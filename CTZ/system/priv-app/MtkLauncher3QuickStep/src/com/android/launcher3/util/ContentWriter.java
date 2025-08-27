@@ -10,6 +10,7 @@ import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.compat.UserManagerCompat;
+
 /* loaded from: classes.dex */
 public class ContentWriter {
     private CommitParams mCommitParams;
@@ -83,7 +84,6 @@ public class ContentWriter {
         return 0;
     }
 
-    /* loaded from: classes.dex */
     public static final class CommitParams {
         String[] mSelectionArgs;
         final Uri mUri = LauncherSettings.Favorites.CONTENT_URI;

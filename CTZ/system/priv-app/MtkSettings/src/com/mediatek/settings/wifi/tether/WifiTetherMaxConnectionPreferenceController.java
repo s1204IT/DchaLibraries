@@ -5,6 +5,7 @@ import android.provider.Settings;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.wifi.tether.WifiTetherBasePreferenceController;
+
 /* loaded from: classes.dex */
 public class WifiTetherMaxConnectionPreferenceController extends WifiTetherBasePreferenceController {
     private int mMaxConnectionsValue;

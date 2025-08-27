@@ -7,20 +7,22 @@ import android.util.Log;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class PreferenceControllerListHelper {
     public static List<BasePreferenceController> getPreferenceControllersFromXml(Context context, int i) {
-        BasePreferenceController createInstance;
+        BasePreferenceController basePreferenceControllerCreateInstance;
         ArrayList arrayList = new ArrayList();
         try {
             for (Bundle bundle : PreferenceXmlParserUtils.extractMetadata(context, i, 10)) {
                 String string = bundle.getString("controller");
                 if (!TextUtils.isEmpty(string)) {
                     try {
-                        createInstance = BasePreferenceController.createInstance(context, string);
+                        basePreferenceControllerCreateInstance = BasePreferenceController.createInstance(context, string);
                     } catch (IllegalStateException e) {
                         Log.d("PrefCtrlListHelper", "Could not find Context-only controller for pref: " + string);
                         String string2 = bundle.getString("key");
@@ -28,13 +30,13 @@ public class PreferenceControllerListHelper {
                             Log.w("PrefCtrlListHelper", "Controller requires key but it's not defined in xml: " + string);
                         } else {
                             try {
-                                createInstance = BasePreferenceController.createInstance(context, string, string2);
+                                basePreferenceControllerCreateInstance = BasePreferenceController.createInstance(context, string, string2);
                             } catch (IllegalStateException e2) {
                                 Log.w("PrefCtrlListHelper", "Cannot instantiate controller from reflection: " + string);
                             }
                         }
                     }
-                    arrayList.add(createInstance);
+                    arrayList.add(basePreferenceControllerCreateInstance);
                 }
             }
             return arrayList;
@@ -50,8 +52,9 @@ public class PreferenceControllerListHelper {
         }
         TreeSet treeSet = new TreeSet();
         ArrayList arrayList = new ArrayList();
-        for (AbstractPreferenceController abstractPreferenceController : list2) {
-            String preferenceKey = abstractPreferenceController.getPreferenceKey();
+        Iterator<AbstractPreferenceController> it = list2.iterator();
+        while (it.hasNext()) {
+            String preferenceKey = it.next().getPreferenceKey();
             if (preferenceKey != null) {
                 treeSet.add(preferenceKey);
             }

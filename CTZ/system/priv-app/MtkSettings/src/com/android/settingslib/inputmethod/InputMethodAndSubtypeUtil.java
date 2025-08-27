@@ -21,22 +21,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class InputMethodAndSubtypeUtil {
     private static final TextUtils.SimpleStringSplitter sStringInputMethodSplitter = new TextUtils.SimpleStringSplitter(':');
     private static final TextUtils.SimpleStringSplitter sStringInputMethodSubtypeSplitter = new TextUtils.SimpleStringSplitter(';');
 
-    private static String buildInputMethodsAndSubtypesString(HashMap<String, HashSet<String>> hashMap) {
+    private static String buildInputMethodsAndSubtypesString(HashMap<String, HashSet<String>> map) {
         StringBuilder sb = new StringBuilder();
-        for (String str : hashMap.keySet()) {
+        for (String str : map.keySet()) {
             if (sb.length() > 0) {
                 sb.append(':');
             }
+            HashSet<String> hashSet = map.get(str);
             sb.append(str);
-            Iterator<String> it = hashMap.get(str).iterator();
+            Iterator<String> it = hashSet.iterator();
             while (it.hasNext()) {
+                String next = it.next();
                 sb.append(';');
-                sb.append(it.next());
+                sb.append(next);
             }
         }
         return sb.toString();
@@ -76,9 +79,9 @@ public class InputMethodAndSubtypeUtil {
     }
 
     private static HashMap<String, HashSet<String>> parseInputMethodsAndSubtypesString(String str) {
-        HashMap<String, HashSet<String>> hashMap = new HashMap<>();
+        HashMap<String, HashSet<String>> map = new HashMap<>();
         if (TextUtils.isEmpty(str)) {
-            return hashMap;
+            return map;
         }
         sStringInputMethodSplitter.setString(str);
         while (sStringInputMethodSplitter.hasNext()) {
@@ -89,10 +92,10 @@ public class InputMethodAndSubtypeUtil {
                 while (sStringInputMethodSubtypeSplitter.hasNext()) {
                     hashSet.add(sStringInputMethodSubtypeSplitter.next());
                 }
-                hashMap.put(next, hashSet);
+                map.put(next, hashSet);
             }
         }
-        return hashMap;
+        return map;
     }
 
     private static HashSet<String> getDisabledSystemIMEs(ContentResolver contentResolver) {
@@ -109,7 +112,7 @@ public class InputMethodAndSubtypeUtil {
     }
 
     public static void saveInputMethodSubtypeList(PreferenceFragment preferenceFragment, ContentResolver contentResolver, List<InputMethodInfo> list, boolean z) {
-        boolean containsKey;
+        boolean zContainsKey;
         Iterator<InputMethodInfo> it;
         String string = Settings.Secure.getString(contentResolver, "default_input_method");
         int inputMethodSubtypeSelected = getInputMethodSubtypeSelected(contentResolver);
@@ -121,16 +124,16 @@ public class InputMethodAndSubtypeUtil {
         while (it2.hasNext()) {
             InputMethodInfo next = it2.next();
             String id = next.getId();
-            Preference findPreference = preferenceFragment.findPreference(id);
-            if (findPreference != null) {
-                if (findPreference instanceof TwoStatePreference) {
-                    containsKey = ((TwoStatePreference) findPreference).isChecked();
+            Preference preferenceFindPreference = preferenceFragment.findPreference(id);
+            if (preferenceFindPreference != null) {
+                if (preferenceFindPreference instanceof TwoStatePreference) {
+                    zContainsKey = ((TwoStatePreference) preferenceFindPreference).isChecked();
                 } else {
-                    containsKey = enabledInputMethodsAndSubtypeList.containsKey(id);
+                    zContainsKey = enabledInputMethodsAndSubtypeList.containsKey(id);
                 }
-                boolean equals = id.equals(str);
-                boolean isSystemIme = InputMethodUtils.isSystemIme(next);
-                if ((!z && InputMethodSettingValuesWrapper.getInstance(preferenceFragment.getActivity()).isAlwaysCheckedIme(next, preferenceFragment.getActivity())) || containsKey) {
+                boolean zEquals = id.equals(str);
+                boolean zIsSystemIme = InputMethodUtils.isSystemIme(next);
+                if ((!z && InputMethodSettingValuesWrapper.getInstance(preferenceFragment.getActivity()).isAlwaysCheckedIme(next, preferenceFragment.getActivity())) || zContainsKey) {
                     if (!enabledInputMethodsAndSubtypeList.containsKey(id)) {
                         enabledInputMethodsAndSubtypeList.put(id, new HashSet<>());
                     }
@@ -143,9 +146,9 @@ public class InputMethodAndSubtypeUtil {
                         Iterator<InputMethodInfo> it3 = it2;
                         InputMethodSubtype subtypeAt = next.getSubtypeAt(i);
                         InputMethodInfo inputMethodInfo = next;
-                        String valueOf = String.valueOf(subtypeAt.hashCode());
+                        String strValueOf = String.valueOf(subtypeAt.hashCode());
                         int i2 = subtypeCount;
-                        TwoStatePreference twoStatePreference = (TwoStatePreference) preferenceFragment.findPreference(id + valueOf);
+                        TwoStatePreference twoStatePreference = (TwoStatePreference) preferenceFragment.findPreference(id + strValueOf);
                         if (twoStatePreference != null) {
                             if (!z4) {
                                 hashSet.clear();
@@ -153,12 +156,12 @@ public class InputMethodAndSubtypeUtil {
                                 z3 = true;
                             }
                             if (twoStatePreference.isEnabled() && twoStatePreference.isChecked()) {
-                                hashSet.add(valueOf);
-                                if (equals && inputMethodSubtypeSelected == subtypeAt.hashCode()) {
+                                hashSet.add(strValueOf);
+                                if (zEquals && inputMethodSubtypeSelected == subtypeAt.hashCode()) {
                                     z3 = false;
                                 }
                             } else {
-                                hashSet.remove(valueOf);
+                                hashSet.remove(strValueOf);
                             }
                         }
                         i++;
@@ -171,30 +174,30 @@ public class InputMethodAndSubtypeUtil {
                 } else {
                     it = it2;
                     enabledInputMethodsAndSubtypeList.remove(id);
-                    if (equals) {
+                    if (zEquals) {
                         str = null;
                     }
                 }
-                if (isSystemIme && z) {
+                if (zIsSystemIme && z) {
                     if (disabledSystemIMEs.contains(id)) {
-                        if (containsKey) {
+                        if (zContainsKey) {
                             disabledSystemIMEs.remove(id);
                         }
-                    } else if (!containsKey) {
+                    } else if (!zContainsKey) {
                         disabledSystemIMEs.add(id);
                     }
                 }
                 it2 = it;
             }
         }
-        String buildInputMethodsAndSubtypesString = buildInputMethodsAndSubtypesString(enabledInputMethodsAndSubtypeList);
-        String buildInputMethodsString = buildInputMethodsString(disabledSystemIMEs);
+        String strBuildInputMethodsAndSubtypesString = buildInputMethodsAndSubtypesString(enabledInputMethodsAndSubtypeList);
+        String strBuildInputMethodsString = buildInputMethodsString(disabledSystemIMEs);
         if (z2 || !isInputMethodSubtypeSelected(contentResolver)) {
             putSelectedInputMethodSubtype(contentResolver, -1);
         }
-        Settings.Secure.putString(contentResolver, "enabled_input_methods", buildInputMethodsAndSubtypesString);
-        if (buildInputMethodsString.length() > 0) {
-            Settings.Secure.putString(contentResolver, "disabled_system_input_methods", buildInputMethodsString);
+        Settings.Secure.putString(contentResolver, "enabled_input_methods", strBuildInputMethodsAndSubtypesString);
+        if (strBuildInputMethodsString.length() > 0) {
+            Settings.Secure.putString(contentResolver, "disabled_system_input_methods", strBuildInputMethodsString);
         }
         if (str == null) {
             str = "";
@@ -204,18 +207,20 @@ public class InputMethodAndSubtypeUtil {
 
     public static void loadInputMethodSubtypeList(PreferenceFragment preferenceFragment, ContentResolver contentResolver, List<InputMethodInfo> list, Map<String, List<Preference>> map) {
         HashMap<String, HashSet<String>> enabledInputMethodsAndSubtypeList = getEnabledInputMethodsAndSubtypeList(contentResolver);
-        for (InputMethodInfo inputMethodInfo : list) {
-            String id = inputMethodInfo.getId();
-            Preference findPreference = preferenceFragment.findPreference(id);
-            if (findPreference instanceof TwoStatePreference) {
-                boolean containsKey = enabledInputMethodsAndSubtypeList.containsKey(id);
-                ((TwoStatePreference) findPreference).setChecked(containsKey);
+        Iterator<InputMethodInfo> it = list.iterator();
+        while (it.hasNext()) {
+            String id = it.next().getId();
+            Preference preferenceFindPreference = preferenceFragment.findPreference(id);
+            if (preferenceFindPreference instanceof TwoStatePreference) {
+                boolean zContainsKey = enabledInputMethodsAndSubtypeList.containsKey(id);
+                ((TwoStatePreference) preferenceFindPreference).setChecked(zContainsKey);
                 if (map != null) {
-                    for (Preference preference : map.get(id)) {
-                        preference.setEnabled(containsKey);
+                    Iterator<Preference> it2 = map.get(id).iterator();
+                    while (it2.hasNext()) {
+                        it2.next().setEnabled(zContainsKey);
                     }
                 }
-                setSubtypesPreferenceEnabled(preferenceFragment, list, id, containsKey);
+                setSubtypesPreferenceEnabled(preferenceFragment, list, id, zContainsKey);
             }
         }
         updateSubtypesPreferenceChecked(preferenceFragment, list, enabledInputMethodsAndSubtypeList);
@@ -227,8 +232,7 @@ public class InputMethodAndSubtypeUtil {
             if (str.equals(inputMethodInfo.getId())) {
                 int subtypeCount = inputMethodInfo.getSubtypeCount();
                 for (int i = 0; i < subtypeCount; i++) {
-                    InputMethodSubtype subtypeAt = inputMethodInfo.getSubtypeAt(i);
-                    TwoStatePreference twoStatePreference = (TwoStatePreference) preferenceScreen.findPreference(str + subtypeAt.hashCode());
+                    TwoStatePreference twoStatePreference = (TwoStatePreference) preferenceScreen.findPreference(str + inputMethodInfo.getSubtypeAt(i).hashCode());
                     if (twoStatePreference != null) {
                         twoStatePreference.setEnabled(z);
                     }
@@ -237,18 +241,18 @@ public class InputMethodAndSubtypeUtil {
         }
     }
 
-    private static void updateSubtypesPreferenceChecked(PreferenceFragment preferenceFragment, List<InputMethodInfo> list, HashMap<String, HashSet<String>> hashMap) {
+    private static void updateSubtypesPreferenceChecked(PreferenceFragment preferenceFragment, List<InputMethodInfo> list, HashMap<String, HashSet<String>> map) {
         PreferenceScreen preferenceScreen = preferenceFragment.getPreferenceScreen();
         for (InputMethodInfo inputMethodInfo : list) {
             String id = inputMethodInfo.getId();
-            if (hashMap.containsKey(id)) {
-                HashSet<String> hashSet = hashMap.get(id);
+            if (map.containsKey(id)) {
+                HashSet<String> hashSet = map.get(id);
                 int subtypeCount = inputMethodInfo.getSubtypeCount();
                 for (int i = 0; i < subtypeCount; i++) {
-                    String valueOf = String.valueOf(inputMethodInfo.getSubtypeAt(i).hashCode());
-                    TwoStatePreference twoStatePreference = (TwoStatePreference) preferenceScreen.findPreference(id + valueOf);
+                    String strValueOf = String.valueOf(inputMethodInfo.getSubtypeAt(i).hashCode());
+                    TwoStatePreference twoStatePreference = (TwoStatePreference) preferenceScreen.findPreference(id + strValueOf);
                     if (twoStatePreference != null) {
-                        twoStatePreference.setChecked(hashSet.contains(valueOf));
+                        twoStatePreference.setChecked(hashSet.contains(strValueOf));
                     }
                 }
             }

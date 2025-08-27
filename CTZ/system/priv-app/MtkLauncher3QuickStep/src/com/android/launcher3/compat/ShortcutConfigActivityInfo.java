@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.android.launcher3.IconCache;
 import com.android.launcher3.R;
 import com.android.launcher3.ShortcutInfo;
+
 /* loaded from: classes.dex */
 public abstract class ShortcutConfigActivityInfo {
     private static final String TAG = "SCActivityInfo";
@@ -29,8 +30,7 @@ public abstract class ShortcutConfigActivityInfo {
 
     public abstract CharSequence getLabel();
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public ShortcutConfigActivityInfo(ComponentName componentName, UserHandle userHandle) {
+    protected ShortcutConfigActivityInfo(ComponentName componentName, UserHandle userHandle) {
         this.mCn = componentName;
         this.mUser = userHandle;
     }
@@ -60,10 +60,10 @@ public abstract class ShortcutConfigActivityInfo {
             activity.startActivityForResult(component, i);
             return true;
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(activity, (int) R.string.activity_not_found, 0).show();
+            Toast.makeText(activity, R.string.activity_not_found, 0).show();
             return false;
         } catch (SecurityException e2) {
-            Toast.makeText(activity, (int) R.string.activity_not_found, 0).show();
+            Toast.makeText(activity, R.string.activity_not_found, 0).show();
             Log.e(TAG, "Launcher does not have the permission to launch " + component + ". Make sure to create a MAIN intent-filter for the corresponding activity or use the exported attribute for this activity.", e2);
             return false;
         }
@@ -73,7 +73,6 @@ public abstract class ShortcutConfigActivityInfo {
         return true;
     }
 
-    /* loaded from: classes.dex */
     static class ShortcutConfigActivityInfoVL extends ShortcutConfigActivityInfo {
         private final ActivityInfo mInfo;
         private final PackageManager mPm;
@@ -96,7 +95,6 @@ public abstract class ShortcutConfigActivityInfo {
     }
 
     @TargetApi(26)
-    /* loaded from: classes.dex */
     public static class ShortcutConfigActivityInfoVO extends ShortcutConfigActivityInfo {
         private final LauncherActivityInfo mInfo;
 
@@ -116,7 +114,7 @@ public abstract class ShortcutConfigActivityInfo {
         }
 
         @Override // com.android.launcher3.compat.ShortcutConfigActivityInfo
-        public boolean startConfigActivity(Activity activity, int i) {
+        public boolean startConfigActivity(Activity activity, int i) throws IntentSender.SendIntentException {
             if (getUser().equals(Process.myUserHandle())) {
                 return super.startConfigActivity(activity, i);
             }
@@ -124,7 +122,7 @@ public abstract class ShortcutConfigActivityInfo {
                 activity.startIntentSenderForResult(((LauncherApps) activity.getSystemService(LauncherApps.class)).getShortcutConfigActivityIntent(this.mInfo), i, null, 0, 0, 0);
                 return true;
             } catch (IntentSender.SendIntentException e) {
-                Toast.makeText(activity, (int) R.string.activity_not_found, 0).show();
+                Toast.makeText(activity, R.string.activity_not_found, 0).show();
                 return false;
             }
         }

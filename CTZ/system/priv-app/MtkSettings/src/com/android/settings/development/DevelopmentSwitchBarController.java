@@ -7,6 +7,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
 import com.android.settingslib.development.DevelopmentSettingsEnabler;
+
 /* loaded from: classes.dex */
 public class DevelopmentSwitchBarController implements LifecycleObserver, OnStart, OnStop {
     private final boolean mIsAvailable;

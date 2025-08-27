@@ -7,6 +7,7 @@ import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.SystemUI;
 import com.android.systemui.statusbar.CommandQueue;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class TvStatusBar extends SystemUI implements CommandQueue.Callbacks {
     private IStatusBarService mBarService;

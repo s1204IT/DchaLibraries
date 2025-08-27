@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.service.settings.suggestions.Suggestion;
 import com.android.settingslib.suggestions.SuggestionControllerMixin;
+
 /* loaded from: classes.dex */
 public interface SuggestionFeatureProvider {
     void dismissSuggestion(Context context, SuggestionControllerMixin suggestionControllerMixin, Suggestion suggestion);

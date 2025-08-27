@@ -3,6 +3,7 @@ package com.android.systemui.statusbar;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
 /* loaded from: classes.dex */
 public class AlphaOptimizedFrameLayout extends FrameLayout {
     public AlphaOptimizedFrameLayout(Context context) {

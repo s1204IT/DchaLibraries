@@ -4,13 +4,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 import com.android.internal.policy.IShortcutService;
+
 /* loaded from: classes.dex */
 public class ShortcutKeyServiceProxy extends IShortcutService.Stub {
     private Callbacks mCallbacks;
     private final Object mLock = new Object();
     private final Handler mHandler = new H();
 
-    /* loaded from: classes.dex */
     public interface Callbacks {
         void onShortcutKeyPressed(long j);
     }
@@ -25,7 +25,6 @@ public class ShortcutKeyServiceProxy extends IShortcutService.Stub {
         }
     }
 
-    /* loaded from: classes.dex */
     private final class H extends Handler {
         private H() {
         }

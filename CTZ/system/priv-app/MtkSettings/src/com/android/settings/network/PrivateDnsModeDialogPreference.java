@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.provider.Settings;
 import android.system.Os;
 import android.system.OsConstants;
@@ -25,8 +26,10 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.utils.AnnotationSpan;
 import com.android.settingslib.CustomDialogPreference;
 import com.android.settingslib.HelpUtils;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class PrivateDnsModeDialogPreference extends CustomDialogPreference implements DialogInterface.OnClickListener, TextWatcher, RadioGroup.OnCheckedChangeListener {
     private static final int[] ADDRESS_FAMILIES;
@@ -39,9 +42,9 @@ public class PrivateDnsModeDialogPreference extends CustomDialogPreference imple
     private final AnnotationSpan.LinkInfo mUrlLinkInfo;
 
     static {
-        PRIVATE_DNS_MAP.put("off", Integer.valueOf((int) R.id.private_dns_mode_off));
-        PRIVATE_DNS_MAP.put("opportunistic", Integer.valueOf((int) R.id.private_dns_mode_opportunistic));
-        PRIVATE_DNS_MAP.put("hostname", Integer.valueOf((int) R.id.private_dns_mode_provider));
+        PRIVATE_DNS_MAP.put("off", Integer.valueOf(R.id.private_dns_mode_off));
+        PRIVATE_DNS_MAP.put("opportunistic", Integer.valueOf(R.id.private_dns_mode_opportunistic));
+        PRIVATE_DNS_MAP.put("hostname", Integer.valueOf(R.id.private_dns_mode_provider));
         ADDRESS_FAMILIES = new int[]{OsConstants.AF_INET, OsConstants.AF_INET6};
     }
 
@@ -77,8 +80,7 @@ public class PrivateDnsModeDialogPreference extends CustomDialogPreference imple
         this.mUrlLinkInfo = new AnnotationSpan.LinkInfo("url", $$Lambda$PrivateDnsModeDialogPreference$I1bK8FTmQSNCcqXqZ0usMONEsU.INSTANCE);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$new$0(View view) {
+    static /* synthetic */ void lambda$new$0(View view) throws Resources.NotFoundException, URISyntaxException {
         Context context = view.getContext();
         Intent helpIntent = HelpUtils.getHelpIntent(context, context.getString(R.string.help_uri_private_dns), context.getClass().getName());
         if (helpIntent != null) {
@@ -90,9 +92,8 @@ public class PrivateDnsModeDialogPreference extends CustomDialogPreference imple
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomDialogPreference
-    public void onBindDialogView(View view) {
+    protected void onBindDialogView(View view) {
         Context context = getContext();
         ContentResolver contentResolver = context.getContentResolver();
         this.mMode = getModeFromSettings(context.getContentResolver());
@@ -101,7 +102,7 @@ public class PrivateDnsModeDialogPreference extends CustomDialogPreference imple
         this.mEditText.setText(getHostnameFromSettings(contentResolver));
         this.mRadioGroup = (RadioGroup) view.findViewById(R.id.private_dns_radio_group);
         this.mRadioGroup.setOnCheckedChangeListener(this);
-        this.mRadioGroup.check(PRIVATE_DNS_MAP.getOrDefault(this.mMode, Integer.valueOf((int) R.id.private_dns_mode_opportunistic)).intValue());
+        this.mRadioGroup.check(PRIVATE_DNS_MAP.getOrDefault(this.mMode, Integer.valueOf(R.id.private_dns_mode_opportunistic)).intValue());
         TextView textView = (TextView) view.findViewById(R.id.private_dns_help_info);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         AnnotationSpan.LinkInfo linkInfo = new AnnotationSpan.LinkInfo(context, "url", HelpUtils.getHelpIntent(context, context.getString(R.string.help_uri_private_dns), context.getClass().getName()));
@@ -152,15 +153,15 @@ public class PrivateDnsModeDialogPreference extends CustomDialogPreference imple
     }
 
     private boolean isWeaklyValidatedHostname(String str) {
-        if (str.matches("^[a-zA-Z0-9_.-]+$")) {
-            for (int i : ADDRESS_FAMILIES) {
-                if (Os.inet_pton(i, str) != null) {
-                    return false;
-                }
-            }
-            return true;
+        if (!str.matches("^[a-zA-Z0-9_.-]+$")) {
+            return false;
         }
-        return false;
+        for (int i : ADDRESS_FAMILIES) {
+            if (Os.inet_pton(i, str) != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Button getSaveButton() {
@@ -172,19 +173,19 @@ public class PrivateDnsModeDialogPreference extends CustomDialogPreference imple
     }
 
     private void updateDialogInfo() {
-        boolean z;
-        boolean equals = "hostname".equals(this.mMode);
+        boolean zIsWeaklyValidatedHostname;
+        boolean zEquals = "hostname".equals(this.mMode);
         if (this.mEditText != null) {
-            this.mEditText.setEnabled(equals);
+            this.mEditText.setEnabled(zEquals);
         }
         Button saveButton = getSaveButton();
         if (saveButton != null) {
-            if (equals) {
-                z = isWeaklyValidatedHostname(this.mEditText.getText().toString());
+            if (zEquals) {
+                zIsWeaklyValidatedHostname = isWeaklyValidatedHostname(this.mEditText.getText().toString());
             } else {
-                z = true;
+                zIsWeaklyValidatedHostname = true;
             }
-            saveButton.setEnabled(z);
+            saveButton.setEnabled(zIsWeaklyValidatedHostname);
         }
     }
 }

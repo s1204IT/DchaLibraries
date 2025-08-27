@@ -1,8 +1,8 @@
 package com.android.systemui.doze;
+
 /* loaded from: classes.dex */
 public interface DozeHost {
 
-    /* loaded from: classes.dex */
     public interface PulseCallback {
         void onPulseFinished();
 
@@ -44,7 +44,6 @@ public interface DozeHost {
     default void setAodDimmingScrim(float f) {
     }
 
-    /* loaded from: classes.dex */
     public interface Callback {
         default void onNotificationHeadsUp() {
         }

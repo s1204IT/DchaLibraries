@@ -8,6 +8,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.mediatek.settings.FeatureOption;
+
 /* loaded from: classes.dex */
 public class AmbientDisplayPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private static final int MY_USER_ID = UserHandle.myUserId();
@@ -30,7 +31,9 @@ public class AmbientDisplayPreferenceController extends AbstractPreferenceContro
         super.updateState(preference);
         if (this.mConfig.alwaysOnEnabled(MY_USER_ID)) {
             preference.setSummary(R.string.ambient_display_screen_summary_always_on);
-        } else if (this.mConfig.pulseOnNotificationEnabled(MY_USER_ID)) {
+            return;
+        }
+        if (this.mConfig.pulseOnNotificationEnabled(MY_USER_ID)) {
             preference.setSummary(R.string.ambient_display_screen_summary_notifications);
         } else if (this.mConfig.enabled(MY_USER_ID)) {
             preference.setSummary(R.string.switch_on_text);

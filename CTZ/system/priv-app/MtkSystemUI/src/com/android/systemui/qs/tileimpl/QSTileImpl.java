@@ -1,5 +1,6 @@
 package com.android.systemui.qs.tileimpl;
 
+import android.R;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import com.android.systemui.qs.QSHost;
 import com.mediatek.systemui.statusbar.util.FeatureOptions;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile {
     protected static final Object ARG_SHOW_TRANSIENT_ENABLING;
@@ -45,8 +47,8 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
     private final MetricsLogger mMetricsLogger = (MetricsLogger) Dependency.get(MetricsLogger.class);
     private final ArrayList<QSTile.Callback> mCallbacks = new ArrayList<>();
     private final Object mStaleListener = new Object();
-    protected TState mState = newTileState();
-    private TState mTmpState = newTileState();
+    protected TState mState = (TState) newTileState();
+    private TState mTmpState = (TState) newTileState();
 
     public abstract Intent getLongClickIntent();
 
@@ -66,8 +68,7 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         ARG_SHOW_TRANSIENT_ENABLING = new Object();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public QSTileImpl(QSHost qSHost) {
+    protected QSTileImpl(QSHost qSHost) {
         this.mHost = qSHost;
         this.mContext = qSHost.getContext();
     }
@@ -81,9 +82,8 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         return 600000L;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @VisibleForTesting
-    public void handleStale() {
+    protected void handleStale() {
         setListening(this.mStaleListener, true);
     }
 
@@ -171,8 +171,7 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         refreshState(null);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final void refreshState(Object obj) {
+    protected final void refreshState(Object obj) {
         this.mHandler.obtainMessage(5, obj).sendToTarget();
     }
 
@@ -208,19 +207,16 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
     public void setDetailListening(boolean z) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleAddCallback(QSTile.Callback callback) {
+    private void handleAddCallback(QSTile.Callback callback) {
         this.mCallbacks.add(callback);
         callback.onStateChanged(this.mState);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleRemoveCallback(QSTile.Callback callback) {
+    private void handleRemoveCallback(QSTile.Callback callback) {
         this.mCallbacks.remove(callback);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleRemoveCallbacks() {
+    private void handleRemoveCallbacks() {
         this.mCallbacks.clear();
     }
 
@@ -233,12 +229,11 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
     }
 
     protected void handleClearState() {
-        this.mTmpState = newTileState();
-        this.mState = newTileState();
+        this.mTmpState = (TState) newTileState();
+        this.mState = (TState) newTileState();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void handleRefreshState(Object obj) {
+    protected void handleRefreshState(Object obj) {
         handleUpdateState(this.mTmpState, obj);
         if (this.mTmpState.copyTo(this.mState)) {
             handleStateChanged();
@@ -249,20 +244,20 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
     }
 
     private void handleStateChanged() {
-        String composeChangeAnnouncement;
-        boolean shouldAnnouncementBeDelayed = shouldAnnouncementBeDelayed();
+        String strComposeChangeAnnouncement;
+        boolean zShouldAnnouncementBeDelayed = shouldAnnouncementBeDelayed();
         boolean z = false;
         if (this.mCallbacks.size() != 0) {
-            TState newTileState = newTileState();
-            this.mState.copyTo(newTileState);
+            QSTile.State stateNewTileState = newTileState();
+            this.mState.copyTo(stateNewTileState);
             for (int i = 0; i < this.mCallbacks.size(); i++) {
-                this.mCallbacks.get(i).onStateChanged(newTileState);
+                this.mCallbacks.get(i).onStateChanged(stateNewTileState);
             }
-            if (this.mAnnounceNextStateChange && !shouldAnnouncementBeDelayed && (composeChangeAnnouncement = composeChangeAnnouncement()) != null) {
-                this.mCallbacks.get(0).onAnnouncementRequested(composeChangeAnnouncement);
+            if (this.mAnnounceNextStateChange && !zShouldAnnouncementBeDelayed && (strComposeChangeAnnouncement = composeChangeAnnouncement()) != null) {
+                this.mCallbacks.get(0).onAnnouncementRequested(strComposeChangeAnnouncement);
             }
         }
-        if (this.mAnnounceNextStateChange && shouldAnnouncementBeDelayed) {
+        if (this.mAnnounceNextStateChange && zShouldAnnouncementBeDelayed) {
             z = true;
         }
         this.mAnnounceNextStateChange = z;
@@ -276,40 +271,34 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleShowDetail(boolean z) {
+    private void handleShowDetail(boolean z) {
         this.mShowingDetail = z;
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             this.mCallbacks.get(i).onShowDetail(z);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isShowingDetail() {
+    protected boolean isShowingDetail() {
         return this.mShowingDetail;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleToggleStateChanged(boolean z) {
+    private void handleToggleStateChanged(boolean z) {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             this.mCallbacks.get(i).onToggleStateChanged(z);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleScanStateChanged(boolean z) {
+    private void handleScanStateChanged(boolean z) {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             this.mCallbacks.get(i).onScanStateChanged(z);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void handleUserSwitch(int i) {
+    protected void handleUserSwitch(int i) {
         handleRefreshState(null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleSetListeningInternal(Object obj, boolean z) {
+    private void handleSetListeningInternal(Object obj, boolean z) {
         if (z) {
             if (this.mListeners.add(obj) && this.mListeners.size() == 1) {
                 if (DEBUG) {
@@ -338,47 +327,46 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         this.mIsFullQs = 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void handleDestroy() {
+    protected void handleDestroy() {
         if (this.mListeners.size() != 0) {
             handleSetListening(false);
         }
         this.mCallbacks.clear();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void checkIfRestrictionEnforcedByAdminOnly(QSTile.State state, String str) {
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, str, ActivityManager.getCurrentUser());
-        if (checkIfRestrictionEnforced != null && !RestrictedLockUtils.hasBaseUserRestriction(this.mContext, str, ActivityManager.getCurrentUser())) {
+    protected void checkIfRestrictionEnforcedByAdminOnly(QSTile.State state, String str) {
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, str, ActivityManager.getCurrentUser());
+        if (enforcedAdminCheckIfRestrictionEnforced != null && !RestrictedLockUtils.hasBaseUserRestriction(this.mContext, str, ActivityManager.getCurrentUser())) {
             state.disabledByPolicy = true;
-            this.mEnforcedAdmin = checkIfRestrictionEnforced;
-            return;
+            this.mEnforcedAdmin = enforcedAdminCheckIfRestrictionEnforced;
+        } else {
+            state.disabledByPolicy = false;
+            this.mEnforcedAdmin = null;
         }
-        state.disabledByPolicy = false;
-        this.mEnforcedAdmin = null;
     }
 
     public static int getColorForState(Context context, int i) {
         switch (i) {
             case 0:
-                return Utils.getDisabled(context, Utils.getColorAttr(context, 16842808));
+                return Utils.getDisabled(context, Utils.getColorAttr(context, R.attr.textColorSecondary));
             case 1:
-                return Utils.getColorAttr(context, 16842808);
+                return Utils.getColorAttr(context, R.attr.textColorSecondary);
             case 2:
-                return Utils.getColorAttr(context, 16843827);
+                return Utils.getColorAttr(context, R.attr.colorPrimary);
             default:
                 Log.e("QSTile", "Invalid state " + i);
                 return 0;
         }
     }
 
-    /* loaded from: classes.dex */
     protected final class H extends Handler {
         @VisibleForTesting
         protected H(Looper looper) {
             super(looper);
         }
 
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:225:0x0005 */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:228:0x001c */
         /* JADX WARN: Multi-variable type inference failed */
         /* JADX WARN: Type inference failed for: r0v0 */
         /* JADX WARN: Type inference failed for: r0v1, types: [java.lang.String] */
@@ -515,7 +503,6 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         }
     }
 
-    /* loaded from: classes.dex */
     public static class DrawableIcon extends QSTile.Icon {
         protected final Drawable mDrawable;
         protected final Drawable mInvisibleDrawable;
@@ -536,7 +523,6 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ResourceIcon extends QSTile.Icon {
         private static final SparseArray<QSTile.Icon> ICONS = new SparseArray<>();
         protected final int mResId;

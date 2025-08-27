@@ -6,6 +6,7 @@ import android.util.Log;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.notification.NotificationSettingsBase;
 import com.android.settingslib.RestrictedSwitchPreference;
+
 /* loaded from: classes.dex */
 public class AllowSoundPreferenceController extends NotificationPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private NotificationSettingsBase.ImportanceListener mImportanceListener;
@@ -30,12 +31,8 @@ public class AllowSoundPreferenceController extends NotificationPreferenceContro
         if (this.mChannel != null) {
             RestrictedSwitchPreference restrictedSwitchPreference = (RestrictedSwitchPreference) preference;
             restrictedSwitchPreference.setDisabledByAdmin(this.mAdmin);
-            boolean z = false;
             restrictedSwitchPreference.setEnabled(isChannelConfigurable() && !restrictedSwitchPreference.isDisabledByAdmin());
-            if (this.mChannel.getImportance() >= 3 || this.mChannel.getImportance() == -1000) {
-                z = true;
-            }
-            restrictedSwitchPreference.setChecked(z);
+            restrictedSwitchPreference.setChecked(this.mChannel.getImportance() >= 3 || this.mChannel.getImportance() == -1000);
             return;
         }
         Log.i("AllowSoundPrefContr", "tried to updatestate on a null channel?!");

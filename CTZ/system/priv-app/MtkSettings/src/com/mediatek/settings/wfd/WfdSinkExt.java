@@ -12,6 +12,7 @@ import android.view.Surface;
 import android.widget.Toast;
 import com.android.settings.R;
 import com.mediatek.settings.FeatureOption;
+
 /* loaded from: classes.dex */
 public class WfdSinkExt {
     private Context mContext;
@@ -76,8 +77,7 @@ public class WfdSinkExt {
         this.mSinkFragment = wfdSinkSurfaceFragment;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleWfdStatusChanged(WifiDisplayStatus wifiDisplayStatus) {
+    private void handleWfdStatusChanged(WifiDisplayStatus wifiDisplayStatus) {
         boolean z = wifiDisplayStatus != null && wifiDisplayStatus.getFeatureState() == 3;
         Log.d("@M_WfdSinkExt", "handleWfdStatusChanged bStateOn: " + z);
         if (z) {
@@ -105,10 +105,7 @@ public class WfdSinkExt {
                     showToast(false);
                 }
                 this.mUiPortrait = false;
-                return;
-            case 1:
-            default:
-                return;
+                break;
             case 2:
                 if (z) {
                     Log.d("@M_WfdSinkExt", "mUiPortrait: " + this.mUiPortrait);
@@ -123,7 +120,7 @@ public class WfdSinkExt {
                     }
                 }
                 this.mUiPortrait = false;
-                return;
+                break;
         }
     }
 

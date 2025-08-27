@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import com.android.settingslib.animation.AppearAnimationUtils;
 import com.android.settingslib.animation.DisappearAnimationUtils;
+
 /* loaded from: classes.dex */
 public class KeyguardPINView extends KeyguardPinBasedInputView {
     private final AppearAnimationUtils mAppearAnimationUtils;
@@ -29,28 +30,25 @@ public class KeyguardPINView extends KeyguardPinBasedInputView {
     public KeyguardPINView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mAppearAnimationUtils = new AppearAnimationUtils(context);
-        this.mDisappearAnimationUtils = new DisappearAnimationUtils(context, 125L, 0.6f, 0.45f, AnimationUtils.loadInterpolator(this.mContext, 17563663));
-        this.mDisappearAnimationUtilsLocked = new DisappearAnimationUtils(context, 187L, 0.6f, 0.45f, AnimationUtils.loadInterpolator(this.mContext, 17563663));
+        this.mDisappearAnimationUtils = new DisappearAnimationUtils(context, 125L, 0.6f, 0.45f, AnimationUtils.loadInterpolator(this.mContext, android.R.interpolator.fast_out_linear_in));
+        this.mDisappearAnimationUtilsLocked = new DisappearAnimationUtils(context, 187L, 0.6f, 0.45f, AnimationUtils.loadInterpolator(this.mContext, android.R.interpolator.fast_out_linear_in));
         this.mDisappearYTranslation = getResources().getDimensionPixelSize(com.android.systemui.R.dimen.disappear_y_translation);
         this.mKeyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardPinBasedInputView, com.android.keyguard.KeyguardAbsKeyInputView
-    public void resetState() {
+    protected void resetState() {
         super.resetState();
         this.mSecurityMessageDisplay.setMessage("");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public int getPasswordTextViewId() {
+    protected int getPasswordTextViewId() {
         return com.android.systemui.R.id.pinEntry;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardPinBasedInputView, com.android.keyguard.KeyguardAbsKeyInputView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mContainer = (ViewGroup) findViewById(com.android.systemui.R.id.container);
         this.mRow0 = (ViewGroup) findViewById(com.android.systemui.R.id.row0);
@@ -59,12 +57,12 @@ public class KeyguardPINView extends KeyguardPinBasedInputView {
         this.mRow3 = (ViewGroup) findViewById(com.android.systemui.R.id.row3);
         this.mDivider = findViewById(com.android.systemui.R.id.divider);
         this.mViews = new View[][]{new View[]{this.mRow0, null, null}, new View[]{findViewById(com.android.systemui.R.id.key1), findViewById(com.android.systemui.R.id.key2), findViewById(com.android.systemui.R.id.key3)}, new View[]{findViewById(com.android.systemui.R.id.key4), findViewById(com.android.systemui.R.id.key5), findViewById(com.android.systemui.R.id.key6)}, new View[]{findViewById(com.android.systemui.R.id.key7), findViewById(com.android.systemui.R.id.key8), findViewById(com.android.systemui.R.id.key9)}, new View[]{null, findViewById(com.android.systemui.R.id.key0), findViewById(com.android.systemui.R.id.key_enter)}, new View[]{null, this.mEcaView, null}};
-        View findViewById = findViewById(com.android.systemui.R.id.cancel_button);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.keyguard.-$$Lambda$KeyguardPINView$32q9EwjCzWlJ6lNiw9pw0PSsPxs
+        View viewFindViewById = findViewById(com.android.systemui.R.id.cancel_button);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.keyguard.-$$Lambda$KeyguardPINView$32q9EwjCzWlJ6lNiw9pw0PSsPxs
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    KeyguardPINView.this.mCallback.reset();
+                    this.f$0.mCallback.reset();
                 }
             });
         }
@@ -112,8 +110,7 @@ public class KeyguardPINView extends KeyguardPinBasedInputView {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void enableClipping(boolean z) {
+    private void enableClipping(boolean z) {
         this.mContainer.setClipToPadding(z);
         this.mContainer.setClipChildren(z);
         this.mRow1.setClipToPadding(z);

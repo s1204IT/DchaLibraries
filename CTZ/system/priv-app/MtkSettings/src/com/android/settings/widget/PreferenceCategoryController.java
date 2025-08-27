@@ -4,7 +4,9 @@ import android.content.Context;
 import com.android.settings.core.BasePreferenceController;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PreferenceCategoryController extends BasePreferenceController {
     private final List<AbstractPreferenceController> mChildren;
@@ -21,8 +23,9 @@ public class PreferenceCategoryController extends BasePreferenceController {
         if (this.mChildren == null || this.mChildren.isEmpty()) {
             return 2;
         }
-        for (AbstractPreferenceController abstractPreferenceController : this.mChildren) {
-            if (abstractPreferenceController.isAvailable()) {
+        Iterator<AbstractPreferenceController> it = this.mChildren.iterator();
+        while (it.hasNext()) {
+            if (it.next().isAvailable()) {
                 return 0;
             }
         }

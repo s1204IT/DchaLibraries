@@ -12,6 +12,7 @@ import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.search.Indexable;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AmbientDisplaySettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.display.AmbientDisplaySettings.1
@@ -32,7 +33,7 @@ public class AmbientDisplaySettings extends DashboardFragment {
         ((AmbientDisplayAlwaysOnPreferenceController) use(AmbientDisplayAlwaysOnPreferenceController.class)).setConfig(getConfig(context)).setCallback(new AmbientDisplayAlwaysOnPreferenceController.OnPreferenceChangedCallback() { // from class: com.android.settings.display.-$$Lambda$AmbientDisplaySettings$EZV3GOIvjt5KUMzbyw8y8_onopw
             @Override // com.android.settings.display.AmbientDisplayAlwaysOnPreferenceController.OnPreferenceChangedCallback
             public final void onPreferenceChanged() {
-                AmbientDisplaySettings.this.updatePreferenceStates();
+                this.f$0.updatePreferenceStates();
             }
         });
         ((AmbientDisplayNotificationsPreferenceController) use(AmbientDisplayNotificationsPreferenceController.class)).setConfig(getConfig(context));
@@ -45,9 +46,8 @@ public class AmbientDisplaySettings extends DashboardFragment {
         return "AmbientDisplaySettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.ambient_display_settings;
     }
 

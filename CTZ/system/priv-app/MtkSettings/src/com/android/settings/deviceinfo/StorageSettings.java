@@ -39,6 +39,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class StorageSettings extends SettingsPreferenceFragment implements Indexable {
     private static long sTotalInternalStorage;
@@ -157,8 +158,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         setHasOptionsMenu(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static boolean isInteresting(VolumeInfo volumeInfo) {
+    private static boolean isInteresting(VolumeInfo volumeInfo) {
         switch (volumeInfo.getType()) {
             case 0:
             case 1:
@@ -168,8 +168,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public synchronized void refresh() {
+    private synchronized void refresh() {
         Context prefContext = getPrefContext();
         getPreferenceScreen().removeAll();
         this.mInternalCategory.removeAll();
@@ -197,7 +196,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
                 Preference preference = new Preference(prefContext);
                 preference.setKey(volumeRecord.getFsUuid());
                 preference.setTitle(volumeRecord.getNickname());
-                preference.setSummary(17039866);
+                preference.setSummary(android.R.string.config_bodyFontFamilyMedium);
                 preference.setIcon(drawable);
                 this.mInternalCategory.addPreference(preference);
             }
@@ -207,13 +206,13 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
                 Preference preference2 = new Preference(prefContext);
                 preference2.setKey(diskInfo.getId());
                 preference2.setTitle(diskInfo.getDescription());
-                preference2.setSummary(17039872);
+                preference2.setSummary(android.R.string.config_chooseTypeAndAccountActivity);
                 preference2.setIcon(R.drawable.ic_sim_sd);
                 this.mExternalCategory.addPreference(preference2);
             }
         }
-        Formatter.BytesResult formatBytes = Formatter.formatBytes(getResources(), j2, 0);
-        this.mInternalSummary.setTitle(TextUtils.expandTemplate(getText(R.string.storage_size_large), formatBytes.value, formatBytes.units));
+        Formatter.BytesResult bytes = Formatter.formatBytes(getResources(), j2, 0);
+        this.mInternalSummary.setTitle(TextUtils.expandTemplate(getText(R.string.storage_size_large), bytes.value, bytes.units));
         this.mInternalSummary.setSummary(getString(R.string.storage_volume_used_total, new Object[]{Formatter.formatFileSize(prefContext, j)}));
         if (this.mInternalCategory.getPreferenceCount() > 0) {
             getPreferenceScreen().addPreference(this.mInternalCategory);
@@ -251,50 +250,52 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
     public boolean onPreferenceTreeClick(Preference preference) {
         String key = preference.getKey();
         if (preference instanceof StorageVolumePreference) {
-            VolumeInfo findVolumeById = this.mStorageManager.findVolumeById(key);
-            if (findVolumeById == null) {
+            VolumeInfo volumeInfoFindVolumeById = this.mStorageManager.findVolumeById(key);
+            if (volumeInfoFindVolumeById == null) {
                 return false;
             }
-            if (findVolumeById.getState() == 0) {
-                VolumeUnmountedFragment.show(this, findVolumeById.getId());
+            if (volumeInfoFindVolumeById.getState() == 0) {
+                VolumeUnmountedFragment.show(this, volumeInfoFindVolumeById.getId());
                 return true;
-            } else if (findVolumeById.getState() == 6) {
-                DiskInitFragment.show(this, R.string.storage_dialog_unmountable, findVolumeById.getDiskId());
+            }
+            if (volumeInfoFindVolumeById.getState() == 6) {
+                DiskInitFragment.show(this, R.string.storage_dialog_unmountable, volumeInfoFindVolumeById.getDiskId());
                 return true;
-            } else if (findVolumeById.getType() == 1) {
+            }
+            if (volumeInfoFindVolumeById.getType() == 1) {
                 Bundle bundle = new Bundle();
-                bundle.putString("android.os.storage.extra.VOLUME_ID", findVolumeById.getId());
-                if ("private".equals(findVolumeById.getId())) {
+                bundle.putString("android.os.storage.extra.VOLUME_ID", volumeInfoFindVolumeById.getId());
+                if ("private".equals(volumeInfoFindVolumeById.getId())) {
                     if (Utils.isMonkeyRunning()) {
                         Log.e("StorageSettings", "Monkey test running so finishing storage manager dashboard settings");
                     } else {
                         new SubSettingLauncher(getContext()).setDestination(StorageDashboardFragment.class.getCanonicalName()).setTitle(R.string.storage_settings).setSourceMetricsCategory(getMetricsCategory()).setArguments(bundle).launch();
                     }
                 } else {
-                    PrivateVolumeSettings.setVolumeSize(bundle, PrivateStorageInfo.getTotalSize(findVolumeById, sTotalInternalStorage));
+                    PrivateVolumeSettings.setVolumeSize(bundle, PrivateStorageInfo.getTotalSize(volumeInfoFindVolumeById, sTotalInternalStorage));
                     new SubSettingLauncher(getContext()).setDestination(PrivateVolumeSettings.class.getCanonicalName()).setTitle(-1).setSourceMetricsCategory(getMetricsCategory()).setArguments(bundle).launch();
                 }
                 return true;
-            } else if (findVolumeById.getType() != 0) {
-                return false;
-            } else {
-                return handlePublicVolumeClick(getContext(), findVolumeById);
             }
-        } else if (key.startsWith("disk:")) {
+            if (volumeInfoFindVolumeById.getType() != 0) {
+                return false;
+            }
+            return handlePublicVolumeClick(getContext(), volumeInfoFindVolumeById);
+        }
+        if (key.startsWith("disk:")) {
             DiskInitFragment.show(this, R.string.storage_dialog_unsupported, key);
             return true;
-        } else {
-            Bundle bundle2 = new Bundle();
-            bundle2.putString("android.os.storage.extra.FS_UUID", key);
-            new SubSettingLauncher(getContext()).setDestination(PrivateVolumeForget.class.getCanonicalName()).setTitle(R.string.storage_menu_forget).setSourceMetricsCategory(getMetricsCategory()).setArguments(bundle2).launch();
-            return true;
         }
+        Bundle bundle2 = new Bundle();
+        bundle2.putString("android.os.storage.extra.FS_UUID", key);
+        new SubSettingLauncher(getContext()).setDestination(PrivateVolumeForget.class.getCanonicalName()).setTitle(R.string.storage_menu_forget).setSourceMetricsCategory(getMetricsCategory()).setArguments(bundle2).launch();
+        return true;
     }
 
     static boolean handlePublicVolumeClick(Context context, VolumeInfo volumeInfo) {
-        Intent buildBrowseIntent = volumeInfo.buildBrowseIntent();
-        if (volumeInfo.isMountedReadable() && buildBrowseIntent != null) {
-            context.startActivity(buildBrowseIntent);
+        Intent intentBuildBrowseIntent = volumeInfo.buildBrowseIntent();
+        if (volumeInfo.isMountedReadable() && intentBuildBrowseIntent != null) {
+            context.startActivity(intentBuildBrowseIntent);
             return true;
         }
         Bundle bundle = new Bundle();
@@ -303,7 +304,6 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         return true;
     }
 
-    /* loaded from: classes.dex */
     public static class MountTask extends AsyncTask<Void, Void, Exception> {
         private final Context mContext;
         private final String mDescription;
@@ -317,9 +317,9 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
             this.mDescription = this.mStorageManager.getBestVolumeDescription(volumeInfo);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Exception doInBackground(Void... voidArr) {
+        protected Exception doInBackground(Void... voidArr) {
             try {
                 this.mStorageManager.mount(this.mVolumeId);
                 return null;
@@ -328,9 +328,9 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Exception exc) {
+        protected void onPostExecute(Exception exc) {
             if (exc == null) {
                 Toast.makeText(this.mContext, this.mContext.getString(R.string.storage_mount_success, this.mDescription), 0).show();
                 return;
@@ -340,7 +340,6 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
     }
 
-    /* loaded from: classes.dex */
     public static class UnmountTask extends AsyncTask<Void, Void, Exception> {
         private final Context mContext;
         private final String mDescription;
@@ -354,9 +353,9 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
             this.mDescription = this.mStorageManager.getBestVolumeDescription(volumeInfo);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Exception doInBackground(Void... voidArr) {
+        protected Exception doInBackground(Void... voidArr) {
             try {
                 this.mStorageManager.unmount(this.mVolumeId);
                 return null;
@@ -365,9 +364,9 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Exception exc) {
+        protected void onPostExecute(Exception exc) {
             if (exc == null) {
                 Toast.makeText(this.mContext, this.mContext.getString(R.string.storage_unmount_success, this.mDescription), 0).show();
                 return;
@@ -377,7 +376,6 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
     }
 
-    /* loaded from: classes.dex */
     public static class VolumeUnmountedFragment extends InstrumentedDialogFragment {
         public static void show(Fragment fragment, String str) {
             Bundle bundle = new Bundle();
@@ -396,15 +394,15 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
             final Activity activity = getActivity();
-            final VolumeInfo findVolumeById = ((StorageManager) activity.getSystemService(StorageManager.class)).findVolumeById(getArguments().getString("android.os.storage.extra.VOLUME_ID"));
+            final VolumeInfo volumeInfoFindVolumeById = ((StorageManager) activity.getSystemService(StorageManager.class)).findVolumeById(getArguments().getString("android.os.storage.extra.VOLUME_ID"));
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setMessage(TextUtils.expandTemplate(getText(R.string.storage_dialog_unmounted), findVolumeById.getDisk().getDescription()));
+            builder.setMessage(TextUtils.expandTemplate(getText(R.string.storage_dialog_unmounted), volumeInfoFindVolumeById.getDisk().getDescription()));
             builder.setPositiveButton(R.string.storage_menu_mount, new DialogInterface.OnClickListener() { // from class: com.android.settings.deviceinfo.StorageSettings.VolumeUnmountedFragment.1
                 private boolean wasAdminSupportIntentShown(String str) {
-                    RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(VolumeUnmountedFragment.this.getActivity(), str, UserHandle.myUserId());
-                    boolean hasBaseUserRestriction = RestrictedLockUtils.hasBaseUserRestriction(VolumeUnmountedFragment.this.getActivity(), str, UserHandle.myUserId());
-                    if (checkIfRestrictionEnforced != null && !hasBaseUserRestriction) {
-                        RestrictedLockUtils.sendShowAdminSupportDetailsIntent(VolumeUnmountedFragment.this.getActivity(), checkIfRestrictionEnforced);
+                    RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(VolumeUnmountedFragment.this.getActivity(), str, UserHandle.myUserId());
+                    boolean zHasBaseUserRestriction = RestrictedLockUtils.hasBaseUserRestriction(VolumeUnmountedFragment.this.getActivity(), str, UserHandle.myUserId());
+                    if (enforcedAdminCheckIfRestrictionEnforced != null && !zHasBaseUserRestriction) {
+                        RestrictedLockUtils.sendShowAdminSupportDetailsIntent(VolumeUnmountedFragment.this.getActivity(), enforcedAdminCheckIfRestrictionEnforced);
                         return true;
                     }
                     return false;
@@ -415,10 +413,10 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
                     if (wasAdminSupportIntentShown("no_physical_media")) {
                         return;
                     }
-                    if (findVolumeById.disk != null && findVolumeById.disk.isUsb() && wasAdminSupportIntentShown("no_usb_file_transfer")) {
+                    if (volumeInfoFindVolumeById.disk != null && volumeInfoFindVolumeById.disk.isUsb() && wasAdminSupportIntentShown("no_usb_file_transfer")) {
                         return;
                     }
-                    new MountTask(activity, findVolumeById).execute(new Void[0]);
+                    new MountTask(activity, volumeInfoFindVolumeById).execute(new Void[0]);
                 }
             });
             builder.setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null);
@@ -426,7 +424,6 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
     }
 
-    /* loaded from: classes.dex */
     public static class DiskInitFragment extends InstrumentedDialogFragment {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {
@@ -446,15 +443,16 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
             final Activity activity = getActivity();
+            StorageManager storageManager = (StorageManager) activity.getSystemService(StorageManager.class);
             int i = getArguments().getInt("android.intent.extra.TEXT");
             final String string = getArguments().getString("android.os.storage.extra.DISK_ID");
-            DiskInfo findDiskById = ((StorageManager) activity.getSystemService(StorageManager.class)).findDiskById(string);
+            DiskInfo diskInfoFindDiskById = storageManager.findDiskById(string);
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setMessage(TextUtils.expandTemplate(getText(i), findDiskById.getDescription()));
+            builder.setMessage(TextUtils.expandTemplate(getText(i), diskInfoFindDiskById.getDescription()));
             builder.setPositiveButton(R.string.storage_menu_set_up, new DialogInterface.OnClickListener() { // from class: com.android.settings.deviceinfo.StorageSettings.DiskInitFragment.1
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i2) {
-                    Intent intent = new Intent(activity, StorageWizardInit.class);
+                    Intent intent = new Intent(activity, (Class<?>) StorageWizardInit.class);
                     intent.putExtra("android.os.storage.extra.DISK_ID", string);
                     DiskInitFragment.this.startActivity(intent);
                 }
@@ -464,9 +462,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mLoader;
         private final StorageManagerVolumeProvider mStorageManagerVolumeProvider;
@@ -485,14 +481,16 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
 
         private void updateSummary() {
-            NumberFormat percentInstance = NumberFormat.getPercentInstance();
-            PrivateStorageInfo privateStorageInfo = PrivateStorageInfo.getPrivateStorageInfo(this.mStorageManagerVolumeProvider);
-            this.mLoader.setSummary(this, this.mContext.getString(R.string.storage_summary, percentInstance.format((privateStorageInfo.totalBytes - privateStorageInfo.freeBytes) / privateStorageInfo.totalBytes), Formatter.formatFileSize(this.mContext, privateStorageInfo.freeBytes)));
+            this.mLoader.setSummary(this, this.mContext.getString(R.string.storage_summary, NumberFormat.getPercentInstance().format((r1.totalBytes - r1.freeBytes) / r1.totalBytes), Formatter.formatFileSize(this.mContext, PrivateStorageInfo.getPrivateStorageInfo(this.mStorageManagerVolumeProvider).freeBytes)));
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$0(Activity activity, SummaryLoader summaryLoader) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0003: CONSTRUCTOR 
+  (r2v0 android.app.Activity)
+  (r3v0 com.android.settings.dashboard.SummaryLoader)
+  (null com.android.settings.deviceinfo.StorageSettings$1)
+ A[MD:(android.content.Context, com.android.settings.dashboard.SummaryLoader, com.android.settings.deviceinfo.StorageSettings$1):void (m)] (LINE:583) call: com.android.settings.deviceinfo.StorageSettings.SummaryProvider.<init>(android.content.Context, com.android.settings.dashboard.SummaryLoader, com.android.settings.deviceinfo.StorageSettings$1):void type: CONSTRUCTOR */
+    static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$0(Activity activity, SummaryLoader summaryLoader) {
         return new SummaryProvider(activity, summaryLoader);
     }
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.accessibility.ListDialogPreference;
+
 /* loaded from: classes.dex */
 public class AppDomainsPreference extends ListDialogPreference {
     private int mNumEntries;

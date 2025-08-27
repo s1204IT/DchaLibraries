@@ -1,9 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_gravity="center" android:orientation="horizontal" android:id="@+id/battery_entity_header" android:paddingTop="24dp" android:paddingBottom="24dp" android:layout_width="match_parent" android:layout_height="match_parent" style="@style/EntityHeader">
-    <LinearLayout android:orientation="vertical" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="56dp">
-        <TextView android:textAppearance="@android:style/TextAppearance.Material.Display1" android:id="@+id/battery_percent" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:fontFamily="@android:string/autofill_card_ignored_re"/>
-        <TextView android:textAppearance="@android:style/TextAppearance.Material.Small" android:id="@+id/summary1" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:minLines="2"/>
-        <TextView android:textAppearance="@android:style/TextAppearance.Material.Small" android:id="@+id/summary2" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center"
+    android:orientation="horizontal"
+    android:id="@+id/battery_entity_header"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/EntityHeader">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="56dp">
+        <TextView
+            android:textAppearance="@android:style/TextAppearance.Material.Display1"
+            android:id="@+id/battery_percent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@android:string/android_system_label"/>
+        <TextView
+            android:textAppearance="@android:style/TextAppearance.Material.Small"
+            android:id="@+id/summary1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minLines="2"/>
+        <TextView
+            android:textAppearance="@android:style/TextAppearance.Material.Small"
+            android:id="@+id/summary2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
-    <com.android.settings.fuelgauge.BatteryMeterView android:id="@+id/battery_header_icon" android:layout_width="@dimen/battery_meter_width" android:layout_height="@dimen/battery_meter_height" android:layout_marginEnd="16dp"/>
+    <com.android.settings.fuelgauge.BatteryMeterView
+        android:id="@+id/battery_header_icon"
+        android:layout_width="@dimen/battery_meter_width"
+        android:layout_height="@dimen/battery_meter_height"
+        android:layout_marginEnd="16dp"/>
 </LinearLayout>

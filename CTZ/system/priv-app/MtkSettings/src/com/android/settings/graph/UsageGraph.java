@@ -16,6 +16,7 @@ import android.util.TypedValue;
 import android.view.View;
 import com.android.settings.R;
 import com.android.settings.fuelgauge.BatteryUtils;
+
 /* loaded from: classes.dex */
 public class UsageGraph extends View {
     private int mAccentColor;
@@ -63,41 +64,38 @@ public class UsageGraph extends View {
         this.mDottedPaint = new Paint(this.mLinePaint);
         this.mDottedPaint.setStyle(Paint.Style.STROKE);
         float dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.usage_graph_dot_size);
+        float dimensionPixelSize2 = resources.getDimensionPixelSize(R.dimen.usage_graph_dot_interval);
         this.mDottedPaint.setStrokeWidth(3.0f * dimensionPixelSize);
-        this.mDottedPaint.setPathEffect(new DashPathEffect(new float[]{dimensionPixelSize, resources.getDimensionPixelSize(R.dimen.usage_graph_dot_interval)}, 0.0f));
+        this.mDottedPaint.setPathEffect(new DashPathEffect(new float[]{dimensionPixelSize, dimensionPixelSize2}, 0.0f));
         this.mDottedPaint.setColor(context.getColor(R.color.usage_graph_dots));
         TypedValue typedValue = new TypedValue();
-        context.getTheme().resolveAttribute(16843284, typedValue, true);
+        context.getTheme().resolveAttribute(android.R.attr.listDivider, typedValue, true);
         this.mDivider = context.getDrawable(typedValue.resourceId);
         this.mTintedDivider = context.getDrawable(typedValue.resourceId);
         this.mDividerSize = resources.getDimensionPixelSize(R.dimen.usage_graph_divider_size);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void clearPaths() {
+    void clearPaths() {
         this.mPaths.clear();
         this.mLocalPaths.clear();
         this.mProjectedPaths.clear();
         this.mLocalProjectedPaths.clear();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setMax(int i, int i2) {
-        long currentTimeMillis = System.currentTimeMillis();
+    void setMax(int i, int i2) {
+        long jCurrentTimeMillis = System.currentTimeMillis();
         this.mMaxX = i;
         this.mMaxY = i2;
         calculateLocalPaths();
         postInvalidate();
-        BatteryUtils.logRuntime("UsageGraph", "setMax", currentTimeMillis);
+        BatteryUtils.logRuntime("UsageGraph", "setMax", jCurrentTimeMillis);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setDividerLoc(int i) {
+    void setDividerLoc(int i) {
         this.mMiddleDividerLoc = 1.0f - (i / this.mMaxY);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setDividerColors(int i, int i2) {
+    void setDividerColors(int i, int i2) {
         this.mMiddleDividerTint = i;
         this.mTopDividerTint = i2;
     }
@@ -111,7 +109,7 @@ public class UsageGraph extends View {
     }
 
     private void addPathAndUpdate(SparseIntArray sparseIntArray, SparseIntArray sparseIntArray2, SparseIntArray sparseIntArray3) {
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         int size = sparseIntArray.size();
         for (int i = 0; i < size; i++) {
             sparseIntArray2.put(sparseIntArray.keyAt(i), sparseIntArray.valueAt(i));
@@ -119,11 +117,10 @@ public class UsageGraph extends View {
         sparseIntArray2.put(sparseIntArray.keyAt(sparseIntArray.size() - 1) + 1, -1);
         calculateLocalPaths(sparseIntArray2, sparseIntArray3);
         postInvalidate();
-        BatteryUtils.logRuntime("UsageGraph", "addPathAndUpdate", currentTimeMillis);
+        BatteryUtils.logRuntime("UsageGraph", "addPathAndUpdate", jCurrentTimeMillis);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setAccentColor(int i) {
+    void setAccentColor(int i) {
         this.mAccentColor = i;
         this.mLinePaint.setColor(this.mAccentColor);
         updateGradient();
@@ -132,11 +129,11 @@ public class UsageGraph extends View {
 
     @Override // android.view.View
     protected void onSizeChanged(int i, int i2, int i3, int i4) {
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         super.onSizeChanged(i, i2, i3, i4);
         updateGradient();
         calculateLocalPaths();
-        BatteryUtils.logRuntime("UsageGraph", "onSizeChanged", currentTimeMillis);
+        BatteryUtils.logRuntime("UsageGraph", "onSizeChanged", jCurrentTimeMillis);
     }
 
     private void calculateLocalPaths() {
@@ -145,7 +142,7 @@ public class UsageGraph extends View {
     }
 
     void calculateLocalPaths(SparseIntArray sparseIntArray, SparseIntArray sparseIntArray2) {
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         if (getWidth() == 0) {
             return;
         }
@@ -154,11 +151,11 @@ public class UsageGraph extends View {
         boolean z = false;
         int i2 = 0;
         for (int i3 = 0; i3 < sparseIntArray.size(); i3++) {
-            int keyAt = sparseIntArray.keyAt(i3);
-            int valueAt = sparseIntArray.valueAt(i3);
-            if (valueAt == -1) {
+            int iKeyAt = sparseIntArray.keyAt(i3);
+            int iValueAt = sparseIntArray.valueAt(i3);
+            if (iValueAt == -1) {
                 if (i3 == 1) {
-                    sparseIntArray2.put(getX(keyAt + 1) - 1, getY(0.0f));
+                    sparseIntArray2.put(getX(iKeyAt + 1) - 1, getY(0.0f));
                 } else {
                     if (i3 == sparseIntArray.size() - 1 && z) {
                         sparseIntArray2.put(i2, i);
@@ -167,12 +164,12 @@ public class UsageGraph extends View {
                     z = false;
                 }
             } else {
-                int x = getX(keyAt);
-                int y = getY(valueAt);
+                int x = getX(iKeyAt);
+                int y = getY(iValueAt);
                 if (sparseIntArray2.size() > 0) {
-                    int keyAt2 = sparseIntArray2.keyAt(sparseIntArray2.size() - 1);
-                    int valueAt2 = sparseIntArray2.valueAt(sparseIntArray2.size() - 1);
-                    if (valueAt2 != -1 && !hasDiff(keyAt2, x) && !hasDiff(valueAt2, y)) {
+                    int iKeyAt2 = sparseIntArray2.keyAt(sparseIntArray2.size() - 1);
+                    int iValueAt2 = sparseIntArray2.valueAt(sparseIntArray2.size() - 1);
+                    if (iValueAt2 != -1 && !hasDiff(iKeyAt2, x) && !hasDiff(iValueAt2, y)) {
                         i = y;
                         i2 = x;
                         z = true;
@@ -184,7 +181,7 @@ public class UsageGraph extends View {
                 z = false;
             }
         }
-        BatteryUtils.logRuntime("UsageGraph", "calculateLocalPaths", currentTimeMillis);
+        BatteryUtils.logRuntime("UsageGraph", "calculateLocalPaths", jCurrentTimeMillis);
     }
 
     private boolean hasDiff(int i, int i2) {
@@ -209,7 +206,7 @@ public class UsageGraph extends View {
 
     @Override // android.view.View
     protected void onDraw(Canvas canvas) {
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         if (this.mMiddleDividerLoc != 0.0f) {
             drawDivider(0, canvas, this.mTopDividerTint);
         }
@@ -221,7 +218,7 @@ public class UsageGraph extends View {
         drawLinePath(canvas, this.mLocalProjectedPaths, this.mDottedPaint);
         drawFilledPath(canvas, this.mLocalPaths, this.mFillPaint);
         drawLinePath(canvas, this.mLocalPaths, this.mLinePaint);
-        BatteryUtils.logRuntime("UsageGraph", "onDraw", currentTimeMillis);
+        BatteryUtils.logRuntime("UsageGraph", "onDraw", jCurrentTimeMillis);
     }
 
     private void drawLinePath(Canvas canvas, SparseIntArray sparseIntArray, Paint paint) {
@@ -232,15 +229,15 @@ public class UsageGraph extends View {
         this.mPath.moveTo(sparseIntArray.keyAt(0), sparseIntArray.valueAt(0));
         int i = 1;
         while (i < sparseIntArray.size()) {
-            int keyAt = sparseIntArray.keyAt(i);
-            int valueAt = sparseIntArray.valueAt(i);
-            if (valueAt == -1) {
+            int iKeyAt = sparseIntArray.keyAt(i);
+            int iValueAt = sparseIntArray.valueAt(i);
+            if (iValueAt == -1) {
                 i++;
                 if (i < sparseIntArray.size()) {
                     this.mPath.moveTo(sparseIntArray.keyAt(i), sparseIntArray.valueAt(i));
                 }
             } else {
-                this.mPath.lineTo(keyAt, valueAt);
+                this.mPath.lineTo(iKeyAt, iValueAt);
             }
             i++;
         }
@@ -249,23 +246,24 @@ public class UsageGraph extends View {
 
     private void drawFilledPath(Canvas canvas, SparseIntArray sparseIntArray, Paint paint) {
         this.mPath.reset();
+        float fKeyAt = sparseIntArray.keyAt(0);
         this.mPath.moveTo(sparseIntArray.keyAt(0), sparseIntArray.valueAt(0));
-        float keyAt = sparseIntArray.keyAt(0);
+        float fKeyAt2 = fKeyAt;
         int i = 1;
         while (i < sparseIntArray.size()) {
-            int keyAt2 = sparseIntArray.keyAt(i);
-            int valueAt = sparseIntArray.valueAt(i);
-            if (valueAt == -1) {
+            int iKeyAt = sparseIntArray.keyAt(i);
+            int iValueAt = sparseIntArray.valueAt(i);
+            if (iValueAt == -1) {
                 this.mPath.lineTo(sparseIntArray.keyAt(i - 1), getHeight());
-                this.mPath.lineTo(keyAt, getHeight());
+                this.mPath.lineTo(fKeyAt2, getHeight());
                 this.mPath.close();
                 i++;
                 if (i < sparseIntArray.size()) {
-                    keyAt = sparseIntArray.keyAt(i);
+                    fKeyAt2 = sparseIntArray.keyAt(i);
                     this.mPath.moveTo(sparseIntArray.keyAt(i), sparseIntArray.valueAt(i));
                 }
             } else {
-                this.mPath.lineTo(keyAt2, valueAt);
+                this.mPath.lineTo(iKeyAt, iValueAt);
             }
             i++;
         }

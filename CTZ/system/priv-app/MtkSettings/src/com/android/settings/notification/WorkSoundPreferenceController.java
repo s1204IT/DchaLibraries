@@ -29,6 +29,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class WorkSoundPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private final AudioHelper mHelper;
@@ -51,32 +52,28 @@ public class WorkSoundPreferenceController extends AbstractPreferenceController 
     WorkSoundPreferenceController(Context context, SoundSettings soundSettings, Lifecycle lifecycle, AudioHelper audioHelper) {
         super(context);
         this.mManagedProfileReceiver = new BroadcastReceiver() { // from class: com.android.settings.notification.WorkSoundPreferenceController.1
+            /* JADX WARN: Removed duplicated region for block: B:13:0x0033  */
             @Override // android.content.BroadcastReceiver
+            /*
+                Code decompiled incorrectly, please refer to instructions dump.
+            */
             public void onReceive(Context context2, Intent intent) {
                 char c;
                 int identifier = ((UserHandle) intent.getExtra("android.intent.extra.USER")).getIdentifier();
                 String action = intent.getAction();
-                int hashCode = action.hashCode();
-                if (hashCode != -385593787) {
-                    if (hashCode == 1051477093 && action.equals("android.intent.action.MANAGED_PROFILE_REMOVED")) {
-                        c = 1;
-                    }
-                    c = 65535;
-                } else {
-                    if (action.equals("android.intent.action.MANAGED_PROFILE_ADDED")) {
-                        c = 0;
-                    }
-                    c = 65535;
+                int iHashCode = action.hashCode();
+                if (iHashCode != -385593787) {
+                    c = (iHashCode == 1051477093 && action.equals("android.intent.action.MANAGED_PROFILE_REMOVED")) ? (char) 1 : (char) 65535;
+                } else if (action.equals("android.intent.action.MANAGED_PROFILE_ADDED")) {
+                    c = 0;
                 }
                 switch (c) {
                     case 0:
                         WorkSoundPreferenceController.this.onManagedProfileAdded(identifier);
-                        return;
+                        break;
                     case 1:
                         WorkSoundPreferenceController.this.onManagedProfileRemoved(identifier);
-                        return;
-                    default:
-                        return;
+                        break;
                 }
             }
         };
@@ -133,9 +130,10 @@ public class WorkSoundPreferenceController extends AbstractPreferenceController 
         if (!"work_ringtone".equals(preference.getKey())) {
             if ("work_notification_ringtone".equals(preference.getKey())) {
                 i = 2;
-            } else if (!"work_alarm_ringtone".equals(preference.getKey())) {
-                return true;
             } else {
+                if (!"work_alarm_ringtone".equals(preference.getKey())) {
+                    return true;
+                }
                 i = 4;
             }
         } else {
@@ -174,9 +172,9 @@ public class WorkSoundPreferenceController extends AbstractPreferenceController 
         if (this.mWorkPreferenceCategory == null) {
             return;
         }
-        boolean isAvailable = isAvailable();
-        this.mWorkPreferenceCategory.setVisible(isAvailable);
-        if (!isAvailable) {
+        boolean zIsAvailable = isAvailable();
+        this.mWorkPreferenceCategory.setVisible(zIsAvailable);
+        if (!zIsAvailable) {
             return;
         }
         if (this.mWorkUsePersonalSounds == null) {
@@ -184,7 +182,7 @@ public class WorkSoundPreferenceController extends AbstractPreferenceController 
             this.mWorkUsePersonalSounds.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.notification.-$$Lambda$WorkSoundPreferenceController$XBbO1oM_StZ54wAnUJEnnExa5OU
                 @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
                 public final boolean onPreferenceChange(Preference preference, Object obj) {
-                    return WorkSoundPreferenceController.lambda$updateWorkPreferences$0(WorkSoundPreferenceController.this, preference, obj);
+                    return WorkSoundPreferenceController.lambda$updateWorkPreferences$0(this.f$0, preference, obj);
                 }
             });
         }
@@ -217,8 +215,7 @@ public class WorkSoundPreferenceController extends AbstractPreferenceController 
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void enableWorkSync() {
+    void enableWorkSync() {
         RingtoneManager.enableSyncFromParent(getManagedProfileContext());
         enableWorkSyncSettings();
     }
@@ -269,7 +266,6 @@ public class WorkSoundPreferenceController extends AbstractPreferenceController 
         }
     }
 
-    /* loaded from: classes.dex */
     public static class UnifyWorkDialogFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {
@@ -278,7 +274,7 @@ public class WorkSoundPreferenceController extends AbstractPreferenceController 
 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            return new AlertDialog.Builder(getActivity()).setTitle(R.string.work_sync_dialog_title).setMessage(R.string.work_sync_dialog_message).setPositiveButton(R.string.work_sync_dialog_yes, this).setNegativeButton(17039369, (DialogInterface.OnClickListener) null).create();
+            return new AlertDialog.Builder(getActivity()).setTitle(R.string.work_sync_dialog_title).setMessage(R.string.work_sync_dialog_message).setPositiveButton(R.string.work_sync_dialog_yes, this).setNegativeButton(android.R.string.no, (DialogInterface.OnClickListener) null).create();
         }
 
         public static void show(SoundSettings soundSettings) {

@@ -14,10 +14,14 @@ import com.android.systemui.statusbar.ExpandableView;
 import com.android.systemui.statusbar.notification.AnimatableProperty;
 import com.android.systemui.statusbar.notification.PropertyAnimator;
 import com.android.systemui.statusbar.policy.HeadsUpUtil;
+
 /* loaded from: classes.dex */
 public class ViewState {
     protected static final AnimationProperties NO_NEW_ANIMATIONS = new AnimationProperties() { // from class: com.android.systemui.statusbar.stack.ViewState.1
         AnimationFilter mAnimationFilter = new AnimationFilter();
+
+        AnonymousClass1() {
+        }
 
         @Override // com.android.systemui.statusbar.stack.AnimationProperties
         public AnimationFilter getAnimationFilter() {
@@ -25,6 +29,9 @@ public class ViewState {
         }
     };
     private static final AnimatableProperty SCALE_X_PROPERTY = new AnimatableProperty() { // from class: com.android.systemui.statusbar.stack.ViewState.2
+        AnonymousClass2() {
+        }
+
         @Override // com.android.systemui.statusbar.notification.AnimatableProperty
         public int getAnimationStartTag() {
             return R.id.scale_x_animator_start_value_tag;
@@ -46,6 +53,9 @@ public class ViewState {
         }
     };
     private static final AnimatableProperty SCALE_Y_PROPERTY = new AnimatableProperty() { // from class: com.android.systemui.statusbar.stack.ViewState.3
+        AnonymousClass3() {
+        }
+
         @Override // com.android.systemui.statusbar.notification.AnimatableProperty
         public int getAnimationStartTag() {
             return R.id.scale_y_animator_start_value_tag;
@@ -75,6 +85,71 @@ public class ViewState {
     public float yTranslation;
     public float zTranslation;
 
+    /* renamed from: com.android.systemui.statusbar.stack.ViewState$1 */
+    class AnonymousClass1 extends AnimationProperties {
+        AnimationFilter mAnimationFilter = new AnimationFilter();
+
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.systemui.statusbar.stack.AnimationProperties
+        public AnimationFilter getAnimationFilter() {
+            return this.mAnimationFilter;
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.stack.ViewState$2 */
+    class AnonymousClass2 extends AnimatableProperty {
+        AnonymousClass2() {
+        }
+
+        @Override // com.android.systemui.statusbar.notification.AnimatableProperty
+        public int getAnimationStartTag() {
+            return R.id.scale_x_animator_start_value_tag;
+        }
+
+        @Override // com.android.systemui.statusbar.notification.AnimatableProperty
+        public int getAnimationEndTag() {
+            return R.id.scale_x_animator_end_value_tag;
+        }
+
+        @Override // com.android.systemui.statusbar.notification.AnimatableProperty
+        public int getAnimatorTag() {
+            return R.id.scale_x_animator_tag;
+        }
+
+        @Override // com.android.systemui.statusbar.notification.AnimatableProperty
+        public Property getProperty() {
+            return View.SCALE_X;
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.stack.ViewState$3 */
+    class AnonymousClass3 extends AnimatableProperty {
+        AnonymousClass3() {
+        }
+
+        @Override // com.android.systemui.statusbar.notification.AnimatableProperty
+        public int getAnimationStartTag() {
+            return R.id.scale_y_animator_start_value_tag;
+        }
+
+        @Override // com.android.systemui.statusbar.notification.AnimatableProperty
+        public int getAnimationEndTag() {
+            return R.id.scale_y_animator_end_value_tag;
+        }
+
+        @Override // com.android.systemui.statusbar.notification.AnimatableProperty
+        public int getAnimatorTag() {
+            return R.id.scale_y_animator_tag;
+        }
+
+        @Override // com.android.systemui.statusbar.notification.AnimatableProperty
+        public Property getProperty() {
+            return View.SCALE_Y;
+        }
+    }
+
     public void copyFrom(ViewState viewState) {
         this.alpha = viewState.alpha;
         this.xTranslation = viewState.xTranslation;
@@ -102,17 +177,17 @@ public class ViewState {
         if (this.gone) {
             return;
         }
-        if (isAnimating(view, (int) R.id.translation_x_animator_tag)) {
+        if (isAnimating(view, R.id.translation_x_animator_tag)) {
             updateAnimationX(view);
         } else if (view.getTranslationX() != this.xTranslation) {
             view.setTranslationX(this.xTranslation);
         }
-        if (isAnimating(view, (int) R.id.translation_y_animator_tag)) {
+        if (isAnimating(view, R.id.translation_y_animator_tag)) {
             updateAnimationY(view);
         } else if (view.getTranslationY() != this.yTranslation) {
             view.setTranslationY(this.yTranslation);
         }
-        if (isAnimating(view, (int) R.id.translation_z_animator_tag)) {
+        if (isAnimating(view, R.id.translation_z_animator_tag)) {
             updateAnimationZ(view);
         } else if (view.getTranslationZ() != this.zTranslation) {
             view.setTranslationZ(this.zTranslation);
@@ -128,17 +203,13 @@ public class ViewState {
             view.setScaleY(this.scaleY);
         }
         int visibility = view.getVisibility();
-        boolean z = true;
-        boolean z2 = this.alpha == 0.0f || (this.hidden && !(isAnimating(view) && visibility == 0));
-        if (isAnimating(view, (int) R.id.alpha_animator_tag)) {
+        boolean z = this.alpha == 0.0f || (this.hidden && !(isAnimating(view) && visibility == 0));
+        if (isAnimating(view, R.id.alpha_animator_tag)) {
             updateAlphaAnimation(view);
         } else if (view.getAlpha() != this.alpha) {
-            boolean z3 = this.alpha == 1.0f;
-            if (z2 || z3 || !view.hasOverlappingRendering()) {
-                z = false;
-            }
+            boolean z2 = (z || ((this.alpha > 1.0f ? 1 : (this.alpha == 1.0f ? 0 : -1)) == 0) || !view.hasOverlappingRendering()) ? false : true;
             int layerType = view.getLayerType();
-            if (z) {
+            if (z2) {
                 i = 2;
             } else {
                 i = 0;
@@ -148,7 +219,7 @@ public class ViewState {
             }
             view.setAlpha(this.alpha);
         }
-        int i2 = z2 ? 4 : 0;
+        int i2 = z ? 4 : 0;
         if (i2 != visibility) {
             if (!(view instanceof ExpandableView) || !((ExpandableView) view).willBeGone()) {
                 view.setVisibility(i2);
@@ -157,7 +228,7 @@ public class ViewState {
     }
 
     public boolean isAnimating(View view) {
-        return isAnimating(view, (int) R.id.translation_x_animator_tag) || isAnimating(view, (int) R.id.translation_y_animator_tag) || isAnimating(view, (int) R.id.translation_z_animator_tag) || isAnimating(view, (int) R.id.alpha_animator_tag) || isAnimating(view, SCALE_X_PROPERTY) || isAnimating(view, SCALE_Y_PROPERTY);
+        return isAnimating(view, R.id.translation_x_animator_tag) || isAnimating(view, R.id.translation_y_animator_tag) || isAnimating(view, R.id.translation_z_animator_tag) || isAnimating(view, R.id.alpha_animator_tag) || isAnimating(view, SCALE_X_PROPERTY) || isAnimating(view, SCALE_Y_PROPERTY);
     }
 
     private static boolean isAnimating(View view, int i) {
@@ -214,10 +285,10 @@ public class ViewState {
         startAlphaAnimation(view, NO_NEW_ANIMATIONS);
     }
 
-    private void startAlphaAnimation(final View view, AnimationProperties animationProperties) {
+    private void startAlphaAnimation(View view, AnimationProperties animationProperties) {
         Float f = (Float) getChildTag(view, R.id.alpha_animator_start_value_tag);
         Float f2 = (Float) getChildTag(view, R.id.alpha_animator_end_value_tag);
-        final float f3 = this.alpha;
+        float f3 = this.alpha;
         if (f2 != null && f2.floatValue() == f3) {
             return;
         }
@@ -225,9 +296,9 @@ public class ViewState {
         if (!animationProperties.getAnimationFilter().animateAlpha) {
             if (objectAnimator != null) {
                 PropertyValuesHolder[] values = objectAnimator.getValues();
-                float floatValue = f.floatValue() + (f3 - f2.floatValue());
-                values[0].setFloatValues(floatValue, f3);
-                view.setTag(R.id.alpha_animator_start_value_tag, Float.valueOf(floatValue));
+                float fFloatValue = f.floatValue() + (f3 - f2.floatValue());
+                values[0].setFloatValues(fFloatValue, f3);
+                view.setTag(R.id.alpha_animator_start_value_tag, Float.valueOf(fFloatValue));
                 view.setTag(R.id.alpha_animator_end_value_tag, Float.valueOf(f3));
                 objectAnimator.setCurrentPlayTime(objectAnimator.getCurrentPlayTime());
                 return;
@@ -237,16 +308,23 @@ public class ViewState {
                 view.setVisibility(4);
             }
         }
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(view, View.ALPHA, view.getAlpha(), f3);
-        ofFloat.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(view, (Property<View, Float>) View.ALPHA, view.getAlpha(), f3);
+        objectAnimatorOfFloat.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
         view.setLayerType(2, null);
-        ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.ViewState.4
+        objectAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.ViewState.4
             public boolean mWasCancelled;
+            final /* synthetic */ View val$child;
+            final /* synthetic */ float val$newEndValue;
+
+            AnonymousClass4(View view2, float f32) {
+                view = view2;
+                f = f32;
+            }
 
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 view.setLayerType(0, null);
-                if (f3 == 0.0f && !this.mWasCancelled) {
+                if (f == 0.0f && !this.mWasCancelled) {
                     view.setVisibility(4);
                 }
                 view.setTag(R.id.alpha_animator_tag, null);
@@ -264,18 +342,51 @@ public class ViewState {
                 this.mWasCancelled = false;
             }
         });
-        ofFloat.setDuration(cancelAnimatorAndGetNewDuration(animationProperties.duration, objectAnimator));
+        objectAnimatorOfFloat.setDuration(cancelAnimatorAndGetNewDuration(animationProperties.duration, objectAnimator));
         if (animationProperties.delay > 0 && (objectAnimator == null || objectAnimator.getAnimatedFraction() == 0.0f)) {
-            ofFloat.setStartDelay(animationProperties.delay);
+            objectAnimatorOfFloat.setStartDelay(animationProperties.delay);
         }
         AnimatorListenerAdapter animationFinishListener = animationProperties.getAnimationFinishListener();
         if (animationFinishListener != null) {
-            ofFloat.addListener(animationFinishListener);
+            objectAnimatorOfFloat.addListener(animationFinishListener);
         }
-        startAnimator(ofFloat, animationFinishListener);
-        view.setTag(R.id.alpha_animator_tag, ofFloat);
-        view.setTag(R.id.alpha_animator_start_value_tag, Float.valueOf(view.getAlpha()));
-        view.setTag(R.id.alpha_animator_end_value_tag, Float.valueOf(f3));
+        startAnimator(objectAnimatorOfFloat, animationFinishListener);
+        view2.setTag(R.id.alpha_animator_tag, objectAnimatorOfFloat);
+        view2.setTag(R.id.alpha_animator_start_value_tag, Float.valueOf(view2.getAlpha()));
+        view2.setTag(R.id.alpha_animator_end_value_tag, Float.valueOf(f32));
+    }
+
+    /* renamed from: com.android.systemui.statusbar.stack.ViewState$4 */
+    class AnonymousClass4 extends AnimatorListenerAdapter {
+        public boolean mWasCancelled;
+        final /* synthetic */ View val$child;
+        final /* synthetic */ float val$newEndValue;
+
+        AnonymousClass4(View view2, float f32) {
+            view = view2;
+            f = f32;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            view.setLayerType(0, null);
+            if (f == 0.0f && !this.mWasCancelled) {
+                view.setVisibility(4);
+            }
+            view.setTag(R.id.alpha_animator_tag, null);
+            view.setTag(R.id.alpha_animator_start_value_tag, null);
+            view.setTag(R.id.alpha_animator_end_value_tag, null);
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            this.mWasCancelled = true;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationStart(Animator animator) {
+            this.mWasCancelled = false;
+        }
     }
 
     private void updateAnimationZ(View view) {
@@ -286,7 +397,7 @@ public class ViewState {
         PropertyAnimator.startAnimation(view, animatableProperty, f, NO_NEW_ANIMATIONS);
     }
 
-    private void startZTranslationAnimation(final View view, AnimationProperties animationProperties) {
+    private void startZTranslationAnimation(View view, AnimationProperties animationProperties) {
         Float f = (Float) getChildTag(view, R.id.translation_z_animator_start_value_tag);
         Float f2 = (Float) getChildTag(view, R.id.translation_z_animator_end_value_tag);
         float f3 = this.zTranslation;
@@ -297,26 +408,32 @@ public class ViewState {
         if (!animationProperties.getAnimationFilter().animateZ) {
             if (objectAnimator != null) {
                 PropertyValuesHolder[] values = objectAnimator.getValues();
-                float floatValue = f.floatValue() + (f3 - f2.floatValue());
-                values[0].setFloatValues(floatValue, f3);
-                view.setTag(R.id.translation_z_animator_start_value_tag, Float.valueOf(floatValue));
+                float fFloatValue = f.floatValue() + (f3 - f2.floatValue());
+                values[0].setFloatValues(fFloatValue, f3);
+                view.setTag(R.id.translation_z_animator_start_value_tag, Float.valueOf(fFloatValue));
                 view.setTag(R.id.translation_z_animator_end_value_tag, Float.valueOf(f3));
                 objectAnimator.setCurrentPlayTime(objectAnimator.getCurrentPlayTime());
                 return;
             }
             view.setTranslationZ(f3);
         }
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(view, View.TRANSLATION_Z, view.getTranslationZ(), f3);
-        ofFloat.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
-        ofFloat.setDuration(cancelAnimatorAndGetNewDuration(animationProperties.duration, objectAnimator));
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(view, (Property<View, Float>) View.TRANSLATION_Z, view.getTranslationZ(), f3);
+        objectAnimatorOfFloat.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
+        objectAnimatorOfFloat.setDuration(cancelAnimatorAndGetNewDuration(animationProperties.duration, objectAnimator));
         if (animationProperties.delay > 0 && (objectAnimator == null || objectAnimator.getAnimatedFraction() == 0.0f)) {
-            ofFloat.setStartDelay(animationProperties.delay);
+            objectAnimatorOfFloat.setStartDelay(animationProperties.delay);
         }
         AnimatorListenerAdapter animationFinishListener = animationProperties.getAnimationFinishListener();
         if (animationFinishListener != null) {
-            ofFloat.addListener(animationFinishListener);
+            objectAnimatorOfFloat.addListener(animationFinishListener);
         }
-        ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.ViewState.5
+        objectAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.ViewState.5
+            final /* synthetic */ View val$child;
+
+            AnonymousClass5(View view2) {
+                view = view2;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 view.setTag(R.id.translation_z_animator_tag, null);
@@ -324,17 +441,33 @@ public class ViewState {
                 view.setTag(R.id.translation_z_animator_end_value_tag, null);
             }
         });
-        startAnimator(ofFloat, animationFinishListener);
-        view.setTag(R.id.translation_z_animator_tag, ofFloat);
-        view.setTag(R.id.translation_z_animator_start_value_tag, Float.valueOf(view.getTranslationZ()));
-        view.setTag(R.id.translation_z_animator_end_value_tag, Float.valueOf(f3));
+        startAnimator(objectAnimatorOfFloat, animationFinishListener);
+        view2.setTag(R.id.translation_z_animator_tag, objectAnimatorOfFloat);
+        view2.setTag(R.id.translation_z_animator_start_value_tag, Float.valueOf(view2.getTranslationZ()));
+        view2.setTag(R.id.translation_z_animator_end_value_tag, Float.valueOf(f3));
+    }
+
+    /* renamed from: com.android.systemui.statusbar.stack.ViewState$5 */
+    class AnonymousClass5 extends AnimatorListenerAdapter {
+        final /* synthetic */ View val$child;
+
+        AnonymousClass5(View view2) {
+            view = view2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            view.setTag(R.id.translation_z_animator_tag, null);
+            view.setTag(R.id.translation_z_animator_start_value_tag, null);
+            view.setTag(R.id.translation_z_animator_end_value_tag, null);
+        }
     }
 
     private void updateAnimationX(View view) {
         startXTranslationAnimation(view, NO_NEW_ANIMATIONS);
     }
 
-    private void startXTranslationAnimation(final View view, AnimationProperties animationProperties) {
+    private void startXTranslationAnimation(View view, AnimationProperties animationProperties) {
         Float f = (Float) getChildTag(view, R.id.translation_x_animator_start_value_tag);
         Float f2 = (Float) getChildTag(view, R.id.translation_x_animator_end_value_tag);
         float f3 = this.xTranslation;
@@ -345,9 +478,9 @@ public class ViewState {
         if (!animationProperties.getAnimationFilter().animateX) {
             if (objectAnimator != null) {
                 PropertyValuesHolder[] values = objectAnimator.getValues();
-                float floatValue = f.floatValue() + (f3 - f2.floatValue());
-                values[0].setFloatValues(floatValue, f3);
-                view.setTag(R.id.translation_x_animator_start_value_tag, Float.valueOf(floatValue));
+                float fFloatValue = f.floatValue() + (f3 - f2.floatValue());
+                values[0].setFloatValues(fFloatValue, f3);
+                view.setTag(R.id.translation_x_animator_start_value_tag, Float.valueOf(fFloatValue));
                 view.setTag(R.id.translation_x_animator_end_value_tag, Float.valueOf(f3));
                 objectAnimator.setCurrentPlayTime(objectAnimator.getCurrentPlayTime());
                 return;
@@ -355,21 +488,27 @@ public class ViewState {
             view.setTranslationX(f3);
             return;
         }
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(view, View.TRANSLATION_X, view.getTranslationX(), f3);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(view, (Property<View, Float>) View.TRANSLATION_X, view.getTranslationX(), f3);
         Interpolator customInterpolator = animationProperties.getCustomInterpolator(view, View.TRANSLATION_X);
         if (customInterpolator == null) {
             customInterpolator = Interpolators.FAST_OUT_SLOW_IN;
         }
-        ofFloat.setInterpolator(customInterpolator);
-        ofFloat.setDuration(cancelAnimatorAndGetNewDuration(animationProperties.duration, objectAnimator));
+        objectAnimatorOfFloat.setInterpolator(customInterpolator);
+        objectAnimatorOfFloat.setDuration(cancelAnimatorAndGetNewDuration(animationProperties.duration, objectAnimator));
         if (animationProperties.delay > 0 && (objectAnimator == null || objectAnimator.getAnimatedFraction() == 0.0f)) {
-            ofFloat.setStartDelay(animationProperties.delay);
+            objectAnimatorOfFloat.setStartDelay(animationProperties.delay);
         }
         AnimatorListenerAdapter animationFinishListener = animationProperties.getAnimationFinishListener();
         if (animationFinishListener != null) {
-            ofFloat.addListener(animationFinishListener);
+            objectAnimatorOfFloat.addListener(animationFinishListener);
         }
-        ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.ViewState.6
+        objectAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.ViewState.6
+            final /* synthetic */ View val$child;
+
+            AnonymousClass6(View view2) {
+                view = view2;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 view.setTag(R.id.translation_x_animator_tag, null);
@@ -377,17 +516,33 @@ public class ViewState {
                 view.setTag(R.id.translation_x_animator_end_value_tag, null);
             }
         });
-        startAnimator(ofFloat, animationFinishListener);
-        view.setTag(R.id.translation_x_animator_tag, ofFloat);
-        view.setTag(R.id.translation_x_animator_start_value_tag, Float.valueOf(view.getTranslationX()));
-        view.setTag(R.id.translation_x_animator_end_value_tag, Float.valueOf(f3));
+        startAnimator(objectAnimatorOfFloat, animationFinishListener);
+        view2.setTag(R.id.translation_x_animator_tag, objectAnimatorOfFloat);
+        view2.setTag(R.id.translation_x_animator_start_value_tag, Float.valueOf(view2.getTranslationX()));
+        view2.setTag(R.id.translation_x_animator_end_value_tag, Float.valueOf(f3));
+    }
+
+    /* renamed from: com.android.systemui.statusbar.stack.ViewState$6 */
+    class AnonymousClass6 extends AnimatorListenerAdapter {
+        final /* synthetic */ View val$child;
+
+        AnonymousClass6(View view2) {
+            view = view2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            view.setTag(R.id.translation_x_animator_tag, null);
+            view.setTag(R.id.translation_x_animator_start_value_tag, null);
+            view.setTag(R.id.translation_x_animator_end_value_tag, null);
+        }
     }
 
     private void updateAnimationY(View view) {
         startYTranslationAnimation(view, NO_NEW_ANIMATIONS);
     }
 
-    private void startYTranslationAnimation(final View view, AnimationProperties animationProperties) {
+    private void startYTranslationAnimation(View view, AnimationProperties animationProperties) {
         Float f = (Float) getChildTag(view, R.id.translation_y_animator_start_value_tag);
         Float f2 = (Float) getChildTag(view, R.id.translation_y_animator_end_value_tag);
         float f3 = this.yTranslation;
@@ -398,9 +553,9 @@ public class ViewState {
         if (!animationProperties.getAnimationFilter().shouldAnimateY(view)) {
             if (objectAnimator != null) {
                 PropertyValuesHolder[] values = objectAnimator.getValues();
-                float floatValue = f.floatValue() + (f3 - f2.floatValue());
-                values[0].setFloatValues(floatValue, f3);
-                view.setTag(R.id.translation_y_animator_start_value_tag, Float.valueOf(floatValue));
+                float fFloatValue = f.floatValue() + (f3 - f2.floatValue());
+                values[0].setFloatValues(fFloatValue, f3);
+                view.setTag(R.id.translation_y_animator_start_value_tag, Float.valueOf(fFloatValue));
                 view.setTag(R.id.translation_y_animator_end_value_tag, Float.valueOf(f3));
                 objectAnimator.setCurrentPlayTime(objectAnimator.getCurrentPlayTime());
                 return;
@@ -408,21 +563,27 @@ public class ViewState {
             view.setTranslationY(f3);
             return;
         }
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.getTranslationY(), f3);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(view, (Property<View, Float>) View.TRANSLATION_Y, view.getTranslationY(), f3);
         Interpolator customInterpolator = animationProperties.getCustomInterpolator(view, View.TRANSLATION_Y);
         if (customInterpolator == null) {
             customInterpolator = Interpolators.FAST_OUT_SLOW_IN;
         }
-        ofFloat.setInterpolator(customInterpolator);
-        ofFloat.setDuration(cancelAnimatorAndGetNewDuration(animationProperties.duration, objectAnimator));
+        objectAnimatorOfFloat.setInterpolator(customInterpolator);
+        objectAnimatorOfFloat.setDuration(cancelAnimatorAndGetNewDuration(animationProperties.duration, objectAnimator));
         if (animationProperties.delay > 0 && (objectAnimator == null || objectAnimator.getAnimatedFraction() == 0.0f)) {
-            ofFloat.setStartDelay(animationProperties.delay);
+            objectAnimatorOfFloat.setStartDelay(animationProperties.delay);
         }
         AnimatorListenerAdapter animationFinishListener = animationProperties.getAnimationFinishListener();
         if (animationFinishListener != null) {
-            ofFloat.addListener(animationFinishListener);
+            objectAnimatorOfFloat.addListener(animationFinishListener);
         }
-        ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.ViewState.7
+        objectAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.ViewState.7
+            final /* synthetic */ View val$child;
+
+            AnonymousClass7(View view2) {
+                view = view2;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 HeadsUpUtil.setIsClickedHeadsUpNotification(view, false);
@@ -432,14 +593,31 @@ public class ViewState {
                 ViewState.this.onYTranslationAnimationFinished(view);
             }
         });
-        startAnimator(ofFloat, animationFinishListener);
-        view.setTag(R.id.translation_y_animator_tag, ofFloat);
-        view.setTag(R.id.translation_y_animator_start_value_tag, Float.valueOf(view.getTranslationY()));
-        view.setTag(R.id.translation_y_animator_end_value_tag, Float.valueOf(f3));
+        startAnimator(objectAnimatorOfFloat, animationFinishListener);
+        view2.setTag(R.id.translation_y_animator_tag, objectAnimatorOfFloat);
+        view2.setTag(R.id.translation_y_animator_start_value_tag, Float.valueOf(view2.getTranslationY()));
+        view2.setTag(R.id.translation_y_animator_end_value_tag, Float.valueOf(f3));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onYTranslationAnimationFinished(View view) {
+    /* renamed from: com.android.systemui.statusbar.stack.ViewState$7 */
+    class AnonymousClass7 extends AnimatorListenerAdapter {
+        final /* synthetic */ View val$child;
+
+        AnonymousClass7(View view2) {
+            view = view2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            HeadsUpUtil.setIsClickedHeadsUpNotification(view, false);
+            view.setTag(R.id.translation_y_animator_tag, null);
+            view.setTag(R.id.translation_y_animator_start_value_tag, null);
+            view.setTag(R.id.translation_y_animator_end_value_tag, null);
+            ViewState.this.onYTranslationAnimationFinished(view);
+        }
+    }
+
+    protected void onYTranslationAnimationFinished(View view) {
         if (this.hidden && !this.gone) {
             view.setVisibility(4);
         }
@@ -456,8 +634,7 @@ public class ViewState {
         return (T) view.getTag(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void abortAnimation(View view, int i) {
+    protected void abortAnimation(View view, int i) {
         Animator animator = (Animator) getChildTag(view, i);
         if (animator != null) {
             animator.cancel();
@@ -466,9 +643,9 @@ public class ViewState {
 
     public static long cancelAnimatorAndGetNewDuration(long j, ValueAnimator valueAnimator) {
         if (valueAnimator != null) {
-            long max = Math.max(valueAnimator.getDuration() - valueAnimator.getCurrentPlayTime(), j);
+            long jMax = Math.max(valueAnimator.getDuration() - valueAnimator.getCurrentPlayTime(), j);
             valueAnimator.cancel();
-            return max;
+            return jMax;
         }
         return j;
     }

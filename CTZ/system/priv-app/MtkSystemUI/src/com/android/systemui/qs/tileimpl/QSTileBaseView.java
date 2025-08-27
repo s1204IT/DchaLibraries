@@ -3,6 +3,7 @@ package com.android.systemui.qs.tileimpl;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
@@ -22,6 +23,7 @@ import com.android.settingslib.Utils;
 import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSIconView;
 import com.android.systemui.plugins.qs.QSTile;
+
 /* loaded from: classes.dex */
 public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
     private String mAccessibilityClass;
@@ -39,7 +41,7 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
     private Drawable mTileBackground;
     private boolean mTileState;
 
-    public QSTileBaseView(Context context, QSIconView qSIconView, boolean z) {
+    public QSTileBaseView(Context context, QSIconView qSIconView, boolean z) throws Resources.NotFoundException {
         super(context);
         this.mHandler = new H();
         int dimensionPixelSize = context.getResources().getDimensionPixelSize(R.dimen.qs_quick_tile_padding);
@@ -63,9 +65,9 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         }
         setImportantForAccessibility(1);
         setBackground(this.mTileBackground);
-        this.mColorActive = Utils.getColorAttr(context, 16843829);
-        this.mColorDisabled = Utils.getDisabled(context, Utils.getColorAttr(context, 16843282));
-        this.mColorInactive = Utils.getColorAttr(context, 16842808);
+        this.mColorActive = Utils.getColorAttr(context, android.R.attr.colorAccent);
+        this.mColorDisabled = Utils.getDisabled(context, Utils.getColorAttr(context, android.R.attr.textColorTertiary));
+        this.mColorInactive = Utils.getColorAttr(context, android.R.attr.textColorSecondary);
         setPadding(0, 0, 0, 0);
         setClipChildren(false);
         setClipToPadding(false);
@@ -74,9 +76,9 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
     }
 
     protected Drawable newTileBackground() {
-        TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(new int[]{16843868});
-        Drawable drawable = obtainStyledAttributes.getDrawable(0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = getContext().obtainStyledAttributes(new int[]{android.R.attr.selectableItemBackgroundBorderless});
+        Drawable drawable = typedArrayObtainStyledAttributes.getDrawable(0);
+        typedArrayObtainStyledAttributes.recycle();
         return drawable;
     }
 
@@ -99,23 +101,22 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         init(new View.OnClickListener() { // from class: com.android.systemui.qs.tileimpl.-$$Lambda$QSTileBaseView$aVxKNvlJE7IFS8nVmOyLdAcByFA
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                QSTile.this.click();
+                qSTile.click();
             }
         }, new View.OnClickListener() { // from class: com.android.systemui.qs.tileimpl.-$$Lambda$QSTileBaseView$W9w1scJAVZm5V6Q1VB4ZO5o3C8A
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                QSTile.this.secondaryClick();
+                qSTile.secondaryClick();
             }
         }, new View.OnLongClickListener() { // from class: com.android.systemui.qs.tileimpl.-$$Lambda$QSTileBaseView$STEfvGmwtIL_pMrVYwBQuK3x1jo
             @Override // android.view.View.OnLongClickListener
             public final boolean onLongClick(View view) {
-                return QSTileBaseView.lambda$init$2(QSTile.this, view);
+                return QSTileBaseView.lambda$init$2(qSTile, view);
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$init$2(QSTile qSTile, View view) {
+    static /* synthetic */ boolean lambda$init$2(QSTile qSTile, View view) {
         qSTile.longClick();
         return true;
     }
@@ -149,8 +150,7 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         this.mHandler.obtainMessage(1, state).sendToTarget();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void handleStateChanged(QSTile.State state) {
+    protected void handleStateChanged(QSTile.State state) {
         boolean z;
         int circleColor = getCircleColor(state.state);
         if (circleColor != this.mCircleColor) {
@@ -159,7 +159,7 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
                 duration.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.qs.tileimpl.-$$Lambda$QSTileBaseView$R4RxHhlQ5aUQCBgq0kdDEHJXn14
                     @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                     public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        QSTileBaseView.this.mBg.setImageTintList(ColorStateList.valueOf(((Integer) valueAnimator.getAnimatedValue()).intValue()));
+                        this.f$0.mBg.setImageTintList(ColorStateList.valueOf(((Integer) valueAnimator.getAnimatedValue()).intValue()));
                     }
                 });
                 duration.start();
@@ -257,7 +257,6 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         }
     }
 
-    /* loaded from: classes.dex */
     private class H extends Handler {
         public H() {
             super(Looper.getMainLooper());

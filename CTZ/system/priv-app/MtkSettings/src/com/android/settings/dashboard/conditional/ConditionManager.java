@@ -19,9 +19,11 @@ import java.util.List;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
+
 /* loaded from: classes.dex */
 public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
     private static final Comparator<Condition> CONDITION_COMPARATOR = new Comparator<Condition>() { // from class: com.android.settings.dashboard.conditional.ConditionManager.1
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(Condition condition, Condition condition2) {
             return Long.compare(condition.getLastChange(), condition2.getLastChange());
@@ -33,7 +35,6 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
     private final ArrayList<ConditionListener> mListeners = new ArrayList<>();
     private final ArrayList<Condition> mConditions = new ArrayList<>();
 
-    /* loaded from: classes.dex */
     public interface ConditionListener {
         void onConditionsChanged();
     }
@@ -44,10 +45,10 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
             Log.d("ConditionManager", "conditions loading synchronously");
             ConditionLoader conditionLoader = new ConditionLoader();
             conditionLoader.onPostExecute(conditionLoader.doInBackground(new Void[0]));
-            return;
+        } else {
+            Log.d("ConditionManager", "conditions loading asychronously");
+            new ConditionLoader().execute(new Void[0]);
         }
-        Log.d("ConditionManager", "conditions loading asychronously");
-        new ConditionLoader().execute(new Void[0]);
     }
 
     public void refreshAll() {
@@ -58,29 +59,28 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void readFromXml(File file, ArrayList<Condition> arrayList) {
+    private void readFromXml(File file, ArrayList<Condition> arrayList) throws XmlPullParserException, IOException {
         try {
-            XmlPullParser newPullParser = Xml.newPullParser();
+            XmlPullParser xmlPullParserNewPullParser = Xml.newPullParser();
             FileReader fileReader = new FileReader(file);
-            newPullParser.setInput(fileReader);
-            for (int eventType = newPullParser.getEventType(); eventType != 1; eventType = newPullParser.next()) {
-                if ("c".equals(newPullParser.getName())) {
-                    int depth = newPullParser.getDepth();
-                    String attributeValue = newPullParser.getAttributeValue("", "cls");
+            xmlPullParserNewPullParser.setInput(fileReader);
+            for (int eventType = xmlPullParserNewPullParser.getEventType(); eventType != 1; eventType = xmlPullParserNewPullParser.next()) {
+                if ("c".equals(xmlPullParserNewPullParser.getName())) {
+                    int depth = xmlPullParserNewPullParser.getDepth();
+                    String attributeValue = xmlPullParserNewPullParser.getAttributeValue("", "cls");
                     if (!attributeValue.startsWith("com.android.settings.dashboard.conditional.")) {
                         attributeValue = "com.android.settings.dashboard.conditional." + attributeValue;
                     }
-                    Condition createCondition = createCondition(Class.forName(attributeValue));
-                    PersistableBundle restoreFromXml = PersistableBundle.restoreFromXml(newPullParser);
-                    if (createCondition != null) {
-                        createCondition.restoreState(restoreFromXml);
-                        arrayList.add(createCondition);
+                    Condition conditionCreateCondition = createCondition(Class.forName(attributeValue));
+                    PersistableBundle persistableBundleRestoreFromXml = PersistableBundle.restoreFromXml(xmlPullParserNewPullParser);
+                    if (conditionCreateCondition != null) {
+                        conditionCreateCondition.restoreState(persistableBundleRestoreFromXml);
+                        arrayList.add(conditionCreateCondition);
                     } else {
                         Log.e("ConditionManager", "failed to add condition: " + attributeValue);
                     }
-                    while (newPullParser.getDepth() > depth) {
-                        newPullParser.next();
+                    while (xmlPullParserNewPullParser.getDepth() > depth) {
+                        xmlPullParserNewPullParser.next();
                     }
                 }
             }
@@ -90,33 +90,32 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
         }
     }
 
-    private void saveToXml() {
+    private void saveToXml() throws IllegalStateException, IOException, IllegalArgumentException {
         try {
-            XmlSerializer newSerializer = Xml.newSerializer();
+            XmlSerializer xmlSerializerNewSerializer = Xml.newSerializer();
             FileWriter fileWriter = new FileWriter(this.mXmlFile);
-            newSerializer.setOutput(fileWriter);
-            newSerializer.startDocument("UTF-8", true);
-            newSerializer.startTag("", "cs");
+            xmlSerializerNewSerializer.setOutput(fileWriter);
+            xmlSerializerNewSerializer.startDocument("UTF-8", true);
+            xmlSerializerNewSerializer.startTag("", "cs");
             int size = this.mConditions.size();
             for (int i = 0; i < size; i++) {
                 PersistableBundle persistableBundle = new PersistableBundle();
                 if (this.mConditions.get(i).saveState(persistableBundle)) {
-                    newSerializer.startTag("", "c");
-                    newSerializer.attribute("", "cls", this.mConditions.get(i).getClass().getSimpleName());
-                    persistableBundle.saveToXml(newSerializer);
-                    newSerializer.endTag("", "c");
+                    xmlSerializerNewSerializer.startTag("", "c");
+                    xmlSerializerNewSerializer.attribute("", "cls", this.mConditions.get(i).getClass().getSimpleName());
+                    persistableBundle.saveToXml(xmlSerializerNewSerializer);
+                    xmlSerializerNewSerializer.endTag("", "c");
                 }
             }
-            newSerializer.endTag("", "cs");
-            newSerializer.flush();
+            xmlSerializerNewSerializer.endTag("", "cs");
+            xmlSerializerNewSerializer.flush();
             fileWriter.close();
         } catch (IOException | XmlPullParserException e) {
             Log.w("ConditionManager", "Problem writing condition_state.xml", e);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void addMissingConditions(ArrayList<Condition> arrayList) {
+    private void addMissingConditions(ArrayList<Condition> arrayList) {
         addIfMissing(AirplaneModeCondition.class, arrayList);
         addIfMissing(HotspotCondition.class, arrayList);
         addIfMissing(DndCondition.class, arrayList);
@@ -131,9 +130,9 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
     }
 
     private void addIfMissing(Class<? extends Condition> cls, ArrayList<Condition> arrayList) {
-        Condition createCondition;
-        if (getCondition(cls, arrayList) == null && (createCondition = createCondition(cls)) != null) {
-            arrayList.add(createCondition);
+        Condition conditionCreateCondition;
+        if (getCondition(cls, arrayList) == null && (conditionCreateCondition = createCondition(cls)) != null) {
+            arrayList.add(conditionCreateCondition);
         }
     }
 
@@ -172,8 +171,7 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Context getContext() {
+    Context getContext() {
         return this.mContext;
     }
 
@@ -195,7 +193,7 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
         return this.mConditions;
     }
 
-    public void notifyChanged(Condition condition) {
+    public void notifyChanged(Condition condition) throws IllegalStateException, IOException, IllegalArgumentException {
         saveToXml();
         Collections.sort(this.mConditions, CONDITION_COMPARATOR);
         int size = this.mListeners.size();
@@ -229,14 +227,13 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
         }
     }
 
-    /* loaded from: classes.dex */
     private class ConditionLoader extends AsyncTask<Void, Void, ArrayList<Condition>> {
         private ConditionLoader() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public ArrayList<Condition> doInBackground(Void... voidArr) {
+        protected ArrayList<Condition> doInBackground(Void... voidArr) throws XmlPullParserException, IOException {
             Log.d("ConditionManager", "loading conditions from xml");
             ArrayList<Condition> arrayList = new ArrayList<>();
             ConditionManager.this.mXmlFile = new File(ConditionManager.this.mContext.getFilesDir(), "condition_state.xml");
@@ -247,9 +244,9 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
             return arrayList;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(ArrayList<Condition> arrayList) {
+        protected void onPostExecute(ArrayList<Condition> arrayList) {
             Log.d("ConditionManager", "conditions loaded from xml, refreshing conditions");
             ConditionManager.this.mConditions.clear();
             ConditionManager.this.mConditions.addAll(arrayList);

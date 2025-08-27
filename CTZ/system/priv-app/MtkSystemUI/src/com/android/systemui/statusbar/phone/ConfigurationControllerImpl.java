@@ -7,6 +7,7 @@ import com.android.systemui.ConfigurationChangedReceiver;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class ConfigurationControllerImpl implements ConfigurationChangedReceiver, ConfigurationController {
     private int mDensity;
@@ -32,7 +33,7 @@ public class ConfigurationControllerImpl implements ConfigurationChangedReceiver
         arrayList.forEach(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ConfigurationControllerImpl$q8toNxdmBM4_Z2SzGR-62P2UFpQ
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                ConfigurationControllerImpl.lambda$onConfigurationChanged$0(ConfigurationControllerImpl.this, configuration, (ConfigurationController.ConfigurationListener) obj);
+                ConfigurationControllerImpl.lambda$onConfigurationChanged$0(this.f$0, configuration, (ConfigurationController.ConfigurationListener) obj);
             }
         });
         float f = configuration.fontScale;
@@ -42,7 +43,7 @@ public class ConfigurationControllerImpl implements ConfigurationChangedReceiver
             arrayList.forEach(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ConfigurationControllerImpl$vqa1un3Hr9_5bDPhhhNK1qKD-2o
                 @Override // java.util.function.Consumer
                 public final void accept(Object obj) {
-                    ConfigurationControllerImpl.lambda$onConfigurationChanged$1(ConfigurationControllerImpl.this, (ConfigurationController.ConfigurationListener) obj);
+                    ConfigurationControllerImpl.lambda$onConfigurationChanged$1(this.f$0, (ConfigurationController.ConfigurationListener) obj);
                 }
             });
             this.mDensity = i;
@@ -55,7 +56,7 @@ public class ConfigurationControllerImpl implements ConfigurationChangedReceiver
             arrayList.forEach(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ConfigurationControllerImpl$MFXzl9-SIDbbTeRwTeJK0oQCn9Q
                 @Override // java.util.function.Consumer
                 public final void accept(Object obj) {
-                    ConfigurationControllerImpl.lambda$onConfigurationChanged$2(ConfigurationControllerImpl.this, (ConfigurationController.ConfigurationListener) obj);
+                    ConfigurationControllerImpl.lambda$onConfigurationChanged$2(this.f$0, (ConfigurationController.ConfigurationListener) obj);
                 }
             });
         }
@@ -63,7 +64,7 @@ public class ConfigurationControllerImpl implements ConfigurationChangedReceiver
             arrayList.forEach(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ConfigurationControllerImpl$SclF_d3UDXYaKsa0uhbxuxURXSI
                 @Override // java.util.function.Consumer
                 public final void accept(Object obj) {
-                    ConfigurationControllerImpl.lambda$onConfigurationChanged$3(ConfigurationControllerImpl.this, (ConfigurationController.ConfigurationListener) obj);
+                    ConfigurationControllerImpl.lambda$onConfigurationChanged$3(this.f$0, (ConfigurationController.ConfigurationListener) obj);
                 }
             });
         }
@@ -93,12 +94,14 @@ public class ConfigurationControllerImpl implements ConfigurationChangedReceiver
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(ConfigurationController.ConfigurationListener configurationListener) {
         this.mListeners.add(configurationListener);
         configurationListener.onDensityOrFontScaleChanged();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(ConfigurationController.ConfigurationListener configurationListener) {
         this.mListeners.remove(configurationListener);

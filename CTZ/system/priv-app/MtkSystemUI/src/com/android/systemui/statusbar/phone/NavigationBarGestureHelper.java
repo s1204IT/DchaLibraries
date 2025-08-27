@@ -1,6 +1,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.MotionEvent;
@@ -15,6 +16,7 @@ import com.android.systemui.plugins.statusbar.phone.NavGesture;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.stackdivider.DividerView;
 import com.android.systemui.tuner.TunerService;
+
 /* loaded from: classes.dex */
 public class NavigationBarGestureHelper implements NavGesture.GestureHelper, TunerService.Tunable {
     private Context mContext;
@@ -70,11 +72,11 @@ public class NavigationBarGestureHelper implements NavGesture.GestureHelper, Tun
         if (!canHandleGestures()) {
             return false;
         }
-        boolean onInterceptTouchEvent = this.mQuickStepController.onInterceptTouchEvent(motionEvent);
+        boolean zOnInterceptTouchEvent = this.mQuickStepController.onInterceptTouchEvent(motionEvent);
         if (this.mDockWindowEnabled) {
-            return onInterceptTouchEvent | interceptDockWindowEvent(motionEvent);
+            return zOnInterceptTouchEvent | interceptDockWindowEvent(motionEvent);
         }
-        return onInterceptTouchEvent;
+        return zOnInterceptTouchEvent;
     }
 
     @Override // com.android.systemui.plugins.statusbar.phone.NavGesture.GestureHelper
@@ -82,11 +84,11 @@ public class NavigationBarGestureHelper implements NavGesture.GestureHelper, Tun
         if (!canHandleGestures()) {
             return false;
         }
-        boolean onTouchEvent = this.mQuickStepController.onTouchEvent(motionEvent);
+        boolean zOnTouchEvent = this.mQuickStepController.onTouchEvent(motionEvent);
         if (this.mDockWindowEnabled) {
-            return onTouchEvent | handleDockWindowEvent(motionEvent);
+            return zOnTouchEvent | handleDockWindowEvent(motionEvent);
         }
-        return onTouchEvent;
+        return zOnTouchEvent;
     }
 
     @Override // com.android.systemui.plugins.statusbar.phone.NavGesture.GestureHelper
@@ -109,7 +111,7 @@ public class NavigationBarGestureHelper implements NavGesture.GestureHelper, Tun
         this.mQuickStepController.onNavigationButtonLongPress(view);
     }
 
-    private boolean interceptDockWindowEvent(MotionEvent motionEvent) {
+    private boolean interceptDockWindowEvent(MotionEvent motionEvent) throws Resources.NotFoundException {
         switch (motionEvent.getActionMasked()) {
             case 0:
                 handleDragActionDownEvent(motionEvent);
@@ -125,21 +127,20 @@ public class NavigationBarGestureHelper implements NavGesture.GestureHelper, Tun
         }
     }
 
-    private boolean handleDockWindowEvent(MotionEvent motionEvent) {
+    private boolean handleDockWindowEvent(MotionEvent motionEvent) throws Resources.NotFoundException {
         switch (motionEvent.getActionMasked()) {
             case 0:
                 handleDragActionDownEvent(motionEvent);
-                return true;
+                break;
             case 1:
             case 3:
                 handleDragActionUpEvent(motionEvent);
-                return true;
+                break;
             case 2:
                 handleDragActionMoveEvent(motionEvent);
-                return true;
-            default:
-                return true;
+                break;
         }
+        return true;
     }
 
     private void handleDragActionDownEvent(MotionEvent motionEvent) {
@@ -170,18 +171,20 @@ public class NavigationBarGestureHelper implements NavGesture.GestureHelper, Tun
         int i;
         int rawY;
         this.mVelocityTracker.addMovement(motionEvent);
-        int abs = Math.abs(((int) motionEvent.getX()) - this.mTouchDownX);
-        int abs2 = Math.abs(((int) motionEvent.getY()) - this.mTouchDownY);
+        int x = (int) motionEvent.getX();
+        int y = (int) motionEvent.getY();
+        int iAbs = Math.abs(x - this.mTouchDownX);
+        int iAbs2 = Math.abs(y - this.mTouchDownY);
         if (this.mDivider == null || this.mRecentsComponent == null) {
             return false;
         }
         if (!this.mDockWindowTouchSlopExceeded) {
-            boolean z = this.mIsVertical ? !(abs <= this.mScrollTouchSlop || abs <= abs2) : !(abs2 <= this.mScrollTouchSlop || abs2 <= abs);
+            boolean z = this.mIsVertical ? !(iAbs <= this.mScrollTouchSlop || iAbs <= iAbs2) : !(iAbs2 <= this.mScrollTouchSlop || iAbs2 <= iAbs);
             if (this.mDownOnRecents && z && this.mDivider.getView().getWindowManagerProxy().getDockSide() == -1) {
                 Rect rect = null;
-                int calculateDragMode = calculateDragMode();
+                int iCalculateDragMode = calculateDragMode();
                 int i2 = 2;
-                if (calculateDragMode == 1) {
+                if (iCalculateDragMode == 1) {
                     rect = new Rect();
                     DividerView view = this.mDivider.getView();
                     if (this.mIsVertical) {
@@ -193,10 +196,12 @@ public class NavigationBarGestureHelper implements NavGesture.GestureHelper, Tun
                         i2 = 1;
                     }
                     view.calculateBoundsForPosition(rawY, i2, rect);
-                } else if (calculateDragMode == 0 && this.mTouchDownX < this.mContext.getResources().getDisplayMetrics().widthPixels / 2) {
-                    i = 1;
-                    if (this.mRecentsComponent.splitPrimaryTask(calculateDragMode, i, rect, 272)) {
-                        this.mDragMode = calculateDragMode;
+                } else {
+                    if (iCalculateDragMode == 0 && this.mTouchDownX < this.mContext.getResources().getDisplayMetrics().widthPixels / 2) {
+                        i = 1;
+                    }
+                    if (this.mRecentsComponent.splitPrimaryTask(iCalculateDragMode, i, rect, 272)) {
+                        this.mDragMode = iCalculateDragMode;
                         if (this.mDragMode == 1) {
                             this.mDivider.getView().startDragging(false, true);
                         }
@@ -205,20 +210,20 @@ public class NavigationBarGestureHelper implements NavGesture.GestureHelper, Tun
                     }
                 }
                 i = 0;
-                if (this.mRecentsComponent.splitPrimaryTask(calculateDragMode, i, rect, 272)) {
+                if (this.mRecentsComponent.splitPrimaryTask(iCalculateDragMode, i, rect, 272)) {
                 }
             }
         } else if (this.mDragMode == 1) {
             int rawY2 = (int) (!this.mIsVertical ? motionEvent.getRawY() : motionEvent.getRawX());
-            DividerSnapAlgorithm.SnapTarget calculateSnapTarget = this.mDivider.getView().getSnapAlgorithm().calculateSnapTarget(rawY2, 0.0f, false);
-            this.mDivider.getView().resizeStack(rawY2, calculateSnapTarget.position, calculateSnapTarget);
+            DividerSnapAlgorithm.SnapTarget snapTargetCalculateSnapTarget = this.mDivider.getView().getSnapAlgorithm().calculateSnapTarget(rawY2, 0.0f, false);
+            this.mDivider.getView().resizeStack(rawY2, snapTargetCalculateSnapTarget.position, snapTargetCalculateSnapTarget);
         } else if (this.mDragMode == 0) {
             this.mRecentsComponent.onDraggingInRecents(motionEvent.getRawY());
         }
         return false;
     }
 
-    private void handleDragActionUpEvent(MotionEvent motionEvent) {
+    private void handleDragActionUpEvent(MotionEvent motionEvent) throws Resources.NotFoundException {
         int rawY;
         float yVelocity;
         this.mVelocityTracker.addMovement(motionEvent);

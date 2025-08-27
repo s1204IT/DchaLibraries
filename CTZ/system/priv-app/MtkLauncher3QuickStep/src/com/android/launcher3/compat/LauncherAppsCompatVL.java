@@ -21,15 +21,16 @@ import com.android.launcher3.compat.ShortcutConfigActivityInfo;
 import com.android.launcher3.shortcuts.ShortcutInfoCompat;
 import com.android.launcher3.util.PackageUserKey;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LauncherAppsCompatVL extends LauncherAppsCompat {
     private final ArrayMap<LauncherAppsCompat.OnAppsChangedCallbackCompat, WrappedCallback> mCallbacks = new ArrayMap<>();
     protected final Context mContext;
     protected final LauncherApps mLauncherApps;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public LauncherAppsCompatVL(Context context) {
+    LauncherAppsCompatVL(Context context) {
         this.mContext = context;
         this.mLauncherApps = (LauncherApps) context.getSystemService("launcherapps");
     }
@@ -50,9 +51,9 @@ public class LauncherAppsCompatVL extends LauncherAppsCompat {
     }
 
     @Override // com.android.launcher3.compat.LauncherAppsCompat
-    public ApplicationInfo getApplicationInfo(String str, int i, UserHandle userHandle) {
-        boolean equals = Process.myUserHandle().equals(userHandle);
-        if (!equals && i == 0) {
+    public ApplicationInfo getApplicationInfo(String str, int i, UserHandle userHandle) throws PackageManager.NameNotFoundException {
+        boolean zEquals = Process.myUserHandle().equals(userHandle);
+        if (!zEquals && i == 0) {
             List<LauncherActivityInfo> activityList = this.mLauncherApps.getActivityList(str, userHandle);
             if (activityList.size() > 0) {
                 return activityList.get(0).getApplicationInfo();
@@ -61,7 +62,7 @@ public class LauncherAppsCompatVL extends LauncherAppsCompat {
         }
         try {
             ApplicationInfo applicationInfo = this.mContext.getPackageManager().getApplicationInfo(str, i);
-            if (!equals || (applicationInfo.flags & 8388608) != 0) {
+            if (!zEquals || (applicationInfo.flags & 8388608) != 0) {
                 if (applicationInfo.enabled) {
                     return applicationInfo;
                 }
@@ -88,12 +89,12 @@ public class LauncherAppsCompatVL extends LauncherAppsCompat {
 
     @Override // com.android.launcher3.compat.LauncherAppsCompat
     public void removeOnAppsChangedCallback(LauncherAppsCompat.OnAppsChangedCallbackCompat onAppsChangedCallbackCompat) {
-        WrappedCallback remove;
+        WrappedCallback wrappedCallbackRemove;
         synchronized (this.mCallbacks) {
-            remove = this.mCallbacks.remove(onAppsChangedCallbackCompat);
+            wrappedCallbackRemove = this.mCallbacks.remove(onAppsChangedCallbackCompat);
         }
-        if (remove != null) {
-            this.mLauncherApps.unregisterCallback(remove);
+        if (wrappedCallbackRemove != null) {
+            this.mLauncherApps.unregisterCallback(wrappedCallbackRemove);
         }
     }
 
@@ -107,7 +108,6 @@ public class LauncherAppsCompatVL extends LauncherAppsCompat {
         return this.mLauncherApps.isActivityEnabled(componentName, userHandle);
     }
 
-    /* loaded from: classes.dex */
     private static class WrappedCallback extends LauncherApps.Callback {
         private final LauncherAppsCompat.OnAppsChangedCallbackCompat mCallback;
 
@@ -153,8 +153,9 @@ public class LauncherAppsCompatVL extends LauncherAppsCompat {
         @Override // android.content.pm.LauncherApps.Callback
         public void onShortcutsChanged(@NonNull String str, @NonNull List<ShortcutInfo> list, @NonNull UserHandle userHandle) {
             ArrayList arrayList = new ArrayList(list.size());
-            for (ShortcutInfo shortcutInfo : list) {
-                arrayList.add(new ShortcutInfoCompat(shortcutInfo));
+            Iterator<ShortcutInfo> it = list.iterator();
+            while (it.hasNext()) {
+                arrayList.add(new ShortcutInfoCompat(it.next()));
             }
             this.mCallback.onShortcutsChanged(str, arrayList, userHandle);
         }

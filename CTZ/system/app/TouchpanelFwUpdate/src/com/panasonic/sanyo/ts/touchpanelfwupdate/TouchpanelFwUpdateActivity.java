@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 /* loaded from: classes.dex */
 public class TouchpanelFwUpdateActivity extends Activity {
     Button mButton = null;
@@ -73,25 +74,26 @@ public class TouchpanelFwUpdateActivity extends Activity {
         unregisterReceiver(this.mReceiver);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [101=4] */
     @Override // android.app.Activity
     protected void onActivityResult(int i, int i2, Intent intent) {
         if (i != 8634 || i2 != -1 || intent == null) {
             Log.e("TouchpanelFwUpdateActivity", "----- Failed! -----");
             return;
         }
-        Cursor query = getContentResolver().query(intent.getData(), new String[]{"_data"}, null, null);
-        if (query == null) {
+        Cursor cursorQuery = getContentResolver().query(intent.getData(), new String[]{"_data"}, null, null);
+        if (cursorQuery == null) {
             Toast.makeText(this, "ファイルが見つかりません", 0).show();
             return;
         }
         try {
-            if (query.getCount() != 1) {
+            if (cursorQuery.getCount() != 1) {
                 Toast.makeText(this, "ファイルが見つかりません", 0).show();
                 return;
             }
-            query.moveToFirst();
-            int columnIndex = query.getColumnIndex("_data");
-            String string = columnIndex >= 0 ? query.getString(columnIndex) : null;
+            cursorQuery.moveToFirst();
+            int columnIndex = cursorQuery.getColumnIndex("_data");
+            String string = columnIndex >= 0 ? cursorQuery.getString(columnIndex) : null;
             if (string == null) {
                 Toast.makeText(this, "ファイルが見つかりません", 0).show();
                 return;
@@ -103,7 +105,7 @@ public class TouchpanelFwUpdateActivity extends Activity {
                 this.mPendingPath = string;
             }
         } finally {
-            query.close();
+            cursorQuery.close();
         }
     }
 

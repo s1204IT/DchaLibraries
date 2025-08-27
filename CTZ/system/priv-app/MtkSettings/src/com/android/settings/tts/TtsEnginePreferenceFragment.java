@@ -16,7 +16,9 @@ import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.search.Indexable;
 import com.android.settings.tts.TtsEnginePreference;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TtsEnginePreferenceFragment extends SettingsPreferenceFragment implements Indexable, TtsEnginePreference.RadioButtonGroupState {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.tts.TtsEnginePreferenceFragment.2
@@ -70,8 +72,9 @@ public class TtsEnginePreferenceFragment extends SettingsPreferenceFragment impl
         }
         this.mEnginePreferenceCategory.removeAll();
         SettingsActivity settingsActivity = (SettingsActivity) getActivity();
-        for (TextToSpeech.EngineInfo engineInfo : this.mEnginesHelper.getEngines()) {
-            this.mEnginePreferenceCategory.addPreference(new TtsEnginePreference(getPrefContext(), engineInfo, this, settingsActivity));
+        Iterator it = this.mEnginesHelper.getEngines().iterator();
+        while (it.hasNext()) {
+            this.mEnginePreferenceCategory.addPreference(new TtsEnginePreference(getPrefContext(), (TextToSpeech.EngineInfo) it.next(), this, settingsActivity));
         }
     }
 

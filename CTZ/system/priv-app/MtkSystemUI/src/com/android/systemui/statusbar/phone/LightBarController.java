@@ -11,6 +11,7 @@ import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.DarkIconDispatcher;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class LightBarController implements Dumpable, BatteryController.BatteryStateChangeCallback {
     private final Color mDarkModeColor;
@@ -115,19 +116,21 @@ public class LightBarController implements Dumpable, BatteryController.BatterySt
         if ((this.mFullscreenLight && this.mDockedLight) || (this.mFullscreenLight && !z)) {
             this.mStatusBarIconController.setIconsDarkArea(null);
             this.mStatusBarIconController.getTransitionsController().setIconsDark(true, animateChange());
-        } else if ((!this.mFullscreenLight && !this.mDockedLight) || (!this.mFullscreenLight && !z)) {
-            this.mStatusBarIconController.getTransitionsController().setIconsDark(false, animateChange());
-        } else {
-            if (!this.mFullscreenLight) {
-                rect = rect2;
-            }
-            if (rect.isEmpty()) {
-                this.mStatusBarIconController.setIconsDarkArea(null);
-            } else {
-                this.mStatusBarIconController.setIconsDarkArea(rect);
-            }
-            this.mStatusBarIconController.getTransitionsController().setIconsDark(true, animateChange());
+            return;
         }
+        if ((!this.mFullscreenLight && !this.mDockedLight) || (!this.mFullscreenLight && !z)) {
+            this.mStatusBarIconController.getTransitionsController().setIconsDark(false, animateChange());
+            return;
+        }
+        if (!this.mFullscreenLight) {
+            rect = rect2;
+        }
+        if (rect.isEmpty()) {
+            this.mStatusBarIconController.setIconsDarkArea(null);
+        } else {
+            this.mStatusBarIconController.setIconsDarkArea(rect);
+        }
+        this.mStatusBarIconController.getTransitionsController().setIconsDark(true, animateChange());
     }
 
     private void updateNavigation() {

@@ -11,6 +11,7 @@ import com.android.internal.util.LatencyTracker;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.systemui.statusbar.phone.FingerprintUnlockController;
 import com.android.systemui.statusbar.phone.StatusBar;
+
 /* loaded from: classes.dex */
 public class LatencyTester extends SystemUI {
     @Override // com.android.systemui.SystemUI
@@ -34,8 +35,7 @@ public class LatencyTester extends SystemUI {
         }, intentFilter);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fakeTurnOnScreen() {
+    private void fakeTurnOnScreen() {
         PowerManager powerManager = (PowerManager) this.mContext.getSystemService(PowerManager.class);
         if (LatencyTracker.isEnabled(this.mContext)) {
             LatencyTracker.getInstance(this.mContext).onActionStart(5);
@@ -43,8 +43,7 @@ public class LatencyTester extends SystemUI {
         powerManager.wakeUp(SystemClock.uptimeMillis(), "android.policy:LATENCY_TESTS");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fakeWakeAndUnlock() {
+    private void fakeWakeAndUnlock() {
         FingerprintUnlockController fingerprintUnlockController = ((StatusBar) getComponent(StatusBar.class)).getFingerprintUnlockController();
         fingerprintUnlockController.onFingerprintAcquired();
         fingerprintUnlockController.onFingerprintAuthenticated(KeyguardUpdateMonitor.getCurrentUser());

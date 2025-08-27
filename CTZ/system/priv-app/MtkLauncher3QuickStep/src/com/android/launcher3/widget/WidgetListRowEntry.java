@@ -3,6 +3,7 @@ package com.android.launcher3.widget;
 import com.android.launcher3.model.PackageItemInfo;
 import com.android.launcher3.model.WidgetItem;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class WidgetListRowEntry {
     public final PackageItemInfo pkgItem;

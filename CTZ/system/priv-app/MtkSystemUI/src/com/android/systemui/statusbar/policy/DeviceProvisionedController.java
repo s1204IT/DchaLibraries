@@ -1,4 +1,5 @@
 package com.android.systemui.statusbar.policy;
+
 /* loaded from: classes.dex */
 public interface DeviceProvisionedController extends CallbackController<DeviceProvisionedListener> {
     int getCurrentUser();
@@ -11,7 +12,6 @@ public interface DeviceProvisionedController extends CallbackController<DevicePr
         return isUserSetup(getCurrentUser());
     }
 
-    /* loaded from: classes.dex */
     public interface DeviceProvisionedListener {
         default void onDeviceProvisionedChanged() {
         }

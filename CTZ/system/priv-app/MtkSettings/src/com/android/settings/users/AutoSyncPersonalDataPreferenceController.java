@@ -3,6 +3,7 @@ package com.android.settings.users;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.UserHandle;
+
 /* loaded from: classes.dex */
 public class AutoSyncPersonalDataPreferenceController extends AutoSyncDataPreferenceController {
     public AutoSyncPersonalDataPreferenceController(Context context, Fragment fragment) {

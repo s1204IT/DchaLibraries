@@ -1,6 +1,7 @@
 package com.android.systemui.statusbar.policy;
 
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class WifiIcons {
     static final int[][] WIFI_SIGNAL_STRENGTH = {new int[]{R.drawable.stat_sys_wifi_signal_0, R.drawable.stat_sys_wifi_signal_1, R.drawable.stat_sys_wifi_signal_2, R.drawable.stat_sys_wifi_signal_3, R.drawable.stat_sys_wifi_signal_4}, new int[]{R.drawable.stat_sys_wifi_signal_0_fully, R.drawable.stat_sys_wifi_signal_1_fully, R.drawable.stat_sys_wifi_signal_2_fully, R.drawable.stat_sys_wifi_signal_3_fully, R.drawable.stat_sys_wifi_signal_4_fully}};

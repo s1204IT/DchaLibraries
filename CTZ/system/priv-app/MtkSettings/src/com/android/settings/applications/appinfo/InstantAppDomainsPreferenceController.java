@@ -7,6 +7,7 @@ import android.util.ArraySet;
 import com.android.settings.Utils;
 import com.android.settings.applications.AppDomainsPreference;
 import com.android.settingslib.applications.AppUtils;
+
 /* loaded from: classes.dex */
 public class InstantAppDomainsPreferenceController extends AppInfoPreferenceControllerBase {
     private PackageManager mPackageManager;

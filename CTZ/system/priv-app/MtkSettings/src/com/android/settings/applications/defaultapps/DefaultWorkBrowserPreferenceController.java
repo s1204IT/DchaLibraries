@@ -3,6 +3,7 @@ package com.android.settings.applications.defaultapps;
 import android.content.Context;
 import android.os.UserHandle;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class DefaultWorkBrowserPreferenceController extends DefaultBrowserPreferenceController {
     private final UserHandle mUserHandle;

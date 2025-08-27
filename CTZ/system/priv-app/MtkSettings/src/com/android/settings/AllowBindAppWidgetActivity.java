@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
+
 /* loaded from: classes.dex */
 public class AllowBindAppWidgetActivity extends AlertActivity implements DialogInterface.OnClickListener {
     private CheckBox mAlwaysUse;
@@ -38,9 +39,9 @@ public class AllowBindAppWidgetActivity extends AlertActivity implements DialogI
             } catch (Exception e) {
                 Log.v("BIND_APPWIDGET", "Error binding widget with id " + this.mAppWidgetId + " and component " + this.mComponentName);
             }
-            boolean isChecked = this.mAlwaysUse.isChecked();
-            if (isChecked != this.mAppWidgetManager.hasBindAppWidgetPermission(this.mCallingPackage)) {
-                this.mAppWidgetManager.setBindAppWidgetPermission(this.mCallingPackage, isChecked);
+            boolean zIsChecked = this.mAlwaysUse.isChecked();
+            if (zIsChecked != this.mAppWidgetManager.hasBindAppWidgetPermission(this.mCallingPackage)) {
+                this.mAppWidgetManager.setBindAppWidgetPermission(this.mCallingPackage, zIsChecked);
             }
         }
         finish();
@@ -53,14 +54,15 @@ public class AllowBindAppWidgetActivity extends AlertActivity implements DialogI
         super.onPause();
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r6v0, resolved type: com.android.settings.AllowBindAppWidgetActivity */
     /* JADX WARN: Multi-variable type inference failed */
     protected void onCreate(Bundle bundle) {
-        CharSequence charSequence;
+        CharSequence applicationLabel;
         super.onCreate(bundle);
         setResult(0);
         Intent intent = getIntent();
         if (intent == null) {
-            charSequence = "";
+            applicationLabel = "";
         } else {
             try {
                 this.mAppWidgetId = intent.getIntExtra("appWidgetId", -1);
@@ -72,7 +74,7 @@ public class AllowBindAppWidgetActivity extends AlertActivity implements DialogI
                 this.mBindOptions = (Bundle) intent.getParcelableExtra("appWidgetOptions");
                 this.mCallingPackage = getCallingPackage();
                 PackageManager packageManager = getPackageManager();
-                charSequence = packageManager.getApplicationLabel(packageManager.getApplicationInfo(this.mCallingPackage, 0));
+                applicationLabel = packageManager.getApplicationLabel(packageManager.getApplicationInfo(this.mCallingPackage, 0));
             } catch (Exception e) {
                 this.mAppWidgetId = -1;
                 this.mComponentName = null;
@@ -84,14 +86,14 @@ public class AllowBindAppWidgetActivity extends AlertActivity implements DialogI
         }
         AlertController.AlertParams alertParams = this.mAlertParams;
         alertParams.mTitle = getString(R.string.allow_bind_app_widget_activity_allow_bind_title);
-        alertParams.mMessage = getString(R.string.allow_bind_app_widget_activity_allow_bind, new Object[]{charSequence});
+        alertParams.mMessage = getString(R.string.allow_bind_app_widget_activity_allow_bind, new Object[]{applicationLabel});
         alertParams.mPositiveButtonText = getString(R.string.create);
-        alertParams.mNegativeButtonText = getString(17039360);
+        alertParams.mNegativeButtonText = getString(android.R.string.cancel);
         alertParams.mPositiveButtonListener = this;
         alertParams.mNegativeButtonListener = this;
-        alertParams.mView = ((LayoutInflater) getSystemService("layout_inflater")).inflate(17367090, (ViewGroup) null);
-        this.mAlwaysUse = (CheckBox) alertParams.mView.findViewById(16908711);
-        this.mAlwaysUse.setText(getString(R.string.allow_bind_app_widget_activity_always_allow_bind, new Object[]{charSequence}));
+        alertParams.mView = ((LayoutInflater) getSystemService("layout_inflater")).inflate(android.R.layout.alert_dialog_progress, (ViewGroup) null);
+        this.mAlwaysUse = (CheckBox) alertParams.mView.findViewById(android.R.id.accessibility_permissionDialog_title);
+        this.mAlwaysUse.setText(getString(R.string.allow_bind_app_widget_activity_always_allow_bind, new Object[]{applicationLabel}));
         this.mAlwaysUse.setPadding(this.mAlwaysUse.getPaddingLeft(), this.mAlwaysUse.getPaddingTop(), this.mAlwaysUse.getPaddingRight(), (int) (this.mAlwaysUse.getPaddingBottom() + getResources().getDimension(R.dimen.bind_app_widget_dialog_checkbox_bottom_padding)));
         this.mAppWidgetManager = AppWidgetManager.getInstance(this);
         this.mAlwaysUse.setChecked(this.mAppWidgetManager.hasBindAppWidgetPermission(this.mCallingPackage, this.mProfile.getIdentifier()));

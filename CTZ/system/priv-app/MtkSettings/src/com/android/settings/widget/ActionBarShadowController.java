@@ -8,6 +8,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class ActionBarShadowController implements LifecycleObserver, OnStart, OnStop {
     static final float ELEVATION_HIGH = 8.0f;
@@ -61,9 +62,7 @@ public class ActionBarShadowController implements LifecycleObserver, OnStart, On
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public final class ScrollChangeWatcher extends RecyclerView.OnScrollListener {
+    final class ScrollChangeWatcher extends RecyclerView.OnScrollListener {
         private final Activity mActivity;
         private final View mAnchorView;
 
@@ -84,11 +83,11 @@ public class ActionBarShadowController implements LifecycleObserver, OnStart, On
 
         public void updateDropShadow(View view) {
             ActionBar actionBar;
-            boolean canScrollVertically = view.canScrollVertically(-1);
+            boolean zCanScrollVertically = view.canScrollVertically(-1);
             if (this.mAnchorView != null) {
-                this.mAnchorView.setElevation(canScrollVertically ? 8.0f : 0.0f);
+                this.mAnchorView.setElevation(zCanScrollVertically ? 8.0f : 0.0f);
             } else if (this.mActivity != null && (actionBar = this.mActivity.getActionBar()) != null) {
-                actionBar.setElevation(canScrollVertically ? 8.0f : 0.0f);
+                actionBar.setElevation(zCanScrollVertically ? 8.0f : 0.0f);
             }
         }
     }

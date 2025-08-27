@@ -24,6 +24,7 @@ import com.android.settingslib.core.lifecycle.events.OnCreate;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.core.lifecycle.events.OnSaveInstanceState;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TrustAgentListPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnCreate, OnResume, OnSaveInstanceState {
     private static final int MY_USER_ID = UserHandle.myUserId();
@@ -57,7 +58,7 @@ public class TrustAgentListPreferenceController extends AbstractPreferenceContro
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
-    public void displayPreference(PreferenceScreen preferenceScreen) {
+    public void displayPreference(PreferenceScreen preferenceScreen) throws Throwable {
         super.displayPreference(preferenceScreen);
         this.mSecurityCategory = (PreferenceCategory) preferenceScreen.findPreference(PREF_KEY_SECURITY_CATEGORY);
         updateTrustAgents();
@@ -93,25 +94,26 @@ public class TrustAgentListPreferenceController extends AbstractPreferenceContro
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnResume
-    public void onResume() {
+    public void onResume() throws Throwable {
         updateTrustAgents();
     }
 
-    private void updateTrustAgents() {
+    private void updateTrustAgents() throws Throwable {
         if (this.mSecurityCategory == null) {
             return;
         }
         while (true) {
-            Preference findPreference = this.mSecurityCategory.findPreference(PREF_KEY_TRUST_AGENT);
-            if (findPreference == null) {
+            Preference preferenceFindPreference = this.mSecurityCategory.findPreference(PREF_KEY_TRUST_AGENT);
+            if (preferenceFindPreference == null) {
                 break;
+            } else {
+                this.mSecurityCategory.removePreference(preferenceFindPreference);
             }
-            this.mSecurityCategory.removePreference(findPreference);
         }
         if (!isAvailable()) {
             return;
         }
-        boolean isSecure = this.mLockPatternUtils.isSecure(MY_USER_ID);
+        boolean zIsSecure = this.mLockPatternUtils.isSecure(MY_USER_ID);
         List<TrustAgentManager.TrustAgentComponentInfo> activeTrustAgents = this.mTrustAgentManager.getActiveTrustAgents(this.mContext, this.mLockPatternUtils);
         if (activeTrustAgents == null) {
             return;
@@ -123,7 +125,7 @@ public class TrustAgentListPreferenceController extends AbstractPreferenceContro
             restrictedPreference.setSummary(trustAgentComponentInfo.summary);
             restrictedPreference.setIntent(new Intent("android.intent.action.MAIN").setComponent(trustAgentComponentInfo.componentName));
             restrictedPreference.setDisabledByAdmin(trustAgentComponentInfo.admin);
-            if (!restrictedPreference.isDisabledByAdmin() && !isSecure) {
+            if (!restrictedPreference.isDisabledByAdmin() && !zIsSecure) {
                 restrictedPreference.setEnabled(false);
                 restrictedPreference.setSummary(R.string.disabled_because_no_backup_security);
             }

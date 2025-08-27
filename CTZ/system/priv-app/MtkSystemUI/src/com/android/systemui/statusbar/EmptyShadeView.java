@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.stack.ExpandableViewState;
 import com.android.systemui.statusbar.stack.StackScrollState;
+
 /* loaded from: classes.dex */
 public class EmptyShadeView extends StackScrollerDecorView {
     private TextView mEmptyText;
@@ -47,9 +48,8 @@ public class EmptyShadeView extends StackScrollerDecorView {
         return this.mText;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.StackScrollerDecorView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mEmptyText = (TextView) findContentView();
     }
@@ -59,7 +59,6 @@ public class EmptyShadeView extends StackScrollerDecorView {
         return new EmptyShadeViewState();
     }
 
-    /* loaded from: classes.dex */
     public class EmptyShadeViewState extends ExpandableViewState {
         public EmptyShadeViewState() {
         }

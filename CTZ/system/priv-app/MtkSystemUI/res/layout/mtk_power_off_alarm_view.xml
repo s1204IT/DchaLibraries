@@ -1,17 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.mediatek.keyguard.PowerOffAlarm.PowerOffAlarmView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:dc="http://schemas.android.com/apk/res-auto" android:gravity="center_horizontal" android:orientation="vertical" android:id="@+id/power_off_alarm_view" android:layout_width="match_parent" android:layout_height="match_parent" android:contentDescription="@string/keyguard_accessibility_alarm_unlock">
-    <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_marginTop="50sp" android:layout_alignParentTop="true" android:layout_centerHorizontal="true">
-        <TextView android:textColor="@color/clock_white" android:ellipsize="end" android:id="@+id/alertTitle" android:paddingLeft="@dimen/label_margin_big" android:paddingBottom="@dimen/label_margin_small" android:layout_width="wrap_content" android:layout_height="wrap_content" android:singleLine="true" style="@style/header_not_caps"/>
-        <com.mediatek.keyguard.Clock.MediatekDigitalClock android:gravity="top" android:id="@+id/digitalClock" android:paddingBottom="24dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:baselineAligned="false">
-            <com.mediatek.keyguard.PowerOffAlarm.MediatekZeroTopPaddingTextView android:textColor="@color/clock_white" android:ellipsize="none" android:id="@+id/timeDisplayHours" android:paddingRight="@dimen/time_margin_right" android:layout_width="wrap_content" android:layout_height="wrap_content" android:singleLine="true" style="@style/big_thin"/>
-            <com.mediatek.keyguard.PowerOffAlarm.MediatekZeroTopPaddingTextView android:textColor="@color/clock_white" android:ellipsize="none" android:id="@+id/timeDisplayMinutes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:singleLine="true" style="@style/big_thin"/>
-            <com.mediatek.keyguard.PowerOffAlarm.MediatekZeroTopPaddingTextView android:textColor="@color/clock_white" android:ellipsize="none" android:id="@+id/am_pm" android:layout_width="wrap_content" android:layout_height="wrap_content" android:singleLine="true" style="@style/label"/>
+<com.mediatek.keyguard.PowerOffAlarm.PowerOffAlarmView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:dc="http://schemas.android.com/apk/res-auto"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:id="@+id/power_off_alarm_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:contentDescription="@string/keyguard_accessibility_alarm_unlock">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:textColor="@color/clock_white"
+            android:ellipsize="end"
+            android:id="@+id/alertTitle"
+            android:paddingLeft="@dimen/label_margin_big"
+            android:paddingBottom="@dimen/label_margin_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            style="@style/header_not_caps"/>
+        <com.mediatek.keyguard.Clock.MediatekDigitalClock
+            android:gravity="top"
+            android:id="@+id/digitalClock"
+            android:paddingBottom="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false">
+            <com.mediatek.keyguard.PowerOffAlarm.MediatekZeroTopPaddingTextView
+                android:textColor="@color/clock_white"
+                android:ellipsize="none"
+                android:id="@+id/timeDisplayHours"
+                android:paddingRight="@dimen/time_margin_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                style="@style/big_thin"/>
+            <com.mediatek.keyguard.PowerOffAlarm.MediatekZeroTopPaddingTextView
+                android:textColor="@color/clock_white"
+                android:ellipsize="none"
+                android:id="@+id/timeDisplayMinutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                style="@style/big_thin"/>
+            <com.mediatek.keyguard.PowerOffAlarm.MediatekZeroTopPaddingTextView
+                android:textColor="@color/clock_white"
+                android:ellipsize="none"
+                android:id="@+id/am_pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                style="@style/label"/>
         </com.mediatek.keyguard.Clock.MediatekDigitalClock>
-        <View android:layout_width="match_parent" android:layout_height="30sp"/>
-        <LinearLayout android:gravity="center_horizontal" android:orientation="horizontal" android:id="@+id/tips_container" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content">
-            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/mtk_stat_voice"/>
-            <TextView android:textSize="11sp" android:textColor="@color/clock_white" android:ellipsize="end" android:id="@+id/tips" android:paddingLeft="@dimen/label_margin_big" android:paddingBottom="@dimen/label_margin_small" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="-3dp" android:layout_marginTop="-1dp" style="@style/header_not_caps"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30sp"/>
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:id="@+id/tips_container"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/mtk_stat_voice"/>
+            <TextView
+                android:textSize="11sp"
+                android:textColor="@color/clock_white"
+                android:ellipsize="end"
+                android:id="@+id/tips"
+                android:paddingLeft="@dimen/label_margin_big"
+                android:paddingBottom="@dimen/label_margin_small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-3dp"
+                android:layout_marginTop="-1dp"
+                style="@style/header_not_caps"/>
         </LinearLayout>
     </LinearLayout>
-    <com.mediatek.keyguard.PowerOffAlarm.multiwaveview.GlowPadView android:gravity="center" android:layout_gravity="center_vertical" android:id="@+id/glow_pad_view" android:focusable="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/glowpadview_margin_bottom" android:layout_alignParentBottom="true" android:layout_centerHorizontal="true" dc:directionDescriptions="@array/snooze_dismiss_direction_descriptions" dc:feedbackCount="1" dc:glowRadius="@dimen/glowpadview_glow_radius" dc:handleDrawable="@drawable/mtk_ic_alarm_alert_touch_handle" dc:innerRadius="@dimen/glowpadview_inner_radius" dc:outerRadius="@dimen/glowpadview_target_placement_radius" dc:outerRingDrawable="@drawable/mtk_ic_alarm_alert_outerring" dc:pointDrawable="@drawable/mtk_ic_lockscreen_glowdot" dc:snapMargin="@dimen/glowpadview_snap_margin" dc:targetDescriptions="@array/snooze_dismiss_descriptions" dc:targetDrawables="@array/snooze_dismiss_drawables" dc:vibrationDuration="20"/>
+    <com.mediatek.keyguard.PowerOffAlarm.multiwaveview.GlowPadView
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
+        android:id="@+id/glow_pad_view"
+        android:focusable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/glowpadview_margin_bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        dc:directionDescriptions="@array/snooze_dismiss_direction_descriptions"
+        dc:feedbackCount="1"
+        dc:glowRadius="@dimen/glowpadview_glow_radius"
+        dc:handleDrawable="@drawable/mtk_ic_alarm_alert_touch_handle"
+        dc:innerRadius="@dimen/glowpadview_inner_radius"
+        dc:outerRadius="@dimen/glowpadview_target_placement_radius"
+        dc:outerRingDrawable="@drawable/mtk_ic_alarm_alert_outerring"
+        dc:pointDrawable="@drawable/mtk_ic_lockscreen_glowdot"
+        dc:snapMargin="@dimen/glowpadview_snap_margin"
+        dc:targetDescriptions="@array/snooze_dismiss_descriptions"
+        dc:targetDrawables="@array/snooze_dismiss_drawables"
+        dc:vibrationDuration="20"/>
 </com.mediatek.keyguard.PowerOffAlarm.PowerOffAlarmView>

@@ -5,6 +5,7 @@ import android.os.storage.StorageManager;
 import android.os.storage.VolumeInfo;
 import java.io.IOException;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class StorageManagerVolumeProvider implements StorageVolumeProvider {
     private StorageManager mStorageManager;

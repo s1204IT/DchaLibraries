@@ -1,6 +1,7 @@
 package com.android.settings.fingerprint;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class FingerprintProfileStatusPreferenceController extends FingerprintStatusPreferenceController {
     public static final String KEY_FINGERPRINT_SETTINGS = "fingerprint_settings_profile";

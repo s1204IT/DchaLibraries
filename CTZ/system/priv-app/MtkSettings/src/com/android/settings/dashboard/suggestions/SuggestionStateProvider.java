@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class SuggestionStateProvider extends ContentProvider {
     static final String EXTRA_CANDIDATE_ID = "candidate_id";
@@ -46,19 +47,19 @@ public class SuggestionStateProvider extends ContentProvider {
 
     @Override // android.content.ContentProvider
     public Bundle call(String str, String str2, Bundle bundle) {
-        boolean isSuggestionComplete;
+        boolean zIsSuggestionComplete;
         Bundle bundle2 = new Bundle();
         if (METHOD_GET_SUGGESTION_STATE.equals(str)) {
             String string = bundle.getString(EXTRA_CANDIDATE_ID);
             ComponentName componentName = (ComponentName) bundle.getParcelable("android.intent.extra.COMPONENT_NAME");
             if (componentName == null) {
-                isSuggestionComplete = true;
+                zIsSuggestionComplete = true;
             } else {
                 Context context = getContext();
-                isSuggestionComplete = FeatureFactory.getFactory(context).getSuggestionFeatureProvider(context).isSuggestionComplete(context, componentName);
+                zIsSuggestionComplete = FeatureFactory.getFactory(context).getSuggestionFeatureProvider(context).isSuggestionComplete(context, componentName);
             }
-            Log.d("SugstStatusProvider", "Suggestion " + string + " complete: " + isSuggestionComplete);
-            bundle2.putBoolean("candidate_is_complete", isSuggestionComplete);
+            Log.d("SugstStatusProvider", "Suggestion " + string + " complete: " + zIsSuggestionComplete);
+            bundle2.putBoolean("candidate_is_complete", zIsSuggestionComplete);
         }
         return bundle2;
     }

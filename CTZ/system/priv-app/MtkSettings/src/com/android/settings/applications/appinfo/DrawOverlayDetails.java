@@ -18,6 +18,7 @@ import com.android.settings.applications.AppStateAppOpsBridge;
 import com.android.settings.applications.AppStateOverlayBridge;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.applications.ApplicationsState;
+
 /* loaded from: classes.dex */
 public class DrawOverlayDetails extends AppInfoWithHeader implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     private static final int[] APP_OPS_OP_CODE = {24};

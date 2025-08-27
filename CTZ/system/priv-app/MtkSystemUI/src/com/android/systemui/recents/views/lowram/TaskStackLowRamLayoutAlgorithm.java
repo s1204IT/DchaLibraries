@@ -11,6 +11,7 @@ import com.android.systemui.recents.views.TaskViewTransform;
 import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class TaskStackLowRamLayoutAlgorithm {
     private int mFlingThreshold;
@@ -34,13 +35,13 @@ public class TaskStackLowRamLayoutAlgorithm {
     public void initialize(Rect rect) {
         this.mWindowRect = rect;
         if (this.mWindowRect.height() > 0) {
-            int height = this.mWindowRect.height() - this.mSystemInsets.bottom;
-            int width = (this.mWindowRect.width() - this.mSystemInsets.right) - this.mSystemInsets.left;
-            int min = Math.min(width, height) - (this.mPadding * 2);
-            this.mTaskRect.set(0, 0, min, width > height ? (min * 2) / 3 : min);
-            this.mPaddingLeftRight = (width - this.mTaskRect.width()) / 2;
-            this.mPaddingEndTopBottom = (height - this.mTaskRect.height()) / 2;
-            this.mTopOffset = (getTotalHeightOfTasks(9) - height) / 2;
+            int iHeight = this.mWindowRect.height() - this.mSystemInsets.bottom;
+            int iWidth = (this.mWindowRect.width() - this.mSystemInsets.right) - this.mSystemInsets.left;
+            int iMin = Math.min(iWidth, iHeight) - (this.mPadding * 2);
+            this.mTaskRect.set(0, 0, iMin, iWidth > iHeight ? (iMin * 2) / 3 : iMin);
+            this.mPaddingLeftRight = (iWidth - this.mTaskRect.width()) / 2;
+            this.mPaddingEndTopBottom = (iHeight - this.mTaskRect.height()) / 2;
+            this.mTopOffset = (getTotalHeightOfTasks(9) - iHeight) / 2;
         }
     }
 
@@ -56,8 +57,8 @@ public class TaskStackLowRamLayoutAlgorithm {
         } else {
             i = 3;
         }
-        int min = Math.min(i, arrayList.size());
-        return new TaskStackLayoutAlgorithm.VisibilityReport(min, min);
+        int iMin = Math.min(i, arrayList.size());
+        return new TaskStackLayoutAlgorithm.VisibilityReport(iMin, iMin);
     }
 
     public void getFrontOfStackTransform(TaskViewTransform taskViewTransform, TaskStackLayoutAlgorithm taskStackLayoutAlgorithm) {
@@ -77,36 +78,36 @@ public class TaskStackLowRamLayoutAlgorithm {
     }
 
     public TaskViewTransform getTransform(int i, float f, TaskViewTransform taskViewTransform, int i2, TaskStackLayoutAlgorithm taskStackLayoutAlgorithm) {
-        int height;
+        int iHeight;
         if (i2 == 0) {
             taskViewTransform.reset();
             return taskViewTransform;
         }
         boolean z = true;
         if (i2 > 1) {
-            height = getTaskTopFromIndex(i) - percentageToScroll(f);
-            if (this.mPadding + height + getTaskRect().height() <= 0) {
+            iHeight = getTaskTopFromIndex(i) - percentageToScroll(f);
+            if (this.mPadding + iHeight + getTaskRect().height() <= 0) {
                 z = false;
             }
         } else {
-            height = (((this.mWindowRect.height() - this.mSystemInsets.bottom) - this.mTaskRect.height()) / 2) - percentageToScroll(f);
+            iHeight = (((this.mWindowRect.height() - this.mSystemInsets.bottom) - this.mTaskRect.height()) / 2) - percentageToScroll(f);
         }
-        fillStackTransform(taskViewTransform, height, taskStackLayoutAlgorithm.mMaxTranslationZ, z);
+        fillStackTransform(taskViewTransform, iHeight, taskStackLayoutAlgorithm.mMaxTranslationZ, z);
         return taskViewTransform;
     }
 
     public float getClosestTaskP(float f, int i, int i2) {
-        int percentageToScroll = percentageToScroll(f);
+        int iPercentageToScroll = percentageToScroll(f);
         int taskTopFromIndex = getTaskTopFromIndex(0) - this.mPaddingEndTopBottom;
         int i3 = 1;
         while (i3 < i) {
             int taskTopFromIndex2 = getTaskTopFromIndex(i3) - this.mPaddingEndTopBottom;
-            int i4 = taskTopFromIndex2 - percentageToScroll;
+            int i4 = taskTopFromIndex2 - iPercentageToScroll;
             if (i4 <= 0) {
                 i3++;
                 taskTopFromIndex = taskTopFromIndex2;
             } else {
-                boolean z = i4 > Math.abs(percentageToScroll - taskTopFromIndex);
+                boolean z = i4 > Math.abs(iPercentageToScroll - taskTopFromIndex);
                 if (Math.abs(i2) > this.mFlingThreshold) {
                     z = i2 > 0;
                 }

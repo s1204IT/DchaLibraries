@@ -9,6 +9,8 @@ import android.net.ConnectivityManager;
 import android.util.Log;
 import com.android.settings.R;
 import com.android.settingslib.WirelessUtils;
+import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class AirplaneModeCondition extends Condition {
     private final Receiver mReceiver;
@@ -21,7 +23,7 @@ public class AirplaneModeCondition extends Condition {
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
-    public void refreshState() {
+    public void refreshState() throws IllegalStateException, IOException, IllegalArgumentException {
         Log.d(TAG, "APM condition refreshed");
         setActive(WirelessUtils.isAirplaneModeOn(this.mManager.getContext()));
     }
@@ -41,12 +43,10 @@ public class AirplaneModeCondition extends Condition {
         return this.mManager.getContext().getDrawable(R.drawable.ic_airplane);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.conditional.Condition
-    public void setActive(boolean z) {
+    protected void setActive(boolean z) throws IllegalStateException, IOException, IllegalArgumentException {
         super.setActive(z);
-        String str = TAG;
-        Log.d(str, "setActive was called with " + z);
+        Log.d(TAG, "setActive was called with " + z);
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
@@ -70,13 +70,13 @@ public class AirplaneModeCondition extends Condition {
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
-    public void onActionClick(int i) {
+    public void onActionClick(int i) throws IllegalStateException, IOException, IllegalArgumentException {
         if (i == 0) {
             ConnectivityManager.from(this.mManager.getContext()).setAirplaneMode(false);
             setActive(false);
-            return;
+        } else {
+            throw new IllegalArgumentException("Unexpected index " + i);
         }
-        throw new IllegalArgumentException("Unexpected index " + i);
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
@@ -84,10 +84,9 @@ public class AirplaneModeCondition extends Condition {
         return 377;
     }
 
-    /* loaded from: classes.dex */
     public static class Receiver extends BroadcastReceiver {
         @Override // android.content.BroadcastReceiver
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, Intent intent) throws IllegalStateException, IOException, IllegalArgumentException {
             if ("android.intent.action.AIRPLANE_MODE".equals(intent.getAction())) {
                 ((AirplaneModeCondition) ConditionManager.get(context).getCondition(AirplaneModeCondition.class)).refreshState();
             }

@@ -32,6 +32,7 @@ import com.android.systemui.shared.recents.model.ThumbnailData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class ActivityManagerWrapper {
     public static final String CLOSE_SYSTEM_WINDOWS_REASON_RECENTS = "recentapps";
@@ -132,11 +133,17 @@ public class ActivityManagerWrapper {
         return label;
     }
 
-    public void startRecentsActivity(Intent intent, final AssistDataReceiver assistDataReceiver, final RecentsAnimationListener animationHandler, final Consumer<Boolean> resultCallback, Handler resultCallbackHandler) {
+    public void startRecentsActivity(Intent intent, AssistDataReceiver assistDataReceiver, RecentsAnimationListener animationHandler, Consumer<Boolean> resultCallback, Handler resultCallbackHandler) {
         IAssistDataReceiver receiver = null;
         if (assistDataReceiver != null) {
             try {
                 receiver = new IAssistDataReceiver.Stub() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.1
+                    final /* synthetic */ AssistDataReceiver val$assistDataReceiver;
+
+                    AnonymousClass1(AssistDataReceiver assistDataReceiver2) {
+                        assistDataReceiver = assistDataReceiver2;
+                    }
+
                     public void onHandleAssistData(Bundle resultData) {
                         assistDataReceiver.onHandleAssistData(resultData);
                     }
@@ -148,9 +155,15 @@ public class ActivityManagerWrapper {
             } catch (Exception e) {
                 if (resultCallback != null) {
                     resultCallbackHandler.post(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.4
+                        final /* synthetic */ Consumer val$resultCallback;
+
+                        AnonymousClass4(Consumer resultCallback2) {
+                            consumer = resultCallback2;
+                        }
+
                         @Override // java.lang.Runnable
                         public void run() {
-                            resultCallback.accept(false);
+                            consumer.accept(false);
                         }
                     });
                     return;
@@ -161,25 +174,101 @@ public class ActivityManagerWrapper {
         IRecentsAnimationRunner runner = null;
         if (animationHandler != null) {
             runner = new IRecentsAnimationRunner.Stub() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.2
+                final /* synthetic */ RecentsAnimationListener val$animationHandler;
+
+                AnonymousClass2(RecentsAnimationListener animationHandler2) {
+                    recentsAnimationListener = animationHandler2;
+                }
+
                 public void onAnimationStart(IRecentsAnimationController controller, RemoteAnimationTarget[] apps, Rect homeContentInsets, Rect minimizedHomeBounds) {
                     RecentsAnimationControllerCompat controllerCompat = new RecentsAnimationControllerCompat(controller);
                     RemoteAnimationTargetCompat[] appsCompat = RemoteAnimationTargetCompat.wrap(apps);
-                    animationHandler.onAnimationStart(controllerCompat, appsCompat, homeContentInsets, minimizedHomeBounds);
+                    recentsAnimationListener.onAnimationStart(controllerCompat, appsCompat, homeContentInsets, minimizedHomeBounds);
                 }
 
                 public void onAnimationCanceled() {
-                    animationHandler.onAnimationCanceled();
+                    recentsAnimationListener.onAnimationCanceled();
                 }
             };
         }
         ActivityManager.getService().startRecentsActivity(intent, receiver, runner);
-        if (resultCallback != null) {
+        if (resultCallback2 != null) {
             resultCallbackHandler.post(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.3
+                final /* synthetic */ Consumer val$resultCallback;
+
+                AnonymousClass3(Consumer resultCallback2) {
+                    consumer = resultCallback2;
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
-                    resultCallback.accept(true);
+                    consumer.accept(true);
                 }
             });
+        }
+    }
+
+    /* renamed from: com.android.systemui.shared.system.ActivityManagerWrapper$1 */
+    class AnonymousClass1 extends IAssistDataReceiver.Stub {
+        final /* synthetic */ AssistDataReceiver val$assistDataReceiver;
+
+        AnonymousClass1(AssistDataReceiver assistDataReceiver2) {
+            assistDataReceiver = assistDataReceiver2;
+        }
+
+        public void onHandleAssistData(Bundle resultData) {
+            assistDataReceiver.onHandleAssistData(resultData);
+        }
+
+        public void onHandleAssistScreenshot(Bitmap screenshot) {
+            assistDataReceiver.onHandleAssistScreenshot(screenshot);
+        }
+    }
+
+    /* renamed from: com.android.systemui.shared.system.ActivityManagerWrapper$2 */
+    class AnonymousClass2 extends IRecentsAnimationRunner.Stub {
+        final /* synthetic */ RecentsAnimationListener val$animationHandler;
+
+        AnonymousClass2(RecentsAnimationListener animationHandler2) {
+            recentsAnimationListener = animationHandler2;
+        }
+
+        public void onAnimationStart(IRecentsAnimationController controller, RemoteAnimationTarget[] apps, Rect homeContentInsets, Rect minimizedHomeBounds) {
+            RecentsAnimationControllerCompat controllerCompat = new RecentsAnimationControllerCompat(controller);
+            RemoteAnimationTargetCompat[] appsCompat = RemoteAnimationTargetCompat.wrap(apps);
+            recentsAnimationListener.onAnimationStart(controllerCompat, appsCompat, homeContentInsets, minimizedHomeBounds);
+        }
+
+        public void onAnimationCanceled() {
+            recentsAnimationListener.onAnimationCanceled();
+        }
+    }
+
+    /* renamed from: com.android.systemui.shared.system.ActivityManagerWrapper$3 */
+    class AnonymousClass3 implements Runnable {
+        final /* synthetic */ Consumer val$resultCallback;
+
+        AnonymousClass3(Consumer resultCallback2) {
+            consumer = resultCallback2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            consumer.accept(true);
+        }
+    }
+
+    /* renamed from: com.android.systemui.shared.system.ActivityManagerWrapper$4 */
+    class AnonymousClass4 implements Runnable {
+        final /* synthetic */ Consumer val$resultCallback;
+
+        AnonymousClass4(Consumer resultCallback2) {
+            consumer = resultCallback2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            consumer.accept(false);
         }
     }
 
@@ -195,7 +284,7 @@ public class ActivityManagerWrapper {
         startActivityFromRecentsAsync(taskKey, options, 0, 0, resultCallback, resultCallbackHandler);
     }
 
-    public void startActivityFromRecentsAsync(final Task.TaskKey taskKey, ActivityOptions options, int windowingMode, int activityType, final Consumer<Boolean> resultCallback, final Handler resultCallbackHandler) {
+    public void startActivityFromRecentsAsync(Task.TaskKey taskKey, ActivityOptions options, int windowingMode, int activityType, Consumer<Boolean> resultCallback, Handler resultCallbackHandler) {
         if (taskKey.windowingMode == 3) {
             if (options == null) {
                 options = ActivityOptions.makeBasic();
@@ -208,26 +297,111 @@ public class ActivityManagerWrapper {
             options.setLaunchWindowingMode(windowingMode);
             options.setLaunchActivityType(activityType);
         }
-        final ActivityOptions finalOptions = options;
+        ActivityOptions finalOptions = options;
         this.mBackgroundExecutor.submit(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.5
+            final /* synthetic */ ActivityOptions val$finalOptions;
+            final /* synthetic */ Consumer val$resultCallback;
+            final /* synthetic */ Handler val$resultCallbackHandler;
+            final /* synthetic */ Task.TaskKey val$taskKey;
+
+            AnonymousClass5(Task.TaskKey taskKey2, ActivityOptions finalOptions2, Consumer resultCallback2, Handler resultCallbackHandler2) {
+                taskKey = taskKey2;
+                activityOptions = finalOptions2;
+                consumer = resultCallback2;
+                handler = resultCallbackHandler2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 boolean result = false;
                 try {
-                    result = ActivityManagerWrapper.this.startActivityFromRecents(taskKey.id, finalOptions);
+                    result = ActivityManagerWrapper.this.startActivityFromRecents(taskKey.id, activityOptions);
                 } catch (Exception e) {
                 }
-                final boolean finalResult = result;
-                if (resultCallback != null) {
-                    resultCallbackHandler.post(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.5.1
+                boolean finalResult = result;
+                if (consumer != null) {
+                    handler.post(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.5.1
+                        final /* synthetic */ boolean val$finalResult;
+
+                        AnonymousClass1(boolean finalResult2) {
+                            z = finalResult2;
+                        }
+
                         @Override // java.lang.Runnable
                         public void run() {
-                            resultCallback.accept(Boolean.valueOf(finalResult));
+                            consumer.accept(Boolean.valueOf(z));
                         }
                     });
                 }
             }
+
+            /* renamed from: com.android.systemui.shared.system.ActivityManagerWrapper$5$1 */
+            class AnonymousClass1 implements Runnable {
+                final /* synthetic */ boolean val$finalResult;
+
+                AnonymousClass1(boolean finalResult2) {
+                    z = finalResult2;
+                }
+
+                @Override // java.lang.Runnable
+                public void run() {
+                    consumer.accept(Boolean.valueOf(z));
+                }
+            }
         });
+    }
+
+    /* renamed from: com.android.systemui.shared.system.ActivityManagerWrapper$5 */
+    class AnonymousClass5 implements Runnable {
+        final /* synthetic */ ActivityOptions val$finalOptions;
+        final /* synthetic */ Consumer val$resultCallback;
+        final /* synthetic */ Handler val$resultCallbackHandler;
+        final /* synthetic */ Task.TaskKey val$taskKey;
+
+        AnonymousClass5(Task.TaskKey taskKey2, ActivityOptions finalOptions2, Consumer resultCallback2, Handler resultCallbackHandler2) {
+            taskKey = taskKey2;
+            activityOptions = finalOptions2;
+            consumer = resultCallback2;
+            handler = resultCallbackHandler2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            boolean result = false;
+            try {
+                result = ActivityManagerWrapper.this.startActivityFromRecents(taskKey.id, activityOptions);
+            } catch (Exception e) {
+            }
+            boolean finalResult2 = result;
+            if (consumer != null) {
+                handler.post(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.5.1
+                    final /* synthetic */ boolean val$finalResult;
+
+                    AnonymousClass1(boolean finalResult22) {
+                        z = finalResult22;
+                    }
+
+                    @Override // java.lang.Runnable
+                    public void run() {
+                        consumer.accept(Boolean.valueOf(z));
+                    }
+                });
+            }
+        }
+
+        /* renamed from: com.android.systemui.shared.system.ActivityManagerWrapper$5$1 */
+        class AnonymousClass1 implements Runnable {
+            final /* synthetic */ boolean val$finalResult;
+
+            AnonymousClass1(boolean finalResult22) {
+                z = finalResult22;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                consumer.accept(Boolean.valueOf(z));
+            }
+        }
     }
 
     public boolean startActivityFromRecents(int taskId, ActivityOptions options) {
@@ -257,12 +431,36 @@ public class ActivityManagerWrapper {
         }
     }
 
-    public void closeSystemWindows(final String reason) {
+    /* renamed from: com.android.systemui.shared.system.ActivityManagerWrapper$6 */
+    class AnonymousClass6 implements Runnable {
+        final /* synthetic */ String val$reason;
+
+        AnonymousClass6(String str) {
+            str = str;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                ActivityManager.getService().closeSystemDialogs(str);
+            } catch (RemoteException e) {
+                Log.w(ActivityManagerWrapper.TAG, "Failed to close system windows", e);
+            }
+        }
+    }
+
+    public void closeSystemWindows(String reason) {
         this.mBackgroundExecutor.submit(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.6
+            final /* synthetic */ String val$reason;
+
+            AnonymousClass6(String reason2) {
+                str = reason2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 try {
-                    ActivityManager.getService().closeSystemDialogs(reason);
+                    ActivityManager.getService().closeSystemDialogs(str);
                 } catch (RemoteException e) {
                     Log.w(ActivityManagerWrapper.TAG, "Failed to close system windows", e);
                 }
@@ -270,14 +468,38 @@ public class ActivityManagerWrapper {
         });
     }
 
-    public void removeTask(final int taskId) {
+    /* renamed from: com.android.systemui.shared.system.ActivityManagerWrapper$7 */
+    class AnonymousClass7 implements Runnable {
+        final /* synthetic */ int val$taskId;
+
+        AnonymousClass7(int i) {
+            i = i;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                ActivityManager.getService().removeTask(i);
+            } catch (RemoteException e) {
+                Log.w(ActivityManagerWrapper.TAG, "Failed to remove task=" + i, e);
+            }
+        }
+    }
+
+    public void removeTask(int taskId) {
         this.mBackgroundExecutor.submit(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.7
+            final /* synthetic */ int val$taskId;
+
+            AnonymousClass7(int taskId2) {
+                i = taskId2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 try {
-                    ActivityManager.getService().removeTask(taskId);
+                    ActivityManager.getService().removeTask(i);
                 } catch (RemoteException e) {
-                    Log.w(ActivityManagerWrapper.TAG, "Failed to remove task=" + taskId, e);
+                    Log.w(ActivityManagerWrapper.TAG, "Failed to remove task=" + i, e);
                 }
             }
         });

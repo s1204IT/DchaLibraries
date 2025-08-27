@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import com.android.systemui.SystemUIApplication;
+
 /* loaded from: classes.dex */
 public class RecentsSystemUserService extends Service {
     @Override // android.app.Service

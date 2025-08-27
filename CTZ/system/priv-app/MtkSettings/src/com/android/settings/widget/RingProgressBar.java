@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class RingProgressBar extends ProgressBar {
     public RingProgressBar(Context context) {
@@ -25,7 +26,7 @@ public class RingProgressBar extends ProgressBar {
     @Override // android.widget.ProgressBar, android.view.View
     protected synchronized void onMeasure(int i, int i2) {
         super.onMeasure(i, i2);
-        int min = Math.min(getMeasuredHeight(), getMeasuredWidth());
-        setMeasuredDimension(min, min);
+        int iMin = Math.min(getMeasuredHeight(), getMeasuredWidth());
+        setMeasuredDimension(iMin, iMin);
     }
 }

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public final class ServiceEntry implements Parcelable {
     Integer banner;
@@ -16,13 +17,14 @@ public final class ServiceEntry implements Parcelable {
     Boolean wasEnabled;
     private static String TAG = "ServiceEntry";
     public static final Parcelable.Creator<ServiceEntry> CREATOR = new Parcelable.Creator<ServiceEntry>() { // from class: com.mediatek.nfcsettingsadapter.ServiceEntry.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ServiceEntry createFromParcel(Parcel parcel) {
             ComponentName componentName;
-            String readString = parcel.readString();
-            String readString2 = parcel.readString();
-            Integer valueOf = Integer.valueOf(parcel.readInt());
+            String string = parcel.readString();
+            String string2 = parcel.readString();
+            Integer numValueOf = Integer.valueOf(parcel.readInt());
             Boolean bool = new Boolean(parcel.readInt() != 0);
             Boolean bool2 = new Boolean(parcel.readInt() != 0);
             if (getClass().getClassLoader() == null) {
@@ -30,9 +32,10 @@ public final class ServiceEntry implements Parcelable {
             } else {
                 componentName = (ComponentName) parcel.readParcelable(getClass().getClassLoader());
             }
-            return new ServiceEntry(componentName, readString, readString2, valueOf, bool, bool2);
+            return new ServiceEntry(componentName, string, string2, numValueOf, bool, bool2);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ServiceEntry[] newArray(int i) {

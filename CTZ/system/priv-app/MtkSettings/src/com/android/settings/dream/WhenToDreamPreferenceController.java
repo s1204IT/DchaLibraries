@@ -5,12 +5,12 @@ import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.dream.DreamBackend;
+
 /* loaded from: classes.dex */
 public class WhenToDreamPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final DreamBackend mBackend;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WhenToDreamPreferenceController(Context context) {
+    WhenToDreamPreferenceController(Context context) {
         super(context);
         this.mBackend = DreamBackend.getInstance(context);
     }

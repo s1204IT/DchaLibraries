@@ -18,6 +18,7 @@ import com.android.settingslib.bluetooth.LocalBluetoothManager;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnCreate;
 import com.android.settingslib.core.lifecycle.events.OnSaveInstanceState;
+
 /* loaded from: classes.dex */
 public class DeviceNamePreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener, ValidatedEditTextPreference.Validator, LifecycleObserver, OnCreate, OnSaveInstanceState {
     public static final int DEVICE_NAME_SET_WARNING_ID = 1;
@@ -31,7 +32,6 @@ public class DeviceNamePreferenceController extends BasePreferenceController imp
     private final WifiDeviceNameTextValidator mWifiDeviceNameTextValidator;
     protected WifiManager mWifiManager;
 
-    /* loaded from: classes.dex */
     public interface DeviceNamePreferenceHost {
         void showDeviceNameWarningDialog(String str);
     }
@@ -124,11 +124,11 @@ public class DeviceNamePreferenceController extends BasePreferenceController imp
     }
 
     private static final String getFilteredBluetoothString(String str) {
-        CharSequence filter = new BluetoothLengthDeviceNameFilter().filter(str, 0, str.length(), new SpannedString(""), 0, 0);
-        if (filter == null) {
+        CharSequence charSequenceFilter = new BluetoothLengthDeviceNameFilter().filter(str, 0, str.length(), new SpannedString(""), 0, 0);
+        if (charSequenceFilter == null) {
             return str;
         }
-        return filter.toString();
+        return charSequenceFilter.toString();
     }
 
     private void setTetherSsidName(String str) {

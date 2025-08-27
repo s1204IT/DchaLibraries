@@ -6,6 +6,7 @@ import com.android.quicksearchbox.util.Consumer;
 import com.android.quicksearchbox.util.Consumers;
 import com.android.quicksearchbox.util.NamedTask;
 import com.android.quicksearchbox.util.NamedTaskExecutor;
+
 /* loaded from: classes.dex */
 public class QueryTask<C extends SuggestionCursor> implements NamedTask {
     private final Consumer<C> mConsumer;

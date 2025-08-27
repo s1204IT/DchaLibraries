@@ -29,6 +29,7 @@ import com.android.settingslib.core.lifecycle.events.OnDestroy;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.concurrent.atomic.AtomicReference;
+
 /* loaded from: classes.dex */
 public class TetherPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnCreate, OnDestroy, OnPause, OnResume {
     private final boolean mAdminDisallowedTetherConfig;
@@ -176,12 +177,12 @@ public class TetherPreferenceController extends AbstractPreferenceController imp
                     while (true) {
                         if (i >= length) {
                             break;
-                        } else if (str.matches(tetherableWifiRegexs[i])) {
+                        }
+                        if (str.matches(tetherableWifiRegexs[i])) {
                             z2 = true;
                             break;
-                        } else {
-                            i++;
                         }
+                        i++;
                     }
                 }
             } else {
@@ -195,7 +196,9 @@ public class TetherPreferenceController extends AbstractPreferenceController imp
         }
         if (!z2 && !z) {
             this.mPreference.setSummary(R.string.switch_off_text);
-        } else if (z2 && z) {
+            return;
+        }
+        if (z2 && z) {
             this.mPreference.setSummary(R.string.tether_settings_summary_hotspot_on_tether_on);
         } else if (z2) {
             this.mPreference.setSummary(R.string.tether_settings_summary_hotspot_on_tether_off);
@@ -204,15 +207,13 @@ public class TetherPreferenceController extends AbstractPreferenceController imp
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSummaryToOff() {
+    private void updateSummaryToOff() {
         if (this.mPreference == null) {
             return;
         }
         this.mPreference.setSummary(R.string.switch_off_text);
     }
 
-    /* loaded from: classes.dex */
     class SettingObserver extends ContentObserver {
         public final Uri uri;
 
@@ -232,7 +233,6 @@ public class TetherPreferenceController extends AbstractPreferenceController imp
         }
     }
 
-    /* loaded from: classes.dex */
     class TetherBroadcastReceiver extends BroadcastReceiver {
         TetherBroadcastReceiver() {
         }

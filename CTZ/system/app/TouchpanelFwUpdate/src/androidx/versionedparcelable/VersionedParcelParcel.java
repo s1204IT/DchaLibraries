@@ -2,6 +2,7 @@ package androidx.versionedparcelable;
 
 import android.os.Parcel;
 import android.util.SparseIntArray;
+
 /* loaded from: classes.dex */
 class VersionedParcelParcel extends VersionedParcel {
     private int mCurrentField;
@@ -12,8 +13,7 @@ class VersionedParcelParcel extends VersionedParcel {
     private final SparseIntArray mPositionLookup;
     private final String mPrefix;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public VersionedParcelParcel(Parcel p) {
+    VersionedParcelParcel(Parcel p) {
         this(p, p.dataPosition(), p.dataSize(), "");
     }
 
@@ -42,10 +42,7 @@ class VersionedParcelParcel extends VersionedParcel {
 
     @Override // androidx.versionedparcelable.VersionedParcel
     protected VersionedParcel createSubParcel() {
-        Parcel parcel = this.mParcel;
-        int dataPosition = this.mParcel.dataPosition();
-        int i = this.mNextRead == this.mOffset ? this.mEnd : this.mNextRead;
-        return new VersionedParcelParcel(parcel, dataPosition, i, this.mPrefix + "  ");
+        return new VersionedParcelParcel(this.mParcel, this.mParcel.dataPosition(), this.mNextRead == this.mOffset ? this.mEnd : this.mNextRead, this.mPrefix + "  ");
     }
 
     @Override // androidx.versionedparcelable.VersionedParcel

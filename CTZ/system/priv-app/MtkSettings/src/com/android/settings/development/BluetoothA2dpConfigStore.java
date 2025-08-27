@@ -1,6 +1,7 @@
 package com.android.settings.development;
 
 import android.bluetooth.BluetoothCodecConfig;
+
 /* loaded from: classes.dex */
 public class BluetoothA2dpConfigStore {
     private long mCodecSpecific1Value;

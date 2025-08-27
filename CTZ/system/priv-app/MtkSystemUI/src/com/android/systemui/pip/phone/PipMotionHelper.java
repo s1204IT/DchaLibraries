@@ -24,6 +24,7 @@ import com.android.systemui.recents.misc.ForegroundThread;
 import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.statusbar.FlingAnimationUtils;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class PipMotionHelper implements Handler.Callback {
     private static final RectEvaluator RECT_EVALUATOR = new RectEvaluator(new Rect());
@@ -48,14 +49,12 @@ public class PipMotionHelper implements Handler.Callback {
         onConfigurationChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onConfigurationChanged() {
+    void onConfigurationChanged() {
         this.mSnapAlgorithm.onConfigurationChanged();
         SystemServicesProxy.getInstance(this.mContext).getStableInsets(this.mStableInsets);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void synchronizePinnedStackBounds() {
+    void synchronizePinnedStackBounds() {
         cancelAnimations();
         try {
             ActivityManager.StackInfo stackInfo = this.mActivityManager.getStackInfo(2, 0);
@@ -67,26 +66,23 @@ public class PipMotionHelper implements Handler.Callback {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void movePip(Rect rect) {
+    void movePip(Rect rect) {
         cancelAnimations();
         resizePipUnchecked(rect);
         this.mBounds.set(rect);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void expandPip() {
+    void expandPip() {
         expandPip(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void expandPip(final boolean z) {
+    void expandPip(final boolean z) {
         cancelAnimations();
         this.mMenuController.hideMenuWithoutResize();
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipMotionHelper$sKxCzHQTJVfrtc--kVVtTIgcND4
             @Override // java.lang.Runnable
             public final void run() {
-                PipMotionHelper.lambda$expandPip$0(PipMotionHelper.this, z);
+                PipMotionHelper.lambda$expandPip$0(this.f$0, z);
             }
         });
     }
@@ -99,14 +95,13 @@ public class PipMotionHelper implements Handler.Callback {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void dismissPip() {
+    void dismissPip() {
         cancelAnimations();
         this.mMenuController.hideMenuWithoutResize();
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipMotionHelper$ExBmB11pCWcEFXztVKlantVNH0o
             @Override // java.lang.Runnable
             public final void run() {
-                PipMotionHelper.lambda$dismissPip$1(PipMotionHelper.this);
+                PipMotionHelper.lambda$dismissPip$1(this.f$0);
             }
         });
     }
@@ -119,29 +114,26 @@ public class PipMotionHelper implements Handler.Callback {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Rect getBounds() {
+    Rect getBounds() {
         return this.mBounds;
     }
 
     Rect getClosestMinimizedBounds(Rect rect, Rect rect2) {
         Point point = new Point();
         this.mContext.getDisplay().getRealSize(point);
-        Rect findClosestSnapBounds = this.mSnapAlgorithm.findClosestSnapBounds(rect2, rect);
-        this.mSnapAlgorithm.applyMinimizedOffset(findClosestSnapBounds, rect2, point, this.mStableInsets);
-        return findClosestSnapBounds;
+        Rect rectFindClosestSnapBounds = this.mSnapAlgorithm.findClosestSnapBounds(rect2, rect);
+        this.mSnapAlgorithm.applyMinimizedOffset(rectFindClosestSnapBounds, rect2, point, this.mStableInsets);
+        return rectFindClosestSnapBounds;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean shouldDismissPip() {
+    boolean shouldDismissPip() {
         Point point = new Point();
         this.mContext.getDisplay().getRealSize(point);
         int i = point.y - this.mStableInsets.bottom;
         return this.mBounds.bottom > i && ((float) (this.mBounds.bottom - i)) / ((float) this.mBounds.height()) >= 0.3f;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Rect animateToClosestMinimizedState(Rect rect, ValueAnimator.AnimatorUpdateListener animatorUpdateListener) {
+    Rect animateToClosestMinimizedState(Rect rect, ValueAnimator.AnimatorUpdateListener animatorUpdateListener) {
         cancelAnimations();
         Rect closestMinimizedBounds = getClosestMinimizedBounds(this.mBounds, rect);
         if (!this.mBounds.equals(closestMinimizedBounds)) {
@@ -154,13 +146,12 @@ public class PipMotionHelper implements Handler.Callback {
         return closestMinimizedBounds;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Rect flingToSnapTarget(float f, float f2, float f3, Rect rect, ValueAnimator.AnimatorUpdateListener animatorUpdateListener, Animator.AnimatorListener animatorListener, Point point) {
+    Rect flingToSnapTarget(float f, float f2, float f3, Rect rect, ValueAnimator.AnimatorUpdateListener animatorUpdateListener, Animator.AnimatorListener animatorListener, Point point) {
         cancelAnimations();
-        Rect findClosestSnapBounds = this.mSnapAlgorithm.findClosestSnapBounds(rect, this.mBounds, f2, f3, point);
-        if (!this.mBounds.equals(findClosestSnapBounds)) {
-            this.mBoundsAnimator = createAnimationToBounds(this.mBounds, findClosestSnapBounds, 0, Interpolators.FAST_OUT_SLOW_IN);
-            this.mFlingAnimationUtils.apply(this.mBoundsAnimator, 0.0f, distanceBetweenRectOffsets(this.mBounds, findClosestSnapBounds), f);
+        Rect rectFindClosestSnapBounds = this.mSnapAlgorithm.findClosestSnapBounds(rect, this.mBounds, f2, f3, point);
+        if (!this.mBounds.equals(rectFindClosestSnapBounds)) {
+            this.mBoundsAnimator = createAnimationToBounds(this.mBounds, rectFindClosestSnapBounds, 0, Interpolators.FAST_OUT_SLOW_IN);
+            this.mFlingAnimationUtils.apply(this.mBoundsAnimator, 0.0f, distanceBetweenRectOffsets(this.mBounds, rectFindClosestSnapBounds), f);
             if (animatorUpdateListener != null) {
                 this.mBoundsAnimator.addUpdateListener(animatorUpdateListener);
             }
@@ -169,15 +160,14 @@ public class PipMotionHelper implements Handler.Callback {
             }
             this.mBoundsAnimator.start();
         }
-        return findClosestSnapBounds;
+        return rectFindClosestSnapBounds;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Rect animateToClosestSnapTarget(Rect rect, ValueAnimator.AnimatorUpdateListener animatorUpdateListener, Animator.AnimatorListener animatorListener) {
+    Rect animateToClosestSnapTarget(Rect rect, ValueAnimator.AnimatorUpdateListener animatorUpdateListener, Animator.AnimatorListener animatorListener) {
         cancelAnimations();
-        Rect findClosestSnapBounds = this.mSnapAlgorithm.findClosestSnapBounds(rect, this.mBounds);
-        if (!this.mBounds.equals(findClosestSnapBounds)) {
-            this.mBoundsAnimator = createAnimationToBounds(this.mBounds, findClosestSnapBounds, 225, Interpolators.FAST_OUT_SLOW_IN);
+        Rect rectFindClosestSnapBounds = this.mSnapAlgorithm.findClosestSnapBounds(rect, this.mBounds);
+        if (!this.mBounds.equals(rectFindClosestSnapBounds)) {
+            this.mBoundsAnimator = createAnimationToBounds(this.mBounds, rectFindClosestSnapBounds, 225, Interpolators.FAST_OUT_SLOW_IN);
             if (animatorUpdateListener != null) {
                 this.mBoundsAnimator.addUpdateListener(animatorUpdateListener);
             }
@@ -186,19 +176,17 @@ public class PipMotionHelper implements Handler.Callback {
             }
             this.mBoundsAnimator.start();
         }
-        return findClosestSnapBounds;
+        return rectFindClosestSnapBounds;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float animateToExpandedState(Rect rect, Rect rect2, Rect rect3) {
+    float animateToExpandedState(Rect rect, Rect rect2, Rect rect3) {
         float snapFraction = this.mSnapAlgorithm.getSnapFraction(new Rect(this.mBounds), rect2);
         this.mSnapAlgorithm.applySnapFraction(rect, rect3, snapFraction);
         resizeAndAnimatePipUnchecked(rect, 250);
         return snapFraction;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void animateToUnexpandedState(Rect rect, float f, Rect rect2, Rect rect3, boolean z, boolean z2) {
+    void animateToUnexpandedState(Rect rect, float f, Rect rect2, Rect rect3, boolean z, boolean z2) {
         if (f < 0.0f) {
             f = this.mSnapAlgorithm.getSnapFraction(new Rect(this.mBounds), rect3);
         }
@@ -213,14 +201,12 @@ public class PipMotionHelper implements Handler.Callback {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void animateToOffset(Rect rect) {
+    void animateToOffset(Rect rect) {
         cancelAnimations();
         resizeAndAnimatePipUnchecked(rect, 300);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Rect animateDismiss(Rect rect, float f, float f2, ValueAnimator.AnimatorUpdateListener animatorUpdateListener) {
+    Rect animateDismiss(Rect rect, float f, float f2, ValueAnimator.AnimatorUpdateListener animatorUpdateListener) {
         cancelAnimations();
         float length = PointF.length(f, f2);
         boolean z = length > this.mFlingAnimationUtils.getMinVelocityPxPerSecond();
@@ -264,39 +250,37 @@ public class PipMotionHelper implements Handler.Callback {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipMotionHelper$UijvXdqv_A_f2ZSKr4tqG6uf9mk
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator2) {
-                PipMotionHelper.this.resizePipUnchecked((Rect) valueAnimator2.getAnimatedValue());
+                this.f$0.resizePipUnchecked((Rect) valueAnimator2.getAnimatedValue());
             }
         });
         return valueAnimator;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resizePipUnchecked(Rect rect) {
+    private void resizePipUnchecked(Rect rect) {
         if (!rect.equals(this.mBounds)) {
-            SomeArgs obtain = SomeArgs.obtain();
-            obtain.arg1 = rect;
-            this.mHandler.sendMessage(this.mHandler.obtainMessage(1, obtain));
+            SomeArgs someArgsObtain = SomeArgs.obtain();
+            someArgsObtain.arg1 = rect;
+            this.mHandler.sendMessage(this.mHandler.obtainMessage(1, someArgsObtain));
         }
     }
 
     private void resizeAndAnimatePipUnchecked(Rect rect, int i) {
         if (!rect.equals(this.mBounds)) {
-            SomeArgs obtain = SomeArgs.obtain();
-            obtain.arg1 = rect;
-            obtain.argi1 = i;
-            this.mHandler.sendMessage(this.mHandler.obtainMessage(2, obtain));
+            SomeArgs someArgsObtain = SomeArgs.obtain();
+            someArgsObtain.arg1 = rect;
+            someArgsObtain.argi1 = i;
+            this.mHandler.sendMessage(this.mHandler.obtainMessage(2, someArgsObtain));
         }
     }
 
     private Point getDismissEndPoint(Rect rect, float f, float f2, boolean z) {
-        Point point = new Point();
-        this.mContext.getDisplay().getRealSize(point);
-        float height = point.y + (rect.height() * 0.1f);
+        this.mContext.getDisplay().getRealSize(new Point());
+        float fHeight = r0.y + (rect.height() * 0.1f);
         if (z && f != 0.0f && f2 != 0.0f) {
             float f3 = f2 / f;
-            return new Point((int) ((height - (rect.top - (rect.left * f3))) / f3), (int) height);
+            return new Point((int) ((fHeight - (rect.top - (rect.left * f3))) / f3), (int) fHeight);
         }
-        return new Point(rect.left, (int) height);
+        return new Point(rect.left, (int) fHeight);
     }
 
     private float distanceBetweenRectOffsets(Rect rect, Rect rect2) {

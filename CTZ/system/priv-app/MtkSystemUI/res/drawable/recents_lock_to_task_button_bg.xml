@@ -3,7 +3,9 @@
     <item>
         <shape android:shape="oval">
             <solid android:color="#9cc8c4"/>
-            <size android:height="@dimen/recents_lock_to_app_size" android:width="@dimen/recents_lock_to_app_size"/>
+            <size
+                android:height="@dimen/recents_lock_to_app_size"
+                android:width="@dimen/recents_lock_to_app_size"/>
         </shape>
     </item>
 </ripple>

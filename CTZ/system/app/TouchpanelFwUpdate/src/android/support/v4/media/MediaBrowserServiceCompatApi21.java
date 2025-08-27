@@ -9,10 +9,10 @@ import android.os.Parcel;
 import android.service.media.MediaBrowserService;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 class MediaBrowserServiceCompatApi21 {
 
-    /* loaded from: classes.dex */
     public interface ServiceCompatProxy {
         BrowserRoot onGetRoot(String str, int i, Bundle bundle);
 
@@ -31,27 +31,29 @@ class MediaBrowserServiceCompatApi21 {
         return ((MediaBrowserService) serviceObj).onBind(intent);
     }
 
-    /* loaded from: classes.dex */
     static class ResultWrapper<T> {
         MediaBrowserService.Result mResultObj;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public ResultWrapper(MediaBrowserService.Result result) {
+        ResultWrapper(MediaBrowserService.Result result) {
             this.mResultObj = result;
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r1v2, resolved type: android.service.media.MediaBrowserService$Result */
+        /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: T */
         /* JADX WARN: Multi-variable type inference failed */
-        public void sendResult(T result) {
-            if (result instanceof List) {
-                this.mResultObj.sendResult(parcelListToItemList((List) result));
-            } else if (result instanceof Parcel) {
-                Parcel parcel = (Parcel) result;
+        public void sendResult(T t) {
+            if (t instanceof List) {
+                this.mResultObj.sendResult(parcelListToItemList((List) t));
+                return;
+            }
+            if (t instanceof Parcel) {
+                Parcel parcel = (Parcel) t;
                 parcel.setDataPosition(0);
                 this.mResultObj.sendResult(MediaBrowser.MediaItem.CREATOR.createFromParcel(parcel));
                 parcel.recycle();
-            } else {
-                this.mResultObj.sendResult(null);
+                return;
             }
+            this.mResultObj.sendResult(null);
         }
 
         List<MediaBrowser.MediaItem> parcelListToItemList(List<Parcel> parcelList) {
@@ -68,24 +70,20 @@ class MediaBrowserServiceCompatApi21 {
         }
     }
 
-    /* loaded from: classes.dex */
     static class BrowserRoot {
         final Bundle mExtras;
         final String mRootId;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public BrowserRoot(String rootId, Bundle extras) {
+        BrowserRoot(String rootId, Bundle extras) {
             this.mRootId = rootId;
             this.mExtras = extras;
         }
     }
 
-    /* loaded from: classes.dex */
     static class MediaBrowserServiceAdaptor extends MediaBrowserService {
         final ServiceCompatProxy mServiceProxy;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public MediaBrowserServiceAdaptor(Context context, ServiceCompatProxy serviceWrapper) {
+        MediaBrowserServiceAdaptor(Context context, ServiceCompatProxy serviceWrapper) {
             attachBaseContext(context);
             this.mServiceProxy = serviceWrapper;
         }

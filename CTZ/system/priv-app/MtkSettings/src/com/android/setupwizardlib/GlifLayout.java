@@ -22,6 +22,7 @@ import com.android.setupwizardlib.template.ProgressBarMixin;
 import com.android.setupwizardlib.template.RequireScrollMixin;
 import com.android.setupwizardlib.template.ScrollViewScrollHandlingDelegate;
 import com.android.setupwizardlib.view.StatusBarBackgroundLayout;
+
 /* loaded from: classes.dex */
 public class GlifLayout extends TemplateLayout {
     private ColorStateList mBackgroundBaseColor;
@@ -70,40 +71,38 @@ public class GlifLayout extends TemplateLayout {
         if (scrollView != null) {
             requireScrollMixin.setScrollHandlingDelegate(new ScrollViewScrollHandlingDelegate(requireScrollMixin, scrollView));
         }
-        TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwGlifLayout, i, 0);
-        ColorStateList colorStateList = obtainStyledAttributes.getColorStateList(R.styleable.SuwGlifLayout_suwColorPrimary);
+        TypedArray typedArrayObtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwGlifLayout, i, 0);
+        ColorStateList colorStateList = typedArrayObtainStyledAttributes.getColorStateList(R.styleable.SuwGlifLayout_suwColorPrimary);
         if (colorStateList != null) {
             setPrimaryColor(colorStateList);
         }
-        setBackgroundBaseColor(obtainStyledAttributes.getColorStateList(R.styleable.SuwGlifLayout_suwBackgroundBaseColor));
-        setBackgroundPatterned(obtainStyledAttributes.getBoolean(R.styleable.SuwGlifLayout_suwBackgroundPatterned, true));
-        int resourceId = obtainStyledAttributes.getResourceId(R.styleable.SuwGlifLayout_suwFooter, 0);
+        setBackgroundBaseColor(typedArrayObtainStyledAttributes.getColorStateList(R.styleable.SuwGlifLayout_suwBackgroundBaseColor));
+        setBackgroundPatterned(typedArrayObtainStyledAttributes.getBoolean(R.styleable.SuwGlifLayout_suwBackgroundPatterned, true));
+        int resourceId = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwGlifLayout_suwFooter, 0);
         if (resourceId != 0) {
             inflateFooter(resourceId);
         }
-        int resourceId2 = obtainStyledAttributes.getResourceId(R.styleable.SuwGlifLayout_suwStickyHeader, 0);
+        int resourceId2 = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwGlifLayout_suwStickyHeader, 0);
         if (resourceId2 != 0) {
             inflateStickyHeader(resourceId2);
         }
-        this.mLayoutFullscreen = obtainStyledAttributes.getBoolean(R.styleable.SuwGlifLayout_suwLayoutFullscreen, true);
-        obtainStyledAttributes.recycle();
+        this.mLayoutFullscreen = typedArrayObtainStyledAttributes.getBoolean(R.styleable.SuwGlifLayout_suwLayoutFullscreen, true);
+        typedArrayObtainStyledAttributes.recycle();
         if (Build.VERSION.SDK_INT >= 21 && this.mLayoutFullscreen) {
             setSystemUiVisibility(1024);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.TemplateLayout
-    public View onInflateTemplate(LayoutInflater layoutInflater, int i) {
+    protected View onInflateTemplate(LayoutInflater layoutInflater, int i) {
         if (i == 0) {
             i = R.layout.suw_glif_template;
         }
         return inflateTemplate(layoutInflater, R.style.SuwThemeGlif_Light, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.TemplateLayout
-    public ViewGroup findContainer(int i) {
+    protected ViewGroup findContainer(int i) {
         if (i == 0) {
             i = R.id.suw_layout_content;
         }
@@ -123,9 +122,9 @@ public class GlifLayout extends TemplateLayout {
     }
 
     public ScrollView getScrollView() {
-        View findManagedViewById = findManagedViewById(R.id.suw_scroll_view);
-        if (findManagedViewById instanceof ScrollView) {
-            return (ScrollView) findManagedViewById;
+        View viewFindManagedViewById = findManagedViewById(R.id.suw_scroll_view);
+        if (viewFindManagedViewById instanceof ScrollView) {
+            return (ScrollView) viewFindManagedViewById;
         }
         return null;
     }
@@ -188,23 +187,23 @@ public class GlifLayout extends TemplateLayout {
 
     private void updateBackground() {
         Drawable colorDrawable;
-        View findManagedViewById = findManagedViewById(R.id.suw_pattern_bg);
-        if (findManagedViewById != null) {
-            int i = 0;
+        View viewFindManagedViewById = findManagedViewById(R.id.suw_pattern_bg);
+        if (viewFindManagedViewById != null) {
+            int defaultColor = 0;
             if (this.mBackgroundBaseColor != null) {
-                i = this.mBackgroundBaseColor.getDefaultColor();
+                defaultColor = this.mBackgroundBaseColor.getDefaultColor();
             } else if (this.mPrimaryColor != null) {
-                i = this.mPrimaryColor.getDefaultColor();
+                defaultColor = this.mPrimaryColor.getDefaultColor();
             }
             if (this.mBackgroundPatterned) {
-                colorDrawable = new GlifPatternDrawable(i);
+                colorDrawable = new GlifPatternDrawable(defaultColor);
             } else {
-                colorDrawable = new ColorDrawable(i);
+                colorDrawable = new ColorDrawable(defaultColor);
             }
-            if (findManagedViewById instanceof StatusBarBackgroundLayout) {
-                ((StatusBarBackgroundLayout) findManagedViewById).setStatusBarBackground(colorDrawable);
+            if (viewFindManagedViewById instanceof StatusBarBackgroundLayout) {
+                ((StatusBarBackgroundLayout) viewFindManagedViewById).setStatusBarBackground(colorDrawable);
             } else {
-                findManagedViewById.setBackgroundDrawable(colorDrawable);
+                viewFindManagedViewById.setBackgroundDrawable(colorDrawable);
             }
         }
     }

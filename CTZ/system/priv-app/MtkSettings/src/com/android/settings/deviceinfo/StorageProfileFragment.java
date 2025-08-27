@@ -20,6 +20,7 @@ import com.android.settingslib.deviceinfo.StorageManagerVolumeProvider;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class StorageProfileFragment extends DashboardFragment implements LoaderManager.LoaderCallbacks<SparseArray<StorageAsyncLoader.AppsStorageResult>> {
     private StorageItemPreferenceController mPreferenceController;
@@ -56,9 +57,8 @@ public class StorageProfileFragment extends DashboardFragment implements LoaderM
         return "StorageProfileFragment";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.storage_profile_fragment;
     }
 
@@ -76,6 +76,7 @@ public class StorageProfileFragment extends DashboardFragment implements LoaderM
         return new StorageAsyncLoader(context, (UserManager) context.getSystemService(UserManager.class), this.mVolume.fsUuid, new StorageStatsSource(context), new PackageManagerWrapper(context.getPackageManager()));
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<SparseArray<StorageAsyncLoader.AppsStorageResult>> loader, SparseArray<StorageAsyncLoader.AppsStorageResult> sparseArray) {
         this.mPreferenceController.onLoadFinished(sparseArray, this.mUserId);

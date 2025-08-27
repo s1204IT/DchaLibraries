@@ -9,6 +9,7 @@ import com.android.launcher3.ShortcutInfo;
 import com.android.launcher3.shortcuts.ShortcutKey;
 import java.util.HashSet;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public abstract class ItemInfoMatcher {
     public abstract boolean matches(ItemInfo itemInfo, ComponentName componentName);
@@ -105,9 +106,11 @@ public abstract class ItemInfoMatcher {
 
     public static ItemInfoMatcher ofItemIds(final LongArrayMap<Boolean> longArrayMap, final Boolean bool) {
         return new ItemInfoMatcher() { // from class: com.android.launcher3.util.ItemInfoMatcher.8
+            /* JADX DEBUG: Multi-variable search result rejected for r3v2, resolved type: E */
+            /* JADX WARN: Multi-variable type inference failed */
             @Override // com.android.launcher3.util.ItemInfoMatcher
             public boolean matches(ItemInfo itemInfo, ComponentName componentName) {
-                return ((Boolean) LongArrayMap.this.get(itemInfo.id, bool)).booleanValue();
+                return ((Boolean) longArrayMap.get(itemInfo.id, bool)).booleanValue();
             }
         };
     }

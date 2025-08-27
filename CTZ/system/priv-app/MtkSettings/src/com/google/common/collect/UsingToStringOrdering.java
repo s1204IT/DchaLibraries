@@ -1,9 +1,9 @@
 package com.google.common.collect;
 
 import java.io.Serializable;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class UsingToStringOrdering extends Ordering<Object> implements Serializable {
+final class UsingToStringOrdering extends Ordering<Object> implements Serializable {
     static final UsingToStringOrdering INSTANCE = new UsingToStringOrdering();
     private static final long serialVersionUID = 0;
 

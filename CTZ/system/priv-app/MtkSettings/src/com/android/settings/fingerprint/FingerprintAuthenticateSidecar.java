@@ -3,6 +3,7 @@ package com.android.settings.fingerprint;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.CancellationSignal;
 import com.android.settings.core.InstrumentedFragment;
+
 /* loaded from: classes.dex */
 public class FingerprintAuthenticateSidecar extends InstrumentedFragment {
     private FingerprintManager.AuthenticationCallback mAuthenticationCallback = new FingerprintManager.AuthenticationCallback() { // from class: com.android.settings.fingerprint.FingerprintAuthenticateSidecar.1
@@ -11,10 +12,10 @@ public class FingerprintAuthenticateSidecar extends InstrumentedFragment {
             FingerprintAuthenticateSidecar.this.mCancellationSignal = null;
             if (FingerprintAuthenticateSidecar.this.mListener != null) {
                 FingerprintAuthenticateSidecar.this.mListener.onAuthenticationSucceeded(authenticationResult);
-                return;
+            } else {
+                FingerprintAuthenticateSidecar.this.mAuthenticationResult = authenticationResult;
+                FingerprintAuthenticateSidecar.this.mAuthenticationError = null;
             }
-            FingerprintAuthenticateSidecar.this.mAuthenticationResult = authenticationResult;
-            FingerprintAuthenticateSidecar.this.mAuthenticationError = null;
         }
 
         @Override // android.hardware.fingerprint.FingerprintManager.AuthenticationCallback
@@ -31,7 +32,7 @@ public class FingerprintAuthenticateSidecar extends InstrumentedFragment {
                 FingerprintAuthenticateSidecar.this.mListener.onAuthenticationError(i, charSequence);
                 return;
             }
-            FingerprintAuthenticateSidecar.this.mAuthenticationError = new AuthenticationError(i, charSequence);
+            FingerprintAuthenticateSidecar.this.mAuthenticationError = FingerprintAuthenticateSidecar.this.new AuthenticationError(i, charSequence);
             FingerprintAuthenticateSidecar.this.mAuthenticationResult = null;
         }
 
@@ -48,7 +49,6 @@ public class FingerprintAuthenticateSidecar extends InstrumentedFragment {
     private FingerprintManager mFingerprintManager;
     private Listener mListener;
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onAuthenticationError(int i, CharSequence charSequence);
 
@@ -59,7 +59,6 @@ public class FingerprintAuthenticateSidecar extends InstrumentedFragment {
         void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult authenticationResult);
     }
 
-    /* loaded from: classes.dex */
     private class AuthenticationError {
         int error;
         CharSequence errorString;

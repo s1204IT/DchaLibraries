@@ -3,6 +3,7 @@ package com.mediatek.settings.security;
 import android.content.Context;
 import android.content.Intent;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class AutoBootManagementPreferenceController extends AbstractPreferenceController {
     public AutoBootManagementPreferenceController(Context context) {

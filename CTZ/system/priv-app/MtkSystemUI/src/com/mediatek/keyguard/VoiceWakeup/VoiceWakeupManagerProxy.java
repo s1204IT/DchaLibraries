@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import com.android.keyguard.KeyguardSecurityModel;
 import com.android.keyguard.ViewMediatorCallback;
+import java.lang.reflect.InvocationTargetException;
+
 /* loaded from: classes.dex */
 public class VoiceWakeupManagerProxy {
     private static VoiceWakeupManagerProxy sInstance = null;
@@ -60,7 +62,7 @@ public class VoiceWakeupManagerProxy {
         }
     }
 
-    public void notifySecurityModeChange(KeyguardSecurityModel.SecurityMode securityMode, KeyguardSecurityModel.SecurityMode securityMode2) {
+    public void notifySecurityModeChange(KeyguardSecurityModel.SecurityMode securityMode, KeyguardSecurityModel.SecurityMode securityMode2) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try {
             if (mVoiceWakeupInstance != null) {
                 mVoiceWakeupClsObj.getDeclaredMethod("notifySecurityModeChange", KeyguardSecurityModel.SecurityMode.class, KeyguardSecurityModel.SecurityMode.class).invoke(mVoiceWakeupInstance, securityMode, securityMode2);
@@ -71,7 +73,7 @@ public class VoiceWakeupManagerProxy {
         }
     }
 
-    public void notifyKeyguardIsGone() {
+    public void notifyKeyguardIsGone() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try {
             if (mVoiceWakeupInstance != null) {
                 mVoiceWakeupClsObj.getDeclaredMethod("notifyKeyguardIsGone", new Class[0]).invoke(mVoiceWakeupInstance, new Object[0]);
@@ -82,7 +84,7 @@ public class VoiceWakeupManagerProxy {
         }
     }
 
-    public void init(Context context, ViewMediatorCallback viewMediatorCallback) {
+    public void init(Context context, ViewMediatorCallback viewMediatorCallback) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try {
             if (mVoiceWakeupInstance != null) {
                 mVoiceWakeupClsObj.getDeclaredMethod("init", Context.class, ViewMediatorCallback.class).invoke(mVoiceWakeupInstance, context, viewMediatorCallback);

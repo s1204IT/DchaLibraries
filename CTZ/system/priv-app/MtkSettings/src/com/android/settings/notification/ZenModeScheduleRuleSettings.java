@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.service.notification.ZenModeConfig;
 import android.support.v14.preference.SwitchPreference;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
     private final SimpleDateFormat mDayFormat = new SimpleDateFormat("EEE");
@@ -38,9 +40,8 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
         return this.mSchedule != null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.zen_mode_schedule_rule_settings;
     }
 
@@ -65,19 +66,19 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
                 if (ZenModeScheduleRuleSettings.this.mDisableListeners) {
                     return true;
                 }
-                if (ZenModeConfig.isValidHour(i) && ZenModeConfig.isValidMinute(i2)) {
-                    if (i == ZenModeScheduleRuleSettings.this.mSchedule.startHour && i2 == ZenModeScheduleRuleSettings.this.mSchedule.startMinute) {
-                        return true;
-                    }
-                    if (ZenModeRuleSettingsBase.DEBUG) {
-                        Log.d("ZenModeSettings", "onPrefChange start h=" + i + " m=" + i2);
-                    }
-                    ZenModeScheduleRuleSettings.this.mSchedule.startHour = i;
-                    ZenModeScheduleRuleSettings.this.mSchedule.startMinute = i2;
-                    ZenModeScheduleRuleSettings.this.updateRule(ZenModeConfig.toScheduleConditionId(ZenModeScheduleRuleSettings.this.mSchedule));
+                if (!ZenModeConfig.isValidHour(i) || !ZenModeConfig.isValidMinute(i2)) {
+                    return false;
+                }
+                if (i == ZenModeScheduleRuleSettings.this.mSchedule.startHour && i2 == ZenModeScheduleRuleSettings.this.mSchedule.startMinute) {
                     return true;
                 }
-                return false;
+                if (ZenModeRuleSettingsBase.DEBUG) {
+                    Log.d("ZenModeSettings", "onPrefChange start h=" + i + " m=" + i2);
+                }
+                ZenModeScheduleRuleSettings.this.mSchedule.startHour = i;
+                ZenModeScheduleRuleSettings.this.mSchedule.startMinute = i2;
+                ZenModeScheduleRuleSettings.this.updateRule(ZenModeConfig.toScheduleConditionId(ZenModeScheduleRuleSettings.this.mSchedule));
+                return true;
             }
         });
         preferenceScreen.addPreference(this.mStart);
@@ -91,19 +92,19 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
                 if (ZenModeScheduleRuleSettings.this.mDisableListeners) {
                     return true;
                 }
-                if (ZenModeConfig.isValidHour(i) && ZenModeConfig.isValidMinute(i2)) {
-                    if (i == ZenModeScheduleRuleSettings.this.mSchedule.endHour && i2 == ZenModeScheduleRuleSettings.this.mSchedule.endMinute) {
-                        return true;
-                    }
-                    if (ZenModeRuleSettingsBase.DEBUG) {
-                        Log.d("ZenModeSettings", "onPrefChange end h=" + i + " m=" + i2);
-                    }
-                    ZenModeScheduleRuleSettings.this.mSchedule.endHour = i;
-                    ZenModeScheduleRuleSettings.this.mSchedule.endMinute = i2;
-                    ZenModeScheduleRuleSettings.this.updateRule(ZenModeConfig.toScheduleConditionId(ZenModeScheduleRuleSettings.this.mSchedule));
+                if (!ZenModeConfig.isValidHour(i) || !ZenModeConfig.isValidMinute(i2)) {
+                    return false;
+                }
+                if (i == ZenModeScheduleRuleSettings.this.mSchedule.endHour && i2 == ZenModeScheduleRuleSettings.this.mSchedule.endMinute) {
                     return true;
                 }
-                return false;
+                if (ZenModeRuleSettingsBase.DEBUG) {
+                    Log.d("ZenModeSettings", "onPrefChange end h=" + i + " m=" + i2);
+                }
+                ZenModeScheduleRuleSettings.this.mSchedule.endHour = i;
+                ZenModeScheduleRuleSettings.this.mSchedule.endMinute = i2;
+                ZenModeScheduleRuleSettings.this.updateRule(ZenModeConfig.toScheduleConditionId(ZenModeScheduleRuleSettings.this.mSchedule));
+                return true;
             }
         });
         preferenceScreen.addPreference(this.mEnd);
@@ -119,9 +120,7 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDays() {
-        int[] daysOfWeekForLocale;
+    private void updateDays() {
         int[] iArr = this.mSchedule.days;
         if (iArr != null && iArr.length > 0) {
             StringBuilder sb = new StringBuilder();
@@ -131,7 +130,8 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
                 while (true) {
                     if (i2 >= iArr.length) {
                         break;
-                    } else if (i != iArr[i2]) {
+                    }
+                    if (i != iArr[i2]) {
                         i2++;
                     } else {
                         calendar.set(7, i);
@@ -152,12 +152,12 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
         this.mDays.notifyDependencyChange(true);
     }
 
-    private void updateEndSummary() {
+    private void updateEndSummary() throws Resources.NotFoundException {
         this.mEnd.setSummaryFormat((this.mSchedule.startHour * 60) + this.mSchedule.startMinute >= (60 * this.mSchedule.endHour) + this.mSchedule.endMinute ? R.string.zen_mode_end_time_next_day_summary_format : 0);
     }
 
     @Override // com.android.settings.notification.ZenModeRuleSettingsBase
-    protected void updateControlsInternal() {
+    protected void updateControlsInternal() throws Resources.NotFoundException {
         updateDays();
         this.mStart.setTime(this.mSchedule.startHour, this.mSchedule.startMinute);
         this.mEnd.setTime(this.mSchedule.endHour, this.mSchedule.endMinute);
@@ -180,8 +180,7 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
         return 144;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showDaysDialog() {
+    private void showDaysDialog() {
         new AlertDialog.Builder(this.mContext).setTitle(R.string.zen_mode_schedule_rule_days).setView(new ZenModeScheduleDaysSelection(this.mContext, this.mSchedule.days) { // from class: com.android.settings.notification.ZenModeScheduleRuleSettings.6
             @Override // com.android.settings.notification.ZenModeScheduleDaysSelection
             protected void onChanged(int[] iArr) {
@@ -202,16 +201,13 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
         }).setPositiveButton(R.string.done_button, (DialogInterface.OnClickListener) null).show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class TimePickerPreference extends Preference {
+    private static class TimePickerPreference extends Preference {
         private Callback mCallback;
         private final Context mContext;
         private int mHourOfDay;
         private int mMinute;
         private int mSummaryFormat;
 
-        /* loaded from: classes.dex */
         public interface Callback {
             boolean onSetTime(int i, int i2);
         }
@@ -235,12 +231,12 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
             this.mCallback = callback;
         }
 
-        public void setSummaryFormat(int i) {
+        public void setSummaryFormat(int i) throws Resources.NotFoundException {
             this.mSummaryFormat = i;
             updateSummary();
         }
 
-        public void setTime(int i, int i2) {
+        public void setTime(int i, int i2) throws Resources.NotFoundException {
             if (this.mCallback == null || this.mCallback.onSetTime(i, i2)) {
                 this.mHourOfDay = i;
                 this.mMinute = i2;
@@ -248,18 +244,17 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
             }
         }
 
-        private void updateSummary() {
+        private void updateSummary() throws Resources.NotFoundException {
             Calendar calendar = Calendar.getInstance();
             calendar.set(11, this.mHourOfDay);
             calendar.set(12, this.mMinute);
-            String format = DateFormat.getTimeFormat(this.mContext).format(calendar.getTime());
+            String string = DateFormat.getTimeFormat(this.mContext).format(calendar.getTime());
             if (this.mSummaryFormat != 0) {
-                format = this.mContext.getResources().getString(this.mSummaryFormat, format);
+                string = this.mContext.getResources().getString(this.mSummaryFormat, string);
             }
-            setSummary(format);
+            setSummary(string);
         }
 
-        /* loaded from: classes.dex */
         public static class TimePickerFragment extends InstrumentedDialogFragment implements TimePickerDialog.OnTimeSetListener {
             public TimePickerPreference pref;
 
@@ -289,7 +284,7 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
             }
 
             @Override // android.app.TimePickerDialog.OnTimeSetListener
-            public void onTimeSet(TimePicker timePicker, int i, int i2) {
+            public void onTimeSet(TimePicker timePicker, int i, int i2) throws Resources.NotFoundException {
                 if (this.pref != null) {
                     this.pref.setTime(i, i2);
                 }

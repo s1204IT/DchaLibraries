@@ -30,8 +30,10 @@ import com.android.browser.WebStorageSizeManager;
 import com.android.browser.provider.BrowserContract;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class WebsiteSettingsFragment extends ListFragment implements View.OnClickListener {
     private static String sMBStored = null;
@@ -39,17 +41,18 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
     private SiteAdapter mAdapter = null;
     private Site mSite = null;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Site implements Parcelable {
+    static class Site implements Parcelable {
         public static final Parcelable.Creator<Site> CREATOR = new Parcelable.Creator<Site>() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.Site.1
-            /* JADX WARN: Can't rename method to resolve collision */
+            AnonymousClass1() {
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             @Override // android.os.Parcelable.Creator
             public Site createFromParcel(Parcel parcel) {
                 return new Site(parcel);
             }
 
-            /* JADX WARN: Can't rename method to resolve collision */
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             @Override // android.os.Parcelable.Creator
             public Site[] newArray(int i) {
                 return new Site[i];
@@ -59,6 +62,10 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
         private Bitmap mIcon;
         private String mOrigin;
         private String mTitle;
+
+        /* synthetic */ Site(Parcel parcel, AnonymousClass1 anonymousClass1) {
+            this(parcel);
+        }
 
         public Site(String str) {
             this.mOrigin = str;
@@ -148,11 +155,27 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             this.mFeatures = parcel.readInt();
             this.mIcon = (Bitmap) parcel.readParcelable(null);
         }
+
+        /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$Site$1 */
+        class AnonymousClass1 implements Parcelable.Creator<Site> {
+            AnonymousClass1() {
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
+            @Override // android.os.Parcelable.Creator
+            public Site createFromParcel(Parcel parcel) {
+                return new Site(parcel);
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
+            @Override // android.os.Parcelable.Creator
+            public Site[] newArray(int i) {
+                return new Site[i];
+            }
+        }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class SiteAdapter extends ArrayAdapter<Site> implements AdapterView.OnItemClickListener {
+    class SiteAdapter extends ArrayAdapter<Site> implements AdapterView.OnItemClickListener {
         private Site mCurrentSite;
         private Bitmap mDefaultIcon;
         private LayoutInflater mInflater;
@@ -183,8 +206,7 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void addFeatureToSite(Map<String, Site> map, String str, int i) {
+        private void addFeatureToSite(Map<String, Site> map, String str, int i) {
             Site site;
             if (map.containsKey(str)) {
                 site = map.get(str);
@@ -196,28 +218,82 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             site.addFeature(i);
         }
 
+        /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$SiteAdapter$1 */
+        class AnonymousClass1 implements ValueCallback<Map> {
+            AnonymousClass1() {
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
+            @Override // android.webkit.ValueCallback
+            public void onReceiveValue(Map map) {
+                HashMap map2 = new HashMap();
+                if (map != null) {
+                    Iterator it = map.keySet().iterator();
+                    while (it.hasNext()) {
+                        SiteAdapter.this.addFeatureToSite(map2, (String) it.next(), 0);
+                    }
+                }
+                SiteAdapter.this.askForGeolocation(map2);
+            }
+        }
+
         public void askForOrigins() {
             WebStorage.getInstance().getOrigins(new ValueCallback<Map>() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.SiteAdapter.1
+                AnonymousClass1() {
+                }
+
+                /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
                 @Override // android.webkit.ValueCallback
                 public void onReceiveValue(Map map) {
-                    HashMap hashMap = new HashMap();
+                    HashMap map2 = new HashMap();
                     if (map != null) {
-                        for (String str : map.keySet()) {
-                            SiteAdapter.this.addFeatureToSite(hashMap, str, 0);
+                        Iterator it = map.keySet().iterator();
+                        while (it.hasNext()) {
+                            SiteAdapter.this.addFeatureToSite(map2, (String) it.next(), 0);
                         }
                     }
-                    SiteAdapter.this.askForGeolocation(hashMap);
+                    SiteAdapter.this.askForGeolocation(map2);
                 }
             });
         }
 
-        public void askForGeolocation(final Map<String, Site> map) {
+        /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$SiteAdapter$2 */
+        class AnonymousClass2 implements ValueCallback<Set<String>> {
+            final /* synthetic */ Map val$sites;
+
+            AnonymousClass2(Map map) {
+                map = map;
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
+            @Override // android.webkit.ValueCallback
+            public void onReceiveValue(Set<String> set) {
+                if (set != null) {
+                    Iterator<String> it = set.iterator();
+                    while (it.hasNext()) {
+                        SiteAdapter.this.addFeatureToSite(map, it.next(), 1);
+                    }
+                }
+                SiteAdapter.this.populateIcons(map);
+                SiteAdapter.this.populateOrigins(map);
+            }
+        }
+
+        public void askForGeolocation(Map<String, Site> map) {
             GeolocationPermissions.getInstance().getOrigins(new ValueCallback<Set<String>>() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.SiteAdapter.2
+                final /* synthetic */ Map val$sites;
+
+                AnonymousClass2(Map map2) {
+                    map = map2;
+                }
+
+                /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
                 @Override // android.webkit.ValueCallback
                 public void onReceiveValue(Set<String> set) {
                     if (set != null) {
-                        for (String str : set) {
-                            SiteAdapter.this.addFeatureToSite(map, str, 1);
+                        Iterator<String> it = set.iterator();
+                        while (it.hasNext()) {
+                            SiteAdapter.this.addFeatureToSite(map, it.next(), 1);
                         }
                     }
                     SiteAdapter.this.populateIcons(map);
@@ -230,9 +306,7 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             new UpdateFromBookmarksDbTask(getContext(), map).execute(new Void[0]);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class UpdateFromBookmarksDbTask extends AsyncTask<Void, Void, Void> {
+        private class UpdateFromBookmarksDbTask extends AsyncTask<Void, Void, Void> {
             private Context mContext;
             private boolean mDataSetChanged;
             private Map<String, Site> mSites;
@@ -242,70 +316,68 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
                 this.mSites = map;
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
-            /* JADX WARN: Code restructure failed: missing block: B:27:0x00e3, code lost:
-                if (new java.lang.String(r9.getOrigin() + "/").equals(r5) != false) goto L35;
-             */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
+            /* JADX WARN: Removed duplicated region for block: B:74:0x00e5  */
             @Override // android.os.AsyncTask
             /*
                 Code decompiled incorrectly, please refer to instructions dump.
             */
-            public Void doInBackground(Void... voidArr) {
-                Bitmap bitmap;
+            protected Void doInBackground(Void... voidArr) {
+                Bitmap bitmapDecodeByteArray;
                 Set set;
-                HashMap hashMap = new HashMap();
+                HashMap map = new HashMap();
                 for (Map.Entry<String, Site> entry : this.mSites.entrySet()) {
                     Site value = entry.getValue();
                     String host = Uri.parse(entry.getKey()).getHost();
-                    if (hashMap.containsKey(host)) {
-                        set = (Set) hashMap.get(host);
+                    if (map.containsKey(host)) {
+                        set = (Set) map.get(host);
                     } else {
                         HashSet hashSet = new HashSet();
-                        hashMap.put(host, hashSet);
+                        map.put(host, hashSet);
                         set = hashSet;
                     }
                     set.add(value);
                 }
-                Cursor query = this.mContext.getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"url", "title", "favicon"}, "folder == 0", null, null);
-                if (query != null) {
-                    if (query.moveToFirst()) {
-                        int columnIndex = query.getColumnIndex("url");
-                        int columnIndex2 = query.getColumnIndex("title");
-                        int columnIndex3 = query.getColumnIndex("favicon");
+                Cursor cursorQuery = this.mContext.getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"url", "title", "favicon"}, "folder == 0", null, null);
+                if (cursorQuery != null) {
+                    if (cursorQuery.moveToFirst()) {
+                        int columnIndex = cursorQuery.getColumnIndex("url");
+                        int columnIndex2 = cursorQuery.getColumnIndex("title");
+                        int columnIndex3 = cursorQuery.getColumnIndex("favicon");
                         do {
-                            String string = query.getString(columnIndex);
+                            String string = cursorQuery.getString(columnIndex);
                             String host2 = Uri.parse(string).getHost();
-                            if (hashMap.containsKey(host2)) {
-                                String string2 = query.getString(columnIndex2);
-                                byte[] blob = query.getBlob(columnIndex3);
+                            if (map.containsKey(host2)) {
+                                String string2 = cursorQuery.getString(columnIndex2);
+                                byte[] blob = cursorQuery.getBlob(columnIndex3);
                                 if (blob != null) {
-                                    bitmap = BitmapFactory.decodeByteArray(blob, 0, blob.length);
+                                    bitmapDecodeByteArray = BitmapFactory.decodeByteArray(blob, 0, blob.length);
                                 } else {
-                                    bitmap = null;
+                                    bitmapDecodeByteArray = null;
                                 }
-                                for (Site site : (Set) hashMap.get(host2)) {
+                                for (Site site : (Set) map.get(host2)) {
                                     if (!string.equals(site.getOrigin())) {
+                                        if (new String(site.getOrigin() + "/").equals(string)) {
+                                            this.mDataSetChanged = true;
+                                            site.setTitle(string2);
+                                        }
                                     }
-                                    this.mDataSetChanged = true;
-                                    site.setTitle(string2);
-                                    if (bitmap != null) {
+                                    if (bitmapDecodeByteArray != null) {
                                         this.mDataSetChanged = true;
-                                        site.setIcon(bitmap);
+                                        site.setIcon(bitmapDecodeByteArray);
                                     }
                                 }
                             }
-                        } while (query.moveToNext());
-                        query.close();
-                    } else {
-                        query.close();
+                        } while (cursorQuery.moveToNext());
                     }
+                    cursorQuery.close();
                 }
                 return null;
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(Void r1) {
+            protected void onPostExecute(Void r1) {
                 if (this.mDataSetChanged) {
                     SiteAdapter.this.notifyDataSetChanged();
                 }
@@ -314,8 +386,9 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
 
         public void populateOrigins(Map<String, Site> map) {
             clear();
-            for (Map.Entry<String, Site> entry : map.entrySet()) {
-                add(entry.getValue());
+            Iterator<Map.Entry<String, Site>> it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                add(it.next().getValue());
             }
             notifyDataSetChanged();
             if (getCount() == 0) {
@@ -333,36 +406,38 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
 
         public String sizeValueToString(long j) {
             if (j <= 0) {
-                String str = WebsiteSettingsFragment.this.LOGTAG;
-                Log.e(str, "sizeValueToString called with non-positive value: " + j);
+                Log.e(WebsiteSettingsFragment.this.LOGTAG, "sizeValueToString called with non-positive value: " + j);
                 return "0";
             }
-            return String.valueOf(((int) Math.ceil((((float) j) / 1048576.0f) * 10.0f)) / 10.0f);
+            return String.valueOf(((int) Math.ceil((j / 1048576.0f) * 10.0f)) / 10.0f);
         }
 
         public void setIconForUsage(ImageView imageView, long j) {
-            float f = ((float) j) / 1048576.0f;
+            float f = j / 1048576.0f;
             double d = f;
             if (d <= 0.1d) {
                 imageView.setImageBitmap(this.mUsageEmptyIcon);
-            } else if (d > 0.1d && f <= 5.0f) {
+                return;
+            }
+            if (d > 0.1d && f <= 5.0f) {
                 imageView.setImageBitmap(this.mUsageLowIcon);
             } else if (f > 5.0f) {
                 imageView.setImageBitmap(this.mUsageHighIcon);
             }
         }
 
+        /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
         @Override // android.widget.ArrayAdapter, android.widget.Adapter
         public View getView(int i, View view, ViewGroup viewGroup) {
             if (view == null) {
                 view = this.mInflater.inflate(this.mResource, viewGroup, false);
             }
-            final TextView textView = (TextView) view.findViewById(R.id.title);
-            final TextView textView2 = (TextView) view.findViewById(R.id.subtitle);
+            TextView textView = (TextView) view.findViewById(R.id.title);
+            TextView textView2 = (TextView) view.findViewById(R.id.subtitle);
             ImageView imageView = (ImageView) view.findViewById(R.id.icon);
-            final ImageView imageView2 = (ImageView) view.findViewById(R.id.feature_icon);
-            final ImageView imageView3 = (ImageView) view.findViewById(R.id.usage_icon);
-            final ImageView imageView4 = (ImageView) view.findViewById(R.id.location_icon);
+            ImageView imageView2 = (ImageView) view.findViewById(R.id.feature_icon);
+            ImageView imageView3 = (ImageView) view.findViewById(R.id.usage_icon);
+            ImageView imageView4 = (ImageView) view.findViewById(R.id.location_icon);
             imageView3.setVisibility(8);
             imageView4.setVisibility(8);
             if (this.mCurrentSite == null) {
@@ -392,11 +467,18 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
                 String origin = item.getOrigin();
                 if (item.hasFeature(0)) {
                     WebStorage.getInstance().getUsageForOrigin(origin, new ValueCallback<Long>() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.SiteAdapter.3
+                        final /* synthetic */ ImageView val$usageIcon;
+
+                        AnonymousClass3(ImageView imageView32) {
+                            imageView = imageView32;
+                        }
+
+                        /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
                         @Override // android.webkit.ValueCallback
                         public void onReceiveValue(Long l) {
                             if (l != null) {
-                                SiteAdapter.this.setIconForUsage(imageView3, l.longValue());
-                                imageView3.setVisibility(0);
+                                SiteAdapter.this.setIconForUsage(imageView, l.longValue());
+                                imageView.setVisibility(0);
                             }
                         }
                     });
@@ -404,13 +486,20 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
                 if (item.hasFeature(1)) {
                     imageView4.setVisibility(0);
                     GeolocationPermissions.getInstance().getAllowed(origin, new ValueCallback<Boolean>() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.SiteAdapter.4
+                        final /* synthetic */ ImageView val$locationIcon;
+
+                        AnonymousClass4(ImageView imageView42) {
+                            imageView = imageView42;
+                        }
+
+                        /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
                         @Override // android.webkit.ValueCallback
                         public void onReceiveValue(Boolean bool) {
                             if (bool != null) {
                                 if (bool.booleanValue()) {
-                                    imageView4.setImageBitmap(SiteAdapter.this.mLocationAllowedIcon);
+                                    imageView.setImageBitmap(SiteAdapter.this.mLocationAllowedIcon);
                                 } else {
-                                    imageView4.setImageBitmap(SiteAdapter.this.mLocationDisallowedIcon);
+                                    imageView.setImageBitmap(SiteAdapter.this.mLocationDisallowedIcon);
                                 }
                             }
                         }
@@ -418,38 +507,59 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
                 }
             } else {
                 imageView.setVisibility(8);
-                imageView4.setVisibility(8);
-                imageView3.setVisibility(8);
+                imageView42.setVisibility(8);
+                imageView32.setVisibility(8);
                 imageView2.setVisibility(0);
                 String origin2 = this.mCurrentSite.getOrigin();
                 switch (this.mCurrentSite.getFeatureByIndex(i)) {
                     case 0:
                         WebStorage.getInstance().getUsageForOrigin(origin2, new ValueCallback<Long>() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.SiteAdapter.5
+                            final /* synthetic */ ImageView val$featureIcon;
+                            final /* synthetic */ TextView val$subtitle;
+                            final /* synthetic */ TextView val$title;
+
+                            AnonymousClass5(TextView textView3, TextView textView22, ImageView imageView22) {
+                                textView = textView3;
+                                textView = textView22;
+                                imageView = imageView22;
+                            }
+
+                            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
                             @Override // android.webkit.ValueCallback
                             public void onReceiveValue(Long l) {
                                 if (l != null) {
+                                    String str = SiteAdapter.this.sizeValueToString(l.longValue()) + " " + WebsiteSettingsFragment.sMBStored;
                                     textView.setText(R.string.webstorage_clear_data_title);
-                                    textView2.setText(SiteAdapter.this.sizeValueToString(l.longValue()) + " " + WebsiteSettingsFragment.sMBStored);
-                                    textView2.setVisibility(0);
-                                    SiteAdapter.this.setIconForUsage(imageView2, l.longValue());
+                                    textView.setText(str);
+                                    textView.setVisibility(0);
+                                    SiteAdapter.this.setIconForUsage(imageView, l.longValue());
                                 }
                             }
                         });
                         break;
                     case 1:
-                        textView.setText(R.string.geolocation_settings_page_title);
+                        textView3.setText(R.string.geolocation_settings_page_title);
                         GeolocationPermissions.getInstance().getAllowed(origin2, new ValueCallback<Boolean>() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.SiteAdapter.6
+                            final /* synthetic */ ImageView val$featureIcon;
+                            final /* synthetic */ TextView val$subtitle;
+
+                            AnonymousClass6(TextView textView22, ImageView imageView22) {
+                                textView = textView22;
+                                imageView = imageView22;
+                            }
+
+                            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
                             @Override // android.webkit.ValueCallback
                             public void onReceiveValue(Boolean bool) {
                                 if (bool != null) {
                                     if (bool.booleanValue()) {
-                                        textView2.setText(R.string.geolocation_settings_page_summary_allowed);
-                                        imageView2.setImageBitmap(SiteAdapter.this.mLocationAllowedIcon);
+                                        textView.setText(R.string.geolocation_settings_page_summary_allowed);
+                                        imageView.setImageBitmap(SiteAdapter.this.mLocationAllowedIcon);
                                     } else {
-                                        textView2.setText(R.string.geolocation_settings_page_summary_not_allowed);
-                                        imageView2.setImageBitmap(SiteAdapter.this.mLocationDisallowedIcon);
+                                        textView.setText(R.string.geolocation_settings_page_summary_not_allowed);
+                                        imageView.setImageBitmap(SiteAdapter.this.mLocationDisallowedIcon);
                                     }
-                                    textView2.setVisibility(0);
+                                    textView.setVisibility(0);
                                 }
                             }
                         });
@@ -459,12 +569,105 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             return view;
         }
 
+        /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$SiteAdapter$3 */
+        class AnonymousClass3 implements ValueCallback<Long> {
+            final /* synthetic */ ImageView val$usageIcon;
+
+            AnonymousClass3(ImageView imageView32) {
+                imageView = imageView32;
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
+            @Override // android.webkit.ValueCallback
+            public void onReceiveValue(Long l) {
+                if (l != null) {
+                    SiteAdapter.this.setIconForUsage(imageView, l.longValue());
+                    imageView.setVisibility(0);
+                }
+            }
+        }
+
+        /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$SiteAdapter$4 */
+        class AnonymousClass4 implements ValueCallback<Boolean> {
+            final /* synthetic */ ImageView val$locationIcon;
+
+            AnonymousClass4(ImageView imageView42) {
+                imageView = imageView42;
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
+            @Override // android.webkit.ValueCallback
+            public void onReceiveValue(Boolean bool) {
+                if (bool != null) {
+                    if (bool.booleanValue()) {
+                        imageView.setImageBitmap(SiteAdapter.this.mLocationAllowedIcon);
+                    } else {
+                        imageView.setImageBitmap(SiteAdapter.this.mLocationDisallowedIcon);
+                    }
+                }
+            }
+        }
+
+        /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$SiteAdapter$5 */
+        class AnonymousClass5 implements ValueCallback<Long> {
+            final /* synthetic */ ImageView val$featureIcon;
+            final /* synthetic */ TextView val$subtitle;
+            final /* synthetic */ TextView val$title;
+
+            AnonymousClass5(TextView textView3, TextView textView22, ImageView imageView22) {
+                textView = textView3;
+                textView = textView22;
+                imageView = imageView22;
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
+            @Override // android.webkit.ValueCallback
+            public void onReceiveValue(Long l) {
+                if (l != null) {
+                    String str = SiteAdapter.this.sizeValueToString(l.longValue()) + " " + WebsiteSettingsFragment.sMBStored;
+                    textView.setText(R.string.webstorage_clear_data_title);
+                    textView.setText(str);
+                    textView.setVisibility(0);
+                    SiteAdapter.this.setIconForUsage(imageView, l.longValue());
+                }
+            }
+        }
+
+        /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$SiteAdapter$6 */
+        class AnonymousClass6 implements ValueCallback<Boolean> {
+            final /* synthetic */ ImageView val$featureIcon;
+            final /* synthetic */ TextView val$subtitle;
+
+            AnonymousClass6(TextView textView22, ImageView imageView22) {
+                textView = textView22;
+                imageView = imageView22;
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
+            @Override // android.webkit.ValueCallback
+            public void onReceiveValue(Boolean bool) {
+                if (bool != null) {
+                    if (bool.booleanValue()) {
+                        textView.setText(R.string.geolocation_settings_page_summary_allowed);
+                        imageView.setImageBitmap(SiteAdapter.this.mLocationAllowedIcon);
+                    } else {
+                        textView.setText(R.string.geolocation_settings_page_summary_not_allowed);
+                        imageView.setImageBitmap(SiteAdapter.this.mLocationDisallowedIcon);
+                    }
+                    textView.setVisibility(0);
+                }
+            }
+        }
+
         @Override // android.widget.AdapterView.OnItemClickListener
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long j) {
             if (this.mCurrentSite != null) {
                 switch (this.mCurrentSite.getFeatureByIndex(i)) {
                     case 0:
                         new AlertDialog.Builder(getContext()).setMessage(R.string.webstorage_clear_data_dialog_message).setPositiveButton(R.string.webstorage_clear_data_dialog_ok_button, new DialogInterface.OnClickListener() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.SiteAdapter.7
+                            AnonymousClass7() {
+                            }
+
                             @Override // android.content.DialogInterface.OnClickListener
                             public void onClick(DialogInterface dialogInterface, int i2) {
                                 WebStorage.getInstance().deleteOrigin(SiteAdapter.this.mCurrentSite.getOrigin());
@@ -475,10 +678,13 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
                                 SiteAdapter.this.askForOrigins();
                                 SiteAdapter.this.notifyDataSetChanged();
                             }
-                        }).setNegativeButton(R.string.webstorage_clear_data_dialog_cancel_button, (DialogInterface.OnClickListener) null).setIconAttribute(16843605).show();
-                        return;
+                        }).setNegativeButton(R.string.webstorage_clear_data_dialog_cancel_button, (DialogInterface.OnClickListener) null).setIconAttribute(android.R.attr.alertDialogIcon).show();
+                        break;
                     case 1:
                         new AlertDialog.Builder(getContext()).setMessage(R.string.geolocation_settings_page_dialog_message).setPositiveButton(R.string.geolocation_settings_page_dialog_ok_button, new DialogInterface.OnClickListener() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.SiteAdapter.8
+                            AnonymousClass8() {
+                            }
+
                             @Override // android.content.DialogInterface.OnClickListener
                             public void onClick(DialogInterface dialogInterface, int i2) {
                                 GeolocationPermissions.getInstance().clear(SiteAdapter.this.mCurrentSite.getOrigin());
@@ -489,10 +695,8 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
                                 SiteAdapter.this.askForOrigins();
                                 SiteAdapter.this.notifyDataSetChanged();
                             }
-                        }).setNegativeButton(R.string.geolocation_settings_page_dialog_cancel_button, (DialogInterface.OnClickListener) null).setIconAttribute(16843605).show();
-                        return;
-                    default:
-                        return;
+                        }).setNegativeButton(R.string.geolocation_settings_page_dialog_cancel_button, (DialogInterface.OnClickListener) null).setIconAttribute(android.R.attr.alertDialogIcon).show();
+                        break;
                 }
             }
             Site site = (Site) view.getTag();
@@ -503,21 +707,55 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
                 preferenceActivity.startPreferencePanel(WebsiteSettingsFragment.class.getName(), bundle, 0, site.getPrettyTitle(), null, 0);
             }
         }
+
+        /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$SiteAdapter$7 */
+        class AnonymousClass7 implements DialogInterface.OnClickListener {
+            AnonymousClass7() {
+            }
+
+            @Override // android.content.DialogInterface.OnClickListener
+            public void onClick(DialogInterface dialogInterface, int i2) {
+                WebStorage.getInstance().deleteOrigin(SiteAdapter.this.mCurrentSite.getOrigin());
+                SiteAdapter.this.mCurrentSite.removeFeature(0);
+                if (SiteAdapter.this.mCurrentSite.getFeatureCount() == 0) {
+                    WebsiteSettingsFragment.this.finish();
+                }
+                SiteAdapter.this.askForOrigins();
+                SiteAdapter.this.notifyDataSetChanged();
+            }
+        }
+
+        /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$SiteAdapter$8 */
+        class AnonymousClass8 implements DialogInterface.OnClickListener {
+            AnonymousClass8() {
+            }
+
+            @Override // android.content.DialogInterface.OnClickListener
+            public void onClick(DialogInterface dialogInterface, int i2) {
+                GeolocationPermissions.getInstance().clear(SiteAdapter.this.mCurrentSite.getOrigin());
+                SiteAdapter.this.mCurrentSite.removeFeature(1);
+                if (SiteAdapter.this.mCurrentSite.getFeatureCount() == 0) {
+                    WebsiteSettingsFragment.this.finish();
+                }
+                SiteAdapter.this.askForOrigins();
+                SiteAdapter.this.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override // android.app.ListFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate = layoutInflater.inflate(R.layout.website_settings, viewGroup, false);
+        View viewInflate = layoutInflater.inflate(R.layout.website_settings, viewGroup, false);
         Bundle arguments = getArguments();
         if (arguments != null) {
             this.mSite = (Site) arguments.getParcelable("site");
         }
         if (this.mSite == null) {
-            View findViewById = inflate.findViewById(R.id.clear_all_button);
-            findViewById.setVisibility(0);
-            findViewById.setOnClickListener(this);
+            View viewFindViewById = viewInflate.findViewById(R.id.clear_all_button);
+            viewFindViewById.setVisibility(0);
+            viewFindViewById.setOnClickListener(this);
         }
-        return inflate;
+        return viewInflate;
     }
 
     @Override // android.app.Fragment
@@ -540,8 +778,7 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
         this.mAdapter.askForOrigins();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void finish() {
+    private void finish() {
         PreferenceActivity preferenceActivity = (PreferenceActivity) getActivity();
         if (preferenceActivity != null) {
             preferenceActivity.finishPreferencePanel(this, 0, null);
@@ -552,6 +789,9 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
     public void onClick(View view) {
         if (view.getId() == R.id.clear_all_button) {
             new AlertDialog.Builder(getActivity()).setMessage(R.string.website_settings_clear_all_dialog_message).setPositiveButton(R.string.website_settings_clear_all_dialog_ok_button, new DialogInterface.OnClickListener() { // from class: com.android.browser.preferences.WebsiteSettingsFragment.1
+                AnonymousClass1() {
+                }
+
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i) {
                     WebStorage.getInstance().deleteAllData();
@@ -560,7 +800,22 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
                     WebsiteSettingsFragment.this.mAdapter.askForOrigins();
                     WebsiteSettingsFragment.this.finish();
                 }
-            }).setNegativeButton(R.string.website_settings_clear_all_dialog_cancel_button, (DialogInterface.OnClickListener) null).setIconAttribute(16843605).show();
+            }).setNegativeButton(R.string.website_settings_clear_all_dialog_cancel_button, (DialogInterface.OnClickListener) null).setIconAttribute(android.R.attr.alertDialogIcon).show();
+        }
+    }
+
+    /* renamed from: com.android.browser.preferences.WebsiteSettingsFragment$1 */
+    class AnonymousClass1 implements DialogInterface.OnClickListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialogInterface, int i) {
+            WebStorage.getInstance().deleteAllData();
+            GeolocationPermissions.getInstance().clearAll();
+            WebStorageSizeManager.resetLastOutOfSpaceNotificationTime();
+            WebsiteSettingsFragment.this.mAdapter.askForOrigins();
+            WebsiteSettingsFragment.this.finish();
         }
     }
 }

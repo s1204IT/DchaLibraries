@@ -6,10 +6,10 @@ import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.google.protobuf.nano.MessageNano;
 import com.google.protobuf.nano.WireFormatNano;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public interface LauncherLogExtensions {
 
-    /* loaded from: classes.dex */
     public static final class LauncherEventExtension extends MessageNano {
         private static volatile LauncherEventExtension[] _emptyArray;
 
@@ -33,15 +33,16 @@ public interface LauncherLogExtensions {
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: mergeFrom(Lcom/google/protobuf/nano/CodedInputByteBufferNano;)Lcom/google/protobuf/nano/MessageNano; */
         @Override // com.google.protobuf.nano.MessageNano
         public LauncherEventExtension mergeFrom(CodedInputByteBufferNano codedInputByteBufferNano) throws IOException {
-            int readTag;
+            int tag;
             do {
-                readTag = codedInputByteBufferNano.readTag();
-                if (readTag == 0) {
+                tag = codedInputByteBufferNano.readTag();
+                if (tag == 0) {
                     return this;
                 }
-            } while (WireFormatNano.parseUnknownField(codedInputByteBufferNano, readTag));
+            } while (WireFormatNano.parseUnknownField(codedInputByteBufferNano, tag));
             return this;
         }
 
@@ -54,7 +55,6 @@ public interface LauncherLogExtensions {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class TargetExtension extends MessageNano {
         private static volatile TargetExtension[] _emptyArray;
 
@@ -78,15 +78,16 @@ public interface LauncherLogExtensions {
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: mergeFrom(Lcom/google/protobuf/nano/CodedInputByteBufferNano;)Lcom/google/protobuf/nano/MessageNano; */
         @Override // com.google.protobuf.nano.MessageNano
         public TargetExtension mergeFrom(CodedInputByteBufferNano codedInputByteBufferNano) throws IOException {
-            int readTag;
+            int tag;
             do {
-                readTag = codedInputByteBufferNano.readTag();
-                if (readTag == 0) {
+                tag = codedInputByteBufferNano.readTag();
+                if (tag == 0) {
                     return this;
                 }
-            } while (WireFormatNano.parseUnknownField(codedInputByteBufferNano, readTag));
+            } while (WireFormatNano.parseUnknownField(codedInputByteBufferNano, tag));
             return this;
         }
 

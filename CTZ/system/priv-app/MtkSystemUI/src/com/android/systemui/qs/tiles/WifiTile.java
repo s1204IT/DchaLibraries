@@ -21,6 +21,7 @@ import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.NetworkController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WifiTile extends QSTileImpl<QSTile.SignalState> {
     private static final Intent WIFI_SETTINGS = new Intent("android.settings.WIFI_SETTINGS");
@@ -42,7 +43,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
         this.mActivityStarter = (ActivityStarter) Dependency.get(ActivityStarter.class);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.SignalState newTileState() {
         return new QSTile.SignalState();
@@ -97,7 +98,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
             this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.qs.tiles.-$$Lambda$WifiTile$FBMX-zj483F7uFPAUwutmnquiRU
                 @Override // java.lang.Runnable
                 public final void run() {
-                    WifiTile.lambda$handleClick$0(WifiTile.this);
+                    WifiTile.lambda$handleClick$0(this.f$0);
                 }
             }, 350L);
         }
@@ -127,19 +128,19 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
         return this.mContext.getString(R.string.quick_settings_wifi_label);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.SignalState signalState, Object obj) {
+    protected void handleUpdateState(QSTile.SignalState signalState, Object obj) {
         if (DEBUG) {
-            String str = this.TAG;
-            Log.d(str, "handleUpdateState arg=" + obj);
+            Log.d(this.TAG, "handleUpdateState arg=" + obj);
         }
         CallbackInfo callbackInfo = this.mSignalCallback.mInfo;
         if (this.mExpectDisabled) {
             if (callbackInfo.enabled) {
                 return;
+            } else {
+                this.mExpectDisabled = false;
             }
-            this.mExpectDisabled = false;
         }
         boolean z = obj == ARG_SHOW_TRANSIENT_ENABLING;
         boolean z2 = callbackInfo.enabled && callbackInfo.wifiSignalIconId > 0 && callbackInfo.ssid != null;
@@ -236,9 +237,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
         return str;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public static final class CallbackInfo {
+    protected static final class CallbackInfo {
         boolean activityIn;
         boolean activityOut;
         boolean connected;
@@ -257,9 +256,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public final class WifiSignalCallback implements NetworkController.SignalCallback {
+    protected final class WifiSignalCallback implements NetworkController.SignalCallback {
         final CallbackInfo mInfo = new CallbackInfo();
 
         protected WifiSignalCallback() {
@@ -268,8 +265,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
         @Override // com.android.systemui.statusbar.policy.NetworkController.SignalCallback
         public void setWifiIndicators(boolean z, NetworkController.IconState iconState, NetworkController.IconState iconState2, boolean z2, boolean z3, String str, boolean z4, String str2) {
             if (WifiTile.DEBUG) {
-                String str3 = WifiTile.this.TAG;
-                Log.d(str3, "onWifiSignalChanged enabled=" + z);
+                Log.d(WifiTile.this.TAG, "onWifiSignalChanged enabled=" + z);
             }
             this.mInfo.enabled = z;
             this.mInfo.connected = iconState2.visible;
@@ -287,9 +283,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class WifiDetailAdapter implements DetailAdapter, QSDetailItems.Callback, NetworkController.AccessPointController.AccessPointCallback {
+    protected class WifiDetailAdapter implements DetailAdapter, QSDetailItems.Callback, NetworkController.AccessPointController.AccessPointCallback {
         private AccessPoint[] mAccessPoints;
         private QSDetailItems mItems;
 
@@ -314,8 +308,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
         @Override // com.android.systemui.plugins.qs.DetailAdapter
         public void setToggleState(boolean z) {
             if (WifiTile.DEBUG) {
-                String str = WifiTile.this.TAG;
-                Log.d(str, "setToggleState " + z);
+                Log.d(WifiTile.this.TAG, "setToggleState " + z);
             }
             MetricsLogger.action(WifiTile.this.mContext, 153, z);
             WifiTile.this.mController.setWifiEnabled(z);
@@ -399,8 +392,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
             this.mItems.setItemsVisible(z);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateItems() {
+        private void updateItems() {
             QSDetailItems.Item[] itemArr;
             int i;
             if (this.mItems == null) {

@@ -11,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
@@ -45,6 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+
 /* loaded from: classes.dex */
 public class IconCache {
     private static final boolean DEBUG = false;
@@ -65,19 +67,17 @@ public class IconCache {
     final UserManagerCompat mUserManager;
     private final HashMap<UserHandle, BitmapInfo> mDefaultIcons = new HashMap<>();
     final MainThreadExecutor mMainThreadExecutor = new MainThreadExecutor();
-    private final HashMap<ComponentKey, CacheEntry> mCache = new HashMap<>((int) INITIAL_ICON_CACHE_CAPACITY);
+    private final HashMap<ComponentKey, CacheEntry> mCache = new HashMap<>(INITIAL_ICON_CACHE_CAPACITY);
     private int mPendingIconRequestCount = 0;
     final Handler mWorkerHandler = new Handler(LauncherModel.getWorkerLooper());
     private final BitmapFactory.Options mLowResOptions = new BitmapFactory.Options();
 
-    /* loaded from: classes.dex */
     public static class CacheEntry extends BitmapInfo {
         public boolean isLowResIcon;
         public CharSequence title = "";
         public CharSequence contentDescription = "";
     }
 
-    /* loaded from: classes.dex */
     public interface ItemInfoUpdateReceiver {
         void reapplyItemInfo(ItemInfoWithIcon itemInfoWithIcon);
     }
@@ -101,42 +101,42 @@ public class IconCache {
     }
 
     private Drawable getFullResDefaultActivityIcon() {
-        return getFullResIcon(Resources.getSystem(), Utilities.ATLEAST_OREO ? 17301651 : 17629184);
+        return getFullResIcon(Resources.getSystem(), Utilities.ATLEAST_OREO ? android.R.drawable.sym_def_app_icon : android.R.mipmap.sym_def_app_icon);
     }
 
-    private Drawable getFullResIcon(Resources resources, int i) {
-        Drawable drawable;
+    private Drawable getFullResIcon(Resources resources, int i) throws Resources.NotFoundException {
+        Drawable drawableForDensity;
         try {
-            drawable = resources.getDrawableForDensity(i, this.mIconDpi);
+            drawableForDensity = resources.getDrawableForDensity(i, this.mIconDpi);
         } catch (Resources.NotFoundException e) {
-            drawable = null;
+            drawableForDensity = null;
         }
-        return drawable != null ? drawable : getFullResDefaultActivityIcon();
+        return drawableForDensity != null ? drawableForDensity : getFullResDefaultActivityIcon();
     }
 
-    public Drawable getFullResIcon(String str, int i) {
-        Resources resources;
+    public Drawable getFullResIcon(String str, int i) throws PackageManager.NameNotFoundException {
+        Resources resourcesForApplication;
         try {
-            resources = this.mPackageManager.getResourcesForApplication(str);
+            resourcesForApplication = this.mPackageManager.getResourcesForApplication(str);
         } catch (PackageManager.NameNotFoundException e) {
-            resources = null;
+            resourcesForApplication = null;
         }
-        if (resources != null && i != 0) {
-            return getFullResIcon(resources, i);
+        if (resourcesForApplication != null && i != 0) {
+            return getFullResIcon(resourcesForApplication, i);
         }
         return getFullResDefaultActivityIcon();
     }
 
-    public Drawable getFullResIcon(ActivityInfo activityInfo) {
-        Resources resources;
+    public Drawable getFullResIcon(ActivityInfo activityInfo) throws PackageManager.NameNotFoundException {
+        Resources resourcesForApplication;
         int iconResource;
         try {
-            resources = this.mPackageManager.getResourcesForApplication(activityInfo.applicationInfo);
+            resourcesForApplication = this.mPackageManager.getResourcesForApplication(activityInfo.applicationInfo);
         } catch (PackageManager.NameNotFoundException e) {
-            resources = null;
+            resourcesForApplication = null;
         }
-        if (resources != null && (iconResource = activityInfo.getIconResource()) != 0) {
-            return getFullResIcon(resources, iconResource);
+        if (resourcesForApplication != null && (iconResource = activityInfo.getIconResource()) != 0) {
+            return getFullResIcon(resourcesForApplication, iconResource);
         }
         return getFullResDefaultActivityIcon();
     }
@@ -150,30 +150,30 @@ public class IconCache {
     }
 
     protected BitmapInfo makeDefaultIcon(UserHandle userHandle) {
-        LauncherIcons obtain = LauncherIcons.obtain(this.mContext);
+        LauncherIcons launcherIconsObtain = LauncherIcons.obtain(this.mContext);
+        Throwable th = null;
         try {
-            BitmapInfo createBadgedIconBitmap = obtain.createBadgedIconBitmap(getFullResDefaultActivityIcon(), userHandle, Build.VERSION.SDK_INT);
-            if (obtain != null) {
-                obtain.close();
-            }
-            return createBadgedIconBitmap;
-        } catch (Throwable th) {
             try {
-                throw th;
-            } catch (Throwable th2) {
-                if (obtain != null) {
-                    if (th != null) {
-                        try {
-                            obtain.close();
-                        } catch (Throwable th3) {
-                            th.addSuppressed(th3);
-                        }
-                    } else {
-                        obtain.close();
-                    }
+                BitmapInfo bitmapInfoCreateBadgedIconBitmap = launcherIconsObtain.createBadgedIconBitmap(getFullResDefaultActivityIcon(), userHandle, Build.VERSION.SDK_INT);
+                if (launcherIconsObtain != null) {
+                    launcherIconsObtain.close();
                 }
-                throw th2;
+                return bitmapInfoCreateBadgedIconBitmap;
+            } finally {
             }
+        } catch (Throwable th2) {
+            if (launcherIconsObtain != null) {
+                if (th != null) {
+                    try {
+                        launcherIconsObtain.close();
+                    } catch (Throwable th3) {
+                        th.addSuppressed(th3);
+                    }
+                } else {
+                    launcherIconsObtain.close();
+                }
+            }
+            throw th2;
         }
     }
 
@@ -199,8 +199,9 @@ public class IconCache {
         try {
             PackageInfo packageInfo = this.mPackageManager.getPackageInfo(str, 8192);
             long serialNumberForUser = this.mUserManager.getSerialNumberForUser(userHandle);
-            for (LauncherActivityInfo launcherActivityInfo : this.mLauncherApps.getActivityList(str, userHandle)) {
-                addIconToDBAndMemCache(launcherActivityInfo, packageInfo, serialNumberForUser, false);
+            Iterator<LauncherActivityInfo> it = this.mLauncherApps.getActivityList(str, userHandle).iterator();
+            while (it.hasNext()) {
+                addIconToDBAndMemCache(it.next(), packageInfo, serialNumberForUser, false);
             }
         } catch (PackageManager.NameNotFoundException e) {
             Log.d(TAG, "Package not found", e);
@@ -210,104 +211,104 @@ public class IconCache {
     public synchronized void removeIconsForPkg(String str, UserHandle userHandle) {
         removeFromMemCacheLocked(str, userHandle);
         long serialNumberForUser = this.mUserManager.getSerialNumberForUser(userHandle);
-        IconDB iconDB = this.mIconDb;
-        iconDB.delete("componentName LIKE ? AND profileId = ?", new String[]{str + "/%", Long.toString(serialNumberForUser)});
+        this.mIconDb.delete("componentName LIKE ? AND profileId = ?", new String[]{str + "/%", Long.toString(serialNumberForUser)});
     }
 
-    public void updateDbIcons(Set<String> set) {
+    public void updateDbIcons(Set<String> set) throws Throwable {
         UserHandle next;
         List<LauncherActivityInfo> activityList;
-        Set<String> emptySet;
+        Set<String> setEmptySet;
         this.mWorkerHandler.removeCallbacksAndMessages(ICON_UPDATE_TOKEN);
         this.mIconProvider.updateSystemStateString(this.mContext);
         Iterator<UserHandle> it = this.mUserManager.getUserProfiles().iterator();
         while (it.hasNext() && (activityList = this.mLauncherApps.getActivityList(null, (next = it.next()))) != null && !activityList.isEmpty()) {
             if (Process.myUserHandle().equals(next)) {
-                emptySet = set;
+                setEmptySet = set;
             } else {
-                emptySet = Collections.emptySet();
+                setEmptySet = Collections.emptySet();
             }
-            updateDBIcons(next, activityList, emptySet);
+            updateDBIcons(next, activityList, setEmptySet);
         }
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:57:0x015d  */
-    /* JADX WARN: Removed duplicated region for block: B:67:0x0191  */
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [345=5] */
+    /* JADX WARN: Removed duplicated region for block: B:144:0x015d  */
+    /* JADX WARN: Removed duplicated region for block: B:154:0x0191  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private void updateDBIcons(UserHandle userHandle, List<LauncherActivityInfo> list, Set<String> set) {
-        Cursor cursor;
+    private void updateDBIcons(UserHandle userHandle, List<LauncherActivityInfo> list, Set<String> set) throws Throwable {
+        Cursor cursorQuery;
         long j;
-        Cursor cursor2;
+        Cursor cursor;
         int i;
         long serialNumberForUser = this.mUserManager.getSerialNumberForUser(userHandle);
         PackageManager packageManager = this.mContext.getPackageManager();
-        HashMap hashMap = new HashMap();
+        HashMap map = new HashMap();
         for (PackageInfo packageInfo : packageManager.getInstalledPackages(8192)) {
-            hashMap.put(packageInfo.packageName, packageInfo);
+            map.put(packageInfo.packageName, packageInfo);
         }
-        HashMap hashMap2 = new HashMap();
+        HashMap map2 = new HashMap();
         for (LauncherActivityInfo launcherActivityInfo : list) {
-            hashMap2.put(launcherActivityInfo.getComponentName(), launcherActivityInfo);
+            map2.put(launcherActivityInfo.getComponentName(), launcherActivityInfo);
         }
         HashSet hashSet = new HashSet();
         Stack stack = new Stack();
         try {
-            cursor = this.mIconDb.query(new String[]{"rowid", "componentName", "lastUpdated", "version", "system_state"}, "profileId = ? ", new String[]{Long.toString(serialNumberForUser)});
+            cursorQuery = this.mIconDb.query(new String[]{"rowid", "componentName", "lastUpdated", "version", "system_state"}, "profileId = ? ", new String[]{Long.toString(serialNumberForUser)});
             try {
                 try {
-                    int columnIndex = cursor.getColumnIndex("componentName");
-                    int columnIndex2 = cursor.getColumnIndex("lastUpdated");
-                    int columnIndex3 = cursor.getColumnIndex("version");
-                    int columnIndex4 = cursor.getColumnIndex("rowid");
-                    int columnIndex5 = cursor.getColumnIndex("system_state");
-                    while (cursor.moveToNext()) {
-                        ComponentName unflattenFromString = ComponentName.unflattenFromString(cursor.getString(columnIndex));
-                        PackageInfo packageInfo2 = (PackageInfo) hashMap.get(unflattenFromString.getPackageName());
+                    int columnIndex = cursorQuery.getColumnIndex("componentName");
+                    int columnIndex2 = cursorQuery.getColumnIndex("lastUpdated");
+                    int columnIndex3 = cursorQuery.getColumnIndex("version");
+                    int columnIndex4 = cursorQuery.getColumnIndex("rowid");
+                    int columnIndex5 = cursorQuery.getColumnIndex("system_state");
+                    while (cursorQuery.moveToNext()) {
+                        ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(cursorQuery.getString(columnIndex));
+                        PackageInfo packageInfo2 = (PackageInfo) map.get(componentNameUnflattenFromString.getPackageName());
                         if (packageInfo2 == null) {
                             i = columnIndex;
-                            if (!set.contains(unflattenFromString.getPackageName())) {
-                                remove(unflattenFromString, userHandle);
-                                hashSet.add(Integer.valueOf(cursor.getInt(columnIndex4)));
+                            if (!set.contains(componentNameUnflattenFromString.getPackageName())) {
+                                remove(componentNameUnflattenFromString, userHandle);
+                                hashSet.add(Integer.valueOf(cursorQuery.getInt(columnIndex4)));
                             }
                         } else {
                             i = columnIndex;
                             if ((packageInfo2.applicationInfo.flags & 16777216) == 0) {
-                                long j2 = cursor.getLong(columnIndex2);
-                                int i2 = cursor.getInt(columnIndex3);
+                                long j2 = cursorQuery.getLong(columnIndex2);
+                                int i2 = cursorQuery.getInt(columnIndex3);
                                 int i3 = columnIndex2;
-                                LauncherActivityInfo launcherActivityInfo2 = (LauncherActivityInfo) hashMap2.remove(unflattenFromString);
+                                LauncherActivityInfo launcherActivityInfo2 = (LauncherActivityInfo) map2.remove(componentNameUnflattenFromString);
                                 int i4 = columnIndex3;
                                 if (i2 == packageInfo2.versionCode) {
                                     j = serialNumberForUser;
                                     try {
-                                        if (j2 == packageInfo2.lastUpdateTime && TextUtils.equals(cursor.getString(columnIndex5), this.mIconProvider.getIconSystemState(packageInfo2.packageName))) {
-                                            columnIndex = i;
-                                            columnIndex2 = i3;
-                                            columnIndex3 = i4;
-                                            serialNumberForUser = j;
+                                        if (j2 != packageInfo2.lastUpdateTime || !TextUtils.equals(cursorQuery.getString(columnIndex5), this.mIconProvider.getIconSystemState(packageInfo2.packageName))) {
                                         }
+                                        columnIndex = i;
+                                        columnIndex2 = i3;
+                                        columnIndex3 = i4;
+                                        serialNumberForUser = j;
                                     } catch (SQLiteException e) {
                                         e = e;
-                                        cursor2 = cursor;
+                                        cursor = cursorQuery;
                                         try {
                                             Log.d(TAG, "Error reading icon cache", e);
-                                            if (cursor2 != null) {
-                                                cursor2.close();
+                                            if (cursor != null) {
+                                                cursor.close();
                                             }
                                             if (!hashSet.isEmpty()) {
                                             }
-                                            if (hashMap2.isEmpty()) {
+                                            if (map2.isEmpty()) {
                                             }
                                             Stack stack2 = new Stack();
-                                            stack2.addAll(hashMap2.values());
-                                            new SerializedIconUpdateTask(j, hashMap, stack2, stack).scheduleNext();
+                                            stack2.addAll(map2.values());
+                                            new SerializedIconUpdateTask(j, map, stack2, stack).scheduleNext();
                                         } catch (Throwable th) {
                                             th = th;
-                                            cursor = cursor2;
-                                            if (cursor != null) {
-                                                cursor.close();
+                                            cursorQuery = cursor;
+                                            if (cursorQuery != null) {
+                                                cursorQuery.close();
                                             }
                                             throw th;
                                         }
@@ -316,8 +317,8 @@ public class IconCache {
                                     j = serialNumberForUser;
                                 }
                                 if (launcherActivityInfo2 == null) {
-                                    remove(unflattenFromString, userHandle);
-                                    hashSet.add(Integer.valueOf(cursor.getInt(columnIndex4)));
+                                    remove(componentNameUnflattenFromString, userHandle);
+                                    hashSet.add(Integer.valueOf(cursorQuery.getInt(columnIndex4)));
                                 } else {
                                     stack.add(launcherActivityInfo2);
                                 }
@@ -330,52 +331,49 @@ public class IconCache {
                         columnIndex = i;
                     }
                     j = serialNumberForUser;
-                    if (cursor != null) {
-                        cursor.close();
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
                     }
-                } catch (SQLiteException e2) {
-                    e = e2;
-                    j = serialNumberForUser;
+                } catch (Throwable th2) {
+                    th = th2;
+                    if (cursorQuery != null) {
+                    }
+                    throw th;
                 }
-            } catch (Throwable th2) {
-                th = th2;
-                if (cursor != null) {
-                }
-                throw th;
+            } catch (SQLiteException e2) {
+                e = e2;
+                j = serialNumberForUser;
             }
         } catch (SQLiteException e3) {
             e = e3;
             j = serialNumberForUser;
-            cursor2 = null;
+            cursor = null;
         } catch (Throwable th3) {
             th = th3;
-            cursor = null;
+            cursorQuery = null;
         }
         if (!hashSet.isEmpty()) {
             this.mIconDb.delete(Utilities.createDbSelectionQuery("rowid", hashSet), null);
         }
-        if (hashMap2.isEmpty() || !stack.isEmpty()) {
+        if (map2.isEmpty() || !stack.isEmpty()) {
             Stack stack22 = new Stack();
-            stack22.addAll(hashMap2.values());
-            new SerializedIconUpdateTask(j, hashMap, stack22, stack).scheduleNext();
+            stack22.addAll(map2.values());
+            new SerializedIconUpdateTask(j, map, stack22, stack).scheduleNext();
         }
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:15:0x002a, code lost:
-        r1 = new com.android.launcher3.IconCache.CacheEntry();
-        r2 = com.android.launcher3.graphics.LauncherIcons.obtain(r8.mContext);
-        r2.createBadgedIconBitmap(getFullResIcon(r9), r9.getUser(), r9.getApplicationInfo().targetSdkVersion).applyTo(r1);
-        r2.recycle();
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     synchronized void addIconToDBAndMemCache(LauncherActivityInfo launcherActivityInfo, PackageInfo packageInfo, long j, boolean z) {
         CacheEntry cacheEntry;
         ComponentKey componentKey = new ComponentKey(launcherActivityInfo.getComponentName(), launcherActivityInfo.getUser());
         CacheEntry cacheEntry2 = null;
         if (!z && (cacheEntry = this.mCache.get(componentKey)) != null && !cacheEntry.isLowResIcon && cacheEntry.icon != null) {
             cacheEntry2 = cacheEntry;
+        }
+        if (cacheEntry2 == null) {
+            cacheEntry2 = new CacheEntry();
+            LauncherIcons launcherIconsObtain = LauncherIcons.obtain(this.mContext);
+            launcherIconsObtain.createBadgedIconBitmap(getFullResIcon(launcherActivityInfo), launcherActivityInfo.getUser(), launcherActivityInfo.getApplicationInfo().targetSdkVersion).applyTo(cacheEntry2);
+            launcherIconsObtain.recycle();
         }
         cacheEntry2.title = launcherActivityInfo.getLabel();
         cacheEntry2.contentDescription = this.mUserManager.getBadgedLabelForUser(cacheEntry2.title, launcherActivityInfo.getUser());
@@ -400,17 +398,15 @@ public class IconCache {
         AnonymousClass1 anonymousClass1 = new AnonymousClass1(this.mWorkerHandler, new Runnable() { // from class: com.android.launcher3.-$$Lambda$IconCache$i9cUcxPyZLyL2CkO-mTsWx7iQ94
             @Override // java.lang.Runnable
             public final void run() {
-                IconCache.this.onIconRequestEnd();
+                this.f$0.onIconRequestEnd();
             }
         }, itemInfoWithIcon, itemInfoUpdateReceiver);
         Utilities.postAsyncCallback(this.mWorkerHandler, anonymousClass1);
         return anonymousClass1;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.launcher3.IconCache$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends IconLoadRequest {
+    /* renamed from: com.android.launcher3.IconCache$1 */
+    class AnonymousClass1 extends IconLoadRequest {
         final /* synthetic */ ItemInfoUpdateReceiver val$caller;
         final /* synthetic */ ItemInfoWithIcon val$info;
 
@@ -434,7 +430,7 @@ public class IconCache {
             mainThreadExecutor.execute(new Runnable() { // from class: com.android.launcher3.-$$Lambda$IconCache$1$TK_u5pHJBKCYnl2rjJTHPBeKfeI
                 @Override // java.lang.Runnable
                 public final void run() {
-                    IconCache.AnonymousClass1.lambda$run$0(IconCache.AnonymousClass1.this, itemInfoUpdateReceiver, itemInfoWithIcon);
+                    IconCache.AnonymousClass1.lambda$run$0(this.f$0, itemInfoUpdateReceiver, itemInfoWithIcon);
                 }
             });
         }
@@ -445,8 +441,7 @@ public class IconCache {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onIconRequestEnd() {
+    private void onIconRequestEnd() {
         this.mPendingIconRequestCount--;
         if (this.mPendingIconRequestCount <= 0) {
             LauncherModel.setWorkerPriority(10);
@@ -454,9 +449,9 @@ public class IconCache {
     }
 
     public synchronized void updateTitleAndIcon(AppInfo appInfo) {
-        CacheEntry cacheLocked = cacheLocked(appInfo.componentName, Provider.of(null), appInfo.user, false, appInfo.usingLowResIcon);
-        if (cacheLocked.icon != null && !isDefaultIcon(cacheLocked.icon, appInfo.user)) {
-            applyCacheEntry(cacheLocked, appInfo);
+        CacheEntry cacheEntryCacheLocked = cacheLocked(appInfo.componentName, Provider.of(null), appInfo.user, false, appInfo.usingLowResIcon);
+        if (cacheEntryCacheLocked.icon != null && !isDefaultIcon(cacheEntryCacheLocked.icon, appInfo.user)) {
+            applyCacheEntry(cacheEntryCacheLocked, appInfo);
         }
     }
 
@@ -488,11 +483,11 @@ public class IconCache {
         itemInfoWithIcon.contentDescription = cacheEntry.contentDescription;
         itemInfoWithIcon.usingLowResIcon = cacheEntry.isLowResIcon;
         Bitmap bitmap = cacheEntry.icon;
-        CacheEntry cacheEntry2 = cacheEntry;
+        BitmapInfo defaultIcon = cacheEntry;
         if (bitmap == null) {
-            cacheEntry2 = getDefaultIcon(itemInfoWithIcon.user);
+            defaultIcon = getDefaultIcon(itemInfoWithIcon.user);
         }
-        cacheEntry2.applyTo(itemInfoWithIcon);
+        defaultIcon.applyTo(itemInfoWithIcon);
     }
 
     public synchronized BitmapInfo getDefaultIcon(UserHandle userHandle) {
@@ -520,9 +515,9 @@ public class IconCache {
                 launcherActivityInfo = provider.get();
                 z3 = true;
                 if (launcherActivityInfo != null) {
-                    LauncherIcons obtain = LauncherIcons.obtain(this.mContext);
-                    obtain.createBadgedIconBitmap(getFullResIcon(launcherActivityInfo), launcherActivityInfo.getUser(), launcherActivityInfo.getApplicationInfo().targetSdkVersion).applyTo(cacheEntry);
-                    obtain.recycle();
+                    LauncherIcons launcherIconsObtain = LauncherIcons.obtain(this.mContext);
+                    launcherIconsObtain.createBadgedIconBitmap(getFullResIcon(launcherActivityInfo), launcherActivityInfo.getUser(), launcherActivityInfo.getApplicationInfo().targetSdkVersion).applyTo(cacheEntry);
+                    launcherIconsObtain.recycle();
                 } else {
                     if (z && (entryForPackageLocked = getEntryForPackageLocked(componentName.getPackageName(), userHandle, false)) != null) {
                         entryForPackageLocked.applyTo(cacheEntry);
@@ -565,9 +560,9 @@ public class IconCache {
             cacheEntry.title = charSequence;
         }
         if (bitmap != null) {
-            LauncherIcons obtain = LauncherIcons.obtain(this.mContext);
-            obtain.createIconBitmap(bitmap).applyTo(cacheEntry);
-            obtain.recycle();
+            LauncherIcons launcherIconsObtain = LauncherIcons.obtain(this.mContext);
+            launcherIconsObtain.createIconBitmap(bitmap).applyTo(cacheEntry);
+            launcherIconsObtain.recycle();
         }
         if (!TextUtils.isEmpty(charSequence) && cacheEntry.icon != null) {
             this.mCache.put(packageKey, cacheEntry);
@@ -578,52 +573,57 @@ public class IconCache {
         return new ComponentKey(new ComponentName(str, str + EMPTY_CLASS_NAME), userHandle);
     }
 
-    private CacheEntry getEntryForPackageLocked(String str, UserHandle userHandle, boolean z) {
+    private CacheEntry getEntryForPackageLocked(String str, UserHandle userHandle, boolean z) throws PackageManager.NameNotFoundException {
         int i;
         Preconditions.assertWorkerThread();
         ComponentKey packageKey = getPackageKey(str, userHandle);
         CacheEntry cacheEntry = this.mCache.get(packageKey);
-        if (cacheEntry == null || (cacheEntry.isLowResIcon && !z)) {
-            CacheEntry cacheEntry2 = new CacheEntry();
-            boolean z2 = true;
-            if (!getEntryFromDB(packageKey, cacheEntry2, z)) {
-                try {
-                    if (!Process.myUserHandle().equals(userHandle)) {
-                        i = 8192;
-                    } else {
-                        i = 0;
-                    }
-                    PackageInfo packageInfo = this.mPackageManager.getPackageInfo(str, i);
-                    ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-                    if (applicationInfo == null) {
-                        throw new PackageManager.NameNotFoundException("ApplicationInfo is null");
-                    }
-                    LauncherIcons obtain = LauncherIcons.obtain(this.mContext);
-                    BitmapInfo createBadgedIconBitmap = obtain.createBadgedIconBitmap(applicationInfo.loadIcon(this.mPackageManager), userHandle, applicationInfo.targetSdkVersion, this.mInstantAppResolver.isInstantApp(applicationInfo));
-                    obtain.recycle();
-                    Bitmap generateLowResIcon = generateLowResIcon(createBadgedIconBitmap.icon);
-                    cacheEntry2.title = applicationInfo.loadLabel(this.mPackageManager);
-                    cacheEntry2.contentDescription = this.mUserManager.getBadgedLabelForUser(cacheEntry2.title, userHandle);
-                    cacheEntry2.icon = z ? generateLowResIcon : createBadgedIconBitmap.icon;
-                    cacheEntry2.color = createBadgedIconBitmap.color;
-                    cacheEntry2.isLowResIcon = z;
-                    addIconToDB(newContentValues(createBadgedIconBitmap.icon, generateLowResIcon, cacheEntry2.color, cacheEntry2.title.toString(), str), packageKey.componentName, packageInfo, this.mUserManager.getSerialNumberForUser(userHandle));
-                } catch (PackageManager.NameNotFoundException e) {
-                    z2 = false;
-                }
-            }
-            if (z2) {
-                this.mCache.put(packageKey, cacheEntry2);
-            }
-            return cacheEntry2;
+        if (cacheEntry != null && (!cacheEntry.isLowResIcon || z)) {
+            return cacheEntry;
         }
-        return cacheEntry;
+        CacheEntry cacheEntry2 = new CacheEntry();
+        boolean z2 = true;
+        if (!getEntryFromDB(packageKey, cacheEntry2, z)) {
+            try {
+                if (!Process.myUserHandle().equals(userHandle)) {
+                    i = 8192;
+                } else {
+                    i = 0;
+                }
+                PackageInfo packageInfo = this.mPackageManager.getPackageInfo(str, i);
+                ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+                if (applicationInfo == null) {
+                    throw new PackageManager.NameNotFoundException("ApplicationInfo is null");
+                }
+                LauncherIcons launcherIconsObtain = LauncherIcons.obtain(this.mContext);
+                BitmapInfo bitmapInfoCreateBadgedIconBitmap = launcherIconsObtain.createBadgedIconBitmap(applicationInfo.loadIcon(this.mPackageManager), userHandle, applicationInfo.targetSdkVersion, this.mInstantAppResolver.isInstantApp(applicationInfo));
+                launcherIconsObtain.recycle();
+                Bitmap bitmapGenerateLowResIcon = generateLowResIcon(bitmapInfoCreateBadgedIconBitmap.icon);
+                cacheEntry2.title = applicationInfo.loadLabel(this.mPackageManager);
+                cacheEntry2.contentDescription = this.mUserManager.getBadgedLabelForUser(cacheEntry2.title, userHandle);
+                cacheEntry2.icon = z ? bitmapGenerateLowResIcon : bitmapInfoCreateBadgedIconBitmap.icon;
+                cacheEntry2.color = bitmapInfoCreateBadgedIconBitmap.color;
+                cacheEntry2.isLowResIcon = z;
+                addIconToDB(newContentValues(bitmapInfoCreateBadgedIconBitmap.icon, bitmapGenerateLowResIcon, cacheEntry2.color, cacheEntry2.title.toString(), str), packageKey.componentName, packageInfo, this.mUserManager.getSerialNumberForUser(userHandle));
+            } catch (PackageManager.NameNotFoundException e) {
+                z2 = false;
+            }
+        }
+        if (z2) {
+            this.mCache.put(packageKey, cacheEntry2);
+        }
+        return cacheEntry2;
     }
 
-    private boolean getEntryFromDB(ComponentKey componentKey, CacheEntry cacheEntry, boolean z) {
-        Cursor query;
-        boolean moveToNext;
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [714=6, 715=4] */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:69:0x008c */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:71:0x008e */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:80:0x0003 */
+    private boolean getEntryFromDB(ComponentKey componentKey, CacheEntry cacheEntry, boolean z) throws Throwable {
+        Cursor cursorQuery;
+        boolean zMoveToNext;
         Cursor cursor = null;
+        Cursor cursor2 = null;
         try {
             try {
                 IconDB iconDB = this.mIconDb;
@@ -631,58 +631,57 @@ public class IconCache {
                 strArr[0] = z ? "icon_low_res" : LauncherSettings.BaseLauncherColumns.ICON;
                 strArr[1] = "icon_color";
                 strArr[2] = "label";
-                query = iconDB.query(strArr, "componentName = ? AND profileId = ?", new String[]{componentKey.componentName.flattenToString(), Long.toString(this.mUserManager.getSerialNumberForUser(componentKey.user))});
-            } catch (Throwable th) {
-                th = th;
+                cursorQuery = iconDB.query(strArr, "componentName = ? AND profileId = ?", new String[]{componentKey.componentName.flattenToString(), Long.toString(this.mUserManager.getSerialNumberForUser(componentKey.user))});
+                try {
+                    zMoveToNext = cursorQuery.moveToNext();
+                    cursor = zMoveToNext;
+                } catch (SQLiteException e) {
+                    e = e;
+                    cursor2 = cursorQuery;
+                    Log.d(TAG, "Error reading icon cache", e);
+                    cursor = cursor2;
+                    if (cursor2 != null) {
+                        cursor2.close();
+                        cursor = cursor2;
+                    }
+                    return false;
+                } catch (Throwable th) {
+                    th = th;
+                    cursor = cursorQuery;
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                    throw th;
+                }
+            } catch (SQLiteException e2) {
+                e = e2;
             }
-        } catch (SQLiteException e) {
-            e = e;
-        }
-        try {
-            moveToNext = query.moveToNext();
-            cursor = moveToNext;
-        } catch (SQLiteException e2) {
-            e = e2;
-            cursor = query;
-            Log.d(TAG, "Error reading icon cache", e);
-            cursor = cursor;
-            if (cursor != null) {
-                cursor.close();
-                cursor = cursor;
+            if (!zMoveToNext) {
+                if (cursorQuery != null) {
+                    cursorQuery.close();
+                    cursor = zMoveToNext;
+                }
+                return false;
             }
-            return false;
+            cacheEntry.icon = loadIconNoResize(cursorQuery, 0, z ? this.mLowResOptions : this.mHighResOptions);
+            cacheEntry.color = ColorUtils.setAlphaComponent(cursorQuery.getInt(1), 255);
+            cacheEntry.isLowResIcon = z;
+            cacheEntry.title = cursorQuery.getString(2);
+            if (cacheEntry.title == null) {
+                cacheEntry.title = "";
+                cacheEntry.contentDescription = "";
+            } else {
+                cacheEntry.contentDescription = this.mUserManager.getBadgedLabelForUser(cacheEntry.title, componentKey.user);
+            }
+            if (cursorQuery != null) {
+                cursorQuery.close();
+            }
+            return true;
         } catch (Throwable th2) {
             th = th2;
-            cursor = query;
-            if (cursor != null) {
-                cursor.close();
-            }
-            throw th;
         }
-        if (!moveToNext) {
-            if (query != null) {
-                query.close();
-                cursor = moveToNext;
-            }
-            return false;
-        }
-        cacheEntry.icon = loadIconNoResize(query, 0, z ? this.mLowResOptions : this.mHighResOptions);
-        cacheEntry.color = ColorUtils.setAlphaComponent(query.getInt(1), 255);
-        cacheEntry.isLowResIcon = z;
-        cacheEntry.title = query.getString(2);
-        if (cacheEntry.title == null) {
-            cacheEntry.title = "";
-            cacheEntry.contentDescription = "";
-        } else {
-            cacheEntry.contentDescription = this.mUserManager.getBadgedLabelForUser(cacheEntry.title, componentKey.user);
-        }
-        if (query != null) {
-            query.close();
-        }
-        return true;
     }
 
-    /* loaded from: classes.dex */
     public static abstract class IconLoadRequest implements Runnable {
         private final Runnable mEndRunnable;
         private boolean mEnded = false;
@@ -706,18 +705,16 @@ public class IconCache {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class SerializedIconUpdateTask implements Runnable {
+    class SerializedIconUpdateTask implements Runnable {
         private final Stack<LauncherActivityInfo> mAppsToAdd;
         private final Stack<LauncherActivityInfo> mAppsToUpdate;
         private final HashMap<String, PackageInfo> mPkgInfoMap;
         private final HashSet<String> mUpdatedPackages = new HashSet<>();
         private final long mUserSerial;
 
-        SerializedIconUpdateTask(long j, HashMap<String, PackageInfo> hashMap, Stack<LauncherActivityInfo> stack, Stack<LauncherActivityInfo> stack2) {
+        SerializedIconUpdateTask(long j, HashMap<String, PackageInfo> map, Stack<LauncherActivityInfo> stack, Stack<LauncherActivityInfo> stack2) {
             this.mUserSerial = j;
-            this.mPkgInfoMap = hashMap;
+            this.mPkgInfoMap = map;
             this.mAppsToAdd = stack;
             this.mAppsToUpdate = stack2;
         }
@@ -726,10 +723,10 @@ public class IconCache {
         public void run() {
             if (this.mAppsToUpdate.isEmpty()) {
                 if (!this.mAppsToAdd.isEmpty()) {
-                    LauncherActivityInfo pop = this.mAppsToAdd.pop();
-                    PackageInfo packageInfo = this.mPkgInfoMap.get(pop.getComponentName().getPackageName());
+                    LauncherActivityInfo launcherActivityInfoPop = this.mAppsToAdd.pop();
+                    PackageInfo packageInfo = this.mPkgInfoMap.get(launcherActivityInfoPop.getComponentName().getPackageName());
                     if (packageInfo != null) {
-                        IconCache.this.addIconToDBAndMemCache(pop, packageInfo, this.mUserSerial, false);
+                        IconCache.this.addIconToDBAndMemCache(launcherActivityInfoPop, packageInfo, this.mUserSerial, false);
                     }
                     if (!this.mAppsToAdd.isEmpty()) {
                         scheduleNext();
@@ -739,9 +736,9 @@ public class IconCache {
                 }
                 return;
             }
-            LauncherActivityInfo pop2 = this.mAppsToUpdate.pop();
-            String packageName = pop2.getComponentName().getPackageName();
-            IconCache.this.addIconToDBAndMemCache(pop2, this.mPkgInfoMap.get(packageName), this.mUserSerial, true);
+            LauncherActivityInfo launcherActivityInfoPop2 = this.mAppsToUpdate.pop();
+            String packageName = launcherActivityInfoPop2.getComponentName().getPackageName();
+            IconCache.this.addIconToDBAndMemCache(launcherActivityInfoPop2, this.mPkgInfoMap.get(packageName), this.mUserSerial, true);
             this.mUpdatedPackages.add(packageName);
             if (this.mAppsToUpdate.isEmpty() && !this.mUpdatedPackages.isEmpty()) {
                 LauncherAppState.getInstance(IconCache.this.mContext).getModel().onPackageIconsUpdated(this.mUpdatedPackages, IconCache.this.mUserManager.getUserForSerialNumber(this.mUserSerial));
@@ -754,9 +751,7 @@ public class IconCache {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class IconDB extends SQLiteCacheHelper {
+    private static final class IconDB extends SQLiteCacheHelper {
         private static final String COLUMN_COMPONENT = "componentName";
         private static final String COLUMN_ICON = "icon";
         private static final String COLUMN_ICON_COLOR = "icon_color";
@@ -775,7 +770,7 @@ public class IconCache {
         }
 
         @Override // com.android.launcher3.util.SQLiteCacheHelper
-        protected void onCreateTable(SQLiteDatabase sQLiteDatabase) {
+        protected void onCreateTable(SQLiteDatabase sQLiteDatabase) throws SQLException {
             sQLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS icons (componentName TEXT NOT NULL, profileId INTEGER NOT NULL, lastUpdated INTEGER NOT NULL DEFAULT 0, version INTEGER NOT NULL DEFAULT 0, icon BLOB, icon_low_res BLOB, icon_color INTEGER NOT NULL DEFAULT 0, label TEXT, system_state TEXT, PRIMARY KEY (componentName, profileId) );");
         }
     }
@@ -803,9 +798,7 @@ public class IconCache {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ActivityInfoProvider extends Provider<LauncherActivityInfo> {
+    private class ActivityInfoProvider extends Provider<LauncherActivityInfo> {
         private final Intent mIntent;
         private final UserHandle mUser;
 
@@ -814,7 +807,7 @@ public class IconCache {
             this.mUser = userHandle;
         }
 
-        /* JADX WARN: Can't rename method to resolve collision */
+        /* JADX DEBUG: Method merged with bridge method: get()Ljava/lang/Object; */
         @Override // com.android.launcher3.util.Provider
         public LauncherActivityInfo get() {
             return IconCache.this.mLauncherApps.resolveActivity(this.mIntent, this.mUser);

@@ -7,15 +7,17 @@ import android.content.Intent;
 import android.content.pm.UserInfo;
 import android.os.UserHandle;
 import android.os.UserManager;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class RestrictedLockUtils {
     public static void sendShowAdminSupportDetailsIntent(Context context, EnforcedAdmin enforcedAdmin) {
         Intent showAdminSupportDetailsIntent = getShowAdminSupportDetailsIntent(context, enforcedAdmin);
-        int myUserId = UserHandle.myUserId();
+        int iMyUserId = UserHandle.myUserId();
         if (enforcedAdmin != null && enforcedAdmin.userId != -10000 && isCurrentUserOrProfile(context, enforcedAdmin.userId)) {
-            myUserId = enforcedAdmin.userId;
+            iMyUserId = enforcedAdmin.userId;
         }
-        context.startActivityAsUser(showAdminSupportDetailsIntent, new UserHandle(myUserId));
+        context.startActivityAsUser(showAdminSupportDetailsIntent, new UserHandle(iMyUserId));
     }
 
     private static Intent getShowAdminSupportDetailsIntent(Context context, EnforcedAdmin enforcedAdmin) {
@@ -24,18 +26,19 @@ public class RestrictedLockUtils {
             if (enforcedAdmin.component != null) {
                 intent.putExtra("android.app.extra.DEVICE_ADMIN", enforcedAdmin.component);
             }
-            int myUserId = UserHandle.myUserId();
+            int iMyUserId = UserHandle.myUserId();
             if (enforcedAdmin.userId != -10000) {
-                myUserId = enforcedAdmin.userId;
+                iMyUserId = enforcedAdmin.userId;
             }
-            intent.putExtra("android.intent.extra.USER_ID", myUserId);
+            intent.putExtra("android.intent.extra.USER_ID", iMyUserId);
         }
         return intent;
     }
 
     public static boolean isCurrentUserOrProfile(Context context, int i) {
-        for (UserInfo userInfo : UserManager.get(context).getProfiles(UserHandle.myUserId())) {
-            if (userInfo.id == i) {
+        Iterator it = UserManager.get(context).getProfiles(UserHandle.myUserId()).iterator();
+        while (it.hasNext()) {
+            if (((UserInfo) it.next()).id == i) {
                 return true;
             }
         }
@@ -51,7 +54,6 @@ public class RestrictedLockUtils {
         return new EnforcedAdmin(deviceOwnerComponentOnAnyUser, devicePolicyManager.getDeviceOwnerUserId());
     }
 
-    /* loaded from: classes.dex */
     public static class EnforcedAdmin {
         public static final EnforcedAdmin MULTIPLE_ENFORCED_ADMIN = new EnforcedAdmin();
         public ComponentName component;
@@ -73,14 +75,14 @@ public class RestrictedLockUtils {
             if (obj == this) {
                 return true;
             }
-            if (obj instanceof EnforcedAdmin) {
-                EnforcedAdmin enforcedAdmin = (EnforcedAdmin) obj;
-                if (this.userId != enforcedAdmin.userId) {
-                    return false;
-                }
-                return (this.component == null && enforcedAdmin.component == null) || (this.component != null && this.component.equals(enforcedAdmin.component));
+            if (!(obj instanceof EnforcedAdmin)) {
+                return false;
             }
-            return false;
+            EnforcedAdmin enforcedAdmin = (EnforcedAdmin) obj;
+            if (this.userId != enforcedAdmin.userId) {
+                return false;
+            }
+            return (this.component == null && enforcedAdmin.component == null) || (this.component != null && this.component.equals(enforcedAdmin.component));
         }
 
         public String toString() {

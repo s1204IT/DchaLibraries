@@ -8,6 +8,7 @@ import android.os.ParcelUuid;
 import com.android.settingslib.wifi.AccessPoint;
 import java.util.List;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class LocalBluetoothAdapter {
     private static LocalBluetoothAdapter sInstance;
@@ -20,22 +21,16 @@ public class LocalBluetoothAdapter {
         this.mAdapter = bluetoothAdapter;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setProfileManager(LocalBluetoothProfileManager localBluetoothProfileManager) {
+    void setProfileManager(LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mProfileManager = localBluetoothProfileManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static synchronized LocalBluetoothAdapter getInstance() {
-        LocalBluetoothAdapter localBluetoothAdapter;
+    static synchronized LocalBluetoothAdapter getInstance() {
         BluetoothAdapter defaultAdapter;
-        synchronized (LocalBluetoothAdapter.class) {
-            if (sInstance == null && (defaultAdapter = BluetoothAdapter.getDefaultAdapter()) != null) {
-                sInstance = new LocalBluetoothAdapter(defaultAdapter);
-            }
-            localBluetoothAdapter = sInstance;
+        if (sInstance == null && (defaultAdapter = BluetoothAdapter.getDefaultAdapter()) != null) {
+            sInstance = new LocalBluetoothAdapter(defaultAdapter);
         }
-        return localBluetoothAdapter;
+        return sInstance;
     }
 
     public void cancelDiscovery() {
@@ -54,8 +49,7 @@ public class LocalBluetoothAdapter {
         return this.mAdapter.getAddress();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void getProfileProxy(Context context, BluetoothProfile.ServiceListener serviceListener, int i) {
+    void getProfileProxy(Context context, BluetoothProfile.ServiceListener serviceListener, int i) {
         this.mAdapter.getProfileProxy(context, serviceListener, i);
     }
 
@@ -135,8 +129,7 @@ public class LocalBluetoothAdapter {
         return this.mState;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setBluetoothStateInt(int i) {
+    void setBluetoothStateInt(int i) {
         synchronized (this) {
             if (this.mState == i) {
                 return;
@@ -157,14 +150,14 @@ public class LocalBluetoothAdapter {
     }
 
     public boolean setBluetoothEnabled(boolean z) {
-        boolean disable;
+        boolean zDisable;
         int i;
         if (z) {
-            disable = this.mAdapter.enable();
+            zDisable = this.mAdapter.enable();
         } else {
-            disable = this.mAdapter.disable();
+            zDisable = this.mAdapter.disable();
         }
-        if (disable) {
+        if (zDisable) {
             if (z) {
                 i = 11;
             } else {
@@ -174,7 +167,7 @@ public class LocalBluetoothAdapter {
         } else {
             syncBluetoothState();
         }
-        return disable;
+        return zDisable;
     }
 
     public BluetoothDevice getRemoteDevice(String str) {

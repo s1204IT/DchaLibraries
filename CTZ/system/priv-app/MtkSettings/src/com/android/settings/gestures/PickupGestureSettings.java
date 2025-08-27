@@ -10,6 +10,7 @@ import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.search.Indexable;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PickupGestureSettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.gestures.PickupGestureSettings.1
@@ -38,9 +39,8 @@ public class PickupGestureSettings extends DashboardFragment {
         return "PickupGestureSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.pick_up_gesture_settings;
     }
 

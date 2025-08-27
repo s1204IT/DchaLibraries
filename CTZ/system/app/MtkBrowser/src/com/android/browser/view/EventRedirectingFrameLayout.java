@@ -6,6 +6,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+
 /* loaded from: classes.dex */
 public class EventRedirectingFrameLayout extends FrameLayout {
     private int mTargetChild;

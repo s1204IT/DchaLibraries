@@ -13,6 +13,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class UploadHandler {
     static final /* synthetic */ boolean $assertionsDisabled = false;
@@ -28,9 +29,8 @@ public class UploadHandler {
         this.mIsLowMemory = false;
         this.mAuthority = null;
         this.mController = controller;
-        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
-        ((ActivityManager) this.mController.getContext().getSystemService("activity")).getMemoryInfo(memoryInfo);
-        if ((memoryInfo.totalMem / 1024.0d) / 1024.0d < 512.0d) {
+        ((ActivityManager) this.mController.getContext().getSystemService("activity")).getMemoryInfo(new ActivityManager.MemoryInfo());
+        if ((r6.totalMem / 1024.0d) / 1024.0d < 512.0d) {
             this.mIsLowMemory = true;
             this.mAuthority = new ArrayList<>();
             this.mAuthority.add("com.android.externalstorage.documents");
@@ -40,44 +40,43 @@ public class UploadHandler {
         this.mIsLowMemory = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean handled() {
+    boolean handled() {
         return this.mHandled;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onResult(int i, Intent intent) {
+    void onResult(int i, Intent intent) {
         Log.d("browser", "onResult: " + i + " " + intent);
         this.mUploadMessage.onReceiveValue(parseResult(i, intent));
         this.mHandled = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void openFileChooser(ValueCallback<Uri[]> valueCallback, WebChromeClient.FileChooserParams fileChooserParams) {
+    void openFileChooser(ValueCallback<Uri[]> valueCallback, WebChromeClient.FileChooserParams fileChooserParams) {
         Intent intent;
         if (this.mUploadMessage != null) {
             return;
         }
         this.mUploadMessage = valueCallback;
         this.mParams = fileChooserParams;
-        Intent[] createCaptureIntent = createCaptureIntent();
+        Intent[] intentArrCreateCaptureIntent = createCaptureIntent();
         if (this.mIsLowMemory) {
             String str = "*/*";
             String[] acceptTypes = this.mParams.getAcceptTypes();
             if (acceptTypes != null && acceptTypes.length > 0) {
                 str = acceptTypes[0];
             }
-            str = (str == null || str.equals("")) ? "*/*" : "*/*";
+            if (str == null || str.equals("")) {
+                str = "*/*";
+            }
             intent = new Intent("android.intent.action.GET_CONTENT");
             intent.addCategory("android.intent.category.OPENABLE");
             intent.setType(str);
             intent.putStringArrayListExtra("user-assigned-authorities", this.mAuthority);
             Log.d("browser", "MIME TYPE: " + str);
-        } else if (fileChooserParams.isCaptureEnabled() && createCaptureIntent.length == 1) {
-            intent = createCaptureIntent[0];
+        } else if (fileChooserParams.isCaptureEnabled() && intentArrCreateCaptureIntent.length == 1) {
+            intent = intentArrCreateCaptureIntent[0];
         } else {
             Intent intent2 = new Intent("android.intent.action.CHOOSER");
-            intent2.putExtra("android.intent.extra.INITIAL_INTENTS", createCaptureIntent);
+            intent2.putExtra("android.intent.extra.INITIAL_INTENTS", intentArrCreateCaptureIntent);
             intent2.putExtra("android.intent.extra.INTENT", fileChooserParams.createIntent());
             intent = intent2;
         }
@@ -85,29 +84,29 @@ public class UploadHandler {
     }
 
     private Uri[] parseResult(int i, Intent intent) {
-        Uri uri;
+        Uri data;
         if (i == 0) {
             return null;
         }
         if (intent != null && i == -1) {
-            uri = intent.getData();
+            data = intent.getData();
         } else {
-            uri = null;
+            data = null;
         }
-        if (uri == null && intent == null && i == -1 && this.mCapturedMedia != null) {
-            uri = this.mCapturedMedia;
+        if (data == null && intent == null && i == -1 && this.mCapturedMedia != null) {
+            data = this.mCapturedMedia;
         }
-        if (uri != null) {
-            return new Uri[]{uri};
+        if (data == null) {
+            return null;
         }
-        return null;
+        return new Uri[]{data};
     }
 
     private void startActivity(Intent intent) {
         try {
             this.mController.getActivity().startActivityForResult(intent, 4);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this.mController.getActivity(), (int) R.string.uploads_disabled, 1).show();
+            Toast.makeText(this.mController.getActivity(), R.string.uploads_disabled, 1).show();
         }
     }
 
@@ -117,10 +116,19 @@ public class UploadHandler {
         if (acceptTypes != null && acceptTypes.length > 0) {
             str = acceptTypes[0];
         }
-        return str.equals("image/*") ? new Intent[]{createCameraIntent(createTempFileContentUri(".jpg"))} : str.equals("video/*") ? new Intent[]{createCamcorderIntent()} : str.equals("audio/*") ? new Intent[]{createSoundRecorderIntent()} : new Intent[]{createCameraIntent(createTempFileContentUri(".jpg")), createCamcorderIntent(), createSoundRecorderIntent()};
+        if (str.equals("image/*")) {
+            return new Intent[]{createCameraIntent(createTempFileContentUri(".jpg"))};
+        }
+        if (str.equals("video/*")) {
+            return new Intent[]{createCamcorderIntent()};
+        }
+        if (str.equals("audio/*")) {
+            return new Intent[]{createSoundRecorderIntent()};
+        }
+        return new Intent[]{createCameraIntent(createTempFileContentUri(".jpg")), createCamcorderIntent(), createSoundRecorderIntent()};
     }
 
-    private Uri createTempFileContentUri(String str) {
+    private Uri createTempFileContentUri(String str) throws IOException {
         try {
             File file = new File(this.mController.getActivity().getFilesDir(), "captured_media");
             if (!file.exists() && !file.mkdir()) {

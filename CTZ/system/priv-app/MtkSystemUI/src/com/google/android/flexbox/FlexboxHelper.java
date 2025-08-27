@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class FlexboxHelper {
+class FlexboxHelper {
     static final /* synthetic */ boolean $assertionsDisabled = false;
     private boolean[] mChildrenFrozen;
     private final FlexContainer mFlexContainer;
@@ -18,24 +18,22 @@ public class FlexboxHelper {
     long[] mMeasureSpecCache;
     private long[] mMeasuredSizeCache;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public FlexboxHelper(FlexContainer flexContainer) {
+    FlexboxHelper(FlexContainer flexContainer) {
         this.mFlexContainer = flexContainer;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int[] createReorderedIndices(View viewBeforeAdded, int indexForViewBeforeAdded, ViewGroup.LayoutParams paramsForViewBeforeAdded, SparseIntArray orderCache) {
+    /* JADX DEBUG: Multi-variable search result rejected for r10v0, resolved type: android.view.ViewGroup$LayoutParams */
+    /* JADX WARN: Multi-variable type inference failed */
+    int[] createReorderedIndices(View viewBeforeAdded, int indexForViewBeforeAdded, ViewGroup.LayoutParams layoutParams, SparseIntArray orderCache) {
         int childCount = this.mFlexContainer.getFlexItemCount();
         List<Order> orders = createOrders(childCount);
         Order orderForViewToBeAdded = new Order();
-        if (viewBeforeAdded != null && (paramsForViewBeforeAdded instanceof FlexItem)) {
-            orderForViewToBeAdded.order = ((FlexItem) paramsForViewBeforeAdded).getOrder();
+        if (viewBeforeAdded != null && (layoutParams instanceof FlexItem)) {
+            orderForViewToBeAdded.order = ((FlexItem) layoutParams).getOrder();
         } else {
             orderForViewToBeAdded.order = 1;
         }
-        if (indexForViewBeforeAdded == -1 || indexForViewBeforeAdded == childCount) {
-            orderForViewToBeAdded.index = childCount;
-        } else if (indexForViewBeforeAdded < this.mFlexContainer.getFlexItemCount()) {
+        if (indexForViewBeforeAdded != -1 && indexForViewBeforeAdded != childCount && indexForViewBeforeAdded < this.mFlexContainer.getFlexItemCount()) {
             orderForViewToBeAdded.index = indexForViewBeforeAdded;
             for (int i = indexForViewBeforeAdded; i < childCount; i++) {
                 orders.get(i).index++;
@@ -47,8 +45,7 @@ public class FlexboxHelper {
         return sortOrdersIntoReorderedIndices(childCount + 1, orders, orderCache);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int[] createReorderedIndices(SparseIntArray orderCache) {
+    int[] createReorderedIndices(SparseIntArray orderCache) {
         int childCount = this.mFlexContainer.getFlexItemCount();
         List<Order> orders = createOrders(childCount);
         return sortOrdersIntoReorderedIndices(childCount, orders, orderCache);
@@ -67,8 +64,7 @@ public class FlexboxHelper {
         return orders;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isOrderChangedFromLastMeasurement(SparseIntArray orderCache) {
+    boolean isOrderChangedFromLastMeasurement(SparseIntArray orderCache) {
         int childCount = this.mFlexContainer.getFlexItemCount();
         if (orderCache.size() != childCount) {
             return true;
@@ -98,38 +94,31 @@ public class FlexboxHelper {
         return reorderedIndices;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void calculateHorizontalFlexLines(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec) {
+    void calculateHorizontalFlexLines(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec) {
         calculateFlexLines(result, widthMeasureSpec, heightMeasureSpec, Integer.MAX_VALUE, 0, -1, null);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void calculateHorizontalFlexLines(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec, int needsCalcAmount, int fromIndex, List<FlexLine> existingLines) {
+    void calculateHorizontalFlexLines(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec, int needsCalcAmount, int fromIndex, List<FlexLine> existingLines) {
         calculateFlexLines(result, widthMeasureSpec, heightMeasureSpec, needsCalcAmount, fromIndex, -1, existingLines);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void calculateHorizontalFlexLinesToIndex(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec, int needsCalcAmount, int toIndex, List<FlexLine> existingLines) {
+    void calculateHorizontalFlexLinesToIndex(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec, int needsCalcAmount, int toIndex, List<FlexLine> existingLines) {
         calculateFlexLines(result, widthMeasureSpec, heightMeasureSpec, needsCalcAmount, 0, toIndex, existingLines);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void calculateVerticalFlexLines(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec) {
+    void calculateVerticalFlexLines(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec) {
         calculateFlexLines(result, heightMeasureSpec, widthMeasureSpec, Integer.MAX_VALUE, 0, -1, null);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void calculateVerticalFlexLines(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec, int needsCalcAmount, int fromIndex, List<FlexLine> existingLines) {
+    void calculateVerticalFlexLines(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec, int needsCalcAmount, int fromIndex, List<FlexLine> existingLines) {
         calculateFlexLines(result, heightMeasureSpec, widthMeasureSpec, needsCalcAmount, fromIndex, -1, existingLines);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void calculateVerticalFlexLinesToIndex(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec, int needsCalcAmount, int toIndex, List<FlexLine> existingLines) {
+    void calculateVerticalFlexLinesToIndex(FlexLinesResult result, int widthMeasureSpec, int heightMeasureSpec, int needsCalcAmount, int toIndex, List<FlexLine> existingLines) {
         calculateFlexLines(result, heightMeasureSpec, widthMeasureSpec, needsCalcAmount, 0, toIndex, existingLines);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void calculateFlexLines(FlexLinesResult result, int mainMeasureSpec, int crossMeasureSpec, int needsCalcAmount, int fromIndex, int toIndex, List<FlexLine> existingLines) {
+    void calculateFlexLines(FlexLinesResult result, int mainMeasureSpec, int crossMeasureSpec, int needsCalcAmount, int fromIndex, int toIndex, List<FlexLine> existingLines) {
         List<FlexLine> flexLines;
         List<FlexLine> flexLines2;
         int mainSize;
@@ -276,15 +265,9 @@ public class FlexboxHelper {
                             childCrossMeasureSpec2 = this.mFlexContainer.getChildWidthMeasureSpec(crossMeasureSpec, this.mFlexContainer.getPaddingLeft() + this.mFlexContainer.getPaddingRight() + flexItem.getMarginLeft() + flexItem.getMarginRight() + sumCrossSize3, flexItem.getWidth());
                             child.measure(childCrossMeasureSpec2, childMainMeasureSpec2);
                             checkSizeConstraints(child, i2);
-                            flexLine = new FlexLine();
-                            flexLine.mItemCount = 1;
-                            flexLine.mMainSize = mainPaddingStart + mainPaddingEnd;
-                            flexLine.mFirstIndex = i2;
-                            indexInFlexLine = 0;
-                            largestSizeInCross = Integer.MIN_VALUE;
-                            sumCrossSize5 = sumCrossSize3;
+                        } else {
+                            childCrossMeasureSpec2 = childCrossMeasureSpec5;
                         }
-                        childCrossMeasureSpec2 = childCrossMeasureSpec5;
                         flexLine = new FlexLine();
                         flexLine.mItemCount = 1;
                         flexLine.mMainSize = mainPaddingStart + mainPaddingEnd;
@@ -327,22 +310,22 @@ public class FlexboxHelper {
                     if (flexLines3.get(flexLines3.size() - 1).mLastIndex >= i3 && i2 >= i3 && !reachedToIndex2) {
                         sumCrossSize2 = -flexLine.getCrossSize();
                         reachedToIndex2 = true;
-                        if (sumCrossSize2 <= needsCalcAmount && reachedToIndex2) {
-                            largestSizeInCross2 = childState2;
-                            break;
-                        }
-                        largestSizeInCross = largestSizeInCross5;
-                        indexInFlexLine2 = indexInFlexLine;
-                        largestSizeInCross2 = childState2;
-                        childState = i2 + 1;
-                        childCount2 = sumCrossSize;
-                        i4 = i3;
-                        childCount = sumCrossSize2;
-                        flexLines4 = flexLines3;
-                        mainSize3 = mainSize2;
-                        mainMode2 = mainMode;
-                        sumCrossSize4 = mainMeasureSpec;
                     }
+                    if (sumCrossSize2 <= needsCalcAmount && reachedToIndex2) {
+                        largestSizeInCross2 = childState2;
+                        break;
+                    }
+                    largestSizeInCross = largestSizeInCross5;
+                    indexInFlexLine2 = indexInFlexLine;
+                    largestSizeInCross2 = childState2;
+                    childState = i2 + 1;
+                    childCount2 = sumCrossSize;
+                    i4 = i3;
+                    childCount = sumCrossSize2;
+                    flexLines4 = flexLines3;
+                    mainSize3 = mainSize2;
+                    mainMode2 = mainMode;
+                    sumCrossSize4 = mainMeasureSpec;
                 }
                 sumCrossSize2 = sumCrossSize5;
                 if (sumCrossSize2 <= needsCalcAmount) {
@@ -518,13 +501,11 @@ public class FlexboxHelper {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void determineMainSize(int widthMeasureSpec, int heightMeasureSpec) {
+    void determineMainSize(int widthMeasureSpec, int heightMeasureSpec) {
         determineMainSize(widthMeasureSpec, heightMeasureSpec, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void determineMainSize(int widthMeasureSpec, int heightMeasureSpec, int fromIndex) {
+    void determineMainSize(int widthMeasureSpec, int heightMeasureSpec, int fromIndex) {
         int mainSize;
         int paddingAlongMainAxis;
         int size;
@@ -604,9 +585,10 @@ public class FlexboxHelper {
                 int newCapacity = this.mChildrenFrozen.length * 2;
                 this.mChildrenFrozen = new boolean[newCapacity >= size ? newCapacity : size];
                 return;
+            } else {
+                Arrays.fill(this.mChildrenFrozen, false);
+                return;
             }
-            Arrays.fill(this.mChildrenFrozen, false);
-            return;
         }
         this.mChildrenFrozen = new boolean[size >= 10 ? size : 10];
     }
@@ -646,21 +628,75 @@ public class FlexboxHelper {
             } else {
                 FlexItem flexItem = (FlexItem) child.getLayoutParams();
                 int flexDirection2 = this.mFlexContainer.getFlexDirection();
-                if (flexDirection2 != 0 && flexDirection2 != 1) {
-                    int childMeasuredHeight3 = child.getMeasuredHeight();
-                    if (this.mMeasuredSizeCache != null) {
-                        int childMeasuredHeight4 = extractHigherInt(this.mMeasuredSizeCache[index]);
-                        flexDirection = childMeasuredHeight4;
-                    } else {
-                        flexDirection = childMeasuredHeight3;
-                    }
+                if (flexDirection2 == 0 || flexDirection2 == 1) {
                     int childMeasuredWidth2 = child.getMeasuredWidth();
                     if (this.mMeasuredSizeCache != null) {
                         childMeasuredWidth2 = extractLowerInt(this.mMeasuredSizeCache[index]);
                     }
+                    int childMeasuredHeight3 = child.getMeasuredHeight();
+                    if (this.mMeasuredSizeCache != null) {
+                        int childMeasuredHeight4 = extractHigherInt(this.mMeasuredSizeCache[index]);
+                        childMeasuredHeight = childMeasuredHeight4;
+                    } else {
+                        childMeasuredHeight = childMeasuredHeight3;
+                    }
+                    if (this.mChildrenFrozen[index] || flexItem.getFlexGrow() <= 0.0f) {
+                        sizeBeforeExpand = sizeBeforeExpand2;
+                    } else {
+                        float rawCalculatedWidth = childMeasuredWidth2 + (flexItem.getFlexGrow() * unitSpace);
+                        if (i2 == flexLine.mItemCount - 1) {
+                            rawCalculatedWidth += accumulatedRoundError2;
+                            accumulatedRoundError2 = 0.0f;
+                        }
+                        int newWidth = Math.round(rawCalculatedWidth);
+                        if (newWidth > flexItem.getMaxWidth()) {
+                            newWidth = flexItem.getMaxWidth();
+                            this.mChildrenFrozen[index] = true;
+                            flexLine.mTotalFlexGrow -= flexItem.getFlexGrow();
+                            needsReexpand = true;
+                            sizeBeforeExpand = sizeBeforeExpand2;
+                        } else {
+                            float accumulatedRoundError3 = accumulatedRoundError2 + (rawCalculatedWidth - newWidth);
+                            sizeBeforeExpand = sizeBeforeExpand2;
+                            if (accumulatedRoundError3 > 1.0d) {
+                                newWidth++;
+                                accumulatedRoundError3 = (float) (accumulatedRoundError3 - 1.0d);
+                            } else if (accumulatedRoundError3 < -1.0d) {
+                                newWidth--;
+                                accumulatedRoundError3 = (float) (accumulatedRoundError3 + 1.0d);
+                            }
+                            accumulatedRoundError2 = accumulatedRoundError3;
+                        }
+                        int childHeightMeasureSpec = getChildHeightMeasureSpecInternal(heightMeasureSpec, flexItem, flexLine.mSumCrossSizeBefore);
+                        int childWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(newWidth, 1073741824);
+                        child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+                        int childMeasuredWidth3 = child.getMeasuredWidth();
+                        childMeasuredHeight = child.getMeasuredHeight();
+                        updateMeasureCache(index, childWidthMeasureSpec, childHeightMeasureSpec, child);
+                        this.mFlexContainer.updateViewCache(index, child);
+                        childMeasuredWidth2 = childMeasuredWidth3;
+                    }
+                    int largestCrossSize3 = Math.max(largestCrossSize2, childMeasuredHeight + flexItem.getMarginTop() + flexItem.getMarginBottom() + this.mFlexContainer.getDecorationLengthCrossAxis(child));
+                    flexLine.mMainSize += flexItem.getMarginLeft() + childMeasuredWidth2 + flexItem.getMarginRight();
+                    largestCrossSize = largestCrossSize3;
+                    int largestCrossSize4 = flexLine.mCrossSize;
+                    flexLine.mCrossSize = Math.max(largestCrossSize4, largestCrossSize);
+                    largestCrossSize2 = largestCrossSize;
+                } else {
+                    int childMeasuredHeight5 = child.getMeasuredHeight();
+                    if (this.mMeasuredSizeCache != null) {
+                        int childMeasuredHeight6 = extractHigherInt(this.mMeasuredSizeCache[index]);
+                        flexDirection = childMeasuredHeight6;
+                    } else {
+                        flexDirection = childMeasuredHeight5;
+                    }
+                    int childMeasuredWidth4 = child.getMeasuredWidth();
+                    if (this.mMeasuredSizeCache != null) {
+                        childMeasuredWidth4 = extractLowerInt(this.mMeasuredSizeCache[index]);
+                    }
                     if (this.mChildrenFrozen[index] || flexItem.getFlexGrow() <= 0.0f) {
                         childMeasuredHeight2 = flexDirection;
-                        childMeasuredWidth = childMeasuredWidth2;
+                        childMeasuredWidth = childMeasuredWidth4;
                     } else {
                         float rawCalculatedHeight = flexDirection + (flexItem.getFlexGrow() * unitSpace);
                         if (i2 == flexLine.mItemCount - 1) {
@@ -674,93 +710,35 @@ public class FlexboxHelper {
                             flexLine.mTotalFlexGrow -= flexItem.getFlexGrow();
                             needsReexpand = true;
                         } else {
-                            float accumulatedRoundError3 = accumulatedRoundError2 + (rawCalculatedHeight - newHeight);
-                            int childMeasuredHeight5 = (accumulatedRoundError3 > 1.0d ? 1 : (accumulatedRoundError3 == 1.0d ? 0 : -1));
-                            if (childMeasuredHeight5 <= 0) {
-                                if (accumulatedRoundError3 < -1.0d) {
-                                    newHeight--;
-                                    accumulatedRoundError = (float) (accumulatedRoundError3 + 1.0d);
-                                } else {
-                                    accumulatedRoundError2 = accumulatedRoundError3;
-                                }
-                            } else {
+                            float accumulatedRoundError4 = accumulatedRoundError2 + (rawCalculatedHeight - newHeight);
+                            if (accumulatedRoundError4 > 1.0d) {
                                 newHeight++;
-                                accumulatedRoundError = (float) (accumulatedRoundError3 - 1.0d);
+                                accumulatedRoundError = (float) (accumulatedRoundError4 - 1.0d);
+                            } else if (accumulatedRoundError4 < -1.0d) {
+                                newHeight--;
+                                accumulatedRoundError = (float) (accumulatedRoundError4 + 1.0d);
+                            } else {
+                                accumulatedRoundError2 = accumulatedRoundError4;
                             }
                             accumulatedRoundError2 = accumulatedRoundError;
                         }
-                        int childWidthMeasureSpec = getChildWidthMeasureSpecInternal(widthMeasureSpec, flexItem, flexLine.mSumCrossSizeBefore);
-                        int childHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(newHeight, 1073741824);
-                        child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
-                        int childMeasuredWidth3 = child.getMeasuredWidth();
-                        int childMeasuredHeight6 = child.getMeasuredHeight();
-                        updateMeasureCache(index, childWidthMeasureSpec, childHeightMeasureSpec, child);
+                        int childWidthMeasureSpec2 = getChildWidthMeasureSpecInternal(widthMeasureSpec, flexItem, flexLine.mSumCrossSizeBefore);
+                        int childHeightMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(newHeight, 1073741824);
+                        child.measure(childWidthMeasureSpec2, childHeightMeasureSpec2);
+                        int childMeasuredWidth5 = child.getMeasuredWidth();
+                        int childMeasuredHeight7 = child.getMeasuredHeight();
+                        updateMeasureCache(index, childWidthMeasureSpec2, childHeightMeasureSpec2, child);
                         this.mFlexContainer.updateViewCache(index, child);
-                        childMeasuredWidth = childMeasuredWidth3;
-                        childMeasuredHeight2 = childMeasuredHeight6;
+                        childMeasuredWidth = childMeasuredWidth5;
+                        childMeasuredHeight2 = childMeasuredHeight7;
                     }
                     largestCrossSize = Math.max(largestCrossSize2, childMeasuredWidth + flexItem.getMarginLeft() + flexItem.getMarginRight() + this.mFlexContainer.getDecorationLengthCrossAxis(child));
                     flexLine.mMainSize += childMeasuredHeight2 + flexItem.getMarginTop() + flexItem.getMarginBottom();
                     sizeBeforeExpand = sizeBeforeExpand2;
-                    int largestCrossSize3 = flexLine.mCrossSize;
-                    flexLine.mCrossSize = Math.max(largestCrossSize3, largestCrossSize);
+                    int largestCrossSize42 = flexLine.mCrossSize;
+                    flexLine.mCrossSize = Math.max(largestCrossSize42, largestCrossSize);
                     largestCrossSize2 = largestCrossSize;
                 }
-                int childMeasuredWidth4 = child.getMeasuredWidth();
-                if (this.mMeasuredSizeCache != null) {
-                    childMeasuredWidth4 = extractLowerInt(this.mMeasuredSizeCache[index]);
-                }
-                int childMeasuredHeight7 = child.getMeasuredHeight();
-                if (this.mMeasuredSizeCache != null) {
-                    int childMeasuredHeight8 = extractHigherInt(this.mMeasuredSizeCache[index]);
-                    childMeasuredHeight = childMeasuredHeight8;
-                } else {
-                    childMeasuredHeight = childMeasuredHeight7;
-                }
-                if (this.mChildrenFrozen[index] || flexItem.getFlexGrow() <= 0.0f) {
-                    sizeBeforeExpand = sizeBeforeExpand2;
-                } else {
-                    float rawCalculatedWidth = childMeasuredWidth4 + (flexItem.getFlexGrow() * unitSpace);
-                    if (i2 == flexLine.mItemCount - 1) {
-                        rawCalculatedWidth += accumulatedRoundError2;
-                        accumulatedRoundError2 = 0.0f;
-                    }
-                    int newWidth = Math.round(rawCalculatedWidth);
-                    if (newWidth > flexItem.getMaxWidth()) {
-                        newWidth = flexItem.getMaxWidth();
-                        this.mChildrenFrozen[index] = true;
-                        flexLine.mTotalFlexGrow -= flexItem.getFlexGrow();
-                        needsReexpand = true;
-                        sizeBeforeExpand = sizeBeforeExpand2;
-                    } else {
-                        float accumulatedRoundError4 = accumulatedRoundError2 + (rawCalculatedWidth - newWidth);
-                        sizeBeforeExpand = sizeBeforeExpand2;
-                        if (accumulatedRoundError4 <= 1.0d) {
-                            if (accumulatedRoundError4 < -1.0d) {
-                                newWidth--;
-                                accumulatedRoundError4 = (float) (accumulatedRoundError4 + 1.0d);
-                            }
-                        } else {
-                            newWidth++;
-                            accumulatedRoundError4 = (float) (accumulatedRoundError4 - 1.0d);
-                        }
-                        accumulatedRoundError2 = accumulatedRoundError4;
-                    }
-                    int childHeightMeasureSpec2 = getChildHeightMeasureSpecInternal(heightMeasureSpec, flexItem, flexLine.mSumCrossSizeBefore);
-                    int childWidthMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(newWidth, 1073741824);
-                    child.measure(childWidthMeasureSpec2, childHeightMeasureSpec2);
-                    int childMeasuredWidth5 = child.getMeasuredWidth();
-                    childMeasuredHeight = child.getMeasuredHeight();
-                    updateMeasureCache(index, childWidthMeasureSpec2, childHeightMeasureSpec2, child);
-                    this.mFlexContainer.updateViewCache(index, child);
-                    childMeasuredWidth4 = childMeasuredWidth5;
-                }
-                int largestCrossSize4 = Math.max(largestCrossSize2, childMeasuredHeight + flexItem.getMarginTop() + flexItem.getMarginBottom() + this.mFlexContainer.getDecorationLengthCrossAxis(child));
-                flexLine.mMainSize += flexItem.getMarginLeft() + childMeasuredWidth4 + flexItem.getMarginRight();
-                largestCrossSize = largestCrossSize4;
-                int largestCrossSize32 = flexLine.mCrossSize;
-                flexLine.mCrossSize = Math.max(largestCrossSize32, largestCrossSize);
-                largestCrossSize2 = largestCrossSize;
             }
             i = i2 + 1;
             sizeBeforeExpand2 = sizeBeforeExpand;
@@ -807,35 +785,83 @@ public class FlexboxHelper {
                 } else {
                     FlexItem flexItem = (FlexItem) child.getLayoutParams();
                     int flexDirection = this.mFlexContainer.getFlexDirection();
-                    if (flexDirection == 0) {
+                    if (flexDirection == 0 || flexDirection == 1) {
                         sizeBeforeShrink = sizeBeforeShrink2;
-                    } else if (flexDirection == 1) {
-                        sizeBeforeShrink = sizeBeforeShrink2;
-                    } else {
+                        int childMeasuredWidth3 = child.getMeasuredWidth();
+                        if (this.mMeasuredSizeCache != null) {
+                            childMeasuredWidth3 = extractLowerInt(this.mMeasuredSizeCache[index]);
+                        }
                         int childMeasuredHeight3 = child.getMeasuredHeight();
                         if (this.mMeasuredSizeCache != null) {
                             childMeasuredHeight3 = extractHigherInt(this.mMeasuredSizeCache[index]);
                         }
-                        int childMeasuredHeight4 = childMeasuredHeight3;
-                        int childMeasuredWidth3 = child.getMeasuredWidth();
-                        if (this.mMeasuredSizeCache != null) {
-                            int childMeasuredWidth4 = extractLowerInt(this.mMeasuredSizeCache[index]);
-                            childMeasuredWidth2 = childMeasuredWidth4;
+                        if (!this.mChildrenFrozen[index] && flexItem.getFlexShrink() > 0.0f) {
+                            float rawCalculatedWidth = childMeasuredWidth3 - (flexItem.getFlexShrink() * unitShrink2);
+                            if (i2 == flexLine.mItemCount - 1) {
+                                rawCalculatedWidth += accumulatedRoundError;
+                                accumulatedRoundError = 0.0f;
+                            }
+                            int newWidth = Math.round(rawCalculatedWidth);
+                            int childMeasuredWidth4 = flexItem.getMinWidth();
+                            if (newWidth < childMeasuredWidth4) {
+                                newWidth = flexItem.getMinWidth();
+                                this.mChildrenFrozen[index] = true;
+                                flexLine.mTotalFlexShrink -= flexItem.getFlexShrink();
+                                needsReshrink = true;
+                                unitShrink = unitShrink2;
+                            } else {
+                                accumulatedRoundError += rawCalculatedWidth - newWidth;
+                                unitShrink = unitShrink2;
+                                if (accumulatedRoundError > 1.0d) {
+                                    newWidth++;
+                                    accumulatedRoundError -= 1.0f;
+                                } else if (accumulatedRoundError < -1.0d) {
+                                    newWidth--;
+                                    accumulatedRoundError += 1.0f;
+                                }
+                            }
+                            int childHeightMeasureSpec = getChildHeightMeasureSpecInternal(heightMeasureSpec, flexItem, flexLine.mSumCrossSizeBefore);
+                            int childWidthMeasureSpec = View.MeasureSpec.makeMeasureSpec(newWidth, 1073741824);
+                            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+                            childMeasuredWidth = child.getMeasuredWidth();
+                            childMeasuredHeight = child.getMeasuredHeight();
+                            updateMeasureCache(index, childWidthMeasureSpec, childHeightMeasureSpec, child);
+                            this.mFlexContainer.updateViewCache(index, child);
                         } else {
-                            childMeasuredWidth2 = childMeasuredWidth3;
+                            unitShrink = unitShrink2;
+                            childMeasuredWidth = childMeasuredWidth3;
+                            childMeasuredHeight = childMeasuredHeight3;
+                        }
+                        largestCrossSize = Math.max(largestCrossSize2, childMeasuredHeight + flexItem.getMarginTop() + flexItem.getMarginBottom() + this.mFlexContainer.getDecorationLengthCrossAxis(child));
+                        int largestCrossSize3 = flexLine.mMainSize;
+                        flexLine.mMainSize = largestCrossSize3 + childMeasuredWidth + flexItem.getMarginLeft() + flexItem.getMarginRight();
+                        flexLine.mCrossSize = Math.max(flexLine.mCrossSize, largestCrossSize);
+                        largestCrossSize2 = largestCrossSize;
+                    } else {
+                        int childMeasuredHeight4 = child.getMeasuredHeight();
+                        if (this.mMeasuredSizeCache != null) {
+                            childMeasuredHeight4 = extractHigherInt(this.mMeasuredSizeCache[index]);
+                        }
+                        int childMeasuredHeight5 = childMeasuredHeight4;
+                        int childMeasuredWidth5 = child.getMeasuredWidth();
+                        if (this.mMeasuredSizeCache != null) {
+                            int childMeasuredWidth6 = extractLowerInt(this.mMeasuredSizeCache[index]);
+                            childMeasuredWidth2 = childMeasuredWidth6;
+                        } else {
+                            childMeasuredWidth2 = childMeasuredWidth5;
                         }
                         if (this.mChildrenFrozen[index] || flexItem.getFlexShrink() <= 0.0f) {
-                            childMeasuredHeight2 = childMeasuredHeight4;
+                            childMeasuredHeight2 = childMeasuredHeight5;
                             sizeBeforeShrink = sizeBeforeShrink2;
                         } else {
-                            float rawCalculatedHeight = childMeasuredHeight4 - (flexItem.getFlexShrink() * unitShrink2);
+                            float rawCalculatedHeight = childMeasuredHeight5 - (flexItem.getFlexShrink() * unitShrink2);
                             if (i2 == flexLine.mItemCount - 1) {
                                 rawCalculatedHeight += accumulatedRoundError;
                                 accumulatedRoundError = 0.0f;
                             }
                             int newHeight = Math.round(rawCalculatedHeight);
-                            int childMeasuredHeight5 = flexItem.getMinHeight();
-                            if (newHeight < childMeasuredHeight5) {
+                            int childMeasuredHeight6 = flexItem.getMinHeight();
+                            if (newHeight < childMeasuredHeight6) {
                                 newHeight = flexItem.getMinHeight();
                                 this.mChildrenFrozen[index] = true;
                                 flexLine.mTotalFlexShrink -= flexItem.getFlexShrink();
@@ -844,85 +870,31 @@ public class FlexboxHelper {
                             } else {
                                 accumulatedRoundError += rawCalculatedHeight - newHeight;
                                 sizeBeforeShrink = sizeBeforeShrink2;
-                                if (accumulatedRoundError <= 1.0d) {
-                                    if (accumulatedRoundError < -1.0d) {
-                                        newHeight--;
-                                        accumulatedRoundError += 1.0f;
-                                    }
-                                } else {
+                                if (accumulatedRoundError > 1.0d) {
                                     newHeight++;
                                     accumulatedRoundError -= 1.0f;
+                                } else if (accumulatedRoundError < -1.0d) {
+                                    newHeight--;
+                                    accumulatedRoundError += 1.0f;
                                 }
                             }
-                            int childWidthMeasureSpec = getChildWidthMeasureSpecInternal(widthMeasureSpec, flexItem, flexLine.mSumCrossSizeBefore);
-                            int childHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(newHeight, 1073741824);
-                            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+                            int childWidthMeasureSpec2 = getChildWidthMeasureSpecInternal(widthMeasureSpec, flexItem, flexLine.mSumCrossSizeBefore);
+                            int childHeightMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(newHeight, 1073741824);
+                            child.measure(childWidthMeasureSpec2, childHeightMeasureSpec2);
                             childMeasuredWidth2 = child.getMeasuredWidth();
-                            int childMeasuredHeight6 = child.getMeasuredHeight();
-                            updateMeasureCache(index, childWidthMeasureSpec, childHeightMeasureSpec, child);
+                            int childMeasuredHeight7 = child.getMeasuredHeight();
+                            updateMeasureCache(index, childWidthMeasureSpec2, childHeightMeasureSpec2, child);
                             this.mFlexContainer.updateViewCache(index, child);
-                            childMeasuredHeight2 = childMeasuredHeight6;
+                            childMeasuredHeight2 = childMeasuredHeight7;
                         }
-                        int childMeasuredHeight7 = flexItem.getMarginLeft();
-                        largestCrossSize = Math.max(largestCrossSize2, childMeasuredWidth2 + childMeasuredHeight7 + flexItem.getMarginRight() + this.mFlexContainer.getDecorationLengthCrossAxis(child));
-                        int largestCrossSize3 = flexLine.mMainSize;
-                        flexLine.mMainSize = largestCrossSize3 + childMeasuredHeight2 + flexItem.getMarginTop() + flexItem.getMarginBottom();
+                        int childMeasuredHeight8 = flexItem.getMarginLeft();
+                        largestCrossSize = Math.max(largestCrossSize2, childMeasuredWidth2 + childMeasuredHeight8 + flexItem.getMarginRight() + this.mFlexContainer.getDecorationLengthCrossAxis(child));
+                        int largestCrossSize4 = flexLine.mMainSize;
+                        flexLine.mMainSize = largestCrossSize4 + childMeasuredHeight2 + flexItem.getMarginTop() + flexItem.getMarginBottom();
                         unitShrink = unitShrink2;
                         flexLine.mCrossSize = Math.max(flexLine.mCrossSize, largestCrossSize);
                         largestCrossSize2 = largestCrossSize;
                     }
-                    int childMeasuredWidth5 = child.getMeasuredWidth();
-                    if (this.mMeasuredSizeCache != null) {
-                        childMeasuredWidth5 = extractLowerInt(this.mMeasuredSizeCache[index]);
-                    }
-                    int childMeasuredHeight8 = child.getMeasuredHeight();
-                    if (this.mMeasuredSizeCache != null) {
-                        childMeasuredHeight8 = extractHigherInt(this.mMeasuredSizeCache[index]);
-                    }
-                    if (!this.mChildrenFrozen[index] && flexItem.getFlexShrink() > 0.0f) {
-                        float rawCalculatedWidth = childMeasuredWidth5 - (flexItem.getFlexShrink() * unitShrink2);
-                        if (i2 == flexLine.mItemCount - 1) {
-                            rawCalculatedWidth += accumulatedRoundError;
-                            accumulatedRoundError = 0.0f;
-                        }
-                        int newWidth = Math.round(rawCalculatedWidth);
-                        int childMeasuredWidth6 = flexItem.getMinWidth();
-                        if (newWidth < childMeasuredWidth6) {
-                            newWidth = flexItem.getMinWidth();
-                            this.mChildrenFrozen[index] = true;
-                            flexLine.mTotalFlexShrink -= flexItem.getFlexShrink();
-                            needsReshrink = true;
-                            unitShrink = unitShrink2;
-                        } else {
-                            accumulatedRoundError += rawCalculatedWidth - newWidth;
-                            unitShrink = unitShrink2;
-                            if (accumulatedRoundError <= 1.0d) {
-                                if (accumulatedRoundError < -1.0d) {
-                                    newWidth--;
-                                    accumulatedRoundError += 1.0f;
-                                }
-                            } else {
-                                newWidth++;
-                                accumulatedRoundError -= 1.0f;
-                            }
-                        }
-                        int childHeightMeasureSpec2 = getChildHeightMeasureSpecInternal(heightMeasureSpec, flexItem, flexLine.mSumCrossSizeBefore);
-                        int childWidthMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(newWidth, 1073741824);
-                        child.measure(childWidthMeasureSpec2, childHeightMeasureSpec2);
-                        childMeasuredWidth = child.getMeasuredWidth();
-                        childMeasuredHeight = child.getMeasuredHeight();
-                        updateMeasureCache(index, childWidthMeasureSpec2, childHeightMeasureSpec2, child);
-                        this.mFlexContainer.updateViewCache(index, child);
-                    } else {
-                        unitShrink = unitShrink2;
-                        childMeasuredWidth = childMeasuredWidth5;
-                        childMeasuredHeight = childMeasuredHeight8;
-                    }
-                    largestCrossSize = Math.max(largestCrossSize2, childMeasuredHeight + flexItem.getMarginTop() + flexItem.getMarginBottom() + this.mFlexContainer.getDecorationLengthCrossAxis(child));
-                    int largestCrossSize4 = flexLine.mMainSize;
-                    flexLine.mMainSize = largestCrossSize4 + childMeasuredWidth + flexItem.getMarginLeft() + flexItem.getMarginRight();
-                    flexLine.mCrossSize = Math.max(flexLine.mCrossSize, largestCrossSize);
-                    largestCrossSize2 = largestCrossSize;
                 }
                 i = i2 + 1;
                 sizeBeforeShrink2 = sizeBeforeShrink;
@@ -959,8 +931,7 @@ public class FlexboxHelper {
         return childHeightMeasureSpec;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void determineCrossSize(int widthMeasureSpec, int heightMeasureSpec, int paddingAlongCrossAxis) {
+    void determineCrossSize(int widthMeasureSpec, int heightMeasureSpec, int paddingAlongCrossAxis) {
         int mode;
         int size;
         char c;
@@ -984,7 +955,9 @@ public class FlexboxHelper {
             int totalCrossSize = this.mFlexContainer.getSumOfCrossSize() + paddingAlongCrossAxis;
             if (flexLines.size() == 1) {
                 flexLines.get(0).mCrossSize = size - paddingAlongCrossAxis;
-            } else if (flexLines.size() >= 2) {
+                return;
+            }
+            if (flexLines.size() >= 2) {
                 switch (this.mFlexContainer.getAlignContent()) {
                     case 1:
                         int spaceTop = size - totalCrossSize;
@@ -1100,13 +1073,11 @@ public class FlexboxHelper {
         return newFlexLines;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void stretchViews() {
+    void stretchViews() {
         stretchViews(0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void stretchViews(int fromIndex) {
+    void stretchViews(int fromIndex) {
         View view;
         if (fromIndex >= this.mFlexContainer.getFlexItemCount()) {
             return;
@@ -1198,8 +1169,7 @@ public class FlexboxHelper {
         this.mFlexContainer.updateViewCache(index, view);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void layoutSingleChildHorizontal(View view, FlexLine flexLine, int left, int top, int right, int bottom) {
+    void layoutSingleChildHorizontal(View view, FlexLine flexLine, int left, int top, int right, int bottom) {
         FlexItem flexItem = (FlexItem) view.getLayoutParams();
         int alignItems = this.mFlexContainer.getAlignItems();
         if (flexItem.getAlignSelf() != -1) {
@@ -1211,44 +1181,42 @@ public class FlexboxHelper {
             case 4:
                 if (this.mFlexContainer.getFlexWrap() != 2) {
                     view.layout(left, flexItem.getMarginTop() + top, right, flexItem.getMarginTop() + bottom);
-                    return;
+                    break;
                 } else {
                     view.layout(left, top - flexItem.getMarginBottom(), right, bottom - flexItem.getMarginBottom());
-                    return;
+                    break;
                 }
             case 1:
                 if (this.mFlexContainer.getFlexWrap() != 2) {
                     view.layout(left, ((top + crossSize) - view.getMeasuredHeight()) - flexItem.getMarginBottom(), right, (top + crossSize) - flexItem.getMarginBottom());
-                    return;
+                    break;
                 } else {
                     view.layout(left, (top - crossSize) + view.getMeasuredHeight() + flexItem.getMarginTop(), right, (bottom - crossSize) + view.getMeasuredHeight() + flexItem.getMarginTop());
-                    return;
+                    break;
                 }
             case 2:
                 int topFromCrossAxis = (((crossSize - view.getMeasuredHeight()) + flexItem.getMarginTop()) - flexItem.getMarginBottom()) / 2;
                 if (this.mFlexContainer.getFlexWrap() != 2) {
                     view.layout(left, top + topFromCrossAxis, right, top + topFromCrossAxis + view.getMeasuredHeight());
-                    return;
+                    break;
                 } else {
                     view.layout(left, top - topFromCrossAxis, right, (top - topFromCrossAxis) + view.getMeasuredHeight());
-                    return;
+                    break;
                 }
             case 3:
                 if (this.mFlexContainer.getFlexWrap() != 2) {
                     int marginTop = Math.max(flexLine.mMaxBaseline - view.getBaseline(), flexItem.getMarginTop());
                     view.layout(left, top + marginTop, right, bottom + marginTop);
-                    return;
+                    break;
+                } else {
+                    int marginBottom = Math.max((flexLine.mMaxBaseline - view.getMeasuredHeight()) + view.getBaseline(), flexItem.getMarginBottom());
+                    view.layout(left, top - marginBottom, right, bottom - marginBottom);
+                    break;
                 }
-                int marginBottom = Math.max((flexLine.mMaxBaseline - view.getMeasuredHeight()) + view.getBaseline(), flexItem.getMarginBottom());
-                view.layout(left, top - marginBottom, right, bottom - marginBottom);
-                return;
-            default:
-                return;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void layoutSingleChildVertical(View view, FlexLine flexLine, boolean isRtl, int left, int top, int right, int bottom) {
+    void layoutSingleChildVertical(View view, FlexLine flexLine, boolean isRtl, int left, int top, int right, int bottom) {
         FlexItem flexItem = (FlexItem) view.getLayoutParams();
         int alignItems = this.mFlexContainer.getAlignItems();
         if (flexItem.getAlignSelf() != -1) {
@@ -1261,36 +1229,33 @@ public class FlexboxHelper {
             case 4:
                 if (!isRtl) {
                     view.layout(flexItem.getMarginLeft() + left, top, flexItem.getMarginLeft() + right, bottom);
-                    return;
+                    break;
                 } else {
                     view.layout(left - flexItem.getMarginRight(), top, right - flexItem.getMarginRight(), bottom);
-                    return;
+                    break;
                 }
             case 1:
                 if (!isRtl) {
                     view.layout(((left + crossSize) - view.getMeasuredWidth()) - flexItem.getMarginRight(), top, ((right + crossSize) - view.getMeasuredWidth()) - flexItem.getMarginRight(), bottom);
-                    return;
+                    break;
                 } else {
                     view.layout((left - crossSize) + view.getMeasuredWidth() + flexItem.getMarginLeft(), top, (right - crossSize) + view.getMeasuredWidth() + flexItem.getMarginLeft(), bottom);
-                    return;
+                    break;
                 }
             case 2:
                 ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
                 int leftFromCrossAxis = (((crossSize - view.getMeasuredWidth()) + MarginLayoutParamsCompat.getMarginStart(lp)) - MarginLayoutParamsCompat.getMarginEnd(lp)) / 2;
                 if (!isRtl) {
                     view.layout(left + leftFromCrossAxis, top, right + leftFromCrossAxis, bottom);
-                    return;
+                    break;
                 } else {
                     view.layout(left - leftFromCrossAxis, top, right - leftFromCrossAxis, bottom);
-                    return;
+                    break;
                 }
-            default:
-                return;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void ensureMeasuredSizeCache(int size) {
+    void ensureMeasuredSizeCache(int size) {
         if (this.mMeasuredSizeCache != null) {
             if (this.mMeasuredSizeCache.length < size) {
                 int newCapacity = this.mMeasuredSizeCache.length * 2;
@@ -1302,8 +1267,7 @@ public class FlexboxHelper {
         this.mMeasuredSizeCache = new long[size >= 10 ? size : 10];
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void ensureMeasureSpecCache(int size) {
+    void ensureMeasureSpecCache(int size) {
         if (this.mMeasureSpecCache != null) {
             if (this.mMeasureSpecCache.length < size) {
                 int newCapacity = this.mMeasureSpecCache.length * 2;
@@ -1315,13 +1279,11 @@ public class FlexboxHelper {
         this.mMeasureSpecCache = new long[size >= 10 ? size : 10];
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int extractLowerInt(long longValue) {
+    int extractLowerInt(long longValue) {
         return (int) longValue;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int extractHigherInt(long longValue) {
+    int extractHigherInt(long longValue) {
         return (int) (longValue >> 32);
     }
 
@@ -1338,8 +1300,7 @@ public class FlexboxHelper {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void ensureIndexToFlexLine(int size) {
+    void ensureIndexToFlexLine(int size) {
         if (this.mIndexToFlexLine != null) {
             if (this.mIndexToFlexLine.length < size) {
                 int newCapacity = this.mIndexToFlexLine.length * 2;
@@ -1351,8 +1312,7 @@ public class FlexboxHelper {
         this.mIndexToFlexLine = new int[size >= 10 ? size : 10];
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void clearFlexLines(List<FlexLine> flexLines, int fromFlexItem) {
+    void clearFlexLines(List<FlexLine> flexLines, int fromFlexItem) {
         int fromFlexLine = this.mIndexToFlexLine[fromFlexItem];
         if (fromFlexLine == -1) {
             fromFlexLine = 0;
@@ -1374,15 +1334,14 @@ public class FlexboxHelper {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class Order implements Comparable<Order> {
+    private static class Order implements Comparable<Order> {
         int index;
         int order;
 
         private Order() {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // java.lang.Comparable
         public int compareTo(Order another) {
             if (this.order != another.order) {
@@ -1396,14 +1355,14 @@ public class FlexboxHelper {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class FlexLinesResult {
+    static class FlexLinesResult {
         int mChildState;
         List<FlexLine> mFlexLines;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void reset() {
+        FlexLinesResult() {
+        }
+
+        void reset() {
             this.mFlexLines = null;
             this.mChildState = 0;
         }

@@ -27,6 +27,7 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.compat.LauncherAppsCompat;
 import java.net.URISyntaxException;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PackageManagerHelper {
     private static final String TAG = "PackageManagerHelper";
@@ -67,37 +68,37 @@ public class PackageManagerHelper {
     }
 
     public boolean hasPermissionForActivity(Intent intent, String str) {
-        ResolveInfo resolveActivity = this.mPm.resolveActivity(intent, 0);
-        if (resolveActivity == null) {
+        ResolveInfo resolveInfoResolveActivity = this.mPm.resolveActivity(intent, 0);
+        if (resolveInfoResolveActivity == null) {
             return false;
         }
-        if (TextUtils.isEmpty(resolveActivity.activityInfo.permission)) {
+        if (TextUtils.isEmpty(resolveInfoResolveActivity.activityInfo.permission)) {
             return true;
         }
-        if (!TextUtils.isEmpty(str) && this.mPm.checkPermission(resolveActivity.activityInfo.permission, str) == 0) {
-            if (Utilities.ATLEAST_MARSHMALLOW && !TextUtils.isEmpty(AppOpsManager.permissionToOp(resolveActivity.activityInfo.permission))) {
-                try {
-                    return this.mPm.getApplicationInfo(str, 0).targetSdkVersion >= 23;
-                } catch (PackageManager.NameNotFoundException e) {
-                    return false;
-                }
-            }
+        if (TextUtils.isEmpty(str) || this.mPm.checkPermission(resolveInfoResolveActivity.activityInfo.permission, str) != 0) {
+            return false;
+        }
+        if (!Utilities.ATLEAST_MARSHMALLOW || TextUtils.isEmpty(AppOpsManager.permissionToOp(resolveInfoResolveActivity.activityInfo.permission))) {
             return true;
         }
-        return false;
+        try {
+            return this.mPm.getApplicationInfo(str, 0).targetSdkVersion >= 23;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     public Intent getMarketIntent(String str) {
         return new Intent("android.intent.action.VIEW").setData(new Uri.Builder().scheme("market").authority("details").appendQueryParameter("id", str).build()).putExtra("android.intent.extra.REFERRER", new Uri.Builder().scheme("android-app").authority(this.mContext.getPackageName()).build());
     }
 
-    public static Intent getMarketSearchIntent(Context context, String str) {
+    public static Intent getMarketSearchIntent(Context context, String str) throws URISyntaxException {
         try {
-            Intent parseUri = Intent.parseUri(context.getString(R.string.market_search_intent), 0);
+            Intent uri = Intent.parseUri(context.getString(R.string.market_search_intent), 0);
             if (!TextUtils.isEmpty(str)) {
-                parseUri.setData(parseUri.getData().buildUpon().appendQueryParameter("q", str).build());
+                uri.setData(uri.getData().buildUpon().appendQueryParameter("q", str).build());
             }
-            return parseUri;
+            return uri;
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -108,21 +109,21 @@ public class PackageManagerHelper {
             this.mContext.startActivity(((PromiseAppInfo) itemInfo).getMarketIntent(this.mContext));
             return;
         }
-        ComponentName componentName = null;
+        ComponentName targetComponent = null;
         if (itemInfo instanceof AppInfo) {
-            componentName = ((AppInfo) itemInfo).componentName;
+            targetComponent = ((AppInfo) itemInfo).componentName;
         } else if (itemInfo instanceof ShortcutInfo) {
-            componentName = itemInfo.getTargetComponent();
+            targetComponent = itemInfo.getTargetComponent();
         } else if (itemInfo instanceof PendingAddItemInfo) {
-            componentName = ((PendingAddItemInfo) itemInfo).componentName;
+            targetComponent = ((PendingAddItemInfo) itemInfo).componentName;
         } else if (itemInfo instanceof LauncherAppWidgetInfo) {
-            componentName = ((LauncherAppWidgetInfo) itemInfo).providerName;
+            targetComponent = ((LauncherAppWidgetInfo) itemInfo).providerName;
         }
-        if (componentName != null) {
+        if (targetComponent != null) {
             try {
-                this.mLauncherApps.showAppDetailsForProfile(componentName, itemInfo.user, rect, bundle);
+                this.mLauncherApps.showAppDetailsForProfile(targetComponent, itemInfo.user, rect, bundle);
             } catch (ActivityNotFoundException | SecurityException e) {
-                Toast.makeText(this.mContext, (int) R.string.activity_not_found, 0).show();
+                Toast.makeText(this.mContext, R.string.activity_not_found, 0).show();
                 Log.e(TAG, "Unable to launch settings", e);
             }
         }

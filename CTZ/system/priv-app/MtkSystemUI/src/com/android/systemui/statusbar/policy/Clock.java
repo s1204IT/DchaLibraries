@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import libcore.icu.LocaleData;
+
 /* loaded from: classes.dex */
 public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks, ConfigurationController.ConfigurationListener, DarkIconDispatcher.DarkReceiver, TunerService.Tunable {
     private final int mAmPmStyle;
@@ -80,6 +81,9 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
         this.mStatusBarExt = null;
         this.mIntentReceiver = new AnonymousClass3();
         this.mScreenReceiver = new BroadcastReceiver() { // from class: com.android.systemui.statusbar.policy.Clock.4
+            AnonymousClass4() {
+            }
+
             @Override // android.content.BroadcastReceiver
             public void onReceive(Context context2, Intent intent) {
                 String action = intent.getAction();
@@ -93,6 +97,9 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
             }
         };
         this.mSecondTick = new Runnable() { // from class: com.android.systemui.statusbar.policy.Clock.5
+            AnonymousClass5() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 if (Clock.this.mCalendar != null) {
@@ -101,23 +108,39 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
                 Clock.this.mSecondsHandler.postAtTime(this, ((SystemClock.uptimeMillis() / 1000) * 1000) + 1000);
             }
         };
-        TypedArray obtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.Clock, 0, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.Clock, 0, 0);
         try {
             this.mSystemUIFactoryBase = OpSystemUICustomizationFactoryBase.getOpFactory(context);
             this.mStatusBarExt = this.mSystemUIFactoryBase.makeSystemUIStatusBar(context);
-            this.mAmPmStyle = this.mStatusBarExt.getClockAmPmStyle(obtainStyledAttributes.getInt(0, 2));
-            this.mShowDark = obtainStyledAttributes.getBoolean(1, true);
+            this.mAmPmStyle = this.mStatusBarExt.getClockAmPmStyle(typedArrayObtainStyledAttributes.getInt(0, 2));
+            this.mShowDark = typedArrayObtainStyledAttributes.getBoolean(1, true);
             this.mNonAdaptedColor = getCurrentTextColor();
-            obtainStyledAttributes.recycle();
+            typedArrayObtainStyledAttributes.recycle();
             this.mCurrentUserTracker = new CurrentUserTracker(context) { // from class: com.android.systemui.statusbar.policy.Clock.1
+                AnonymousClass1(Context context2) {
+                    super(context2);
+                }
+
                 @Override // com.android.systemui.settings.CurrentUserTracker
                 public void onUserSwitched(int i2) {
                     Clock.this.mCurrentUserId = i2;
                 }
             };
         } catch (Throwable th) {
-            obtainStyledAttributes.recycle();
+            typedArrayObtainStyledAttributes.recycle();
             throw th;
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.policy.Clock$1 */
+    class AnonymousClass1 extends CurrentUserTracker {
+        AnonymousClass1(Context context2) {
+            super(context2);
+        }
+
+        @Override // com.android.systemui.settings.CurrentUserTracker
+        public void onUserSwitched(int i2) {
+            Clock.this.mCurrentUserId = i2;
         }
     }
 
@@ -148,10 +171,8 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
         updateShowSeconds();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.policy.Clock$2  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass2 extends ContentObserver {
+    /* renamed from: com.android.systemui.statusbar.policy.Clock$2 */
+    class AnonymousClass2 extends ContentObserver {
         AnonymousClass2(Handler handler) {
             super(handler);
         }
@@ -184,10 +205,8 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.policy.Clock$3  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass3 extends BroadcastReceiver {
+    /* renamed from: com.android.systemui.statusbar.policy.Clock$3 */
+    class AnonymousClass3 extends BroadcastReceiver {
         AnonymousClass3() {
         }
 
@@ -199,7 +218,7 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
                 Clock.this.getHandler().post(new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$Clock$3$vGCY_kdDSOy-aRUO8i3_EKu4ygA
                     @Override // java.lang.Runnable
                     public final void run() {
-                        Clock.AnonymousClass3.lambda$onReceive$0(Clock.AnonymousClass3.this, stringExtra);
+                        Clock.AnonymousClass3.lambda$onReceive$0(this.f$0, stringExtra);
                     }
                 });
             } else if (action.equals("android.intent.action.CONFIGURATION_CHANGED")) {
@@ -207,7 +226,7 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
                 Clock.this.getHandler().post(new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$Clock$3$JvybRbba-smMtw2IG5FzcFDp3jM
                     @Override // java.lang.Runnable
                     public final void run() {
-                        Clock.AnonymousClass3.lambda$onReceive$1(Clock.AnonymousClass3.this, locale);
+                        Clock.AnonymousClass3.lambda$onReceive$1(this.f$0, locale);
                     }
                 });
             }
@@ -250,8 +269,7 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
         setVisibility(z ? 0 : 8);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public final void updateClock() {
+    final void updateClock() {
         if (this.mDemoMode) {
             return;
         }
@@ -262,14 +280,13 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
 
     @Override // com.android.systemui.tuner.TunerService.Tunable
     public void onTuningChanged(String str, String str2) {
-        boolean z = true;
         if ("clock_seconds".equals(str)) {
-            this.mShowSeconds = (str2 == null || Integer.parseInt(str2) == 0) ? false : false;
+            this.mShowSeconds = (str2 == null || Integer.parseInt(str2) == 0) ? false : true;
             updateShowSeconds();
-            return;
+        } else {
+            setClockVisibleByUser(!StatusBarIconController.getIconBlacklist(str2).contains("clock"));
+            updateClockVisibility();
         }
-        setClockVisibleByUser(!StatusBarIconController.getIconBlacklist(str2).contains("clock"));
-        updateClockVisibility();
     }
 
     @Override // com.android.systemui.statusbar.CommandQueue.Callbacks
@@ -316,8 +333,11 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
                 IntentFilter intentFilter = new IntentFilter("android.intent.action.SCREEN_OFF");
                 intentFilter.addAction("android.intent.action.SCREEN_ON");
                 this.mContext.registerReceiver(this.mScreenReceiver, intentFilter);
+                return;
             }
-        } else if (this.mSecondsHandler != null) {
+            return;
+        }
+        if (this.mSecondsHandler != null) {
             this.mContext.unregisterReceiver(this.mScreenReceiver);
             this.mSecondsHandler.removeCallbacks(this.mSecondTick);
             this.mSecondsHandler = null;
@@ -329,12 +349,12 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
         String str;
         SimpleDateFormat simpleDateFormat;
         Context context = getContext();
-        boolean is24HourFormat = DateFormat.is24HourFormat(context, this.mCurrentUserId);
+        boolean zIs24HourFormat = DateFormat.is24HourFormat(context, this.mCurrentUserId);
         LocaleData localeData = LocaleData.get(context.getResources().getConfiguration().locale);
         if (this.mShowSeconds) {
-            str = is24HourFormat ? localeData.timeFormat_Hms : localeData.timeFormat_hms;
+            str = zIs24HourFormat ? localeData.timeFormat_Hms : localeData.timeFormat_hms;
         } else {
-            str = is24HourFormat ? localeData.timeFormat_Hm : localeData.timeFormat_hm;
+            str = zIs24HourFormat ? localeData.timeFormat_Hm : localeData.timeFormat_hm;
         }
         if (BenesseExtension.getDchaState() != 0) {
             str = "M月d日aaKK:mm";
@@ -346,11 +366,11 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
                 boolean z = false;
                 while (true) {
                     if (i < str.length()) {
-                        char charAt = str.charAt(i);
-                        if (charAt == '\'') {
+                        char cCharAt = str.charAt(i);
+                        if (cCharAt == '\'') {
                             z = !z;
                         }
-                        if (!z && charAt == 'a') {
+                        if (!z && cCharAt == 'a') {
                             break;
                         }
                         i++;
@@ -373,51 +393,87 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
         } else {
             simpleDateFormat = this.mClockFormat;
         }
-        String format = simpleDateFormat.format(this.mCalendar.getTime());
+        String str2 = simpleDateFormat.format(this.mCalendar.getTime());
         if (this.mAmPmStyle != 0) {
-            int indexOf = format.indexOf(61184);
-            int indexOf2 = format.indexOf(61185);
-            if (indexOf >= 0 && indexOf2 > indexOf) {
-                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(format);
+            int iIndexOf = str2.indexOf(61184);
+            int iIndexOf2 = str2.indexOf(61185);
+            if (iIndexOf >= 0 && iIndexOf2 > iIndexOf) {
+                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(str2);
                 if (this.mAmPmStyle == 2) {
-                    spannableStringBuilder.delete(indexOf, indexOf2 + 1);
+                    spannableStringBuilder.delete(iIndexOf, iIndexOf2 + 1);
                 } else {
                     if (this.mAmPmStyle == 1) {
-                        spannableStringBuilder.setSpan(new RelativeSizeSpan(0.7f), indexOf, indexOf2, 34);
+                        spannableStringBuilder.setSpan(new RelativeSizeSpan(0.7f), iIndexOf, iIndexOf2, 34);
                     }
-                    spannableStringBuilder.delete(indexOf2, indexOf2 + 1);
-                    spannableStringBuilder.delete(indexOf, indexOf + 1);
+                    spannableStringBuilder.delete(iIndexOf2, iIndexOf2 + 1);
+                    spannableStringBuilder.delete(iIndexOf, iIndexOf + 1);
                 }
                 return spannableStringBuilder;
             }
         }
-        return format;
+        return str2;
     }
 
     @Override // com.android.systemui.DemoMode
-    public void dispatchDemoCommand(String str, Bundle bundle) {
+    public void dispatchDemoCommand(String str, Bundle bundle) throws NumberFormatException {
         if (!this.mDemoMode && str.equals("enter")) {
             this.mDemoMode = true;
-        } else if (this.mDemoMode && str.equals("exit")) {
+            return;
+        }
+        if (this.mDemoMode && str.equals("exit")) {
             this.mDemoMode = false;
             updateClock();
-        } else if (this.mDemoMode && str.equals("clock")) {
+            return;
+        }
+        if (this.mDemoMode && str.equals("clock")) {
             String string = bundle.getString("millis");
             String string2 = bundle.getString("hhmm");
             if (string != null) {
                 this.mCalendar.setTimeInMillis(Long.parseLong(string));
             } else if (string2 != null && string2.length() == 4) {
-                int parseInt = Integer.parseInt(string2.substring(0, 2));
-                int parseInt2 = Integer.parseInt(string2.substring(2));
+                int i = Integer.parseInt(string2.substring(0, 2));
+                int i2 = Integer.parseInt(string2.substring(2));
                 if (DateFormat.is24HourFormat(getContext(), this.mCurrentUserId)) {
-                    this.mCalendar.set(11, parseInt);
+                    this.mCalendar.set(11, i);
                 } else {
-                    this.mCalendar.set(10, parseInt);
+                    this.mCalendar.set(10, i);
                 }
-                this.mCalendar.set(12, parseInt2);
+                this.mCalendar.set(12, i2);
             }
             setText(getSmallTime());
             setContentDescription(this.mContentDescriptionFormat.format(this.mCalendar.getTime()));
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.policy.Clock$4 */
+    class AnonymousClass4 extends BroadcastReceiver {
+        AnonymousClass4() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context2, Intent intent) {
+            String action = intent.getAction();
+            if ("android.intent.action.SCREEN_OFF".equals(action)) {
+                if (Clock.this.mSecondsHandler != null) {
+                    Clock.this.mSecondsHandler.removeCallbacks(Clock.this.mSecondTick);
+                }
+            } else if ("android.intent.action.SCREEN_ON".equals(action) && Clock.this.mSecondsHandler != null) {
+                Clock.this.mSecondsHandler.postAtTime(Clock.this.mSecondTick, ((SystemClock.uptimeMillis() / 1000) * 1000) + 1000);
+            }
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.policy.Clock$5 */
+    class AnonymousClass5 implements Runnable {
+        AnonymousClass5() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (Clock.this.mCalendar != null) {
+                Clock.this.updateClock();
+            }
+            Clock.this.mSecondsHandler.postAtTime(this, ((SystemClock.uptimeMillis() / 1000) * 1000) + 1000);
         }
     }
 }

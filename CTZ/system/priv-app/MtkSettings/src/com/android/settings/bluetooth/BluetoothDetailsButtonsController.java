@@ -8,6 +8,7 @@ import com.android.settings.R;
 import com.android.settings.widget.ActionButtonPreference;
 import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class BluetoothDetailsButtonsController extends BluetoothDetailsController {
     private ActionButtonPreference mActionButtons;
@@ -19,8 +20,7 @@ public class BluetoothDetailsButtonsController extends BluetoothDetailsControlle
         this.mIsConnected = cachedBluetoothDevice.isConnected();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onForgetButtonPressed() {
+    private void onForgetButtonPressed() {
         ForgetDeviceDialogFragment.newInstance(this.mCachedDevice.getAddress()).show(this.mFragment.getFragmentManager(), "ForgetBluetoothDevice");
     }
 
@@ -29,7 +29,7 @@ public class BluetoothDetailsButtonsController extends BluetoothDetailsControlle
         this.mActionButtons = ((ActionButtonPreference) preferenceScreen.findPreference(getPreferenceKey())).setButton1Text(R.string.forget).setButton1OnClickListener(new View.OnClickListener() { // from class: com.android.settings.bluetooth.-$$Lambda$BluetoothDetailsButtonsController$10mSfoM1rAEvasn6gc-o1iWQgIA
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                BluetoothDetailsButtonsController.this.onForgetButtonPressed();
+                this.f$0.onForgetButtonPressed();
             }
         }).setButton1Positive(false).setButton1Enabled(true);
     }
@@ -44,16 +44,19 @@ public class BluetoothDetailsButtonsController extends BluetoothDetailsControlle
                 this.mActionButtons.setButton2Text(R.string.bluetooth_device_context_disconnect).setButton2OnClickListener(new View.OnClickListener() { // from class: com.android.settings.bluetooth.-$$Lambda$BluetoothDetailsButtonsController$AbsgPn9bfqFfvfi3BgeGPbSW3X0
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        BluetoothDetailsButtonsController.this.mCachedDevice.disconnect();
+                        this.f$0.mCachedDevice.disconnect();
                     }
                 }).setButton2Positive(false);
                 this.mConnectButtonInitialized = true;
+                return;
             }
-        } else if (!this.mConnectButtonInitialized || z) {
+            return;
+        }
+        if (!this.mConnectButtonInitialized || z) {
             this.mActionButtons.setButton2Text(R.string.bluetooth_device_context_connect).setButton2OnClickListener(new View.OnClickListener() { // from class: com.android.settings.bluetooth.-$$Lambda$BluetoothDetailsButtonsController$eZ36ezumIpXzpP7dOOnqn-gI5Uk
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    BluetoothDetailsButtonsController.this.mCachedDevice.connect(true);
+                    this.f$0.mCachedDevice.connect(true);
                 }
             }).setButton2Positive(true);
             this.mConnectButtonInitialized = true;

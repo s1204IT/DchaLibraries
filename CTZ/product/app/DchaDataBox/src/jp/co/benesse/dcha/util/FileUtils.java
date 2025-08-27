@@ -3,12 +3,13 @@ package jp.co.benesse.dcha.util;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class FileUtils {
     private FileUtils() {
     }
 
-    public static final void close(Closeable closeable) {
+    public static final void close(Closeable closeable) throws IOException {
         if (closeable == null) {
             return;
         }
@@ -19,21 +20,21 @@ public class FileUtils {
     }
 
     public static boolean fileDelete(File file) {
-        File[] listFiles;
-        if (file.exists()) {
-            if (file.isFile()) {
-                return file.delete();
-            }
-            if (!file.isDirectory() || (listFiles = file.listFiles()) == null) {
-                return false;
-            }
-            for (File file2 : listFiles) {
-                if (!fileDelete(file2)) {
-                    return false;
-                }
-            }
+        File[] fileArrListFiles;
+        if (!file.exists()) {
+            return false;
+        }
+        if (file.isFile()) {
             return file.delete();
         }
-        return false;
+        if (!file.isDirectory() || (fileArrListFiles = file.listFiles()) == null) {
+            return false;
+        }
+        for (File file2 : fileArrListFiles) {
+            if (!fileDelete(file2)) {
+                return false;
+            }
+        }
+        return file.delete();
     }
 }

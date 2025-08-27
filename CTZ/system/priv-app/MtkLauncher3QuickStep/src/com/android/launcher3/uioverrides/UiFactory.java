@@ -28,10 +28,17 @@ import com.android.systemui.shared.system.WindowManagerWrapper;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.zip.Deflater;
+
 /* loaded from: classes.dex */
 public class UiFactory {
     public static TouchController[] createTouchControllers(Launcher launcher) {
-        return !OverviewInteractionState.getInstance(launcher).isSwipeUpGestureEnabled() ? new TouchController[]{launcher.getDragController(), new OverviewToAllAppsTouchController(launcher), new LauncherTaskViewController(launcher)} : launcher.getDeviceProfile().isVerticalBarLayout() ? new TouchController[]{launcher.getDragController(), new OverviewToAllAppsTouchController(launcher), new LandscapeEdgeSwipeController(launcher), new LauncherTaskViewController(launcher)} : new TouchController[]{launcher.getDragController(), new PortraitStatesTouchController(launcher), new LauncherTaskViewController(launcher)};
+        if (!OverviewInteractionState.getInstance(launcher).isSwipeUpGestureEnabled()) {
+            return new TouchController[]{launcher.getDragController(), new OverviewToAllAppsTouchController(launcher), new LauncherTaskViewController(launcher)};
+        }
+        if (launcher.getDeviceProfile().isVerticalBarLayout()) {
+            return new TouchController[]{launcher.getDragController(), new OverviewToAllAppsTouchController(launcher), new LandscapeEdgeSwipeController(launcher), new LauncherTaskViewController(launcher)};
+        }
+        return new TouchController[]{launcher.getDragController(), new PortraitStatesTouchController(launcher), new LauncherTaskViewController(launcher)};
     }
 
     public static void setOnTouchControllersChangedListener(Context context, Runnable runnable) {
@@ -67,11 +74,11 @@ public class UiFactory {
 
                 @Override // com.android.launcher3.LauncherStateManager.StateListener
                 public void onStateTransitionComplete(LauncherState launcherState) {
-                    boolean isSwipeUpGestureEnabled = OverviewInteractionState.getInstance(Launcher.this).isSwipeUpGestureEnabled();
-                    LauncherState lastState = Launcher.this.getStateManager().getLastState();
-                    if ((isSwipeUpGestureEnabled && launcherState == LauncherState.OVERVIEW) || (!isSwipeUpGestureEnabled && launcherState == LauncherState.ALL_APPS && lastState == LauncherState.NORMAL)) {
-                        Launcher.this.getSharedPrefs().edit().putBoolean(DiscoveryBounce.HOME_BOUNCE_SEEN, true).apply();
-                        Launcher.this.getStateManager().removeStateListener(this);
+                    boolean zIsSwipeUpGestureEnabled = OverviewInteractionState.getInstance(launcher).isSwipeUpGestureEnabled();
+                    LauncherState lastState = launcher.getStateManager().getLastState();
+                    if ((zIsSwipeUpGestureEnabled && launcherState == LauncherState.OVERVIEW) || (!zIsSwipeUpGestureEnabled && launcherState == LauncherState.ALL_APPS && lastState == LauncherState.NORMAL)) {
+                        launcher.getSharedPrefs().edit().putBoolean(DiscoveryBounce.HOME_BOUNCE_SEEN, true).apply();
+                        launcher.getStateManager().removeStateListener(this);
                     }
                 }
             });
@@ -88,10 +95,10 @@ public class UiFactory {
 
                 @Override // com.android.launcher3.LauncherStateManager.StateListener
                 public void onStateTransitionComplete(LauncherState launcherState) {
-                    LauncherState lastState = Launcher.this.getStateManager().getLastState();
+                    LauncherState lastState = launcher.getStateManager().getLastState();
                     if (launcherState == LauncherState.ALL_APPS && lastState == LauncherState.OVERVIEW) {
-                        Launcher.this.getSharedPrefs().edit().putBoolean(DiscoveryBounce.SHELF_BOUNCE_SEEN, true).apply();
-                        Launcher.this.getStateManager().removeStateListener(this);
+                        launcher.getSharedPrefs().edit().putBoolean(DiscoveryBounce.SHELF_BOUNCE_SEEN, true).apply();
+                        launcher.getStateManager().removeStateListener(this);
                     }
                 }
             });
@@ -130,35 +137,34 @@ public class UiFactory {
         }, cancellationSignal);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ AnimatorSet lambda$useFadeOutAnimationForLauncherStart$0(CancellationSignal cancellationSignal, RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
+    static /* synthetic */ AnimatorSet lambda$useFadeOutAnimationForLauncherStart$0(CancellationSignal cancellationSignal, RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
         cancellationSignal.cancel();
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(1.0f, 0.0f);
-        ofFloat.addUpdateListener(new RemoteFadeOutAnimationListener(remoteAnimationTargetCompatArr));
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(1.0f, 0.0f);
+        valueAnimatorOfFloat.addUpdateListener(new RemoteFadeOutAnimationListener(remoteAnimationTargetCompatArr));
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(ofFloat);
+        animatorSet.play(valueAnimatorOfFloat);
         return animatorSet;
     }
 
     public static boolean dumpActivity(Activity activity, PrintWriter printWriter) {
-        if (Utilities.IS_DEBUG_DEVICE) {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            if (new ActivityCompat(activity).encodeViewHierarchy(byteArrayOutputStream)) {
-                Deflater deflater = new Deflater();
-                deflater.setInput(byteArrayOutputStream.toByteArray());
-                deflater.finish();
-                byteArrayOutputStream.reset();
-                byte[] bArr = new byte[1024];
-                while (!deflater.finished()) {
-                    byteArrayOutputStream.write(bArr, 0, deflater.deflate(bArr));
-                }
-                printWriter.println("--encoded-view-dump-v0--");
-                printWriter.println(Base64.encodeToString(byteArrayOutputStream.toByteArray(), 3));
-                return true;
-            }
+        if (!Utilities.IS_DEBUG_DEVICE) {
             return false;
         }
-        return false;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        if (!new ActivityCompat(activity).encodeViewHierarchy(byteArrayOutputStream)) {
+            return false;
+        }
+        Deflater deflater = new Deflater();
+        deflater.setInput(byteArrayOutputStream.toByteArray());
+        deflater.finish();
+        byteArrayOutputStream.reset();
+        byte[] bArr = new byte[1024];
+        while (!deflater.finished()) {
+            byteArrayOutputStream.write(bArr, 0, deflater.deflate(bArr));
+        }
+        printWriter.println("--encoded-view-dump-v0--");
+        printWriter.println(Base64.encodeToString(byteArrayOutputStream.toByteArray(), 3));
+        return true;
     }
 
     public static void prepareToShowOverview(Launcher launcher) {
@@ -168,7 +174,6 @@ public class UiFactory {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class LauncherTaskViewController extends TaskViewTouchController<Launcher> {
         public LauncherTaskViewController(Launcher launcher) {
             super(launcher);

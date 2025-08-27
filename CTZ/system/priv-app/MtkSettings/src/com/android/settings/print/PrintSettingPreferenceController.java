@@ -14,7 +14,9 @@ import com.android.settingslib.RestrictedPreference;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PrintSettingPreferenceController extends BasePreferenceController implements PrintManager.PrintJobStateChangeListener, LifecycleObserver, OnStart, OnStop {
     private static final String KEY_PRINTING_SETTINGS = "connected_device_printing";
@@ -64,9 +66,10 @@ public class PrintSettingPreferenceController extends BasePreferenceController i
         int i;
         List<PrintJob> printJobs = this.mPrintManager.getPrintJobs();
         if (printJobs != null) {
+            Iterator<PrintJob> it = printJobs.iterator();
             i = 0;
-            for (PrintJob printJob : printJobs) {
-                if (shouldShowToUser(printJob.getInfo())) {
+            while (it.hasNext()) {
+                if (shouldShowToUser(it.next().getInfo())) {
                     i++;
                 }
             }
@@ -84,8 +87,7 @@ public class PrintSettingPreferenceController extends BasePreferenceController i
         return this.mContext.getResources().getQuantityString(R.plurals.print_settings_summary, size, Integer.valueOf(size));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean shouldShowToUser(PrintJobInfo printJobInfo) {
+    static boolean shouldShowToUser(PrintJobInfo printJobInfo) {
         int state = printJobInfo.getState();
         if (state != 6) {
             switch (state) {

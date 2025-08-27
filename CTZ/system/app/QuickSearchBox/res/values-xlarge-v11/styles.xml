@@ -4,7 +4,7 @@
         <item name="android:windowBackground">@drawable/activity_background</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">adjustResize|stateUnchanged</item>
+        <item name="android:windowSoftInputMode">0x11</item>
         <item name="android:windowShowWallpaper">true</item>
         <item name="android:windowActionBar">false</item>
     </style>

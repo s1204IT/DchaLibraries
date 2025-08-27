@@ -2,6 +2,7 @@ package com.android.systemui.util.wakelock;
 
 import android.os.Handler;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class DelayedWakeLock implements WakeLock {
     private final Handler mHandler;
@@ -16,7 +17,7 @@ public class DelayedWakeLock implements WakeLock {
         this.mRelease = new Runnable() { // from class: com.android.systemui.util.wakelock.-$$Lambda$CFIjGRHyMGVbSujKFcwVsXltENg
             @Override // java.lang.Runnable
             public final void run() {
-                WakeLock.this.release();
+                wakeLock2.release();
             }
         };
     }

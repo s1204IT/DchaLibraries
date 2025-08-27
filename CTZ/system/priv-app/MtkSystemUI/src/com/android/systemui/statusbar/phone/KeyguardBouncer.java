@@ -24,6 +24,8 @@ import com.android.systemui.classifier.FalsingManager;
 import com.android.systemui.keyguard.DismissCallbackRegistry;
 import com.mediatek.keyguard.PowerOffAlarm.PowerOffAlarmManager;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+
 /* loaded from: classes.dex */
 public class KeyguardBouncer {
     private int mBouncerPromptReason;
@@ -52,13 +54,13 @@ public class KeyguardBouncer {
     private final Runnable mRemoveViewRunnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$iQsniWdIxLGqyYwRi09kQ-Ah02M
         @Override // java.lang.Runnable
         public final void run() {
-            KeyguardBouncer.this.removeView();
+            this.f$0.removeView();
         }
     };
     private final Runnable mResetRunnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$KeyguardBouncer$Y9Hvfk0n3yPK2FQ39O1Z5j49gj0
         @Override // java.lang.Runnable
         public final void run() {
-            KeyguardBouncer.lambda$new$0(KeyguardBouncer.this);
+            KeyguardBouncer.lambda$new$0(this.f$0);
         }
     };
     private float mExpansion = 1.0f;
@@ -67,9 +69,9 @@ public class KeyguardBouncer {
         public void run() {
             KeyguardBouncer.this.mRoot.setVisibility(0);
             KeyguardBouncer.this.showPromptReason(KeyguardBouncer.this.mBouncerPromptReason);
-            CharSequence consumeCustomMessage = KeyguardBouncer.this.mCallback.consumeCustomMessage();
-            if (consumeCustomMessage != null) {
-                KeyguardBouncer.this.mKeyguardView.showErrorMessage(consumeCustomMessage);
+            CharSequence charSequenceConsumeCustomMessage = KeyguardBouncer.this.mCallback.consumeCustomMessage();
+            if (charSequenceConsumeCustomMessage != null) {
+                KeyguardBouncer.this.mKeyguardView.showErrorMessage(charSequenceConsumeCustomMessage);
             }
             if (KeyguardBouncer.this.mKeyguardView.getHeight() != 0 && KeyguardBouncer.this.mKeyguardView.getHeight() != KeyguardBouncer.this.mStatusBarHeight) {
                 KeyguardBouncer.this.mKeyguardView.startAppearAnimation();
@@ -92,7 +94,6 @@ public class KeyguardBouncer {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface BouncerExpansionCallback {
         void onFullyHidden();
 
@@ -118,11 +119,11 @@ public class KeyguardBouncer {
         this.mSecurityModel = new KeyguardSecurityModel(this.mContext);
     }
 
-    public void show(boolean z) {
+    public void show(boolean z) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         show(z, false, true);
     }
 
-    public void show(boolean z, boolean z2, boolean z3) {
+    public void show(boolean z, boolean z2, boolean z3) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         int currentUser = KeyguardUpdateMonitor.getCurrentUser();
         if (currentUser == 0 && UserManager.isSplitSystemUser()) {
             return;
@@ -212,7 +213,7 @@ public class KeyguardBouncer {
         this.mShowingSoon = false;
     }
 
-    public void showWithDismissAction(KeyguardHostView.OnDismissAction onDismissAction, Runnable runnable) {
+    public void showWithDismissAction(KeyguardHostView.OnDismissAction onDismissAction, Runnable runnable) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         ensureView();
         this.mKeyguardView.setOnDismissAction(onDismissAction, runnable);
         show(false);
@@ -248,7 +249,7 @@ public class KeyguardBouncer {
         }
     }
 
-    public void onScreenTurnedOff() {
+    public void onScreenTurnedOff() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (this.mKeyguardView != null && this.mRoot != null && this.mRoot.getVisibility() == 0) {
             this.mKeyguardView.onPause();
         }
@@ -262,7 +263,7 @@ public class KeyguardBouncer {
         return this.mIsAnimatingAway;
     }
 
-    public void prepare() {
+    public void prepare() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         boolean z = this.mRoot != null;
         ensureView();
         if (z) {
@@ -303,8 +304,8 @@ public class KeyguardBouncer {
     }
 
     protected void ensureView() {
-        boolean hasCallbacks = this.mHandler.hasCallbacks(this.mRemoveViewRunnable);
-        if (this.mRoot == null || hasCallbacks) {
+        boolean zHasCallbacks = this.mHandler.hasCallbacks(this.mRemoveViewRunnable);
+        if (this.mRoot == null || zHasCallbacks) {
             inflateView();
         }
     }
@@ -326,8 +327,7 @@ public class KeyguardBouncer {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void removeView() {
+    protected void removeView() {
         if (this.mRoot != null && this.mRoot.getParent() == this.mContainer) {
             this.mContainer.removeView(this.mRoot);
             this.mRoot = null;
@@ -341,11 +341,11 @@ public class KeyguardBouncer {
     }
 
     public boolean isFullscreenBouncer() {
-        if (this.mKeyguardView != null) {
-            KeyguardSecurityModel.SecurityMode currentSecurityMode = this.mKeyguardView.getCurrentSecurityMode();
-            return currentSecurityMode == KeyguardSecurityModel.SecurityMode.SimPinPukMe1 || currentSecurityMode == KeyguardSecurityModel.SecurityMode.SimPinPukMe2 || currentSecurityMode == KeyguardSecurityModel.SecurityMode.SimPinPukMe3 || currentSecurityMode == KeyguardSecurityModel.SecurityMode.SimPinPukMe4 || currentSecurityMode == KeyguardSecurityModel.SecurityMode.AntiTheft || currentSecurityMode == KeyguardSecurityModel.SecurityMode.AlarmBoot;
+        if (this.mKeyguardView == null) {
+            return false;
         }
-        return false;
+        KeyguardSecurityModel.SecurityMode currentSecurityMode = this.mKeyguardView.getCurrentSecurityMode();
+        return currentSecurityMode == KeyguardSecurityModel.SecurityMode.SimPinPukMe1 || currentSecurityMode == KeyguardSecurityModel.SecurityMode.SimPinPukMe2 || currentSecurityMode == KeyguardSecurityModel.SecurityMode.SimPinPukMe3 || currentSecurityMode == KeyguardSecurityModel.SecurityMode.SimPinPukMe4 || currentSecurityMode == KeyguardSecurityModel.SecurityMode.AntiTheft || currentSecurityMode == KeyguardSecurityModel.SecurityMode.AlarmBoot;
     }
 
     public boolean isSecure() {

@@ -1,6 +1,7 @@
 package com.android.settings.security;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class UserCredentialsPreferenceController extends RestrictedEncryptionPreferenceController {
     public UserCredentialsPreferenceController(Context context) {

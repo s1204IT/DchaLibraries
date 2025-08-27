@@ -16,6 +16,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class HotspotControllerImpl implements WifiManager.SoftApCallback, HotspotController {
     private static final boolean DEBUG = Log.isLoggable("HotspotController", 3);
@@ -63,6 +64,7 @@ public class HotspotControllerImpl implements WifiManager.SoftApCallback, Hotspo
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(HotspotController.Callback callback) {
         synchronized (this.mCallbacks) {
@@ -83,6 +85,7 @@ public class HotspotControllerImpl implements WifiManager.SoftApCallback, Hotspo
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(HotspotController.Callback callback) {
         if (callback == null) {
@@ -140,8 +143,7 @@ public class HotspotControllerImpl implements WifiManager.SoftApCallback, Hotspo
         return this.mNumConnectedDevices;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireHotspotChangedCallback(boolean z) {
+    private void fireHotspotChangedCallback(boolean z) {
         fireHotspotChangedCallback(z, this.mNumConnectedDevices);
     }
 
@@ -162,7 +164,6 @@ public class HotspotControllerImpl implements WifiManager.SoftApCallback, Hotspo
         fireHotspotChangedCallback(isHotspotEnabled(), i);
     }
 
-    /* loaded from: classes.dex */
     private final class OnStartTetheringCallback extends ConnectivityManager.OnStartTetheringCallback {
         private OnStartTetheringCallback() {
         }
@@ -183,9 +184,7 @@ public class HotspotControllerImpl implements WifiManager.SoftApCallback, Hotspo
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class WifiStateReceiver extends BroadcastReceiver {
+    private final class WifiStateReceiver extends BroadcastReceiver {
         private boolean mRegistered;
 
         private WifiStateReceiver() {
@@ -200,7 +199,9 @@ public class HotspotControllerImpl implements WifiManager.SoftApCallback, Hotspo
                 intentFilter.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED");
                 HotspotControllerImpl.this.mContext.registerReceiver(this, intentFilter);
                 this.mRegistered = true;
-            } else if (!z && this.mRegistered) {
+                return;
+            }
+            if (!z && this.mRegistered) {
                 if (HotspotControllerImpl.DEBUG) {
                     Log.d("HotspotController", "Unregistering receiver");
                 }

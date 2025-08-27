@@ -11,6 +11,7 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class DoubleTwistPreferenceController extends GesturePreferenceController {
     private static final String PREF_KEY_VIDEO = "gesture_double_twist_video";
@@ -31,7 +32,7 @@ public class DoubleTwistPreferenceController extends GesturePreferenceController
         return !isGestureAvailable(context) || sharedPreferences.getBoolean("pref_double_twist_suggestion_complete", false);
     }
 
-    public static boolean isGestureAvailable(Context context) {
+    public static boolean isGestureAvailable(Context context) throws Resources.NotFoundException {
         Resources resources = context.getResources();
         String string = resources.getString(R.string.gesture_double_twist_sensor_name);
         String string2 = resources.getString(R.string.gesture_double_twist_sensor_vendor);

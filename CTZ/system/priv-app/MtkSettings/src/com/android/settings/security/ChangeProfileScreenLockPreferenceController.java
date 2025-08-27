@@ -8,6 +8,7 @@ import com.android.settings.R;
 import com.android.settings.Utils;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.password.ChooseLockGeneric;
+
 /* loaded from: classes.dex */
 public class ChangeProfileScreenLockPreferenceController extends ChangeScreenLockPreferenceController {
     public ChangeProfileScreenLockPreferenceController(Context context, SecuritySettings securitySettings) {
@@ -30,13 +31,13 @@ public class ChangeProfileScreenLockPreferenceController extends ChangeScreenLoc
 
     @Override // com.android.settings.security.ChangeScreenLockPreferenceController, com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        if (TextUtils.equals(preference.getKey(), getPreferenceKey()) && !Utils.startQuietModeDialogIfNecessary(this.mContext, this.mUm, this.mProfileChallengeUserId)) {
-            Bundle bundle = new Bundle();
-            bundle.putInt("android.intent.extra.USER_ID", this.mProfileChallengeUserId);
-            new SubSettingLauncher(this.mContext).setDestination(ChooseLockGeneric.ChooseLockGenericFragment.class.getName()).setTitle(R.string.lock_settings_picker_title_profile).setSourceMetricsCategory(this.mHost.getMetricsCategory()).setArguments(bundle).launch();
-            return true;
+        if (!TextUtils.equals(preference.getKey(), getPreferenceKey()) || Utils.startQuietModeDialogIfNecessary(this.mContext, this.mUm, this.mProfileChallengeUserId)) {
+            return false;
         }
-        return false;
+        Bundle bundle = new Bundle();
+        bundle.putInt("android.intent.extra.USER_ID", this.mProfileChallengeUserId);
+        new SubSettingLauncher(this.mContext).setDestination(ChooseLockGeneric.ChooseLockGenericFragment.class.getName()).setTitle(R.string.lock_settings_picker_title_profile).setSourceMetricsCategory(this.mHost.getMetricsCategory()).setArguments(bundle).launch();
+        return true;
     }
 
     @Override // com.android.settings.security.ChangeScreenLockPreferenceController, com.android.settingslib.core.AbstractPreferenceController

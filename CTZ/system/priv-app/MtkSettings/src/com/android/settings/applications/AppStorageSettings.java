@@ -37,10 +37,12 @@ import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.applications.ApplicationsState;
 import com.android.settingslib.applications.StorageStatsSource;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+
 /* loaded from: classes.dex */
 public class AppStorageSettings extends AppInfoWithHeader implements LoaderManager.LoaderCallbacks<StorageStatsSource.AppStorageStats>, DialogInterface.OnClickListener, View.OnClickListener, ApplicationsState.Callbacks {
     private static final String TAG = AppStorageSettings.class.getSimpleName();
@@ -81,10 +83,9 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         if (bundle != null) {
-            boolean z = false;
             this.mCacheCleared = bundle.getBoolean("cache_cleared", false);
             this.mDataCleared = bundle.getBoolean("data_cleared", false);
-            this.mCacheCleared = (this.mCacheCleared || this.mDataCleared) ? true : true;
+            this.mCacheCleared = this.mCacheCleared || this.mDataCleared;
         }
         addPreferencesFromResource(R.xml.app_storage_settings);
         setupViews();
@@ -119,8 +120,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         this.mClearUriButton.setOnClickListener(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void handleClearCacheClick() {
+    void handleClearCacheClick() {
         if (this.mAppsControlDisallowedAdmin != null && !this.mAppsControlDisallowedBySystem) {
             RestrictedLockUtils.sendShowAdminSupportDetailsIntent(getActivity(), this.mAppsControlDisallowedAdmin);
             return;
@@ -132,26 +132,30 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         this.mPm.deleteApplicationCacheFiles(this.mPackageName, this.mClearCacheObserver);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void handleClearDataClick() {
+    void handleClearDataClick() {
         if (this.mAppsControlDisallowedAdmin != null && !this.mAppsControlDisallowedBySystem) {
             RestrictedLockUtils.sendShowAdminSupportDetailsIntent(getActivity(), this.mAppsControlDisallowedAdmin);
-        } else if (this.mAppEntry.info.manageSpaceActivityName != null) {
+            return;
+        }
+        if (this.mAppEntry.info.manageSpaceActivityName != null) {
             if (!Utils.isMonkeyRunning()) {
                 Intent intent = new Intent("android.intent.action.VIEW");
                 intent.setClassName(this.mAppEntry.info.packageName, this.mAppEntry.info.manageSpaceActivityName);
                 startActivityForResult(intent, 2);
+                return;
             }
-        } else {
-            showDialogInner(1, 0);
+            return;
         }
+        showDialogInner(1, 0);
     }
 
     @Override // android.view.View.OnClickListener
     public void onClick(View view) {
         if (view == this.mChangeStorageButton && this.mDialogBuilder != null && !isMoveInProgress()) {
             this.mDialogBuilder.show();
-        } else if (view == this.mClearUriButton) {
+            return;
+        }
+        if (view == this.mClearUriButton) {
             if (this.mAppsControlDisallowedAdmin != null && !this.mAppsControlDisallowedBySystem) {
                 RestrictedLockUtils.sendShowAdminSupportDetailsIntent(getActivity(), this.mAppsControlDisallowedAdmin);
             } else {
@@ -174,7 +178,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         Activity activity = getActivity();
         VolumeInfo volumeInfo = this.mCandidates[i];
         if (!Objects.equals(volumeInfo, activity.getPackageManager().getPackageCurrentVolume(this.mAppEntry.info))) {
-            Intent intent = new Intent(activity, StorageWizardMoveConfirm.class);
+            Intent intent = new Intent(activity, (Class<?>) StorageWizardMoveConfirm.class);
             intent.putExtra("android.os.storage.extra.VOLUME_ID", volumeInfo.getId());
             intent.putExtra("android.intent.extra.PACKAGE_NAME", this.mAppEntry.info.packageName);
             startActivity(intent);
@@ -190,7 +194,8 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         }
         updateUiWithSize(this.mSizeController.getLastResult());
         refreshGrantedUriPermissions();
-        this.mStorageUsed.setSummary(((StorageManager) getContext().getSystemService(StorageManager.class)).getBestVolumeDescription(getActivity().getPackageManager().getPackageCurrentVolume(this.mAppEntry.info)));
+        VolumeInfo packageCurrentVolume = getActivity().getPackageManager().getPackageCurrentVolume(this.mAppEntry.info);
+        this.mStorageUsed.setSummary(((StorageManager) getContext().getSystemService(StorageManager.class)).getBestVolumeDescription(packageCurrentVolume));
         refreshButtons();
         return true;
     }
@@ -220,7 +225,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
             this.mButtonsPref.setButton1Text(R.string.clear_user_data_text).setButton1OnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.-$$Lambda$AppStorageSettings$uXyfUeZFqT2Ct1euRP3fPo2Es3o
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    AppStorageSettings.this.handleClearDataClick();
+                    this.f$0.handleClearDataClick();
                 }
             });
         }
@@ -253,27 +258,23 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         removePreference("storage_space");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void initiateClearUserData() {
+    private void initiateClearUserData() {
         this.mMetricsFeatureProvider.action(getContext(), 876, new Pair[0]);
         this.mButtonsPref.setButton1Enabled(false);
         String str = this.mAppEntry.info.packageName;
-        String str2 = TAG;
-        Log.i(str2, "Clearing user data for package : " + str);
+        Log.i(TAG, "Clearing user data for package : " + str);
         if (this.mClearDataObserver == null) {
             this.mClearDataObserver = new ClearUserDataObserver();
         }
         if (!((ActivityManager) getActivity().getSystemService("activity")).clearApplicationUserData(str, this.mClearDataObserver)) {
-            String str3 = TAG;
-            Log.i(str3, "Couldn't clear application user data for package:" + str);
+            Log.i(TAG, "Couldn't clear application user data for package:" + str);
             showDialogInner(2, 0);
             return;
         }
         this.mButtonsPref.setButton1Text(R.string.recompute_size);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void processClearMsg(Message message) {
+    private void processClearMsg(Message message) {
         int i = message.arg1;
         String str = this.mAppEntry.info.packageName;
         this.mButtonsPref.setButton1Text(R.string.clear_user_data_text);
@@ -281,8 +282,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
             this.mButtonsPref.setButton1Enabled(true);
             return;
         }
-        String str2 = TAG;
-        Log.i(str2, "Cleared user data for package : " + str);
+        Log.i(TAG, "Cleared user data for package : " + str);
         updateSize();
         Intent intent = new Intent("com.mediatek.intent.action.SETTINGS_PACKAGE_DATA_CLEARED");
         intent.putExtra("packageName", str);
@@ -291,18 +291,19 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
 
     private void refreshGrantedUriPermissions() {
         removeUriPermissionsFromUi();
-        List<GrantedUriPermission> list = ((ActivityManager) getActivity().getSystemService("activity")).getGrantedUriPermissions(this.mAppEntry.info.packageName).getList();
+        List list = ((ActivityManager) getActivity().getSystemService("activity")).getGrantedUriPermissions(this.mAppEntry.info.packageName).getList();
         if (list.isEmpty()) {
             this.mClearUriButton.setVisibility(8);
             return;
         }
         PackageManager packageManager = getActivity().getPackageManager();
         TreeMap treeMap = new TreeMap();
-        for (GrantedUriPermission grantedUriPermission : list) {
-            CharSequence loadLabel = packageManager.resolveContentProvider(grantedUriPermission.uri.getAuthority(), 0).applicationInfo.loadLabel(packageManager);
-            MutableInt mutableInt = (MutableInt) treeMap.get(loadLabel);
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            CharSequence charSequenceLoadLabel = packageManager.resolveContentProvider(((GrantedUriPermission) it.next()).uri.getAuthority(), 0).applicationInfo.loadLabel(packageManager);
+            MutableInt mutableInt = (MutableInt) treeMap.get(charSequenceLoadLabel);
             if (mutableInt == null) {
-                treeMap.put(loadLabel, new MutableInt(1));
+                treeMap.put(charSequenceLoadLabel, new MutableInt(1));
             } else {
                 mutableInt.value++;
             }
@@ -329,12 +330,10 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         Activity activity = getActivity();
         String str = this.mAppEntry.info.packageName;
         ((ActivityManager) activity.getSystemService("activity")).clearGrantedUriPermissions(str);
-        Uri build = new Uri.Builder().scheme("content").authority("com.android.documentsui.scopedAccess").appendPath("permissions").appendPath("*").build();
-        String str2 = TAG;
-        Log.v(str2, "Asking " + build + " to delete permissions for " + str);
-        int delete = activity.getContentResolver().delete(build, null, new String[]{str});
-        String str3 = TAG;
-        Log.d(str3, "Deleted " + delete + " entries for package " + str);
+        Uri uriBuild = new Uri.Builder().scheme("content").authority("com.android.documentsui.scopedAccess").appendPath("permissions").appendPath("*").build();
+        Log.v(TAG, "Asking " + uriBuild + " to delete permissions for " + str);
+        int iDelete = activity.getContentResolver().delete(uriBuild, null, new String[]{str});
+        Log.d(TAG, "Deleted " + iDelete + " entries for package " + str);
         refreshGrantedUriPermissions();
     }
 
@@ -380,6 +379,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         return new FetchPackageStorageAsyncLoader(context, new StorageStatsSource(context), this.mInfo, UserHandle.of(this.mUserId));
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<StorageStatsSource.AppStorageStats> loader, StorageStatsSource.AppStorageStats appStorageStats) {
         this.mSizeController.setResult(appStorageStats);
@@ -390,8 +390,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
     public void onLoaderReset(Loader<StorageStatsSource.AppStorageStats> loader) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSize() {
+    private void updateSize() {
         try {
             this.mInfo = getPackageManager().getApplicationInfo(this.mPackageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
@@ -421,7 +420,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
                 this.mButtonsPref.setButton1Enabled(true).setButton1OnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.-$$Lambda$AppStorageSettings$n1EpAla7gNI7Nnl-O3UD0UWSgTo
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        AppStorageSettings.this.handleClearDataClick();
+                        this.f$0.handleClearDataClick();
                     }
                 });
             }
@@ -431,7 +430,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
                 this.mButtonsPref.setButton2Enabled(true).setButton2OnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.-$$Lambda$AppStorageSettings$DjRyx_XFfzsxe3o1nZS2usao_fc
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        AppStorageSettings.this.handleClearCacheClick();
+                        this.f$0.handleClearCacheClick();
                     }
                 });
             }
@@ -446,29 +445,25 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         return 19;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class ClearCacheObserver extends IPackageDataObserver.Stub {
+    class ClearCacheObserver extends IPackageDataObserver.Stub {
         ClearCacheObserver() {
         }
 
         public void onRemoveCompleted(String str, boolean z) {
-            Message obtainMessage = AppStorageSettings.this.mHandler.obtainMessage(3);
-            obtainMessage.arg1 = z ? 1 : 2;
-            AppStorageSettings.this.mHandler.sendMessage(obtainMessage);
+            Message messageObtainMessage = AppStorageSettings.this.mHandler.obtainMessage(3);
+            messageObtainMessage.arg1 = z ? 1 : 2;
+            AppStorageSettings.this.mHandler.sendMessage(messageObtainMessage);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class ClearUserDataObserver extends IPackageDataObserver.Stub {
+    class ClearUserDataObserver extends IPackageDataObserver.Stub {
         ClearUserDataObserver() {
         }
 
         public void onRemoveCompleted(String str, boolean z) {
-            Message obtainMessage = AppStorageSettings.this.mHandler.obtainMessage(1);
-            obtainMessage.arg1 = z ? 1 : 2;
-            AppStorageSettings.this.mHandler.sendMessage(obtainMessage);
+            Message messageObtainMessage = AppStorageSettings.this.mHandler.obtainMessage(1);
+            messageObtainMessage.arg1 = z ? 1 : 2;
+            AppStorageSettings.this.mHandler.sendMessage(messageObtainMessage);
         }
     }
 }

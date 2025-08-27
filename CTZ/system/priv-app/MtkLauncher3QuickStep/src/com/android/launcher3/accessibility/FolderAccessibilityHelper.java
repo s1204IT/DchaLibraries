@@ -3,6 +3,7 @@ package com.android.launcher3.accessibility;
 import com.android.launcher3.CellLayout;
 import com.android.launcher3.R;
 import com.android.launcher3.folder.FolderPagedView;
+
 /* loaded from: classes.dex */
 public class FolderAccessibilityHelper extends DragAndDropAccessibilityDelegate {
     private final FolderPagedView mParent;

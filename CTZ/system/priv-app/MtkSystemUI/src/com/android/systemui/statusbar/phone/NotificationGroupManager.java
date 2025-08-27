@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class NotificationGroupManager implements OnHeadsUpChangedListener {
     private HeadsUpManager mHeadsUpManager;
@@ -25,7 +26,6 @@ public class NotificationGroupManager implements OnHeadsUpChangedListener {
     private int mBarState = -1;
     private HashMap<String, StatusBarNotification> mIsolatedEntries = new HashMap<>();
 
-    /* loaded from: classes.dex */
     public interface OnGroupChangeListener {
         void onGroupCreatedFromChildren(NotificationGroup notificationGroup);
 
@@ -89,14 +89,14 @@ public class NotificationGroupManager implements OnHeadsUpChangedListener {
             entry.setDebugThrowable(new Throwable());
         }
         StatusBarNotification statusBarNotification = entry.notification;
-        boolean isGroupChild = isGroupChild(statusBarNotification);
+        boolean zIsGroupChild = isGroupChild(statusBarNotification);
         String groupKey = getGroupKey(statusBarNotification);
         NotificationGroup notificationGroup = this.mGroupMap.get(groupKey);
         if (notificationGroup == null) {
             notificationGroup = new NotificationGroup();
             this.mGroupMap.put(groupKey, notificationGroup);
         }
-        if (isGroupChild) {
+        if (zIsGroupChild) {
             NotificationData.Entry entry2 = notificationGroup.children.get(entry.key);
             if (entry2 != null && entry2 != entry) {
                 Throwable debugThrowable = entry2.getDebugThrowable();
@@ -255,9 +255,9 @@ public class NotificationGroupManager implements OnHeadsUpChangedListener {
         String groupKey2 = entry.notification.getGroupKey();
         boolean z = true;
         boolean z2 = !groupKey.equals(groupKey2);
-        boolean isGroupChild = isGroupChild(statusBarNotification);
-        boolean isGroupChild2 = isGroupChild(entry.notification);
-        if (z2 || isGroupChild != isGroupChild2) {
+        boolean zIsGroupChild = isGroupChild(statusBarNotification);
+        boolean zIsGroupChild2 = isGroupChild(entry.notification);
+        if (z2 || zIsGroupChild != zIsGroupChild2) {
             z = false;
         }
         this.mIsUpdatingUnchangedGroup = z;
@@ -271,8 +271,11 @@ public class NotificationGroupManager implements OnHeadsUpChangedListener {
             if (z2) {
                 updateSuppression(this.mGroupMap.get(groupKey));
                 updateSuppression(this.mGroupMap.get(groupKey2));
+                return;
             }
-        } else if (!isGroupChild && isGroupChild2) {
+            return;
+        }
+        if (!zIsGroupChild && zIsGroupChild2) {
             onEntryBecomingChild(entry);
         }
     }
@@ -408,7 +411,9 @@ public class NotificationGroupManager implements OnHeadsUpChangedListener {
                 return;
             }
             handleSuppressedSummaryHeadsUpped(entry);
-        } else if (this.mIsolatedEntries.containsKey(statusBarNotification.getKey())) {
+            return;
+        }
+        if (this.mIsolatedEntries.containsKey(statusBarNotification.getKey())) {
             onEntryRemovedInternal(entry, entry.notification);
             this.mIsolatedEntries.remove(statusBarNotification.getKey());
             onEntryAdded(entry);
@@ -456,9 +461,9 @@ public class NotificationGroupManager implements OnHeadsUpChangedListener {
         if (this.mPendingNotifications == null) {
             return false;
         }
-        Collection<NotificationData.Entry> values = this.mPendingNotifications.values();
+        Collection<NotificationData.Entry> collectionValues = this.mPendingNotifications.values();
         String groupKey = getGroupKey(notificationGroup.summary.notification);
-        for (NotificationData.Entry entry : values) {
+        for (NotificationData.Entry entry : collectionValues) {
             if (isGroupChild(entry.notification) && Objects.equals(getGroupKey(entry.notification), groupKey) && !notificationGroup.children.containsKey(entry.key)) {
                 return true;
             }
@@ -495,11 +500,10 @@ public class NotificationGroupManager implements OnHeadsUpChangedListener {
         }
     }
 
-    public void setPendingEntries(HashMap<String, NotificationData.Entry> hashMap) {
-        this.mPendingNotifications = hashMap;
+    public void setPendingEntries(HashMap<String, NotificationData.Entry> map) {
+        this.mPendingNotifications = map;
     }
 
-    /* loaded from: classes.dex */
     public static class NotificationGroup {
         public final HashMap<String, NotificationData.Entry> children = new HashMap<>();
         public boolean expanded;
@@ -509,32 +513,32 @@ public class NotificationGroupManager implements OnHeadsUpChangedListener {
         public boolean suppressed;
 
         public String toString() {
-            String str;
-            String str2;
+            String stackTraceString;
+            String stackTraceString2;
             StringBuilder sb = new StringBuilder();
             sb.append("    summary:\n      ");
             sb.append(this.summary != null ? this.summary.notification : "null");
             if (this.summary != null && this.summary.getDebugThrowable() != null) {
-                str = Log.getStackTraceString(this.summary.getDebugThrowable());
+                stackTraceString = Log.getStackTraceString(this.summary.getDebugThrowable());
             } else {
-                str = "";
+                stackTraceString = "";
             }
-            sb.append(str);
-            String str3 = sb.toString() + "\n    children size: " + this.children.size();
+            sb.append(stackTraceString);
+            String string = sb.toString() + "\n    children size: " + this.children.size();
             for (NotificationData.Entry entry : this.children.values()) {
                 StringBuilder sb2 = new StringBuilder();
-                sb2.append(str3);
+                sb2.append(string);
                 sb2.append("\n      ");
                 sb2.append(entry.notification);
                 if (entry.getDebugThrowable() != null) {
-                    str2 = Log.getStackTraceString(entry.getDebugThrowable());
+                    stackTraceString2 = Log.getStackTraceString(entry.getDebugThrowable());
                 } else {
-                    str2 = "";
+                    stackTraceString2 = "";
                 }
-                sb2.append(str2);
-                str3 = sb2.toString();
+                sb2.append(stackTraceString2);
+                string = sb2.toString();
             }
-            return str3;
+            return string;
         }
     }
 }

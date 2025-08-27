@@ -1,4 +1,5 @@
 package com.google.common.base;
+
 /* loaded from: classes.dex */
 public final class Preconditions {
     public static void checkArgument(boolean z) {
@@ -117,18 +118,18 @@ public final class Preconditions {
     }
 
     static String format(String str, Object... objArr) {
-        int indexOf;
-        String valueOf = String.valueOf(str);
+        int iIndexOf;
+        String strValueOf = String.valueOf(str);
         int i = 0;
-        StringBuilder sb = new StringBuilder(valueOf.length() + (16 * objArr.length));
+        StringBuilder sb = new StringBuilder(strValueOf.length() + (16 * objArr.length));
         int i2 = 0;
-        while (i < objArr.length && (indexOf = valueOf.indexOf("%s", i2)) != -1) {
-            sb.append(valueOf.substring(i2, indexOf));
+        while (i < objArr.length && (iIndexOf = strValueOf.indexOf("%s", i2)) != -1) {
+            sb.append(strValueOf.substring(i2, iIndexOf));
             sb.append(objArr[i]);
             i++;
-            i2 = indexOf + 2;
+            i2 = iIndexOf + 2;
         }
-        sb.append(valueOf.substring(i2));
+        sb.append(strValueOf.substring(i2));
         if (i < objArr.length) {
             sb.append(" [");
             sb.append(objArr[i]);

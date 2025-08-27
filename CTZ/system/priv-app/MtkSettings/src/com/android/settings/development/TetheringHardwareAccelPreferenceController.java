@@ -6,6 +6,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class TetheringHardwareAccelPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final int SETTING_VALUE_OFF = 1;
@@ -22,7 +23,7 @@ public class TetheringHardwareAccelPreferenceController extends DeveloperOptions
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        Settings.Global.putInt(this.mContext.getContentResolver(), "tether_offload_disabled", !((Boolean) obj).booleanValue());
+        Settings.Global.putInt(this.mContext.getContentResolver(), "tether_offload_disabled", !((Boolean) obj).booleanValue() ? 1 : 0);
         return true;
     }
 
@@ -31,9 +32,8 @@ public class TetheringHardwareAccelPreferenceController extends DeveloperOptions
         ((SwitchPreference) this.mPreference).setChecked(Settings.Global.getInt(this.mContext.getContentResolver(), "tether_offload_disabled", 0) != 1);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         Settings.Global.putInt(this.mContext.getContentResolver(), "tether_offload_disabled", 1);
         ((SwitchPreference) this.mPreference).setChecked(false);

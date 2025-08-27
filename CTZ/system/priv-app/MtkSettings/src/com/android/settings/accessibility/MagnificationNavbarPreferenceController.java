@@ -6,6 +6,7 @@ import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settings.core.TogglePreferenceController;
+
 /* loaded from: classes.dex */
 public class MagnificationNavbarPreferenceController extends TogglePreferenceController {
     private boolean mIsFromSUW;

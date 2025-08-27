@@ -14,7 +14,6 @@ import android.os.UserHandle;
 import android.util.ArraySet;
 import android.util.Log;
 import android.util.TimingsTraceLog;
-import com.android.systemui.SystemUIApplication;
 import com.android.systemui.plugins.OverlayPlugin;
 import com.android.systemui.plugins.PluginListener;
 import com.android.systemui.plugins.PluginManager;
@@ -24,6 +23,7 @@ import com.android.systemui.util.NotificationChannels;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class SystemUIApplication extends Application implements SysUiServiceProvider {
     private boolean mBootCompleted;
@@ -32,9 +32,9 @@ public class SystemUIApplication extends Application implements SysUiServiceProv
     private boolean mServicesStarted;
 
     @Override // android.app.Application
-    public void onCreate() {
+    public void onCreate() throws ClassNotFoundException {
         super.onCreate();
-        setTheme(com.android.systemui.plugins.R.style.Theme_SystemUI);
+        setTheme(2131886642);
         SystemUIFactory.createFromConfig(this);
         if (Process.myUserHandle().equals(UserHandle.SYSTEM)) {
             IntentFilter intentFilter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
@@ -65,26 +65,25 @@ public class SystemUIApplication extends Application implements SysUiServiceProv
             }, new IntentFilter("android.intent.action.LOCALE_CHANGED"));
             return;
         }
-        String currentProcessName = ActivityThread.currentProcessName();
+        String strCurrentProcessName = ActivityThread.currentProcessName();
         ApplicationInfo applicationInfo = getApplicationInfo();
-        if (currentProcessName != null) {
-            if (currentProcessName.startsWith(applicationInfo.processName + ":")) {
+        if (strCurrentProcessName != null) {
+            if (strCurrentProcessName.startsWith(applicationInfo.processName + ":")) {
                 return;
             }
         }
         startSecondaryUserServicesIfNeeded();
     }
 
-    public void startServicesIfNeeded() {
+    public void startServicesIfNeeded() throws ClassNotFoundException {
         startServicesIfNeeded(getResources().getStringArray(R.array.config_systemUIServiceComponents));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void startSecondaryUserServicesIfNeeded() {
+    void startSecondaryUserServicesIfNeeded() throws ClassNotFoundException {
         startServicesIfNeeded(getResources().getStringArray(R.array.config_systemUIServiceComponentsPerUser));
     }
 
-    private void startServicesIfNeeded(String[] strArr) {
+    private void startServicesIfNeeded(String[] strArr) throws ClassNotFoundException {
         if (this.mServicesStarted) {
             return;
         }
@@ -99,7 +98,7 @@ public class SystemUIApplication extends Application implements SysUiServiceProv
         for (int i = 0; i < length; i++) {
             String str = strArr[i];
             timingsTraceLog.traceBegin("StartServices" + str);
-            long currentTimeMillis = System.currentTimeMillis();
+            long jCurrentTimeMillis = System.currentTimeMillis();
             try {
                 Class<?> cls = Class.forName(str);
                 this.mServices[i] = (SystemUI) cls.newInstance();
@@ -107,9 +106,9 @@ public class SystemUIApplication extends Application implements SysUiServiceProv
                 this.mServices[i].mComponents = this.mComponents;
                 this.mServices[i].start();
                 timingsTraceLog.traceEnd();
-                long currentTimeMillis2 = System.currentTimeMillis() - currentTimeMillis;
-                if (currentTimeMillis2 > 1000) {
-                    Log.w("SystemUIService", "Initialization of " + cls.getName() + " took " + currentTimeMillis2 + " ms");
+                long jCurrentTimeMillis2 = System.currentTimeMillis() - jCurrentTimeMillis;
+                if (jCurrentTimeMillis2 > 1000) {
+                    Log.w("SystemUIService", "Initialization of " + cls.getName() + " took " + jCurrentTimeMillis2 + " ms");
                 }
                 if (this.mBootCompleted) {
                     this.mServices[i].onBootCompleted();
@@ -127,15 +126,14 @@ public class SystemUIApplication extends Application implements SysUiServiceProv
         this.mServicesStarted = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.SystemUIApplication$3  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass3 implements PluginListener<OverlayPlugin> {
+    /* renamed from: com.android.systemui.SystemUIApplication$3, reason: invalid class name */
+    class AnonymousClass3 implements PluginListener<OverlayPlugin> {
         private ArraySet<OverlayPlugin> mOverlays;
 
         AnonymousClass3() {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onPluginConnected(Lcom/android/systemui/plugins/Plugin;Landroid/content/Context;)V */
         @Override // com.android.systemui.plugins.PluginListener
         public void onPluginConnected(OverlayPlugin overlayPlugin, Context context) {
             StatusBar statusBar = (StatusBar) SystemUIApplication.this.getComponent(StatusBar.class);
@@ -150,7 +148,7 @@ public class SystemUIApplication extends Application implements SysUiServiceProv
                 ((StatusBarWindowManager) Dependency.get(StatusBarWindowManager.class)).setStateListener(new StatusBarWindowManager.OtherwisedCollapsedListener() { // from class: com.android.systemui.-$$Lambda$SystemUIApplication$3$p3nb_gGx-K0KPgblBW5zld3voX0
                     @Override // com.android.systemui.statusbar.phone.StatusBarWindowManager.OtherwisedCollapsedListener
                     public final void setWouldOtherwiseCollapse(boolean z) {
-                        SystemUIApplication.AnonymousClass3.this.mOverlays.forEach(new Consumer() { // from class: com.android.systemui.-$$Lambda$SystemUIApplication$3$KtEuVDRzZWbFRFHh7e6NcPePYDw
+                        this.f$0.mOverlays.forEach(new Consumer() { // from class: com.android.systemui.-$$Lambda$SystemUIApplication$3$KtEuVDRzZWbFRFHh7e6NcPePYDw
                             @Override // java.util.function.Consumer
                             public final void accept(Object obj) {
                                 ((OverlayPlugin) obj).setCollapseDesired(z);
@@ -162,6 +160,7 @@ public class SystemUIApplication extends Application implements SysUiServiceProv
             }
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onPluginDisconnected(Lcom/android/systemui/plugins/Plugin;)V */
         @Override // com.android.systemui.plugins.PluginListener
         public void onPluginDisconnected(OverlayPlugin overlayPlugin) {
             this.mOverlays.remove(overlayPlugin);

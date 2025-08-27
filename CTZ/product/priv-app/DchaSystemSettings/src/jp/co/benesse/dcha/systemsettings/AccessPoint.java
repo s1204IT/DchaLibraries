@@ -1,6 +1,7 @@
 package jp.co.benesse.dcha.systemsettings;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -20,6 +21,7 @@ import android.util.LruCache;
 import java.util.ArrayList;
 import java.util.Iterator;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
     private String bssid;
@@ -36,7 +38,6 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
     private int security;
     private String ssid;
 
-    /* loaded from: classes.dex */
     public interface AccessPointListener {
         void onAccessPointChanged(AccessPoint accessPoint);
 
@@ -90,8 +91,7 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         Logger.d("AccessPoint", "AccessPoint 0009");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public AccessPoint(Context context, ScanResult scanResult) {
+    AccessPoint(Context context, ScanResult scanResult) {
         this.mScanResultCache = new LruCache<>(32);
         this.networkId = -1;
         this.pskType = 0;
@@ -103,8 +103,7 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         Logger.d("AccessPoint", "AccessPoint 0011");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public AccessPoint(Context context, WifiConfiguration wifiConfiguration) {
+    AccessPoint(Context context, WifiConfiguration wifiConfiguration) {
         this.mScanResultCache = new LruCache<>(32);
         this.networkId = -1;
         this.pskType = 0;
@@ -130,39 +129,40 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         return accessPoint;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     @Override // java.lang.Comparable
     public int compareTo(AccessPoint accessPoint) {
         Logger.d("AccessPoint", "compareTo 0001");
-        if (!isActive() || accessPoint.isActive()) {
-            if (isActive() || !accessPoint.isActive()) {
-                if (!isReachable() || accessPoint.isReachable()) {
-                    if (isReachable() || !accessPoint.isReachable()) {
-                        if (!isSaved() || accessPoint.isSaved()) {
-                            if (isSaved() || !accessPoint.isSaved()) {
-                                int calculateSignalLevel = WifiManager.calculateSignalLevel(accessPoint.mRssi, 4) - WifiManager.calculateSignalLevel(this.mRssi, 4);
-                                if (calculateSignalLevel != 0) {
-                                    Logger.d("AccessPoint", "compareTo 0008");
-                                    return calculateSignalLevel;
-                                }
-                                int compareToIgnoreCase = this.ssid.compareToIgnoreCase(accessPoint.ssid);
-                                if (compareToIgnoreCase != 0) {
-                                    Logger.d("AccessPoint", "compareTo 0009");
-                                    return compareToIgnoreCase;
-                                }
-                                Logger.d("AccessPoint", "compareTo 0010");
-                                return this.ssid.compareTo(accessPoint.ssid);
-                            }
-                            return 1;
-                        }
-                        return -1;
-                    }
-                    return 1;
-                }
-                return -1;
-            }
+        if (isActive() && !accessPoint.isActive()) {
+            return -1;
+        }
+        if (!isActive() && accessPoint.isActive()) {
             return 1;
         }
-        return -1;
+        if (isReachable() && !accessPoint.isReachable()) {
+            return -1;
+        }
+        if (!isReachable() && accessPoint.isReachable()) {
+            return 1;
+        }
+        if (isSaved() && !accessPoint.isSaved()) {
+            return -1;
+        }
+        if (!isSaved() && accessPoint.isSaved()) {
+            return 1;
+        }
+        int iCalculateSignalLevel = WifiManager.calculateSignalLevel(accessPoint.mRssi, 4) - WifiManager.calculateSignalLevel(this.mRssi, 4);
+        if (iCalculateSignalLevel != 0) {
+            Logger.d("AccessPoint", "compareTo 0008");
+            return iCalculateSignalLevel;
+        }
+        int iCompareToIgnoreCase = this.ssid.compareToIgnoreCase(accessPoint.ssid);
+        if (iCompareToIgnoreCase != 0) {
+            Logger.d("AccessPoint", "compareTo 0009");
+            return iCompareToIgnoreCase;
+        }
+        Logger.d("AccessPoint", "compareTo 0010");
+        return this.ssid.compareTo(accessPoint.ssid);
     }
 
     public boolean equals(Object obj) {
@@ -176,17 +176,17 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
     }
 
     public int hashCode() {
-        int i;
+        int iHashCode;
         Logger.d("AccessPoint", "hashCode 0001");
         if (this.mInfo != null) {
             Logger.d("AccessPoint", "hashCode 0002");
-            i = (13 * this.mInfo.hashCode()) + 0;
+            iHashCode = (13 * this.mInfo.hashCode()) + 0;
         } else {
-            i = 0;
+            iHashCode = 0;
         }
-        int hashCode = i + (19 * this.mRssi) + (23 * this.networkId) + (29 * this.ssid.hashCode());
+        int iHashCode2 = iHashCode + (19 * this.mRssi) + (23 * this.networkId) + (29 * this.ssid.hashCode());
         Logger.d("AccessPoint", "hashCode 0003");
-        return hashCode;
+        return iHashCode2;
     }
 
     public String toString() {
@@ -288,7 +288,6 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         return this.security;
     }
 
-    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     public String getSecurityString(boolean z) {
         Logger.d("AccessPoint", "getSecurityString 0001");
         Context context = this.mContext;
@@ -449,13 +448,13 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         if (!isPasspoint() && this.networkId != -1) {
             Logger.d("AccessPoint", "isInfoForThisAccessPoint 0002");
             return this.networkId == wifiInfo.getNetworkId();
-        } else if (wifiConfiguration != null) {
+        }
+        if (wifiConfiguration != null) {
             Logger.d("AccessPoint", "isInfoForThisAccessPoint 0003");
             return matches(wifiConfiguration);
-        } else {
-            Logger.d("AccessPoint", "isInfoForThisAccessPoint 0004");
-            return this.ssid.equals(removeDoubleQuotes(wifiInfo.getSSID()));
         }
+        Logger.d("AccessPoint", "isInfoForThisAccessPoint 0004");
+        return this.ssid.equals(removeDoubleQuotes(wifiInfo.getSSID()));
     }
 
     public boolean isSaved() {
@@ -463,8 +462,7 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         return this.networkId != -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void loadConfig(WifiConfiguration wifiConfiguration) {
+    void loadConfig(WifiConfiguration wifiConfiguration) {
         Logger.d("AccessPoint", "loadConfig 0001");
         if (wifiConfiguration.isPasspoint()) {
             Logger.d("AccessPoint", "loadConfig 0002");
@@ -521,8 +519,7 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         Logger.d("AccessPoint", "setListener 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean update(ScanResult scanResult) {
+    boolean update(ScanResult scanResult) {
         Logger.d("AccessPoint", "update 0001");
         if (matches(scanResult)) {
             Logger.d("AccessPoint", "update 0002");
@@ -550,8 +547,7 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean update(WifiConfiguration wifiConfiguration, WifiInfo wifiInfo, NetworkInfo networkInfo) {
+    boolean update(WifiConfiguration wifiConfiguration, WifiInfo wifiInfo, NetworkInfo networkInfo) {
         boolean z;
         Logger.d("AccessPoint", "update 0008");
         int level = getLevel();
@@ -594,8 +590,7 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         return z;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void update(WifiConfiguration wifiConfiguration) {
+    void update(WifiConfiguration wifiConfiguration) {
         Logger.d("AccessPoint", "update 0016");
         this.mConfig = wifiConfiguration;
         this.networkId = wifiConfiguration != null ? wifiConfiguration.networkId : -1;
@@ -606,8 +601,7 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         Logger.d("AccessPoint", "update 0018");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setRssi(int i) {
+    void setRssi(int i) {
         Logger.d("AccessPoint", "setRssi 0001");
         this.mRssi = i;
         Logger.d("AccessPoint", "setRssi 0002");
@@ -617,15 +611,16 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         return this.mRssi != Integer.MIN_VALUE;
     }
 
-    public static String getSummary(Context context, String str, NetworkInfo.DetailedState detailedState, boolean z, String str2) {
-        Network network;
+    public static String getSummary(Context context, String str, NetworkInfo.DetailedState detailedState, boolean z, String str2) throws Resources.NotFoundException {
+        Network currentNetwork;
         Logger.d("AccessPoint", "getSummary 0002");
         if (detailedState == NetworkInfo.DetailedState.CONNECTED && str == null) {
             Logger.d("AccessPoint", "getSummary 0003");
             if (!TextUtils.isEmpty(str2)) {
                 Logger.d("AccessPoint", "getSummary 0004");
                 return String.format(context.getString(R.string.connected_via_passpoint), str2);
-            } else if (z) {
+            }
+            if (z) {
                 Logger.d("AccessPoint", "getSummary 0005");
                 return context.getString(R.string.connected_via_wfa);
             }
@@ -634,26 +629,26 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         if (detailedState == NetworkInfo.DetailedState.CONNECTED) {
             Logger.d("AccessPoint", "getSummary 0006");
             try {
-                network = IWifiManager.Stub.asInterface(ServiceManager.getService("wifi")).getCurrentNetwork();
+                currentNetwork = IWifiManager.Stub.asInterface(ServiceManager.getService("wifi")).getCurrentNetwork();
             } catch (RemoteException e) {
                 Logger.d("AccessPoint", "getSummary 0007");
                 Logger.d("AccessPoint", "RemoteException", e);
-                network = null;
+                currentNetwork = null;
             }
-            NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(network);
+            NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(currentNetwork);
             if (networkCapabilities != null && !networkCapabilities.hasCapability(16)) {
                 Logger.d("AccessPoint", "getSummary 0008");
                 return context.getString(R.string.wifi_connected_no_internet);
             }
         }
         String[] stringArray = context.getResources().getStringArray(str == null ? R.array.wifi_status : R.array.wifi_status_with_ssid);
-        int ordinal = detailedState.ordinal();
-        if (ordinal >= stringArray.length || stringArray[ordinal].length() == 0) {
+        int iOrdinal = detailedState.ordinal();
+        if (iOrdinal >= stringArray.length || stringArray[iOrdinal].length() == 0) {
             Logger.d("AccessPoint", "getSummary 0009");
             return "";
         }
         Logger.d("AccessPoint", "getSummary 0010");
-        return String.format(stringArray[ordinal], str);
+        return String.format(stringArray[iOrdinal], str);
     }
 
     public static String getSummary(Context context, NetworkInfo.DetailedState detailedState, boolean z) {
@@ -673,22 +668,23 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
 
     private static int getPskType(ScanResult scanResult) {
         Logger.d("AccessPoint", "getPskType 0001");
-        boolean contains = scanResult.capabilities.contains("WPA-PSK");
-        boolean contains2 = scanResult.capabilities.contains("WPA2-PSK");
-        if (contains2 && contains) {
+        boolean zContains = scanResult.capabilities.contains("WPA-PSK");
+        boolean zContains2 = scanResult.capabilities.contains("WPA2-PSK");
+        if (zContains2 && zContains) {
             Logger.d("AccessPoint", "getPskType 0002");
             return 3;
-        } else if (contains2) {
+        }
+        if (zContains2) {
             Logger.d("AccessPoint", "getPskType 0003");
             return 2;
-        } else if (contains) {
+        }
+        if (zContains) {
             Logger.d("AccessPoint", "getPskType 0004");
             return 1;
-        } else {
-            Logger.d("AccessPoint", "getPskType 0005");
-            Logger.w("AccessPoint", "Received abnormal flag string: " + scanResult.capabilities);
-            return 0;
         }
+        Logger.d("AccessPoint", "getPskType 0005");
+        Logger.w("AccessPoint", "Received abnormal flag string: " + scanResult.capabilities);
+        return 0;
     }
 
     private static int getSecurity(ScanResult scanResult) {
@@ -696,16 +692,17 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         if (scanResult.capabilities.contains("WEP")) {
             Logger.d("AccessPoint", "getSecurity 0002");
             return 1;
-        } else if (scanResult.capabilities.contains("PSK")) {
+        }
+        if (scanResult.capabilities.contains("PSK")) {
             Logger.d("AccessPoint", "getSecurity 0003");
             return 2;
-        } else if (scanResult.capabilities.contains("EAP")) {
+        }
+        if (scanResult.capabilities.contains("EAP")) {
             Logger.d("AccessPoint", "getSecurity 0004");
             return 3;
-        } else {
-            Logger.d("AccessPoint", "getSecurity 0005");
-            return 0;
         }
+        Logger.d("AccessPoint", "getSecurity 0005");
+        return 0;
     }
 
     static int getSecurity(WifiConfiguration wifiConfiguration) {
@@ -713,13 +710,13 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         if (wifiConfiguration.allowedKeyManagement.get(1)) {
             Logger.d("AccessPoint", "getSecurity 0007");
             return 2;
-        } else if (wifiConfiguration.allowedKeyManagement.get(2) || wifiConfiguration.allowedKeyManagement.get(3)) {
+        }
+        if (wifiConfiguration.allowedKeyManagement.get(2) || wifiConfiguration.allowedKeyManagement.get(3)) {
             Logger.d("AccessPoint", "getSecurity 0008");
             return 3;
-        } else {
-            Logger.d("AccessPoint", "getSecurity 0009");
-            return wifiConfiguration.wepKeys[0] != null ? 1 : 0;
         }
+        Logger.d("AccessPoint", "getSecurity 0009");
+        return wifiConfiguration.wepKeys[0] != null ? 1 : 0;
     }
 
     public static String securityToString(int i, int i2) {
@@ -727,28 +724,30 @@ public class AccessPoint implements Cloneable, Comparable<AccessPoint> {
         if (i == 1) {
             Logger.d("AccessPoint", "securityToString 0002");
             return "WEP";
-        } else if (i == 2) {
+        }
+        if (i == 2) {
             Logger.d("AccessPoint", "securityToString 0003");
             if (i2 == 1) {
                 Logger.d("AccessPoint", "securityToString 0004");
                 return "WPA";
-            } else if (i2 == 2) {
+            }
+            if (i2 == 2) {
                 Logger.d("AccessPoint", "securityToString 0005");
                 return "WPA2";
-            } else if (i2 == 3) {
+            }
+            if (i2 == 3) {
                 Logger.d("AccessPoint", "securityToString 0006");
                 return "WPA_WPA2";
-            } else {
-                Logger.d("AccessPoint", "securityToString 0007");
-                return "PSK";
             }
-        } else if (i == 3) {
+            Logger.d("AccessPoint", "securityToString 0007");
+            return "PSK";
+        }
+        if (i == 3) {
             Logger.d("AccessPoint", "securityToString 0008");
             return "EAP";
-        } else {
-            Logger.d("AccessPoint", "securityToString 0009");
-            return "NONE";
         }
+        Logger.d("AccessPoint", "securityToString 0009");
+        return "NONE";
     }
 
     static String removeDoubleQuotes(String str) {

@@ -11,6 +11,7 @@ import com.android.settings.SettingsActivity;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.widget.SwitchBar;
 import com.android.settings.widget.ToggleSwitch;
+
 /* loaded from: classes.dex */
 public abstract class ToggleFeaturePreferenceFragment extends SettingsPreferenceFragment {
     protected String mPreferenceKey;
@@ -62,12 +63,10 @@ public abstract class ToggleFeaturePreferenceFragment extends SettingsPreference
         switchBar.setSwitchBarText(R.string.accessibility_service_master_switch_title, R.string.accessibility_service_master_switch_title);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onInstallSwitchBarToggleSwitch() {
+    protected void onInstallSwitchBarToggleSwitch() {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onRemoveSwitchBarToggleSwitch() {
+    protected void onRemoveSwitchBarToggleSwitch() {
     }
 
     private void installActionBarToggleSwitch() {
@@ -85,8 +84,7 @@ public abstract class ToggleFeaturePreferenceFragment extends SettingsPreference
         getActivity().setTitle(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onProcessArguments(Bundle bundle) {
+    protected void onProcessArguments(Bundle bundle) {
         this.mPreferenceKey = bundle.getString("preference_key");
         if (bundle.containsKey("checked")) {
             this.mSwitchBar.setCheckedInternal(bundle.getBoolean("checked"));

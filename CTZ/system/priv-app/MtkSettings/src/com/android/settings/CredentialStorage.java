@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.UserInfo;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
@@ -32,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import sun.security.util.ObjectIdentifier;
 import sun.security.x509.AlgorithmId;
+
 /* loaded from: classes.dex */
 public final class CredentialStorage extends Activity {
     private static AlertDialog sResetDialog = null;
@@ -62,7 +64,9 @@ public final class CredentialStorage extends Activity {
                 this.mInstallBundle = intent.getExtras();
             }
             handleUnlockOrInstall();
-        } else if ("com.android.credentials.UNLOCK".equals(action) && this.mKeyStore.state() == KeyStore.State.UNINITIALIZED) {
+            return;
+        }
+        if ("com.android.credentials.UNLOCK".equals(action) && this.mKeyStore.state() == KeyStore.State.UNINITIALIZED) {
             ensureKeyGuard();
         } else {
             finish();
@@ -82,39 +86,34 @@ public final class CredentialStorage extends Activity {
         super.onDestroy();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleUnlockOrInstall() {
+    private void handleUnlockOrInstall() {
         if (isFinishing()) {
-            return;
         }
         switch (AnonymousClass1.$SwitchMap$android$security$KeyStore$State[this.mKeyStore.state().ordinal()]) {
             case 1:
                 ensureKeyGuard();
-                return;
+                break;
             case 2:
                 new UnlockDialog(this, null);
-                return;
+                break;
             case 3:
                 if (!checkKeyGuardQuality()) {
                     new ConfigureKeyGuardDialog().show(getFragmentManager(), "ConfigureKeyGuardDialog");
-                    return;
+                    break;
+                } else {
+                    installIfAvailable();
+                    if (!this.mIsMarkKeyAsUserSelectable) {
+                        Log.e("CredentialStorage", "handleUnlockOrInstall, mIsMarkKeyAsUserSelectable");
+                        finish();
+                        break;
+                    }
                 }
-                installIfAvailable();
-                if (!this.mIsMarkKeyAsUserSelectable) {
-                    Log.e("CredentialStorage", "handleUnlockOrInstall, mIsMarkKeyAsUserSelectable");
-                    finish();
-                    return;
-                }
-                return;
-            default:
-                return;
+                break;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.settings.CredentialStorage$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public static /* synthetic */ class AnonymousClass1 {
+    /* renamed from: com.android.settings.CredentialStorage$1, reason: invalid class name */
+    static /* synthetic */ class AnonymousClass1 {
         static final /* synthetic */ int[] $SwitchMap$android$security$KeyStore$State = new int[KeyStore.State.values().length];
 
         static {
@@ -133,12 +132,13 @@ public final class CredentialStorage extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void ensureKeyGuard() {
+    private void ensureKeyGuard() {
         if (!checkKeyGuardQuality()) {
             new ConfigureKeyGuardDialog().show(getFragmentManager(), "ConfigureKeyGuardDialog");
-        } else if (confirmKeyGuard(1)) {
         } else {
+            if (confirmKeyGuard(1)) {
+                return;
+            }
             finish();
         }
     }
@@ -186,7 +186,8 @@ public final class CredentialStorage extends Activity {
             if (!this.mKeyStore.importKey(string, byteArray, i2, i)) {
                 Log.e("CredentialStorage", "Failed to install " + string + " as uid " + i2);
                 return;
-            } else if (i2 == 1000 || i2 == -1) {
+            }
+            if (i2 == 1000 || i2 == -1) {
                 Log.e("CredentialStorage", "installIfAvailable, MarkKeyAsUserSelectable");
                 new MarkKeyAsUserSelectable(string.replaceFirst("^USRPKEY_", "")).execute(new Void[0]);
                 this.mIsMarkKeyAsUserSelectable = true;
@@ -226,20 +227,20 @@ public final class CredentialStorage extends Activity {
         setResult(-1);
     }
 
-    /* loaded from: classes.dex */
     private class ResetDialog implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
         private boolean mResetConfirmed;
 
+        /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0000: CONSTRUCTOR (r1v0 com.android.settings.CredentialStorage) A[MD:(com.android.settings.CredentialStorage):void (m)] (LINE:374) call: com.android.settings.CredentialStorage.ResetDialog.<init>(com.android.settings.CredentialStorage):void type: THIS */
         /* synthetic */ ResetDialog(CredentialStorage credentialStorage, AnonymousClass1 anonymousClass1) {
             this();
         }
 
         private ResetDialog() {
             if (CredentialStorage.sResetDialog == null) {
-                AlertDialog create = new AlertDialog.Builder(CredentialStorage.this).setTitle(17039380).setMessage(R.string.credentials_reset_hint).setPositiveButton(17039370, this).setNegativeButton(17039360, this).create();
-                AlertDialog unused = CredentialStorage.sResetDialog = create;
-                create.setOnDismissListener(this);
-                create.show();
+                AlertDialog alertDialogCreate = new AlertDialog.Builder(CredentialStorage.this).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.credentials_reset_hint).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this).create();
+                AlertDialog unused = CredentialStorage.sResetDialog = alertDialogCreate;
+                alertDialogCreate.setOnDismissListener(this);
+                alertDialogCreate.show();
             }
         }
 
@@ -261,28 +262,30 @@ public final class CredentialStorage extends Activity {
         }
     }
 
-    /* loaded from: classes.dex */
     private class ResetKeyStoreAndKeyChain extends AsyncTask<Void, Void, Boolean> {
         private ResetKeyStoreAndKeyChain() {
         }
 
+        /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0000: CONSTRUCTOR (r1v0 com.android.settings.CredentialStorage) A[MD:(com.android.settings.CredentialStorage):void (m)] (LINE:417) call: com.android.settings.CredentialStorage.ResetKeyStoreAndKeyChain.<init>(com.android.settings.CredentialStorage):void type: THIS */
         /* synthetic */ ResetKeyStoreAndKeyChain(CredentialStorage credentialStorage, AnonymousClass1 anonymousClass1) {
             this();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [432=4] */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             new LockPatternUtils(CredentialStorage.this).resetKeyStore(UserHandle.myUserId());
             try {
-                KeyChain.KeyChainConnection bind = KeyChain.bind(CredentialStorage.this);
+                KeyChain.KeyChainConnection keyChainConnectionBind = KeyChain.bind(CredentialStorage.this);
                 try {
-                    Boolean valueOf = Boolean.valueOf(bind.getService().reset());
-                    bind.close();
-                    return valueOf;
-                } catch (RemoteException e) {
-                    bind.close();
-                    return false;
+                    try {
+                        return Boolean.valueOf(keyChainConnectionBind.getService().reset());
+                    } catch (RemoteException e) {
+                        return false;
+                    }
+                } finally {
+                    keyChainConnectionBind.close();
                 }
             } catch (InterruptedException e2) {
                 Thread.currentThread().interrupt();
@@ -290,45 +293,47 @@ public final class CredentialStorage extends Activity {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) {
             if (bool.booleanValue()) {
-                Toast.makeText(CredentialStorage.this, (int) R.string.credentials_erased, 0).show();
+                Toast.makeText(CredentialStorage.this, R.string.credentials_erased, 0).show();
                 CredentialStorage.this.clearLegacyVpnIfEstablished();
             } else {
-                Toast.makeText(CredentialStorage.this, (int) R.string.credentials_not_erased, 0).show();
+                Toast.makeText(CredentialStorage.this, R.string.credentials_not_erased, 0).show();
             }
             CredentialStorage.this.finish();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void clearLegacyVpnIfEstablished() {
+    private void clearLegacyVpnIfEstablished() {
         if (VpnUtils.disconnectLegacyVpn(getApplicationContext())) {
-            Toast.makeText(this, (int) R.string.vpn_disconnected, 0).show();
+            Toast.makeText(this, R.string.vpn_disconnected, 0).show();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class MarkKeyAsUserSelectable extends AsyncTask<Void, Void, Boolean> {
+    private class MarkKeyAsUserSelectable extends AsyncTask<Void, Void, Boolean> {
         final String mAlias;
 
         public MarkKeyAsUserSelectable(String str) {
             this.mAlias = str;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [478=4] */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             try {
-                KeyChain.KeyChainConnection bind = KeyChain.bind(CredentialStorage.this);
-                bind.getService().setUserSelectable(this.mAlias, true);
-                if (bind != null) {
-                    bind.close();
+                KeyChain.KeyChainConnection keyChainConnectionBind = KeyChain.bind(CredentialStorage.this);
+                Throwable th = null;
+                try {
+                    keyChainConnectionBind.getService().setUserSelectable(this.mAlias, true);
+                    if (keyChainConnectionBind != null) {
+                        keyChainConnectionBind.close();
+                    }
+                    return true;
+                } finally {
                 }
-                return true;
             } catch (RemoteException e) {
                 Log.w("CredentialStorage", "Failed to mark key " + this.mAlias + " as user-selectable.");
                 return false;
@@ -339,9 +344,9 @@ public final class CredentialStorage extends Activity {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) {
             Log.e("CredentialStorage", "onPostExecute ");
             CredentialStorage.this.mIsMarkKeyAsUserSelectable = false;
             CredentialStorage.this.finish();
@@ -357,19 +362,18 @@ public final class CredentialStorage extends Activity {
             if (launchedFromUid == -1) {
                 Log.e("CredentialStorage", "com.android.credentials.INSTALL must be started with startActivityForResult");
                 return false;
-            } else if (UserHandle.isSameApp(launchedFromUid, Process.myUid())) {
-                UserInfo profileParent = ((UserManager) getSystemService("user")).getProfileParent(UserHandle.getUserId(launchedFromUid));
-                return profileParent != null && profileParent.id == UserHandle.myUserId();
-            } else {
+            }
+            if (!UserHandle.isSameApp(launchedFromUid, Process.myUid())) {
                 return false;
             }
+            UserInfo profileParent = ((UserManager) getSystemService("user")).getProfileParent(UserHandle.getUserId(launchedFromUid));
+            return profileParent != null && profileParent.id == UserHandle.myUserId();
         } catch (RemoteException e) {
             return false;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean confirmKeyGuard(int i) {
+    private boolean confirmKeyGuard(int i) {
         return new ChooseLockSettingsHelper(this).launchConfirmationActivity(i, getResources().getText(R.string.credentials_title), true);
     }
 
@@ -385,7 +389,9 @@ public final class CredentialStorage extends Activity {
                 }
             }
             finish();
-        } else if (i == 2) {
+            return;
+        }
+        if (i == 2) {
             if (i2 == -1) {
                 new ResetKeyStoreAndKeyChain(this, null).execute(new Void[0]);
             } else {
@@ -394,21 +400,20 @@ public final class CredentialStorage extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class UnlockDialog implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener, TextWatcher {
+    private class UnlockDialog implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener, TextWatcher {
         private final Button mButton;
         private final TextView mError;
         private final TextView mOldPassword;
         private boolean mUnlockConfirmed;
 
+        /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0000: CONSTRUCTOR (r1v0 com.android.settings.CredentialStorage) A[MD:(com.android.settings.CredentialStorage):void throws android.content.res.Resources$NotFoundException (m)] (LINE:580) call: com.android.settings.CredentialStorage.UnlockDialog.<init>(com.android.settings.CredentialStorage):void type: THIS */
         /* synthetic */ UnlockDialog(CredentialStorage credentialStorage, AnonymousClass1 anonymousClass1) {
             this();
         }
 
-        private UnlockDialog() {
+        private UnlockDialog() throws Resources.NotFoundException {
             CharSequence string;
-            View inflate = View.inflate(CredentialStorage.this, R.layout.credentials_dialog, null);
+            View viewInflate = View.inflate(CredentialStorage.this, R.layout.credentials_dialog, null);
             if (CredentialStorage.this.mRetriesRemaining != -1) {
                 if (CredentialStorage.this.mRetriesRemaining <= 3) {
                     if (CredentialStorage.this.mRetriesRemaining == 1) {
@@ -422,16 +427,16 @@ public final class CredentialStorage extends Activity {
             } else {
                 string = CredentialStorage.this.getResources().getText(R.string.credentials_unlock_hint);
             }
-            ((TextView) inflate.findViewById(R.id.hint)).setText(string);
-            this.mOldPassword = (TextView) inflate.findViewById(R.id.old_password);
+            ((TextView) viewInflate.findViewById(R.id.hint)).setText(string);
+            this.mOldPassword = (TextView) viewInflate.findViewById(R.id.old_password);
             this.mOldPassword.setVisibility(0);
             this.mOldPassword.addTextChangedListener(this);
-            this.mError = (TextView) inflate.findViewById(R.id.error);
+            this.mError = (TextView) viewInflate.findViewById(R.id.error);
             if (CredentialStorage.sUnlockDialog == null) {
-                AlertDialog create = new AlertDialog.Builder(CredentialStorage.this).setView(inflate).setTitle(R.string.credentials_unlock).setPositiveButton(17039370, this).setNegativeButton(17039360, this).create();
-                AlertDialog unused = CredentialStorage.sUnlockDialog = create;
-                create.setOnDismissListener(this);
-                create.show();
+                AlertDialog alertDialogCreate = new AlertDialog.Builder(CredentialStorage.this).setView(viewInflate).setTitle(R.string.credentials_unlock).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this).create();
+                AlertDialog unused = CredentialStorage.sUnlockDialog = alertDialogCreate;
+                alertDialogCreate.setOnDismissListener(this);
+                alertDialogCreate.show();
             }
             this.mButton = CredentialStorage.sUnlockDialog.getButton(-1);
             this.mButton.setEnabled(false);
@@ -465,19 +470,20 @@ public final class CredentialStorage extends Activity {
                 int lastError = CredentialStorage.this.mKeyStore.getLastError();
                 if (lastError == 1) {
                     CredentialStorage.this.mRetriesRemaining = -1;
-                    Toast.makeText(CredentialStorage.this, (int) R.string.credentials_enabled, 0).show();
+                    Toast.makeText(CredentialStorage.this, R.string.credentials_enabled, 0).show();
                     CredentialStorage.this.ensureKeyGuard();
                     return;
                 } else if (lastError == 3) {
                     CredentialStorage.this.mRetriesRemaining = -1;
-                    Toast.makeText(CredentialStorage.this, (int) R.string.credentials_erased, 0).show();
-                    CredentialStorage.this.handleUnlockOrInstall();
-                    return;
-                } else if (lastError >= 10) {
-                    CredentialStorage.this.mRetriesRemaining = (lastError - 10) + 1;
+                    Toast.makeText(CredentialStorage.this, R.string.credentials_erased, 0).show();
                     CredentialStorage.this.handleUnlockOrInstall();
                     return;
                 } else {
+                    if (lastError >= 10) {
+                        CredentialStorage.this.mRetriesRemaining = (lastError - 10) + 1;
+                        CredentialStorage.this.handleUnlockOrInstall();
+                        return;
+                    }
                     return;
                 }
             }

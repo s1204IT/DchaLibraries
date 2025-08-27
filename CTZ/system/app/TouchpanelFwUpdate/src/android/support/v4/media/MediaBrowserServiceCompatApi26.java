@@ -10,11 +10,11 @@ import android.util.Log;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 class MediaBrowserServiceCompatApi26 {
     private static Field sResultFlags;
 
-    /* loaded from: classes.dex */
     public interface ServiceCompatProxy extends MediaBrowserServiceCompatApi23.ServiceCompatProxy {
         void onLoadChildren(String str, ResultWrapper resultWrapper, Bundle bundle);
     }
@@ -32,7 +32,6 @@ class MediaBrowserServiceCompatApi26 {
         return new MediaBrowserServiceAdaptor(context, serviceProxy);
     }
 
-    /* loaded from: classes.dex */
     static class ResultWrapper {
         MediaBrowserService.Result mResultObj;
 
@@ -40,7 +39,7 @@ class MediaBrowserServiceCompatApi26 {
             this.mResultObj = result;
         }
 
-        public void sendResult(List<Parcel> result, int flags) {
+        public void sendResult(List<Parcel> result, int flags) throws IllegalAccessException, IllegalArgumentException {
             try {
                 MediaBrowserServiceCompatApi26.sResultFlags.setInt(this.mResultObj, flags);
             } catch (IllegalAccessException e) {
@@ -63,7 +62,6 @@ class MediaBrowserServiceCompatApi26 {
         }
     }
 
-    /* loaded from: classes.dex */
     static class MediaBrowserServiceAdaptor extends MediaBrowserServiceCompatApi23.MediaBrowserServiceAdaptor {
         MediaBrowserServiceAdaptor(Context context, ServiceCompatProxy serviceWrapper) {
             super(context, serviceWrapper);

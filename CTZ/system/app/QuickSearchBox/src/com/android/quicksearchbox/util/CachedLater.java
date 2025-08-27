@@ -1,7 +1,9 @@
 package com.android.quicksearchbox.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class CachedLater<A> implements NowOrLater<A> {
     private boolean mCreating;
@@ -12,8 +14,7 @@ public abstract class CachedLater<A> implements NowOrLater<A> {
 
     protected abstract void create();
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void store(A a) {
+    protected void store(A a) {
         List<Consumer<? super A>> list;
         synchronized (this.mLock) {
             this.mValue = a;
@@ -23,8 +24,9 @@ public abstract class CachedLater<A> implements NowOrLater<A> {
             this.mWaitingConsumers = null;
         }
         if (list != null) {
-            for (Consumer<? super A> consumer : list) {
-                consumer.consume(a);
+            Iterator<Consumer<? super A>> it = list.iterator();
+            while (it.hasNext()) {
+                it.next().consume(a);
             }
         }
     }
@@ -32,10 +34,10 @@ public abstract class CachedLater<A> implements NowOrLater<A> {
     @Override // com.android.quicksearchbox.util.NowOrLater
     public void getLater(Consumer<? super A> consumer) {
         boolean z;
-        Object obj;
+        A a;
         synchronized (this.mLock) {
             z = this.mValid;
-            obj = (A) this.mValue;
+            a = this.mValue;
             if (!z) {
                 if (this.mWaitingConsumers == null) {
                     this.mWaitingConsumers = new ArrayList();
@@ -44,7 +46,7 @@ public abstract class CachedLater<A> implements NowOrLater<A> {
             }
         }
         if (z) {
-            consumer.consume(obj);
+            consumer.consume(a);
             return;
         }
         boolean z2 = false;

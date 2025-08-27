@@ -6,6 +6,7 @@ import android.content.pm.PackageInstaller;
 import android.support.annotation.NonNull;
 import java.util.HashMap;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class PackageInstallerCompat {
     public static final int STATUS_FAILED = 2;
@@ -31,7 +32,6 @@ public abstract class PackageInstallerCompat {
         return packageInstallerCompat;
     }
 
-    /* loaded from: classes.dex */
     public static final class PackageInstallInfo {
         public final ComponentName componentName;
         public final String packageName;

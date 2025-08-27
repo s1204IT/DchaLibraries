@@ -6,6 +6,7 @@ import android.support.v7.preference.TwoStatePreference;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class PatternVisiblePreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final LockPatternUtils mLockPatternUtils;

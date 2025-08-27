@@ -2,6 +2,7 @@ package com.android.settings.slices;
 
 import android.net.Uri;
 import android.text.TextUtils;
+
 /* loaded from: classes.dex */
 public class SliceData {
     private final String mFragmentClassName;
@@ -85,9 +86,7 @@ public class SliceData {
         return TextUtils.equals(this.mKey, ((SliceData) obj).mKey);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Builder {
+    static class Builder {
         private String mFragmentClassName;
         private int mIconResource;
         private boolean mIsPlatformDefined;
@@ -99,6 +98,9 @@ public class SliceData {
         private String mSummary;
         private String mTitle;
         private Uri mUri;
+
+        Builder() {
+        }
 
         public Builder setKey(String str) {
             this.mKey = str;
@@ -172,7 +174,6 @@ public class SliceData {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class InvalidSliceDataException extends RuntimeException {
         public InvalidSliceDataException(String str) {
             super(str);

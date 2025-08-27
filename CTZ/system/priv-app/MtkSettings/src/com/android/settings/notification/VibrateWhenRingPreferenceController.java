@@ -14,6 +14,7 @@ import com.android.settings.core.TogglePreferenceController;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class VibrateWhenRingPreferenceController extends TogglePreferenceController implements LifecycleObserver, OnPause, OnResume {
     private static final String KEY_VIBRATE_WHEN_RINGING = "vibrate_when_ringing";
@@ -50,10 +51,10 @@ public class VibrateWhenRingPreferenceController extends TogglePreferenceControl
     @Override // com.android.settings.core.BasePreferenceController, com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference(KEY_VIBRATE_WHEN_RINGING);
-        if (findPreference != null) {
-            this.mSettingObserver = new SettingObserver(findPreference);
-            findPreference.setPersistent(false);
+        Preference preferenceFindPreference = preferenceScreen.findPreference(KEY_VIBRATE_WHEN_RINGING);
+        if (preferenceFindPreference != null) {
+            this.mSettingObserver = new SettingObserver(preferenceFindPreference);
+            preferenceFindPreference.setPersistent(false);
         }
     }
 
@@ -71,7 +72,6 @@ public class VibrateWhenRingPreferenceController extends TogglePreferenceControl
         }
     }
 
-    /* loaded from: classes.dex */
     private final class SettingObserver extends ContentObserver {
         private final Uri VIBRATE_WHEN_RINGING_URI;
         private final Preference mPreference;

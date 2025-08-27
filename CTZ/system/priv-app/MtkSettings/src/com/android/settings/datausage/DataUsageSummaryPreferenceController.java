@@ -22,6 +22,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.net.DataUsageController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DataUsageSummaryPreferenceController extends BasePreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnStart {
     private static final String KEY = "status_header";
@@ -137,7 +138,7 @@ public class DataUsageSummaryPreferenceController extends BasePreferenceControll
             } else {
                 dataUsageSummaryPreference.setChartEnabled(true);
                 dataUsageSummaryPreference.setLabels(DataUsageUtils.formatDataUsage(this.mContext, 0L), DataUsageUtils.formatDataUsage(this.mContext, this.mDataBarSize));
-                dataUsageSummaryPreference.setProgress(((float) this.mDataplanUse) / ((float) this.mDataBarSize));
+                dataUsageSummaryPreference.setProgress(this.mDataplanUse / this.mDataBarSize);
             }
             dataUsageSummaryPreference.setUsageInfo(this.mCycleEnd, this.mSnapshotTime, this.mCarrierName, this.mDataplanCount, this.mManageSubscriptionIntent);
             return;

@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import com.android.launcher3.R;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class TopRoundedCornerView extends SpringRelativeLayout {
     private final Path mClipPath;

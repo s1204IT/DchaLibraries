@@ -23,6 +23,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class MobileNetworkPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnStart, OnStop {
     private BroadcastReceiver mAirplanModeChangedReceiver;
@@ -82,24 +83,25 @@ public class MobileNetworkPreferenceController extends AbstractPreferenceControl
             if (Looper.myLooper() == null) {
                 Log.d("MobileNetworkPreferenceController", "onResume Looper is null.");
                 return;
-            }
-            if (this.mPhoneStateListener == null) {
-                this.mPhoneStateListener = new PhoneStateListener() { // from class: com.android.settings.network.MobileNetworkPreferenceController.2
-                    @Override // android.telephony.PhoneStateListener
-                    public void onCallStateChanged(int i, String str) {
-                        super.onCallStateChanged(i, str);
-                        Log.d("MobileNetworkPreferenceController", "PhoneStateListener, new state=" + i);
-                        if (i == 0) {
-                            MobileNetworkPreferenceController.this.updateMobileNetworkEnabled();
+            } else {
+                if (this.mPhoneStateListener == null) {
+                    this.mPhoneStateListener = new PhoneStateListener() { // from class: com.android.settings.network.MobileNetworkPreferenceController.2
+                        @Override // android.telephony.PhoneStateListener
+                        public void onCallStateChanged(int i, String str) {
+                            super.onCallStateChanged(i, str);
+                            Log.d("MobileNetworkPreferenceController", "PhoneStateListener, new state=" + i);
+                            if (i == 0) {
+                                MobileNetworkPreferenceController.this.updateMobileNetworkEnabled();
+                            }
                         }
-                    }
 
-                    @Override // android.telephony.PhoneStateListener
-                    public void onServiceStateChanged(ServiceState serviceState) {
-                    }
-                };
+                        @Override // android.telephony.PhoneStateListener
+                        public void onServiceStateChanged(ServiceState serviceState) {
+                        }
+                    };
+                }
+                this.mTelephonyManager.listen(this.mPhoneStateListener, 33);
             }
-            this.mTelephonyManager.listen(this.mPhoneStateListener, 33);
         }
         if (this.mAirplanModeChangedReceiver != null) {
             this.mContext.registerReceiver(this.mAirplanModeChangedReceiver, new IntentFilter("android.intent.action.AIRPLANE_MODE"));
@@ -156,8 +158,7 @@ public class MobileNetworkPreferenceController extends AbstractPreferenceControl
         return "";
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateMobileNetworkEnabled() {
+    private void updateMobileNetworkEnabled() {
         if (this.mPreference == null) {
             return;
         }

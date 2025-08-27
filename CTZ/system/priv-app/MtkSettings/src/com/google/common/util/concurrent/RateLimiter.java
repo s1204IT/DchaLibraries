@@ -3,6 +3,7 @@ package com.google.common.util.concurrent;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.SmoothRateLimiter;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public abstract class RateLimiter {
     private volatile Object mutexDoNotUseDirectly;
@@ -38,8 +39,7 @@ public abstract class RateLimiter {
         return obj;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RateLimiter(SleepingStopwatch sleepingStopwatch) {
+    RateLimiter(SleepingStopwatch sleepingStopwatch) {
         this.stopwatch = (SleepingStopwatch) Preconditions.checkNotNull(sleepingStopwatch);
     }
 
@@ -51,20 +51,18 @@ public abstract class RateLimiter {
     }
 
     public final double getRate() {
-        double doGetRate;
+        double dDoGetRate;
         synchronized (mutex()) {
-            doGetRate = doGetRate();
+            dDoGetRate = doGetRate();
         }
-        return doGetRate;
+        return dDoGetRate;
     }
 
     public String toString() {
         return String.format("RateLimiter[stableRate=%3.1fqps]", Double.valueOf(getRate()));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static abstract class SleepingStopwatch {
+    static abstract class SleepingStopwatch {
         abstract long readMicros();
 
         SleepingStopwatch() {

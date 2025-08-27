@@ -316,8 +316,8 @@
     <string name="battery_info_status_not_charging">Plugged in, can\'t charge right now</string>
     <string name="battery_info_status_unknown">Unknown</string>
     <string name="battery_low_percent_format">%s remaining</string>
-    <string name="battery_low_percent_format_hybrid">%s remaining, about %s left based on your usage</string>
-    <string name="battery_low_percent_format_hybrid_short">%s remaining, about %s left</string>
+    <string name="battery_low_percent_format_hybrid" formatted="false">%s remaining, about %s left based on your usage</string>
+    <string name="battery_low_percent_format_hybrid_short" formatted="false">%s remaining, about %s left</string>
     <string name="battery_low_percent_format_saver_started">%s remaining. Battery Saver is on.</string>
     <string name="battery_low_title">Battery may run out soon</string>
     <string name="battery_low_why">Settings</string>
@@ -735,9 +735,9 @@
     <string name="keyguard_enter_your_pattern">Enter your Pattern</string>
     <string name="keyguard_enter_your_pin">Enter your PIN</string>
     <string name="keyguard_fancy_colon" />
-    <string name="keyguard_indication_charging_time">%2$s • Charging (%s until full)</string>
-    <string name="keyguard_indication_charging_time_fast">%2$s • Charging rapidly (%s until full)</string>
-    <string name="keyguard_indication_charging_time_slowly">%2$s • Charging slowly (%s until full)</string>
+    <string name="keyguard_indication_charging_time" formatted="false">%2$s • Charging (%s until full)</string>
+    <string name="keyguard_indication_charging_time_fast" formatted="false">%2$s • Charging rapidly (%s until full)</string>
+    <string name="keyguard_indication_charging_time_slowly" formatted="false">%2$s • Charging slowly (%s until full)</string>
     <string name="keyguard_indication_trust_disabled">Device will stay locked until you manually unlock</string>
     <string name="keyguard_indication_trust_granted">Unlocked for %1$s</string>
     <string name="keyguard_indication_trust_managed">%1$s is running</string>
@@ -917,7 +917,7 @@
     <string name="mobile_data_disable_message">You won’t have access to data or the internet through %s. Internet will only be available via Wi-Fi.</string>
     <string name="mobile_data_disable_message_default_carrier">your carrier</string>
     <string name="mobile_data_disable_title">Turn off mobile data?</string>
-    <string name="mobile_data_text_format">%s — %s</string>
+    <string name="mobile_data_text_format" formatted="false">%s — %s</string>
     <string name="mock_location_app">Select mock location app</string>
     <string name="mock_location_app_not_set">No mock location app set</string>
     <string name="mock_location_app_set">Mock location app: %1$s</string>
@@ -1003,7 +1003,7 @@
     <string name="notification_channel_tv_pip">Picture-in-Picture</string>
     <string name="notification_done">Done</string>
     <string name="notification_group_overflow_indicator">+ %s</string>
-    <string name="notification_group_overflow_indicator_ambient">%s, +%s</string>
+    <string name="notification_group_overflow_indicator_ambient" formatted="false">%s, +%s</string>
     <string name="notification_header_default_channel">Notifications</string>
     <string name="notification_menu_accessibility">%1$s %2$s</string>
     <string name="notification_menu_gear_description">notification controls</string>
@@ -1378,7 +1378,7 @@
     <string name="switch_bar_off">Off</string>
     <string name="switch_bar_on">On</string>
     <string name="system_ui_aod_date_pattern">eeeMMMd</string>
-    <string name="system_ui_date_pattern">@android:string/permlab_processOutgoingCalls</string>
+    <string name="system_ui_date_pattern">@android:string/nas_upgrade_notification_learn_more_action</string>
     <string name="system_ui_tuner">System UI Tuner</string>
     <string name="tether_settings_title_all">Tethering &amp; portable hotspot</string>
     <string name="tether_settings_title_bluetooth">Bluetooth tethering</string>

@@ -11,6 +11,7 @@ import com.android.settings.R;
 import com.android.settings.applications.LayoutPreference;
 import com.android.settings.core.TogglePreferenceController;
 import java.time.LocalTime;
+
 /* loaded from: classes.dex */
 public class NightDisplayActivationPreferenceController extends TogglePreferenceController {
     private ColorDisplayController mController;
@@ -72,8 +73,7 @@ public class NightDisplayActivationPreferenceController extends TogglePreference
         return this.mTimeFormatter.getAutoModeTimeSummary(this.mContext, this.mController);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateStateInternal() {
+    private void updateStateInternal() {
         int i;
         String string;
         int i2;
@@ -82,18 +82,18 @@ public class NightDisplayActivationPreferenceController extends TogglePreference
         if (this.mTurnOnButton == null || this.mTurnOffButton == null) {
             return;
         }
-        boolean isActivated = this.mController.isActivated();
+        boolean zIsActivated = this.mController.isActivated();
         int autoMode = this.mController.getAutoMode();
         if (autoMode == 1) {
             Context context = this.mContext;
-            if (isActivated) {
+            if (zIsActivated) {
                 i3 = R.string.night_display_activation_off_custom;
             } else {
                 i3 = R.string.night_display_activation_on_custom;
             }
             Object[] objArr = new Object[1];
             NightDisplayTimeFormatter nightDisplayTimeFormatter = this.mTimeFormatter;
-            if (isActivated) {
+            if (zIsActivated) {
                 customEndTime = this.mController.getCustomStartTime();
             } else {
                 customEndTime = this.mController.getCustomEndTime();
@@ -102,7 +102,7 @@ public class NightDisplayActivationPreferenceController extends TogglePreference
             string = context.getString(i3, objArr);
         } else if (autoMode == 2) {
             Context context2 = this.mContext;
-            if (isActivated) {
+            if (zIsActivated) {
                 i2 = R.string.night_display_activation_off_twilight;
             } else {
                 i2 = R.string.night_display_activation_on_twilight;
@@ -110,21 +110,21 @@ public class NightDisplayActivationPreferenceController extends TogglePreference
             string = context2.getString(i2);
         } else {
             Context context3 = this.mContext;
-            if (isActivated) {
+            if (zIsActivated) {
                 i = R.string.night_display_activation_off_manual;
             } else {
                 i = R.string.night_display_activation_on_manual;
             }
             string = context3.getString(i);
         }
-        if (isActivated) {
+        if (zIsActivated) {
             this.mTurnOnButton.setVisibility(8);
             this.mTurnOffButton.setVisibility(0);
             this.mTurnOffButton.setText(string);
-            return;
+        } else {
+            this.mTurnOnButton.setVisibility(0);
+            this.mTurnOffButton.setVisibility(8);
+            this.mTurnOnButton.setText(string);
         }
-        this.mTurnOnButton.setVisibility(0);
-        this.mTurnOffButton.setVisibility(8);
-        this.mTurnOnButton.setText(string);
     }
 }

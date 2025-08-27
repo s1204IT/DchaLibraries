@@ -15,8 +15,10 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.overlay.FeatureFactory;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
+
 /* loaded from: classes.dex */
 public class DeviceIndexUpdateJobService extends JobService {
+
     @VisibleForTesting
     protected boolean mRunningJob;
 
@@ -26,8 +28,8 @@ public class DeviceIndexUpdateJobService extends JobService {
             this.mRunningJob = true;
             Thread thread = new Thread(new Runnable() { // from class: com.android.settings.search.-$$Lambda$DeviceIndexUpdateJobService$CyjXGsZVpAu5iTckScg1Ee8_bGU
                 @Override // java.lang.Runnable
-                public final void run() {
-                    DeviceIndexUpdateJobService.this.updateIndex(jobParameters);
+                public final void run() throws InterruptedException {
+                    this.f$0.updateIndex(jobParameters);
                 }
             });
             thread.setPriority(1);
@@ -38,32 +40,31 @@ public class DeviceIndexUpdateJobService extends JobService {
 
     @Override // android.app.job.JobService
     public boolean onStopJob(JobParameters jobParameters) {
-        if (this.mRunningJob) {
-            this.mRunningJob = false;
-            return true;
+        if (!this.mRunningJob) {
+            return false;
         }
-        return false;
+        this.mRunningJob = false;
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @VisibleForTesting
-    public void updateIndex(JobParameters jobParameters) {
+    protected void updateIndex(JobParameters jobParameters) throws InterruptedException {
         DeviceIndexFeatureProvider deviceIndexFeatureProvider = FeatureFactory.getFactory(this).getDeviceIndexFeatureProvider();
         SliceViewManager sliceViewManager = getSliceViewManager();
-        Uri build = new Uri.Builder().scheme("content").authority("com.android.settings.slices").build();
-        Uri build2 = new Uri.Builder().scheme("content").authority("android.settings.slices").build();
-        Collection<Uri> sliceDescendants = sliceViewManager.getSliceDescendants(build);
-        sliceDescendants.addAll(sliceViewManager.getSliceDescendants(build2));
+        Uri uriBuild = new Uri.Builder().scheme("content").authority("com.android.settings.slices").build();
+        Uri uriBuild2 = new Uri.Builder().scheme("content").authority("android.settings.slices").build();
+        Collection<Uri> sliceDescendants = sliceViewManager.getSliceDescendants(uriBuild);
+        sliceDescendants.addAll(sliceViewManager.getSliceDescendants(uriBuild2));
         deviceIndexFeatureProvider.clearIndex(this);
         for (Uri uri : sliceDescendants) {
             if (!this.mRunningJob) {
                 return;
             }
-            Slice bindSliceSynchronous = bindSliceSynchronous(sliceViewManager, uri);
-            SliceMetadata metadata = getMetadata(bindSliceSynchronous);
-            CharSequence findTitle = findTitle(bindSliceSynchronous, metadata);
-            if (findTitle != null) {
-                deviceIndexFeatureProvider.index(this, findTitle, uri, DeviceIndexFeatureProvider.createDeepLink(new Intent("com.android.settings.action.VIEW_SLICE").setPackage(getPackageName()).putExtra("slice", uri.toString()).toUri(2)), metadata.getSliceKeywords());
+            Slice sliceBindSliceSynchronous = bindSliceSynchronous(sliceViewManager, uri);
+            SliceMetadata metadata = getMetadata(sliceBindSliceSynchronous);
+            CharSequence charSequenceFindTitle = findTitle(sliceBindSliceSynchronous, metadata);
+            if (charSequenceFindTitle != null) {
+                deviceIndexFeatureProvider.index(this, charSequenceFindTitle, uri, DeviceIndexFeatureProvider.createDeepLink(new Intent("com.android.settings.action.VIEW_SLICE").setPackage(getPackageName()).putExtra("slice", uri.toString()).toUri(2)), metadata.getSliceKeywords());
             }
         }
         jobFinished(jobParameters, false);
@@ -86,22 +87,22 @@ public class DeviceIndexUpdateJobService extends JobService {
             }
             headerItem = listContent.getRowItems().get(0);
         }
-        SliceItem find = SliceQuery.find(headerItem, "text", "title", (String) null);
-        if (find != null) {
-            return find.getText();
+        SliceItem sliceItemFind = SliceQuery.find(headerItem, "text", "title", (String) null);
+        if (sliceItemFind != null) {
+            return sliceItemFind.getText();
         }
-        SliceItem find2 = SliceQuery.find(headerItem, "text", "large", (String) null);
-        if (find2 != null) {
-            return find2.getText();
+        SliceItem sliceItemFind2 = SliceQuery.find(headerItem, "text", "large", (String) null);
+        if (sliceItemFind2 != null) {
+            return sliceItemFind2.getText();
         }
-        SliceItem find3 = SliceQuery.find(headerItem, "text");
-        if (find3 != null) {
-            return find3.getText();
+        SliceItem sliceItemFind3 = SliceQuery.find(headerItem, "text");
+        if (sliceItemFind3 != null) {
+            return sliceItemFind3.getText();
         }
         return null;
     }
 
-    protected Slice bindSliceSynchronous(final SliceViewManager sliceViewManager, final Uri uri) {
+    protected Slice bindSliceSynchronous(final SliceViewManager sliceViewManager, final Uri uri) throws InterruptedException {
         final Slice[] sliceArr = new Slice[1];
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         SliceViewManager.SliceCallback sliceCallback = new SliceViewManager.SliceCallback() { // from class: com.android.settings.search.DeviceIndexUpdateJobService.1

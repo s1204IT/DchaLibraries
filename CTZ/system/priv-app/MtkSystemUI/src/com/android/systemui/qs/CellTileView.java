@@ -8,6 +8,7 @@ import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class CellTileView extends SignalTileView {
     private final SignalDrawable mSignalDrawable;
@@ -19,9 +20,8 @@ public class CellTileView extends SignalTileView {
         this.mSignalDrawable.setIntrinsicSize(context.getResources().getDimensionPixelSize(R.dimen.qs_tile_icon_size));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSIconViewImpl
-    public void updateIcon(ImageView imageView, QSTile.State state) {
+    protected void updateIcon(ImageView imageView, QSTile.State state) {
         if (!(state.icon instanceof SignalIcon)) {
             super.updateIcon(imageView, state);
         } else if (!Objects.equals(state.icon, imageView.getTag(R.id.qs_icon_tag))) {
@@ -31,7 +31,6 @@ public class CellTileView extends SignalTileView {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class SignalIcon extends QSTile.Icon {
         private final int mState;
 

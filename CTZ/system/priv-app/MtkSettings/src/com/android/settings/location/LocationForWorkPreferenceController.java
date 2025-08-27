@@ -8,6 +8,7 @@ import com.android.settings.Utils;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedSwitchPreference;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class LocationForWorkPreferenceController extends LocationBasePreferenceController {
     private RestrictedSwitchPreference mPreference;
@@ -19,9 +20,9 @@ public class LocationForWorkPreferenceController extends LocationBasePreferenceC
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
         if ("managed_profile_location_switch".equals(preference.getKey())) {
-            boolean isChecked = this.mPreference.isChecked();
-            this.mUserManager.setUserRestriction("no_share_location", !isChecked, Utils.getManagedProfile(this.mUserManager));
-            this.mPreference.setSummary(isChecked ? R.string.switch_on_text : R.string.switch_off_text);
+            boolean zIsChecked = this.mPreference.isChecked();
+            this.mUserManager.setUserRestriction("no_share_location", !zIsChecked, Utils.getManagedProfile(this.mUserManager));
+            this.mPreference.setSummary(zIsChecked ? R.string.switch_on_text : R.string.switch_off_text);
             return true;
         }
         return false;
@@ -49,20 +50,20 @@ public class LocationForWorkPreferenceController extends LocationBasePreferenceC
             return;
         }
         RestrictedLockUtils.EnforcedAdmin shareLocationEnforcedAdmin = this.mLocationEnabler.getShareLocationEnforcedAdmin(Utils.getManagedProfile(this.mUserManager).getIdentifier());
-        boolean isManagedProfileRestrictedByBase = this.mLocationEnabler.isManagedProfileRestrictedByBase();
-        if (!isManagedProfileRestrictedByBase && shareLocationEnforcedAdmin != null) {
+        boolean zIsManagedProfileRestrictedByBase = this.mLocationEnabler.isManagedProfileRestrictedByBase();
+        if (!zIsManagedProfileRestrictedByBase && shareLocationEnforcedAdmin != null) {
             this.mPreference.setDisabledByAdmin(shareLocationEnforcedAdmin);
             this.mPreference.setChecked(false);
             return;
         }
-        boolean isEnabled = this.mLocationEnabler.isEnabled(i);
-        this.mPreference.setEnabled(isEnabled);
+        boolean zIsEnabled = this.mLocationEnabler.isEnabled(i);
+        this.mPreference.setEnabled(zIsEnabled);
         int i2 = R.string.switch_off_text;
-        if (!isEnabled) {
+        if (!zIsEnabled) {
             this.mPreference.setChecked(false);
         } else {
-            this.mPreference.setChecked(!isManagedProfileRestrictedByBase);
-            if (!isManagedProfileRestrictedByBase) {
+            this.mPreference.setChecked(!zIsManagedProfileRestrictedByBase);
+            if (!zIsManagedProfileRestrictedByBase) {
                 i2 = R.string.switch_on_text;
             }
         }

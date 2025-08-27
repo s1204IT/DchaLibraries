@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import android.widget.ImageView;
+
 /* loaded from: classes.dex */
 public class DefaultSettingsMiscExt extends ContextWrapper implements ISettingsMiscExt {
     private static final String KEY_GPS_SETTINGS_BUTTON = "gps_settings_button";

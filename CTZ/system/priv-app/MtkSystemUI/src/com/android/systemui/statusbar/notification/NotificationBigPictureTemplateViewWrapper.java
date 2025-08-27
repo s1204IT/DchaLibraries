@@ -6,10 +6,10 @@ import android.service.notification.StatusBarNotification;
 import android.view.View;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
+
 /* loaded from: classes.dex */
 public class NotificationBigPictureTemplateViewWrapper extends NotificationTemplateViewWrapper {
-    /* JADX INFO: Access modifiers changed from: protected */
-    public NotificationBigPictureTemplateViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
+    protected NotificationBigPictureTemplateViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
         super(context, view, expandableNotificationRow);
     }
 

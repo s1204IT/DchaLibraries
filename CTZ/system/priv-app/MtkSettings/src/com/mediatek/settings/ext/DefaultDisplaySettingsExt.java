@@ -3,6 +3,7 @@ package com.mediatek.settings.ext;
 import android.content.Context;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class DefaultDisplaySettingsExt implements IDisplaySettingsExt {
     private static final String KEY_CUSTOM_FONT_SIZE = "custom_font_size";

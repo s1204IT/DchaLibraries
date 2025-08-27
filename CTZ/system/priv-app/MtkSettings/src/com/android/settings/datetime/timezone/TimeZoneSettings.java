@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class TimeZoneSettings extends DashboardFragment {
     private Locale mLocale;
@@ -38,9 +39,8 @@ public class TimeZoneSettings extends DashboardFragment {
         return 515;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.time_zone_prefs;
     }
 
@@ -58,21 +58,21 @@ public class TimeZoneSettings extends DashboardFragment {
         regionPreferenceController.setOnClickListener(new OnPreferenceClickListener() { // from class: com.android.settings.datetime.timezone.-$$Lambda$TimeZoneSettings$vqMeoCUXFQsF8oLE4z3Gn5iFYMM
             @Override // com.android.settings.datetime.timezone.OnPreferenceClickListener
             public final void onClick() {
-                TimeZoneSettings.this.startRegionPicker();
+                this.f$0.startRegionPicker();
             }
         });
         RegionZonePreferenceController regionZonePreferenceController = new RegionZonePreferenceController(context);
         regionZonePreferenceController.setOnClickListener(new OnPreferenceClickListener() { // from class: com.android.settings.datetime.timezone.-$$Lambda$TimeZoneSettings$fBefFKEAVxzXT5oriz7X9NJj6a0
             @Override // com.android.settings.datetime.timezone.OnPreferenceClickListener
             public final void onClick() {
-                TimeZoneSettings.this.onRegionZonePreferenceClicked();
+                this.f$0.onRegionZonePreferenceClicked();
             }
         });
         FixedOffsetPreferenceController fixedOffsetPreferenceController = new FixedOffsetPreferenceController(context);
         fixedOffsetPreferenceController.setOnClickListener(new OnPreferenceClickListener() { // from class: com.android.settings.datetime.timezone.-$$Lambda$TimeZoneSettings$Ah3tL-2LTanl7tTAw64r8xCK07o
             @Override // com.android.settings.datetime.timezone.OnPreferenceClickListener
             public final void onClick() {
-                TimeZoneSettings.this.startFixedOffsetPicker();
+                this.f$0.startFixedOffsetPicker();
             }
         });
         arrayList.add(regionPreferenceController);
@@ -89,7 +89,7 @@ public class TimeZoneSettings extends DashboardFragment {
         getLoaderManager().initLoader(0, null, new TimeZoneDataLoader.LoaderCreator(getContext(), new TimeZoneDataLoader.OnDataReadyCallback() { // from class: com.android.settings.datetime.timezone.-$$Lambda$TimeZoneSettings$CFHMJtb3KFCwNTuhyOFedUZcT20
             @Override // com.android.settings.datetime.timezone.model.TimeZoneDataLoader.OnDataReadyCallback
             public final void onTimeZoneDataReady(TimeZoneData timeZoneData) {
-                TimeZoneSettings.this.onTimeZoneDataReady(timeZoneData);
+                this.f$0.onTimeZoneDataReady(timeZoneData);
             }
         }));
     }
@@ -106,18 +106,16 @@ public class TimeZoneSettings extends DashboardFragment {
                 String stringExtra2 = intent.getStringExtra("com.android.settings.datetime.timezone.result_time_zone_id");
                 if (!Objects.equals(stringExtra, ((RegionPreferenceController) use(RegionPreferenceController.class)).getRegionId()) || !Objects.equals(stringExtra2, this.mSelectedTimeZoneId)) {
                     onRegionZoneChanged(stringExtra, stringExtra2);
-                    return;
+                    break;
                 }
-                return;
+                break;
             case 3:
                 String stringExtra3 = intent.getStringExtra("com.android.settings.datetime.timezone.result_time_zone_id");
                 if (stringExtra3 != null && !stringExtra3.equals(this.mSelectedTimeZoneId)) {
                     onFixedOffsetZoneChanged(stringExtra3);
-                    return;
+                    break;
                 }
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -125,8 +123,7 @@ public class TimeZoneSettings extends DashboardFragment {
         this.mTimeZoneData = timeZoneData;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onTimeZoneDataReady(TimeZoneData timeZoneData) {
+    private void onTimeZoneDataReady(TimeZoneData timeZoneData) {
         if (this.mTimeZoneData == null && timeZoneData != null) {
             this.mTimeZoneData = timeZoneData;
             setupForCurrentTimeZone();
@@ -134,20 +131,17 @@ public class TimeZoneSettings extends DashboardFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startRegionPicker() {
+    private void startRegionPicker() {
         startPickerFragment(RegionSearchPicker.class, new Bundle(), 1);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onRegionZonePreferenceClicked() {
+    private void onRegionZonePreferenceClicked() {
         Bundle bundle = new Bundle();
         bundle.putString("com.android.settings.datetime.timezone.region_id", ((RegionPreferenceController) use(RegionPreferenceController.class)).getRegionId());
         startPickerFragment(RegionZonePicker.class, bundle, 2);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startFixedOffsetPicker() {
+    private void startFixedOffsetPicker() {
         startPickerFragment(FixedOffsetPicker.class, new Bundle(), 3);
     }
 
@@ -161,16 +155,16 @@ public class TimeZoneSettings extends DashboardFragment {
     }
 
     private void setDisplayedTimeZoneInfo(String str, String str2) {
-        TimeZoneInfo format = str2 == null ? null : this.mTimeZoneInfoFormatter.format(str2);
-        FilteredCountryTimeZones lookupCountryTimeZones = this.mTimeZoneData.lookupCountryTimeZones(str);
-        ((RegionZonePreferenceController) use(RegionZonePreferenceController.class)).setTimeZoneInfo(format);
+        TimeZoneInfo timeZoneInfo = str2 == null ? null : this.mTimeZoneInfoFormatter.format(str2);
+        FilteredCountryTimeZones filteredCountryTimeZonesLookupCountryTimeZones = this.mTimeZoneData.lookupCountryTimeZones(str);
+        ((RegionZonePreferenceController) use(RegionZonePreferenceController.class)).setTimeZoneInfo(timeZoneInfo);
         RegionZonePreferenceController regionZonePreferenceController = (RegionZonePreferenceController) use(RegionZonePreferenceController.class);
         boolean z = true;
-        if (format != null && (lookupCountryTimeZones == null || lookupCountryTimeZones.getTimeZoneIds().size() <= 1)) {
+        if (timeZoneInfo != null && (filteredCountryTimeZonesLookupCountryTimeZones == null || filteredCountryTimeZonesLookupCountryTimeZones.getTimeZoneIds().size() <= 1)) {
             z = false;
         }
         regionZonePreferenceController.setClickable(z);
-        ((TimeZoneInfoPreferenceController) use(TimeZoneInfoPreferenceController.class)).setTimeZoneInfo(format);
+        ((TimeZoneInfoPreferenceController) use(TimeZoneInfoPreferenceController.class)).setTimeZoneInfo(timeZoneInfo);
         updatePreferenceStates();
     }
 
@@ -184,8 +178,8 @@ public class TimeZoneSettings extends DashboardFragment {
     }
 
     private void onRegionZoneChanged(String str, String str2) {
-        FilteredCountryTimeZones lookupCountryTimeZones = this.mTimeZoneData.lookupCountryTimeZones(str);
-        if (lookupCountryTimeZones == null || !lookupCountryTimeZones.getTimeZoneIds().contains(str2)) {
+        FilteredCountryTimeZones filteredCountryTimeZonesLookupCountryTimeZones = this.mTimeZoneData.lookupCountryTimeZones(str);
+        if (filteredCountryTimeZonesLookupCountryTimeZones == null || !filteredCountryTimeZonesLookupCountryTimeZones.getTimeZoneIds().contains(str2)) {
             Log.e("TimeZoneSettings", "Unknown time zone id is selected: " + str2);
             return;
         }
@@ -204,13 +198,13 @@ public class TimeZoneSettings extends DashboardFragment {
     }
 
     private void saveTimeZone(String str, String str2) {
-        SharedPreferences.Editor edit = getPreferenceManager().getSharedPreferences().edit();
+        SharedPreferences.Editor editorEdit = getPreferenceManager().getSharedPreferences().edit();
         if (str == null) {
-            edit.remove("time_zone_region");
+            editorEdit.remove("time_zone_region");
         } else {
-            edit.putString("time_zone_region", str);
+            editorEdit.putString("time_zone_region", str);
         }
-        edit.apply();
+        editorEdit.apply();
         ((AlarmManager) getActivity().getSystemService(AlarmManager.class)).setTimeZone(str2);
     }
 
@@ -223,13 +217,8 @@ public class TimeZoneSettings extends DashboardFragment {
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onPrepareOptionsMenu(Menu menu) {
-        boolean z = true;
         menu.findItem(1).setVisible((this.mTimeZoneData == null || this.mSelectByRegion) ? false : true);
-        MenuItem findItem = menu.findItem(2);
-        if (this.mTimeZoneData == null || !this.mSelectByRegion) {
-            z = false;
-        }
-        findItem.setVisible(z);
+        menu.findItem(2).setVisible(this.mTimeZoneData != null && this.mSelectByRegion);
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -237,13 +226,12 @@ public class TimeZoneSettings extends DashboardFragment {
         switch (menuItem.getItemId()) {
             case 1:
                 startRegionPicker();
-                return true;
+                break;
             case 2:
                 startFixedOffsetPicker();
-                return true;
-            default:
-                return false;
+                break;
         }
+        return true;
     }
 
     private void setupForCurrentTimeZone() {
@@ -269,10 +257,10 @@ public class TimeZoneSettings extends DashboardFragment {
             setDisplayedFixedOffsetTimeZoneInfo(this.mSelectedTimeZoneId);
             return;
         }
-        String findRegionIdForTzId = findRegionIdForTzId(this.mSelectedTimeZoneId);
-        if (findRegionIdForTzId != null) {
-            setDisplayedRegion(findRegionIdForTzId);
-            setDisplayedTimeZoneInfo(findRegionIdForTzId, this.mSelectedTimeZoneId);
+        String strFindRegionIdForTzId = findRegionIdForTzId(this.mSelectedTimeZoneId);
+        if (strFindRegionIdForTzId != null) {
+            setDisplayedRegion(strFindRegionIdForTzId);
+            setDisplayedTimeZoneInfo(strFindRegionIdForTzId, this.mSelectedTimeZoneId);
         }
     }
 
@@ -281,17 +269,17 @@ public class TimeZoneSettings extends DashboardFragment {
     }
 
     String findRegionIdForTzId(String str, String str2, String str3) {
-        Set<String> lookupCountryCodesForZoneId = this.mTimeZoneData.lookupCountryCodesForZoneId(str);
-        if (lookupCountryCodesForZoneId.size() == 0) {
+        Set<String> setLookupCountryCodesForZoneId = this.mTimeZoneData.lookupCountryCodesForZoneId(str);
+        if (setLookupCountryCodesForZoneId.size() == 0) {
             return null;
         }
-        if (str2 != null && lookupCountryCodesForZoneId.contains(str2)) {
+        if (str2 != null && setLookupCountryCodesForZoneId.contains(str2)) {
             return str2;
         }
-        if (str3 != null && lookupCountryCodesForZoneId.contains(str3)) {
+        if (str3 != null && setLookupCountryCodesForZoneId.contains(str3)) {
             return str3;
         }
-        return ((String[]) lookupCountryCodesForZoneId.toArray(new String[lookupCountryCodesForZoneId.size()]))[0];
+        return ((String[]) setLookupCountryCodesForZoneId.toArray(new String[setLookupCountryCodesForZoneId.size()]))[0];
     }
 
     private void setPreferenceCategoryVisible(PreferenceCategory preferenceCategory, boolean z) {

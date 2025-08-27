@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import com.android.browser.provider.BrowserContract;
+
 /* loaded from: classes.dex */
 public class Browser {
     public static final Uri BOOKMARKS_URI = Uri.parse("content://MtkBrowserProvider/bookmarks");
@@ -30,26 +31,19 @@ public class Browser {
         intent.setType("text/plain");
         intent.putExtra("android.intent.extra.TEXT", str);
         try {
-            Intent createChooser = Intent.createChooser(intent, str2);
-            createChooser.setFlags(268435456);
-            context.startActivity(createChooser);
+            Intent intentCreateChooser = Intent.createChooser(intent, str2);
+            intentCreateChooser.setFlags(268435456);
+            context.startActivity(intentCreateChooser);
         } catch (ActivityNotFoundException e) {
         }
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:16:0x0038, code lost:
-        if (r10 != null) goto L18;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:17:0x003a, code lost:
-        r10.close();
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:23:0x004e, code lost:
-        if (r10 == null) goto L19;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:25:0x0051, code lost:
-        return r1;
-     */
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [395=4] */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:26:0x0052 */
     /* JADX WARN: Multi-variable type inference failed */
+    /* JADX WARN: Removed duplicated region for block: B:17:0x003a A[PHI: r1 r10
+  0x003a: PHI (r1v5 java.lang.String[]) = (r1v3 java.lang.String[]), (r1v8 java.lang.String[]) binds: [B:23:0x004e, B:16:0x0038] A[DONT_GENERATE, DONT_INLINE]
+  0x003a: PHI (r10v6 android.database.Cursor) = (r10v5 android.database.Cursor), (r10v7 android.database.Cursor) binds: [B:23:0x004e, B:16:0x0038] A[DONT_GENERATE, DONT_INLINE]] */
     /* JADX WARN: Removed duplicated region for block: B:28:0x0055  */
     /* JADX WARN: Type inference failed for: r10v0, types: [android.content.ContentResolver] */
     /* JADX WARN: Type inference failed for: r10v1 */
@@ -58,129 +52,136 @@ public class Browser {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static final String[] getVisitedHistory(ContentResolver contentResolver) {
+    public static final String[] getVisitedHistory(ContentResolver contentResolver) throws Throwable {
         IllegalStateException e;
-        Cursor cursor;
+        Cursor cursorQuery;
         String[] strArr;
         try {
             try {
-                cursor = contentResolver.query(BrowserContract.History.CONTENT_URI, new String[]{"url"}, "visits > 0", null, null);
-                try {
-                    if (cursor == null) {
-                        String[] strArr2 = new String[0];
-                        if (cursor != null) {
-                            cursor.close();
-                        }
-                        return strArr2;
-                    }
-                    strArr = new String[cursor.getCount()];
-                    int i = 0;
-                    while (cursor.moveToNext()) {
-                        strArr[i] = cursor.getString(0);
-                        i++;
-                    }
-                } catch (IllegalStateException e2) {
-                    e = e2;
-                    Log.e("browser", "getVisitedHistory", e);
-                    strArr = new String[0];
-                }
+                cursorQuery = contentResolver.query(BrowserContract.History.CONTENT_URI, new String[]{"url"}, "visits > 0", null, null);
+            } catch (IllegalStateException e2) {
+                e = e2;
+                cursorQuery = null;
             } catch (Throwable th) {
                 th = th;
+                contentResolver = 0;
                 if (contentResolver != 0) {
-                    contentResolver.close();
                 }
                 throw th;
             }
-        } catch (IllegalStateException e3) {
-            e = e3;
-            cursor = null;
+            try {
+            } catch (IllegalStateException e3) {
+                e = e3;
+                Log.e("browser", "getVisitedHistory", e);
+                strArr = new String[0];
+                if (cursorQuery != null) {
+                }
+                return strArr;
+            }
+            if (cursorQuery == null) {
+                String[] strArr2 = new String[0];
+                if (cursorQuery != null) {
+                    cursorQuery.close();
+                }
+                return strArr2;
+            }
+            strArr = new String[cursorQuery.getCount()];
+            int i = 0;
+            while (cursorQuery.moveToNext()) {
+                strArr[i] = cursorQuery.getString(0);
+                i++;
+            }
+            if (cursorQuery != null) {
+                cursorQuery.close();
+            }
+            return strArr;
         } catch (Throwable th2) {
             th = th2;
-            contentResolver = 0;
             if (contentResolver != 0) {
+                contentResolver.close();
             }
             throw th;
         }
     }
 
-    public static final void truncateHistory(ContentResolver contentResolver) {
-        Cursor query;
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [431=4] */
+    public static final void truncateHistory(ContentResolver contentResolver) throws Throwable {
         Cursor cursor = null;
         try {
             try {
-                query = contentResolver.query(BrowserContract.History.CONTENT_URI, new String[]{"_id", "url", "date"}, null, null, "date ASC");
-            } catch (IllegalStateException e) {
-                e = e;
-            }
-        } catch (Throwable th) {
-            th = th;
-        }
-        try {
-            if (query.moveToFirst() && query.getCount() >= 250) {
-                for (int i = 0; i < 5; i++) {
-                    contentResolver.delete(ContentUris.withAppendedId(BrowserContract.History.CONTENT_URI, query.getLong(0)), null, null);
-                    if (!query.moveToNext()) {
-                        break;
+                Cursor cursorQuery = contentResolver.query(BrowserContract.History.CONTENT_URI, new String[]{"_id", "url", "date"}, null, null, "date ASC");
+                try {
+                    if (cursorQuery.moveToFirst() && cursorQuery.getCount() >= 250) {
+                        for (int i = 0; i < 5; i++) {
+                            contentResolver.delete(ContentUris.withAppendedId(BrowserContract.History.CONTENT_URI, cursorQuery.getLong(0)), null, null);
+                            if (!cursorQuery.moveToNext()) {
+                                break;
+                            }
+                        }
                     }
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
+                    }
+                } catch (IllegalStateException e) {
+                    e = e;
+                    cursor = cursorQuery;
+                    Log.e("browser", "truncateHistory", e);
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                } catch (Throwable th) {
+                    th = th;
+                    cursor = cursorQuery;
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                    throw th;
                 }
-            }
-            if (query != null) {
-                query.close();
+            } catch (Throwable th2) {
+                th = th2;
             }
         } catch (IllegalStateException e2) {
             e = e2;
-            cursor = query;
-            Log.e("browser", "truncateHistory", e);
-            if (cursor != null) {
-                cursor.close();
-            }
-        } catch (Throwable th2) {
-            th = th2;
-            cursor = query;
-            if (cursor != null) {
-                cursor.close();
-            }
-            throw th;
         }
     }
 
-    public static final void clearHistory(ContentResolver contentResolver) {
+    public static final void clearHistory(ContentResolver contentResolver) throws Throwable {
         deleteHistoryWhere(contentResolver, null);
     }
 
-    private static final void deleteHistoryWhere(ContentResolver contentResolver, String str) {
-        Cursor query;
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [492=5] */
+    private static final void deleteHistoryWhere(ContentResolver contentResolver, String str) throws Throwable {
         Cursor cursor = null;
         try {
             try {
-                query = contentResolver.query(BrowserContract.History.CONTENT_URI, new String[]{"url"}, str, null, null);
-            } catch (Throwable th) {
-                th = th;
-            }
-        } catch (IllegalStateException e) {
-            e = e;
-        }
-        try {
-            if (query.moveToFirst()) {
-                contentResolver.delete(BrowserContract.History.CONTENT_URI, str, null);
-            }
-            if (query != null) {
-                query.close();
-            }
-        } catch (IllegalStateException e2) {
-            e = e2;
-            cursor = query;
-            Log.e("browser", "deleteHistoryWhere", e);
-            if (cursor != null) {
-                cursor.close();
+                Cursor cursorQuery = contentResolver.query(BrowserContract.History.CONTENT_URI, new String[]{"url"}, str, null, null);
+                try {
+                    if (cursorQuery.moveToFirst()) {
+                        contentResolver.delete(BrowserContract.History.CONTENT_URI, str, null);
+                    }
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
+                    }
+                } catch (IllegalStateException e) {
+                    e = e;
+                    cursor = cursorQuery;
+                    Log.e("browser", "deleteHistoryWhere", e);
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                } catch (Throwable th) {
+                    th = th;
+                    cursor = cursorQuery;
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                    throw th;
+                }
+            } catch (IllegalStateException e2) {
+                e = e2;
             }
         } catch (Throwable th2) {
             th = th2;
-            cursor = query;
-            if (cursor != null) {
-                cursor.close();
-            }
-            throw th;
         }
     }
 

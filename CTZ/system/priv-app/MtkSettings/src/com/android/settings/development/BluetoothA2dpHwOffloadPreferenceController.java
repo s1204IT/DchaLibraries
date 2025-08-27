@@ -6,6 +6,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class BluetoothA2dpHwOffloadPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final DevelopmentSettingsDashboardFragment mFragment;
@@ -32,22 +33,21 @@ public class BluetoothA2dpHwOffloadPreferenceController extends DeveloperOptions
         if (!SystemProperties.getBoolean("ro.bluetooth.a2dp_offload.supported", false)) {
             this.mPreference.setEnabled(false);
             ((SwitchPreference) this.mPreference).setChecked(true);
-            return;
+        } else {
+            ((SwitchPreference) this.mPreference).setChecked(SystemProperties.getBoolean("persist.bluetooth.a2dp_offload.disabled", false));
         }
-        ((SwitchPreference) this.mPreference).setChecked(SystemProperties.getBoolean("persist.bluetooth.a2dp_offload.disabled", false));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         if (SystemProperties.getBoolean("ro.bluetooth.a2dp_offload.supported", false)) {
             ((SwitchPreference) this.mPreference).setChecked(false);
             SystemProperties.set("persist.bluetooth.a2dp_offload.disabled", "false");
-            return;
+        } else {
+            ((SwitchPreference) this.mPreference).setChecked(true);
+            SystemProperties.set("persist.bluetooth.a2dp_offload.disabled", "true");
         }
-        ((SwitchPreference) this.mPreference).setChecked(true);
-        SystemProperties.set("persist.bluetooth.a2dp_offload.disabled", "true");
     }
 
     public void onA2dpHwDialogConfirmed() {

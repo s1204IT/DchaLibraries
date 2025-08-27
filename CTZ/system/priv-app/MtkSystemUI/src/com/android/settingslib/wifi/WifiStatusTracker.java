@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Looper;
 import com.android.settingslib.R;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WifiStatusTracker extends ConnectivityManager.NetworkCallback {
     public boolean connected;
@@ -64,11 +65,11 @@ public class WifiStatusTracker extends ConnectivityManager.NetworkCallback {
             this.mNetworkScoreManager.registerNetworkScoreCache(1, this.mWifiNetworkScoreCache, 1);
             this.mWifiNetworkScoreCache.registerListener(this.mCacheListener);
             this.mConnectivityManager.registerNetworkCallback(this.mNetworkRequest, this.mNetworkCallback, this.mHandler);
-            return;
+        } else {
+            this.mNetworkScoreManager.unregisterNetworkScoreCache(1, this.mWifiNetworkScoreCache);
+            this.mWifiNetworkScoreCache.unregisterListener();
+            this.mConnectivityManager.unregisterNetworkCallback(this.mNetworkCallback);
         }
-        this.mNetworkScoreManager.unregisterNetworkScoreCache(1, this.mWifiNetworkScoreCache);
-        this.mWifiNetworkScoreCache.unregisterListener();
-        this.mConnectivityManager.unregisterNetworkCallback(this.mNetworkCallback);
     }
 
     public void handleBroadcast(Intent intent) {
@@ -78,27 +79,30 @@ public class WifiStatusTracker extends ConnectivityManager.NetworkCallback {
         String action = intent.getAction();
         if (action.equals("android.net.wifi.WIFI_STATE_CHANGED")) {
             updateWifiState();
-        } else if (!action.equals("android.net.wifi.STATE_CHANGE")) {
+            return;
+        }
+        if (!action.equals("android.net.wifi.STATE_CHANGE")) {
             if (action.equals("android.net.wifi.RSSI_CHANGED")) {
                 updateRssi(intent.getIntExtra("newRssi", -200));
                 updateStatusLabel();
+                return;
             }
-        } else {
-            updateWifiState();
-            NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra("networkInfo");
-            this.connected = networkInfo != null && networkInfo.isConnected();
-            this.mWifiInfo = null;
-            this.ssid = null;
-            if (this.connected) {
-                this.mWifiInfo = this.mWifiManager.getConnectionInfo();
-                if (this.mWifiInfo != null) {
-                    this.ssid = getValidSsid(this.mWifiInfo);
-                    updateRssi(this.mWifiInfo.getRssi());
-                    maybeRequestNetworkScore();
-                }
-            }
-            updateStatusLabel();
+            return;
         }
+        updateWifiState();
+        NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra("networkInfo");
+        this.connected = networkInfo != null && networkInfo.isConnected();
+        this.mWifiInfo = null;
+        this.ssid = null;
+        if (this.connected) {
+            this.mWifiInfo = this.mWifiManager.getConnectionInfo();
+            if (this.mWifiInfo != null) {
+                this.ssid = getValidSsid(this.mWifiInfo);
+                updateRssi(this.mWifiInfo.getRssi());
+                maybeRequestNetworkScore();
+            }
+        }
+        updateStatusLabel();
     }
 
     private void updateWifiState() {
@@ -112,14 +116,13 @@ public class WifiStatusTracker extends ConnectivityManager.NetworkCallback {
     }
 
     private void maybeRequestNetworkScore() {
-        NetworkKey createFromWifiInfo = NetworkKey.createFromWifiInfo(this.mWifiInfo);
-        if (this.mWifiNetworkScoreCache.getScoredNetwork(createFromWifiInfo) == null) {
-            this.mNetworkScoreManager.requestScores(new NetworkKey[]{createFromWifiInfo});
+        NetworkKey networkKeyCreateFromWifiInfo = NetworkKey.createFromWifiInfo(this.mWifiInfo);
+        if (this.mWifiNetworkScoreCache.getScoredNetwork(networkKeyCreateFromWifiInfo) == null) {
+            this.mNetworkScoreManager.requestScores(new NetworkKey[]{networkKeyCreateFromWifiInfo});
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateStatusLabel() {
+    private void updateStatusLabel() {
         NetworkCapabilities networkCapabilities = this.mConnectivityManager.getNetworkCapabilities(this.mWifiManager.getCurrentNetwork());
         if (networkCapabilities != null) {
             if (networkCapabilities.hasCapability(17)) {

@@ -3,6 +3,7 @@ package com.mediatek.systemui.ext;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mediatek.systemui.statusbar.extcb.IconIdWrapper;
+
 /* loaded from: classes.dex */
 public interface IQuickSettingsPlugin {
     String addOpTileSpecs(String str);

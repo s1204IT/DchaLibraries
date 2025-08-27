@@ -13,6 +13,7 @@ import com.android.launcher3.util.ComponentKey;
 import com.android.launcher3.util.PackageUserKey;
 import java.util.HashMap;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class AppWidgetManagerCompat {
     private static AppWidgetManagerCompat sInstance;
@@ -43,8 +44,7 @@ public abstract class AppWidgetManagerCompat {
         return appWidgetManagerCompat;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public AppWidgetManagerCompat(Context context) {
+    AppWidgetManagerCompat(Context context) {
         this.mContext = context;
         this.mAppWidgetManager = AppWidgetManager.getInstance(context);
     }

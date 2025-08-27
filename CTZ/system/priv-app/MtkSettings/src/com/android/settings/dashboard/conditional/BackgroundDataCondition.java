@@ -6,6 +6,7 @@ import android.net.NetworkPolicyManager;
 import android.util.FeatureFlagUtils;
 import com.android.settings.R;
 import com.android.settings.Settings;
+
 /* loaded from: classes.dex */
 public class BackgroundDataCondition extends Condition {
     public BackgroundDataCondition(ConditionManager conditionManager) {
@@ -45,7 +46,7 @@ public class BackgroundDataCondition extends Condition {
         } else {
             cls = Settings.DataUsageSummaryLegacyActivity.class;
         }
-        this.mManager.getContext().startActivity(new Intent(this.mManager.getContext(), cls).addFlags(268435456));
+        this.mManager.getContext().startActivity(new Intent(this.mManager.getContext(), (Class<?>) cls).addFlags(268435456));
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
@@ -58,8 +59,8 @@ public class BackgroundDataCondition extends Condition {
         if (i == 0) {
             NetworkPolicyManager.from(this.mManager.getContext()).setRestrictBackground(false);
             setActive(false);
-            return;
+        } else {
+            throw new IllegalArgumentException("Unexpected index " + i);
         }
-        throw new IllegalArgumentException("Unexpected index " + i);
     }
 }

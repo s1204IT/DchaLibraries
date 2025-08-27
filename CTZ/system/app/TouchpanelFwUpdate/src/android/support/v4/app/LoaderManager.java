@@ -5,10 +5,10 @@ import android.arch.lifecycle.ViewModelStoreOwner;
 import android.support.v4.content.Loader;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public abstract class LoaderManager {
 
-    /* loaded from: classes.dex */
     public interface LoaderCallbacks<D> {
         void onLoadFinished(Loader<D> loader, D d);
 

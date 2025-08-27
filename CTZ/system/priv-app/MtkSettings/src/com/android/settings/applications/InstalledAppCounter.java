@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.UserHandle;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class InstalledAppCounter extends AppCounter {
     private final int mInstallReason;
@@ -27,10 +28,10 @@ public abstract class InstalledAppCounter extends AppCounter {
         if (i != -1 && packageManagerWrapper.getInstallReason(applicationInfo.packageName, new UserHandle(userId)) != i) {
             return false;
         }
-        if ((applicationInfo.flags & 128) == 0 && (applicationInfo.flags & 1) != 0) {
-            List<ResolveInfo> queryIntentActivitiesAsUser = packageManagerWrapper.queryIntentActivitiesAsUser(new Intent("android.intent.action.MAIN", (Uri) null).addCategory("android.intent.category.LAUNCHER").setPackage(applicationInfo.packageName), 786944, userId);
-            return (queryIntentActivitiesAsUser == null || queryIntentActivitiesAsUser.size() == 0) ? false : true;
+        if ((applicationInfo.flags & 128) != 0 || (applicationInfo.flags & 1) == 0) {
+            return true;
         }
-        return true;
+        List<ResolveInfo> listQueryIntentActivitiesAsUser = packageManagerWrapper.queryIntentActivitiesAsUser(new Intent("android.intent.action.MAIN", (Uri) null).addCategory("android.intent.category.LAUNCHER").setPackage(applicationInfo.packageName), 786944, userId);
+        return (listQueryIntentActivitiesAsUser == null || listQueryIntentActivitiesAsUser.size() == 0) ? false : true;
     }
 }

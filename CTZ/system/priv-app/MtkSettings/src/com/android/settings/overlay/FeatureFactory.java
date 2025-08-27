@@ -17,6 +17,7 @@ import com.android.settings.security.SecurityFeatureProvider;
 import com.android.settings.slices.SlicesFeatureProvider;
 import com.android.settings.users.UserFeatureProvider;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public abstract class FeatureFactory {
     protected static FeatureFactory sFactory;
@@ -71,7 +72,6 @@ public abstract class FeatureFactory {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class FactoryNotFoundException extends RuntimeException {
         public FactoryNotFoundException(Throwable th) {
             super("Unable to create factory. Did you misconfigure Proguard?", th);

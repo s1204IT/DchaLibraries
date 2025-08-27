@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.Build;
 import android.os.SystemProperties;
 import com.mediatek.custom.CustomProperties;
+
 /* loaded from: classes.dex */
 public class Browser extends Application {
     public static final boolean DEBUG;

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class ClearAdbKeysWarningDialog extends InstrumentedDialogFragment implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
     public static void show(Fragment fragment) {
@@ -26,7 +27,7 @@ public class ClearAdbKeysWarningDialog extends InstrumentedDialogFragment implem
 
     @Override // android.app.DialogFragment
     public Dialog onCreateDialog(Bundle bundle) {
-        return new AlertDialog.Builder(getActivity()).setMessage(R.string.adb_keys_warning_message).setPositiveButton(17039370, this).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
+        return new AlertDialog.Builder(getActivity()).setMessage(R.string.adb_keys_warning_message).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).create();
     }
 
     @Override // android.content.DialogInterface.OnClickListener

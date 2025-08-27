@@ -1,6 +1,7 @@
 package com.android.systemui.shared.system;
 
 import android.content.res.Resources;
+
 /* loaded from: classes.dex */
 public class NavigationBarCompat {
     public static int getQuickStepTouchSlopPx() {

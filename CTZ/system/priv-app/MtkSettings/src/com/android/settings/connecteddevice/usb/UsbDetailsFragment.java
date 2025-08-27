@@ -11,7 +11,9 @@ import com.android.settings.search.Indexable;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.google.android.collect.Lists;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class UsbDetailsFragment extends DashboardFragment {
     private List<UsbDetailsController> mControllers;
@@ -19,7 +21,7 @@ public class UsbDetailsFragment extends DashboardFragment {
     private UsbConnectionBroadcastReceiver.UsbConnectionListener mUsbConnectionListener = new UsbConnectionBroadcastReceiver.UsbConnectionListener() { // from class: com.android.settings.connecteddevice.usb.-$$Lambda$UsbDetailsFragment$0qs6NXPaSCNUBBPVeTrwViGe6pk
         @Override // com.android.settings.connecteddevice.usb.UsbConnectionBroadcastReceiver.UsbConnectionListener
         public final void onUsbConnectionChanged(boolean z, long j, int i, int i2) {
-            UsbDetailsFragment.lambda$new$0(UsbDetailsFragment.this, z, j, i, i2);
+            UsbDetailsFragment.lambda$new$0(this.f$0, z, j, i, i2);
         }
     };
     UsbConnectionBroadcastReceiver mUsbReceiver;
@@ -44,8 +46,9 @@ public class UsbDetailsFragment extends DashboardFragment {
     };
 
     public static /* synthetic */ void lambda$new$0(UsbDetailsFragment usbDetailsFragment, boolean z, long j, int i, int i2) {
-        for (UsbDetailsController usbDetailsController : usbDetailsFragment.mControllers) {
-            usbDetailsController.refresh(z, j, i, i2);
+        Iterator<UsbDetailsController> it = usbDetailsFragment.mControllers.iterator();
+        while (it.hasNext()) {
+            it.next().refresh(z, j, i, i2);
         }
     }
 
@@ -59,9 +62,8 @@ public class UsbDetailsFragment extends DashboardFragment {
         return TAG;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.usb_details_fragment;
     }
 
@@ -79,8 +81,7 @@ public class UsbDetailsFragment extends DashboardFragment {
         return new ArrayList(this.mControllers);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<UsbDetailsController> createControllerList(Context context, UsbBackend usbBackend, UsbDetailsFragment usbDetailsFragment) {
+    private static List<UsbDetailsController> createControllerList(Context context, UsbBackend usbBackend, UsbDetailsFragment usbDetailsFragment) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new UsbDetailsHeaderController(context, usbDetailsFragment, usbBackend));
         arrayList.add(new UsbDetailsDataRoleController(context, usbDetailsFragment, usbBackend));

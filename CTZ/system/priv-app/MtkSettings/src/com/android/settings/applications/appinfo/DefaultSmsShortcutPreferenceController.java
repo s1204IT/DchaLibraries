@@ -2,6 +2,7 @@ package com.android.settings.applications.appinfo;
 
 import android.content.Context;
 import com.android.settings.applications.defaultapps.DefaultSmsPreferenceController;
+
 /* loaded from: classes.dex */
 public class DefaultSmsShortcutPreferenceController extends DefaultAppShortcutPreferenceControllerBase {
     private static final String KEY = "default_sms_app";

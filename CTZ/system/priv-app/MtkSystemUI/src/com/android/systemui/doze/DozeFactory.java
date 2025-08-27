@@ -15,6 +15,7 @@ import com.android.systemui.statusbar.phone.DozeParameters;
 import com.android.systemui.util.AsyncSensorManager;
 import com.android.systemui.util.wakelock.DelayedWakeLock;
 import com.android.systemui.util.wakelock.WakeLock;
+
 /* loaded from: classes.dex */
 public class DozeFactory {
     public DozeMachine assembleMachine(DozeService dozeService) {
@@ -25,9 +26,9 @@ public class DozeFactory {
         DozeParameters dozeParameters = DozeParameters.getInstance(dozeService);
         Handler handler = new Handler();
         DelayedWakeLock delayedWakeLock = new DelayedWakeLock(handler, WakeLock.createPartial(dozeService, "Doze"));
-        DozeMachine.Service wrapIfNeeded = DozeSuspendScreenStatePreventingAdapter.wrapIfNeeded(DozeScreenStatePreventingAdapter.wrapIfNeeded(new DozeBrightnessHostForwarder(dozeService, host), dozeParameters), dozeParameters);
-        DozeMachine dozeMachine = new DozeMachine(wrapIfNeeded, ambientDisplayConfiguration, delayedWakeLock);
-        dozeMachine.setParts(new DozeMachine.Part[]{new DozePauser(handler, dozeMachine, alarmManager, dozeParameters.getPolicy()), new DozeFalsingManagerAdapter(FalsingManager.getInstance(dozeService)), createDozeTriggers(dozeService, sensorManager, host, alarmManager, ambientDisplayConfiguration, dozeParameters, handler, delayedWakeLock, dozeMachine), createDozeUi(dozeService, host, delayedWakeLock, dozeMachine, handler, alarmManager, dozeParameters), new DozeScreenState(wrapIfNeeded, handler, dozeParameters, delayedWakeLock), createDozeScreenBrightness(dozeService, wrapIfNeeded, sensorManager, host, dozeParameters, handler), new DozeWallpaperState(dozeService)});
+        DozeMachine.Service serviceWrapIfNeeded = DozeSuspendScreenStatePreventingAdapter.wrapIfNeeded(DozeScreenStatePreventingAdapter.wrapIfNeeded(new DozeBrightnessHostForwarder(dozeService, host), dozeParameters), dozeParameters);
+        DozeMachine dozeMachine = new DozeMachine(serviceWrapIfNeeded, ambientDisplayConfiguration, delayedWakeLock);
+        dozeMachine.setParts(new DozeMachine.Part[]{new DozePauser(handler, dozeMachine, alarmManager, dozeParameters.getPolicy()), new DozeFalsingManagerAdapter(FalsingManager.getInstance(dozeService)), createDozeTriggers(dozeService, sensorManager, host, alarmManager, ambientDisplayConfiguration, dozeParameters, handler, delayedWakeLock, dozeMachine), createDozeUi(dozeService, host, delayedWakeLock, dozeMachine, handler, alarmManager, dozeParameters), new DozeScreenState(serviceWrapIfNeeded, handler, dozeParameters, delayedWakeLock), createDozeScreenBrightness(dozeService, serviceWrapIfNeeded, sensorManager, host, dozeParameters, handler), new DozeWallpaperState(dozeService)});
         return dozeMachine;
     }
 

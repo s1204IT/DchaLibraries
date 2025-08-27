@@ -5,6 +5,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.notification.ZenModeSettings;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeBehaviorSoundPreferenceController extends AbstractZenModePreferenceController implements PreferenceControllerMixin {
     private final ZenModeSettings.SummaryBuilder mSummaryBuilder;

@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /* loaded from: classes.dex */
 public class RequestHandlerSiteNavigation extends Thread {
     private static final UriMatcher S_URI_MATCHER = new UriMatcher(-1);
@@ -34,7 +35,7 @@ public class RequestHandlerSiteNavigation extends Thread {
     }
 
     @Override // java.lang.Thread, java.lang.Runnable
-    public void run() {
+    public void run() throws IOException {
         super.run();
         try {
             try {
@@ -47,60 +48,60 @@ public class RequestHandlerSiteNavigation extends Thread {
         }
     }
 
-    void doHandleRequest() throws IOException {
+    void doHandleRequest() throws Throwable {
         switch (S_URI_MATCHER.match(this.mUri)) {
             case 1:
                 writeTemplatedIndex();
-                return;
+                break;
             case 2:
                 writeResource(getUriResourcePath());
-                return;
-            default:
-                return;
+                break;
         }
     }
 
-    private void writeTemplatedIndex() throws IOException {
-        Cursor query;
+    private void writeTemplatedIndex() throws Throwable {
         TemplateSiteNavigation cachedTemplate = TemplateSiteNavigation.getCachedTemplate(this.mContext, R.raw.site_navigation);
         Cursor cursor = null;
         try {
-            query = this.mContext.getContentResolver().query(Uri.parse("content://com.android.browser.site_navigation/websites"), new String[]{"url", "title", "thumbnail"}, null, null, null);
-        } catch (Throwable th) {
-            th = th;
-        }
-        try {
-            cachedTemplate.assignLoop("site_navigation", new TemplateSiteNavigation.CursorListEntityWrapper(query) { // from class: com.android.browser.sitenavigation.RequestHandlerSiteNavigation.1
-                @Override // com.android.browser.sitenavigation.TemplateSiteNavigation.EntityData
-                public void writeValue(OutputStream outputStream, String str) throws IOException {
-                    Cursor cursor2 = getCursor();
-                    if (str.equals("url")) {
-                        outputStream.write(RequestHandlerSiteNavigation.this.htmlEncode(cursor2.getString(0)));
-                    } else if (!str.equals("title")) {
-                        if (str.equals("thumbnail")) {
-                            outputStream.write("data:image/png;base64,".getBytes());
-                            outputStream.write(Base64.encode(cursor2.getBlob(2), 0));
+            Cursor cursorQuery = this.mContext.getContentResolver().query(Uri.parse("content://com.android.browser.site_navigation/websites"), new String[]{"url", "title", "thumbnail"}, null, null, null);
+            try {
+                cachedTemplate.assignLoop("site_navigation", new TemplateSiteNavigation.CursorListEntityWrapper(cursorQuery) { // from class: com.android.browser.sitenavigation.RequestHandlerSiteNavigation.1
+                    @Override // com.android.browser.sitenavigation.TemplateSiteNavigation.EntityData
+                    public void writeValue(OutputStream outputStream, String str) throws IOException {
+                        Cursor cursor2 = getCursor();
+                        if (str.equals("url")) {
+                            outputStream.write(RequestHandlerSiteNavigation.this.htmlEncode(cursor2.getString(0)));
+                            return;
                         }
-                    } else {
+                        if (!str.equals("title")) {
+                            if (str.equals("thumbnail")) {
+                                outputStream.write("data:image/png;base64,".getBytes());
+                                outputStream.write(Base64.encode(cursor2.getBlob(2), 0));
+                                return;
+                            }
+                            return;
+                        }
                         String string = cursor2.getString(1);
                         if (string == null || string.length() == 0) {
                             string = RequestHandlerSiteNavigation.this.mContext.getString(R.string.sitenavigation_add);
                         }
                         outputStream.write(RequestHandlerSiteNavigation.this.htmlEncode(string));
                     }
+                });
+                cachedTemplate.write(this.mOutput);
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
-            });
-            cachedTemplate.write(this.mOutput);
-            if (query != null) {
-                query.close();
+            } catch (Throwable th) {
+                th = th;
+                cursor = cursorQuery;
+                if (cursor != null) {
+                    cursor.close();
+                }
+                throw th;
             }
         } catch (Throwable th2) {
             th = th2;
-            cursor = query;
-            if (cursor != null) {
-                cursor.close();
-            }
-            throw th;
         }
     }
 
@@ -116,25 +117,25 @@ public class RequestHandlerSiteNavigation extends Thread {
         return this.mUri.getPath();
     }
 
-    void writeResource(String str) throws IOException {
+    void writeResource(String str) throws Resources.NotFoundException, IOException {
         Resources resources = this.mContext.getResources();
         int identifier = resources.getIdentifier(str, null, R.class.getPackage().getName());
         if (identifier != 0) {
-            InputStream openRawResource = resources.openRawResource(identifier);
+            InputStream inputStreamOpenRawResource = resources.openRawResource(identifier);
             byte[] bArr = new byte[4096];
             while (true) {
-                int read = openRawResource.read(bArr);
-                if (read > 0) {
-                    this.mOutput.write(bArr, 0, read);
+                int i = inputStreamOpenRawResource.read(bArr);
+                if (i > 0) {
+                    this.mOutput.write(bArr, 0, i);
                 } else {
-                    openRawResource.close();
+                    inputStreamOpenRawResource.close();
                     return;
                 }
             }
         }
     }
 
-    void cleanup() {
+    void cleanup() throws IOException {
         try {
             this.mOutput.close();
         } catch (IOException e) {

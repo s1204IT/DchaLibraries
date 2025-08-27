@@ -4,13 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
 /* loaded from: classes.dex */
 public class BatterySaverReceiver extends BroadcastReceiver {
     private BatterySaverListener mBatterySaverListener;
     private Context mContext;
     private boolean mRegistered;
 
-    /* loaded from: classes.dex */
     public interface BatterySaverListener {
         void onBatteryChanged(boolean z);
 

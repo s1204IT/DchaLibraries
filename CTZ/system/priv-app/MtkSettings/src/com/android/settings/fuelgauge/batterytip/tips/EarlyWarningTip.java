@@ -5,14 +5,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import com.android.settings.R;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public class EarlyWarningTip extends BatteryTip {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() { // from class: com.android.settings.fuelgauge.batterytip.tips.EarlyWarningTip.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public BatteryTip createFromParcel(Parcel parcel) {
             return new EarlyWarningTip(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public BatteryTip[] newArray(int i) {
             return new EarlyWarningTip[i];
@@ -60,18 +63,21 @@ public class EarlyWarningTip extends BatteryTip {
         return R.drawable.ic_battery_status_bad_24dp;
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:13:0x001c  */
     @Override // com.android.settings.fuelgauge.batterytip.tips.BatteryTip
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public void updateState(BatteryTip batteryTip) {
         EarlyWarningTip earlyWarningTip = (EarlyWarningTip) batteryTip;
         if (earlyWarningTip.mState == 0) {
             this.mState = 0;
-        } else {
-            if (this.mState == 0) {
-                if (earlyWarningTip.mState == 2) {
-                    this.mState = earlyWarningTip.mPowerSaveModeOn ? 1 : 2;
-                }
+        } else if (this.mState == 0) {
+            if (earlyWarningTip.mState == 2) {
+                this.mState = earlyWarningTip.mPowerSaveModeOn ? 1 : 2;
+            } else {
+                this.mState = earlyWarningTip.getState();
             }
-            this.mState = earlyWarningTip.getState();
         }
         this.mPowerSaveModeOn = earlyWarningTip.mPowerSaveModeOn;
     }

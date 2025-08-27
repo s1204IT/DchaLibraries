@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.SearchIndexableResource;
 import android.provider.Settings;
@@ -37,6 +38,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class TextToSpeechSettings extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, Indexable, GearPreference.OnGearClickListener {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.tts.TextToSpeechSettings.5
@@ -93,12 +95,12 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         this.mActionButtons = ((ActionButtonPreference) findPreference("action_buttons")).setButton1Text(R.string.tts_play).setButton1Positive(true).setButton1OnClickListener(new View.OnClickListener() { // from class: com.android.settings.tts.-$$Lambda$TextToSpeechSettings$-mqMfqhP2l_0b2lu0aliM8gSxIQ
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                TextToSpeechSettings.this.speakSampleText();
+                this.f$0.speakSampleText();
             }
         }).setButton1Enabled(false).setButton2Text(R.string.tts_reset).setButton2Positive(false).setButton2OnClickListener(new View.OnClickListener() { // from class: com.android.settings.tts.-$$Lambda$TextToSpeechSettings$-PSeoELUhAn9aTlkws2o7dPjqCc
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                TextToSpeechSettings.this.resetTts();
+                this.f$0.resetTts();
             }
         }).setButton1Enabled(true);
         if (bundle == null) {
@@ -203,12 +205,11 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
             this.mTts.setPitch(this.mDefaultPitch / 100.0f);
         }
         if (getActivity() instanceof SettingsActivity) {
-            SettingsActivity settingsActivity = (SettingsActivity) getActivity();
             if (this.mCurrentEngine != null) {
                 TextToSpeech.EngineInfo engineInfo = this.mEnginesHelper.getEngineInfo(this.mCurrentEngine);
-                Preference findPreference = findPreference("tts_engine_preference");
-                ((GearPreference) findPreference).setOnGearClickListener(this);
-                findPreference.setSummary(engineInfo.label);
+                Preference preferenceFindPreference = findPreference("tts_engine_preference");
+                ((GearPreference) preferenceFindPreference).setOnGearClickListener(this);
+                preferenceFindPreference.setSummary(engineInfo.label);
             }
             checkVoiceData(this.mCurrentEngine);
             return;
@@ -245,9 +246,9 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
                     TextToSpeechSettings.this.mLocalePreference.setEnabled(true);
                 }
             });
-            return;
+        } else {
+            updateWidgetState(false);
         }
-        updateWidgetState(false);
     }
 
     private void checkDefaultLocale() {
@@ -268,7 +269,7 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         }
     }
 
-    private boolean evaluateDefaultLocale() {
+    private boolean evaluateDefaultLocale() throws MissingResourceException {
         boolean z;
         if (this.mCurrentDefaultLocale == null || this.mAvailableStrLocals == null) {
             return false;
@@ -324,7 +325,7 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
     }
 
     @Override // android.app.Fragment
-    public void onActivityResult(int i, int i2, Intent intent) {
+    public void onActivityResult(int i, int i2, Intent intent) throws Resources.NotFoundException, MissingResourceException {
         if (i == 1983) {
             onSampleTextReceived(i2, intent);
         } else if (i == 1977) {
@@ -342,18 +343,19 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
             this.mLocalePreference.setEnabled(false);
             return;
         }
-        Locale locale = null;
+        Locale localePrefForEngine = null;
         if (!this.mEnginesHelper.isLocaleSetToDefaultForEngine(this.mTts.getCurrentEngine())) {
-            locale = this.mEnginesHelper.getLocalePrefForEngine(this.mTts.getCurrentEngine());
+            localePrefForEngine = this.mEnginesHelper.getLocalePrefForEngine(this.mTts.getCurrentEngine());
         }
         ArrayList arrayList = new ArrayList(stringArrayListExtra.size());
         for (int i = 0; i < stringArrayListExtra.size(); i++) {
-            Locale parseLocaleString = this.mEnginesHelper.parseLocaleString(stringArrayListExtra.get(i));
-            if (parseLocaleString != null) {
-                arrayList.add(new Pair(parseLocaleString.getDisplayName(), parseLocaleString));
+            Locale localeString = this.mEnginesHelper.parseLocaleString(stringArrayListExtra.get(i));
+            if (localeString != null) {
+                arrayList.add(new Pair(localeString.getDisplayName(), localeString));
             }
         }
         Collections.sort(arrayList, new Comparator<Pair<String, Locale>>() { // from class: com.android.settings.tts.TextToSpeechSettings.4
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(Pair<String, Locale> pair, Pair<String, Locale> pair2) {
                 return ((String) pair.first).compareToIgnoreCase((String) pair2.first);
@@ -368,7 +370,7 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         int i2 = 1;
         while (it.hasNext()) {
             Pair pair = (Pair) it.next();
-            if (((Locale) pair.second).equals(locale)) {
+            if (((Locale) pair.second).equals(localePrefForEngine)) {
                 this.mSelectedLocaleIndex = i2;
             }
             charSequenceArr[i2] = (CharSequence) pair.first;
@@ -385,13 +387,13 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         if (i < 0) {
             this.mLocalePreference.setValue("");
             this.mLocalePreference.setSummary(R.string.tts_lang_not_selected);
-            return;
+        } else {
+            this.mLocalePreference.setValueIndex(i);
+            this.mLocalePreference.setSummary(this.mLocalePreference.getEntries()[i]);
         }
-        this.mLocalePreference.setValueIndex(i);
-        this.mLocalePreference.setSummary(this.mLocalePreference.getEntries()[i]);
     }
 
-    private String getDefaultSampleString() {
+    private String getDefaultSampleString() throws Resources.NotFoundException, MissingResourceException {
         if (this.mTts != null && this.mTts.getLanguage() != null) {
             try {
                 String iSO3Language = this.mTts.getLanguage().getISO3Language();
@@ -413,7 +415,7 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         return (features == null || !features.contains("networkTts") || features.contains("embeddedTts")) ? false : true;
     }
 
-    private void onSampleTextReceived(int i, Intent intent) {
+    private void onSampleTextReceived(int i, Intent intent) throws Resources.NotFoundException, MissingResourceException {
         String defaultSampleString = getDefaultSampleString();
         if (i == 0 && intent != null && intent != null && intent.getStringExtra("sampleText") != null) {
             defaultSampleString = intent.getStringExtra("sampleText");
@@ -426,22 +428,21 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void speakSampleText() {
-        boolean isNetworkRequiredForSynthesis = isNetworkRequiredForSynthesis();
-        if (!isNetworkRequiredForSynthesis || (isNetworkRequiredForSynthesis && this.mTts.isLanguageAvailable(this.mCurrentDefaultLocale) >= 0)) {
-            HashMap<String, String> hashMap = new HashMap<>();
-            hashMap.put("utteranceId", "Sample");
-            this.mTts.speak(this.mSampleText, 0, hashMap);
-            return;
+    private void speakSampleText() {
+        boolean zIsNetworkRequiredForSynthesis = isNetworkRequiredForSynthesis();
+        if (!zIsNetworkRequiredForSynthesis || (zIsNetworkRequiredForSynthesis && this.mTts.isLanguageAvailable(this.mCurrentDefaultLocale) >= 0)) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("utteranceId", "Sample");
+            this.mTts.speak(this.mSampleText, 0, map);
+        } else {
+            Log.w("TextToSpeechSettings", "Network required for sample synthesis for requested language");
+            displayNetworkAlert();
         }
-        Log.w("TextToSpeechSettings", "Network required for sample synthesis for requested language");
-        displayNetworkAlert();
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        Locale locale;
+        Locale localeString;
         if ("tts_default_rate".equals(preference.getKey())) {
             updateSpeechRate(((Integer) obj).intValue());
         } else if ("tts_default_pitch".equals(preference.getKey())) {
@@ -449,11 +450,11 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         } else if (preference == this.mLocalePreference) {
             String str = (String) obj;
             if (!TextUtils.isEmpty(str)) {
-                locale = this.mEnginesHelper.parseLocaleString(str);
+                localeString = this.mEnginesHelper.parseLocaleString(str);
             } else {
-                locale = null;
+                localeString = null;
             }
-            updateLanguageTo(locale);
+            updateLanguageTo(localeString);
             checkDefaultLocale();
             return true;
         }
@@ -461,14 +462,15 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
     }
 
     private void updateLanguageTo(Locale locale) {
-        String locale2 = locale != null ? locale.toString() : "";
+        String string = locale != null ? locale.toString() : "";
         int i = 0;
         while (true) {
             if (i < this.mLocalePreference.getEntryValues().length) {
-                if (locale2.equalsIgnoreCase(this.mLocalePreference.getEntryValues()[i].toString())) {
+                if (string.equalsIgnoreCase(this.mLocalePreference.getEntryValues()[i].toString())) {
                     break;
+                } else {
+                    i++;
                 }
-                i++;
             } else {
                 i = -1;
                 break;
@@ -488,8 +490,7 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         textToSpeech.setLanguage(locale);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resetTts() {
+    private void resetTts() {
         int seekBarProgressFromValue = getSeekBarProgressFromValue("tts_default_rate", 100);
         this.mDefaultRatePref.setProgress(seekBarProgressFromValue);
         updateSpeechRate(seekBarProgressFromValue);
@@ -530,7 +531,7 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
 
     private void displayNetworkAlert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(17039380).setMessage(getActivity().getString(R.string.tts_engine_network_required)).setCancelable(false).setPositiveButton(17039370, (DialogInterface.OnClickListener) null);
+        builder.setTitle(android.R.string.dialog_alert_title).setMessage(getActivity().getString(R.string.tts_engine_network_required)).setCancelable(false).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null);
         builder.create().show();
     }
 
@@ -548,18 +549,20 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         String currentEngine = this.mTts.getCurrentEngine();
         if (currentEngine == null) {
             Log.e("TextToSpeechSettings", "Voice data check complete, but no engine bound");
-        } else if (intent == null) {
+            return;
+        }
+        if (intent == null) {
             Log.e("TextToSpeechSettings", "Engine failed voice data integrity check (null return)" + this.mTts.getCurrentEngine());
-        } else {
-            Settings.Secure.putString(getContentResolver(), "tts_default_synth", currentEngine);
-            this.mAvailableStrLocals = intent.getStringArrayListExtra("availableVoices");
-            if (this.mAvailableStrLocals == null) {
-                Log.e("TextToSpeechSettings", "Voice data check complete, but no available voices found");
-                this.mAvailableStrLocals = new ArrayList();
-            }
-            if (evaluateDefaultLocale()) {
-                getSampleText();
-            }
+            return;
+        }
+        Settings.Secure.putString(getContentResolver(), "tts_default_synth", currentEngine);
+        this.mAvailableStrLocals = intent.getStringArrayListExtra("availableVoices");
+        if (this.mAvailableStrLocals == null) {
+            Log.e("TextToSpeechSettings", "Voice data check complete, but no available voices found");
+            this.mAvailableStrLocals = new ArrayList();
+        }
+        if (evaluateDefaultLocale()) {
+            getSampleText();
         }
     }
 

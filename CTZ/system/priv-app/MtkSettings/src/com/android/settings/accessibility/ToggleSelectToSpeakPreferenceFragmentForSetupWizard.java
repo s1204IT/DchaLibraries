@@ -1,13 +1,13 @@
 package com.android.settings.accessibility;
 
 import android.os.Bundle;
+
 /* loaded from: classes.dex */
 public class ToggleSelectToSpeakPreferenceFragmentForSetupWizard extends ToggleAccessibilityServicePreferenceFragment {
     private boolean mToggleSwitchWasInitiallyChecked;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.accessibility.ToggleAccessibilityServicePreferenceFragment, com.android.settings.accessibility.ToggleFeaturePreferenceFragment
-    public void onProcessArguments(Bundle bundle) {
+    protected void onProcessArguments(Bundle bundle) {
         super.onProcessArguments(bundle);
         this.mToggleSwitchWasInitiallyChecked = this.mToggleSwitch.isChecked();
     }

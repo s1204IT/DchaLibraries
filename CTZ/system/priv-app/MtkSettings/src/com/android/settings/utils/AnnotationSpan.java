@@ -11,6 +11,7 @@ import android.text.style.URLSpan;
 import android.util.Log;
 import android.view.View;
 import com.android.settings.utils.AnnotationSpan;
+
 /* loaded from: classes.dex */
 public class AnnotationSpan extends URLSpan {
     private final View.OnClickListener mClickListener;
@@ -63,7 +64,6 @@ public class AnnotationSpan extends URLSpan {
         return spannableStringBuilder;
     }
 
-    /* loaded from: classes.dex */
     public static class LinkInfo {
         private final Boolean mActionable;
         private final String mAnnotation;
@@ -94,8 +94,7 @@ public class AnnotationSpan extends URLSpan {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$new$0(Intent intent, View view) {
+        static /* synthetic */ void lambda$new$0(Intent intent, View view) {
             try {
                 view.startActivityForResult(intent, 0);
             } catch (ActivityNotFoundException e) {

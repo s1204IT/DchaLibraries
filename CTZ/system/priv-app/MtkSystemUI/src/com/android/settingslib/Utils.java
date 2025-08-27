@@ -15,11 +15,13 @@ import android.provider.Settings;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settingslib.wrapper.LocationManagerWrapper;
 import java.text.NumberFormat;
+
 /* loaded from: classes.dex */
 public class Utils {
+
     @VisibleForTesting
     static final String STORAGE_MANAGER_SHOW_OPT_IN_PROPERTY = "ro.storage_manager.show_opt_in";
-    static final int[] WIFI_PIE = {17302780, 17302781, 17302782, 17302783, 17302784};
+    static final int[] WIFI_PIE = {android.R.drawable.ic_media_route_on_2_holo_light, android.R.drawable.ic_media_route_on_holo_dark, android.R.drawable.ic_media_route_on_holo_light, android.R.drawable.ic_media_seamless, android.R.drawable.ic_media_stop};
     private static String sPermissionControllerPackageName;
     private static String sServicesSystemSharedLibPackageName;
     private static String sSharedSystemSharedLibPackageName;
@@ -49,11 +51,11 @@ public class Utils {
     }
 
     public static int getColorAccent(Context context) {
-        return getColorAttr(context, 16843829);
+        return getColorAttr(context, android.R.attr.colorAccent);
     }
 
     public static int getColorError(Context context) {
-        return getColorAttr(context, 16844099);
+        return getColorAttr(context, android.R.attr.colorError);
     }
 
     public static int getDefaultColor(Context context, int i) {
@@ -61,13 +63,13 @@ public class Utils {
     }
 
     public static int getDisabled(Context context, int i) {
-        return applyAlphaAttr(context, 16842803, i);
+        return applyAlphaAttr(context, android.R.attr.disabledAlpha, i);
     }
 
     public static int applyAlphaAttr(Context context, int i, int i2) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
-        float f = obtainStyledAttributes.getFloat(0, 0.0f);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
+        float f = typedArrayObtainStyledAttributes.getFloat(0, 0.0f);
+        typedArrayObtainStyledAttributes.recycle();
         return applyAlpha(f, i2);
     }
 
@@ -76,23 +78,23 @@ public class Utils {
     }
 
     public static int getColorAttr(Context context, int i) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
-        int color = obtainStyledAttributes.getColor(0, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
+        int color = typedArrayObtainStyledAttributes.getColor(0, 0);
+        typedArrayObtainStyledAttributes.recycle();
         return color;
     }
 
     public static int getThemeAttr(Context context, int i) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
-        int resourceId = obtainStyledAttributes.getResourceId(0, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
+        int resourceId = typedArrayObtainStyledAttributes.getResourceId(0, 0);
+        typedArrayObtainStyledAttributes.recycle();
         return resourceId;
     }
 
     public static Drawable getDrawable(Context context, int i) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
-        Drawable drawable = obtainStyledAttributes.getDrawable(0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
+        Drawable drawable = typedArrayObtainStyledAttributes.getDrawable(0);
+        typedArrayObtainStyledAttributes.recycle();
         return drawable;
     }
 
@@ -127,8 +129,8 @@ public class Utils {
         }
     }
 
-    public static boolean isDeviceProvisioningPackage(Resources resources, String str) {
-        String string = resources.getString(17039662);
+    public static boolean isDeviceProvisioningPackage(Resources resources, String str) throws Resources.NotFoundException {
+        String string = resources.getString(android.R.string.aerr_process);
         return string != null && string.equals(str);
     }
 }

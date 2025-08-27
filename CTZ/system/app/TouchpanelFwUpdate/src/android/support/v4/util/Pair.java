@@ -1,4 +1,5 @@
 package android.support.v4.util;
+
 /* loaded from: classes.dex */
 public class Pair<F, S> {
     public final F first;
@@ -10,11 +11,11 @@ public class Pair<F, S> {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof Pair) {
-            Pair<?, ?> p = (Pair) o;
-            return ObjectsCompat.equals(p.first, this.first) && ObjectsCompat.equals(p.second, this.second);
+        if (!(o instanceof Pair)) {
+            return false;
         }
-        return false;
+        Pair<?, ?> p = (Pair) o;
+        return ObjectsCompat.equals(p.first, this.first) && ObjectsCompat.equals(p.second, this.second);
     }
 
     public int hashCode() {

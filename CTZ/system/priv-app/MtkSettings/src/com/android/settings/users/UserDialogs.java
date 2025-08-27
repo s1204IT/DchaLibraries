@@ -16,16 +16,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public final class UserDialogs {
     public static Dialog createRemoveDialog(Context context, int i, DialogInterface.OnClickListener onClickListener) {
         UserInfo userInfo = ((UserManager) context.getSystemService("user")).getUserInfo(i);
-        AlertDialog.Builder negativeButton = new AlertDialog.Builder(context).setPositiveButton(R.string.user_delete_button, onClickListener).setNegativeButton(17039360, (DialogInterface.OnClickListener) null);
+        AlertDialog.Builder negativeButton = new AlertDialog.Builder(context).setPositiveButton(R.string.user_delete_button, onClickListener).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null);
         if (userInfo.isManagedProfile()) {
             negativeButton.setTitle(R.string.work_profile_confirm_remove_title);
-            View createRemoveManagedUserDialogView = createRemoveManagedUserDialogView(context, i);
-            if (createRemoveManagedUserDialogView != null) {
-                negativeButton.setView(createRemoveManagedUserDialogView);
+            View viewCreateRemoveManagedUserDialogView = createRemoveManagedUserDialogView(context, i);
+            if (viewCreateRemoveManagedUserDialogView != null) {
+                negativeButton.setView(viewCreateRemoveManagedUserDialogView);
             } else {
                 negativeButton.setMessage(R.string.work_profile_confirm_remove_message);
             }
@@ -48,23 +49,23 @@ public final class UserDialogs {
         if (adminApplicationInfo == null) {
             return null;
         }
-        View inflate = ((LayoutInflater) context.getSystemService("layout_inflater")).inflate(R.layout.delete_managed_profile_dialog, (ViewGroup) null);
-        ((ImageView) inflate.findViewById(R.id.delete_managed_profile_mdm_icon_view)).setImageDrawable(packageManager.getUserBadgedIcon(packageManager.getApplicationIcon(adminApplicationInfo), new UserHandle(i)));
+        View viewInflate = ((LayoutInflater) context.getSystemService("layout_inflater")).inflate(R.layout.delete_managed_profile_dialog, (ViewGroup) null);
+        ((ImageView) viewInflate.findViewById(R.id.delete_managed_profile_mdm_icon_view)).setImageDrawable(packageManager.getUserBadgedIcon(packageManager.getApplicationIcon(adminApplicationInfo), new UserHandle(i)));
         CharSequence applicationLabel = packageManager.getApplicationLabel(adminApplicationInfo);
         CharSequence userBadgedLabel = packageManager.getUserBadgedLabel(applicationLabel, new UserHandle(i));
-        TextView textView = (TextView) inflate.findViewById(R.id.delete_managed_profile_device_manager_name);
+        TextView textView = (TextView) viewInflate.findViewById(R.id.delete_managed_profile_device_manager_name);
         textView.setText(applicationLabel);
         if (!applicationLabel.toString().contentEquals(userBadgedLabel)) {
             textView.setContentDescription(userBadgedLabel);
         }
-        return inflate;
+        return viewInflate;
     }
 
     public static Dialog createEnablePhoneCallsAndSmsDialog(Context context, DialogInterface.OnClickListener onClickListener) {
-        return new AlertDialog.Builder(context).setTitle(R.string.user_enable_calling_and_sms_confirm_title).setMessage(R.string.user_enable_calling_and_sms_confirm_message).setPositiveButton(R.string.okay, onClickListener).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
+        return new AlertDialog.Builder(context).setTitle(R.string.user_enable_calling_and_sms_confirm_title).setMessage(R.string.user_enable_calling_and_sms_confirm_message).setPositiveButton(R.string.okay, onClickListener).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).create();
     }
 
     public static Dialog createEnablePhoneCallsDialog(Context context, DialogInterface.OnClickListener onClickListener) {
-        return new AlertDialog.Builder(context).setTitle(R.string.user_enable_calling_confirm_title).setMessage(R.string.user_enable_calling_confirm_message).setPositiveButton(R.string.okay, onClickListener).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
+        return new AlertDialog.Builder(context).setTitle(R.string.user_enable_calling_confirm_title).setMessage(R.string.user_enable_calling_confirm_message).setPositiveButton(R.string.okay, onClickListener).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).create();
     }
 }

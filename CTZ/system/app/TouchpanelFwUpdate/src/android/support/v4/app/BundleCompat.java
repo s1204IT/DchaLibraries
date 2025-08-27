@@ -6,10 +6,10 @@ import android.os.IBinder;
 import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 /* loaded from: classes.dex */
 public final class BundleCompat {
 
-    /* loaded from: classes.dex */
     static class BundleCompatBaseImpl {
         private static Method sGetIBinderMethod;
         private static boolean sGetIBinderMethodFetched;
@@ -37,7 +37,7 @@ public final class BundleCompat {
             return null;
         }
 
-        public static void putBinder(Bundle bundle, String key, IBinder binder) {
+        public static void putBinder(Bundle bundle, String key, IBinder binder) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
             if (!sPutIBinderMethodFetched) {
                 try {
                     sPutIBinderMethod = Bundle.class.getMethod("putIBinder", String.class, IBinder.class);
@@ -65,7 +65,7 @@ public final class BundleCompat {
         return BundleCompatBaseImpl.getBinder(bundle, key);
     }
 
-    public static void putBinder(Bundle bundle, String key, IBinder binder) {
+    public static void putBinder(Bundle bundle, String key, IBinder binder) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (Build.VERSION.SDK_INT >= 18) {
             bundle.putBinder(key, binder);
         } else {

@@ -8,6 +8,7 @@ import com.android.launcher3.anim.AnimatorSetBuilder;
 import com.android.launcher3.anim.Interpolators;
 import com.android.launcher3.anim.PropertySetter;
 import com.android.launcher3.graphics.WorkspaceAndHotseatScrim;
+
 /* loaded from: classes.dex */
 public class WorkspaceStateTransitionAnimation {
     private final Launcher mLauncher;
@@ -41,8 +42,8 @@ public class WorkspaceStateTransitionAnimation {
         }
         int visibleElements = launcherState.getVisibleElements(this.mLauncher);
         Interpolator interpolator = animatorSetBuilder.getInterpolator(2, workspacePageAlphaProvider.interpolator);
-        boolean playAtomicComponent = animationConfig.playAtomicComponent();
-        if (playAtomicComponent) {
+        boolean zPlayAtomicComponent = animationConfig.playAtomicComponent();
+        if (zPlayAtomicComponent) {
             propertySetter.setFloat(this.mWorkspace, LauncherAnimUtils.SCALE_PROPERTY, this.mNewScale, animatorSetBuilder.getInterpolator(1, Interpolators.ZOOM_OUT));
             float f = (visibleElements & 1) != 0 ? 1.0f : 0.0f;
             propertySetter.setViewAlpha(this.mLauncher.getHotseat().getLayout(), f, interpolator);
@@ -51,7 +52,7 @@ public class WorkspaceStateTransitionAnimation {
         if (!animationConfig.playNonAtomicComponent()) {
             return;
         }
-        Interpolator interpolator2 = !playAtomicComponent ? Interpolators.LINEAR : Interpolators.ZOOM_OUT;
+        Interpolator interpolator2 = !zPlayAtomicComponent ? Interpolators.LINEAR : Interpolators.ZOOM_OUT;
         propertySetter.setFloat(this.mWorkspace, View.TRANSLATION_X, workspaceScaleAndTranslation[1], interpolator2);
         propertySetter.setFloat(this.mWorkspace, View.TRANSLATION_Y, workspaceScaleAndTranslation[2], interpolator2);
         propertySetter.setViewAlpha(this.mLauncher.getHotseatSearchBox(), (visibleElements & 2) != 0 ? 1.0f : 0.0f, interpolator);
@@ -66,9 +67,9 @@ public class WorkspaceStateTransitionAnimation {
 
     private void applyChildState(LauncherState launcherState, CellLayout cellLayout, int i, LauncherState.PageAlphaProvider pageAlphaProvider, PropertySetter propertySetter, AnimatorSetBuilder animatorSetBuilder, LauncherStateManager.AnimationConfig animationConfig) {
         float pageAlpha = pageAlphaProvider.getPageAlpha(i);
-        int round = Math.round((launcherState.hasWorkspacePageBackground ? 255 : 0) * pageAlpha);
+        int iRound = Math.round((launcherState.hasWorkspacePageBackground ? 255 : 0) * pageAlpha);
         if (animationConfig.playNonAtomicComponent()) {
-            propertySetter.setInt(cellLayout.getScrimBackground(), LauncherAnimUtils.DRAWABLE_ALPHA, round, Interpolators.ZOOM_OUT);
+            propertySetter.setInt(cellLayout.getScrimBackground(), LauncherAnimUtils.DRAWABLE_ALPHA, iRound, Interpolators.ZOOM_OUT);
         }
         if (animationConfig.playAtomicComponent()) {
             propertySetter.setFloat(cellLayout.getShortcutsAndWidgets(), View.ALPHA, pageAlpha, animatorSetBuilder.getInterpolator(2, pageAlphaProvider.interpolator));

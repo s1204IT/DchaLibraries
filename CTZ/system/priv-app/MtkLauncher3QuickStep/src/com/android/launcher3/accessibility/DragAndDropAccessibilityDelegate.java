@@ -12,6 +12,7 @@ import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
 import com.android.launcher3.accessibility.LauncherAccessibilityDelegate;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class DragAndDropAccessibilityDelegate extends ExploreByTouchHelper implements View.OnClickListener {
     protected static final int INVALID_POSITION = -1;
@@ -76,9 +77,8 @@ public abstract class DragAndDropAccessibilityDelegate extends ExploreByTouchHel
         accessibilityEvent.setContentDescription(this.mContext.getString(R.string.action_move_here));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v4.widget.ExploreByTouchHelper
-    public void onPopulateNodeForVirtualView(int i, AccessibilityNodeInfoCompat accessibilityNodeInfoCompat) {
+    protected void onPopulateNodeForVirtualView(int i, AccessibilityNodeInfoCompat accessibilityNodeInfoCompat) {
         if (i == Integer.MIN_VALUE) {
             throw new IllegalArgumentException("Invalid virtual view id");
         }

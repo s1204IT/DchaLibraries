@@ -1,6 +1,7 @@
 package com.android.browser;
 
 import android.graphics.drawable.BitmapDrawable;
+
 /* loaded from: classes.dex */
 public class BrowserBookmarksAdapterItem {
     public boolean has_thumbnail;

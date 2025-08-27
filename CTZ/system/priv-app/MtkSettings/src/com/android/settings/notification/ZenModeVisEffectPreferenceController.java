@@ -1,5 +1,6 @@
 package com.android.settings.notification;
 
+import android.R;
 import android.content.Context;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
@@ -7,6 +8,7 @@ import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.widget.DisabledCheckBoxPreference;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeVisEffectPreferenceController extends AbstractZenModePreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     protected final int mEffect;
@@ -31,7 +33,7 @@ public class ZenModeVisEffectPreferenceController extends AbstractZenModePrefere
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean isAvailable() {
         if (this.mEffect == 8) {
-            return this.mContext.getResources().getBoolean(17956984);
+            return this.mContext.getResources().getBoolean(R.^attr-private.headerLayout);
         }
         return true;
     }
@@ -44,32 +46,32 @@ public class ZenModeVisEffectPreferenceController extends AbstractZenModePrefere
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void updateState(Preference preference) {
-        boolean z;
+        boolean zIsVisualEffectSuppressed;
         super.updateState(preference);
-        boolean isVisualEffectSuppressed = this.mBackend.isVisualEffectSuppressed(this.mEffect);
+        boolean zIsVisualEffectSuppressed2 = this.mBackend.isVisualEffectSuppressed(this.mEffect);
         if (this.mParentSuppressedEffects != null) {
-            z = false;
+            zIsVisualEffectSuppressed = false;
             for (int i : this.mParentSuppressedEffects) {
-                z |= this.mBackend.isVisualEffectSuppressed(i);
+                zIsVisualEffectSuppressed |= this.mBackend.isVisualEffectSuppressed(i);
             }
         } else {
-            z = false;
+            zIsVisualEffectSuppressed = false;
         }
-        if (z) {
-            ((CheckBoxPreference) preference).setChecked(z);
-            onPreferenceChange(preference, Boolean.valueOf(z));
+        if (zIsVisualEffectSuppressed) {
+            ((CheckBoxPreference) preference).setChecked(zIsVisualEffectSuppressed);
+            onPreferenceChange(preference, Boolean.valueOf(zIsVisualEffectSuppressed));
             ((DisabledCheckBoxPreference) preference).enableCheckbox(false);
-            return;
+        } else {
+            ((DisabledCheckBoxPreference) preference).enableCheckbox(true);
+            ((CheckBoxPreference) preference).setChecked(zIsVisualEffectSuppressed2);
         }
-        ((DisabledCheckBoxPreference) preference).enableCheckbox(true);
-        ((CheckBoxPreference) preference).setChecked(isVisualEffectSuppressed);
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        boolean booleanValue = ((Boolean) obj).booleanValue();
-        this.mMetricsFeatureProvider.action(this.mContext, this.mMetricsCategory, booleanValue);
-        this.mBackend.saveVisualEffectsPolicy(this.mEffect, booleanValue);
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
+        this.mMetricsFeatureProvider.action(this.mContext, this.mMetricsCategory, zBooleanValue);
+        this.mBackend.saveVisualEffectsPolicy(this.mEffect, zBooleanValue);
         return true;
     }
 }

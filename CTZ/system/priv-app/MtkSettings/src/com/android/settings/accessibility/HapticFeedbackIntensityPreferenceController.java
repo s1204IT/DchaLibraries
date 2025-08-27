@@ -1,6 +1,7 @@
 package com.android.settings.accessibility;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class HapticFeedbackIntensityPreferenceController extends VibrationIntensityPreferenceController {
     static final String PREF_KEY = "touch_vibration_preference_screen";

@@ -23,12 +23,14 @@ import android.widget.Toast;
 import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class UsbDebuggingActivity extends AlertActivity implements DialogInterface.OnClickListener {
     private CheckBox mAlwaysAllow;
     private UsbDisconnectedReceiver mDisconnectedReceiver;
     private String mKey;
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: com.android.systemui.usb.UsbDebuggingActivity */
     /* JADX WARN: Multi-variable type inference failed */
     public void onCreate(Bundle bundle) {
         Window window = getWindow();
@@ -48,14 +50,14 @@ public class UsbDebuggingActivity extends AlertActivity implements DialogInterfa
         AlertController.AlertParams alertParams = this.mAlertParams;
         alertParams.mTitle = getString(R.string.usb_debugging_title);
         alertParams.mMessage = getString(R.string.usb_debugging_message, new Object[]{stringExtra});
-        alertParams.mPositiveButtonText = getString(17039370);
-        alertParams.mNegativeButtonText = getString(17039360);
+        alertParams.mPositiveButtonText = getString(android.R.string.ok);
+        alertParams.mNegativeButtonText = getString(android.R.string.cancel);
         alertParams.mPositiveButtonListener = this;
         alertParams.mNegativeButtonListener = this;
-        View inflate = LayoutInflater.from(alertParams.mContext).inflate(17367090, (ViewGroup) null);
-        this.mAlwaysAllow = (CheckBox) inflate.findViewById(16908711);
+        View viewInflate = LayoutInflater.from(alertParams.mContext).inflate(android.R.layout.alert_dialog_progress, (ViewGroup) null);
+        this.mAlwaysAllow = (CheckBox) viewInflate.findViewById(android.R.id.accessibility_permissionDialog_title);
         this.mAlwaysAllow.setText(getString(R.string.usb_debugging_always));
-        alertParams.mView = inflate;
+        alertParams.mView = viewInflate;
         setupAlert();
         this.mAlert.getButton(-1).setOnTouchListener(new View.OnTouchListener() { // from class: com.android.systemui.usb.-$$Lambda$UsbDebuggingActivity$XWt--qGCtWBJlTLnAvCSF7AuSg8
             @Override // android.view.View.OnTouchListener
@@ -65,14 +67,13 @@ public class UsbDebuggingActivity extends AlertActivity implements DialogInterfa
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$onCreate$0(View view, MotionEvent motionEvent) {
+    static /* synthetic */ boolean lambda$onCreate$0(View view, MotionEvent motionEvent) {
         if ((motionEvent.getFlags() & 1) == 0 && (motionEvent.getFlags() & 2) == 0) {
             return false;
         }
         if (motionEvent.getAction() == 1) {
             EventLog.writeEvent(1397638484, "62187985");
-            Toast.makeText(view.getContext(), (int) R.string.touch_filtered_warning, 0).show();
+            Toast.makeText(view.getContext(), R.string.touch_filtered_warning, 0).show();
         }
         return true;
     }
@@ -81,7 +82,6 @@ public class UsbDebuggingActivity extends AlertActivity implements DialogInterfa
         super.onWindowAttributesChanged(layoutParams);
     }
 
-    /* loaded from: classes.dex */
     private class UsbDisconnectedReceiver extends BroadcastReceiver {
         private final Activity mActivity;
 
@@ -117,11 +117,11 @@ public class UsbDebuggingActivity extends AlertActivity implements DialogInterfa
             z = true;
         }
         try {
-            IUsbManager asInterface = IUsbManager.Stub.asInterface(ServiceManager.getService("usb"));
+            IUsbManager iUsbManagerAsInterface = IUsbManager.Stub.asInterface(ServiceManager.getService("usb"));
             if (z2) {
-                asInterface.allowUsbDebugging(z, this.mKey);
+                iUsbManagerAsInterface.allowUsbDebugging(z, this.mKey);
             } else {
-                asInterface.denyUsbDebugging();
+                iUsbManagerAsInterface.denyUsbDebugging();
             }
         } catch (Exception e) {
             Log.e("UsbDebuggingActivity", "Unable to notify Usb service", e);

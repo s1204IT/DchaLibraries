@@ -13,6 +13,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class WifiP2pPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private final IntentFilter mFilter;
@@ -60,8 +61,7 @@ public class WifiP2pPreferenceController extends AbstractPreferenceController im
         return "wifi_direct";
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void togglePreferences() {
+    private void togglePreferences() {
         if (this.mWifiDirectPref != null) {
             this.mWifiDirectPref.setEnabled(this.mWifiManager.isWifiEnabled());
         }

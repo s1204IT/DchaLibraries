@@ -8,9 +8,11 @@ import android.view.IAppTransitionAnimationSpecsFuture;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+
 /* loaded from: classes.dex */
 public abstract class AppTransitionAnimationSpecsFuture {
     private FutureTask<List<AppTransitionAnimationSpecCompat>> mComposeTask = new FutureTask<>(new Callable<List<AppTransitionAnimationSpecCompat>>() { // from class: com.android.systemui.shared.recents.view.AppTransitionAnimationSpecsFuture.1
+        /* JADX DEBUG: Method merged with bridge method: call()Ljava/lang/Object; */
         @Override // java.util.concurrent.Callable
         public List<AppTransitionAnimationSpecCompat> call() throws Exception {
             return AppTransitionAnimationSpecsFuture.this.composeSpecs();

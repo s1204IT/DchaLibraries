@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Toolbar;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public interface SearchFeatureProvider {
     public static final Intent SEARCH_UI_INTENT = new Intent("com.android.settings.action.SETTINGS_SEARCH");
@@ -26,7 +27,7 @@ public interface SearchFeatureProvider {
         toolbar.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.search.-$$Lambda$SearchFeatureProvider$7ZGLG3tZpGqHgt7m_jMbwikwfJM
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                SearchFeatureProvider.lambda$initSearchToolbar$0(SearchFeatureProvider.this, activity, view);
+                SearchFeatureProvider.lambda$initSearchToolbar$0(this.f$0, activity, view);
             }
         });
     }

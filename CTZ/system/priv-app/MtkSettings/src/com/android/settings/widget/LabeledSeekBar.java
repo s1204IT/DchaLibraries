@@ -1,5 +1,6 @@
 package com.android.settings.widget;
 
+import android.R;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LabeledSeekBar extends SeekBar {
     private final ExploreByTouchHelper mAccessHelper;
@@ -21,7 +23,7 @@ public class LabeledSeekBar extends SeekBar {
     private final SeekBar.OnSeekBarChangeListener mProxySeekBarListener;
 
     public LabeledSeekBar(Context context, AttributeSet attributeSet) {
-        this(context, attributeSet, 16842875);
+        this(context, attributeSet, R.attr.seekBarStyle);
     }
 
     public LabeledSeekBar(Context context, AttributeSet attributeSet, int i) {
@@ -80,13 +82,11 @@ public class LabeledSeekBar extends SeekBar {
         return this.mAccessHelper.dispatchHoverEvent(motionEvent) || super.dispatchHoverEvent(motionEvent);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void sendClickEventForAccessibility(int i) {
+    private void sendClickEventForAccessibility(int i) {
         this.mAccessHelper.invalidateRoot();
         this.mAccessHelper.sendEventForVirtualView(i, 1);
     }
 
-    /* loaded from: classes.dex */
     private class LabeledSeekBarExploreByTouchHelper extends ExploreByTouchHelper {
         private boolean mIsLayoutRtl;
 
@@ -151,8 +151,8 @@ public class LabeledSeekBar extends SeekBar {
         }
 
         private int getVirtualViewIdIndexFromX(float f) {
-            int min = Math.min((Math.max(0, (((int) f) - LabeledSeekBar.this.getPaddingStart()) / getHalfVirtualViewWidth()) + 1) / 2, LabeledSeekBar.this.getMax());
-            return this.mIsLayoutRtl ? LabeledSeekBar.this.getMax() - min : min;
+            int iMin = Math.min((Math.max(0, (((int) f) - LabeledSeekBar.this.getPaddingStart()) / getHalfVirtualViewWidth()) + 1) / 2, LabeledSeekBar.this.getMax());
+            return this.mIsLayoutRtl ? LabeledSeekBar.this.getMax() - iMin : iMin;
         }
 
         private Rect getBoundsInParentFromVirtualViewId(int i) {

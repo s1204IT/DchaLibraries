@@ -6,6 +6,7 @@ import com.android.settings.applications.AppStateBaseBridge;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppStateOverlayBridge extends AppStateAppOpsBridge {
     private static final String[] PM_PERMISSION = {"android.permission.SYSTEM_ALERT_WINDOW"};
@@ -33,7 +34,6 @@ public class AppStateOverlayBridge extends AppStateAppOpsBridge {
         return new OverlayState(super.getPermissionInfo(str, i));
     }
 
-    /* loaded from: classes.dex */
     public static class OverlayState extends AppStateAppOpsBridge.PermissionState {
         private static final List<String> DISABLE_PACKAGE_LIST = new ArrayList();
         public final boolean controlEnabled;

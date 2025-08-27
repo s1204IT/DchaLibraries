@@ -7,6 +7,7 @@ import com.android.settingslib.core.instrumentation.Instrumentable;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.core.instrumentation.VisibilityLoggerMixin;
 import com.android.settingslib.core.lifecycle.ObservableFragment;
+
 /* loaded from: classes.dex */
 public abstract class InstrumentedFragment extends ObservableFragment implements Instrumentable {
     protected MetricsFeatureProvider mMetricsFeatureProvider;

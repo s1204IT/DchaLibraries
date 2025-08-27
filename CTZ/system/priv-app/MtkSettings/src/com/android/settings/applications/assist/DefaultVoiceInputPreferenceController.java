@@ -18,6 +18,7 @@ import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultVoiceInputPreferenceController extends DefaultAppPreferenceController implements LifecycleObserver, OnPause, OnResume {
     private AssistUtils mAssistUtils;
@@ -26,7 +27,7 @@ public class DefaultVoiceInputPreferenceController extends DefaultAppPreferenceC
     private PreferenceScreen mScreen;
     private SettingObserver mSettingObserver;
 
-    public DefaultVoiceInputPreferenceController(Context context, Lifecycle lifecycle) {
+    public DefaultVoiceInputPreferenceController(Context context, Lifecycle lifecycle) throws Throwable {
         super(context);
         this.mSettingObserver = new SettingObserver();
         this.mAssistUtils = new AssistUtils(context);
@@ -55,13 +56,13 @@ public class DefaultVoiceInputPreferenceController extends DefaultAppPreferenceC
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnResume
-    public void onResume() {
+    public void onResume() throws Throwable {
         this.mSettingObserver.register(this.mContext.getContentResolver(), true);
         updatePreference();
     }
 
     @Override // com.android.settings.applications.defaultapps.DefaultAppPreferenceController, com.android.settingslib.core.AbstractPreferenceController
-    public void updateState(Preference preference) {
+    public void updateState(Preference preference) throws Throwable {
         super.updateState(this.mPreference);
         updatePreference();
     }
@@ -103,8 +104,7 @@ public class DefaultVoiceInputPreferenceController extends DefaultAppPreferenceC
         return ((DefaultVoiceInputPicker.VoiceInputDefaultAppInfo) defaultAppInfo2).getSettingIntent();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreference() {
+    private void updatePreference() throws Throwable {
         if (this.mPreference == null) {
             return;
         }
@@ -127,7 +127,6 @@ public class DefaultVoiceInputPreferenceController extends DefaultAppPreferenceC
         return currentService.flattenToShortString();
     }
 
-    /* loaded from: classes.dex */
     class SettingObserver extends AssistSettingObserver {
         SettingObserver() {
         }
@@ -138,7 +137,7 @@ public class DefaultVoiceInputPreferenceController extends DefaultAppPreferenceC
         }
 
         @Override // com.android.settings.applications.assist.AssistSettingObserver
-        public void onSettingChange() {
+        public void onSettingChange() throws Throwable {
             DefaultVoiceInputPreferenceController.this.updatePreference();
         }
     }

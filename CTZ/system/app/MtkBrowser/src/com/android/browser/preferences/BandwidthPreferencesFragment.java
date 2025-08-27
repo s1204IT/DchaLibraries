@@ -7,6 +7,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import com.android.browser.BrowserSettings;
 import com.android.browser.R;
+
 /* loaded from: classes.dex */
 public class BandwidthPreferencesFragment extends PreferenceFragment {
     @Override // android.preference.PreferenceFragment, android.app.Fragment

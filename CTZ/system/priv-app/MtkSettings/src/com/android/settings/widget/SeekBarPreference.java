@@ -15,6 +15,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.SeekBar;
 import com.android.internal.R;
 import com.android.settingslib.RestrictedPreference;
+
 /* loaded from: classes.dex */
 public class SeekBarPreference extends RestrictedPreference implements View.OnKeyListener, SeekBar.OnSeekBarChangeListener {
     private int mAccessibilityRangeInfoType;
@@ -32,13 +33,13 @@ public class SeekBarPreference extends RestrictedPreference implements View.OnKe
         super(context, attributeSet, i, i2);
         this.mDefaultProgress = -1;
         this.mAccessibilityRangeInfoType = 0;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ProgressBar, i, i2);
-        setMax(obtainStyledAttributes.getInt(2, this.mMax));
-        setMin(obtainStyledAttributes.getInt(26, this.mMin));
-        obtainStyledAttributes.recycle();
-        TypedArray obtainStyledAttributes2 = context.obtainStyledAttributes(attributeSet, R.styleable.SeekBarPreference, i, i2);
-        int resourceId = obtainStyledAttributes2.getResourceId(0, 17367238);
-        obtainStyledAttributes2.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ProgressBar, i, i2);
+        setMax(typedArrayObtainStyledAttributes.getInt(2, this.mMax));
+        setMin(typedArrayObtainStyledAttributes.getInt(26, this.mMin));
+        typedArrayObtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes2 = context.obtainStyledAttributes(attributeSet, R.styleable.SeekBarPreference, i, i2);
+        int resourceId = typedArrayObtainStyledAttributes2.getResourceId(0, android.R.layout.notification_template_material_inbox);
+        typedArrayObtainStyledAttributes2.recycle();
         setLayoutResource(resourceId);
     }
 
@@ -47,7 +48,7 @@ public class SeekBarPreference extends RestrictedPreference implements View.OnKe
     }
 
     public SeekBarPreference(Context context, AttributeSet attributeSet) {
-        this(context, attributeSet, TypedArrayUtils.getAttr(context, com.android.settings.R.attr.seekBarPreferenceStyle, 17891515));
+        this(context, attributeSet, TypedArrayUtils.getAttr(context, com.android.settings.R.attr.seekBarPreferenceStyle, android.R.bool.config_cecQuerySadMpeg1Disabled_allowed));
     }
 
     public SeekBarPreference(Context context) {
@@ -58,7 +59,7 @@ public class SeekBarPreference extends RestrictedPreference implements View.OnKe
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
         preferenceViewHolder.itemView.setOnKeyListener(this);
-        this.mSeekBar = (SeekBar) preferenceViewHolder.findViewById(16909273);
+        this.mSeekBar = (SeekBar) preferenceViewHolder.findViewById(android.R.id.mode_in);
         this.mSeekBar.setOnSeekBarChangeListener(this);
         this.mSeekBar.setMax(this.mMax);
         this.mSeekBar.setMin(this.mMin);
@@ -78,7 +79,7 @@ public class SeekBarPreference extends RestrictedPreference implements View.OnKe
             view.post(new Runnable() { // from class: com.android.settings.widget.-$$Lambda$SeekBarPreference$dLBfCJMqk38mmQ3tQY-pIyDA0S8
                 @Override // java.lang.Runnable
                 public final void run() {
-                    SeekBarPreference.lambda$onBindViewHolder$0(SeekBarPreference.this, view);
+                    SeekBarPreference.lambda$onBindViewHolder$0(this.f$0, view);
                 }
             });
         }
@@ -121,7 +122,7 @@ public class SeekBarPreference extends RestrictedPreference implements View.OnKe
     @Override // android.view.View.OnKeyListener
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
         SeekBar seekBar;
-        if (keyEvent.getAction() == 0 && (seekBar = (SeekBar) view.findViewById(16909273)) != null) {
+        if (keyEvent.getAction() == 0 && (seekBar = (SeekBar) view.findViewById(android.R.id.mode_in)) != null) {
             return seekBar.onKeyDown(i, keyEvent);
         }
         return false;
@@ -221,23 +222,21 @@ public class SeekBarPreference extends RestrictedPreference implements View.OnKe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public Parcelable onSaveInstanceState() {
-        Parcelable onSaveInstanceState = super.onSaveInstanceState();
+    protected Parcelable onSaveInstanceState() {
+        Parcelable parcelableOnSaveInstanceState = super.onSaveInstanceState();
         if (isPersistent()) {
-            return onSaveInstanceState;
+            return parcelableOnSaveInstanceState;
         }
-        SavedState savedState = new SavedState(onSaveInstanceState);
+        SavedState savedState = new SavedState(parcelableOnSaveInstanceState);
         savedState.progress = this.mProgress;
         savedState.max = this.mMax;
         savedState.min = this.mMin;
         return savedState;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void onRestoreInstanceState(Parcelable parcelable) {
+    protected void onRestoreInstanceState(Parcelable parcelable) {
         if (!parcelable.getClass().equals(SavedState.class)) {
             super.onRestoreInstanceState(parcelable);
             return;
@@ -250,16 +249,16 @@ public class SeekBarPreference extends RestrictedPreference implements View.OnKe
         notifyChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SavedState extends Preference.BaseSavedState {
+    private static class SavedState extends Preference.BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() { // from class: com.android.settings.widget.SeekBarPreference.SavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState createFromParcel(Parcel parcel) {
                 return new SavedState(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState[] newArray(int i) {

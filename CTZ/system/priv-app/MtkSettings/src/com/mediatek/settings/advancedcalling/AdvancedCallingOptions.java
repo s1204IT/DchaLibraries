@@ -29,6 +29,7 @@ import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.widget.SwitchBar;
 import com.mediatek.ims.internal.MtkImsManager;
 import com.mediatek.settings.sim.TelephonyUtils;
+
 /* loaded from: classes.dex */
 public class AdvancedCallingOptions extends SettingsPreferenceFragment implements SwitchBar.OnSwitchChangeListener {
     private Context mContext;
@@ -58,7 +59,9 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
                 setResultCode(0);
                 AdvancedCallingOptions.this.mSwitch.setChecked(false);
                 AdvancedCallingOptions.this.showAlert(intent);
-            } else if (action.equals("com.android.intent.action.IMS_CONFIG_CHANGED")) {
+                return;
+            }
+            if (action.equals("com.android.intent.action.IMS_CONFIG_CHANGED")) {
                 Log.d("OP12AdvancedCallingOptionsFragment", "config changed, finish Advance Calling activity");
                 try {
                     ImsConfig configInterface = ImsManager.getInstance(AdvancedCallingOptions.this.mContext, SubscriptionManager.getDefaultVoicePhoneId()).getConfigInterface();
@@ -74,7 +77,9 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
                     e.printStackTrace();
                 }
                 AdvancedCallingOptions.this.getActivity().finish();
-            } else if (action.equals("android.intent.action.PHONE_STATE")) {
+                return;
+            }
+            if (action.equals("android.intent.action.PHONE_STATE")) {
                 Log.d("OP12AdvancedCallingOptionsFragment", "Phone state changed, so update the screen");
                 AdvancedCallingOptions.this.updateScreen();
             }
@@ -115,15 +120,15 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate;
+        View viewInflate;
         if (this.mEnablePlatform) {
-            inflate = layoutInflater.inflate(R.layout.calling_pref_layout, viewGroup, false);
-            this.mVoiceVideoButton = (RadioButton) inflate.findViewById(R.id.hd_voice_video);
+            viewInflate = layoutInflater.inflate(R.layout.calling_pref_layout, viewGroup, false);
+            this.mVoiceVideoButton = (RadioButton) viewInflate.findViewById(R.id.hd_voice_video);
         } else {
-            inflate = layoutInflater.inflate(R.layout.calling_voice_only_pref_layout, viewGroup, false);
+            viewInflate = layoutInflater.inflate(R.layout.calling_voice_only_pref_layout, viewGroup, false);
         }
-        this.mRadioGroup = (RadioGroup) inflate.findViewById(R.id.hd_voice_video_group);
-        this.mVoiceButton = (RadioButton) inflate.findViewById(R.id.hd_voice_only);
+        this.mRadioGroup = (RadioGroup) viewInflate.findViewById(R.id.hd_voice_video_group);
+        this.mVoiceButton = (RadioButton) viewInflate.findViewById(R.id.hd_voice_only);
         this.mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() { // from class: com.mediatek.settings.advancedcalling.AdvancedCallingOptions.3
             @Override // android.widget.RadioGroup.OnCheckedChangeListener
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -133,90 +138,88 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
                         if (AdvancedCallingOptions.this.mVoiceButton.isEnabled()) {
                             Log.d("OP12AdvancedCallingOptionsFragment", "Show Voice only Button ON dialog");
                             AlertDialog.Builder builder = new AlertDialog.Builder(AdvancedCallingOptions.this.mContext);
-                            View inflate2 = LayoutInflater.from(AdvancedCallingOptions.this.mContext).inflate(R.layout.skip_checkbox, (ViewGroup) null);
-                            final CheckBox checkBox = (CheckBox) inflate2.findViewById(R.id.skip_box);
-                            builder.setView(inflate2);
+                            View viewInflate2 = LayoutInflater.from(AdvancedCallingOptions.this.mContext).inflate(R.layout.skip_checkbox, (ViewGroup) null);
+                            final CheckBox checkBox = (CheckBox) viewInflate2.findViewById(R.id.skip_box);
+                            builder.setView(viewInflate2);
                             builder.setTitle(AdvancedCallingOptions.this.mContext.getString(R.string.note));
                             builder.setCancelable(false);
-                            builder.setMessage(AdvancedCallingOptions.this.mContext.getString(R.string.enable_hd_voice_only_msg)).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.advancedcalling.AdvancedCallingOptions.3.2
+                            builder.setMessage(AdvancedCallingOptions.this.mContext.getString(R.string.enable_hd_voice_only_msg)).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.advancedcalling.AdvancedCallingOptions.3.2
                                 @Override // android.content.DialogInterface.OnClickListener
                                 public void onClick(DialogInterface dialogInterface, int i2) {
                                     String str = "NOT checked";
                                     if (checkBox.isChecked()) {
                                         str = "checked";
                                     }
-                                    SharedPreferences.Editor edit = AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).edit();
-                                    edit.putString("skipMessage4", str);
-                                    edit.commit();
+                                    SharedPreferences.Editor editorEdit = AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).edit();
+                                    editorEdit.putString("skipMessage4", str);
+                                    editorEdit.commit();
                                 }
                             });
-                            AlertDialog create = builder.create();
+                            AlertDialog alertDialogCreate = builder.create();
                             if (!AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).getString("skipMessage4", "NOT checked").equalsIgnoreCase("checked")) {
-                                create.show();
+                                alertDialogCreate.show();
                             }
                             if (AdvancedCallingOptions.this.mEnablePlatform && AdvancedCallingOptions.this.mEnableLVC) {
                                 Settings.Global.putInt(AdvancedCallingOptions.this.mContext.getContentResolver(), "KEY_CALL_OPTIONS", 0);
                                 ImsManager.getInstance(AdvancedCallingOptions.this.mContext, TelephonyUtils.getMainCapabilityPhoneId());
                                 MtkImsManager.setVtSetting(AdvancedCallingOptions.this.mContext, false, 0);
                                 Log.d("OP12AdvancedCallingOptionsFragment", "Set VT false");
-                                return;
+                                break;
                             }
-                            return;
                         }
-                        return;
+                        break;
                     case R.id.hd_voice_video /* 2131362168 */:
                         Log.d("OP12AdvancedCallingOptionsFragment", "Video Button checked");
                         if (AdvancedCallingOptions.this.mEnableLVC) {
                             if (AdvancedCallingOptions.this.mVoiceVideoButton.isEnabled()) {
                                 Log.d("OP12AdvancedCallingOptionsFragment", "Show Video Button ON dialog");
                                 AlertDialog.Builder builder2 = new AlertDialog.Builder(AdvancedCallingOptions.this.mContext);
-                                View inflate3 = LayoutInflater.from(AdvancedCallingOptions.this.mContext).inflate(R.layout.skip_checkbox, (ViewGroup) null);
-                                final CheckBox checkBox2 = (CheckBox) inflate3.findViewById(R.id.skip_box);
-                                builder2.setView(inflate3);
+                                View viewInflate3 = LayoutInflater.from(AdvancedCallingOptions.this.mContext).inflate(R.layout.skip_checkbox, (ViewGroup) null);
+                                final CheckBox checkBox2 = (CheckBox) viewInflate3.findViewById(R.id.skip_box);
+                                builder2.setView(viewInflate3);
                                 builder2.setCancelable(false);
                                 builder2.setTitle(AdvancedCallingOptions.this.mContext.getString(R.string.note));
-                                builder2.setMessage(AdvancedCallingOptions.this.mContext.getString(R.string.advance_calling_enable_msg)).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.advancedcalling.AdvancedCallingOptions.3.1
+                                builder2.setMessage(AdvancedCallingOptions.this.mContext.getString(R.string.advance_calling_enable_msg)).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.advancedcalling.AdvancedCallingOptions.3.1
                                     @Override // android.content.DialogInterface.OnClickListener
                                     public void onClick(DialogInterface dialogInterface, int i2) {
                                         String str = "NOT checked";
                                         if (checkBox2.isChecked()) {
                                             str = "checked";
                                         }
-                                        SharedPreferences.Editor edit = AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).edit();
-                                        edit.putString("skipMessage3", str);
-                                        edit.commit();
+                                        SharedPreferences.Editor editorEdit = AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).edit();
+                                        editorEdit.putString("skipMessage3", str);
+                                        editorEdit.commit();
                                     }
                                 });
-                                AlertDialog create2 = builder2.create();
+                                AlertDialog alertDialogCreate2 = builder2.create();
                                 if (!AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).getString("skipMessage3", "NOT checked").equalsIgnoreCase("checked")) {
-                                    create2.show();
+                                    alertDialogCreate2.show();
                                 }
                                 ImsManager.getInstance(AdvancedCallingOptions.this.mContext, TelephonyUtils.getMainCapabilityPhoneId());
                                 MtkImsManager.setVtSetting(AdvancedCallingOptions.this.mContext, true, 0);
                                 Log.d("OP12AdvancedCallingOptionsFragment", "Set VT true");
                                 Settings.Global.putInt(AdvancedCallingOptions.this.mContext.getContentResolver(), "KEY_CALL_OPTIONS", 1);
-                                return;
+                                break;
                             }
-                            return;
+                        } else {
+                            AlertDialog.Builder builder3 = new AlertDialog.Builder(AdvancedCallingOptions.this.mContext);
+                            builder3.setCancelable(false);
+                            builder3.setTitle(AdvancedCallingOptions.this.mContext.getString(R.string.note));
+                            builder3.setMessage(AdvancedCallingOptions.this.mContext.getString(R.string.lvc_disable));
+                            builder3.setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null);
+                            builder3.create().show();
+                            AdvancedCallingOptions.this.mVoiceVideoButton.setChecked(false);
+                            AdvancedCallingOptions.this.mVoiceButton.setEnabled(false);
+                            AdvancedCallingOptions.this.mVoiceButton.setChecked(true);
+                            AdvancedCallingOptions.this.mVoiceButton.setEnabled(true);
+                            Log.d("OP12AdvancedCallingOptionsFragment", "LVC is disabled, so disable HD Voice and Video option");
+                            break;
                         }
-                        AlertDialog.Builder builder3 = new AlertDialog.Builder(AdvancedCallingOptions.this.mContext);
-                        builder3.setCancelable(false);
-                        builder3.setTitle(AdvancedCallingOptions.this.mContext.getString(R.string.note));
-                        builder3.setMessage(AdvancedCallingOptions.this.mContext.getString(R.string.lvc_disable));
-                        builder3.setPositiveButton(17039370, (DialogInterface.OnClickListener) null);
-                        builder3.create().show();
-                        AdvancedCallingOptions.this.mVoiceVideoButton.setChecked(false);
-                        AdvancedCallingOptions.this.mVoiceButton.setEnabled(false);
-                        AdvancedCallingOptions.this.mVoiceButton.setChecked(true);
-                        AdvancedCallingOptions.this.mVoiceButton.setEnabled(true);
-                        Log.d("OP12AdvancedCallingOptionsFragment", "LVC is disabled, so disable HD Voice and Video option");
-                        return;
-                    default:
-                        return;
+                        break;
                 }
             }
         });
-        return inflate;
+        return viewInflate;
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -227,8 +230,8 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
             this.mSwitchBar.addOnSwitchChangeListener(this);
             this.mValidListener = true;
         }
-        boolean isEnhanced4gLteModeSettingEnabledByUser = ImsManager.isEnhanced4gLteModeSettingEnabledByUser(this.mContext);
-        if (isEnhanced4gLteModeSettingEnabledByUser) {
+        boolean zIsEnhanced4gLteModeSettingEnabledByUser = ImsManager.isEnhanced4gLteModeSettingEnabledByUser(this.mContext);
+        if (zIsEnhanced4gLteModeSettingEnabledByUser) {
             for (int i = 0; i < this.mRadioGroup.getChildCount(); i++) {
                 this.mRadioGroup.getChildAt(i).setEnabled(false);
             }
@@ -259,7 +262,7 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
             }
             this.mRadioGroup.clearCheck();
         }
-        this.mSwitch.setChecked(isEnhanced4gLteModeSettingEnabledByUser);
+        this.mSwitch.setChecked(zIsEnhanced4gLteModeSettingEnabledByUser);
         updateScreen();
         this.mContext.registerReceiver(this.mIntentReceiver, this.mIntentFilter);
         Intent intent = getActivity().getIntent();
@@ -294,26 +297,26 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
             Log.d("OP12AdvancedCallingOptionsFragment", "Switch is checked");
             Settings.Global.putInt(this.mContext.getContentResolver(), "KEY_ADVANCED_CALLING", 1);
             AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
-            View inflate = LayoutInflater.from(this.mContext).inflate(R.layout.skip_checkbox, (ViewGroup) null);
-            final CheckBox checkBox = (CheckBox) inflate.findViewById(R.id.skip_box);
-            builder.setView(inflate);
+            View viewInflate = LayoutInflater.from(this.mContext).inflate(R.layout.skip_checkbox, (ViewGroup) null);
+            final CheckBox checkBox = (CheckBox) viewInflate.findViewById(R.id.skip_box);
+            builder.setView(viewInflate);
             builder.setTitle(this.mContext.getString(R.string.note));
             builder.setCancelable(false);
-            builder.setMessage(this.mContext.getString(R.string.advance_calling_enable_msg)).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.advancedcalling.AdvancedCallingOptions.4
+            builder.setMessage(this.mContext.getString(R.string.advance_calling_enable_msg)).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.advancedcalling.AdvancedCallingOptions.4
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i) {
                     String str = "NOT checked";
                     if (checkBox.isChecked()) {
                         str = "checked";
                     }
-                    SharedPreferences.Editor edit = AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).edit();
-                    edit.putString("skipMessage1", str);
-                    edit.commit();
+                    SharedPreferences.Editor editorEdit = AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).edit();
+                    editorEdit.putString("skipMessage1", str);
+                    editorEdit.commit();
                 }
             });
-            AlertDialog create = builder.create();
+            AlertDialog alertDialogCreate = builder.create();
             if (!this.mContext.getSharedPreferences("preff_advanced_calling", 0).getString("skipMessage1", "NOT checked").equalsIgnoreCase("checked")) {
-                create.show();
+                alertDialogCreate.show();
             }
             for (int i = 0; i < this.mRadioGroup.getChildCount(); i++) {
                 this.mRadioGroup.getChildAt(i).setEnabled(false);
@@ -331,26 +334,26 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
             Log.d("OP12AdvancedCallingOptionsFragment", "Switch is Unchecked");
             Settings.Global.putInt(this.mContext.getContentResolver(), "KEY_ADVANCED_CALLING", 0);
             AlertDialog.Builder builder2 = new AlertDialog.Builder(this.mContext);
-            View inflate2 = LayoutInflater.from(this.mContext).inflate(R.layout.skip_checkbox, (ViewGroup) null);
-            final CheckBox checkBox2 = (CheckBox) inflate2.findViewById(R.id.skip_box);
-            builder2.setView(inflate2);
+            View viewInflate2 = LayoutInflater.from(this.mContext).inflate(R.layout.skip_checkbox, (ViewGroup) null);
+            final CheckBox checkBox2 = (CheckBox) viewInflate2.findViewById(R.id.skip_box);
+            builder2.setView(viewInflate2);
             builder2.setTitle(this.mContext.getString(R.string.note));
             builder2.setCancelable(false);
-            builder2.setMessage(this.mContext.getString(R.string.advance_calling_disable_msg)).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.advancedcalling.AdvancedCallingOptions.5
+            builder2.setMessage(this.mContext.getString(R.string.advance_calling_disable_msg)).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.advancedcalling.AdvancedCallingOptions.5
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i4) {
                     String str = "NOT checked";
                     if (checkBox2.isChecked()) {
                         str = "checked";
                     }
-                    SharedPreferences.Editor edit = AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).edit();
-                    edit.putString("skipMessage2", str);
-                    edit.commit();
+                    SharedPreferences.Editor editorEdit = AdvancedCallingOptions.this.mContext.getSharedPreferences("preff_advanced_calling", 0).edit();
+                    editorEdit.putString("skipMessage2", str);
+                    editorEdit.commit();
                 }
             });
-            AlertDialog create2 = builder2.create();
+            AlertDialog alertDialogCreate2 = builder2.create();
             if (!this.mContext.getSharedPreferences("preff_advanced_calling", 0).getString("skipMessage2", "NOT checked").equalsIgnoreCase("checked")) {
-                create2.show();
+                alertDialogCreate2.show();
             }
             if (this.mEnableLVC) {
                 if (this.mRadioGroup.getCheckedRadioButtonId() == R.id.hd_voice_video) {
@@ -377,35 +380,28 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showAlert(Intent intent) {
+    private void showAlert(Intent intent) {
         CharSequence charSequenceExtra = intent.getCharSequenceExtra("alertTitle");
         CharSequence charSequenceExtra2 = intent.getCharSequenceExtra("alertMessage");
         AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
-        builder.setMessage(charSequenceExtra2).setTitle(charSequenceExtra).setIcon(17301543).setPositiveButton(17039370, (DialogInterface.OnClickListener) null);
+        builder.setMessage(charSequenceExtra2).setTitle(charSequenceExtra).setIcon(android.R.drawable.ic_dialog_alert).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null);
         builder.create().show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateScreen() {
+    private void updateScreen() {
         SettingsActivity settingsActivity = (SettingsActivity) getActivity();
         if (settingsActivity == null) {
             return;
         }
         SwitchBar switchBar = settingsActivity.getSwitchBar();
-        boolean isChecked = switchBar.getSwitch().isChecked();
-        boolean z = true;
-        boolean z2 = !TelecomManager.from(settingsActivity).isInCall();
-        Log.d("OP12AdvancedCallingOptionsFragment", "isAdvanceCallingEnabled: " + isChecked + ", isCallStateIdle: " + z2);
-        switchBar.setEnabled(z2);
+        boolean zIsChecked = switchBar.getSwitch().isChecked();
+        boolean z = !TelecomManager.from(settingsActivity).isInCall();
+        Log.d("OP12AdvancedCallingOptionsFragment", "isAdvanceCallingEnabled: " + zIsChecked + ", isCallStateIdle: " + z);
+        switchBar.setEnabled(z);
         if (this.mEnablePlatform) {
-            this.mVoiceVideoButton.setEnabled(isChecked && z2);
+            this.mVoiceVideoButton.setEnabled(zIsChecked && z);
         }
-        RadioButton radioButton = this.mVoiceButton;
-        if (!isChecked || !z2) {
-            z = false;
-        }
-        radioButton.setEnabled(z);
+        this.mVoiceButton.setEnabled(zIsChecked && z);
     }
 
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -429,8 +425,7 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleImsStateChange(int i, int[] iArr, int[] iArr2) {
+    private void handleImsStateChange(int i, int[] iArr, int[] iArr2) {
         if (i == 1) {
             Log.d("OP12AdvancedCallingOptionsFragment", "VoLTE capability changed to :" + iArr[0]);
             this.mSwitchBar.setEnabled(true);

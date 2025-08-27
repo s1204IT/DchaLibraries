@@ -4,6 +4,7 @@ import android.graphics.Outline;
 import android.graphics.Path;
 import android.graphics.drawable.shapes.PathShape;
 import android.support.annotation.NonNull;
+
 /* loaded from: classes.dex */
 public class TriangleShape extends PathShape {
     private Path mTriangularPath;

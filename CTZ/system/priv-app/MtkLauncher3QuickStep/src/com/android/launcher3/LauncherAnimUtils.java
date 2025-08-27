@@ -12,6 +12,7 @@ import android.view.ViewTreeObserver;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.WeakHashMap;
+
 /* loaded from: classes.dex */
 public class LauncherAnimUtils {
     public static final int ALL_APPS_TRANSITION_MS = 320;
@@ -41,22 +42,26 @@ public class LauncherAnimUtils {
         }
     };
     public static final Property<Drawable, Integer> DRAWABLE_ALPHA = new Property<Drawable, Integer>(Integer.TYPE, "drawableAlpha") { // from class: com.android.launcher3.LauncherAnimUtils.3
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(Drawable drawable) {
             return Integer.valueOf(drawable.getAlpha());
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(Drawable drawable, Integer num) {
             drawable.setAlpha(num.intValue());
         }
     };
     public static final Property<View, Float> SCALE_PROPERTY = new Property<View, Float>(Float.class, "scale") { // from class: com.android.launcher3.LauncherAnimUtils.4
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(View view) {
             return Float.valueOf(view.getScaleX());
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(View view, Float f) {
             view.setScaleX(f.floatValue());
@@ -117,14 +122,14 @@ public class LauncherAnimUtils {
     }
 
     public static ObjectAnimator ofFloat(View view, Property<View, Float> property, float... fArr) {
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(view, property, fArr);
-        cancelOnDestroyActivity(ofFloat);
-        new FirstFrameAnimatorHelper(ofFloat, view);
-        return ofFloat;
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(view, property, fArr);
+        cancelOnDestroyActivity(objectAnimatorOfFloat);
+        new FirstFrameAnimatorHelper(objectAnimatorOfFloat, view);
+        return objectAnimatorOfFloat;
     }
 
     public static ObjectAnimator ofViewAlphaAndScale(View view, float f, float f2, float f3) {
-        return ofPropertyValuesHolder(view, PropertyValuesHolder.ofFloat(View.ALPHA, f), PropertyValuesHolder.ofFloat(View.SCALE_X, f2), PropertyValuesHolder.ofFloat(View.SCALE_Y, f3));
+        return ofPropertyValuesHolder(view, PropertyValuesHolder.ofFloat((Property<?, Float>) View.ALPHA, f), PropertyValuesHolder.ofFloat((Property<?, Float>) View.SCALE_X, f2), PropertyValuesHolder.ofFloat((Property<?, Float>) View.SCALE_Y, f3));
     }
 
     public static ObjectAnimator ofPropertyValuesHolder(View view, PropertyValuesHolder... propertyValuesHolderArr) {
@@ -132,10 +137,10 @@ public class LauncherAnimUtils {
     }
 
     public static ObjectAnimator ofPropertyValuesHolder(Object obj, View view, PropertyValuesHolder... propertyValuesHolderArr) {
-        ObjectAnimator ofPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(obj, propertyValuesHolderArr);
-        cancelOnDestroyActivity(ofPropertyValuesHolder);
-        new FirstFrameAnimatorHelper(ofPropertyValuesHolder, view);
-        return ofPropertyValuesHolder;
+        ObjectAnimator objectAnimatorOfPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(obj, propertyValuesHolderArr);
+        cancelOnDestroyActivity(objectAnimatorOfPropertyValuesHolder);
+        new FirstFrameAnimatorHelper(objectAnimatorOfPropertyValuesHolder, view);
+        return objectAnimatorOfPropertyValuesHolder;
     }
 
     public static int blockedFlingDurationFactor(float f) {

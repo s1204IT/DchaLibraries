@@ -2,6 +2,7 @@ package com.android.systemui.util.wakelock;
 
 import android.content.Context;
 import android.os.PowerManager;
+
 /* loaded from: classes.dex */
 public interface WakeLock {
     void acquire();

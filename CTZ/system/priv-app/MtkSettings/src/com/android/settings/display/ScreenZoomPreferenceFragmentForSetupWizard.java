@@ -1,4 +1,5 @@
 package com.android.settings.display;
+
 /* loaded from: classes.dex */
 public class ScreenZoomPreferenceFragmentForSetupWizard extends ScreenZoomSettings {
     @Override // com.android.settings.display.ScreenZoomSettings, com.android.settingslib.core.instrumentation.Instrumentable

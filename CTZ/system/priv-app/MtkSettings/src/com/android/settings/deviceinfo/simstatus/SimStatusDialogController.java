@@ -34,6 +34,7 @@ import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.cdma.CdmaSimStatus;
 import com.mediatek.settings.ext.ISettingsMiscExt;
+
 /* loaded from: classes.dex */
 public class SimStatusDialogController implements LifecycleObserver, OnPause, OnResume {
     static final int CELLULAR_NETWORK_STATE = 2131362032;
@@ -99,7 +100,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         this.mMiscExt = UtilsExt.getMiscPlugin(this.mContext);
     }
 
-    public void initialize() {
+    public void initialize() throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         updateEid();
         if (this.mSubscriptionInfo == null) {
             removeCdmaStatus();
@@ -120,7 +121,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnResume
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         if (this.mSubscriptionInfo == null) {
             return;
         }
@@ -152,8 +153,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateNetworkProvider(ServiceState serviceState) {
+    private void updateNetworkProvider(ServiceState serviceState) {
         this.mDialog.setText(R.id.operator_name_value, serviceState.getOperatorAlphaLong());
     }
 
@@ -161,8 +161,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         this.mDialog.setText(R.id.number_value, BidiFormatter.getInstance().unicodeWrap(getPhoneNumber(), TextDirectionHeuristics.LTR));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDataState(int i) {
+    private void updateDataState(int i) throws Resources.NotFoundException {
         String string;
         switch (i) {
             case 0:
@@ -185,15 +184,14 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
     }
 
     private void updateLatestAreaInfo() {
-        this.mShowLatestAreaInfo = Resources.getSystem().getBoolean(17957017) && this.mTelephonyManager.getPhoneType() != 2;
+        this.mShowLatestAreaInfo = Resources.getSystem().getBoolean(android.R.^attr-private.listItemLayout) && this.mTelephonyManager.getPhoneType() != 2;
         if (!this.mShowLatestAreaInfo) {
             this.mDialog.removeSettingFromScreen(R.id.latest_area_info_label);
             this.mDialog.removeSettingFromScreen(R.id.latest_area_info_value);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateServiceState(ServiceState serviceState) {
+    private void updateServiceState(ServiceState serviceState) throws Resources.NotFoundException {
         String string;
         Log.d("SimStatusDialogCtrl", "updateServiceState, serviceState=" + serviceState);
         int state = serviceState.getState();
@@ -220,8 +218,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         this.mCdmaSimStatus.setServiceState(serviceState);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSignalStrength(SignalStrength signalStrength) {
+    private void updateSignalStrength(SignalStrength signalStrength) {
         boolean z;
         PersistableBundle configForSubId = this.mCarrierConfigManager.getConfigForSubId(this.mSubscriptionInfo.getSubscriptionId());
         if (configForSubId != null) {
@@ -254,46 +251,44 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         this.mDialog.setText(R.id.signal_strength_value, "0");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateNetworkType() {
-        String str;
+    private void updateNetworkType() throws Resources.NotFoundException, PackageManager.NameNotFoundException {
+        String networkTypeName;
         int subscriptionId = this.mSubscriptionInfo.getSubscriptionId();
         int dataNetworkType = this.mTelephonyManager.getDataNetworkType(subscriptionId);
         int voiceNetworkType = this.mTelephonyManager.getVoiceNetworkType(subscriptionId);
         Log.d("SimStatusDialogCtrl", "updateNetworkType, dataType=" + dataNetworkType + ", voiceType=" + voiceNetworkType);
-        String str2 = null;
+        String networkTypeName2 = null;
         if (dataNetworkType != 0) {
             TelephonyManager telephonyManager = this.mTelephonyManager;
-            str = TelephonyManager.getNetworkTypeName(dataNetworkType);
+            networkTypeName = TelephonyManager.getNetworkTypeName(dataNetworkType);
         } else {
-            str = null;
+            networkTypeName = null;
         }
         if (voiceNetworkType != 0) {
             TelephonyManager telephonyManager2 = this.mTelephonyManager;
-            str2 = TelephonyManager.getNetworkTypeName(voiceNetworkType);
+            networkTypeName2 = TelephonyManager.getNetworkTypeName(voiceNetworkType);
         }
         boolean z = false;
         try {
-            Context createPackageContext = this.mContext.createPackageContext("com.android.systemui", 0);
-            z = createPackageContext.getResources().getBoolean(createPackageContext.getResources().getIdentifier("config_show4GForLTE", "bool", "com.android.systemui"));
+            Context contextCreatePackageContext = this.mContext.createPackageContext("com.android.systemui", 0);
+            z = contextCreatePackageContext.getResources().getBoolean(contextCreatePackageContext.getResources().getIdentifier("config_show4GForLTE", "bool", "com.android.systemui"));
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("SimStatusDialogCtrl", "NameNotFoundException for show4GForLTE");
         }
         if (z) {
-            if ("LTE".equals(str)) {
-                str = "4G";
+            if ("LTE".equals(networkTypeName)) {
+                networkTypeName = "4G";
             }
-            if ("LTE".equals(str2)) {
-                str2 = "4G";
+            if ("LTE".equals(networkTypeName2)) {
+                networkTypeName2 = "4G";
             }
         }
-        String networktypeString = this.mMiscExt.getNetworktypeString(str, subscriptionId);
-        this.mDialog.setText(R.id.voice_network_type_value, this.mMiscExt.getNetworktypeString(str2, subscriptionId));
+        String networktypeString = this.mMiscExt.getNetworktypeString(networkTypeName, subscriptionId);
+        this.mDialog.setText(R.id.voice_network_type_value, this.mMiscExt.getNetworktypeString(networkTypeName2, subscriptionId));
         this.mDialog.setText(R.id.data_network_type_value, networktypeString);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateRoamingStatus(ServiceState serviceState) {
+    private void updateRoamingStatus(ServiceState serviceState) {
         if (serviceState.getRoaming()) {
             this.mDialog.setText(R.id.roaming_state_value, this.mRes.getString(R.string.radioInfo_roaming_in));
         } else {
@@ -301,8 +296,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateIccidNumber() {
+    private void updateIccidNumber() {
         boolean z;
         int subscriptionId = this.mSubscriptionInfo.getSubscriptionId();
         PersistableBundle configForSubId = this.mCarrierConfigManager.getConfigForSubId(subscriptionId);
@@ -334,10 +328,10 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         PersistableBundle configForSubId = this.mCarrierConfigManager.getConfigForSubId(subscriptionId);
         if (configForSubId == null ? false : configForSubId.getBoolean("show_ims_registration_status_bool")) {
             this.mDialog.setText(R.id.ims_reg_state_value, this.mRes.getString(this.mTelephonyManager.isImsRegistered(subscriptionId) ? R.string.ims_reg_status_registered : R.string.ims_reg_status_not_registered));
-            return;
+        } else {
+            this.mDialog.removeSettingFromScreen(R.id.ims_reg_state_label);
+            this.mDialog.removeSettingFromScreen(R.id.ims_reg_state_value);
         }
-        this.mDialog.removeSettingFromScreen(R.id.ims_reg_state_label);
-        this.mDialog.removeSettingFromScreen(R.id.ims_reg_state_value);
     }
 
     private SubscriptionInfo getPhoneSubscriptionInfo(int i) {
@@ -366,7 +360,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
     PhoneStateListener getPhoneStateListener() {
         return new PhoneStateListener(Integer.valueOf(this.mSubscriptionInfo.getSubscriptionId())) { // from class: com.android.settings.deviceinfo.simstatus.SimStatusDialogController.2
             @Override // android.telephony.PhoneStateListener
-            public void onDataConnectionStateChanged(int i) {
+            public void onDataConnectionStateChanged(int i) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
                 if (SimStatusDialogController.this.mDialog.getDialog() != null) {
                     Log.d("SimStatusDialogCtrl", "onDataConnectionStateChanged, state=" + i + ", subInfo=" + SimStatusDialogController.this.mSubscriptionInfo);
                     SimStatusDialogController.this.updateDataState(i);
@@ -377,7 +371,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
             }
 
             @Override // android.telephony.PhoneStateListener
-            public void onPreciseDataConnectionStateChanged(PreciseDataConnectionState preciseDataConnectionState) {
+            public void onPreciseDataConnectionStateChanged(PreciseDataConnectionState preciseDataConnectionState) throws Resources.NotFoundException {
                 if (SimStatusDialogController.this.mDialog.getDialog() == null) {
                     Log.w("SimStatusDialogCtrl", "onPreciseDataConnectionStateChanged, dialog is null.");
                     return;
@@ -401,7 +395,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
             }
 
             @Override // android.telephony.PhoneStateListener
-            public void onServiceStateChanged(ServiceState serviceState) {
+            public void onServiceStateChanged(ServiceState serviceState) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
                 if (SimStatusDialogController.this.mDialog.getDialog() == null) {
                     Log.w("SimStatusDialogCtrl", "onServiceStateChanged, dialog is null.");
                     return;
@@ -429,8 +423,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         return this.mTelephonyManager.getSimSerialNumber(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateCdmaStatus(ServiceState serviceState) {
+    private void updateCdmaStatus(ServiceState serviceState) {
         int subscriptionId = this.mSubscriptionInfo.getSubscriptionId();
         int currentPhoneType = this.mTelephonyManager.getCurrentPhoneType(subscriptionId);
         Log.d("SimStatusDialogCtrl", "updateCdmaStatus, subId=" + subscriptionId + ", phoneType=" + currentPhoneType);
@@ -484,9 +477,9 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
     private void updateCellId() {
         CellLocation cellLocation = this.mTelephonyManager.getCellLocation();
         if (cellLocation instanceof CdmaCellLocation) {
-            String num = Integer.toString(((CdmaCellLocation) cellLocation).getBaseStationId());
-            Log.d("SimStatusDialogCtrl", "updateCellId, cellId=" + num);
-            this.mDialog.setText(R.id.cell_id_value, num);
+            String string = Integer.toString(((CdmaCellLocation) cellLocation).getBaseStationId());
+            Log.d("SimStatusDialogCtrl", "updateCellId, cellId=" + string);
+            this.mDialog.setText(R.id.cell_id_value, string);
         } else {
             Log.d("SimStatusDialogCtrl", "updateCellId, not CDMA cell location.");
             this.mDialog.setText(R.id.cell_id_value, null);

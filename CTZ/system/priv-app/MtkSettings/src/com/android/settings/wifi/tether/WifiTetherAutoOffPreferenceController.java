@@ -5,6 +5,7 @@ import android.provider.Settings;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class WifiTetherAutoOffPreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener {
     public WifiTetherAutoOffPreferenceController(Context context, String str) {

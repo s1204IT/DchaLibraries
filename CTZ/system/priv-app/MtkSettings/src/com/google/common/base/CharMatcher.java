@@ -1,6 +1,8 @@
 package com.google.common.base;
 
+import com.android.settingslib.wifi.AccessPoint;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public abstract class CharMatcher implements Predicate<Character> {
     public static final CharMatcher ANY;
@@ -27,20 +29,24 @@ public abstract class CharMatcher implements Predicate<Character> {
                 }
                 if (c != 8287 && c != 12288) {
                     switch (c) {
-                        case '\t':
-                        case '\n':
-                        case 11:
-                        case '\f':
-                        case '\r':
-                            break;
                         default:
                             switch (c) {
                                 case 8232:
                                 case 8233:
                                     break;
                                 default:
-                                    return c >= 8192 && c <= 8202;
+                                    if (c < 8192 || c > 8202) {
+                                        break;
+                                    }
+                                    break;
                             }
+                            return false;
+                        case '\t':
+                        case AccessPoint.Speed.MODERATE /* 10 */:
+                        case 11:
+                        case '\f':
+                        case '\r':
+                            return true;
                     }
                 }
             }
@@ -95,7 +101,7 @@ public abstract class CharMatcher implements Predicate<Character> {
         };
         JAVA_ISO_CONTROL = inRange((char) 0, (char) 31).or(inRange((char) 127, (char) 159)).withToString("CharMatcher.JAVA_ISO_CONTROL");
         INVISIBLE = new RangesMatcher("CharMatcher.INVISIBLE", "\u0000\u007f\u00ad\u0600\u061c\u06dd\u070f\u1680\u180e\u2000\u2028\u205f\u2066\u2067\u2068\u2069\u206a\u3000\ud800\ufeff\ufff9\ufffa".toCharArray(), "  \u00ad\u0604\u061c\u06dd\u070f\u1680\u180e\u200f \u2064\u2066\u2067\u2068\u2069\u206f\u3000\uf8ff\ufeff\ufff9\ufffb".toCharArray());
-        SINGLE_WIDTH = new RangesMatcher("CharMatcher.SINGLE_WIDTH", "\u0000־א׳\u0600ݐ\u0e00Ḁ℀ﭐﹰ｡".toCharArray(), "ӹ־ת״ۿݿ\u0e7f₯℺\ufdff\ufeffￜ".toCharArray());
+        SINGLE_WIDTH = new RangesMatcher("CharMatcher.SINGLE_WIDTH", "\u0000־א׳\u0600ݐ\u0e00Ḁ℀ﭐﹰ｡".toCharArray(), "ӹ־ת״ۿݿ\u0e7f₯℺﷿\ufeffￜ".toCharArray());
         ANY = new FastMatcher("CharMatcher.ANY") { // from class: com.google.common.base.CharMatcher.7
             @Override // com.google.common.base.CharMatcher
             public boolean matches(char c) {
@@ -128,7 +134,6 @@ public abstract class CharMatcher implements Predicate<Character> {
         };
     }
 
-    /* loaded from: classes.dex */
     private static class RangesMatcher extends CharMatcher {
         private final char[] rangeEnds;
         private final char[] rangeStarts;
@@ -151,11 +156,11 @@ public abstract class CharMatcher implements Predicate<Character> {
 
         @Override // com.google.common.base.CharMatcher
         public boolean matches(char c) {
-            int binarySearch = Arrays.binarySearch(this.rangeStarts, c);
-            if (binarySearch >= 0) {
+            int iBinarySearch = Arrays.binarySearch(this.rangeStarts, c);
+            if (iBinarySearch >= 0) {
                 return true;
             }
-            int i = (~binarySearch) - 1;
+            int i = (~iBinarySearch) - 1;
             return i >= 0 && c <= this.rangeEnds[i];
         }
     }
@@ -195,9 +200,7 @@ public abstract class CharMatcher implements Predicate<Character> {
         return new Or(this, (CharMatcher) Preconditions.checkNotNull(charMatcher));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class Or extends CharMatcher {
+    private static class Or extends CharMatcher {
         final CharMatcher first;
         final CharMatcher second;
 
@@ -226,13 +229,13 @@ public abstract class CharMatcher implements Predicate<Character> {
         throw new UnsupportedOperationException();
     }
 
-    /* loaded from: classes.dex */
     static abstract class FastMatcher extends CharMatcher {
         FastMatcher(String str) {
             super(str);
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: apply(Ljava/lang/Object;)Z */
     @Override // com.google.common.base.Predicate
     @Deprecated
     public boolean apply(Character ch) {

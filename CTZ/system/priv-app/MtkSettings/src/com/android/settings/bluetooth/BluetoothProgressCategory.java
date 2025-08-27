@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import com.android.settings.ProgressCategory;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class BluetoothProgressCategory extends ProgressCategory {
     public BluetoothProgressCategory(Context context) {

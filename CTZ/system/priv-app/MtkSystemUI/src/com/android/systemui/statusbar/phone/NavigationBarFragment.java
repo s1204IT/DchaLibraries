@@ -65,6 +65,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
 /* loaded from: classes.dex */
 public class NavigationBarFragment extends Fragment implements CommandQueue.Callbacks {
     private boolean mAccessibilityFeedbackEnabled;
@@ -100,19 +101,18 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
     private final Runnable mRemoveRotationProposal = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$2a6PQeDykikHzH0rBVD4AZZp14o
         @Override // java.lang.Runnable
         public final void run() {
-            NavigationBarFragment.this.setRotateSuggestionButtonState(false);
+            this.f$0.setRotateSuggestionButtonState(false);
         }
     };
     private final Runnable mCancelPendingRotationProposal = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$Wf_FUQzkbSdMD9hXKJaXOD_rVSY
         @Override // java.lang.Runnable
         public final void run() {
-            NavigationBarFragment.this.mPendingRotationSuggestion = false;
+            this.f$0.mPendingRotationSuggestion = false;
         }
     };
     private ViewRippler mViewRippler = new ViewRippler();
     private final OverviewProxyService.OverviewProxyListener mOverviewProxyListener = new OverviewProxyService.OverviewProxyListener() { // from class: com.android.systemui.statusbar.phone.NavigationBarFragment.1
-        {
-            NavigationBarFragment.this = this;
+        AnonymousClass1() {
         }
 
         @Override // com.android.systemui.OverviewProxyService.OverviewProxyListener
@@ -140,14 +140,14 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         }
     };
     private final AccessibilityManager.AccessibilityServicesStateChangeListener mAccessibilityListener = new AccessibilityManager.AccessibilityServicesStateChangeListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$dxES00kAyC8r2RmY9FwTYgUhoj8
+        @Override // android.view.accessibility.AccessibilityManager.AccessibilityServicesStateChangeListener
         public final void onAccessibilityServicesStateChanged(AccessibilityManager accessibilityManager) {
-            NavigationBarFragment.this.updateAccessibilityServicesState(accessibilityManager);
+            this.f$0.updateAccessibilityServicesState(accessibilityManager);
         }
     };
     private final IRotationWatcher.Stub mRotationWatcher = new AnonymousClass3();
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() { // from class: com.android.systemui.statusbar.phone.NavigationBarFragment.4
-        {
-            NavigationBarFragment.this = this;
+        AnonymousClass4() {
         }
 
         @Override // android.content.BroadcastReceiver
@@ -161,6 +161,36 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
             }
         }
     };
+
+    /* renamed from: com.android.systemui.statusbar.phone.NavigationBarFragment$1 */
+    class AnonymousClass1 implements OverviewProxyService.OverviewProxyListener {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.systemui.OverviewProxyService.OverviewProxyListener
+        public void onConnectionChanged(boolean z) {
+            NavigationBarFragment.this.mNavigationBarView.updateStates();
+            NavigationBarFragment.this.updateScreenPinningGestures();
+        }
+
+        @Override // com.android.systemui.OverviewProxyService.OverviewProxyListener
+        public void onQuickStepStarted() {
+            NavigationBarFragment.this.setRotateSuggestionButtonState(false);
+        }
+
+        @Override // com.android.systemui.OverviewProxyService.OverviewProxyListener
+        public void onInteractionFlagsChanged(int i) {
+            NavigationBarFragment.this.mNavigationBarView.updateStates();
+            NavigationBarFragment.this.updateScreenPinningGestures();
+        }
+
+        @Override // com.android.systemui.OverviewProxyService.OverviewProxyListener
+        public void onBackButtonAlphaChanged(float f, boolean z) {
+            ButtonDispatcher backButton = NavigationBarFragment.this.mNavigationBarView.getBackButton();
+            backButton.setVisibility(f > 0.0f ? 0 : 4);
+            backButton.setAlpha(f, z);
+        }
+    }
 
     @Override // android.app.Fragment
     public void onCreate(Bundle bundle) {
@@ -223,15 +253,13 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         this.mNavigationBarView.setOnVerticalChangedListener(new NavigationBarView.OnVerticalChangedListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$eFJm5m1txtISSi8Cx3m3pc8Nvjw
             @Override // com.android.systemui.statusbar.phone.NavigationBarView.OnVerticalChangedListener
             public final void onVerticalChanged(boolean z) {
-                NavigationBarFragment.this.onVerticalChanged(z);
+                this.f$0.onVerticalChanged(z);
             }
         });
         this.mNavigationBarView.setOnTouchListener(new View.OnTouchListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$X9JO9eLzlFoQkYf8XrZG-l2EMsk
             @Override // android.view.View.OnTouchListener
             public final boolean onTouch(View view2, MotionEvent motionEvent) {
-                boolean onNavigationTouch;
-                onNavigationTouch = NavigationBarFragment.this.onNavigationTouch(view2, motionEvent);
-                return onNavigationTouch;
+                return this.f$0.onNavigationTouch(view2, motionEvent);
             }
         });
         if (bundle != null) {
@@ -357,7 +385,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
     public void onRotationProposal(int i, boolean z) {
         int i2;
         int rotation = this.mWindowManager.getDefaultDisplay().getRotation();
-        boolean hasDisable2RotateSuggestionFlag = hasDisable2RotateSuggestionFlag(this.mDisabledFlags2);
+        boolean zHasDisable2RotateSuggestionFlag = hasDisable2RotateSuggestionFlag(this.mDisabledFlags2);
         StringBuilder sb = new StringBuilder();
         sb.append("onRotationProposal proposedRotation=");
         sb.append(Surface.rotationToString(i));
@@ -368,37 +396,39 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         sb.append(", mNavBarWindowState=");
         sb.append(StatusBarManager.windowStateToString(this.mNavigationBarWindowState));
         sb.append(", rotateSuggestionsDisabled=");
-        sb.append(hasDisable2RotateSuggestionFlag);
+        sb.append(zHasDisable2RotateSuggestionFlag);
         sb.append(", isRotateButtonVisible=");
         sb.append(this.mNavigationBarView == null ? "null" : Boolean.valueOf(this.mNavigationBarView.isRotateButtonVisible()));
         Log.v("NavigationBar", sb.toString());
-        if (hasDisable2RotateSuggestionFlag) {
+        if (zHasDisable2RotateSuggestionFlag) {
             return;
         }
         if (!z) {
             setRotateSuggestionButtonState(false);
-        } else if (i == rotation) {
+            return;
+        }
+        if (i == rotation) {
             getView().removeCallbacks(this.mRemoveRotationProposal);
             setRotateSuggestionButtonState(false);
-        } else {
-            this.mLastRotationSuggestion = i;
-            if (this.mNavigationBarView != null) {
-                boolean isRotationAnimationCCW = isRotationAnimationCCW(rotation, i);
-                if (rotation == 0 || rotation == 2) {
-                    i2 = isRotationAnimationCCW ? R.style.RotateButtonCCWStart90 : R.style.RotateButtonCWStart90;
-                } else {
-                    i2 = isRotationAnimationCCW ? R.style.RotateButtonCCWStart0 : R.style.RotateButtonCWStart0;
-                }
-                this.mNavigationBarView.updateRotateSuggestionButtonStyle(i2, true);
-            }
-            if (this.mNavigationBarWindowState != 0) {
-                this.mPendingRotationSuggestion = true;
-                getView().removeCallbacks(this.mCancelPendingRotationProposal);
-                getView().postDelayed(this.mCancelPendingRotationProposal, 20000L);
-                return;
-            }
-            showAndLogRotationSuggestion();
+            return;
         }
+        this.mLastRotationSuggestion = i;
+        if (this.mNavigationBarView != null) {
+            boolean zIsRotationAnimationCCW = isRotationAnimationCCW(rotation, i);
+            if (rotation == 0 || rotation == 2) {
+                i2 = zIsRotationAnimationCCW ? R.style.RotateButtonCCWStart90 : R.style.RotateButtonCWStart90;
+            } else {
+                i2 = zIsRotationAnimationCCW ? R.style.RotateButtonCCWStart0 : R.style.RotateButtonCWStart0;
+            }
+            this.mNavigationBarView.updateRotateSuggestionButtonStyle(i2, true);
+        }
+        if (this.mNavigationBarWindowState != 0) {
+            this.mPendingRotationSuggestion = true;
+            getView().removeCallbacks(this.mCancelPendingRotationProposal);
+            getView().postDelayed(this.mCancelPendingRotationProposal, 20000L);
+            return;
+        }
+        showAndLogRotationSuggestion();
     }
 
     private void onRotationSuggestionsDisabled() {
@@ -464,8 +494,8 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
             return;
         }
         ButtonDispatcher rotateSuggestionButton = this.mNavigationBarView.getRotateSuggestionButton();
-        boolean isRotateButtonVisible = this.mNavigationBarView.isRotateButtonVisible();
-        if ((!z && !isRotateButtonVisible) || (currentView = rotateSuggestionButton.getCurrentView()) == null || (imageDrawable = rotateSuggestionButton.getImageDrawable()) == null) {
+        boolean zIsRotateButtonVisible = this.mNavigationBarView.isRotateButtonVisible();
+        if ((!z && !zIsRotateButtonVisible) || (currentView = rotateSuggestionButton.getCurrentView()) == null || (imageDrawable = rotateSuggestionButton.getImageDrawable()) == null) {
             return;
         }
         if (imageDrawable.getDrawable(0) instanceof AnimatedVectorDrawable) {
@@ -502,13 +532,14 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
                 this.mRotateHideAnimator.pause();
             }
             this.mNavigationBarView.setRotateButtonVisibility(false);
-        } else if (this.mRotateHideAnimator == null || !this.mRotateHideAnimator.isRunning()) {
-            ObjectAnimator ofFloat = ObjectAnimator.ofFloat(currentView, "alpha", 0.0f);
-            ofFloat.setDuration(100L);
-            ofFloat.setInterpolator(Interpolators.LINEAR);
-            ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.NavigationBarFragment.2
-                {
-                    NavigationBarFragment.this = this;
+            return;
+        }
+        if (this.mRotateHideAnimator == null || !this.mRotateHideAnimator.isRunning()) {
+            ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(currentView, "alpha", 0.0f);
+            objectAnimatorOfFloat.setDuration(100L);
+            objectAnimatorOfFloat.setInterpolator(Interpolators.LINEAR);
+            objectAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.NavigationBarFragment.2
+                AnonymousClass2() {
                 }
 
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
@@ -516,8 +547,19 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
                     NavigationBarFragment.this.mNavigationBarView.setRotateButtonVisibility(false);
                 }
             });
-            this.mRotateHideAnimator = ofFloat;
-            ofFloat.start();
+            this.mRotateHideAnimator = objectAnimatorOfFloat;
+            objectAnimatorOfFloat.start();
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.NavigationBarFragment$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        AnonymousClass2() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            NavigationBarFragment.this.mNavigationBarView.setRotateButtonVisibility(false);
         }
     }
 
@@ -557,26 +599,26 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
 
     @Override // com.android.systemui.statusbar.CommandQueue.Callbacks
     public void setSystemUiVisibility(int i, int i2, int i3, int i4, Rect rect, Rect rect2) {
-        int computeBarMode;
+        int iComputeBarMode;
         int i5 = this.mSystemUiVisibility;
         int i6 = ((~i4) & i5) | (i & i4);
         if ((i6 ^ i5) != 0) {
             this.mSystemUiVisibility = i6;
             if (getView() != null) {
-                computeBarMode = this.mStatusBar.computeBarMode(i5, i6, 134217728, Integer.MIN_VALUE, 32768);
+                iComputeBarMode = this.mStatusBar.computeBarMode(i5, i6, 134217728, Integer.MIN_VALUE, 32768);
             } else {
-                computeBarMode = -1;
+                iComputeBarMode = -1;
             }
-            r9 = computeBarMode != -1;
-            if (r9) {
-                if (this.mNavigationBarMode != computeBarMode) {
-                    this.mNavigationBarMode = computeBarMode;
+            z = iComputeBarMode != -1;
+            if (z) {
+                if (this.mNavigationBarMode != iComputeBarMode) {
+                    this.mNavigationBarMode = iComputeBarMode;
                     checkNavBarModes();
                 }
                 this.mStatusBar.touchAutoHide();
             }
         }
-        this.mLightBarController.onNavigationVisibilityChanged(i, i4, r9, this.mNavigationBarMode);
+        this.mLightBarController.onNavigationVisibilityChanged(i, i4, z, this.mNavigationBarMode);
     }
 
     @Override // com.android.systemui.statusbar.CommandQueue.Callbacks
@@ -616,7 +658,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         return (this.mStatusBar.isDeviceProvisioned() && (this.mDisabledFlags1 & 33554432) == 0) ? false : true;
     }
 
-    public void repositionNavigationBar() {
+    private void repositionNavigationBar() {
         if (this.mNavigationBarView == null || !this.mNavigationBarView.isAttachedToWindow()) {
             return;
         }
@@ -624,27 +666,25 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         this.mWindowManager.updateViewLayout((View) this.mNavigationBarView.getParent(), ((View) this.mNavigationBarView.getParent()).getLayoutParams());
     }
 
-    public void updateScreenPinningGestures() {
+    private void updateScreenPinningGestures() {
         if (this.mNavigationBarView == null) {
             return;
         }
-        boolean isRecentsButtonVisible = this.mNavigationBarView.isRecentsButtonVisible();
+        boolean zIsRecentsButtonVisible = this.mNavigationBarView.isRecentsButtonVisible();
         ButtonDispatcher backButton = this.mNavigationBarView.getBackButton();
-        if (isRecentsButtonVisible) {
+        if (zIsRecentsButtonVisible) {
             backButton.setOnLongClickListener(new $$Lambda$NavigationBarFragment$dtGeJfWz2E4_XAoQgX8peIw4kU8(this));
         } else {
             backButton.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$oZtQ9jE1OTI8AtitIxsN6ETT4sc
                 @Override // android.view.View.OnLongClickListener
                 public final boolean onLongClick(View view) {
-                    boolean onLongPressBackHome;
-                    onLongPressBackHome = NavigationBarFragment.this.onLongPressBackHome(view);
-                    return onLongPressBackHome;
+                    return this.f$0.onLongPressBackHome(view);
                 }
             });
         }
     }
 
-    public void notifyNavigationBarScreenOn() {
+    private void notifyNavigationBarScreenOn() {
         this.mNavigationBarView.updateNavButtonIcons();
     }
 
@@ -654,15 +694,13 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         recentsButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$0mmLLxBq7RxotphHQB_RtYb4SpQ
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                NavigationBarFragment.this.onRecentsClick(view);
+                this.f$0.onRecentsClick(view);
             }
         });
         recentsButton.setOnTouchListener(new View.OnTouchListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$VEqqEZFjg0f3lWOW2BJ66Oo_2aE
             @Override // android.view.View.OnTouchListener
             public final boolean onTouch(View view, MotionEvent motionEvent) {
-                boolean onRecentsTouch;
-                onRecentsTouch = NavigationBarFragment.this.onRecentsTouch(view, motionEvent);
-                return onRecentsTouch;
+                return this.f$0.onRecentsTouch(view, motionEvent);
             }
         });
         recentsButton.setLongClickable(true);
@@ -672,30 +710,26 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         homeButton.setOnTouchListener(new View.OnTouchListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$y_1OHmWTpLl8uCcO3A0Am620g94
             @Override // android.view.View.OnTouchListener
             public final boolean onTouch(View view, MotionEvent motionEvent) {
-                boolean onHomeTouch;
-                onHomeTouch = NavigationBarFragment.this.onHomeTouch(view, motionEvent);
-                return onHomeTouch;
+                return this.f$0.onHomeTouch(view, motionEvent);
             }
         });
         homeButton.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$8vcstZEv0YyG7EUTK_UrsNSFXRo
             @Override // android.view.View.OnLongClickListener
             public final boolean onLongClick(View view) {
-                return NavigationBarFragment.this.onHomeLongClick(view);
+                return this.f$0.onHomeLongClick(view);
             }
         });
         ButtonDispatcher accessibilityButton = this.mNavigationBarView.getAccessibilityButton();
         accessibilityButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$Ylizyb5K7ZQr77j1Ehc8SUjcI6E
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                NavigationBarFragment.this.onAccessibilityClick(view);
+                this.f$0.onAccessibilityClick(view);
             }
         });
         accessibilityButton.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$RtBTLxltRKo37YrTKiaCXCxwRDg
             @Override // android.view.View.OnLongClickListener
             public final boolean onLongClick(View view) {
-                boolean onAccessibilityLongClick;
-                onAccessibilityLongClick = NavigationBarFragment.this.onAccessibilityLongClick(view);
-                return onAccessibilityLongClick;
+                return this.f$0.onAccessibilityLongClick(view);
             }
         });
         updateAccessibilityServicesState(this.mAccessibilityManager);
@@ -703,53 +737,57 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         rotateSuggestionButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$-5zWkb0xwQ86wYhCk6W_5t9CDxE
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                NavigationBarFragment.this.onRotateSuggestionClick(view);
+                this.f$0.onRotateSuggestionClick(view);
             }
         });
         rotateSuggestionButton.setOnHoverListener(new View.OnHoverListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$rOeIdAxSsC2NXHBJKZPXVBzZPfI
             @Override // android.view.View.OnHoverListener
             public final boolean onHover(View view, MotionEvent motionEvent) {
-                boolean onRotateSuggestionHover;
-                onRotateSuggestionHover = NavigationBarFragment.this.onRotateSuggestionHover(view, motionEvent);
-                return onRotateSuggestionHover;
+                return this.f$0.onRotateSuggestionHover(view, motionEvent);
             }
         });
         updateScreenPinningGestures();
     }
 
-    public boolean onHomeTouch(View view, MotionEvent motionEvent) {
-        if (!this.mHomeBlockedThisTouch || motionEvent.getActionMasked() == 0) {
-            int action = motionEvent.getAction();
-            if (action != 3) {
-                switch (action) {
-                    case 0:
-                        this.mHomeBlockedThisTouch = false;
-                        TelecomManager telecomManager = (TelecomManager) getContext().getSystemService(TelecomManager.class);
-                        if (telecomManager != null && telecomManager.isRinging() && this.mStatusBar.isKeyguardShowing()) {
-                            Log.i("NavigationBar", "Ignoring HOME; there's a ringing incoming call. No heads up");
-                            this.mHomeBlockedThisTouch = true;
-                            return true;
-                        }
-                        break;
-                }
-                return false;
-            }
-            this.mStatusBar.awakenDreams();
-            return false;
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:40:0x0041  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    private boolean onHomeTouch(View view, MotionEvent motionEvent) {
+        if (this.mHomeBlockedThisTouch && motionEvent.getActionMasked() != 0) {
+            return true;
         }
-        return true;
+        int action = motionEvent.getAction();
+        if (action != 3) {
+            switch (action) {
+                case 0:
+                    this.mHomeBlockedThisTouch = false;
+                    TelecomManager telecomManager = (TelecomManager) getContext().getSystemService(TelecomManager.class);
+                    if (telecomManager != null && telecomManager.isRinging() && this.mStatusBar.isKeyguardShowing()) {
+                        Log.i("NavigationBar", "Ignoring HOME; there's a ringing incoming call. No heads up");
+                        this.mHomeBlockedThisTouch = true;
+                        return true;
+                    }
+                    break;
+                case 1:
+                    this.mStatusBar.awakenDreams();
+                    break;
+            }
+        }
+        return false;
     }
 
-    public void onVerticalChanged(boolean z) {
+    private void onVerticalChanged(boolean z) {
         this.mStatusBar.setQsScrimEnabled(!z);
     }
 
-    public boolean onNavigationTouch(View view, MotionEvent motionEvent) {
+    private boolean onNavigationTouch(View view, MotionEvent motionEvent) {
         this.mStatusBar.checkUserAutohide(motionEvent);
         return false;
     }
 
-    public boolean onHomeLongClick(View view) {
+    boolean onHomeLongClick(View view) {
         if (!this.mNavigationBarView.isRecentsButtonVisible() && ActivityManagerWrapper.getInstance().isScreenPinningActive()) {
             return onLongPressBackHome(view);
         }
@@ -767,23 +805,24 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         return true;
     }
 
-    public boolean onRecentsTouch(View view, MotionEvent motionEvent) {
+    private boolean onRecentsTouch(View view, MotionEvent motionEvent) {
         int action = motionEvent.getAction() & 255;
         if (action == 0) {
             this.mCommandQueue.preloadRecentApps();
             return false;
-        } else if (action == 3) {
+        }
+        if (action == 3) {
             this.mCommandQueue.cancelPreloadRecentApps();
-            return false;
-        } else if (action == 1 && !view.isPressed()) {
-            this.mCommandQueue.cancelPreloadRecentApps();
-            return false;
-        } else {
             return false;
         }
+        if (action == 1 && !view.isPressed()) {
+            this.mCommandQueue.cancelPreloadRecentApps();
+            return false;
+        }
+        return false;
     }
 
-    public void onRecentsClick(View view) {
+    private void onRecentsClick(View view) {
         if (LatencyTracker.isEnabled(getContext())) {
             LatencyTracker.getInstance(getContext()).onActionStart(1);
         }
@@ -791,67 +830,77 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         this.mCommandQueue.toggleRecentApps();
     }
 
-    public boolean onLongPressBackHome(View view) {
+    private boolean onLongPressBackHome(View view) {
         this.mNavigationBarView.onNavigationButtonLongPress(view);
         return onLongPressNavigationButtons(view, R.id.back, R.id.home);
     }
 
-    public boolean onLongPressBackRecents(View view) {
+    private boolean onLongPressBackRecents(View view) {
         this.mNavigationBarView.onNavigationButtonLongPress(view);
         return onLongPressNavigationButtons(view, R.id.back, R.id.recent_apps);
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:61:0x0051  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private boolean onLongPressNavigationButtons(View view, int i, int i2) {
+        IActivityManager iActivityManager;
+        boolean zIsTouchExplorationEnabled;
+        boolean zIsInLockTaskMode;
         boolean z;
         ButtonDispatcher homeButton;
         try {
-            IActivityManager iActivityManager = ActivityManagerNative.getDefault();
-            boolean isTouchExplorationEnabled = this.mAccessibilityManager.isTouchExplorationEnabled();
-            boolean isInLockTaskMode = iActivityManager.isInLockTaskMode();
-            if (isInLockTaskMode && !isTouchExplorationEnabled) {
-                long currentTimeMillis = System.currentTimeMillis();
-                if (currentTimeMillis - this.mLastLockToAppLongPress < 200) {
-                    iActivityManager.stopSystemLockTaskMode();
-                    this.mNavigationBarView.updateNavButtonIcons();
-                    return true;
-                }
-                if (view.getId() == i) {
-                    if (i2 == R.id.recent_apps) {
-                        homeButton = this.mNavigationBarView.getRecentsButton();
-                    } else {
-                        homeButton = this.mNavigationBarView.getHomeButton();
-                    }
-                    if (!homeButton.getCurrentView().isPressed()) {
-                        z = true;
-                        this.mLastLockToAppLongPress = currentTimeMillis;
-                    }
-                }
-                z = false;
-                this.mLastLockToAppLongPress = currentTimeMillis;
-            } else if (view.getId() != i) {
-                if (isTouchExplorationEnabled && isInLockTaskMode) {
-                    iActivityManager.stopSystemLockTaskMode();
-                    this.mNavigationBarView.updateNavButtonIcons();
-                    return true;
-                } else if (view.getId() == i2) {
-                    if (i2 == R.id.recent_apps) {
-                        return onLongPressRecents();
-                    }
-                    return onHomeLongClick(this.mNavigationBarView.getHomeButton().getCurrentView());
-                } else {
-                    z = false;
-                }
-            } else {
-                z = true;
-            }
-            if (z) {
-                KeyButtonView keyButtonView = (KeyButtonView) view;
-                keyButtonView.sendEvent(0, 128);
-                keyButtonView.sendAccessibilityEvent(2);
-                return true;
-            }
+            iActivityManager = ActivityManagerNative.getDefault();
+            zIsTouchExplorationEnabled = this.mAccessibilityManager.isTouchExplorationEnabled();
+            zIsInLockTaskMode = iActivityManager.isInLockTaskMode();
         } catch (RemoteException e) {
             Log.d("NavigationBar", "Unable to reach activity manager", e);
+        }
+        if (zIsInLockTaskMode && !zIsTouchExplorationEnabled) {
+            long jCurrentTimeMillis = System.currentTimeMillis();
+            if (jCurrentTimeMillis - this.mLastLockToAppLongPress < 200) {
+                iActivityManager.stopSystemLockTaskMode();
+                this.mNavigationBarView.updateNavButtonIcons();
+                return true;
+            }
+            if (view.getId() != i) {
+                z = false;
+                this.mLastLockToAppLongPress = jCurrentTimeMillis;
+            } else {
+                if (i2 == R.id.recent_apps) {
+                    homeButton = this.mNavigationBarView.getRecentsButton();
+                } else {
+                    homeButton = this.mNavigationBarView.getHomeButton();
+                }
+                if (!homeButton.getCurrentView().isPressed()) {
+                    z = true;
+                }
+                this.mLastLockToAppLongPress = jCurrentTimeMillis;
+            }
+            return false;
+        }
+        if (view.getId() != i) {
+            if (zIsTouchExplorationEnabled && zIsInLockTaskMode) {
+                iActivityManager.stopSystemLockTaskMode();
+                this.mNavigationBarView.updateNavButtonIcons();
+                return true;
+            }
+            if (view.getId() == i2) {
+                if (i2 == R.id.recent_apps) {
+                    return onLongPressRecents();
+                }
+                return onHomeLongClick(this.mNavigationBarView.getHomeButton().getCurrentView());
+            }
+            z = false;
+        } else {
+            z = true;
+        }
+        if (z) {
+            KeyButtonView keyButtonView = (KeyButtonView) view;
+            keyButtonView.sendEvent(0, 128);
+            keyButtonView.sendAccessibilityEvent(2);
+            return true;
         }
         return false;
     }
@@ -863,18 +912,18 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         return this.mStatusBar.toggleSplitScreenMode(271, 286);
     }
 
-    public void onAccessibilityClick(View view) {
+    private void onAccessibilityClick(View view) {
         this.mAccessibilityManager.notifyAccessibilityButtonClicked();
     }
 
-    public boolean onAccessibilityLongClick(View view) {
+    private boolean onAccessibilityLongClick(View view) {
         Intent intent = new Intent("com.android.internal.intent.action.CHOOSE_ACCESSIBILITY_BUTTON");
         intent.addFlags(268468224);
         view.getContext().startActivityAsUser(intent, UserHandle.CURRENT);
         return true;
     }
 
-    public void updateAccessibilityServicesState(AccessibilityManager accessibilityManager) {
+    private void updateAccessibilityServicesState(AccessibilityManager accessibilityManager) {
         int i;
         boolean z = false;
         try {
@@ -906,13 +955,13 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         this.mNavigationBarView.setAccessibilityButtonState(z3, z);
     }
 
-    public void onRotateSuggestionClick(View view) {
+    private void onRotateSuggestionClick(View view) {
         this.mMetricsLogger.action(1287);
         incrementNumAcceptedRotationSuggestionsIfNeeded();
         this.mRotationLockController.setRotationLockedAtAngle(true, this.mLastRotationSuggestion);
     }
 
-    public boolean onRotateSuggestionHover(View view, MotionEvent motionEvent) {
+    private boolean onRotateSuggestionHover(View view, MotionEvent motionEvent) {
         int actionMasked = motionEvent.getActionMasked();
         this.mHoveringRotationSuggestion = actionMasked == 9 || actionMasked == 7;
         rescheduleRotationTimeout(true);
@@ -933,7 +982,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         this.mNavigationBarView.postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$wHCoB9XA9DosUU7aBE6XFRCVIq8
             @Override // java.lang.Runnable
             public final void run() {
-                NavigationBarFragment.this.mNavigationBarView.setLayoutTransitionsEnabled(true);
+                this.f$0.mNavigationBarView.setLayoutTransitionsEnabled(true);
             }
         }, j + 448);
     }
@@ -950,12 +999,9 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         this.mNavigationBarView.getBarTransitions().finishAnimations();
     }
 
-    /* loaded from: classes.dex */
     private class MagnificationContentObserver extends ContentObserver {
-        /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
         public MagnificationContentObserver(Handler handler) {
             super(handler);
-            NavigationBarFragment.this = r1;
         }
 
         @Override // android.database.ContentObserver
@@ -965,22 +1011,20 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
     }
 
     /* renamed from: com.android.systemui.statusbar.phone.NavigationBarFragment$3 */
-    /* loaded from: classes.dex */
-    public class AnonymousClass3 extends IRotationWatcher.Stub {
+    class AnonymousClass3 extends IRotationWatcher.Stub {
         AnonymousClass3() {
-            NavigationBarFragment.this = r1;
         }
 
         public void onRotationChanged(final int i) throws RemoteException {
             Handler handler = NavigationBarFragment.this.getView().getHandler();
-            Message obtain = Message.obtain(handler, new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$3$kMvCAK_G5IzeGu5joS3NsFaWUXs
+            Message messageObtain = Message.obtain(handler, new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$3$kMvCAK_G5IzeGu5joS3NsFaWUXs
                 @Override // java.lang.Runnable
                 public final void run() {
-                    NavigationBarFragment.AnonymousClass3.lambda$onRotationChanged$0(NavigationBarFragment.AnonymousClass3.this, i);
+                    NavigationBarFragment.AnonymousClass3.lambda$onRotationChanged$0(this.f$0, i);
                 }
             });
-            obtain.setAsynchronous(true);
-            handler.sendMessageAtFrontOfQueue(obtain);
+            messageObtain.setAsynchronous(true);
+            handler.sendMessageAtFrontOfQueue(messageObtain);
         }
 
         public static /* synthetic */ void lambda$onRotationChanged$0(AnonymousClass3 anonymousClass3, int i) {
@@ -1000,10 +1044,25 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         }
     }
 
-    /* loaded from: classes.dex */
-    public class TaskStackListenerImpl extends SysUiTaskStackChangeListener {
+    /* renamed from: com.android.systemui.statusbar.phone.NavigationBarFragment$4 */
+    class AnonymousClass4 extends BroadcastReceiver {
+        AnonymousClass4() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if ("android.intent.action.SCREEN_OFF".equals(action) || "android.intent.action.SCREEN_ON".equals(action)) {
+                NavigationBarFragment.this.notifyNavigationBarScreenOn();
+            }
+            if ("android.intent.action.USER_SWITCHED".equals(action)) {
+                NavigationBarFragment.this.updateAccessibilityServicesState(NavigationBarFragment.this.mAccessibilityManager);
+            }
+        }
+    }
+
+    class TaskStackListenerImpl extends SysUiTaskStackChangeListener {
         TaskStackListenerImpl() {
-            NavigationBarFragment.this = r1;
         }
 
         @Override // com.android.systemui.shared.system.TaskStackChangeListener
@@ -1031,7 +1090,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
             }).ifPresent(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarFragment$TaskStackListenerImpl$WOZBpkylBist4A7EGTrKlHaP-0c
                 @Override // java.util.function.Consumer
                 public final void accept(Object obj) {
-                    NavigationBarFragment.TaskStackListenerImpl.lambda$onActivityRequestedOrientationChanged$0(NavigationBarFragment.TaskStackListenerImpl.this, i, (ActivityManager.RunningTaskInfo) obj);
+                    NavigationBarFragment.TaskStackListenerImpl.lambda$onActivityRequestedOrientationChanged$0(this.f$0, i, (ActivityManager.RunningTaskInfo) obj);
                 }
             });
         }
@@ -1043,16 +1102,13 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         }
     }
 
-    /* loaded from: classes.dex */
-    public class ViewRippler {
+    private class ViewRippler {
         private final Runnable mRipple;
         private View mRoot;
 
         private ViewRippler() {
-            NavigationBarFragment.this = r1;
             this.mRipple = new Runnable() { // from class: com.android.systemui.statusbar.phone.NavigationBarFragment.ViewRippler.1
-                {
-                    ViewRippler.this = this;
+                AnonymousClass1() {
                 }
 
                 @Override // java.lang.Runnable
@@ -1063,6 +1119,10 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
                     }
                 }
             };
+        }
+
+        /* synthetic */ ViewRippler(NavigationBarFragment navigationBarFragment, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         public void start(View view) {
@@ -1080,6 +1140,20 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
                 this.mRoot.removeCallbacks(this.mRipple);
             }
         }
+
+        /* renamed from: com.android.systemui.statusbar.phone.NavigationBarFragment$ViewRippler$1 */
+        class AnonymousClass1 implements Runnable {
+            AnonymousClass1() {
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                if (ViewRippler.this.mRoot.isAttachedToWindow()) {
+                    ViewRippler.this.mRoot.setPressed(true);
+                    ViewRippler.this.mRoot.setPressed(false);
+                }
+            }
+        }
     }
 
     public static View create(Context context, FragmentHostManager.FragmentListener fragmentListener) {
@@ -1088,14 +1162,14 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         layoutParams.setTitle("NavigationBar");
         layoutParams.accessibilityTitle = context.getString(R.string.nav_bar);
         layoutParams.windowAnimations = 0;
-        View inflate = LayoutInflater.from(context).inflate(R.layout.navigation_bar_window, (ViewGroup) null);
-        if (inflate == null) {
+        View viewInflate = LayoutInflater.from(context).inflate(R.layout.navigation_bar_window, (ViewGroup) null);
+        if (viewInflate == null) {
             return null;
         }
-        ((WindowManager) context.getSystemService(WindowManager.class)).addView(inflate, layoutParams);
-        FragmentHostManager fragmentHostManager = FragmentHostManager.get(inflate);
+        ((WindowManager) context.getSystemService(WindowManager.class)).addView(viewInflate, layoutParams);
+        FragmentHostManager fragmentHostManager = FragmentHostManager.get(viewInflate);
         fragmentHostManager.getFragmentManager().beginTransaction().replace(R.id.navigation_bar_frame, new NavigationBarFragment(), "NavigationBar").commit();
         fragmentHostManager.addTagListener("NavigationBar", fragmentListener);
-        return inflate;
+        return viewInflate;
     }
 }

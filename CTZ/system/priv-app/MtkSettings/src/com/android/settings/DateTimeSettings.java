@@ -26,6 +26,7 @@ import com.mediatek.settings.datetime.AutoTimeExtPreferenceController;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DateTimeSettings extends DashboardFragment implements DialogInterface.OnCancelListener, DatePreferenceController.DatePreferenceHost, TimePreferenceController.TimePreferenceHost, AutoTimeExtPreferenceController.GPSPreferenceHost {
     private boolean isGPSSupport;
@@ -48,9 +49,8 @@ public class DateTimeSettings extends DashboardFragment implements DialogInterfa
         return "DateTimeSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         Log.d("DateTimeSettings", "getPreferenceScreenResId, isGPSSupport= " + this.isGPSSupport);
         if (this.isGPSSupport) {
             return R.xml.date_time_ext_prefs;
@@ -148,7 +148,6 @@ public class DateTimeSettings extends DashboardFragment implements DialogInterfa
         }
     }
 
-    /* loaded from: classes.dex */
     private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;
@@ -167,7 +166,6 @@ public class DateTimeSettings extends DashboardFragment implements DialogInterfa
         }
     }
 
-    /* loaded from: classes.dex */
     private static class DateTimeSearchIndexProvider extends BaseSearchIndexProvider {
         private DateTimeSearchIndexProvider() {
         }

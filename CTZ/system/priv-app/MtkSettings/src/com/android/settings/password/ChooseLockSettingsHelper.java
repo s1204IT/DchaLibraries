@@ -11,10 +11,12 @@ import com.android.internal.widget.LockPatternUtils;
 import com.android.settings.Utils;
 import com.android.settings.password.ConfirmLockPassword;
 import com.android.settings.password.ConfirmLockPattern;
+
 /* loaded from: classes.dex */
 public final class ChooseLockSettingsHelper {
     private Activity mActivity;
     private Fragment mFragment;
+
     @VisibleForTesting
     LockPatternUtils mLockPatternUtils;
 
@@ -48,8 +50,7 @@ public final class ChooseLockSettingsHelper {
         return launchConfirmationActivity(i, charSequence, charSequence2, charSequence3, z, z2, false, 0L, Utils.getCredentialOwnerUserId(this.mActivity));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean launchConfirmationActivity(int i, CharSequence charSequence, CharSequence charSequence2, CharSequence charSequence3, boolean z, boolean z2, int i2) {
+    boolean launchConfirmationActivity(int i, CharSequence charSequence, CharSequence charSequence2, CharSequence charSequence3, boolean z, boolean z2, int i2) {
         return launchConfirmationActivity(i, charSequence, charSequence2, charSequence3, z, z2, false, 0L, Utils.enforceSameOwner(this.mActivity, i2));
     }
 
@@ -94,16 +95,16 @@ public final class ChooseLockSettingsHelper {
                 cls = ConfirmLockPattern.class;
             }
             return launchConfirmationActivity(i, charSequence, charSequence2, charSequence3, cls, z, z2, z3, j, i2, charSequence4, bundle);
-        } else if (keyguardStoredPasswordQuality == 131072 || keyguardStoredPasswordQuality == 196608 || keyguardStoredPasswordQuality == 262144 || keyguardStoredPasswordQuality == 327680 || keyguardStoredPasswordQuality == 393216 || keyguardStoredPasswordQuality == 524288) {
+        }
+        if (keyguardStoredPasswordQuality == 131072 || keyguardStoredPasswordQuality == 196608 || keyguardStoredPasswordQuality == 262144 || keyguardStoredPasswordQuality == 327680 || keyguardStoredPasswordQuality == 393216 || keyguardStoredPasswordQuality == 524288) {
             if (z || z3) {
                 cls2 = ConfirmLockPassword.InternalActivity.class;
             } else {
                 cls2 = ConfirmLockPassword.class;
             }
             return launchConfirmationActivity(i, charSequence, charSequence2, charSequence3, cls2, z, z2, z3, j, i2, charSequence4, bundle);
-        } else {
-            return false;
         }
+        return false;
     }
 
     private boolean launchConfirmationActivity(int i, CharSequence charSequence, CharSequence charSequence2, CharSequence charSequence3, Class<?> cls, boolean z, boolean z2, boolean z3, long j, int i2, CharSequence charSequence4, Bundle bundle) {

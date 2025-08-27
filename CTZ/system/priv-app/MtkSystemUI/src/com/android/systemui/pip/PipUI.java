@@ -8,6 +8,7 @@ import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.statusbar.CommandQueue;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class PipUI extends SystemUI implements CommandQueue.Callbacks {
     private BasePipManager mPipManager;
@@ -39,9 +40,8 @@ public class PipUI extends SystemUI implements CommandQueue.Callbacks {
         this.mPipManager.showPictureInPictureMenu();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.SystemUI
-    public void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
         if (this.mPipManager == null) {
             return;

@@ -8,6 +8,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.view.View;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class UserDictionaryAddWordActivity extends Activity {
     private UserDictionaryAddWordContents mContents;
@@ -42,7 +43,7 @@ public class UserDictionaryAddWordActivity extends Activity {
         this.mContents.saveStateIntoBundle(bundle);
     }
 
-    private void reportBackToCaller(int i, Bundle bundle) {
+    private void reportBackToCaller(int i, Bundle bundle) throws RemoteException {
         Intent intent = getIntent();
         if (intent.getExtras() == null) {
             return;
@@ -50,22 +51,22 @@ public class UserDictionaryAddWordActivity extends Activity {
         Object obj = intent.getExtras().get("listener");
         if (obj instanceof Messenger) {
             Messenger messenger = (Messenger) obj;
-            Message obtain = Message.obtain();
-            obtain.obj = bundle;
-            obtain.what = i;
+            Message messageObtain = Message.obtain();
+            messageObtain.obj = bundle;
+            messageObtain.what = i;
             try {
-                messenger.send(obtain);
+                messenger.send(messageObtain);
             } catch (RemoteException e) {
             }
         }
     }
 
-    public void onClickCancel(View view) {
+    public void onClickCancel(View view) throws RemoteException {
         reportBackToCaller(1, null);
         finish();
     }
 
-    public void onClickConfirm(View view) {
+    public void onClickConfirm(View view) throws RemoteException {
         Bundle bundle = new Bundle();
         reportBackToCaller(this.mContents.apply(this, bundle), bundle);
         finish();

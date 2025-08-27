@@ -17,6 +17,7 @@ import com.android.launcher3.util.InstantAppResolver;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class PackageInstallStateChangedTask extends BaseModelUpdateTask {
     private final PackageInstallerCompat.PackageInstallInfo mInstallInfo;
@@ -26,7 +27,7 @@ public class PackageInstallStateChangedTask extends BaseModelUpdateTask {
     }
 
     @Override // com.android.launcher3.model.BaseModelUpdateTask
-    public void execute(LauncherAppState launcherAppState, BgDataModel bgDataModel, AllAppsList allAppsList) {
+    public void execute(LauncherAppState launcherAppState, BgDataModel bgDataModel, AllAppsList allAppsList) throws PackageManager.NameNotFoundException {
         if (this.mInstallInfo.state == 0) {
             try {
                 ApplicationInfo applicationInfo = launcherAppState.getContext().getPackageManager().getApplicationInfo(this.mInstallInfo.packageName, 0);

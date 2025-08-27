@@ -2,6 +2,7 @@ package com.android.settings.widget;
 
 import android.support.v7.preference.Preference;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class MasterSwitchController extends SwitchWidgetController implements Preference.OnPreferenceChangeListener {
     private final MasterSwitchPreference mPreference;

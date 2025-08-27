@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import com.android.browser.R;
+
 /* loaded from: classes.dex */
 public class PrivacySecurityPreferencesFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
     @Override // android.preference.PreferenceFragment, android.app.Fragment

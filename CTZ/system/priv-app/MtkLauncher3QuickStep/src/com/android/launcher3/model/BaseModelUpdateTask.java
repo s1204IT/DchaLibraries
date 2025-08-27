@@ -11,6 +11,7 @@ import com.android.launcher3.util.MultiHashMap;
 import com.android.launcher3.widget.WidgetListRowEntry;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
+
 /* loaded from: classes.dex */
 public abstract class BaseModelUpdateTask implements LauncherModel.ModelUpdateTask {
     private static final boolean DEBUG_TASKS = false;
@@ -45,7 +46,7 @@ public abstract class BaseModelUpdateTask implements LauncherModel.ModelUpdateTa
         this.mUiExecutor.execute(new Runnable() { // from class: com.android.launcher3.model.-$$Lambda$BaseModelUpdateTask$wC_xrSA2wDogNJ7aI_9kn7ZSyLg
             @Override // java.lang.Runnable
             public final void run() {
-                BaseModelUpdateTask.lambda$scheduleCallbackTask$0(BaseModelUpdateTask.this, callback, callbackTask);
+                BaseModelUpdateTask.lambda$scheduleCallbackTask$0(this.f$0, callback, callbackTask);
             }
         });
     }
@@ -73,11 +74,11 @@ public abstract class BaseModelUpdateTask implements LauncherModel.ModelUpdateTa
     }
 
     public void bindDeepShortcuts(BgDataModel bgDataModel) {
-        final MultiHashMap<ComponentKey, String> clone = bgDataModel.deepShortcutMap.clone();
+        final MultiHashMap<ComponentKey, String> multiHashMapClone = bgDataModel.deepShortcutMap.clone();
         scheduleCallbackTask(new LauncherModel.CallbackTask() { // from class: com.android.launcher3.model.BaseModelUpdateTask.2
             @Override // com.android.launcher3.LauncherModel.CallbackTask
             public void execute(LauncherModel.Callbacks callbacks) {
-                callbacks.bindDeepShortcutMap(clone);
+                callbacks.bindDeepShortcutMap(multiHashMapClone);
             }
         });
     }

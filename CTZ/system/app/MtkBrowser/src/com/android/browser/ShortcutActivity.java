@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+
 /* loaded from: classes.dex */
-public class ShortcutActivity extends Activity implements View.OnClickListener, BookmarksPageCallbacks {
+public class ShortcutActivity extends Activity implements View.OnClickListener, BrowserBookmarksPage2 {
     private BrowserBookmarksPage mBookmarks;
 
     @Override // android.app.Activity
@@ -16,13 +17,13 @@ public class ShortcutActivity extends Activity implements View.OnClickListener, 
         this.mBookmarks = (BrowserBookmarksPage) getFragmentManager().findFragmentById(R.id.bookmarks);
         this.mBookmarks.setEnableContextMenu(false);
         this.mBookmarks.setCallbackListener(this);
-        View findViewById = findViewById(R.id.cancel);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(this);
+        View viewFindViewById = findViewById(R.id.cancel);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(this);
         }
     }
 
-    @Override // com.android.browser.BookmarksPageCallbacks
+    @Override // com.android.browser.BrowserBookmarksPage2
     public boolean onBookmarkSelected(Cursor cursor, boolean z) {
         if (z) {
             return false;
@@ -32,7 +33,7 @@ public class ShortcutActivity extends Activity implements View.OnClickListener, 
         return true;
     }
 
-    @Override // com.android.browser.BookmarksPageCallbacks
+    @Override // com.android.browser.BrowserBookmarksPage2
     public boolean onOpenInNewWindow(String... strArr) {
         return false;
     }

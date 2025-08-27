@@ -4,6 +4,7 @@ import android.content.Context;
 import com.mediatek.common.util.OperatorCustomizationFactoryLoader;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class OpSettingsCustomizationUtils {
     private static final List<OperatorCustomizationFactoryLoader.OperatorFactoryInfo> sOperatorFactoryInfoList = new ArrayList();
@@ -23,16 +24,12 @@ public class OpSettingsCustomizationUtils {
     }
 
     public static synchronized OpSettingsCustomizationFactoryBase getOpFactory(Context context) {
-        OpSettingsCustomizationFactoryBase opSettingsCustomizationFactoryBase;
-        synchronized (OpSettingsCustomizationUtils.class) {
+        if (sFactory == null) {
+            sFactory = (OpSettingsCustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOperatorFactoryInfoList);
             if (sFactory == null) {
-                sFactory = (OpSettingsCustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOperatorFactoryInfoList);
-                if (sFactory == null) {
-                    sFactory = new OpSettingsCustomizationFactoryBase(context);
-                }
+                sFactory = new OpSettingsCustomizationFactoryBase(context);
             }
-            opSettingsCustomizationFactoryBase = sFactory;
         }
-        return opSettingsCustomizationFactoryBase;
+        return sFactory;
     }
 }

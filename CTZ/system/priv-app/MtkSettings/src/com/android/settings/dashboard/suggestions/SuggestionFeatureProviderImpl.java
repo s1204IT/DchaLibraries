@@ -19,6 +19,7 @@ import com.android.settings.wallpaper.WallpaperSuggestionActivity;
 import com.android.settings.wifi.calling.WifiCallingSuggestionActivity;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.suggestions.SuggestionControllerMixin;
+
 /* loaded from: classes.dex */
 public class SuggestionFeatureProviderImpl implements SuggestionFeatureProvider {
     private final MetricsFeatureProvider mMetricsFeatureProvider;

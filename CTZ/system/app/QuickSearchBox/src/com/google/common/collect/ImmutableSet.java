@@ -5,8 +5,10 @@ import com.google.common.collect.ImmutableCollection;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements Set<E> {
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public abstract UnmodifiableIterator<E> iterator();
 
@@ -18,35 +20,36 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
         return new SingletonImmutableSet(e);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static <E> ImmutableSet<E> construct(int i, Object... objArr) {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [194=4] */
+    private static <E> ImmutableSet<E> construct(int i, Object... objArr) {
         switch (i) {
             case 0:
                 return of();
             case 1:
                 return of(objArr[0]);
             default:
-                int chooseTableSize = chooseTableSize(i);
-                Object[] objArr2 = new Object[chooseTableSize];
-                int i2 = chooseTableSize - 1;
+                int iChooseTableSize = chooseTableSize(i);
+                Object[] objArr2 = new Object[iChooseTableSize];
+                int i2 = iChooseTableSize - 1;
                 int i3 = 0;
                 int i4 = 0;
                 for (int i5 = 0; i5 < i; i5++) {
-                    Object checkElementNotNull = ObjectArrays.checkElementNotNull(objArr[i5], i5);
-                    int hashCode = checkElementNotNull.hashCode();
-                    int smear = Hashing.smear(hashCode);
+                    Object objCheckElementNotNull = ObjectArrays.checkElementNotNull(objArr[i5], i5);
+                    int iHashCode = objCheckElementNotNull.hashCode();
+                    int iSmear = Hashing.smear(iHashCode);
                     while (true) {
-                        int i6 = smear & i2;
+                        int i6 = iSmear & i2;
                         Object obj = objArr2[i6];
                         if (obj == null) {
-                            objArr[i3] = checkElementNotNull;
-                            objArr2[i6] = checkElementNotNull;
-                            i4 += hashCode;
+                            objArr[i3] = objCheckElementNotNull;
+                            objArr2[i6] = objCheckElementNotNull;
+                            i4 += iHashCode;
                             i3++;
-                        } else if (obj.equals(checkElementNotNull)) {
-                            break;
                         } else {
-                            smear++;
+                            if (obj.equals(objCheckElementNotNull)) {
+                                break;
+                            }
+                            iSmear++;
                         }
                     }
                 }
@@ -54,7 +57,7 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
                 if (i3 == 1) {
                     return new SingletonImmutableSet(objArr[0], i4);
                 }
-                if (chooseTableSize != chooseTableSize(i3)) {
+                if (iChooseTableSize != chooseTableSize(i3)) {
                     return construct(i3, objArr);
                 }
                 if (i3 < objArr.length) {
@@ -66,11 +69,11 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
 
     static int chooseTableSize(int i) {
         if (i < 751619276) {
-            int highestOneBit = Integer.highestOneBit(i - 1) << 1;
-            while (highestOneBit * 0.7d < i) {
-                highestOneBit <<= 1;
+            int iHighestOneBit = Integer.highestOneBit(i - 1) << 1;
+            while (iHighestOneBit * 0.7d < i) {
+                iHighestOneBit <<= 1;
             }
-            return highestOneBit;
+            return iHighestOneBit;
         }
         Preconditions.checkArgument(i < 1073741824, "collection too large");
         return 1073741824;
@@ -85,6 +88,9 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
             default:
                 return construct(eArr.length, (Object[]) eArr.clone());
         }
+    }
+
+    ImmutableSet() {
     }
 
     boolean isHashCodeFast() {
@@ -107,7 +113,6 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
         return Sets.hashCodeImpl(this);
     }
 
-    /* loaded from: classes.dex */
     private static class SerializedForm implements Serializable {
         private static final long serialVersionUID = 0;
         final Object[] elements;
@@ -130,14 +135,15 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
         return new Builder<>();
     }
 
-    /* loaded from: classes.dex */
     public static class Builder<E> extends ImmutableCollection.ArrayBasedBuilder<E> {
+        /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public /* bridge */ /* synthetic */ ImmutableCollection.ArrayBasedBuilder add(Object obj) {
             return add((Builder<E>) obj);
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public /* bridge */ /* synthetic */ ImmutableCollection.Builder add(Object obj) {
@@ -158,12 +164,14 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: add([Ljava/lang/Object;)Lcom/google/common/collect/ImmutableCollection$Builder; */
         @Override // com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public Builder<E> add(E... eArr) {
             super.add((Object[]) eArr);
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: addAll(Ljava/lang/Iterable;)Lcom/google/common/collect/ImmutableCollection$Builder; */
         @Override // com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public Builder<E> addAll(Iterable<? extends E> iterable) {
             super.addAll((Iterable) iterable);
@@ -171,9 +179,9 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
         }
 
         public ImmutableSet<E> build() {
-            ImmutableSet<E> construct = ImmutableSet.construct(this.size, this.contents);
-            this.size = construct.size();
-            return construct;
+            ImmutableSet<E> immutableSetConstruct = ImmutableSet.construct(this.size, this.contents);
+            this.size = immutableSetConstruct.size();
+            return immutableSetConstruct;
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.android.systemui.statusbar.policy;
 
 import com.android.systemui.Dumpable;
+
 /* loaded from: classes.dex */
 public interface SecurityController extends Dumpable, CallbackController<SecurityControllerCallback> {
 
-    /* loaded from: classes.dex */
     public interface SecurityControllerCallback {
         void onStateChanged();
     }

@@ -10,6 +10,7 @@ import android.util.Log;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class VoiceWakeupPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private Context mContext;
@@ -33,8 +34,8 @@ public class VoiceWakeupPreferenceController extends AbstractPreferenceControlle
     public void updateState(Preference preference) {
         Intent intent = new Intent("com.mediatek.voicecommand.VOICE_CONTROL_SETTINGS");
         intent.setFlags(268435456);
-        List<ResolveInfo> queryIntentActivities = this.mContext.getPackageManager().queryIntentActivities(intent, 0);
-        if (queryIntentActivities == null || queryIntentActivities.size() == 0) {
+        List<ResolveInfo> listQueryIntentActivities = this.mContext.getPackageManager().queryIntentActivities(intent, 0);
+        if (listQueryIntentActivities == null || listQueryIntentActivities.size() == 0) {
             preference.setEnabled(false);
         } else {
             preference.setEnabled(true);

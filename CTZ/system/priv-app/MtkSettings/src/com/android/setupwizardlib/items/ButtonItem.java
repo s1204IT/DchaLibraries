@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class ButtonItem extends AbstractItem implements View.OnClickListener {
     private Button mButton;
@@ -18,7 +19,6 @@ public class ButtonItem extends AbstractItem implements View.OnClickListener {
     private CharSequence mText;
     private int mTheme;
 
-    /* loaded from: classes.dex */
     public interface OnClickListener {
         void onClick(ButtonItem buttonItem);
     }
@@ -32,11 +32,11 @@ public class ButtonItem extends AbstractItem implements View.OnClickListener {
         super(context, attributeSet);
         this.mEnabled = true;
         this.mTheme = R.style.SuwButtonItem;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwButtonItem);
-        this.mEnabled = obtainStyledAttributes.getBoolean(R.styleable.SuwButtonItem_android_enabled, true);
-        this.mText = obtainStyledAttributes.getText(R.styleable.SuwButtonItem_android_text);
-        this.mTheme = obtainStyledAttributes.getResourceId(R.styleable.SuwButtonItem_android_theme, R.style.SuwButtonItem);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwButtonItem);
+        this.mEnabled = typedArrayObtainStyledAttributes.getBoolean(R.styleable.SuwButtonItem_android_enabled, true);
+        this.mText = typedArrayObtainStyledAttributes.getText(R.styleable.SuwButtonItem_android_text);
+        this.mTheme = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwButtonItem_android_theme, R.style.SuwButtonItem);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     @Override // com.android.setupwizardlib.items.AbstractItem, com.android.setupwizardlib.items.ItemHierarchy
@@ -59,8 +59,7 @@ public class ButtonItem extends AbstractItem implements View.OnClickListener {
         throw new UnsupportedOperationException("Cannot bind to ButtonItem's view");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Button createButton(ViewGroup viewGroup) {
+    protected Button createButton(ViewGroup viewGroup) {
         if (this.mButton == null) {
             Context context = viewGroup.getContext();
             if (this.mTheme != 0) {

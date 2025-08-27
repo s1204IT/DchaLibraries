@@ -10,6 +10,7 @@ import android.icu.util.TimeZoneTransition;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import java.util.Date;
+
 /* loaded from: classes.dex */
 public class TimeZoneInfoPreferenceController extends BaseTimeZonePreferenceController {
     private static final String PREFERENCE_KEY = "footer_preference";
@@ -59,27 +60,27 @@ public class TimeZoneInfoPreferenceController extends BaseTimeZonePreferenceCont
     }
 
     private CharSequence formatInfo(TimeZoneInfo timeZoneInfo) {
-        CharSequence formatOffsetAndName = formatOffsetAndName(timeZoneInfo);
+        CharSequence offsetAndName = formatOffsetAndName(timeZoneInfo);
         TimeZone timeZone = timeZoneInfo.getTimeZone();
-        if (timeZone.observesDaylightTime()) {
-            TimeZoneTransition findNextDstTransition = findNextDstTransition(timeZone);
-            if (findNextDstTransition == null) {
-                return null;
-            }
-            boolean z = findNextDstTransition.getTo().getDSTSavings() != 0;
-            String daylightName = z ? timeZoneInfo.getDaylightName() : timeZoneInfo.getStandardName();
-            if (daylightName == null) {
-                if (z) {
-                    daylightName = this.mContext.getString(R.string.zone_time_type_dst);
-                } else {
-                    daylightName = this.mContext.getString(R.string.zone_time_type_standard);
-                }
-            }
-            Calendar calendar = Calendar.getInstance(timeZone);
-            calendar.setTimeInMillis(findNextDstTransition.getTime());
-            return SpannableUtil.getResourcesText(this.mContext.getResources(), R.string.zone_info_footer, formatOffsetAndName, daylightName, this.mDateFormat.format(calendar));
+        if (!timeZone.observesDaylightTime()) {
+            return this.mContext.getString(R.string.zone_info_footer_no_dst, offsetAndName);
         }
-        return this.mContext.getString(R.string.zone_info_footer_no_dst, formatOffsetAndName);
+        TimeZoneTransition timeZoneTransitionFindNextDstTransition = findNextDstTransition(timeZone);
+        if (timeZoneTransitionFindNextDstTransition == null) {
+            return null;
+        }
+        boolean z = timeZoneTransitionFindNextDstTransition.getTo().getDSTSavings() != 0;
+        String daylightName = z ? timeZoneInfo.getDaylightName() : timeZoneInfo.getStandardName();
+        if (daylightName == null) {
+            if (z) {
+                daylightName = this.mContext.getString(R.string.zone_time_type_dst);
+            } else {
+                daylightName = this.mContext.getString(R.string.zone_time_type_standard);
+            }
+        }
+        Calendar calendar = Calendar.getInstance(timeZone);
+        calendar.setTimeInMillis(timeZoneTransitionFindNextDstTransition.getTime());
+        return SpannableUtil.getResourcesText(this.mContext.getResources(), R.string.zone_info_footer, offsetAndName, daylightName, this.mDateFormat.format(calendar));
     }
 
     private TimeZoneTransition findNextDstTransition(TimeZone timeZone) {

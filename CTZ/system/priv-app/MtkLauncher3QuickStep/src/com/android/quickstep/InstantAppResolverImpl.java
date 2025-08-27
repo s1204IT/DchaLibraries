@@ -9,7 +9,9 @@ import android.util.Log;
 import com.android.launcher3.AppInfo;
 import com.android.launcher3.util.InstantAppResolver;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class InstantAppResolverImpl extends InstantAppResolver {
     public static final String COMPONENT_CLASS_MARKER = "@instantapp";
@@ -35,8 +37,9 @@ public class InstantAppResolverImpl extends InstantAppResolver {
     public List<ApplicationInfo> getInstantApps() {
         try {
             ArrayList arrayList = new ArrayList();
-            for (InstantAppInfo instantAppInfo : this.mPM.getInstantApps()) {
-                ApplicationInfo applicationInfo = instantAppInfo.getApplicationInfo();
+            Iterator it = this.mPM.getInstantApps().iterator();
+            while (it.hasNext()) {
+                ApplicationInfo applicationInfo = ((InstantAppInfo) it.next()).getApplicationInfo();
                 if (applicationInfo != null) {
                     arrayList.add(applicationInfo);
                 }

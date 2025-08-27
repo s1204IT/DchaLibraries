@@ -1,4 +1,5 @@
 package android.support.v4.util;
+
 /* loaded from: classes.dex */
 public class SparseArrayCompat<E> implements Cloneable {
     private static final Object DELETED = new Object();
@@ -24,7 +25,8 @@ public class SparseArrayCompat<E> implements Cloneable {
         this.mSize = 0;
     }
 
-    /* renamed from: clone */
+    /* JADX DEBUG: Method merged with bridge method: clone()Ljava/lang/Object; */
+    /* renamed from: clone, reason: merged with bridge method [inline-methods] */
     public SparseArrayCompat<E> m0clone() {
         SparseArrayCompat<E> clone = null;
         try {
@@ -41,12 +43,12 @@ public class SparseArrayCompat<E> implements Cloneable {
         return get(key, null);
     }
 
-    public E get(int key, E valueIfKeyNotFound) {
-        int i = ContainerHelpers.binarySearch(this.mKeys, this.mSize, key);
-        if (i < 0 || this.mValues[i] == DELETED) {
-            return valueIfKeyNotFound;
+    public E get(int i, E e) {
+        int iBinarySearch = ContainerHelpers.binarySearch(this.mKeys, this.mSize, i);
+        if (iBinarySearch < 0 || this.mValues[iBinarySearch] == DELETED) {
+            return e;
         }
-        return (E) this.mValues[i];
+        return (E) this.mValues[iBinarySearch];
     }
 
     public void delete(int key) {
@@ -129,11 +131,11 @@ public class SparseArrayCompat<E> implements Cloneable {
         return this.mKeys[index];
     }
 
-    public E valueAt(int index) {
+    public E valueAt(int i) {
         if (this.mGarbage) {
             gc();
         }
-        return (E) this.mValues[index];
+        return (E) this.mValues[i];
     }
 
     public void clear() {

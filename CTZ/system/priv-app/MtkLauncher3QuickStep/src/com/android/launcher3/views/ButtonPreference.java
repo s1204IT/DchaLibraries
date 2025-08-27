@@ -1,10 +1,12 @@
 package com.android.launcher3.views;
 
+import android.R;
 import android.content.Context;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+
 /* loaded from: classes.dex */
 public class ButtonPreference extends Preference {
     private boolean mWidgetFrameVisible;
@@ -39,7 +41,7 @@ public class ButtonPreference extends Preference {
     @Override // android.preference.Preference
     protected void onBindView(View view) {
         super.onBindView(view);
-        ViewGroup viewGroup = (ViewGroup) view.findViewById(16908312);
+        ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.widget_frame);
         if (viewGroup != null) {
             viewGroup.setVisibility(this.mWidgetFrameVisible ? 0 : 8);
         }

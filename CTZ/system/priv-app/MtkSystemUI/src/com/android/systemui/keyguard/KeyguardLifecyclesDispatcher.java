@@ -2,6 +2,7 @@ package com.android.systemui.keyguard;
 
 import android.os.Handler;
 import android.os.Message;
+
 /* loaded from: classes.dex */
 public class KeyguardLifecyclesDispatcher {
     private Handler mHandler = new Handler() { // from class: com.android.systemui.keyguard.KeyguardLifecyclesDispatcher.1
@@ -45,8 +46,7 @@ public class KeyguardLifecyclesDispatcher {
         this.mWakefulnessLifecycle = wakefulnessLifecycle;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void dispatch(int i) {
+    void dispatch(int i) {
         this.mHandler.obtainMessage(i).sendToTarget();
     }
 }

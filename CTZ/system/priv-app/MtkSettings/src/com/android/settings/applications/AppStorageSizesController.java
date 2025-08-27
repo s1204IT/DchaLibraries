@@ -5,6 +5,7 @@ import android.support.v7.preference.Preference;
 import android.text.format.Formatter;
 import com.android.internal.util.Preconditions;
 import com.android.settingslib.applications.StorageStatsSource;
+
 /* loaded from: classes.dex */
 public class AppStorageSizesController {
     private final Preference mAppSize;
@@ -46,7 +47,7 @@ public class AppStorageSizesController {
             return;
         }
         long codeBytes = this.mLastResult.getCodeBytes();
-        long j = 0;
+        long cacheBytes = 0;
         if (!this.mDataCleared) {
             dataBytes = this.mLastResult.getDataBytes() - this.mLastResult.getCacheBytes();
         } else {
@@ -61,16 +62,16 @@ public class AppStorageSizesController {
             this.mDataSize.setSummary(getSizeStr(context, dataBytes));
         }
         if (!this.mDataCleared && !this.mCachedCleared) {
-            j = this.mLastResult.getCacheBytes();
+            cacheBytes = this.mLastResult.getCacheBytes();
         }
-        if (this.mLastCacheSize != j) {
-            this.mLastCacheSize = j;
-            this.mCacheSize.setSummary(getSizeStr(context, j));
+        if (this.mLastCacheSize != cacheBytes) {
+            this.mLastCacheSize = cacheBytes;
+            this.mCacheSize.setSummary(getSizeStr(context, cacheBytes));
         }
-        long j2 = codeBytes + dataBytes + j;
-        if (this.mLastTotalSize != j2) {
-            this.mLastTotalSize = j2;
-            this.mTotalSize.setSummary(getSizeStr(context, j2));
+        long j = codeBytes + dataBytes + cacheBytes;
+        if (this.mLastTotalSize != j) {
+            this.mLastTotalSize = j;
+            this.mTotalSize.setSummary(getSizeStr(context, j));
         }
     }
 
@@ -95,7 +96,6 @@ public class AppStorageSizesController {
         return Formatter.formatFileSize(context, j);
     }
 
-    /* loaded from: classes.dex */
     public static class Builder {
         private Preference mAppSize;
         private Preference mCacheSize;

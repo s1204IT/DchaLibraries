@@ -9,6 +9,7 @@ import com.android.settings.R;
 import com.android.settings.applications.LayoutPreference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeButtonPreferenceController extends AbstractZenModePreferenceController implements PreferenceControllerMixin {
     private FragmentManager mFragment;
@@ -42,7 +43,7 @@ public class ZenModeButtonPreferenceController extends AbstractZenModePreference
             this.mZenButtonOff.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.notification.-$$Lambda$ZenModeButtonPreferenceController$RnfY8k3LZN005jbH9s0d6akYfFk
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    ZenModeButtonPreferenceController.lambda$updateState$0(ZenModeButtonPreferenceController.this, view);
+                    ZenModeButtonPreferenceController.lambda$updateState$0(this.f$0, view);
                 }
             });
         }
@@ -61,12 +62,12 @@ public class ZenModeButtonPreferenceController extends AbstractZenModePreference
             case 3:
                 this.mZenButtonOff.setVisibility(0);
                 this.mZenButtonOn.setVisibility(8);
-                return;
+                break;
             default:
                 this.mZenButtonOff.setVisibility(8);
                 updateZenButtonOnClickListener();
                 this.mZenButtonOn.setVisibility(0);
-                return;
+                break;
         }
     }
 
@@ -77,26 +78,26 @@ public class ZenModeButtonPreferenceController extends AbstractZenModePreference
                 this.mZenButtonOn.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.notification.-$$Lambda$ZenModeButtonPreferenceController$KAk_Mj51Obvq4mW4RobrcR4_CRM
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        ZenModeButtonPreferenceController.lambda$updateZenButtonOnClickListener$1(ZenModeButtonPreferenceController.this, view);
+                        ZenModeButtonPreferenceController.lambda$updateZenButtonOnClickListener$1(this.f$0, view);
                     }
                 });
-                return;
+                break;
             case 0:
                 this.mZenButtonOn.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.notification.-$$Lambda$ZenModeButtonPreferenceController$16-xvFNOTseGHNtlUJrmr4Oa8o8
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        ZenModeButtonPreferenceController.lambda$updateZenButtonOnClickListener$2(ZenModeButtonPreferenceController.this, view);
+                        ZenModeButtonPreferenceController.lambda$updateZenButtonOnClickListener$2(this.f$0, view);
                     }
                 });
-                return;
+                break;
             default:
                 this.mZenButtonOn.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.notification.-$$Lambda$ZenModeButtonPreferenceController$NQfCfaUFz6J6tbPXZDP09CGnoAo
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        ZenModeButtonPreferenceController.lambda$updateZenButtonOnClickListener$3(ZenModeButtonPreferenceController.this, zenDuration, view);
+                        ZenModeButtonPreferenceController.lambda$updateZenButtonOnClickListener$3(this.f$0, zenDuration, view);
                     }
                 });
-                return;
+                break;
         }
     }
 

@@ -1,8 +1,8 @@
 package com.mediatek.settings.ext;
+
 /* loaded from: classes.dex */
 public interface IRcseOnlyApnExt {
 
-    /* loaded from: classes.dex */
     public interface OnRcseOnlyApnStateChangedListener {
         void OnRcseOnlyApnStateChanged();
     }

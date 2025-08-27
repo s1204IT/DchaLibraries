@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -31,6 +32,7 @@ import com.android.systemui.statusbar.phone.StatusBarWindowView;
 import com.android.systemui.tuner.TunablePadding;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.leak.RotationUtils;
+
 /* loaded from: classes.dex */
 public class ScreenDecorations extends SystemUI implements TunerService.Tunable {
     private static final boolean DEBUG_SCREENSHOT_ROUNDED_CORNERS = SystemProperties.getBoolean("debug.screenshot_rounded_corners", false);
@@ -46,7 +48,7 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
     private WindowManager mWindowManager;
 
     @Override // com.android.systemui.SystemUI
-    public void start() {
+    public void start() throws Resources.NotFoundException {
         this.mWindowManager = (WindowManager) this.mContext.getSystemService(WindowManager.class);
         this.mRoundedDefault = this.mContext.getResources().getDimensionPixelSize(R.dimen.rounded_corner_radius);
         this.mRoundedDefaultTop = this.mContext.getResources().getDimensionPixelSize(R.dimen.rounded_corner_radius_top);
@@ -59,6 +61,9 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
             setupPadding(dimensionPixelSize);
         }
         this.mDisplayListener = new DisplayManager.DisplayListener() { // from class: com.android.systemui.ScreenDecorations.1
+            AnonymousClass1() {
+            }
+
             @Override // android.hardware.display.DisplayManager.DisplayListener
             public void onDisplayAdded(int i) {
             }
@@ -77,20 +82,39 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
         this.mDisplayManager.registerDisplayListener(this.mDisplayListener, null);
     }
 
+    /* renamed from: com.android.systemui.ScreenDecorations$1 */
+    class AnonymousClass1 implements DisplayManager.DisplayListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.hardware.display.DisplayManager.DisplayListener
+        public void onDisplayAdded(int i) {
+        }
+
+        @Override // android.hardware.display.DisplayManager.DisplayListener
+        public void onDisplayRemoved(int i) {
+        }
+
+        @Override // android.hardware.display.DisplayManager.DisplayListener
+        public void onDisplayChanged(int i) {
+            ScreenDecorations.this.updateOrientation();
+        }
+    }
+
     private void setupDecorations() {
         this.mOverlay = LayoutInflater.from(this.mContext).inflate(R.layout.rounded_corners, (ViewGroup) null);
-        final DisplayCutoutView displayCutoutView = new DisplayCutoutView(this.mContext, true, new Runnable() { // from class: com.android.systemui.-$$Lambda$ScreenDecorations$aq1MVJyy_LkZ11q5t5cPVZOqbG0
+        DisplayCutoutView displayCutoutView = new DisplayCutoutView(this.mContext, true, new Runnable() { // from class: com.android.systemui.-$$Lambda$ScreenDecorations$aq1MVJyy_LkZ11q5t5cPVZOqbG0
             @Override // java.lang.Runnable
             public final void run() {
-                ScreenDecorations.this.updateWindowVisibilities();
+                this.f$0.updateWindowVisibilities();
             }
         });
         ((ViewGroup) this.mOverlay).addView(displayCutoutView);
         this.mBottomOverlay = LayoutInflater.from(this.mContext).inflate(R.layout.rounded_corners, (ViewGroup) null);
-        final DisplayCutoutView displayCutoutView2 = new DisplayCutoutView(this.mContext, false, new Runnable() { // from class: com.android.systemui.-$$Lambda$ScreenDecorations$aq1MVJyy_LkZ11q5t5cPVZOqbG0
+        DisplayCutoutView displayCutoutView2 = new DisplayCutoutView(this.mContext, false, new Runnable() { // from class: com.android.systemui.-$$Lambda$ScreenDecorations$aq1MVJyy_LkZ11q5t5cPVZOqbG0
             @Override // java.lang.Runnable
             public final void run() {
-                ScreenDecorations.this.updateWindowVisibilities();
+                this.f$0.updateWindowVisibilities();
             }
         });
         ((ViewGroup) this.mBottomOverlay).addView(displayCutoutView2);
@@ -105,22 +129,35 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
         this.mWindowManager.getDefaultDisplay().getMetrics(displayMetrics);
         this.mDensity = displayMetrics.density;
         ((TunerService) Dependency.get(TunerService.class)).addTunable(this, "sysui_rounded_size");
-        SecureSetting secureSetting = new SecureSetting(this.mContext, (Handler) Dependency.get(Dependency.MAIN_HANDLER), "accessibility_display_inversion_enabled") { // from class: com.android.systemui.ScreenDecorations.2
+        AnonymousClass2 anonymousClass2 = new SecureSetting(this.mContext, (Handler) Dependency.get(Dependency.MAIN_HANDLER), "accessibility_display_inversion_enabled") { // from class: com.android.systemui.ScreenDecorations.2
+            final /* synthetic */ DisplayCutoutView val$cutoutBottom;
+            final /* synthetic */ DisplayCutoutView val$cutoutTop;
+
+            /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+            AnonymousClass2(Context context, Handler handler, String str, DisplayCutoutView displayCutoutView3, DisplayCutoutView displayCutoutView22) {
+                super(context, handler, str);
+                displayCutoutView = displayCutoutView3;
+                displayCutoutView = displayCutoutView22;
+            }
+
             @Override // com.android.systemui.qs.SecureSetting
             protected void handleValueChanged(int i, boolean z) {
                 int i2 = i != 0 ? -1 : -16777216;
-                ColorStateList valueOf = ColorStateList.valueOf(i2);
-                ((ImageView) ScreenDecorations.this.mOverlay.findViewById(R.id.left)).setImageTintList(valueOf);
-                ((ImageView) ScreenDecorations.this.mOverlay.findViewById(R.id.right)).setImageTintList(valueOf);
-                ((ImageView) ScreenDecorations.this.mBottomOverlay.findViewById(R.id.left)).setImageTintList(valueOf);
-                ((ImageView) ScreenDecorations.this.mBottomOverlay.findViewById(R.id.right)).setImageTintList(valueOf);
+                ColorStateList colorStateListValueOf = ColorStateList.valueOf(i2);
+                ((ImageView) ScreenDecorations.this.mOverlay.findViewById(R.id.left)).setImageTintList(colorStateListValueOf);
+                ((ImageView) ScreenDecorations.this.mOverlay.findViewById(R.id.right)).setImageTintList(colorStateListValueOf);
+                ((ImageView) ScreenDecorations.this.mBottomOverlay.findViewById(R.id.left)).setImageTintList(colorStateListValueOf);
+                ((ImageView) ScreenDecorations.this.mBottomOverlay.findViewById(R.id.right)).setImageTintList(colorStateListValueOf);
                 displayCutoutView.setColor(i2);
-                displayCutoutView2.setColor(i2);
+                displayCutoutView.setColor(i2);
             }
         };
-        secureSetting.setListening(true);
-        secureSetting.onChange(false);
+        anonymousClass2.setListening(true);
+        anonymousClass2.onChange(false);
         this.mOverlay.addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // from class: com.android.systemui.ScreenDecorations.3
+            AnonymousClass3() {
+            }
+
             @Override // android.view.View.OnLayoutChangeListener
             public void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
                 ScreenDecorations.this.mOverlay.removeOnLayoutChangeListener(this);
@@ -130,9 +167,46 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* renamed from: com.android.systemui.ScreenDecorations$2 */
+    class AnonymousClass2 extends SecureSetting {
+        final /* synthetic */ DisplayCutoutView val$cutoutBottom;
+        final /* synthetic */ DisplayCutoutView val$cutoutTop;
+
+        /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+        AnonymousClass2(Context context, Handler handler, String str, DisplayCutoutView displayCutoutView3, DisplayCutoutView displayCutoutView22) {
+            super(context, handler, str);
+            displayCutoutView = displayCutoutView3;
+            displayCutoutView = displayCutoutView22;
+        }
+
+        @Override // com.android.systemui.qs.SecureSetting
+        protected void handleValueChanged(int i, boolean z) {
+            int i2 = i != 0 ? -1 : -16777216;
+            ColorStateList colorStateListValueOf = ColorStateList.valueOf(i2);
+            ((ImageView) ScreenDecorations.this.mOverlay.findViewById(R.id.left)).setImageTintList(colorStateListValueOf);
+            ((ImageView) ScreenDecorations.this.mOverlay.findViewById(R.id.right)).setImageTintList(colorStateListValueOf);
+            ((ImageView) ScreenDecorations.this.mBottomOverlay.findViewById(R.id.left)).setImageTintList(colorStateListValueOf);
+            ((ImageView) ScreenDecorations.this.mBottomOverlay.findViewById(R.id.right)).setImageTintList(colorStateListValueOf);
+            displayCutoutView.setColor(i2);
+            displayCutoutView.setColor(i2);
+        }
+    }
+
+    /* renamed from: com.android.systemui.ScreenDecorations$3 */
+    class AnonymousClass3 implements View.OnLayoutChangeListener {
+        AnonymousClass3() {
+        }
+
+        @Override // android.view.View.OnLayoutChangeListener
+        public void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
+            ScreenDecorations.this.mOverlay.removeOnLayoutChangeListener(this);
+            ScreenDecorations.this.mOverlay.animate().alpha(1.0f).setDuration(1000L).start();
+            ScreenDecorations.this.mBottomOverlay.animate().alpha(1.0f).setDuration(1000L).start();
+        }
+    }
+
     @Override // com.android.systemui.SystemUI
-    public void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) {
         updateOrientation();
         if (shouldDrawCutout() && this.mOverlay == null) {
             setupDecorations();
@@ -151,30 +225,30 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
     }
 
     private void updateViews() {
-        View findViewById = this.mOverlay.findViewById(R.id.left);
-        View findViewById2 = this.mOverlay.findViewById(R.id.right);
-        View findViewById3 = this.mBottomOverlay.findViewById(R.id.left);
-        View findViewById4 = this.mBottomOverlay.findViewById(R.id.right);
+        View viewFindViewById = this.mOverlay.findViewById(R.id.left);
+        View viewFindViewById2 = this.mOverlay.findViewById(R.id.right);
+        View viewFindViewById3 = this.mBottomOverlay.findViewById(R.id.left);
+        View viewFindViewById4 = this.mBottomOverlay.findViewById(R.id.right);
         if (this.mRotation == 0) {
-            updateView(findViewById, 51, 0);
-            updateView(findViewById2, 53, 90);
-            updateView(findViewById3, 83, 270);
-            updateView(findViewById4, 85, 180);
+            updateView(viewFindViewById, 51, 0);
+            updateView(viewFindViewById2, 53, 90);
+            updateView(viewFindViewById3, 83, 270);
+            updateView(viewFindViewById4, 85, 180);
         } else if (this.mRotation == 1) {
-            updateView(findViewById, 51, 0);
-            updateView(findViewById2, 83, 270);
-            updateView(findViewById3, 53, 90);
-            updateView(findViewById4, 85, 180);
+            updateView(viewFindViewById, 51, 0);
+            updateView(viewFindViewById2, 83, 270);
+            updateView(viewFindViewById3, 53, 90);
+            updateView(viewFindViewById4, 85, 180);
         } else if (this.mRotation == 3) {
-            updateView(findViewById, 83, 270);
-            updateView(findViewById2, 85, 180);
-            updateView(findViewById3, 51, 0);
-            updateView(findViewById4, 53, 90);
+            updateView(viewFindViewById, 83, 270);
+            updateView(viewFindViewById2, 85, 180);
+            updateView(viewFindViewById3, 51, 0);
+            updateView(viewFindViewById4, 53, 90);
         } else if (this.mRotation == 2) {
-            updateView(findViewById, 85, 180);
-            updateView(findViewById2, 53, 90);
-            updateView(findViewById3, 83, 270);
-            updateView(findViewById4, 51, 0);
+            updateView(viewFindViewById, 85, 180);
+            updateView(viewFindViewById2, 53, 90);
+            updateView(viewFindViewById3, 83, 270);
+            updateView(viewFindViewById4, 51, 0);
         }
         updateWindowVisibilities();
     }
@@ -184,8 +258,7 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
         view.setRotation(i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateWindowVisibilities() {
+    private void updateWindowVisibilities() {
         updateWindowVisibility(this.mOverlay);
         updateWindowVisibility(this.mBottomOverlay);
     }
@@ -193,8 +266,8 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
     private void updateWindowVisibility(View view) {
         int i = 0;
         boolean z = shouldDrawCutout() && view.findViewById(R.id.display_cutout).getVisibility() == 0;
-        boolean hasRoundedCorners = hasRoundedCorners();
-        if (!z && !hasRoundedCorners) {
+        boolean zHasRoundedCorners = hasRoundedCorners();
+        if (!z && !zHasRoundedCorners) {
             i = 8;
         }
         view.setVisibility(i);
@@ -209,7 +282,7 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
     }
 
     static boolean shouldDrawCutout(Context context) {
-        return context.getResources().getBoolean(17956972);
+        return context.getResources().getBoolean(android.R.^attr-private.floatingToolbarPopupBackgroundDrawable);
     }
 
     private void setupPadding(int i) {
@@ -291,9 +364,7 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
         view.setLayoutParams(layoutParams);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class TunablePaddingTagListener implements FragmentHostManager.FragmentListener {
+    static class TunablePaddingTagListener implements FragmentHostManager.FragmentListener {
         private final int mId;
         private final int mPadding;
         private TunablePadding mTunablePadding;
@@ -316,7 +387,6 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
         }
     }
 
-    /* loaded from: classes.dex */
     public static class DisplayCutoutView extends View implements DisplayManager.DisplayListener, RegionInterceptingFrameLayout.RegionInterceptableView {
         private final Path mBoundingPath;
         private final Rect mBoundingRect;
@@ -489,10 +559,16 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
             if (this.mStart) {
                 if (displayCutout.getSafeInsetLeft() > 0) {
                     boundsFromDirection(displayCutout, 3, rect);
-                } else if (displayCutout.getSafeInsetTop() > 0) {
-                    boundsFromDirection(displayCutout, 48, rect);
+                    return;
+                } else {
+                    if (displayCutout.getSafeInsetTop() > 0) {
+                        boundsFromDirection(displayCutout, 48, rect);
+                        return;
+                    }
+                    return;
                 }
-            } else if (displayCutout.getSafeInsetRight() > 0) {
+            }
+            if (displayCutout.getSafeInsetRight() > 0) {
                 boundsFromDirection(displayCutout, 5, rect);
             } else if (displayCutout.getSafeInsetBottom() > 0) {
                 boundsFromDirection(displayCutout, 80, rect);

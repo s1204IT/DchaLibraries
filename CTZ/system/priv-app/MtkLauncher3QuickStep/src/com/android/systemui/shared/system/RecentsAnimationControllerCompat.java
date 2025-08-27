@@ -5,6 +5,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.IRecentsAnimationController;
 import com.android.systemui.shared.recents.model.ThumbnailData;
+
 /* loaded from: classes.dex */
 public class RecentsAnimationControllerCompat {
     private static final String TAG = RecentsAnimationControllerCompat.class.getSimpleName();

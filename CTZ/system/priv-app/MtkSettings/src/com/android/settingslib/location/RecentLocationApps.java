@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RecentLocationApps {
     static final String ANDROID_SYSTEM_PACKAGE_NAME = "android";
@@ -33,14 +34,14 @@ public class RecentLocationApps {
         List packagesForOps = ((AppOpsManager) this.mContext.getSystemService("appops")).getPackagesForOps(LOCATION_OPS);
         int size = packagesForOps != null ? packagesForOps.size() : 0;
         ArrayList arrayList = new ArrayList(size);
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         List<UserHandle> userProfiles = ((UserManager) this.mContext.getSystemService("user")).getUserProfiles();
         for (int i = 0; i < size; i++) {
             AppOpsManager.PackageOps packageOps = (AppOpsManager.PackageOps) packagesForOps.get(i);
             String packageName = packageOps.getPackageName();
             int uid = packageOps.getUid();
             int userId = UserHandle.getUserId(uid);
-            if (!(uid == 1000 && ANDROID_SYSTEM_PACKAGE_NAME.equals(packageName)) && userProfiles.contains(new UserHandle(userId)) && (requestFromOps = getRequestFromOps(currentTimeMillis, packageOps)) != null) {
+            if (!(uid == 1000 && ANDROID_SYSTEM_PACKAGE_NAME.equals(packageName)) && userProfiles.contains(new UserHandle(userId)) && (requestFromOps = getRequestFromOps(jCurrentTimeMillis, packageOps)) != null) {
                 arrayList.add(requestFromOps);
             }
         }
@@ -50,6 +51,7 @@ public class RecentLocationApps {
     public List<Request> getAppListSorted() {
         List<Request> appList = getAppList();
         Collections.sort(appList, Collections.reverseOrder(new Comparator<Request>() { // from class: com.android.settingslib.location.RecentLocationApps.1
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(Request request, Request request2) {
                 return Long.compare(request.requestFinishTime, request2.requestFinishTime);
@@ -62,18 +64,18 @@ public class RecentLocationApps {
         String packageName = packageOps.getPackageName();
         long j2 = j - 86400000;
         boolean z = false;
-        long j3 = 0;
+        long time = 0;
         boolean z2 = false;
         for (AppOpsManager.OpEntry opEntry : packageOps.getOps()) {
             if (opEntry.isRunning() || opEntry.getTime() >= j2) {
-                j3 = opEntry.getTime() + opEntry.getDuration();
+                time = opEntry.getTime() + opEntry.getDuration();
                 switch (opEntry.getOp()) {
                     case 41:
                         z = true;
-                        continue;
+                        break;
                     case 42:
                         z2 = true;
-                        continue;
+                        break;
                 }
             }
         }
@@ -94,14 +96,13 @@ public class RecentLocationApps {
             Drawable badgedIcon = this.mDrawableFactory.getBadgedIcon(applicationInfoAsUser, userId);
             CharSequence applicationLabel = this.mPackageManager.getApplicationLabel(applicationInfoAsUser);
             CharSequence userBadgedLabel = this.mPackageManager.getUserBadgedLabel(applicationLabel, userHandle);
-            return new Request(packageName, userHandle, badgedIcon, applicationLabel, z2, applicationLabel.toString().contentEquals(userBadgedLabel) ? null : userBadgedLabel, j3);
+            return new Request(packageName, userHandle, badgedIcon, applicationLabel, z2, applicationLabel.toString().contentEquals(userBadgedLabel) ? null : userBadgedLabel, time);
         } catch (PackageManager.NameNotFoundException e) {
             Log.w(TAG, "package name not found for " + packageName + ", userId " + userId);
             return null;
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Request {
         public final CharSequence contentDescription;
         public final Drawable icon;

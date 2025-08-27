@@ -4,6 +4,7 @@ import android.support.v4.util.Pools;
 import android.support.v4.util.SimpleArrayMap;
 import java.util.ArrayList;
 import java.util.HashSet;
+
 /* loaded from: classes.dex */
 public final class DirectedAcyclicGraph<T> {
     private final SimpleArrayMap<T, ArrayList<T>> mGraph;

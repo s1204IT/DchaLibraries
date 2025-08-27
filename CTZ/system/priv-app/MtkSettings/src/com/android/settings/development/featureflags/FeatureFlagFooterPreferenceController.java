@@ -6,6 +6,7 @@ import com.android.settings.core.BasePreferenceController;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.widget.FooterPreferenceMixin;
+
 /* loaded from: classes.dex */
 public class FeatureFlagFooterPreferenceController extends BasePreferenceController implements LifecycleObserver, OnStart {
     private FooterPreferenceMixin mFooterMixin;

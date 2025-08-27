@@ -14,6 +14,7 @@ import android.util.Log;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.recents.misc.SysUiTaskStackChangeListener;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
+
 /* loaded from: classes.dex */
 public class WorkLockActivityController {
     private static final String TAG = WorkLockActivityController.class.getSimpleName();
@@ -38,26 +39,23 @@ public class WorkLockActivityController {
         activityManagerWrapper.registerTaskStackListener(this.mLockListener);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startWorkChallengeInTask(int i, int i2) {
+    private void startWorkChallengeInTask(int i, int i2) {
         ActivityManager.TaskDescription taskDescription;
         try {
             taskDescription = this.mIam.getTaskDescription(i);
         } catch (RemoteException e) {
-            String str = TAG;
-            Log.w(str, "Failed to get description for task=" + i);
+            Log.w(TAG, "Failed to get description for task=" + i);
             taskDescription = null;
         }
-        Intent addFlags = new Intent("android.app.action.CONFIRM_DEVICE_CREDENTIAL_WITH_USER").setComponent(new ComponentName(this.mContext, WorkLockActivity.class)).putExtra("android.intent.extra.USER_ID", i2).putExtra("com.android.systemui.keyguard.extra.TASK_DESCRIPTION", taskDescription).addFlags(67239936);
-        ActivityOptions makeBasic = ActivityOptions.makeBasic();
-        makeBasic.setLaunchTaskId(i);
-        makeBasic.setTaskOverlay(true, false);
-        if (!ActivityManager.isStartResultSuccessful(startActivityAsUser(addFlags, makeBasic.toBundle(), -2))) {
+        Intent intentAddFlags = new Intent("android.app.action.CONFIRM_DEVICE_CREDENTIAL_WITH_USER").setComponent(new ComponentName(this.mContext, (Class<?>) WorkLockActivity.class)).putExtra("android.intent.extra.USER_ID", i2).putExtra("com.android.systemui.keyguard.extra.TASK_DESCRIPTION", taskDescription).addFlags(67239936);
+        ActivityOptions activityOptionsMakeBasic = ActivityOptions.makeBasic();
+        activityOptionsMakeBasic.setLaunchTaskId(i);
+        activityOptionsMakeBasic.setTaskOverlay(true, false);
+        if (!ActivityManager.isStartResultSuccessful(startActivityAsUser(intentAddFlags, activityOptionsMakeBasic.toBundle(), -2))) {
             try {
                 this.mIam.removeTask(i);
             } catch (RemoteException e2) {
-                String str2 = TAG;
-                Log.w(str2, "Failed to get description for task=" + i);
+                Log.w(TAG, "Failed to get description for task=" + i);
             }
         }
     }

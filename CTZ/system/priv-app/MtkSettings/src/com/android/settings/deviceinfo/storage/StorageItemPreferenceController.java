@@ -1,5 +1,6 @@
 package com.android.settings.deviceinfo.storage;
 
+import android.R;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -14,7 +15,6 @@ import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
-import com.android.settings.R;
 import com.android.settings.Settings;
 import com.android.settings.applications.manageapplications.ManageApplications;
 import com.android.settings.core.PreferenceControllerMixin;
@@ -26,6 +26,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.deviceinfo.StorageVolumeProvider;
+
 /* loaded from: classes.dex */
 public class StorageItemPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     static final String AUDIO_KEY = "pref_music_audio";
@@ -72,103 +73,51 @@ public class StorageItemPreferenceController extends AbstractPreferenceControlle
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:32:0x0060  */
     @Override // com.android.settingslib.core.AbstractPreferenceController
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public boolean handlePreferenceTreeClick(Preference preference) {
-        char c;
         if (preference == null) {
             return false;
         }
-        Intent intent = null;
+        Intent photosIntent = null;
         if (preference.getKey() == null) {
             return false;
         }
-        String key = preference.getKey();
-        switch (key.hashCode()) {
-            case -1642571429:
-                if (key.equals(FILES_KEY)) {
-                    c = 5;
-                    break;
-                }
-                c = 65535;
+        switch (preference.getKey()) {
+            case "pref_photos_videos":
+                photosIntent = getPhotosIntent();
                 break;
-            case -1641885275:
-                if (key.equals(GAME_KEY)) {
-                    c = 2;
-                    break;
-                }
-                c = 65535;
+            case "pref_music_audio":
+                photosIntent = getAudioIntent();
                 break;
-            case -1488779334:
-                if (key.equals(PHOTO_KEY)) {
-                    c = 0;
-                    break;
-                }
-                c = 65535;
+            case "pref_games":
+                photosIntent = getGamesIntent();
                 break;
-            case 283435296:
-                if (key.equals(AUDIO_KEY)) {
-                    c = 1;
-                    break;
-                }
-                c = 65535;
+            case "pref_movies":
+                photosIntent = getMoviesIntent();
                 break;
-            case 826139871:
-                if (key.equals(MOVIES_KEY)) {
-                    c = 3;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1007071179:
-                if (key.equals(SYSTEM_KEY)) {
-                    c = 6;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1161100765:
-                if (key.equals(OTHER_APPS_KEY)) {
-                    c = 4;
-                    break;
-                }
-                c = 65535;
-                break;
-            default:
-                c = 65535;
-                break;
-        }
-        switch (c) {
-            case 0:
-                intent = getPhotosIntent();
-                break;
-            case 1:
-                intent = getAudioIntent();
-                break;
-            case 2:
-                intent = getGamesIntent();
-                break;
-            case 3:
-                intent = getMoviesIntent();
-                break;
-            case 4:
+            case "pref_other_apps":
                 if (this.mVolume != null) {
-                    intent = getAppsIntent();
+                    photosIntent = getAppsIntent();
                     break;
                 }
                 break;
-            case 5:
-                intent = getFilesIntent();
+            case "pref_files":
+                photosIntent = getFilesIntent();
                 FeatureFactory.getFactory(this.mContext).getMetricsFeatureProvider().action(this.mContext, 841, new Pair[0]);
                 break;
-            case 6:
+            case "pref_system":
                 PrivateVolumeSettings.SystemInfoFragment systemInfoFragment = new PrivateVolumeSettings.SystemInfoFragment();
                 systemInfoFragment.setTargetFragment(this.mFragment, 0);
                 systemInfoFragment.show(this.mFragment.getFragmentManager(), "SystemInfo");
                 return true;
         }
-        if (intent != null) {
-            intent.putExtra("android.intent.extra.USER_ID", this.mUserId);
-            launchIntent(intent);
+        if (photosIntent != null) {
+            photosIntent.putExtra("android.intent.extra.USER_ID", this.mUserId);
+            launchIntent(photosIntent);
             return true;
         }
         return super.handlePreferenceTreeClick(preference);
@@ -186,8 +135,8 @@ public class StorageItemPreferenceController extends AbstractPreferenceControlle
 
     private void setFilesPreferenceVisibility() {
         if (this.mScreen != null) {
-            VolumeInfo findEmulatedForPrivate = this.mSvp.findEmulatedForPrivate(this.mVolume);
-            if (findEmulatedForPrivate == null || !findEmulatedForPrivate.isMountedReadable()) {
+            VolumeInfo volumeInfoFindEmulatedForPrivate = this.mSvp.findEmulatedForPrivate(this.mVolume);
+            if (volumeInfoFindEmulatedForPrivate == null || !volumeInfoFindEmulatedForPrivate.isMountedReadable()) {
                 this.mScreen.removePreference(this.mFilePreference);
             } else {
                 this.mScreen.addPreference(this.mFilePreference);
@@ -213,11 +162,11 @@ public class StorageItemPreferenceController extends AbstractPreferenceControlle
     }
 
     private static Drawable applyTint(Context context, Drawable drawable) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{16843817});
-        Drawable mutate = drawable.mutate();
-        mutate.setTint(obtainStyledAttributes.getColor(0, 0));
-        obtainStyledAttributes.recycle();
-        return mutate;
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(new int[]{R.attr.colorControlNormal});
+        Drawable drawableMutate = drawable.mutate();
+        drawableMutate.setTint(typedArrayObtainStyledAttributes.getColor(0, 0));
+        typedArrayObtainStyledAttributes.recycle();
+        return drawableMutate;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
@@ -244,8 +193,8 @@ public class StorageItemPreferenceController extends AbstractPreferenceControlle
         if (this.mSystemPreference != null) {
             long j = 0;
             for (int i2 = 0; i2 < sparseArray.size(); i2++) {
-                StorageAsyncLoader.AppsStorageResult valueAt = sparseArray.valueAt(i2);
-                j = j + valueAt.gamesSize + valueAt.musicAppsSize + valueAt.videoAppsSize + valueAt.photosAppsSize + valueAt.otherAppsSize + (valueAt.externalStats.totalBytes - valueAt.externalStats.appBytes);
+                StorageAsyncLoader.AppsStorageResult appsStorageResultValueAt = sparseArray.valueAt(i2);
+                j = j + appsStorageResultValueAt.gamesSize + appsStorageResultValueAt.musicAppsSize + appsStorageResultValueAt.videoAppsSize + appsStorageResultValueAt.photosAppsSize + appsStorageResultValueAt.otherAppsSize + (appsStorageResultValueAt.externalStats.totalBytes - appsStorageResultValueAt.externalStats.appBytes);
             }
             this.mSystemPreference.setStorageSize(Math.max(1073741824L, this.mUsedBytes - j), this.mTotalSize);
         }
@@ -263,7 +212,7 @@ public class StorageItemPreferenceController extends AbstractPreferenceControlle
         Bundle workAnnotatedBundle = getWorkAnnotatedBundle(2);
         workAnnotatedBundle.putString("classname", Settings.PhotosStorageActivity.class.getName());
         workAnnotatedBundle.putInt("storageType", 3);
-        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(R.string.storage_photos_videos).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
+        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(com.android.settings.R.string.storage_photos_videos).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
     }
 
     private Intent getAudioIntent() {
@@ -275,7 +224,7 @@ public class StorageItemPreferenceController extends AbstractPreferenceControlle
         workAnnotatedBundle.putString("volumeUuid", this.mVolume.getFsUuid());
         workAnnotatedBundle.putString("volumeName", this.mVolume.getDescription());
         workAnnotatedBundle.putInt("storageType", 1);
-        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(R.string.storage_music_audio).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
+        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(com.android.settings.R.string.storage_music_audio).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
     }
 
     private Intent getAppsIntent() {
@@ -286,19 +235,19 @@ public class StorageItemPreferenceController extends AbstractPreferenceControlle
         workAnnotatedBundle.putString("classname", Settings.StorageUseActivity.class.getName());
         workAnnotatedBundle.putString("volumeUuid", this.mVolume.getFsUuid());
         workAnnotatedBundle.putString("volumeName", this.mVolume.getDescription());
-        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(R.string.apps_storage).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
+        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(com.android.settings.R.string.apps_storage).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
     }
 
     private Intent getGamesIntent() {
         Bundle workAnnotatedBundle = getWorkAnnotatedBundle(1);
         workAnnotatedBundle.putString("classname", Settings.GamesStorageActivity.class.getName());
-        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(R.string.game_storage_settings).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
+        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(com.android.settings.R.string.game_storage_settings).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
     }
 
     private Intent getMoviesIntent() {
         Bundle workAnnotatedBundle = getWorkAnnotatedBundle(1);
         workAnnotatedBundle.putString("classname", Settings.MoviesStorageActivity.class.getName());
-        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(R.string.storage_movies_tv).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
+        return new SubSettingLauncher(this.mContext).setDestination(ManageApplications.class.getName()).setTitle(com.android.settings.R.string.storage_movies_tv).setArguments(workAnnotatedBundle).setSourceMetricsCategory(this.mMetricsFeatureProvider.getMetricsCategory(this.mFragment)).toIntent();
     }
 
     private Bundle getWorkAnnotatedBundle(int i) {

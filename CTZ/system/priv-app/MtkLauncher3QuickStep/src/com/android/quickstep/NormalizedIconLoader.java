@@ -1,5 +1,6 @@
 package com.android.quickstep;
 
+import android.R;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -16,6 +17,7 @@ import com.android.launcher3.graphics.DrawableFactory;
 import com.android.launcher3.graphics.LauncherIcons;
 import com.android.systemui.shared.recents.model.IconLoader;
 import com.android.systemui.shared.recents.model.TaskKeyLruCache;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class NormalizedIconLoader extends IconLoader {
@@ -35,7 +37,7 @@ public class NormalizedIconLoader extends IconLoader {
         synchronized (this.mDefaultIcons) {
             BitmapInfo bitmapInfo = this.mDefaultIcons.get(i);
             if (bitmapInfo == null) {
-                bitmapInfo = getBitmapInfo(Resources.getSystem().getDrawable(17301651), i, 0, false);
+                bitmapInfo = getBitmapInfo(Resources.getSystem().getDrawable(R.drawable.sym_def_app_icon), i, 0, false);
                 this.mDefaultIcons.put(i, bitmapInfo);
             }
             fastBitmapDrawable = new FastBitmapDrawable(bitmapInfo);

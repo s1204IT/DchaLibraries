@@ -2,6 +2,7 @@ package com.android.settings.fuelgauge.batterytip.actions;
 
 import android.content.Context;
 import com.android.settingslib.fuelgauge.BatterySaverUtils;
+
 /* loaded from: classes.dex */
 public class BatterySaverAction extends BatteryTipAction {
     public BatterySaverAction(Context context) {

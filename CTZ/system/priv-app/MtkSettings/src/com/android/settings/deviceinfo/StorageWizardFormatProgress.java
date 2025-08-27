@@ -15,14 +15,14 @@ import com.android.settings.R;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public class StorageWizardFormatProgress extends StorageWizardBase {
     private boolean mFormatPrivate;
     private PartitionTask mTask;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.deviceinfo.StorageWizardBase, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         if (this.mDisk == null) {
             finish();
@@ -48,24 +48,23 @@ public class StorageWizardFormatProgress extends StorageWizardBase {
         return this.mTask;
     }
 
-    /* loaded from: classes.dex */
     public static class PartitionTask extends AsyncTask<Void, Integer, Exception> {
         public StorageWizardFormatProgress mActivity;
         private volatile long mPrivateBench;
         private volatile int mProgress = 20;
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Exception doInBackground(Void... voidArr) {
+        protected Exception doInBackground(Void... voidArr) {
             StorageWizardFormatProgress storageWizardFormatProgress = this.mActivity;
             StorageManager storageManager = this.mActivity.mStorage;
             try {
                 if (storageWizardFormatProgress.mFormatPrivate) {
                     storageManager.partitionPrivate(storageWizardFormatProgress.mDisk.getId());
                     publishProgress(40);
-                    VolumeInfo findFirstVolume = storageWizardFormatProgress.findFirstVolume(1, 25);
+                    VolumeInfo volumeInfoFindFirstVolume = storageWizardFormatProgress.findFirstVolume(1, 25);
                     final CompletableFuture completableFuture = new CompletableFuture();
-                    storageManager.benchmark(findFirstVolume.getId(), new IVoldTaskListener.Stub() { // from class: com.android.settings.deviceinfo.StorageWizardFormatProgress.PartitionTask.1
+                    storageManager.benchmark(volumeInfoFindFirstVolume.getId(), new IVoldTaskListener.Stub() { // from class: com.android.settings.deviceinfo.StorageWizardFormatProgress.PartitionTask.1
                         public void onStatus(int i, PersistableBundle persistableBundle) {
                             PartitionTask.this.publishProgress(Integer.valueOf(40 + ((i * 40) / 100)));
                         }
@@ -77,7 +76,7 @@ public class StorageWizardFormatProgress extends StorageWizardBase {
                     this.mPrivateBench = ((PersistableBundle) completableFuture.get(60L, TimeUnit.SECONDS)).getLong("run", Long.MAX_VALUE);
                     if (storageWizardFormatProgress.mDisk.isDefaultPrimary() && Objects.equals(storageManager.getPrimaryStorageUuid(), "primary_physical")) {
                         Log.d("StorageSettings", "Just formatted primary physical; silently moving storage to new emulated volume");
-                        storageManager.setPrimaryStorageUuid(findFirstVolume.getFsUuid(), new SilentObserver());
+                        storageManager.setPrimaryStorageUuid(volumeInfoFindFirstVolume.getFsUuid(), new SilentObserver());
                     }
                 } else {
                     storageManager.partitionPublic(storageWizardFormatProgress.mDisk.getId());
@@ -88,9 +87,9 @@ public class StorageWizardFormatProgress extends StorageWizardBase {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onProgressUpdate([Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onProgressUpdate(Integer... numArr) {
+        protected void onProgressUpdate(Integer... numArr) {
             this.mProgress = numArr[0].intValue();
             this.mActivity.setCurrentProgress(this.mProgress);
         }
@@ -100,9 +99,9 @@ public class StorageWizardFormatProgress extends StorageWizardBase {
             this.mActivity.setCurrentProgress(this.mProgress);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Exception exc) {
+        protected void onPostExecute(Exception exc) {
             StorageWizardFormatProgress storageWizardFormatProgress = this.mActivity;
             if (storageWizardFormatProgress.isDestroyed()) {
                 return;
@@ -128,22 +127,20 @@ public class StorageWizardFormatProgress extends StorageWizardBase {
     }
 
     public void onFormatFinished() {
-        Intent intent = new Intent(this, StorageWizardFormatSlow.class);
+        Intent intent = new Intent(this, (Class<?>) StorageWizardFormatSlow.class);
         intent.putExtra("format_slow", false);
         startActivity(intent);
         finishAffinity();
     }
 
     public void onFormatFinishedSlow() {
-        Intent intent = new Intent(this, StorageWizardFormatSlow.class);
+        Intent intent = new Intent(this, (Class<?>) StorageWizardFormatSlow.class);
         intent.putExtra("format_slow", true);
         startActivity(intent);
         finishAffinity();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SilentObserver extends IPackageMoveObserver.Stub {
+    private static class SilentObserver extends IPackageMoveObserver.Stub {
         private SilentObserver() {
         }
 

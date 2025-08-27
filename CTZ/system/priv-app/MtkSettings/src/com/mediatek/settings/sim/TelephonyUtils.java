@@ -9,6 +9,7 @@ import android.util.Log;
 import com.android.internal.telephony.ITelephony;
 import com.mediatek.internal.telephony.IMtkTelephonyEx;
 import com.mediatek.internal.telephony.RadioCapabilitySwitchUtil;
+
 /* loaded from: classes.dex */
 public class TelephonyUtils {
     private static boolean DBG = SystemProperties.get("ro.build.type").equals("eng");
@@ -18,12 +19,12 @@ public class TelephonyUtils {
     }
 
     public static boolean isRadioOn(int i, Context context) {
-        ITelephony asInterface = ITelephony.Stub.asInterface(ServiceManager.getService("phone"));
-        boolean z = false;
-        if (asInterface != null) {
+        ITelephony iTelephonyAsInterface = ITelephony.Stub.asInterface(ServiceManager.getService("phone"));
+        boolean zIsRadioOnForSubscriber = false;
+        if (iTelephonyAsInterface != null) {
             if (i != -1) {
                 try {
-                    z = asInterface.isRadioOnForSubscriber(i, context.getPackageName());
+                    zIsRadioOnForSubscriber = iTelephonyAsInterface.isRadioOnForSubscriber(i, context.getPackageName());
                 } catch (RemoteException e) {
                     Log.e("TelephonyUtils", "isRadioOn, RemoteException=" + e);
                 }
@@ -31,26 +32,26 @@ public class TelephonyUtils {
         } else {
             Log.e("TelephonyUtils", "isRadioOn, ITelephony is null.");
         }
-        log("isRadioOn=" + z + ", subId=" + i);
-        return z;
+        log("isRadioOn=" + zIsRadioOnForSubscriber + ", subId=" + i);
+        return zIsRadioOnForSubscriber;
     }
 
     public static boolean isCapabilitySwitching() {
-        boolean isCapabilitySwitching;
-        IMtkTelephonyEx asInterface = IMtkTelephonyEx.Stub.asInterface(ServiceManager.getService("phoneEx"));
-        if (asInterface != null) {
+        boolean zIsCapabilitySwitching;
+        IMtkTelephonyEx iMtkTelephonyExAsInterface = IMtkTelephonyEx.Stub.asInterface(ServiceManager.getService("phoneEx"));
+        if (iMtkTelephonyExAsInterface != null) {
             try {
-                isCapabilitySwitching = asInterface.isCapabilitySwitching();
+                zIsCapabilitySwitching = iMtkTelephonyExAsInterface.isCapabilitySwitching();
             } catch (RemoteException e) {
                 Log.e("TelephonyUtils", "isCapabilitySwitching, RemoteException=" + e);
             }
-            log("isSwitching=" + isCapabilitySwitching);
-            return isCapabilitySwitching;
+            log("isSwitching=" + zIsCapabilitySwitching);
+            return zIsCapabilitySwitching;
         }
         log("isCapabilitySwitching, IMtkTelephonyEx service not ready.");
-        isCapabilitySwitching = false;
-        log("isSwitching=" + isCapabilitySwitching);
-        return isCapabilitySwitching;
+        zIsCapabilitySwitching = false;
+        log("isSwitching=" + zIsCapabilitySwitching);
+        return zIsCapabilitySwitching;
     }
 
     private static void log(String str) {
@@ -60,10 +61,10 @@ public class TelephonyUtils {
     }
 
     public static int getMainCapabilityPhoneId() {
-        IMtkTelephonyEx asInterface = IMtkTelephonyEx.Stub.asInterface(ServiceManager.getService("phoneEx"));
-        if (asInterface != null) {
+        IMtkTelephonyEx iMtkTelephonyExAsInterface = IMtkTelephonyEx.Stub.asInterface(ServiceManager.getService("phoneEx"));
+        if (iMtkTelephonyExAsInterface != null) {
             try {
-                return asInterface.getMainCapabilityPhoneId();
+                return iMtkTelephonyExAsInterface.getMainCapabilityPhoneId();
             } catch (RemoteException e) {
                 log("getMainCapabilityPhoneId, RemoteException=" + e);
                 return -1;

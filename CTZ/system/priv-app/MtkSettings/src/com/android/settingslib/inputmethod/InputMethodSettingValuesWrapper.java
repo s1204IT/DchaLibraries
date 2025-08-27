@@ -12,8 +12,10 @@ import com.android.internal.inputmethod.InputMethodUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class InputMethodSettingValuesWrapper {
     private static final String TAG = InputMethodSettingValuesWrapper.class.getSimpleName();
@@ -93,24 +95,25 @@ public class InputMethodSettingValuesWrapper {
     }
 
     public boolean isAlwaysCheckedIme(InputMethodInfo inputMethodInfo, Context context) {
-        boolean isEnabledImi = isEnabledImi(inputMethodInfo);
+        boolean zIsEnabledImi = isEnabledImi(inputMethodInfo);
         synchronized (this.mMethodMap) {
-            if (this.mSettings.getEnabledInputMethodListLocked().size() > 1 || !isEnabledImi) {
-                int enabledValidSystemNonAuxAsciiCapableImeCount = getEnabledValidSystemNonAuxAsciiCapableImeCount(context);
-                return enabledValidSystemNonAuxAsciiCapableImeCount <= 1 && (enabledValidSystemNonAuxAsciiCapableImeCount != 1 || isEnabledImi) && InputMethodUtils.isSystemIme(inputMethodInfo) && isValidSystemNonAuxAsciiCapableIme(inputMethodInfo, context);
+            if (this.mSettings.getEnabledInputMethodListLocked().size() <= 1 && zIsEnabledImi) {
+                return true;
             }
-            return true;
+            int enabledValidSystemNonAuxAsciiCapableImeCount = getEnabledValidSystemNonAuxAsciiCapableImeCount(context);
+            return enabledValidSystemNonAuxAsciiCapableImeCount <= 1 && (enabledValidSystemNonAuxAsciiCapableImeCount != 1 || zIsEnabledImi) && InputMethodUtils.isSystemIme(inputMethodInfo) && isValidSystemNonAuxAsciiCapableIme(inputMethodInfo, context);
         }
     }
 
     private int getEnabledValidSystemNonAuxAsciiCapableImeCount(Context context) {
-        ArrayList<InputMethodInfo> enabledInputMethodListLocked;
+        ArrayList enabledInputMethodListLocked;
         synchronized (this.mMethodMap) {
             enabledInputMethodListLocked = this.mSettings.getEnabledInputMethodListLocked();
         }
+        Iterator it = enabledInputMethodListLocked.iterator();
         int i = 0;
-        for (InputMethodInfo inputMethodInfo : enabledInputMethodListLocked) {
-            if (isValidSystemNonAuxAsciiCapableIme(inputMethodInfo, context)) {
+        while (it.hasNext()) {
+            if (isValidSystemNonAuxAsciiCapableIme((InputMethodInfo) it.next(), context)) {
                 i++;
             }
         }
@@ -121,12 +124,13 @@ public class InputMethodSettingValuesWrapper {
     }
 
     public boolean isEnabledImi(InputMethodInfo inputMethodInfo) {
-        ArrayList<InputMethodInfo> enabledInputMethodListLocked;
+        ArrayList enabledInputMethodListLocked;
         synchronized (this.mMethodMap) {
             enabledInputMethodListLocked = this.mSettings.getEnabledInputMethodListLocked();
         }
-        for (InputMethodInfo inputMethodInfo2 : enabledInputMethodListLocked) {
-            if (inputMethodInfo2.getId().equals(inputMethodInfo.getId())) {
+        Iterator it = enabledInputMethodListLocked.iterator();
+        while (it.hasNext()) {
+            if (((InputMethodInfo) it.next()).getId().equals(inputMethodInfo.getId())) {
                 return true;
             }
         }

@@ -1,5 +1,6 @@
 package com.android.settings.notification;
 
+import android.R;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
@@ -15,6 +16,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class PulseNotificationPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private SettingObserver mSettingObserver;
@@ -26,9 +28,9 @@ public class PulseNotificationPreferenceController extends AbstractPreferenceCon
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference("notification_pulse");
-        if (findPreference != null) {
-            this.mSettingObserver = new SettingObserver(findPreference);
+        Preference preferenceFindPreference = preferenceScreen.findPreference("notification_pulse");
+        if (preferenceFindPreference != null) {
+            this.mSettingObserver = new SettingObserver(preferenceFindPreference);
         }
     }
 
@@ -53,7 +55,7 @@ public class PulseNotificationPreferenceController extends AbstractPreferenceCon
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean isAvailable() {
-        return this.mContext.getResources().getBoolean(17956984);
+        return this.mContext.getResources().getBoolean(R.^attr-private.headerLayout);
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
@@ -74,7 +76,6 @@ public class PulseNotificationPreferenceController extends AbstractPreferenceCon
         return Settings.System.putInt(this.mContext.getContentResolver(), "notification_light_pulse", ((Boolean) obj).booleanValue() ? 1 : 0);
     }
 
-    /* loaded from: classes.dex */
     class SettingObserver extends ContentObserver {
         private final Uri NOTIFICATION_LIGHT_PULSE_URI;
         private final Preference mPreference;

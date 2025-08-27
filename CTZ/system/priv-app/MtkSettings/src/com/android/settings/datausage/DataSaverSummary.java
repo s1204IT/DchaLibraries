@@ -13,6 +13,7 @@ import com.android.settings.datausage.DataSaverBackend;
 import com.android.settings.widget.SwitchBar;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class DataSaverSummary extends SettingsPreferenceFragment implements AppStateBaseBridge.Callback, DataSaverBackend.Listener, SwitchBar.OnSwitchChangeListener, ApplicationsState.Callbacks {
     private ApplicationsState mApplicationsState;
@@ -27,7 +28,7 @@ public class DataSaverSummary extends SettingsPreferenceFragment implements AppS
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         addPreferencesFromResource(R.xml.data_saver);
-        this.mFooterPreferenceMixin.createFooterPreference().setTitle(17039735);
+        this.mFooterPreferenceMixin.createFooterPreference().setTitle(android.R.string.autofill_save_title_with_3types);
         this.mUnrestrictedAccess = findPreference("unrestricted_access");
         this.mApplicationsState = ApplicationsState.getInstance((Application) getContext().getApplicationContext());
         this.mDataSaverBackend = new DataSaverBackend(getContext());

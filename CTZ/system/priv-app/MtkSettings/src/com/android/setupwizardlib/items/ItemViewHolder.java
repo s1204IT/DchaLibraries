@@ -3,13 +3,13 @@ package com.android.setupwizardlib.items;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.android.setupwizardlib.DividerItemDecoration;
+
 /* loaded from: classes.dex */
 class ItemViewHolder extends RecyclerView.ViewHolder implements DividerItemDecoration.DividedViewHolder {
     private boolean mIsEnabled;
     private IItem mItem;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ItemViewHolder(View view) {
+    ItemViewHolder(View view) {
         super(view);
     }
 

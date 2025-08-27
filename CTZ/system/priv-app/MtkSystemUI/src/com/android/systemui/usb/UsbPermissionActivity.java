@@ -28,6 +28,7 @@ import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
 import com.android.internal.util.XmlUtils;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class UsbPermissionActivity extends AlertActivity implements DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private UsbAccessory mAccessory;
@@ -40,8 +41,9 @@ public class UsbPermissionActivity extends AlertActivity implements DialogInterf
     private boolean mPermissionGranted;
     private int mUid;
 
+    /* JADX DEBUG: Multi-variable search result rejected for r8v0, resolved type: com.android.systemui.usb.UsbPermissionActivity */
     /* JADX WARN: Multi-variable type inference failed */
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
         super.onCreate(bundle);
         Intent intent = getIntent();
         this.mDevice = (UsbDevice) intent.getParcelableExtra("device");
@@ -51,32 +53,32 @@ public class UsbPermissionActivity extends AlertActivity implements DialogInterf
         this.mPackageName = intent.getStringExtra("package");
         PackageManager packageManager = getPackageManager();
         try {
-            String charSequence = packageManager.getApplicationInfo(this.mPackageName, 0).loadLabel(packageManager).toString();
+            String string = packageManager.getApplicationInfo(this.mPackageName, 0).loadLabel(packageManager).toString();
             AlertController.AlertParams alertParams = this.mAlertParams;
-            alertParams.mTitle = charSequence;
+            alertParams.mTitle = string;
             if (this.mDevice == null) {
-                alertParams.mMessage = getString(R.string.usb_accessory_permission_prompt, new Object[]{charSequence, this.mAccessory.getDescription()});
+                alertParams.mMessage = getString(R.string.usb_accessory_permission_prompt, new Object[]{string, this.mAccessory.getDescription()});
                 this.mDisconnectedReceiver = new UsbDisconnectedReceiver((Activity) this, this.mAccessory);
             } else {
-                alertParams.mMessage = getString(R.string.usb_device_permission_prompt, new Object[]{charSequence, this.mDevice.getProductName()});
+                alertParams.mMessage = getString(R.string.usb_device_permission_prompt, new Object[]{string, this.mDevice.getProductName()});
                 this.mDisconnectedReceiver = new UsbDisconnectedReceiver((Activity) this, this.mDevice);
             }
-            alertParams.mPositiveButtonText = getString(17039370);
-            alertParams.mNegativeButtonText = getString(17039360);
+            alertParams.mPositiveButtonText = getString(android.R.string.ok);
+            alertParams.mNegativeButtonText = getString(android.R.string.cancel);
             alertParams.mPositiveButtonListener = this;
             alertParams.mNegativeButtonListener = this;
             try {
                 PackageInfo packageInfo = packageManager.getPackageInfo(this.mPackageName, 129);
                 if ((this.mDevice != null && canBeDefault(this.mDevice, packageInfo)) || (this.mAccessory != null && canBeDefault(this.mAccessory, packageInfo))) {
-                    alertParams.mView = ((LayoutInflater) getSystemService("layout_inflater")).inflate(17367090, (ViewGroup) null);
-                    this.mAlwaysUse = (CheckBox) alertParams.mView.findViewById(16908711);
+                    alertParams.mView = ((LayoutInflater) getSystemService("layout_inflater")).inflate(android.R.layout.alert_dialog_progress, (ViewGroup) null);
+                    this.mAlwaysUse = (CheckBox) alertParams.mView.findViewById(android.R.id.accessibility_permissionDialog_title);
                     if (this.mDevice == null) {
-                        this.mAlwaysUse.setText(getString(R.string.always_use_accessory, new Object[]{charSequence, this.mAccessory.getDescription()}));
+                        this.mAlwaysUse.setText(getString(R.string.always_use_accessory, new Object[]{string, this.mAccessory.getDescription()}));
                     } else {
-                        this.mAlwaysUse.setText(getString(R.string.always_use_device, new Object[]{charSequence, this.mDevice.getProductName()}));
+                        this.mAlwaysUse.setText(getString(R.string.always_use_device, new Object[]{string, this.mDevice.getProductName()}));
                     }
                     this.mAlwaysUse.setOnCheckedChangeListener(this);
-                    this.mClearDefaultHint = (TextView) alertParams.mView.findViewById(16908796);
+                    this.mClearDefaultHint = (TextView) alertParams.mView.findViewById(android.R.id.async);
                     this.mClearDefaultHint.setVisibility(8);
                 }
             } catch (PackageManager.NameNotFoundException e) {
@@ -88,28 +90,34 @@ public class UsbPermissionActivity extends AlertActivity implements DialogInterf
         }
     }
 
+    /* JADX DEBUG: Another duplicated slice has different insns count: {[IF]}, finally: {[IF, INVOKE] complete} */
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [173=5] */
     private boolean canBeDefault(UsbDevice usbDevice, PackageInfo packageInfo) {
         ActivityInfo[] activityInfoArr = packageInfo.activities;
         if (activityInfoArr != null) {
             for (ActivityInfo activityInfo : activityInfoArr) {
                 try {
-                    XmlResourceParser loadXmlMetaData = activityInfo.loadXmlMetaData(getPackageManager(), "android.hardware.usb.action.USB_DEVICE_ATTACHED");
-                    if (loadXmlMetaData != null) {
-                        XmlUtils.nextElement(loadXmlMetaData);
-                        while (loadXmlMetaData.getEventType() != 1) {
-                            if ("usb-device".equals(loadXmlMetaData.getName()) && DeviceFilter.read(loadXmlMetaData).matches(usbDevice)) {
-                                if (loadXmlMetaData != null) {
-                                    $closeResource(null, loadXmlMetaData);
+                    XmlResourceParser xmlResourceParserLoadXmlMetaData = activityInfo.loadXmlMetaData(getPackageManager(), "android.hardware.usb.action.USB_DEVICE_ATTACHED");
+                    Throwable th = null;
+                    if (xmlResourceParserLoadXmlMetaData != null) {
+                        try {
+                            XmlUtils.nextElement(xmlResourceParserLoadXmlMetaData);
+                            while (xmlResourceParserLoadXmlMetaData.getEventType() != 1) {
+                                if ("usb-device".equals(xmlResourceParserLoadXmlMetaData.getName()) && DeviceFilter.read(xmlResourceParserLoadXmlMetaData).matches(usbDevice)) {
+                                    return true;
                                 }
-                                return true;
+                                XmlUtils.nextElement(xmlResourceParserLoadXmlMetaData);
                             }
-                            XmlUtils.nextElement(loadXmlMetaData);
+                            if (xmlResourceParserLoadXmlMetaData != null) {
+                                $closeResource(null, xmlResourceParserLoadXmlMetaData);
+                            }
+                        } finally {
+                            if (xmlResourceParserLoadXmlMetaData != null) {
+                                $closeResource(th, xmlResourceParserLoadXmlMetaData);
+                            }
                         }
-                        if (loadXmlMetaData != null) {
-                            $closeResource(null, loadXmlMetaData);
-                        }
-                    } else if (loadXmlMetaData != null) {
-                        $closeResource(null, loadXmlMetaData);
+                    } else if (xmlResourceParserLoadXmlMetaData != null) {
+                        $closeResource(null, xmlResourceParserLoadXmlMetaData);
                     }
                 } catch (Exception e) {
                     Log.w("UsbPermissionActivity", "Unable to load component info " + activityInfo.toString(), e);
@@ -119,7 +127,7 @@ public class UsbPermissionActivity extends AlertActivity implements DialogInterf
         return false;
     }
 
-    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) {
+    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) throws Exception {
         if (th == null) {
             autoCloseable.close();
             return;
@@ -131,28 +139,34 @@ public class UsbPermissionActivity extends AlertActivity implements DialogInterf
         }
     }
 
+    /* JADX DEBUG: Another duplicated slice has different insns count: {[IF]}, finally: {[IF, INVOKE] complete} */
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [216=5] */
     private boolean canBeDefault(UsbAccessory usbAccessory, PackageInfo packageInfo) {
         ActivityInfo[] activityInfoArr = packageInfo.activities;
         if (activityInfoArr != null) {
             for (ActivityInfo activityInfo : activityInfoArr) {
                 try {
-                    XmlResourceParser loadXmlMetaData = activityInfo.loadXmlMetaData(getPackageManager(), "android.hardware.usb.action.USB_ACCESSORY_ATTACHED");
-                    if (loadXmlMetaData != null) {
-                        XmlUtils.nextElement(loadXmlMetaData);
-                        while (loadXmlMetaData.getEventType() != 1) {
-                            if ("usb-accessory".equals(loadXmlMetaData.getName()) && AccessoryFilter.read(loadXmlMetaData).matches(usbAccessory)) {
-                                if (loadXmlMetaData != null) {
-                                    $closeResource(null, loadXmlMetaData);
+                    XmlResourceParser xmlResourceParserLoadXmlMetaData = activityInfo.loadXmlMetaData(getPackageManager(), "android.hardware.usb.action.USB_ACCESSORY_ATTACHED");
+                    Throwable th = null;
+                    if (xmlResourceParserLoadXmlMetaData != null) {
+                        try {
+                            XmlUtils.nextElement(xmlResourceParserLoadXmlMetaData);
+                            while (xmlResourceParserLoadXmlMetaData.getEventType() != 1) {
+                                if ("usb-accessory".equals(xmlResourceParserLoadXmlMetaData.getName()) && AccessoryFilter.read(xmlResourceParserLoadXmlMetaData).matches(usbAccessory)) {
+                                    return true;
                                 }
-                                return true;
+                                XmlUtils.nextElement(xmlResourceParserLoadXmlMetaData);
                             }
-                            XmlUtils.nextElement(loadXmlMetaData);
+                            if (xmlResourceParserLoadXmlMetaData != null) {
+                                $closeResource(null, xmlResourceParserLoadXmlMetaData);
+                            }
+                        } finally {
+                            if (xmlResourceParserLoadXmlMetaData != null) {
+                                $closeResource(th, xmlResourceParserLoadXmlMetaData);
+                            }
                         }
-                        if (loadXmlMetaData != null) {
-                            $closeResource(null, loadXmlMetaData);
-                        }
-                    } else if (loadXmlMetaData != null) {
-                        $closeResource(null, loadXmlMetaData);
+                    } else if (xmlResourceParserLoadXmlMetaData != null) {
+                        $closeResource(null, xmlResourceParserLoadXmlMetaData);
                     }
                 } catch (Exception e) {
                     Log.w("UsbPermissionActivity", "Unable to load component info " + activityInfo.toString(), e);
@@ -162,26 +176,27 @@ public class UsbPermissionActivity extends AlertActivity implements DialogInterf
         return false;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r5v0, resolved type: com.android.systemui.usb.UsbPermissionActivity */
     /* JADX WARN: Multi-variable type inference failed */
-    public void onDestroy() {
-        IUsbManager asInterface = IUsbManager.Stub.asInterface(ServiceManager.getService("usb"));
+    public void onDestroy() throws PendingIntent.CanceledException {
+        IUsbManager iUsbManagerAsInterface = IUsbManager.Stub.asInterface(ServiceManager.getService("usb"));
         Intent intent = new Intent();
         try {
             if (this.mDevice != null) {
                 intent.putExtra("device", this.mDevice);
                 if (this.mPermissionGranted) {
-                    asInterface.grantDevicePermission(this.mDevice, this.mUid);
+                    iUsbManagerAsInterface.grantDevicePermission(this.mDevice, this.mUid);
                     if (this.mAlwaysUse != null && this.mAlwaysUse.isChecked()) {
-                        asInterface.setDevicePackage(this.mDevice, this.mPackageName, UserHandle.getUserId(this.mUid));
+                        iUsbManagerAsInterface.setDevicePackage(this.mDevice, this.mPackageName, UserHandle.getUserId(this.mUid));
                     }
                 }
             }
             if (this.mAccessory != null) {
                 intent.putExtra("accessory", this.mAccessory);
                 if (this.mPermissionGranted) {
-                    asInterface.grantAccessoryPermission(this.mAccessory, this.mUid);
+                    iUsbManagerAsInterface.grantAccessoryPermission(this.mAccessory, this.mUid);
                     if (this.mAlwaysUse != null && this.mAlwaysUse.isChecked()) {
-                        asInterface.setAccessoryPackage(this.mAccessory, this.mPackageName, UserHandle.getUserId(this.mUid));
+                        iUsbManagerAsInterface.setAccessoryPackage(this.mAccessory, this.mPackageName, UserHandle.getUserId(this.mUid));
                     }
                 }
             }

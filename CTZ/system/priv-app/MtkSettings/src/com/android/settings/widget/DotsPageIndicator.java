@@ -19,6 +19,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import com.android.settings.R;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class DotsPageIndicator extends View implements ViewPager.OnPageChangeListener {
     public static final String TAG = DotsPageIndicator.class.getSimpleName();
@@ -78,24 +79,24 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
     public DotsPageIndicator(Context context, AttributeSet attributeSet, int i) {
         super(context, attributeSet, i);
         int i2 = (int) context.getResources().getDisplayMetrics().scaledDensity;
-        TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.DotsPageIndicator, i, 0);
-        this.dotDiameter = obtainStyledAttributes.getDimensionPixelSize(2, 8 * i2);
+        TypedArray typedArrayObtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.DotsPageIndicator, i, 0);
+        this.dotDiameter = typedArrayObtainStyledAttributes.getDimensionPixelSize(2, 8 * i2);
         this.dotRadius = this.dotDiameter / 2;
         this.halfDotRadius = this.dotRadius / 2.0f;
-        this.gap = obtainStyledAttributes.getDimensionPixelSize(3, 12 * i2);
-        this.animDuration = obtainStyledAttributes.getInteger(0, 400);
+        this.gap = typedArrayObtainStyledAttributes.getDimensionPixelSize(3, 12 * i2);
+        this.animDuration = typedArrayObtainStyledAttributes.getInteger(0, 400);
         this.animHalfDuration = this.animDuration / 2;
-        this.unselectedColour = obtainStyledAttributes.getColor(4, -2130706433);
-        this.selectedColour = obtainStyledAttributes.getColor(1, -1);
-        obtainStyledAttributes.recycle();
+        this.unselectedColour = typedArrayObtainStyledAttributes.getColor(4, -2130706433);
+        this.selectedColour = typedArrayObtainStyledAttributes.getColor(1, -1);
+        typedArrayObtainStyledAttributes.recycle();
         this.unselectedPaint = new Paint(1);
         this.unselectedPaint.setColor(this.unselectedColour);
         this.selectedPaint = new Paint(1);
         this.selectedPaint.setColor(this.selectedColour);
         if (Build.VERSION.SDK_INT >= 21) {
-            this.interpolator = AnimationUtils.loadInterpolator(context, 17563661);
+            this.interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_slow_in);
         } else {
-            this.interpolator = AnimationUtils.loadInterpolator(context, 17432580);
+            this.interpolator = AnimationUtils.loadInterpolator(context, android.R.anim.accelerate_decelerate_interpolator);
         }
         this.combinedUnselectedPath = new Path();
         this.unselectedDotPath = new Path();
@@ -158,8 +159,7 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setPageCount(int i) {
+    private void setPageCount(int i) {
         this.pageCount = i;
         calculateDotPositions();
         resetState();
@@ -283,11 +283,10 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
 
     private Path getUnselectedPath(int i, float f, float f2, float f3, float f4) {
         this.unselectedDotPath.rewind();
-        int i2 = (f3 > 0.0f ? 1 : (f3 == 0.0f ? 0 : -1));
-        if ((i2 == 0 || f3 == -1.0f) && f4 == 0.0f && (i != this.currentPage || !this.selectedDotInPosition)) {
+        if ((f3 == 0.0f || f3 == -1.0f) && f4 == 0.0f && (i != this.currentPage || !this.selectedDotInPosition)) {
             this.unselectedDotPath.addCircle(this.dotCenterX[i], this.dotCenterY, this.dotRadius, Path.Direction.CW);
         }
-        if (i2 > 0 && f3 < 0.5f && this.retreatingJoinX1 == -1.0f) {
+        if (f3 > 0.0f && f3 < 0.5f && this.retreatingJoinX1 == -1.0f) {
             this.unselectedDotLeftPath.rewind();
             this.unselectedDotLeftPath.moveTo(f, this.dotBottomY);
             this.rectF.set(f - this.dotRadius, this.dotTopY, this.dotRadius + f, this.dotBottomY);
@@ -395,10 +394,10 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         this.currentPage = i;
         if (Build.VERSION.SDK_INT >= 16) {
             cancelRunningAnimations();
-            int abs = Math.abs(i - i2);
-            this.moveAnimation = createMoveSelectedAnimator(this.dotCenterX[i], i2, i, abs);
-            this.joiningAnimations = new ValueAnimator[abs];
-            for (int i3 = 0; i3 < abs; i3++) {
+            int iAbs = Math.abs(i - i2);
+            this.moveAnimation = createMoveSelectedAnimator(this.dotCenterX[i], i2, i, iAbs);
+            this.joiningAnimations = new ValueAnimator[iAbs];
+            for (int i3 = 0; i3 < iAbs; i3++) {
                 this.joiningAnimations[i3] = createJoiningAnimator(i > i2 ? i2 + i3 : (i2 - 1) - i3, i3 * (this.animDuration / 8));
             }
             this.moveAnimation.start();
@@ -411,14 +410,14 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
 
     private ValueAnimator createMoveSelectedAnimator(float f, int i, int i2, int i3) {
         StartPredicate leftwardStartPredicate;
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(this.selectedDotX, f);
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(this.selectedDotX, f);
         if (i2 <= i) {
             leftwardStartPredicate = new LeftwardStartPredicate(f + ((this.selectedDotX - f) * 0.25f));
         } else {
             leftwardStartPredicate = new RightwardStartPredicate(f - ((f - this.selectedDotX) * 0.25f));
         }
         this.retreatAnimation = new PendingRetreatAnimator(i, i2, i3, leftwardStartPredicate);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.settings.widget.DotsPageIndicator.3
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.settings.widget.DotsPageIndicator.3
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 DotsPageIndicator.this.selectedDotX = ((Float) valueAnimator.getAnimatedValue()).floatValue();
@@ -426,7 +425,7 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
                 DotsPageIndicator.this.postInvalidateOnAnimation();
             }
         });
-        ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.settings.widget.DotsPageIndicator.4
+        valueAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.settings.widget.DotsPageIndicator.4
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationStart(Animator animator) {
                 DotsPageIndicator.this.selectedDotInPosition = false;
@@ -437,40 +436,37 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
                 DotsPageIndicator.this.selectedDotInPosition = true;
             }
         });
-        ofFloat.setStartDelay(this.selectedDotInPosition ? this.animDuration / 4 : 0L);
-        ofFloat.setDuration((this.animDuration * 3) / 4);
-        ofFloat.setInterpolator(this.interpolator);
-        return ofFloat;
+        valueAnimatorOfFloat.setStartDelay(this.selectedDotInPosition ? this.animDuration / 4 : 0L);
+        valueAnimatorOfFloat.setDuration((this.animDuration * 3) / 4);
+        valueAnimatorOfFloat.setInterpolator(this.interpolator);
+        return valueAnimatorOfFloat;
     }
 
     private ValueAnimator createJoiningAnimator(final int i, long j) {
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.settings.widget.DotsPageIndicator.5
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.settings.widget.DotsPageIndicator.5
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 DotsPageIndicator.this.setJoiningFraction(i, valueAnimator.getAnimatedFraction());
             }
         });
-        ofFloat.setDuration(this.animHalfDuration);
-        ofFloat.setStartDelay(j);
-        ofFloat.setInterpolator(this.interpolator);
-        return ofFloat;
+        valueAnimatorOfFloat.setDuration(this.animHalfDuration);
+        valueAnimatorOfFloat.setStartDelay(j);
+        valueAnimatorOfFloat.setInterpolator(this.interpolator);
+        return valueAnimatorOfFloat;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setJoiningFraction(int i, float f) {
+    private void setJoiningFraction(int i, float f) {
         this.joiningFractions[i] = f;
         postInvalidateOnAnimation();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void clearJoiningFractions() {
+    private void clearJoiningFractions() {
         Arrays.fill(this.joiningFractions, 0.0f);
         postInvalidateOnAnimation();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setDotRevealFraction(int i, float f) {
+    private void setDotRevealFraction(int i, float f) {
         this.dotRevealFractions[i] = f;
         postInvalidateOnAnimation();
     }
@@ -495,8 +491,7 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         this.joiningAnimationSet.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void cancelJoiningAnimations() {
+    private void cancelJoiningAnimations() {
         if (this.joiningAnimationSet != null && this.joiningAnimationSet.isRunning()) {
             this.joiningAnimationSet.cancel();
         }
@@ -536,7 +531,6 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         return this.currentPage;
     }
 
-    /* loaded from: classes.dex */
     public abstract class PendingStartAnimator extends ValueAnimator {
         protected boolean hasStarted = false;
         protected StartPredicate predicate;
@@ -553,24 +547,23 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         }
     }
 
-    /* loaded from: classes.dex */
     public class PendingRetreatAnimator extends PendingStartAnimator {
         public PendingRetreatAnimator(int i, int i2, int i3, StartPredicate startPredicate) {
             super(startPredicate);
             setDuration(DotsPageIndicator.this.animHalfDuration);
             setInterpolator(DotsPageIndicator.this.interpolator);
-            final float min = i2 > i ? Math.min(DotsPageIndicator.this.dotCenterX[i], DotsPageIndicator.this.selectedDotX) - DotsPageIndicator.this.dotRadius : DotsPageIndicator.this.dotCenterX[i2] - DotsPageIndicator.this.dotRadius;
+            final float fMin = i2 > i ? Math.min(DotsPageIndicator.this.dotCenterX[i], DotsPageIndicator.this.selectedDotX) - DotsPageIndicator.this.dotRadius : DotsPageIndicator.this.dotCenterX[i2] - DotsPageIndicator.this.dotRadius;
             float f = i2 > i ? DotsPageIndicator.this.dotCenterX[i2] - DotsPageIndicator.this.dotRadius : DotsPageIndicator.this.dotCenterX[i2] - DotsPageIndicator.this.dotRadius;
-            final float max = i2 > i ? DotsPageIndicator.this.dotCenterX[i2] + DotsPageIndicator.this.dotRadius : Math.max(DotsPageIndicator.this.dotCenterX[i], DotsPageIndicator.this.selectedDotX) + DotsPageIndicator.this.dotRadius;
+            final float fMax = i2 > i ? DotsPageIndicator.this.dotCenterX[i2] + DotsPageIndicator.this.dotRadius : Math.max(DotsPageIndicator.this.dotCenterX[i], DotsPageIndicator.this.selectedDotX) + DotsPageIndicator.this.dotRadius;
             float f2 = i2 > i ? DotsPageIndicator.this.dotCenterX[i2] + DotsPageIndicator.this.dotRadius : DotsPageIndicator.this.dotCenterX[i2] + DotsPageIndicator.this.dotRadius;
             DotsPageIndicator.this.revealAnimations = new PendingRevealAnimator[i3];
             final int[] iArr = new int[i3];
             int i4 = 0;
-            if (min != f) {
-                setFloatValues(new float[]{min, f});
+            if (fMin != f) {
+                setFloatValues(new float[]{fMin, f});
                 while (i4 < i3) {
                     int i5 = i + i4;
-                    DotsPageIndicator.this.revealAnimations[i4] = new PendingRevealAnimator(i5, new RightwardStartPredicate(DotsPageIndicator.this.dotCenterX[i5]));
+                    DotsPageIndicator.this.revealAnimations[i4] = DotsPageIndicator.this.new PendingRevealAnimator(i5, DotsPageIndicator.this.new RightwardStartPredicate(DotsPageIndicator.this.dotCenterX[i5]));
                     iArr[i4] = i5;
                     i4++;
                 }
@@ -585,10 +578,10 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
                     }
                 });
             } else {
-                setFloatValues(new float[]{max, f2});
+                setFloatValues(new float[]{fMax, f2});
                 while (i4 < i3) {
                     int i6 = i - i4;
-                    DotsPageIndicator.this.revealAnimations[i4] = new PendingRevealAnimator(i6, new LeftwardStartPredicate(DotsPageIndicator.this.dotCenterX[i6]));
+                    DotsPageIndicator.this.revealAnimations[i4] = DotsPageIndicator.this.new PendingRevealAnimator(i6, DotsPageIndicator.this.new LeftwardStartPredicate(DotsPageIndicator.this.dotCenterX[i6]));
                     iArr[i4] = i6;
                     i4++;
                 }
@@ -611,8 +604,8 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
                     for (int i7 : iArr) {
                         DotsPageIndicator.this.setDotRevealFraction(i7, 1.0E-5f);
                     }
-                    DotsPageIndicator.this.retreatingJoinX1 = min;
-                    DotsPageIndicator.this.retreatingJoinX2 = max;
+                    DotsPageIndicator.this.retreatingJoinX1 = fMin;
+                    DotsPageIndicator.this.retreatingJoinX2 = fMax;
                     DotsPageIndicator.this.postInvalidateOnAnimation();
                 }
 
@@ -626,7 +619,6 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         }
     }
 
-    /* loaded from: classes.dex */
     public class PendingRevealAnimator extends PendingStartAnimator {
         private final int dot;
 
@@ -652,7 +644,6 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         }
     }
 
-    /* loaded from: classes.dex */
     public abstract class StartPredicate {
         protected float thresholdValue;
 
@@ -663,7 +654,6 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         }
     }
 
-    /* loaded from: classes.dex */
     public class RightwardStartPredicate extends StartPredicate {
         public RightwardStartPredicate(float f) {
             super(f);
@@ -675,7 +665,6 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         }
     }
 
-    /* loaded from: classes.dex */
     public class LeftwardStartPredicate extends StartPredicate {
         public LeftwardStartPredicate(float f) {
             super(f);

@@ -2,6 +2,7 @@ package com.android.settingslib;
 
 import android.content.Context;
 import android.provider.Settings;
+
 /* loaded from: classes.dex */
 public class WirelessUtils {
     public static boolean isAirplaneModeOn(Context context) {

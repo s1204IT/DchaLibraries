@@ -9,20 +9,28 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class CameraLaserSensorPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
+
     @VisibleForTesting
     static final String BUILD_TYPE = "ro.build.type";
+
     @VisibleForTesting
     static final int DISABLED = 2;
+
     @VisibleForTesting
     static final int ENABLED = 0;
+
     @VisibleForTesting
     static final String ENG_BUILD = "eng";
+
     @VisibleForTesting
     static final String PROPERTY_CAMERA_LASER_SENSOR = "persist.camera.stats.disablehaf";
+
     @VisibleForTesting
     static final String USERDEBUG_BUILD = "userdebug";
+
     @VisibleForTesting
     static final String USER_BUILD = "user";
 
@@ -51,9 +59,8 @@ public class CameraLaserSensorPreferenceController extends DeveloperOptionsPrefe
         ((SwitchPreference) this.mPreference).setChecked(isLaserSensorEnabled());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         SystemProperties.set(PROPERTY_CAMERA_LASER_SENSOR, Integer.toString(2));
         ((SwitchPreference) this.mPreference).setChecked(false);

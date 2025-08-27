@@ -16,14 +16,21 @@ import com.android.launcher3.anim.Interpolators;
 import com.android.launcher3.anim.PropertySetter;
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ScrimView;
+
 /* loaded from: classes.dex */
 public class AllAppsTransitionController implements LauncherStateManager.StateHandler, DeviceProfile.OnDeviceProfileChangeListener {
     public static final Property<AllAppsTransitionController, Float> ALL_APPS_PROGRESS = new Property<AllAppsTransitionController, Float>(Float.class, "allAppsProgress") { // from class: com.android.launcher3.allapps.AllAppsTransitionController.1
+        AnonymousClass1(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(AllAppsTransitionController allAppsTransitionController) {
             return Float.valueOf(allAppsTransitionController.mProgress);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(AllAppsTransitionController allAppsTransitionController, Float f) {
             allAppsTransitionController.setProgress(f.floatValue());
@@ -38,6 +45,25 @@ public class AllAppsTransitionController implements LauncherStateManager.StateHa
     private float mScrollRangeDelta = 0.0f;
     private float mProgress = 1.0f;
 
+    /* renamed from: com.android.launcher3.allapps.AllAppsTransitionController$1 */
+    class AnonymousClass1 extends Property<AllAppsTransitionController, Float> {
+        AnonymousClass1(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.util.Property
+        public Float get(AllAppsTransitionController allAppsTransitionController) {
+            return Float.valueOf(allAppsTransitionController.mProgress);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
+        @Override // android.util.Property
+        public void set(AllAppsTransitionController allAppsTransitionController, Float f) {
+            allAppsTransitionController.setProgress(f.floatValue());
+        }
+    }
+
     public AllAppsTransitionController(Launcher launcher) {
         this.mLauncher = launcher;
         this.mShiftRange = this.mLauncher.getDeviceProfile().heightPx;
@@ -50,8 +76,7 @@ public class AllAppsTransitionController implements LauncherStateManager.StateHa
         return this.mShiftRange;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onProgressAnimationStart() {
+    private void onProgressAnimationStart() {
         this.mAppsView.setVisibility(0);
     }
 
@@ -101,22 +126,24 @@ public class AllAppsTransitionController implements LauncherStateManager.StateHa
         if (Float.compare(this.mProgress, verticalProgress) == 0) {
             setAlphas(launcherState, animationConfig.getPropertySetter(animatorSetBuilder));
             onProgressAnimationEnd();
-        } else if (!animationConfig.playNonAtomicComponent()) {
-        } else {
-            if (animationConfig.userControlled) {
-                interpolator = Interpolators.LINEAR;
-            } else if (launcherState == LauncherState.OVERVIEW) {
-                interpolator = animatorSetBuilder.getInterpolator(3, Interpolators.FAST_OUT_SLOW_IN);
-            } else {
-                interpolator = Interpolators.FAST_OUT_SLOW_IN;
-            }
-            ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this, ALL_APPS_PROGRESS, this.mProgress, verticalProgress);
-            ofFloat.setDuration(animationConfig.duration);
-            ofFloat.setInterpolator(animatorSetBuilder.getInterpolator(0, interpolator));
-            ofFloat.addListener(getProgressAnimatorListener());
-            animatorSetBuilder.play(ofFloat);
-            setAlphas(launcherState, animationConfig.getPropertySetter(animatorSetBuilder));
+            return;
         }
+        if (!animationConfig.playNonAtomicComponent()) {
+            return;
+        }
+        if (animationConfig.userControlled) {
+            interpolator = Interpolators.LINEAR;
+        } else if (launcherState == LauncherState.OVERVIEW) {
+            interpolator = animatorSetBuilder.getInterpolator(3, Interpolators.FAST_OUT_SLOW_IN);
+        } else {
+            interpolator = Interpolators.FAST_OUT_SLOW_IN;
+        }
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, ALL_APPS_PROGRESS, this.mProgress, verticalProgress);
+        objectAnimatorOfFloat.setDuration(animationConfig.duration);
+        objectAnimatorOfFloat.setInterpolator(animatorSetBuilder.getInterpolator(0, interpolator));
+        objectAnimatorOfFloat.addListener(getProgressAnimatorListener());
+        animatorSetBuilder.play(objectAnimatorOfFloat);
+        setAlphas(launcherState, animationConfig.getPropertySetter(animatorSetBuilder));
     }
 
     private void setAlphas(LauncherState launcherState, PropertySetter propertySetter) {
@@ -133,8 +160,27 @@ public class AllAppsTransitionController implements LauncherStateManager.StateHa
         propertySetter.setInt(this.mScrimView, ScrimView.DRAG_HANDLE_ALPHA, (visibleElements & 32) != 0 ? 255 : 0, Interpolators.LINEAR);
     }
 
+    /* renamed from: com.android.launcher3.allapps.AllAppsTransitionController$2 */
+    class AnonymousClass2 extends AnimationSuccessListener {
+        AnonymousClass2() {
+        }
+
+        @Override // com.android.launcher3.anim.AnimationSuccessListener
+        public void onAnimationSuccess(Animator animator) {
+            AllAppsTransitionController.this.onProgressAnimationEnd();
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationStart(Animator animator) {
+            AllAppsTransitionController.this.onProgressAnimationStart();
+        }
+    }
+
     public AnimatorListenerAdapter getProgressAnimatorListener() {
         return new AnimationSuccessListener() { // from class: com.android.launcher3.allapps.AllAppsTransitionController.2
+            AnonymousClass2() {
+            }
+
             @Override // com.android.launcher3.anim.AnimationSuccessListener
             public void onAnimationSuccess(Animator animator) {
                 AllAppsTransitionController.this.onProgressAnimationEnd();
@@ -160,8 +206,7 @@ public class AllAppsTransitionController implements LauncherStateManager.StateHa
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onProgressAnimationEnd() {
+    private void onProgressAnimationEnd() {
         if (Float.compare(this.mProgress, 1.0f) == 0) {
             this.mAppsView.setVisibility(4);
             this.mAppsView.reset(false);

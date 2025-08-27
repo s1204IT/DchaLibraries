@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothCodecStatus;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -39,6 +40,7 @@ import com.android.settingslib.development.SystemPropPoker;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFragment implements AdbClearKeysDialogHost, AdbDialogHost, BluetoothA2dpHwOffloadRebootDialog.OnA2dpHwDialogConfirmedListener, LogPersistDialogHost, OemUnlockDialogHost, SwitchBar.OnSwitchChangeListener {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.development.DevelopmentSettingsDashboardFragment.5
@@ -81,9 +83,9 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
         this.mEnableAdbReceiver = new BroadcastReceiver() { // from class: com.android.settings.development.DevelopmentSettingsDashboardFragment.1
             @Override // android.content.BroadcastReceiver
             public void onReceive(Context context, Intent intent) {
-                for (AbstractPreferenceController abstractPreferenceController : DevelopmentSettingsDashboardFragment.this.mPreferenceControllers) {
-                    if (abstractPreferenceController instanceof AdbOnChangeListener) {
-                        ((AdbOnChangeListener) abstractPreferenceController).onAdbSettingChanged();
+                for (Object obj : DevelopmentSettingsDashboardFragment.this.mPreferenceControllers) {
+                    if (obj instanceof AdbOnChangeListener) {
+                        ((AdbOnChangeListener) obj).onAdbSettingChanged();
                     }
                 }
             }
@@ -93,10 +95,10 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
             public void onReceive(Context context, Intent intent) {
                 Log.d("DevSettingsDashboard", "mBluetoothA2dpReceiver.onReceive intent=" + intent);
                 if ("android.bluetooth.a2dp.profile.action.CODEC_CONFIG_CHANGED".equals(intent.getAction())) {
-                    Log.d("DevSettingsDashboard", "Received BluetoothCodecStatus=" + intent.getParcelableExtra("android.bluetooth.codec.extra.CODEC_STATUS"));
-                    for (AbstractPreferenceController abstractPreferenceController : DevelopmentSettingsDashboardFragment.this.mPreferenceControllers) {
-                        if (abstractPreferenceController instanceof BluetoothServiceConnectionListener) {
-                            ((BluetoothServiceConnectionListener) abstractPreferenceController).onBluetoothCodecUpdated();
+                    Log.d("DevSettingsDashboard", "Received BluetoothCodecStatus=" + ((BluetoothCodecStatus) intent.getParcelableExtra("android.bluetooth.codec.extra.CODEC_STATUS")));
+                    for (Object obj : DevelopmentSettingsDashboardFragment.this.mPreferenceControllers) {
+                        if (obj instanceof BluetoothServiceConnectionListener) {
+                            ((BluetoothServiceConnectionListener) obj).onBluetoothCodecUpdated();
                         }
                     }
                 }
@@ -108,9 +110,9 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
                 synchronized (DevelopmentSettingsDashboardFragment.this.mBluetoothA2dpConfigStore) {
                     DevelopmentSettingsDashboardFragment.this.mBluetoothA2dp = (BluetoothA2dp) bluetoothProfile;
                 }
-                for (AbstractPreferenceController abstractPreferenceController : DevelopmentSettingsDashboardFragment.this.mPreferenceControllers) {
-                    if (abstractPreferenceController instanceof BluetoothServiceConnectionListener) {
-                        ((BluetoothServiceConnectionListener) abstractPreferenceController).onBluetoothServiceConnected(DevelopmentSettingsDashboardFragment.this.mBluetoothA2dp);
+                for (Object obj : DevelopmentSettingsDashboardFragment.this.mPreferenceControllers) {
+                    if (obj instanceof BluetoothServiceConnectionListener) {
+                        ((BluetoothServiceConnectionListener) obj).onBluetoothServiceConnected(DevelopmentSettingsDashboardFragment.this.mBluetoothA2dp);
                     }
                 }
             }
@@ -120,9 +122,9 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
                 synchronized (DevelopmentSettingsDashboardFragment.this.mBluetoothA2dpConfigStore) {
                     DevelopmentSettingsDashboardFragment.this.mBluetoothA2dp = null;
                 }
-                for (AbstractPreferenceController abstractPreferenceController : DevelopmentSettingsDashboardFragment.this.mPreferenceControllers) {
-                    if (abstractPreferenceController instanceof BluetoothServiceConnectionListener) {
-                        ((BluetoothServiceConnectionListener) abstractPreferenceController).onBluetoothServiceDisconnected();
+                for (Object obj : DevelopmentSettingsDashboardFragment.this.mPreferenceControllers) {
+                    if (obj instanceof BluetoothServiceConnectionListener) {
+                        ((BluetoothServiceConnectionListener) obj).onBluetoothServiceDisconnected();
                     }
                 }
             }
@@ -134,7 +136,9 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
         super.onCreate(bundle);
         if (Utils.isMonkeyRunning()) {
             getActivity().finish();
-        } else if (BenesseExtension.getDchaState() != 3 && BenesseExtension.COUNT_DCHA_COMPLETED_FILE.exists() && !BenesseExtension.IGNORE_DCHA_COMPLETED_FILE.exists()) {
+            return;
+        }
+        if (BenesseExtension.getDchaState() != 3 && BenesseExtension.COUNT_DCHA_COMPLETED_FILE.exists() && !BenesseExtension.IGNORE_DCHA_COMPLETED_FILE.exists()) {
             if (this.mDialog != null) {
                 this.mDialog.setDismissMessage(null);
                 this.mDialog = null;
@@ -147,17 +151,17 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
             this.mDialog = new AlertDialog.Builder(getActivity()).setTitle(R.string.unlock_set_unlock_password_title).setView(this.mEditText).setPositiveButton(R.string.dlg_ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.development.-$$Lambda$DevelopmentSettingsDashboardFragment$Q5a7Jz9BxX6km-568T51TcOuOyU
                 @Override // android.content.DialogInterface.OnClickListener
                 public final void onClick(DialogInterface dialogInterface, int i) {
-                    DevelopmentSettingsDashboardFragment.lambda$onCreate$0(DevelopmentSettingsDashboardFragment.this, dialogInterface, i);
+                    DevelopmentSettingsDashboardFragment.lambda$onCreate$0(this.f$0, dialogInterface, i);
                 }
             }).setNegativeButton(R.string.dlg_cancel, new DialogInterface.OnClickListener() { // from class: com.android.settings.development.-$$Lambda$DevelopmentSettingsDashboardFragment$v0u1FsI7jo-rqkWhcWcNnZcHze0
                 @Override // android.content.DialogInterface.OnClickListener
                 public final void onClick(DialogInterface dialogInterface, int i) {
-                    DevelopmentSettingsDashboardFragment.this.getActivity().finish();
+                    this.f$0.getActivity().finish();
                 }
             }).setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.settings.development.-$$Lambda$DevelopmentSettingsDashboardFragment$jzVHycpupavLOs4NkGCn3aOD_dY
                 @Override // android.content.DialogInterface.OnCancelListener
                 public final void onCancel(DialogInterface dialogInterface) {
-                    DevelopmentSettingsDashboardFragment.this.getActivity().finish();
+                    this.f$0.getActivity().finish();
                 }
             }).create();
             this.mDialog.show();
@@ -204,8 +208,8 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
         if (defaultAdapter != null) {
             defaultAdapter.getProfileProxy(getActivity(), this.mBluetoothA2dpServiceListener, 2);
         }
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
-        this.mFrameLayout = (FrameLayout) onCreateView.findViewById(16908351);
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        this.mFrameLayout = (FrameLayout) viewOnCreateView.findViewById(android.R.id.list_container);
         this.mView = new View(getActivity());
         this.mView.setBackgroundColor(-16777216);
         this.mView.setOnTouchListener(new View.OnTouchListener() { // from class: com.android.settings.development.DevelopmentSettingsDashboardFragment.4
@@ -214,7 +218,7 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
                 return true;
             }
         });
-        return onCreateView;
+        return viewOnCreateView;
     }
 
     @Override // com.android.settings.dashboard.RestrictedDashboardFragment, com.android.settings.dashboard.DashboardFragment, com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -292,13 +296,13 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
 
     @Override // com.android.settings.dashboard.RestrictedDashboardFragment, android.app.Fragment
     public void onActivityResult(int i, int i2, Intent intent) {
-        boolean z = false;
-        for (AbstractPreferenceController abstractPreferenceController : this.mPreferenceControllers) {
-            if (abstractPreferenceController instanceof OnActivityResultListener) {
-                z |= ((OnActivityResultListener) abstractPreferenceController).onActivityResult(i, i2, intent);
+        boolean zOnActivityResult = false;
+        for (Object obj : this.mPreferenceControllers) {
+            if (obj instanceof OnActivityResultListener) {
+                zOnActivityResult |= ((OnActivityResultListener) obj).onActivityResult(i, i2, intent);
             }
         }
-        if (!z) {
+        if (!zOnActivityResult) {
             super.onActivityResult(i, i2, intent);
         }
     }
@@ -313,9 +317,8 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
         return 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return Utils.isMonkeyRunning() ? R.xml.placeholder_prefs : R.xml.development_settings;
     }
 
@@ -369,18 +372,15 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
         systemPropPoker.poke();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onEnableDevelopmentOptionsConfirmed() {
+    void onEnableDevelopmentOptionsConfirmed() {
         enableDeveloperOptions();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onEnableDevelopmentOptionsRejected() {
+    void onEnableDevelopmentOptionsRejected() {
         this.mSwitchBar.setChecked(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, Lifecycle lifecycle, DevelopmentSettingsDashboardFragment developmentSettingsDashboardFragment, BluetoothA2dpConfigStore bluetoothA2dpConfigStore) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, Lifecycle lifecycle, DevelopmentSettingsDashboardFragment developmentSettingsDashboardFragment, BluetoothA2dpConfigStore bluetoothA2dpConfigStore) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new TouchPanelVersionPreferenceController(context));
         if (Build.MODEL.equals("TAB-A05-BD")) {

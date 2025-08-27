@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class BluetoothAvrcpVersionPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final String BLUETOOTH_AVRCP_VERSION_PROPERTY = "persist.bluetooth.avrcpversion";
@@ -41,7 +42,8 @@ public class BluetoothAvrcpVersionPreferenceController extends DeveloperOptionsP
         while (true) {
             if (i2 >= this.mListValues.length) {
                 break;
-            } else if (!TextUtils.equals(str, this.mListValues[i2])) {
+            }
+            if (!TextUtils.equals(str, this.mListValues[i2])) {
                 i2++;
             } else {
                 i = i2;

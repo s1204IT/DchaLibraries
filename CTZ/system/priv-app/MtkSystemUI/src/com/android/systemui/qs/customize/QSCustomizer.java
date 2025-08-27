@@ -29,6 +29,8 @@ import com.android.systemui.statusbar.phone.NotificationsQuickSettingsContainer;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClickListener {
     private boolean isShown;
@@ -51,14 +53,17 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
     private int mY;
 
     public QSCustomizer(Context context, AttributeSet attributeSet) {
-        super(new ContextThemeWrapper(context, (int) R.style.edit_theme), attributeSet);
+        super(new ContextThemeWrapper(context, R.style.edit_theme), attributeSet);
         this.mKeyguardCallback = new KeyguardMonitor.Callback() { // from class: com.android.systemui.qs.customize.-$$Lambda$QSCustomizer$jyG9W7OYQzaSrDHqhU5p9dAeqes
             @Override // com.android.systemui.statusbar.policy.KeyguardMonitor.Callback
             public final void onKeyguardShowingChanged() {
-                QSCustomizer.lambda$new$0(QSCustomizer.this);
+                QSCustomizer.lambda$new$0(this.f$0);
             }
         };
         this.mExpandAnimationListener = new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.customize.QSCustomizer.3
+            AnonymousClass3() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 if (QSCustomizer.this.isShown) {
@@ -75,6 +80,9 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
             }
         };
         this.mCollapseAnimationListener = new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.customize.QSCustomizer.4
+            AnonymousClass4() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 if (!QSCustomizer.this.isShown) {
@@ -94,24 +102,27 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
         };
         LayoutInflater.from(getContext()).inflate(R.layout.qs_customize_panel_content, this);
         this.mClipper = new QSDetailClipper(findViewById(R.id.customize_container));
-        this.mToolbar = (Toolbar) findViewById(16908672);
+        this.mToolbar = (Toolbar) findViewById(android.R.id.KEYCODE_VIDEO_APP_3);
         TypedValue typedValue = new TypedValue();
-        this.mContext.getTheme().resolveAttribute(16843531, typedValue, true);
+        this.mContext.getTheme().resolveAttribute(android.R.attr.homeAsUpIndicator, typedValue, true);
         this.mToolbar.setNavigationIcon(getResources().getDrawable(typedValue.resourceId, this.mContext.getTheme()));
         this.mToolbar.setNavigationOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.qs.customize.QSCustomizer.1
+            AnonymousClass1() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 QSCustomizer.this.hide(((int) view.getX()) + (view.getWidth() / 2), ((int) view.getY()) + (view.getHeight() / 2));
             }
         });
         this.mToolbar.setOnMenuItemClickListener(this);
-        this.mToolbar.getMenu().add(0, 1, 0, this.mContext.getString(17040769));
+        this.mToolbar.getMenu().add(0, 1, 0, this.mContext.getString(android.R.string.lockscreen_transport_stop_description));
         this.mToolbar.setTitle(R.string.qs_edit);
-        int colorAttr = Utils.getColorAttr(context, 16843829);
+        int colorAttr = Utils.getColorAttr(context, android.R.attr.colorAccent);
         this.mToolbar.setTitleTextColor(colorAttr);
         this.mToolbar.getNavigationIcon().setTint(colorAttr);
         this.mToolbar.getOverflowIcon().setTint(colorAttr);
-        this.mRecyclerView = (RecyclerView) findViewById(16908298);
+        this.mRecyclerView = (RecyclerView) findViewById(android.R.id.list);
         this.mTileAdapter = new TileAdapter(getContext());
         this.mTileQueryHelper = new TileQueryHelper(context, this.mTileAdapter);
         this.mRecyclerView.setAdapter(this.mTileAdapter);
@@ -127,6 +138,17 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
         updateNavBackDrop(getResources().getConfiguration());
     }
 
+    /* renamed from: com.android.systemui.qs.customize.QSCustomizer$1 */
+    class AnonymousClass1 implements View.OnClickListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            QSCustomizer.this.hide(((int) view.getX()) + (view.getWidth() / 2), ((int) view.getY()) + (view.getHeight() / 2));
+        }
+    }
+
     @Override // android.view.View
     protected void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
@@ -134,10 +156,10 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
     }
 
     private void updateNavBackDrop(Configuration configuration) {
-        View findViewById = findViewById(R.id.nav_bar_background);
+        View viewFindViewById = findViewById(R.id.nav_bar_background);
         this.mIsShowingNavBackdrop = configuration.smallestScreenWidthDp >= 600 || configuration.orientation != 2;
-        if (findViewById != null) {
-            findViewById.setVisibility(this.mIsShowingNavBackdrop ? 0 : 8);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(this.mIsShowingNavBackdrop ? 0 : 8);
         }
         updateNavColors();
     }
@@ -216,8 +238,7 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
         return this.isShown;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setCustomizing(boolean z) {
+    private void setCustomizing(boolean z) {
         this.mCustomizing = z;
         this.mQs.notifyCustomizeChanged();
     }
@@ -246,8 +267,9 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
 
     private void setTileSpecs() {
         ArrayList arrayList = new ArrayList();
-        for (QSTile qSTile : this.mHost.getTiles()) {
-            arrayList.add(qSTile.getTileSpec());
+        Iterator<QSTile> it = this.mHost.getTiles().iterator();
+        while (it.hasNext()) {
+            arrayList.add(it.next().getTileSpec());
         }
         this.mTileAdapter.setTileSpecs(arrayList);
         this.mRecyclerView.setAdapter(this.mTileAdapter);
@@ -270,12 +292,27 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
         if (bundle.getBoolean("qs_customizing")) {
             setVisibility(0);
             addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // from class: com.android.systemui.qs.customize.QSCustomizer.2
+                AnonymousClass2() {
+                }
+
                 @Override // android.view.View.OnLayoutChangeListener
                 public void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
                     QSCustomizer.this.removeOnLayoutChangeListener(this);
                     QSCustomizer.this.showImmediately();
                 }
             });
+        }
+    }
+
+    /* renamed from: com.android.systemui.qs.customize.QSCustomizer$2 */
+    class AnonymousClass2 implements View.OnLayoutChangeListener {
+        AnonymousClass2() {
+        }
+
+        @Override // android.view.View.OnLayoutChangeListener
+        public void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
+            QSCustomizer.this.removeOnLayoutChangeListener(this);
+            QSCustomizer.this.showImmediately();
         }
     }
 
@@ -287,6 +324,50 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
     public static /* synthetic */ void lambda$new$0(QSCustomizer qSCustomizer) {
         if (qSCustomizer.isAttachedToWindow() && ((KeyguardMonitor) Dependency.get(KeyguardMonitor.class)).isShowing() && !qSCustomizer.mOpening) {
             qSCustomizer.hide(0, 0);
+        }
+    }
+
+    /* renamed from: com.android.systemui.qs.customize.QSCustomizer$3 */
+    class AnonymousClass3 extends AnimatorListenerAdapter {
+        AnonymousClass3() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (QSCustomizer.this.isShown) {
+                QSCustomizer.this.setCustomizing(true);
+            }
+            QSCustomizer.this.mOpening = false;
+            QSCustomizer.this.mNotifQsContainer.setCustomizerAnimating(false);
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            QSCustomizer.this.mOpening = false;
+            QSCustomizer.this.mNotifQsContainer.setCustomizerAnimating(false);
+        }
+    }
+
+    /* renamed from: com.android.systemui.qs.customize.QSCustomizer$4 */
+    class AnonymousClass4 extends AnimatorListenerAdapter {
+        AnonymousClass4() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (!QSCustomizer.this.isShown) {
+                QSCustomizer.this.setVisibility(8);
+            }
+            QSCustomizer.this.mNotifQsContainer.setCustomizerAnimating(false);
+            QSCustomizer.this.mRecyclerView.setAdapter(QSCustomizer.this.mTileAdapter);
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            if (!QSCustomizer.this.isShown) {
+                QSCustomizer.this.setVisibility(8);
+            }
+            QSCustomizer.this.mNotifQsContainer.setCustomizerAnimating(false);
         }
     }
 }

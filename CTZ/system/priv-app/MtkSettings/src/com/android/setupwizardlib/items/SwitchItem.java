@@ -7,12 +7,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CompoundButton;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class SwitchItem extends Item implements CompoundButton.OnCheckedChangeListener {
     private boolean mChecked;
     private OnCheckedChangeListener mListener;
 
-    /* loaded from: classes.dex */
     public interface OnCheckedChangeListener {
         void onCheckedChange(SwitchItem switchItem, boolean z);
     }
@@ -24,9 +24,9 @@ public class SwitchItem extends Item implements CompoundButton.OnCheckedChangeLi
     public SwitchItem(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mChecked = false;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwSwitchItem);
-        this.mChecked = obtainStyledAttributes.getBoolean(R.styleable.SuwSwitchItem_android_checked, false);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwSwitchItem);
+        this.mChecked = typedArrayObtainStyledAttributes.getBoolean(R.styleable.SuwSwitchItem_android_checked, false);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     @Override // com.android.setupwizardlib.items.Item

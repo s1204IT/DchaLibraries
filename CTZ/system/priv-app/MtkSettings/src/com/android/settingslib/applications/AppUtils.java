@@ -12,6 +12,7 @@ import com.android.settingslib.R;
 import com.android.settingslib.applications.ApplicationsState;
 import com.android.settingslib.applications.instantapps.InstantAppDataProvider;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AppUtils {
     private static InstantAppDataProvider sInstantAppDataProvider = null;
@@ -49,7 +50,7 @@ public class AppUtils {
     }
 
     public static boolean isInstant(ApplicationInfo applicationInfo) {
-        String[] split;
+        String[] strArrSplit;
         if (sInstantAppDataProvider != null) {
             if (sInstantAppDataProvider.isInstantApp(applicationInfo)) {
                 return true;
@@ -58,8 +59,8 @@ public class AppUtils {
             return true;
         }
         String str = SystemProperties.get("settingsdebug.instant.packages");
-        if (str != null && !str.isEmpty() && applicationInfo.packageName != null && (split = str.split(",")) != null) {
-            for (String str2 : split) {
+        if (str != null && !str.isEmpty() && applicationInfo.packageName != null && (strArrSplit = str.split(",")) != null) {
+            for (String str2 : strArrSplit) {
                 if (applicationInfo.packageName.contains(str2)) {
                     return true;
                 }

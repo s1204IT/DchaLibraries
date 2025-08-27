@@ -1,11 +1,11 @@
 package com.android.systemui.recents.events.ui.focus;
 
 import com.android.systemui.recents.events.EventBus;
+
 /* loaded from: classes.dex */
 public class NavigateTaskViewEvent extends EventBus.Event {
     public Direction direction;
 
-    /* loaded from: classes.dex */
     public enum Direction {
         UNDEFINED,
         UP,

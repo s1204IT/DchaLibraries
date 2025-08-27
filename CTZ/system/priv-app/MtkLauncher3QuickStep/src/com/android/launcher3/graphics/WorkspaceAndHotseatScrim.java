@@ -26,6 +26,7 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.Workspace;
 import com.android.launcher3.uioverrides.WallpaperColorInfo;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class WorkspaceAndHotseatScrim implements View.OnAttachStateChangeListener, WallpaperColorInfo.OnChangeListener {
     private static final int ALPHA_MASK_BITMAP_DP = 200;
@@ -47,33 +48,39 @@ public class WorkspaceAndHotseatScrim implements View.OnAttachStateChangeListene
     private final WallpaperColorInfo mWallpaperColorInfo;
     private Workspace mWorkspace;
     public static Property<WorkspaceAndHotseatScrim, Float> SCRIM_PROGRESS = new Property<WorkspaceAndHotseatScrim, Float>(Float.TYPE, "scrimProgress") { // from class: com.android.launcher3.graphics.WorkspaceAndHotseatScrim.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(WorkspaceAndHotseatScrim workspaceAndHotseatScrim) {
             return Float.valueOf(workspaceAndHotseatScrim.mScrimProgress);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(WorkspaceAndHotseatScrim workspaceAndHotseatScrim, Float f) {
             workspaceAndHotseatScrim.setScrimProgress(f.floatValue());
         }
     };
     public static Property<WorkspaceAndHotseatScrim, Float> SYSUI_PROGRESS = new Property<WorkspaceAndHotseatScrim, Float>(Float.TYPE, "sysUiProgress") { // from class: com.android.launcher3.graphics.WorkspaceAndHotseatScrim.2
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(WorkspaceAndHotseatScrim workspaceAndHotseatScrim) {
             return Float.valueOf(workspaceAndHotseatScrim.mSysUiProgress);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(WorkspaceAndHotseatScrim workspaceAndHotseatScrim, Float f) {
             workspaceAndHotseatScrim.setSysUiProgress(f.floatValue());
         }
     };
     private static Property<WorkspaceAndHotseatScrim, Float> SYSUI_ANIM_MULTIPLIER = new Property<WorkspaceAndHotseatScrim, Float>(Float.TYPE, "sysUiAnimMultiplier") { // from class: com.android.launcher3.graphics.WorkspaceAndHotseatScrim.3
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(WorkspaceAndHotseatScrim workspaceAndHotseatScrim) {
             return Float.valueOf(workspaceAndHotseatScrim.mSysUiAnimMultiplier);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(WorkspaceAndHotseatScrim workspaceAndHotseatScrim, Float f) {
             workspaceAndHotseatScrim.mSysUiAnimMultiplier = f.floatValue();
@@ -132,27 +139,28 @@ public class WorkspaceAndHotseatScrim implements View.OnAttachStateChangeListene
             canvas.drawColor(ColorUtils.setAlphaComponent(this.mFullScrimColor, this.mScrimAlpha));
             canvas.restore();
         }
-        if (!this.mHideSysUiScrim && this.mHasSysUiScrim) {
-            if (this.mSysUiProgress <= 0.0f) {
-                this.mAnimateScrimOnNextDraw = false;
-                return;
-            }
-            if (this.mAnimateScrimOnNextDraw) {
-                this.mSysUiAnimMultiplier = 0.0f;
-                reapplySysUiAlphaNoInvalidate();
-                ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this, SYSUI_ANIM_MULTIPLIER, 1.0f);
-                ofFloat.setAutoCancel(true);
-                ofFloat.setDuration(600L);
-                ofFloat.setStartDelay(this.mLauncher.getWindow().getTransitionBackgroundFadeDuration());
-                ofFloat.start();
-                this.mAnimateScrimOnNextDraw = false;
-            }
-            if (this.mDrawTopScrim) {
-                this.mTopScrim.draw(canvas);
-            }
-            if (this.mDrawBottomScrim) {
-                canvas.drawBitmap(this.mBottomMask, (Rect) null, this.mFinalMaskRect, this.mBottomMaskPaint);
-            }
+        if (this.mHideSysUiScrim || !this.mHasSysUiScrim) {
+            return;
+        }
+        if (this.mSysUiProgress <= 0.0f) {
+            this.mAnimateScrimOnNextDraw = false;
+            return;
+        }
+        if (this.mAnimateScrimOnNextDraw) {
+            this.mSysUiAnimMultiplier = 0.0f;
+            reapplySysUiAlphaNoInvalidate();
+            ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, SYSUI_ANIM_MULTIPLIER, 1.0f);
+            objectAnimatorOfFloat.setAutoCancel(true);
+            objectAnimatorOfFloat.setDuration(600L);
+            objectAnimatorOfFloat.setStartDelay(this.mLauncher.getWindow().getTransitionBackgroundFadeDuration());
+            objectAnimatorOfFloat.start();
+            this.mAnimateScrimOnNextDraw = false;
+        }
+        if (this.mDrawTopScrim) {
+            this.mTopScrim.draw(canvas);
+        }
+        if (this.mDrawBottomScrim) {
+            canvas.drawBitmap(this.mBottomMask, (Rect) null, this.mFinalMaskRect, this.mBottomMaskPaint);
         }
     }
 
@@ -161,8 +169,7 @@ public class WorkspaceAndHotseatScrim implements View.OnAttachStateChangeListene
         this.mDrawBottomScrim = !this.mLauncher.getDeviceProfile().isVerticalBarLayout();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setScrimProgress(float f) {
+    private void setScrimProgress(float f) {
         if (this.mScrimProgress != f) {
             this.mScrimProgress = f;
             this.mScrimAlpha = Math.round(255.0f * this.mScrimProgress);
@@ -191,7 +198,7 @@ public class WorkspaceAndHotseatScrim implements View.OnAttachStateChangeListene
 
     @Override // com.android.launcher3.uioverrides.WallpaperColorInfo.OnChangeListener
     public void onExtractedColorsChanged(WallpaperColorInfo wallpaperColorInfo) {
-        this.mBottomMaskPaint.setColor(ColorUtils.compositeColors((int) DARK_SCRIM_COLOR, wallpaperColorInfo.getMainColor()));
+        this.mBottomMaskPaint.setColor(ColorUtils.compositeColors(DARK_SCRIM_COLOR, wallpaperColorInfo.getMainColor()));
         reapplySysUiAlpha();
         this.mFullScrimColor = wallpaperColorInfo.getMainColor();
         if (this.mScrimAlpha > 0) {
@@ -214,16 +221,14 @@ public class WorkspaceAndHotseatScrim implements View.OnAttachStateChangeListene
         invalidate();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setSysUiProgress(float f) {
+    private void setSysUiProgress(float f) {
         if (f != this.mSysUiProgress) {
             this.mSysUiProgress = f;
             reapplySysUiAlpha();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void reapplySysUiAlpha() {
+    private void reapplySysUiAlpha() {
         if (this.mHasSysUiScrim) {
             reapplySysUiAlphaNoInvalidate();
             if (!this.mHideSysUiScrim) {
@@ -244,14 +249,14 @@ public class WorkspaceAndHotseatScrim implements View.OnAttachStateChangeListene
 
     public Bitmap createDitheredAlphaMask() {
         DisplayMetrics displayMetrics = this.mLauncher.getResources().getDisplayMetrics();
-        int pxFromDp = Utilities.pxFromDp(2.0f, displayMetrics);
-        int pxFromDp2 = Utilities.pxFromDp(500.0f, displayMetrics);
-        Bitmap createBitmap = Bitmap.createBitmap(pxFromDp, this.mMaskHeight, Bitmap.Config.ALPHA_8);
-        Canvas canvas = new Canvas(createBitmap);
+        int iPxFromDp = Utilities.pxFromDp(2.0f, displayMetrics);
+        int iPxFromDp2 = Utilities.pxFromDp(500.0f, displayMetrics);
+        Bitmap bitmapCreateBitmap = Bitmap.createBitmap(iPxFromDp, this.mMaskHeight, Bitmap.Config.ALPHA_8);
+        Canvas canvas = new Canvas(bitmapCreateBitmap);
         Paint paint = new Paint(4);
-        float f = pxFromDp2;
+        float f = iPxFromDp2;
         paint.setShader(new LinearGradient(0.0f, 0.0f, 0.0f, f, new int[]{ViewCompat.MEASURED_SIZE_MASK, ColorUtils.setAlphaComponent(-1, 242), -1}, new float[]{0.0f, 0.8f, 1.0f}, Shader.TileMode.CLAMP));
-        canvas.drawRect(0.0f, 0.0f, pxFromDp, f, paint);
-        return createBitmap;
+        canvas.drawRect(0.0f, 0.0f, iPxFromDp, f, paint);
+        return bitmapCreateBitmap;
     }
 }

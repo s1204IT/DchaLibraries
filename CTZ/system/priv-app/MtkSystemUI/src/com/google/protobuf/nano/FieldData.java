@@ -3,32 +3,38 @@ package com.google.protobuf.nano;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class FieldData implements Cloneable {
+class FieldData implements Cloneable {
     private Extension<?, ?> cachedExtension;
     private List<UnknownFieldData> unknownFieldData = new ArrayList();
     private Object value;
+
+    FieldData() {
+    }
 
     int computeSerializedSize() {
         if (this.value != null) {
             return this.cachedExtension.computeSerializedSize(this.value);
         }
-        int i = 0;
-        for (UnknownFieldData unknownFieldData : this.unknownFieldData) {
-            i += unknownFieldData.computeSerializedSize();
+        Iterator<UnknownFieldData> it = this.unknownFieldData.iterator();
+        int iComputeSerializedSize = 0;
+        while (it.hasNext()) {
+            iComputeSerializedSize += it.next().computeSerializedSize();
         }
-        return i;
+        return iComputeSerializedSize;
     }
 
-    void writeTo(CodedOutputByteBufferNano codedOutputByteBufferNano) throws IOException {
+    void writeTo(CodedOutputByteBufferNano codedOutputByteBufferNano) throws IOException, ArrayIndexOutOfBoundsException, IllegalArgumentException {
         if (this.value != null) {
             this.cachedExtension.writeTo(this.value, codedOutputByteBufferNano);
             return;
         }
-        for (UnknownFieldData unknownFieldData : this.unknownFieldData) {
-            unknownFieldData.writeTo(codedOutputByteBufferNano);
+        Iterator<UnknownFieldData> it = this.unknownFieldData.iterator();
+        while (it.hasNext()) {
+            it.next().writeTo(codedOutputByteBufferNano);
         }
     }
 
@@ -36,45 +42,45 @@ public class FieldData implements Cloneable {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof FieldData) {
-            FieldData fieldData = (FieldData) obj;
-            if (this.value != null && fieldData.value != null) {
-                if (this.cachedExtension != fieldData.cachedExtension) {
-                    return false;
-                }
-                if (!this.cachedExtension.clazz.isArray()) {
-                    return this.value.equals(fieldData.value);
-                }
-                if (this.value instanceof byte[]) {
-                    return Arrays.equals((byte[]) this.value, (byte[]) fieldData.value);
-                }
-                if (this.value instanceof int[]) {
-                    return Arrays.equals((int[]) this.value, (int[]) fieldData.value);
-                }
-                if (this.value instanceof long[]) {
-                    return Arrays.equals((long[]) this.value, (long[]) fieldData.value);
-                }
-                if (this.value instanceof float[]) {
-                    return Arrays.equals((float[]) this.value, (float[]) fieldData.value);
-                }
-                if (this.value instanceof double[]) {
-                    return Arrays.equals((double[]) this.value, (double[]) fieldData.value);
-                }
-                if (this.value instanceof boolean[]) {
-                    return Arrays.equals((boolean[]) this.value, (boolean[]) fieldData.value);
-                }
-                return Arrays.deepEquals((Object[]) this.value, (Object[]) fieldData.value);
-            } else if (this.unknownFieldData != null && fieldData.unknownFieldData != null) {
-                return this.unknownFieldData.equals(fieldData.unknownFieldData);
-            } else {
-                try {
-                    return Arrays.equals(toByteArray(), fieldData.toByteArray());
-                } catch (IOException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
+        if (!(obj instanceof FieldData)) {
+            return false;
         }
-        return false;
+        FieldData fieldData = (FieldData) obj;
+        if (this.value != null && fieldData.value != null) {
+            if (this.cachedExtension != fieldData.cachedExtension) {
+                return false;
+            }
+            if (!this.cachedExtension.clazz.isArray()) {
+                return this.value.equals(fieldData.value);
+            }
+            if (this.value instanceof byte[]) {
+                return Arrays.equals((byte[]) this.value, (byte[]) fieldData.value);
+            }
+            if (this.value instanceof int[]) {
+                return Arrays.equals((int[]) this.value, (int[]) fieldData.value);
+            }
+            if (this.value instanceof long[]) {
+                return Arrays.equals((long[]) this.value, (long[]) fieldData.value);
+            }
+            if (this.value instanceof float[]) {
+                return Arrays.equals((float[]) this.value, (float[]) fieldData.value);
+            }
+            if (this.value instanceof double[]) {
+                return Arrays.equals((double[]) this.value, (double[]) fieldData.value);
+            }
+            if (this.value instanceof boolean[]) {
+                return Arrays.equals((boolean[]) this.value, (boolean[]) fieldData.value);
+            }
+            return Arrays.deepEquals((Object[]) this.value, (Object[]) fieldData.value);
+        }
+        if (this.unknownFieldData != null && fieldData.unknownFieldData != null) {
+            return this.unknownFieldData.equals(fieldData.unknownFieldData);
+        }
+        try {
+            return Arrays.equals(toByteArray(), fieldData.toByteArray());
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public int hashCode() {
@@ -85,13 +91,14 @@ public class FieldData implements Cloneable {
         }
     }
 
-    private byte[] toByteArray() throws IOException {
+    private byte[] toByteArray() throws IOException, ArrayIndexOutOfBoundsException, IllegalArgumentException {
         byte[] bArr = new byte[computeSerializedSize()];
         writeTo(CodedOutputByteBufferNano.newInstance(bArr));
         return bArr;
     }
 
-    /* renamed from: clone */
+    /* JADX DEBUG: Method merged with bridge method: clone()Ljava/lang/Object; */
+    /* renamed from: clone, reason: merged with bridge method [inline-methods] */
     public final FieldData m28clone() {
         FieldData fieldData = new FieldData();
         try {
@@ -110,7 +117,7 @@ public class FieldData implements Cloneable {
                     int i = 0;
                     if (this.value instanceof byte[][]) {
                         byte[][] bArr = (byte[][]) this.value;
-                        byte[][] bArr2 = new byte[bArr.length];
+                        byte[][] bArr2 = new byte[bArr.length][];
                         fieldData.value = bArr2;
                         while (i < bArr.length) {
                             bArr2[i] = (byte[]) bArr[i].clone();

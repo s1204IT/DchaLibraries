@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class CategoryManager {
     private static CategoryManager sInstance;
@@ -39,9 +40,9 @@ public class CategoryManager {
     }
 
     public synchronized void reloadAllCategories(Context context, String str) {
-        boolean applyNewConfig = this.mInterestingConfigChanges.applyNewConfig(context.getResources());
+        boolean zApplyNewConfig = this.mInterestingConfigChanges.applyNewConfig(context.getResources());
         this.mCategories = null;
-        tryInitCategories(context, applyNewConfig, str);
+        tryInitCategories(context, zApplyNewConfig, str);
     }
 
     public synchronized void updateCategoryFromBlacklist(Set<ComponentName> set) {
@@ -79,34 +80,36 @@ public class CategoryManager {
     }
 
     synchronized void backwardCompatCleanupForCategory(Map<Pair<String, String>, Tile> map, Map<String, DashboardCategory> map2) {
-        HashMap hashMap = new HashMap();
+        HashMap map3 = new HashMap();
         for (Map.Entry<Pair<String, String>, Tile> entry : map.entrySet()) {
             String str = (String) entry.getKey().first;
-            List list = (List) hashMap.get(str);
-            if (list == null) {
-                list = new ArrayList();
-                hashMap.put(str, list);
+            List arrayList = (List) map3.get(str);
+            if (arrayList == null) {
+                arrayList = new ArrayList();
+                map3.put(str, arrayList);
             }
-            list.add(entry.getValue());
+            arrayList.add(entry.getValue());
         }
-        for (Map.Entry entry2 : hashMap.entrySet()) {
-            List<Tile> list2 = (List) entry2.getValue();
-            Iterator it = list2.iterator();
+        Iterator it = map3.entrySet().iterator();
+        while (it.hasNext()) {
+            List<Tile> list = (List) ((Map.Entry) it.next()).getValue();
+            Iterator it2 = list.iterator();
             boolean z = true;
             boolean z2 = false;
             while (true) {
-                if (it.hasNext()) {
-                    if (!CategoryKey.KEY_COMPAT_MAP.containsKey(((Tile) it.next()).category)) {
+                if (it2.hasNext()) {
+                    if (!CategoryKey.KEY_COMPAT_MAP.containsKey(((Tile) it2.next()).category)) {
                         break;
+                    } else {
+                        z2 = true;
                     }
-                    z2 = true;
                 } else {
                     z = false;
                     break;
                 }
             }
             if (z2 && !z) {
-                for (Tile tile : list2) {
+                for (Tile tile : list) {
                     String str2 = CategoryKey.KEY_COMPAT_MAP.get(tile.category);
                     tile.category = str2;
                     DashboardCategory dashboardCategory = map2.get(str2);
@@ -121,14 +124,16 @@ public class CategoryManager {
     }
 
     synchronized void sortCategories(Context context, Map<String, DashboardCategory> map) {
-        for (Map.Entry<String, DashboardCategory> entry : map.entrySet()) {
-            entry.getValue().sortTiles(context.getPackageName());
+        Iterator<Map.Entry<String, DashboardCategory>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            it.next().getValue().sortTiles(context.getPackageName());
         }
     }
 
     synchronized void filterDuplicateTiles(Map<String, DashboardCategory> map) {
-        for (Map.Entry<String, DashboardCategory> entry : map.entrySet()) {
-            DashboardCategory value = entry.getValue();
+        Iterator<Map.Entry<String, DashboardCategory>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            DashboardCategory value = it.next().getValue();
             int tilesCount = value.getTilesCount();
             ArraySet arraySet = new ArraySet();
             for (int i = tilesCount - 1; i >= 0; i--) {

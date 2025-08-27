@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.RadioButton;
 import com.android.settings.R;
 import com.android.settingslib.TwoTargetPreference;
+
 /* loaded from: classes.dex */
 public class ZenCustomRadioButtonPreference extends TwoTargetPreference implements View.OnClickListener {
     private RadioButton mButton;
@@ -14,12 +15,10 @@ public class ZenCustomRadioButtonPreference extends TwoTargetPreference implemen
     private OnGearClickListener mOnGearClickListener;
     private OnRadioButtonClickListener mOnRadioButtonClickListener;
 
-    /* loaded from: classes.dex */
     public interface OnGearClickListener {
         void onGearClick(ZenCustomRadioButtonPreference zenCustomRadioButtonPreference);
     }
 
-    /* loaded from: classes.dex */
     public interface OnRadioButtonClickListener {
         void onRadioButtonClick(ZenCustomRadioButtonPreference zenCustomRadioButtonPreference);
     }
@@ -62,25 +61,25 @@ public class ZenCustomRadioButtonPreference extends TwoTargetPreference implemen
     @Override // com.android.settingslib.TwoTargetPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.checkbox_frame);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(this);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.checkbox_frame);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(this);
         }
-        this.mButton = (RadioButton) preferenceViewHolder.findViewById(16908289);
+        this.mButton = (RadioButton) preferenceViewHolder.findViewById(android.R.id.checkbox);
         if (this.mButton != null) {
             this.mButton.setChecked(this.mChecked);
         }
-        View findViewById2 = preferenceViewHolder.findViewById(16908312);
-        View findViewById3 = preferenceViewHolder.findViewById(R.id.two_target_divider);
+        View viewFindViewById2 = preferenceViewHolder.findViewById(android.R.id.widget_frame);
+        View viewFindViewById3 = preferenceViewHolder.findViewById(R.id.two_target_divider);
         if (this.mOnGearClickListener != null) {
-            findViewById3.setVisibility(0);
-            findViewById2.setVisibility(0);
-            findViewById2.setOnClickListener(this);
-            return;
+            viewFindViewById3.setVisibility(0);
+            viewFindViewById2.setVisibility(0);
+            viewFindViewById2.setOnClickListener(this);
+        } else {
+            viewFindViewById3.setVisibility(8);
+            viewFindViewById2.setVisibility(8);
+            viewFindViewById2.setOnClickListener(null);
         }
-        findViewById3.setVisibility(8);
-        findViewById2.setVisibility(8);
-        findViewById2.setOnClickListener(null);
     }
 
     public void setChecked(boolean z) {

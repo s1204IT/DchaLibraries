@@ -1,6 +1,7 @@
 package com.android.quicksearchbox;
 
 import android.content.ComponentName;
+
 /* loaded from: classes.dex */
 public abstract class AbstractSuggestionWrapper implements Suggestion {
     protected abstract Suggestion current();

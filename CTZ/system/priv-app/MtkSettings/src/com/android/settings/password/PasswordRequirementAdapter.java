@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class PasswordRequirementAdapter extends RecyclerView.Adapter<PasswordRequirementViewHolder> {
     private String[] mRequirements;
@@ -14,6 +15,7 @@ public class PasswordRequirementAdapter extends RecyclerView.Adapter<PasswordReq
         setHasStableIds(true);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public PasswordRequirementViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new PasswordRequirementViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.password_requirement_item, viewGroup, false));
@@ -34,12 +36,12 @@ public class PasswordRequirementAdapter extends RecyclerView.Adapter<PasswordReq
         return this.mRequirements[i].hashCode();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(PasswordRequirementViewHolder passwordRequirementViewHolder, int i) {
         passwordRequirementViewHolder.mDescriptionText.setText(this.mRequirements[i]);
     }
 
-    /* loaded from: classes.dex */
     public static class PasswordRequirementViewHolder extends RecyclerView.ViewHolder {
         private TextView mDescriptionText;
 

@@ -35,6 +35,7 @@ import com.android.systemui.statusbar.phone.KeyguardDismissUtil;
 import java.text.BreakIterator;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+
 /* loaded from: classes.dex */
 public class SmartReplyView extends ViewGroup {
     private final BreakIterator mBreakIterator;
@@ -64,8 +65,8 @@ public class SmartReplyView extends ViewGroup {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ int lambda$static$0(View view, View view2) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x001c: ARITH (wrap:int:0x000d: ARITH (wrap:int:0x0008: ARITH (wrap:int:0x0000: INVOKE (r3v0 android.view.View) VIRTUAL call: android.view.View.getMeasuredWidth():int A[MD:():int (c), WRAPPED] (LINE:52)) - (wrap:int:0x0004: INVOKE (r3v0 android.view.View) VIRTUAL call: android.view.View.getPaddingLeft():int A[MD:():int (c), WRAPPED]) A[WRAPPED] (LINE:52)) - (wrap:int:0x0009: INVOKE (r3v0 android.view.View) VIRTUAL call: android.view.View.getPaddingRight():int A[MD:():int (c), WRAPPED]) A[WRAPPED] (LINE:52)) - (wrap:int:0x001b: ARITH (wrap:int:0x0016: ARITH (wrap:int:0x000e: INVOKE (r2v0 android.view.View) VIRTUAL call: android.view.View.getMeasuredWidth():int A[MD:():int (c), WRAPPED] (LINE:53)) - (wrap:int:0x0012: INVOKE (r2v0 android.view.View) VIRTUAL call: android.view.View.getPaddingLeft():int A[MD:():int (c), WRAPPED]) A[WRAPPED] (LINE:53)) - (wrap:int:0x0017: INVOKE (r2v0 android.view.View) VIRTUAL call: android.view.View.getPaddingRight():int A[MD:():int (c), WRAPPED]) A[WRAPPED] (LINE:53)) (LINE:53) */
+    static /* synthetic */ int lambda$static$0(View view, View view2) {
         return ((view2.getMeasuredWidth() - view2.getPaddingLeft()) - view2.getPaddingRight()) - ((view.getMeasuredWidth() - view.getPaddingLeft()) - view.getPaddingRight());
     }
 
@@ -82,34 +83,34 @@ public class SmartReplyView extends ViewGroup {
         this.mRippleColor = this.mContext.getColor(R.color.notification_ripple_untinted_color);
         this.mRippleColorDarkBg = Color.argb(Color.alpha(this.mRippleColor), 255, 255, 255);
         this.mMinStrokeContrast = NotificationColorUtil.calculateContrast(this.mDefaultStrokeColor, this.mDefaultBackgroundColor);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SmartReplyView, 0, 0);
-        int indexCount = obtainStyledAttributes.getIndexCount();
-        int i = 0;
-        int i2 = 0;
-        int i3 = 0;
-        int i4 = 0;
-        for (int i5 = 0; i5 < indexCount; i5++) {
-            switch (obtainStyledAttributes.getIndex(i5)) {
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SmartReplyView, 0, 0);
+        int indexCount = typedArrayObtainStyledAttributes.getIndexCount();
+        int dimensionPixelSize = 0;
+        int dimensionPixelSize2 = 0;
+        int dimensionPixelSize3 = 0;
+        int dimensionPixelSize4 = 0;
+        for (int i = 0; i < indexCount; i++) {
+            switch (typedArrayObtainStyledAttributes.getIndex(i)) {
                 case 0:
-                    i = obtainStyledAttributes.getDimensionPixelSize(i5, 0);
+                    dimensionPixelSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(i, 0);
                     break;
                 case 1:
-                    i4 = obtainStyledAttributes.getDimensionPixelSize(i5, 0);
+                    dimensionPixelSize4 = typedArrayObtainStyledAttributes.getDimensionPixelSize(i, 0);
                     break;
                 case 2:
-                    i3 = obtainStyledAttributes.getDimensionPixelSize(i5, 0);
+                    dimensionPixelSize3 = typedArrayObtainStyledAttributes.getDimensionPixelSize(i, 0);
                     break;
                 case 3:
-                    i2 = obtainStyledAttributes.getDimensionPixelSize(i5, 0);
+                    dimensionPixelSize2 = typedArrayObtainStyledAttributes.getDimensionPixelSize(i, 0);
                     break;
             }
         }
-        obtainStyledAttributes.recycle();
-        this.mStrokeWidth = i;
-        this.mSpacing = i2;
-        this.mSingleLineButtonPaddingHorizontal = i3;
-        this.mDoubleLineButtonPaddingHorizontal = i4;
-        this.mSingleToDoubleLineButtonWidthIncrease = 2 * (i4 - i3);
+        typedArrayObtainStyledAttributes.recycle();
+        this.mStrokeWidth = dimensionPixelSize;
+        this.mSpacing = dimensionPixelSize2;
+        this.mSingleLineButtonPaddingHorizontal = dimensionPixelSize3;
+        this.mDoubleLineButtonPaddingHorizontal = dimensionPixelSize4;
+        this.mSingleToDoubleLineButtonWidthIncrease = 2 * (dimensionPixelSize4 - dimensionPixelSize3);
         this.mBreakIterator = BreakIterator.getLineInstance();
         reallocateCandidateButtonQueueForSqueezing();
     }
@@ -146,13 +147,13 @@ public class SmartReplyView extends ViewGroup {
         final KeyguardHostView.OnDismissAction onDismissAction = new KeyguardHostView.OnDismissAction() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$SmartReplyView$UwLdHmeZSqfnZQeDlBO5lJ6m-GM
             @Override // com.android.keyguard.KeyguardHostView.OnDismissAction
             public final boolean onDismiss() {
-                return SmartReplyView.lambda$inflateReplyButton$1(SmartReplyView.this, smartReplyController, entry, i, button, remoteInput, charSequence, pendingIntent, context);
+                return SmartReplyView.lambda$inflateReplyButton$1(this.f$0, smartReplyController, entry, i, button, remoteInput, charSequence, pendingIntent, context);
             }
         };
         button.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$SmartReplyView$oc5xsdTBKPaigeImxuPKm7py0NE
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                SmartReplyView.this.mKeyguardDismissUtil.executeWhenUnlocked(onDismissAction);
+                this.f$0.mKeyguardDismissUtil.executeWhenUnlocked(onDismissAction);
             }
         });
         button.setAccessibilityDelegate(new View.AccessibilityDelegate() { // from class: com.android.systemui.statusbar.policy.SmartReplyView.1
@@ -166,16 +167,16 @@ public class SmartReplyView extends ViewGroup {
         return button;
     }
 
-    public static /* synthetic */ boolean lambda$inflateReplyButton$1(SmartReplyView smartReplyView, SmartReplyController smartReplyController, NotificationData.Entry entry, int i, Button button, RemoteInput remoteInput, CharSequence charSequence, PendingIntent pendingIntent, Context context) {
+    public static /* synthetic */ boolean lambda$inflateReplyButton$1(SmartReplyView smartReplyView, SmartReplyController smartReplyController, NotificationData.Entry entry, int i, Button button, RemoteInput remoteInput, CharSequence charSequence, PendingIntent pendingIntent, Context context) throws PendingIntent.CanceledException {
         smartReplyController.smartReplySent(entry, i, button.getText());
         Bundle bundle = new Bundle();
         bundle.putString(remoteInput.getResultKey(), charSequence.toString());
-        Intent addFlags = new Intent().addFlags(268435456);
-        RemoteInput.addResultsToIntent(new RemoteInput[]{remoteInput}, addFlags, bundle);
-        RemoteInput.setResultsSource(addFlags, 1);
+        Intent intentAddFlags = new Intent().addFlags(268435456);
+        RemoteInput.addResultsToIntent(new RemoteInput[]{remoteInput}, intentAddFlags, bundle);
+        RemoteInput.setResultsSource(intentAddFlags, 1);
         entry.setHasSentReply();
         try {
-            pendingIntent.send(context, 0, addFlags);
+            pendingIntent.send(context, 0, intentAddFlags);
         } catch (PendingIntent.CanceledException e) {
             Log.w("SmartReplyView", "Unable to send smart reply", e);
         }
@@ -183,15 +184,17 @@ public class SmartReplyView extends ViewGroup {
         return false;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/util/AttributeSet;)Landroid/view/ViewGroup$LayoutParams; */
     @Override // android.view.ViewGroup
     public LayoutParams generateLayoutParams(AttributeSet attributeSet) {
         return new LayoutParams(this.mContext, attributeSet);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: generateDefaultLayoutParams()Landroid/view/ViewGroup$LayoutParams; */
     @Override // android.view.ViewGroup
-    public LayoutParams generateDefaultLayoutParams() {
-        return new LayoutParams(-2, -2);
+    protected LayoutParams generateDefaultLayoutParams() {
+        int i = -2;
+        return new LayoutParams(i, i);
     }
 
     @Override // android.view.ViewGroup
@@ -237,7 +240,7 @@ public class SmartReplyView extends ViewGroup {
                         i3 = 0;
                     }
                     int measuredWidth = i3 + childAt.getMeasuredWidth() + i7;
-                    int max = Math.max(i9, childAt.getMeasuredHeight());
+                    int iMax = Math.max(i9, childAt.getMeasuredHeight());
                     if (i6 == this.mSingleLineButtonPaddingHorizontal && (lineCount == 2 || measuredWidth > size)) {
                         measuredWidth += (i10 + 1) * this.mSingleToDoubleLineButtonWidthIncrease;
                         i4 = this.mDoubleLineButtonPaddingHorizontal;
@@ -246,11 +249,11 @@ public class SmartReplyView extends ViewGroup {
                     }
                     if (measuredWidth > size) {
                         while (measuredWidth > size && !this.mCandidateButtonQueueForSqueezing.isEmpty()) {
-                            Button poll = this.mCandidateButtonQueueForSqueezing.poll();
-                            int squeezeButton = squeezeButton(poll, i2);
-                            if (squeezeButton != -1) {
-                                max = Math.max(max, poll.getMeasuredHeight());
-                                measuredWidth -= squeezeButton;
+                            Button buttonPoll = this.mCandidateButtonQueueForSqueezing.poll();
+                            int iSqueezeButton = squeezeButton(buttonPoll, i2);
+                            if (iSqueezeButton != -1) {
+                                iMax = Math.max(iMax, buttonPoll.getMeasuredHeight());
+                                measuredWidth -= iSqueezeButton;
                             }
                         }
                         if (measuredWidth > size) {
@@ -262,7 +265,7 @@ public class SmartReplyView extends ViewGroup {
                     layoutParams.show = true;
                     i10++;
                     i7 = measuredWidth;
-                    i9 = max;
+                    i9 = iMax;
                     i6 = i4;
                 }
             }
@@ -283,58 +286,57 @@ public class SmartReplyView extends ViewGroup {
     }
 
     private int squeezeButton(Button button, int i) {
-        int estimateOptimalSqueezedButtonTextWidth = estimateOptimalSqueezedButtonTextWidth(button);
-        if (estimateOptimalSqueezedButtonTextWidth == -1) {
+        int iEstimateOptimalSqueezedButtonTextWidth = estimateOptimalSqueezedButtonTextWidth(button);
+        if (iEstimateOptimalSqueezedButtonTextWidth == -1) {
             return -1;
         }
-        return squeezeButtonToTextWidth(button, i, estimateOptimalSqueezedButtonTextWidth);
+        return squeezeButtonToTextWidth(button, i, iEstimateOptimalSqueezedButtonTextWidth);
     }
 
     private int estimateOptimalSqueezedButtonTextWidth(Button button) {
-        String charSequence = button.getText().toString();
+        String string = button.getText().toString();
         TransformationMethod transformationMethod = button.getTransformationMethod();
         if (transformationMethod != null) {
-            charSequence = transformationMethod.getTransformation(charSequence, button).toString();
+            string = transformationMethod.getTransformation(string, button).toString();
         }
-        int length = charSequence.length();
-        this.mBreakIterator.setText(charSequence);
+        int length = string.length();
+        this.mBreakIterator.setText(string);
         if (this.mBreakIterator.preceding(length / 2) == -1 && this.mBreakIterator.next() == -1) {
             return -1;
         }
         TextPaint paint = button.getPaint();
-        int current = this.mBreakIterator.current();
-        float desiredWidth = Layout.getDesiredWidth(charSequence, 0, current, paint);
-        float desiredWidth2 = Layout.getDesiredWidth(charSequence, current, length, paint);
-        float max = Math.max(desiredWidth, desiredWidth2);
-        int i = (desiredWidth > desiredWidth2 ? 1 : (desiredWidth == desiredWidth2 ? 0 : -1));
-        if (i != 0) {
-            boolean z = i > 0;
+        int iCurrent = this.mBreakIterator.current();
+        float desiredWidth = Layout.getDesiredWidth(string, 0, iCurrent, paint);
+        float desiredWidth2 = Layout.getDesiredWidth(string, iCurrent, length, paint);
+        float fMax = Math.max(desiredWidth, desiredWidth2);
+        if (desiredWidth != desiredWidth2) {
+            boolean z = desiredWidth > desiredWidth2;
             int maxSqueezeRemeasureAttempts = this.mConstants.getMaxSqueezeRemeasureAttempts();
-            float f = max;
-            int i2 = 0;
-            while (i2 < maxSqueezeRemeasureAttempts) {
-                int previous = z ? this.mBreakIterator.previous() : this.mBreakIterator.next();
-                if (previous != -1) {
-                    float desiredWidth3 = Layout.getDesiredWidth(charSequence, 0, previous, paint);
-                    float desiredWidth4 = Layout.getDesiredWidth(charSequence, previous, length, paint);
-                    float max2 = Math.max(desiredWidth3, desiredWidth4);
-                    if (max2 >= f) {
+            float f = fMax;
+            int i = 0;
+            while (i < maxSqueezeRemeasureAttempts) {
+                int iPrevious = z ? this.mBreakIterator.previous() : this.mBreakIterator.next();
+                if (iPrevious != -1) {
+                    float desiredWidth3 = Layout.getDesiredWidth(string, 0, iPrevious, paint);
+                    float desiredWidth4 = Layout.getDesiredWidth(string, iPrevious, length, paint);
+                    float fMax2 = Math.max(desiredWidth3, desiredWidth4);
+                    if (fMax2 >= f) {
                         break;
                     }
                     if (!(!z ? desiredWidth3 < desiredWidth4 : desiredWidth3 > desiredWidth4)) {
-                        i2++;
-                        f = max2;
+                        i++;
+                        f = fMax2;
                     } else {
-                        max = max2;
+                        fMax = fMax2;
                         break;
                     }
                 } else {
                     break;
                 }
             }
-            max = f;
+            fMax = f;
         }
-        return (int) Math.ceil(max);
+        return (int) Math.ceil(fMax);
     }
 
     private int squeezeButtonToTextWidth(Button button, int i, int i2) {
@@ -356,7 +358,7 @@ public class SmartReplyView extends ViewGroup {
 
     private void remeasureButtonsIfNecessary(int i, int i2) {
         boolean z;
-        int makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(i2, 1073741824);
+        int iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(i2, 1073741824);
         int childCount = getChildCount();
         for (int i3 = 0; i3 < childCount; i3++) {
             View childAt = getChildAt(i3);
@@ -384,7 +386,7 @@ public class SmartReplyView extends ViewGroup {
                     z = true;
                 }
                 if (z) {
-                    childAt.measure(View.MeasureSpec.makeMeasureSpec(measuredWidth, Integer.MIN_VALUE), makeMeasureSpec);
+                    childAt.measure(View.MeasureSpec.makeMeasureSpec(measuredWidth, Integer.MIN_VALUE), iMakeMeasureSpec);
                 }
             }
         }
@@ -433,20 +435,20 @@ public class SmartReplyView extends ViewGroup {
         this.mCurrentBackgroundColor = i;
         boolean z = !NotificationColorUtil.isColorLight(i);
         int i2 = (-16777216) | i;
-        int ensureTextContrast = NotificationColorUtil.ensureTextContrast(z ? this.mDefaultTextColorDarkBg : this.mDefaultTextColor, i2, z);
-        int ensureContrast = NotificationColorUtil.ensureContrast(this.mDefaultStrokeColor, i2, z, this.mMinStrokeContrast);
+        int iEnsureTextContrast = NotificationColorUtil.ensureTextContrast(z ? this.mDefaultTextColorDarkBg : this.mDefaultTextColor, i2, z);
+        int iEnsureContrast = NotificationColorUtil.ensureContrast(this.mDefaultStrokeColor, i2, z, this.mMinStrokeContrast);
         int i3 = z ? this.mRippleColorDarkBg : this.mRippleColor;
         int childCount = getChildCount();
         for (int i4 = 0; i4 < childCount; i4++) {
-            setColors((Button) getChildAt(i4), i, ensureContrast, ensureTextContrast, i3);
+            setColors((Button) getChildAt(i4), i, iEnsureContrast, iEnsureTextContrast, i3);
         }
     }
 
     private void setColors(Button button, int i, int i2, int i3, int i4) {
         Drawable background = button.getBackground();
         if (background instanceof RippleDrawable) {
-            Drawable mutate = background.mutate();
-            RippleDrawable rippleDrawable = (RippleDrawable) mutate;
+            Drawable drawableMutate = background.mutate();
+            RippleDrawable rippleDrawable = (RippleDrawable) drawableMutate;
             rippleDrawable.setColor(ColorStateList.valueOf(i4));
             Drawable drawable = rippleDrawable.getDrawable(0);
             if (drawable instanceof InsetDrawable) {
@@ -457,15 +459,13 @@ public class SmartReplyView extends ViewGroup {
                     gradientDrawable.setStroke(this.mStrokeWidth, i2);
                 }
             }
-            button.setBackground(mutate);
+            button.setBackground(drawableMutate);
         }
         button.setTextColor(i3);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    /* loaded from: classes.dex */
-    public static class LayoutParams extends ViewGroup.LayoutParams {
+    static class LayoutParams extends ViewGroup.LayoutParams {
         private boolean show;
         private int squeezeStatus;
 

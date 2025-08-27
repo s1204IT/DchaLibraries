@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class ButtonBarLayout extends LinearLayout {
     private int mOriginalPaddingLeft;
@@ -24,17 +25,17 @@ public class ButtonBarLayout extends LinearLayout {
     @Override // android.widget.LinearLayout, android.view.View
     protected void onMeasure(int i, int i2) {
         boolean z;
-        int i3;
+        int iMakeMeasureSpec;
         int size = View.MeasureSpec.getSize(i);
         setStacked(false);
         if (View.MeasureSpec.getMode(i) != 1073741824) {
             z = false;
-            i3 = i;
+            iMakeMeasureSpec = i;
         } else {
-            i3 = View.MeasureSpec.makeMeasureSpec(0, 0);
+            iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, 0);
             z = true;
         }
-        super.onMeasure(i3, i2);
+        super.onMeasure(iMakeMeasureSpec, i2);
         if (getMeasuredWidth() > size) {
             setStacked(true);
             z = true;
@@ -71,8 +72,8 @@ public class ButtonBarLayout extends LinearLayout {
         if (z) {
             this.mOriginalPaddingLeft = getPaddingLeft();
             this.mOriginalPaddingRight = getPaddingRight();
-            int max = Math.max(this.mOriginalPaddingLeft, this.mOriginalPaddingRight);
-            setPadding(max, getPaddingTop(), max, getPaddingBottom());
+            int iMax = Math.max(this.mOriginalPaddingLeft, this.mOriginalPaddingRight);
+            setPadding(iMax, getPaddingTop(), iMax, getPaddingBottom());
             return;
         }
         setPadding(this.mOriginalPaddingLeft, getPaddingTop(), this.mOriginalPaddingRight, getPaddingBottom());

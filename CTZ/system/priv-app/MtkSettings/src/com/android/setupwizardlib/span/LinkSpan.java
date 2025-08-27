@@ -11,18 +11,17 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class LinkSpan extends ClickableSpan {
     private static final Typeface TYPEFACE_MEDIUM = Typeface.create("sans-serif-medium", 0);
     private final String mId;
 
     @Deprecated
-    /* loaded from: classes.dex */
     public interface OnClickListener {
         void onClick(LinkSpan linkSpan);
     }
 
-    /* loaded from: classes.dex */
     public interface OnLinkClickListener {
         boolean onLinkClick(LinkSpan linkSpan);
     }
@@ -48,31 +47,34 @@ public class LinkSpan extends ClickableSpan {
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     private boolean dispatchClick(View view) {
-        boolean z;
+        boolean zOnLinkClick;
         OnClickListener legacyListenerFromContext;
         if (view instanceof OnLinkClickListener) {
-            z = ((OnLinkClickListener) view).onLinkClick(this);
+            zOnLinkClick = ((OnLinkClickListener) view).onLinkClick(this);
         } else {
-            z = false;
+            zOnLinkClick = false;
         }
-        if (!z && (legacyListenerFromContext = getLegacyListenerFromContext(view.getContext())) != null) {
+        if (!zOnLinkClick && (legacyListenerFromContext = getLegacyListenerFromContext(view.getContext())) != null) {
             legacyListenerFromContext.onClick(this);
             return true;
         }
-        return z;
+        return zOnLinkClick;
     }
 
     @Deprecated
     private OnClickListener getLegacyListenerFromContext(Context context) {
-        while (!(context instanceof OnClickListener)) {
-            if (context instanceof ContextWrapper) {
-                context = ((ContextWrapper) context).getBaseContext();
+        Object baseContext = context;
+        while (!(baseContext instanceof OnClickListener)) {
+            if (baseContext instanceof ContextWrapper) {
+                baseContext = ((ContextWrapper) baseContext).getBaseContext();
             } else {
                 return null;
             }
         }
-        return (OnClickListener) context;
+        return (OnClickListener) baseContext;
     }
 
     @Override // android.text.style.ClickableSpan, android.text.style.CharacterStyle

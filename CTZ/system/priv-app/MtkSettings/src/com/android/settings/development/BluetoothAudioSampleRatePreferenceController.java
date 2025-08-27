@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothCodecConfig;
 import android.content.Context;
 import com.android.settings.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class BluetoothAudioSampleRatePreferenceController extends AbstractBluetoothA2dpPreferenceController {
     public BluetoothAudioSampleRatePreferenceController(Context context, Lifecycle lifecycle, BluetoothA2dpConfigStore bluetoothA2dpConfigStore) {
@@ -53,19 +54,19 @@ public class BluetoothAudioSampleRatePreferenceController extends AbstractBlueto
     @Override // com.android.settings.development.AbstractBluetoothA2dpPreferenceController
     protected int getCurrentA2dpSettingIndex(BluetoothCodecConfig bluetoothCodecConfig) {
         int sampleRate = bluetoothCodecConfig.getSampleRate();
-        if (sampleRate != 4) {
-            if (sampleRate == 8) {
-                return 4;
-            }
-            switch (sampleRate) {
-                case 1:
-                    return 1;
-                case 2:
-                    return 2;
-                default:
-                    return 0;
-            }
+        if (sampleRate == 4) {
+            return 3;
         }
-        return 3;
+        if (sampleRate == 8) {
+            return 4;
+        }
+        switch (sampleRate) {
+            case 1:
+                return 1;
+            case 2:
+                return 2;
+            default:
+                return 0;
+        }
     }
 }

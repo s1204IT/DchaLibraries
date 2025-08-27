@@ -5,6 +5,7 @@ import android.os.Vibrator;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.RestrictedSwitchPreference;
+
 /* loaded from: classes.dex */
 public class VibrationPreferenceController extends NotificationPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final Vibrator mVibrator;

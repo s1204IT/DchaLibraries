@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class TemperatureTextView extends TextView implements TemperatureView {
     private final int mAreaId;
@@ -14,10 +15,10 @@ public class TemperatureTextView extends TextView implements TemperatureView {
 
     public TemperatureTextView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.TemperatureView);
-        this.mAreaId = obtainStyledAttributes.getInt(0, -1);
-        this.mPropertyId = obtainStyledAttributes.getInt(1, -1);
-        String string = obtainStyledAttributes.getString(2);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.TemperatureView);
+        this.mAreaId = typedArrayObtainStyledAttributes.getInt(0, -1);
+        this.mPropertyId = typedArrayObtainStyledAttributes.getInt(1, -1);
+        String string = typedArrayObtainStyledAttributes.getString(2);
         this.mTempFormat = string == null ? "%.1f°" : string;
         ((HvacController) Dependency.get(HvacController.class)).addHvacTextView(this);
     }

@@ -21,6 +21,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedSwitchPreference;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TrustAgentSettings extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener {
     private final ArraySet<ComponentName> mActiveAgents = new ArraySet<>();
@@ -29,7 +30,6 @@ public class TrustAgentSettings extends SettingsPreferenceFragment implements Pr
     private LockPatternUtils mLockPatternUtils;
     private TrustAgentManager mTrustAgentManager;
 
-    /* loaded from: classes.dex */
     public static final class AgentInfo {
         ComponentName component;
         public Drawable icon;
@@ -80,24 +80,24 @@ public class TrustAgentSettings extends SettingsPreferenceFragment implements Pr
         loadActiveAgents();
         PreferenceGroup preferenceGroup = (PreferenceGroup) getPreferenceScreen().findPreference("trust_agents");
         preferenceGroup.removeAll();
-        RestrictedLockUtils.EnforcedAdmin checkIfKeyguardFeaturesDisabled = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(activity, 16, UserHandle.myUserId());
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfKeyguardFeaturesDisabled = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(activity, 16, UserHandle.myUserId());
         int size = this.mAvailableAgents.size();
         for (int i = 0; i < size; i++) {
-            AgentInfo valueAt = this.mAvailableAgents.valueAt(i);
+            AgentInfo agentInfoValueAt = this.mAvailableAgents.valueAt(i);
             RestrictedSwitchPreference restrictedSwitchPreference = new RestrictedSwitchPreference(getPrefContext());
             restrictedSwitchPreference.useAdminDisabledSummary(true);
-            valueAt.preference = restrictedSwitchPreference;
+            agentInfoValueAt.preference = restrictedSwitchPreference;
             restrictedSwitchPreference.setPersistent(false);
-            restrictedSwitchPreference.setTitle(valueAt.label);
-            restrictedSwitchPreference.setIcon(valueAt.icon);
+            restrictedSwitchPreference.setTitle(agentInfoValueAt.label);
+            restrictedSwitchPreference.setIcon(agentInfoValueAt.icon);
             restrictedSwitchPreference.setPersistent(false);
             restrictedSwitchPreference.setOnPreferenceChangeListener(this);
-            restrictedSwitchPreference.setChecked(this.mActiveAgents.contains(valueAt.component));
-            if (checkIfKeyguardFeaturesDisabled != null && this.mDpm.getTrustAgentConfiguration(null, valueAt.component) == null) {
+            restrictedSwitchPreference.setChecked(this.mActiveAgents.contains(agentInfoValueAt.component));
+            if (enforcedAdminCheckIfKeyguardFeaturesDisabled != null && this.mDpm.getTrustAgentConfiguration(null, agentInfoValueAt.component) == null) {
                 restrictedSwitchPreference.setChecked(false);
-                restrictedSwitchPreference.setDisabledByAdmin(checkIfKeyguardFeaturesDisabled);
+                restrictedSwitchPreference.setDisabledByAdmin(enforcedAdminCheckIfKeyguardFeaturesDisabled);
             }
-            preferenceGroup.addPreference(valueAt.preference);
+            preferenceGroup.addPreference(agentInfoValueAt.preference);
         }
     }
 
@@ -114,12 +114,12 @@ public class TrustAgentSettings extends SettingsPreferenceFragment implements Pr
 
     private ArrayMap<ComponentName, AgentInfo> findAvailableTrustAgents() {
         PackageManager packageManager = getActivity().getPackageManager();
-        List<ResolveInfo> queryIntentServices = packageManager.queryIntentServices(new Intent("android.service.trust.TrustAgentService"), 128);
+        List<ResolveInfo> listQueryIntentServices = packageManager.queryIntentServices(new Intent("android.service.trust.TrustAgentService"), 128);
         ArrayMap<ComponentName, AgentInfo> arrayMap = new ArrayMap<>();
-        int size = queryIntentServices.size();
+        int size = listQueryIntentServices.size();
         arrayMap.ensureCapacity(size);
         for (int i = 0; i < size; i++) {
-            ResolveInfo resolveInfo = queryIntentServices.get(i);
+            ResolveInfo resolveInfo = listQueryIntentServices.get(i);
             if (resolveInfo.serviceInfo != null && this.mTrustAgentManager.shouldProvideTrust(resolveInfo, packageManager)) {
                 ComponentName componentName = this.mTrustAgentManager.getComponentName(resolveInfo);
                 AgentInfo agentInfo = new AgentInfo();
@@ -137,14 +137,14 @@ public class TrustAgentSettings extends SettingsPreferenceFragment implements Pr
         if (preference instanceof SwitchPreference) {
             int size = this.mAvailableAgents.size();
             for (int i = 0; i < size; i++) {
-                AgentInfo valueAt = this.mAvailableAgents.valueAt(i);
-                if (valueAt.preference == preference) {
+                AgentInfo agentInfoValueAt = this.mAvailableAgents.valueAt(i);
+                if (agentInfoValueAt.preference == preference) {
                     if (((Boolean) obj).booleanValue()) {
-                        if (!this.mActiveAgents.contains(valueAt.component)) {
-                            this.mActiveAgents.add(valueAt.component);
+                        if (!this.mActiveAgents.contains(agentInfoValueAt.component)) {
+                            this.mActiveAgents.add(agentInfoValueAt.component);
                         }
                     } else {
-                        this.mActiveAgents.remove(valueAt.component);
+                        this.mActiveAgents.remove(agentInfoValueAt.component);
                     }
                     saveActiveAgents();
                     return true;

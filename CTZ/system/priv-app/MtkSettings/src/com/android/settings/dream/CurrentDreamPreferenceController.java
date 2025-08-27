@@ -8,6 +8,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.dream.DreamBackend;
 import java.util.Optional;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class CurrentDreamPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final DreamBackend mBackend;
@@ -44,15 +45,14 @@ public class CurrentDreamPreferenceController extends AbstractPreferenceControll
                 gearPreference.setOnGearClickListener(new GearPreference.OnGearClickListener() { // from class: com.android.settings.dream.-$$Lambda$CurrentDreamPreferenceController$faOOwvjkeM0i38i1bxACLza6vQ4
                     @Override // com.android.settings.widget.GearPreference.OnGearClickListener
                     public final void onGearClick(GearPreference gearPreference2) {
-                        CurrentDreamPreferenceController.this.launchScreenSaverSettings();
+                        this.f$0.launchScreenSaverSettings();
                     }
                 });
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void launchScreenSaverSettings() {
+    private void launchScreenSaverSettings() {
         Optional<DreamBackend.DreamInfo> activeDreamInfo = getActiveDreamInfo();
         if (activeDreamInfo.isPresent()) {
             this.mBackend.launchSettings(activeDreamInfo.get());
@@ -63,9 +63,7 @@ public class CurrentDreamPreferenceController extends AbstractPreferenceControll
         return this.mBackend.getDreamInfos().stream().filter(new Predicate() { // from class: com.android.settings.dream.-$$Lambda$CurrentDreamPreferenceController$JJd0D4Ql1FstWgOpYrMCLEB2pnU
             @Override // java.util.function.Predicate
             public final boolean test(Object obj) {
-                boolean z;
-                z = ((DreamBackend.DreamInfo) obj).isActive;
-                return z;
+                return ((DreamBackend.DreamInfo) obj).isActive;
             }
         }).findFirst();
     }

@@ -6,6 +6,7 @@ import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.policy.OnHeadsUpChangedListener;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class VisualStabilityManager implements OnHeadsUpChangedListener {
     private boolean mPanelExpanded;
@@ -18,7 +19,6 @@ public class VisualStabilityManager implements OnHeadsUpChangedListener {
     private ArraySet<View> mLowPriorityReorderingViews = new ArraySet<>();
     private ArraySet<View> mAddedChildren = new ArraySet<>();
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onReorderingAllowed();
     }

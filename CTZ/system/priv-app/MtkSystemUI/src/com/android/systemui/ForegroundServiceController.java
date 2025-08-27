@@ -2,6 +2,7 @@ package com.android.systemui;
 
 import android.service.notification.StatusBarNotification;
 import android.util.ArraySet;
+
 /* loaded from: classes.dex */
 public interface ForegroundServiceController {
     void addNotification(StatusBarNotification statusBarNotification, int i);

@@ -7,12 +7,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class AnomalyDialogFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
     Anomaly mAnomaly;
     AnomalyUtils mAnomalyUtils;
 
-    /* loaded from: classes.dex */
     public interface AnomalyDialogListener {
         void onAnomalyHandled(Anomaly anomaly);
     }

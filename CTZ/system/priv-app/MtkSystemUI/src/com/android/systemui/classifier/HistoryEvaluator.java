@@ -2,6 +2,7 @@ package com.android.systemui.classifier;
 
 import android.os.SystemClock;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class HistoryEvaluator {
     private final ArrayList<Data> mStrokes = new ArrayList<>();
@@ -38,14 +39,14 @@ public class HistoryEvaluator {
     }
 
     private void decayValue() {
-        long elapsedRealtime = SystemClock.elapsedRealtime();
-        if (elapsedRealtime <= this.mLastUpdate) {
+        long jElapsedRealtime = SystemClock.elapsedRealtime();
+        if (jElapsedRealtime <= this.mLastUpdate) {
             return;
         }
-        float pow = (float) Math.pow(0.8999999761581421d, ((float) (elapsedRealtime - this.mLastUpdate)) / 50.0f);
-        decayValue(this.mStrokes, pow);
-        decayValue(this.mGestureWeights, pow);
-        this.mLastUpdate = elapsedRealtime;
+        float fPow = (float) Math.pow(0.8999999761581421d, (jElapsedRealtime - this.mLastUpdate) / 50.0f);
+        decayValue(this.mStrokes, fPow);
+        decayValue(this.mGestureWeights, fPow);
+        this.mLastUpdate = jElapsedRealtime;
     }
 
     private void decayValue(ArrayList<Data> arrayList, float f) {
@@ -62,9 +63,7 @@ public class HistoryEvaluator {
         return f <= 1.0E-5f && f >= -1.0E-5f;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class Data {
+    private static class Data {
         public float evaluation;
         public float weight = 1.0f;
 

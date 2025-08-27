@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.net.Uri;
 import com.android.browser.provider.BrowserContract;
+
 /* loaded from: classes.dex */
 public class BookmarksLoader extends CursorLoader {
     public static final String[] PROJECTION = {"_id", "url", "title", "favicon", "thumbnail", "touch_icon", "folder", "position", "parent", "type"};
@@ -21,8 +22,7 @@ public class BookmarksLoader extends CursorLoader {
         super.setUri(addAccount(uri, this.mAccountType, this.mAccountName));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static Uri addAccount(Uri uri, String str, String str2) {
+    static Uri addAccount(Uri uri, String str, String str2) {
         return uri.buildUpon().appendQueryParameter("acct_type", str).appendQueryParameter("acct_name", str2).build();
     }
 }

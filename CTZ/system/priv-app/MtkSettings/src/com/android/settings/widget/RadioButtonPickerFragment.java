@@ -18,6 +18,7 @@ import com.android.settings.widget.RadioButtonPreference;
 import com.android.settingslib.widget.CandidateInfo;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public abstract class RadioButtonPickerFragment extends InstrumentedPreferenceFragment implements RadioButtonPreference.OnClickListener {
     static final String EXTRA_FOR_WORK = "for_work";
@@ -37,7 +38,7 @@ public abstract class RadioButtonPickerFragment extends InstrumentedPreferenceFr
     @Override // com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onAttach(Context context) {
         boolean z;
-        int myUserId;
+        int iMyUserId;
         super.onAttach(context);
         this.mUserManager = (UserManager) context.getSystemService("user");
         Bundle arguments = getArguments();
@@ -48,11 +49,11 @@ public abstract class RadioButtonPickerFragment extends InstrumentedPreferenceFr
         }
         UserHandle managedProfile = Utils.getManagedProfile(this.mUserManager);
         if (z && managedProfile != null) {
-            myUserId = managedProfile.getIdentifier();
+            iMyUserId = managedProfile.getIdentifier();
         } else {
-            myUserId = UserHandle.myUserId();
+            iMyUserId = UserHandle.myUserId();
         }
-        this.mUserId = myUserId;
+        this.mUserId = iMyUserId;
     }
 
     @Override // com.android.settings.core.InstrumentedPreferenceFragment, android.support.v14.preference.PreferenceFragment
@@ -63,17 +64,16 @@ public abstract class RadioButtonPickerFragment extends InstrumentedPreferenceFr
 
     @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
         setHasOptionsMenu(true);
-        return onCreateView;
+        return viewOnCreateView;
     }
 
     public void onRadioButtonClicked(RadioButtonPreference radioButtonPreference) {
         onRadioButtonConfirmed(radioButtonPreference.getKey());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onSelectionPerformed(boolean z) {
+    protected void onSelectionPerformed(boolean z) {
     }
 
     protected boolean shouldShowItemNone() {
@@ -83,13 +83,11 @@ public abstract class RadioButtonPickerFragment extends InstrumentedPreferenceFr
     protected void addStaticPreferences(PreferenceScreen preferenceScreen) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public CandidateInfo getCandidate(String str) {
+    protected CandidateInfo getCandidate(String str) {
         return this.mCandidates.get(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onRadioButtonConfirmed(String str) {
+    protected void onRadioButtonConfirmed(String str) {
         boolean defaultKey = setDefaultKey(str);
         if (defaultKey) {
             updateCheckedState(str);

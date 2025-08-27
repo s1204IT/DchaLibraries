@@ -12,6 +12,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ManageAssist extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.applications.assist.ManageAssist.1
@@ -40,9 +41,8 @@ public class ManageAssist extends DashboardFragment {
         return "ManageAssist";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.manage_assist;
     }
 
@@ -68,8 +68,7 @@ public class ManageAssist extends DashboardFragment {
         this.mFooterPreferenceMixin.createFooterPreference().setTitle(R.string.assist_footer);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new DefaultAssistPreferenceController(context, "default_assist", true));
         arrayList.add(new AssistContextPreferenceController(context, lifecycle));

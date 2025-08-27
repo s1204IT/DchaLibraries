@@ -1,5 +1,6 @@
 package com.android.settings.fuelgauge;
 
+import android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -12,25 +13,30 @@ import android.view.View;
 import android.widget.Checkable;
 import android.widget.TextView;
 import com.android.internal.annotations.VisibleForTesting;
-import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.applications.ApplicationsState;
 import com.android.settingslib.fuelgauge.PowerWhitelistBackend;
+
 /* loaded from: classes.dex */
 public class HighPowerDetail extends InstrumentedDialogFragment implements DialogInterface.OnClickListener, View.OnClickListener {
+
     @VisibleForTesting
     PowerWhitelistBackend mBackend;
+
     @VisibleForTesting
     BatteryUtils mBatteryUtils;
     private boolean mDefaultOn;
+
     @VisibleForTesting
     boolean mIsEnabled;
     private CharSequence mLabel;
     private Checkable mOptionOff;
     private Checkable mOptionOn;
+
     @VisibleForTesting
     String mPackageName;
+
     @VisibleForTesting
     int mPackageUid;
 
@@ -48,19 +54,20 @@ public class HighPowerDetail extends InstrumentedDialogFragment implements Dialo
         this.mPackageName = getArguments().getString("package");
         this.mPackageUid = getArguments().getInt("uid");
         PackageManager packageManager = context.getPackageManager();
-        boolean z = false;
         try {
             this.mLabel = packageManager.getApplicationInfo(this.mPackageName, 0).loadLabel(packageManager);
         } catch (PackageManager.NameNotFoundException e) {
             this.mLabel = this.mPackageName;
         }
         this.mDefaultOn = getArguments().getBoolean("default_on");
-        this.mIsEnabled = (this.mDefaultOn || this.mBackend.isWhitelisted(this.mPackageName)) ? true : true;
+        this.mIsEnabled = this.mDefaultOn || this.mBackend.isWhitelisted(this.mPackageName);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     public Checkable setup(View view, boolean z) {
-        ((TextView) view.findViewById(16908310)).setText(z ? R.string.ignore_optimizations_on : R.string.ignore_optimizations_off);
-        ((TextView) view.findViewById(16908304)).setText(z ? R.string.ignore_optimizations_on_desc : R.string.ignore_optimizations_off_desc);
+        ((TextView) view.findViewById(R.id.title)).setText(z ? com.android.settings.R.string.ignore_optimizations_on : com.android.settings.R.string.ignore_optimizations_off);
+        ((TextView) view.findViewById(R.id.summary)).setText(z ? com.android.settings.R.string.ignore_optimizations_on_desc : com.android.settings.R.string.ignore_optimizations_off_desc);
         view.setClickable(true);
         view.setOnClickListener(this);
         if (!z && this.mBackend.isSysWhitelisted(this.mPackageName)) {
@@ -71,9 +78,9 @@ public class HighPowerDetail extends InstrumentedDialogFragment implements Dialo
 
     @Override // android.app.DialogFragment
     public Dialog onCreateDialog(Bundle bundle) {
-        AlertDialog.Builder view = new AlertDialog.Builder(getContext()).setTitle(this.mLabel).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).setView(R.layout.ignore_optimizations_content);
+        AlertDialog.Builder view = new AlertDialog.Builder(getContext()).setTitle(this.mLabel).setNegativeButton(com.android.settings.R.string.cancel, (DialogInterface.OnClickListener) null).setView(com.android.settings.R.layout.ignore_optimizations_content);
         if (!this.mBackend.isSysWhitelisted(this.mPackageName)) {
-            view.setPositiveButton(R.string.done, this);
+            view.setPositiveButton(com.android.settings.R.string.done, this);
         }
         return view.create();
     }
@@ -81,8 +88,8 @@ public class HighPowerDetail extends InstrumentedDialogFragment implements Dialo
     @Override // com.android.settingslib.core.lifecycle.ObservableDialogFragment, android.app.DialogFragment, android.app.Fragment
     public void onStart() {
         super.onStart();
-        this.mOptionOn = setup(getDialog().findViewById(R.id.ignore_on), true);
-        this.mOptionOff = setup(getDialog().findViewById(R.id.ignore_off), false);
+        this.mOptionOn = setup(getDialog().findViewById(com.android.settings.R.id.ignore_on), true);
+        this.mOptionOff = setup(getDialog().findViewById(com.android.settings.R.id.ignore_off), false);
         updateViews();
     }
 
@@ -110,9 +117,9 @@ public class HighPowerDetail extends InstrumentedDialogFragment implements Dialo
             if (z) {
                 this.mBatteryUtils.setForceAppStandby(this.mPackageUid, this.mPackageName, 0);
                 this.mBackend.addApp(this.mPackageName);
-                return;
+            } else {
+                this.mBackend.removeApp(this.mPackageName);
             }
-            this.mBackend.removeApp(this.mPackageName);
         }
     }
 
@@ -138,9 +145,9 @@ public class HighPowerDetail extends InstrumentedDialogFragment implements Dialo
         int i;
         PowerWhitelistBackend powerWhitelistBackend = PowerWhitelistBackend.getInstance(context);
         if (powerWhitelistBackend.isSysWhitelisted(str)) {
-            i = R.string.high_power_system;
+            i = com.android.settings.R.string.high_power_system;
         } else {
-            i = powerWhitelistBackend.isWhitelisted(str) ? R.string.high_power_on : R.string.high_power_off;
+            i = powerWhitelistBackend.isWhitelisted(str) ? com.android.settings.R.string.high_power_on : com.android.settings.R.string.high_power_off;
         }
         return context.getString(i);
     }

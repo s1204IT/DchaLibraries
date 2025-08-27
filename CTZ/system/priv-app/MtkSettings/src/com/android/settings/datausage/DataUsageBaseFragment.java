@@ -19,6 +19,7 @@ import com.android.settings.dashboard.DashboardFragment;
 import com.android.settings.datausage.TemplatePreference;
 import com.android.settingslib.NetworkPolicyEditor;
 import com.mediatek.settings.sim.SimHotSwapHandler;
+
 /* loaded from: classes.dex */
 public abstract class DataUsageBaseFragment extends DashboardFragment {
     private SimHotSwapHandler mSimHotSwapHandler;
@@ -53,23 +54,22 @@ public abstract class DataUsageBaseFragment extends DashboardFragment {
         this.services.mPolicyEditor.read();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isAdmin() {
+    protected boolean isAdmin() {
         return this.services.mUserManager.isAdminUser();
     }
 
     public boolean hasEthernet(Context context) {
-        long j;
-        boolean isNetworkSupported = ConnectivityManager.from(context).isNetworkSupported(9);
+        long totalBytes;
+        boolean zIsNetworkSupported = ConnectivityManager.from(context).isNetworkSupported(9);
         try {
-            INetworkStatsSession openSession = this.services.mStatsService.openSession();
-            if (openSession != null) {
-                j = openSession.getSummaryForNetwork(NetworkTemplate.buildTemplateEthernet(), Long.MIN_VALUE, Long.MAX_VALUE).getTotalBytes();
-                TrafficStats.closeQuietly(openSession);
+            INetworkStatsSession iNetworkStatsSessionOpenSession = this.services.mStatsService.openSession();
+            if (iNetworkStatsSessionOpenSession != null) {
+                totalBytes = iNetworkStatsSessionOpenSession.getSummaryForNetwork(NetworkTemplate.buildTemplateEthernet(), Long.MIN_VALUE, Long.MAX_VALUE).getTotalBytes();
+                TrafficStats.closeQuietly(iNetworkStatsSessionOpenSession);
             } else {
-                j = 0;
+                totalBytes = 0;
             }
-            return isNetworkSupported && j > 0;
+            return zIsNetworkSupported && totalBytes > 0;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

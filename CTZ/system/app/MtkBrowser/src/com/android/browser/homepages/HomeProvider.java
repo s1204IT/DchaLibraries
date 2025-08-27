@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+
 /* loaded from: classes.dex */
 public class HomeProvider extends ContentProvider {
     @Override // android.content.ContentProvider
@@ -47,11 +48,11 @@ public class HomeProvider extends ContentProvider {
     }
 
     @Override // android.content.ContentProvider
-    public ParcelFileDescriptor openFile(Uri uri, String str) {
+    public ParcelFileDescriptor openFile(Uri uri, String str) throws IOException {
         try {
-            ParcelFileDescriptor[] createPipe = ParcelFileDescriptor.createPipe();
-            new RequestHandler(getContext(), uri, new AssetFileDescriptor(createPipe[1], 0L, -1L).createOutputStream()).start();
-            return createPipe[0];
+            ParcelFileDescriptor[] parcelFileDescriptorArrCreatePipe = ParcelFileDescriptor.createPipe();
+            new RequestHandler(getContext(), uri, new AssetFileDescriptor(parcelFileDescriptorArrCreatePipe[1], 0L, -1L).createOutputStream()).start();
+            return parcelFileDescriptorArrCreatePipe[0];
         } catch (IOException e) {
             Log.e("HomeProvider", "Failed to handle request: " + uri, e);
             return null;

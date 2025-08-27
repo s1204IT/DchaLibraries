@@ -1,25 +1,23 @@
 package com.android.settings.slices;
 
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.util.Log;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class SlicesDatabaseHelper extends SQLiteOpenHelper {
     private static SlicesDatabaseHelper sSingleton;
     private final Context mContext;
 
     public static synchronized SlicesDatabaseHelper getInstance(Context context) {
-        SlicesDatabaseHelper slicesDatabaseHelper;
-        synchronized (SlicesDatabaseHelper.class) {
-            if (sSingleton == null) {
-                sSingleton = new SlicesDatabaseHelper(context.getApplicationContext());
-            }
-            slicesDatabaseHelper = sSingleton;
+        if (sSingleton == null) {
+            sSingleton = new SlicesDatabaseHelper(context.getApplicationContext());
         }
-        return slicesDatabaseHelper;
+        return sSingleton;
     }
 
     private SlicesDatabaseHelper(Context context) {
@@ -28,20 +26,19 @@ public class SlicesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override // android.database.sqlite.SQLiteOpenHelper
-    public void onCreate(SQLiteDatabase sQLiteDatabase) {
+    public void onCreate(SQLiteDatabase sQLiteDatabase) throws SQLException {
         createDatabases(sQLiteDatabase);
     }
 
     @Override // android.database.sqlite.SQLiteOpenHelper
-    public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+    public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) throws SQLException {
         if (i < 2) {
             Log.d("SlicesDatabaseHelper", "Reconstructing DB from " + i + "to " + i2);
             reconstruct(sQLiteDatabase);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void reconstruct(SQLiteDatabase sQLiteDatabase) {
+    void reconstruct(SQLiteDatabase sQLiteDatabase) throws SQLException {
         this.mContext.getSharedPreferences("slices_shared_prefs", 0).edit().clear().apply();
         dropTables(sQLiteDatabase);
         createDatabases(sQLiteDatabase);
@@ -56,12 +53,12 @@ public class SlicesDatabaseHelper extends SQLiteOpenHelper {
         return isBuildIndexed() && isLocaleIndexed();
     }
 
-    private void createDatabases(SQLiteDatabase sQLiteDatabase) {
+    private void createDatabases(SQLiteDatabase sQLiteDatabase) throws SQLException {
         sQLiteDatabase.execSQL("CREATE VIRTUAL TABLE slices_index USING fts4(key, title, summary, screentitle, keywords, icon, fragment, controller, platform_slice, slice_type);");
         Log.d("SlicesDatabaseHelper", "Created databases");
     }
 
-    private void dropTables(SQLiteDatabase sQLiteDatabase) {
+    private void dropTables(SQLiteDatabase sQLiteDatabase) throws SQLException {
         sQLiteDatabase.execSQL("DROP TABLE IF EXISTS slices_index");
     }
 

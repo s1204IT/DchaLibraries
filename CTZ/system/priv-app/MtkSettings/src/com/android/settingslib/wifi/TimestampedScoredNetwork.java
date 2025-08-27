@@ -3,16 +3,18 @@ package com.android.settingslib.wifi;
 import android.net.ScoredNetwork;
 import android.os.Parcel;
 import android.os.Parcelable;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class TimestampedScoredNetwork implements Parcelable {
+class TimestampedScoredNetwork implements Parcelable {
     public static final Parcelable.Creator<TimestampedScoredNetwork> CREATOR = new Parcelable.Creator<TimestampedScoredNetwork>() { // from class: com.android.settingslib.wifi.TimestampedScoredNetwork.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public TimestampedScoredNetwork createFromParcel(Parcel parcel) {
             return new TimestampedScoredNetwork(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public TimestampedScoredNetwork[] newArray(int i) {
@@ -22,8 +24,7 @@ public class TimestampedScoredNetwork implements Parcelable {
     private ScoredNetwork mScore;
     private long mUpdatedTimestampMillis;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public TimestampedScoredNetwork(ScoredNetwork scoredNetwork, long j) {
+    TimestampedScoredNetwork(ScoredNetwork scoredNetwork, long j) {
         this.mScore = scoredNetwork;
         this.mUpdatedTimestampMillis = j;
     }

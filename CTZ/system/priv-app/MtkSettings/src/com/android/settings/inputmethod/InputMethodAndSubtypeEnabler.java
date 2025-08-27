@@ -5,6 +5,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.text.TextUtils;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settingslib.inputmethod.InputMethodAndSubtypeEnablerManager;
+
 /* loaded from: classes.dex */
 public class InputMethodAndSubtypeEnabler extends SettingsPreferenceFragment {
     private InputMethodAndSubtypeEnablerManager mManager;
@@ -18,10 +19,10 @@ public class InputMethodAndSubtypeEnabler extends SettingsPreferenceFragment {
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         String stringExtraFromIntentOrArguments = getStringExtraFromIntentOrArguments("input_method_id");
-        PreferenceScreen createPreferenceScreen = getPreferenceManager().createPreferenceScreen(getPrefContext());
+        PreferenceScreen preferenceScreenCreatePreferenceScreen = getPreferenceManager().createPreferenceScreen(getPrefContext());
         this.mManager = new InputMethodAndSubtypeEnablerManager(this);
-        this.mManager.init(this, stringExtraFromIntentOrArguments, createPreferenceScreen);
-        setPreferenceScreen(createPreferenceScreen);
+        this.mManager.init(this, stringExtraFromIntentOrArguments, preferenceScreenCreatePreferenceScreen);
+        setPreferenceScreen(preferenceScreenCreatePreferenceScreen);
     }
 
     private String getStringExtraFromIntentOrArguments(String str) {

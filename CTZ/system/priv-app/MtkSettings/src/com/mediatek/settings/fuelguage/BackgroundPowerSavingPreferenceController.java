@@ -8,6 +8,7 @@ import android.util.Log;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.mediatek.settings.FeatureOption;
+
 /* loaded from: classes.dex */
 public class BackgroundPowerSavingPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     public BackgroundPowerSavingPreferenceController(Context context) {
@@ -33,9 +34,9 @@ public class BackgroundPowerSavingPreferenceController extends AbstractPreferenc
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        boolean booleanValue = ((Boolean) obj).booleanValue();
-        Log.d("BackgroundPowerSavingPreferenceContr", "set background power saving state: " + (booleanValue ? 1 : 0));
-        Settings.System.putInt(this.mContext.getContentResolver(), "background_power_saving_enable", booleanValue ? 1 : 0);
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
+        Log.d("BackgroundPowerSavingPreferenceContr", "set background power saving state: " + (zBooleanValue ? 1 : 0));
+        Settings.System.putInt(this.mContext.getContentResolver(), "background_power_saving_enable", zBooleanValue ? 1 : 0);
         return true;
     }
 }

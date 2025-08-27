@@ -5,10 +5,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.WindowInsets;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
 /* loaded from: classes.dex */
 public class ViewCompat {
     private static ThreadLocal<Rect> sThreadLocalRect;
@@ -79,10 +79,10 @@ public class ViewCompat {
     public static void setLayerPaint(View view, Paint paint) {
         if (Build.VERSION.SDK_INT >= 17) {
             view.setLayerPaint(paint);
-            return;
+        } else {
+            view.setLayerType(view.getLayerType(), paint);
+            view.invalidate();
         }
-        view.setLayerType(view.getLayerType(), paint);
-        view.invalidate();
     }
 
     public static int getLayoutDirection(View view) {
@@ -141,19 +141,34 @@ public class ViewCompat {
         return false;
     }
 
-    public static void setOnApplyWindowInsetsListener(View v, final OnApplyWindowInsetsListener listener) {
+    public static void setOnApplyWindowInsetsListener(View v, OnApplyWindowInsetsListener listener) {
         if (Build.VERSION.SDK_INT >= 21) {
             if (listener == null) {
                 v.setOnApplyWindowInsetsListener(null);
             } else {
                 v.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() { // from class: android.support.v4.view.ViewCompat.1
+                    AnonymousClass1() {
+                    }
+
                     @Override // android.view.View.OnApplyWindowInsetsListener
                     public WindowInsets onApplyWindowInsets(View view, WindowInsets insets) {
                         WindowInsetsCompat compatInsets = WindowInsetsCompat.wrap(insets);
-                        return (WindowInsets) WindowInsetsCompat.unwrap(OnApplyWindowInsetsListener.this.onApplyWindowInsets(view, compatInsets));
+                        return (WindowInsets) WindowInsetsCompat.unwrap(onApplyWindowInsetsListener.onApplyWindowInsets(view, compatInsets));
                     }
                 });
             }
+        }
+    }
+
+    /* renamed from: android.support.v4.view.ViewCompat$1 */
+    static class AnonymousClass1 implements View.OnApplyWindowInsetsListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.view.View.OnApplyWindowInsetsListener
+        public WindowInsets onApplyWindowInsets(View view, WindowInsets insets) {
+            WindowInsetsCompat compatInsets = WindowInsetsCompat.wrap(insets);
+            return (WindowInsets) WindowInsetsCompat.unwrap(onApplyWindowInsetsListener.onApplyWindowInsets(view, compatInsets));
         }
     }
 
@@ -164,6 +179,8 @@ public class ViewCompat {
         return true;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     public static void stopNestedScroll(View view) {
         if (Build.VERSION.SDK_INT >= 21) {
             view.stopNestedScroll();
@@ -189,10 +206,12 @@ public class ViewCompat {
     public static void offsetTopAndBottom(View view, int offset) {
         if (Build.VERSION.SDK_INT >= 23) {
             view.offsetTopAndBottom(offset);
-        } else if (Build.VERSION.SDK_INT >= 21) {
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 21) {
             Rect parentRect = getEmptyTempRect();
             boolean needInvalidateWorkaround = false;
-            ViewParent parent = view.getParent();
+            Object parent = view.getParent();
             if (parent instanceof View) {
                 View p = (View) parent;
                 parentRect.set(p.getLeft(), p.getTop(), p.getRight(), p.getBottom());
@@ -201,17 +220,18 @@ public class ViewCompat {
             compatOffsetTopAndBottom(view, offset);
             if (needInvalidateWorkaround && parentRect.intersect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom())) {
                 ((View) parent).invalidate(parentRect);
+                return;
             }
-        } else {
-            compatOffsetTopAndBottom(view, offset);
+            return;
         }
+        compatOffsetTopAndBottom(view, offset);
     }
 
     private static void compatOffsetTopAndBottom(View view, int offset) {
         view.offsetTopAndBottom(offset);
         if (view.getVisibility() == 0) {
             tickleInvalidationFlag(view);
-            ViewParent parent = view.getParent();
+            Object parent = view.getParent();
             if (parent instanceof View) {
                 tickleInvalidationFlag((View) parent);
             }
@@ -221,10 +241,12 @@ public class ViewCompat {
     public static void offsetLeftAndRight(View view, int offset) {
         if (Build.VERSION.SDK_INT >= 23) {
             view.offsetLeftAndRight(offset);
-        } else if (Build.VERSION.SDK_INT >= 21) {
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 21) {
             Rect parentRect = getEmptyTempRect();
             boolean needInvalidateWorkaround = false;
-            ViewParent parent = view.getParent();
+            Object parent = view.getParent();
             if (parent instanceof View) {
                 View p = (View) parent;
                 parentRect.set(p.getLeft(), p.getTop(), p.getRight(), p.getBottom());
@@ -233,17 +255,18 @@ public class ViewCompat {
             compatOffsetLeftAndRight(view, offset);
             if (needInvalidateWorkaround && parentRect.intersect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom())) {
                 ((View) parent).invalidate(parentRect);
+                return;
             }
-        } else {
-            compatOffsetLeftAndRight(view, offset);
+            return;
         }
+        compatOffsetLeftAndRight(view, offset);
     }
 
     private static void compatOffsetLeftAndRight(View view, int offset) {
         view.offsetLeftAndRight(offset);
         if (view.getVisibility() == 0) {
             tickleInvalidationFlag(view);
-            ViewParent parent = view.getParent();
+            Object parent = view.getParent();
             if (parent instanceof View) {
                 tickleInvalidationFlag((View) parent);
             }

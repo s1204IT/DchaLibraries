@@ -5,6 +5,7 @@ import android.util.Pair;
 import com.android.settings.fuelgauge.anomaly.Anomaly;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public abstract class AnomalyAction {
     protected int mActionMetricKey;

@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class InputMethodAndSubtypeEnablerManager implements Preference.OnPreferenceChangeListener {
     private final PreferenceFragment mFragment;
@@ -54,27 +55,27 @@ public class InputMethodAndSubtypeEnablerManager implements Preference.OnPrefere
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        if (obj instanceof Boolean) {
-            boolean booleanValue = ((Boolean) obj).booleanValue();
-            for (String str : this.mAutoSelectionPrefsMap.keySet()) {
-                if (this.mAutoSelectionPrefsMap.get(str) == preference) {
-                    TwoStatePreference twoStatePreference = (TwoStatePreference) preference;
-                    twoStatePreference.setChecked(booleanValue);
-                    setAutoSelectionSubtypesEnabled(str, twoStatePreference.isChecked());
-                    return false;
-                }
-            }
-            if (preference instanceof InputMethodSubtypePreference) {
-                InputMethodSubtypePreference inputMethodSubtypePreference = (InputMethodSubtypePreference) preference;
-                inputMethodSubtypePreference.setChecked(booleanValue);
-                if (!inputMethodSubtypePreference.isChecked()) {
-                    updateAutoSelectionPreferences();
-                }
-                return false;
-            }
+        if (!(obj instanceof Boolean)) {
             return true;
         }
-        return true;
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
+        for (String str : this.mAutoSelectionPrefsMap.keySet()) {
+            if (this.mAutoSelectionPrefsMap.get(str) == preference) {
+                TwoStatePreference twoStatePreference = (TwoStatePreference) preference;
+                twoStatePreference.setChecked(zBooleanValue);
+                setAutoSelectionSubtypesEnabled(str, twoStatePreference.isChecked());
+                return false;
+            }
+        }
+        if (!(preference instanceof InputMethodSubtypePreference)) {
+            return true;
+        }
+        InputMethodSubtypePreference inputMethodSubtypePreference = (InputMethodSubtypePreference) preference;
+        inputMethodSubtypePreference.setChecked(zBooleanValue);
+        if (!inputMethodSubtypePreference.isChecked()) {
+            updateAutoSelectionPreferences();
+        }
+        return false;
     }
 
     private void addInputMethodSubtypePreferences(PreferenceFragment preferenceFragment, InputMethodInfo inputMethodInfo, PreferenceScreen preferenceScreen) {
@@ -95,13 +96,13 @@ public class InputMethodAndSubtypeEnablerManager implements Preference.OnPrefere
         PreferenceCategory preferenceCategory2 = new PreferenceCategory(context);
         preferenceCategory2.setTitle(R.string.active_input_method_subtypes);
         preferenceScreen.addPreference(preferenceCategory2);
-        String str = null;
+        String subtypeLocaleNameAsSentence = null;
         ArrayList arrayList = new ArrayList();
         for (int i = 0; i < subtypeCount; i++) {
             InputMethodSubtype subtypeAt = inputMethodInfo.getSubtypeAt(i);
             if (subtypeAt.overridesImplicitlyEnabledSubtype()) {
-                if (str == null) {
-                    str = InputMethodAndSubtypeUtil.getSubtypeLocaleNameAsSentence(subtypeAt, context, inputMethodInfo);
+                if (subtypeLocaleNameAsSentence == null) {
+                    subtypeLocaleNameAsSentence = InputMethodAndSubtypeUtil.getSubtypeLocaleNameAsSentence(subtypeAt, context, inputMethodInfo);
                 }
             } else {
                 arrayList.add(new InputMethodSubtypePreference(context, subtypeAt, inputMethodInfo));
@@ -110,7 +111,7 @@ public class InputMethodAndSubtypeEnablerManager implements Preference.OnPrefere
         arrayList.sort(new Comparator() { // from class: com.android.settingslib.inputmethod.-$$Lambda$InputMethodAndSubtypeEnablerManager$dNefE8o88NKQTk3_894EfBqAP3w
             @Override // java.util.Comparator
             public final int compare(Object obj, Object obj2) {
-                return InputMethodAndSubtypeEnablerManager.lambda$addInputMethodSubtypePreferences$0(InputMethodAndSubtypeEnablerManager.this, (Preference) obj, (Preference) obj2);
+                return InputMethodAndSubtypeEnablerManager.lambda$addInputMethodSubtypePreferences$0(this.f$0, (Preference) obj, (Preference) obj2);
             }
         });
         Iterator it = arrayList.iterator();
@@ -121,10 +122,10 @@ public class InputMethodAndSubtypeEnablerManager implements Preference.OnPrefere
             InputMethodAndSubtypeUtil.removeUnnecessaryNonPersistentPreference(preference);
         }
         this.mInputMethodAndSubtypePrefsMap.put(id, arrayList);
-        if (TextUtils.isEmpty(str)) {
+        if (TextUtils.isEmpty(subtypeLocaleNameAsSentence)) {
             switchWithNoTextPreference.setTitle(R.string.use_system_language_to_select_input_method_subtypes);
         } else {
-            switchWithNoTextPreference.setTitle(str);
+            switchWithNoTextPreference.setTitle(subtypeLocaleNameAsSentence);
         }
     }
 

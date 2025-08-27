@@ -11,6 +11,7 @@ import com.android.settings.widget.ValidatedEditTextPreference;
 import com.android.settings.wifi.WifiUtils;
 import com.android.settings.wifi.tether.WifiTetherBasePreferenceController;
 import java.util.UUID;
+
 /* loaded from: classes.dex */
 public class WifiTetherPasswordPreferenceController extends WifiTetherBasePreferenceController implements ValidatedEditTextPreference.Validator {
     private String mPassword;
@@ -68,8 +69,8 @@ public class WifiTetherPasswordPreferenceController extends WifiTetherBasePrefer
     }
 
     private static String generateRandomPassword() {
-        String uuid = UUID.randomUUID().toString();
-        return uuid.substring(0, 8) + uuid.substring(9, 13);
+        String string = UUID.randomUUID().toString();
+        return string.substring(0, 8) + string.substring(9, 13);
     }
 
     private void updatePasswordDisplay(EditTextPreference editTextPreference) {
@@ -79,11 +80,11 @@ public class WifiTetherPasswordPreferenceController extends WifiTetherBasePrefer
             validatedEditTextPreference.setIsSummaryPassword(true);
             validatedEditTextPreference.setSummary(this.mPassword);
             validatedEditTextPreference.setVisible(true);
-            return;
+        } else {
+            validatedEditTextPreference.setIsSummaryPassword(false);
+            validatedEditTextPreference.setSummary(R.string.wifi_hotspot_no_password_subtext);
+            validatedEditTextPreference.setVisible(false);
         }
-        validatedEditTextPreference.setIsSummaryPassword(false);
-        validatedEditTextPreference.setSummary(R.string.wifi_hotspot_no_password_subtext);
-        validatedEditTextPreference.setVisible(false);
     }
 
     public void setPassword(String str) {
@@ -94,8 +95,8 @@ public class WifiTetherPasswordPreferenceController extends WifiTetherBasePrefer
     public void setEnabled(boolean z) {
         this.mPreference.setEnabled(z);
         if (z && TextUtils.isEmpty(this.mPassword)) {
-            String uuid = UUID.randomUUID().toString();
-            this.mPassword = uuid.substring(0, 8) + uuid.substring(9, 13);
+            String string = UUID.randomUUID().toString();
+            this.mPassword = string.substring(0, 8) + string.substring(9, 13);
             updatePasswordDisplay((EditTextPreference) this.mPreference);
         }
     }

@@ -11,6 +11,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 import com.android.settingslib.R;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class MapProfile implements LocalBluetoothProfile {
     private final CachedBluetoothDeviceManager mDeviceManager;
@@ -21,7 +22,6 @@ public class MapProfile implements LocalBluetoothProfile {
     private static boolean V = true;
     static final ParcelUuid[] UUIDS = {BluetoothUuid.MAP, BluetoothUuid.MNS, BluetoothUuid.MAS};
 
-    /* loaded from: classes.dex */
     private final class MapServiceListener implements BluetoothProfile.ServiceListener {
         private MapServiceListener() {
         }
@@ -35,13 +35,13 @@ public class MapProfile implements LocalBluetoothProfile {
             List connectedDevices = MapProfile.this.mService.getConnectedDevices();
             while (!connectedDevices.isEmpty()) {
                 BluetoothDevice bluetoothDevice = (BluetoothDevice) connectedDevices.remove(0);
-                CachedBluetoothDevice findDevice = MapProfile.this.mDeviceManager.findDevice(bluetoothDevice);
-                if (findDevice == null) {
+                CachedBluetoothDevice cachedBluetoothDeviceFindDevice = MapProfile.this.mDeviceManager.findDevice(bluetoothDevice);
+                if (cachedBluetoothDeviceFindDevice == null) {
                     Log.w("MapProfile", "MapProfile found new device: " + bluetoothDevice);
-                    findDevice = MapProfile.this.mDeviceManager.addDevice(MapProfile.this.mLocalAdapter, MapProfile.this.mProfileManager, bluetoothDevice);
+                    cachedBluetoothDeviceFindDevice = MapProfile.this.mDeviceManager.addDevice(MapProfile.this.mLocalAdapter, MapProfile.this.mProfileManager, bluetoothDevice);
                 }
-                findDevice.onProfileStateChanged(MapProfile.this, 2);
-                findDevice.refresh();
+                cachedBluetoothDeviceFindDevice.onProfileStateChanged(MapProfile.this, 2);
+                cachedBluetoothDeviceFindDevice.refresh();
             }
             MapProfile.this.mProfileManager.callServiceConnectedListeners();
             MapProfile.this.mIsProfileReady = true;
@@ -70,8 +70,7 @@ public class MapProfile implements LocalBluetoothProfile {
         return 9;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public MapProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
+    MapProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;
         this.mProfileManager = localBluetoothProfileManager;

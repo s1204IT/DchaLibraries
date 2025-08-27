@@ -7,6 +7,7 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+
 /* loaded from: classes.dex */
 public class ShadowKeyDrawable extends Drawable {
     private final Paint mPaint;
@@ -101,38 +102,33 @@ public class ShadowKeyDrawable extends Drawable {
     }
 
     private void regenerateBitmapCache() {
-        int intrinsicWidth;
-        int intrinsicHeight;
-        int[] iArr;
-        Bitmap createBitmap = Bitmap.createBitmap(getIntrinsicWidth(), getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(createBitmap);
+        Bitmap bitmapCreateBitmap = Bitmap.createBitmap(getIntrinsicWidth(), getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmapCreateBitmap);
         canvas.save();
         float f = (float) ((this.mState.mRotateDegrees * 3.141592653589793d) / 180.0d);
         if (this.mState.mShadowSize == 0) {
-            canvas.rotate(this.mState.mRotateDegrees, intrinsicWidth / 2, intrinsicHeight / 2);
+            canvas.rotate(this.mState.mRotateDegrees, r1 / 2, r2 / 2);
         }
-        Drawable mutate = this.mState.mChildState.newDrawable().mutate();
-        mutate.setBounds(0, 0, this.mState.mBaseWidth, this.mState.mBaseHeight);
-        mutate.draw(canvas);
+        Drawable drawableMutate = this.mState.mChildState.newDrawable().mutate();
+        drawableMutate.setBounds(0, 0, this.mState.mBaseWidth, this.mState.mBaseHeight);
+        drawableMutate.draw(canvas);
         if (this.mState.mShadowSize > 0) {
             Paint paint = new Paint(3);
             paint.setMaskFilter(new BlurMaskFilter(this.mState.mShadowSize, BlurMaskFilter.Blur.NORMAL));
-            Bitmap extractAlpha = createBitmap.extractAlpha(paint, new int[2]);
+            Bitmap bitmapExtractAlpha = bitmapCreateBitmap.extractAlpha(paint, new int[2]);
             paint.setMaskFilter(null);
             paint.setColor(this.mState.mShadowColor);
-            createBitmap.eraseColor(0);
-            canvas.rotate(this.mState.mRotateDegrees, intrinsicWidth / 2, intrinsicHeight / 2);
+            bitmapCreateBitmap.eraseColor(0);
+            canvas.rotate(this.mState.mRotateDegrees, r1 / 2, r2 / 2);
             double d = f;
-            canvas.drawBitmap(extractAlpha, iArr[0] + ((float) ((Math.sin(d) * this.mState.mShadowOffsetY) + (Math.cos(d) * this.mState.mShadowOffsetX))), iArr[1] + ((float) ((Math.cos(d) * this.mState.mShadowOffsetY) - (Math.sin(d) * this.mState.mShadowOffsetX))), paint);
-            mutate.draw(canvas);
+            canvas.drawBitmap(bitmapExtractAlpha, r10[0] + ((float) ((Math.sin(d) * this.mState.mShadowOffsetY) + (Math.cos(d) * this.mState.mShadowOffsetX))), r10[1] + ((float) ((Math.cos(d) * this.mState.mShadowOffsetY) - (Math.sin(d) * this.mState.mShadowOffsetX))), paint);
+            drawableMutate.draw(canvas);
         }
-        this.mState.mLastDrawnBitmap = createBitmap.copy(Bitmap.Config.HARDWARE, false);
+        this.mState.mLastDrawnBitmap = bitmapCreateBitmap.copy(Bitmap.Config.HARDWARE, false);
         canvas.restore();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ShadowDrawableState extends Drawable.ConstantState {
+    private static class ShadowDrawableState extends Drawable.ConstantState {
         int mBaseHeight;
         int mBaseWidth;
         int mChangingConfigurations;

@@ -9,7 +9,9 @@ import android.util.ArrayMap;
 import com.android.settings.fuelgauge.batterytip.AppInfo;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BatteryDatabaseManager {
     private static BatteryDatabaseManager sSingleton;
@@ -27,22 +29,29 @@ public class BatteryDatabaseManager {
     }
 
     public synchronized boolean insertAnomaly(int i, String str, int i2, int i3, long j) {
-        boolean z;
-        SQLiteDatabase writableDatabase = this.mDatabaseHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("uid", Integer.valueOf(i));
-        contentValues.put("package_name", str);
-        contentValues.put("anomaly_type", Integer.valueOf(i2));
-        contentValues.put("anomaly_state", Integer.valueOf(i3));
-        contentValues.put("time_stamp_ms", Long.valueOf(j));
-        z = writableDatabase.insertWithOnConflict("anomaly", null, contentValues, 4) != -1;
-        if (writableDatabase != null) {
-            $closeResource(null, writableDatabase);
+        SQLiteDatabase writableDatabase;
+        ContentValues contentValues;
+        writableDatabase = this.mDatabaseHelper.getWritableDatabase();
+        Throwable th = null;
+        try {
+            try {
+                contentValues = new ContentValues();
+                contentValues.put("uid", Integer.valueOf(i));
+                contentValues.put("package_name", str);
+                contentValues.put("anomaly_type", Integer.valueOf(i2));
+                contentValues.put("anomaly_state", Integer.valueOf(i3));
+                contentValues.put("time_stamp_ms", Long.valueOf(j));
+            } finally {
+            }
+        } finally {
+            if (writableDatabase != null) {
+                $closeResource(th, writableDatabase);
+            }
         }
-        return z;
+        return writableDatabase.insertWithOnConflict("anomaly", null, contentValues, 4) != -1;
     }
 
-    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) {
+    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) throws Exception {
         if (th == null) {
             autoCloseable.close();
             return;
@@ -54,39 +63,61 @@ public class BatteryDatabaseManager {
         }
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:32:0x00c2 A[Catch: all -> 0x00c6, Throwable -> 0x00c8, TRY_ENTER, TryCatch #5 {, blocks: (B:6:0x000e, B:15:0x008d, B:16:0x0090, B:17:0x0098, B:19:0x009e, B:32:0x00c2, B:33:0x00c5), top: B:46:0x000e, outer: #2 }] */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public synchronized List<AppInfo> queryAllAnomalies(long j, int i) {
         ArrayList arrayList;
+        Throwable th;
         arrayList = new ArrayList();
         SQLiteDatabase readableDatabase = this.mDatabaseHelper.getReadableDatabase();
-        ArrayMap arrayMap = new ArrayMap();
-        Cursor query = readableDatabase.query("anomaly", new String[]{"package_name", "anomaly_type", "uid"}, "time_stamp_ms > ? AND anomaly_state = ? ", new String[]{String.valueOf(j), String.valueOf(i)}, null, null, "time_stamp_ms DESC");
-        while (query.moveToNext()) {
-            try {
-                int i2 = query.getInt(query.getColumnIndex("uid"));
-                if (!arrayMap.containsKey(Integer.valueOf(i2))) {
-                    arrayMap.put(Integer.valueOf(i2), new AppInfo.Builder().setUid(i2).setPackageName(query.getString(query.getColumnIndex("package_name"))));
+        try {
+            ArrayMap arrayMap = new ArrayMap();
+            Cursor cursorQuery = readableDatabase.query("anomaly", new String[]{"package_name", "anomaly_type", "uid"}, "time_stamp_ms > ? AND anomaly_state = ? ", new String[]{String.valueOf(j), String.valueOf(i)}, null, null, "time_stamp_ms DESC");
+            while (cursorQuery.moveToNext()) {
+                try {
+                    int i2 = cursorQuery.getInt(cursorQuery.getColumnIndex("uid"));
+                    if (!arrayMap.containsKey(Integer.valueOf(i2))) {
+                        arrayMap.put(Integer.valueOf(i2), new AppInfo.Builder().setUid(i2).setPackageName(cursorQuery.getString(cursorQuery.getColumnIndex("package_name"))));
+                    }
+                    ((AppInfo.Builder) arrayMap.get(Integer.valueOf(i2))).addAnomalyType(cursorQuery.getInt(cursorQuery.getColumnIndex("anomaly_type")));
+                } catch (Throwable th2) {
+                    th = th2;
+                    try {
+                        throw th;
+                    } catch (Throwable th3) {
+                        th = th3;
+                        if (cursorQuery != null) {
+                            $closeResource(th, cursorQuery);
+                        }
+                        throw th;
+                    }
                 }
-                ((AppInfo.Builder) arrayMap.get(Integer.valueOf(i2))).addAnomalyType(query.getInt(query.getColumnIndex("anomaly_type")));
-            } finally {
             }
-        }
-        if (query != null) {
-            $closeResource(null, query);
-        }
-        for (Integer num : arrayMap.keySet()) {
-            arrayList.add(((AppInfo.Builder) arrayMap.get(num)).build());
-        }
-        if (readableDatabase != null) {
-            $closeResource(null, readableDatabase);
+            if (cursorQuery != null) {
+                $closeResource(null, cursorQuery);
+            }
+            Iterator it = arrayMap.keySet().iterator();
+            while (it.hasNext()) {
+                arrayList.add(((AppInfo.Builder) arrayMap.get((Integer) it.next())).build());
+            }
+        } finally {
+            if (readableDatabase != null) {
+                $closeResource(null, readableDatabase);
+            }
         }
         return arrayList;
     }
 
     public synchronized void deleteAllAnomaliesBeforeTimeStamp(long j) {
         SQLiteDatabase writableDatabase = this.mDatabaseHelper.getWritableDatabase();
-        writableDatabase.delete("anomaly", "time_stamp_ms < ?", new String[]{String.valueOf(j)});
-        if (writableDatabase != null) {
-            $closeResource(null, writableDatabase);
+        try {
+            writableDatabase.delete("anomaly", "time_stamp_ms < ?", new String[]{String.valueOf(j)});
+        } finally {
+            if (writableDatabase != null) {
+                $closeResource(null, writableDatabase);
+            }
         }
     }
 
@@ -98,11 +129,14 @@ public class BatteryDatabaseManager {
                 strArr[i2] = list.get(i2).packageName;
             }
             SQLiteDatabase writableDatabase = this.mDatabaseHelper.getWritableDatabase();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("anomaly_state", Integer.valueOf(i));
-            writableDatabase.update("anomaly", contentValues, "package_name IN (" + TextUtils.join(",", Collections.nCopies(list.size(), "?")) + ")", strArr);
-            if (writableDatabase != null) {
-                $closeResource(null, writableDatabase);
+            try {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("anomaly_state", Integer.valueOf(i));
+                writableDatabase.update("anomaly", contentValues, "package_name IN (" + TextUtils.join(",", Collections.nCopies(list.size(), "?")) + ")", strArr);
+            } finally {
+                if (writableDatabase != null) {
+                    $closeResource(null, writableDatabase);
+                }
             }
         }
     }

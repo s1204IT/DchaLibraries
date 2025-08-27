@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public final class SessionCommandGroup2 {
     private Set<SessionCommand2> mCommands = new HashSet();

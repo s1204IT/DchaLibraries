@@ -1,6 +1,7 @@
 package com.android.keyguard;
 
 import android.os.SystemProperties;
+
 /* loaded from: classes.dex */
 public class KeyguardConstants {
     private static final boolean IS_ENG_BUILD = SystemProperties.get("ro.build.type").equals("eng");

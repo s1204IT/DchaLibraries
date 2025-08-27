@@ -12,6 +12,7 @@ import com.android.launcher3.LauncherState;
 import com.android.launcher3.R;
 import com.android.launcher3.compat.UserManagerCompat;
 import com.android.launcher3.states.InternalStateHandler;
+
 /* loaded from: classes.dex */
 public class DiscoveryBounce extends AbstractFloatingView {
     private static final long DELAY_MS = 450;
@@ -27,12 +28,26 @@ public class DiscoveryBounce extends AbstractFloatingView {
         this.mDiscoBounceAnimation = AnimatorInflater.loadAnimator(launcher, R.animator.discovery_bounce);
         this.mDiscoBounceAnimation.setTarget(new VerticalProgressWrapper(allAppsController, f));
         this.mDiscoBounceAnimation.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.allapps.DiscoveryBounce.1
+            AnonymousClass1() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 DiscoveryBounce.this.handleClose(false);
             }
         });
         this.mDiscoBounceAnimation.addListener(allAppsController.getProgressAnimatorListener());
+    }
+
+    /* renamed from: com.android.launcher3.allapps.DiscoveryBounce$1 */
+    class AnonymousClass1 extends AnimatorListenerAdapter {
+        AnonymousClass1() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            DiscoveryBounce.this.handleClose(false);
+        }
     }
 
     @Override // android.view.ViewGroup, android.view.View
@@ -89,8 +104,7 @@ public class DiscoveryBounce extends AbstractFloatingView {
         showForHomeIfNeeded(launcher, true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void showForHomeIfNeeded(final Launcher launcher, boolean z) {
+    private static void showForHomeIfNeeded(final Launcher launcher, boolean z) {
         if (!launcher.isInState(LauncherState.NORMAL) || launcher.getSharedPrefs().getBoolean(HOME_BOUNCE_SEEN, false) || AbstractFloatingView.getTopOpenView(launcher) != null || UserManagerCompat.getInstance(launcher).isDemoUser() || ActivityManager.isRunningInTestHarness()) {
             return;
         }
@@ -98,7 +112,7 @@ public class DiscoveryBounce extends AbstractFloatingView {
             new Handler().postDelayed(new Runnable() { // from class: com.android.launcher3.allapps.-$$Lambda$DiscoveryBounce$UWP5iGtDzA1k_-2kVLNOLEwtkow
                 @Override // java.lang.Runnable
                 public final void run() {
-                    DiscoveryBounce.showForHomeIfNeeded(Launcher.this, false);
+                    DiscoveryBounce.showForHomeIfNeeded(launcher, false);
                 }
             }, DELAY_MS);
         } else {
@@ -110,8 +124,7 @@ public class DiscoveryBounce extends AbstractFloatingView {
         showForOverviewIfNeeded(launcher, true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void showForOverviewIfNeeded(final Launcher launcher, boolean z) {
+    private static void showForOverviewIfNeeded(final Launcher launcher, boolean z) {
         if (!launcher.isInState(LauncherState.OVERVIEW) || !launcher.hasBeenResumed() || launcher.isForceInvisible() || launcher.getDeviceProfile().isVerticalBarLayout() || launcher.getSharedPrefs().getBoolean(SHELF_BOUNCE_SEEN, false) || UserManagerCompat.getInstance(launcher).isDemoUser() || ActivityManager.isRunningInTestHarness()) {
             return;
         }
@@ -119,19 +132,24 @@ public class DiscoveryBounce extends AbstractFloatingView {
             new Handler().postDelayed(new Runnable() { // from class: com.android.launcher3.allapps.-$$Lambda$DiscoveryBounce$nH_kGUpN9-eIXSNWizqgojM7CJQ
                 @Override // java.lang.Runnable
                 public final void run() {
-                    DiscoveryBounce.showForOverviewIfNeeded(Launcher.this, false);
+                    DiscoveryBounce.showForOverviewIfNeeded(launcher, false);
                 }
             }, DELAY_MS);
-        } else if (InternalStateHandler.hasPending() || AbstractFloatingView.getTopOpenView(launcher) != null) {
         } else {
+            if (InternalStateHandler.hasPending() || AbstractFloatingView.getTopOpenView(launcher) != null) {
+                return;
+            }
             new DiscoveryBounce(launcher, 1.0f - LauncherState.OVERVIEW.getVerticalProgress(launcher)).show(7);
         }
     }
 
-    /* loaded from: classes.dex */
     public static class VerticalProgressWrapper {
         private final AllAppsTransitionController mController;
         private final float mDelta;
+
+        /* synthetic */ VerticalProgressWrapper(AllAppsTransitionController allAppsTransitionController, float f, AnonymousClass1 anonymousClass1) {
+            this(allAppsTransitionController, f);
+        }
 
         private VerticalProgressWrapper(AllAppsTransitionController allAppsTransitionController, float f) {
             this.mController = allAppsTransitionController;

@@ -5,6 +5,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class ProgressCategory extends ProgressCategoryBase {
     private int mEmptyTextRes;
@@ -43,15 +44,18 @@ public class ProgressCategory extends ProgressCategoryBase {
     @Override // android.support.v7.preference.PreferenceCategory, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.scanning_progress);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.scanning_progress);
         boolean z = getPreferenceCount() == 0 || (getPreferenceCount() == 1 && getPreference(0) == this.mNoDeviceFoundPreference);
-        findViewById.setVisibility(this.mProgress ? 0 : 8);
+        viewFindViewById.setVisibility(this.mProgress ? 0 : 8);
         if (this.mProgress || !z) {
             if (this.mNoDeviceFoundAdded) {
                 removePreference(this.mNoDeviceFoundPreference);
                 this.mNoDeviceFoundAdded = false;
+                return;
             }
-        } else if (!this.mNoDeviceFoundAdded) {
+            return;
+        }
+        if (!this.mNoDeviceFoundAdded) {
             if (this.mNoDeviceFoundPreference == null) {
                 this.mNoDeviceFoundPreference = new Preference(getContext());
                 this.mNoDeviceFoundPreference.setLayoutResource(R.layout.preference_empty_list);

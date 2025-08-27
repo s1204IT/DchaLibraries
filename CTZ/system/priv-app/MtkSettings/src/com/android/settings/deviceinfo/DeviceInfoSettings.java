@@ -20,6 +20,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DeviceInfoSettings extends DashboardFragment implements Indexable {
     static final int NON_SIM_PREFERENCES_COUNT = 2;
@@ -79,9 +80,8 @@ public class DeviceInfoSettings extends DashboardFragment implements Indexable {
         return "DeviceInfoSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.device_info_settings;
     }
 
@@ -90,7 +90,6 @@ public class DeviceInfoSettings extends DashboardFragment implements Indexable {
         return buildPreferenceControllers(context, getActivity(), this, getLifecycle());
     }
 
-    /* loaded from: classes.dex */
     private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final SummaryLoader mSummaryLoader;
 
@@ -106,8 +105,7 @@ public class DeviceInfoSettings extends DashboardFragment implements Indexable {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, Fragment fragment, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, Fragment fragment, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new PhoneNumberPreferenceController(context, lifecycle));
         arrayList.add(new SimStatusPreferenceController(context, fragment, lifecycle));

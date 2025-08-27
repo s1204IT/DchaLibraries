@@ -8,6 +8,7 @@ import android.util.MathUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class StorageSummaryPreference extends Preference {
     private int mPercent;
@@ -25,7 +26,7 @@ public class StorageSummaryPreference extends Preference {
 
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
-        ProgressBar progressBar = (ProgressBar) preferenceViewHolder.findViewById(16908301);
+        ProgressBar progressBar = (ProgressBar) preferenceViewHolder.findViewById(android.R.id.progress);
         if (this.mPercent != -1) {
             progressBar.setVisibility(0);
             progressBar.setProgress(this.mPercent);
@@ -33,7 +34,7 @@ public class StorageSummaryPreference extends Preference {
         } else {
             progressBar.setVisibility(8);
         }
-        ((TextView) preferenceViewHolder.findViewById(16908304)).setTextColor(Color.parseColor("#8a000000"));
+        ((TextView) preferenceViewHolder.findViewById(android.R.id.summary)).setTextColor(Color.parseColor("#8a000000"));
         super.onBindViewHolder(preferenceViewHolder);
     }
 }

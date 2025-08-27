@@ -3,6 +3,7 @@ package com.android.settings.notification;
 import android.content.Context;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
+
 /* loaded from: classes.dex */
 public class AppLinkPreferenceController extends NotificationPreferenceController implements PreferenceControllerMixin {
     public AppLinkPreferenceController(Context context) {

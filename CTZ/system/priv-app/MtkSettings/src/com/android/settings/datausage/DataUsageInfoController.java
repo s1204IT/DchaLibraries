@@ -2,6 +2,7 @@ package com.android.settings.datausage;
 
 import android.net.NetworkPolicy;
 import com.android.settingslib.net.DataUsageController;
+
 /* loaded from: classes.dex */
 public class DataUsageInfoController {
     public void updateDataLimit(DataUsageController.DataUsageInfo dataUsageInfo, NetworkPolicy networkPolicy) {

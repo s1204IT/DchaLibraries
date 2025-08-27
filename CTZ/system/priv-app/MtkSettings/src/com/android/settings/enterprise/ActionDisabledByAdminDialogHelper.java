@@ -20,6 +20,7 @@ import com.android.settings.Settings;
 import com.android.settings.Utils;
 import com.android.settingslib.RestrictedLockUtils;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class ActionDisabledByAdminDialogHelper {
     private static final String TAG = ActionDisabledByAdminDialogHelper.class.getName();
@@ -41,7 +42,7 @@ public class ActionDisabledByAdminDialogHelper {
         return builder.setPositiveButton(R.string.okay, (DialogInterface.OnClickListener) null).setNeutralButton(R.string.learn_more, new DialogInterface.OnClickListener() { // from class: com.android.settings.enterprise.-$$Lambda$ActionDisabledByAdminDialogHelper$1vfAOqcacTgM-c2XJLB5Z1-4lQ4
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                ActionDisabledByAdminDialogHelper.lambda$prepareDialogBuilder$0(ActionDisabledByAdminDialogHelper.this, dialogInterface, i);
+                ActionDisabledByAdminDialogHelper.lambda$prepareDialogBuilder$0(this.f$0, dialogInterface, i);
             }
         }).setView(this.mDialogView);
     }
@@ -76,82 +77,36 @@ public class ActionDisabledByAdminDialogHelper {
     void setAdminSupportTitle(View view, String str) {
         TextView textView = (TextView) view.findViewById(R.id.admin_support_dialog_title);
         if (textView == null) {
-            return;
         }
         if (str == null) {
             textView.setText(R.string.disabled_by_policy_title);
             return;
         }
-        char c = 65535;
-        switch (str.hashCode()) {
-            case -1040305701:
-                if (str.equals("no_sms")) {
-                    c = 2;
-                    break;
-                }
-                break;
-            case -932215031:
-                if (str.equals("policy_disable_camera")) {
-                    c = 3;
-                    break;
-                }
-                break;
-            case 620339799:
-                if (str.equals("policy_disable_screen_capture")) {
-                    c = 4;
-                    break;
-                }
-                break;
-            case 1416425725:
-                if (str.equals("policy_suspend_packages")) {
-                    c = 6;
-                    break;
-                }
-                break;
-            case 1950494080:
-                if (str.equals("no_outgoing_calls")) {
-                    c = 1;
-                    break;
-                }
-                break;
-            case 2052329662:
-                if (str.equals("policy_mandatory_backups")) {
-                    c = 5;
-                    break;
-                }
-                break;
-            case 2135693260:
-                if (str.equals("no_adjust_volume")) {
-                    c = 0;
-                    break;
-                }
-                break;
-        }
-        switch (c) {
-            case 0:
+        switch (str) {
+            case "no_adjust_volume":
                 textView.setText(R.string.disabled_by_policy_title_adjust_volume);
-                return;
-            case 1:
+                break;
+            case "no_outgoing_calls":
                 textView.setText(R.string.disabled_by_policy_title_outgoing_calls);
-                return;
-            case 2:
+                break;
+            case "no_sms":
                 textView.setText(R.string.disabled_by_policy_title_sms);
-                return;
-            case 3:
+                break;
+            case "policy_disable_camera":
                 textView.setText(R.string.disabled_by_policy_title_camera);
-                return;
-            case 4:
+                break;
+            case "policy_disable_screen_capture":
                 textView.setText(R.string.disabled_by_policy_title_screen_capture);
-                return;
-            case 5:
+                break;
+            case "policy_mandatory_backups":
                 textView.setText(R.string.disabled_by_policy_title_turn_off_backups);
-                return;
-            case 6:
+                break;
+            case "policy_suspend_packages":
                 textView.setText(R.string.disabled_by_policy_title_suspend_packages);
-                return;
+                break;
             default:
                 textView.setText(R.string.disabled_by_policy_title);
-                return;
+                break;
         }
     }
 

@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 /* loaded from: classes.dex */
 public final class Closer implements Closeable {
     private static final Suppressor SUPPRESSOR;
@@ -16,7 +16,6 @@ public final class Closer implements Closeable {
     final Suppressor suppressor;
     private Throwable thrown;
 
-    /* loaded from: classes.dex */
     interface Suppressor {
         void suppress(Closeable closeable, Throwable th, Throwable th2);
     }
@@ -36,15 +35,15 @@ public final class Closer implements Closeable {
     }
 
     @Override // java.io.Closeable, java.lang.AutoCloseable
-    public void close() throws IOException {
+    public void close() throws Throwable {
         Throwable th = this.thrown;
         while (!this.stack.isEmpty()) {
-            Closeable removeFirst = this.stack.removeFirst();
+            Closeable closeableRemoveFirst = this.stack.removeFirst();
             try {
-                removeFirst.close();
+                closeableRemoveFirst.close();
             } catch (Throwable th2) {
                 if (th != null) {
-                    this.suppressor.suppress(removeFirst, th, th2);
+                    this.suppressor.suppress(closeableRemoveFirst, th, th2);
                 } else {
                     th = th2;
                 }
@@ -56,7 +55,6 @@ public final class Closer implements Closeable {
         }
     }
 
-    /* loaded from: classes.dex */
     static final class LoggingSuppressor implements Suppressor {
         static final LoggingSuppressor INSTANCE = new LoggingSuppressor();
 
@@ -65,13 +63,10 @@ public final class Closer implements Closeable {
 
         @Override // com.google.common.io.Closer.Suppressor
         public void suppress(Closeable closeable, Throwable th, Throwable th2) {
-            Logger logger = Closeables.logger;
-            Level level = Level.WARNING;
-            logger.log(level, "Suppressing exception thrown when closing " + closeable, th2);
+            Closeables.logger.log(Level.WARNING, "Suppressing exception thrown when closing " + closeable, th2);
         }
     }
 
-    /* loaded from: classes.dex */
     static final class SuppressingSuppressor implements Suppressor {
         static final SuppressingSuppressor INSTANCE = new SuppressingSuppressor();
         static final Method addSuppressed = getAddSuppressed();

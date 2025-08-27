@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class AvailableVirtualKeyboardFragment extends SettingsPreferenceFragment implements Indexable, InputMethodPreference.OnSavePreferenceListener {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.inputmethod.AvailableVirtualKeyboardFragment.1
@@ -90,21 +91,21 @@ public final class AvailableVirtualKeyboardFragment extends SettingsPreferenceFr
         if (serviceInfo == null || applicationInfo == null || packageName == null) {
             return new ColorDrawable(0);
         }
-        Drawable loadDrawable = loadDrawable(packageManager, packageName, serviceInfo.logo, applicationInfo);
-        if (loadDrawable != null) {
-            return loadDrawable;
+        Drawable drawableLoadDrawable = loadDrawable(packageManager, packageName, serviceInfo.logo, applicationInfo);
+        if (drawableLoadDrawable != null) {
+            return drawableLoadDrawable;
         }
-        Drawable loadDrawable2 = loadDrawable(packageManager, packageName, serviceInfo.icon, applicationInfo);
-        if (loadDrawable2 != null) {
-            return loadDrawable2;
+        Drawable drawableLoadDrawable2 = loadDrawable(packageManager, packageName, serviceInfo.icon, applicationInfo);
+        if (drawableLoadDrawable2 != null) {
+            return drawableLoadDrawable2;
         }
-        Drawable loadDrawable3 = loadDrawable(packageManager, packageName, applicationInfo.logo, applicationInfo);
-        if (loadDrawable3 != null) {
-            return loadDrawable3;
+        Drawable drawableLoadDrawable3 = loadDrawable(packageManager, packageName, applicationInfo.logo, applicationInfo);
+        if (drawableLoadDrawable3 != null) {
+            return drawableLoadDrawable3;
         }
-        Drawable loadDrawable4 = loadDrawable(packageManager, packageName, applicationInfo.icon, applicationInfo);
-        if (loadDrawable4 != null) {
-            return loadDrawable4;
+        Drawable drawableLoadDrawable4 = loadDrawable(packageManager, packageName, applicationInfo.icon, applicationInfo);
+        if (drawableLoadDrawable4 != null) {
+            return drawableLoadDrawable4;
         }
         return new ColorDrawable(0);
     }
@@ -132,9 +133,7 @@ public final class AvailableVirtualKeyboardFragment extends SettingsPreferenceFr
         this.mInputMethodPreferenceList.sort(new Comparator() { // from class: com.android.settings.inputmethod.-$$Lambda$AvailableVirtualKeyboardFragment$jwIjaxSxVSRnK0I3ZX1KVHtd2wk
             @Override // java.util.Comparator
             public final int compare(Object obj, Object obj2) {
-                int compareTo;
-                compareTo = ((InputMethodPreference) obj).compareTo((InputMethodPreference) obj2, collator);
-                return compareTo;
+                return ((InputMethodPreference) obj).compareTo((InputMethodPreference) obj2, collator);
             }
         });
         getPreferenceScreen().removeAll();

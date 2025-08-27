@@ -5,18 +5,19 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 import com.android.setupwizardlib.R;
 import com.android.setupwizardlib.TemplateLayout;
+
 /* loaded from: classes.dex */
 public class HeaderMixin implements Mixin {
     private TemplateLayout mTemplateLayout;
 
     public HeaderMixin(TemplateLayout templateLayout, AttributeSet attributeSet, int i) {
         this.mTemplateLayout = templateLayout;
-        TypedArray obtainStyledAttributes = templateLayout.getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwHeaderMixin, i, 0);
-        CharSequence text = obtainStyledAttributes.getText(R.styleable.SuwHeaderMixin_suwHeaderText);
+        TypedArray typedArrayObtainStyledAttributes = templateLayout.getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwHeaderMixin, i, 0);
+        CharSequence text = typedArrayObtainStyledAttributes.getText(R.styleable.SuwHeaderMixin_suwHeaderText);
         if (text != null) {
             setText(text);
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public TextView getTextView() {

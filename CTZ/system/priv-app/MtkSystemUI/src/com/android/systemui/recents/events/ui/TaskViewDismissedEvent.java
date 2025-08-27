@@ -4,6 +4,7 @@ import com.android.systemui.recents.events.EventBus;
 import com.android.systemui.recents.views.TaskView;
 import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.recents.utilities.AnimationProps;
+
 /* loaded from: classes.dex */
 public class TaskViewDismissedEvent extends EventBus.Event {
     public final AnimationProps animation;

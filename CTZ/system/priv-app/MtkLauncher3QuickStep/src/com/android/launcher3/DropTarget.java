@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import com.android.launcher3.accessibility.DragViewStateAnnouncer;
 import com.android.launcher3.dragndrop.DragOptions;
 import com.android.launcher3.dragndrop.DragView;
+
 /* loaded from: classes.dex */
 public interface DropTarget {
     boolean acceptDrop(DragObject dragObject);
@@ -22,7 +23,6 @@ public interface DropTarget {
 
     void prepareAccessibilityDrop();
 
-    /* loaded from: classes.dex */
     public static class DragObject {
         public boolean accessibleDrag;
         public DragViewStateAnnouncer stateAnnouncer;
@@ -42,8 +42,10 @@ public interface DropTarget {
             if (fArr == null) {
                 fArr = new float[2];
             }
-            fArr[0] = (this.x - this.xOffset) + (this.dragView.getDragRegion().width() / 2);
-            fArr[1] = (this.y - this.yOffset) + (this.dragView.getDragRegion().height() / 2);
+            int i = this.x - this.xOffset;
+            int i2 = this.y - this.yOffset;
+            fArr[0] = i + (this.dragView.getDragRegion().width() / 2);
+            fArr[1] = i2 + (this.dragView.getDragRegion().height() / 2);
             return fArr;
         }
     }

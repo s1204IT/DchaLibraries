@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
+
 /* loaded from: classes.dex */
 class LiftToActivateListener implements View.OnHoverListener {
     private final AccessibilityManager mAccessibilityManager;

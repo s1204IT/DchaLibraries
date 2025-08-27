@@ -5,20 +5,22 @@ import android.os.UserHandle;
 import com.android.launcher3.model.WidgetItem;
 import java.text.Collator;
 import java.util.Comparator;
+
 /* loaded from: classes.dex */
 public class WidgetItemComparator implements Comparator<WidgetItem> {
     private final UserHandle mMyUserHandle = Process.myUserHandle();
     private final Collator mCollator = Collator.getInstance();
 
+    /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
     @Override // java.util.Comparator
     public int compare(WidgetItem widgetItem, WidgetItem widgetItem2) {
         boolean z = !this.mMyUserHandle.equals(widgetItem.user);
         if ((!this.mMyUserHandle.equals(widgetItem2.user)) ^ z) {
             return z ? 1 : -1;
         }
-        int compare = this.mCollator.compare(widgetItem.label, widgetItem2.label);
-        if (compare != 0) {
-            return compare;
+        int iCompare = this.mCollator.compare(widgetItem.label, widgetItem2.label);
+        if (iCompare != 0) {
+            return iCompare;
         }
         int i = widgetItem.spanX * widgetItem.spanY;
         int i2 = widgetItem2.spanX * widgetItem2.spanY;

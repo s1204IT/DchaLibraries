@@ -6,6 +6,7 @@ import com.android.launcher3.LauncherState;
 import com.android.launcher3.LauncherStateManager;
 import com.android.launcher3.anim.AnimatorSetBuilder;
 import com.android.quickstep.OverviewInteractionState;
+
 /* loaded from: classes.dex */
 public class BackButtonAlphaHandler implements LauncherStateManager.StateHandler {
     private static final String TAG = "BackButtonAlphaHandler";
@@ -30,15 +31,15 @@ public class BackButtonAlphaHandler implements LauncherStateManager.StateHandler
         float backButtonAlpha = this.mOverviewInteractionState.getBackButtonAlpha();
         float f = launcherState.hideBackButton ? 0.0f : 1.0f;
         if (Float.compare(backButtonAlpha, f) != 0) {
-            ValueAnimator ofFloat = ValueAnimator.ofFloat(backButtonAlpha, f);
-            ofFloat.setDuration(animationConfig.duration);
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.uioverrides.-$$Lambda$BackButtonAlphaHandler$DDHUGNiM3JALSeCA9Id6lcF7t5c
+            ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(backButtonAlpha, f);
+            valueAnimatorOfFloat.setDuration(animationConfig.duration);
+            valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.uioverrides.-$$Lambda$BackButtonAlphaHandler$DDHUGNiM3JALSeCA9Id6lcF7t5c
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    BackButtonAlphaHandler.this.mOverviewInteractionState.setBackButtonAlpha(((Float) valueAnimator.getAnimatedValue()).floatValue(), false);
+                    this.f$0.mOverviewInteractionState.setBackButtonAlpha(((Float) valueAnimator.getAnimatedValue()).floatValue(), false);
                 }
             });
-            animatorSetBuilder.play(ofFloat);
+            animatorSetBuilder.play(valueAnimatorOfFloat);
         }
     }
 }

@@ -10,6 +10,7 @@ import com.android.settings.R;
 import com.android.settings.search.DatabaseIndexingUtils;
 import com.android.settings.search.InlineSwitchPayload;
 import com.android.settings.search.ResultPayload;
+
 /* loaded from: classes.dex */
 public class DoubleTapScreenPreferenceController extends GesturePreferenceController {
     private static final String PREF_KEY_VIDEO = "gesture_double_tap_screen_video";

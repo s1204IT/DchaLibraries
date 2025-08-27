@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.WindowManagerGlobal;
 import com.android.systemui.shared.recents.view.AppTransitionAnimationSpecsFuture;
 import com.android.systemui.shared.recents.view.RecentsTransition;
+
 /* loaded from: classes.dex */
 public class WindowManagerWrapper {
     private static final WindowManagerWrapper sInstance = new WindowManagerWrapper();

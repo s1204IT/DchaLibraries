@@ -6,6 +6,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import java.io.File;
+
 /* loaded from: classes.dex */
 public class Partner {
     private static final String ACTION_PARTNER_CUSTOMIZATION = "com.android.launcher3.action.PARTNER_CUSTOMIZATION";
@@ -25,18 +26,14 @@ public class Partner {
     private final Resources mResources;
 
     public static synchronized Partner get(PackageManager packageManager) {
-        Partner partner;
-        synchronized (Partner.class) {
-            if (!sSearched) {
-                Pair<String, Resources> findSystemApk = Utilities.findSystemApk(ACTION_PARTNER_CUSTOMIZATION, packageManager);
-                if (findSystemApk != null) {
-                    sPartner = new Partner((String) findSystemApk.first, (Resources) findSystemApk.second);
-                }
-                sSearched = true;
+        if (!sSearched) {
+            Pair<String, Resources> pairFindSystemApk = Utilities.findSystemApk(ACTION_PARTNER_CUSTOMIZATION, packageManager);
+            if (pairFindSystemApk != null) {
+                sPartner = new Partner((String) pairFindSystemApk.first, (Resources) pairFindSystemApk.second);
             }
-            partner = sPartner;
+            sSearched = true;
         }
-        return partner;
+        return sPartner;
     }
 
     private Partner(String str, Resources resources) {
@@ -79,32 +76,32 @@ public class Partner {
     }
 
     public void applyInvariantDeviceProfileOverrides(InvariantDeviceProfile invariantDeviceProfile, DisplayMetrics displayMetrics) {
-        int i;
-        float f;
+        int integer;
+        float fDpiFromPx;
         try {
             int identifier = getResources().getIdentifier(RES_GRID_NUM_ROWS, "integer", getPackageName());
-            int i2 = -1;
+            int integer2 = -1;
             if (identifier > 0) {
-                i = getResources().getInteger(identifier);
+                integer = getResources().getInteger(identifier);
             } else {
-                i = -1;
+                integer = -1;
             }
             int identifier2 = getResources().getIdentifier(RES_GRID_NUM_COLUMNS, "integer", getPackageName());
             if (identifier2 > 0) {
-                i2 = getResources().getInteger(identifier2);
+                integer2 = getResources().getInteger(identifier2);
             }
             int identifier3 = getResources().getIdentifier(RES_GRID_ICON_SIZE_DP, "dimen", getPackageName());
             if (identifier3 > 0) {
-                f = Utilities.dpiFromPx(getResources().getDimensionPixelSize(identifier3), displayMetrics);
+                fDpiFromPx = Utilities.dpiFromPx(getResources().getDimensionPixelSize(identifier3), displayMetrics);
             } else {
-                f = -1.0f;
+                fDpiFromPx = -1.0f;
             }
-            if (i > 0 && i2 > 0) {
-                invariantDeviceProfile.numRows = i;
-                invariantDeviceProfile.numColumns = i2;
+            if (integer > 0 && integer2 > 0) {
+                invariantDeviceProfile.numRows = integer;
+                invariantDeviceProfile.numColumns = integer2;
             }
-            if (f > 0.0f) {
-                invariantDeviceProfile.iconSize = f;
+            if (fDpiFromPx > 0.0f) {
+                invariantDeviceProfile.iconSize = fDpiFromPx;
             }
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Invalid Partner grid resource!", e);

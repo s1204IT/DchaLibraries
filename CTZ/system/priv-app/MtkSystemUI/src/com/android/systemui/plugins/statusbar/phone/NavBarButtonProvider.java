@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.android.systemui.plugins.Plugin;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
+
 @ProvidesInterface(action = NavBarButtonProvider.ACTION, version = 2)
 /* loaded from: classes.dex */
 public interface NavBarButtonProvider extends Plugin {
@@ -13,7 +14,6 @@ public interface NavBarButtonProvider extends Plugin {
 
     View createView(String str, ViewGroup viewGroup);
 
-    /* loaded from: classes.dex */
     public interface ButtonInterface {
         void abortCurrentGesture();
 

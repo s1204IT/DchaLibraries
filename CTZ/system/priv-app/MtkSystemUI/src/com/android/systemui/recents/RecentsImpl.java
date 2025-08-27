@@ -63,6 +63,7 @@ import com.android.systemui.statusbar.phone.StatusBar;
 import com.google.android.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener {
     protected static RecentsTaskLoadPlan sInstanceLoadPlan;
@@ -107,7 +108,6 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
     private final TaskStack mEmptyTaskStack = new TaskStack();
     protected Handler mHandler = new Handler();
 
-    /* loaded from: classes.dex */
     class TaskStackListenerImpl extends SysUiTaskStackChangeListener {
         private OverviewProxyService mOverviewProxyService = (OverviewProxyService) Dependency.get(OverviewProxyService.class);
 
@@ -132,10 +132,10 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
                     RecentsImpl.this.updateDummyStackViewLayout(RecentsImpl.this.mBackgroundLayoutAlgorithm, taskStack, windowRect);
                     recentsActivityLaunchState.launchedFromApp = true;
                     RecentsImpl.this.mBackgroundLayoutAlgorithm.update(recentsTaskLoadPlan.getTaskStack(), RecentsImpl.EMPTY_SET, recentsActivityLaunchState, -1.0f);
-                    TaskStackLayoutAlgorithm.VisibilityReport computeStackVisibilityReport = RecentsImpl.this.mBackgroundLayoutAlgorithm.computeStackVisibilityReport(taskStack.getTasks());
+                    TaskStackLayoutAlgorithm.VisibilityReport visibilityReportComputeStackVisibilityReport = RecentsImpl.this.mBackgroundLayoutAlgorithm.computeStackVisibilityReport(taskStack.getTasks());
                     options.runningTaskId = runningTask != null ? runningTask.id : -1;
-                    options.numVisibleTasks = computeStackVisibilityReport.numVisibleTasks;
-                    options.numVisibleTaskThumbnails = computeStackVisibilityReport.numVisibleThumbnails;
+                    options.numVisibleTasks = visibilityReportComputeStackVisibilityReport.numVisibleTasks;
+                    options.numVisibleTaskThumbnails = visibilityReportComputeStackVisibilityReport.numVisibleThumbnails;
                     options.onlyLoadForCache = true;
                     options.onlyLoadPausedActivities = true;
                     options.loadThumbnails = true;
@@ -222,7 +222,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         Recents.getSystemServices();
         boolean z4 = true;
         MutableBoolean mutableBoolean = new MutableBoolean(true);
-        boolean isRecentsActivityVisible = Recents.getSystemServices().isRecentsActivityVisible(mutableBoolean);
+        boolean zIsRecentsActivityVisible = Recents.getSystemServices().isRecentsActivityVisible(mutableBoolean);
         boolean z5 = mutableBoolean.value;
         boolean z6 = Recents.getSystemServices().getSplitScreenPrimaryStack() != null;
         this.mTriggeredFromAltTab = z;
@@ -233,13 +233,14 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         } else if (this.mFastAltTabTrigger.isDozing()) {
             if (!z) {
                 return;
+            } else {
+                this.mFastAltTabTrigger.stopDozing();
             }
-            this.mFastAltTabTrigger.stopDozing();
         } else if (z) {
             this.mFastAltTabTrigger.startDozing();
             return;
         }
-        if ((z6 || z2) || !isRecentsActivityVisible) {
+        if ((z6 || z2) || !zIsRecentsActivityVisible) {
             try {
                 ActivityManager.RunningTaskInfo runningTask = ActivityManagerWrapper.getInstance().getRunningTask();
                 if (!mutableBoolean.value && !z5) {
@@ -256,9 +257,9 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         if (z && this.mFastAltTabTrigger.isDozing()) {
             showNextTask();
             this.mFastAltTabTrigger.stopDozing();
-            return;
+        } else {
+            EventBus.getDefault().post(new HideRecentsEvent(z, z2));
         }
-        EventBus.getDefault().post(new HideRecentsEvent(z, z2));
     }
 
     public void toggleRecents(int i) {
@@ -275,32 +276,36 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         this.mTriggeredFromAltTab = false;
         try {
             MutableBoolean mutableBoolean = new MutableBoolean(true);
-            long elapsedRealtime = SystemClock.elapsedRealtime() - this.mLastToggleTime;
-            if (Recents.getSystemServices().isRecentsActivityVisible(mutableBoolean)) {
-                if (!Recents.getConfiguration().getLaunchState().launchedWithAltTab) {
-                    if (Recents.getConfiguration().isGridEnabled) {
-                        if (elapsedRealtime < ViewConfiguration.getDoubleTapTimeout()) {
-                            z = true;
-                        }
-                        if (z) {
-                            EventBus.getDefault().post(new LaunchNextTaskRequestEvent());
-                        } else {
-                            EventBus.getDefault().post(new LaunchMostRecentTaskRequestEvent());
-                        }
-                        return;
-                    }
-                    EventBus.getDefault().post(new LaunchNextTaskRequestEvent());
-                } else if (elapsedRealtime < 350) {
-                } else {
-                    EventBus.getDefault().post(new ToggleRecentsEvent());
-                    this.mLastToggleTime = SystemClock.elapsedRealtime();
+            long jElapsedRealtime = SystemClock.elapsedRealtime() - this.mLastToggleTime;
+            if (!Recents.getSystemServices().isRecentsActivityVisible(mutableBoolean)) {
+                if (jElapsedRealtime < 350) {
+                    return;
                 }
-            } else if (elapsedRealtime < 350) {
-            } else {
                 startRecentsActivityAndDismissKeyguardIfNeeded(ActivityManagerWrapper.getInstance().getRunningTask(), mutableBoolean.value, true, i);
                 ActivityManagerWrapper.getInstance().closeSystemWindows("recentapps");
                 this.mLastToggleTime = SystemClock.elapsedRealtime();
+                return;
             }
+            if (Recents.getConfiguration().getLaunchState().launchedWithAltTab) {
+                if (jElapsedRealtime < 350) {
+                    return;
+                }
+                EventBus.getDefault().post(new ToggleRecentsEvent());
+                this.mLastToggleTime = SystemClock.elapsedRealtime();
+                return;
+            }
+            if (Recents.getConfiguration().isGridEnabled) {
+                if (jElapsedRealtime < ViewConfiguration.getDoubleTapTimeout()) {
+                    z = true;
+                }
+                if (z) {
+                    EventBus.getDefault().post(new LaunchNextTaskRequestEvent());
+                } else {
+                    EventBus.getDefault().post(new LaunchMostRecentTaskRequestEvent());
+                }
+                return;
+            }
+            EventBus.getDefault().post(new LaunchNextTaskRequestEvent());
         } catch (ActivityNotFoundException e) {
             Log.e("RecentsImpl", "Failed to launch RecentsActivity", e);
         }
@@ -317,7 +322,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$RecentsImpl$j3kxRIim5t_10M0HDPUojNhJV5I
             @Override // java.lang.Runnable
             public final void run() {
-                RecentsImpl.lambda$preloadRecents$0(RecentsImpl.this);
+                RecentsImpl.lambda$preloadRecents$0(this.f$0);
             }
         });
     }
@@ -356,7 +361,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         ActivityManager.RunningTaskInfo runningTask;
         boolean z;
         Task task;
-        ActivityOptions activityOptions;
+        ActivityOptions activityOptionsMakeCustomAnimation;
         SystemServicesProxy systemServices = Recents.getSystemServices();
         RecentsTaskLoader taskLoader = Recents.getTaskLoader();
         RecentsTaskLoadPlan recentsTaskLoadPlan = new RecentsTaskLoadPlan(this.mContext);
@@ -377,25 +382,25 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
                 Task task2 = tasks.get(size);
                 if (z) {
                     task = tasks.get(size - 1);
-                    activityOptions = ActivityOptions.makeCustomAnimation(this.mContext, R.anim.recents_launch_next_affiliated_task_target, R.anim.recents_fast_toggle_app_home_exit);
+                    activityOptionsMakeCustomAnimation = ActivityOptions.makeCustomAnimation(this.mContext, R.anim.recents_launch_next_affiliated_task_target, R.anim.recents_fast_toggle_app_home_exit);
                     break;
                 } else if (task2.key.id != runningTask.id) {
                     size--;
                 } else {
                     task = tasks.get(size - 1);
-                    activityOptions = ActivityOptions.makeCustomAnimation(this.mContext, R.anim.recents_launch_prev_affiliated_task_target, R.anim.recents_launch_prev_affiliated_task_source);
+                    activityOptionsMakeCustomAnimation = ActivityOptions.makeCustomAnimation(this.mContext, R.anim.recents_launch_prev_affiliated_task_target, R.anim.recents_launch_prev_affiliated_task_source);
                     break;
                 }
             } else {
                 task = null;
-                activityOptions = null;
+                activityOptionsMakeCustomAnimation = null;
                 break;
             }
         }
         if (task == null) {
             systemServices.startInPlaceAnimationOnFrontMostApplication(ActivityOptions.makeCustomInPlaceAnimation(this.mContext, R.anim.recents_launch_prev_affiliated_task_bounce));
         } else {
-            ActivityManagerWrapper.getInstance().startActivityFromRecentsAsync(task.key, activityOptions, null, null);
+            ActivityManagerWrapper.getInstance().startActivityFromRecentsAsync(task.key, activityOptionsMakeCustomAnimation, null, null);
         }
     }
 
@@ -414,7 +419,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
             this.mHandler.post(new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$RecentsImpl$8KagPhOavaRXCFab5YBHz8Lgk54
                 @Override // java.lang.Runnable
                 public final void run() {
-                    RecentsImpl.this.toggleRecents(-1);
+                    this.f$0.toggleRecents(-1);
                 }
             });
         }
@@ -438,8 +443,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         this.mHeaderBar.setLayoutDirection(resources.getConfiguration().getLayoutDirection());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDummyStackViewLayout(TaskStackLayoutAlgorithm taskStackLayoutAlgorithm, TaskStack taskStack, Rect rect) {
+    private void updateDummyStackViewLayout(TaskStackLayoutAlgorithm taskStackLayoutAlgorithm, TaskStack taskStack, Rect rect) {
         SystemServicesProxy systemServices = Recents.getSystemServices();
         Rect displayRect = systemServices.getDisplayRect();
         Rect rect2 = new Rect();
@@ -460,50 +464,51 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Rect getWindowRect(Rect rect) {
+    private Rect getWindowRect(Rect rect) {
         if (rect != null) {
             return new Rect(rect);
         }
         return Recents.getSystemServices().getWindowRect();
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:10:0x005b  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private void updateHeaderBarLayout(TaskStack taskStack, Rect rect) {
-        int i;
+        int iWidth;
         Rect windowRect = getWindowRect(rect);
-        boolean useGridLayout = this.mDummyStackView.useGridLayout();
+        boolean zUseGridLayout = this.mDummyStackView.useGridLayout();
         updateDummyStackViewLayout(this.mDummyStackView.getStackAlgorithm(), taskStack, windowRect);
         if (taskStack != null) {
             TaskStackLayoutAlgorithm stackAlgorithm = this.mDummyStackView.getStackAlgorithm();
             this.mDummyStackView.getStack().removeAllTasks(false);
             this.mDummyStackView.setTasks(taskStack, false);
-            if (useGridLayout) {
+            if (zUseGridLayout) {
                 TaskGridLayoutAlgorithm gridAlgorithm = this.mDummyStackView.getGridAlgorithm();
                 gridAlgorithm.initialize(windowRect);
-                i = (int) gridAlgorithm.getTransform(0, taskStack.getTaskCount(), new TaskViewTransform(), stackAlgorithm).rect.width();
+                iWidth = (int) gridAlgorithm.getTransform(0, taskStack.getTaskCount(), new TaskViewTransform(), stackAlgorithm).rect.width();
             } else {
                 Rect untransformedTaskViewBounds = stackAlgorithm.getUntransformedTaskViewBounds();
                 if (!untransformedTaskViewBounds.isEmpty()) {
-                    i = untransformedTaskViewBounds.width();
+                    iWidth = untransformedTaskViewBounds.width();
+                } else {
+                    iWidth = 0;
                 }
-            }
-            if (taskStack == null && i > 0) {
-                synchronized (this.mHeaderBarLock) {
-                    if (this.mHeaderBar.getMeasuredWidth() != i || this.mHeaderBar.getMeasuredHeight() != this.mTaskBarHeight) {
-                        if (useGridLayout) {
-                            this.mHeaderBar.setShouldDarkenBackgroundColor(true);
-                            this.mHeaderBar.setNoUserInteractionState();
-                        }
-                        this.mHeaderBar.forceLayout();
-                        this.mHeaderBar.measure(View.MeasureSpec.makeMeasureSpec(i, 1073741824), View.MeasureSpec.makeMeasureSpec(this.mTaskBarHeight, 1073741824));
-                    }
-                    this.mHeaderBar.layout(0, 0, i, this.mTaskBarHeight);
-                }
-                return;
             }
         }
-        i = 0;
-        if (taskStack == null) {
+        if (taskStack != null && iWidth > 0) {
+            synchronized (this.mHeaderBarLock) {
+                if (this.mHeaderBar.getMeasuredWidth() != iWidth || this.mHeaderBar.getMeasuredHeight() != this.mTaskBarHeight) {
+                    if (zUseGridLayout) {
+                        this.mHeaderBar.setShouldDarkenBackgroundColor(true);
+                        this.mHeaderBar.setNoUserInteractionState();
+                    }
+                    this.mHeaderBar.forceLayout();
+                    this.mHeaderBar.measure(View.MeasureSpec.makeMeasureSpec(iWidth, 1073741824), View.MeasureSpec.makeMeasureSpec(this.mTaskBarHeight, 1073741824));
+                }
+                this.mHeaderBar.layout(0, 0, iWidth, this.mTaskBarHeight);
+            }
         }
     }
 
@@ -566,18 +571,17 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         return this.mTmpTransform;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Bitmap drawThumbnailTransitionBitmap(Task task, TaskViewTransform taskViewTransform) {
-        Bitmap drawViewIntoHardwareBitmap;
+    private Bitmap drawThumbnailTransitionBitmap(Task task, TaskViewTransform taskViewTransform) {
+        Bitmap bitmapDrawViewIntoHardwareBitmap;
         SystemServicesProxy systemServices = Recents.getSystemServices();
-        int width = (int) taskViewTransform.rect.width();
-        int height = (int) taskViewTransform.rect.height();
-        if (taskViewTransform == null || task.key == null || width <= 0 || height <= 0) {
+        int iWidth = (int) taskViewTransform.rect.width();
+        int iHeight = (int) taskViewTransform.rect.height();
+        if (taskViewTransform == null || task.key == null || iWidth <= 0 || iHeight <= 0) {
             return null;
         }
         synchronized (this.mHeaderBarLock) {
             boolean z = !task.isSystemApp && systemServices.isInSafeMode();
-            this.mHeaderBar.onTaskViewSizeChanged(width, height);
+            this.mHeaderBar.onTaskViewSizeChanged(iWidth, iHeight);
             Drawable drawable = this.mHeaderBar.getIconView().getDrawable();
             if (drawable != null) {
                 drawable.setCallback(null);
@@ -585,9 +589,9 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
             this.mHeaderBar.bindToTask(task, false, z);
             this.mHeaderBar.onTaskDataLoaded();
             this.mHeaderBar.setDimAlpha(taskViewTransform.dimAlpha);
-            drawViewIntoHardwareBitmap = RecentsTransition.drawViewIntoHardwareBitmap(width, this.mTaskBarHeight, this.mHeaderBar, 1.0f, 0);
+            bitmapDrawViewIntoHardwareBitmap = RecentsTransition.drawViewIntoHardwareBitmap(iWidth, this.mTaskBarHeight, this.mHeaderBar, 1.0f, 0);
         }
-        return drawViewIntoHardwareBitmap;
+        return bitmapDrawViewIntoHardwareBitmap;
     }
 
     protected void startRecentsActivityAndDismissKeyguardIfNeeded(final ActivityManager.RunningTaskInfo runningTaskInfo, final boolean z, final boolean z2, final int i) {
@@ -596,7 +600,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
             statusBar.executeRunnableDismissingKeyguard(new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$RecentsImpl$nl0CQjEHqL97ISAVXWR_Z-bUHGg
                 @Override // java.lang.Runnable
                 public final void run() {
-                    RecentsImpl.lambda$startRecentsActivityAndDismissKeyguardIfNeeded$3(RecentsImpl.this, runningTaskInfo, z, z2, i);
+                    RecentsImpl.lambda$startRecentsActivityAndDismissKeyguardIfNeeded$3(this.f$0, runningTaskInfo, z, z2, i);
                 }
             }, null, true, false, true);
         } else {
@@ -609,13 +613,12 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         recentsImpl.mHandler.post(new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$RecentsImpl$p86QbP39-AERJwYL1CmDcPooyqY
             @Override // java.lang.Runnable
             public final void run() {
-                RecentsImpl.this.startRecentsActivity(runningTaskInfo, z, z2, i);
+                this.f$0.startRecentsActivity(runningTaskInfo, z, z2, i);
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startRecentsActivity(ActivityManager.RunningTaskInfo runningTaskInfo, boolean z, boolean z2, int i) {
+    private void startRecentsActivity(ActivityManager.RunningTaskInfo runningTaskInfo, boolean z, boolean z2, int i) {
         int i2;
         Pair<ActivityOptions, AppTransitionAnimationSpecsFuture> pair;
         ActivityOptions unknownTransitionActivityOptions;
@@ -651,9 +654,9 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         preloadIcon(i2);
         Rect windowRectOverride = getWindowRectOverride(i);
         updateHeaderBarLayout(taskStack, windowRectOverride);
-        TaskStackLayoutAlgorithm.VisibilityReport computeStackVisibilityReport = this.mDummyStackView.computeStackVisibilityReport();
-        launchState.launchedNumVisibleTasks = computeStackVisibilityReport.numVisibleTasks;
-        launchState.launchedNumVisibleThumbnails = computeStackVisibilityReport.numVisibleThumbnails;
+        TaskStackLayoutAlgorithm.VisibilityReport visibilityReportComputeStackVisibilityReport = this.mDummyStackView.computeStackVisibilityReport();
+        launchState.launchedNumVisibleTasks = visibilityReportComputeStackVisibilityReport.numVisibleTasks;
+        launchState.launchedNumVisibleThumbnails = visibilityReportComputeStackVisibilityReport.numVisibleThumbnails;
         if (!z2) {
             startRecentsActivity(ActivityOptions.makeCustomAnimation(this.mContext, -1, -1), null);
             return;
@@ -701,8 +704,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         this.mDummyStackView.setTasks(this.mEmptyTaskStack, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$startRecentsActivity$4(Intent intent, ActivityOptions activityOptions, AppTransitionAnimationSpecsFuture appTransitionAnimationSpecsFuture) {
+    static /* synthetic */ void lambda$startRecentsActivity$4(Intent intent, ActivityOptions activityOptions, AppTransitionAnimationSpecsFuture appTransitionAnimationSpecsFuture) {
         Recents.getSystemServices().startActivityAsUserAsync(intent, activityOptions);
         EventBus.getDefault().send(new RecentsActivityStartingEvent());
         if (appTransitionAnimationSpecsFuture != null) {

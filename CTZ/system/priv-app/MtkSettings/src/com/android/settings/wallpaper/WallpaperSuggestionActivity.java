@@ -8,15 +8,16 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import com.android.settings.R;
 import com.android.settings.core.SubSettingLauncher;
+
 /* loaded from: classes.dex */
 public class WallpaperSuggestionActivity extends Activity {
     @Override // android.app.Activity
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         PackageManager packageManager = getPackageManager();
-        Intent addFlags = new Intent().setClassName(getString(R.string.config_wallpaper_picker_package), getString(R.string.config_wallpaper_picker_class)).addFlags(33554432);
-        if (packageManager.resolveActivity(addFlags, 0) != null) {
-            startActivity(addFlags);
+        Intent intentAddFlags = new Intent().setClassName(getString(R.string.config_wallpaper_picker_package), getString(R.string.config_wallpaper_picker_class)).addFlags(33554432);
+        if (packageManager.resolveActivity(intentAddFlags, 0) != null) {
+            startActivity(intentAddFlags);
         } else {
             startFallbackSuggestion();
         }
@@ -32,6 +33,6 @@ public class WallpaperSuggestionActivity extends Activity {
     }
 
     private static boolean isWallpaperServiceEnabled(Context context) {
-        return context.getResources().getBoolean(17956968);
+        return context.getResources().getBoolean(android.R.^attr-private.floatingToolbarForegroundColor);
     }
 }

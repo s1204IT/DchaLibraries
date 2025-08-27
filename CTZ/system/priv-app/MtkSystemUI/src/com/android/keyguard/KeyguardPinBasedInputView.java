@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.keyguard.PasswordTextView;
+
 /* loaded from: classes.dex */
 public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView implements View.OnKeyListener, View.OnTouchListener {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
@@ -24,6 +25,7 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView 
     private View mButton9;
     private View mDeleteButton;
     private View mOkButton;
+
     @VisibleForTesting
     public PasswordTextView mPasswordEntry;
 
@@ -40,15 +42,13 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView 
         return this.mPasswordEntry.requestFocus(i, rect);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public void resetState() {
+    protected void resetState() {
         setPasswordEntryEnabled(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public void setPasswordEntryEnabled(boolean z) {
+    protected void setPasswordEntryEnabled(boolean z) {
         this.mPasswordEntry.setEnabled(z);
         this.mOkButton.setEnabled(z);
     }
@@ -64,36 +64,27 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView 
         if (KeyEvent.isConfirmKey(i)) {
             performClick(this.mOkButton);
             return true;
-        } else if (i == 67) {
+        }
+        if (i == 67) {
             performClick(this.mDeleteButton);
             return true;
-        } else if (i >= 7 && i <= 16) {
+        }
+        if (i >= 7 && i <= 16) {
             performNumberClick(i - 7);
             return true;
-        } else if (i >= 144 && i <= 153) {
+        }
+        if (i >= 144 && i <= 153) {
             performNumberClick(i - 144);
             return true;
-        } else {
-            return super.onKeyDown(i, keyEvent);
         }
+        return super.onKeyDown(i, keyEvent);
     }
 
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
     protected int getPromptReasonStringRes(int i) {
         switch (i) {
-            case 0:
-                return 0;
-            case 1:
-                return com.android.systemui.R.string.kg_prompt_reason_restart_pin;
-            case 2:
-                return com.android.systemui.R.string.kg_prompt_reason_timeout_pin;
-            case 3:
-                return com.android.systemui.R.string.kg_prompt_reason_device_admin;
-            case 4:
-                return com.android.systemui.R.string.kg_prompt_reason_user_request;
-            default:
-                return com.android.systemui.R.string.kg_prompt_reason_timeout_pin;
         }
+        return com.android.systemui.R.string.kg_prompt_reason_timeout_pin;
     }
 
     private void performClick(View view) {
@@ -104,54 +95,49 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView 
         switch (i) {
             case 0:
                 performClick(this.mButton0);
-                return;
+                break;
             case 1:
                 performClick(this.mButton1);
-                return;
+                break;
             case 2:
                 performClick(this.mButton2);
-                return;
+                break;
             case 3:
                 performClick(this.mButton3);
-                return;
+                break;
             case 4:
                 performClick(this.mButton4);
-                return;
+                break;
             case 5:
                 performClick(this.mButton5);
-                return;
+                break;
             case 6:
                 performClick(this.mButton6);
-                return;
+                break;
             case 7:
                 performClick(this.mButton7);
-                return;
+                break;
             case 8:
                 performClick(this.mButton8);
-                return;
+                break;
             case 9:
                 performClick(this.mButton9);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public void resetPasswordText(boolean z, boolean z2) {
+    protected void resetPasswordText(boolean z, boolean z2) {
         this.mPasswordEntry.reset(z, z2);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public String getPasswordText() {
+    protected String getPasswordText() {
         return this.mPasswordEntry.getText();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         this.mPasswordEntry = (PasswordTextView) findViewById(getPasswordTextViewId());
         this.mPasswordEntry.setOnKeyListener(this);
         this.mPasswordEntry.setSelected(true);
@@ -237,6 +223,6 @@ public abstract class KeyguardPinBasedInputView extends KeyguardAbsKeyInputView 
 
     @Override // com.android.keyguard.KeyguardSecurityView
     public CharSequence getTitle() {
-        return getContext().getString(17040060);
+        return getContext().getString(android.R.string.config_systemImageEditor);
     }
 }

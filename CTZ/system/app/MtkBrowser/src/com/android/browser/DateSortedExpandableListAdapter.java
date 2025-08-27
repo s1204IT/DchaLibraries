@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.webkit.DateSorter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class DateSortedExpandableListAdapter extends BaseExpandableListAdapter {
     private Context mContext;
@@ -67,8 +68,7 @@ public class DateSortedExpandableListAdapter extends BaseExpandableListAdapter {
         this.mItemMap = iArr;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Context getContext() {
+    Context getContext() {
         return this.mContext;
     }
 
@@ -80,32 +80,31 @@ public class DateSortedExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     private int groupPositionToBin(int i) {
-        if (this.mDataValid) {
-            if (i < 0 || i >= 5) {
-                throw new AssertionError("group position out of range");
-            }
-            if (5 == this.mNumberOfBins || this.mNumberOfBins == 0) {
-                return i;
-            }
-            int i2 = -1;
-            while (i > -1) {
-                i2++;
-                if (this.mItemMap[i2] != 0) {
-                    i--;
-                }
-            }
-            return i2;
+        if (!this.mDataValid) {
+            return -1;
         }
-        return -1;
+        if (i < 0 || i >= 5) {
+            throw new AssertionError("group position out of range");
+        }
+        if (5 == this.mNumberOfBins || this.mNumberOfBins == 0) {
+            return i;
+        }
+        int i2 = -1;
+        while (i > -1) {
+            i2++;
+            if (this.mItemMap[i2] != 0) {
+                i--;
+            }
+        }
+        return i2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean moveCursorToChildPosition(int i, int i2) {
+    boolean moveCursorToChildPosition(int i, int i2) {
         if (!this.mDataValid || this.mCursor.isClosed()) {
             return false;
         }
-        int groupPositionToBin = groupPositionToBin(i);
-        for (int i3 = 0; i3 < groupPositionToBin; i3++) {
+        int iGroupPositionToBin = groupPositionToBin(i);
+        for (int i3 = 0; i3 < iGroupPositionToBin; i3++) {
             i2 += this.mItemMap[i3];
         }
         return this.mCursor.moveToPosition(i2);

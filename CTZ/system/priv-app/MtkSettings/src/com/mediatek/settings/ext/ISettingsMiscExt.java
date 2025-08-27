@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.widget.ImageView;
+
 /* loaded from: classes.dex */
 public interface ISettingsMiscExt {
     void addCustomizedItem(Object obj, Boolean bool);

@@ -1,17 +1,19 @@
 package com.mediatek.keyguard.PowerOffAlarm.multiwaveview;
 
+import android.R;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+
 /* loaded from: classes.dex */
 public class TargetDrawable {
     private Drawable mDrawable;
     private int mNumDrawables;
     private final int mResourceId;
-    public static final int[] STATE_ACTIVE = {16842910, 16842914};
-    public static final int[] STATE_INACTIVE = {16842910, -16842914};
-    public static final int[] STATE_FOCUSED = {16842910, -16842914, 16842908};
+    public static final int[] STATE_ACTIVE = {R.attr.state_enabled, R.attr.state_active};
+    public static final int[] STATE_INACTIVE = {R.attr.state_enabled, -16842914};
+    public static final int[] STATE_FOCUSED = {R.attr.state_enabled, -16842914, R.attr.state_focused};
     private float mTranslationX = 0.0f;
     private float mTranslationY = 0.0f;
     private float mPositionX = 0.0f;
@@ -21,14 +23,14 @@ public class TargetDrawable {
     private float mAlpha = 1.0f;
     private boolean mEnabled = true;
 
-    public TargetDrawable(Resources resources, int i, int i2) {
+    public TargetDrawable(Resources resources, int i, int i2) throws Resources.NotFoundException {
         this.mNumDrawables = 1;
         this.mResourceId = i;
         setDrawable(resources, i);
         this.mNumDrawables = i2;
     }
 
-    public void setDrawable(Resources resources, int i) {
+    public void setDrawable(Resources resources, int i) throws Resources.NotFoundException {
         Drawable drawable;
         if (i != 0) {
             drawable = resources.getDrawable(i);
@@ -59,18 +61,18 @@ public class TargetDrawable {
             return;
         }
         StateListDrawable stateListDrawable = (StateListDrawable) this.mDrawable;
-        int i = 0;
-        int i2 = 0;
-        for (int i3 = 0; i3 < this.mNumDrawables; i3++) {
-            stateListDrawable.selectDrawable(i3);
+        int iMax = 0;
+        int iMax2 = 0;
+        for (int i = 0; i < this.mNumDrawables; i++) {
+            stateListDrawable.selectDrawable(i);
             Drawable current = stateListDrawable.getCurrent();
-            i = Math.max(i, current.getIntrinsicWidth());
-            i2 = Math.max(i2, current.getIntrinsicHeight());
+            iMax = Math.max(iMax, current.getIntrinsicWidth());
+            iMax2 = Math.max(iMax2, current.getIntrinsicHeight());
         }
-        stateListDrawable.setBounds(0, 0, i, i2);
-        for (int i4 = 0; i4 < this.mNumDrawables; i4++) {
-            stateListDrawable.selectDrawable(i4);
-            stateListDrawable.getCurrent().setBounds(0, 0, i, i2);
+        stateListDrawable.setBounds(0, 0, iMax, iMax2);
+        for (int i2 = 0; i2 < this.mNumDrawables; i2++) {
+            stateListDrawable.selectDrawable(i2);
+            stateListDrawable.getCurrent().setBounds(0, 0, iMax, iMax2);
         }
     }
 

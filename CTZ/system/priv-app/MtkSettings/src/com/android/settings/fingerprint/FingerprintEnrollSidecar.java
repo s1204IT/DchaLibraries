@@ -8,6 +8,7 @@ import android.os.Handler;
 import com.android.settings.Utils;
 import com.android.settings.core.InstrumentedFragment;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class FingerprintEnrollSidecar extends InstrumentedFragment {
     private boolean mDone;
@@ -30,7 +31,7 @@ public class FingerprintEnrollSidecar extends InstrumentedFragment {
             if (FingerprintEnrollSidecar.this.mListener != null) {
                 FingerprintEnrollSidecar.this.mListener.onEnrollmentProgressChange(FingerprintEnrollSidecar.this.mEnrollmentSteps, i);
             } else {
-                FingerprintEnrollSidecar.this.mQueuedEvents.add(new QueuedEnrollmentProgress(FingerprintEnrollSidecar.this.mEnrollmentSteps, i));
+                FingerprintEnrollSidecar.this.mQueuedEvents.add(FingerprintEnrollSidecar.this.new QueuedEnrollmentProgress(FingerprintEnrollSidecar.this.mEnrollmentSteps, i));
             }
         }
 
@@ -38,7 +39,7 @@ public class FingerprintEnrollSidecar extends InstrumentedFragment {
             if (FingerprintEnrollSidecar.this.mListener != null) {
                 FingerprintEnrollSidecar.this.mListener.onEnrollmentHelp(charSequence);
             } else {
-                FingerprintEnrollSidecar.this.mQueuedEvents.add(new QueuedEnrollmentHelp(i, charSequence));
+                FingerprintEnrollSidecar.this.mQueuedEvents.add(FingerprintEnrollSidecar.this.new QueuedEnrollmentHelp(i, charSequence));
             }
         }
 
@@ -46,7 +47,7 @@ public class FingerprintEnrollSidecar extends InstrumentedFragment {
             if (FingerprintEnrollSidecar.this.mListener != null) {
                 FingerprintEnrollSidecar.this.mListener.onEnrollmentError(i, charSequence);
             } else {
-                FingerprintEnrollSidecar.this.mQueuedEvents.add(new QueuedEnrollmentError(i, charSequence));
+                FingerprintEnrollSidecar.this.mQueuedEvents.add(FingerprintEnrollSidecar.this.new QueuedEnrollmentError(i, charSequence));
             }
             FingerprintEnrollSidecar.this.mEnrolling = false;
         }
@@ -59,7 +60,6 @@ public class FingerprintEnrollSidecar extends InstrumentedFragment {
     };
     private ArrayList<QueuedEvent> mQueuedEvents = new ArrayList<>();
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onEnrollmentError(int i, CharSequence charSequence);
 
@@ -68,16 +68,13 @@ public class FingerprintEnrollSidecar extends InstrumentedFragment {
         void onEnrollmentProgressChange(int i, int i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public abstract class QueuedEvent {
+    private abstract class QueuedEvent {
         public abstract void send(Listener listener);
 
         private QueuedEvent() {
         }
     }
 
-    /* loaded from: classes.dex */
     private class QueuedEnrollmentProgress extends QueuedEvent {
         int enrollmentSteps;
         int remaining;
@@ -94,7 +91,6 @@ public class FingerprintEnrollSidecar extends InstrumentedFragment {
         }
     }
 
-    /* loaded from: classes.dex */
     private class QueuedEnrollmentHelp extends QueuedEvent {
         int helpMsgId;
         CharSequence helpString;
@@ -111,7 +107,6 @@ public class FingerprintEnrollSidecar extends InstrumentedFragment {
         }
     }
 
-    /* loaded from: classes.dex */
     private class QueuedEnrollmentError extends QueuedEvent {
         int errMsgId;
         CharSequence errString;
@@ -169,16 +164,15 @@ public class FingerprintEnrollSidecar extends InstrumentedFragment {
         this.mEnrolling = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean cancelEnrollment() {
+    boolean cancelEnrollment() {
         this.mHandler.removeCallbacks(this.mTimeoutRunnable);
-        if (this.mEnrolling) {
-            this.mEnrollmentCancel.cancel();
-            this.mEnrolling = false;
-            this.mEnrollmentSteps = -1;
-            return true;
+        if (!this.mEnrolling) {
+            return false;
         }
-        return false;
+        this.mEnrollmentCancel.cancel();
+        this.mEnrolling = false;
+        this.mEnrollmentSteps = -1;
+        return true;
     }
 
     public void setListener(Listener listener) {

@@ -8,6 +8,7 @@ import com.android.quicksearchbox.Suggestion;
 import com.android.quicksearchbox.SuggestionCursor;
 import java.util.Collection;
 import java.util.Collections;
+
 /* loaded from: classes.dex */
 public class SuggestionViewInflater implements SuggestionViewFactory {
     private final Context mContext;

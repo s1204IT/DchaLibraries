@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.android.settings.R;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public abstract class ZenModeRuleSettingsBase extends ZenModeSettingsBase {
     protected static final boolean DEBUG = ZenModeSettingsBase.DEBUG;
@@ -86,23 +87,21 @@ public abstract class ZenModeRuleSettingsBase extends ZenModeSettingsBase {
             return;
         }
         String preferenceKey = abstractPreferenceController.getPreferenceKey();
-        Preference findPreference = preferenceScreen.findPreference(preferenceKey);
-        if (findPreference == null) {
+        Preference preferenceFindPreference = preferenceScreen.findPreference(preferenceKey);
+        if (preferenceFindPreference == null) {
             Log.d("ZenModeSettings", String.format("Cannot find preference with key %s in Controller %s", preferenceKey, abstractPreferenceController.getClass().getSimpleName()));
         } else {
-            abstractPreferenceController.updateState(findPreference);
+            abstractPreferenceController.updateState(preferenceFindPreference);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateRule(Uri uri) {
+    protected void updateRule(Uri uri) {
         this.mRule.setConditionId(uri);
         this.mBackend.setZenRule(this.mId, this.mRule);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.notification.ZenModeSettingsBase
-    public void onZenModeConfigChanged() {
+    protected void onZenModeConfigChanged() {
         super.onZenModeConfigChanged();
         if (!refreshRuleOrFinish()) {
             updateControls();
@@ -122,7 +121,7 @@ public abstract class ZenModeRuleSettingsBase extends ZenModeSettingsBase {
     }
 
     private void toastAndFinish() {
-        Toast.makeText(this.mContext, (int) R.string.zen_mode_rule_not_found_text, 0).show();
+        Toast.makeText(this.mContext, R.string.zen_mode_rule_not_found_text, 0).show();
         getActivity().finish();
     }
 

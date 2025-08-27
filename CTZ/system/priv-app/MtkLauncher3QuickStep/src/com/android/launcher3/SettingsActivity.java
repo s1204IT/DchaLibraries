@@ -20,7 +20,6 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import com.android.launcher3.SettingsActivity;
 import com.android.launcher3.graphics.IconShapeOverride;
 import com.android.launcher3.notification.NotificationListener;
 import com.android.launcher3.states.RotationHelper;
@@ -28,6 +27,7 @@ import com.android.launcher3.util.ListViewHighlighter;
 import com.android.launcher3.util.SettingsObserver;
 import com.android.launcher3.views.ButtonPreference;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class SettingsActivity extends Activity {
     private static final int DELAY_HIGHLIGHT_DURATION_MILLIS = 600;
@@ -42,7 +42,7 @@ public class SettingsActivity extends Activity {
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         if (bundle == null) {
-            getFragmentManager().beginTransaction().replace(16908290, getNewFragment()).commit();
+            getFragmentManager().beginTransaction().replace(android.R.id.content, getNewFragment()).commit();
         }
     }
 
@@ -50,7 +50,6 @@ public class SettingsActivity extends Activity {
         return new LauncherSettingsFragment();
     }
 
-    /* loaded from: classes.dex */
     public static class LauncherSettingsFragment extends PreferenceFragment {
         private IconBadgingObserver mIconBadgingObserver;
         private boolean mPreferenceHighlighted = false;
@@ -75,19 +74,19 @@ public class SettingsActivity extends Activity {
                 this.mIconBadgingObserver = new IconBadgingObserver(buttonPreference, contentResolver, getFragmentManager());
                 this.mIconBadgingObserver.register(SettingsActivity.NOTIFICATION_BADGING, SettingsActivity.NOTIFICATION_ENABLED_LISTENERS);
             }
-            Preference findPreference = findPreference(IconShapeOverride.KEY_PREFERENCE);
-            if (findPreference != null) {
+            Preference preferenceFindPreference = findPreference(IconShapeOverride.KEY_PREFERENCE);
+            if (preferenceFindPreference != null) {
                 if (IconShapeOverride.isSupported(getActivity())) {
-                    IconShapeOverride.handlePreferenceUi((ListPreference) findPreference);
+                    IconShapeOverride.handlePreferenceUi((ListPreference) preferenceFindPreference);
                 } else {
-                    getPreferenceScreen().removePreference(findPreference);
+                    getPreferenceScreen().removePreference(preferenceFindPreference);
                 }
             }
-            Preference findPreference2 = findPreference(RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY);
+            Preference preferenceFindPreference2 = findPreference(RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY);
             if (getResources().getBoolean(R.bool.allow_rotation)) {
-                getPreferenceScreen().removePreference(findPreference2);
+                getPreferenceScreen().removePreference(preferenceFindPreference2);
             } else {
-                findPreference2.setDefaultValue(Boolean.valueOf(RotationHelper.getAllowRotationDefaultValue()));
+                preferenceFindPreference2.setDefaultValue(Boolean.valueOf(RotationHelper.getAllowRotationDefaultValue()));
             }
         }
 
@@ -105,26 +104,25 @@ public class SettingsActivity extends Activity {
                 getView().postDelayed(new Runnable() { // from class: com.android.launcher3.-$$Lambda$SettingsActivity$LauncherSettingsFragment$ZPeeMXt8knkkS8xr0AY99mJgiqM
                     @Override // java.lang.Runnable
                     public final void run() {
-                        SettingsActivity.LauncherSettingsFragment.this.highlightPreference();
+                        this.f$0.highlightPreference();
                     }
                 }, 600L);
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void highlightPreference() {
-            Preference findPreference = findPreference(this.mPreferenceKey);
-            if (findPreference == null || getPreferenceScreen() == null) {
+        private void highlightPreference() {
+            Preference preferenceFindPreference = findPreference(this.mPreferenceKey);
+            if (preferenceFindPreference == null || getPreferenceScreen() == null) {
                 return;
             }
             PreferenceScreen preferenceScreen = getPreferenceScreen();
             if (Utilities.ATLEAST_OREO) {
-                preferenceScreen = selectPreferenceRecursive(findPreference, preferenceScreen);
+                preferenceScreen = selectPreferenceRecursive(preferenceFindPreference, preferenceScreen);
             }
             if (preferenceScreen == null) {
                 return;
             }
-            ListView listView = (ListView) (preferenceScreen.getDialog() != null ? preferenceScreen.getDialog().getWindow().getDecorView() : getView()).findViewById(16908298);
+            ListView listView = (ListView) (preferenceScreen.getDialog() != null ? preferenceScreen.getDialog().getWindow().getDecorView() : getView()).findViewById(android.R.id.list);
             if (listView == null || listView.getAdapter() == null) {
                 return;
             }
@@ -132,10 +130,11 @@ public class SettingsActivity extends Activity {
             int count = adapter.getCount() - 1;
             while (true) {
                 if (count >= 0) {
-                    if (findPreference == adapter.getItem(count)) {
+                    if (preferenceFindPreference == adapter.getItem(count)) {
                         break;
+                    } else {
+                        count--;
                     }
-                    count--;
                 } else {
                     count = -1;
                     break;
@@ -156,22 +155,21 @@ public class SettingsActivity extends Activity {
 
         @TargetApi(26)
         private PreferenceScreen selectPreferenceRecursive(Preference preference, PreferenceScreen preferenceScreen) {
-            if (preference.getParent() instanceof PreferenceScreen) {
-                PreferenceScreen preferenceScreen2 = (PreferenceScreen) preference.getParent();
-                if (Objects.equals(preferenceScreen2.getKey(), preferenceScreen.getKey())) {
-                    return preferenceScreen2;
-                }
-                if (selectPreferenceRecursive(preferenceScreen2, preferenceScreen) != null) {
-                    ((PreferenceScreen) preferenceScreen2.getParent()).onItemClick(null, null, preferenceScreen2.getOrder(), 0L);
-                    return preferenceScreen2;
-                }
+            if (!(preference.getParent() instanceof PreferenceScreen)) {
                 return null;
             }
-            return null;
+            PreferenceScreen preferenceScreen2 = (PreferenceScreen) preference.getParent();
+            if (Objects.equals(preferenceScreen2.getKey(), preferenceScreen.getKey())) {
+                return preferenceScreen2;
+            }
+            if (selectPreferenceRecursive(preferenceScreen2, preferenceScreen) == null) {
+                return null;
+            }
+            ((PreferenceScreen) preferenceScreen2.getParent()).onItemClick(null, null, preferenceScreen2.getOrder(), 0L);
+            return preferenceScreen2;
         }
     }
 
-    /* loaded from: classes.dex */
     private static class IconBadgingObserver extends SettingsObserver.Secure implements Preference.OnPreferenceClickListener {
         private final ButtonPreference mBadgingPref;
         private final FragmentManager mFragmentManager;
@@ -190,7 +188,7 @@ public class SettingsActivity extends Activity {
             boolean z2 = true;
             if (z) {
                 String string = Settings.Secure.getString(this.mResolver, SettingsActivity.NOTIFICATION_ENABLED_LISTENERS);
-                ComponentName componentName = new ComponentName(this.mBadgingPref.getContext(), NotificationListener.class);
+                ComponentName componentName = new ComponentName(this.mBadgingPref.getContext(), (Class<?>) NotificationListener.class);
                 if (string == null || (!string.contains(componentName.flattenToString()) && !string.contains(componentName.flattenToShortString()))) {
                     z2 = false;
                 }
@@ -210,12 +208,11 @@ public class SettingsActivity extends Activity {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class NotificationAccessConfirmation extends DialogFragment implements DialogInterface.OnClickListener {
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
             Activity activity = getActivity();
-            return new AlertDialog.Builder(activity).setTitle(R.string.title_missing_notification_access).setMessage(activity.getString(R.string.msg_missing_notification_access, activity.getString(R.string.derived_app_name))).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).setPositiveButton(R.string.title_change_settings, this).create();
+            return new AlertDialog.Builder(activity).setTitle(R.string.title_missing_notification_access).setMessage(activity.getString(R.string.msg_missing_notification_access, activity.getString(R.string.derived_app_name))).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).setPositiveButton(R.string.title_change_settings, this).create();
         }
 
         @Override // android.content.DialogInterface.OnClickListener
@@ -223,7 +220,7 @@ public class SettingsActivity extends Activity {
             if (BenesseExtension.getDchaState() != 0) {
                 return;
             }
-            ComponentName componentName = new ComponentName(getActivity(), NotificationListener.class);
+            ComponentName componentName = new ComponentName(getActivity(), (Class<?>) NotificationListener.class);
             Bundle bundle = new Bundle();
             bundle.putString(SettingsActivity.EXTRA_FRAGMENT_ARG_KEY, componentName.flattenToString());
             getActivity().startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS").addFlags(268435456).putExtra(SettingsActivity.EXTRA_FRAGMENT_ARG_KEY, componentName.flattenToString()).putExtra(SettingsActivity.EXTRA_SHOW_FRAGMENT_ARGS, bundle));

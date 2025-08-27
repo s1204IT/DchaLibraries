@@ -10,6 +10,7 @@ import android.text.format.DateFormat;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class AutoTimeFormatPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     public AutoTimeFormatPreferenceController(Context context, UpdateTimeAndDateCallback updateTimeAndDateCallback) {
@@ -36,16 +37,16 @@ public class AutoTimeFormatPreferenceController extends AbstractPreferenceContro
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        Boolean valueOf;
+        Boolean boolValueOf;
         if (!(preference instanceof TwoStatePreference) || !TextUtils.equals("auto_24hour", preference.getKey())) {
             return false;
         }
         if (((SwitchPreference) preference).isChecked()) {
-            valueOf = null;
+            boolValueOf = null;
         } else {
-            valueOf = Boolean.valueOf(is24HourLocale(this.mContext.getResources().getConfiguration().locale));
+            boolValueOf = Boolean.valueOf(is24HourLocale(this.mContext.getResources().getConfiguration().locale));
         }
-        TimeFormatPreferenceController.update24HourFormat(this.mContext, valueOf);
+        TimeFormatPreferenceController.update24HourFormat(this.mContext, boolValueOf);
         return true;
     }
 
@@ -53,8 +54,7 @@ public class AutoTimeFormatPreferenceController extends AbstractPreferenceContro
         return DateFormat.is24HourLocale(locale);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean isAutoTimeFormatSelection(Context context) {
+    static boolean isAutoTimeFormatSelection(Context context) {
         return Settings.System.getString(context.getContentResolver(), "time_12_24") == null;
     }
 }

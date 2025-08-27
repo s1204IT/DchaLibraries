@@ -8,6 +8,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class PictureColorModePreferenceController extends DeveloperOptionsPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private ColorModePreference mPreference;

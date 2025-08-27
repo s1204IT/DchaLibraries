@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ColorPreference extends ListDialogPreference {
     private ColorDrawable mPreviewColor;
@@ -27,9 +28,8 @@ public class ColorPreference extends ListDialogPreference {
         return Color.alpha(getValue()) == 0 || super.shouldDisableDependents();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.accessibility.ListDialogPreference
-    public CharSequence getTitleAt(int i) {
+    protected CharSequence getTitleAt(int i) {
         CharSequence titleAt = super.getTitleAt(i);
         if (titleAt != null) {
             return titleAt;
@@ -68,9 +68,9 @@ public class ColorPreference extends ListDialogPreference {
     @Override // com.android.settings.accessibility.ListDialogPreference
     protected void onBindListItem(View view, int i) {
         int valueAt = getValueAt(i);
-        int alpha = Color.alpha(valueAt);
+        int iAlpha = Color.alpha(valueAt);
         ImageView imageView = (ImageView) view.findViewById(R.id.color_swatch);
-        if (alpha < 255) {
+        if (iAlpha < 255) {
             imageView.setBackgroundResource(R.drawable.transparency_tileable);
         } else {
             imageView.setBackground(null);

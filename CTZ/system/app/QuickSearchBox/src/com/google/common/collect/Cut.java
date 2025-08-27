@@ -4,30 +4,24 @@ import com.google.common.base.Preconditions;
 import com.google.common.primitives.Booleans;
 import java.io.Serializable;
 import java.lang.Comparable;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public abstract class Cut<C extends Comparable> implements Serializable, Comparable<Cut<C>> {
+abstract class Cut<C extends Comparable> implements Serializable, Comparable<Cut<C>> {
     private static final long serialVersionUID = 0;
     final C endpoint;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract void describeAsLowerBound(StringBuilder sb);
+    abstract void describeAsLowerBound(StringBuilder sb);
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract void describeAsUpperBound(StringBuilder sb);
+    abstract void describeAsUpperBound(StringBuilder sb);
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract boolean isLessThan(C c);
-
-    @Override // java.lang.Comparable
-    public /* bridge */ /* synthetic */ int compareTo(Object obj) {
-        return compareTo((Cut) ((Cut) obj));
-    }
+    abstract boolean isLessThan(C c);
 
     Cut(C c) {
         this.endpoint = c;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
+    @Override // java.lang.Comparable
     public int compareTo(Cut<C> cut) {
         if (cut == belowAll()) {
             return 1;
@@ -35,36 +29,32 @@ public abstract class Cut<C extends Comparable> implements Serializable, Compara
         if (cut == aboveAll()) {
             return -1;
         }
-        int compareOrThrow = Range.compareOrThrow(this.endpoint, cut.endpoint);
-        if (compareOrThrow != 0) {
-            return compareOrThrow;
+        int iCompareOrThrow = Range.compareOrThrow(this.endpoint, cut.endpoint);
+        if (iCompareOrThrow != 0) {
+            return iCompareOrThrow;
         }
         return Booleans.compare(this instanceof AboveValue, cut instanceof AboveValue);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public C endpoint() {
+    C endpoint() {
         return this.endpoint;
     }
 
     public boolean equals(Object obj) {
         if (obj instanceof Cut) {
             try {
-                return compareTo((Cut) ((Cut) obj)) == 0;
+                return compareTo((Cut) obj) == 0;
             } catch (ClassCastException e) {
             }
         }
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <C extends Comparable> Cut<C> belowAll() {
+    static <C extends Comparable> Cut<C> belowAll() {
         return BelowAll.INSTANCE;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class BelowAll extends Cut<Comparable<?>> {
+    private static final class BelowAll extends Cut<Comparable<?>> {
         private static final BelowAll INSTANCE = new BelowAll();
         private static final long serialVersionUID = 0;
 
@@ -92,6 +82,7 @@ public abstract class Cut<C extends Comparable> implements Serializable, Compara
             throw new AssertionError();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // com.google.common.collect.Cut, java.lang.Comparable
         public int compareTo(Cut<Comparable<?>> cut) {
             return cut == this ? 0 : -1;
@@ -106,14 +97,11 @@ public abstract class Cut<C extends Comparable> implements Serializable, Compara
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <C extends Comparable> Cut<C> aboveAll() {
+    static <C extends Comparable> Cut<C> aboveAll() {
         return AboveAll.INSTANCE;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class AboveAll extends Cut<Comparable<?>> {
+    private static final class AboveAll extends Cut<Comparable<?>> {
         private static final AboveAll INSTANCE = new AboveAll();
         private static final long serialVersionUID = 0;
 
@@ -141,6 +129,7 @@ public abstract class Cut<C extends Comparable> implements Serializable, Compara
             sb.append("+∞)");
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // com.google.common.collect.Cut, java.lang.Comparable
         public int compareTo(Cut<Comparable<?>> cut) {
             return cut == this ? 0 : 1;
@@ -155,12 +144,10 @@ public abstract class Cut<C extends Comparable> implements Serializable, Compara
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <C extends Comparable> Cut<C> belowValue(C c) {
+    static <C extends Comparable> Cut<C> belowValue(C c) {
         return new BelowValue(c);
     }
 
-    /* loaded from: classes.dex */
     private static final class BelowValue<C extends Comparable> extends Cut<C> {
         private static final long serialVersionUID = 0;
 
@@ -194,14 +181,11 @@ public abstract class Cut<C extends Comparable> implements Serializable, Compara
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <C extends Comparable> Cut<C> aboveValue(C c) {
+    static <C extends Comparable> Cut<C> aboveValue(C c) {
         return new AboveValue(c);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class AboveValue<C extends Comparable> extends Cut<C> {
+    private static final class AboveValue<C extends Comparable> extends Cut<C> {
         private static final long serialVersionUID = 0;
 
         AboveValue(C c) {

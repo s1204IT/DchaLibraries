@@ -1,6 +1,7 @@
 package com.android.settings.accessibility;
 
 import android.os.Bundle;
+
 /* loaded from: classes.dex */
 public class ToggleScreenMagnificationPreferenceFragmentForSetupWizard extends ToggleScreenMagnificationPreferenceFragment {
     @Override // com.android.settings.accessibility.ToggleScreenMagnificationPreferenceFragment, com.android.settingslib.core.instrumentation.Instrumentable

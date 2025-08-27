@@ -9,6 +9,7 @@ import android.content.Context;
 import android.util.Log;
 import com.android.settingslib.R;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class HidDeviceProfile implements LocalBluetoothProfile {
     private final CachedBluetoothDeviceManager mDeviceManager;
@@ -17,15 +18,13 @@ public class HidDeviceProfile implements LocalBluetoothProfile {
     private final LocalBluetoothProfileManager mProfileManager;
     private BluetoothHidDevice mService;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public HidDeviceProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
+    HidDeviceProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;
         this.mProfileManager = localBluetoothProfileManager;
         localBluetoothAdapter.getProfileProxy(context, new HidDeviceServiceListener(), 19);
     }
 
-    /* loaded from: classes.dex */
     private final class HidDeviceServiceListener implements BluetoothProfile.ServiceListener {
         private HidDeviceServiceListener() {
         }
@@ -35,14 +34,14 @@ public class HidDeviceProfile implements LocalBluetoothProfile {
             Log.d("HidDeviceProfile", "Bluetooth service connected :-)");
             HidDeviceProfile.this.mService = (BluetoothHidDevice) bluetoothProfile;
             for (BluetoothDevice bluetoothDevice : HidDeviceProfile.this.mService.getConnectedDevices()) {
-                CachedBluetoothDevice findDevice = HidDeviceProfile.this.mDeviceManager.findDevice(bluetoothDevice);
-                if (findDevice == null) {
+                CachedBluetoothDevice cachedBluetoothDeviceFindDevice = HidDeviceProfile.this.mDeviceManager.findDevice(bluetoothDevice);
+                if (cachedBluetoothDeviceFindDevice == null) {
                     Log.w("HidDeviceProfile", "HidProfile found new device: " + bluetoothDevice);
-                    findDevice = HidDeviceProfile.this.mDeviceManager.addDevice(HidDeviceProfile.this.mLocalAdapter, HidDeviceProfile.this.mProfileManager, bluetoothDevice);
+                    cachedBluetoothDeviceFindDevice = HidDeviceProfile.this.mDeviceManager.addDevice(HidDeviceProfile.this.mLocalAdapter, HidDeviceProfile.this.mProfileManager, bluetoothDevice);
                 }
-                Log.d("HidDeviceProfile", "Connection status changed: " + findDevice);
-                findDevice.onProfileStateChanged(HidDeviceProfile.this, 2);
-                findDevice.refresh();
+                Log.d("HidDeviceProfile", "Connection status changed: " + cachedBluetoothDeviceFindDevice);
+                cachedBluetoothDeviceFindDevice.onProfileStateChanged(HidDeviceProfile.this, 2);
+                cachedBluetoothDeviceFindDevice.refresh();
             }
             HidDeviceProfile.this.mIsProfileReady = true;
         }

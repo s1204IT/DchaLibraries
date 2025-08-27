@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.UserHandle;
 import android.os.UserManager;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class NetworkResetRestrictionChecker {
     private final Context mContext;
@@ -22,8 +23,7 @@ public class NetworkResetRestrictionChecker {
         return RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_network_reset", UserHandle.myUserId()) != null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean hasUserRestriction() {
+    boolean hasUserRestriction() {
         return !this.mUserManager.isAdminUser() || hasUserBaseRestriction();
     }
 }

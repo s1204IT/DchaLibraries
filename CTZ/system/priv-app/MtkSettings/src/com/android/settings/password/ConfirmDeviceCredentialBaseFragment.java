@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.UserInfo;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
@@ -33,6 +34,7 @@ import com.android.settings.core.InstrumentedFragment;
 import com.android.settings.fingerprint.FingerprintUiHelper;
 import com.android.settings.password.ConfirmLockPassword;
 import com.android.settings.password.ConfirmLockPattern;
+
 /* loaded from: classes.dex */
 public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFragment implements FingerprintUiHelper.Callback {
     protected Button mCancelButton;
@@ -79,7 +81,7 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
     }
 
     @Override // android.app.Fragment
-    public void onViewCreated(View view, Bundle bundle) {
+    public void onViewCreated(View view, Bundle bundle) throws Resources.NotFoundException {
         super.onViewCreated(view, bundle);
         this.mCancelButton = (Button) view.findViewById(R.id.cancelButton);
         this.mFingerprintIcon = (ImageView) view.findViewById(R.id.fingerprintIcon);
@@ -114,8 +116,7 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
         return (this.mDevicePolicyManager.getKeyguardDisabledFeatures(null, this.mEffectiveUserId) & 32) != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isStrongAuthRequired() {
+    protected boolean isStrongAuthRequired() {
         return (!this.mFrp && this.mLockPatternUtils.isFingerprintAllowedForUser(this.mEffectiveUserId) && this.mUserManager.isUserUnlocked(this.mUserId)) ? false : true;
     }
 
@@ -129,8 +130,7 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
         refreshLockScreen();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void refreshLockScreen() {
+    protected void refreshLockScreen() {
         if (isFingerprintAllowed()) {
             this.mFingerprintHelper.startListening();
         } else if (this.mFingerprintHelper.isListening()) {
@@ -139,8 +139,7 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
         updateErrorMessage(this.mLockPatternUtils.getCurrentFailedPasswordAttempts(this.mEffectiveUserId));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setAccessibilityTitle(CharSequence charSequence) {
+    protected void setAccessibilityTitle(CharSequence charSequence) {
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             CharSequence charSequenceExtra = intent.getCharSequenceExtra("com.android.settings.ConfirmCredentials.title");
@@ -164,7 +163,7 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
     }
 
     @Override // com.android.settings.fingerprint.FingerprintUiHelper.Callback
-    public void onAuthenticated() {
+    public void onAuthenticated() throws IntentSender.SendIntentException {
         if (getActivity() != null && getActivity().isResumed()) {
             ((TrustManager) getActivity().getSystemService("trust")).setDeviceLockedForUser(this.mEffectiveUserId, false);
             authenticationSucceeded();
@@ -182,8 +181,7 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
     public void startEnterAnimation() {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void checkForPendingIntent() {
+    protected void checkForPendingIntent() throws IntentSender.SendIntentException {
         int intExtra = getActivity().getIntent().getIntExtra("android.intent.extra.TASK_ID", -1);
         if (intExtra != -1) {
             try {
@@ -201,10 +199,10 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
         }
     }
 
-    private void setWorkChallengeBackground(View view, int i) {
-        View findViewById = getActivity().findViewById(R.id.main_content);
-        if (findViewById != null) {
-            findViewById.setPadding(0, 0, 0, 0);
+    private void setWorkChallengeBackground(View view, int i) throws Resources.NotFoundException {
+        View viewFindViewById = getActivity().findViewById(R.id.main_content);
+        if (viewFindViewById != null) {
+            viewFindViewById.setPadding(0, 0, 0, 0);
         }
         view.setBackground(new ColorDrawable(this.mDevicePolicyManager.getOrganizationColorForUser(i)));
         ImageView imageView = (ImageView) view.findViewById(R.id.background_image);
@@ -218,22 +216,19 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void reportSuccessfulAttempt() {
+    protected void reportSuccessfulAttempt() {
         this.mLockPatternUtils.reportSuccessfulPasswordAttempt(this.mEffectiveUserId);
         if (this.mUserManager.isManagedProfile(this.mEffectiveUserId)) {
             this.mLockPatternUtils.userPresent(this.mEffectiveUserId);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void reportFailedAttempt() {
+    protected void reportFailedAttempt() {
         updateErrorMessage(this.mLockPatternUtils.getCurrentFailedPasswordAttempts(this.mEffectiveUserId) + 1);
         this.mLockPatternUtils.reportFailedPasswordAttempt(this.mEffectiveUserId);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateErrorMessage(int i) {
+    protected void updateErrorMessage(int i) {
         int maximumFailedPasswordsForWipe = this.mLockPatternUtils.getMaximumFailedPasswordsForWipe(this.mEffectiveUserId);
         if (maximumFailedPasswordsForWipe <= 0 || i <= 0) {
             return;
@@ -248,7 +243,7 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
         FragmentManager childFragmentManager = getChildFragmentManager();
         int userTypeForWipe = getUserTypeForWipe();
         if (i2 == 1) {
-            LastTryDialog.show(childFragmentManager, getActivity().getString(R.string.lock_last_attempt_before_wipe_warning_title), getLastTryErrorMessage(userTypeForWipe), 17039370, false);
+            LastTryDialog.show(childFragmentManager, getActivity().getString(R.string.lock_last_attempt_before_wipe_warning_title), getLastTryErrorMessage(userTypeForWipe), android.R.string.ok, false);
         } else {
             LastTryDialog.show(childFragmentManager, null, getWipeMessage(userTypeForWipe), R.string.lock_failed_attempts_now_wiping_dialog_dismiss, true);
         }
@@ -278,8 +273,7 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void showError(CharSequence charSequence, long j) {
+    protected void showError(CharSequence charSequence, long j) {
         this.mErrorTextView.setText(charSequence);
         onShowError();
         this.mHandler.removeCallbacks(this.mResetErrorRunnable);
@@ -288,12 +282,10 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void showError(int i, long j) {
+    protected void showError(int i, long j) {
         showError(getText(i), j);
     }
 
-    /* loaded from: classes.dex */
     public static class LastTryDialog extends DialogFragment {
         private static final String TAG = LastTryDialog.class.getSimpleName();
 
@@ -316,9 +308,9 @@ public abstract class ConfirmDeviceCredentialBaseFragment extends InstrumentedFr
 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            AlertDialog create = new AlertDialog.Builder(getActivity()).setTitle(getArguments().getString("title")).setMessage(getArguments().getInt("message")).setPositiveButton(getArguments().getInt("button"), (DialogInterface.OnClickListener) null).create();
-            create.setCanceledOnTouchOutside(false);
-            return create;
+            AlertDialog alertDialogCreate = new AlertDialog.Builder(getActivity()).setTitle(getArguments().getString("title")).setMessage(getArguments().getInt("message")).setPositiveButton(getArguments().getInt("button"), (DialogInterface.OnClickListener) null).create();
+            alertDialogCreate.setCanceledOnTouchOutside(false);
+            return alertDialogCreate;
         }
 
         @Override // android.app.DialogFragment, android.content.DialogInterface.OnDismissListener

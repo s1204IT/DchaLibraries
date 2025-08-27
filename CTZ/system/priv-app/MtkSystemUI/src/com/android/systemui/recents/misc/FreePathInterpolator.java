@@ -2,6 +2,7 @@ package com.android.systemui.recents.misc;
 
 import android.graphics.Path;
 import android.view.animation.BaseInterpolator;
+
 /* loaded from: classes.dex */
 public class FreePathInterpolator extends BaseInterpolator {
     private float mArcLength;
@@ -13,8 +14,8 @@ public class FreePathInterpolator extends BaseInterpolator {
     }
 
     private void initPath(Path path) {
-        float[] approximate = path.approximate(0.002f);
-        int length = approximate.length / 3;
+        float[] fArrApproximate = path.approximate(0.002f);
+        int length = fArrApproximate.length / 3;
         this.mX = new float[length];
         this.mY = new float[length];
         this.mArcLength = 0.0f;
@@ -25,11 +26,11 @@ public class FreePathInterpolator extends BaseInterpolator {
         int i2 = 0;
         while (i < length) {
             int i3 = i2 + 1;
-            float f4 = approximate[i2];
+            float f4 = fArrApproximate[i2];
             int i4 = i3 + 1;
-            float f5 = approximate[i3];
+            float f5 = fArrApproximate[i3];
             int i5 = i4 + 1;
-            float f6 = approximate[i4];
+            float f6 = fArrApproximate[i4];
             if (f4 == f && f5 != f2) {
                 throw new IllegalArgumentException("The Path cannot have discontinuity in the X axis.");
             }

@@ -10,6 +10,7 @@ import com.android.settings.core.InstrumentedPreferenceFragment;
 import com.android.settings.fuelgauge.batterytip.AppInfo;
 import com.android.settings.fuelgauge.batterytip.BatteryTipUtils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RestrictAppPreferenceController extends BasePreferenceController {
     static final String KEY_RESTRICT_APP = "restricted_app";

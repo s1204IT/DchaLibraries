@@ -7,6 +7,7 @@ import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.SecureSetting;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
+
 /* loaded from: classes.dex */
 public class ColorInversionTile extends QSTileImpl<QSTile.BooleanState> {
     private final QSTile.Icon mIcon;
@@ -23,14 +24,13 @@ public class ColorInversionTile extends QSTileImpl<QSTile.BooleanState> {
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleDestroy() {
+    protected void handleDestroy() {
         super.handleDestroy();
         this.mSetting.setListening(false);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -41,9 +41,8 @@ public class ColorInversionTile extends QSTileImpl<QSTile.BooleanState> {
         this.mSetting.setListening(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUserSwitch(int i) {
+    protected void handleUserSwitch(int i) {
         this.mSetting.setUserId(i);
         handleRefreshState(Integer.valueOf(this.mSetting.getValue()));
     }
@@ -63,9 +62,9 @@ public class ColorInversionTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mContext.getString(R.string.quick_settings_inversion_label);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         boolean z;
         if ((obj instanceof Integer ? ((Integer) obj).intValue() : this.mSetting.getValue()) == 0) {
             z = false;
@@ -86,7 +85,7 @@ public class ColorInversionTile extends QSTileImpl<QSTile.BooleanState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 116;
+        return com.android.systemui.plugins.R.styleable.AppCompatTheme_windowFixedWidthMajor;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl

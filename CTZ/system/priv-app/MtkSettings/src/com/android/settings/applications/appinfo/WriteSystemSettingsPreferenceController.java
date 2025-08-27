@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.UserManager;
 import com.android.settings.SettingsPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class WriteSystemSettingsPreferenceController extends AppInfoPreferenceControllerBase {
     public WriteSystemSettingsPreferenceController(Context context, String str) {

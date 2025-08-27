@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
 /* loaded from: classes.dex */
 public class DataController {
     private static final boolean DEBUG = Browser.DEBUG;
@@ -26,25 +27,23 @@ public class DataController {
     private Context mContext;
     private DataControllerHandler mDataHandler = new DataControllerHandler();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface OnQueryUrlIsBookmark {
+    interface OnQueryUrlIsBookmark {
         void onQueryUrlIsBookmark(String str, boolean z);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class CallbackContainer {
+    private static class CallbackContainer {
         Object[] args;
         Object replyTo;
 
         private CallbackContainer() {
         }
+
+        /* synthetic */ CallbackContainer(AnonymousClass1 anonymousClass1) {
+            this();
+        }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class DCMessage {
+    private static class DCMessage {
         Object obj;
         Object replyTo;
         int what;
@@ -55,8 +54,7 @@ public class DataController {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static DataController getInstance(Context context) {
+    static DataController getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new DataController(context);
         }
@@ -67,6 +65,9 @@ public class DataController {
         this.mContext = context.getApplicationContext();
         this.mDataHandler.start();
         this.mCbHandler = new Handler() { // from class: com.android.browser.DataController.1
+            AnonymousClass1() {
+            }
+
             @Override // android.os.Handler
             public void handleMessage(Message message) {
                 CallbackContainer callbackContainer = (CallbackContainer) message.obj;
@@ -75,6 +76,20 @@ public class DataController {
                 }
             }
         };
+    }
+
+    /* renamed from: com.android.browser.DataController$1 */
+    class AnonymousClass1 extends Handler {
+        AnonymousClass1() {
+        }
+
+        @Override // android.os.Handler
+        public void handleMessage(Message message) {
+            CallbackContainer callbackContainer = (CallbackContainer) message.obj;
+            if (message.what == 200) {
+                ((OnQueryUrlIsBookmark) callbackContainer.replyTo).onQueryUrlIsBookmark((String) callbackContainer.args[0], ((Boolean) callbackContainer.args[1]).booleanValue());
+            }
+        }
     }
 
     public void updateVisitedHistory(String str) {
@@ -105,9 +120,7 @@ public class DataController {
         this.mDataHandler.sendMessage(202, tab);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class DataControllerHandler extends Thread {
+    class DataControllerHandler extends Thread {
         private BlockingQueue<DCMessage> mMessageQueue;
 
         public DataControllerHandler() {
@@ -116,7 +129,7 @@ public class DataController {
         }
 
         @Override // java.lang.Thread, java.lang.Runnable
-        public void run() {
+        public void run() throws Throwable {
             setPriority(1);
             while (true) {
                 try {
@@ -137,36 +150,34 @@ public class DataController {
             this.mMessageQueue.add(dCMessage);
         }
 
-        private void handleMessage(DCMessage dCMessage) {
+        private void handleMessage(DCMessage dCMessage) throws Throwable {
             int i = dCMessage.what;
             switch (i) {
                 case 100:
                     doUpdateVisitedHistory((String) dCMessage.obj);
-                    return;
+                    break;
                 case 101:
                     String[] strArr = (String[]) dCMessage.obj;
                     doUpdateHistoryTitle(strArr[0], strArr[1]);
-                    return;
+                    break;
                 default:
                     switch (i) {
                         case 200:
                             doQueryBookmarkStatus((String) dCMessage.obj, dCMessage.replyTo);
-                            return;
+                            break;
                         case 201:
                             doLoadThumbnail((Tab) dCMessage.obj);
-                            return;
+                            break;
                         case 202:
                             doSaveThumbnail((Tab) dCMessage.obj);
-                            return;
+                            break;
                         case 203:
                             try {
                                 DataController.this.mContext.getContentResolver().delete(ContentUris.withAppendedId(BrowserProvider2.Thumbnails.CONTENT_URI, ((Long) dCMessage.obj).longValue()), null, null);
-                                return;
+                                break;
                             } catch (Throwable th) {
                                 return;
                             }
-                        default:
-                            return;
                     }
             }
         }
@@ -199,33 +210,34 @@ public class DataController {
             }
         }
 
-        private void doLoadThumbnail(Tab tab) {
+        private void doLoadThumbnail(Tab tab) throws Throwable {
+            Cursor cursorQuery;
             byte[] blob;
             Cursor cursor = null;
             try {
-                Cursor query = DataController.this.mContext.getContentResolver().query(ContentUris.withAppendedId(BrowserProvider2.Thumbnails.CONTENT_URI, tab.getId()), new String[]{"_id", "thumbnail"}, null, null, null);
-                try {
-                    if (query.moveToFirst() && !query.isNull(1) && (blob = query.getBlob(1)) != null && blob.length > 0) {
-                        tab.updateCaptureFromBlob(blob);
-                    }
-                    if (query != null) {
-                        query.close();
-                    }
-                } catch (Throwable th) {
-                    th = th;
-                    cursor = query;
-                    if (cursor != null) {
-                        cursor.close();
-                    }
-                    throw th;
+                cursorQuery = DataController.this.mContext.getContentResolver().query(ContentUris.withAppendedId(BrowserProvider2.Thumbnails.CONTENT_URI, tab.getId()), new String[]{"_id", "thumbnail"}, null, null, null);
+            } catch (Throwable th) {
+                th = th;
+            }
+            try {
+                if (cursorQuery.moveToFirst() && !cursorQuery.isNull(1) && (blob = cursorQuery.getBlob(1)) != null && blob.length > 0) {
+                    tab.updateCaptureFromBlob(blob);
+                }
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
             } catch (Throwable th2) {
                 th = th2;
+                cursor = cursorQuery;
+                if (cursor != null) {
+                    cursor.close();
+                }
+                throw th;
             }
         }
 
-        private String findHistoryUrlInBookmark(String str) {
-            String str2;
+        private String findHistoryUrlInBookmark(String str) throws Throwable {
+            String strSubstring;
             Cursor cursor = null;
             try {
                 if (DataController.DEBUG) {
@@ -237,16 +249,16 @@ public class DataController {
                 String[] strArr2 = new String[2];
                 strArr2[0] = str;
                 if (str.endsWith("/")) {
-                    str2 = str.substring(0, str.lastIndexOf("/"));
+                    strSubstring = str.substring(0, str.lastIndexOf("/"));
                 } else {
-                    str2 = str + "/";
+                    strSubstring = str + "/";
                 }
-                strArr2[1] = str2;
-                Cursor query = contentResolver.query(bookmarksUri, strArr, "url == ? OR url == ?", strArr2, null);
-                if (query != null) {
+                strArr2[1] = strSubstring;
+                Cursor cursorQuery = contentResolver.query(bookmarksUri, strArr, "url == ? OR url == ?", strArr2, null);
+                if (cursorQuery != null) {
                     try {
-                        if (query.moveToNext()) {
-                            str = query.getString(0);
+                        if (cursorQuery.moveToNext()) {
+                            str = cursorQuery.getString(0);
                             if (DataController.DEBUG) {
                                 Log.d("DataController", "Url in bookmark table is: " + str);
                                 Log.d("DataController", "save url to history table is: " + str);
@@ -254,15 +266,15 @@ public class DataController {
                         }
                     } catch (Throwable th) {
                         th = th;
-                        cursor = query;
+                        cursor = cursorQuery;
                         if (cursor != null) {
                             cursor.close();
                         }
                         throw th;
                     }
                 }
-                if (query != null) {
-                    query.close();
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
                 return str;
             } catch (Throwable th2) {
@@ -270,11 +282,11 @@ public class DataController {
             }
         }
 
-        private void doUpdateVisitedHistory(String str) {
+        private void doUpdateVisitedHistory(String str) throws Throwable {
             Throwable th;
-            Cursor cursor;
-            String str2;
-            String findHistoryUrlInBookmark = findHistoryUrlInBookmark(str);
+            Cursor cursorQuery;
+            String strSubstring;
+            String strFindHistoryUrlInBookmark = findHistoryUrlInBookmark(str);
             ContentResolver contentResolver = DataController.this.mContext.getContentResolver();
             try {
                 Uri uri = BrowserContract.History.CONTENT_URI;
@@ -282,111 +294,112 @@ public class DataController {
                 String[] strArr2 = new String[2];
                 strArr2[0] = str;
                 if (str.endsWith("/")) {
-                    str2 = str.substring(0, str.lastIndexOf("/"));
+                    strSubstring = str.substring(0, str.lastIndexOf("/"));
                 } else {
-                    str2 = str + "/";
+                    strSubstring = str + "/";
                 }
-                strArr2[1] = str2;
-                cursor = contentResolver.query(uri, strArr, "url==? OR url==?", strArr2, null);
-                try {
-                    if (cursor.moveToFirst()) {
-                        if (DataController.DEBUG) {
-                            Log.d("DataController", "update history to " + findHistoryUrlInBookmark);
-                        }
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put("url", findHistoryUrlInBookmark);
-                        contentValues.put("visits", Integer.valueOf(cursor.getInt(1) + 1));
-                        contentValues.put("date", Long.valueOf(System.currentTimeMillis()));
-                        contentResolver.update(ContentUris.withAppendedId(BrowserContract.History.CONTENT_URI, cursor.getLong(0)), contentValues, null, null);
-                    } else {
-                        if (DataController.DEBUG) {
-                            Log.d("DataController", "insert new history to " + findHistoryUrlInBookmark);
-                        }
-                        com.android.browser.provider.Browser.truncateHistory(contentResolver);
-                        ContentValues contentValues2 = new ContentValues();
-                        contentValues2.put("url", findHistoryUrlInBookmark);
-                        contentValues2.put("visits", (Integer) 1);
-                        contentValues2.put("date", Long.valueOf(System.currentTimeMillis()));
-                        contentValues2.put("title", findHistoryUrlInBookmark);
-                        contentValues2.put("created", (Integer) 0);
-                        contentValues2.put("user_entered", (Integer) 0);
-                        contentResolver.insert(BrowserContract.History.CONTENT_URI, contentValues2);
+                strArr2[1] = strSubstring;
+                cursorQuery = contentResolver.query(uri, strArr, "url==? OR url==?", strArr2, null);
+            } catch (Throwable th2) {
+                th = th2;
+                cursorQuery = null;
+            }
+            try {
+                if (cursorQuery.moveToFirst()) {
+                    if (DataController.DEBUG) {
+                        Log.d("DataController", "update history to " + strFindHistoryUrlInBookmark);
                     }
-                    if (cursor != null) {
-                        cursor.close();
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("url", strFindHistoryUrlInBookmark);
+                    contentValues.put("visits", Integer.valueOf(cursorQuery.getInt(1) + 1));
+                    contentValues.put("date", Long.valueOf(System.currentTimeMillis()));
+                    contentResolver.update(ContentUris.withAppendedId(BrowserContract.History.CONTENT_URI, cursorQuery.getLong(0)), contentValues, null, null);
+                } else {
+                    if (DataController.DEBUG) {
+                        Log.d("DataController", "insert new history to " + strFindHistoryUrlInBookmark);
                     }
-                } catch (Throwable th2) {
-                    th = th2;
-                    if (cursor != null) {
-                        cursor.close();
-                    }
-                    throw th;
+                    com.android.browser.provider.Browser.truncateHistory(contentResolver);
+                    ContentValues contentValues2 = new ContentValues();
+                    contentValues2.put("url", strFindHistoryUrlInBookmark);
+                    contentValues2.put("visits", (Integer) 1);
+                    contentValues2.put("date", Long.valueOf(System.currentTimeMillis()));
+                    contentValues2.put("title", strFindHistoryUrlInBookmark);
+                    contentValues2.put("created", (Integer) 0);
+                    contentValues2.put("user_entered", (Integer) 0);
+                    contentResolver.insert(BrowserContract.History.CONTENT_URI, contentValues2);
+                }
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
             } catch (Throwable th3) {
                 th = th3;
-                cursor = null;
+                if (cursorQuery != null) {
+                    cursorQuery.close();
+                }
+                throw th;
             }
         }
 
-        /* JADX WARN: Removed duplicated region for block: B:22:0x007e  */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [345=4] */
+        /* JADX WARN: Removed duplicated region for block: B:51:0x007e  */
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        private void doQueryBookmarkStatus(String str, Object obj) {
-            Cursor cursor;
-            boolean z;
-            Cursor cursor2 = null;
+        private void doQueryBookmarkStatus(String str, Object obj) throws Throwable {
+            Cursor cursorQuery;
+            boolean zMoveToFirst;
+            Cursor cursor = null;
             try {
-                cursor = DataController.this.mContext.getContentResolver().query(BookmarkUtils.getBookmarksUri(DataController.this.mContext), new String[]{"url"}, "url == ?", new String[]{str}, null);
+                cursorQuery = DataController.this.mContext.getContentResolver().query(BookmarkUtils.getBookmarksUri(DataController.this.mContext), new String[]{"url"}, "url == ?", new String[]{str}, null);
+            } catch (SQLiteException e) {
+                e = e;
+                cursorQuery = null;
+            } catch (Throwable th) {
+                th = th;
+                if (cursor != null) {
+                }
+                throw th;
+            }
+            try {
                 try {
-                    try {
-                        z = cursor.moveToFirst();
-                        if (cursor != null) {
-                            cursor.close();
-                        }
-                    } catch (SQLiteException e) {
-                        e = e;
-                        Log.e("DataController", "Error checking for bookmark: " + e);
-                        if (cursor != null) {
-                            cursor.close();
-                        }
-                        z = false;
-                        CallbackContainer callbackContainer = new CallbackContainer();
-                        callbackContainer.replyTo = obj;
-                        callbackContainer.args = new Object[]{str, Boolean.valueOf(z)};
-                        DataController.this.mCbHandler.obtainMessage(200, callbackContainer).sendToTarget();
+                    zMoveToFirst = cursorQuery.moveToFirst();
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
                     }
-                } catch (Throwable th) {
-                    th = th;
-                    cursor2 = cursor;
-                    if (cursor2 != null) {
-                        cursor2.close();
+                } catch (Throwable th2) {
+                    th = th2;
+                    cursor = cursorQuery;
+                    if (cursor != null) {
+                        cursor.close();
                     }
                     throw th;
                 }
             } catch (SQLiteException e2) {
                 e = e2;
-                cursor = null;
-            } catch (Throwable th2) {
-                th = th2;
-                if (cursor2 != null) {
+                Log.e("DataController", "Error checking for bookmark: " + e);
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
-                throw th;
+                zMoveToFirst = false;
+                CallbackContainer callbackContainer = new CallbackContainer();
+                callbackContainer.replyTo = obj;
+                callbackContainer.args = new Object[]{str, Boolean.valueOf(zMoveToFirst)};
+                DataController.this.mCbHandler.obtainMessage(200, callbackContainer).sendToTarget();
             }
             CallbackContainer callbackContainer2 = new CallbackContainer();
             callbackContainer2.replyTo = obj;
-            callbackContainer2.args = new Object[]{str, Boolean.valueOf(z)};
+            callbackContainer2.args = new Object[]{str, Boolean.valueOf(zMoveToFirst)};
             DataController.this.mCbHandler.obtainMessage(200, callbackContainer2).sendToTarget();
         }
 
-        private void doUpdateHistoryTitle(String str, String str2) {
-            String findHistoryUrlInBookmark = findHistoryUrlInBookmark(str);
+        private void doUpdateHistoryTitle(String str, String str2) throws Throwable {
+            String strFindHistoryUrlInBookmark = findHistoryUrlInBookmark(str);
             ContentResolver contentResolver = DataController.this.mContext.getContentResolver();
             ContentValues contentValues = new ContentValues();
             contentValues.put("title", str2);
-            contentValues.put("url", findHistoryUrlInBookmark);
-            if (contentResolver.update(BrowserContract.History.CONTENT_URI, contentValues, "url==?", new String[]{str}) <= 0 && findHistoryUrlInBookmark.endsWith("/")) {
-                contentResolver.update(BrowserContract.History.CONTENT_URI, contentValues, "url==?", new String[]{findHistoryUrlInBookmark.substring(0, findHistoryUrlInBookmark.lastIndexOf("/"))});
+            contentValues.put("url", strFindHistoryUrlInBookmark);
+            if (contentResolver.update(BrowserContract.History.CONTENT_URI, contentValues, "url==?", new String[]{str}) <= 0 && strFindHistoryUrlInBookmark.endsWith("/")) {
+                contentResolver.update(BrowserContract.History.CONTENT_URI, contentValues, "url==?", new String[]{strFindHistoryUrlInBookmark.substring(0, strFindHistoryUrlInBookmark.lastIndexOf("/"))});
             }
         }
     }

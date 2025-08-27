@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NotificationStation extends SettingsPreferenceFragment {
     private static final String TAG = NotificationStation.class.getSimpleName();
@@ -89,15 +90,14 @@ public class NotificationStation extends SettingsPreferenceFragment {
         }
     };
     private final Comparator<HistoricalNotificationInfo> mNotificationSorter = new Comparator<HistoricalNotificationInfo>() { // from class: com.android.settings.notification.NotificationStation.3
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(HistoricalNotificationInfo historicalNotificationInfo, HistoricalNotificationInfo historicalNotificationInfo2) {
             return Long.compare(historicalNotificationInfo2.timestamp, historicalNotificationInfo.timestamp);
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class HistoricalNotificationInfo {
+    private static class HistoricalNotificationInfo {
         public boolean active;
         public String channel;
         public CharSequence extra;
@@ -115,8 +115,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void scheduleRefreshList() {
+    private void scheduleRefreshList() {
         if (this.mHandler != null) {
             this.mHandler.removeCallbacks(this.mRefreshListRunnable);
             this.mHandler.postDelayed(this.mRefreshListRunnable, 100L);
@@ -157,7 +156,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onActivityCreated(Bundle bundle) {
+    public void onActivityCreated(Bundle bundle) throws Resources.NotFoundException {
         logd("onActivityCreated(%s)", bundle);
         super.onActivityCreated(bundle);
         Utils.forceCustomPadding(getListView(), false);
@@ -175,25 +174,23 @@ public class NotificationStation extends SettingsPreferenceFragment {
         refreshList();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshList() {
-        List<HistoricalNotificationInfo> loadNotifications = loadNotifications();
-        if (loadNotifications != null) {
-            int size = loadNotifications.size();
+    private void refreshList() {
+        List<HistoricalNotificationInfo> listLoadNotifications = loadNotifications();
+        if (listLoadNotifications != null) {
+            int size = listLoadNotifications.size();
             logd("adding %d infos", Integer.valueOf(size));
-            Collections.sort(loadNotifications, this.mNotificationSorter);
+            Collections.sort(listLoadNotifications, this.mNotificationSorter);
             if (getPreferenceScreen() == null) {
                 setPreferenceScreen(getPreferenceManager().createPreferenceScreen(getContext()));
             }
             getPreferenceScreen().removeAll();
             for (int i = 0; i < size; i++) {
-                getPreferenceScreen().addPreference(new HistoricalNotificationPreference(getPrefContext(), loadNotifications.get(i)));
+                getPreferenceScreen().addPreference(new HistoricalNotificationPreference(getPrefContext(), listLoadNotifications.get(i)));
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void logd(String str, Object... objArr) {
+    private static void logd(String str, Object... objArr) {
         String str2 = TAG;
         if (objArr != null && objArr.length != 0) {
             str = String.format(str, objArr);
@@ -393,16 +390,16 @@ public class NotificationStation extends SettingsPreferenceFragment {
         if (notification.extras != null && notification.extras.size() > 0) {
             spannableStringBuilder.append((CharSequence) "\n").append(bold(getString(R.string.notification_log_details_extras)));
             for (String str : notification.extras.keySet()) {
-                String valueOf = String.valueOf(notification.extras.get(str));
-                if (valueOf.length() > 100) {
-                    valueOf = valueOf.substring(0, 100) + "...";
+                String strValueOf = String.valueOf(notification.extras.get(str));
+                if (strValueOf.length() > 100) {
+                    strValueOf = strValueOf.substring(0, 100) + "...";
                 }
-                spannableStringBuilder.append((CharSequence) "\n  ").append((CharSequence) str).append((CharSequence) string).append((CharSequence) valueOf);
+                spannableStringBuilder.append((CharSequence) "\n  ").append((CharSequence) str).append((CharSequence) string).append((CharSequence) strValueOf);
             }
         }
-        Parcel obtain = Parcel.obtain();
-        notification.writeToParcel(obtain, 0);
-        spannableStringBuilder.append((CharSequence) "\n").append(bold(getString(R.string.notification_log_details_parcel))).append((CharSequence) string).append((CharSequence) String.valueOf(obtain.dataPosition())).append(' ').append(bold(getString(R.string.notification_log_details_ashmem))).append((CharSequence) string).append((CharSequence) String.valueOf(obtain.getBlobAshmemSize())).append((CharSequence) "\n");
+        Parcel parcelObtain = Parcel.obtain();
+        notification.writeToParcel(parcelObtain, 0);
+        spannableStringBuilder.append((CharSequence) "\n").append(bold(getString(R.string.notification_log_details_parcel))).append((CharSequence) string).append((CharSequence) String.valueOf(parcelObtain.dataPosition())).append(' ').append(bold(getString(R.string.notification_log_details_ashmem))).append((CharSequence) string).append((CharSequence) String.valueOf(parcelObtain.getBlobAshmemSize())).append((CharSequence) "\n");
         return spannableStringBuilder;
     }
 
@@ -414,8 +411,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
             try {
                 return this.mPm.getResourcesForApplicationAsUser(str, i);
             } catch (PackageManager.NameNotFoundException e) {
-                String str2 = TAG;
-                Log.e(str2, "Icon package not found: " + str, e);
+                Log.e(TAG, "Icon package not found: " + str, e);
                 return null;
             }
         }
@@ -431,7 +427,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
         }
     }
 
-    private CharSequence loadPackageName(String str) {
+    private CharSequence loadPackageName(String str) throws PackageManager.NameNotFoundException {
         try {
             ApplicationInfo applicationInfo = this.mPm.getApplicationInfo(str, 4194304);
             if (applicationInfo != null) {
@@ -462,9 +458,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class HistoricalNotificationPreference extends Preference {
+    private static class HistoricalNotificationPreference extends Preference {
         private static long sLastExpandedTimestamp;
         private final HistoricalNotificationInfo mInfo;
 

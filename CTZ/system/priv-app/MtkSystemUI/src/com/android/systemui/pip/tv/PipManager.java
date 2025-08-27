@@ -33,6 +33,7 @@ import com.android.systemui.shared.system.ActivityManagerWrapper;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PipManager implements BasePipManager {
     static final boolean DEBUG = Log.isLoggable("PipManager", 3);
@@ -113,7 +114,8 @@ public class PipManager implements BasePipManager {
                 while (true) {
                     if (length < 0) {
                         break;
-                    } else if (pinnedStackInfo.taskIds[length] != PipManager.this.mPipTaskId) {
+                    }
+                    if (pinnedStackInfo.taskIds[length] != PipManager.this.mPipTaskId) {
                         length--;
                     } else {
                         z = true;
@@ -179,7 +181,6 @@ public class PipManager implements BasePipManager {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onMoveToFullscreen();
 
@@ -194,14 +195,11 @@ public class PipManager implements BasePipManager {
         void onShowPipMenu();
     }
 
-    /* loaded from: classes.dex */
     public interface MediaListener {
         void onMediaControllerChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PinnedStackListener extends IPinnedStackListener.Stub {
+    private class PinnedStackListener extends IPinnedStackListener.Stub {
         private PinnedStackListener() {
         }
 
@@ -241,7 +239,7 @@ public class PipManager implements BasePipManager {
             PipManager.this.mHandler.post(new Runnable() { // from class: com.android.systemui.pip.tv.-$$Lambda$PipManager$PinnedStackListener$KRSqnvGtvsFkEwCqcSExZLuYv1k
                 @Override // java.lang.Runnable
                 public final void run() {
-                    PipManager.PinnedStackListener.lambda$onActionsChanged$1(PipManager.PinnedStackListener.this);
+                    PipManager.PinnedStackListener.lambda$onActionsChanged$1(this.f$0);
                 }
             });
         }
@@ -257,7 +255,7 @@ public class PipManager implements BasePipManager {
     }
 
     @Override // com.android.systemui.pip.BasePipManager
-    public void initialize(Context context) {
+    public void initialize(Context context) throws Resources.NotFoundException {
         if (this.mInitialized) {
             return;
         }
@@ -274,21 +272,21 @@ public class PipManager implements BasePipManager {
             sSettingsPackageAndClassNamePairList = new ArrayList();
             if (stringArray != null) {
                 for (int i = 0; i < stringArray.length; i++) {
-                    String[] split = stringArray[i].split("/");
-                    Pair<String, String> pair = null;
-                    switch (split.length) {
+                    String[] strArrSplit = stringArray[i].split("/");
+                    Pair<String, String> pairCreate = null;
+                    switch (strArrSplit.length) {
                         case 1:
-                            pair = Pair.create(split[0], null);
+                            pairCreate = Pair.create(strArrSplit[0], null);
                             break;
                         case 2:
-                            if (split[1] != null && split[1].startsWith(".")) {
-                                pair = Pair.create(split[0], split[0] + split[1]);
+                            if (strArrSplit[1] != null && strArrSplit[1].startsWith(".")) {
+                                pairCreate = Pair.create(strArrSplit[0], strArrSplit[0] + strArrSplit[1]);
                                 break;
                             }
                             break;
                     }
-                    if (pair != null) {
-                        sSettingsPackageAndClassNamePairList.add(pair);
+                    if (pairCreate != null) {
+                        sSettingsPackageAndClassNamePairList.add(pairCreate);
                     } else {
                         Log.w("PipManager", "Ignoring malformed settings name " + stringArray[i]);
                     }
@@ -336,8 +334,7 @@ public class PipManager implements BasePipManager {
         closePipInternal(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void closePipInternal(boolean z) {
+    private void closePipInternal(boolean z) {
         this.mState = 0;
         this.mPipTaskId = -1;
         this.mPipMediaController = null;
@@ -360,8 +357,7 @@ public class PipManager implements BasePipManager {
         updatePipVisibility(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void movePipToFullscreen() {
+    void movePipToFullscreen() {
         this.mPipTaskId = -1;
         for (int size = this.mListeners.size() - 1; size >= 0; size--) {
             this.mListeners.get(size).onMoveToFullscreen();
@@ -388,8 +384,7 @@ public class PipManager implements BasePipManager {
         this.mHandler.post(this.mResizePinnedStackRunnable);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void resizePinnedStack(int i) {
+    void resizePinnedStack(int i) {
         boolean z;
         if (DEBUG) {
             Log.d("PipManager", "resizePinnedStack() state=" + i, new Exception());
@@ -435,16 +430,14 @@ public class PipManager implements BasePipManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int getState() {
+    private int getState() {
         if (this.mSuspendPipResizingReason != 0) {
             return this.mResumeResizePinnedStackRunnableState;
         }
         return this.mState;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showPipMenu() {
+    private void showPipMenu() {
         if (DEBUG) {
             Log.d("PipManager", "showPipMenu()");
         }
@@ -452,7 +445,7 @@ public class PipManager implements BasePipManager {
         for (int size = this.mListeners.size() - 1; size >= 0; size--) {
             this.mListeners.get(size).onShowPipMenu();
         }
-        Intent intent = new Intent(this.mContext, PipMenuActivity.class);
+        Intent intent = new Intent(this.mContext, (Class<?>) PipMenuActivity.class);
         intent.setFlags(268435456);
         intent.putExtra("custom_actions", (Parcelable) this.mCustomActions);
         this.mContext.startActivity(intent);
@@ -478,8 +471,7 @@ public class PipManager implements BasePipManager {
         return this.mState != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public ActivityManager.StackInfo getPinnedStackInfo() {
+    private ActivityManager.StackInfo getPinnedStackInfo() {
         try {
             return this.mActivityManager.getStackInfo(2, 0);
         } catch (RemoteException e) {
@@ -488,9 +480,7 @@ public class PipManager implements BasePipManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleMediaResourceGranted(String[] strArr) {
-        String[] strArr2;
+    private void handleMediaResourceGranted(String[] strArr) {
         if (getState() == 0) {
             this.mLastPackagesResourceGranted = strArr;
             return;
@@ -504,12 +494,12 @@ public class PipManager implements BasePipManager {
                 while (true) {
                     if (i >= length) {
                         break;
-                    } else if (TextUtils.equals(strArr[i], str)) {
+                    }
+                    if (TextUtils.equals(strArr[i], str)) {
                         z2 = true;
                         break;
-                    } else {
-                        i++;
                     }
+                    i++;
                 }
             }
             z = z2;
@@ -520,8 +510,7 @@ public class PipManager implements BasePipManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateMediaController(List<MediaController> list) {
+    private void updateMediaController(List<MediaController> list) {
         MediaController mediaController;
         if (list != null && getState() != 0 && this.mPipComponentName != null) {
             for (int size = list.size() - 1; size >= 0; size--) {
@@ -530,8 +519,10 @@ public class PipManager implements BasePipManager {
                     break;
                 }
             }
+            mediaController = null;
+        } else {
+            mediaController = null;
         }
-        mediaController = null;
         if (this.mPipMediaController != mediaController) {
             this.mPipMediaController = mediaController;
             for (int size2 = this.mMediaListeners.size() - 1; size2 >= 0; size2--) {
@@ -545,13 +536,11 @@ public class PipManager implements BasePipManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public MediaController getMediaController() {
+    MediaController getMediaController() {
         return this.mPipMediaController;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getPlaybackState() {
+    int getPlaybackState() {
         if (this.mPipMediaController == null || this.mPipMediaController.getPlaybackState() == null) {
             return 2;
         }
@@ -564,8 +553,7 @@ public class PipManager implements BasePipManager {
         return 1;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isSettingsShown() {
+    private boolean isSettingsShown() {
         String str;
         try {
             List tasks = this.mActivityManager.getTasks(1);
@@ -592,8 +580,7 @@ public class PipManager implements BasePipManager {
         return sPipManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePipVisibility(boolean z) {
+    private void updatePipVisibility(boolean z) {
         SystemServicesProxy.getInstance(this.mContext).setPipVisibility(z);
     }
 

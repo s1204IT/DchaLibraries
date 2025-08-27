@@ -10,6 +10,7 @@ import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.support.v4.media.IMediaSession2;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface IMediaController2 extends IInterface {
     void onAllowedCommandsChanged(Bundle bundle) throws RemoteException;
@@ -58,7 +59,6 @@ public interface IMediaController2 extends IInterface {
 
     void onShuffleModeChanged(int i) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IMediaController2 {
         public static IMediaController2 asInterface(IBinder obj) {
             if (obj == null) {
@@ -77,204 +77,127 @@ public interface IMediaController2 extends IInterface {
         }
 
         @Override // android.os.Binder
-        public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
-            Bundle _arg1;
-            Bundle _arg3;
-            Bundle _arg8;
-            Bundle _arg0;
-            Bundle _arg12;
-            Bundle _arg02;
-            if (code == 1598968902) {
-                reply.writeString("android.support.v4.media.IMediaController2");
+        public boolean onTransact(int i, Parcel parcel, Parcel parcel2, int i2) throws RemoteException {
+            Bundle bundle;
+            Bundle bundle2;
+            Bundle bundle3;
+            if (i == 1598968902) {
+                parcel2.writeString("android.support.v4.media.IMediaController2");
                 return true;
             }
-            switch (code) {
+            switch (i) {
                 case 1:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    Bundle _arg03 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onCurrentMediaItemChanged(_arg03);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onCurrentMediaItemChanged(parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 2:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    long _arg04 = data.readLong();
-                    long _arg13 = data.readLong();
-                    int _arg2 = data.readInt();
-                    onPlayerStateChanged(_arg04, _arg13, _arg2);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onPlayerStateChanged(parcel.readLong(), parcel.readLong(), parcel.readInt());
                     return true;
                 case 3:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    long _arg05 = data.readLong();
-                    long _arg14 = data.readLong();
-                    float _arg22 = data.readFloat();
-                    onPlaybackSpeedChanged(_arg05, _arg14, _arg22);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onPlaybackSpeedChanged(parcel.readLong(), parcel.readLong(), parcel.readFloat());
                     return true;
                 case 4:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    Bundle _arg06 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    int _arg15 = data.readInt();
-                    long _arg23 = data.readLong();
-                    onBufferingStateChanged(_arg06, _arg15, _arg23);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onBufferingStateChanged(parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null, parcel.readInt(), parcel.readLong());
                     return true;
                 case 5:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    List<Bundle> _arg07 = data.createTypedArrayList(Bundle.CREATOR);
-                    Bundle _arg16 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onPlaylistChanged(_arg07, _arg16);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onPlaylistChanged(parcel.createTypedArrayList(Bundle.CREATOR), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 6:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    Bundle _arg08 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onPlaylistMetadataChanged(_arg08);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onPlaylistMetadataChanged(parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 7:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    Bundle _arg09 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onPlaybackInfoChanged(_arg09);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onPlaybackInfoChanged(parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 8:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    int _arg010 = data.readInt();
-                    onRepeatModeChanged(_arg010);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onRepeatModeChanged(parcel.readInt());
                     return true;
                 case 9:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    int _arg011 = data.readInt();
-                    onShuffleModeChanged(_arg011);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onShuffleModeChanged(parcel.readInt());
                     return true;
                 case 10:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    long _arg012 = data.readLong();
-                    long _arg17 = data.readLong();
-                    long _arg24 = data.readLong();
-                    onSeekCompleted(_arg012, _arg17, _arg24);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onSeekCompleted(parcel.readLong(), parcel.readLong(), parcel.readLong());
                     return true;
                 case 11:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    int _arg013 = data.readInt();
-                    Bundle _arg18 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onError(_arg013, _arg18);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onError(parcel.readInt(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 12:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    List<Bundle> _arg014 = data.createTypedArrayList(Bundle.CREATOR);
-                    onRoutesInfoChanged(_arg014);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onRoutesInfoChanged(parcel.createTypedArrayList(Bundle.CREATOR));
                     return true;
                 case 13:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    IMediaSession2 _arg015 = IMediaSession2.Stub.asInterface(data.readStrongBinder());
-                    if (data.readInt() != 0) {
-                        Bundle _arg19 = (Bundle) Bundle.CREATOR.createFromParcel(data);
-                        _arg1 = _arg19;
-                    } else {
-                        _arg1 = null;
-                    }
-                    int _arg25 = data.readInt();
-                    if (data.readInt() != 0) {
-                        Bundle _arg32 = (Bundle) Bundle.CREATOR.createFromParcel(data);
-                        _arg3 = _arg32;
-                    } else {
-                        _arg3 = null;
-                    }
-                    long _arg4 = data.readLong();
-                    long _arg5 = data.readLong();
-                    float _arg6 = data.readFloat();
-                    long _arg7 = data.readLong();
-                    if (data.readInt() != 0) {
-                        Bundle _arg82 = (Bundle) Bundle.CREATOR.createFromParcel(data);
-                        _arg8 = _arg82;
-                    } else {
-                        _arg8 = null;
-                    }
-                    int _arg9 = data.readInt();
-                    int _arg10 = data.readInt();
-                    List<Bundle> _arg11 = data.createTypedArrayList(Bundle.CREATOR);
-                    PendingIntent _arg122 = data.readInt() != 0 ? (PendingIntent) PendingIntent.CREATOR.createFromParcel(data) : null;
-                    onConnected(_arg015, _arg1, _arg25, _arg3, _arg4, _arg5, _arg6, _arg7, _arg8, _arg9, _arg10, _arg11, _arg122);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onConnected(IMediaSession2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null, parcel.readInt(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null, parcel.readLong(), parcel.readLong(), parcel.readFloat(), parcel.readLong(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null, parcel.readInt(), parcel.readInt(), parcel.createTypedArrayList(Bundle.CREATOR), parcel.readInt() != 0 ? (PendingIntent) PendingIntent.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 14:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
                     onDisconnected();
                     return true;
                 case 15:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    List<Bundle> _arg016 = data.createTypedArrayList(Bundle.CREATOR);
-                    onCustomLayoutChanged(_arg016);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onCustomLayoutChanged(parcel.createTypedArrayList(Bundle.CREATOR));
                     return true;
                 case 16:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    Bundle _arg017 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onAllowedCommandsChanged(_arg017);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onAllowedCommandsChanged(parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 17:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    if (data.readInt() != 0) {
-                        _arg0 = (Bundle) Bundle.CREATOR.createFromParcel(data);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    if (parcel.readInt() != 0) {
+                        bundle = (Bundle) Bundle.CREATOR.createFromParcel(parcel);
                     } else {
-                        _arg0 = null;
+                        bundle = null;
                     }
-                    if (data.readInt() != 0) {
-                        _arg12 = (Bundle) Bundle.CREATOR.createFromParcel(data);
+                    if (parcel.readInt() != 0) {
+                        bundle2 = (Bundle) Bundle.CREATOR.createFromParcel(parcel);
                     } else {
-                        _arg12 = null;
+                        bundle2 = null;
                     }
-                    ResultReceiver _arg26 = data.readInt() != 0 ? (ResultReceiver) ResultReceiver.CREATOR.createFromParcel(data) : null;
-                    onCustomCommand(_arg0, _arg12, _arg26);
+                    onCustomCommand(bundle, bundle2, parcel.readInt() != 0 ? (ResultReceiver) ResultReceiver.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 18:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    if (data.readInt() != 0) {
-                        _arg02 = (Bundle) Bundle.CREATOR.createFromParcel(data);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    if (parcel.readInt() != 0) {
+                        bundle3 = (Bundle) Bundle.CREATOR.createFromParcel(parcel);
                     } else {
-                        _arg02 = null;
+                        bundle3 = null;
                     }
-                    String _arg110 = data.readString();
-                    Bundle _arg27 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onGetLibraryRootDone(_arg02, _arg110, _arg27);
+                    onGetLibraryRootDone(bundle3, parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 19:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    String _arg018 = data.readString();
-                    Bundle _arg111 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onGetItemDone(_arg018, _arg111);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onGetItemDone(parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 20:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    String _arg019 = data.readString();
-                    int _arg112 = data.readInt();
-                    Bundle _arg28 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onChildrenChanged(_arg019, _arg112, _arg28);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onChildrenChanged(parcel.readString(), parcel.readInt(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 21:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    String _arg020 = data.readString();
-                    int _arg113 = data.readInt();
-                    int _arg29 = data.readInt();
-                    List<Bundle> _arg33 = data.createTypedArrayList(Bundle.CREATOR);
-                    Bundle _arg42 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onGetChildrenDone(_arg020, _arg113, _arg29, _arg33, _arg42);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onGetChildrenDone(parcel.readString(), parcel.readInt(), parcel.readInt(), parcel.createTypedArrayList(Bundle.CREATOR), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 22:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    String _arg021 = data.readString();
-                    int _arg114 = data.readInt();
-                    Bundle _arg210 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onSearchResultChanged(_arg021, _arg114, _arg210);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onSearchResultChanged(parcel.readString(), parcel.readInt(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 23:
-                    data.enforceInterface("android.support.v4.media.IMediaController2");
-                    String _arg022 = data.readString();
-                    int _arg115 = data.readInt();
-                    int _arg211 = data.readInt();
-                    List<Bundle> _arg34 = data.createTypedArrayList(Bundle.CREATOR);
-                    Bundle _arg43 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onGetSearchResultDone(_arg022, _arg115, _arg211, _arg34, _arg43);
+                    parcel.enforceInterface("android.support.v4.media.IMediaController2");
+                    onGetSearchResultDone(parcel.readString(), parcel.readInt(), parcel.readInt(), parcel.createTypedArrayList(Bundle.CREATOR), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 default:
-                    return super.onTransact(code, data, reply, flags);
+                    return super.onTransact(i, parcel, parcel2, i2);
             }
         }
 
-        /* loaded from: classes.dex */
         private static class Proxy implements IMediaController2 {
             private IBinder mRemote;
 
@@ -472,7 +395,7 @@ public interface IMediaController2 extends IInterface {
             }
 
             @Override // android.support.v4.media.IMediaController2
-            public void onConnected(IMediaSession2 sessionBinder, Bundle commandGroup, int playerState, Bundle currentItem, long positionEventTimeMs, long positionMs, float playbackSpeed, long bufferedPositionMs, Bundle playbackInfo, int repeatMode, int shuffleMode, List<Bundle> playlist, PendingIntent sessionActivity) throws RemoteException {
+            public void onConnected(IMediaSession2 sessionBinder, Bundle commandGroup, int playerState, Bundle currentItem, long positionEventTimeMs, long positionMs, float playbackSpeed, long bufferedPositionMs, Bundle playbackInfo, int repeatMode, int shuffleMode, List<Bundle> playlist, PendingIntent sessionActivity) throws Throwable {
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken("android.support.v4.media.IMediaController2");
@@ -490,45 +413,45 @@ public interface IMediaController2 extends IInterface {
                     } else {
                         _data.writeInt(0);
                     }
+                } catch (Throwable th) {
+                    th = th;
+                }
+                try {
+                    _data.writeLong(positionEventTimeMs);
+                } catch (Throwable th2) {
+                    th = th2;
+                    _data.recycle();
+                    throw th;
+                }
+                try {
+                    _data.writeLong(positionMs);
+                } catch (Throwable th3) {
+                    th = th3;
+                    _data.recycle();
+                    throw th;
+                }
+                try {
+                    _data.writeFloat(playbackSpeed);
+                } catch (Throwable th4) {
+                    th = th4;
+                    _data.recycle();
+                    throw th;
+                }
+                try {
+                    _data.writeLong(bufferedPositionMs);
+                    if (playbackInfo != null) {
+                        _data.writeInt(1);
+                        playbackInfo.writeToParcel(_data, 0);
+                    } else {
+                        _data.writeInt(0);
+                    }
                     try {
-                        _data.writeLong(positionEventTimeMs);
-                        try {
-                            _data.writeLong(positionMs);
-                            try {
-                                _data.writeFloat(playbackSpeed);
-                                try {
-                                    _data.writeLong(bufferedPositionMs);
-                                    if (playbackInfo != null) {
-                                        _data.writeInt(1);
-                                        playbackInfo.writeToParcel(_data, 0);
-                                    } else {
-                                        _data.writeInt(0);
-                                    }
-                                } catch (Throwable th) {
-                                    th = th;
-                                    _data.recycle();
-                                    throw th;
-                                }
-                            } catch (Throwable th2) {
-                                th = th2;
-                                _data.recycle();
-                                throw th;
-                            }
-                        } catch (Throwable th3) {
-                            th = th3;
-                            _data.recycle();
-                            throw th;
-                        }
-                    } catch (Throwable th4) {
-                        th = th4;
+                        _data.writeInt(repeatMode);
+                    } catch (Throwable th5) {
+                        th = th5;
                         _data.recycle();
                         throw th;
                     }
-                } catch (Throwable th5) {
-                    th = th5;
-                }
-                try {
-                    _data.writeInt(repeatMode);
                     try {
                         _data.writeInt(shuffleMode);
                         _data.writeTypedList(playlist);

@@ -6,6 +6,7 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.android.launcher3.Utilities;
+
 /* loaded from: classes.dex */
 public abstract class NoLocaleSQLiteHelper extends SQLiteOpenHelper {
     public NoLocaleSQLiteHelper(Context context, String str, int i) {
@@ -15,7 +16,6 @@ public abstract class NoLocaleSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class NoLocalContext extends ContextWrapper {
         public NoLocalContext(Context context) {
             super(context);

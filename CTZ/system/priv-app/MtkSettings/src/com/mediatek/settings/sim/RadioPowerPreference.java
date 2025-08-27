@@ -11,6 +11,7 @@ import android.widget.Switch;
 import com.android.settings.R;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.ISimManagementExt;
+
 /* loaded from: classes.dex */
 public class RadioPowerPreference extends Preference {
     private static final boolean ENG_LOAD;
@@ -60,16 +61,14 @@ public class RadioPowerPreference extends Preference {
             this.mRadioSwith.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() { // from class: com.mediatek.settings.sim.RadioPowerPreference.1
                 @Override // android.widget.CompoundButton.OnCheckedChangeListener
                 public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
-                    RadioPowerPreference radioPowerPreference = RadioPowerPreference.this;
-                    radioPowerPreference.logInEng("onCheckedChanged, mPowerState=" + RadioPowerPreference.this.mPowerState + ", isChecked=" + z + ", subId=" + RadioPowerPreference.this.mSubId);
+                    RadioPowerPreference.this.logInEng("onCheckedChanged, mPowerState=" + RadioPowerPreference.this.mPowerState + ", isChecked=" + z + ", subId=" + RadioPowerPreference.this.mSubId);
                     if (RadioPowerPreference.this.mPowerState != z) {
                         if (!RadioPowerPreference.this.mController.setRadionOn(RadioPowerPreference.this.mSubId, z)) {
                             RadioPowerPreference.this.logInEng("onCheckedChanged, set radio power FAIL.");
                             RadioPowerPreference.this.setRadioOn(!z);
                             return;
                         }
-                        RadioPowerPreference radioPowerPreference2 = RadioPowerPreference.this;
-                        radioPowerPreference2.logInEng("onCheckedChanged, mPowerState=" + z);
+                        RadioPowerPreference.this.logInEng("onCheckedChanged, mPowerState=" + z);
                         RadioPowerPreference.this.mPowerState = z;
                         RadioPowerPreference.this.setRadioEnabled(false);
                         RadioPowerPreference.this.mExt.customizeMainCapabily(RadioPowerPreference.this.mPowerState, RadioPowerPreference.this.mSubId);
@@ -91,9 +90,9 @@ public class RadioPowerPreference extends Preference {
         this.mSubId = i;
         if (z) {
             setRadioOn(z2);
-            boolean isValidSubscriptionId = SubscriptionManager.isValidSubscriptionId(i);
-            logInEng("bindRadioPowerState, isValidSub=" + isValidSubscriptionId);
-            setRadioEnabled(isValidSubscriptionId);
+            boolean zIsValidSubscriptionId = SubscriptionManager.isValidSubscriptionId(i);
+            logInEng("bindRadioPowerState, isValidSub=" + zIsValidSubscriptionId);
+            setRadioEnabled(zIsValidSubscriptionId);
             return;
         }
         logInEng("bindRadioPowerState, normal=false");
@@ -105,8 +104,7 @@ public class RadioPowerPreference extends Preference {
         setRadioOn(z4);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void logInEng(String str) {
+    private void logInEng(String str) {
         if (ENG_LOAD) {
             Log.d("RadioPowerPreference", str);
         }

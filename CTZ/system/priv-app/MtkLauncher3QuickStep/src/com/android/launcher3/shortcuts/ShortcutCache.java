@@ -3,7 +3,9 @@ package com.android.launcher3.shortcuts;
 import android.annotation.TargetApi;
 import android.util.ArrayMap;
 import android.util.LruCache;
+import java.util.Iterator;
 import java.util.List;
+
 @TargetApi(24)
 /* loaded from: classes.dex */
 public class ShortcutCache {
@@ -12,10 +14,11 @@ public class ShortcutCache {
     private final ArrayMap<ShortcutKey, ShortcutInfoCompat> mPinnedShortcuts = new ArrayMap<>();
 
     public void removeShortcuts(List<ShortcutInfoCompat> list) {
-        for (ShortcutInfoCompat shortcutInfoCompat : list) {
-            ShortcutKey fromInfo = ShortcutKey.fromInfo(shortcutInfoCompat);
-            this.mCachedShortcuts.remove(fromInfo);
-            this.mPinnedShortcuts.remove(fromInfo);
+        Iterator<ShortcutInfoCompat> it = list.iterator();
+        while (it.hasNext()) {
+            ShortcutKey shortcutKeyFromInfo = ShortcutKey.fromInfo(it.next());
+            this.mCachedShortcuts.remove(shortcutKeyFromInfo);
+            this.mPinnedShortcuts.remove(shortcutKeyFromInfo);
         }
     }
 

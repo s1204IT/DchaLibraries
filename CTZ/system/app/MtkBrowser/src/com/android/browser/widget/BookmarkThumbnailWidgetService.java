@@ -22,6 +22,7 @@ import java.io.FilenameFilter;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /* loaded from: classes.dex */
 public class BookmarkThumbnailWidgetService extends RemoteViewsService {
     private static final String[] PROJECTION = {"_id", "title", "url", "favicon", "folder", "position", "thumbnail", "parent"};
@@ -40,16 +41,14 @@ public class BookmarkThumbnailWidgetService extends RemoteViewsService {
         return context.getSharedPreferences(String.format("widgetState-%d", Integer.valueOf(i)), 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void deleteWidgetState(Context context, int i) {
+    static void deleteWidgetState(Context context, int i) {
         File sharedPrefsFile = context.getSharedPrefsFile(String.format("widgetState-%d", Integer.valueOf(i)));
         if (sharedPrefsFile.exists() && !sharedPrefsFile.delete()) {
             sharedPrefsFile.deleteOnExit();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void changeFolder(Context context, Intent intent) {
+    static void changeFolder(Context context, Intent intent) {
         int intExtra = intent.getIntExtra("appWidgetId", -1);
         long longExtra = intent.getLongExtra("_id", -1L);
         if (intExtra >= 0 && longExtra >= 0) {
@@ -59,16 +58,14 @@ public class BookmarkThumbnailWidgetService extends RemoteViewsService {
         BookmarkThumbnailWidgetProvider.refreshWidgets(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void setupWidgetState(Context context, int i, long j) {
+    static void setupWidgetState(Context context, int i, long j) {
         getWidgetState(context, i).edit().putLong("current_folder", j).putLong("root_folder", j).apply();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void removeOrphanedStates(Context context, int[] iArr) {
-        File[] listFiles = context.getSharedPrefsFile("null").getParentFile().listFiles(new StateFilter(iArr));
-        if (listFiles != null) {
-            for (File file : listFiles) {
+    static void removeOrphanedStates(Context context, int[] iArr) {
+        File[] fileArrListFiles = context.getSharedPrefsFile("null").getParentFile().listFiles(new StateFilter(iArr));
+        if (fileArrListFiles != null) {
+            for (File file : fileArrListFiles) {
                 Log.w("BookmarkThumbnailWidgetService", "Found orphaned state: " + file.getName());
                 if (!file.delete()) {
                     file.deleteOnExit();
@@ -77,7 +74,6 @@ public class BookmarkThumbnailWidgetService extends RemoteViewsService {
         }
     }
 
-    /* loaded from: classes.dex */
     static class StateFilter implements FilenameFilter {
         static final Pattern sStatePattern = Pattern.compile("widgetState-(\\d+)\\.xml");
         HashSet<Integer> mWidgetIds = new HashSet<>();
@@ -89,7 +85,7 @@ public class BookmarkThumbnailWidgetService extends RemoteViewsService {
         }
 
         @Override // java.io.FilenameFilter
-        public boolean accept(File file, String str) {
+        public boolean accept(File file, String str) throws NumberFormatException {
             Matcher matcher = sStatePattern.matcher(str);
             if (matcher.matches()) {
                 if (!this.mWidgetIds.contains(Integer.valueOf(Integer.parseInt(matcher.group(1))))) {
@@ -101,7 +97,6 @@ public class BookmarkThumbnailWidgetService extends RemoteViewsService {
         }
     }
 
-    /* loaded from: classes.dex */
     static class BookmarkFactory implements RemoteViewsService.RemoteViewsFactory {
         private Cursor mBookmarks;
         private Context mContext;
@@ -149,7 +144,7 @@ public class BookmarkThumbnailWidgetService extends RemoteViewsService {
 
         @Override // android.widget.RemoteViewsService.RemoteViewsFactory
         public RemoteViews getLoadingView() {
-            return new RemoteViews(this.mContext.getPackageName(), (int) R.layout.bookmarkthumbnailwidget_item);
+            return new RemoteViews(this.mContext.getPackageName(), R.layout.bookmarkthumbnailwidget_item);
         }
 
         @Override // android.widget.RemoteViewsService.RemoteViewsFactory
@@ -164,9 +159,9 @@ public class BookmarkThumbnailWidgetService extends RemoteViewsService {
             String string2 = this.mBookmarks.getString(2);
             boolean z = this.mBookmarks.getInt(4) != 0;
             if (z) {
-                remoteViews = new RemoteViews(this.mContext.getPackageName(), (int) R.layout.bookmarkthumbnailwidget_item_folder);
+                remoteViews = new RemoteViews(this.mContext.getPackageName(), R.layout.bookmarkthumbnailwidget_item_folder);
             } else {
-                remoteViews = new RemoteViews(this.mContext.getPackageName(), (int) R.layout.bookmarkthumbnailwidget_item);
+                remoteViews = new RemoteViews(this.mContext.getPackageName(), R.layout.bookmarkthumbnailwidget_item);
             }
             if (TextUtils.isEmpty(string)) {
                 string = string2;
@@ -232,7 +227,7 @@ public class BookmarkThumbnailWidgetService extends RemoteViewsService {
 
         @Override // android.widget.RemoteViewsService.RemoteViewsFactory
         public void onDataSetChanged() {
-            long clearCallingIdentity = Binder.clearCallingIdentity();
+            long jClearCallingIdentity = Binder.clearCallingIdentity();
             syncState();
             if (this.mRootFolder < 0 || this.mCurrentFolder < 0) {
                 this.mRootFolder = 1L;
@@ -240,7 +235,7 @@ public class BookmarkThumbnailWidgetService extends RemoteViewsService {
                 saveState();
             }
             loadBookmarks();
-            Binder.restoreCallingIdentity(clearCallingIdentity);
+            Binder.restoreCallingIdentity(jClearCallingIdentity);
         }
 
         private void resetBookmarks() {

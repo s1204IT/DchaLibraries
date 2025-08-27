@@ -1,17 +1,16 @@
 package jp.co.benesse.dcha.dchaservice.util;
+
 /* loaded from: classes.dex */
 public class Log {
     static final int LOGLEVEL = LogLevel.NONE.getLevel();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public enum LogLevel {
+    enum LogLevel {
         NONE(0),
         ERROR(1),
         INFO(2),
         DEBUG(3),
         VERBOSE(4);
-        
+
         private int level;
 
         LogLevel(int i) {

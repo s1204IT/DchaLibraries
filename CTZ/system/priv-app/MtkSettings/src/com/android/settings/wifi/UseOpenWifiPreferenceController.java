@@ -23,6 +23,8 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class UseOpenWifiPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private final ContentResolver mContentResolver;
@@ -44,8 +46,7 @@ public class UseOpenWifiPreferenceController extends AbstractPreferenceControlle
         lifecycle.addObserver(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateEnableUseWifiComponentName() {
+    private void updateEnableUseWifiComponentName() {
         NetworkScorerAppData activeScorer = this.mNetworkScoreManager.getActiveScorer();
         this.mEnableUseWifiComponentName = activeScorer == null ? null : activeScorer.getEnableUseOpenWifiActivity();
     }
@@ -55,8 +56,9 @@ public class UseOpenWifiPreferenceController extends AbstractPreferenceControlle
             this.mDoFeatureSupportedScorersExist = true;
             return;
         }
-        for (NetworkScorerAppData networkScorerAppData : this.mNetworkScoreManager.getAllValidScorers()) {
-            if (networkScorerAppData.getEnableUseOpenWifiActivity() != null) {
+        Iterator it = this.mNetworkScoreManager.getAllValidScorers().iterator();
+        while (it.hasNext()) {
+            if (((NetworkScorerAppData) it.next()).getEnableUseOpenWifiActivity() != null) {
                 this.mDoFeatureSupportedScorersExist = true;
                 return;
             }
@@ -116,16 +118,16 @@ public class UseOpenWifiPreferenceController extends AbstractPreferenceControlle
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        if (TextUtils.equals(preference.getKey(), "use_open_wifi_automatically") && isAvailable()) {
-            if (isSettingEnabled()) {
-                Settings.Global.putString(this.mContentResolver, "use_open_wifi_package", "");
-                return true;
-            }
-            Intent intent = new Intent("android.net.scoring.CUSTOM_ENABLE");
-            intent.setComponent(this.mEnableUseWifiComponentName);
-            this.mFragment.startActivityForResult(intent, 400);
+        if (!TextUtils.equals(preference.getKey(), "use_open_wifi_automatically") || !isAvailable()) {
             return false;
         }
+        if (isSettingEnabled()) {
+            Settings.Global.putString(this.mContentResolver, "use_open_wifi_package", "");
+            return true;
+        }
+        Intent intent = new Intent("android.net.scoring.CUSTOM_ENABLE");
+        intent.setComponent(this.mEnableUseWifiComponentName);
+        this.mFragment.startActivityForResult(intent, 400);
         return false;
     }
 
@@ -144,7 +146,6 @@ public class UseOpenWifiPreferenceController extends AbstractPreferenceControlle
         return true;
     }
 
-    /* loaded from: classes.dex */
     class SettingObserver extends ContentObserver {
         private final Uri NETWORK_RECOMMENDATIONS_ENABLED_URI;
 

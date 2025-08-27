@@ -3,6 +3,7 @@ package com.android.systemui.statusbar;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class AlphaOptimizedTextView extends TextView {
     public AlphaOptimizedTextView(Context context) {

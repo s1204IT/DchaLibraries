@@ -15,6 +15,7 @@ import com.android.settings.search.Indexable;
 import com.android.settings.search.SearchIndexableRaw;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WallpaperTypeSettings extends SettingsPreferenceFragment implements Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.wallpaper.WallpaperTypeSettings.1
@@ -23,16 +24,16 @@ public class WallpaperTypeSettings extends SettingsPreferenceFragment implements
             ArrayList arrayList = new ArrayList();
             Intent intent = new Intent("android.intent.action.SET_WALLPAPER");
             PackageManager packageManager = context.getPackageManager();
-            List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent, 65536);
+            List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent, 65536);
             String string = context.getString(R.string.config_wallpaper_picker_package);
-            for (ResolveInfo resolveInfo : queryIntentActivities) {
+            for (ResolveInfo resolveInfo : listQueryIntentActivities) {
                 if (string.equals(resolveInfo.activityInfo.packageName)) {
-                    CharSequence loadLabel = resolveInfo.loadLabel(packageManager);
-                    if (loadLabel == null) {
-                        loadLabel = resolveInfo.activityInfo.packageName;
+                    CharSequence charSequenceLoadLabel = resolveInfo.loadLabel(packageManager);
+                    if (charSequenceLoadLabel == null) {
+                        charSequenceLoadLabel = resolveInfo.activityInfo.packageName;
                     }
                     SearchIndexableRaw searchIndexableRaw = new SearchIndexableRaw(context);
-                    searchIndexableRaw.title = loadLabel.toString();
+                    searchIndexableRaw.title = charSequenceLoadLabel.toString();
                     searchIndexableRaw.key = "wallpaper_type_settings";
                     searchIndexableRaw.screenTitle = context.getResources().getString(R.string.wallpaper_settings_fragment_title);
                     searchIndexableRaw.intentAction = "android.intent.action.SET_WALLPAPER";
@@ -66,19 +67,19 @@ public class WallpaperTypeSettings extends SettingsPreferenceFragment implements
     private void populateWallpaperTypes() {
         Intent intent = new Intent("android.intent.action.SET_WALLPAPER");
         PackageManager packageManager = getPackageManager();
-        List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent, 65536);
+        List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent, 65536);
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.setOrderingAsAdded(false);
-        for (ResolveInfo resolveInfo : queryIntentActivities) {
+        for (ResolveInfo resolveInfo : listQueryIntentActivities) {
             Preference preference = new Preference(getPrefContext());
-            Intent addFlags = new Intent(intent).addFlags(33554432);
-            addFlags.setComponent(new ComponentName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name));
-            preference.setIntent(addFlags);
-            CharSequence loadLabel = resolveInfo.loadLabel(packageManager);
-            if (loadLabel == null) {
-                loadLabel = resolveInfo.activityInfo.packageName;
+            Intent intentAddFlags = new Intent(intent).addFlags(33554432);
+            intentAddFlags.setComponent(new ComponentName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name));
+            preference.setIntent(intentAddFlags);
+            CharSequence charSequenceLoadLabel = resolveInfo.loadLabel(packageManager);
+            if (charSequenceLoadLabel == null) {
+                charSequenceLoadLabel = resolveInfo.activityInfo.packageName;
             }
-            preference.setTitle(loadLabel);
+            preference.setTitle(charSequenceLoadLabel);
             preference.setIcon(resolveInfo.loadIcon(packageManager));
             preferenceScreen.addPreference(preference);
         }

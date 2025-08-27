@@ -19,6 +19,7 @@ import com.android.systemui.statusbar.policy.DarkIconDispatcher;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.tuner.TunerService;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class OperatorNameView extends TextView implements DemoMode, DarkIconDispatcher.DarkReceiver, NetworkController.SignalCallback, TunerService.Tunable {
     private final KeyguardUpdateMonitorCallback mCallback;
@@ -81,7 +82,9 @@ public class OperatorNameView extends TextView implements DemoMode, DarkIconDisp
     public void dispatchDemoCommand(String str, Bundle bundle) {
         if (!this.mDemoMode && str.equals("enter")) {
             this.mDemoMode = true;
-        } else if (this.mDemoMode && str.equals("exit")) {
+            return;
+        }
+        if (this.mDemoMode && str.equals("exit")) {
             this.mDemoMode = false;
             update();
         } else if (this.mDemoMode && str.equals("operator")) {
@@ -95,9 +98,9 @@ public class OperatorNameView extends TextView implements DemoMode, DarkIconDisp
             z = false;
         }
         setVisibility(z ? 0 : 8);
-        boolean isNetworkSupported = ConnectivityManager.from(this.mContext).isNetworkSupported(0);
-        boolean isAirplaneModeOn = WirelessUtils.isAirplaneModeOn(this.mContext);
-        if (!isNetworkSupported || isAirplaneModeOn) {
+        boolean zIsNetworkSupported = ConnectivityManager.from(this.mContext).isNetworkSupported(0);
+        boolean zIsAirplaneModeOn = WirelessUtils.isAirplaneModeOn(this.mContext);
+        if (!zIsNetworkSupported || zIsAirplaneModeOn) {
             setText((CharSequence) null);
             setVisibility(8);
         } else if (!this.mDemoMode) {
@@ -105,9 +108,8 @@ public class OperatorNameView extends TextView implements DemoMode, DarkIconDisp
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateText() {
-        CharSequence charSequence;
+    private void updateText() {
+        CharSequence carrierName;
         ServiceState serviceState;
         int i = 0;
         List<SubscriptionInfo> subscriptionInfo = this.mKeyguardUpdateMonitor.getSubscriptionInfo(false);
@@ -116,16 +118,17 @@ public class OperatorNameView extends TextView implements DemoMode, DarkIconDisp
             if (i < size) {
                 int subscriptionId = subscriptionInfo.get(i).getSubscriptionId();
                 IccCardConstants.State simState = this.mKeyguardUpdateMonitor.getSimState(subscriptionId);
-                charSequence = subscriptionInfo.get(i).getCarrierName();
-                if (!TextUtils.isEmpty(charSequence) && simState == IccCardConstants.State.READY && (serviceState = this.mKeyguardUpdateMonitor.getServiceState(subscriptionId)) != null && serviceState.getState() == 0) {
+                carrierName = subscriptionInfo.get(i).getCarrierName();
+                if (!TextUtils.isEmpty(carrierName) && simState == IccCardConstants.State.READY && (serviceState = this.mKeyguardUpdateMonitor.getServiceState(subscriptionId)) != null && serviceState.getState() == 0) {
                     break;
+                } else {
+                    i++;
                 }
-                i++;
             } else {
-                charSequence = null;
+                carrierName = null;
                 break;
             }
         }
-        setText(charSequence);
+        setText(carrierName);
     }
 }

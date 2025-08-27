@@ -46,6 +46,7 @@ import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.RemoteInputController;
 import com.android.systemui.statusbar.notification.NotificationViewWrapper;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class RemoteInputView extends LinearLayout implements TextWatcher, View.OnClickListener {
     public static final Object VIEW_TAG = new Object();
@@ -81,8 +82,11 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         this.mSendButton.setOnClickListener(this);
         this.mEditText = (RemoteEditText) getChildAt(0);
         this.mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() { // from class: com.android.systemui.statusbar.policy.RemoteInputView.1
+            AnonymousClass1() {
+            }
+
             @Override // android.widget.TextView.OnEditorActionListener
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) throws PendingIntent.CanceledException {
                 boolean z = keyEvent == null && (i == 6 || i == 5 || i == 4);
                 boolean z2 = keyEvent != null && KeyEvent.isConfirmKey(keyEvent.getKeyCode()) && keyEvent.getAction() == 0;
                 if (z || z2) {
@@ -99,13 +103,31 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         this.mEditText.mRemoteInputView = this;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void sendRemoteInput() {
+    /* renamed from: com.android.systemui.statusbar.policy.RemoteInputView$1 */
+    class AnonymousClass1 implements TextView.OnEditorActionListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.widget.TextView.OnEditorActionListener
+        public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) throws PendingIntent.CanceledException {
+            boolean z = keyEvent == null && (i == 6 || i == 5 || i == 4);
+            boolean z2 = keyEvent != null && KeyEvent.isConfirmKey(keyEvent.getKeyCode()) && keyEvent.getAction() == 0;
+            if (z || z2) {
+                if (RemoteInputView.this.mEditText.length() > 0) {
+                    RemoteInputView.this.sendRemoteInput();
+                }
+                return true;
+            }
+            return false;
+        }
+    }
+
+    private void sendRemoteInput() throws PendingIntent.CanceledException {
         Bundle bundle = new Bundle();
         bundle.putString(this.mRemoteInput.getResultKey(), this.mEditText.getText().toString());
-        Intent addFlags = new Intent().addFlags(268435456);
-        RemoteInput.addResultsToIntent(this.mRemoteInputs, addFlags, bundle);
-        RemoteInput.setResultsSource(addFlags, 0);
+        Intent intentAddFlags = new Intent().addFlags(268435456);
+        RemoteInput.addResultsToIntent(this.mRemoteInputs, intentAddFlags, bundle);
+        RemoteInput.setResultsSource(intentAddFlags, 0);
         this.mEditText.setEnabled(false);
         this.mSendButton.setVisibility(4);
         this.mProgressBar.setVisibility(0);
@@ -119,7 +141,7 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         ((ShortcutManager) getContext().getSystemService(ShortcutManager.class)).onApplicationActive(this.mEntry.notification.getPackageName(), this.mEntry.notification.getUser().getIdentifier());
         MetricsLogger.action(this.mContext, 398, this.mEntry.notification.getPackageName());
         try {
-            this.mPendingIntent.send(this.mContext, 0, addFlags);
+            this.mPendingIntent.send(this.mContext, 0, intentAddFlags);
         } catch (PendingIntent.CanceledException e) {
             Log.i("RemoteInput", "Unable to send remote input result", e);
             MetricsLogger.action(this.mContext, 399, this.mEntry.notification.getPackageName());
@@ -144,8 +166,8 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
     public ActionMode startActionMode(ActionMode.Callback callback, int i) {
         try {
             UserHandle user = this.mEntry.notification.getUser();
-            UserHandle of = UserHandle.of(ActivityManager.getCurrentUser());
-            if (!UserHandle.ALL.equals(user) && !of.equals(user)) {
+            UserHandle userHandleOf = UserHandle.of(ActivityManager.getCurrentUser());
+            if (!UserHandle.ALL.equals(user) && !userHandleOf.equals(user)) {
                 EventLog.writeEvent(1397638484, "123232892", -1, "");
             }
         } catch (Throwable th) {
@@ -155,7 +177,7 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
     }
 
     @Override // android.view.View.OnClickListener
-    public void onClick(View view) {
+    public void onClick(View view) throws PendingIntent.CanceledException {
         if (view == this.mSendButton) {
             sendRemoteInput();
         }
@@ -167,16 +189,18 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onDefocus(boolean z) {
+    private void onDefocus(boolean z) {
         this.mController.removeRemoteInput(this.mEntry, this.mToken);
         this.mEntry.remoteInputText = this.mEditText.getText();
         if (!this.mRemoved) {
             if (z && this.mRevealR > 0) {
-                Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(this, this.mRevealCx, this.mRevealCy, this.mRevealR, 0.0f);
-                createCircularReveal.setInterpolator(Interpolators.FAST_OUT_LINEAR_IN);
-                createCircularReveal.setDuration(150L);
-                createCircularReveal.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.policy.RemoteInputView.2
+                Animator animatorCreateCircularReveal = ViewAnimationUtils.createCircularReveal(this, this.mRevealCx, this.mRevealCy, this.mRevealR, 0.0f);
+                animatorCreateCircularReveal.setInterpolator(Interpolators.FAST_OUT_LINEAR_IN);
+                animatorCreateCircularReveal.setDuration(150L);
+                animatorCreateCircularReveal.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.policy.RemoteInputView.2
+                    AnonymousClass2() {
+                    }
+
                     @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                     public void onAnimationEnd(Animator animator) {
                         RemoteInputView.this.setVisibility(4);
@@ -185,7 +209,7 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
                         }
                     }
                 });
-                createCircularReveal.start();
+                animatorCreateCircularReveal.start();
             } else {
                 setVisibility(4);
                 if (this.mWrapper != null) {
@@ -195,6 +219,20 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         }
         this.mRemoteInputQuickSettingsDisabler.setRemoteInputActive(false);
         MetricsLogger.action(this.mContext, 400, this.mEntry.notification.getPackageName());
+    }
+
+    /* renamed from: com.android.systemui.statusbar.policy.RemoteInputView$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        AnonymousClass2() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            RemoteInputView.this.setVisibility(4);
+            if (RemoteInputView.this.mWrapper != null) {
+                RemoteInputView.this.mWrapper.setRemoteInputVisible(false);
+            }
+        }
     }
 
     @Override // android.view.ViewGroup, android.view.View
@@ -227,10 +265,10 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
 
     public void focusAnimated() {
         if (getVisibility() != 0) {
-            Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(this, this.mRevealCx, this.mRevealCy, 0.0f, this.mRevealR);
-            createCircularReveal.setDuration(360L);
-            createCircularReveal.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
-            createCircularReveal.start();
+            Animator animatorCreateCircularReveal = ViewAnimationUtils.createCircularReveal(this, this.mRevealCx, this.mRevealCy, 0.0f, this.mRevealR);
+            animatorCreateCircularReveal.setDuration(360L);
+            animatorCreateCircularReveal.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
+            animatorCreateCircularReveal.start();
         }
         focus();
     }
@@ -410,7 +448,6 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         return getVisibility() == 0 && this.mController.isSpinning(this.mEntry.key, this.mToken);
     }
 
-    /* loaded from: classes.dex */
     public static class RemoteEditText extends EditText {
         private final Drawable mBackground;
         private RemoteInputView mRemoteInputView;
@@ -421,13 +458,15 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
             this.mBackground = getBackground();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void defocusIfNeeded(boolean z) {
+        private void defocusIfNeeded(boolean z) {
             if ((this.mRemoteInputView != null && this.mRemoteInputView.mEntry.row.isChangingPosition()) || isTemporarilyDetached()) {
                 if (isTemporarilyDetached() && this.mRemoteInputView != null) {
                     this.mRemoteInputView.mEntry.remoteInputText = getText();
+                    return;
                 }
-            } else if (isFocusable() && isEnabled()) {
+                return;
+            }
+            if (isFocusable() && isEnabled()) {
                 setInnerFocusable(false);
                 if (this.mRemoteInputView != null) {
                     this.mRemoteInputView.onDefocus(z);
@@ -496,10 +535,16 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
 
         @Override // android.widget.TextView, android.view.View
         public InputConnection onCreateInputConnection(EditorInfo editorInfo) {
-            final InputMethodManager inputMethodManager;
-            InputConnection onCreateInputConnection = super.onCreateInputConnection(editorInfo);
-            if (this.mShowImeOnInputConnection && onCreateInputConnection != null && (inputMethodManager = InputMethodManager.getInstance()) != null) {
+            InputMethodManager inputMethodManager;
+            InputConnection inputConnectionOnCreateInputConnection = super.onCreateInputConnection(editorInfo);
+            if (this.mShowImeOnInputConnection && inputConnectionOnCreateInputConnection != null && (inputMethodManager = InputMethodManager.getInstance()) != null) {
                 post(new Runnable() { // from class: com.android.systemui.statusbar.policy.RemoteInputView.RemoteEditText.1
+                    final /* synthetic */ InputMethodManager val$imm;
+
+                    AnonymousClass1(InputMethodManager inputMethodManager2) {
+                        inputMethodManager = inputMethodManager2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         inputMethodManager.viewClicked(RemoteEditText.this);
@@ -507,7 +552,22 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
                     }
                 });
             }
-            return onCreateInputConnection;
+            return inputConnectionOnCreateInputConnection;
+        }
+
+        /* renamed from: com.android.systemui.statusbar.policy.RemoteInputView$RemoteEditText$1 */
+        class AnonymousClass1 implements Runnable {
+            final /* synthetic */ InputMethodManager val$imm;
+
+            AnonymousClass1(InputMethodManager inputMethodManager2) {
+                inputMethodManager = inputMethodManager2;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                inputMethodManager.viewClicked(RemoteEditText.this);
+                inputMethodManager.showSoftInput(RemoteEditText.this, 0);
+            }
         }
 
         @Override // android.widget.TextView
@@ -524,9 +584,9 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
             if (z) {
                 requestFocus();
                 setBackground(this.mBackground);
-                return;
+            } else {
+                setBackground(null);
             }
-            setBackground(null);
         }
     }
 }

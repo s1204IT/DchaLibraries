@@ -2,6 +2,7 @@ package com.mediatek.keyguard.ext;
 
 import android.content.Context;
 import com.mediatek.keyguard.ext.IOperatorSIMString;
+
 /* loaded from: classes.dex */
 public class DefaultOperatorSIMString implements IOperatorSIMString {
     @Override // com.mediatek.keyguard.ext.IOperatorSIMString

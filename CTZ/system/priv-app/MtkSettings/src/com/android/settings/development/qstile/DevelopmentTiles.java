@@ -17,6 +17,7 @@ import com.android.internal.app.LocalePicker;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.settingslib.development.DevelopmentSettingsEnabler;
 import com.android.settingslib.development.SystemPropPoker;
+
 /* loaded from: classes.dex */
 public abstract class DevelopmentTiles extends TileService {
     protected abstract boolean isEnabled();
@@ -39,10 +40,10 @@ public abstract class DevelopmentTiles extends TileService {
             ComponentName componentName = new ComponentName(getPackageName(), getClass().getName());
             try {
                 getPackageManager().setComponentEnabledSetting(componentName, 2, 1);
-                IStatusBarService asInterface = IStatusBarService.Stub.asInterface(ServiceManager.checkService("statusbar"));
-                if (asInterface != null) {
+                IStatusBarService iStatusBarServiceAsInterface = IStatusBarService.Stub.asInterface(ServiceManager.checkService("statusbar"));
+                if (iStatusBarServiceAsInterface != null) {
                     EventLog.writeEvent(1397638484, "117770924");
-                    asInterface.remTile(componentName);
+                    iStatusBarServiceAsInterface.remTile(componentName);
                 }
             } catch (RemoteException e) {
                 Log.e("DevelopmentTiles", "Failed to modify QS tile for component " + componentName.toString(), e);
@@ -61,7 +62,6 @@ public abstract class DevelopmentTiles extends TileService {
         refresh();
     }
 
-    /* loaded from: classes.dex */
     public static class ShowLayout extends DevelopmentTiles {
         @Override // com.android.settings.development.qstile.DevelopmentTiles
         protected boolean isEnabled() {
@@ -74,7 +74,6 @@ public abstract class DevelopmentTiles extends TileService {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class GPUProfiling extends DevelopmentTiles {
         @Override // com.android.settings.development.qstile.DevelopmentTiles
         protected boolean isEnabled() {
@@ -87,7 +86,6 @@ public abstract class DevelopmentTiles extends TileService {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ForceRTL extends DevelopmentTiles {
         @Override // com.android.settings.development.qstile.DevelopmentTiles
         protected boolean isEnabled() {
@@ -102,7 +100,6 @@ public abstract class DevelopmentTiles extends TileService {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AnimationSpeed extends DevelopmentTiles {
         @Override // com.android.settings.development.qstile.DevelopmentTiles
         protected boolean isEnabled() {
@@ -126,7 +123,6 @@ public abstract class DevelopmentTiles extends TileService {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class WinscopeTrace extends DevelopmentTiles {
         static final int SURFACE_FLINGER_LAYER_TRACE_CONTROL_CODE = 1025;
         static final int SURFACE_FLINGER_LAYER_TRACE_STATUS_CODE = 1026;
@@ -151,73 +147,74 @@ public abstract class DevelopmentTiles extends TileService {
             }
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [222=6] */
         /* JADX WARN: Removed duplicated region for block: B:30:0x0065  */
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        private boolean isLayerTraceEnabled() {
+        private boolean isLayerTraceEnabled() throws Throwable {
+            Parcel parcelObtain;
             Parcel parcel;
-            Parcel parcel2;
-            Parcel parcel3;
+            Parcel parcelObtain2;
             RemoteException e;
-            Parcel parcel4 = null;
+            Parcel parcel2 = null;
             boolean z = false;
             try {
                 try {
                     if (this.mSurfaceFlinger != null) {
-                        parcel = Parcel.obtain();
+                        parcelObtain = Parcel.obtain();
                         try {
-                            parcel3 = Parcel.obtain();
-                            try {
-                                parcel3.writeInterfaceToken("android.ui.ISurfaceComposer");
-                                this.mSurfaceFlinger.transact(SURFACE_FLINGER_LAYER_TRACE_STATUS_CODE, parcel3, parcel, 0);
-                                z = parcel.readBoolean();
-                                parcel4 = parcel3;
-                            } catch (RemoteException e2) {
-                                e = e2;
-                                Log.e("DevelopmentTiles", "Could not get layer trace status, defaulting to false." + e.toString());
-                                if (parcel3 != null) {
-                                    parcel3.recycle();
-                                    parcel.recycle();
-                                }
-                                return z;
-                            }
-                        } catch (RemoteException e3) {
-                            parcel3 = null;
-                            e = e3;
+                            parcelObtain2 = Parcel.obtain();
+                        } catch (RemoteException e2) {
+                            parcelObtain2 = null;
+                            e = e2;
                         } catch (Throwable th) {
                             th = th;
-                            parcel2 = null;
+                            parcel = null;
                             th = th;
-                            if (parcel2 != null) {
+                            if (parcel != null) {
                             }
                             throw th;
                         }
+                        try {
+                            parcelObtain2.writeInterfaceToken("android.ui.ISurfaceComposer");
+                            this.mSurfaceFlinger.transact(SURFACE_FLINGER_LAYER_TRACE_STATUS_CODE, parcelObtain2, parcelObtain, 0);
+                            z = parcelObtain.readBoolean();
+                            parcel2 = parcelObtain2;
+                        } catch (RemoteException e3) {
+                            e = e3;
+                            Log.e("DevelopmentTiles", "Could not get layer trace status, defaulting to false." + e.toString());
+                            if (parcelObtain2 != null) {
+                                parcelObtain2.recycle();
+                                parcelObtain.recycle();
+                            }
+                            return z;
+                        }
                     } else {
-                        parcel = null;
+                        parcelObtain = null;
                     }
+                } catch (RemoteException e4) {
+                    parcelObtain2 = null;
+                    e = e4;
+                    parcelObtain = null;
                 } catch (Throwable th2) {
                     th = th2;
-                    if (parcel2 != null) {
-                        parcel2.recycle();
-                        parcel.recycle();
-                    }
-                    throw th;
+                    parcelObtain = null;
+                    parcel = null;
                 }
-            } catch (RemoteException e4) {
-                parcel3 = null;
-                e = e4;
-                parcel = null;
+                if (parcel2 != null) {
+                    parcel2.recycle();
+                    parcelObtain.recycle();
+                }
+                return z;
             } catch (Throwable th3) {
                 th = th3;
-                parcel = null;
-                parcel2 = null;
+                if (parcel != null) {
+                    parcel.recycle();
+                    parcelObtain.recycle();
+                }
+                throw th;
             }
-            if (parcel4 != null) {
-                parcel4.recycle();
-                parcel.recycle();
-            }
-            return z;
         }
 
         @Override // com.android.settings.development.qstile.DevelopmentTiles
@@ -237,20 +234,21 @@ public abstract class DevelopmentTiles extends TileService {
             }
         }
 
-        private void setLayerTraceEnabled(boolean z) {
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [260=5] */
+        private void setLayerTraceEnabled(boolean z) throws Throwable {
             Parcel parcel = null;
             try {
                 try {
                     if (this.mSurfaceFlinger != null) {
-                        Parcel obtain = Parcel.obtain();
+                        Parcel parcelObtain = Parcel.obtain();
                         try {
-                            obtain.writeInterfaceToken("android.ui.ISurfaceComposer");
-                            obtain.writeInt(z ? 1 : 0);
-                            this.mSurfaceFlinger.transact(SURFACE_FLINGER_LAYER_TRACE_CONTROL_CODE, obtain, null, 0);
-                            parcel = obtain;
+                            parcelObtain.writeInterfaceToken("android.ui.ISurfaceComposer");
+                            parcelObtain.writeInt(z ? 1 : 0);
+                            this.mSurfaceFlinger.transact(SURFACE_FLINGER_LAYER_TRACE_CONTROL_CODE, parcelObtain, null, 0);
+                            parcel = parcelObtain;
                         } catch (RemoteException e) {
                             e = e;
-                            parcel = obtain;
+                            parcel = parcelObtain;
                             Log.e("DevelopmentTiles", "Could not set layer tracing." + e.toString());
                             if (parcel == null) {
                                 return;
@@ -258,7 +256,7 @@ public abstract class DevelopmentTiles extends TileService {
                             parcel.recycle();
                         } catch (Throwable th) {
                             th = th;
-                            parcel = obtain;
+                            parcel = parcelObtain;
                             if (parcel != null) {
                                 parcel.recycle();
                             }
@@ -268,17 +266,17 @@ public abstract class DevelopmentTiles extends TileService {
                     if (parcel == null) {
                         return;
                     }
-                } catch (Throwable th2) {
-                    th = th2;
+                } catch (RemoteException e2) {
+                    e = e2;
                 }
-            } catch (RemoteException e2) {
-                e = e2;
+                parcel.recycle();
+            } catch (Throwable th2) {
+                th = th2;
             }
-            parcel.recycle();
         }
 
         @Override // com.android.settings.development.qstile.DevelopmentTiles
-        protected void setIsEnabled(boolean z) {
+        protected void setIsEnabled(boolean z) throws Throwable {
             setWindowTraceEnabled(z);
             setLayerTraceEnabled(z);
             if (!z) {

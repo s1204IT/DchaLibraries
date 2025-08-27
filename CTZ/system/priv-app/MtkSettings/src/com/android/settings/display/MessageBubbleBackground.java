@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class MessageBubbleBackground extends LinearLayout {
     private final int mSnapWidthPixels;

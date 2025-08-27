@@ -5,14 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class AbandonSettingActivity extends ParentSettingActivity implements View.OnClickListener {
     private ImageView mNoBtn;
     private ImageView mYesBtn;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d("AbandonSettingActivity", "onCreate 0001");
         super.onCreate(bundle);
         setContentView(R.layout.act_abandon);
@@ -23,9 +23,8 @@ public class AbandonSettingActivity extends ParentSettingActivity implements Vie
         Logger.d("AbandonSettingActivity", "onCreate 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d("AbandonSettingActivity", "onDestroy 0001");
         super.onDestroy();
         this.mYesBtn.setOnClickListener(null);

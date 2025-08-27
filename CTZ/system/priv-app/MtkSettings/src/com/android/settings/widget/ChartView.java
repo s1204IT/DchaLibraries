@@ -10,10 +10,12 @@ import android.view.ViewDebug;
 import android.widget.FrameLayout;
 import com.android.internal.util.Preconditions;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ChartView extends FrameLayout {
     private Rect mContent;
     ChartAxis mHoriz;
+
     @ViewDebug.ExportedProperty
     private int mOptimalWidth;
     private float mOptimalWidthWeight;
@@ -32,15 +34,14 @@ public class ChartView extends FrameLayout {
         this.mOptimalWidth = -1;
         this.mOptimalWidthWeight = 0.0f;
         this.mContent = new Rect();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ChartView, i, 0);
-        setOptimalWidth(obtainStyledAttributes.getDimensionPixelSize(0, -1), obtainStyledAttributes.getFloat(1, 0.0f));
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ChartView, i, 0);
+        setOptimalWidth(typedArrayObtainStyledAttributes.getDimensionPixelSize(0, -1), typedArrayObtainStyledAttributes.getFloat(1, 0.0f));
+        typedArrayObtainStyledAttributes.recycle();
         setClipToPadding(false);
         setClipChildren(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void init(ChartAxis chartAxis, ChartAxis chartAxis2) {
+    void init(ChartAxis chartAxis, ChartAxis chartAxis2) {
         this.mHoriz = (ChartAxis) Preconditions.checkNotNull(chartAxis, "missing horiz");
         this.mVert = (ChartAxis) Preconditions.checkNotNull(chartAxis2, "missing vert");
     }
@@ -63,10 +64,10 @@ public class ChartView extends FrameLayout {
     @Override // android.widget.FrameLayout, android.view.ViewGroup, android.view.View
     protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         this.mContent.set(getPaddingLeft(), getPaddingTop(), (i3 - i) - getPaddingRight(), (i4 - i2) - getPaddingBottom());
-        int width = this.mContent.width();
-        int height = this.mContent.height();
-        this.mHoriz.setSize(width);
-        this.mVert.setSize(height);
+        int iWidth = this.mContent.width();
+        int iHeight = this.mContent.height();
+        this.mHoriz.setSize(iWidth);
+        this.mVert.setSize(iHeight);
         Rect rect = new Rect();
         Rect rect2 = new Rect();
         for (int i5 = 0; i5 < getChildCount(); i5++) {
@@ -74,10 +75,10 @@ public class ChartView extends FrameLayout {
             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) childAt.getLayoutParams();
             rect.set(this.mContent);
             if (childAt instanceof ChartNetworkSeriesView) {
-                Gravity.apply(layoutParams.gravity, width, height, rect, rect2);
+                Gravity.apply(layoutParams.gravity, iWidth, iHeight, rect, rect2);
                 childAt.layout(rect2.left, rect2.top, rect2.right, rect2.bottom);
             } else if (childAt instanceof ChartGridView) {
-                Gravity.apply(layoutParams.gravity, width, height, rect, rect2);
+                Gravity.apply(layoutParams.gravity, iWidth, iHeight, rect, rect2);
                 childAt.layout(rect2.left, rect2.top, rect2.right, rect2.bottom + childAt.getPaddingBottom());
             } else if (childAt instanceof ChartSweepView) {
                 layoutSweep((ChartSweepView) childAt, rect, rect2);
@@ -86,8 +87,7 @@ public class ChartView extends FrameLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void layoutSweep(ChartSweepView chartSweepView) {
+    protected void layoutSweep(ChartSweepView chartSweepView) {
         Rect rect = new Rect(this.mContent);
         Rect rect2 = new Rect();
         layoutSweep(chartSweepView, rect, rect2);

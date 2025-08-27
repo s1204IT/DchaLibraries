@@ -6,6 +6,7 @@ import android.view.DisplayListCanvas;
 import android.view.View;
 import android.view.ViewRootImpl;
 import android.view.WindowCallbacks;
+
 /* loaded from: classes.dex */
 public class WindowCallbacksCompat {
     private final View mView;

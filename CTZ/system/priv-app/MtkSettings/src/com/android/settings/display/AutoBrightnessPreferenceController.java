@@ -1,14 +1,15 @@
 package com.android.settings.display;
 
+import android.R;
 import android.content.Context;
 import android.provider.Settings;
 import android.text.TextUtils;
 import com.android.settings.DisplaySettings;
-import com.android.settings.R;
 import com.android.settings.core.TogglePreferenceController;
 import com.android.settings.search.DatabaseIndexingUtils;
 import com.android.settings.search.InlineSwitchPayload;
 import com.android.settings.search.ResultPayload;
+
 /* loaded from: classes.dex */
 public class AutoBrightnessPreferenceController extends TogglePreferenceController {
     private final int DEFAULT_VALUE;
@@ -33,7 +34,7 @@ public class AutoBrightnessPreferenceController extends TogglePreferenceControll
 
     @Override // com.android.settings.core.BasePreferenceController
     public int getAvailabilityStatus() {
-        if (this.mContext.getResources().getBoolean(17956895)) {
+        if (this.mContext.getResources().getBoolean(R.^attr-private.borderRight)) {
             return 0;
         }
         return 2;
@@ -46,6 +47,6 @@ public class AutoBrightnessPreferenceController extends TogglePreferenceControll
 
     @Override // com.android.settings.core.BasePreferenceController
     public ResultPayload getResultPayload() {
-        return new InlineSwitchPayload("screen_brightness_mode", 1, 1, DatabaseIndexingUtils.buildSearchResultPageIntent(this.mContext, DisplaySettings.class.getName(), getPreferenceKey(), this.mContext.getString(R.string.display_settings)), isAvailable(), 0);
+        return new InlineSwitchPayload("screen_brightness_mode", 1, 1, DatabaseIndexingUtils.buildSearchResultPageIntent(this.mContext, DisplaySettings.class.getName(), getPreferenceKey(), this.mContext.getString(com.android.settings.R.string.display_settings)), isAvailable(), 0);
     }
 }

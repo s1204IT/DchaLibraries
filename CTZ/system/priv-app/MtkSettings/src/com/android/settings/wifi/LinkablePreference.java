@@ -1,5 +1,6 @@
 package com.android.settings.wifi;
 
+import android.R;
 import android.content.Context;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceViewHolder;
@@ -9,6 +10,7 @@ import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import com.android.settings.LinkifyUtils;
+
 /* loaded from: classes.dex */
 public class LinkablePreference extends Preference {
     private LinkifyUtils.OnClickListener mClickListener;
@@ -33,7 +35,7 @@ public class LinkablePreference extends Preference {
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        TextView textView = (TextView) preferenceViewHolder.findViewById(16908310);
+        TextView textView = (TextView) preferenceViewHolder.findViewById(R.id.title);
         if (textView == null) {
             return;
         }
@@ -49,7 +51,7 @@ public class LinkablePreference extends Preference {
         }
         if (LinkifyUtils.linkify(textView, sb, this.mClickListener) && this.mContentTitle != null) {
             Spannable spannable = (Spannable) textView.getText();
-            spannable.setSpan(new TextAppearanceSpan(getContext(), 16973892), 0, this.mContentTitle.length(), 17);
+            spannable.setSpan(new TextAppearanceSpan(getContext(), R.style.TextAppearance.Medium), 0, this.mContentTitle.length(), 17);
             textView.setText(spannable);
             textView.setMovementMethod(new LinkMovementMethod());
         }

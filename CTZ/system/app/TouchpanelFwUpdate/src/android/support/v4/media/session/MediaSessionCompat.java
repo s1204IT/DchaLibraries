@@ -13,12 +13,13 @@ import android.support.v4.media.session.IMediaSession;
 import android.support.v4.media.session.MediaSessionCompatApi21;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class MediaSessionCompat {
 
-    /* loaded from: classes.dex */
     public static final class Token implements Parcelable {
         public static final Parcelable.Creator<Token> CREATOR = new Parcelable.Creator<Token>() { // from class: android.support.v4.media.session.MediaSessionCompat.Token.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public Token createFromParcel(Parcel in) {
@@ -31,6 +32,7 @@ public class MediaSessionCompat {
                 return new Token(inner);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public Token[] newArray(int size) {
@@ -76,17 +78,17 @@ public class MediaSessionCompat {
             if (this == obj) {
                 return true;
             }
-            if (obj instanceof Token) {
-                Token other = (Token) obj;
-                if (this.mInner == null) {
-                    return other.mInner == null;
-                } else if (other.mInner == null) {
-                    return false;
-                } else {
-                    return this.mInner.equals(other.mInner);
-                }
+            if (!(obj instanceof Token)) {
+                return false;
             }
-            return false;
+            Token other = (Token) obj;
+            if (this.mInner == null) {
+                return other.mInner == null;
+            }
+            if (other.mInner == null) {
+                return false;
+            }
+            return this.mInner.equals(other.mInner);
         }
 
         public IMediaSession getExtraBinder() {
@@ -115,15 +117,16 @@ public class MediaSessionCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class QueueItem implements Parcelable {
         public static final Parcelable.Creator<QueueItem> CREATOR = new Parcelable.Creator<QueueItem>() { // from class: android.support.v4.media.session.MediaSessionCompat.QueueItem.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public QueueItem createFromParcel(Parcel p) {
                 return new QueueItem(p);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public QueueItem[] newArray(int size) {
@@ -188,15 +191,16 @@ public class MediaSessionCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class ResultReceiverWrapper implements Parcelable {
         public static final Parcelable.Creator<ResultReceiverWrapper> CREATOR = new Parcelable.Creator<ResultReceiverWrapper>() { // from class: android.support.v4.media.session.MediaSessionCompat.ResultReceiverWrapper.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public ResultReceiverWrapper createFromParcel(Parcel p) {
                 return new ResultReceiverWrapper(p);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public ResultReceiverWrapper[] newArray(int size) {

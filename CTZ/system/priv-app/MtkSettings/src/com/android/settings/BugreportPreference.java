@@ -13,6 +13,7 @@ import android.widget.CheckedTextView;
 import android.widget.TextView;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.CustomDialogPreference;
+
 /* loaded from: classes.dex */
 public class BugreportPreference extends CustomDialogPreference {
     private TextView mFullSummary;
@@ -24,15 +25,14 @@ public class BugreportPreference extends CustomDialogPreference {
         super(context, attributeSet);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomDialogPreference
-    public void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
         super.onPrepareDialogBuilder(builder, onClickListener);
-        View inflate = View.inflate(getContext(), R.layout.bugreport_options_dialog, null);
-        this.mInteractiveTitle = (CheckedTextView) inflate.findViewById(R.id.bugreport_option_interactive_title);
-        this.mInteractiveSummary = (TextView) inflate.findViewById(R.id.bugreport_option_interactive_summary);
-        this.mFullTitle = (CheckedTextView) inflate.findViewById(R.id.bugreport_option_full_title);
-        this.mFullSummary = (TextView) inflate.findViewById(R.id.bugreport_option_full_summary);
+        View viewInflate = View.inflate(getContext(), R.layout.bugreport_options_dialog, null);
+        this.mInteractiveTitle = (CheckedTextView) viewInflate.findViewById(R.id.bugreport_option_interactive_title);
+        this.mInteractiveSummary = (TextView) viewInflate.findViewById(R.id.bugreport_option_interactive_summary);
+        this.mFullTitle = (CheckedTextView) viewInflate.findViewById(R.id.bugreport_option_full_title);
+        this.mFullSummary = (TextView) viewInflate.findViewById(R.id.bugreport_option_full_summary);
         View.OnClickListener onClickListener2 = new View.OnClickListener() { // from class: com.android.settings.BugreportPreference.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
@@ -50,8 +50,8 @@ public class BugreportPreference extends CustomDialogPreference {
         this.mFullTitle.setOnClickListener(onClickListener2);
         this.mInteractiveSummary.setOnClickListener(onClickListener2);
         this.mFullSummary.setOnClickListener(onClickListener2);
-        builder.setPositiveButton(17040768, onClickListener);
-        builder.setView(inflate);
+        builder.setPositiveButton(android.R.string.lockscreen_transport_rew_description, onClickListener);
+        builder.setView(viewInflate);
     }
 
     @Override // com.android.settingslib.CustomDialogPreference
@@ -62,11 +62,11 @@ public class BugreportPreference extends CustomDialogPreference {
                 Log.v("BugreportPreference", "Taking full bugreport right away");
                 FeatureFactory.getFactory(context).getMetricsFeatureProvider().action(context, 295, new Pair[0]);
                 takeBugreport(0);
-                return;
+            } else {
+                Log.v("BugreportPreference", "Taking interactive bugreport right away");
+                FeatureFactory.getFactory(context).getMetricsFeatureProvider().action(context, 294, new Pair[0]);
+                takeBugreport(1);
             }
-            Log.v("BugreportPreference", "Taking interactive bugreport right away");
-            FeatureFactory.getFactory(context).getMetricsFeatureProvider().action(context, 294, new Pair[0]);
-            takeBugreport(1);
         }
     }
 

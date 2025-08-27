@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.android.settings.R;
 import com.android.settingslib.RestrictedPreferenceHelper;
+
 /* loaded from: classes.dex */
 public class RestrictedAppPreference extends AppPreference {
     private RestrictedPreferenceHelper mHelper;
@@ -29,9 +30,9 @@ public class RestrictedAppPreference extends AppPreference {
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
         this.mHelper.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.restricted_icon);
-        if (findViewById != null) {
-            findViewById.setVisibility(isDisabledByAdmin() ? 0 : 8);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.restricted_icon);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(isDisabledByAdmin() ? 0 : 8);
         }
     }
 
@@ -54,9 +55,8 @@ public class RestrictedAppPreference extends AppPreference {
         return this.mHelper.isDisabledByAdmin();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void onAttachedToHierarchy(PreferenceManager preferenceManager) {
+    protected void onAttachedToHierarchy(PreferenceManager preferenceManager) {
         this.mHelper.onAttachedToHierarchy();
         super.onAttachedToHierarchy(preferenceManager);
     }

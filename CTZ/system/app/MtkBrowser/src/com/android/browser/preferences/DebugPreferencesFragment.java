@@ -5,6 +5,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import com.android.browser.BrowserSettings;
 import com.android.browser.R;
+
 /* loaded from: classes.dex */
 public class DebugPreferencesFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
     @Override // android.preference.PreferenceFragment, android.app.Fragment

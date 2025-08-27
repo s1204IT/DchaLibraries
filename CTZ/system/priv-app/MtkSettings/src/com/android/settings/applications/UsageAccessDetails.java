@@ -16,6 +16,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
 import com.android.settings.applications.AppStateUsageBridge;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class UsageAccessDetails extends AppInfoWithHeader implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     private AppOpsManager mAppOpsManager;
@@ -53,7 +54,7 @@ public class UsageAccessDetails extends AppInfoWithHeader implements Preference.
         if (preference == this.mSwitchPref) {
             if (this.mUsageState != null && ((Boolean) obj).booleanValue() != this.mUsageState.isPermissible()) {
                 if (this.mUsageState.isPermissible() && this.mDpm.isProfileOwnerApp(this.mPackageName)) {
-                    new AlertDialog.Builder(getContext()).setIcon(17302338).setTitle(17039380).setMessage(R.string.work_profile_usage_access_warning).setPositiveButton(R.string.okay, (DialogInterface.OnClickListener) null).show();
+                    new AlertDialog.Builder(getContext()).setIcon(android.R.drawable.focus_event_rotary_input_background).setTitle(android.R.string.dialog_alert_title).setMessage(R.string.work_profile_usage_access_warning).setPositiveButton(R.string.okay, (DialogInterface.OnClickListener) null).show();
                 }
                 setHasAccess(!this.mUsageState.isPermissible());
                 refreshUi();
@@ -82,10 +83,10 @@ public class UsageAccessDetails extends AppInfoWithHeader implements Preference.
         this.mUsageState = this.mUsageBridge.getUsageInfo(this.mPackageName, this.mPackageInfo.applicationInfo.uid);
         this.mSwitchPref.setChecked(this.mUsageState.isPermissible());
         this.mSwitchPref.setEnabled(this.mUsageState.permissionDeclared);
-        ResolveInfo resolveActivityAsUser = this.mPm.resolveActivityAsUser(this.mSettingsIntent, 128, this.mUserId);
-        if (resolveActivityAsUser != null) {
-            Bundle bundle = resolveActivityAsUser.activityInfo.metaData;
-            this.mSettingsIntent.setComponent(new ComponentName(resolveActivityAsUser.activityInfo.packageName, resolveActivityAsUser.activityInfo.name));
+        ResolveInfo resolveInfoResolveActivityAsUser = this.mPm.resolveActivityAsUser(this.mSettingsIntent, 128, this.mUserId);
+        if (resolveInfoResolveActivityAsUser != null) {
+            Bundle bundle = resolveInfoResolveActivityAsUser.activityInfo.metaData;
+            this.mSettingsIntent.setComponent(new ComponentName(resolveInfoResolveActivityAsUser.activityInfo.packageName, resolveInfoResolveActivityAsUser.activityInfo.name));
             if (bundle != null && bundle.containsKey("android.settings.metadata.USAGE_ACCESS_REASON")) {
                 this.mSwitchPref.setSummary(bundle.getString("android.settings.metadata.USAGE_ACCESS_REASON"));
                 return true;

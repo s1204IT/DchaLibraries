@@ -23,6 +23,7 @@ import com.android.launcher3.folder.FolderIcon;
 import com.android.launcher3.util.PackageManagerHelper;
 import com.android.launcher3.widget.PendingAppWidgetHostView;
 import com.android.launcher3.widget.WidgetAddFlowHandler;
+
 /* loaded from: classes.dex */
 public class ItemClickHandler {
     public static final View.OnClickListener INSTANCE = new View.OnClickListener() { // from class: com.android.launcher3.touch.-$$Lambda$ItemClickHandler$oPqR0koj5OQZ6VtyqmfcFGp5X0Q
@@ -32,8 +33,7 @@ public class ItemClickHandler {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void onClick(View view) {
+    private static void onClick(View view) {
         if (view.getWindowToken() == null) {
             return;
         }
@@ -44,7 +44,9 @@ public class ItemClickHandler {
         Object tag = view.getTag();
         if (tag instanceof ShortcutInfo) {
             onClickAppShortcut(view, (ShortcutInfo) tag, launcher);
-        } else if (tag instanceof FolderInfo) {
+            return;
+        }
+        if (tag instanceof FolderInfo) {
             if (view instanceof FolderIcon) {
                 onClickFolderIcon(view);
             }
@@ -64,16 +66,16 @@ public class ItemClickHandler {
 
     private static void onClickPendingWidget(PendingAppWidgetHostView pendingAppWidgetHostView, Launcher launcher) {
         if (launcher.getPackageManager().isSafeMode()) {
-            Toast.makeText(launcher, (int) R.string.safemode_widget_error, 0).show();
+            Toast.makeText(launcher, R.string.safemode_widget_error, 0).show();
             return;
         }
         LauncherAppWidgetInfo launcherAppWidgetInfo = (LauncherAppWidgetInfo) pendingAppWidgetHostView.getTag();
         if (pendingAppWidgetHostView.isReadyForClickSetup()) {
-            LauncherAppWidgetProviderInfo findProvider = AppWidgetManagerCompat.getInstance(launcher).findProvider(launcherAppWidgetInfo.providerName, launcherAppWidgetInfo.user);
-            if (findProvider == null) {
+            LauncherAppWidgetProviderInfo launcherAppWidgetProviderInfoFindProvider = AppWidgetManagerCompat.getInstance(launcher).findProvider(launcherAppWidgetInfo.providerName, launcherAppWidgetInfo.user);
+            if (launcherAppWidgetProviderInfoFindProvider == null) {
                 return;
             }
-            WidgetAddFlowHandler widgetAddFlowHandler = new WidgetAddFlowHandler(findProvider);
+            WidgetAddFlowHandler widgetAddFlowHandler = new WidgetAddFlowHandler(launcherAppWidgetProviderInfoFindProvider);
             if (launcherAppWidgetInfo.hasRestoreFlag(1)) {
                 if (!launcherAppWidgetInfo.hasRestoreFlag(16)) {
                     return;
@@ -99,14 +101,13 @@ public class ItemClickHandler {
             }).setNeutralButton(R.string.abandoned_clean_this, new DialogInterface.OnClickListener() { // from class: com.android.launcher3.touch.-$$Lambda$ItemClickHandler$ybj7MHOR9LbGx6T4RkopJHIkLSs
                 @Override // android.content.DialogInterface.OnClickListener
                 public final void onClick(DialogInterface dialogInterface, int i) {
-                    Launcher.this.getWorkspace().removeAbandonedPromise(str, Process.myUserHandle());
+                    launcher.getWorkspace().removeAbandonedPromise(str, Process.myUserHandle());
                 }
             }).create().show();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void startMarketIntentForPackage(View view, Launcher launcher, String str) {
+    private static void startMarketIntentForPackage(View view, Launcher launcher, String str) {
         launcher.startActivitySafely(view, new PackageManagerHelper(launcher).getMarketIntent(str), (ItemInfo) view.getTag());
     }
 

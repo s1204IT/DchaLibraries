@@ -14,6 +14,7 @@ import com.android.settings.R;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.overlay.SupportFeatureProvider;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NewDeviceIntroSuggestionActivity extends Activity {
     static final long PERMANENT_DISMISS_THRESHOLD = 1209600000;
@@ -42,22 +43,22 @@ public class NewDeviceIntroSuggestionActivity extends Activity {
     private static boolean isExpired(Context context) {
         long j;
         SharedPreferences sharedPrefs = FeatureFactory.getFactory(context).getSuggestionFeatureProvider(context).getSharedPrefs(context);
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         if (!sharedPrefs.contains(PREF_KEY_SUGGGESTION_FIRST_DISPLAY_TIME)) {
-            sharedPrefs.edit().putLong(PREF_KEY_SUGGGESTION_FIRST_DISPLAY_TIME, currentTimeMillis).commit();
-            j = currentTimeMillis;
+            sharedPrefs.edit().putLong(PREF_KEY_SUGGGESTION_FIRST_DISPLAY_TIME, jCurrentTimeMillis).commit();
+            j = jCurrentTimeMillis;
         } else {
             j = sharedPrefs.getLong(PREF_KEY_SUGGGESTION_FIRST_DISPLAY_TIME, -1L);
         }
-        boolean z = currentTimeMillis > j + PERMANENT_DISMISS_THRESHOLD;
+        boolean z = jCurrentTimeMillis > j + PERMANENT_DISMISS_THRESHOLD;
         Log.d("NewDeviceIntroSugg", "is suggestion expired: " + z);
         return z;
     }
 
     private static boolean canOpenUrlInBrowser(Context context) {
-        List<ResolveInfo> queryIntentActivities;
+        List<ResolveInfo> listQueryIntentActivities;
         Intent launchIntent = getLaunchIntent(context);
-        return (launchIntent == null || (queryIntentActivities = context.getPackageManager().queryIntentActivities(launchIntent, 0)) == null || queryIntentActivities.size() == 0) ? false : true;
+        return (launchIntent == null || (listQueryIntentActivities = context.getPackageManager().queryIntentActivities(launchIntent, 0)) == null || listQueryIntentActivities.size() == 0) ? false : true;
     }
 
     private static boolean hasLaunchedBefore(Context context) {

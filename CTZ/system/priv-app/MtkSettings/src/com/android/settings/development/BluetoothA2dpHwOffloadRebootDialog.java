@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class BluetoothA2dpHwOffloadRebootDialog extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
 
-    /* loaded from: classes.dex */
     public interface OnA2dpHwDialogConfirmedListener {
         void onA2dpHwDialogConfirmed();
     }

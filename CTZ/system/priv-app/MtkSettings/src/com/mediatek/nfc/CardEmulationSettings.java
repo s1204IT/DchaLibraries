@@ -19,19 +19,21 @@ import com.android.settings.SettingsActivity;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.widget.SwitchBar;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class CardEmulationSettings extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, SwitchBar.OnSwitchChangeListener {
     private static final String CATEGORY_KEY = "card_emulation_settings_category";
     private static final String DEFAULT_MODE = "SIM1";
     private static final String TAG = "CardEmulationSettings";
-    private SecurityItemPreference mActivePref;
+    private CardEmulationSettings3 mActivePref;
     private TextView mEmptyView;
     private IntentFilter mIntentFilter;
-    private CardEmulationProgressCategory mProgressCategory;
+    private CardEmulationSettings2 mProgressCategory;
     private SwitchBar mSwitchBar;
     private String EMULATION_OFF = null;
-    private final List<SecurityItemPreference> mItemPreferences = new ArrayList();
+    private final List<CardEmulationSettings3> mItemPreferences = new ArrayList();
     private final List<String> mItemKeys = new ArrayList();
     private boolean mUpdateStatusOnly = false;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() { // from class: com.mediatek.nfc.CardEmulationSettings.1
@@ -80,7 +82,7 @@ public class CardEmulationSettings extends SettingsPreferenceFragment implements
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         addPreferencesFromResource(R.xml.card_emulation_settings);
-        this.mProgressCategory = (CardEmulationProgressCategory) findPreference(CATEGORY_KEY);
+        this.mProgressCategory = (CardEmulationSettings2) findPreference(CATEGORY_KEY);
         getCardEmulationList();
         this.mIntentFilter = new IntentFilter();
         this.mIntentFilter.addAction("com.android.nfc_extras.action.RF_FIELD_ON_DETECTED");
@@ -90,7 +92,7 @@ public class CardEmulationSettings extends SettingsPreferenceFragment implements
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-        this.mEmptyView = (TextView) getView().findViewById(16908292);
+        this.mEmptyView = (TextView) getView().findViewById(android.R.id.empty);
         setEmptyView(this.mEmptyView);
     }
 
@@ -140,8 +142,7 @@ public class CardEmulationSettings extends SettingsPreferenceFragment implements
         this.mItemKeys.clear();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreferences() {
+    private void updatePreferences() {
         removeAll();
         String string = Settings.Global.getString(getContentResolver(), "nfc_multise_active");
         String string2 = Settings.Global.getString(getContentResolver(), "nfc_multise_previous");
@@ -179,10 +180,10 @@ public class CardEmulationSettings extends SettingsPreferenceFragment implements
                 addItemPreference();
                 this.mProgressCategory.getPreferenceCount();
                 getPreferenceScreen().addPreference(this.mProgressCategory);
-                SecurityItemPreference securityItemPreference = (SecurityItemPreference) findPreference(string);
-                if (securityItemPreference != null) {
-                    securityItemPreference.setChecked(true);
-                    this.mActivePref = securityItemPreference;
+                CardEmulationSettings3 cardEmulationSettings3 = (CardEmulationSettings3) findPreference(string);
+                if (cardEmulationSettings3 != null) {
+                    cardEmulationSettings3.setChecked(true);
+                    this.mActivePref = cardEmulationSettings3;
                 } else {
                     Log.d("@M_CardEmulationSettings", "Activie mode is " + string + ", can not find it on screen");
                 }
@@ -199,29 +200,29 @@ public class CardEmulationSettings extends SettingsPreferenceFragment implements
         String[] cardEmulationList = getCardEmulationList();
         if (cardEmulationList != null) {
             for (String str : cardEmulationList) {
-                SecurityItemPreference securityItemPreference = new SecurityItemPreference(getActivity());
-                securityItemPreference.setTitle(str);
-                securityItemPreference.setKey(str);
-                securityItemPreference.setOnPreferenceChangeListener(this);
-                this.mProgressCategory.addPreference(securityItemPreference);
-                this.mItemPreferences.add(securityItemPreference);
+                CardEmulationSettings3 cardEmulationSettings3 = new CardEmulationSettings3(getActivity());
+                cardEmulationSettings3.setTitle(str);
+                cardEmulationSettings3.setKey(str);
+                cardEmulationSettings3.setOnPreferenceChangeListener(this);
+                this.mProgressCategory.addPreference(cardEmulationSettings3);
+                this.mItemPreferences.add(cardEmulationSettings3);
                 this.mItemKeys.add(str);
             }
         }
     }
 
     private String[] getCardEmulationList() {
-        String[] split = Settings.Global.getString(getContentResolver(), "nfc_multise_list").split("[,]");
-        int length = split.length;
+        String[] strArrSplit = Settings.Global.getString(getContentResolver(), "nfc_multise_list").split("[,]");
+        int length = strArrSplit.length;
         Log.d("@M_CardEmulationSettings", "getCardEmulationList, length = " + length);
         if (this.EMULATION_OFF == null) {
-            this.EMULATION_OFF = split[length - 1];
+            this.EMULATION_OFF = strArrSplit[length - 1];
             Log.d("@M_CardEmulationSettings", "EMULATION_OFF is " + this.EMULATION_OFF);
         }
         String[] strArr = new String[length - 1];
-        if (split != null) {
-            for (int i = 0; i < split.length - 1; i++) {
-                strArr[i] = split[i];
+        if (strArrSplit != null) {
+            for (int i = 0; i < strArrSplit.length - 1; i++) {
+                strArr[i] = strArrSplit[i];
                 Log.d("@M_CardEmulationSettings", "emulation list item is " + strArr[i]);
             }
         }
@@ -230,21 +231,22 @@ public class CardEmulationSettings extends SettingsPreferenceFragment implements
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        if (preference == null || !(preference instanceof SecurityItemPreference)) {
+        if (preference == null || !(preference instanceof CardEmulationSettings3)) {
             return false;
         }
         Log.d("@M_CardEmulationSettings", "onPreferenceChange, select " + preference.getKey() + " active");
         Settings.Global.putString(getContentResolver(), "nfc_multise_active", preference.getKey());
         this.mProgressCategory.setProgress(true);
         this.mSwitchBar.setEnabled(false);
-        for (SecurityItemPreference securityItemPreference : this.mItemPreferences) {
-            securityItemPreference.setEnabled(false);
+        Iterator<CardEmulationSettings3> it = this.mItemPreferences.iterator();
+        while (it.hasNext()) {
+            it.next().setEnabled(false);
         }
         return true;
     }
 
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        if (preference != null && (preference instanceof SecurityItemPreference)) {
+        if (preference != null && (preference instanceof CardEmulationSettings3)) {
             Log.d("@M_CardEmulationSettings", "onPreferenceTreeClick " + preference.getKey());
             String string = Settings.Global.getString(getContentResolver(), "nfc_multise_active");
             String key = preference.getKey();
@@ -252,8 +254,9 @@ public class CardEmulationSettings extends SettingsPreferenceFragment implements
                 Settings.Global.putString(getContentResolver(), "nfc_multise_active", preference.getKey());
                 this.mProgressCategory.setProgress(true);
                 this.mSwitchBar.setEnabled(false);
-                for (SecurityItemPreference securityItemPreference : this.mItemPreferences) {
-                    securityItemPreference.setEnabled(false);
+                Iterator<CardEmulationSettings3> it = this.mItemPreferences.iterator();
+                while (it.hasNext()) {
+                    it.next().setEnabled(false);
                 }
                 return true;
             }

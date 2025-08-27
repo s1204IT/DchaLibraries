@@ -18,22 +18,19 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
 import com.android.settingslib.wifi.AccessPoint;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LinkAccessibilityHelper extends AccessibilityDelegateCompat {
     private final AccessibilityDelegateCompat mDelegate;
 
-    /* JADX WARN: Illegal instructions before constructor call */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public LinkAccessibilityHelper(TextView textView) {
-        this(r3);
         AccessibilityDelegateCompat preOLinkAccessibilityHelper;
         if (Build.VERSION.SDK_INT >= 26) {
             preOLinkAccessibilityHelper = new AccessibilityDelegateCompat();
         } else {
             preOLinkAccessibilityHelper = new PreOLinkAccessibilityHelper(textView);
         }
+        this(preOLinkAccessibilityHelper);
     }
 
     LinkAccessibilityHelper(AccessibilityDelegateCompat accessibilityDelegateCompat) {
@@ -89,7 +86,6 @@ public class LinkAccessibilityHelper extends AccessibilityDelegateCompat {
         return (this.mDelegate instanceof ExploreByTouchHelper) && ((ExploreByTouchHelper) this.mDelegate).dispatchHoverEvent(motionEvent);
     }
 
-    /* loaded from: classes.dex */
     static class PreOLinkAccessibilityHelper extends ExploreByTouchHelper {
         private final Rect mTempRect;
         private final TextView mView;

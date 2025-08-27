@@ -4,6 +4,7 @@ import android.content.Context;
 import android.provider.Settings;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class ScreenPinningPreferenceController extends BasePreferenceController {
     private static final String KEY_SCREEN_PINNING = "screen_pinning_settings";

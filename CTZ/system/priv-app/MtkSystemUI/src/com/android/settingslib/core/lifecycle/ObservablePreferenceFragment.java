@@ -8,6 +8,7 @@ import android.support.v14.preference.PreferenceFragment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 /* loaded from: classes.dex */
 public abstract class ObservablePreferenceFragment extends PreferenceFragment implements LifecycleOwner {
     private final Lifecycle mLifecycle = new Lifecycle(this);
@@ -75,10 +76,10 @@ public abstract class ObservablePreferenceFragment extends PreferenceFragment im
 
     @Override // android.app.Fragment
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        boolean onOptionsItemSelected = this.mLifecycle.onOptionsItemSelected(menuItem);
-        if (!onOptionsItemSelected) {
+        boolean zOnOptionsItemSelected = this.mLifecycle.onOptionsItemSelected(menuItem);
+        if (!zOnOptionsItemSelected) {
             return super.onOptionsItemSelected(menuItem);
         }
-        return onOptionsItemSelected;
+        return zOnOptionsItemSelected;
     }
 }

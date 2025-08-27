@@ -8,6 +8,7 @@ import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.phone.ManagedProfileController;
+
 /* loaded from: classes.dex */
 public class WorkModeTile extends QSTileImpl<QSTile.BooleanState> implements ManagedProfileController.Callback {
     private final QSTile.Icon mIcon;
@@ -19,7 +20,7 @@ public class WorkModeTile extends QSTileImpl<QSTile.BooleanState> implements Man
         this.mProfileController = (ManagedProfileController) Dependency.get(ManagedProfileController.class);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -64,9 +65,9 @@ public class WorkModeTile extends QSTileImpl<QSTile.BooleanState> implements Man
         return this.mContext.getString(R.string.quick_settings_work_mode_label);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         if (!isAvailable()) {
             onManagedProfileRemoved();
         }

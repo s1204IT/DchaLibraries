@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceGroup;
 import android.support.v7.preference.PreferenceScreen;
+
 /* loaded from: classes.dex */
 public abstract class AbstractPreferenceController {
     protected final Context mContext;
@@ -16,6 +17,8 @@ public abstract class AbstractPreferenceController {
         this.mContext = context;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: com.android.settingslib.core.AbstractPreferenceController */
+    /* JADX WARN: Multi-variable type inference failed */
     public void displayPreference(PreferenceScreen preferenceScreen) {
         String preferenceKey = getPreferenceKey();
         if (isAvailable()) {
@@ -33,8 +36,7 @@ public abstract class AbstractPreferenceController {
         refreshSummary(preference);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void refreshSummary(Preference preference) {
+    protected void refreshSummary(Preference preference) {
         CharSequence summary;
         if (preference == null || (summary = getSummary()) == null) {
             return;
@@ -46,11 +48,10 @@ public abstract class AbstractPreferenceController {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final void setVisible(PreferenceGroup preferenceGroup, String str, boolean z) {
-        Preference findPreference = preferenceGroup.findPreference(str);
-        if (findPreference != null) {
-            findPreference.setVisible(z);
+    protected final void setVisible(PreferenceGroup preferenceGroup, String str, boolean z) {
+        Preference preferenceFindPreference = preferenceGroup.findPreference(str);
+        if (preferenceFindPreference != null) {
+            preferenceFindPreference.setVisible(z);
         }
     }
 

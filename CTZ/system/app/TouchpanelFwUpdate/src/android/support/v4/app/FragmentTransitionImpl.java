@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public abstract class FragmentTransitionImpl {
     public abstract void addTarget(Object obj, View view);
@@ -42,15 +43,13 @@ public abstract class FragmentTransitionImpl {
 
     public abstract Object wrapTransitionInSet(Object obj);
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void getBoundsOnScreen(View view, Rect epicenter) {
+    protected void getBoundsOnScreen(View view, Rect epicenter) {
         int[] loc = new int[2];
         view.getLocationOnScreen(loc);
         epicenter.set(loc[0], loc[1], loc[0] + view.getWidth(), loc[1] + view.getHeight());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ArrayList<String> prepareSetNameOverridesReordered(ArrayList<View> sharedElementsIn) {
+    ArrayList<String> prepareSetNameOverridesReordered(ArrayList<View> sharedElementsIn) {
         ArrayList<String> names = new ArrayList<>();
         int numSharedElements = sharedElementsIn.size();
         for (int i = 0; i < numSharedElements; i++) {
@@ -61,8 +60,7 @@ public abstract class FragmentTransitionImpl {
         return names;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setNameOverridesReordered(View sceneRoot, final ArrayList<View> sharedElementsOut, final ArrayList<View> sharedElementsIn, final ArrayList<String> inNames, Map<String, String> nameOverrides) {
+    void setNameOverridesReordered(View sceneRoot, final ArrayList<View> sharedElementsOut, final ArrayList<View> sharedElementsIn, final ArrayList<String> inNames, Map<String, String> nameOverrides) {
         final int numSharedElements = sharedElementsIn.size();
         final ArrayList<String> outNames = new ArrayList<>();
         for (int i = 0; i < numSharedElements; i++) {
@@ -74,14 +72,13 @@ public abstract class FragmentTransitionImpl {
                 String inName = nameOverrides.get(name);
                 int j = 0;
                 while (true) {
-                    if (j < numSharedElements) {
-                        if (!inName.equals(inNames.get(j))) {
-                            j++;
-                        } else {
-                            ViewCompat.setTransitionName(sharedElementsIn.get(j), name);
-                            break;
-                        }
+                    if (j >= numSharedElements) {
+                        break;
+                    }
+                    if (!inName.equals(inNames.get(j))) {
+                        j++;
                     } else {
+                        ViewCompat.setTransitionName(sharedElementsIn.get(j), name);
                         break;
                     }
                 }
@@ -98,8 +95,7 @@ public abstract class FragmentTransitionImpl {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void captureTransitioningViews(ArrayList<View> transitioningViews, View view) {
+    void captureTransitioningViews(ArrayList<View> transitioningViews, View view) {
         if (view.getVisibility() == 0) {
             if (view instanceof ViewGroup) {
                 ViewGroup viewGroup = (ViewGroup) view;
@@ -118,8 +114,7 @@ public abstract class FragmentTransitionImpl {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void findNamedViews(Map<String, View> namedViews, View view) {
+    void findNamedViews(Map<String, View> namedViews, View view) {
         if (view.getVisibility() == 0) {
             String transitionName = ViewCompat.getTransitionName(view);
             if (transitionName != null) {
@@ -136,8 +131,7 @@ public abstract class FragmentTransitionImpl {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setNameOverridesOrdered(View sceneRoot, final ArrayList<View> sharedElementsIn, final Map<String, String> nameOverrides) {
+    void setNameOverridesOrdered(View sceneRoot, final ArrayList<View> sharedElementsIn, final Map<String, String> nameOverrides) {
         OneShotPreDrawListener.add(sceneRoot, new Runnable() { // from class: android.support.v4.app.FragmentTransitionImpl.2
             @Override // java.lang.Runnable
             public void run() {
@@ -154,8 +148,7 @@ public abstract class FragmentTransitionImpl {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void scheduleNameReset(ViewGroup sceneRoot, final ArrayList<View> sharedElementsIn, final Map<String, String> nameOverrides) {
+    void scheduleNameReset(ViewGroup sceneRoot, final ArrayList<View> sharedElementsIn, final Map<String, String> nameOverrides) {
         OneShotPreDrawListener.add(sceneRoot, new Runnable() { // from class: android.support.v4.app.FragmentTransitionImpl.3
             @Override // java.lang.Runnable
             public void run() {
@@ -170,8 +163,7 @@ public abstract class FragmentTransitionImpl {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static void bfsAddViewChildren(List<View> views, View startView) {
+    protected static void bfsAddViewChildren(List<View> views, View startView) {
         int startIndex = views.size();
         if (containedBeforeIndex(views, startView, startIndex)) {
             return;
@@ -201,8 +193,7 @@ public abstract class FragmentTransitionImpl {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static boolean isNullOrEmpty(List list) {
+    protected static boolean isNullOrEmpty(List list) {
         return list == null || list.isEmpty();
     }
 

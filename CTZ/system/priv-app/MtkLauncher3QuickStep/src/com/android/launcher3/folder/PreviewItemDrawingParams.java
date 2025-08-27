@@ -1,9 +1,9 @@
 package com.android.launcher3.folder;
 
 import android.graphics.drawable.Drawable;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class PreviewItemDrawingParams {
+class PreviewItemDrawingParams {
     FolderPreviewItemAnim anim;
     Drawable drawable;
     public boolean hidden;
@@ -12,8 +12,7 @@ public class PreviewItemDrawingParams {
     float transX;
     float transY;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public PreviewItemDrawingParams(float f, float f2, float f3, float f4) {
+    PreviewItemDrawingParams(float f, float f2, float f3, float f4) {
         this.transX = f;
         this.transY = f2;
         this.scale = f3;
@@ -24,8 +23,9 @@ public class PreviewItemDrawingParams {
         if (this.anim != null) {
             if (this.anim.finalTransX == f || this.anim.finalTransY == f2 || this.anim.finalScale == f3) {
                 return;
+            } else {
+                this.anim.cancel();
             }
-            this.anim.cancel();
         }
         this.transX = f;
         this.transY = f2;

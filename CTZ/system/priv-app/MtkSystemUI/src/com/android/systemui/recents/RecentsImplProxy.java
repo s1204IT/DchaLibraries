@@ -6,6 +6,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import com.android.internal.os.SomeArgs;
 import com.android.systemui.recents.IRecentsNonSystemUserCallbacks;
+
 /* loaded from: classes.dex */
 public class RecentsImplProxy extends IRecentsNonSystemUserCallbacks.Stub {
     private final Handler mHandler = new Handler() { // from class: com.android.systemui.recents.RecentsImplProxy.1
@@ -73,12 +74,12 @@ public class RecentsImplProxy extends IRecentsNonSystemUserCallbacks.Stub {
 
     @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
     public void showRecents(boolean z, boolean z2, boolean z3, int i) throws RemoteException {
-        SomeArgs obtain = SomeArgs.obtain();
-        obtain.argi1 = z ? 1 : 0;
-        obtain.argi2 = z2 ? 1 : 0;
-        obtain.argi3 = z3 ? 1 : 0;
-        obtain.argi4 = i;
-        this.mHandler.sendMessage(this.mHandler.obtainMessage(3, obtain));
+        SomeArgs someArgsObtain = SomeArgs.obtain();
+        someArgsObtain.argi1 = z ? 1 : 0;
+        someArgsObtain.argi2 = z2 ? 1 : 0;
+        someArgsObtain.argi3 = z3 ? 1 : 0;
+        someArgsObtain.argi4 = i;
+        this.mHandler.sendMessage(this.mHandler.obtainMessage(3, someArgsObtain));
     }
 
     @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
@@ -88,9 +89,9 @@ public class RecentsImplProxy extends IRecentsNonSystemUserCallbacks.Stub {
 
     @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
     public void toggleRecents(int i) throws RemoteException {
-        SomeArgs obtain = SomeArgs.obtain();
-        obtain.argi1 = i;
-        this.mHandler.sendMessage(this.mHandler.obtainMessage(5, obtain));
+        SomeArgs someArgsObtain = SomeArgs.obtain();
+        someArgsObtain.argi1 = i;
+        this.mHandler.sendMessage(this.mHandler.obtainMessage(5, someArgsObtain));
     }
 
     @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
@@ -100,12 +101,12 @@ public class RecentsImplProxy extends IRecentsNonSystemUserCallbacks.Stub {
 
     @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
     public void splitPrimaryTask(int i, int i2, int i3, Rect rect) throws RemoteException {
-        SomeArgs obtain = SomeArgs.obtain();
-        obtain.argi1 = i;
-        obtain.argi2 = i2;
-        obtain.argi3 = i3;
-        obtain.arg1 = rect;
-        this.mHandler.sendMessage(this.mHandler.obtainMessage(7, obtain));
+        SomeArgs someArgsObtain = SomeArgs.obtain();
+        someArgsObtain.argi1 = i;
+        someArgsObtain.argi2 = i2;
+        someArgsObtain.argi3 = i3;
+        someArgsObtain.arg1 = rect;
+        this.mHandler.sendMessage(this.mHandler.obtainMessage(7, someArgsObtain));
     }
 
     @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks

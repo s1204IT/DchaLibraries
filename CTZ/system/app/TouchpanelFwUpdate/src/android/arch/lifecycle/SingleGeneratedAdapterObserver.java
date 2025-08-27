@@ -1,12 +1,12 @@
 package android.arch.lifecycle;
 
 import android.arch.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class SingleGeneratedAdapterObserver implements GenericLifecycleObserver {
     private final GeneratedAdapter mGeneratedAdapter;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public SingleGeneratedAdapterObserver(GeneratedAdapter generatedAdapter) {
+    SingleGeneratedAdapterObserver(GeneratedAdapter generatedAdapter) {
         this.mGeneratedAdapter = generatedAdapter;
     }
 

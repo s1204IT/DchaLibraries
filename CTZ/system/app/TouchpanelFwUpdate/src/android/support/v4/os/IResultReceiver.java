@@ -6,11 +6,11 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
+
 /* loaded from: classes.dex */
 public interface IResultReceiver extends IInterface {
     void send(int i, Bundle bundle) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IResultReceiver {
         public Stub() {
             attachInterface(this, "android.support.v4.os.IResultReceiver");
@@ -53,7 +53,6 @@ public interface IResultReceiver extends IInterface {
             return true;
         }
 
-        /* loaded from: classes.dex */
         private static class Proxy implements IResultReceiver {
             private IBinder mRemote;
 

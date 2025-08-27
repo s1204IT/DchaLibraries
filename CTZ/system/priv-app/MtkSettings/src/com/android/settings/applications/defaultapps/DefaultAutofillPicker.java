@@ -22,7 +22,9 @@ import com.android.settingslib.applications.DefaultAppInfo;
 import com.android.settingslib.utils.ThreadUtils;
 import com.android.settingslib.widget.CandidateInfo;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultAutofillPicker extends DefaultAppPickerFragment {
     static final Intent AUTOFILL_PROBE = new Intent("android.service.autofill.AutofillService");
@@ -45,8 +47,7 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
         update();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$onCreate$0(Activity activity, DialogInterface dialogInterface, int i) {
+    static /* synthetic */ void lambda$onCreate$0(Activity activity, DialogInterface dialogInterface, int i) {
         activity.setResult(0);
         activity.finish();
     }
@@ -58,7 +59,6 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
         return autofillPickerConfirmationDialogFragment;
     }
 
-    /* loaded from: classes.dex */
     public static class AutofillPickerConfirmationDialogFragment extends DefaultAppPickerFragment.ConfirmationDialogFragment {
         @Override // com.android.settingslib.core.lifecycle.ObservableDialogFragment, android.app.DialogFragment, android.app.Fragment
         public void onCreate(Bundle bundle) {
@@ -67,9 +67,8 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.default_autofill_settings;
     }
 
@@ -83,10 +82,8 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.settings.applications.defaultapps.DefaultAutofillPicker$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends PackageMonitor {
+    /* renamed from: com.android.settings.applications.defaultapps.DefaultAutofillPicker$1, reason: invalid class name */
+    class AnonymousClass1 extends PackageMonitor {
         AnonymousClass1() {
         }
 
@@ -118,8 +115,7 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void update() {
+    private void update() {
         updateCandidates();
         addAddServicePreference();
     }
@@ -146,18 +142,18 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
     }
 
     private void addAddServicePreference() {
-        Preference newAddServicePreferenceOrNull = newAddServicePreferenceOrNull();
-        if (newAddServicePreferenceOrNull != null) {
-            getPreferenceScreen().addPreference(newAddServicePreferenceOrNull);
+        Preference preferenceNewAddServicePreferenceOrNull = newAddServicePreferenceOrNull();
+        if (preferenceNewAddServicePreferenceOrNull != null) {
+            getPreferenceScreen().addPreference(preferenceNewAddServicePreferenceOrNull);
         }
     }
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected List<DefaultAppInfo> getCandidates() {
         ArrayList arrayList = new ArrayList();
-        List<ResolveInfo> queryIntentServices = this.mPm.queryIntentServices(AUTOFILL_PROBE, 128);
+        List<ResolveInfo> listQueryIntentServices = this.mPm.queryIntentServices(AUTOFILL_PROBE, 128);
         Context context = getContext();
-        for (ResolveInfo resolveInfo : queryIntentServices) {
+        for (ResolveInfo resolveInfo : listQueryIntentServices) {
             String str = resolveInfo.serviceInfo.permission;
             if ("android.permission.BIND_AUTOFILL_SERVICE".equals(str)) {
                 arrayList.add(new DefaultAppInfo(context, this.mPm, this.mUserId, new ComponentName(resolveInfo.serviceInfo.packageName, resolveInfo.serviceInfo.name)));
@@ -171,10 +167,10 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
     }
 
     public static String getDefaultKey(Context context) {
-        ComponentName unflattenFromString;
+        ComponentName componentNameUnflattenFromString;
         String string = Settings.Secure.getString(context.getContentResolver(), "autofill_service");
-        if (string != null && (unflattenFromString = ComponentName.unflattenFromString(string)) != null) {
-            return unflattenFromString.flattenToString();
+        if (string != null && (componentNameUnflattenFromString = ComponentName.unflattenFromString(string)) != null) {
+            return componentNameUnflattenFromString.flattenToString();
         }
         return null;
     }
@@ -205,7 +201,6 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
         return true;
     }
 
-    /* loaded from: classes.dex */
     static final class AutofillSettingIntentProvider {
         private final Context mContext;
         private final String mSelectedKey;
@@ -216,8 +211,9 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
         }
 
         public Intent getIntent() {
-            for (ResolveInfo resolveInfo : this.mContext.getPackageManager().queryIntentServices(DefaultAutofillPicker.AUTOFILL_PROBE, 128)) {
-                ServiceInfo serviceInfo = resolveInfo.serviceInfo;
+            Iterator<ResolveInfo> it = this.mContext.getPackageManager().queryIntentServices(DefaultAutofillPicker.AUTOFILL_PROBE, 128).iterator();
+            while (it.hasNext()) {
+                ServiceInfo serviceInfo = it.next().serviceInfo;
                 if (TextUtils.equals(this.mSelectedKey, new ComponentName(serviceInfo.packageName, serviceInfo.name).flattenToString())) {
                     try {
                         String settingsActivity = new AutofillServiceInfo(this.mContext, serviceInfo).getSettingsActivity();

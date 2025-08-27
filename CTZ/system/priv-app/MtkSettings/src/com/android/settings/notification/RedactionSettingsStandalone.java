@@ -4,6 +4,7 @@ import android.content.Intent;
 import com.android.settings.R;
 import com.android.settings.SettingsActivity;
 import com.android.settings.notification.RedactionInterstitial;
+
 /* loaded from: classes.dex */
 public class RedactionSettingsStandalone extends SettingsActivity {
     @Override // com.android.settings.SettingsActivity, android.app.Activity
@@ -13,9 +14,8 @@ public class RedactionSettingsStandalone extends SettingsActivity {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return RedactionInterstitial.RedactionInterstitialFragment.class.getName().equals(str);
     }
 }

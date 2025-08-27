@@ -9,9 +9,11 @@ import android.os.Parcelable;
 import android.support.v4.media.MediaDescriptionCompatApi21;
 import android.support.v4.media.MediaDescriptionCompatApi23;
 import android.text.TextUtils;
+
 /* loaded from: classes.dex */
 public final class MediaDescriptionCompat implements Parcelable {
     public static final Parcelable.Creator<MediaDescriptionCompat> CREATOR = new Parcelable.Creator<MediaDescriptionCompat>() { // from class: android.support.v4.media.MediaDescriptionCompat.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public MediaDescriptionCompat createFromParcel(Parcel in) {
@@ -21,6 +23,7 @@ public final class MediaDescriptionCompat implements Parcelable {
             return MediaDescriptionCompat.fromMediaDescription(MediaDescriptionCompatApi21.fromParcel(in));
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public MediaDescriptionCompat[] newArray(int size) {
@@ -146,7 +149,6 @@ public final class MediaDescriptionCompat implements Parcelable {
         return descriptionCompat;
     }
 
-    /* loaded from: classes.dex */
     public static final class Builder {
         private CharSequence mDescription;
         private Bundle mExtras;

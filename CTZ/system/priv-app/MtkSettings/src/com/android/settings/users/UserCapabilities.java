@@ -8,6 +8,7 @@ import android.os.UserManager;
 import android.provider.Settings;
 import com.android.settings.Utils;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class UserCapabilities {
     boolean mCanAddGuest;
@@ -43,10 +44,10 @@ public class UserCapabilities {
 
     public void updateAddUserCapabilities(Context context) {
         this.mEnforcedAdmin = RestrictedLockUtils.checkIfRestrictionEnforced(context, "no_add_user", UserHandle.myUserId());
-        boolean hasBaseUserRestriction = RestrictedLockUtils.hasBaseUserRestriction(context, "no_add_user", UserHandle.myUserId());
+        boolean zHasBaseUserRestriction = RestrictedLockUtils.hasBaseUserRestriction(context, "no_add_user", UserHandle.myUserId());
         boolean z = false;
-        this.mDisallowAddUserSetByAdmin = (this.mEnforcedAdmin == null || hasBaseUserRestriction) ? false : true;
-        this.mDisallowAddUser = this.mEnforcedAdmin != null || hasBaseUserRestriction;
+        this.mDisallowAddUserSetByAdmin = (this.mEnforcedAdmin == null || zHasBaseUserRestriction) ? false : true;
+        this.mDisallowAddUser = this.mEnforcedAdmin != null || zHasBaseUserRestriction;
         this.mCanAddUser = true;
         if (!this.mIsAdmin || UserManager.getMaxSupportedUsers() < 2 || !UserManager.supportsMultipleUsers() || this.mDisallowAddUser) {
             this.mCanAddUser = false;

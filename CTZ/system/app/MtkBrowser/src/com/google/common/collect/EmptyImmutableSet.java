@@ -2,6 +2,7 @@ package com.google.common.collect;
 
 import java.util.Collection;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 final class EmptyImmutableSet extends ImmutableSet<Object> {
     static final EmptyImmutableSet INSTANCE = new EmptyImmutableSet();
@@ -30,6 +31,7 @@ final class EmptyImmutableSet extends ImmutableSet<Object> {
         return collection.isEmpty();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<Object> iterator() {
         return Iterators.emptyIterator();

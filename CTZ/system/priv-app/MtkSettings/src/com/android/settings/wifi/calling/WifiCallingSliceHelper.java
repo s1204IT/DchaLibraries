@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
 /* loaded from: classes.dex */
 public class WifiCallingSliceHelper {
     public static final Uri WIFI_CALLING_URI = new Uri.Builder().scheme("content").authority("com.android.settings.slices").appendPath("wifi_calling").build();
@@ -51,20 +52,21 @@ public class WifiCallingSliceHelper {
             return getNonActionableWifiCallingSlice(this.mContext.getString(R.string.wifi_calling_settings_title), this.mContext.getString(R.string.wifi_calling_not_supported, simCarrierName), uri, getSettingsIntent(this.mContext));
         }
         try {
-            boolean isWifiCallingEnabled = isWifiCallingEnabled(imsManager);
-            if (getWifiCallingCarrierActivityIntent(defaultVoiceSubId) != null && !isWifiCallingEnabled) {
+            boolean zIsWifiCallingEnabled = isWifiCallingEnabled(imsManager);
+            if (getWifiCallingCarrierActivityIntent(defaultVoiceSubId) != null && !zIsWifiCallingEnabled) {
                 Log.d("WifiCallingSliceHelper", "Needs Activation");
                 return getNonActionableWifiCallingSlice(this.mContext.getString(R.string.wifi_calling_settings_title), this.mContext.getString(R.string.wifi_calling_settings_activation_instructions), uri, getActivityIntent("android.settings.WIFI_CALLING_SETTINGS"));
             }
-            return getWifiCallingSlice(uri, this.mContext, isWifiCallingEnabled);
+            return getWifiCallingSlice(uri, this.mContext, zIsWifiCallingEnabled);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             Log.e("WifiCallingSliceHelper", "Unable to read the current WiFi calling status", e);
             return getNonActionableWifiCallingSlice(this.mContext.getString(R.string.wifi_calling_settings_title), this.mContext.getString(R.string.wifi_calling_turn_on), uri, getActivityIntent("android.settings.WIFI_CALLING_SETTINGS"));
         }
     }
 
-    private boolean isWifiCallingEnabled(final ImsManager imsManager) throws InterruptedException, ExecutionException, TimeoutException {
+    private boolean isWifiCallingEnabled(final ImsManager imsManager) throws ExecutionException, InterruptedException, TimeoutException {
         FutureTask futureTask = new FutureTask(new Callable<Boolean>() { // from class: com.android.settings.wifi.calling.WifiCallingSliceHelper.1
+            /* JADX DEBUG: Method merged with bridge method: call()Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // java.util.concurrent.Callable
             public Boolean call() {
@@ -77,13 +79,14 @@ public class WifiCallingSliceHelper {
     }
 
     private Slice getWifiCallingSlice(Uri uri, Context context, final boolean z) {
-        final IconCompat createWithResource = IconCompat.createWithResource(context, (int) R.drawable.wifi_signal);
+        final IconCompat iconCompatCreateWithResource = IconCompat.createWithResource(context, R.drawable.wifi_signal);
         final String string = context.getString(R.string.wifi_calling_settings_title);
         return new ListBuilder(context, uri, -1L).setColor(R.color.material_blue_500).addRow(new Consumer() { // from class: com.android.settings.wifi.calling.-$$Lambda$WifiCallingSliceHelper$zbtZymRgbM5OtQTuVraAeUKJDfQ
             @Override // android.support.v4.util.Consumer
             public final void accept(Object obj) {
-                ListBuilder.RowBuilder rowBuilder = (ListBuilder.RowBuilder) obj;
-                rowBuilder.setTitle(r1).addEndItem(new SliceAction(r0.getBroadcastIntent("com.android.settings.wifi.calling.action.WIFI_CALLING_CHANGED"), (CharSequence) null, z)).setPrimaryAction(new SliceAction(WifiCallingSliceHelper.this.getActivityIntent("android.settings.WIFI_CALLING_SETTINGS"), createWithResource, string));
+                WifiCallingSliceHelper wifiCallingSliceHelper = this.f$0;
+                String str = string;
+                ((ListBuilder.RowBuilder) obj).setTitle(str).addEndItem(new SliceAction(wifiCallingSliceHelper.getBroadcastIntent("com.android.settings.wifi.calling.action.WIFI_CALLING_CHANGED"), (CharSequence) null, z)).setPrimaryAction(new SliceAction(wifiCallingSliceHelper.getActivityIntent("android.settings.WIFI_CALLING_SETTINGS"), iconCompatCreateWithResource, str));
             }
         }).build();
     }
@@ -109,12 +112,12 @@ public class WifiCallingSliceHelper {
     }
 
     private Slice getNonActionableWifiCallingSlice(final String str, final String str2, Uri uri, final PendingIntent pendingIntent) {
-        final IconCompat createWithResource = IconCompat.createWithResource(this.mContext, (int) R.drawable.wifi_signal);
+        final IconCompat iconCompatCreateWithResource = IconCompat.createWithResource(this.mContext, R.drawable.wifi_signal);
         return new ListBuilder(this.mContext, uri, -1L).setColor(R.color.material_blue_500).addRow(new Consumer() { // from class: com.android.settings.wifi.calling.-$$Lambda$WifiCallingSliceHelper$6JNBI7DQgipwzIQhGGlqsYB5PlI
             @Override // android.support.v4.util.Consumer
             public final void accept(Object obj) {
-                ListBuilder.RowBuilder rowBuilder = (ListBuilder.RowBuilder) obj;
-                rowBuilder.setTitle(r0).setSubtitle(str2).setPrimaryAction(new SliceAction(pendingIntent, createWithResource, str));
+                String str3 = str;
+                ((ListBuilder.RowBuilder) obj).setTitle(str3).setSubtitle(str2).setPrimaryAction(new SliceAction(pendingIntent, iconCompatCreateWithResource, str3));
             }
         }).build();
     }
@@ -132,17 +135,17 @@ public class WifiCallingSliceHelper {
 
     protected Intent getWifiCallingCarrierActivityIntent(int i) {
         PersistableBundle configForSubId;
-        ComponentName unflattenFromString;
+        ComponentName componentNameUnflattenFromString;
         CarrierConfigManager carrierConfigManager = getCarrierConfigManager(this.mContext);
         if (carrierConfigManager == null || (configForSubId = carrierConfigManager.getConfigForSubId(i)) == null) {
             return null;
         }
         String string = configForSubId.getString("wfc_emergency_address_carrier_app_string");
-        if (TextUtils.isEmpty(string) || (unflattenFromString = ComponentName.unflattenFromString(string)) == null) {
+        if (TextUtils.isEmpty(string) || (componentNameUnflattenFromString = ComponentName.unflattenFromString(string)) == null) {
             return null;
         }
         Intent intent = new Intent();
-        intent.setComponent(unflattenFromString);
+        intent.setComponent(componentNameUnflattenFromString);
         return intent;
     }
 

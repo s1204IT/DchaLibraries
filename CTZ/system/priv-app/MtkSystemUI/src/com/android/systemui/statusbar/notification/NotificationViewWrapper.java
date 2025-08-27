@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar.notification;
 
+import android.R;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -8,6 +9,7 @@ import android.view.View;
 import com.android.systemui.statusbar.CrossFadeHelper;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.TransformableView;
+
 /* loaded from: classes.dex */
 public abstract class NotificationViewWrapper implements TransformableView {
     private int mBackgroundColor = 0;
@@ -29,15 +31,14 @@ public abstract class NotificationViewWrapper implements TransformableView {
                 return new NotificationMessagingTemplateViewWrapper(context, view, expandableNotificationRow);
             }
             return new NotificationTemplateViewWrapper(context, view, expandableNotificationRow);
-        } else if (view instanceof NotificationHeaderView) {
-            return new NotificationHeaderViewWrapper(context, view, expandableNotificationRow);
-        } else {
-            return new NotificationCustomViewWrapper(context, view, expandableNotificationRow);
         }
+        if (view instanceof NotificationHeaderView) {
+            return new NotificationHeaderViewWrapper(context, view, expandableNotificationRow);
+        }
+        return new NotificationCustomViewWrapper(context, view, expandableNotificationRow);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public NotificationViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
+    protected NotificationViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
         this.mView = view;
         this.mRow = expandableNotificationRow;
         onReinflated();
@@ -110,13 +111,12 @@ public abstract class NotificationViewWrapper implements TransformableView {
         return this.mBackgroundColor;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int resolveBackgroundColor() {
+    protected int resolveBackgroundColor() {
         int customBackgroundColor = getCustomBackgroundColor();
         if (customBackgroundColor != 0) {
             return customBackgroundColor;
         }
-        return this.mView.getContext().getColor(17170675);
+        return this.mView.getContext().getColor(R.color.accessibility_magnification_thumbnail_container_background_color);
     }
 
     public void setLegacy(boolean z) {

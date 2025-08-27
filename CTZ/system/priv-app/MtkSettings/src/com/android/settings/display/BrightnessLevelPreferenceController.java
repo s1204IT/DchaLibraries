@@ -22,6 +22,7 @@ import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
 import com.android.settingslib.display.BrightnessUtils;
 import java.text.NumberFormat;
+
 /* loaded from: classes.dex */
 public class BrightnessLevelPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnStart, OnStop {
     private ContentObserver mBrightnessObserver;
@@ -87,21 +88,20 @@ public class BrightnessLevelPreferenceController extends AbstractPreferenceContr
         this.mContentResolver.unregisterContentObserver(this.mBrightnessObserver);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatedSummary(Preference preference) {
+    private void updatedSummary(Preference preference) {
         if (preference != null) {
             preference.setSummary(NumberFormat.getPercentInstance().format(getCurrentBrightness()));
         }
     }
 
     private double getCurrentBrightness() {
-        int convertLinearToGamma;
+        int iConvertLinearToGamma;
         if (isInVrMode()) {
-            convertLinearToGamma = BrightnessUtils.convertLinearToGamma(Settings.System.getInt(this.mContentResolver, "screen_brightness_for_vr", this.mMaxBrightness), this.mMinVrBrightness, this.mMaxVrBrightness);
+            iConvertLinearToGamma = BrightnessUtils.convertLinearToGamma(Settings.System.getInt(this.mContentResolver, "screen_brightness_for_vr", this.mMaxBrightness), this.mMinVrBrightness, this.mMaxVrBrightness);
         } else {
-            convertLinearToGamma = BrightnessUtils.convertLinearToGamma(Settings.System.getInt(this.mContentResolver, "screen_brightness", this.mMinBrightness), this.mMinBrightness, this.mMaxBrightness);
+            iConvertLinearToGamma = BrightnessUtils.convertLinearToGamma(Settings.System.getInt(this.mContentResolver, "screen_brightness", this.mMinBrightness), this.mMinBrightness, this.mMaxBrightness);
         }
-        return getPercentage(convertLinearToGamma, 0, 1023);
+        return getPercentage(iConvertLinearToGamma, 0, 1023);
     }
 
     private double getPercentage(double d, int i, int i2) {

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.android.internal.widget.LockPatternUtils;
+
 /* loaded from: classes.dex */
 public class NumPadKey extends ViewGroup {
     static String[] sKlondike;
@@ -45,9 +46,9 @@ public class NumPadKey extends ViewGroup {
         this.mListener = new View.OnClickListener() { // from class: com.android.keyguard.NumPadKey.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
-                View findViewById;
-                if (NumPadKey.this.mTextView == null && NumPadKey.this.mTextViewResId > 0 && (findViewById = NumPadKey.this.getRootView().findViewById(NumPadKey.this.mTextViewResId)) != null && (findViewById instanceof PasswordTextView)) {
-                    NumPadKey.this.mTextView = (PasswordTextView) findViewById;
+                View viewFindViewById;
+                if (NumPadKey.this.mTextView == null && NumPadKey.this.mTextViewResId > 0 && (viewFindViewById = NumPadKey.this.getRootView().findViewById(NumPadKey.this.mTextViewResId)) != null && (viewFindViewById instanceof PasswordTextView)) {
+                    NumPadKey.this.mTextView = (PasswordTextView) viewFindViewById;
                 }
                 if (NumPadKey.this.mTextView != null && NumPadKey.this.mTextView.isEnabled()) {
                     NumPadKey.this.mTextView.append(Character.forDigit(NumPadKey.this.mDigit, 10));
@@ -56,11 +57,11 @@ public class NumPadKey extends ViewGroup {
             }
         };
         setFocusable(true);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.NumPadKey);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.NumPadKey);
         try {
-            this.mDigit = obtainStyledAttributes.getInt(0, this.mDigit);
-            this.mTextViewResId = obtainStyledAttributes.getResourceId(1, 0);
-            obtainStyledAttributes.recycle();
+            this.mDigit = typedArrayObtainStyledAttributes.getInt(0, this.mDigit);
+            this.mTextViewResId = typedArrayObtainStyledAttributes.getResourceId(1, 0);
+            typedArrayObtainStyledAttributes.recycle();
             setOnClickListener(this.mListener);
             setOnHoverListener(new LiftToActivateListener(context));
             this.mEnableHaptics = new LockPatternUtils(context).isTactileFeedbackEnabled();
@@ -82,14 +83,14 @@ public class NumPadKey extends ViewGroup {
                     }
                 }
             }
-            TypedArray obtainStyledAttributes2 = context.obtainStyledAttributes(attributeSet, android.R.styleable.View);
-            if (!obtainStyledAttributes2.hasValueOrEmpty(13)) {
+            TypedArray typedArrayObtainStyledAttributes2 = context.obtainStyledAttributes(attributeSet, android.R.styleable.View);
+            if (!typedArrayObtainStyledAttributes2.hasValueOrEmpty(13)) {
                 setBackground(this.mContext.getDrawable(com.android.systemui.R.drawable.ripple_drawable));
             }
-            obtainStyledAttributes2.recycle();
+            typedArrayObtainStyledAttributes2.recycle();
             setContentDescription(this.mDigitText.getText().toString());
         } catch (Throwable th) {
-            obtainStyledAttributes.recycle();
+            typedArrayObtainStyledAttributes.recycle();
             throw th;
         }
     }

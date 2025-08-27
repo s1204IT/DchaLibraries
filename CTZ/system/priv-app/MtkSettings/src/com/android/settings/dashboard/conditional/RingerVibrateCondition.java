@@ -2,10 +2,10 @@ package com.android.settings.dashboard.conditional;
 
 import android.graphics.drawable.Drawable;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class RingerVibrateCondition extends AbnormalRingerConditionBase {
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RingerVibrateCondition(ConditionManager conditionManager) {
+    RingerVibrateCondition(ConditionManager conditionManager) {
         super(conditionManager);
     }
 

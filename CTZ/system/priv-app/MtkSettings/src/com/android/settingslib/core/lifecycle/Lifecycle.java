@@ -26,6 +26,7 @@ import com.android.settingslib.core.lifecycle.events.SetPreferenceScreen;
 import com.android.settingslib.utils.ThreadUtils;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class Lifecycle extends LifecycleRegistry {
     private final List<LifecycleObserver> mObservers;
@@ -76,8 +77,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onStart() {
+    private void onStart() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);
@@ -97,8 +97,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onResume() {
+    private void onResume() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);
@@ -108,8 +107,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onPause() {
+    private void onPause() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);
@@ -129,8 +127,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onStop() {
+    private void onStop() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);
@@ -140,8 +137,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onDestroy() {
+    private void onDestroy() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);
@@ -182,7 +178,6 @@ public class Lifecycle extends LifecycleRegistry {
         return false;
     }
 
-    /* loaded from: classes.dex */
     private class LifecycleProxy implements android.arch.lifecycle.LifecycleObserver {
         private LifecycleProxy() {
         }
@@ -190,27 +185,24 @@ public class Lifecycle extends LifecycleRegistry {
         @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
         public void onLifecycleEvent(LifecycleOwner lifecycleOwner, Lifecycle.Event event) {
             switch (event) {
-                case ON_CREATE:
-                default:
-                    return;
                 case ON_START:
                     Lifecycle.this.onStart();
-                    return;
+                    break;
                 case ON_RESUME:
                     Lifecycle.this.onResume();
-                    return;
+                    break;
                 case ON_PAUSE:
                     Lifecycle.this.onPause();
-                    return;
+                    break;
                 case ON_STOP:
                     Lifecycle.this.onStop();
-                    return;
+                    break;
                 case ON_DESTROY:
                     Lifecycle.this.onDestroy();
-                    return;
+                    break;
                 case ON_ANY:
                     Log.wtf("LifecycleObserver", "Should not receive an 'ANY' event!");
-                    return;
+                    break;
             }
         }
     }

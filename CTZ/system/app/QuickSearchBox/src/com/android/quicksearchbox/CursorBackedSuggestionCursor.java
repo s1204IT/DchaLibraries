@@ -3,6 +3,7 @@ package com.android.quicksearchbox;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public abstract class CursorBackedSuggestionCursor implements SuggestionCursor {
     protected final Cursor mCursor;

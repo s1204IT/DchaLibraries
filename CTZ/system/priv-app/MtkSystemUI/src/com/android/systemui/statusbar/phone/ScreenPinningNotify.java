@@ -6,6 +6,7 @@ import android.util.Slog;
 import android.widget.Toast;
 import com.android.systemui.R;
 import com.android.systemui.SysUIToast;
+
 /* loaded from: classes.dex */
 public class ScreenPinningNotify {
     private final Context mContext;
@@ -26,8 +27,8 @@ public class ScreenPinningNotify {
 
     public void showEscapeToast(boolean z) {
         int i;
-        long elapsedRealtime = SystemClock.elapsedRealtime();
-        if (elapsedRealtime - this.mLastShowToastTime < 1000) {
+        long jElapsedRealtime = SystemClock.elapsedRealtime();
+        if (jElapsedRealtime - this.mLastShowToastTime < 1000) {
             Slog.i("ScreenPinningNotify", "Ignore toast since it is requested in very short interval.");
             return;
         }
@@ -40,12 +41,12 @@ public class ScreenPinningNotify {
             i = R.string.screen_pinning_toast_recents_invisible;
         }
         this.mLastToast = makeAllUserToastAndShow(i);
-        this.mLastShowToastTime = elapsedRealtime;
+        this.mLastShowToastTime = jElapsedRealtime;
     }
 
     private Toast makeAllUserToastAndShow(int i) {
-        Toast makeText = SysUIToast.makeText(this.mContext, i, 1);
-        makeText.show();
-        return makeText;
+        Toast toastMakeText = SysUIToast.makeText(this.mContext, i, 1);
+        toastMakeText.show();
+        return toastMakeText;
     }
 }

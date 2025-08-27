@@ -13,6 +13,7 @@ import android.widget.TextView;
 import jp.co.benesse.dcha.dchaservice.IDchaService;
 import jp.co.benesse.dcha.util.DchaUncaughtExceptionHandler;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public abstract class ParentSettingActivity extends Activity {
     public static final String CLASS_SYSTEM_WIFI_SETTING = "jp.co.benesse.dcha.systemsettings.WifiSettingActivity";
@@ -41,9 +42,8 @@ public abstract class ParentSettingActivity extends Activity {
     protected IDchaService mDchaServiceParent;
     protected boolean mIsShowErrorDialog;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d(TAG, "onCreate 0001");
         super.onCreate(bundle);
         this.mIsShowErrorDialog = false;
@@ -55,17 +55,15 @@ public abstract class ParentSettingActivity extends Activity {
         Logger.d(TAG, "onCreate 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         Logger.d(TAG, "onStart 0001");
         super.onStart();
         Logger.d(TAG, "onStart 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         Logger.d(TAG, "onStop 0001");
         super.onStop();
         if (!isApplicationForeground()) {
@@ -77,9 +75,8 @@ public abstract class ParentSettingActivity extends Activity {
         Logger.d(TAG, "onStop 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d(TAG, "onDestroy 0001");
         super.onDestroy();
         if (this.mDchaServiceConnectionParent != null) {
@@ -91,12 +88,11 @@ public abstract class ParentSettingActivity extends Activity {
         Logger.d(TAG, "onDestroy 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void moveIntroductionSettingActivity() {
+    protected void moveIntroductionSettingActivity() {
         Logger.d(TAG, "moveIntroductionSettingActivity 0001");
         try {
             Logger.d(TAG, "moveIntroductionSettingActivity 0002");
-            startActivity(new Intent(this, IntroductionSettingActivity.class));
+            startActivity(new Intent(this, (Class<?>) IntroductionSettingActivity.class));
             overridePendingTransition(0, 0);
             Logger.d(TAG, "moveIntroductionSettingActivity 0003");
         } catch (ActivityNotFoundException e) {
@@ -122,8 +118,7 @@ public abstract class ParentSettingActivity extends Activity {
         return z;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void doCancelDigicharize(IDchaService iDchaService) {
+    protected void doCancelDigicharize(IDchaService iDchaService) {
         Logger.d(TAG, "doCancelDigicharize 0001");
         try {
             Logger.d(TAG, "doCancelDigicharize 0002");
@@ -138,8 +133,7 @@ public abstract class ParentSettingActivity extends Activity {
         Logger.d(TAG, "doCancelDigicharize 0005");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setFont(TextView textView) {
+    protected void setFont(TextView textView) {
         Logger.d(TAG, "setFont 0001");
         try {
             textView.setTypeface(Typeface.createFromFile("system/fonts/gjsgm.ttf"));
@@ -150,8 +144,7 @@ public abstract class ParentSettingActivity extends Activity {
         Logger.d(TAG, "setFont 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void callWifiErrorDialog() {
+    protected void callWifiErrorDialog() {
         Logger.d(TAG, "callWifiErrorDialog 0001");
         if (this.mIsShowErrorDialog) {
             Logger.d(TAG, "callWifiErrorDialog 0002");
@@ -162,8 +155,7 @@ public abstract class ParentSettingActivity extends Activity {
         Logger.d(TAG, "callWifiErrorDialog 0004");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void callSystemErrorDialog(String str) {
+    protected void callSystemErrorDialog(String str) {
         Logger.d(TAG, "callSystemErrorDialog 0001");
         if (this.mIsShowErrorDialog) {
             Logger.d(TAG, "callSystemErrorDialog 0002");
@@ -174,8 +166,7 @@ public abstract class ParentSettingActivity extends Activity {
         Logger.d(TAG, "callSystemErrorDialog 0004");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void callNetworkErrorDialog() {
+    protected void callNetworkErrorDialog() {
         Logger.d(TAG, "callNetworkErrorDialog 0001");
         if (this.mIsShowErrorDialog) {
             Logger.d(TAG, "callNetworkErrorDialog 0002");
@@ -186,8 +177,7 @@ public abstract class ParentSettingActivity extends Activity {
         Logger.d(TAG, "callNetworkErrorDialog 0004");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void hideNavigationBar(IDchaService iDchaService, boolean z) {
+    protected void hideNavigationBar(IDchaService iDchaService, boolean z) {
         try {
             Logger.d(TAG, "hideNavigationBar 0001");
             if (iDchaService != null) {
@@ -203,11 +193,11 @@ public abstract class ParentSettingActivity extends Activity {
     protected String getForegroundPackageName(IDchaService iDchaService) {
         try {
             Logger.d(TAG, "getForegroundPackageName 0001");
-            if (iDchaService != null) {
-                Logger.d(TAG, "getForegroundPackageName 0002");
-                return iDchaService.getForegroundPackageName();
+            if (iDchaService == null) {
+                return null;
             }
-            return null;
+            Logger.d(TAG, "getForegroundPackageName 0002");
+            return iDchaService.getForegroundPackageName();
         } catch (RemoteException e) {
             Logger.d(TAG, "getForegroundPackageName 0003");
             Logger.d(TAG, "getForegroundPackageName", e);

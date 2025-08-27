@@ -13,6 +13,7 @@ import com.android.settings.R;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.ISimManagementExt;
 import com.mediatek.telephony.MtkTelephonyManagerEx;
+
 /* loaded from: classes.dex */
 public class RadioPowerController {
     private static final boolean ENG_LOAD;
@@ -31,10 +32,8 @@ public class RadioPowerController {
     }
 
     private static synchronized void createInstance(Context context) {
-        synchronized (RadioPowerController.class) {
-            if (sInstance == null) {
-                sInstance = new RadioPowerController(context);
-            }
+        if (sInstance == null) {
+            sInstance = new RadioPowerController(context);
         }
     }
 
@@ -48,42 +47,42 @@ public class RadioPowerController {
     public boolean setRadionOn(int i, boolean z) {
         logInEng("setRadioOn, turnOn=" + z + ", subId=" + i);
         boolean z2 = false;
-        if (SubscriptionManager.isValidSubscriptionId(i)) {
-            boolean isEccInProgress = this.mTelEx.isEccInProgress();
-            if (!z && isEccInProgress) {
-                Log.d("RadioPowerController", "Not allow to operate radio power during emergency call");
-                Toast.makeText(this.mContext.getApplicationContext(), (int) R.string.radio_off_during_emergency_call, 1).show();
-                return false;
-            }
-            ITelephony asInterface = ITelephony.Stub.asInterface(ServiceManager.getService("phone"));
-            if (asInterface != null) {
-                try {
-                    if (asInterface.isRadioOnForSubscriber(i, this.mContext.getPackageName()) != z) {
-                        boolean radioForSubscriber = asInterface.setRadioForSubscriber(i, z);
-                        if (radioForSubscriber) {
-                            try {
-                                updateRadioMsimDb(i, z);
-                                this.mExt.setRadioPowerState(i, z);
-                            } catch (RemoteException e) {
-                                e = e;
-                                z2 = radioForSubscriber;
-                                Log.e("RadioPowerController", "setRadionOn, RemoteException=" + e);
-                                logInEng("setRadionOn, isSuccessful=" + z2);
-                                return z2;
-                            }
-                        }
-                        z2 = radioForSubscriber;
-                    }
-                } catch (RemoteException e2) {
-                    e = e2;
-                }
-            } else {
-                logInEng("telephony is null.");
-            }
-            logInEng("setRadionOn, isSuccessful=" + z2);
-            return z2;
+        if (!SubscriptionManager.isValidSubscriptionId(i)) {
+            return false;
         }
-        return false;
+        boolean zIsEccInProgress = this.mTelEx.isEccInProgress();
+        if (!z && zIsEccInProgress) {
+            Log.d("RadioPowerController", "Not allow to operate radio power during emergency call");
+            Toast.makeText(this.mContext.getApplicationContext(), R.string.radio_off_during_emergency_call, 1).show();
+            return false;
+        }
+        ITelephony iTelephonyAsInterface = ITelephony.Stub.asInterface(ServiceManager.getService("phone"));
+        if (iTelephonyAsInterface != null) {
+            try {
+                if (iTelephonyAsInterface.isRadioOnForSubscriber(i, this.mContext.getPackageName()) != z) {
+                    boolean radioForSubscriber = iTelephonyAsInterface.setRadioForSubscriber(i, z);
+                    if (radioForSubscriber) {
+                        try {
+                            updateRadioMsimDb(i, z);
+                            this.mExt.setRadioPowerState(i, z);
+                        } catch (RemoteException e) {
+                            e = e;
+                            z2 = radioForSubscriber;
+                            Log.e("RadioPowerController", "setRadionOn, RemoteException=" + e);
+                            logInEng("setRadionOn, isSuccessful=" + z2);
+                            return z2;
+                        }
+                    }
+                    z2 = radioForSubscriber;
+                }
+            } catch (RemoteException e2) {
+                e = e2;
+            }
+        } else {
+            logInEng("telephony is null.");
+        }
+        logInEng("setRadionOn, isSuccessful=" + z2);
+        return z2;
     }
 
     private void updateRadioMsimDb(int i, boolean z) {
@@ -114,16 +113,16 @@ public class RadioPowerController {
     }
 
     public boolean isRadioSwitchComplete(int i, boolean z) {
-        if (SubscriptionManager.isValidSubscriptionId(i)) {
-            int slotIndex = SubscriptionManager.getSlotIndex(i);
-            logInEng("isRadioSwitchComplete, slot=" + slotIndex + ", radioOn=" + z);
-            if (!z || (isExpectedRadioStateOn(slotIndex) && z)) {
-                logInEng("isRadioSwitchComplete, done.");
-                return true;
-            }
+        if (!SubscriptionManager.isValidSubscriptionId(i)) {
             return false;
         }
-        return false;
+        int slotIndex = SubscriptionManager.getSlotIndex(i);
+        logInEng("isRadioSwitchComplete, slot=" + slotIndex + ", radioOn=" + z);
+        if (z && (!isExpectedRadioStateOn(slotIndex) || !z)) {
+            return false;
+        }
+        logInEng("isRadioSwitchComplete, done.");
+        return true;
     }
 
     public boolean isExpectedRadioStateOn(int i) {

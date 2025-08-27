@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class LocaleLinearLayoutManager extends LinearLayoutManager {
     private final AccessibilityNodeInfoCompat.AccessibilityActionCompat mActionMoveBottom;
@@ -55,7 +56,12 @@ public class LocaleLinearLayoutManager extends LinearLayoutManager {
         }
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:18:0x0040  */
+    /* JADX WARN: Removed duplicated region for block: B:20:0x0043  */
     @Override // android.support.v7.widget.RecyclerView.LayoutManager
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public boolean performAccessibilityActionForItem(RecyclerView.Recycler recycler, RecyclerView.State state, View view, int i, Bundle bundle) {
         int itemCount = getItemCount();
         int position = getPosition(view);
@@ -65,45 +71,44 @@ public class LocaleLinearLayoutManager extends LinearLayoutManager {
                 int i2 = itemCount - 1;
                 if (position != i2) {
                     this.mAdapter.onItemMove(position, i2);
-                    break;
+                } else {
+                    z = false;
                 }
-                z = false;
-                break;
+                if (z) {
+                    this.mAdapter.doTheUpdate();
+                }
+                return z;
             case R.id.action_drag_move_down /* 2131361820 */:
                 int i3 = position + 1;
                 if (i3 < itemCount) {
                     this.mAdapter.onItemMove(position, i3);
-                    break;
                 }
-                z = false;
-                break;
+                if (z) {
+                }
+                return z;
             case R.id.action_drag_move_top /* 2131361821 */:
                 if (position != 0) {
                     this.mAdapter.onItemMove(position, 0);
-                    break;
                 }
-                z = false;
-                break;
+                if (z) {
+                }
+                return z;
             case R.id.action_drag_move_up /* 2131361822 */:
                 if (position > 0) {
                     this.mAdapter.onItemMove(position, position - 1);
-                    break;
                 }
-                z = false;
-                break;
+                if (z) {
+                }
+                return z;
             case R.id.action_drag_remove /* 2131361823 */:
                 if (itemCount > 1) {
                     this.mAdapter.removeItem(position);
-                    break;
                 }
-                z = false;
-                break;
+                if (z) {
+                }
+                return z;
             default:
                 return super.performAccessibilityActionForItem(recycler, state, view, i, bundle);
         }
-        if (z) {
-            this.mAdapter.doTheUpdate();
-        }
-        return z;
     }
 }

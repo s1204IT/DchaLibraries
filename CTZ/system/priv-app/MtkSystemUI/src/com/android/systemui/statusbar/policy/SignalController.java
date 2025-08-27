@@ -9,6 +9,7 @@ import com.android.systemui.statusbar.policy.SignalController.State;
 import com.mediatek.systemui.statusbar.util.FeatureOptions;
 import java.io.PrintWriter;
 import java.util.BitSet;
+
 /* loaded from: classes.dex */
 public abstract class SignalController<T extends State, I extends IconGroup> {
     protected static final boolean CHATTY;
@@ -19,8 +20,8 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
     protected final NetworkControllerImpl mNetworkController;
     protected final String mTag;
     protected final int mTransportType;
-    protected final T mCurrentState = cleanState();
-    protected final T mLastState = cleanState();
+    protected final T mCurrentState = (T) cleanState();
+    protected final T mLastState = (T) cleanState();
     private final State[] mHistory = new State[64];
 
     protected abstract T cleanState();
@@ -64,8 +65,7 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
     public boolean isDirty() {
         if (!this.mLastState.equals(this.mCurrentState)) {
             if (DEBUG) {
-                String str = this.mTag;
-                Log.d(str, "[" + this + "]\nChange in state from: " + this.mLastState + "\n                  to: " + this.mCurrentState);
+                Log.d(this.mTag, "[" + this + "]\nChange in state from: " + this.mLastState + "\n                  to: " + this.mCurrentState);
                 return true;
             }
             return true;
@@ -113,13 +113,11 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public String getStringIfExists(int i) {
+    protected String getStringIfExists(int i) {
         return i != 0 ? this.mContext.getString(i) : "";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public I getIcons() {
+    protected I getIcons() {
         return (I) this.mCurrentState.iconGroup;
     }
 
@@ -130,6 +128,7 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
         stateArr[i & 63].copyFrom(this.mLastState);
     }
 
+    /* JADX DEBUG: Move duplicate insns, count: 1 to block B:28:0x004e */
     public void dump(PrintWriter printWriter) {
         printWriter.println("  - " + this.mTag + " -----");
         StringBuilder sb = new StringBuilder();
@@ -147,8 +146,9 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
             i3--;
             if (i3 < (this.mHistoryIndex + 64) - i) {
                 return;
+            } else {
+                printWriter.println("  Previous State(" + ((this.mHistoryIndex + 64) - i3) + "): " + this.mHistory[i3 & 63]);
             }
-            printWriter.println("  Previous State(" + ((this.mHistoryIndex + 64) - i3) + "): " + this.mHistory[i3 & 63]);
         }
     }
 
@@ -156,9 +156,7 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
         notifyListeners(this.mCallbackHandler);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class IconGroup {
+    static class IconGroup {
         final int[] mContentDesc;
         final int mDiscContentDesc;
         final String mName;
@@ -186,9 +184,7 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class State {
+    static class State {
         boolean activityIn;
         boolean activityOut;
         boolean connected;
@@ -198,6 +194,9 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
         int level;
         int rssi;
         long time;
+
+        State() {
+        }
 
         public void copyFrom(State state) {
             this.connected = state.connected;
@@ -220,8 +219,7 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
             return "Empty " + getClass().getSimpleName();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public void toString(StringBuilder sb) {
+        protected void toString(StringBuilder sb) {
             sb.append("this=");
             sb.append(hashCode());
             sb.append(',');
@@ -254,11 +252,11 @@ public abstract class SignalController<T extends State, I extends IconGroup> {
         }
 
         public boolean equals(Object obj) {
-            if (obj.getClass().equals(getClass())) {
-                State state = (State) obj;
-                return state.connected == this.connected && state.enabled == this.enabled && state.level == this.level && state.inetCondition == this.inetCondition && state.iconGroup == this.iconGroup && state.activityIn == this.activityIn && state.activityOut == this.activityOut && state.rssi == this.rssi;
+            if (!obj.getClass().equals(getClass())) {
+                return false;
             }
-            return false;
+            State state = (State) obj;
+            return state.connected == this.connected && state.enabled == this.enabled && state.level == this.level && state.inetCondition == this.inetCondition && state.iconGroup == this.iconGroup && state.activityIn == this.activityIn && state.activityOut == this.activityOut && state.rssi == this.rssi;
         }
     }
 }

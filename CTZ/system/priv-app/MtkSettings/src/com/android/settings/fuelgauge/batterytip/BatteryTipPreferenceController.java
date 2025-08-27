@@ -16,6 +16,7 @@ import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class BatteryTipPreferenceController extends BasePreferenceController {
     private static final String KEY_BATTERY_TIPS = "key_battery_tips";
@@ -31,7 +32,6 @@ public class BatteryTipPreferenceController extends BasePreferenceController {
     PreferenceGroup mPreferenceGroup;
     private SettingsActivity mSettingsActivity;
 
-    /* loaded from: classes.dex */
     public interface BatteryTipListener {
         void onBatteryTipHandled(BatteryTip batteryTip);
     }
@@ -80,9 +80,9 @@ public class BatteryTipPreferenceController extends BasePreferenceController {
         for (int i2 = 0; i2 < size2; i2++) {
             BatteryTip batteryTip = this.mBatteryTips.get(i2);
             if (batteryTip.getState() != 2) {
-                Preference buildPreference = batteryTip.buildPreference(this.mPrefContext);
-                this.mBatteryTipMap.put(buildPreference.getKey(), batteryTip);
-                this.mPreferenceGroup.addPreference(buildPreference);
+                Preference preferenceBuildPreference = batteryTip.buildPreference(this.mPrefContext);
+                this.mBatteryTipMap.put(preferenceBuildPreference.getKey(), batteryTip);
+                this.mPreferenceGroup.addPreference(preferenceBuildPreference);
                 batteryTip.log(this.mContext, this.mMetricsFeatureProvider);
                 this.mNeedUpdate = batteryTip.needUpdate();
                 return;
@@ -95,9 +95,9 @@ public class BatteryTipPreferenceController extends BasePreferenceController {
         BatteryTip batteryTip = this.mBatteryTipMap.get(preference.getKey());
         if (batteryTip != null) {
             if (batteryTip.shouldShowDialog()) {
-                BatteryTipDialogFragment newInstance = BatteryTipDialogFragment.newInstance(batteryTip, this.mFragment.getMetricsCategory());
-                newInstance.setTargetFragment(this.mFragment, 0);
-                newInstance.show(this.mFragment.getFragmentManager(), TAG);
+                BatteryTipDialogFragment batteryTipDialogFragmentNewInstance = BatteryTipDialogFragment.newInstance(batteryTip, this.mFragment.getMetricsCategory());
+                batteryTipDialogFragmentNewInstance.setTargetFragment(this.mFragment, 0);
+                batteryTipDialogFragmentNewInstance.show(this.mFragment.getFragmentManager(), TAG);
                 return true;
             }
             BatteryTipAction actionForBatteryTip = BatteryTipUtils.getActionForBatteryTip(batteryTip, this.mSettingsActivity, this.mFragment);

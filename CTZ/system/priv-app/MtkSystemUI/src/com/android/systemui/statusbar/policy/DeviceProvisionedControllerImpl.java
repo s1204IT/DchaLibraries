@@ -11,6 +11,7 @@ import com.android.systemui.Dependency;
 import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class DeviceProvisionedControllerImpl extends CurrentUserTracker implements DeviceProvisionedController {
     private final ContentResolver mContentResolver;
@@ -54,6 +55,7 @@ public class DeviceProvisionedControllerImpl extends CurrentUserTracker implemen
         return ActivityManager.getCurrentUser();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(DeviceProvisionedController.DeviceProvisionedListener deviceProvisionedListener) {
         this.mListeners.add(deviceProvisionedListener);
@@ -64,6 +66,7 @@ public class DeviceProvisionedControllerImpl extends CurrentUserTracker implemen
         deviceProvisionedListener.onDeviceProvisionedChanged();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(DeviceProvisionedController.DeviceProvisionedListener deviceProvisionedListener) {
         this.mListeners.remove(deviceProvisionedListener);
@@ -97,15 +100,13 @@ public class DeviceProvisionedControllerImpl extends CurrentUserTracker implemen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifySetupChanged() {
+    private void notifySetupChanged() {
         for (int size = this.mListeners.size() - 1; size >= 0; size--) {
             this.mListeners.get(size).onUserSetupChanged();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyProvisionedChanged() {
+    private void notifyProvisionedChanged() {
         for (int size = this.mListeners.size() - 1; size >= 0; size--) {
             this.mListeners.get(size).onDeviceProvisionedChanged();
         }

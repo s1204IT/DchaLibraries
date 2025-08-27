@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.car;
 
 import android.app.ActivityManager;
 import android.app.Fragment;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.SystemProperties;
 import android.util.Log;
@@ -28,6 +29,7 @@ import com.android.systemui.statusbar.policy.UserSwitcherController;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class CarStatusBar extends StatusBar implements CarBatteryController.BatteryViewHandler {
     public static final boolean ENABLE_HVAC_CONNECTION = !SystemProperties.getBoolean("android.car.hvac.demo", true);
@@ -53,7 +55,7 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
     private boolean mDeviceIsProvisioned = true;
 
     @Override // com.android.systemui.statusbar.phone.StatusBar, com.android.systemui.SystemUI
-    public void start() {
+    public void start() throws IllegalStateException, Resources.NotFoundException {
         super.start();
         this.mTaskStackListener = new TaskStackListenerImpl();
         this.mActivityManagerWrapper = ActivityManagerWrapper.getInstance();
@@ -79,8 +81,7 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void restartNavBars() {
+    private void restartNavBars() {
         this.mCarFacetButtonController.removeAll();
         if (ENABLE_HVAC_CONNECTION) {
             ((HvacController) Dependency.get(HvacController.class)).removeAllComponents();
@@ -100,8 +101,7 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         buildNavBarContent();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setNavBarVisibility(int i) {
+    void setNavBarVisibility(int i) {
         if (this.mNavigationBarWindow != null) {
             this.mNavigationBarWindow.setVisibility(i);
         }
@@ -115,7 +115,7 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
 
     @Override // com.android.systemui.statusbar.phone.StatusBar
     public boolean hideKeyguard() {
-        boolean hideKeyguard = super.hideKeyguard();
+        boolean zHideKeyguard = super.hideKeyguard();
         if (this.mNavigationBarView != null) {
             this.mNavigationBarView.hideKeyguardButtons();
         }
@@ -125,7 +125,7 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         if (this.mRightNavigationBarView != null) {
             this.mRightNavigationBarView.hideKeyguardButtons();
         }
-        return hideKeyguard;
+        return zHideKeyguard;
     }
 
     @Override // com.android.systemui.statusbar.phone.StatusBar
@@ -142,16 +142,15 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.phone.StatusBar
-    public void makeStatusBarView() {
+    protected void makeStatusBarView() throws Resources.NotFoundException {
         super.makeStatusBarView();
         this.mNotificationPanelBackground = getDefaultWallpaper();
         this.mScrimController.setScrimBehindDrawable(this.mNotificationPanelBackground);
         FragmentHostManager.get(this.mStatusBarWindow).addTagListener("CollapsedStatusBarFragment", new FragmentHostManager.FragmentListener() { // from class: com.android.systemui.statusbar.car.-$$Lambda$CarStatusBar$PUUfpFW14_Bn6H5Pyx2aCDzbBeU
             @Override // com.android.systemui.fragments.FragmentHostManager.FragmentListener
             public final void onFragmentViewCreated(String str, Fragment fragment) {
-                CarStatusBar.lambda$makeStatusBarView$0(CarStatusBar.this, str, fragment);
+                CarStatusBar.lambda$makeStatusBarView$0(this.f$0, str, fragment);
             }
         });
     }
@@ -232,9 +231,8 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         if (this.mNavigationBarView == null) {
             Log.e("CarStatusBar", "CarStatusBar failed inflate for R.layout.car_navigation_bar");
             throw new RuntimeException("Unable to build botom nav bar due to missing layout");
-        } else {
-            this.mNavigationBarView.setStatusBar(this);
         }
+        this.mNavigationBarView.setStatusBar(this);
     }
 
     private void buildLeft(int i) {
@@ -243,9 +241,8 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         if (this.mLeftNavigationBarView == null) {
             Log.e("CarStatusBar", "CarStatusBar failed inflate for R.layout.car_navigation_bar");
             throw new RuntimeException("Unable to build left nav bar due to missing layout");
-        } else {
-            this.mLeftNavigationBarView.setStatusBar(this);
         }
+        this.mLeftNavigationBarView.setStatusBar(this);
     }
 
     private void buildRight(int i) {
@@ -316,7 +313,6 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         }
     }
 
-    /* loaded from: classes.dex */
     private class TaskStackListenerImpl extends SysUiTaskStackChangeListener {
         private TaskStackListenerImpl() {
         }
@@ -331,9 +327,8 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.phone.StatusBar
-    public void createUserSwitcher() {
+    protected void createUserSwitcher() {
         if (((UserSwitcherController) Dependency.get(UserSwitcherController.class)).useFullscreenUserSwitcher()) {
             this.mFullscreenUserSwitcher = new FullscreenUserSwitcher(this, (ViewStub) this.mStatusBarWindow.findViewById(R.id.fullscreen_user_switcher_stub), this.mContext);
         } else {
@@ -379,6 +374,6 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
     }
 
     private Drawable getDefaultWallpaper() {
-        return this.mContext.getDrawable(17302116);
+        return this.mContext.getDrawable(android.R.drawable.btn_switch_to_on_mtrl_00010);
     }
 }

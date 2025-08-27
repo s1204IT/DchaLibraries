@@ -28,6 +28,7 @@ import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.mediatek.systemui.ext.IQuickSettingsPlugin;
 import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
+
 /* loaded from: classes.dex */
 public class CellularTile extends QSTileImpl<QSTile.SignalState> {
     private final ActivityStarter mActivityStarter;
@@ -53,7 +54,7 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
         this.mIcon = QSTileImpl.ResourceIcon.get(R.drawable.ic_qs_data_usage);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.SignalState newTileState() {
         return new QSTile.SignalState();
@@ -96,7 +97,7 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
                 this.mActivityStarter.postQSRunnableDismissingKeyguard(new Runnable() { // from class: com.android.systemui.qs.tiles.-$$Lambda$CellularTile$e5lJLa1KQT80zJILmE-4gKT4_rA
                     @Override // java.lang.Runnable
                     public final void run() {
-                        CellularTile.this.maybeShowDisableDialog();
+                        this.f$0.maybeShowDisableDialog();
                     }
                 });
                 return;
@@ -104,7 +105,7 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
                 this.mUiHandler.post(new Runnable() { // from class: com.android.systemui.qs.tiles.-$$Lambda$CellularTile$e5lJLa1KQT80zJILmE-4gKT4_rA
                     @Override // java.lang.Runnable
                     public final void run() {
-                        CellularTile.this.maybeShowDisableDialog();
+                        this.f$0.maybeShowDisableDialog();
                     }
                 });
                 return;
@@ -114,8 +115,7 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
         this.mQuickSettingsPlugin.disableDataForOtherSubscriptions();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void maybeShowDisableDialog() {
+    private void maybeShowDisableDialog() {
         if (Prefs.getBoolean(this.mContext, "QsHasTurnedOffMobileData", false)) {
             this.mDataController.setMobileDataEnabled(false);
             return;
@@ -124,17 +124,17 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
         if (TextUtils.isEmpty(mobileDataNetworkName)) {
             mobileDataNetworkName = this.mContext.getString(R.string.mobile_data_disable_message_default_carrier);
         }
-        AlertDialog create = new AlertDialog.Builder(this.mContext).setTitle(R.string.mobile_data_disable_title).setMessage(this.mContext.getString(R.string.mobile_data_disable_message, mobileDataNetworkName)).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).setPositiveButton(17039467, new DialogInterface.OnClickListener() { // from class: com.android.systemui.qs.tiles.-$$Lambda$CellularTile$oLJGrvqAwKFs9wNM4MvnfZ_a1QQ
+        AlertDialog alertDialogCreate = new AlertDialog.Builder(this.mContext).setTitle(R.string.mobile_data_disable_title).setMessage(this.mContext.getString(R.string.mobile_data_disable_message, mobileDataNetworkName)).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).setPositiveButton(android.R.string.PERSOSUBSTATE_RUIM_HRPD_PUK_ENTRY, new DialogInterface.OnClickListener() { // from class: com.android.systemui.qs.tiles.-$$Lambda$CellularTile$oLJGrvqAwKFs9wNM4MvnfZ_a1QQ
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                CellularTile.lambda$maybeShowDisableDialog$0(CellularTile.this, dialogInterface, i);
+                CellularTile.lambda$maybeShowDisableDialog$0(this.f$0, dialogInterface, i);
             }
         }).create();
-        create.getWindow().setType(2009);
-        SystemUIDialog.setShowForAllUsers(create, true);
-        SystemUIDialog.registerDismissListener(create);
-        SystemUIDialog.setWindowOnTop(create);
-        create.show();
+        alertDialogCreate.getWindow().setType(2009);
+        SystemUIDialog.setShowForAllUsers(alertDialogCreate, true);
+        SystemUIDialog.registerDismissListener(alertDialogCreate);
+        SystemUIDialog.setWindowOnTop(alertDialogCreate);
+        alertDialogCreate.show();
     }
 
     public static /* synthetic */ void lambda$maybeShowDisableDialog$0(CellularTile cellularTile, DialogInterface dialogInterface, int i) {
@@ -159,10 +159,10 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
         return this.mContext.getString(R.string.quick_settings_cellular_detail_title);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.SignalState signalState, Object obj) {
-        Object obj2;
+    protected void handleUpdateState(QSTile.SignalState signalState, Object obj) throws Resources.NotFoundException {
+        Object string;
         if (this.mDisplayDataUsage) {
             signalState.icon = this.mIcon;
             signalState.label = this.mContext.getString(R.string.data_usage);
@@ -199,26 +199,26 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
             signalState.secondaryLabel = resources.getString(R.string.cell_data_off);
         }
         if (signalState.state == 1) {
-            obj2 = resources.getString(R.string.cell_data_off_content_description);
+            string = resources.getString(R.string.cell_data_off_content_description);
         } else {
-            obj2 = signalState.secondaryLabel;
+            string = signalState.secondaryLabel;
         }
-        signalState.contentDescription = ((Object) signalState.label) + ", " + obj2;
+        signalState.contentDescription = ((Object) signalState.label) + ", " + string;
     }
 
     private CharSequence getMobileDataDescription(CallbackInfo callbackInfo) {
         if (callbackInfo.roaming && !TextUtils.isEmpty(callbackInfo.dataContentDescription)) {
             return this.mContext.getString(R.string.mobile_data_text_format, this.mContext.getString(R.string.data_connection_roaming), callbackInfo.dataContentDescription);
-        } else if (callbackInfo.roaming) {
-            return this.mContext.getString(R.string.data_connection_roaming);
-        } else {
-            return callbackInfo.dataContentDescription;
         }
+        if (callbackInfo.roaming) {
+            return this.mContext.getString(R.string.data_connection_roaming);
+        }
+        return callbackInfo.dataContentDescription;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 115;
+        return com.android.systemui.plugins.R.styleable.AppCompatTheme_windowFixedHeightMinor;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
@@ -226,9 +226,7 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
         return this.mController.hasMobileDataFeature();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class CallbackInfo {
+    private static final class CallbackInfo {
         boolean activityIn;
         boolean activityOut;
         boolean airplaneModeEnabled;
@@ -241,9 +239,7 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class CellSignalCallback implements NetworkController.SignalCallback {
+    private final class CellSignalCallback implements NetworkController.SignalCallback {
         private final CallbackInfo mInfo;
 
         private CellSignalCallback() {
@@ -281,12 +277,10 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static Intent getCellularSettingIntent() {
+    static Intent getCellularSettingIntent() {
         return new Intent("android.settings.DATA_USAGE_SETTINGS");
     }
 
-    /* loaded from: classes.dex */
     private final class CellularDetailAdapter implements DetailAdapter {
         private CellularDetailAdapter() {
         }
@@ -320,11 +314,11 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
 
         @Override // com.android.systemui.plugins.qs.DetailAdapter
         public int getMetricsCategory() {
-            return 117;
+            return com.android.systemui.plugins.R.styleable.AppCompatTheme_windowFixedWidthMinor;
         }
 
         @Override // com.android.systemui.plugins.qs.DetailAdapter
-        public View createDetailView(Context context, View view, ViewGroup viewGroup) {
+        public View createDetailView(Context context, View view, ViewGroup viewGroup) throws Resources.NotFoundException {
             if (view == null) {
                 view = LayoutInflater.from(CellularTile.this.mContext).inflate(R.layout.data_usage, viewGroup, false);
             }

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import com.android.quicksearchbox.util.NowOrLater;
+
 /* loaded from: classes.dex */
 public interface Source extends SuggestionCursorProvider<SourceResult> {
     Intent createSearchIntent(String str, Bundle bundle);

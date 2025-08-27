@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import com.android.internal.app.ColorDisplayController;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class NightDisplayCustomEndTimePreferenceController extends BasePreferenceController {
     private ColorDisplayController mController;

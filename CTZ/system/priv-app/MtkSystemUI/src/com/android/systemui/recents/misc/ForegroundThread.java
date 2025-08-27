@@ -2,6 +2,7 @@ package com.android.systemui.recents.misc;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+
 /* loaded from: classes.dex */
 public final class ForegroundThread extends HandlerThread {
     private static Handler sHandler;

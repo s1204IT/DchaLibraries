@@ -15,6 +15,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class ZenModePreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private final String mKey;
@@ -68,7 +69,6 @@ public class ZenModePreferenceController extends AbstractPreferenceController im
         }
     }
 
-    /* loaded from: classes.dex */
     class SettingObserver extends ContentObserver {
         private final Uri ZEN_MODE_CONFIG_ETAG_URI;
         private final Uri ZEN_MODE_URI;

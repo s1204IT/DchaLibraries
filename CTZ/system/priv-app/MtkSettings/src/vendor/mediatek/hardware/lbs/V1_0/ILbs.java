@@ -11,6 +11,7 @@ import android.os.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public interface ILbs extends IBase {
     ArrayList<String> interfaceChain() throws RemoteException;
@@ -23,9 +24,9 @@ public interface ILbs extends IBase {
         if (iHwBinder == null) {
             return null;
         }
-        ILbs queryLocalInterface = iHwBinder.queryLocalInterface("vendor.mediatek.hardware.lbs@1.0::ILbs");
-        if (queryLocalInterface != null && (queryLocalInterface instanceof ILbs)) {
-            return queryLocalInterface;
+        ILbs iLbsQueryLocalInterface = iHwBinder.queryLocalInterface("vendor.mediatek.hardware.lbs@1.0::ILbs");
+        if (iLbsQueryLocalInterface != null && (iLbsQueryLocalInterface instanceof ILbs)) {
+            return iLbsQueryLocalInterface;
         }
         Proxy proxy = new Proxy(iHwBinder);
         try {
@@ -44,7 +45,6 @@ public interface ILbs extends IBase {
         return asInterface(HwBinder.getService("vendor.mediatek.hardware.lbs@1.0::ILbs", str));
     }
 
-    /* loaded from: classes.dex */
     public static final class Proxy implements ILbs {
         private IHwBinder mRemote;
 
@@ -127,13 +127,13 @@ public interface ILbs extends IBase {
                 hwParcel2.verifySuccess();
                 hwParcel.releaseTemporaryStorage();
                 ArrayList<byte[]> arrayList = new ArrayList<>();
-                HwBlob readBuffer = hwParcel2.readBuffer(16L);
-                int int32 = readBuffer.getInt32(8L);
-                HwBlob readEmbeddedBuffer = hwParcel2.readEmbeddedBuffer(int32 * 32, readBuffer.handle(), 0L, true);
+                HwBlob buffer = hwParcel2.readBuffer(16L);
+                int int32 = buffer.getInt32(8L);
+                HwBlob embeddedBuffer = hwParcel2.readEmbeddedBuffer(int32 * 32, buffer.handle(), 0L, true);
                 arrayList.clear();
                 for (int i = 0; i < int32; i++) {
                     byte[] bArr = new byte[32];
-                    readEmbeddedBuffer.copyToInt8Array(i * 32, bArr, 32);
+                    embeddedBuffer.copyToInt8Array(i * 32, bArr, 32);
                     arrayList.add(bArr);
                 }
                 return arrayList;

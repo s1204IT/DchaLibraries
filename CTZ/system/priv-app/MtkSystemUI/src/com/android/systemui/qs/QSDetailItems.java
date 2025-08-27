@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSTile;
+
 /* loaded from: classes.dex */
 public class QSDetailItems extends FrameLayout {
     private static final boolean DEBUG = Log.isLoggable("QSDetailItems", 3);
@@ -35,14 +36,12 @@ public class QSDetailItems extends FrameLayout {
     private final int mQsDetailIconOverlaySize;
     private String mTag;
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onDetailItemClick(Item item);
 
         void onDetailItemDisconnect(Item item);
     }
 
-    /* loaded from: classes.dex */
     public static class Item {
         public boolean canDisconnect;
         public QSTile.Icon icon;
@@ -74,13 +73,13 @@ public class QSDetailItems extends FrameLayout {
     @Override // android.view.View
     protected void onFinishInflate() {
         super.onFinishInflate();
-        this.mItemList = (AutoSizingList) findViewById(16908298);
+        this.mItemList = (AutoSizingList) findViewById(android.R.id.list);
         this.mItemList.setVisibility(8);
         this.mItemList.setAdapter(this.mAdapter);
-        this.mEmpty = findViewById(16908292);
+        this.mEmpty = findViewById(android.R.id.empty);
         this.mEmpty.setVisibility(8);
-        this.mEmptyText = (TextView) this.mEmpty.findViewById(16908310);
-        this.mEmptyIcon = (ImageView) this.mEmpty.findViewById(16908294);
+        this.mEmptyText = (TextView) this.mEmpty.findViewById(android.R.id.title);
+        this.mEmptyIcon = (ImageView) this.mEmpty.findViewById(android.R.id.icon);
     }
 
     @Override // android.view.View
@@ -90,8 +89,8 @@ public class QSDetailItems extends FrameLayout {
         int childCount = this.mItemList.getChildCount();
         for (int i = 0; i < childCount; i++) {
             View childAt = this.mItemList.getChildAt(i);
-            FontSizeUtils.updateFontSize(childAt, 16908310, R.dimen.qs_detail_item_primary_text_size);
-            FontSizeUtils.updateFontSize(childAt, 16908304, R.dimen.qs_detail_item_secondary_text_size);
+            FontSizeUtils.updateFontSize(childAt, android.R.id.title, R.dimen.qs_detail_item_primary_text_size);
+            FontSizeUtils.updateFontSize(childAt, android.R.id.summary, R.dimen.qs_detail_item_secondary_text_size);
         }
     }
 
@@ -103,7 +102,7 @@ public class QSDetailItems extends FrameLayout {
         this.mEmptyIcon.post(new Runnable() { // from class: com.android.systemui.qs.-$$Lambda$QSDetailItems$8UkcDK0xyJROkQ0Pv0OF8HNZO94
             @Override // java.lang.Runnable
             public final void run() {
-                QSDetailItems.lambda$setEmptyState$0(QSDetailItems.this, i, i2);
+                QSDetailItems.lambda$setEmptyState$0(this.f$0, i, i2);
             }
         });
     }
@@ -145,13 +144,11 @@ public class QSDetailItems extends FrameLayout {
         this.mHandler.obtainMessage(3, z ? 1 : 0, 0).sendToTarget();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleSetCallback(Callback callback) {
+    private void handleSetCallback(Callback callback) {
         this.mCallback = callback;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleSetItems(Item[] itemArr) {
+    private void handleSetItems(Item[] itemArr) {
         int length = itemArr != null ? itemArr.length : 0;
         this.mEmpty.setVisibility(length == 0 ? 0 : 8);
         this.mItemList.setVisibility(length == 0 ? 8 : 0);
@@ -159,8 +156,7 @@ public class QSDetailItems extends FrameLayout {
         this.mAdapter.notifyDataSetChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleSetItemsVisible(boolean z) {
+    private void handleSetItemsVisible(boolean z) {
         if (this.mItemsVisible == z) {
             return;
         }
@@ -170,9 +166,7 @@ public class QSDetailItems extends FrameLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class Adapter extends BaseAdapter {
+    private class Adapter extends BaseAdapter {
         private Adapter() {
         }
 
@@ -202,7 +196,7 @@ public class QSDetailItems extends FrameLayout {
                 view = LayoutInflater.from(QSDetailItems.this.mContext).inflate(R.layout.qs_detail_item, viewGroup, false);
             }
             view.setVisibility(QSDetailItems.this.mItemsVisible ? 0 : 4);
-            ImageView imageView = (ImageView) view.findViewById(16908294);
+            ImageView imageView = (ImageView) view.findViewById(android.R.id.icon);
             if (item.icon != null) {
                 imageView.setImageDrawable(item.icon.getDrawable(imageView.getContext()));
             } else {
@@ -213,9 +207,9 @@ public class QSDetailItems extends FrameLayout {
                 item.overlay.setBounds(0, 0, QSDetailItems.this.mQsDetailIconOverlaySize, QSDetailItems.this.mQsDetailIconOverlaySize);
                 imageView.getOverlay().add(item.overlay);
             }
-            TextView textView = (TextView) view.findViewById(16908310);
+            TextView textView = (TextView) view.findViewById(android.R.id.title);
             textView.setText(item.line1);
-            TextView textView2 = (TextView) view.findViewById(16908304);
+            TextView textView2 = (TextView) view.findViewById(android.R.id.summary);
             boolean z = !TextUtils.isEmpty(item.line2);
             textView.setMaxLines(z ? 1 : 2);
             if (z) {
@@ -233,7 +227,7 @@ public class QSDetailItems extends FrameLayout {
                     }
                 }
             });
-            ImageView imageView2 = (ImageView) view.findViewById(16908296);
+            ImageView imageView2 = (ImageView) view.findViewById(android.R.id.icon2);
             if (item.canDisconnect) {
                 imageView2.setImageResource(R.drawable.ic_qs_cancel);
                 imageView2.setVisibility(0);
@@ -257,7 +251,6 @@ public class QSDetailItems extends FrameLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     private class H extends Handler {
         public H() {
             super(Looper.getMainLooper());

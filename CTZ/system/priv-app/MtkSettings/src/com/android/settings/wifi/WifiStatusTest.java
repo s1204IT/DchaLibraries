@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WifiStatusTest extends Activity {
     private TextView mBSSID;
@@ -50,11 +51,17 @@ public class WifiStatusTest extends Activity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("android.net.wifi.WIFI_STATE_CHANGED")) {
                 WifiStatusTest.this.handleWifiStateChanged(intent.getIntExtra("wifi_state", 4));
-            } else if (intent.getAction().equals("android.net.wifi.STATE_CHANGE")) {
+                return;
+            }
+            if (intent.getAction().equals("android.net.wifi.STATE_CHANGE")) {
                 WifiStatusTest.this.handleNetworkStateChanged((NetworkInfo) intent.getParcelableExtra("networkInfo"));
-            } else if (intent.getAction().equals("android.net.wifi.SCAN_RESULTS")) {
+                return;
+            }
+            if (intent.getAction().equals("android.net.wifi.SCAN_RESULTS")) {
                 WifiStatusTest.this.handleScanResultsAvailable();
-            } else if (!intent.getAction().equals("android.net.wifi.supplicant.CONNECTION_CHANGE")) {
+                return;
+            }
+            if (!intent.getAction().equals("android.net.wifi.supplicant.CONNECTION_CHANGE")) {
                 if (intent.getAction().equals("android.net.wifi.supplicant.STATE_CHANGE")) {
                     WifiStatusTest.this.handleSupplicantStateChanged((SupplicantState) intent.getParcelableExtra("newState"), intent.hasExtra("supplicantError"), intent.getIntExtra("supplicantError", 0));
                 } else if (intent.getAction().equals("android.net.wifi.RSSI_CHANGED")) {
@@ -90,8 +97,7 @@ public class WifiStatusTest extends Activity {
             stringBuffer.append('.');
             stringBuffer.append((i2 >>> 8) & 255);
             WifiStatusTest.this.mIPAddr.setText(stringBuffer);
-            TextView textView = WifiStatusTest.this.mLinkSpeed;
-            textView.setText(String.valueOf(connectionInfo.getLinkSpeed()) + " Mbps");
+            WifiStatusTest.this.mLinkSpeed.setText(String.valueOf(connectionInfo.getLinkSpeed()) + " Mbps");
             WifiStatusTest.this.mMACAddr.setText(connectionInfo.getMacAddress());
             WifiStatusTest.this.mNetworkId.setText(String.valueOf(connectionInfo.getNetworkId()));
             WifiStatusTest.this.mRSSI.setText(String.valueOf(connectionInfo.getRssi()));
@@ -144,27 +150,44 @@ public class WifiStatusTest extends Activity {
         unregisterReceiver(this.mWifiStateReceiver);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setSupplicantStateText(SupplicantState supplicantState) {
+    private void setSupplicantStateText(SupplicantState supplicantState) {
         if (SupplicantState.FOUR_WAY_HANDSHAKE.equals(supplicantState)) {
             this.mSupplicantState.setText("FOUR WAY HANDSHAKE");
-        } else if (SupplicantState.ASSOCIATED.equals(supplicantState)) {
+            return;
+        }
+        if (SupplicantState.ASSOCIATED.equals(supplicantState)) {
             this.mSupplicantState.setText("ASSOCIATED");
-        } else if (SupplicantState.ASSOCIATING.equals(supplicantState)) {
+            return;
+        }
+        if (SupplicantState.ASSOCIATING.equals(supplicantState)) {
             this.mSupplicantState.setText("ASSOCIATING");
-        } else if (SupplicantState.COMPLETED.equals(supplicantState)) {
+            return;
+        }
+        if (SupplicantState.COMPLETED.equals(supplicantState)) {
             this.mSupplicantState.setText("COMPLETED");
-        } else if (SupplicantState.DISCONNECTED.equals(supplicantState)) {
+            return;
+        }
+        if (SupplicantState.DISCONNECTED.equals(supplicantState)) {
             this.mSupplicantState.setText("DISCONNECTED");
-        } else if (SupplicantState.DORMANT.equals(supplicantState)) {
+            return;
+        }
+        if (SupplicantState.DORMANT.equals(supplicantState)) {
             this.mSupplicantState.setText("DORMANT");
-        } else if (SupplicantState.GROUP_HANDSHAKE.equals(supplicantState)) {
+            return;
+        }
+        if (SupplicantState.GROUP_HANDSHAKE.equals(supplicantState)) {
             this.mSupplicantState.setText("GROUP HANDSHAKE");
-        } else if (SupplicantState.INACTIVE.equals(supplicantState)) {
+            return;
+        }
+        if (SupplicantState.INACTIVE.equals(supplicantState)) {
             this.mSupplicantState.setText("INACTIVE");
-        } else if (SupplicantState.INVALID.equals(supplicantState)) {
+            return;
+        }
+        if (SupplicantState.INVALID.equals(supplicantState)) {
             this.mSupplicantState.setText("INVALID");
-        } else if (SupplicantState.SCANNING.equals(supplicantState)) {
+            return;
+        }
+        if (SupplicantState.SCANNING.equals(supplicantState)) {
             this.mSupplicantState.setText("SCANNING");
         } else if (SupplicantState.UNINITIALIZED.equals(supplicantState)) {
             this.mSupplicantState.setText("UNINITIALIZED");
@@ -174,8 +197,7 @@ public class WifiStatusTest extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setWifiStateText(int i) {
+    private void setWifiStateText(int i) {
         String string;
         switch (i) {
             case 0:
@@ -201,18 +223,15 @@ public class WifiStatusTest extends Activity {
         this.mWifiState.setText(string);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleSignalChanged(int i) {
+    private void handleSignalChanged(int i) {
         this.mRSSI.setText(String.valueOf(i));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleWifiStateChanged(int i) {
+    private void handleWifiStateChanged(int i) {
         setWifiStateText(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleScanResultsAvailable() {
+    private void handleScanResultsAvailable() {
         List<ScanResult> scanResults = this.mWifiManager.getScanResults();
         StringBuffer stringBuffer = new StringBuffer();
         if (scanResults != null) {
@@ -226,8 +245,7 @@ public class WifiStatusTest extends Activity {
         this.mScanList.setText(stringBuffer);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleSupplicantStateChanged(SupplicantState supplicantState, boolean z, int i) {
+    private void handleSupplicantStateChanged(SupplicantState supplicantState, boolean z, int i) {
         if (z) {
             this.mSupplicantState.setText("ERROR AUTHENTICATING");
         } else {
@@ -235,16 +253,14 @@ public class WifiStatusTest extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleNetworkStateChanged(NetworkInfo networkInfo) {
+    private void handleNetworkStateChanged(NetworkInfo networkInfo) {
         if (this.mWifiManager.isWifiEnabled()) {
             android.net.wifi.WifiInfo connectionInfo = this.mWifiManager.getConnectionInfo();
             this.mNetworkState.setText(AccessPoint.getSummary(this, connectionInfo.getSSID(), networkInfo.getDetailedState(), connectionInfo.getNetworkId() == -1, null));
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updatePingState() {
+    private final void updatePingState() {
         final Handler handler = new Handler();
         this.mPingHostnameResult = getResources().getString(R.string.radioInfo_unknown);
         this.mHttpClientTestResult = getResources().getString(R.string.radioInfo_unknown);
@@ -266,15 +282,14 @@ public class WifiStatusTest extends Activity {
         }.start();
         new Thread() { // from class: com.android.settings.wifi.WifiStatusTest.6
             @Override // java.lang.Thread, java.lang.Runnable
-            public void run() {
+            public void run() throws Throwable {
                 WifiStatusTest.this.httpClientTest();
                 handler.post(runnable);
             }
         }.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void pingHostname() {
+    private final void pingHostname() {
         try {
             if (Runtime.getRuntime().exec("ping -c 1 -w 100 www.google.com").waitFor() == 0) {
                 this.mPingHostnameResult = "Pass";
@@ -290,41 +305,41 @@ public class WifiStatusTest extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void httpClientTest() {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [372=5] */
+    private void httpClientTest() throws Throwable {
         HttpURLConnection httpURLConnection;
         Throwable th;
         HttpURLConnection httpURLConnection2 = null;
         try {
             try {
                 httpURLConnection = (HttpURLConnection) new URL("https://www.google.com").openConnection();
-            } catch (IOException e) {
-            }
-        } catch (Throwable th2) {
-            httpURLConnection = httpURLConnection2;
-            th = th2;
-        }
-        try {
-            if (httpURLConnection.getResponseCode() == 200) {
-                this.mHttpClientTestResult = "Pass";
-            } else {
-                this.mHttpClientTestResult = "Fail: Code: " + httpURLConnection.getResponseMessage();
-            }
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
+                try {
+                    if (httpURLConnection.getResponseCode() == 200) {
+                        this.mHttpClientTestResult = "Pass";
+                    } else {
+                        this.mHttpClientTestResult = "Fail: Code: " + httpURLConnection.getResponseMessage();
+                    }
+                    if (httpURLConnection != null) {
+                        httpURLConnection.disconnect();
+                    }
+                } catch (IOException e) {
+                    httpURLConnection2 = httpURLConnection;
+                    this.mHttpClientTestResult = "Fail: IOException";
+                    if (httpURLConnection2 != null) {
+                        httpURLConnection2.disconnect();
+                    }
+                } catch (Throwable th2) {
+                    th = th2;
+                    if (httpURLConnection != null) {
+                        httpURLConnection.disconnect();
+                    }
+                    throw th;
+                }
+            } catch (Throwable th3) {
+                httpURLConnection = httpURLConnection2;
+                th = th3;
             }
         } catch (IOException e2) {
-            httpURLConnection2 = httpURLConnection;
-            this.mHttpClientTestResult = "Fail: IOException";
-            if (httpURLConnection2 != null) {
-                httpURLConnection2.disconnect();
-            }
-        } catch (Throwable th3) {
-            th = th3;
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
-            }
-            throw th;
         }
     }
 }

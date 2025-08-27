@@ -1,6 +1,8 @@
 package com.android.launcher3.widget;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.View;
@@ -18,9 +20,9 @@ import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.launcher3.util.SystemUiController;
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.AbstractSlideInView;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public abstract class BaseWidgetSheet extends AbstractSlideInView implements View.OnClickListener, View.OnLongClickListener, DragSource {
+abstract class BaseWidgetSheet extends AbstractSlideInView implements View.OnClickListener, View.OnLongClickListener, DragSource {
     protected final ColorScrim mColorScrim;
     private Toast mWidgetInstructionToast;
 
@@ -42,23 +44,22 @@ public abstract class BaseWidgetSheet extends AbstractSlideInView implements Vie
 
     @Override // android.view.View.OnLongClickListener
     public final boolean onLongClick(View view) {
-        if (ItemLongClickListener.canStartDrag(this.mLauncher)) {
-            if (view instanceof WidgetCell) {
-                return beginDraggingWidget((WidgetCell) view);
-            }
-            return true;
+        if (!ItemLongClickListener.canStartDrag(this.mLauncher)) {
+            return false;
         }
-        return false;
+        if (view instanceof WidgetCell) {
+            return beginDraggingWidget((WidgetCell) view);
+        }
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.views.AbstractSlideInView
-    public void setTranslationShift(float f) {
+    protected void setTranslationShift(float f) {
         super.setTranslationShift(f);
         this.mColorScrim.setProgress(1.0f - this.mTranslationShift);
     }
 
-    private boolean beginDraggingWidget(WidgetCell widgetCell) {
+    private boolean beginDraggingWidget(WidgetCell widgetCell) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         WidgetImageView widgetView = widgetCell.getWidgetView();
         if (widgetView.getBitmap() == null) {
             return false;
@@ -74,20 +75,17 @@ public abstract class BaseWidgetSheet extends AbstractSlideInView implements Vie
     public void onDropCompleted(View view, DropTarget.DragObject dragObject, boolean z) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.views.AbstractSlideInView
-    public void onCloseComplete() {
+    protected void onCloseComplete() {
         super.onCloseComplete();
         clearNavBarColor();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void clearNavBarColor() {
+    protected void clearNavBarColor() {
         this.mLauncher.getSystemUiController().updateUiState(2, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setupNavBarColor() {
+    protected void setupNavBarColor() {
         int i;
         boolean attrBoolean = Themes.getAttrBoolean(this.mLauncher, R.attr.isMainColorDark);
         SystemUiController systemUiController = this.mLauncher.getSystemUiController();
@@ -107,8 +105,8 @@ public abstract class BaseWidgetSheet extends AbstractSlideInView implements Vie
 
     @Override // com.android.launcher3.AbstractFloatingView
     public final void logActionCommand(int i) {
-        LauncherLogProto.Target newContainerTarget = LoggerUtils.newContainerTarget(5);
-        newContainerTarget.cardinality = getElementsRowCount();
-        this.mLauncher.getUserEventDispatcher().logActionCommand(i, newContainerTarget);
+        LauncherLogProto.Target targetNewContainerTarget = LoggerUtils.newContainerTarget(5);
+        targetNewContainerTarget.cardinality = getElementsRowCount();
+        this.mLauncher.getUserEventDispatcher().logActionCommand(i, targetNewContainerTarget);
     }
 }

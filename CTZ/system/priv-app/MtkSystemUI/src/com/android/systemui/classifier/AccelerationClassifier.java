@@ -2,6 +2,7 @@ package com.android.systemui.classifier;
 
 import android.view.MotionEvent;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class AccelerationClassifier extends StrokeClassifier {
     private final HashMap<Stroke, Data> mStrokeMap = new HashMap<>();
@@ -36,7 +37,6 @@ public class AccelerationClassifier extends StrokeClassifier {
         return 2.0f * SpeedRatioEvaluator.evaluate(this.mStrokeMap.get(stroke).maxSpeedRatio);
     }
 
-    /* loaded from: classes.dex */
     private static class Data {
         Point previousPoint;
         float previousSpeed = 0.0f;
@@ -47,19 +47,19 @@ public class AccelerationClassifier extends StrokeClassifier {
         }
 
         public void addPoint(Point point) {
-            float dist = this.previousPoint.dist(point);
-            float f = (float) ((point.timeOffsetNano - this.previousPoint.timeOffsetNano) + 1);
-            float f2 = dist / f;
+            float fDist = this.previousPoint.dist(point);
+            float f = (point.timeOffsetNano - this.previousPoint.timeOffsetNano) + 1;
+            float f2 = fDist / f;
             if (f > 2.0E7f || f < 5000000.0f) {
                 this.previousSpeed = 0.0f;
                 this.previousPoint = point;
-                return;
+            } else {
+                if (this.previousSpeed != 0.0f) {
+                    this.maxSpeedRatio = Math.max(this.maxSpeedRatio, f2 / this.previousSpeed);
+                }
+                this.previousSpeed = f2;
+                this.previousPoint = point;
             }
-            if (this.previousSpeed != 0.0f) {
-                this.maxSpeedRatio = Math.max(this.maxSpeedRatio, f2 / this.previousSpeed);
-            }
-            this.previousSpeed = f2;
-            this.previousPoint = point;
         }
     }
 }

@@ -2,6 +2,8 @@ package com.android.launcher3.dragndrop;
 
 import android.content.ClipDescription;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -20,6 +22,7 @@ import com.android.launcher3.dragndrop.DragOptions;
 import com.android.launcher3.states.InternalStateHandler;
 import com.android.launcher3.widget.PendingItemDragHelper;
 import java.util.UUID;
+
 /* loaded from: classes.dex */
 public abstract class BaseItemDragListener extends InternalStateHandler implements View.OnDragListener, DragSource, DragOptions.PreDragCondition {
     public static final String EXTRA_PIN_ITEM_DRAG_LISTENER = "pin_item_drag_listener";
@@ -61,19 +64,18 @@ public abstract class BaseItemDragListener extends InternalStateHandler implemen
         if (this.mLauncher == null || this.mDragController == null) {
             postCleanup();
             return false;
-        } else if (dragEvent.getAction() == 1) {
+        }
+        if (dragEvent.getAction() == 1) {
             if (onDragStart(dragEvent)) {
                 return true;
             }
             postCleanup();
             return false;
-        } else {
-            return this.mDragController.onDragEvent(this.mDragStartTime, dragEvent);
         }
+        return this.mDragController.onDragEvent(this.mDragStartTime, dragEvent);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean onDragStart(DragEvent dragEvent) {
+    protected boolean onDragStart(DragEvent dragEvent) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         ClipDescription clipDescription = dragEvent.getClipDescription();
         if (clipDescription == null || !clipDescription.hasMimeType(getMimeType())) {
             Log.e(TAG, "Someone started a dragAndDrop before us.");
@@ -111,8 +113,7 @@ public abstract class BaseItemDragListener extends InternalStateHandler implemen
         postCleanup();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void postCleanup() {
+    protected void postCleanup() {
         clearReference();
         if (this.mLauncher != null) {
             Intent intent = new Intent(this.mLauncher.getIntent());
@@ -122,7 +123,7 @@ public abstract class BaseItemDragListener extends InternalStateHandler implemen
         new Handler(Looper.getMainLooper()).post(new Runnable() { // from class: com.android.launcher3.dragndrop.-$$Lambda$GXOZhabmkyV94fsaekT73At9yKU
             @Override // java.lang.Runnable
             public final void run() {
-                BaseItemDragListener.this.removeListener();
+                this.f$0.removeListener();
             }
         });
     }

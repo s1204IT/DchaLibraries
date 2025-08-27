@@ -5,6 +5,7 @@ import android.provider.Settings;
 import android.util.KeyValueListParser;
 import android.util.Log;
 import java.time.Duration;
+
 /* loaded from: classes.dex */
 public class BatteryTipPolicy {
     public final boolean appRestrictionEnabled;

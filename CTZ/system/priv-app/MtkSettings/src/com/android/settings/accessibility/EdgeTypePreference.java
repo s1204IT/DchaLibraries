@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.android.internal.widget.SubtitleView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class EdgeTypePreference extends ListDialogPreference {
     public EdgeTypePreference(Context context, AttributeSet attributeSet) {
@@ -25,12 +26,12 @@ public class EdgeTypePreference extends ListDialogPreference {
 
     @Override // com.android.settings.accessibility.ListDialogPreference
     protected void onBindListItem(View view, int i) {
-        SubtitleView findViewById = view.findViewById(R.id.preview);
-        findViewById.setForegroundColor(-1);
-        findViewById.setBackgroundColor(0);
-        findViewById.setTextSize(32.0f * getContext().getResources().getDisplayMetrics().density);
-        findViewById.setEdgeType(getValueAt(i));
-        findViewById.setEdgeColor(-16777216);
+        SubtitleView subtitleViewFindViewById = view.findViewById(R.id.preview);
+        subtitleViewFindViewById.setForegroundColor(-1);
+        subtitleViewFindViewById.setBackgroundColor(0);
+        subtitleViewFindViewById.setTextSize(32.0f * getContext().getResources().getDisplayMetrics().density);
+        subtitleViewFindViewById.setEdgeType(getValueAt(i));
+        subtitleViewFindViewById.setEdgeColor(-16777216);
         CharSequence titleAt = getTitleAt(i);
         if (titleAt != null) {
             ((TextView) view.findViewById(R.id.summary)).setText(titleAt);

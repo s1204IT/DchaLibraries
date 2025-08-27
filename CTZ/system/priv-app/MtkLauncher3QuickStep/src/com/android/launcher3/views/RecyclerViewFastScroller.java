@@ -1,5 +1,6 @@
 package com.android.launcher3.views;
 
+import android.R;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.Resources;
@@ -16,10 +17,10 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.TextView;
 import com.android.launcher3.BaseRecyclerView;
-import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.graphics.FastScrollThumbDrawable;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class RecyclerViewFastScroller extends View {
     private static final float FAST_SCROLL_OVERLAY_Y_OFFSET_FACTOR = 0.75f;
@@ -54,11 +55,13 @@ public class RecyclerViewFastScroller extends View {
     private ObjectAnimator mWidthAnimator;
     private static final Rect sTempRect = new Rect();
     private static final Property<RecyclerViewFastScroller, Integer> TRACK_WIDTH = new Property<RecyclerViewFastScroller, Integer>(Integer.class, "width") { // from class: com.android.launcher3.views.RecyclerViewFastScroller.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(RecyclerViewFastScroller recyclerViewFastScroller) {
             return Integer.valueOf(recyclerViewFastScroller.mWidth);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(RecyclerViewFastScroller recyclerViewFastScroller, Integer num) {
             recyclerViewFastScroller.setTrackWidth(num.intValue());
@@ -73,28 +76,28 @@ public class RecyclerViewFastScroller extends View {
         this(context, attributeSet, 0);
     }
 
-    public RecyclerViewFastScroller(Context context, AttributeSet attributeSet, int i) {
+    public RecyclerViewFastScroller(Context context, AttributeSet attributeSet, int i) throws Resources.NotFoundException {
         super(context, attributeSet, i);
         this.mDy = 0;
         this.mTrackPaint = new Paint();
-        this.mTrackPaint.setColor(Themes.getAttrColor(context, 16842806));
+        this.mTrackPaint.setColor(Themes.getAttrColor(context, R.attr.textColorPrimary));
         this.mTrackPaint.setAlpha(30);
         this.mThumbPaint = new Paint();
         this.mThumbPaint.setAntiAlias(true);
         this.mThumbPaint.setColor(Themes.getColorAccent(context));
         this.mThumbPaint.setStyle(Paint.Style.FILL);
         Resources resources = getResources();
-        int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.fastscroll_track_min_width);
+        int dimensionPixelSize = resources.getDimensionPixelSize(com.android.launcher3.R.dimen.fastscroll_track_min_width);
         this.mMinWidth = dimensionPixelSize;
         this.mWidth = dimensionPixelSize;
-        this.mMaxWidth = resources.getDimensionPixelSize(R.dimen.fastscroll_track_max_width);
-        this.mThumbPadding = resources.getDimensionPixelSize(R.dimen.fastscroll_thumb_padding);
-        this.mThumbHeight = resources.getDimensionPixelSize(R.dimen.fastscroll_thumb_height);
+        this.mMaxWidth = resources.getDimensionPixelSize(com.android.launcher3.R.dimen.fastscroll_track_max_width);
+        this.mThumbPadding = resources.getDimensionPixelSize(com.android.launcher3.R.dimen.fastscroll_thumb_padding);
+        this.mThumbHeight = resources.getDimensionPixelSize(com.android.launcher3.R.dimen.fastscroll_thumb_height);
         this.mConfig = ViewConfiguration.get(context);
         this.mDeltaThreshold = resources.getDisplayMetrics().density * 4.0f;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.RecyclerViewFastScroller, i, 0);
-        this.mCanThumbDetach = obtainStyledAttributes.getBoolean(0, false);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, com.android.launcher3.R.styleable.RecyclerViewFastScroller, i, 0);
+        this.mCanThumbDetach = typedArrayObtainStyledAttributes.getBoolean(0, false);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public void setRecyclerView(BaseRecyclerView baseRecyclerView, TextView textView) {
@@ -132,8 +135,7 @@ public class RecyclerViewFastScroller extends View {
         return this.mThumbOffsetY;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setTrackWidth(int i) {
+    private void setTrackWidth(int i) {
         if (this.mWidth == i) {
             return;
         }
@@ -213,15 +215,15 @@ public class RecyclerViewFastScroller extends View {
 
     private void updateFastScrollSectionNameAndThumbOffset(int i, int i2) {
         int scrollbarTrackHeight = this.mRv.getScrollbarTrackHeight() - this.mThumbHeight;
-        float max = Math.max(0, Math.min(scrollbarTrackHeight, i2 - this.mTouchOffsetY));
-        String scrollToPositionAtProgress = this.mRv.scrollToPositionAtProgress(max / scrollbarTrackHeight);
-        if (!scrollToPositionAtProgress.equals(this.mPopupSectionName)) {
-            this.mPopupSectionName = scrollToPositionAtProgress;
-            this.mPopupView.setText(scrollToPositionAtProgress);
+        float fMax = Math.max(0, Math.min(scrollbarTrackHeight, i2 - this.mTouchOffsetY));
+        String strScrollToPositionAtProgress = this.mRv.scrollToPositionAtProgress(fMax / scrollbarTrackHeight);
+        if (!strScrollToPositionAtProgress.equals(this.mPopupSectionName)) {
+            this.mPopupSectionName = strScrollToPositionAtProgress;
+            this.mPopupView.setText(strScrollToPositionAtProgress);
         }
-        animatePopupVisibility(!scrollToPositionAtProgress.isEmpty());
+        animatePopupVisibility(!strScrollToPositionAtProgress.isEmpty());
         updatePopupY(i);
-        this.mLastTouchY = max;
+        this.mLastTouchY = fMax;
         setThumbOffsetY((int) this.mLastTouchY);
     }
 
@@ -230,7 +232,7 @@ public class RecyclerViewFastScroller extends View {
         if (this.mThumbOffsetY < 0) {
             return;
         }
-        int save = canvas.save();
+        int iSave = canvas.save();
         canvas.translate(getWidth() / 2, this.mRv.getScrollBarTop());
         float f = this.mWidth / 2;
         canvas.drawRoundRect(-f, 0.0f, f, this.mRv.getScrollbarTrackHeight(), this.mWidth, this.mWidth, this.mTrackPaint);
@@ -238,7 +240,7 @@ public class RecyclerViewFastScroller extends View {
         float f2 = f + this.mThumbPadding;
         float f3 = this.mWidth + this.mThumbPadding + this.mThumbPadding;
         canvas.drawRoundRect(-f2, 0.0f, f2, this.mThumbHeight, f3, f3, this.mThumbPaint);
-        canvas.restoreToCount(save);
+        canvas.restoreToCount(iSave);
     }
 
     private void showActiveScrollbar(boolean z) {
@@ -275,8 +277,7 @@ public class RecyclerViewFastScroller extends View {
     }
 
     private void updatePopupY(int i) {
-        int height = this.mPopupView.getHeight();
-        this.mPopupView.setTranslationY(Utilities.boundToRange((i - (0.75f * height)) + this.mRv.getScrollBarTop(), this.mMaxWidth, (this.mRv.getScrollbarTrackHeight() - this.mMaxWidth) - height));
+        this.mPopupView.setTranslationY(Utilities.boundToRange((i - (0.75f * this.mPopupView.getHeight())) + this.mRv.getScrollBarTop(), this.mMaxWidth, (this.mRv.getScrollbarTrackHeight() - this.mMaxWidth) - r0));
     }
 
     public boolean isHitInParent(float f, float f2, Point point) {

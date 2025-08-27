@@ -15,6 +15,7 @@ import com.mediatek.internal.telephony.MtkIccCardConstants;
 import com.mediatek.internal.telephony.MtkSubscriptionManager;
 import com.mediatek.telephony.MtkTelephonyManagerEx;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SIMHelper {
     private static final String[] CT_NUMERIC = {"45502", "45507", "46003", "46011", "46012", "46013"};
@@ -49,10 +50,10 @@ public class SIMHelper {
     }
 
     public static boolean isRadioOn(int i) {
-        ITelephony asInterface = ITelephony.Stub.asInterface(ServiceManager.getService("phone"));
-        if (asInterface != null) {
+        ITelephony iTelephonyAsInterface = ITelephony.Stub.asInterface(ServiceManager.getService("phone"));
+        if (iTelephonyAsInterface != null) {
             try {
-                return asInterface.isRadioOnForSubscriber(i, sContext.getPackageName());
+                return iTelephonyAsInterface.isRadioOnForSubscriber(i, sContext.getPackageName());
             } catch (RemoteException e) {
                 Log.e("SIMHelper", "mTelephony exception");
                 return false;
@@ -98,7 +99,8 @@ public class SIMHelper {
         while (true) {
             if (i2 >= length) {
                 break;
-            } else if (!strArr[i2].equals(simOperator)) {
+            }
+            if (!strArr[i2].equals(simOperator)) {
                 i2++;
             } else {
                 z = true;

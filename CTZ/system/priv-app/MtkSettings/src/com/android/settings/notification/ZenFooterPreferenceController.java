@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenFooterPreferenceController extends AbstractZenModePreferenceController {
     public ZenFooterPreferenceController(Context context, Lifecycle lifecycle, String str) {

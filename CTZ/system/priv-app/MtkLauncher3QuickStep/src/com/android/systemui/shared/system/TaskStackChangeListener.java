@@ -3,6 +3,7 @@ package com.android.systemui.shared.system;
 import android.os.UserHandle;
 import android.util.Log;
 import com.android.systemui.shared.recents.model.ThumbnailData;
+
 /* loaded from: classes.dex */
 public abstract class TaskStackChangeListener {
     public void onTaskStackChangedBackground() {

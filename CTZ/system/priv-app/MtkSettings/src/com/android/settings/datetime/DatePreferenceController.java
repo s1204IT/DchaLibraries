@@ -12,12 +12,12 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.RestrictedPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.Calendar;
+
 /* loaded from: classes.dex */
 public class DatePreferenceController extends AbstractPreferenceController implements DatePickerDialog.OnDateSetListener, PreferenceControllerMixin {
     private final AutoTimePreferenceController mAutoTimePreferenceController;
     private final DatePreferenceHost mHost;
 
-    /* loaded from: classes.dex */
     public interface DatePreferenceHost extends UpdateTimeAndDateCallback {
         void showDatePicker();
     }
@@ -81,9 +81,9 @@ public class DatePreferenceController extends AbstractPreferenceController imple
         calendar.set(1, i);
         calendar.set(2, i2);
         calendar.set(5, i3);
-        long max = Math.max(calendar.getTimeInMillis(), 1194220800000L);
-        if (max / 1000 < 2147483647L) {
-            ((AlarmManager) this.mContext.getSystemService("alarm")).setTime(max);
+        long jMax = Math.max(calendar.getTimeInMillis(), 1194220800000L);
+        if (jMax / 1000 < 2147483647L) {
+            ((AlarmManager) this.mContext.getSystemService("alarm")).setTime(jMax);
         }
     }
 }

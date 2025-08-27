@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.os.PersistableBundle;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+import java.io.IOException;
+
 /* loaded from: classes.dex */
 public abstract class Condition {
     private boolean mIsActive;
@@ -31,8 +33,7 @@ public abstract class Condition {
 
     public abstract void refreshState();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Condition(ConditionManager conditionManager) {
+    Condition(ConditionManager conditionManager) {
         this(conditionManager, FeatureFactory.getFactory(conditionManager.getContext()).getMetricsFeatureProvider());
     }
 
@@ -41,15 +42,13 @@ public abstract class Condition {
         this.mMetricsFeatureProvider = metricsFeatureProvider;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void restoreState(PersistableBundle persistableBundle) {
+    void restoreState(PersistableBundle persistableBundle) {
         this.mIsSilenced = persistableBundle.getBoolean("silence");
         this.mIsActive = persistableBundle.getBoolean("active");
         this.mLastStateChange = persistableBundle.getLong("last_state");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean saveState(PersistableBundle persistableBundle) {
+    boolean saveState(PersistableBundle persistableBundle) {
         if (this.mIsSilenced) {
             persistableBundle.putBoolean("silence", this.mIsSilenced);
         }
@@ -60,7 +59,7 @@ public abstract class Condition {
         return this.mIsSilenced || this.mIsActive;
     }
 
-    protected void notifyChanged() {
+    protected void notifyChanged() throws IllegalStateException, IOException, IllegalArgumentException {
         this.mManager.notifyChanged(this);
     }
 
@@ -72,8 +71,7 @@ public abstract class Condition {
         return this.mIsActive;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setActive(boolean z) {
+    protected void setActive(boolean z) throws IllegalStateException, IOException, IllegalArgumentException {
         if (this.mIsActive == z) {
             return;
         }
@@ -86,7 +84,7 @@ public abstract class Condition {
         notifyChanged();
     }
 
-    public void silence() {
+    public void silence() throws IllegalStateException, IOException, IllegalArgumentException {
         if (!this.mIsSilenced) {
             this.mIsSilenced = true;
             this.mMetricsFeatureProvider.action(this.mManager.getContext(), 372, getMetricsConstant());
@@ -104,8 +102,11 @@ public abstract class Condition {
             if (!this.mReceiverRegistered) {
                 this.mManager.getContext().registerReceiver(receiver, getIntentFilter());
                 this.mReceiverRegistered = true;
+                return;
             }
-        } else if (this.mReceiverRegistered) {
+            return;
+        }
+        if (this.mReceiverRegistered) {
             this.mManager.getContext().unregisterReceiver(receiver);
             this.mReceiverRegistered = false;
         }
@@ -123,8 +124,7 @@ public abstract class Condition {
         return isActive() && !isSilenced();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public long getLastChange() {
+    long getLastChange() {
         return this.mLastStateChange;
     }
 

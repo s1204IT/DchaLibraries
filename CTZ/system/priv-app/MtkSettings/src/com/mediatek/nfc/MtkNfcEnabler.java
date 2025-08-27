@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Switch;
 import com.android.settings.widget.SwitchBar;
+
 /* loaded from: classes.dex */
 public class MtkNfcEnabler implements SwitchBar.OnSwitchChangeListener {
     private final Context mContext;
@@ -95,8 +96,10 @@ public class MtkNfcEnabler implements SwitchBar.OnSwitchChangeListener {
             Log.d("@M_MtkNfcEnabler", "onSwitchChanged: enable NFC ");
             this.mNfcAdapter.enable();
             r4.setEnabled(false);
-        } else if (z) {
         } else {
+            if (z) {
+                return;
+            }
             if (this.mNfcState == 3 || this.mNfcState == 2) {
                 Log.d("@M_MtkNfcEnabler", "onSwitchChanged: disable NFC ");
                 this.mNfcAdapter.disable();
@@ -105,55 +108,52 @@ public class MtkNfcEnabler implements SwitchBar.OnSwitchChangeListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleNfcStateChanged(int i) {
+    private void handleNfcStateChanged(int i) {
         Log.d("@M_MtkNfcEnabler", "handleNfcStateChanged  newState = " + i);
         updateSwitch(i);
     }
 
     private void updateSwitch(int i) {
         if (this.mSwitch == null) {
-            return;
         }
         switch (i) {
             case 1:
                 setSwitchChecked(false);
                 this.mSwitch.setEnabled(true);
-                return;
+                break;
             case 2:
                 setSwitchChecked(true);
                 this.mSwitch.setEnabled(false);
-                return;
+                break;
             case 3:
                 setSwitchChecked(true);
                 this.mSwitch.setEnabled(true);
-                return;
+                break;
             case 4:
                 setSwitchChecked(false);
                 this.mSwitch.setEnabled(false);
-                return;
+                break;
             default:
                 setSwitchChecked(false);
-                return;
+                break;
         }
     }
 
-    /* loaded from: classes.dex */
     private class QueryTask extends AsyncTask<Void, Void, Integer> {
         private QueryTask() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Integer doInBackground(Void... voidArr) {
+        protected Integer doInBackground(Void... voidArr) {
             MtkNfcEnabler.this.mNfcState = MtkNfcEnabler.this.mNfcAdapter.getAdapterState();
             Log.d("@M_MtkNfcEnabler", "[QueryTask] doInBackground  mNfcState: " + MtkNfcEnabler.this.mNfcState);
             return Integer.valueOf(MtkNfcEnabler.this.mNfcState);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Integer num) {
+        protected void onPostExecute(Integer num) {
             Log.d("@M_MtkNfcEnabler", "[QueryTask] onPostExecute: " + num);
             MtkNfcEnabler.this.handleNfcStateChanged(num.intValue());
         }

@@ -8,6 +8,7 @@ import android.telecom.DefaultDialerManager;
 import android.telephony.TelephonyManager;
 import com.android.settingslib.applications.DefaultAppInfo;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultPhonePreferenceController extends DefaultAppPreferenceController {
     public DefaultPhonePreferenceController(Context context) {

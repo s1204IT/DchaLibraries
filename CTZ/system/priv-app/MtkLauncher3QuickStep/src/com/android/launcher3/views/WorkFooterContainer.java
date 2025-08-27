@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
+
 /* loaded from: classes.dex */
 public class WorkFooterContainer extends RelativeLayout {
     public WorkFooterContainer(Context context) {

@@ -10,6 +10,7 @@ import com.android.launcher3.dragndrop.DragOptions;
 import com.android.launcher3.folder.Folder;
 import com.android.launcher3.logging.LoggerUtils;
 import com.android.launcher3.userevent.nano.LauncherLogProto;
+
 /* loaded from: classes.dex */
 public class DeleteDropTarget extends ButtonDropTarget {
     private int mControlType;
@@ -23,9 +24,8 @@ public class DeleteDropTarget extends ButtonDropTarget {
         this.mControlType = 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.ButtonDropTarget, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mHoverColor = getResources().getColor(R.color.delete_target_hover_tint);
         setDrawable(R.drawable.ic_remove_shadow);
@@ -60,7 +60,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
             if (itemInfo.id != -1) {
                 i = R.string.remove_drop_target_label;
             } else {
-                i = 17039360;
+                i = android.R.string.cancel;
             }
             this.mText = resources.getString(i);
             requestLayout();
@@ -88,8 +88,8 @@ public class DeleteDropTarget extends ButtonDropTarget {
 
     @Override // com.android.launcher3.ButtonDropTarget
     public LauncherLogProto.Target getDropTargetForLogging() {
-        LauncherLogProto.Target newTarget = LoggerUtils.newTarget(2);
-        newTarget.controlType = this.mControlType;
-        return newTarget;
+        LauncherLogProto.Target targetNewTarget = LoggerUtils.newTarget(2);
+        targetNewTarget.controlType = this.mControlType;
+        return targetNewTarget;
     }
 }

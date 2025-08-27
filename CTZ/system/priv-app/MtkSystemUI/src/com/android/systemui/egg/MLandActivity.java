@@ -1,10 +1,12 @@
 package com.android.systemui.egg;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class MLandActivity extends Activity {
     MLand mLand;
@@ -24,23 +26,23 @@ public class MLandActivity extends Activity {
 
     public void updateSplashPlayers() {
         int numPlayers = this.mLand.getNumPlayers();
-        View findViewById = findViewById(R.id.player_minus_button);
-        View findViewById2 = findViewById(R.id.player_plus_button);
+        View viewFindViewById = findViewById(R.id.player_minus_button);
+        View viewFindViewById2 = findViewById(R.id.player_plus_button);
         if (numPlayers == 1) {
-            findViewById.setVisibility(4);
-            findViewById2.setVisibility(0);
-            findViewById2.requestFocus();
+            viewFindViewById.setVisibility(4);
+            viewFindViewById2.setVisibility(0);
+            viewFindViewById2.requestFocus();
             return;
         }
         MLand mLand = this.mLand;
         if (numPlayers == 6) {
-            findViewById.setVisibility(0);
-            findViewById2.setVisibility(4);
-            findViewById.requestFocus();
-            return;
+            viewFindViewById.setVisibility(0);
+            viewFindViewById2.setVisibility(4);
+            viewFindViewById.requestFocus();
+        } else {
+            viewFindViewById.setVisibility(0);
+            viewFindViewById2.setVisibility(0);
         }
-        findViewById.setVisibility(0);
-        findViewById2.setVisibility(0);
     }
 
     @Override // android.app.Activity
@@ -50,7 +52,7 @@ public class MLandActivity extends Activity {
     }
 
     @Override // android.app.Activity
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         super.onResume();
         this.mLand.onAttachedToWindow();
         updateSplashPlayers();

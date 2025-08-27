@@ -18,6 +18,7 @@ import com.android.launcher3.views.BaseDragLayer;
 import com.android.quickstep.OverviewInteractionState;
 import com.android.quickstep.views.RecentsView;
 import com.android.quickstep.views.TaskView;
+
 /* loaded from: classes.dex */
 public abstract class TaskViewTouchController<T extends BaseDraggingActivity> extends AnimatorListenerAdapter implements TouchController, SwipeDetector.Listener {
     private static final float SUCCESS_TRANSITION_PROGRESS = 0.5f;
@@ -83,11 +84,7 @@ public abstract class TaskViewTouchController<T extends BaseDraggingActivity> ex
                             i2++;
                         } else {
                             this.mTaskBeingDragged = pageAt;
-                            if (OverviewInteractionState.getInstance(this.mActivity).isSwipeUpGestureEnabled()) {
-                                if (i2 != this.mRecentsView.getCurrentPage()) {
-                                    i = 1;
-                                }
-                            } else {
+                            if (!OverviewInteractionState.getInstance(this.mActivity).isSwipeUpGestureEnabled() || i2 != this.mRecentsView.getCurrentPage()) {
                                 i = 1;
                             }
                         }
@@ -153,7 +150,7 @@ public abstract class TaskViewTouchController<T extends BaseDraggingActivity> ex
         this.mCurrentAnimation = AnimatorPlaybackController.wrap(this.mPendingAnimation.anim, height, new Runnable() { // from class: com.android.launcher3.uioverrides.-$$Lambda$TaskViewTouchController$4GTuxdpgbIVgblH80yOIPyBpedc
             @Override // java.lang.Runnable
             public final void run() {
-                TaskViewTouchController.this.clearState();
+                this.f$0.clearState();
             }
         });
         onUserControlledAnimationCreated(this.mCurrentAnimation);
@@ -217,29 +214,28 @@ public abstract class TaskViewTouchController<T extends BaseDraggingActivity> ex
         } else {
             f2 = 1.0f - progressFraction;
         }
-        long calculateDuration = SwipeDetector.calculateDuration(f, f2);
+        long jCalculateDuration = SwipeDetector.calculateDuration(f, f2);
         if (z3 && !z2) {
-            calculateDuration *= LauncherAnimUtils.blockedFlingDurationFactor(f);
+            jCalculateDuration *= LauncherAnimUtils.blockedFlingDurationFactor(f);
         }
-        float boundToRange = Utilities.boundToRange(progressFraction + ((16.0f * f) / Math.abs(this.mEndDisplacement)), 0.0f, 1.0f);
+        float fBoundToRange = Utilities.boundToRange(progressFraction + ((16.0f * f) / Math.abs(this.mEndDisplacement)), 0.0f, 1.0f);
         this.mCurrentAnimation.setEndAction(new Runnable() { // from class: com.android.launcher3.uioverrides.-$$Lambda$TaskViewTouchController$lRDfqKw2NqVZoHwkdXukBoQMYTs
             @Override // java.lang.Runnable
             public final void run() {
-                TaskViewTouchController.this.onCurrentAnimationEnd(z2, i);
+                this.f$0.onCurrentAnimationEnd(z2, i);
             }
         });
         ValueAnimator animationPlayer = this.mCurrentAnimation.getAnimationPlayer();
         float[] fArr = new float[2];
-        fArr[0] = boundToRange;
+        fArr[0] = fBoundToRange;
         fArr[1] = z2 ? 1.0f : 0.0f;
         animationPlayer.setFloatValues(fArr);
-        animationPlayer.setDuration(calculateDuration);
+        animationPlayer.setDuration(jCalculateDuration);
         animationPlayer.setInterpolator(Interpolators.scrollInterpolatorForVelocity(f));
         animationPlayer.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onCurrentAnimationEnd(boolean z, int i) {
+    private void onCurrentAnimationEnd(boolean z, int i) {
         if (this.mPendingAnimation != null) {
             this.mPendingAnimation.finish(z, i);
             this.mPendingAnimation = null;
@@ -247,8 +243,7 @@ public abstract class TaskViewTouchController<T extends BaseDraggingActivity> ex
         clearState();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void clearState() {
+    private void clearState() {
         this.mDetector.finishedScrolling();
         this.mDetector.setDetectableScrollConditions(0, false);
         this.mTaskBeingDragged = null;

@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.policy;
 
 import android.net.Uri;
 import android.service.notification.ZenModeConfig;
+
 /* loaded from: classes.dex */
 public interface ZenModeController extends CallbackController<Callback> {
     boolean areNotificationsHiddenInShade();
@@ -18,7 +19,6 @@ public interface ZenModeController extends CallbackController<Callback> {
 
     void setZen(int i, Uri uri, String str);
 
-    /* loaded from: classes.dex */
     public interface Callback {
         default void onZenChanged(int i) {
         }

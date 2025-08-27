@@ -1,6 +1,7 @@
 package com.android.quicksearchbox.util;
 
 import android.os.Handler;
+
 /* loaded from: classes.dex */
 public class Consumers {
     public static <A extends QuietlyCloseable> void consumeCloseable(Consumer<A> consumer, A a) {
@@ -21,7 +22,7 @@ public class Consumers {
             handler.post(new Runnable() { // from class: com.android.quicksearchbox.util.Consumers.2
                 @Override // java.lang.Runnable
                 public void run() {
-                    Consumers.consumeCloseable(Consumer.this, a);
+                    Consumers.consumeCloseable(consumer, a);
                 }
             });
         }

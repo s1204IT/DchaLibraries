@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class InterruptibleInOutAnimator {
     private static final int IN = 1;
@@ -33,11 +34,11 @@ public class InterruptibleInOutAnimator {
     private void animate(int i) {
         long currentPlayTime = this.mAnimator.getCurrentPlayTime();
         float f = i == 1 ? this.mOriginalToValue : this.mOriginalFromValue;
-        float floatValue = this.mFirstRun ? this.mOriginalFromValue : ((Float) this.mAnimator.getAnimatedValue()).floatValue();
+        float fFloatValue = this.mFirstRun ? this.mOriginalFromValue : ((Float) this.mAnimator.getAnimatedValue()).floatValue();
         cancel();
         this.mDirection = i;
         this.mAnimator.setDuration(Math.max(0L, Math.min(this.mOriginalDuration - currentPlayTime, this.mOriginalDuration)));
-        this.mAnimator.setFloatValues(floatValue, f);
+        this.mAnimator.setFloatValues(fFloatValue, f);
         this.mAnimator.start();
         this.mFirstRun = false;
     }

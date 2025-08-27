@@ -1,5 +1,6 @@
 package com.android.systemui.tuner;
 
+import android.R;
 import android.content.Context;
 import android.provider.Settings;
 import android.support.v7.preference.DropDownPreference;
@@ -10,6 +11,7 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.Dependency;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.tuner.TunerService;
+
 /* loaded from: classes.dex */
 public class BatteryPreference extends DropDownPreference implements TunerService.Tunable {
     private final String mBattery;
@@ -20,7 +22,7 @@ public class BatteryPreference extends DropDownPreference implements TunerServic
 
     public BatteryPreference(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.mBattery = context.getString(17040910);
+        this.mBattery = context.getString(R.string.mime_type_generic);
         setEntryValues(new CharSequence[]{"percent", "default", "disabled"});
     }
 
@@ -55,12 +57,11 @@ public class BatteryPreference extends DropDownPreference implements TunerServic
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public boolean persistString(String str) {
-        boolean equals = "percent".equals(str);
-        MetricsLogger.action(getContext(), 237, equals);
-        Settings.System.putInt(getContext().getContentResolver(), "status_bar_show_battery_percent", equals ? 1 : 0);
+    protected boolean persistString(String str) {
+        boolean zEquals = "percent".equals(str);
+        MetricsLogger.action(getContext(), 237, zEquals);
+        Settings.System.putInt(getContext().getContentResolver(), "status_bar_show_battery_percent", zEquals ? 1 : 0);
         if ("disabled".equals(str)) {
             this.mBlacklist.add(this.mBattery);
         } else {

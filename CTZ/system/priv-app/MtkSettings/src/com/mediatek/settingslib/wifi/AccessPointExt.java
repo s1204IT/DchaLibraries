@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import com.android.settingslib.R;
+
 /* loaded from: classes.dex */
 public class AccessPointExt {
     public AccessPointExt(Context context) {

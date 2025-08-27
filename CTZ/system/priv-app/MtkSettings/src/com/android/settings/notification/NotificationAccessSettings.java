@@ -16,6 +16,7 @@ import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settings.notification.NotificationAccessSettings;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.utils.ManagedServiceSettings;
+
 /* loaded from: classes.dex */
 public class NotificationAccessSettings extends ManagedServiceSettings {
     private NotificationManager mNm;
@@ -38,22 +39,21 @@ public class NotificationAccessSettings extends ManagedServiceSettings {
         return CONFIG;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.utils.ManagedServiceSettings
-    public boolean setEnabled(ComponentName componentName, String str, boolean z) {
+    protected boolean setEnabled(ComponentName componentName, String str, boolean z) {
         logSpecialPermissionChange(z, componentName.getPackageName());
         if (!z) {
-            if (isServiceEnabled(componentName)) {
-                new FriendlyWarningDialogFragment().setServiceInfo(componentName, str, this).show(getFragmentManager(), "friendlydialog");
-                return false;
+            if (!isServiceEnabled(componentName)) {
+                return true;
             }
-            return true;
-        } else if (isServiceEnabled(componentName)) {
-            return true;
-        } else {
-            new ManagedServiceSettings.ScaryWarningDialogFragment().setServiceInfo(componentName, str, this).show(getFragmentManager(), "dialog");
+            new FriendlyWarningDialogFragment().setServiceInfo(componentName, str, this).show(getFragmentManager(), "friendlydialog");
             return false;
         }
+        if (isServiceEnabled(componentName)) {
+            return true;
+        }
+        new ManagedServiceSettings.ScaryWarningDialogFragment().setServiceInfo(componentName, str, this).show(getFragmentManager(), "dialog");
+        return false;
     }
 
     @Override // com.android.settings.utils.ManagedServiceSettings
@@ -61,15 +61,13 @@ public class NotificationAccessSettings extends ManagedServiceSettings {
         return this.mNm.isNotificationListenerAccessGranted(componentName);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.utils.ManagedServiceSettings
-    public void enable(ComponentName componentName) {
+    protected void enable(ComponentName componentName) {
         this.mNm.setNotificationListenerAccessGranted(componentName, true);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.notification_access_settings;
     }
 
@@ -78,25 +76,22 @@ public class NotificationAccessSettings extends ManagedServiceSettings {
         FeatureFactory.getFactory(getContext()).getMetricsFeatureProvider().action(getContext(), z ? 776 : 777, str, new Pair[0]);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void disable(final NotificationAccessSettings notificationAccessSettings, final ComponentName componentName) {
+    private static void disable(final NotificationAccessSettings notificationAccessSettings, final ComponentName componentName) {
         notificationAccessSettings.mNm.setNotificationListenerAccessGranted(componentName, false);
         AsyncTask.execute(new Runnable() { // from class: com.android.settings.notification.-$$Lambda$NotificationAccessSettings$5Getr2Y6VpjSaSB3qVPpmCZNr9A
             @Override // java.lang.Runnable
             public final void run() {
-                NotificationAccessSettings.lambda$disable$0(NotificationAccessSettings.this, componentName);
+                NotificationAccessSettings.lambda$disable$0(this.f$0, componentName);
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$disable$0(NotificationAccessSettings notificationAccessSettings, ComponentName componentName) {
+    static /* synthetic */ void lambda$disable$0(NotificationAccessSettings notificationAccessSettings, ComponentName componentName) {
         if (!notificationAccessSettings.mNm.isNotificationPolicyAccessGrantedForPackage(componentName.getPackageName())) {
             notificationAccessSettings.mNm.removeAutomaticZenRules(componentName.getPackageName());
         }
     }
 
-    /* loaded from: classes.dex */
     public static class FriendlyWarningDialogFragment extends InstrumentedDialogFragment {
         public FriendlyWarningDialogFragment setServiceInfo(ComponentName componentName, String str, Fragment fragment) {
             Bundle bundle = new Bundle();
@@ -116,12 +111,12 @@ public class NotificationAccessSettings extends ManagedServiceSettings {
         public Dialog onCreateDialog(Bundle bundle) {
             Bundle arguments = getArguments();
             String string = arguments.getString("l");
-            final ComponentName unflattenFromString = ComponentName.unflattenFromString(arguments.getString("c"));
+            final ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(arguments.getString("c"));
             final NotificationAccessSettings notificationAccessSettings = (NotificationAccessSettings) getTargetFragment();
             return new AlertDialog.Builder(getContext()).setMessage(getResources().getString(R.string.notification_listener_disable_warning_summary, string)).setCancelable(true).setPositiveButton(R.string.notification_listener_disable_warning_confirm, new DialogInterface.OnClickListener() { // from class: com.android.settings.notification.-$$Lambda$NotificationAccessSettings$FriendlyWarningDialogFragment$ND5PkKgvmxdEIdAr9gHIhLyAwTU
                 @Override // android.content.DialogInterface.OnClickListener
                 public final void onClick(DialogInterface dialogInterface, int i) {
-                    NotificationAccessSettings.disable(NotificationAccessSettings.this, unflattenFromString);
+                    NotificationAccessSettings.disable(notificationAccessSettings, componentNameUnflattenFromString);
                 }
             }).setNegativeButton(R.string.notification_listener_disable_warning_cancel, new DialogInterface.OnClickListener() { // from class: com.android.settings.notification.-$$Lambda$NotificationAccessSettings$FriendlyWarningDialogFragment$dxECkfkY-zLrkSsUm1OLKJMeIiE
                 @Override // android.content.DialogInterface.OnClickListener
@@ -131,8 +126,7 @@ public class NotificationAccessSettings extends ManagedServiceSettings {
             }).create();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$onCreateDialog$1(DialogInterface dialogInterface, int i) {
+        static /* synthetic */ void lambda$onCreateDialog$1(DialogInterface dialogInterface, int i) {
         }
     }
 }

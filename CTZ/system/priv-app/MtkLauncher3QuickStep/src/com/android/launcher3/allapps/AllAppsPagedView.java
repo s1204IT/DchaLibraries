@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import com.android.launcher3.PagedView;
+
 /* loaded from: classes.dex */
 public class AllAppsPagedView extends PagedView<PersonalWorkSlidingTabStrip> {
     static final float MAX_SWIPE_ANGLE = 1.0471976f;
@@ -33,23 +34,22 @@ public class AllAppsPagedView extends PagedView<PersonalWorkSlidingTabStrip> {
         ((PersonalWorkSlidingTabStrip) this.mPageIndicator).setScroll(i, this.mMaxScrollX);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.PagedView
-    public void determineScrollingStart(MotionEvent motionEvent) {
-        float abs = Math.abs(motionEvent.getX() - getDownMotionX());
-        float abs2 = Math.abs(motionEvent.getY() - getDownMotionY());
-        if (Float.compare(abs, 0.0f) == 0) {
+    protected void determineScrollingStart(MotionEvent motionEvent) {
+        float fAbs = Math.abs(motionEvent.getX() - getDownMotionX());
+        float fAbs2 = Math.abs(motionEvent.getY() - getDownMotionY());
+        if (Float.compare(fAbs, 0.0f) == 0) {
             return;
         }
-        float atan = (float) Math.atan(abs2 / abs);
-        if (abs > this.mTouchSlop || abs2 > this.mTouchSlop) {
+        float fAtan = (float) Math.atan(fAbs2 / fAbs);
+        if (fAbs > this.mTouchSlop || fAbs2 > this.mTouchSlop) {
             cancelCurrentPageLongPress();
         }
-        if (atan > MAX_SWIPE_ANGLE) {
+        if (fAtan > MAX_SWIPE_ANGLE) {
             return;
         }
-        if (atan > START_DAMPING_TOUCH_SLOP_ANGLE) {
-            super.determineScrollingStart(motionEvent, 1.0f + (TOUCH_SLOP_DAMPING_FACTOR * ((float) Math.sqrt((atan - START_DAMPING_TOUCH_SLOP_ANGLE) / START_DAMPING_TOUCH_SLOP_ANGLE))));
+        if (fAtan > START_DAMPING_TOUCH_SLOP_ANGLE) {
+            super.determineScrollingStart(motionEvent, 1.0f + (TOUCH_SLOP_DAMPING_FACTOR * ((float) Math.sqrt((fAtan - START_DAMPING_TOUCH_SLOP_ANGLE) / START_DAMPING_TOUCH_SLOP_ANGLE))));
         } else {
             super.determineScrollingStart(motionEvent);
         }

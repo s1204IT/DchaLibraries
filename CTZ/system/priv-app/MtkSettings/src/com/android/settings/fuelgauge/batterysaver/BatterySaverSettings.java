@@ -12,6 +12,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BatterySaverSettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.fuelgauge.batterysaver.BatterySaverSettings.1
@@ -38,9 +39,8 @@ public class BatterySaverSettings extends DashboardFragment {
         return 52;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.battery_saver_settings;
     }
 
@@ -59,8 +59,7 @@ public class BatterySaverSettings extends DashboardFragment {
         return R.string.help_url_battery_saver_settings;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new AutoBatterySaverPreferenceController(context));
         arrayList.add(new AutoBatterySeekBarPreferenceController(context, lifecycle));

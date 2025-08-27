@@ -19,9 +19,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public abstract class BluetoothNameDialogFragment extends InstrumentedDialogFragment implements TextWatcher {
+abstract class BluetoothNameDialogFragment extends InstrumentedDialogFragment implements TextWatcher {
     private AlertDialog mAlertDialog;
     private boolean mDeviceNameEdited;
     private boolean mDeviceNameUpdated;
@@ -32,8 +32,10 @@ public abstract class BluetoothNameDialogFragment extends InstrumentedDialogFrag
 
     protected abstract int getDialogTitle();
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public abstract void setDeviceName(String str);
+    protected abstract void setDeviceName(String str);
+
+    BluetoothNameDialogFragment() {
+    }
 
     @Override // android.app.DialogFragment
     public Dialog onCreateDialog(Bundle bundle) {
@@ -46,13 +48,14 @@ public abstract class BluetoothNameDialogFragment extends InstrumentedDialogFrag
         this.mAlertDialog = new AlertDialog.Builder(getActivity()).setTitle(getDialogTitle()).setView(createDialogView(deviceName)).setPositiveButton(R.string.bluetooth_rename_button, new DialogInterface.OnClickListener() { // from class: com.android.settings.bluetooth.-$$Lambda$BluetoothNameDialogFragment$pGuotXbZkr5ej_7pdbB840goZcw
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                r0.setDeviceName(BluetoothNameDialogFragment.this.mDeviceNameView.getText().toString());
+                BluetoothNameDialogFragment bluetoothNameDialogFragment = this.f$0;
+                bluetoothNameDialogFragment.setDeviceName(bluetoothNameDialogFragment.mDeviceNameView.getText().toString());
             }
-        }).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
+        }).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).create();
         this.mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() { // from class: com.android.settings.bluetooth.-$$Lambda$BluetoothNameDialogFragment$UwiP0mVIJKgl9XIciCSL5BjtkO4
             @Override // android.content.DialogInterface.OnShowListener
             public final void onShow(DialogInterface dialogInterface) {
-                BluetoothNameDialogFragment.lambda$onCreateDialog$1(BluetoothNameDialogFragment.this, dialogInterface);
+                BluetoothNameDialogFragment.lambda$onCreateDialog$1(this.f$0, dialogInterface);
             }
         });
         return this.mAlertDialog;
@@ -72,8 +75,8 @@ public abstract class BluetoothNameDialogFragment extends InstrumentedDialogFrag
     }
 
     private View createDialogView(String str) {
-        View inflate = ((LayoutInflater) getActivity().getSystemService("layout_inflater")).inflate(R.layout.dialog_edittext, (ViewGroup) null);
-        this.mDeviceNameView = (EditText) inflate.findViewById(R.id.edittext);
+        View viewInflate = ((LayoutInflater) getActivity().getSystemService("layout_inflater")).inflate(R.layout.dialog_edittext, (ViewGroup) null);
+        this.mDeviceNameView = (EditText) viewInflate.findViewById(R.id.edittext);
         this.mDeviceNameView.setFilters(new InputFilter[]{new BluetoothLengthDeviceNameFilter()});
         this.mDeviceNameView.setText(str);
         if (!TextUtils.isEmpty(str)) {
@@ -92,7 +95,7 @@ public abstract class BluetoothNameDialogFragment extends InstrumentedDialogFrag
                 return false;
             }
         });
-        return inflate;
+        return viewInflate;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservableDialogFragment, android.app.Fragment
@@ -112,8 +115,7 @@ public abstract class BluetoothNameDialogFragment extends InstrumentedDialogFrag
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updateDeviceName() {
+    void updateDeviceName() {
         String deviceName = getDeviceName();
         if (deviceName != null) {
             this.mDeviceNameUpdated = true;
@@ -127,11 +129,11 @@ public abstract class BluetoothNameDialogFragment extends InstrumentedDialogFrag
         if (this.mDeviceNameUpdated) {
             this.mDeviceNameUpdated = false;
             this.mOkButton.setEnabled(false);
-            return;
-        }
-        this.mDeviceNameEdited = true;
-        if (this.mOkButton != null) {
-            this.mOkButton.setEnabled(editable.toString().trim().length() != 0);
+        } else {
+            this.mDeviceNameEdited = true;
+            if (this.mOkButton != null) {
+                this.mOkButton.setEnabled(editable.toString().trim().length() != 0);
+            }
         }
     }
 

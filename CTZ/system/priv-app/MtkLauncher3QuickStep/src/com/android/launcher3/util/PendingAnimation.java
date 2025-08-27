@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Consumer;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class PendingAnimation {
@@ -27,7 +28,6 @@ public class PendingAnimation {
         this.mEndListeners.add(consumer);
     }
 
-    /* loaded from: classes.dex */
     public static class OnEndListener {
         public boolean isSuccess;
         public int logAction;

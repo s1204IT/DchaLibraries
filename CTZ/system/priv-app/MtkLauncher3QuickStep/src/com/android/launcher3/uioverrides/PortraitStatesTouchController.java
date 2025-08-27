@@ -18,6 +18,7 @@ import com.android.quickstep.RecentsModel;
 import com.android.quickstep.TouchInteractionService;
 import com.android.quickstep.views.RecentsView;
 import com.android.quickstep.views.TaskView;
+
 /* loaded from: classes.dex */
 public class PortraitStatesTouchController extends AbstractStateChangeTouchController {
     private static final String TAG = "PortraitStatesTouchCtrl";
@@ -54,13 +55,14 @@ public class PortraitStatesTouchController extends AbstractStateChangeTouchContr
     protected LauncherState getTargetState(LauncherState launcherState, boolean z) {
         if (launcherState == LauncherState.ALL_APPS && !z) {
             return TouchInteractionService.isConnected() ? this.mLauncher.getStateManager().getLastState() : LauncherState.NORMAL;
-        } else if (launcherState == LauncherState.OVERVIEW) {
-            return z ? LauncherState.ALL_APPS : LauncherState.NORMAL;
-        } else if (launcherState == LauncherState.NORMAL && z) {
-            return TouchInteractionService.isConnected() ? LauncherState.OVERVIEW : LauncherState.ALL_APPS;
-        } else {
-            return launcherState;
         }
+        if (launcherState == LauncherState.OVERVIEW) {
+            return z ? LauncherState.ALL_APPS : LauncherState.NORMAL;
+        }
+        if (launcherState == LauncherState.NORMAL && z) {
+            return TouchInteractionService.isConnected() ? LauncherState.OVERVIEW : LauncherState.ALL_APPS;
+        }
+        return launcherState;
     }
 
     @Override // com.android.launcher3.touch.AbstractStateChangeTouchController
@@ -79,7 +81,7 @@ public class PortraitStatesTouchController extends AbstractStateChangeTouchContr
     protected float initCurrentAnimation(int i) {
         AnimatorSetBuilder animatorSetBuilder;
         float shiftRange = getShiftRange();
-        long j = 2.0f * shiftRange;
+        long j = (long) (2.0f * shiftRange);
         float verticalProgress = (this.mToState.getVerticalProgress(this.mLauncher) * shiftRange) - (this.mFromState.getVerticalProgress(this.mLauncher) * shiftRange);
         if (this.mFromState == LauncherState.NORMAL && this.mToState == LauncherState.OVERVIEW && verticalProgress != 0.0f) {
             animatorSetBuilder = getNormalToOverviewAnimation();
@@ -96,7 +98,7 @@ public class PortraitStatesTouchController extends AbstractStateChangeTouchContr
             this.mCurrentAnimation = AnimatorPlaybackController.wrap(this.mPendingAnimation.anim, j, new Runnable() { // from class: com.android.launcher3.uioverrides.-$$Lambda$PortraitStatesTouchController$Lr8WCJ6fPg-JUNf5e-gNGi0C5VA
                 @Override // java.lang.Runnable
                 public final void run() {
-                    PortraitStatesTouchController.lambda$initCurrentAnimation$0(PortraitStatesTouchController.this);
+                    PortraitStatesTouchController.lambda$initCurrentAnimation$0(this.f$0);
                 }
             });
             this.mLauncher.getStateManager().setCurrentUserControlledAnimation(this.mCurrentAnimation);
@@ -104,7 +106,7 @@ public class PortraitStatesTouchController extends AbstractStateChangeTouchContr
             this.mCurrentAnimation = this.mLauncher.getStateManager().createAnimationToNewWorkspace(this.mToState, animatorSetBuilder2, j, new Runnable() { // from class: com.android.launcher3.uioverrides.-$$Lambda$PortraitStatesTouchController$giQThULY0XWptg0AjAH1tO0p39A
                 @Override // java.lang.Runnable
                 public final void run() {
-                    PortraitStatesTouchController.this.clearState();
+                    this.f$0.clearState();
                 }
             }, i);
         }
@@ -154,13 +156,15 @@ public class PortraitStatesTouchController extends AbstractStateChangeTouchContr
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class InterpolatorWrapper implements Interpolator {
+    private static class InterpolatorWrapper implements Interpolator {
         public TimeInterpolator baseInterpolator;
 
         private InterpolatorWrapper() {
             this.baseInterpolator = Interpolators.LINEAR;
+        }
+
+        /* synthetic */ InterpolatorWrapper(AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // android.animation.TimeInterpolator

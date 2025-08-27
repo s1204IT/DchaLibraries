@@ -8,6 +8,7 @@ import android.support.v7.preference.PreferenceViewHolder;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class WifiP2pPeer extends Preference {
     private static final int[] STATE_SECURED = {R.attr.state_encrypted};
@@ -41,20 +42,21 @@ public class WifiP2pPeer extends Preference {
         this.mSignal.setImageLevel(getLevel());
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // android.support.v7.preference.Preference, java.lang.Comparable
     public int compareTo(Preference preference) {
-        if (preference instanceof WifiP2pPeer) {
-            WifiP2pPeer wifiP2pPeer = (WifiP2pPeer) preference;
-            if (this.device.status != wifiP2pPeer.device.status) {
-                return this.device.status < wifiP2pPeer.device.status ? -1 : 1;
-            } else if (this.device.deviceName != null) {
-                return this.device.deviceName.compareToIgnoreCase(wifiP2pPeer.device.deviceName);
-            } else {
-                return this.device.deviceAddress.compareToIgnoreCase(wifiP2pPeer.device.deviceAddress);
-            }
+        if (!(preference instanceof WifiP2pPeer)) {
+            return 1;
         }
-        return 1;
+        WifiP2pPeer wifiP2pPeer = (WifiP2pPeer) preference;
+        if (this.device.status != wifiP2pPeer.device.status) {
+            return this.device.status < wifiP2pPeer.device.status ? -1 : 1;
+        }
+        if (this.device.deviceName != null) {
+            return this.device.deviceName.compareToIgnoreCase(wifiP2pPeer.device.deviceName);
+        }
+        return this.device.deviceAddress.compareToIgnoreCase(wifiP2pPeer.device.deviceAddress);
     }
 
     int getLevel() {

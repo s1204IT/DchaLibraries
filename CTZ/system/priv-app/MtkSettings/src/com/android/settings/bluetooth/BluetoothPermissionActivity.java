@@ -20,6 +20,7 @@ import com.android.settings.R;
 import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.bluetooth.CachedBluetoothDeviceManager;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
+
 /* loaded from: classes.dex */
 public class BluetoothPermissionActivity extends AlertActivity implements DialogInterface.OnClickListener, Preference.OnPreferenceChangeListener {
     private BluetoothDevice mDevice;
@@ -39,8 +40,7 @@ public class BluetoothPermissionActivity extends AlertActivity implements Dialog
     };
     private boolean mReceiverRegistered = false;
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dismissDialog() {
+    private void dismissDialog() {
         dismiss();
     }
 
@@ -103,39 +103,43 @@ public class BluetoothPermissionActivity extends AlertActivity implements Dialog
         Log.i("BluetoothPermissionActivity", "Back button pressed! ignoring");
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: com.android.settings.bluetooth.BluetoothPermissionActivity */
     /* JADX WARN: Multi-variable type inference failed */
     private View createConnectionDialogView() {
-        String createRemoteName = Utils.createRemoteName(this, this.mDevice);
+        String strCreateRemoteName = Utils.createRemoteName(this, this.mDevice);
         this.mView = getLayoutInflater().inflate(R.layout.bluetooth_access, (ViewGroup) null);
         this.messageView = (TextView) this.mView.findViewById(R.id.message);
-        this.messageView.setText(getString(R.string.bluetooth_connection_dialog_text, new Object[]{createRemoteName}));
+        this.messageView.setText(getString(R.string.bluetooth_connection_dialog_text, new Object[]{strCreateRemoteName}));
         return this.mView;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: com.android.settings.bluetooth.BluetoothPermissionActivity */
     /* JADX WARN: Multi-variable type inference failed */
     private View createPhonebookDialogView() {
-        String createRemoteName = Utils.createRemoteName(this, this.mDevice);
+        String strCreateRemoteName = Utils.createRemoteName(this, this.mDevice);
         this.mView = getLayoutInflater().inflate(R.layout.bluetooth_access, (ViewGroup) null);
         this.messageView = (TextView) this.mView.findViewById(R.id.message);
-        this.messageView.setText(getString(R.string.bluetooth_phonebook_access_dialog_content, new Object[]{createRemoteName, createRemoteName}));
+        this.messageView.setText(getString(R.string.bluetooth_phonebook_access_dialog_content, new Object[]{strCreateRemoteName, strCreateRemoteName}));
         return this.mView;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: com.android.settings.bluetooth.BluetoothPermissionActivity */
     /* JADX WARN: Multi-variable type inference failed */
     private View createMapDialogView() {
-        String createRemoteName = Utils.createRemoteName(this, this.mDevice);
+        String strCreateRemoteName = Utils.createRemoteName(this, this.mDevice);
         this.mView = getLayoutInflater().inflate(R.layout.bluetooth_access, (ViewGroup) null);
         this.messageView = (TextView) this.mView.findViewById(R.id.message);
-        this.messageView.setText(getString(R.string.bluetooth_message_access_dialog_content, new Object[]{createRemoteName, createRemoteName}));
+        this.messageView.setText(getString(R.string.bluetooth_message_access_dialog_content, new Object[]{strCreateRemoteName, strCreateRemoteName}));
         return this.mView;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: com.android.settings.bluetooth.BluetoothPermissionActivity */
     /* JADX WARN: Multi-variable type inference failed */
     private View createSapDialogView() {
-        String createRemoteName = Utils.createRemoteName(this, this.mDevice);
+        String strCreateRemoteName = Utils.createRemoteName(this, this.mDevice);
         this.mView = getLayoutInflater().inflate(R.layout.bluetooth_access, (ViewGroup) null);
         this.messageView = (TextView) this.mView.findViewById(R.id.message);
-        this.messageView.setText(getString(R.string.bluetooth_sap_acceptance_dialog_text, new Object[]{createRemoteName, createRemoteName}));
+        this.messageView.setText(getString(R.string.bluetooth_sap_acceptance_dialog_text, new Object[]{strCreateRemoteName, strCreateRemoteName}));
         return this.mView;
     }
 
@@ -145,22 +149,23 @@ public class BluetoothPermissionActivity extends AlertActivity implements Dialog
         finish();
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: com.android.settings.bluetooth.BluetoothPermissionActivity */
     /* JADX WARN: Multi-variable type inference failed */
     private void onNegative() {
-        boolean z;
+        boolean zCheckAndIncreaseMessageRejectionCount;
         Log.d("BluetoothPermissionActivity", "onNegative");
         if (this.mRequestType == 3) {
             LocalBluetoothManager localBtManager = Utils.getLocalBtManager(this);
             CachedBluetoothDeviceManager cachedDeviceManager = localBtManager.getCachedDeviceManager();
-            CachedBluetoothDevice findDevice = cachedDeviceManager.findDevice(this.mDevice);
-            if (findDevice == null) {
-                findDevice = cachedDeviceManager.addDevice(localBtManager.getBluetoothAdapter(), localBtManager.getProfileManager(), this.mDevice);
+            CachedBluetoothDevice cachedBluetoothDeviceFindDevice = cachedDeviceManager.findDevice(this.mDevice);
+            if (cachedBluetoothDeviceFindDevice == null) {
+                cachedBluetoothDeviceFindDevice = cachedDeviceManager.addDevice(localBtManager.getBluetoothAdapter(), localBtManager.getProfileManager(), this.mDevice);
             }
-            z = findDevice.checkAndIncreaseMessageRejectionCount();
+            zCheckAndIncreaseMessageRejectionCount = cachedBluetoothDeviceFindDevice.checkAndIncreaseMessageRejectionCount();
         } else {
-            z = true;
+            zCheckAndIncreaseMessageRejectionCount = true;
         }
-        sendReplyIntentToReceiver(false, z);
+        sendReplyIntentToReceiver(false, zCheckAndIncreaseMessageRejectionCount);
     }
 
     @VisibleForTesting
@@ -179,12 +184,10 @@ public class BluetoothPermissionActivity extends AlertActivity implements Dialog
         switch (i) {
             case -2:
                 onNegative();
-                return;
+                break;
             case -1:
                 onPositive();
-                return;
-            default:
-                return;
+                break;
         }
     }
 

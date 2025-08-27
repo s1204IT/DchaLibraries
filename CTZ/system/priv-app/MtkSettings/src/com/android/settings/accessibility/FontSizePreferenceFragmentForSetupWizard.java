@@ -1,4 +1,5 @@
 package com.android.settings.accessibility;
+
 /* loaded from: classes.dex */
 public class FontSizePreferenceFragmentForSetupWizard extends ToggleFontSizePreferenceFragment {
     @Override // com.android.settings.accessibility.ToggleFontSizePreferenceFragment, com.android.settingslib.core.instrumentation.Instrumentable

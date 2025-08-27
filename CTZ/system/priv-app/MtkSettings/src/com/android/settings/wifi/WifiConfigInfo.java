@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 import com.android.settings.R;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WifiConfigInfo extends Activity {
     private TextView mConfigList;

@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.android.settings.SubSettings;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class SearchResultTrampoline extends Activity {
     @Override // android.app.Activity
-    protected void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) throws SecurityException, IllegalArgumentException {
         super.onCreate(bundle);
         FeatureFactory.getFactory(this).getSearchFeatureProvider().verifyLaunchSearchResultPageCaller(this, getCallingActivity());
         Intent intent = getIntent();

@@ -1,4 +1,5 @@
 package android.support.v4.util;
+
 /* loaded from: classes.dex */
 public class DebugUtils {
     public static void buildShortClassTag(Object cls, StringBuilder out) {

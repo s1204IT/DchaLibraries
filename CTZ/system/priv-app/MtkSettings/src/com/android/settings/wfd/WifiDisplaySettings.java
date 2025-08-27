@@ -47,6 +47,7 @@ import com.mediatek.settings.FeatureOption;
 import com.mediatek.settings.wfd.WfdChangeResolution;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class WifiDisplaySettings extends SettingsPreferenceFragment implements Indexable {
     private boolean mAutoGO;
@@ -160,7 +161,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-        this.mEmptyView = (TextView) getView().findViewById(16908292);
+        this.mEmptyView = (TextView) getView().findViewById(android.R.id.empty);
         this.mEmptyView.setText(R.string.wifi_display_no_devices_found);
         setEmptyView(this.mEmptyView);
     }
@@ -199,9 +200,9 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         if (this.mWifiDisplayStatus != null && this.mWifiDisplayStatus.getFeatureState() != 0) {
-            MenuItem add = menu.add(0, 1, 0, R.string.wifi_display_enable_menu_item);
-            add.setCheckable(true);
-            add.setChecked(this.mWifiDisplayOnSetting);
+            MenuItem menuItemAdd = menu.add(0, 1, 0, R.string.wifi_display_enable_menu_item);
+            menuItemAdd.setCheckable(true);
+            menuItemAdd.setChecked(this.mWifiDisplayOnSetting);
         }
         if (this.mWfdChangeResolution != null) {
             this.mWfdChangeResolution.onCreateOptionMenu(menu, this.mWifiDisplayStatus);
@@ -216,19 +217,18 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
             menuItem.setChecked(this.mWifiDisplayOnSetting);
             Settings.Global.putInt(getContentResolver(), "wifi_display_on", this.mWifiDisplayOnSetting ? 1 : 0);
             return true;
-        } else if (this.mWfdChangeResolution == null || !this.mWfdChangeResolution.onOptionMenuSelected(menuItem, getFragmentManager())) {
-            return super.onOptionsItemSelected(menuItem);
-        } else {
-            return true;
         }
+        if (this.mWfdChangeResolution == null || !this.mWfdChangeResolution.onOptionMenuSelected(menuItem, getFragmentManager())) {
+            return super.onOptionsItemSelected(menuItem);
+        }
+        return true;
     }
 
     public static boolean isAvailable(Context context) {
         return (context.getSystemService("display") == null || !context.getPackageManager().hasSystemFeature("android.hardware.wifi.direct") || context.getSystemService("wifip2p") == null) ? false : true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void scheduleUpdate(int i) {
+    private void scheduleUpdate(int i) {
         if (this.mStarted) {
             if (this.mPendingChanges == 0) {
                 this.mHandler.post(this.mUpdateRunnable);
@@ -244,10 +244,8 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void update(int i) {
+    private void update(int i) {
         boolean z;
-        WifiDisplay[] displays;
         Preference preference;
         if ((i & 1) != 0) {
             this.mWifiDisplayOnSetting = Settings.Global.getInt(getContentResolver(), "wifi_display_on", 0) != 0;
@@ -304,15 +302,14 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
     }
 
     private RoutePreference createRoutePreference(MediaRouter.RouteInfo routeInfo) {
-        WifiDisplay findWifiDisplay = findWifiDisplay(routeInfo.getDeviceAddress());
-        if (findWifiDisplay != null) {
-            return new WifiDisplayRoutePreference(getPrefContext(), routeInfo, findWifiDisplay);
+        WifiDisplay wifiDisplayFindWifiDisplay = findWifiDisplay(routeInfo.getDeviceAddress());
+        if (wifiDisplayFindWifiDisplay != null) {
+            return new WifiDisplayRoutePreference(getPrefContext(), routeInfo, wifiDisplayFindWifiDisplay);
         }
         return new RoutePreference(getPrefContext(), routeInfo);
     }
 
     private WifiDisplay findWifiDisplay(String str) {
-        WifiDisplay[] displays;
         if (this.mWifiDisplayStatus != null && str != null) {
             for (WifiDisplay wifiDisplay : this.mWifiDisplayStatus.getDisplays()) {
                 if (wifiDisplay.getDeviceAddress().equals(str)) {
@@ -365,9 +362,8 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
             }
         }
         SwitchPreference switchPreference = new SwitchPreference(getPrefContext()) { // from class: com.android.settings.wfd.WifiDisplaySettings.2
-            /* JADX INFO: Access modifiers changed from: protected */
             @Override // android.support.v7.preference.TwoStatePreference, android.support.v7.preference.Preference
-            public void onClick() {
+            protected void onClick() {
                 WifiDisplaySettings.this.mListen = !WifiDisplaySettings.this.mListen;
                 WifiDisplaySettings.this.setListenMode(WifiDisplaySettings.this.mListen);
                 setChecked(WifiDisplaySettings.this.mListen);
@@ -377,9 +373,8 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         switchPreference.setChecked(this.mListen);
         this.mCertCategory.addPreference(switchPreference);
         SwitchPreference switchPreference2 = new SwitchPreference(getPrefContext()) { // from class: com.android.settings.wfd.WifiDisplaySettings.3
-            /* JADX INFO: Access modifiers changed from: protected */
             @Override // android.support.v7.preference.TwoStatePreference, android.support.v7.preference.Preference
-            public void onClick() {
+            protected void onClick() {
                 WifiDisplaySettings.this.mAutoGO = !WifiDisplaySettings.this.mAutoGO;
                 if (WifiDisplaySettings.this.mAutoGO) {
                     WifiDisplaySettings.this.startAutoGO();
@@ -395,10 +390,10 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         ListPreference listPreference = new ListPreference(getPrefContext());
         listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.4
             @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-            public boolean onPreferenceChange(Preference preference2, Object obj) {
-                int parseInt = Integer.parseInt((String) obj);
-                if (parseInt != WifiDisplaySettings.this.mWpsConfig) {
-                    WifiDisplaySettings.this.mWpsConfig = parseInt;
+            public boolean onPreferenceChange(Preference preference2, Object obj) throws NumberFormatException {
+                int i = Integer.parseInt((String) obj);
+                if (i != WifiDisplaySettings.this.mWpsConfig) {
+                    WifiDisplaySettings.this.mWpsConfig = i;
                     WifiDisplaySettings.this.getActivity().invalidateOptionsMenu();
                     Settings.Global.putInt(WifiDisplaySettings.this.getActivity().getContentResolver(), "wifi_display_wps_config", WifiDisplaySettings.this.mWpsConfig);
                     return true;
@@ -417,10 +412,10 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         ListPreference listPreference2 = new ListPreference(getPrefContext());
         listPreference2.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.5
             @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-            public boolean onPreferenceChange(Preference preference2, Object obj) {
-                int parseInt = Integer.parseInt((String) obj);
-                if (parseInt != WifiDisplaySettings.this.mListenChannel) {
-                    WifiDisplaySettings.this.mListenChannel = parseInt;
+            public boolean onPreferenceChange(Preference preference2, Object obj) throws NumberFormatException {
+                int i = Integer.parseInt((String) obj);
+                if (i != WifiDisplaySettings.this.mListenChannel) {
+                    WifiDisplaySettings.this.mListenChannel = i;
                     WifiDisplaySettings.this.getActivity().invalidateOptionsMenu();
                     WifiDisplaySettings.this.setWifiP2pChannels(WifiDisplaySettings.this.mListenChannel, WifiDisplaySettings.this.mOperatingChannel);
                     return true;
@@ -438,10 +433,10 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         ListPreference listPreference3 = new ListPreference(getPrefContext());
         listPreference3.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.6
             @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-            public boolean onPreferenceChange(Preference preference2, Object obj) {
-                int parseInt = Integer.parseInt((String) obj);
-                if (parseInt != WifiDisplaySettings.this.mOperatingChannel) {
-                    WifiDisplaySettings.this.mOperatingChannel = parseInt;
+            public boolean onPreferenceChange(Preference preference2, Object obj) throws NumberFormatException {
+                int i = Integer.parseInt((String) obj);
+                if (i != WifiDisplaySettings.this.mOperatingChannel) {
+                    WifiDisplaySettings.this.mOperatingChannel = i;
                     WifiDisplaySettings.this.getActivity().invalidateOptionsMenu();
                     WifiDisplaySettings.this.setWifiP2pChannels(WifiDisplaySettings.this.mListenChannel, WifiDisplaySettings.this.mOperatingChannel);
                     return true;
@@ -458,8 +453,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         this.mCertCategory.addPreference(listPreference3);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startAutoGO() {
+    private void startAutoGO() {
         this.mWifiP2pManager.createGroup(this.mWifiP2pChannel, new WifiP2pManager.ActionListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.7
             @Override // android.net.wifi.p2p.WifiP2pManager.ActionListener
             public void onSuccess() {
@@ -472,8 +466,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void stopAutoGO() {
+    private void stopAutoGO() {
         this.mWifiP2pManager.removeGroup(this.mWifiP2pChannel, new WifiP2pManager.ActionListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.8
             @Override // android.net.wifi.p2p.WifiP2pManager.ActionListener
             public void onSuccess() {
@@ -486,8 +479,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setListenMode(final boolean z) {
+    private void setListenMode(final boolean z) {
         this.mWifiP2pManager.listen(this.mWifiP2pChannel, z, new WifiP2pManager.ActionListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.9
             @Override // android.net.wifi.p2p.WifiP2pManager.ActionListener
             public void onSuccess() {
@@ -506,8 +498,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setWifiP2pChannels(int i, int i2) {
+    private void setWifiP2pChannels(int i, int i2) {
         this.mWifiP2pManager.setWifiP2pChannels(this.mWifiP2pChannel, i, i2, new WifiP2pManager.ActionListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.10
             @Override // android.net.wifi.p2p.WifiP2pManager.ActionListener
             public void onSuccess() {
@@ -520,8 +511,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void toggleRoute(MediaRouter.RouteInfo routeInfo) {
+    private void toggleRoute(MediaRouter.RouteInfo routeInfo) {
         if (routeInfo.isSelected()) {
             MediaRouteDialogPresenter.showDialogFragment(getActivity(), 4, (View.OnClickListener) null);
             return;
@@ -532,8 +522,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         routeInfo.select();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void pairWifiDisplay(WifiDisplay wifiDisplay) {
+    private void pairWifiDisplay(WifiDisplay wifiDisplay) {
         if (wifiDisplay.canConnect()) {
             if (this.mWfdChangeResolution != null) {
                 this.mWfdChangeResolution.prepareWfdConnect();
@@ -542,19 +531,21 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showWifiDisplayOptionsDialog(final WifiDisplay wifiDisplay) {
-        View inflate = getActivity().getLayoutInflater().inflate(R.layout.wifi_display_options, (ViewGroup) null);
-        final EditText editText = (EditText) inflate.findViewById(R.id.name);
+    private void showWifiDisplayOptionsDialog(final WifiDisplay wifiDisplay) {
+        View viewInflate = getActivity().getLayoutInflater().inflate(R.layout.wifi_display_options, (ViewGroup) null);
+        final EditText editText = (EditText) viewInflate.findViewById(R.id.name);
         editText.setText(wifiDisplay.getFriendlyDisplayName());
         DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.11
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
-                String trim = editText.getText().toString().trim();
-                WifiDisplaySettings.this.mDisplayManager.renameWifiDisplay(wifiDisplay.getDeviceAddress(), (trim.isEmpty() || trim.equals(wifiDisplay.getDeviceName())) ? null : null);
+                String strTrim = editText.getText().toString().trim();
+                if (strTrim.isEmpty() || strTrim.equals(wifiDisplay.getDeviceName())) {
+                    strTrim = null;
+                }
+                WifiDisplaySettings.this.mDisplayManager.renameWifiDisplay(wifiDisplay.getDeviceAddress(), strTrim);
             }
         };
-        new AlertDialog.Builder(getActivity()).setCancelable(true).setTitle(R.string.wifi_display_options_title).setView(inflate).setPositiveButton(R.string.wifi_display_options_done, onClickListener).setNegativeButton(R.string.wifi_display_options_forget, new DialogInterface.OnClickListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.12
+        new AlertDialog.Builder(getActivity()).setCancelable(true).setTitle(R.string.wifi_display_options_title).setView(viewInflate).setPositiveButton(R.string.wifi_display_options_done, onClickListener).setNegativeButton(R.string.wifi_display_options_forget, new DialogInterface.OnClickListener() { // from class: com.android.settings.wfd.WifiDisplaySettings.12
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 WifiDisplaySettings.this.mDisplayManager.forgetWifiDisplay(wifiDisplay.getDeviceAddress());
@@ -562,9 +553,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }).create().show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class RoutePreference extends Preference implements Preference.OnPreferenceClickListener {
+    private class RoutePreference extends Preference implements Preference.OnPreferenceClickListener {
         private final MediaRouter.RouteInfo mRoute;
 
         public RoutePreference(Context context, MediaRouter.RouteInfo routeInfo) {
@@ -600,9 +589,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class WifiDisplayRoutePreference extends RoutePreference implements View.OnClickListener {
+    private class WifiDisplayRoutePreference extends RoutePreference implements View.OnClickListener {
         private final WifiDisplay mDisplay;
 
         public WifiDisplayRoutePreference(Context context, MediaRouter.RouteInfo routeInfo, WifiDisplay wifiDisplay) {
@@ -619,7 +606,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
                 imageView.setOnClickListener(this);
                 if (!isEnabled()) {
                     TypedValue typedValue = new TypedValue();
-                    getContext().getTheme().resolveAttribute(16842803, typedValue, true);
+                    getContext().getTheme().resolveAttribute(android.R.attr.disabledAlpha, typedValue, true);
                     imageView.setImageAlpha((int) (typedValue.getFloat() * 255.0f));
                     imageView.setEnabled(true);
                 }
@@ -632,16 +619,14 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class UnpairedWifiDisplayPreference extends Preference implements Preference.OnPreferenceClickListener {
+    private class UnpairedWifiDisplayPreference extends Preference implements Preference.OnPreferenceClickListener {
         private final WifiDisplay mDisplay;
 
         public UnpairedWifiDisplayPreference(Context context, WifiDisplay wifiDisplay) {
             super(context);
             this.mDisplay = wifiDisplay;
             setTitle(wifiDisplay.getFriendlyDisplayName());
-            setSummary(17041126);
+            setSummary(android.R.string.permdesc_changeWifiState);
             setEnabled(wifiDisplay.canConnect());
             if (isEnabled()) {
                 setOrder(3);
@@ -659,9 +644,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final MediaRouter mRouter;
         private final MediaRouter.Callback mRouterCallback = new MediaRouter.SimpleCallback() { // from class: com.android.settings.wfd.WifiDisplaySettings.SummaryProvider.1
@@ -703,13 +686,12 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
             if (z) {
                 this.mRouter.addCallback(4, this.mRouterCallback);
                 updateSummary();
-                return;
+            } else {
+                this.mRouter.removeCallback(this.mRouterCallback);
             }
-            this.mRouter.removeCallback(this.mRouterCallback);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateSummary() {
+        private void updateSummary() {
             String string = this.mContext.getString(R.string.disconnected);
             int routeCount = this.mRouter.getRouteCount();
             int i = 0;
@@ -729,8 +711,8 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$0(Activity activity, SummaryLoader summaryLoader) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0002: CONSTRUCTOR (r1v0 android.app.Activity), (r2v0 com.android.settings.dashboard.SummaryLoader) A[MD:(android.content.Context, com.android.settings.dashboard.SummaryLoader):void (m)] (LINE:904) call: com.android.settings.wfd.WifiDisplaySettings.SummaryProvider.<init>(android.content.Context, com.android.settings.dashboard.SummaryLoader):void type: CONSTRUCTOR */
+    static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$0(Activity activity, SummaryLoader summaryLoader) {
         return new SummaryProvider(activity, summaryLoader);
     }
 }

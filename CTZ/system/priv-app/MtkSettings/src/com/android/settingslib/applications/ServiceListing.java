@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ServiceListing {
     private final List<Callback> mCallbacks;
@@ -35,7 +36,6 @@ public class ServiceListing {
     private final ContentObserver mSettingsObserver;
     private final String mTag;
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onServicesReloaded(List<ServiceInfo> list);
     }
@@ -109,9 +109,9 @@ public class ServiceListing {
         String string = Settings.Secure.getString(this.mContentResolver, this.mSetting);
         if (string != null && !"".equals(string)) {
             for (String str : string.split(":")) {
-                ComponentName unflattenFromString = ComponentName.unflattenFromString(str);
-                if (unflattenFromString != null) {
-                    this.mEnabledServices.add(unflattenFromString);
+                ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(str);
+                if (componentNameUnflattenFromString != null) {
+                    this.mEnabledServices.add(componentNameUnflattenFromString);
                 }
             }
         }
@@ -120,17 +120,18 @@ public class ServiceListing {
     public void reload() {
         loadEnabledServices();
         this.mServices.clear();
-        for (ResolveInfo resolveInfo : new PackageManagerWrapper(this.mContext.getPackageManager()).queryIntentServicesAsUser(new Intent(this.mIntentAction), 132, ActivityManager.getCurrentUser())) {
-            ServiceInfo serviceInfo = resolveInfo.serviceInfo;
+        Iterator<ResolveInfo> it = new PackageManagerWrapper(this.mContext.getPackageManager()).queryIntentServicesAsUser(new Intent(this.mIntentAction), 132, ActivityManager.getCurrentUser()).iterator();
+        while (it.hasNext()) {
+            ServiceInfo serviceInfo = it.next().serviceInfo;
             if (!this.mPermission.equals(serviceInfo.permission)) {
-                String str = this.mTag;
-                Slog.w(str, "Skipping " + this.mNoun + " service " + serviceInfo.packageName + "/" + serviceInfo.name + ": it does not require the permission " + this.mPermission);
+                Slog.w(this.mTag, "Skipping " + this.mNoun + " service " + serviceInfo.packageName + "/" + serviceInfo.name + ": it does not require the permission " + this.mPermission);
             } else {
                 this.mServices.add(serviceInfo);
             }
         }
-        for (Callback callback : this.mCallbacks) {
-            callback.onServicesReloaded(this.mServices);
+        Iterator<Callback> it2 = this.mCallbacks.iterator();
+        while (it2.hasNext()) {
+            it2.next().onServicesReloaded(this.mServices);
         }
     }
 
@@ -147,7 +148,6 @@ public class ServiceListing {
         saveEnabledServices();
     }
 
-    /* loaded from: classes.dex */
     public static class Builder {
         private final Context mContext;
         private String mIntentAction;

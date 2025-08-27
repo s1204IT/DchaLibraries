@@ -13,6 +13,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class EncryptionAndCredential extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new SecuritySearchIndexProvider();
@@ -32,14 +33,12 @@ public class EncryptionAndCredential extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.encryption_and_credential;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         EncryptionStatusPreferenceController encryptionStatusPreferenceController = new EncryptionStatusPreferenceController(context, "encryption_and_credentials_encryption_status");
         arrayList.add(encryptionStatusPreferenceController);
@@ -56,7 +55,6 @@ public class EncryptionAndCredential extends DashboardFragment {
         return R.string.help_url_encryption;
     }
 
-    /* loaded from: classes.dex */
     private static class SecuritySearchIndexProvider extends BaseSearchIndexProvider {
         private SecuritySearchIndexProvider() {
         }

@@ -16,6 +16,7 @@ import com.android.settingslib.bluetooth.LocalBluetoothManager;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class BluetoothDeviceNamePreferenceController extends BasePreferenceController implements LifecycleObserver, OnStart, OnStop {
     private static final String TAG = "BluetoothNamePrefCtrl";
@@ -33,8 +34,11 @@ public class BluetoothDeviceNamePreferenceController extends BasePreferenceContr
                 if (TextUtils.equals(action, "android.bluetooth.adapter.action.LOCAL_NAME_CHANGED")) {
                     if (BluetoothDeviceNamePreferenceController.this.mPreference != null && BluetoothDeviceNamePreferenceController.this.mLocalAdapter != null && BluetoothDeviceNamePreferenceController.this.mLocalAdapter.isEnabled()) {
                         BluetoothDeviceNamePreferenceController.this.updatePreferenceState(BluetoothDeviceNamePreferenceController.this.mPreference);
+                        return;
                     }
-                } else if (TextUtils.equals(action, "android.bluetooth.adapter.action.STATE_CHANGED")) {
+                    return;
+                }
+                if (TextUtils.equals(action, "android.bluetooth.adapter.action.STATE_CHANGED")) {
                     BluetoothDeviceNamePreferenceController.this.updatePreferenceState(BluetoothDeviceNamePreferenceController.this.mPreference);
                 }
             }
@@ -47,8 +51,7 @@ public class BluetoothDeviceNamePreferenceController extends BasePreferenceContr
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public BluetoothDeviceNamePreferenceController(Context context, LocalBluetoothAdapter localBluetoothAdapter, String str) {
+    BluetoothDeviceNamePreferenceController(Context context, LocalBluetoothAdapter localBluetoothAdapter, String str) {
         super(context, str);
         this.mReceiver = new BroadcastReceiver() { // from class: com.android.settings.bluetooth.BluetoothDeviceNamePreferenceController.1
             @Override // android.content.BroadcastReceiver
@@ -57,8 +60,11 @@ public class BluetoothDeviceNamePreferenceController extends BasePreferenceContr
                 if (TextUtils.equals(action, "android.bluetooth.adapter.action.LOCAL_NAME_CHANGED")) {
                     if (BluetoothDeviceNamePreferenceController.this.mPreference != null && BluetoothDeviceNamePreferenceController.this.mLocalAdapter != null && BluetoothDeviceNamePreferenceController.this.mLocalAdapter.isEnabled()) {
                         BluetoothDeviceNamePreferenceController.this.updatePreferenceState(BluetoothDeviceNamePreferenceController.this.mPreference);
+                        return;
                     }
-                } else if (TextUtils.equals(action, "android.bluetooth.adapter.action.STATE_CHANGED")) {
+                    return;
+                }
+                if (TextUtils.equals(action, "android.bluetooth.adapter.action.STATE_CHANGED")) {
                     BluetoothDeviceNamePreferenceController.this.updatePreferenceState(BluetoothDeviceNamePreferenceController.this.mPreference);
                 }
             }
@@ -117,8 +123,7 @@ public class BluetoothDeviceNamePreferenceController extends BasePreferenceContr
         preference.setSummary(getSummary());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public String getDeviceName() {
+    protected String getDeviceName() {
         return this.mLocalAdapter.getName();
     }
 }

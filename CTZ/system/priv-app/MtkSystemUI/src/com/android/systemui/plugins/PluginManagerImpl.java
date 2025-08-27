@@ -31,7 +31,9 @@ import dalvik.system.PathClassLoader;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.lang.Thread;
+import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class PluginManagerImpl extends BroadcastReceiver implements PluginManager {
     private final boolean isDebuggable;
@@ -77,31 +79,31 @@ public class PluginManagerImpl extends BroadcastReceiver implements PluginManage
         ProvidesInterface providesInterface = (ProvidesInterface) cls.getDeclaredAnnotation(ProvidesInterface.class);
         if (providesInterface == null) {
             throw new RuntimeException(cls + " doesn't provide an interface");
-        } else if (TextUtils.isEmpty(providesInterface.action())) {
-            throw new RuntimeException(cls + " doesn't provide an action");
-        } else {
-            return (T) getOneShotPlugin(providesInterface.action(), cls);
         }
+        if (TextUtils.isEmpty(providesInterface.action())) {
+            throw new RuntimeException(cls + " doesn't provide an action");
+        }
+        return (T) getOneShotPlugin(providesInterface.action(), cls);
     }
 
     @Override // com.android.systemui.plugins.PluginManager
     public <T extends Plugin> T getOneShotPlugin(String str, Class<?> cls) {
-        if (this.isDebuggable) {
-            if (Looper.myLooper() != Looper.getMainLooper()) {
-                throw new RuntimeException("Must be called from UI thread");
-            }
-            PluginInstanceManager createPluginInstanceManager = this.mFactory.createPluginInstanceManager(this.mContext, str, null, false, this.mLooper, cls, this);
-            this.mPluginPrefs.addAction(str);
-            PluginInstanceManager.PluginInfo<T> plugin = createPluginInstanceManager.getPlugin();
-            if (plugin != null) {
-                this.mOneShotPackages.add(plugin.mPackage);
-                this.mHasOneShot = true;
-                startListening();
-                return plugin.mPlugin;
-            }
+        if (!this.isDebuggable) {
             return null;
         }
-        return null;
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new RuntimeException("Must be called from UI thread");
+        }
+        PluginInstanceManager pluginInstanceManagerCreatePluginInstanceManager = this.mFactory.createPluginInstanceManager(this.mContext, str, null, false, this.mLooper, cls, this);
+        this.mPluginPrefs.addAction(str);
+        PluginInstanceManager.PluginInfo<T> plugin = pluginInstanceManagerCreatePluginInstanceManager.getPlugin();
+        if (plugin == null) {
+            return null;
+        }
+        this.mOneShotPackages.add(plugin.mPackage);
+        this.mHasOneShot = true;
+        startListening();
+        return plugin.mPlugin;
     }
 
     @Override // com.android.systemui.plugins.PluginManager
@@ -125,9 +127,9 @@ public class PluginManagerImpl extends BroadcastReceiver implements PluginManage
             return;
         }
         this.mPluginPrefs.addAction(str);
-        PluginInstanceManager createPluginInstanceManager = this.mFactory.createPluginInstanceManager(this.mContext, str, pluginListener, z, this.mLooper, cls, this);
-        createPluginInstanceManager.loadAll();
-        this.mPluginMap.put(pluginListener, createPluginInstanceManager);
+        PluginInstanceManager pluginInstanceManagerCreatePluginInstanceManager = this.mFactory.createPluginInstanceManager(this.mContext, str, pluginListener, z, this.mLooper, cls, this);
+        pluginInstanceManagerCreatePluginInstanceManager.loadAll();
+        this.mPluginMap.put(pluginListener, pluginInstanceManagerCreatePluginInstanceManager);
         startListening();
     }
 
@@ -168,44 +170,46 @@ public class PluginManagerImpl extends BroadcastReceiver implements PluginManage
 
     @Override // android.content.BroadcastReceiver
     public void onReceive(Context context, Intent intent) {
-        String str;
+        String string;
         if ("android.intent.action.USER_UNLOCKED".equals(intent.getAction())) {
-            for (PluginInstanceManager pluginInstanceManager : this.mPluginMap.values()) {
-                pluginInstanceManager.loadAll();
+            Iterator<PluginInstanceManager> it = this.mPluginMap.values().iterator();
+            while (it.hasNext()) {
+                it.next().loadAll();
             }
-        } else if ("com.android.systemui.action.DISABLE_PLUGIN".equals(intent.getAction())) {
-            ComponentName unflattenFromString = ComponentName.unflattenFromString(intent.getData().toString().substring(10));
-            this.mContext.getPackageManager().setComponentEnabledSetting(unflattenFromString, 2, 1);
-            ((NotificationManager) this.mContext.getSystemService(NotificationManager.class)).cancel(unflattenFromString.getClassName(), 6);
+            return;
+        }
+        if ("com.android.systemui.action.DISABLE_PLUGIN".equals(intent.getAction())) {
+            ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(intent.getData().toString().substring(10));
+            this.mContext.getPackageManager().setComponentEnabledSetting(componentNameUnflattenFromString, 2, 1);
+            ((NotificationManager) this.mContext.getSystemService(NotificationManager.class)).cancel(componentNameUnflattenFromString.getClassName(), 6);
+            return;
+        }
+        String encodedSchemeSpecificPart = intent.getData().getEncodedSchemeSpecificPart();
+        if (this.mOneShotPackages.contains(encodedSchemeSpecificPart)) {
+            int identifier = this.mContext.getResources().getIdentifier("tuner", "drawable", this.mContext.getPackageName());
+            int identifier2 = Resources.getSystem().getIdentifier("system_notification_accent_color", "color", "android");
+            try {
+                PackageManager packageManager = this.mContext.getPackageManager();
+                string = packageManager.getApplicationInfo(encodedSchemeSpecificPart, 0).loadLabel(packageManager).toString();
+            } catch (PackageManager.NameNotFoundException e) {
+                string = encodedSchemeSpecificPart;
+            }
+            Notification.Builder contentText = new Notification.Builder(this.mContext, PluginManager.NOTIFICATION_CHANNEL_ID).setSmallIcon(identifier).setWhen(0L).setShowWhen(false).setPriority(2).setVisibility(1).setColor(this.mContext.getColor(identifier2)).setContentTitle("Plugin \"" + string + "\" has updated").setContentText("Restart SysUI for changes to take effect.");
+            contentText.addAction(new Notification.Action.Builder((Icon) null, "Restart SysUI", PendingIntent.getBroadcast(this.mContext, 0, new Intent("com.android.systemui.action.RESTART").setData(Uri.parse("package://" + encodedSchemeSpecificPart)), 0)).build());
+            ((NotificationManager) this.mContext.getSystemService(NotificationManager.class)).notifyAsUser(encodedSchemeSpecificPart, 6, contentText.build(), UserHandle.ALL);
+        }
+        if (clearClassLoader(encodedSchemeSpecificPart)) {
+            Toast.makeText(this.mContext, "Reloading " + encodedSchemeSpecificPart, 1).show();
+        }
+        if (!"android.intent.action.PACKAGE_REMOVED".equals(intent.getAction())) {
+            Iterator<PluginInstanceManager> it2 = this.mPluginMap.values().iterator();
+            while (it2.hasNext()) {
+                it2.next().onPackageChange(encodedSchemeSpecificPart);
+            }
         } else {
-            String encodedSchemeSpecificPart = intent.getData().getEncodedSchemeSpecificPart();
-            if (this.mOneShotPackages.contains(encodedSchemeSpecificPart)) {
-                int identifier = this.mContext.getResources().getIdentifier("tuner", "drawable", this.mContext.getPackageName());
-                int identifier2 = Resources.getSystem().getIdentifier("system_notification_accent_color", "color", "android");
-                try {
-                    PackageManager packageManager = this.mContext.getPackageManager();
-                    str = packageManager.getApplicationInfo(encodedSchemeSpecificPart, 0).loadLabel(packageManager).toString();
-                } catch (PackageManager.NameNotFoundException e) {
-                    str = encodedSchemeSpecificPart;
-                }
-                Notification.Builder color = new Notification.Builder(this.mContext, PluginManager.NOTIFICATION_CHANNEL_ID).setSmallIcon(identifier).setWhen(0L).setShowWhen(false).setPriority(2).setVisibility(1).setColor(this.mContext.getColor(identifier2));
-                Notification.Builder contentText = color.setContentTitle("Plugin \"" + str + "\" has updated").setContentText("Restart SysUI for changes to take effect.");
-                Intent intent2 = new Intent("com.android.systemui.action.RESTART");
-                contentText.addAction(new Notification.Action.Builder((Icon) null, "Restart SysUI", PendingIntent.getBroadcast(this.mContext, 0, intent2.setData(Uri.parse("package://" + encodedSchemeSpecificPart)), 0)).build());
-                ((NotificationManager) this.mContext.getSystemService(NotificationManager.class)).notifyAsUser(encodedSchemeSpecificPart, 6, contentText.build(), UserHandle.ALL);
-            }
-            if (clearClassLoader(encodedSchemeSpecificPart)) {
-                Context context2 = this.mContext;
-                Toast.makeText(context2, "Reloading " + encodedSchemeSpecificPart, 1).show();
-            }
-            if (!"android.intent.action.PACKAGE_REMOVED".equals(intent.getAction())) {
-                for (PluginInstanceManager pluginInstanceManager2 : this.mPluginMap.values()) {
-                    pluginInstanceManager2.onPackageChange(encodedSchemeSpecificPart);
-                }
-                return;
-            }
-            for (PluginInstanceManager pluginInstanceManager3 : this.mPluginMap.values()) {
-                pluginInstanceManager3.onPackageRemoved(encodedSchemeSpecificPart);
+            Iterator<PluginInstanceManager> it3 = this.mPluginMap.values().iterator();
+            while (it3.hasNext()) {
+                it3.next().onPackageRemoved(encodedSchemeSpecificPart);
             }
         }
     }
@@ -249,14 +253,17 @@ public class PluginManagerImpl extends BroadcastReceiver implements PluginManage
             this.mWtfsSet = true;
             Log.setWtfHandler(new Log.TerribleFailureHandler() { // from class: com.android.systemui.plugins.-$$Lambda$PluginManagerImpl$x7_zsW6bYkksPPNk4f5aNW7Etqo
                 public final void onTerribleFailure(String str, Log.TerribleFailure terribleFailure, boolean z) {
-                    PluginManagerImpl.lambda$handleWtfs$1(PluginManagerImpl.this, str, terribleFailure, z);
+                    PluginManagerImpl.lambda$handleWtfs$1(this.f$0, str, terribleFailure, z);
                 }
             });
         }
     }
 
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0005: THROW 
+  (wrap:com.android.systemui.plugins.PluginManagerImpl$CrashWhilePluginActiveException:0x0002: CONSTRUCTOR (r0v0 com.android.systemui.plugins.PluginManagerImpl), (r2v0 android.util.Log$TerribleFailure) A[MD:(com.android.systemui.plugins.PluginManagerImpl, java.lang.Throwable):void (m), WRAPPED] (LINE:305) call: com.android.systemui.plugins.PluginManagerImpl.CrashWhilePluginActiveException.<init>(com.android.systemui.plugins.PluginManagerImpl, java.lang.Throwable):void type: CONSTRUCTOR)
+ (LINE:305) */
     public static /* synthetic */ void lambda$handleWtfs$1(PluginManagerImpl pluginManagerImpl, String str, Log.TerribleFailure terribleFailure, boolean z) {
-        throw new CrashWhilePluginActiveException(terribleFailure);
+        throw pluginManagerImpl.new CrashWhilePluginActiveException(terribleFailure);
     }
 
     public void dump(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
@@ -267,16 +274,13 @@ public class PluginManagerImpl extends BroadcastReceiver implements PluginManage
     }
 
     @VisibleForTesting
-    /* loaded from: classes.dex */
     public static class PluginInstanceManagerFactory {
         public <T extends Plugin> PluginInstanceManager createPluginInstanceManager(Context context, String str, PluginListener<T> pluginListener, boolean z, Looper looper, Class<?> cls, PluginManagerImpl pluginManagerImpl) {
             return new PluginInstanceManager(context, str, pluginListener, z, looper, new VersionInfo().addClass(cls), pluginManagerImpl);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ClassLoaderFilter extends ClassLoader {
+    private static class ClassLoaderFilter extends ClassLoader {
         private final ClassLoader mBase;
         private final String mPackage;
 
@@ -295,7 +299,6 @@ public class PluginManagerImpl extends BroadcastReceiver implements PluginManage
         }
     }
 
-    /* loaded from: classes.dex */
     private class PluginExceptionHandler implements Thread.UncaughtExceptionHandler {
         private final Thread.UncaughtExceptionHandler mHandler;
 
@@ -309,36 +312,35 @@ public class PluginManagerImpl extends BroadcastReceiver implements PluginManage
                 this.mHandler.uncaughtException(thread, th);
                 return;
             }
-            boolean checkStack = checkStack(th);
-            if (!checkStack) {
-                for (PluginInstanceManager pluginInstanceManager : PluginManagerImpl.this.mPluginMap.values()) {
-                    checkStack |= pluginInstanceManager.disableAll();
+            boolean zCheckStack = checkStack(th);
+            if (!zCheckStack) {
+                Iterator it = PluginManagerImpl.this.mPluginMap.values().iterator();
+                while (it.hasNext()) {
+                    zCheckStack |= ((PluginInstanceManager) it.next()).disableAll();
                 }
             }
-            if (checkStack) {
-                th = new CrashWhilePluginActiveException(th);
+            if (zCheckStack) {
+                th = PluginManagerImpl.this.new CrashWhilePluginActiveException(th);
             }
             this.mHandler.uncaughtException(thread, th);
         }
 
         private boolean checkStack(Throwable th) {
-            StackTraceElement[] stackTrace;
             if (th == null) {
                 return false;
             }
-            boolean z = false;
+            boolean zCheckAndDisable = false;
             for (StackTraceElement stackTraceElement : th.getStackTrace()) {
-                for (PluginInstanceManager pluginInstanceManager : PluginManagerImpl.this.mPluginMap.values()) {
-                    z |= pluginInstanceManager.checkAndDisable(stackTraceElement.getClassName());
+                Iterator it = PluginManagerImpl.this.mPluginMap.values().iterator();
+                while (it.hasNext()) {
+                    zCheckAndDisable |= ((PluginInstanceManager) it.next()).checkAndDisable(stackTraceElement.getClassName());
                 }
             }
-            return checkStack(th.getCause()) | z;
+            return checkStack(th.getCause()) | zCheckAndDisable;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class CrashWhilePluginActiveException extends RuntimeException {
+    private class CrashWhilePluginActiveException extends RuntimeException {
         public CrashWhilePluginActiveException(Throwable th) {
             super(th);
         }

@@ -2,6 +2,7 @@ package com.android.systemui.plugins;
 
 import com.android.systemui.plugins.annotations.DependsOn;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
+
 @ProvidesInterface(action = VolumeDialog.ACTION, version = 1)
 @DependsOn(target = Callback.class)
 /* loaded from: classes.dex */
@@ -10,7 +11,6 @@ public interface VolumeDialog extends Plugin {
     public static final int VERSION = 1;
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public interface Callback {
         public static final int VERSION = 1;
 

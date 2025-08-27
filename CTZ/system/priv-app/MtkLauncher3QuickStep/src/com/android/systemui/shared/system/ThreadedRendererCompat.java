@@ -1,6 +1,7 @@
 package com.android.systemui.shared.system;
 
 import android.view.ThreadedRenderer;
+
 /* loaded from: classes.dex */
 public class ThreadedRendererCompat {
     public static int EGL_CONTEXT_PRIORITY_HIGH_IMG = 12545;

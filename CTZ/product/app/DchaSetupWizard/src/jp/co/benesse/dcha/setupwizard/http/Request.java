@@ -7,6 +7,7 @@ import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public abstract class Request {
     private static final String TAG = Request.class.getSimpleName();
@@ -25,7 +26,6 @@ public abstract class Request {
     int maxNumRetries = 0;
     long retryInterval = 0;
 
-    /* loaded from: classes.dex */
     public interface ResponseListener extends EventListener {
         void onHttpCancelled(Request request);
 
@@ -36,20 +36,16 @@ public abstract class Request {
         void onHttpResponse(Response response);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract Class<? extends Response> getResponseClass();
+    abstract Class<? extends Response> getResponseClass();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract void onSendData(HttpURLConnection httpURLConnection) throws IOException;
+    abstract void onSendData(HttpURLConnection httpURLConnection) throws IOException;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public synchronized void cancel() {
+    protected synchronized void cancel() {
         Logger.d(TAG, "cancel 0001");
         this.cancel = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public synchronized boolean isCancelled() {
+    protected synchronized boolean isCancelled() {
         Logger.d(TAG, "isCancelled 0001");
         return this.cancel;
     }

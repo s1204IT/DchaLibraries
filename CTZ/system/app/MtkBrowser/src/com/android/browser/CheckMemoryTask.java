@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 /* loaded from: classes.dex */
 public class CheckMemoryTask extends AsyncTask<Object, Void, Void> {
     private Handler mHandler;
@@ -13,17 +14,17 @@ public class CheckMemoryTask extends AsyncTask<Object, Void, Void> {
         this.mHandler = handler;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
     @Override // android.os.AsyncTask
-    public Void doInBackground(Object... objArr) {
+    protected Void doInBackground(Object... objArr) {
         if (objArr.length != 6) {
             Log.d("browser", "Incorrect parameters to CheckMemoryTask doInBackground(): " + String.valueOf(objArr.length));
             return null;
-        } else if (Performance.checkShouldReleaseTabs(((Integer) objArr[0]).intValue(), (ArrayList) objArr[1], ((Boolean) objArr[2]).booleanValue(), (String) objArr[3], (CopyOnWriteArrayList) objArr[4], ((Boolean) objArr[5]).booleanValue()) && this.mHandler != null && !this.mHandler.hasMessages(1100)) {
+        }
+        if (Performance.checkShouldReleaseTabs(((Integer) objArr[0]).intValue(), (ArrayList) objArr[1], ((Boolean) objArr[2]).booleanValue(), (String) objArr[3], (CopyOnWriteArrayList) objArr[4], ((Boolean) objArr[5]).booleanValue()) && this.mHandler != null && !this.mHandler.hasMessages(1100)) {
             this.mHandler.sendEmptyMessage(1100);
             return null;
-        } else {
-            return null;
         }
+        return null;
     }
 }

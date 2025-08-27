@@ -2,6 +2,7 @@ package com.android.settings.deviceinfo;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.os.storage.DiskInfo;
@@ -22,6 +23,7 @@ import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.deviceinfo.StorageSettings;
 import java.io.File;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class PublicVolumeSettings extends SettingsPreferenceFragment {
     private DiskInfo mDisk;
@@ -100,7 +102,7 @@ public class PublicVolumeSettings extends SettingsPreferenceFragment {
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onActivityCreated(Bundle bundle) {
+    public void onActivityCreated(Bundle bundle) throws Resources.NotFoundException {
         super.onActivityCreated(bundle);
         if (!isVolumeValid()) {
             return;
@@ -125,8 +127,8 @@ public class PublicVolumeSettings extends SettingsPreferenceFragment {
             File path = this.mVolume.getPath();
             long totalSpace = path.getTotalSpace();
             long freeSpace = totalSpace - path.getFreeSpace();
-            Formatter.BytesResult formatBytes = Formatter.formatBytes(getResources(), freeSpace, 0);
-            this.mSummary.setTitle(TextUtils.expandTemplate(getText(R.string.storage_size_large), formatBytes.value, formatBytes.units));
+            Formatter.BytesResult bytes = Formatter.formatBytes(getResources(), freeSpace, 0);
+            this.mSummary.setTitle(TextUtils.expandTemplate(getText(R.string.storage_size_large), bytes.value, bytes.units));
             this.mSummary.setSummary(getString(R.string.storage_volume_used, new Object[]{Formatter.formatFileSize(activity, totalSpace)}));
             this.mSummary.setPercent(freeSpace, totalSpace);
         }
@@ -156,10 +158,10 @@ public class PublicVolumeSettings extends SettingsPreferenceFragment {
         this.mVolume = this.mStorageManager.findVolumeById(this.mVolumeId);
         if (!isVolumeValid()) {
             getActivity().finish();
-            return;
+        } else {
+            this.mStorageManager.registerListener(this.mStorageListener);
+            update();
         }
-        this.mStorageManager.registerListener(this.mStorageListener);
-        update();
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment

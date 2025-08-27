@@ -26,6 +26,7 @@ import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.BaseDragLayer;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class FolderAnimationManager {
     private FolderPagedView mContent;
@@ -82,41 +83,43 @@ public class FolderAnimationManager {
         int i2 = i;
         int paddingLeft = (int) ((this.mFolder.getPaddingLeft() + this.mContent.getPaddingLeft()) * iconSize2);
         int paddingTop = (int) ((this.mFolder.getPaddingTop() + this.mContent.getPaddingTop()) * iconSize2);
-        float offsetX = (((rect.left + this.mPreviewBackground.getOffsetX()) - paddingLeft) - i2) - layoutParams.x;
-        float offsetY = ((rect.top + this.mPreviewBackground.getOffsetY()) - paddingTop) - layoutParams.y;
-        int attrColor = Themes.getAttrColor(this.mContext, 16843827);
+        int offsetX = ((rect.left + this.mPreviewBackground.getOffsetX()) - paddingLeft) - i2;
+        int offsetY = (rect.top + this.mPreviewBackground.getOffsetY()) - paddingTop;
+        float f3 = offsetX - layoutParams.x;
+        float f4 = offsetY - layoutParams.y;
+        int attrColor = Themes.getAttrColor(this.mContext, android.R.attr.colorPrimary);
         int alphaComponent = ColorUtils.setAlphaComponent(attrColor, this.mPreviewBackground.getBackgroundAlpha());
         this.mFolderBackground.setColor(this.mIsOpening ? alphaComponent : attrColor);
-        float f3 = paddingLeft + i2;
-        float f4 = paddingTop;
-        Rect rect2 = new Rect(Math.round(f3 / iconSize2), Math.round(f4 / iconSize2), Math.round((f3 + f) / iconSize2), Math.round((f4 + f) / iconSize2));
+        float f5 = paddingLeft + i2;
+        float f6 = paddingTop;
+        Rect rect2 = new Rect(Math.round(f5 / iconSize2), Math.round(f6 / iconSize2), Math.round((f5 + f) / iconSize2), Math.round((f6 + f) / iconSize2));
         Rect rect3 = new Rect(0, 0, layoutParams.width, layoutParams.height);
-        float f5 = (f / iconSize2) / 2.0f;
-        float pxFromDp = Utilities.pxFromDp(2.0f, this.mContext.getResources().getDisplayMetrics());
-        AnimatorSet createAnimatorSet = LauncherAnimUtils.createAnimatorSet();
+        float f7 = (f / iconSize2) / 2.0f;
+        float fPxFromDp = Utilities.pxFromDp(2.0f, this.mContext.getResources().getDisplayMetrics());
+        AnimatorSet animatorSetCreateAnimatorSet = LauncherAnimUtils.createAnimatorSet();
         PropertyResetListener propertyResetListener = new PropertyResetListener(BubbleTextView.TEXT_ALPHA_PROPERTY, Float.valueOf(1.0f));
         for (BubbleTextView bubbleTextView : this.mFolder.getItemsOnPage(this.mFolder.mContent.getCurrentPage())) {
             if (this.mIsOpening) {
                 bubbleTextView.setTextVisibility(false);
             }
-            ObjectAnimator createTextAlphaAnimator = bubbleTextView.createTextAlphaAnimator(this.mIsOpening);
-            createTextAlphaAnimator.addListener(propertyResetListener);
-            play(createAnimatorSet, createTextAlphaAnimator);
+            ObjectAnimator objectAnimatorCreateTextAlphaAnimator = bubbleTextView.createTextAlphaAnimator(this.mIsOpening);
+            objectAnimatorCreateTextAlphaAnimator.addListener(propertyResetListener);
+            play(animatorSetCreateAnimatorSet, objectAnimatorCreateTextAlphaAnimator);
         }
-        play(createAnimatorSet, getAnimator(this.mFolder, View.TRANSLATION_X, offsetX, 0.0f));
-        play(createAnimatorSet, getAnimator(this.mFolder, View.TRANSLATION_Y, offsetY, 0.0f));
-        play(createAnimatorSet, getAnimator(this.mFolder, LauncherAnimUtils.SCALE_PROPERTY, iconSize2, 1.0f));
-        play(createAnimatorSet, getAnimator(this.mFolderBackground, "color", alphaComponent, attrColor));
-        play(createAnimatorSet, this.mFolderIcon.mFolderName.createTextAlphaAnimator(!this.mIsOpening));
-        play(createAnimatorSet, new RoundedRectRevealOutlineProvider(f5, pxFromDp, rect2, rect3) { // from class: com.android.launcher3.folder.FolderAnimationManager.1
+        play(animatorSetCreateAnimatorSet, getAnimator(this.mFolder, View.TRANSLATION_X, f3, 0.0f));
+        play(animatorSetCreateAnimatorSet, getAnimator(this.mFolder, View.TRANSLATION_Y, f4, 0.0f));
+        play(animatorSetCreateAnimatorSet, getAnimator(this.mFolder, LauncherAnimUtils.SCALE_PROPERTY, iconSize2, 1.0f));
+        play(animatorSetCreateAnimatorSet, getAnimator(this.mFolderBackground, "color", alphaComponent, attrColor));
+        play(animatorSetCreateAnimatorSet, this.mFolderIcon.mFolderName.createTextAlphaAnimator(!this.mIsOpening));
+        play(animatorSetCreateAnimatorSet, new RoundedRectRevealOutlineProvider(f7, fPxFromDp, rect2, rect3) { // from class: com.android.launcher3.folder.FolderAnimationManager.1
             @Override // com.android.launcher3.anim.RoundedRectRevealOutlineProvider, com.android.launcher3.anim.RevealOutlineAnimation
             public boolean shouldRemoveElevationDuringAnimation() {
                 return true;
             }
         }.createRevealAnimator(this.mFolder, !this.mIsOpening));
         int i3 = this.mDuration / 2;
-        play(createAnimatorSet, getAnimator(this.mFolder, View.TRANSLATION_Z, -this.mFolder.getElevation(), 0.0f), this.mIsOpening ? i3 : 0L, i3);
-        createAnimatorSet.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.folder.FolderAnimationManager.2
+        play(animatorSetCreateAnimatorSet, getAnimator(this.mFolder, View.TRANSLATION_Z, -this.mFolder.getElevation(), 0.0f), this.mIsOpening ? i3 : 0L, i3);
+        animatorSetCreateAnimatorSet.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.folder.FolderAnimationManager.2
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 super.onAnimationEnd(animator);
@@ -127,18 +130,17 @@ public class FolderAnimationManager {
                 FolderAnimationManager.this.mFolder.setScaleY(1.0f);
             }
         });
-        Iterator<Animator> it = createAnimatorSet.getChildAnimations().iterator();
+        Iterator<Animator> it = animatorSetCreateAnimatorSet.getChildAnimations().iterator();
         while (it.hasNext()) {
             it.next().setInterpolator(this.mFolderInterpolator);
         }
         int radius = scaledRadius - this.mPreviewBackground.getRadius();
-        addPreviewItemAnimators(createAnimatorSet, iconSize2 / descendantRectRelativeToSelf, i2 + radius, radius);
-        return createAnimatorSet;
+        addPreviewItemAnimators(animatorSetCreateAnimatorSet, iconSize2 / descendantRectRelativeToSelf, i2 + radius, radius);
+        return animatorSetCreateAnimatorSet;
     }
 
     private void addPreviewItemAnimators(AnimatorSet animatorSet, float f, int i, int i2) {
         List<BubbleTextView> previewItemsOnPage;
-        float iconSize;
         List<BubbleTextView> list;
         int i3;
         ClippedFolderIconLayoutRule layoutRule = this.mFolderIcon.getLayoutRule();
@@ -160,24 +162,25 @@ public class FolderAnimationManager {
             CellLayout.LayoutParams layoutParams = (CellLayout.LayoutParams) bubbleTextView.getLayoutParams();
             layoutParams.isLockedToGrid = z;
             shortcutsAndWidgets.setupLp(bubbleTextView);
-            final float iconSize2 = ((layoutRule.getIconSize() * layoutRule.scaleForItem(i4)) / list2.get(i5).getIconSize()) / f;
-            float f2 = this.mIsOpening ? iconSize2 : 1.0f;
+            final float iconSize = ((layoutRule.getIconSize() * layoutRule.scaleForItem(i4)) / list2.get(i5).getIconSize()) / f;
+            float f2 = this.mIsOpening ? iconSize : 1.0f;
             bubbleTextView.setScaleX(f2);
             bubbleTextView.setScaleY(f2);
             layoutRule.computePreviewItemDrawingParams(i5, i4, this.mTmpParams);
+            int iconSize2 = (int) (((this.mTmpParams.transX - (((int) ((layoutParams.width - bubbleTextView.getIconSize()) * r3)) / 2)) + i) / f);
             ClippedFolderIconLayoutRule clippedFolderIconLayoutRule = layoutRule;
             int i6 = (int) ((this.mTmpParams.transY + i2) / f);
-            final float iconSize3 = ((int) (((this.mTmpParams.transX - (((int) ((layoutParams.width - bubbleTextView.getIconSize()) * iconSize)) / 2)) + i) / f)) - layoutParams.x;
-            final float f3 = i6 - layoutParams.y;
-            Animator animator = getAnimator(bubbleTextView, View.TRANSLATION_X, iconSize3, 0.0f);
+            final float f3 = iconSize2 - layoutParams.x;
+            final float f4 = i6 - layoutParams.y;
+            Animator animator = getAnimator(bubbleTextView, View.TRANSLATION_X, f3, 0.0f);
             animator.setInterpolator(previewItemInterpolator);
             play(animatorSet, animator);
             int i7 = i5;
-            Animator animator2 = getAnimator(bubbleTextView, View.TRANSLATION_Y, f3, 0.0f);
+            Animator animator2 = getAnimator(bubbleTextView, View.TRANSLATION_Y, f4, 0.0f);
             animator2.setInterpolator(previewItemInterpolator);
             play(animatorSet, animator2);
             ShortcutAndWidgetContainer shortcutAndWidgetContainer = shortcutsAndWidgets;
-            Animator animator3 = getAnimator(bubbleTextView, LauncherAnimUtils.SCALE_PROPERTY, iconSize2, 1.0f);
+            Animator animator3 = getAnimator(bubbleTextView, LauncherAnimUtils.SCALE_PROPERTY, iconSize, 1.0f);
             animator3.setInterpolator(previewItemInterpolator);
             play(animatorSet, animator3);
             if (this.mFolder.getItemCount() > 4) {
@@ -203,10 +206,10 @@ public class FolderAnimationManager {
                 public void onAnimationStart(Animator animator4) {
                     super.onAnimationStart(animator4);
                     if (FolderAnimationManager.this.mIsOpening) {
-                        bubbleTextView.setTranslationX(iconSize3);
-                        bubbleTextView.setTranslationY(f3);
-                        bubbleTextView.setScaleX(iconSize2);
-                        bubbleTextView.setScaleY(iconSize2);
+                        bubbleTextView.setTranslationX(f3);
+                        bubbleTextView.setTranslationY(f4);
+                        bubbleTextView.setScaleX(iconSize);
+                        bubbleTextView.setScaleY(iconSize);
                     }
                 }
 
@@ -249,7 +252,7 @@ public class FolderAnimationManager {
     }
 
     private Animator getAnimator(View view, Property property, float f, float f2) {
-        return this.mIsOpening ? ObjectAnimator.ofFloat(view, property, f, f2) : ObjectAnimator.ofFloat(view, property, f2, f);
+        return this.mIsOpening ? ObjectAnimator.ofFloat(view, (Property<View, Float>) property, f, f2) : ObjectAnimator.ofFloat(view, (Property<View, Float>) property, f2, f);
     }
 
     private Animator getAnimator(GradientDrawable gradientDrawable, String str, int i, int i2) {

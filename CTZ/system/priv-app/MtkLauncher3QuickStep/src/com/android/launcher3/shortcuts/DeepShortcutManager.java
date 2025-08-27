@@ -14,7 +14,9 @@ import com.android.launcher3.ShortcutInfo;
 import com.android.launcher3.Utilities;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DeepShortcutManager {
     private static final int FLAG_GET_ALL = 11;
@@ -39,6 +41,7 @@ public class DeepShortcutManager {
         this.mLauncherApps = (LauncherApps) context.getSystemService("launcherapps");
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [70=4] */
     public static boolean supportsShortcuts(ItemInfo itemInfo) {
         return (itemInfo.itemType != 0 || itemInfo.isDisabled() || ((itemInfo instanceof ShortcutInfo) && ((ShortcutInfo) itemInfo).hasPromiseIconUi())) ? false : true;
     }
@@ -64,10 +67,10 @@ public class DeepShortcutManager {
             String packageName = shortcutKey.componentName.getPackageName();
             String id = shortcutKey.getId();
             UserHandle userHandle = shortcutKey.user;
-            List<String> extractIds = extractIds(queryForPinnedShortcuts(packageName, userHandle));
-            extractIds.remove(id);
+            List<String> listExtractIds = extractIds(queryForPinnedShortcuts(packageName, userHandle));
+            listExtractIds.remove(id);
             try {
-                this.mLauncherApps.pinShortcuts(packageName, extractIds, userHandle);
+                this.mLauncherApps.pinShortcuts(packageName, listExtractIds, userHandle);
                 this.mWasLastCallSuccess = true;
             } catch (IllegalStateException | SecurityException e) {
                 Log.w(TAG, "Failed to unpin shortcut", e);
@@ -82,10 +85,10 @@ public class DeepShortcutManager {
             String packageName = shortcutKey.componentName.getPackageName();
             String id = shortcutKey.getId();
             UserHandle userHandle = shortcutKey.user;
-            List<String> extractIds = extractIds(queryForPinnedShortcuts(packageName, userHandle));
-            extractIds.add(id);
+            List<String> listExtractIds = extractIds(queryForPinnedShortcuts(packageName, userHandle));
+            listExtractIds.add(id);
             try {
-                this.mLauncherApps.pinShortcuts(packageName, extractIds, userHandle);
+                this.mLauncherApps.pinShortcuts(packageName, listExtractIds, userHandle);
                 this.mWasLastCallSuccess = true;
             } catch (IllegalStateException | SecurityException e) {
                 Log.w(TAG, "Failed to pin shortcut", e);
@@ -133,20 +136,20 @@ public class DeepShortcutManager {
 
     private List<String> extractIds(List<ShortcutInfoCompat> list) {
         ArrayList arrayList = new ArrayList(list.size());
-        for (ShortcutInfoCompat shortcutInfoCompat : list) {
-            arrayList.add(shortcutInfoCompat.getId());
+        Iterator<ShortcutInfoCompat> it = list.iterator();
+        while (it.hasNext()) {
+            arrayList.add(it.next().getId());
         }
         return arrayList;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:17:0x0036  */
-    /* JADX WARN: Removed duplicated region for block: B:19:0x0039  */
+    /* JADX WARN: Removed duplicated region for block: B:48:0x0036  */
+    /* JADX WARN: Removed duplicated region for block: B:50:0x0039  */
     @TargetApi(25)
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
     private List<ShortcutInfoCompat> query(int i, String str, ComponentName componentName, List<String> list, UserHandle userHandle) {
-        List<android.content.pm.ShortcutInfo> shortcuts;
         if (Utilities.ATLEAST_NOUGAT_MR1) {
             LauncherApps.ShortcutQuery shortcutQuery = new LauncherApps.ShortcutQuery();
             shortcutQuery.setQueryFlags(i);
@@ -157,27 +160,28 @@ public class DeepShortcutManager {
             }
             List<android.content.pm.ShortcutInfo> list2 = null;
             try {
-                shortcuts = this.mLauncherApps.getShortcuts(shortcutQuery, userHandle);
-            } catch (IllegalStateException | SecurityException e) {
-                e = e;
-            }
-            try {
-                this.mWasLastCallSuccess = true;
-                list2 = shortcuts;
+                List<android.content.pm.ShortcutInfo> shortcuts = this.mLauncherApps.getShortcuts(shortcutQuery, userHandle);
+                try {
+                    this.mWasLastCallSuccess = true;
+                    list2 = shortcuts;
+                } catch (IllegalStateException | SecurityException e) {
+                    e = e;
+                    list2 = shortcuts;
+                    Log.e(TAG, "Failed to query for shortcuts", e);
+                    this.mWasLastCallSuccess = false;
+                    if (list2 != null) {
+                    }
+                }
             } catch (IllegalStateException | SecurityException e2) {
                 e = e2;
-                list2 = shortcuts;
-                Log.e(TAG, "Failed to query for shortcuts", e);
-                this.mWasLastCallSuccess = false;
-                if (list2 != null) {
-                }
             }
             if (list2 != null) {
                 return Collections.EMPTY_LIST;
             }
             ArrayList arrayList = new ArrayList(list2.size());
-            for (android.content.pm.ShortcutInfo shortcutInfo : list2) {
-                arrayList.add(new ShortcutInfoCompat(shortcutInfo));
+            Iterator<android.content.pm.ShortcutInfo> it = list2.iterator();
+            while (it.hasNext()) {
+                arrayList.add(new ShortcutInfoCompat(it.next()));
             }
             return arrayList;
         }

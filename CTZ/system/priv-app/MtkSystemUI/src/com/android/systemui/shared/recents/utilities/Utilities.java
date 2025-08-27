@@ -19,25 +19,30 @@ import android.view.ViewParent;
 import android.view.ViewStub;
 import java.util.ArrayList;
 import java.util.Collections;
+
 /* loaded from: classes.dex */
 public class Utilities {
     public static final Property<Drawable, Integer> DRAWABLE_ALPHA = new IntProperty<Drawable>("drawableAlpha") { // from class: com.android.systemui.shared.recents.utilities.Utilities.1
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;I)V */
         @Override // android.util.IntProperty
         public void setValue(Drawable drawable, int i) {
             drawable.setAlpha(i);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(Drawable drawable) {
             return Integer.valueOf(drawable.getAlpha());
         }
     };
     public static final Property<Drawable, Rect> DRAWABLE_RECT = new Property<Drawable, Rect>(Rect.class, "drawableBounds") { // from class: com.android.systemui.shared.recents.utilities.Utilities.2
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(Drawable drawable, Rect rect) {
             drawable.setBounds(rect);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Rect get(Drawable drawable) {
             return drawable.getBounds();
@@ -85,26 +90,26 @@ public class Utilities {
 
     public static void scaleRectAboutCenter(RectF rectF, float f) {
         if (f != 1.0f) {
-            float centerX = rectF.centerX();
-            float centerY = rectF.centerY();
-            rectF.offset(-centerX, -centerY);
+            float fCenterX = rectF.centerX();
+            float fCenterY = rectF.centerY();
+            rectF.offset(-fCenterX, -fCenterY);
             rectF.left *= f;
             rectF.top *= f;
             rectF.right *= f;
             rectF.bottom *= f;
-            rectF.offset(centerX, centerY);
+            rectF.offset(fCenterX, fCenterY);
         }
     }
 
     public static float computeContrastBetweenColors(int i, int i2) {
-        float red = Color.red(i) / 255.0f;
-        float green = Color.green(i) / 255.0f;
-        float blue = Color.blue(i) / 255.0f;
-        float pow = ((red < 0.03928f ? red / 12.92f : (float) Math.pow((red + 0.055f) / 1.055f, 2.4000000953674316d)) * 0.2126f) + ((green < 0.03928f ? green / 12.92f : (float) Math.pow((green + 0.055f) / 1.055f, 2.4000000953674316d)) * 0.7152f) + ((blue < 0.03928f ? blue / 12.92f : (float) Math.pow((blue + 0.055f) / 1.055f, 2.4000000953674316d)) * 0.0722f);
-        float red2 = Color.red(i2) / 255.0f;
-        float green2 = Color.green(i2) / 255.0f;
-        float blue2 = Color.blue(i2) / 255.0f;
-        return Math.abs(((((0.2126f * (red2 < 0.03928f ? red2 / 12.92f : (float) Math.pow((red2 + 0.055f) / 1.055f, 2.4000000953674316d))) + (0.7152f * (green2 < 0.03928f ? green2 / 12.92f : (float) Math.pow((green2 + 0.055f) / 1.055f, 2.4000000953674316d)))) + (0.0722f * (blue2 < 0.03928f ? blue2 / 12.92f : (float) Math.pow((blue2 + 0.055f) / 1.055f, 2.4000000953674316d)))) + 0.05f) / (pow + 0.05f));
+        float fRed = Color.red(i) / 255.0f;
+        float fGreen = Color.green(i) / 255.0f;
+        float fBlue = Color.blue(i) / 255.0f;
+        float fPow = ((fRed < 0.03928f ? fRed / 12.92f : (float) Math.pow((fRed + 0.055f) / 1.055f, 2.4000000953674316d)) * 0.2126f) + ((fGreen < 0.03928f ? fGreen / 12.92f : (float) Math.pow((fGreen + 0.055f) / 1.055f, 2.4000000953674316d)) * 0.7152f) + ((fBlue < 0.03928f ? fBlue / 12.92f : (float) Math.pow((fBlue + 0.055f) / 1.055f, 2.4000000953674316d)) * 0.0722f);
+        float fRed2 = Color.red(i2) / 255.0f;
+        float fGreen2 = Color.green(i2) / 255.0f;
+        float fBlue2 = Color.blue(i2) / 255.0f;
+        return Math.abs(((((0.2126f * (fRed2 < 0.03928f ? fRed2 / 12.92f : (float) Math.pow((fRed2 + 0.055f) / 1.055f, 2.4000000953674316d))) + (0.7152f * (fGreen2 < 0.03928f ? fGreen2 / 12.92f : (float) Math.pow((fGreen2 + 0.055f) / 1.055f, 2.4000000953674316d)))) + (0.0722f * (fBlue2 < 0.03928f ? fBlue2 / 12.92f : (float) Math.pow((fBlue2 + 0.055f) / 1.055f, 2.4000000953674316d)))) + 0.05f) / (fPow + 0.05f));
     }
 
     public static int getColorWithOverlay(int i, int i2, float f) {

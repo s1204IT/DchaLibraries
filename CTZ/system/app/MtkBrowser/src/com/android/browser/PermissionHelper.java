@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class PermissionHelper {
     private static PermissionHelper sInstance;
@@ -15,7 +16,6 @@ public class PermissionHelper {
     private static final boolean DEBUG = Browser.ENGONLY;
     private static final String[] ALL_PERMISSIONS = {"android.permission.CAMERA", "android.permission.ACCESS_FINE_LOCATION", "android.permission.RECORD_AUDIO", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.GET_ACCOUNTS"};
 
-    /* loaded from: classes.dex */
     public interface PermissionCallback {
         void onPermissionsResult(int i, String[] strArr, int[] iArr);
     }

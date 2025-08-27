@@ -12,6 +12,7 @@ import com.android.systemui.recents.Recents;
 import com.android.systemui.recents.events.EventBus;
 import com.android.systemui.recents.events.ui.dragndrop.DragEndEvent;
 import com.android.systemui.recents.events.ui.dragndrop.DragStartEvent;
+
 /* loaded from: classes.dex */
 public class TaskViewAccessibilityDelegate extends View.AccessibilityDelegate {
     protected final SparseArray<AccessibilityNodeInfo.AccessibilityAction> mActions = new SparseArray<>();
@@ -27,7 +28,6 @@ public class TaskViewAccessibilityDelegate extends View.AccessibilityDelegate {
 
     @Override // android.view.View.AccessibilityDelegate
     public void onInitializeAccessibilityNodeInfo(View view, AccessibilityNodeInfo accessibilityNodeInfo) {
-        DockState[] dockStatesForCurrentOrientation;
         super.onInitializeAccessibilityNodeInfo(view, accessibilityNodeInfo);
         if (ActivityManager.supportsSplitScreenMultiWindow(this.mTaskView.getContext()) && !Recents.getSystemServices().hasDockedTask()) {
             for (DockState dockState : Recents.getConfiguration().getDockStatesForCurrentOrientation()) {
@@ -47,15 +47,16 @@ public class TaskViewAccessibilityDelegate extends View.AccessibilityDelegate {
         if (i == R.id.action_split_task_to_top) {
             simulateDragIntoMultiwindow(DockState.TOP);
             return true;
-        } else if (i == R.id.action_split_task_to_left) {
+        }
+        if (i == R.id.action_split_task_to_left) {
             simulateDragIntoMultiwindow(DockState.LEFT);
             return true;
-        } else if (i == R.id.action_split_task_to_right) {
+        }
+        if (i == R.id.action_split_task_to_right) {
             simulateDragIntoMultiwindow(DockState.RIGHT);
             return true;
-        } else {
-            return super.performAccessibilityAction(view, i, bundle);
         }
+        return super.performAccessibilityAction(view, i, bundle);
     }
 
     private void simulateDragIntoMultiwindow(DockState dockState) {

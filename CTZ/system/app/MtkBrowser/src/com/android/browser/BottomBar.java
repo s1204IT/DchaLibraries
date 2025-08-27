@@ -3,6 +3,7 @@ package com.android.browser;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.browser.TabControl;
 import com.android.browser.UI;
+
 /* loaded from: classes.dex */
 public class BottomBar extends LinearLayout {
     private BaseUi mBaseUi;
@@ -36,6 +38,9 @@ public class BottomBar extends LinearLayout {
     public BottomBar(Context context, UiController uiController, BaseUi baseUi, TabControl tabControl, FrameLayout frameLayout) {
         super(context, null);
         this.mHideBottomBarAnimatorListener = new Animator.AnimatorListener() { // from class: com.android.browser.BottomBar.10
+            AnonymousClass10() {
+            }
+
             @Override // android.animation.Animator.AnimatorListener
             public void onAnimationStart(Animator animator) {
             }
@@ -72,12 +77,18 @@ public class BottomBar extends LinearLayout {
         this.mBottomBarBookmarks = (ImageView) findViewById(R.id.bookmarks);
         this.mBottomBarTabCount = (TextView) findViewById(R.id.tabcount);
         this.mBottomBarBack.setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.BottomBar.1
+            AnonymousClass1() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 ((Controller) BottomBar.this.mUiController).onBackKey();
             }
         });
         this.mBottomBarBack.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.browser.BottomBar.2
+            AnonymousClass2() {
+            }
+
             @Override // android.view.View.OnLongClickListener
             public boolean onLongClick(View view) {
                 Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.back), 0).show();
@@ -85,6 +96,9 @@ public class BottomBar extends LinearLayout {
             }
         });
         this.mBottomBarForward.setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.BottomBar.3
+            AnonymousClass3() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 if (BottomBar.this.mUiController != null && BottomBar.this.mUiController.getCurrentTab() != null) {
@@ -93,6 +107,9 @@ public class BottomBar extends LinearLayout {
             }
         });
         this.mBottomBarForward.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.browser.BottomBar.4
+            AnonymousClass4() {
+            }
+
             @Override // android.view.View.OnLongClickListener
             public boolean onLongClick(View view) {
                 Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.forward), 0).show();
@@ -100,12 +117,18 @@ public class BottomBar extends LinearLayout {
             }
         });
         this.mBottomBarTabs.setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.BottomBar.5
+            AnonymousClass5() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 ((PhoneUi) BottomBar.this.mBaseUi).toggleNavScreen();
             }
         });
         this.mBottomBarTabs.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.browser.BottomBar.6
+            AnonymousClass6() {
+            }
+
             @Override // android.view.View.OnLongClickListener
             public boolean onLongClick(View view) {
                 Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.tabs), 0).show();
@@ -113,12 +136,18 @@ public class BottomBar extends LinearLayout {
             }
         });
         this.mBottomBarBookmarks.setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.BottomBar.7
+            AnonymousClass7() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 BottomBar.this.mUiController.bookmarksOrHistoryPicker(UI.ComboViews.Bookmarks);
             }
         });
         this.mBottomBarBookmarks.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.browser.BottomBar.8
+            AnonymousClass8() {
+            }
+
             @Override // android.view.View.OnLongClickListener
             public boolean onLongClick(View view) {
                 Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.bookmarks), 0).show();
@@ -127,11 +156,119 @@ public class BottomBar extends LinearLayout {
         });
         this.mBottomBarTabCount.setText(Integer.toString(this.mUiController.getTabControl().getTabCount()));
         this.mTabControl.setOnTabCountChangedListener(new TabControl.OnTabCountChangedListener() { // from class: com.android.browser.BottomBar.9
+            AnonymousClass9() {
+            }
+
             @Override // com.android.browser.TabControl.OnTabCountChangedListener
             public void onTabCountChanged() {
                 BottomBar.this.mBottomBarTabCount.setText(Integer.toString(BottomBar.this.mTabControl.getTabCount()));
             }
         });
+    }
+
+    /* renamed from: com.android.browser.BottomBar$1 */
+    class AnonymousClass1 implements View.OnClickListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            ((Controller) BottomBar.this.mUiController).onBackKey();
+        }
+    }
+
+    /* renamed from: com.android.browser.BottomBar$2 */
+    class AnonymousClass2 implements View.OnLongClickListener {
+        AnonymousClass2() {
+        }
+
+        @Override // android.view.View.OnLongClickListener
+        public boolean onLongClick(View view) {
+            Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.back), 0).show();
+            return false;
+        }
+    }
+
+    /* renamed from: com.android.browser.BottomBar$3 */
+    class AnonymousClass3 implements View.OnClickListener {
+        AnonymousClass3() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            if (BottomBar.this.mUiController != null && BottomBar.this.mUiController.getCurrentTab() != null) {
+                BottomBar.this.mUiController.getCurrentTab().goForward();
+            }
+        }
+    }
+
+    /* renamed from: com.android.browser.BottomBar$4 */
+    class AnonymousClass4 implements View.OnLongClickListener {
+        AnonymousClass4() {
+        }
+
+        @Override // android.view.View.OnLongClickListener
+        public boolean onLongClick(View view) {
+            Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.forward), 0).show();
+            return false;
+        }
+    }
+
+    /* renamed from: com.android.browser.BottomBar$5 */
+    class AnonymousClass5 implements View.OnClickListener {
+        AnonymousClass5() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            ((PhoneUi) BottomBar.this.mBaseUi).toggleNavScreen();
+        }
+    }
+
+    /* renamed from: com.android.browser.BottomBar$6 */
+    class AnonymousClass6 implements View.OnLongClickListener {
+        AnonymousClass6() {
+        }
+
+        @Override // android.view.View.OnLongClickListener
+        public boolean onLongClick(View view) {
+            Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.tabs), 0).show();
+            return false;
+        }
+    }
+
+    /* renamed from: com.android.browser.BottomBar$7 */
+    class AnonymousClass7 implements View.OnClickListener {
+        AnonymousClass7() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            BottomBar.this.mUiController.bookmarksOrHistoryPicker(UI.ComboViews.Bookmarks);
+        }
+    }
+
+    /* renamed from: com.android.browser.BottomBar$8 */
+    class AnonymousClass8 implements View.OnLongClickListener {
+        AnonymousClass8() {
+        }
+
+        @Override // android.view.View.OnLongClickListener
+        public boolean onLongClick(View view) {
+            Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.bookmarks), 0).show();
+            return false;
+        }
+    }
+
+    /* renamed from: com.android.browser.BottomBar$9 */
+    class AnonymousClass9 implements TabControl.OnTabCountChangedListener {
+        AnonymousClass9() {
+        }
+
+        @Override // com.android.browser.TabControl.OnTabCountChangedListener
+        public void onTabCountChanged() {
+            BottomBar.this.mBottomBarTabCount.setText(Integer.toString(BottomBar.this.mTabControl.getTabCount()));
+        }
     }
 
     private void setupBottomBar() {
@@ -162,14 +299,13 @@ public class BottomBar extends LinearLayout {
         }
     }
 
-    void setupBottomBarAnimator(Animator animator) {
+    void setupBottomBarAnimator(Animator animator) throws Resources.NotFoundException {
         int integer = this.mContext.getResources().getInteger(R.integer.titlebar_animation_duration);
         animator.setInterpolator(new DecelerateInterpolator(2.5f));
         animator.setDuration(integer);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void show() {
+    void show() {
         cancelBottomBarAnimation();
         if (this.mUseQuickControls) {
             setVisibility(8);
@@ -186,8 +322,7 @@ public class BottomBar extends LinearLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void hide() {
+    void hide() throws Resources.NotFoundException {
         if (this.mUseQuickControls || this.mUseFullScreen) {
             cancelBottomBarAnimation();
             int visibleBottomHeight = getVisibleBottomHeight();
@@ -213,8 +348,7 @@ public class BottomBar extends LinearLayout {
         this.mShowing = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isShowing() {
+    boolean isShowing() {
         return this.mShowing;
     }
 
@@ -222,6 +356,30 @@ public class BottomBar extends LinearLayout {
         if (this.mBottomBarAnimator != null) {
             this.mBottomBarAnimator.cancel();
             this.mBottomBarAnimator = null;
+        }
+    }
+
+    /* renamed from: com.android.browser.BottomBar$10 */
+    class AnonymousClass10 implements Animator.AnimatorListener {
+        AnonymousClass10() {
+        }
+
+        @Override // android.animation.Animator.AnimatorListener
+        public void onAnimationStart(Animator animator) {
+        }
+
+        @Override // android.animation.Animator.AnimatorListener
+        public void onAnimationRepeat(Animator animator) {
+        }
+
+        @Override // android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            BottomBar.this.onScrollChanged();
+            BottomBar.this.setLayerType(0, null);
+        }
+
+        @Override // android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
         }
     }
 

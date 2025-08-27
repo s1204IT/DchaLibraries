@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.android.settings.R;
 import com.android.settings.Utils;
 import com.android.settingslib.graph.BatteryMeterDrawableBase;
+
 /* loaded from: classes.dex */
 public class BatteryMeterView extends ImageView {
     ColorFilter mAccentColorFilter;
@@ -26,7 +27,7 @@ public class BatteryMeterView extends ImageView {
     public BatteryMeterView(Context context, AttributeSet attributeSet, int i) {
         super(context, attributeSet, i);
         int color = context.getColor(R.color.meter_background_color);
-        this.mAccentColorFilter = new PorterDuffColorFilter(Utils.getColorAttr(context, 16843829), PorterDuff.Mode.SRC_IN);
+        this.mAccentColorFilter = new PorterDuffColorFilter(Utils.getColorAttr(context, android.R.attr.colorAccent), PorterDuff.Mode.SRC_IN);
         this.mErrorColorFilter = new PorterDuffColorFilter(context.getColor(R.color.battery_icon_color_error), PorterDuff.Mode.SRC_IN);
         this.mDrawable = new BatteryMeterDrawable(context, color);
         this.mDrawable.setShowPercent(false);
@@ -57,7 +58,6 @@ public class BatteryMeterView extends ImageView {
         return this.mDrawable.getCharging();
     }
 
-    /* loaded from: classes.dex */
     public static class BatteryMeterDrawable extends BatteryMeterDrawableBase {
         private final int mIntrinsicHeight;
         private final int mIntrinsicWidth;

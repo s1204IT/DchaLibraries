@@ -4,6 +4,7 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import com.android.systemui.Dependency;
 import com.android.systemui.ForegroundServiceController;
+
 /* loaded from: classes.dex */
 public class AppOpsListener implements AppOpsManager.OnOpActiveChangedListener {
     protected static final int[] OPS = {26, 24, 27};
@@ -29,7 +30,7 @@ public class AppOpsListener implements AppOpsManager.OnOpActiveChangedListener {
         this.mPresenter.getHandler().post(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$AppOpsListener$q1rvytNuPQxuSlMkTPgexkQ-Hb4
             @Override // java.lang.Runnable
             public final void run() {
-                AppOpsListener.this.mEntryManager.updateNotificationsForAppOp(i, i2, str, z);
+                this.f$0.mEntryManager.updateNotificationsForAppOp(i, i2, str, z);
             }
         });
     }

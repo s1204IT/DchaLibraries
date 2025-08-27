@@ -8,12 +8,14 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Property;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import com.android.browser.view.ScrollerView;
+
 /* loaded from: classes.dex */
 public class NavTabScroller extends ScrollerView {
     static final float[] PULL_FACTOR = {2.5f, 0.9f};
@@ -31,12 +33,10 @@ public class NavTabScroller extends ScrollerView {
     private OnRemoveListener mRemoveListener;
     private int mScrollPosition;
 
-    /* loaded from: classes.dex */
     interface OnLayoutListener {
         void onLayout(int i, int i2, int i3, int i4);
     }
 
-    /* loaded from: classes.dex */
     interface OnRemoveListener {
         void onRemovePosition(int i);
     }
@@ -70,13 +70,11 @@ public class NavTabScroller extends ScrollerView {
         this.mFlingVelocity = getContext().getResources().getDisplayMetrics().density * 1500.0f;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getScrollValue() {
+    protected int getScrollValue() {
         return this.mHorizontal ? this.mScrollX : this.mScrollY;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setScrollValue(int i) {
+    protected void setScrollValue(int i) {
         int i2 = this.mHorizontal ? i : 0;
         if (this.mHorizontal) {
             i = 0;
@@ -84,8 +82,7 @@ public class NavTabScroller extends ScrollerView {
         scrollTo(i2, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public NavTabView getTabView(int i) {
+    protected NavTabView getTabView(int i) {
         return (NavTabView) this.mContentView.getChildAt(i);
     }
 
@@ -104,9 +101,8 @@ public class NavTabScroller extends ScrollerView {
         super.setOrientation(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.browser.view.ScrollerView, android.widget.FrameLayout, android.view.View
-    public void onMeasure(int i, int i2) {
+    protected void onMeasure(int i, int i2) {
         super.onMeasure(i, i2);
         calcPadding();
     }
@@ -117,10 +113,10 @@ public class NavTabScroller extends ScrollerView {
             if (this.mHorizontal) {
                 int measuredWidth = ((getMeasuredWidth() - childAt.getMeasuredWidth()) / 2) + 2;
                 this.mContentView.setPadding(measuredWidth, 0, measuredWidth, 0);
-                return;
+            } else {
+                int measuredHeight = ((getMeasuredHeight() - childAt.getMeasuredHeight()) / 2) + 2;
+                this.mContentView.setPadding(0, measuredHeight, 0, measuredHeight);
             }
-            int measuredHeight = ((getMeasuredHeight() - childAt.getMeasuredHeight()) / 2) + 2;
-            this.mContentView.setPadding(0, measuredHeight, 0, measuredHeight);
         }
     }
 
@@ -132,8 +128,7 @@ public class NavTabScroller extends ScrollerView {
         this.mLayoutListener = onLayoutListener;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setAdapter(BaseAdapter baseAdapter, int i) {
+    protected void setAdapter(BaseAdapter baseAdapter, int i) {
         this.mAdapter = baseAdapter;
         this.mAdapter.registerDataSetObserver(new DataSetObserver() { // from class: com.android.browser.NavTabScroller.1
             @Override // android.database.DataSetObserver
@@ -154,8 +149,7 @@ public class NavTabScroller extends ScrollerView {
         handleDataChanged(-1);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void handleDataChanged(int i) {
+    void handleDataChanged(int i) {
         int scrollValue = getScrollValue();
         if (this.mGapAnimator != null) {
             this.mGapAnimator.cancel();
@@ -176,23 +170,21 @@ public class NavTabScroller extends ScrollerView {
             i2++;
         }
         if (i > -1) {
-            int min = Math.min(this.mAdapter.getCount() - 1, i);
+            int iMin = Math.min(this.mAdapter.getCount() - 1, i);
             this.mNeedsScroll = true;
-            this.mScrollPosition = min;
+            this.mScrollPosition = iMin;
             requestLayout();
             return;
         }
         setScrollValue(scrollValue);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void finishScroller() {
+    protected void finishScroller() {
         this.mScroller.forceFinished(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.browser.view.ScrollerView, android.widget.FrameLayout, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         if (this.mNeedsScroll) {
             this.mScroller.forceFinished(true);
@@ -207,27 +199,26 @@ public class NavTabScroller extends ScrollerView {
 
     void snapToSelected(int i, boolean z) {
         View childAt;
-        int i2;
+        int left;
         if (i >= 0 && (childAt = this.mContentView.getChildAt(i)) != null) {
-            int i3 = 0;
+            int top = 0;
             if (this.mHorizontal) {
-                i2 = ((childAt.getLeft() + childAt.getRight()) - getWidth()) / 2;
+                left = ((childAt.getLeft() + childAt.getRight()) - getWidth()) / 2;
             } else {
-                i3 = ((childAt.getTop() + childAt.getBottom()) - getHeight()) / 2;
-                i2 = 0;
+                top = ((childAt.getTop() + childAt.getBottom()) - getHeight()) / 2;
+                left = 0;
             }
-            if (i2 != this.mScrollX || i3 != this.mScrollY) {
+            if (left != this.mScrollX || top != this.mScrollY) {
                 if (z) {
-                    smoothScrollTo(i2, i3);
+                    smoothScrollTo(left, top);
                 } else {
-                    scrollTo(i2, i3);
+                    scrollTo(left, top);
                 }
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void animateOut(View view) {
+    protected void animateOut(View view) {
         if (view == null) {
             return;
         }
@@ -241,17 +232,17 @@ public class NavTabScroller extends ScrollerView {
     private void animateOut(View view, float f, float f2) {
         int height;
         int i;
-        ObjectAnimator objectAnimator;
+        ObjectAnimator objectAnimatorOfInt;
         if (view == null || this.mAnimator != null) {
             return;
         }
-        final int indexOfChild = this.mContentView.indexOfChild(view);
+        final int iIndexOfChild = this.mContentView.indexOfChild(view);
         if (f < 0.0f) {
             height = -(this.mHorizontal ? getHeight() : getWidth());
         } else {
             height = this.mHorizontal ? getHeight() : getWidth();
         }
-        long abs = (Math.abs(height - (this.mHorizontal ? view.getTop() : view.getLeft())) * 1000) / Math.abs(f);
+        long jAbs = (long) ((Math.abs(height - (this.mHorizontal ? view.getTop() : view.getLeft())) * 1000) / Math.abs(f));
         int width = this.mHorizontal ? view.getWidth() : view.getHeight();
         int viewCenter = getViewCenter(view);
         int screenCenter = getScreenCenter();
@@ -259,65 +250,66 @@ public class NavTabScroller extends ScrollerView {
         int i3 = width / 2;
         if (viewCenter < screenCenter - i3) {
             i = -((screenCenter - viewCenter) - width);
-            if (indexOfChild <= 0) {
+            if (iIndexOfChild <= 0) {
                 width = 0;
             }
-            i2 = indexOfChild;
+            i2 = iIndexOfChild;
         } else if (viewCenter > i3 + screenCenter) {
             i = -((screenCenter + width) - viewCenter);
-            if (indexOfChild < this.mAdapter.getCount() - 1) {
+            if (iIndexOfChild < this.mAdapter.getCount() - 1) {
                 width = -width;
+            } else {
+                width = 0;
             }
-            width = 0;
         } else {
             i = -(screenCenter - viewCenter);
-            if (indexOfChild < this.mAdapter.getCount() - 1) {
+            if (iIndexOfChild < this.mAdapter.getCount() - 1) {
                 width = -width;
             } else {
                 i -= width;
                 width = 0;
             }
         }
-        this.mGapPosition = indexOfChild;
+        this.mGapPosition = iIndexOfChild;
         float f3 = height;
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(view, this.mHorizontal ? TRANSLATION_Y : TRANSLATION_X, f2, f3);
-        ObjectAnimator ofFloat2 = ObjectAnimator.ofFloat(view, ALPHA, getAlpha(view, f2), getAlpha(view, f3));
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(view, (Property<View, Float>) (this.mHorizontal ? TRANSLATION_Y : TRANSLATION_X), f2, f3);
+        ObjectAnimator objectAnimatorOfFloat2 = ObjectAnimator.ofFloat(view, (Property<View, Float>) ALPHA, getAlpha(view, f2), getAlpha(view, f3));
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(ofFloat, ofFloat2);
-        animatorSet.setDuration(abs);
+        animatorSet.playTogether(objectAnimatorOfFloat, objectAnimatorOfFloat2);
+        animatorSet.setDuration(jAbs);
         this.mAnimator = new AnimatorSet();
-        ObjectAnimator objectAnimator2 = null;
+        ObjectAnimator objectAnimatorOfInt2 = null;
         if (i != 0) {
             if (this.mHorizontal) {
-                objectAnimator = ObjectAnimator.ofInt(this, "scrollX", getScrollX(), getScrollX() + i);
+                objectAnimatorOfInt = ObjectAnimator.ofInt(this, "scrollX", getScrollX(), getScrollX() + i);
             } else {
-                objectAnimator = ObjectAnimator.ofInt(this, "scrollY", getScrollY(), getScrollY() + i);
+                objectAnimatorOfInt = ObjectAnimator.ofInt(this, "scrollY", getScrollY(), getScrollY() + i);
             }
         } else {
-            objectAnimator = null;
+            objectAnimatorOfInt = null;
         }
         if (width != 0) {
-            objectAnimator2 = ObjectAnimator.ofInt(this, "gap", 0, width);
+            objectAnimatorOfInt2 = ObjectAnimator.ofInt(this, "gap", 0, width);
         }
-        if (objectAnimator != null) {
-            if (objectAnimator2 != null) {
+        if (objectAnimatorOfInt != null) {
+            if (objectAnimatorOfInt2 != null) {
                 AnimatorSet animatorSet2 = new AnimatorSet();
-                animatorSet2.playTogether(objectAnimator, objectAnimator2);
+                animatorSet2.playTogether(objectAnimatorOfInt, objectAnimatorOfInt2);
                 animatorSet2.setDuration(200L);
                 this.mAnimator.playSequentially(animatorSet, animatorSet2);
             } else {
-                objectAnimator.setDuration(200L);
-                this.mAnimator.playSequentially(animatorSet, objectAnimator);
+                objectAnimatorOfInt.setDuration(200L);
+                this.mAnimator.playSequentially(animatorSet, objectAnimatorOfInt);
             }
-        } else if (objectAnimator2 != null) {
-            objectAnimator2.setDuration(200L);
-            this.mAnimator.playSequentially(animatorSet, objectAnimator2);
+        } else if (objectAnimatorOfInt2 != null) {
+            objectAnimatorOfInt2.setDuration(200L);
+            this.mAnimator.playSequentially(animatorSet, objectAnimatorOfInt2);
         }
         this.mAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.browser.NavTabScroller.2
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 if (NavTabScroller.this.mRemoveListener != null) {
-                    NavTabScroller.this.mRemoveListener.onRemovePosition(indexOfChild);
+                    NavTabScroller.this.mRemoveListener.onRemovePosition(iIndexOfChild);
                     NavTabScroller.this.mAnimator = null;
                     NavTabScroller.this.mGapPosition = -1;
                     NavTabScroller.this.mGap = 0;
@@ -461,14 +453,14 @@ public class NavTabScroller extends ScrollerView {
                 float[] fArr = new float[2];
                 fArr[0] = this.mHorizontal ? getTranslationX() : getTranslationY();
                 fArr[1] = 0.0f;
-                ObjectAnimator ofFloat = ObjectAnimator.ofFloat(childAt, str, fArr);
+                ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(childAt, str, fArr);
                 String str2 = this.mHorizontal ? "rotationY" : "rotationX";
                 float[] fArr2 = new float[2];
                 fArr2[0] = this.mHorizontal ? getRotationY() : getRotationX();
                 fArr2[1] = 0.0f;
-                ObjectAnimator ofFloat2 = ObjectAnimator.ofFloat(childAt, str2, fArr2);
+                ObjectAnimator objectAnimatorOfFloat2 = ObjectAnimator.ofFloat(childAt, str2, fArr2);
                 AnimatorSet animatorSet = new AnimatorSet();
-                animatorSet.playTogether(ofFloat, ofFloat2);
+                animatorSet.playTogether(objectAnimatorOfFloat, objectAnimatorOfFloat2);
                 animatorSet.setDuration(100L);
                 animatorSet.start();
             }
@@ -479,7 +471,7 @@ public class NavTabScroller extends ScrollerView {
             this.mPullValue += i;
         }
         int width = this.mHorizontal ? getWidth() : getHeight();
-        int abs = Math.abs(this.mPullValue);
+        int iAbs = Math.abs(this.mPullValue);
         int i3 = this.mPullValue <= 0 ? 1 : -1;
         for (int i4 = 0; i4 < 2; i4++) {
             ContentLayout contentLayout2 = this.mContentView;
@@ -491,19 +483,19 @@ public class NavTabScroller extends ScrollerView {
             View childAt2 = contentLayout2.getChildAt(childCount);
             if (childAt2 != null) {
                 float f = PULL_FACTOR[i4];
-                float f2 = abs;
+                float f2 = iAbs;
                 float f3 = width;
-                float ease = (-i3) * ease(this.mCubic, f2, 0.0f, f * 2.0f, f3);
-                int ease2 = ((int) ease(this.mCubic, f2, 0.0f, f * 20.0f, f3)) * i3;
+                float fEase = (-i3) * ease(this.mCubic, f2, 0.0f, f * 2.0f, f3);
+                int iEase = ((int) ease(this.mCubic, f2, 0.0f, f * 20.0f, f3)) * i3;
                 if (this.mHorizontal) {
-                    childAt2.setTranslationX(ease2);
+                    childAt2.setTranslationX(iEase);
                 } else {
-                    childAt2.setTranslationY(ease2);
+                    childAt2.setTranslationY(iEase);
                 }
                 if (this.mHorizontal) {
-                    childAt2.setRotationY(-ease);
+                    childAt2.setRotationY(-fEase);
                 } else {
-                    childAt2.setRotationX(ease);
+                    childAt2.setRotationX(fEase);
                 }
             } else {
                 return;
@@ -511,9 +503,7 @@ public class NavTabScroller extends ScrollerView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ContentLayout extends LinearLayout {
+    static class ContentLayout extends LinearLayout {
         NavTabScroller mScroller;
 
         public ContentLayout(Context context, NavTabScroller navTabScroller) {

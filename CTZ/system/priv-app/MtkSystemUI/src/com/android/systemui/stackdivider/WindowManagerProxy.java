@@ -9,12 +9,14 @@ import android.view.WindowManagerGlobal;
 import com.android.internal.annotations.GuardedBy;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 /* loaded from: classes.dex */
 public class WindowManagerProxy {
     private static final WindowManagerProxy sInstance = new WindowManagerProxy();
     private float mDimLayerAlpha;
     private int mDimLayerTargetWindowingMode;
     private boolean mDimLayerVisible;
+
     @GuardedBy("mDockedRect")
     private final Rect mDockedRect = new Rect();
     private final Rect mTempDockedTaskRect = new Rect();
@@ -26,6 +28,7 @@ public class WindowManagerProxy {
     private final Rect mTmpRect3 = new Rect();
     private final Rect mTmpRect4 = new Rect();
     private final Rect mTmpRect5 = new Rect();
+
     @GuardedBy("mDockedRect")
     private final Rect mTouchableRegion = new Rect();
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();

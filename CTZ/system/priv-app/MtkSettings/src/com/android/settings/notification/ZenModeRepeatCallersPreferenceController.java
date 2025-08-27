@@ -7,6 +7,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import com.android.settings.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeRepeatCallersPreferenceController extends AbstractZenModePreferenceController implements Preference.OnPreferenceChangeListener {
     private final ZenModeBackend mBackend;
@@ -43,27 +44,29 @@ public class ZenModeRepeatCallersPreferenceController extends AbstractZenModePre
             case 3:
                 switchPreference.setEnabled(false);
                 switchPreference.setChecked(false);
-                return;
+                break;
             default:
                 if (this.mBackend.isPriorityCategoryEnabled(8) && this.mBackend.getPriorityCallSenders() == 0) {
                     switchPreference.setEnabled(false);
                     switchPreference.setChecked(true);
-                    return;
+                    break;
+                } else {
+                    switchPreference.setEnabled(true);
+                    switchPreference.setChecked(this.mBackend.isPriorityCategoryEnabled(16));
+                    break;
                 }
-                switchPreference.setEnabled(true);
-                switchPreference.setChecked(this.mBackend.isPriorityCategoryEnabled(16));
-                return;
+                break;
         }
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        boolean booleanValue = ((Boolean) obj).booleanValue();
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
         if (ZenModeSettingsBase.DEBUG) {
-            Log.d("PrefControllerMixin", "onPrefChange allowRepeatCallers=" + booleanValue);
+            Log.d("PrefControllerMixin", "onPrefChange allowRepeatCallers=" + zBooleanValue);
         }
-        this.mMetricsFeatureProvider.action(this.mContext, 171, booleanValue);
-        this.mBackend.saveSoundPolicy(16, booleanValue);
+        this.mMetricsFeatureProvider.action(this.mContext, 171, zBooleanValue);
+        this.mBackend.saveSoundPolicy(16, zBooleanValue);
         return true;
     }
 

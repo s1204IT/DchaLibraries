@@ -1,6 +1,7 @@
 package com.android.settings.notification;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -12,13 +13,14 @@ import com.android.settings.R;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+
 /* loaded from: classes.dex */
 public class ZenModeScheduleDaysSelection extends ScrollView {
     private final SimpleDateFormat mDayFormat;
     private final SparseBooleanArray mDays;
     private final LinearLayout mLayout;
 
-    public ZenModeScheduleDaysSelection(Context context, int[] iArr) {
+    public ZenModeScheduleDaysSelection(Context context, int[] iArr) throws Resources.NotFoundException {
         super(context);
         this.mDayFormat = new SimpleDateFormat("EEEE");
         this.mDays = new SparseBooleanArray();
@@ -34,9 +36,9 @@ public class ZenModeScheduleDaysSelection extends ScrollView {
         this.mLayout.setOrientation(1);
         Calendar calendar = Calendar.getInstance();
         int[] daysOfWeekForLocale = getDaysOfWeekForLocale(calendar);
-        LayoutInflater from = LayoutInflater.from(context);
+        LayoutInflater layoutInflaterFrom = LayoutInflater.from(context);
         for (final int i2 : daysOfWeekForLocale) {
-            CheckBox checkBox = (CheckBox) from.inflate(R.layout.zen_schedule_rule_day, (ViewGroup) this, false);
+            CheckBox checkBox = (CheckBox) layoutInflaterFrom.inflate(R.layout.zen_schedule_rule_day, (ViewGroup) this, false);
             calendar.set(7, i2);
             checkBox.setText(this.mDayFormat.format(calendar.getTime()));
             checkBox.setChecked(this.mDays.get(i2));
@@ -51,13 +53,12 @@ public class ZenModeScheduleDaysSelection extends ScrollView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int[] getDays() {
+    private int[] getDays() {
         SparseBooleanArray sparseBooleanArray = new SparseBooleanArray(this.mDays.size());
         for (int i = 0; i < this.mDays.size(); i++) {
-            int keyAt = this.mDays.keyAt(i);
+            int iKeyAt = this.mDays.keyAt(i);
             if (this.mDays.valueAt(i)) {
-                sparseBooleanArray.put(keyAt, true);
+                sparseBooleanArray.put(iKeyAt, true);
             }
         }
         int[] iArr = new int[sparseBooleanArray.size()];
@@ -68,8 +69,7 @@ public class ZenModeScheduleDaysSelection extends ScrollView {
         return iArr;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static int[] getDaysOfWeekForLocale(Calendar calendar) {
+    protected static int[] getDaysOfWeekForLocale(Calendar calendar) {
         int[] iArr = new int[7];
         int firstDayOfWeek = calendar.getFirstDayOfWeek();
         for (int i = 0; i < iArr.length; i++) {

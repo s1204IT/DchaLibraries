@@ -10,16 +10,19 @@ import android.view.View;
 import com.android.systemui.shared.recents.utilities.AnimationProps;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class TaskViewTransform {
     public static final Property<View, Rect> LTRB = new Property<View, Rect>(Rect.class, "leftTopRightBottom") { // from class: com.android.systemui.recents.views.TaskViewTransform.1
         private Rect mTmpRect = new Rect();
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(View view, Rect rect) {
             view.setLeftTopRightBottom(rect.left, rect.top, rect.right, rect.bottom);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Rect get(View view) {
             this.mTmpRect.set(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
@@ -106,13 +109,13 @@ public class TaskViewTransform {
             return;
         }
         if (z && hasTranslationZChangedFrom(taskView.getTranslationZ())) {
-            arrayList.add(animationProps.apply(3, ObjectAnimator.ofFloat(taskView, View.TRANSLATION_Z, taskView.getTranslationZ(), this.translationZ)));
+            arrayList.add(animationProps.apply(3, ObjectAnimator.ofFloat(taskView, (Property<TaskView, Float>) View.TRANSLATION_Z, taskView.getTranslationZ(), this.translationZ)));
         }
         if (hasScaleChangedFrom(taskView.getScaleX())) {
-            arrayList.add(animationProps.apply(5, ObjectAnimator.ofPropertyValuesHolder(taskView, PropertyValuesHolder.ofFloat(View.SCALE_X, taskView.getScaleX(), this.scale), PropertyValuesHolder.ofFloat(View.SCALE_Y, taskView.getScaleX(), this.scale))));
+            arrayList.add(animationProps.apply(5, ObjectAnimator.ofPropertyValuesHolder(taskView, PropertyValuesHolder.ofFloat((Property<?, Float>) View.SCALE_X, taskView.getScaleX(), this.scale), PropertyValuesHolder.ofFloat((Property<?, Float>) View.SCALE_Y, taskView.getScaleX(), this.scale))));
         }
         if (hasAlphaChangedFrom(taskView.getAlpha())) {
-            arrayList.add(animationProps.apply(4, ObjectAnimator.ofFloat(taskView, View.ALPHA, taskView.getAlpha(), this.alpha)));
+            arrayList.add(animationProps.apply(4, ObjectAnimator.ofFloat(taskView, (Property<TaskView, Float>) View.ALPHA, taskView.getAlpha(), this.alpha)));
         }
         if (hasRectChangedFrom(taskView)) {
             Rect rect = new Rect(taskView.getLeft(), taskView.getTop(), taskView.getRight(), taskView.getBottom());

@@ -14,6 +14,7 @@ import com.android.settings.R;
 import com.android.settings.core.InstrumentedPreferenceFragment;
 import com.android.settings.widget.RadioButtonPreference;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NetworkScorerPicker extends InstrumentedPreferenceFragment implements RadioButtonPreference.OnClickListener {
     private NetworkScoreManager mNetworkScoreManager;
@@ -37,14 +38,13 @@ public class NetworkScorerPicker extends InstrumentedPreferenceFragment implemen
 
     @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
         setHasOptionsMenu(true);
-        return onCreateView;
+        return viewOnCreateView;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.network_scorer_picker_prefs;
     }
 

@@ -21,16 +21,16 @@ import com.android.launcher3.util.LooperExecutor;
 import com.android.launcher3.util.PackageUserKey;
 import java.util.ArrayList;
 import java.util.List;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class LauncherAppsCompatVO extends LauncherAppsCompatVL {
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public LauncherAppsCompatVO(Context context) {
+    LauncherAppsCompatVO(Context context) {
         super(context);
     }
 
     @Override // com.android.launcher3.compat.LauncherAppsCompatVL, com.android.launcher3.compat.LauncherAppsCompat
-    public ApplicationInfo getApplicationInfo(String str, int i, UserHandle userHandle) {
+    public ApplicationInfo getApplicationInfo(String str, int i, UserHandle userHandle) throws PackageManager.NameNotFoundException {
         try {
             ApplicationInfo applicationInfo = this.mLauncherApps.getApplicationInfo(str, i, userHandle);
             if ((applicationInfo.flags & 8388608) != 0) {
@@ -47,22 +47,22 @@ public class LauncherAppsCompatVO extends LauncherAppsCompatVL {
     @Override // com.android.launcher3.compat.LauncherAppsCompatVL, com.android.launcher3.compat.LauncherAppsCompat
     public List<ShortcutConfigActivityInfo> getCustomShortcutActivityList(@Nullable PackageUserKey packageUserKey) {
         String str;
-        List<UserHandle> list;
+        List<UserHandle> userProfiles;
         ArrayList arrayList = new ArrayList();
-        UserHandle myUserHandle = Process.myUserHandle();
+        UserHandle userHandleMyUserHandle = Process.myUserHandle();
         if (packageUserKey == null) {
-            list = UserManagerCompat.getInstance(this.mContext).getUserProfiles();
+            userProfiles = UserManagerCompat.getInstance(this.mContext).getUserProfiles();
             str = null;
         } else {
             ArrayList arrayList2 = new ArrayList(1);
             arrayList2.add(packageUserKey.mUser);
             str = packageUserKey.mPackageName;
-            list = arrayList2;
+            userProfiles = arrayList2;
         }
-        for (UserHandle userHandle : list) {
-            boolean equals = myUserHandle.equals(userHandle);
+        for (UserHandle userHandle : userProfiles) {
+            boolean zEquals = userHandleMyUserHandle.equals(userHandle);
             for (LauncherActivityInfo launcherActivityInfo : this.mLauncherApps.getShortcutConfigActivityList(str, userHandle)) {
-                if (equals || launcherActivityInfo.getApplicationInfo().targetSdkVersion >= 26) {
+                if (zEquals || launcherActivityInfo.getApplicationInfo().targetSdkVersion >= 26) {
                     arrayList.add(new ShortcutConfigActivityInfo.ShortcutConfigActivityInfoVO(launcherActivityInfo));
                 }
             }
@@ -82,7 +82,7 @@ public class LauncherAppsCompatVO extends LauncherAppsCompatVL {
         } else {
             new LooperExecutor(LauncherModel.getWorkerLooper()).execute(new Runnable() { // from class: com.android.launcher3.compat.LauncherAppsCompatVO.1
                 @Override // java.lang.Runnable
-                public void run() {
+                public void run() throws InterruptedException {
                     try {
                         Thread.sleep(j);
                     } catch (InterruptedException e) {
@@ -95,9 +95,9 @@ public class LauncherAppsCompatVO extends LauncherAppsCompatVL {
         }
         ShortcutInfoCompat shortcutInfoCompat = new ShortcutInfoCompat(pinItemRequest.getShortcutInfo());
         ShortcutInfo shortcutInfo = new ShortcutInfo(shortcutInfoCompat, context);
-        LauncherIcons obtain = LauncherIcons.obtain(context);
-        obtain.createShortcutIcon(shortcutInfoCompat, false).applyTo(shortcutInfo);
-        obtain.recycle();
+        LauncherIcons launcherIconsObtain = LauncherIcons.obtain(context);
+        launcherIconsObtain.createShortcutIcon(shortcutInfoCompat, false).applyTo(shortcutInfo);
+        launcherIconsObtain.recycle();
         LauncherAppState.getInstance(context).getModel().updateAndBindShortcutInfo(shortcutInfo, shortcutInfoCompat);
         return shortcutInfo;
     }

@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Loader;
 import android.os.Bundle;
 import com.android.settingslib.utils.AsyncLoader;
+
 /* loaded from: classes.dex */
 public class TimeZoneDataLoader extends AsyncLoader<TimeZoneData> {
 
-    /* loaded from: classes.dex */
     public interface OnDataReadyCallback {
         void onTimeZoneDataReady(TimeZoneData timeZoneData);
     }
@@ -17,17 +17,17 @@ public class TimeZoneDataLoader extends AsyncLoader<TimeZoneData> {
         super(context);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
     public TimeZoneData loadInBackground() {
         return TimeZoneData.getInstance();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(TimeZoneData timeZoneData) {
+    protected void onDiscardResult(TimeZoneData timeZoneData) {
     }
 
-    /* loaded from: classes.dex */
     public static class LoaderCreator implements LoaderManager.LoaderCallbacks<TimeZoneData> {
         private final OnDataReadyCallback mCallback;
         private final Context mContext;
@@ -37,11 +37,13 @@ public class TimeZoneDataLoader extends AsyncLoader<TimeZoneData> {
             this.mCallback = onDataReadyCallback;
         }
 
+        /* JADX DEBUG: Return type fixed from 'android.content.Loader' to match base method */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public Loader<TimeZoneData> onCreateLoader(int i, Bundle bundle) {
             return new TimeZoneDataLoader(this.mContext);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<TimeZoneData> loader, TimeZoneData timeZoneData) {
             if (this.mCallback != null) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import com.mediatek.common.util.OperatorCustomizationFactoryLoader;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class OpKeyguardCustomizationFactoryBase {
     static OpKeyguardCustomizationFactoryBase sFactory;
@@ -34,16 +35,12 @@ public class OpKeyguardCustomizationFactoryBase {
     }
 
     public static synchronized OpKeyguardCustomizationFactoryBase getOpFactory(Context context) {
-        OpKeyguardCustomizationFactoryBase opKeyguardCustomizationFactoryBase;
-        synchronized (OpKeyguardCustomizationFactoryBase.class) {
+        if (sFactory == null) {
+            sFactory = (OpKeyguardCustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOpFactoryInfoList);
             if (sFactory == null) {
-                sFactory = (OpKeyguardCustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOpFactoryInfoList);
-                if (sFactory == null) {
-                    sFactory = new OpKeyguardCustomizationFactoryBase();
-                }
+                sFactory = new OpKeyguardCustomizationFactoryBase();
             }
-            opKeyguardCustomizationFactoryBase = sFactory;
         }
-        return opKeyguardCustomizationFactoryBase;
+        return sFactory;
     }
 }

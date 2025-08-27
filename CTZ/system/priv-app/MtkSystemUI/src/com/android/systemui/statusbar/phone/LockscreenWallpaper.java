@@ -23,6 +23,7 @@ import android.os.UserHandle;
 import android.util.Log;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import libcore.io.IoUtils;
+
 /* loaded from: classes.dex */
 public class LockscreenWallpaper extends IWallpaperManagerCallback.Stub implements Runnable {
     private final StatusBar mBar;
@@ -56,15 +57,16 @@ public class LockscreenWallpaper extends IWallpaperManagerCallback.Stub implemen
             this.mCache = null;
             return null;
         }
-        LoaderResult loadBitmap = loadBitmap(this.mCurrentUserId, this.mSelectedUser);
-        if (loadBitmap.success) {
+        LoaderResult loaderResultLoadBitmap = loadBitmap(this.mCurrentUserId, this.mSelectedUser);
+        if (loaderResultLoadBitmap.success) {
             this.mCached = true;
-            this.mUpdateMonitor.setHasLockscreenWallpaper(loadBitmap.bitmap != null);
-            this.mCache = loadBitmap.bitmap;
+            this.mUpdateMonitor.setHasLockscreenWallpaper(loaderResultLoadBitmap.bitmap != null);
+            this.mCache = loaderResultLoadBitmap.bitmap;
         }
         return this.mCache;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [122=4] */
     public LoaderResult loadBitmap(int i, UserHandle userHandle) {
         if (userHandle != null) {
             i = userHandle.getIdentifier();
@@ -113,15 +115,15 @@ public class LockscreenWallpaper extends IWallpaperManagerCallback.Stub implemen
         final int i = this.mCurrentUserId;
         final UserHandle userHandle = this.mSelectedUser;
         this.mLoader = new AsyncTask<Void, Void, LoaderResult>() { // from class: com.android.systemui.statusbar.phone.LockscreenWallpaper.1
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public LoaderResult doInBackground(Void... voidArr) {
+            protected LoaderResult doInBackground(Void... voidArr) {
                 return LockscreenWallpaper.this.loadBitmap(i, userHandle);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(LoaderResult loaderResult) {
+            protected void onPostExecute(LoaderResult loaderResult) {
                 super.onPostExecute((AnonymousClass1) loaderResult);
                 if (isCancelled()) {
                     return;
@@ -137,9 +139,7 @@ public class LockscreenWallpaper extends IWallpaperManagerCallback.Stub implemen
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[0]);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class LoaderResult {
+    private static class LoaderResult {
         public final Bitmap bitmap;
         public final boolean success;
 
@@ -157,7 +157,6 @@ public class LockscreenWallpaper extends IWallpaperManagerCallback.Stub implemen
         }
     }
 
-    /* loaded from: classes.dex */
     public static class WallpaperDrawable extends DrawableWrapper {
         private final ConstantState mState;
         private final Rect mTmpRect;
@@ -189,32 +188,31 @@ public class LockscreenWallpaper extends IWallpaperManagerCallback.Stub implemen
         @Override // android.graphics.drawable.DrawableWrapper, android.graphics.drawable.Drawable
         protected void onBoundsChange(Rect rect) {
             float f;
-            int width = getBounds().width();
-            int height = getBounds().height();
-            int width2 = this.mState.mBackground.getWidth();
-            int height2 = this.mState.mBackground.getHeight();
-            if (width2 * height > width * height2) {
-                f = height / height2;
+            int iWidth = getBounds().width();
+            int iHeight = getBounds().height();
+            int width = this.mState.mBackground.getWidth();
+            int height = this.mState.mBackground.getHeight();
+            if (width * iHeight > iWidth * height) {
+                f = iHeight / height;
             } else {
-                f = width / width2;
+                f = iWidth / width;
             }
             if (f <= 1.0f) {
                 f = 1.0f;
             }
-            float f2 = height2 * f;
-            float f3 = (height - f2) * 0.5f;
-            this.mTmpRect.set(rect.left, rect.top + Math.round(f3), rect.left + Math.round(width2 * f), rect.top + Math.round(f2 + f3));
+            float f2 = height * f;
+            float f3 = (iHeight - f2) * 0.5f;
+            this.mTmpRect.set(rect.left, rect.top + Math.round(f3), rect.left + Math.round(width * f), rect.top + Math.round(f2 + f3));
             super.onBoundsChange(this.mTmpRect);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getConstantState()Landroid/graphics/drawable/Drawable$ConstantState; */
         @Override // android.graphics.drawable.DrawableWrapper, android.graphics.drawable.Drawable
         public ConstantState getConstantState() {
             return this.mState;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        /* loaded from: classes.dex */
-        public static class ConstantState extends Drawable.ConstantState {
+        static class ConstantState extends Drawable.ConstantState {
             private final Bitmap mBackground;
 
             ConstantState(Bitmap bitmap) {

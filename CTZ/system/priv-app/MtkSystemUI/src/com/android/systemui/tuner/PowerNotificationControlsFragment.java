@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class PowerNotificationControlsFragment extends Fragment {
     @Override // android.app.Fragment
@@ -26,9 +27,9 @@ public class PowerNotificationControlsFragment extends Fragment {
     public void onViewCreated(View view, Bundle bundle) {
         String string;
         super.onViewCreated(view, bundle);
-        View findViewById = view.findViewById(R.id.switch_bar);
-        final Switch r3 = (Switch) findViewById.findViewById(16908352);
-        final TextView textView = (TextView) findViewById.findViewById(R.id.switch_text);
+        View viewFindViewById = view.findViewById(R.id.switch_bar);
+        final Switch r3 = (Switch) viewFindViewById.findViewById(android.R.id.switch_widget);
+        final TextView textView = (TextView) viewFindViewById.findViewById(R.id.switch_text);
         r3.setChecked(isEnabled());
         if (isEnabled()) {
             string = getString(R.string.switch_bar_on);
@@ -67,8 +68,7 @@ public class PowerNotificationControlsFragment extends Fragment {
         MetricsLogger.visibility(getContext(), 392, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isEnabled() {
+    private boolean isEnabled() {
         return Settings.Secure.getInt(getContext().getContentResolver(), "show_importance_slider", 0) == 1;
     }
 }

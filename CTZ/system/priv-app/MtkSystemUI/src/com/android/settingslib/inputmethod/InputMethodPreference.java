@@ -14,6 +14,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.inputmethod.InputMethodUtils;
 import com.android.settingslib.R;
 import com.android.settingslib.RestrictedSwitchPreference;
+
 /* loaded from: classes.dex */
 public class InputMethodPreference extends RestrictedSwitchPreference implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     private static final String TAG = InputMethodPreference.class.getSimpleName();
@@ -24,7 +25,6 @@ public class InputMethodPreference extends RestrictedSwitchPreference implements
     private final boolean mIsAllowedByOrganization;
     private final OnSavePreferenceListener mOnSaveListener;
 
-    /* loaded from: classes.dex */
     public interface OnSavePreferenceListener {
         void onSaveInputMethodPreference(InputMethodPreference inputMethodPreference);
     }
@@ -65,21 +65,21 @@ public class InputMethodPreference extends RestrictedSwitchPreference implements
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        if (isImeEnabler()) {
-            if (isChecked()) {
-                setCheckedInternal(false);
-                return false;
-            }
-            if (InputMethodUtils.isSystemIme(this.mImi)) {
-                if (this.mImi.getServiceInfo().directBootAware || isTv()) {
-                    setCheckedInternal(true);
-                } else if (!isTv()) {
-                    showDirectBootWarnDialog();
-                }
-            } else {
-                showSecurityWarnDialog();
-            }
+        if (!isImeEnabler()) {
             return false;
+        }
+        if (isChecked()) {
+            setCheckedInternal(false);
+            return false;
+        }
+        if (InputMethodUtils.isSystemIme(this.mImi)) {
+            if (this.mImi.getServiceInfo().directBootAware || isTv()) {
+                setCheckedInternal(true);
+            } else if (!isTv()) {
+                showDirectBootWarnDialog();
+            }
+        } else {
+            showSecurityWarnDialog();
         }
         return false;
     }
@@ -102,8 +102,7 @@ public class InputMethodPreference extends RestrictedSwitchPreference implements
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setCheckedInternal(boolean z) {
+    private void setCheckedInternal(boolean z) {
         super.setChecked(z);
         this.mOnSaveListener.onSaveInputMethodPreference(this);
         notifyChanged();
@@ -116,18 +115,18 @@ public class InputMethodPreference extends RestrictedSwitchPreference implements
         Context context = getContext();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
-        builder.setTitle(17039380);
+        builder.setTitle(android.R.string.dialog_alert_title);
         builder.setMessage(context.getString(R.string.ime_security_warning, this.mImi.getServiceInfo().applicationInfo.loadLabel(context.getPackageManager())));
-        builder.setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settingslib.inputmethod.-$$Lambda$InputMethodPreference$pHt4-6FWRQ9Ts6PuJy_AB14MhJc
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.settingslib.inputmethod.-$$Lambda$InputMethodPreference$pHt4-6FWRQ9Ts6PuJy_AB14MhJc
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                InputMethodPreference.lambda$showSecurityWarnDialog$0(InputMethodPreference.this, dialogInterface, i);
+                InputMethodPreference.lambda$showSecurityWarnDialog$0(this.f$0, dialogInterface, i);
             }
         });
-        builder.setNegativeButton(17039360, new DialogInterface.OnClickListener() { // from class: com.android.settingslib.inputmethod.-$$Lambda$InputMethodPreference$HH5dtwzFZv06UNDXJAO6Cyx4kxo
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.settingslib.inputmethod.-$$Lambda$InputMethodPreference$HH5dtwzFZv06UNDXJAO6Cyx4kxo
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                InputMethodPreference.this.setCheckedInternal(false);
+                this.f$0.setCheckedInternal(false);
             }
         });
         this.mDialog = builder.create();
@@ -154,16 +153,16 @@ public class InputMethodPreference extends RestrictedSwitchPreference implements
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
         builder.setMessage(context.getText(R.string.direct_boot_unaware_dialog_message));
-        builder.setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settingslib.inputmethod.-$$Lambda$InputMethodPreference$FTfMqDGTv2yWgiGfPYaiYBCHriY
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.settingslib.inputmethod.-$$Lambda$InputMethodPreference$FTfMqDGTv2yWgiGfPYaiYBCHriY
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                InputMethodPreference.this.setCheckedInternal(true);
+                this.f$0.setCheckedInternal(true);
             }
         });
-        builder.setNegativeButton(17039360, new DialogInterface.OnClickListener() { // from class: com.android.settingslib.inputmethod.-$$Lambda$InputMethodPreference$_R1WCgG1LabBNKieYWiJs9NnYv4
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.settingslib.inputmethod.-$$Lambda$InputMethodPreference$_R1WCgG1LabBNKieYWiJs9NnYv4
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                InputMethodPreference.this.setCheckedInternal(false);
+                this.f$0.setCheckedInternal(false);
             }
         });
         this.mDialog = builder.create();

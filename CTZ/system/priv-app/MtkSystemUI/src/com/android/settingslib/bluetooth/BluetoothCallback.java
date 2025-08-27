@@ -1,4 +1,5 @@
 package com.android.settingslib.bluetooth;
+
 /* loaded from: classes.dex */
 public interface BluetoothCallback {
     void onActiveDeviceChanged(CachedBluetoothDevice cachedBluetoothDevice, int i);

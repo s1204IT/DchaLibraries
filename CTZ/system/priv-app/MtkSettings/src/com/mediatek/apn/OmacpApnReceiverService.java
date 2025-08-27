@@ -16,6 +16,7 @@ import com.android.settings.R;
 import com.mediatek.settings.UtilsExt;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class OmacpApnReceiverService extends IntentService {
     private static int sAuthType = -1;
@@ -51,7 +52,7 @@ public class OmacpApnReceiverService extends IntentService {
     }
 
     @Override // android.app.IntentService
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(Intent intent) throws Throwable {
         String action = intent.getAction();
         Log.d("OmacpApnReceiverService", "get action = " + action);
         if (!"com.mediatek.apn.action.start.omacpservice".equals(action)) {
@@ -70,20 +71,22 @@ public class OmacpApnReceiverService extends IntentService {
             this.mResult = false;
             sendFeedback(this);
             Log.e("OmacpApnReceiverService", "Intent list size is wrong");
-        } else if (!initState(this.mIntentList.get(0))) {
+            return;
+        }
+        if (!initState(this.mIntentList.get(0))) {
             sendFeedback(this);
             Log.e("OmacpApnReceiverService", "Can not get MCC+MNC");
-        } else {
-            this.mUri = Telephony.Carriers.CONTENT_URI;
-            Log.d("OmacpApnReceiverService", "mUri = " + this.mUri + " mNumeric = " + this.mNumeric + " mPreferedUri = " + this.mPreferedUri);
-            for (int i = 0; this.mResult && i < size; i++) {
-                extractAPN(this.mIntentList.get(i), this);
-                ContentValues contentValues = new ContentValues();
-                validateProfile(contentValues);
-                updateApn(this, this.mUri, this.mApn, this.mApnId, this.mName, contentValues, this.mNumeric, this.mPreferedUri);
-            }
-            sendFeedback(this);
+            return;
         }
+        this.mUri = Telephony.Carriers.CONTENT_URI;
+        Log.d("OmacpApnReceiverService", "mUri = " + this.mUri + " mNumeric = " + this.mNumeric + " mPreferedUri = " + this.mPreferedUri);
+        for (int i = 0; this.mResult && i < size; i++) {
+            extractAPN(this.mIntentList.get(i), this);
+            ContentValues contentValues = new ContentValues();
+            validateProfile(contentValues);
+            updateApn(this, this.mUri, this.mApn, this.mApnId, this.mName, contentValues, this.mNumeric, this.mPreferedUri);
+        }
+        sendFeedback(this);
     }
 
     private void sendFeedback(Context context) {
@@ -118,10 +121,10 @@ public class OmacpApnReceiverService extends IntentService {
 
     private boolean verifyMccMnc() {
         if (this.mNumeric != null && this.mNumeric.length() > 4) {
-            String substring = this.mNumeric.substring(0, 3);
-            String substring2 = this.mNumeric.substring(3);
-            this.mMcc = substring;
-            this.mMnc = substring2;
+            String strSubstring = this.mNumeric.substring(0, 3);
+            String strSubstring2 = this.mNumeric.substring(3);
+            this.mMcc = strSubstring;
+            this.mMnc = strSubstring2;
             Log.d("OmacpApnReceiverService", "mcc&mnc is right , mMcc = " + this.mMcc + " mMnc = " + this.mMnc);
         } else {
             this.mResult = false;
@@ -145,10 +148,10 @@ public class OmacpApnReceiverService extends IntentService {
         sAuthType = -1;
         ArrayList arrayList = (ArrayList) intent.getExtra("NAPAUTHINFO");
         if (arrayList != null && arrayList.size() > 0) {
-            HashMap hashMap = (HashMap) arrayList.get(0);
-            this.mUserName = (String) hashMap.get("AUTHNAME");
-            this.mPassword = (String) hashMap.get("AUTHSECRET");
-            this.mAuthType = (String) hashMap.get("AUTHTYPE");
+            HashMap map = (HashMap) arrayList.get(0);
+            this.mUserName = (String) map.get("AUTHNAME");
+            this.mPassword = (String) map.get("AUTHSECRET");
+            this.mAuthType = (String) map.get("AUTHTYPE");
             if (this.mAuthType != null) {
                 if ("PAP".equalsIgnoreCase(this.mAuthType)) {
                     sAuthType = 1;
@@ -188,22 +191,22 @@ public class OmacpApnReceiverService extends IntentService {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     private boolean setCurrentApn(Context context, long j, Uri uri) {
-        int i;
+        int iUpdate;
         ContentValues contentValues = new ContentValues();
         contentValues.put("apn_id", Long.valueOf(j));
         try {
-            i = context.getContentResolver().update(uri, contentValues, null, null);
-            try {
-                Log.d("OmacpApnReceiverService", "update preferred uri ,row = " + i);
-            } catch (SQLException e) {
-                Log.d("OmacpApnReceiverService", "SetCurrentApn SQLException happened!");
-                if (i <= 0) {
-                }
-            }
-        } catch (SQLException e2) {
-            i = 0;
+            iUpdate = context.getContentResolver().update(uri, contentValues, null, null);
+        } catch (SQLException e) {
+            iUpdate = 0;
         }
-        return i <= 0;
+        try {
+            Log.d("OmacpApnReceiverService", "update preferred uri ,row = " + iUpdate);
+        } catch (SQLException e2) {
+            Log.d("OmacpApnReceiverService", "SetCurrentApn SQLException happened!");
+            if (iUpdate <= 0) {
+            }
+        }
+        return iUpdate <= 0;
     }
 
     /* JADX WARN: Removed duplicated region for block: B:19:0x00ae  */
@@ -211,24 +214,24 @@ public class OmacpApnReceiverService extends IntentService {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private void updateApn(Context context, Uri uri, String str, String str2, String str3, ContentValues contentValues, String str4, Uri uri2) {
-        long replaceApn = UtilsExt.getApnSettingsExt(context).replaceApn(replaceApn(context, uri, str, str2, str3, contentValues, str4), context, uri, str, str3, contentValues, str4);
-        Log.d("OmacpApnReceiverService", "replace number = " + replaceApn);
-        if (replaceApn == -1) {
+    private void updateApn(Context context, Uri uri, String str, String str2, String str3, ContentValues contentValues, String str4, Uri uri2) throws Throwable {
+        long jReplaceApn = UtilsExt.getApnSettingsExt(context).replaceApn(replaceApn(context, uri, str, str2, str3, contentValues, str4), context, uri, str, str3, contentValues, str4);
+        Log.d("OmacpApnReceiverService", "replace number = " + jReplaceApn);
+        if (jReplaceApn == -1) {
             try {
-                Uri insert = context.getContentResolver().insert(uri, addMVNOItem(contentValues));
-                if (insert != null) {
-                    Log.d("OmacpApnReceiverService", "uri = " + insert);
-                    if (insert.getPathSegments().size() == 2) {
-                        long parseLong = Long.parseLong(insert.getLastPathSegment());
+                Uri uriInsert = context.getContentResolver().insert(uri, addMVNOItem(contentValues));
+                if (uriInsert != null) {
+                    Log.d("OmacpApnReceiverService", "uri = " + uriInsert);
+                    if (uriInsert.getPathSegments().size() == 2) {
+                        long j = Long.parseLong(uriInsert.getLastPathSegment());
                         try {
-                            Log.d("OmacpApnReceiverService", "insert row id = " + parseLong);
-                            replaceApn = parseLong;
+                            Log.d("OmacpApnReceiverService", "insert row id = " + j);
+                            jReplaceApn = j;
                         } catch (SQLException e) {
-                            replaceApn = parseLong;
+                            jReplaceApn = j;
                             Log.d("OmacpApnReceiverService", "insert SQLException happened!");
                             this.mResult = false;
-                            Log.d("OmacpApnReceiverService", "insert number = " + replaceApn);
+                            Log.d("OmacpApnReceiverService", "insert number = " + jReplaceApn);
                             if (!this.mIsMmsApn) {
                             }
                         }
@@ -237,20 +240,25 @@ public class OmacpApnReceiverService extends IntentService {
             } catch (SQLException e2) {
             }
         }
-        Log.d("OmacpApnReceiverService", "insert number = " + replaceApn);
+        Log.d("OmacpApnReceiverService", "insert number = " + jReplaceApn);
         if (!this.mIsMmsApn) {
-            if (replaceApn == -1) {
+            if (jReplaceApn == -1) {
                 this.mResult = false;
                 Log.d("OmacpApnReceiverService", "mms, insertNum is APN_NO_UPDATE ,mResult = false");
+                return;
             }
-        } else if (replaceApn == -1) {
+            return;
+        }
+        if (jReplaceApn == -1) {
             this.mResult = false;
             Log.d("OmacpApnReceiverService", "not mms, insertNum is APN_NO_UPDATE, mResult = false");
-        } else if (replaceApn == 0) {
-            this.mResult = true;
-            Log.d("OmacpApnReceiverService", "not mms, insertNum is APN_EXIST, mResult = true");
         } else {
-            this.mResult = setCurrentApn(context, replaceApn, uri2);
+            if (jReplaceApn == 0) {
+                this.mResult = true;
+                Log.d("OmacpApnReceiverService", "not mms, insertNum is APN_EXIST, mResult = true");
+                return;
+            }
+            this.mResult = setCurrentApn(context, jReplaceApn, uri2);
             Log.d("OmacpApnReceiverService", "set current apn result, mResult = " + this.mResult);
         }
     }
@@ -273,49 +281,50 @@ public class OmacpApnReceiverService extends IntentService {
         return verifyMccMnc();
     }
 
-    public long replaceApn(Context context, Uri uri, String str, String str2, String str3, ContentValues contentValues, String str4) {
-        Cursor cursor;
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [512=4] */
+    public long replaceApn(Context context, Uri uri, String str, String str2, String str3, ContentValues contentValues, String str4) throws Throwable {
+        Cursor cursorQuery;
         String str5 = "numeric=\"" + str4 + "\" and omacpid<>''";
         Log.d("OmacpApnReceiverService", "name " + str3 + " numeric = " + str4 + " apnId = " + str2);
         try {
-            cursor = context.getContentResolver().query(uri, new String[]{"_id", "omacpid"}, str5, null, "name ASC");
+            cursorQuery = context.getContentResolver().query(uri, new String[]{"_id", "omacpid"}, str5, null, "name ASC");
             long j = -1;
-            if (cursor != null) {
+            if (cursorQuery != null) {
                 try {
-                    if (cursor.getCount() != 0) {
-                        cursor.moveToFirst();
+                    if (cursorQuery.getCount() != 0) {
+                        cursorQuery.moveToFirst();
                         while (true) {
-                            if (cursor.isAfterLast()) {
+                            if (cursorQuery.isAfterLast()) {
                                 break;
                             }
-                            Log.d("OmacpApnReceiverService", "apnId " + str2 + " getApnId = " + cursor.getString(1));
-                            if (str2.equals(cursor.getString(1))) {
+                            Log.d("OmacpApnReceiverService", "apnId " + str2 + " getApnId = " + cursorQuery.getString(1));
+                            if (str2.equals(cursorQuery.getString(1))) {
                                 j = 0;
                                 break;
                             }
-                            cursor.moveToNext();
+                            cursorQuery.moveToNext();
                         }
-                        if (cursor != null) {
-                            cursor.close();
+                        if (cursorQuery != null) {
+                            cursorQuery.close();
                         }
                         return j;
                     }
                 } catch (Throwable th) {
                     th = th;
-                    if (cursor != null) {
-                        cursor.close();
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
                     }
                     throw th;
                 }
             }
             Log.d("OmacpApnReceiverService", "cursor is null , or cursor.getCount() == 0 return");
-            if (cursor != null) {
-                cursor.close();
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
             return -1L;
         } catch (Throwable th2) {
             th = th2;
-            cursor = null;
+            cursorQuery = null;
         }
     }
 }

@@ -11,6 +11,8 @@ import android.widget.LinearLayout;
 import com.android.keyguard.AlphaOptimizedImageButton;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
+import java.net.URISyntaxException;
+
 /* loaded from: classes.dex */
 public class CarFacetButton extends LinearLayout {
     private String[] mComponentNames;
@@ -26,7 +28,7 @@ public class CarFacetButton extends LinearLayout {
     private float mUnselectedAlpha;
     private boolean mUseMoreIcon;
 
-    public CarFacetButton(Context context, AttributeSet attributeSet) {
+    public CarFacetButton(Context context, AttributeSet attributeSet) throws URISyntaxException {
         super(context, attributeSet);
         this.mSelected = false;
         this.mUseMoreIcon = true;
@@ -34,28 +36,28 @@ public class CarFacetButton extends LinearLayout {
         this.mUnselectedAlpha = 1.0f;
         this.mContext = context;
         View.inflate(context, R.layout.car_facet_button, this);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.CarFacetButton);
-        setupIntents(obtainStyledAttributes);
-        setupIcons(obtainStyledAttributes);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.CarFacetButton);
+        setupIntents(typedArrayObtainStyledAttributes);
+        setupIcons(typedArrayObtainStyledAttributes);
         ((CarFacetButtonController) Dependency.get(CarFacetButtonController.class)).addFacetButton(this);
     }
 
-    private void setupIntents(TypedArray typedArray) {
+    private void setupIntents(TypedArray typedArray) throws URISyntaxException {
         String string = typedArray.getString(3);
         String string2 = typedArray.getString(4);
         String string3 = typedArray.getString(0);
         String string4 = typedArray.getString(5);
         String string5 = typedArray.getString(1);
         try {
-            final Intent parseUri = Intent.parseUri(string, 1);
-            parseUri.putExtra("filter_id", Integer.toString(getId()));
+            final Intent uri = Intent.parseUri(string, 1);
+            uri.putExtra("filter_id", Integer.toString(getId()));
             if (string4 != null) {
                 this.mFacetPackages = string4.split(";");
-                parseUri.putExtra("packages", this.mFacetPackages);
+                uri.putExtra("packages", this.mFacetPackages);
             }
             if (string3 != null) {
                 this.mFacetCategories = string3.split(";");
-                parseUri.putExtra("categories", this.mFacetCategories);
+                uri.putExtra("categories", this.mFacetCategories);
             }
             if (string5 != null) {
                 this.mComponentNames = string5.split(";");
@@ -63,15 +65,15 @@ public class CarFacetButton extends LinearLayout {
             setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.car.-$$Lambda$CarFacetButton$i_dU0gknjwIWw7BhdaypNSeIb4I
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    CarFacetButton.lambda$setupIntents$0(CarFacetButton.this, parseUri, view);
+                    CarFacetButton.lambda$setupIntents$0(this.f$0, uri, view);
                 }
             });
             if (string2 != null) {
-                final Intent parseUri2 = Intent.parseUri(string2, 1);
+                final Intent uri2 = Intent.parseUri(string2, 1);
                 setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.systemui.statusbar.car.-$$Lambda$CarFacetButton$531BxJPdfLOepcWw24yntC-HGBQ
                     @Override // android.view.View.OnLongClickListener
                     public final boolean onLongClick(View view) {
-                        return CarFacetButton.lambda$setupIntents$1(CarFacetButton.this, parseUri2, view);
+                        return CarFacetButton.lambda$setupIntents$1(this.f$0, uri2, view);
                     }
                 });
             }

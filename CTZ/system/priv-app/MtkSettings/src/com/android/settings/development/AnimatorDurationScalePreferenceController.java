@@ -9,6 +9,7 @@ import android.view.IWindowManager;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class AnimatorDurationScalePreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final int ANIMATOR_DURATION_SCALE_SELECTOR = 2;
@@ -30,7 +31,7 @@ public class AnimatorDurationScalePreferenceController extends DeveloperOptionsP
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         writeAnimationScaleOption(obj);
         return true;
     }
@@ -40,25 +41,24 @@ public class AnimatorDurationScalePreferenceController extends DeveloperOptionsP
         updateAnimationScaleValue();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() throws NumberFormatException {
         super.onDeveloperOptionsSwitchDisabled();
         writeAnimationScaleOption(null);
     }
 
-    private void writeAnimationScaleOption(Object obj) {
-        float parseFloat;
+    private void writeAnimationScaleOption(Object obj) throws NumberFormatException {
+        float f;
         if (obj == null) {
-            parseFloat = DEFAULT_VALUE;
+            f = DEFAULT_VALUE;
         } else {
             try {
-                parseFloat = Float.parseFloat(obj.toString());
+                f = Float.parseFloat(obj.toString());
             } catch (RemoteException e) {
                 return;
             }
         }
-        this.mWindowManager.setAnimationScale(2, parseFloat);
+        this.mWindowManager.setAnimationScale(2, f);
         updateAnimationScaleValue();
     }
 
@@ -70,7 +70,8 @@ public class AnimatorDurationScalePreferenceController extends DeveloperOptionsP
             while (true) {
                 if (i2 >= this.mListValues.length) {
                     break;
-                } else if (animationScale > Float.parseFloat(this.mListValues[i2])) {
+                }
+                if (animationScale > Float.parseFloat(this.mListValues[i2])) {
                     i2++;
                 } else {
                     i = i2;

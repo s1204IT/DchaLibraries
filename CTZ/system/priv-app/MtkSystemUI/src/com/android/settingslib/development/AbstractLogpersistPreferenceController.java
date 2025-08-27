@@ -4,6 +4,7 @@ import android.support.v7.preference.Preference;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnCreate;
 import com.android.settingslib.core.lifecycle.events.OnDestroy;
+
 /* loaded from: classes.dex */
 public abstract class AbstractLogpersistPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, LifecycleObserver, OnCreate, OnDestroy {
     static final String ACTUAL_LOGPERSIST_PROPERTY = "logd.logpersistd";

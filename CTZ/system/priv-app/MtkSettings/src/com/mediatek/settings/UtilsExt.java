@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class UtilsExt {
     public static ArrayList<String> disableAppList = readFile("/vendor/etc/disableapplist.txt");
@@ -142,6 +143,9 @@ public class UtilsExt {
         return sDeviceInfoSettingsExt;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [271=4, 274=4, 277=6, 279=4] */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:20:0x0054 */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:22:0x0056 */
     /* JADX WARN: Multi-variable type inference failed */
     /* JADX WARN: Type inference failed for: r2v0 */
     /* JADX WARN: Type inference failed for: r2v1 */
@@ -153,7 +157,7 @@ public class UtilsExt {
     /* JADX WARN: Type inference failed for: r7v3, types: [java.io.FileReader] */
     /* JADX WARN: Type inference failed for: r7v5, types: [java.io.FileReader] */
     /* JADX WARN: Type inference failed for: r7v9, types: [java.io.FileReader, java.io.Reader] */
-    private static ArrayList<String> readFile(String str) {
+    private static ArrayList<String> readFile(String str) throws Throwable {
         BufferedReader bufferedReader;
         ArrayList<String> arrayList = new ArrayList<>();
         arrayList.clear();
@@ -162,85 +166,84 @@ public class UtilsExt {
         r2 = 0;
         try {
             try {
-                if (file.exists()) {
-                    str = new FileReader(file);
-                    try {
-                        bufferedReader = new BufferedReader(str);
-                        while (true) {
-                            try {
-                                String readLine = bufferedReader.readLine();
-                                if (readLine != null) {
-                                    Log.d("UtilsExt", " read line " + readLine);
-                                    arrayList.add(readLine);
-                                } else {
-                                    try {
-                                        break;
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            } catch (IOException e2) {
-                                e = e2;
-                                Log.d("UtilsExt", "IOException");
-                                e.printStackTrace();
-                                if (bufferedReader != null) {
-                                    try {
-                                        bufferedReader.close();
-                                    } catch (IOException e3) {
-                                        e3.printStackTrace();
-                                        return null;
-                                    }
-                                }
-                                if (str != 0) {
-                                    str.close();
-                                }
-                                return null;
-                            }
-                        }
-                        bufferedReader.close();
-                        str.close();
-                        return arrayList;
-                    } catch (IOException e4) {
-                        e = e4;
-                        bufferedReader = null;
-                    } catch (Throwable th) {
-                        th = th;
-                        if (r2 != 0) {
-                            try {
-                                r2.close();
-                            } catch (IOException e5) {
-                                e5.printStackTrace();
-                                throw th;
-                            }
-                        }
-                        if (str != 0) {
-                            str.close();
-                        }
-                        throw th;
-                    }
-                } else {
+                if (!file.exists()) {
                     Log.d("UtilsExt", "file in " + ((String) str) + " does not exist!");
                     return null;
                 }
+                str = new FileReader(file);
+                try {
+                    bufferedReader = new BufferedReader(str);
+                    while (true) {
+                        try {
+                            String line = bufferedReader.readLine();
+                            if (line != null) {
+                                Log.d("UtilsExt", " read line " + line);
+                                arrayList.add(line);
+                            } else {
+                                try {
+                                    break;
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } catch (IOException e2) {
+                            e = e2;
+                            Log.d("UtilsExt", "IOException");
+                            e.printStackTrace();
+                            if (bufferedReader != null) {
+                                try {
+                                    bufferedReader.close();
+                                } catch (IOException e3) {
+                                    e3.printStackTrace();
+                                    return null;
+                                }
+                            }
+                            if (str != 0) {
+                                str.close();
+                            }
+                            return null;
+                        }
+                    }
+                    bufferedReader.close();
+                    str.close();
+                    return arrayList;
+                } catch (IOException e4) {
+                    e = e4;
+                    bufferedReader = null;
+                } catch (Throwable th) {
+                    th = th;
+                    if (r2 != 0) {
+                        try {
+                            r2.close();
+                        } catch (IOException e5) {
+                            e5.printStackTrace();
+                            throw th;
+                        }
+                    }
+                    if (str != 0) {
+                        str.close();
+                    }
+                    throw th;
+                }
+            } catch (IOException e6) {
+                e = e6;
+                str = 0;
+                bufferedReader = null;
             } catch (Throwable th2) {
                 th = th2;
-                r2 = file;
+                str = 0;
             }
-        } catch (IOException e6) {
-            e = e6;
-            str = 0;
-            bufferedReader = null;
         } catch (Throwable th3) {
             th = th3;
-            str = 0;
+            r2 = file;
         }
     }
 
     public static boolean shouldDisableForAutoSanity() {
-        boolean equals = SystemProperties.get("ro.mtk.autosanity").equals("1");
+        boolean zEquals = SystemProperties.get("ro.mtk.autosanity").equals("1");
         String str = SystemProperties.get("ro.build.type", "");
-        Log.d("UtilsExt", "autoSanity: " + equals + " buildType: " + str);
-        if (equals && !TextUtils.isEmpty(str) && str.endsWith("eng")) {
+        Log.d("UtilsExt", "autoSanity: " + zEquals + " buildType: " + str);
+        if (zEquals && !TextUtils.isEmpty(str) && str.endsWith("eng")) {
             Log.d("UtilsExt", "ShouldDisableForAutoSanity()...");
             return true;
         }

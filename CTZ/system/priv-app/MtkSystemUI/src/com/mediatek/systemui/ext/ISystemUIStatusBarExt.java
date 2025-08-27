@@ -7,6 +7,7 @@ import android.telephony.SignalStrength;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 /* loaded from: classes.dex */
 public interface ISystemUIStatusBarExt {
     void SetHostViewInvisible(ImageView imageView);
@@ -96,7 +97,6 @@ public interface ISystemUIStatusBarExt {
 
     boolean updateSignalStrengthWifiOnlyMode(ServiceState serviceState, boolean z);
 
-    /* loaded from: classes.dex */
     public interface StatusBarCallback {
         default void setSystemIcon(String str, int i, CharSequence charSequence, boolean z) {
         }

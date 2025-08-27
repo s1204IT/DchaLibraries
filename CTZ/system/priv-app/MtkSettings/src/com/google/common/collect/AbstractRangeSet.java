@@ -1,6 +1,7 @@
 package com.google.common.collect;
 
 import java.lang.Comparable;
+
 /* loaded from: classes.dex */
 abstract class AbstractRangeSet<C extends Comparable> implements RangeSet<C> {
     public boolean equals(Object obj) {

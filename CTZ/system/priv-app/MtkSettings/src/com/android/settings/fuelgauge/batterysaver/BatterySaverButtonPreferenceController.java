@@ -11,6 +11,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
 import com.android.settingslib.fuelgauge.BatterySaverUtils;
+
 /* loaded from: classes.dex */
 public class BatterySaverButtonPreferenceController extends TogglePreferenceController implements BatterySaverReceiver.BatterySaverListener, LifecycleObserver, OnStart, OnStop {
     private final BatterySaverReceiver mBatterySaverReceiver;
@@ -70,9 +71,9 @@ public class BatterySaverButtonPreferenceController extends TogglePreferenceCont
 
     @Override // com.android.settings.fuelgauge.BatterySaverReceiver.BatterySaverListener
     public void onPowerSaveModeChanged() {
-        boolean isChecked = isChecked();
-        if (this.mPreference != null && this.mPreference.isChecked() != isChecked) {
-            this.mPreference.setChecked(isChecked);
+        boolean zIsChecked = isChecked();
+        if (this.mPreference != null && this.mPreference.isChecked() != zIsChecked) {
+            this.mPreference.setChecked(zIsChecked);
         }
     }
 

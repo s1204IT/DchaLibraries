@@ -2,6 +2,7 @@ package com.android.quicksearchbox;
 
 import android.content.Context;
 import android.net.Uri;
+
 /* loaded from: classes.dex */
 public class Config {
     private final Context mContext;

@@ -1,13 +1,13 @@
 package com.android.systemui.statusbar.notification;
 
 import android.util.Pools;
+
 /* loaded from: classes.dex */
 public class ProgressTransformState extends TransformState {
     private static Pools.SimplePool<ProgressTransformState> sInstancePool = new Pools.SimplePool<>(40);
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.TransformState
-    public boolean sameAs(TransformState transformState) {
+    protected boolean sameAs(TransformState transformState) {
         if (transformState instanceof ProgressTransformState) {
             return true;
         }

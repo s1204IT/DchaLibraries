@@ -8,6 +8,7 @@ import com.android.settings.R;
 import com.android.settings.RestrictedListPreference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.notification.NotificationSettingsBase;
+
 /* loaded from: classes.dex */
 public class ImportancePreferenceController extends NotificationPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private NotificationSettingsBase.ImportanceListener mImportanceListener;
@@ -51,14 +52,14 @@ public class ImportancePreferenceController extends NotificationPreferenceContro
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         if (this.mChannel != null) {
-            int parseInt = Integer.parseInt((String) obj);
-            if (this.mChannel.getImportance() < 3 && !SoundPreferenceController.hasValidSound(this.mChannel) && parseInt >= 3) {
+            int i = Integer.parseInt((String) obj);
+            if (this.mChannel.getImportance() < 3 && !SoundPreferenceController.hasValidSound(this.mChannel) && i >= 3) {
                 this.mChannel.setSound(RingtoneManager.getDefaultUri(2), this.mChannel.getAudioAttributes());
                 this.mChannel.lockFields(32);
             }
-            this.mChannel.setImportance(parseInt);
+            this.mChannel.setImportance(i);
             this.mChannel.lockFields(4);
             saveChannel();
             this.mImportanceListener.onImportanceChanged();

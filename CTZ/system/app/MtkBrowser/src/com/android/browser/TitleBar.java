@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Region;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+
 /* loaded from: classes.dex */
 public class TitleBar extends RelativeLayout {
     private AccessibilityManager mAccessibilityManager;
@@ -35,9 +37,12 @@ public class TitleBar extends RelativeLayout {
     private UiController mUiController;
     private boolean mUseQuickControls;
 
-    public TitleBar(Context context, UiController uiController, BaseUi baseUi, FrameLayout frameLayout) {
+    public TitleBar(Context context, UiController uiController, BaseUi baseUi, FrameLayout frameLayout) throws Resources.NotFoundException {
         super(context, null);
         this.mHideTileBarAnimatorListener = new Animator.AnimatorListener() { // from class: com.android.browser.TitleBar.1
+            AnonymousClass1() {
+            }
+
             @Override // android.animation.Animator.AnimatorListener
             public void onAnimationStart(Animator animator) {
             }
@@ -47,7 +52,7 @@ public class TitleBar extends RelativeLayout {
             }
 
             @Override // android.animation.Animator.AnimatorListener
-            public void onAnimationEnd(Animator animator) {
+            public void onAnimationEnd(Animator animator) throws Resources.NotFoundException {
                 TitleBar.this.onScrollChanged();
             }
 
@@ -80,7 +85,7 @@ public class TitleBar extends RelativeLayout {
     }
 
     @Override // android.view.View
-    protected void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) throws Resources.NotFoundException {
         super.onConfigurationChanged(configuration);
         setFixedTitleBar();
     }
@@ -90,9 +95,9 @@ public class TitleBar extends RelativeLayout {
         super.onMeasure(i, i2);
         if (this.mIsFixedTitleBar) {
             this.mBaseUi.setContentViewMarginTop(-(getMeasuredHeight() - calculateEmbeddedMeasuredHeight()));
-            return;
+        } else {
+            this.mBaseUi.setContentViewMarginTop(0);
         }
-        this.mBaseUi.setContentViewMarginTop(0);
     }
 
     @Override // android.view.ViewGroup, android.view.View
@@ -105,7 +110,7 @@ public class TitleBar extends RelativeLayout {
         return true;
     }
 
-    private void setFixedTitleBar() {
+    private void setFixedTitleBar() throws Resources.NotFoundException {
         ViewGroup viewGroup = (ViewGroup) getParent();
         if (!this.mIsFixedTitleBar || viewGroup == null) {
             this.mIsFixedTitleBar = true;
@@ -117,10 +122,10 @@ public class TitleBar extends RelativeLayout {
             }
             if (this.mIsFixedTitleBar) {
                 this.mBaseUi.addFixedTitleBar(this);
-                return;
+            } else {
+                this.mContentView.addView(this, makeLayoutParams());
+                this.mBaseUi.setContentViewMarginTop(0);
             }
-            this.mContentView.addView(this, makeLayoutParams());
-            this.mBaseUi.setContentViewMarginTop(0);
         }
     }
 
@@ -132,19 +137,17 @@ public class TitleBar extends RelativeLayout {
         return this.mUiController;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setSkipTitleBarAnimations(boolean z) {
+    void setSkipTitleBarAnimations(boolean z) {
         this.mSkipTitleBarAnimations = z;
     }
 
-    void setupTitleBarAnimator(Animator animator) {
+    void setupTitleBarAnimator(Animator animator) throws Resources.NotFoundException {
         int integer = this.mContext.getResources().getInteger(R.integer.titlebar_animation_duration);
         animator.setInterpolator(new DecelerateInterpolator(2.5f));
         animator.setDuration(integer);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void show() {
+    void show() throws Resources.NotFoundException {
         cancelTitleBarAnimation(false);
         setLayerType(2, null);
         if (this.mSkipTitleBarAnimations) {
@@ -162,8 +165,7 @@ public class TitleBar extends RelativeLayout {
         this.mShowing = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void hide() {
+    void hide() throws Resources.NotFoundException {
         if (this.mIsFixedTitleBar) {
             return;
         }
@@ -181,19 +183,40 @@ public class TitleBar extends RelativeLayout {
         this.mShowing = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isShowing() {
+    boolean isShowing() {
         return this.mShowing;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void cancelTitleBarAnimation(boolean z) {
+    void cancelTitleBarAnimation(boolean z) {
         if (this.mTitleBarAnimator != null) {
             this.mTitleBarAnimator.cancel();
             this.mTitleBarAnimator = null;
         }
         if (z) {
             setTranslationY(0.0f);
+        }
+    }
+
+    /* renamed from: com.android.browser.TitleBar$1 */
+    class AnonymousClass1 implements Animator.AnimatorListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.animation.Animator.AnimatorListener
+        public void onAnimationStart(Animator animator) {
+        }
+
+        @Override // android.animation.Animator.AnimatorListener
+        public void onAnimationRepeat(Animator animator) {
+        }
+
+        @Override // android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) throws Resources.NotFoundException {
+            TitleBar.this.onScrollChanged();
+        }
+
+        @Override // android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
         }
     }
 
@@ -206,7 +229,7 @@ public class TitleBar extends RelativeLayout {
         return 0;
     }
 
-    public void setProgress(int i) {
+    public void setProgress(int i) throws Resources.NotFoundException {
         if (i >= 100) {
             this.mProgress.setProgress(10000);
             this.mProgress.setVisibility(8);
@@ -256,8 +279,9 @@ public class TitleBar extends RelativeLayout {
         if (this.mAutoLogin == null) {
             if (tab.getDeviceAccountLogin() == null) {
                 return;
+            } else {
+                inflateAutoLoginBar();
             }
-            inflateAutoLoginBar();
         }
         this.mAutoLogin.updateAutoLogin(tab, z);
     }
@@ -275,13 +299,16 @@ public class TitleBar extends RelativeLayout {
         }
     }
 
-    public void hideAutoLogin(boolean z) {
+    public void hideAutoLogin(boolean z) throws Resources.NotFoundException {
         if (this.mUseQuickControls) {
             this.mAutoLogin.setVisibility(8);
             this.mBaseUi.refreshWebView();
         } else if (z) {
-            Animation loadAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.autologin_exit);
-            loadAnimation.setAnimationListener(new Animation.AnimationListener() { // from class: com.android.browser.TitleBar.2
+            Animation animationLoadAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.autologin_exit);
+            animationLoadAnimation.setAnimationListener(new Animation.AnimationListener() { // from class: com.android.browser.TitleBar.2
+                AnonymousClass2() {
+                }
+
                 @Override // android.view.animation.Animation.AnimationListener
                 public void onAnimationEnd(Animation animation) {
                     TitleBar.this.mAutoLogin.setVisibility(8);
@@ -296,10 +323,30 @@ public class TitleBar extends RelativeLayout {
                 public void onAnimationRepeat(Animation animation) {
                 }
             });
-            this.mAutoLogin.startAnimation(loadAnimation);
+            this.mAutoLogin.startAnimation(animationLoadAnimation);
         } else if (this.mAutoLogin.getAnimation() == null) {
             this.mAutoLogin.setVisibility(8);
             this.mBaseUi.refreshWebView();
+        }
+    }
+
+    /* renamed from: com.android.browser.TitleBar$2 */
+    class AnonymousClass2 implements Animation.AnimationListener {
+        AnonymousClass2() {
+        }
+
+        @Override // android.view.animation.Animation.AnimationListener
+        public void onAnimationEnd(Animation animation) {
+            TitleBar.this.mAutoLogin.setVisibility(8);
+            TitleBar.this.mBaseUi.refreshWebView();
+        }
+
+        @Override // android.view.animation.Animation.AnimationListener
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override // android.view.animation.Animation.AnimationListener
+        public void onAnimationRepeat(Animation animation) {
         }
     }
 
@@ -356,7 +403,7 @@ public class TitleBar extends RelativeLayout {
         this.mNavBar.setVisibility(0);
     }
 
-    public void onScrollChanged() {
+    public void onScrollChanged() throws Resources.NotFoundException {
         if (!this.mShowing && !this.mIsFixedTitleBar) {
             int visibleTitleHeight = getVisibleTitleHeight() - getEmbeddedHeight();
             setTranslationY(visibleTitleHeight);
@@ -369,7 +416,7 @@ public class TitleBar extends RelativeLayout {
         }
     }
 
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         setFixedTitleBar();
     }
 }

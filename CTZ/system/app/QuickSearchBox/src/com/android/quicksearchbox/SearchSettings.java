@@ -1,4 +1,5 @@
 package com.android.quicksearchbox;
+
 /* loaded from: classes.dex */
 public interface SearchSettings {
     String getSearchBaseDomain();

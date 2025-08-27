@@ -22,34 +22,40 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class EventBus extends BroadcastReceiver {
     private static volatile EventBus sDefaultBus;
     private Handler mHandler;
-    private static final Comparator<EventHandler> EVENT_HANDLER_COMPARATOR = new Comparator<EventHandler>() { // from class: com.android.systemui.recents.events.EventBus.1
+    private static final Comparator<EventBus2> EVENT_HANDLER_COMPARATOR = new Comparator<EventBus2>() { // from class: com.android.systemui.recents.events.EventBus.1
+        AnonymousClass1() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
-        public int compare(EventHandler eventHandler, EventHandler eventHandler2) {
-            if (eventHandler.priority != eventHandler2.priority) {
-                return eventHandler2.priority - eventHandler.priority;
+        public int compare(EventBus2 eventBus2, EventBus2 eventBus22) {
+            if (eventBus2.priority != eventBus22.priority) {
+                return eventBus22.priority - eventBus2.priority;
             }
-            return Long.compare(eventHandler2.subscriber.registrationTime, eventHandler.subscriber.registrationTime);
+            return Long.compare(eventBus22.subscriber.registrationTime, eventBus2.subscriber.registrationTime);
         }
     };
     private static final Object sLock = new Object();
-    private HashMap<Class<? extends Event>, ArrayList<EventHandler>> mEventTypeMap = new HashMap<>();
-    private HashMap<Class<? extends Object>, ArrayList<EventHandlerMethod>> mSubscriberTypeMap = new HashMap<>();
+    private HashMap<Class<? extends Event>, ArrayList<EventBus2>> mEventTypeMap = new HashMap<>();
+    private HashMap<Class<? extends Object>, ArrayList<EventBus3>> mSubscriberTypeMap = new HashMap<>();
     private HashMap<String, Class<? extends InterprocessEvent>> mInterprocessEventNameMap = new HashMap<>();
-    private ArrayList<Subscriber> mSubscribers = new ArrayList<>();
+    private ArrayList<EventBus4> mSubscribers = new ArrayList<>();
 
-    /* loaded from: classes.dex */
     public static class InterprocessEvent extends Event {
     }
 
-    /* loaded from: classes.dex */
     public static class Event implements Cloneable {
         boolean cancelled;
         boolean requiresPost;
         boolean trace;
+
+        protected Event() {
+        }
 
         void onPreDispatch() {
         }
@@ -64,9 +70,11 @@ public class EventBus extends BroadcastReceiver {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AnimatedEvent extends Event {
         private final ReferenceCountedTrigger mTrigger = new ReferenceCountedTrigger();
+
+        protected AnimatedEvent() {
+        }
 
         public ReferenceCountedTrigger getAnimationTrigger() {
             return this.mTrigger;
@@ -92,9 +100,11 @@ public class EventBus extends BroadcastReceiver {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ReusableEvent extends Event {
         private int mDispatchCount;
+
+        protected ReusableEvent() {
+        }
 
         @Override // com.android.systemui.recents.events.EventBus.Event
         void onPostDispatch() {
@@ -105,6 +115,21 @@ public class EventBus extends BroadcastReceiver {
         @Override // com.android.systemui.recents.events.EventBus.Event
         protected Object clone() throws CloneNotSupportedException {
             throw new CloneNotSupportedException();
+        }
+    }
+
+    /* renamed from: com.android.systemui.recents.events.EventBus$1 */
+    class AnonymousClass1 implements Comparator<EventBus2> {
+        AnonymousClass1() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
+        @Override // java.util.Comparator
+        public int compare(EventBus2 eventBus2, EventBus2 eventBus22) {
+            if (eventBus2.priority != eventBus22.priority) {
+                return eventBus22.priority - eventBus2.priority;
+            }
+            return Long.compare(eventBus22.subscriber.registrationTime, eventBus2.subscriber.registrationTime);
         }
     }
 
@@ -123,11 +148,11 @@ public class EventBus extends BroadcastReceiver {
         return sDefaultBus;
     }
 
-    public void register(Object obj) {
+    public void register(Object obj) throws NoSuchMethodException, SecurityException {
         registerSubscriber(obj, 1, null);
     }
 
-    public void register(Object obj, int i) {
+    public void register(Object obj, int i) throws NoSuchMethodException, SecurityException {
         registerSubscriber(obj, i, null);
     }
 
@@ -138,11 +163,11 @@ public class EventBus extends BroadcastReceiver {
         if (!findRegisteredSubscriber(obj, true)) {
             return;
         }
-        ArrayList<EventHandlerMethod> arrayList = this.mSubscriberTypeMap.get(obj.getClass());
+        ArrayList<EventBus3> arrayList = this.mSubscriberTypeMap.get(obj.getClass());
         if (arrayList != null) {
-            Iterator<EventHandlerMethod> it = arrayList.iterator();
+            Iterator<EventBus3> it = arrayList.iterator();
             while (it.hasNext()) {
-                ArrayList<EventHandler> arrayList2 = this.mEventTypeMap.get(it.next().eventType);
+                ArrayList<EventBus2> arrayList2 = this.mEventTypeMap.get(it.next().eventType);
                 for (int size = arrayList2.size() - 1; size >= 0; size--) {
                     if (arrayList2.get(size).subscriber.getReference() == obj) {
                         arrayList2.remove(size);
@@ -189,7 +214,6 @@ public class EventBus extends BroadcastReceiver {
     }
 
     public String dumpInternal(String str) {
-        EventHandler next;
         String str2 = str + "  ";
         String str3 = str2 + "  ";
         StringBuilder sb = new StringBuilder();
@@ -198,14 +222,19 @@ public class EventBus extends BroadcastReceiver {
         sb.append("\n");
         ArrayList arrayList = new ArrayList(this.mSubscriberTypeMap.keySet());
         Collections.sort(arrayList, new Comparator<Class<?>>() { // from class: com.android.systemui.recents.events.EventBus.2
+            AnonymousClass2() {
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(Class<?> cls, Class<?> cls2) {
                 return cls.getSimpleName().compareTo(cls2.getSimpleName());
             }
         });
         for (int i = 0; i < arrayList.size(); i++) {
+            Class cls = (Class) arrayList.get(i);
             sb.append(str2);
-            sb.append(((Class) arrayList.get(i)).getSimpleName());
+            sb.append(cls.getSimpleName());
             sb.append("\n");
         }
         sb.append(str);
@@ -213,20 +242,25 @@ public class EventBus extends BroadcastReceiver {
         sb.append("\n");
         ArrayList arrayList2 = new ArrayList(this.mEventTypeMap.keySet());
         Collections.sort(arrayList2, new Comparator<Class<?>>() { // from class: com.android.systemui.recents.events.EventBus.3
+            AnonymousClass3() {
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
-            public int compare(Class<?> cls, Class<?> cls2) {
-                return cls.getSimpleName().compareTo(cls2.getSimpleName());
+            public int compare(Class<?> cls2, Class<?> cls3) {
+                return cls2.getSimpleName().compareTo(cls3.getSimpleName());
             }
         });
         for (int i2 = 0; i2 < arrayList2.size(); i2++) {
-            Class cls = (Class) arrayList2.get(i2);
+            Class cls2 = (Class) arrayList2.get(i2);
             sb.append(str2);
-            sb.append(cls.getSimpleName());
+            sb.append(cls2.getSimpleName());
             sb.append(" -> ");
             sb.append("\n");
-            Iterator<EventHandler> it = this.mEventTypeMap.get(cls).iterator();
+            Iterator<EventBus2> it = this.mEventTypeMap.get(cls2).iterator();
             while (it.hasNext()) {
-                Object reference = it.next().subscriber.getReference();
+                EventBus2 next = it.next();
+                Object reference = next.subscriber.getReference();
                 if (reference != null) {
                     String hexString = Integer.toHexString(System.identityHashCode(reference));
                     sb.append(str3);
@@ -239,39 +273,65 @@ public class EventBus extends BroadcastReceiver {
         return sb.toString();
     }
 
+    /* renamed from: com.android.systemui.recents.events.EventBus$2 */
+    class AnonymousClass2 implements Comparator<Class<?>> {
+        AnonymousClass2() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
+        @Override // java.util.Comparator
+        public int compare(Class<?> cls, Class<?> cls2) {
+            return cls.getSimpleName().compareTo(cls2.getSimpleName());
+        }
+    }
+
+    /* renamed from: com.android.systemui.recents.events.EventBus$3 */
+    class AnonymousClass3 implements Comparator<Class<?>> {
+        AnonymousClass3() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
+        @Override // java.util.Comparator
+        public int compare(Class<?> cls2, Class<?> cls3) {
+            return cls2.getSimpleName().compareTo(cls3.getSimpleName());
+        }
+    }
+
+    /* JADX DEBUG: Multi-variable search result rejected for r10v1, resolved type: java.util.HashMap<java.lang.String, java.lang.Class<? extends com.android.systemui.recents.events.EventBus$InterprocessEvent>> */
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: java.util.HashMap<java.lang.Class<? extends java.lang.Object>, java.util.ArrayList<com.android.systemui.recents.events.EventHandlerMethod>> */
+    /* JADX DEBUG: Multi-variable search result rejected for r9v3, resolved type: java.util.HashMap<java.lang.Class<? extends com.android.systemui.recents.events.EventBus$Event>, java.util.ArrayList<com.android.systemui.recents.events.EventHandler>> */
     /* JADX WARN: Multi-variable type inference failed */
-    private void registerSubscriber(Object obj, int i, MutableBoolean mutableBoolean) {
-        Method[] declaredMethods;
+    private void registerSubscriber(Object obj, int i, MutableBoolean mutableBoolean) throws NoSuchMethodException, SecurityException {
         if (Thread.currentThread().getId() != this.mHandler.getLooper().getThread().getId()) {
             throw new RuntimeException("Can not register() a subscriber from a non-main thread.");
         }
         if (findRegisteredSubscriber(obj, false)) {
             return;
         }
-        Subscriber subscriber = new Subscriber(obj, SystemClock.uptimeMillis());
+        EventBus4 eventBus4 = new EventBus4(obj, SystemClock.uptimeMillis());
         Class<?> cls = obj.getClass();
-        ArrayList<EventHandlerMethod> arrayList = this.mSubscriberTypeMap.get(cls);
+        ArrayList<EventBus3> arrayList = this.mSubscriberTypeMap.get(cls);
         if (arrayList != null) {
-            Iterator<EventHandlerMethod> it = arrayList.iterator();
+            Iterator<EventBus3> it = arrayList.iterator();
             while (it.hasNext()) {
-                EventHandlerMethod next = it.next();
-                ArrayList<EventHandler> arrayList2 = this.mEventTypeMap.get(next.eventType);
-                arrayList2.add(new EventHandler(subscriber, next, i));
+                EventBus3 next = it.next();
+                ArrayList<EventBus2> arrayList2 = this.mEventTypeMap.get(next.eventType);
+                arrayList2.add(new EventBus2(eventBus4, next, i));
                 sortEventHandlersByPriority(arrayList2);
             }
-            this.mSubscribers.add(subscriber);
+            this.mSubscribers.add(eventBus4);
             return;
         }
         ArrayList arrayList3 = new ArrayList();
         this.mSubscriberTypeMap.put(cls, arrayList3);
-        this.mSubscribers.add(subscriber);
+        this.mSubscribers.add(eventBus4);
         MutableBoolean mutableBoolean2 = new MutableBoolean(false);
         for (Method method : cls.getDeclaredMethods()) {
             Class<?>[] parameterTypes = method.getParameterTypes();
             mutableBoolean2.value = false;
             if (isValidEventBusHandlerMethod(method, parameterTypes, mutableBoolean2)) {
                 Class<?> cls2 = parameterTypes[0];
-                ArrayList<EventHandler> arrayList4 = this.mEventTypeMap.get(cls2);
+                ArrayList<EventBus2> arrayList4 = this.mEventTypeMap.get(cls2);
                 if (arrayList4 == null) {
                     arrayList4 = new ArrayList<>();
                     this.mEventTypeMap.put(cls2, arrayList4);
@@ -287,16 +347,16 @@ public class EventBus extends BroadcastReceiver {
                         throw new RuntimeException("Expected InterprocessEvent to have a Bundle constructor");
                     }
                 }
-                EventHandlerMethod eventHandlerMethod = new EventHandlerMethod(method, cls2);
-                arrayList4.add(new EventHandler(subscriber, eventHandlerMethod, i));
-                arrayList3.add(eventHandlerMethod);
+                EventBus3 eventBus3 = new EventBus3(method, cls2);
+                arrayList4.add(new EventBus2(eventBus4, eventBus3, i));
+                arrayList3.add(eventBus3);
                 sortEventHandlersByPriority(arrayList4);
             }
         }
     }
 
-    private void queueEvent(final Event event) {
-        ArrayList<EventHandler> arrayList = this.mEventTypeMap.get(event.getClass());
+    private void queueEvent(Event event) {
+        ArrayList<EventBus2> arrayList = this.mEventTypeMap.get(event.getClass());
         if (arrayList == null) {
             event.onPreDispatch();
             event.onPostDispatch();
@@ -307,35 +367,78 @@ public class EventBus extends BroadcastReceiver {
         int size = arrayList2.size();
         boolean z = false;
         for (int i = 0; i < size; i++) {
-            final EventHandler eventHandler = (EventHandler) arrayList2.get(i);
-            if (eventHandler.subscriber.getReference() != null) {
+            EventBus2 eventBus2 = (EventBus2) arrayList2.get(i);
+            if (eventBus2.subscriber.getReference() != null) {
                 if (event.requiresPost) {
                     this.mHandler.post(new Runnable() { // from class: com.android.systemui.recents.events.EventBus.4
+                        final /* synthetic */ Event val$event;
+                        final /* synthetic */ EventBus2 val$eventHandler;
+
+                        AnonymousClass4(EventBus2 eventBus22, Event event2) {
+                            eventBus2 = eventBus22;
+                            event = event2;
+                        }
+
                         @Override // java.lang.Runnable
                         public void run() {
-                            EventBus.this.processEvent(eventHandler, event);
+                            EventBus.this.processEvent(eventBus2, event);
                         }
                     });
                     z = true;
                 } else {
-                    processEvent(eventHandler, event);
+                    processEvent(eventBus22, event2);
                 }
             }
         }
         if (z) {
             this.mHandler.post(new Runnable() { // from class: com.android.systemui.recents.events.EventBus.5
+                final /* synthetic */ Event val$event;
+
+                AnonymousClass5(Event event2) {
+                    event = event2;
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     event.onPostDispatch();
                 }
             });
         } else {
+            event2.onPostDispatch();
+        }
+    }
+
+    /* renamed from: com.android.systemui.recents.events.EventBus$4 */
+    class AnonymousClass4 implements Runnable {
+        final /* synthetic */ Event val$event;
+        final /* synthetic */ EventBus2 val$eventHandler;
+
+        AnonymousClass4(EventBus2 eventBus22, Event event2) {
+            eventBus2 = eventBus22;
+            event = event2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            EventBus.this.processEvent(eventBus2, event);
+        }
+    }
+
+    /* renamed from: com.android.systemui.recents.events.EventBus$5 */
+    class AnonymousClass5 implements Runnable {
+        final /* synthetic */ Event val$event;
+
+        AnonymousClass5(Event event2) {
+            event = event2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
             event.onPostDispatch();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void processEvent(EventHandler eventHandler, Event event) {
+    private void processEvent(EventBus2 eventBus2, Event event) {
         if (event.cancelled) {
             if (event.trace) {
                 logWithPid("Event dispatch cancelled");
@@ -345,11 +448,11 @@ public class EventBus extends BroadcastReceiver {
         }
         try {
             if (event.trace) {
-                logWithPid(" -> " + eventHandler.toString());
+                logWithPid(" -> " + eventBus2.toString());
             }
-            Object reference = eventHandler.subscriber.getReference();
+            Object reference = eventBus2.subscriber.getReference();
             if (reference != null) {
-                eventHandler.method.invoke(reference, event);
+                eventBus2.method.invoke(reference, event);
             } else {
                 Log.e("EventBus", "Failed to deliver event to null subscriber");
             }
@@ -378,7 +481,8 @@ public class EventBus extends BroadcastReceiver {
             if (InterprocessEvent.class.isAssignableFrom(clsArr[0]) && method.getName().startsWith("onInterprocessBusEvent")) {
                 mutableBoolean.value = true;
                 return true;
-            } else if (Event.class.isAssignableFrom(clsArr[0]) && method.getName().startsWith("onBusEvent")) {
+            }
+            if (Event.class.isAssignableFrom(clsArr[0]) && method.getName().startsWith("onBusEvent")) {
                 mutableBoolean.value = false;
                 return true;
             }
@@ -386,7 +490,7 @@ public class EventBus extends BroadcastReceiver {
         return false;
     }
 
-    private void sortEventHandlersByPriority(List<EventHandler> list) {
+    private void sortEventHandlersByPriority(List<EventBus2> list) {
         Collections.sort(list, EVENT_HANDLER_COMPARATOR);
     }
 

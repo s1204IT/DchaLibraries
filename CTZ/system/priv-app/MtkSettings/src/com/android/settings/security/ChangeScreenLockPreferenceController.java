@@ -20,6 +20,7 @@ import com.android.settings.widget.GearPreference;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class ChangeScreenLockPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, GearPreference.OnGearClickListener {
     protected final DevicePolicyManager mDPM;
@@ -91,8 +92,7 @@ public class ChangeScreenLockPreferenceController extends AbstractPreferenceCont
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateSummary(Preference preference, int i) {
+    protected void updateSummary(Preference preference, int i) {
         if (!this.mLockPatternUtils.isSecure(i)) {
             if (i == this.mProfileChallengeUserId || this.mLockPatternUtils.isLockScreenDisabled(i)) {
                 preference.setSummary(R.string.unlock_set_unlock_mode_off);
@@ -112,12 +112,11 @@ public class ChangeScreenLockPreferenceController extends AbstractPreferenceCont
         this.mPreference.setEnabled(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void disableIfPasswordQualityManaged(int i) {
-        RestrictedLockUtils.EnforcedAdmin checkIfPasswordQualityIsSet = RestrictedLockUtils.checkIfPasswordQualityIsSet(this.mContext, i);
+    void disableIfPasswordQualityManaged(int i) {
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfPasswordQualityIsSet = RestrictedLockUtils.checkIfPasswordQualityIsSet(this.mContext, i);
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) this.mContext.getSystemService("device_policy");
-        if (checkIfPasswordQualityIsSet != null && devicePolicyManager.getPasswordQuality(checkIfPasswordQualityIsSet.component, i) == 524288) {
-            this.mPreference.setDisabledByAdmin(checkIfPasswordQualityIsSet);
+        if (enforcedAdminCheckIfPasswordQualityIsSet != null && devicePolicyManager.getPasswordQuality(enforcedAdminCheckIfPasswordQualityIsSet.component, i) == 524288) {
+            this.mPreference.setDisabledByAdmin(enforcedAdminCheckIfPasswordQualityIsSet);
         }
     }
 }

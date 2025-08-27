@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.android.setupwizardlib.template.RecyclerMixin;
 import com.android.setupwizardlib.template.RecyclerViewScrollHandlingDelegate;
 import com.android.setupwizardlib.template.RequireScrollMixin;
+
 /* loaded from: classes.dex */
 public class SetupWizardRecyclerLayout extends SetupWizardLayout {
     protected RecyclerMixin mRecyclerMixin;
@@ -58,18 +59,16 @@ public class SetupWizardRecyclerLayout extends SetupWizardLayout {
         return this.mRecyclerMixin.getRecyclerView();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.SetupWizardLayout, com.android.setupwizardlib.TemplateLayout
-    public ViewGroup findContainer(int i) {
+    protected ViewGroup findContainer(int i) {
         if (i == 0) {
             i = R.id.suw_recycler_view;
         }
         return super.findContainer(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.SetupWizardLayout, com.android.setupwizardlib.TemplateLayout
-    public View onInflateTemplate(LayoutInflater layoutInflater, int i) {
+    protected View onInflateTemplate(LayoutInflater layoutInflater, int i) {
         if (i == 0) {
             i = R.layout.suw_recycler_template;
         }
@@ -78,9 +77,9 @@ public class SetupWizardRecyclerLayout extends SetupWizardLayout {
 
     @Override // com.android.setupwizardlib.TemplateLayout
     protected void onTemplateInflated() {
-        View findViewById = findViewById(R.id.suw_recycler_view);
-        if (findViewById instanceof RecyclerView) {
-            this.mRecyclerMixin = new RecyclerMixin(this, (RecyclerView) findViewById);
+        View viewFindViewById = findViewById(R.id.suw_recycler_view);
+        if (viewFindViewById instanceof RecyclerView) {
+            this.mRecyclerMixin = new RecyclerMixin(this, (RecyclerView) viewFindViewById);
             return;
         }
         throw new IllegalStateException("SetupWizardRecyclerLayout should use a template with recycler view");

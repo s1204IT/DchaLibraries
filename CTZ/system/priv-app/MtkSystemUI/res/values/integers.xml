@@ -16,7 +16,7 @@
     <integer name="car_user_switcher_anim_cascade_delay_ms">27</integer>
     <integer name="carrier_network_change_anim_time">3000</integer>
     <integer name="column_card_default_column_span">4</integer>
-    <integer name="config_activityDefaultDur">@android:integer/config_activeTaskDurationHours</integer>
+    <integer name="config_activityDefaultDur">@android:integer/button_pressed_animation_delay</integer>
     <integer name="config_chargingFastThreshold">7500000</integer>
     <integer name="config_chargingSlowlyThreshold">5000000</integer>
     <integer name="config_maxNotificationIcons">5</integer>

@@ -23,6 +23,7 @@ import com.android.keyguard.ViewMediatorCallback;
 import com.android.systemui.R;
 import com.mediatek.common.ppl.IPplManager;
 import vendor.mediatek.hardware.pplagent.V1_0.IPplAgent;
+
 /* loaded from: classes.dex */
 public class AntiTheftManager {
     public static final String ANTITHEFT_NONEED_PRINT_TEXT = "AntiTheft Noneed Print Text";
@@ -45,8 +46,12 @@ public class AntiTheftManager {
     private static boolean mAntiTheftAutoTestNotShowUI = DEBUG;
     private final int MSG_ARG_LOCK = 0;
     private final int MSG_ARG_UNLOCK = 1;
+
     @VisibleForTesting
     protected final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() { // from class: com.mediatek.keyguard.AntiTheft.AntiTheftManager.1
+        AnonymousClass1() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -55,16 +60,23 @@ public class AntiTheftManager {
                 Log.d(AntiTheftManager.TAG, "receive PPL_LOCK");
                 if (!KeyguardUtils.isSystemEncrypted()) {
                     AntiTheftManager.this.sendAntiTheftUpdateMsg(2, 0);
+                    return;
                 } else {
                     Log.d(AntiTheftManager.TAG, "Currently system needs to be decrypted. Not show PPL.");
+                    return;
                 }
-            } else if (AntiTheftManager.PPL_UNLOCK.equals(action)) {
+            }
+            if (AntiTheftManager.PPL_UNLOCK.equals(action)) {
                 Log.d(AntiTheftManager.TAG, "receive PPL_UNLOCK");
                 AntiTheftManager.this.sendAntiTheftUpdateMsg(2, 1);
             }
         }
     };
     private Handler mHandler = new Handler(Looper.myLooper(), null, true) { // from class: com.mediatek.keyguard.AntiTheft.AntiTheftManager.2
+        AnonymousClass2(Looper looper, Handler.Callback callback, boolean z) {
+            super(looper, callback, z);
+        }
+
         @Override // android.os.Handler
         public void handleMessage(Message message) {
             if (message.what == AntiTheftManager.MSG_ANTITHEFT_KEYGUARD_UPDATE) {
@@ -72,8 +84,12 @@ public class AntiTheftManager {
             }
         }
     };
+
     @VisibleForTesting
     protected ServiceConnection mPplServiceConnection = new ServiceConnection() { // from class: com.mediatek.keyguard.AntiTheft.AntiTheftManager.3
+        AnonymousClass3() {
+        }
+
         @Override // android.content.ServiceConnection
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             Log.i(AntiTheftManager.TAG, "onServiceConnected() -- PPL");
@@ -120,14 +136,14 @@ public class AntiTheftManager {
     }
 
     public static int getCurrentAntiTheftMode() {
-        if (isAntiTheftLocked()) {
-            for (int i = 0; i < 32; i++) {
-                int i2 = mAntiTheftLockEnabled & (1 << i);
-                if (i2 != 0) {
-                    return i2;
-                }
-            }
+        if (!isAntiTheftLocked()) {
             return 0;
+        }
+        for (int i = 0; i < 32; i++) {
+            int i2 = mAntiTheftLockEnabled & (1 << i);
+            if (i2 != 0) {
+                return i2;
+            }
         }
         return 0;
     }
@@ -143,9 +159,9 @@ public class AntiTheftManager {
     public static void setKeypadNeeded(int i, boolean z) {
         if (z) {
             mKeypadNeeded = i | mKeypadNeeded;
-            return;
+        } else {
+            mKeypadNeeded = (~i) & mKeypadNeeded;
         }
-        mKeypadNeeded = (~i) & mKeypadNeeded;
     }
 
     public static boolean isAntiTheftLocked() {
@@ -159,20 +175,20 @@ public class AntiTheftManager {
         if (z && (mAntiTheftLockEnabled & i) != 0) {
             Log.d(TAG, "isNeedUpdate() - lockMode( " + i + " ) is already enabled, no need update");
             return DEBUG;
-        } else if (!z && (mAntiTheftLockEnabled & i) == 0) {
+        }
+        if (!z && (mAntiTheftLockEnabled & i) == 0) {
             Log.d(TAG, "isNeedUpdate() - lockMode( " + i + " ) is already disabled, no need update");
             return DEBUG;
-        } else {
-            return true;
         }
+        return true;
     }
 
     private void setAntiTheftLocked(int i, boolean z) {
         if (z) {
             mAntiTheftLockEnabled = i | mAntiTheftLockEnabled;
-            return;
+        } else {
+            mAntiTheftLockEnabled = (~i) & mAntiTheftLockEnabled;
         }
-        mAntiTheftLockEnabled = (~i) & mAntiTheftLockEnabled;
     }
 
     public static boolean isDismissable() {
@@ -237,28 +253,66 @@ public class AntiTheftManager {
     }
 
     public boolean checkPassword(String str) {
-        boolean doPplCheckPassword;
+        boolean zDoPplCheckPassword;
         int currentAntiTheftMode = getCurrentAntiTheftMode();
         Log.d(TAG, "checkPassword, mode is " + getAntiTheftModeName(currentAntiTheftMode));
         if (currentAntiTheftMode == 2) {
-            doPplCheckPassword = doPplCheckPassword(str);
+            zDoPplCheckPassword = doPplCheckPassword(str);
         } else {
-            doPplCheckPassword = DEBUG;
+            zDoPplCheckPassword = DEBUG;
         }
-        Log.d(TAG, "checkPassword, unlockSuccess is " + doPplCheckPassword);
-        return doPplCheckPassword;
+        Log.d(TAG, "checkPassword, unlockSuccess is " + zDoPplCheckPassword);
+        return zDoPplCheckPassword;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void sendAntiTheftUpdateMsg(int i, int i2) {
-        Message obtainMessage = this.mHandler.obtainMessage(MSG_ANTITHEFT_KEYGUARD_UPDATE);
-        obtainMessage.arg1 = i;
-        obtainMessage.arg2 = i2;
-        obtainMessage.sendToTarget();
+    /* renamed from: com.mediatek.keyguard.AntiTheft.AntiTheftManager$1 */
+    class AnonymousClass1 extends BroadcastReceiver {
+        AnonymousClass1() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(AntiTheftManager.TAG, "handleAntiTheftViewUpdate() - action = " + action);
+            if (AntiTheftManager.PPL_LOCK.equals(action)) {
+                Log.d(AntiTheftManager.TAG, "receive PPL_LOCK");
+                if (!KeyguardUtils.isSystemEncrypted()) {
+                    AntiTheftManager.this.sendAntiTheftUpdateMsg(2, 0);
+                    return;
+                } else {
+                    Log.d(AntiTheftManager.TAG, "Currently system needs to be decrypted. Not show PPL.");
+                    return;
+                }
+            }
+            if (AntiTheftManager.PPL_UNLOCK.equals(action)) {
+                Log.d(AntiTheftManager.TAG, "receive PPL_UNLOCK");
+                AntiTheftManager.this.sendAntiTheftUpdateMsg(2, 1);
+            }
+        }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleAntiTheftViewUpdate(int i, boolean z) {
+    private void sendAntiTheftUpdateMsg(int i, int i2) {
+        Message messageObtainMessage = this.mHandler.obtainMessage(MSG_ANTITHEFT_KEYGUARD_UPDATE);
+        messageObtainMessage.arg1 = i;
+        messageObtainMessage.arg2 = i2;
+        messageObtainMessage.sendToTarget();
+    }
+
+    /* renamed from: com.mediatek.keyguard.AntiTheft.AntiTheftManager$2 */
+    class AnonymousClass2 extends Handler {
+        AnonymousClass2(Looper looper, Handler.Callback callback, boolean z) {
+            super(looper, callback, z);
+        }
+
+        @Override // android.os.Handler
+        public void handleMessage(Message message) {
+            if (message.what == AntiTheftManager.MSG_ANTITHEFT_KEYGUARD_UPDATE) {
+                AntiTheftManager.this.handleAntiTheftViewUpdate(message.arg1, message.arg2 == 0 ? true : AntiTheftManager.DEBUG);
+            }
+        }
+    }
+
+    private void handleAntiTheftViewUpdate(int i, boolean z) {
         if (isNeedUpdate(i, z)) {
             setAntiTheftLocked(i, z);
             if (z) {
@@ -324,6 +378,24 @@ public class AntiTheftManager {
         }
     }
 
+    /* renamed from: com.mediatek.keyguard.AntiTheft.AntiTheftManager$3 */
+    class AnonymousClass3 implements ServiceConnection {
+        AnonymousClass3() {
+        }
+
+        @Override // android.content.ServiceConnection
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.i(AntiTheftManager.TAG, "onServiceConnected() -- PPL");
+            IPplManager unused = AntiTheftManager.mIPplManager = IPplManager.Stub.asInterface(iBinder);
+        }
+
+        @Override // android.content.ServiceConnection
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.i(AntiTheftManager.TAG, "onServiceDisconnected()");
+            IPplManager unused = AntiTheftManager.mIPplManager = null;
+        }
+    }
+
     private void bindPplService() {
         Log.e(TAG, "binPplService() is called.");
         if (mIPplManager == null) {
@@ -343,15 +415,15 @@ public class AntiTheftManager {
     private boolean doPplCheckPassword(String str) {
         if (mIPplManager != null) {
             try {
-                boolean unlock = mIPplManager.unlock(str);
+                boolean zUnlock = mIPplManager.unlock(str);
                 try {
-                    Log.i(TAG, "doPplCheckPassword, unlockSuccess is " + unlock);
-                    if (unlock) {
+                    Log.i(TAG, "doPplCheckPassword, unlockSuccess is " + zUnlock);
+                    if (zUnlock) {
                         setAntiTheftLocked(2, DEBUG);
                     }
-                    return unlock;
+                    return zUnlock;
                 } catch (RemoteException e) {
-                    return unlock;
+                    return zUnlock;
                 }
             } catch (RemoteException e2) {
                 return DEBUG;

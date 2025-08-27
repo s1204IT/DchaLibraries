@@ -5,9 +5,9 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class DashboardTilePlaceholderPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
+class DashboardTilePlaceholderPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private int mOrder;
 
     public DashboardTilePlaceholderPreferenceController(Context context) {
@@ -17,10 +17,10 @@ public class DashboardTilePlaceholderPreferenceController extends AbstractPrefer
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
-        Preference findPreference = preferenceScreen.findPreference(getPreferenceKey());
-        if (findPreference != null) {
-            this.mOrder = findPreference.getOrder();
-            preferenceScreen.removePreference(findPreference);
+        Preference preferenceFindPreference = preferenceScreen.findPreference(getPreferenceKey());
+        if (preferenceFindPreference != null) {
+            this.mOrder = preferenceFindPreference.getOrder();
+            preferenceScreen.removePreference(preferenceFindPreference);
         }
     }
 

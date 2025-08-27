@@ -1,6 +1,7 @@
 package com.android.systemui.shared.system;
 
 import android.app.ActivityOptions;
+
 /* loaded from: classes.dex */
 public abstract class ActivityOptionsCompat {
     public static ActivityOptions makeSplitScreenOptions(boolean dockTopLeft) {

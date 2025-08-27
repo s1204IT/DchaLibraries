@@ -2,11 +2,11 @@ package com.android.launcher3.compat;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+
 @TargetApi(25)
 /* loaded from: classes.dex */
 public class UserManagerCompatVNMr1 extends UserManagerCompatVN {
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public UserManagerCompatVNMr1(Context context) {
+    UserManagerCompatVNMr1(Context context) {
         super(context);
     }
 

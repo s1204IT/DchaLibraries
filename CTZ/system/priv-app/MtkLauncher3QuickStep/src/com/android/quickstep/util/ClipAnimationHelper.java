@@ -24,6 +24,7 @@ import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
 import com.android.systemui.shared.system.TransactionCompat;
 import com.android.systemui.shared.system.WindowManagerWrapper;
 import java.util.function.BiConsumer;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public class ClipAnimationHelper {
@@ -51,8 +52,7 @@ public class ClipAnimationHelper {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$new$0(TransactionCompat transactionCompat, RemoteAnimationTargetCompat remoteAnimationTargetCompat) {
+    static /* synthetic */ void lambda$new$0(TransactionCompat transactionCompat, RemoteAnimationTargetCompat remoteAnimationTargetCompat) {
     }
 
     private void updateSourceStack(RemoteAnimationTargetCompat remoteAnimationTargetCompat) {
@@ -85,14 +85,13 @@ public class ClipAnimationHelper {
     }
 
     public RectF applyTransform(RemoteAnimationTargetSet remoteAnimationTargetSet, float f) {
-        RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr;
         this.mTmpRectF.set(this.mTargetRect);
         Utilities.scaleRectFAboutCenter(this.mTmpRectF, this.mTargetScale);
         float interpolation = this.mOffsetYInterpolator.getInterpolation(f);
         float interpolation2 = this.mInterpolator.getInterpolation(f);
-        RectF evaluate = this.mRectFEvaluator.evaluate(interpolation2, this.mSourceRect, this.mTmpRectF);
+        RectF rectFEvaluate = this.mRectFEvaluator.evaluate(interpolation2, this.mSourceRect, this.mTmpRectF);
         synchronized (this.mTargetOffset) {
-            evaluate.offset(this.mTargetOffset.x * this.mOffsetScale * interpolation2, this.mTargetOffset.y * interpolation);
+            rectFEvaluate.offset(this.mTargetOffset.x * this.mOffsetScale * interpolation2, this.mTargetOffset.y * interpolation);
         }
         this.mClipRect.left = (int) (this.mSourceWindowClipInsets.left * interpolation2);
         this.mClipRect.top = (int) (this.mSourceWindowClipInsets.top * interpolation2);
@@ -105,7 +104,7 @@ public class ClipAnimationHelper {
         }
         for (RemoteAnimationTargetCompat remoteAnimationTargetCompat : remoteAnimationTargetSet.apps) {
             if (remoteAnimationTargetCompat.activityType != 2) {
-                this.mTmpMatrix.setRectToRect(this.mSourceRect, evaluate, Matrix.ScaleToFit.FILL);
+                this.mTmpMatrix.setRectToRect(this.mSourceRect, rectFEvaluate, Matrix.ScaleToFit.FILL);
                 this.mTmpMatrix.postTranslate(remoteAnimationTargetCompat.position.x, remoteAnimationTargetCompat.position.y);
                 transactionCompat.setMatrix(remoteAnimationTargetCompat.leash, this.mTmpMatrix).setWindowCrop(remoteAnimationTargetCompat.leash, this.mClipRect);
             }
@@ -116,7 +115,7 @@ public class ClipAnimationHelper {
         }
         transactionCompat.setEarlyWakeup();
         transactionCompat.apply();
-        return evaluate;
+        return rectFEvaluate;
     }
 
     public void setTaskTransformCallback(BiConsumer<TransactionCompat, RemoteAnimationTargetCompat> biConsumer) {
@@ -137,8 +136,8 @@ public class ClipAnimationHelper {
     }
 
     public void fromTaskThumbnailView(TaskThumbnailView taskThumbnailView, RecentsView recentsView, @Nullable RemoteAnimationTargetCompat remoteAnimationTargetCompat) {
-        BaseDraggingActivity fromContext = BaseDraggingActivity.fromContext(taskThumbnailView.getContext());
-        BaseDragLayer dragLayer = fromContext.getDragLayer();
+        BaseDraggingActivity baseDraggingActivityFromContext = BaseDraggingActivity.fromContext(taskThumbnailView.getContext());
+        BaseDragLayer dragLayer = baseDraggingActivityFromContext.getDragLayer();
         int[] iArr = new int[2];
         dragLayer.getLocationOnScreen(iArr);
         this.mHomeStackBounds.set(0, 0, dragLayer.getWidth(), dragLayer.getHeight());
@@ -146,20 +145,20 @@ public class ClipAnimationHelper {
         if (remoteAnimationTargetCompat != null) {
             updateSourceStack(remoteAnimationTargetCompat);
         } else if (recentsView.shouldUseMultiWindowTaskSizeStrategy()) {
-            updateStackBoundsToMultiWindowTaskSize(fromContext);
+            updateStackBoundsToMultiWindowTaskSize(baseDraggingActivityFromContext);
         } else {
             this.mSourceStackBounds.set(this.mHomeStackBounds);
-            this.mSourceInsets.set(fromContext.getDeviceProfile().getInsets());
+            this.mSourceInsets.set(baseDraggingActivityFromContext.getDeviceProfile().getInsets());
         }
         TransformedRect transformedRect = new TransformedRect();
         dragLayer.getDescendantRectRelativeToSelf(taskThumbnailView, transformedRect.rect);
         updateTargetRect(transformedRect);
         if (remoteAnimationTargetCompat == null) {
-            float width = this.mTargetRect.width() / this.mSourceRect.width();
-            this.mSourceWindowClipInsets.left *= width;
-            this.mSourceWindowClipInsets.top *= width;
-            this.mSourceWindowClipInsets.right *= width;
-            this.mSourceWindowClipInsets.bottom *= width;
+            float fWidth = this.mTargetRect.width() / this.mSourceRect.width();
+            this.mSourceWindowClipInsets.left *= fWidth;
+            this.mSourceWindowClipInsets.top *= fWidth;
+            this.mSourceWindowClipInsets.right *= fWidth;
+            this.mSourceWindowClipInsets.bottom *= fWidth;
         }
     }
 
@@ -189,9 +188,9 @@ public class ClipAnimationHelper {
     }
 
     public void drawForProgress(TaskThumbnailView taskThumbnailView, Canvas canvas, float f) {
-        RectF evaluate = this.mRectFEvaluator.evaluate(f, this.mSourceRect, this.mTargetRect);
+        RectF rectFEvaluate = this.mRectFEvaluator.evaluate(f, this.mSourceRect, this.mTargetRect);
         canvas.translate(this.mSourceStackBounds.left - this.mHomeStackBounds.left, this.mSourceStackBounds.top - this.mHomeStackBounds.top);
-        this.mTmpMatrix.setRectToRect(this.mTargetRect, evaluate, Matrix.ScaleToFit.FILL);
+        this.mTmpMatrix.setRectToRect(this.mTargetRect, rectFEvaluate, Matrix.ScaleToFit.FILL);
         canvas.concat(this.mTmpMatrix);
         canvas.translate(this.mTargetRect.left, this.mTargetRect.top);
         float f2 = 1.0f - f;

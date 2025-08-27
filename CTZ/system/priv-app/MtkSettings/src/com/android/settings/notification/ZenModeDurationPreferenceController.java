@@ -2,11 +2,13 @@ package com.android.settings.notification;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeDurationPreferenceController extends AbstractZenModePreferenceController implements Preference.OnPreferenceClickListener, PreferenceControllerMixin {
     private FragmentManager mFragment;
@@ -33,7 +35,7 @@ public class ZenModeDurationPreferenceController extends AbstractZenModePreferen
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
-    public void updateState(Preference preference) {
+    public void updateState(Preference preference) throws Resources.NotFoundException {
         String string;
         super.updateState(preference);
         int zenDuration = getZenDuration();

@@ -20,6 +20,7 @@ import com.android.launcher3.shortcuts.DeepShortcutView;
 import com.android.launcher3.widget.WidgetsFullSheet;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class OptionsPopupView extends ArrowPopup implements View.OnClickListener, View.OnLongClickListener {
     private final ArrayMap<View, OptionItem> mItemMap;
@@ -65,11 +66,11 @@ public class OptionsPopupView extends ArrowPopup implements View.OnClickListener
 
     @Override // com.android.launcher3.util.TouchController
     public boolean onControllerInterceptTouchEvent(MotionEvent motionEvent) {
-        if (motionEvent.getAction() == 0 && !this.mLauncher.getDragLayer().isEventOverView(this, motionEvent)) {
-            close(true);
-            return true;
+        if (motionEvent.getAction() != 0 || this.mLauncher.getDragLayer().isEventOverView(this, motionEvent)) {
+            return false;
         }
-        return false;
+        close(true);
+        return true;
     }
 
     @Override // com.android.launcher3.AbstractFloatingView
@@ -121,7 +122,7 @@ public class OptionsPopupView extends ArrowPopup implements View.OnClickListener
     public static boolean onWidgetsClicked(View view) {
         Launcher launcher = Launcher.getLauncher(view.getContext());
         if (launcher.getPackageManager().isSafeMode()) {
-            Toast.makeText(launcher, (int) R.string.safemode_widget_error, 0).show();
+            Toast.makeText(launcher, R.string.safemode_widget_error, 0).show();
             return false;
         }
         WidgetsFullSheet.show(launcher, true);
@@ -137,21 +138,20 @@ public class OptionsPopupView extends ArrowPopup implements View.OnClickListener
     public static boolean startWallpaperPicker(View view) {
         Launcher launcher = Launcher.getLauncher(view.getContext());
         if (!Utilities.isWallpaperAllowed(launcher)) {
-            Toast.makeText(launcher, (int) R.string.msg_disabled_by_admin, 0).show();
+            Toast.makeText(launcher, R.string.msg_disabled_by_admin, 0).show();
             return false;
         }
-        Intent putExtra = new Intent("android.intent.action.SET_WALLPAPER").putExtra(Utilities.EXTRA_WALLPAPER_OFFSET, launcher.getWorkspace().getWallpaperOffsetForCenterPage());
-        putExtra.addFlags(32768);
+        Intent intentPutExtra = new Intent("android.intent.action.SET_WALLPAPER").putExtra(Utilities.EXTRA_WALLPAPER_OFFSET, launcher.getWorkspace().getWallpaperOffsetForCenterPage());
+        intentPutExtra.addFlags(32768);
         String string = launcher.getString(R.string.wallpaper_picker_package);
         if (!TextUtils.isEmpty(string)) {
-            putExtra.setPackage(string);
+            intentPutExtra.setPackage(string);
         } else {
-            putExtra.putExtra(BaseDraggingActivity.INTENT_EXTRA_IGNORE_LAUNCH_ANIMATION, true);
+            intentPutExtra.putExtra(BaseDraggingActivity.INTENT_EXTRA_IGNORE_LAUNCH_ANIMATION, true);
         }
-        return launcher.startActivitySafely(view, putExtra, null);
+        return launcher.startActivitySafely(view, intentPutExtra, null);
     }
 
-    /* loaded from: classes.dex */
     public static class OptionItem {
         private final View.OnLongClickListener mClickListener;
         private final int mControlTypeForLog;

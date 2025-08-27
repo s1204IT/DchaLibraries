@@ -2,6 +2,7 @@ package com.android.quickstep;
 
 import android.os.RemoteException;
 import android.util.Log;
+
 @FunctionalInterface
 /* loaded from: classes.dex */
 public interface RemoteRunnable {

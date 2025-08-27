@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.UserHandle;
 import com.android.launcher3.Utilities;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class UserManagerCompat {
     private static UserManagerCompat sInstance;
@@ -28,6 +29,9 @@ public abstract class UserManagerCompat {
     public abstract boolean isUserUnlocked(UserHandle userHandle);
 
     public abstract boolean requestQuietModeEnabled(boolean z, UserHandle userHandle);
+
+    protected UserManagerCompat() {
+    }
 
     public static UserManagerCompat getInstance(Context context) {
         UserManagerCompat userManagerCompat;

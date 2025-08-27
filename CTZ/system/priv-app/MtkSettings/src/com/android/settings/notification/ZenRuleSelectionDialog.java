@@ -26,19 +26,22 @@ import com.android.settings.utils.ZenServiceListing;
 import java.lang.ref.WeakReference;
 import java.text.Collator;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
 /* loaded from: classes.dex */
 public class ZenRuleSelectionDialog extends InstrumentedDialogFragment {
     private static final boolean DEBUG = ZenModeSettings.DEBUG;
     private static final Comparator<ZenRuleInfo> RULE_TYPE_COMPARATOR = new Comparator<ZenRuleInfo>() { // from class: com.android.settings.notification.ZenRuleSelectionDialog.3
         private final Collator mCollator = Collator.getInstance();
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ZenRuleInfo zenRuleInfo, ZenRuleInfo zenRuleInfo2) {
-            int compare = this.mCollator.compare(zenRuleInfo.packageLabel, zenRuleInfo2.packageLabel);
-            if (compare != 0) {
-                return compare;
+            int iCompare = this.mCollator.compare(zenRuleInfo.packageLabel, zenRuleInfo2.packageLabel);
+            if (iCompare != 0) {
+                return iCompare;
             }
             return this.mCollator.compare(zenRuleInfo.title, zenRuleInfo2.title);
         }
@@ -51,7 +54,7 @@ public class ZenRuleSelectionDialog extends InstrumentedDialogFragment {
     private LinearLayout mRuleContainer;
     private final ZenServiceListing.Callback mServiceListingCallback = new ZenServiceListing.Callback() { // from class: com.android.settings.notification.ZenRuleSelectionDialog.2
         @Override // com.android.settings.utils.ZenServiceListing.Callback
-        public void onServicesReloaded(Set<ServiceInfo> set) {
+        public void onServicesReloaded(Set<ServiceInfo> set) throws PackageManager.NameNotFoundException {
             if (ZenRuleSelectionDialog.DEBUG) {
                 Log.d("ZenRuleSelectionDialog", "Services reloaded: count=" + set.size());
             }
@@ -66,7 +69,6 @@ public class ZenRuleSelectionDialog extends InstrumentedDialogFragment {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface PositiveClickListener {
         void onExternalRuleSelected(ZenRuleInfo zenRuleInfo, Fragment fragment);
 
@@ -90,16 +92,16 @@ public class ZenRuleSelectionDialog extends InstrumentedDialogFragment {
     }
 
     @Override // android.app.DialogFragment
-    public Dialog onCreateDialog(Bundle bundle) {
-        View inflate = LayoutInflater.from(getContext()).inflate(R.layout.zen_rule_type_selection, (ViewGroup) null, false);
-        this.mRuleContainer = (LinearLayout) inflate.findViewById(R.id.rule_container);
+    public Dialog onCreateDialog(Bundle bundle) throws PackageManager.NameNotFoundException {
+        View viewInflate = LayoutInflater.from(getContext()).inflate(R.layout.zen_rule_type_selection, (ViewGroup) null, false);
+        this.mRuleContainer = (LinearLayout) viewInflate.findViewById(R.id.rule_container);
         if (mServiceListing != null) {
             bindType(defaultNewEvent());
             bindType(defaultNewSchedule());
             mServiceListing.addZenCallback(this.mServiceListingCallback);
             mServiceListing.reloadApprovedServices();
         }
-        return new AlertDialog.Builder(getContext()).setTitle(R.string.zen_mode_choose_rule_type).setView(inflate).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).create();
+        return new AlertDialog.Builder(getContext()).setTitle(R.string.zen_mode_choose_rule_type).setView(viewInflate).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).create();
     }
 
     @Override // android.app.DialogFragment, android.content.DialogInterface.OnDismissListener
@@ -110,7 +112,7 @@ public class ZenRuleSelectionDialog extends InstrumentedDialogFragment {
         }
     }
 
-    private void bindType(final ZenRuleInfo zenRuleInfo) {
+    private void bindType(final ZenRuleInfo zenRuleInfo) throws PackageManager.NameNotFoundException {
         try {
             ApplicationInfo applicationInfo = mPm.getApplicationInfo(zenRuleInfo.packageName, 0);
             LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.zen_rule_type, (ViewGroup) null, false);
@@ -171,31 +173,29 @@ public class ZenRuleSelectionDialog extends InstrumentedDialogFragment {
         return zenRuleInfo;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void bindExternalRules(Set<ZenRuleInfo> set) {
-        for (ZenRuleInfo zenRuleInfo : set) {
-            bindType(zenRuleInfo);
+    private void bindExternalRules(Set<ZenRuleInfo> set) throws PackageManager.NameNotFoundException {
+        Iterator<ZenRuleInfo> it = set.iterator();
+        while (it.hasNext()) {
+            bindType(it.next());
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class LoadIconTask extends AsyncTask<ApplicationInfo, Void, Drawable> {
+    private class LoadIconTask extends AsyncTask<ApplicationInfo, Void, Drawable> {
         private final WeakReference<ImageView> viewReference;
 
         public LoadIconTask(ImageView imageView) {
             this.viewReference = new WeakReference<>(imageView);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Drawable doInBackground(ApplicationInfo... applicationInfoArr) {
+        protected Drawable doInBackground(ApplicationInfo... applicationInfoArr) {
             return applicationInfoArr[0].loadIcon(ZenRuleSelectionDialog.mPm);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Drawable drawable) {
+        protected void onPostExecute(Drawable drawable) {
             ImageView imageView;
             if (drawable != null && (imageView = this.viewReference.get()) != null) {
                 imageView.setImageDrawable(drawable);

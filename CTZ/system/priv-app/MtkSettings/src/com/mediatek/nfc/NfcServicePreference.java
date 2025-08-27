@@ -7,6 +7,7 @@ import android.support.v7.preference.PreferenceViewHolder;
 import android.widget.CheckBox;
 import com.android.settings.R;
 import com.mediatek.nfcsettingsadapter.ServiceEntry;
+
 /* loaded from: classes.dex */
 public class NfcServicePreference extends Preference {
     private CheckBox mCheckBox;

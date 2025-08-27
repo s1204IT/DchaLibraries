@@ -8,6 +8,7 @@ import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class BootSoundPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     static final String PROPERTY_BOOT_SOUNDS = "persist.sys.bootanim.play_sound";

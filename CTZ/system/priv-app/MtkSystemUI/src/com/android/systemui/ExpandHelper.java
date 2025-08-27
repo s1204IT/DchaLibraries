@@ -14,6 +14,7 @@ import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.ExpandableView;
 import com.android.systemui.statusbar.FlingAnimationUtils;
 import com.android.systemui.statusbar.policy.ScrollAdapter;
+
 /* loaded from: classes.dex */
 public class ExpandHelper {
     private Callback mCallback;
@@ -67,7 +68,6 @@ public class ExpandHelper {
     private int mGravity = 48;
     private ObjectAnimator mScaleAnimation = ObjectAnimator.ofFloat(this.mScaler, "height", 0.0f);
 
-    /* loaded from: classes.dex */
     public interface Callback {
         boolean canChildBeExpanded(View view);
 
@@ -91,9 +91,7 @@ public class ExpandHelper {
         return this.mScaleAnimation;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ViewScaler {
+    private class ViewScaler {
         ExpandableView mView;
 
         public ViewScaler() {
@@ -133,8 +131,8 @@ public class ExpandHelper {
     void updateExpansion() {
         float currentSpan = (this.mSGD.getCurrentSpan() - this.mInitialTouchSpan) * 1.0f;
         float focusY = (this.mSGD.getFocusY() - this.mInitialTouchFocusY) * 1.0f * (this.mGravity == 80 ? -1.0f : 1.0f);
-        float abs = Math.abs(focusY) + Math.abs(currentSpan) + 1.0f;
-        this.mScaler.setHeight(clamp(((focusY * Math.abs(focusY)) / abs) + ((currentSpan * Math.abs(currentSpan)) / abs) + this.mOldHeight));
+        float fAbs = Math.abs(focusY) + Math.abs(currentSpan) + 1.0f;
+        this.mScaler.setHeight(clamp(((focusY * Math.abs(focusY)) / fAbs) + ((currentSpan * Math.abs(currentSpan)) / fAbs) + this.mOldHeight));
         this.mLastFocusY = this.mSGD.getFocusY();
         this.mLastSpanY = this.mSGD.getCurrentSpan();
     }
@@ -148,10 +146,8 @@ public class ExpandHelper {
 
     private ExpandableView findView(float f, float f2) {
         if (this.mEventSource != null) {
-            int[] iArr = new int[2];
-            this.mEventSource.getLocationOnScreen(iArr);
-            float f3 = f2 + iArr[1];
-            return this.mCallback.getChildAtRawPosition(f + iArr[0], f3);
+            this.mEventSource.getLocationOnScreen(new int[2]);
+            return this.mCallback.getChildAtRawPosition(f + r0[0], f2 + r0[1]);
         }
         return this.mCallback.getChildAtPosition(f, f2);
     }
@@ -161,15 +157,13 @@ public class ExpandHelper {
             return false;
         }
         if (this.mEventSource != null) {
-            int[] iArr = new int[2];
-            this.mEventSource.getLocationOnScreen(iArr);
-            f += iArr[0];
-            f2 += iArr[1];
+            this.mEventSource.getLocationOnScreen(new int[2]);
+            f += r1[0];
+            f2 += r1[1];
         }
-        int[] iArr2 = new int[2];
-        view.getLocationOnScreen(iArr2);
-        float f3 = f - iArr2[0];
-        float f4 = f2 - iArr2[1];
+        view.getLocationOnScreen(new int[2]);
+        float f3 = f - r1[0];
+        float f4 = f2 - r1[1];
         if (f3 <= 0.0f || f4 <= 0.0f) {
             return false;
         }
@@ -185,70 +179,66 @@ public class ExpandHelper {
     }
 
     public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
-        if (isEnabled()) {
-            trackVelocity(motionEvent);
-            int action = motionEvent.getAction();
-            this.mSGD.onTouchEvent(motionEvent);
-            int focusX = (int) this.mSGD.getFocusX();
-            float focusY = (int) this.mSGD.getFocusY();
-            this.mInitialTouchFocusY = focusY;
-            this.mInitialTouchSpan = this.mSGD.getCurrentSpan();
-            this.mLastFocusY = this.mInitialTouchFocusY;
-            this.mLastSpanY = this.mInitialTouchSpan;
-            boolean z = true;
-            if (this.mExpanding) {
-                this.mLastMotionY = motionEvent.getRawY();
-                maybeRecycleVelocityTracker(motionEvent);
-                return true;
-            } else if (action != 2 || (this.mExpansionStyle & 1) == 0) {
-                switch (action & 255) {
-                    case 0:
-                        if (this.mScrollAdapter == null || !isInside(this.mScrollAdapter.getHostView(), focusX, focusY) || !this.mScrollAdapter.isScrolledToTop()) {
-                            z = false;
-                        }
-                        this.mWatchingForPull = z;
-                        this.mResizedView = findView(focusX, focusY);
-                        if (this.mResizedView != null && !this.mCallback.canChildBeExpanded(this.mResizedView)) {
-                            this.mResizedView = null;
-                            this.mWatchingForPull = false;
-                        }
-                        this.mInitialTouchY = motionEvent.getRawY();
-                        this.mInitialTouchX = motionEvent.getRawX();
-                        break;
-                    case 1:
-                    case 3:
-                        finishExpanding(motionEvent.getActionMasked() == 3, getCurrentVelocity());
-                        clearView();
-                        break;
-                    case 2:
-                        float currentSpanX = this.mSGD.getCurrentSpanX();
-                        if (currentSpanX > this.mPullGestureMinXSpan && currentSpanX > this.mSGD.getCurrentSpanY() && !this.mExpanding) {
-                            startExpanding(this.mResizedView, 2);
-                            this.mWatchingForPull = false;
-                        }
-                        if (this.mWatchingForPull) {
-                            float rawY = motionEvent.getRawY() - this.mInitialTouchY;
-                            float rawX = motionEvent.getRawX() - this.mInitialTouchX;
-                            if (rawY > this.mTouchSlop && rawY > Math.abs(rawX)) {
-                                this.mWatchingForPull = false;
-                                if (this.mResizedView != null && !isFullyExpanded(this.mResizedView) && startExpanding(this.mResizedView, 1)) {
-                                    this.mLastMotionY = motionEvent.getRawY();
-                                    this.mInitialTouchY = motionEvent.getRawY();
-                                    this.mHasPopped = false;
-                                    break;
-                                }
-                            }
-                        }
-                        break;
-                }
-                this.mLastMotionY = motionEvent.getRawY();
-                maybeRecycleVelocityTracker(motionEvent);
-                return this.mExpanding;
-            } else {
-                return true;
-            }
+        if (!isEnabled()) {
+            return false;
         }
-        return false;
+        trackVelocity(motionEvent);
+        int action = motionEvent.getAction();
+        this.mSGD.onTouchEvent(motionEvent);
+        int focusX = (int) this.mSGD.getFocusX();
+        float focusY = (int) this.mSGD.getFocusY();
+        this.mInitialTouchFocusY = focusY;
+        this.mInitialTouchSpan = this.mSGD.getCurrentSpan();
+        this.mLastFocusY = this.mInitialTouchFocusY;
+        this.mLastSpanY = this.mInitialTouchSpan;
+        if (this.mExpanding) {
+            this.mLastMotionY = motionEvent.getRawY();
+            maybeRecycleVelocityTracker(motionEvent);
+            return true;
+        }
+        if (action == 2 && (this.mExpansionStyle & 1) != 0) {
+            return true;
+        }
+        switch (action & 255) {
+            case 0:
+                this.mWatchingForPull = this.mScrollAdapter != null && isInside(this.mScrollAdapter.getHostView(), (float) focusX, focusY) && this.mScrollAdapter.isScrolledToTop();
+                this.mResizedView = findView(focusX, focusY);
+                if (this.mResizedView != null && !this.mCallback.canChildBeExpanded(this.mResizedView)) {
+                    this.mResizedView = null;
+                    this.mWatchingForPull = false;
+                }
+                this.mInitialTouchY = motionEvent.getRawY();
+                this.mInitialTouchX = motionEvent.getRawX();
+                break;
+            case 1:
+            case 3:
+                finishExpanding(motionEvent.getActionMasked() == 3, getCurrentVelocity());
+                clearView();
+                break;
+            case 2:
+                float currentSpanX = this.mSGD.getCurrentSpanX();
+                if (currentSpanX > this.mPullGestureMinXSpan && currentSpanX > this.mSGD.getCurrentSpanY() && !this.mExpanding) {
+                    startExpanding(this.mResizedView, 2);
+                    this.mWatchingForPull = false;
+                }
+                if (this.mWatchingForPull) {
+                    float rawY = motionEvent.getRawY() - this.mInitialTouchY;
+                    float rawX = motionEvent.getRawX() - this.mInitialTouchX;
+                    if (rawY > this.mTouchSlop && rawY > Math.abs(rawX)) {
+                        this.mWatchingForPull = false;
+                        if (this.mResizedView != null && !isFullyExpanded(this.mResizedView) && startExpanding(this.mResizedView, 1)) {
+                            this.mLastMotionY = motionEvent.getRawY();
+                            this.mInitialTouchY = motionEvent.getRawY();
+                            this.mHasPopped = false;
+                            break;
+                        }
+                    }
+                }
+                break;
+        }
+        this.mLastMotionY = motionEvent.getRawY();
+        maybeRecycleVelocityTracker(motionEvent);
+        return this.mExpanding;
     }
 
     private void trackVelocity(MotionEvent motionEvent) {
@@ -260,7 +250,9 @@ public class ExpandHelper {
                 this.mVelocityTracker.clear();
             }
             this.mVelocityTracker.addMovement(motionEvent);
-        } else if (actionMasked == 2) {
+            return;
+        }
+        if (actionMasked == 2) {
             if (this.mVelocityTracker == null) {
                 this.mVelocityTracker = VelocityTracker.obtain();
             }
@@ -298,79 +290,80 @@ public class ExpandHelper {
     }
 
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        if (isEnabled() || this.mExpanding) {
-            trackVelocity(motionEvent);
-            int actionMasked = motionEvent.getActionMasked();
-            this.mSGD.onTouchEvent(motionEvent);
-            int focusX = (int) this.mSGD.getFocusX();
-            int focusY = (int) this.mSGD.getFocusY();
-            if (this.mOnlyMovements) {
-                this.mLastMotionY = motionEvent.getRawY();
-                return false;
-            }
-            switch (actionMasked) {
-                case 0:
-                    this.mWatchingForPull = this.mScrollAdapter != null && isInside(this.mScrollAdapter.getHostView(), (float) focusX, (float) focusY);
-                    this.mResizedView = findView(focusX, focusY);
-                    this.mInitialTouchX = motionEvent.getRawX();
-                    this.mInitialTouchY = motionEvent.getRawY();
-                    break;
-                case 1:
-                case 3:
-                    finishExpanding(!isEnabled() || motionEvent.getActionMasked() == 3, getCurrentVelocity());
-                    clearView();
-                    break;
-                case 2:
-                    if (this.mWatchingForPull) {
-                        float rawY = motionEvent.getRawY() - this.mInitialTouchY;
-                        float rawX = motionEvent.getRawX() - this.mInitialTouchX;
-                        if (rawY > this.mTouchSlop && rawY > Math.abs(rawX)) {
-                            this.mWatchingForPull = false;
-                            if (this.mResizedView != null && !isFullyExpanded(this.mResizedView) && startExpanding(this.mResizedView, 1)) {
-                                this.mInitialTouchY = motionEvent.getRawY();
-                                this.mLastMotionY = motionEvent.getRawY();
-                                this.mHasPopped = false;
-                            }
-                        }
-                    }
-                    if (this.mExpanding && (this.mExpansionStyle & 1) != 0) {
-                        float rawY2 = (motionEvent.getRawY() - this.mLastMotionY) + this.mCurrentHeight;
-                        float clamp = clamp(rawY2);
-                        boolean z = rawY2 > this.mNaturalHeight;
-                        if (rawY2 < this.mSmallSize) {
-                            z = true;
-                        }
-                        if (!this.mHasPopped) {
-                            if (this.mEventSource != null) {
-                                this.mEventSource.performHapticFeedback(1);
-                            }
-                            this.mHasPopped = true;
-                        }
-                        this.mScaler.setHeight(clamp);
-                        this.mLastMotionY = motionEvent.getRawY();
-                        if (!z) {
-                            this.mCallback.expansionStateChanged(true);
-                        } else {
-                            this.mCallback.expansionStateChanged(false);
-                        }
-                        return true;
-                    } else if (this.mExpanding) {
-                        updateExpansion();
-                        this.mLastMotionY = motionEvent.getRawY();
-                        return true;
-                    }
-                    break;
-                case 5:
-                case 6:
-                    this.mInitialTouchY += this.mSGD.getFocusY() - this.mLastFocusY;
-                    this.mInitialTouchSpan += this.mSGD.getCurrentSpan() - this.mLastSpanY;
-                    break;
-            }
-            this.mLastMotionY = motionEvent.getRawY();
-            maybeRecycleVelocityTracker(motionEvent);
-            return this.mResizedView != null;
+        if (!isEnabled() && !this.mExpanding) {
+            return false;
         }
-        return false;
+        trackVelocity(motionEvent);
+        int actionMasked = motionEvent.getActionMasked();
+        this.mSGD.onTouchEvent(motionEvent);
+        int focusX = (int) this.mSGD.getFocusX();
+        int focusY = (int) this.mSGD.getFocusY();
+        if (this.mOnlyMovements) {
+            this.mLastMotionY = motionEvent.getRawY();
+            return false;
+        }
+        switch (actionMasked) {
+            case 0:
+                this.mWatchingForPull = this.mScrollAdapter != null && isInside(this.mScrollAdapter.getHostView(), (float) focusX, (float) focusY);
+                this.mResizedView = findView(focusX, focusY);
+                this.mInitialTouchX = motionEvent.getRawX();
+                this.mInitialTouchY = motionEvent.getRawY();
+                break;
+            case 1:
+            case 3:
+                finishExpanding(!isEnabled() || motionEvent.getActionMasked() == 3, getCurrentVelocity());
+                clearView();
+                break;
+            case 2:
+                if (this.mWatchingForPull) {
+                    float rawY = motionEvent.getRawY() - this.mInitialTouchY;
+                    float rawX = motionEvent.getRawX() - this.mInitialTouchX;
+                    if (rawY > this.mTouchSlop && rawY > Math.abs(rawX)) {
+                        this.mWatchingForPull = false;
+                        if (this.mResizedView != null && !isFullyExpanded(this.mResizedView) && startExpanding(this.mResizedView, 1)) {
+                            this.mInitialTouchY = motionEvent.getRawY();
+                            this.mLastMotionY = motionEvent.getRawY();
+                            this.mHasPopped = false;
+                        }
+                    }
+                }
+                if (this.mExpanding && (this.mExpansionStyle & 1) != 0) {
+                    float rawY2 = (motionEvent.getRawY() - this.mLastMotionY) + this.mCurrentHeight;
+                    float fClamp = clamp(rawY2);
+                    boolean z = rawY2 > this.mNaturalHeight;
+                    if (rawY2 < this.mSmallSize) {
+                        z = true;
+                    }
+                    if (!this.mHasPopped) {
+                        if (this.mEventSource != null) {
+                            this.mEventSource.performHapticFeedback(1);
+                        }
+                        this.mHasPopped = true;
+                    }
+                    this.mScaler.setHeight(fClamp);
+                    this.mLastMotionY = motionEvent.getRawY();
+                    if (!z) {
+                        this.mCallback.expansionStateChanged(true);
+                    } else {
+                        this.mCallback.expansionStateChanged(false);
+                    }
+                    return true;
+                }
+                if (this.mExpanding) {
+                    updateExpansion();
+                    this.mLastMotionY = motionEvent.getRawY();
+                    return true;
+                }
+                break;
+            case 5:
+            case 6:
+                this.mInitialTouchY += this.mSGD.getFocusY() - this.mLastFocusY;
+                this.mInitialTouchSpan += this.mSGD.getCurrentSpan() - this.mLastSpanY;
+                break;
+        }
+        this.mLastMotionY = motionEvent.getRawY();
+        maybeRecycleVelocityTracker(motionEvent);
+        return this.mResizedView != null;
     }
 
     @VisibleForTesting
@@ -421,8 +414,7 @@ public class ExpandHelper {
                 naturalHeight = this.mSmallSize;
             }
             float f2 = naturalHeight;
-            int i = (f2 > height ? 1 : (f2 == height ? 0 : -1));
-            if (i != 0 && this.mEnabled && z2) {
+            if (f2 != height && this.mEnabled && z2) {
                 this.mScaleAnimation.setFloatValues(f2);
                 this.mScaleAnimation.setupStartValues();
                 final ExpandableView expandableView = this.mResizedView;
@@ -454,7 +446,7 @@ public class ExpandHelper {
                 this.mFlingAnimationUtils.apply(this.mScaleAnimation, height, f2, f);
                 this.mScaleAnimation.start();
             } else {
-                if (i != 0) {
+                if (f2 != height) {
                     this.mScaler.setHeight(f2);
                 }
                 this.mCallback.setUserExpandedChild(this.mResizedView, z3);

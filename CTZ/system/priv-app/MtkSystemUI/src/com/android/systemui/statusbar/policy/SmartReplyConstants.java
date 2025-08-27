@@ -9,6 +9,7 @@ import android.provider.Settings;
 import android.util.KeyValueListParser;
 import android.util.Log;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public final class SmartReplyConstants extends ContentObserver {
     private final Context mContext;

@@ -12,6 +12,7 @@ import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.bluetooth.CachedBluetoothDeviceManager;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class BluetoothDetailsHeaderController extends BluetoothDetailsController {
     private CachedBluetoothDeviceManager mDeviceManager;

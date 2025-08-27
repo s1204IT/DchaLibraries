@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 /* loaded from: classes.dex */
 public class HeadsUpManager {
     protected final Context mContext;
@@ -35,7 +36,7 @@ public class HeadsUpManager {
     protected final Handler mHandler = new Handler(Looper.getMainLooper());
     private final HashMap<String, HeadsUpEntry> mHeadsUpEntries = new HashMap<>();
 
-    public HeadsUpManager(final Context context) {
+    public HeadsUpManager(final Context context) throws Resources.NotFoundException {
         this.mContext = context;
         Resources resources = context.getResources();
         this.mMinimumDisplayTime = resources.getInteger(R.integer.heads_up_notification_minimum_time);
@@ -79,11 +80,11 @@ public class HeadsUpManager {
     }
 
     private void addHeadsUpEntry(NotificationData.Entry entry) {
-        HeadsUpEntry createHeadsUpEntry = createHeadsUpEntry();
-        createHeadsUpEntry.setEntry(entry);
-        this.mHeadsUpEntries.put(entry.key, createHeadsUpEntry);
+        HeadsUpEntry headsUpEntryCreateHeadsUpEntry = createHeadsUpEntry();
+        headsUpEntryCreateHeadsUpEntry.setEntry(entry);
+        this.mHeadsUpEntries.put(entry.key, headsUpEntryCreateHeadsUpEntry);
         entry.row.setHeadsUp(true);
-        setEntryPinned(createHeadsUpEntry, shouldHeadsUpBecomePinned(entry));
+        setEntryPinned(headsUpEntryCreateHeadsUpEntry, shouldHeadsUpBecomePinned(entry));
         Iterator<OnHeadsUpChangedListener> it = this.mListeners.iterator();
         while (it.hasNext()) {
             it.next().onHeadsUpStateChanged(entry, true);
@@ -91,8 +92,7 @@ public class HeadsUpManager {
         entry.row.sendAccessibilityEvent(2048);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean shouldHeadsUpBecomePinned(NotificationData.Entry entry) {
+    protected boolean shouldHeadsUpBecomePinned(NotificationData.Entry entry) {
         return hasFullScreenIntent(entry);
     }
 
@@ -117,8 +117,7 @@ public class HeadsUpManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void removeHeadsUpEntry(NotificationData.Entry entry) {
+    protected void removeHeadsUpEntry(NotificationData.Entry entry) {
         onHeadsUpEntryRemoved(this.mHeadsUpEntries.remove(entry.key));
     }
 
@@ -135,17 +134,17 @@ public class HeadsUpManager {
     }
 
     protected void updatePinnedMode() {
-        boolean hasPinnedNotificationInternal = hasPinnedNotificationInternal();
-        if (hasPinnedNotificationInternal == this.mHasPinnedNotification) {
+        boolean zHasPinnedNotificationInternal = hasPinnedNotificationInternal();
+        if (zHasPinnedNotificationInternal == this.mHasPinnedNotification) {
             return;
         }
-        this.mHasPinnedNotification = hasPinnedNotificationInternal;
+        this.mHasPinnedNotification = zHasPinnedNotificationInternal;
         if (this.mHasPinnedNotification) {
             MetricsLogger.count(this.mContext, "note_peek", 1);
         }
         Iterator<OnHeadsUpChangedListener> it = this.mListeners.iterator();
         while (it.hasNext()) {
-            it.next().onHeadsUpPinnedModeChanged(hasPinnedNotificationInternal);
+            it.next().onHeadsUpPinnedModeChanged(zHasPinnedNotificationInternal);
         }
     }
 
@@ -161,8 +160,9 @@ public class HeadsUpManager {
     public void releaseAllImmediately() {
         Iterator<HeadsUpEntry> it = this.mHeadsUpEntries.values().iterator();
         while (it.hasNext()) {
+            HeadsUpEntry next = it.next();
             it.remove();
-            onHeadsUpEntryRemoved(it.next());
+            onHeadsUpEntryRemoved(next);
         }
     }
 
@@ -176,19 +176,20 @@ public class HeadsUpManager {
 
     public boolean isSnoozed(String str) {
         Long l = this.mSnoozedPackages.get(snoozeKey(str, this.mUser));
-        if (l != null) {
-            if (l.longValue() > this.mClock.currentTimeMillis()) {
-                return true;
-            }
-            this.mSnoozedPackages.remove(str);
+        if (l == null) {
             return false;
         }
+        if (l.longValue() > this.mClock.currentTimeMillis()) {
+            return true;
+        }
+        this.mSnoozedPackages.remove(str);
         return false;
     }
 
     public void snooze() {
-        for (String str : this.mHeadsUpEntries.keySet()) {
-            this.mSnoozedPackages.put(snoozeKey(this.mHeadsUpEntries.get(str).entry.notification.getPackageName(), this.mUser), Long.valueOf(this.mClock.currentTimeMillis() + this.mSnoozeLengthMs));
+        Iterator<String> it = this.mHeadsUpEntries.keySet().iterator();
+        while (it.hasNext()) {
+            this.mSnoozedPackages.put(snoozeKey(this.mHeadsUpEntries.get(it.next()).entry.notification.getPackageName(), this.mUser), Long.valueOf(this.mClock.currentTimeMillis() + this.mSnoozeLengthMs));
         }
     }
 
@@ -196,8 +197,7 @@ public class HeadsUpManager {
         return i + "," + str;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public HeadsUpEntry getHeadsUpEntry(String str) {
+    protected HeadsUpEntry getHeadsUpEntry(String str) {
         return this.mHeadsUpEntries.get(str);
     }
 
@@ -209,13 +209,12 @@ public class HeadsUpManager {
         return null;
     }
 
+    /* JADX DEBUG: Type inference failed for r0v3. Raw type applied. Possible types: java.util.stream.Stream<R>, java.util.stream.Stream<com.android.systemui.statusbar.NotificationData$Entry> */
     public Stream<NotificationData.Entry> getAllEntries() {
         return this.mHeadsUpEntries.values().stream().map(new Function() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$HeadsUpManager$Q03ExeWuSMcpx0F3Hl5vkzUbslA
             @Override // java.util.function.Function
             public final Object apply(Object obj) {
-                NotificationData.Entry entry;
-                entry = ((HeadsUpManager.HeadsUpEntry) obj).entry;
-                return entry;
+                return ((HeadsUpManager.HeadsUpEntry) obj).entry;
             }
         });
     }
@@ -232,8 +231,7 @@ public class HeadsUpManager {
         return !this.mHeadsUpEntries.isEmpty();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public HeadsUpEntry getTopHeadsUpEntry() {
+    protected HeadsUpEntry getTopHeadsUpEntry() {
         HeadsUpEntry headsUpEntry = null;
         if (this.mHeadsUpEntries.isEmpty()) {
             return null;
@@ -255,8 +253,7 @@ public class HeadsUpManager {
         dumpInternal(fileDescriptor, printWriter, strArr);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void dumpInternal(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
+    protected void dumpInternal(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
         printWriter.print("  mTouchAcceptanceDelay=");
         printWriter.println(this.mTouchAcceptanceDelay);
         printWriter.print("  mSnoozeLengthMs=");
@@ -284,8 +281,9 @@ public class HeadsUpManager {
     }
 
     private boolean hasPinnedNotificationInternal() {
-        for (String str : this.mHeadsUpEntries.keySet()) {
-            if (this.mHeadsUpEntries.get(str).entry.row.isPinned()) {
+        Iterator<String> it = this.mHeadsUpEntries.keySet().iterator();
+        while (it.hasNext()) {
+            if (this.mHeadsUpEntries.get(it.next()).entry.row.isPinned()) {
                 return true;
             }
         }
@@ -293,8 +291,9 @@ public class HeadsUpManager {
     }
 
     public void unpinAll() {
-        for (String str : this.mHeadsUpEntries.keySet()) {
-            HeadsUpEntry headsUpEntry = this.mHeadsUpEntries.get(str);
+        Iterator<String> it = this.mHeadsUpEntries.keySet().iterator();
+        while (it.hasNext()) {
+            HeadsUpEntry headsUpEntry = this.mHeadsUpEntries.get(it.next());
             setEntryPinned(headsUpEntry, false);
             headsUpEntry.updateEntry(false);
         }
@@ -331,9 +330,7 @@ public class HeadsUpManager {
     public void onDensityOrFontScaleChanged() {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class HeadsUpEntry implements Comparable<HeadsUpEntry> {
+    protected class HeadsUpEntry implements Comparable<HeadsUpEntry> {
         public long earliestRemovaltime;
         public NotificationData.Entry entry;
         public boolean expanded;
@@ -341,8 +338,7 @@ public class HeadsUpManager {
         public long postTime;
         public boolean remoteInputActive;
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public HeadsUpEntry() {
+        protected HeadsUpEntry() {
         }
 
         public void setEntry(NotificationData.Entry entry) {
@@ -357,14 +353,14 @@ public class HeadsUpManager {
         }
 
         public void updateEntry(boolean z) {
-            long currentTimeMillis = HeadsUpManager.this.mClock.currentTimeMillis();
-            this.earliestRemovaltime = HeadsUpManager.this.mMinimumDisplayTime + currentTimeMillis;
+            long jCurrentTimeMillis = HeadsUpManager.this.mClock.currentTimeMillis();
+            this.earliestRemovaltime = HeadsUpManager.this.mMinimumDisplayTime + jCurrentTimeMillis;
             if (z) {
-                this.postTime = Math.max(this.postTime, currentTimeMillis);
+                this.postTime = Math.max(this.postTime, jCurrentTimeMillis);
             }
             removeAutoRemovalCallbacks();
             if (!isSticky()) {
-                HeadsUpManager.this.mHandler.postDelayed(this.mRemoveHeadsUpRunnable, Math.max((this.postTime + HeadsUpManager.this.mHeadsUpNotificationDecay) - currentTimeMillis, HeadsUpManager.this.mMinimumDisplayTime));
+                HeadsUpManager.this.mHandler.postDelayed(this.mRemoveHeadsUpRunnable, Math.max((this.postTime + HeadsUpManager.this.mHeadsUpNotificationDecay) - jCurrentTimeMillis, HeadsUpManager.this.mMinimumDisplayTime));
             }
         }
 
@@ -372,34 +368,35 @@ public class HeadsUpManager {
             return (this.entry.row.isPinned() && this.expanded) || this.remoteInputActive || HeadsUpManager.this.hasFullScreenIntent(this.entry);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // java.lang.Comparable
         public int compareTo(HeadsUpEntry headsUpEntry) {
-            boolean isPinned = this.entry.row.isPinned();
-            boolean isPinned2 = headsUpEntry.entry.row.isPinned();
-            if (!isPinned || isPinned2) {
-                if (!isPinned && isPinned2) {
-                    return 1;
-                }
-                boolean hasFullScreenIntent = HeadsUpManager.this.hasFullScreenIntent(this.entry);
-                boolean hasFullScreenIntent2 = HeadsUpManager.this.hasFullScreenIntent(headsUpEntry.entry);
-                if (hasFullScreenIntent && !hasFullScreenIntent2) {
-                    return -1;
-                }
-                if (!hasFullScreenIntent && hasFullScreenIntent2) {
-                    return 1;
-                }
-                if (this.remoteInputActive && !headsUpEntry.remoteInputActive) {
-                    return -1;
-                }
-                if ((this.remoteInputActive || !headsUpEntry.remoteInputActive) && this.postTime >= headsUpEntry.postTime) {
-                    if (this.postTime == headsUpEntry.postTime) {
-                        return this.entry.key.compareTo(headsUpEntry.entry.key);
-                    }
-                    return -1;
-                }
+            boolean zIsPinned = this.entry.row.isPinned();
+            boolean zIsPinned2 = headsUpEntry.entry.row.isPinned();
+            if (zIsPinned && !zIsPinned2) {
+                return -1;
+            }
+            if (!zIsPinned && zIsPinned2) {
                 return 1;
             }
-            return -1;
+            boolean zHasFullScreenIntent = HeadsUpManager.this.hasFullScreenIntent(this.entry);
+            boolean zHasFullScreenIntent2 = HeadsUpManager.this.hasFullScreenIntent(headsUpEntry.entry);
+            if (zHasFullScreenIntent && !zHasFullScreenIntent2) {
+                return -1;
+            }
+            if (!zHasFullScreenIntent && zHasFullScreenIntent2) {
+                return 1;
+            }
+            if (this.remoteInputActive && !headsUpEntry.remoteInputActive) {
+                return -1;
+            }
+            if ((this.remoteInputActive || !headsUpEntry.remoteInputActive) && this.postTime >= headsUpEntry.postTime) {
+                if (this.postTime == headsUpEntry.postTime) {
+                    return this.entry.key.compareTo(headsUpEntry.entry.key);
+                }
+                return -1;
+            }
+            return 1;
         }
 
         public void expanded(boolean z) {
@@ -428,7 +425,6 @@ public class HeadsUpManager {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Clock {
         public long currentTimeMillis() {
             return SystemClock.elapsedRealtime();

@@ -6,6 +6,7 @@ import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import com.mediatek.telephony.MtkTelephonyManagerEx;
+
 /* loaded from: classes.dex */
 public class CdmaUtils {
     public static boolean isSupportCdma(int i) {
@@ -27,37 +28,37 @@ public class CdmaUtils {
     }
 
     public static int getSimType(int i) {
-        int i2;
+        int iccAppFamily;
         MtkTelephonyManagerEx mtkTelephonyManagerEx = MtkTelephonyManagerEx.getDefault();
         if (mtkTelephonyManagerEx != null) {
-            i2 = mtkTelephonyManagerEx.getIccAppFamily(i);
+            iccAppFamily = mtkTelephonyManagerEx.getIccAppFamily(i);
         } else {
-            i2 = 0;
+            iccAppFamily = 0;
         }
-        Log.d("CdmaUtils", "simType=" + i2 + ", slotId=" + i);
-        return i2;
+        Log.d("CdmaUtils", "simType=" + iccAppFamily + ", slotId=" + i);
+        return iccAppFamily;
     }
 
     public static boolean isCdmaCardCompetion(Context context) {
-        int i;
+        int simCount;
         boolean z;
         boolean z2;
         if (context != null) {
-            i = TelephonyManager.from(context).getSimCount();
+            simCount = TelephonyManager.from(context).getSimCount();
         } else {
-            i = 0;
+            simCount = 0;
         }
-        if (i == 2) {
-            int i2 = 0;
+        if (simCount == 2) {
+            int i = 0;
             z = true;
             z2 = true;
             while (true) {
-                if (i2 < i) {
-                    z = z && isCdmaCard(i2);
-                    SubscriptionInfo activeSubscriptionInfoForSimSlotIndex = SubscriptionManager.from(context).getActiveSubscriptionInfoForSimSlotIndex(i2);
+                if (i < simCount) {
+                    z = z && isCdmaCard(i);
+                    SubscriptionInfo activeSubscriptionInfoForSimSlotIndex = SubscriptionManager.from(context).getActiveSubscriptionInfoForSimSlotIndex(i);
                     if (activeSubscriptionInfoForSimSlotIndex != null) {
                         z2 = z2 && MtkTelephonyManagerEx.getDefault().isInHomeNetwork(activeSubscriptionInfoForSimSlotIndex.getSubscriptionId());
-                        i2++;
+                        i++;
                     } else {
                         z2 = false;
                         break;

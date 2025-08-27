@@ -19,6 +19,7 @@ import com.android.launcher3.util.FlingBlockCheck;
 import com.android.launcher3.util.PendingAnimation;
 import com.android.launcher3.util.TouchController;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public abstract class AbstractStateChangeTouchController implements TouchController, SwipeDetector.Listener {
     protected static final long ATOMIC_DURATION = 200;
@@ -102,24 +103,23 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         return this.mDetector.onTouchEvent(motionEvent);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public float getShiftRange() {
+    protected float getShiftRange() {
         return this.mLauncher.getAllAppsController().getShiftRange();
     }
 
     private boolean reinitCurrentAnimation(boolean z, boolean z2) {
-        LauncherState launcherState;
+        LauncherState state;
         int i;
         if (this.mFromState == null) {
-            launcherState = this.mLauncher.getStateManager().getState();
+            state = this.mLauncher.getStateManager().getState();
         } else {
-            launcherState = z ? this.mToState : this.mFromState;
+            state = z ? this.mToState : this.mFromState;
         }
-        LauncherState targetState = getTargetState(launcherState, z2);
-        if ((launcherState == this.mFromState && targetState == this.mToState) || launcherState == targetState) {
+        LauncherState targetState = getTargetState(state, z2);
+        if ((state == this.mFromState && targetState == this.mToState) || state == targetState) {
             return false;
         }
-        this.mFromState = launcherState;
+        this.mFromState = state;
         this.mToState = targetState;
         this.mStartProgress = 0.0f;
         this.mPassedOverviewAtomicThreshold = false;
@@ -138,7 +138,7 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
                     AbstractStateChangeTouchController.this.cancelAtomicComponentsController();
                     if (AbstractStateChangeTouchController.this.mCurrentAnimation != null) {
                         AbstractStateChangeTouchController.this.mAtomicComponentsStartProgress = AbstractStateChangeTouchController.this.mCurrentAnimation.getProgressFraction();
-                        long shiftRange = AbstractStateChangeTouchController.this.getShiftRange() * 2.0f;
+                        long shiftRange = (long) (AbstractStateChangeTouchController.this.getShiftRange() * 2.0f);
                         AbstractStateChangeTouchController.this.mAtomicComponentsController = AnimatorPlaybackController.wrap(AbstractStateChangeTouchController.this.createAtomicAnimForState(AbstractStateChangeTouchController.this.mFromState, AbstractStateChangeTouchController.this.mToState, shiftRange), shiftRange);
                         AbstractStateChangeTouchController.this.mAtomicComponentsController.dispatchOnStart();
                     }
@@ -243,8 +243,7 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public AnimatorSet createAtomicAnimForState(LauncherState launcherState, LauncherState launcherState2, long j) {
+    private AnimatorSet createAtomicAnimForState(LauncherState launcherState, LauncherState launcherState2, long j) {
         AnimatorSetBuilder animatorSetBuilder = new AnimatorSetBuilder();
         this.mLauncher.getStateManager().prepareForAtomicAnimation(launcherState, launcherState2, animatorSetBuilder);
         LauncherStateManager.AnimationConfig animationConfig = new LauncherStateManager.AnimationConfig();
@@ -256,11 +255,12 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         return animatorSetBuilder.build();
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [389=4] */
     @Override // com.android.launcher3.touch.SwipeDetector.Listener
     public void onDragEnd(float f, boolean z) {
         LauncherState launcherState;
-        float boundToRange;
-        long calculateDuration;
+        float fBoundToRange;
+        long jCalculateDuration;
         final float f2;
         final int i = z ? 4 : 3;
         boolean z2 = z && this.mFlingBlockCheck.isBlocked();
@@ -274,40 +274,40 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
             launcherState = progressFraction > 0.5f ? this.mToState : this.mFromState;
         }
         final LauncherState launcherState4 = launcherState;
-        int blockedFlingDurationFactor = (z2 && launcherState4 == this.mFromState) ? LauncherAnimUtils.blockedFlingDurationFactor(f) : 1;
+        int iBlockedFlingDurationFactor = (z2 && launcherState4 == this.mFromState) ? LauncherAnimUtils.blockedFlingDurationFactor(f) : 1;
         if (launcherState4 != this.mToState) {
             Runnable onCancelRunnable = this.mCurrentAnimation.getOnCancelRunnable();
             this.mCurrentAnimation.setOnCancelRunnable(null);
             this.mCurrentAnimation.dispatchOnCancel();
             this.mCurrentAnimation.setOnCancelRunnable(onCancelRunnable);
             if (progressFraction <= 0.0f) {
-                boundToRange = 0.0f;
-                f2 = boundToRange;
-                calculateDuration = 0;
+                fBoundToRange = 0.0f;
+                f2 = fBoundToRange;
+                jCalculateDuration = 0;
             } else {
-                boundToRange = Utilities.boundToRange((f * 16.0f * this.mProgressMultiplier) + progressFraction, 0.0f, 1.0f);
-                calculateDuration = blockedFlingDurationFactor * SwipeDetector.calculateDuration(f, Math.min(progressFraction, 1.0f) - 0.0f);
+                fBoundToRange = Utilities.boundToRange((f * 16.0f * this.mProgressMultiplier) + progressFraction, 0.0f, 1.0f);
+                jCalculateDuration = iBlockedFlingDurationFactor * SwipeDetector.calculateDuration(f, Math.min(progressFraction, 1.0f) - 0.0f);
                 f2 = 0.0f;
             }
         } else if (progressFraction >= 1.0f) {
-            boundToRange = 1.0f;
-            f2 = boundToRange;
-            calculateDuration = 0;
+            fBoundToRange = 1.0f;
+            f2 = fBoundToRange;
+            jCalculateDuration = 0;
         } else {
-            boundToRange = Utilities.boundToRange((f * 16.0f * this.mProgressMultiplier) + progressFraction, 0.0f, 1.0f);
-            calculateDuration = SwipeDetector.calculateDuration(f, 1.0f - Math.max(progressFraction, 0.0f)) * blockedFlingDurationFactor;
+            fBoundToRange = Utilities.boundToRange((f * 16.0f * this.mProgressMultiplier) + progressFraction, 0.0f, 1.0f);
+            jCalculateDuration = SwipeDetector.calculateDuration(f, 1.0f - Math.max(progressFraction, 0.0f)) * iBlockedFlingDurationFactor;
             f2 = 1.0f;
         }
         this.mCurrentAnimation.setEndAction(new Runnable() { // from class: com.android.launcher3.touch.-$$Lambda$AbstractStateChangeTouchController$RwEISxsMUlr5U_4sLbHR6ktFaa4
             @Override // java.lang.Runnable
             public final void run() {
-                AbstractStateChangeTouchController.this.onSwipeInteractionCompleted(launcherState4, i);
+                this.f$0.onSwipeInteractionCompleted(launcherState4, i);
             }
         });
         final ValueAnimator animationPlayer = this.mCurrentAnimation.getAnimationPlayer();
-        animationPlayer.setFloatValues(boundToRange, f2);
+        animationPlayer.setFloatValues(fBoundToRange, f2);
         maybeUpdateAtomicAnim(this.mFromState, launcherState4, launcherState4 == this.mToState ? 1.0f : 0.0f);
-        updateSwipeCompleteAnimation(animationPlayer, Math.max(calculateDuration, getRemainingAtomicDuration()), launcherState4, f, z3);
+        updateSwipeCompleteAnimation(animationPlayer, Math.max(jCalculateDuration, getRemainingAtomicDuration()), launcherState4, f, z3);
         this.mCurrentAnimation.dispatchOnStart();
         if (z3 && launcherState4 == LauncherState.ALL_APPS) {
             this.mLauncher.getAppsView().addSpringFromFlingUpdateListener(animationPlayer, f);
@@ -325,8 +325,7 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startAtomicComponentsAnim(float f, long j) {
+    private void startAtomicComponentsAnim(float f, long j) {
         if (this.mAtomicComponentsController != null) {
             ValueAnimator animationPlayer = this.mAtomicComponentsController.getAnimationPlayer();
             animationPlayer.setFloatValues(this.mAtomicComponentsController.getProgressFraction(), f);
@@ -342,7 +341,7 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
     }
 
     private long getRemainingAtomicDuration() {
-        long j = 0;
+        long jMax = 0;
         if (this.mAtomicAnim == null) {
             return 0L;
         }
@@ -351,13 +350,12 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         }
         Iterator<Animator> it = this.mAtomicAnim.getChildAnimations().iterator();
         while (it.hasNext()) {
-            j = Math.max(j, it.next().getDuration());
+            jMax = Math.max(jMax, it.next().getDuration());
         }
-        return j;
+        return jMax;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateSwipeCompleteAnimation(ValueAnimator valueAnimator, long j, LauncherState launcherState, float f, boolean z) {
+    protected void updateSwipeCompleteAnimation(ValueAnimator valueAnimator, long j, LauncherState launcherState, float f, boolean z) {
         valueAnimator.setDuration(j).setInterpolator(Interpolators.scrollInterpolatorForVelocity(f));
     }
 
@@ -365,8 +363,7 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         return this.mToState.ordinal > this.mFromState.ordinal ? 1 : 2;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onSwipeInteractionCompleted(LauncherState launcherState, int i) {
+    protected void onSwipeInteractionCompleted(LauncherState launcherState, int i) {
         clearState();
         boolean z = true;
         if (this.mPendingAnimation != null) {
@@ -387,16 +384,14 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         this.mLauncher.getUserEventDispatcher().logStateChangeAction(i, getDirectionForLog(), this.mStartContainerType, this.mStartState.containerType, launcherState.containerType, this.mLauncher.getWorkspace().getCurrentPage());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void clearState() {
+    protected void clearState() {
         this.mCurrentAnimation = null;
         cancelAtomicComponentsController();
         this.mDetector.finishedScrolling();
         this.mDetector.setDetectableScrollConditions(0, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void cancelAtomicComponentsController() {
+    private void cancelAtomicComponentsController() {
         if (this.mAtomicComponentsController != null) {
             this.mAtomicComponentsController.getAnimationPlayer().cancel();
             this.mAtomicComponentsController = null;

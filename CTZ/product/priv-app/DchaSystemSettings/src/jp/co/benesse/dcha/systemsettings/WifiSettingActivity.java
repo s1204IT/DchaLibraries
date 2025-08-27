@@ -19,6 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import jp.co.benesse.dcha.dchaservice.IDchaService;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class WifiSettingActivity extends ParentSettingActivity implements View.OnClickListener {
     private ImageView mBackBtn;
@@ -81,9 +82,8 @@ public class WifiSettingActivity extends ParentSettingActivity implements View.O
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d("WiFiSettingActivity", "onCreate 0001");
         super.onCreate(bundle);
         setContentView(R.layout.act_wifi);
@@ -137,9 +137,8 @@ public class WifiSettingActivity extends ParentSettingActivity implements View.O
         Logger.d("WiFiSettingActivity", "onCreate 0004");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         Logger.d("WiFiSettingActivity", "onStart 0001");
         super.onStart();
         changeBtnClickable(true);
@@ -160,9 +159,8 @@ public class WifiSettingActivity extends ParentSettingActivity implements View.O
         Logger.d("WiFiSettingActivity", "onResume 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         Logger.d("WiFiSettingActivity", "onStop 0001");
         super.onStop();
         if (this.mIsFirstFlow) {
@@ -172,9 +170,8 @@ public class WifiSettingActivity extends ParentSettingActivity implements View.O
         Logger.d("WiFiSettingActivity", "onStop 0004");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d("WiFiSettingActivity", "onDestroy 0001");
         super.onDestroy();
         if (getSetupStatus() == 3) {
@@ -268,7 +265,7 @@ public class WifiSettingActivity extends ParentSettingActivity implements View.O
 
     private void moveNetworkSettingActivity() {
         Logger.d("WiFiSettingActivity", "moveNetworkSettingActivity 0001");
-        Intent intent = new Intent(this, NetworkSettingActivity.class);
+        Intent intent = new Intent(this, (Class<?>) NetworkSettingActivity.class);
         intent.putExtra("first_flg", this.mIsFirstFlow);
         startActivity(intent);
         overridePendingTransition(0, 0);
@@ -318,20 +315,20 @@ public class WifiSettingActivity extends ParentSettingActivity implements View.O
         Logger.d("WiFiSettingActivity", "startTimer 0002");
     }
 
-    private int getSetupStatus() {
+    private int getSetupStatus() throws RemoteException {
         Logger.d("WiFiSettingActivity", "getSetupStatus 0001");
-        int i = -1;
+        int setupStatus = -1;
         try {
             Logger.d("WiFiSettingActivity", "getSetupStatus 0002");
             if (this.mDchaService != null) {
                 Logger.d("WiFiSettingActivity", "getSetupStatus 0003");
-                i = this.mDchaService.getSetupStatus();
+                setupStatus = this.mDchaService.getSetupStatus();
             }
         } catch (RemoteException e) {
             Logger.d("WiFiSettingActivity", "getSetupStatus 0004");
             Logger.e("WiFiSettingActivity", "getSetupStatus", e);
         }
         Logger.d("WiFiSettingActivity", "getSetupStatus 0005");
-        return i;
+        return setupStatus;
     }
 }

@@ -11,6 +11,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
 import com.android.settings.applications.AppInfoWithHeader;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class PictureInPictureDetails extends AppInfoWithHeader implements Preference.OnPreferenceChangeListener {
     private SwitchPreference mSwitchPref;

@@ -5,6 +5,7 @@ import android.os.UserHandle;
 import com.android.settings.R;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedPreference;
+
 /* loaded from: classes.dex */
 public class AndroidBeamEnabler extends BaseNfcEnabler {
     private final boolean mBeamDisallowedBySystem;
@@ -27,10 +28,10 @@ public class AndroidBeamEnabler extends BaseNfcEnabler {
             case 1:
                 this.mPreference.setEnabled(false);
                 this.mPreference.setSummary(R.string.android_beam_disabled_summary);
-                return;
+                break;
             case 2:
                 this.mPreference.setEnabled(false);
-                return;
+                break;
             case 3:
                 if (this.mBeamDisallowedBySystem) {
                     this.mPreference.setDisabledByAdmin(null);
@@ -40,16 +41,15 @@ public class AndroidBeamEnabler extends BaseNfcEnabler {
                 }
                 if (this.mNfcAdapter.isNdefPushEnabled() && this.mPreference.isEnabled()) {
                     this.mPreference.setSummary(R.string.android_beam_on_summary);
-                    return;
+                    break;
                 } else {
                     this.mPreference.setSummary(R.string.android_beam_off_summary);
-                    return;
+                    break;
                 }
+                break;
             case 4:
                 this.mPreference.setEnabled(false);
-                return;
-            default:
-                return;
+                break;
         }
     }
 }

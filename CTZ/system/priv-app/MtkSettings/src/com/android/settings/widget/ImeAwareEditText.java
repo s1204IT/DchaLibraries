@@ -6,6 +6,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
 /* loaded from: classes.dex */
 public class ImeAwareEditText extends EditText {
     private boolean mHasPendingShowSoftInputRequest;
@@ -16,7 +17,7 @@ public class ImeAwareEditText extends EditText {
         this.mRunShowSoftInputIfNecessary = new Runnable() { // from class: com.android.settings.widget.-$$Lambda$ImeAwareEditText$jSRw3KSZxc80AfkP8GTCtV5_bRY
             @Override // java.lang.Runnable
             public final void run() {
-                ImeAwareEditText.this.showSoftInputIfNecessary();
+                this.f$0.showSoftInputIfNecessary();
             }
         };
     }
@@ -26,7 +27,7 @@ public class ImeAwareEditText extends EditText {
         this.mRunShowSoftInputIfNecessary = new Runnable() { // from class: com.android.settings.widget.-$$Lambda$ImeAwareEditText$jSRw3KSZxc80AfkP8GTCtV5_bRY
             @Override // java.lang.Runnable
             public final void run() {
-                ImeAwareEditText.this.showSoftInputIfNecessary();
+                this.f$0.showSoftInputIfNecessary();
             }
         };
     }
@@ -36,7 +37,7 @@ public class ImeAwareEditText extends EditText {
         this.mRunShowSoftInputIfNecessary = new Runnable() { // from class: com.android.settings.widget.-$$Lambda$ImeAwareEditText$jSRw3KSZxc80AfkP8GTCtV5_bRY
             @Override // java.lang.Runnable
             public final void run() {
-                ImeAwareEditText.this.showSoftInputIfNecessary();
+                this.f$0.showSoftInputIfNecessary();
             }
         };
     }
@@ -46,23 +47,22 @@ public class ImeAwareEditText extends EditText {
         this.mRunShowSoftInputIfNecessary = new Runnable() { // from class: com.android.settings.widget.-$$Lambda$ImeAwareEditText$jSRw3KSZxc80AfkP8GTCtV5_bRY
             @Override // java.lang.Runnable
             public final void run() {
-                ImeAwareEditText.this.showSoftInputIfNecessary();
+                this.f$0.showSoftInputIfNecessary();
             }
         };
     }
 
     @Override // android.widget.TextView, android.view.View
     public InputConnection onCreateInputConnection(EditorInfo editorInfo) {
-        InputConnection onCreateInputConnection = super.onCreateInputConnection(editorInfo);
+        InputConnection inputConnectionOnCreateInputConnection = super.onCreateInputConnection(editorInfo);
         if (this.mHasPendingShowSoftInputRequest) {
             removeCallbacks(this.mRunShowSoftInputIfNecessary);
             post(this.mRunShowSoftInputIfNecessary);
         }
-        return onCreateInputConnection;
+        return inputConnectionOnCreateInputConnection;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showSoftInputIfNecessary() {
+    private void showSoftInputIfNecessary() {
         if (this.mHasPendingShowSoftInputRequest) {
             ((InputMethodManager) getContext().getSystemService(InputMethodManager.class)).showSoftInput(this, 0);
             this.mHasPendingShowSoftInputRequest = false;

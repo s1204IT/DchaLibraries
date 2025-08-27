@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.policy;
 
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.NotificationData;
+
 /* loaded from: classes.dex */
 public interface OnHeadsUpChangedListener {
     default void onHeadsUpPinnedModeChanged(boolean z) {

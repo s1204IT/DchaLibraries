@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import com.android.settings.R;
 import com.mediatek.settings.sim.SimHotSwapHandler;
+
 /* loaded from: classes.dex */
 public class TempDataServiceDialogActivity extends Activity {
     private Dialog mDialog;
@@ -22,8 +23,7 @@ public class TempDataServiceDialogActivity extends Activity {
     private BroadcastReceiver mSubReceiver = new BroadcastReceiver() { // from class: com.mediatek.settings.datausage.TempDataServiceDialogActivity.1
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Log.d("TempDataServiceDialogActivity", "onReceive, action=" + action);
+            Log.d("TempDataServiceDialogActivity", "onReceive, action=" + intent.getAction());
             TempDataServiceDialogActivity.this.dismissTempDataDialog();
             TempDataServiceDialogActivity.this.finish();
         }
@@ -60,7 +60,7 @@ public class TempDataServiceDialogActivity extends Activity {
         Log.d("TempDataServiceDialogActivity", "displayTempDataDialog");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.data_service_prompt);
-        builder.setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.datausage.TempDataServiceDialogActivity.3
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.datausage.TempDataServiceDialogActivity.3
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 Log.d("TempDataServiceDialogActivity", "onClick, OK.");
@@ -69,7 +69,7 @@ public class TempDataServiceDialogActivity extends Activity {
                 TempDataServiceDialogActivity.this.finish();
             }
         });
-        builder.setNegativeButton(17039360, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.datausage.TempDataServiceDialogActivity.4
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.datausage.TempDataServiceDialogActivity.4
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 Log.d("TempDataServiceDialogActivity", "onClick, CANCEL.");
@@ -102,16 +102,14 @@ public class TempDataServiceDialogActivity extends Activity {
         this.mDialog.show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dismissTempDataDialog() {
+    private void dismissTempDataDialog() {
         if (this.mDialog != null && this.mDialog.isShowing()) {
             this.mDialog.dismiss();
             this.mDialog = null;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setDataService(int i) {
+    private void setDataService(int i) {
         Log.d("TempDataServiceDialogActivity", "setDataService, value=" + i);
         Settings.Global.putInt(getContentResolver(), "data_service_enabled", i);
     }

@@ -9,6 +9,7 @@ import android.service.settings.suggestions.ISuggestionService;
 import android.service.settings.suggestions.Suggestion;
 import android.util.Log;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SuggestionController {
     private final Context mContext;
@@ -28,18 +29,18 @@ public class SuggestionController {
     }
 
     public List<Suggestion> getSuggestions() {
-        if (isReady()) {
-            try {
-                return this.mRemoteService.getSuggestions();
-            } catch (RemoteException | RuntimeException e) {
-                Log.w("SuggestionController", "Error when calling getSuggestion()", e);
-                return null;
-            } catch (NullPointerException e2) {
-                Log.w("SuggestionController", "mRemote service detached before able to query", e2);
-                return null;
-            }
+        if (!isReady()) {
+            return null;
         }
-        return null;
+        try {
+            return this.mRemoteService.getSuggestions();
+        } catch (RemoteException | RuntimeException e) {
+            Log.w("SuggestionController", "Error when calling getSuggestion()", e);
+            return null;
+        } catch (NullPointerException e2) {
+            Log.w("SuggestionController", "mRemote service detached before able to query", e2);
+            return null;
+        }
     }
 
     private boolean isReady() {

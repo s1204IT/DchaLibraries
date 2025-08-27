@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import java.util.Map;
 import jp.co.benesse.touch.util.Logger;
+
 /* loaded from: classes.dex */
 public class SboxProvider extends ContentProvider {
     private static final int SBOX_ID = 2;
@@ -30,19 +31,20 @@ public class SboxProvider extends ContentProvider {
 
     @Override // android.content.ContentProvider
     public int delete(Uri uri, String str, String[] strArr) {
-        String[] strArr2;
+        String[] strArrAddAppidToselectionArgs;
         try {
-            int match = sUriMatcher.match(uri);
-            String str2 = null;
-            if (match == 2) {
-                str2 = addAppidToSelection(str);
-                strArr2 = addAppidToselectionArgs(uri, strArr);
-            } else if (match != 1) {
-                throw new IllegalArgumentException("Unknown URI " + uri);
+            int iMatch = sUriMatcher.match(uri);
+            String strAddAppidToSelection = null;
+            if (iMatch == 2) {
+                strAddAppidToSelection = addAppidToSelection(str);
+                strArrAddAppidToselectionArgs = addAppidToselectionArgs(uri, strArr);
             } else {
-                strArr2 = null;
+                if (iMatch != 1) {
+                    throw new IllegalArgumentException("Unknown URI " + uri);
+                }
+                strArrAddAppidToselectionArgs = null;
             }
-            return this.mDbHelper.getWritableDatabase().delete(SboxDbHelper.TABLE_NAME, str2, strArr2);
+            return this.mDbHelper.getWritableDatabase().delete(SboxDbHelper.TABLE_NAME, strAddAppidToSelection, strArrAddAppidToselectionArgs);
         } catch (Exception e) {
             Logger.e(TAG, e);
             return UNSPECIFIED_ID;
@@ -76,9 +78,9 @@ public class SboxProvider extends ContentProvider {
                         }
                     }
                 }
-                long replace = this.mDbHelper.getWritableDatabase().replace(SboxDbHelper.TABLE_NAME, null, contentValues);
-                if (replace >= 0) {
-                    return ContentUris.withAppendedId(uri, replace);
+                long jReplace = this.mDbHelper.getWritableDatabase().replace(SboxDbHelper.TABLE_NAME, null, contentValues);
+                if (jReplace >= 0) {
+                    return ContentUris.withAppendedId(uri, jReplace);
                 }
                 throw new IllegalArgumentException("Failed to insert row into " + uri);
             }
@@ -97,59 +99,62 @@ public class SboxProvider extends ContentProvider {
         return true;
     }
 
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:18:0x0076 */
     /* JADX WARN: Type inference failed for: r7v0 */
     /* JADX WARN: Type inference failed for: r7v1 */
     /* JADX WARN: Type inference failed for: r7v4, types: [int] */
     @Override // android.content.ContentProvider
-    public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) {
-        ?? r7;
+    public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) throws Throwable {
+        ?? Match;
         MatrixCursor matrixCursor;
+        Cursor cursorQuery;
         try {
-            r7 = sUriMatcher.match(uri);
+            Match = sUriMatcher.match(uri);
         } catch (Exception e) {
             e = e;
-            r7 = 0;
+            Match = 0;
         }
-        if (r7 == 2) {
+        if (Match == 2) {
             try {
-                String addAppidToSelection = addAppidToSelection(str);
-                String[] addAppidToselectionArgs = addAppidToselectionArgs(uri, strArr2);
+                String strAddAppidToSelection = addAppidToSelection(str);
+                String[] strArrAddAppidToselectionArgs = addAppidToselectionArgs(uri, strArr2);
                 SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
                 sQLiteQueryBuilder.setTables(SboxDbHelper.TABLE_NAME);
-                Cursor query = sQLiteQueryBuilder.query(this.mDbHelper.getReadableDatabase(), strArr, addAppidToSelection, addAppidToselectionArgs, null, null, str2);
-                try {
-                    MatrixCursor matrixCursor2 = new MatrixCursor(new String[]{SboxColumns.KEY, SboxColumns.VALUE});
-                    while (query.moveToNext()) {
-                        try {
-                            matrixCursor2.addRow(new String[]{query.getString(query.getColumnIndex(SboxColumns.KEY)), this.mKeyStoreAdapter.decryptString(query.getString(query.getColumnIndex(SboxColumns.VALUE)))});
-                        } catch (Throwable th) {
-                            th = th;
-                            query.close();
-                            throw th;
-                        }
-                    }
-                    query.close();
-                    matrixCursor = matrixCursor2;
-                } catch (Throwable th2) {
-                    th = th2;
-                }
+                cursorQuery = sQLiteQueryBuilder.query(this.mDbHelper.getReadableDatabase(), strArr, strAddAppidToSelection, strArrAddAppidToselectionArgs, null, null, str2);
             } catch (Exception e2) {
                 e = e2;
                 Logger.e(TAG, e);
-                matrixCursor = r7;
+                matrixCursor = Match;
                 return matrixCursor;
             }
-            return matrixCursor;
+            try {
+                MatrixCursor matrixCursor2 = new MatrixCursor(new String[]{SboxColumns.KEY, SboxColumns.VALUE});
+                while (cursorQuery.moveToNext()) {
+                    try {
+                        matrixCursor2.addRow(new String[]{cursorQuery.getString(cursorQuery.getColumnIndex(SboxColumns.KEY)), this.mKeyStoreAdapter.decryptString(cursorQuery.getString(cursorQuery.getColumnIndex(SboxColumns.VALUE)))});
+                    } catch (Throwable th) {
+                        th = th;
+                        cursorQuery.close();
+                        throw th;
+                    }
+                }
+                cursorQuery.close();
+                matrixCursor = matrixCursor2;
+                return matrixCursor;
+            } catch (Throwable th2) {
+                th = th2;
+            }
+        } else {
+            throw new IllegalArgumentException("Unknown URI " + uri);
         }
-        throw new IllegalArgumentException("Unknown URI " + uri);
     }
 
     @Override // android.content.ContentProvider
     public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
         try {
             if (sUriMatcher.match(uri) == 2) {
-                String addAppidToSelection = addAppidToSelection(str);
-                String[] addAppidToselectionArgs = addAppidToselectionArgs(uri, strArr);
+                String strAddAppidToSelection = addAppidToSelection(str);
+                String[] strArrAddAppidToselectionArgs = addAppidToselectionArgs(uri, strArr);
                 for (Map.Entry<String, Object> entry : contentValues.valueSet()) {
                     if (TextUtils.equals(SboxColumns.VALUE, entry.getKey())) {
                         Object value = entry.getValue();
@@ -158,7 +163,7 @@ public class SboxProvider extends ContentProvider {
                         }
                     }
                 }
-                return this.mDbHelper.getWritableDatabase().update(SboxDbHelper.TABLE_NAME, contentValues, addAppidToSelection, addAppidToselectionArgs);
+                return this.mDbHelper.getWritableDatabase().update(SboxDbHelper.TABLE_NAME, contentValues, strAddAppidToSelection, strArrAddAppidToselectionArgs);
             }
             throw new IllegalArgumentException("Unknown URI " + uri);
         } catch (Exception e) {

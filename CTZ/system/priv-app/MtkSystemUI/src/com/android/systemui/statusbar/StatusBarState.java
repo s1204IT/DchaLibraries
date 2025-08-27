@@ -1,4 +1,5 @@
 package com.android.systemui.statusbar;
+
 /* loaded from: classes.dex */
 public class StatusBarState {
     public static String toShortString(int i) {

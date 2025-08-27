@@ -16,6 +16,7 @@ import com.android.settings.SubSettings;
 import com.android.settings.Utils;
 import com.android.settings.search.DatabaseIndexingUtils;
 import com.android.settings.slices.SliceBroadcastReceiver;
+
 /* loaded from: classes.dex */
 public class ZenModeSliceBuilder {
     public static final Uri ZEN_MODE_URI = new Uri.Builder().scheme("content").authority("com.android.settings.slices").appendPath("action").appendPath("zen_mode").build();
@@ -28,12 +29,12 @@ public class ZenModeSliceBuilder {
     }
 
     public static Slice getSlice(Context context) {
-        boolean isZenModeEnabled = isZenModeEnabled(context);
+        boolean zIsZenModeEnabled = isZenModeEnabled(context);
         final CharSequence text = context.getText(R.string.zen_mode_settings_title);
         int colorAccent = Utils.getColorAccent(context);
         PendingIntent broadcastIntent = getBroadcastIntent(context);
         final SliceAction sliceAction = new SliceAction(getPrimaryAction(context), (IconCompat) null, text);
-        final SliceAction sliceAction2 = new SliceAction(broadcastIntent, (CharSequence) null, isZenModeEnabled);
+        final SliceAction sliceAction2 = new SliceAction(broadcastIntent, (CharSequence) null, zIsZenModeEnabled);
         return new ListBuilder(context, ZEN_MODE_URI, -1L).setAccentColor(colorAccent).addRow(new Consumer() { // from class: com.android.settings.notification.-$$Lambda$ZenModeSliceBuilder$sz-ZmwW0wKJApaEBVBuTr2mkXrg
             @Override // android.support.v4.util.Consumer
             public final void accept(Object obj) {

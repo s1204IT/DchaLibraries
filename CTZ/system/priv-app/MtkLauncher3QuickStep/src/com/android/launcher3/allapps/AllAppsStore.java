@@ -11,8 +11,10 @@ import com.android.launcher3.util.PackageUserKey;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class AllAppsStore {
     private PackageUserKey mTempKey = new PackageUserKey(null, null);
@@ -22,12 +24,10 @@ public class AllAppsStore {
     private boolean mDeferUpdates = false;
     private boolean mUpdatePending = false;
 
-    /* loaded from: classes.dex */
     public interface IconAction {
         void apply(BubbleTextView bubbleTextView);
     }
 
-    /* loaded from: classes.dex */
     public interface OnUpdateListener {
         void onAppsUpdated();
     }
@@ -65,8 +65,9 @@ public class AllAppsStore {
     }
 
     public void removeApps(List<AppInfo> list) {
-        for (AppInfo appInfo : list) {
-            this.mComponentToAppMap.remove(appInfo.toComponentKey());
+        Iterator<AppInfo> it = list.iterator();
+        while (it.hasNext()) {
+            this.mComponentToAppMap.remove(it.next().toComponentKey());
         }
         notifyUpdate();
     }
@@ -104,7 +105,7 @@ public class AllAppsStore {
         updateAllIcons(new IconAction() { // from class: com.android.launcher3.allapps.-$$Lambda$AllAppsStore$6bVp2gMnIq4ZTAQOmyy7A3JXVgc
             @Override // com.android.launcher3.allapps.AllAppsStore.IconAction
             public final void apply(BubbleTextView bubbleTextView) {
-                AllAppsStore.lambda$updateIconBadges$0(AllAppsStore.this, set, bubbleTextView);
+                AllAppsStore.lambda$updateIconBadges$0(this.f$0, set, bubbleTextView);
             }
         });
     }
@@ -122,13 +123,12 @@ public class AllAppsStore {
         updateAllIcons(new IconAction() { // from class: com.android.launcher3.allapps.-$$Lambda$AllAppsStore$XmF5pBEgXE-njZ0HPoPNR9vf60k
             @Override // com.android.launcher3.allapps.AllAppsStore.IconAction
             public final void apply(BubbleTextView bubbleTextView) {
-                AllAppsStore.lambda$updatePromiseAppProgress$1(PromiseAppInfo.this, bubbleTextView);
+                AllAppsStore.lambda$updatePromiseAppProgress$1(promiseAppInfo, bubbleTextView);
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$updatePromiseAppProgress$1(PromiseAppInfo promiseAppInfo, BubbleTextView bubbleTextView) {
+    static /* synthetic */ void lambda$updatePromiseAppProgress$1(PromiseAppInfo promiseAppInfo, BubbleTextView bubbleTextView) {
         if (bubbleTextView.getTag() == promiseAppInfo) {
             bubbleTextView.applyProgressLevel(promiseAppInfo.level);
         }

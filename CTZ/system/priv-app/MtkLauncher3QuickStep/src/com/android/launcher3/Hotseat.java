@@ -9,9 +9,11 @@ import android.view.ViewDebug;
 import android.widget.FrameLayout;
 import com.android.launcher3.logging.UserEventDispatcher;
 import com.android.launcher3.userevent.nano.LauncherLogProto;
+
 /* loaded from: classes.dex */
 public class Hotseat extends FrameLayout implements UserEventDispatcher.LogContainerProvider, Insettable {
     private CellLayout mContent;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private boolean mHasVerticalHotseat;
     private final Launcher mLauncher;
@@ -37,16 +39,14 @@ public class Hotseat extends FrameLayout implements UserEventDispatcher.LogConta
         return this.mHasVerticalHotseat ? (this.mContent.getCountY() - i2) - 1 : i;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getCellXFromOrder(int i) {
+    int getCellXFromOrder(int i) {
         if (this.mHasVerticalHotseat) {
             return 0;
         }
         return i;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getCellYFromOrder(int i) {
+    int getCellYFromOrder(int i) {
         if (this.mHasVerticalHotseat) {
             return this.mContent.getCountY() - (i + 1);
         }
@@ -59,8 +59,7 @@ public class Hotseat extends FrameLayout implements UserEventDispatcher.LogConta
         this.mContent = (CellLayout) findViewById(R.id.layout);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void resetLayout(boolean z) {
+    void resetLayout(boolean z) {
         this.mContent.removeAllViewsInLayout();
         this.mHasVerticalHotseat = z;
         InvariantDeviceProfile invariantDeviceProfile = this.mLauncher.getDeviceProfile().inv;

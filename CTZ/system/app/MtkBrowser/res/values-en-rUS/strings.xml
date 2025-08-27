@@ -69,7 +69,7 @@
     <string name="tab_snapshots">Saved pages</string>
     <string name="added_to_bookmarks">Added to bookmarks.</string>
     <string name="removed_from_bookmarks">Removed from bookmarks.</string>
-    <string name="sign_in_to">Sign in to %s1 \" %s2\"</string>
+    <string name="sign_in_to" formatted="false">Sign in to %s1 \" %s2\"</string>
     <string name="username">Name</string>
     <string name="password">Password</string>
     <string name="action">Sign in</string>
@@ -322,7 +322,7 @@
     <string name="webstorage_clear_data_dialog_cancel_button">Cancel</string>
     <string name="webstorage_origin_summary_mb_stored">MB stored on your phone</string>
     <string name="loading_video">Loading video…</string>
-    <string name="permissions_prompt_message">%s wants to use your %s.</string>
+    <string name="permissions_prompt_message" formatted="false">%s wants to use your %s.</string>
     <string name="resource_protected_media_id">protected media ID</string>
     <string name="geolocation_permissions_prompt_message">%s wants to know your location</string>
     <string name="geolocation_permissions_prompt_share">Share location</string>

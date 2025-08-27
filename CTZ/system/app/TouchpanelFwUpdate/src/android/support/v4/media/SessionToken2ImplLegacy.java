@@ -3,6 +3,7 @@ package android.support.v4.media;
 import android.os.Bundle;
 import android.support.v4.media.SessionToken2;
 import android.support.v4.media.session.MediaSessionCompat;
+
 /* loaded from: classes.dex */
 final class SessionToken2ImplLegacy implements SessionToken2.SupportLibraryImpl {
     private final MediaSessionCompat.Token mLegacyToken;

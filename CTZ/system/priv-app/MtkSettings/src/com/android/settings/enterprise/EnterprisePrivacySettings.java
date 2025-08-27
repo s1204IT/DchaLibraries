@@ -12,6 +12,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class EnterprisePrivacySettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.enterprise.EnterprisePrivacySettings.1
@@ -53,8 +54,7 @@ public class EnterprisePrivacySettings extends DashboardFragment {
         return buildPreferenceControllers(context, true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, boolean z) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, boolean z) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new NetworkLogsPreferenceController(context));
         arrayList.add(new BugReportsPreferenceController(context));

@@ -27,6 +27,7 @@ import com.android.systemui.statusbar.VibratorHelper;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.function.BiConsumer;
+
 /* loaded from: classes.dex */
 public abstract class PanelView extends FrameLayout {
     public static final String TAG = PanelView.class.getSimpleName();
@@ -127,25 +128,21 @@ public abstract class PanelView extends FrameLayout {
 
     protected abstract boolean shouldUseDismissingAnimation();
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onExpandingFinished() {
+    protected void onExpandingFinished() {
         this.mBar.onExpandingFinished();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onExpandingStarted() {
+    protected void onExpandingStarted() {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyExpandingStarted() {
+    private void notifyExpandingStarted() {
         if (!this.mExpanding) {
             this.mExpanding = true;
             onExpandingStarted();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final void notifyExpandingFinished() {
+    protected final void notifyExpandingFinished() {
         endClosing();
         if (this.mExpanding) {
             this.mExpanding = false;
@@ -153,7 +150,7 @@ public abstract class PanelView extends FrameLayout {
         }
     }
 
-    private void runPeekAnimation(long j, float f, final boolean z) {
+    private void runPeekAnimation(long j, float f, boolean z) {
         this.mPeekHeight = f;
         if (this.mHeightAnimator != null) {
             return;
@@ -165,6 +162,11 @@ public abstract class PanelView extends FrameLayout {
         this.mPeekAnimator.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
         this.mPeekAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.PanelView.1
             private boolean mCancelled;
+            final /* synthetic */ boolean val$collapseWhenFinished;
+
+            AnonymousClass1(boolean z2) {
+                z = z2;
+            }
 
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationCancel(Animator animator) {
@@ -184,6 +186,29 @@ public abstract class PanelView extends FrameLayout {
         this.mJustPeeked = true;
     }
 
+    /* renamed from: com.android.systemui.statusbar.phone.PanelView$1 */
+    class AnonymousClass1 extends AnimatorListenerAdapter {
+        private boolean mCancelled;
+        final /* synthetic */ boolean val$collapseWhenFinished;
+
+        AnonymousClass1(boolean z2) {
+            z = z2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            this.mCancelled = true;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            PanelView.this.mPeekAnimator = null;
+            if (!this.mCancelled && z) {
+                PanelView.this.postOnAnimation(PanelView.this.mPostCollapseRunnable);
+            }
+        }
+    }
+
     public PanelView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mLockscreenGestureLogger = new LockscreenGestureLogger();
@@ -192,12 +217,18 @@ public abstract class PanelView extends FrameLayout {
         this.mExpandedHeight = 0.0f;
         this.mNextCollapseSpeedUpFactor = 1.0f;
         this.mFlingCollapseRunnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.PanelView.3
+            AnonymousClass3() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 PanelView.this.fling(0.0f, false, PanelView.this.mNextCollapseSpeedUpFactor, false);
             }
         };
         this.mPostCollapseRunnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.PanelView.8
+            AnonymousClass8() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 PanelView.this.collapse(false, 1.0f);
@@ -213,8 +244,7 @@ public abstract class PanelView extends FrameLayout {
         this.mVibrateOnOpening = this.mContext.getResources().getBoolean(R.bool.config_vibrateOnIconAnimation);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void loadDimens() {
+    protected void loadDimens() {
         Resources resources = getContext().getResources();
         this.mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         this.mHintDistance = resources.getDimension(R.dimen.hint_move_distance);
@@ -259,113 +289,113 @@ public abstract class PanelView extends FrameLayout {
                 onTrackingStopped(true);
             }
             return false;
-        } else if (isFullyCollapsed() && motionEvent.isFromSource(8194)) {
+        }
+        if (isFullyCollapsed() && motionEvent.isFromSource(8194)) {
             if (motionEvent.getAction() == 1) {
                 expand(true);
             }
             return true;
-        } else {
-            int findPointerIndex = motionEvent.findPointerIndex(this.mTrackingPointer);
-            if (findPointerIndex < 0) {
-                this.mTrackingPointer = motionEvent.getPointerId(0);
-                findPointerIndex = 0;
-            }
-            float x = motionEvent.getX(findPointerIndex);
-            float y = motionEvent.getY(findPointerIndex);
-            if (motionEvent.getActionMasked() == 0) {
-                this.mGestureWaitForTouchSlop = isFullyCollapsed() || hasConflictingGestures();
-                this.mIgnoreXTouchSlop = isFullyCollapsed() || shouldGestureIgnoreXTouchSlop(x, y);
-            }
-            switch (motionEvent.getActionMasked()) {
-                case 0:
-                    startExpandMotion(x, y, false, this.mExpandedHeight);
-                    this.mJustPeeked = false;
-                    this.mMinExpandHeight = 0.0f;
-                    this.mPanelClosedOnDown = isFullyCollapsed();
-                    this.mHasLayoutedSinceDown = false;
-                    this.mUpdateFlingOnLayout = false;
-                    this.mMotionAborted = false;
-                    this.mPeekTouching = this.mPanelClosedOnDown;
-                    this.mDownTime = SystemClock.uptimeMillis();
-                    this.mTouchAboveFalsingThreshold = false;
-                    this.mCollapsedAndHeadsUpOnDown = isFullyCollapsed() && this.mHeadsUpManager.hasPinnedHeadsUp();
-                    if (this.mVelocityTracker == null) {
-                        initVelocityTracker();
-                    }
-                    trackMovement(motionEvent);
-                    if (!this.mGestureWaitForTouchSlop || ((this.mHeightAnimator != null && !this.mHintAnimationRunning) || this.mPeekAnimator != null)) {
-                        this.mTouchSlopExceeded = ((this.mHeightAnimator == null || this.mHintAnimationRunning) && this.mPeekAnimator == null) ? false : true;
+        }
+        int iFindPointerIndex = motionEvent.findPointerIndex(this.mTrackingPointer);
+        if (iFindPointerIndex < 0) {
+            this.mTrackingPointer = motionEvent.getPointerId(0);
+            iFindPointerIndex = 0;
+        }
+        float x = motionEvent.getX(iFindPointerIndex);
+        float y = motionEvent.getY(iFindPointerIndex);
+        if (motionEvent.getActionMasked() == 0) {
+            this.mGestureWaitForTouchSlop = isFullyCollapsed() || hasConflictingGestures();
+            this.mIgnoreXTouchSlop = isFullyCollapsed() || shouldGestureIgnoreXTouchSlop(x, y);
+        }
+        switch (motionEvent.getActionMasked()) {
+            case 0:
+                startExpandMotion(x, y, false, this.mExpandedHeight);
+                this.mJustPeeked = false;
+                this.mMinExpandHeight = 0.0f;
+                this.mPanelClosedOnDown = isFullyCollapsed();
+                this.mHasLayoutedSinceDown = false;
+                this.mUpdateFlingOnLayout = false;
+                this.mMotionAborted = false;
+                this.mPeekTouching = this.mPanelClosedOnDown;
+                this.mDownTime = SystemClock.uptimeMillis();
+                this.mTouchAboveFalsingThreshold = false;
+                this.mCollapsedAndHeadsUpOnDown = isFullyCollapsed() && this.mHeadsUpManager.hasPinnedHeadsUp();
+                if (this.mVelocityTracker == null) {
+                    initVelocityTracker();
+                }
+                trackMovement(motionEvent);
+                if (!this.mGestureWaitForTouchSlop || ((this.mHeightAnimator != null && !this.mHintAnimationRunning) || this.mPeekAnimator != null)) {
+                    this.mTouchSlopExceeded = ((this.mHeightAnimator == null || this.mHintAnimationRunning) && this.mPeekAnimator == null) ? false : true;
+                    cancelHeightAnimator();
+                    cancelPeek();
+                    onTrackingStarted();
+                }
+                if (isFullyCollapsed() && !this.mHeadsUpManager.hasPinnedHeadsUp() && !this.mStatusBar.isBouncerShowing()) {
+                    startOpening(motionEvent);
+                    break;
+                }
+                break;
+            case 1:
+            case 3:
+                trackMovement(motionEvent);
+                endMotionEvent(motionEvent, x, y, false);
+                break;
+            case 2:
+                trackMovement(motionEvent);
+                float f = y - this.mInitialTouchY;
+                if (Math.abs(f) > this.mTouchSlop && (Math.abs(f) > Math.abs(x - this.mInitialTouchX) || this.mIgnoreXTouchSlop)) {
+                    this.mTouchSlopExceeded = true;
+                    if (this.mGestureWaitForTouchSlop && !this.mTracking && !this.mCollapsedAndHeadsUpOnDown) {
+                        if (!this.mJustPeeked && this.mInitialOffsetOnTouch != 0.0f) {
+                            startExpandMotion(x, y, false, this.mExpandedHeight);
+                            f = 0.0f;
+                        }
                         cancelHeightAnimator();
-                        cancelPeek();
                         onTrackingStarted();
                     }
-                    if (isFullyCollapsed() && !this.mHeadsUpManager.hasPinnedHeadsUp() && !this.mStatusBar.isBouncerShowing()) {
-                        startOpening(motionEvent);
-                        break;
+                }
+                float fMax = Math.max(0.0f, this.mInitialOffsetOnTouch + f);
+                if (fMax > this.mPeekHeight) {
+                    if (this.mPeekAnimator != null) {
+                        this.mPeekAnimator.cancel();
                     }
+                    this.mJustPeeked = false;
+                } else if (this.mPeekAnimator == null && this.mJustPeeked) {
+                    this.mInitialOffsetOnTouch = this.mExpandedHeight;
+                    this.mInitialTouchY = y;
+                    this.mMinExpandHeight = this.mExpandedHeight;
+                    this.mJustPeeked = false;
+                }
+                float fMax2 = Math.max(fMax, this.mMinExpandHeight);
+                if ((-f) >= getFalsingThreshold()) {
+                    this.mTouchAboveFalsingThreshold = true;
+                    this.mUpwardsWhenTresholdReached = isDirectionUpwards(x, y);
+                }
+                if (!this.mJustPeeked && ((!this.mGestureWaitForTouchSlop || this.mTracking) && !isTrackingBlocked())) {
+                    setExpandedHeightInternal(fMax2);
                     break;
-                case 1:
-                case 3:
-                    trackMovement(motionEvent);
-                    endMotionEvent(motionEvent, x, y, false);
+                }
+                break;
+            case 5:
+                if (this.mStatusBar.getBarState() == 1) {
+                    this.mMotionAborted = true;
+                    endMotionEvent(motionEvent, x, y, true);
+                    return false;
+                }
+                break;
+            case 6:
+                int pointerId = motionEvent.getPointerId(motionEvent.getActionIndex());
+                if (this.mTrackingPointer == pointerId) {
+                    int i = motionEvent.getPointerId(0) != pointerId ? 0 : 1;
+                    float y2 = motionEvent.getY(i);
+                    float x2 = motionEvent.getX(i);
+                    this.mTrackingPointer = motionEvent.getPointerId(i);
+                    startExpandMotion(x2, y2, true, this.mExpandedHeight);
                     break;
-                case 2:
-                    trackMovement(motionEvent);
-                    float f = y - this.mInitialTouchY;
-                    if (Math.abs(f) > this.mTouchSlop && (Math.abs(f) > Math.abs(x - this.mInitialTouchX) || this.mIgnoreXTouchSlop)) {
-                        this.mTouchSlopExceeded = true;
-                        if (this.mGestureWaitForTouchSlop && !this.mTracking && !this.mCollapsedAndHeadsUpOnDown) {
-                            if (!this.mJustPeeked && this.mInitialOffsetOnTouch != 0.0f) {
-                                startExpandMotion(x, y, false, this.mExpandedHeight);
-                                f = 0.0f;
-                            }
-                            cancelHeightAnimator();
-                            onTrackingStarted();
-                        }
-                    }
-                    float max = Math.max(0.0f, this.mInitialOffsetOnTouch + f);
-                    if (max > this.mPeekHeight) {
-                        if (this.mPeekAnimator != null) {
-                            this.mPeekAnimator.cancel();
-                        }
-                        this.mJustPeeked = false;
-                    } else if (this.mPeekAnimator == null && this.mJustPeeked) {
-                        this.mInitialOffsetOnTouch = this.mExpandedHeight;
-                        this.mInitialTouchY = y;
-                        this.mMinExpandHeight = this.mExpandedHeight;
-                        this.mJustPeeked = false;
-                    }
-                    float max2 = Math.max(max, this.mMinExpandHeight);
-                    if ((-f) >= getFalsingThreshold()) {
-                        this.mTouchAboveFalsingThreshold = true;
-                        this.mUpwardsWhenTresholdReached = isDirectionUpwards(x, y);
-                    }
-                    if (!this.mJustPeeked && ((!this.mGestureWaitForTouchSlop || this.mTracking) && !isTrackingBlocked())) {
-                        setExpandedHeightInternal(max2);
-                        break;
-                    }
-                    break;
-                case 5:
-                    if (this.mStatusBar.getBarState() == 1) {
-                        this.mMotionAborted = true;
-                        endMotionEvent(motionEvent, x, y, true);
-                        return false;
-                    }
-                    break;
-                case 6:
-                    int pointerId = motionEvent.getPointerId(motionEvent.getActionIndex());
-                    if (this.mTrackingPointer == pointerId) {
-                        int i = motionEvent.getPointerId(0) != pointerId ? 0 : 1;
-                        float y2 = motionEvent.getY(i);
-                        float x2 = motionEvent.getX(i);
-                        this.mTrackingPointer = motionEvent.getPointerId(i);
-                        startExpandMotion(x2, y2, true, this.mExpandedHeight);
-                        break;
-                    }
-                    break;
-            }
-            return !this.mGestureWaitForTouchSlop || this.mTracking;
+                }
+                break;
         }
+        return !this.mGestureWaitForTouchSlop || this.mTracking;
     }
 
     private void startOpening(MotionEvent motionEvent) {
@@ -385,13 +415,11 @@ public abstract class PanelView extends FrameLayout {
         return f4 < 0.0f && Math.abs(f4) >= Math.abs(f3);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void startExpandingFromPeek() {
+    protected void startExpandingFromPeek() {
         this.mStatusBar.handlePeekToExpandTransistion();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void startExpandMotion(float f, float f2, boolean z, float f3) {
+    protected void startExpandMotion(float f, float f2, boolean z, float f3) {
         this.mInitialOffsetOnTouch = f3;
         this.mInitialTouchY = f2;
         this.mInitialTouchX = f;
@@ -403,32 +431,28 @@ public abstract class PanelView extends FrameLayout {
     }
 
     private void endMotionEvent(MotionEvent motionEvent, float f, float f2, boolean z) {
-        float f3;
+        float fHypot;
         this.mTrackingPointer = -1;
-        boolean z2 = true;
         if ((this.mTracking && this.mTouchSlopExceeded) || Math.abs(f - this.mInitialTouchX) > this.mTouchSlop || Math.abs(f2 - this.mInitialTouchY) > this.mTouchSlop || motionEvent.getActionMasked() == 3 || z) {
-            float f4 = 0.0f;
+            float yVelocity = 0.0f;
             if (this.mVelocityTracker != null) {
                 this.mVelocityTracker.computeCurrentVelocity(1000);
-                f4 = this.mVelocityTracker.getYVelocity();
-                f3 = (float) Math.hypot(this.mVelocityTracker.getXVelocity(), this.mVelocityTracker.getYVelocity());
+                yVelocity = this.mVelocityTracker.getYVelocity();
+                fHypot = (float) Math.hypot(this.mVelocityTracker.getXVelocity(), this.mVelocityTracker.getYVelocity());
             } else {
-                f3 = 0.0f;
+                fHypot = 0.0f;
             }
-            boolean z3 = flingExpands(f4, f3, f, f2) || motionEvent.getActionMasked() == 3 || z;
-            DozeLog.traceFling(z3, this.mTouchAboveFalsingThreshold, this.mStatusBar.isFalsingThresholdNeeded(), this.mStatusBar.isWakeUpComingFromTouch());
-            if (!z3 && this.mStatusBar.getBarState() == 1) {
+            boolean z2 = flingExpands(yVelocity, fHypot, f, f2) || motionEvent.getActionMasked() == 3 || z;
+            DozeLog.traceFling(z2, this.mTouchAboveFalsingThreshold, this.mStatusBar.isFalsingThresholdNeeded(), this.mStatusBar.isWakeUpComingFromTouch());
+            if (!z2 && this.mStatusBar.getBarState() == 1) {
                 float displayDensity = this.mStatusBar.getDisplayDensity();
-                this.mLockscreenGestureLogger.write(186, (int) Math.abs((f2 - this.mInitialTouchY) / displayDensity), (int) Math.abs(f4 / displayDensity));
+                this.mLockscreenGestureLogger.write(186, (int) Math.abs((f2 - this.mInitialTouchY) / displayDensity), (int) Math.abs(yVelocity / displayDensity));
             }
-            fling(f4, z3, isFalseTouch(f, f2));
-            onTrackingStopped(z3);
-            if (!z3 || !this.mPanelClosedOnDown || this.mHasLayoutedSinceDown) {
-                z2 = false;
-            }
-            this.mUpdateFlingOnLayout = z2;
+            fling(yVelocity, z2, isFalseTouch(f, f2));
+            onTrackingStopped(z2);
+            this.mUpdateFlingOnLayout = z2 && this.mPanelClosedOnDown && !this.mHasLayoutedSinceDown;
             if (this.mUpdateFlingOnLayout) {
-                this.mUpdateFlingVelocity = f4;
+                this.mUpdateFlingVelocity = yVelocity;
             }
         } else if (!this.mPanelClosedOnDown || this.mHeadsUpManager.hasPinnedHeadsUp() || this.mTracking || this.mStatusBar.isBouncerShowing() || this.mStatusBar.isKeyguardFadingAway()) {
             if (!this.mStatusBar.isBouncerShowing()) {
@@ -446,8 +470,7 @@ public abstract class PanelView extends FrameLayout {
         this.mPeekTouching = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public float getCurrentExpandVelocity() {
+    protected float getCurrentExpandVelocity() {
         if (this.mVelocityTracker == null) {
             return 0.0f;
         }
@@ -459,15 +482,13 @@ public abstract class PanelView extends FrameLayout {
         return (int) (this.mUnlockFalsingThreshold * (this.mStatusBar.isWakeUpComingFromTouch() ? 1.5f : 1.0f));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onTrackingStopped(boolean z) {
+    protected void onTrackingStopped(boolean z) {
         this.mTracking = false;
         this.mBar.onTrackingStopped(z);
         notifyBarPanelExpansionChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onTrackingStarted() {
+    protected void onTrackingStarted() {
         endClosing();
         this.mTracking = true;
         this.mBar.onTrackingStarted();
@@ -475,19 +496,20 @@ public abstract class PanelView extends FrameLayout {
         notifyBarPanelExpansionChanged();
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // android.view.ViewGroup
     public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
         if (this.mInstantExpanding || !this.mNotificationsDragEnabled || this.mTouchDisabled || (this.mMotionAborted && motionEvent.getActionMasked() != 0)) {
             return false;
         }
-        int findPointerIndex = motionEvent.findPointerIndex(this.mTrackingPointer);
-        if (findPointerIndex < 0) {
+        int iFindPointerIndex = motionEvent.findPointerIndex(this.mTrackingPointer);
+        if (iFindPointerIndex < 0) {
             this.mTrackingPointer = motionEvent.getPointerId(0);
-            findPointerIndex = 0;
+            iFindPointerIndex = 0;
         }
-        float x = motionEvent.getX(findPointerIndex);
-        float y = motionEvent.getY(findPointerIndex);
-        boolean isScrolledToBottom = isScrolledToBottom();
+        float x = motionEvent.getX(iFindPointerIndex);
+        float y = motionEvent.getY(iFindPointerIndex);
+        boolean zIsScrolledToBottom = isScrolledToBottom();
         switch (motionEvent.getActionMasked()) {
             case 0:
                 this.mStatusBar.userActivity();
@@ -513,38 +535,38 @@ public abstract class PanelView extends FrameLayout {
                 this.mTouchAboveFalsingThreshold = false;
                 initVelocityTracker();
                 trackMovement(motionEvent);
-                break;
-                break;
+                return false;
             case 1:
             case 3:
                 if (this.mVelocityTracker != null) {
                     this.mVelocityTracker.recycle();
                     this.mVelocityTracker = null;
-                    break;
                 }
-                break;
+                return false;
             case 2:
                 float f = y - this.mInitialTouchY;
                 trackMovement(motionEvent);
-                if (isScrolledToBottom || this.mTouchStartedInEmptyArea || this.mAnimatingOnDown) {
-                    float abs = Math.abs(f);
-                    if ((f < (-this.mTouchSlop) || (this.mAnimatingOnDown && abs > this.mTouchSlop)) && abs > Math.abs(x - this.mInitialTouchX)) {
+                if (zIsScrolledToBottom || this.mTouchStartedInEmptyArea || this.mAnimatingOnDown) {
+                    float fAbs = Math.abs(f);
+                    if ((f < (-this.mTouchSlop) || (this.mAnimatingOnDown && fAbs > this.mTouchSlop)) && fAbs > Math.abs(x - this.mInitialTouchX)) {
                         cancelHeightAnimator();
                         startExpandMotion(x, y, true, this.mExpandedHeight);
                         return true;
                     }
                 }
-                break;
+                return false;
+            case 4:
+            default:
+                return false;
             case 5:
                 if (this.mStatusBar.getBarState() == 1) {
                     this.mMotionAborted = true;
                     if (this.mVelocityTracker != null) {
                         this.mVelocityTracker.recycle();
                         this.mVelocityTracker = null;
-                        break;
                     }
                 }
-                break;
+                return false;
             case 6:
                 int pointerId = motionEvent.getPointerId(motionEvent.getActionIndex());
                 if (this.mTrackingPointer == pointerId) {
@@ -552,15 +574,12 @@ public abstract class PanelView extends FrameLayout {
                     this.mTrackingPointer = motionEvent.getPointerId(i);
                     this.mInitialTouchX = motionEvent.getX(i);
                     this.mInitialTouchY = motionEvent.getY(i);
-                    break;
                 }
-                break;
+                return false;
         }
-        return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void cancelHeightAnimator() {
+    protected void cancelHeightAnimator() {
         if (this.mHeightAnimator != null) {
             if (this.mHeightAnimator.isRunning()) {
                 this.mPanelUpdateWhenAnimatorEnds = false;
@@ -588,22 +607,19 @@ public abstract class PanelView extends FrameLayout {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         loadDimens();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.View
-    public void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
         loadDimens();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean flingExpands(float f, float f2, float f3, float f4) {
+    protected boolean flingExpands(float f, float f2, float f3, float f4) {
         if (isFalseTouch(f3, f4)) {
             return true;
         }
@@ -611,23 +627,22 @@ public abstract class PanelView extends FrameLayout {
     }
 
     private boolean isFalseTouch(float f, float f2) {
-        if (this.mStatusBar.isFalsingThresholdNeeded()) {
-            if (this.mFalsingManager.isClassiferEnabled()) {
-                return this.mFalsingManager.isFalseTouch();
-            }
-            if (this.mTouchAboveFalsingThreshold) {
-                if (this.mUpwardsWhenTresholdReached) {
-                    return false;
-                }
-                return !isDirectionUpwards(f, f2);
-            }
+        if (!this.mStatusBar.isFalsingThresholdNeeded()) {
+            return false;
+        }
+        if (this.mFalsingManager.isClassiferEnabled()) {
+            return this.mFalsingManager.isFalseTouch();
+        }
+        if (!this.mTouchAboveFalsingThreshold) {
             return true;
         }
-        return false;
+        if (this.mUpwardsWhenTresholdReached) {
+            return false;
+        }
+        return !isDirectionUpwards(f, f2);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void fling(float f, boolean z) {
+    protected void fling(float f, boolean z) {
         fling(f, z, 1.0f, false);
     }
 
@@ -644,9 +659,8 @@ public abstract class PanelView extends FrameLayout {
         flingToHeight(f, z, maxPanelHeight, f2, z2);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void flingToHeight(float f, boolean z, float f2, float f3, boolean z2) {
-        final boolean z3 = z && fullyExpandedClearAllVisible() && this.mExpandedHeight < ((float) (getMaxPanelHeight() - getClearAllHeight())) && !isClearAllVisible();
+    protected void flingToHeight(float f, boolean z, float f2, float f3, boolean z2) {
+        boolean z3 = z && fullyExpandedClearAllVisible() && this.mExpandedHeight < ((float) (getMaxPanelHeight() - getClearAllHeight())) && !isClearAllVisible();
         if (z3) {
             f2 = getMaxPanelHeight() - getClearAllHeight();
         }
@@ -656,37 +670,40 @@ public abstract class PanelView extends FrameLayout {
             return;
         }
         this.mOverExpandedBeforeFling = getOverExpansionAmount() > 0.0f;
-        ValueAnimator createHeightAnimator = createHeightAnimator(f4);
+        ValueAnimator valueAnimatorCreateHeightAnimator = createHeightAnimator(f4);
         if (z) {
             if (z2 && f < 0.0f) {
                 f = 0.0f;
             }
-            this.mFlingAnimationUtils.apply(createHeightAnimator, this.mExpandedHeight, f4, f, getHeight());
+            this.mFlingAnimationUtils.apply(valueAnimatorCreateHeightAnimator, this.mExpandedHeight, f4, f, getHeight());
             if (f == 0.0f) {
-                createHeightAnimator.setDuration(350L);
+                valueAnimatorCreateHeightAnimator.setDuration(350L);
             }
         } else {
-            if (shouldUseDismissingAnimation()) {
-                if (f == 0.0f) {
-                    createHeightAnimator.setInterpolator(Interpolators.PANEL_CLOSE_ACCELERATED);
-                    createHeightAnimator.setDuration(200.0f + ((this.mExpandedHeight / getHeight()) * 100.0f));
-                } else {
-                    this.mFlingAnimationUtilsDismissing.apply(createHeightAnimator, this.mExpandedHeight, f4, f, getHeight());
-                    createHeightAnimator.setDuration(48L);
-                }
+            if (!shouldUseDismissingAnimation()) {
+                this.mFlingAnimationUtilsClosing.apply(valueAnimatorCreateHeightAnimator, this.mExpandedHeight, f4, f, getHeight());
+                valueAnimatorCreateHeightAnimator.setDuration(48L);
+            } else if (f == 0.0f) {
+                valueAnimatorCreateHeightAnimator.setInterpolator(Interpolators.PANEL_CLOSE_ACCELERATED);
+                valueAnimatorCreateHeightAnimator.setDuration((long) (200.0f + ((this.mExpandedHeight / getHeight()) * 100.0f)));
             } else {
-                this.mFlingAnimationUtilsClosing.apply(createHeightAnimator, this.mExpandedHeight, f4, f, getHeight());
-                createHeightAnimator.setDuration(48L);
+                this.mFlingAnimationUtilsDismissing.apply(valueAnimatorCreateHeightAnimator, this.mExpandedHeight, f4, f, getHeight());
+                valueAnimatorCreateHeightAnimator.setDuration(48L);
             }
             if (f == 0.0f) {
-                createHeightAnimator.setDuration(((float) createHeightAnimator.getDuration()) / f3);
+                valueAnimatorCreateHeightAnimator.setDuration((long) (valueAnimatorCreateHeightAnimator.getDuration() / f3));
             }
             if (this.mFixedDuration != -1) {
-                createHeightAnimator.setDuration(this.mFixedDuration);
+                valueAnimatorCreateHeightAnimator.setDuration(this.mFixedDuration);
             }
         }
-        createHeightAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.PanelView.2
+        valueAnimatorCreateHeightAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.PanelView.2
             private boolean mCancelled;
+            final /* synthetic */ boolean val$clearAllExpandHack;
+
+            AnonymousClass2(boolean z32) {
+                z = z32;
+            }
 
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationCancel(Animator animator) {
@@ -695,7 +712,7 @@ public abstract class PanelView extends FrameLayout {
 
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
-                if (z3 && !this.mCancelled) {
+                if (z && !this.mCancelled) {
                     PanelView.this.setExpandedHeightInternal(PanelView.this.getMaxPanelHeight());
                 }
                 PanelView.this.setAnimator(null);
@@ -705,13 +722,39 @@ public abstract class PanelView extends FrameLayout {
                 PanelView.this.notifyBarPanelExpansionChanged();
             }
         });
-        setAnimator(createHeightAnimator);
-        createHeightAnimator.start();
+        setAnimator(valueAnimatorCreateHeightAnimator);
+        valueAnimatorCreateHeightAnimator.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* renamed from: com.android.systemui.statusbar.phone.PanelView$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        private boolean mCancelled;
+        final /* synthetic */ boolean val$clearAllExpandHack;
+
+        AnonymousClass2(boolean z32) {
+            z = z32;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            this.mCancelled = true;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (z && !this.mCancelled) {
+                PanelView.this.setExpandedHeightInternal(PanelView.this.getMaxPanelHeight());
+            }
+            PanelView.this.setAnimator(null);
+            if (!this.mCancelled) {
+                PanelView.this.notifyExpandingFinished();
+            }
+            PanelView.this.notifyBarPanelExpansionChanged();
+        }
+    }
+
     @Override // android.view.ViewGroup, android.view.View
-    public void onAttachedToWindow() {
+    protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         this.mViewName = getResources().getResourceName(getId());
     }
@@ -720,9 +763,8 @@ public abstract class PanelView extends FrameLayout {
         setExpandedHeightInternal(f + getOverExpansionPixels());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.widget.FrameLayout, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         this.mStatusBar.onPanelLaidOut();
         requestPanelHeightUpdate();
@@ -734,8 +776,7 @@ public abstract class PanelView extends FrameLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void requestPanelHeightUpdate() {
+    protected void requestPanelHeightUpdate() {
         float maxPanelHeight = getMaxPanelHeight();
         if (isFullyCollapsed() || maxPanelHeight == this.mExpandedHeight || this.mPeekAnimator != null || this.mPeekTouching) {
             return;
@@ -755,16 +796,16 @@ public abstract class PanelView extends FrameLayout {
             DejankUtils.postAfterTraversal(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$PanelView$NcQsgCLFImw9_GKeELFJ1HpKiII
                 @Override // java.lang.Runnable
                 public final void run() {
-                    LatencyTracker.getInstance(PanelView.this.mContext).onActionEnd(0);
+                    LatencyTracker.getInstance(this.f$0.mContext).onActionEnd(0);
                 }
             });
             this.mExpandLatencyTracking = false;
         }
         float maxPanelHeight = getMaxPanelHeight() - getOverExpansionAmount();
         if (this.mHeightAnimator == null) {
-            float max = Math.max(0.0f, f - maxPanelHeight);
-            if (getOverExpansionPixels() != max && this.mTracking) {
-                setOverExpansion(max, true);
+            float fMax = Math.max(0.0f, f - maxPanelHeight);
+            if (getOverExpansionPixels() != fMax && this.mTracking) {
+                setOverExpansion(fMax, true);
             }
             this.mExpandedHeight = Math.min(f, maxPanelHeight) + getOverExpansionAmount();
         } else {
@@ -824,14 +865,25 @@ public abstract class PanelView extends FrameLayout {
             if (z) {
                 this.mNextCollapseSpeedUpFactor = f;
                 postDelayed(this.mFlingCollapseRunnable, 120L);
-                return;
+            } else {
+                fling(0.0f, false, f, false);
             }
-            fling(0.0f, false, f, false);
         }
     }
 
     public boolean canPanelBeCollapsed() {
         return (isFullyCollapsed() || this.mTracking || this.mClosing) ? false : true;
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.PanelView$3 */
+    class AnonymousClass3 implements Runnable {
+        AnonymousClass3() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            PanelView.this.fling(0.0f, false, PanelView.this.mNextCollapseSpeedUpFactor, false);
+        }
     }
 
     public void cancelPeek() {
@@ -864,11 +916,16 @@ public abstract class PanelView extends FrameLayout {
         }
         notifyBarPanelExpansionChanged();
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() { // from class: com.android.systemui.statusbar.phone.PanelView.4
+            AnonymousClass4() {
+            }
+
             @Override // android.view.ViewTreeObserver.OnGlobalLayoutListener
             public void onGlobalLayout() {
                 if (!PanelView.this.mInstantExpanding) {
                     PanelView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else if (PanelView.this.mStatusBar.getStatusBarWindow().getHeight() != PanelView.this.mStatusBar.getStatusBarHeight()) {
+                    return;
+                }
+                if (PanelView.this.mStatusBar.getStatusBarWindow().getHeight() != PanelView.this.mStatusBar.getStatusBarHeight()) {
                     PanelView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     if (PanelView.this.mAnimateAfterExpanding) {
                         PanelView.this.notifyExpandingStarted();
@@ -881,6 +938,30 @@ public abstract class PanelView extends FrameLayout {
             }
         });
         requestLayout();
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.PanelView$4 */
+    class AnonymousClass4 implements ViewTreeObserver.OnGlobalLayoutListener {
+        AnonymousClass4() {
+        }
+
+        @Override // android.view.ViewTreeObserver.OnGlobalLayoutListener
+        public void onGlobalLayout() {
+            if (!PanelView.this.mInstantExpanding) {
+                PanelView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                return;
+            }
+            if (PanelView.this.mStatusBar.getStatusBarWindow().getHeight() != PanelView.this.mStatusBar.getStatusBarHeight()) {
+                PanelView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if (PanelView.this.mAnimateAfterExpanding) {
+                    PanelView.this.notifyExpandingStarted();
+                    PanelView.this.fling(0.0f, true);
+                } else {
+                    PanelView.this.setExpandedFraction(1.0f);
+                }
+                PanelView.this.mInstantExpanding = false;
+            }
+        }
     }
 
     public void instantCollapse() {
@@ -902,13 +983,11 @@ public abstract class PanelView extends FrameLayout {
         removeCallbacks(this.mFlingCollapseRunnable);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onClosingFinished() {
+    protected void onClosingFinished() {
         this.mBar.onClosingFinished();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void startUnlockHintAnimation() {
+    protected void startUnlockHintAnimation() {
         if (this.mHeightAnimator != null || this.mTracking) {
             return;
         }
@@ -917,7 +996,7 @@ public abstract class PanelView extends FrameLayout {
         startUnlockHintAnimationPhase1(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$PanelView$tAljekoGx9mlKIleW6Fmi59MCOs
             @Override // java.lang.Runnable
             public final void run() {
-                PanelView.lambda$startUnlockHintAnimation$1(PanelView.this);
+                PanelView.lambda$startUnlockHintAnimation$1(this.f$0);
             }
         });
         onUnlockHintStarted();
@@ -930,13 +1009,11 @@ public abstract class PanelView extends FrameLayout {
         panelView.mHintAnimationRunning = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onUnlockHintFinished() {
+    protected void onUnlockHintFinished() {
         this.mStatusBar.onHintFinished();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onUnlockHintStarted() {
+    protected void onUnlockHintStarted() {
         this.mStatusBar.onUnlockHintStarted();
     }
 
@@ -944,13 +1021,17 @@ public abstract class PanelView extends FrameLayout {
         return this.mHintAnimationRunning;
     }
 
-    private void startUnlockHintAnimationPhase1(final Runnable runnable) {
-        View[] viewArr;
-        ValueAnimator createHeightAnimator = createHeightAnimator(Math.max(0.0f, getMaxPanelHeight() - this.mHintDistance));
-        createHeightAnimator.setDuration(250L);
-        createHeightAnimator.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
-        createHeightAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.PanelView.5
+    private void startUnlockHintAnimationPhase1(Runnable runnable) {
+        ValueAnimator valueAnimatorCreateHeightAnimator = createHeightAnimator(Math.max(0.0f, getMaxPanelHeight() - this.mHintDistance));
+        valueAnimatorCreateHeightAnimator.setDuration(250L);
+        valueAnimatorCreateHeightAnimator.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
+        valueAnimatorCreateHeightAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.PanelView.5
             private boolean mCancelled;
+            final /* synthetic */ Runnable val$onAnimationFinished;
+
+            AnonymousClass5(Runnable runnable2) {
+                runnable = runnable2;
+            }
 
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationCancel(Animator animator) {
@@ -962,27 +1043,51 @@ public abstract class PanelView extends FrameLayout {
                 if (this.mCancelled) {
                     PanelView.this.setAnimator(null);
                     runnable.run();
-                    return;
+                } else {
+                    PanelView.this.startUnlockHintAnimationPhase2(runnable);
                 }
-                PanelView.this.startUnlockHintAnimationPhase2(runnable);
             }
         });
-        createHeightAnimator.start();
-        setAnimator(createHeightAnimator);
+        valueAnimatorCreateHeightAnimator.start();
+        setAnimator(valueAnimatorCreateHeightAnimator);
         for (final View view : new View[]{this.mKeyguardBottomArea.getIndicationArea(), this.mStatusBar.getAmbientIndicationContainer()}) {
             if (view != null) {
                 view.animate().translationY(-this.mHintDistance).setDuration(250L).setInterpolator(Interpolators.FAST_OUT_SLOW_IN).withEndAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$PanelView$NxwxpLj3ZElyZw-bMmniBqBlhdY
                     @Override // java.lang.Runnable
                     public final void run() {
-                        view.animate().translationY(0.0f).setDuration(450L).setInterpolator(PanelView.this.mBounceInterpolator).start();
+                        view.animate().translationY(0.0f).setDuration(450L).setInterpolator(this.f$0.mBounceInterpolator).start();
                     }
                 }).start();
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setAnimator(ValueAnimator valueAnimator) {
+    /* renamed from: com.android.systemui.statusbar.phone.PanelView$5 */
+    class AnonymousClass5 extends AnimatorListenerAdapter {
+        private boolean mCancelled;
+        final /* synthetic */ Runnable val$onAnimationFinished;
+
+        AnonymousClass5(Runnable runnable2) {
+            runnable = runnable2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            this.mCancelled = true;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (this.mCancelled) {
+                PanelView.this.setAnimator(null);
+                runnable.run();
+            } else {
+                PanelView.this.startUnlockHintAnimationPhase2(runnable);
+            }
+        }
+    }
+
+    private void setAnimator(ValueAnimator valueAnimator) {
         this.mHeightAnimator = valueAnimator;
         if (valueAnimator == null && this.mPanelUpdateWhenAnimatorEnds) {
             this.mPanelUpdateWhenAnimatorEnds = false;
@@ -990,12 +1095,17 @@ public abstract class PanelView extends FrameLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startUnlockHintAnimationPhase2(final Runnable runnable) {
-        ValueAnimator createHeightAnimator = createHeightAnimator(getMaxPanelHeight());
-        createHeightAnimator.setDuration(450L);
-        createHeightAnimator.setInterpolator(this.mBounceInterpolator);
-        createHeightAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.PanelView.6
+    private void startUnlockHintAnimationPhase2(Runnable runnable) {
+        ValueAnimator valueAnimatorCreateHeightAnimator = createHeightAnimator(getMaxPanelHeight());
+        valueAnimatorCreateHeightAnimator.setDuration(450L);
+        valueAnimatorCreateHeightAnimator.setInterpolator(this.mBounceInterpolator);
+        valueAnimatorCreateHeightAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.PanelView.6
+            final /* synthetic */ Runnable val$onAnimationFinished;
+
+            AnonymousClass6(Runnable runnable2) {
+                runnable = runnable2;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 PanelView.this.setAnimator(null);
@@ -1003,23 +1113,52 @@ public abstract class PanelView extends FrameLayout {
                 PanelView.this.notifyBarPanelExpansionChanged();
             }
         });
-        createHeightAnimator.start();
-        setAnimator(createHeightAnimator);
+        valueAnimatorCreateHeightAnimator.start();
+        setAnimator(valueAnimatorCreateHeightAnimator);
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.PanelView$6 */
+    class AnonymousClass6 extends AnimatorListenerAdapter {
+        final /* synthetic */ Runnable val$onAnimationFinished;
+
+        AnonymousClass6(Runnable runnable2) {
+            runnable = runnable2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            PanelView.this.setAnimator(null);
+            runnable.run();
+            PanelView.this.notifyBarPanelExpansionChanged();
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.PanelView$7 */
+    class AnonymousClass7 implements ValueAnimator.AnimatorUpdateListener {
+        AnonymousClass7() {
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            PanelView.this.setExpandedHeightInternal(((Float) valueAnimator.getAnimatedValue()).floatValue());
+        }
     }
 
     private ValueAnimator createHeightAnimator(float f) {
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(this.mExpandedHeight, f);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.PanelView.7
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(this.mExpandedHeight, f);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.PanelView.7
+            AnonymousClass7() {
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 PanelView.this.setExpandedHeightInternal(((Float) valueAnimator.getAnimatedValue()).floatValue());
             }
         });
-        return ofFloat;
+        return valueAnimatorOfFloat;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void notifyBarPanelExpansionChanged() {
+    protected void notifyBarPanelExpansionChanged() {
         this.mBar.panelExpansionChanged(this.mExpandedFraction, this.mExpandedFraction > 0.0f || this.mPeekAnimator != null || this.mInstantExpanding || isPanelVisibleBecauseOfHeadsUp() || this.mTracking || this.mHeightAnimator != null);
         if (this.mExpansionListener != null) {
             this.mExpansionListener.accept(Float.valueOf(this.mExpandedFraction), Boolean.valueOf(this.mTracking));
@@ -1030,12 +1169,22 @@ public abstract class PanelView extends FrameLayout {
         this.mExpansionListener = biConsumer;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean onEmptySpaceClick(float f) {
+    protected boolean onEmptySpaceClick(float f) {
         if (this.mHintAnimationRunning) {
             return true;
         }
         return onMiddleClicked();
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.PanelView$8 */
+    class AnonymousClass8 implements Runnable {
+        AnonymousClass8() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            PanelView.this.collapse(false, 1.0f);
+        }
     }
 
     public void dump(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {

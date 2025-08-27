@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
+
 /* loaded from: classes.dex */
 public class SwipeDetector {
     private static final float ANIMATION_DURATION = 1200.0f;
@@ -53,14 +54,12 @@ public class SwipeDetector {
         }
     };
 
-    /* loaded from: classes.dex */
     public static abstract class Direction {
         abstract float getActiveTouchSlop(MotionEvent motionEvent, int i, PointF pointF);
 
         abstract float getDisplacement(MotionEvent motionEvent, int i, PointF pointF);
     }
 
-    /* loaded from: classes.dex */
     public interface Listener {
         boolean onDrag(float f, float f2);
 
@@ -69,9 +68,7 @@ public class SwipeDetector {
         void onDragStart(boolean z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public enum ScrollState {
+    enum ScrollState {
         IDLE,
         DRAGGING,
         SETTLING
@@ -143,6 +140,7 @@ public class SwipeDetector {
         return ((this.mScrollConditions & 2) > 0 && this.mDisplacement > 0.0f) || ((this.mScrollConditions & 1) > 0 && this.mDisplacement < 0.0f);
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     public boolean onTouchEvent(MotionEvent motionEvent) {
         int actionMasked = motionEvent.getActionMasked();
         if (actionMasked != 6) {
@@ -167,17 +165,17 @@ public class SwipeDetector {
                     }
                     break;
                 case 2:
-                    int findPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
-                    if (findPointerIndex != -1) {
-                        this.mDisplacement = this.mDir.getDisplacement(motionEvent, findPointerIndex, this.mDownPos);
-                        computeVelocity(this.mDir.getDisplacement(motionEvent, findPointerIndex, this.mLastPos), motionEvent.getEventTime());
-                        if (this.mState != ScrollState.DRAGGING && shouldScrollStart(motionEvent, findPointerIndex)) {
+                    int iFindPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
+                    if (iFindPointerIndex != -1) {
+                        this.mDisplacement = this.mDir.getDisplacement(motionEvent, iFindPointerIndex, this.mDownPos);
+                        computeVelocity(this.mDir.getDisplacement(motionEvent, iFindPointerIndex, this.mLastPos), motionEvent.getEventTime());
+                        if (this.mState != ScrollState.DRAGGING && shouldScrollStart(motionEvent, iFindPointerIndex)) {
                             setState(ScrollState.DRAGGING);
                         }
                         if (this.mState == ScrollState.DRAGGING) {
                             reportDragging();
                         }
-                        this.mLastPos.set(motionEvent.getX(findPointerIndex), motionEvent.getY(findPointerIndex));
+                        this.mLastPos.set(motionEvent.getX(iFindPointerIndex), motionEvent.getY(iFindPointerIndex));
                         break;
                     }
                     break;
@@ -233,7 +231,7 @@ public class SwipeDetector {
     public float computeVelocity(float f, long j) {
         long j2 = this.mCurrentMillis;
         this.mCurrentMillis = j;
-        float f2 = (float) (this.mCurrentMillis - j2);
+        float f2 = this.mCurrentMillis - j2;
         float f3 = f2 > 0.0f ? f / f2 : 0.0f;
         if (Math.abs(this.mVelocity) < 0.001f) {
             this.mVelocity = f3;
@@ -252,7 +250,7 @@ public class SwipeDetector {
     }
 
     public static long calculateDuration(float f, float f2) {
-        float max = Math.max(2.0f, Math.abs(0.5f * f));
-        return Math.max(100.0f, (ANIMATION_DURATION / max) * Math.max(0.2f, f2));
+        float fMax = Math.max(2.0f, Math.abs(0.5f * f));
+        return (long) Math.max(100.0f, (ANIMATION_DURATION / fMax) * Math.max(0.2f, f2));
     }
 }

@@ -12,6 +12,7 @@ import com.android.systemui.recents.views.TaskViewTransform;
 import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class TaskGridLayoutAlgorithm {
     private float mAppAspectRatio;
@@ -27,9 +28,7 @@ public class TaskGridLayoutAlgorithm {
     private Point mScreenSize = new Point();
     private Rect mSystemInsets = new Rect();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class TaskGridRectInfo {
+    class TaskGridRectInfo {
         int lines;
         Rect size = new Rect();
         int tasksPerLine;
@@ -37,21 +36,20 @@ public class TaskGridLayoutAlgorithm {
         int[] yOffsets;
 
         TaskGridRectInfo(int i) {
-            float f;
             this.xOffsets = new int[i];
             this.yOffsets = new int[i];
-            int min = Math.min(8, i);
-            this.tasksPerLine = getTasksPerLine(min);
+            int iMin = Math.min(8, i);
+            this.tasksPerLine = getTasksPerLine(iMin);
             int i2 = 4;
-            this.lines = min < 4 ? 1 : 2;
+            this.lines = iMin < 4 ? 1 : 2;
             boolean z = TaskGridLayoutAlgorithm.this.mWindowRect.width() > TaskGridLayoutAlgorithm.this.mWindowRect.height();
             boolean z2 = TaskGridLayoutAlgorithm.this.mAppAspectRatio > 1.0f;
             if (!z && z2) {
-                this.tasksPerLine = min < 2 ? 1 : 2;
-                if (min >= 3) {
-                    if (min < 5) {
+                this.tasksPerLine = iMin < 2 ? 1 : 2;
+                if (iMin >= 3) {
+                    if (iMin < 5) {
                         i2 = 2;
-                    } else if (min < 7) {
+                    } else if (iMin < 7) {
                         i2 = 3;
                     }
                 } else {
@@ -60,25 +58,25 @@ public class TaskGridLayoutAlgorithm {
                 this.lines = i2;
             }
             if (z && !z2) {
-                this.tasksPerLine = min < 7 ? min : 6;
-                this.lines = min < 7 ? 1 : 2;
+                this.tasksPerLine = iMin < 7 ? iMin : 6;
+                this.lines = iMin < 7 ? 1 : 2;
             }
-            int width = ((TaskGridLayoutAlgorithm.this.mWindowRect.width() - (TaskGridLayoutAlgorithm.this.mPaddingLeftRight * 2)) - ((this.tasksPerLine - 1) * TaskGridLayoutAlgorithm.this.mPaddingTaskView)) / this.tasksPerLine;
-            int height = ((TaskGridLayoutAlgorithm.this.mWindowRect.height() - (TaskGridLayoutAlgorithm.this.mPaddingTopBottom * 2)) - ((this.lines - 1) * TaskGridLayoutAlgorithm.this.mPaddingTaskView)) / this.lines;
-            if (height >= (width / TaskGridLayoutAlgorithm.this.mAppAspectRatio) + TaskGridLayoutAlgorithm.this.mTitleBarHeight) {
-                height = (int) ((f / TaskGridLayoutAlgorithm.this.mAppAspectRatio) + TaskGridLayoutAlgorithm.this.mTitleBarHeight + 0.5d);
+            int iWidth = ((TaskGridLayoutAlgorithm.this.mWindowRect.width() - (TaskGridLayoutAlgorithm.this.mPaddingLeftRight * 2)) - ((this.tasksPerLine - 1) * TaskGridLayoutAlgorithm.this.mPaddingTaskView)) / this.tasksPerLine;
+            int iHeight = ((TaskGridLayoutAlgorithm.this.mWindowRect.height() - (TaskGridLayoutAlgorithm.this.mPaddingTopBottom * 2)) - ((this.lines - 1) * TaskGridLayoutAlgorithm.this.mPaddingTaskView)) / this.lines;
+            if (iHeight >= (iWidth / TaskGridLayoutAlgorithm.this.mAppAspectRatio) + TaskGridLayoutAlgorithm.this.mTitleBarHeight) {
+                iHeight = (int) ((r5 / TaskGridLayoutAlgorithm.this.mAppAspectRatio) + TaskGridLayoutAlgorithm.this.mTitleBarHeight + 0.5d);
             } else {
-                width = (int) (((height - TaskGridLayoutAlgorithm.this.mTitleBarHeight) * TaskGridLayoutAlgorithm.this.mAppAspectRatio) + 0.5d);
+                iWidth = (int) (((iHeight - TaskGridLayoutAlgorithm.this.mTitleBarHeight) * TaskGridLayoutAlgorithm.this.mAppAspectRatio) + 0.5d);
             }
-            this.size.set(0, 0, width, height);
-            int width2 = ((TaskGridLayoutAlgorithm.this.mWindowRect.width() - (TaskGridLayoutAlgorithm.this.mPaddingLeftRight * 2)) - (this.tasksPerLine * width)) - ((this.tasksPerLine - 1) * TaskGridLayoutAlgorithm.this.mPaddingTaskView);
-            int height2 = ((TaskGridLayoutAlgorithm.this.mWindowRect.height() - (TaskGridLayoutAlgorithm.this.mPaddingTopBottom * 2)) - (this.lines * height)) - ((this.lines - 1) * TaskGridLayoutAlgorithm.this.mPaddingTaskView);
+            this.size.set(0, 0, iWidth, iHeight);
+            int iWidth2 = ((TaskGridLayoutAlgorithm.this.mWindowRect.width() - (TaskGridLayoutAlgorithm.this.mPaddingLeftRight * 2)) - (this.tasksPerLine * iWidth)) - ((this.tasksPerLine - 1) * TaskGridLayoutAlgorithm.this.mPaddingTaskView);
+            int iHeight2 = ((TaskGridLayoutAlgorithm.this.mWindowRect.height() - (TaskGridLayoutAlgorithm.this.mPaddingTopBottom * 2)) - (this.lines * iHeight)) - ((this.lines - 1) * TaskGridLayoutAlgorithm.this.mPaddingTaskView);
             for (int i3 = 0; i3 < i; i3++) {
                 int i4 = (i - i3) - 1;
                 int i5 = i4 % this.tasksPerLine;
                 int i6 = i4 / this.tasksPerLine;
-                this.xOffsets[i3] = TaskGridLayoutAlgorithm.this.mWindowRect.left + (width2 / 2) + TaskGridLayoutAlgorithm.this.mPaddingLeftRight + ((TaskGridLayoutAlgorithm.this.mPaddingTaskView + width) * i5);
-                this.yOffsets[i3] = TaskGridLayoutAlgorithm.this.mWindowRect.top + (height2 / 2) + TaskGridLayoutAlgorithm.this.mPaddingTopBottom + ((TaskGridLayoutAlgorithm.this.mPaddingTaskView + height) * i6);
+                this.xOffsets[i3] = TaskGridLayoutAlgorithm.this.mWindowRect.left + (iWidth2 / 2) + TaskGridLayoutAlgorithm.this.mPaddingLeftRight + ((TaskGridLayoutAlgorithm.this.mPaddingTaskView + iWidth) * i5);
+                this.yOffsets[i3] = TaskGridLayoutAlgorithm.this.mWindowRect.top + (iHeight2 / 2) + TaskGridLayoutAlgorithm.this.mPaddingTopBottom + ((TaskGridLayoutAlgorithm.this.mPaddingTaskView + iHeight) * i6);
             }
         }
 
@@ -233,7 +231,7 @@ public class TaskGridLayoutAlgorithm {
     }
 
     public TaskStackLayoutAlgorithm.VisibilityReport computeStackVisibilityReport(ArrayList<Task> arrayList) {
-        int min = Math.min(8, arrayList.size());
-        return new TaskStackLayoutAlgorithm.VisibilityReport(min, min);
+        int iMin = Math.min(8, arrayList.size());
+        return new TaskStackLayoutAlgorithm.VisibilityReport(iMin, iMin);
     }
 }

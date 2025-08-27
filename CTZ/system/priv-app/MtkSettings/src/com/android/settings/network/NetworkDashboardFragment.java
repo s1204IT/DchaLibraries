@@ -26,6 +26,7 @@ import com.mediatek.settings.network.RcsePreferenceController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NetworkDashboardFragment extends DashboardFragment implements MobilePlanPreferenceController.MobilePlanPreferenceHost {
     public static final SummaryLoader.SummaryProviderFactory SUMMARY_PROVIDER_FACTORY = new SummaryLoader.SummaryProviderFactory() { // from class: com.android.settings.network.NetworkDashboardFragment.1
@@ -65,9 +66,8 @@ public class NetworkDashboardFragment extends DashboardFragment implements Mobil
         return "NetworkDashboardFrag";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.network_and_internet;
     }
 
@@ -93,8 +93,7 @@ public class NetworkDashboardFragment extends DashboardFragment implements Mobil
         return buildPreferenceControllers(context, getLifecycle(), this.mMetricsFeatureProvider, this, this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, MetricsFeatureProvider metricsFeatureProvider, Fragment fragment, MobilePlanPreferenceController.MobilePlanPreferenceHost mobilePlanPreferenceHost) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, MetricsFeatureProvider metricsFeatureProvider, Fragment fragment, MobilePlanPreferenceController.MobilePlanPreferenceHost mobilePlanPreferenceHost) {
         MobilePlanPreferenceController mobilePlanPreferenceController = new MobilePlanPreferenceController(context, mobilePlanPreferenceHost);
         WifiMasterSwitchPreferenceController wifiMasterSwitchPreferenceController = new WifiMasterSwitchPreferenceController(context, metricsFeatureProvider);
         MobileNetworkPreferenceController mobileNetworkPreferenceController = new MobileNetworkPreferenceController(context);
@@ -131,10 +130,10 @@ public class NetworkDashboardFragment extends DashboardFragment implements Mobil
         Log.d("NetworkDashboardFrag", "onCreateDialog: dialogId=" + i);
         if (i == 1) {
             final MobilePlanPreferenceController mobilePlanPreferenceController = (MobilePlanPreferenceController) use(MobilePlanPreferenceController.class);
-            return new AlertDialog.Builder(getActivity()).setMessage(mobilePlanPreferenceController.getMobilePlanDialogMessage()).setCancelable(false).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settings.network.-$$Lambda$NetworkDashboardFragment$ezC2Ol_SOf4CDiS8HjkkdWzGu_s
+            return new AlertDialog.Builder(getActivity()).setMessage(mobilePlanPreferenceController.getMobilePlanDialogMessage()).setCancelable(false).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.network.-$$Lambda$NetworkDashboardFragment$ezC2Ol_SOf4CDiS8HjkkdWzGu_s
                 @Override // android.content.DialogInterface.OnClickListener
                 public final void onClick(DialogInterface dialogInterface, int i2) {
-                    MobilePlanPreferenceController.this.setMobilePlanDialogMessage(null);
+                    mobilePlanPreferenceController.setMobilePlanDialogMessage(null);
                 }
             }).create();
         }
@@ -149,7 +148,6 @@ public class NetworkDashboardFragment extends DashboardFragment implements Mobil
         return 0;
     }
 
-    /* loaded from: classes.dex */
     static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final MobileNetworkPreferenceController mMobileNetworkPreferenceController;
@@ -170,11 +168,11 @@ public class NetworkDashboardFragment extends DashboardFragment implements Mobil
         @Override // com.android.settings.dashboard.SummaryLoader.SummaryProvider
         public void setListening(boolean z) {
             if (z) {
-                String unicodeWrap = BidiFormatter.getInstance().unicodeWrap(this.mContext.getString(R.string.wifi_settings_title));
+                String strUnicodeWrap = BidiFormatter.getInstance().unicodeWrap(this.mContext.getString(R.string.wifi_settings_title));
                 if (this.mMobileNetworkPreferenceController.isAvailable()) {
-                    unicodeWrap = this.mContext.getString(R.string.join_many_items_middle, unicodeWrap, this.mContext.getString(R.string.network_dashboard_summary_mobile));
+                    strUnicodeWrap = this.mContext.getString(R.string.join_many_items_middle, strUnicodeWrap, this.mContext.getString(R.string.network_dashboard_summary_mobile));
                 }
-                String string = this.mContext.getString(R.string.join_many_items_middle, unicodeWrap, this.mContext.getString(R.string.network_dashboard_summary_data_usage));
+                String string = this.mContext.getString(R.string.join_many_items_middle, strUnicodeWrap, this.mContext.getString(R.string.network_dashboard_summary_data_usage));
                 if (this.mTetherPreferenceController.isAvailable()) {
                     string = this.mContext.getString(R.string.join_many_items_middle, string, this.mContext.getString(R.string.network_dashboard_summary_hotspot));
                 }

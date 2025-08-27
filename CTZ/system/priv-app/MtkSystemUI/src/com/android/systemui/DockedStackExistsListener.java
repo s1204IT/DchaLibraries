@@ -8,6 +8,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class DockedStackExistsListener {
     private static boolean mLastExists;
@@ -37,8 +38,7 @@ public class DockedStackExistsListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void onDockedStackExistsChanged(final boolean z) {
+    private static void onDockedStackExistsChanged(final boolean z) {
         mLastExists = z;
         synchronized (sCallbacks) {
             sCallbacks.removeIf(new Predicate() { // from class: com.android.systemui.-$$Lambda$DockedStackExistsListener$fsI9l50cYy8em3Xlw9NfoEH95Z8
@@ -50,8 +50,7 @@ public class DockedStackExistsListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$onDockedStackExistsChanged$0(boolean z, WeakReference weakReference) {
+    static /* synthetic */ boolean lambda$onDockedStackExistsChanged$0(boolean z, WeakReference weakReference) {
         Consumer consumer = (Consumer) weakReference.get();
         if (consumer != null) {
             consumer.accept(Boolean.valueOf(z));

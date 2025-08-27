@@ -3,6 +3,7 @@ package com.mediatek.keyguard.ext;
 import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public interface IKeyguardUtilExt {
     void customizeCarrierTextGravity(TextView textView);

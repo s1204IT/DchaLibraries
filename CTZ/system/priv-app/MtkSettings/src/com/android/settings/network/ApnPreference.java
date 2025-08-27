@@ -13,6 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ApnPreference extends Preference implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private boolean mEditable;
@@ -40,27 +41,27 @@ public class ApnPreference extends Preference implements View.OnClickListener, C
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.apn_radiobutton);
-        if (findViewById != null && (findViewById instanceof RadioButton)) {
-            RadioButton radioButton = (RadioButton) findViewById;
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.apn_radiobutton);
+        if (viewFindViewById != null && (viewFindViewById instanceof RadioButton)) {
+            RadioButton radioButton = (RadioButton) viewFindViewById;
             if (this.mSelectable) {
                 radioButton.setOnCheckedChangeListener(this);
-                boolean equals = getKey().equals(mSelectedKey);
-                if (equals) {
+                boolean zEquals = getKey().equals(mSelectedKey);
+                if (zEquals) {
                     mCurrentChecked = radioButton;
                     mSelectedKey = getKey();
                 }
                 this.mProtectFromCheckedChange = true;
-                radioButton.setChecked(equals);
+                radioButton.setChecked(zEquals);
                 this.mProtectFromCheckedChange = false;
                 radioButton.setVisibility(0);
             } else {
                 radioButton.setVisibility(8);
             }
         }
-        View findViewById2 = preferenceViewHolder.findViewById(R.id.text_layout);
-        if (findViewById2 != null && (findViewById2 instanceof RelativeLayout)) {
-            findViewById2.setOnClickListener(this);
+        View viewFindViewById2 = preferenceViewHolder.findViewById(R.id.text_layout);
+        if (viewFindViewById2 != null && (viewFindViewById2 instanceof RelativeLayout)) {
+            viewFindViewById2.setOnClickListener(this);
         }
     }
 

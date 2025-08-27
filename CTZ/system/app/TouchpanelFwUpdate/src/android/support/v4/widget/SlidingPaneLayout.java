@@ -1,5 +1,6 @@
 package android.support.v4.widget;
 
+import android.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -19,8 +20,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class SlidingPaneLayout extends ViewGroup {
     private boolean mCanSlide;
@@ -123,7 +126,7 @@ public class SlidingPaneLayout extends ViewGroup {
     }
 
     @Override // android.view.ViewGroup, android.view.View
-    protected void onDetachedFromWindow() {
+    protected void onDetachedFromWindow() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         super.onDetachedFromWindow();
         this.mFirstLayout = true;
         int count = this.mPostedRunnables.size();
@@ -134,9 +137,8 @@ public class SlidingPaneLayout extends ViewGroup {
         this.mPostedRunnables.clear();
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:38:0x00bb, code lost:
-        if (r14.width == 0) goto L20;
-     */
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [555=5, 611=4] */
+    /* JADX WARN: Removed duplicated region for block: B:79:0x0167  */
     @Override // android.view.View
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -208,6 +210,11 @@ public class SlidingPaneLayout extends ViewGroup {
             } else {
                 if (lp.weight > 0.0f) {
                     weightSum += lp.weight;
+                    if (lp.width == 0) {
+                    }
+                    layoutHeight2++;
+                    widthMode = widthMode2;
+                    heightSize2 = heightSize;
                 }
                 int horizontalMargin = lp.leftMargin + lp.rightMargin;
                 heightSize = heightSize2;
@@ -247,7 +254,12 @@ public class SlidingPaneLayout extends ViewGroup {
             int i3 = 0;
             while (i3 < childCount2) {
                 View child2 = getChildAt(i3);
-                if (child2.getVisibility() != i) {
+                if (child2.getVisibility() == i) {
+                    fixedPanelWidthLimit = fixedPanelWidthLimit2;
+                    heightMode = heightMode2;
+                    maxLayoutHeight = maxLayoutHeight2;
+                    childCount = childCount2;
+                } else {
                     LayoutParams lp2 = (LayoutParams) child2.getLayoutParams();
                     if (child2.getVisibility() != i) {
                         boolean skippedFirstPass = lp2.width == 0 && lp2.weight > 0.0f;
@@ -287,25 +299,11 @@ public class SlidingPaneLayout extends ViewGroup {
                                 fixedPanelWidthLimit = fixedPanelWidthLimit2;
                                 maxLayoutHeight = maxLayoutHeight2;
                             }
-                            i3++;
-                            heightMode2 = heightMode;
-                            childCount2 = childCount;
-                            fixedPanelWidthLimit2 = fixedPanelWidthLimit;
-                            maxLayoutHeight2 = maxLayoutHeight;
-                            i = 8;
                         } else if (lp2.width < 0) {
                             if (measuredWidth <= fixedPanelWidthLimit2) {
                                 heightMode = heightMode2;
                                 if (lp2.weight <= 0.0f) {
                                     fixedPanelWidthLimit = fixedPanelWidthLimit2;
-                                    maxLayoutHeight = maxLayoutHeight2;
-                                    childCount = childCount2;
-                                    i3++;
-                                    heightMode2 = heightMode;
-                                    childCount2 = childCount;
-                                    fixedPanelWidthLimit2 = fixedPanelWidthLimit;
-                                    maxLayoutHeight2 = maxLayoutHeight;
-                                    i = 8;
                                 }
                             } else {
                                 heightMode = heightMode2;
@@ -331,30 +329,16 @@ public class SlidingPaneLayout extends ViewGroup {
                             child2.measure(childWidthSpec4, childHeightSpec2);
                             fixedPanelWidthLimit = fixedPanelWidthLimit2;
                             maxLayoutHeight = maxLayoutHeight2;
-                            i3++;
-                            heightMode2 = heightMode;
-                            childCount2 = childCount;
-                            fixedPanelWidthLimit2 = fixedPanelWidthLimit;
-                            maxLayoutHeight2 = maxLayoutHeight;
-                            i = 8;
                         } else {
                             heightMode = heightMode2;
                             childCount = childCount2;
                             fixedPanelWidthLimit = fixedPanelWidthLimit2;
                             maxLayoutHeight = maxLayoutHeight2;
-                            i3++;
-                            heightMode2 = heightMode;
-                            childCount2 = childCount;
-                            fixedPanelWidthLimit2 = fixedPanelWidthLimit;
-                            maxLayoutHeight2 = maxLayoutHeight;
-                            i = 8;
                         }
                     }
+                    maxLayoutHeight = maxLayoutHeight2;
+                    childCount = childCount2;
                 }
-                fixedPanelWidthLimit = fixedPanelWidthLimit2;
-                heightMode = heightMode2;
-                maxLayoutHeight = maxLayoutHeight2;
-                childCount = childCount2;
                 i3++;
                 heightMode2 = heightMode;
                 childCount2 = childCount;
@@ -373,7 +357,7 @@ public class SlidingPaneLayout extends ViewGroup {
     }
 
     @Override // android.view.ViewGroup, android.view.View
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    protected void onLayout(boolean changed, int l, int t, int r, int b) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         int paddingStart;
         int childLeft;
         int childRight;
@@ -481,37 +465,38 @@ public class SlidingPaneLayout extends ViewGroup {
         if (!this.mCanSlide || (this.mIsUnableToDrag && action != 0)) {
             this.mDragHelper.cancel();
             return super.onInterceptTouchEvent(ev);
-        } else if (action == 3 || action == 1) {
+        }
+        if (action == 3 || action == 1) {
             this.mDragHelper.cancel();
             return false;
-        } else {
-            boolean interceptTap = false;
-            if (action == 0) {
-                this.mIsUnableToDrag = false;
-                float x = ev.getX();
-                float y = ev.getY();
-                this.mInitialMotionX = x;
-                this.mInitialMotionY = y;
-                if (this.mDragHelper.isViewUnder(this.mSlideableView, (int) x, (int) y) && isDimmed(this.mSlideableView)) {
-                    interceptTap = true;
-                }
-            } else if (action == 2) {
-                float x2 = ev.getX();
-                float y2 = ev.getY();
-                float adx = Math.abs(x2 - this.mInitialMotionX);
-                float ady = Math.abs(y2 - this.mInitialMotionY);
-                int slop = this.mDragHelper.getTouchSlop();
-                if (adx > slop && ady > adx) {
-                    this.mDragHelper.cancel();
-                    this.mIsUnableToDrag = true;
-                    return false;
-                }
-            }
-            boolean interceptForDrag = this.mDragHelper.shouldInterceptTouchEvent(ev);
-            return interceptForDrag || interceptTap;
         }
+        boolean interceptTap = false;
+        if (action == 0) {
+            this.mIsUnableToDrag = false;
+            float x = ev.getX();
+            float y = ev.getY();
+            this.mInitialMotionX = x;
+            this.mInitialMotionY = y;
+            if (this.mDragHelper.isViewUnder(this.mSlideableView, (int) x, (int) y) && isDimmed(this.mSlideableView)) {
+                interceptTap = true;
+            }
+        } else if (action == 2) {
+            float x2 = ev.getX();
+            float y2 = ev.getY();
+            float adx = Math.abs(x2 - this.mInitialMotionX);
+            float ady = Math.abs(y2 - this.mInitialMotionY);
+            int slop = this.mDragHelper.getTouchSlop();
+            if (adx > slop && ady > adx) {
+                this.mDragHelper.cancel();
+                this.mIsUnableToDrag = true;
+                return false;
+            }
+        }
+        boolean interceptForDrag = this.mDragHelper.shouldInterceptTouchEvent(ev);
+        return interceptForDrag || interceptTap;
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent ev) {
         if (!this.mCanSlide) {
@@ -524,7 +509,7 @@ public class SlidingPaneLayout extends ViewGroup {
                 float y = ev.getY();
                 this.mInitialMotionX = x;
                 this.mInitialMotionY = y;
-                break;
+                return true;
             case 1:
                 if (isDimmed(this.mSlideableView)) {
                     float x2 = ev.getX();
@@ -534,20 +519,20 @@ public class SlidingPaneLayout extends ViewGroup {
                     int slop = this.mDragHelper.getTouchSlop();
                     if ((dx * dx) + (dy * dy) < slop * slop && this.mDragHelper.isViewUnder(this.mSlideableView, (int) x2, (int) y2)) {
                         closePane(this.mSlideableView, 0);
-                        break;
                     }
                 }
-                break;
+                return true;
+            default:
+                return true;
         }
-        return true;
     }
 
     private boolean closePane(View pane, int initialVelocity) {
-        if (this.mFirstLayout || smoothSlideTo(0.0f, initialVelocity)) {
-            this.mPreservedOpenState = false;
-            return true;
+        if (!this.mFirstLayout && !smoothSlideTo(0.0f, initialVelocity)) {
+            return false;
         }
-        return false;
+        this.mPreservedOpenState = false;
+        return true;
     }
 
     private boolean openPane(View pane, int initialVelocity) {
@@ -574,7 +559,7 @@ public class SlidingPaneLayout extends ViewGroup {
         return this.mCanSlide;
     }
 
-    private void dimChildView(View v, float mag, int fadeColor) {
+    private void dimChildView(View v, float mag, int fadeColor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         LayoutParams lp = (LayoutParams) v.getLayoutParams();
         if (mag <= 0.0f || fadeColor == 0) {
             if (v.getLayerType() != 0) {
@@ -619,7 +604,7 @@ public class SlidingPaneLayout extends ViewGroup {
         return result;
     }
 
-    void invalidateChildRegion(View v) {
+    void invalidateChildRegion(View v) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (Build.VERSION.SDK_INT >= 17) {
             ViewCompat.setLayerPaint(v, ((LayoutParams) v.getLayoutParams()).dimPaint);
             return;
@@ -627,7 +612,7 @@ public class SlidingPaneLayout extends ViewGroup {
         if (Build.VERSION.SDK_INT >= 16) {
             if (!this.mDisplayListReflectionLoaded) {
                 try {
-                    this.mGetDisplayList = View.class.getDeclaredMethod("getDisplayList", null);
+                    this.mGetDisplayList = View.class.getDeclaredMethod("getDisplayList", (Class[]) null);
                 } catch (NoSuchMethodException e) {
                     Log.e("SlidingPaneLayout", "Couldn't fetch getDisplayList method; dimming won't work right.", e);
                 }
@@ -645,7 +630,7 @@ public class SlidingPaneLayout extends ViewGroup {
             }
             try {
                 this.mRecreateDisplayList.setBoolean(v, true);
-                this.mGetDisplayList.invoke(v, null);
+                this.mGetDisplayList.invoke(v, (Object[]) null);
             } catch (Exception e3) {
                 Log.e("SlidingPaneLayout", "Error refreshing display list state", e3);
             }
@@ -655,26 +640,26 @@ public class SlidingPaneLayout extends ViewGroup {
 
     boolean smoothSlideTo(float slideOffset, int velocity) {
         int startBound;
-        if (this.mCanSlide) {
-            boolean isLayoutRtl = isLayoutRtlSupport();
-            LayoutParams lp = (LayoutParams) this.mSlideableView.getLayoutParams();
-            if (isLayoutRtl) {
-                int startBound2 = getPaddingRight() + lp.rightMargin;
-                int childWidth = this.mSlideableView.getWidth();
-                startBound = (int) (getWidth() - ((startBound2 + (this.mSlideRange * slideOffset)) + childWidth));
-            } else {
-                int x = getPaddingLeft();
-                int startBound3 = x + lp.leftMargin;
-                startBound = (int) (startBound3 + (this.mSlideRange * slideOffset));
-            }
-            if (this.mDragHelper.smoothSlideViewTo(this.mSlideableView, startBound, this.mSlideableView.getTop())) {
-                setAllChildrenVisible();
-                ViewCompat.postInvalidateOnAnimation(this);
-                return true;
-            }
+        if (!this.mCanSlide) {
             return false;
         }
-        return false;
+        boolean isLayoutRtl = isLayoutRtlSupport();
+        LayoutParams lp = (LayoutParams) this.mSlideableView.getLayoutParams();
+        if (isLayoutRtl) {
+            int startBound2 = getPaddingRight() + lp.rightMargin;
+            int childWidth = this.mSlideableView.getWidth();
+            startBound = (int) (getWidth() - ((startBound2 + (this.mSlideRange * slideOffset)) + childWidth));
+        } else {
+            int x = getPaddingLeft();
+            int startBound3 = x + lp.leftMargin;
+            startBound = (int) (startBound3 + (this.mSlideRange * slideOffset));
+        }
+        if (!this.mDragHelper.smoothSlideViewTo(this.mSlideableView, startBound, this.mSlideableView.getTop())) {
+            return false;
+        }
+        setAllChildrenVisible();
+        ViewCompat.postInvalidateOnAnimation(this);
+        return true;
     }
 
     @Override // android.view.View
@@ -718,37 +703,32 @@ public class SlidingPaneLayout extends ViewGroup {
         shadowDrawable.draw(c);
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:12:0x0024  */
+    /* JADX WARN: Removed duplicated region for block: B:9:0x001c  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private void parallaxOtherViews(float slideOffset) {
+    private void parallaxOtherViews(float slideOffset) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         boolean dimViews;
-        int childCount;
         boolean isLayoutRtl = isLayoutRtlSupport();
         LayoutParams slideLp = (LayoutParams) this.mSlideableView.getLayoutParams();
-        if (slideLp.dimWhenOffset) {
-            if ((isLayoutRtl ? slideLp.rightMargin : slideLp.leftMargin) <= 0) {
-                dimViews = true;
-                childCount = getChildCount();
-                for (int i = 0; i < childCount; i++) {
-                    View v = getChildAt(i);
-                    if (v != this.mSlideableView) {
-                        int oldOffset = (int) ((1.0f - this.mParallaxOffset) * this.mParallaxBy);
-                        this.mParallaxOffset = slideOffset;
-                        int newOffset = (int) ((1.0f - slideOffset) * this.mParallaxBy);
-                        int dx = oldOffset - newOffset;
-                        v.offsetLeftAndRight(isLayoutRtl ? -dx : dx);
-                        if (dimViews) {
-                            dimChildView(v, isLayoutRtl ? this.mParallaxOffset - 1.0f : 1.0f - this.mParallaxOffset, this.mCoveredFadeColor);
-                        }
-                    }
+        if (!slideLp.dimWhenOffset) {
+            dimViews = false;
+        } else if ((isLayoutRtl ? slideLp.rightMargin : slideLp.leftMargin) <= 0) {
+            dimViews = true;
+        }
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View v = getChildAt(i);
+            if (v != this.mSlideableView) {
+                int oldOffset = (int) ((1.0f - this.mParallaxOffset) * this.mParallaxBy);
+                this.mParallaxOffset = slideOffset;
+                int newOffset = (int) ((1.0f - slideOffset) * this.mParallaxBy);
+                int dx = oldOffset - newOffset;
+                v.offsetLeftAndRight(isLayoutRtl ? -dx : dx);
+                if (dimViews) {
+                    dimChildView(v, isLayoutRtl ? this.mParallaxOffset - 1.0f : 1.0f - this.mParallaxOffset, this.mCoveredFadeColor);
                 }
             }
-        }
-        dimViews = false;
-        childCount = getChildCount();
-        while (i < childCount) {
         }
     }
 
@@ -804,9 +784,8 @@ public class SlidingPaneLayout extends ViewGroup {
         this.mPreservedOpenState = ss.isOpen;
     }
 
-    /* loaded from: classes.dex */
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
-        private static final int[] ATTRS = {16843137};
+        private static final int[] ATTRS = {R.attr.layout_weight};
         Paint dimPaint;
         boolean dimWhenOffset;
         boolean slideable;
@@ -836,21 +815,22 @@ public class SlidingPaneLayout extends ViewGroup {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SavedState extends AbsSavedState {
+    static class SavedState extends AbsSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() { // from class: android.support.v4.widget.SlidingPaneLayout.SavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;Ljava/lang/ClassLoader;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.ClassLoaderCreator
             public SavedState createFromParcel(Parcel in, ClassLoader loader) {
                 return new SavedState(in, null);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             @Override // android.os.Parcelable.Creator
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in, null);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             @Override // android.os.Parcelable.Creator
             public SavedState[] newArray(int size) {
                 return new SavedState[size];
@@ -868,15 +848,13 @@ public class SlidingPaneLayout extends ViewGroup {
         }
 
         @Override // android.support.v4.view.AbsSavedState, android.os.Parcelable
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeInt(this.isOpen ? 1 : 0);
+        public void writeToParcel(Parcel parcel, int i) {
+            super.writeToParcel(parcel, i);
+            parcel.writeInt(this.isOpen ? 1 : 0);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class DisableLayerRunnable implements Runnable {
+    private class DisableLayerRunnable implements Runnable {
         final View mChildView;
 
         DisableLayerRunnable(View childView) {
@@ -884,7 +862,7 @@ public class SlidingPaneLayout extends ViewGroup {
         }
 
         @Override // java.lang.Runnable
-        public void run() {
+        public void run() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
             if (this.mChildView.getParent() == SlidingPaneLayout.this) {
                 this.mChildView.setLayerType(0, null);
                 SlidingPaneLayout.this.invalidateChildRegion(this.mChildView);

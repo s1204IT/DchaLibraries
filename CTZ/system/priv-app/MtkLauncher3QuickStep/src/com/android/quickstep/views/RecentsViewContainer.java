@@ -9,14 +9,17 @@ import android.view.View;
 import com.android.launcher3.InsettableFrameLayout;
 import com.android.launcher3.R;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class RecentsViewContainer extends InsettableFrameLayout {
     public static final FloatProperty<RecentsViewContainer> CONTENT_ALPHA = new FloatProperty<RecentsViewContainer>("contentAlpha") { // from class: com.android.quickstep.views.RecentsViewContainer.1
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(RecentsViewContainer recentsViewContainer, float f) {
             recentsViewContainer.setContentAlpha(f);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(RecentsViewContainer recentsViewContainer) {
             return Float.valueOf(recentsViewContainer.mRecentsView.getContentAlpha());
@@ -38,7 +41,7 @@ public class RecentsViewContainer extends InsettableFrameLayout {
         this.mClearAllButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.quickstep.views.-$$Lambda$RecentsViewContainer$iGbXk9Fa-oVLdQQkwEr2ZhTHqug
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                RecentsViewContainer.lambda$onFinishInflate$0(RecentsViewContainer.this, view);
+                RecentsViewContainer.lambda$onFinishInflate$0(this.f$0, view);
             }
         });
         this.mRecentsView = (RecentsView) findViewById(R.id.overview_panel);
@@ -48,10 +51,10 @@ public class RecentsViewContainer extends InsettableFrameLayout {
         if (this.mRecentsView.isRtl()) {
             this.mClearAllButton.setNextFocusRightId(this.mRecentsView.getId());
             this.mRecentsView.setNextFocusLeftId(this.mClearAllButton.getId());
-            return;
+        } else {
+            this.mClearAllButton.setNextFocusLeftId(this.mRecentsView.getId());
+            this.mRecentsView.setNextFocusRightId(this.mClearAllButton.getId());
         }
-        this.mClearAllButton.setNextFocusLeftId(this.mRecentsView.getId());
-        this.mRecentsView.setNextFocusRightId(this.mClearAllButton.getId());
     }
 
     public static /* synthetic */ void lambda$onFinishInflate$0(RecentsViewContainer recentsViewContainer, View view) {

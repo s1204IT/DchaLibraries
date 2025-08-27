@@ -3,6 +3,7 @@ package jp.co.benesse.dcha.util;
 import android.content.Context;
 import android.os.Process;
 import java.lang.Thread;
+
 /* loaded from: classes.dex */
 public class DchaUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
     private Context mAppContext;

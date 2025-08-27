@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class DeviceAdminSettings extends ListFragment implements Instrumentable {
     private DevicePolicyManager mDPM;
@@ -56,9 +57,7 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class DeviceAdminListItem implements Comparable<DeviceAdminListItem> {
+    private static class DeviceAdminListItem implements Comparable<DeviceAdminListItem> {
         public boolean active;
         public DeviceAdminInfo info;
         public String name;
@@ -66,6 +65,7 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
         private DeviceAdminListItem() {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // java.lang.Comparable
         public int compareTo(DeviceAdminListItem deviceAdminListItem) {
             if (this.active != deviceAdminListItem.active) {
@@ -94,7 +94,7 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
     }
 
     @Override // android.app.Fragment
-    public void onActivityCreated(Bundle bundle) {
+    public void onActivityCreated(Bundle bundle) throws Resources.NotFoundException {
         super.onActivityCreated(bundle);
         setHasOptionsMenu(true);
         Utils.forceCustomPadding(getListView(), true);
@@ -144,14 +144,12 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
         DeviceAdminInfo deviceAdminInfo = (DeviceAdminInfo) listView.getAdapter().getItem(i);
         UserHandle userHandle = new UserHandle(getUserId(deviceAdminInfo));
         Activity activity = getActivity();
-        Intent intent = new Intent(activity, DeviceAdminAdd.class);
+        Intent intent = new Intent(activity, (Class<?>) DeviceAdminAdd.class);
         intent.putExtra("android.app.extra.DEVICE_ADMIN", deviceAdminInfo.getComponent());
         activity.startActivityAsUser(intent, userHandle);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ViewHolder {
+    static class ViewHolder {
         Switch checkbox;
         TextView description;
         ImageView icon;
@@ -161,9 +159,7 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class PolicyListAdapter extends BaseAdapter {
+    class PolicyListAdapter extends BaseAdapter {
         final LayoutInflater mInflater;
 
         PolicyListAdapter() {
@@ -228,14 +224,14 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
         }
 
         private View newDeviceAdminView(ViewGroup viewGroup) {
-            View inflate = this.mInflater.inflate(R.layout.device_admin_item, viewGroup, false);
+            View viewInflate = this.mInflater.inflate(R.layout.device_admin_item, viewGroup, false);
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.icon = (ImageView) inflate.findViewById(R.id.icon);
-            viewHolder.name = (TextView) inflate.findViewById(R.id.name);
-            viewHolder.checkbox = (Switch) inflate.findViewById(R.id.checkbox);
-            viewHolder.description = (TextView) inflate.findViewById(R.id.description);
-            inflate.setTag(viewHolder);
-            return inflate;
+            viewHolder.icon = (ImageView) viewInflate.findViewById(R.id.icon);
+            viewHolder.name = (TextView) viewInflate.findViewById(R.id.name);
+            viewHolder.checkbox = (Switch) viewInflate.findViewById(R.id.checkbox);
+            viewHolder.description = (TextView) viewInflate.findViewById(R.id.description);
+            viewInflate.setTag(viewHolder);
+            return viewInflate;
         }
 
         private void bindView(View view, DeviceAdminInfo deviceAdminInfo) {
@@ -244,49 +240,47 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
             viewHolder.icon.setImageDrawable(activity.getPackageManager().getUserBadgedIcon(deviceAdminInfo.loadIcon(activity.getPackageManager()), new UserHandle(DeviceAdminSettings.this.getUserId(deviceAdminInfo))));
             viewHolder.name.setText(deviceAdminInfo.loadLabel(activity.getPackageManager()));
             viewHolder.checkbox.setChecked(DeviceAdminSettings.this.isActiveAdmin(deviceAdminInfo));
-            boolean isEnabled = isEnabled(deviceAdminInfo);
+            boolean zIsEnabled = isEnabled(deviceAdminInfo);
             try {
                 viewHolder.description.setText(deviceAdminInfo.loadDescription(activity.getPackageManager()));
             } catch (Resources.NotFoundException e) {
             }
-            viewHolder.checkbox.setEnabled(isEnabled);
-            viewHolder.name.setEnabled(isEnabled);
-            viewHolder.description.setEnabled(isEnabled);
-            viewHolder.icon.setEnabled(isEnabled);
+            viewHolder.checkbox.setEnabled(zIsEnabled);
+            viewHolder.name.setEnabled(zIsEnabled);
+            viewHolder.description.setEnabled(zIsEnabled);
+            viewHolder.icon.setEnabled(zIsEnabled);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isActiveAdmin(DeviceAdminInfo deviceAdminInfo) {
+    private boolean isActiveAdmin(DeviceAdminInfo deviceAdminInfo) {
         return this.mDPM.isAdminActiveAsUser(deviceAdminInfo.getComponent(), getUserId(deviceAdminInfo));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isRemovingAdmin(DeviceAdminInfo deviceAdminInfo) {
+    private boolean isRemovingAdmin(DeviceAdminInfo deviceAdminInfo) {
         return this.mDPM.isRemovingAdmin(deviceAdminInfo.getComponent(), getUserId(deviceAdminInfo));
     }
 
     private void updateAvailableAdminsForProfile(int i) {
-        List<ComponentName> activeAdminsAsUser = this.mDPM.getActiveAdminsAsUser(i);
+        List activeAdminsAsUser = this.mDPM.getActiveAdminsAsUser(i);
         addActiveAdminsForProfile(activeAdminsAsUser, i);
         addDeviceAdminBroadcastReceiversForProfile(activeAdminsAsUser, i);
     }
 
     private void addDeviceAdminBroadcastReceiversForProfile(Collection<ComponentName> collection, int i) {
-        DeviceAdminInfo createDeviceAdminInfo;
+        DeviceAdminInfo deviceAdminInfoCreateDeviceAdminInfo;
         PackageManager packageManager = getActivity().getPackageManager();
-        List queryBroadcastReceiversAsUser = packageManager.queryBroadcastReceiversAsUser(new Intent("android.app.action.DEVICE_ADMIN_ENABLED"), 32896, i);
-        if (queryBroadcastReceiversAsUser == null) {
-            queryBroadcastReceiversAsUser = Collections.emptyList();
+        List listQueryBroadcastReceiversAsUser = packageManager.queryBroadcastReceiversAsUser(new Intent("android.app.action.DEVICE_ADMIN_ENABLED"), 32896, i);
+        if (listQueryBroadcastReceiversAsUser == null) {
+            listQueryBroadcastReceiversAsUser = Collections.emptyList();
         }
-        int size = queryBroadcastReceiversAsUser.size();
+        int size = listQueryBroadcastReceiversAsUser.size();
         for (int i2 = 0; i2 < size; i2++) {
-            ResolveInfo resolveInfo = (ResolveInfo) queryBroadcastReceiversAsUser.get(i2);
+            ResolveInfo resolveInfo = (ResolveInfo) listQueryBroadcastReceiversAsUser.get(i2);
             ComponentName componentName = new ComponentName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name);
-            if ((collection == null || !collection.contains(componentName)) && (createDeviceAdminInfo = createDeviceAdminInfo(resolveInfo.activityInfo)) != null && createDeviceAdminInfo.isVisible() && createDeviceAdminInfo.getActivityInfo().applicationInfo.isInternal()) {
+            if ((collection == null || !collection.contains(componentName)) && (deviceAdminInfoCreateDeviceAdminInfo = createDeviceAdminInfo(resolveInfo.activityInfo)) != null && deviceAdminInfoCreateDeviceAdminInfo.isVisible() && deviceAdminInfoCreateDeviceAdminInfo.getActivityInfo().applicationInfo.isInternal()) {
                 DeviceAdminListItem deviceAdminListItem = new DeviceAdminListItem();
-                deviceAdminListItem.info = createDeviceAdminInfo;
-                deviceAdminListItem.name = createDeviceAdminInfo.loadLabel(packageManager).toString();
+                deviceAdminListItem.info = deviceAdminInfoCreateDeviceAdminInfo;
+                deviceAdminListItem.name = deviceAdminInfoCreateDeviceAdminInfo.loadLabel(packageManager).toString();
                 deviceAdminListItem.active = false;
                 this.mAdmins.add(deviceAdminListItem);
             }
@@ -301,11 +295,11 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
             for (int i2 = 0; i2 < size; i2++) {
                 ComponentName componentName = list.get(i2);
                 try {
-                    DeviceAdminInfo createDeviceAdminInfo = createDeviceAdminInfo(packageManager2.getReceiverInfo(componentName, 819328, i));
-                    if (createDeviceAdminInfo != null) {
+                    DeviceAdminInfo deviceAdminInfoCreateDeviceAdminInfo = createDeviceAdminInfo(packageManager2.getReceiverInfo(componentName, 819328, i));
+                    if (deviceAdminInfoCreateDeviceAdminInfo != null) {
                         DeviceAdminListItem deviceAdminListItem = new DeviceAdminListItem();
-                        deviceAdminListItem.info = createDeviceAdminInfo;
-                        deviceAdminListItem.name = createDeviceAdminInfo.loadLabel(packageManager).toString();
+                        deviceAdminListItem.info = deviceAdminInfoCreateDeviceAdminInfo;
+                        deviceAdminListItem.name = deviceAdminInfoCreateDeviceAdminInfo.loadLabel(packageManager).toString();
                         deviceAdminListItem.active = true;
                         this.mAdmins.add(deviceAdminListItem);
                     }
@@ -325,8 +319,7 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int getUserId(DeviceAdminInfo deviceAdminInfo) {
+    private int getUserId(DeviceAdminInfo deviceAdminInfo) {
         return UserHandle.getUserId(deviceAdminInfo.getActivityInfo().applicationInfo.uid);
     }
 }

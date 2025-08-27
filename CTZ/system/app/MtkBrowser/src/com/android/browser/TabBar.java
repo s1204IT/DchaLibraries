@@ -23,8 +23,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class TabBar extends LinearLayout implements View.OnClickListener {
     private Drawable mActiveDrawable;
@@ -97,18 +99,17 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
         this.mTabs.updateLayout();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setUseQuickControls(boolean z) {
+    void setUseQuickControls(boolean z) {
         this.mUseQuickControls = z;
         this.mNewTab.setVisibility(this.mUseQuickControls ? 8 : 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updateTabs(List<Tab> list) {
+    void updateTabs(List<Tab> list) {
         this.mTabs.clearTabs();
         this.mTabMap.clear();
-        for (Tab tab : list) {
-            this.mTabs.addTab(buildTabView(tab));
+        Iterator<Tab> it = list.iterator();
+        while (it.hasNext()) {
+            this.mTabs.addTab(buildTabView(it.next()));
         }
         this.mTabs.setSelectedTab(this.mTabControl.getCurrentPosition());
     }
@@ -149,22 +150,30 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
     public void onClick(View view) {
         if (this.mNewTab == view) {
             this.mUiController.openTabToHomePage();
-        } else if (this.mTabs.getSelectedTab() == view) {
+            return;
+        }
+        if (this.mTabs.getSelectedTab() == view) {
             if (this.mUseQuickControls) {
                 if (this.mUi.isTitleBarShowing() && !isLoading()) {
                     this.mUi.stopEditingUrl();
                     this.mUi.hideTitleBar();
                     return;
+                } else {
+                    this.mUi.stopWebViewScrolling();
+                    this.mUi.editUrl(false, false);
+                    return;
                 }
-                this.mUi.stopWebViewScrolling();
-                this.mUi.editUrl(false, false);
-            } else if (this.mUi.isTitleBarShowing() && !isLoading()) {
+            }
+            if (this.mUi.isTitleBarShowing() && !isLoading()) {
                 this.mUi.stopEditingUrl();
                 this.mUi.hideTitleBar();
+                return;
             } else {
                 showUrlBar();
+                return;
             }
-        } else if (view instanceof TabView) {
+        }
+        if (view instanceof TabView) {
             Tab tab = ((TabView) view).mTab;
             int childIndex = this.mTabs.getChildIndex(view);
             if (childIndex >= 0) {
@@ -186,19 +195,16 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
         return tabView;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static Bitmap getDrawableAsBitmap(Drawable drawable, int i, int i2) {
-        Bitmap createBitmap = Bitmap.createBitmap(i, i2, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(createBitmap);
+    private static Bitmap getDrawableAsBitmap(Drawable drawable, int i, int i2) {
+        Bitmap bitmapCreateBitmap = Bitmap.createBitmap(i, i2, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmapCreateBitmap);
         drawable.setBounds(0, 0, i, i2);
         drawable.draw(canvas);
         canvas.setBitmap(null);
-        return createBitmap;
+        return bitmapCreateBitmap;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class TabView extends LinearLayout implements View.OnClickListener {
+    class TabView extends LinearLayout implements View.OnClickListener {
         ImageView mClose;
         Path mFocusPath;
         ImageView mIconView;
@@ -253,8 +259,7 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
             updateTabIcons();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateTabIcons() {
+        private void updateTabIcons() {
             this.mIncognito.setVisibility(this.mTab.isPrivateBrowsingEnabled() ? 0 : 8);
             this.mSnapshot.setVisibility(this.mTab.isSnapshot() ? 0 : 8);
         }
@@ -323,10 +328,10 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
                 }
             }
             if (TabBar.this.mActiveShader != null && TabBar.this.mInactiveShader != null) {
-                int save = canvas.save();
+                int iSave = canvas.save();
                 getLocationInWindow(this.mWindowPos);
                 drawClipped(canvas, this.mSelected ? TabBar.this.mActiveShaderPaint : TabBar.this.mInactiveShaderPaint, this.mPath, this.mWindowPos[0]);
-                canvas.restoreToCount(save);
+                canvas.restoreToCount(iSave);
             }
             super.dispatchDraw(canvas);
         }
@@ -368,11 +373,11 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
     }
 
     private void animateTabOut(final Tab tab, final TabView tabView) {
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(tabView, "scaleX", 1.0f, 0.0f);
-        ObjectAnimator ofFloat2 = ObjectAnimator.ofFloat(tabView, "scaleY", 1.0f, 0.0f);
-        ObjectAnimator ofFloat3 = ObjectAnimator.ofFloat(tabView, "alpha", 1.0f, 0.0f);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(tabView, "scaleX", 1.0f, 0.0f);
+        ObjectAnimator objectAnimatorOfFloat2 = ObjectAnimator.ofFloat(tabView, "scaleY", 1.0f, 0.0f);
+        ObjectAnimator objectAnimatorOfFloat3 = ObjectAnimator.ofFloat(tabView, "alpha", 1.0f, 0.0f);
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(ofFloat, ofFloat2, ofFloat3);
+        animatorSet.playTogether(objectAnimatorOfFloat, objectAnimatorOfFloat2, objectAnimatorOfFloat3);
         animatorSet.setDuration(150L);
         animatorSet.addListener(new Animator.AnimatorListener() { // from class: com.android.browser.TabBar.1
             @Override // android.animation.Animator.AnimatorListener
@@ -398,9 +403,9 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
     }
 
     private void animateTabIn(final Tab tab, final TabView tabView) {
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(tabView, "scaleX", 0.0f, 1.0f);
-        ofFloat.setDuration(150L);
-        ofFloat.addListener(new Animator.AnimatorListener() { // from class: com.android.browser.TabBar.2
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(tabView, "scaleX", 0.0f, 1.0f);
+        objectAnimatorOfFloat.setDuration(150L);
+        objectAnimatorOfFloat.addListener(new Animator.AnimatorListener() { // from class: com.android.browser.TabBar.2
             @Override // android.animation.Animator.AnimatorListener
             public void onAnimationCancel(Animator animator) {
             }
@@ -419,7 +424,7 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
                 TabBar.this.mTabs.addTab(tabView);
             }
         });
-        ofFloat.start();
+        objectAnimatorOfFloat.start();
     }
 
     public void onSetActiveTab(Tab tab) {

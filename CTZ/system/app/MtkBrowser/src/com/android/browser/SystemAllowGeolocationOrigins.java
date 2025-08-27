@@ -9,10 +9,11 @@ import android.text.TextUtils;
 import android.webkit.GeolocationPermissions;
 import android.webkit.ValueCallback;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class SystemAllowGeolocationOrigins {
+class SystemAllowGeolocationOrigins {
     private final Context mContext;
     private Runnable mMaybeApplySetting = new Runnable() { // from class: com.android.browser.SystemAllowGeolocationOrigins.1
         @Override // java.lang.Runnable
@@ -24,10 +25,10 @@ public class SystemAllowGeolocationOrigins {
                 return;
             }
             preferences.edit().putString("last_read_allow_geolocation_origins", systemSetting).apply();
-            HashSet parseAllowGeolocationOrigins = SystemAllowGeolocationOrigins.parseAllowGeolocationOrigins(string);
-            HashSet parseAllowGeolocationOrigins2 = SystemAllowGeolocationOrigins.parseAllowGeolocationOrigins(systemSetting);
-            Set minus = SystemAllowGeolocationOrigins.this.setMinus(parseAllowGeolocationOrigins2, parseAllowGeolocationOrigins);
-            SystemAllowGeolocationOrigins.this.removeOrigins(SystemAllowGeolocationOrigins.this.setMinus(parseAllowGeolocationOrigins, parseAllowGeolocationOrigins2));
+            HashSet allowGeolocationOrigins = SystemAllowGeolocationOrigins.parseAllowGeolocationOrigins(string);
+            HashSet allowGeolocationOrigins2 = SystemAllowGeolocationOrigins.parseAllowGeolocationOrigins(systemSetting);
+            Set minus = SystemAllowGeolocationOrigins.this.setMinus(allowGeolocationOrigins2, allowGeolocationOrigins);
+            SystemAllowGeolocationOrigins.this.removeOrigins(SystemAllowGeolocationOrigins.this.setMinus(allowGeolocationOrigins, allowGeolocationOrigins2));
             SystemAllowGeolocationOrigins.this.addOrigins(minus);
         }
     };
@@ -50,9 +51,7 @@ public class SystemAllowGeolocationOrigins {
         BackgroundHandler.execute(this.mMaybeApplySetting);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static HashSet<String> parseAllowGeolocationOrigins(String str) {
-        String[] split;
+    private static HashSet<String> parseAllowGeolocationOrigins(String str) {
         HashSet<String> hashSet = new HashSet<>();
         if (!TextUtils.isEmpty(str)) {
             for (String str2 : str.split("\\s+")) {
@@ -64,8 +63,7 @@ public class SystemAllowGeolocationOrigins {
         return hashSet;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public <A> Set<A> setMinus(Set<A> set, Set<A> set2) {
+    private <A> Set<A> setMinus(Set<A> set, Set<A> set2) {
         HashSet hashSet = new HashSet(set.size());
         for (A a : set) {
             if (!set2.contains(a)) {
@@ -75,23 +73,22 @@ public class SystemAllowGeolocationOrigins {
         return hashSet;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getSystemSetting() {
+    private String getSystemSetting() {
         String string = Settings.Secure.getString(this.mContext.getContentResolver(), "allowed_geolocation_origins");
         return string == null ? "" : string;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void addOrigins(Set<String> set) {
-        for (String str : set) {
-            GeolocationPermissions.getInstance().allow(str);
+    private void addOrigins(Set<String> set) {
+        Iterator<String> it = set.iterator();
+        while (it.hasNext()) {
+            GeolocationPermissions.getInstance().allow(it.next());
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void removeOrigins(Set<String> set) {
+    private void removeOrigins(Set<String> set) {
         for (final String str : set) {
             GeolocationPermissions.getInstance().getAllowed(str, new ValueCallback<Boolean>() { // from class: com.android.browser.SystemAllowGeolocationOrigins.2
+                /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
                 @Override // android.webkit.ValueCallback
                 public void onReceiveValue(Boolean bool) {
                     if (bool != null && bool.booleanValue()) {
@@ -102,9 +99,7 @@ public class SystemAllowGeolocationOrigins {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SettingObserver extends ContentObserver {
+    private class SettingObserver extends ContentObserver {
         SettingObserver() {
             super(new Handler());
         }

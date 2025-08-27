@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import java.text.NumberFormat;
+
 /* loaded from: classes.dex */
 public class WirelessChargingLayout extends FrameLayout {
     public WirelessChargingLayout(Context context, int i, boolean z) {
@@ -40,23 +41,23 @@ public class WirelessChargingLayout extends FrameLayout {
         }
         long integer = context.getResources().getInteger(R.integer.wireless_charging_fade_offset);
         long integer2 = context.getResources().getInteger(R.integer.wireless_charging_fade_duration);
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(textView, "textSize", context.getResources().getFloat(R.dimen.wireless_charging_anim_battery_level_text_size_start), context.getResources().getFloat(R.dimen.wireless_charging_anim_battery_level_text_size_end));
-        ofFloat.setInterpolator(new PathInterpolator(0.0f, 0.0f, 0.0f, 1.0f));
-        ofFloat.setDuration(context.getResources().getInteger(R.integer.wireless_charging_battery_level_text_scale_animation_duration));
-        ObjectAnimator ofFloat2 = ObjectAnimator.ofFloat(textView, "alpha", 0.0f, 1.0f);
-        ofFloat2.setInterpolator(Interpolators.LINEAR);
-        ofFloat2.setDuration(context.getResources().getInteger(R.integer.wireless_charging_battery_level_text_opacity_duration));
-        ofFloat2.setStartDelay(context.getResources().getInteger(R.integer.wireless_charging_anim_opacity_offset));
-        ObjectAnimator ofFloat3 = ObjectAnimator.ofFloat(textView, "alpha", 1.0f, 0.0f);
-        ofFloat3.setDuration(integer2);
-        ofFloat3.setInterpolator(Interpolators.LINEAR);
-        ofFloat3.setStartDelay(integer);
-        ObjectAnimator ofFloat4 = ObjectAnimator.ofFloat(wirelessChargingView, "alpha", 1.0f, 0.0f);
-        ofFloat4.setDuration(integer2);
-        ofFloat4.setInterpolator(Interpolators.LINEAR);
-        ofFloat4.setStartDelay(integer);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(textView, "textSize", context.getResources().getFloat(R.dimen.wireless_charging_anim_battery_level_text_size_start), context.getResources().getFloat(R.dimen.wireless_charging_anim_battery_level_text_size_end));
+        objectAnimatorOfFloat.setInterpolator(new PathInterpolator(0.0f, 0.0f, 0.0f, 1.0f));
+        objectAnimatorOfFloat.setDuration(context.getResources().getInteger(R.integer.wireless_charging_battery_level_text_scale_animation_duration));
+        ObjectAnimator objectAnimatorOfFloat2 = ObjectAnimator.ofFloat(textView, "alpha", 0.0f, 1.0f);
+        objectAnimatorOfFloat2.setInterpolator(Interpolators.LINEAR);
+        objectAnimatorOfFloat2.setDuration(context.getResources().getInteger(R.integer.wireless_charging_battery_level_text_opacity_duration));
+        objectAnimatorOfFloat2.setStartDelay(context.getResources().getInteger(R.integer.wireless_charging_anim_opacity_offset));
+        ObjectAnimator objectAnimatorOfFloat3 = ObjectAnimator.ofFloat(textView, "alpha", 1.0f, 0.0f);
+        objectAnimatorOfFloat3.setDuration(integer2);
+        objectAnimatorOfFloat3.setInterpolator(Interpolators.LINEAR);
+        objectAnimatorOfFloat3.setStartDelay(integer);
+        ObjectAnimator objectAnimatorOfFloat4 = ObjectAnimator.ofFloat(wirelessChargingView, "alpha", 1.0f, 0.0f);
+        objectAnimatorOfFloat4.setDuration(integer2);
+        objectAnimatorOfFloat4.setInterpolator(Interpolators.LINEAR);
+        objectAnimatorOfFloat4.setStartDelay(integer);
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(ofFloat, ofFloat2, ofFloat3, ofFloat4);
+        animatorSet.playTogether(objectAnimatorOfFloat, objectAnimatorOfFloat2, objectAnimatorOfFloat3, objectAnimatorOfFloat4);
         animatorSet.start();
     }
 }

@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class TrackedCollections {
     private final WeakIdentityHashMap<Collection<?>, CollectionState> mCollections = new WeakIdentityHashMap<>();
@@ -25,7 +26,6 @@ public class TrackedCollections {
         collectionState.lastUptime = SystemClock.uptimeMillis();
     }
 
-    /* loaded from: classes.dex */
     private static class CollectionState {
         int halfwayCount;
         int lastCount;
@@ -39,15 +39,15 @@ public class TrackedCollections {
         }
 
         void dump(PrintWriter printWriter) {
-            long uptimeMillis = SystemClock.uptimeMillis();
-            printWriter.format("%s: %.2f (start-30min) / %.2f (30min-now) / %.2f (start-now) (growth rate in #/hour); %d (current size)", this.tag, Float.valueOf(ratePerHour(this.startUptime, 0, this.startUptime + 1800000, this.halfwayCount)), Float.valueOf(ratePerHour(this.startUptime + 1800000, this.halfwayCount, uptimeMillis, this.lastCount)), Float.valueOf(ratePerHour(this.startUptime, 0, uptimeMillis, this.lastCount)), Integer.valueOf(this.lastCount));
+            long jUptimeMillis = SystemClock.uptimeMillis();
+            printWriter.format("%s: %.2f (start-30min) / %.2f (30min-now) / %.2f (start-now) (growth rate in #/hour); %d (current size)", this.tag, Float.valueOf(ratePerHour(this.startUptime, 0, this.startUptime + 1800000, this.halfwayCount)), Float.valueOf(ratePerHour(this.startUptime + 1800000, this.halfwayCount, jUptimeMillis, this.lastCount)), Float.valueOf(ratePerHour(this.startUptime, 0, jUptimeMillis, this.lastCount)), Integer.valueOf(this.lastCount));
         }
 
         private float ratePerHour(long j, int i, long j2, int i2) {
             if (j >= j2 || i < 0 || i2 < 0) {
                 return Float.NaN;
             }
-            return ((i2 - i) / ((float) (j2 - j))) * 60.0f * 60000.0f;
+            return ((i2 - i) / (j2 - j)) * 60.0f * 60000.0f;
         }
     }
 

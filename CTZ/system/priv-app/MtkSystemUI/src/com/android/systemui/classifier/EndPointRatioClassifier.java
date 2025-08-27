@@ -1,4 +1,5 @@
 package com.android.systemui.classifier;
+
 /* loaded from: classes.dex */
 public class EndPointRatioClassifier extends StrokeClassifier {
     public EndPointRatioClassifier(ClassifierData classifierData) {

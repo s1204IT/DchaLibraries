@@ -15,6 +15,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.security.trustagent.TrustAgentManager;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class LockAfterTimeoutPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final DevicePolicyManager mDPM;
@@ -32,11 +33,11 @@ public class LockAfterTimeoutPreferenceController extends AbstractPreferenceCont
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean isAvailable() {
-        if (this.mLockPatternUtils.isSecure(this.mUserId)) {
-            int keyguardStoredPasswordQuality = this.mLockPatternUtils.getKeyguardStoredPasswordQuality(this.mUserId);
-            return keyguardStoredPasswordQuality == 65536 || keyguardStoredPasswordQuality == 131072 || keyguardStoredPasswordQuality == 196608 || keyguardStoredPasswordQuality == 262144 || keyguardStoredPasswordQuality == 327680 || keyguardStoredPasswordQuality == 393216 || keyguardStoredPasswordQuality == 524288;
+        if (!this.mLockPatternUtils.isSecure(this.mUserId)) {
+            return false;
         }
-        return false;
+        int keyguardStoredPasswordQuality = this.mLockPatternUtils.getKeyguardStoredPasswordQuality(this.mUserId);
+        return keyguardStoredPasswordQuality == 65536 || keyguardStoredPasswordQuality == 131072 || keyguardStoredPasswordQuality == 196608 || keyguardStoredPasswordQuality == 262144 || keyguardStoredPasswordQuality == 327680 || keyguardStoredPasswordQuality == 393216 || keyguardStoredPasswordQuality == 524288;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
@@ -45,14 +46,14 @@ public class LockAfterTimeoutPreferenceController extends AbstractPreferenceCont
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
-    public void updateState(Preference preference) {
+    public void updateState(Preference preference) throws Throwable {
         TimeoutListPreference timeoutListPreference = (TimeoutListPreference) preference;
         setupLockAfterPreference(timeoutListPreference);
         updateLockAfterPreferenceSummary(timeoutListPreference);
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws Throwable {
         try {
             Settings.Secure.putInt(this.mContext.getContentResolver(), "lock_screen_lock_after_timeout", Integer.parseInt((String) obj));
             updateState(preference);
@@ -63,14 +64,14 @@ public class LockAfterTimeoutPreferenceController extends AbstractPreferenceCont
         }
     }
 
-    private void setupLockAfterPreference(TimeoutListPreference timeoutListPreference) {
+    private void setupLockAfterPreference(TimeoutListPreference timeoutListPreference) throws NumberFormatException {
         timeoutListPreference.setValue(String.valueOf(Settings.Secure.getLong(this.mContext.getContentResolver(), "lock_screen_lock_after_timeout", 5000L)));
         if (this.mDPM != null) {
             timeoutListPreference.removeUnusableTimeouts(Math.max(0L, this.mDPM.getMaximumTimeToLock(null, UserHandle.myUserId()) - Math.max(0, Settings.System.getInt(this.mContext.getContentResolver(), "screen_off_timeout", 0))), RestrictedLockUtils.checkIfMaximumTimeToLockIsSet(this.mContext));
         }
     }
 
-    private void updateLockAfterPreferenceSummary(TimeoutListPreference timeoutListPreference) {
+    private void updateLockAfterPreferenceSummary(TimeoutListPreference timeoutListPreference) throws Throwable {
         CharSequence string;
         if (timeoutListPreference.isDisabledByAdmin()) {
             string = this.mContext.getText(R.string.disabled_by_policy_title);
@@ -85,14 +86,12 @@ public class LockAfterTimeoutPreferenceController extends AbstractPreferenceCont
                 }
             }
             CharSequence activeTrustAgentLabel = this.mTrustAgentManager.getActiveTrustAgentLabel(this.mContext, this.mLockPatternUtils);
-            if (!TextUtils.isEmpty(activeTrustAgentLabel)) {
-                if (Long.valueOf(entryValues[i].toString()).longValue() == 0) {
-                    string = this.mContext.getString(R.string.lock_immediately_summary_with_exception, activeTrustAgentLabel);
-                } else {
-                    string = this.mContext.getString(R.string.lock_after_timeout_summary_with_exception, entries[i], activeTrustAgentLabel);
-                }
-            } else {
+            if (TextUtils.isEmpty(activeTrustAgentLabel)) {
                 string = this.mContext.getString(R.string.lock_after_timeout_summary, entries[i]);
+            } else if (Long.valueOf(entryValues[i].toString()).longValue() == 0) {
+                string = this.mContext.getString(R.string.lock_immediately_summary_with_exception, activeTrustAgentLabel);
+            } else {
+                string = this.mContext.getString(R.string.lock_after_timeout_summary_with_exception, entries[i], activeTrustAgentLabel);
             }
         }
         timeoutListPreference.setSummary(string);

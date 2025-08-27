@@ -3,15 +3,18 @@ package com.android.launcher3.util;
 import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 /* loaded from: classes.dex */
 public class ActivityResultInfo implements Parcelable {
     public static final Parcelable.Creator<ActivityResultInfo> CREATOR = new Parcelable.Creator<ActivityResultInfo>() { // from class: com.android.launcher3.util.ActivityResultInfo.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ActivityResultInfo createFromParcel(Parcel parcel) {
             return new ActivityResultInfo(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ActivityResultInfo[] newArray(int i) {
@@ -46,8 +49,8 @@ public class ActivityResultInfo implements Parcelable {
         if (this.data != null) {
             parcel.writeInt(1);
             this.data.writeToParcel(parcel, i);
-            return;
+        } else {
+            parcel.writeInt(0);
         }
-        parcel.writeInt(0);
     }
 }

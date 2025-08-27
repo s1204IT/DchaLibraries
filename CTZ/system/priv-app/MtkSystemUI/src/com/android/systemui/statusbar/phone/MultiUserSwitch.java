@@ -18,6 +18,7 @@ import com.android.systemui.plugins.qs.DetailAdapter;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
+
 /* loaded from: classes.dex */
 public class MultiUserSwitch extends FrameLayout implements View.OnClickListener {
     private boolean mKeyguardMode;
@@ -65,6 +66,10 @@ public class MultiUserSwitch extends FrameLayout implements View.OnClickListener
         UserSwitcherController userSwitcherController;
         if (this.mUserManager.isUserSwitcherEnabled() && this.mUserListener == null && (userSwitcherController = this.mUserSwitcherController) != null) {
             this.mUserListener = new UserSwitcherController.BaseUserAdapter(userSwitcherController) { // from class: com.android.systemui.statusbar.phone.MultiUserSwitch.1
+                AnonymousClass1(UserSwitcherController userSwitcherController2) {
+                    super(userSwitcherController2);
+                }
+
                 @Override // android.widget.BaseAdapter
                 public void notifyDataSetChanged() {
                     MultiUserSwitch.this.refreshContentDescription();
@@ -79,23 +84,47 @@ public class MultiUserSwitch extends FrameLayout implements View.OnClickListener
         }
     }
 
+    /* renamed from: com.android.systemui.statusbar.phone.MultiUserSwitch$1 */
+    class AnonymousClass1 extends UserSwitcherController.BaseUserAdapter {
+        AnonymousClass1(UserSwitcherController userSwitcherController2) {
+            super(userSwitcherController2);
+        }
+
+        @Override // android.widget.BaseAdapter
+        public void notifyDataSetChanged() {
+            MultiUserSwitch.this.refreshContentDescription();
+        }
+
+        @Override // android.widget.Adapter
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            return null;
+        }
+    }
+
     @Override // android.view.View.OnClickListener
     public void onClick(View view) {
         if (this.mUserManager.isUserSwitcherEnabled()) {
             if (this.mKeyguardMode) {
                 if (this.mKeyguardUserSwitcher != null) {
                     this.mKeyguardUserSwitcher.show(true);
+                    return;
                 }
-            } else if (this.mQsPanel != null && this.mUserSwitcherController != null) {
-                View childAt = getChildCount() > 0 ? getChildAt(0) : this;
-                childAt.getLocationInWindow(this.mTmpInt2);
-                int[] iArr = this.mTmpInt2;
-                iArr[0] = iArr[0] + (childAt.getWidth() / 2);
-                int[] iArr2 = this.mTmpInt2;
-                iArr2[1] = iArr2[1] + (childAt.getHeight() / 2);
-                this.mQsPanel.showDetailAdapter(true, getUserDetailAdapter(), this.mTmpInt2);
+                return;
+            } else {
+                if (this.mQsPanel != null && this.mUserSwitcherController != null) {
+                    View childAt = getChildCount() > 0 ? getChildAt(0) : this;
+                    childAt.getLocationInWindow(this.mTmpInt2);
+                    int[] iArr = this.mTmpInt2;
+                    iArr[0] = iArr[0] + (childAt.getWidth() / 2);
+                    int[] iArr2 = this.mTmpInt2;
+                    iArr2[1] = iArr2[1] + (childAt.getHeight() / 2);
+                    this.mQsPanel.showDetailAdapter(true, getUserDetailAdapter(), this.mTmpInt2);
+                    return;
+                }
+                return;
             }
-        } else if (this.mQsPanel != null) {
+        }
+        if (this.mQsPanel != null) {
             ((ActivityStarter) Dependency.get(ActivityStarter.class)).postStartActivityDismissingKeyguard(ContactsContract.QuickContact.composeQuickContactsIntent(getContext(), view, ContactsContract.Profile.CONTENT_URI, 3, null), 0);
         }
     }
@@ -106,15 +135,14 @@ public class MultiUserSwitch extends FrameLayout implements View.OnClickListener
         refreshContentDescription();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshContentDescription() {
-        String str;
+    private void refreshContentDescription() {
+        String currentUserName;
         if (this.mUserManager.isUserSwitcherEnabled() && this.mUserSwitcherController != null) {
-            str = this.mUserSwitcherController.getCurrentUserName(this.mContext);
+            currentUserName = this.mUserSwitcherController.getCurrentUserName(this.mContext);
         } else {
-            str = null;
+            currentUserName = null;
         }
-        String string = TextUtils.isEmpty(str) ? null : this.mContext.getString(R.string.accessibility_quick_settings_user, str);
+        String string = TextUtils.isEmpty(currentUserName) ? null : this.mContext.getString(R.string.accessibility_quick_settings_user, currentUserName);
         if (!TextUtils.equals(getContentDescription(), string)) {
             setContentDescription(string);
         }

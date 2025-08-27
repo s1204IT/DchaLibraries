@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class OemLockInfoDialog extends InstrumentedDialogFragment {
     public static void show(Fragment fragment) {

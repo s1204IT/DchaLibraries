@@ -16,6 +16,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import jp.co.benesse.dcha.dchaservice.IDchaService;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class SdUpdateActivity extends ParentSettingActivity implements View.OnClickListener {
     private IDchaService dchaService;
@@ -39,9 +40,8 @@ public class SdUpdateActivity extends ParentSettingActivity implements View.OnCl
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d("SDSettingActivity", "onCreate 0001");
         super.onCreate(bundle);
         setContentView(R.layout.act_sd_update);
@@ -65,9 +65,8 @@ public class SdUpdateActivity extends ParentSettingActivity implements View.OnCl
         Logger.d("SDSettingActivity", "onPause 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d("SDSettingActivity", "onDestroy 0001");
         super.onDestroy();
         this.mUpdateBtn.setOnClickListener(null);
@@ -112,7 +111,6 @@ public class SdUpdateActivity extends ParentSettingActivity implements View.OnCl
         Logger.d("SDSettingActivity", "onClick 0005");
     }
 
-    /* loaded from: classes.dex */
     class OsUploadTask extends AsyncTask<String, Integer, String> {
         OsUploadTask() {
         }
@@ -130,9 +128,9 @@ public class SdUpdateActivity extends ParentSettingActivity implements View.OnCl
             Logger.d("SDSettingActivity", "onPreExecute 0002");
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public String doInBackground(String... strArr) {
+        protected String doInBackground(String... strArr) {
             Logger.d("SDSettingActivity", "doInBackground 0001");
             try {
                 Logger.d("SDSettingActivity", "doInBackground 0002");
@@ -151,9 +149,9 @@ public class SdUpdateActivity extends ParentSettingActivity implements View.OnCl
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onCancelled(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onCancelled(String str) {
+        protected void onCancelled(String str) {
             Logger.d("SDSettingActivity", "onCancelled 0001");
             super.onCancelled((OsUploadTask) str);
             SdUpdateActivity.this.progressDialog.dismiss();
@@ -164,9 +162,9 @@ public class SdUpdateActivity extends ParentSettingActivity implements View.OnCl
             Logger.d("SDSettingActivity", "onCancelled 0002");
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(String str) {
+        protected void onPostExecute(String str) {
             Logger.d("SDSettingActivity", "onPostExecute 0001");
             if (str != null) {
                 Logger.d("SDSettingActivity", "onPostExecute 0002");

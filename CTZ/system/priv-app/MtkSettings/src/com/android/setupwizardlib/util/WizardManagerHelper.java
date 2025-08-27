@@ -2,6 +2,7 @@ package com.android.setupwizardlib.util;
 
 import android.content.Intent;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class WizardManagerHelper {
     static final String EXTRA_ACTION_ID = "actionId";

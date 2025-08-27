@@ -1,6 +1,7 @@
 package com.android.systemui.util;
 
 import android.os.Looper;
+
 /* loaded from: classes.dex */
 public class Assert {
     public static void isMainThread() {

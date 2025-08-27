@@ -2,18 +2,17 @@ package com.google.common.collect;
 
 import com.google.common.base.Preconditions;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 final class SingletonImmutableSet<E> extends ImmutableSet<E> {
     private transient int cachedHashCode;
     final transient E element;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public SingletonImmutableSet(E e) {
+    SingletonImmutableSet(E e) {
         this.element = (E) Preconditions.checkNotNull(e);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public SingletonImmutableSet(E e, int i) {
+    SingletonImmutableSet(E e, int i) {
         this.element = e;
         this.cachedHashCode = i;
     }
@@ -33,14 +32,14 @@ final class SingletonImmutableSet<E> extends ImmutableSet<E> {
         return this.element.equals(obj);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<E> iterator() {
         return Iterators.singletonIterator(this.element);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return false;
     }
 
@@ -55,20 +54,20 @@ final class SingletonImmutableSet<E> extends ImmutableSet<E> {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof Set) {
-            Set set = (Set) obj;
-            return set.size() == 1 && this.element.equals(set.iterator().next());
+        if (!(obj instanceof Set)) {
+            return false;
         }
-        return false;
+        Set set = (Set) obj;
+        return set.size() == 1 && this.element.equals(set.iterator().next());
     }
 
     @Override // com.google.common.collect.ImmutableSet, java.util.Collection, java.util.Set
     public final int hashCode() {
         int i = this.cachedHashCode;
         if (i == 0) {
-            int hashCode = this.element.hashCode();
-            this.cachedHashCode = hashCode;
-            return hashCode;
+            int iHashCode = this.element.hashCode();
+            this.cachedHashCode = iHashCode;
+            return iHashCode;
         }
         return i;
     }
@@ -80,10 +79,10 @@ final class SingletonImmutableSet<E> extends ImmutableSet<E> {
 
     @Override // java.util.AbstractCollection
     public String toString() {
-        String obj = this.element.toString();
-        StringBuilder sb = new StringBuilder(obj.length() + 2);
+        String string = this.element.toString();
+        StringBuilder sb = new StringBuilder(string.length() + 2);
         sb.append('[');
-        sb.append(obj);
+        sb.append(string);
         sb.append(']');
         return sb.toString();
     }

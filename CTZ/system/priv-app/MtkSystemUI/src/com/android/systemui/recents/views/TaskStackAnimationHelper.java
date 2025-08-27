@@ -20,6 +20,7 @@ import com.android.systemui.shared.recents.model.TaskStack;
 import com.android.systemui.shared.recents.utilities.AnimationProps;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TaskStackAnimationHelper {
     private final int mEnterAndExitFromHomeTranslationOffset;
@@ -56,7 +57,7 @@ public class TaskStackAnimationHelper {
         if (stack.getTaskCount() == 0) {
             return;
         }
-        int height = stackAlgorithm.mStackRect.height();
+        int iHeight = stackAlgorithm.mStackRect.height();
         resources.getDimensionPixelSize(R.dimen.recents_task_stack_animation_affiliate_enter_offset);
         int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.recents_task_stack_animation_launched_while_docking_offset);
         if (resources2.getConfiguration().orientation != 2) {
@@ -100,19 +101,21 @@ public class TaskStackAnimationHelper {
                         this.mTmpTransform.rect.offset(0.0f, stackAlgorithm.getTaskRect().height() / 4);
                     } else {
                         f2 = 0.0f;
-                        this.mTmpTransform.rect.offset(0.0f, height);
+                        this.mTmpTransform.rect.offset(0.0f, iHeight);
                     }
                     this.mTmpTransform.alpha = f2;
                     this.mStackView.updateTaskViewToTransform(taskView, this.mTmpTransform, AnimationProps.IMMEDIATE);
-                } else if (launchState.launchedViaDockGesture) {
-                    if (!z) {
-                        i2 = (int) (height * 0.9f);
-                    } else {
-                        i2 = i;
+                } else {
+                    if (launchState.launchedViaDockGesture) {
+                        if (!z) {
+                            i2 = (int) (iHeight * 0.9f);
+                        } else {
+                            i2 = i;
+                        }
+                        this.mTmpTransform.rect.offset(0.0f, i2);
+                        this.mTmpTransform.alpha = 0.0f;
+                        this.mStackView.updateTaskViewToTransform(taskView, this.mTmpTransform, AnimationProps.IMMEDIATE);
                     }
-                    this.mTmpTransform.rect.offset(0.0f, i2);
-                    this.mTmpTransform.alpha = 0.0f;
-                    this.mStackView.updateTaskViewToTransform(taskView, this.mTmpTransform, AnimationProps.IMMEDIATE);
                     size--;
                     dimensionPixelSize = i;
                     taskViewTransform = null;
@@ -163,12 +166,12 @@ public class TaskStackAnimationHelper {
                     taskView.onStartLaunchTargetEnterAnimation(this.mTmpTransform, integer, this.mStackView.mScreenPinningEnabled, referenceCountedTrigger);
                 }
             } else if (launchState.launchedFromHome) {
-                float min = (Math.min(5, i3) * this.mEnterAndExitFromHomeTranslationOffset) / 300.0f;
+                float fMin = (Math.min(5, i3) * this.mEnterAndExitFromHomeTranslationOffset) / 300.0f;
                 AnimationProps listener = new AnimationProps().setInterpolator(4, ENTER_FROM_HOME_ALPHA_INTERPOLATOR).setListener(referenceCountedTrigger.decrementOnAnimationEnd());
                 if (z) {
                     listener.setInterpolator(6, Interpolators.FAST_OUT_SLOW_IN).setDuration(6, 150).setDuration(4, 150);
                 } else {
-                    listener.setStartDelay(4, Math.min(5, i3) * 16).setInterpolator(6, new RecentsEntrancePathInterpolator(0.0f, 0.0f, 0.2f, 1.0f, min)).setDuration(6, 300).setDuration(4, 100);
+                    listener.setStartDelay(4, Math.min(5, i3) * 16).setInterpolator(6, new RecentsEntrancePathInterpolator(0.0f, 0.0f, 0.2f, 1.0f, fMin)).setDuration(6, 300).setDuration(4, 100);
                 }
                 referenceCountedTrigger.increment();
                 this.mStackView.updateTaskViewToTransform(taskView, this.mTmpTransform, listener);
@@ -187,12 +190,12 @@ public class TaskStackAnimationHelper {
     }
 
     public void startExitToHomeAnimation(boolean z, ReferenceCountedTrigger referenceCountedTrigger) {
-        AnimationProps animationProps;
+        AnimationProps listener;
         TaskStackLayoutAlgorithm stackAlgorithm = this.mStackView.getStackAlgorithm();
         if (this.mStackView.getStack().getTaskCount() == 0) {
             return;
         }
-        int height = stackAlgorithm.mStackRect.height();
+        int iHeight = stackAlgorithm.mStackRect.height();
         List<TaskView> taskViews = this.mStackView.getTaskViews();
         int size = taskViews.size();
         for (int i = 0; i < size; i++) {
@@ -200,26 +203,26 @@ public class TaskStackAnimationHelper {
             TaskView taskView = taskViews.get(i);
             if (!this.mStackView.isIgnoredTask(taskView.getTask())) {
                 if (z) {
-                    int min = Math.min(5, i2) * this.mEnterAndExitFromHomeTranslationOffset;
-                    animationProps = new AnimationProps().setDuration(6, 200).setListener(referenceCountedTrigger.decrementOnAnimationEnd());
+                    int iMin = Math.min(5, i2) * this.mEnterAndExitFromHomeTranslationOffset;
+                    listener = new AnimationProps().setDuration(6, 200).setListener(referenceCountedTrigger.decrementOnAnimationEnd());
                     if (Recents.getConfiguration().isLowRamDevice) {
-                        animationProps.setInterpolator(6, Interpolators.FAST_OUT_SLOW_IN);
+                        listener.setInterpolator(6, Interpolators.FAST_OUT_SLOW_IN);
                     } else {
-                        animationProps.setStartDelay(6, min).setInterpolator(6, EXIT_TO_HOME_TRANSLATION_INTERPOLATOR);
+                        listener.setStartDelay(6, iMin).setInterpolator(6, EXIT_TO_HOME_TRANSLATION_INTERPOLATOR);
                     }
                     referenceCountedTrigger.increment();
                 } else {
-                    animationProps = AnimationProps.IMMEDIATE;
+                    listener = AnimationProps.IMMEDIATE;
                 }
                 this.mTmpTransform.fillIn(taskView);
                 if (Recents.getConfiguration().isLowRamDevice) {
-                    animationProps.setInterpolator(4, EXIT_TO_HOME_TRANSLATION_INTERPOLATOR).setDuration(4, 200);
+                    listener.setInterpolator(4, EXIT_TO_HOME_TRANSLATION_INTERPOLATOR).setDuration(4, 200);
                     this.mTmpTransform.rect.offset(0.0f, stackAlgorithm.mTaskStackLowRamLayoutAlgorithm.getTaskRect().height() / 4);
                     this.mTmpTransform.alpha = 0.0f;
                 } else {
-                    this.mTmpTransform.rect.offset(0.0f, height);
+                    this.mTmpTransform.rect.offset(0.0f, iHeight);
                 }
-                this.mStackView.updateTaskViewToTransform(taskView, this.mTmpTransform, animationProps);
+                this.mStackView.updateTaskViewToTransform(taskView, this.mTmpTransform, listener);
             }
         }
     }
@@ -266,7 +269,7 @@ public class TaskStackAnimationHelper {
     }
 
     public boolean startScrollToFocusedTaskAnimation(Task task, boolean z) {
-        int i;
+        int iMax;
         Interpolator interpolator;
         TaskStackLayoutAlgorithm stackAlgorithm = this.mStackView.getStackAlgorithm();
         TaskStackViewScroller scroller = this.mStackView.getScroller();
@@ -298,30 +301,31 @@ public class TaskStackAnimationHelper {
         });
         List<TaskView> taskViews = this.mStackView.getTaskViews();
         int size2 = taskViews.size();
-        int indexOf = taskViews.indexOf(childViewForTask);
-        for (int i2 = 0; i2 < size2; i2++) {
-            TaskView taskView = taskViews.get(i2);
+        int iIndexOf = taskViews.indexOf(childViewForTask);
+        for (int i = 0; i < size2; i++) {
+            TaskView taskView = taskViews.get(i);
             Task task2 = taskView.getTask();
             if (!this.mStackView.isIgnoredTask(task2)) {
-                int indexOf2 = tasks.indexOf(task2);
-                TaskViewTransform taskViewTransform = this.mTmpFinalTaskTransforms.get(indexOf2);
-                this.mStackView.updateTaskViewToTransform(taskView, this.mTmpCurrentTaskTransforms.get(indexOf2), AnimationProps.IMMEDIATE);
+                int iIndexOf2 = tasks.indexOf(task2);
+                TaskViewTransform taskViewTransform = this.mTmpCurrentTaskTransforms.get(iIndexOf2);
+                TaskViewTransform taskViewTransform2 = this.mTmpFinalTaskTransforms.get(iIndexOf2);
+                this.mStackView.updateTaskViewToTransform(taskView, taskViewTransform, AnimationProps.IMMEDIATE);
                 if (z2) {
-                    i = calculateStaggeredAnimDuration(i2);
+                    iMax = calculateStaggeredAnimDuration(i);
                     interpolator = FOCUS_BEHIND_NEXT_TASK_INTERPOLATOR;
-                } else if (i2 < indexOf) {
-                    i = 150 + (((indexOf - i2) - 1) * 50);
+                } else if (i < iIndexOf) {
+                    iMax = 150 + (((iIndexOf - i) - 1) * 50);
                     interpolator = FOCUS_BEHIND_NEXT_TASK_INTERPOLATOR;
-                } else if (i2 > indexOf) {
-                    i = Math.max(100, 150 - (((i2 - indexOf) - 1) * 50));
+                } else if (i > iIndexOf) {
+                    iMax = Math.max(100, 150 - (((i - iIndexOf) - 1) * 50));
                     interpolator = FOCUS_IN_FRONT_NEXT_TASK_INTERPOLATOR;
                 } else {
-                    i = 200;
+                    iMax = 200;
                     interpolator = FOCUS_NEXT_TASK_INTERPOLATOR;
                 }
-                AnimationProps listener = new AnimationProps().setDuration(6, i).setInterpolator(6, interpolator).setListener(referenceCountedTrigger.decrementOnAnimationEnd());
+                AnimationProps listener = new AnimationProps().setDuration(6, iMax).setInterpolator(6, interpolator).setListener(referenceCountedTrigger.decrementOnAnimationEnd());
                 referenceCountedTrigger.increment();
-                this.mStackView.updateTaskViewToTransform(taskView, taskViewTransform, listener);
+                this.mStackView.updateTaskViewToTransform(taskView, taskViewTransform2, listener);
             }
         }
         return z3;
@@ -362,15 +366,17 @@ public class TaskStackAnimationHelper {
             TaskView taskView = taskViews.get(i);
             Task task = taskView.getTask();
             if (!this.mStackView.isIgnoredTask(task) && (task != frontMostTask || childViewForTask == null)) {
-                int indexOf = tasks.indexOf(task);
-                if (indexOf == -1) {
+                int iIndexOf = tasks.indexOf(task);
+                if (iIndexOf == -1) {
                     Log.w("TaskStackAnimationHelper", "startNewStackScrollAnimation() task index = -1");
                 } else {
-                    this.mStackView.updateTaskViewToTransform(taskView, this.mTmpCurrentTaskTransforms.get(indexOf), AnimationProps.IMMEDIATE);
-                    int calculateStaggeredAnimDuration = calculateStaggeredAnimDuration(i);
-                    AnimationProps listener = new AnimationProps().setDuration(6, calculateStaggeredAnimDuration).setInterpolator(6, FOCUS_BEHIND_NEXT_TASK_INTERPOLATOR).setListener(referenceCountedTrigger.decrementOnAnimationEnd());
+                    TaskViewTransform taskViewTransform2 = this.mTmpCurrentTaskTransforms.get(iIndexOf);
+                    TaskViewTransform taskViewTransform3 = this.mTmpFinalTaskTransforms.get(iIndexOf);
+                    this.mStackView.updateTaskViewToTransform(taskView, taskViewTransform2, AnimationProps.IMMEDIATE);
+                    int iCalculateStaggeredAnimDuration = calculateStaggeredAnimDuration(i);
+                    AnimationProps listener = new AnimationProps().setDuration(6, iCalculateStaggeredAnimDuration).setInterpolator(6, FOCUS_BEHIND_NEXT_TASK_INTERPOLATOR).setListener(referenceCountedTrigger.decrementOnAnimationEnd());
                     referenceCountedTrigger.increment();
-                    this.mStackView.updateTaskViewToTransform(taskView, this.mTmpFinalTaskTransforms.get(indexOf), listener);
+                    this.mStackView.updateTaskViewToTransform(taskView, taskViewTransform3, listener);
                 }
             }
         }
@@ -385,7 +391,7 @@ public class TaskStackAnimationHelper {
         referenceCountedTrigger.addLastDecrementRunnable(new Runnable() { // from class: com.android.systemui.recents.views.-$$Lambda$TaskStackAnimationHelper$8-n9X8WiqU8WjSQafJipbVZD-LA
             @Override // java.lang.Runnable
             public final void run() {
-                TaskStackAnimationHelper.this.mStackView.getTouchHandler().onChildDismissed(taskView);
+                this.f$0.mStackView.getTouchHandler().onChildDismissed(taskView);
             }
         });
         taskView.animate().setDuration(300L).scaleX(0.9f).scaleY(0.9f).alpha(0.0f).setListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.recents.views.TaskStackAnimationHelper.4
@@ -403,41 +409,39 @@ public class TaskStackAnimationHelper {
         referenceCountedTrigger.addLastDecrementRunnable(new Runnable() { // from class: com.android.systemui.recents.views.-$$Lambda$TaskStackAnimationHelper$ax6dOg8GHbAwig9kBnwP5_DTcLA
             @Override // java.lang.Runnable
             public final void run() {
-                TaskStackViewTouchHandler.this.onChildDismissed(taskView);
+                touchHandler.onChildDismissed(taskView);
             }
         });
         final float scaledDismissSize = touchHandler.getScaledDismissSize();
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-        ofFloat.setDuration(400L);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.recents.views.-$$Lambda$TaskStackAnimationHelper$DBVHlVbyKhFHpm00avfl8nT1DCw
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+        valueAnimatorOfFloat.setDuration(400L);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.recents.views.-$$Lambda$TaskStackAnimationHelper$DBVHlVbyKhFHpm00avfl8nT1DCw
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                TaskStackAnimationHelper.lambda$startTaskStackDeleteTaskAnimation$3(TaskView.this, scaledDismissSize, touchHandler, valueAnimator);
+                TaskStackAnimationHelper.lambda$startTaskStackDeleteTaskAnimation$3(taskView, scaledDismissSize, touchHandler, valueAnimator);
             }
         });
-        ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.recents.views.TaskStackAnimationHelper.5
+        valueAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.recents.views.TaskStackAnimationHelper.5
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 referenceCountedTrigger.decrement();
             }
         });
-        ofFloat.start();
+        valueAnimatorOfFloat.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$startTaskStackDeleteTaskAnimation$3(TaskView taskView, float f, TaskStackViewTouchHandler taskStackViewTouchHandler, ValueAnimator valueAnimator) {
-        float floatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
-        taskView.setTranslationX(f * floatValue);
-        taskStackViewTouchHandler.updateSwipeProgress(taskView, true, floatValue);
+    static /* synthetic */ void lambda$startTaskStackDeleteTaskAnimation$3(TaskView taskView, float f, TaskStackViewTouchHandler taskStackViewTouchHandler, ValueAnimator valueAnimator) {
+        float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+        taskView.setTranslationX(f * fFloatValue);
+        taskStackViewTouchHandler.updateSwipeProgress(taskView, true, fFloatValue);
     }
 
     private void startTaskStackDeleteAllTasksAnimation(List<TaskView> list, final ReferenceCountedTrigger referenceCountedTrigger) {
-        int size;
         int measuredWidth = this.mStackView.getMeasuredWidth() - this.mStackView.getStackAlgorithm().getTaskRect().left;
-        for (int size2 = list.size() - 1; size2 >= 0; size2--) {
-            final TaskView taskView = list.get(size2);
+        for (int size = list.size() - 1; size >= 0; size--) {
+            final TaskView taskView = list.get(size);
             taskView.setClipViewInStack(false);
-            AnimationProps animationProps = new AnimationProps(((size - size2) - 1) * 33, 200, DISMISS_ALL_TRANSLATION_INTERPOLATOR, new AnimatorListenerAdapter() { // from class: com.android.systemui.recents.views.TaskStackAnimationHelper.6
+            AnimationProps animationProps = new AnimationProps(((r0 - size) - 1) * 33, 200, DISMISS_ALL_TRANSLATION_INTERPOLATOR, new AnimatorListenerAdapter() { // from class: com.android.systemui.recents.views.TaskStackAnimationHelper.6
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
                     referenceCountedTrigger.decrement();

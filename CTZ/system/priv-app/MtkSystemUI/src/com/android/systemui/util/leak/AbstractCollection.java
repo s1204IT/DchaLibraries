@@ -2,8 +2,12 @@ package com.android.systemui.util.leak;
 
 import java.util.Collection;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 abstract class AbstractCollection<T> implements Collection<T> {
+    AbstractCollection() {
+    }
+
     @Override // java.util.Collection
     public boolean contains(Object obj) {
         throw new UnsupportedOperationException();

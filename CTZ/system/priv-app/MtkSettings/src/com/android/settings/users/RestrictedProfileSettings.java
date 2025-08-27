@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.Utils;
 import com.android.settings.users.EditUserInfoController;
+
 /* loaded from: classes.dex */
 public class RestrictedProfileSettings extends AppRestrictionsFragment implements EditUserInfoController.OnContentChangedCallback {
     private ImageView mDeleteButton;
@@ -33,8 +34,8 @@ public class RestrictedProfileSettings extends AppRestrictionsFragment implement
     public void onActivityCreated(Bundle bundle) {
         this.mHeaderView = setPinnedHeaderView(R.layout.user_info_header);
         this.mHeaderView.setOnClickListener(this);
-        this.mUserIconView = (ImageView) this.mHeaderView.findViewById(16908294);
-        this.mUserNameView = (TextView) this.mHeaderView.findViewById(16908310);
+        this.mUserIconView = (ImageView) this.mHeaderView.findViewById(android.R.id.icon);
+        this.mUserNameView = (TextView) this.mHeaderView.findViewById(android.R.id.title);
         this.mDeleteButton = (ImageView) this.mHeaderView.findViewById(R.id.delete);
         this.mDeleteButton.setOnClickListener(this);
         super.onActivityCreated(bundle);
@@ -52,10 +53,10 @@ public class RestrictedProfileSettings extends AppRestrictionsFragment implement
         UserInfo existingUser = Utils.getExistingUser(this.mUserManager, this.mUser);
         if (existingUser == null) {
             finishFragment();
-            return;
+        } else {
+            ((TextView) this.mHeaderView.findViewById(android.R.id.title)).setText(existingUser.name);
+            ((ImageView) this.mHeaderView.findViewById(android.R.id.icon)).setImageDrawable(com.android.settingslib.Utils.getUserIcon(getActivity(), this.mUserManager, existingUser));
         }
-        ((TextView) this.mHeaderView.findViewById(16908310)).setText(existingUser.name);
-        ((ImageView) this.mHeaderView.findViewById(16908294)).setImageDrawable(com.android.settingslib.Utils.getUserIcon(getActivity(), this.mUserManager, existingUser));
     }
 
     @Override // android.app.Fragment
@@ -109,8 +110,7 @@ public class RestrictedProfileSettings extends AppRestrictionsFragment implement
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void removeUser() {
+    private void removeUser() {
         getView().post(new Runnable() { // from class: com.android.settings.users.RestrictedProfileSettings.2
             @Override // java.lang.Runnable
             public void run() {

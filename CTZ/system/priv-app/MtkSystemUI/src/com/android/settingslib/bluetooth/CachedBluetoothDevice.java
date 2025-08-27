@@ -16,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 /* loaded from: classes.dex */
 public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> {
     private final AudioManager mAudioManager;
@@ -48,7 +50,6 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
     private boolean isReconnectedTimeOut = false;
     private HashMap<LocalBluetoothProfile, Integer> mProfileConnectionState = new HashMap<>();
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onDeviceAttributesChanged();
     }
@@ -79,23 +80,21 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         return sb.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onProfileStateChanged(LocalBluetoothProfile localBluetoothProfile, int i) {
+    void onProfileStateChanged(LocalBluetoothProfile localBluetoothProfile, int i) {
         Log.d("CachedBluetoothDevice", "onProfileStateChanged: profile " + localBluetoothProfile + " newProfileState " + i);
         if (this.mLocalAdapter.getBluetoothState() == 13) {
             Log.d("CachedBluetoothDevice", " BT Turninig Off...Profile conn state change ignored...");
             return;
         }
-        String str = SystemProperties.get("persist.sys.bt.autoreconnect");
-        Log.d("CachedBluetoothDevice", "onProfileStateChanged: connectString = " + str);
-        boolean equals = SystemProperties.get("persist.sys.bt.autoreconnect").equals("1");
-        Log.d("CachedBluetoothDevice", "onProfileStateChanged: autoReconnect = " + equals);
+        Log.d("CachedBluetoothDevice", "onProfileStateChanged: connectString = " + SystemProperties.get("persist.sys.bt.autoreconnect"));
+        boolean zEquals = SystemProperties.get("persist.sys.bt.autoreconnect").equals("1");
+        Log.d("CachedBluetoothDevice", "onProfileStateChanged: autoReconnect = " + zEquals);
         Log.d("CachedBluetoothDevice", "onProfileStateChanged: isReconnectedTimeOut = " + this.isReconnectedTimeOut);
         if (localBluetoothProfile instanceof A2dpSinkProfile) {
             if (i == 2) {
                 stopTimer();
                 Log.d("CachedBluetoothDevice", "onProfileStateChanged: timer stop ");
-            } else if (i == 0 && equals && !this.isReconnectedTimeOut) {
+            } else if (i == 0 && zEquals && !this.isReconnectedTimeOut) {
                 startTimer();
                 Log.d("CachedBluetoothDevice", "onProfileStateChanged: timer start ");
                 if (this.mTimer != null && !this.mTimerScheduled) {
@@ -129,8 +128,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         fetchActiveDevices();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public CachedBluetoothDevice(Context context, LocalBluetoothAdapter localBluetoothAdapter, LocalBluetoothProfileManager localBluetoothProfileManager, BluetoothDevice bluetoothDevice) {
+    CachedBluetoothDevice(Context context, LocalBluetoothAdapter localBluetoothAdapter, LocalBluetoothProfileManager localBluetoothProfileManager, BluetoothDevice bluetoothDevice) {
         this.mContext = context;
         this.mLocalAdapter = localBluetoothAdapter;
         this.mProfileManager = localBluetoothProfileManager;
@@ -171,8 +169,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         this.isReconnectedTimeOut = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void stopTimer() {
+    private void stopTimer() {
         if (this.mTimer != null) {
             this.mTimer.cancel();
             this.mTimer = null;
@@ -189,8 +186,9 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
     }
 
     public void disconnect() {
-        for (LocalBluetoothProfile localBluetoothProfile : this.mProfiles) {
-            disconnect(localBluetoothProfile);
+        Iterator<LocalBluetoothProfile> it = this.mProfiles.iterator();
+        while (it.hasNext()) {
+            disconnect(it.next());
         }
         PbapServerProfile pbapProfile = this.mProfileManager.getPbapProfile();
         if (pbapProfile.getConnectionStatus(this.mDevice) == 2) {
@@ -319,8 +317,9 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
 
     public void clearProfileConnectionState() {
         Log.d("CachedBluetoothDevice", " Clearing all connection state for dev:" + this.mDevice.getName());
-        for (LocalBluetoothProfile localBluetoothProfile : getProfiles()) {
-            this.mProfileConnectionState.put(localBluetoothProfile, 0);
+        Iterator<LocalBluetoothProfile> it = getProfiles().iterator();
+        while (it.hasNext()) {
+            this.mProfileConnectionState.put(it.next(), 0);
         }
     }
 
@@ -343,8 +342,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         return this.mName;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setNewName(String str) {
+    void setNewName(String str) {
         if (this.mName == null) {
             this.mName = str;
             if (this.mName == null || TextUtils.isEmpty(this.mName)) {
@@ -354,8 +352,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void refreshName() {
+    void refreshName() {
         fetchName();
         dispatchAttributesChanged();
     }
@@ -373,8 +370,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         return this.mDevice.getBatteryLevel();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void refresh() {
+    void refresh() {
         dispatchAttributesChanged();
     }
 
@@ -393,11 +389,11 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         if (i != 21) {
             switch (i) {
                 case 1:
-                    r2 = this.mIsActiveDeviceHeadset != z;
+                    z = this.mIsActiveDeviceHeadset != z;
                     this.mIsActiveDeviceHeadset = z;
                     break;
                 case 2:
-                    r2 = this.mIsActiveDeviceA2dp != z;
+                    z = this.mIsActiveDeviceA2dp != z;
                     this.mIsActiveDeviceA2dp = z;
                     break;
                 default:
@@ -405,16 +401,15 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
                     break;
             }
         } else {
-            r2 = this.mIsActiveDeviceHearingAid != z;
+            z = this.mIsActiveDeviceHearingAid != z;
             this.mIsActiveDeviceHearingAid = z;
         }
-        if (r2) {
+        if (z) {
             dispatchAttributesChanged();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onAudioModeChanged() {
+    void onAudioModeChanged() {
         dispatchAttributesChanged();
     }
 
@@ -433,8 +428,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         return this.mIsActiveDeviceHearingAid;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setRssi(short s) {
+    void setRssi(short s) {
         if (this.mRssi != s) {
             this.mRssi = s;
             dispatchAttributesChanged();
@@ -442,8 +436,9 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
     }
 
     public boolean isConnected() {
-        for (LocalBluetoothProfile localBluetoothProfile : this.mProfiles) {
-            if (getProfileConnectionState(localBluetoothProfile) == 2) {
+        Iterator<LocalBluetoothProfile> it = this.mProfiles.iterator();
+        while (it.hasNext()) {
+            if (getProfileConnectionState(it.next()) == 2) {
                 return true;
             }
         }
@@ -456,8 +451,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
             Log.d("CachedBluetoothDevice", "fetchClass, mBtClass is null");
             return;
         }
-        int majorDeviceClass = this.mBtClass.getMajorDeviceClass();
-        Log.d("CachedBluetoothDevice", "fetchClass, mBtClass is " + majorDeviceClass);
+        Log.d("CachedBluetoothDevice", "fetchClass, mBtClass is " + this.mBtClass.getMajorDeviceClass());
     }
 
     private boolean updateProfiles() {
@@ -492,14 +486,12 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void refreshBtClass() {
+    void refreshBtClass() {
         fetchBtClass();
         dispatchAttributesChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onUuidChanged() {
+    void onUuidChanged() {
         long j;
         updateProfiles();
         if (BluetoothUuid.isUuidPresent(this.mDevice.getUuids(), BluetoothUuid.Hogp)) {
@@ -513,8 +505,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         dispatchAttributesChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onBondingStateChanged(int i) {
+    void onBondingStateChanged(int i) {
         Log.d("CachedBluetoothDevice", "onBondingStateChanged to " + i);
         if (i == 10) {
             this.mProfiles.clear();
@@ -535,8 +526,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setBtClass(BluetoothClass bluetoothClass) {
+    void setBtClass(BluetoothClass bluetoothClass) {
         if (bluetoothClass != null && this.mBtClass != bluetoothClass) {
             this.mBtClass = bluetoothClass;
             dispatchAttributesChanged();
@@ -559,8 +549,9 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
 
     private void dispatchAttributesChanged() {
         synchronized (this.mCallbacks) {
-            for (Callback callback : this.mCallbacks) {
-                callback.onDeviceAttributesChanged();
+            Iterator<Callback> it = this.mCallbacks.iterator();
+            while (it.hasNext()) {
+                it.next().onDeviceAttributesChanged();
             }
         }
     }
@@ -580,6 +571,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         return this.mDevice.getAddress().hashCode();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     @Override // java.lang.Comparable
     public int compareTo(CachedBluetoothDevice cachedBluetoothDevice) {
         int i = (cachedBluetoothDevice.isConnected() ? 1 : 0) - (isConnected() ? 1 : 0);
@@ -634,9 +626,9 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
                 this.mDevice.setPhonebookAccessPermission(2);
             }
         }
-        SharedPreferences.Editor edit = sharedPreferences.edit();
-        edit.remove(this.mDevice.getAddress());
-        edit.commit();
+        SharedPreferences.Editor editorEdit = sharedPreferences.edit();
+        editorEdit.remove(this.mDevice.getAddress());
+        editorEdit.commit();
     }
 
     public void setMessagePermissionChoice(int i) {
@@ -676,9 +668,9 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
                 this.mDevice.setMessageAccessPermission(2);
             }
         }
-        SharedPreferences.Editor edit = sharedPreferences.edit();
-        edit.remove(this.mDevice.getAddress());
-        edit.commit();
+        SharedPreferences.Editor editorEdit = sharedPreferences.edit();
+        editorEdit.remove(this.mDevice.getAddress());
+        editorEdit.commit();
     }
 
     private void fetchMessageRejectionCount() {
@@ -686,13 +678,13 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
     }
 
     private void saveMessageRejectionCount() {
-        SharedPreferences.Editor edit = this.mContext.getSharedPreferences("bluetooth_message_reject", 0).edit();
+        SharedPreferences.Editor editorEdit = this.mContext.getSharedPreferences("bluetooth_message_reject", 0).edit();
         if (this.mMessageRejectionCount == 0) {
-            edit.remove(this.mDevice.getAddress());
+            editorEdit.remove(this.mDevice.getAddress());
         } else {
-            edit.putInt(this.mDevice.getAddress(), this.mMessageRejectionCount);
+            editorEdit.putInt(this.mDevice.getAddress(), this.mMessageRejectionCount);
         }
-        edit.commit();
+        editorEdit.commit();
     }
 
     private void processPhonebookAccess() {
@@ -705,9 +697,10 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
     }
 
     public int getMaxConnectionState() {
+        Iterator<LocalBluetoothProfile> it = getProfiles().iterator();
         int i = 0;
-        for (LocalBluetoothProfile localBluetoothProfile : getProfiles()) {
-            int profileConnectionState = getProfileConnectionState(localBluetoothProfile);
+        while (it.hasNext()) {
+            int profileConnectionState = getProfileConnectionState(it.next());
             if (profileConnectionState > i) {
                 i = profileConnectionState;
             }

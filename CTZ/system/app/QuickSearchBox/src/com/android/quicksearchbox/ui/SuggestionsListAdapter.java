@@ -6,6 +6,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import com.android.quicksearchbox.SuggestionCursor;
 import com.android.quicksearchbox.SuggestionPosition;
+
 /* loaded from: classes.dex */
 public class SuggestionsListAdapter extends SuggestionsAdapterBase<ListAdapter> {
     private Adapter mAdapter;
@@ -20,6 +21,7 @@ public class SuggestionsListAdapter extends SuggestionsAdapterBase<ListAdapter> 
         return new SuggestionPosition(getCurrentSuggestions(), (int) j);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getListAdapter()Ljava/lang/Object; */
     @Override // com.android.quicksearchbox.ui.SuggestionsAdapterBase, com.android.quicksearchbox.ui.SuggestionsAdapter
     public BaseAdapter getListAdapter() {
         return this.mAdapter;
@@ -35,9 +37,7 @@ public class SuggestionsListAdapter extends SuggestionsAdapterBase<ListAdapter> 
         this.mAdapter.notifyDataSetInvalidated();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class Adapter extends BaseAdapter {
+    class Adapter extends BaseAdapter {
         Adapter() {
         }
 

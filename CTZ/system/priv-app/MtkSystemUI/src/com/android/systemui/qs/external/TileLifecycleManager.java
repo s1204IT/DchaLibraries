@@ -20,6 +20,7 @@ import android.util.ArraySet;
 import android.util.Log;
 import java.util.Objects;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class TileLifecycleManager extends BroadcastReceiver implements ServiceConnection, IBinder.DeathRecipient, IQSTileService {
     private int mBindRetryDelay;
@@ -40,7 +41,6 @@ public class TileLifecycleManager extends BroadcastReceiver implements ServiceCo
     private final UserHandle mUser;
     private QSTileServiceWrapper mWrapper;
 
-    /* loaded from: classes.dex */
     public interface TileChangeListener {
         void onTileChanged(ComponentName componentName);
     }
@@ -67,11 +67,11 @@ public class TileLifecycleManager extends BroadcastReceiver implements ServiceCo
     }
 
     public boolean hasPendingClick() {
-        boolean contains;
+        boolean zContains;
         synchronized (this.mQueuedMessages) {
-            contains = this.mQueuedMessages.contains(2);
+            zContains = this.mQueuedMessages.contains(2);
         }
-        return contains;
+        return zContains;
     }
 
     public boolean isActiveTile() {
@@ -101,18 +101,18 @@ public class TileLifecycleManager extends BroadcastReceiver implements ServiceCo
             if (this.mBindTryCount == 5) {
                 startPackageListening();
                 return;
-            } else if (!checkComponentState()) {
+            }
+            if (!checkComponentState()) {
                 return;
-            } else {
-                this.mBindTryCount++;
-                try {
-                    this.mIsBound = this.mContext.bindServiceAsUser(this.mIntent, this, 33554433, this.mUser);
-                    return;
-                } catch (SecurityException e) {
-                    Log.e("TileLifecycleManager", "Failed to bind to service", e);
-                    this.mIsBound = false;
-                    return;
-                }
+            }
+            this.mBindTryCount++;
+            try {
+                this.mIsBound = this.mContext.bindServiceAsUser(this.mIntent, this, 33554433, this.mUser);
+                return;
+            } catch (SecurityException e) {
+                Log.e("TileLifecycleManager", "Failed to bind to service", e);
+                this.mIsBound = false;
+                return;
             }
         }
         this.mBindTryCount = 0;
@@ -124,7 +124,7 @@ public class TileLifecycleManager extends BroadcastReceiver implements ServiceCo
     }
 
     @Override // android.content.ServiceConnection
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) throws RemoteException {
         this.mBindTryCount = 0;
         QSTileServiceWrapper qSTileServiceWrapper = new QSTileServiceWrapper(IQSTileService.Stub.asInterface(iBinder));
         try {

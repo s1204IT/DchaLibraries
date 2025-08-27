@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LauncherActivityInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.graphics.BitmapFactory;
@@ -32,6 +33,7 @@ import com.android.launcher3.util.LongArrayMap;
 import java.net.URISyntaxException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class LoaderCursor extends CursorWrapper {
     private static final String TAG = "LoaderCursor";
@@ -90,8 +92,8 @@ public class LoaderCursor extends CursorWrapper {
 
     @Override // android.database.CursorWrapper, android.database.Cursor
     public boolean moveToNext() {
-        boolean moveToNext = super.moveToNext();
-        if (moveToNext) {
+        boolean zMoveToNext = super.moveToNext();
+        if (zMoveToNext) {
             this.itemType = getInt(this.itemTypeIndex);
             this.container = getInt(this.containerIndex);
             this.id = getLong(this.idIndex);
@@ -99,7 +101,7 @@ public class LoaderCursor extends CursorWrapper {
             this.user = this.allUsers.get(this.serialNumber);
             this.restoreFlag = getInt(this.restoredIndex);
         }
-        return moveToNext;
+        return zMoveToNext;
     }
 
     public Intent parseIntent() {
@@ -126,8 +128,7 @@ public class LoaderCursor extends CursorWrapper {
         return shortcutInfo;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean loadIcon(ShortcutInfo shortcutInfo) {
+    protected boolean loadIcon(ShortcutInfo shortcutInfo) throws PackageManager.NameNotFoundException {
         if (this.itemType == 1) {
             String string = getString(this.iconPackageIndex);
             String string2 = getString(this.iconResourceIndex);
@@ -135,23 +136,26 @@ public class LoaderCursor extends CursorWrapper {
                 shortcutInfo.iconResource = new Intent.ShortcutIconResource();
                 shortcutInfo.iconResource.packageName = string;
                 shortcutInfo.iconResource.resourceName = string2;
-                LauncherIcons obtain = LauncherIcons.obtain(this.mContext);
-                BitmapInfo createIconBitmap = obtain.createIconBitmap(shortcutInfo.iconResource);
-                obtain.recycle();
-                if (createIconBitmap != null) {
-                    createIconBitmap.applyTo(shortcutInfo);
+                LauncherIcons launcherIconsObtain = LauncherIcons.obtain(this.mContext);
+                BitmapInfo bitmapInfoCreateIconBitmap = launcherIconsObtain.createIconBitmap(shortcutInfo.iconResource);
+                launcherIconsObtain.recycle();
+                if (bitmapInfoCreateIconBitmap != null) {
+                    bitmapInfoCreateIconBitmap.applyTo(shortcutInfo);
                     return true;
                 }
             }
         }
         byte[] blob = getBlob(this.iconIndex);
         try {
-            LauncherIcons obtain2 = LauncherIcons.obtain(this.mContext);
-            obtain2.createIconBitmap(BitmapFactory.decodeByteArray(blob, 0, blob.length)).applyTo(shortcutInfo);
-            if (obtain2 != null) {
-                obtain2.close();
+            LauncherIcons launcherIconsObtain2 = LauncherIcons.obtain(this.mContext);
+            try {
+                launcherIconsObtain2.createIconBitmap(BitmapFactory.decodeByteArray(blob, 0, blob.length)).applyTo(shortcutInfo);
+                if (launcherIconsObtain2 != null) {
+                    launcherIconsObtain2.close();
+                }
+                return true;
+            } finally {
             }
-            return true;
         } catch (Exception e) {
             Log.e(TAG, "Failed to load icon for info " + shortcutInfo, e);
             return false;
@@ -188,7 +192,7 @@ public class LoaderCursor extends CursorWrapper {
         return shortcutInfo;
     }
 
-    public ShortcutInfo getAppShortcutInfo(Intent intent, boolean z, boolean z2) {
+    public ShortcutInfo getAppShortcutInfo(Intent intent, boolean z, boolean z2) throws PackageManager.NameNotFoundException {
         if (this.user == null) {
             Log.d(TAG, "Null user found in getShortcutInfo");
             return null;
@@ -201,8 +205,8 @@ public class LoaderCursor extends CursorWrapper {
         Intent intent2 = new Intent("android.intent.action.MAIN", (Uri) null);
         intent2.addCategory("android.intent.category.LAUNCHER");
         intent2.setComponent(component);
-        LauncherActivityInfo resolveActivity = LauncherAppsCompat.getInstance(this.mContext).resolveActivity(intent2, this.user);
-        if (resolveActivity == null && !z) {
+        LauncherActivityInfo launcherActivityInfoResolveActivity = LauncherAppsCompat.getInstance(this.mContext).resolveActivity(intent2, this.user);
+        if (launcherActivityInfoResolveActivity == null && !z) {
             Log.d(TAG, "Missing activity found in getShortcutInfo: " + component);
             return null;
         }
@@ -210,12 +214,12 @@ public class LoaderCursor extends CursorWrapper {
         shortcutInfo.itemType = 0;
         shortcutInfo.user = this.user;
         shortcutInfo.intent = intent2;
-        this.mIconCache.getTitleAndIcon(shortcutInfo, resolveActivity, z2);
+        this.mIconCache.getTitleAndIcon(shortcutInfo, launcherActivityInfoResolveActivity, z2);
         if (this.mIconCache.isDefaultIcon(shortcutInfo.iconBitmap, this.user)) {
             loadIcon(shortcutInfo);
         }
-        if (resolveActivity != null) {
-            AppInfo.updateRuntimeFlagsForActivityTarget(shortcutInfo, resolveActivity);
+        if (launcherActivityInfoResolveActivity != null) {
+            AppInfo.updateRuntimeFlagsForActivityTarget(shortcutInfo, launcherActivityInfoResolveActivity);
         }
         if (TextUtils.isEmpty(shortcutInfo.title)) {
             shortcutInfo.title = getTitle();
@@ -290,46 +294,46 @@ public class LoaderCursor extends CursorWrapper {
             if (itemInfo.screenId >= this.mIDP.numHotseatIcons) {
                 Log.e(TAG, "Error loading shortcut " + itemInfo + " into hotseat position " + itemInfo.screenId + ", position out of bounds: (0 to " + (this.mIDP.numHotseatIcons - 1) + ")");
                 return false;
-            } else if (gridOccupancy != null) {
+            }
+            if (gridOccupancy != null) {
                 if (gridOccupancy.cells[(int) itemInfo.screenId][0]) {
                     Log.e(TAG, "Error loading shortcut into hotseat " + itemInfo + " into position (" + itemInfo.screenId + ":" + itemInfo.cellX + "," + itemInfo.cellY + ") already occupied");
                     return false;
                 }
                 gridOccupancy.cells[(int) itemInfo.screenId][0] = true;
                 return true;
-            } else {
-                GridOccupancy gridOccupancy2 = new GridOccupancy(this.mIDP.numHotseatIcons, 1);
-                gridOccupancy2.cells[(int) itemInfo.screenId][0] = true;
-                this.occupied.put(-101L, gridOccupancy2);
-                return true;
             }
-        } else if (itemInfo.container == -100) {
-            if (arrayList.contains(Long.valueOf(itemInfo.screenId))) {
-                int i = this.mIDP.numColumns;
-                int i2 = this.mIDP.numRows;
-                if ((itemInfo.container == -100 && itemInfo.cellX < 0) || itemInfo.cellY < 0 || itemInfo.cellX + itemInfo.spanX > i || itemInfo.cellY + itemInfo.spanY > i2) {
-                    Log.e(TAG, "Error loading shortcut " + itemInfo + " into cell (" + j + "-" + itemInfo.screenId + ":" + itemInfo.cellX + "," + itemInfo.cellY + ") out of screen bounds ( " + i + "x" + i2 + ")");
-                    return false;
-                }
-                if (!this.occupied.containsKey(itemInfo.screenId)) {
-                    int i3 = i + 1;
-                    GridOccupancy gridOccupancy3 = new GridOccupancy(i3, i2 + 1);
-                    if (itemInfo.screenId == 0) {
-                        gridOccupancy3.markCells(0, 0, i3, 1, false);
-                    }
-                    this.occupied.put(itemInfo.screenId, gridOccupancy3);
-                }
-                GridOccupancy gridOccupancy4 = this.occupied.get(itemInfo.screenId);
-                if (gridOccupancy4.isRegionVacant(itemInfo.cellX, itemInfo.cellY, itemInfo.spanX, itemInfo.spanY)) {
-                    gridOccupancy4.markCells(itemInfo, true);
-                    return true;
-                }
-                Log.e(TAG, "Error loading shortcut " + itemInfo + " into cell (" + j + "-" + itemInfo.screenId + ":" + itemInfo.cellX + "," + itemInfo.cellX + "," + itemInfo.spanX + "," + itemInfo.spanY + ") already occupied");
-                return false;
-            }
-            return false;
-        } else {
+            GridOccupancy gridOccupancy2 = new GridOccupancy(this.mIDP.numHotseatIcons, 1);
+            gridOccupancy2.cells[(int) itemInfo.screenId][0] = true;
+            this.occupied.put(-101L, gridOccupancy2);
             return true;
         }
+        if (itemInfo.container != -100) {
+            return true;
+        }
+        if (!arrayList.contains(Long.valueOf(itemInfo.screenId))) {
+            return false;
+        }
+        int i = this.mIDP.numColumns;
+        int i2 = this.mIDP.numRows;
+        if ((itemInfo.container == -100 && itemInfo.cellX < 0) || itemInfo.cellY < 0 || itemInfo.cellX + itemInfo.spanX > i || itemInfo.cellY + itemInfo.spanY > i2) {
+            Log.e(TAG, "Error loading shortcut " + itemInfo + " into cell (" + j + "-" + itemInfo.screenId + ":" + itemInfo.cellX + "," + itemInfo.cellY + ") out of screen bounds ( " + i + "x" + i2 + ")");
+            return false;
+        }
+        if (!this.occupied.containsKey(itemInfo.screenId)) {
+            int i3 = i + 1;
+            GridOccupancy gridOccupancy3 = new GridOccupancy(i3, i2 + 1);
+            if (itemInfo.screenId == 0) {
+                gridOccupancy3.markCells(0, 0, i3, 1, false);
+            }
+            this.occupied.put(itemInfo.screenId, gridOccupancy3);
+        }
+        GridOccupancy gridOccupancy4 = this.occupied.get(itemInfo.screenId);
+        if (gridOccupancy4.isRegionVacant(itemInfo.cellX, itemInfo.cellY, itemInfo.spanX, itemInfo.spanY)) {
+            gridOccupancy4.markCells(itemInfo, true);
+            return true;
+        }
+        Log.e(TAG, "Error loading shortcut " + itemInfo + " into cell (" + j + "-" + itemInfo.screenId + ":" + itemInfo.cellX + "," + itemInfo.cellX + "," + itemInfo.spanX + "," + itemInfo.spanY + ") already occupied");
+        return false;
     }
 }

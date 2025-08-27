@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.telephony.TelephonyManager;
 import com.android.settings.R;
 import com.android.settings.Settings;
+
 /* loaded from: classes.dex */
 public class CellularDataCondition extends Condition {
     private static final IntentFilter DATA_CONNECTION_FILTER = new IntentFilter("android.intent.action.ANY_DATA_STATE");
@@ -21,8 +22,9 @@ public class CellularDataCondition extends Condition {
 
     @Override // com.android.settings.dashboard.conditional.Condition
     public void refreshState() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.mManager.getContext().getSystemService(ConnectivityManager.class);
         TelephonyManager telephonyManager = (TelephonyManager) this.mManager.getContext().getSystemService(TelephonyManager.class);
-        if (!((ConnectivityManager) this.mManager.getContext().getSystemService(ConnectivityManager.class)).isNetworkSupported(0) || telephonyManager.getSimState() != 5) {
+        if (!connectivityManager.isNetworkSupported(0) || telephonyManager.getSimState() != 5) {
             setActive(false);
         } else {
             setActive(!telephonyManager.isDataEnabled());
@@ -61,7 +63,7 @@ public class CellularDataCondition extends Condition {
 
     @Override // com.android.settings.dashboard.conditional.Condition
     public void onPrimaryClick() {
-        this.mManager.getContext().startActivity(new Intent(this.mManager.getContext(), Settings.DataUsageSummaryActivity.class).addFlags(268435456));
+        this.mManager.getContext().startActivity(new Intent(this.mManager.getContext(), (Class<?>) Settings.DataUsageSummaryActivity.class).addFlags(268435456));
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
@@ -69,9 +71,9 @@ public class CellularDataCondition extends Condition {
         if (i == 0) {
             ((TelephonyManager) this.mManager.getContext().getSystemService(TelephonyManager.class)).setDataEnabled(true);
             setActive(false);
-            return;
+        } else {
+            throw new IllegalArgumentException("Unexpected index " + i);
         }
-        throw new IllegalArgumentException("Unexpected index " + i);
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
@@ -79,7 +81,6 @@ public class CellularDataCondition extends Condition {
         return 380;
     }
 
-    /* loaded from: classes.dex */
     public static class Receiver extends BroadcastReceiver {
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {

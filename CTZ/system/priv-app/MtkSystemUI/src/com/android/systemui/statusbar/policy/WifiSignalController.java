@@ -19,6 +19,7 @@ import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.SignalController;
 import java.util.BitSet;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class WifiSignalController extends SignalController<WifiState, SignalController.IconGroup> {
     private final boolean mHasMobileData;
@@ -26,12 +27,12 @@ public class WifiSignalController extends SignalController<WifiState, SignalCont
     private final WifiStatusTracker mWifiTracker;
 
     public WifiSignalController(Context context, boolean z, CallbackHandler callbackHandler, NetworkControllerImpl networkControllerImpl, WifiManager wifiManager) {
-        super("WifiSignalController", context, 1, callbackHandler, networkControllerImpl);
         Messenger wifiServiceMessenger;
+        super("WifiSignalController", context, 1, callbackHandler, networkControllerImpl);
         this.mWifiTracker = new WifiStatusTracker(this.mContext, wifiManager, (NetworkScoreManager) context.getSystemService(NetworkScoreManager.class), (ConnectivityManager) context.getSystemService(ConnectivityManager.class), new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$WifiSignalController$AffzGdHvQakHA4bIzi_tW1MVLCY
             @Override // java.lang.Runnable
             public final void run() {
-                WifiSignalController.this.handleStatusUpdated();
+                this.f$0.handleStatusUpdated();
             }
         });
         this.mWifiTracker.setListening(true);
@@ -41,14 +42,16 @@ public class WifiSignalController extends SignalController<WifiState, SignalCont
         if (wifiManager != null && (wifiServiceMessenger = wifiManager.getWifiServiceMessenger()) != null) {
             this.mWifiChannel.connect(context, wifiHandler, wifiServiceMessenger);
         }
+        WifiState wifiState = (WifiState) this.mCurrentState;
+        WifiState wifiState2 = (WifiState) this.mLastState;
         SignalController.IconGroup iconGroup = new SignalController.IconGroup("Wi-Fi Icons", WifiIcons.WIFI_SIGNAL_STRENGTH, WifiIcons.QS_WIFI_SIGNAL_STRENGTH, AccessibilityContentDescriptions.WIFI_CONNECTION_STRENGTH, R.drawable.stat_sys_wifi_signal_null, R.drawable.ic_qs_wifi_no_network, R.drawable.stat_sys_wifi_signal_null, R.drawable.ic_qs_wifi_no_network, R.string.accessibility_no_wifi);
-        ((WifiState) this.mLastState).iconGroup = iconGroup;
-        ((WifiState) this.mCurrentState).iconGroup = iconGroup;
+        wifiState2.iconGroup = iconGroup;
+        wifiState.iconGroup = iconGroup;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: cleanState()Lcom/android/systemui/statusbar/policy/SignalController$State; */
     @Override // com.android.systemui.statusbar.policy.SignalController
-    public WifiState cleanState() {
+    protected WifiState cleanState() {
         return new WifiState();
     }
 
@@ -75,26 +78,18 @@ public class WifiSignalController extends SignalController<WifiState, SignalCont
         notifyListenersIfNecessary();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleStatusUpdated() {
+    private void handleStatusUpdated() {
         ((WifiState) this.mCurrentState).statusLabel = this.mWifiTracker.statusLabel;
         notifyListenersIfNecessary();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    public void setActivity(int i) {
-        boolean z = false;
+    void setActivity(int i) {
         ((WifiState) this.mCurrentState).activityIn = i == 3 || i == 1;
-        WifiState wifiState = (WifiState) this.mCurrentState;
-        if (i == 3 || i == 2) {
-            z = true;
-        }
-        wifiState.activityOut = z;
+        ((WifiState) this.mCurrentState).activityOut = i == 3 || i == 2;
         notifyListenersIfNecessary();
     }
 
-    /* loaded from: classes.dex */
     private class WifiHandler extends Handler {
         WifiHandler(Looper looper) {
             super(looper);
@@ -115,9 +110,7 @@ public class WifiSignalController extends SignalController<WifiState, SignalCont
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class WifiState extends SignalController.State {
+    static class WifiState extends SignalController.State {
         boolean isTransient;
         String ssid;
         String statusLabel;
@@ -134,9 +127,8 @@ public class WifiSignalController extends SignalController<WifiState, SignalCont
             this.statusLabel = wifiState.statusLabel;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.android.systemui.statusbar.policy.SignalController.State
-        public void toString(StringBuilder sb) {
+        protected void toString(StringBuilder sb) {
             super.toString(sb);
             sb.append(",ssid=");
             sb.append(this.ssid);
@@ -148,11 +140,11 @@ public class WifiSignalController extends SignalController<WifiState, SignalCont
 
         @Override // com.android.systemui.statusbar.policy.SignalController.State
         public boolean equals(Object obj) {
-            if (super.equals(obj)) {
-                WifiState wifiState = (WifiState) obj;
-                return Objects.equals(wifiState.ssid, this.ssid) && wifiState.isTransient == this.isTransient && TextUtils.equals(wifiState.statusLabel, this.statusLabel);
+            if (!super.equals(obj)) {
+                return false;
             }
-            return false;
+            WifiState wifiState = (WifiState) obj;
+            return Objects.equals(wifiState.ssid, this.ssid) && wifiState.isTransient == this.isTransient && TextUtils.equals(wifiState.statusLabel, this.statusLabel);
         }
     }
 

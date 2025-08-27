@@ -36,6 +36,7 @@ import com.android.settings.search.Indexable;
 import com.android.settings.utils.ProfileSettingsPreferenceFragment;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment implements View.OnClickListener, Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.print.PrintSettingsFragment.1
@@ -66,7 +67,7 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
         addPreferencesFromResource(R.xml.print_settings);
         this.mActivePrintJobsCategory = (PreferenceCategory) findPreference("print_jobs_category");
         this.mPrintServicesCategory = (PreferenceCategory) findPreference("print_services_category");
@@ -75,7 +76,7 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
         getLoaderManager().initLoader(1, null, this.mPrintJobsController);
         this.mPrintServicesController = new PrintServicesController();
         getLoaderManager().initLoader(2, null, this.mPrintServicesController);
-        return onCreateView;
+        return viewOnCreateView;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
@@ -89,15 +90,15 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
         ViewGroup viewGroup = (ViewGroup) getListView().getParent();
-        View inflate = getActivity().getLayoutInflater().inflate(R.layout.empty_print_state, viewGroup, false);
-        ((TextView) inflate.findViewById(R.id.message)).setText(R.string.print_no_services_installed);
+        View viewInflate = getActivity().getLayoutInflater().inflate(R.layout.empty_print_state, viewGroup, false);
+        ((TextView) viewInflate.findViewById(R.id.message)).setText(R.string.print_no_services_installed);
         if (createAddNewServiceIntentOrNull() != null) {
-            this.mAddNewServiceButton = (Button) inflate.findViewById(R.id.add_new_service);
+            this.mAddNewServiceButton = (Button) viewInflate.findViewById(R.id.add_new_service);
             this.mAddNewServiceButton.setOnClickListener(this);
             this.mAddNewServiceButton.setVisibility(0);
         }
-        viewGroup.addView(inflate);
-        setEmptyView(inflate);
+        viewGroup.addView(viewInflate);
+        setEmptyView(viewInflate);
     }
 
     @Override // com.android.settings.utils.ProfileSettingsPreferenceFragment
@@ -105,7 +106,6 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
         return "android.settings.ACTION_PRINT_SETTINGS";
     }
 
-    /* loaded from: classes.dex */
     private final class PrintServicesController implements LoaderManager.LoaderCallbacks<List<PrintServiceInfo>> {
         private PrintServicesController() {
         }
@@ -119,6 +119,7 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
             return null;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<List<PrintServiceInfo>> loader, List<PrintServiceInfo> list) {
             if (list.isEmpty()) {
@@ -137,8 +138,8 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
             }
             for (PrintServiceInfo printServiceInfo : list) {
                 Preference preference = new Preference(prefContext);
-                String charSequence = printServiceInfo.getResolveInfo().loadLabel(packageManager).toString();
-                preference.setTitle(charSequence);
+                String string = printServiceInfo.getResolveInfo().loadLabel(packageManager).toString();
+                preference.setTitle(string);
                 ComponentName componentName = printServiceInfo.getComponentName();
                 preference.setKey(componentName.flattenToString());
                 preference.setFragment(PrintServiceSettingsFragment.class.getName());
@@ -148,19 +149,19 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
                 } else {
                     preference.setSummary(PrintSettingsFragment.this.getString(R.string.print_feature_state_off));
                 }
-                Drawable loadIcon = printServiceInfo.getResolveInfo().loadIcon(packageManager);
-                if (loadIcon != null) {
-                    preference.setIcon(loadIcon);
+                Drawable drawableLoadIcon = printServiceInfo.getResolveInfo().loadIcon(packageManager);
+                if (drawableLoadIcon != null) {
+                    preference.setIcon(drawableLoadIcon);
                 }
                 Bundle extras = preference.getExtras();
                 extras.putBoolean("EXTRA_CHECKED", printServiceInfo.isEnabled());
-                extras.putString("EXTRA_TITLE", charSequence);
+                extras.putString("EXTRA_TITLE", string);
                 extras.putString("EXTRA_SERVICE_COMPONENT_NAME", componentName.flattenToString());
                 PrintSettingsFragment.this.mPrintServicesCategory.addPreference(preference);
             }
-            Preference newAddServicePreferenceOrNull = PrintSettingsFragment.this.newAddServicePreferenceOrNull();
-            if (newAddServicePreferenceOrNull != null) {
-                PrintSettingsFragment.this.mPrintServicesCategory.addPreference(newAddServicePreferenceOrNull);
+            Preference preferenceNewAddServicePreferenceOrNull = PrintSettingsFragment.this.newAddServicePreferenceOrNull();
+            if (preferenceNewAddServicePreferenceOrNull != null) {
+                PrintSettingsFragment.this.mPrintServicesCategory.addPreference(preferenceNewAddServicePreferenceOrNull);
             }
         }
 
@@ -170,17 +171,16 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Preference newAddServicePreferenceOrNull() {
-        Intent createAddNewServiceIntentOrNull = createAddNewServiceIntentOrNull();
-        if (createAddNewServiceIntentOrNull == null) {
+    private Preference newAddServicePreferenceOrNull() {
+        Intent intentCreateAddNewServiceIntentOrNull = createAddNewServiceIntentOrNull();
+        if (intentCreateAddNewServiceIntentOrNull == null) {
             return null;
         }
         Preference preference = new Preference(getPrefContext());
         preference.setTitle(R.string.print_menu_item_add_service);
         preference.setIcon(R.drawable.ic_menu_add);
         preference.setOrder(2147483646);
-        preference.setIntent(createAddNewServiceIntentOrNull);
+        preference.setIntent(intentCreateAddNewServiceIntentOrNull);
         preference.setPersistent(false);
         return preference;
     }
@@ -197,26 +197,25 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
         String string;
         if (getArguments() != null && (string = getArguments().getString("EXTRA_PRINT_SERVICE_COMPONENT_NAME")) != null) {
             getArguments().remove("EXTRA_PRINT_SERVICE_COMPONENT_NAME");
-            Preference findPreference = findPreference(string);
-            if (findPreference != null) {
-                findPreference.performClick();
+            Preference preferenceFindPreference = findPreference(string);
+            if (preferenceFindPreference != null) {
+                preferenceFindPreference.performClick();
             }
         }
     }
 
     @Override // android.view.View.OnClickListener
     public void onClick(View view) {
-        Intent createAddNewServiceIntentOrNull;
-        if (this.mAddNewServiceButton == view && (createAddNewServiceIntentOrNull = createAddNewServiceIntentOrNull()) != null) {
+        Intent intentCreateAddNewServiceIntentOrNull;
+        if (this.mAddNewServiceButton == view && (intentCreateAddNewServiceIntentOrNull = createAddNewServiceIntentOrNull()) != null) {
             try {
-                startActivity(createAddNewServiceIntentOrNull);
+                startActivity(intentCreateAddNewServiceIntentOrNull);
             } catch (ActivityNotFoundException e) {
                 Log.w("PrintSettingsFragment", "Unable to start activity", e);
             }
         }
     }
 
-    /* loaded from: classes.dex */
     private final class PrintJobsController implements LoaderManager.LoaderCallbacks<List<PrintJobInfo>> {
         private PrintJobsController() {
         }
@@ -229,7 +228,12 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
             return null;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
+        /* JADX WARN: Removed duplicated region for block: B:36:0x014a  */
         @Override // android.app.LoaderManager.LoaderCallbacks
+        /*
+            Code decompiled incorrectly, please refer to instructions dump.
+        */
         public void onLoadFinished(Loader<List<PrintJobInfo>> loader, List<PrintJobInfo> list) {
             if (list == null || list.isEmpty()) {
                 PrintSettingsFragment.this.getPreferenceScreen().removePreference(PrintSettingsFragment.this.mActivePrintJobsCategory);
@@ -274,30 +278,25 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
                     preference.setTitle(PrintSettingsFragment.this.getString(R.string.print_failed_state_title_template, new Object[]{printJobInfo.getLabel()}));
                 }
                 preference.setSummary(PrintSettingsFragment.this.getString(R.string.print_job_summary, new Object[]{printJobInfo.getPrinterName(), DateUtils.formatSameDayTime(printJobInfo.getCreationTime(), printJobInfo.getCreationTime(), 3, 3)}));
-                TypedArray obtainStyledAttributes = PrintSettingsFragment.this.getActivity().obtainStyledAttributes(new int[]{16843817});
-                int color = obtainStyledAttributes.getColor(0, 0);
-                obtainStyledAttributes.recycle();
+                TypedArray typedArrayObtainStyledAttributes = PrintSettingsFragment.this.getActivity().obtainStyledAttributes(new int[]{android.R.attr.colorControlNormal});
+                int color = typedArrayObtainStyledAttributes.getColor(0, 0);
+                typedArrayObtainStyledAttributes.recycle();
                 int state2 = printJobInfo.getState();
                 if (state2 != 6) {
                     switch (state2) {
                         case 2:
                         case 3:
-                            Drawable drawable = PrintSettingsFragment.this.getActivity().getDrawable(17302724);
+                            Drawable drawable = PrintSettingsFragment.this.getActivity().getDrawable(android.R.drawable.ic_media_route_connecting_dark_26_mtrl);
                             drawable.setTint(color);
                             preference.setIcon(drawable);
-                            continue;
-                            preference.getExtras().putString("EXTRA_PRINT_JOB_ID", printJobInfo.getId().flattenToString());
-                            PrintSettingsFragment.this.mActivePrintJobsCategory.addPreference(preference);
-                        case 4:
                             break;
-                        default:
-                            preference.getExtras().putString("EXTRA_PRINT_JOB_ID", printJobInfo.getId().flattenToString());
-                            PrintSettingsFragment.this.mActivePrintJobsCategory.addPreference(preference);
+                        case 4:
+                            Drawable drawable2 = PrintSettingsFragment.this.getActivity().getDrawable(android.R.drawable.ic_media_route_connecting_dark_27_mtrl);
+                            drawable2.setTint(color);
+                            preference.setIcon(drawable2);
+                            break;
                     }
                 }
-                Drawable drawable2 = PrintSettingsFragment.this.getActivity().getDrawable(17302725);
-                drawable2.setTint(color);
-                preference.setIcon(drawable2);
                 preference.getExtras().putString("EXTRA_PRINT_JOB_ID", printJobInfo.getId().flattenToString());
                 PrintSettingsFragment.this.mActivePrintJobsCategory.addPreference(preference);
             }
@@ -309,7 +308,6 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
         }
     }
 
-    /* loaded from: classes.dex */
     private static final class PrintJobsLoader extends AsyncTaskLoader<List<PrintJobInfo>> {
         private PrintManager.PrintJobStateChangeListener mPrintJobStateChangeListener;
         private List<PrintJobInfo> mPrintJobs;
@@ -321,6 +319,7 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
             this.mPrintManager = ((PrintManager) context.getSystemService("print")).getGlobalPrintManagerForUser(context.getUserId());
         }
 
+        /* JADX DEBUG: Method merged with bridge method: deliverResult(Ljava/lang/Object;)V */
         @Override // android.content.Loader
         public void deliverResult(List<PrintJobInfo> list) {
             if (isStarted()) {
@@ -361,6 +360,7 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
             }
         }
 
+        /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
         @Override // android.content.AsyncTaskLoader
         public List<PrintJobInfo> loadInBackground() {
             List<PrintJob> printJobs = this.mPrintManager.getPrintJobs();

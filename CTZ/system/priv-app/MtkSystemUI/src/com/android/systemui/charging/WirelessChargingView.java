@@ -9,6 +9,7 @@ import android.view.animation.Interpolator;
 import com.android.settingslib.Utils;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 final class WirelessChargingView extends View {
     private double mAngleOffset;
@@ -98,9 +99,9 @@ final class WirelessChargingView extends View {
     }
 
     private void updateDrawingParameters() {
-        long currentTimeMillis = System.currentTimeMillis();
-        long j = currentTimeMillis - this.mAnimationStartTime;
-        this.mPathGone = getPathGone(currentTimeMillis);
+        long jCurrentTimeMillis = System.currentTimeMillis();
+        long j = jCurrentTimeMillis - this.mAnimationStartTime;
+        this.mPathGone = getPathGone(jCurrentTimeMillis);
         this.mInterpolatedPathGone = this.mInterpolator.getInterpolation(this.mPathGone);
         if (this.mPathGone < 1.0f) {
             this.mMainCircleCurrentRadius = this.mMainCircleStartRadius + ((int) (this.mInterpolatedPathGone * (this.mMainCircleEndRadius - this.mMainCircleStartRadius)));
@@ -108,7 +109,7 @@ final class WirelessChargingView extends View {
             this.mMainCircleCurrentRadius = this.mMainCircleEndRadius;
         }
         if (j < this.mScaleDotsDuration) {
-            this.mCurrDotRadius = this.mDotsRadiusStart + ((int) (this.mInterpolator.getInterpolation(((float) j) / ((float) this.mScaleDotsDuration)) * (this.mDotsRadiusEnd - this.mDotsRadiusStart)));
+            this.mCurrDotRadius = this.mDotsRadiusStart + ((int) (this.mInterpolator.getInterpolation(j / this.mScaleDotsDuration) * (this.mDotsRadiusEnd - this.mDotsRadiusStart)));
         } else {
             this.mCurrDotRadius = this.mDotsRadiusEnd;
         }
@@ -116,6 +117,6 @@ final class WirelessChargingView extends View {
     }
 
     private float getPathGone(long j) {
-        return ((float) (j - this.mAnimationStartTime)) / 1133.0f;
+        return (j - this.mAnimationStartTime) / 1133.0f;
     }
 }

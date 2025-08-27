@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AccessPointControllerImpl implements WifiTracker.WifiListener, NetworkController.AccessPointController {
     private static final boolean DEBUG = Log.isLoggable("AccessPointController", 3);
@@ -112,16 +113,17 @@ public class AccessPointControllerImpl implements WifiTracker.WifiListener, Netw
         }
         if (accessPoint.isSaved()) {
             this.mWifiTracker.getManager().connect(accessPoint.getConfig().networkId, this.mConnectListener);
-        } else if (accessPoint.getSecurity() != 0) {
-            if (BenesseExtension.getDchaState() != 0) {
+        } else {
+            if (accessPoint.getSecurity() != 0) {
+                if (BenesseExtension.getDchaState() != 0) {
+                    return true;
+                }
+                Intent intent = new Intent("android.settings.WIFI_SETTINGS");
+                intent.putExtra("wifi_start_connect_ssid", accessPoint.getSsidStr());
+                intent.addFlags(268435456);
+                fireSettingsIntentCallback(intent);
                 return true;
             }
-            Intent intent = new Intent("android.settings.WIFI_SETTINGS");
-            intent.putExtra("wifi_start_connect_ssid", accessPoint.getSsidStr());
-            intent.addFlags(268435456);
-            fireSettingsIntentCallback(intent);
-            return true;
-        } else {
             accessPoint.generateOpenNetworkConfig();
             this.mWifiTracker.getManager().connect(accessPoint.getConfig(), this.mConnectListener);
         }

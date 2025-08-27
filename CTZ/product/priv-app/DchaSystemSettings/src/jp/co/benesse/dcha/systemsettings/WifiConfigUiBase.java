@@ -3,6 +3,7 @@ package jp.co.benesse.dcha.systemsettings;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.Button;
+
 /* loaded from: classes.dex */
 public interface WifiConfigUiBase {
     void dispatchSubmit();

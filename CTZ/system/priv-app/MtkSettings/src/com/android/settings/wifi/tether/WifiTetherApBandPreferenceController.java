@@ -11,6 +11,7 @@ import com.android.settings.widget.HotspotApBandSelectionPreference;
 import com.android.settings.wifi.tether.WifiTetherBasePreferenceController;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IWifiTetherSettingsExt;
+
 /* loaded from: classes.dex */
 public class WifiTetherApBandPreferenceController extends WifiTetherBasePreferenceController {
     public static final String[] BAND_VALUES = {String.valueOf(0), String.valueOf(1)};
@@ -46,10 +47,10 @@ public class WifiTetherApBandPreferenceController extends WifiTetherBasePreferen
         if (!is5GhzBandSupported()) {
             hotspotApBandSelectionPreference.setEnabled(false);
             hotspotApBandSelectionPreference.setSummary(R.string.wifi_ap_choose_2G);
-            return;
+        } else {
+            hotspotApBandSelectionPreference.setExistingConfigValue(wifiApConfiguration.apBand);
+            hotspotApBandSelectionPreference.setSummary(getConfigSummary());
         }
-        hotspotApBandSelectionPreference.setExistingConfigValue(wifiApConfiguration.apBand);
-        hotspotApBandSelectionPreference.setSummary(getConfigSummary());
     }
 
     String getConfigSummary() {

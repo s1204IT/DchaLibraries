@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.android.internal.app.ColorDisplayController;
 import com.android.settings.core.SliderPreferenceController;
 import com.android.settings.widget.SeekBarPreference;
+
 /* loaded from: classes.dex */
 public class NightDisplayIntensityPreferenceController extends SliderPreferenceController {
     private ColorDisplayController mController;

@@ -16,6 +16,7 @@ import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.policy.EncryptionHelper;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.NetworkController;
+
 /* loaded from: classes.dex */
 public class CollapsedStatusBarFragment extends Fragment implements CommandQueue.Callbacks {
     private View mClockView;
@@ -105,11 +106,11 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
 
     @Override // com.android.systemui.statusbar.CommandQueue.Callbacks
     public void disable(int i, int i2, boolean z) {
-        int adjustDisableFlags = adjustDisableFlags(i);
-        int i3 = this.mDisabled1 ^ adjustDisableFlags;
-        this.mDisabled1 = adjustDisableFlags;
+        int iAdjustDisableFlags = adjustDisableFlags(i);
+        int i3 = this.mDisabled1 ^ iAdjustDisableFlags;
+        this.mDisabled1 = iAdjustDisableFlags;
         if ((i3 & 1048576) != 0) {
-            if ((1048576 & adjustDisableFlags) != 0) {
+            if ((1048576 & iAdjustDisableFlags) != 0) {
                 hideSystemIconArea(z);
                 hideOperatorName(z);
             } else {
@@ -118,14 +119,14 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
             }
         }
         if ((i3 & 131072) != 0) {
-            if ((131072 & adjustDisableFlags) != 0) {
+            if ((131072 & iAdjustDisableFlags) != 0) {
                 hideNotificationIconArea(z);
             } else {
                 showNotificationIconArea(z);
             }
         }
         if ((i3 & 8388608) != 0 || this.mClockView.getVisibility() != clockHiddenMode()) {
-            if ((adjustDisableFlags & 8388608) != 0) {
+            if ((iAdjustDisableFlags & 8388608) != 0) {
                 hideClock(z);
             } else {
                 showClock(z);
@@ -201,14 +202,14 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         if (!z) {
             view.setAlpha(0.0f);
             view.setVisibility(i);
-            return;
+        } else {
+            view.animate().alpha(0.0f).setDuration(160L).setStartDelay(0L).setInterpolator(Interpolators.ALPHA_OUT).withEndAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$CollapsedStatusBarFragment$27RMKG7VU7GD3kVXbGdyl_3FVd4
+                @Override // java.lang.Runnable
+                public final void run() {
+                    view.setVisibility(i);
+                }
+            });
         }
-        view.animate().alpha(0.0f).setDuration(160L).setStartDelay(0L).setInterpolator(Interpolators.ALPHA_OUT).withEndAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$CollapsedStatusBarFragment$27RMKG7VU7GD3kVXbGdyl_3FVd4
-            @Override // java.lang.Runnable
-            public final void run() {
-                view.setVisibility(i);
-            }
-        });
     }
 
     private void animateHide(View view, boolean z) {
@@ -229,14 +230,14 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     private void initEmergencyCryptkeeperText() {
-        View findViewById = this.mStatusBar.findViewById(R.id.emergency_cryptkeeper_text);
+        View viewFindViewById = this.mStatusBar.findViewById(R.id.emergency_cryptkeeper_text);
         if (this.mNetworkController.hasEmergencyCryptKeeperText()) {
-            if (findViewById != null) {
-                ((ViewStub) findViewById).inflate();
+            if (viewFindViewById != null) {
+                ((ViewStub) viewFindViewById).inflate();
             }
             this.mNetworkController.addCallback(this.mSignalCallback);
-        } else if (findViewById != null) {
-            ((ViewGroup) findViewById.getParent()).removeView(findViewById);
+        } else if (viewFindViewById != null) {
+            ((ViewGroup) viewFindViewById.getParent()).removeView(viewFindViewById);
         }
     }
 

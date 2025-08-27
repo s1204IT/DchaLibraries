@@ -3,6 +3,7 @@ package com.android.settings.slices;
 import android.content.Context;
 import com.android.settings.wifi.calling.WifiCallingSliceHelper;
 import com.android.settingslib.utils.ThreadUtils;
+
 /* loaded from: classes.dex */
 public class SlicesFeatureProviderImpl implements SlicesFeatureProvider {
     private SliceDataConverter mSliceDataConverter;

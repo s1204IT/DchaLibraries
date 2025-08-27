@@ -5,6 +5,7 @@ import android.provider.Settings;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
 import com.android.settings.nfc.NfcPreferenceController;
+
 /* loaded from: classes.dex */
 public class AdvancedConnectedDeviceController extends BasePreferenceController {
     private static final String DRIVING_MODE_SETTINGS_ENABLED = "gearhead:driving_mode_settings_enabled";
@@ -37,10 +38,10 @@ public class AdvancedConnectedDeviceController extends BasePreferenceController 
                 return R.string.connected_devices_dashboard_summary;
             }
             return R.string.connected_devices_dashboard_no_driving_mode_summary;
-        } else if (z) {
-            return R.string.connected_devices_dashboard_no_nfc_summary;
-        } else {
-            return R.string.connected_devices_dashboard_no_driving_mode_no_nfc_summary;
         }
+        if (z) {
+            return R.string.connected_devices_dashboard_no_nfc_summary;
+        }
+        return R.string.connected_devices_dashboard_no_driving_mode_no_nfc_summary;
     }
 }

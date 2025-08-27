@@ -28,6 +28,7 @@ import com.android.settingslib.bluetooth.LocalBluetoothProfileManager;
 import com.android.settingslib.bluetooth.MapProfile;
 import com.android.settingslib.bluetooth.PanProfile;
 import com.android.settingslib.bluetooth.PbapServerProfile;
+
 /* loaded from: classes.dex */
 public final class DeviceProfilesSettings extends InstrumentedDialogFragment implements DialogInterface.OnClickListener, View.OnClickListener, CachedBluetoothDevice.Callback {
     static final String HIGH_QUALITY_AUDIO_PREF_TAG = "A2dpProfileHighQualityAudio";
@@ -119,10 +120,10 @@ public final class DeviceProfilesSettings extends InstrumentedDialogFragment imp
             Log.d("DeviceProfilesSettings", "onResume, registerCallback");
             if (this.mCachedDevice.getBondState() == 10) {
                 dismiss();
-                return;
+            } else {
+                addPreferencesForProfiles();
+                refresh();
             }
-            addPreferencesForProfiles();
-            refresh();
         }
     }
 
@@ -140,9 +141,9 @@ public final class DeviceProfilesSettings extends InstrumentedDialogFragment imp
     private void addPreferencesForProfiles() {
         this.mProfileContainer.removeAllViews();
         for (LocalBluetoothProfile localBluetoothProfile : this.mCachedDevice.getConnectableProfiles()) {
-            CheckBox createProfilePreference = createProfilePreference(localBluetoothProfile);
+            CheckBox checkBoxCreateProfilePreference = createProfilePreference(localBluetoothProfile);
             if (!(localBluetoothProfile instanceof PbapServerProfile) && !(localBluetoothProfile instanceof MapProfile)) {
-                this.mProfileContainer.addView(createProfilePreference);
+                this.mProfileContainer.addView(checkBoxCreateProfilePreference);
             }
             if (localBluetoothProfile instanceof A2dpProfile) {
                 final BluetoothDevice device = this.mCachedDevice.getDevice();
@@ -153,13 +154,13 @@ public final class DeviceProfilesSettings extends InstrumentedDialogFragment imp
                     checkBox.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.bluetooth.-$$Lambda$DeviceProfilesSettings$qBNrFA8-Smm3qyHXDkezO-CS7tQ
                         @Override // android.view.View.OnClickListener
                         public final void onClick(View view) {
-                            A2dpProfile.this.setHighQualityAudioEnabled(device, checkBox.isChecked());
+                            a2dpProfile.setHighQualityAudioEnabled(device, checkBox.isChecked());
                         }
                     });
                     checkBox.setVisibility(8);
                     this.mProfileContainer.addView(checkBox);
                 }
-                refreshProfilePreference(createProfilePreference, localBluetoothProfile);
+                refreshProfilePreference(checkBoxCreateProfilePreference, localBluetoothProfile);
             }
         }
         int phonebookPermissionChoice = this.mCachedDevice.getPhonebookPermissionChoice();
@@ -274,16 +275,16 @@ public final class DeviceProfilesSettings extends InstrumentedDialogFragment imp
 
     private void refreshProfiles() {
         for (LocalBluetoothProfile localBluetoothProfile : this.mCachedDevice.getConnectableProfiles()) {
-            CheckBox findProfile = findProfile(localBluetoothProfile.toString());
-            if (findProfile == null) {
+            CheckBox checkBoxFindProfile = findProfile(localBluetoothProfile.toString());
+            if (checkBoxFindProfile == null) {
                 this.mProfileContainer.addView(createProfilePreference(localBluetoothProfile));
             } else {
-                refreshProfilePreference(findProfile, localBluetoothProfile);
+                refreshProfilePreference(checkBoxFindProfile, localBluetoothProfile);
             }
         }
         for (LocalBluetoothProfile localBluetoothProfile2 : this.mCachedDevice.getRemovedProfiles()) {
-            CheckBox findProfile2 = findProfile(localBluetoothProfile2.toString());
-            if (findProfile2 != null) {
+            CheckBox checkBoxFindProfile2 = findProfile(localBluetoothProfile2.toString());
+            if (checkBoxFindProfile2 != null) {
                 if (localBluetoothProfile2 instanceof PbapServerProfile) {
                     int phonebookPermissionChoice = this.mCachedDevice.getPhonebookPermissionChoice();
                     Log.d("DeviceProfilesSettings", "refreshProfiles: pbapPermission = " + phonebookPermissionChoice);
@@ -297,19 +298,17 @@ public final class DeviceProfilesSettings extends InstrumentedDialogFragment imp
                     }
                 }
                 Log.d("DeviceProfilesSettings", "Removing " + localBluetoothProfile2.toString() + " from profile list");
-                this.mProfileContainer.removeView(findProfile2);
+                this.mProfileContainer.removeView(checkBoxFindProfile2);
             }
         }
         showOrHideProfileGroup();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public CheckBox findProfile(String str) {
+    private CheckBox findProfile(String str) {
         return (CheckBox) this.mProfileContainer.findViewWithTag(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshProfilePreference(CheckBox checkBox, LocalBluetoothProfile localBluetoothProfile) {
+    private void refreshProfilePreference(CheckBox checkBox, LocalBluetoothProfile localBluetoothProfile) {
         BluetoothDevice device = this.mCachedDevice.getDevice();
         checkBox.setEnabled(!this.mCachedDevice.isBusy());
         if (localBluetoothProfile instanceof MapProfile) {
@@ -323,33 +322,33 @@ public final class DeviceProfilesSettings extends InstrumentedDialogFragment imp
         }
         if (localBluetoothProfile instanceof A2dpProfile) {
             A2dpProfile a2dpProfile = (A2dpProfile) localBluetoothProfile;
-            View findViewWithTag = this.mProfileContainer.findViewWithTag(HIGH_QUALITY_AUDIO_PREF_TAG);
-            if (findViewWithTag instanceof CheckBox) {
-                CheckBox checkBox2 = (CheckBox) findViewWithTag;
+            View viewFindViewWithTag = this.mProfileContainer.findViewWithTag(HIGH_QUALITY_AUDIO_PREF_TAG);
+            if (viewFindViewWithTag instanceof CheckBox) {
+                CheckBox checkBox2 = (CheckBox) viewFindViewWithTag;
                 checkBox2.setText(a2dpProfile.getHighQualityAudioOptionLabel(device));
                 checkBox2.setChecked(a2dpProfile.isHighQualityAudioEnabled(device));
                 if (a2dpProfile.isPreferred(device)) {
-                    findViewWithTag.setVisibility(0);
-                    findViewWithTag.setEnabled(!this.mCachedDevice.isBusy());
-                    return;
+                    viewFindViewWithTag.setVisibility(0);
+                    viewFindViewWithTag.setEnabled(!this.mCachedDevice.isBusy());
+                } else {
+                    viewFindViewWithTag.setVisibility(8);
                 }
-                findViewWithTag.setVisibility(8);
             }
         }
     }
 
     private LocalBluetoothProfile getProfileOf(View view) {
-        if (view instanceof CheckBox) {
-            String str = (String) view.getTag();
-            if (TextUtils.isEmpty(str)) {
-                return null;
-            }
-            try {
-                return this.mProfileManager.getProfileByName(str);
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
+        if (!(view instanceof CheckBox)) {
+            return null;
         }
-        return null;
+        String str = (String) view.getTag();
+        if (TextUtils.isEmpty(str)) {
+            return null;
+        }
+        try {
+            return this.mProfileManager.getProfileByName(str);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }

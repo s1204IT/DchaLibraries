@@ -3,11 +3,13 @@ package com.android.systemui.statusbar.phone;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.view.KeyEvent;
 import android.view.View;
 import com.android.systemui.Interpolators;
 import com.android.systemui.plugins.statusbar.phone.NavBarButtonProvider;
 import com.android.systemui.statusbar.policy.KeyButtonDrawable;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ButtonDispatcher {
     private View.AccessibilityDelegate mAccessibilityDelegate;
@@ -29,7 +31,7 @@ public class ButtonDispatcher {
     private final ValueAnimator.AnimatorUpdateListener mAlphaListener = new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ButtonDispatcher$YQ5xchhAskLzgLUT3UrgvCxrRAQ
         @Override // android.animation.ValueAnimator.AnimatorUpdateListener
         public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-            ButtonDispatcher.this.setAlpha(((Float) valueAnimator.getAnimatedValue()).floatValue());
+            this.f$0.setAlpha(((Float) valueAnimator.getAnimatedValue()).floatValue());
         }
     };
     private final AnimatorListenerAdapter mFadeListener = new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.ButtonDispatcher.1
@@ -43,13 +45,13 @@ public class ButtonDispatcher {
         this.mId = i;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void clear() {
+    void clear() {
         this.mViews.clear();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void addView(View view) {
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
+    void addView(View view) {
         this.mViews.add(view);
         view.setOnClickListener(this.mClickListener);
         view.setOnTouchListener(this.mTouchListener);
@@ -243,9 +245,9 @@ public class ButtonDispatcher {
         this.mVertical = z;
         int size = this.mViews.size();
         for (int i = 0; i < size; i++) {
-            View view = this.mViews.get(i);
-            if (view instanceof NavBarButtonProvider.ButtonInterface) {
-                ((NavBarButtonProvider.ButtonInterface) view).setVertical(z);
+            KeyEvent.Callback callback = (View) this.mViews.get(i);
+            if (callback instanceof NavBarButtonProvider.ButtonInterface) {
+                ((NavBarButtonProvider.ButtonInterface) callback).setVertical(z);
             }
         }
     }

@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.CursorAdapter;
 import com.android.browser.R;
 import java.lang.ref.WeakReference;
+
 /* loaded from: classes.dex */
 public abstract class ThreadedCursorAdapter<T> extends BaseAdapter {
     private Context mContext;
@@ -41,9 +42,7 @@ public abstract class ThreadedCursorAdapter<T> extends BaseAdapter {
         return j;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class LoadContainer {
+    private class LoadContainer {
         T bind_object;
         long generation;
         boolean loaded;
@@ -57,8 +56,9 @@ public abstract class ThreadedCursorAdapter<T> extends BaseAdapter {
 
     public ThreadedCursorAdapter(Context context, Cursor cursor) {
         this.mContext = context;
+        int i = 0;
         this.mHasCursor = cursor != null;
-        this.mCursorAdapter = new CursorAdapter(context, cursor, 0) { // from class: com.android.browser.util.ThreadedCursorAdapter.1
+        this.mCursorAdapter = new CursorAdapter(context, cursor, i) { // from class: com.android.browser.util.ThreadedCursorAdapter.1
             @Override // android.widget.CursorAdapter
             public View newView(Context context2, Cursor cursor2, ViewGroup viewGroup) {
                 throw new IllegalStateException("not supported");
@@ -113,6 +113,7 @@ public abstract class ThreadedCursorAdapter<T> extends BaseAdapter {
         return this.mSize;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
     @Override // android.widget.Adapter
     public Cursor getItem(int i) {
         return (Cursor) this.mCursorAdapter.getItem(i);
@@ -127,8 +128,7 @@ public abstract class ThreadedCursorAdapter<T> extends BaseAdapter {
         return itemId;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void loadRowObject(int i, ThreadedCursorAdapter<T>.LoadContainer loadContainer) {
+    private void loadRowObject(int i, ThreadedCursorAdapter<T>.LoadContainer loadContainer) {
         if (loadContainer == null || loadContainer.position != i || loadContainer.owner != this || loadContainer.view.get() == null) {
             return;
         }

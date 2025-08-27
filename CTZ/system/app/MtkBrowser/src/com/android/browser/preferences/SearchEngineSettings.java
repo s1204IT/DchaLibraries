@@ -13,7 +13,9 @@ import com.android.browser.R;
 import com.mediatek.common.search.SearchEngine;
 import com.mediatek.search.SearchEngineManager;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SearchEngineSettings extends PreferenceFragment implements Preference.OnPreferenceClickListener {
     private PreferenceActivity mActivity;
@@ -53,16 +55,16 @@ public class SearchEngineSettings extends PreferenceFragment implements Preferen
     @Override // android.app.Fragment
     public void onPause() {
         super.onPause();
-        SharedPreferences.Editor edit = this.mPrefs.edit();
-        edit.putBoolean("syc_search_engine", false);
-        edit.commit();
+        SharedPreferences.Editor editorEdit = this.mPrefs.edit();
+        editorEdit.putBoolean("syc_search_engine", false);
+        editorEdit.commit();
     }
 
     private PreferenceScreen createPreferenceHierarchy() {
-        PreferenceScreen createPreferenceScreen = getPreferenceManager().createPreferenceScreen(this.mActivity);
+        PreferenceScreen preferenceScreenCreatePreferenceScreen = getPreferenceManager().createPreferenceScreen(this.mActivity);
         PreferenceCategory preferenceCategory = new PreferenceCategory(this.mActivity);
         preferenceCategory.setTitle(R.string.pref_content_search_engine);
-        createPreferenceScreen.addPreference(preferenceCategory);
+        preferenceScreenCreatePreferenceScreen.addPreference(preferenceCategory);
         for (int i = 0; i < this.mEntries.length; i++) {
             RadioPreference radioPreference = new RadioPreference(this.mActivity);
             radioPreference.setWidgetLayoutResource(R.layout.radio_preference);
@@ -72,19 +74,20 @@ public class SearchEngineSettings extends PreferenceFragment implements Preferen
             preferenceCategory.addPreference(radioPreference);
             this.mRadioPrefs.add(radioPreference);
         }
-        return createPreferenceScreen;
+        return preferenceScreenCreatePreferenceScreen;
     }
 
     @Override // android.preference.Preference.OnPreferenceClickListener
     public boolean onPreferenceClick(Preference preference) {
-        for (RadioPreference radioPreference : this.mRadioPrefs) {
-            radioPreference.setChecked(false);
+        Iterator<RadioPreference> it = this.mRadioPrefs.iterator();
+        while (it.hasNext()) {
+            it.next().setChecked(false);
         }
         ((RadioPreference) preference).setChecked(true);
-        SharedPreferences.Editor edit = this.mPrefs.edit();
-        edit.putString("search_engine", this.mEntryValues[preference.getOrder()]);
-        edit.putString("search_engine_favicon", this.mEntryFavicon[preference.getOrder()]);
-        edit.commit();
+        SharedPreferences.Editor editorEdit = this.mPrefs.edit();
+        editorEdit.putString("search_engine", this.mEntryValues[preference.getOrder()]);
+        editorEdit.putString("search_engine_favicon", this.mEntryFavicon[preference.getOrder()]);
+        editorEdit.commit();
         return true;
     }
 }

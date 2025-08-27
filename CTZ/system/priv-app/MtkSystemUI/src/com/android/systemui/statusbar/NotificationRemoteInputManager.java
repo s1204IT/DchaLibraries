@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar;
 
+import android.R;
 import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.app.RemoteInput;
@@ -31,6 +32,7 @@ import com.android.systemui.statusbar.policy.RemoteInputView;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class NotificationRemoteInputManager implements Dumpable {
     public static final boolean ENABLE_REMOTE_INPUT = SystemProperties.getBoolean("debug.enable_remote_input", true);
@@ -46,7 +48,6 @@ public class NotificationRemoteInputManager implements Dumpable {
     private final RemoteViews.OnClickHandler mOnClickHandler = new AnonymousClass1();
     protected IStatusBarService mBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService("statusbar"));
 
-    /* loaded from: classes.dex */
     public interface Callback {
         boolean handleRemoteViewClick(View view, PendingIntent pendingIntent, Intent intent, ClickHandler clickHandler);
 
@@ -59,15 +60,12 @@ public class NotificationRemoteInputManager implements Dumpable {
         boolean shouldHandleRemoteInput(View view, PendingIntent pendingIntent);
     }
 
-    /* loaded from: classes.dex */
     public interface ClickHandler {
         boolean handleClick();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.NotificationRemoteInputManager$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends RemoteViews.OnClickHandler {
+    /* renamed from: com.android.systemui.statusbar.NotificationRemoteInputManager$1, reason: invalid class name */
+    class AnonymousClass1 extends RemoteViews.OnClickHandler {
         AnonymousClass1() {
         }
 
@@ -84,9 +82,7 @@ public class NotificationRemoteInputManager implements Dumpable {
             return NotificationRemoteInputManager.this.mCallback.handleRemoteViewClick(view, pendingIntent, intent, new ClickHandler() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationRemoteInputManager$1$dzxY8UkafLAnu6kZIoh3HbriWqA
                 @Override // com.android.systemui.statusbar.NotificationRemoteInputManager.ClickHandler
                 public final boolean handleClick() {
-                    boolean superOnClickHandler;
-                    superOnClickHandler = NotificationRemoteInputManager.AnonymousClass1.this.superOnClickHandler(view, pendingIntent, intent);
-                    return superOnClickHandler;
+                    return this.f$0.superOnClickHandler(view, pendingIntent, intent);
                 }
             });
         }
@@ -98,12 +94,12 @@ public class NotificationRemoteInputManager implements Dumpable {
                 Log.w("NotificationRemoteInputManager", "Couldn't determine notification for click.");
                 return;
             }
-            int i = -1;
+            int iIndexOfChild = -1;
             if (view.getId() == 16908661 && parent != null && (parent instanceof ViewGroup)) {
-                i = ((ViewGroup) parent).indexOfChild(view);
+                iIndexOfChild = ((ViewGroup) parent).indexOfChild(view);
             }
             try {
-                NotificationRemoteInputManager.this.mBarService.onNotificationActionClick(notificationKeyForParent, i, NotificationVisibility.obtain(notificationKeyForParent, NotificationRemoteInputManager.this.mEntryManager.getNotificationData().getRank(notificationKeyForParent), NotificationRemoteInputManager.this.mEntryManager.getNotificationData().getActiveNotifications().size(), true));
+                NotificationRemoteInputManager.this.mBarService.onNotificationActionClick(notificationKeyForParent, iIndexOfChild, NotificationVisibility.obtain(notificationKeyForParent, NotificationRemoteInputManager.this.mEntryManager.getNotificationData().getRank(notificationKeyForParent), NotificationRemoteInputManager.this.mEntryManager.getNotificationData().getActiveNotifications().size(), true));
             } catch (RemoteException e) {
             }
         }
@@ -118,18 +114,24 @@ public class NotificationRemoteInputManager implements Dumpable {
             return null;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public boolean superOnClickHandler(View view, PendingIntent pendingIntent, Intent intent) {
+        private boolean superOnClickHandler(View view, PendingIntent pendingIntent, Intent intent) {
             return super.onClickHandler(view, pendingIntent, intent, 4);
         }
 
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:72:? */
+        /* JADX WARN: Multi-variable type inference failed */
+        /* JADX WARN: Type inference failed for: r4v2, types: [android.view.ViewParent] */
+        /* JADX WARN: Type inference failed for: r4v20, types: [android.view.ViewParent] */
+        /* JADX WARN: Type inference failed for: r4v22 */
+        /* JADX WARN: Type inference failed for: r4v23 */
+        /* JADX WARN: Type inference failed for: r4v3, types: [android.view.ViewParent] */
         private boolean handleRemoteInput(View view, PendingIntent pendingIntent) {
             RemoteInput[] remoteInputArr;
-            RemoteInputView remoteInputView;
+            RemoteInputView remoteInputViewFindRemoteInputView;
             if (NotificationRemoteInputManager.this.mCallback.shouldHandleRemoteInput(view, pendingIntent)) {
                 return true;
             }
-            Object tag = view.getTag(16909223);
+            Object tag = view.getTag(R.id.low);
             ExpandableNotificationRow expandableNotificationRow = null;
             if (tag instanceof RemoteInput[]) {
                 remoteInputArr = (RemoteInput[]) tag;
@@ -148,31 +150,31 @@ public class NotificationRemoteInputManager implements Dumpable {
             if (remoteInput == null) {
                 return false;
             }
-            ViewParent parent = view.getParent();
+            ExpandableNotificationRow parent = view.getParent();
             while (true) {
-                if (parent != null) {
+                if (parent != 0) {
                     if (parent instanceof View) {
-                        View view2 = (View) parent;
+                        View view2 = parent;
                         if (view2.isRootNamespace()) {
-                            remoteInputView = findRemoteInputView(view2);
+                            remoteInputViewFindRemoteInputView = findRemoteInputView(view2);
                             break;
                         }
                     }
                     parent = parent.getParent();
                 } else {
-                    remoteInputView = null;
+                    remoteInputViewFindRemoteInputView = null;
                     break;
                 }
             }
             while (true) {
-                if (parent == null) {
+                if (parent == 0) {
                     break;
-                } else if (parent instanceof ExpandableNotificationRow) {
-                    expandableNotificationRow = (ExpandableNotificationRow) parent;
-                    break;
-                } else {
-                    parent = parent.getParent();
                 }
+                if (parent instanceof ExpandableNotificationRow) {
+                    expandableNotificationRow = parent;
+                    break;
+                }
+                parent = parent.getParent();
             }
             if (expandableNotificationRow == null) {
                 return false;
@@ -190,9 +192,9 @@ public class NotificationRemoteInputManager implements Dumpable {
                     return true;
                 }
             }
-            if (remoteInputView == null) {
-                remoteInputView = findRemoteInputView(expandableNotificationRow.getPrivateLayout().getExpandedChild());
-                if (remoteInputView == null) {
+            if (remoteInputViewFindRemoteInputView == null) {
+                remoteInputViewFindRemoteInputView = findRemoteInputView(expandableNotificationRow.getPrivateLayout().getExpandedChild());
+                if (remoteInputViewFindRemoteInputView == null) {
                     return false;
                 }
                 if (!expandableNotificationRow.getPrivateLayout().getExpandedChild().isShown()) {
@@ -209,13 +211,13 @@ public class NotificationRemoteInputManager implements Dumpable {
             }
             int left = view.getLeft() + (width / 2);
             int top = view.getTop() + (view.getHeight() / 2);
-            int width2 = remoteInputView.getWidth();
-            int height = remoteInputView.getHeight() - top;
+            int width2 = remoteInputViewFindRemoteInputView.getWidth();
+            int height = remoteInputViewFindRemoteInputView.getHeight() - top;
             int i = width2 - left;
-            remoteInputView.setRevealParameters(left, top, Math.max(Math.max(left + top, left + height), Math.max(i + top, i + height)));
-            remoteInputView.setPendingIntent(pendingIntent);
-            remoteInputView.setRemoteInput(remoteInputArr, remoteInput);
-            remoteInputView.focusAnimated();
+            remoteInputViewFindRemoteInputView.setRevealParameters(left, top, Math.max(Math.max(left + top, left + height), Math.max(i + top, i + height)));
+            remoteInputViewFindRemoteInputView.setPendingIntent(pendingIntent);
+            remoteInputViewFindRemoteInputView.setRemoteInput(remoteInputArr, remoteInput);
+            remoteInputViewFindRemoteInputView.focusAnimated();
             return true;
         }
 
@@ -240,10 +242,8 @@ public class NotificationRemoteInputManager implements Dumpable {
         this.mRemoteInputController.addCallback(new AnonymousClass2());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.NotificationRemoteInputManager$2  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass2 implements RemoteInputController.Callback {
+    /* renamed from: com.android.systemui.statusbar.NotificationRemoteInputManager$2, reason: invalid class name */
+    class AnonymousClass2 implements RemoteInputController.Callback {
         AnonymousClass2() {
         }
 
@@ -255,7 +255,7 @@ public class NotificationRemoteInputManager implements Dumpable {
                 NotificationRemoteInputManager.this.mPresenter.getHandler().postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationRemoteInputManager$2$upPlaSspsvwkYecy75h02dyePMo
                     @Override // java.lang.Runnable
                     public final void run() {
-                        NotificationRemoteInputManager.AnonymousClass2.lambda$onRemoteInputSent$0(NotificationRemoteInputManager.AnonymousClass2.this, entry);
+                        NotificationRemoteInputManager.AnonymousClass2.lambda$onRemoteInputSent$0(this.f$0, entry);
                     }
                 }, 200L);
             }
@@ -296,9 +296,9 @@ public class NotificationRemoteInputManager implements Dumpable {
 
     public void removeRemoteInputEntriesKeptUntilCollapsed() {
         for (int i = 0; i < this.mRemoteInputEntriesToRemoveOnCollapse.size(); i++) {
-            NotificationData.Entry valueAt = this.mRemoteInputEntriesToRemoveOnCollapse.valueAt(i);
-            this.mRemoteInputController.removeRemoteInput(valueAt, null);
-            this.mEntryManager.removeNotification(valueAt.key, this.mEntryManager.getLatestRankingMap());
+            NotificationData.Entry entryValueAt = this.mRemoteInputEntriesToRemoveOnCollapse.valueAt(i);
+            this.mRemoteInputController.removeRemoteInput(entryValueAt, null);
+            this.mEntryManager.removeNotification(entryValueAt.key, this.mEntryManager.getLatestRankingMap());
         }
         this.mRemoteInputEntriesToRemoveOnCollapse.clear();
     }

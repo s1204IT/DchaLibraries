@@ -2,15 +2,18 @@ package com.android.settings.support;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 /* loaded from: classes.dex */
 public final class SupportPhone implements Parcelable {
     public static final Parcelable.Creator<SupportPhone> CREATOR = new Parcelable.Creator<SupportPhone>() { // from class: com.android.settings.support.SupportPhone.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public SupportPhone createFromParcel(Parcel parcel) {
             return new SupportPhone(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public SupportPhone[] newArray(int i) {

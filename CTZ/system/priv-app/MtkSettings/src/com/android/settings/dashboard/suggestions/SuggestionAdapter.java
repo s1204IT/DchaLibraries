@@ -1,5 +1,6 @@
 package com.android.settings.dashboard.suggestions;
 
+import android.R;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.res.Resources;
@@ -17,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
-import com.android.settings.R;
 import com.android.settings.dashboard.DashboardAdapter;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.Utils;
@@ -30,6 +30,7 @@ import com.android.settingslib.utils.IconCache;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class SuggestionAdapter extends RecyclerView.Adapter<DashboardAdapter.DashboardItemHolder> implements LifecycleObserver, OnSaveInstanceState {
     private final IconCache mCache;
@@ -42,7 +43,6 @@ public class SuggestionAdapter extends RecyclerView.Adapter<DashboardAdapter.Das
     private List<Suggestion> mSuggestions;
     private final ArrayList<String> mSuggestionsShownLogged;
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onSuggestionClosed(Suggestion suggestion);
     }
@@ -68,11 +68,13 @@ public class SuggestionAdapter extends RecyclerView.Adapter<DashboardAdapter.Das
         setHasStableIds(true);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public DashboardAdapter.DashboardItemHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new DashboardAdapter.DashboardItemHolder(LayoutInflater.from(viewGroup.getContext()).inflate(i, viewGroup, false));
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(DashboardAdapter.DashboardItemHolder dashboardItemHolder, int i) {
         final Suggestion suggestion = this.mSuggestions.get(i);
@@ -88,7 +90,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<DashboardAdapter.Das
         }
         dashboardItemHolder.icon.setImageDrawable(icon);
         dashboardItemHolder.title.setText(suggestion.getTitle());
-        dashboardItemHolder.title.setTypeface(Typeface.create(this.mContext.getString(17039680), 0));
+        dashboardItemHolder.title.setTypeface(Typeface.create(this.mContext.getString(R.string.android_system_label), 0));
         if (size == 1) {
             CharSequence summary = suggestion.getSummary();
             if (!TextUtils.isEmpty(summary)) {
@@ -100,24 +102,24 @@ public class SuggestionAdapter extends RecyclerView.Adapter<DashboardAdapter.Das
         } else {
             this.mConfig.setCardLayout(dashboardItemHolder, i);
         }
-        View findViewById = dashboardItemHolder.itemView.findViewById(R.id.close_button);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.dashboard.suggestions.-$$Lambda$SuggestionAdapter$3YCJShAgHMZGvTmpJ4rD8V_2WkA
+        View viewFindViewById = dashboardItemHolder.itemView.findViewById(com.android.settings.R.id.close_button);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.dashboard.suggestions.-$$Lambda$SuggestionAdapter$3YCJShAgHMZGvTmpJ4rD8V_2WkA
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    SuggestionAdapter.lambda$onBindViewHolder$0(SuggestionAdapter.this, suggestion, view);
+                    SuggestionAdapter.lambda$onBindViewHolder$0(this.f$0, suggestion, view);
                 }
             });
         }
         View view = dashboardItemHolder.itemView;
-        View findViewById2 = dashboardItemHolder.itemView.findViewById(16908300);
-        if (findViewById2 == null) {
-            findViewById2 = view;
+        View viewFindViewById2 = dashboardItemHolder.itemView.findViewById(R.id.primary);
+        if (viewFindViewById2 == null) {
+            viewFindViewById2 = view;
         }
-        findViewById2.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.dashboard.suggestions.-$$Lambda$SuggestionAdapter$o_nlX1JhE-RQCl3p5ch8A_R_uN0
+        viewFindViewById2.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.dashboard.suggestions.-$$Lambda$SuggestionAdapter$o_nlX1JhE-RQCl3p5ch8A_R_uN0
             @Override // android.view.View.OnClickListener
-            public final void onClick(View view2) {
-                SuggestionAdapter.lambda$onBindViewHolder$1(SuggestionAdapter.this, id, suggestion, view2);
+            public final void onClick(View view2) throws PendingIntent.CanceledException {
+                SuggestionAdapter.lambda$onBindViewHolder$1(this.f$0, id, suggestion, view2);
             }
         });
     }
@@ -129,7 +131,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<DashboardAdapter.Das
         }
     }
 
-    public static /* synthetic */ void lambda$onBindViewHolder$1(SuggestionAdapter suggestionAdapter, String str, Suggestion suggestion, View view) {
+    public static /* synthetic */ void lambda$onBindViewHolder$1(SuggestionAdapter suggestionAdapter, String str, Suggestion suggestion, View view) throws PendingIntent.CanceledException {
         suggestionAdapter.mMetricsFeatureProvider.action(suggestionAdapter.mContext, 386, str, new Pair[0]);
         try {
             suggestion.getPendingIntent().send();
@@ -147,12 +149,12 @@ public class SuggestionAdapter extends RecyclerView.Adapter<DashboardAdapter.Das
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public int getItemViewType(int i) {
         if ((getSuggestion(i).getFlags() & 1) != 0) {
-            return R.layout.suggestion_tile_with_button;
+            return com.android.settings.R.layout.suggestion_tile_with_button;
         }
         if (getItemCount() == 1) {
-            return R.layout.suggestion_tile;
+            return com.android.settings.R.layout.suggestion_tile;
         }
-        return R.layout.suggestion_tile_two_cards;
+        return com.android.settings.R.layout.suggestion_tile_two_cards;
     }
 
     @Override // android.support.v7.widget.RecyclerView.Adapter
@@ -189,9 +191,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<DashboardAdapter.Das
         return this.mSuggestions;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class CardConfig {
+    static class CardConfig {
         private static CardConfig sConfig;
         private final int mMarginInner;
         private final int mMarginOuter;
@@ -200,8 +200,8 @@ public class SuggestionAdapter extends RecyclerView.Adapter<DashboardAdapter.Das
         private CardConfig(Context context) {
             this.mWindowManager = (WindowManager) context.getSystemService("window");
             Resources resources = context.getResources();
-            this.mMarginInner = resources.getDimensionPixelOffset(R.dimen.suggestion_card_inner_margin);
-            this.mMarginOuter = resources.getDimensionPixelOffset(R.dimen.suggestion_card_outer_margin);
+            this.mMarginInner = resources.getDimensionPixelOffset(com.android.settings.R.dimen.suggestion_card_inner_margin);
+            this.mMarginOuter = resources.getDimensionPixelOffset(com.android.settings.R.dimen.suggestion_card_outer_margin);
         }
 
         public static CardConfig get(Context context) {

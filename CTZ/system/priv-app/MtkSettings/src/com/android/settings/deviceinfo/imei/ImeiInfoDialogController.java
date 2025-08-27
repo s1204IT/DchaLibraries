@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.text.style.TtsSpan;
 import android.util.Log;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ImeiInfoDialogController {
     static final int ID_CDMA_SETTINGS = 2131361956;
@@ -28,12 +29,12 @@ public class ImeiInfoDialogController {
         if (charSequence == null) {
             return "";
         }
-        if (TextUtils.isDigitsOnly(charSequence)) {
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(charSequence);
-            spannableStringBuilder.setSpan(new TtsSpan.DigitsBuilder(charSequence.toString()).build(), 0, spannableStringBuilder.length(), 33);
-            return spannableStringBuilder;
+        if (!TextUtils.isDigitsOnly(charSequence)) {
+            return charSequence;
         }
-        return charSequence;
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(charSequence);
+        spannableStringBuilder.setSpan(new TtsSpan.DigitsBuilder(charSequence.toString()).build(), 0, spannableStringBuilder.length(), 33);
+        return spannableStringBuilder;
     }
 
     public ImeiInfoDialogController(ImeiInfoDialogFragment imeiInfoDialogFragment, int i) {
@@ -57,16 +58,16 @@ public class ImeiInfoDialogController {
     }
 
     private void updateDialogForCdmaPhone() {
-        String str;
+        String cdmaMin;
         Resources resources = this.mDialog.getContext().getResources();
         this.mDialog.setText(R.id.meid_number_value, getMeid());
         ImeiInfoDialogFragment imeiInfoDialogFragment = this.mDialog;
         if (this.mSubscriptionInfo != null) {
-            str = this.mTelephonyManager.getCdmaMin(this.mSubscriptionInfo.getSubscriptionId());
+            cdmaMin = this.mTelephonyManager.getCdmaMin(this.mSubscriptionInfo.getSubscriptionId());
         } else {
-            str = "";
+            cdmaMin = "";
         }
-        imeiInfoDialogFragment.setText(R.id.min_number_value, str);
+        imeiInfoDialogFragment.setText(R.id.min_number_value, cdmaMin);
         if (resources.getBoolean(R.bool.config_msid_enable)) {
             this.mDialog.setText(R.id.min_number_label, resources.getString(R.string.status_msid_number));
         }
@@ -74,9 +75,9 @@ public class ImeiInfoDialogController {
         if (this.mSubscriptionInfo != null && isCdmaLteEnabled()) {
             this.mDialog.setText(R.id.imei_value, getTextAsDigits(this.mTelephonyManager.getImei(this.mSlotId)));
             this.mDialog.setText(R.id.imei_sv_value, getTextAsDigits(this.mTelephonyManager.getDeviceSoftwareVersion(this.mSlotId)));
-            return;
+        } else {
+            this.mDialog.removeViewFromScreen(R.id.gsm_settings);
         }
-        this.mDialog.removeViewFromScreen(R.id.gsm_settings);
     }
 
     private void updateDialogForGsmPhone() {

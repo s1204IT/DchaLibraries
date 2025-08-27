@@ -1,6 +1,7 @@
 package com.android.settings.fuelgauge.anomaly;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.SettingsActivity;
@@ -8,6 +9,7 @@ import com.android.settings.core.InstrumentedPreferenceFragment;
 import com.android.settings.fuelgauge.BatteryUtils;
 import com.android.settings.fuelgauge.PowerUsageAnomalyDetails;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AnomalySummaryPreferenceController {
     List<Anomaly> mAnomalies;
@@ -31,16 +33,16 @@ public class AnomalySummaryPreferenceController {
             return false;
         }
         if (this.mAnomalies.size() == 1) {
-            AnomalyDialogFragment newInstance = AnomalyDialogFragment.newInstance(this.mAnomalies.get(0), this.mMetricsKey);
-            newInstance.setTargetFragment(this.mFragment, 0);
-            newInstance.show(this.mFragment.getFragmentManager(), "HighUsagePreferenceController");
+            AnomalyDialogFragment anomalyDialogFragmentNewInstance = AnomalyDialogFragment.newInstance(this.mAnomalies.get(0), this.mMetricsKey);
+            anomalyDialogFragmentNewInstance.setTargetFragment(this.mFragment, 0);
+            anomalyDialogFragmentNewInstance.show(this.mFragment.getFragmentManager(), "HighUsagePreferenceController");
         } else {
             PowerUsageAnomalyDetails.startBatteryAbnormalPage(this.mSettingsActivity, this.mFragment, this.mAnomalies);
         }
         return true;
     }
 
-    public void updateAnomalySummaryPreference(List<Anomaly> list) {
+    public void updateAnomalySummaryPreference(List<Anomaly> list) throws Resources.NotFoundException {
         String string;
         Context context = this.mFragment.getContext();
         this.mAnomalies = list;

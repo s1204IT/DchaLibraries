@@ -2,6 +2,7 @@ package com.android.settings.accounts;
 
 import android.accounts.Account;
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class AccountFeatureProviderImpl implements AccountFeatureProvider {
     @Override // com.android.settings.accounts.AccountFeatureProvider

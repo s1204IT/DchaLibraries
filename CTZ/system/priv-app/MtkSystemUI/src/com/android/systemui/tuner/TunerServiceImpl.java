@@ -21,8 +21,10 @@ import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.leak.LeakDetector;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 /* loaded from: classes.dex */
 public class TunerServiceImpl extends TunerService {
     private static final String[] RESET_BLACKLIST = {"sysui_qs_tiles", "doze_always_on"};
@@ -39,8 +41,9 @@ public class TunerServiceImpl extends TunerService {
         this.mTunables = LeakDetector.ENABLED ? new HashSet<>() : null;
         this.mContext = context;
         this.mContentResolver = this.mContext.getContentResolver();
-        for (UserInfo userInfo : UserManager.get(this.mContext).getUsers()) {
-            this.mCurrentUser = userInfo.getUserHandle().getIdentifier();
+        Iterator it = UserManager.get(this.mContext).getUsers().iterator();
+        while (it.hasNext()) {
+            this.mCurrentUser = ((UserInfo) it.next()).getUserHandle().getIdentifier();
             if (getValue("sysui_tuner_version", 0) != 4) {
                 upgradeTuner(getValue("sysui_tuner_version", 0), 4);
             }
@@ -72,7 +75,7 @@ public class TunerServiceImpl extends TunerService {
             new Handler((Looper) Dependency.get(Dependency.BG_LOOPER)).postDelayed(new Runnable() { // from class: com.android.systemui.tuner.-$$Lambda$TunerServiceImpl$6-LaNwUHcRc1UGw8s8y1YCsTRbQ
                 @Override // java.lang.Runnable
                 public final void run() {
-                    TunerServiceImpl.this.clearAll();
+                    this.f$0.clearAll();
                 }
             }, 5000L);
         }
@@ -131,8 +134,9 @@ public class TunerServiceImpl extends TunerService {
 
     @Override // com.android.systemui.tuner.TunerService
     public void removeTunable(TunerService.Tunable tunable) {
-        for (Set<TunerService.Tunable> set : this.mTunableLookup.values()) {
-            set.remove(tunable);
+        Iterator<Set<TunerService.Tunable>> it = this.mTunableLookup.values().iterator();
+        while (it.hasNext()) {
+            it.next().remove(tunable);
         }
         if (LeakDetector.ENABLED) {
             this.mTunables.remove(tunable);
@@ -144,30 +148,31 @@ public class TunerServiceImpl extends TunerService {
             return;
         }
         this.mContentResolver.unregisterContentObserver(this.mObserver);
-        for (Uri uri : this.mListeningUris.keySet()) {
-            this.mContentResolver.registerContentObserver(uri, false, this.mObserver, this.mCurrentUser);
+        Iterator<Uri> it = this.mListeningUris.keySet().iterator();
+        while (it.hasNext()) {
+            this.mContentResolver.registerContentObserver(it.next(), false, this.mObserver, this.mCurrentUser);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void reloadSetting(Uri uri) {
+    private void reloadSetting(Uri uri) {
         String str = this.mListeningUris.get(uri);
         Set<TunerService.Tunable> set = this.mTunableLookup.get(str);
         if (set == null) {
             return;
         }
         String stringForUser = Settings.Secure.getStringForUser(this.mContentResolver, str, this.mCurrentUser);
-        for (TunerService.Tunable tunable : set) {
-            tunable.onTuningChanged(str, stringForUser);
+        Iterator<TunerService.Tunable> it = set.iterator();
+        while (it.hasNext()) {
+            it.next().onTuningChanged(str, stringForUser);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void reloadAll() {
+    private void reloadAll() {
         for (String str : this.mTunableLookup.keySet()) {
             String stringForUser = Settings.Secure.getStringForUser(this.mContentResolver, str, this.mCurrentUser);
-            for (TunerService.Tunable tunable : this.mTunableLookup.get(str)) {
-                tunable.onTuningChanged(str, stringForUser);
+            Iterator<TunerService.Tunable> it = this.mTunableLookup.get(str).iterator();
+            while (it.hasNext()) {
+                it.next().onTuningChanged(str, stringForUser);
             }
         }
     }
@@ -185,9 +190,7 @@ public class TunerServiceImpl extends TunerService {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class Observer extends ContentObserver {
+    private class Observer extends ContentObserver {
         public Observer() {
             super(new Handler(Looper.getMainLooper()));
         }

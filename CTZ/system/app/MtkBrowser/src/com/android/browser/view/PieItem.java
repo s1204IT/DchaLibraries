@@ -4,6 +4,7 @@ import android.view.View;
 import com.android.browser.view.PieMenu;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PieItem {
     private float animate;

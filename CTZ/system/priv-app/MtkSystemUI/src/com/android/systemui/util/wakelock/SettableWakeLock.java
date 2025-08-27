@@ -1,6 +1,7 @@
 package com.android.systemui.util.wakelock;
 
 import com.android.internal.util.Preconditions;
+
 /* loaded from: classes.dex */
 public class SettableWakeLock {
     private boolean mAcquired;

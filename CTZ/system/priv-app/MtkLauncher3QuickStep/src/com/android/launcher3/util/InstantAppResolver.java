@@ -9,6 +9,7 @@ import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class InstantAppResolver {
     public static InstantAppResolver newInstance(Context context) {

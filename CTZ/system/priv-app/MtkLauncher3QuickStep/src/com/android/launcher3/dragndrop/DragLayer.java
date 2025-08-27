@@ -33,6 +33,7 @@ import com.android.launcher3.keyboard.ViewGroupFocusHelper;
 import com.android.launcher3.uioverrides.UiFactory;
 import com.android.launcher3.views.BaseDragLayer;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class DragLayer extends BaseDragLayer<Launcher> {
     private static final int ALPHA_CHANNEL_COUNT = 4;
@@ -125,11 +126,11 @@ public class DragLayer extends BaseDragLayer<Launcher> {
                     sendTapOutsideFolderAccessibilityEvent(folder.isEditingName());
                     this.mHoverPointClosesFolder = true;
                     return true;
-                } else if (!z) {
-                    return true;
-                } else {
-                    this.mHoverPointClosesFolder = false;
                 }
+                if (!z) {
+                    return true;
+                }
+                this.mHoverPointClosesFolder = false;
             } else if (action == 9) {
                 if (!(isEventOverView(topOpenView, motionEvent) || isEventOverAccessibleDropTargetBar(motionEvent))) {
                     sendTapOutsideFolderAccessibilityEvent(folder.isEditingName());
@@ -203,12 +204,13 @@ public class DragLayer extends BaseDragLayer<Launcher> {
     }
 
     public void animateViewIntoPosition(DragView dragView, final View view, int i, View view2) {
-        int round;
-        int round2;
+        int iRound;
+        int iRound2;
         float f;
         int i2;
+        ShortcutAndWidgetContainer shortcutAndWidgetContainer = (ShortcutAndWidgetContainer) view.getParent();
         CellLayout.LayoutParams layoutParams = (CellLayout.LayoutParams) view.getLayoutParams();
-        ((ShortcutAndWidgetContainer) view.getParent()).measureChild(view);
+        shortcutAndWidgetContainer.measureChild(view);
         Rect rect = new Rect();
         getViewRectRelativeToSelf(dragView, rect);
         float scaleX = view.getScaleX();
@@ -219,28 +221,28 @@ public class DragLayer extends BaseDragLayer<Launcher> {
         int i4 = iArr[1];
         if (view instanceof TextView) {
             float intrinsicIconScaleFactor = descendantCoordRelativeToSelf / dragView.getIntrinsicIconScaleFactor();
-            int round3 = (int) ((i4 + Math.round(((TextView) view).getPaddingTop() * intrinsicIconScaleFactor)) - ((dragView.getMeasuredHeight() * (1.0f - intrinsicIconScaleFactor)) / 2.0f));
+            int iRound3 = (int) ((i4 + Math.round(((TextView) view).getPaddingTop() * intrinsicIconScaleFactor)) - ((dragView.getMeasuredHeight() * (1.0f - intrinsicIconScaleFactor)) / 2.0f));
             if (dragView.getDragVisualizeOffset() != null) {
-                round3 -= Math.round(dragView.getDragVisualizeOffset().y * intrinsicIconScaleFactor);
+                iRound3 -= Math.round(dragView.getDragVisualizeOffset().y * intrinsicIconScaleFactor);
             }
-            round2 = i3 - ((dragView.getMeasuredWidth() - Math.round(descendantCoordRelativeToSelf * view.getMeasuredWidth())) / 2);
-            i2 = round3;
+            iRound2 = i3 - ((dragView.getMeasuredWidth() - Math.round(descendantCoordRelativeToSelf * view.getMeasuredWidth())) / 2);
+            i2 = iRound3;
             f = intrinsicIconScaleFactor;
         } else {
             if (!(view instanceof FolderIcon)) {
-                round = i4 - (Math.round((dragView.getHeight() - view.getMeasuredHeight()) * descendantCoordRelativeToSelf) / 2);
-                round2 = i3 - (Math.round((dragView.getMeasuredWidth() - view.getMeasuredWidth()) * descendantCoordRelativeToSelf) / 2);
+                iRound = i4 - (Math.round((dragView.getHeight() - view.getMeasuredHeight()) * descendantCoordRelativeToSelf) / 2);
+                iRound2 = i3 - (Math.round((dragView.getMeasuredWidth() - view.getMeasuredWidth()) * descendantCoordRelativeToSelf) / 2);
             } else {
-                round = (int) (((int) ((i4 + Math.round((view.getPaddingTop() - dragView.getDragRegionTop()) * descendantCoordRelativeToSelf)) - ((dragView.getBlurSizeOutline() * descendantCoordRelativeToSelf) / 2.0f))) - (((1.0f - descendantCoordRelativeToSelf) * dragView.getMeasuredHeight()) / 2.0f));
-                round2 = i3 - ((dragView.getMeasuredWidth() - Math.round(view.getMeasuredWidth() * descendantCoordRelativeToSelf)) / 2);
+                iRound = (int) (((int) ((i4 + Math.round((view.getPaddingTop() - dragView.getDragRegionTop()) * descendantCoordRelativeToSelf)) - ((dragView.getBlurSizeOutline() * descendantCoordRelativeToSelf) / 2.0f))) - (((1.0f - descendantCoordRelativeToSelf) * dragView.getMeasuredHeight()) / 2.0f));
+                iRound2 = i3 - ((dragView.getMeasuredWidth() - Math.round(view.getMeasuredWidth() * descendantCoordRelativeToSelf)) / 2);
             }
             f = descendantCoordRelativeToSelf;
-            i2 = round;
+            i2 = iRound;
         }
         int i5 = rect.left;
         int i6 = rect.top;
         view.setVisibility(4);
-        animateViewIntoPosition(dragView, i5, i6, round2, i2, 1.0f, 1.0f, 1.0f, f, f, new Runnable() { // from class: com.android.launcher3.dragndrop.-$$Lambda$DragLayer$4i4C7xaW5PxMjg4ve7qhaNJy2wk
+        animateViewIntoPosition(dragView, i5, i6, iRound2, i2, 1.0f, 1.0f, 1.0f, f, f, new Runnable() { // from class: com.android.launcher3.dragndrop.-$$Lambda$DragLayer$4i4C7xaW5PxMjg4ve7qhaNJy2wk
             @Override // java.lang.Runnable
             public final void run() {
                 view.setVisibility(0);
@@ -252,67 +254,151 @@ public class DragLayer extends BaseDragLayer<Launcher> {
         animateView(dragView, new Rect(i, i2, dragView.getMeasuredWidth() + i, dragView.getMeasuredHeight() + i2), new Rect(i3, i4, dragView.getMeasuredWidth() + i3, dragView.getMeasuredHeight() + i4), f, f2, f3, f4, f5, i6, null, null, runnable, i5, view);
     }
 
-    public void animateView(final DragView dragView, final Rect rect, final Rect rect2, final float f, final float f2, final float f3, final float f4, final float f5, int i, final Interpolator interpolator, final Interpolator interpolator2, Runnable runnable, int i2, View view) {
-        int i3;
-        float hypot = (float) Math.hypot(rect2.left - rect.left, rect2.top - rect.top);
+    public void animateView(DragView dragView, Rect rect, Rect rect2, float f, float f2, float f3, float f4, float f5, int i, Interpolator interpolator, Interpolator interpolator2, Runnable runnable, int i2, View view) {
+        int iMax;
+        float fHypot = (float) Math.hypot(rect2.left - rect.left, rect2.top - rect.top);
         Resources resources = getResources();
         float integer = resources.getInteger(R.integer.config_dropAnimMaxDist);
         if (i < 0) {
             int integer2 = resources.getInteger(R.integer.config_dropAnimMaxDuration);
-            if (hypot < integer) {
-                integer2 = (int) (integer2 * this.mCubicEaseOutInterpolator.getInterpolation(hypot / integer));
+            if (fHypot < integer) {
+                integer2 = (int) (integer2 * this.mCubicEaseOutInterpolator.getInterpolation(fHypot / integer));
             }
-            i3 = Math.max(integer2, resources.getInteger(R.integer.config_dropAnimMinDuration));
+            iMax = Math.max(integer2, resources.getInteger(R.integer.config_dropAnimMinDuration));
         } else {
-            i3 = i;
+            iMax = i;
         }
-        TimeInterpolator timeInterpolator = null;
-        if (interpolator2 == null || interpolator == null) {
-            timeInterpolator = this.mCubicEaseOutInterpolator;
-        }
-        TimeInterpolator timeInterpolator2 = timeInterpolator;
-        final float alpha = dragView.getAlpha();
-        final float scaleX = dragView.getScaleX();
         animateView(dragView, new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.dragndrop.DragLayer.1
+            final /* synthetic */ Interpolator val$alphaInterpolator;
+            final /* synthetic */ float val$dropViewScale;
+            final /* synthetic */ float val$finalAlpha;
+            final /* synthetic */ float val$finalScaleX;
+            final /* synthetic */ float val$finalScaleY;
+            final /* synthetic */ Rect val$from;
+            final /* synthetic */ float val$initAlpha;
+            final /* synthetic */ float val$initScaleX;
+            final /* synthetic */ float val$initScaleY;
+            final /* synthetic */ Interpolator val$motionInterpolator;
+            final /* synthetic */ Rect val$to;
+            final /* synthetic */ DragView val$view;
+
+            AnonymousClass1(DragView dragView2, Interpolator interpolator22, Interpolator interpolator3, float f22, float f6, float f32, float f42, float f52, float f7, float f8, Rect rect3, Rect rect22) {
+                dragView = dragView2;
+                interpolator = interpolator22;
+                interpolator = interpolator3;
+                f = f22;
+                f = f6;
+                f = f32;
+                f = f42;
+                f = f52;
+                f = f7;
+                f = f8;
+                rect = rect3;
+                rect = rect22;
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float interpolation;
                 float interpolation2;
-                float floatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+                float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
                 int measuredWidth = dragView.getMeasuredWidth();
                 int measuredHeight = dragView.getMeasuredHeight();
-                if (interpolator2 != null) {
-                    interpolation = interpolator2.getInterpolation(floatValue);
+                if (interpolator != null) {
+                    interpolation = interpolator.getInterpolation(fFloatValue);
                 } else {
-                    interpolation = floatValue;
+                    interpolation = fFloatValue;
                 }
                 if (interpolator != null) {
-                    interpolation2 = interpolator.getInterpolation(floatValue);
+                    interpolation2 = interpolator.getInterpolation(fFloatValue);
                 } else {
-                    interpolation2 = floatValue;
+                    interpolation2 = fFloatValue;
                 }
-                float f6 = f2 * scaleX;
-                float f7 = f3 * scaleX;
-                float f8 = 1.0f - floatValue;
-                float f9 = (f4 * floatValue) + (f6 * f8);
-                float f10 = (f5 * floatValue) + (f8 * f7);
-                float f11 = (f * interpolation) + (alpha * (1.0f - interpolation));
+                float f6 = f * f;
+                float f7 = f * f;
+                float f8 = 1.0f - fFloatValue;
+                float f9 = (f * fFloatValue) + (f6 * f8);
+                float f10 = (f * fFloatValue) + (f8 * f7);
+                float f11 = (f * interpolation) + (f * (1.0f - interpolation));
                 float f12 = rect.left + (((f6 - 1.0f) * measuredWidth) / 2.0f);
-                float f13 = rect.top + (((f7 - 1.0f) * measuredHeight) / 2.0f);
-                int round = (int) (f12 + Math.round((rect2.left - f12) * interpolation2));
-                int round2 = (int) (f13 + Math.round((rect2.top - f13) * interpolation2));
-                int scrollX = (round - DragLayer.this.mDropView.getScrollX()) + (DragLayer.this.mAnchorView == null ? 0 : (int) (DragLayer.this.mAnchorView.getScaleX() * (DragLayer.this.mAnchorViewInitialScrollX - DragLayer.this.mAnchorView.getScrollX())));
-                int scrollY = round2 - DragLayer.this.mDropView.getScrollY();
-                DragLayer.this.mDropView.setTranslationX(scrollX);
+                int iRound = (int) (rect.top + (((f7 - 1.0f) * measuredHeight) / 2.0f) + Math.round((rect.top - r4) * interpolation2));
+                int iRound2 = (((int) (f12 + Math.round((rect.left - f12) * interpolation2))) - DragLayer.this.mDropView.getScrollX()) + (DragLayer.this.mAnchorView == null ? 0 : (int) (DragLayer.this.mAnchorView.getScaleX() * (DragLayer.this.mAnchorViewInitialScrollX - DragLayer.this.mAnchorView.getScrollX())));
+                int scrollY = iRound - DragLayer.this.mDropView.getScrollY();
+                DragLayer.this.mDropView.setTranslationX(iRound2);
                 DragLayer.this.mDropView.setTranslationY(scrollY);
                 DragLayer.this.mDropView.setScaleX(f9);
                 DragLayer.this.mDropView.setScaleY(f10);
                 DragLayer.this.mDropView.setAlpha(f11);
             }
-        }, i3, timeInterpolator2, runnable, i2, view);
+        }, iMax, (interpolator22 == null || interpolator3 == null) ? this.mCubicEaseOutInterpolator : null, runnable, i2, view);
     }
 
-    public void animateView(DragView dragView, ValueAnimator.AnimatorUpdateListener animatorUpdateListener, int i, TimeInterpolator timeInterpolator, final Runnable runnable, final int i2, View view) {
+    /* renamed from: com.android.launcher3.dragndrop.DragLayer$1 */
+    class AnonymousClass1 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ Interpolator val$alphaInterpolator;
+        final /* synthetic */ float val$dropViewScale;
+        final /* synthetic */ float val$finalAlpha;
+        final /* synthetic */ float val$finalScaleX;
+        final /* synthetic */ float val$finalScaleY;
+        final /* synthetic */ Rect val$from;
+        final /* synthetic */ float val$initAlpha;
+        final /* synthetic */ float val$initScaleX;
+        final /* synthetic */ float val$initScaleY;
+        final /* synthetic */ Interpolator val$motionInterpolator;
+        final /* synthetic */ Rect val$to;
+        final /* synthetic */ DragView val$view;
+
+        AnonymousClass1(DragView dragView2, Interpolator interpolator22, Interpolator interpolator3, float f22, float f6, float f32, float f42, float f52, float f7, float f8, Rect rect3, Rect rect22) {
+            dragView = dragView2;
+            interpolator = interpolator22;
+            interpolator = interpolator3;
+            f = f22;
+            f = f6;
+            f = f32;
+            f = f42;
+            f = f52;
+            f = f7;
+            f = f8;
+            rect = rect3;
+            rect = rect22;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            float interpolation;
+            float interpolation2;
+            float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+            int measuredWidth = dragView.getMeasuredWidth();
+            int measuredHeight = dragView.getMeasuredHeight();
+            if (interpolator != null) {
+                interpolation = interpolator.getInterpolation(fFloatValue);
+            } else {
+                interpolation = fFloatValue;
+            }
+            if (interpolator != null) {
+                interpolation2 = interpolator.getInterpolation(fFloatValue);
+            } else {
+                interpolation2 = fFloatValue;
+            }
+            float f6 = f * f;
+            float f7 = f * f;
+            float f8 = 1.0f - fFloatValue;
+            float f9 = (f * fFloatValue) + (f6 * f8);
+            float f10 = (f * fFloatValue) + (f8 * f7);
+            float f11 = (f * interpolation) + (f * (1.0f - interpolation));
+            float f12 = rect.left + (((f6 - 1.0f) * measuredWidth) / 2.0f);
+            int iRound = (int) (rect.top + (((f7 - 1.0f) * measuredHeight) / 2.0f) + Math.round((rect.top - r4) * interpolation2));
+            int iRound2 = (((int) (f12 + Math.round((rect.left - f12) * interpolation2))) - DragLayer.this.mDropView.getScrollX()) + (DragLayer.this.mAnchorView == null ? 0 : (int) (DragLayer.this.mAnchorView.getScaleX() * (DragLayer.this.mAnchorViewInitialScrollX - DragLayer.this.mAnchorView.getScrollX())));
+            int scrollY = iRound - DragLayer.this.mDropView.getScrollY();
+            DragLayer.this.mDropView.setTranslationX(iRound2);
+            DragLayer.this.mDropView.setTranslationY(scrollY);
+            DragLayer.this.mDropView.setScaleX(f9);
+            DragLayer.this.mDropView.setScaleY(f10);
+            DragLayer.this.mDropView.setAlpha(f11);
+        }
+    }
+
+    public void animateView(DragView dragView, ValueAnimator.AnimatorUpdateListener animatorUpdateListener, int i, TimeInterpolator timeInterpolator, Runnable runnable, int i2, View view) {
         if (this.mDropAnim != null) {
             this.mDropAnim.cancel();
         }
@@ -329,18 +415,48 @@ public class DragLayer extends BaseDragLayer<Launcher> {
         this.mDropAnim.setFloatValues(0.0f, 1.0f);
         this.mDropAnim.addUpdateListener(animatorUpdateListener);
         this.mDropAnim.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.dragndrop.DragLayer.2
+            final /* synthetic */ int val$animationEndStyle;
+            final /* synthetic */ Runnable val$onCompleteRunnable;
+
+            AnonymousClass2(Runnable runnable2, int i22) {
+                runnable = runnable2;
+                i = i22;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 if (runnable != null) {
                     runnable.run();
                 }
-                if (i2 == 0) {
+                if (i == 0) {
                     DragLayer.this.clearAnimatedView();
                 }
                 DragLayer.this.mDropAnim = null;
             }
         });
         this.mDropAnim.start();
+    }
+
+    /* renamed from: com.android.launcher3.dragndrop.DragLayer$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        final /* synthetic */ int val$animationEndStyle;
+        final /* synthetic */ Runnable val$onCompleteRunnable;
+
+        AnonymousClass2(Runnable runnable2, int i22) {
+            runnable = runnable2;
+            i = i22;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (runnable != null) {
+                runnable.run();
+            }
+            if (i == 0) {
+                DragLayer.this.clearAnimatedView();
+            }
+            DragLayer.this.mDropAnim = null;
+        }
     }
 
     public void clearAnimatedView() {

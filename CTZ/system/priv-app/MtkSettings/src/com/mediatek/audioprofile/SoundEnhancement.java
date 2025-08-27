@@ -16,6 +16,7 @@ import com.android.settings.search.SearchIndexableRaw;
 import com.mediatek.settings.FeatureOption;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SoundEnhancement extends SettingsPreferenceFragment implements Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.mediatek.audioprofile.SoundEnhancement.1

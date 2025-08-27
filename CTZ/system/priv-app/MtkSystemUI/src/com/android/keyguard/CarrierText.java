@@ -20,6 +20,7 @@ import com.mediatek.keyguard.ext.IOperatorSIMString;
 import com.mediatek.keyguard.ext.OpKeyguardCustomizationFactoryBase;
 import java.util.List;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class CarrierText extends TextView {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
@@ -38,9 +39,7 @@ public class CarrierText extends TextView {
     private StatusMode[] mStatusMode;
     private WifiManager mWifiManager;
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public enum StatusMode {
+    private enum StatusMode {
         Normal,
         NetworkLocked,
         SimMissing,
@@ -97,25 +96,25 @@ public class CarrierText extends TextView {
             }
         };
         this.mContext = context;
-        this.mIsEmergencyCallCapable = context.getResources().getBoolean(17957067);
+        this.mIsEmergencyCallCapable = context.getResources().getBoolean(android.R.^attr-private.materialColorSurfaceContainerLowest);
         this.mKeyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(this.mContext);
         initMembers();
         this.mIOperatorSIMString = OpKeyguardCustomizationFactoryBase.getOpFactory(this.mContext).makeOperatorSIMString();
         this.mCarrierTextExt = OpKeyguardCustomizationFactoryBase.getOpFactory(this.mContext).makeCarrierText();
-        TypedArray obtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.CarrierText, 0, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.CarrierText, 0, 0);
         try {
-            boolean z = obtainStyledAttributes.getBoolean(0, false);
-            obtainStyledAttributes.recycle();
+            boolean z = typedArrayObtainStyledAttributes.getBoolean(0, false);
+            typedArrayObtainStyledAttributes.recycle();
             setTransformationMethod(new CarrierTextTransformationMethod(this.mContext, z));
             this.mWifiManager = (WifiManager) context.getSystemService("wifi");
         } catch (Throwable th) {
-            obtainStyledAttributes.recycle();
+            typedArrayObtainStyledAttributes.recycle();
             throw th;
         }
     }
 
     protected void updateCarrierText() {
-        String str;
+        String string;
         CharSequence carrierName;
         ServiceState serviceState;
         if (isWifiOnlyDevice()) {
@@ -123,11 +122,11 @@ public class CarrierText extends TextView {
             setText("");
             return;
         }
-        boolean showOrHideCarrier = showOrHideCarrier();
+        boolean zShowOrHideCarrier = showOrHideCarrier();
         boolean z = false;
         int i = 0;
         while (true) {
-            str = null;
+            string = null;
             if (i >= this.mNumOfPhone) {
                 break;
             }
@@ -163,23 +162,23 @@ public class CarrierText extends TextView {
             i++;
             z = z2;
         }
-        String customizeCarrierTextDivider = this.mCarrierTextExt.customizeCarrierTextDivider(mSeparator.toString());
+        String strCustomizeCarrierTextDivider = this.mCarrierTextExt.customizeCarrierTextDivider(mSeparator.toString());
         for (int i2 = 0; i2 < this.mNumOfPhone; i2++) {
             if (this.mCarrierNeedToShow[i2] && this.mCarrier[i2] != null) {
-                str = str == null ? this.mCarrier[i2] : str + customizeCarrierTextDivider + this.mCarrier[i2];
+                string = string == null ? this.mCarrier[i2] : string + strCustomizeCarrierTextDivider + this.mCarrier[i2];
             }
         }
         if (!z && WirelessUtils.isAirplaneModeOn(this.mContext)) {
-            str = getContext().getString(com.android.systemui.R.string.airplane_mode);
+            string = getContext().getString(com.android.systemui.R.string.airplane_mode);
         }
-        Log.d("CarrierText", "updateCarrierText() - after combination, carrierFinalContent = " + str + ", allSimsMissing = " + showOrHideCarrier);
-        setText(str);
+        Log.d("CarrierText", "updateCarrierText() - after combination, carrierFinalContent = " + string + ", allSimsMissing = " + zShowOrHideCarrier);
+        setText(string);
     }
 
     @Override // android.view.View
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mSeparator = getResources().getString(17040110);
+        mSeparator = getResources().getString(android.R.string.conversation_single_line_name_display);
         setSelected(KeyguardUpdateMonitor.getInstance(this.mContext).isDeviceInteractive());
         setLayerType(2, null);
     }
@@ -190,10 +189,10 @@ public class CarrierText extends TextView {
         if (ConnectivityManager.from(this.mContext).isNetworkSupported(0)) {
             this.mKeyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(this.mContext);
             this.mKeyguardUpdateMonitor.registerCallback(this.mCallback);
-            return;
+        } else {
+            this.mKeyguardUpdateMonitor = null;
+            setText("");
         }
-        this.mKeyguardUpdateMonitor = null;
-        setText("");
     }
 
     @Override // android.view.View
@@ -215,43 +214,43 @@ public class CarrierText extends TextView {
     }
 
     private CharSequence getCarrierTextForSimState(int i, IccCardConstants.State state, CharSequence charSequence, CharSequence charSequence2, CharSequence charSequence3) {
-        String str;
+        CharSequence charSequenceMakeCarrierStringOnEmergencyCapable;
         switch (getStatusForIccState(state)) {
             case Normal:
             default:
-                str = charSequence;
+                charSequenceMakeCarrierStringOnEmergencyCapable = charSequence;
                 break;
             case SimNotReady:
             case SimMissingLocked:
-                str = null;
+                charSequenceMakeCarrierStringOnEmergencyCapable = null;
                 break;
             case NetworkLocked:
-                str = makeCarrierStringOnEmergencyCapable(this.mContext.getText(com.android.systemui.R.string.keyguard_network_locked_message), charSequence, charSequence2, charSequence3);
+                charSequenceMakeCarrierStringOnEmergencyCapable = makeCarrierStringOnEmergencyCapable(this.mContext.getText(com.android.systemui.R.string.keyguard_network_locked_message), charSequence, charSequence2, charSequence3);
                 break;
             case SimMissing:
                 CharSequence text = getContext().getText(com.android.systemui.R.string.keyguard_missing_sim_message_short);
-                str = this.mCarrierTextExt.customizeCarrierTextWhenSimMissing(this.mCarrierTextExt.customizeCarrierText(makeCarrierStringOnEmergencyCapable(text, charSequence, charSequence2, charSequence3), text, i));
+                charSequenceMakeCarrierStringOnEmergencyCapable = this.mCarrierTextExt.customizeCarrierTextWhenSimMissing(this.mCarrierTextExt.customizeCarrierText(makeCarrierStringOnEmergencyCapable(text, charSequence, charSequence2, charSequence3), text, i));
                 break;
             case SimPermDisabled:
-                str = makeCarrierStringOnEmergencyCapable(getContext().getText(com.android.systemui.R.string.keyguard_permanent_disabled_sim_message_short), charSequence, charSequence2, charSequence3);
+                charSequenceMakeCarrierStringOnEmergencyCapable = makeCarrierStringOnEmergencyCapable(getContext().getText(com.android.systemui.R.string.keyguard_permanent_disabled_sim_message_short), charSequence, charSequence2, charSequence3);
                 break;
             case SimLocked:
-                str = makeCarrierStringOnEmergencyCapable(getContext().getText(com.android.systemui.R.string.keyguard_sim_locked_message), charSequence, charSequence2, charSequence3);
+                charSequenceMakeCarrierStringOnEmergencyCapable = makeCarrierStringOnEmergencyCapable(getContext().getText(com.android.systemui.R.string.keyguard_sim_locked_message), charSequence, charSequence2, charSequence3);
                 break;
             case SimPukLocked:
-                str = makeCarrierStringOnEmergencyCapable(getContext().getText(com.android.systemui.R.string.keyguard_sim_puk_locked_message), charSequence, charSequence2, charSequence3);
+                charSequenceMakeCarrierStringOnEmergencyCapable = makeCarrierStringOnEmergencyCapable(getContext().getText(com.android.systemui.R.string.keyguard_sim_puk_locked_message), charSequence, charSequence2, charSequence3);
                 break;
             case SimIoError:
-                str = makeCarrierStringOnEmergencyCapable(getContext().getText(com.android.systemui.R.string.keyguard_sim_error_message_short), charSequence, charSequence2, charSequence3);
+                charSequenceMakeCarrierStringOnEmergencyCapable = makeCarrierStringOnEmergencyCapable(getContext().getText(com.android.systemui.R.string.keyguard_sim_error_message_short), charSequence, charSequence2, charSequence3);
                 break;
         }
-        if (str != null) {
-            str = this.mCarrierTextExt.customizeCarrierTextWhenCardTypeLocked(str, this.mContext, i, false).toString();
+        if (charSequenceMakeCarrierStringOnEmergencyCapable != null) {
+            charSequenceMakeCarrierStringOnEmergencyCapable = this.mCarrierTextExt.customizeCarrierTextWhenCardTypeLocked(charSequenceMakeCarrierStringOnEmergencyCapable, this.mContext, i, false).toString();
         }
         if (DEBUG) {
-            Log.d("CarrierText", "getCarrierTextForSimState simState=" + state + " carrierName(from Sub)=" + ((Object) charSequence) + " HNB=" + ((Object) charSequence2) + " CSG=" + ((Object) charSequence3) + " carrierText=" + ((Object) str));
+            Log.d("CarrierText", "getCarrierTextForSimState simState=" + state + " carrierName(from Sub)=" + ((Object) charSequence) + " HNB=" + ((Object) charSequence2) + " CSG=" + ((Object) charSequence3) + " carrierText=" + ((Object) charSequenceMakeCarrierStringOnEmergencyCapable));
         }
-        return str;
+        return charSequenceMakeCarrierStringOnEmergencyCapable;
     }
 
     private CharSequence makeCarrierStringOnEmergencyCapable(CharSequence charSequence, CharSequence charSequence2, CharSequence charSequence3, CharSequence charSequence4) {
@@ -295,10 +294,8 @@ public class CarrierText extends TextView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.keyguard.CarrierText$2  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public static /* synthetic */ class AnonymousClass2 {
+    /* renamed from: com.android.keyguard.CarrierText$2, reason: invalid class name */
+    static /* synthetic */ class AnonymousClass2 {
         static final /* synthetic */ int[] $SwitchMap$com$android$internal$telephony$IccCardConstants$State = new int[IccCardConstants.State.values().length];
 
         static {
@@ -378,6 +375,7 @@ public class CarrierText extends TextView {
         }
     }
 
+    /* JADX DEBUG: TODO: convert one arg to string using `String.valueOf()`, args: r2v0, (wrap:java.lang.CharSequence:SGET), r3v0 */
     private static CharSequence concatenate(CharSequence charSequence, CharSequence charSequence2) {
         boolean z = !TextUtils.isEmpty(charSequence);
         boolean z2 = !TextUtils.isEmpty(charSequence2);
@@ -387,17 +385,16 @@ public class CarrierText extends TextView {
             sb.append(mSeparator);
             sb.append(charSequence2);
             return sb.toString();
-        } else if (z) {
-            return charSequence;
-        } else {
-            if (z2) {
-                return charSequence2;
-            }
-            return "";
         }
+        if (z) {
+            return charSequence;
+        }
+        if (z2) {
+            return charSequence2;
+        }
+        return "";
     }
 
-    /* loaded from: classes.dex */
     private class CarrierTextTransformationMethod extends SingleLineTransformationMethod {
         private final boolean mAllCaps;
         private final Locale mLocale;
@@ -422,39 +419,39 @@ public class CarrierText extends TextView {
     }
 
     private boolean showOrHideCarrier() {
-        int i;
-        int i2 = 0;
-        for (int i3 = 0; i3 < this.mNumOfPhone; i3++) {
-            StatusMode statusForIccState = getStatusForIccState(this.mKeyguardUpdateMonitor.getSimStateOfPhoneId(i3));
-            if (this.mCarrierTextExt.showCarrierTextWhenSimMissing(statusForIccState == StatusMode.SimMissing || statusForIccState == StatusMode.SimMissingLocked || statusForIccState == StatusMode.SimUnknown, i3)) {
-                this.mCarrierNeedToShow[i3] = false;
+        int simSlotIndex;
+        int i = 0;
+        for (int i2 = 0; i2 < this.mNumOfPhone; i2++) {
+            StatusMode statusForIccState = getStatusForIccState(this.mKeyguardUpdateMonitor.getSimStateOfPhoneId(i2));
+            if (this.mCarrierTextExt.showCarrierTextWhenSimMissing(statusForIccState == StatusMode.SimMissing || statusForIccState == StatusMode.SimMissingLocked || statusForIccState == StatusMode.SimUnknown, i2)) {
+                this.mCarrierNeedToShow[i2] = false;
             } else {
-                this.mCarrierNeedToShow[i3] = true;
-                i2++;
+                this.mCarrierNeedToShow[i2] = true;
+                i++;
             }
         }
         List<SubscriptionInfo> subscriptionInfo = this.mKeyguardUpdateMonitor.getSubscriptionInfo(false);
-        if (i2 == 0) {
-            String charSequence = this.mKeyguardUpdateMonitor.getDefaultPlmn().toString();
-            int i4 = 0;
+        if (i == 0) {
+            String string = this.mKeyguardUpdateMonitor.getDefaultPlmn().toString();
+            int i3 = 0;
             while (true) {
-                if (i4 < subscriptionInfo.size()) {
-                    SubscriptionInfo subscriptionInfo2 = subscriptionInfo.get(i4);
+                if (i3 < subscriptionInfo.size()) {
+                    SubscriptionInfo subscriptionInfo2 = subscriptionInfo.get(i3);
                     subscriptionInfo2.getSubscriptionId();
-                    i = subscriptionInfo2.getSimSlotIndex();
+                    simSlotIndex = subscriptionInfo2.getSimSlotIndex();
                     CharSequence carrierName = subscriptionInfo2.getCarrierName();
-                    if (carrierName != null && !charSequence.contentEquals(carrierName)) {
+                    if (carrierName != null && !string.contentEquals(carrierName)) {
                         break;
                     }
-                    i4++;
+                    i3++;
                 } else {
-                    i = 0;
+                    simSlotIndex = 0;
                     break;
                 }
             }
-            this.mCarrierNeedToShow[i] = true;
+            this.mCarrierNeedToShow[simSlotIndex] = true;
         }
-        return i2 == 0;
+        return i == 0;
     }
 
     private CharSequence appendCsgInfo(CharSequence charSequence, CharSequence charSequence2, CharSequence charSequence3) {

@@ -3,30 +3,32 @@ package com.android.quicksearchbox;
 import android.text.SpannableString;
 import android.text.Spanned;
 import com.android.quicksearchbox.util.LevenshteinDistance;
+
 /* loaded from: classes.dex */
 public class LevenshteinSuggestionFormatter extends SuggestionFormatter {
     public LevenshteinSuggestionFormatter(TextAppearanceFactory textAppearanceFactory) {
         super(textAppearanceFactory);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: formatSuggestion(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/CharSequence; */
     @Override // com.android.quicksearchbox.SuggestionFormatter
     public Spanned formatSuggestion(String str, String str2) {
-        int i;
+        int length;
         LevenshteinDistance.Token[] tokenArr = tokenize(normalizeQuery(str));
         LevenshteinDistance.Token[] tokenArr2 = tokenize(str2);
-        int[] findMatches = findMatches(tokenArr, tokenArr2);
+        int[] iArrFindMatches = findMatches(tokenArr, tokenArr2);
         SpannableString spannableString = new SpannableString(str2);
-        int length = findMatches.length;
-        for (int i2 = 0; i2 < length; i2++) {
-            LevenshteinDistance.Token token = tokenArr2[i2];
-            int i3 = findMatches[i2];
-            if (i3 >= 0) {
-                i = tokenArr[i3].length();
+        int length2 = iArrFindMatches.length;
+        for (int i = 0; i < length2; i++) {
+            LevenshteinDistance.Token token = tokenArr2[i];
+            int i2 = iArrFindMatches[i];
+            if (i2 >= 0) {
+                length = tokenArr[i2].length();
             } else {
-                i = 0;
+                length = 0;
             }
-            applySuggestedTextStyle(spannableString, token.mStart + i, token.mEnd);
-            applyQueryTextStyle(spannableString, token.mStart, token.mStart + i);
+            applySuggestedTextStyle(spannableString, token.mStart + length, token.mEnd);
+            applyQueryTextStyle(spannableString, token.mStart, token.mStart + length);
         }
         return spannableString;
     }
@@ -51,13 +53,6 @@ public class LevenshteinSuggestionFormatter extends SuggestionFormatter {
         return iArr;
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:20:0x0034, code lost:
-        r1[r4] = new com.android.quicksearchbox.util.LevenshteinDistance.Token(r10, r3, r7);
-        r4 = r4 + 1;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     LevenshteinDistance.Token[] tokenize(String str) {
         int length = str.length();
         char[] charArray = str.toCharArray();
@@ -71,6 +66,10 @@ public class LevenshteinSuggestionFormatter extends SuggestionFormatter {
             int i3 = i;
             while (i3 < length && charArray[i3] != ' ' && charArray[i3] != '\t') {
                 i3++;
+            }
+            if (i != i3) {
+                tokenArr[i2] = new LevenshteinDistance.Token(charArray, i, i3);
+                i2++;
             }
             i = i3;
         }

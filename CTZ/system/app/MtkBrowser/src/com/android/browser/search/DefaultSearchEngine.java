@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class DefaultSearchEngine implements SearchEngine {
     private final CharSequence mLabel;

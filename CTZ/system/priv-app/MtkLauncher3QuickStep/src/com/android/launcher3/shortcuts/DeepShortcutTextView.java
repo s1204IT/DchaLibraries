@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.android.launcher3.BubbleTextView;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
+
 /* loaded from: classes.dex */
 public class DeepShortcutTextView extends BubbleTextView {
     private final Rect mDragHandleBounds;
@@ -33,9 +34,8 @@ public class DeepShortcutTextView extends BubbleTextView {
         this.mDragHandleWidth = resources.getDimensionPixelSize(R.dimen.popup_padding_end) + resources.getDimensionPixelSize(R.dimen.deep_shortcut_drag_handle_size) + (resources.getDimensionPixelSize(R.dimen.deep_shortcut_drawable_padding) / 2);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.BubbleTextView, android.widget.TextView, android.view.View
-    public void onMeasure(int i, int i2) {
+    protected void onMeasure(int i, int i2) {
         super.onMeasure(i, i2);
         this.mDragHandleBounds.set(0, 0, this.mDragHandleWidth, getMeasuredHeight());
         if (!Utilities.isRtl(getResources())) {

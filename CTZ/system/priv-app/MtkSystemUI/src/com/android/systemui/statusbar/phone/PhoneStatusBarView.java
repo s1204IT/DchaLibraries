@@ -20,6 +20,7 @@ import com.android.systemui.R;
 import com.android.systemui.ScreenDecorations;
 import com.android.systemui.statusbar.policy.DarkIconDispatcher;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class PhoneStatusBarView extends PanelBar {
     private static final boolean DEBUG = StatusBar.DEBUG;
@@ -127,10 +128,10 @@ public class PhoneStatusBarView extends PanelBar {
 
     public boolean onRequestSendAccessibilityEventInternal(View view, AccessibilityEvent accessibilityEvent) {
         if (super.onRequestSendAccessibilityEventInternal(view, accessibilityEvent)) {
-            AccessibilityEvent obtain = AccessibilityEvent.obtain();
-            onInitializeAccessibilityEvent(obtain);
-            dispatchPopulateAccessibilityEvent(obtain);
-            accessibilityEvent.appendRecord(obtain);
+            AccessibilityEvent accessibilityEventObtain = AccessibilityEvent.obtain();
+            onInitializeAccessibilityEvent(accessibilityEventObtain);
+            dispatchPopulateAccessibilityEvent(accessibilityEventObtain);
+            accessibilityEvent.appendRecord(accessibilityEventObtain);
             return true;
         }
         return false;
@@ -217,11 +218,11 @@ public class PhoneStatusBarView extends PanelBar {
     }
 
     private void updateScrimFraction() {
-        float f = this.mPanelFraction;
+        float fMax = this.mPanelFraction;
         if (this.mMinFraction < 1.0f) {
-            f = Math.max((this.mPanelFraction - this.mMinFraction) / (1.0f - this.mMinFraction), 0.0f);
+            fMax = Math.max((this.mPanelFraction - this.mMinFraction) / (1.0f - this.mMinFraction), 0.0f);
         }
-        this.mScrimController.setPanelExpansion(f);
+        this.mScrimController.setPanelExpansion(fMax);
     }
 
     public void updateResources() {
@@ -232,9 +233,9 @@ public class PhoneStatusBarView extends PanelBar {
     }
 
     private void updateLayoutForCutout() {
-        Pair<Integer, Integer> cornerCutoutMargins = cornerCutoutMargins(this.mDisplayCutout, getDisplay());
-        updateCutoutLocation(cornerCutoutMargins);
-        updateSafeInsets(cornerCutoutMargins);
+        Pair<Integer, Integer> pairCornerCutoutMargins = cornerCutoutMargins(this.mDisplayCutout, getDisplay());
+        updateCutoutLocation(pairCornerCutoutMargins);
+        updateSafeInsets(pairCornerCutoutMargins);
     }
 
     private void updateCutoutLocation(Pair<Integer, Integer> pair) {

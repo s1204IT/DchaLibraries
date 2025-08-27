@@ -19,6 +19,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class AutoSyncDataPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final Fragment mParentFragment;
@@ -41,13 +42,13 @@ public class AutoSyncDataPreferenceController extends AbstractPreferenceControll
     public boolean handlePreferenceTreeClick(Preference preference) {
         if (getPreferenceKey().equals(preference.getKey())) {
             SwitchPreference switchPreference = (SwitchPreference) preference;
-            boolean isChecked = switchPreference.isChecked();
-            switchPreference.setChecked(!isChecked);
+            boolean zIsChecked = switchPreference.isChecked();
+            switchPreference.setChecked(!zIsChecked);
             if (ActivityManager.isUserAMonkey()) {
                 Log.d("AutoSyncDataController", "ignoring monkey's attempt to flip sync state");
                 return true;
             }
-            ConfirmAutoSyncChangeFragment.show(this.mParentFragment, isChecked, this.mUserHandle, switchPreference);
+            ConfirmAutoSyncChangeFragment.show(this.mParentFragment, zIsChecked, this.mUserHandle, switchPreference);
             return true;
         }
         return false;
@@ -63,7 +64,6 @@ public class AutoSyncDataPreferenceController extends AbstractPreferenceControll
         return "auto_sync_account_data";
     }
 
-    /* loaded from: classes.dex */
     public static class ConfirmAutoSyncChangeFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
         boolean mEnabling;
         int mIdentifier;
@@ -98,8 +98,8 @@ public class AutoSyncDataPreferenceController extends AbstractPreferenceControll
                 builder.setTitle(R.string.data_usage_auto_sync_on_dialog_title);
                 builder.setMessage(R.string.data_usage_auto_sync_on_dialog);
             }
-            builder.setPositiveButton(17039370, this);
-            builder.setNegativeButton(17039360, (DialogInterface.OnClickListener) null);
+            builder.setPositiveButton(android.R.string.ok, this);
+            builder.setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null);
             return builder.create();
         }
 

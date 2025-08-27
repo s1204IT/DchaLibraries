@@ -25,10 +25,12 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Logger;
+
 /* loaded from: classes.dex */
 public final class ClassPath {
     private static final Logger logger = Logger.getLogger(ClassPath.class.getName());
     private static final Predicate<ClassInfo> IS_TOP_LEVEL = new Predicate<ClassInfo>() { // from class: com.google.common.reflect.ClassPath.1
+        /* JADX DEBUG: Method merged with bridge method: apply(Ljava/lang/Object;)Z */
         @Override // com.google.common.base.Predicate
         public boolean apply(ClassInfo classInfo) {
             return classInfo.className.indexOf(36) == -1;
@@ -36,7 +38,6 @@ public final class ClassPath {
     };
     private static final Splitter CLASS_PATH_ATTRIBUTE_SEPARATOR = Splitter.on(" ").omitEmptyStrings();
 
-    /* loaded from: classes.dex */
     public static class ResourceInfo {
         final ClassLoader loader;
         private final String resourceName;
@@ -58,11 +59,11 @@ public final class ClassPath {
         }
 
         public boolean equals(Object obj) {
-            if (obj instanceof ResourceInfo) {
-                ResourceInfo resourceInfo = (ResourceInfo) obj;
-                return this.resourceName.equals(resourceInfo.resourceName) && this.loader == resourceInfo.loader;
+            if (!(obj instanceof ResourceInfo)) {
+                return false;
             }
-            return false;
+            ResourceInfo resourceInfo = (ResourceInfo) obj;
+            return this.resourceName.equals(resourceInfo.resourceName) && this.loader == resourceInfo.loader;
         }
 
         public String toString() {
@@ -70,7 +71,6 @@ public final class ClassPath {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class ClassInfo extends ResourceInfo {
         private final String className;
 
@@ -85,28 +85,27 @@ public final class ClassPath {
         }
     }
 
-    static ImmutableMap<URI, ClassLoader> getClassPathEntries(ClassLoader classLoader) {
-        LinkedHashMap newLinkedHashMap = Maps.newLinkedHashMap();
+    static ImmutableMap<URI, ClassLoader> getClassPathEntries(ClassLoader classLoader) throws URISyntaxException {
+        LinkedHashMap linkedHashMapNewLinkedHashMap = Maps.newLinkedHashMap();
         ClassLoader parent = classLoader.getParent();
         if (parent != null) {
-            newLinkedHashMap.putAll(getClassPathEntries(parent));
+            linkedHashMapNewLinkedHashMap.putAll(getClassPathEntries(parent));
         }
         if (classLoader instanceof URLClassLoader) {
             for (URL url : ((URLClassLoader) classLoader).getURLs()) {
                 try {
                     URI uri = url.toURI();
-                    if (!newLinkedHashMap.containsKey(uri)) {
-                        newLinkedHashMap.put(uri, classLoader);
+                    if (!linkedHashMapNewLinkedHashMap.containsKey(uri)) {
+                        linkedHashMapNewLinkedHashMap.put(uri, classLoader);
                     }
                 } catch (URISyntaxException e) {
                     throw new IllegalArgumentException(e);
                 }
             }
         }
-        return ImmutableMap.copyOf((Map) newLinkedHashMap);
+        return ImmutableMap.copyOf((Map) linkedHashMapNewLinkedHashMap);
     }
 
-    /* loaded from: classes.dex */
     static final class Scanner {
         private final ImmutableSortedSet.Builder<ResourceInfo> resources = new ImmutableSortedSet.Builder<>(Ordering.usingToString());
         private final Set<URI> scannedUris = Sets.newHashSet();
@@ -140,16 +139,16 @@ public final class ClassPath {
             if (immutableSet.contains(canonicalFile)) {
                 return;
             }
-            File[] listFiles = file.listFiles();
-            if (listFiles == null) {
+            File[] fileArrListFiles = file.listFiles();
+            if (fileArrListFiles == null) {
                 ClassPath.logger.warning("Cannot read directory " + file);
                 return;
             }
-            ImmutableSet<File> build = ImmutableSet.builder().addAll((Iterable) immutableSet).add((ImmutableSet.Builder) canonicalFile).build();
-            for (File file2 : listFiles) {
+            ImmutableSet<File> immutableSetBuild = ImmutableSet.builder().addAll((Iterable) immutableSet).add((ImmutableSet.Builder) canonicalFile).build();
+            for (File file2 : fileArrListFiles) {
                 String name = file2.getName();
                 if (file2.isDirectory()) {
-                    scanDirectory(file2, classLoader, str + name + "/", build);
+                    scanDirectory(file2, classLoader, str + name + "/", immutableSetBuild);
                 } else {
                     String str2 = str + name;
                     if (!str2.equals("META-INF/MANIFEST.MF")) {
@@ -167,11 +166,11 @@ public final class ClassPath {
                     while (it.hasNext()) {
                         scan(it.next(), classLoader);
                     }
-                    Enumeration<JarEntry> entries = jarFile.entries();
-                    while (entries.hasMoreElements()) {
-                        JarEntry nextElement = entries.nextElement();
-                        if (!nextElement.isDirectory() && !nextElement.getName().equals("META-INF/MANIFEST.MF")) {
-                            this.resources.add((ImmutableSortedSet.Builder<ResourceInfo>) ResourceInfo.of(nextElement.getName(), classLoader));
+                    Enumeration<JarEntry> enumerationEntries = jarFile.entries();
+                    while (enumerationEntries.hasMoreElements()) {
+                        JarEntry jarEntryNextElement = enumerationEntries.nextElement();
+                        if (!jarEntryNextElement.isDirectory() && !jarEntryNextElement.getName().equals("META-INF/MANIFEST.MF")) {
+                            this.resources.add((ImmutableSortedSet.Builder<ResourceInfo>) ResourceInfo.of(jarEntryNextElement.getName(), classLoader));
                         }
                     }
                     try {
@@ -200,8 +199,7 @@ public final class ClassPath {
                     try {
                         builder.add((ImmutableSet.Builder) getClassPathEntry(file, str));
                     } catch (URISyntaxException e) {
-                        Logger logger = ClassPath.logger;
-                        logger.warning("Invalid Class-Path entry: " + str);
+                        ClassPath.logger.warning("Invalid Class-Path entry: " + str);
                     }
                 }
             }

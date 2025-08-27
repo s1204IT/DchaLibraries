@@ -9,6 +9,7 @@ import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.tileimpl.QSIconViewImpl;
 import com.android.systemui.qs.tileimpl.SlashImageView;
+
 /* loaded from: classes.dex */
 public class SignalTileView extends QSIconViewImpl {
     private static final long DEFAULT_DURATION = new ValueAnimator().getDuration();
@@ -53,19 +54,17 @@ public class SignalTileView extends QSIconViewImpl {
         return new SlashImageView(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSIconViewImpl, android.view.View
-    public void onMeasure(int i, int i2) {
+    protected void onMeasure(int i, int i2) {
         super.onMeasure(i, i2);
-        int makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(this.mIconFrame.getMeasuredHeight(), 1073741824);
-        int makeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(this.mIconFrame.getMeasuredHeight(), Integer.MIN_VALUE);
-        this.mIn.measure(makeMeasureSpec2, makeMeasureSpec);
-        this.mOut.measure(makeMeasureSpec2, makeMeasureSpec);
+        int iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(this.mIconFrame.getMeasuredHeight(), 1073741824);
+        int iMakeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(this.mIconFrame.getMeasuredHeight(), Integer.MIN_VALUE);
+        this.mIn.measure(iMakeMeasureSpec2, iMakeMeasureSpec);
+        this.mOut.measure(iMakeMeasureSpec2, iMakeMeasureSpec);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSIconViewImpl, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         layoutIndicator(this.mIn);
         layoutIndicator(this.mOut);
@@ -104,9 +103,9 @@ public class SignalTileView extends QSIconViewImpl {
         } else {
             this.mSignal.setPaddingRelative(0, 0, 0, 0);
         }
-        boolean isShown = isShown();
-        setVisibility(this.mIn, isShown, signalState.activityIn);
-        setVisibility(this.mOut, isShown, signalState.activityOut);
+        boolean zIsShown = isShown();
+        setVisibility(this.mIn, zIsShown, signalState.activityIn);
+        setVisibility(this.mOut, zIsShown, signalState.activityOut);
     }
 
     private void setVisibility(View view, boolean z, boolean z2) {

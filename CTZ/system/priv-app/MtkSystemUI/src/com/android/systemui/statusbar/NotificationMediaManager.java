@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar;
 
+import android.R;
 import android.content.Context;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
@@ -11,6 +12,7 @@ import com.android.systemui.statusbar.NotificationData;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class NotificationMediaManager implements Dumpable {
     private final Context mContext;
@@ -151,8 +153,7 @@ public class NotificationMediaManager implements Dumpable {
         printWriter.println();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isPlaybackActive(int i) {
+    private boolean isPlaybackActive(int i) {
         return (i == 1 || i == 7 || i == 0) ? false : true;
     }
 
@@ -175,7 +176,7 @@ public class NotificationMediaManager implements Dumpable {
     }
 
     private boolean isMediaNotification(NotificationData.Entry entry) {
-        return (entry.getExpandedContentView() == null || entry.getExpandedContentView().findViewById(16909052) == null) ? false : true;
+        return (entry.getExpandedContentView() == null || entry.getExpandedContentView().findViewById(R.id.flagNoPersonalizedLearning) == null) ? false : true;
     }
 
     private void clearCurrentMediaNotificationSession() {

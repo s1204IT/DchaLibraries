@@ -20,6 +20,7 @@ import com.android.systemui.shared.recents.model.ThumbnailData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class ActivityManagerWrapper {
     private static final ActivityManagerWrapper sInstance = new ActivityManagerWrapper();
@@ -94,18 +95,18 @@ public class ActivityManagerWrapper {
     }
 
     public String getBadgedContentDescription(ActivityInfo activityInfo, int i, ActivityManager.TaskDescription taskDescription) {
-        String charSequence;
+        String string;
         if (taskDescription != null && taskDescription.getLabel() != null) {
-            charSequence = taskDescription.getLabel();
+            string = taskDescription.getLabel();
         } else {
-            charSequence = activityInfo.loadLabel(this.mPackageManager).toString();
+            string = activityInfo.loadLabel(this.mPackageManager).toString();
         }
-        String charSequence2 = activityInfo.applicationInfo.loadLabel(this.mPackageManager).toString();
-        String badgedLabel = getBadgedLabel(charSequence2, i);
-        if (charSequence2.equals(charSequence)) {
+        String string2 = activityInfo.applicationInfo.loadLabel(this.mPackageManager).toString();
+        String badgedLabel = getBadgedLabel(string2, i);
+        if (string2.equals(string)) {
             return badgedLabel;
         }
-        return badgedLabel + " " + charSequence;
+        return badgedLabel + " " + string;
     }
 
     private String getBadgedLabel(String str, int i) {
@@ -136,17 +137,17 @@ public class ActivityManagerWrapper {
         this.mBackgroundExecutor.submit(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.5
             @Override // java.lang.Runnable
             public void run() {
-                final boolean z;
+                final boolean zStartActivityFromRecents;
                 try {
-                    z = ActivityManagerWrapper.this.startActivityFromRecents(taskKey.id, activityOptions2);
+                    zStartActivityFromRecents = ActivityManagerWrapper.this.startActivityFromRecents(taskKey.id, activityOptions2);
                 } catch (Exception e) {
-                    z = false;
+                    zStartActivityFromRecents = false;
                 }
                 if (consumer != null) {
                     handler.post(new Runnable() { // from class: com.android.systemui.shared.system.ActivityManagerWrapper.5.1
                         @Override // java.lang.Runnable
                         public void run() {
-                            consumer.accept(Boolean.valueOf(z));
+                            consumer.accept(Boolean.valueOf(zStartActivityFromRecents));
                         }
                     });
                 }

@@ -1,6 +1,7 @@
 package com.android.quickstep.util;
 
 import android.graphics.Rect;
+
 /* loaded from: classes.dex */
 public class TransformedRect {
     public final Rect rect = new Rect();

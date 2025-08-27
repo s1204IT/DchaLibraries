@@ -2,6 +2,7 @@ package com.mediatek.browser.ext;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+
 /* loaded from: classes.dex */
 public interface IBrowserDownloadExt {
     boolean checkStorageBeforeDownload(Activity activity, String str, long j);

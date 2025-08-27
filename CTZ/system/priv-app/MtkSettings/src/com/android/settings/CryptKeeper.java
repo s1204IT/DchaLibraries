@@ -41,7 +41,9 @@ import android.widget.TextView;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.internal.widget.LockPatternView;
 import com.android.settings.widget.ImeAwareEditText;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyListener, View.OnTouchListener, TextView.OnEditorActionListener {
     private AudioManager mAudioManager;
@@ -72,16 +74,14 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
     };
     private final Handler mHandler = new Handler() { // from class: com.android.settings.CryptKeeper.3
         @Override // android.os.Handler
-        public void handleMessage(Message message) {
+        public void handleMessage(Message message) throws NumberFormatException {
             switch (message.what) {
                 case 1:
                     CryptKeeper.this.updateProgress();
-                    return;
+                    break;
                 case 2:
                     CryptKeeper.this.notifyUser();
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     };
@@ -106,7 +106,6 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         }
     };
 
-    /* loaded from: classes.dex */
     private static class NonConfigurationInstanceState {
         final PowerManager.WakeLock wakelock;
 
@@ -115,15 +114,14 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         }
     }
 
-    /* loaded from: classes.dex */
     private class DecryptTask extends AsyncTask<String, Void, Integer> {
         private DecryptTask() {
         }
 
         private void hide(int i) {
-            View findViewById = CryptKeeper.this.findViewById(i);
-            if (findViewById != null) {
-                findViewById.setVisibility(8);
+            View viewFindViewById = CryptKeeper.this.findViewById(i);
+            if (viewFindViewById != null) {
+                viewFindViewById.setVisibility(8);
             }
         }
 
@@ -133,9 +131,9 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
             CryptKeeper.this.beginAttempt();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Integer doInBackground(String... strArr) {
+        protected Integer doInBackground(String... strArr) {
             try {
                 return Integer.valueOf(CryptKeeper.this.getStorageManager().decryptStorage(strArr[0]));
             } catch (Exception e) {
@@ -144,9 +142,9 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Integer num) {
+        protected void onPostExecute(Integer num) {
             Log.d("CryptKeeper", "failedAttempts : " + num);
             if (num.intValue() == 0) {
                 if (CryptKeeper.this.mLockPatternView != null) {
@@ -159,13 +157,17 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
                 hide(R.id.lockPattern);
                 hide(R.id.owner_info);
                 hide(R.id.emergencyCallButton);
-            } else if (num.intValue() == 30) {
+                return;
+            }
+            if (num.intValue() == 30) {
                 Intent intent = new Intent("android.intent.action.FACTORY_RESET");
                 intent.setPackage("android");
                 intent.addFlags(268435456);
                 intent.putExtra("android.intent.extra.REASON", "CryptKeeper.MAX_FAILED_ATTEMPTS");
                 CryptKeeper.this.sendBroadcast(intent);
-            } else if (num.intValue() != -1) {
+                return;
+            }
+            if (num.intValue() != -1) {
                 CryptKeeper.this.handleBadAttempt(num);
             } else {
                 CryptKeeper.this.setContentView(R.layout.crypt_keeper_progress);
@@ -174,14 +176,12 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void beginAttempt() {
+    private void beginAttempt() {
         ((TextView) findViewById(R.id.status)).setText(R.string.checking_decryption);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleBadAttempt(Integer num) {
-        int i;
+    private void handleBadAttempt(Integer num) {
+        int passwordType;
         if (this.mLockPatternView != null) {
             this.mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);
             this.mLockPatternView.removeCallbacks(this.mClearPatternRunnable);
@@ -193,19 +193,19 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
             return;
         }
         TextView textView = (TextView) findViewById(R.id.status);
-        int intValue = 30 - num.intValue();
-        if (intValue < 10) {
-            textView.setText(TextUtils.expandTemplate(getText(R.string.crypt_keeper_warn_wipe), Integer.toString(intValue)));
+        int iIntValue = 30 - num.intValue();
+        if (iIntValue < 10) {
+            textView.setText(TextUtils.expandTemplate(getText(R.string.crypt_keeper_warn_wipe), Integer.toString(iIntValue)));
         } else {
             try {
-                i = getStorageManager().getPasswordType();
+                passwordType = getStorageManager().getPasswordType();
             } catch (Exception e) {
                 Log.e("CryptKeeper", "Error calling mount service " + e);
-                i = 0;
+                passwordType = 0;
             }
-            if (i == 3) {
+            if (passwordType == 3) {
                 textView.setText(R.string.cryptkeeper_wrong_pin);
-            } else if (i == 2) {
+            } else if (passwordType == 2) {
                 textView.setText(R.string.cryptkeeper_wrong_pattern);
             } else {
                 textView.setText(R.string.cryptkeeper_wrong_password);
@@ -222,17 +222,15 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ValidationTask extends AsyncTask<Void, Void, Boolean> {
+    private class ValidationTask extends AsyncTask<Void, Void, Boolean> {
         int state;
 
         private ValidationTask() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             IStorageManager storageManager = CryptKeeper.this.getStorageManager();
             try {
                 Log.d("CryptKeeper", "Validating encryption state.");
@@ -248,9 +246,9 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) throws NumberFormatException {
             CryptKeeper.this.mValidationComplete = true;
             if (Boolean.FALSE.equals(bool)) {
                 Log.w("CryptKeeper", "Incomplete, or corrupted encryption detected. Prompting user to wipe.");
@@ -271,8 +269,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         return str.equals(getIntent().getStringExtra("com.android.settings.CryptKeeper.DEBUG_FORCE_VIEW"));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyUser() {
+    private void notifyUser() {
         if (this.mNotificationCountdown > 0) {
             Log.d("CryptKeeper", "Counting down to notify user..." + this.mNotificationCountdown);
             this.mNotificationCountdown = this.mNotificationCountdown + (-1);
@@ -335,20 +332,21 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
     }
 
     @Override // android.app.Activity
-    public void onStart() {
+    public void onStart() throws NumberFormatException {
         super.onStart();
         Log.d("CryptKeeper", "onStart()");
         listenPhoneStateBroadcast(this);
         setupUi();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     /* JADX WARN: Type inference failed for: r0v10, types: [com.android.settings.CryptKeeper$4] */
-    public void setupUi() {
+    private void setupUi() throws NumberFormatException {
         if (this.mEncryptionGoneBad || isDebugView("error")) {
             setContentView(R.layout.crypt_keeper_progress);
             showFactoryReset(this.mCorrupt);
-        } else if (!"".equals(SystemProperties.get("vold.encrypt_progress")) || isDebugView("progress")) {
+            return;
+        }
+        if (!"".equals(SystemProperties.get("vold.encrypt_progress")) || isDebugView("progress")) {
             setContentView(R.layout.crypt_keeper_progress);
             encryptionProgressInit();
         } else if (this.mValidationComplete || isDebugView("password")) {
@@ -358,6 +356,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
                 boolean password_visible;
                 boolean pattern_visible;
 
+                /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // android.os.AsyncTask
                 public Void doInBackground(Void... voidArr) {
                     try {
@@ -373,6 +372,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
                     }
                 }
 
+                /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
                 @Override // android.os.AsyncTask
                 public void onPostExecute(Void r4) {
                     Settings.System.putInt(CryptKeeper.this.getContentResolver(), "show_password", this.password_visible ? 1 : 0);
@@ -392,7 +392,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
                     textView.setText(this.owner_info);
                     textView.setSelected(true);
                     CryptKeeper.this.passwordEntryInit();
-                    CryptKeeper.this.findViewById(16908290).setSystemUiVisibility(4194816);
+                    CryptKeeper.this.findViewById(android.R.id.content).setSystemUiVisibility(4194816);
                     if (CryptKeeper.this.mLockPatternView != null) {
                         CryptKeeper.this.mLockPatternView.setInStealthMode(true ^ this.pattern_visible);
                     }
@@ -403,7 +403,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
                 }
             }.execute(new Void[0]);
         } else if (!this.mValidationRequested) {
-            new ValidationTask().execute((Object[]) null);
+            new ValidationTask().execute((Void[]) null);
             this.mValidationRequested = true;
         }
     }
@@ -440,7 +440,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         }
     }
 
-    private void encryptionProgressInit() {
+    private void encryptionProgressInit() throws NumberFormatException {
         Log.d("CryptKeeper", "Encryption progress screen initializing.");
         if (this.mWakeLock == null) {
             Log.d("CryptKeeper", "Acquiring wakelock.");
@@ -452,8 +452,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         updateProgress();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showFactoryReset(final boolean z) {
+    private void showFactoryReset(final boolean z) {
         findViewById(R.id.encroid).setVisibility(8);
         Button button = (Button) findViewById(R.id.factory_reset);
         button.setVisibility(0);
@@ -474,14 +473,13 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
             ((TextView) findViewById(R.id.title)).setText(R.string.crypt_keeper_failed_title);
             ((TextView) findViewById(R.id.status)).setText(R.string.crypt_keeper_failed_summary);
         }
-        View findViewById = findViewById(R.id.bottom_divider);
-        if (findViewById != null) {
-            findViewById.setVisibility(0);
+        View viewFindViewById = findViewById(R.id.bottom_divider);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(0);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateProgress() {
+    private void updateProgress() throws NumberFormatException {
         int i;
         String str = SystemProperties.get("vold.encrypt_progress");
         if ("error_partially_encrypted".equals(str)) {
@@ -495,31 +493,29 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
             Log.w("CryptKeeper", "Error parsing progress: " + e.toString());
             i = 0;
         }
-        String num = Integer.toString(i);
-        Log.v("CryptKeeper", "Encryption progress: " + num);
+        String string = Integer.toString(i);
+        Log.v("CryptKeeper", "Encryption progress: " + string);
         try {
-            int parseInt = Integer.parseInt(SystemProperties.get("vold.encrypt_time_remaining"));
-            if (parseInt >= 0) {
-                String formatElapsedTime = DateUtils.formatElapsedTime(((parseInt + 9) / 10) * 10);
+            if (Integer.parseInt(SystemProperties.get("vold.encrypt_time_remaining")) >= 0) {
+                String elapsedTime = DateUtils.formatElapsedTime(((r3 + 9) / 10) * 10);
                 try {
                     text = getText(R.string.crypt_keeper_setup_time_remaining);
-                    num = formatElapsedTime;
+                    string = elapsedTime;
                 } catch (Exception e2) {
-                    num = formatElapsedTime;
+                    string = elapsedTime;
                 }
             }
         } catch (Exception e3) {
         }
         TextView textView = (TextView) findViewById(R.id.status);
         if (textView != null) {
-            textView.setText(TextUtils.expandTemplate(text, num));
+            textView.setText(TextUtils.expandTemplate(text, string));
         }
         this.mHandler.removeMessages(1);
         this.mHandler.sendEmptyMessageDelayed(1, 1000L);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void cooldown() {
+    private void cooldown() {
         if (this.mPasswordEntry != null) {
             this.mPasswordEntry.setEnabled(false);
         }
@@ -529,8 +525,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         ((TextView) findViewById(R.id.status)).setText(R.string.crypt_keeper_force_power_cycle);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void setBackFunctionality(boolean z) {
+    private final void setBackFunctionality(boolean z) {
         if (z) {
             this.mStatusBar.disable(52887552);
         } else {
@@ -538,15 +533,13 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fakeUnlockAttempt(View view) {
+    private void fakeUnlockAttempt(View view) {
         beginAttempt();
         view.postDelayed(this.mFakeUnlockAttemptRunnable, 1000L);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void passwordEntryInit() {
-        View findViewById;
+    private void passwordEntryInit() {
+        View viewFindViewById;
         Log.d("CryptKeeper", "passwordEntryInit().");
         this.mPasswordEntry = (ImeAwareEditText) findViewById(R.id.passwordEntry);
         if (this.mPasswordEntry != null) {
@@ -560,15 +553,15 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         if (this.mLockPatternView != null) {
             this.mLockPatternView.setOnPatternListener(this.mChooseNewLockPatternListener);
         }
-        if (!getTelephonyManager().isVoiceCapable() && (findViewById = findViewById(R.id.emergencyCallButton)) != null) {
+        if (!getTelephonyManager().isVoiceCapable() && (viewFindViewById = findViewById(R.id.emergencyCallButton)) != null) {
             Log.d("CryptKeeper", "Removing the emergency Call button");
-            findViewById.setVisibility(8);
+            viewFindViewById.setVisibility(8);
         }
-        View findViewById2 = findViewById(R.id.switch_ime_button);
+        View viewFindViewById2 = findViewById(R.id.switch_ime_button);
         final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService("input_method");
-        if (findViewById2 != null && !isPatternLockType() && hasMultipleEnabledIMEsOrSubtypes(inputMethodManager, false)) {
-            findViewById2.setVisibility(0);
-            findViewById2.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.CryptKeeper.7
+        if (viewFindViewById2 != null && !isPatternLockType() && hasMultipleEnabledIMEsOrSubtypes(inputMethodManager, false)) {
+            viewFindViewById2.setVisibility(0);
+            viewFindViewById2.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.CryptKeeper.7
                 @Override // android.view.View.OnClickListener
                 public void onClick(View view) {
                     inputMethodManager.showInputMethodPicker(false);
@@ -606,9 +599,10 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
             if (enabledInputMethodSubtypeList.isEmpty()) {
                 i++;
             } else {
+                Iterator<InputMethodSubtype> it = enabledInputMethodSubtypeList.iterator();
                 int i2 = 0;
-                for (InputMethodSubtype inputMethodSubtype : enabledInputMethodSubtypeList) {
-                    if (inputMethodSubtype.isAuxiliary()) {
+                while (it.hasNext()) {
+                    if (it.next().isAuxiliary()) {
                         i2++;
                     }
                 }
@@ -620,8 +614,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         return i > 1 || inputMethodManager.getEnabledInputMethodSubtypeList(null, false).size() > 1;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public IStorageManager getStorageManager() {
+    private IStorageManager getStorageManager() {
         IBinder service = ServiceManager.getService("mount");
         if (service != null) {
             return IStorageManager.Stub.asInterface(service);
@@ -634,15 +627,15 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         if (i != 0 && i != 6) {
             return false;
         }
-        String charSequence = textView.getText().toString();
-        if (TextUtils.isEmpty(charSequence)) {
+        String string = textView.getText().toString();
+        if (TextUtils.isEmpty(string)) {
             return true;
         }
         textView.setText((CharSequence) null);
         this.mPasswordEntry.setEnabled(false);
         setBackFunctionality(false);
-        if (charSequence.length() >= 4) {
-            new DecryptTask().execute(charSequence);
+        if (string.length() >= 4) {
+            new DecryptTask().execute(string);
         } else {
             fakeUnlockAttempt(this.mPasswordEntry);
         }
@@ -665,8 +658,7 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateEmergencyCallButtonState() {
+    private void updateEmergencyCallButtonState() {
         int i;
         Button button = (Button) findViewById(R.id.emergencyCallButton);
         if (button == null) {
@@ -694,11 +686,10 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
     }
 
     private boolean isEmergencyCallCapable() {
-        return getResources().getBoolean(17957067);
+        return getResources().getBoolean(android.R.^attr-private.materialColorSurfaceContainerLowest);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void takeEmergencyCallAction() {
+    private void takeEmergencyCallAction() {
         TelecomManager telecomManager = getTelecomManager();
         Log.d("CryptKeeper", "onClick Button telecomManager.isInCall() = " + telecomManager.isInCall());
         if (telecomManager.isInCall()) {
@@ -754,14 +745,12 @@ public class CryptKeeper extends Activity implements TextWatcher, View.OnKeyList
 
     private static void disableCryptKeeperComponent(Context context) {
         PackageManager packageManager = context.getPackageManager();
-        ComponentName componentName = new ComponentName(context, CryptKeeper.class);
+        ComponentName componentName = new ComponentName(context, (Class<?>) CryptKeeper.class);
         Log.d("CryptKeeper", "Disabling component " + componentName);
         packageManager.setComponentEnabledSetting(componentName, 2, 1);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PhoneStateBroadcastReceiver extends BroadcastReceiver {
+    private class PhoneStateBroadcastReceiver extends BroadcastReceiver {
         private PhoneStateBroadcastReceiver() {
         }
 

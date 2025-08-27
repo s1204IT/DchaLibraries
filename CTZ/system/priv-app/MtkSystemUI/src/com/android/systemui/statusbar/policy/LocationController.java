@@ -1,4 +1,5 @@
 package com.android.systemui.statusbar.policy;
+
 /* loaded from: classes.dex */
 public interface LocationController extends CallbackController<LocationChangeCallback> {
     boolean isLocationActive();
@@ -7,7 +8,6 @@ public interface LocationController extends CallbackController<LocationChangeCal
 
     boolean setLocationEnabled(boolean z);
 
-    /* loaded from: classes.dex */
     public interface LocationChangeCallback {
         default void onLocationActiveChanged(boolean z) {
         }

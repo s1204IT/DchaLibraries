@@ -11,6 +11,7 @@ import com.android.settings.R;
 import com.android.settings.applications.defaultapps.DefaultAppPreferenceController;
 import com.android.settingslib.applications.DefaultAppInfo;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultAssistPreferenceController extends DefaultAppPreferenceController {
     private final AssistUtils mAssistUtils;
@@ -28,16 +29,16 @@ public class DefaultAssistPreferenceController extends DefaultAppPreferenceContr
     protected Intent getSettingIntent(DefaultAppInfo defaultAppInfo) {
         ComponentName assistComponentForUser;
         String assistSettingsActivity;
-        if (this.mShowSetting && (assistComponentForUser = this.mAssistUtils.getAssistComponentForUser(this.mUserId)) != null) {
-            Intent intent = new Intent("android.service.voice.VoiceInteractionService").setPackage(assistComponentForUser.getPackageName());
-            PackageManager packageManager = this.mPackageManager.getPackageManager();
-            List<ResolveInfo> queryIntentServices = packageManager.queryIntentServices(intent, 128);
-            if (queryIntentServices == null || queryIntentServices.isEmpty() || (assistSettingsActivity = getAssistSettingsActivity(assistComponentForUser, queryIntentServices.get(0), packageManager)) == null) {
-                return null;
-            }
-            return new Intent("android.intent.action.MAIN").setComponent(new ComponentName(assistComponentForUser.getPackageName(), assistSettingsActivity));
+        if (!this.mShowSetting || (assistComponentForUser = this.mAssistUtils.getAssistComponentForUser(this.mUserId)) == null) {
+            return null;
         }
-        return null;
+        Intent intent = new Intent("android.service.voice.VoiceInteractionService").setPackage(assistComponentForUser.getPackageName());
+        PackageManager packageManager = this.mPackageManager.getPackageManager();
+        List<ResolveInfo> listQueryIntentServices = packageManager.queryIntentServices(intent, 128);
+        if (listQueryIntentServices == null || listQueryIntentServices.isEmpty() || (assistSettingsActivity = getAssistSettingsActivity(assistComponentForUser, listQueryIntentServices.get(0), packageManager)) == null) {
+            return null;
+        }
+        return new Intent("android.intent.action.MAIN").setComponent(new ComponentName(assistComponentForUser.getPackageName(), assistSettingsActivity));
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController

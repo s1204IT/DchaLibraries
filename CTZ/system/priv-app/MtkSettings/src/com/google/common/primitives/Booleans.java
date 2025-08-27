@@ -1,4 +1,5 @@
 package com.google.common.primitives;
+
 /* loaded from: classes.dex */
 public final class Booleans {
     public static int compare(boolean z, boolean z2) {

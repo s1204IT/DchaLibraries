@@ -14,6 +14,7 @@ import com.android.settings.R;
 import com.android.settings.Utils;
 import com.android.settingslib.utils.StringUtil;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class HighUsageAdapter extends RecyclerView.Adapter<ViewHolder> {
     private final Context mContext;
@@ -21,7 +22,6 @@ public class HighUsageAdapter extends RecyclerView.Adapter<ViewHolder> {
     private final IconDrawableFactory mIconDrawableFactory;
     private final PackageManager mPackageManager;
 
-    /* loaded from: classes.dex */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView appIcon;
         public TextView appName;
@@ -44,11 +44,13 @@ public class HighUsageAdapter extends RecyclerView.Adapter<ViewHolder> {
         this.mPackageManager = context.getPackageManager();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new ViewHolder(LayoutInflater.from(this.mContext).inflate(R.layout.app_high_usage_item, viewGroup, false));
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         AppInfo appInfo = this.mHighUsageAppList.get(i);

@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settings.widget.SummaryUpdater;
 import com.android.settingslib.wifi.WifiStatusTracker;
+
 /* loaded from: classes.dex */
 public final class WifiSummaryUpdater extends SummaryUpdater {
     private static final IntentFilter INTENT_FILTER = new IntentFilter();
@@ -28,13 +29,13 @@ public final class WifiSummaryUpdater extends SummaryUpdater {
     }
 
     public WifiSummaryUpdater(Context context, SummaryUpdater.OnSummaryChangeListener onSummaryChangeListener, WifiStatusTracker wifiStatusTracker) {
-        super(context, onSummaryChangeListener);
         WifiStatusTracker wifiStatusTracker2;
+        super(context, onSummaryChangeListener);
         if (wifiStatusTracker == null) {
             wifiStatusTracker2 = new WifiStatusTracker(context, (WifiManager) context.getSystemService(WifiManager.class), (NetworkScoreManager) context.getSystemService(NetworkScoreManager.class), (ConnectivityManager) context.getSystemService(ConnectivityManager.class), new Runnable() { // from class: com.android.settings.wifi.-$$Lambda$WifiSummaryUpdater$5w1MXX8MJfsbMZcSIHVb0vJmaww
                 @Override // java.lang.Runnable
                 public final void run() {
-                    WifiSummaryUpdater.this.notifyChangeIfNeeded();
+                    this.f$0.notifyChangeIfNeeded();
                 }
             });
         } else {
@@ -67,7 +68,7 @@ public final class WifiSummaryUpdater extends SummaryUpdater {
         if (!this.mWifiTracker.connected) {
             return this.mContext.getString(R.string.disconnected);
         }
-        String removeDoubleQuotes = android.net.wifi.WifiInfo.removeDoubleQuotes(this.mWifiTracker.ssid);
-        return TextUtils.isEmpty(this.mWifiTracker.statusLabel) ? removeDoubleQuotes : this.mContext.getResources().getString(R.string.preference_summary_default_combination, removeDoubleQuotes, this.mWifiTracker.statusLabel);
+        String strRemoveDoubleQuotes = android.net.wifi.WifiInfo.removeDoubleQuotes(this.mWifiTracker.ssid);
+        return TextUtils.isEmpty(this.mWifiTracker.statusLabel) ? strRemoveDoubleQuotes : this.mContext.getResources().getString(R.string.preference_summary_default_combination, strRemoveDoubleQuotes, this.mWifiTracker.statusLabel);
     }
 }

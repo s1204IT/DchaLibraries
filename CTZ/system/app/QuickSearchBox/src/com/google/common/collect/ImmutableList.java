@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.RandomAccess;
+
 /* loaded from: classes.dex */
 public abstract class ImmutableList<E> extends ImmutableCollection<E> implements List<E>, RandomAccess {
     private static final ImmutableList<Object> EMPTY = new RegularImmutableList(ObjectArrays.EMPTY_ARRAY);
@@ -31,13 +32,11 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <E> ImmutableList<E> asImmutableList(Object[] objArr) {
+    static <E> ImmutableList<E> asImmutableList(Object[] objArr) {
         return asImmutableList(objArr, objArr.length);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <E> ImmutableList<E> asImmutableList(Object[] objArr, int i) {
+    static <E> ImmutableList<E> asImmutableList(Object[] objArr, int i) {
         switch (i) {
             case 0:
                 return of();
@@ -51,16 +50,22 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         }
     }
 
+    ImmutableList() {
+    }
+
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<E> iterator() {
         return listIterator();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: listIterator()Ljava/util/ListIterator; */
     @Override // java.util.List
     public UnmodifiableListIterator<E> listIterator() {
         return listIterator(0);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: listIterator(I)Ljava/util/ListIterator; */
     @Override // java.util.List
     public UnmodifiableListIterator<E> listIterator(int i) {
         return new AbstractIndexedListIterator<E>(size(), i) { // from class: com.google.common.collect.ImmutableList.1
@@ -92,6 +97,7 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         return indexOf(obj) >= 0;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: subList(II)Ljava/util/List; */
     @Override // java.util.List
     public ImmutableList<E> subList(int i, int i2) {
         Preconditions.checkPositionIndexes(i, i2, size());
@@ -105,14 +111,11 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ImmutableList<E> subListUnchecked(int i, int i2) {
+    ImmutableList<E> subListUnchecked(int i, int i2) {
         return new SubList(i, i2 - i);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class SubList extends ImmutableList<E> {
+    class SubList extends ImmutableList<E> {
         final transient int length;
         final transient int offset;
 
@@ -132,15 +135,15 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
             return ImmutableList.this.get(i + this.offset);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: subList(II)Ljava/util/List; */
         @Override // com.google.common.collect.ImmutableList, java.util.List
         public ImmutableList<E> subList(int i, int i2) {
             Preconditions.checkPositionIndexes(i, i2, this.length);
             return ImmutableList.this.subList(i + this.offset, i2 + this.offset);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
         @Override // com.google.common.collect.ImmutableCollection
-        public boolean isPartialView() {
+        boolean isPartialView() {
             return true;
         }
     }
@@ -174,9 +177,8 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         return this;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public int copyIntoArray(Object[] objArr, int i) {
+    int copyIntoArray(Object[] objArr, int i) {
         int size = size();
         for (int i2 = 0; i2 < size; i2++) {
             objArr[i + i2] = get(i2);
@@ -188,9 +190,7 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         return new ReverseImmutableList(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ReverseImmutableList<E> extends ImmutableList<E> {
+    private static class ReverseImmutableList<E> extends ImmutableList<E> {
         private final transient ImmutableList<E> forwardList;
 
         ReverseImmutableList(ImmutableList<E> immutableList) {
@@ -217,22 +217,23 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
 
         @Override // com.google.common.collect.ImmutableList, java.util.List
         public int indexOf(Object obj) {
-            int lastIndexOf = this.forwardList.lastIndexOf(obj);
-            if (lastIndexOf >= 0) {
-                return reverseIndex(lastIndexOf);
+            int iLastIndexOf = this.forwardList.lastIndexOf(obj);
+            if (iLastIndexOf >= 0) {
+                return reverseIndex(iLastIndexOf);
             }
             return -1;
         }
 
         @Override // com.google.common.collect.ImmutableList, java.util.List
         public int lastIndexOf(Object obj) {
-            int indexOf = this.forwardList.indexOf(obj);
-            if (indexOf >= 0) {
-                return reverseIndex(indexOf);
+            int iIndexOf = this.forwardList.indexOf(obj);
+            if (iIndexOf >= 0) {
+                return reverseIndex(iIndexOf);
             }
             return -1;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: subList(II)Ljava/util/List; */
         @Override // com.google.common.collect.ImmutableList, java.util.List
         public ImmutableList<E> subList(int i, int i2) {
             Preconditions.checkPositionIndexes(i, i2, size());
@@ -250,9 +251,8 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
             return this.forwardList.size();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
         @Override // com.google.common.collect.ImmutableCollection
-        public boolean isPartialView() {
+        boolean isPartialView() {
             return this.forwardList.isPartialView();
         }
     }
@@ -265,20 +265,18 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
     @Override // java.util.Collection, java.util.List
     public int hashCode() {
         int size = size();
-        int i = 1;
-        for (int i2 = 0; i2 < size; i2++) {
-            i = (((31 * i) + get(i2).hashCode()) ^ (-1)) ^ (-1);
+        int iHashCode = 1;
+        for (int i = 0; i < size; i++) {
+            iHashCode = (((31 * iHashCode) + get(i).hashCode()) ^ (-1)) ^ (-1);
         }
-        return i;
+        return iHashCode;
     }
 
-    /* loaded from: classes.dex */
     static class SerializedForm implements Serializable {
         private static final long serialVersionUID = 0;
         final Object[] elements;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public SerializedForm(Object[] objArr) {
+        SerializedForm(Object[] objArr) {
             this.elements = objArr;
         }
 
@@ -300,14 +298,15 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
         return new Builder<>();
     }
 
-    /* loaded from: classes.dex */
     public static final class Builder<E> extends ImmutableCollection.ArrayBasedBuilder<E> {
+        /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public /* bridge */ /* synthetic */ ImmutableCollection.ArrayBasedBuilder add(Object obj) {
             return add((Builder<E>) obj);
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public /* bridge */ /* synthetic */ ImmutableCollection.Builder add(Object obj) {
@@ -328,12 +327,14 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E> implements
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: addAll(Ljava/lang/Iterable;)Lcom/google/common/collect/ImmutableCollection$Builder; */
         @Override // com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public Builder<E> addAll(Iterable<? extends E> iterable) {
             super.addAll((Iterable) iterable);
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: add([Ljava/lang/Object;)Lcom/google/common/collect/ImmutableCollection$Builder; */
         @Override // com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public Builder<E> add(E... eArr) {
             super.add((Object[]) eArr);

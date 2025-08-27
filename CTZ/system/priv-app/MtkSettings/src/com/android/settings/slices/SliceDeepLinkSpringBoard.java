@@ -10,6 +10,7 @@ import com.android.settings.location.LocationSliceBuilder;
 import com.android.settings.notification.ZenModeSliceBuilder;
 import com.android.settings.wifi.WifiSliceBuilder;
 import java.net.URISyntaxException;
+
 /* loaded from: classes.dex */
 public class SliceDeepLinkSpringBoard extends Activity {
     @Override // android.app.Activity
@@ -23,23 +24,23 @@ public class SliceDeepLinkSpringBoard extends Activity {
             return;
         }
         try {
-            Intent parse = parse(data, getPackageName());
-            if ("com.android.settings.action.VIEW_SLICE".equals(parse.getAction())) {
-                Uri parse2 = Uri.parse(parse.getStringExtra("slice"));
-                if (WifiSliceBuilder.WIFI_URI.equals(parse2)) {
+            Intent intent = parse(data, getPackageName());
+            if ("com.android.settings.action.VIEW_SLICE".equals(intent.getAction())) {
+                Uri uri = Uri.parse(intent.getStringExtra("slice"));
+                if (WifiSliceBuilder.WIFI_URI.equals(uri)) {
                     contentIntent = WifiSliceBuilder.getIntent(this);
-                } else if (ZenModeSliceBuilder.ZEN_MODE_URI.equals(parse2)) {
+                } else if (ZenModeSliceBuilder.ZEN_MODE_URI.equals(uri)) {
                     contentIntent = ZenModeSliceBuilder.getIntent(this);
-                } else if (BluetoothSliceBuilder.BLUETOOTH_URI.equals(parse2)) {
+                } else if (BluetoothSliceBuilder.BLUETOOTH_URI.equals(uri)) {
                     contentIntent = BluetoothSliceBuilder.getIntent(this);
-                } else if (LocationSliceBuilder.LOCATION_URI.equals(parse2)) {
+                } else if (LocationSliceBuilder.LOCATION_URI.equals(uri)) {
                     contentIntent = LocationSliceBuilder.getIntent(this);
                 } else {
-                    contentIntent = SliceBuilderUtils.getContentIntent(this, new SlicesDatabaseAccessor(this).getSliceDataFromUri(parse2));
+                    contentIntent = SliceBuilderUtils.getContentIntent(this, new SlicesDatabaseAccessor(this).getSliceDataFromUri(uri));
                 }
                 startActivity(contentIntent);
             } else {
-                startActivity(parse);
+                startActivity(intent);
             }
             finish();
         } catch (IllegalStateException e) {
@@ -53,12 +54,12 @@ public class SliceDeepLinkSpringBoard extends Activity {
     }
 
     public static Intent parse(Uri uri, String str) throws URISyntaxException {
-        Intent parseUri = Intent.parseUri(uri.getQueryParameter("intent"), 2);
-        parseUri.setComponent(null);
-        if (parseUri.getExtras() != null) {
-            parseUri.getExtras().clear();
+        Intent uri2 = Intent.parseUri(uri.getQueryParameter("intent"), 2);
+        uri2.setComponent(null);
+        if (uri2.getExtras() != null) {
+            uri2.getExtras().clear();
         }
-        parseUri.setPackage(str);
-        return parseUri;
+        uri2.setPackage(str);
+        return uri2;
     }
 }

@@ -14,8 +14,10 @@ import android.util.Log;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.util.Preconditions;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AsyncSensorManager extends SensorManager {
+
     @VisibleForTesting
     final Handler mHandler;
     private final HandlerThread mHandlerThread = new HandlerThread("async_sensor");
@@ -41,7 +43,7 @@ public class AsyncSensorManager extends SensorManager {
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.util.-$$Lambda$AsyncSensorManager$d7xLBI7qZK784-fy2ffbXtJPEGA
             @Override // java.lang.Runnable
             public final void run() {
-                AsyncSensorManager.lambda$registerListenerImpl$0(AsyncSensorManager.this, sensorEventListener, sensor, i, i2, handler);
+                AsyncSensorManager.lambda$registerListenerImpl$0(this.f$0, sensorEventListener, sensor, i, i2, handler);
             }
         });
         return true;
@@ -73,7 +75,7 @@ public class AsyncSensorManager extends SensorManager {
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.util.-$$Lambda$AsyncSensorManager$Hwm7wwA6xT-rLeZcpNr7J2BNQWE
             @Override // java.lang.Runnable
             public final void run() {
-                AsyncSensorManager.this.mInner.registerDynamicSensorCallback(dynamicSensorCallback, handler);
+                this.f$0.mInner.registerDynamicSensorCallback(dynamicSensorCallback, handler);
             }
         });
     }
@@ -82,7 +84,7 @@ public class AsyncSensorManager extends SensorManager {
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.util.-$$Lambda$AsyncSensorManager$ioH8tBFNQaFrSnUQEwQdi_ri4K0
             @Override // java.lang.Runnable
             public final void run() {
-                AsyncSensorManager.this.mInner.unregisterDynamicSensorCallback(dynamicSensorCallback);
+                this.f$0.mInner.unregisterDynamicSensorCallback(dynamicSensorCallback);
             }
         });
     }
@@ -91,7 +93,7 @@ public class AsyncSensorManager extends SensorManager {
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.util.-$$Lambda$AsyncSensorManager$q1TQFoUPad2_Ye0DbYS5yACL5CU
             @Override // java.lang.Runnable
             public final void run() {
-                AsyncSensorManager.lambda$requestTriggerSensorImpl$3(AsyncSensorManager.this, triggerEventListener, sensor);
+                AsyncSensorManager.lambda$requestTriggerSensorImpl$3(this.f$0, triggerEventListener, sensor);
             }
         });
         return true;
@@ -108,7 +110,7 @@ public class AsyncSensorManager extends SensorManager {
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.util.-$$Lambda$AsyncSensorManager$ssfdtdJfSGgmlHJqcz8km7BLSQE
             @Override // java.lang.Runnable
             public final void run() {
-                AsyncSensorManager.lambda$cancelTriggerSensorImpl$4(AsyncSensorManager.this, triggerEventListener, sensor);
+                AsyncSensorManager.lambda$cancelTriggerSensorImpl$4(this.f$0, triggerEventListener, sensor);
             }
         });
         return true;
@@ -132,7 +134,7 @@ public class AsyncSensorManager extends SensorManager {
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.util.-$$Lambda$AsyncSensorManager$yWyG4VnNvYVS3_A55eZfq00QEBQ
             @Override // java.lang.Runnable
             public final void run() {
-                AsyncSensorManager.this.mInner.setOperationParameter(sensorAdditionalInfo);
+                this.f$0.mInner.setOperationParameter(sensorAdditionalInfo);
             }
         });
         return true;
@@ -142,7 +144,7 @@ public class AsyncSensorManager extends SensorManager {
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.util.-$$Lambda$AsyncSensorManager$-X62bKcCGUmPVwchbYAj2vQKUTg
             @Override // java.lang.Runnable
             public final void run() {
-                AsyncSensorManager.lambda$unregisterListenerImpl$6(AsyncSensorManager.this, sensor, sensorEventListener);
+                AsyncSensorManager.lambda$unregisterListenerImpl$6(this.f$0, sensor, sensorEventListener);
             }
         });
     }

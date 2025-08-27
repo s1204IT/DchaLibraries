@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settings.Utils;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class RingVolumePreferenceController extends VolumeSeekBarPreferenceController {
     private static final String KEY_RING_VOLUME = "ring_volume";
@@ -84,8 +85,7 @@ public class RingVolumePreferenceController extends VolumeSeekBarPreferenceContr
         return this.mMuteIcon;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateRingerMode() {
+    private void updateRingerMode() {
         int ringerModeInternal = this.mHelper.getRingerModeInternal();
         if (this.mRingerMode == ringerModeInternal) {
             return;
@@ -94,8 +94,7 @@ public class RingVolumePreferenceController extends VolumeSeekBarPreferenceContr
         updatePreferenceIcon();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateEffectsSuppressor() {
+    private void updateEffectsSuppressor() {
         ComponentName effectsSuppressor = NotificationManager.from(this.mContext).getEffectsSuppressor();
         if (Objects.equals(effectsSuppressor, this.mSuppressor)) {
             return;
@@ -121,7 +120,6 @@ public class RingVolumePreferenceController extends VolumeSeekBarPreferenceContr
         }
     }
 
-    /* loaded from: classes.dex */
     private final class H extends Handler {
         private H() {
             super(Looper.getMainLooper());
@@ -132,17 +130,14 @@ public class RingVolumePreferenceController extends VolumeSeekBarPreferenceContr
             switch (message.what) {
                 case 1:
                     RingVolumePreferenceController.this.updateEffectsSuppressor();
-                    return;
+                    break;
                 case 2:
                     RingVolumePreferenceController.this.updateRingerMode();
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }
 
-    /* loaded from: classes.dex */
     private class RingReceiver extends BroadcastReceiver {
         private boolean mRegistered;
 

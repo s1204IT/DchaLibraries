@@ -15,6 +15,7 @@ import com.android.internal.util.ArrayUtils;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.notification.ActivityLaunchAnimator;
+
 /* loaded from: classes.dex */
 public class NotificationBackgroundView extends View {
     private int mActualHeight;
@@ -61,20 +62,20 @@ public class NotificationBackgroundView extends View {
             if (this.mBottomIsRounded && this.mBottomAmountClips && !this.mExpandAnimationRunning) {
                 i2 -= this.mClipBottomAmount;
             }
-            int i3 = 0;
-            int width = getWidth();
+            int width = 0;
+            int width2 = getWidth();
             if (this.mExpandAnimationRunning) {
-                i3 = (int) ((getWidth() - this.mActualWidth) / 2.0f);
-                width = (int) (i3 + this.mActualWidth);
+                width = (int) ((getWidth() - this.mActualWidth) / 2.0f);
+                width2 = (int) (width + this.mActualWidth);
             }
             if (this.mTopAmountRounded) {
-                int i4 = (int) (this.mClipTopAmount - this.mDistanceToTopRoundness);
-                i += i4;
-                if (i4 >= 0) {
-                    i2 += i4;
+                int i3 = (int) (this.mClipTopAmount - this.mDistanceToTopRoundness);
+                i += i3;
+                if (i3 >= 0) {
+                    i2 += i3;
                 }
             }
-            drawable.setBounds(i3, i, width, i2);
+            drawable.setBounds(width, i, width2, i2);
             drawable.draw(canvas);
         }
     }
@@ -166,7 +167,7 @@ public class NotificationBackgroundView extends View {
     public void setState(int[] iArr) {
         if (this.mBackground != null && this.mBackground.isStateful()) {
             if (!this.mIsPressedAllowed) {
-                iArr = ArrayUtils.removeInt(iArr, 16842919);
+                iArr = ArrayUtils.removeInt(iArr, android.R.attr.state_pressed);
             }
             this.mBackground.setState(iArr);
         }

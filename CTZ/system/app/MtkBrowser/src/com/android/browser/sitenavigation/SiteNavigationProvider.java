@@ -5,7 +5,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDiskIOException;
 import android.database.sqlite.SQLiteFullException;
@@ -23,6 +25,7 @@ import com.android.browser.provider.BrowserProvider2;
 import com.mediatek.browser.ext.IBrowserSiteNavigationExt;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class SiteNavigationProvider extends ContentProvider {
     private static final Uri NOTIFICATION_URI;
@@ -63,28 +66,28 @@ public class SiteNavigationProvider extends ContentProvider {
         switch (S_URI_MATCHER.match(uri)) {
             case 0:
                 break;
-            default:
-                Log.e("@M_browser/SiteNavigationProvider", "SiteNavigationProvider query Unknown URI: " + uri);
-                return null;
             case 1:
                 sQLiteQueryBuilder.appendWhere("_id=" + uri.getPathSegments().get(0));
                 break;
+            default:
+                Log.e("@M_browser/SiteNavigationProvider", "SiteNavigationProvider query Unknown URI: " + uri);
+                return null;
         }
-        Cursor query = sQLiteQueryBuilder.query(this.mOpenHelper.getReadableDatabase(), strArr, str, strArr2, null, null, TextUtils.isEmpty(str2) ? null : str2);
-        if (query != null) {
-            query.setNotificationUri(getContext().getContentResolver(), NOTIFICATION_URI);
+        Cursor cursorQuery = sQLiteQueryBuilder.query(this.mOpenHelper.getReadableDatabase(), strArr, str, strArr2, null, null, TextUtils.isEmpty(str2) ? null : str2);
+        if (cursorQuery != null) {
+            cursorQuery.setNotificationUri(getContext().getContentResolver(), NOTIFICATION_URI);
         }
-        return query;
+        return cursorQuery;
     }
 
     @Override // android.content.ContentProvider
     public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
         String str2;
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
-        int i = 0;
+        int iUpdate = 0;
         switch (S_URI_MATCHER.match(uri)) {
             case 0:
-                i = writableDatabase.update("websites", contentValues, str, strArr);
+                iUpdate = writableDatabase.update("websites", contentValues, str, strArr);
                 break;
             case 1:
                 StringBuilder sb = new StringBuilder();
@@ -97,7 +100,7 @@ public class SiteNavigationProvider extends ContentProvider {
                 }
                 sb.append(str2);
                 try {
-                    i = writableDatabase.update("websites", contentValues, sb.toString(), strArr);
+                    iUpdate = writableDatabase.update("websites", contentValues, sb.toString(), strArr);
                     break;
                 } catch (SQLiteDiskIOException e) {
                     Log.e("browser/SiteNavigationProvider", "Here happened SQLiteDiskIOException");
@@ -110,25 +113,24 @@ public class SiteNavigationProvider extends ContentProvider {
                 Log.e("@M_browser/SiteNavigationProvider", "SiteNavigationProvider update Unknown URI: " + uri);
                 return 0;
         }
-        if (i > 0) {
+        if (iUpdate > 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
-        return i;
+        return iUpdate;
     }
 
     @Override // android.content.ContentProvider
-    public ParcelFileDescriptor openFile(Uri uri, String str) {
+    public ParcelFileDescriptor openFile(Uri uri, String str) throws IOException {
         try {
-            ParcelFileDescriptor[] createPipe = ParcelFileDescriptor.createPipe();
-            new RequestHandlerSiteNavigation(getContext(), uri, new AssetFileDescriptor(createPipe[1], 0L, -1L).createOutputStream()).start();
-            return createPipe[0];
+            ParcelFileDescriptor[] parcelFileDescriptorArrCreatePipe = ParcelFileDescriptor.createPipe();
+            new RequestHandlerSiteNavigation(getContext(), uri, new AssetFileDescriptor(parcelFileDescriptorArrCreatePipe[1], 0L, -1L).createOutputStream()).start();
+            return parcelFileDescriptorArrCreatePipe[0];
         } catch (IOException e) {
             Log.e("browser/SiteNavigationProvider", "Failed to handle request: " + uri, e);
             return null;
         }
     }
 
-    /* loaded from: classes.dex */
     private class SiteNavigationDatabaseHelper extends SQLiteOpenHelper {
         private IBrowserSiteNavigationExt mBrowserSiteNavigationExt;
         private Context mContext;
@@ -140,7 +142,7 @@ public class SiteNavigationProvider extends ContentProvider {
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onCreate(SQLiteDatabase sQLiteDatabase) {
+        public void onCreate(SQLiteDatabase sQLiteDatabase) throws Resources.NotFoundException, SQLException {
             createTable(sQLiteDatabase);
             initTable(sQLiteDatabase);
         }
@@ -149,14 +151,17 @@ public class SiteNavigationProvider extends ContentProvider {
         public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
         }
 
-        private void createTable(SQLiteDatabase sQLiteDatabase) {
+        private void createTable(SQLiteDatabase sQLiteDatabase) throws SQLException {
             sQLiteDatabase.execSQL("CREATE TABLE websites (_id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT,title TEXT,created LONG,website INTEGER,thumbnail BLOB DEFAULT NULL,favicon BLOB DEFAULT NULL,default_thumb TEXT);");
         }
 
-        private void initTable(SQLiteDatabase sQLiteDatabase) {
-            int i;
-            Bitmap decodeResource;
-            Bitmap bitmap;
+        /* JADX WARN: Removed duplicated region for block: B:26:0x0083 A[Catch: all -> 0x0081, TRY_LEAVE, TryCatch #1 {all -> 0x0081, blocks: (B:21:0x005e, B:23:0x0064, B:26:0x0083), top: B:44:0x005e, outer: #0 }] */
+        /*
+            Code decompiled incorrectly, please refer to instructions dump.
+        */
+        private void initTable(SQLiteDatabase sQLiteDatabase) throws Resources.NotFoundException, SQLException {
+            int siteNavigationCount;
+            Bitmap bitmapDecodeResource;
             this.mBrowserSiteNavigationExt = Extensions.getSiteNavigationPlugin(this.mContext);
             CharSequence[] predefinedWebsites = this.mBrowserSiteNavigationExt.getPredefinedWebsites();
             if (predefinedWebsites == null) {
@@ -167,35 +172,44 @@ public class SiteNavigationProvider extends ContentProvider {
             }
             int length = predefinedWebsites.length;
             if (!this.mContext.getResources().getBoolean(R.bool.isTablet)) {
-                i = this.mBrowserSiteNavigationExt.getSiteNavigationCount();
-                if (i == 0) {
-                    i = 9;
+                siteNavigationCount = this.mBrowserSiteNavigationExt.getSiteNavigationCount();
+                if (siteNavigationCount == 0) {
+                    siteNavigationCount = 9;
                 }
             } else {
-                i = 8;
+                siteNavigationCount = 8;
             }
-            int i2 = i * 3;
-            if (length > i2) {
-                length = i2;
+            int i = siteNavigationCount * 3;
+            if (length > i) {
+                length = i;
             }
-            for (int i3 = 0; i3 < length; i3 += 3) {
+            Bitmap bitmapDecodeResource2 = null;
+            for (int i2 = 0; i2 < length; i2 += 3) {
                 try {
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    String charSequence = predefinedWebsites[i3 + 2].toString();
-                    if (charSequence != null && charSequence.length() != 0) {
-                        decodeResource = BitmapFactory.decodeResource(this.mContext.getResources(), this.mContext.getResources().getIdentifier(charSequence, "raw", this.mContext.getPackageName()));
-                    } else {
-                        decodeResource = BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default);
+                    String string = predefinedWebsites[i2 + 2].toString();
+                    if (string != null) {
+                        try {
+                            if (string.length() != 0) {
+                                bitmapDecodeResource = BitmapFactory.decodeResource(this.mContext.getResources(), this.mContext.getResources().getIdentifier(string, "raw", this.mContext.getPackageName()));
+                            } else {
+                                bitmapDecodeResource = BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default);
+                            }
+                        } finally {
+                            if (bitmapDecodeResource2 == null) {
+                                BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default);
+                            }
+                        }
                     }
-                    if (decodeResource == null) {
-                        bitmap = BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default);
+                    if (bitmapDecodeResource == null) {
+                        bitmapDecodeResource2 = BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default);
                     } else {
-                        bitmap = decodeResource;
+                        bitmapDecodeResource2 = bitmapDecodeResource;
                     }
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                    bitmapDecodeResource2.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put("url", BrowserProvider2.replaceSystemPropertyInString(this.mContext, predefinedWebsites[i3 + 1]).toString());
-                    contentValues.put("title", predefinedWebsites[i3].toString());
+                    contentValues.put("url", BrowserProvider2.replaceSystemPropertyInString(this.mContext, predefinedWebsites[i2 + 1]).toString());
+                    contentValues.put("title", predefinedWebsites[i2].toString());
                     contentValues.put("created", "0");
                     contentValues.put("website", "1");
                     contentValues.put("thumbnail", byteArrayOutputStream.toByteArray());
@@ -205,15 +219,15 @@ public class SiteNavigationProvider extends ContentProvider {
                     return;
                 }
             }
-            int i4 = length / 3;
-            while (i4 < i) {
+            int i3 = length / 3;
+            while (i3 < siteNavigationCount) {
                 ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
                 BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default).compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream2);
                 ContentValues contentValues2 = new ContentValues();
                 StringBuilder sb = new StringBuilder();
                 sb.append("about:blank");
-                i4++;
-                sb.append(i4);
+                i3++;
+                sb.append(i3);
                 contentValues2.put("url", sb.toString());
                 contentValues2.put("title", "about:blank");
                 contentValues2.put("created", "0");

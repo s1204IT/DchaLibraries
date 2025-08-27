@@ -17,7 +17,9 @@ import com.android.settingslib.bluetooth.MapProfile;
 import com.android.settingslib.bluetooth.PanProfile;
 import com.android.settingslib.bluetooth.PbapServerProfile;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BluetoothDetailsProfilesController extends BluetoothDetailsController implements Preference.OnPreferenceClickListener {
     static final String HIGH_QUALITY_AUDIO_PREF_TAG = "A2dpProfileHighQualityAudio";
@@ -103,23 +105,23 @@ public class BluetoothDetailsProfilesController extends BluetoothDetailsControll
     @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
     public boolean onPreferenceClick(Preference preference) {
         LocalBluetoothProfile profileByName = this.mProfileManager.getProfileByName(preference.getKey());
-        PbapServerProfile pbapServerProfile = profileByName;
+        LocalBluetoothProfile localBluetoothProfile = profileByName;
         if (profileByName == null) {
             PbapServerProfile pbapProfile = this.mManager.getProfileManager().getPbapProfile();
-            boolean equals = TextUtils.equals(preference.getKey(), pbapProfile.toString());
-            pbapServerProfile = pbapProfile;
-            if (!equals) {
+            boolean zEquals = TextUtils.equals(preference.getKey(), pbapProfile.toString());
+            localBluetoothProfile = pbapProfile;
+            if (!zEquals) {
                 return false;
             }
         }
         SwitchPreference switchPreference = (SwitchPreference) preference;
         BluetoothDevice device = this.mCachedDevice.getDevice();
         if (switchPreference.isChecked()) {
-            enableProfile(pbapServerProfile, device, switchPreference);
+            enableProfile(localBluetoothProfile, device, switchPreference);
         } else {
-            disableProfile(pbapServerProfile, device, switchPreference);
+            disableProfile(localBluetoothProfile, device, switchPreference);
         }
-        refreshProfilePreference(switchPreference, pbapServerProfile);
+        refreshProfilePreference(switchPreference, localBluetoothProfile);
         return true;
     }
 
@@ -147,7 +149,7 @@ public class BluetoothDetailsProfilesController extends BluetoothDetailsControll
             switchPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.bluetooth.-$$Lambda$BluetoothDetailsProfilesController$pv2kZi3KDLDrPBqbb1ECR74MeRo
                 @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
                 public final boolean onPreferenceClick(Preference preference) {
-                    return BluetoothDetailsProfilesController.lambda$maybeAddHighQualityAudioPref$0(BluetoothDetailsProfilesController.this, a2dpProfile, preference);
+                    return BluetoothDetailsProfilesController.lambda$maybeAddHighQualityAudioPref$0(this.f$0, a2dpProfile, preference);
                 }
             });
             this.mProfilesContainer.addPreference(switchPreference);
@@ -162,18 +164,19 @@ public class BluetoothDetailsProfilesController extends BluetoothDetailsControll
     @Override // com.android.settings.bluetooth.BluetoothDetailsController
     protected void refresh() {
         for (LocalBluetoothProfile localBluetoothProfile : getProfiles()) {
-            SwitchPreference switchPreference = (SwitchPreference) this.mProfilesContainer.findPreference(localBluetoothProfile.toString());
-            if (switchPreference == null) {
-                switchPreference = createProfilePreference(this.mProfilesContainer.getContext(), localBluetoothProfile);
-                this.mProfilesContainer.addPreference(switchPreference);
+            SwitchPreference switchPreferenceCreateProfilePreference = (SwitchPreference) this.mProfilesContainer.findPreference(localBluetoothProfile.toString());
+            if (switchPreferenceCreateProfilePreference == null) {
+                switchPreferenceCreateProfilePreference = createProfilePreference(this.mProfilesContainer.getContext(), localBluetoothProfile);
+                this.mProfilesContainer.addPreference(switchPreferenceCreateProfilePreference);
                 maybeAddHighQualityAudioPref(localBluetoothProfile);
             }
-            refreshProfilePreference(switchPreference, localBluetoothProfile);
+            refreshProfilePreference(switchPreferenceCreateProfilePreference, localBluetoothProfile);
         }
-        for (LocalBluetoothProfile localBluetoothProfile2 : this.mCachedDevice.getRemovedProfiles()) {
-            SwitchPreference switchPreference2 = (SwitchPreference) this.mProfilesContainer.findPreference(localBluetoothProfile2.toString());
-            if (switchPreference2 != null) {
-                this.mProfilesContainer.removePreference(switchPreference2);
+        Iterator<LocalBluetoothProfile> it = this.mCachedDevice.getRemovedProfiles().iterator();
+        while (it.hasNext()) {
+            SwitchPreference switchPreference = (SwitchPreference) this.mProfilesContainer.findPreference(it.next().toString());
+            if (switchPreference != null) {
+                this.mProfilesContainer.removePreference(switchPreference);
             }
         }
     }

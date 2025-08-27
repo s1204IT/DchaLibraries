@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.android.launcher3.CellLayout;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
+
 /* loaded from: classes.dex */
 public class ShortcutAndWidgetContainer extends ViewGroup {
     static final String TAG = "ShortcutAndWidgetContainer";
@@ -64,9 +65,9 @@ public class ShortcutAndWidgetContainer extends ViewGroup {
         if (view instanceof LauncherAppWidgetHostView) {
             DeviceProfile deviceProfile = this.mLauncher.getDeviceProfile();
             layoutParams.setup(this.mCellWidth, this.mCellHeight, invertLayoutHorizontally(), this.mCountX, deviceProfile.appWidgetScale.x, deviceProfile.appWidgetScale.y);
-            return;
+        } else {
+            layoutParams.setup(this.mCellWidth, this.mCellHeight, invertLayoutHorizontally(), this.mCountX);
         }
-        layoutParams.setup(this.mCellWidth, this.mCellHeight, invertLayoutHorizontally(), this.mCountX);
     }
 
     public void setInvertIfRtl(boolean z) {
@@ -85,13 +86,13 @@ public class ShortcutAndWidgetContainer extends ViewGroup {
             layoutParams.setup(this.mCellWidth, this.mCellHeight, invertLayoutHorizontally(), this.mCountX, deviceProfile.appWidgetScale.x, deviceProfile.appWidgetScale.y);
         } else {
             layoutParams.setup(this.mCellWidth, this.mCellHeight, invertLayoutHorizontally(), this.mCountX);
-            int max = (int) Math.max(0.0f, (layoutParams.height - getCellContentHeight()) / 2.0f);
+            int iMax = (int) Math.max(0.0f, (layoutParams.height - getCellContentHeight()) / 2.0f);
             if (this.mContainerType == 0) {
                 i = deviceProfile.workspaceCellPaddingXPx;
             } else {
                 i = (int) (deviceProfile.edgeMarginPx / 2.0f);
             }
-            view.setPadding(i, max, i, 0);
+            view.setPadding(i, iMax, i, 0);
         }
         view.measure(View.MeasureSpec.makeMeasureSpec(layoutParams.width, 1073741824), View.MeasureSpec.makeMeasureSpec(layoutParams.height, 1073741824));
     }

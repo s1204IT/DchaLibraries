@@ -67,9 +67,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Vector;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class Tab implements WebView.PictureListener {
+class Tab implements WebView.PictureListener {
     private static final boolean DEBUG = Browser.DEBUG;
     private static Paint sAlphaPaint = new Paint();
     private static Bitmap sDefaultFavicon;
@@ -120,7 +120,6 @@ public class Tab implements WebView.PictureListener {
     protected WebViewController mWebViewController;
     private boolean mWillBeClosed;
 
-    /* loaded from: classes.dex */
     public enum SecurityState {
         SECURITY_STATE_NOT_SECURE,
         SECURITY_STATE_SECURE,
@@ -133,21 +132,14 @@ public class Tab implements WebView.PictureListener {
         sAlphaPaint.setColor(0);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static synchronized Bitmap getDefaultFavicon(Context context) {
-        Bitmap bitmap;
-        synchronized (Tab.class) {
-            if (sDefaultFavicon == null) {
-                sDefaultFavicon = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_web_browser_sm);
-            }
-            bitmap = sDefaultFavicon;
+    private static synchronized Bitmap getDefaultFavicon(Context context) {
+        if (sDefaultFavicon == null) {
+            sDefaultFavicon = BitmapFactory.decodeResource(context.getResources(), R.drawable.app_web_browser_sm);
         }
-        return bitmap;
+        return sDefaultFavicon;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public static class PageState {
+    protected static class PageState {
         Bitmap mFavicon;
         boolean mIncognito;
         boolean mIsBookmarkedSite;
@@ -185,9 +177,7 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ErrorDialog {
+    private class ErrorDialog {
         public final String mDescription;
         public final int mError;
         public final int mTitle;
@@ -199,8 +189,7 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void processNextError() {
+    private void processNextError() {
         if (this.mQueuedErrors == null) {
             return;
         }
@@ -212,8 +201,19 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void queueError(int i, String str) {
+    /* renamed from: com.android.browser.Tab$1 */
+    class AnonymousClass1 implements DialogInterface.OnDismissListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.content.DialogInterface.OnDismissListener
+        public void onDismiss(DialogInterface dialogInterface) {
+            Tab.this.mIsErrorDialogShown = false;
+            Tab.this.processNextError();
+        }
+    }
+
+    private void queueError(int i, String str) {
         int i2;
         if (this.mQueuedErrors == null) {
             this.mQueuedErrors = new LinkedList<>();
@@ -241,15 +241,421 @@ public class Tab implements WebView.PictureListener {
 
     private void showError(ErrorDialog errorDialog) {
         if (this.mInForeground && !this.mIsErrorDialogShown) {
-            AlertDialog create = new AlertDialog.Builder(this.mContext).setTitle(errorDialog.mTitle).setMessage(errorDialog.mDescription).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).create();
-            create.setOnDismissListener(this.mDialogListener);
-            create.show();
+            AlertDialog alertDialogCreate = new AlertDialog.Builder(this.mContext).setTitle(errorDialog.mTitle).setMessage(errorDialog.mDescription).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).create();
+            alertDialogCreate.setOnDismissListener(this.mDialogListener);
+            alertDialogCreate.show();
             this.mIsErrorDialogShown = true;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void syncCurrentState(WebView webView, String str) {
+    /* renamed from: com.android.browser.Tab$2 */
+    class AnonymousClass2 extends WebViewClient {
+        private Message mDontResend;
+        private Message mResend;
+
+        AnonymousClass2() {
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onPageStarted(WebView webView, String str, Bitmap bitmap) {
+            TabControl tabControl = Tab.this.mWebViewController.getTabControl();
+            if (tabControl != null && Tab.DEBUG) {
+                Log.d("browser", "Network_Issue [" + tabControl.getTabPosition(Tab.this) + "/" + tabControl.getTabCount() + "] onPageStarted url=" + str);
+            }
+            Tab.this.mInPageLoad = true;
+            Tab.this.mUpdateThumbnail = true;
+            Tab.this.mPageLoadProgress = 5;
+            Tab.this.mCurrentState = new PageState(Tab.this.mContext, webView.isPrivateBrowsingEnabled(), str, bitmap);
+            Tab.this.mLoadStartTime = SystemClock.uptimeMillis();
+            if (Tab.this.mTouchIconLoader != null) {
+                Tab.this.mTouchIconLoader.mTab = null;
+                Tab.this.mTouchIconLoader = null;
+            }
+            if (Tab.this.mErrorConsole != null) {
+                Tab.this.mErrorConsole.clearErrorMessages();
+                if (Tab.this.mWebViewController.shouldShowErrorConsole()) {
+                    Tab.this.mErrorConsole.showConsole(2);
+                }
+            }
+            if (Tab.this.mDeviceAccountLogin != null) {
+                Tab.this.mDeviceAccountLogin.cancel();
+                Tab.this.mDeviceAccountLogin = null;
+                Tab.this.mWebViewController.hideAutoLogin(Tab.this);
+            }
+            Tab.this.mWebViewController.onPageStarted(Tab.this, webView, bitmap);
+            Tab.this.updateBookmarkedStatus();
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onPageFinished(WebView webView, String str) {
+            TabControl tabControl = Tab.this.mWebViewController.getTabControl();
+            if (tabControl != null && Tab.DEBUG) {
+                Log.d("browser", "Network_Issue [" + tabControl.getTabPosition(Tab.this) + "/" + tabControl.getTabCount() + "] onPageFinished url=" + str);
+            }
+            Tab.this.mDisableOverrideUrlLoading = false;
+            if (!Tab.this.isPrivateBrowsingEnabled()) {
+                LogTag.logPageFinishedLoading(str, SystemClock.uptimeMillis() - Tab.this.mLoadStartTime);
+            }
+            Tab.this.syncCurrentState(webView, str);
+            if (Tab.this.mCurrentState.mIsDownload) {
+                Tab.this.mCurrentState.mUrl = Tab.this.mCurrentState.mOriginalUrl;
+                if (Tab.this.mCurrentState.mUrl == null) {
+                    Tab.this.mCurrentState.mUrl = "";
+                }
+            }
+            if (str != null && str.equals(Tab.this.mSavePageUrl)) {
+                Tab.this.mCurrentState.mTitle = Tab.this.mSavePageTitle;
+                Tab.this.mCurrentState.mUrl = Tab.this.mSavePageUrl;
+            }
+            if (str != null && str.startsWith("about:blank")) {
+                Tab.this.mCurrentState.mFavicon = Tab.getDefaultFavicon(Tab.this.mContext);
+            }
+            Tab.this.mWebViewController.onPageFinished(Tab.this);
+        }
+
+        @Override // android.webkit.WebViewClient
+        public boolean shouldOverrideUrlLoading(WebView webView, String str) {
+            if (!Tab.this.mDisableOverrideUrlLoading && Tab.this.mInForeground) {
+                return Tab.this.mWebViewController.shouldOverrideUrlLoading(Tab.this, webView, str);
+            }
+            return false;
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onLoadResource(WebView webView, String str) {
+            if (str != null && str.length() > 0 && Tab.this.mCurrentState.mSecurityState == SecurityState.SECURITY_STATE_SECURE && !URLUtil.isHttpsUrl(str) && !URLUtil.isDataUrl(str) && !URLUtil.isAboutUrl(str)) {
+                Tab.this.mCurrentState.mSecurityState = SecurityState.SECURITY_STATE_MIXED;
+            }
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onReceivedError(WebView webView, int i, String str, String str2) {
+            if (Tab.DEBUG) {
+                Log.d("Tab", "Network_Issue error code: " + i + " url: " + str2);
+            }
+            Tab.this.mPageError = i;
+            Tab.this.mWebViewController.sendErrorCode(i, str2);
+            if (i != -2 && i != -6 && i != -12 && i != -10 && i != -13) {
+                Tab.this.queueError(i, str);
+                if (!Tab.this.isPrivateBrowsingEnabled() && Tab.DEBUG) {
+                    Log.e("Tab", "onReceivedError " + i + " " + str2 + " " + str);
+                }
+            }
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onReceivedHttpError(WebView webView, WebResourceRequest webResourceRequest, WebResourceResponse webResourceResponse) {
+            if (webResourceRequest.isForMainFrame() && Tab.DEBUG && webResourceResponse != null) {
+                Log.d("Tab", "Network_Issue http error code: " + webResourceResponse.getStatusCode() + " url: " + webResourceRequest.getUrl());
+            }
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onFormResubmission(WebView webView, Message message, Message message2) {
+            if (!Tab.this.mInForeground) {
+                message.sendToTarget();
+                return;
+            }
+            if (this.mDontResend != null) {
+                Log.w("Tab", "onFormResubmission should not be called again while dialog is still up");
+                message.sendToTarget();
+            } else {
+                this.mDontResend = message;
+                this.mResend = message2;
+                new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.browserFrameFormResubmitLabel).setMessage(R.string.browserFrameFormResubmitMessage).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.3
+                    AnonymousClass3() {
+                    }
+
+                    @Override // android.content.DialogInterface.OnClickListener
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (AnonymousClass2.this.mResend != null) {
+                            AnonymousClass2.this.mResend.sendToTarget();
+                            AnonymousClass2.this.mResend = null;
+                            AnonymousClass2.this.mDontResend = null;
+                        }
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.2
+                    DialogInterfaceOnClickListenerC00022() {
+                    }
+
+                    @Override // android.content.DialogInterface.OnClickListener
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (AnonymousClass2.this.mDontResend != null) {
+                            AnonymousClass2.this.mDontResend.sendToTarget();
+                            AnonymousClass2.this.mResend = null;
+                            AnonymousClass2.this.mDontResend = null;
+                        }
+                    }
+                }).setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.browser.Tab.2.1
+                    AnonymousClass1() {
+                    }
+
+                    @Override // android.content.DialogInterface.OnCancelListener
+                    public void onCancel(DialogInterface dialogInterface) {
+                        if (AnonymousClass2.this.mDontResend != null) {
+                            AnonymousClass2.this.mDontResend.sendToTarget();
+                            AnonymousClass2.this.mResend = null;
+                            AnonymousClass2.this.mDontResend = null;
+                        }
+                    }
+                }).show();
+            }
+        }
+
+        /* renamed from: com.android.browser.Tab$2$3 */
+        class AnonymousClass3 implements DialogInterface.OnClickListener {
+            AnonymousClass3() {
+            }
+
+            @Override // android.content.DialogInterface.OnClickListener
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (AnonymousClass2.this.mResend != null) {
+                    AnonymousClass2.this.mResend.sendToTarget();
+                    AnonymousClass2.this.mResend = null;
+                    AnonymousClass2.this.mDontResend = null;
+                }
+            }
+        }
+
+        /* renamed from: com.android.browser.Tab$2$2 */
+        class DialogInterfaceOnClickListenerC00022 implements DialogInterface.OnClickListener {
+            DialogInterfaceOnClickListenerC00022() {
+            }
+
+            @Override // android.content.DialogInterface.OnClickListener
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (AnonymousClass2.this.mDontResend != null) {
+                    AnonymousClass2.this.mDontResend.sendToTarget();
+                    AnonymousClass2.this.mResend = null;
+                    AnonymousClass2.this.mDontResend = null;
+                }
+            }
+        }
+
+        /* renamed from: com.android.browser.Tab$2$1 */
+        class AnonymousClass1 implements DialogInterface.OnCancelListener {
+            AnonymousClass1() {
+            }
+
+            @Override // android.content.DialogInterface.OnCancelListener
+            public void onCancel(DialogInterface dialogInterface) {
+                if (AnonymousClass2.this.mDontResend != null) {
+                    AnonymousClass2.this.mDontResend.sendToTarget();
+                    AnonymousClass2.this.mResend = null;
+                    AnonymousClass2.this.mDontResend = null;
+                }
+            }
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void doUpdateVisitedHistory(WebView webView, String str, boolean z) {
+            Tab.this.mWebViewController.doUpdateVisitedHistory(Tab.this, z);
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onReceivedSslError(WebView webView, SslErrorHandler sslErrorHandler, SslError sslError) {
+            if (Tab.DEBUG) {
+                Log.d("Tab", "Network_Issue onReceivedSslError: " + sslError.toString());
+            }
+            if (Tab.this.mInForeground) {
+                if (Tab.this.mSettings.showSecurityWarnings()) {
+                    new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.security_warning).setMessage(R.string.ssl_warnings_header).setIconAttribute(android.R.attr.alertDialogIcon).setPositiveButton(R.string.ssl_continue, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.7
+                        final /* synthetic */ SslError val$error;
+                        final /* synthetic */ SslErrorHandler val$handler;
+
+                        AnonymousClass7(SslErrorHandler sslErrorHandler2, SslError sslError2) {
+                            sslErrorHandler = sslErrorHandler2;
+                            sslError = sslError2;
+                        }
+
+                        @Override // android.content.DialogInterface.OnClickListener
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            sslErrorHandler.proceed();
+                            Tab.this.handleProceededAfterSslError(sslError);
+                        }
+                    }).setNeutralButton(R.string.view_certificate, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.6
+                        final /* synthetic */ SslError val$error;
+                        final /* synthetic */ SslErrorHandler val$handler;
+                        final /* synthetic */ WebView val$view;
+
+                        AnonymousClass6(WebView webView2, SslErrorHandler sslErrorHandler2, SslError sslError2) {
+                            webView = webView2;
+                            sslErrorHandler = sslErrorHandler2;
+                            sslError = sslError2;
+                        }
+
+                        @Override // android.content.DialogInterface.OnClickListener
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Tab.this.mWebViewController.showSslCertificateOnError(webView, sslErrorHandler, sslError);
+                        }
+                    }).setNegativeButton(R.string.ssl_go_back, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.5
+                        AnonymousClass5() {
+                        }
+
+                        @Override // android.content.DialogInterface.OnClickListener
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    }).setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.browser.Tab.2.4
+                        final /* synthetic */ SslErrorHandler val$handler;
+
+                        AnonymousClass4(SslErrorHandler sslErrorHandler2) {
+                            sslErrorHandler = sslErrorHandler2;
+                        }
+
+                        @Override // android.content.DialogInterface.OnCancelListener
+                        public void onCancel(DialogInterface dialogInterface) {
+                            sslErrorHandler.cancel();
+                            Tab.this.setSecurityState(SecurityState.SECURITY_STATE_NOT_SECURE);
+                            Tab.this.mWebViewController.onUserCanceledSsl(Tab.this);
+                        }
+                    }).show();
+                    return;
+                } else {
+                    sslErrorHandler2.proceed();
+                    return;
+                }
+            }
+            sslErrorHandler2.cancel();
+            Tab.this.setSecurityState(SecurityState.SECURITY_STATE_NOT_SECURE);
+        }
+
+        /* renamed from: com.android.browser.Tab$2$7 */
+        class AnonymousClass7 implements DialogInterface.OnClickListener {
+            final /* synthetic */ SslError val$error;
+            final /* synthetic */ SslErrorHandler val$handler;
+
+            AnonymousClass7(SslErrorHandler sslErrorHandler2, SslError sslError2) {
+                sslErrorHandler = sslErrorHandler2;
+                sslError = sslError2;
+            }
+
+            @Override // android.content.DialogInterface.OnClickListener
+            public void onClick(DialogInterface dialogInterface, int i) {
+                sslErrorHandler.proceed();
+                Tab.this.handleProceededAfterSslError(sslError);
+            }
+        }
+
+        /* renamed from: com.android.browser.Tab$2$6 */
+        class AnonymousClass6 implements DialogInterface.OnClickListener {
+            final /* synthetic */ SslError val$error;
+            final /* synthetic */ SslErrorHandler val$handler;
+            final /* synthetic */ WebView val$view;
+
+            AnonymousClass6(WebView webView2, SslErrorHandler sslErrorHandler2, SslError sslError2) {
+                webView = webView2;
+                sslErrorHandler = sslErrorHandler2;
+                sslError = sslError2;
+            }
+
+            @Override // android.content.DialogInterface.OnClickListener
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Tab.this.mWebViewController.showSslCertificateOnError(webView, sslErrorHandler, sslError);
+            }
+        }
+
+        /* renamed from: com.android.browser.Tab$2$5 */
+        class AnonymousClass5 implements DialogInterface.OnClickListener {
+            AnonymousClass5() {
+            }
+
+            @Override // android.content.DialogInterface.OnClickListener
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        }
+
+        /* renamed from: com.android.browser.Tab$2$4 */
+        class AnonymousClass4 implements DialogInterface.OnCancelListener {
+            final /* synthetic */ SslErrorHandler val$handler;
+
+            AnonymousClass4(SslErrorHandler sslErrorHandler2) {
+                sslErrorHandler = sslErrorHandler2;
+            }
+
+            @Override // android.content.DialogInterface.OnCancelListener
+            public void onCancel(DialogInterface dialogInterface) {
+                sslErrorHandler.cancel();
+                Tab.this.setSecurityState(SecurityState.SECURITY_STATE_NOT_SECURE);
+                Tab.this.mWebViewController.onUserCanceledSsl(Tab.this);
+            }
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onReceivedClientCertRequest(WebView webView, ClientCertRequest clientCertRequest) {
+            if (!Tab.this.mInForeground) {
+                clientCertRequest.ignore();
+            } else {
+                KeyChain.choosePrivateKeyAlias(Tab.this.mWebViewController.getActivity(), new KeyChainAliasCallback() { // from class: com.android.browser.Tab.2.8
+                    final /* synthetic */ ClientCertRequest val$request;
+
+                    AnonymousClass8(ClientCertRequest clientCertRequest2) {
+                        clientCertRequest = clientCertRequest2;
+                    }
+
+                    @Override // android.security.KeyChainAliasCallback
+                    public void alias(String str) {
+                        if (str == null) {
+                            clientCertRequest.cancel();
+                        } else {
+                            new KeyChainLookup(Tab.this.mContext, clientCertRequest, str).execute(new Void[0]);
+                        }
+                    }
+                }, clientCertRequest2.getKeyTypes(), clientCertRequest2.getPrincipals(), clientCertRequest2.getHost(), clientCertRequest2.getPort(), null);
+            }
+        }
+
+        /* renamed from: com.android.browser.Tab$2$8 */
+        class AnonymousClass8 implements KeyChainAliasCallback {
+            final /* synthetic */ ClientCertRequest val$request;
+
+            AnonymousClass8(ClientCertRequest clientCertRequest2) {
+                clientCertRequest = clientCertRequest2;
+            }
+
+            @Override // android.security.KeyChainAliasCallback
+            public void alias(String str) {
+                if (str == null) {
+                    clientCertRequest.cancel();
+                } else {
+                    new KeyChainLookup(Tab.this.mContext, clientCertRequest, str).execute(new Void[0]);
+                }
+            }
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onReceivedHttpAuthRequest(WebView webView, HttpAuthHandler httpAuthHandler, String str, String str2) {
+            Tab.this.mWebViewController.onReceivedHttpAuthRequest(Tab.this, webView, httpAuthHandler, str, str2);
+        }
+
+        @Override // android.webkit.WebViewClient
+        public WebResourceResponse shouldInterceptRequest(WebView webView, String str) {
+            return HomeProvider.shouldInterceptRequest(Tab.this.mContext, str);
+        }
+
+        @Override // android.webkit.WebViewClient
+        public boolean shouldOverrideKeyEvent(WebView webView, KeyEvent keyEvent) {
+            if (!Tab.this.mInForeground) {
+                return false;
+            }
+            return Tab.this.mWebViewController.shouldOverrideKeyEvent(keyEvent);
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onUnhandledKeyEvent(WebView webView, KeyEvent keyEvent) {
+            if (Tab.this.mInForeground && !Tab.this.mWebViewController.onUnhandledKeyEvent(keyEvent)) {
+                super.onUnhandledKeyEvent(webView, keyEvent);
+            }
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onReceivedLoginRequest(WebView webView, String str, String str2, String str3) {
+            new DeviceAccountLogin(Tab.this.mWebViewController.getActivity(), webView, Tab.this, Tab.this.mWebViewController).handleLogin(str, str2, str3);
+        }
+    }
+
+    private void syncCurrentState(WebView webView, String str) {
         if (this.mWillBeClosed) {
             return;
         }
@@ -273,13 +679,11 @@ public class Tab implements WebView.PictureListener {
         this.mCurrentState.mIncognito = webView.isPrivateBrowsingEnabled();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setDeviceAccountLogin(DeviceAccountLogin deviceAccountLogin) {
+    void setDeviceAccountLogin(DeviceAccountLogin deviceAccountLogin) {
         this.mDeviceAccountLogin = deviceAccountLogin;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public DeviceAccountLogin getDeviceAccountLogin() {
+    DeviceAccountLogin getDeviceAccountLogin() {
         if (DEBUG) {
             Log.d("browser", "Tab.getDeviceAccountLogin()--->");
         }
@@ -290,8 +694,256 @@ public class Tab implements WebView.PictureListener {
         this.mSubWindowShown = z;
     }
 
-    /* renamed from: com.android.browser.Tab$9  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.browser.Tab$3 */
+    class AnonymousClass3 extends WebChromeClient {
+        AnonymousClass3() {
+        }
+
+        private void createWindow(boolean z, Message message) {
+            WebView.WebViewTransport webViewTransport = (WebView.WebViewTransport) message.obj;
+            if (z) {
+                Tab.this.createSubWindow();
+                Tab.this.mWebViewController.attachSubWindow(Tab.this);
+                webViewTransport.setWebView(Tab.this.mSubView);
+            } else {
+                webViewTransport.setWebView(Tab.this.mWebViewController.openTab(null, Tab.this, true, true).getWebView());
+            }
+            message.sendToTarget();
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public boolean onCreateWindow(WebView webView, boolean z, boolean z2, Message message) {
+            if (!Tab.this.mInForeground) {
+                return false;
+            }
+            if (z && Tab.this.mSubView != null) {
+                new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.too_many_subwindows_dialog_title).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(R.string.too_many_subwindows_dialog_message).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
+                return false;
+            }
+            if (!Tab.this.mWebViewController.getTabControl().canCreateNewTab()) {
+                new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.too_many_windows_dialog_title).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(R.string.too_many_windows_dialog_message).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
+                return false;
+            }
+            if (!z2) {
+                if (!Tab.this.mSubWindowShown) {
+                    Tab.this.mWebViewController.onShowPopupWindowAttempt(Tab.this, z, message);
+                    return true;
+                }
+                new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.too_many_subwindows_dialog_title).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(R.string.too_many_subwindows_dialog_message).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
+                return false;
+            }
+            createWindow(z, message);
+            return true;
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onRequestFocus(WebView webView) {
+            if (!Tab.this.mInForeground) {
+                Tab.this.mWebViewController.switchToTab(Tab.this);
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onCloseWindow(WebView webView) {
+            if (Tab.this.mParent != null) {
+                if (Tab.this.mInForeground) {
+                    Tab.this.mWebViewController.switchToTab(Tab.this.mParent);
+                }
+                Tab.this.mWebViewController.closeTab(Tab.this);
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public boolean onJsAlert(WebView webView, String str, String str2, JsResult jsResult) {
+            Tab.this.mWebViewController.getTabControl().setActiveTab(Tab.this);
+            return false;
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public boolean onJsConfirm(WebView webView, String str, String str2, JsResult jsResult) {
+            Tab.this.mWebViewController.getTabControl().setActiveTab(Tab.this);
+            return false;
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public boolean onJsPrompt(WebView webView, String str, String str2, String str3, JsPromptResult jsPromptResult) {
+            Tab.this.mWebViewController.getTabControl().setActiveTab(Tab.this);
+            return false;
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onProgressChanged(WebView webView, int i) {
+            Tab.this.mPageLoadProgress = i;
+            Tab.this.mPageError = 0;
+            if (i == 100) {
+                Tab.this.mInPageLoad = false;
+                Tab.this.syncCurrentState(webView, webView.getUrl());
+            }
+            Tab.this.mWebViewController.onProgressChanged(Tab.this);
+            if (Tab.this.mUpdateThumbnail && i == 100) {
+                Tab.this.mUpdateThumbnail = false;
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onReceivedTitle(WebView webView, String str) {
+            Tab.this.mCurrentState.mTitle = str;
+            Tab.this.mWebViewController.onReceivedTitle(Tab.this, str);
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onReceivedIcon(WebView webView, Bitmap bitmap) {
+            Tab.this.mCurrentState.mFavicon = bitmap;
+            Tab.this.mWebViewController.onFavicon(Tab.this, webView, bitmap);
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onReceivedTouchIconUrl(WebView webView, String str, boolean z) {
+            ContentResolver contentResolver = Tab.this.mContext.getContentResolver();
+            synchronized (Tab.this) {
+                if (z) {
+                    try {
+                        if (Tab.this.mTouchIconLoader != null) {
+                            Tab.this.mTouchIconLoader.cancel(false);
+                            Tab.this.mTouchIconLoader = null;
+                        }
+                    } catch (Throwable th) {
+                        throw th;
+                    }
+                }
+                if (Tab.this.mTouchIconLoader == null) {
+                    Tab.this.mTouchIconLoader = new DownloadTouchIcon(Tab.this, Tab.this.mContext, contentResolver, webView);
+                    Tab.this.mTouchIconLoader.execute(str);
+                }
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onShowCustomView(View view, WebChromeClient.CustomViewCallback customViewCallback) {
+            Activity activity = Tab.this.mWebViewController.getActivity();
+            if (activity != null) {
+                onShowCustomView(view, activity.getRequestedOrientation(), customViewCallback);
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onShowCustomView(View view, int i, WebChromeClient.CustomViewCallback customViewCallback) {
+            if (Tab.this.mInForeground) {
+                Tab.this.mWebViewController.showCustomView(Tab.this, view, i, customViewCallback);
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onHideCustomView() {
+            if (Tab.this.mInForeground) {
+                Tab.this.mWebViewController.hideCustomView();
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onExceededDatabaseQuota(String str, String str2, long j, long j2, long j3, WebStorage.QuotaUpdater quotaUpdater) {
+            Tab.this.mSettings.getWebStorageSizeManager().onExceededDatabaseQuota(str, str2, j, j2, j3, quotaUpdater);
+        }
+
+        public void onReachedMaxAppCacheSize(long j, long j2, WebStorage.QuotaUpdater quotaUpdater) {
+            Tab.this.mSettings.getWebStorageSizeManager().onReachedMaxAppCacheSize(j, j2, quotaUpdater);
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onGeolocationPermissionsShowPrompt(String str, GeolocationPermissions.Callback callback) {
+            if (Tab.this.mInForeground) {
+                Tab.this.getGeolocationPermissionsPrompt().show(str, callback);
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onGeolocationPermissionsHidePrompt() {
+            if (Tab.this.mInForeground && Tab.this.mGeolocationPermissionsPrompt != null) {
+                Tab.this.mGeolocationPermissionsPrompt.hide();
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onPermissionRequest(PermissionRequest permissionRequest) {
+            if (Tab.this.mInForeground) {
+                Tab.this.getPermissionsPrompt().show(permissionRequest);
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void onPermissionRequestCanceled(PermissionRequest permissionRequest) {
+            if (Tab.this.mInForeground && Tab.this.mPermissionsPrompt != null) {
+                Tab.this.mPermissionsPrompt.hide();
+            }
+        }
+
+        /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+        @Override // android.webkit.WebChromeClient
+        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+            if (Tab.this.mInForeground) {
+                ErrorConsoleView errorConsole = Tab.this.getErrorConsole(true);
+                errorConsole.addErrorMessage(consoleMessage);
+                if (Tab.this.mWebViewController.shouldShowErrorConsole() && errorConsole.getShowState() != 1) {
+                    errorConsole.showConsole(0);
+                }
+            }
+            if (Tab.this.isPrivateBrowsingEnabled() || !Tab.DEBUG) {
+                return true;
+            }
+            String str = "Console: " + consoleMessage.message() + " " + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber();
+            switch (AnonymousClass9.$SwitchMap$android$webkit$ConsoleMessage$MessageLevel[consoleMessage.messageLevel().ordinal()]) {
+                case 1:
+                    Log.v("browser", str);
+                    return true;
+                case 2:
+                    Log.i("browser", str);
+                    return true;
+                case 3:
+                    Log.w("browser", str);
+                    return true;
+                case 4:
+                    Log.e("browser", str);
+                    return true;
+                case 5:
+                    Log.d("browser", str);
+                    return true;
+                default:
+                    return true;
+            }
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public Bitmap getDefaultVideoPoster() {
+            if (Tab.this.mInForeground) {
+                return Tab.this.mWebViewController.getDefaultVideoPoster();
+            }
+            return null;
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public View getVideoLoadingProgressView() {
+            if (Tab.this.mInForeground) {
+                return Tab.this.mWebViewController.getVideoLoadingProgressView();
+            }
+            return null;
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> valueCallback, WebChromeClient.FileChooserParams fileChooserParams) {
+            if (Tab.this.mInForeground) {
+                Tab.this.mWebViewController.showFileChooser(valueCallback, fileChooserParams);
+                return true;
+            }
+            return false;
+        }
+
+        @Override // android.webkit.WebChromeClient
+        public void getVisitedHistory(ValueCallback<String[]> valueCallback) {
+            Tab.this.mWebViewController.getVisitedHistory(valueCallback);
+        }
+    }
+
+    /* renamed from: com.android.browser.Tab$9 */
     static /* synthetic */ class AnonymousClass9 {
         static final /* synthetic */ int[] $SwitchMap$android$webkit$ConsoleMessage$MessageLevel = new int[ConsoleMessage.MessageLevel.values().length];
 
@@ -319,9 +971,7 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SubWindowClient extends WebViewClient {
+    private static class SubWindowClient extends WebViewClient {
         private final WebViewClient mClient;
         private final WebViewController mController;
 
@@ -381,9 +1031,7 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SubWindowChromeClient extends WebChromeClient {
+    private class SubWindowChromeClient extends WebChromeClient {
         private final WebChromeClient mClient;
 
         SubWindowChromeClient(WebChromeClient webChromeClient) {
@@ -409,23 +1057,23 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab(WebViewController webViewController, WebView webView) {
+    Tab(WebViewController webViewController, WebView webView) {
         this(webViewController, webView, null);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab(WebViewController webViewController, Bundle bundle) {
+    Tab(WebViewController webViewController, Bundle bundle) {
         this(webViewController, null, bundle);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab(WebViewController webViewController, WebView webView, Bundle bundle) {
-        boolean z;
+    Tab(WebViewController webViewController, WebView webView, Bundle bundle) {
+        boolean zIsPrivateBrowsingEnabled;
         this.mWillBeClosed = false;
         this.mPageError = 0;
         this.mId = -1L;
         this.mDialogListener = new DialogInterface.OnDismissListener() { // from class: com.android.browser.Tab.1
+            AnonymousClass1() {
+            }
+
             @Override // android.content.DialogInterface.OnDismissListener
             public void onDismiss(DialogInterface dialogInterface) {
                 Tab.this.mIsErrorDialogShown = false;
@@ -436,6 +1084,9 @@ public class Tab implements WebView.PictureListener {
         this.mWebViewClient = new WebViewClient() { // from class: com.android.browser.Tab.2
             private Message mDontResend;
             private Message mResend;
+
+            AnonymousClass2() {
+            }
 
             @Override // android.webkit.WebViewClient
             public void onPageStarted(WebView webView2, String str, Bitmap bitmap) {
@@ -535,13 +1186,18 @@ public class Tab implements WebView.PictureListener {
             public void onFormResubmission(WebView webView2, Message message, Message message2) {
                 if (!Tab.this.mInForeground) {
                     message.sendToTarget();
-                } else if (this.mDontResend != null) {
+                    return;
+                }
+                if (this.mDontResend != null) {
                     Log.w("Tab", "onFormResubmission should not be called again while dialog is still up");
                     message.sendToTarget();
                 } else {
                     this.mDontResend = message;
                     this.mResend = message2;
                     new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.browserFrameFormResubmitLabel).setMessage(R.string.browserFrameFormResubmitMessage).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.3
+                        AnonymousClass3() {
+                        }
+
                         @Override // android.content.DialogInterface.OnClickListener
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (AnonymousClass2.this.mResend != null) {
@@ -551,6 +1207,9 @@ public class Tab implements WebView.PictureListener {
                             }
                         }
                     }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.2
+                        DialogInterfaceOnClickListenerC00022() {
+                        }
+
                         @Override // android.content.DialogInterface.OnClickListener
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (AnonymousClass2.this.mDontResend != null) {
@@ -560,6 +1219,9 @@ public class Tab implements WebView.PictureListener {
                             }
                         }
                     }).setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.browser.Tab.2.1
+                        AnonymousClass1() {
+                        }
+
                         @Override // android.content.DialogInterface.OnCancelListener
                         public void onCancel(DialogInterface dialogInterface) {
                             if (AnonymousClass2.this.mDontResend != null) {
@@ -572,35 +1234,107 @@ public class Tab implements WebView.PictureListener {
                 }
             }
 
-            @Override // android.webkit.WebViewClient
-            public void doUpdateVisitedHistory(WebView webView2, String str, boolean z2) {
-                Tab.this.mWebViewController.doUpdateVisitedHistory(Tab.this, z2);
+            /* renamed from: com.android.browser.Tab$2$3 */
+            class AnonymousClass3 implements DialogInterface.OnClickListener {
+                AnonymousClass3() {
+                }
+
+                @Override // android.content.DialogInterface.OnClickListener
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if (AnonymousClass2.this.mResend != null) {
+                        AnonymousClass2.this.mResend.sendToTarget();
+                        AnonymousClass2.this.mResend = null;
+                        AnonymousClass2.this.mDontResend = null;
+                    }
+                }
+            }
+
+            /* renamed from: com.android.browser.Tab$2$2 */
+            class DialogInterfaceOnClickListenerC00022 implements DialogInterface.OnClickListener {
+                DialogInterfaceOnClickListenerC00022() {
+                }
+
+                @Override // android.content.DialogInterface.OnClickListener
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if (AnonymousClass2.this.mDontResend != null) {
+                        AnonymousClass2.this.mDontResend.sendToTarget();
+                        AnonymousClass2.this.mResend = null;
+                        AnonymousClass2.this.mDontResend = null;
+                    }
+                }
+            }
+
+            /* renamed from: com.android.browser.Tab$2$1 */
+            class AnonymousClass1 implements DialogInterface.OnCancelListener {
+                AnonymousClass1() {
+                }
+
+                @Override // android.content.DialogInterface.OnCancelListener
+                public void onCancel(DialogInterface dialogInterface) {
+                    if (AnonymousClass2.this.mDontResend != null) {
+                        AnonymousClass2.this.mDontResend.sendToTarget();
+                        AnonymousClass2.this.mResend = null;
+                        AnonymousClass2.this.mDontResend = null;
+                    }
+                }
             }
 
             @Override // android.webkit.WebViewClient
-            public void onReceivedSslError(final WebView webView2, final SslErrorHandler sslErrorHandler, final SslError sslError) {
+            public void doUpdateVisitedHistory(WebView webView2, String str, boolean z) {
+                Tab.this.mWebViewController.doUpdateVisitedHistory(Tab.this, z);
+            }
+
+            @Override // android.webkit.WebViewClient
+            public void onReceivedSslError(WebView webView2, SslErrorHandler sslErrorHandler2, SslError sslError2) {
                 if (Tab.DEBUG) {
-                    Log.d("Tab", "Network_Issue onReceivedSslError: " + sslError.toString());
+                    Log.d("Tab", "Network_Issue onReceivedSslError: " + sslError2.toString());
                 }
                 if (Tab.this.mInForeground) {
                     if (Tab.this.mSettings.showSecurityWarnings()) {
-                        new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.security_warning).setMessage(R.string.ssl_warnings_header).setIconAttribute(16843605).setPositiveButton(R.string.ssl_continue, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.7
+                        new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.security_warning).setMessage(R.string.ssl_warnings_header).setIconAttribute(android.R.attr.alertDialogIcon).setPositiveButton(R.string.ssl_continue, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.7
+                            final /* synthetic */ SslError val$error;
+                            final /* synthetic */ SslErrorHandler val$handler;
+
+                            AnonymousClass7(SslErrorHandler sslErrorHandler22, SslError sslError22) {
+                                sslErrorHandler = sslErrorHandler22;
+                                sslError = sslError22;
+                            }
+
                             @Override // android.content.DialogInterface.OnClickListener
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 sslErrorHandler.proceed();
                                 Tab.this.handleProceededAfterSslError(sslError);
                             }
                         }).setNeutralButton(R.string.view_certificate, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.6
+                            final /* synthetic */ SslError val$error;
+                            final /* synthetic */ SslErrorHandler val$handler;
+                            final /* synthetic */ WebView val$view;
+
+                            AnonymousClass6(WebView webView22, SslErrorHandler sslErrorHandler22, SslError sslError22) {
+                                webView = webView22;
+                                sslErrorHandler = sslErrorHandler22;
+                                sslError = sslError22;
+                            }
+
                             @Override // android.content.DialogInterface.OnClickListener
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Tab.this.mWebViewController.showSslCertificateOnError(webView2, sslErrorHandler, sslError);
+                                Tab.this.mWebViewController.showSslCertificateOnError(webView, sslErrorHandler, sslError);
                             }
                         }).setNegativeButton(R.string.ssl_go_back, new DialogInterface.OnClickListener() { // from class: com.android.browser.Tab.2.5
+                            AnonymousClass5() {
+                            }
+
                             @Override // android.content.DialogInterface.OnClickListener
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.cancel();
                             }
                         }).setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.browser.Tab.2.4
+                            final /* synthetic */ SslErrorHandler val$handler;
+
+                            AnonymousClass4(SslErrorHandler sslErrorHandler22) {
+                                sslErrorHandler = sslErrorHandler22;
+                            }
+
                             @Override // android.content.DialogInterface.OnCancelListener
                             public void onCancel(DialogInterface dialogInterface) {
                                 sslErrorHandler.cancel();
@@ -610,20 +1344,88 @@ public class Tab implements WebView.PictureListener {
                         }).show();
                         return;
                     } else {
-                        sslErrorHandler.proceed();
+                        sslErrorHandler22.proceed();
                         return;
                     }
                 }
-                sslErrorHandler.cancel();
+                sslErrorHandler22.cancel();
                 Tab.this.setSecurityState(SecurityState.SECURITY_STATE_NOT_SECURE);
             }
 
+            /* renamed from: com.android.browser.Tab$2$7 */
+            class AnonymousClass7 implements DialogInterface.OnClickListener {
+                final /* synthetic */ SslError val$error;
+                final /* synthetic */ SslErrorHandler val$handler;
+
+                AnonymousClass7(SslErrorHandler sslErrorHandler22, SslError sslError22) {
+                    sslErrorHandler = sslErrorHandler22;
+                    sslError = sslError22;
+                }
+
+                @Override // android.content.DialogInterface.OnClickListener
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    sslErrorHandler.proceed();
+                    Tab.this.handleProceededAfterSslError(sslError);
+                }
+            }
+
+            /* renamed from: com.android.browser.Tab$2$6 */
+            class AnonymousClass6 implements DialogInterface.OnClickListener {
+                final /* synthetic */ SslError val$error;
+                final /* synthetic */ SslErrorHandler val$handler;
+                final /* synthetic */ WebView val$view;
+
+                AnonymousClass6(WebView webView22, SslErrorHandler sslErrorHandler22, SslError sslError22) {
+                    webView = webView22;
+                    sslErrorHandler = sslErrorHandler22;
+                    sslError = sslError22;
+                }
+
+                @Override // android.content.DialogInterface.OnClickListener
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Tab.this.mWebViewController.showSslCertificateOnError(webView, sslErrorHandler, sslError);
+                }
+            }
+
+            /* renamed from: com.android.browser.Tab$2$5 */
+            class AnonymousClass5 implements DialogInterface.OnClickListener {
+                AnonymousClass5() {
+                }
+
+                @Override // android.content.DialogInterface.OnClickListener
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            }
+
+            /* renamed from: com.android.browser.Tab$2$4 */
+            class AnonymousClass4 implements DialogInterface.OnCancelListener {
+                final /* synthetic */ SslErrorHandler val$handler;
+
+                AnonymousClass4(SslErrorHandler sslErrorHandler22) {
+                    sslErrorHandler = sslErrorHandler22;
+                }
+
+                @Override // android.content.DialogInterface.OnCancelListener
+                public void onCancel(DialogInterface dialogInterface) {
+                    sslErrorHandler.cancel();
+                    Tab.this.setSecurityState(SecurityState.SECURITY_STATE_NOT_SECURE);
+                    Tab.this.mWebViewController.onUserCanceledSsl(Tab.this);
+                }
+            }
+
             @Override // android.webkit.WebViewClient
-            public void onReceivedClientCertRequest(WebView webView2, final ClientCertRequest clientCertRequest) {
+            public void onReceivedClientCertRequest(WebView webView2, ClientCertRequest clientCertRequest2) {
                 if (!Tab.this.mInForeground) {
-                    clientCertRequest.ignore();
+                    clientCertRequest2.ignore();
                 } else {
                     KeyChain.choosePrivateKeyAlias(Tab.this.mWebViewController.getActivity(), new KeyChainAliasCallback() { // from class: com.android.browser.Tab.2.8
+                        final /* synthetic */ ClientCertRequest val$request;
+
+                        AnonymousClass8(ClientCertRequest clientCertRequest22) {
+                            clientCertRequest = clientCertRequest22;
+                        }
+
                         @Override // android.security.KeyChainAliasCallback
                         public void alias(String str) {
                             if (str == null) {
@@ -632,7 +1434,25 @@ public class Tab implements WebView.PictureListener {
                                 new KeyChainLookup(Tab.this.mContext, clientCertRequest, str).execute(new Void[0]);
                             }
                         }
-                    }, clientCertRequest.getKeyTypes(), clientCertRequest.getPrincipals(), clientCertRequest.getHost(), clientCertRequest.getPort(), null);
+                    }, clientCertRequest22.getKeyTypes(), clientCertRequest22.getPrincipals(), clientCertRequest22.getHost(), clientCertRequest22.getPort(), null);
+                }
+            }
+
+            /* renamed from: com.android.browser.Tab$2$8 */
+            class AnonymousClass8 implements KeyChainAliasCallback {
+                final /* synthetic */ ClientCertRequest val$request;
+
+                AnonymousClass8(ClientCertRequest clientCertRequest22) {
+                    clientCertRequest = clientCertRequest22;
+                }
+
+                @Override // android.security.KeyChainAliasCallback
+                public void alias(String str) {
+                    if (str == null) {
+                        clientCertRequest.cancel();
+                    } else {
+                        new KeyChainLookup(Tab.this.mContext, clientCertRequest, str).execute(new Void[0]);
+                    }
                 }
             }
 
@@ -668,9 +1488,12 @@ public class Tab implements WebView.PictureListener {
         };
         this.mSubWindowShown = false;
         this.mWebChromeClient = new WebChromeClient() { // from class: com.android.browser.Tab.3
-            private void createWindow(boolean z2, Message message) {
+            AnonymousClass3() {
+            }
+
+            private void createWindow(boolean z, Message message) {
                 WebView.WebViewTransport webViewTransport = (WebView.WebViewTransport) message.obj;
-                if (z2) {
+                if (z) {
                     Tab.this.createSubWindow();
                     Tab.this.mWebViewController.attachSubWindow(Tab.this);
                     webViewTransport.setWebView(Tab.this.mSubView);
@@ -681,27 +1504,28 @@ public class Tab implements WebView.PictureListener {
             }
 
             @Override // android.webkit.WebChromeClient
-            public boolean onCreateWindow(WebView webView2, boolean z2, boolean z3, Message message) {
-                if (Tab.this.mInForeground) {
-                    if (z2 && Tab.this.mSubView != null) {
-                        new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.too_many_subwindows_dialog_title).setIconAttribute(16843605).setMessage(R.string.too_many_subwindows_dialog_message).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
-                        return false;
-                    } else if (!Tab.this.mWebViewController.getTabControl().canCreateNewTab()) {
-                        new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.too_many_windows_dialog_title).setIconAttribute(16843605).setMessage(R.string.too_many_windows_dialog_message).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
-                        return false;
-                    } else if (!z3) {
-                        if (!Tab.this.mSubWindowShown) {
-                            Tab.this.mWebViewController.onShowPopupWindowAttempt(Tab.this, z2, message);
-                            return true;
-                        }
-                        new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.too_many_subwindows_dialog_title).setIconAttribute(16843605).setMessage(R.string.too_many_subwindows_dialog_message).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
-                        return false;
-                    } else {
-                        createWindow(z2, message);
+            public boolean onCreateWindow(WebView webView2, boolean z, boolean z2, Message message) {
+                if (!Tab.this.mInForeground) {
+                    return false;
+                }
+                if (z && Tab.this.mSubView != null) {
+                    new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.too_many_subwindows_dialog_title).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(R.string.too_many_subwindows_dialog_message).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
+                    return false;
+                }
+                if (!Tab.this.mWebViewController.getTabControl().canCreateNewTab()) {
+                    new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.too_many_windows_dialog_title).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(R.string.too_many_windows_dialog_message).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
+                    return false;
+                }
+                if (!z2) {
+                    if (!Tab.this.mSubWindowShown) {
+                        Tab.this.mWebViewController.onShowPopupWindowAttempt(Tab.this, z, message);
                         return true;
                     }
+                    new AlertDialog.Builder(Tab.this.mContext).setTitle(R.string.too_many_subwindows_dialog_title).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(R.string.too_many_subwindows_dialog_message).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
+                    return false;
                 }
-                return false;
+                createWindow(z, message);
+                return true;
             }
 
             @Override // android.webkit.WebChromeClient
@@ -766,10 +1590,10 @@ public class Tab implements WebView.PictureListener {
             }
 
             @Override // android.webkit.WebChromeClient
-            public void onReceivedTouchIconUrl(WebView webView2, String str, boolean z2) {
+            public void onReceivedTouchIconUrl(WebView webView2, String str, boolean z) {
                 ContentResolver contentResolver = Tab.this.mContext.getContentResolver();
                 synchronized (Tab.this) {
-                    if (z2) {
+                    if (z) {
                         try {
                             if (Tab.this.mTouchIconLoader != null) {
                                 Tab.this.mTouchIconLoader.cancel(false);
@@ -813,7 +1637,6 @@ public class Tab implements WebView.PictureListener {
                 Tab.this.mSettings.getWebStorageSizeManager().onExceededDatabaseQuota(str, str2, j, j2, j3, quotaUpdater);
             }
 
-            @Override // android.webkit.WebChromeClient
             public void onReachedMaxAppCacheSize(long j, long j2, WebStorage.QuotaUpdater quotaUpdater) {
                 Tab.this.mSettings.getWebStorageSizeManager().onReachedMaxAppCacheSize(j, j2, quotaUpdater);
             }
@@ -846,6 +1669,7 @@ public class Tab implements WebView.PictureListener {
                 }
             }
 
+            /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
             @Override // android.webkit.WebChromeClient
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
                 if (Tab.this.mInForeground) {
@@ -855,28 +1679,29 @@ public class Tab implements WebView.PictureListener {
                         errorConsole.showConsole(0);
                     }
                 }
-                if (!Tab.this.isPrivateBrowsingEnabled() && Tab.DEBUG) {
-                    String str = "Console: " + consoleMessage.message() + " " + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber();
-                    switch (AnonymousClass9.$SwitchMap$android$webkit$ConsoleMessage$MessageLevel[consoleMessage.messageLevel().ordinal()]) {
-                        case 1:
-                            Log.v("browser", str);
-                            break;
-                        case 2:
-                            Log.i("browser", str);
-                            break;
-                        case 3:
-                            Log.w("browser", str);
-                            break;
-                        case 4:
-                            Log.e("browser", str);
-                            break;
-                        case 5:
-                            Log.d("browser", str);
-                            break;
-                    }
+                if (Tab.this.isPrivateBrowsingEnabled() || !Tab.DEBUG) {
                     return true;
                 }
-                return true;
+                String str = "Console: " + consoleMessage.message() + " " + consoleMessage.sourceId() + ":" + consoleMessage.lineNumber();
+                switch (AnonymousClass9.$SwitchMap$android$webkit$ConsoleMessage$MessageLevel[consoleMessage.messageLevel().ordinal()]) {
+                    case 1:
+                        Log.v("browser", str);
+                        return true;
+                    case 2:
+                        Log.i("browser", str);
+                        return true;
+                    case 3:
+                        Log.w("browser", str);
+                        return true;
+                    case 4:
+                        Log.e("browser", str);
+                        return true;
+                    case 5:
+                        Log.d("browser", str);
+                        return true;
+                    default:
+                        return true;
+                }
             }
 
             @Override // android.webkit.WebChromeClient
@@ -910,10 +1735,13 @@ public class Tab implements WebView.PictureListener {
             }
         };
         this.mIsBookmarkCallback = new DataController.OnQueryUrlIsBookmark() { // from class: com.android.browser.Tab.8
+            AnonymousClass8() {
+            }
+
             @Override // com.android.browser.DataController.OnQueryUrlIsBookmark
-            public void onQueryUrlIsBookmark(String str, boolean z2) {
+            public void onQueryUrlIsBookmark(String str, boolean z) {
                 if (Tab.this.mCurrentState.mUrl.equals(str)) {
-                    Tab.this.mCurrentState.mIsBookmarkedSite = z2;
+                    Tab.this.mCurrentState.mIsBookmarkedSite = z;
                     Tab.this.mWebViewController.bookmarkedStatusHasChanged(Tab.this);
                 }
             }
@@ -935,22 +1763,27 @@ public class Tab implements WebView.PictureListener {
         this.mDataController = DataController.getInstance(this.mContext);
         Context context = this.mContext;
         if (webView == null) {
-            z = false;
+            zIsPrivateBrowsingEnabled = false;
         } else {
-            z = webView.isPrivateBrowsingEnabled();
+            zIsPrivateBrowsingEnabled = webView.isPrivateBrowsingEnabled();
         }
-        this.mCurrentState = new PageState(context, z);
+        this.mCurrentState = new PageState(context, zIsPrivateBrowsingEnabled);
         this.mInPageLoad = false;
         this.mInForeground = false;
         this.mDownloadListener = new BrowserDownloadListener() { // from class: com.android.browser.Tab.4
+            AnonymousClass4() {
+            }
+
             @Override // com.android.browser.BrowserDownloadListener
             public void onDownloadStart(String str, String str2, String str3, String str4, String str5, long j) {
-                String remapGenericMimeTypePublic = MimeTypeMap.getSingleton().remapGenericMimeTypePublic(str4, str, str3);
+                String strRemapGenericMimeTypePublic = MimeTypeMap.getSingleton().remapGenericMimeTypePublic(str4, str, str3);
                 Tab.this.mCurrentState.mIsDownload = true;
-                Tab.this.mWebViewController.onDownloadStart(Tab.this, str, str2, str3, remapGenericMimeTypePublic, str5, j);
+                Tab.this.mWebViewController.onDownloadStart(Tab.this, str, str2, str3, strRemapGenericMimeTypePublic, str5, j);
             }
         };
         this.mWebBackForwardListClient = new WebBackForwardListClient() { // from class: com.android.browser.Tab.5
+            AnonymousClass5() {
+            }
         };
         this.mCaptureWidth = this.mContext.getResources().getDimensionPixelSize(R.dimen.tab_thumbnail_width);
         this.mCaptureHeight = this.mContext.getResources().getDimensionPixelSize(R.dimen.tab_thumbnail_height);
@@ -961,6 +1794,9 @@ public class Tab implements WebView.PictureListener {
         }
         setWebView(webView);
         this.mHandler = new Handler() { // from class: com.android.browser.Tab.6
+            AnonymousClass6() {
+            }
+
             @Override // android.os.Handler
             public void handleMessage(Message message) {
                 if (message.what == 42) {
@@ -968,6 +1804,38 @@ public class Tab implements WebView.PictureListener {
                 }
             }
         };
+    }
+
+    /* renamed from: com.android.browser.Tab$4 */
+    class AnonymousClass4 extends BrowserDownloadListener {
+        AnonymousClass4() {
+        }
+
+        @Override // com.android.browser.BrowserDownloadListener
+        public void onDownloadStart(String str, String str2, String str3, String str4, String str5, long j) {
+            String strRemapGenericMimeTypePublic = MimeTypeMap.getSingleton().remapGenericMimeTypePublic(str4, str, str3);
+            Tab.this.mCurrentState.mIsDownload = true;
+            Tab.this.mWebViewController.onDownloadStart(Tab.this, str, str2, str3, strRemapGenericMimeTypePublic, str5, j);
+        }
+    }
+
+    /* renamed from: com.android.browser.Tab$5 */
+    class AnonymousClass5 extends WebBackForwardListClient {
+        AnonymousClass5() {
+        }
+    }
+
+    /* renamed from: com.android.browser.Tab$6 */
+    class AnonymousClass6 extends Handler {
+        AnonymousClass6() {
+        }
+
+        @Override // android.os.Handler
+        public void handleMessage(Message message) {
+            if (message.what == 42) {
+                Tab.this.capture();
+            }
+        }
     }
 
     public boolean shouldUpdateThumbnail() {
@@ -1006,13 +1874,11 @@ public class Tab implements WebView.PictureListener {
         return this.mId;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setWebView(WebView webView) {
+    void setWebView(WebView webView) {
         setWebView(webView, true);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setWebView(WebView webView, boolean z) {
+    void setWebView(WebView webView, boolean z) {
         if (DEBUG) {
             Log.d("browser", "Tab.setWebView()--->webview = " + webView + ", restore = " + z);
         }
@@ -1045,8 +1911,8 @@ public class Tab implements WebView.PictureListener {
             }
             if (z && this.mSavedState != null) {
                 restoreUserAgent();
-                WebBackForwardList restoreState = this.mMainView.restoreState(this.mSavedState);
-                if (restoreState == null || restoreState.getSize() == 0) {
+                WebBackForwardList webBackForwardListRestoreState = this.mMainView.restoreState(this.mSavedState);
+                if (webBackForwardListRestoreState == null || webBackForwardListRestoreState.getSize() == 0) {
                     Log.w("Tab", "Failed to restore WebView state!");
                     loadUrl(this.mCurrentState.mOriginalUrl, null);
                 }
@@ -1055,8 +1921,7 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void destroy() {
+    void destroy() {
         if (DEBUG) {
             Log.d("browser", "Tab.destroy--->" + this.mMainView);
         }
@@ -1067,19 +1932,22 @@ public class Tab implements WebView.PictureListener {
             webView.destroy();
         }
         if (this.mSavePageJob != null && this.mSavePageJob.size() != 0) {
-            Toast.makeText(this.mContext, (int) R.string.saved_page_failed, 1).show();
+            Toast.makeText(this.mContext, R.string.saved_page_failed, 1).show();
             new CancelSavePageTask().execute(new Void[0]);
         }
     }
 
-    /* loaded from: classes.dex */
     private class CancelSavePageTask extends AsyncTask<Void, Void, Void> {
         private CancelSavePageTask() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* synthetic */ CancelSavePageTask(Tab tab, AnonymousClass1 anonymousClass1) {
+            this();
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) throws RemoteException, OperationApplicationException {
             if (Tab.DEBUG) {
                 Log.d("browser", "Tab()--->CancelSavePageTask()--->doInBackground()");
             }
@@ -1088,15 +1956,15 @@ public class Tab implements WebView.PictureListener {
             ArrayList<ContentProviderOperation> arrayList = new ArrayList<>();
             Tab.this.mContext.getContentResolver();
             for (Map.Entry<Integer, Long> entry : Tab.this.mSavePageJob.entrySet()) {
-                long longValue = entry.getValue().longValue();
-                int intValue = entry.getKey().intValue();
+                long jLongValue = entry.getValue().longValue();
+                int iIntValue = entry.getKey().intValue();
                 builder.setSmallIcon(R.drawable.ic_save_page_notification_fail);
                 builder.setContentText(Tab.this.mContext.getText(R.string.saved_page_failed));
                 builder.setOngoing(false);
                 builder.setContentIntent(null);
                 builder.setTicker(Tab.this.mContext.getText(R.string.saved_page_failed));
-                notificationManager.notify(intValue, builder.build());
-                arrayList.add(ContentProviderOperation.newDelete(ContentUris.withAppendedId(SnapshotProvider.Snapshots.CONTENT_URI, longValue)).build());
+                notificationManager.notify(iIntValue, builder.build());
+                arrayList.add(ContentProviderOperation.newDelete(ContentUris.withAppendedId(SnapshotProvider.Snapshots.CONTENT_URI, jLongValue)).build());
             }
             try {
                 Tab.this.mContext.getContentResolver().applyBatch("com.android.browser.snapshots", arrayList);
@@ -1108,9 +1976,9 @@ public class Tab implements WebView.PictureListener {
             return null;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Void r2) {
+        protected void onPostExecute(Void r2) {
             if (Tab.this.mSavePageJob != null) {
                 Tab.this.mSavePageJob.clear();
                 Tab.this.mSavePageJob = null;
@@ -1118,8 +1986,7 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void removeFromTree() {
+    void removeFromTree() {
         if (DEBUG) {
             Log.d("browser", "Tab.removeFromTree()--->tab this = " + this);
         }
@@ -1135,8 +2002,7 @@ public class Tab implements WebView.PictureListener {
         deleteThumbnail();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean createSubWindow() {
+    boolean createSubWindow() {
         if (DEBUG) {
             Log.d("browser", "Tab.createSubWindow()--->mSubView = " + this.mSubView);
         }
@@ -1145,6 +2011,9 @@ public class Tab implements WebView.PictureListener {
             this.mSubView.setWebViewClient(new SubWindowClient(this.mWebViewClient, this.mWebViewController));
             this.mSubView.setWebChromeClient(new SubWindowChromeClient(this.mWebChromeClient));
             this.mSubView.setDownloadListener(new BrowserDownloadListener() { // from class: com.android.browser.Tab.7
+                AnonymousClass7() {
+                }
+
                 @Override // com.android.browser.BrowserDownloadListener
                 public void onDownloadStart(String str, String str2, String str3, String str4, String str5, long j) {
                     Tab.this.mWebViewController.onDownloadStart(Tab.this, str, str2, str3, MimeTypeMap.getSingleton().remapGenericMimeTypePublic(str4, str, str3), str5, j);
@@ -1159,8 +2028,21 @@ public class Tab implements WebView.PictureListener {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void dismissSubWindow() {
+    /* renamed from: com.android.browser.Tab$7 */
+    class AnonymousClass7 extends BrowserDownloadListener {
+        AnonymousClass7() {
+        }
+
+        @Override // com.android.browser.BrowserDownloadListener
+        public void onDownloadStart(String str, String str2, String str3, String str4, String str5, long j) {
+            Tab.this.mWebViewController.onDownloadStart(Tab.this, str, str2, str3, MimeTypeMap.getSingleton().remapGenericMimeTypePublic(str4, str, str3), str5, j);
+            if (Tab.this.mSubView.copyBackForwardList().getSize() == 0) {
+                Tab.this.mWebViewController.dismissSubWindow(Tab.this);
+            }
+        }
+    }
+
+    void dismissSubWindow() {
         if (DEBUG) {
             Log.d("browser", "Tab.dismissSubWindow()--->mSubView = " + this.mSubView);
         }
@@ -1196,8 +2078,7 @@ public class Tab implements WebView.PictureListener {
         return this.mParent;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void addChildTab(Tab tab) {
+    void addChildTab(Tab tab) {
         if (DEBUG) {
             Log.d("browser", "Tab.addChildTab()--->Tab child = " + tab);
         }
@@ -1208,8 +2089,7 @@ public class Tab implements WebView.PictureListener {
         tab.setParent(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void resume() {
+    void resume() {
         if (this.mMainView != null) {
             setupHwAcceleration(this.mMainView);
             this.mMainView.onResume();
@@ -1230,8 +2110,7 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void pause() {
+    void pause() {
         if (this.mMainView != null) {
             this.mMainView.onPause();
             if (this.mSubView != null) {
@@ -1240,8 +2119,7 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void putInForeground() {
+    void putInForeground() {
         if (this.mInForeground) {
             return;
         }
@@ -1258,8 +2136,7 @@ public class Tab implements WebView.PictureListener {
         this.mWebViewController.bookmarkedStatusHasChanged(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void putInBackground() {
+    void putInBackground() {
         if (!this.mInForeground) {
             return;
         }
@@ -1272,56 +2149,46 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean inForeground() {
+    boolean inForeground() {
         return this.mInForeground;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WebView getTopWindow() {
+    WebView getTopWindow() {
         if (this.mSubView != null) {
             return this.mSubView;
         }
         return this.mMainView;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WebView getWebView() {
+    WebView getWebView() {
         return this.mMainView;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setViewContainer(View view) {
+    void setViewContainer(View view) {
         this.mContainer = view;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public View getViewContainer() {
+    View getViewContainer() {
         return this.mContainer;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isPrivateBrowsingEnabled() {
+    boolean isPrivateBrowsingEnabled() {
         return this.mCurrentState.mIncognito;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WebView getSubWebView() {
+    WebView getSubWebView() {
         return this.mSubView;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setSubWebView(WebView webView) {
+    void setSubWebView(WebView webView) {
         this.mSubView = webView;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public View getSubViewContainer() {
+    View getSubViewContainer() {
         return this.mSubViewContainer;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setSubViewContainer(View view) {
+    void setSubViewContainer(View view) {
         this.mSubViewContainer = view;
     }
 
@@ -1339,49 +2206,41 @@ public class Tab implements WebView.PictureListener {
         return this.mPermissionsPrompt;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getAppId() {
+    String getAppId() {
         return this.mAppId;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setAppId(String str) {
+    void setAppId(String str) {
         this.mAppId = str;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean closeOnBack() {
+    boolean closeOnBack() {
         return this.mCloseOnBack;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setCloseOnBack(boolean z) {
+    void setCloseOnBack(boolean z) {
         this.mCloseOnBack = z;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getUrl() {
+    String getUrl() {
         return UrlUtils.filteredUrl(this.mCurrentState.mUrl);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getOriginalUrl() {
+    String getOriginalUrl() {
         if (this.mCurrentState.mOriginalUrl == null) {
             return getUrl();
         }
         return UrlUtils.filteredUrl(this.mCurrentState.mOriginalUrl);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getTitle() {
+    String getTitle() {
         if (this.mCurrentState.mTitle == null && this.mInPageLoad) {
             return this.mContext.getString(R.string.title_bar_loading);
         }
         return this.mCurrentState.mTitle;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Bitmap getFavicon() {
+    Bitmap getFavicon() {
         if (this.mCurrentState.mFavicon != null) {
             return this.mCurrentState.mFavicon;
         }
@@ -1400,8 +2259,7 @@ public class Tab implements WebView.PictureListener {
         this.mCurrentState.mTitle = "";
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ErrorConsoleView getErrorConsole(boolean z) {
+    ErrorConsoleView getErrorConsole(boolean z) {
         if (z && this.mErrorConsole == null) {
             this.mErrorConsole = new ErrorConsoleView(this.mContext);
             this.mErrorConsole.setWebView(this.mMainView);
@@ -1409,33 +2267,28 @@ public class Tab implements WebView.PictureListener {
         return this.mErrorConsole;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setSecurityState(SecurityState securityState) {
+    private void setSecurityState(SecurityState securityState) {
         this.mCurrentState.mSecurityState = securityState;
         this.mCurrentState.mSslCertificateError = null;
         this.mWebViewController.onUpdatedSecurityState(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public SecurityState getSecurityState() {
+    SecurityState getSecurityState() {
         return this.mCurrentState.mSecurityState;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public SslError getSslCertificateError() {
+    SslError getSslCertificateError() {
         return this.mCurrentState.mSslCertificateError;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getLoadProgress() {
+    int getLoadProgress() {
         if (this.mInPageLoad) {
             return this.mPageLoadProgress;
         }
         return 100;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean inPageLoad() {
+    boolean inPageLoad() {
         return this.mInPageLoad;
     }
 
@@ -1447,8 +2300,8 @@ public class Tab implements WebView.PictureListener {
             return null;
         }
         this.mSavedState = new Bundle();
-        WebBackForwardList saveState = this.mMainView.saveState(this.mSavedState);
-        if ((saveState == null || saveState.getSize() == 0) && DEBUG) {
+        WebBackForwardList webBackForwardListSaveState = this.mMainView.saveState(this.mSavedState);
+        if ((webBackForwardListSaveState == null || webBackForwardListSaveState.getSize() == 0) && DEBUG) {
             Log.w("Tab", "Failed to save back/forward list for " + this.mCurrentState.mUrl);
         }
         this.mSavedState.putLong("ID", this.mId);
@@ -1503,6 +2356,20 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
+    /* renamed from: com.android.browser.Tab$8 */
+    class AnonymousClass8 implements DataController.OnQueryUrlIsBookmark {
+        AnonymousClass8() {
+        }
+
+        @Override // com.android.browser.DataController.OnQueryUrlIsBookmark
+        public void onQueryUrlIsBookmark(String str, boolean z) {
+            if (Tab.this.mCurrentState.mUrl.equals(str)) {
+                Tab.this.mCurrentState.mIsBookmarkedSite = z;
+                Tab.this.mWebViewController.bookmarkedStatusHasChanged(Tab.this);
+            }
+        }
+    }
+
     public Bitmap getScreenshot() {
         Bitmap bitmap;
         synchronized (this) {
@@ -1535,10 +2402,10 @@ public class Tab implements WebView.PictureListener {
         return contentValues;
     }
 
-    /* loaded from: classes.dex */
     private static class SaveCallback implements ValueCallback<String> {
         String mResult;
 
+        /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
         @Override // android.webkit.ValueCallback
         public void onReceiveValue(String str) {
             this.mResult = str;
@@ -1563,16 +2430,16 @@ public class Tab implements WebView.PictureListener {
         }
         if (this.mMainView != null) {
             this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mContext);
-            String checkAndTrimUrl = this.mBrowserUrlExt.checkAndTrimUrl(str);
+            String strCheckAndTrimUrl = this.mBrowserUrlExt.checkAndTrimUrl(str);
             this.mPageLoadProgress = 5;
             this.mInPageLoad = true;
-            this.mCurrentState = new PageState(this.mContext, false, checkAndTrimUrl, null);
+            this.mCurrentState = new PageState(this.mContext, false, strCheckAndTrimUrl, null);
             this.mWebViewController.onPageStarted(this, this.mMainView, null);
             if (map == null) {
                 map = new HashMap<>();
             }
             map.put(Browser.HEADER, Browser.UAPROF);
-            this.mMainView.loadUrl(checkAndTrimUrl, map);
+            this.mMainView.loadUrl(strCheckAndTrimUrl, map);
         }
     }
 
@@ -1580,8 +2447,7 @@ public class Tab implements WebView.PictureListener {
         this.mDisableOverrideUrlLoading = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void capture() {
+    protected void capture() {
         TabControl.OnThumbnailUpdatedListener onThumbnailUpdatedListener;
         if (this.mMainView == null || this.mCapture == null || this.mMainView.getContentWidth() <= 0 || this.mMainView.getContentHeight() <= 0) {
             return;
@@ -1589,7 +2455,7 @@ public class Tab implements WebView.PictureListener {
         Canvas canvas = new Canvas(this.mCapture);
         int scrollX = this.mMainView.getScrollX();
         int scrollY = this.mMainView.getScrollY() + this.mMainView.getVisibleTitleHeight();
-        int save = canvas.save();
+        int iSave = canvas.save();
         canvas.translate(-scrollX, -scrollY);
         float width = this.mCaptureWidth / this.mMainView.getWidth();
         if (DEBUG) {
@@ -1601,7 +2467,7 @@ public class Tab implements WebView.PictureListener {
         } else {
             this.mMainView.draw(canvas);
         }
-        canvas.restoreToCount(save);
+        canvas.restoreToCount(iSave);
         canvas.drawRect(0.0f, 0.0f, 1.0f, this.mCapture.getHeight(), sAlphaPaint);
         canvas.drawRect(this.mCapture.getWidth() - 1, 0.0f, this.mCapture.getWidth(), this.mCapture.getHeight(), sAlphaPaint);
         canvas.drawRect(0.0f, 0.0f, this.mCapture.getWidth(), 1.0f, sAlphaPaint);
@@ -1658,13 +2524,11 @@ public class Tab implements WebView.PictureListener {
         DataController.getInstance(this.mContext).saveThumbnail(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void deleteThumbnail() {
+    protected void deleteThumbnail() {
         DataController.getInstance(this.mContext).deleteThumbnail(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updateCaptureFromBlob(byte[] bArr) {
+    void updateCaptureFromBlob(byte[] bArr) {
         synchronized (this) {
             if (this.mCapture == null) {
                 return;
@@ -1672,15 +2536,15 @@ public class Tab implements WebView.PictureListener {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inMutable = true;
             options.inPreferredConfig = Bitmap.Config.RGB_565;
-            ByteBuffer wrap = ByteBuffer.wrap(bArr);
-            Bitmap decodeByteArray = BitmapFactory.decodeByteArray(wrap.array(), wrap.arrayOffset(), wrap.capacity(), options);
-            if (decodeByteArray == null) {
+            ByteBuffer byteBufferWrap = ByteBuffer.wrap(bArr);
+            Bitmap bitmapDecodeByteArray = BitmapFactory.decodeByteArray(byteBufferWrap.array(), byteBufferWrap.arrayOffset(), byteBufferWrap.capacity(), options);
+            if (bitmapDecodeByteArray == null) {
                 return;
             }
             try {
-                this.mCapture = Bitmap.createScaledBitmap(decodeByteArray, this.mCapture.getWidth(), this.mCapture.getHeight(), true);
+                this.mCapture = Bitmap.createScaledBitmap(bitmapDecodeByteArray, this.mCapture.getWidth(), this.mCapture.getHeight(), true);
             } catch (RuntimeException e) {
-                Log.e("Tab", "Load capture has mismatched sizes; buffer: " + wrap.capacity() + " blob: " + bArr.length + "capture: " + this.mCapture.getByteCount());
+                Log.e("Tab", "Load capture has mismatched sizes; buffer: " + byteBufferWrap.capacity() + " blob: " + bArr.length + "capture: " + this.mCapture.getByteCount());
                 throw e;
             }
         }
@@ -1708,8 +2572,7 @@ public class Tab implements WebView.PictureListener {
         return sb.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleProceededAfterSslError(SslError sslError) {
+    private void handleProceededAfterSslError(SslError sslError) {
         if (sslError.getUrl().equals(this.mCurrentState.mUrl)) {
             setSecurityState(SecurityState.SECURITY_STATE_BAD_CERTIFICATE);
             this.mCurrentState.mSslCertificateError = sslError;
@@ -1728,23 +2591,20 @@ public class Tab implements WebView.PictureListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void addDatabaseItemId(int i, long j) {
+    void addDatabaseItemId(int i, long j) {
         if (this.mSavePageJob == null) {
             this.mSavePageJob = new HashMap<>();
         }
         this.mSavePageJob.put(Integer.valueOf(i), Long.valueOf(j));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void removeDatabaseItemId(int i) {
+    void removeDatabaseItemId(int i) {
         if (this.mSavePageJob != null) {
             this.mSavePageJob.remove(Integer.valueOf(i));
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean containsDatabaseItemId(int i) {
+    boolean containsDatabaseItemId(int i) {
         if (this.mSavePageJob != null) {
             return this.mSavePageJob.containsKey(Integer.valueOf(i));
         }

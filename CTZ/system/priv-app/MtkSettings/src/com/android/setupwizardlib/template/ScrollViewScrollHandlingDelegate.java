@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.ScrollView;
 import com.android.setupwizardlib.template.RequireScrollMixin;
 import com.android.setupwizardlib.view.BottomScrollView;
+
 /* loaded from: classes.dex */
 public class ScrollViewScrollHandlingDelegate implements RequireScrollMixin.ScrollHandlingDelegate, BottomScrollView.BottomScrollListener {
     private final RequireScrollMixin mRequireScrollMixin;

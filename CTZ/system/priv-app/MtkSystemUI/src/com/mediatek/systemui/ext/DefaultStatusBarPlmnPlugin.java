@@ -5,6 +5,7 @@ import android.content.ContextWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
 /* loaded from: classes.dex */
 public class DefaultStatusBarPlmnPlugin extends ContextWrapper implements IStatusBarPlmnPlugin {
     public DefaultStatusBarPlmnPlugin(Context context) {

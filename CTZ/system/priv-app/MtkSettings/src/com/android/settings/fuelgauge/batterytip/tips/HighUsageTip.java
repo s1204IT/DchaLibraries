@@ -8,14 +8,17 @@ import com.android.settings.R;
 import com.android.settings.fuelgauge.batterytip.AppInfo;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class HighUsageTip extends BatteryTip {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() { // from class: com.android.settings.fuelgauge.batterytip.tips.HighUsageTip.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public BatteryTip createFromParcel(Parcel parcel) {
             return new HighUsageTip(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public BatteryTip[] newArray(int i) {
             return new HighUsageTip[i];

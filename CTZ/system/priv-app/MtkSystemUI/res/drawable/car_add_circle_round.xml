@@ -3,8 +3,12 @@
     <item>
         <shape android:shape="oval">
             <solid android:color="@color/car_user_switcher_add_user_background_color"/>
-            <size android:height="@dimen/car_user_switcher_image_avatar_size" android:width="@dimen/car_user_switcher_image_avatar_size"/>
+            <size
+                android:height="@dimen/car_user_switcher_image_avatar_size"
+                android:width="@dimen/car_user_switcher_image_avatar_size"/>
         </shape>
     </item>
-    <item android:gravity="center" android:drawable="@drawable/car_ic_add_white"/>
+    <item
+        android:gravity="center"
+        android:drawable="@drawable/car_ic_add_white"/>
 </layer-list>

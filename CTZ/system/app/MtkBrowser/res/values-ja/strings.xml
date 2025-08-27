@@ -76,7 +76,7 @@
     <string name="tab_snapshots">保存したページ</string>
     <string name="added_to_bookmarks">ブックマークに追加しました。</string>
     <string name="removed_from_bookmarks">ブックマークから削除しました。</string>
-    <string name="sign_in_to">%s1に「%s2」でログイン</string>
+    <string name="sign_in_to" formatted="false">%s1に「%s2」でログイン</string>
     <string name="username">名前</string>
     <string name="password">パスワード</string>
     <string name="action">ログイン</string>
@@ -330,7 +330,7 @@
     <string name="webstorage_clear_data_dialog_cancel_button">キャンセル</string>
     <string name="webstorage_origin_summary_mb_stored">携帯電話に保存している容量（MB）</string>
     <string name="loading_video">動画を読み込み中...</string>
-    <string name="permissions_prompt_message">%sがあなたの%sを使いたがっています。</string>
+    <string name="permissions_prompt_message" formatted="false">%sがあなたの%sを使いたがっています。</string>
     <string name="permissions_prompt_allow">許可</string>
     <string name="permissions_prompt_deny">拒否</string>
     <string name="permissions_prompt_remember">設定を保存</string>

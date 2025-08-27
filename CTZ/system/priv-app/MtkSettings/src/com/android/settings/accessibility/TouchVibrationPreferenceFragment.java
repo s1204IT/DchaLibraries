@@ -3,6 +3,7 @@ package com.android.settings.accessibility;
 import android.os.Vibrator;
 import android.provider.Settings;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class TouchVibrationPreferenceFragment extends VibrationPreferenceFragment {
     @Override // com.android.settingslib.core.instrumentation.Instrumentable

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.UserManager;
 import com.android.internal.os.BatteryStatsHelper;
 import com.android.settingslib.utils.AsyncLoader;
+
 /* loaded from: classes.dex */
 public class BatteryStatsHelperLoader extends AsyncLoader<BatteryStatsHelper> {
     BatteryUtils mBatteryUtils;
@@ -15,6 +16,7 @@ public class BatteryStatsHelperLoader extends AsyncLoader<BatteryStatsHelper> {
         this.mBatteryUtils = BatteryUtils.getInstance(context);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
     public BatteryStatsHelper loadInBackground() {
         BatteryStatsHelper batteryStatsHelper = new BatteryStatsHelper(getContext(), true);
@@ -22,8 +24,8 @@ public class BatteryStatsHelperLoader extends AsyncLoader<BatteryStatsHelper> {
         return batteryStatsHelper;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(BatteryStatsHelper batteryStatsHelper) {
+    protected void onDiscardResult(BatteryStatsHelper batteryStatsHelper) {
     }
 }

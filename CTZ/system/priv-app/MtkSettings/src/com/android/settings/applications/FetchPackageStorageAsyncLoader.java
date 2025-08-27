@@ -9,6 +9,7 @@ import com.android.internal.util.Preconditions;
 import com.android.settingslib.applications.StorageStatsSource;
 import com.android.settingslib.utils.AsyncLoader;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class FetchPackageStorageAsyncLoader extends AsyncLoader<StorageStatsSource.AppStorageStats> {
     private final ApplicationInfo mInfo;
@@ -22,6 +23,7 @@ public class FetchPackageStorageAsyncLoader extends AsyncLoader<StorageStatsSour
         this.mUser = userHandle;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
     public StorageStatsSource.AppStorageStats loadInBackground() {
         try {
@@ -32,8 +34,8 @@ public class FetchPackageStorageAsyncLoader extends AsyncLoader<StorageStatsSour
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(StorageStatsSource.AppStorageStats appStorageStats) {
+    protected void onDiscardResult(StorageStatsSource.AppStorageStats appStorageStats) {
     }
 }

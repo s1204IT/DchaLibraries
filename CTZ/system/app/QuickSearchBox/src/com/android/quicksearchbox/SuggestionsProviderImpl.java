@@ -5,6 +5,7 @@ import android.util.Log;
 import com.android.quicksearchbox.util.Consumer;
 import com.android.quicksearchbox.util.NamedTaskExecutor;
 import com.android.quicksearchbox.util.NoOpConsumer;
+
 /* loaded from: classes.dex */
 public class SuggestionsProviderImpl implements SuggestionsProvider {
     private final Config mConfig;
@@ -45,7 +46,6 @@ public class SuggestionsProviderImpl implements SuggestionsProvider {
         return true;
     }
 
-    /* loaded from: classes.dex */
     private class SuggestionCursorReceiver implements Consumer<SourceResult> {
         private final Suggestions mSuggestions;
 
@@ -53,6 +53,7 @@ public class SuggestionsProviderImpl implements SuggestionsProvider {
             this.mSuggestions = suggestions;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: consume(Ljava/lang/Object;)Z */
         @Override // com.android.quicksearchbox.util.Consumer
         public boolean consume(SourceResult sourceResult) {
             this.mSuggestions.addResults(sourceResult);

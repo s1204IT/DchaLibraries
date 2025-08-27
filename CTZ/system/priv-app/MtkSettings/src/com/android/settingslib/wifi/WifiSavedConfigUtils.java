@@ -5,7 +5,9 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.net.wifi.hotspot2.PasspointConfiguration;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WifiSavedConfigUtils {
     public static List<AccessPoint> getAllConfigs(Context context, WifiManager wifiManager) {
@@ -16,8 +18,9 @@ public class WifiSavedConfigUtils {
             }
         }
         try {
-            for (PasspointConfiguration passpointConfiguration : wifiManager.getPasspointConfigurations()) {
-                arrayList.add(new AccessPoint(context, passpointConfiguration));
+            Iterator<PasspointConfiguration> it = wifiManager.getPasspointConfigurations().iterator();
+            while (it.hasNext()) {
+                arrayList.add(new AccessPoint(context, it.next()));
             }
         } catch (UnsupportedOperationException e) {
         }

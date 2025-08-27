@@ -3,6 +3,7 @@ package com.android.systemui.shared.system;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
 /* loaded from: classes.dex */
 public class BackgroundExecutor {
     private static final BackgroundExecutor sInstance = new BackgroundExecutor();

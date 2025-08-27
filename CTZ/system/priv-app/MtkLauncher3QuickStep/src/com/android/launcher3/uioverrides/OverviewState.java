@@ -2,13 +2,13 @@ package com.android.launcher3.uioverrides;
 
 import android.view.View;
 import com.android.launcher3.AbstractFloatingView;
-import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherState;
 import com.android.launcher3.Workspace;
 import com.android.launcher3.allapps.DiscoveryBounce;
 import com.android.launcher3.anim.Interpolators;
 import com.android.quickstep.views.RecentsView;
+
 /* loaded from: classes.dex */
 public class OverviewState extends LauncherState {
     private static final int STATE_FLAGS = 142;
@@ -17,8 +17,7 @@ public class OverviewState extends LauncherState {
         this(i, 250, 142);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public OverviewState(int i, int i2, int i3) {
+    protected OverviewState(int i, int i2, int i3) {
         super(i, 12, i2, i3);
     }
 
@@ -86,7 +85,6 @@ public class OverviewState extends LauncherState {
     }
 
     public static float getDefaultSwipeHeight(Launcher launcher) {
-        DeviceProfile deviceProfile = launcher.getDeviceProfile();
-        return deviceProfile.allAppsCellHeightPx - deviceProfile.allAppsIconTextSizePx;
+        return r1.allAppsCellHeightPx - launcher.getDeviceProfile().allAppsIconTextSizePx;
     }
 }

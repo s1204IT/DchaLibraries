@@ -7,6 +7,7 @@ import android.util.ArrayMap;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.LightBarTransitionsController;
 import com.android.systemui.statusbar.policy.DarkIconDispatcher;
+
 /* loaded from: classes.dex */
 public class DarkIconDispatcherImpl implements DarkIconDispatcher {
     private float mDarkIntensity;
@@ -23,7 +24,7 @@ public class DarkIconDispatcherImpl implements DarkIconDispatcher {
         this.mTransitionsController = new LightBarTransitionsController(context, new LightBarTransitionsController.DarkIntensityApplier() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$DarkIconDispatcherImpl$oA-3cfsaKFqoqAQl8JID377YBJY
             @Override // com.android.systemui.statusbar.phone.LightBarTransitionsController.DarkIntensityApplier
             public final void applyDarkIntensity(float f) {
-                DarkIconDispatcherImpl.this.setIconTintInternal(f);
+                this.f$0.setIconTintInternal(f);
             }
         });
     }
@@ -62,8 +63,7 @@ public class DarkIconDispatcherImpl implements DarkIconDispatcher {
         applyIconTint();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setIconTintInternal(float f) {
+    private void setIconTintInternal(float f) {
         this.mDarkIntensity = f;
         this.mIconTint = ((Integer) ArgbEvaluator.getInstance().evaluate(f, Integer.valueOf(this.mLightModeIconColorSingleTone), Integer.valueOf(this.mDarkModeIconColorSingleTone))).intValue();
         applyIconTint();

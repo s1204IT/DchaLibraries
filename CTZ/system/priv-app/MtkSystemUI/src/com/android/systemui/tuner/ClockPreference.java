@@ -1,5 +1,6 @@
 package com.android.systemui.tuner;
 
+import android.R;
 import android.content.Context;
 import android.support.v7.preference.DropDownPreference;
 import android.text.TextUtils;
@@ -8,6 +9,7 @@ import android.util.AttributeSet;
 import com.android.systemui.Dependency;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.tuner.TunerService;
+
 /* loaded from: classes.dex */
 public class ClockPreference extends DropDownPreference implements TunerService.Tunable {
     private ArraySet<String> mBlacklist;
@@ -20,7 +22,7 @@ public class ClockPreference extends DropDownPreference implements TunerService.
 
     public ClockPreference(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.mClock = context.getString(17040914);
+        this.mClock = context.getString(R.string.mime_type_presentation);
         setEntryValues(new CharSequence[]{"seconds", "default", "disabled"});
     }
 
@@ -58,9 +60,8 @@ public class ClockPreference extends DropDownPreference implements TunerService.
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public boolean persistString(String str) {
+    protected boolean persistString(String str) {
         ((TunerService) Dependency.get(TunerService.class)).setValue("clock_seconds", "seconds".equals(str) ? 1 : 0);
         if ("disabled".equals(str)) {
             this.mBlacklist.add(this.mClock);

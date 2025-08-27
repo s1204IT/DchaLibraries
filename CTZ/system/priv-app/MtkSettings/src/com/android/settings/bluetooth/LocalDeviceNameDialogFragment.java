@@ -10,6 +10,7 @@ import android.text.Editable;
 import com.android.settings.R;
 import com.android.settingslib.bluetooth.LocalBluetoothAdapter;
 import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class LocalDeviceNameDialogFragment extends BluetoothNameDialogFragment {
     private LocalBluetoothAdapter mLocalAdapter;
@@ -96,9 +97,8 @@ public class LocalDeviceNameDialogFragment extends BluetoothNameDialogFragment {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.bluetooth.BluetoothNameDialogFragment
-    public void setDeviceName(String str) {
+    protected void setDeviceName(String str) {
         this.mLocalAdapter.setName(str);
     }
 }

@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import com.android.systemui.recents.events.EventBus;
 import com.android.systemui.recents.views.TaskView;
 import com.android.systemui.shared.recents.model.Task;
+
 /* loaded from: classes.dex */
 public class LaunchTaskEvent extends EventBus.Event {
     public final boolean screenPinningRequested;

@@ -3,12 +3,12 @@ package com.android.systemui.statusbar.policy;
 import android.graphics.Rect;
 import android.view.View;
 import com.android.systemui.statusbar.phone.LightBarTransitionsController;
+
 /* loaded from: classes.dex */
 public interface DarkIconDispatcher {
     public static final Rect sTmpRect = new Rect();
     public static final int[] sTmpInt2 = new int[2];
 
-    /* loaded from: classes.dex */
     public interface DarkReceiver {
         void onDarkChanged(Rect rect, float f, int i);
     }

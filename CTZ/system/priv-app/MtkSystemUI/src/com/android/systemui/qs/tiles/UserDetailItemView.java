@@ -16,6 +16,7 @@ import com.android.internal.util.ArrayUtils;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.UserAvatarView;
+
 /* loaded from: classes.dex */
 public class UserDetailItemView extends LinearLayout {
     protected static int layoutResId = R.layout.qs_user_detail_item;
@@ -39,20 +40,20 @@ public class UserDetailItemView extends LinearLayout {
 
     public UserDetailItemView(Context context, AttributeSet attributeSet, int i, int i2) {
         super(context, attributeSet, i, i2);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.UserDetailItemView, i, i2);
-        int indexCount = obtainStyledAttributes.getIndexCount();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.UserDetailItemView, i, i2);
+        int indexCount = typedArrayObtainStyledAttributes.getIndexCount();
         for (int i3 = 0; i3 < indexCount; i3++) {
-            int index = obtainStyledAttributes.getIndex(i3);
+            int index = typedArrayObtainStyledAttributes.getIndex(i3);
             switch (index) {
                 case 0:
-                    this.mActivatedTypeface = Typeface.create(obtainStyledAttributes.getString(index), 0);
+                    this.mActivatedTypeface = Typeface.create(typedArrayObtainStyledAttributes.getString(index), 0);
                     break;
                 case 1:
-                    this.mRegularTypeface = Typeface.create(obtainStyledAttributes.getString(index), 0);
+                    this.mRegularTypeface = Typeface.create(typedArrayObtainStyledAttributes.getString(index), 0);
                     break;
             }
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public static UserDetailItemView convertOrInflate(Context context, View view, ViewGroup viewGroup) {
@@ -115,7 +116,7 @@ public class UserDetailItemView extends LinearLayout {
     }
 
     private void updateTypeface() {
-        this.mName.setTypeface(ArrayUtils.contains(getDrawableState(), 16843518) ? this.mActivatedTypeface : this.mRegularTypeface);
+        this.mName.setTypeface(ArrayUtils.contains(getDrawableState(), android.R.attr.state_activated) ? this.mActivatedTypeface : this.mRegularTypeface);
     }
 
     @Override // android.view.View

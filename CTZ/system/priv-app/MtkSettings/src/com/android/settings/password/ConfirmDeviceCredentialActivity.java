@@ -8,11 +8,11 @@ import android.os.UserManager;
 import android.util.Log;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class ConfirmDeviceCredentialActivity extends Activity {
     public static final String TAG = ConfirmDeviceCredentialActivity.class.getSimpleName();
 
-    /* loaded from: classes.dex */
     public static class InternalActivity extends ConfirmDeviceCredentialActivity {
     }
 
@@ -24,22 +24,16 @@ public class ConfirmDeviceCredentialActivity extends Activity {
         return intent;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:15:0x005c  */
-    /* JADX WARN: Removed duplicated region for block: B:16:0x0062  */
-    /* JADX WARN: Removed duplicated region for block: B:24:0x0088  */
     @Override // android.app.Activity
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public void onCreate(Bundle bundle) {
         int userIdFromBundle;
-        boolean launchConfirmationActivity;
+        boolean zLaunchConfirmationActivity;
         super.onCreate(bundle);
         Intent intent = getIntent();
         String stringExtra = intent.getStringExtra("android.app.extra.TITLE");
         String stringExtra2 = intent.getStringExtra("android.app.extra.DESCRIPTION");
         String stringExtra3 = intent.getStringExtra("android.app.extra.ALTERNATE_BUTTON_LABEL");
-        boolean equals = "android.app.action.CONFIRM_FRP_CREDENTIAL".equals(intent.getAction());
+        boolean zEquals = "android.app.action.CONFIRM_FRP_CREDENTIAL".equals(intent.getAction());
         int credentialOwnerUserId = Utils.getCredentialOwnerUserId(this);
         if (isInternalActivity()) {
             try {
@@ -47,37 +41,26 @@ public class ConfirmDeviceCredentialActivity extends Activity {
             } catch (SecurityException e) {
                 Log.e(TAG, "Invalid intent extra", e);
             }
-            boolean isManagedProfile = UserManager.get(this).isManagedProfile(userIdFromBundle);
-            if (stringExtra == null && isManagedProfile) {
-                stringExtra = getTitleFromOrganizationName(userIdFromBundle);
-            }
-            String str = stringExtra;
-            ChooseLockSettingsHelper chooseLockSettingsHelper = new ChooseLockSettingsHelper(this);
-            LockPatternUtils lockPatternUtils = new LockPatternUtils(this);
-            if (!equals) {
-                launchConfirmationActivity = chooseLockSettingsHelper.launchFrpConfirmationActivity(0, str, stringExtra2, stringExtra3);
-            } else if (isManagedProfile && isInternalActivity() && !lockPatternUtils.isSeparateProfileChallengeEnabled(userIdFromBundle)) {
-                launchConfirmationActivity = chooseLockSettingsHelper.launchConfirmationActivityWithExternalAndChallenge(0, null, str, stringExtra2, true, 0L, userIdFromBundle);
-            } else {
-                launchConfirmationActivity = chooseLockSettingsHelper.launchConfirmationActivity(0, null, str, stringExtra2, false, true, userIdFromBundle);
-            }
-            if (!launchConfirmationActivity) {
-                Log.d(TAG, "No pattern, password or PIN set.");
-                setResult(-1);
-            }
-            finish();
+        } else {
+            userIdFromBundle = credentialOwnerUserId;
         }
-        userIdFromBundle = credentialOwnerUserId;
-        boolean isManagedProfile2 = UserManager.get(this).isManagedProfile(userIdFromBundle);
-        if (stringExtra == null) {
+        boolean zIsManagedProfile = UserManager.get(this).isManagedProfile(userIdFromBundle);
+        if (stringExtra == null && zIsManagedProfile) {
             stringExtra = getTitleFromOrganizationName(userIdFromBundle);
         }
-        String str2 = stringExtra;
-        ChooseLockSettingsHelper chooseLockSettingsHelper2 = new ChooseLockSettingsHelper(this);
-        LockPatternUtils lockPatternUtils2 = new LockPatternUtils(this);
-        if (!equals) {
+        String str = stringExtra;
+        ChooseLockSettingsHelper chooseLockSettingsHelper = new ChooseLockSettingsHelper(this);
+        LockPatternUtils lockPatternUtils = new LockPatternUtils(this);
+        if (zEquals) {
+            zLaunchConfirmationActivity = chooseLockSettingsHelper.launchFrpConfirmationActivity(0, str, stringExtra2, stringExtra3);
+        } else if (zIsManagedProfile && isInternalActivity() && !lockPatternUtils.isSeparateProfileChallengeEnabled(userIdFromBundle)) {
+            zLaunchConfirmationActivity = chooseLockSettingsHelper.launchConfirmationActivityWithExternalAndChallenge(0, null, str, stringExtra2, true, 0L, userIdFromBundle);
+        } else {
+            zLaunchConfirmationActivity = chooseLockSettingsHelper.launchConfirmationActivity(0, null, str, stringExtra2, false, true, userIdFromBundle);
         }
-        if (!launchConfirmationActivity) {
+        if (!zLaunchConfirmationActivity) {
+            Log.d(TAG, "No pattern, password or PIN set.");
+            setResult(-1);
         }
         finish();
     }
@@ -87,15 +70,15 @@ public class ConfirmDeviceCredentialActivity extends Activity {
     }
 
     private String getTitleFromOrganizationName(int i) {
-        CharSequence charSequence;
+        CharSequence organizationNameForUser;
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService("device_policy");
         if (devicePolicyManager != null) {
-            charSequence = devicePolicyManager.getOrganizationNameForUser(i);
+            organizationNameForUser = devicePolicyManager.getOrganizationNameForUser(i);
         } else {
-            charSequence = null;
+            organizationNameForUser = null;
         }
-        if (charSequence != null) {
-            return charSequence.toString();
+        if (organizationNameForUser != null) {
+            return organizationNameForUser.toString();
         }
         return null;
     }

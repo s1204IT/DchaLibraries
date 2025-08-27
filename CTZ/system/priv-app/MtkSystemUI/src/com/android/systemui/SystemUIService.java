@@ -13,10 +13,11 @@ import com.android.systemui.plugins.PluginManager;
 import com.android.systemui.plugins.PluginManagerImpl;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class SystemUIService extends Service {
     @Override // android.app.Service
-    public void onCreate() {
+    public void onCreate() throws ClassNotFoundException {
         super.onCreate();
         ((SystemUIApplication) getApplication()).startServicesIfNeeded();
         if (Build.IS_DEBUGGABLE && SystemProperties.getBoolean("debug.crash_sysui", false)) {

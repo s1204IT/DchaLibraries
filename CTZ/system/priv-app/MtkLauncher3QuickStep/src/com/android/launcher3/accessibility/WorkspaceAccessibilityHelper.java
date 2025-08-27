@@ -15,6 +15,7 @@ import com.android.launcher3.ShortcutInfo;
 import com.android.launcher3.accessibility.LauncherAccessibilityDelegate;
 import com.android.launcher3.dragndrop.DragLayer;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class WorkspaceAccessibilityHelper extends DragAndDropAccessibilityDelegate {
     private final int[] mTempCords;
@@ -33,43 +34,43 @@ public class WorkspaceAccessibilityHelper extends DragAndDropAccessibilityDelega
         int i2 = i % countX;
         int i3 = i / countX;
         LauncherAccessibilityDelegate.DragInfo dragInfo = this.mDelegate.getDragInfo();
-        if (dragInfo.dragType != LauncherAccessibilityDelegate.DragType.WIDGET || this.mView.acceptsWidget()) {
-            if (dragInfo.dragType == LauncherAccessibilityDelegate.DragType.WIDGET) {
-                int i4 = dragInfo.info.spanX;
-                int i5 = dragInfo.info.spanY;
-                for (int i6 = 0; i6 < i4; i6++) {
-                    for (int i7 = 0; i7 < i5; i7++) {
-                        int i8 = i2 - i6;
-                        int i9 = i3 - i7;
-                        if (i8 >= 0 && i9 >= 0) {
-                            boolean z = true;
-                            for (int i10 = i8; i10 < i8 + i4 && z; i10++) {
-                                for (int i11 = i9; i11 < i9 + i5; i11++) {
-                                    if (i10 >= countX || i11 >= countY || this.mView.isOccupied(i10, i11)) {
-                                        z = false;
-                                        break;
-                                    }
+        if (dragInfo.dragType == LauncherAccessibilityDelegate.DragType.WIDGET && !this.mView.acceptsWidget()) {
+            return -1;
+        }
+        if (dragInfo.dragType == LauncherAccessibilityDelegate.DragType.WIDGET) {
+            int i4 = dragInfo.info.spanX;
+            int i5 = dragInfo.info.spanY;
+            for (int i6 = 0; i6 < i4; i6++) {
+                for (int i7 = 0; i7 < i5; i7++) {
+                    int i8 = i2 - i6;
+                    int i9 = i3 - i7;
+                    if (i8 >= 0 && i9 >= 0) {
+                        boolean z = true;
+                        for (int i10 = i8; i10 < i8 + i4 && z; i10++) {
+                            for (int i11 = i9; i11 < i9 + i5; i11++) {
+                                if (i10 >= countX || i11 >= countY || this.mView.isOccupied(i10, i11)) {
+                                    z = false;
+                                    break;
                                 }
                             }
-                            if (z) {
-                                return i8 + (countX * i9);
-                            }
+                        }
+                        if (z) {
+                            return i8 + (countX * i9);
                         }
                     }
                 }
-                return -1;
-            }
-            View childAt = this.mView.getChildAt(i2, i3);
-            if (childAt == null || childAt == dragInfo.item) {
-                return i;
-            }
-            if (dragInfo.dragType != LauncherAccessibilityDelegate.DragType.FOLDER) {
-                ItemInfo itemInfo = (ItemInfo) childAt.getTag();
-                if ((itemInfo instanceof AppInfo) || (itemInfo instanceof FolderInfo) || (itemInfo instanceof ShortcutInfo)) {
-                    return i;
-                }
             }
             return -1;
+        }
+        View childAt = this.mView.getChildAt(i2, i3);
+        if (childAt == null || childAt == dragInfo.item) {
+            return i;
+        }
+        if (dragInfo.dragType != LauncherAccessibilityDelegate.DragType.FOLDER) {
+            ItemInfo itemInfo = (ItemInfo) childAt.getTag();
+            if ((itemInfo instanceof AppInfo) || (itemInfo instanceof FolderInfo) || (itemInfo instanceof ShortcutInfo)) {
+                return i;
+            }
         }
         return -1;
     }
@@ -93,9 +94,8 @@ public class WorkspaceAccessibilityHelper extends DragAndDropAccessibilityDelega
         return "";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.accessibility.DragAndDropAccessibilityDelegate, android.support.v4.widget.ExploreByTouchHelper
-    public void onPopulateNodeForVirtualView(int i, AccessibilityNodeInfoCompat accessibilityNodeInfoCompat) {
+    protected void onPopulateNodeForVirtualView(int i, AccessibilityNodeInfoCompat accessibilityNodeInfoCompat) {
         super.onPopulateNodeForVirtualView(i, accessibilityNodeInfoCompat);
         DragLayer dragLayer = Launcher.getLauncher(this.mView.getContext()).getDragLayer();
         int[] iArr = this.mTempCords;

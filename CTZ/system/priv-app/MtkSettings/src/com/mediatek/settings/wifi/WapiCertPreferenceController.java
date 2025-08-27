@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class WapiCertPreferenceController extends AbstractPreferenceController {
     private Context mContext;
@@ -24,7 +25,7 @@ public class WapiCertPreferenceController extends AbstractPreferenceController {
         return "wapi_cert_manage";
     }
 
-    private boolean isWapiCertPackageExist() {
+    private boolean isWapiCertPackageExist() throws PackageManager.NameNotFoundException {
         if (this.mContext != null) {
             try {
                 this.mContext.getPackageManager().getActivityInfo(new ComponentName("com.wapi.wapicertmanager", "com.wapi.wapicertmanager.WapiCertManagerActivity"), 0);

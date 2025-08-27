@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class ExecuteHttpTask extends Thread {
     protected CountDownLatch countDownLatch;
@@ -29,11 +30,8 @@ public class ExecuteHttpTask extends Thread {
         Logger.d("ExecuteHttpTask", "ExecuteHttpTask end");
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:13:0x004d  */
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [153=5] */
     @Override // java.lang.Thread, java.lang.Runnable
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public void run() {
         HttpURLConnection httpURLConnection;
         String str;
@@ -48,31 +46,29 @@ public class ExecuteHttpTask extends Thread {
             } catch (IOException e2) {
                 Logger.d("ExecuteHttpTask", "run 003", e2);
             }
-            if (httpURLConnection != null) {
-                Logger.d("ExecuteHttpTask", "run 004");
+        } else {
+            httpURLConnection = null;
+        }
+        if (httpURLConnection != null) {
+            Logger.d("ExecuteHttpTask", "run 004");
+            try {
                 try {
-                    try {
-                        httpURLConnection.setRequestMethod("GET");
-                        httpURLConnection.setRequestProperty("Connection", "close");
-                        httpURLConnection.setRequestProperty("Content-Type", "text/html; charset=UTF-8");
-                        httpURLConnection.setRequestProperty("Content-Type", "application/octet-stream");
-                        httpURLConnection.setInstanceFollowRedirects(true);
-                        httpURLConnection.setConnectTimeout(this.timeout * 1000);
-                        httpURLConnection.setReadTimeout(this.timeout * 1000);
-                        httpURLConnection.connect();
-                        StringBuffer processResponse = processResponse(httpURLConnection);
-                        Logger.d("ExecuteHttpTask", "run 005");
-                        synchronized (this.lock) {
-                            Logger.d("ExecuteHttpTask", "run 006");
-                            this.httpResponse = new HttpResponse(httpURLConnection.getResponseCode(), processResponse);
-                        }
-                        str = "ExecuteHttpTask";
-                        objArr = new Object[]{"run 009"};
-                    } catch (Throwable th) {
-                        Logger.d("ExecuteHttpTask", "run 009");
-                        httpURLConnection.disconnect();
-                        throw th;
+                    httpURLConnection.setRequestMethod("GET");
+                    httpURLConnection.setRequestProperty("Connection", "close");
+                    httpURLConnection.setRequestProperty("Content-Type", "text/html; charset=UTF-8");
+                    httpURLConnection.setRequestProperty("Content-Type", "application/octet-stream");
+                    httpURLConnection.setInstanceFollowRedirects(true);
+                    httpURLConnection.setConnectTimeout(this.timeout * 1000);
+                    httpURLConnection.setReadTimeout(this.timeout * 1000);
+                    httpURLConnection.connect();
+                    StringBuffer stringBufferProcessResponse = processResponse(httpURLConnection);
+                    Logger.d("ExecuteHttpTask", "run 005");
+                    synchronized (this.lock) {
+                        Logger.d("ExecuteHttpTask", "run 006");
+                        this.httpResponse = new HttpResponse(httpURLConnection.getResponseCode(), stringBufferProcessResponse);
                     }
+                    str = "ExecuteHttpTask";
+                    objArr = new Object[]{"run 009"};
                 } catch (ProtocolException e3) {
                     Logger.d("ExecuteHttpTask", "run 007", e3);
                     str = "ExecuteHttpTask";
@@ -84,26 +80,36 @@ public class ExecuteHttpTask extends Thread {
                 }
                 Logger.d(str, objArr);
                 httpURLConnection.disconnect();
+            } catch (Throwable th) {
+                Logger.d("ExecuteHttpTask", "run 009");
+                httpURLConnection.disconnect();
+                throw th;
             }
-            this.countDownLatch.countDown();
-            Logger.d("ExecuteHttpTask", "run end");
-        }
-        httpURLConnection = null;
-        if (httpURLConnection != null) {
         }
         this.countDownLatch.countDown();
         Logger.d("ExecuteHttpTask", "run end");
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [195=8, 196=6, 197=5, 199=5, 200=5, 201=5] */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:20:0x006e */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:22:0x0071 */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:31:0x00a9 */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:40:0x00df */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:49:0x0115 */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:75:0x0016 */
     /* JADX WARN: Multi-variable type inference failed */
     /* JADX WARN: Type inference failed for: r2v21, types: [java.lang.Object[]] */
     /* JADX WARN: Type inference failed for: r3v11, types: [java.lang.String] */
-    private StringBuffer processResponse(HttpURLConnection httpURLConnection) {
+    private StringBuffer processResponse(HttpURLConnection httpURLConnection) throws Throwable {
         String str;
         Object[] objArr;
         Logger.d("ExecuteHttpTask", "processResponse start");
         StringBuffer stringBuffer = new StringBuffer();
         BufferedReader bufferedReader = null;
+        BufferedReader bufferedReader2 = null;
+        BufferedReader bufferedReader3 = null;
+        BufferedReader bufferedReader4 = null;
+        BufferedReader bufferedReader5 = null;
         int i = 2;
         i = 2;
         i = 2;
@@ -117,26 +123,26 @@ public class ExecuteHttpTask extends Thread {
         try {
             try {
                 Logger.d("ExecuteHttpTask", "processResponse 001");
-                BufferedReader bufferedReader2 = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(), "UTF-8"));
+                BufferedReader bufferedReader6 = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(), "UTF-8"));
                 while (true) {
                     try {
-                        String readLine = bufferedReader2.readLine();
-                        if (readLine == null) {
+                        String line = bufferedReader6.readLine();
+                        if (line == null) {
                             break;
                         }
-                        stringBuffer.append(readLine);
+                        stringBuffer.append(line);
                         stringBuffer.append("\n");
                     } catch (FileNotFoundException e) {
                         e = e;
-                        bufferedReader = bufferedReader2;
+                        bufferedReader2 = bufferedReader6;
                         Logger.d("ExecuteHttpTask", "processResponse 005", e);
                         Logger.d("ExecuteHttpTask", "processResponse 006");
-                        bufferedReader = bufferedReader;
-                        if (bufferedReader != null) {
+                        bufferedReader = bufferedReader2;
+                        if (bufferedReader2 != null) {
                             Logger.d("ExecuteHttpTask", "processResponse 007");
                             try {
-                                bufferedReader.close();
-                                bufferedReader = bufferedReader;
+                                bufferedReader2.close();
+                                bufferedReader = bufferedReader2;
                             } catch (IOException e2) {
                                 str = "ExecuteHttpTask";
                                 objArr = new Object[]{"processResponse 008", e2};
@@ -149,15 +155,15 @@ public class ExecuteHttpTask extends Thread {
                         return stringBuffer;
                     } catch (UnsupportedEncodingException e3) {
                         e = e3;
-                        bufferedReader = bufferedReader2;
+                        bufferedReader3 = bufferedReader6;
                         Logger.d("ExecuteHttpTask", "processResponse 003", e);
                         Logger.d("ExecuteHttpTask", "processResponse 006");
-                        bufferedReader = bufferedReader;
-                        if (bufferedReader != null) {
+                        bufferedReader = bufferedReader3;
+                        if (bufferedReader3 != null) {
                             Logger.d("ExecuteHttpTask", "processResponse 007");
                             try {
-                                bufferedReader.close();
-                                bufferedReader = bufferedReader;
+                                bufferedReader3.close();
+                                bufferedReader = bufferedReader3;
                             } catch (IOException e4) {
                                 str = "ExecuteHttpTask";
                                 objArr = new Object[]{"processResponse 008", e4};
@@ -170,15 +176,15 @@ public class ExecuteHttpTask extends Thread {
                         return stringBuffer;
                     } catch (UnknownHostException e5) {
                         e = e5;
-                        bufferedReader = bufferedReader2;
+                        bufferedReader4 = bufferedReader6;
                         Logger.d("ExecuteHttpTask", "processResponse 004", e);
                         Logger.d("ExecuteHttpTask", "processResponse 006");
-                        bufferedReader = bufferedReader;
-                        if (bufferedReader != null) {
+                        bufferedReader = bufferedReader4;
+                        if (bufferedReader4 != null) {
                             Logger.d("ExecuteHttpTask", "processResponse 007");
                             try {
-                                bufferedReader.close();
-                                bufferedReader = bufferedReader;
+                                bufferedReader4.close();
+                                bufferedReader = bufferedReader4;
                             } catch (IOException e6) {
                                 str = "ExecuteHttpTask";
                                 objArr = new Object[]{"processResponse 008", e6};
@@ -191,15 +197,15 @@ public class ExecuteHttpTask extends Thread {
                         return stringBuffer;
                     } catch (IOException e7) {
                         e = e7;
-                        bufferedReader = bufferedReader2;
+                        bufferedReader5 = bufferedReader6;
                         Logger.d("ExecuteHttpTask", "processResponse 005", e);
                         Logger.d("ExecuteHttpTask", "processResponse 006");
-                        bufferedReader = bufferedReader;
-                        if (bufferedReader != null) {
+                        bufferedReader = bufferedReader5;
+                        if (bufferedReader5 != null) {
                             Logger.d("ExecuteHttpTask", "processResponse 007");
                             try {
-                                bufferedReader.close();
-                                bufferedReader = bufferedReader;
+                                bufferedReader5.close();
+                                bufferedReader = bufferedReader5;
                             } catch (IOException e8) {
                                 str = "ExecuteHttpTask";
                                 objArr = new Object[]{"processResponse 008", e8};
@@ -212,7 +218,7 @@ public class ExecuteHttpTask extends Thread {
                         return stringBuffer;
                     } catch (Throwable th) {
                         th = th;
-                        bufferedReader = bufferedReader2;
+                        bufferedReader = bufferedReader6;
                         Logger.d("ExecuteHttpTask", "processResponse 006");
                         if (bufferedReader != null) {
                             Logger.d("ExecuteHttpTask", "processResponse 007");
@@ -228,29 +234,29 @@ public class ExecuteHttpTask extends Thread {
                         throw th;
                     }
                 }
-                bufferedReader2.close();
+                bufferedReader6.close();
                 Logger.d("ExecuteHttpTask", "processResponse 002");
                 ?? r2 = {"processResponse 006"};
                 Logger.d("ExecuteHttpTask", r2);
                 bufferedReader = r2;
                 i = "processResponse 006";
-            } catch (Throwable th2) {
-                th = th2;
+            } catch (FileNotFoundException e10) {
+                e = e10;
+            } catch (UnsupportedEncodingException e11) {
+                e = e11;
+            } catch (UnknownHostException e12) {
+                e = e12;
+            } catch (IOException e13) {
+                e = e13;
             }
-        } catch (FileNotFoundException e10) {
-            e = e10;
-        } catch (UnsupportedEncodingException e11) {
-            e = e11;
-        } catch (UnknownHostException e12) {
-            e = e12;
-        } catch (IOException e13) {
-            e = e13;
+            Logger.d("ExecuteHttpTask", "processResponse end");
+            return stringBuffer;
+        } catch (Throwable th2) {
+            th = th2;
         }
-        Logger.d("ExecuteHttpTask", "processResponse end");
-        return stringBuffer;
     }
 
-    public void execute() {
+    public void execute() throws InterruptedException {
         Logger.d("ExecuteHttpTask", "execute start");
         start();
         try {

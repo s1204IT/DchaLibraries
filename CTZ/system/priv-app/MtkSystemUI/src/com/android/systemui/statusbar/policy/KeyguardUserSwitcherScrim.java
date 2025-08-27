@@ -11,6 +11,7 @@ import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class KeyguardUserSwitcherScrim extends Drawable implements View.OnLayoutChangeListener {
     private int mDarkColor;
@@ -27,10 +28,10 @@ public class KeyguardUserSwitcherScrim extends Drawable implements View.OnLayout
     public void draw(Canvas canvas) {
         boolean z = getLayoutDirection() == 0;
         Rect bounds = getBounds();
-        float width = bounds.width() * 2.5f;
+        float fWidth = bounds.width() * 2.5f;
         canvas.translate(0.0f, -this.mTop);
-        canvas.scale(1.0f, ((this.mTop + bounds.height()) * 2.5f) / width);
-        canvas.drawRect(z ? bounds.right - width : 0.0f, 0.0f, z ? bounds.right : bounds.left + width, width, this.mRadialGradientPaint);
+        canvas.scale(1.0f, ((this.mTop + bounds.height()) * 2.5f) / fWidth);
+        canvas.drawRect(z ? bounds.right - fWidth : 0.0f, 0.0f, z ? bounds.right : bounds.left + fWidth, fWidth, this.mRadialGradientPaint);
     }
 
     @Override // android.graphics.drawable.Drawable
@@ -68,7 +69,6 @@ public class KeyguardUserSwitcherScrim extends Drawable implements View.OnLayout
             return;
         }
         float f = this.mLayoutWidth * 2.5f;
-        boolean z = getLayoutDirection() == 0;
-        this.mRadialGradientPaint.setShader(new RadialGradient(z ? this.mLayoutWidth : 0.0f, 0.0f, f, new int[]{Color.argb((int) ((Color.alpha(this.mDarkColor) * this.mAlpha) / 255.0f), 0, 0, 0), 0}, new float[]{Math.max(0.0f, (this.mLayoutWidth * 0.75f) / f), 1.0f}, Shader.TileMode.CLAMP));
+        this.mRadialGradientPaint.setShader(new RadialGradient(getLayoutDirection() == 0 ? this.mLayoutWidth : 0.0f, 0.0f, f, new int[]{Color.argb((int) ((Color.alpha(this.mDarkColor) * this.mAlpha) / 255.0f), 0, 0, 0), 0}, new float[]{Math.max(0.0f, (this.mLayoutWidth * 0.75f) / f), 1.0f}, Shader.TileMode.CLAMP));
     }
 }

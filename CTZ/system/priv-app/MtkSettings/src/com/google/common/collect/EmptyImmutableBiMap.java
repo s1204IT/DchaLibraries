@@ -1,9 +1,9 @@
 package com.google.common.collect;
 
 import java.util.Map;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class EmptyImmutableBiMap extends ImmutableBiMap<Object, Object> {
+final class EmptyImmutableBiMap extends ImmutableBiMap<Object, Object> {
     static final EmptyImmutableBiMap INSTANCE = new EmptyImmutableBiMap();
 
     private EmptyImmutableBiMap() {
@@ -29,6 +29,7 @@ public final class EmptyImmutableBiMap extends ImmutableBiMap<Object, Object> {
         return null;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: entrySet()Ljava/util/Set; */
     @Override // com.google.common.collect.ImmutableMap, java.util.Map
     public ImmutableSet<Map.Entry<Object, Object>> entrySet() {
         return ImmutableSet.of();
@@ -39,14 +40,14 @@ public final class EmptyImmutableBiMap extends ImmutableBiMap<Object, Object> {
         throw new AssertionError("should never be called");
     }
 
+    /* JADX DEBUG: Method merged with bridge method: keySet()Ljava/util/Set; */
     @Override // com.google.common.collect.ImmutableMap, java.util.Map
     public ImmutableSet<Object> keySet() {
         return ImmutableSet.of();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableMap
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return false;
     }
 

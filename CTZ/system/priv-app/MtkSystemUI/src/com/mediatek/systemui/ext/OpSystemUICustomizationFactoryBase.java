@@ -4,6 +4,7 @@ import android.content.Context;
 import com.mediatek.common.util.OperatorCustomizationFactoryLoader;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class OpSystemUICustomizationFactoryBase {
     static OpSystemUICustomizationFactoryBase sFactory;
@@ -43,16 +44,12 @@ public class OpSystemUICustomizationFactoryBase {
     }
 
     public static synchronized OpSystemUICustomizationFactoryBase getOpFactory(Context context) {
-        OpSystemUICustomizationFactoryBase opSystemUICustomizationFactoryBase;
-        synchronized (OpSystemUICustomizationFactoryBase.class) {
+        if (sFactory == null) {
+            sFactory = (OpSystemUICustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOpFactoryInfoList);
             if (sFactory == null) {
-                sFactory = (OpSystemUICustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOpFactoryInfoList);
-                if (sFactory == null) {
-                    sFactory = new OpSystemUICustomizationFactoryBase();
-                }
+                sFactory = new OpSystemUICustomizationFactoryBase();
             }
-            opSystemUICustomizationFactoryBase = sFactory;
         }
-        return opSystemUICustomizationFactoryBase;
+        return sFactory;
     }
 }

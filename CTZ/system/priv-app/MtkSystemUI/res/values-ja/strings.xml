@@ -295,8 +295,8 @@
     <string name="battery_info_status_not_charging">接続されていますが、現在、充電できません</string>
     <string name="battery_info_status_unknown">不明</string>
     <string name="battery_low_percent_format">残量が%sです</string>
-    <string name="battery_low_percent_format_hybrid">残量 %s、約 %s（使用状況に基づく）</string>
-    <string name="battery_low_percent_format_hybrid_short">残量 %s、約 %s</string>
+    <string name="battery_low_percent_format_hybrid" formatted="false">残量 %s、約 %s（使用状況に基づく）</string>
+    <string name="battery_low_percent_format_hybrid_short" formatted="false">残量 %s、約 %s</string>
     <string name="battery_low_percent_format_saver_started">残量が %s です。バッテリー セーバーは ON です。</string>
     <string name="battery_low_title">もうすぐ電池がなくなります</string>
     <string name="battery_low_why">設定</string>
@@ -688,9 +688,9 @@
     <string name="keyguard_enter_your_password">パスワードを入力してください</string>
     <string name="keyguard_enter_your_pattern">パターンを入力してください</string>
     <string name="keyguard_enter_your_pin">PIN を入力してください</string>
-    <string name="keyguard_indication_charging_time">%2$s • 充電中（完了まで %s）</string>
-    <string name="keyguard_indication_charging_time_fast">%2$s • 急速充電中（完了まで %s）</string>
-    <string name="keyguard_indication_charging_time_slowly">%2$s • 低速充電中（完了まで %s）</string>
+    <string name="keyguard_indication_charging_time" formatted="false">%2$s • 充電中（完了まで %s）</string>
+    <string name="keyguard_indication_charging_time_fast" formatted="false">%2$s • 急速充電中（完了まで %s）</string>
+    <string name="keyguard_indication_charging_time_slowly" formatted="false">%2$s • 低速充電中（完了まで %s）</string>
     <string name="keyguard_indication_trust_disabled">手動でロックを解除するまでロックされたままとなります</string>
     <string name="keyguard_indication_trust_granted">%1$s さんのロックを解除しました</string>
     <string name="keyguard_indication_trust_managed">%1$s を実行しています</string>
@@ -855,7 +855,7 @@
     <string name="mobile_data_disable_message">%s でデータやインターネットにアクセスできなくなります。インターネットには Wi-Fi からのみ接続できます。</string>
     <string name="mobile_data_disable_message_default_carrier">携帯通信会社</string>
     <string name="mobile_data_disable_title">モバイルデータを OFF にしますか？</string>
-    <string name="mobile_data_text_format">%s — %s</string>
+    <string name="mobile_data_text_format" formatted="false">%s — %s</string>
     <string name="mock_location_app">仮の現在地情報アプリを選択</string>
     <string name="mock_location_app_not_set">仮の現在地情報アプリが設定されていません</string>
     <string name="mock_location_app_set">仮の現在地情報アプリ: %1$s</string>
@@ -939,7 +939,7 @@
     <string name="notification_channel_tv_pip">ピクチャー イン ピクチャー</string>
     <string name="notification_done">完了</string>
     <string name="notification_group_overflow_indicator">他 %s 件</string>
-    <string name="notification_group_overflow_indicator_ambient">%s、他 %s 件</string>
+    <string name="notification_group_overflow_indicator_ambient" formatted="false">%s、他 %s 件</string>
     <string name="notification_header_default_channel">通知</string>
     <string name="notification_menu_accessibility">%1$s %2$s</string>
     <string name="notification_menu_gear_description">通知管理</string>

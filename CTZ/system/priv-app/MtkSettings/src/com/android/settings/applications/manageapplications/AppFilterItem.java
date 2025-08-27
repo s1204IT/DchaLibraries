@@ -2,6 +2,7 @@ package com.android.settings.applications.manageapplications;
 
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class AppFilterItem implements Comparable<AppFilterItem> {
     private final ApplicationsState.AppFilter mFilter;
@@ -26,6 +27,7 @@ public class AppFilterItem implements Comparable<AppFilterItem> {
         return this.mFilterType;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     @Override // java.lang.Comparable
     public int compareTo(AppFilterItem appFilterItem) {
         if (appFilterItem == null) {

@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LocationSettings extends DashboardFragment {
     private static ISettingsMiscExt mExt;
@@ -64,9 +66,8 @@ public class LocationSettings extends DashboardFragment {
         mExt.customizeAGPRS(getPreferenceScreen());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.location_settings;
     }
 
@@ -80,16 +81,17 @@ public class LocationSettings extends DashboardFragment {
         return buildPreferenceControllers(context, this, getLifecycle());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void addPreferencesSorted(List<Preference> list, PreferenceGroup preferenceGroup) {
+    static void addPreferencesSorted(List<Preference> list, PreferenceGroup preferenceGroup) {
         Collections.sort(list, new Comparator<Preference>() { // from class: com.android.settings.location.LocationSettings.1
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(Preference preference, Preference preference2) {
                 return preference.getTitle().toString().compareTo(preference2.getTitle().toString());
             }
         });
-        for (Preference preference : list) {
-            preferenceGroup.addPreference(preference);
+        Iterator<Preference> it = list.iterator();
+        while (it.hasNext()) {
+            preferenceGroup.addPreference(it.next());
         }
     }
 
@@ -98,8 +100,7 @@ public class LocationSettings extends DashboardFragment {
         return R.string.help_url_location_access;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, LocationSettings locationSettings, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, LocationSettings locationSettings, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new AppLocationPermissionPreferenceController(context));
         arrayList.add(new LocationForWorkPreferenceController(context, lifecycle));
@@ -113,7 +114,6 @@ public class LocationSettings extends DashboardFragment {
         return arrayList;
     }
 
-    /* loaded from: classes.dex */
     private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;

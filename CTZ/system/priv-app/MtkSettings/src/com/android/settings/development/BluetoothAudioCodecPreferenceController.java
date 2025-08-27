@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothCodecConfig;
 import android.content.Context;
 import com.android.settings.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class BluetoothAudioCodecPreferenceController extends AbstractBluetoothA2dpPreferenceController {
     public BluetoothAudioCodecPreferenceController(Context context, Lifecycle lifecycle, BluetoothA2dpConfigStore bluetoothA2dpConfigStore) {
@@ -30,6 +31,8 @@ public class BluetoothAudioCodecPreferenceController extends AbstractBluetoothA2
         return 0;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [126=9] */
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     /* JADX WARN: Removed duplicated region for block: B:43:0x0076  */
     @Override // com.android.settings.development.AbstractBluetoothA2dpPreferenceController
     /*
@@ -63,18 +66,33 @@ public class BluetoothAudioCodecPreferenceController extends AbstractBluetoothA2
                         i = 4;
                         break;
                 }
+                this.mBluetoothA2dpConfigStore.setCodecType(i);
+                this.mBluetoothA2dpConfigStore.setCodecPriority(i2);
+                return;
+            case 1:
+                this.mBluetoothA2dpConfigStore.setCodecType(i);
+                this.mBluetoothA2dpConfigStore.setCodecPriority(i2);
+                return;
             case 2:
                 i = 1;
-                break;
+                this.mBluetoothA2dpConfigStore.setCodecType(i);
+                this.mBluetoothA2dpConfigStore.setCodecPriority(i2);
+                return;
             case 3:
                 i = 2;
-                break;
+                this.mBluetoothA2dpConfigStore.setCodecType(i);
+                this.mBluetoothA2dpConfigStore.setCodecPriority(i2);
+                return;
             case 4:
                 i = 3;
-                break;
+                this.mBluetoothA2dpConfigStore.setCodecType(i);
+                this.mBluetoothA2dpConfigStore.setCodecPriority(i2);
+                return;
             case 5:
                 i = 4;
-                break;
+                this.mBluetoothA2dpConfigStore.setCodecType(i);
+                this.mBluetoothA2dpConfigStore.setCodecPriority(i2);
+                return;
             case 6:
                 synchronized (this.mBluetoothA2dpConfigStore) {
                     if (this.mBluetoothA2dp != null) {
@@ -90,8 +108,6 @@ public class BluetoothAudioCodecPreferenceController extends AbstractBluetoothA2
                 }
                 return;
         }
-        this.mBluetoothA2dpConfigStore.setCodecType(i);
-        this.mBluetoothA2dpConfigStore.setCodecPriority(i2);
     }
 
     @Override // com.android.settings.development.AbstractBluetoothA2dpPreferenceController

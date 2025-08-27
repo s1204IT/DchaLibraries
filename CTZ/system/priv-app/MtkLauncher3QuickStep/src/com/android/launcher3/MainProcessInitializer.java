@@ -3,14 +3,14 @@ package com.android.launcher3;
 import android.content.Context;
 import com.android.launcher3.graphics.IconShapeOverride;
 import com.android.launcher3.logging.FileLog;
+
 /* loaded from: classes.dex */
 public class MainProcessInitializer {
-    public static void initialize(Context context) {
+    public static void initialize(Context context) throws IllegalAccessException, IllegalArgumentException {
         ((MainProcessInitializer) Utilities.getOverrideObject(MainProcessInitializer.class, context, R.string.main_process_initializer_class)).init(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void init(Context context) {
+    protected void init(Context context) throws IllegalAccessException, IllegalArgumentException {
         FileLog.setDir(context.getApplicationContext().getFilesDir());
         IconShapeOverride.apply(context);
         SessionCommitReceiver.applyDefaultUserPrefs(context);

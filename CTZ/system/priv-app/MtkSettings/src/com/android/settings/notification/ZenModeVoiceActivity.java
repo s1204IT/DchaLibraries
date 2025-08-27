@@ -12,6 +12,7 @@ import android.util.Log;
 import com.android.settings.R;
 import com.android.settings.utils.VoiceSettingsActivity;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class ZenModeVoiceActivity extends VoiceSettingsActivity {
     @Override // com.android.settings.utils.VoiceSettingsActivity
@@ -19,16 +20,16 @@ public class ZenModeVoiceActivity extends VoiceSettingsActivity {
         int i;
         if (intent.hasExtra("android.settings.extra.do_not_disturb_mode_enabled")) {
             int intExtra = intent.getIntExtra("android.settings.extra.do_not_disturb_mode_minutes", -1);
-            Condition condition = null;
+            Condition timeCondition = null;
             if (intent.getBooleanExtra("android.settings.extra.do_not_disturb_mode_enabled", false)) {
                 if (intExtra > 0) {
-                    condition = ZenModeConfig.toTimeCondition(this, intExtra, UserHandle.myUserId());
+                    timeCondition = ZenModeConfig.toTimeCondition(this, intExtra, UserHandle.myUserId());
                 }
                 i = 3;
             } else {
                 i = 0;
             }
-            setZenModeConfig(i, condition);
+            setZenModeConfig(i, timeCondition);
             AudioManager audioManager = (AudioManager) getSystemService("audio");
             if (audioManager != null) {
                 audioManager.adjustStreamVolume(5, 0, 1);
@@ -72,15 +73,15 @@ public class ZenModeVoiceActivity extends VoiceSettingsActivity {
         if (i2 < 0 || i == 0) {
             return getString(i6);
         }
-        CharSequence format = DateFormat.format(DateFormat.getBestDateTimePattern(Locale.getDefault(), DateFormat.is24HourFormat(this, UserHandle.myUserId()) ? "Hm" : "hma"), System.currentTimeMillis() + (60000 * i2));
+        CharSequence charSequence = DateFormat.format(DateFormat.getBestDateTimePattern(Locale.getDefault(), DateFormat.is24HourFormat(this, UserHandle.myUserId()) ? "Hm" : "hma"), System.currentTimeMillis() + (60000 * i2));
         Resources resources = getResources();
         if (i2 < 60) {
-            return resources.getQuantityString(i5, i2, Integer.valueOf(i2), format);
+            return resources.getQuantityString(i5, i2, Integer.valueOf(i2), charSequence);
         }
         if (i2 % 60 != 0) {
-            return resources.getString(i4, format);
+            return resources.getString(i4, charSequence);
         }
         int i7 = i2 / 60;
-        return resources.getQuantityString(i3, i7, Integer.valueOf(i7), format);
+        return resources.getQuantityString(i3, i7, Integer.valueOf(i7), charSequence);
     }
 }

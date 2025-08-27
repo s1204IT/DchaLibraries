@@ -25,19 +25,26 @@ import com.android.settings.widget.AppCheckBoxPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.widget.FooterPreferenceMixin;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RestrictedAppDetails extends DashboardFragment implements BatteryTipPreferenceController.BatteryTipListener {
+
     @VisibleForTesting
     static final String EXTRA_APP_INFO_LIST = "app_info_list";
+
     @VisibleForTesting
     List<AppInfo> mAppInfos;
+
     @VisibleForTesting
     BatteryUtils mBatteryUtils;
     private final FooterPreferenceMixin mFooterPreferenceMixin = new FooterPreferenceMixin(this, getLifecycle());
+
     @VisibleForTesting
     IconDrawableFactory mIconDrawableFactory;
+
     @VisibleForTesting
     PackageManager mPackageManager;
+
     @VisibleForTesting
     PreferenceGroup mRestrictedAppListGroup;
 
@@ -70,9 +77,8 @@ public class RestrictedAppDetails extends DashboardFragment implements BatteryTi
         return "RestrictedAppDetails";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.restricted_apps_detail;
     }
 
@@ -108,7 +114,7 @@ public class RestrictedAppDetails extends DashboardFragment implements BatteryTi
                 appCheckBoxPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.fuelgauge.-$$Lambda$RestrictedAppDetails$9OOxuAylZQQH-NDtRgh0ZoFLi_8
                     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
                     public final boolean onPreferenceChange(Preference preference, Object obj) {
-                        return RestrictedAppDetails.lambda$refreshUi$0(RestrictedAppDetails.this, appInfo, preference, obj);
+                        return RestrictedAppDetails.lambda$refreshUi$0(this.f$0, appInfo, preference, obj);
                     }
                 });
                 this.mRestrictedAppListGroup.addPreference(appCheckBoxPreference);
@@ -119,9 +125,9 @@ public class RestrictedAppDetails extends DashboardFragment implements BatteryTi
     }
 
     public static /* synthetic */ boolean lambda$refreshUi$0(RestrictedAppDetails restrictedAppDetails, AppInfo appInfo, Preference preference, Object obj) {
-        BatteryTipDialogFragment createDialogFragment = restrictedAppDetails.createDialogFragment(appInfo, ((Boolean) obj).booleanValue());
-        createDialogFragment.setTargetFragment(restrictedAppDetails, 0);
-        createDialogFragment.show(restrictedAppDetails.getFragmentManager(), "RestrictedAppDetails");
+        BatteryTipDialogFragment batteryTipDialogFragmentCreateDialogFragment = restrictedAppDetails.createDialogFragment(appInfo, ((Boolean) obj).booleanValue());
+        batteryTipDialogFragmentCreateDialogFragment.setTargetFragment(restrictedAppDetails, 0);
+        batteryTipDialogFragmentCreateDialogFragment.show(restrictedAppDetails.getFragmentManager(), "RestrictedAppDetails");
         return false;
     }
 

@@ -15,6 +15,7 @@ import com.android.settingslib.applications.ApplicationsState;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
+
 /* loaded from: classes.dex */
 public class AppHeaderViewPreferenceController extends BasePreferenceController implements AppInfoDashboardFragment.Callback, LifecycleObserver, OnStart {
     private static final String KEY_HEADER = "header_view";
@@ -58,7 +59,7 @@ public class AppHeaderViewPreferenceController extends BasePreferenceController 
 
     private void setAppLabelAndIcon(PackageInfo packageInfo, ApplicationsState.AppEntry appEntry) {
         Activity activity = this.mParent.getActivity();
-        boolean isInstant = AppUtils.isInstant(packageInfo.applicationInfo);
-        this.mEntityHeaderController.setLabel(appEntry).setIcon(appEntry).setSummary(isInstant ? null : this.mContext.getString(Utils.getInstallationStatus(appEntry.info))).setIsInstantApp(isInstant).done(activity, false);
+        boolean zIsInstant = AppUtils.isInstant(packageInfo.applicationInfo);
+        this.mEntityHeaderController.setLabel(appEntry).setIcon(appEntry).setSummary(zIsInstant ? null : this.mContext.getString(Utils.getInstallationStatus(appEntry.info))).setIsInstantApp(zIsInstant).done(activity, false);
     }
 }

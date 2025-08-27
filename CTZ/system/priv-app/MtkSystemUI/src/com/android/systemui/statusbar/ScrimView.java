@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar;
 
+import android.R;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -25,6 +26,7 @@ import com.android.internal.colorextraction.drawable.GradientDrawable;
 import com.android.settingslib.Utils;
 import com.android.systemui.Dependency;
 import com.android.systemui.statusbar.policy.ConfigurationController;
+
 /* loaded from: classes.dex */
 public class ScrimView extends View implements ConfigurationController.ConfigurationListener {
     private ValueAnimator mAlphaAnimator;
@@ -69,7 +71,7 @@ public class ScrimView extends View implements ConfigurationController.Configura
         this.mAlphaUpdateListener = new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.-$$Lambda$ScrimView$sc4BNvVbdVkUsFhB3vCR-4vbL8o
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                ScrimView.lambda$new$0(ScrimView.this, valueAnimator);
+                ScrimView.lambda$new$0(this.f$0, valueAnimator);
             }
         };
         this.mClearAnimatorListener = new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.ScrimView.1
@@ -88,7 +90,7 @@ public class ScrimView extends View implements ConfigurationController.Configura
     }
 
     private void initView() {
-        this.mCornerRadius = getResources().getDimensionPixelSize(Utils.getThemeAttr(this.mContext, 16844145));
+        this.mCornerRadius = getResources().getDimensionPixelSize(Utils.getThemeAttr(this.mContext, R.attr.dialogCornerRadius));
     }
 
     @Override // android.view.View
@@ -229,8 +231,8 @@ public class ScrimView extends View implements ConfigurationController.Configura
 
     private void updateColorWithTint(boolean z) {
         if (this.mDrawable instanceof GradientDrawable) {
-            float alpha = Color.alpha(this.mTintColor) / 255.0f;
-            this.mDrawable.setColors(ColorUtils.blendARGB(this.mColors.getMainColor(), this.mTintColor, alpha), ColorUtils.blendARGB(this.mColors.getSecondaryColor(), this.mTintColor, alpha), z);
+            float fAlpha = Color.alpha(this.mTintColor) / 255.0f;
+            this.mDrawable.setColors(ColorUtils.blendARGB(this.mColors.getMainColor(), this.mTintColor, fAlpha), ColorUtils.blendARGB(this.mColors.getSecondaryColor(), this.mTintColor, fAlpha), z);
         } else {
             if (this.mColorFilter == null) {
                 this.mColorFilter = new PorterDuffColorFilter(this.mTintColor, PorterDuff.Mode.SRC_OVER);
@@ -274,12 +276,12 @@ public class ScrimView extends View implements ConfigurationController.Configura
     public void setExcludedArea(Rect rect) {
         boolean z = false;
         if (rect != null) {
-            int max = Math.max(rect.left, 0);
-            int max2 = Math.max(rect.top, 0);
-            int min = Math.min(rect.right, getWidth());
-            int min2 = Math.min(rect.bottom, getHeight());
-            this.mExcludedRect.set(max, max2, min, min2);
-            if (max < min && max2 < min2) {
+            int iMax = Math.max(rect.left, 0);
+            int iMax2 = Math.max(rect.top, 0);
+            int iMin = Math.min(rect.right, getWidth());
+            int iMin2 = Math.min(rect.bottom, getHeight());
+            this.mExcludedRect.set(iMax, iMax2, iMin, iMin2);
+            if (iMax < iMin && iMax2 < iMin2) {
                 z = true;
             }
             this.mHasExcludedArea = z;

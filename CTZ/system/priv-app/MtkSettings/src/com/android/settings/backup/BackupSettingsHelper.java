@@ -3,6 +3,7 @@ package com.android.settings.backup;
 import android.app.backup.IBackupManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.UserHandle;
@@ -10,6 +11,7 @@ import android.util.Log;
 import com.android.settings.R;
 import com.android.settings.Settings;
 import java.net.URISyntaxException;
+
 /* loaded from: classes.dex */
 public class BackupSettingsHelper {
     private IBackupManager mBackupManager = IBackupManager.Stub.asInterface(ServiceManager.getService("backup"));
@@ -43,7 +45,7 @@ public class BackupSettingsHelper {
         return summaryFromBackupTransport;
     }
 
-    public boolean isBackupProvidedByManufacturer() {
+    public boolean isBackupProvidedByManufacturer() throws Resources.NotFoundException {
         if (Log.isLoggable("BackupSettingsHelper", 3)) {
             Log.d("BackupSettingsHelper", "Checking if intent provided by manufacturer");
         }
@@ -55,7 +57,7 @@ public class BackupSettingsHelper {
         return this.mContext.getResources().getString(R.string.config_backup_settings_label);
     }
 
-    public Intent getIntentProvidedByManufacturer() {
+    public Intent getIntentProvidedByManufacturer() throws Resources.NotFoundException {
         if (Log.isLoggable("BackupSettingsHelper", 3)) {
             Log.d("BackupSettingsHelper", "Getting a backup settings intent provided by manufacturer");
         }
@@ -80,7 +82,7 @@ public class BackupSettingsHelper {
     }
 
     private Intent getIntentForDefaultBackupSettings() {
-        return new Intent(this.mContext, Settings.PrivacySettingsActivity.class);
+        return new Intent(this.mContext, (Class<?>) Settings.PrivacySettingsActivity.class);
     }
 
     boolean isIntentProvidedByTransport() {

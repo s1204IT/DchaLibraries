@@ -12,6 +12,7 @@ import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settings.wifi.tether.WifiTetherBasePreferenceController;
 import com.mediatek.settings.wifi.tether.WifiTetherResetPreferenceController;
+
 /* loaded from: classes.dex */
 public class WifiTetherResetPreferenceController extends WifiTetherBasePreferenceController {
     private final FragmentManager mFragmentManager;
@@ -42,7 +43,7 @@ public class WifiTetherResetPreferenceController extends WifiTetherBasePreferenc
         this.mResetNetworkPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.mediatek.settings.wifi.tether.-$$Lambda$WifiTetherResetPreferenceController$mfWCzapxXAW8MEUEh6X4wIuj8EU
             @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
             public final boolean onPreferenceClick(Preference preference) {
-                return WifiTetherResetPreferenceController.lambda$displayPreference$0(WifiTetherResetPreferenceController.this, preference);
+                return WifiTetherResetPreferenceController.lambda$displayPreference$0(this.f$0, preference);
             }
         });
     }
@@ -61,7 +62,6 @@ public class WifiTetherResetPreferenceController extends WifiTetherBasePreferenc
         return true;
     }
 
-    /* loaded from: classes.dex */
     public static class ResetNetworkFragment extends InstrumentedDialogFragment {
         private static WifiTetherBasePreferenceController.OnTetherConfigUpdateListener sListener;
 
@@ -79,15 +79,15 @@ public class WifiTetherResetPreferenceController extends WifiTetherBasePreferenc
 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            AlertDialog create = new AlertDialog.Builder(getActivity()).setPositiveButton(R.string.wifi_ap_reset_OOB, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.wifi.tether.-$$Lambda$WifiTetherResetPreferenceController$ResetNetworkFragment$TLRVfJsPOAiLfdkMhgnEvyCRCv8
+            AlertDialog alertDialogCreate = new AlertDialog.Builder(getActivity()).setPositiveButton(R.string.wifi_ap_reset_OOB, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.wifi.tether.-$$Lambda$WifiTetherResetPreferenceController$ResetNetworkFragment$TLRVfJsPOAiLfdkMhgnEvyCRCv8
                 @Override // android.content.DialogInterface.OnClickListener
                 public final void onClick(DialogInterface dialogInterface, int i) {
                     WifiTetherResetPreferenceController.ResetNetworkFragment.sListener.onNetworkReset();
                 }
-            }).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
-            create.setTitle(R.string.wifi_ap_reset_OOB);
-            create.setMessage(getActivity().getString(R.string.wifi_ap_reset_OOB_title));
-            return create;
+            }).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).create();
+            alertDialogCreate.setTitle(R.string.wifi_ap_reset_OOB);
+            alertDialogCreate.setMessage(getActivity().getString(R.string.wifi_ap_reset_OOB_title));
+            return alertDialogCreate;
         }
     }
 }

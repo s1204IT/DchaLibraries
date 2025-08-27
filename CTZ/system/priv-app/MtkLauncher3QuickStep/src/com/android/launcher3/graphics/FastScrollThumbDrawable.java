@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+
 /* loaded from: classes.dex */
 public class FastScrollThumbDrawable extends Drawable {
     private static final Matrix sMatrix = new Matrix();
@@ -30,11 +31,11 @@ public class FastScrollThumbDrawable extends Drawable {
     @Override // android.graphics.drawable.Drawable
     protected void onBoundsChange(Rect rect) {
         this.mPath.reset();
-        float height = rect.height() * 0.5f;
-        float f = 2.0f * height;
-        float f2 = height / 5.0f;
-        this.mPath.addRoundRect(rect.left, rect.top, rect.left + f, rect.top + f, new float[]{height, height, height, height, f2, f2, height, height}, Path.Direction.CCW);
-        sMatrix.setRotate(-45.0f, rect.left + height, rect.top + height);
+        float fHeight = rect.height() * 0.5f;
+        float f = 2.0f * fHeight;
+        float f2 = fHeight / 5.0f;
+        this.mPath.addRoundRect(rect.left, rect.top, rect.left + f, rect.top + f, new float[]{fHeight, fHeight, fHeight, fHeight, f2, f2, fHeight, fHeight}, Path.Direction.CCW);
+        sMatrix.setRotate(-45.0f, rect.left + fHeight, rect.top + fHeight);
         if (this.mIsRtl) {
             sMatrix.postTranslate(rect.width(), 0.0f);
             sMatrix.postScale(-1.0f, 1.0f, rect.width(), 0.0f);

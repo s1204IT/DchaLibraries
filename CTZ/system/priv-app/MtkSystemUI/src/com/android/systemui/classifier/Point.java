@@ -1,4 +1,5 @@
 package com.android.systemui.classifier;
+
 /* loaded from: classes.dex */
 public class Point {
     public long timeOffsetNano;
@@ -34,16 +35,16 @@ public class Point {
     }
 
     public float getAngle(Point point, Point point2) {
-        float dist = dist(point);
-        float dist2 = dist(point2);
-        if (dist == 0.0f || dist2 == 0.0f) {
+        float fDist = dist(point);
+        float fDist2 = dist(point2);
+        if (fDist == 0.0f || fDist2 == 0.0f) {
             return 0.0f;
         }
-        float crossProduct = crossProduct(point, point2);
-        float acos = (float) Math.acos(Math.min(1.0f, Math.max(-1.0f, (dotProduct(point, point2) / dist) / dist2)));
-        if (crossProduct < 0.0d) {
-            return 6.2831855f - acos;
+        float fCrossProduct = crossProduct(point, point2);
+        float fAcos = (float) Math.acos(Math.min(1.0f, Math.max(-1.0f, (dotProduct(point, point2) / fDist) / fDist2)));
+        if (fCrossProduct < 0.0d) {
+            return 6.2831855f - fAcos;
         }
-        return acos;
+        return fAcos;
     }
 }

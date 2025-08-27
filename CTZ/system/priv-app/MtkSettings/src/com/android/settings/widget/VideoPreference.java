@@ -14,6 +14,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.ImageView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class VideoPreference extends Preference {
     boolean mAnimationAvailable;
@@ -29,19 +30,19 @@ public class VideoPreference extends Preference {
         super(context, attributeSet);
         this.mAspectRadio = 1.0f;
         this.mContext = context;
-        TypedArray obtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.VideoPreference, 0, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.VideoPreference, 0, 0);
         try {
             try {
-                this.mVideoPath = new Uri.Builder().scheme("android.resource").authority(context.getPackageName()).appendPath(String.valueOf(obtainStyledAttributes.getResourceId(0, 0))).build();
+                this.mVideoPath = new Uri.Builder().scheme("android.resource").authority(context.getPackageName()).appendPath(String.valueOf(typedArrayObtainStyledAttributes.getResourceId(0, 0))).build();
                 this.mMediaPlayer = MediaPlayer.create(this.mContext, this.mVideoPath);
                 if (this.mMediaPlayer != null && this.mMediaPlayer.getDuration() > 0) {
                     setVisible(true);
                     setLayoutResource(R.layout.video_preference);
-                    this.mPreviewResource = obtainStyledAttributes.getResourceId(1, 0);
+                    this.mPreviewResource = typedArrayObtainStyledAttributes.getResourceId(1, 0);
                     this.mMediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() { // from class: com.android.settings.widget.-$$Lambda$VideoPreference$dH8H9UsxsQzXI7GaCcZWWDvTxoU
                         @Override // android.media.MediaPlayer.OnSeekCompleteListener
                         public final void onSeekComplete(MediaPlayer mediaPlayer) {
-                            VideoPreference.this.mVideoReady = true;
+                            this.f$0.mVideoReady = true;
                         }
                     });
                     this.mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() { // from class: com.android.settings.widget.-$$Lambda$VideoPreference$2crRm1Sj4_bqGlDPLY9cVIbC7CU
@@ -59,7 +60,7 @@ public class VideoPreference extends Preference {
                 Log.w("VideoPreference", "Animation resource not found. Will not show animation.");
             }
         } finally {
-            obtainStyledAttributes.recycle();
+            typedArrayObtainStyledAttributes.recycle();
         }
     }
 
@@ -72,17 +73,18 @@ public class VideoPreference extends Preference {
         TextureView textureView = (TextureView) preferenceViewHolder.findViewById(R.id.video_texture_view);
         final ImageView imageView = (ImageView) preferenceViewHolder.findViewById(R.id.video_preview_image);
         final ImageView imageView2 = (ImageView) preferenceViewHolder.findViewById(R.id.video_play_button);
+        AspectRatioFrameLayout aspectRatioFrameLayout = (AspectRatioFrameLayout) preferenceViewHolder.findViewById(R.id.video_container);
         imageView.setImageResource(this.mPreviewResource);
-        ((AspectRatioFrameLayout) preferenceViewHolder.findViewById(R.id.video_container)).setAspectRatio(this.mAspectRadio);
+        aspectRatioFrameLayout.setAspectRatio(this.mAspectRadio);
         textureView.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.widget.-$$Lambda$VideoPreference$n3lVCTPDzJxvnNXXv__BWcO0YKM
             @Override // android.view.View.OnClickListener
-            public final void onClick(View view) {
-                VideoPreference.lambda$onBindViewHolder$2(VideoPreference.this, imageView2, view);
+            public final void onClick(View view) throws IllegalStateException {
+                VideoPreference.lambda$onBindViewHolder$2(this.f$0, imageView2, view);
             }
         });
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() { // from class: com.android.settings.widget.VideoPreference.1
             @Override // android.view.TextureView.SurfaceTextureListener
-            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i2) {
+            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i2) throws IllegalStateException {
                 if (VideoPreference.this.mMediaPlayer != null) {
                     VideoPreference.this.mMediaPlayer.setSurface(new Surface(surfaceTexture));
                     VideoPreference.this.mVideoReady = false;
@@ -101,7 +103,7 @@ public class VideoPreference extends Preference {
             }
 
             @Override // android.view.TextureView.SurfaceTextureListener
-            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) throws IllegalStateException {
                 if (VideoPreference.this.mVideoReady) {
                     if (imageView.getVisibility() == 0) {
                         imageView.setVisibility(8);
@@ -118,22 +120,22 @@ public class VideoPreference extends Preference {
         });
     }
 
-    public static /* synthetic */ void lambda$onBindViewHolder$2(VideoPreference videoPreference, ImageView imageView, View view) {
+    public static /* synthetic */ void lambda$onBindViewHolder$2(VideoPreference videoPreference, ImageView imageView, View view) throws IllegalStateException {
         if (videoPreference.mMediaPlayer != null) {
             if (videoPreference.mMediaPlayer.isPlaying()) {
                 videoPreference.mMediaPlayer.pause();
                 imageView.setVisibility(0);
                 videoPreference.mVideoPaused = true;
-                return;
+            } else {
+                videoPreference.mMediaPlayer.start();
+                imageView.setVisibility(8);
+                videoPreference.mVideoPaused = false;
             }
-            videoPreference.mMediaPlayer.start();
-            imageView.setVisibility(8);
-            videoPreference.mVideoPaused = false;
         }
     }
 
     @Override // android.support.v7.preference.Preference
-    public void onDetached() {
+    public void onDetached() throws IllegalStateException {
         if (this.mMediaPlayer != null) {
             this.mMediaPlayer.stop();
             this.mMediaPlayer.reset();
@@ -142,14 +144,14 @@ public class VideoPreference extends Preference {
         super.onDetached();
     }
 
-    public void onViewVisible(boolean z) {
+    public void onViewVisible(boolean z) throws IllegalStateException {
         this.mVideoPaused = z;
         if (this.mVideoReady && this.mMediaPlayer != null && !this.mMediaPlayer.isPlaying()) {
             this.mMediaPlayer.seekTo(0);
         }
     }
 
-    public void onViewInvisible() {
+    public void onViewInvisible() throws IllegalStateException {
         if (this.mMediaPlayer != null && this.mMediaPlayer.isPlaying()) {
             this.mMediaPlayer.pause();
         }

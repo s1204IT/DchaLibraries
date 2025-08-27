@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.UserInfo;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
 import android.os.UserHandle;
@@ -15,19 +16,19 @@ import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 import android.widget.TextView;
 import com.android.internal.widget.LockPatternUtils;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class RestrictedLockUtils {
     static Proxy sProxy = new Proxy();
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public interface LockSettingCheck {
+    private interface LockSettingCheck {
         boolean isEnforcing(DevicePolicyManager devicePolicyManager, ComponentName componentName, int i);
     }
 
-    public static Drawable getRestrictedPadlock(Context context) {
+    public static Drawable getRestrictedPadlock(Context context) throws Resources.NotFoundException {
         Drawable drawable = context.getDrawable(R.drawable.ic_info);
         int dimensionPixelSize = context.getResources().getDimensionPixelSize(R.dimen.restricted_icon_size);
         drawable.setBounds(0, 0, dimensionPixelSize, dimensionPixelSize);
@@ -57,14 +58,14 @@ public class RestrictedLockUtils {
                 return getProfileOwner(context, str, identifier);
             }
             return EnforcedAdmin.createDefaultEnforcedAdminWithRestriction(str);
-        } else if (userRestrictionSource != 2) {
-            return null;
-        } else {
-            if (identifier == i) {
-                return getDeviceOwner(context, str);
-            }
-            return EnforcedAdmin.createDefaultEnforcedAdminWithRestriction(str);
         }
+        if (userRestrictionSource != 2) {
+            return null;
+        }
+        if (identifier == i) {
+            return getDeviceOwner(context, str);
+        }
+        return EnforcedAdmin.createDefaultEnforcedAdminWithRestriction(str);
     }
 
     public static boolean hasBaseUserRestriction(Context context, String str, int i) {
@@ -85,8 +86,7 @@ public class RestrictedLockUtils {
         return checkForLockSetting(context, i2, lockSettingCheck);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$checkIfKeyguardFeaturesDisabled$0(int i, int i2, DevicePolicyManager devicePolicyManager, ComponentName componentName, int i3) {
+    static /* synthetic */ boolean lambda$checkIfKeyguardFeaturesDisabled$0(int i, int i2, DevicePolicyManager devicePolicyManager, ComponentName componentName, int i3) {
         int keyguardDisabledFeatures = devicePolicyManager.getKeyguardDisabledFeatures(componentName, i3);
         if (i3 != i) {
             keyguardDisabledFeatures &= 432;
@@ -112,13 +112,13 @@ public class RestrictedLockUtils {
     }
 
     public static EnforcedAdmin checkIfUninstallBlocked(Context context, String str, int i) {
-        EnforcedAdmin checkIfRestrictionEnforced = checkIfRestrictionEnforced(context, "no_control_apps", i);
-        if (checkIfRestrictionEnforced != null) {
-            return checkIfRestrictionEnforced;
+        EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = checkIfRestrictionEnforced(context, "no_control_apps", i);
+        if (enforcedAdminCheckIfRestrictionEnforced != null) {
+            return enforcedAdminCheckIfRestrictionEnforced;
         }
-        EnforcedAdmin checkIfRestrictionEnforced2 = checkIfRestrictionEnforced(context, "no_uninstall_apps", i);
-        if (checkIfRestrictionEnforced2 != null) {
-            return checkIfRestrictionEnforced2;
+        EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced2 = checkIfRestrictionEnforced(context, "no_uninstall_apps", i);
+        if (enforcedAdminCheckIfRestrictionEnforced2 != null) {
+            return enforcedAdminCheckIfRestrictionEnforced2;
         }
         try {
             if (AppGlobals.getPackageManager().getBlockUninstallForUser(str, i)) {
@@ -142,30 +142,30 @@ public class RestrictedLockUtils {
     }
 
     public static EnforcedAdmin checkIfInputMethodDisallowed(Context context, String str, int i) {
-        boolean z;
+        boolean zIsInputMethodPermittedByAdmin;
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService("device_policy");
         if (devicePolicyManager == null) {
             return null;
         }
         EnforcedAdmin profileOrDeviceOwner = getProfileOrDeviceOwner(context, i);
-        boolean z2 = true;
+        boolean zIsInputMethodPermittedByAdmin2 = true;
         if (profileOrDeviceOwner != null) {
-            z = devicePolicyManager.isInputMethodPermittedByAdmin(profileOrDeviceOwner.component, str, i);
+            zIsInputMethodPermittedByAdmin = devicePolicyManager.isInputMethodPermittedByAdmin(profileOrDeviceOwner.component, str, i);
         } else {
-            z = true;
+            zIsInputMethodPermittedByAdmin = true;
         }
         int managedProfileId = getManagedProfileId(context, i);
         EnforcedAdmin profileOrDeviceOwner2 = getProfileOrDeviceOwner(context, managedProfileId);
         if (profileOrDeviceOwner2 != null) {
-            z2 = devicePolicyManager.isInputMethodPermittedByAdmin(profileOrDeviceOwner2.component, str, managedProfileId);
+            zIsInputMethodPermittedByAdmin2 = devicePolicyManager.isInputMethodPermittedByAdmin(profileOrDeviceOwner2.component, str, managedProfileId);
         }
-        if (!z && !z2) {
+        if (!zIsInputMethodPermittedByAdmin && !zIsInputMethodPermittedByAdmin2) {
             return EnforcedAdmin.MULTIPLE_ENFORCED_ADMIN;
         }
-        if (!z) {
+        if (!zIsInputMethodPermittedByAdmin) {
             return profileOrDeviceOwner;
         }
-        if (z2) {
+        if (zIsInputMethodPermittedByAdmin2) {
             return null;
         }
         return profileOrDeviceOwner2;
@@ -177,38 +177,38 @@ public class RestrictedLockUtils {
         if (devicePolicyManager == null || (profileOwner = getProfileOwner(context, i)) == null) {
             return null;
         }
-        UserHandle of = UserHandle.of(i);
-        if (!devicePolicyManager.getCrossProfileContactsSearchDisabled(of) || !devicePolicyManager.getCrossProfileCallerIdDisabled(of)) {
+        UserHandle userHandleOf = UserHandle.of(i);
+        if (!devicePolicyManager.getCrossProfileContactsSearchDisabled(userHandleOf) || !devicePolicyManager.getCrossProfileCallerIdDisabled(userHandleOf)) {
             return null;
         }
         return profileOwner;
     }
 
     public static EnforcedAdmin checkIfAccessibilityServiceDisallowed(Context context, String str, int i) {
-        boolean z;
+        boolean zIsAccessibilityServicePermittedByAdmin;
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService("device_policy");
         if (devicePolicyManager == null) {
             return null;
         }
         EnforcedAdmin profileOrDeviceOwner = getProfileOrDeviceOwner(context, i);
-        boolean z2 = true;
+        boolean zIsAccessibilityServicePermittedByAdmin2 = true;
         if (profileOrDeviceOwner != null) {
-            z = devicePolicyManager.isAccessibilityServicePermittedByAdmin(profileOrDeviceOwner.component, str, i);
+            zIsAccessibilityServicePermittedByAdmin = devicePolicyManager.isAccessibilityServicePermittedByAdmin(profileOrDeviceOwner.component, str, i);
         } else {
-            z = true;
+            zIsAccessibilityServicePermittedByAdmin = true;
         }
         int managedProfileId = getManagedProfileId(context, i);
         EnforcedAdmin profileOrDeviceOwner2 = getProfileOrDeviceOwner(context, managedProfileId);
         if (profileOrDeviceOwner2 != null) {
-            z2 = devicePolicyManager.isAccessibilityServicePermittedByAdmin(profileOrDeviceOwner2.component, str, managedProfileId);
+            zIsAccessibilityServicePermittedByAdmin2 = devicePolicyManager.isAccessibilityServicePermittedByAdmin(profileOrDeviceOwner2.component, str, managedProfileId);
         }
-        if (!z && !z2) {
+        if (!zIsAccessibilityServicePermittedByAdmin && !zIsAccessibilityServicePermittedByAdmin2) {
             return EnforcedAdmin.MULTIPLE_ENFORCED_ADMIN;
         }
-        if (!z) {
+        if (!zIsAccessibilityServicePermittedByAdmin) {
             return profileOrDeviceOwner;
         }
-        if (z2) {
+        if (zIsAccessibilityServicePermittedByAdmin2) {
             return null;
         }
         return profileOrDeviceOwner2;
@@ -238,7 +238,8 @@ public class RestrictedLockUtils {
         while (true) {
             if (i2 >= length) {
                 break;
-            } else if (!str.equals(accountTypesWithManagementDisabledAsUser[i2])) {
+            }
+            if (!str.equals(accountTypesWithManagementDisabledAsUser[i2])) {
                 i2++;
             } else {
                 z = true;
@@ -298,8 +299,8 @@ public class RestrictedLockUtils {
         return checkForLockSetting(context, i, __lambda_restrictedlockutils_zgpdjgoya42trxypazgpdxw5os);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$checkIfPasswordQualityIsSet$1(DevicePolicyManager devicePolicyManager, ComponentName componentName, int i) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: ?: TERNARY null = ((wrap:int:0x0000: INVOKE (r0v0 android.app.admin.DevicePolicyManager), (r1v0 android.content.ComponentName), (r2v0 int) VIRTUAL call: android.app.admin.DevicePolicyManager.getPasswordQuality(android.content.ComponentName, int):int A[MD:(android.content.ComponentName, int):int (s), WRAPPED] (LINE:414)) > (0 int)) ? true : false */
+    static /* synthetic */ boolean lambda$checkIfPasswordQualityIsSet$1(DevicePolicyManager devicePolicyManager, ComponentName componentName, int i) {
         return devicePolicyManager.getPasswordQuality(componentName, i) > 0;
     }
 
@@ -312,8 +313,8 @@ public class RestrictedLockUtils {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$checkIfMaximumTimeToLockIsSet$2(DevicePolicyManager devicePolicyManager, ComponentName componentName, int i) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: ?: TERNARY null = ((wrap:long:0x0000: INVOKE (r2v0 android.app.admin.DevicePolicyManager), (r3v0 android.content.ComponentName), (r4v0 int) VIRTUAL call: android.app.admin.DevicePolicyManager.getMaximumTimeToLock(android.content.ComponentName, int):long A[MD:(android.content.ComponentName, int):long (s), WRAPPED] (LINE:457)) > (0 long)) ? true : false */
+    static /* synthetic */ boolean lambda$checkIfMaximumTimeToLockIsSet$2(DevicePolicyManager devicePolicyManager, ComponentName componentName, int i) {
         return devicePolicyManager.getMaximumTimeToLock(componentName, i) > 0;
     }
 
@@ -327,9 +328,9 @@ public class RestrictedLockUtils {
         for (UserInfo userInfo : UserManager.get(context).getProfiles(i)) {
             List<ComponentName> activeAdminsAsUser = devicePolicyManager.getActiveAdminsAsUser(userInfo.id);
             if (activeAdminsAsUser != null) {
-                boolean isSeparateProfileChallengeEnabled = sProxy.isSeparateProfileChallengeEnabled(lockPatternUtils, userInfo.id);
+                boolean zIsSeparateProfileChallengeEnabled = sProxy.isSeparateProfileChallengeEnabled(lockPatternUtils, userInfo.id);
                 for (ComponentName componentName : activeAdminsAsUser) {
-                    if (!isSeparateProfileChallengeEnabled && lockSettingCheck.isEnforcing(devicePolicyManager, componentName, userInfo.id)) {
+                    if (!zIsSeparateProfileChallengeEnabled && lockSettingCheck.isEnforcing(devicePolicyManager, componentName, userInfo.id)) {
                         if (enforcedAdmin == null) {
                             enforcedAdmin = new EnforcedAdmin(componentName, userInfo.id);
                         } else {
@@ -343,7 +344,6 @@ public class RestrictedLockUtils {
                         }
                     }
                 }
-                continue;
             }
         }
         return enforcedAdmin;
@@ -415,7 +415,6 @@ public class RestrictedLockUtils {
     }
 
     private static void removeExistingRestrictedSpans(SpannableStringBuilder spannableStringBuilder) {
-        RestrictedLockImageSpan[] restrictedLockImageSpanArr;
         int length = spannableStringBuilder.length();
         for (RestrictedLockImageSpan restrictedLockImageSpan : (RestrictedLockImageSpan[]) spannableStringBuilder.getSpans(length - 1, length, RestrictedLockImageSpan.class)) {
             int spanStart = spannableStringBuilder.getSpanStart(restrictedLockImageSpan);
@@ -430,12 +429,12 @@ public class RestrictedLockUtils {
 
     public static void sendShowAdminSupportDetailsIntent(Context context, EnforcedAdmin enforcedAdmin) {
         Intent showAdminSupportDetailsIntent = getShowAdminSupportDetailsIntent(context, enforcedAdmin);
-        int myUserId = UserHandle.myUserId();
+        int iMyUserId = UserHandle.myUserId();
         if (enforcedAdmin != null && enforcedAdmin.userId != -10000 && isCurrentUserOrProfile(context, enforcedAdmin.userId)) {
-            myUserId = enforcedAdmin.userId;
+            iMyUserId = enforcedAdmin.userId;
         }
         showAdminSupportDetailsIntent.putExtra("android.app.extra.RESTRICTION", enforcedAdmin.enforcedRestriction);
-        context.startActivityAsUser(showAdminSupportDetailsIntent, new UserHandle(myUserId));
+        context.startActivityAsUser(showAdminSupportDetailsIntent, new UserHandle(iMyUserId));
     }
 
     public static Intent getShowAdminSupportDetailsIntent(Context context, EnforcedAdmin enforcedAdmin) {
@@ -444,18 +443,19 @@ public class RestrictedLockUtils {
             if (enforcedAdmin.component != null) {
                 intent.putExtra("android.app.extra.DEVICE_ADMIN", enforcedAdmin.component);
             }
-            int myUserId = UserHandle.myUserId();
+            int iMyUserId = UserHandle.myUserId();
             if (enforcedAdmin.userId != -10000) {
-                myUserId = enforcedAdmin.userId;
+                iMyUserId = enforcedAdmin.userId;
             }
-            intent.putExtra("android.intent.extra.USER_ID", myUserId);
+            intent.putExtra("android.intent.extra.USER_ID", iMyUserId);
         }
         return intent;
     }
 
     public static boolean isCurrentUserOrProfile(Context context, int i) {
-        for (UserInfo userInfo : UserManager.get(context).getProfiles(UserHandle.myUserId())) {
-            if (userInfo.id == i) {
+        Iterator it = UserManager.get(context).getProfiles(UserHandle.myUserId()).iterator();
+        while (it.hasNext()) {
+            if (((UserInfo) it.next()).id == i) {
                 return true;
             }
         }
@@ -464,8 +464,9 @@ public class RestrictedLockUtils {
 
     public static boolean isAdminInCurrentUserOrProfile(Context context, ComponentName componentName) {
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService("device_policy");
-        for (UserInfo userInfo : UserManager.get(context).getProfiles(UserHandle.myUserId())) {
-            if (devicePolicyManager.isAdminActiveAsUser(componentName, userInfo.id)) {
+        Iterator it = UserManager.get(context).getProfiles(UserHandle.myUserId()).iterator();
+        while (it.hasNext()) {
+            if (devicePolicyManager.isAdminActiveAsUser(componentName, ((UserInfo) it.next()).id)) {
                 return true;
             }
         }
@@ -485,7 +486,6 @@ public class RestrictedLockUtils {
         textView.setText(spannableStringBuilder);
     }
 
-    /* loaded from: classes.dex */
     public static class EnforcedAdmin {
         public static final EnforcedAdmin MULTIPLE_ENFORCED_ADMIN = new EnforcedAdmin();
         public ComponentName component;
@@ -544,9 +544,7 @@ public class RestrictedLockUtils {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Proxy {
+    static class Proxy {
         Proxy() {
         }
 

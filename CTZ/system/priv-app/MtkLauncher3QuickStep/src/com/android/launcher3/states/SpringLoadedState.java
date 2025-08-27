@@ -1,11 +1,11 @@
 package com.android.launcher3.states;
 
-import android.graphics.Rect;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.InstallShortcutReceiver;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherState;
 import com.android.launcher3.Workspace;
+
 /* loaded from: classes.dex */
 public class SpringLoadedState extends LauncherState {
     private static final int STATE_FLAGS = 319;
@@ -16,7 +16,6 @@ public class SpringLoadedState extends LauncherState {
 
     @Override // com.android.launcher3.LauncherState
     public float[] getWorkspaceScaleAndTranslation(Launcher launcher) {
-        Rect insets;
         DeviceProfile deviceProfile = launcher.getDeviceProfile();
         Workspace workspace = launcher.getWorkspace();
         if (workspace.getChildCount() == 0) {
@@ -27,7 +26,7 @@ public class SpringLoadedState extends LauncherState {
         }
         float f = deviceProfile.workspaceSpringLoadShrinkFactor;
         float f2 = launcher.getDragLayer().getInsets().top + deviceProfile.dropTargetBarSizePx;
-        float measuredHeight = f2 + ((((((workspace.getMeasuredHeight() - insets.bottom) - deviceProfile.workspacePadding.bottom) - deviceProfile.workspaceSpringLoadedBottomSpace) - f2) - (workspace.getNormalChildHeight() * f)) / 2.0f);
+        float measuredHeight = f2 + ((((((workspace.getMeasuredHeight() - r12.bottom) - deviceProfile.workspacePadding.bottom) - deviceProfile.workspaceSpringLoadedBottomSpace) - f2) - (workspace.getNormalChildHeight() * f)) / 2.0f);
         float height = workspace.getHeight() / 2;
         return new float[]{f, 0.0f, (measuredHeight - ((workspace.getTop() + height) - ((height - workspace.getChildAt(0).getTop()) * f))) / f};
     }

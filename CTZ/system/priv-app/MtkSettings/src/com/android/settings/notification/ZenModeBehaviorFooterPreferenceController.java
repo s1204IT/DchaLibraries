@@ -7,6 +7,7 @@ import android.service.notification.ZenModeConfig;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeBehaviorFooterPreferenceController extends AbstractZenModePreferenceController {
     private final int mTitleRes;

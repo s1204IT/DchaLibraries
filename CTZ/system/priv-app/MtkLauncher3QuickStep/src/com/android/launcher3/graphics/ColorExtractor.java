@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v4.view.ViewCompat;
 import android.util.SparseArray;
+
 /* loaded from: classes.dex */
 public class ColorExtractor {
     public static int findDominantColorByHue(Bitmap bitmap) {
@@ -13,9 +14,9 @@ public class ColorExtractor {
     public static int findDominantColorByHue(Bitmap bitmap, int i) {
         int height = bitmap.getHeight();
         int width = bitmap.getWidth();
-        int sqrt = (int) Math.sqrt((height * width) / i);
-        if (sqrt < 1) {
-            sqrt = 1;
+        int iSqrt = (int) Math.sqrt((height * width) / i);
+        if (iSqrt < 1) {
+            iSqrt = 1;
         }
         float[] fArr = new float[3];
         float[] fArr2 = new float[360];
@@ -51,10 +52,10 @@ public class ColorExtractor {
                         }
                     }
                 }
-                i8 += sqrt;
+                i8 += iSqrt;
                 i5 = ViewCompat.MEASURED_STATE_MASK;
             }
-            i3 += sqrt;
+            i3 += iSqrt;
             i4 = i7;
             i2 = i6;
             f = f2;
@@ -69,15 +70,15 @@ public class ColorExtractor {
                 float f4 = fArr[1];
                 float f5 = fArr[2];
                 int i14 = ((int) (100.0f * f4)) + ((int) (10000.0f * f5));
-                float f6 = f4 * f5;
-                Float f7 = (Float) sparseArray.get(i14);
-                if (f7 != null) {
-                    f6 += f7.floatValue();
+                float fFloatValue = f4 * f5;
+                Float f6 = (Float) sparseArray.get(i14);
+                if (f6 != null) {
+                    fFloatValue += f6.floatValue();
                 }
-                sparseArray.put(i14, Float.valueOf(f6));
-                if (f6 > f3) {
+                sparseArray.put(i14, Float.valueOf(fFloatValue));
+                if (fFloatValue > f3) {
                     i11 = i13;
-                    f3 = f6;
+                    f3 = fFloatValue;
                 }
             }
         }

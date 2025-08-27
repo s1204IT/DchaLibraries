@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Binder;
 import android.view.View;
 import android.view.WindowManager;
+
 /* loaded from: classes.dex */
 public class DividerWindowManager {
     private WindowManager.LayoutParams mLp;

@@ -1,16 +1,17 @@
 package com.android.systemui.statusbar.phone;
 
+import android.R;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 import com.android.keyguard.AlphaOptimizedLinearLayout;
-import com.android.systemui.R;
 import com.android.systemui.statusbar.StatusIconDisplayable;
 import com.android.systemui.statusbar.stack.AnimationFilter;
 import com.android.systemui.statusbar.stack.AnimationProperties;
 import com.android.systemui.statusbar.stack.ViewState;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class StatusIconContainer extends AlphaOptimizedLinearLayout {
     private static final AnimationProperties ADD_ICON_PROPERTIES = new AnimationProperties() { // from class: com.android.systemui.statusbar.phone.StatusIconContainer.1
@@ -67,9 +68,9 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
     }
 
     private void initDimens() {
-        this.mIconDotFrameWidth = getResources().getDimensionPixelSize(17105312);
-        this.mDotPadding = getResources().getDimensionPixelSize(R.dimen.overflow_icon_dot_padding);
-        this.mStaticDotDiameter = 2 * getResources().getDimensionPixelSize(R.dimen.overflow_dot_radius);
+        this.mIconDotFrameWidth = getResources().getDimensionPixelSize(R.dimen.indeterminate_progress_alpha_19);
+        this.mDotPadding = getResources().getDimensionPixelSize(com.android.systemui.R.dimen.overflow_icon_dot_padding);
+        this.mStaticDotDiameter = 2 * getResources().getDimensionPixelSize(com.android.systemui.R.dimen.overflow_dot_radius);
         this.mUnderflowWidth = this.mIconDotFrameWidth + (0 * (this.mStaticDotDiameter + this.mDotPadding));
     }
 
@@ -93,6 +94,8 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
         super.onDraw(canvas);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v4, resolved type: com.android.systemui.statusbar.StatusIconDisplayable */
+    /* JADX WARN: Multi-variable type inference failed */
     @Override // android.widget.LinearLayout, android.view.View
     protected void onMeasure(int i, int i2) {
         int i3;
@@ -112,35 +115,35 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
         } else {
             i3 = 7;
         }
-        int i5 = this.mPaddingLeft + this.mPaddingRight;
-        int makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(size, 0);
+        int viewTotalMeasuredWidth = this.mPaddingLeft + this.mPaddingRight;
+        int iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(size, 0);
         this.mNeedsUnderflow = this.mShouldRestrictIcons && size2 > 7;
         boolean z = true;
-        for (int i6 = 0; i6 < this.mMeasureViews.size(); i6++) {
-            View view = this.mMeasureViews.get((size2 - i6) - 1);
-            measureChild(view, makeMeasureSpec, i2);
+        for (int i5 = 0; i5 < this.mMeasureViews.size(); i5++) {
+            View view = this.mMeasureViews.get((size2 - i5) - 1);
+            measureChild(view, iMakeMeasureSpec, i2);
             if (this.mShouldRestrictIcons) {
-                if (i6 < i3 && z) {
-                    i5 += getViewTotalMeasuredWidth(view);
+                if (i5 < i3 && z) {
+                    viewTotalMeasuredWidth += getViewTotalMeasuredWidth(view);
                 } else if (z) {
-                    i5 += this.mUnderflowWidth;
+                    viewTotalMeasuredWidth += this.mUnderflowWidth;
                     z = false;
                 }
             } else {
-                i5 += getViewTotalMeasuredWidth(view);
+                viewTotalMeasuredWidth += getViewTotalMeasuredWidth(view);
             }
         }
         if (mode == 1073741824) {
-            if (!this.mNeedsUnderflow && i5 > size) {
+            if (!this.mNeedsUnderflow && viewTotalMeasuredWidth > size) {
                 this.mNeedsUnderflow = true;
             }
             setMeasuredDimension(size, View.MeasureSpec.getSize(i2));
             return;
         }
-        if (mode == Integer.MIN_VALUE && i5 > size) {
+        if (mode == Integer.MIN_VALUE && viewTotalMeasuredWidth > size) {
             this.mNeedsUnderflow = true;
         } else {
-            size = i5;
+            size = viewTotalMeasuredWidth;
         }
         setMeasuredDimension(size, View.MeasureSpec.getSize(i2));
     }
@@ -150,18 +153,19 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
         super.onViewAdded(view);
         StatusIconState statusIconState = new StatusIconState();
         statusIconState.justAdded = true;
-        view.setTag(R.id.status_bar_view_state_tag, statusIconState);
+        view.setTag(com.android.systemui.R.id.status_bar_view_state_tag, statusIconState);
     }
 
     @Override // android.view.ViewGroup
     public void onViewRemoved(View view) {
         super.onViewRemoved(view);
-        view.setTag(R.id.status_bar_view_state_tag, null);
+        view.setTag(com.android.systemui.R.id.status_bar_view_state_tag, null);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r7v1, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     private void calculateIconTranslations() {
         int i;
-        View childAt;
         this.mLayoutStates.clear();
         float width = getWidth();
         float paddingEnd = width - getPaddingEnd();
@@ -172,16 +176,16 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
             if (i2 < 0) {
                 break;
             }
-            View childAt2 = getChildAt(i2);
-            StatusIconDisplayable statusIconDisplayable = (StatusIconDisplayable) childAt2;
-            StatusIconState viewStateFromChild = getViewStateFromChild(childAt2);
+            View childAt = getChildAt(i2);
+            StatusIconDisplayable statusIconDisplayable = (StatusIconDisplayable) childAt;
+            StatusIconState viewStateFromChild = getViewStateFromChild(childAt);
             if (!statusIconDisplayable.isIconVisible() || statusIconDisplayable.isIconBlocked()) {
                 viewStateFromChild.visibleState = 2;
             } else {
                 viewStateFromChild.visibleState = 0;
-                viewStateFromChild.xTranslation = paddingEnd - getViewTotalWidth(childAt2);
+                viewStateFromChild.xTranslation = paddingEnd - getViewTotalWidth(childAt);
                 this.mLayoutStates.add(0, viewStateFromChild);
-                paddingEnd -= getViewTotalWidth(childAt2);
+                paddingEnd -= getViewTotalWidth(childAt);
             }
             i2--;
         }
@@ -224,7 +228,7 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
         if (isLayoutRtl()) {
             for (i = 0; i < childCount; i++) {
                 StatusIconState viewStateFromChild2 = getViewStateFromChild(getChildAt(i));
-                viewStateFromChild2.xTranslation = (width - viewStateFromChild2.xTranslation) - childAt.getWidth();
+                viewStateFromChild2.xTranslation = (width - viewStateFromChild2.xTranslation) - r1.getWidth();
             }
         }
     }
@@ -239,6 +243,8 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r2v1, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     private void resetViewStates() {
         for (int i = 0; i < getChildCount(); i++) {
             View childAt = getChildAt(i);
@@ -256,7 +262,7 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
     }
 
     private static StatusIconState getViewStateFromChild(View view) {
-        return (StatusIconState) view.getTag(R.id.status_bar_view_state_tag);
+        return (StatusIconState) view.getTag(com.android.systemui.R.id.status_bar_view_state_tag);
     }
 
     private static int getViewTotalMeasuredWidth(View view) {
@@ -267,11 +273,12 @@ public class StatusIconContainer extends AlphaOptimizedLinearLayout {
         return view.getWidth() + view.getPaddingStart() + view.getPaddingEnd();
     }
 
-    /* loaded from: classes.dex */
     public static class StatusIconState extends ViewState {
         public int visibleState = 0;
         public boolean justAdded = true;
 
+        /* JADX DEBUG: Multi-variable search result rejected for r7v0, resolved type: android.view.View */
+        /* JADX WARN: Multi-variable type inference failed */
         @Override // com.android.systemui.statusbar.stack.ViewState
         public void applyToView(View view) {
             if (!(view instanceof StatusIconDisplayable)) {

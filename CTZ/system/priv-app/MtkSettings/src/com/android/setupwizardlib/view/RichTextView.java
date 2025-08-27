@@ -19,13 +19,13 @@ import com.android.setupwizardlib.span.LinkSpan;
 import com.android.setupwizardlib.span.SpanHelper;
 import com.android.setupwizardlib.util.LinkAccessibilityHelper;
 import com.android.setupwizardlib.view.TouchableMovementMethod;
+
 /* loaded from: classes.dex */
 public class RichTextView extends AppCompatTextView implements LinkSpan.OnLinkClickListener {
     private LinkAccessibilityHelper mAccessibilityHelper;
     private LinkSpan.OnLinkClickListener mOnLinkClickListener;
 
     public static CharSequence getRichText(Context context, CharSequence charSequence) {
-        Annotation[] annotationArr;
         if (charSequence instanceof Spanned) {
             SpannableString spannableString = new SpannableString(charSequence);
             for (Annotation annotation : (Annotation[]) spannableString.getSpans(0, spannableString.length(), Annotation.class)) {
@@ -64,16 +64,16 @@ public class RichTextView extends AppCompatTextView implements LinkSpan.OnLinkCl
     public void setText(CharSequence charSequence, TextView.BufferType bufferType) {
         CharSequence richText = getRichText(getContext(), charSequence);
         super.setText(richText, bufferType);
-        boolean hasLinks = hasLinks(richText);
-        if (hasLinks) {
+        boolean zHasLinks = hasLinks(richText);
+        if (zHasLinks) {
             setMovementMethod(TouchableMovementMethod.TouchableLinkMovementMethod.getInstance());
         } else {
             setMovementMethod(null);
         }
-        setFocusable(hasLinks);
+        setFocusable(zHasLinks);
         if (Build.VERSION.SDK_INT >= 25) {
             setRevealOnFocusHint(false);
-            setFocusableInTouchMode(hasLinks);
+            setFocusableInTouchMode(zHasLinks);
         }
     }
 
@@ -83,7 +83,7 @@ public class RichTextView extends AppCompatTextView implements LinkSpan.OnLinkCl
 
     @Override // android.widget.TextView, android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
         MovementMethod movementMethod = getMovementMethod();
         if (movementMethod instanceof TouchableMovementMethod) {
             TouchableMovementMethod touchableMovementMethod = (TouchableMovementMethod) movementMethod;
@@ -91,7 +91,7 @@ public class RichTextView extends AppCompatTextView implements LinkSpan.OnLinkCl
                 return touchableMovementMethod.isLastTouchEventHandled();
             }
         }
-        return onTouchEvent;
+        return zOnTouchEvent;
     }
 
     @Override // android.view.View
@@ -102,10 +102,8 @@ public class RichTextView extends AppCompatTextView implements LinkSpan.OnLinkCl
         return super.dispatchHoverEvent(motionEvent);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.widget.AppCompatTextView, android.widget.TextView, android.view.View
-    public void drawableStateChanged() {
-        Drawable[] compoundDrawablesRelative;
+    protected void drawableStateChanged() {
         super.drawableStateChanged();
         if (Build.VERSION.SDK_INT >= 17) {
             int[] drawableState = getDrawableState();

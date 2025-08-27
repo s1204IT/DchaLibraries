@@ -5,6 +5,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import java.util.Formatter;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class SpannableUtil {
     public static Spannable getResourcesText(Resources resources, int i, Object... objArr) {

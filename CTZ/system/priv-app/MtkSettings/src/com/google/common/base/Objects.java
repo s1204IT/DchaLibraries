@@ -1,6 +1,7 @@
 package com.google.common.base;
 
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public final class Objects {
     public static boolean equal(Object obj, Object obj2) {

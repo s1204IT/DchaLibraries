@@ -14,6 +14,7 @@ import com.android.launcher3.ShortcutInfo;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.popup.PopupContainerWithArrow;
 import com.android.launcher3.touch.ItemClickHandler;
+
 /* loaded from: classes.dex */
 public class DeepShortcutView extends FrameLayout {
     private static final Point sTempPoint = new Point();

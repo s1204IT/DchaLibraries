@@ -30,6 +30,7 @@ import com.mediatek.nfcsettingsadapter.NfcSettingsAdapter;
 import com.mediatek.settings.FeatureOption;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NfcSettings extends SettingsPreferenceFragment implements Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.mediatek.nfc.NfcSettings.3
@@ -77,8 +78,11 @@ public class NfcSettings extends SettingsPreferenceFragment implements Indexable
                 if (NfcSettings.this.mNfcAdapter != null) {
                     NfcSettings.this.mQueryTask = new QueryTask();
                     NfcSettings.this.mQueryTask.execute(new Void[0]);
+                    return;
                 }
-            } else if ("com.android.nfc_extras.action.RF_FIELD_ON_DETECTED".equals(action)) {
+                return;
+            }
+            if ("com.android.nfc_extras.action.RF_FIELD_ON_DETECTED".equals(action)) {
                 NfcSettings.this.getPreferenceScreen().setEnabled(false);
                 Log.d("@M_NfcSettings", "Receive broadcast: RF field on detected");
             } else if ("com.android.nfc_extras.action.RF_FIELD_OFF_DETECTED".equals(action)) {
@@ -168,8 +172,7 @@ public class NfcSettings extends SettingsPreferenceFragment implements Indexable
         getPreferenceScreen().addPreference(this.mNfcServiceStatusPref);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreferenceEnabledStatus(int i) {
+    private void updatePreferenceEnabledStatus(int i) {
         Log.d("@M_NfcSettings", "updatePreferenceEnabledStatus nfc state :" + i);
         if (i == 3) {
             this.mNfcP2pModePref.setEnabled(true);
@@ -228,10 +231,10 @@ public class NfcSettings extends SettingsPreferenceFragment implements Indexable
             this.EMULATION_OFF = "Off";
             return;
         }
-        String[] split = string.split("[,]");
-        int length = split.length;
+        String[] strArrSplit = string.split("[,]");
+        int length = strArrSplit.length;
         if (this.EMULATION_OFF == null) {
-            this.EMULATION_OFF = split[length - 1];
+            this.EMULATION_OFF = strArrSplit[length - 1];
             Log.d("@M_NfcSettings", "NFC_MULTISE_LIST is" + string + ", EMULATION_OFF is " + this.EMULATION_OFF);
         }
     }
@@ -251,9 +254,9 @@ public class NfcSettings extends SettingsPreferenceFragment implements Indexable
                 Log.d("@M_NfcSettings", "card emulation mode");
                 new SubSettingLauncher(getContext()).setDestination(CardEmulationSettings.class.getCanonicalName()).setTitle(R.string.nfc_card_emulation).setSourceMetricsCategory(getMetricsCategory()).setArguments(null).launch();
             } else if (preference.equals(this.mNfcTapPayPref)) {
-                boolean isChecked = this.mNfcTapPayPref.isChecked();
-                Log.d("@M_NfcSettings", "pay tap " + isChecked);
-                Settings.Global.putInt(getContentResolver(), "nfc_hce_on", isChecked ? 1 : 0);
+                boolean zIsChecked = this.mNfcTapPayPref.isChecked();
+                Log.d("@M_NfcSettings", "pay tap " + zIsChecked);
+                Settings.Global.putInt(getContentResolver(), "nfc_hce_on", zIsChecked ? 1 : 0);
             }
         }
         return super.onPreferenceTreeClick(preference);
@@ -290,14 +293,13 @@ public class NfcSettings extends SettingsPreferenceFragment implements Indexable
         }
     }
 
-    /* loaded from: classes.dex */
     private class QueryTask extends AsyncTask<Void, Void, Integer> {
         private QueryTask() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Integer doInBackground(Void... voidArr) {
+        protected Integer doInBackground(Void... voidArr) {
             NfcSettings.this.mNfcState = NfcSettings.this.mNfcAdapter.getAdapterState();
             NfcSettings.this.mNfcBeamOpen = NfcSettings.this.mNfcAdapter.isNdefPushEnabled();
             Log.d("@M_NfcSettings", "doInBackground  mNfcState: " + NfcSettings.this.mNfcState);
@@ -305,9 +307,9 @@ public class NfcSettings extends SettingsPreferenceFragment implements Indexable
             return Integer.valueOf(NfcSettings.this.mNfcState);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Integer num) {
+        protected void onPostExecute(Integer num) {
             Log.d("@M_NfcSettings", "onPostExecute");
             NfcSettings.this.updatePreferenceEnabledStatus(num.intValue());
         }

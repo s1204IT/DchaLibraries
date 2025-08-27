@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.util.SparseArray;
 import com.android.systemui.plugins.qs.QSTile;
 import com.mediatek.systemui.statusbar.extcb.IconIdWrapper;
+
 /* loaded from: classes.dex */
 public class QsIconWrapper extends QSTile.Icon {
     private static SparseArray<QsIconWrapper> sQsIconWrapperMap = new SparseArray<>();

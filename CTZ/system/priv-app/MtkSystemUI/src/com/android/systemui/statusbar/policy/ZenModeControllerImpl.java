@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class ZenModeControllerImpl extends CurrentUserTracker implements ZenModeController {
     private static final boolean DEBUG = Log.isLoggable("ZenModeController", 3);
@@ -96,6 +97,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         return (this.mZenMode == 0 || (this.mConfig.suppressedVisualEffects & 256) == 0) ? false : true;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(ZenModeController.Callback callback) {
         if (callback == null) {
@@ -105,6 +107,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(ZenModeController.Callback callback) {
         this.mCallbacks.remove(callback);
@@ -159,8 +162,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         this.mSetupObserver.register();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireNextAlarmChanged() {
+    private void fireNextAlarmChanged() {
         Utils.safeForeach(this.mCallbacks, new Consumer() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$ZenModeControllerImpl$6_S_aAoRd9fsiJr9D0TIwCJGb6M
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
@@ -169,8 +171,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireEffectsSuppressorChanged() {
+    private void fireEffectsSuppressorChanged() {
         Utils.safeForeach(this.mCallbacks, new Consumer() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$ZenModeControllerImpl$SV0AVEr3ZD6I5F0ZOAtC6EOyn-k
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
@@ -179,8 +180,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireZenChanged(final int i) {
+    private void fireZenChanged(final int i) {
         Utils.safeForeach(this.mCallbacks, new Consumer() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$ZenModeControllerImpl$d6ICAgvR9KT8NKs4p-zRwBgYI2g
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
@@ -189,8 +189,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireZenAvailableChanged(final boolean z) {
+    private void fireZenAvailableChanged(final boolean z) {
         Utils.safeForeach(this.mCallbacks, new Consumer() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$ZenModeControllerImpl$SZ6Og1sK4NAner-jv0COJMr2bCU
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
@@ -239,9 +238,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         fireManualRuleChanged(zenRule2);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class SetupObserver extends ContentObserver {
+    private final class SetupObserver extends ContentObserver {
         private boolean mRegistered;
         private final ContentResolver mResolver;
 

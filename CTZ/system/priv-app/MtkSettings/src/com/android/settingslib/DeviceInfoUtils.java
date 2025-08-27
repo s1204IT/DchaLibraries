@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.os.Build;
 import android.system.Os;
 import android.system.StructUtsname;
@@ -21,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /* loaded from: classes.dex */
 public class DeviceInfoUtils {
     private static String readLine(String str) throws IOException {
@@ -59,7 +61,7 @@ public class DeviceInfoUtils {
         }
     }
 
-    public static String getFeedbackReporterPackage(Context context) {
+    public static String getFeedbackReporterPackage(Context context) throws Resources.NotFoundException {
         String string = context.getResources().getString(R.string.oem_preferred_feedback_reporter);
         if (TextUtils.isEmpty(string)) {
             return string;

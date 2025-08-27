@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class KeyguardIndicationTextView extends TextView {
     public KeyguardIndicationTextView(Context context) {
@@ -25,10 +26,10 @@ public class KeyguardIndicationTextView extends TextView {
     public void switchIndication(CharSequence charSequence) {
         if (TextUtils.isEmpty(charSequence)) {
             setVisibility(4);
-            return;
+        } else {
+            setVisibility(0);
+            setText(charSequence);
         }
-        setVisibility(0);
-        setText(charSequence);
     }
 
     public void switchIndication(int i) {

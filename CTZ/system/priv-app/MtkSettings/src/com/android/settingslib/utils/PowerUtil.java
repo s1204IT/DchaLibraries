@@ -10,6 +10,7 @@ import com.android.settingslib.R;
 import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public class PowerUtil {
     private static final long SEVEN_MINUTES_MILLIS = TimeUnit.MINUTES.toMillis(7);
@@ -19,22 +20,22 @@ public class PowerUtil {
     private static final long ONE_HOUR_MILLIS = TimeUnit.HOURS.toMillis(1);
 
     public static String getBatteryRemainingStringFormatted(Context context, long j, String str, boolean z) {
-        if (j > 0) {
-            if (j <= SEVEN_MINUTES_MILLIS) {
-                return getShutdownImminentString(context, str);
-            }
-            if (j <= FIFTEEN_MINUTES_MILLIS) {
-                return getUnderFifteenString(context, StringUtil.formatElapsedTime(context, FIFTEEN_MINUTES_MILLIS, false), str);
-            }
-            if (j >= TWO_DAYS_MILLIS) {
-                return getMoreThanTwoDaysString(context, str);
-            }
-            if (j >= ONE_DAY_MILLIS) {
-                return getMoreThanOneDayString(context, j, str, z);
-            }
-            return getRegularTimeRemainingString(context, j, str, z);
+        if (j <= 0) {
+            return null;
         }
-        return null;
+        if (j <= SEVEN_MINUTES_MILLIS) {
+            return getShutdownImminentString(context, str);
+        }
+        if (j <= FIFTEEN_MINUTES_MILLIS) {
+            return getUnderFifteenString(context, StringUtil.formatElapsedTime(context, FIFTEEN_MINUTES_MILLIS, false), str);
+        }
+        if (j >= TWO_DAYS_MILLIS) {
+            return getMoreThanTwoDaysString(context, str);
+        }
+        if (j >= ONE_DAY_MILLIS) {
+            return getMoreThanOneDayString(context, j, str, z);
+        }
+        return getRegularTimeRemainingString(context, j, str, z);
     }
 
     private static String getShutdownImminentString(Context context, String str) {
@@ -48,21 +49,21 @@ public class PowerUtil {
     private static String getMoreThanOneDayString(Context context, long j, String str, boolean z) {
         int i;
         int i2;
-        CharSequence formatElapsedTime = StringUtil.formatElapsedTime(context, roundTimeToNearestThreshold(j, ONE_HOUR_MILLIS), false);
+        CharSequence elapsedTime = StringUtil.formatElapsedTime(context, roundTimeToNearestThreshold(j, ONE_HOUR_MILLIS), false);
         if (TextUtils.isEmpty(str)) {
             if (z) {
                 i2 = R.string.power_remaining_duration_only_enhanced;
             } else {
                 i2 = R.string.power_remaining_duration_only;
             }
-            return context.getString(i2, formatElapsedTime);
+            return context.getString(i2, elapsedTime);
         }
         if (z) {
             i = R.string.power_discharging_duration_enhanced;
         } else {
             i = R.string.power_discharging_duration;
         }
-        return context.getString(i, formatElapsedTime, str);
+        return context.getString(i, elapsedTime, str);
     }
 
     private static String getMoreThanTwoDaysString(Context context, String str) {
@@ -77,21 +78,21 @@ public class PowerUtil {
     private static String getRegularTimeRemainingString(Context context, long j, String str, boolean z) {
         int i;
         int i2;
-        String format = DateFormat.getInstanceForSkeleton(android.text.format.DateFormat.getTimeFormatString(context)).format(Date.from(Instant.ofEpochMilli(roundTimeToNearestThreshold(System.currentTimeMillis() + j, FIFTEEN_MINUTES_MILLIS))));
+        String str2 = DateFormat.getInstanceForSkeleton(android.text.format.DateFormat.getTimeFormatString(context)).format(Date.from(Instant.ofEpochMilli(roundTimeToNearestThreshold(System.currentTimeMillis() + j, FIFTEEN_MINUTES_MILLIS))));
         if (TextUtils.isEmpty(str)) {
             if (z) {
                 i2 = R.string.power_discharge_by_only_enhanced;
             } else {
                 i2 = R.string.power_discharge_by_only;
             }
-            return context.getString(i2, format);
+            return context.getString(i2, str2);
         }
         if (z) {
             i = R.string.power_discharge_by_enhanced;
         } else {
             i = R.string.power_discharge_by;
         }
-        return context.getString(i, format, str);
+        return context.getString(i, str2, str);
     }
 
     public static long convertUsToMs(long j) {
@@ -103,12 +104,12 @@ public class PowerUtil {
     }
 
     public static long roundTimeToNearestThreshold(long j, long j2) {
-        long abs = Math.abs(j);
-        long abs2 = Math.abs(j2);
-        long j3 = abs % abs2;
-        if (j3 < abs2 / 2) {
-            return abs - j3;
+        long jAbs = Math.abs(j);
+        long jAbs2 = Math.abs(j2);
+        long j3 = jAbs % jAbs2;
+        if (j3 < jAbs2 / 2) {
+            return jAbs - j3;
         }
-        return (abs - j3) + abs2;
+        return (jAbs - j3) + jAbs2;
     }
 }

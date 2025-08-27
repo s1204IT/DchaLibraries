@@ -13,9 +13,11 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+import java.util.Iterator;
 import java.util.List;
 import mediatek.net.wifi.HotspotClient;
 import mediatek.net.wifi.WifiHotspotManager;
+
 /* loaded from: classes.dex */
 public class WifiTetherUserPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private static final IntentFilter WIFI_TETHER_USER_CHANGED_FILTER = new IntentFilter("android.net.wifi.WIFI_HOTSPOT_CLIENTS_IP_READY");
@@ -68,16 +70,16 @@ public class WifiTetherUserPreferenceController extends AbstractPreferenceContro
         this.mContext.unregisterReceiver(this.mReceiver);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleWifiApClientsChanged() {
+    private void handleWifiApClientsChanged() {
         int i;
         int i2;
-        List<HotspotClient> hotspotClients = this.mHotspotManager.getHotspotClients();
+        List hotspotClients = this.mHotspotManager.getHotspotClients();
         if (hotspotClients != null) {
+            Iterator it = hotspotClients.iterator();
             i = 0;
             i2 = 0;
-            for (HotspotClient hotspotClient : hotspotClients) {
-                if (hotspotClient.isBlocked) {
+            while (it.hasNext()) {
+                if (((HotspotClient) it.next()).isBlocked) {
                     i++;
                 } else {
                     i2++;

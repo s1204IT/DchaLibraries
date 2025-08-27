@@ -11,6 +11,7 @@ import com.android.systemui.Dependency;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.tuner.TunerService;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class StatusBarSwitch extends SwitchPreference implements TunerService.Tunable {
     private Set<String> mBlacklist;
@@ -40,9 +41,8 @@ public class StatusBarSwitch extends SwitchPreference implements TunerService.Tu
         setChecked(!this.mBlacklist.contains(getKey()));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public boolean persistBoolean(boolean z) {
+    protected boolean persistBoolean(boolean z) {
         if (!z) {
             if (!this.mBlacklist.contains(getKey())) {
                 MetricsLogger.action(getContext(), 234, getKey());
@@ -51,13 +51,13 @@ public class StatusBarSwitch extends SwitchPreference implements TunerService.Tu
                 return true;
             }
             return true;
-        } else if (this.mBlacklist.remove(getKey())) {
+        }
+        if (this.mBlacklist.remove(getKey())) {
             MetricsLogger.action(getContext(), 233, getKey());
             setList(this.mBlacklist);
             return true;
-        } else {
-            return true;
         }
+        return true;
     }
 
     private void setList(Set<String> set) {

@@ -6,6 +6,7 @@ import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settings.core.TogglePreferenceController;
+
 /* loaded from: classes.dex */
 public class MagnificationGesturesPreferenceController extends TogglePreferenceController {
     private boolean mIsFromSUW;
@@ -62,8 +63,7 @@ public class MagnificationGesturesPreferenceController extends TogglePreferenceC
         return this.mContext.getString(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void populateMagnificationGesturesPreferenceExtras(Bundle bundle, Context context) {
+    static void populateMagnificationGesturesPreferenceExtras(Bundle bundle, Context context) {
         bundle.putString("preference_key", "accessibility_display_magnification_enabled");
         bundle.putInt("title_res", R.string.accessibility_screen_magnification_gestures_title);
         bundle.putInt("summary_res", R.string.accessibility_screen_magnification_summary);

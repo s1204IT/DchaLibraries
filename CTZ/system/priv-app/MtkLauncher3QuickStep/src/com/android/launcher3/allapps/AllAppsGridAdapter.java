@@ -24,6 +24,7 @@ import com.android.launcher3.touch.ItemClickHandler;
 import com.android.launcher3.touch.ItemLongClickListener;
 import com.android.launcher3.util.PackageManagerHelper;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AllAppsGridAdapter extends RecyclerView.Adapter<ViewHolder> {
     public static final String TAG = "AppsGridAdapter";
@@ -45,19 +46,16 @@ public class AllAppsGridAdapter extends RecyclerView.Adapter<ViewHolder> {
     private final LayoutInflater mLayoutInflater;
     private Intent mMarketSearchIntent;
 
-    /* loaded from: classes.dex */
     public interface BindViewCallback {
         void onBindView(ViewHolder viewHolder);
     }
 
-    /* loaded from: classes.dex */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View view) {
             super(view);
         }
     }
 
-    /* loaded from: classes.dex */
     public class AppsGridLayoutManager extends GridLayoutManager {
         public AppsGridLayoutManager(Context context) {
             super(context, 1, 1, false);
@@ -66,10 +64,10 @@ public class AllAppsGridAdapter extends RecyclerView.Adapter<ViewHolder> {
         @Override // android.support.v7.widget.LinearLayoutManager, android.support.v7.widget.RecyclerView.LayoutManager
         public void onInitializeAccessibilityEvent(AccessibilityEvent accessibilityEvent) {
             super.onInitializeAccessibilityEvent(accessibilityEvent);
-            AccessibilityRecordCompat asRecord = AccessibilityEventCompat.asRecord(accessibilityEvent);
-            asRecord.setItemCount(AllAppsGridAdapter.this.mApps.getNumFilteredApps());
-            asRecord.setFromIndex(Math.max(0, asRecord.getFromIndex() - getRowsNotForAccessibility(asRecord.getFromIndex())));
-            asRecord.setToIndex(Math.max(0, asRecord.getToIndex() - getRowsNotForAccessibility(asRecord.getToIndex())));
+            AccessibilityRecordCompat accessibilityRecordCompatAsRecord = AccessibilityEventCompat.asRecord(accessibilityEvent);
+            accessibilityRecordCompatAsRecord.setItemCount(AllAppsGridAdapter.this.mApps.getNumFilteredApps());
+            accessibilityRecordCompatAsRecord.setFromIndex(Math.max(0, accessibilityRecordCompatAsRecord.getFromIndex() - getRowsNotForAccessibility(accessibilityRecordCompatAsRecord.getFromIndex())));
+            accessibilityRecordCompatAsRecord.setToIndex(Math.max(0, accessibilityRecordCompatAsRecord.getToIndex() - getRowsNotForAccessibility(accessibilityRecordCompatAsRecord.getToIndex())));
         }
 
         @Override // android.support.v7.widget.GridLayoutManager, android.support.v7.widget.RecyclerView.LayoutManager
@@ -90,9 +88,9 @@ public class AllAppsGridAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         private int getRowsNotForAccessibility(int i) {
             List<AlphabeticalAppsList.AdapterItem> adapterItems = AllAppsGridAdapter.this.mApps.getAdapterItems();
-            int max = Math.max(i, AllAppsGridAdapter.this.mApps.getAdapterItems().size() - 1);
+            int iMax = Math.max(i, AllAppsGridAdapter.this.mApps.getAdapterItems().size() - 1);
             int i2 = 0;
-            for (int i3 = 0; i3 <= max; i3++) {
+            for (int i3 = 0; i3 <= iMax; i3++) {
                 if (!AllAppsGridAdapter.isViewType(adapterItems.get(i3).viewType, 2)) {
                     i2++;
                 }
@@ -101,7 +99,6 @@ public class AllAppsGridAdapter extends RecyclerView.Adapter<ViewHolder> {
         }
     }
 
-    /* loaded from: classes.dex */
     public class GridSpanSizer extends GridLayoutManager.SpanSizeLookup {
         public GridSpanSizer() {
             setSpanIndexCacheEnabled(true);
@@ -158,6 +155,7 @@ public class AllAppsGridAdapter extends RecyclerView.Adapter<ViewHolder> {
         return this.mGridLayoutMgr;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         if (i == 2) {
@@ -168,29 +166,44 @@ public class AllAppsGridAdapter extends RecyclerView.Adapter<ViewHolder> {
             bubbleTextView.setOnFocusChangeListener(this.mIconFocusListener);
             bubbleTextView.getLayoutParams().height = this.mLauncher.getDeviceProfile().allAppsCellHeightPx;
             return new ViewHolder(bubbleTextView);
-        } else if (i != 4) {
-            if (i == 8) {
-                View inflate = this.mLayoutInflater.inflate(R.layout.all_apps_search_market, viewGroup, false);
-                inflate.setOnClickListener(new View.OnClickListener() { // from class: com.android.launcher3.allapps.AllAppsGridAdapter.1
-                    @Override // android.view.View.OnClickListener
-                    public void onClick(View view) {
-                        AllAppsGridAdapter.this.mLauncher.startActivitySafely(view, AllAppsGridAdapter.this.mMarketSearchIntent, null);
-                    }
-                });
-                return new ViewHolder(inflate);
-            } else if (i != 16) {
-                if (i == 32) {
-                    return new ViewHolder(this.mLayoutInflater.inflate(R.layout.work_tab_footer, viewGroup, false));
-                }
-                throw new RuntimeException("Unexpected view type");
-            } else {
-                return new ViewHolder(this.mLayoutInflater.inflate(R.layout.all_apps_divider, viewGroup, false));
-            }
-        } else {
+        }
+        if (i == 4) {
             return new ViewHolder(this.mLayoutInflater.inflate(R.layout.all_apps_empty_search, viewGroup, false));
+        }
+        if (i == 8) {
+            View viewInflate = this.mLayoutInflater.inflate(R.layout.all_apps_search_market, viewGroup, false);
+            viewInflate.setOnClickListener(new View.OnClickListener() { // from class: com.android.launcher3.allapps.AllAppsGridAdapter.1
+                AnonymousClass1() {
+                }
+
+                @Override // android.view.View.OnClickListener
+                public void onClick(View view) {
+                    AllAppsGridAdapter.this.mLauncher.startActivitySafely(view, AllAppsGridAdapter.this.mMarketSearchIntent, null);
+                }
+            });
+            return new ViewHolder(viewInflate);
+        }
+        if (i == 16) {
+            return new ViewHolder(this.mLayoutInflater.inflate(R.layout.all_apps_divider, viewGroup, false));
+        }
+        if (i == 32) {
+            return new ViewHolder(this.mLayoutInflater.inflate(R.layout.work_tab_footer, viewGroup, false));
+        }
+        throw new RuntimeException("Unexpected view type");
+    }
+
+    /* renamed from: com.android.launcher3.allapps.AllAppsGridAdapter$1 */
+    class AnonymousClass1 implements View.OnClickListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            AllAppsGridAdapter.this.mLauncher.startActivitySafely(view, AllAppsGridAdapter.this.mMarketSearchIntent, null);
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         int itemViewType = viewHolder.getItemViewType();
@@ -220,6 +233,7 @@ public class AllAppsGridAdapter extends RecyclerView.Adapter<ViewHolder> {
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onFailedToRecycleView(Landroid/support/v7/widget/RecyclerView$ViewHolder;)Z */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public boolean onFailedToRecycleView(ViewHolder viewHolder) {
         return true;

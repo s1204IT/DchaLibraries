@@ -20,6 +20,7 @@ import com.android.browser.R;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PieMenu extends FrameLayout {
     private boolean mAnimating;
@@ -44,17 +45,14 @@ public class PieMenu extends FrameLayout {
     private int mTouchOffset;
     private boolean mUseBackground;
 
-    /* loaded from: classes.dex */
     public interface PieController {
         boolean onOpen();
 
         void stopEditingUrl();
     }
 
-    /* loaded from: classes.dex */
     public interface PieView {
 
-        /* loaded from: classes.dex */
         public interface OnLayoutListener {
             void onLayout(int i, int i2, boolean z);
         }
@@ -121,8 +119,9 @@ public class PieMenu extends FrameLayout {
             this.mPieView = null;
             this.mController.stopEditingUrl();
             this.mCurrentItems = this.mItems;
-            for (PieItem pieItem : this.mCurrentItems) {
-                pieItem.setSelected(false);
+            Iterator<PieItem> it = this.mCurrentItems.iterator();
+            while (it.hasNext()) {
+                it.next().setSelected(false);
             }
             if (this.mController != null) {
                 this.mController.onOpen();
@@ -133,9 +132,26 @@ public class PieMenu extends FrameLayout {
         invalidate();
     }
 
+    /* renamed from: com.android.browser.view.PieMenu$1 */
+    class AnonymousClass1 implements ValueAnimator.AnimatorUpdateListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            for (PieItem pieItem : PieMenu.this.mCurrentItems) {
+                pieItem.setAnimationAngle((1.0f - valueAnimator.getAnimatedFraction()) * (-pieItem.getStart()));
+            }
+            PieMenu.this.invalidate();
+        }
+    }
+
     private void animateOpen() {
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.browser.view.PieMenu.1
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.browser.view.PieMenu.1
+            AnonymousClass1() {
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 for (PieItem pieItem : PieMenu.this.mCurrentItems) {
@@ -144,8 +160,8 @@ public class PieMenu extends FrameLayout {
                 PieMenu.this.invalidate();
             }
         });
-        ofFloat.setDuration(160L);
-        ofFloat.start();
+        valueAnimatorOfFloat.setDuration(160L);
+        valueAnimatorOfFloat.start();
     }
 
     private void setCenter(int i, int i2) {
@@ -157,8 +173,7 @@ public class PieMenu extends FrameLayout {
         this.mCenter.y = i2;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void layoutPie() {
+    private void layoutPie() {
         Iterator<PieItem> it;
         int i;
         int i2;
@@ -191,14 +206,14 @@ public class PieMenu extends FrameLayout {
                         double d2 = f3;
                         i3 = i8;
                         i4 = i7;
-                        int sin = (int) (d * Math.sin(d2));
-                        int cos = (this.mCenter.y - ((int) (d * Math.cos(d2)))) - (measuredHeight / 2);
+                        int iSin = (int) (d * Math.sin(d2));
+                        int iCos = (this.mCenter.y - ((int) (d * Math.cos(d2)))) - (measuredHeight / 2);
                         if (onTheLeft()) {
-                            i5 = (this.mCenter.x + sin) - (measuredWidth / 2);
+                            i5 = (this.mCenter.x + iSin) - (measuredWidth / 2);
                         } else {
-                            i5 = (this.mCenter.x - sin) - (measuredWidth / 2);
+                            i5 = (this.mCenter.x - iSin) - (measuredWidth / 2);
                         }
-                        view.layout(i5, cos, measuredWidth + i5, measuredHeight + cos);
+                        view.layout(i5, iCos, measuredWidth + i5, measuredHeight + iCos);
                     } else {
                         it = it2;
                         pieItem = next;
@@ -237,12 +252,12 @@ public class PieMenu extends FrameLayout {
                 int i = this.mCenter.x - intrinsicWidth;
                 int i2 = this.mCenter.y - (intrinsicHeight / 2);
                 this.mBackground.setBounds(i, i2, intrinsicWidth + i, intrinsicHeight + i2);
-                int save = canvas.save();
+                int iSave = canvas.save();
                 if (onTheLeft()) {
                     canvas.scale(-1.0f, 1.0f);
                 }
                 this.mBackground.draw(canvas);
-                canvas.restoreToCount(save);
+                canvas.restoreToCount(iSave);
             }
             PieItem pieItem = this.mCurrentItem;
             if (this.mOpenItem != null) {
@@ -268,18 +283,18 @@ public class PieMenu extends FrameLayout {
             if (!this.mItems.contains(pieItem)) {
                 paint = pieItem.isSelected() ? this.mSelectedPaint : this.mSubPaint;
             }
-            int save = canvas.save();
+            int iSave = canvas.save();
             if (onTheLeft()) {
                 canvas.scale(-1.0f, 1.0f);
             }
             canvas.rotate(getDegrees(pieItem.getStartAngle()) - 270.0f, this.mCenter.x, this.mCenter.y);
             canvas.drawPath(this.mPath, paint);
-            canvas.restoreToCount(save);
+            canvas.restoreToCount(iSave);
             View view = pieItem.getView();
-            int save2 = canvas.save();
+            int iSave2 = canvas.save();
             canvas.translate(view.getX(), view.getY());
             view.draw(canvas);
-            canvas.restoreToCount(save2);
+            canvas.restoreToCount(iSave2);
         }
     }
 
@@ -295,8 +310,8 @@ public class PieMenu extends FrameLayout {
 
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean z;
-        boolean z2;
+        boolean zOnTouchEvent;
+        boolean zOnTouchEvent2;
         float x = motionEvent.getX();
         float y = motionEvent.getY();
         int actionMasked = motionEvent.getActionMasked();
@@ -309,43 +324,46 @@ public class PieMenu extends FrameLayout {
         } else if (1 == actionMasked) {
             if (this.mOpen) {
                 if (this.mPieView != null) {
-                    z2 = this.mPieView.onTouchEvent(motionEvent);
+                    zOnTouchEvent2 = this.mPieView.onTouchEvent(motionEvent);
                 } else {
-                    z2 = false;
+                    zOnTouchEvent2 = false;
                 }
                 PieItem pieItem = this.mCurrentItem;
                 if (!this.mAnimating) {
                     deselect();
                 }
                 show(false);
-                if (!z2 && pieItem != null && pieItem.getView() != null && (pieItem == this.mOpenItem || !this.mAnimating)) {
+                if (!zOnTouchEvent2 && pieItem != null && pieItem.getView() != null && (pieItem == this.mOpenItem || !this.mAnimating)) {
                     pieItem.getView().performClick();
                 }
                 return true;
             }
-        } else if (3 == actionMasked) {
-            if (this.mOpen) {
-                show(false);
-            }
-            if (!this.mAnimating) {
-                deselect();
-                invalidate();
-            }
-            return false;
-        } else if (2 != actionMasked || this.mAnimating) {
-            return false;
         } else {
+            if (3 == actionMasked) {
+                if (this.mOpen) {
+                    show(false);
+                }
+                if (!this.mAnimating) {
+                    deselect();
+                    invalidate();
+                }
+                return false;
+            }
+            if (2 != actionMasked || this.mAnimating) {
+                return false;
+            }
             PointF polar = getPolar(x, y);
             int i = this.mRadius + (this.mLevels * this.mRadiusInc) + 50;
             if (this.mPieView != null) {
-                z = this.mPieView.onTouchEvent(motionEvent);
+                zOnTouchEvent = this.mPieView.onTouchEvent(motionEvent);
             } else {
-                z = false;
+                zOnTouchEvent = false;
             }
-            if (z) {
+            if (zOnTouchEvent) {
                 invalidate();
                 return false;
-            } else if (polar.y < this.mRadius) {
+            }
+            if (polar.y < this.mRadius) {
                 if (this.mOpenItem != null) {
                     closeSub();
                 } else if (!this.mAnimating) {
@@ -353,7 +371,8 @@ public class PieMenu extends FrameLayout {
                     invalidate();
                 }
                 return false;
-            } else if (polar.y > i) {
+            }
+            if (polar.y > i) {
                 deselect();
                 show(false);
                 motionEvent.setAction(0);
@@ -361,18 +380,17 @@ public class PieMenu extends FrameLayout {
                     ((ViewGroup) getParent()).dispatchTouchEvent(motionEvent);
                 }
                 return false;
-            } else {
-                PieItem findItem = findItem(polar);
-                if (findItem != null && this.mCurrentItem != findItem) {
-                    onEnter(findItem);
-                    if (findItem != null && findItem.isPieView() && findItem.getView() != null) {
-                        int left = findItem.getView().getLeft() + (onTheLeft() ? findItem.getView().getWidth() : 0);
-                        int top = findItem.getView().getTop();
-                        this.mPieView = findItem.getPieView();
-                        layoutPieView(this.mPieView, left, top, (findItem.getStartAngle() + findItem.getSweep()) / 2.0f);
-                    }
-                    invalidate();
+            }
+            PieItem pieItemFindItem = findItem(polar);
+            if (pieItemFindItem != null && this.mCurrentItem != pieItemFindItem) {
+                onEnter(pieItemFindItem);
+                if (pieItemFindItem != null && pieItemFindItem.isPieView() && pieItemFindItem.getView() != null) {
+                    int left = pieItemFindItem.getView().getLeft() + (onTheLeft() ? pieItemFindItem.getView().getWidth() : 0);
+                    int top = pieItemFindItem.getView().getTop();
+                    this.mPieView = pieItemFindItem.getPieView();
+                    layoutPieView(this.mPieView, left, top, (pieItemFindItem.getStartAngle() + pieItemFindItem.getSweep()) / 2.0f);
                 }
+                invalidate();
             }
         }
         return false;
@@ -401,58 +419,178 @@ public class PieMenu extends FrameLayout {
         this.mCurrentItem = null;
     }
 
-    private void animateOut(final PieItem pieItem, Animator.AnimatorListener animatorListener) {
+    private void animateOut(PieItem pieItem, Animator.AnimatorListener animatorListener) {
         if (this.mCurrentItems == null || pieItem == null) {
             return;
         }
-        final float startAngle = pieItem.getStartAngle();
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.browser.view.PieMenu.2
+        float startAngle = pieItem.getStartAngle();
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.browser.view.PieMenu.2
+            final /* synthetic */ PieItem val$fixed;
+            final /* synthetic */ float val$target;
+
+            AnonymousClass2(PieItem pieItem2, float startAngle2) {
+                pieItem = pieItem2;
+                f = startAngle2;
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 for (PieItem pieItem2 : PieMenu.this.mCurrentItems) {
                     if (pieItem2 != pieItem) {
-                        pieItem2.setAnimationAngle(valueAnimator.getAnimatedFraction() * (startAngle - pieItem2.getStart()));
+                        pieItem2.setAnimationAngle(valueAnimator.getAnimatedFraction() * (f - pieItem2.getStart()));
                     }
                 }
                 PieMenu.this.invalidate();
             }
         });
-        ofFloat.setDuration(80L);
-        ofFloat.addListener(animatorListener);
-        ofFloat.start();
+        valueAnimatorOfFloat.setDuration(80L);
+        valueAnimatorOfFloat.addListener(animatorListener);
+        valueAnimatorOfFloat.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void animateIn(final PieItem pieItem, Animator.AnimatorListener animatorListener) {
+    /* renamed from: com.android.browser.view.PieMenu$2 */
+    class AnonymousClass2 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ PieItem val$fixed;
+        final /* synthetic */ float val$target;
+
+        AnonymousClass2(PieItem pieItem2, float startAngle2) {
+            pieItem = pieItem2;
+            f = startAngle2;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            for (PieItem pieItem2 : PieMenu.this.mCurrentItems) {
+                if (pieItem2 != pieItem) {
+                    pieItem2.setAnimationAngle(valueAnimator.getAnimatedFraction() * (f - pieItem2.getStart()));
+                }
+            }
+            PieMenu.this.invalidate();
+        }
+    }
+
+    private void animateIn(PieItem pieItem, Animator.AnimatorListener animatorListener) {
         if (this.mCurrentItems == null || pieItem == null) {
             return;
         }
-        final float startAngle = pieItem.getStartAngle();
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.browser.view.PieMenu.3
+        float startAngle = pieItem.getStartAngle();
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.browser.view.PieMenu.3
+            final /* synthetic */ PieItem val$fixed;
+            final /* synthetic */ float val$target;
+
+            AnonymousClass3(PieItem pieItem2, float startAngle2) {
+                pieItem = pieItem2;
+                f = startAngle2;
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 for (PieItem pieItem2 : PieMenu.this.mCurrentItems) {
                     if (pieItem2 != pieItem) {
-                        pieItem2.setAnimationAngle((1.0f - valueAnimator.getAnimatedFraction()) * (startAngle - pieItem2.getStart()));
+                        pieItem2.setAnimationAngle((1.0f - valueAnimator.getAnimatedFraction()) * (f - pieItem2.getStart()));
                     }
                 }
                 PieMenu.this.invalidate();
             }
         });
-        ofFloat.setDuration(80L);
-        ofFloat.addListener(animatorListener);
-        ofFloat.start();
+        valueAnimatorOfFloat.setDuration(80L);
+        valueAnimatorOfFloat.addListener(animatorListener);
+        valueAnimatorOfFloat.start();
     }
 
-    private void openSub(final PieItem pieItem) {
+    /* renamed from: com.android.browser.view.PieMenu$3 */
+    class AnonymousClass3 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ PieItem val$fixed;
+        final /* synthetic */ float val$target;
+
+        AnonymousClass3(PieItem pieItem2, float startAngle2) {
+            pieItem = pieItem2;
+            f = startAngle2;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            for (PieItem pieItem2 : PieMenu.this.mCurrentItems) {
+                if (pieItem2 != pieItem) {
+                    pieItem2.setAnimationAngle((1.0f - valueAnimator.getAnimatedFraction()) * (f - pieItem2.getStart()));
+                }
+            }
+            PieMenu.this.invalidate();
+        }
+    }
+
+    /* renamed from: com.android.browser.view.PieMenu$4 */
+    class AnonymousClass4 extends AnimatorListenerAdapter {
+        final /* synthetic */ PieItem val$item;
+
+        AnonymousClass4(PieItem pieItem) {
+            pieItem = pieItem;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            Iterator it = PieMenu.this.mCurrentItems.iterator();
+            while (it.hasNext()) {
+                ((PieItem) it.next()).setAnimationAngle(0.0f);
+            }
+            PieMenu.this.mCurrentItems = new ArrayList(PieMenu.this.mItems.size());
+            int i = 0;
+            for (int i2 = 0; i2 < PieMenu.this.mItems.size(); i2++) {
+                if (PieMenu.this.mItems.get(i2) == pieItem) {
+                    PieMenu.this.mCurrentItems.add(pieItem);
+                } else {
+                    PieMenu.this.mCurrentItems.add(pieItem.getItems().get(i));
+                    i++;
+                }
+            }
+            PieMenu.this.layoutPie();
+            PieMenu.this.animateIn(pieItem, new AnimatorListenerAdapter() { // from class: com.android.browser.view.PieMenu.4.1
+                AnonymousClass1() {
+                }
+
+                @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+                public void onAnimationEnd(Animator animator2) {
+                    Iterator it2 = PieMenu.this.mCurrentItems.iterator();
+                    while (it2.hasNext()) {
+                        ((PieItem) it2.next()).setAnimationAngle(0.0f);
+                    }
+                    PieMenu.this.mAnimating = false;
+                }
+            });
+        }
+
+        /* renamed from: com.android.browser.view.PieMenu$4$1 */
+        class AnonymousClass1 extends AnimatorListenerAdapter {
+            AnonymousClass1() {
+            }
+
+            @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+            public void onAnimationEnd(Animator animator2) {
+                Iterator it2 = PieMenu.this.mCurrentItems.iterator();
+                while (it2.hasNext()) {
+                    ((PieItem) it2.next()).setAnimationAngle(0.0f);
+                }
+                PieMenu.this.mAnimating = false;
+            }
+        }
+    }
+
+    private void openSub(PieItem pieItem) {
         this.mAnimating = true;
         animateOut(pieItem, new AnimatorListenerAdapter() { // from class: com.android.browser.view.PieMenu.4
+            final /* synthetic */ PieItem val$item;
+
+            AnonymousClass4(PieItem pieItem2) {
+                pieItem = pieItem2;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
-                for (PieItem pieItem2 : PieMenu.this.mCurrentItems) {
-                    pieItem2.setAnimationAngle(0.0f);
+                Iterator it = PieMenu.this.mCurrentItems.iterator();
+                while (it.hasNext()) {
+                    ((PieItem) it.next()).setAnimationAngle(0.0f);
                 }
                 PieMenu.this.mCurrentItems = new ArrayList(PieMenu.this.mItems.size());
                 int i = 0;
@@ -466,14 +604,33 @@ public class PieMenu extends FrameLayout {
                 }
                 PieMenu.this.layoutPie();
                 PieMenu.this.animateIn(pieItem, new AnimatorListenerAdapter() { // from class: com.android.browser.view.PieMenu.4.1
+                    AnonymousClass1() {
+                    }
+
                     @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                     public void onAnimationEnd(Animator animator2) {
-                        for (PieItem pieItem3 : PieMenu.this.mCurrentItems) {
-                            pieItem3.setAnimationAngle(0.0f);
+                        Iterator it2 = PieMenu.this.mCurrentItems.iterator();
+                        while (it2.hasNext()) {
+                            ((PieItem) it2.next()).setAnimationAngle(0.0f);
                         }
                         PieMenu.this.mAnimating = false;
                     }
                 });
+            }
+
+            /* renamed from: com.android.browser.view.PieMenu$4$1 */
+            class AnonymousClass1 extends AnimatorListenerAdapter {
+                AnonymousClass1() {
+                }
+
+                @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+                public void onAnimationEnd(Animator animator2) {
+                    Iterator it2 = PieMenu.this.mCurrentItems.iterator();
+                    while (it2.hasNext()) {
+                        ((PieItem) it2.next()).setAnimationAngle(0.0f);
+                    }
+                    PieMenu.this.mAnimating = false;
+                }
             }
         });
     }
@@ -484,18 +641,26 @@ public class PieMenu extends FrameLayout {
             this.mCurrentItem.setSelected(false);
         }
         animateOut(this.mOpenItem, new AnimatorListenerAdapter() { // from class: com.android.browser.view.PieMenu.5
+            AnonymousClass5() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
-                for (PieItem pieItem : PieMenu.this.mCurrentItems) {
-                    pieItem.setAnimationAngle(0.0f);
+                Iterator it = PieMenu.this.mCurrentItems.iterator();
+                while (it.hasNext()) {
+                    ((PieItem) it.next()).setAnimationAngle(0.0f);
                 }
                 PieMenu.this.mCurrentItems = PieMenu.this.mItems;
                 PieMenu.this.mPieView = null;
                 PieMenu.this.animateIn(PieMenu.this.mOpenItem, new AnimatorListenerAdapter() { // from class: com.android.browser.view.PieMenu.5.1
+                    AnonymousClass1() {
+                    }
+
                     @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                     public void onAnimationEnd(Animator animator2) {
-                        for (PieItem pieItem2 : PieMenu.this.mCurrentItems) {
-                            pieItem2.setAnimationAngle(0.0f);
+                        Iterator it2 = PieMenu.this.mCurrentItems.iterator();
+                        while (it2.hasNext()) {
+                            ((PieItem) it2.next()).setAnimationAngle(0.0f);
                         }
                         PieMenu.this.mAnimating = false;
                         PieMenu.this.mOpenItem = null;
@@ -503,7 +668,72 @@ public class PieMenu extends FrameLayout {
                     }
                 });
             }
+
+            /* renamed from: com.android.browser.view.PieMenu$5$1 */
+            class AnonymousClass1 extends AnimatorListenerAdapter {
+                AnonymousClass1() {
+                }
+
+                @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+                public void onAnimationEnd(Animator animator2) {
+                    Iterator it2 = PieMenu.this.mCurrentItems.iterator();
+                    while (it2.hasNext()) {
+                        ((PieItem) it2.next()).setAnimationAngle(0.0f);
+                    }
+                    PieMenu.this.mAnimating = false;
+                    PieMenu.this.mOpenItem = null;
+                    PieMenu.this.mCurrentItem = null;
+                }
+            }
         });
+    }
+
+    /* renamed from: com.android.browser.view.PieMenu$5 */
+    class AnonymousClass5 extends AnimatorListenerAdapter {
+        AnonymousClass5() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            Iterator it = PieMenu.this.mCurrentItems.iterator();
+            while (it.hasNext()) {
+                ((PieItem) it.next()).setAnimationAngle(0.0f);
+            }
+            PieMenu.this.mCurrentItems = PieMenu.this.mItems;
+            PieMenu.this.mPieView = null;
+            PieMenu.this.animateIn(PieMenu.this.mOpenItem, new AnimatorListenerAdapter() { // from class: com.android.browser.view.PieMenu.5.1
+                AnonymousClass1() {
+                }
+
+                @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+                public void onAnimationEnd(Animator animator2) {
+                    Iterator it2 = PieMenu.this.mCurrentItems.iterator();
+                    while (it2.hasNext()) {
+                        ((PieItem) it2.next()).setAnimationAngle(0.0f);
+                    }
+                    PieMenu.this.mAnimating = false;
+                    PieMenu.this.mOpenItem = null;
+                    PieMenu.this.mCurrentItem = null;
+                }
+            });
+        }
+
+        /* renamed from: com.android.browser.view.PieMenu$5$1 */
+        class AnonymousClass1 extends AnimatorListenerAdapter {
+            AnonymousClass1() {
+            }
+
+            @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+            public void onAnimationEnd(Animator animator2) {
+                Iterator it2 = PieMenu.this.mCurrentItems.iterator();
+                while (it2.hasNext()) {
+                    ((PieItem) it2.next()).setAnimationAngle(0.0f);
+                }
+                PieMenu.this.mAnimating = false;
+                PieMenu.this.mOpenItem = null;
+                PieMenu.this.mCurrentItem = null;
+            }
+        }
     }
 
     private void deselect() {

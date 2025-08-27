@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.android.browser.view.BookmarkContainer xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:background="@drawable/bookmark_thumb_selector" android:padding="@dimen/combo_horizontalSpacing" android:layout_width="wrap_content" android:layout_height="wrap_content">
-    <ImageView android:id="@+id/thumb" android:background="@drawable/border_thumb_bookmarks_widget_holo" android:layout_width="@dimen/bookmarkThumbnailWidth" android:layout_height="@dimen/bookmarkThumbnailHeight" android:src="@drawable/browser_thumbnail" android:scaleType="centerCrop"/>
-    <ImageView android:id="@+id/divider" android:layout_width="wrap_content" android:layout_height="34dp" android:layout_marginTop="12dp" android:src="?android:attr/dividerVertical" android:scaleType="fitXY" android:layout_below="@+id/thumb" android:layout_alignStart="@+id/thumb"/>
-    <TextView android:textSize="14sp" android:typeface="sans" android:textColor="#aaaaaa" android:ellipsize="marquee" android:gravity="center_vertical" android:id="@+id/label" android:layout_width="match_parent" android:layout_height="match_parent" android:singleLine="true" android:layout_alignTop="@+id/divider" android:layout_alignBottom="@+id/divider" android:paddingStart="8dp" android:paddingEnd="2dp" android:layout_toEndOf="@+id/divider" android:layout_alignEnd="@+id/thumb"/>
+<com.android.browser.view.BookmarkContainer xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/bookmark_thumb_selector"
+    android:padding="@dimen/combo_horizontalSpacing"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/thumb"
+        android:background="@drawable/border_thumb_bookmarks_widget_holo"
+        android:layout_width="@dimen/bookmarkThumbnailWidth"
+        android:layout_height="@dimen/bookmarkThumbnailHeight"
+        android:src="@drawable/browser_thumbnail"
+        android:scaleType="centerCrop"/>
+    <ImageView
+        android:id="@+id/divider"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:layout_marginTop="12dp"
+        android:src="?android:attr/dividerVertical"
+        android:scaleType="fitXY"
+        android:layout_below="@+id/thumb"
+        android:layout_alignStart="@+id/thumb"/>
+    <TextView
+        android:textSize="14sp"
+        android:typeface="sans"
+        android:textColor="#aaaaaa"
+        android:ellipsize="marquee"
+        android:gravity="center_vertical"
+        android:id="@+id/label"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:singleLine="true"
+        android:layout_alignTop="@+id/divider"
+        android:layout_alignBottom="@+id/divider"
+        android:paddingStart="8dp"
+        android:paddingEnd="2dp"
+        android:layout_toEndOf="@+id/divider"
+        android:layout_alignEnd="@+id/thumb"/>
 </com.android.browser.view.BookmarkContainer>

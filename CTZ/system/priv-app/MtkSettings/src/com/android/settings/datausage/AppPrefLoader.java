@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.v7.preference.Preference;
 import android.util.ArraySet;
 import com.android.settingslib.utils.AsyncLoader;
+
 /* loaded from: classes.dex */
 public class AppPrefLoader extends AsyncLoader<ArraySet<Preference>> {
     private PackageManager mPackageManager;
@@ -19,8 +20,9 @@ public class AppPrefLoader extends AsyncLoader<ArraySet<Preference>> {
         this.mPrefContext = context;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
-    public ArraySet<Preference> loadInBackground() {
+    public ArraySet<Preference> loadInBackground() throws PackageManager.NameNotFoundException {
         ArraySet<Preference> arraySet = new ArraySet<>();
         int size = this.mPackages.size();
         for (int i = 1; i < size; i++) {
@@ -37,8 +39,8 @@ public class AppPrefLoader extends AsyncLoader<ArraySet<Preference>> {
         return arraySet;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(ArraySet<Preference> arraySet) {
+    protected void onDiscardResult(ArraySet<Preference> arraySet) {
     }
 }

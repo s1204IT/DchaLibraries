@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.android.settingslib.drawable.UserIconDrawable;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class UserAvatarView extends View {
     private final UserIconDrawable mDrawable;
@@ -16,32 +17,32 @@ public class UserAvatarView extends View {
     public UserAvatarView(Context context, AttributeSet attributeSet, int i, int i2) {
         super(context, attributeSet, i, i2);
         this.mDrawable = new UserIconDrawable();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.UserAvatarView, i, i2);
-        int indexCount = obtainStyledAttributes.getIndexCount();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.UserAvatarView, i, i2);
+        int indexCount = typedArrayObtainStyledAttributes.getIndexCount();
         for (int i3 = 0; i3 < indexCount; i3++) {
-            int index = obtainStyledAttributes.getIndex(i3);
+            int index = typedArrayObtainStyledAttributes.getIndex(i3);
             switch (index) {
                 case 1:
-                    setAvatarPadding(obtainStyledAttributes.getDimension(index, 0.0f));
+                    setAvatarPadding(typedArrayObtainStyledAttributes.getDimension(index, 0.0f));
                     break;
                 case 2:
-                    setBadgeDiameter(obtainStyledAttributes.getDimension(index, 0.0f));
+                    setBadgeDiameter(typedArrayObtainStyledAttributes.getDimension(index, 0.0f));
                     break;
                 case 3:
-                    setBadgeMargin(obtainStyledAttributes.getDimension(index, 0.0f));
+                    setBadgeMargin(typedArrayObtainStyledAttributes.getDimension(index, 0.0f));
                     break;
                 case 4:
-                    setFrameColor(obtainStyledAttributes.getColorStateList(index));
+                    setFrameColor(typedArrayObtainStyledAttributes.getColorStateList(index));
                     break;
                 case 5:
-                    setFramePadding(obtainStyledAttributes.getDimension(index, 0.0f));
+                    setFramePadding(typedArrayObtainStyledAttributes.getDimension(index, 0.0f));
                     break;
                 case 6:
-                    setFrameWidth(obtainStyledAttributes.getDimension(index, 0.0f));
+                    setFrameWidth(typedArrayObtainStyledAttributes.getDimension(index, 0.0f));
                     break;
             }
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
         setBackground(this.mDrawable);
     }
 

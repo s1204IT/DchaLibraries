@@ -1,6 +1,7 @@
 package com.android.settingslib.datetime;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.icu.text.TimeZoneFormat;
 import android.icu.text.TimeZoneNames;
@@ -24,6 +25,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import libcore.util.TimeZoneFinder;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class ZoneGetter {
     public static CharSequence getTimeZoneOffsetAndName(Context context, TimeZone timeZone, Date date) {
@@ -38,12 +40,12 @@ public class ZoneGetter {
         Date date = new Date();
         TimeZoneNames timeZoneNames = TimeZoneNames.getInstance(locale);
         ZoneGetterData zoneGetterData = new ZoneGetterData(context);
-        boolean shouldUseExemplarLocationForLocalNames = shouldUseExemplarLocationForLocalNames(zoneGetterData, timeZoneNames);
+        boolean zShouldUseExemplarLocationForLocalNames = shouldUseExemplarLocationForLocalNames(zoneGetterData, timeZoneNames);
         ArrayList arrayList = new ArrayList();
         for (int i = 0; i < zoneGetterData.zoneCount; i++) {
             TimeZone timeZone = zoneGetterData.timeZones[i];
             CharSequence charSequence = zoneGetterData.gmtOffsetTexts[i];
-            CharSequence timeZoneDisplayName = getTimeZoneDisplayName(zoneGetterData, timeZoneNames, shouldUseExemplarLocationForLocalNames, timeZone, zoneGetterData.olsonIdsToDisplay[i]);
+            CharSequence timeZoneDisplayName = getTimeZoneDisplayName(zoneGetterData, timeZoneNames, zShouldUseExemplarLocationForLocalNames, timeZone, zoneGetterData.olsonIdsToDisplay[i]);
             if (TextUtils.isEmpty(timeZoneDisplayName)) {
                 timeZoneDisplayName = charSequence;
             }
@@ -53,23 +55,26 @@ public class ZoneGetter {
     }
 
     private static Map<String, Object> createDisplayEntry(TimeZone timeZone, CharSequence charSequence, CharSequence charSequence2, int i) {
-        HashMap hashMap = new HashMap();
-        hashMap.put("id", timeZone.getID());
-        hashMap.put("name", charSequence2.toString());
-        hashMap.put("display_label", charSequence2);
-        hashMap.put("gmt", charSequence.toString());
-        hashMap.put("offset_label", charSequence);
-        hashMap.put("offset", Integer.valueOf(i));
-        return hashMap;
+        HashMap map = new HashMap();
+        map.put("id", timeZone.getID());
+        map.put("name", charSequence2.toString());
+        map.put("display_label", charSequence2);
+        map.put("gmt", charSequence.toString());
+        map.put("offset_label", charSequence);
+        map.put("offset", Integer.valueOf(i));
+        return map;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<String> readTimezonesToDisplay(Context context) {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [173=4] */
+    private static List<String> readTimezonesToDisplay(Context context) throws Resources.NotFoundException {
         ArrayList arrayList = new ArrayList();
         try {
             XmlResourceParser xml = context.getResources().getXml(R.xml.timezones);
-            while (xml.next() != 2) {
-            }
+            do {
+                try {
+                } finally {
+                }
+            } while (xml.next() != 2);
             xml.next();
             while (xml.getEventType() != 3) {
                 while (xml.getEventType() != 2) {
@@ -155,7 +160,7 @@ public class ZoneGetter {
     }
 
     public static CharSequence getGmtOffsetText(TimeZoneFormat timeZoneFormat, Locale locale, TimeZone timeZone, Date date) {
-        String substring;
+        String strSubstring;
         String str;
         TimeZoneFormat.GMTOffsetPatternType gMTOffsetPatternType;
         int i;
@@ -163,14 +168,14 @@ public class ZoneGetter {
         int i2;
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         String gMTPattern = timeZoneFormat.getGMTPattern();
-        int indexOf = gMTPattern.indexOf("{0}");
-        if (indexOf == -1) {
+        int iIndexOf = gMTPattern.indexOf("{0}");
+        if (iIndexOf == -1) {
             str = "GMT";
-            substring = "";
+            strSubstring = "";
         } else {
-            String substring2 = gMTPattern.substring(0, indexOf);
-            substring = gMTPattern.substring(indexOf + 3);
-            str = substring2;
+            String strSubstring2 = gMTPattern.substring(0, iIndexOf);
+            strSubstring = gMTPattern.substring(iIndexOf + 3);
+            str = strSubstring2;
         }
         if (!str.isEmpty()) {
             appendWithTtsSpan(spannableStringBuilder, str, new TtsSpan.TextBuilder(str).build());
@@ -187,37 +192,37 @@ public class ZoneGetter {
         String gMTOffsetDigits = timeZoneFormat.getGMTOffsetDigits();
         long j = offset;
         int i3 = (int) (j / 3600000);
-        int abs = Math.abs((int) (j / 60000)) % 60;
+        int iAbs = Math.abs((int) (j / 60000)) % 60;
         int i4 = 0;
         while (i4 < gMTOffsetPattern.length()) {
-            char charAt = gMTOffsetPattern.charAt(i4);
-            if (charAt == '+' || charAt == '-' || charAt == 8722) {
-                String valueOf = String.valueOf(charAt);
-                appendWithTtsSpan(spannableStringBuilder, valueOf, new TtsSpan.VerbatimBuilder(valueOf).build());
-            } else if (charAt == 'H' || charAt == 'm') {
+            char cCharAt = gMTOffsetPattern.charAt(i4);
+            if (cCharAt == '+' || cCharAt == '-' || cCharAt == 8722) {
+                String strValueOf = String.valueOf(cCharAt);
+                appendWithTtsSpan(spannableStringBuilder, strValueOf, new TtsSpan.VerbatimBuilder(strValueOf).build());
+            } else if (cCharAt == 'H' || cCharAt == 'm') {
                 int i5 = i4 + 1;
-                if (i5 < gMTOffsetPattern.length() && gMTOffsetPattern.charAt(i5) == charAt) {
+                if (i5 < gMTOffsetPattern.length() && gMTOffsetPattern.charAt(i5) == cCharAt) {
                     i = 2;
                 } else {
                     i5 = i4;
                     i = 1;
                 }
-                if (charAt == 'H') {
+                if (cCharAt == 'H') {
                     str2 = "hour";
                     i2 = i3;
                 } else {
                     str2 = "minute";
-                    i2 = abs;
+                    i2 = iAbs;
                 }
                 appendWithTtsSpan(spannableStringBuilder, formatDigits(i2, i, gMTOffsetDigits), new TtsSpan.MeasureBuilder().setNumber(i2).setUnit(str2).build());
                 i4 = i5;
             } else {
-                spannableStringBuilder.append(charAt);
+                spannableStringBuilder.append(cCharAt);
             }
             i4++;
         }
-        if (!substring.isEmpty()) {
-            appendWithTtsSpan(spannableStringBuilder, substring, new TtsSpan.TextBuilder(substring).build());
+        if (!strSubstring.isEmpty()) {
+            appendWithTtsSpan(spannableStringBuilder, strSubstring, new TtsSpan.TextBuilder(strSubstring).build());
         }
         SpannableString spannableString = new SpannableString(spannableStringBuilder);
         BidiFormatter bidiFormatter = BidiFormatter.getInstance();
@@ -227,7 +232,6 @@ public class ZoneGetter {
         return bidiFormatter.unicodeWrap(spannableString, z ? TextDirectionHeuristicsCompat.RTL : TextDirectionHeuristicsCompat.LTR);
     }
 
-    /* loaded from: classes.dex */
     public static final class ZoneGetterData {
         public final CharSequence[] gmtOffsetTexts;
         public final Set<String> localZoneIds;
@@ -235,17 +239,17 @@ public class ZoneGetter {
         public final TimeZone[] timeZones;
         public final int zoneCount;
 
-        public ZoneGetterData(Context context) {
+        public ZoneGetterData(Context context) throws Resources.NotFoundException {
             Locale locale = context.getResources().getConfiguration().locale;
             TimeZoneFormat timeZoneFormat = TimeZoneFormat.getInstance(locale);
             Date date = new Date();
-            List readTimezonesToDisplay = ZoneGetter.readTimezonesToDisplay(context);
-            this.zoneCount = readTimezonesToDisplay.size();
+            List timezonesToDisplay = ZoneGetter.readTimezonesToDisplay(context);
+            this.zoneCount = timezonesToDisplay.size();
             this.olsonIdsToDisplay = new String[this.zoneCount];
             this.timeZones = new TimeZone[this.zoneCount];
             this.gmtOffsetTexts = new CharSequence[this.zoneCount];
             for (int i = 0; i < this.zoneCount; i++) {
-                String str = (String) readTimezonesToDisplay.get(i);
+                String str = (String) timezonesToDisplay.get(i);
                 this.olsonIdsToDisplay[i] = str;
                 TimeZone timeZone = TimeZone.getTimeZone(str);
                 this.timeZones[i] = timeZone;

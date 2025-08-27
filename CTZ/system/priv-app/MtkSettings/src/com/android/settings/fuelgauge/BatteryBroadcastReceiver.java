@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class BatteryBroadcastReceiver extends BroadcastReceiver {
     String mBatteryLevel;
@@ -12,7 +13,6 @@ public class BatteryBroadcastReceiver extends BroadcastReceiver {
     String mBatteryStatus;
     private Context mContext;
 
-    /* loaded from: classes.dex */
     public interface OnBatteryChangedListener {
         void onBatteryChanged(int i);
     }

@@ -28,6 +28,7 @@ import com.android.settings.password.ChooseLockSettingsHelper;
 import com.android.settingslib.RestrictedLockUtils;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ResetNetwork extends InstrumentedFragment {
     private View mContentView;
@@ -51,8 +52,7 @@ public class ResetNetwork extends InstrumentedFragment {
         getActivity().setTitle(R.string.reset_network_title);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean runKeyguardConfirmation(int i) {
+    private boolean runKeyguardConfirmation(int i) {
         return new ChooseLockSettingsHelper(getActivity(), this).launchConfirmationActivity(i, getActivity().getResources().getText(R.string.reset_network_title));
     }
 
@@ -69,8 +69,7 @@ public class ResetNetwork extends InstrumentedFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showFinalConfirmation() {
+    private void showFinalConfirmation() {
         Bundle bundle = new Bundle();
         if (this.mSubscriptions != null && this.mSubscriptions.size() > 0) {
             bundle.putInt("subscription", this.mSubscriptions.get(this.mSubscriptionSpinner.getSelectedItemPosition()).getSubscriptionId());
@@ -97,27 +96,27 @@ public class ResetNetwork extends InstrumentedFragment {
             }
             this.mSubscriptions.size();
             ArrayList arrayList = new ArrayList();
-            int i = 0;
+            int size = 0;
             for (SubscriptionInfo subscriptionInfo : this.mSubscriptions) {
                 if (subscriptionInfo.getSubscriptionId() == defaultDataSubscriptionId) {
-                    i = arrayList.size();
+                    size = arrayList.size();
                 }
-                String charSequence = subscriptionInfo.getDisplayName().toString();
-                if (TextUtils.isEmpty(charSequence)) {
-                    charSequence = subscriptionInfo.getNumber();
+                String string = subscriptionInfo.getDisplayName().toString();
+                if (TextUtils.isEmpty(string)) {
+                    string = subscriptionInfo.getNumber();
                 }
-                if (TextUtils.isEmpty(charSequence)) {
-                    charSequence = subscriptionInfo.getCarrierName().toString();
+                if (TextUtils.isEmpty(string)) {
+                    string = subscriptionInfo.getCarrierName().toString();
                 }
-                if (TextUtils.isEmpty(charSequence)) {
-                    charSequence = String.format("MCC:%s MNC:%s Slot:%s Id:%s", Integer.valueOf(subscriptionInfo.getMcc()), Integer.valueOf(subscriptionInfo.getMnc()), Integer.valueOf(subscriptionInfo.getSimSlotIndex()), Integer.valueOf(subscriptionInfo.getSubscriptionId()));
+                if (TextUtils.isEmpty(string)) {
+                    string = String.format("MCC:%s MNC:%s Slot:%s Id:%s", Integer.valueOf(subscriptionInfo.getMcc()), Integer.valueOf(subscriptionInfo.getMnc()), Integer.valueOf(subscriptionInfo.getSimSlotIndex()), Integer.valueOf(subscriptionInfo.getSubscriptionId()));
                 }
-                arrayList.add(charSequence);
+                arrayList.add(string);
             }
-            ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), 17367048, arrayList);
-            arrayAdapter.setDropDownViewResource(17367049);
+            ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, arrayList);
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             this.mSubscriptionSpinner.setAdapter((SpinnerAdapter) arrayAdapter);
-            this.mSubscriptionSpinner.setSelection(i);
+            this.mSubscriptionSpinner.setSelection(size);
             if (this.mSubscriptions.size() > 1) {
                 this.mSubscriptionSpinner.setVisibility(0);
             } else {
@@ -143,25 +142,25 @@ public class ResetNetwork extends InstrumentedFragment {
     }
 
     private boolean showEuiccSettings(Context context) {
-        if (((EuiccManager) context.getSystemService("euicc")).isEnabled()) {
-            ContentResolver contentResolver = context.getContentResolver();
-            return (Settings.Global.getInt(contentResolver, "euicc_provisioned", 0) == 0 && Settings.Global.getInt(contentResolver, "development_settings_enabled", 0) == 0) ? false : true;
+        if (!((EuiccManager) context.getSystemService("euicc")).isEnabled()) {
+            return false;
         }
-        return false;
+        ContentResolver contentResolver = context.getContentResolver();
+        return (Settings.Global.getInt(contentResolver, "euicc_provisioned", 0) == 0 && Settings.Global.getInt(contentResolver, "development_settings_enabled", 0) == 0) ? false : true;
     }
 
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         UserManager userManager = UserManager.get(getActivity());
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getActivity(), "no_network_reset", UserHandle.myUserId());
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getActivity(), "no_network_reset", UserHandle.myUserId());
         if (!userManager.isAdminUser() || RestrictedLockUtils.hasBaseUserRestriction(getActivity(), "no_network_reset", UserHandle.myUserId())) {
             return layoutInflater.inflate(R.layout.network_reset_disallowed_screen, (ViewGroup) null);
         }
-        if (checkIfRestrictionEnforced != null) {
-            new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_network_reset", checkIfRestrictionEnforced).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.-$$Lambda$ResetNetwork$sNSFVrhYYO7NxbKY35cdb4I6sYI
+        if (enforcedAdminCheckIfRestrictionEnforced != null) {
+            new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_network_reset", enforcedAdminCheckIfRestrictionEnforced).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.-$$Lambda$ResetNetwork$sNSFVrhYYO7NxbKY35cdb4I6sYI
                 @Override // android.content.DialogInterface.OnDismissListener
                 public final void onDismiss(DialogInterface dialogInterface) {
-                    ResetNetwork.this.getActivity().finish();
+                    this.f$0.getActivity().finish();
                 }
             }).show();
             return new View(getContext());

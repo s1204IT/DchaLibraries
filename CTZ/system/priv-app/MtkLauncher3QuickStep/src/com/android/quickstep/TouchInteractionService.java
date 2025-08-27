@@ -25,6 +25,7 @@ import com.android.quickstep.views.RecentsView;
 import com.android.systemui.shared.recents.IOverviewProxy;
 import com.android.systemui.shared.recents.ISystemUiProxy;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class TouchInteractionService extends Service {
@@ -90,9 +91,9 @@ public class TouchInteractionService extends Service {
             if (z) {
                 TouchInteractionService.this.setupTouchConsumer(0);
                 TouchInteractionService.this.mEventQueue.onOverviewShownFromAltTab();
-                return;
+            } else {
+                TouchInteractionService.this.mOverviewCommandHelper.onOverviewShown();
             }
-            TouchInteractionService.this.mOverviewCommandHelper.onOverviewShown();
         }
 
         @Override // com.android.systemui.shared.recents.IOverviewProxy
@@ -114,6 +115,7 @@ public class TouchInteractionService extends Service {
         }
     };
     private final TouchConsumer mNoOpTouchConsumer = new TouchConsumer() { // from class: com.android.quickstep.-$$Lambda$TouchInteractionService$7TIkPClCm7OCC9BGMTDzvfJzrCo
+        /* JADX DEBUG: Method arguments types fixed to match base method, original types: [java.lang.Object] */
         @Override // java.util.function.Consumer
         public final void accept(MotionEvent motionEvent) {
             TouchInteractionService.lambda$new$0(motionEvent);
@@ -131,8 +133,7 @@ public class TouchInteractionService extends Service {
         sConnected = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$new$0(MotionEvent motionEvent) {
+    static /* synthetic */ void lambda$new$0(MotionEvent motionEvent) {
     }
 
     public static boolean isConnected() {
@@ -168,27 +169,23 @@ public class TouchInteractionService extends Service {
         return this.mMyBinder;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setupTouchConsumer(final int i) {
+    private void setupTouchConsumer(final int i) {
         this.mEventQueue.reset();
         final TouchConsumer consumer = this.mEventQueue.getConsumer();
         if (consumer.deferNextEventToMainThread()) {
             this.mEventQueue = new MotionEventQueue(this.mMainThreadChoreographer, new DeferredTouchConsumer(new DeferredTouchConsumer.DeferredTouchProvider() { // from class: com.android.quickstep.-$$Lambda$TouchInteractionService$05X3VuiaVtbQAPi0UEjms9szGiI
                 @Override // com.android.quickstep.DeferredTouchConsumer.DeferredTouchProvider
                 public final TouchConsumer createTouchConsumer(VelocityTracker velocityTracker) {
-                    TouchConsumer currentTouchConsumer;
-                    currentTouchConsumer = TouchInteractionService.this.getCurrentTouchConsumer(i, consumer.forceToLauncherConsumer(), velocityTracker);
-                    return currentTouchConsumer;
+                    return this.f$0.getCurrentTouchConsumer(i, consumer.forceToLauncherConsumer(), velocityTracker);
                 }
             }));
             this.mEventQueue.deferInit();
-            return;
+        } else {
+            this.mEventQueue = new MotionEventQueue(this.mMainThreadChoreographer, getCurrentTouchConsumer(i, false, null));
         }
-        this.mEventQueue = new MotionEventQueue(this.mMainThreadChoreographer, getCurrentTouchConsumer(i, false, null));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public TouchConsumer getCurrentTouchConsumer(int i, boolean z, VelocityTracker velocityTracker) {
+    private TouchConsumer getCurrentTouchConsumer(int i, boolean z, VelocityTracker velocityTracker) {
         ActivityManager.RunningTaskInfo runningTask = this.mAM.getRunningTask(0);
         if (runningTask == null && !z) {
             return this.mNoOpTouchConsumer;
@@ -208,9 +205,7 @@ public class TouchInteractionService extends Service {
         return new OverviewTouchConsumer(activityControlHelper, createdActivity);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class OverviewTouchConsumer<T extends BaseDraggingActivity> implements TouchConsumer {
+    private static class OverviewTouchConsumer<T extends BaseDraggingActivity> implements TouchConsumer {
         private final T mActivity;
         private final ActivityControlHelper<T> mActivityHelper;
         private final QuickScrubController mQuickScrubController;
@@ -232,6 +227,7 @@ public class TouchInteractionService extends Service {
             this.mQuickScrubController = ((RecentsView) this.mActivity.getOverviewPanel()).getQuickScrubController();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: accept(Ljava/lang/Object;)V */
         @Override // java.util.function.Consumer
         public void accept(MotionEvent motionEvent) {
             if (this.mInvalidated) {
@@ -254,10 +250,10 @@ public class TouchInteractionService extends Service {
                     }
                 } else if (Math.abs(motionEvent.getY() - this.mDownPos.y) >= this.mTouchSlop) {
                     this.mTarget.getLocationOnScreen(this.mLocationOnScreen);
-                    MotionEvent obtain = MotionEvent.obtain(motionEvent);
-                    obtain.setAction(0);
-                    sendEvent(obtain);
-                    obtain.recycle();
+                    MotionEvent motionEventObtain = MotionEvent.obtain(motionEvent);
+                    motionEventObtain.setAction(0);
+                    sendEvent(motionEventObtain);
+                    motionEventObtain.recycle();
                     this.mTrackingStarted = true;
                 }
             }
@@ -303,7 +299,7 @@ public class TouchInteractionService extends Service {
                 this.mActivityHelper.executeOnWindowAvailable(this.mActivity, new Runnable() { // from class: com.android.quickstep.-$$Lambda$TouchInteractionService$OverviewTouchConsumer$L0AiJ-YDSQgueZLNDQVO_4-hZRg
                     @Override // java.lang.Runnable
                     public final void run() {
-                        TouchInteractionService.OverviewTouchConsumer.lambda$updateTouchTracking$0(TouchInteractionService.OverviewTouchConsumer.this);
+                        TouchInteractionService.OverviewTouchConsumer.lambda$updateTouchTracking$0(this.f$0);
                     }
                 });
             }
@@ -353,7 +349,7 @@ public class TouchInteractionService extends Service {
         new Handler(sRemoteUiThread.getLooper()).post(new Runnable() { // from class: com.android.quickstep.-$$Lambda$TouchInteractionService$k7qQihrvDzN2K5DqycNFu9xhre0
             @Override // java.lang.Runnable
             public final void run() {
-                TouchInteractionService.this.mBackgroundThreadChoreographer = Choreographer.getInstance();
+                this.f$0.mBackgroundThreadChoreographer = Choreographer.getInstance();
             }
         });
     }

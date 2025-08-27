@@ -10,6 +10,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.utils.ThreadUtils;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class DataSaverBackend {
     private boolean mBlacklistInitialized;
@@ -21,7 +22,6 @@ public class DataSaverBackend {
     private SparseIntArray mUidPolicies = new SparseIntArray();
     private final INetworkPolicyListener mPolicyListener = new AnonymousClass1();
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onBlacklistStatusChanged(int i, boolean z);
 
@@ -138,8 +138,7 @@ public class DataSaverBackend {
         this.mBlacklistInitialized = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleRestrictBackgroundChanged(boolean z) {
+    private void handleRestrictBackgroundChanged(boolean z) {
         for (int i = 0; i < this.mListeners.size(); i++) {
             this.mListeners.get(i).onDataSaverChanged(z);
         }
@@ -157,8 +156,7 @@ public class DataSaverBackend {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleUidPoliciesChanged(int i, int i2) {
+    private void handleUidPoliciesChanged(int i, int i2) {
         loadWhitelist();
         loadBlacklist();
         int i3 = this.mUidPolicies.get(i, 0);
@@ -179,10 +177,8 @@ public class DataSaverBackend {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.settings.datausage.DataSaverBackend$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends INetworkPolicyListener.Stub {
+    /* renamed from: com.android.settings.datausage.DataSaverBackend$1, reason: invalid class name */
+    class AnonymousClass1 extends INetworkPolicyListener.Stub {
         AnonymousClass1() {
         }
 

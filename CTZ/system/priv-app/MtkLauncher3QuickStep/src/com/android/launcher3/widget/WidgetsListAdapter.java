@@ -13,6 +13,7 @@ import com.android.launcher3.util.LabelComparator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
 /* loaded from: classes.dex */
 public class WidgetsListAdapter extends RecyclerView.Adapter<WidgetsRowViewHolder> {
     private static final boolean DEBUG = false;
@@ -63,6 +64,7 @@ public class WidgetsListAdapter extends RecyclerView.Adapter<WidgetsRowViewHolde
         return this.mEntries.get(i).titleSectionName;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(WidgetsRowViewHolder widgetsRowViewHolder, int i) {
         WidgetListRowEntry widgetListRowEntry = this.mEntries.get(i);
@@ -102,6 +104,7 @@ public class WidgetsListAdapter extends RecyclerView.Adapter<WidgetsRowViewHolde
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public WidgetsRowViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         ViewGroup viewGroup2 = (ViewGroup) this.mLayoutInflater.inflate(R.layout.widgets_list_row_view, viewGroup, false);
@@ -109,6 +112,7 @@ public class WidgetsListAdapter extends RecyclerView.Adapter<WidgetsRowViewHolde
         return new WidgetsRowViewHolder(viewGroup2);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onViewRecycled(Landroid/support/v7/widget/RecyclerView$ViewHolder;)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onViewRecycled(WidgetsRowViewHolder widgetsRowViewHolder) {
         int childCount = widgetsRowViewHolder.cellContainer.getChildCount();
@@ -117,6 +121,7 @@ public class WidgetsListAdapter extends RecyclerView.Adapter<WidgetsRowViewHolde
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onFailedToRecycleView(Landroid/support/v7/widget/RecyclerView$ViewHolder;)Z */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public boolean onFailedToRecycleView(WidgetsRowViewHolder widgetsRowViewHolder) {
         return true;
@@ -127,10 +132,10 @@ public class WidgetsListAdapter extends RecyclerView.Adapter<WidgetsRowViewHolde
         return i;
     }
 
-    /* loaded from: classes.dex */
     public static class WidgetListRowEntryComparator implements Comparator<WidgetListRowEntry> {
         private final LabelComparator mComparator = new LabelComparator();
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(WidgetListRowEntry widgetListRowEntry, WidgetListRowEntry widgetListRowEntry2) {
             return this.mComparator.compare(widgetListRowEntry.pkgItem.title.toString(), widgetListRowEntry2.pkgItem.title.toString());

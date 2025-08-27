@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class PackageUpdatedTask extends BaseModelUpdateTask {
     private static final boolean DEBUG = false;
@@ -54,8 +55,37 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
     }
 
     /* JADX WARN: Removed duplicated region for block: B:109:0x0281 A[ADDED_TO_REGION] */
+    /* JADX WARN: Removed duplicated region for block: B:110:0x0283 A[Catch: all -> 0x03ce, TryCatch #0 {, blocks: (B:55:0x015f, B:56:0x0165, B:58:0x016b, B:60:0x017b, B:62:0x0187, B:64:0x018f, B:66:0x0199, B:68:0x01a8, B:70:0x01af, B:72:0x01b5, B:74:0x01bb, B:76:0x01cb, B:80:0x01f5, B:83:0x01fd, B:85:0x0205, B:87:0x0211, B:89:0x0222, B:92:0x0232, B:93:0x023b, B:95:0x0241, B:97:0x024d, B:99:0x0255, B:101:0x0259, B:103:0x0263, B:112:0x0288, B:110:0x0283, B:116:0x0297, B:119:0x02a1, B:121:0x02ad, B:123:0x02b4, B:125:0x02c0, B:129:0x02f0), top: B:173:0x015f }] */
     /* JADX WARN: Removed duplicated region for block: B:112:0x0288 A[Catch: all -> 0x03ce, TryCatch #0 {, blocks: (B:55:0x015f, B:56:0x0165, B:58:0x016b, B:60:0x017b, B:62:0x0187, B:64:0x018f, B:66:0x0199, B:68:0x01a8, B:70:0x01af, B:72:0x01b5, B:74:0x01bb, B:76:0x01cb, B:80:0x01f5, B:83:0x01fd, B:85:0x0205, B:87:0x0211, B:89:0x0222, B:92:0x0232, B:93:0x023b, B:95:0x0241, B:97:0x024d, B:99:0x0255, B:101:0x0259, B:103:0x0263, B:112:0x0288, B:110:0x0283, B:116:0x0297, B:119:0x02a1, B:121:0x02ad, B:123:0x02b4, B:125:0x02c0, B:129:0x02f0), top: B:173:0x015f }] */
+    /* JADX WARN: Removed duplicated region for block: B:126:0x02d9 A[PHI: r19 r21 r22 r23
+  0x02d9: PHI (r19v4 int) = (r19v2 int), (r19v2 int), (r19v2 int), (r19v2 int), (r19v2 int), (r19v5 int) binds: [B:117:0x029d, B:118:0x029f, B:120:0x02ab, B:122:0x02b2, B:124:0x02be, B:113:0x028f] A[DONT_GENERATE, DONT_INLINE]
+  0x02d9: PHI (r21v4 java.lang.String[]) = 
+  (r21v2 java.lang.String[])
+  (r21v2 java.lang.String[])
+  (r21v2 java.lang.String[])
+  (r21v2 java.lang.String[])
+  (r21v2 java.lang.String[])
+  (r21v8 java.lang.String[])
+ binds: [B:117:0x029d, B:118:0x029f, B:120:0x02ab, B:122:0x02b2, B:124:0x02be, B:113:0x028f] A[DONT_GENERATE, DONT_INLINE]
+  0x02d9: PHI (r22v2 com.android.launcher3.util.ItemInfoMatcher) = 
+  (r22v0 com.android.launcher3.util.ItemInfoMatcher)
+  (r22v0 com.android.launcher3.util.ItemInfoMatcher)
+  (r22v0 com.android.launcher3.util.ItemInfoMatcher)
+  (r22v0 com.android.launcher3.util.ItemInfoMatcher)
+  (r22v0 com.android.launcher3.util.ItemInfoMatcher)
+  (r22v5 com.android.launcher3.util.ItemInfoMatcher)
+ binds: [B:117:0x029d, B:118:0x029f, B:120:0x02ab, B:122:0x02b2, B:124:0x02be, B:113:0x028f] A[DONT_GENERATE, DONT_INLINE]
+  0x02d9: PHI (r23v1 java.util.ArrayList) = 
+  (r23v0 java.util.ArrayList)
+  (r23v0 java.util.ArrayList)
+  (r23v0 java.util.ArrayList)
+  (r23v0 java.util.ArrayList)
+  (r23v0 java.util.ArrayList)
+  (r23v4 java.util.ArrayList)
+ binds: [B:117:0x029d, B:118:0x029f, B:120:0x02ab, B:122:0x02b2, B:124:0x02be, B:113:0x028f] A[DONT_GENERATE, DONT_INLINE]] */
+    /* JADX WARN: Removed duplicated region for block: B:158:0x0379  */
     /* JADX WARN: Removed duplicated region for block: B:161:0x03a4  */
+    /* JADX WARN: Removed duplicated region for block: B:69:0x01ae  */
     @Override // com.android.launcher3.model.BaseModelUpdateTask
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -82,9 +112,9 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
         IconCache iconCache = launcherAppState.getIconCache();
         String[] strArr4 = this.mPackages;
         int length = strArr4.length;
-        FlagOp flagOp = FlagOp.NO_OP;
+        FlagOp flagOpRemoveFlag = FlagOp.NO_OP;
         HashSet hashSet = new HashSet(Arrays.asList(strArr4));
-        ItemInfoMatcher ofPackages = ItemInfoMatcher.ofPackages(hashSet, this.mUser);
+        ItemInfoMatcher itemInfoMatcherOfPackages = ItemInfoMatcher.ofPackages(hashSet, this.mUser);
         switch (this.mOp) {
             case 1:
                 for (int i5 = 0; i5 < length; i5++) {
@@ -94,7 +124,7 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                         SessionCommitReceiver.queueAppIconAddition(context, strArr4[i5], this.mUser);
                     }
                 }
-                flagOp = FlagOp.removeFlag(2);
+                flagOpRemoveFlag = FlagOp.removeFlag(2);
                 break;
             case 2:
                 for (int i6 = 0; i6 < length; i6++) {
@@ -102,7 +132,7 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                     allAppsList.updatePackage(context, strArr4[i6], this.mUser);
                     launcherAppState.getWidgetCache().removePackage(strArr4[i6], this.mUser);
                 }
-                flagOp = FlagOp.removeFlag(2);
+                flagOpRemoveFlag = FlagOp.removeFlag(2);
                 break;
             case 3:
                 for (String str : strArr4) {
@@ -113,25 +143,25 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                     allAppsList.removePackage(strArr4[i7], this.mUser);
                     launcherAppState.getWidgetCache().removePackage(strArr4[i7], this.mUser);
                 }
-                flagOp = FlagOp.addFlag(2);
+                flagOpRemoveFlag = FlagOp.addFlag(2);
                 break;
             case 5:
             case 6:
                 if (this.mOp == 5) {
-                    flagOp = FlagOp.addFlag(4);
+                    flagOpRemoveFlag = FlagOp.addFlag(4);
                 } else {
-                    flagOp = FlagOp.removeFlag(4);
+                    flagOpRemoveFlag = FlagOp.removeFlag(4);
                 }
-                allAppsList.updateDisabledFlags(ofPackages, flagOp);
+                allAppsList.updateDisabledFlags(itemInfoMatcherOfPackages, flagOpRemoveFlag);
                 break;
             case 7:
                 if (UserManagerCompat.getInstance(context).isQuietModeEnabled(this.mUser)) {
-                    flagOp = FlagOp.addFlag(8);
+                    flagOpRemoveFlag = FlagOp.addFlag(8);
                 } else {
-                    flagOp = FlagOp.removeFlag(8);
+                    flagOpRemoveFlag = FlagOp.removeFlag(8);
                 }
-                ofPackages = ItemInfoMatcher.ofUser(this.mUser);
-                allAppsList.updateDisabledFlags(ofPackages, flagOp);
+                itemInfoMatcherOfPackages = ItemInfoMatcher.ofUser(this.mUser);
+                allAppsList.updateDisabledFlags(itemInfoMatcherOfPackages, flagOpRemoveFlag);
                 break;
         }
         final ArrayList arrayList6 = new ArrayList();
@@ -156,7 +186,7 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
             }
         }
         LongArrayMap longArrayMap = new LongArrayMap();
-        if (this.mOp == 1 || flagOp != FlagOp.NO_OP) {
+        if (this.mOp == 1 || flagOpRemoveFlag != FlagOp.NO_OP) {
             ArrayList<ShortcutInfo> arrayList8 = new ArrayList<>();
             ArrayList arrayList9 = new ArrayList();
             boolean z4 = this.mOp == 1 || this.mOp == 2;
@@ -171,95 +201,103 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                         if (this.mUser.equals(next.user)) {
                             ShortcutInfo shortcutInfo = (ShortcutInfo) next;
                             if (shortcutInfo.iconResource != null && hashSet.contains(shortcutInfo.iconResource.packageName)) {
-                                LauncherIcons obtain = LauncherIcons.obtain(context);
-                                BitmapInfo createIconBitmap = obtain.createIconBitmap(shortcutInfo.iconResource);
-                                obtain.recycle();
-                                if (createIconBitmap != null) {
-                                    createIconBitmap.applyTo(shortcutInfo);
+                                LauncherIcons launcherIconsObtain = LauncherIcons.obtain(context);
+                                BitmapInfo bitmapInfoCreateIconBitmap = launcherIconsObtain.createIconBitmap(shortcutInfo.iconResource);
+                                launcherIconsObtain.recycle();
+                                if (bitmapInfoCreateIconBitmap != null) {
+                                    bitmapInfoCreateIconBitmap.applyTo(shortcutInfo);
                                     z = true;
-                                    targetComponent = shortcutInfo.getTargetComponent();
-                                    if (targetComponent == null && ofPackages.matches(shortcutInfo, targetComponent)) {
-                                        AppInfo appInfo2 = (AppInfo) arrayMap.get(targetComponent);
-                                        boolean z5 = z;
-                                        if (shortcutInfo.hasStatusFlag(16)) {
-                                            strArr2 = strArr4;
-                                            itemInfoMatcher = ofPackages;
-                                            arrayList3 = arrayList9;
-                                            longArrayMap.put(shortcutInfo.id, false);
-                                            if (this.mOp == 3) {
-                                                it2 = it3;
-                                                arrayList7 = arrayList10;
-                                                length = i3;
-                                                strArr4 = strArr2;
-                                                ofPackages = itemInfoMatcher;
-                                                arrayList9 = arrayList3;
-                                            }
-                                        } else {
-                                            strArr2 = strArr4;
-                                            itemInfoMatcher = ofPackages;
-                                            arrayList3 = arrayList9;
+                                }
+                                targetComponent = shortcutInfo.getTargetComponent();
+                                if (targetComponent == null) {
+                                }
+                                strArr2 = strArr4;
+                                itemInfoMatcher = itemInfoMatcherOfPackages;
+                                arrayList3 = arrayList9;
+                                z2 = z;
+                                if (z2) {
+                                }
+                            } else {
+                                z = false;
+                                targetComponent = shortcutInfo.getTargetComponent();
+                                if (targetComponent == null && itemInfoMatcherOfPackages.matches(shortcutInfo, targetComponent)) {
+                                    AppInfo appInfo2 = (AppInfo) arrayMap.get(targetComponent);
+                                    boolean z5 = z;
+                                    if (shortcutInfo.hasStatusFlag(16)) {
+                                        strArr2 = strArr4;
+                                        itemInfoMatcher = itemInfoMatcherOfPackages;
+                                        arrayList3 = arrayList9;
+                                        longArrayMap.put(shortcutInfo.id, false);
+                                        if (this.mOp == 3) {
                                         }
-                                        if (shortcutInfo.isPromise() && z4) {
-                                            if (shortcutInfo.hasStatusFlag(2)) {
-                                                if (!LauncherAppsCompat.getInstance(context).isActivityEnabledForProfile(targetComponent, this.mUser)) {
-                                                    Intent appLaunchIntent = new PackageManagerHelper(context).getAppLaunchIntent(targetComponent.getPackageName(), this.mUser);
-                                                    if (appLaunchIntent != null) {
-                                                        appInfo2 = (AppInfo) arrayMap.get(appLaunchIntent.getComponent());
-                                                    }
-                                                    if (appLaunchIntent != null && appInfo2 != null) {
-                                                        shortcutInfo.intent = appLaunchIntent;
-                                                        shortcutInfo.status = 0;
-                                                        z5 = true;
-                                                    } else if (shortcutInfo.hasPromiseIconUi()) {
-                                                        longArrayMap.put(shortcutInfo.id, true);
-                                                        it2 = it3;
-                                                        arrayList7 = arrayList10;
-                                                        length = i3;
-                                                        strArr4 = strArr2;
-                                                        ofPackages = itemInfoMatcher;
-                                                        arrayList9 = arrayList3;
-                                                    }
-                                                }
-                                            } else {
-                                                shortcutInfo.status = 0;
-                                                z5 = true;
-                                            }
-                                        }
-                                        if (z4 && shortcutInfo.itemType == 0) {
-                                            iconCache.getTitleAndIcon(shortcutInfo, shortcutInfo.usingLowResIcon);
-                                            z2 = true;
-                                        } else {
-                                            z2 = z5;
-                                        }
-                                        int i8 = shortcutInfo.runtimeStatusFlags;
-                                        shortcutInfo.runtimeStatusFlags = flagOp.apply(shortcutInfo.runtimeStatusFlags);
-                                        if (shortcutInfo.runtimeStatusFlags != i8) {
-                                            z3 = true;
-                                            if (!z2 || z3) {
-                                                arrayList8.add(shortcutInfo);
-                                            }
-                                            if (z2) {
-                                                getModelWriter().updateItemInDatabase(shortcutInfo);
-                                            }
-                                            arrayList4 = arrayList3;
-                                            arrayList9 = arrayList4;
-                                            it2 = it3;
-                                            arrayList7 = arrayList10;
-                                            length = i3;
-                                            strArr4 = strArr2;
-                                            ofPackages = itemInfoMatcher;
-                                        }
+                                        it2 = it3;
+                                        arrayList7 = arrayList10;
+                                        length = i3;
+                                        strArr4 = strArr2;
+                                        itemInfoMatcherOfPackages = itemInfoMatcher;
+                                        arrayList9 = arrayList3;
                                     } else {
                                         strArr2 = strArr4;
-                                        itemInfoMatcher = ofPackages;
+                                        itemInfoMatcher = itemInfoMatcherOfPackages;
                                         arrayList3 = arrayList9;
-                                        z2 = z;
                                     }
-                                    z3 = false;
-                                    if (!z2) {
+                                    if (shortcutInfo.isPromise() && z4) {
+                                        if (shortcutInfo.hasStatusFlag(2)) {
+                                            if (!LauncherAppsCompat.getInstance(context).isActivityEnabledForProfile(targetComponent, this.mUser)) {
+                                                Intent appLaunchIntent = new PackageManagerHelper(context).getAppLaunchIntent(targetComponent.getPackageName(), this.mUser);
+                                                if (appLaunchIntent != null) {
+                                                    appInfo2 = (AppInfo) arrayMap.get(appLaunchIntent.getComponent());
+                                                }
+                                                if (appLaunchIntent != null && appInfo2 != null) {
+                                                    shortcutInfo.intent = appLaunchIntent;
+                                                    shortcutInfo.status = 0;
+                                                    z5 = true;
+                                                } else if (shortcutInfo.hasPromiseIconUi()) {
+                                                    longArrayMap.put(shortcutInfo.id, true);
+                                                    it2 = it3;
+                                                    arrayList7 = arrayList10;
+                                                    length = i3;
+                                                    strArr4 = strArr2;
+                                                    itemInfoMatcherOfPackages = itemInfoMatcher;
+                                                    arrayList9 = arrayList3;
+                                                }
+                                            }
+                                        } else {
+                                            shortcutInfo.status = 0;
+                                            z5 = true;
+                                        }
                                     }
-                                    arrayList8.add(shortcutInfo);
+                                    if (z4 && shortcutInfo.itemType == 0) {
+                                        iconCache.getTitleAndIcon(shortcutInfo, shortcutInfo.usingLowResIcon);
+                                        z2 = true;
+                                    } else {
+                                        z2 = z5;
+                                    }
+                                    int i8 = shortcutInfo.runtimeStatusFlags;
+                                    shortcutInfo.runtimeStatusFlags = flagOpRemoveFlag.apply(shortcutInfo.runtimeStatusFlags);
+                                    z3 = shortcutInfo.runtimeStatusFlags != i8;
                                     if (z2) {
+                                        arrayList8.add(shortcutInfo);
+                                        if (z2) {
+                                        }
+                                        arrayList4 = arrayList3;
+                                        arrayList9 = arrayList4;
+                                        it2 = it3;
+                                        arrayList7 = arrayList10;
+                                        length = i3;
+                                        strArr4 = strArr2;
+                                        itemInfoMatcherOfPackages = itemInfoMatcher;
+                                    }
+                                } else {
+                                    strArr2 = strArr4;
+                                    itemInfoMatcher = itemInfoMatcherOfPackages;
+                                    arrayList3 = arrayList9;
+                                    z2 = z;
+                                    if (z2 || z3) {
+                                        arrayList8.add(shortcutInfo);
+                                    }
+                                    if (z2) {
+                                        getModelWriter().updateItemInDatabase(shortcutInfo);
                                     }
                                     arrayList4 = arrayList3;
                                     arrayList9 = arrayList4;
@@ -267,30 +305,9 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                                     arrayList7 = arrayList10;
                                     length = i3;
                                     strArr4 = strArr2;
-                                    ofPackages = itemInfoMatcher;
+                                    itemInfoMatcherOfPackages = itemInfoMatcher;
                                 }
                             }
-                            z = false;
-                            targetComponent = shortcutInfo.getTargetComponent();
-                            if (targetComponent == null) {
-                            }
-                            strArr2 = strArr4;
-                            itemInfoMatcher = ofPackages;
-                            arrayList3 = arrayList9;
-                            z2 = z;
-                            z3 = false;
-                            if (!z2) {
-                            }
-                            arrayList8.add(shortcutInfo);
-                            if (z2) {
-                            }
-                            arrayList4 = arrayList3;
-                            arrayList9 = arrayList4;
-                            it2 = it3;
-                            arrayList7 = arrayList10;
-                            length = i3;
-                            strArr4 = strArr2;
-                            ofPackages = itemInfoMatcher;
                         } else {
                             strArr2 = strArr4;
                         }
@@ -298,7 +315,7 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                         strArr2 = strArr4;
                         i3 = length;
                     }
-                    itemInfoMatcher = ofPackages;
+                    itemInfoMatcher = itemInfoMatcherOfPackages;
                     arrayList3 = arrayList9;
                     if ((next instanceof LauncherAppWidgetInfo) && z4) {
                         LauncherAppWidgetInfo launcherAppWidgetInfo = (LauncherAppWidgetInfo) next;
@@ -308,21 +325,22 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                             arrayList4 = arrayList3;
                             arrayList4.add(launcherAppWidgetInfo);
                             getModelWriter().updateItemInDatabase(launcherAppWidgetInfo);
-                            arrayList9 = arrayList4;
-                            it2 = it3;
-                            arrayList7 = arrayList10;
-                            length = i3;
-                            strArr4 = strArr2;
-                            ofPackages = itemInfoMatcher;
                         }
+                        arrayList9 = arrayList4;
+                        it2 = it3;
+                        arrayList7 = arrayList10;
+                        length = i3;
+                        strArr4 = strArr2;
+                        itemInfoMatcherOfPackages = itemInfoMatcher;
+                    } else {
+                        arrayList4 = arrayList3;
+                        arrayList9 = arrayList4;
+                        it2 = it3;
+                        arrayList7 = arrayList10;
+                        length = i3;
+                        strArr4 = strArr2;
+                        itemInfoMatcherOfPackages = itemInfoMatcher;
                     }
-                    arrayList4 = arrayList3;
-                    arrayList9 = arrayList4;
-                    it2 = it3;
-                    arrayList7 = arrayList10;
-                    length = i3;
-                    strArr4 = strArr2;
-                    ofPackages = itemInfoMatcher;
                 }
                 strArr = strArr4;
                 i = length;
@@ -374,36 +392,36 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
                         while (it4.hasNext()) {
                             hashSet3.add(((AppInfo) it4.next()).componentName);
                         }
-                        if (hashSet2.isEmpty() || !hashSet3.isEmpty()) {
-                            deleteAndBindComponentsRemoved(ItemInfoMatcher.ofPackages(hashSet2, this.mUser).or(ItemInfoMatcher.ofComponents(hashSet3, this.mUser)).and(ItemInfoMatcher.ofItemIds(longArrayMap, true)));
-                            InstallShortcutReceiver.removeFromInstallQueue(context, hashSet2, this.mUser);
-                        }
-                        if (!arrayList5.isEmpty()) {
-                            scheduleCallbackTask(new LauncherModel.CallbackTask() { // from class: com.android.launcher3.model.PackageUpdatedTask.3
-                                @Override // com.android.launcher3.LauncherModel.CallbackTask
-                                public void execute(LauncherModel.Callbacks callbacks) {
-                                    callbacks.bindAppInfosRemoved(arrayList5);
-                                }
-                            });
-                        }
-                        if (!Utilities.ATLEAST_OREO && this.mOp == 1) {
-                            while (i2 < i4) {
-                                bgDataModel.widgetsModel.update(launcherAppState, new PackageUserKey(strArr3[i2], this.mUser));
-                                i2++;
-                            }
-                            bindUpdatedWidgets(bgDataModel);
-                            return;
-                        }
                     }
                 }
+            }
+            if (hashSet2.isEmpty() || !hashSet3.isEmpty()) {
+                deleteAndBindComponentsRemoved(ItemInfoMatcher.ofPackages(hashSet2, this.mUser).or(ItemInfoMatcher.ofComponents(hashSet3, this.mUser)).and(ItemInfoMatcher.ofItemIds(longArrayMap, true)));
+                InstallShortcutReceiver.removeFromInstallQueue(context, hashSet2, this.mUser);
+            }
+            if (!arrayList5.isEmpty()) {
+                scheduleCallbackTask(new LauncherModel.CallbackTask() { // from class: com.android.launcher3.model.PackageUpdatedTask.3
+                    @Override // com.android.launcher3.LauncherModel.CallbackTask
+                    public void execute(LauncherModel.Callbacks callbacks) {
+                        callbacks.bindAppInfosRemoved(arrayList5);
+                    }
+                });
+            }
+            if (!Utilities.ATLEAST_OREO && this.mOp == 1) {
+                while (i2 < i4) {
+                    bgDataModel.widgetsModel.update(launcherAppState, new PackageUserKey(strArr3[i2], this.mUser));
+                    i2++;
+                }
+                bindUpdatedWidgets(bgDataModel);
+                return;
             }
         }
         arrayList5 = arrayList2;
         i4 = i;
         if (hashSet2.isEmpty()) {
+            deleteAndBindComponentsRemoved(ItemInfoMatcher.ofPackages(hashSet2, this.mUser).or(ItemInfoMatcher.ofComponents(hashSet3, this.mUser)).and(ItemInfoMatcher.ofItemIds(longArrayMap, true)));
+            InstallShortcutReceiver.removeFromInstallQueue(context, hashSet2, this.mUser);
         }
-        deleteAndBindComponentsRemoved(ItemInfoMatcher.ofPackages(hashSet2, this.mUser).or(ItemInfoMatcher.ofComponents(hashSet3, this.mUser)).and(ItemInfoMatcher.ofItemIds(longArrayMap, true)));
-        InstallShortcutReceiver.removeFromInstallQueue(context, hashSet2, this.mUser);
         if (!arrayList5.isEmpty()) {
         }
         if (!Utilities.ATLEAST_OREO) {

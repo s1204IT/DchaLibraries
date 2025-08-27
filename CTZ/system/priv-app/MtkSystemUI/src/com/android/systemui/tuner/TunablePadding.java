@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.WindowManager;
 import com.android.systemui.Dependency;
 import com.android.systemui.tuner.TunerService;
+
 /* loaded from: classes.dex */
 public class TunablePadding implements TunerService.Tunable {
     private final int mDefaultSize;
@@ -42,7 +43,6 @@ public class TunablePadding implements TunerService.Tunable {
         ((TunerService) Dependency.get(TunerService.class)).removeTunable(this);
     }
 
-    /* loaded from: classes.dex */
     public static class TunablePaddingService {
         public TunablePadding add(View view, String str, int i, int i2) {
             if (view == null) {

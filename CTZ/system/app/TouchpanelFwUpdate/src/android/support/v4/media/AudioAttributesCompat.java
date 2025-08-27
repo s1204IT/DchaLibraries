@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.media.AudioAttributesCompatApi21;
 import android.util.SparseIntArray;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class AudioAttributesCompat {
     private static final int[] SDK_USAGES;
@@ -85,7 +86,7 @@ public class AudioAttributesCompat {
     }
 
     public static AudioAttributesCompat fromBundle(Bundle bundle) {
-        Integer num = null;
+        Integer numValueOf = null;
         if (bundle == null) {
             return null;
         }
@@ -104,9 +105,9 @@ public class AudioAttributesCompat {
         attr.mContentType = contentType;
         attr.mFlags = flags;
         if (bundle.containsKey("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE")) {
-            num = Integer.valueOf(bundle.getInt("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE"));
+            numValueOf = Integer.valueOf(bundle.getInt("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE"));
         }
-        attr.mLegacyStream = num;
+        attr.mLegacyStream = numValueOf;
         return attr;
     }
 
@@ -182,42 +183,42 @@ public class AudioAttributesCompat {
     static int toVolumeStreamType(boolean fromGetVolumeControlStream, int flags, int usage) {
         if ((flags & 1) == 1) {
             return fromGetVolumeControlStream ? 1 : 7;
-        } else if ((flags & 4) == 4) {
+        }
+        if ((flags & 4) == 4) {
             return fromGetVolumeControlStream ? 0 : 6;
-        } else {
-            switch (usage) {
-                case 0:
-                    return fromGetVolumeControlStream ? Integer.MIN_VALUE : 3;
-                case 1:
-                case 12:
-                case 14:
-                case 16:
+        }
+        switch (usage) {
+            case 0:
+                return fromGetVolumeControlStream ? Integer.MIN_VALUE : 3;
+            case 1:
+            case 12:
+            case 14:
+            case 16:
+                return 3;
+            case 2:
+                return 0;
+            case 3:
+                return fromGetVolumeControlStream ? 0 : 8;
+            case 4:
+                return 4;
+            case 5:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+                return 5;
+            case 6:
+                return 2;
+            case 11:
+                return 10;
+            case 13:
+                return 1;
+            case 15:
+            default:
+                if (!fromGetVolumeControlStream) {
                     return 3;
-                case 2:
-                    return 0;
-                case 3:
-                    return fromGetVolumeControlStream ? 0 : 8;
-                case 4:
-                    return 4;
-                case 5:
-                case 7:
-                case 8:
-                case 9:
-                case 10:
-                    return 5;
-                case 6:
-                    return 2;
-                case 11:
-                    return 10;
-                case 13:
-                    return 1;
-                case 15:
-                default:
-                    if (!fromGetVolumeControlStream) {
-                        return 3;
-                    }
-                    throw new IllegalArgumentException("Unknown usage value " + usage + " in audio attributes");
-            }
+                }
+                throw new IllegalArgumentException("Unknown usage value " + usage + " in audio attributes");
         }
     }
 

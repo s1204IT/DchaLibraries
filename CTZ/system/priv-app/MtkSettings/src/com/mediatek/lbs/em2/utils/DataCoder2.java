@@ -1,10 +1,10 @@
 package com.mediatek.lbs.em2.utils;
 
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class DataCoder2 {
 
-    /* loaded from: classes.dex */
     public static class DataCoderBuffer {
         public byte[] mBuff;
         public int mOffset = 0;

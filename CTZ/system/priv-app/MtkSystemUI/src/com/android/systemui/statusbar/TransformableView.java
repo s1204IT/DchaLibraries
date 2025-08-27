@@ -1,6 +1,7 @@
 package com.android.systemui.statusbar;
 
 import com.android.systemui.statusbar.notification.TransformState;
+
 /* loaded from: classes.dex */
 public interface TransformableView {
     TransformState getCurrentState(int i);

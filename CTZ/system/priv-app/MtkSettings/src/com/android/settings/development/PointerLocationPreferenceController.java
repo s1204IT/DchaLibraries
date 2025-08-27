@@ -6,6 +6,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class PointerLocationPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final int SETTING_VALUE_OFF = 0;
@@ -31,9 +32,8 @@ public class PointerLocationPreferenceController extends DeveloperOptionsPrefere
         ((SwitchPreference) this.mPreference).setChecked(Settings.System.getInt(this.mContext.getContentResolver(), "pointer_location", 0) != 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         Settings.System.putInt(this.mContext.getContentResolver(), "pointer_location", 0);
         ((SwitchPreference) this.mPreference).setChecked(false);

@@ -1,5 +1,6 @@
 package com.android.launcher3.folder;
 
+import android.R;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -24,6 +25,7 @@ import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherAnimUtils;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class PreviewBackground {
     private static final float ACCEPT_COLOR_MULTIPLIER = 1.5f;
@@ -45,11 +47,17 @@ public class PreviewBackground {
     private float mStrokeWidth;
     int previewSize;
     private static final Property<PreviewBackground, Integer> STROKE_ALPHA = new Property<PreviewBackground, Integer>(Integer.class, "strokeAlpha") { // from class: com.android.launcher3.folder.PreviewBackground.1
+        AnonymousClass1(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(PreviewBackground previewBackground) {
             return Integer.valueOf(previewBackground.mStrokeAlpha);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(PreviewBackground previewBackground, Integer num) {
             previewBackground.mStrokeAlpha = num.intValue();
@@ -57,11 +65,17 @@ public class PreviewBackground {
         }
     };
     private static final Property<PreviewBackground, Integer> SHADOW_ALPHA = new Property<PreviewBackground, Integer>(Integer.class, "shadowAlpha") { // from class: com.android.launcher3.folder.PreviewBackground.2
+        AnonymousClass2(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(PreviewBackground previewBackground) {
             return Integer.valueOf(previewBackground.mShadowAlpha);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(PreviewBackground previewBackground, Integer num) {
             previewBackground.mShadowAlpha = num.intValue();
@@ -81,9 +95,49 @@ public class PreviewBackground {
     private int mShadowAlpha = 255;
     public boolean isClipping = true;
 
+    /* renamed from: com.android.launcher3.folder.PreviewBackground$1 */
+    class AnonymousClass1 extends Property<PreviewBackground, Integer> {
+        AnonymousClass1(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.util.Property
+        public Integer get(PreviewBackground previewBackground) {
+            return Integer.valueOf(previewBackground.mStrokeAlpha);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
+        @Override // android.util.Property
+        public void set(PreviewBackground previewBackground, Integer num) {
+            previewBackground.mStrokeAlpha = num.intValue();
+            previewBackground.invalidate();
+        }
+    }
+
+    /* renamed from: com.android.launcher3.folder.PreviewBackground$2 */
+    class AnonymousClass2 extends Property<PreviewBackground, Integer> {
+        AnonymousClass2(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.util.Property
+        public Integer get(PreviewBackground previewBackground) {
+            return Integer.valueOf(previewBackground.mShadowAlpha);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
+        @Override // android.util.Property
+        public void set(PreviewBackground previewBackground, Integer num) {
+            previewBackground.mShadowAlpha = num.intValue();
+            previewBackground.invalidate();
+        }
+    }
+
     public void setup(Launcher launcher, View view, int i, int i2) {
         this.mInvalidateDelegate = view;
-        this.mBgColor = Themes.getAttrColor(launcher, 16843827);
+        this.mBgColor = Themes.getAttrColor(launcher, R.attr.colorPrimary);
         DeviceProfile deviceProfile = launcher.getDeviceProfile();
         this.previewSize = deviceProfile.folderIconSizePx;
         this.basePreviewOffsetX = (i - this.previewSize) / 2;
@@ -94,28 +148,23 @@ public class PreviewBackground {
         invalidate();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getRadius() {
+    int getRadius() {
         return this.previewSize / 2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getScaledRadius() {
+    int getScaledRadius() {
         return (int) (this.mScale * getRadius());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getOffsetX() {
+    int getOffsetX() {
         return this.basePreviewOffsetX - (getScaledRadius() - getRadius());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getOffsetY() {
+    int getOffsetY() {
         return this.basePreviewOffsetY - (getScaledRadius() - getRadius());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getScaleProgress() {
+    float getScaleProgress() {
         return (this.mScale - 1.0f) / 0.20000005f;
     }
 
@@ -128,8 +177,7 @@ public class PreviewBackground {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setInvalidateDelegate(View view) {
+    void setInvalidateDelegate(View view) {
         this.mInvalidateDelegate = view;
         invalidate();
     }
@@ -150,7 +198,7 @@ public class PreviewBackground {
     }
 
     public void drawShadow(Canvas canvas) {
-        int save;
+        int iSave;
         if (this.mShadowShader == null) {
             return;
         }
@@ -163,9 +211,9 @@ public class PreviewBackground {
         if (canvas.isHardwareAccelerated()) {
             float f2 = offsetX;
             float f3 = offsetY;
-            save = canvas.saveLayer(f2 - this.mStrokeWidth, f3, f2 + scaledRadius + f, f3 + f + f, null);
+            iSave = canvas.saveLayer(f2 - this.mStrokeWidth, f3, f2 + scaledRadius + f, f3 + f + f, null);
         } else {
-            save = canvas.save();
+            iSave = canvas.save();
             canvas.clipPath(getClipPath(), Region.Op.DIFFERENCE);
         }
         this.mShaderMatrix.setScale(f, f);
@@ -183,7 +231,7 @@ public class PreviewBackground {
             canvas.drawCircle(f4, f5 + scaledRadius, scaledRadius, this.mPaint);
             this.mPaint.setXfermode(null);
         }
-        canvas.restoreToCount(save);
+        canvas.restoreToCount(iSave);
     }
 
     public void fadeInBackgroundShadow() {
@@ -192,6 +240,9 @@ public class PreviewBackground {
         }
         this.mShadowAnimator = ObjectAnimator.ofInt(this, SHADOW_ALPHA, 0, 255).setDuration(100L);
         this.mShadowAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.folder.PreviewBackground.3
+            AnonymousClass3() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 PreviewBackground.this.mShadowAnimator = null;
@@ -200,18 +251,43 @@ public class PreviewBackground {
         this.mShadowAnimator.start();
     }
 
+    /* renamed from: com.android.launcher3.folder.PreviewBackground$3 */
+    class AnonymousClass3 extends AnimatorListenerAdapter {
+        AnonymousClass3() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            PreviewBackground.this.mShadowAnimator = null;
+        }
+    }
+
     public void animateBackgroundStroke() {
         if (this.mStrokeAlphaAnimator != null) {
             this.mStrokeAlphaAnimator.cancel();
         }
         this.mStrokeAlphaAnimator = ObjectAnimator.ofInt(this, STROKE_ALPHA, AbstractFloatingView.TYPE_REBIND_SAFE, MAX_BG_OPACITY).setDuration(100L);
         this.mStrokeAlphaAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.folder.PreviewBackground.4
+            AnonymousClass4() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 PreviewBackground.this.mStrokeAlphaAnimator = null;
             }
         });
         this.mStrokeAlphaAnimator.start();
+    }
+
+    /* renamed from: com.android.launcher3.folder.PreviewBackground$4 */
+    class AnonymousClass4 extends AnimatorListenerAdapter {
+        AnonymousClass4() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            PreviewBackground.this.mStrokeAlphaAnimator = null;
+        }
     }
 
     public void drawBackgroundStroke(Canvas canvas) {
@@ -242,8 +318,7 @@ public class PreviewBackground {
         return this.mPath;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void clipCanvasHardware(Canvas canvas) {
+    void clipCanvasHardware(Canvas canvas) {
         this.mPaint.setColor(ViewCompat.MEASURED_STATE_MASK);
         this.mPaint.setStyle(Paint.Style.FILL);
         this.mPaint.setXfermode(this.mClipPorterDuffXfermode);
@@ -257,8 +332,7 @@ public class PreviewBackground {
         this.mPaint.setShader(null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void delegateDrawing(CellLayout cellLayout, int i, int i2) {
+    private void delegateDrawing(CellLayout cellLayout, int i, int i2) {
         if (this.mDrawingDelegate != cellLayout) {
             cellLayout.addFolderBackground(this);
         }
@@ -268,8 +342,7 @@ public class PreviewBackground {
         invalidate();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void clearDrawingDelegate() {
+    private void clearDrawingDelegate() {
         if (this.mDrawingDelegate != null) {
             this.mDrawingDelegate.removeFolderBackground(this);
         }
@@ -278,29 +351,48 @@ public class PreviewBackground {
         invalidate();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean drawingDelegated() {
+    boolean drawingDelegated() {
         return this.mDrawingDelegate != null;
     }
 
-    private void animateScale(final float f, final float f2, final Runnable runnable, final Runnable runnable2) {
-        final float f3 = this.mScale;
-        final float f4 = this.mColorMultiplier;
+    private void animateScale(float f, float f2, Runnable runnable, Runnable runnable2) {
+        float f3 = this.mScale;
+        float f4 = this.mColorMultiplier;
         if (this.mScaleAnimator != null) {
             this.mScaleAnimator.cancel();
         }
         this.mScaleAnimator = LauncherAnimUtils.ofFloat(0.0f, 1.0f);
         this.mScaleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.folder.PreviewBackground.5
+            final /* synthetic */ float val$bgMultiplier0;
+            final /* synthetic */ float val$bgMultiplier1;
+            final /* synthetic */ float val$scale0;
+            final /* synthetic */ float val$scale1;
+
+            AnonymousClass5(float f5, float f32, float f22, float f42) {
+                f = f5;
+                f = f32;
+                f = f22;
+                f = f42;
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float animatedFraction = valueAnimator.getAnimatedFraction();
                 float f5 = 1.0f - animatedFraction;
-                PreviewBackground.this.mScale = (f * animatedFraction) + (f3 * f5);
-                PreviewBackground.this.mColorMultiplier = (animatedFraction * f2) + (f5 * f4);
+                PreviewBackground.this.mScale = (f * animatedFraction) + (f * f5);
+                PreviewBackground.this.mColorMultiplier = (animatedFraction * f) + (f5 * f);
                 PreviewBackground.this.invalidate();
             }
         });
         this.mScaleAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.folder.PreviewBackground.6
+            final /* synthetic */ Runnable val$onEnd;
+            final /* synthetic */ Runnable val$onStart;
+
+            AnonymousClass6(Runnable runnable3, Runnable runnable22) {
+                runnable = runnable3;
+                runnable = runnable22;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationStart(Animator animator) {
                 if (runnable != null) {
@@ -310,8 +402,8 @@ public class PreviewBackground {
 
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
-                if (runnable2 != null) {
-                    runnable2.run();
+                if (runnable != null) {
+                    runnable.run();
                 }
                 PreviewBackground.this.mScaleAnimator = null;
             }
@@ -320,30 +412,147 @@ public class PreviewBackground {
         this.mScaleAnimator.start();
     }
 
-    public void animateToAccept(final CellLayout cellLayout, final int i, final int i2) {
+    /* renamed from: com.android.launcher3.folder.PreviewBackground$5 */
+    class AnonymousClass5 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ float val$bgMultiplier0;
+        final /* synthetic */ float val$bgMultiplier1;
+        final /* synthetic */ float val$scale0;
+        final /* synthetic */ float val$scale1;
+
+        AnonymousClass5(float f5, float f32, float f22, float f42) {
+            f = f5;
+            f = f32;
+            f = f22;
+            f = f42;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            float animatedFraction = valueAnimator.getAnimatedFraction();
+            float f5 = 1.0f - animatedFraction;
+            PreviewBackground.this.mScale = (f * animatedFraction) + (f * f5);
+            PreviewBackground.this.mColorMultiplier = (animatedFraction * f) + (f5 * f);
+            PreviewBackground.this.invalidate();
+        }
+    }
+
+    /* renamed from: com.android.launcher3.folder.PreviewBackground$6 */
+    class AnonymousClass6 extends AnimatorListenerAdapter {
+        final /* synthetic */ Runnable val$onEnd;
+        final /* synthetic */ Runnable val$onStart;
+
+        AnonymousClass6(Runnable runnable3, Runnable runnable22) {
+            runnable = runnable3;
+            runnable = runnable22;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationStart(Animator animator) {
+            if (runnable != null) {
+                runnable.run();
+            }
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (runnable != null) {
+                runnable.run();
+            }
+            PreviewBackground.this.mScaleAnimator = null;
+        }
+    }
+
+    /* renamed from: com.android.launcher3.folder.PreviewBackground$7 */
+    class AnonymousClass7 implements Runnable {
+        final /* synthetic */ int val$cellX;
+        final /* synthetic */ int val$cellY;
+        final /* synthetic */ CellLayout val$cl;
+
+        AnonymousClass7(CellLayout cellLayout, int i, int i2) {
+            cellLayout = cellLayout;
+            i = i;
+            i = i2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            PreviewBackground.this.delegateDrawing(cellLayout, i, i);
+        }
+    }
+
+    public void animateToAccept(CellLayout cellLayout, int i, int i2) {
         animateScale(ACCEPT_SCALE_FACTOR, ACCEPT_COLOR_MULTIPLIER, new Runnable() { // from class: com.android.launcher3.folder.PreviewBackground.7
+            final /* synthetic */ int val$cellX;
+            final /* synthetic */ int val$cellY;
+            final /* synthetic */ CellLayout val$cl;
+
+            AnonymousClass7(CellLayout cellLayout2, int i3, int i22) {
+                cellLayout = cellLayout2;
+                i = i3;
+                i = i22;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
-                PreviewBackground.this.delegateDrawing(cellLayout, i, i2);
+                PreviewBackground.this.delegateDrawing(cellLayout, i, i);
             }
         }, null);
     }
 
     public void animateToRest() {
-        final CellLayout cellLayout = this.mDrawingDelegate;
-        final int i = this.delegateCellX;
-        final int i2 = this.delegateCellY;
         animateScale(1.0f, 1.0f, new Runnable() { // from class: com.android.launcher3.folder.PreviewBackground.8
+            final /* synthetic */ int val$cellX;
+            final /* synthetic */ int val$cellY;
+            final /* synthetic */ CellLayout val$cl;
+
+            AnonymousClass8(CellLayout cellLayout, int i, int i2) {
+                cellLayout = cellLayout;
+                i = i;
+                i = i2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
-                PreviewBackground.this.delegateDrawing(cellLayout, i, i2);
+                PreviewBackground.this.delegateDrawing(cellLayout, i, i);
             }
         }, new Runnable() { // from class: com.android.launcher3.folder.PreviewBackground.9
+            AnonymousClass9() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 PreviewBackground.this.clearDrawingDelegate();
             }
         });
+    }
+
+    /* renamed from: com.android.launcher3.folder.PreviewBackground$8 */
+    class AnonymousClass8 implements Runnable {
+        final /* synthetic */ int val$cellX;
+        final /* synthetic */ int val$cellY;
+        final /* synthetic */ CellLayout val$cl;
+
+        AnonymousClass8(CellLayout cellLayout, int i, int i2) {
+            cellLayout = cellLayout;
+            i = i;
+            i = i2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            PreviewBackground.this.delegateDrawing(cellLayout, i, i);
+        }
+    }
+
+    /* renamed from: com.android.launcher3.folder.PreviewBackground$9 */
+    class AnonymousClass9 implements Runnable {
+        AnonymousClass9() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            PreviewBackground.this.clearDrawingDelegate();
+        }
     }
 
     public int getBackgroundAlpha() {

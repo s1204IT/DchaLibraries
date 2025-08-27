@@ -7,6 +7,7 @@ import android.icu.util.MeasureUnit;
 import android.text.SpannableStringBuilder;
 import android.text.style.TtsSpan;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class StringUtil {
     public static CharSequence formatElapsedTime(Context context, double d, boolean z) {
@@ -14,25 +15,25 @@ public class StringUtil {
         int i2;
         int i3;
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-        int floor = (int) Math.floor(d / 1000.0d);
+        int iFloor = (int) Math.floor(d / 1000.0d);
         if (!z) {
-            floor += 30;
+            iFloor += 30;
         }
-        if (floor >= 86400) {
-            i = floor / 86400;
-            floor -= 86400 * i;
+        if (iFloor >= 86400) {
+            i = iFloor / 86400;
+            iFloor -= 86400 * i;
         } else {
             i = 0;
         }
-        if (floor >= 3600) {
-            i2 = floor / 3600;
-            floor -= i2 * 3600;
+        if (iFloor >= 3600) {
+            i2 = iFloor / 3600;
+            iFloor -= i2 * 3600;
         } else {
             i2 = 0;
         }
-        if (floor >= 60) {
-            i3 = floor / 60;
-            floor -= i3 * 60;
+        if (iFloor >= 60) {
+            i3 = iFloor / 60;
+            iFloor -= i3 * 60;
         } else {
             i3 = 0;
         }
@@ -46,8 +47,8 @@ public class StringUtil {
         if (i3 > 0) {
             arrayList.add(new Measure(Integer.valueOf(i3), MeasureUnit.MINUTE));
         }
-        if (z && floor > 0) {
-            arrayList.add(new Measure(Integer.valueOf(floor), MeasureUnit.SECOND));
+        if (z && iFloor > 0) {
+            arrayList.add(new Measure(Integer.valueOf(iFloor), MeasureUnit.SECOND));
         }
         if (arrayList.size() == 0) {
             arrayList.add(new Measure(0, z ? MeasureUnit.SECOND : MeasureUnit.MINUTE));

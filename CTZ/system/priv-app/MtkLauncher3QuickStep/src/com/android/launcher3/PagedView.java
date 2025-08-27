@@ -25,6 +25,7 @@ import com.android.launcher3.compat.AccessibilityManagerCompat;
 import com.android.launcher3.pageindicators.PageIndicator;
 import com.android.launcher3.touch.OverScroll;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public abstract class PagedView<T extends View & PageIndicator> extends ViewGroup {
     private static final boolean DEBUG = false;
@@ -47,6 +48,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     protected static final int TOUCH_STATE_SCROLLING = 1;
     protected int mActivePointerId;
     protected boolean mAllowOverScroll;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     protected int mCurrentPage;
     private Interpolator mDefaultInterpolator;
@@ -65,6 +67,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     private int mMaximumVelocity;
     protected int mMinFlingVelocity;
     protected int mMinSnapVelocity;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     protected int mNextPage;
     protected int mOverScrollX;
@@ -91,14 +94,12 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     private static final float[] sTmpPoint = new float[2];
     private static final Rect sTmpRect = new Rect();
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public interface ComputePageScrollsLogic {
+    protected interface ComputePageScrollsLogic {
         boolean shouldIncludeView(View view);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$static$0(View view) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: ?: TERNARY null = ((wrap:int:0x0000: INVOKE (r1v0 android.view.View) VIRTUAL call: android.view.View.getVisibility():int A[MD:():int (c), WRAPPED] (LINE:64)) != (8 int)) ? true : false */
+    static /* synthetic */ boolean lambda$static$0(View view) {
         return view.getVisibility() != 8;
     }
 
@@ -124,9 +125,9 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         this.mWasInOverscroll = false;
         this.mInsets = new Rect();
         this.mTmpIntPair = new int[2];
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.PagedView, i, 0);
-        this.mPageIndicatorViewId = obtainStyledAttributes.getResourceId(0, -1);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.PagedView, i, 0);
+        this.mPageIndicatorViewId = typedArrayObtainStyledAttributes.getResourceId(0, -1);
+        typedArrayObtainStyledAttributes.recycle();
         setHapticFeedbackEnabled(false);
         this.mIsRtl = Utilities.isRtl(getResources());
         init();
@@ -184,21 +185,20 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         return i;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void scrollAndForceFinish(int i) {
+    protected void scrollAndForceFinish(int i) {
         scrollTo(i, 0);
         this.mScroller.setFinalX(i);
         forceFinishScroller(true);
     }
 
     protected void updateCurrentPageScroll() {
-        int i;
+        int scrollForPage;
         if (this.mCurrentPage >= 0 && this.mCurrentPage < getPageCount()) {
-            i = getScrollForPage(this.mCurrentPage);
+            scrollForPage = getScrollForPage(this.mCurrentPage);
         } else {
-            i = 0;
+            scrollForPage = 0;
         }
-        scrollAndForceFinish(i);
+        scrollAndForceFinish(scrollForPage);
     }
 
     private void abortScrollerAnimation(boolean z) {
@@ -235,8 +235,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         invalidate();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void notifyPageSwitchListener(int i) {
+    protected void notifyPageSwitchListener(int i) {
         updatePageIndicator();
     }
 
@@ -260,22 +259,18 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isPageInTransition() {
+    protected boolean isPageInTransition() {
         return this.mIsPageInTransition;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onPageBeginTransition() {
+    protected void onPageBeginTransition() {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onPageEndTransition() {
+    protected void onPageEndTransition() {
         this.mWasInOverscroll = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getUnboundedScrollX() {
+    protected int getUnboundedScrollX() {
         return this.mUnboundedScrollX;
     }
 
@@ -284,6 +279,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         scrollTo(getUnboundedScrollX() + i, getScrollY() + i2);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [380=5] */
     @Override // android.view.View
     public void scrollTo(int i, int i2) {
         if (this.mFreeScroll) {
@@ -301,56 +297,57 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                 this.mWasInOverscroll = true;
                 if (this.mIsRtl) {
                     overScroll(i - this.mMaxScrollX);
+                    return;
                 } else {
                     overScroll(i);
+                    return;
                 }
             }
-        } else if (!z2) {
+            return;
+        }
+        if (!z2) {
             if (this.mWasInOverscroll) {
                 overScroll(0.0f);
                 this.mWasInOverscroll = false;
             }
             this.mOverScrollX = i;
             super.scrollTo(i, i2);
-        } else {
-            super.scrollTo(this.mIsRtl ? 0 : this.mMaxScrollX, i2);
-            if (this.mAllowOverScroll) {
-                this.mWasInOverscroll = true;
-                if (this.mIsRtl) {
-                    overScroll(i);
-                } else {
-                    overScroll(i - this.mMaxScrollX);
-                }
+            return;
+        }
+        super.scrollTo(this.mIsRtl ? 0 : this.mMaxScrollX, i2);
+        if (this.mAllowOverScroll) {
+            this.mWasInOverscroll = true;
+            if (this.mIsRtl) {
+                overScroll(i);
+            } else {
+                overScroll(i - this.mMaxScrollX);
             }
         }
     }
 
     private void sendScrollAccessibilityEvent() {
         if (AccessibilityManagerCompat.isObservedEventType(getContext(), 4096) && this.mCurrentPage != getNextPage()) {
-            AccessibilityEvent obtain = AccessibilityEvent.obtain(4096);
-            obtain.setScrollable(true);
-            obtain.setScrollX(getScrollX());
-            obtain.setScrollY(getScrollY());
-            obtain.setMaxScrollX(this.mMaxScrollX);
-            obtain.setMaxScrollY(0);
-            sendAccessibilityEventUnchecked(obtain);
+            AccessibilityEvent accessibilityEventObtain = AccessibilityEvent.obtain(4096);
+            accessibilityEventObtain.setScrollable(true);
+            accessibilityEventObtain.setScrollX(getScrollX());
+            accessibilityEventObtain.setScrollY(getScrollY());
+            accessibilityEventObtain.setMaxScrollX(this.mMaxScrollX);
+            accessibilityEventObtain.setMaxScrollY(0);
+            sendAccessibilityEventUnchecked(accessibilityEventObtain);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean computeScrollHelper() {
+    protected boolean computeScrollHelper() {
         return computeScrollHelper(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void announcePageForAccessibility() {
+    protected void announcePageForAccessibility() {
         if (AccessibilityManagerCompat.isAccessibilityEnabled(getContext())) {
             announceForAccessibility(getCurrentPageDescription());
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean computeScrollHelper(boolean z) {
+    protected boolean computeScrollHelper(boolean z) {
         if (this.mScroller.computeScrollOffset()) {
             if (getUnboundedScrollX() != this.mScroller.getCurrX() || getScrollY() != this.mScroller.getCurrY() || this.mOverScrollX != this.mScroller.getCurrX()) {
                 scrollTo(this.mScroller.getCurrX(), this.mScroller.getCurrY());
@@ -360,7 +357,8 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                 return true;
             }
             return true;
-        } else if (this.mNextPage != -1 && z) {
+        }
+        if (this.mNextPage != -1 && z) {
             sendScrollAccessibilityEvent();
             int i = this.mCurrentPage;
             this.mCurrentPage = validateNewPage(this.mNextPage);
@@ -374,9 +372,8 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                 return false;
             }
             return false;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override // android.view.View
@@ -432,15 +429,13 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void restoreScrollOnLayout() {
+    protected void restoreScrollOnLayout() {
         setCurrentPage(getNextPage());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.ViewGroup, android.view.View
     @SuppressLint({"DrawAllocation"})
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         boolean z2;
         boolean z3 = true;
         this.mIsLayoutValid = true;
@@ -483,8 +478,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean getPageScrolls(int[] iArr, boolean z, ComputePageScrollsLogic computePageScrollsLogic) {
+    protected boolean getPageScrolls(int[] iArr, boolean z, ComputePageScrollsLogic computePageScrollsLogic) {
         int childCount = getChildCount();
         boolean z2 = false;
         if (this.mIsRtl) {
@@ -493,21 +487,21 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         int i = this.mIsRtl ? -1 : 1;
         int paddingTop = ((((getPaddingTop() + getMeasuredHeight()) + this.mInsets.top) - this.mInsets.bottom) - getPaddingBottom()) / 2;
         int paddingLeft = this.mInsets.left + getPaddingLeft();
-        int offsetForPageScrolls = offsetForPageScrolls() + paddingLeft;
+        int iOffsetForPageScrolls = offsetForPageScrolls() + paddingLeft;
         for (int i2 = this.mIsRtl ? childCount - 1 : 0; i2 != childCount; i2 += i) {
             View pageAt = getPageAt(i2);
             if (computePageScrollsLogic.shouldIncludeView(pageAt)) {
                 int measuredHeight = paddingTop - (pageAt.getMeasuredHeight() / 2);
                 int measuredWidth = pageAt.getMeasuredWidth();
                 if (z) {
-                    pageAt.layout(offsetForPageScrolls, measuredHeight, offsetForPageScrolls + pageAt.getMeasuredWidth(), pageAt.getMeasuredHeight() + measuredHeight);
+                    pageAt.layout(iOffsetForPageScrolls, measuredHeight, iOffsetForPageScrolls + pageAt.getMeasuredWidth(), pageAt.getMeasuredHeight() + measuredHeight);
                 }
-                int i3 = offsetForPageScrolls - paddingLeft;
+                int i3 = iOffsetForPageScrolls - paddingLeft;
                 if (iArr[i2] != i3) {
                     iArr[i2] = i3;
                     z2 = true;
                 }
-                offsetForPageScrolls += measuredWidth + this.mPageSpacing + getChildGap();
+                iOffsetForPageScrolls += measuredWidth + this.mPageSpacing + getChildGap();
             }
         }
         return z2;
@@ -517,13 +511,11 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         return 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateMaxScrollX() {
+    private void updateMaxScrollX() {
         this.mMaxScrollX = computeMaxScrollX();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int computeMaxScrollX() {
+    protected int computeMaxScrollX() {
         int childCount = getChildCount();
         if (childCount <= 0) {
             return 0;
@@ -569,13 +561,13 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
 
     @Override // android.view.ViewGroup, android.view.ViewParent
     public boolean requestChildRectangleOnScreen(View view, Rect rect, boolean z) {
-        int indexToPage = indexToPage(indexOfChild(view));
-        if (indexToPage != this.mCurrentPage || !this.mScroller.isFinished()) {
+        int iIndexToPage = indexToPage(indexOfChild(view));
+        if (iIndexToPage != this.mCurrentPage || !this.mScroller.isFinished()) {
             if (z) {
-                setCurrentPage(indexToPage);
+                setCurrentPage(iIndexToPage);
                 return true;
             }
-            snapToPage(indexToPage);
+            snapToPage(iIndexToPage);
             return true;
         }
         return false;
@@ -616,12 +608,12 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                 return true;
             }
             return false;
-        } else if (i == 66 && getCurrentPage() < getPageCount() - 1) {
+        }
+        if (i == 66 && getCurrentPage() < getPageCount() - 1) {
             snapToPage(getCurrentPage() + 1);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override // android.view.ViewGroup, android.view.View
@@ -724,20 +716,18 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         return this.mTouchState != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void determineScrollingStart(MotionEvent motionEvent) {
+    protected void determineScrollingStart(MotionEvent motionEvent) {
         determineScrollingStart(motionEvent, 1.0f);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void determineScrollingStart(MotionEvent motionEvent, float f) {
+    protected void determineScrollingStart(MotionEvent motionEvent, float f) {
         boolean z;
-        int findPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
-        if (findPointerIndex == -1) {
+        int iFindPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
+        if (iFindPointerIndex == -1) {
             return;
         }
-        float x = motionEvent.getX(findPointerIndex);
-        if (isTouchPointInViewportWithBuffer((int) x, (int) motionEvent.getY(findPointerIndex))) {
+        float x = motionEvent.getX(iFindPointerIndex);
+        if (isTouchPointInViewportWithBuffer((int) x, (int) motionEvent.getY(iFindPointerIndex))) {
             if (((int) Math.abs(x - this.mLastMotionX)) <= Math.round(f * this.mTouchSlop)) {
                 z = false;
             } else {
@@ -755,16 +745,14 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void cancelCurrentPageLongPress() {
+    protected void cancelCurrentPageLongPress() {
         View pageAt = getPageAt(this.mCurrentPage);
         if (pageAt != null) {
             pageAt.cancelLongPress();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public float getScrollProgress(int i, View view, int i2) {
+    protected float getScrollProgress(int i, View view, int i2) {
         int measuredWidth;
         int scrollForPage = i - (getScrollForPage(i2) + (getMeasuredWidth() / 2));
         int childCount = getChildCount();
@@ -794,17 +782,16 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         return (int) (getChildAt(i).getX() - (this.mPageScrolls[i] + (this.mIsRtl ? getPaddingRight() : getPaddingLeft())));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void dampedOverScroll(float f) {
+    protected void dampedOverScroll(float f) {
         if (Float.compare(f, 0.0f) == 0) {
             return;
         }
-        int dampedScroll = OverScroll.dampedScroll(f, getMeasuredWidth());
+        int iDampedScroll = OverScroll.dampedScroll(f, getMeasuredWidth());
         if (f < 0.0f) {
-            this.mOverScrollX = dampedScroll;
+            this.mOverScrollX = iDampedScroll;
             super.scrollTo(this.mOverScrollX, getScrollY());
         } else {
-            this.mOverScrollX = this.mMaxScrollX + dampedScroll;
+            this.mOverScrollX = this.mMaxScrollX + iDampedScroll;
             super.scrollTo(this.mOverScrollX, getScrollY());
         }
         invalidate();
@@ -814,8 +801,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         dampedOverScroll(f);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void enableFreeScroll(boolean z) {
+    protected void enableFreeScroll(boolean z) {
         setEnableFreeScroll(true);
         this.mSettleOnPageInFreeScroll = z;
     }
@@ -831,11 +817,12 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         setEnableOverscroll(!z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setEnableOverscroll(boolean z) {
+    protected void setEnableOverscroll(boolean z) {
         this.mAllowOverScroll = z;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [1154=4] */
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
         super.onTouchEvent(motionEvent);
@@ -898,11 +885,11 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                             boolean z3 = ((float) Math.abs(i2)) > measuredWidth * RETURN_TO_ORIGINAL_PAGE_THRESHOLD && Math.signum((float) xVelocity) != Math.signum((float) i2) && z2;
                             boolean z4 = !this.mIsRtl ? i2 >= 0 : i2 <= 0;
                             if (!this.mIsRtl ? xVelocity < 0 : xVelocity > 0) {
-                                r1 = 1;
+                                i = 1;
                             }
-                            if (((z && !z4 && !z2) || (z2 && r1 == 0)) && this.mCurrentPage > 0) {
+                            if (((z && !z4 && !z2) || (z2 && i == 0)) && this.mCurrentPage > 0) {
                                 snapToPageWithVelocity(z3 ? this.mCurrentPage : this.mCurrentPage - 1, xVelocity);
-                            } else if ((!(z && z4 && !z2) && (!z2 || r1 == 0)) || this.mCurrentPage >= getChildCount() - 1) {
+                            } else if ((!(z && z4 && !z2) && (!z2 || i == 0)) || this.mCurrentPage >= getChildCount() - 1) {
                                 snapToDestination();
                             } else {
                                 snapToPageWithVelocity(z3 ? this.mCurrentPage : this.mCurrentPage + 1, xVelocity);
@@ -910,16 +897,16 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                         }
                         onScrollInteractionEnd();
                     } else if (this.mTouchState == 2) {
-                        int max = Math.max(0, this.mCurrentPage - 1);
-                        if (max != this.mCurrentPage) {
-                            snapToPage(max);
+                        int iMax = Math.max(0, this.mCurrentPage - 1);
+                        if (iMax != this.mCurrentPage) {
+                            snapToPage(iMax);
                         } else {
                             snapToDestination();
                         }
                     } else if (this.mTouchState == 3) {
-                        int min = Math.min(getChildCount() - 1, this.mCurrentPage + 1);
-                        if (min != this.mCurrentPage) {
-                            snapToPage(min);
+                        int iMin = Math.min(getChildCount() - 1, this.mCurrentPage + 1);
+                        if (iMin != this.mCurrentPage) {
+                            snapToPage(iMin);
                         } else {
                             snapToDestination();
                         }
@@ -931,9 +918,9 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                         determineScrollingStart(motionEvent);
                         break;
                     } else {
-                        int findPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
-                        if (findPointerIndex != -1) {
-                            float x3 = motionEvent.getX(findPointerIndex);
+                        int iFindPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
+                        if (iFindPointerIndex != -1) {
+                            float x3 = motionEvent.getX(iFindPointerIndex);
                             float f = (this.mLastMotionX + this.mLastMotionXRemainder) - x3;
                             this.mTotalMotionX += Math.abs(f);
                             if (Math.abs(f) < 1.0f) {
@@ -965,8 +952,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean shouldFlingForVelocity(int i) {
+    protected boolean shouldFlingForVelocity(int i) {
         return Math.abs(i) > this.mFlingThresholdVelocity;
     }
 
@@ -979,8 +965,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     protected void onScrollInteractionBegin() {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onScrollInteractionEnd() {
+    protected void onScrollInteractionEnd() {
     }
 
     @Override // android.view.View
@@ -995,10 +980,9 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                 f = -motionEvent.getAxisValue(9);
                 axisValue = motionEvent.getAxisValue(10);
             }
-            int i = (axisValue > 0.0f ? 1 : (axisValue == 0.0f ? 0 : -1));
-            if (i != 0 || f != 0.0f) {
+            if (axisValue != 0.0f || f != 0.0f) {
                 boolean z = false;
-                if (!this.mIsRtl ? i > 0 || f > 0.0f : axisValue < 0.0f || f < 0.0f) {
+                if (!this.mIsRtl ? axisValue > 0.0f || f > 0.0f : axisValue < 0.0f || f < 0.0f) {
                     z = true;
                 }
                 if (z) {
@@ -1045,9 +1029,9 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     @Override // android.view.ViewGroup, android.view.ViewParent
     public void requestChildFocus(View view, View view2) {
         super.requestChildFocus(view, view2);
-        int indexToPage = indexToPage(indexOfChild(view));
-        if (indexToPage >= 0 && indexToPage != getCurrentPage() && !isInTouchMode()) {
-            snapToPage(indexToPage);
+        int iIndexToPage = indexToPage(indexOfChild(view));
+        if (iIndexToPage >= 0 && iIndexToPage != getCurrentPage() && !isInTouchMode()) {
+            snapToPage(iIndexToPage);
         }
     }
 
@@ -1061,17 +1045,16 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         int i2 = Integer.MAX_VALUE;
         int i3 = -1;
         for (int i4 = 0; i4 < childCount; i4++) {
-            int abs = Math.abs((getChildOffset(i4) + (getPageAt(i4).getMeasuredWidth() / 2)) - measuredWidth);
-            if (abs < i2) {
+            int iAbs = Math.abs((getChildOffset(i4) + (getPageAt(i4).getMeasuredWidth() / 2)) - measuredWidth);
+            if (iAbs < i2) {
                 i3 = i4;
-                i2 = abs;
+                i2 = iAbs;
             }
         }
         return i3;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void snapToDestination() {
+    protected void snapToDestination() {
         snapToPage(getPageNearestToCenterOfScreen(), getPageSnapDuration());
     }
 
@@ -1091,14 +1074,15 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     }
 
     protected boolean snapToPageWithVelocity(int i, int i2) {
-        int validateNewPage = validateNewPage(i);
+        int iValidateNewPage = validateNewPage(i);
         int measuredWidth = getMeasuredWidth() / 2;
-        int scrollForPage = getScrollForPage(validateNewPage) - getUnboundedScrollX();
+        int scrollForPage = getScrollForPage(iValidateNewPage) - getUnboundedScrollX();
         if (Math.abs(i2) < this.mMinFlingVelocity) {
-            return snapToPage(validateNewPage, PAGE_SNAP_ANIMATION_DURATION);
+            return snapToPage(iValidateNewPage, PAGE_SNAP_ANIMATION_DURATION);
         }
+        float fMin = Math.min(1.0f, (Math.abs(scrollForPage) * 1.0f) / (2 * measuredWidth));
         float f = measuredWidth;
-        return snapToPage(validateNewPage, scrollForPage, 4 * Math.round(1000.0f * Math.abs((f + (distanceInfluenceForSnapDuration(Math.min(1.0f, (Math.abs(scrollForPage) * 1.0f) / (2 * measuredWidth))) * f)) / Math.max(this.mMinSnapVelocity, Math.abs(i2)))));
+        return snapToPage(iValidateNewPage, scrollForPage, 4 * Math.round(1000.0f * Math.abs((f + (distanceInfluenceForSnapDuration(fMin) * f)) / Math.max(this.mMinSnapVelocity, Math.abs(i2)))));
     }
 
     public boolean snapToPage(int i) {
@@ -1118,8 +1102,8 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     }
 
     protected boolean snapToPage(int i, int i2, boolean z, TimeInterpolator timeInterpolator) {
-        int validateNewPage = validateNewPage(i);
-        return snapToPage(validateNewPage, getScrollForPage(validateNewPage) - getUnboundedScrollX(), i2, z, timeInterpolator);
+        int iValidateNewPage = validateNewPage(i);
+        return snapToPage(iValidateNewPage, getScrollForPage(iValidateNewPage) - getUnboundedScrollX(), i2, z, timeInterpolator);
     }
 
     protected boolean snapToPage(int i, int i2, int i3) {
@@ -1191,13 +1175,13 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     @Override // android.view.View
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo accessibilityNodeInfo) {
         super.onInitializeAccessibilityNodeInfo(accessibilityNodeInfo);
-        boolean isPageOrderFlipped = isPageOrderFlipped();
+        boolean zIsPageOrderFlipped = isPageOrderFlipped();
         accessibilityNodeInfo.setScrollable(getPageCount() > 1);
         if (getCurrentPage() < getPageCount() - 1) {
-            accessibilityNodeInfo.addAction(isPageOrderFlipped ? 8192 : 4096);
+            accessibilityNodeInfo.addAction(zIsPageOrderFlipped ? 8192 : 4096);
         }
         if (getCurrentPage() > 0) {
-            accessibilityNodeInfo.addAction(isPageOrderFlipped ? 4096 : 8192);
+            accessibilityNodeInfo.addAction(zIsPageOrderFlipped ? 4096 : 8192);
         }
         accessibilityNodeInfo.setLongClickable(false);
         accessibilityNodeInfo.removeAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_LONG_CLICK);
@@ -1221,9 +1205,9 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         if (super.performAccessibilityAction(i, bundle)) {
             return true;
         }
-        boolean isPageOrderFlipped = isPageOrderFlipped();
+        boolean zIsPageOrderFlipped = isPageOrderFlipped();
         if (i == 4096) {
-            if (isPageOrderFlipped) {
+            if (zIsPageOrderFlipped) {
                 if (!scrollLeft()) {
                     return false;
                 }
@@ -1231,8 +1215,9 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                 return false;
             }
             return true;
-        } else if (i == 8192) {
-            if (isPageOrderFlipped) {
+        }
+        if (i == 8192) {
+            if (zIsPageOrderFlipped) {
                 if (!scrollRight()) {
                     return false;
                 }
@@ -1240,9 +1225,8 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
                 return false;
             }
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     protected boolean canAnnouncePageDescription() {
@@ -1253,18 +1237,15 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         return getContext().getString(R.string.default_scroll_format, Integer.valueOf(getNextPage() + 1), Integer.valueOf(getChildCount()));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public float getDownMotionX() {
+    protected float getDownMotionX() {
         return this.mDownMotionX;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public float getDownMotionY() {
+    protected float getDownMotionY() {
         return this.mDownMotionY;
     }
 
     public int[] getVisibleChildrenRange() {
-        View pageAt;
         float f = 0.0f;
         float measuredWidth = getMeasuredWidth() + 0.0f;
         float scaleX = getScaleX();
@@ -1277,8 +1258,8 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         int i = -1;
         int i2 = -1;
         for (int i3 = 0; i3 < childCount; i3++) {
-            float left = (pageAt.getLeft() + getPageAt(i3).getTranslationX()) - getScrollX();
-            if (left <= measuredWidth && left + pageAt.getMeasuredWidth() >= f) {
+            float left = (r8.getLeft() + getPageAt(i3).getTranslationX()) - getScrollX();
+            if (left <= measuredWidth && left + r8.getMeasuredWidth() >= f) {
                 if (i == -1) {
                     i = i3;
                 }

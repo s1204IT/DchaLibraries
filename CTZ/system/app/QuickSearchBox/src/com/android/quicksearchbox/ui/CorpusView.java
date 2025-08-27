@@ -1,5 +1,6 @@
 package com.android.quicksearchbox.ui;
 
+import android.R;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewDebug;
@@ -7,10 +8,10 @@ import android.widget.Checkable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.android.quicksearchbox.R;
+
 /* loaded from: classes.dex */
 public class CorpusView extends RelativeLayout implements Checkable {
-    private static final int[] CHECKED_STATE_SET = {16842912};
+    private static final int[] CHECKED_STATE_SET = {R.attr.state_checked};
     private boolean mChecked;
     private ImageView mIcon;
     private TextView mLabel;
@@ -26,8 +27,8 @@ public class CorpusView extends RelativeLayout implements Checkable {
     @Override // android.view.View
     protected void onFinishInflate() {
         super.onFinishInflate();
-        this.mIcon = (ImageView) findViewById(R.id.source_icon);
-        this.mLabel = (TextView) findViewById(R.id.source_label);
+        this.mIcon = (ImageView) findViewById(com.android.quicksearchbox.R.id.source_icon);
+        this.mLabel = (TextView) findViewById(com.android.quicksearchbox.R.id.source_label);
     }
 
     @Override // android.widget.Checkable
@@ -51,10 +52,10 @@ public class CorpusView extends RelativeLayout implements Checkable {
 
     @Override // android.view.ViewGroup, android.view.View
     protected int[] onCreateDrawableState(int i) {
-        int[] onCreateDrawableState = super.onCreateDrawableState(i + 1);
+        int[] iArrOnCreateDrawableState = super.onCreateDrawableState(i + 1);
         if (isChecked()) {
-            mergeDrawableStates(onCreateDrawableState, CHECKED_STATE_SET);
+            mergeDrawableStates(iArrOnCreateDrawableState, CHECKED_STATE_SET);
         }
-        return onCreateDrawableState;
+        return iArrOnCreateDrawableState;
     }
 }

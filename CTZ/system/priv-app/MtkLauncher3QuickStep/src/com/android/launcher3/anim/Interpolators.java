@@ -7,6 +7,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.PathInterpolator;
+
 /* loaded from: classes.dex */
 public class Interpolators {
     public static final Interpolator EXAGGERATED_EASE;
@@ -89,8 +90,7 @@ public class Interpolators {
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ float lambda$clampToProgress$0(float f, float f2, Interpolator interpolator, float f3) {
+    static /* synthetic */ float lambda$clampToProgress$0(float f, float f2, Interpolator interpolator, float f3) {
         if (f3 < f) {
             return 0.0f;
         }

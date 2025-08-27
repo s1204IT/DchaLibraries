@@ -1,4 +1,5 @@
 package com.android.systemui.power;
+
 /* loaded from: classes.dex */
 public interface EnhancedEstimates {
     Estimate getEstimate();

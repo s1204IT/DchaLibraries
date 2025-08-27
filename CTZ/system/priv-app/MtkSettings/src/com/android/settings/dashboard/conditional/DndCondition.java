@@ -11,6 +11,7 @@ import android.service.notification.ZenModeConfig;
 import com.android.settings.R;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.notification.ZenModeSettings;
+
 /* loaded from: classes.dex */
 public class DndCondition extends Condition {
     static final IntentFilter DND_FILTER = new IntentFilter("android.app.action.INTERRUPTION_FILTER_CHANGED_INTERNAL");
@@ -39,16 +40,14 @@ public class DndCondition extends Condition {
         setActive(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.android.settings.dashboard.conditional.Condition
-    public boolean saveState(PersistableBundle persistableBundle) {
+    boolean saveState(PersistableBundle persistableBundle) {
         persistableBundle.putInt("state", this.mZen);
         return super.saveState(persistableBundle);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.android.settings.dashboard.conditional.Condition
-    public void restoreState(PersistableBundle persistableBundle) {
+    void restoreState(PersistableBundle persistableBundle) {
         super.restoreState(persistableBundle);
         this.mZen = persistableBundle.getInt("state", 0);
     }
@@ -83,9 +82,9 @@ public class DndCondition extends Condition {
         if (i == 0) {
             ((NotificationManager) this.mManager.getContext().getSystemService(NotificationManager.class)).setZenMode(0, null, "DndCondition");
             setActive(false);
-            return;
+        } else {
+            throw new IllegalArgumentException("Unexpected index " + i);
         }
-        throw new IllegalArgumentException("Unexpected index " + i);
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
@@ -93,7 +92,6 @@ public class DndCondition extends Condition {
         return 381;
     }
 
-    /* loaded from: classes.dex */
     public static class Receiver extends BroadcastReceiver {
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {

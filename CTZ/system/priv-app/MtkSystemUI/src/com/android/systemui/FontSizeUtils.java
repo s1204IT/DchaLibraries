@@ -2,6 +2,7 @@ package com.android.systemui;
 
 import android.view.View;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class FontSizeUtils {
     public static void updateFontSize(View view, int i, int i2) {

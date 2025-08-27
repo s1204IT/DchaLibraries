@@ -13,13 +13,16 @@ import com.android.settings.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ZenModeStarredContactsPreferenceController extends AbstractZenModePreferenceController implements Preference.OnPreferenceClickListener {
+
     @VisibleForTesting
     Intent mFallbackIntent;
     private final PackageManager mPackageManager;
     private Preference mPreference;
     private final int mPriorityCategory;
+
     @VisibleForTesting
     Intent mStarredContactsIntent;
 
@@ -48,11 +51,11 @@ public class ZenModeStarredContactsPreferenceController extends AbstractZenModeP
     public boolean isAvailable() {
         if (this.mPriorityCategory == 8) {
             return this.mBackend.isPriorityCategoryEnabled(8) && this.mBackend.getPriorityCallSenders() == 2 && isIntentValid();
-        } else if (this.mPriorityCategory == 4) {
-            return this.mBackend.isPriorityCategoryEnabled(4) && this.mBackend.getPriorityMessageSenders() == 2 && isIntentValid();
-        } else {
-            return false;
         }
+        if (this.mPriorityCategory == 4) {
+            return this.mBackend.isPriorityCategoryEnabled(4) && this.mBackend.getPriorityMessageSenders() == 2 && isIntentValid();
+        }
+        return false;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
@@ -89,12 +92,11 @@ public class ZenModeStarredContactsPreferenceController extends AbstractZenModeP
 
     private List<String> getStarredContacts() {
         ArrayList arrayList = new ArrayList();
-        Cursor query = this.mContext.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, new String[]{"display_name"}, "starred=1", null, "times_contacted");
-        if (query.moveToFirst()) {
+        Cursor cursorQuery = this.mContext.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, new String[]{"display_name"}, "starred=1", null, "times_contacted");
+        if (cursorQuery.moveToFirst()) {
             do {
-                arrayList.add(query.getString(0));
-            } while (query.moveToNext());
-            return arrayList;
+                arrayList.add(cursorQuery.getString(0));
+            } while (cursorQuery.moveToNext());
         }
         return arrayList;
     }

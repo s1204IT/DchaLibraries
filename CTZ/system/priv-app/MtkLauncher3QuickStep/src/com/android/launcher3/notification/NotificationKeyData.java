@@ -4,7 +4,9 @@ import android.app.Notification;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NotificationKeyData {
     public int count;
@@ -24,8 +26,9 @@ public class NotificationKeyData {
 
     public static List<String> extractKeysOnly(@NonNull List<NotificationKeyData> list) {
         ArrayList arrayList = new ArrayList(list.size());
-        for (NotificationKeyData notificationKeyData : list) {
-            arrayList.add(notificationKeyData.notificationKey);
+        Iterator<NotificationKeyData> it = list.iterator();
+        while (it.hasNext()) {
+            arrayList.add(it.next().notificationKey);
         }
         return arrayList;
     }

@@ -13,6 +13,7 @@ import com.android.launcher3.LauncherState;
 import com.android.launcher3.Workspace;
 import com.android.launcher3.dragndrop.DragLayer;
 import com.android.launcher3.views.OptionsPopupView;
+
 /* loaded from: classes.dex */
 public class WorkspaceTouchListener implements View.OnTouchListener, Runnable {
     private static final int STATE_CANCELLED = 0;
@@ -35,17 +36,17 @@ public class WorkspaceTouchListener implements View.OnTouchListener, Runnable {
         boolean z;
         int actionMasked = motionEvent.getActionMasked();
         if (actionMasked == 0) {
-            boolean canHandleLongPress = canHandleLongPress();
-            if (canHandleLongPress) {
+            boolean zCanHandleLongPress = canHandleLongPress();
+            if (zCanHandleLongPress) {
                 DeviceProfile deviceProfile = this.mLauncher.getDeviceProfile();
                 DragLayer dragLayer = this.mLauncher.getDragLayer();
                 Rect insets = deviceProfile.getInsets();
                 this.mTempRect.set(insets.left, insets.top, dragLayer.getWidth() - insets.right, dragLayer.getHeight() - insets.bottom);
                 this.mTempRect.inset(deviceProfile.edgeMarginPx, deviceProfile.edgeMarginPx);
-                canHandleLongPress = this.mTempRect.contains((int) motionEvent.getX(), (int) motionEvent.getY());
+                zCanHandleLongPress = this.mTempRect.contains((int) motionEvent.getX(), (int) motionEvent.getY());
             }
             cancelLongPress();
-            if (canHandleLongPress) {
+            if (zCanHandleLongPress) {
                 this.mLongPressState = 1;
                 this.mTouchDownPoint.set(motionEvent.getX(), motionEvent.getY());
                 this.mWorkspace.postDelayed(this, ViewConfiguration.getLongPressTimeout());
@@ -65,24 +66,19 @@ public class WorkspaceTouchListener implements View.OnTouchListener, Runnable {
                 if (this.mWorkspace.isHandlingTouch()) {
                     cancelLongPress();
                 }
+                z = true;
             } else {
                 z = false;
-                if ((actionMasked != 1 || actionMasked == 6) && !this.mWorkspace.isTouchActive() && ((CellLayout) this.mWorkspace.getChildAt(this.mWorkspace.getCurrentPage())) != null) {
-                    this.mWorkspace.onWallpaperTap(motionEvent);
-                }
-                if (actionMasked != 1 || actionMasked == 3) {
-                    cancelLongPress();
-                }
-                return z;
             }
+        } else {
+            z = true;
         }
-        z = true;
-        if (actionMasked != 1) {
+        if ((actionMasked == 1 || actionMasked == 6) && !this.mWorkspace.isTouchActive() && ((CellLayout) this.mWorkspace.getChildAt(this.mWorkspace.getCurrentPage())) != null) {
+            this.mWorkspace.onWallpaperTap(motionEvent);
         }
-        this.mWorkspace.onWallpaperTap(motionEvent);
-        if (actionMasked != 1) {
+        if (actionMasked == 1 || actionMasked == 3) {
+            cancelLongPress();
         }
-        cancelLongPress();
         return z;
     }
 

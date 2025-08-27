@@ -1,5 +1,6 @@
 package com.android.systemui.settings;
 
+import android.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
@@ -9,7 +10,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import com.android.internal.logging.MetricsLogger;
-import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class BrightnessDialog extends Activity {
     private BrightnessController mBrightnessController;
@@ -21,8 +22,8 @@ public class BrightnessDialog extends Activity {
         window.setGravity(48);
         window.clearFlags(2);
         window.requestFeature(1);
-        setContentView(LayoutInflater.from(new ContextThemeWrapper(this, 16974788)).inflate(R.layout.quick_settings_brightness_dialog, (ViewGroup) null));
-        this.mBrightnessController = new BrightnessController(this, (ImageView) findViewById(R.id.brightness_icon), (ToggleSliderView) findViewById(R.id.brightness_slider));
+        setContentView(LayoutInflater.from(new ContextThemeWrapper(this, R.style.TextAppearance.Material.TextSuggestionHighlight)).inflate(com.android.systemui.R.layout.quick_settings_brightness_dialog, (ViewGroup) null));
+        this.mBrightnessController = new BrightnessController(this, (ImageView) findViewById(com.android.systemui.R.id.brightness_icon), (ToggleSliderView) findViewById(com.android.systemui.R.id.brightness_slider));
     }
 
     @Override // android.app.Activity

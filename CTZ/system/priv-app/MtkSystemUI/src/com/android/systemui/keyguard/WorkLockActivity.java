@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class WorkLockActivity extends Activity {
     private KeyguardManager mKgm;
@@ -68,15 +69,15 @@ public class WorkLockActivity extends Activity {
     }
 
     private void showConfirmCredentialActivity() {
-        Intent createConfirmDeviceCredentialIntent;
-        if (isFinishing() || !getKeyguardManager().isDeviceLocked(getTargetUserId()) || (createConfirmDeviceCredentialIntent = getKeyguardManager().createConfirmDeviceCredentialIntent(null, null, getTargetUserId())) == null) {
+        Intent intentCreateConfirmDeviceCredentialIntent;
+        if (isFinishing() || !getKeyguardManager().isDeviceLocked(getTargetUserId()) || (intentCreateConfirmDeviceCredentialIntent = getKeyguardManager().createConfirmDeviceCredentialIntent(null, null, getTargetUserId())) == null) {
             return;
         }
-        ActivityOptions makeBasic = ActivityOptions.makeBasic();
-        makeBasic.setLaunchTaskId(getTaskId());
-        createConfirmDeviceCredentialIntent.putExtra("android.intent.extra.INTENT", PendingIntent.getActivity(this, -1, getIntent(), 1409286144, makeBasic.toBundle()).getIntentSender());
+        ActivityOptions activityOptionsMakeBasic = ActivityOptions.makeBasic();
+        activityOptionsMakeBasic.setLaunchTaskId(getTaskId());
+        intentCreateConfirmDeviceCredentialIntent.putExtra("android.intent.extra.INTENT", PendingIntent.getActivity(this, -1, getIntent(), 1409286144, activityOptionsMakeBasic.toBundle()).getIntentSender());
         try {
-            ActivityManager.getService().startConfirmDeviceCredentialIntent(createConfirmDeviceCredentialIntent, getChallengeOptions().toBundle());
+            ActivityManager.getService().startConfirmDeviceCredentialIntent(intentCreateConfirmDeviceCredentialIntent, getChallengeOptions().toBundle());
         } catch (RemoteException e) {
             Log.e("WorkLockActivity", "Failed to start confirm credential intent", e);
         }
@@ -90,8 +91,7 @@ public class WorkLockActivity extends Activity {
         return ActivityOptions.makeScaleUpAnimation(decorView, 0, 0, decorView.getWidth(), decorView.getHeight());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public KeyguardManager getKeyguardManager() {
+    private KeyguardManager getKeyguardManager() {
         if (this.mKgm == null) {
             this.mKgm = (KeyguardManager) getSystemService("keyguard");
         }

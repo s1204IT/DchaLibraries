@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
-    <com.android.systemui.recents.views.FixedSizeImageView android:layout_gravity="start|center_vertical" android:id="@+id/app_icon" android:paddingTop="8dp" android:paddingBottom="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:contentDescription="@string/recents_app_info_button_label" android:paddingStart="16dp" android:paddingEnd="12dp"/>
-    <TextView android:textSize="16sp" android:textColor="#ffffffff" android:ellipsize="marquee" android:layout_gravity="start|center_vertical" android:id="@+id/app_title" android:fadingEdge="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/recents_empty_message" android:maxLines="2" android:singleLine="true" android:fontFamily="sans-serif-medium"/>
-    <com.android.systemui.recents.views.FixedSizeImageView android:layout_gravity="end|center_vertical" android:id="@+id/app_info" android:background="?android:attr/selectableItemBackground" android:padding="@dimen/recents_task_view_header_button_padding" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/recents_info_light"/>
-</FrameLayout>

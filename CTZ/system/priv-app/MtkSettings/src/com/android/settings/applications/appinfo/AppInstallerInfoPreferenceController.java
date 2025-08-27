@@ -8,6 +8,7 @@ import com.android.settings.R;
 import com.android.settings.Utils;
 import com.android.settings.applications.AppStoreUtil;
 import com.android.settingslib.applications.AppUtils;
+
 /* loaded from: classes.dex */
 public class AppInstallerInfoPreferenceController extends AppInfoPreferenceControllerBase {
     private CharSequence mInstallerLabel;

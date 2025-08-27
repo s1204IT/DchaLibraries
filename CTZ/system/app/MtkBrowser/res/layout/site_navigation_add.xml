@@ -1,22 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout android:orientation="horizontal" android:paddingLeft="20dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-        <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@+id/dialog_title" android:background="?android:attr/selectableItemBackground" android:paddingTop="12dp" android:paddingRight="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/edit"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/dialog_title"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingTop="12dp"
+            android:paddingRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit"/>
     </LinearLayout>
-    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
-        <LinearLayout android:orientation="vertical" android:paddingLeft="20dp" android:paddingTop="10dp" android:paddingRight="20dp" android:layout_width="match_parent" android:layout_height="wrap_content">
-            <View android:id="@+id/add_divider" android:background="?android:attr/dividerVertical" android:layout_width="match_parent" android:layout_height="1dp"/>
-            <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:gravity="left" android:id="@+id/titleText" android:paddingTop="10dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/name"/>
-            <EditText android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content" android:selectAllOnFocus="true" android:maxLength="64" android:inputType="textCapSentences"/>
-            <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:gravity="left" android:id="@+id/addressText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/location"/>
-            <EditText android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/address" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/http" android:selectAllOnFocus="true" android:inputType="textUri"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingRight="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <View
+                android:id="@+id/add_divider"
+                android:background="?android:attr/dividerVertical"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:gravity="left"
+                android:id="@+id/titleText"
+                android:paddingTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"/>
+            <EditText
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:selectAllOnFocus="true"
+                android:maxLength="64"
+                android:inputType="textCapSentences"/>
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:gravity="left"
+                android:id="@+id/addressText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/location"/>
+            <EditText
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/http"
+                android:selectAllOnFocus="true"
+                android:inputType="textUri"/>
         </LinearLayout>
     </ScrollView>
-    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
-        <View android:id="@+id/add_divider" android:background="?android:attr/dividerVertical" android:layout_width="match_parent" android:layout_height="1dp"/>
-        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" style="?android:attr/buttonBarStyle">
-            <Button android:layout_gravity="right" android:id="@+id/cancel" android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/do_not_save" android:maxLines="2" android:layout_weight="1" style="?android:attr/buttonBarButtonStyle"/>
-            <Button android:layout_gravity="left" android:id="@+id/OK" android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/save" android:maxLines="2" android:layout_weight="1" style="?android:attr/buttonBarButtonStyle"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/add_divider"
+            android:background="?android:attr/dividerVertical"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarStyle">
+            <Button
+                android:layout_gravity="right"
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/do_not_save"
+                android:maxLines="2"
+                android:layout_weight="1"
+                style="?android:attr/buttonBarButtonStyle"/>
+            <Button
+                android:layout_gravity="left"
+                android:id="@+id/OK"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                android:maxLines="2"
+                android:layout_weight="1"
+                style="?android:attr/buttonBarButtonStyle"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

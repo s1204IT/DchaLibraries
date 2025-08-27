@@ -4,13 +4,13 @@ import android.content.Context;
 import android.view.View;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
+
 /* loaded from: classes.dex */
 public class NotificationCustomViewWrapper extends NotificationViewWrapper {
     private boolean mIsLegacy;
     private int mLegacyColor;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public NotificationCustomViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
+    protected NotificationCustomViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
         super(context, view, expandableNotificationRow);
         this.mLegacyColor = expandableNotificationRow.getContext().getColor(R.color.notification_legacy_background_color);
     }

@@ -18,6 +18,8 @@ import com.android.keyguard.KeyguardSecurityModel;
 import com.mediatek.keyguard.AntiTheft.AntiTheftManager;
 import com.mediatek.keyguard.Telephony.KeyguardSimPinPukMeView;
 import com.mediatek.keyguard.VoiceWakeup.VoiceWakeupManagerProxy;
+import java.lang.reflect.InvocationTargetException;
+
 /* loaded from: classes.dex */
 public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSecurityView {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
@@ -31,7 +33,6 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     private KeyguardSecurityViewFlipper mSecurityViewFlipper;
     private final KeyguardUpdateMonitor mUpdateMonitor;
 
-    /* loaded from: classes.dex */
     public interface SecurityCallback {
         boolean dismiss(boolean z, int i);
 
@@ -58,6 +59,9 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         super(context, attributeSet, i);
         this.mCurrentSecuritySelection = KeyguardSecurityModel.SecurityMode.Invalid;
         this.mCallback = new KeyguardSecurityCallback() { // from class: com.android.keyguard.KeyguardSecurityContainer.1
+            AnonymousClass1() {
+            }
+
             @Override // com.android.keyguard.KeyguardSecurityCallback
             public void userActivity() {
                 if (KeyguardSecurityContainer.this.mSecurityCallback != null) {
@@ -77,10 +81,10 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
                     StatsLog.write(64, 2);
                     keyguardUpdateMonitor.clearFailedUnlockAttempts();
                     KeyguardSecurityContainer.this.mLockPatternUtils.reportSuccessfulPasswordAttempt(i2);
-                    return;
+                } else {
+                    StatsLog.write(64, 1);
+                    KeyguardSecurityContainer.this.reportFailedUnlockAttempt(i2, i3);
                 }
-                StatsLog.write(64, 1);
-                KeyguardSecurityContainer.this.reportFailedUnlockAttempt(i2, i3);
             }
 
             @Override // com.android.keyguard.KeyguardSecurityCallback
@@ -89,6 +93,9 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             }
         };
         this.mNullCallback = new KeyguardSecurityCallback() { // from class: com.android.keyguard.KeyguardSecurityContainer.2
+            AnonymousClass2() {
+            }
+
             @Override // com.android.keyguard.KeyguardSecurityCallback
             public void userActivity() {
             }
@@ -152,6 +159,8 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         return this.mSecurityViewFlipper.getTitle();
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r0v5, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     private KeyguardSecurityView getSecurityView(KeyguardSecurityModel.SecurityMode securityMode) {
         KeyguardSecurityView keyguardSecurityView;
         int securityViewIdForMode = getSecurityViewIdForMode(securityMode);
@@ -172,35 +181,37 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         }
         int layoutIdFor = getLayoutIdFor(securityMode);
         if (keyguardSecurityView == null && layoutIdFor != 0) {
-            LayoutInflater from = LayoutInflater.from(this.mContext);
+            LayoutInflater layoutInflaterFrom = LayoutInflater.from(this.mContext);
             if (DEBUG) {
                 Log.v("KeyguardSecurityView", "inflating id = " + layoutIdFor);
             }
-            View inflate = from.inflate(layoutIdFor, (ViewGroup) this.mSecurityViewFlipper, false);
-            KeyguardSecurityView keyguardSecurityView2 = (KeyguardSecurityView) inflate;
+            View viewInflate = layoutInflaterFrom.inflate(layoutIdFor, (ViewGroup) this.mSecurityViewFlipper, false);
+            KeyguardSecurityView keyguardSecurityView2 = (KeyguardSecurityView) viewInflate;
             if (keyguardSecurityView2 instanceof KeyguardSimPinPukMeView) {
                 ((KeyguardSimPinPukMeView) keyguardSecurityView2).setPhoneId(this.mSecurityModel.getPhoneIdUsingSecurityMode(securityMode));
             }
-            this.mSecurityViewFlipper.addView(inflate);
-            updateSecurityView(inflate);
+            this.mSecurityViewFlipper.addView(viewInflate);
+            updateSecurityView(viewInflate);
             return keyguardSecurityView2;
-        } else if (keyguardSecurityView != null && (keyguardSecurityView instanceof KeyguardSimPinPukMeView) && securityMode != this.mCurrentSecuritySelection) {
+        }
+        if (keyguardSecurityView != null && (keyguardSecurityView instanceof KeyguardSimPinPukMeView) && securityMode != this.mCurrentSecuritySelection) {
             Log.i("KeyguardSecurityView", "getSecurityView, here, we will refresh the layout");
             ((KeyguardSimPinPukMeView) keyguardSecurityView).setPhoneId(this.mSecurityModel.getPhoneIdUsingSecurityMode(securityMode));
             return keyguardSecurityView;
-        } else {
-            return keyguardSecurityView;
         }
+        return keyguardSecurityView;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     private void updateSecurityView(View view) {
         if (view instanceof KeyguardSecurityView) {
             KeyguardSecurityView keyguardSecurityView = (KeyguardSecurityView) view;
             keyguardSecurityView.setKeyguardCallback(this.mCallback);
             keyguardSecurityView.setLockPatternUtils(this.mLockPatternUtils);
-            return;
+        } else {
+            Log.w("KeyguardSecurityView", "View " + view + " is not a KeyguardSecurityView");
         }
-        Log.w("KeyguardSecurityView", "View " + view + " is not a KeyguardSecurityView");
     }
 
     @Override // android.view.View
@@ -265,8 +276,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         showDialog(null, string);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void reportFailedUnlockAttempt(int i, int i2) {
+    private void reportFailedUnlockAttempt(int i, int i2) {
         int i3;
         KeyguardUpdateMonitor keyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(this.mContext);
         int i4 = 1;
@@ -304,8 +314,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void showPrimarySecurityScreen(boolean z) {
+    void showPrimarySecurityScreen(boolean z) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         KeyguardSecurityModel.SecurityMode securityMode = this.mSecurityModel.getSecurityMode(KeyguardUpdateMonitor.getCurrentUser());
         if (DEBUG) {
             Log.v("KeyguardSecurityView", "showPrimarySecurityScreen(turningOff=" + z + ")");
@@ -315,9 +324,9 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             Log.d("KeyguardSecurityView", "showPrimarySecurityScreen() - current is " + this.mCurrentSecuritySelection);
             int phoneIdUsingSecurityMode = this.mSecurityModel.getPhoneIdUsingSecurityMode(this.mCurrentSecuritySelection);
             Log.d("KeyguardSecurityView", "showPrimarySecurityScreen() - phoneId of currentView is " + phoneIdUsingSecurityMode);
-            boolean isSimPinSecure = this.mUpdateMonitor.isSimPinSecure(phoneIdUsingSecurityMode);
-            Log.d("KeyguardSecurityView", "showPrimarySecurityScreen() - isCurrentModeSimPinSecure = " + isSimPinSecure);
-            if (isSimPinSecure) {
+            boolean zIsSimPinSecure = this.mUpdateMonitor.isSimPinSecure(phoneIdUsingSecurityMode);
+            Log.d("KeyguardSecurityView", "showPrimarySecurityScreen() - isCurrentModeSimPinSecure = " + zIsSimPinSecure);
+            if (zIsSimPinSecure) {
                 Log.d("KeyguardSecurityView", "Skip show security because it already shows SimPinPukMeView");
                 return;
             }
@@ -326,8 +335,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         showSecurityScreen(securityMode);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean showNextSecurityScreenOrFinish(boolean z, int i) {
+    boolean showNextSecurityScreenOrFinish(boolean z, int i) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (DEBUG) {
             Log.d("KeyguardSecurityView", "showNextSecurityScreenOrFinish(" + z + ")");
         }
@@ -335,27 +343,14 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         boolean z2 = false;
         boolean z3 = true;
         if (!this.mUpdateMonitor.getUserCanSkipBouncer(i)) {
-            if (KeyguardSecurityModel.SecurityMode.None == this.mCurrentSecuritySelection) {
-                KeyguardSecurityModel.SecurityMode securityMode = this.mSecurityModel.getSecurityMode(i);
-                if (KeyguardSecurityModel.SecurityMode.None == securityMode) {
-                    if (DEBUG) {
-                        Log.d("KeyguardSecurityView", "showNextSecurityScreenOrFinish() - securityMode is None, just finish.");
-                    }
-                } else {
-                    if (DEBUG) {
-                        Log.d("KeyguardSecurityView", "showNextSecurityScreenOrFinish()- switch to the alternate security view for None mode.");
-                    }
-                    showSecurityScreen(securityMode);
-                    z3 = false;
-                }
-            } else {
+            if (KeyguardSecurityModel.SecurityMode.None != this.mCurrentSecuritySelection) {
                 if (z) {
                     if (DEBUG) {
                         Log.d("KeyguardSecurityView", "showNextSecurityScreenOrFinish() - authenticated is True, and mCurrentSecuritySelection = " + this.mCurrentSecuritySelection);
                     }
-                    KeyguardSecurityModel.SecurityMode securityMode2 = this.mSecurityModel.getSecurityMode(KeyguardUpdateMonitor.getCurrentUser());
+                    KeyguardSecurityModel.SecurityMode securityMode = this.mSecurityModel.getSecurityMode(KeyguardUpdateMonitor.getCurrentUser());
                     if (DEBUG) {
-                        Log.v("KeyguardSecurityView", "securityMode = " + securityMode2);
+                        Log.v("KeyguardSecurityView", "securityMode = " + securityMode);
                     }
                     Log.d("KeyguardSecurityView", "mCurrentSecuritySelection: " + this.mCurrentSecuritySelection);
                     switch (this.mCurrentSecuritySelection) {
@@ -369,29 +364,46 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
                         default:
                             Log.v("KeyguardSecurityView", "Bad security screen " + this.mCurrentSecuritySelection + ", fail safe");
                             showPrimarySecurityScreen(false);
+                            z3 = false;
                             break;
                         case SimPinPukMe1:
                         case SimPinPukMe2:
                         case SimPinPukMe3:
                         case SimPinPukMe4:
-                            if (securityMode2 != KeyguardSecurityModel.SecurityMode.None) {
-                                showSecurityScreen(securityMode2);
+                            if (securityMode != KeyguardSecurityModel.SecurityMode.None) {
+                                showSecurityScreen(securityMode);
+                                z3 = false;
                                 break;
                             }
                             break;
                         case AntiTheft:
-                            KeyguardSecurityModel.SecurityMode securityMode3 = this.mSecurityModel.getSecurityMode(KeyguardUpdateMonitor.getCurrentUser());
+                            KeyguardSecurityModel.SecurityMode securityMode2 = this.mSecurityModel.getSecurityMode(KeyguardUpdateMonitor.getCurrentUser());
                             if (DEBUG) {
-                                Log.v("KeyguardSecurityView", "now is Antitheft, next securityMode = " + securityMode3);
+                                Log.v("KeyguardSecurityView", "now is Antitheft, next securityMode = " + securityMode2);
                             }
-                            if (securityMode3 != KeyguardSecurityModel.SecurityMode.None) {
-                                showSecurityScreen(securityMode3);
+                            if (securityMode2 != KeyguardSecurityModel.SecurityMode.None) {
+                                showSecurityScreen(securityMode2);
+                                z3 = false;
                                 break;
                             }
                             break;
                     }
+                } else {
+                    z3 = false;
                 }
-                z3 = false;
+            } else {
+                KeyguardSecurityModel.SecurityMode securityMode3 = this.mSecurityModel.getSecurityMode(i);
+                if (KeyguardSecurityModel.SecurityMode.None == securityMode3) {
+                    if (DEBUG) {
+                        Log.d("KeyguardSecurityView", "showNextSecurityScreenOrFinish() - securityMode is None, just finish.");
+                    }
+                } else {
+                    if (DEBUG) {
+                        Log.d("KeyguardSecurityView", "showNextSecurityScreenOrFinish()- switch to the alternate security view for None mode.");
+                    }
+                    showSecurityScreen(securityMode3);
+                    z3 = false;
+                }
             }
         }
         this.mSecurityCallback.updateNavbarStatus();
@@ -405,7 +417,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         return z3;
     }
 
-    private void showSecurityScreen(KeyguardSecurityModel.SecurityMode securityMode) {
+    private void showSecurityScreen(KeyguardSecurityModel.SecurityMode securityMode) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (DEBUG) {
             Log.d("KeyguardSecurityView", "showSecurityScreen(" + securityMode + ")");
         }
@@ -432,7 +444,8 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         while (true) {
             if (i >= childCount) {
                 break;
-            } else if (this.mSecurityViewFlipper.getChildAt(i).getId() != securityViewIdForMode) {
+            }
+            if (this.mSecurityViewFlipper.getChildAt(i).getId() != securityViewIdForMode) {
                 i++;
             } else {
                 this.mSecurityViewFlipper.setDisplayedChild(i);
@@ -446,6 +459,64 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             z = true;
         }
         securityCallback.onSecurityModeChanged(securityMode, z);
+    }
+
+    /* renamed from: com.android.keyguard.KeyguardSecurityContainer$1 */
+    class AnonymousClass1 implements KeyguardSecurityCallback {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.keyguard.KeyguardSecurityCallback
+        public void userActivity() {
+            if (KeyguardSecurityContainer.this.mSecurityCallback != null) {
+                KeyguardSecurityContainer.this.mSecurityCallback.userActivity();
+            }
+        }
+
+        @Override // com.android.keyguard.KeyguardSecurityCallback
+        public void dismiss(boolean z, int i2) {
+            KeyguardSecurityContainer.this.mSecurityCallback.dismiss(z, i2);
+        }
+
+        @Override // com.android.keyguard.KeyguardSecurityCallback
+        public void reportUnlockAttempt(int i2, boolean z, int i3) {
+            KeyguardUpdateMonitor keyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(KeyguardSecurityContainer.this.mContext);
+            if (z) {
+                StatsLog.write(64, 2);
+                keyguardUpdateMonitor.clearFailedUnlockAttempts();
+                KeyguardSecurityContainer.this.mLockPatternUtils.reportSuccessfulPasswordAttempt(i2);
+            } else {
+                StatsLog.write(64, 1);
+                KeyguardSecurityContainer.this.reportFailedUnlockAttempt(i2, i3);
+            }
+        }
+
+        @Override // com.android.keyguard.KeyguardSecurityCallback
+        public void reset() {
+            KeyguardSecurityContainer.this.mSecurityCallback.reset();
+        }
+    }
+
+    /* renamed from: com.android.keyguard.KeyguardSecurityContainer$2 */
+    class AnonymousClass2 implements KeyguardSecurityCallback {
+        AnonymousClass2() {
+        }
+
+        @Override // com.android.keyguard.KeyguardSecurityCallback
+        public void userActivity() {
+        }
+
+        @Override // com.android.keyguard.KeyguardSecurityCallback
+        public void reportUnlockAttempt(int i2, boolean z, int i3) {
+        }
+
+        @Override // com.android.keyguard.KeyguardSecurityCallback
+        public void dismiss(boolean z, int i2) {
+        }
+
+        @Override // com.android.keyguard.KeyguardSecurityCallback
+        public void reset() {
+        }
     }
 
     private int getSecurityViewIdForMode(KeyguardSecurityModel.SecurityMode securityMode) {

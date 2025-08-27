@@ -27,8 +27,10 @@ import com.android.settingslib.utils.StringUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class RecentNotifyingAppsPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     static final String KEY_DIVIDER = "all_notifications_divider";
@@ -164,7 +166,7 @@ public class RecentNotifyingAppsPreferenceController extends AbstractPreferenceC
                 notificationAppPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.notification.-$$Lambda$RecentNotifyingAppsPreferenceController$7CmRKIepfLY9sZOWQrI97x_3AWA
                     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
                     public final boolean onPreferenceChange(Preference preference2, Object obj) {
-                        return RecentNotifyingAppsPreferenceController.lambda$displayRecentApps$0(RecentNotifyingAppsPreferenceController.this, str, entry, preference2, obj);
+                        return RecentNotifyingAppsPreferenceController.lambda$displayRecentApps$0(this.f$0, str, entry, preference2, obj);
                     }
                 });
                 notificationAppPreference.setChecked(!this.mNotificationBackend.getNotificationsBanned(str, entry.info.uid));
@@ -173,8 +175,9 @@ public class RecentNotifyingAppsPreferenceController extends AbstractPreferenceC
                 }
             }
         }
-        for (Preference preference2 : arrayMap.values()) {
-            this.mCategory.removePreference(preference2);
+        Iterator it = arrayMap.values().iterator();
+        while (it.hasNext()) {
+            this.mCategory.removePreference((Preference) it.next());
         }
     }
 

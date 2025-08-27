@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.BatteryStats;
 import android.os.Bundle;
 import android.os.UserHandle;
@@ -41,6 +42,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.utils.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AdvancedPowerUsageDetail extends DashboardFragment implements LoaderManager.LoaderCallbacks<List<Anomaly>>, ButtonActionDialogFragment.AppButtonsDialogListener, AnomalyDialogFragment.AnomalyDialogListener, BatteryTipPreferenceController.BatteryTipListener {
     private List<Anomaly> mAnomalies;
@@ -123,7 +125,7 @@ public class AdvancedPowerUsageDetail extends DashboardFragment implements Loade
     }
 
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws Resources.NotFoundException {
         super.onCreate(bundle);
         this.mPackageName = getArguments().getString("extra_package_name");
         this.mAnomalySummaryPreferenceController = new AnomalySummaryPreferenceController((SettingsActivity) getActivity(), this);
@@ -143,7 +145,7 @@ public class AdvancedPowerUsageDetail extends DashboardFragment implements Loade
         initPreference();
     }
 
-    void initAnomalyInfo() {
+    void initAnomalyInfo() throws Resources.NotFoundException {
         this.mAnomalies = getArguments().getParcelableArrayList("extra_anomaly_list");
         if (this.mAnomalies == null) {
             getLoaderManager().initLoader(0, Bundle.EMPTY, this);
@@ -153,10 +155,10 @@ public class AdvancedPowerUsageDetail extends DashboardFragment implements Loade
     }
 
     void initHeader() {
-        View findViewById = this.mHeaderPreference.findViewById(R.id.entity_header);
+        View viewFindViewById = this.mHeaderPreference.findViewById(R.id.entity_header);
         Activity activity = getActivity();
         Bundle arguments = getArguments();
-        EntityHeaderController buttonActions = EntityHeaderController.newInstance(activity, this, findViewById).setRecyclerView(getListView(), getLifecycle()).setButtonActions(0, 0);
+        EntityHeaderController buttonActions = EntityHeaderController.newInstance(activity, this, viewFindViewById).setRecyclerView(getListView(), getLifecycle()).setButtonActions(0, 0);
         if (this.mAppEntry == null) {
             buttonActions.setLabel(arguments.getString("extra_label"));
             if (arguments.getInt("extra_icon_id", 0) == 0) {
@@ -205,9 +207,8 @@ public class AdvancedPowerUsageDetail extends DashboardFragment implements Loade
         return "AdvancedPowerDetail";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.power_usage_detail;
     }
 
@@ -250,8 +251,9 @@ public class AdvancedPowerUsageDetail extends DashboardFragment implements Loade
         return new AnomalyLoader(getContext(), this.mPackageName);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
-    public void onLoadFinished(Loader<List<Anomaly>> loader, List<Anomaly> list) {
+    public void onLoadFinished(Loader<List<Anomaly>> loader, List<Anomaly> list) throws Resources.NotFoundException {
         AnomalyUtils.getInstance(getContext()).logAnomalies(this.mMetricsFeatureProvider, list, 53);
         this.mAnomalySummaryPreferenceController.updateAnomalySummaryPreference(list);
     }

@@ -17,7 +17,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 import android.widget.TextView;
 import com.android.internal.widget.TextViewInputDisabler;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class KeyguardPasswordView extends KeyguardAbsKeyInputView implements TextWatcher, TextView.OnEditorActionListener, KeyguardSecurityView {
     private final int mDisappearYTranslation;
@@ -37,25 +39,24 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView implements Tex
         super(context, attributeSet);
         this.mShowImeAtScreenOn = context.getResources().getBoolean(com.android.systemui.R.bool.kg_show_ime_at_screen_on);
         this.mDisappearYTranslation = getResources().getDimensionPixelSize(com.android.systemui.R.dimen.disappear_y_translation);
-        this.mLinearOutSlowInInterpolator = AnimationUtils.loadInterpolator(context, 17563662);
-        this.mFastOutLinearInInterpolator = AnimationUtils.loadInterpolator(context, 17563663);
+        this.mLinearOutSlowInInterpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear_out_slow_in);
+        this.mFastOutLinearInInterpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.fast_out_linear_in);
     }
 
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
     protected void resetState() {
         this.mPasswordEntry.setRestrictedAcrossUser(true);
         this.mSecurityMessageDisplay.setMessage("");
-        boolean isEnabled = this.mPasswordEntry.isEnabled();
+        boolean zIsEnabled = this.mPasswordEntry.isEnabled();
         setPasswordEntryEnabled(true);
         setPasswordEntryInputEnabled(true);
-        if (isEnabled) {
+        if (zIsEnabled) {
             this.mImm.showSoftInput(this.mPasswordEntry, 1);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public int getPasswordTextViewId() {
+    protected int getPasswordTextViewId() {
         return com.android.systemui.R.id.passwordEntry;
     }
 
@@ -83,19 +84,8 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView implements Tex
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
     protected int getPromptReasonStringRes(int i) {
         switch (i) {
-            case 0:
-                return 0;
-            case 1:
-                return com.android.systemui.R.string.kg_prompt_reason_restart_password;
-            case 2:
-                return com.android.systemui.R.string.kg_prompt_reason_timeout_password;
-            case 3:
-                return com.android.systemui.R.string.kg_prompt_reason_device_admin;
-            case 4:
-                return com.android.systemui.R.string.kg_prompt_reason_user_request;
-            default:
-                return com.android.systemui.R.string.kg_prompt_reason_timeout_password;
         }
+        return com.android.systemui.R.string.kg_prompt_reason_timeout_password;
     }
 
     @Override // com.android.keyguard.KeyguardAbsKeyInputView, com.android.keyguard.KeyguardSecurityView
@@ -104,12 +94,11 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView implements Tex
         this.mImm.hideSoftInputFromWindow(getWindowToken(), 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSwitchImeButton() {
+    private void updateSwitchImeButton() {
         boolean z = this.mSwitchImeButton.getVisibility() == 0;
-        boolean hasMultipleEnabledIMEsOrSubtypes = hasMultipleEnabledIMEsOrSubtypes(this.mImm, false);
-        if (z != hasMultipleEnabledIMEsOrSubtypes) {
-            this.mSwitchImeButton.setVisibility(hasMultipleEnabledIMEsOrSubtypes ? 0 : 8);
+        boolean zHasMultipleEnabledIMEsOrSubtypes = hasMultipleEnabledIMEsOrSubtypes(this.mImm, false);
+        if (z != zHasMultipleEnabledIMEsOrSubtypes) {
+            this.mSwitchImeButton.setVisibility(zHasMultipleEnabledIMEsOrSubtypes ? 0 : 8);
         }
         if (this.mSwitchImeButton.getVisibility() != 0) {
             ViewGroup.LayoutParams layoutParams = this.mPasswordEntry.getLayoutParams();
@@ -120,9 +109,8 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView implements Tex
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mImm = (InputMethodManager) getContext().getSystemService("input_method");
         this.mPasswordEntry = (TextView) findViewById(getPasswordTextViewId());
@@ -147,12 +135,12 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView implements Tex
                 KeyguardPasswordView.this.mImm.showInputMethodPicker(false);
             }
         });
-        View findViewById = findViewById(com.android.systemui.R.id.cancel_button);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.keyguard.-$$Lambda$KeyguardPasswordView$o6rdkANQuxgpLXMWWI2lzhbd_0k
+        View viewFindViewById = findViewById(com.android.systemui.R.id.cancel_button);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.keyguard.-$$Lambda$KeyguardPasswordView$o6rdkANQuxgpLXMWWI2lzhbd_0k
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    KeyguardPasswordView.this.mCallback.reset();
+                    this.f$0.mCallback.reset();
                 }
             });
         }
@@ -200,9 +188,10 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView implements Tex
             if (enabledInputMethodSubtypeList.isEmpty()) {
                 i++;
             } else {
+                Iterator<InputMethodSubtype> it = enabledInputMethodSubtypeList.iterator();
                 int i2 = 0;
-                for (InputMethodSubtype inputMethodSubtype : enabledInputMethodSubtypeList) {
-                    if (inputMethodSubtype.isAuxiliary()) {
+                while (it.hasNext()) {
+                    if (it.next().isAuxiliary()) {
                         i2++;
                     }
                 }
@@ -263,6 +252,6 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView implements Tex
 
     @Override // com.android.keyguard.KeyguardSecurityView
     public CharSequence getTitle() {
-        return getContext().getString(17040057);
+        return getContext().getString(android.R.string.config_somnambulatorComponent);
     }
 }

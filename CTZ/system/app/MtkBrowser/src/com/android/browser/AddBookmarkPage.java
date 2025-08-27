@@ -54,6 +54,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+
 /* loaded from: classes.dex */
 public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener, BreadCrumbView.Controller, FolderSpinner.OnSetSelectionListener {
     private ArrayAdapter<BookmarkAccount> mAccountAdapter;
@@ -112,6 +113,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         public void onLoaderReset(Loader<EditBookmarkInfo> loader) {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<EditBookmarkInfo> loader, EditBookmarkInfo editBookmarkInfo) {
             boolean z;
@@ -162,9 +164,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class Folder {
+    private static class Folder {
         long Id;
         String Name;
 
@@ -242,26 +242,32 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
                 this.mCurrentFolder = folder.Id;
                 if (this.mCurrentFolder == this.mRootFolder) {
                     this.mFolder.setSelectionIgnoringSelectionChange(1 ^ (this.mEditingFolder ? 1 : 0));
+                    return;
                 } else {
                     this.mFolderAdapter.setOtherFolderDisplayText(folder.Name);
-                }
-            }
-        } else if (this.mSaveToHomeScreen) {
-            this.mFolder.setSelectionIgnoringSelectionChange(0);
-        } else if (this.mCurrentFolder == this.mRootFolder) {
-            this.mFolder.setSelectionIgnoringSelectionChange(1 ^ (this.mEditingFolder ? 1 : 0));
-        } else {
-            Object topData2 = this.mCrumbs.getTopData();
-            if (topData2 != null) {
-                Folder folder2 = (Folder) topData2;
-                if (folder2.Id == this.mCurrentFolder) {
-                    this.mFolderAdapter.setOtherFolderDisplayText(folder2.Name);
                     return;
                 }
             }
-            setupTopCrumb();
-            getLoaderManager().restartLoader(1, null, this);
+            return;
         }
+        if (this.mSaveToHomeScreen) {
+            this.mFolder.setSelectionIgnoringSelectionChange(0);
+            return;
+        }
+        if (this.mCurrentFolder == this.mRootFolder) {
+            this.mFolder.setSelectionIgnoringSelectionChange(1 ^ (this.mEditingFolder ? 1 : 0));
+            return;
+        }
+        Object topData2 = this.mCrumbs.getTopData();
+        if (topData2 != null) {
+            Folder folder2 = (Folder) topData2;
+            if (folder2.Id == this.mCurrentFolder) {
+                this.mFolderAdapter.setOtherFolderDisplayText(folder2.Name);
+                return;
+            }
+        }
+        setupTopCrumb();
+        getLoaderManager().restartLoader(1, null, this);
     }
 
     @Override // android.view.View.OnClickListener
@@ -271,26 +277,36 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
                 if (this.mIsFolderNamerShowing) {
                     completeOrCancelFolderNaming(false);
                     return;
+                } else {
+                    this.mSaveToHomeScreen = false;
+                    switchToDefaultView(true);
+                    return;
                 }
-                this.mSaveToHomeScreen = false;
-                switchToDefaultView(true);
-                return;
             }
             this.mOverwriteBookmarkId = -1L;
             if (save()) {
                 finish();
+                return;
             }
-        } else if (view == this.mCancelButton) {
+            return;
+        }
+        if (view == this.mCancelButton) {
             if (this.mIsFolderNamerShowing) {
                 completeOrCancelFolderNaming(true);
+                return;
             } else if (this.mFolderSelector.getVisibility() == 0) {
                 switchToDefaultView(false);
+                return;
             } else {
                 finish();
+                return;
             }
-        } else if (view == this.mFolderCancel) {
+        }
+        if (view == this.mFolderCancel) {
             completeOrCancelFolderNaming(true);
-        } else if (view == this.mAddNewFolder) {
+            return;
+        }
+        if (view == this.mAddNewFolder) {
             setShowFolderNamer(true);
             this.mFolderNamer.setText(R.string.new_folder);
             this.mFolderNamer.setSelection(this.mFolderNamer.length());
@@ -300,17 +316,19 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             InputMethodManager inputMethodManager = getInputMethodManager();
             inputMethodManager.focusIn(this.mListView);
             inputMethodManager.showSoftInput(this.mFolderNamer, 1);
-        } else if (view == this.mRemoveLink) {
+            return;
+        }
+        if (view == this.mRemoveLink) {
             if (!this.mEditingExisting) {
                 throw new AssertionError("Remove button should not be shown for new bookmarks");
             }
             long j = this.mMap.getLong("_id");
             createHandler();
-            Message obtain = Message.obtain(this.mHandler, 102);
+            Message messageObtain = Message.obtain(this.mHandler, 102);
             if (this.mEditingFolder) {
-                BookmarkUtils.displayRemoveFolderDialog(j, this.mTitle.getText().toString(), this, obtain);
+                BookmarkUtils.displayRemoveFolderDialog(j, this.mTitle.getText().toString(), this, messageObtain);
             } else {
-                BookmarkUtils.displayRemoveBookmarkDialog(j, this.mTitle.getText().toString(), this, obtain);
+                BookmarkUtils.displayRemoveBookmarkDialog(j, this.mTitle.getText().toString(), this, messageObtain);
             }
         }
     }
@@ -324,38 +342,36 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
     }
 
     private void displayToastForExistingFolder() {
-        Toast.makeText(getApplicationContext(), (int) R.string.duplicated_folder_warning, 1).show();
+        Toast.makeText(getApplicationContext(), R.string.duplicated_folder_warning, 1).show();
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:12:0x0070, code lost:
-        if (r9.getCount() != 0) goto L11;
-     */
+    /* JADX WARN: Removed duplicated region for block: B:16:0x0076  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private boolean isFolderExist(long j, String str) {
+    private boolean isFolderExist(long j, String str) throws Throwable {
+        boolean z;
         Log.e("browser/AddBookmarkPage", "BrowserProvider2.isValidAccountName parentId:" + j + " title:" + str);
         if (j <= 0 || str == null || str.length() == 0) {
             return false;
         }
         Cursor cursor = null;
         try {
-            boolean z = true;
-            Cursor query = getApplicationContext().getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"_id"}, "parent = ? AND deleted = ? AND folder = ? AND title = ?", new String[]{j + "", "0", "1", str}, null);
-            if (query != null) {
+            Cursor cursorQuery = getApplicationContext().getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"_id"}, "parent = ? AND deleted = ? AND folder = ? AND title = ?", new String[]{j + "", "0", "1", str}, null);
+            if (cursorQuery != null) {
                 try {
+                    z = cursorQuery.getCount() != 0;
                 } catch (Throwable th) {
                     th = th;
-                    cursor = query;
+                    cursor = cursorQuery;
                     if (cursor != null) {
                         cursor.close();
                     }
                     throw th;
                 }
             }
-            z = false;
-            if (query != null) {
-                query.close();
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
             return z;
         } catch (Throwable th2) {
@@ -364,7 +380,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
     }
 
     private void displayAlertDialogForExistingBookmark() {
-        new AlertDialog.Builder(this).setTitle(R.string.duplicated_bookmark).setIcon(17301543).setMessage(getText(R.string.duplicated_bookmark_warning).toString()).setPositiveButton(R.string.ok, this.mAlertDlgOk).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).show();
+        new AlertDialog.Builder(this).setTitle(R.string.duplicated_bookmark).setIcon(android.R.drawable.ic_dialog_alert).setMessage(getText(R.string.duplicated_bookmark_warning).toString()).setPositiveButton(R.string.ok, this.mAlertDlgOk).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).show();
     }
 
     @Override // com.android.browser.addbookmark.FolderSpinner.OnSetSelectionListener
@@ -372,21 +388,19 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         switch ((int) j) {
             case 0:
                 this.mSaveToHomeScreen = true;
-                return;
+                break;
             case 1:
                 this.mCurrentFolder = this.mRootFolder;
                 this.mSaveToHomeScreen = false;
-                return;
+                break;
             case 2:
                 switchToFolderSelector();
-                return;
+                break;
             case 3:
                 this.mCurrentFolder = this.mFolderAdapter.recentFolderId();
                 this.mSaveToHomeScreen = false;
                 getLoaderManager().restartLoader(1, null, this);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -400,25 +414,25 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
     }
 
     private long addFolderToCurrent(String str) {
-        Object obj;
+        Object topData;
         long j;
         ContentValues contentValues = new ContentValues();
         contentValues.put("title", str);
         contentValues.put("folder", (Integer) 1);
         if (this.mCrumbs != null) {
-            obj = this.mCrumbs.getTopData();
+            topData = this.mCrumbs.getTopData();
         } else {
-            obj = null;
+            topData = null;
         }
-        if (obj != null) {
-            j = ((Folder) obj).Id;
+        if (topData != null) {
+            j = ((Folder) topData).Id;
         } else {
             j = this.mRootFolder;
         }
         contentValues.put("parent", Long.valueOf(j));
-        Uri insert = getContentResolver().insert(BrowserContract.Bookmarks.CONTENT_URI, contentValues);
-        if (insert != null) {
-            return ContentUris.parseId(insert);
+        Uri uriInsert = getContentResolver().insert(BrowserContract.Bookmarks.CONTENT_URI, contentValues);
+        if (uriInsert != null) {
+            return ContentUris.parseId(uriInsert);
         }
         return -1L;
     }
@@ -428,36 +442,36 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         contentValues.put("title", str);
         contentValues.put("folder", (Integer) 1);
         contentValues.put("parent", (Long) 1L);
-        Uri insert = context.getContentResolver().insert(BrowserContract.Bookmarks.CONTENT_URI, contentValues);
-        if (insert != null) {
-            return ContentUris.parseId(insert);
+        Uri uriInsert = context.getContentResolver().insert(BrowserContract.Bookmarks.CONTENT_URI, contentValues);
+        if (uriInsert != null) {
+            return ContentUris.parseId(uriInsert);
         }
         return getIdFromName(context, str);
     }
 
-    private static long getIdFromName(Context context, String str) {
+    private static long getIdFromName(Context context, String str) throws Throwable {
         Cursor cursor = null;
         try {
-            Cursor query = context.getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"_id"}, "title = ? AND deleted = ? AND folder = ? AND parent = ?", new String[]{str, "0", "1", "1"}, null);
+            Cursor cursorQuery = context.getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"_id"}, "title = ? AND deleted = ? AND folder = ? AND parent = ?", new String[]{str, "0", "1", "1"}, null);
             long j = -1;
-            if (query != null) {
+            if (cursorQuery != null) {
                 try {
-                    if (query.getCount() != 0) {
-                        while (query.moveToNext()) {
-                            j = query.getLong(0);
+                    if (cursorQuery.getCount() != 0) {
+                        while (cursorQuery.moveToNext()) {
+                            j = cursorQuery.getLong(0);
                         }
                     }
                 } catch (Throwable th) {
                     th = th;
-                    cursor = query;
+                    cursor = cursorQuery;
                     if (cursor != null) {
                         cursor.close();
                     }
                     throw th;
                 }
             }
-            if (query != null) {
-                query.close();
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
             return j;
         } catch (Throwable th2) {
@@ -479,9 +493,9 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         if (j != -1) {
             this.mCrumbs.pushView(str, new Folder(str, j));
             this.mCrumbs.notifyController();
-            return;
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.duplicated_folder_warning, 1).show();
         }
-        Toast.makeText(getApplicationContext(), (int) R.string.duplicated_folder_warning, 1).show();
     }
 
     void setAccount(String str, String str2) {
@@ -523,6 +537,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         switch (loader.getId()) {
@@ -533,12 +548,10 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
                 }
                 getLoaderManager().destroyLoader(0);
                 getLoaderManager().restartLoader(2, null, this.mEditInfoLoaderCallbacks);
-                return;
+                break;
             case 1:
                 this.mAdapter.changeCursor(cursor);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -551,7 +564,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
 
     @Override // android.widget.AdapterView.OnItemClickListener
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long j) {
-        descendInto(((TextView) view.findViewById(16908308)).getText().toString(), j);
+        descendInto(((TextView) view.findViewById(android.R.id.text1)).getText().toString(), j);
     }
 
     private void setShowFolderNamer(boolean z) {
@@ -569,16 +582,14 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class FolderAdapter extends CursorAdapter {
+    private class FolderAdapter extends CursorAdapter {
         public FolderAdapter(Context context) {
             super(context, null);
         }
 
         @Override // android.widget.CursorAdapter
         public void bindView(View view, Context context, Cursor cursor) {
-            ((TextView) view.findViewById(16908308)).setText(cursor.getString(cursor.getColumnIndexOrThrow("title")));
+            ((TextView) view.findViewById(android.R.id.text1)).setText(cursor.getString(cursor.getColumnIndexOrThrow("title")));
         }
 
         @Override // android.widget.CursorAdapter
@@ -638,22 +649,22 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
                 if (length <= 0) {
                     AddBookmarkPage.this.showWarningDialog();
                     return "";
-                } else if (length >= i3 - i2) {
-                    return null;
-                } else {
-                    if (length < charSequence.length()) {
-                        AddBookmarkPage.this.showWarningDialog();
-                    }
-                    return charSequence.subSequence(i2, length + i2);
                 }
+                if (length >= i3 - i2) {
+                    return null;
+                }
+                if (length < charSequence.length()) {
+                    AddBookmarkPage.this.showWarningDialog();
+                }
+                return charSequence.subSequence(i2, length + i2);
             }
         }};
     }
 
     @Override // android.app.Activity
     protected void onCreate(Bundle bundle) {
-        String str;
-        String str2;
+        String string;
+        String string2;
         super.onCreate(bundle);
         requestWindowFeature(1);
         this.mMap = getIntent().getExtras();
@@ -687,30 +698,30 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
                     window.setAttributes(attributes);
                 }
             }
-            str = this.mMap.getString("title");
-            str2 = this.mMap.getString("url");
-            this.mOriginalUrl = str2;
+            string = this.mMap.getString("title");
+            string2 = this.mMap.getString("url");
+            this.mOriginalUrl = string2;
             this.mTouchIconUrl = this.mMap.getString("touch_icon_url");
             this.mCurrentFolder = this.mMap.getLong("parent", -1L);
             Log.i("Bookmarks", "CurrentFolderId: " + this.mCurrentFolder);
         } else {
-            str = null;
-            str2 = null;
+            string = null;
+            string2 = null;
         }
         this.mWarningDialog = new AlertDialog.Builder(this).create();
         this.mTitle = (EditText) findViewById(R.id.title);
         this.mTitle.setFilters(generateInputFilter(getResources().getInteger(R.integer.bookmark_title_maxlength)));
-        this.mTitle.setText(str);
-        if (str != null) {
+        this.mTitle.setText(string);
+        if (string != null) {
             this.mTitle.setSelection(this.mTitle.getText().length());
         }
         this.mAddress = (EditText) findViewById(R.id.address);
         Context applicationContext = getApplicationContext();
-        InputFilter[] checkUrlLengthLimit = Extensions.getUrlPlugin(applicationContext).checkUrlLengthLimit(applicationContext);
-        if (checkUrlLengthLimit != null) {
-            this.mAddress.setFilters(checkUrlLengthLimit);
+        InputFilter[] inputFilterArrCheckUrlLengthLimit = Extensions.getUrlPlugin(applicationContext).checkUrlLengthLimit(applicationContext);
+        if (inputFilterArrCheckUrlLengthLimit != null) {
+            this.mAddress.setFilters(inputFilterArrCheckUrlLengthLimit);
         }
-        this.mAddress.setText(str2);
+        this.mAddress.setText(string2);
         this.mButton = (TextView) findViewById(R.id.OK);
         this.mButton.setOnClickListener(this);
         this.mCancelButton = findViewById(R.id.cancel);
@@ -749,8 +760,8 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         this.mListView.setAdapter((ListAdapter) this.mAdapter);
         this.mListView.setOnItemClickListener(this);
         this.mListView.addEditText(this.mFolderNamer);
-        this.mAccountAdapter = new ArrayAdapter<>(this, 17367048);
-        this.mAccountAdapter.setDropDownViewResource(17367049);
+        this.mAccountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+        this.mAccountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.mAccountSpinner = (Spinner) findViewById(R.id.accounts);
         this.mAccountSpinner.setAdapter((SpinnerAdapter) this.mAccountAdapter);
         this.mAccountSpinner.setOnItemSelectedListener(this);
@@ -761,37 +772,36 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         getLoaderManager().restartLoader(0, null, this);
     }
 
-    private String getNameFromId(long j) {
-        String str = "";
+    private String getNameFromId(long j) throws Throwable {
+        String string = "";
         Cursor cursor = null;
         try {
-            Cursor query = getApplicationContext().getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"title"}, "_id = ? AND deleted = ? AND folder = ? ", new String[]{String.valueOf(j), "0", "1"}, null);
-            if (query != null) {
+            Cursor cursorQuery = getApplicationContext().getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"title"}, "_id = ? AND deleted = ? AND folder = ? ", new String[]{String.valueOf(j), "0", "1"}, null);
+            if (cursorQuery != null) {
                 try {
-                    if (query.moveToNext()) {
-                        str = query.getString(0);
+                    if (cursorQuery.moveToNext()) {
+                        string = cursorQuery.getString(0);
                     }
                 } catch (Throwable th) {
                     th = th;
-                    cursor = query;
+                    cursor = cursorQuery;
                     if (cursor != null) {
                         cursor.close();
                     }
                     throw th;
                 }
             }
-            if (query != null) {
-                query.close();
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
-            Log.d("browser/AddBookmarkPage", "title :" + str);
-            return str;
+            Log.d("browser/AddBookmarkPage", "title :" + string);
+            return string;
         } catch (Throwable th2) {
             th = th2;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showWarningDialog() {
+    private void showWarningDialog() {
         if (this.mWarningDialog != null && !this.mWarningDialog.isShowing()) {
             this.mWarningDialog.setTitle(R.string.max_input_browser_search_title);
             this.mWarningDialog.setMessage(getString(R.string.max_input_browser_search));
@@ -804,8 +814,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showRemoveButton() {
+    private void showRemoveButton() {
         findViewById(R.id.remove_divider).setVisibility(0);
         this.mRemoveLink = findViewById(R.id.remove);
         this.mRemoveLink.setVisibility(0);
@@ -828,8 +837,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         this.mTopLevelLabel.setCompoundDrawablePadding(6);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onCurrentFolderFound() {
+    private void onCurrentFolderFound() {
         LoaderManager loaderManager = getLoaderManager();
         if (!this.mSaveToHomeScreen) {
             if (this.mCurrentFolder != -1 && this.mCurrentFolder != this.mRootFolder) {
@@ -844,9 +852,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         loaderManager.restartLoader(1, null, this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SaveBookmarkRunnable implements Runnable {
+    private class SaveBookmarkRunnable implements Runnable {
         private Context mContext;
         private Message mMessage;
 
@@ -877,9 +883,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class UpdateBookmarkTask extends AsyncTask<ContentValues, Void, Void> {
+    private static class UpdateBookmarkTask extends AsyncTask<ContentValues, Void, Void> {
         long mBookmarkCurrentId;
         Context mContext;
         Long mId;
@@ -889,9 +893,9 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             this.mId = Long.valueOf(j);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(ContentValues... contentValuesArr) {
+        protected Void doInBackground(ContentValues... contentValuesArr) {
             if (contentValuesArr.length < 1) {
                 throw new IllegalArgumentException("No ContentValues provided!");
             }
@@ -905,9 +909,9 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             return null;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Void r7) {
+        protected void onPostExecute(Void r7) {
             Log.d("browser/AddBookmarkPage", "UpdateBookmarkTask onPostExecute mBookmarkCurrentId:" + this.mBookmarkCurrentId);
             if (this.mBookmarkCurrentId > 0) {
                 this.mContext.getContentResolver().delete(BrowserContract.Bookmarks.CONTENT_URI, "_id = ?", new String[]{String.valueOf(this.mBookmarkCurrentId)});
@@ -923,36 +927,34 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
                     switch (message.what) {
                         case 100:
                             if (1 == message.arg1) {
-                                Toast.makeText(AddBookmarkPage.this, (int) R.string.bookmark_saved, 1).show();
-                                return;
+                                Toast.makeText(AddBookmarkPage.this, R.string.bookmark_saved, 1).show();
+                                break;
                             } else {
-                                Toast.makeText(AddBookmarkPage.this, (int) R.string.bookmark_not_saved, 1).show();
-                                return;
+                                Toast.makeText(AddBookmarkPage.this, R.string.bookmark_not_saved, 1).show();
+                                break;
                             }
                         case 101:
                             Bundle data = message.getData();
                             BookmarkUtils.createShortcutToHome(AddBookmarkPage.this, data.getString("url"), data.getString("title"), (Bitmap) data.getParcelable("touch_icon"), (Bitmap) data.getParcelable("favicon"));
-                            return;
+                            break;
                         case 102:
                             AddBookmarkPage.this.finish();
-                            return;
-                        default:
-                            return;
+                            break;
                     }
                 }
             };
         }
     }
 
-    boolean save() {
+    boolean save() throws URISyntaxException {
         Bitmap bitmap;
         Bitmap bitmap2;
         String titleFromId;
         createHandler();
-        String trim = this.mTitle.getText().toString().trim();
-        String fixUrl = UrlUtils.fixUrl(this.mAddress.getText().toString());
-        boolean z = trim.length() == 0;
-        boolean z2 = fixUrl.trim().length() == 0;
+        String strTrim = this.mTitle.getText().toString().trim();
+        String strFixUrl = UrlUtils.fixUrl(this.mAddress.getText().toString());
+        boolean z = strTrim.length() == 0;
+        boolean z2 = strFixUrl.trim().length() == 0;
         Resources resources = getResources();
         if (z || (z2 && !this.mEditingFolder)) {
             if (z) {
@@ -967,35 +969,35 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             }
             return false;
         }
-        Boolean saveCustomizedEditFolder = this.mBookmarkExt.saveCustomizedEditFolder(getApplicationContext(), trim, this.mCurrentFolder, this.mMap, getString(R.string.duplicated_folder_warning));
-        if (saveCustomizedEditFolder != null) {
-            if (saveCustomizedEditFolder.booleanValue()) {
+        Boolean boolSaveCustomizedEditFolder = this.mBookmarkExt.saveCustomizedEditFolder(getApplicationContext(), strTrim, this.mCurrentFolder, this.mMap, getString(R.string.duplicated_folder_warning));
+        if (boolSaveCustomizedEditFolder != null) {
+            if (boolSaveCustomizedEditFolder.booleanValue()) {
                 setResult(-1);
             }
-            return saveCustomizedEditFolder.booleanValue();
+            return boolSaveCustomizedEditFolder.booleanValue();
         }
-        String trim2 = fixUrl.trim();
+        String strTrim2 = strFixUrl.trim();
         if (!this.mEditingFolder) {
             try {
-                if (!trim2.toLowerCase().startsWith("javascript:")) {
-                    String encode = URLEncoder.encode(trim2);
-                    String scheme = new URI(encode).getScheme();
-                    if (!Bookmarks.urlHasAcceptableScheme(fixUrl.trim())) {
+                if (!strTrim2.toLowerCase().startsWith("javascript:")) {
+                    String strEncode = URLEncoder.encode(strTrim2);
+                    String scheme = new URI(strEncode).getScheme();
+                    if (!Bookmarks.urlHasAcceptableScheme(strFixUrl.trim())) {
                         if (scheme != null) {
                             this.mAddress.setError(resources.getText(R.string.bookmark_cannot_save_url));
                             return false;
                         }
                         try {
-                            WebAddress webAddress = new WebAddress(fixUrl);
+                            WebAddress webAddress = new WebAddress(strFixUrl);
                             if (webAddress.getHost().length() == 0) {
                                 throw new URISyntaxException("", "");
                             }
-                            encode = webAddress.toString();
+                            strEncode = webAddress.toString();
                         } catch (ParseException e) {
                             throw new URISyntaxException("", "");
                         }
                     }
-                    trim2 = URLDecoder.decode(encode);
+                    strTrim2 = URLDecoder.decode(strEncode);
                 }
             } catch (IllegalArgumentException e2) {
                 this.mAddress.setError(resources.getText(R.string.bookmark_url_not_valid));
@@ -1005,15 +1007,15 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
                 return false;
             }
         }
-        boolean equals = trim2.equals(this.mOriginalUrl);
+        boolean zEquals = strTrim2.equals(this.mOriginalUrl);
         if (this.mOverwriteBookmarkId > 0) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("bookmark_current_id", Long.valueOf(this.mCurrentId));
             ContentValues contentValues2 = new ContentValues();
-            contentValues2.put("title", trim);
+            contentValues2.put("title", strTrim);
             contentValues2.put("parent", Long.valueOf(this.mCurrentFolder));
-            contentValues2.put("url", trim2);
-            if (!equals) {
+            contentValues2.put("url", strTrim2);
+            if (!zEquals) {
                 contentValues2.putNull("thumbnail");
             }
             if (contentValues2.size() > 0) {
@@ -1023,7 +1025,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             setResult(-1);
             return true;
         }
-        this.mOverwriteBookmarkId = haveToOverwriteBookmarkId(trim, trim2, this.mCurrentFolder);
+        this.mOverwriteBookmarkId = haveToOverwriteBookmarkId(strTrim, strTrim2, this.mCurrentFolder);
         if (this.mOverwriteBookmarkId > 0) {
             displayAlertDialogForExistingBookmark();
             return false;
@@ -1039,12 +1041,12 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             if (j3 == -1) {
                 j3 = this.mRootFolder;
             }
-            if (j2 == j3 && (titleFromId = getTitleFromId(j)) != null && titleFromId.equals(trim)) {
+            if (j2 == j3 && (titleFromId = getTitleFromId(j)) != null && titleFromId.equals(strTrim)) {
                 Log.d("browser/AddBookmarkPage", "edit folder save, does not change anything");
                 return true;
             }
         }
-        if (this.mEditingFolder && isFolderExist(this.mCurrentFolder, trim)) {
+        if (this.mEditingFolder && isFolderExist(this.mCurrentFolder, strTrim)) {
             displayToastForExistingFolder();
             return false;
         }
@@ -1052,22 +1054,22 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             this.mEditingExisting = false;
         }
         if (this.mEditingExisting) {
-            Long valueOf = Long.valueOf(this.mMap.getLong("_id"));
+            Long lValueOf = Long.valueOf(this.mMap.getLong("_id"));
             ContentValues contentValues3 = new ContentValues();
-            contentValues3.put("title", trim);
+            contentValues3.put("title", strTrim);
             contentValues3.put("parent", Long.valueOf(this.mCurrentFolder));
             if (!this.mEditingFolder) {
-                contentValues3.put("url", trim2);
-                if (!equals) {
+                contentValues3.put("url", strTrim2);
+                if (!zEquals) {
                     contentValues3.putNull("thumbnail");
                 }
             }
             if (contentValues3.size() > 0) {
-                new UpdateBookmarkTask(getApplicationContext(), valueOf.longValue()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, contentValues3);
+                new UpdateBookmarkTask(getApplicationContext(), lValueOf.longValue()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, contentValues3);
             }
             setResult(-1);
         } else {
-            if (equals) {
+            if (zEquals) {
                 bitmap = (Bitmap) this.mMap.getParcelable("thumbnail");
                 bitmap2 = (Bitmap) this.mMap.getParcelable("favicon");
             } else {
@@ -1075,59 +1077,58 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
                 bitmap2 = null;
             }
             Bundle bundle = new Bundle();
-            bundle.putString("title", trim);
-            bundle.putString("url", trim2);
+            bundle.putString("title", strTrim);
+            bundle.putString("url", strTrim2);
             bundle.putParcelable("favicon", bitmap2);
             if (this.mSaveToHomeScreen) {
-                if (this.mTouchIconUrl != null && equals) {
-                    Message obtain = Message.obtain(this.mHandler, 101);
-                    obtain.setData(bundle);
-                    new DownloadTouchIcon(this, obtain, this.mMap.getString("user_agent")).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.mTouchIconUrl);
+                if (this.mTouchIconUrl != null && zEquals) {
+                    Message messageObtain = Message.obtain(this.mHandler, 101);
+                    messageObtain.setData(bundle);
+                    new DownloadTouchIcon(this, messageObtain, this.mMap.getString("user_agent")).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.mTouchIconUrl);
                 } else {
-                    BookmarkUtils.createShortcutToHome(this, trim2, trim, null, bitmap2);
+                    BookmarkUtils.createShortcutToHome(this, strTrim2, strTrim, null, bitmap2);
                 }
             } else {
                 bundle.putParcelable("thumbnail", bitmap);
-                bundle.putBoolean("remove_thumbnail", !equals);
+                bundle.putBoolean("remove_thumbnail", !zEquals);
                 bundle.putString("touch_icon_url", this.mTouchIconUrl);
-                Message obtain2 = Message.obtain(this.mHandler, 100);
-                obtain2.setData(bundle);
-                new Thread(new SaveBookmarkRunnable(getApplicationContext(), obtain2)).start();
+                Message messageObtain2 = Message.obtain(this.mHandler, 100);
+                messageObtain2.setData(bundle);
+                new Thread(new SaveBookmarkRunnable(getApplicationContext(), messageObtain2)).start();
             }
             setResult(-1);
-            LogTag.logBookmarkAdded(trim2, "bookmarkview");
+            LogTag.logBookmarkAdded(strTrim2, "bookmarkview");
         }
         return true;
     }
 
-    private String getTitleFromId(long j) {
-        Uri uri = BrowserContract.Bookmarks.CONTENT_URI;
+    private String getTitleFromId(long j) throws Throwable {
         Cursor cursor = null;
-        r6 = null;
-        r6 = null;
-        String str = null;
+        string = null;
+        string = null;
+        String string = null;
         try {
-            Cursor query = getApplicationContext().getContentResolver().query(uri, new String[]{"title"}, "_id = ? AND deleted = ? AND folder = ?", new String[]{j + "", "0", "1"}, null);
-            if (query != null) {
+            Cursor cursorQuery = getApplicationContext().getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"title"}, "_id = ? AND deleted = ? AND folder = ?", new String[]{j + "", "0", "1"}, null);
+            if (cursorQuery != null) {
                 try {
-                    if (query.getCount() != 0) {
-                        while (query.moveToNext()) {
-                            str = query.getString(0);
+                    if (cursorQuery.getCount() != 0) {
+                        while (cursorQuery.moveToNext()) {
+                            string = cursorQuery.getString(0);
                         }
                     }
                 } catch (Throwable th) {
                     th = th;
-                    cursor = query;
+                    cursor = cursorQuery;
                     if (cursor != null) {
                         cursor.close();
                     }
                     throw th;
                 }
             }
-            if (query != null) {
-                query.close();
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
-            return str;
+            return string;
         } catch (Throwable th2) {
             th = th2;
         }
@@ -1149,7 +1150,6 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
     public void onNothingSelected(AdapterView<?> adapterView) {
     }
 
-    /* loaded from: classes.dex */
     public static class CustomListView extends ListView {
         private EditText mEditText;
 
@@ -1175,7 +1175,6 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    /* loaded from: classes.dex */
     static class AccountsLoader extends CursorLoader {
         static final String[] PROJECTION = {"account_name", "account_type", "root_id"};
 
@@ -1184,7 +1183,6 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    /* loaded from: classes.dex */
     public static class BookmarkAccount {
         String accountName;
         String accountType;
@@ -1206,9 +1204,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class EditBookmarkInfo {
+    static class EditBookmarkInfo {
         String accountName;
         String accountType;
         String lastUsedAccountName;
@@ -1224,7 +1220,6 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    /* loaded from: classes.dex */
     static class EditBookmarkInfoLoader extends AsyncTaskLoader<EditBookmarkInfo> {
         private Context mContext;
         private Bundle mMap;
@@ -1235,82 +1230,91 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             this.mMap = bundle;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
-        /* JADX WARN: Removed duplicated region for block: B:47:0x0137  */
+        /* JADX WARN: Removed duplicated region for block: B:21:0x006f A[Catch: all -> 0x0134, TRY_LEAVE, TryCatch #2 {all -> 0x0134, blocks: (B:3:0x000d, B:5:0x002d, B:7:0x0033, B:9:0x0039, B:19:0x0068, B:21:0x006f, B:26:0x00c3, B:28:0x00c9, B:29:0x00cf, B:30:0x00d2, B:34:0x010c, B:36:0x0112, B:37:0x0126), top: B:53:0x000d }] */
+        /* JADX WARN: Removed duplicated region for block: B:33:0x00e9 A[Catch: all -> 0x0131, TRY_LEAVE, TryCatch #0 {all -> 0x0131, blocks: (B:22:0x008b, B:24:0x0091, B:25:0x00aa, B:31:0x00e3, B:33:0x00e9), top: B:49:0x008b }] */
+        /* JADX WARN: Removed duplicated region for block: B:39:0x012a  */
+        /* JADX WARN: Removed duplicated region for block: B:41:0x012d  */
         @Override // android.content.AsyncTaskLoader
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        public EditBookmarkInfo loadInBackground() {
-            Cursor cursor;
-            Cursor cursor2;
+        public EditBookmarkInfo loadInBackground() throws Throwable {
+            Cursor cursorQuery;
             ContentResolver contentResolver = this.mContext.getContentResolver();
             EditBookmarkInfo editBookmarkInfo = new EditBookmarkInfo();
-            Cursor cursor3 = null;
+            Cursor cursorQuery2 = null;
             try {
                 String string = this.mMap.getString("url");
                 editBookmarkInfo.id = this.mMap.getLong("_id", -1L);
                 if (this.mMap.getBoolean("check_for_dupe") && editBookmarkInfo.id == -1 && !TextUtils.isEmpty(string)) {
-                    Cursor query = contentResolver.query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"_id"}, "url=?", new String[]{string}, null);
+                    Cursor cursorQuery3 = contentResolver.query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"_id"}, "url=?", new String[]{string}, null);
                     try {
-                        if (query.getCount() == 1 && query.moveToFirst()) {
-                            editBookmarkInfo.id = query.getLong(0);
+                        if (cursorQuery3.getCount() == 1 && cursorQuery3.moveToFirst()) {
+                            editBookmarkInfo.id = cursorQuery3.getLong(0);
                         }
-                        query.close();
+                        cursorQuery3.close();
+                        if (editBookmarkInfo.id != -1) {
+                        }
+                        cursorQuery = contentResolver.query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"parent"}, null, null, "modified DESC LIMIT 1");
+                        if (!cursorQuery.moveToFirst()) {
+                        }
+                        if (cursorQuery2 != null) {
+                        }
+                        return editBookmarkInfo;
                     } catch (Throwable th) {
                         th = th;
-                        cursor3 = query;
-                        if (cursor3 != null) {
-                        }
-                        throw th;
+                        cursorQuery2 = cursorQuery3;
                     }
-                }
-                if (editBookmarkInfo.id != -1) {
-                    Cursor query2 = contentResolver.query(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, editBookmarkInfo.id), new String[]{"parent", "account_name", "account_type", "title"}, null, null, null);
-                    try {
-                        if (query2.moveToFirst()) {
-                            editBookmarkInfo.parentId = query2.getLong(0);
-                            editBookmarkInfo.accountName = query2.getString(1);
-                            editBookmarkInfo.accountType = query2.getString(2);
-                            editBookmarkInfo.title = query2.getString(3);
-                        }
-                        query2.close();
-                        Cursor query3 = contentResolver.query(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, editBookmarkInfo.parentId), new String[]{"title"}, null, null, null);
-                        if (query3.moveToFirst()) {
-                            editBookmarkInfo.parentTitle = query3.getString(0);
-                        }
-                        query3.close();
-                    } catch (Throwable th2) {
-                        th = th2;
-                        cursor3 = cursor2;
-                        if (cursor3 != null) {
-                            cursor3.close();
-                        }
-                        throw th;
-                    }
-                }
-                Cursor query4 = contentResolver.query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"parent"}, null, null, "modified DESC LIMIT 1");
-                if (query4.moveToFirst()) {
-                    long j = query4.getLong(0);
-                    query4.close();
-                    cursor = contentResolver.query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"title", "account_name", "account_type"}, "_id=?", new String[]{Long.toString(j)}, null);
-                    if (cursor.moveToFirst()) {
-                        editBookmarkInfo.lastUsedId = j;
-                        editBookmarkInfo.lastUsedTitle = cursor.getString(0);
-                        editBookmarkInfo.lastUsedAccountName = cursor.getString(1);
-                        editBookmarkInfo.lastUsedAccountType = cursor.getString(2);
-                    }
-                    cursor.close();
                 } else {
-                    cursor = query4;
+                    if (editBookmarkInfo.id != -1) {
+                        cursorQuery = contentResolver.query(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, editBookmarkInfo.id), new String[]{"parent", "account_name", "account_type", "title"}, null, null, null);
+                        try {
+                            if (cursorQuery.moveToFirst()) {
+                                editBookmarkInfo.parentId = cursorQuery.getLong(0);
+                                editBookmarkInfo.accountName = cursorQuery.getString(1);
+                                editBookmarkInfo.accountType = cursorQuery.getString(2);
+                                editBookmarkInfo.title = cursorQuery.getString(3);
+                            }
+                            cursorQuery.close();
+                            Cursor cursorQuery4 = contentResolver.query(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, editBookmarkInfo.parentId), new String[]{"title"}, null, null, null);
+                            if (cursorQuery4.moveToFirst()) {
+                                editBookmarkInfo.parentTitle = cursorQuery4.getString(0);
+                            }
+                            cursorQuery4.close();
+                        } catch (Throwable th2) {
+                            th = th2;
+                            cursorQuery2 = cursorQuery;
+                        }
+                    }
+                    cursorQuery = contentResolver.query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"parent"}, null, null, "modified DESC LIMIT 1");
+                    if (!cursorQuery.moveToFirst()) {
+                        long j = cursorQuery.getLong(0);
+                        cursorQuery.close();
+                        cursorQuery2 = contentResolver.query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"title", "account_name", "account_type"}, "_id=?", new String[]{Long.toString(j)}, null);
+                        if (cursorQuery2.moveToFirst()) {
+                            editBookmarkInfo.lastUsedId = j;
+                            editBookmarkInfo.lastUsedTitle = cursorQuery2.getString(0);
+                            editBookmarkInfo.lastUsedAccountName = cursorQuery2.getString(1);
+                            editBookmarkInfo.lastUsedAccountType = cursorQuery2.getString(2);
+                        }
+                        cursorQuery2.close();
+                    } else {
+                        cursorQuery2 = cursorQuery;
+                    }
+                    if (cursorQuery2 != null) {
+                        cursorQuery2.close();
+                    }
+                    return editBookmarkInfo;
                 }
-                if (cursor != null) {
-                    cursor.close();
-                }
-                return editBookmarkInfo;
             } catch (Throwable th3) {
                 th = th3;
             }
+            if (cursorQuery2 != null) {
+                cursorQuery2.close();
+            }
+            throw th;
         }
 
         @Override // android.content.Loader

@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 import com.android.settings.widget.AppPreference;
+
 /* loaded from: classes.dex */
 public class ProcessStatsPreference extends AppPreference {
     private ProcStatsPackageEntry mEntry;

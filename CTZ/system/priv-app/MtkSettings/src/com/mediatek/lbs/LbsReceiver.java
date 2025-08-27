@@ -14,6 +14,7 @@ import com.mediatek.settings.FeatureOption;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class LbsReceiver extends BroadcastReceiver {
     private Context mContext;
@@ -41,7 +42,7 @@ public class LbsReceiver extends BroadcastReceiver {
     }
 
     private void handleOmaCpSetting(Context context, Intent intent) {
-        HashMap hashMap;
+        HashMap map;
         if (!FeatureOption.MTK_OMACP_SUPPORT) {
             Log.d("LbsReceiver", "handleOmaCpSetting, MTK OMACP NOT SUPPOR ");
             return;
@@ -59,9 +60,9 @@ public class LbsReceiver extends BroadcastReceiver {
         String str3 = "";
         Bundle extras = intent.getExtras();
         ArrayList arrayList = (ArrayList) extras.get("APPADDR");
-        if (arrayList != null && !arrayList.isEmpty() && (hashMap = (HashMap) arrayList.get(0)) != null) {
-            str2 = (String) hashMap.get("ADDR");
-            str3 = (String) hashMap.get("ADDRTYPE");
+        if (arrayList != null && !arrayList.isEmpty() && (map = (HashMap) arrayList.get(0)) != null) {
+            str2 = (String) map.get("ADDR");
+            str3 = (String) map.get("ADDRTYPE");
         }
         if (str2 == null || str2.equals("")) {
             Log.d("LbsReceiver", "Invalid oma cp pushed supl address");
@@ -152,8 +153,7 @@ public class LbsReceiver extends BroadcastReceiver {
     }
 
     private void dealWithOmaUpdataResult(boolean z, String str) {
-        Context context = this.mContext;
-        Toast.makeText(context, "Deal with OMA CP operation : " + str, 1).show();
+        Toast.makeText(this.mContext, "Deal with OMA CP operation : " + str, 1).show();
         Log.d("LbsReceiver", "Deal with OMA UP operation : " + str);
         Intent intent = new Intent();
         intent.setAction("com.mediatek.omacp.settings.result");

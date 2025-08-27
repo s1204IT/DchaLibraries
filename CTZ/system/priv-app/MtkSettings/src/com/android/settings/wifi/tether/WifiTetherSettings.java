@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+
 /* loaded from: classes.dex */
 public class WifiTetherSettings extends RestrictedDashboardFragment implements WifiTetherBasePreferenceController.OnTetherConfigUpdateListener {
     private static final IntentFilter TETHER_STATE_CHANGE_FILTER = new IntentFilter("android.net.conn.TETHER_STATE_CHANGED");
@@ -93,9 +94,8 @@ public class WifiTetherSettings extends RestrictedDashboardFragment implements W
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.wifi_tether_settings;
     }
 
@@ -124,14 +124,14 @@ public class WifiTetherSettings extends RestrictedDashboardFragment implements W
 
     @Override // com.android.settings.wifi.tether.WifiTetherBasePreferenceController.OnTetherConfigUpdateListener
     public void onTetherConfigUpdated() {
-        WifiConfiguration buildNewConfig = buildNewConfig();
-        this.mPasswordPreferenceController.updateVisibility(buildNewConfig.getAuthType());
+        WifiConfiguration wifiConfigurationBuildNewConfig = buildNewConfig();
+        this.mPasswordPreferenceController.updateVisibility(wifiConfigurationBuildNewConfig.getAuthType());
         if (this.mWifiManager.getWifiApState() == 13) {
             Log.d("TetheringSettings", "Wifi AP config changed while enabled, stop and restart");
             this.mRestartWifiApAfterConfigChange = true;
             this.mSwitchBarController.stopTether();
         }
-        this.mWifiManager.setWifiApConfiguration(buildNewConfig);
+        this.mWifiManager.setWifiApConfiguration(wifiConfigurationBuildNewConfig);
     }
 
     private WifiConfiguration buildNewConfig() {
@@ -145,21 +145,18 @@ public class WifiTetherSettings extends RestrictedDashboardFragment implements W
         return wifiConfiguration;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startTether() {
+    private void startTether() {
         this.mRestartWifiApAfterConfigChange = false;
         this.mSwitchBarController.startTether();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDisplayWithNewConfig() {
+    private void updateDisplayWithNewConfig() {
         ((WifiTetherSSIDPreferenceController) use(WifiTetherSSIDPreferenceController.class)).updateDisplay();
         ((WifiTetherSecurityPreferenceController) use(WifiTetherSecurityPreferenceController.class)).updateDisplay();
         ((WifiTetherPasswordPreferenceController) use(WifiTetherPasswordPreferenceController.class)).updateDisplay();
         ((WifiTetherApBandPreferenceController) use(WifiTetherApBandPreferenceController.class)).updateDisplay();
     }
 
-    /* loaded from: classes.dex */
     class TetherChangeReceiver extends BroadcastReceiver {
         TetherChangeReceiver() {
         }
@@ -172,8 +169,11 @@ public class WifiTetherSettings extends RestrictedDashboardFragment implements W
             if (action.equals("android.net.conn.TETHER_STATE_CHANGED")) {
                 if (WifiTetherSettings.this.mWifiManager.getWifiApState() == 11 && WifiTetherSettings.this.mRestartWifiApAfterConfigChange) {
                     WifiTetherSettings.this.startTether();
+                    return;
                 }
-            } else if (action.equals("android.net.wifi.WIFI_AP_STATE_CHANGED") && intent.getIntExtra("wifi_state", 0) == 11 && WifiTetherSettings.this.mRestartWifiApAfterConfigChange) {
+                return;
+            }
+            if (action.equals("android.net.wifi.WIFI_AP_STATE_CHANGED") && intent.getIntExtra("wifi_state", 0) == 11 && WifiTetherSettings.this.mRestartWifiApAfterConfigChange) {
                 WifiTetherSettings.this.startTether();
             }
         }
@@ -184,8 +184,8 @@ public class WifiTetherSettings extends RestrictedDashboardFragment implements W
         this.mSSIDPreferenceController.setSSID("AndroidAP_" + (new Random().nextInt(9000) + 1000));
         this.mSecurityPreferenceController.setSecurityType();
         this.mPasswordPreferenceController.setEnabled(true);
-        String uuid = UUID.randomUUID().toString();
-        this.mPasswordPreferenceController.setPassword(uuid.substring(0, 8) + uuid.substring(9, 13));
+        String string = UUID.randomUUID().toString();
+        this.mPasswordPreferenceController.setPassword(string.substring(0, 8) + string.substring(9, 13));
         onTetherConfigUpdated();
     }
 

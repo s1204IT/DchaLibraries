@@ -5,7 +5,9 @@
             <item android:state_focused="true">
                 <shape android:shape="oval">
                     <solid android:color="#000000"/>
-                    <size android:height="@dimen/lb_control_button_diameter" android:width="@dimen/lb_control_button_diameter"/>
+                    <size
+                        android:height="@dimen/lb_control_button_diameter"
+                        android:width="@dimen/lb_control_button_diameter"/>
                 </shape>
             </item>
         </selector>

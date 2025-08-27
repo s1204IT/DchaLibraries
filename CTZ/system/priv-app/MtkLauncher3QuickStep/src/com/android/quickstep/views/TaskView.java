@@ -29,6 +29,7 @@ import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.recents.model.ThumbnailData;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class TaskView extends FrameLayout implements Task.TaskCallbacks, RecentsView.PageCallbacks {
     private static final long DIM_ANIM_DURATION = 700;
@@ -49,20 +50,44 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
         }
     };
     public static final Property<TaskView, Float> ZOOM_SCALE = new FloatProperty<TaskView>("zoomScale") { // from class: com.android.quickstep.views.TaskView.1
+        AnonymousClass1(String str) {
+            super(str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(TaskView taskView, float f) {
             taskView.setZoomScale(f);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(TaskView taskView) {
             return Float.valueOf(taskView.mZoomScale);
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ float lambda$static$0(float f) {
+    static /* synthetic */ float lambda$static$0(float f) {
         return (((float) (-Math.cos(f * 3.141592653589793d))) / 2.0f) + 0.5f;
+    }
+
+    /* renamed from: com.android.quickstep.views.TaskView$1 */
+    class AnonymousClass1 extends FloatProperty<TaskView> {
+        AnonymousClass1(String str) {
+            super(str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
+        @Override // android.util.FloatProperty
+        public void setValue(TaskView taskView, float f) {
+            taskView.setZoomScale(f);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.util.Property
+        public Float get(TaskView taskView) {
+            return Float.valueOf(taskView.mZoomScale);
+        }
     }
 
     public TaskView(Context context) {
@@ -78,7 +103,7 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
         setOnClickListener(new View.OnClickListener() { // from class: com.android.quickstep.views.-$$Lambda$TaskView$QuGgavyMob9vJJgGm52abwDZX48
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                TaskView.lambda$new$1(TaskView.this, context, view);
+                TaskView.lambda$new$1(this.f$0, context, view);
             }
         });
         setOutlineProvider(new TaskOutlineProvider(getResources()));
@@ -125,7 +150,7 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
         launchTask(z, new Consumer() { // from class: com.android.quickstep.views.-$$Lambda$TaskView$0UVTZJy5u1ZYBmK7ksAA-8MCLWE
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                TaskView.lambda$launchTask$2(TaskView.this, (Boolean) obj);
+                TaskView.lambda$launchTask$2(this.f$0, (Boolean) obj);
             }
         }, getHandler());
     }
@@ -137,14 +162,14 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
     }
 
     public void launchTask(boolean z, Consumer<Boolean> consumer, Handler handler) {
-        ActivityOptions makeCustomAnimation;
+        ActivityOptions activityOptionsMakeCustomAnimation;
         if (this.mTask != null) {
             if (z) {
-                makeCustomAnimation = BaseDraggingActivity.fromContext(getContext()).getActivityLaunchOptions(this);
+                activityOptionsMakeCustomAnimation = BaseDraggingActivity.fromContext(getContext()).getActivityLaunchOptions(this);
             } else {
-                makeCustomAnimation = ActivityOptions.makeCustomAnimation(getContext(), 0, 0);
+                activityOptionsMakeCustomAnimation = ActivityOptions.makeCustomAnimation(getContext(), 0, 0);
             }
-            ActivityManagerWrapper.getInstance().startActivityFromRecentsAsync(this.mTask.key, makeCustomAnimation, consumer, handler);
+            ActivityManagerWrapper.getInstance().startActivityFromRecentsAsync(this.mTask.key, activityOptionsMakeCustomAnimation, consumer, handler);
         }
     }
 
@@ -155,13 +180,13 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
         this.mIconView.setOnClickListener(new View.OnClickListener() { // from class: com.android.quickstep.views.-$$Lambda$TaskView$5sxfOzE6B_OwPtWtJzye-XL5KiQ
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                TaskMenuView.showForTask(TaskView.this);
+                TaskMenuView.showForTask(this.f$0);
             }
         });
         this.mIconView.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.quickstep.views.-$$Lambda$TaskView$LqQK-5y9I-rIFkI5jv25hj5g7ys
             @Override // android.view.View.OnLongClickListener
             public final boolean onLongClick(View view) {
-                return TaskView.lambda$onTaskDataLoaded$4(TaskView.this, view);
+                return TaskView.lambda$onTaskDataLoaded$4(this.f$0, view);
             }
         });
     }
@@ -187,6 +212,9 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
         this.mDimAlphaAnim = ObjectAnimator.ofFloat(this.mSnapshotView, TaskThumbnailView.DIM_ALPHA_MULTIPLIER, 1.0f - f, f);
         this.mDimAlphaAnim.setDuration(DIM_ANIM_DURATION);
         this.mDimAlphaAnim.addListener(new AnimatorListenerAdapter() { // from class: com.android.quickstep.views.TaskView.2
+            AnonymousClass2() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 TaskView.this.mDimAlphaAnim = null;
@@ -195,8 +223,18 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
         this.mDimAlphaAnim.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setIconScaleAndDim(float f) {
+    /* renamed from: com.android.quickstep.views.TaskView$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        AnonymousClass2() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            TaskView.this.mDimAlphaAnim = null;
+        }
+    }
+
+    protected void setIconScaleAndDim(float f) {
         this.mIconView.animate().cancel();
         this.mIconView.setScaleX(f);
         this.mIconView.setScaleY(f);
@@ -262,7 +300,6 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
         return false;
     }
 
-    /* loaded from: classes.dex */
     private static final class TaskOutlineProvider extends ViewOutlineProvider {
         private final int mMarginTop;
         private final float mRadius;
@@ -280,13 +317,12 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
 
     @Override // android.view.View
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo accessibilityNodeInfo) {
-        TaskSystemShortcut[] taskSystemShortcutArr;
         super.onInitializeAccessibilityNodeInfo(accessibilityNodeInfo);
         accessibilityNodeInfo.addAction(new AccessibilityNodeInfo.AccessibilityAction(R.string.accessibility_close_task, getContext().getText(R.string.accessibility_close_task)));
         Context context = getContext();
-        BaseDraggingActivity fromContext = BaseDraggingActivity.fromContext(context);
+        BaseDraggingActivity baseDraggingActivityFromContext = BaseDraggingActivity.fromContext(context);
         for (TaskSystemShortcut taskSystemShortcut : TaskMenuView.MENU_OPTIONS) {
-            if (taskSystemShortcut.getOnClickListener(fromContext, this) != null) {
+            if (taskSystemShortcut.getOnClickListener(baseDraggingActivityFromContext, this) != null) {
                 accessibilityNodeInfo.addAction(new AccessibilityNodeInfo.AccessibilityAction(taskSystemShortcut.labelResId, context.getText(taskSystemShortcut.labelResId)));
             }
         }
@@ -296,7 +332,6 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
 
     @Override // android.view.View
     public boolean performAccessibilityAction(int i, Bundle bundle) {
-        TaskSystemShortcut[] taskSystemShortcutArr;
         if (i == R.string.accessibility_close_task) {
             getRecentsView().dismissTask(this, true, true);
             return true;
@@ -326,6 +361,6 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks, Recents
             str2 = "Failed to launch task (task=" + this.mTask.key.baseIntent + " userId=" + this.mTask.key.userId + ")";
         }
         Log.w(str, str2);
-        Toast.makeText(getContext(), (int) R.string.activity_not_available, 0).show();
+        Toast.makeText(getContext(), R.string.activity_not_available, 0).show();
     }
 }

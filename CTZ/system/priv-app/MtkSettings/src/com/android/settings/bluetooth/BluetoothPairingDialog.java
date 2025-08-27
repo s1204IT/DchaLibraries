@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class BluetoothPairingDialog extends Activity {
     private BluetoothPairingController mBluetoothPairingController;
@@ -20,8 +21,11 @@ public class BluetoothPairingDialog extends Activity {
                 int intExtra = intent.getIntExtra("android.bluetooth.device.extra.BOND_STATE", AccessPoint.UNREACHABLE_RSSI);
                 if (intExtra == 12 || intExtra == 10) {
                     BluetoothPairingDialog.this.dismiss();
+                    return;
                 }
-            } else if ("android.bluetooth.device.action.PAIRING_CANCEL".equals(action)) {
+                return;
+            }
+            if ("android.bluetooth.device.action.PAIRING_CANCEL".equals(action)) {
                 BluetoothDevice bluetoothDevice = (BluetoothDevice) intent.getParcelableExtra("android.bluetooth.device.extra.DEVICE");
                 if (bluetoothDevice == null || BluetoothPairingDialog.this.mBluetoothPairingController.deviceEquals(bluetoothDevice)) {
                     BluetoothPairingDialog.this.dismiss();
@@ -66,8 +70,7 @@ public class BluetoothPairingDialog extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void dismiss() {
+    void dismiss() {
         if (!isFinishing()) {
             finish();
         }

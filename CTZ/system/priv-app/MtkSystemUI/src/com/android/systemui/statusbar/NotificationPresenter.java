@@ -8,6 +8,7 @@ import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationEntryManager;
 import com.android.systemui.statusbar.NotificationRemoteInputManager;
+
 /* loaded from: classes.dex */
 public interface NotificationPresenter extends ActivatableNotificationView.OnActivatedListener, ExpandableNotificationRow.OnExpandClickListener, NotificationData.Environment, NotificationEntryManager.Callback, NotificationRemoteInputManager.Callback {
     Handler getHandler();

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class AnimatorPlaybackController implements ValueAnimator.AnimatorUpdateListener {
     protected final AnimatorSet mAnim;
@@ -101,11 +102,11 @@ public abstract class AnimatorPlaybackController implements ValueAnimator.Animat
     }
 
     protected long clampDuration(float f) {
-        float f2 = ((float) this.mDuration) * f;
+        float f2 = this.mDuration * f;
         if (f2 <= 0.0f) {
             return 0L;
         }
-        return Math.min(f2, this.mDuration);
+        return Math.min((long) f2, this.mDuration);
     }
 
     public void dispatchOnStart() {
@@ -113,12 +114,14 @@ public abstract class AnimatorPlaybackController implements ValueAnimator.Animat
     }
 
     private void dispatchOnStartRecursively(Animator animator) {
-        for (Animator.AnimatorListener animatorListener : nonNullList(animator.getListeners())) {
-            animatorListener.onAnimationStart(animator);
+        Iterator it = nonNullList(animator.getListeners()).iterator();
+        while (it.hasNext()) {
+            ((Animator.AnimatorListener) it.next()).onAnimationStart(animator);
         }
         if (animator instanceof AnimatorSet) {
-            for (Animator animator2 : nonNullList(((AnimatorSet) animator).getChildAnimations())) {
-                dispatchOnStartRecursively(animator2);
+            Iterator it2 = nonNullList(((AnimatorSet) animator).getChildAnimations()).iterator();
+            while (it2.hasNext()) {
+                dispatchOnStartRecursively((Animator) it2.next());
             }
         }
     }
@@ -128,12 +131,14 @@ public abstract class AnimatorPlaybackController implements ValueAnimator.Animat
     }
 
     private void dispatchOnCancelRecursively(Animator animator) {
-        for (Animator.AnimatorListener animatorListener : nonNullList(animator.getListeners())) {
-            animatorListener.onAnimationCancel(animator);
+        Iterator it = nonNullList(animator.getListeners()).iterator();
+        while (it.hasNext()) {
+            ((Animator.AnimatorListener) it.next()).onAnimationCancel(animator);
         }
         if (animator instanceof AnimatorSet) {
-            for (Animator animator2 : nonNullList(((AnimatorSet) animator).getChildAnimations())) {
-                dispatchOnCancelRecursively(animator2);
+            Iterator it2 = nonNullList(((AnimatorSet) animator).getChildAnimations()).iterator();
+            while (it2.hasNext()) {
+                dispatchOnCancelRecursively((Animator) it2.next());
             }
         }
     }
@@ -146,7 +151,6 @@ public abstract class AnimatorPlaybackController implements ValueAnimator.Animat
         return this.mOnCancelRunnable;
     }
 
-    /* loaded from: classes.dex */
     public static class AnimatorPlaybackControllerVL extends AnimatorPlaybackController {
         private final ValueAnimator[] mChildAnimations;
 
@@ -181,19 +185,17 @@ public abstract class AnimatorPlaybackController implements ValueAnimator.Animat
 
         @Override // com.android.launcher3.anim.AnimatorPlaybackController
         public void setPlayFraction(float f) {
-            ValueAnimator[] valueAnimatorArr;
             this.mCurrentFraction = f;
             if (this.mTargetCancelled) {
                 return;
             }
-            long clampDuration = clampDuration(f);
+            long jClampDuration = clampDuration(f);
             for (ValueAnimator valueAnimator : this.mChildAnimations) {
-                valueAnimator.setCurrentPlayTime(Math.min(clampDuration, valueAnimator.getDuration()));
+                valueAnimator.setCurrentPlayTime(Math.min(jClampDuration, valueAnimator.getDuration()));
             }
         }
     }
 
-    /* loaded from: classes.dex */
     private class OnAnimationEndDispatcher extends AnimationSuccessListener {
         private OnAnimationEndDispatcher() {
         }
@@ -212,19 +214,20 @@ public abstract class AnimatorPlaybackController implements ValueAnimator.Animat
         }
 
         private void dispatchOnEndRecursively(Animator animator) {
-            for (Animator.AnimatorListener animatorListener : AnimatorPlaybackController.nonNullList(animator.getListeners())) {
-                animatorListener.onAnimationEnd(animator);
+            Iterator it = AnimatorPlaybackController.nonNullList(animator.getListeners()).iterator();
+            while (it.hasNext()) {
+                ((Animator.AnimatorListener) it.next()).onAnimationEnd(animator);
             }
             if (animator instanceof AnimatorSet) {
-                for (Animator animator2 : AnimatorPlaybackController.nonNullList(((AnimatorSet) animator).getChildAnimations())) {
-                    dispatchOnEndRecursively(animator2);
+                Iterator it2 = AnimatorPlaybackController.nonNullList(((AnimatorSet) animator).getChildAnimations()).iterator();
+                while (it2.hasNext()) {
+                    dispatchOnEndRecursively((Animator) it2.next());
                 }
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static <T> List<T> nonNullList(ArrayList<T> arrayList) {
+    private static <T> List<T> nonNullList(ArrayList<T> arrayList) {
         return arrayList == null ? Collections.emptyList() : arrayList;
     }
 }

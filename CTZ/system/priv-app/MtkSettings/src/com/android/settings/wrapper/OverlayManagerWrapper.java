@@ -5,6 +5,7 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class OverlayManagerWrapper {
     private final IOverlayManager mOverlayManager;
@@ -55,7 +56,6 @@ public class OverlayManagerWrapper {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class OverlayInfo {
         public final String category;
         private final boolean mEnabled;

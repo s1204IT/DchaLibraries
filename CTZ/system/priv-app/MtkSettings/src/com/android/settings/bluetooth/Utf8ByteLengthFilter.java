@@ -2,12 +2,12 @@ package com.android.settings.bluetooth;
 
 import android.text.InputFilter;
 import android.text.Spanned;
+
 /* loaded from: classes.dex */
 public class Utf8ByteLengthFilter implements InputFilter {
     private final int mMaxBytes;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Utf8ByteLengthFilter(int i) {
+    Utf8ByteLengthFilter(int i) {
         this.mMaxBytes = i;
     }
 
@@ -20,9 +20,9 @@ public class Utf8ByteLengthFilter implements InputFilter {
             if (i5 >= i2) {
                 break;
             }
-            char charAt = charSequence.charAt(i5);
-            if (charAt >= 128) {
-                i7 = charAt < 2048 ? 2 : 3;
+            char cCharAt = charSequence.charAt(i5);
+            if (cCharAt >= 128) {
+                i7 = cCharAt < 2048 ? 2 : 3;
             }
             i6 += i7;
             i5++;
@@ -30,10 +30,10 @@ public class Utf8ByteLengthFilter implements InputFilter {
         int length = spanned.length();
         int i8 = 0;
         for (int i9 = 0; i9 < length; i9++) {
-            if (i9 >= i3 && i9 < i4) {
+            if (i9 < i3 || i9 >= i4) {
+                char cCharAt2 = spanned.charAt(i9);
+                i8 += cCharAt2 < 128 ? 1 : cCharAt2 < 2048 ? 2 : 3;
             }
-            char charAt2 = spanned.charAt(i9);
-            i8 += charAt2 < 128 ? 1 : charAt2 < 2048 ? 2 : 3;
         }
         int i10 = this.mMaxBytes - i8;
         if (i10 <= 0) {
@@ -44,8 +44,8 @@ public class Utf8ByteLengthFilter implements InputFilter {
         }
         int i11 = i10;
         for (int i12 = i; i12 < i2; i12++) {
-            char charAt3 = charSequence.charAt(i12);
-            i11 -= charAt3 < 128 ? 1 : charAt3 < 2048 ? 2 : 3;
+            char cCharAt3 = charSequence.charAt(i12);
+            i11 -= cCharAt3 < 128 ? 1 : cCharAt3 < 2048 ? 2 : 3;
             if (i11 < 0) {
                 return charSequence.subSequence(i, i12);
             }

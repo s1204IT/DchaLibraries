@@ -13,6 +13,7 @@ import com.android.systemui.R;
 import com.android.systemui.classifier.FalsingManager;
 import com.android.systemui.statusbar.FlingAnimationUtils;
 import com.android.systemui.statusbar.KeyguardAffordanceView;
+
 /* loaded from: classes.dex */
 public class KeyguardAffordanceHelper {
     private final Callback mCallback;
@@ -53,7 +54,6 @@ public class KeyguardAffordanceHelper {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface Callback {
         float getAffordanceFalsingFactor();
 
@@ -82,8 +82,7 @@ public class KeyguardAffordanceHelper {
         void onSwipingStarted(boolean z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public KeyguardAffordanceHelper(Callback callback, Context context) {
+    KeyguardAffordanceHelper(Callback callback, Context context) {
         this.mContext = context;
         this.mCallback = callback;
         initIcons();
@@ -117,26 +116,29 @@ public class KeyguardAffordanceHelper {
         this.mRightIcon.setPreviewView(this.mCallback.getRightPreview());
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     /* JADX WARN: Removed duplicated region for block: B:26:0x0063  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public boolean onTouchEvent(MotionEvent motionEvent) {
         boolean z;
-        float max;
+        float fMax;
         boolean z2;
         int actionMasked = motionEvent.getActionMasked();
-        if (!this.mMotionCancelled || actionMasked == 0) {
-            float y = motionEvent.getY();
-            float x = motionEvent.getX();
-            if (actionMasked != 5) {
-                switch (actionMasked) {
-                    case 0:
-                        View iconAtPosition = getIconAtPosition(x, y);
-                        if (iconAtPosition == null || (this.mTargetedView != null && this.mTargetedView != iconAtPosition)) {
-                            this.mMotionCancelled = true;
-                            return false;
-                        }
+        if (this.mMotionCancelled && actionMasked != 0) {
+            return false;
+        }
+        float y = motionEvent.getY();
+        float x = motionEvent.getX();
+        if (actionMasked != 5) {
+            switch (actionMasked) {
+                case 0:
+                    View iconAtPosition = getIconAtPosition(x, y);
+                    if (iconAtPosition == null || (this.mTargetedView != null && this.mTargetedView != iconAtPosition)) {
+                        this.mMotionCancelled = true;
+                        break;
+                    } else {
                         if (this.mTargetedView != null) {
                             cancelAnimation();
                         } else {
@@ -150,51 +152,51 @@ public class KeyguardAffordanceHelper {
                         trackMovement(motionEvent);
                         this.mMotionCancelled = false;
                         break;
-                    case 1:
-                        z = true;
-                        z2 = this.mTargetedView == this.mRightIcon;
-                        trackMovement(motionEvent);
-                        endMotion(!z, x, y);
-                        if (!this.mTouchSlopExeeded && z) {
-                            this.mCallback.onIconClicked(z2);
-                            break;
-                        }
+                    }
+                    break;
+                case 1:
+                    z = true;
+                    z2 = this.mTargetedView == this.mRightIcon;
+                    trackMovement(motionEvent);
+                    endMotion(!z, x, y);
+                    if (!this.mTouchSlopExeeded && z) {
+                        this.mCallback.onIconClicked(z2);
                         break;
-                    case 2:
-                        trackMovement(motionEvent);
-                        float hypot = (float) Math.hypot(x - this.mInitialTouchX, y - this.mInitialTouchY);
-                        if (!this.mTouchSlopExeeded && hypot > this.mTouchSlop) {
-                            this.mTouchSlopExeeded = true;
-                        }
-                        if (this.mSwipingInProgress) {
-                            if (this.mTargetedView == this.mRightIcon) {
-                                max = Math.min(0.0f, this.mTranslationOnDown - hypot);
-                            } else {
-                                max = Math.max(0.0f, this.mTranslationOnDown + hypot);
-                            }
-                            setTranslation(max, false, false);
-                            break;
-                        }
-                        break;
-                    case 3:
-                        z = false;
+                    }
+                    break;
+                case 2:
+                    trackMovement(motionEvent);
+                    float fHypot = (float) Math.hypot(x - this.mInitialTouchX, y - this.mInitialTouchY);
+                    if (!this.mTouchSlopExeeded && fHypot > this.mTouchSlop) {
+                        this.mTouchSlopExeeded = true;
+                    }
+                    if (this.mSwipingInProgress) {
                         if (this.mTargetedView == this.mRightIcon) {
+                            fMax = Math.min(0.0f, this.mTranslationOnDown - fHypot);
+                        } else {
+                            fMax = Math.max(0.0f, this.mTranslationOnDown + fHypot);
                         }
-                        trackMovement(motionEvent);
-                        endMotion(!z, x, y);
-                        if (!this.mTouchSlopExeeded) {
-                            this.mCallback.onIconClicked(z2);
-                            break;
-                        }
+                        setTranslation(fMax, false, false);
                         break;
-                }
-            } else {
-                this.mMotionCancelled = true;
-                endMotion(true, x, y);
+                    }
+                    break;
+                case 3:
+                    z = false;
+                    if (this.mTargetedView == this.mRightIcon) {
+                    }
+                    trackMovement(motionEvent);
+                    endMotion(!z, x, y);
+                    if (!this.mTouchSlopExeeded) {
+                        this.mCallback.onIconClicked(z2);
+                        break;
+                    }
+                    break;
             }
-            return true;
+            return false;
         }
-        return false;
+        this.mMotionCancelled = true;
+        endMotion(true, x, y);
+        return true;
     }
 
     private void startSwiping(View view) {
@@ -275,8 +277,7 @@ public class KeyguardAffordanceHelper {
         this.mTargetedView = keyguardAffordanceView;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startUnlockHintAnimationPhase2(boolean z, final Runnable runnable) {
+    private void startUnlockHintAnimationPhase2(boolean z, final Runnable runnable) {
         ValueAnimator animatorToRadius = getAnimatorToRadius(z, 0);
         animatorToRadius.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.KeyguardAffordanceHelper.4
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
@@ -295,13 +296,13 @@ public class KeyguardAffordanceHelper {
 
     private ValueAnimator getAnimatorToRadius(final boolean z, int i) {
         final KeyguardAffordanceView keyguardAffordanceView = z ? this.mRightIcon : this.mLeftIcon;
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(keyguardAffordanceView.getCircleRadius(), i);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.KeyguardAffordanceHelper.5
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(keyguardAffordanceView.getCircleRadius(), i);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.KeyguardAffordanceHelper.5
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float floatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
-                keyguardAffordanceView.setCircleRadiusWithoutAnimation(floatValue);
-                float translationFromRadius = KeyguardAffordanceHelper.this.getTranslationFromRadius(floatValue);
+                float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+                keyguardAffordanceView.setCircleRadiusWithoutAnimation(fFloatValue);
+                float translationFromRadius = KeyguardAffordanceHelper.this.getTranslationFromRadius(fFloatValue);
                 KeyguardAffordanceHelper keyguardAffordanceHelper = KeyguardAffordanceHelper.this;
                 if (z) {
                     translationFromRadius = -translationFromRadius;
@@ -310,7 +311,7 @@ public class KeyguardAffordanceHelper {
                 KeyguardAffordanceHelper.this.updateIconsFromTranslation(keyguardAffordanceView);
             }
         });
-        return ofFloat;
+        return valueAnimatorOfFloat;
     }
 
     private void cancelAnimation() {
@@ -343,23 +344,23 @@ public class KeyguardAffordanceHelper {
         if (z) {
             maxTranslationDistance = 0.0f;
         }
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(this.mTranslation, maxTranslationDistance);
-        this.mFlingAnimationUtils.apply(ofFloat, this.mTranslation, maxTranslationDistance, f);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.KeyguardAffordanceHelper.6
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(this.mTranslation, maxTranslationDistance);
+        this.mFlingAnimationUtils.apply(valueAnimatorOfFloat, this.mTranslation, maxTranslationDistance, f);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.KeyguardAffordanceHelper.6
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 KeyguardAffordanceHelper.this.mTranslation = ((Float) valueAnimator.getAnimatedValue()).floatValue();
             }
         });
-        ofFloat.addListener(this.mFlingEndListener);
+        valueAnimatorOfFloat.addListener(this.mFlingEndListener);
         if (!z) {
             startFinishingCircleAnimation(0.375f * f, this.mAnimationEndRunnable, z2);
             this.mCallback.onAnimationToSideStarted(z2, this.mTranslation, f);
         } else {
             reset(true);
         }
-        ofFloat.start();
-        this.mSwipeAnimator = ofFloat;
+        valueAnimatorOfFloat.start();
+        this.mSwipeAnimator = valueAnimatorOfFloat;
         if (z) {
             this.mCallback.onSwipingAborted();
         }
@@ -370,53 +371,50 @@ public class KeyguardAffordanceHelper {
     }
 
     private void setTranslation(float f, boolean z, boolean z2) {
-        float max;
+        float fMax;
         if (!rightSwipePossible()) {
-            max = Math.max(0.0f, f);
+            fMax = Math.max(0.0f, f);
         } else {
-            max = f;
+            fMax = f;
         }
         if (!leftSwipePossible()) {
-            max = Math.min(0.0f, max);
+            fMax = Math.min(0.0f, fMax);
         }
-        float f2 = max;
-        float abs = Math.abs(f2);
+        float f2 = fMax;
+        float fAbs = Math.abs(f2);
         if (f2 != this.mTranslation || z) {
-            int i = (f2 > 0.0f ? 1 : (f2 == 0.0f ? 0 : -1));
-            KeyguardAffordanceView keyguardAffordanceView = i > 0 ? this.mLeftIcon : this.mRightIcon;
-            KeyguardAffordanceView keyguardAffordanceView2 = i > 0 ? this.mRightIcon : this.mLeftIcon;
-            float minTranslationAmount = abs / getMinTranslationAmount();
-            float max2 = Math.max(1.0f - minTranslationAmount, 0.0f);
+            KeyguardAffordanceView keyguardAffordanceView = f2 > 0.0f ? this.mLeftIcon : this.mRightIcon;
+            KeyguardAffordanceView keyguardAffordanceView2 = f2 > 0.0f ? this.mRightIcon : this.mLeftIcon;
+            float minTranslationAmount = fAbs / getMinTranslationAmount();
+            float fMax2 = Math.max(1.0f - minTranslationAmount, 0.0f);
             boolean z3 = z && z2;
             boolean z4 = z && !z2;
-            float radiusFromTranslation = getRadiusFromTranslation(abs);
+            float radiusFromTranslation = getRadiusFromTranslation(fAbs);
             boolean z5 = z && isBelowFalsingThreshold();
             if (!z) {
-                updateIcon(keyguardAffordanceView, radiusFromTranslation, minTranslationAmount + (keyguardAffordanceView.getRestingAlpha() * max2), false, false, false, false);
+                updateIcon(keyguardAffordanceView, radiusFromTranslation, minTranslationAmount + (keyguardAffordanceView.getRestingAlpha() * fMax2), false, false, false, false);
             } else {
-                updateIcon(keyguardAffordanceView, 0.0f, max2 * keyguardAffordanceView.getRestingAlpha(), z3, z5, true, z4);
+                updateIcon(keyguardAffordanceView, 0.0f, fMax2 * keyguardAffordanceView.getRestingAlpha(), z3, z5, true, z4);
             }
             boolean z6 = z3;
             boolean z7 = z5;
             boolean z8 = z4;
-            updateIcon(keyguardAffordanceView2, 0.0f, max2 * keyguardAffordanceView2.getRestingAlpha(), z6, z7, z, z8);
-            updateIcon(this.mCenterIcon, 0.0f, max2 * this.mCenterIcon.getRestingAlpha(), z6, z7, z, z8);
+            updateIcon(keyguardAffordanceView2, 0.0f, fMax2 * keyguardAffordanceView2.getRestingAlpha(), z6, z7, z, z8);
+            updateIcon(this.mCenterIcon, 0.0f, fMax2 * this.mCenterIcon.getRestingAlpha(), z6, z7, z, z8);
             this.mTranslation = f2;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateIconsFromTranslation(KeyguardAffordanceView keyguardAffordanceView) {
-        float abs = Math.abs(this.mTranslation) / getMinTranslationAmount();
-        float max = Math.max(0.0f, 1.0f - abs);
+    private void updateIconsFromTranslation(KeyguardAffordanceView keyguardAffordanceView) {
+        float fAbs = Math.abs(this.mTranslation) / getMinTranslationAmount();
+        float fMax = Math.max(0.0f, 1.0f - fAbs);
         KeyguardAffordanceView keyguardAffordanceView2 = keyguardAffordanceView == this.mRightIcon ? this.mLeftIcon : this.mRightIcon;
-        updateIconAlpha(keyguardAffordanceView, abs + (keyguardAffordanceView.getRestingAlpha() * max), false);
-        updateIconAlpha(keyguardAffordanceView2, keyguardAffordanceView2.getRestingAlpha() * max, false);
-        updateIconAlpha(this.mCenterIcon, max * this.mCenterIcon.getRestingAlpha(), false);
+        updateIconAlpha(keyguardAffordanceView, fAbs + (keyguardAffordanceView.getRestingAlpha() * fMax), false);
+        updateIconAlpha(keyguardAffordanceView2, keyguardAffordanceView2.getRestingAlpha() * fMax, false);
+        updateIconAlpha(this.mCenterIcon, fMax * this.mCenterIcon.getRestingAlpha(), false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public float getTranslationFromRadius(float f) {
+    private float getTranslationFromRadius(float f) {
         float f2 = (f - this.mMinBackgroundRadius) / 0.25f;
         if (f2 > 0.0f) {
             return this.mTouchSlop + f2;
@@ -481,11 +479,11 @@ public class KeyguardAffordanceHelper {
         float yVelocity = this.mVelocityTracker.getYVelocity();
         float f3 = f - this.mInitialTouchX;
         float f4 = f2 - this.mInitialTouchY;
-        float hypot = ((xVelocity * f3) + (yVelocity * f4)) / ((float) Math.hypot(f3, f4));
+        float fHypot = ((xVelocity * f3) + (yVelocity * f4)) / ((float) Math.hypot(f3, f4));
         if (this.mTargetedView == this.mRightIcon) {
-            return -hypot;
+            return -fHypot;
         }
-        return hypot;
+        return fHypot;
     }
 
     public void onConfigurationChanged() {

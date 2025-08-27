@@ -16,10 +16,13 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ZenModeEventRuleSettings extends ZenModeRuleSettingsBase {
     private static final Comparator<CalendarInfo> CALENDAR_NAME = new Comparator<CalendarInfo>() { // from class: com.android.settings.notification.ZenModeEventRuleSettings.3
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(CalendarInfo calendarInfo, CalendarInfo calendarInfo2) {
             return calendarInfo.name.compareTo(calendarInfo2.name);
@@ -31,7 +34,6 @@ public class ZenModeEventRuleSettings extends ZenModeRuleSettingsBase {
     private ZenModeConfig.EventInfo mEvent;
     private DropDownPreference mReply;
 
-    /* loaded from: classes.dex */
     public static class CalendarInfo {
         public String name;
         public int userId;
@@ -55,9 +57,8 @@ public class ZenModeEventRuleSettings extends ZenModeRuleSettingsBase {
         this.mCreate = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.zen_mode_event_rule_settings;
     }
 
@@ -106,9 +107,9 @@ public class ZenModeEventRuleSettings extends ZenModeRuleSettingsBase {
                 if (str.equals(ZenModeEventRuleSettings.key(ZenModeEventRuleSettings.this.mEvent))) {
                     return false;
                 }
-                int indexOf = str.indexOf(58);
-                ZenModeEventRuleSettings.this.mEvent.userId = Integer.parseInt(str.substring(0, indexOf));
-                ZenModeEventRuleSettings.this.mEvent.calendar = str.substring(indexOf + 1);
+                int iIndexOf = str.indexOf(58);
+                ZenModeEventRuleSettings.this.mEvent.userId = Integer.parseInt(str.substring(0, iIndexOf));
+                ZenModeEventRuleSettings.this.mEvent.calendar = str.substring(iIndexOf + 1);
                 if (ZenModeEventRuleSettings.this.mEvent.calendar.isEmpty()) {
                     ZenModeEventRuleSettings.this.mEvent.calendar = null;
                 }
@@ -121,12 +122,12 @@ public class ZenModeEventRuleSettings extends ZenModeRuleSettingsBase {
         this.mReply.setEntryValues(new CharSequence[]{Integer.toString(0), Integer.toString(1), Integer.toString(2)});
         this.mReply.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.notification.ZenModeEventRuleSettings.2
             @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-            public boolean onPreferenceChange(Preference preference, Object obj) {
-                int parseInt = Integer.parseInt((String) obj);
-                if (parseInt == ZenModeEventRuleSettings.this.mEvent.reply) {
+            public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
+                int i = Integer.parseInt((String) obj);
+                if (i == ZenModeEventRuleSettings.this.mEvent.reply) {
                     return false;
                 }
-                ZenModeEventRuleSettings.this.mEvent.reply = parseInt;
+                ZenModeEventRuleSettings.this.mEvent.reply = i;
                 ZenModeEventRuleSettings.this.updateRule(ZenModeConfig.toEventConditionId(ZenModeEventRuleSettings.this.mEvent));
                 return true;
             }
@@ -146,10 +147,11 @@ public class ZenModeEventRuleSettings extends ZenModeRuleSettingsBase {
         return 146;
     }
 
-    private static List<CalendarInfo> getCalendars(Context context) {
+    private static List<CalendarInfo> getCalendars(Context context) throws Throwable {
         ArrayList arrayList = new ArrayList();
-        for (UserHandle userHandle : UserManager.get(context).getUserProfiles()) {
-            Context contextForUser = getContextForUser(context, userHandle);
+        Iterator<UserHandle> it = UserManager.get(context).getUserProfiles().iterator();
+        while (it.hasNext()) {
+            Context contextForUser = getContextForUser(context, it.next());
             if (contextForUser != null) {
                 addCalendars(contextForUser, arrayList);
             }
@@ -166,35 +168,38 @@ public class ZenModeEventRuleSettings extends ZenModeRuleSettingsBase {
         }
     }
 
-    public static void addCalendars(Context context, List<CalendarInfo> list) {
-        Cursor cursor;
+    public static void addCalendars(Context context, List<CalendarInfo> list) throws Throwable {
+        Cursor cursorQuery;
         try {
-            cursor = context.getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, new String[]{"_id", "calendar_displayName", "(account_name=ownerAccount) AS \"primary\""}, "\"primary\" = 1", null, null);
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
+            cursorQuery = context.getContentResolver().query(CalendarContract.Calendars.CONTENT_URI, new String[]{"_id", "calendar_displayName", "(account_name=ownerAccount) AS \"primary\""}, "\"primary\" = 1", null, null);
+            if (cursorQuery != null) {
+                while (cursorQuery.moveToNext()) {
                     try {
                         CalendarInfo calendarInfo = new CalendarInfo();
-                        calendarInfo.name = cursor.getString(1);
+                        calendarInfo.name = cursorQuery.getString(1);
                         calendarInfo.userId = context.getUserId();
                         list.add(calendarInfo);
                     } catch (Throwable th) {
                         th = th;
-                        if (cursor != null) {
-                            cursor.close();
+                        if (cursorQuery != null) {
+                            cursorQuery.close();
                         }
                         throw th;
                     }
                 }
-                if (cursor != null) {
-                    cursor.close();
+                if (cursorQuery != null) {
+                    cursorQuery.close();
+                    return;
                 }
-            } else if (cursor == null) {
-            } else {
-                cursor.close();
+                return;
             }
+            if (cursorQuery == null) {
+                return;
+            }
+            cursorQuery.close();
         } catch (Throwable th2) {
             th = th2;
-            cursor = null;
+            cursorQuery = null;
         }
     }
 
@@ -202,8 +207,7 @@ public class ZenModeEventRuleSettings extends ZenModeRuleSettingsBase {
         return key(calendarInfo.userId, calendarInfo.name);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static String key(ZenModeConfig.EventInfo eventInfo) {
+    private static String key(ZenModeConfig.EventInfo eventInfo) {
         return key(eventInfo.userId, eventInfo.calendar);
     }
 

@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.Toolbar;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SettingsDrawerActivity extends Activity {
     private static final boolean DEBUG = Log.isLoggable("SettingsDrawerActivity", 3);
@@ -27,25 +28,23 @@ public class SettingsDrawerActivity extends Activity {
     private final PackageReceiver mPackageReceiver = new PackageReceiver();
     private final List<CategoryListener> mCategoryListeners = new ArrayList();
 
-    /* loaded from: classes.dex */
     public interface CategoryListener {
         void onCategoriesChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         System.currentTimeMillis();
-        TypedArray obtainStyledAttributes = getTheme().obtainStyledAttributes(R.styleable.Theme);
-        if (!obtainStyledAttributes.getBoolean(38, false)) {
+        TypedArray typedArrayObtainStyledAttributes = getTheme().obtainStyledAttributes(R.styleable.Theme);
+        if (!typedArrayObtainStyledAttributes.getBoolean(38, false)) {
             getWindow().addFlags(Integer.MIN_VALUE);
             requestWindowFeature(1);
         }
         super.setContentView(com.android.settingslib.R.layout.settings_with_drawer);
         this.mContentHeaderContainer = (FrameLayout) findViewById(com.android.settingslib.R.id.content_header_container);
         Toolbar toolbar = (Toolbar) findViewById(com.android.settingslib.R.id.action_bar);
-        if (obtainStyledAttributes.getBoolean(38, false)) {
+        if (typedArrayObtainStyledAttributes.getBoolean(38, false)) {
             toolbar.setVisibility(8);
         } else {
             setActionBar(toolbar);
@@ -98,8 +97,7 @@ public class SettingsDrawerActivity extends Activity {
         ((ViewGroup) findViewById(com.android.settingslib.R.id.content_frame)).addView(view, layoutParams);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onCategoriesChanged() {
+    private void onCategoriesChanged() {
         int size = this.mCategoryListeners.size();
         for (int i = 0; i < size; i++) {
             this.mCategoryListeners.get(i).onCategoriesChanged();
@@ -110,7 +108,6 @@ public class SettingsDrawerActivity extends Activity {
         return "com.android.settings";
     }
 
-    /* loaded from: classes.dex */
     private class CategoriesUpdateTask extends AsyncTask<Void, Void, Void> {
         private final CategoryManager mCategoryManager;
 
@@ -118,29 +115,28 @@ public class SettingsDrawerActivity extends Activity {
             this.mCategoryManager = CategoryManager.get(SettingsDrawerActivity.this);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) {
             this.mCategoryManager.reloadAllCategories(SettingsDrawerActivity.this, SettingsDrawerActivity.this.getSettingPkg());
             return null;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Void r2) {
+        protected void onPostExecute(Void r2) {
             this.mCategoryManager.updateCategoryFromBlacklist(SettingsDrawerActivity.sTileBlacklist);
             SettingsDrawerActivity.this.onCategoriesChanged();
         }
     }
 
-    /* loaded from: classes.dex */
     private class PackageReceiver extends BroadcastReceiver {
         private PackageReceiver() {
         }
 
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
-            new CategoriesUpdateTask().execute(new Void[0]);
+            SettingsDrawerActivity.this.new CategoriesUpdateTask().execute(new Void[0]);
         }
     }
 }

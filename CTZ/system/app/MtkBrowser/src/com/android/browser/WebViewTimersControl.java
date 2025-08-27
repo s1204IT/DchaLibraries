@@ -3,6 +3,7 @@ package com.android.browser;
 import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebView;
+
 /* loaded from: classes.dex */
 public class WebViewTimersControl {
     private static WebViewTimersControl sInstance;

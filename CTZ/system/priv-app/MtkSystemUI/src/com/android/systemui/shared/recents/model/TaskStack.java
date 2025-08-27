@@ -10,13 +10,13 @@ import com.android.systemui.shared.system.PackageManagerWrapper;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TaskStack {
     private TaskStackCallbacks mCb;
     private final ArrayList<Task> mRawTaskList = new ArrayList<>();
     private final FilteredTaskList mStackTaskList = new FilteredTaskList();
 
-    /* loaded from: classes.dex */
     public interface TaskStackCallbacks {
         void onStackTaskAdded(TaskStack taskStack, Task task);
 
@@ -31,9 +31,7 @@ public class TaskStack {
         this.mStackTaskList.setFilter(new TaskFilter() { // from class: com.android.systemui.shared.recents.model.-$$Lambda$TaskStack$gkuBLLtJ6FV7PDAxT-_KECDzTOI
             @Override // com.android.systemui.shared.recents.model.TaskFilter
             public final boolean acceptTask(SparseArray sparseArray, Task task, int i) {
-                boolean z;
-                z = task.isStackTask;
-                return z;
+                return task.isStackTask;
             }
         });
     }
@@ -74,22 +72,22 @@ public class TaskStack {
     }
 
     public void setTasks(List<Task> list, boolean z) {
-        ArrayMap<Task.TaskKey, Task> createTaskKeyMapFromList = createTaskKeyMapFromList(this.mRawTaskList);
-        ArrayMap<Task.TaskKey, Task> createTaskKeyMapFromList2 = createTaskKeyMapFromList(list);
+        ArrayMap<Task.TaskKey, Task> arrayMapCreateTaskKeyMapFromList = createTaskKeyMapFromList(this.mRawTaskList);
+        ArrayMap<Task.TaskKey, Task> arrayMapCreateTaskKeyMapFromList2 = createTaskKeyMapFromList(list);
         ArrayList arrayList = new ArrayList();
         ArrayList arrayList2 = new ArrayList();
         ArrayList arrayList3 = new ArrayList();
         boolean z2 = this.mCb == null ? false : z;
         for (int size = this.mRawTaskList.size() - 1; size >= 0; size--) {
             Task task = this.mRawTaskList.get(size);
-            if (!createTaskKeyMapFromList2.containsKey(task.key) && z2) {
+            if (!arrayMapCreateTaskKeyMapFromList2.containsKey(task.key) && z2) {
                 arrayList2.add(task);
             }
         }
         int size2 = list.size();
         for (int i = 0; i < size2; i++) {
             Task task2 = list.get(i);
-            Task task3 = createTaskKeyMapFromList.get(task2.key);
+            Task task3 = arrayMapCreateTaskKeyMapFromList.get(task2.key);
             if (task3 == null && z2) {
                 arrayList.add(task2);
             } else if (task3 != null) {
@@ -128,10 +126,10 @@ public class TaskStack {
 
     public ArrayList<Task.TaskKey> getTaskKeys() {
         ArrayList<Task.TaskKey> arrayList = new ArrayList<>();
-        ArrayList<Task> computeAllTasksList = computeAllTasksList();
-        int size = computeAllTasksList.size();
+        ArrayList<Task> arrayListComputeAllTasksList = computeAllTasksList();
+        int size = arrayListComputeAllTasksList.size();
         for (int i = 0; i < size; i++) {
-            arrayList.add(computeAllTasksList.get(i).key);
+            arrayList.add(arrayListComputeAllTasksList.get(i).key);
         }
         return arrayList;
     }
@@ -177,11 +175,11 @@ public class TaskStack {
     }
 
     private Task getNextLaunchTargetRaw() {
-        int indexOfTask;
-        if (getTaskCount() == 0 || (indexOfTask = indexOfTask(getLaunchTarget())) == -1 || indexOfTask <= 0) {
+        int iIndexOfTask;
+        if (getTaskCount() == 0 || (iIndexOfTask = indexOfTask(getLaunchTarget())) == -1 || iIndexOfTask <= 0) {
             return null;
         }
-        return getTasks().get(indexOfTask - 1);
+        return getTasks().get(iIndexOfTask - 1);
     }
 
     public int indexOfTask(Task task) {
@@ -189,10 +187,10 @@ public class TaskStack {
     }
 
     public Task findTaskWithId(int i) {
-        ArrayList<Task> computeAllTasksList = computeAllTasksList();
-        int size = computeAllTasksList.size();
+        ArrayList<Task> arrayListComputeAllTasksList = computeAllTasksList();
+        int size = arrayListComputeAllTasksList.size();
         for (int i2 = 0; i2 < size; i2++) {
-            Task task = computeAllTasksList.get(i2);
+            Task task = arrayListComputeAllTasksList.get(i2);
             if (task.key.id == i) {
                 return task;
             }
@@ -222,9 +220,10 @@ public class TaskStack {
     }
 
     public String toString() {
-        ArrayList<Task> tasks;
         String str = "Stack Tasks (" + this.mStackTaskList.size() + "):\n";
-        for (int i = 0; i < this.mStackTaskList.getTasks().size(); i++) {
+        ArrayList<Task> tasks = this.mStackTaskList.getTasks();
+        int size = tasks.size();
+        for (int i = 0; i < size; i++) {
             str = str + "    " + tasks.get(i).toString() + "\n";
         }
         return str;

@@ -15,6 +15,7 @@ import com.android.settingslib.bluetooth.LocalBluetoothAdapter;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public final class BluetoothEnabler implements SwitchWidgetController.OnSwitchChangeListener {
     private SwitchWidgetController.OnSwitchChangeListener mCallback;
@@ -57,12 +58,12 @@ public final class BluetoothEnabler implements SwitchWidgetController.OnSwitchCh
         if (this.mContext != context) {
             this.mContext = context;
         }
-        boolean maybeEnforceRestrictions = maybeEnforceRestrictions();
+        boolean zMaybeEnforceRestrictions = maybeEnforceRestrictions();
         if (this.mLocalAdapter == null) {
             this.mSwitchController.setEnabled(false);
             return;
         }
-        if (!maybeEnforceRestrictions) {
+        if (!zMaybeEnforceRestrictions) {
             handleStateChanged(this.mLocalAdapter.getBluetoothState());
         }
         this.mSwitchController.startListening();
@@ -80,17 +81,17 @@ public final class BluetoothEnabler implements SwitchWidgetController.OnSwitchCh
 
     void handleStateChanged(int i) {
         switch (i) {
-            case 10:
+            case AccessPoint.Speed.MODERATE /* 10 */:
                 this.mUpdateStatusOnly = true;
                 Log.d("BluetoothEnabler", "Begin update status: turn off set mUpdateStatusOnly to true");
                 setChecked(false);
                 this.mSwitchController.setEnabled(true);
                 this.mUpdateStatusOnly = false;
                 Log.d("BluetoothEnabler", "End update status: turn off set mUpdateStatusOnly to false");
-                return;
+                break;
             case 11:
                 this.mSwitchController.setEnabled(false);
-                return;
+                break;
             case 12:
                 this.mUpdateStatusOnly = true;
                 Log.d("BluetoothEnabler", "Begin update status: turn on set mUpdateStatusOnly to true");
@@ -98,14 +99,14 @@ public final class BluetoothEnabler implements SwitchWidgetController.OnSwitchCh
                 this.mSwitchController.setEnabled(true);
                 this.mUpdateStatusOnly = false;
                 Log.d("BluetoothEnabler", "End update status: turn on set mUpdateStatusOnly to false");
-                return;
+                break;
             case 13:
                 this.mSwitchController.setEnabled(false);
-                return;
+                break;
             default:
                 setChecked(false);
                 this.mSwitchController.setEnabled(true);
-                return;
+                break;
         }
     }
 
@@ -129,7 +130,7 @@ public final class BluetoothEnabler implements SwitchWidgetController.OnSwitchCh
         }
         Log.d("BluetoothEnabler", "onSwitchChanged to " + z);
         if (z && !WirelessUtils.isRadioAllowed(this.mContext, "bluetooth")) {
-            Toast.makeText(this.mContext, (int) R.string.wifi_in_airplane_mode, 0).show();
+            Toast.makeText(this.mContext, R.string.wifi_in_airplane_mode, 0).show();
             this.mSwitchController.setChecked(false);
             triggerParentPreferenceCallback(false);
             return false;
@@ -167,11 +168,11 @@ public final class BluetoothEnabler implements SwitchWidgetController.OnSwitchCh
     }
 
     public static RestrictedLockUtils.EnforcedAdmin getEnforcedAdmin(RestrictionUtils restrictionUtils, Context context) {
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = restrictionUtils.checkIfRestrictionEnforced(context, "no_bluetooth");
-        if (checkIfRestrictionEnforced == null) {
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = restrictionUtils.checkIfRestrictionEnforced(context, "no_bluetooth");
+        if (enforcedAdminCheckIfRestrictionEnforced == null) {
             return restrictionUtils.checkIfRestrictionEnforced(context, "no_config_bluetooth");
         }
-        return checkIfRestrictionEnforced;
+        return enforcedAdminCheckIfRestrictionEnforced;
     }
 
     private void triggerParentPreferenceCallback(boolean z) {

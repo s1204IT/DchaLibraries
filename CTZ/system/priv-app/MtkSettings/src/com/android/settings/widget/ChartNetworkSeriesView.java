@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.android.internal.util.Preconditions;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ChartNetworkSeriesView extends View {
     private long mEnd;
@@ -47,22 +48,21 @@ public class ChartNetworkSeriesView extends View {
         this.mPathValid = false;
         this.mEstimateVisible = false;
         this.mSecondary = false;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ChartNetworkSeriesView, i, 0);
-        int color = obtainStyledAttributes.getColor(3, -65536);
-        int color2 = obtainStyledAttributes.getColor(0, -65536);
-        int color3 = obtainStyledAttributes.getColor(1, -65536);
-        int dimensionPixelSize = obtainStyledAttributes.getDimensionPixelSize(2, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ChartNetworkSeriesView, i, 0);
+        int color = typedArrayObtainStyledAttributes.getColor(3, -65536);
+        int color2 = typedArrayObtainStyledAttributes.getColor(0, -65536);
+        int color3 = typedArrayObtainStyledAttributes.getColor(1, -65536);
+        int dimensionPixelSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(2, 0);
         setChartColor(color, color2, color3);
         setSafeRegion(dimensionPixelSize);
         setWillNotDraw(false);
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
         this.mPathStroke = new Path();
         this.mPathFill = new Path();
         this.mPathEstimate = new Path();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void init(ChartAxis chartAxis, ChartAxis chartAxis2) {
+    void init(ChartAxis chartAxis, ChartAxis chartAxis2) {
         this.mHoriz = (ChartAxis) Preconditions.checkNotNull(chartAxis, "missing horiz");
         this.mVert = (ChartAxis) Preconditions.checkNotNull(chartAxis2, "missing vert");
     }
@@ -116,46 +116,46 @@ public class ChartNetworkSeriesView extends View {
         }
         getWidth();
         float height = getHeight();
-        long convertToValue = this.mHoriz.convertToValue(0.0f);
+        long jConvertToValue = this.mHoriz.convertToValue(0.0f);
         this.mPathStroke.moveTo(0.0f, height);
         this.mPathFill.moveTo(0.0f, height);
-        NetworkStatsHistory.Entry entry = null;
+        NetworkStatsHistory.Entry values = null;
         int indexBefore = this.mStats.getIndexBefore(this.mStart);
         int indexAfter = this.mStats.getIndexAfter(this.mEnd);
         float f = height;
-        float f2 = 0.0f;
+        float fConvertToPoint = 0.0f;
         while (indexBefore <= indexAfter) {
-            entry = this.mStats.getValues(indexBefore, entry);
-            long j2 = entry.bucketStart;
-            long j3 = entry.bucketDuration + j2;
-            float convertToPoint = this.mHoriz.convertToPoint(j2);
+            values = this.mStats.getValues(indexBefore, values);
+            long j2 = values.bucketStart;
+            long j3 = values.bucketDuration + j2;
+            float fConvertToPoint2 = this.mHoriz.convertToPoint(j2);
             int i2 = indexAfter;
-            float convertToPoint2 = this.mHoriz.convertToPoint(j3);
-            if (convertToPoint2 < 0.0f) {
+            float fConvertToPoint3 = this.mHoriz.convertToPoint(j3);
+            if (fConvertToPoint3 < 0.0f) {
                 i = indexBefore;
             } else {
                 i = indexBefore;
-                j += entry.rxBytes + entry.txBytes;
-                float convertToPoint3 = this.mVert.convertToPoint(j);
-                if (convertToValue != j2) {
-                    this.mPathStroke.lineTo(convertToPoint, f);
-                    this.mPathFill.lineTo(convertToPoint, f);
+                j += values.rxBytes + values.txBytes;
+                float fConvertToPoint4 = this.mVert.convertToPoint(j);
+                if (jConvertToValue != j2) {
+                    this.mPathStroke.lineTo(fConvertToPoint2, f);
+                    this.mPathFill.lineTo(fConvertToPoint2, f);
                 }
-                this.mPathStroke.lineTo(convertToPoint2, convertToPoint3);
-                this.mPathFill.lineTo(convertToPoint2, convertToPoint3);
-                f2 = convertToPoint2;
-                f = convertToPoint3;
-                convertToValue = j3;
+                this.mPathStroke.lineTo(fConvertToPoint3, fConvertToPoint4);
+                this.mPathFill.lineTo(fConvertToPoint3, fConvertToPoint4);
+                fConvertToPoint = fConvertToPoint3;
+                f = fConvertToPoint4;
+                jConvertToValue = j3;
             }
             indexBefore = i + 1;
             indexAfter = i2;
         }
-        if (convertToValue < this.mEndTime) {
-            f2 = this.mHoriz.convertToPoint(this.mEndTime);
-            this.mPathStroke.lineTo(f2, f);
-            this.mPathFill.lineTo(f2, f);
+        if (jConvertToValue < this.mEndTime) {
+            fConvertToPoint = this.mHoriz.convertToPoint(this.mEndTime);
+            this.mPathStroke.lineTo(fConvertToPoint, f);
+            this.mPathFill.lineTo(fConvertToPoint, f);
         }
-        this.mPathFill.lineTo(f2, height);
+        this.mPathFill.lineTo(fConvertToPoint, height);
         this.mPathFill.lineTo(0.0f, height);
         this.mMax = j;
         invalidate();
@@ -189,15 +189,15 @@ public class ChartNetworkSeriesView extends View {
             generatePath();
         }
         if (this.mEstimateVisible) {
-            int save = canvas.save();
+            int iSave = canvas.save();
             canvas.clipRect(0, 0, getWidth(), getHeight());
             canvas.drawPath(this.mPathEstimate, this.mPaintEstimate);
-            canvas.restoreToCount(save);
+            canvas.restoreToCount(iSave);
         }
         Paint paint = this.mSecondary ? this.mPaintFillSecondary : this.mPaintFill;
-        int save2 = canvas.save();
+        int iSave2 = canvas.save();
         canvas.clipRect(this.mSafeRegion, 0, getWidth(), getHeight() - this.mSafeRegion);
         canvas.drawPath(this.mPathFill, paint);
-        canvas.restoreToCount(save2);
+        canvas.restoreToCount(iSave2);
     }
 }

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import com.android.settings.R;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class StorageWizardReady extends StorageWizardBase {
     private final StorageEventListener mStorageMountListener = new StorageEventListener() { // from class: com.android.settings.deviceinfo.StorageWizardReady.1
@@ -18,9 +19,8 @@ public class StorageWizardReady extends StorageWizardBase {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.deviceinfo.StorageWizardBase, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         if (this.mDisk == null) {
             finish();
@@ -46,9 +46,8 @@ public class StorageWizardReady extends StorageWizardBase {
         finishAffinity();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.deviceinfo.StorageWizardBase, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         this.mStorage.unregisterListener(this.mStorageMountListener);
         super.onDestroy();
     }

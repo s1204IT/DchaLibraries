@@ -1,6 +1,7 @@
 package com.android.settings.deletionhelper;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.preference.DropDownPreference;
@@ -18,6 +19,7 @@ import com.android.settings.widget.SwitchBar;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AutomaticStorageManagerSettings extends DashboardFragment implements Preference.OnPreferenceChangeListener {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.deletionhelper.AutomaticStorageManagerSettings.1
@@ -36,14 +38,14 @@ public class AutomaticStorageManagerSettings extends DashboardFragment implement
     private AutomaticStorageManagerSwitchBarController mSwitchController;
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) throws Resources.NotFoundException {
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
         initializeDaysToRetainPreference();
         initializeSwitchBar();
-        return onCreateView;
+        return viewOnCreateView;
     }
 
-    private void initializeDaysToRetainPreference() {
+    private void initializeDaysToRetainPreference() throws Resources.NotFoundException {
         this.mDaysToRetain = (DropDownPreference) findPreference("days");
         this.mDaysToRetain.setOnPreferenceChangeListener(this);
         int i = Settings.Secure.getInt(getContentResolver(), "automatic_storage_manager_days_to_retain", Utils.getDefaultStorageManagerDaysToRetain(getResources()));
@@ -69,9 +71,8 @@ public class AutomaticStorageManagerSettings extends DashboardFragment implement
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.automatic_storage_management_settings;
     }
 
@@ -115,8 +116,7 @@ public class AutomaticStorageManagerSettings extends DashboardFragment implement
         return strArr.length - 1;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new AutomaticStorageManagerDescriptionPreferenceController(context));
         return arrayList;

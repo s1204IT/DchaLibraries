@@ -9,6 +9,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.CrossFadeHelper;
 import com.android.systemui.statusbar.TransformableView;
 import com.android.systemui.statusbar.ViewTransformationHelper;
+
 /* loaded from: classes.dex */
 public class HybridNotificationView extends AlphaOptimizedLinearLayout implements TransformableView {
     protected TextView mTextView;

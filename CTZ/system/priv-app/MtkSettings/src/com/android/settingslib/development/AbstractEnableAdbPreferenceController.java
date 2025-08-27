@@ -12,6 +12,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.preference.TwoStatePreference;
 import android.text.TextUtils;
 import com.android.settingslib.core.ConfirmationDialogController;
+
 /* loaded from: classes.dex */
 public abstract class AbstractEnableAdbPreferenceController extends DeveloperOptionsPreferenceController implements ConfirmationDialogController {
     protected SwitchPreference mPreference;
@@ -50,19 +51,18 @@ public abstract class AbstractEnableAdbPreferenceController extends DeveloperOpt
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        if (!isUserAMonkey() && TextUtils.equals("enable_adb", preference.getKey())) {
-            if (!isAdbEnabled()) {
-                showConfirmationDialog(preference);
-                return true;
-            }
-            writeAdbSetting(false);
+        if (isUserAMonkey() || !TextUtils.equals("enable_adb", preference.getKey())) {
+            return false;
+        }
+        if (!isAdbEnabled()) {
+            showConfirmationDialog(preference);
             return true;
         }
-        return false;
+        writeAdbSetting(false);
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void writeAdbSetting(boolean z) {
+    protected void writeAdbSetting(boolean z) {
         Settings.Global.putInt(this.mContext.getContentResolver(), "adb_enabled", z ? 1 : 0);
         notifyStateChanged();
     }

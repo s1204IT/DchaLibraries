@@ -3,6 +3,7 @@ package com.android.browser.search;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+
 /* loaded from: classes.dex */
 public interface SearchEngine {
     String getName();

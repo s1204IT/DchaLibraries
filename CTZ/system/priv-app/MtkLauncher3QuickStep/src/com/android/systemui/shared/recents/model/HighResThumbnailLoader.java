@@ -12,19 +12,23 @@ import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class HighResThumbnailLoader implements Task.TaskCallbacks {
     private final ActivityManagerWrapper mActivityManager;
     private boolean mFlingingFast;
     private final boolean mIsLowRamDevice;
+
     @GuardedBy("mLoadQueue")
     private boolean mLoaderIdling;
     private boolean mLoading;
     private final Handler mMainThreadHandler;
     private boolean mTaskLoadQueueIdle;
     private boolean mVisible;
+
     @GuardedBy("mLoadQueue")
     private final ArrayDeque<Task> mLoadQueue = new ArrayDeque<>();
+
     @GuardedBy("mLoadQueue")
     private final ArraySet<Task> mLoadingTasks = new ArraySet<>();
     private final ArrayList<Task> mVisibleTasks = new ArrayList<>();
@@ -150,32 +154,30 @@ public class HighResThumbnailLoader implements Task.TaskCallbacks {
     public void onTaskWindowingModeChanged() {
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.shared.recents.model.HighResThumbnailLoader$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 implements Runnable {
+    /* renamed from: com.android.systemui.shared.recents.model.HighResThumbnailLoader$1, reason: invalid class name */
+    class AnonymousClass1 implements Runnable {
         AnonymousClass1() {
         }
 
-        /* JADX WARN: Can't wrap try/catch for region: R(6:4|5|(3:10|(1:12)|13)|20|21|13) */
         @Override // java.lang.Runnable
-        /*
-            Code decompiled incorrectly, please refer to instructions dump.
-        */
-        public void run() {
+        public void run() throws SecurityException, IllegalArgumentException {
             Process.setThreadPriority(11);
             while (true) {
                 Task next = null;
                 synchronized (HighResThumbnailLoader.this.mLoadQueue) {
-                    if (HighResThumbnailLoader.this.mLoading && !HighResThumbnailLoader.this.mLoadQueue.isEmpty()) {
+                    if (!HighResThumbnailLoader.this.mLoading || HighResThumbnailLoader.this.mLoadQueue.isEmpty()) {
+                        try {
+                            HighResThumbnailLoader.this.mLoaderIdling = true;
+                            HighResThumbnailLoader.this.mLoadQueue.wait();
+                            HighResThumbnailLoader.this.mLoaderIdling = false;
+                        } catch (InterruptedException e) {
+                        }
+                    } else {
                         next = (Task) HighResThumbnailLoader.this.mLoadQueue.poll();
                         if (next != null) {
                             HighResThumbnailLoader.this.mLoadingTasks.add(next);
                         }
                     }
-                    HighResThumbnailLoader.this.mLoaderIdling = true;
-                    HighResThumbnailLoader.this.mLoadQueue.wait();
-                    HighResThumbnailLoader.this.mLoaderIdling = false;
                 }
                 if (next != null) {
                     loadTask(next);
@@ -188,7 +190,7 @@ public class HighResThumbnailLoader implements Task.TaskCallbacks {
             HighResThumbnailLoader.this.mMainThreadHandler.post(new Runnable() { // from class: com.android.systemui.shared.recents.model.-$$Lambda$HighResThumbnailLoader$1$s-1KK0EnA0WJuK_oehEz11H5MbU
                 @Override // java.lang.Runnable
                 public final void run() {
-                    HighResThumbnailLoader.AnonymousClass1.lambda$loadTask$0(HighResThumbnailLoader.AnonymousClass1.this, t, thumbnail);
+                    HighResThumbnailLoader.AnonymousClass1.lambda$loadTask$0(this.f$0, t, thumbnail);
                 }
             });
         }

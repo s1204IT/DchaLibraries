@@ -10,6 +10,7 @@ import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.LocationController;
+
 /* loaded from: classes.dex */
 public class LocationTile extends QSTileImpl<QSTile.BooleanState> {
     private final Callback mCallback;
@@ -25,7 +26,7 @@ public class LocationTile extends QSTileImpl<QSTile.BooleanState> {
         this.mKeyguard = (KeyguardMonitor) Dependency.get(KeyguardMonitor.class);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -36,10 +37,10 @@ public class LocationTile extends QSTileImpl<QSTile.BooleanState> {
         if (z) {
             this.mController.addCallback(this.mCallback);
             this.mKeyguard.addCallback(this.mCallback);
-            return;
+        } else {
+            this.mController.removeCallback(this.mCallback);
+            this.mKeyguard.removeCallback(this.mCallback);
         }
-        this.mController.removeCallback(this.mCallback);
-        this.mKeyguard.removeCallback(this.mCallback);
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
@@ -53,12 +54,12 @@ public class LocationTile extends QSTileImpl<QSTile.BooleanState> {
             ((ActivityStarter) Dependency.get(ActivityStarter.class)).postQSRunnableDismissingKeyguard(new Runnable() { // from class: com.android.systemui.qs.tiles.-$$Lambda$LocationTile$cnlxD4jGztrpcRYGbQTKRSm3Ng0
                 @Override // java.lang.Runnable
                 public final void run() {
-                    LocationTile.lambda$handleClick$0(LocationTile.this);
+                    LocationTile.lambda$handleClick$0(this.f$0);
                 }
             });
-            return;
+        } else {
+            this.mController.setLocationEnabled(!((QSTile.BooleanState) this.mState).value);
         }
-        this.mController.setLocationEnabled(!((QSTile.BooleanState) this.mState).value);
     }
 
     public static /* synthetic */ void lambda$handleClick$0(LocationTile locationTile) {
@@ -72,21 +73,21 @@ public class LocationTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mContext.getString(R.string.quick_settings_location_label);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         if (booleanState.slash == null) {
             booleanState.slash = new QSTile.SlashState();
         }
-        boolean isLocationEnabled = this.mController.isLocationEnabled();
-        booleanState.value = isLocationEnabled;
+        boolean zIsLocationEnabled = this.mController.isLocationEnabled();
+        booleanState.value = zIsLocationEnabled;
         checkIfRestrictionEnforcedByAdminOnly(booleanState, "no_share_location");
         if (!booleanState.disabledByPolicy) {
             checkIfRestrictionEnforcedByAdminOnly(booleanState, "no_config_location");
         }
         booleanState.icon = this.mIcon;
         booleanState.slash.isSlashed = !booleanState.value;
-        if (isLocationEnabled) {
+        if (zIsLocationEnabled) {
             booleanState.label = this.mContext.getString(R.string.quick_settings_location_label);
             booleanState.contentDescription = this.mContext.getString(R.string.accessibility_quick_settings_location_on);
         } else {
@@ -110,7 +111,6 @@ public class LocationTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mContext.getString(R.string.accessibility_quick_settings_location_changed_off);
     }
 
-    /* loaded from: classes.dex */
     private final class Callback implements KeyguardMonitor.Callback, LocationController.LocationChangeCallback {
         private Callback() {
         }

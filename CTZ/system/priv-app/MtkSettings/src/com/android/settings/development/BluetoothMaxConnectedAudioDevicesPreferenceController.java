@@ -1,5 +1,6 @@
 package com.android.settings.development;
 
+import android.R;
 import android.content.Context;
 import android.os.SystemProperties;
 import android.support.v7.preference.ListPreference;
@@ -7,6 +8,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class BluetoothMaxConnectedAudioDevicesPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final String MAX_CONNECTED_AUDIO_DEVICES_PROPERTY = "persist.bluetooth.maxconnectedaudiodevices";
@@ -14,7 +16,7 @@ public class BluetoothMaxConnectedAudioDevicesPreferenceController extends Devel
 
     public BluetoothMaxConnectedAudioDevicesPreferenceController(Context context) {
         super(context);
-        this.mDefaultMaxConnectedAudioDevices = this.mContext.getResources().getInteger(17694740);
+        this.mDefaultMaxConnectedAudioDevices = this.mContext.getResources().getInteger(R.integer.config_attentionMaximumExtension);
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
@@ -33,11 +35,11 @@ public class BluetoothMaxConnectedAudioDevicesPreferenceController extends Devel
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        String obj2 = obj.toString();
-        if (((ListPreference) preference).findIndexOfValue(obj2) <= 0) {
-            obj2 = "";
+        String string = obj.toString();
+        if (((ListPreference) preference).findIndexOfValue(string) <= 0) {
+            string = "";
         }
-        SystemProperties.set(MAX_CONNECTED_AUDIO_DEVICES_PROPERTY, obj2);
+        SystemProperties.set(MAX_CONNECTED_AUDIO_DEVICES_PROPERTY, string);
         updateState(preference);
         return true;
     }
@@ -49,27 +51,25 @@ public class BluetoothMaxConnectedAudioDevicesPreferenceController extends Devel
         String str = SystemProperties.get(MAX_CONNECTED_AUDIO_DEVICES_PROPERTY);
         int i = 0;
         if (!str.isEmpty()) {
-            int findIndexOfValue = listPreference.findIndexOfValue(str);
-            if (findIndexOfValue < 0) {
+            int iFindIndexOfValue = listPreference.findIndexOfValue(str);
+            if (iFindIndexOfValue < 0) {
                 SystemProperties.set(MAX_CONNECTED_AUDIO_DEVICES_PROPERTY, "");
             } else {
-                i = findIndexOfValue;
+                i = iFindIndexOfValue;
             }
         }
         listPreference.setValueIndex(i);
         listPreference.setSummary(entries[i]);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchEnabled() {
+    protected void onDeveloperOptionsSwitchEnabled() {
         super.onDeveloperOptionsSwitchEnabled();
         updateState(this.mPreference);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         SystemProperties.set(MAX_CONNECTED_AUDIO_DEVICES_PROPERTY, "");
         updateState(this.mPreference);

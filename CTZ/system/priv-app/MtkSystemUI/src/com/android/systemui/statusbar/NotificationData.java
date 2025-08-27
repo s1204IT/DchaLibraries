@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class NotificationData {
     private final Environment mEnvironment;
@@ -55,54 +56,58 @@ public class NotificationData {
         private final NotificationListenerService.Ranking mRankingA = new NotificationListenerService.Ranking();
         private final NotificationListenerService.Ranking mRankingB = new NotificationListenerService.Ranking();
 
+        AnonymousClass1() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(Entry entry, Entry entry2) {
-            int i;
-            int i2;
-            int i3;
+            int importance;
+            int rank;
+            int rank2;
             StatusBarNotification statusBarNotification = entry.notification;
             StatusBarNotification statusBarNotification2 = entry2.notification;
-            int i4 = 3;
+            int importance2 = 3;
             boolean z = false;
             if (NotificationData.this.mRankingMap != null) {
                 NotificationData.this.getRanking(entry.key, this.mRankingA);
                 NotificationData.this.getRanking(entry2.key, this.mRankingB);
-                i4 = this.mRankingA.getImportance();
-                i = this.mRankingB.getImportance();
-                i2 = this.mRankingA.getRank();
-                i3 = this.mRankingB.getRank();
+                importance2 = this.mRankingA.getImportance();
+                importance = this.mRankingB.getImportance();
+                rank = this.mRankingA.getRank();
+                rank2 = this.mRankingB.getRank();
             } else {
-                i = 3;
-                i2 = 0;
-                i3 = 0;
+                importance = 3;
+                rank = 0;
+                rank2 = 0;
             }
             String currentMediaNotificationKey = NotificationData.this.mEnvironment.getCurrentMediaNotificationKey();
-            boolean z2 = entry.key.equals(currentMediaNotificationKey) && i4 > 1;
-            boolean z3 = entry2.key.equals(currentMediaNotificationKey) && i > 1;
-            boolean z4 = i4 >= 4 && NotificationData.isSystemNotification(statusBarNotification);
-            if (i >= 4 && NotificationData.isSystemNotification(statusBarNotification2)) {
+            boolean z2 = entry.key.equals(currentMediaNotificationKey) && importance2 > 1;
+            boolean z3 = entry2.key.equals(currentMediaNotificationKey) && importance > 1;
+            boolean z4 = importance2 >= 4 && NotificationData.isSystemNotification(statusBarNotification);
+            if (importance >= 4 && NotificationData.isSystemNotification(statusBarNotification2)) {
                 z = true;
             }
-            boolean isHeadsUp = entry.row.isHeadsUp();
-            if (isHeadsUp != entry2.row.isHeadsUp()) {
-                return isHeadsUp ? -1 : 1;
-            } else if (isHeadsUp) {
-                return NotificationData.this.mHeadsUpManager.compare(entry, entry2);
-            } else {
-                if (z2 != z3) {
-                    return z2 ? -1 : 1;
-                } else if (z4 != z) {
-                    return z4 ? -1 : 1;
-                } else if (i2 != i3) {
-                    return i2 - i3;
-                } else {
-                    return Long.compare(statusBarNotification2.getNotification().when, statusBarNotification.getNotification().when);
-                }
+            boolean zIsHeadsUp = entry.row.isHeadsUp();
+            if (zIsHeadsUp != entry2.row.isHeadsUp()) {
+                return zIsHeadsUp ? -1 : 1;
             }
+            if (zIsHeadsUp) {
+                return NotificationData.this.mHeadsUpManager.compare(entry, entry2);
+            }
+            if (z2 != z3) {
+                return z2 ? -1 : 1;
+            }
+            if (z4 != z) {
+                return z4 ? -1 : 1;
+            }
+            if (rank != rank2) {
+                return rank - rank2;
+            }
+            return Long.compare(statusBarNotification2.getNotification().when, statusBarNotification.getNotification().when);
         }
     };
 
-    /* loaded from: classes.dex */
     public interface Environment {
         String getCurrentMediaNotificationKey();
 
@@ -121,7 +126,6 @@ public class NotificationData {
         boolean shouldHideNotifications(String str);
     }
 
-    /* loaded from: classes.dex */
     public static final class Entry {
         public boolean autoRedacted;
         public RemoteViews cachedAmbientContentView;
@@ -215,7 +219,7 @@ public class NotificationData {
             this.expandedIcon.setOnVisibilityChangedListener(new StatusBarIconView.OnVisibilityChangedListener() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationData$Entry$htRh1w4D2IBYeXc1CwB54DGLhpM
                 @Override // com.android.systemui.statusbar.StatusBarIconView.OnVisibilityChangedListener
                 public final void onVisibilityChanged(int i) {
-                    NotificationData.Entry.lambda$createIcons$0(NotificationData.Entry.this, i);
+                    NotificationData.Entry.lambda$createIcons$0(this.f$0, i);
                 }
             });
         }
@@ -253,9 +257,9 @@ public class NotificationData {
             if (this.mCachedContrastColorIsFor == i2 && this.mCachedContrastColor != 1) {
                 return this.mCachedContrastColor;
             }
-            int resolveContrastColor = NotificationColorUtil.resolveContrastColor(context, i2, i);
+            int iResolveContrastColor = NotificationColorUtil.resolveContrastColor(context, i2, i);
             this.mCachedContrastColorIsFor = i2;
-            this.mCachedContrastColor = resolveContrastColor;
+            this.mCachedContrastColor = iResolveContrastColor;
             return this.mCachedContrastColor;
         }
 
@@ -303,23 +307,23 @@ public class NotificationData {
 
         public boolean isLastMessageFromReply() {
             Notification.MessagingStyle.Message messageFromBundle;
-            if (this.hasSentReply) {
-                Bundle bundle = this.notification.getNotification().extras;
-                if (ArrayUtils.isEmpty(bundle.getCharSequenceArray("android.remoteInputHistory"))) {
-                    Parcelable[] parcelableArray = bundle.getParcelableArray("android.messages");
-                    if (parcelableArray != null && parcelableArray.length > 0) {
-                        Parcelable parcelable = parcelableArray[parcelableArray.length - 1];
-                        if ((parcelable instanceof Bundle) && (messageFromBundle = Notification.MessagingStyle.Message.getMessageFromBundle((Bundle) parcelable)) != null) {
-                            Person senderPerson = messageFromBundle.getSenderPerson();
-                            if (senderPerson == null) {
-                                return true;
-                            }
-                            return Objects.equals((Person) bundle.getParcelable("android.messagingUser"), senderPerson);
-                        }
-                    }
-                    return false;
-                }
+            if (!this.hasSentReply) {
+                return false;
+            }
+            Bundle bundle = this.notification.getNotification().extras;
+            if (!ArrayUtils.isEmpty(bundle.getCharSequenceArray("android.remoteInputHistory"))) {
                 return true;
+            }
+            Parcelable[] parcelableArray = bundle.getParcelableArray("android.messages");
+            if (parcelableArray != null && parcelableArray.length > 0) {
+                Parcelable parcelable = parcelableArray[parcelableArray.length - 1];
+                if ((parcelable instanceof Bundle) && (messageFromBundle = Notification.MessagingStyle.Message.getMessageFromBundle((Bundle) parcelable)) != null) {
+                    Person senderPerson = messageFromBundle.getSenderPerson();
+                    if (senderPerson == null) {
+                        return true;
+                    }
+                    return Objects.equals((Person) bundle.getParcelable("android.messagingUser"), senderPerson);
+                }
             }
             return false;
         }
@@ -327,6 +331,63 @@ public class NotificationData {
 
     public void setHeadsUpManager(HeadsUpManager headsUpManager) {
         this.mHeadsUpManager = headsUpManager;
+    }
+
+    /* renamed from: com.android.systemui.statusbar.NotificationData$1 */
+    class AnonymousClass1 implements Comparator<Entry> {
+        private final NotificationListenerService.Ranking mRankingA = new NotificationListenerService.Ranking();
+        private final NotificationListenerService.Ranking mRankingB = new NotificationListenerService.Ranking();
+
+        AnonymousClass1() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
+        @Override // java.util.Comparator
+        public int compare(Entry entry, Entry entry2) {
+            int importance;
+            int rank;
+            int rank2;
+            StatusBarNotification statusBarNotification = entry.notification;
+            StatusBarNotification statusBarNotification2 = entry2.notification;
+            int importance2 = 3;
+            boolean z = false;
+            if (NotificationData.this.mRankingMap != null) {
+                NotificationData.this.getRanking(entry.key, this.mRankingA);
+                NotificationData.this.getRanking(entry2.key, this.mRankingB);
+                importance2 = this.mRankingA.getImportance();
+                importance = this.mRankingB.getImportance();
+                rank = this.mRankingA.getRank();
+                rank2 = this.mRankingB.getRank();
+            } else {
+                importance = 3;
+                rank = 0;
+                rank2 = 0;
+            }
+            String currentMediaNotificationKey = NotificationData.this.mEnvironment.getCurrentMediaNotificationKey();
+            boolean z2 = entry.key.equals(currentMediaNotificationKey) && importance2 > 1;
+            boolean z3 = entry2.key.equals(currentMediaNotificationKey) && importance > 1;
+            boolean z4 = importance2 >= 4 && NotificationData.isSystemNotification(statusBarNotification);
+            if (importance >= 4 && NotificationData.isSystemNotification(statusBarNotification2)) {
+                z = true;
+            }
+            boolean zIsHeadsUp = entry.row.isHeadsUp();
+            if (zIsHeadsUp != entry2.row.isHeadsUp()) {
+                return zIsHeadsUp ? -1 : 1;
+            }
+            if (zIsHeadsUp) {
+                return NotificationData.this.mHeadsUpManager.compare(entry, entry2);
+            }
+            if (z2 != z3) {
+                return z2 ? -1 : 1;
+            }
+            if (z4 != z) {
+                return z4 ? -1 : 1;
+            }
+            if (rank != rank2) {
+                return rank - rank2;
+            }
+            return Long.compare(statusBarNotification2.getNotification().when, statusBarNotification.getNotification().when);
+        }
     }
 
     public NotificationData(Environment environment) {
@@ -343,9 +404,9 @@ public class NotificationData {
         synchronized (this.mEntries) {
             int size = this.mEntries.size();
             for (int i = 0; i < size; i++) {
-                Entry valueAt = this.mEntries.valueAt(i);
-                if (this.mEnvironment.isNotificationForCurrentProfiles(valueAt.notification)) {
-                    this.mFilteredForUser.add(valueAt);
+                Entry entryValueAt = this.mEntries.valueAt(i);
+                if (this.mEnvironment.isNotificationForCurrentProfiles(entryValueAt.notification)) {
+                    this.mFilteredForUser.add(entryValueAt);
                 }
             }
         }
@@ -365,16 +426,16 @@ public class NotificationData {
     }
 
     public Entry remove(String str, NotificationListenerService.RankingMap rankingMap) {
-        Entry remove;
+        Entry entryRemove;
         synchronized (this.mEntries) {
-            remove = this.mEntries.remove(str);
+            entryRemove = this.mEntries.remove(str);
         }
-        if (remove == null) {
+        if (entryRemove == null) {
             return null;
         }
-        this.mGroupManager.onEntryRemoved(remove);
+        this.mGroupManager.onEntryRemoved(entryRemove);
         updateRankingAndSort(rankingMap);
-        return remove;
+        return entryRemove;
     }
 
     public void updateRanking(NotificationListenerService.RankingMap rankingMap) {
@@ -385,12 +446,12 @@ public class NotificationData {
         synchronized (this.mEntries) {
             int size = this.mEntries.size();
             for (int i3 = 0; i3 < size; i3++) {
-                Entry valueAt = this.mEntries.valueAt(i3);
-                if (i2 == valueAt.notification.getUid() && str.equals(valueAt.notification.getPackageName()) && str2.equals(valueAt.key)) {
+                Entry entryValueAt = this.mEntries.valueAt(i3);
+                if (i2 == entryValueAt.notification.getUid() && str.equals(entryValueAt.notification.getPackageName()) && str2.equals(entryValueAt.key)) {
                     if (z) {
-                        valueAt.mActiveAppOps.add(Integer.valueOf(i));
+                        entryValueAt.mActiveAppOps.add(Integer.valueOf(i));
                     } else {
-                        valueAt.mActiveAppOps.remove(Integer.valueOf(i));
+                        entryValueAt.mActiveAppOps.remove(Integer.valueOf(i));
                     }
                 }
             }
@@ -438,11 +499,11 @@ public class NotificationData {
             return false;
         }
         String str = entry.key;
-        if (this.mRankingMap != null) {
-            getRanking(str, this.mTmpRanking);
-            return (this.mTmpRanking.getSuppressedVisualEffects() & i) != 0;
+        if (this.mRankingMap == null) {
+            return false;
         }
-        return false;
+        getRanking(str, this.mTmpRanking);
+        return (this.mTmpRanking.getSuppressedVisualEffects() & i) != 0;
     }
 
     protected boolean isExemptFromDndVisualSuppression(Entry entry) {
@@ -520,17 +581,17 @@ public class NotificationData {
             synchronized (this.mEntries) {
                 int size = this.mEntries.size();
                 for (int i = 0; i < size; i++) {
-                    Entry valueAt = this.mEntries.valueAt(i);
-                    if (getRanking(valueAt.key, this.mTmpRanking)) {
-                        StatusBarNotification cloneLight = valueAt.notification.cloneLight();
-                        String overrideGroupKey = getOverrideGroupKey(valueAt.key);
-                        if (!Objects.equals(cloneLight.getOverrideGroupKey(), overrideGroupKey)) {
-                            valueAt.notification.setOverrideGroupKey(overrideGroupKey);
-                            this.mGroupManager.onEntryUpdated(valueAt, cloneLight);
+                    Entry entryValueAt = this.mEntries.valueAt(i);
+                    if (getRanking(entryValueAt.key, this.mTmpRanking)) {
+                        StatusBarNotification statusBarNotificationCloneLight = entryValueAt.notification.cloneLight();
+                        String overrideGroupKey = getOverrideGroupKey(entryValueAt.key);
+                        if (!Objects.equals(statusBarNotificationCloneLight.getOverrideGroupKey(), overrideGroupKey)) {
+                            entryValueAt.notification.setOverrideGroupKey(overrideGroupKey);
+                            this.mGroupManager.onEntryUpdated(entryValueAt, statusBarNotificationCloneLight);
                         }
-                        valueAt.channel = getChannel(valueAt.key);
-                        valueAt.snoozeCriteria = getSnoozeCriteria(valueAt.key);
-                        valueAt.userSentiment = this.mTmpRanking.getUserSentiment();
+                        entryValueAt.channel = getChannel(entryValueAt.key);
+                        entryValueAt.snoozeCriteria = getSnoozeCriteria(entryValueAt.key);
+                        entryValueAt.userSentiment = this.mTmpRanking.getUserSentiment();
                     }
                 }
             }
@@ -548,9 +609,9 @@ public class NotificationData {
         synchronized (this.mEntries) {
             int size = this.mEntries.size();
             for (int i = 0; i < size; i++) {
-                Entry valueAt = this.mEntries.valueAt(i);
-                if (!shouldFilterOut(valueAt)) {
-                    this.mSortedAndFiltered.add(valueAt);
+                Entry entryValueAt = this.mEntries.valueAt(i);
+                if (!shouldFilterOut(entryValueAt)) {
+                    this.mSortedAndFiltered.add(entryValueAt);
                 }
             }
         }
@@ -560,23 +621,23 @@ public class NotificationData {
     public boolean shouldFilterOut(Entry entry) {
         String[] stringArray;
         StatusBarNotification statusBarNotification = entry.notification;
-        if ((this.mEnvironment.isDeviceProvisioned() || showNotificationEvenIfUnprovisioned(statusBarNotification)) && this.mEnvironment.isNotificationForCurrentProfiles(statusBarNotification)) {
-            if (this.mEnvironment.isSecurelyLocked(statusBarNotification.getUserId()) && (statusBarNotification.getNotification().visibility == -1 || this.mEnvironment.shouldHideNotifications(statusBarNotification.getUserId()) || this.mEnvironment.shouldHideNotifications(statusBarNotification.getKey()))) {
-                return true;
-            }
-            if (this.mEnvironment.isDozing() && shouldSuppressAmbient(entry)) {
-                return true;
-            }
-            if ((this.mEnvironment.isDozing() || !shouldSuppressNotificationList(entry)) && !shouldHide(statusBarNotification.getKey())) {
-                if (StatusBar.ENABLE_CHILD_NOTIFICATIONS || !this.mGroupManager.isChildInGroupWithSummary(statusBarNotification)) {
-                    if (!this.mFsc.isDungeonNotification(statusBarNotification) || this.mFsc.isDungeonNeededForUser(statusBarNotification.getUserId())) {
-                        return this.mFsc.isSystemAlertNotification(statusBarNotification) && (stringArray = statusBarNotification.getNotification().extras.getStringArray("android.foregroundApps")) != null && stringArray.length >= 1 && !this.mFsc.isSystemAlertWarningNeeded(statusBarNotification.getUserId(), stringArray[0]);
-                    }
-                    return true;
-                }
-                return true;
-            }
+        if ((!this.mEnvironment.isDeviceProvisioned() && !showNotificationEvenIfUnprovisioned(statusBarNotification)) || !this.mEnvironment.isNotificationForCurrentProfiles(statusBarNotification)) {
             return true;
+        }
+        if (this.mEnvironment.isSecurelyLocked(statusBarNotification.getUserId()) && (statusBarNotification.getNotification().visibility == -1 || this.mEnvironment.shouldHideNotifications(statusBarNotification.getUserId()) || this.mEnvironment.shouldHideNotifications(statusBarNotification.getKey()))) {
+            return true;
+        }
+        if (this.mEnvironment.isDozing() && shouldSuppressAmbient(entry)) {
+            return true;
+        }
+        if ((!this.mEnvironment.isDozing() && shouldSuppressNotificationList(entry)) || shouldHide(statusBarNotification.getKey())) {
+            return true;
+        }
+        if (!StatusBar.ENABLE_CHILD_NOTIFICATIONS && this.mGroupManager.isChildInGroupWithSummary(statusBarNotification)) {
+            return true;
+        }
+        if (!this.mFsc.isDungeonNotification(statusBarNotification) || this.mFsc.isDungeonNeededForUser(statusBarNotification.getUserId())) {
+            return this.mFsc.isSystemAlertNotification(statusBarNotification) && (stringArray = statusBarNotification.getNotification().extras.getStringArray("android.foregroundApps")) != null && stringArray.length >= 1 && !this.mFsc.isSystemAlertWarningNeeded(statusBarNotification.getUserId(), stringArray[0]);
         }
         return true;
     }
@@ -613,9 +674,9 @@ public class NotificationData {
             printWriter.println("inactive notifications: " + (size2 - i));
             int i2 = 0;
             for (int i3 = 0; i3 < size2; i3++) {
-                Entry valueAt = this.mEntries.valueAt(i3);
-                if (!this.mSortedAndFiltered.contains(valueAt)) {
-                    dumpEntry(printWriter, str, i2, valueAt);
+                Entry entryValueAt = this.mEntries.valueAt(i3);
+                if (!this.mSortedAndFiltered.contains(entryValueAt)) {
+                    dumpEntry(printWriter, str, i2, entryValueAt);
                     i2++;
                 }
             }
@@ -636,8 +697,7 @@ public class NotificationData {
         printWriter.println(sb.toString());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static boolean isSystemNotification(StatusBarNotification statusBarNotification) {
+    private static boolean isSystemNotification(StatusBarNotification statusBarNotification) {
         String packageName = statusBarNotification.getPackageName();
         return "android".equals(packageName) || "com.android.systemui".equals(packageName);
     }

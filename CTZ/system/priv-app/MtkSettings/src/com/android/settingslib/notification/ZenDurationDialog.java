@@ -21,6 +21,7 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.internal.policy.PhoneWindow;
 import com.android.settingslib.R;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class ZenDurationDialog {
     protected static final int ALWAYS_ASK_CONDITION_INDEX = 2;
@@ -84,19 +85,19 @@ public class ZenDurationDialog {
         if (this.mLayoutInflater == null) {
             this.mLayoutInflater = new PhoneWindow(this.mContext).getLayoutInflater();
         }
-        View inflate = this.mLayoutInflater.inflate(R.layout.zen_mode_duration_dialog, (ViewGroup) null);
-        ScrollView scrollView = (ScrollView) inflate.findViewById(R.id.zen_duration_container);
+        View viewInflate = this.mLayoutInflater.inflate(R.layout.zen_mode_duration_dialog, (ViewGroup) null);
+        ScrollView scrollView = (ScrollView) viewInflate.findViewById(R.id.zen_duration_container);
         this.mZenRadioGroup = (RadioGroup) scrollView.findViewById(R.id.zen_radio_buttons);
         this.mZenRadioGroupContent = (LinearLayout) scrollView.findViewById(R.id.zen_radio_buttons_content);
         for (int i = 0; i < this.MAX_MANUAL_DND_OPTIONS; i++) {
-            View inflate2 = this.mLayoutInflater.inflate(R.layout.zen_mode_radio_button, (ViewGroup) this.mZenRadioGroup, false);
-            this.mZenRadioGroup.addView(inflate2);
-            inflate2.setId(i);
-            View inflate3 = this.mLayoutInflater.inflate(R.layout.zen_mode_condition, (ViewGroup) this.mZenRadioGroupContent, false);
-            inflate3.setId(this.MAX_MANUAL_DND_OPTIONS + i);
-            this.mZenRadioGroupContent.addView(inflate3);
+            View viewInflate2 = this.mLayoutInflater.inflate(R.layout.zen_mode_radio_button, (ViewGroup) this.mZenRadioGroup, false);
+            this.mZenRadioGroup.addView(viewInflate2);
+            viewInflate2.setId(i);
+            View viewInflate3 = this.mLayoutInflater.inflate(R.layout.zen_mode_condition, (ViewGroup) this.mZenRadioGroupContent, false);
+            viewInflate3.setId(this.MAX_MANUAL_DND_OPTIONS + i);
+            this.mZenRadioGroupContent.addView(viewInflate3);
         }
-        return inflate;
+        return viewInflate;
     }
 
     protected void setupRadioButtons(int i) {
@@ -135,13 +136,13 @@ public class ZenDurationDialog {
 
     private void setupUi(final ConditionTag conditionTag, View view) {
         if (conditionTag.lines == null) {
-            conditionTag.lines = view.findViewById(16908290);
+            conditionTag.lines = view.findViewById(android.R.id.content);
             conditionTag.lines.setAccessibilityLiveRegion(1);
         }
         if (conditionTag.line1 == null) {
-            conditionTag.line1 = (TextView) view.findViewById(16908308);
+            conditionTag.line1 = (TextView) view.findViewById(android.R.id.text1);
         }
-        view.findViewById(16908309).setVisibility(8);
+        view.findViewById(android.R.id.text2).setVisibility(8);
         conditionTag.lines.setOnClickListener(new View.OnClickListener() { // from class: com.android.settingslib.notification.ZenDurationDialog.3
             @Override // android.view.View.OnClickListener
             public void onClick(View view2) {
@@ -152,14 +153,14 @@ public class ZenDurationDialog {
 
     private void updateButtons(final ConditionTag conditionTag, final View view, final int i) {
         boolean z;
-        ImageView imageView = (ImageView) view.findViewById(16908313);
+        ImageView imageView = (ImageView) view.findViewById(android.R.id.button1);
         imageView.setOnClickListener(new View.OnClickListener() { // from class: com.android.settingslib.notification.ZenDurationDialog.4
             @Override // android.view.View.OnClickListener
             public void onClick(View view2) {
                 ZenDurationDialog.this.onClickTimeButton(view, conditionTag, false, i);
             }
         });
-        ImageView imageView2 = (ImageView) view.findViewById(16908314);
+        ImageView imageView2 = (ImageView) view.findViewById(android.R.id.button2);
         imageView2.setOnClickListener(new View.OnClickListener() { // from class: com.android.settingslib.notification.ZenDurationDialog.5
             @Override // android.view.View.OnClickListener
             public void onClick(View view2) {
@@ -194,19 +195,19 @@ public class ZenDurationDialog {
             setupUi(conditionTag, view);
         }
         updateButtons(conditionTag, view, i);
-        String str = "";
+        String string = "";
         switch (i) {
             case 0:
-                str = this.mContext.getString(17041145);
+                string = this.mContext.getString(android.R.string.permdesc_foregroundServiceMediaPlayback);
                 break;
             case 1:
-                str = ZenModeConfig.toTimeCondition(this.mContext, conditionTag.countdownZenDuration, ActivityManager.getCurrentUser(), false).line1;
+                string = ZenModeConfig.toTimeCondition(this.mContext, conditionTag.countdownZenDuration, ActivityManager.getCurrentUser(), false).line1;
                 break;
             case 2:
-                str = this.mContext.getString(R.string.zen_mode_duration_always_prompt_title);
+                string = this.mContext.getString(R.string.zen_mode_duration_always_prompt_title);
                 break;
         }
-        conditionTag.line1.setText(str);
+        conditionTag.line1.setText(string);
     }
 
     protected void onClickTimeButton(View view, ConditionTag conditionTag, boolean z, int i) {
@@ -241,9 +242,7 @@ public class ZenDurationDialog {
         conditionTag.rb.setChecked(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public static class ConditionTag {
+    protected static class ConditionTag {
         public int countdownZenDuration;
         public TextView line1;
         public View lines;

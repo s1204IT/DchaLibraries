@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public class DeferredTouchConsumer implements TouchConsumer {
@@ -12,7 +13,6 @@ public class DeferredTouchConsumer implements TouchConsumer {
     private final DeferredTouchProvider mTouchProvider;
     private final VelocityTracker mVelocityTracker = VelocityTracker.obtain();
 
-    /* loaded from: classes.dex */
     public interface DeferredTouchProvider {
         TouchConsumer createTouchConsumer(VelocityTracker velocityTracker);
     }
@@ -21,6 +21,7 @@ public class DeferredTouchConsumer implements TouchConsumer {
         this.mTouchProvider = deferredTouchProvider;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: accept(Ljava/lang/Object;)V */
     @Override // java.util.function.Consumer
     public void accept(MotionEvent motionEvent) {
         this.mTarget.accept(motionEvent);

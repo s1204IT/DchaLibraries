@@ -4,10 +4,10 @@ import com.google.common.base.Function;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
 /* loaded from: classes.dex */
 public abstract class Ordering<T> implements Comparator<T> {
 
-    /* loaded from: classes.dex */
     static class IncomparableValueException extends ClassCastException {
         private static final long serialVersionUID = 0;
         final Object value;
@@ -31,12 +31,14 @@ public abstract class Ordering<T> implements Comparator<T> {
         return UsingToStringOrdering.INSTANCE;
     }
 
-    /* loaded from: classes.dex */
     static class ArbitraryOrdering extends Ordering<Object> {
         private Map<Object, Integer> uids = Platform.tryWeakKeys(new MapMaker()).makeComputingMap(new Function<Object, Integer>() { // from class: com.google.common.collect.Ordering.ArbitraryOrdering.1
             final AtomicInteger counter = new AtomicInteger(0);
 
-            /* JADX WARN: Can't rename method to resolve collision */
+            AnonymousClass1() {
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: apply(Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // com.google.common.base.Function
             public Integer apply(Object obj) {
                 return Integer.valueOf(this.counter.getAndIncrement());
@@ -44,6 +46,20 @@ public abstract class Ordering<T> implements Comparator<T> {
         });
 
         ArbitraryOrdering() {
+        }
+
+        /* renamed from: com.google.common.collect.Ordering$ArbitraryOrdering$1 */
+        class AnonymousClass1 implements Function<Object, Integer> {
+            final AtomicInteger counter = new AtomicInteger(0);
+
+            AnonymousClass1() {
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: apply(Ljava/lang/Object;)Ljava/lang/Object; */
+            @Override // com.google.common.base.Function
+            public Integer apply(Object obj) {
+                return Integer.valueOf(this.counter.getAndIncrement());
+            }
         }
 
         @Override // com.google.common.collect.Ordering, java.util.Comparator
@@ -57,19 +73,19 @@ public abstract class Ordering<T> implements Comparator<T> {
             if (obj2 == null) {
                 return 1;
             }
-            int identityHashCode = identityHashCode(obj);
-            int identityHashCode2 = identityHashCode(obj2);
-            if (identityHashCode != identityHashCode2) {
-                if (identityHashCode < identityHashCode2) {
+            int iIdentityHashCode = identityHashCode(obj);
+            int iIdentityHashCode2 = identityHashCode(obj2);
+            if (iIdentityHashCode != iIdentityHashCode2) {
+                if (iIdentityHashCode < iIdentityHashCode2) {
                     return -1;
                 }
                 return 1;
             }
-            int compareTo = this.uids.get(obj).compareTo(this.uids.get(obj2));
-            if (compareTo == 0) {
+            int iCompareTo = this.uids.get(obj).compareTo(this.uids.get(obj2));
+            if (iCompareTo == 0) {
                 throw new AssertionError();
             }
-            return compareTo;
+            return iCompareTo;
         }
 
         public String toString() {
@@ -81,6 +97,9 @@ public abstract class Ordering<T> implements Comparator<T> {
         }
     }
 
+    protected Ordering() {
+    }
+
     public <S extends T> Ordering<S> reverse() {
         return new ReverseOrdering(this);
     }
@@ -89,8 +108,7 @@ public abstract class Ordering<T> implements Comparator<T> {
         return new ByFunctionOrdering(function, this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public <T2 extends T> Ordering<Map.Entry<T2, ?>> onKeys() {
+    <T2 extends T> Ordering<Map.Entry<T2, ?>> onKeys() {
         return (Ordering<Map.Entry<T2, ?>>) onResultOf(Maps.keyFunction());
     }
 }

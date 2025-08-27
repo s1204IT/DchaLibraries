@@ -15,6 +15,7 @@ import com.android.internal.R;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.Dependency;
 import com.android.systemui.Interpolators;
+
 /* loaded from: classes.dex */
 public class NotificationGuts extends FrameLayout {
     private int mActualHeight;
@@ -29,17 +30,14 @@ public class NotificationGuts extends FrameLayout {
     private OnHeightChangedListener mHeightListener;
     private boolean mNeedsFalsingProtection;
 
-    /* loaded from: classes.dex */
     public interface OnGutsClosedListener {
         void onGutsClosed(NotificationGuts notificationGuts);
     }
 
-    /* loaded from: classes.dex */
     public interface OnHeightChangedListener {
         void onHeightChanged(NotificationGuts notificationGuts);
     }
 
-    /* loaded from: classes.dex */
     public interface GutsContent {
         int getActualHeight();
 
@@ -154,13 +152,13 @@ public class NotificationGuts extends FrameLayout {
     }
 
     public void closeControls(int i, int i2, boolean z, boolean z2) {
-        boolean dismissCurrentBlockingHelper = ((NotificationBlockingHelperManager) Dependency.get(NotificationBlockingHelperManager.class)).dismissCurrentBlockingHelper();
+        boolean zDismissCurrentBlockingHelper = ((NotificationBlockingHelperManager) Dependency.get(NotificationBlockingHelperManager.class)).dismissCurrentBlockingHelper();
         if (getWindowToken() == null) {
             if (this.mClosedListener != null) {
                 this.mClosedListener.onGutsClosed(this);
             }
-        } else if (this.mGutsContent == null || !this.mGutsContent.handleCloseControls(z, z2) || dismissCurrentBlockingHelper) {
-            animateClose(i, i2, !dismissCurrentBlockingHelper);
+        } else if (this.mGutsContent == null || !this.mGutsContent.handleCloseControls(z, z2) || zDismissCurrentBlockingHelper) {
+            animateClose(i, i2, !zDismissCurrentBlockingHelper);
             setExposed(false, this.mNeedsFalsingProtection);
             if (this.mClosedListener != null) {
                 this.mClosedListener.onGutsClosed(this);
@@ -169,37 +167,41 @@ public class NotificationGuts extends FrameLayout {
     }
 
     private void animateOpen(boolean z, int i, int i2, Runnable runnable) {
-        if (!isAttachedToWindow()) {
-            Log.w("NotificationGuts", "Failed to animate guts open");
-        } else if (z) {
-            Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(this, i, i2, 0.0f, (float) Math.hypot(Math.max(getWidth() - i, i), Math.max(getHeight() - i2, i2)));
-            createCircularReveal.setDuration(360L);
-            createCircularReveal.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
-            createCircularReveal.addListener(new AnimateOpenListener(runnable));
-            createCircularReveal.start();
-        } else {
+        if (isAttachedToWindow()) {
+            if (z) {
+                Animator animatorCreateCircularReveal = ViewAnimationUtils.createCircularReveal(this, i, i2, 0.0f, (float) Math.hypot(Math.max(getWidth() - i, i), Math.max(getHeight() - i2, i2)));
+                animatorCreateCircularReveal.setDuration(360L);
+                animatorCreateCircularReveal.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
+                animatorCreateCircularReveal.addListener(new AnimateOpenListener(runnable));
+                animatorCreateCircularReveal.start();
+                return;
+            }
             setAlpha(0.0f);
             animate().alpha(1.0f).setDuration(240L).setInterpolator(Interpolators.ALPHA_IN).setListener(new AnimateOpenListener(runnable)).start();
+            return;
         }
+        Log.w("NotificationGuts", "Failed to animate guts open");
     }
 
     @VisibleForTesting
     void animateClose(int i, int i2, boolean z) {
-        if (!isAttachedToWindow()) {
-            Log.w("NotificationGuts", "Failed to animate guts close");
-        } else if (z) {
-            if (i == -1 || i2 == -1) {
-                i = (getLeft() + getRight()) / 2;
-                i2 = getTop() + (getHeight() / 2);
+        if (isAttachedToWindow()) {
+            if (z) {
+                if (i == -1 || i2 == -1) {
+                    i = (getLeft() + getRight()) / 2;
+                    i2 = getTop() + (getHeight() / 2);
+                }
+                Animator animatorCreateCircularReveal = ViewAnimationUtils.createCircularReveal(this, i, i2, (float) Math.hypot(Math.max(getWidth() - i, i), Math.max(getHeight() - i2, i2)), 0.0f);
+                animatorCreateCircularReveal.setDuration(360L);
+                animatorCreateCircularReveal.setInterpolator(Interpolators.FAST_OUT_LINEAR_IN);
+                animatorCreateCircularReveal.addListener(new AnimateCloseListener(this));
+                animatorCreateCircularReveal.start();
+                return;
             }
-            Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(this, i, i2, (float) Math.hypot(Math.max(getWidth() - i, i), Math.max(getHeight() - i2, i2)), 0.0f);
-            createCircularReveal.setDuration(360L);
-            createCircularReveal.setInterpolator(Interpolators.FAST_OUT_LINEAR_IN);
-            createCircularReveal.addListener(new AnimateCloseListener(this));
-            createCircularReveal.start();
-        } else {
             animate().alpha(0.0f).setDuration(240L).setInterpolator(Interpolators.ALPHA_OUT).setListener(new AnimateCloseListener(this)).start();
+            return;
         }
+        Log.w("NotificationGuts", "Failed to animate guts close");
     }
 
     public void setActualHeight(int i) {
@@ -234,8 +236,7 @@ public class NotificationGuts extends FrameLayout {
         this.mHeightListener = onHeightChangedListener;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onHeightChanged() {
+    protected void onHeightChanged() {
         if (this.mHeightListener != null) {
             this.mHeightListener.onHeightChanged(this);
         }
@@ -275,9 +276,7 @@ public class NotificationGuts extends FrameLayout {
         return this.mGutsContent != null && this.mGutsContent.isLeavebehind();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class AnimateOpenListener extends AnimatorListenerAdapter {
+    private static class AnimateOpenListener extends AnimatorListenerAdapter {
         final Runnable mOnAnimationEnd;
 
         private AnimateOpenListener(Runnable runnable) {
@@ -293,9 +292,7 @@ public class NotificationGuts extends FrameLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class AnimateCloseListener extends AnimatorListenerAdapter {
+    private static class AnimateCloseListener extends AnimatorListenerAdapter {
         final View mView;
 
         private AnimateCloseListener(View view) {

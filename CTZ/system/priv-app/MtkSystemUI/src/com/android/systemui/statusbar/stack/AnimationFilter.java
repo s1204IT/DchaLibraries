@@ -5,6 +5,7 @@ import android.util.Property;
 import android.view.View;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AnimationFilter {
     boolean animateAlpha;

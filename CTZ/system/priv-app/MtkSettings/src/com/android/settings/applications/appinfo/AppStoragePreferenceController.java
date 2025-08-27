@@ -15,6 +15,7 @@ import com.android.settingslib.applications.StorageStatsSource;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class AppStoragePreferenceController extends AppInfoPreferenceControllerBase implements LoaderManager.LoaderCallbacks<StorageStatsSource.AppStorageStats>, LifecycleObserver, OnPause, OnResume {
     private StorageStatsSource.AppStorageStats mLastResult;
@@ -68,6 +69,7 @@ public class AppStoragePreferenceController extends AppInfoPreferenceControllerB
         return new FetchPackageStorageAsyncLoader(this.mContext, new StorageStatsSource(this.mContext), this.mParent.getAppEntry().info, UserHandle.of(UserHandle.myUserId()));
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<StorageStatsSource.AppStorageStats> loader, StorageStatsSource.AppStorageStats appStorageStats) {
         this.mLastResult = appStorageStats;

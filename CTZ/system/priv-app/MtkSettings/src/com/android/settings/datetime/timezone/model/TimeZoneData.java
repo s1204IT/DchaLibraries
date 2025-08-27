@@ -4,12 +4,14 @@ import android.support.v4.util.ArraySet;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import libcore.util.CountryTimeZones;
 import libcore.util.CountryZonesFinder;
 import libcore.util.TimeZoneFinder;
+
 /* loaded from: classes.dex */
 public class TimeZoneData {
     private static WeakReference<TimeZoneData> sCache = null;
@@ -17,15 +19,13 @@ public class TimeZoneData {
     private final Set<String> mRegionIds;
 
     public static synchronized TimeZoneData getInstance() {
-        synchronized (TimeZoneData.class) {
-            TimeZoneData timeZoneData = sCache == null ? null : sCache.get();
-            if (timeZoneData != null) {
-                return timeZoneData;
-            }
-            TimeZoneData timeZoneData2 = new TimeZoneData(TimeZoneFinder.getInstance().getCountryZonesFinder());
-            sCache = new WeakReference<>(timeZoneData2);
-            return timeZoneData2;
+        TimeZoneData timeZoneData = sCache == null ? null : sCache.get();
+        if (timeZoneData != null) {
+            return timeZoneData;
         }
+        TimeZoneData timeZoneData2 = new TimeZoneData(TimeZoneFinder.getInstance().getCountryZonesFinder());
+        sCache = new WeakReference<>(timeZoneData2);
+        return timeZoneData2;
     }
 
     public TimeZoneData(CountryZonesFinder countryZonesFinder) {
@@ -41,10 +41,11 @@ public class TimeZoneData {
         if (str == null) {
             return Collections.emptySet();
         }
-        List<CountryTimeZones> lookupCountryTimeZonesForZoneId = this.mCountryZonesFinder.lookupCountryTimeZonesForZoneId(str);
+        List listLookupCountryTimeZonesForZoneId = this.mCountryZonesFinder.lookupCountryTimeZonesForZoneId(str);
         ArraySet arraySet = new ArraySet();
-        for (CountryTimeZones countryTimeZones : lookupCountryTimeZonesForZoneId) {
-            FilteredCountryTimeZones filteredCountryTimeZones = new FilteredCountryTimeZones(countryTimeZones);
+        Iterator it = listLookupCountryTimeZonesForZoneId.iterator();
+        while (it.hasNext()) {
+            FilteredCountryTimeZones filteredCountryTimeZones = new FilteredCountryTimeZones((CountryTimeZones) it.next());
             if (filteredCountryTimeZones.getTimeZoneIds().contains(str)) {
                 arraySet.add(filteredCountryTimeZones.getRegionId());
             }
@@ -53,22 +54,23 @@ public class TimeZoneData {
     }
 
     public FilteredCountryTimeZones lookupCountryTimeZones(String str) {
-        CountryTimeZones lookupCountryTimeZones;
+        CountryTimeZones countryTimeZonesLookupCountryTimeZones;
         if (str != null) {
-            lookupCountryTimeZones = this.mCountryZonesFinder.lookupCountryTimeZones(str);
+            countryTimeZonesLookupCountryTimeZones = this.mCountryZonesFinder.lookupCountryTimeZones(str);
         } else {
-            lookupCountryTimeZones = null;
+            countryTimeZonesLookupCountryTimeZones = null;
         }
-        if (lookupCountryTimeZones == null) {
+        if (countryTimeZonesLookupCountryTimeZones == null) {
             return null;
         }
-        return new FilteredCountryTimeZones(lookupCountryTimeZones);
+        return new FilteredCountryTimeZones(countryTimeZonesLookupCountryTimeZones);
     }
 
     private static Set<String> getNormalizedRegionIds(List<String> list) {
         HashSet hashSet = new HashSet(list.size());
-        for (String str : list) {
-            hashSet.add(normalizeRegionId(str));
+        Iterator<String> it = list.iterator();
+        while (it.hasNext()) {
+            hashSet.add(normalizeRegionId(it.next()));
         }
         return Collections.unmodifiableSet(hashSet);
     }

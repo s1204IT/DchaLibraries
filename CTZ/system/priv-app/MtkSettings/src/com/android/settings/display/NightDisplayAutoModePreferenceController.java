@@ -7,6 +7,7 @@ import android.support.v7.preference.PreferenceScreen;
 import com.android.internal.app.ColorDisplayController;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class NightDisplayAutoModePreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener {
     private ColorDisplayController mController;

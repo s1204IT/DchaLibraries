@@ -1,5 +1,6 @@
 package com.android.settings.notification;
 
+import android.R;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Ringtone;
@@ -7,8 +8,8 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
-import com.android.settings.R;
 import com.android.settings.RingtonePreference;
+
 /* loaded from: classes.dex */
 public class NotificationSoundPreference extends RingtonePreference {
     private Uri mRingtone;
@@ -41,25 +42,25 @@ public class NotificationSoundPreference extends RingtonePreference {
 
     private void updateRingtoneName(final Uri uri) {
         new AsyncTask<Object, Void, CharSequence>() { // from class: com.android.settings.notification.NotificationSoundPreference.1
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.AsyncTask
-            public CharSequence doInBackground(Object... objArr) {
+            protected CharSequence doInBackground(Object... objArr) {
                 if (uri == null) {
-                    return NotificationSoundPreference.this.getContext().getString(17040786);
+                    return NotificationSoundPreference.this.getContext().getString(R.string.media_route_chooser_title);
                 }
                 if (RingtoneManager.isDefault(uri)) {
-                    return NotificationSoundPreference.this.getContext().getString(R.string.notification_sound_default);
+                    return NotificationSoundPreference.this.getContext().getString(com.android.settings.R.string.notification_sound_default);
                 }
                 if ("android.resource".equals(uri.getScheme())) {
-                    return NotificationSoundPreference.this.getContext().getString(R.string.notification_unknown_sound_title);
+                    return NotificationSoundPreference.this.getContext().getString(com.android.settings.R.string.notification_unknown_sound_title);
                 }
                 return Ringtone.getTitle(NotificationSoundPreference.this.getContext(), uri, false, true);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(CharSequence charSequence) {
+            protected void onPostExecute(CharSequence charSequence) {
                 NotificationSoundPreference.this.setSummary(charSequence);
             }
         }.execute(new Object[0]);

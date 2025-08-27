@@ -5,6 +5,7 @@ import android.app.VoiceInteractor;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public abstract class VoiceSettingsActivity extends Activity {
     protected abstract boolean onVoiceSettingInteraction(Intent intent);
@@ -15,16 +16,14 @@ public abstract class VoiceSettingsActivity extends Activity {
         if (isVoiceInteractionRoot()) {
             if (onVoiceSettingInteraction(getIntent())) {
                 finish();
-                return;
             }
-            return;
+        } else {
+            Log.v("VoiceSettingsActivity", "Cannot modify settings without voice interaction");
+            finish();
         }
-        Log.v("VoiceSettingsActivity", "Cannot modify settings without voice interaction");
-        finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void notifySuccess(CharSequence charSequence) {
+    protected void notifySuccess(CharSequence charSequence) {
         if (getVoiceInteractor() != null) {
             getVoiceInteractor().submitRequest(new VoiceInteractor.CompleteVoiceRequest(charSequence, null) { // from class: com.android.settings.utils.VoiceSettingsActivity.1
                 @Override // android.app.VoiceInteractor.CompleteVoiceRequest
@@ -35,8 +34,7 @@ public abstract class VoiceSettingsActivity extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void notifyFailure(CharSequence charSequence) {
+    protected void notifyFailure(CharSequence charSequence) {
         if (getVoiceInteractor() != null) {
             getVoiceInteractor().submitRequest(new VoiceInteractor.AbortVoiceRequest(charSequence, (Bundle) null));
         }

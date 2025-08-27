@@ -11,6 +11,7 @@ import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
+
 /* loaded from: classes.dex */
 public class NfcTile extends QSTileImpl<QSTile.BooleanState> {
     private NfcAdapter mAdapter;
@@ -27,7 +28,7 @@ public class NfcTile extends QSTileImpl<QSTile.BooleanState> {
         };
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -48,9 +49,8 @@ public class NfcTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mContext.getPackageManager().hasSystemFeature("android.hardware.nfc");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUserSwitch(int i) {
+    protected void handleUserSwitch(int i) {
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
@@ -77,9 +77,9 @@ public class NfcTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mContext.getString(R.string.quick_settings_nfc_label);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         Drawable drawable = this.mContext.getDrawable(R.drawable.ic_qs_nfc_enabled);
         Drawable drawable2 = this.mContext.getDrawable(R.drawable.ic_qs_nfc_disabled);
         if (getAdapter() == null) {

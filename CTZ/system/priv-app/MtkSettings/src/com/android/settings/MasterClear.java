@@ -39,6 +39,7 @@ import com.android.settings.enterprise.ActionDisabledByAdminDialogHelper;
 import com.android.settings.password.ChooseLockSettingsHelper;
 import com.android.settingslib.RestrictedLockUtils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class MasterClear extends InstrumentedFragment implements ViewTreeObserver.OnGlobalLayoutListener {
     static final int CREDENTIAL_CONFIRM_REQUEST = 56;
@@ -85,8 +86,7 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
         getActivity().setTitle(R.string.master_clear_short_title);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean runKeyguardConfirmation(int i) {
+    private boolean runKeyguardConfirmation(int i) {
         return new ChooseLockSettingsHelper(getActivity(), this).launchConfirmationActivity(i, getActivity().getResources().getText(R.string.master_clear_short_title));
     }
 
@@ -137,8 +137,8 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
         Account[] accountsByType = AccountManager.get(activity).getAccountsByType(string);
         if (accountsByType != null && accountsByType.length > 0) {
             Intent component = new Intent().setPackage(string2).setComponent(new ComponentName(string2, string3));
-            ResolveInfo resolveActivity = activity.getPackageManager().resolveActivity(component, 0);
-            if (resolveActivity != null && resolveActivity.activityInfo != null && string2.equals(resolveActivity.activityInfo.packageName)) {
+            ResolveInfo resolveInfoResolveActivity = activity.getPackageManager().resolveActivity(component, 0);
+            if (resolveInfoResolveActivity != null && resolveInfoResolveActivity.activityInfo != null && string2.equals(resolveInfoResolveActivity.activityInfo.packageName)) {
                 return component;
             }
             Log.i("MasterClear", "Unable to resolve Activity: " + string2 + "/" + string3);
@@ -159,12 +159,12 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
             this.mScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
         }
         this.mScrollView = (ScrollView) this.mContentView.findViewById(R.id.master_clear_scrollview);
-        boolean isExternalStorageEmulated = Environment.isExternalStorageEmulated();
-        if (isExternalStorageEmulated || (!Environment.isExternalStorageRemovable() && isExtStorageEncrypted())) {
+        boolean zIsExternalStorageEmulated = Environment.isExternalStorageEmulated();
+        if (zIsExternalStorageEmulated || (!Environment.isExternalStorageRemovable() && isExtStorageEncrypted())) {
             this.mExternalStorageContainer.setVisibility(8);
             this.mContentView.findViewById(R.id.erase_external_option_text).setVisibility(8);
             this.mContentView.findViewById(R.id.also_erases_external).setVisibility(0);
-            this.mExternalStorage.setChecked(!isExternalStorageEmulated);
+            this.mExternalStorage.setChecked(!zIsExternalStorageEmulated);
         } else {
             this.mExternalStorageContainer.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.MasterClear.2
                 @Override // android.view.View.OnClickListener
@@ -191,9 +191,9 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
         }
         loadAccountList((UserManager) getActivity().getSystemService("user"));
         StringBuffer stringBuffer = new StringBuffer();
-        View findViewById = this.mContentView.findViewById(R.id.master_clear_container);
-        getContentDescription(findViewById, stringBuffer);
-        findViewById.setContentDescription(stringBuffer);
+        View viewFindViewById = this.mContentView.findViewById(R.id.master_clear_container);
+        getContentDescription(viewFindViewById, stringBuffer);
+        viewFindViewById.setContentDescription(stringBuffer);
         this.mScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() { // from class: com.android.settings.MasterClear.4
             @Override // android.view.View.OnScrollChangeListener
             public void onScrollChange(View view, int i, int i2, int i3, int i4) {
@@ -208,11 +208,11 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
 
     boolean showWipeEuicc() {
         Context context = getContext();
-        if (isEuiccEnabled(context)) {
-            ContentResolver contentResolver = context.getContentResolver();
-            return (Settings.Global.getInt(contentResolver, "euicc_provisioned", 0) == 0 && Settings.Global.getInt(contentResolver, "development_settings_enabled", 0) == 0) ? false : true;
+        if (!isEuiccEnabled(context)) {
+            return false;
         }
-        return false;
+        ContentResolver contentResolver = context.getContentResolver();
+        return (Settings.Global.getInt(contentResolver, "euicc_provisioned", 0) == 0 && Settings.Global.getInt(contentResolver, "development_settings_enabled", 0) == 0) ? false : true;
     }
 
     boolean showWipeEuiccCheckbox() {
@@ -257,13 +257,13 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
         int i;
         List list;
         AccountManager accountManager;
-        Drawable drawable;
+        Drawable defaultActivityIcon;
         int i2;
         Account[] accountArr;
         AuthenticatorDescription authenticatorDescription;
         int i3;
         AuthenticatorDescription[] authenticatorDescriptionArr;
-        View findViewById = this.mContentView.findViewById(R.id.accounts_label);
+        View viewFindViewById = this.mContentView.findViewById(R.id.accounts_label);
         LinearLayout linearLayout = (LinearLayout) this.mContentView.findViewById(R.id.accounts);
         linearLayout.removeAllViews();
         Activity activity = getActivity();
@@ -289,16 +289,16 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
                 int length2 = authenticatorTypesAsUser.length;
                 accountManager = accountManager2;
                 if (size > 1) {
-                    View inflateCategoryHeader = Utils.inflateCategoryHeader(layoutInflater, linearLayout);
-                    ((TextView) inflateCategoryHeader.findViewById(16908310)).setText(userInfo.isManagedProfile() ? R.string.category_work : R.string.category_personal);
-                    linearLayout.addView(inflateCategoryHeader);
+                    View viewInflateCategoryHeader = Utils.inflateCategoryHeader(layoutInflater, linearLayout);
+                    ((TextView) viewInflateCategoryHeader.findViewById(android.R.id.title)).setText(userInfo.isManagedProfile() ? R.string.category_work : R.string.category_personal);
+                    linearLayout.addView(viewInflateCategoryHeader);
                 }
                 int i8 = 0;
                 while (i8 < length) {
                     Account account = accountsAsUser[i8];
                     int i9 = 0;
                     while (true) {
-                        drawable = null;
+                        defaultActivityIcon = null;
                         if (i9 < length2) {
                             i2 = length2;
                             accountArr = accountsAsUser;
@@ -326,16 +326,16 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
                             if (authenticatorDescription.iconId != 0) {
                                 i3 = length;
                                 try {
-                                    drawable = activity.getPackageManager().getUserBadgedIcon(activity.createPackageContextAsUser(authenticatorDescription.packageName, 0, userHandle).getDrawable(authenticatorDescription.iconId), userHandle);
+                                    defaultActivityIcon = activity.getPackageManager().getUserBadgedIcon(activity.createPackageContextAsUser(authenticatorDescription.packageName, 0, userHandle).getDrawable(authenticatorDescription.iconId), userHandle);
                                 } catch (PackageManager.NameNotFoundException e) {
                                     authenticatorDescriptionArr = authenticatorTypesAsUser;
                                     Log.w("MasterClear", "Bad package name for account type " + authenticatorDescription.type);
-                                    if (drawable == null) {
+                                    if (defaultActivityIcon == null) {
                                     }
-                                    View inflate = layoutInflater.inflate(R.layout.master_clear_account, (ViewGroup) linearLayout, false);
-                                    ((ImageView) inflate.findViewById(16908294)).setImageDrawable(drawable);
-                                    ((TextView) inflate.findViewById(16908310)).setText(account.name);
-                                    linearLayout.addView(inflate);
+                                    View viewInflate = layoutInflater.inflate(R.layout.master_clear_account, (ViewGroup) linearLayout, false);
+                                    ((ImageView) viewInflate.findViewById(android.R.id.icon)).setImageDrawable(defaultActivityIcon);
+                                    ((TextView) viewInflate.findViewById(android.R.id.title)).setText(account.name);
+                                    linearLayout.addView(viewInflate);
                                     i8++;
                                     length2 = i2;
                                     accountsAsUser = accountArr;
@@ -348,12 +348,12 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
                                     sb.append("Invalid icon id for account type ");
                                     sb.append(authenticatorDescription.type);
                                     Log.w("MasterClear", sb.toString(), e);
-                                    if (drawable == null) {
+                                    if (defaultActivityIcon == null) {
                                     }
-                                    View inflate2 = layoutInflater.inflate(R.layout.master_clear_account, (ViewGroup) linearLayout, false);
-                                    ((ImageView) inflate2.findViewById(16908294)).setImageDrawable(drawable);
-                                    ((TextView) inflate2.findViewById(16908310)).setText(account.name);
-                                    linearLayout.addView(inflate2);
+                                    View viewInflate2 = layoutInflater.inflate(R.layout.master_clear_account, (ViewGroup) linearLayout, false);
+                                    ((ImageView) viewInflate2.findViewById(android.R.id.icon)).setImageDrawable(defaultActivityIcon);
+                                    ((TextView) viewInflate2.findViewById(android.R.id.title)).setText(account.name);
+                                    linearLayout.addView(viewInflate2);
                                     i8++;
                                     length2 = i2;
                                     accountsAsUser = accountArr;
@@ -370,13 +370,13 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
                             e = e4;
                             i3 = length;
                         }
-                        if (drawable == null) {
-                            drawable = activity.getPackageManager().getDefaultActivityIcon();
+                        if (defaultActivityIcon == null) {
+                            defaultActivityIcon = activity.getPackageManager().getDefaultActivityIcon();
                         }
-                        View inflate22 = layoutInflater.inflate(R.layout.master_clear_account, (ViewGroup) linearLayout, false);
-                        ((ImageView) inflate22.findViewById(16908294)).setImageDrawable(drawable);
-                        ((TextView) inflate22.findViewById(16908310)).setText(account.name);
-                        linearLayout.addView(inflate22);
+                        View viewInflate22 = layoutInflater.inflate(R.layout.master_clear_account, (ViewGroup) linearLayout, false);
+                        ((ImageView) viewInflate22.findViewById(android.R.id.icon)).setImageDrawable(defaultActivityIcon);
+                        ((TextView) viewInflate22.findViewById(android.R.id.title)).setText(account.name);
+                        linearLayout.addView(viewInflate22);
                     }
                     i8++;
                     length2 = i2;
@@ -393,37 +393,37 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
         int i10 = 1;
         if (i4 > 0) {
             i = 0;
-            findViewById.setVisibility(0);
+            viewFindViewById.setVisibility(0);
             linearLayout.setVisibility(0);
         } else {
             i = 0;
         }
-        View findViewById2 = this.mContentView.findViewById(R.id.other_users_present);
+        View viewFindViewById2 = this.mContentView.findViewById(R.id.other_users_present);
         if (userManager.getUserCount() - size <= 0) {
             i10 = i;
         }
         if (i10 == 0) {
             i = 8;
         }
-        findViewById2.setVisibility(i);
+        viewFindViewById2.setVisibility(i);
     }
 
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         Context context = getContext();
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(context, "no_factory_reset", UserHandle.myUserId());
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(context, "no_factory_reset", UserHandle.myUserId());
         if ((!UserManager.get(context).isAdminUser() || RestrictedLockUtils.hasBaseUserRestriction(context, "no_factory_reset", UserHandle.myUserId())) && !Utils.isDemoUser(context)) {
             return layoutInflater.inflate(R.layout.master_clear_disallowed_screen, (ViewGroup) null);
         }
-        if (checkIfRestrictionEnforced == null) {
+        if (enforcedAdminCheckIfRestrictionEnforced == null) {
             this.mContentView = layoutInflater.inflate(R.layout.master_clear, (ViewGroup) null);
             establishInitialState();
             return this.mContentView;
         }
-        new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_factory_reset", checkIfRestrictionEnforced).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.-$$Lambda$MasterClear$Z9cDw51Fmk6mKl61MZqDIXg0-34
+        new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_factory_reset", enforcedAdminCheckIfRestrictionEnforced).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.-$$Lambda$MasterClear$Z9cDw51Fmk6mKl61MZqDIXg0-34
             @Override // android.content.DialogInterface.OnDismissListener
             public final void onDismiss(DialogInterface dialogInterface) {
-                MasterClear.this.getActivity().finish();
+                this.f$0.getActivity().finish();
             }
         }).show();
         return new View(getContext());

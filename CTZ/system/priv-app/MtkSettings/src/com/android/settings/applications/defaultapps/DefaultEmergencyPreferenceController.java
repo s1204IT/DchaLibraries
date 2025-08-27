@@ -6,6 +6,7 @@ import android.content.pm.ResolveInfo;
 import android.provider.Settings;
 import com.android.settingslib.applications.DefaultAppInfo;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultEmergencyPreferenceController extends DefaultAppPreferenceController {
     public static final Intent QUERY_INTENT = new Intent("android.telephony.action.EMERGENCY_ASSISTANCE");
@@ -32,8 +33,8 @@ public class DefaultEmergencyPreferenceController extends DefaultAppPreferenceCo
     public static boolean hasEmergencyPreference(String str, Context context) {
         Intent intent = new Intent(QUERY_INTENT);
         intent.setPackage(str);
-        List<ResolveInfo> queryIntentActivities = context.getPackageManager().queryIntentActivities(intent, 0);
-        return (queryIntentActivities == null || queryIntentActivities.size() == 0) ? false : true;
+        List<ResolveInfo> listQueryIntentActivities = context.getPackageManager().queryIntentActivities(intent, 0);
+        return (listQueryIntentActivities == null || listQueryIntentActivities.size() == 0) ? false : true;
     }
 
     public static boolean isEmergencyDefault(String str, Context context) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.UserManager;
 import com.android.settingslib.Utils;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public abstract class AbstractSimStatusImeiInfoPreferenceController extends AbstractPreferenceController {
     public AbstractSimStatusImeiInfoPreferenceController(Context context) {

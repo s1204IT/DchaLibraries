@@ -19,6 +19,7 @@ import com.android.settings.deviceinfo.StorageSettings;
 import com.android.settingslib.Utils;
 import java.io.File;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class StorageVolumePreference extends Preference {
     private static final String TAG = StorageVolumePreference.class.getSimpleName();
@@ -34,11 +35,11 @@ public class StorageVolumePreference extends Preference {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public StorageVolumePreference(Context context, VolumeInfo volumeInfo, int i, long j) {
-        super(context);
         Drawable drawable;
-        long j2;
+        long totalSpace;
         long freeSpace;
-        long j3;
+        long j2;
+        super(context);
         this.mUsedPercent = -1;
         this.mUnmountListener = new View.OnClickListener() { // from class: com.android.settings.deviceinfo.StorageVolumePreference.1
             @Override // android.view.View.OnClickListener
@@ -62,46 +63,47 @@ public class StorageVolumePreference extends Preference {
             if (volumeInfo.getType() == 1) {
                 StorageStatsManager storageStatsManager = (StorageStatsManager) context.getSystemService(StorageStatsManager.class);
                 try {
-                    j2 = storageStatsManager.getTotalBytes(volumeInfo.getFsUuid());
-                } catch (IOException e) {
-                    e = e;
-                    j2 = j;
-                }
-                try {
-                    freeSpace = storageStatsManager.getFreeBytes(volumeInfo.getFsUuid());
-                    j3 = j2 - freeSpace;
+                    totalSpace = storageStatsManager.getTotalBytes(volumeInfo.getFsUuid());
+                    try {
+                        freeSpace = storageStatsManager.getFreeBytes(volumeInfo.getFsUuid());
+                        j2 = totalSpace - freeSpace;
+                    } catch (IOException e) {
+                        e = e;
+                        Log.w(TAG, e);
+                        freeSpace = 0;
+                        j2 = 0;
+                        setSummary(context.getString(R.string.storage_volume_summary, Formatter.formatFileSize(context, j2), Formatter.formatFileSize(context, totalSpace)));
+                        if (totalSpace > 0) {
+                        }
+                        if (freeSpace < this.mStorageManager.getStorageLowBytes(path)) {
+                        }
+                        drawable.mutate();
+                        drawable.setTint(this.mColor);
+                        setIcon(drawable);
+                        if (volumeInfo.getType() != 0) {
+                        } else {
+                            return;
+                        }
+                    }
                 } catch (IOException e2) {
                     e = e2;
-                    Log.w(TAG, e);
-                    freeSpace = 0;
-                    j3 = 0;
-                    setSummary(context.getString(R.string.storage_volume_summary, Formatter.formatFileSize(context, j3), Formatter.formatFileSize(context, j2)));
-                    if (j2 > 0) {
-                    }
-                    if (freeSpace < this.mStorageManager.getStorageLowBytes(path)) {
-                    }
-                    drawable.mutate();
-                    drawable.setTint(this.mColor);
-                    setIcon(drawable);
-                    if (volumeInfo.getType() != 0) {
-                    }
-                    return;
+                    totalSpace = j;
                 }
             } else {
                 if (j <= 0) {
-                    j2 = path.getTotalSpace();
+                    totalSpace = path.getTotalSpace();
                 } else {
-                    j2 = j;
+                    totalSpace = j;
                 }
                 freeSpace = path.getFreeSpace();
-                j3 = j2 - freeSpace;
+                j2 = totalSpace - freeSpace;
             }
-            setSummary(context.getString(R.string.storage_volume_summary, Formatter.formatFileSize(context, j3), Formatter.formatFileSize(context, j2)));
-            if (j2 > 0) {
-                this.mUsedPercent = (int) ((j3 * 100) / j2);
+            setSummary(context.getString(R.string.storage_volume_summary, Formatter.formatFileSize(context, j2), Formatter.formatFileSize(context, totalSpace)));
+            if (totalSpace > 0) {
+                this.mUsedPercent = (int) ((j2 * 100) / totalSpace);
             }
             if (freeSpace < this.mStorageManager.getStorageLowBytes(path)) {
-                this.mColor = Utils.getColorAttr(context, 16844099);
+                this.mColor = Utils.getColorAttr(context, android.R.attr.colorError);
                 drawable = context.getDrawable(R.drawable.ic_warning_24dp);
             }
         } else {
@@ -123,7 +125,7 @@ public class StorageVolumePreference extends Preference {
             imageView.setImageTintList(ColorStateList.valueOf(Color.parseColor("#8a000000")));
             imageView.setOnClickListener(this.mUnmountListener);
         }
-        ProgressBar progressBar = (ProgressBar) preferenceViewHolder.findViewById(16908301);
+        ProgressBar progressBar = (ProgressBar) preferenceViewHolder.findViewById(android.R.id.progress);
         if (this.mVolume.getType() == 1 && this.mUsedPercent != -1) {
             progressBar.setVisibility(0);
             progressBar.setProgress(this.mUsedPercent);

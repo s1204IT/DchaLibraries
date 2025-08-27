@@ -1,11 +1,13 @@
 package com.android.settings.enterprise;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class ManageDeviceAdminPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final EnterprisePrivacyFeatureProvider mFeatureProvider;
@@ -16,7 +18,7 @@ public class ManageDeviceAdminPreferenceController extends AbstractPreferenceCon
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
-    public void updateState(Preference preference) {
+    public void updateState(Preference preference) throws Resources.NotFoundException {
         String quantityString;
         int numberOfActiveDeviceAdminsForCurrentUserAndManagedProfile = this.mFeatureProvider.getNumberOfActiveDeviceAdminsForCurrentUserAndManagedProfile();
         if (numberOfActiveDeviceAdminsForCurrentUserAndManagedProfile == 0) {

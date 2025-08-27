@@ -11,6 +11,7 @@ import com.mediatek.systemui.statusbar.util.FeatureOptions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class CallbackHandler extends Handler implements NetworkController.EmergencyListener, NetworkController.SignalCallback {
     static final boolean CHATTY;
@@ -48,7 +49,7 @@ public class CallbackHandler extends Handler implements NetworkController.Emerge
                 while (it.hasNext()) {
                     it.next().setEmergencyCallsOnly(message.arg1 != 0);
                 }
-                return;
+                break;
             case 1:
                 if (CHATTY) {
                     Log.d("CallbackHandler", "handleMessage(MSG_SUBS_CHANGED), mSignalCallbacks = " + this.mSignalCallbacks);
@@ -57,38 +58,38 @@ public class CallbackHandler extends Handler implements NetworkController.Emerge
                 while (it2.hasNext()) {
                     it2.next().setSubs((List) message.obj);
                 }
-                return;
+                break;
             case 2:
                 Iterator<NetworkController.SignalCallback> it3 = this.mSignalCallbacks.iterator();
                 while (it3.hasNext()) {
                     it3.next().setNoSims(message.arg1 != 0, message.arg2 != 0);
                 }
-                return;
+                break;
             case 3:
                 Iterator<NetworkController.SignalCallback> it4 = this.mSignalCallbacks.iterator();
                 while (it4.hasNext()) {
                     it4.next().setEthernetIndicators((NetworkController.IconState) message.obj);
                 }
-                return;
+                break;
             case 4:
                 Iterator<NetworkController.SignalCallback> it5 = this.mSignalCallbacks.iterator();
                 while (it5.hasNext()) {
                     it5.next().setIsAirplaneMode((NetworkController.IconState) message.obj);
                 }
-                return;
+                break;
             case 5:
                 Iterator<NetworkController.SignalCallback> it6 = this.mSignalCallbacks.iterator();
                 while (it6.hasNext()) {
                     it6.next().setMobileDataEnabled(message.arg1 != 0);
                 }
-                return;
+                break;
             case 6:
                 if (message.arg1 != 0) {
                     this.mEmergencyListeners.add((NetworkController.EmergencyListener) message.obj);
-                    return;
+                    break;
                 } else {
                     this.mEmergencyListeners.remove((NetworkController.EmergencyListener) message.obj);
-                    return;
+                    break;
                 }
             case 7:
                 if (CHATTY) {
@@ -96,13 +97,11 @@ public class CallbackHandler extends Handler implements NetworkController.Emerge
                 }
                 if (message.arg1 != 0) {
                     this.mSignalCallbacks.add((NetworkController.SignalCallback) message.obj);
-                    return;
+                    break;
                 } else {
                     this.mSignalCallbacks.remove((NetworkController.SignalCallback) message.obj);
-                    return;
+                    break;
                 }
-            default:
-                return;
         }
     }
 

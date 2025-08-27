@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.ShadowKeyDrawable;
+
 /* loaded from: classes.dex */
 public class KeyButtonDrawable extends LayerDrawable {
     private final boolean mHasDarkDrawable;
@@ -23,8 +24,7 @@ public class KeyButtonDrawable extends LayerDrawable {
         return new KeyButtonDrawable(new Drawable[]{new ShadowKeyDrawable(drawable.mutate())});
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public KeyButtonDrawable(Drawable[] drawableArr) {
+    protected KeyButtonDrawable(Drawable[] drawableArr) {
         super(drawableArr);
         for (int i = 0; i < drawableArr.length; i++) {
             setLayerGravity(i, 17);

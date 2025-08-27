@@ -4,13 +4,15 @@ import android.accounts.Account;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+
 /* loaded from: classes.dex */
 public class SyncStateContentProviderHelper {
     private static long DB_VERSION = 1;
     private static final String[] ACCOUNT_PROJECTION = {"account_name", "account_type"};
 
-    public void createDatabase(SQLiteDatabase sQLiteDatabase) {
+    public void createDatabase(SQLiteDatabase sQLiteDatabase) throws SQLException {
         sQLiteDatabase.execSQL("DROP TABLE IF EXISTS _sync_state");
         sQLiteDatabase.execSQL("CREATE TABLE _sync_state (_id INTEGER PRIMARY KEY,account_name TEXT NOT NULL,account_type TEXT NOT NULL,data TEXT,UNIQUE(account_name, account_type));");
         sQLiteDatabase.execSQL("DROP TABLE IF EXISTS _sync_state_metadata");
@@ -20,7 +22,7 @@ public class SyncStateContentProviderHelper {
         sQLiteDatabase.insert("_sync_state_metadata", "version", contentValues);
     }
 
-    public void onDatabaseOpened(SQLiteDatabase sQLiteDatabase) {
+    public void onDatabaseOpened(SQLiteDatabase sQLiteDatabase) throws SQLException {
         if (DatabaseUtils.longForQuery(sQLiteDatabase, "SELECT version FROM _sync_state_metadata", null) != DB_VERSION) {
             createDatabase(sQLiteDatabase);
         }
@@ -43,16 +45,16 @@ public class SyncStateContentProviderHelper {
     }
 
     public void onAccountsChanged(SQLiteDatabase sQLiteDatabase, Account[] accountArr) {
-        Cursor query = sQLiteDatabase.query("_sync_state", ACCOUNT_PROJECTION, null, null, null, null, null);
-        while (query.moveToNext()) {
+        Cursor cursorQuery = sQLiteDatabase.query("_sync_state", ACCOUNT_PROJECTION, null, null, null, null, null);
+        while (cursorQuery.moveToNext()) {
             try {
-                String string = query.getString(0);
-                String string2 = query.getString(1);
+                String string = cursorQuery.getString(0);
+                String string2 = cursorQuery.getString(1);
                 if (!contains(accountArr, new Account(string, string2))) {
                     sQLiteDatabase.delete("_sync_state", "account_name=? AND account_type=?", new String[]{string, string2});
                 }
             } finally {
-                query.close();
+                cursorQuery.close();
             }
         }
     }

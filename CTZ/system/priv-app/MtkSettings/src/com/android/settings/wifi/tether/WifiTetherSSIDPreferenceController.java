@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import android.util.Log;
 import com.android.settings.widget.ValidatedEditTextPreference;
 import com.android.settings.wifi.tether.WifiTetherBasePreferenceController;
+
 /* loaded from: classes.dex */
 public class WifiTetherSSIDPreferenceController extends WifiTetherBasePreferenceController implements ValidatedEditTextPreference.Validator {
     static final String DEFAULT_SSID = "AndroidAP";

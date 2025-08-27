@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class IconView extends View {
     private Drawable mDrawable;

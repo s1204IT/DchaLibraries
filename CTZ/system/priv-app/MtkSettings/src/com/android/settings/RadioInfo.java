@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.QueuedWork;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -69,7 +68,9 @@ import com.android.internal.telephony.PhoneFactory;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RadioInfo extends Activity {
     private TextView callState;
@@ -139,18 +140,18 @@ public class RadioInfo extends Activity {
     };
     private final PhoneStateListener mPhoneStateListener = new PhoneStateListener() { // from class: com.android.settings.RadioInfo.2
         @Override // android.telephony.PhoneStateListener
-        public void onDataConnectionStateChanged(int i) {
+        public void onDataConnectionStateChanged(int i) throws Resources.NotFoundException {
             RadioInfo.this.updateDataState();
             RadioInfo.this.updateNetworkType();
         }
 
         @Override // android.telephony.PhoneStateListener
-        public void onDataActivity(int i) {
+        public void onDataActivity(int i) throws Resources.NotFoundException {
             RadioInfo.this.updateDataStats2();
         }
 
         @Override // android.telephony.PhoneStateListener
-        public void onCallStateChanged(int i, String str) {
+        public void onCallStateChanged(int i, String str) throws Resources.NotFoundException {
             RadioInfo.this.updateNetworkType();
             RadioInfo.this.updatePhoneState(i);
         }
@@ -178,29 +179,25 @@ public class RadioInfo extends Activity {
 
         @Override // android.telephony.PhoneStateListener
         public void onCellInfoChanged(List<CellInfo> list) {
-            RadioInfo radioInfo = RadioInfo.this;
-            radioInfo.log("onCellInfoChanged: arrayCi=" + list);
+            RadioInfo.this.log("onCellInfoChanged: arrayCi=" + list);
             RadioInfo.this.mCellInfoResult = list;
             RadioInfo.this.updateCellInfo(RadioInfo.this.mCellInfoResult);
         }
 
         public void onDataConnectionRealTimeInfoChanged(DataConnectionRealTimeInfo dataConnectionRealTimeInfo) {
-            RadioInfo radioInfo = RadioInfo.this;
-            radioInfo.log("onDataConnectionRealTimeInfoChanged: dcRtInfo=" + dataConnectionRealTimeInfo);
+            RadioInfo.this.log("onDataConnectionRealTimeInfoChanged: dcRtInfo=" + dataConnectionRealTimeInfo);
             RadioInfo.this.updateDcRtInfoTv(dataConnectionRealTimeInfo);
         }
 
         @Override // android.telephony.PhoneStateListener
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
-            RadioInfo radioInfo = RadioInfo.this;
-            radioInfo.log("onSignalStrengthChanged: SignalStrength=" + signalStrength);
+            RadioInfo.this.log("onSignalStrengthChanged: SignalStrength=" + signalStrength);
             RadioInfo.this.updateSignalStrength(signalStrength);
         }
 
         @Override // android.telephony.PhoneStateListener
-        public void onServiceStateChanged(ServiceState serviceState) {
-            RadioInfo radioInfo = RadioInfo.this;
-            radioInfo.log("onServiceStateChanged: ServiceState=" + serviceState);
+        public void onServiceStateChanged(ServiceState serviceState) throws Resources.NotFoundException {
+            RadioInfo.this.log("onServiceStateChanged: ServiceState=" + serviceState);
             RadioInfo.this.updateServiceState(serviceState);
             RadioInfo.this.updateRadioPowerState();
             RadioInfo.this.updateNetworkType();
@@ -219,39 +216,40 @@ public class RadioInfo extends Activity {
                     AsyncResult asyncResult = (AsyncResult) message.obj;
                     if (asyncResult.exception != null || asyncResult.result == null) {
                         RadioInfo.this.updatePreferredNetworkType(RadioInfo.mPreferredNetworkLabels.length - 1);
-                        return;
+                        break;
                     } else {
                         RadioInfo.this.updatePreferredNetworkType(((int[]) asyncResult.result)[0]);
-                        return;
+                        break;
                     }
+                    break;
                 case 1001:
                     if (((AsyncResult) message.obj).exception != null) {
                         RadioInfo.this.log("Set preferred network type failed.");
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 case 1002:
                 case 1003:
                 case 1004:
                 default:
                     super.handleMessage(message);
-                    return;
+                    break;
                 case 1005:
                     AsyncResult asyncResult2 = (AsyncResult) message.obj;
                     if (asyncResult2.exception != null) {
                         RadioInfo.this.smsc.setText("refresh error");
-                        return;
+                        break;
                     } else {
                         RadioInfo.this.smsc.setText((String) asyncResult2.result);
-                        return;
+                        break;
                     }
                 case 1006:
                     RadioInfo.this.updateSmscButton.setEnabled(true);
                     if (((AsyncResult) message.obj).exception != null) {
                         RadioInfo.this.smsc.setText("update error");
-                        return;
+                        break;
                     }
-                    return;
+                    break;
             }
         }
     };
@@ -286,12 +284,12 @@ public class RadioInfo extends Activity {
         @Override // android.view.MenuItem.OnMenuItemClickListener
         public boolean onMenuItemClick(MenuItem menuItem) {
             String string;
-            boolean isImsRegistered = RadioInfo.this.phone.isImsRegistered();
-            boolean isVolteEnabled = RadioInfo.this.phone.isVolteEnabled();
-            boolean isWifiCallingEnabled = RadioInfo.this.phone.isWifiCallingEnabled();
-            boolean isVideoEnabled = RadioInfo.this.phone.isVideoEnabled();
-            boolean isUtEnabled = RadioInfo.this.phone.isUtEnabled();
-            if (isImsRegistered) {
+            boolean zIsImsRegistered = RadioInfo.this.phone.isImsRegistered();
+            boolean zIsVolteEnabled = RadioInfo.this.phone.isVolteEnabled();
+            boolean zIsWifiCallingEnabled = RadioInfo.this.phone.isWifiCallingEnabled();
+            boolean zIsVideoEnabled = RadioInfo.this.phone.isVideoEnabled();
+            boolean zIsUtEnabled = RadioInfo.this.phone.isUtEnabled();
+            if (zIsImsRegistered) {
                 string = RadioInfo.this.getString(R.string.radio_info_ims_reg_status_registered);
             } else {
                 string = RadioInfo.this.getString(R.string.radio_info_ims_reg_status_not_registered);
@@ -301,10 +299,10 @@ public class RadioInfo extends Activity {
             RadioInfo radioInfo = RadioInfo.this;
             Object[] objArr = new Object[5];
             objArr[0] = string;
-            objArr[1] = isVolteEnabled ? string2 : string3;
-            objArr[2] = isWifiCallingEnabled ? string2 : string3;
-            objArr[3] = isVideoEnabled ? string2 : string3;
-            if (!isUtEnabled) {
+            objArr[1] = zIsVolteEnabled ? string2 : string3;
+            objArr[2] = zIsWifiCallingEnabled ? string2 : string3;
+            objArr[3] = zIsVideoEnabled ? string2 : string3;
+            if (!zIsUtEnabled) {
                 string2 = string3;
             }
             objArr[4] = string2;
@@ -381,8 +379,7 @@ public class RadioInfo extends Activity {
             try {
                 RadioInfo.this.startActivity(new Intent("com.android.settings.OEM_RADIO_INFO"));
             } catch (ActivityNotFoundException e) {
-                RadioInfo radioInfo = RadioInfo.this;
-                radioInfo.log("OEM-specific Info/Settings Activity Not Found : " + e);
+                RadioInfo.this.log("OEM-specific Info/Settings Activity Not Found : " + e);
             }
         }
     };
@@ -428,11 +425,9 @@ public class RadioInfo extends Activity {
                 RadioInfo.this.mPreferredNetworkTypeResult = i;
                 int subId = RadioInfo.this.phone.getSubId();
                 if (SubscriptionManager.isUsableSubIdValue(subId)) {
-                    ContentResolver contentResolver = RadioInfo.this.phone.getContext().getContentResolver();
-                    Settings.Global.putInt(contentResolver, "preferred_network_mode" + subId, RadioInfo.this.mPreferredNetworkTypeResult);
+                    Settings.Global.putInt(RadioInfo.this.phone.getContext().getContentResolver(), "preferred_network_mode" + subId, RadioInfo.this.mPreferredNetworkTypeResult);
                 }
-                RadioInfo radioInfo = RadioInfo.this;
-                radioInfo.log("Calling setPreferredNetworkType(" + RadioInfo.this.mPreferredNetworkTypeResult + ")");
+                RadioInfo.this.log("Calling setPreferredNetworkType(" + RadioInfo.this.mPreferredNetworkTypeResult + ")");
                 RadioInfo.this.phone.setPreferredNetworkType(RadioInfo.this.mPreferredNetworkTypeResult, RadioInfo.this.mHandler.obtainMessage(1001));
             }
         }
@@ -454,13 +449,11 @@ public class RadioInfo extends Activity {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void log(String str) {
+    private void log(String str) {
         Log.d("RadioInfo", str);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePhysicalChannelConfiguration(List<PhysicalChannelConfig> list) {
+    private void updatePhysicalChannelConfiguration(List<PhysicalChannelConfig> list) {
         StringBuilder sb = new StringBuilder();
         String str = "";
         sb.append("{");
@@ -475,8 +468,7 @@ public class RadioInfo extends Activity {
         this.mPhyChanConfig.setText(sb.toString());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreferredNetworkType(int i) {
+    private void updatePreferredNetworkType(int i) {
         if (i >= mPreferredNetworkLabels.length || i < 0) {
             log("EVENT_QUERY_PREFERRED_TYPE_DONE: unknown type=" + i);
             i = mPreferredNetworkLabels.length - 1;
@@ -526,12 +518,12 @@ public class RadioInfo extends Activity {
         this.mHttpClientTest = (TextView) findViewById(R.id.httpClientTest);
         this.mPhyChanConfig = (TextView) findViewById(R.id.phy_chan_config);
         this.preferredNetworkType = (Spinner) findViewById(R.id.preferredNetworkType);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, 17367048, mPreferredNetworkLabels);
-        arrayAdapter.setDropDownViewResource(17367049);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, mPreferredNetworkLabels);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.preferredNetworkType.setAdapter((SpinnerAdapter) arrayAdapter);
         this.cellInfoRefreshRateSpinner = (Spinner) findViewById(R.id.cell_info_rate_select);
-        ArrayAdapter arrayAdapter2 = new ArrayAdapter(this, 17367048, mCellInfoRefreshRateLabels);
-        arrayAdapter2.setDropDownViewResource(17367049);
+        ArrayAdapter arrayAdapter2 = new ArrayAdapter(this, android.R.layout.simple_spinner_item, mCellInfoRefreshRateLabels);
+        arrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.cellInfoRefreshRateSpinner.setAdapter((SpinnerAdapter) arrayAdapter2);
         this.imsVolteProvisionedSwitch = (Switch) findViewById(R.id.volte_provisioned_switch);
         this.imsVtProvisionedSwitch = (Switch) findViewById(R.id.vt_provisioned_switch);
@@ -565,7 +557,7 @@ public class RadioInfo extends Activity {
     }
 
     @Override // android.app.Activity
-    protected void onResume() {
+    protected void onResume() throws Resources.NotFoundException {
         super.onResume();
         log("Started onResume");
         updateMessageWaiting();
@@ -643,34 +635,32 @@ public class RadioInfo extends Activity {
     @Override // android.app.Activity
     public boolean onPrepareOptionsMenu(Menu menu) {
         boolean z;
-        MenuItem findItem = menu.findItem(5);
+        MenuItem menuItemFindItem = menu.findItem(5);
         int dataState = this.mTelephonyManager.getDataState();
         if (dataState != 0) {
             switch (dataState) {
                 case 2:
                 case 3:
-                    findItem.setTitle(R.string.radio_info_data_connection_disable);
+                    menuItemFindItem.setTitle(R.string.radio_info_data_connection_disable);
                     break;
                 default:
                     z = false;
                     break;
             }
-            findItem.setVisible(z);
+            menuItemFindItem.setVisible(z);
             return true;
         }
-        findItem.setTitle(R.string.radio_info_data_connection_enable);
+        menuItemFindItem.setTitle(R.string.radio_info_data_connection_enable);
         z = true;
-        findItem.setVisible(z);
+        menuItemFindItem.setVisible(z);
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDnsCheckState() {
+    private void updateDnsCheckState() {
         this.dnsCheckState.setText(this.phone.isDnsCheckDisabled() ? "0.0.0.0 allowed" : "0.0.0.0 not allowed");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateBandwidths(int i, int i2) {
+    private void updateBandwidths(int i, int i2) {
         if (i < 0 || i == Integer.MAX_VALUE) {
             i = -1;
         }
@@ -681,20 +671,17 @@ public class RadioInfo extends Activity {
         this.mUplinkKbps.setText(String.format("%-5d", Integer.valueOf(i2)));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateSignalStrength(SignalStrength signalStrength) {
+    private final void updateSignalStrength(SignalStrength signalStrength) {
         Resources resources = getResources();
         int dbm = signalStrength.getDbm();
         int asuLevel = signalStrength.getAsuLevel();
         if (-1 == asuLevel) {
             asuLevel = 0;
         }
-        TextView textView = this.dBm;
-        textView.setText(String.valueOf(dbm) + " " + resources.getString(R.string.radioInfo_display_dbm) + "   " + String.valueOf(asuLevel) + " " + resources.getString(R.string.radioInfo_display_asu));
+        this.dBm.setText(String.valueOf(dbm) + " " + resources.getString(R.string.radioInfo_display_dbm) + "   " + String.valueOf(asuLevel) + " " + resources.getString(R.string.radioInfo_display_asu));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateLocation(CellLocation cellLocation) {
+    private final void updateLocation(CellLocation cellLocation) {
         Resources resources = getResources();
         if (cellLocation instanceof GsmCellLocation) {
             GsmCellLocation gsmCellLocation = (GsmCellLocation) cellLocation;
@@ -710,7 +697,9 @@ public class RadioInfo extends Activity {
             sb.append(" = ");
             sb.append(cid == -1 ? "unknown" : Integer.toHexString(cid));
             textView.setText(sb.toString());
-        } else if (cellLocation instanceof CdmaCellLocation) {
+            return;
+        }
+        if (cellLocation instanceof CdmaCellLocation) {
             CdmaCellLocation cdmaCellLocation = (CdmaCellLocation) cellLocation;
             int baseStationId = cdmaCellLocation.getBaseStationId();
             int systemId = cdmaCellLocation.getSystemId();
@@ -730,20 +719,20 @@ public class RadioInfo extends Activity {
             sb2.append("   LONG = ");
             sb2.append(baseStationLongitude == -1 ? "unknown" : Integer.toHexString(baseStationLongitude));
             textView2.setText(sb2.toString());
-        } else {
-            this.mLocation.setText("unknown");
+            return;
         }
+        this.mLocation.setText("unknown");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateNeighboringCids(List<NeighboringCellInfo> list) {
+    private final void updateNeighboringCids(List<NeighboringCellInfo> list) {
         StringBuilder sb = new StringBuilder();
         if (list != null) {
             if (list.isEmpty()) {
                 sb.append("no neighboring cells");
             } else {
-                for (NeighboringCellInfo neighboringCellInfo : list) {
-                    sb.append(neighboringCellInfo.toString());
+                Iterator<NeighboringCellInfo> it = list.iterator();
+                while (it.hasNext()) {
+                    sb.append(it.next().toString());
                     sb.append(" ");
                 }
             }
@@ -842,28 +831,23 @@ public class RadioInfo extends Activity {
         return str.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateCellInfo(List<CellInfo> list) {
+    private final void updateCellInfo(List<CellInfo> list) {
         this.mCellInfo.setText(buildCellInfoString(list));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateDcRtInfoTv(DataConnectionRealTimeInfo dataConnectionRealTimeInfo) {
+    private final void updateDcRtInfoTv(DataConnectionRealTimeInfo dataConnectionRealTimeInfo) {
         this.mDcRtInfoTv.setText(dataConnectionRealTimeInfo.toString());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateMessageWaiting() {
+    private final void updateMessageWaiting() {
         this.mMwi.setText(String.valueOf(this.mMwiValue));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateCallRedirect() {
+    private final void updateCallRedirect() {
         this.mCfi.setText(String.valueOf(this.mCfiValue));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateServiceState(ServiceState serviceState) {
+    private final void updateServiceState(ServiceState serviceState) throws Resources.NotFoundException {
         int state = serviceState.getState();
         Resources resources = getResources();
         String string = resources.getString(R.string.radioInfo_unknown);
@@ -888,8 +872,7 @@ public class RadioInfo extends Activity {
         this.operatorName.setText(serviceState.getOperatorAlphaLong());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updatePhoneState(int i) {
+    private final void updatePhoneState(int i) throws Resources.NotFoundException {
         Resources resources = getResources();
         String string = resources.getString(R.string.radioInfo_unknown);
         switch (i) {
@@ -906,8 +889,7 @@ public class RadioInfo extends Activity {
         this.callState.setText(string);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateDataState() {
+    private final void updateDataState() throws Resources.NotFoundException {
         int dataState = this.mTelephonyManager.getDataState();
         Resources resources = getResources();
         String string = resources.getString(R.string.radioInfo_unknown);
@@ -928,8 +910,7 @@ public class RadioInfo extends Activity {
         this.gprsState.setText(string);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateNetworkType() {
+    private final void updateNetworkType() {
         if (this.phone != null) {
             this.phone.getServiceState();
             this.dataNetwork.setText(ServiceState.rilRadioTechnologyToString(this.phone.getServiceState().getRilDataRadioTechnology()));
@@ -937,7 +918,7 @@ public class RadioInfo extends Activity {
         }
     }
 
-    private final void updateProperties() {
+    private final void updateProperties() throws Resources.NotFoundException {
         Resources resources = getResources();
         String deviceId = this.phone.getDeviceId();
         if (deviceId == null) {
@@ -956,8 +937,7 @@ public class RadioInfo extends Activity {
         this.number.setText(line1Number);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateDataStats2() {
+    private final void updateDataStats2() throws Resources.NotFoundException {
         Resources resources = getResources();
         long mobileTxPackets = TrafficStats.getMobileTxPackets();
         long mobileRxPackets = TrafficStats.getMobileRxPackets();
@@ -965,32 +945,29 @@ public class RadioInfo extends Activity {
         long mobileRxBytes = TrafficStats.getMobileRxBytes();
         String string = resources.getString(R.string.radioInfo_display_packets);
         String string2 = resources.getString(R.string.radioInfo_display_bytes);
-        TextView textView = this.sent;
-        textView.setText(mobileTxPackets + " " + string + ", " + mobileTxBytes + " " + string2);
-        TextView textView2 = this.received;
-        textView2.setText(mobileRxPackets + " " + string + ", " + mobileRxBytes + " " + string2);
+        this.sent.setText(mobileTxPackets + " " + string + ", " + mobileTxBytes + " " + string2);
+        this.received.setText(mobileRxPackets + " " + string + ", " + mobileRxBytes + " " + string2);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Unsupported multi-entry loop pattern (BACK_EDGE: B:18:0x0056 -> B:25:0x0062). Please submit an issue!!! */
-    public final void pingHostname() {
+    /* JADX WARN: Unsupported multi-entry loop pattern (BACK_EDGE: B:18:0x0056 -> B:25:0x0062). Please report as a decompilation issue!!! */
+    private final void pingHostname() throws InterruptedException {
         try {
             try {
-                int waitFor = Runtime.getRuntime().exec("ping -c 1 www.google.com").waitFor();
-                if (waitFor == 0) {
+                int iWaitFor = Runtime.getRuntime().exec("ping -c 1 www.google.com").waitFor();
+                if (iWaitFor == 0) {
                     this.mPingHostnameResultV4 = "Pass";
                 } else {
-                    this.mPingHostnameResultV4 = String.format("Fail(%d)", Integer.valueOf(waitFor));
+                    this.mPingHostnameResultV4 = String.format("Fail(%d)", Integer.valueOf(iWaitFor));
                 }
             } catch (IOException e) {
                 this.mPingHostnameResultV4 = "Fail: IOException";
             }
             try {
-                int waitFor2 = Runtime.getRuntime().exec("ping6 -c 1 www.google.com").waitFor();
-                if (waitFor2 == 0) {
+                int iWaitFor2 = Runtime.getRuntime().exec("ping6 -c 1 www.google.com").waitFor();
+                if (iWaitFor2 == 0) {
                     this.mPingHostnameResultV6 = "Pass";
                 } else {
-                    this.mPingHostnameResultV6 = String.format("Fail(%d)", Integer.valueOf(waitFor2));
+                    this.mPingHostnameResultV6 = String.format("Fail(%d)", Integer.valueOf(iWaitFor2));
                 }
             } catch (IOException e2) {
                 this.mPingHostnameResultV6 = "Fail: IOException";
@@ -1001,51 +978,49 @@ public class RadioInfo extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void httpClientTest() {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [1070=5] */
+    private void httpClientTest() throws Throwable {
         HttpURLConnection httpURLConnection;
         Throwable th;
         HttpURLConnection httpURLConnection2 = null;
         try {
             try {
                 httpURLConnection = (HttpURLConnection) new URL("https://www.google.com").openConnection();
-            } catch (IOException e) {
-            }
-        } catch (Throwable th2) {
-            httpURLConnection = httpURLConnection2;
-            th = th2;
-        }
-        try {
-            if (httpURLConnection.getResponseCode() == 200) {
-                this.mHttpClientTestResult = "Pass";
-            } else {
-                this.mHttpClientTestResult = "Fail: Code: " + httpURLConnection.getResponseMessage();
-            }
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
+                try {
+                    if (httpURLConnection.getResponseCode() == 200) {
+                        this.mHttpClientTestResult = "Pass";
+                    } else {
+                        this.mHttpClientTestResult = "Fail: Code: " + httpURLConnection.getResponseMessage();
+                    }
+                    if (httpURLConnection != null) {
+                        httpURLConnection.disconnect();
+                    }
+                } catch (IOException e) {
+                    httpURLConnection2 = httpURLConnection;
+                    this.mHttpClientTestResult = "Fail: IOException";
+                    if (httpURLConnection2 != null) {
+                        httpURLConnection2.disconnect();
+                    }
+                } catch (Throwable th2) {
+                    th = th2;
+                    if (httpURLConnection != null) {
+                        httpURLConnection.disconnect();
+                    }
+                    throw th;
+                }
+            } catch (Throwable th3) {
+                httpURLConnection = httpURLConnection2;
+                th = th3;
             }
         } catch (IOException e2) {
-            httpURLConnection2 = httpURLConnection;
-            this.mHttpClientTestResult = "Fail: IOException";
-            if (httpURLConnection2 != null) {
-                httpURLConnection2.disconnect();
-            }
-        } catch (Throwable th3) {
-            th = th3;
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
-            }
-            throw th;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshSmsc() {
+    private void refreshSmsc() {
         this.phone.getSmscAddress(this.mHandler.obtainMessage(1005));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateAllCellInfo() {
+    private final void updateAllCellInfo() {
         this.mCellInfo.setText("");
         this.mNeighboringCids.setText("");
         this.mLocation.setText("");
@@ -1068,8 +1043,7 @@ public class RadioInfo extends Activity {
         }.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updatePingState() {
+    private final void updatePingState() {
         this.mPingHostnameResultV4 = getResources().getString(R.string.radioInfo_unknown);
         this.mPingHostnameResultV6 = getResources().getString(R.string.radioInfo_unknown);
         this.mHttpClientTestResult = getResources().getString(R.string.radioInfo_unknown);
@@ -1086,27 +1060,25 @@ public class RadioInfo extends Activity {
         };
         new Thread() { // from class: com.android.settings.RadioInfo.7
             @Override // java.lang.Thread, java.lang.Runnable
-            public void run() {
+            public void run() throws InterruptedException {
                 RadioInfo.this.pingHostname();
                 RadioInfo.this.mHandler.post(runnable);
             }
         }.start();
         new Thread() { // from class: com.android.settings.RadioInfo.8
             @Override // java.lang.Thread, java.lang.Runnable
-            public void run() {
+            public void run() throws Throwable {
                 RadioInfo.this.httpClientTest();
                 RadioInfo.this.mHandler.post(runnable);
             }
         }.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isRadioOn() {
+    private boolean isRadioOn() {
         return this.phone.getServiceState().getState() != 3;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateRadioPowerState() {
+    private void updateRadioPowerState() {
         this.radioPowerOnSwitch.setOnCheckedChangeListener(null);
         this.radioPowerOnSwitch.setChecked(isRadioOn());
         this.radioPowerOnSwitch.setOnCheckedChangeListener(this.mRadioPowerOnChangeListener);
@@ -1164,11 +1136,11 @@ public class RadioInfo extends Activity {
             return false;
         }
         ImsManager imsManager = this.mImsManager;
-        if (ImsManager.isVolteEnabledByPlatform(this.phone.getContext())) {
-            ImsManager imsManager2 = this.mImsManager;
-            return ImsManager.isVolteProvisionedOnDevice(this.phone.getContext());
+        if (!ImsManager.isVolteEnabledByPlatform(this.phone.getContext())) {
+            return false;
         }
-        return false;
+        ImsManager imsManager2 = this.mImsManager;
+        return ImsManager.isVolteProvisionedOnDevice(this.phone.getContext());
     }
 
     private boolean isImsVtProvisioned() {
@@ -1176,11 +1148,11 @@ public class RadioInfo extends Activity {
             return false;
         }
         ImsManager imsManager = this.mImsManager;
-        if (ImsManager.isVtEnabledByPlatform(this.phone.getContext())) {
-            ImsManager imsManager2 = this.mImsManager;
-            return ImsManager.isVtProvisionedOnDevice(this.phone.getContext());
+        if (!ImsManager.isVtEnabledByPlatform(this.phone.getContext())) {
+            return false;
         }
-        return false;
+        ImsManager imsManager2 = this.mImsManager;
+        return ImsManager.isVtProvisionedOnDevice(this.phone.getContext());
     }
 
     private boolean isImsWfcProvisioned() {
@@ -1188,11 +1160,11 @@ public class RadioInfo extends Activity {
             return false;
         }
         ImsManager imsManager = this.mImsManager;
-        if (ImsManager.isWfcEnabledByPlatform(this.phone.getContext())) {
-            ImsManager imsManager2 = this.mImsManager;
-            return ImsManager.isWfcProvisionedOnDevice(this.phone.getContext());
+        if (!ImsManager.isWfcEnabledByPlatform(this.phone.getContext())) {
+            return false;
         }
-        return false;
+        ImsManager imsManager2 = this.mImsManager;
+        return ImsManager.isWfcProvisionedOnDevice(this.phone.getContext());
     }
 
     private boolean isEabProvisioned() {
@@ -1225,8 +1197,7 @@ public class RadioInfo extends Activity {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateImsProvisionedState() {
+    private void updateImsProvisionedState() {
         log("updateImsProvisionedState isImsVolteProvisioned()=" + isImsVolteProvisioned());
         this.imsVolteProvisionedSwitch.setOnCheckedChangeListener(null);
         this.imsVolteProvisionedSwitch.setChecked(isImsVolteProvisioned());

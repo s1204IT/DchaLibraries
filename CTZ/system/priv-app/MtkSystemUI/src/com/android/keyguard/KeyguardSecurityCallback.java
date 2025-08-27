@@ -1,4 +1,5 @@
 package com.android.keyguard;
+
 /* loaded from: classes.dex */
 public interface KeyguardSecurityCallback {
     void dismiss(boolean z, int i);

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.UserInfo;
+import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -44,6 +45,7 @@ import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class UserSwitcherController {
     private final ActivityStarter mActivityStarter;
@@ -80,32 +82,32 @@ public class UserSwitcherController {
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             boolean z = false;
-            int i = -10000;
+            int intExtra = -10000;
             if ("android.intent.action.USER_SWITCHED".equals(intent.getAction())) {
                 if (UserSwitcherController.this.mExitGuestDialog != null && UserSwitcherController.this.mExitGuestDialog.isShowing()) {
                     UserSwitcherController.this.mExitGuestDialog.cancel();
                     UserSwitcherController.this.mExitGuestDialog = null;
                 }
-                int intExtra = intent.getIntExtra("android.intent.extra.user_handle", -1);
-                UserInfo userInfo = UserSwitcherController.this.mUserManager.getUserInfo(intExtra);
+                int intExtra2 = intent.getIntExtra("android.intent.extra.user_handle", -1);
+                UserInfo userInfo = UserSwitcherController.this.mUserManager.getUserInfo(intExtra2);
                 int size = UserSwitcherController.this.mUsers.size();
-                int i2 = 0;
-                while (i2 < size) {
-                    UserRecord userRecord = (UserRecord) UserSwitcherController.this.mUsers.get(i2);
+                int i = 0;
+                while (i < size) {
+                    UserRecord userRecord = (UserRecord) UserSwitcherController.this.mUsers.get(i);
                     if (userRecord.info != null) {
-                        boolean z2 = userRecord.info.id == intExtra;
+                        boolean z2 = userRecord.info.id == intExtra2;
                         if (userRecord.isCurrent != z2) {
-                            UserSwitcherController.this.mUsers.set(i2, userRecord.copyWithIsCurrent(z2));
+                            UserSwitcherController.this.mUsers.set(i, userRecord.copyWithIsCurrent(z2));
                         }
                         if (z2 && !userRecord.isGuest) {
                             UserSwitcherController.this.mLastNonGuestUser = userRecord.info.id;
                         }
                         if ((userInfo == null || !userInfo.isAdmin()) && userRecord.isRestricted) {
-                            UserSwitcherController.this.mUsers.remove(i2);
-                            i2--;
+                            UserSwitcherController.this.mUsers.remove(i);
+                            i--;
                         }
                     }
-                    i2++;
+                    i++;
                 }
                 UserSwitcherController.this.notifyAdapters();
                 if (UserSwitcherController.this.mSecondaryUser != -10000) {
@@ -118,11 +120,11 @@ public class UserSwitcherController {
                 }
                 z = true;
             } else if ("android.intent.action.USER_INFO_CHANGED".equals(intent.getAction())) {
-                i = intent.getIntExtra("android.intent.extra.user_handle", -10000);
+                intExtra = intent.getIntExtra("android.intent.extra.user_handle", -10000);
             } else if ("android.intent.action.USER_UNLOCKED".equals(intent.getAction()) && intent.getIntExtra("android.intent.extra.user_handle", -10000) != 0) {
                 return;
             }
-            UserSwitcherController.this.refreshUsers(i);
+            UserSwitcherController.this.refreshUsers(intExtra);
             if (z) {
                 UserSwitcherController.this.mUnpauseRefreshUsers.run();
             }
@@ -154,15 +156,15 @@ public class UserSwitcherController {
 
         @Override // com.android.systemui.plugins.qs.DetailAdapter
         public View createDetailView(Context context, View view, ViewGroup viewGroup) {
-            UserDetailView userDetailView;
+            UserDetailView userDetailViewInflate;
             if (!(view instanceof UserDetailView)) {
-                userDetailView = UserDetailView.inflate(context, viewGroup, false);
-                userDetailView.createAndSetAdapter(UserSwitcherController.this);
+                userDetailViewInflate = UserDetailView.inflate(context, viewGroup, false);
+                userDetailViewInflate.createAndSetAdapter(UserSwitcherController.this);
             } else {
-                userDetailView = (UserDetailView) view;
+                userDetailViewInflate = (UserDetailView) view;
             }
-            userDetailView.refreshAdapter();
-            return userDetailView;
+            userDetailViewInflate.refreshAdapter();
+            return userDetailViewInflate;
         }
 
         @Override // com.android.systemui.plugins.qs.DetailAdapter
@@ -204,7 +206,7 @@ public class UserSwitcherController {
         intentFilter.addAction("android.intent.action.USER_STOPPED");
         intentFilter.addAction("android.intent.action.USER_UNLOCKED");
         this.mContext.registerReceiverAsUser(this.mReceiver, UserHandle.SYSTEM, intentFilter, null, null);
-        this.mSecondaryUserServiceIntent = new Intent(context, SystemUISecondaryUserService.class);
+        this.mSecondaryUserServiceIntent = new Intent(context, (Class<?>) SystemUISecondaryUserService.class);
         this.mContext.registerReceiverAsUser(this.mReceiver, UserHandle.SYSTEM, new IntentFilter(), "com.android.systemui.permission.SELF", null);
         this.mContext.getContentResolver().registerContentObserver(Settings.Global.getUriFor("lockscreenSimpleUserSwitcher"), true, this.mSettingsObserver);
         this.mContext.getContentResolver().registerContentObserver(Settings.Global.getUriFor("add_users_when_locked"), true, this.mSettingsObserver);
@@ -215,9 +217,8 @@ public class UserSwitcherController {
         refreshUsers(-10000);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     /* JADX WARN: Type inference failed for: r2v4, types: [com.android.systemui.statusbar.policy.UserSwitcherController$1] */
-    public void refreshUsers(int i) {
+    private void refreshUsers(int i) {
         if (i != -10000) {
             this.mForcePictureLoadForUserId.put(i, true);
         }
@@ -236,9 +237,9 @@ public class UserSwitcherController {
         this.mForcePictureLoadForUserId.clear();
         final boolean z2 = this.mAddUsersWhenLocked;
         new AsyncTask<SparseArray<Bitmap>, Void, ArrayList<UserRecord>>() { // from class: com.android.systemui.statusbar.policy.UserSwitcherController.1
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public ArrayList<UserRecord> doInBackground(SparseArray<Bitmap>... sparseArrayArr) {
+            protected ArrayList<UserRecord> doInBackground(SparseArray<Bitmap>... sparseArrayArr) throws Resources.NotFoundException {
                 int size2;
                 SparseArray<Bitmap> sparseArray2 = sparseArrayArr[0];
                 List<UserInfo> users = UserSwitcherController.this.mUserManager.getUsers(true);
@@ -248,28 +249,28 @@ public class UserSwitcherController {
                 }
                 ArrayList<UserRecord> arrayList = new ArrayList<>(users.size());
                 int currentUser = ActivityManager.getCurrentUser();
-                boolean canSwitchUsers = UserSwitcherController.this.mUserManager.canSwitchUsers();
+                boolean zCanSwitchUsers = UserSwitcherController.this.mUserManager.canSwitchUsers();
                 UserInfo userInfo = null;
                 for (UserInfo userInfo2 : users) {
                     boolean z3 = currentUser == userInfo2.id;
                     UserInfo userInfo3 = z3 ? userInfo2 : userInfo;
-                    boolean z4 = canSwitchUsers || z3;
+                    boolean z4 = zCanSwitchUsers || z3;
                     if (userInfo2.isEnabled()) {
                         if (userInfo2.isGuest()) {
-                            userRecord2 = new UserRecord(userInfo2, null, true, z3, false, false, canSwitchUsers);
+                            userRecord2 = new UserRecord(userInfo2, null, true, z3, false, false, zCanSwitchUsers);
                         } else if (userInfo2.supportsSwitchToByUser()) {
-                            Bitmap bitmap = sparseArray2.get(userInfo2.id);
-                            if (bitmap == null && (bitmap = UserSwitcherController.this.mUserManager.getUserIcon(userInfo2.id)) != null) {
+                            Bitmap userIcon = sparseArray2.get(userInfo2.id);
+                            if (userIcon == null && (userIcon = UserSwitcherController.this.mUserManager.getUserIcon(userInfo2.id)) != null) {
                                 int dimensionPixelSize = UserSwitcherController.this.mContext.getResources().getDimensionPixelSize(R.dimen.max_avatar_size);
-                                bitmap = Bitmap.createScaledBitmap(bitmap, dimensionPixelSize, dimensionPixelSize, true);
+                                userIcon = Bitmap.createScaledBitmap(userIcon, dimensionPixelSize, dimensionPixelSize, true);
                             }
-                            Bitmap bitmap2 = bitmap;
+                            Bitmap bitmap = userIcon;
                             if (!z3) {
                                 size2 = arrayList.size();
                             } else {
                                 size2 = 0;
                             }
-                            arrayList.add(size2, new UserRecord(userInfo2, bitmap2, false, z3, false, false, z4));
+                            arrayList.add(size2, new UserRecord(userInfo2, bitmap, false, z3, false, false, z4));
                         }
                     }
                     userInfo = userInfo3;
@@ -286,7 +287,7 @@ public class UserSwitcherController {
                 if (!UserSwitcherController.this.mSimpleUserSwitcher) {
                     if (userRecord2 == null) {
                         if (z8) {
-                            UserRecord userRecord3 = new UserRecord(null, null, true, false, false, z10, canSwitchUsers);
+                            UserRecord userRecord3 = new UserRecord(null, null, true, false, false, z10, zCanSwitchUsers);
                             UserSwitcherController.this.checkIfAddUserDisallowedByAdminOnly(userRecord3);
                             arrayList.add(userRecord3);
                         }
@@ -295,16 +296,16 @@ public class UserSwitcherController {
                     }
                 }
                 if (!UserSwitcherController.this.mSimpleUserSwitcher && z9) {
-                    UserRecord userRecord4 = new UserRecord(null, null, false, false, true, z10, canSwitchUsers);
+                    UserRecord userRecord4 = new UserRecord(null, null, false, false, true, z10, zCanSwitchUsers);
                     UserSwitcherController.this.checkIfAddUserDisallowedByAdminOnly(userRecord4);
                     arrayList.add(userRecord4);
                 }
                 return arrayList;
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(ArrayList<UserRecord> arrayList) {
+            protected void onPostExecute(ArrayList<UserRecord> arrayList) {
                 if (arrayList != null) {
                     UserSwitcherController.this.mUsers = arrayList;
                     UserSwitcherController.this.notifyAdapters();
@@ -320,8 +321,7 @@ public class UserSwitcherController {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyAdapters() {
+    private void notifyAdapters() {
         for (int size = this.mAdapters.size() - 1; size >= 0; size--) {
             BaseUserAdapter baseUserAdapter = this.mAdapters.get(size).get();
             if (baseUserAdapter != null) {
@@ -348,15 +348,17 @@ public class UserSwitcherController {
         int i;
         UserInfo userInfo;
         if (userRecord.isGuest && userRecord.info == null) {
-            UserInfo createGuest = this.mUserManager.createGuest(this.mContext, this.mContext.getString(R.string.guest_nickname));
-            if (createGuest == null) {
+            UserInfo userInfoCreateGuest = this.mUserManager.createGuest(this.mContext, this.mContext.getString(R.string.guest_nickname));
+            if (userInfoCreateGuest == null) {
+                return;
+            } else {
+                i = userInfoCreateGuest.id;
+            }
+        } else {
+            if (userRecord.isAddUser) {
+                showAddUserDialog();
                 return;
             }
-            i = createGuest.id;
-        } else if (userRecord.isAddUser) {
-            showAddUserDialog();
-            return;
-        } else {
             i = userRecord.info.id;
         }
         int currentUser = ActivityManager.getCurrentUser();
@@ -450,13 +452,11 @@ public class UserSwitcherController {
         return this.mUsers;
     }
 
-    /* loaded from: classes.dex */
     public static abstract class BaseUserAdapter extends BaseAdapter {
         final UserSwitcherController mController;
         private final KeyguardMonitor mKeyguardMonitor = (KeyguardMonitor) Dependency.get(KeyguardMonitor.class);
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public BaseUserAdapter(UserSwitcherController userSwitcherController) {
+        protected BaseUserAdapter(UserSwitcherController userSwitcherController) {
             this.mController = userSwitcherController;
             userSwitcherController.addAdapter(new WeakReference<>(this));
         }
@@ -474,6 +474,7 @@ public class UserSwitcherController {
             return i;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
         @Override // android.widget.Adapter
         public UserRecord getItem(int i) {
             return this.mController.getUsers().get(i);
@@ -494,11 +495,11 @@ public class UserSwitcherController {
                     return context.getString(R.string.guest_exit_guest);
                 }
                 return context.getString(userRecord.info == null ? R.string.guest_new_guest : R.string.guest_nickname);
-            } else if (userRecord.isAddUser) {
-                return context.getString(R.string.user_add_user);
-            } else {
-                return userRecord.info.name;
             }
+            if (userRecord.isAddUser) {
+                return context.getString(R.string.user_add_user);
+            }
+            return userRecord.info.name;
         }
 
         public Drawable getDrawable(Context context, UserRecord userRecord) {
@@ -507,7 +508,7 @@ public class UserSwitcherController {
             }
             Drawable defaultUserIcon = UserIcons.getDefaultUserIcon(context.getResources(), userRecord.resolveId(), false);
             if (userRecord.isGuest) {
-                defaultUserIcon.setColorFilter(Utils.getColorAttr(context, 16842800), PorterDuff.Mode.SRC_IN);
+                defaultUserIcon.setColorFilter(Utils.getColorAttr(context, android.R.attr.colorForeground), PorterDuff.Mode.SRC_IN);
             }
             return defaultUserIcon;
         }
@@ -517,23 +518,21 @@ public class UserSwitcherController {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void checkIfAddUserDisallowedByAdminOnly(UserRecord userRecord) {
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_add_user", ActivityManager.getCurrentUser());
-        if (checkIfRestrictionEnforced != null && !RestrictedLockUtils.hasBaseUserRestriction(this.mContext, "no_add_user", ActivityManager.getCurrentUser())) {
+    private void checkIfAddUserDisallowedByAdminOnly(UserRecord userRecord) {
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_add_user", ActivityManager.getCurrentUser());
+        if (enforcedAdminCheckIfRestrictionEnforced != null && !RestrictedLockUtils.hasBaseUserRestriction(this.mContext, "no_add_user", ActivityManager.getCurrentUser())) {
             userRecord.isDisabledByAdmin = true;
-            userRecord.enforcedAdmin = checkIfRestrictionEnforced;
-            return;
+            userRecord.enforcedAdmin = enforcedAdminCheckIfRestrictionEnforced;
+        } else {
+            userRecord.isDisabledByAdmin = false;
+            userRecord.enforcedAdmin = null;
         }
-        userRecord.isDisabledByAdmin = false;
-        userRecord.enforcedAdmin = null;
     }
 
     public void startActivity(Intent intent) {
         this.mActivityStarter.startActivity(intent, true);
     }
 
-    /* loaded from: classes.dex */
     public static final class UserRecord {
         public RestrictedLockUtils.EnforcedAdmin enforcedAdmin;
         public final UserInfo info;
@@ -607,8 +606,7 @@ public class UserSwitcherController {
         }
     }
 
-    /* renamed from: com.android.systemui.statusbar.policy.UserSwitcherController$7  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.systemui.statusbar.policy.UserSwitcherController$7, reason: invalid class name */
     class AnonymousClass7 implements KeyguardMonitor.Callback {
         AnonymousClass7() {
         }
@@ -624,15 +622,13 @@ public class UserSwitcherController {
             handler.post(new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$UserSwitcherController$7$pQr4FiWnaYmK1LUVjgYn-vNV4vI
                 @Override // java.lang.Runnable
                 public final void run() {
-                    UserSwitcherController.this.notifyAdapters();
+                    userSwitcherController.notifyAdapters();
                 }
             });
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class ExitGuestDialog extends SystemUIDialog implements DialogInterface.OnClickListener {
+    private final class ExitGuestDialog extends SystemUIDialog implements DialogInterface.OnClickListener {
         private final int mGuestId;
         private final int mTargetId;
 
@@ -640,7 +636,7 @@ public class UserSwitcherController {
             super(context);
             setTitle(R.string.guest_exit_guest_dialog_title);
             setMessage(context.getString(R.string.guest_exit_guest_dialog_message));
-            setButton(-2, context.getString(17039360), this);
+            setButton(-2, context.getString(android.R.string.cancel), this);
             setButton(-1, context.getString(R.string.guest_exit_guest_dialog_remove), this);
             SystemUIDialog.setWindowOnTop(this);
             setCanceledOnTouchOutside(false);
@@ -652,37 +648,35 @@ public class UserSwitcherController {
         public void onClick(DialogInterface dialogInterface, int i) {
             if (i == -2) {
                 cancel();
-                return;
+            } else {
+                dismiss();
+                UserSwitcherController.this.exitGuest(this.mGuestId, this.mTargetId);
             }
-            dismiss();
-            UserSwitcherController.this.exitGuest(this.mGuestId, this.mTargetId);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class AddUserDialog extends SystemUIDialog implements DialogInterface.OnClickListener {
+    private final class AddUserDialog extends SystemUIDialog implements DialogInterface.OnClickListener {
         public AddUserDialog(Context context) {
             super(context);
             setTitle(R.string.user_add_user_title);
             setMessage(context.getString(R.string.user_add_user_message_short));
-            setButton(-2, context.getString(17039360), this);
-            setButton(-1, context.getString(17039370), this);
+            setButton(-2, context.getString(android.R.string.cancel), this);
+            setButton(-1, context.getString(android.R.string.ok), this);
             SystemUIDialog.setWindowOnTop(this);
         }
 
         @Override // android.content.DialogInterface.OnClickListener
         public void onClick(DialogInterface dialogInterface, int i) {
-            UserInfo createUser;
+            UserInfo userInfoCreateUser;
             if (i == -2) {
                 cancel();
                 return;
             }
             dismiss();
-            if (ActivityManager.isUserAMonkey() || (createUser = UserSwitcherController.this.mUserManager.createUser(UserSwitcherController.this.mContext.getString(R.string.user_new_user_name), 0)) == null) {
+            if (ActivityManager.isUserAMonkey() || (userInfoCreateUser = UserSwitcherController.this.mUserManager.createUser(UserSwitcherController.this.mContext.getString(R.string.user_new_user_name), 0)) == null) {
                 return;
             }
-            int i2 = createUser.id;
+            int i2 = userInfoCreateUser.id;
             UserSwitcherController.this.mUserManager.setUserIcon(i2, UserIcons.convertToBitmap(UserIcons.getDefaultUserIcon(UserSwitcherController.this.mContext.getResources(), i2, false)));
             UserSwitcherController.this.switchToUserId(i2);
         }

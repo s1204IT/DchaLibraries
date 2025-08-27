@@ -1,4 +1,5 @@
 package jp.co.benesse.dcha.setupwizard;
+
 /* loaded from: classes.dex */
 public final class BuildConfig {
     public static final String APPLICATION_ID = "jp.co.benesse.dcha.setupwizard";

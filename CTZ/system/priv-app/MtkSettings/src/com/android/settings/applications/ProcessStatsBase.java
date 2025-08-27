@@ -1,5 +1,6 @@
 package com.android.settings.applications;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import com.android.settings.SettingsActivity;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.applications.ProcStatsData;
 import com.android.settings.core.SubSettingLauncher;
+import java.io.IOException;
+
 /* loaded from: classes.dex */
 public abstract class ProcessStatsBase extends SettingsPreferenceFragment implements AdapterView.OnItemSelectedListener {
     protected int mDurationIndex;
@@ -27,7 +30,7 @@ public abstract class ProcessStatsBase extends SettingsPreferenceFragment implem
     public abstract void refreshUi();
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException, IOException {
         int i;
         super.onCreate(bundle);
         Bundle arguments = getArguments();
@@ -49,7 +52,7 @@ public abstract class ProcessStatsBase extends SettingsPreferenceFragment implem
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onResume() {
+    public void onResume() throws PackageManager.NameNotFoundException, IOException {
         super.onResume();
         this.mStatsManager.refreshStats(false);
         refreshUi();
@@ -69,7 +72,7 @@ public abstract class ProcessStatsBase extends SettingsPreferenceFragment implem
         this.mSpinnerHeader = (ViewGroup) setPinnedHeaderView(R.layout.apps_filter_spinner);
         this.mFilterSpinner = (Spinner) this.mSpinnerHeader.findViewById(R.id.filter_spinner);
         this.mFilterAdapter = new ArrayAdapter<>(this.mFilterSpinner.getContext(), R.layout.filter_spinner_item);
-        this.mFilterAdapter.setDropDownViewResource(17367049);
+        this.mFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         for (int i = 0; i < 4; i++) {
             this.mFilterAdapter.add(getString(sDurationLabels[i]));
         }
@@ -79,7 +82,7 @@ public abstract class ProcessStatsBase extends SettingsPreferenceFragment implem
     }
 
     @Override // android.widget.AdapterView.OnItemSelectedListener
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long j) {
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long j) throws PackageManager.NameNotFoundException, IOException {
         this.mDurationIndex = i;
         this.mStatsManager.setDuration(sDurations[i]);
         refreshUi();

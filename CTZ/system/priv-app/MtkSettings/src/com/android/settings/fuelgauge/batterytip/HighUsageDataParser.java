@@ -2,6 +2,7 @@ package com.android.settings.fuelgauge.batterytip;
 
 import android.os.BatteryStats;
 import com.android.settings.fuelgauge.BatteryInfo;
+
 /* loaded from: classes.dex */
 public class HighUsageDataParser implements BatteryInfo.BatteryDataParser {
     private int mBatteryDrain;

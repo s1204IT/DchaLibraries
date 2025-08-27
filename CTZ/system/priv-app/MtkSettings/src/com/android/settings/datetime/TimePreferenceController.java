@@ -12,12 +12,12 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.RestrictedPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.Calendar;
+
 /* loaded from: classes.dex */
 public class TimePreferenceController extends AbstractPreferenceController implements TimePickerDialog.OnTimeSetListener, PreferenceControllerMixin {
     private final AutoTimePreferenceController mAutoTimePreferenceController;
     private final TimePreferenceHost mHost;
 
-    /* loaded from: classes.dex */
     public interface TimePreferenceHost extends UpdateTimeAndDateCallback {
         void showTimePicker();
     }
@@ -77,9 +77,9 @@ public class TimePreferenceController extends AbstractPreferenceController imple
         calendar.set(12, i2);
         calendar.set(13, 0);
         calendar.set(14, 0);
-        long max = Math.max(calendar.getTimeInMillis(), 1194220800000L);
-        if (max / 1000 < 2147483647L) {
-            ((AlarmManager) this.mContext.getSystemService("alarm")).setTime(max);
+        long jMax = Math.max(calendar.getTimeInMillis(), 1194220800000L);
+        if (jMax / 1000 < 2147483647L) {
+            ((AlarmManager) this.mContext.getSystemService("alarm")).setTime(jMax);
         }
     }
 }

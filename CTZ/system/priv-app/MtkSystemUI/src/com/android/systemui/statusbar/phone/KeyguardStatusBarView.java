@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.DisplayCutout;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -33,6 +34,7 @@ import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.UserInfoController;
 import com.android.systemui.statusbar.policy.UserInfoControllerImpl;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
+
 /* loaded from: classes.dex */
 public class KeyguardStatusBarView extends RelativeLayout implements BatteryController.BatteryStateChangeCallback, ConfigurationController.ConfigurationListener, UserInfoController.OnUserInfoChangedListener {
     private boolean mBatteryCharging;
@@ -76,7 +78,7 @@ public class KeyguardStatusBarView extends RelativeLayout implements BatteryCont
     }
 
     @Override // android.view.View
-    protected void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) throws Resources.NotFoundException {
         super.onConfigurationChanged(configuration);
         ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) this.mMultiUserAvatar.getLayoutParams();
         int dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.multi_user_avatar_keyguard_size);
@@ -91,7 +93,7 @@ public class KeyguardStatusBarView extends RelativeLayout implements BatteryCont
         marginLayoutParams3.setMarginStart(getResources().getDimensionPixelSize(R.dimen.system_icons_super_container_margin_start));
         this.mSystemIconsContainer.setLayoutParams(marginLayoutParams3);
         this.mSystemIconsContainer.setPaddingRelative(this.mSystemIconsContainer.getPaddingStart(), this.mSystemIconsContainer.getPaddingTop(), getResources().getDimensionPixelSize(R.dimen.system_icons_keyguard_padding_end), this.mSystemIconsContainer.getPaddingBottom());
-        this.mCarrierLabel.setTextSize(0, getResources().getDimensionPixelSize(17105335));
+        this.mCarrierLabel.setTextSize(0, getResources().getDimensionPixelSize(android.R.dimen.indeterminate_progress_alpha_42));
         ViewGroup.MarginLayoutParams marginLayoutParams4 = (ViewGroup.MarginLayoutParams) this.mCarrierLabel.getLayoutParams();
         marginLayoutParams4.setMarginStart(getResources().getDimensionPixelSize(R.dimen.keyguard_carrier_text_margin));
         this.mCarrierLabel.setLayoutParams(marginLayoutParams4);
@@ -154,9 +156,9 @@ public class KeyguardStatusBarView extends RelativeLayout implements BatteryCont
 
     private boolean updateLayoutConsideringCutout() {
         DisplayCutout displayCutout = getRootWindowInsets().getDisplayCutout();
-        Pair<Integer, Integer> cornerCutoutMargins = PhoneStatusBarView.cornerCutoutMargins(displayCutout, getDisplay());
-        updateCornerCutoutPadding(cornerCutoutMargins);
-        if (displayCutout == null || cornerCutoutMargins != null) {
+        Pair<Integer, Integer> pairCornerCutoutMargins = PhoneStatusBarView.cornerCutoutMargins(displayCutout, getDisplay());
+        updateCornerCutoutPadding(pairCornerCutoutMargins);
+        if (displayCutout == null || pairCornerCutoutMargins != null) {
             return updateLayoutParamsNoCutout();
         }
         return updateLayoutParamsForCutout(displayCutout);
@@ -293,10 +295,8 @@ public class KeyguardStatusBarView extends RelativeLayout implements BatteryCont
         getViewTreeObserver().addOnPreDrawListener(new AnonymousClass1(this.mMultiUserSwitch.getParent() == this.mStatusIconArea, this.mSystemIconsContainer.getLeft()));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.phone.KeyguardStatusBarView$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 implements ViewTreeObserver.OnPreDrawListener {
+    /* renamed from: com.android.systemui.statusbar.phone.KeyguardStatusBarView$1 */
+    class AnonymousClass1 implements ViewTreeObserver.OnPreDrawListener {
         final /* synthetic */ int val$systemIconsCurrentX;
         final /* synthetic */ boolean val$userSwitcherVisible;
 
@@ -321,7 +321,7 @@ public class KeyguardStatusBarView extends RelativeLayout implements BatteryCont
                 KeyguardStatusBarView.this.mMultiUserSwitch.animate().alpha(0.0f).setDuration(300L).setStartDelay(0L).setInterpolator(Interpolators.ALPHA_OUT).withEndAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$KeyguardStatusBarView$1$DyabYtIeJMptnepd5jqXSnZ7UZ0
                     @Override // java.lang.Runnable
                     public final void run() {
-                        KeyguardStatusBarView.AnonymousClass1.lambda$onPreDraw$0(KeyguardStatusBarView.AnonymousClass1.this);
+                        KeyguardStatusBarView.AnonymousClass1.lambda$onPreDraw$0(this.f$0);
                     }
                 }).start();
             } else {
@@ -377,9 +377,9 @@ public class KeyguardStatusBarView extends RelativeLayout implements BatteryCont
     }
 
     private void applyDarkness(int i, Rect rect, float f, int i2) {
-        View findViewById = findViewById(i);
-        if (findViewById instanceof DarkIconDispatcher.DarkReceiver) {
-            ((DarkIconDispatcher.DarkReceiver) findViewById).onDarkChanged(rect, f, i2);
+        KeyEvent.Callback callbackFindViewById = findViewById(i);
+        if (callbackFindViewById instanceof DarkIconDispatcher.DarkReceiver) {
+            ((DarkIconDispatcher.DarkReceiver) callbackFindViewById).onDarkChanged(rect, f, i2);
         }
     }
 }

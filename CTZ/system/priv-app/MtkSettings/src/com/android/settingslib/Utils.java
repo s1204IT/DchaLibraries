@@ -22,11 +22,13 @@ import com.android.internal.util.UserIcons;
 import com.android.settingslib.drawable.UserIconDrawable;
 import com.android.settingslib.wrapper.LocationManagerWrapper;
 import java.text.NumberFormat;
+
 /* loaded from: classes.dex */
 public class Utils {
+
     @VisibleForTesting
     static final String STORAGE_MANAGER_SHOW_OPT_IN_PROPERTY = "ro.storage_manager.show_opt_in";
-    static final int[] WIFI_PIE = {17302780, 17302781, 17302782, 17302783, 17302784};
+    static final int[] WIFI_PIE = {android.R.drawable.ic_media_route_on_2_holo_light, android.R.drawable.ic_media_route_on_holo_dark, android.R.drawable.ic_media_route_on_holo_light, android.R.drawable.ic_media_seamless, android.R.drawable.ic_media_stop};
     private static String sPermissionControllerPackageName;
     private static String sServicesSystemSharedLibPackageName;
     private static String sSharedSystemSharedLibPackageName;
@@ -72,19 +74,19 @@ public class Utils {
     }
 
     public static String getUserLabel(Context context, UserInfo userInfo) {
-        String str = userInfo != null ? userInfo.name : null;
+        String string = userInfo != null ? userInfo.name : null;
         if (userInfo.isManagedProfile()) {
             return context.getString(R.string.managed_user_title);
         }
         if (userInfo.isGuest()) {
-            str = context.getString(R.string.user_guest);
+            string = context.getString(R.string.user_guest);
         }
-        if (str == null && userInfo != null) {
-            str = Integer.toString(userInfo.id);
+        if (string == null && userInfo != null) {
+            string = Integer.toString(userInfo.id);
         } else if (userInfo == null) {
-            str = context.getString(R.string.unknown);
+            string = context.getString(R.string.unknown);
         }
-        return context.getResources().getString(R.string.running_process_item_user_label, str);
+        return context.getResources().getString(R.string.running_process_item_user_label, string);
     }
 
     public static Drawable getUserIcon(Context context, UserManager userManager, UserInfo userInfo) {
@@ -94,11 +96,11 @@ public class Utils {
             Drawable managedUserDrawable = UserIconDrawable.getManagedUserDrawable(context);
             managedUserDrawable.setBounds(0, 0, sizeForList, sizeForList);
             return managedUserDrawable;
-        } else if (userInfo.iconPath != null && (userIcon = userManager.getUserIcon(userInfo.id)) != null) {
-            return new UserIconDrawable(sizeForList).setIcon(userIcon).bake();
-        } else {
-            return new UserIconDrawable(sizeForList).setIconDrawable(UserIcons.getDefaultUserIcon(context.getResources(), userInfo.id, false)).bake();
         }
+        if (userInfo.iconPath != null && (userIcon = userManager.getUserIcon(userInfo.id)) != null) {
+            return new UserIconDrawable(sizeForList).setIcon(userIcon).bake();
+        }
+        return new UserIconDrawable(sizeForList).setIconDrawable(UserIcons.getDefaultUserIcon(context.getResources(), userInfo.id, false)).bake();
     }
 
     public static String formatPercentage(double d, boolean z) {
@@ -139,7 +141,7 @@ public class Utils {
     }
 
     public static int getColorAccent(Context context) {
-        return getColorAttr(context, 16843829);
+        return getColorAttr(context, android.R.attr.colorAccent);
     }
 
     public static int getDefaultColor(Context context, int i) {
@@ -147,9 +149,9 @@ public class Utils {
     }
 
     public static int getColorAttr(Context context, int i) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
-        int color = obtainStyledAttributes.getColor(0, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(new int[]{i});
+        int color = typedArrayObtainStyledAttributes.getColor(0, 0);
+        typedArrayObtainStyledAttributes.recycle();
         return color;
     }
 
@@ -184,8 +186,8 @@ public class Utils {
         }
     }
 
-    public static boolean isDeviceProvisioningPackage(Resources resources, String str) {
-        String string = resources.getString(17039662);
+    public static boolean isDeviceProvisioningPackage(Resources resources, String str) throws Resources.NotFoundException {
+        String string = resources.getString(android.R.string.aerr_process);
         return string != null && string.equals(str);
     }
 
@@ -198,7 +200,7 @@ public class Utils {
 
     public static int getDefaultStorageManagerDaysToRetain(Resources resources) {
         try {
-            return resources.getInteger(17694870);
+            return resources.getInteger(android.R.integer.config_immersive_mode_confirmation_panic);
         } catch (Resources.NotFoundException e) {
             return 90;
         }

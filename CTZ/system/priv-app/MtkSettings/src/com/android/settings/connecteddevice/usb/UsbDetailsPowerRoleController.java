@@ -7,6 +7,7 @@ import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class UsbDetailsPowerRoleController extends UsbDetailsController implements Preference.OnPreferenceClickListener {
     private final Runnable mFailureCallback;
@@ -26,7 +27,7 @@ public class UsbDetailsPowerRoleController extends UsbDetailsController implemen
         this.mFailureCallback = new Runnable() { // from class: com.android.settings.connecteddevice.usb.-$$Lambda$UsbDetailsPowerRoleController$jiVF0c0jApWPiJapsUjjyYudYlM
             @Override // java.lang.Runnable
             public final void run() {
-                UsbDetailsPowerRoleController.lambda$new$0(UsbDetailsPowerRoleController.this);
+                UsbDetailsPowerRoleController.lambda$new$0(this.f$0);
             }
         };
         this.mNextPowerRole = 0;
@@ -42,9 +43,8 @@ public class UsbDetailsPowerRoleController extends UsbDetailsController implemen
         this.mPreferenceCategory.addPreference(this.mSwitchPreference);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.connecteddevice.usb.UsbDetailsController
-    public void refresh(boolean z, long j, int i, int i2) {
+    protected void refresh(boolean z, long j, int i, int i2) {
         if (z && !this.mUsbBackend.areAllRolesSupported()) {
             this.mFragment.getPreferenceScreen().removePreference(this.mPreferenceCategory);
         } else if (z && this.mUsbBackend.areAllRolesSupported()) {

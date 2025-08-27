@@ -10,6 +10,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class EmergencyInfoPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     public EmergencyInfoPreferenceController(Context context) {
@@ -34,8 +35,8 @@ public class EmergencyInfoPreferenceController extends AbstractPreferenceControl
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean isAvailable() {
-        List<ResolveInfo> queryIntentActivities = this.mContext.getPackageManager().queryIntentActivities(new Intent("android.settings.EDIT_EMERGENCY_INFO").setPackage("com.android.emergency"), 0);
-        return (queryIntentActivities == null || queryIntentActivities.isEmpty()) ? false : true;
+        List<ResolveInfo> listQueryIntentActivities = this.mContext.getPackageManager().queryIntentActivities(new Intent("android.settings.EDIT_EMERGENCY_INFO").setPackage("com.android.emergency"), 0);
+        return (listQueryIntentActivities == null || listQueryIntentActivities.isEmpty()) ? false : true;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController

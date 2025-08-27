@@ -3,6 +3,7 @@ package com.android.systemui.pip;
 import android.content.Context;
 import android.content.res.Configuration;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public interface BasePipManager {
     void dump(PrintWriter printWriter);

@@ -5,6 +5,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class ExpandableIndicator extends ImageView {
     private boolean mExpanded;

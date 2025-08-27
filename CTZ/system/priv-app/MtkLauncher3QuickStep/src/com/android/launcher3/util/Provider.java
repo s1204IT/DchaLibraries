@@ -1,4 +1,5 @@
 package com.android.launcher3.util;
+
 /* loaded from: classes.dex */
 public abstract class Provider<T> {
     public abstract T get();

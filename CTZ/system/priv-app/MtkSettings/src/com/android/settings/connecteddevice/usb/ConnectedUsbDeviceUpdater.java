@@ -7,6 +7,7 @@ import com.android.settings.connecteddevice.DevicePreferenceCallback;
 import com.android.settings.connecteddevice.usb.UsbConnectionBroadcastReceiver;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.dashboard.DashboardFragment;
+
 /* loaded from: classes.dex */
 public class ConnectedUsbDeviceUpdater {
     private DevicePreferenceCallback mDevicePreferenceCallback;
@@ -20,9 +21,9 @@ public class ConnectedUsbDeviceUpdater {
         if (z) {
             connectedUsbDeviceUpdater.mUsbPreference.setSummary(getSummary(connectedUsbDeviceUpdater.mUsbBackend.getCurrentFunctions(), connectedUsbDeviceUpdater.mUsbBackend.getPowerRole()));
             connectedUsbDeviceUpdater.mDevicePreferenceCallback.onDeviceAdded(connectedUsbDeviceUpdater.mUsbPreference);
-            return;
+        } else {
+            connectedUsbDeviceUpdater.mDevicePreferenceCallback.onDeviceRemoved(connectedUsbDeviceUpdater.mUsbPreference);
         }
-        connectedUsbDeviceUpdater.mDevicePreferenceCallback.onDeviceRemoved(connectedUsbDeviceUpdater.mUsbPreference);
     }
 
     public ConnectedUsbDeviceUpdater(Context context, DashboardFragment dashboardFragment, DevicePreferenceCallback devicePreferenceCallback) {
@@ -33,7 +34,7 @@ public class ConnectedUsbDeviceUpdater {
         this.mUsbConnectionListener = new UsbConnectionBroadcastReceiver.UsbConnectionListener() { // from class: com.android.settings.connecteddevice.usb.-$$Lambda$ConnectedUsbDeviceUpdater$8_8ZhYJMgn-zGVqi-7esENaXwOM
             @Override // com.android.settings.connecteddevice.usb.UsbConnectionBroadcastReceiver.UsbConnectionListener
             public final void onUsbConnectionChanged(boolean z, long j, int i, int i2) {
-                ConnectedUsbDeviceUpdater.lambda$new$0(ConnectedUsbDeviceUpdater.this, z, j, i, i2);
+                ConnectedUsbDeviceUpdater.lambda$new$0(this.f$0, z, j, i, i2);
             }
         };
         this.mFragment = dashboardFragment;
@@ -57,7 +58,7 @@ public class ConnectedUsbDeviceUpdater {
         this.mUsbPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.connecteddevice.usb.-$$Lambda$ConnectedUsbDeviceUpdater$qas_74KUD2s0js4DMK034hpC0Q4
             @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
             public final boolean onPreferenceClick(Preference preference) {
-                return ConnectedUsbDeviceUpdater.lambda$initUsbPreference$1(ConnectedUsbDeviceUpdater.this, preference);
+                return ConnectedUsbDeviceUpdater.lambda$initUsbPreference$1(this.f$0, preference);
             }
         });
         forceUpdate();
@@ -75,32 +76,26 @@ public class ConnectedUsbDeviceUpdater {
     public static int getSummary(long j, int i) {
         switch (i) {
             case 1:
-                if (j == 4) {
-                    return R.string.usb_summary_file_transfers_power;
+                if (j != 4) {
+                    if (j != 32) {
+                        if (j != 16) {
+                            if (j == 8) {
+                            }
+                        }
+                    }
                 }
-                if (j == 32) {
-                    return R.string.usb_summary_tether_power;
-                }
-                if (j == 16) {
-                    return R.string.usb_summary_photo_transfers_power;
-                }
-                if (j == 8) {
-                    return R.string.usb_summary_MIDI_power;
-                }
-                return R.string.usb_summary_power_only;
+                break;
             case 2:
-                if (j == 4) {
-                    return R.string.usb_summary_file_transfers;
+                if (j != 4) {
+                    if (j != 32) {
+                        if (j != 16) {
+                            if (j == 8) {
+                            }
+                        }
+                    }
                 }
-                if (j == 32) {
-                    return R.string.usb_summary_tether;
-                }
-                if (j == 16) {
-                    return R.string.usb_summary_photo_transfers;
-                }
-                return j == 8 ? R.string.usb_summary_MIDI : R.string.usb_summary_charging_only;
-            default:
-                return R.string.usb_summary_charging_only;
+                break;
         }
+        return R.string.usb_summary_charging_only;
     }
 }

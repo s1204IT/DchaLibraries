@@ -2,6 +2,7 @@ package com.mediatek.browser.ext;
 
 import android.content.Context;
 import android.text.InputFilter;
+
 /* loaded from: classes.dex */
 public interface IBrowserUrlExt {
     String checkAndTrimUrl(String str);

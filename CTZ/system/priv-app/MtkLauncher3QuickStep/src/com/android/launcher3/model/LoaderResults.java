@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
+
 /* loaded from: classes.dex */
 public class LoaderResults {
     private static final long INVALID_SCREEN_ID = -1;
@@ -63,13 +64,13 @@ public class LoaderResults {
             currentWorkspaceScreen = -1001;
         }
         final boolean z = currentWorkspaceScreen >= 0;
-        long longValue = z ? ((Long) arrayList3.get(currentWorkspaceScreen)).longValue() : -1L;
+        long jLongValue = z ? ((Long) arrayList3.get(currentWorkspaceScreen)).longValue() : -1L;
         ArrayList<ItemInfo> arrayList4 = new ArrayList<>();
         ArrayList<ItemInfo> arrayList5 = new ArrayList<>();
         ArrayList<LauncherAppWidgetInfo> arrayList6 = new ArrayList<>();
         ArrayList<LauncherAppWidgetInfo> arrayList7 = new ArrayList<>();
-        filterCurrentWorkspaceItems(longValue, arrayList, arrayList4, arrayList5);
-        filterCurrentWorkspaceItems(longValue, arrayList2, arrayList6, arrayList7);
+        filterCurrentWorkspaceItems(jLongValue, arrayList, arrayList4, arrayList5);
+        filterCurrentWorkspaceItems(jLongValue, arrayList2, arrayList6, arrayList7);
         sortWorkspaceItemsSpatially(arrayList4);
         sortWorkspaceItemsSpatially(arrayList5);
         this.mUiExecutor.execute(new Runnable() { // from class: com.android.launcher3.model.LoaderResults.1
@@ -138,6 +139,7 @@ public class LoaderResults {
         }
         HashSet hashSet = new HashSet();
         Collections.sort(arrayList, new Comparator<ItemInfo>() { // from class: com.android.launcher3.model.LoaderResults.6
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(ItemInfo itemInfo, ItemInfo itemInfo2) {
                 return Utilities.longCompare(itemInfo.container, itemInfo2.container);
@@ -170,6 +172,7 @@ public class LoaderResults {
         final int i = invariantDeviceProfile.numColumns;
         final int i2 = invariantDeviceProfile.numColumns * invariantDeviceProfile.numRows;
         Collections.sort(arrayList, new Comparator<ItemInfo>() { // from class: com.android.launcher3.model.LoaderResults.7
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(ItemInfo itemInfo, ItemInfo itemInfo2) {
                 if (itemInfo.container == itemInfo2.container) {
@@ -225,16 +228,16 @@ public class LoaderResults {
     }
 
     public void bindDeepShortcuts() {
-        final MultiHashMap<ComponentKey, String> clone;
+        final MultiHashMap<ComponentKey, String> multiHashMapClone;
         synchronized (this.mBgDataModel) {
-            clone = this.mBgDataModel.deepShortcutMap.clone();
+            multiHashMapClone = this.mBgDataModel.deepShortcutMap.clone();
         }
         this.mUiExecutor.execute(new Runnable() { // from class: com.android.launcher3.model.LoaderResults.10
             @Override // java.lang.Runnable
             public void run() {
                 LauncherModel.Callbacks callbacks = (LauncherModel.Callbacks) LoaderResults.this.mCallbacks.get();
                 if (callbacks != null) {
-                    callbacks.bindDeepShortcutMap(clone);
+                    callbacks.bindDeepShortcutMap(multiHashMapClone);
                 }
             }
         });

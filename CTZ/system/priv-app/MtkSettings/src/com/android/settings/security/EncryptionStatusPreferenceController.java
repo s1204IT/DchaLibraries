@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class EncryptionStatusPreferenceController extends BasePreferenceController {
     static final String PREF_KEY_ENCRYPTION_DETAIL_PAGE = "encryption_and_credentials_encryption_status";
@@ -33,11 +34,11 @@ public class EncryptionStatusPreferenceController extends BasePreferenceControll
                 preference.setFragment(null);
             }
             preference.setSummary(R.string.crypt_keeper_encrypted_summary);
-            return;
+        } else {
+            if (TextUtils.equals(getPreferenceKey(), PREF_KEY_ENCRYPTION_DETAIL_PAGE)) {
+                preference.setFragment(CryptKeeperSettings.class.getName());
+            }
+            preference.setSummary(R.string.decryption_settings_summary);
         }
-        if (TextUtils.equals(getPreferenceKey(), PREF_KEY_ENCRYPTION_DETAIL_PAGE)) {
-            preference.setFragment(CryptKeeperSettings.class.getName());
-        }
-        preference.setSummary(R.string.decryption_settings_summary);
     }
 }

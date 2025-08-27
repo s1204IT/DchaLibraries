@@ -38,10 +38,10 @@ import com.android.settings.password.ChooseLockPattern;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedPreference;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ChooseLockGeneric extends SettingsActivity {
 
-    /* loaded from: classes.dex */
     public static class InternalActivity extends ChooseLockGeneric {
     }
 
@@ -56,9 +56,8 @@ public class ChooseLockGeneric extends SettingsActivity {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return ChooseLockGenericFragment.class.getName().equals(str);
     }
 
@@ -66,7 +65,6 @@ public class ChooseLockGeneric extends SettingsActivity {
         return ChooseLockGenericFragment.class;
     }
 
-    /* loaded from: classes.dex */
     public static class ChooseLockGenericFragment extends SettingsPreferenceFragment {
         private long mChallenge;
         private ChooseLockSettingsHelper mChooseLockSettingsHelper;
@@ -171,8 +169,9 @@ public class ChooseLockGeneric extends SettingsActivity {
             if (!isUnlockMethodSecure(key) && this.mLockPatternUtils.isSecure(this.mUserId)) {
                 showFactoryResetProtectionWarningDialog(key);
                 return true;
-            } else if ("unlock_skip_fingerprint".equals(key)) {
-                Intent intent = new Intent(getActivity(), InternalActivity.class);
+            }
+            if ("unlock_skip_fingerprint".equals(key)) {
+                Intent intent = new Intent(getActivity(), (Class<?>) InternalActivity.class);
                 intent.setAction(getIntent().getAction());
                 intent.putExtra("android.intent.extra.USER_ID", this.mUserId);
                 intent.putExtra("confirm_credentials", !this.mPasswordConfirmed);
@@ -181,9 +180,8 @@ public class ChooseLockGeneric extends SettingsActivity {
                 }
                 startActivityForResult(intent, 104);
                 return true;
-            } else {
-                return setUnlockMethod(key);
             }
+            return setUnlockMethod(key);
         }
 
         private void maybeEnableEncryption(int i, boolean z) {
@@ -194,8 +192,7 @@ public class ChooseLockGeneric extends SettingsActivity {
                 this.mEncryptionRequestDisabled = z;
                 Intent intentForUnlockMethod = getIntentForUnlockMethod(i);
                 intentForUnlockMethod.putExtra("for_cred_req_boot", this.mForChangeCredRequiredForBoot);
-                Activity activity = getActivity();
-                Intent encryptionInterstitialIntent = getEncryptionInterstitialIntent(activity, i, this.mLockPatternUtils.isCredentialRequiredToDecrypt(!AccessibilityManager.getInstance(activity).isEnabled()), intentForUnlockMethod);
+                Intent encryptionInterstitialIntent = getEncryptionInterstitialIntent(getActivity(), i, this.mLockPatternUtils.isCredentialRequiredToDecrypt(!AccessibilityManager.getInstance(r0).isEnabled()), intentForUnlockMethod);
                 encryptionInterstitialIntent.putExtra("for_fingerprint", this.mForFingerprint);
                 encryptionInterstitialIntent.putExtra(":settings:hide_drawer", this.mHideDrawer);
                 if (this.mIsSetNewPassword && this.mHasChallenge) {
@@ -204,7 +201,9 @@ public class ChooseLockGeneric extends SettingsActivity {
                     i2 = 101;
                 }
                 startActivityForResult(encryptionInterstitialIntent, i2);
-            } else if (this.mForChangeCredRequiredForBoot) {
+                return;
+            }
+            if (this.mForChangeCredRequiredForBoot) {
                 finish();
             } else {
                 updateUnlockMethodAndFinish(i, z, false);
@@ -259,7 +258,7 @@ public class ChooseLockGeneric extends SettingsActivity {
         }
 
         protected Intent getFindSensorIntent(Context context) {
-            return new Intent(context, FingerprintEnrollFindSensor.class);
+            return new Intent(context, (Class<?>) FingerprintEnrollFindSensor.class);
         }
 
         @Override // com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
@@ -284,21 +283,20 @@ public class ChooseLockGeneric extends SettingsActivity {
                 }
                 return;
             }
-            int upgradeQuality = this.mController.upgradeQuality(intent.getIntExtra("minimum_quality", -1));
+            int iUpgradeQuality = this.mController.upgradeQuality(intent.getIntExtra("minimum_quality", -1));
             boolean booleanExtra = intent.getBooleanExtra("hide_disabled_prefs", false);
             PreferenceScreen preferenceScreen = getPreferenceScreen();
             if (preferenceScreen != null) {
                 preferenceScreen.removeAll();
             }
             addPreferences();
-            disableUnusablePreferences(upgradeQuality, booleanExtra);
+            disableUnusablePreferences(iUpgradeQuality, booleanExtra);
             updatePreferenceText();
             updateCurrentPreference();
             updatePreferenceSummaryIfNeeded();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public void addPreferences() {
+        protected void addPreferences() {
             addPreferencesFromResource(R.xml.security_settings_picker);
             findPreference(ScreenLockType.NONE.preferenceKey).setViewId(R.id.lock_none);
             findPreference("unlock_skip_fingerprint").setViewId(R.id.lock_none);
@@ -323,30 +321,30 @@ public class ChooseLockGeneric extends SettingsActivity {
         }
 
         private void setPreferenceTitle(ScreenLockType screenLockType, int i) {
-            Preference findPreference = findPreference(screenLockType.preferenceKey);
-            if (findPreference != null) {
-                findPreference.setTitle(i);
+            Preference preferenceFindPreference = findPreference(screenLockType.preferenceKey);
+            if (preferenceFindPreference != null) {
+                preferenceFindPreference.setTitle(i);
             }
         }
 
         private void setPreferenceTitle(ScreenLockType screenLockType, CharSequence charSequence) {
-            Preference findPreference = findPreference(screenLockType.preferenceKey);
-            if (findPreference != null) {
-                findPreference.setTitle(charSequence);
+            Preference preferenceFindPreference = findPreference(screenLockType.preferenceKey);
+            if (preferenceFindPreference != null) {
+                preferenceFindPreference.setTitle(charSequence);
             }
         }
 
         private void setPreferenceSummary(ScreenLockType screenLockType, int i) {
-            Preference findPreference = findPreference(screenLockType.preferenceKey);
-            if (findPreference != null) {
-                findPreference.setSummary(i);
+            Preference preferenceFindPreference = findPreference(screenLockType.preferenceKey);
+            if (preferenceFindPreference != null) {
+                preferenceFindPreference.setSummary(i);
             }
         }
 
         private void updateCurrentPreference() {
-            Preference findPreference = findPreference(getKeyForCurrent());
-            if (findPreference != null) {
-                findPreference.setSummary(R.string.current_screen_lock);
+            Preference preferenceFindPreference = findPreference(getKeyForCurrent());
+            if (preferenceFindPreference != null) {
+                preferenceFindPreference.setSummary(R.string.current_screen_lock);
             }
         }
 
@@ -355,9 +353,9 @@ public class ChooseLockGeneric extends SettingsActivity {
             if (this.mLockPatternUtils.isLockScreenDisabled(credentialOwnerProfile)) {
                 return ScreenLockType.NONE.preferenceKey;
             }
-            ScreenLockType fromQuality = ScreenLockType.fromQuality(this.mLockPatternUtils.getKeyguardStoredPasswordQuality(credentialOwnerProfile));
-            if (fromQuality != null) {
-                return fromQuality.preferenceKey;
+            ScreenLockType screenLockTypeFromQuality = ScreenLockType.fromQuality(this.mLockPatternUtils.getKeyguardStoredPasswordQuality(credentialOwnerProfile));
+            if (screenLockTypeFromQuality != null) {
+                return screenLockTypeFromQuality.preferenceKey;
             }
             return null;
         }
@@ -366,31 +364,29 @@ public class ChooseLockGeneric extends SettingsActivity {
             disableUnusablePreferencesImpl(i, z);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public void disableUnusablePreferencesImpl(int i, boolean z) {
-            ScreenLockType[] values;
+        protected void disableUnusablePreferencesImpl(int i, boolean z) {
             PreferenceScreen preferenceScreen = getPreferenceScreen();
             int passwordQuality = this.mDPM.getPasswordQuality(null, this.mUserId);
-            RestrictedLockUtils.EnforcedAdmin checkIfPasswordQualityIsSet = RestrictedLockUtils.checkIfPasswordQualityIsSet(getActivity(), this.mUserId);
+            RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfPasswordQualityIsSet = RestrictedLockUtils.checkIfPasswordQualityIsSet(getActivity(), this.mUserId);
             for (ScreenLockType screenLockType : ScreenLockType.values()) {
-                Preference findPreference = findPreference(screenLockType.preferenceKey);
-                if (findPreference instanceof RestrictedPreference) {
-                    boolean isScreenLockVisible = this.mController.isScreenLockVisible(screenLockType);
-                    boolean isScreenLockEnabled = this.mController.isScreenLockEnabled(screenLockType, i);
-                    boolean isScreenLockDisabledByAdmin = this.mController.isScreenLockDisabledByAdmin(screenLockType, passwordQuality);
+                Preference preferenceFindPreference = findPreference(screenLockType.preferenceKey);
+                if (preferenceFindPreference instanceof RestrictedPreference) {
+                    boolean zIsScreenLockVisible = this.mController.isScreenLockVisible(screenLockType);
+                    boolean zIsScreenLockEnabled = this.mController.isScreenLockEnabled(screenLockType, i);
+                    boolean zIsScreenLockDisabledByAdmin = this.mController.isScreenLockDisabledByAdmin(screenLockType, passwordQuality);
                     if (z) {
-                        isScreenLockVisible = isScreenLockVisible && isScreenLockEnabled;
+                        zIsScreenLockVisible = zIsScreenLockVisible && zIsScreenLockEnabled;
                     }
-                    if (!isScreenLockVisible) {
-                        preferenceScreen.removePreference(findPreference);
-                    } else if (isScreenLockDisabledByAdmin && checkIfPasswordQualityIsSet != null) {
-                        ((RestrictedPreference) findPreference).setDisabledByAdmin(checkIfPasswordQualityIsSet);
-                    } else if (!isScreenLockEnabled) {
-                        ((RestrictedPreference) findPreference).setDisabledByAdmin(null);
-                        findPreference.setSummary(R.string.unlock_set_unlock_disabled_summary);
-                        findPreference.setEnabled(false);
+                    if (!zIsScreenLockVisible) {
+                        preferenceScreen.removePreference(preferenceFindPreference);
+                    } else if (zIsScreenLockDisabledByAdmin && enforcedAdminCheckIfPasswordQualityIsSet != null) {
+                        ((RestrictedPreference) preferenceFindPreference).setDisabledByAdmin(enforcedAdminCheckIfPasswordQualityIsSet);
+                    } else if (!zIsScreenLockEnabled) {
+                        ((RestrictedPreference) preferenceFindPreference).setDisabledByAdmin(null);
+                        preferenceFindPreference.setSummary(R.string.unlock_set_unlock_disabled_summary);
+                        preferenceFindPreference.setEnabled(false);
                     } else {
-                        ((RestrictedPreference) findPreference).setDisabledByAdmin(null);
+                        ((RestrictedPreference) preferenceFindPreference).setDisabledByAdmin(null);
                     }
                 }
             }
@@ -410,8 +406,7 @@ public class ChooseLockGeneric extends SettingsActivity {
             return this.mManagedPasswordProvider.createIntent(false, str);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public Intent getLockPasswordIntent(int i, int i2, int i3) {
+        protected Intent getLockPasswordIntent(int i, int i2, int i3) {
             ChooseLockPassword.IntentBuilder userId = new ChooseLockPassword.IntentBuilder(getContext()).setPasswordQuality(i).setPasswordLengthRange(i2, i3).setForFingerprint(this.mForFingerprint).setUserId(this.mUserId);
             if (this.mHasChallenge) {
                 userId.setChallenge(this.mChallenge);
@@ -422,8 +417,7 @@ public class ChooseLockGeneric extends SettingsActivity {
             return userId.build();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public Intent getLockPatternIntent() {
+        protected Intent getLockPatternIntent() {
             ChooseLockPattern.IntentBuilder userId = new ChooseLockPattern.IntentBuilder(getContext()).setForFingerprint(this.mForFingerprint).setUserId(this.mUserId);
             if (this.mHasChallenge) {
                 userId.setChallenge(this.mChallenge);
@@ -443,8 +437,8 @@ public class ChooseLockGeneric extends SettingsActivity {
             if (!this.mPasswordConfirmed) {
                 throw new IllegalStateException("Tried to update password without confirming it");
             }
-            int upgradeQuality = this.mController.upgradeQuality(i);
-            Intent intentForUnlockMethod = getIntentForUnlockMethod(upgradeQuality);
+            int iUpgradeQuality = this.mController.upgradeQuality(i);
+            Intent intentForUnlockMethod = getIntentForUnlockMethod(iUpgradeQuality);
             if (intentForUnlockMethod != null) {
                 if (getIntent().getBooleanExtra("show_options_button", false)) {
                     intentForUnlockMethod.putExtra("show_options_button", z2);
@@ -456,33 +450,35 @@ public class ChooseLockGeneric extends SettingsActivity {
                     i2 = 102;
                 }
                 startActivityForResult(intentForUnlockMethod, i2);
-            } else if (upgradeQuality == 0) {
+                return;
+            }
+            if (iUpgradeQuality == 0) {
                 this.mChooseLockSettingsHelper.utils().clearLock(this.mUserPassword, this.mUserId);
                 this.mChooseLockSettingsHelper.utils().setLockScreenDisabled(z, this.mUserId);
                 getActivity().setResult(-1);
                 removeAllFingerprintForUserAndFinish(this.mUserId);
-            } else {
-                removeAllFingerprintForUserAndFinish(this.mUserId);
+                return;
             }
+            removeAllFingerprintForUserAndFinish(this.mUserId);
         }
 
         private Intent getIntentForUnlockMethod(int i) {
-            Intent intent = null;
+            Intent lockPatternIntent = null;
             if (i >= 524288) {
-                intent = getLockManagedPasswordIntent(this.mUserPassword);
+                lockPatternIntent = getLockManagedPasswordIntent(this.mUserPassword);
             } else if (i >= 131072) {
                 int passwordMinimumLength = this.mDPM.getPasswordMinimumLength(null, this.mUserId);
                 if (passwordMinimumLength < 4) {
                     passwordMinimumLength = 4;
                 }
-                intent = getLockPasswordIntent(i, passwordMinimumLength, this.mDPM.getPasswordMaximumLength(i));
+                lockPatternIntent = getLockPasswordIntent(i, passwordMinimumLength, this.mDPM.getPasswordMaximumLength(i));
             } else if (i == 65536) {
-                intent = getLockPatternIntent();
+                lockPatternIntent = getLockPatternIntent();
             }
-            if (intent != null) {
-                intent.putExtra(":settings:hide_drawer", this.mHideDrawer);
+            if (lockPatternIntent != null) {
+                lockPatternIntent.putExtra(":settings:hide_drawer", this.mHideDrawer);
             }
-            return intent;
+            return lockPatternIntent;
         }
 
         private void removeAllFingerprintForUserAndFinish(final int i) {
@@ -508,8 +504,7 @@ public class ChooseLockGeneric extends SettingsActivity {
             finish();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void removeManagedProfileFingerprintsAndFinishIfNecessary(int i) {
+        private void removeManagedProfileFingerprintsAndFinishIfNecessary(int i) {
             if (this.mFingerprintManager != null && this.mFingerprintManager.isHardwareDetected()) {
                 this.mFingerprintManager.setActiveUser(UserHandle.myUserId());
             }
@@ -552,81 +547,83 @@ public class ChooseLockGeneric extends SettingsActivity {
         }
 
         private int getResIdForFactoryResetProtectionWarningMessage() {
-            boolean z;
+            boolean zHasEnrolledFingerprints;
             if (this.mFingerprintManager != null && this.mFingerprintManager.isHardwareDetected()) {
-                z = this.mFingerprintManager.hasEnrolledFingerprints(this.mUserId);
+                zHasEnrolledFingerprints = this.mFingerprintManager.hasEnrolledFingerprints(this.mUserId);
             } else {
-                z = false;
+                zHasEnrolledFingerprints = false;
             }
-            boolean isManagedProfile = UserManager.get(getActivity()).isManagedProfile(this.mUserId);
+            boolean zIsManagedProfile = UserManager.get(getActivity()).isManagedProfile(this.mUserId);
             int keyguardStoredPasswordQuality = this.mLockPatternUtils.getKeyguardStoredPasswordQuality(this.mUserId);
             if (keyguardStoredPasswordQuality == 65536) {
-                if (z && isManagedProfile) {
+                if (zHasEnrolledFingerprints && zIsManagedProfile) {
                     return R.string.unlock_disable_frp_warning_content_pattern_fingerprint_profile;
                 }
-                if (z && !isManagedProfile) {
+                if (zHasEnrolledFingerprints && !zIsManagedProfile) {
                     return R.string.unlock_disable_frp_warning_content_pattern_fingerprint;
                 }
-                if (isManagedProfile) {
+                if (zIsManagedProfile) {
                     return R.string.unlock_disable_frp_warning_content_pattern_profile;
                 }
                 return R.string.unlock_disable_frp_warning_content_pattern;
-            } else if (keyguardStoredPasswordQuality == 131072 || keyguardStoredPasswordQuality == 196608) {
-                if (z && isManagedProfile) {
+            }
+            if (keyguardStoredPasswordQuality == 131072 || keyguardStoredPasswordQuality == 196608) {
+                if (zHasEnrolledFingerprints && zIsManagedProfile) {
                     return R.string.unlock_disable_frp_warning_content_pin_fingerprint_profile;
                 }
-                if (z && !isManagedProfile) {
+                if (zHasEnrolledFingerprints && !zIsManagedProfile) {
                     return R.string.unlock_disable_frp_warning_content_pin_fingerprint;
                 }
-                if (isManagedProfile) {
+                if (zIsManagedProfile) {
                     return R.string.unlock_disable_frp_warning_content_pin_profile;
                 }
                 return R.string.unlock_disable_frp_warning_content_pin;
-            } else if (keyguardStoredPasswordQuality == 262144 || keyguardStoredPasswordQuality == 327680 || keyguardStoredPasswordQuality == 393216 || keyguardStoredPasswordQuality == 524288) {
-                if (z && isManagedProfile) {
+            }
+            if (keyguardStoredPasswordQuality == 262144 || keyguardStoredPasswordQuality == 327680 || keyguardStoredPasswordQuality == 393216 || keyguardStoredPasswordQuality == 524288) {
+                if (zHasEnrolledFingerprints && zIsManagedProfile) {
                     return R.string.unlock_disable_frp_warning_content_password_fingerprint_profile;
                 }
-                if (z && !isManagedProfile) {
+                if (zHasEnrolledFingerprints && !zIsManagedProfile) {
                     return R.string.unlock_disable_frp_warning_content_password_fingerprint;
                 }
-                if (isManagedProfile) {
+                if (zIsManagedProfile) {
                     return R.string.unlock_disable_frp_warning_content_password_profile;
                 }
                 return R.string.unlock_disable_frp_warning_content_password;
-            } else if (z && isManagedProfile) {
-                return R.string.unlock_disable_frp_warning_content_unknown_fingerprint_profile;
-            } else {
-                if (z && !isManagedProfile) {
-                    return R.string.unlock_disable_frp_warning_content_unknown_fingerprint;
-                }
-                if (isManagedProfile) {
-                    return R.string.unlock_disable_frp_warning_content_unknown_profile;
-                }
-                return R.string.unlock_disable_frp_warning_content_unknown;
             }
+            if (zHasEnrolledFingerprints && zIsManagedProfile) {
+                return R.string.unlock_disable_frp_warning_content_unknown_fingerprint_profile;
+            }
+            if (zHasEnrolledFingerprints && !zIsManagedProfile) {
+                return R.string.unlock_disable_frp_warning_content_unknown_fingerprint;
+            }
+            if (zIsManagedProfile) {
+                return R.string.unlock_disable_frp_warning_content_unknown_profile;
+            }
+            return R.string.unlock_disable_frp_warning_content_unknown;
         }
 
         private boolean isUnlockMethodSecure(String str) {
             return (ScreenLockType.SWIPE.preferenceKey.equals(str) || ScreenLockType.NONE.preferenceKey.equals(str)) ? false : true;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public boolean setUnlockMethod(String str) {
+        private boolean setUnlockMethod(String str) {
             EventLog.writeEvent(90200, str);
-            ScreenLockType fromKey = ScreenLockType.fromKey(str);
-            if (fromKey != null) {
-                switch (fromKey) {
+            ScreenLockType screenLockTypeFromKey = ScreenLockType.fromKey(str);
+            if (screenLockTypeFromKey != null) {
+                switch (screenLockTypeFromKey) {
                     case NONE:
                     case SWIPE:
-                        updateUnlockMethodAndFinish(fromKey.defaultQuality, fromKey == ScreenLockType.NONE, false);
-                        return true;
+                        updateUnlockMethodAndFinish(screenLockTypeFromKey.defaultQuality, screenLockTypeFromKey == ScreenLockType.NONE, false);
+                        break;
                     case PATTERN:
                     case PIN:
                     case PASSWORD:
                     case MANAGED:
-                        maybeEnableEncryption(fromKey.defaultQuality, false);
-                        return true;
+                        maybeEnableEncryption(screenLockTypeFromKey.defaultQuality, false);
+                        break;
                 }
+                return true;
             }
             Log.e("ChooseLockGenericFragment", "Encountered unknown unlock method to set: " + str);
             return false;
@@ -636,7 +633,6 @@ public class ChooseLockGeneric extends SettingsActivity {
             FactoryResetProtectionWarningDialog.newInstance(getResIdForFactoryResetProtectionWarningTitle(), getResIdForFactoryResetProtectionWarningMessage(), str).show(getChildFragmentManager(), "frp_warning_dialog");
         }
 
-        /* loaded from: classes.dex */
         public static class FactoryResetProtectionWarningDialog extends InstrumentedDialogFragment {
             public static FactoryResetProtectionWarningDialog newInstance(int i, int i2, String str) {
                 FactoryResetProtectionWarningDialog factoryResetProtectionWarningDialog = new FactoryResetProtectionWarningDialog();
@@ -661,12 +657,12 @@ public class ChooseLockGeneric extends SettingsActivity {
                 return new AlertDialog.Builder(getActivity()).setTitle(arguments.getInt("titleRes")).setMessage(arguments.getInt("messageRes")).setPositiveButton(R.string.unlock_disable_frp_warning_ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.password.-$$Lambda$ChooseLockGeneric$ChooseLockGenericFragment$FactoryResetProtectionWarningDialog$Abdb-f1FnDmiVy0c3RZHU7n2B2k
                     @Override // android.content.DialogInterface.OnClickListener
                     public final void onClick(DialogInterface dialogInterface, int i) {
-                        ((ChooseLockGeneric.ChooseLockGenericFragment) ChooseLockGeneric.ChooseLockGenericFragment.FactoryResetProtectionWarningDialog.this.getParentFragment()).setUnlockMethod(arguments.getString("unlockMethodToSet"));
+                        ((ChooseLockGeneric.ChooseLockGenericFragment) this.f$0.getParentFragment()).setUnlockMethod(arguments.getString("unlockMethodToSet"));
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.settings.password.-$$Lambda$ChooseLockGeneric$ChooseLockGenericFragment$FactoryResetProtectionWarningDialog$YUiXVX_8NlQHl0UI000UMbpVL0U
                     @Override // android.content.DialogInterface.OnClickListener
                     public final void onClick(DialogInterface dialogInterface, int i) {
-                        ChooseLockGeneric.ChooseLockGenericFragment.FactoryResetProtectionWarningDialog.this.dismiss();
+                        this.f$0.dismiss();
                     }
                 }).create();
             }

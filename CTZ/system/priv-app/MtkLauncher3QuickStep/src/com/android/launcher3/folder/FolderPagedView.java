@@ -32,6 +32,7 @@ import com.android.launcher3.touch.ItemClickHandler;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class FolderPagedView extends PagedView<PageIndicatorDots> {
     private static final int REORDER_ANIMATION_DURATION = 230;
@@ -43,16 +44,21 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
     private int mAllocatedContentSize;
     private final ViewGroupFocusHelper mFocusIndicatorHelper;
     private Folder mFolder;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private int mGridCountX;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private int mGridCountY;
     private final LayoutInflater mInflater;
     public final boolean mIsRtl;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private final int mMaxCountX;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private final int mMaxCountY;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private final int mMaxItemsPerPage;
     final ArrayMap<View, Runnable> mPendingAnimations;
@@ -85,8 +91,8 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
         int i7;
         int i8;
         boolean z;
-        int max;
-        int i9;
+        int iMax;
+        int iMax2;
         if (i >= i6) {
             i8 = i4;
             i7 = i5;
@@ -99,34 +105,34 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
         while (!z) {
             if (i8 * i7 < i) {
                 if ((i8 <= i7 || i7 == i5) && i8 < i4) {
-                    max = i8 + 1;
+                    iMax = i8 + 1;
                 } else if (i7 < i5) {
-                    i9 = i7 + 1;
-                    max = i8;
-                    if (i9 == 0) {
-                        i9++;
+                    iMax2 = i7 + 1;
+                    iMax = i8;
+                    if (iMax2 == 0) {
+                        iMax2++;
                     }
                 } else {
-                    max = i8;
+                    iMax = i8;
                 }
-                i9 = i7;
-                if (i9 == 0) {
+                iMax2 = i7;
+                if (iMax2 == 0) {
                 }
             } else {
-                int i10 = i7 - 1;
-                if (i10 * i8 >= i && i7 >= i8) {
-                    i9 = Math.max(0, i10);
-                    max = i8;
+                int i9 = i7 - 1;
+                if (i9 * i8 >= i && i7 >= i8) {
+                    iMax2 = Math.max(0, i9);
+                    iMax = i8;
                 } else {
-                    int i11 = i8 - 1;
-                    max = i11 * i7 >= i ? Math.max(0, i11) : i8;
-                    i9 = i7;
+                    int i10 = i8 - 1;
+                    iMax = i10 * i7 >= i ? Math.max(0, i10) : i8;
+                    iMax2 = i7;
                 }
             }
-            boolean z2 = max == i8 && i9 == i7;
-            i7 = i9;
+            boolean z2 = iMax == i8 && iMax2 == i7;
+            i7 = iMax2;
             z = z2;
-            i8 = max;
+            i8 = iMax;
         }
         iArr[0] = i8;
         iArr[1] = i7;
@@ -171,10 +177,10 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
     }
 
     public View createAndAddViewForRank(ShortcutInfo shortcutInfo, int i) {
-        View createNewView = createNewView(shortcutInfo);
+        View viewCreateNewView = createNewView(shortcutInfo);
         allocateSpaceForRank(i);
-        addViewForRank(createNewView, shortcutInfo, i);
-        return createNewView;
+        addViewForRank(viewCreateNewView, shortcutInfo, i);
+        return viewCreateNewView;
     }
 
     public void addViewForRank(View view, ShortcutInfo shortcutInfo, int i) {
@@ -201,6 +207,7 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
         return bubbleTextView;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getPageAt(I)Landroid/view/View; */
     @Override // com.android.launcher3.PagedView
     public CellLayout getPageAt(int i) {
         return (CellLayout) getChildAt(i);
@@ -250,6 +257,7 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
         arrangeChildren(arrayList, i, true);
     }
 
+    /* JADX DEBUG: Type inference failed for r2v5. Raw type applied. Possible types: T extends android.view.View & com.android.launcher3.pageindicators.PageIndicator */
     /* JADX WARN: Multi-variable type inference failed */
     /* JADX WARN: Type inference failed for: r1v22 */
     /* JADX WARN: Type inference failed for: r1v6, types: [int] */
@@ -269,16 +277,16 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
         Iterator it = arrayList2.iterator();
         FolderIconPreviewVerifier folderIconPreviewVerifier = new FolderIconPreviewVerifier(Launcher.getLauncher(getContext()).getDeviceProfile().inv);
         int i4 = 0;
-        CellLayout cellLayout2 = null;
+        CellLayout cellLayoutCreateAndAddNewPage = null;
         int i5 = 0;
         int i6 = 0;
         while (i4 < i2) {
             View view = arrayList.size() > i4 ? arrayList.get(i4) : null;
-            if (cellLayout2 == null || i5 >= this.mMaxItemsPerPage) {
+            if (cellLayoutCreateAndAddNewPage == null || i5 >= this.mMaxItemsPerPage) {
                 if (it.hasNext()) {
-                    cellLayout2 = (CellLayout) it.next();
+                    cellLayoutCreateAndAddNewPage = (CellLayout) it.next();
                 } else {
-                    cellLayout2 = createAndAddNewPage();
+                    cellLayoutCreateAndAddNewPage = createAndAddNewPage();
                 }
                 i5 = 0;
             }
@@ -297,7 +305,7 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
                 }
                 layoutParams.cellX = itemInfo.cellX;
                 layoutParams.cellY = itemInfo.cellY;
-                cellLayout2.addViewToCellLayout(view, -1, this.mFolder.mLauncher.getViewIdForItem(itemInfo), layoutParams, true);
+                cellLayoutCreateAndAddNewPage.addViewToCellLayout(view, -1, this.mFolder.mLauncher.getViewIdForItem(itemInfo), layoutParams, true);
                 if (folderIconPreviewVerifier.isItemInPreview(i6) && (view instanceof BubbleTextView)) {
                     ((BubbleTextView) view).verifyHighRes();
                 }
@@ -334,17 +342,17 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
     }
 
     public int getDesiredWidth() {
-        if (getPageCount() > 0) {
-            return getPaddingRight() + getPageAt(0).getDesiredWidth() + getPaddingLeft();
+        if (getPageCount() <= 0) {
+            return 0;
         }
-        return 0;
+        return getPaddingRight() + getPageAt(0).getDesiredWidth() + getPaddingLeft();
     }
 
     public int getDesiredHeight() {
-        if (getPageCount() > 0) {
-            return getPaddingBottom() + getPageAt(0).getDesiredHeight() + getPaddingTop();
+        if (getPageCount() <= 0) {
+            return 0;
         }
-        return 0;
+        return getPaddingBottom() + getPageAt(0).getDesiredHeight() + getPaddingTop();
     }
 
     public int getItemCount() {
@@ -414,9 +422,8 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.PagedView
-    public void notifyPageSwitchListener(int i) {
+    protected void notifyPageSwitchListener(int i) {
         super.notifyPageSwitchListener(i);
         if (this.mFolder != null) {
             this.mFolder.updateTextViewFocus();
@@ -451,9 +458,8 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
         return i / this.mMaxItemsPerPage == getNextPage();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.PagedView
-    public void onPageBeginTransition() {
+    protected void onPageBeginTransition() {
         super.onPageBeginTransition();
         verifyVisibleHighResIcons(getCurrentPage() - 1);
         verifyVisibleHighResIcons(getCurrentPage() + 1);
@@ -556,8 +562,9 @@ public class FolderPagedView extends PagedView<PageIndicatorDots> {
                 ((ItemInfo) childAt2.getTag()).rank -= i4;
             }
             if (pageAt2.animateChildToPosition(childAt2, i8 % this.mGridCountX, i8 / this.mGridCountX, REORDER_ANIMATION_DURATION, i11, true, true)) {
+                int i18 = (int) (i11 + f);
                 f *= VIEW_REORDER_DELAY_FACTOR;
-                i11 = (int) (i11 + f);
+                i11 = i18;
             }
             i8 = i17;
         }

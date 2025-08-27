@@ -13,6 +13,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import com.android.settingslib.R;
 import com.android.settingslib.Utils;
+
 /* loaded from: classes.dex */
 public class BatteryMeterDrawableBase extends Drawable {
     public static final String TAG = BatteryMeterDrawableBase.class.getSimpleName();
@@ -57,26 +58,26 @@ public class BatteryMeterDrawableBase extends Drawable {
     private final Path mOutlinePath = new Path();
     private final Path mTextPath = new Path();
 
-    public BatteryMeterDrawableBase(Context context, int i) {
+    public BatteryMeterDrawableBase(Context context, int i) throws Resources.NotFoundException {
         this.mContext = context;
         Resources resources = context.getResources();
-        TypedArray obtainTypedArray = resources.obtainTypedArray(R.array.batterymeter_color_levels);
-        TypedArray obtainTypedArray2 = resources.obtainTypedArray(R.array.batterymeter_color_values);
-        int length = obtainTypedArray.length();
+        TypedArray typedArrayObtainTypedArray = resources.obtainTypedArray(R.array.batterymeter_color_levels);
+        TypedArray typedArrayObtainTypedArray2 = resources.obtainTypedArray(R.array.batterymeter_color_values);
+        int length = typedArrayObtainTypedArray.length();
         this.mColors = new int[2 * length];
         for (int i2 = 0; i2 < length; i2++) {
             int i3 = 2 * i2;
-            this.mColors[i3] = obtainTypedArray.getInt(i2, 0);
-            if (obtainTypedArray2.getType(i2) == 2) {
-                this.mColors[i3 + 1] = Utils.getColorAttr(context, obtainTypedArray2.getThemeAttributeId(i2, 0));
+            this.mColors[i3] = typedArrayObtainTypedArray.getInt(i2, 0);
+            if (typedArrayObtainTypedArray2.getType(i2) == 2) {
+                this.mColors[i3 + 1] = Utils.getColorAttr(context, typedArrayObtainTypedArray2.getThemeAttributeId(i2, 0));
             } else {
-                this.mColors[i3 + 1] = obtainTypedArray2.getColor(i2, 0);
+                this.mColors[i3 + 1] = typedArrayObtainTypedArray2.getColor(i2, 0);
             }
         }
-        obtainTypedArray.recycle();
-        obtainTypedArray2.recycle();
+        typedArrayObtainTypedArray.recycle();
+        typedArrayObtainTypedArray2.recycle();
         this.mWarningString = context.getString(R.string.battery_meter_very_low_overlay_symbol);
-        this.mCriticalLevel = this.mContext.getResources().getInteger(17694757);
+        this.mCriticalLevel = this.mContext.getResources().getInteger(android.R.integer.config_batterySaver_full_locationMode);
         this.mButtonHeightFraction = context.getResources().getFraction(R.fraction.battery_button_height_fraction, 1, 1);
         this.mSubpixelSmoothingLeft = context.getResources().getFraction(R.fraction.battery_subpixel_smoothing_left, 1, 1);
         this.mSubpixelSmoothingRight = context.getResources().getFraction(R.fraction.battery_subpixel_smoothing_right, 1, 1);
@@ -150,30 +151,29 @@ public class BatteryMeterDrawableBase extends Drawable {
         unscheduleSelf(new Runnable() { // from class: com.android.settingslib.graph.-$$Lambda$BatteryMeterDrawableBase$ExJ0HHRzS2_LMtcBJqtFiovbn0w
             @Override // java.lang.Runnable
             public final void run() {
-                BatteryMeterDrawableBase.this.invalidateSelf();
+                this.f$0.invalidateSelf();
             }
         });
         scheduleSelf(new Runnable() { // from class: com.android.settingslib.graph.-$$Lambda$BatteryMeterDrawableBase$ExJ0HHRzS2_LMtcBJqtFiovbn0w
             @Override // java.lang.Runnable
             public final void run() {
-                BatteryMeterDrawableBase.this.invalidateSelf();
+                this.f$0.invalidateSelf();
             }
         }, 0L);
     }
 
-    private static float[] loadPoints(Resources resources, int i) {
-        int i2;
+    private static float[] loadPoints(Resources resources, int i) throws Resources.NotFoundException {
         int[] intArray = resources.getIntArray(i);
-        int i3 = 0;
-        int i4 = 0;
-        for (int i5 = 0; i5 < intArray.length; i5 += 2) {
-            i3 = Math.max(i3, intArray[i5]);
-            i4 = Math.max(i4, intArray[i5 + 1]);
+        int iMax = 0;
+        int iMax2 = 0;
+        for (int i2 = 0; i2 < intArray.length; i2 += 2) {
+            iMax = Math.max(iMax, intArray[i2]);
+            iMax2 = Math.max(iMax2, intArray[i2 + 1]);
         }
         float[] fArr = new float[intArray.length];
-        for (int i6 = 0; i6 < intArray.length; i6 += 2) {
-            fArr[i6] = intArray[i6] / i3;
-            fArr[i6 + 1] = intArray[i2] / i4;
+        for (int i3 = 0; i3 < intArray.length; i3 += 2) {
+            fArr[i3] = intArray[i3] / iMax;
+            fArr[i3 + 1] = intArray[r3] / iMax2;
         }
         return fArr;
     }
@@ -218,9 +218,10 @@ public class BatteryMeterDrawableBase extends Drawable {
             if (i > i4) {
                 i2 += 2;
                 i3 = i5;
-            } else if (i2 == this.mColors.length - 2) {
-                return this.mIconTint;
             } else {
+                if (i2 == this.mColors.length - 2) {
+                    return this.mIconTint;
+                }
                 return i5;
             }
         }
@@ -236,37 +237,37 @@ public class BatteryMeterDrawableBase extends Drawable {
 
     @Override // android.graphics.drawable.Drawable
     public void draw(Canvas canvas) {
-        int i;
         float f;
         float f2;
-        int i2 = this.mLevel;
+        int i = this.mLevel;
         Rect bounds = getBounds();
-        if (i2 == -1) {
+        if (i == -1) {
             return;
         }
-        float f3 = i2 / 100.0f;
-        int i3 = this.mHeight;
+        float f3 = i / 100.0f;
+        int i2 = this.mHeight;
         int aspectRatio = (int) (getAspectRatio() * this.mHeight);
-        float f4 = i3;
-        int round = Math.round(this.mButtonHeightFraction * f4);
+        int i3 = (this.mWidth - aspectRatio) / 2;
+        float f4 = i2;
+        int iRound = Math.round(this.mButtonHeightFraction * f4);
         int i4 = this.mPadding.left + bounds.left;
         float f5 = i4;
-        float f6 = (bounds.bottom - this.mPadding.bottom) - i3;
-        this.mFrame.set(f5, f6, i4 + aspectRatio, i3 + i);
-        this.mFrame.offset((this.mWidth - aspectRatio) / 2, 0.0f);
+        float f6 = (bounds.bottom - this.mPadding.bottom) - i2;
+        this.mFrame.set(f5, f6, i4 + aspectRatio, i2 + r3);
+        this.mFrame.offset(i3, 0.0f);
         float f7 = aspectRatio * 0.28f;
-        float f8 = round;
+        float f8 = iRound;
         this.mButtonFrame.set(this.mFrame.left + Math.round(f7), this.mFrame.top, this.mFrame.right - Math.round(f7), this.mFrame.top + f8);
         this.mFrame.top += f8;
-        this.mBatteryPaint.setColor(batteryColorForLevel(i2));
-        if (i2 < 96) {
-            if (i2 <= this.mCriticalLevel) {
+        this.mBatteryPaint.setColor(batteryColorForLevel(i));
+        if (i < 96) {
+            if (i <= this.mCriticalLevel) {
                 f3 = 0.0f;
             }
         } else {
             f3 = 1.0f;
         }
-        float height = f3 == 1.0f ? this.mButtonFrame.top : this.mFrame.top + (this.mFrame.height() * (1.0f - f3));
+        float fHeight = f3 == 1.0f ? this.mButtonFrame.top : this.mFrame.top + (this.mFrame.height() * (1.0f - f3));
         this.mShapePath.reset();
         this.mOutlinePath.reset();
         float radiusRatio = getRadiusRatio() * (this.mFrame.height() + f8);
@@ -278,12 +279,12 @@ public class BatteryMeterDrawableBase extends Drawable {
         path.addRect(this.mButtonFrame, Path.Direction.CW);
         this.mOutlinePath.op(path, Path.Op.XOR);
         if (this.mCharging) {
-            float width = this.mFrame.left + (this.mFrame.width() / 4.0f) + 1.0f;
-            float height2 = this.mFrame.top + (this.mFrame.height() / 6.0f);
-            float width2 = (this.mFrame.right - (this.mFrame.width() / 4.0f)) + 1.0f;
-            float height3 = this.mFrame.bottom - (this.mFrame.height() / 10.0f);
-            if (this.mBoltFrame.left != width || this.mBoltFrame.top != height2 || this.mBoltFrame.right != width2 || this.mBoltFrame.bottom != height3) {
-                this.mBoltFrame.set(width, height2, width2, height3);
+            float fWidth = this.mFrame.left + (this.mFrame.width() / 4.0f) + 1.0f;
+            float fHeight2 = this.mFrame.top + (this.mFrame.height() / 6.0f);
+            float fWidth2 = (this.mFrame.right - (this.mFrame.width() / 4.0f)) + 1.0f;
+            float fHeight3 = this.mFrame.bottom - (this.mFrame.height() / 10.0f);
+            if (this.mBoltFrame.left != fWidth || this.mBoltFrame.top != fHeight2 || this.mBoltFrame.right != fWidth2 || this.mBoltFrame.bottom != fHeight3) {
+                this.mBoltFrame.set(fWidth, fHeight2, fWidth2, fHeight3);
                 this.mBoltPath.reset();
                 this.mBoltPath.moveTo(this.mBoltFrame.left + (this.mBoltPoints[0] * this.mBoltFrame.width()), this.mBoltFrame.top + (this.mBoltPoints[1] * this.mBoltFrame.height()));
                 for (int i5 = 2; i5 < this.mBoltPoints.length; i5 += 2) {
@@ -291,19 +292,19 @@ public class BatteryMeterDrawableBase extends Drawable {
                 }
                 this.mBoltPath.lineTo(this.mBoltFrame.left + (this.mBoltPoints[0] * this.mBoltFrame.width()), this.mBoltFrame.top + (this.mBoltPoints[1] * this.mBoltFrame.height()));
             }
-            if (Math.min(Math.max((this.mBoltFrame.bottom - height) / (this.mBoltFrame.bottom - this.mBoltFrame.top), 0.0f), 1.0f) <= 0.3f) {
+            if (Math.min(Math.max((this.mBoltFrame.bottom - fHeight) / (this.mBoltFrame.bottom - this.mBoltFrame.top), 0.0f), 1.0f) <= 0.3f) {
                 canvas.drawPath(this.mBoltPath, this.mBoltPaint);
             } else {
                 this.mShapePath.op(this.mBoltPath, Path.Op.DIFFERENCE);
             }
         } else if (this.mPowerSaveEnabled) {
-            float width3 = (this.mFrame.width() * 2.0f) / 3.0f;
-            float width4 = this.mFrame.left + ((this.mFrame.width() - width3) / 2.0f);
-            float height4 = this.mFrame.top + ((this.mFrame.height() - width3) / 2.0f);
-            float width5 = this.mFrame.right - ((this.mFrame.width() - width3) / 2.0f);
-            float height5 = this.mFrame.bottom - ((this.mFrame.height() - width3) / 2.0f);
-            if (this.mPlusFrame.left != width4 || this.mPlusFrame.top != height4 || this.mPlusFrame.right != width5 || this.mPlusFrame.bottom != height5) {
-                this.mPlusFrame.set(width4, height4, width5, height5);
+            float fWidth3 = (this.mFrame.width() * 2.0f) / 3.0f;
+            float fWidth4 = this.mFrame.left + ((this.mFrame.width() - fWidth3) / 2.0f);
+            float fHeight4 = this.mFrame.top + ((this.mFrame.height() - fWidth3) / 2.0f);
+            float fWidth5 = this.mFrame.right - ((this.mFrame.width() - fWidth3) / 2.0f);
+            float fHeight5 = this.mFrame.bottom - ((this.mFrame.height() - fWidth3) / 2.0f);
+            if (this.mPlusFrame.left != fWidth4 || this.mPlusFrame.top != fHeight4 || this.mPlusFrame.right != fWidth5 || this.mPlusFrame.bottom != fHeight5) {
+                this.mPlusFrame.set(fWidth4, fHeight4, fWidth5, fHeight5);
                 this.mPlusPath.reset();
                 this.mPlusPath.moveTo(this.mPlusFrame.left + (this.mPlusPoints[0] * this.mPlusFrame.width()), this.mPlusFrame.top + (this.mPlusPoints[1] * this.mPlusFrame.height()));
                 for (int i6 = 2; i6 < this.mPlusPoints.length; i6 += 2) {
@@ -316,18 +317,18 @@ public class BatteryMeterDrawableBase extends Drawable {
                 canvas.drawPath(this.mPlusPath, this.mPlusPaint);
             }
         }
-        String str = null;
-        if (!this.mCharging && !this.mPowerSaveEnabled && i2 > this.mCriticalLevel && this.mShowPercent) {
-            this.mTextPaint.setColor(getColorForLevel(i2));
+        String strValueOf = null;
+        if (!this.mCharging && !this.mPowerSaveEnabled && i > this.mCriticalLevel && this.mShowPercent) {
+            this.mTextPaint.setColor(getColorForLevel(i));
             this.mTextPaint.setTextSize(f4 * (this.mLevel == 100 ? 0.38f : 0.5f));
             this.mTextHeight = -this.mTextPaint.getFontMetrics().ascent;
-            str = String.valueOf(i2);
+            strValueOf = String.valueOf(i);
             f = (this.mWidth * 0.5f) + f5;
             f2 = ((this.mHeight + this.mTextHeight) * 0.47f) + f6;
-            r6 = height > f2;
-            if (!r6) {
+            z = fHeight > f2;
+            if (!z) {
                 this.mTextPath.reset();
-                this.mTextPaint.getTextPath(str, 0, str.length(), f, f2, this.mTextPath);
+                this.mTextPaint.getTextPath(strValueOf, 0, strValueOf.length(), f, f2, this.mTextPath);
                 this.mShapePath.op(this.mTextPath, Path.Op.DIFFERENCE);
             }
         } else {
@@ -335,16 +336,16 @@ public class BatteryMeterDrawableBase extends Drawable {
             f2 = 0.0f;
         }
         canvas.drawPath(this.mShapePath, this.mFramePaint);
-        this.mFrame.top = height;
+        this.mFrame.top = fHeight;
         canvas.save();
         canvas.clipRect(this.mFrame);
         canvas.drawPath(this.mShapePath, this.mBatteryPaint);
         canvas.restore();
         if (!this.mCharging && !this.mPowerSaveEnabled) {
-            if (i2 <= this.mCriticalLevel) {
+            if (i <= this.mCriticalLevel) {
                 canvas.drawText(this.mWarningString, (this.mWidth * 0.5f) + f5, ((this.mHeight + this.mWarningTextHeight) * 0.48f) + f6, this.mWarningTextPaint);
-            } else if (r6) {
-                canvas.drawText(str, f, f2, this.mTextPaint);
+            } else if (z) {
+                canvas.drawText(strValueOf, f, f2, this.mTextPaint);
             }
         }
         if (!this.mCharging && this.mPowerSaveEnabled && this.mPowerSaveAsColorError) {

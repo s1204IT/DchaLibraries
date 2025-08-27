@@ -64,6 +64,7 @@ import java.util.Formatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public final class Utils extends com.android.settingslib.Utils {
     public static final int[] BADNESS_COLORS = {0, -3917784, -1750760, -754944, -344276, -9986505, -16089278};
@@ -71,27 +72,27 @@ public final class Utils extends com.android.settingslib.Utils {
     private static final Formatter sFormatter = new Formatter(sBuilder, Locale.getDefault());
 
     public static boolean updatePreferenceToSpecificActivityOrRemove(Context context, PreferenceGroup preferenceGroup, String str, int i) {
-        Preference findPreference = preferenceGroup.findPreference(str);
-        if (findPreference == null) {
+        Preference preferenceFindPreference = preferenceGroup.findPreference(str);
+        if (preferenceFindPreference == null) {
             return false;
         }
-        Intent intent = findPreference.getIntent();
+        Intent intent = preferenceFindPreference.getIntent();
         if (intent != null) {
             PackageManager packageManager = context.getPackageManager();
-            List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent, 0);
-            int size = queryIntentActivities.size();
+            List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent, 0);
+            int size = listQueryIntentActivities.size();
             for (int i2 = 0; i2 < size; i2++) {
-                ResolveInfo resolveInfo = queryIntentActivities.get(i2);
+                ResolveInfo resolveInfo = listQueryIntentActivities.get(i2);
                 if ((resolveInfo.activityInfo.applicationInfo.flags & 1) != 0) {
-                    findPreference.setIntent(new Intent().setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name));
+                    preferenceFindPreference.setIntent(new Intent().setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name));
                     if ((i & 1) != 0) {
-                        findPreference.setTitle(resolveInfo.loadLabel(packageManager));
+                        preferenceFindPreference.setTitle(resolveInfo.loadLabel(packageManager));
                     }
                     return true;
                 }
             }
         }
-        preferenceGroup.removePreference(findPreference);
+        preferenceGroup.removePreference(preferenceFindPreference);
         return false;
     }
 
@@ -142,14 +143,14 @@ public final class Utils extends com.android.settingslib.Utils {
         if (str == null) {
             return Locale.getDefault();
         }
-        String[] split = str.split("_", 3);
-        if (1 == split.length) {
-            return new Locale(split[0]);
+        String[] strArrSplit = str.split("_", 3);
+        if (1 == strArrSplit.length) {
+            return new Locale(strArrSplit[0]);
         }
-        if (2 == split.length) {
-            return new Locale(split[0], split[1]);
+        if (2 == strArrSplit.length) {
+            return new Locale(strArrSplit[0], strArrSplit[1]);
         }
-        return new Locale(split[0], split[1], split[2]);
+        return new Locale(strArrSplit[0], strArrSplit[1], strArrSplit[2]);
     }
 
     public static boolean isBatteryPresent(Intent intent) {
@@ -160,11 +161,11 @@ public final class Utils extends com.android.settingslib.Utils {
         return formatPercentage(getBatteryLevel(intent));
     }
 
-    public static void prepareCustomPreferencesList(ViewGroup viewGroup, View view, View view2, boolean z) {
+    public static void prepareCustomPreferencesList(ViewGroup viewGroup, View view, View view2, boolean z) throws Resources.NotFoundException {
         if (view2.getScrollBarStyle() == 33554432) {
             Resources resources = view2.getResources();
             int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.settings_side_margin);
-            int dimensionPixelSize2 = resources.getDimensionPixelSize(17105260);
+            int dimensionPixelSize2 = resources.getDimensionPixelSize(android.R.dimen.floating_toolbar_overflow_side_padding);
             if (viewGroup instanceof PreferenceFrameLayout) {
                 view.getLayoutParams().removeBorders = true;
                 if (z) {
@@ -177,10 +178,10 @@ public final class Utils extends com.android.settingslib.Utils {
         }
     }
 
-    public static void forceCustomPadding(View view, boolean z) {
+    public static void forceCustomPadding(View view, boolean z) throws Resources.NotFoundException {
         Resources resources = view.getResources();
         int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.settings_side_margin);
-        view.setPaddingRelative((z ? view.getPaddingStart() : 0) + dimensionPixelSize, 0, dimensionPixelSize + (z ? view.getPaddingEnd() : 0), resources.getDimensionPixelSize(17105260));
+        view.setPaddingRelative((z ? view.getPaddingStart() : 0) + dimensionPixelSize, 0, dimensionPixelSize + (z ? view.getPaddingEnd() : 0), resources.getDimensionPixelSize(android.R.dimen.floating_toolbar_overflow_side_padding));
     }
 
     public static String getMeProfileName(Context context, boolean z) {
@@ -197,27 +198,27 @@ public final class Utils extends com.android.settingslib.Utils {
 
     private static String getLocalProfileGivenName(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
-        Cursor query = contentResolver.query(ContactsContract.Profile.CONTENT_RAW_CONTACTS_URI, new String[]{"_id"}, "account_type IS NULL AND account_name IS NULL", null, null);
-        if (query == null) {
+        Cursor cursorQuery = contentResolver.query(ContactsContract.Profile.CONTENT_RAW_CONTACTS_URI, new String[]{"_id"}, "account_type IS NULL AND account_name IS NULL", null, null);
+        if (cursorQuery == null) {
             return null;
         }
         try {
-            if (!query.moveToFirst()) {
+            if (!cursorQuery.moveToFirst()) {
                 return null;
             }
-            long j = query.getLong(0);
-            query.close();
-            query = contentResolver.query(ContactsContract.Profile.CONTENT_URI.buildUpon().appendPath("data").build(), new String[]{"data2", "data3"}, "raw_contact_id=" + j, null, null);
-            if (query == null) {
+            long j = cursorQuery.getLong(0);
+            cursorQuery.close();
+            cursorQuery = contentResolver.query(ContactsContract.Profile.CONTENT_URI.buildUpon().appendPath("data").build(), new String[]{"data2", "data3"}, "raw_contact_id=" + j, null, null);
+            if (cursorQuery == null) {
                 return null;
             }
             try {
-                if (!query.moveToFirst()) {
+                if (!cursorQuery.moveToFirst()) {
                     return null;
                 }
-                String string = query.getString(0);
+                String string = cursorQuery.getString(0);
                 if (TextUtils.isEmpty(string)) {
-                    string = query.getString(1);
+                    string = cursorQuery.getString(1);
                 }
                 return string;
             } finally {
@@ -227,17 +228,17 @@ public final class Utils extends com.android.settingslib.Utils {
     }
 
     private static final String getProfileDisplayName(Context context) {
-        Cursor query = context.getContentResolver().query(ContactsContract.Profile.CONTENT_URI, new String[]{"display_name"}, null, null, null);
-        if (query == null) {
+        Cursor cursorQuery = context.getContentResolver().query(ContactsContract.Profile.CONTENT_URI, new String[]{"display_name"}, null, null, null);
+        if (cursorQuery == null) {
             return null;
         }
         try {
-            if (!query.moveToFirst()) {
+            if (!cursorQuery.moveToFirst()) {
                 return null;
             }
-            return query.getString(0);
+            return cursorQuery.getString(0);
         } finally {
-            query.close();
+            cursorQuery.close();
         }
     }
 
@@ -258,12 +259,12 @@ public final class Utils extends com.android.settingslib.Utils {
     }
 
     public static UserHandle getManagedProfileWithDisabled(UserManager userManager) {
-        int myUserId = UserHandle.myUserId();
-        List profiles = userManager.getProfiles(myUserId);
+        int iMyUserId = UserHandle.myUserId();
+        List profiles = userManager.getProfiles(iMyUserId);
         int size = profiles.size();
         for (int i = 0; i < size; i++) {
             UserInfo userInfo = (UserInfo) profiles.get(i);
-            if (userInfo.isManagedProfile() && userInfo.getUserHandle().getIdentifier() != myUserId) {
+            if (userInfo.isManagedProfile() && userInfo.getUserHandle().getIdentifier() != iMyUserId) {
                 return userInfo.getUserHandle();
             }
         }
@@ -271,7 +272,6 @@ public final class Utils extends com.android.settingslib.Utils {
     }
 
     public static int getManagedProfileId(UserManager userManager, int i) {
-        int[] profileIdsWithDisabled;
         for (int i2 : userManager.getProfileIdsWithDisabled(i)) {
             if (i2 != i) {
                 return i2;
@@ -281,12 +281,12 @@ public final class Utils extends com.android.settingslib.Utils {
     }
 
     public static UserHandle getSecureTargetUser(IBinder iBinder, UserManager userManager, Bundle bundle, Bundle bundle2) {
-        boolean equals;
+        boolean zEquals;
         UserHandle userHandle;
         UserHandle userHandle2 = new UserHandle(UserHandle.myUserId());
         IActivityManager service = ActivityManager.getService();
         try {
-            equals = "com.android.settings".equals(service.getLaunchedFromPackage(iBinder));
+            zEquals = "com.android.settings".equals(service.getLaunchedFromPackage(iBinder));
             userHandle = new UserHandle(UserHandle.getUserId(service.getLaunchedFromUid(iBinder)));
         } catch (RemoteException e) {
             Log.v("Settings", "Could not talk to activity manager.", e);
@@ -295,11 +295,11 @@ public final class Utils extends com.android.settingslib.Utils {
             return userHandle;
         }
         UserHandle userHandleFromBundle = getUserHandleFromBundle(bundle2);
-        if (userHandleFromBundle != null && !userHandleFromBundle.equals(userHandle2) && equals && isProfileOf(userManager, userHandleFromBundle)) {
+        if (userHandleFromBundle != null && !userHandleFromBundle.equals(userHandle2) && zEquals && isProfileOf(userManager, userHandleFromBundle)) {
             return userHandleFromBundle;
         }
         UserHandle userHandleFromBundle2 = getUserHandleFromBundle(bundle);
-        if (userHandleFromBundle2 != null && !userHandleFromBundle2.equals(userHandle2) && equals) {
+        if (userHandleFromBundle2 != null && !userHandleFromBundle2.equals(userHandle2) && zEquals) {
             if (isProfileOf(userManager, userHandleFromBundle2)) {
                 return userHandleFromBundle2;
             }
@@ -345,20 +345,22 @@ public final class Utils extends com.android.settingslib.Utils {
     }
 
     public static View inflateCategoryHeader(LayoutInflater layoutInflater, ViewGroup viewGroup) {
-        TypedArray obtainStyledAttributes = layoutInflater.getContext().obtainStyledAttributes(null, com.android.internal.R.styleable.Preference, 16842892, 0);
-        int resourceId = obtainStyledAttributes.getResourceId(3, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = layoutInflater.getContext().obtainStyledAttributes(null, com.android.internal.R.styleable.Preference, android.R.attr.preferenceCategoryStyle, 0);
+        int resourceId = typedArrayObtainStyledAttributes.getResourceId(3, 0);
+        typedArrayObtainStyledAttributes.recycle();
         return layoutInflater.inflate(resourceId, viewGroup, false);
     }
 
     public static ArraySet<String> getHandledDomains(PackageManager packageManager, String str) {
-        List<IntentFilterVerificationInfo> intentFilterVerifications = packageManager.getIntentFilterVerifications(str);
+        List intentFilterVerifications = packageManager.getIntentFilterVerifications(str);
         List<IntentFilter> allIntentFilters = packageManager.getAllIntentFilters(str);
         ArraySet<String> arraySet = new ArraySet<>();
         if (intentFilterVerifications != null && intentFilterVerifications.size() > 0) {
-            for (IntentFilterVerificationInfo intentFilterVerificationInfo : intentFilterVerifications) {
-                for (String str2 : intentFilterVerificationInfo.getDomains()) {
-                    arraySet.add(str2);
+            Iterator it = intentFilterVerifications.iterator();
+            while (it.hasNext()) {
+                Iterator it2 = ((IntentFilterVerificationInfo) it.next()).getDomains().iterator();
+                while (it2.hasNext()) {
+                    arraySet.add((String) it2.next());
                 }
             }
         }
@@ -439,12 +441,12 @@ public final class Utils extends com.android.settingslib.Utils {
     }
 
     public static String formatDateRange(Context context, long j, long j2) {
-        String formatter;
+        String string;
         synchronized (sBuilder) {
             sBuilder.setLength(0);
-            formatter = DateUtils.formatDateRange(context, sFormatter, j, j2, 65552, null).toString();
+            string = DateUtils.formatDateRange(context, sFormatter, j, j2, 65552, null).toString();
         }
-        return formatter;
+        return string;
     }
 
     public static boolean isDeviceProvisioned(Context context) {
@@ -471,9 +473,9 @@ public final class Utils extends com.android.settingslib.Utils {
     }
 
     private static boolean confirmWorkProfileCredentials(Context context, int i) {
-        Intent createConfirmDeviceCredentialIntent = ((KeyguardManager) context.getSystemService("keyguard")).createConfirmDeviceCredentialIntent(null, null, i);
-        if (createConfirmDeviceCredentialIntent != null) {
-            context.startActivity(createConfirmDeviceCredentialIntent);
+        Intent intentCreateConfirmDeviceCredentialIntent = ((KeyguardManager) context.getSystemService("keyguard")).createConfirmDeviceCredentialIntent(null, null, i);
+        if (intentCreateConfirmDeviceCredentialIntent != null) {
+            context.startActivity(intentCreateConfirmDeviceCredentialIntent);
             return true;
         }
         return false;
@@ -488,7 +490,7 @@ public final class Utils extends com.android.settingslib.Utils {
         }
     }
 
-    public static boolean isPackageDirectBootAware(Context context, String str) {
+    public static boolean isPackageDirectBootAware(Context context, String str) throws PackageManager.NameNotFoundException {
         try {
             ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(str, 0);
             if (!applicationInfo.isDirectBootAware()) {
@@ -549,9 +551,9 @@ public final class Utils extends com.android.settingslib.Utils {
     }
 
     public static VolumeInfo maybeInitializeVolume(StorageManager storageManager, Bundle bundle) {
-        VolumeInfo findVolumeById = storageManager.findVolumeById(bundle.getString("android.os.storage.extra.VOLUME_ID", "private"));
-        if (isVolumeValid(findVolumeById)) {
-            return findVolumeById;
+        VolumeInfo volumeInfoFindVolumeById = storageManager.findVolumeById(bundle.getString("android.os.storage.extra.VOLUME_ID", "private"));
+        if (isVolumeValid(volumeInfoFindVolumeById)) {
+            return volumeInfoFindVolumeById;
         }
         return null;
     }
@@ -594,7 +596,7 @@ public final class Utils extends com.android.settingslib.Utils {
     }
 
     public static Drawable getSafeDrawable(Drawable drawable, int i, int i2) {
-        Bitmap bitmap;
+        Bitmap bitmapCreateScaledBitmap;
         int minimumWidth = drawable.getMinimumWidth();
         int minimumHeight = drawable.getMinimumHeight();
         if (minimumWidth <= i && minimumHeight <= i2) {
@@ -602,19 +604,19 @@ public final class Utils extends com.android.settingslib.Utils {
         }
         float f = minimumWidth;
         float f2 = minimumHeight;
-        float min = Math.min(i / f, i2 / f2);
-        int i3 = (int) (f * min);
-        int i4 = (int) (f2 * min);
+        float fMin = Math.min(i / f, i2 / f2);
+        int i3 = (int) (f * fMin);
+        int i4 = (int) (f2 * fMin);
         if (drawable instanceof BitmapDrawable) {
-            bitmap = Bitmap.createScaledBitmap(((BitmapDrawable) drawable).getBitmap(), i3, i4, false);
+            bitmapCreateScaledBitmap = Bitmap.createScaledBitmap(((BitmapDrawable) drawable).getBitmap(), i3, i4, false);
         } else {
-            Bitmap createBitmap = Bitmap.createBitmap(i3, i4, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(createBitmap);
+            Bitmap bitmapCreateBitmap = Bitmap.createBitmap(i3, i4, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmapCreateBitmap);
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             drawable.draw(canvas);
-            bitmap = createBitmap;
+            bitmapCreateScaledBitmap = bitmapCreateBitmap;
         }
-        return new BitmapDrawable((Resources) null, bitmap);
+        return new BitmapDrawable((Resources) null, bitmapCreateScaledBitmap);
     }
 
     public static Drawable getBadgedIcon(IconDrawableFactory iconDrawableFactory, PackageManager packageManager, String str, int i) {

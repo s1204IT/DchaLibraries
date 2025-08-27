@@ -15,6 +15,7 @@ import com.android.setupwizardlib.items.ItemAdapter;
 import com.android.setupwizardlib.items.ItemGroup;
 import com.android.setupwizardlib.items.ItemInflater;
 import com.android.setupwizardlib.util.DrawableLayoutDirectionHelper;
+
 /* loaded from: classes.dex */
 public class ListMixin implements Mixin {
     private Drawable mDefaultDivider;
@@ -27,18 +28,18 @@ public class ListMixin implements Mixin {
     public ListMixin(TemplateLayout templateLayout, AttributeSet attributeSet, int i) {
         this.mTemplateLayout = templateLayout;
         Context context = templateLayout.getContext();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwListMixin, i, 0);
-        int resourceId = obtainStyledAttributes.getResourceId(R.styleable.SuwListMixin_android_entries, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwListMixin, i, 0);
+        int resourceId = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwListMixin_android_entries, 0);
         if (resourceId != 0) {
             setAdapter(new ItemAdapter((ItemGroup) new ItemInflater(context).inflate(resourceId)));
         }
-        int dimensionPixelSize = obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwListMixin_suwDividerInset, -1);
+        int dimensionPixelSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwListMixin_suwDividerInset, -1);
         if (dimensionPixelSize != -1) {
             setDividerInset(dimensionPixelSize);
         } else {
-            setDividerInsets(obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwListMixin_suwDividerInsetStart, 0), obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwListMixin_suwDividerInsetEnd, 0));
+            setDividerInsets(typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwListMixin_suwDividerInsetStart, 0), typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwListMixin_suwDividerInsetEnd, 0));
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public ListView getListView() {
@@ -47,9 +48,9 @@ public class ListMixin implements Mixin {
 
     private ListView getListViewInternal() {
         if (this.mListView == null) {
-            View findManagedViewById = this.mTemplateLayout.findManagedViewById(16908298);
-            if (findManagedViewById instanceof ListView) {
-                this.mListView = (ListView) findManagedViewById;
+            View viewFindManagedViewById = this.mTemplateLayout.findManagedViewById(android.R.id.list);
+            if (viewFindManagedViewById instanceof ListView) {
+                this.mListView = (ListView) viewFindManagedViewById;
             }
         }
         return this.mListView;
@@ -109,11 +110,11 @@ public class ListMixin implements Mixin {
         if (listViewInternal == null) {
             return;
         }
-        boolean z = true;
+        boolean zIsLayoutDirectionResolved = true;
         if (Build.VERSION.SDK_INT >= 19) {
-            z = this.mTemplateLayout.isLayoutDirectionResolved();
+            zIsLayoutDirectionResolved = this.mTemplateLayout.isLayoutDirectionResolved();
         }
-        if (z) {
+        if (zIsLayoutDirectionResolved) {
             if (this.mDefaultDivider == null) {
                 this.mDefaultDivider = listViewInternal.getDivider();
             }

@@ -14,6 +14,8 @@ import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.settingslib.core.AbstractPreferenceController;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class DevelopmentTilePreferenceController extends AbstractPreferenceController {
     private final OnChangeHandler mOnChangeHandler;
@@ -39,8 +41,9 @@ public class DevelopmentTilePreferenceController extends AbstractPreferenceContr
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
         Context context = preferenceScreen.getContext();
-        for (ResolveInfo resolveInfo : this.mPackageManager.queryIntentServices(new Intent("android.service.quicksettings.action.QS_TILE").setPackage(context.getPackageName()), 512)) {
-            ServiceInfo serviceInfo = resolveInfo.serviceInfo;
+        Iterator<ResolveInfo> it = this.mPackageManager.queryIntentServices(new Intent("android.service.quicksettings.action.QS_TILE").setPackage(context.getPackageName()), 512).iterator();
+        while (it.hasNext()) {
+            ServiceInfo serviceInfo = it.next().serviceInfo;
             int componentEnabledSetting = this.mPackageManager.getComponentEnabledSetting(new ComponentName(serviceInfo.packageName, serviceInfo.name));
             boolean z = true;
             if (componentEnabledSetting != 1 && (componentEnabledSetting != 0 || !serviceInfo.enabled)) {
@@ -56,7 +59,6 @@ public class DevelopmentTilePreferenceController extends AbstractPreferenceContr
         }
     }
 
-    /* loaded from: classes.dex */
     static class OnChangeHandler implements Preference.OnPreferenceChangeListener {
         private final Context mContext;
         private final PackageManager mPackageManager;
@@ -69,12 +71,12 @@ public class DevelopmentTilePreferenceController extends AbstractPreferenceContr
 
         @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
         public boolean onPreferenceChange(Preference preference, Object obj) {
-            boolean booleanValue = ((Boolean) obj).booleanValue();
+            boolean zBooleanValue = ((Boolean) obj).booleanValue();
             ComponentName componentName = new ComponentName(this.mContext.getPackageName(), preference.getKey());
-            this.mPackageManager.setComponentEnabledSetting(componentName, booleanValue ? 1 : 2, 1);
+            this.mPackageManager.setComponentEnabledSetting(componentName, zBooleanValue ? 1 : 2, 1);
             try {
                 if (this.mStatusBarService != null) {
-                    if (booleanValue) {
+                    if (zBooleanValue) {
                         this.mStatusBarService.addTile(componentName);
                     } else {
                         this.mStatusBarService.remTile(componentName);

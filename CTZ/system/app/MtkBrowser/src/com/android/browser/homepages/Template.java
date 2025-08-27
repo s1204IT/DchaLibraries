@@ -10,30 +10,27 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /* loaded from: classes.dex */
 public class Template {
     private static HashMap<Integer, Template> sCachedTemplates = new HashMap<>();
     private HashMap<String, Object> mData;
     private List<Entity> mTemplate;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface Entity {
+    interface Entity {
         void write(OutputStream outputStream, EntityData entityData) throws IOException;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface EntityData {
+    interface EntityData {
         ListEntityIterator getListIterator(String str);
 
         void writeValue(OutputStream outputStream, String str) throws IOException;
     }
 
-    /* loaded from: classes.dex */
     interface ListEntityIterator extends EntityData {
         boolean moveToNext();
 
@@ -41,21 +38,19 @@ public class Template {
     }
 
     public static Template getCachedTemplate(Context context, int i) {
-        Template copy;
+        Template templateCopy;
         synchronized (sCachedTemplates) {
             Template template = sCachedTemplates.get(Integer.valueOf(i));
             if (template == null) {
                 template = new Template(context, i);
                 sCachedTemplates.put(Integer.valueOf(i), template);
             }
-            copy = template.copy();
+            templateCopy = template.copy();
         }
-        return copy;
+        return templateCopy;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class StringEntity implements Entity {
+    static class StringEntity implements Entity {
         byte[] mValue;
 
         public StringEntity(String str) {
@@ -68,9 +63,7 @@ public class Template {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SimpleEntity implements Entity {
+    static class SimpleEntity implements Entity {
         String mKey;
 
         public SimpleEntity(String str) {
@@ -83,9 +76,7 @@ public class Template {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ListEntity implements Entity {
+    static class ListEntity implements Entity {
         String mKey;
         Template mSubTemplate;
 
@@ -104,7 +95,6 @@ public class Template {
         }
     }
 
-    /* loaded from: classes.dex */
     public static abstract class CursorListEntityWrapper implements ListEntityIterator {
         private Cursor mCursor;
 
@@ -132,12 +122,11 @@ public class Template {
         }
     }
 
-    /* loaded from: classes.dex */
     static class HashMapEntityData implements EntityData {
         HashMap<String, Object> mData;
 
-        public HashMapEntityData(HashMap<String, Object> hashMap) {
-            this.mData = hashMap;
+        public HashMapEntityData(HashMap<String, Object> map) {
+            this.mData = map;
         }
 
         @Override // com.android.browser.homepages.Template.EntityData
@@ -172,30 +161,30 @@ public class Template {
 
     void parseTemplate(Context context, String str) {
         Matcher matcher = Pattern.compile("<%([=\\{])\\s*(\\w+)\\s*%>").matcher(str);
-        int i = 0;
+        int iEnd = 0;
         while (matcher.find()) {
-            String substring = str.substring(i, matcher.start());
-            if (substring.length() > 0) {
-                this.mTemplate.add(new StringEntity(substring));
+            String strSubstring = str.substring(iEnd, matcher.start());
+            if (strSubstring.length() > 0) {
+                this.mTemplate.add(new StringEntity(strSubstring));
             }
-            String group = matcher.group(1);
-            String group2 = matcher.group(2);
-            if (group.equals("=")) {
-                this.mTemplate.add(new SimpleEntity(group2));
-            } else if (group.equals("{")) {
-                Matcher matcher2 = Pattern.compile("<%\\}\\s*" + Pattern.quote(group2) + "\\s*%>").matcher(str);
+            String strGroup = matcher.group(1);
+            String strGroup2 = matcher.group(2);
+            if (strGroup.equals("=")) {
+                this.mTemplate.add(new SimpleEntity(strGroup2));
+            } else if (strGroup.equals("{")) {
+                Matcher matcher2 = Pattern.compile("<%\\}\\s*" + Pattern.quote(strGroup2) + "\\s*%>").matcher(str);
                 if (matcher2.find(matcher.end())) {
-                    int end = matcher.end();
+                    int iEnd2 = matcher.end();
                     matcher.region(matcher2.end(), str.length());
-                    this.mTemplate.add(new ListEntity(context, group2, str.substring(end, matcher2.start())));
-                    i = matcher2.end();
+                    this.mTemplate.add(new ListEntity(context, strGroup2, str.substring(iEnd2, matcher2.start())));
+                    iEnd = matcher2.end();
                 }
             }
-            i = matcher.end();
+            iEnd = matcher.end();
         }
-        String substring2 = str.substring(i, str.length());
-        if (substring2.length() > 0) {
-            this.mTemplate.add(new StringEntity(substring2));
+        String strSubstring2 = str.substring(iEnd, str.length());
+        if (strSubstring2.length() > 0) {
+            this.mTemplate.add(new StringEntity(strSubstring2));
         }
     }
 
@@ -212,24 +201,25 @@ public class Template {
     }
 
     public void write(OutputStream outputStream, EntityData entityData) throws IOException {
-        for (Entity entity : this.mTemplate) {
-            entity.write(outputStream, entityData);
+        Iterator<Entity> it = this.mTemplate.iterator();
+        while (it.hasNext()) {
+            it.next().write(outputStream, entityData);
         }
     }
 
-    private static String replaceConsts(Context context, String str) {
-        String charSequence;
-        Pattern compile = Pattern.compile("<%@\\s*(\\w+/\\w+)\\s*%>");
+    private static String replaceConsts(Context context, String str) throws Resources.NotFoundException {
+        String string;
+        Pattern patternCompile = Pattern.compile("<%@\\s*(\\w+/\\w+)\\s*%>");
         Resources resources = context.getResources();
         String name = R.class.getPackage().getName();
-        Matcher matcher = compile.matcher(str);
+        Matcher matcher = patternCompile.matcher(str);
         StringBuffer stringBuffer = new StringBuffer();
         while (matcher.find()) {
-            String group = matcher.group(1);
-            if (group.startsWith("drawable/")) {
-                matcher.appendReplacement(stringBuffer, "res/" + group);
+            String strGroup = matcher.group(1);
+            if (strGroup.startsWith("drawable/")) {
+                matcher.appendReplacement(stringBuffer, "res/" + strGroup);
             } else {
-                int identifier = resources.getIdentifier(group, null, name);
+                int identifier = resources.getIdentifier(strGroup, null, name);
                 if (identifier != 0) {
                     TypedValue typedValue = new TypedValue();
                     resources.getValue(identifier, typedValue, true);
@@ -237,14 +227,14 @@ public class Template {
                         float dimension = resources.getDimension(identifier);
                         int i = (int) dimension;
                         if (i == dimension) {
-                            charSequence = Integer.toString(i);
+                            string = Integer.toString(i);
                         } else {
-                            charSequence = Float.toString(dimension);
+                            string = Float.toString(dimension);
                         }
                     } else {
-                        charSequence = typedValue.coerceToString().toString();
+                        string = typedValue.coerceToString().toString();
                     }
-                    matcher.appendReplacement(stringBuffer, charSequence);
+                    matcher.appendReplacement(stringBuffer, string);
                 }
             }
         }
@@ -252,11 +242,11 @@ public class Template {
         return stringBuffer.toString();
     }
 
-    private static String readRaw(Context context, int i) {
-        InputStream openRawResource = context.getResources().openRawResource(i);
+    private static String readRaw(Context context, int i) throws Resources.NotFoundException, IOException {
+        InputStream inputStreamOpenRawResource = context.getResources().openRawResource(i);
         try {
-            byte[] bArr = new byte[openRawResource.available()];
-            openRawResource.read(bArr);
+            byte[] bArr = new byte[inputStreamOpenRawResource.available()];
+            inputStreamOpenRawResource.read(bArr);
             return new String(bArr, "utf-8");
         } catch (IOException e) {
             return "<html><body>Error</body></html>";

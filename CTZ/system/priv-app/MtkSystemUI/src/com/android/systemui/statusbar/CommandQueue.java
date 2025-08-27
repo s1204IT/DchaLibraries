@@ -14,6 +14,7 @@ import com.android.internal.statusbar.IStatusBar;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.systemui.SystemUI;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class CommandQueue extends IStatusBar.Stub {
     private int mDisable1;
@@ -22,7 +23,6 @@ public class CommandQueue extends IStatusBar.Stub {
     private ArrayList<Callbacks> mCallbacks = new ArrayList<>();
     private Handler mHandler = new H(Looper.getMainLooper());
 
-    /* loaded from: classes.dex */
     public interface Callbacks {
         default void setIcon(String str, StatusBarIcon statusBarIcon) {
         }
@@ -186,12 +186,12 @@ public class CommandQueue extends IStatusBar.Stub {
             this.mDisable1 = i;
             this.mDisable2 = i2;
             this.mHandler.removeMessages(131072);
-            Message obtainMessage = this.mHandler.obtainMessage(131072, i, i2, Boolean.valueOf(z));
+            Message messageObtainMessage = this.mHandler.obtainMessage(131072, i, i2, Boolean.valueOf(z));
             if (Looper.myLooper() == this.mHandler.getLooper()) {
-                this.mHandler.handleMessage(obtainMessage);
-                obtainMessage.recycle();
+                this.mHandler.handleMessage(messageObtainMessage);
+                messageObtainMessage.recycle();
             } else {
-                obtainMessage.sendToTarget();
+                messageObtainMessage.sendToTarget();
             }
         }
     }
@@ -241,14 +241,14 @@ public class CommandQueue extends IStatusBar.Stub {
 
     public void setSystemUiVisibility(int i, int i2, int i3, int i4, Rect rect, Rect rect2) {
         synchronized (this.mLock) {
-            SomeArgs obtain = SomeArgs.obtain();
-            obtain.argi1 = i;
-            obtain.argi2 = i2;
-            obtain.argi3 = i3;
-            obtain.argi4 = i4;
-            obtain.arg1 = rect;
-            obtain.arg2 = rect2;
-            this.mHandler.obtainMessage(393216, obtain).sendToTarget();
+            SomeArgs someArgsObtain = SomeArgs.obtain();
+            someArgsObtain.argi1 = i;
+            someArgsObtain.argi2 = i2;
+            someArgsObtain.argi3 = i3;
+            someArgsObtain.argi4 = i4;
+            someArgsObtain.arg1 = rect;
+            someArgsObtain.arg2 = rect2;
+            this.mHandler.obtainMessage(393216, someArgsObtain).sendToTarget();
         }
     }
 
@@ -262,9 +262,9 @@ public class CommandQueue extends IStatusBar.Stub {
     public void setImeWindowStatus(IBinder iBinder, int i, int i2, boolean z) {
         synchronized (this.mLock) {
             this.mHandler.removeMessages(524288);
-            Message obtainMessage = this.mHandler.obtainMessage(524288, i, i2, iBinder);
-            obtainMessage.getData().putBoolean("showImeSwitcherKey", z);
-            obtainMessage.sendToTarget();
+            Message messageObtainMessage = this.mHandler.obtainMessage(524288, i, i2, iBinder);
+            messageObtainMessage.getData().putBoolean("showImeSwitcherKey", z);
+            messageObtainMessage.sendToTarget();
         }
     }
 
@@ -292,9 +292,9 @@ public class CommandQueue extends IStatusBar.Stub {
     public void toggleRecentApps() {
         synchronized (this.mLock) {
             this.mHandler.removeMessages(589824);
-            Message obtainMessage = this.mHandler.obtainMessage(589824, 0, 0, null);
-            obtainMessage.setAsynchronous(true);
-            obtainMessage.sendToTarget();
+            Message messageObtainMessage = this.mHandler.obtainMessage(589824, 0, 0, null);
+            messageObtainMessage.setAsynchronous(true);
+            messageObtainMessage.sendToTarget();
         }
     }
 
@@ -467,10 +467,10 @@ public class CommandQueue extends IStatusBar.Stub {
 
     public void showFingerprintDialog(Bundle bundle, IBiometricPromptReceiver iBiometricPromptReceiver) {
         synchronized (this.mLock) {
-            SomeArgs obtain = SomeArgs.obtain();
-            obtain.arg1 = bundle;
-            obtain.arg2 = iBiometricPromptReceiver;
-            this.mHandler.obtainMessage(2555904, obtain).sendToTarget();
+            SomeArgs someArgsObtain = SomeArgs.obtain();
+            someArgsObtain.arg1 = bundle;
+            someArgsObtain.arg2 = iBiometricPromptReceiver;
+            this.mHandler.obtainMessage(2555904, someArgsObtain).sendToTarget();
         }
     }
 
@@ -498,12 +498,12 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
-    /* loaded from: classes.dex */
     private final class H extends Handler {
         private H(Looper looper) {
             super(looper);
         }
 
+        /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
         @Override // android.os.Handler
         public void handleMessage(Message message) {
             int i = 0;
@@ -516,41 +516,37 @@ public class CommandQueue extends IStatusBar.Stub {
                                 ((Callbacks) CommandQueue.this.mCallbacks.get(i)).setIcon((String) pair.first, (StatusBarIcon) pair.second);
                                 i++;
                             }
-                            return;
-                        case 2:
                             break;
-                        default:
-                            return;
                     }
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).removeIcon((String) message.obj);
                         i++;
                     }
-                    return;
+                    break;
                 case 131072:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).disable(message.arg1, message.arg2, ((Boolean) message.obj).booleanValue());
                         i++;
                     }
-                    return;
+                    break;
                 case 196608:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).animateExpandNotificationsPanel();
                         i++;
                     }
-                    return;
+                    break;
                 case 262144:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).animateCollapsePanels(message.arg1);
                         i++;
                     }
-                    return;
+                    break;
                 case 327680:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).animateExpandSettingsPanel((String) message.obj);
                         i++;
                     }
-                    return;
+                    break;
                 case 393216:
                     SomeArgs someArgs = (SomeArgs) message.obj;
                     while (i < CommandQueue.this.mCallbacks.size()) {
@@ -558,173 +554,173 @@ public class CommandQueue extends IStatusBar.Stub {
                         i++;
                     }
                     someArgs.recycle();
-                    return;
+                    break;
                 case 458752:
                     for (int i2 = 0; i2 < CommandQueue.this.mCallbacks.size(); i2++) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i2)).topAppWindowChanged(message.arg1 != 0);
                     }
-                    return;
+                    break;
                 case 524288:
                     for (int i3 = 0; i3 < CommandQueue.this.mCallbacks.size(); i3++) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i3)).setImeWindowStatus((IBinder) message.obj, message.arg1, message.arg2, message.getData().getBoolean("showImeSwitcherKey", false));
                     }
-                    return;
+                    break;
                 case 589824:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).toggleRecentApps();
                         i++;
                     }
-                    return;
+                    break;
                 case 655360:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).preloadRecentApps();
                         i++;
                     }
-                    return;
+                    break;
                 case 720896:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).cancelPreloadRecentApps();
                         i++;
                     }
-                    return;
+                    break;
                 case 786432:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).setWindowState(message.arg1, message.arg2);
                         i++;
                     }
-                    return;
+                    break;
                 case 851968:
                     for (int i4 = 0; i4 < CommandQueue.this.mCallbacks.size(); i4++) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i4)).showRecentApps(message.arg1 != 0);
                     }
-                    return;
+                    break;
                 case 917504:
                     for (int i5 = 0; i5 < CommandQueue.this.mCallbacks.size(); i5++) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i5)).hideRecentApps(message.arg1 != 0, message.arg2 != 0);
                     }
-                    return;
+                    break;
                 case 1179648:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).showScreenPinningRequest(message.arg1);
                         i++;
                     }
-                    return;
+                    break;
                 case 1245184:
                     for (int i6 = 0; i6 < CommandQueue.this.mCallbacks.size(); i6++) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i6)).appTransitionPending(message.arg1 != 0);
                     }
-                    return;
+                    break;
                 case 1310720:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).appTransitionCancelled();
                         i++;
                     }
-                    return;
+                    break;
                 case 1376256:
                     for (int i7 = 0; i7 < CommandQueue.this.mCallbacks.size(); i7++) {
                         Pair pair2 = (Pair) message.obj;
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i7)).appTransitionStarting(((Long) pair2.first).longValue(), ((Long) pair2.second).longValue(), message.arg1 != 0);
                     }
-                    return;
+                    break;
                 case 1441792:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).showAssistDisclosure();
                         i++;
                     }
-                    return;
+                    break;
                 case 1507328:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).startAssist((Bundle) message.obj);
                         i++;
                     }
-                    return;
+                    break;
                 case 1572864:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).onCameraLaunchGestureDetected(message.arg1);
                         i++;
                     }
-                    return;
+                    break;
                 case 1638400:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).toggleKeyboardShortcutsMenu(message.arg1);
                         i++;
                     }
-                    return;
+                    break;
                 case 1703936:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).showPictureInPictureMenu();
                         i++;
                     }
-                    return;
+                    break;
                 case 1769472:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).addQsTile((ComponentName) message.obj);
                         i++;
                     }
-                    return;
+                    break;
                 case 1835008:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).remQsTile((ComponentName) message.obj);
                         i++;
                     }
-                    return;
+                    break;
                 case 1900544:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).clickTile((ComponentName) message.obj);
                         i++;
                     }
-                    return;
+                    break;
                 case 1966080:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).toggleSplitScreen();
                         i++;
                     }
-                    return;
+                    break;
                 case 2031616:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).appTransitionFinished();
                         i++;
                     }
-                    return;
+                    break;
                 case 2097152:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).dismissKeyboardShortcutsMenu();
                         i++;
                     }
-                    return;
+                    break;
                 case 2162688:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).handleSystemKey(message.arg1);
                         i++;
                     }
-                    return;
+                    break;
                 case 2228224:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).handleShowGlobalActionsMenu();
                         i++;
                     }
-                    return;
+                    break;
                 case 2293760:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).togglePanel();
                         i++;
                     }
-                    return;
+                    break;
                 case 2359296:
                     for (int i8 = 0; i8 < CommandQueue.this.mCallbacks.size(); i8++) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i8)).handleShowShutdownUi(message.arg1 != 0, (String) message.obj);
                     }
-                    return;
+                    break;
                 case 2424832:
                     for (int i9 = 0; i9 < CommandQueue.this.mCallbacks.size(); i9++) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i9)).setTopAppHidesStatusBar(message.arg1 != 0);
                     }
-                    return;
+                    break;
                 case 2490368:
                     for (int i10 = 0; i10 < CommandQueue.this.mCallbacks.size(); i10++) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i10)).onRotationProposal(message.arg1, message.arg2 != 0);
                     }
-                    return;
+                    break;
                 case 2555904:
                     CommandQueue.this.mHandler.removeMessages(2752512);
                     CommandQueue.this.mHandler.removeMessages(2686976);
@@ -733,56 +729,53 @@ public class CommandQueue extends IStatusBar.Stub {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).showFingerprintDialog((Bundle) ((SomeArgs) message.obj).arg1, (IBiometricPromptReceiver) ((SomeArgs) message.obj).arg2);
                         i++;
                     }
-                    return;
+                    break;
                 case 2621440:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).onFingerprintAuthenticated();
                         i++;
                     }
-                    return;
+                    break;
                 case 2686976:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).onFingerprintHelp((String) message.obj);
                         i++;
                     }
-                    return;
+                    break;
                 case 2752512:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).onFingerprintError((String) message.obj);
                         i++;
                     }
-                    return;
+                    break;
                 case 2818048:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).hideFingerprintDialog();
                         i++;
                     }
-                    return;
+                    break;
                 case 2883584:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).showWirelessChargingAnimation(message.arg1);
                         i++;
                     }
-                    return;
+                    break;
                 case 2949120:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).showPinningEnterExitToast(((Boolean) message.obj).booleanValue());
                         i++;
                     }
-                    return;
+                    break;
                 case 3014656:
                     while (i < CommandQueue.this.mCallbacks.size()) {
                         ((Callbacks) CommandQueue.this.mCallbacks.get(i)).showPinningEscapeToast();
                         i++;
                     }
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }
 
-    /* loaded from: classes.dex */
     public static class CommandQueueStart extends SystemUI {
         @Override // com.android.systemui.SystemUI
         public void start() {

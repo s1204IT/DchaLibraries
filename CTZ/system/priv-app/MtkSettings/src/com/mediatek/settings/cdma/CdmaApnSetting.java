@@ -2,6 +2,7 @@ package com.mediatek.settings.cdma;
 
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class CdmaApnSetting {
     public static String customizeQuerySelectionforCdma(String str, String str2, int i) {
@@ -37,8 +38,7 @@ public class CdmaApnSetting {
     }
 
     public static String updateMccMncForCdma(String str, int i) {
-        String networkOperator = TelephonyManager.getDefault().getNetworkOperator(i);
-        Log.d("CdmaApnSetting", "updateMccMncForCdma, subId = " + str + ", numeric = " + i + ", networkNumeric = " + networkOperator);
+        Log.d("CdmaApnSetting", "updateMccMncForCdma, subId = " + str + ", numeric = " + i + ", networkNumeric = " + TelephonyManager.getDefault().getNetworkOperator(i));
         return str;
     }
 

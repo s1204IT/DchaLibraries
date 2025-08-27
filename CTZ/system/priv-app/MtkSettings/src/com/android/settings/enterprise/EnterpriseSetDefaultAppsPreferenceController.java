@@ -10,6 +10,7 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.users.UserFeatureProvider;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class EnterpriseSetDefaultAppsPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final ApplicationFeatureProvider mApplicationFeatureProvider;
@@ -41,11 +42,11 @@ public class EnterpriseSetDefaultAppsPreferenceController extends AbstractPrefer
     private int getNumberOfEnterpriseSetDefaultApps() {
         int i = 0;
         for (UserHandle userHandle : this.mUserFeatureProvider.getUserProfiles()) {
-            int i2 = i;
+            int size = i;
             for (EnterpriseDefaultApps enterpriseDefaultApps : EnterpriseDefaultApps.values()) {
-                i2 += this.mApplicationFeatureProvider.findPersistentPreferredActivities(userHandle.getIdentifier(), enterpriseDefaultApps.getIntents()).size();
+                size += this.mApplicationFeatureProvider.findPersistentPreferredActivities(userHandle.getIdentifier(), enterpriseDefaultApps.getIntents()).size();
             }
-            i = i2;
+            i = size;
         }
         return i;
     }

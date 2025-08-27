@@ -1,6 +1,7 @@
 package com.android.keyguard;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.android.keyguard.KeyguardSecurityModel;
 import com.mediatek.keyguard.AntiTheft.AntiTheftManager;
 import java.lang.ref.WeakReference;
+
 /* loaded from: classes.dex */
 public class KeyguardMessageArea extends TextView implements SecurityMessageDisplay {
     private static final Object ANNOUNCE_TOKEN = new Object();
@@ -21,6 +23,22 @@ public class KeyguardMessageArea extends TextView implements SecurityMessageDisp
     private int mNextMessageColor;
     private KeyguardSecurityModel mSecurityModel;
     private CharSequence mSeparator;
+
+    /* renamed from: com.android.keyguard.KeyguardMessageArea$1 */
+    class AnonymousClass1 extends KeyguardUpdateMonitorCallback {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onFinishedGoingToSleep(int i) {
+            KeyguardMessageArea.this.setSelected(false);
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onStartedWakingUp() {
+            KeyguardMessageArea.this.setSelected(true);
+        }
+    }
 
     public KeyguardMessageArea(Context context) {
         this(context, null);
@@ -34,6 +52,9 @@ public class KeyguardMessageArea extends TextView implements SecurityMessageDisp
         super(context, attributeSet);
         this.mNextMessageColor = -1;
         this.mInfoCallback = new KeyguardUpdateMonitorCallback() { // from class: com.android.keyguard.KeyguardMessageArea.1
+            AnonymousClass1() {
+            }
+
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
             public void onFinishedGoingToSleep(int i) {
                 KeyguardMessageArea.this.setSelected(false);
@@ -46,7 +67,7 @@ public class KeyguardMessageArea extends TextView implements SecurityMessageDisp
         };
         setLayerType(2, null);
         this.mSecurityModel = new KeyguardSecurityModel(context);
-        this.mSeparator = getResources().getString(17040110);
+        this.mSeparator = getResources().getString(android.R.string.conversation_single_line_name_display);
         keyguardUpdateMonitor.registerCallback(this.mInfoCallback);
         this.mHandler = new Handler(Looper.myLooper());
         this.mDefaultColor = getCurrentTextColor();
@@ -68,14 +89,14 @@ public class KeyguardMessageArea extends TextView implements SecurityMessageDisp
     }
 
     @Override // com.android.keyguard.SecurityMessageDisplay
-    public void setMessage(int i) {
-        CharSequence charSequence;
+    public void setMessage(int i) throws Resources.NotFoundException {
+        CharSequence text;
         if (i != 0) {
-            charSequence = getContext().getResources().getText(i);
+            text = getContext().getResources().getText(i);
         } else {
-            charSequence = null;
+            text = null;
         }
-        setMessage(charSequence);
+        setMessage(text);
     }
 
     public static SecurityMessageDisplay findSecurityMessageDisplay(View view) {
@@ -119,9 +140,7 @@ public class KeyguardMessageArea extends TextView implements SecurityMessageDisp
         setTextColor(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class AnnounceRunnable implements Runnable {
+    private static class AnnounceRunnable implements Runnable {
         private final WeakReference<View> mHost;
         private final CharSequence mTextToAnnounce;
 

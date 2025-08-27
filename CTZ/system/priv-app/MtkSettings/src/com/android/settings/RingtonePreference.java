@@ -10,6 +10,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+
 /* loaded from: classes.dex */
 public class RingtonePreference extends Preference {
     private int mRingtoneType;
@@ -20,13 +21,13 @@ public class RingtonePreference extends Preference {
 
     public RingtonePreference(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, com.android.internal.R.styleable.RingtonePreference, 0, 0);
-        this.mRingtoneType = obtainStyledAttributes.getInt(0, 1);
-        this.mShowDefault = obtainStyledAttributes.getBoolean(1, true);
-        this.mShowSilent = obtainStyledAttributes.getBoolean(2, true);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, com.android.internal.R.styleable.RingtonePreference, 0, 0);
+        this.mRingtoneType = typedArrayObtainStyledAttributes.getInt(0, 1);
+        this.mShowDefault = typedArrayObtainStyledAttributes.getBoolean(1, true);
+        this.mShowSilent = typedArrayObtainStyledAttributes.getBoolean(2, true);
         setIntent(new Intent("android.intent.action.RINGTONE_PICKER"));
         setUserId(UserHandle.myUserId());
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public void setUserId(int i) {

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.UserHandle;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class RemoteBugreportActivity extends Activity {
     @Override // android.app.Activity
@@ -20,13 +21,15 @@ public class RemoteBugreportActivity extends Activity {
                 public void onDismiss(DialogInterface dialogInterface) {
                     RemoteBugreportActivity.this.finish();
                 }
-            }).setNegativeButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settings.RemoteBugreportActivity.1
+            }).setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.RemoteBugreportActivity.1
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i2) {
                     RemoteBugreportActivity.this.finish();
                 }
             }).create().show();
-        } else if (intExtra == 1 || intExtra == 3) {
+            return;
+        }
+        if (intExtra == 1 || intExtra == 3) {
             AlertDialog.Builder title = new AlertDialog.Builder(this).setTitle(R.string.share_remote_bugreport_dialog_title);
             if (intExtra == 1) {
                 i = R.string.share_remote_bugreport_dialog_message;
@@ -51,8 +54,8 @@ public class RemoteBugreportActivity extends Activity {
                     RemoteBugreportActivity.this.finish();
                 }
             }).create().show();
-        } else {
-            Log.e("RemoteBugreportActivity", "Incorrect dialog type, no dialog shown. Received: " + intExtra);
+            return;
         }
+        Log.e("RemoteBugreportActivity", "Incorrect dialog type, no dialog shown. Received: " + intExtra);
     }
 }

@@ -8,16 +8,15 @@ import android.util.SparseArray;
 import com.android.internal.util.Preconditions;
 import com.android.settings.Utils;
 import com.android.settingslib.utils.AsyncLoader;
+
 /* loaded from: classes.dex */
 public class UserIconLoader extends AsyncLoader<SparseArray<Drawable>> {
     private FetchUserIconTask mTask;
 
-    /* loaded from: classes.dex */
     public interface FetchUserIconTask {
         SparseArray<Drawable> getUserIcons();
     }
 
-    /* loaded from: classes.dex */
     public interface UserIconHandler {
         void handleUserIcons(SparseArray<Drawable> sparseArray);
     }
@@ -27,14 +26,15 @@ public class UserIconLoader extends AsyncLoader<SparseArray<Drawable>> {
         this.mTask = (FetchUserIconTask) Preconditions.checkNotNull(fetchUserIconTask);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
     public SparseArray<Drawable> loadInBackground() {
         return this.mTask.getUserIcons();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(SparseArray<Drawable> sparseArray) {
+    protected void onDiscardResult(SparseArray<Drawable> sparseArray) {
     }
 
     public static SparseArray<Drawable> loadUserIconsWithContext(Context context) {

@@ -27,6 +27,7 @@ import com.mediatek.settings.inputmethod.VoiceWakeupPreferenceController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LanguageAndInputSettings extends DashboardFragment {
     public static final SummaryLoader.SummaryProviderFactory SUMMARY_PROVIDER_FACTORY = new SummaryLoader.SummaryProviderFactory() { // from class: com.android.settings.language.-$$Lambda$LanguageAndInputSettings$VvwbgRiPWoRSuoMu5QPyPqZ5AEc
@@ -77,9 +78,8 @@ public class LanguageAndInputSettings extends DashboardFragment {
         activity.setTitle(R.string.language_settings);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.language_and_input;
     }
 
@@ -88,8 +88,7 @@ public class LanguageAndInputSettings extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new PhoneLanguagePreferenceController(context));
         VirtualKeyboardPreferenceController virtualKeyboardPreferenceController = new VirtualKeyboardPreferenceController(context);
@@ -109,9 +108,7 @@ public class LanguageAndInputSettings extends DashboardFragment {
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;
 
@@ -140,8 +137,8 @@ public class LanguageAndInputSettings extends DashboardFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$0(Activity activity, SummaryLoader summaryLoader) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0002: CONSTRUCTOR (r1v0 android.app.Activity), (r2v0 com.android.settings.dashboard.SummaryLoader) A[MD:(android.content.Context, com.android.settings.dashboard.SummaryLoader):void (m)] (LINE:169) call: com.android.settings.language.LanguageAndInputSettings.SummaryProvider.<init>(android.content.Context, com.android.settings.dashboard.SummaryLoader):void type: CONSTRUCTOR */
+    static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$0(Activity activity, SummaryLoader summaryLoader) {
         return new SummaryProvider(activity, summaryLoader);
     }
 }

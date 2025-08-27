@@ -12,6 +12,7 @@ import com.android.settings.accounts.AccountFeatureProvider;
 import com.android.settings.core.BasePreferenceController;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class BrandedAccountPreferenceController extends BasePreferenceController {
     private static final String KEY_PREFERENCE_TITLE = "branded_account";
@@ -34,18 +35,18 @@ public class BrandedAccountPreferenceController extends BasePreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
         final AccountFeatureProvider accountFeatureProvider = FeatureFactory.getFactory(this.mContext).getAccountFeatureProvider();
-        Preference findPreference = preferenceScreen.findPreference(KEY_PREFERENCE_TITLE);
-        if (findPreference != null && (this.mAccounts == null || this.mAccounts.length == 0)) {
-            preferenceScreen.removePreference(findPreference);
-            return;
+        Preference preferenceFindPreference = preferenceScreen.findPreference(KEY_PREFERENCE_TITLE);
+        if (preferenceFindPreference != null && (this.mAccounts == null || this.mAccounts.length == 0)) {
+            preferenceScreen.removePreference(preferenceFindPreference);
+        } else {
+            preferenceFindPreference.setSummary(this.mAccounts[0].name);
+            preferenceFindPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.deviceinfo.-$$Lambda$BrandedAccountPreferenceController$rFwl4JPEzufcbKCkFgByL5d4NMI
+                @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
+                public final boolean onPreferenceClick(Preference preference) {
+                    return BrandedAccountPreferenceController.lambda$displayPreference$0(this.f$0, accountFeatureProvider, preference);
+                }
+            });
         }
-        findPreference.setSummary(this.mAccounts[0].name);
-        findPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.deviceinfo.-$$Lambda$BrandedAccountPreferenceController$rFwl4JPEzufcbKCkFgByL5d4NMI
-            @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
-            public final boolean onPreferenceClick(Preference preference) {
-                return BrandedAccountPreferenceController.lambda$displayPreference$0(BrandedAccountPreferenceController.this, accountFeatureProvider, preference);
-            }
-        });
     }
 
     public static /* synthetic */ boolean lambda$displayPreference$0(BrandedAccountPreferenceController brandedAccountPreferenceController, AccountFeatureProvider accountFeatureProvider, Preference preference) {

@@ -3,6 +3,7 @@ package com.android.settings.applications.appinfo;
 import android.content.Context;
 import android.os.UserHandle;
 import com.android.settings.applications.defaultapps.DefaultBrowserPreferenceController;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserShortcutPreferenceController extends DefaultAppShortcutPreferenceControllerBase {
     private static final String KEY = "default_browser";

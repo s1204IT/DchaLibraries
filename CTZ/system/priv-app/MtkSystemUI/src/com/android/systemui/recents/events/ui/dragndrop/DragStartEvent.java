@@ -4,6 +4,7 @@ import android.graphics.Point;
 import com.android.systemui.recents.events.EventBus;
 import com.android.systemui.recents.views.TaskView;
 import com.android.systemui.shared.recents.model.Task;
+
 /* loaded from: classes.dex */
 public class DragStartEvent extends EventBus.Event {
     public final boolean isUserTouchInitiated;

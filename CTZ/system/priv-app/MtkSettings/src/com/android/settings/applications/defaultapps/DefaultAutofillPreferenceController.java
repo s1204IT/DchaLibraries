@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.autofill.AutofillManager;
 import com.android.settings.applications.defaultapps.DefaultAutofillPicker;
 import com.android.settingslib.applications.DefaultAppInfo;
+
 /* loaded from: classes.dex */
 public class DefaultAutofillPreferenceController extends DefaultAppPreferenceController {
     private final AutofillManager mAutofillManager;

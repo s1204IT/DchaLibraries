@@ -9,6 +9,7 @@ import android.os.UserManager;
 import com.android.settings.R;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class RestrictionUtils {
     public static final String[] sRestrictionKeys = {"no_share_location"};
@@ -33,8 +34,7 @@ public class RestrictionUtils {
         UserManager userManager = UserManager.get(context);
         Iterator<RestrictionEntry> it = arrayList.iterator();
         while (it.hasNext()) {
-            RestrictionEntry next = it.next();
-            userManager.setUserRestriction(next.getKey(), !next.getSelectedState(), userHandle);
+            userManager.setUserRestriction(it.next().getKey(), !r0.getSelectedState(), userHandle);
         }
     }
 }

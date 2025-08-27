@@ -22,6 +22,7 @@ import com.android.settings.search.Indexable;
 import com.android.settings.widget.SwitchBar;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ScreenPinningSettings extends SettingsPreferenceFragment implements Indexable, SwitchBar.OnSwitchChangeListener {
     private static final CharSequence KEY_USE_SCREEN_LOCK = "use_screen_lock";
@@ -62,10 +63,10 @@ public class ScreenPinningSettings extends SettingsPreferenceFragment implements
     @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
-        ViewGroup viewGroup = (ViewGroup) view.findViewById(16908351);
-        View inflate = LayoutInflater.from(getContext()).inflate(R.layout.screen_pinning_instructions, viewGroup, false);
-        viewGroup.addView(inflate);
-        setEmptyView(inflate);
+        ViewGroup viewGroup = (ViewGroup) view.findViewById(android.R.id.list_container);
+        View viewInflate = LayoutInflater.from(getContext()).inflate(R.layout.screen_pinning_instructions, viewGroup, false);
+        viewGroup.addView(viewInflate);
+        setEmptyView(viewInflate);
     }
 
     @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
@@ -90,8 +91,7 @@ public class ScreenPinningSettings extends SettingsPreferenceFragment implements
         return Settings.Secure.getInt(getContentResolver(), "lock_to_app_exit_locked", this.mLockPatternUtils.isSecure(UserHandle.myUserId()) ? 1 : 0) != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean setScreenLockUsed(boolean z) {
+    private boolean setScreenLockUsed(boolean z) {
         if (z && new LockPatternUtils(getActivity()).getKeyguardStoredPasswordQuality(UserHandle.myUserId()) == 0) {
             Intent intent = new Intent("android.app.action.SET_NEW_PASSWORD");
             intent.putExtra("minimum_quality", 65536);
@@ -123,14 +123,14 @@ public class ScreenPinningSettings extends SettingsPreferenceFragment implements
                 return R.string.screen_pinning_unlock_pattern;
             }
             return R.string.screen_pinning_unlock_none;
-        } else if (keyguardStoredPasswordQuality == 131072 || keyguardStoredPasswordQuality == 196608) {
-            return R.string.screen_pinning_unlock_pin;
-        } else {
-            if (keyguardStoredPasswordQuality == 262144 || keyguardStoredPasswordQuality == 327680 || keyguardStoredPasswordQuality == 393216 || keyguardStoredPasswordQuality == 524288) {
-                return R.string.screen_pinning_unlock_password;
-            }
-            return R.string.screen_pinning_unlock_none;
         }
+        if (keyguardStoredPasswordQuality == 131072 || keyguardStoredPasswordQuality == 196608) {
+            return R.string.screen_pinning_unlock_pin;
+        }
+        if (keyguardStoredPasswordQuality == 262144 || keyguardStoredPasswordQuality == 327680 || keyguardStoredPasswordQuality == 393216 || keyguardStoredPasswordQuality == 524288) {
+            return R.string.screen_pinning_unlock_password;
+        }
+        return R.string.screen_pinning_unlock_none;
     }
 
     @Override // com.android.settings.widget.SwitchBar.OnSwitchChangeListener

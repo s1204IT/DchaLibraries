@@ -10,10 +10,10 @@ import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.google.protobuf.nano.MessageNano;
 import com.google.protobuf.nano.WireFormatNano;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public interface LauncherDumpProto {
 
-    /* loaded from: classes.dex */
     public interface ContainerType {
         public static final int FOLDER = 3;
         public static final int HOTSEAT = 2;
@@ -21,7 +21,6 @@ public interface LauncherDumpProto {
         public static final int WORKSPACE = 1;
     }
 
-    /* loaded from: classes.dex */
     public interface ItemType {
         public static final int APP_ICON = 1;
         public static final int SHORTCUT = 3;
@@ -29,13 +28,11 @@ public interface LauncherDumpProto {
         public static final int WIDGET = 2;
     }
 
-    /* loaded from: classes.dex */
     public interface UserType {
         public static final int DEFAULT = 0;
         public static final int WORK = 1;
     }
 
-    /* loaded from: classes.dex */
     public static final class DumpTarget extends MessageNano {
         private static volatile DumpTarget[] _emptyArray;
         public String component;
@@ -51,7 +48,6 @@ public interface LauncherDumpProto {
         public int type;
         public int userType;
 
-        /* loaded from: classes.dex */
         public interface Type {
             public static final int CONTAINER = 2;
             public static final int ITEM = 1;
@@ -131,64 +127,64 @@ public interface LauncherDumpProto {
             super.writeTo(codedOutputByteBufferNano);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.google.protobuf.nano.MessageNano
-        public int computeSerializedSize() {
-            int computeSerializedSize = super.computeSerializedSize();
+        protected int computeSerializedSize() {
+            int iComputeSerializedSize = super.computeSerializedSize();
             if (this.type != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(1, this.type);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(1, this.type);
             }
             if (this.pageId != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(2, this.pageId);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(2, this.pageId);
             }
             if (this.gridX != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(3, this.gridX);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(3, this.gridX);
             }
             if (this.gridY != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(4, this.gridY);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(4, this.gridY);
             }
             if (this.containerType != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(5, this.containerType);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(5, this.containerType);
             }
             if (this.itemType != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(6, this.itemType);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(6, this.itemType);
             }
             if (!this.packageName.equals("")) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeStringSize(7, this.packageName);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeStringSize(7, this.packageName);
             }
             if (!this.component.equals("")) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeStringSize(8, this.component);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeStringSize(8, this.component);
             }
             if (!this.itemId.equals("")) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeStringSize(9, this.itemId);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeStringSize(9, this.itemId);
             }
             if (this.spanX != 1) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(10, this.spanX);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(10, this.spanX);
             }
             if (this.spanY != 1) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(11, this.spanY);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(11, this.spanY);
             }
             if (this.userType != 0) {
-                return computeSerializedSize + CodedOutputByteBufferNano.computeInt32Size(12, this.userType);
+                return iComputeSerializedSize + CodedOutputByteBufferNano.computeInt32Size(12, this.userType);
             }
-            return computeSerializedSize;
+            return iComputeSerializedSize;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: mergeFrom(Lcom/google/protobuf/nano/CodedInputByteBufferNano;)Lcom/google/protobuf/nano/MessageNano; */
         @Override // com.google.protobuf.nano.MessageNano
         public DumpTarget mergeFrom(CodedInputByteBufferNano codedInputByteBufferNano) throws IOException {
             while (true) {
-                int readTag = codedInputByteBufferNano.readTag();
-                switch (readTag) {
+                int tag = codedInputByteBufferNano.readTag();
+                switch (tag) {
                     case 0:
                         return this;
                     case 8:
-                        int readInt32 = codedInputByteBufferNano.readInt32();
-                        switch (readInt32) {
+                        int int32 = codedInputByteBufferNano.readInt32();
+                        switch (int32) {
                             case 0:
                             case 1:
                             case 2:
-                                this.type = readInt32;
-                                continue;
+                                this.type = int32;
+                                break;
                         }
                     case 16:
                         this.pageId = codedInputByteBufferNano.readInt32();
@@ -200,24 +196,24 @@ public interface LauncherDumpProto {
                         this.gridY = codedInputByteBufferNano.readInt32();
                         break;
                     case MotionEventCompat.AXIS_GENERIC_9 /* 40 */:
-                        int readInt322 = codedInputByteBufferNano.readInt32();
-                        switch (readInt322) {
+                        int int322 = codedInputByteBufferNano.readInt32();
+                        switch (int322) {
                             case 0:
                             case 1:
                             case 2:
                             case 3:
-                                this.containerType = readInt322;
-                                continue;
+                                this.containerType = int322;
+                                break;
                         }
                     case Cea708CCParser.Const.CODE_G2_BLK /* 48 */:
-                        int readInt323 = codedInputByteBufferNano.readInt32();
-                        switch (readInt323) {
+                        int int323 = codedInputByteBufferNano.readInt32();
+                        switch (int323) {
                             case 0:
                             case 1:
                             case 2:
                             case 3:
-                                this.itemType = readInt323;
-                                continue;
+                                this.itemType = int323;
+                                break;
                         }
                     case 58:
                         this.packageName = codedInputByteBufferNano.readString();
@@ -235,19 +231,18 @@ public interface LauncherDumpProto {
                         this.spanY = codedInputByteBufferNano.readInt32();
                         break;
                     case AbstractFloatingView.TYPE_HIDE_BACK_BUTTON /* 96 */:
-                        int readInt324 = codedInputByteBufferNano.readInt32();
-                        switch (readInt324) {
+                        int int324 = codedInputByteBufferNano.readInt32();
+                        switch (int324) {
                             case 0:
                             case 1:
-                                this.userType = readInt324;
-                                continue;
+                                this.userType = int324;
+                                break;
                         }
                     default:
-                        if (WireFormatNano.parseUnknownField(codedInputByteBufferNano, readTag)) {
-                            break;
-                        } else {
+                        if (!WireFormatNano.parseUnknownField(codedInputByteBufferNano, tag)) {
                             return this;
                         }
+                        break;
                 }
             }
         }
@@ -261,7 +256,6 @@ public interface LauncherDumpProto {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class LauncherImpression extends MessageNano {
         private static volatile LauncherImpression[] _emptyArray;
         public DumpTarget[] targets;
@@ -300,31 +294,31 @@ public interface LauncherDumpProto {
             super.writeTo(codedOutputByteBufferNano);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.google.protobuf.nano.MessageNano
-        public int computeSerializedSize() {
-            int computeSerializedSize = super.computeSerializedSize();
+        protected int computeSerializedSize() {
+            int iComputeSerializedSize = super.computeSerializedSize();
             if (this.targets != null && this.targets.length > 0) {
                 for (int i = 0; i < this.targets.length; i++) {
                     DumpTarget dumpTarget = this.targets[i];
                     if (dumpTarget != null) {
-                        computeSerializedSize += CodedOutputByteBufferNano.computeMessageSize(1, dumpTarget);
+                        iComputeSerializedSize += CodedOutputByteBufferNano.computeMessageSize(1, dumpTarget);
                     }
                 }
             }
-            return computeSerializedSize;
+            return iComputeSerializedSize;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: mergeFrom(Lcom/google/protobuf/nano/CodedInputByteBufferNano;)Lcom/google/protobuf/nano/MessageNano; */
         @Override // com.google.protobuf.nano.MessageNano
         public LauncherImpression mergeFrom(CodedInputByteBufferNano codedInputByteBufferNano) throws IOException {
             int length;
             while (true) {
-                int readTag = codedInputByteBufferNano.readTag();
-                if (readTag == 0) {
+                int tag = codedInputByteBufferNano.readTag();
+                if (tag == 0) {
                     return this;
                 }
-                if (readTag != 10) {
-                    if (!WireFormatNano.parseUnknownField(codedInputByteBufferNano, readTag)) {
+                if (tag != 10) {
+                    if (!WireFormatNano.parseUnknownField(codedInputByteBufferNano, tag)) {
                         return this;
                     }
                 } else {

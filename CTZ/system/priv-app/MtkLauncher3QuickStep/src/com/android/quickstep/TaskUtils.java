@@ -28,6 +28,7 @@ import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
 import com.android.systemui.shared.system.TransactionCompat;
 import java.util.List;
 import java.util.function.BiConsumer;
+
 /* loaded from: classes.dex */
 public class TaskUtils {
     private static final String TAG = "TaskUtils";
@@ -36,13 +37,13 @@ public class TaskUtils {
         LauncherAppsCompat launcherAppsCompat = LauncherAppsCompat.getInstance(context);
         UserManagerCompat userManagerCompat = UserManagerCompat.getInstance(context);
         PackageManager packageManager = context.getPackageManager();
-        UserHandle of = UserHandle.of(task.key.userId);
-        ApplicationInfo applicationInfo = launcherAppsCompat.getApplicationInfo(task.getTopComponent().getPackageName(), 0, of);
+        UserHandle userHandleOf = UserHandle.of(task.key.userId);
+        ApplicationInfo applicationInfo = launcherAppsCompat.getApplicationInfo(task.getTopComponent().getPackageName(), 0, userHandleOf);
         if (applicationInfo == null) {
             Log.e(TAG, "Failed to get title for task " + task);
             return "";
         }
-        return userManagerCompat.getBadgedLabelForUser(applicationInfo.loadLabel(packageManager), of);
+        return userManagerCompat.getBadgedLabelForUser(applicationInfo.loadLabel(packageManager), userHandleOf);
     }
 
     public static ComponentKey getComponentKeyForTask(Task.TaskKey taskKey) {
@@ -98,16 +99,14 @@ public class TaskUtils {
     }
 
     public static ValueAnimator getRecentsWindowAnimator(TaskView taskView, boolean z, RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr, ClipAnimationHelper clipAnimationHelper) {
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-        ofFloat.setInterpolator(Interpolators.TOUCH_RESPONSE_INTERPOLATOR);
-        ofFloat.addUpdateListener(new AnonymousClass1(remoteAnimationTargetCompatArr, clipAnimationHelper, z, taskView));
-        return ofFloat;
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+        valueAnimatorOfFloat.setInterpolator(Interpolators.TOUCH_RESPONSE_INTERPOLATOR);
+        valueAnimatorOfFloat.addUpdateListener(new AnonymousClass1(remoteAnimationTargetCompatArr, clipAnimationHelper, z, taskView));
+        return valueAnimatorOfFloat;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.quickstep.TaskUtils$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends MultiValueUpdateListener {
+    /* renamed from: com.android.quickstep.TaskUtils$1, reason: invalid class name */
+    class AnonymousClass1 extends MultiValueUpdateListener {
         private long mFrameNumber;
         private Surface mSurface;
         final RemoteAnimationTargetSet mTargetSet;
@@ -130,7 +129,7 @@ public class TaskUtils {
             clipAnimationHelper2.setTaskTransformCallback(new BiConsumer() { // from class: com.android.quickstep.-$$Lambda$TaskUtils$1$tEt322p3fxsij67Q0BbFCJTlMi4
                 @Override // java.util.function.BiConsumer
                 public final void accept(Object obj, Object obj2) {
-                    TaskUtils.AnonymousClass1.lambda$new$0(TaskUtils.AnonymousClass1.this, z2, (TransactionCompat) obj, (RemoteAnimationTargetCompat) obj2);
+                    TaskUtils.AnonymousClass1.lambda$new$0(this.f$0, z2, (TransactionCompat) obj, (RemoteAnimationTargetCompat) obj2);
                 }
             });
             this.val$inOutHelper.prepareAnimation(true);
@@ -155,13 +154,13 @@ public class TaskUtils {
                 Log.w(TaskUtils.TAG, "Failed to animate, surface got destroyed.");
                 return;
             }
-            RectF applyTransform = this.val$inOutHelper.applyTransform(this.mTargetSet, 1.0f - f);
+            RectF rectFApplyTransform = this.val$inOutHelper.applyTransform(this.mTargetSet, 1.0f - f);
             if (!this.val$skipViewChanges) {
-                float width = applyTransform.width() / this.mThumbnailRect.width();
-                this.val$v.setScaleX(width);
-                this.val$v.setScaleY(width);
-                this.val$v.setTranslationX(applyTransform.centerX() - this.mThumbnailRect.centerX());
-                this.val$v.setTranslationY(applyTransform.centerY() - this.mThumbnailRect.centerY());
+                float fWidth = rectFApplyTransform.width() / this.mThumbnailRect.width();
+                this.val$v.setScaleX(fWidth);
+                this.val$v.setScaleY(fWidth);
+                this.val$v.setTranslationX(rectFApplyTransform.centerX() - this.mThumbnailRect.centerX());
+                this.val$v.setTranslationY(rectFApplyTransform.centerY() - this.mThumbnailRect.centerY());
                 this.val$v.setAlpha(this.mViewAlpha.value);
             }
         }

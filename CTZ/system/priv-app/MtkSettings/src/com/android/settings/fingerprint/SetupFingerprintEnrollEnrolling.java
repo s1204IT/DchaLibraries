@@ -2,11 +2,12 @@ package com.android.settings.fingerprint;
 
 import android.content.Intent;
 import com.android.settings.SetupWizardUtils;
+
 /* loaded from: classes.dex */
 public class SetupFingerprintEnrollEnrolling extends FingerprintEnrollEnrolling {
     @Override // com.android.settings.fingerprint.FingerprintEnrollEnrolling
     protected Intent getFinishIntent() {
-        Intent intent = new Intent(this, SetupFingerprintEnrollFinish.class);
+        Intent intent = new Intent(this, (Class<?>) SetupFingerprintEnrollFinish.class);
         SetupWizardUtils.copySetupExtras(getIntent(), intent);
         return intent;
     }

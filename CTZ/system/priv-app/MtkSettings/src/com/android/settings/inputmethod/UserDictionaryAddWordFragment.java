@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import com.android.settings.R;
 import com.android.settings.core.InstrumentedFragment;
+
 /* loaded from: classes.dex */
 public class UserDictionaryAddWordFragment extends InstrumentedFragment {
     private UserDictionaryAddWordContents mContents;
@@ -64,7 +65,7 @@ public class UserDictionaryAddWordFragment extends InstrumentedFragment {
     }
 
     private void updateSpinner() {
-        new ArrayAdapter(getActivity(), 17367048, this.mContents.getLocalesList(getActivity())).setDropDownViewResource(17367049);
+        new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, this.mContents.getLocalesList(getActivity())).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservableFragment, android.app.Fragment

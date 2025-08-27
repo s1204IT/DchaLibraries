@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceScreen android:enabled="false" android:layout="@layout/hide_layout" android:selectable="false">
-        <com.android.browser.preferences.SeekBarSummaryPreference android:max="10" android:title="@string/pref_zoom_on_double_tap" android:key="double_tap_zoom" android:defaultValue="5"/>
+    <PreferenceScreen
+        android:enabled="false"
+        android:layout="@layout/hide_layout"
+        android:selectable="false">
+        <com.android.browser.preferences.SeekBarSummaryPreference
+            android:max="10"
+            android:title="@string/pref_zoom_on_double_tap"
+            android:key="double_tap_zoom"
+            android:defaultValue="5"/>
     </PreferenceScreen>
-    <PreferenceCategory android:title="@string/pref_font_size_category" android:key="text_field">
+    <PreferenceCategory
+        android:title="@string/pref_font_size_category"
+        android:key="text_field">
         <com.android.browser.preferences.FontSizePreview android:title="@string/preview"/>
-        <com.android.browser.preferences.SeekBarSummaryPreference android:max="30" android:title="@string/pref_text_zoom" android:key="text_zoom" android:defaultValue="10"/>
-        <com.android.browser.preferences.SeekBarSummaryPreference android:max="20" android:title="@string/pref_min_font_size" android:key="min_font_size" android:defaultValue="0"/>
+        <com.android.browser.preferences.SeekBarSummaryPreference
+            android:max="30"
+            android:title="@string/pref_text_zoom"
+            android:key="text_zoom"
+            android:defaultValue="10"/>
+        <com.android.browser.preferences.SeekBarSummaryPreference
+            android:max="20"
+            android:title="@string/pref_min_font_size"
+            android:key="min_font_size"
+            android:defaultValue="0"/>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.android.settings.R;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WebViewUpdateServiceWrapper {
     public PackageInfo getCurrentWebViewPackage() {
@@ -25,14 +26,14 @@ public class WebViewUpdateServiceWrapper {
     }
 
     public List<ApplicationInfo> getValidWebViewApplicationInfos(Context context) {
-        WebViewProviderInfo[] webViewProviderInfoArr;
+        WebViewProviderInfo[] validWebViewPackages;
         try {
-            webViewProviderInfoArr = WebViewFactory.getUpdateService().getValidWebViewPackages();
+            validWebViewPackages = WebViewFactory.getUpdateService().getValidWebViewPackages();
         } catch (RemoteException e) {
-            webViewProviderInfoArr = null;
+            validWebViewPackages = null;
         }
         ArrayList arrayList = new ArrayList();
-        for (WebViewProviderInfo webViewProviderInfo : webViewProviderInfoArr) {
+        for (WebViewProviderInfo webViewProviderInfo : validWebViewPackages) {
             try {
                 arrayList.add(context.getPackageManager().getApplicationInfo(webViewProviderInfo.packageName, 4194304));
             } catch (PackageManager.NameNotFoundException e2) {
@@ -55,6 +56,6 @@ public class WebViewUpdateServiceWrapper {
     }
 
     public void showInvalidChoiceToast(Context context) {
-        Toast.makeText(context, (int) R.string.select_webview_provider_toast_text, 0).show();
+        Toast.makeText(context, R.string.select_webview_provider_toast_text, 0).show();
     }
 }

@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class Recents extends SystemUI implements RecentsComponent, CommandQueue.Callbacks {
     public static final Set<String> RECENTS_ACTIVITIES = new HashSet();
@@ -66,21 +67,41 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
     private IRecentsSystemUserCallbacks mUserToSystemCallbacks;
     private final ArrayList<Runnable> mOnConnectRunnables = new ArrayList<>();
     private final IBinder.DeathRecipient mUserToSystemCallbacksDeathRcpt = new IBinder.DeathRecipient() { // from class: com.android.systemui.recents.Recents.1
+        AnonymousClass1() {
+        }
+
         @Override // android.os.IBinder.DeathRecipient
         public void binderDied() {
             Recents.this.mUserToSystemCallbacks = null;
             EventLog.writeEvent(36060, 3, Integer.valueOf(Recents.sSystemServicesProxy.getProcessUser()));
             Recents.this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.recents.Recents.1.1
+                RunnableC00041() {
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     Recents.this.registerWithSystemUser();
                 }
             }, 5000L);
         }
+
+        /* renamed from: com.android.systemui.recents.Recents$1$1 */
+        class RunnableC00041 implements Runnable {
+            RunnableC00041() {
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                Recents.this.registerWithSystemUser();
+            }
+        }
     };
     private final ServiceConnection mUserToSystemServiceConnection = new ServiceConnection() { // from class: com.android.systemui.recents.Recents.2
+        AnonymousClass2() {
+        }
+
         @Override // android.content.ServiceConnection
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) throws RemoteException {
             if (iBinder != null) {
                 Recents.this.mUserToSystemCallbacks = IRecentsSystemUserCallbacks.Stub.asInterface(iBinder);
                 EventLog.writeEvent(36060, 2, Integer.valueOf(Recents.sSystemServicesProxy.getProcessUser()));
@@ -101,6 +122,63 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
 
     static {
         RECENTS_ACTIVITIES.add("com.android.systemui.recents.RecentsActivity");
+    }
+
+    /* renamed from: com.android.systemui.recents.Recents$1 */
+    class AnonymousClass1 implements IBinder.DeathRecipient {
+        AnonymousClass1() {
+        }
+
+        @Override // android.os.IBinder.DeathRecipient
+        public void binderDied() {
+            Recents.this.mUserToSystemCallbacks = null;
+            EventLog.writeEvent(36060, 3, Integer.valueOf(Recents.sSystemServicesProxy.getProcessUser()));
+            Recents.this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.recents.Recents.1.1
+                RunnableC00041() {
+                }
+
+                @Override // java.lang.Runnable
+                public void run() {
+                    Recents.this.registerWithSystemUser();
+                }
+            }, 5000L);
+        }
+
+        /* renamed from: com.android.systemui.recents.Recents$1$1 */
+        class RunnableC00041 implements Runnable {
+            RunnableC00041() {
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                Recents.this.registerWithSystemUser();
+            }
+        }
+    }
+
+    /* renamed from: com.android.systemui.recents.Recents$2 */
+    class AnonymousClass2 implements ServiceConnection {
+        AnonymousClass2() {
+        }
+
+        @Override // android.content.ServiceConnection
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) throws RemoteException {
+            if (iBinder != null) {
+                Recents.this.mUserToSystemCallbacks = IRecentsSystemUserCallbacks.Stub.asInterface(iBinder);
+                EventLog.writeEvent(36060, 2, Integer.valueOf(Recents.sSystemServicesProxy.getProcessUser()));
+                try {
+                    iBinder.linkToDeath(Recents.this.mUserToSystemCallbacksDeathRcpt, 0);
+                } catch (RemoteException e) {
+                    Log.e("Recents", "Lost connection to (System) SystemUI", e);
+                }
+                Recents.this.runAndFlushOnConnectRunnables();
+            }
+            Recents.this.mContext.unbindService(this);
+        }
+
+        @Override // android.content.ServiceConnection
+        public void onServiceDisconnected(ComponentName componentName) {
+        }
     }
 
     public IBinder getSystemUserCallbacks() {
@@ -124,7 +202,7 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
     }
 
     @Override // com.android.systemui.SystemUI
-    public void start() {
+    public void start() throws NoSuchMethodException, SecurityException {
         Resources resources = this.mContext.getResources();
         int color = this.mContext.getColor(R.color.recents_task_bar_default_background_color);
         int color2 = this.mContext.getColor(R.color.recents_task_view_default_background_color);
@@ -169,15 +247,17 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
             }
         }
         ActivityManagerWrapper.getInstance().closeSystemWindows("recentapps");
-        int growsRecents = ((Divider) getComponent(Divider.class)).getView().growsRecents();
+        int iGrowsRecents = ((Divider) getComponent(Divider.class)).getView().growsRecents();
         int currentUser = sSystemServicesProxy.getCurrentUser();
         if (sSystemServicesProxy.isSystemUser(currentUser)) {
-            this.mImpl.showRecents(z, false, true, growsRecents);
-        } else if (this.mSystemToUserCallbacks != null) {
+            this.mImpl.showRecents(z, false, true, iGrowsRecents);
+            return;
+        }
+        if (this.mSystemToUserCallbacks != null) {
             IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
             if (nonSystemUserRecentsForUser != null) {
                 try {
-                    nonSystemUserRecentsForUser.showRecents(z, false, true, growsRecents);
+                    nonSystemUserRecentsForUser.showRecents(z, false, true, iGrowsRecents);
                     return;
                 } catch (RemoteException e2) {
                     Log.e("Recents", "Callback failed", e2);
@@ -205,7 +285,9 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         int currentUser = sSystemServicesProxy.getCurrentUser();
         if (sSystemServicesProxy.isSystemUser(currentUser)) {
             this.mImpl.hideRecents(z, z2);
-        } else if (this.mSystemToUserCallbacks != null) {
+            return;
+        }
+        if (this.mSystemToUserCallbacks != null) {
             IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
             if (nonSystemUserRecentsForUser != null) {
                 try {
@@ -229,7 +311,7 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
             final Runnable runnable = new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$Recents$DlCOGSzKaukLbmOv4Q6W4NFOOjI
                 @Override // java.lang.Runnable
                 public final void run() {
-                    Recents.lambda$toggleRecentApps$0(Recents.this);
+                    Recents.lambda$toggleRecentApps$0(this.f$0);
                 }
             };
             StatusBar statusBar = (StatusBar) getComponent(StatusBar.class);
@@ -237,7 +319,7 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
                 statusBar.executeRunnableDismissingKeyguard(new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$Recents$cEpHOgaIXIHB4gNs5mP7QroqZ4o
                     @Override // java.lang.Runnable
                     public final void run() {
-                        Recents.lambda$toggleRecentApps$1(Recents.this, runnable);
+                        Recents.lambda$toggleRecentApps$1(this.f$0, runnable);
                     }
                 }, null, true, false, true);
                 return;
@@ -246,15 +328,17 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
                 return;
             }
         }
-        int growsRecents = ((Divider) getComponent(Divider.class)).getView().growsRecents();
+        int iGrowsRecents = ((Divider) getComponent(Divider.class)).getView().growsRecents();
         int currentUser = sSystemServicesProxy.getCurrentUser();
         if (sSystemServicesProxy.isSystemUser(currentUser)) {
-            this.mImpl.toggleRecents(growsRecents);
-        } else if (this.mSystemToUserCallbacks != null) {
+            this.mImpl.toggleRecents(iGrowsRecents);
+            return;
+        }
+        if (this.mSystemToUserCallbacks != null) {
             IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
             if (nonSystemUserRecentsForUser != null) {
                 try {
-                    nonSystemUserRecentsForUser.toggleRecents(growsRecents);
+                    nonSystemUserRecentsForUser.toggleRecents(iGrowsRecents);
                     return;
                 } catch (RemoteException e) {
                     Log.e("Recents", "Callback failed", e);
@@ -288,7 +372,9 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         int currentUser = sSystemServicesProxy.getCurrentUser();
         if (sSystemServicesProxy.isSystemUser(currentUser)) {
             this.mImpl.preloadRecents();
-        } else if (this.mSystemToUserCallbacks != null) {
+            return;
+        }
+        if (this.mSystemToUserCallbacks != null) {
             IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
             if (nonSystemUserRecentsForUser != null) {
                 try {
@@ -311,7 +397,9 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         int currentUser = sSystemServicesProxy.getCurrentUser();
         if (sSystemServicesProxy.isSystemUser(currentUser)) {
             this.mImpl.cancelPreloadingRecents();
-        } else if (this.mSystemToUserCallbacks != null) {
+            return;
+        }
+        if (this.mSystemToUserCallbacks != null) {
             IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
             if (nonSystemUserRecentsForUser != null) {
                 try {
@@ -328,53 +416,53 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
 
     @Override // com.android.systemui.RecentsComponent
     public boolean splitPrimaryTask(int i, int i2, Rect rect, int i3) {
-        int i4;
-        if (isUserSetup()) {
-            Point point = new Point();
-            if (rect == null) {
-                ((DisplayManager) this.mContext.getSystemService(DisplayManager.class)).getDisplay(0).getRealSize(point);
-                rect = new Rect(0, 0, point.x, point.y);
-            }
-            int currentUser = sSystemServicesProxy.getCurrentUser();
-            ActivityManager.RunningTaskInfo runningTask = ActivityManagerWrapper.getInstance().getRunningTask();
-            if (runningTask != null) {
-                i4 = runningTask.configuration.windowConfiguration.getActivityType();
-            } else {
-                i4 = 0;
-            }
-            boolean isScreenPinningActive = ActivityManagerWrapper.getInstance().isScreenPinningActive();
-            boolean z = i4 == 2 || i4 == 3;
-            if (runningTask == null || z || isScreenPinningActive) {
-                return false;
-            }
-            logDockAttempt(this.mContext, runningTask.topActivity, runningTask.resizeMode);
-            if (runningTask.supportsSplitScreenMultiWindow) {
-                if (i3 != -1) {
-                    MetricsLogger.action(this.mContext, i3, runningTask.topActivity.flattenToShortString());
-                }
-                if (sSystemServicesProxy.isSystemUser(currentUser)) {
-                    this.mImpl.splitPrimaryTask(runningTask.id, i, i2, rect);
-                } else if (this.mSystemToUserCallbacks != null) {
-                    IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
-                    if (nonSystemUserRecentsForUser != null) {
-                        try {
-                            nonSystemUserRecentsForUser.splitPrimaryTask(runningTask.id, i, i2, rect);
-                        } catch (RemoteException e) {
-                            Log.e("Recents", "Callback failed", e);
-                        }
-                    } else {
-                        Log.e("Recents", "No SystemUI callbacks found for user: " + currentUser);
-                    }
-                }
-                this.mDraggingInRecentsCurrentUser = currentUser;
-                if (this.mOverviewProxyService.getProxy() != null) {
-                    EventBus.getDefault().post(new RecentsDrawnEvent());
-                }
-                return true;
-            }
-            EventBus.getDefault().send(new ShowUserToastEvent(R.string.dock_non_resizeble_failed_to_dock_text, 0));
+        int activityType;
+        if (!isUserSetup()) {
             return false;
         }
+        Point point = new Point();
+        if (rect == null) {
+            ((DisplayManager) this.mContext.getSystemService(DisplayManager.class)).getDisplay(0).getRealSize(point);
+            rect = new Rect(0, 0, point.x, point.y);
+        }
+        int currentUser = sSystemServicesProxy.getCurrentUser();
+        ActivityManager.RunningTaskInfo runningTask = ActivityManagerWrapper.getInstance().getRunningTask();
+        if (runningTask != null) {
+            activityType = runningTask.configuration.windowConfiguration.getActivityType();
+        } else {
+            activityType = 0;
+        }
+        boolean zIsScreenPinningActive = ActivityManagerWrapper.getInstance().isScreenPinningActive();
+        boolean z = activityType == 2 || activityType == 3;
+        if (runningTask == null || z || zIsScreenPinningActive) {
+            return false;
+        }
+        logDockAttempt(this.mContext, runningTask.topActivity, runningTask.resizeMode);
+        if (runningTask.supportsSplitScreenMultiWindow) {
+            if (i3 != -1) {
+                MetricsLogger.action(this.mContext, i3, runningTask.topActivity.flattenToShortString());
+            }
+            if (sSystemServicesProxy.isSystemUser(currentUser)) {
+                this.mImpl.splitPrimaryTask(runningTask.id, i, i2, rect);
+            } else if (this.mSystemToUserCallbacks != null) {
+                IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
+                if (nonSystemUserRecentsForUser != null) {
+                    try {
+                        nonSystemUserRecentsForUser.splitPrimaryTask(runningTask.id, i, i2, rect);
+                    } catch (RemoteException e) {
+                        Log.e("Recents", "Callback failed", e);
+                    }
+                } else {
+                    Log.e("Recents", "No SystemUI callbacks found for user: " + currentUser);
+                }
+            }
+            this.mDraggingInRecentsCurrentUser = currentUser;
+            if (this.mOverviewProxyService.getProxy() != null) {
+                EventBus.getDefault().post(new RecentsDrawnEvent());
+            }
+            return true;
+        }
+        EventBus.getDefault().send(new ShowUserToastEvent(R.string.dock_non_resizeble_failed_to_dock_text, 0));
         return false;
     }
 
@@ -402,7 +490,9 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
     public void onDraggingInRecents(float f) {
         if (sSystemServicesProxy.isSystemUser(this.mDraggingInRecentsCurrentUser)) {
             this.mImpl.onDraggingInRecents(f);
-        } else if (this.mSystemToUserCallbacks != null) {
+            return;
+        }
+        if (this.mSystemToUserCallbacks != null) {
             IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(this.mDraggingInRecentsCurrentUser);
             if (nonSystemUserRecentsForUser != null) {
                 try {
@@ -421,7 +511,9 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
     public void onDraggingInRecentsEnded(float f) {
         if (sSystemServicesProxy.isSystemUser(this.mDraggingInRecentsCurrentUser)) {
             this.mImpl.onDraggingInRecentsEnded(f);
-        } else if (this.mSystemToUserCallbacks != null) {
+            return;
+        }
+        if (this.mSystemToUserCallbacks != null) {
             IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(this.mDraggingInRecentsCurrentUser);
             if (nonSystemUserRecentsForUser != null) {
                 try {
@@ -448,7 +540,9 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         int currentUser = sSystemServicesProxy.getCurrentUser();
         if (sSystemServicesProxy.isSystemUser(currentUser)) {
             this.mImpl.onConfigurationChanged();
-        } else if (this.mSystemToUserCallbacks != null) {
+            return;
+        }
+        if (this.mSystemToUserCallbacks != null) {
             IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
             if (nonSystemUserRecentsForUser != null) {
                 try {
@@ -463,12 +557,18 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         }
     }
 
-    public final void onBusEvent(final RecentsVisibilityChangedEvent recentsVisibilityChangedEvent) {
+    public final void onBusEvent(RecentsVisibilityChangedEvent recentsVisibilityChangedEvent) {
         SystemServicesProxy systemServices = getSystemServices();
         if (systemServices.isSystemUser(systemServices.getProcessUser())) {
             this.mImpl.onVisibilityChanged(recentsVisibilityChangedEvent.applicationContext, recentsVisibilityChangedEvent.visible);
         } else {
             postToSystemUser(new Runnable() { // from class: com.android.systemui.recents.Recents.3
+                final /* synthetic */ RecentsVisibilityChangedEvent val$event;
+
+                AnonymousClass3(RecentsVisibilityChangedEvent recentsVisibilityChangedEvent2) {
+                    recentsVisibilityChangedEvent = recentsVisibilityChangedEvent2;
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     try {
@@ -479,8 +579,26 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
                 }
             });
         }
-        if (!recentsVisibilityChangedEvent.visible) {
+        if (!recentsVisibilityChangedEvent2.visible) {
             this.mImpl.setWaitingForTransitionStart(false);
+        }
+    }
+
+    /* renamed from: com.android.systemui.recents.Recents$3 */
+    class AnonymousClass3 implements Runnable {
+        final /* synthetic */ RecentsVisibilityChangedEvent val$event;
+
+        AnonymousClass3(RecentsVisibilityChangedEvent recentsVisibilityChangedEvent2) {
+            recentsVisibilityChangedEvent = recentsVisibilityChangedEvent2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                Recents.this.mUserToSystemCallbacks.updateRecentsVisibility(recentsVisibilityChangedEvent.visible);
+            } catch (RemoteException e) {
+                Log.e("Recents", "Callback failed", e);
+            }
         }
     }
 
@@ -488,6 +606,9 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         SystemServicesProxy systemServices = getSystemServices();
         if (!systemServices.isSystemUser(systemServices.getProcessUser())) {
             postToSystemUser(new Runnable() { // from class: com.android.systemui.recents.Recents.4
+                AnonymousClass4() {
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     try {
@@ -500,11 +621,32 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         }
     }
 
-    public final void onBusEvent(final ScreenPinningRequestEvent screenPinningRequestEvent) {
+    /* renamed from: com.android.systemui.recents.Recents$4 */
+    class AnonymousClass4 implements Runnable {
+        AnonymousClass4() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                Recents.this.mUserToSystemCallbacks.sendDockedFirstAnimationFrameEvent();
+            } catch (RemoteException e) {
+                Log.e("Recents", "Callback failed", e);
+            }
+        }
+    }
+
+    public final void onBusEvent(ScreenPinningRequestEvent screenPinningRequestEvent) {
         if (sSystemServicesProxy.isSystemUser(sSystemServicesProxy.getProcessUser())) {
             this.mImpl.onStartScreenPinning(screenPinningRequestEvent.applicationContext, screenPinningRequestEvent.taskId);
         } else {
             postToSystemUser(new Runnable() { // from class: com.android.systemui.recents.Recents.5
+                final /* synthetic */ ScreenPinningRequestEvent val$event;
+
+                AnonymousClass5(ScreenPinningRequestEvent screenPinningRequestEvent2) {
+                    screenPinningRequestEvent = screenPinningRequestEvent2;
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     try {
@@ -517,9 +659,30 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         }
     }
 
+    /* renamed from: com.android.systemui.recents.Recents$5 */
+    class AnonymousClass5 implements Runnable {
+        final /* synthetic */ ScreenPinningRequestEvent val$event;
+
+        AnonymousClass5(ScreenPinningRequestEvent screenPinningRequestEvent2) {
+            screenPinningRequestEvent = screenPinningRequestEvent2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                Recents.this.mUserToSystemCallbacks.startScreenPinning(screenPinningRequestEvent.taskId);
+            } catch (RemoteException e) {
+                Log.e("Recents", "Callback failed", e);
+            }
+        }
+    }
+
     public final void onBusEvent(RecentsDrawnEvent recentsDrawnEvent) {
         if (!sSystemServicesProxy.isSystemUser(sSystemServicesProxy.getProcessUser())) {
             postToSystemUser(new Runnable() { // from class: com.android.systemui.recents.Recents.6
+                AnonymousClass6() {
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     try {
@@ -532,9 +695,30 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         }
     }
 
-    public final void onBusEvent(final DockedTopTaskEvent dockedTopTaskEvent) {
+    /* renamed from: com.android.systemui.recents.Recents$6 */
+    class AnonymousClass6 implements Runnable {
+        AnonymousClass6() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                Recents.this.mUserToSystemCallbacks.sendRecentsDrawnEvent();
+            } catch (RemoteException e) {
+                Log.e("Recents", "Callback failed", e);
+            }
+        }
+    }
+
+    public final void onBusEvent(DockedTopTaskEvent dockedTopTaskEvent) {
         if (!sSystemServicesProxy.isSystemUser(sSystemServicesProxy.getProcessUser())) {
             postToSystemUser(new Runnable() { // from class: com.android.systemui.recents.Recents.7
+                final /* synthetic */ DockedTopTaskEvent val$event;
+
+                AnonymousClass7(DockedTopTaskEvent dockedTopTaskEvent2) {
+                    dockedTopTaskEvent = dockedTopTaskEvent2;
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     try {
@@ -547,9 +731,30 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         }
     }
 
+    /* renamed from: com.android.systemui.recents.Recents$7 */
+    class AnonymousClass7 implements Runnable {
+        final /* synthetic */ DockedTopTaskEvent val$event;
+
+        AnonymousClass7(DockedTopTaskEvent dockedTopTaskEvent2) {
+            dockedTopTaskEvent = dockedTopTaskEvent2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                Recents.this.mUserToSystemCallbacks.sendDockingTopTaskEvent(dockedTopTaskEvent.dragMode, dockedTopTaskEvent.initialRect);
+            } catch (RemoteException e) {
+                Log.e("Recents", "Callback failed", e);
+            }
+        }
+    }
+
     public final void onBusEvent(RecentsActivityStartingEvent recentsActivityStartingEvent) {
         if (!sSystemServicesProxy.isSystemUser(sSystemServicesProxy.getProcessUser())) {
             postToSystemUser(new Runnable() { // from class: com.android.systemui.recents.Recents.8
+                AnonymousClass8() {
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     try {
@@ -559,6 +764,21 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
                     }
                 }
             });
+        }
+    }
+
+    /* renamed from: com.android.systemui.recents.Recents$8 */
+    class AnonymousClass8 implements Runnable {
+        AnonymousClass8() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                Recents.this.mUserToSystemCallbacks.sendLaunchRecentsEvent();
+            } catch (RemoteException e) {
+                Log.e("Recents", "Callback failed", e);
+            }
         }
     }
 
@@ -574,7 +794,9 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         int currentUser = sSystemServicesProxy.getCurrentUser();
         if (sSystemServicesProxy.isSystemUser(currentUser)) {
             this.mImpl.onShowCurrentUserToast(showUserToastEvent.msgResId, showUserToastEvent.msgLength);
-        } else if (this.mSystemToUserCallbacks != null) {
+            return;
+        }
+        if (this.mSystemToUserCallbacks != null) {
             IRecentsNonSystemUserCallbacks nonSystemUserRecentsForUser = this.mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
             if (nonSystemUserRecentsForUser != null) {
                 try {
@@ -589,11 +811,17 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         }
     }
 
-    public final void onBusEvent(final SetWaitingForTransitionStartEvent setWaitingForTransitionStartEvent) {
+    public final void onBusEvent(SetWaitingForTransitionStartEvent setWaitingForTransitionStartEvent) {
         if (sSystemServicesProxy.isSystemUser(sSystemServicesProxy.getProcessUser())) {
             this.mImpl.setWaitingForTransitionStart(setWaitingForTransitionStartEvent.waitingForTransitionStart);
         } else {
             postToSystemUser(new Runnable() { // from class: com.android.systemui.recents.Recents.9
+                final /* synthetic */ SetWaitingForTransitionStartEvent val$event;
+
+                AnonymousClass9(SetWaitingForTransitionStartEvent setWaitingForTransitionStartEvent2) {
+                    setWaitingForTransitionStartEvent = setWaitingForTransitionStartEvent2;
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     try {
@@ -606,14 +834,54 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void registerWithSystemUser() {
-        final int processUser = sSystemServicesProxy.getProcessUser();
+    /* renamed from: com.android.systemui.recents.Recents$9 */
+    class AnonymousClass9 implements Runnable {
+        final /* synthetic */ SetWaitingForTransitionStartEvent val$event;
+
+        AnonymousClass9(SetWaitingForTransitionStartEvent setWaitingForTransitionStartEvent2) {
+            setWaitingForTransitionStartEvent = setWaitingForTransitionStartEvent2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                Recents.this.mUserToSystemCallbacks.setWaitingForTransitionStartEvent(setWaitingForTransitionStartEvent.waitingForTransitionStart);
+            } catch (RemoteException e) {
+                Log.e("Recents", "Callback failed", e);
+            }
+        }
+    }
+
+    /* renamed from: com.android.systemui.recents.Recents$10 */
+    class AnonymousClass10 implements Runnable {
+        final /* synthetic */ int val$processUser;
+
+        AnonymousClass10(int i) {
+            i = i;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            try {
+                Recents.this.mUserToSystemCallbacks.registerNonSystemUserCallbacks(new RecentsImplProxy(Recents.this.mImpl), i);
+            } catch (RemoteException e) {
+                Log.e("Recents", "Failed to register", e);
+            }
+        }
+    }
+
+    private void registerWithSystemUser() {
         postToSystemUser(new Runnable() { // from class: com.android.systemui.recents.Recents.10
+            final /* synthetic */ int val$processUser;
+
+            AnonymousClass10(int i) {
+                i = i;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 try {
-                    Recents.this.mUserToSystemCallbacks.registerNonSystemUserCallbacks(new RecentsImplProxy(Recents.this.mImpl), processUser);
+                    Recents.this.mUserToSystemCallbacks.registerNonSystemUserCallbacks(new RecentsImplProxy(Recents.this.mImpl), i);
                 } catch (RemoteException e) {
                     Log.e("Recents", "Failed to register", e);
                 }
@@ -626,10 +894,13 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         if (this.mUserToSystemCallbacks == null) {
             Intent intent = new Intent();
             intent.setClass(this.mContext, RecentsSystemUserService.class);
-            boolean bindServiceAsUser = this.mContext.bindServiceAsUser(intent, this.mUserToSystemServiceConnection, 1, UserHandle.SYSTEM);
+            boolean zBindServiceAsUser = this.mContext.bindServiceAsUser(intent, this.mUserToSystemServiceConnection, 1, UserHandle.SYSTEM);
             EventLog.writeEvent(36060, 1, Integer.valueOf(sSystemServicesProxy.getProcessUser()));
-            if (!bindServiceAsUser) {
+            if (!zBindServiceAsUser) {
                 this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.recents.Recents.11
+                    AnonymousClass11() {
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         Recents.this.registerWithSystemUser();
@@ -642,8 +913,18 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         runAndFlushOnConnectRunnables();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void runAndFlushOnConnectRunnables() {
+    /* renamed from: com.android.systemui.recents.Recents$11 */
+    class AnonymousClass11 implements Runnable {
+        AnonymousClass11() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            Recents.this.registerWithSystemUser();
+        }
+    }
+
+    private void runAndFlushOnConnectRunnables() {
         Iterator<Runnable> it = this.mOnConnectRunnables.iterator();
         while (it.hasNext()) {
             it.next().run();

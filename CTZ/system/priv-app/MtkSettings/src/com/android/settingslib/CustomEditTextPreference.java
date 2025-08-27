@@ -10,6 +10,7 @@ import android.support.v7.preference.EditTextPreference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
+
 /* loaded from: classes.dex */
 public class CustomEditTextPreference extends EditTextPreference {
     private CustomPreferenceDialogFragment mFragment;
@@ -33,7 +34,7 @@ public class CustomEditTextPreference extends EditTextPreference {
     public EditText getEditText() {
         Dialog dialog;
         if (this.mFragment != null && (dialog = this.mFragment.getDialog()) != null) {
-            return (EditText) dialog.findViewById(16908291);
+            return (EditText) dialog.findViewById(android.R.id.edit);
         }
         return null;
     }
@@ -52,28 +53,24 @@ public class CustomEditTextPreference extends EditTextPreference {
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDialogClosed(boolean z) {
+    protected void onDialogClosed(boolean z) {
     }
 
     protected void onClick(DialogInterface dialogInterface, int i) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onBindDialogView(View view) {
-        EditText editText = (EditText) view.findViewById(16908291);
+    protected void onBindDialogView(View view) {
+        EditText editText = (EditText) view.findViewById(android.R.id.edit);
         if (editText != null) {
             editText.setInputType(16385);
             editText.requestFocus();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setFragment(CustomPreferenceDialogFragment customPreferenceDialogFragment) {
+    private void setFragment(CustomPreferenceDialogFragment customPreferenceDialogFragment) {
         this.mFragment = customPreferenceDialogFragment;
     }
 
-    /* loaded from: classes.dex */
     public static class CustomPreferenceDialogFragment extends EditTextPreferenceDialogFragment {
         public static CustomPreferenceDialogFragment newInstance(String str) {
             CustomPreferenceDialogFragment customPreferenceDialogFragment = new CustomPreferenceDialogFragment();

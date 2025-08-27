@@ -8,6 +8,7 @@ import com.android.setupwizardlib.items.ItemHierarchy;
 import com.android.setupwizardlib.items.ItemInflater;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ItemGroup extends AbstractItemHierarchy implements ItemHierarchy.Observer, ItemInflater.ItemParent {
     private List<ItemHierarchy> mChildren;
@@ -20,10 +21,10 @@ public class ItemGroup extends AbstractItemHierarchy implements ItemHierarchy.Ob
         int i2 = 0;
         while (i2 <= size) {
             int i3 = (i2 + size) >>> 1;
-            int valueAt = sparseIntArray.valueAt(i3);
-            if (valueAt < i) {
+            int iValueAt = sparseIntArray.valueAt(i3);
+            if (iValueAt < i) {
                 i2 = i3 + 1;
-            } else if (valueAt > i) {
+            } else if (iValueAt > i) {
                 size = i3 - 1;
             } else {
                 return sparseIntArray.keyAt(i3);
@@ -141,10 +142,10 @@ public class ItemGroup extends AbstractItemHierarchy implements ItemHierarchy.Ob
         if (i < 0 || i >= this.mCount) {
             throw new IndexOutOfBoundsException("size=" + this.mCount + "; index=" + i);
         }
-        int binarySearch = binarySearch(this.mHierarchyStart, i);
-        if (binarySearch < 0) {
+        int iBinarySearch = binarySearch(this.mHierarchyStart, i);
+        if (iBinarySearch < 0) {
             throw new IllegalStateException("Cannot have item start index < 0");
         }
-        return binarySearch;
+        return iBinarySearch;
     }
 }

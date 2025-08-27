@@ -10,6 +10,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.development.SystemPropPoker;
+
 /* loaded from: classes.dex */
 public class HdcpCheckingPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final String HDCP_CHECKING_PROPERTY = "persist.sys.hdcp_checking";
@@ -53,8 +54,9 @@ public class HdcpCheckingPreferenceController extends DeveloperOptionsPreference
             if (i < this.mListValues.length) {
                 if (TextUtils.equals(str, this.mListValues[i])) {
                     break;
+                } else {
+                    i++;
                 }
-                i++;
             } else {
                 i = 1;
                 break;

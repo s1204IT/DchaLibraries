@@ -2,11 +2,15 @@ package com.google.common.collect;
 
 import java.util.Collection;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public abstract class ForwardingCollection<E> extends ForwardingObject implements Collection<E> {
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
     @Override // com.google.common.collect.ForwardingObject
-    public abstract Collection<E> delegate();
+    protected abstract Collection<E> delegate();
+
+    protected ForwardingCollection() {
+    }
 
     @Override // java.util.Collection, java.lang.Iterable
     public Iterator<E> iterator() {

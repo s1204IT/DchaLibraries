@@ -15,6 +15,7 @@ import com.android.launcher3.R;
 import com.android.launcher3.allapps.AllAppsContainerView;
 import com.android.launcher3.anim.Interpolators;
 import com.android.launcher3.anim.PropertySetter;
+
 /* loaded from: classes.dex */
 public class FloatingHeaderView extends LinearLayout implements ValueAnimator.AnimatorUpdateListener {
     private boolean mAllowTouchForwarding;
@@ -109,8 +110,7 @@ public class FloatingHeaderView extends LinearLayout implements ValueAnimator.An
         return Math.abs(i) <= this.mMaxTranslation;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void moved(int i) {
+    private void moved(int i) {
         if (this.mHeaderCollapsed) {
             if (i <= this.mSnappedScrolledY) {
                 if (canSnapAt(i)) {
@@ -120,7 +120,9 @@ public class FloatingHeaderView extends LinearLayout implements ValueAnimator.An
                 this.mHeaderCollapsed = false;
             }
             this.mTranslationY = i;
-        } else if (!this.mHeaderCollapsed) {
+            return;
+        }
+        if (!this.mHeaderCollapsed) {
             this.mTranslationY = (i - this.mSnappedScrolledY) - this.mMaxTranslation;
             if (this.mTranslationY >= 0) {
                 this.mTranslationY = 0;

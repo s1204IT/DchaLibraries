@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothCodecConfig;
 import android.content.Context;
 import com.android.settings.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class BluetoothAudioQualityPreferenceController extends AbstractBluetoothA2dpPreferenceController {
     public BluetoothAudioQualityPreferenceController(Context context, Lifecycle lifecycle, BluetoothA2dpConfigStore bluetoothA2dpConfigStore) {
@@ -33,13 +34,13 @@ public class BluetoothAudioQualityPreferenceController extends AbstractBluetooth
     @Override // com.android.settings.development.AbstractBluetoothA2dpPreferenceController
     protected void writeConfigurationValues(Object obj) {
         int i;
-        int findIndexOfValue = this.mPreference.findIndexOfValue(obj.toString());
-        switch (findIndexOfValue) {
+        int iFindIndexOfValue = this.mPreference.findIndexOfValue(obj.toString());
+        switch (iFindIndexOfValue) {
             case 0:
             case 1:
             case 2:
             case 3:
-                i = 1000 + findIndexOfValue;
+                i = 1000 + iFindIndexOfValue;
                 break;
             default:
                 i = 0;

@@ -5,6 +5,7 @@ import android.os.UserHandle;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.mediatek.settings.FeatureOption;
+
 /* loaded from: classes.dex */
 public class MiraVisionPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     public MiraVisionPreferenceController(Context context) {

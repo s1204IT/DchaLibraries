@@ -8,6 +8,7 @@ import android.telephony.SubscriptionInfo;
 import android.util.Log;
 import com.android.internal.telephony.SmsApplication;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultRCSSettings extends ContextWrapper implements IRCSSettings {
     private static final String TAG = "DefaultRCSSettings";

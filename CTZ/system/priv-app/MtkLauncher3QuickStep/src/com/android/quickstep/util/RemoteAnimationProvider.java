@@ -8,6 +8,7 @@ import com.android.systemui.shared.system.ActivityOptionsCompat;
 import com.android.systemui.shared.system.RemoteAnimationAdapterCompat;
 import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
 import com.android.systemui.shared.system.TransactionCompat;
+
 @FunctionalInterface
 /* loaded from: classes.dex */
 public interface RemoteAnimationProvider {

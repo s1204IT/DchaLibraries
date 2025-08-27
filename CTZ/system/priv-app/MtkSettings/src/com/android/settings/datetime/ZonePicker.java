@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+
 /* loaded from: classes.dex */
 public class ZonePicker extends ListFragment implements Instrumentable {
     private SimpleAdapter mAlphabeticalAdapter;
@@ -40,7 +41,7 @@ public class ZonePicker extends ListFragment implements Instrumentable {
     public static SimpleAdapter constructTimezoneAdapter(Context context, boolean z, int i) {
         String str;
         String[] strArr = {"display_label", "offset_label"};
-        int[] iArr = {16908308, 16908309};
+        int[] iArr = {android.R.id.text1, android.R.id.text2};
         if (z) {
             str = "display_label";
         } else {
@@ -54,9 +55,7 @@ public class ZonePicker extends ListFragment implements Instrumentable {
         return simpleAdapter;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class TimeZoneViewBinder implements SimpleAdapter.ViewBinder {
+    private static class TimeZoneViewBinder implements SimpleAdapter.ViewBinder {
         private TimeZoneViewBinder() {
         }
 
@@ -102,14 +101,14 @@ public class ZonePicker extends ListFragment implements Instrumentable {
 
     @Override // android.app.ListFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
-        prepareCustomPreferencesList((ListView) onCreateView.findViewById(16908298));
-        return onCreateView;
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        prepareCustomPreferencesList((ListView) viewOnCreateView.findViewById(android.R.id.list));
+        return viewOnCreateView;
     }
 
     @Override // android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        menu.add(0, 1, 0, R.string.zone_list_menu_sort_alphabetically).setIcon(17301660);
+        menu.add(0, 1, 0, R.string.zone_list_menu_sort_alphabetically).setIcon(android.R.drawable.ic_menu_sort_alphabetically);
         menu.add(0, 2, 0, R.string.zone_list_menu_sort_by_timezone).setIcon(R.drawable.ic_menu_3d_globe);
         super.onCreateOptionsMenu(menu, menuInflater);
     }
@@ -119,10 +118,10 @@ public class ZonePicker extends ListFragment implements Instrumentable {
         if (this.mSortedByTimezone) {
             menu.findItem(2).setVisible(false);
             menu.findItem(1).setVisible(true);
-            return;
+        } else {
+            menu.findItem(2).setVisible(true);
+            menu.findItem(1).setVisible(false);
         }
-        menu.findItem(2).setVisible(true);
-        menu.findItem(1).setVisible(false);
     }
 
     @Override // android.app.Fragment
@@ -175,9 +174,7 @@ public class ZonePicker extends ListFragment implements Instrumentable {
         this.mVisibilityLoggerMixin.onPause();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class MyComparator implements Comparator<Map<?, ?>> {
+    static class MyComparator implements Comparator<Map<?, ?>> {
         private final Collator mCollator = Collator.getInstance();
         private boolean mSortedByName;
         private String mSortingKey;
@@ -187,20 +184,21 @@ public class ZonePicker extends ListFragment implements Instrumentable {
             this.mSortedByName = "display_label".equals(str);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(Map<?, ?> map, Map<?, ?> map2) {
             Object obj = map.get(this.mSortingKey);
             Object obj2 = map2.get(this.mSortingKey);
-            if (isComparable(obj)) {
-                if (!isComparable(obj2)) {
-                    return -1;
-                }
-                if (this.mSortedByName) {
-                    return this.mCollator.compare(obj, obj2);
-                }
-                return ((Comparable) obj).compareTo(obj2);
+            if (!isComparable(obj)) {
+                return isComparable(obj2) ? 1 : 0;
             }
-            return isComparable(obj2) ? 1 : 0;
+            if (!isComparable(obj2)) {
+                return -1;
+            }
+            if (this.mSortedByName) {
+                return this.mCollator.compare(obj, obj2);
+            }
+            return ((Comparable) obj).compareTo(obj2);
         }
 
         private boolean isComparable(Object obj) {

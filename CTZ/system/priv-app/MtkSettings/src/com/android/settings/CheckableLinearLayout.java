@@ -3,9 +3,10 @@ package com.android.settings;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.View;
+import android.view.KeyEvent;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
+
 /* loaded from: classes.dex */
 public class CheckableLinearLayout extends LinearLayout implements Checkable {
     private boolean mChecked;
@@ -14,7 +15,7 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
     public CheckableLinearLayout(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         TypedValue typedValue = new TypedValue();
-        context.getTheme().resolveAttribute(16842803, typedValue, true);
+        context.getTheme().resolveAttribute(android.R.attr.disabledAlpha, typedValue, true);
         this.mDisabledAlpha = typedValue.getFloat();
     }
 
@@ -46,7 +47,7 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
     private void updateChecked() {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
-            View childAt = getChildAt(i);
+            KeyEvent.Callback childAt = getChildAt(i);
             if (childAt instanceof Checkable) {
                 ((Checkable) childAt).setChecked(this.mChecked);
             }

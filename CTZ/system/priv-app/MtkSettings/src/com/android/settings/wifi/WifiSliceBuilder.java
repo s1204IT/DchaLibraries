@@ -17,6 +17,7 @@ import com.android.settings.SubSettings;
 import com.android.settings.Utils;
 import com.android.settings.search.DatabaseIndexingUtils;
 import com.android.settings.slices.SliceBroadcastReceiver;
+
 /* loaded from: classes.dex */
 public class WifiSliceBuilder {
     public static final Uri WIFI_URI = new Uri.Builder().scheme("content").authority("android.settings.slices").appendPath("action").appendPath("wifi").build();
@@ -28,14 +29,14 @@ public class WifiSliceBuilder {
     }
 
     public static Slice getSlice(Context context) {
-        boolean isWifiEnabled = isWifiEnabled(context);
-        IconCompat createWithResource = IconCompat.createWithResource(context, (int) R.drawable.ic_settings_wireless);
+        boolean zIsWifiEnabled = isWifiEnabled(context);
+        IconCompat iconCompatCreateWithResource = IconCompat.createWithResource(context, R.drawable.ic_settings_wireless);
         final String string = context.getString(R.string.wifi_settings);
         final CharSequence summary = getSummary(context);
         int colorAccent = Utils.getColorAccent(context);
         PendingIntent broadcastIntent = getBroadcastIntent(context);
-        final SliceAction sliceAction = new SliceAction(getPrimaryAction(context), createWithResource, string);
-        final SliceAction sliceAction2 = new SliceAction(broadcastIntent, (CharSequence) null, isWifiEnabled);
+        final SliceAction sliceAction = new SliceAction(getPrimaryAction(context), iconCompatCreateWithResource, string);
+        final SliceAction sliceAction2 = new SliceAction(broadcastIntent, (CharSequence) null, zIsWifiEnabled);
         return new ListBuilder(context, WIFI_URI, -1L).setAccentColor(colorAccent).addRow(new Consumer() { // from class: com.android.settings.wifi.-$$Lambda$WifiSliceBuilder$zGyWboi-khe6O7kGcUmHExYnEzU
             @Override // android.support.v4.util.Consumer
             public final void accept(Object obj) {
@@ -52,8 +53,8 @@ public class WifiSliceBuilder {
     }
 
     public static Intent getIntent(Context context) {
-        String charSequence = context.getText(R.string.wifi_settings).toString();
-        return DatabaseIndexingUtils.buildSearchResultPageIntent(context, WifiSettings.class.getName(), "wifi", charSequence, 603).setClassName(context.getPackageName(), SubSettings.class.getName()).setData(new Uri.Builder().appendPath("wifi").build());
+        String string = context.getText(R.string.wifi_settings).toString();
+        return DatabaseIndexingUtils.buildSearchResultPageIntent(context, WifiSettings.class.getName(), "wifi", string, 603).setClassName(context.getPackageName(), SubSettings.class.getName()).setData(new Uri.Builder().appendPath("wifi").build());
     }
 
     private static boolean isWifiEnabled(Context context) {
@@ -75,11 +76,11 @@ public class WifiSliceBuilder {
             case 2:
                 return context.getText(R.string.disconnected);
             case 3:
-                String removeDoubleQuotes = android.net.wifi.WifiInfo.removeDoubleQuotes(wifiManager.getConnectionInfo().getSSID());
-                if (TextUtils.equals(removeDoubleQuotes, "<unknown ssid>")) {
+                String strRemoveDoubleQuotes = android.net.wifi.WifiInfo.removeDoubleQuotes(wifiManager.getConnectionInfo().getSSID());
+                if (TextUtils.equals(strRemoveDoubleQuotes, "<unknown ssid>")) {
                     return context.getText(R.string.disconnected);
                 }
-                return removeDoubleQuotes;
+                return strRemoveDoubleQuotes;
             default:
                 return "";
         }

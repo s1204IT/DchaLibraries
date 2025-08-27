@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.function.Consumer;
+
 @FunctionalInterface
 @TargetApi(26)
 /* loaded from: classes.dex */
@@ -14,7 +15,6 @@ public interface TouchConsumer extends Consumer<MotionEvent> {
     public static final int INTERACTION_QUICK_SCRUB = 1;
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     public @interface InteractionType {
     }
 

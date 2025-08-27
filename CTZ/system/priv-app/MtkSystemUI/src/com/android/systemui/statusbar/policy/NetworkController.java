@@ -7,13 +7,12 @@ import com.android.settingslib.net.DataUsageController;
 import com.android.settingslib.wifi.AccessPoint;
 import com.android.systemui.DemoMode;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface NetworkController extends DemoMode, CallbackController<SignalCallback> {
 
-    /* loaded from: classes.dex */
     public interface AccessPointController {
 
-        /* loaded from: classes.dex */
         public interface AccessPointCallback {
             void onAccessPointsChanged(List<AccessPoint> list);
 
@@ -33,7 +32,6 @@ public interface NetworkController extends DemoMode, CallbackController<SignalCa
         void scanForAccessPoints();
     }
 
-    /* loaded from: classes.dex */
     public interface EmergencyListener {
         void setEmergencyCallsOnly(boolean z);
     }
@@ -64,7 +62,6 @@ public interface NetworkController extends DemoMode, CallbackController<SignalCa
 
     void setWifiEnabled(boolean z);
 
-    /* loaded from: classes.dex */
     public interface SignalCallback {
         default void setWifiIndicators(boolean z, IconState iconState, IconState iconState2, boolean z2, boolean z3, String str, boolean z4, String str2) {
         }
@@ -88,7 +85,6 @@ public interface NetworkController extends DemoMode, CallbackController<SignalCa
         }
     }
 
-    /* loaded from: classes.dex */
     public static class IconState {
         public final String contentDescription;
         public final int icon;

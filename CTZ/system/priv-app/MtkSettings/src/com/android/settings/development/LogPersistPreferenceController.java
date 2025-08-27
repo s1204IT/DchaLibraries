@@ -5,6 +5,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.development.AbstractLogpersistPreferenceController;
+
 /* loaded from: classes.dex */
 public class LogPersistPreferenceController extends AbstractLogpersistPreferenceController implements PreferenceControllerMixin {
     private final DevelopmentSettingsDashboardFragment mFragment;
@@ -24,9 +25,8 @@ public class LogPersistPreferenceController extends AbstractLogpersistPreference
         updateLogpersistValues();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         writeLogpersistOption(null, true);
     }

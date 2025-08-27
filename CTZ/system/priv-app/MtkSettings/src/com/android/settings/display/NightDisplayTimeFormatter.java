@@ -7,12 +7,12 @@ import java.text.DateFormat;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.TimeZone;
+
 /* loaded from: classes.dex */
 public class NightDisplayTimeFormatter {
     private DateFormat mTimeFormatter;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public NightDisplayTimeFormatter(Context context) {
+    NightDisplayTimeFormatter(Context context) {
         this.mTimeFormatter = android.text.format.DateFormat.getTimeFormat(context);
         this.mTimeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
@@ -34,27 +34,27 @@ public class NightDisplayTimeFormatter {
     private String getAutoModeSummary(Context context, ColorDisplayController colorDisplayController) {
         int i;
         int i2;
-        boolean isActivated = colorDisplayController.isActivated();
+        boolean zIsActivated = colorDisplayController.isActivated();
         int autoMode = colorDisplayController.getAutoMode();
         if (autoMode == 1) {
-            if (isActivated) {
+            if (zIsActivated) {
                 return context.getString(R.string.night_display_summary_on_auto_mode_custom, getFormattedTimeString(colorDisplayController.getCustomEndTime()));
             }
             return context.getString(R.string.night_display_summary_off_auto_mode_custom, getFormattedTimeString(colorDisplayController.getCustomStartTime()));
-        } else if (autoMode == 2) {
-            if (isActivated) {
+        }
+        if (autoMode == 2) {
+            if (zIsActivated) {
                 i2 = R.string.night_display_summary_on_auto_mode_twilight;
             } else {
                 i2 = R.string.night_display_summary_off_auto_mode_twilight;
             }
             return context.getString(i2);
-        } else {
-            if (isActivated) {
-                i = R.string.night_display_summary_on_auto_mode_never;
-            } else {
-                i = R.string.night_display_summary_off_auto_mode_never;
-            }
-            return context.getString(i);
         }
+        if (zIsActivated) {
+            i = R.string.night_display_summary_on_auto_mode_never;
+        } else {
+            i = R.string.night_display_summary_off_auto_mode_never;
+        }
+        return context.getString(i);
     }
 }

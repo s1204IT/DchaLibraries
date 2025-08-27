@@ -9,6 +9,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class HardwareOverlaysPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final int SURFACE_FLINGER_READ_CODE = 1010;
@@ -25,19 +26,18 @@ public class HardwareOverlaysPreferenceController extends DeveloperOptionsPrefer
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws RemoteException {
         writeHardwareOverlaysSetting(((Boolean) obj).booleanValue());
         return true;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
-    public void updateState(Preference preference) {
+    public void updateState(Preference preference) throws RemoteException {
         updateHardwareOverlaysSetting();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() throws RemoteException {
         super.onDeveloperOptionsSwitchDisabled();
         SwitchPreference switchPreference = (SwitchPreference) this.mPreference;
         if (switchPreference.isChecked()) {
@@ -46,36 +46,36 @@ public class HardwareOverlaysPreferenceController extends DeveloperOptionsPrefer
         }
     }
 
-    void updateHardwareOverlaysSetting() {
+    void updateHardwareOverlaysSetting() throws RemoteException {
         if (this.mSurfaceFlinger == null) {
             return;
         }
         try {
-            Parcel obtain = Parcel.obtain();
-            Parcel obtain2 = Parcel.obtain();
-            obtain.writeInterfaceToken("android.ui.ISurfaceComposer");
-            this.mSurfaceFlinger.transact(SURFACE_FLINGER_READ_CODE, obtain, obtain2, 0);
-            obtain2.readInt();
-            obtain2.readInt();
-            obtain2.readInt();
-            obtain2.readInt();
-            ((SwitchPreference) this.mPreference).setChecked(obtain2.readInt() != 0);
-            obtain2.recycle();
-            obtain.recycle();
+            Parcel parcelObtain = Parcel.obtain();
+            Parcel parcelObtain2 = Parcel.obtain();
+            parcelObtain.writeInterfaceToken("android.ui.ISurfaceComposer");
+            this.mSurfaceFlinger.transact(SURFACE_FLINGER_READ_CODE, parcelObtain, parcelObtain2, 0);
+            parcelObtain2.readInt();
+            parcelObtain2.readInt();
+            parcelObtain2.readInt();
+            parcelObtain2.readInt();
+            ((SwitchPreference) this.mPreference).setChecked(parcelObtain2.readInt() != 0);
+            parcelObtain2.recycle();
+            parcelObtain.recycle();
         } catch (RemoteException e) {
         }
     }
 
-    void writeHardwareOverlaysSetting(boolean z) {
+    void writeHardwareOverlaysSetting(boolean z) throws RemoteException {
         if (this.mSurfaceFlinger == null) {
             return;
         }
         try {
-            Parcel obtain = Parcel.obtain();
-            obtain.writeInterfaceToken("android.ui.ISurfaceComposer");
-            obtain.writeInt(z ? 1 : 0);
-            this.mSurfaceFlinger.transact(1008, obtain, null, 0);
-            obtain.recycle();
+            Parcel parcelObtain = Parcel.obtain();
+            parcelObtain.writeInterfaceToken("android.ui.ISurfaceComposer");
+            parcelObtain.writeInt(z ? 1 : 0);
+            this.mSurfaceFlinger.transact(1008, parcelObtain, null, 0);
+            parcelObtain.recycle();
         } catch (RemoteException e) {
         }
         updateHardwareOverlaysSetting();

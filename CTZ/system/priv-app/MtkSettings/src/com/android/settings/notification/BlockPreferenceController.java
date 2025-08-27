@@ -8,6 +8,7 @@ import com.android.settings.applications.LayoutPreference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.notification.NotificationSettingsBase;
 import com.android.settings.widget.SwitchBar;
+
 /* loaded from: classes.dex */
 public class BlockPreferenceController extends NotificationPreferenceController implements PreferenceControllerMixin, SwitchBar.OnSwitchChangeListener {
     private NotificationSettingsBase.ImportanceListener mImportanceListener;
@@ -53,14 +54,16 @@ public class BlockPreferenceController extends NotificationPreferenceController 
                     z = true;
                 }
                 switchBar.setChecked(z);
-            } else if (this.mChannelGroup != null) {
+                return;
+            }
+            if (this.mChannelGroup != null) {
                 if (!this.mAppRow.banned && !this.mChannelGroup.isBlocked()) {
                     z = true;
                 }
                 switchBar.setChecked(z);
-            } else {
-                switchBar.setChecked(!this.mAppRow.banned);
+                return;
             }
+            switchBar.setChecked(!this.mAppRow.banned);
         }
     }
 

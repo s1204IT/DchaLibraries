@@ -2,6 +2,7 @@ package com.android.settingslib.wrapper;
 
 import android.location.LocationManager;
 import android.os.UserHandle;
+
 /* loaded from: classes.dex */
 public class LocationManagerWrapper {
     private LocationManager mLocationManager;

@@ -2,6 +2,7 @@ package com.android.launcher3.util;
 
 import android.util.LongSparseArray;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class LongArrayMap<E> extends LongSparseArray<E> implements Iterable<E> {
     public boolean containsKey(long j) {
@@ -12,6 +13,8 @@ public class LongArrayMap<E> extends LongSparseArray<E> implements Iterable<E> {
         return size() <= 0;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: clone()Landroid/util/LongSparseArray; */
+    /* JADX DEBUG: Method merged with bridge method: clone()Ljava/lang/Object; */
     @Override // android.util.LongSparseArray
     public LongArrayMap<E> clone() {
         return (LongArrayMap) super.clone();
@@ -22,7 +25,6 @@ public class LongArrayMap<E> extends LongSparseArray<E> implements Iterable<E> {
         return new ValueIterator();
     }
 
-    /* loaded from: classes.dex */
     class ValueIterator implements Iterator<E> {
         private int mNextIndex = 0;
 

@@ -6,15 +6,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.support.v4.os.IResultReceiver;
+
 /* loaded from: classes.dex */
 public class ResultReceiver implements Parcelable {
     public static final Parcelable.Creator<ResultReceiver> CREATOR = new Parcelable.Creator<ResultReceiver>() { // from class: android.support.v4.os.ResultReceiver.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ResultReceiver createFromParcel(Parcel in) {
             return new ResultReceiver(in);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ResultReceiver[] newArray(int size) {
@@ -25,7 +28,6 @@ public class ResultReceiver implements Parcelable {
     final boolean mLocal = false;
     final Handler mHandler = null;
 
-    /* loaded from: classes.dex */
     class MyRunnable implements Runnable {
         final int mResultCode;
         final Bundle mResultData;
@@ -41,7 +43,6 @@ public class ResultReceiver implements Parcelable {
         }
     }
 
-    /* loaded from: classes.dex */
     class MyResultReceiver extends IResultReceiver.Stub {
         MyResultReceiver() {
         }
@@ -49,7 +50,7 @@ public class ResultReceiver implements Parcelable {
         @Override // android.support.v4.os.IResultReceiver
         public void send(int resultCode, Bundle resultData) {
             if (ResultReceiver.this.mHandler != null) {
-                ResultReceiver.this.mHandler.post(new MyRunnable(resultCode, resultData));
+                ResultReceiver.this.mHandler.post(ResultReceiver.this.new MyRunnable(resultCode, resultData));
             } else {
                 ResultReceiver.this.onReceiveResult(resultCode, resultData);
             }
@@ -60,10 +61,13 @@ public class ResultReceiver implements Parcelable {
         if (this.mLocal) {
             if (this.mHandler != null) {
                 this.mHandler.post(new MyRunnable(resultCode, resultData));
+                return;
             } else {
                 onReceiveResult(resultCode, resultData);
+                return;
             }
-        } else if (this.mReceiver != null) {
+        }
+        if (this.mReceiver != null) {
             try {
                 this.mReceiver.send(resultCode, resultData);
             } catch (RemoteException e) {

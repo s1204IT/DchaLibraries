@@ -2,6 +2,7 @@ package com.android.launcher3.folder;
 
 import com.android.launcher3.FolderInfo;
 import com.android.launcher3.InvariantDeviceProfile;
+
 /* loaded from: classes.dex */
 public class FolderIconPreviewVerifier {
     private int mGridCountX;

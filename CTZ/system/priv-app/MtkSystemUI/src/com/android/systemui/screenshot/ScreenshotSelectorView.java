@@ -9,6 +9,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class ScreenshotSelectorView extends View {
     private final Paint mPaintBackground;

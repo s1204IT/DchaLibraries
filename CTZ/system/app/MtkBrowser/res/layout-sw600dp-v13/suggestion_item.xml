@@ -1,12 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:gravity="center_vertical" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="65dp" android:baselineAligned="false">
-    <LinearLayout android:orientation="horizontal" android:id="@+id/suggestion" android:background="?android:attr/selectableItemBackground" android:padding="0dp" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1">
-        <ImageView android:layout_gravity="center_vertical" android:id="@+id/icon1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="@dimen/suggest_item_padding" android:layout_marginRight="@dimen/suggest_item_padding"/>
-        <LinearLayout android:layout_gravity="center_vertical" android:orientation="vertical" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
-            <TextView android:ellipsize="end" android:id="@android:id/text1" android:layout_width="match_parent" android:layout_height="wrap_content" android:singleLine="true" style="@style/SuggestionLineMedium"/>
-            <TextView android:id="@android:id/text2" android:layout_width="match_parent" android:layout_height="wrap_content" android:singleLine="true" style="@style/SuggestionLineSmall"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:baselineAligned="false">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/suggestion"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <ImageView
+            android:layout_gravity="center_vertical"
+            android:id="@+id/icon1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/suggest_item_padding"
+            android:layout_marginRight="@dimen/suggest_item_padding"/>
+        <LinearLayout
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <TextView
+                android:ellipsize="end"
+                android:id="@android:id/text1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                style="@style/SuggestionLineMedium"/>
+            <TextView
+                android:id="@android:id/text2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                style="@style/SuggestionLineSmall"/>
         </LinearLayout>
     </LinearLayout>
-    <ImageView android:id="@+id/divider" android:background="#a9a9a9" android:layout_width="1dp" android:layout_height="match_parent" android:scaleType="center"/>
-    <ImageView android:id="@+id/icon2" android:background="?android:attr/selectableItemBackground" android:paddingLeft="@dimen/suggest_item_padding" android:paddingRight="@dimen/suggest_item_padding" android:layout_width="wrap_content" android:layout_height="match_parent" android:src="@drawable/ic_querybuilder" android:scaleType="center"/>
+    <ImageView
+        android:id="@+id/divider"
+        android:background="#a9a9a9"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:scaleType="center"/>
+    <ImageView
+        android:id="@+id/icon2"
+        android:background="?android:attr/selectableItemBackground"
+        android:paddingLeft="@dimen/suggest_item_padding"
+        android:paddingRight="@dimen/suggest_item_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_querybuilder"
+        android:scaleType="center"/>
 </LinearLayout>

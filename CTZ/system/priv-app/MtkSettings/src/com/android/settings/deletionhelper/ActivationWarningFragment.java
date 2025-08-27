@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ActivationWarningFragment extends DialogFragment {
     public static ActivationWarningFragment newInstance() {
@@ -14,6 +15,6 @@ public class ActivationWarningFragment extends DialogFragment {
 
     @Override // android.app.DialogFragment
     public Dialog onCreateDialog(Bundle bundle) {
-        return new AlertDialog.Builder(getActivity()).setMessage(R.string.automatic_storage_manager_activation_warning).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).create();
+        return new AlertDialog.Builder(getActivity()).setMessage(R.string.automatic_storage_manager_activation_warning).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null).create();
     }
 }

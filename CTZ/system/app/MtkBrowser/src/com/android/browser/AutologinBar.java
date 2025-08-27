@@ -1,6 +1,7 @@
 package com.android.browser;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import com.android.browser.DeviceAccountLogin;
+
 /* loaded from: classes.dex */
 public class AutologinBar extends LinearLayout implements View.OnClickListener, DeviceAccountLogin.AutoLoginCallback {
     protected ArrayAdapter<String> mAccountsAdapter;
@@ -52,14 +54,16 @@ public class AutologinBar extends LinearLayout implements View.OnClickListener, 
     }
 
     @Override // android.view.View.OnClickListener
-    public void onClick(View view) {
+    public void onClick(View view) throws Resources.NotFoundException {
         if (this.mAutoLoginCancel == view) {
             if (this.mAutoLoginHandler != null) {
                 this.mAutoLoginHandler.cancel();
                 this.mAutoLoginHandler = null;
             }
             hideAutoLogin(true);
-        } else if (this.mAutoLoginLogin == view && this.mAutoLoginHandler != null) {
+            return;
+        }
+        if (this.mAutoLoginLogin == view && this.mAutoLoginHandler != null) {
             this.mAutoLoginAccount.setEnabled(false);
             this.mAutoLoginLogin.setEnabled(false);
             this.mAutoLoginProgress.setVisibility(0);
@@ -72,8 +76,8 @@ public class AutologinBar extends LinearLayout implements View.OnClickListener, 
         DeviceAccountLogin deviceAccountLogin = tab.getDeviceAccountLogin();
         if (deviceAccountLogin != null) {
             this.mAutoLoginHandler = deviceAccountLogin;
-            this.mAccountsAdapter = new ArrayAdapter<>(new ContextThemeWrapper(this.mContext, 16973934), 17367048, deviceAccountLogin.getAccountNames());
-            this.mAccountsAdapter.setDropDownViewResource(17367049);
+            this.mAccountsAdapter = new ArrayAdapter<>(new ContextThemeWrapper(this.mContext, android.R.style.Theme.Holo.Light), android.R.layout.simple_spinner_item, deviceAccountLogin.getAccountNames());
+            this.mAccountsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             this.mAutoLoginAccount.setAdapter((SpinnerAdapter) this.mAccountsAdapter);
             this.mAutoLoginAccount.setSelection(0);
             this.mAutoLoginAccount.setEnabled(true);
@@ -105,7 +109,7 @@ public class AutologinBar extends LinearLayout implements View.OnClickListener, 
         this.mTitleBar.showAutoLogin(z);
     }
 
-    void hideAutoLogin(boolean z) {
+    void hideAutoLogin(boolean z) throws Resources.NotFoundException {
         this.mTitleBar.hideAutoLogin(z);
     }
 

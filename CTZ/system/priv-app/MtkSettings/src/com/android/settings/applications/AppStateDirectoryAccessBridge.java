@@ -9,6 +9,7 @@ import android.util.Log;
 import com.android.settings.applications.AppStateBaseBridge;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class AppStateDirectoryAccessBridge extends AppStateBaseBridge {
     public static final ApplicationsState.AppFilter FILTER_APP_HAS_DIRECTORY_ACCESS = new ApplicationsState.AppFilter() { // from class: com.android.settings.applications.AppStateDirectoryAccessBridge.1
@@ -19,54 +20,52 @@ public class AppStateDirectoryAccessBridge extends AppStateBaseBridge {
             throw new UnsupportedOperationException("Need to call constructor that takes context");
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [90=5] */
         @Override // com.android.settingslib.applications.ApplicationsState.AppFilter
         public void init(Context context) {
+            Throwable th = null;
             this.mPackages = null;
-            Uri build = new Uri.Builder().scheme("content").authority("com.android.documentsui.scopedAccess").appendPath("packages").appendPath("*").build();
-            Cursor query = context.getContentResolver().query(build, StorageVolume.ScopedAccessProviderContract.TABLE_PACKAGES_COLUMNS, null, null);
+            Uri uriBuild = new Uri.Builder().scheme("content").authority("com.android.documentsui.scopedAccess").appendPath("packages").appendPath("*").build();
+            Cursor cursorQuery = context.getContentResolver().query(uriBuild, StorageVolume.ScopedAccessProviderContract.TABLE_PACKAGES_COLUMNS, null, null);
             try {
-                if (query == null) {
-                    Log.w("DirectoryAccessBridge", "Didn't get cursor for " + build);
-                    if (query != null) {
-                        query.close();
+                if (cursorQuery == null) {
+                    Log.w("DirectoryAccessBridge", "Didn't get cursor for " + uriBuild);
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
                         return;
                     }
                     return;
                 }
-                int count = query.getCount();
+                int count = cursorQuery.getCount();
                 if (count == 0) {
                     Log.d("DirectoryAccessBridge", "No packages anymore (was " + this.mPackages + ")");
-                    if (query != null) {
-                        query.close();
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
                         return;
                     }
                     return;
                 }
                 this.mPackages = new ArraySet(count);
-                while (query.moveToNext()) {
-                    this.mPackages.add(query.getString(0));
+                while (cursorQuery.moveToNext()) {
+                    this.mPackages.add(cursorQuery.getString(0));
                 }
                 Log.d("DirectoryAccessBridge", "init(): " + this.mPackages);
-                if (query != null) {
-                    query.close();
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
-            } catch (Throwable th) {
-                try {
-                    throw th;
-                } catch (Throwable th2) {
-                    if (query != null) {
-                        if (th != null) {
-                            try {
-                                query.close();
-                            } catch (Throwable th3) {
-                                th.addSuppressed(th3);
-                            }
-                        } else {
-                            query.close();
+            } catch (Throwable th2) {
+                if (cursorQuery != null) {
+                    if (0 != 0) {
+                        try {
+                            cursorQuery.close();
+                        } catch (Throwable th3) {
+                            th.addSuppressed(th3);
                         }
+                    } else {
+                        cursorQuery.close();
                     }
-                    throw th2;
                 }
+                throw th2;
             }
         }
 

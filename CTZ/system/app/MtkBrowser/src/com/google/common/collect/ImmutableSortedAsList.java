@@ -1,16 +1,16 @@
 package com.google.common.collect;
 
 import java.util.Comparator;
+
 /* loaded from: classes.dex */
 final class ImmutableSortedAsList<E> extends RegularImmutableAsList<E> implements SortedIterable<E> {
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ImmutableSortedAsList(ImmutableSortedSet<E> immutableSortedSet, ImmutableList<E> immutableList) {
+    ImmutableSortedAsList(ImmutableSortedSet<E> immutableSortedSet, ImmutableList<E> immutableList) {
         super(immutableSortedSet, immutableList);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
+    /* JADX DEBUG: Method merged with bridge method: delegateCollection()Lcom/google/common/collect/ImmutableCollection; */
     @Override // com.google.common.collect.RegularImmutableAsList, com.google.common.collect.ImmutableAsList
-    public ImmutableSortedSet<E> delegateCollection() {
+    ImmutableSortedSet<E> delegateCollection() {
         return (ImmutableSortedSet) super.delegateCollection();
     }
 
@@ -21,11 +21,11 @@ final class ImmutableSortedAsList<E> extends RegularImmutableAsList<E> implement
 
     @Override // com.google.common.collect.ImmutableList, java.util.List
     public int indexOf(Object obj) {
-        int indexOf = delegateCollection().indexOf(obj);
-        if (indexOf < 0 || !get(indexOf).equals(obj)) {
+        int iIndexOf = delegateCollection().indexOf(obj);
+        if (iIndexOf < 0 || !get(iIndexOf).equals(obj)) {
             return -1;
         }
-        return indexOf;
+        return iIndexOf;
     }
 
     @Override // com.google.common.collect.ImmutableList, java.util.List
@@ -38,9 +38,8 @@ final class ImmutableSortedAsList<E> extends RegularImmutableAsList<E> implement
         return indexOf(obj) >= 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableList
-    public ImmutableList<E> subListUnchecked(int i, int i2) {
+    ImmutableList<E> subListUnchecked(int i, int i2) {
         return new RegularImmutableSortedSet(super.subListUnchecked(i, i2), comparator()).asList();
     }
 }

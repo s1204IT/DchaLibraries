@@ -16,6 +16,7 @@ import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+
 /* loaded from: classes.dex */
 public class VisiblePatternProfilePreferenceController extends TogglePreferenceController implements LifecycleObserver, OnResume {
     private static final String KEY_VISIBLE_PATTERN_PROFILE = "visiblepattern_profile";
@@ -46,7 +47,7 @@ public class VisiblePatternProfilePreferenceController extends TogglePreferenceC
         FutureTask futureTask = new FutureTask(new Callable() { // from class: com.android.settings.security.-$$Lambda$VisiblePatternProfilePreferenceController$rwDeZ_aTyFGsJcFkBXrMF4RE1tM
             @Override // java.util.concurrent.Callable
             public final Object call() {
-                return VisiblePatternProfilePreferenceController.lambda$getAvailabilityStatus$0(VisiblePatternProfilePreferenceController.this);
+                return VisiblePatternProfilePreferenceController.lambda$getAvailabilityStatus$0(this.f$0);
             }
         });
         try {
@@ -59,9 +60,9 @@ public class VisiblePatternProfilePreferenceController extends TogglePreferenceC
     }
 
     public static /* synthetic */ Integer lambda$getAvailabilityStatus$0(VisiblePatternProfilePreferenceController visiblePatternProfilePreferenceController) throws Exception {
-        boolean isSecure = visiblePatternProfilePreferenceController.mLockPatternUtils.isSecure(visiblePatternProfilePreferenceController.mProfileChallengeUserId);
+        boolean zIsSecure = visiblePatternProfilePreferenceController.mLockPatternUtils.isSecure(visiblePatternProfilePreferenceController.mProfileChallengeUserId);
         boolean z = visiblePatternProfilePreferenceController.mLockPatternUtils.getKeyguardStoredPasswordQuality(visiblePatternProfilePreferenceController.mProfileChallengeUserId) == 65536;
-        if (isSecure && z) {
+        if (zIsSecure && z) {
             return 0;
         }
         return 3;

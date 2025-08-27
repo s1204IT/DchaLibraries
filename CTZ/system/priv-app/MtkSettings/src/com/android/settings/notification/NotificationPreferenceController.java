@@ -11,6 +11,7 @@ import com.android.settings.notification.NotificationBackend;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public abstract class NotificationPreferenceController extends AbstractPreferenceController {
     protected RestrictedLockUtils.EnforcedAdmin mAdmin;
@@ -39,23 +40,21 @@ public abstract class NotificationPreferenceController extends AbstractPreferenc
         }
         if (this.mChannel != null) {
             return this.mChannel.getImportance() != 0;
-        } else if (this.mChannelGroup != null) {
-            return !this.mChannelGroup.isBlocked();
-        } else {
-            return true;
         }
+        if (this.mChannelGroup != null) {
+            return !this.mChannelGroup.isBlocked();
+        }
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onResume(NotificationBackend.AppRow appRow, NotificationChannel notificationChannel, NotificationChannelGroup notificationChannelGroup, RestrictedLockUtils.EnforcedAdmin enforcedAdmin) {
+    protected void onResume(NotificationBackend.AppRow appRow, NotificationChannel notificationChannel, NotificationChannelGroup notificationChannelGroup, RestrictedLockUtils.EnforcedAdmin enforcedAdmin) {
         this.mAppRow = appRow;
         this.mChannel = notificationChannel;
         this.mChannelGroup = notificationChannelGroup;
         this.mAdmin = enforcedAdmin;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean checkCanBeVisible(int i) {
+    protected boolean checkCanBeVisible(int i) {
         if (this.mChannel == null) {
             Log.w("ChannelPrefContr", "No channel");
             return false;
@@ -64,23 +63,20 @@ public abstract class NotificationPreferenceController extends AbstractPreferenc
         return importance == -1000 || importance >= i;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void saveChannel() {
+    protected void saveChannel() {
         if (this.mChannel != null && this.mAppRow != null) {
             this.mBackend.updateChannel(this.mAppRow.pkg, this.mAppRow.uid, this.mChannel);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isChannelConfigurable() {
+    protected boolean isChannelConfigurable() {
         if (this.mChannel != null && this.mAppRow != null) {
             return !Objects.equals(this.mChannel.getId(), this.mAppRow.lockedChannelId);
         }
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isChannelBlockable() {
+    protected boolean isChannelBlockable() {
         if (this.mChannel == null || this.mAppRow == null) {
             return false;
         }
@@ -90,8 +86,7 @@ public abstract class NotificationPreferenceController extends AbstractPreferenc
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isChannelGroupBlockable() {
+    protected boolean isChannelGroupBlockable() {
         if (this.mChannelGroup != null && this.mAppRow != null) {
             if (!this.mAppRow.systemApp) {
                 return true;
@@ -101,13 +96,11 @@ public abstract class NotificationPreferenceController extends AbstractPreferenc
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean hasValidGroup() {
+    protected boolean hasValidGroup() {
         return this.mChannelGroup != null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final boolean isDefaultChannel() {
+    protected final boolean isDefaultChannel() {
         if (this.mChannel == null) {
             return false;
         }

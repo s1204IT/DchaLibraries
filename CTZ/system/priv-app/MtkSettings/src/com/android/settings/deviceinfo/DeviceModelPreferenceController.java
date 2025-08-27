@@ -13,6 +13,7 @@ import com.android.settingslib.DeviceInfoUtils;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IDeviceInfoSettingsExt;
+
 /* loaded from: classes.dex */
 public class DeviceModelPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private static IDeviceInfoSettingsExt mExt;
@@ -32,10 +33,10 @@ public class DeviceModelPreferenceController extends AbstractPreferenceControlle
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference("device_model");
-        if (findPreference != null) {
-            findPreference.setSummary(this.mContext.getResources().getString(R.string.model_summary, getDeviceModel()));
-            mExt.updateSummary(findPreference, Build.MODEL, this.mContext.getResources().getString(R.string.model_summary, getDeviceModel()));
+        Preference preferenceFindPreference = preferenceScreen.findPreference("device_model");
+        if (preferenceFindPreference != null) {
+            preferenceFindPreference.setSummary(this.mContext.getResources().getString(R.string.model_summary, getDeviceModel()));
+            mExt.updateSummary(preferenceFindPreference, Build.MODEL, this.mContext.getResources().getString(R.string.model_summary, getDeviceModel()));
         }
     }
 

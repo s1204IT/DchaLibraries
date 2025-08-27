@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.KeyEvent;
 import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
+
 /* loaded from: classes.dex */
 public class DefaultSmsDialogExt extends ContextWrapper implements ISmsDialogExt {
     private static final String TAG = "DefaultSmsDialogExt";

@@ -16,6 +16,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class AutomaticStorageManagementSwitchPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, SwitchWidgetController.OnSwitchChangeListener, LifecycleObserver, OnResume {
     static final String STORAGE_MANAGER_ENABLED_BY_DEFAULT_PROPERTY = "ro.storage_manager.enabled";

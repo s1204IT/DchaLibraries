@@ -6,9 +6,11 @@ import android.widget.ImageView;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.SlashDrawable;
+
 /* loaded from: classes.dex */
 public class SlashImageView extends ImageView {
     private boolean mAnimationEnabled;
+
     @VisibleForTesting
     protected SlashDrawable mSlash;
 
@@ -17,13 +19,11 @@ public class SlashImageView extends ImageView {
         this.mAnimationEnabled = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public SlashDrawable getSlash() {
+    protected SlashDrawable getSlash() {
         return this.mSlash;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setSlash(SlashDrawable slashDrawable) {
+    protected void setSlash(SlashDrawable slashDrawable) {
         this.mSlash = slashDrawable;
     }
 
@@ -49,8 +49,7 @@ public class SlashImageView extends ImageView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setImageViewDrawable(SlashDrawable slashDrawable) {
+    protected void setImageViewDrawable(SlashDrawable slashDrawable) {
         super.setImageDrawable(slashDrawable);
     }
 
@@ -72,9 +71,9 @@ public class SlashImageView extends ImageView {
         if (slashState != null) {
             setImageDrawable(drawable);
             setSlashState(slashState);
-            return;
+        } else {
+            this.mSlash = null;
+            setImageDrawable(drawable);
         }
-        this.mSlash = null;
-        setImageDrawable(drawable);
     }
 }

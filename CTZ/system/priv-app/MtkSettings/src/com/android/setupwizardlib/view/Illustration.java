@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.FrameLayout;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class Illustration extends FrameLayout {
     private float mAspectRatio;
@@ -53,9 +54,9 @@ public class Illustration extends FrameLayout {
 
     private void init(AttributeSet attributeSet, int i) {
         if (attributeSet != null) {
-            TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwIllustration, i, 0);
-            this.mAspectRatio = obtainStyledAttributes.getFloat(R.styleable.SuwIllustration_suwAspectRatio, 0.0f);
-            obtainStyledAttributes.recycle();
+            TypedArray typedArrayObtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwIllustration, i, 0);
+            this.mAspectRatio = typedArrayObtainStyledAttributes.getFloat(R.styleable.SuwIllustration_suwAspectRatio, 0.0f);
+            typedArrayObtainStyledAttributes.recycle();
         }
         this.mBaselineGridSize = getResources().getDisplayMetrics().density * 8.0f;
         setWillNotDraw(false);

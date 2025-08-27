@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.os.UserManager;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settings.users.UserDialogs;
+
 /* loaded from: classes.dex */
 public class RemoveUserFragment extends InstrumentedDialogFragment {
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static RemoveUserFragment newInstance(int i) {
+    static RemoveUserFragment newInstance(int i) {
         Bundle bundle = new Bundle();
         bundle.putInt("userId", i);
         RemoveUserFragment removeUserFragment = new RemoveUserFragment();

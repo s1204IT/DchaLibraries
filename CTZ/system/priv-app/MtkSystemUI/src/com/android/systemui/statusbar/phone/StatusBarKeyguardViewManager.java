@@ -25,8 +25,10 @@ import com.android.systemui.statusbar.RemoteInputController;
 import com.android.systemui.statusbar.phone.KeyguardBouncer;
 import com.mediatek.keyguard.VoiceWakeup.VoiceWakeupManagerProxy;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.function.BiConsumer;
+
 /* loaded from: classes.dex */
 public class StatusBarKeyguardViewManager implements RemoteInputController.Callback {
     private static String TAG = "StatusBarKeyguardViewManager";
@@ -54,6 +56,9 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     protected ViewMediatorCallback mViewMediatorCallback;
     private final boolean DEBUG = true;
     private final KeyguardBouncer.BouncerExpansionCallback mExpansionCallback = new KeyguardBouncer.BouncerExpansionCallback() { // from class: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager.1
+        AnonymousClass1() {
+        }
+
         @Override // com.android.systemui.statusbar.phone.KeyguardBouncer.BouncerExpansionCallback
         public void onFullyShown() {
             StatusBarKeyguardViewManager.this.updateStates();
@@ -67,6 +72,9 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     protected boolean mFirstUpdate = true;
     private final ArrayList<Runnable> mAfterKeyguardGoneRunnables = new ArrayList<>();
     private final KeyguardUpdateMonitorCallback mUpdateMonitorCallback = new KeyguardUpdateMonitorCallback() { // from class: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager.2
+        AnonymousClass2() {
+        }
+
         @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
         public void onEmergencyCallAction() {
             if (StatusBarKeyguardViewManager.this.mOccluded) {
@@ -75,6 +83,9 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         }
     };
     private Runnable mMakeNavigationBarVisibleRunnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager.6
+        AnonymousClass6() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             Log.d(StatusBarKeyguardViewManager.TAG, "mMakeNavigationBarVisibleRunnable - set nav bar VISIBLE.");
@@ -82,6 +93,35 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         }
     };
     private final StatusBarWindowManager mStatusBarWindowManager = (StatusBarWindowManager) Dependency.get(StatusBarWindowManager.class);
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager$1 */
+    class AnonymousClass1 implements KeyguardBouncer.BouncerExpansionCallback {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.systemui.statusbar.phone.KeyguardBouncer.BouncerExpansionCallback
+        public void onFullyShown() {
+            StatusBarKeyguardViewManager.this.updateStates();
+        }
+
+        @Override // com.android.systemui.statusbar.phone.KeyguardBouncer.BouncerExpansionCallback
+        public void onFullyHidden() {
+            StatusBarKeyguardViewManager.this.updateStates();
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager$2 */
+    class AnonymousClass2 extends KeyguardUpdateMonitorCallback {
+        AnonymousClass2() {
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onEmergencyCallAction() {
+            if (StatusBarKeyguardViewManager.this.mOccluded) {
+                StatusBarKeyguardViewManager.this.reset(true);
+            }
+        }
+    }
 
     public StatusBarKeyguardViewManager(Context context, ViewMediatorCallback viewMediatorCallback, LockPatternUtils lockPatternUtils) {
         this.mContext = context;
@@ -98,31 +138,33 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         this.mContainer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBarKeyguardViewManager$la5jBJIHWW-wWro_RwMU-0UMDCw
             @Override // android.view.View.OnLayoutChangeListener
             public final void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
-                StatusBarKeyguardViewManager.this.onContainerLayout(view, i, i2, i3, i4, i5, i6, i7, i8);
+                this.f$0.onContainerLayout(view, i, i2, i3, i4, i5, i6, i7, i8);
             }
         });
         this.mNotificationPanelView = notificationPanelView;
         notificationPanelView.setExpansionListener(new BiConsumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$RwixcXxEpB1TMXbyMOl_aGzysd0
             @Override // java.util.function.BiConsumer
-            public final void accept(Object obj, Object obj2) {
-                StatusBarKeyguardViewManager.this.onPanelExpansionChanged(((Float) obj).floatValue(), ((Boolean) obj2).booleanValue());
+            public final void accept(Object obj, Object obj2) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+                this.f$0.onPanelExpansionChanged(((Float) obj).floatValue(), ((Boolean) obj2).booleanValue());
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onContainerLayout(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
+    private void onContainerLayout(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
         this.mNotificationPanelView.setBouncerTop(this.mBouncer.getTop());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    public void onPanelExpansionChanged(float f, boolean z) {
+    void onPanelExpansionChanged(float f, boolean z) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (this.mNotificationPanelView.isUnlockHintRunning()) {
             this.mBouncer.setExpansion(1.0f);
-        } else if (this.mOccluded || this.mBouncer.willDismissWithAction() || this.mBouncer.isShowingScrimmed() || this.mStatusBar.isFullScreenUserSwitcherState()) {
+            return;
+        }
+        if (this.mOccluded || this.mBouncer.willDismissWithAction() || this.mBouncer.isShowingScrimmed() || this.mStatusBar.isFullScreenUserSwitcherState()) {
             this.mBouncer.setExpansion(0.0f);
-        } else if (this.mShowing && !this.mDozing) {
+            return;
+        }
+        if (this.mShowing && !this.mDozing) {
             if (!isWakeAndUnlocking()) {
                 this.mBouncer.setExpansion(f);
             }
@@ -140,7 +182,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         StatsLog.write(62, 2);
     }
 
-    protected void showBouncerOrKeyguard(boolean z) {
+    protected void showBouncerOrKeyguard(boolean z) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Log.d(TAG, "showBouncerOrKeyguard() is called.");
         if (this.mBouncer.needsFullscreenBouncer() && !this.mDozing) {
             Log.d(TAG, "needsFullscreenBouncer() is true, show \"Bouncer\" view directly.");
@@ -161,13 +203,12 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void hideBouncer(boolean z) {
+    private void hideBouncer(boolean z) {
         this.mBouncer.hide(z);
         cancelPendingWakeupAction();
     }
 
-    private void showBouncer() {
+    private void showBouncer() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         showBouncer(false, false);
     }
 
@@ -175,7 +216,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         showBouncer(false, z);
     }
 
-    private void showBouncer(boolean z, boolean z2) {
+    private void showBouncer(boolean z, boolean z2) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (this.mShowing && !this.mBouncer.isShowing()) {
             this.mBouncer.show(false, z, z2);
         }
@@ -186,7 +227,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         dismissWithAction(onDismissAction, runnable, z, null);
     }
 
-    public void dismissWithAction(KeyguardHostView.OnDismissAction onDismissAction, Runnable runnable, boolean z, String str) {
+    public void dismissWithAction(KeyguardHostView.OnDismissAction onDismissAction, Runnable runnable, boolean z, String str) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (this.mShowing) {
             cancelPendingWakeupAction();
             if (this.mDozing && !isWakeAndUnlocking()) {
@@ -214,8 +255,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     }
 
     public void reset(boolean z) {
-        String str = TAG;
-        Log.d(str, "reset() is called, mShowing = " + this.mShowing + " ,mOccluded = " + this.mOccluded + "hideBouncerWhenShowing = " + z);
+        Log.d(TAG, "reset() is called, mShowing = " + this.mShowing + " ,mOccluded = " + this.mOccluded + "hideBouncerWhenShowing = " + z);
         if (this.mShowing) {
             if (this.mOccluded && !this.mDozing) {
                 this.mStatusBar.hideKeyguard();
@@ -238,7 +278,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         this.mGoingToSleepVisibleNotOccluded = isShowing() && !isOccluded();
     }
 
-    public void onFinishedGoingToSleep() {
+    public void onFinishedGoingToSleep() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         this.mGoingToSleepVisibleNotOccluded = false;
         this.mBouncer.onScreenTurnedOff();
     }
@@ -278,8 +318,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     }
 
     public void setNeedsInput(boolean z) {
-        String str = TAG;
-        Log.d(str, "setNeedsInput() - needsInput = " + z);
+        Log.d(TAG, "setNeedsInput() - needsInput = " + z);
         this.mStatusBarWindowManager.setKeyguardNeedsInput(z);
     }
 
@@ -289,20 +328,22 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
 
     public void setOccluded(boolean z, boolean z2) {
         this.mStatusBar.setOccluded(z);
-        boolean z3 = true;
         if (z && !this.mOccluded && this.mShowing) {
             StatsLog.write(62, 3);
             if (this.mStatusBar.isInLaunchTransition()) {
                 this.mOccluded = true;
                 this.mStatusBar.fadeKeyguardAfterLaunchTransition(null, new Runnable() { // from class: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager.3
+                    AnonymousClass3() {
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         if (StatusBarKeyguardViewManager.this.mOccluded) {
                             StatusBarKeyguardViewManager.this.mStatusBarWindowManager.setKeyguardOccluded(StatusBarKeyguardViewManager.this.mOccluded);
                             StatusBarKeyguardViewManager.this.reset(true);
-                            return;
+                        } else {
+                            Log.d(StatusBarKeyguardViewManager.TAG, "setOccluded.run() - mOccluded was set to false");
                         }
-                        Log.d(StatusBarKeyguardViewManager.TAG, "setOccluded.run() - mOccluded was set to false");
                     }
                 });
                 return;
@@ -310,22 +351,34 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         } else if (!z && this.mOccluded && this.mShowing) {
             StatsLog.write(62, 2);
         }
-        boolean z4 = !this.mOccluded && z;
+        boolean z3 = !this.mOccluded && z;
         this.mOccluded = z;
         Log.d(TAG, "setOccluded() - setKeyguardOccluded(" + z + ")");
         if (this.mShowing) {
-            StatusBar statusBar = this.mStatusBar;
-            if (!z2 || z) {
-                z3 = false;
-            }
-            statusBar.updateMediaMetaData(false, z3);
+            this.mStatusBar.updateMediaMetaData(false, z2 && !z);
         }
         this.mStatusBarWindowManager.setKeyguardOccluded(z);
         if (!this.mDozing) {
-            reset(z4);
+            reset(z3);
         }
         if (z2 && !z && this.mShowing) {
             this.mStatusBar.animateKeyguardUnoccluding();
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager$3 */
+    class AnonymousClass3 implements Runnable {
+        AnonymousClass3() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (StatusBarKeyguardViewManager.this.mOccluded) {
+                StatusBarKeyguardViewManager.this.mStatusBarWindowManager.setKeyguardOccluded(StatusBarKeyguardViewManager.this.mOccluded);
+                StatusBarKeyguardViewManager.this.reset(true);
+            } else {
+                Log.d(StatusBarKeyguardViewManager.TAG, "setOccluded.run() - mOccluded was set to false");
+            }
         }
     }
 
@@ -342,7 +395,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         }
     }
 
-    public void hide(long j, long j2) {
+    public void hide(long j, long j2) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         long j3;
         long j4;
         long j5;
@@ -353,9 +406,12 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         } else {
             j3 = j2;
         }
-        long max = Math.max(0L, (j - 48) - SystemClock.uptimeMillis());
+        long jMax = Math.max(0L, (j - 48) - SystemClock.uptimeMillis());
         if (this.mStatusBar.isInLaunchTransition()) {
             this.mStatusBar.fadeKeyguardAfterLaunchTransition(new Runnable() { // from class: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager.4
+                AnonymousClass4() {
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     StatusBarKeyguardViewManager.this.mStatusBarWindowManager.setKeyguardShowing(false);
@@ -364,6 +420,9 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
                     StatusBarKeyguardViewManager.this.updateStates();
                 }
             }, new Runnable() { // from class: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager.5
+                AnonymousClass5() {
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     StatusBarKeyguardViewManager.this.mStatusBar.hideKeyguard();
@@ -380,7 +439,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
                 j5 = 0;
             } else {
                 j4 = j3;
-                j5 = max;
+                j5 = jMax;
             }
             this.mStatusBar.setKeyguardFadingAway(j, j5, j4);
             this.mFingerprintUnlockController.startKeyguardFadingAway();
@@ -402,6 +461,34 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         StatsLog.write(62, 1);
     }
 
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager$4 */
+    class AnonymousClass4 implements Runnable {
+        AnonymousClass4() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            StatusBarKeyguardViewManager.this.mStatusBarWindowManager.setKeyguardShowing(false);
+            StatusBarKeyguardViewManager.this.mStatusBarWindowManager.setKeyguardFadingAway(true);
+            StatusBarKeyguardViewManager.this.hideBouncer(true);
+            StatusBarKeyguardViewManager.this.updateStates();
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager$5 */
+    class AnonymousClass5 implements Runnable {
+        AnonymousClass5() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            StatusBarKeyguardViewManager.this.mStatusBar.hideKeyguard();
+            StatusBarKeyguardViewManager.this.mStatusBarWindowManager.setKeyguardFadingAway(false);
+            StatusBarKeyguardViewManager.this.mViewMediatorCallback.keyguardGone();
+            StatusBarKeyguardViewManager.this.executeAfterKeyguardGoneAction();
+        }
+    }
+
     public void onDensityOrFontScaleChanged() {
         hideBouncer(true);
     }
@@ -415,7 +502,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         this.mContainer.postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBarKeyguardViewManager$Qxwhwo1uUdyEeH0KZ8eQm9-dLJ8
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBarKeyguardViewManager.this.mStatusBarWindowManager.setKeyguardFadingAway(false);
+                this.f$0.mStatusBarWindowManager.setKeyguardFadingAway(false);
             }
         }, 100L);
         this.mStatusBar.finishKeyguardFadingAway();
@@ -428,14 +515,13 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
             DejankUtils.postAfterTraversal(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBarKeyguardViewManager$MwYtqufbgyJNJ1l_l2mNmQjtUTg
                 @Override // java.lang.Runnable
                 public final void run() {
-                    LatencyTracker.getInstance(StatusBarKeyguardViewManager.this.mContext).onActionEnd(2);
+                    LatencyTracker.getInstance(this.f$0.mContext).onActionEnd(2);
                 }
             });
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void executeAfterKeyguardGoneAction() {
+    private void executeAfterKeyguardGoneAction() {
         if (this.mAfterKeyguardGoneAction != null) {
             Log.d(TAG, "executeAfterKeyguardGoneAction() is called");
             this.mAfterKeyguardGoneAction.onDismiss();
@@ -452,8 +538,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     }
 
     public void dismiss(boolean z) {
-        String str = TAG;
-        Log.d(str, "dismiss(authenticated = " + z + ") is called.");
+        Log.d(TAG, "dismiss(authenticated = " + z + ") is called.");
         if (VoiceWakeupManagerProxy.getInstance().isDismissAndLaunchApp()) {
             showBouncer(z, false);
         } else {
@@ -499,6 +584,18 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         return 0L;
     }
 
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager$6 */
+    class AnonymousClass6 implements Runnable {
+        AnonymousClass6() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            Log.d(StatusBarKeyguardViewManager.TAG, "mMakeNavigationBarVisibleRunnable - set nav bar VISIBLE.");
+            StatusBarKeyguardViewManager.this.mStatusBar.getNavigationBarView().getRootView().setVisibility(0);
+        }
+    }
+
     public void updateStates() {
         boolean z;
         boolean z2;
@@ -507,7 +604,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         int systemUiVisibility = this.mContainer.getSystemUiVisibility();
         boolean z5 = this.mShowing;
         boolean z6 = this.mOccluded;
-        boolean isShowing = this.mBouncer.isShowing();
+        boolean zIsShowing = this.mBouncer.isShowing();
         boolean z7 = true;
         boolean z8 = !this.mBouncer.isFullscreenBouncer();
         boolean z9 = this.mRemoteInputActive;
@@ -528,15 +625,15 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
                 this.mContainer.setSystemUiVisibility(systemUiVisibility | 4194304);
             }
         }
-        boolean isNavBarVisible = isNavBarVisible();
-        if (isNavBarVisible != getLastNavBarVisible() || this.mFirstUpdate) {
-            Log.d(TAG, "updateStates() - showing = " + z5 + ", mLastShowing = " + this.mLastShowing + "\nupdateStates() - occluded = " + z6 + "mLastOccluded = " + this.mLastOccluded + "\nupdateStates() - bouncerShowing = " + isShowing + ", mLastBouncerShowing = " + this.mLastBouncerShowing + "\nupdateStates() - mFirstUpdate = " + this.mFirstUpdate);
-            updateNavigationBarVisibility(isNavBarVisible);
+        boolean zIsNavBarVisible = isNavBarVisible();
+        if (zIsNavBarVisible != getLastNavBarVisible() || this.mFirstUpdate) {
+            Log.d(TAG, "updateStates() - showing = " + z5 + ", mLastShowing = " + this.mLastShowing + "\nupdateStates() - occluded = " + z6 + "mLastOccluded = " + this.mLastOccluded + "\nupdateStates() - bouncerShowing = " + zIsShowing + ", mLastBouncerShowing = " + this.mLastBouncerShowing + "\nupdateStates() - mFirstUpdate = " + this.mFirstUpdate);
+            updateNavigationBarVisibility(zIsNavBarVisible);
         }
-        if (isShowing != this.mLastBouncerShowing || this.mFirstUpdate) {
-            Log.d(TAG, "updateStates() - setBouncerShowing(" + isShowing + ")");
-            this.mStatusBarWindowManager.setBouncerShowing(isShowing);
-            this.mStatusBar.setBouncerShowing(isShowing);
+        if (zIsShowing != this.mLastBouncerShowing || this.mFirstUpdate) {
+            Log.d(TAG, "updateStates() - setBouncerShowing(" + zIsShowing + ")");
+            this.mStatusBarWindowManager.setBouncerShowing(zIsShowing);
+            this.mStatusBar.setBouncerShowing(zIsShowing);
         }
         KeyguardUpdateMonitor keyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(this.mContext);
         if (z5 && !z6) {
@@ -555,13 +652,13 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
             }
             keyguardUpdateMonitor.onKeyguardVisibilityChanged(z7);
         }
-        if (isShowing != this.mLastBouncerShowing || this.mFirstUpdate) {
-            keyguardUpdateMonitor.sendKeyguardBouncerChanged(isShowing);
+        if (zIsShowing != this.mLastBouncerShowing || this.mFirstUpdate) {
+            keyguardUpdateMonitor.sendKeyguardBouncerChanged(zIsShowing);
         }
         this.mFirstUpdate = false;
         this.mLastShowing = z5;
         this.mLastOccluded = z6;
-        this.mLastBouncerShowing = isShowing;
+        this.mLastBouncerShowing = zIsShowing;
         this.mLastBouncerDismissible = z8;
         this.mLastRemoteInputActive = z9;
         this.mLastDozing = this.mDozing;
@@ -639,7 +736,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         return this.mStatusBar.getStatusBarView().getViewRootImpl();
     }
 
-    public void launchPendingWakeupAction() {
+    public void launchPendingWakeupAction() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         DismissWithActionRequest dismissWithActionRequest = this.mPendingWakeupAction;
         this.mPendingWakeupAction = null;
         if (dismissWithActionRequest != null) {
@@ -682,9 +779,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class DismissWithActionRequest {
+    private static class DismissWithActionRequest {
         final boolean afterKeyguardGone;
         final Runnable cancelAction;
         final KeyguardHostView.OnDismissAction dismissAction;

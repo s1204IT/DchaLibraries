@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.support.v4.content.LocalBroadcastManager;
+
 /* loaded from: classes.dex */
 public interface SurveyFeatureProvider {
     BroadcastReceiver createAndRegisterReceiver(Activity activity);

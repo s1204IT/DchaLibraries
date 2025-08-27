@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
+
 /* loaded from: classes.dex */
 public class NearestTouchFrame extends FrameLayout {
     private final ArrayList<View> mClickableChildren;
@@ -76,25 +77,31 @@ public class NearestTouchFrame extends FrameLayout {
         return (View) ((Pair) this.mClickableChildren.stream().filter(new Predicate() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NearestTouchFrame$vZxk9QSjtyUGPsdKpTYMWyGRwT4
             @Override // java.util.function.Predicate
             public final boolean test(Object obj) {
-                boolean isAttachedToWindow;
-                isAttachedToWindow = ((View) obj).isAttachedToWindow();
-                return isAttachedToWindow;
+                return ((View) obj).isAttachedToWindow();
             }
         }).map(new Function() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NearestTouchFrame$7eHiQu4mAcjiUjco05vH9suDR8c
             @Override // java.util.function.Function
             public final Object apply(Object obj) {
-                return NearestTouchFrame.lambda$findNearestChild$1(NearestTouchFrame.this, motionEvent, (View) obj);
+                return NearestTouchFrame.lambda$findNearestChild$1(this.f$0, motionEvent, (View) obj);
             }
         }).min(Comparator.comparingInt(new ToIntFunction() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NearestTouchFrame$WiqrZjV5HJ63_nsMmVLS89IoMhE
             @Override // java.util.function.ToIntFunction
             public final int applyAsInt(Object obj) {
-                int intValue;
-                intValue = ((Integer) ((Pair) obj).first).intValue();
-                return intValue;
+                return ((Integer) ((Pair) obj).first).intValue();
             }
         })).get()).second;
     }
 
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x000a: CONSTRUCTOR 
+  (wrap:java.lang.Integer:0x0006: INVOKE 
+  (wrap:int:0x0002: INVOKE 
+  (r1v0 com.android.systemui.statusbar.phone.NearestTouchFrame)
+  (r3v0 android.view.View)
+  (r2v0 android.view.MotionEvent)
+ DIRECT call: com.android.systemui.statusbar.phone.NearestTouchFrame.distance(android.view.View, android.view.MotionEvent):int A[MD:(android.view.View, android.view.MotionEvent):int (m), WRAPPED])
+ STATIC call: java.lang.Integer.valueOf(int):java.lang.Integer A[MD:(int):java.lang.Integer (c), WRAPPED])
+  (r3v0 android.view.View)
+ A[MD:(F, S):void (c)] (LINE:101) call: android.util.Pair.<init>(java.lang.Object, java.lang.Object):void type: CONSTRUCTOR */
     public static /* synthetic */ Pair lambda$findNearestChild$1(NearestTouchFrame nearestTouchFrame, MotionEvent motionEvent, View view) {
         return new Pair(Integer.valueOf(nearestTouchFrame.distance(view, motionEvent)), view);
     }

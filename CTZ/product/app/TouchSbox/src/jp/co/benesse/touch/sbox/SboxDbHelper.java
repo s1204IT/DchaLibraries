@@ -1,8 +1,10 @@
 package jp.co.benesse.touch.sbox;
 
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 /* loaded from: classes.dex */
 public class SboxDbHelper extends SQLiteOpenHelper {
     public static final String CREATE_TABLE = "CREATE TABLE kvs (appid TEXT NOT NULL, key TEXT NOT NULL, value TEXT, PRIMARY KEY(appid, key));";
@@ -19,7 +21,7 @@ public class SboxDbHelper extends SQLiteOpenHelper {
     }
 
     @Override // android.database.sqlite.SQLiteOpenHelper
-    public void onCreate(SQLiteDatabase sQLiteDatabase) {
+    public void onCreate(SQLiteDatabase sQLiteDatabase) throws SQLException {
         sQLiteDatabase.execSQL(CREATE_TABLE);
     }
 }

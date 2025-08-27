@@ -26,6 +26,7 @@ import com.android.systemui.OverviewProxyService;
 import com.android.systemui.R;
 import com.android.systemui.plugins.statusbar.phone.NavBarButtonProvider;
 import com.android.systemui.shared.system.NavigationBarCompat;
+
 /* loaded from: classes.dex */
 public class KeyButtonView extends ImageView implements NavBarButtonProvider.ButtonInterface {
     private static final String TAG = KeyButtonView.class.getSimpleName();
@@ -46,6 +47,29 @@ public class KeyButtonView extends ImageView implements NavBarButtonProvider.But
     private int mTouchDownX;
     private int mTouchDownY;
 
+    /* renamed from: com.android.systemui.statusbar.policy.KeyButtonView$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (KeyButtonView.this.isPressed()) {
+                if (!KeyButtonView.this.isLongClickable()) {
+                    if (KeyButtonView.this.mSupportsLongpress) {
+                        KeyButtonView.this.sendEvent(0, 128);
+                        KeyButtonView.this.sendAccessibilityEvent(2);
+                        KeyButtonView.this.mLongClicked = true;
+                        return;
+                    }
+                    return;
+                }
+                KeyButtonView.this.performLongClick();
+                KeyButtonView.this.mLongClicked = true;
+            }
+        }
+    }
+
     public KeyButtonView(Context context, AttributeSet attributeSet) {
         this(context, attributeSet, 0);
     }
@@ -55,6 +79,9 @@ public class KeyButtonView extends ImageView implements NavBarButtonProvider.But
         this.mSupportsLongpress = true;
         this.mMetricsLogger = (MetricsLogger) Dependency.get(MetricsLogger.class);
         this.mCheckLongPress = new Runnable() { // from class: com.android.systemui.statusbar.policy.KeyButtonView.1
+            AnonymousClass1() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 if (KeyButtonView.this.isPressed()) {
@@ -72,15 +99,15 @@ public class KeyButtonView extends ImageView implements NavBarButtonProvider.But
                 }
             }
         };
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.KeyButtonView, i, 0);
-        this.mCode = obtainStyledAttributes.getInteger(1, 0);
-        this.mSupportsLongpress = obtainStyledAttributes.getBoolean(2, true);
-        this.mPlaySounds = obtainStyledAttributes.getBoolean(3, true);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.KeyButtonView, i, 0);
+        this.mCode = typedArrayObtainStyledAttributes.getInteger(1, 0);
+        this.mSupportsLongpress = typedArrayObtainStyledAttributes.getBoolean(2, true);
+        this.mPlaySounds = typedArrayObtainStyledAttributes.getBoolean(3, true);
         TypedValue typedValue = new TypedValue();
-        if (obtainStyledAttributes.getValue(0, typedValue)) {
+        if (typedArrayObtainStyledAttributes.getValue(0, typedValue)) {
             this.mContentDescriptionRes = typedValue.resourceId;
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
         setClickable(true);
         this.mAudioManager = (AudioManager) context.getSystemService("audio");
         this.mRipple = new KeyButtonRipple(context, this);
@@ -104,18 +131,38 @@ public class KeyButtonView extends ImageView implements NavBarButtonProvider.But
         this.mOnClickListener = onClickListener;
     }
 
-    /* JADX WARN: Type inference failed for: r0v0, types: [com.android.systemui.statusbar.policy.KeyButtonView$2] */
+    /* renamed from: com.android.systemui.statusbar.policy.KeyButtonView$2 */
+    class AnonymousClass2 extends AsyncTask<Icon, Void, Drawable> {
+        AnonymousClass2() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.os.AsyncTask
+        protected Drawable doInBackground(Icon... iconArr) {
+            return iconArr[0].loadDrawable(KeyButtonView.this.mContext);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
+        @Override // android.os.AsyncTask
+        protected void onPostExecute(Drawable drawable) {
+            KeyButtonView.this.setImageDrawable(drawable);
+        }
+    }
+
     public void loadAsync(Icon icon) {
         new AsyncTask<Icon, Void, Drawable>() { // from class: com.android.systemui.statusbar.policy.KeyButtonView.2
-            /* JADX INFO: Access modifiers changed from: protected */
+            AnonymousClass2() {
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public Drawable doInBackground(Icon... iconArr) {
+            protected Drawable doInBackground(Icon... iconArr) {
                 return iconArr[0].loadDrawable(KeyButtonView.this.mContext);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(Drawable drawable) {
+            protected void onPostExecute(Drawable drawable) {
                 KeyButtonView.this.setImageDrawable(drawable);
             }
         }.execute(icon);
@@ -155,21 +202,22 @@ public class KeyButtonView extends ImageView implements NavBarButtonProvider.But
             sendAccessibilityEvent(1);
             playSoundEffect(0);
             return true;
-        } else if (i == 32 && this.mCode != 0) {
+        }
+        if (i == 32 && this.mCode != 0) {
             sendEvent(0, 128);
             sendEvent(1, 0);
             sendAccessibilityEvent(2);
             return true;
-        } else {
-            return super.performAccessibilityActionInternal(i, bundle);
         }
+        return super.performAccessibilityActionInternal(i, bundle);
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
         int quickStepTouchSlopPx;
         int quickScrubTouchSlopPx;
-        boolean shouldShowSwipeUpUI = this.mOverviewProxyService.shouldShowSwipeUpUI();
+        boolean zShouldShowSwipeUpUI = this.mOverviewProxyService.shouldShowSwipeUpUI();
         int action = motionEvent.getAction();
         if (action == 0) {
             this.mGestureAborted = false;
@@ -190,17 +238,17 @@ public class KeyButtonView extends ImageView implements NavBarButtonProvider.But
                 } else {
                     performHapticFeedback(1);
                 }
-                if (!shouldShowSwipeUpUI) {
+                if (!zShouldShowSwipeUpUI) {
                     playSoundEffect(0);
                 }
                 removeCallbacks(this.mCheckLongPress);
                 postDelayed(this.mCheckLongPress, ViewConfiguration.getLongPressTimeout());
-                break;
+                return true;
             case 1:
                 boolean z = isPressed() && !this.mLongClicked;
                 setPressed(false);
                 boolean z2 = SystemClock.uptimeMillis() - this.mDownTime > 150;
-                if (shouldShowSwipeUpUI) {
+                if (zShouldShowSwipeUpUI) {
                     if (z) {
                         performHapticFeedback(1);
                         playSoundEffect(0);
@@ -220,37 +268,39 @@ public class KeyButtonView extends ImageView implements NavBarButtonProvider.But
                     sendAccessibilityEvent(1);
                 }
                 removeCallbacks(this.mCheckLongPress);
-                break;
+                return true;
             case 2:
+                int rawX = (int) motionEvent.getRawX();
                 int rawY = (int) motionEvent.getRawY();
-                int abs = Math.abs(((int) motionEvent.getRawX()) - this.mTouchDownX);
+                int iAbs = Math.abs(rawX - this.mTouchDownX);
                 if (this.mIsVertical) {
                     quickStepTouchSlopPx = NavigationBarCompat.getQuickScrubTouchSlopPx();
                 } else {
                     quickStepTouchSlopPx = NavigationBarCompat.getQuickStepTouchSlopPx();
                 }
-                boolean z3 = abs > quickStepTouchSlopPx;
-                int abs2 = Math.abs(rawY - this.mTouchDownY);
+                boolean z3 = iAbs > quickStepTouchSlopPx;
+                int iAbs2 = Math.abs(rawY - this.mTouchDownY);
                 if (this.mIsVertical) {
                     quickScrubTouchSlopPx = NavigationBarCompat.getQuickStepTouchSlopPx();
                 } else {
                     quickScrubTouchSlopPx = NavigationBarCompat.getQuickScrubTouchSlopPx();
                 }
-                boolean z4 = abs2 > quickScrubTouchSlopPx;
+                boolean z4 = iAbs2 > quickScrubTouchSlopPx;
                 if (z3 || z4) {
                     setPressed(false);
                     removeCallbacks(this.mCheckLongPress);
-                    break;
                 }
+                return true;
             case 3:
                 setPressed(false);
                 if (this.mCode != 0) {
                     sendEvent(1, 32);
                 }
                 removeCallbacks(this.mCheckLongPress);
-                break;
+                return true;
+            default:
+                return true;
         }
-        return true;
     }
 
     @Override // android.view.View

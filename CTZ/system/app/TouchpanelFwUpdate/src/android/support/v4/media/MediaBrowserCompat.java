@@ -7,12 +7,12 @@ import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class MediaBrowserCompat {
     static final boolean DEBUG = Log.isLoggable("MediaBrowserCompat", 3);
     private final MediaBrowserImpl mImpl;
 
-    /* loaded from: classes.dex */
     interface MediaBrowserImpl {
         void disconnect();
     }
@@ -21,15 +21,16 @@ public final class MediaBrowserCompat {
         this.mImpl.disconnect();
     }
 
-    /* loaded from: classes.dex */
     public static class MediaItem implements Parcelable {
         public static final Parcelable.Creator<MediaItem> CREATOR = new Parcelable.Creator<MediaItem>() { // from class: android.support.v4.media.MediaBrowserCompat.MediaItem.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public MediaItem createFromParcel(Parcel in) {
                 return new MediaItem(in);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public MediaItem[] newArray(int size) {
@@ -60,7 +61,6 @@ public final class MediaBrowserCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     public static abstract class ItemCallback {
         public void onItemLoaded(MediaItem item) {
         }
@@ -69,7 +69,6 @@ public final class MediaBrowserCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     public static abstract class SearchCallback {
         public void onSearchResult(String query, Bundle extras, List<MediaItem> items) {
         }
@@ -78,7 +77,6 @@ public final class MediaBrowserCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     public static abstract class CustomActionCallback {
         public void onProgressUpdate(String action, Bundle extras, Bundle data) {
         }
@@ -90,7 +88,6 @@ public final class MediaBrowserCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class ItemReceiver extends ResultReceiver {
         private final ItemCallback mCallback;
         private final String mMediaId;
@@ -113,7 +110,6 @@ public final class MediaBrowserCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class SearchResultReceiver extends ResultReceiver {
         private final SearchCallback mCallback;
         private final Bundle mExtras;
@@ -140,7 +136,6 @@ public final class MediaBrowserCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class CustomActionResultReceiver extends ResultReceiver {
         private final String mAction;
         private final CustomActionCallback mCallback;
@@ -149,21 +144,20 @@ public final class MediaBrowserCompat {
         @Override // android.support.v4.os.ResultReceiver
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             if (this.mCallback == null) {
-                return;
             }
             switch (resultCode) {
                 case -1:
                     this.mCallback.onError(this.mAction, this.mExtras, resultData);
-                    return;
+                    break;
                 case 0:
                     this.mCallback.onResult(this.mAction, this.mExtras, resultData);
-                    return;
+                    break;
                 case 1:
                     this.mCallback.onProgressUpdate(this.mAction, this.mExtras, resultData);
-                    return;
+                    break;
                 default:
                     Log.w("MediaBrowserCompat", "Unknown result code: " + resultCode + " (extras=" + this.mExtras + ", resultData=" + resultData + ")");
-                    return;
+                    break;
             }
         }
     }

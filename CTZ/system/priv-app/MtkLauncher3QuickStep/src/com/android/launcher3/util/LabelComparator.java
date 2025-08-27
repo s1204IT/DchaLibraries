@@ -2,10 +2,12 @@ package com.android.launcher3.util;
 
 import java.text.Collator;
 import java.util.Comparator;
+
 /* loaded from: classes.dex */
 public class LabelComparator implements Comparator<String> {
     private final Collator mCollator = Collator.getInstance();
 
+    /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
     @Override // java.util.Comparator
     public int compare(String str, String str2) {
         boolean z = false;

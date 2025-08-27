@@ -17,6 +17,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowManagerGlobal;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
+
 /* loaded from: classes.dex */
 public class GuestResumeSessionReceiver extends BroadcastReceiver {
     private Dialog mNewSessionDialog;
@@ -42,40 +43,43 @@ public class GuestResumeSessionReceiver extends BroadcastReceiver {
                 if (Settings.System.getIntForUser(contentResolver, "systemui.guest_has_logged_in", 0, intExtra) != 0) {
                     this.mNewSessionDialog = new ResetSessionDialog(context, intExtra);
                     this.mNewSessionDialog.show();
-                    return;
+                } else {
+                    Settings.System.putIntForUser(contentResolver, "systemui.guest_has_logged_in", 1, intExtra);
                 }
-                Settings.System.putIntForUser(contentResolver, "systemui.guest_has_logged_in", 1, intExtra);
             } catch (RemoteException e) {
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void wipeGuestSession(Context context, int i) {
+    private static void wipeGuestSession(Context context, int i) {
         UserManager userManager = (UserManager) context.getSystemService("user");
         try {
             UserInfo currentUser = ActivityManager.getService().getCurrentUser();
             if (currentUser.id != i) {
                 Log.w("GuestResumeSessionReceiver", "User requesting to start a new session (" + i + ") is not current user (" + currentUser.id + ")");
-            } else if (!currentUser.isGuest()) {
+                return;
+            }
+            if (!currentUser.isGuest()) {
                 Log.w("GuestResumeSessionReceiver", "User requesting to start a new session (" + i + ") is not a guest");
-            } else if (!userManager.markGuestForDeletion(currentUser.id)) {
+                return;
+            }
+            if (!userManager.markGuestForDeletion(currentUser.id)) {
                 Log.w("GuestResumeSessionReceiver", "Couldn't mark the guest for deletion for user " + i);
-            } else {
-                UserInfo createGuest = userManager.createGuest(context, currentUser.name);
-                try {
-                    if (createGuest == null) {
-                        Log.e("GuestResumeSessionReceiver", "Could not create new guest, switching back to system user");
-                        ActivityManager.getService().switchUser(0);
-                        userManager.removeUser(currentUser.id);
-                        WindowManagerGlobal.getWindowManagerService().lockNow((Bundle) null);
-                        return;
-                    }
-                    ActivityManager.getService().switchUser(createGuest.id);
+                return;
+            }
+            UserInfo userInfoCreateGuest = userManager.createGuest(context, currentUser.name);
+            try {
+                if (userInfoCreateGuest == null) {
+                    Log.e("GuestResumeSessionReceiver", "Could not create new guest, switching back to system user");
+                    ActivityManager.getService().switchUser(0);
                     userManager.removeUser(currentUser.id);
-                } catch (RemoteException e) {
-                    Log.e("GuestResumeSessionReceiver", "Couldn't wipe session because ActivityManager or WindowManager is dead");
+                    WindowManagerGlobal.getWindowManagerService().lockNow((Bundle) null);
+                    return;
                 }
+                ActivityManager.getService().switchUser(userInfoCreateGuest.id);
+                userManager.removeUser(currentUser.id);
+            } catch (RemoteException e) {
+                Log.e("GuestResumeSessionReceiver", "Couldn't wipe session because ActivityManager or WindowManager is dead");
             }
         } catch (RemoteException e2) {
             Log.e("GuestResumeSessionReceiver", "Couldn't wipe session because ActivityManager is dead");
@@ -89,7 +93,6 @@ public class GuestResumeSessionReceiver extends BroadcastReceiver {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class ResetSessionDialog extends SystemUIDialog implements DialogInterface.OnClickListener {
         private final int mUserId;
 

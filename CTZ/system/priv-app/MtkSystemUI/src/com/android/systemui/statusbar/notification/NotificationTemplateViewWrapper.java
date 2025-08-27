@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar.notification;
 
+import android.R;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -17,12 +18,12 @@ import android.widget.TextView;
 import com.android.internal.util.NotificationColorUtil;
 import com.android.internal.widget.NotificationActionListLayout;
 import com.android.systemui.Dependency;
-import com.android.systemui.R;
 import com.android.systemui.UiOffloadThread;
 import com.android.systemui.statusbar.CrossFadeHelper;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.TransformableView;
 import com.android.systemui.statusbar.ViewTransformationHelper;
+
 /* loaded from: classes.dex */
 public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapper {
     private NotificationActionListLayout mActions;
@@ -39,8 +40,7 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
     private Rect mTmpRect;
     private UiOffloadThread mUiOffloadThread;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public NotificationTemplateViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
+    protected NotificationTemplateViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
         super(context, view, expandableNotificationRow);
         this.mTmpRect = new Rect();
         this.mCancelledPendingIntents = new ArraySet<>();
@@ -92,22 +92,22 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
     }
 
     private void resolveTemplateViews(StatusBarNotification statusBarNotification) {
-        this.mPicture = (ImageView) this.mView.findViewById(16909239);
+        this.mPicture = (ImageView) this.mView.findViewById(R.id.mediaProjection);
         if (this.mPicture != null) {
-            this.mPicture.setTag(R.id.image_icon_tag, statusBarNotification.getNotification().getLargeIcon());
+            this.mPicture.setTag(com.android.systemui.R.id.image_icon_tag, statusBarNotification.getNotification().getLargeIcon());
         }
-        this.mTitle = (TextView) this.mView.findViewById(16908310);
-        this.mText = (TextView) this.mView.findViewById(16909374);
-        View findViewById = this.mView.findViewById(16908301);
-        if (findViewById instanceof ProgressBar) {
-            this.mProgressBar = (ProgressBar) findViewById;
+        this.mTitle = (TextView) this.mView.findViewById(R.id.title);
+        this.mText = (TextView) this.mView.findViewById(R.id.perm_money_icon);
+        View viewFindViewById = this.mView.findViewById(R.id.progress);
+        if (viewFindViewById instanceof ProgressBar) {
+            this.mProgressBar = (ProgressBar) viewFindViewById;
         } else {
             this.mProgressBar = null;
         }
-        this.mActionsContainer = this.mView.findViewById(16908685);
-        this.mActions = this.mView.findViewById(16908684);
-        this.mReplyAction = (ImageView) this.mView.findViewById(16909229);
-        this.mRemoteInputHistory = this.mView.findViewById(16909119);
+        this.mActionsContainer = this.mView.findViewById(R.id.KEYCODE_Y);
+        this.mActions = this.mView.findViewById(R.id.KEYCODE_X);
+        this.mReplyAction = (ImageView) this.mView.findViewById(R.id.marquee_forever);
+        this.mRemoteInputHistory = this.mView.findViewById(R.id.icon_preferred);
         updatePendingIntentCancellations();
     }
 
@@ -119,7 +119,7 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
                 performOnPendingIntentCancellation(button, new Runnable() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$NotificationTemplateViewWrapper$oMwnxymrbNZg0qMyiDXpJrgotxQ
                     @Override // java.lang.Runnable
                     public final void run() {
-                        NotificationTemplateViewWrapper.lambda$updatePendingIntentCancellations$0(NotificationTemplateViewWrapper.this, button);
+                        NotificationTemplateViewWrapper.lambda$updatePendingIntentCancellations$0(this.f$0, button);
                     }
                 });
             }
@@ -129,7 +129,7 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
             performOnPendingIntentCancellation(this.mReplyAction, new Runnable() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$NotificationTemplateViewWrapper$FtzUFjG_Gvdx031nKmSLXw7UiBg
                 @Override // java.lang.Runnable
                 public final void run() {
-                    NotificationTemplateViewWrapper.lambda$updatePendingIntentCancellations$1(NotificationTemplateViewWrapper.this);
+                    NotificationTemplateViewWrapper.lambda$updatePendingIntentCancellations$1(this.f$0);
                 }
             });
         }
@@ -141,7 +141,7 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
             ColorStateList textColors = button.getTextColors();
             int[] colors = textColors.getColors();
             int[] iArr = new int[colors.length];
-            float f = notificationTemplateViewWrapper.mView.getResources().getFloat(17105187);
+            float f = notificationTemplateViewWrapper.mView.getResources().getFloat(R.dimen.date_picker_day_width);
             for (int i = 0; i < colors.length; i++) {
                 iArr[i] = notificationTemplateViewWrapper.blendColorWithBackground(colors[i], f);
             }
@@ -152,14 +152,14 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
     public static /* synthetic */ void lambda$updatePendingIntentCancellations$1(NotificationTemplateViewWrapper notificationTemplateViewWrapper) {
         if (notificationTemplateViewWrapper.mReplyAction != null && notificationTemplateViewWrapper.mReplyAction.isEnabled()) {
             notificationTemplateViewWrapper.mReplyAction.setEnabled(false);
-            Drawable mutate = notificationTemplateViewWrapper.mReplyAction.getDrawable().mutate();
-            PorterDuffColorFilter porterDuffColorFilter = (PorterDuffColorFilter) mutate.getColorFilter();
-            float f = notificationTemplateViewWrapper.mView.getResources().getFloat(17105187);
+            Drawable drawableMutate = notificationTemplateViewWrapper.mReplyAction.getDrawable().mutate();
+            PorterDuffColorFilter porterDuffColorFilter = (PorterDuffColorFilter) drawableMutate.getColorFilter();
+            float f = notificationTemplateViewWrapper.mView.getResources().getFloat(R.dimen.date_picker_day_width);
             if (porterDuffColorFilter != null) {
-                mutate.mutate().setColorFilter(notificationTemplateViewWrapper.blendColorWithBackground(porterDuffColorFilter.getColor(), f), porterDuffColorFilter.getMode());
-                return;
+                drawableMutate.mutate().setColorFilter(notificationTemplateViewWrapper.blendColorWithBackground(porterDuffColorFilter.getColor(), f), porterDuffColorFilter.getMode());
+            } else {
+                notificationTemplateViewWrapper.mReplyAction.setAlpha(f);
             }
-            notificationTemplateViewWrapper.mReplyAction.setAlpha(f);
         }
     }
 
@@ -168,7 +168,7 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
     }
 
     private void performOnPendingIntentCancellation(View view, final Runnable runnable) {
-        final PendingIntent pendingIntent = (PendingIntent) view.getTag(16909165);
+        final PendingIntent pendingIntent = (PendingIntent) view.getTag(R.id.installerExemptIgnored);
         if (pendingIntent == null) {
             return;
         }
@@ -178,10 +178,11 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
         }
         final PendingIntent.CancelListener cancelListener = new PendingIntent.CancelListener() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$NotificationTemplateViewWrapper$CdGwp65qr_-MX4610o6pqFvZxIU
             public final void onCancelled(PendingIntent pendingIntent2) {
-                r0.mView.post(new Runnable() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$NotificationTemplateViewWrapper$xG2GQ4HDvuPqD0L-UzmtaSPeQy4
+                NotificationTemplateViewWrapper notificationTemplateViewWrapper = this.f$0;
+                notificationTemplateViewWrapper.mView.post(new Runnable() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$NotificationTemplateViewWrapper$xG2GQ4HDvuPqD0L-UzmtaSPeQy4
                     @Override // java.lang.Runnable
                     public final void run() {
-                        NotificationTemplateViewWrapper.lambda$performOnPendingIntentCancellation$2(NotificationTemplateViewWrapper.this, r2, r3);
+                        NotificationTemplateViewWrapper.lambda$performOnPendingIntentCancellation$2(notificationTemplateViewWrapper, pendingIntent, runnable);
                     }
                 });
             }
@@ -205,10 +206,8 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
         runnable.run();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.notification.NotificationTemplateViewWrapper$2  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass2 implements View.OnAttachStateChangeListener {
+    /* renamed from: com.android.systemui.statusbar.notification.NotificationTemplateViewWrapper$2, reason: invalid class name */
+    class AnonymousClass2 implements View.OnAttachStateChangeListener {
         final /* synthetic */ PendingIntent.CancelListener val$listener;
         final /* synthetic */ PendingIntent val$pendingIntent;
 
@@ -268,9 +267,8 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
         super.onContentUpdated(expandableNotificationRow);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.NotificationHeaderViewWrapper
-    public void updateTransformedTypes() {
+    protected void updateTransformedTypes() {
         super.updateTransformedTypes();
         if (this.mTitle != null) {
             this.mTransformationHelper.addTransformedView(1, this.mTitle);
@@ -310,15 +308,15 @@ public class NotificationTemplateViewWrapper extends NotificationHeaderViewWrapp
 
     @Override // com.android.systemui.statusbar.notification.NotificationViewWrapper
     public int getExtraMeasureHeight() {
-        int i;
+        int dimensionPixelSize;
         if (this.mActions != null) {
-            i = this.mActions.getExtraMeasureHeight();
+            dimensionPixelSize = this.mActions.getExtraMeasureHeight();
         } else {
-            i = 0;
+            dimensionPixelSize = 0;
         }
         if (this.mRemoteInputHistory != null && this.mRemoteInputHistory.getVisibility() != 8) {
-            i += this.mRow.getContext().getResources().getDimensionPixelSize(R.dimen.remote_input_history_extra_height);
+            dimensionPixelSize += this.mRow.getContext().getResources().getDimensionPixelSize(com.android.systemui.R.dimen.remote_input_history_extra_height);
         }
-        return i + super.getExtraMeasureHeight();
+        return dimensionPixelSize + super.getExtraMeasureHeight();
     }
 }

@@ -1,8 +1,8 @@
 package com.android.systemui.statusbar.policy;
+
 /* loaded from: classes.dex */
 public interface KeyguardMonitor extends CallbackController<Callback> {
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onKeyguardShowingChanged();
     }

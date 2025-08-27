@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class ZenRuleNameDialog extends InstrumentedDialogFragment {
     protected static PositiveClickListener mPositiveClickListener;
 
-    /* loaded from: classes.dex */
     public interface PositiveClickListener {
         void onOk(String str, Fragment fragment);
     }
@@ -47,30 +47,29 @@ public class ZenRuleNameDialog extends InstrumentedDialogFragment {
         final String string = arguments.getString("zen_rule_name");
         final boolean z = string == null;
         Context context = getContext();
-        View inflate = LayoutInflater.from(context).inflate(R.layout.zen_rule_name, (ViewGroup) null, false);
-        final EditText editText = (EditText) inflate.findViewById(R.id.zen_mode_rule_name);
+        View viewInflate = LayoutInflater.from(context).inflate(R.layout.zen_rule_name, (ViewGroup) null, false);
+        final EditText editText = (EditText) viewInflate.findViewById(R.id.zen_mode_rule_name);
         if (!z) {
             editText.setText(string);
             editText.setSelection(editText.getText().length());
         }
         editText.setSelectAllOnFocus(true);
-        return new AlertDialog.Builder(context).setTitle(getTitleResource(uri, z)).setView(inflate).setPositiveButton(z ? R.string.zen_mode_add : R.string.okay, new DialogInterface.OnClickListener() { // from class: com.android.settings.notification.ZenRuleNameDialog.1
+        return new AlertDialog.Builder(context).setTitle(getTitleResource(uri, z)).setView(viewInflate).setPositiveButton(z ? R.string.zen_mode_add : R.string.okay, new DialogInterface.OnClickListener() { // from class: com.android.settings.notification.ZenRuleNameDialog.1
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
-                String trimmedText = ZenRuleNameDialog.this.trimmedText(editText);
-                if (TextUtils.isEmpty(trimmedText)) {
+                String strTrimmedText = ZenRuleNameDialog.this.trimmedText(editText);
+                if (TextUtils.isEmpty(strTrimmedText)) {
                     return;
                 }
-                if (!z && string != null && string.equals(trimmedText)) {
+                if (!z && string != null && string.equals(strTrimmedText)) {
                     return;
                 }
-                ZenRuleNameDialog.mPositiveClickListener.onOk(trimmedText, ZenRuleNameDialog.this.getTargetFragment());
+                ZenRuleNameDialog.mPositiveClickListener.onOk(strTrimmedText, ZenRuleNameDialog.this.getTargetFragment());
             }
         }).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).create();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String trimmedText(EditText editText) {
+    private String trimmedText(EditText editText) {
         if (editText.getText() == null) {
             return null;
         }
@@ -78,13 +77,13 @@ public class ZenRuleNameDialog extends InstrumentedDialogFragment {
     }
 
     private int getTitleResource(Uri uri, boolean z) {
-        boolean isValidEventConditionId = ZenModeConfig.isValidEventConditionId(uri);
-        boolean isValidScheduleConditionId = ZenModeConfig.isValidScheduleConditionId(uri);
+        boolean zIsValidEventConditionId = ZenModeConfig.isValidEventConditionId(uri);
+        boolean zIsValidScheduleConditionId = ZenModeConfig.isValidScheduleConditionId(uri);
         if (z) {
-            if (isValidEventConditionId) {
+            if (zIsValidEventConditionId) {
                 return R.string.zen_mode_add_event_rule;
             }
-            if (isValidScheduleConditionId) {
+            if (zIsValidScheduleConditionId) {
                 return R.string.zen_mode_add_time_rule;
             }
         }

@@ -23,6 +23,7 @@ import com.android.browser.PermissionHelper;
 import com.android.browser.provider.SnapshotProvider;
 import com.android.browser.stub.NullController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BrowserActivity extends Activity {
     private static final boolean DEBUG = Browser.ENGONLY;
@@ -33,6 +34,9 @@ public class BrowserActivity extends Activity {
     private PowerManager mPowerManager;
     private ActivityController mController = NullController.INSTANCE;
     private BroadcastReceiver mReceiver = new BroadcastReceiver() { // from class: com.android.browser.BrowserActivity.1
+        AnonymousClass1() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -48,6 +52,9 @@ public class BrowserActivity extends Activity {
         }
     };
     private PermissionHelper.PermissionCallback mPermissionCallback = new PermissionHelper.PermissionCallback() { // from class: com.android.browser.BrowserActivity.2
+        AnonymousClass2() {
+        }
+
         @Override // com.android.browser.PermissionHelper.PermissionCallback
         public void onPermissionsResult(int i, String[] strArr, int[] iArr) {
             if (iArr != null && iArr.length > 0) {
@@ -56,7 +63,8 @@ public class BrowserActivity extends Activity {
                 while (true) {
                     if (i2 >= iArr.length) {
                         break;
-                    } else if (iArr[i2] != 0) {
+                    }
+                    if (iArr[i2] != 0) {
                         BrowserActivity.this.mAllGranted = false;
                         if (BrowserActivity.DEBUG) {
                             Log.d("browser/BrowserActivity", strArr[i2] + " is not granted !");
@@ -74,17 +82,39 @@ public class BrowserActivity extends Activity {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleSearchEngineChanged() {
+    /* renamed from: com.android.browser.BrowserActivity$1 */
+    class AnonymousClass1 extends BroadcastReceiver {
+        AnonymousClass1() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BrowserActivity.DEBUG) {
+                Log.v("@M_browser", "mReceiver action = " + action);
+            }
+            if (action.equals("com.mediatek.search.SEARCH_ENGINE_CHANGED")) {
+                BrowserActivity.this.handleSearchEngineChanged();
+            }
+            if (action.equals("com.mediatek.common.carrierexpress.operator_config_changed")) {
+                Extensions.resetPlugins();
+            }
+        }
+    }
+
+    private void handleSearchEngineChanged() {
         String searchEngineName = BrowserSettings.getInstance().getSearchEngineName();
         if (DEBUG) {
             Log.v("@M_browser", "ChangeSearchEngineReceiver (search): search_engine---" + searchEngineName);
         }
     }
 
-    /* loaded from: classes.dex */
     private class DeleteFailedDownload implements Runnable {
         private DeleteFailedDownload() {
+        }
+
+        /* synthetic */ DeleteFailedDownload(BrowserActivity browserActivity, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // java.lang.Runnable
@@ -125,9 +155,11 @@ public class BrowserActivity extends Activity {
         registerReceiver(this.mReceiver, this.mIntentFilter);
         if (shouldIgnoreIntents()) {
             finish();
-        } else if (IntentHandler.handleWebSearchIntent(this, null, getIntent())) {
-            finish();
         } else {
+            if (IntentHandler.handleWebSearchIntent(this, null, getIntent())) {
+                finish();
+                return;
+            }
             this.mController = createController();
             this.mController.start(bundle == null ? getIntent() : null);
             new Thread(new DeleteFailedDownload()).start();
@@ -150,8 +182,7 @@ public class BrowserActivity extends Activity {
         return controller;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Controller getController() {
+    Controller getController() {
         return (Controller) this.mController;
     }
 
@@ -164,12 +195,14 @@ public class BrowserActivity extends Activity {
             Log.w("browser/BrowserActivity", "onNewIntent for Action_Search Intent reached before finish(), so enter onNewIntent instead of on create");
             startActivity(intent);
             finish();
-        } else if ("--restart--".equals(intent.getAction())) {
-            Bundle bundle = new Bundle();
-            this.mController.onSaveInstanceState(bundle);
-            finish();
-            getApplicationContext().startActivity(new Intent(getApplicationContext(), BrowserActivity.class).addFlags(268435456).putExtra("state", bundle));
         } else {
+            if ("--restart--".equals(intent.getAction())) {
+                Bundle bundle = new Bundle();
+                this.mController.onSaveInstanceState(bundle);
+                finish();
+                getApplicationContext().startActivity(new Intent(getApplicationContext(), (Class<?>) BrowserActivity.class).addFlags(268435456).putExtra("state", bundle));
+                return;
+            }
             this.mController.handleNewIntent(intent);
         }
     }
@@ -201,8 +234,7 @@ public class BrowserActivity extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void doResume() {
+    private void doResume() {
         if (DEBUG) {
             Log.v("browser", "BrowserActivity.onResume: this=" + this);
         }
@@ -360,6 +392,38 @@ public class BrowserActivity extends Activity {
             Log.d("browser/BrowserActivity", " onRequestPermissionsResult " + i);
         }
         PermissionHelper.getInstance().onPermissionsResult(i, strArr, iArr);
+    }
+
+    /* renamed from: com.android.browser.BrowserActivity$2 */
+    class AnonymousClass2 implements PermissionHelper.PermissionCallback {
+        AnonymousClass2() {
+        }
+
+        @Override // com.android.browser.PermissionHelper.PermissionCallback
+        public void onPermissionsResult(int i, String[] strArr, int[] iArr) {
+            if (iArr != null && iArr.length > 0) {
+                BrowserActivity.this.mAllGranted = true;
+                int i2 = 0;
+                while (true) {
+                    if (i2 >= iArr.length) {
+                        break;
+                    }
+                    if (iArr[i2] != 0) {
+                        BrowserActivity.this.mAllGranted = false;
+                        if (BrowserActivity.DEBUG) {
+                            Log.d("browser/BrowserActivity", strArr[i2] + " is not granted !");
+                        }
+                    } else {
+                        i2++;
+                    }
+                }
+                if (!BrowserActivity.this.mAllGranted) {
+                    Toast.makeText(BrowserActivity.this.getApplicationContext(), BrowserActivity.this.getString(R.string.denied_required_permission), 1).show();
+                    BrowserActivity.this.finish();
+                }
+                BrowserActivity.this.doResume();
+            }
+        }
     }
 
     @Override // android.app.Activity

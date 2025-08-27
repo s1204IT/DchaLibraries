@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import com.android.settingslib.R;
 import com.android.settingslib.Utils;
+
 /* loaded from: classes.dex */
 public class SignalDrawable extends Drawable {
     private boolean mAnimating;
@@ -174,58 +175,58 @@ public class SignalDrawable extends Drawable {
         float f2;
         float f3;
         float f4;
-        float width = getBounds().width();
-        float height = getBounds().height();
+        float fWidth = getBounds().width();
+        float fHeight = getBounds().height();
         boolean z = getLayoutDirection() == 1;
         if (z) {
             canvas.save();
-            canvas.translate(width, 0.0f);
+            canvas.translate(fWidth, 0.0f);
             canvas.scale(-1.0f, 1.0f);
         }
         this.mFullPath.reset();
         this.mFullPath.setFillType(Path.FillType.WINDING);
-        float round = Math.round(0.083333336f * width);
-        float f5 = 0.04411765f * height;
+        float fRound = Math.round(0.083333336f * fWidth);
+        float f5 = 0.04411765f * fHeight;
         float f6 = 0.707107f * f5;
-        float f7 = width - round;
-        float f8 = height - round;
+        float f7 = fWidth - fRound;
+        float f8 = fHeight - fRound;
         float f9 = f8 - f5;
         this.mFullPath.moveTo(f7, f9);
-        float f10 = round + f5;
+        float f10 = fRound + f5;
         this.mFullPath.lineTo(f7, f10 + this.mAppliedCornerInset);
         float f11 = 2.0f * f5;
         float f12 = f7 - f11;
-        this.mFullPath.arcTo(f12, round + this.mAppliedCornerInset, f7, this.mAppliedCornerInset + round + f11, 0.0f, -135.0f, false);
-        this.mFullPath.lineTo(((this.mAppliedCornerInset + round) + f5) - f6, f9 - f6);
+        this.mFullPath.arcTo(f12, fRound + this.mAppliedCornerInset, f7, this.mAppliedCornerInset + fRound + f11, 0.0f, -135.0f, false);
+        this.mFullPath.lineTo(((this.mAppliedCornerInset + fRound) + f5) - f6, f9 - f6);
         float f13 = f8 - f11;
-        this.mFullPath.arcTo(round + this.mAppliedCornerInset, f13, this.mAppliedCornerInset + round + f11, f8, -135.0f, -135.0f, false);
+        this.mFullPath.arcTo(fRound + this.mAppliedCornerInset, f13, this.mAppliedCornerInset + fRound + f11, f8, -135.0f, -135.0f, false);
         this.mFullPath.lineTo(f7 - f5, f8);
         this.mFullPath.arcTo(f12, f13, f7, f8, 90.0f, -90.0f, false);
         if (this.mState == 3) {
-            float f14 = 0.5833334f * width;
-            float f15 = 0.16666667f * width;
-            float f16 = 0.125f * height;
+            float f14 = 0.5833334f * fWidth;
+            float f15 = 0.16666667f * fWidth;
+            float f16 = 0.125f * fHeight;
             this.mFullPath.moveTo(f7, f8);
             this.mFullPath.rLineTo(-f14, 0.0f);
             this.mFullPath.rLineTo(0.0f, -f15);
             this.mFullPath.rLineTo(f14, 0.0f);
             this.mFullPath.rLineTo(0.0f, f15);
-            float f17 = (0.041666668f * height * 2.0f) + f16;
+            float f17 = (0.041666668f * fHeight * 2.0f) + f16;
             float f18 = f7 - f16;
             float f19 = f8 - f16;
             this.mForegroundPath.reset();
             f = f8;
             f2 = f7;
-            f3 = round;
+            f3 = fRound;
             drawDot(this.mFullPath, this.mForegroundPath, f18, f19, f16, 2);
             drawDot(this.mFullPath, this.mForegroundPath, f18 - f17, f19, f16, 1);
             drawDot(this.mFullPath, this.mForegroundPath, f18 - (f17 * 2.0f), f19, f16, 0);
         } else {
             f = f8;
             f2 = f7;
-            f3 = round;
+            f3 = fRound;
             if (this.mState == 2) {
-                float f20 = 0.32916668f * width;
+                float f20 = 0.32916668f * fWidth;
                 f4 = f2;
                 this.mFullPath.moveTo(f4, f);
                 float f21 = -f20;
@@ -233,45 +234,45 @@ public class SignalDrawable extends Drawable {
                 this.mFullPath.rLineTo(0.0f, f21);
                 this.mFullPath.rLineTo(f20, 0.0f);
                 this.mFullPath.rLineTo(0.0f, f20);
-                if (this.mState != 1) {
-                    this.mVirtualTop.set(f4, (f10 + this.mAppliedCornerInset) - (INV_TAN * f5));
-                    this.mVirtualLeft.set((f10 + this.mAppliedCornerInset) - (INV_TAN * f5), f);
-                    float f22 = 0.083333336f * height;
-                    float f23 = INV_TAN * f22;
-                    this.mCutPath.reset();
-                    this.mCutPath.setFillType(Path.FillType.WINDING);
-                    float f24 = f4 - f22;
-                    float f25 = f - f22;
-                    this.mCutPath.moveTo(f24, f25);
-                    this.mCutPath.lineTo(f24, this.mVirtualTop.y + f23);
-                    this.mCutPath.lineTo(this.mVirtualLeft.x + f23, f25);
-                    this.mCutPath.lineTo(f24, f25);
-                    this.mForegroundPath.reset();
-                    this.mFullPath.op(this.mCutPath, Path.Op.DIFFERENCE);
-                } else if (this.mState == 4) {
-                    this.mForegroundPath.reset();
-                    this.mSlash.draw((int) height, (int) width, canvas, this.mPaint);
-                } else if (this.mState != 3) {
-                    this.mForegroundPath.reset();
-                    this.mForegroundPath.addRect(f3, f3, f3 + Math.round(calcFit(this.mLevel / (this.mNumLevels - 1.0f)) * (width - (2.0f * f3))), f, Path.Direction.CW);
-                    this.mForegroundPath.op(this.mFullPath, Path.Op.INTERSECT);
+            }
+            if (this.mState != 1) {
+                this.mVirtualTop.set(f4, (f10 + this.mAppliedCornerInset) - (INV_TAN * f5));
+                this.mVirtualLeft.set((f10 + this.mAppliedCornerInset) - (INV_TAN * f5), f);
+                float f22 = 0.083333336f * fHeight;
+                float f23 = INV_TAN * f22;
+                this.mCutPath.reset();
+                this.mCutPath.setFillType(Path.FillType.WINDING);
+                float f24 = f4 - f22;
+                float f25 = f - f22;
+                this.mCutPath.moveTo(f24, f25);
+                this.mCutPath.lineTo(f24, this.mVirtualTop.y + f23);
+                this.mCutPath.lineTo(this.mVirtualLeft.x + f23, f25);
+                this.mCutPath.lineTo(f24, f25);
+                this.mForegroundPath.reset();
+                this.mFullPath.op(this.mCutPath, Path.Op.DIFFERENCE);
+            } else if (this.mState == 4) {
+                this.mForegroundPath.reset();
+                this.mSlash.draw((int) fHeight, (int) fWidth, canvas, this.mPaint);
+            } else if (this.mState != 3) {
+                this.mForegroundPath.reset();
+                this.mForegroundPath.addRect(f3, f3, f3 + Math.round(calcFit(this.mLevel / (this.mNumLevels - 1.0f)) * (fWidth - (2.0f * f3))), f, Path.Direction.CW);
+                this.mForegroundPath.op(this.mFullPath, Path.Op.INTERSECT);
+            }
+            canvas.drawPath(this.mFullPath, this.mPaint);
+            canvas.drawPath(this.mForegroundPath, this.mForegroundPaint);
+            if (this.mState == 2) {
+                this.mXPath.reset();
+                this.mXPath.moveTo(X_PATH[0][0] * fWidth, X_PATH[0][1] * fHeight);
+                for (int i = 1; i < X_PATH.length; i++) {
+                    this.mXPath.rLineTo(X_PATH[i][0] * fWidth, X_PATH[i][1] * fHeight);
                 }
-                canvas.drawPath(this.mFullPath, this.mPaint);
-                canvas.drawPath(this.mForegroundPath, this.mForegroundPaint);
-                if (this.mState == 2) {
-                    this.mXPath.reset();
-                    this.mXPath.moveTo(X_PATH[0][0] * width, X_PATH[0][1] * height);
-                    for (int i = 1; i < X_PATH.length; i++) {
-                        this.mXPath.rLineTo(X_PATH[i][0] * width, X_PATH[i][1] * height);
-                    }
-                    canvas.drawPath(this.mXPath, this.mForegroundPaint);
-                }
-                if (!z) {
-                    canvas.restore();
-                    return;
-                }
+                canvas.drawPath(this.mXPath, this.mForegroundPaint);
+            }
+            if (!z) {
+                canvas.restore();
                 return;
             }
+            return;
         }
         f4 = f2;
         if (this.mState != 1) {
@@ -355,7 +356,6 @@ public class SignalDrawable extends Drawable {
         return (i << 8) | 262144;
     }
 
-    /* loaded from: classes.dex */
     private final class SlashArtist {
         private final Path mPath;
         private final RectF mSlashRect;
@@ -367,10 +367,10 @@ public class SignalDrawable extends Drawable {
 
         void draw(int i, int i2, Canvas canvas, Paint paint) {
             Matrix matrix = new Matrix();
-            float scale = scale(1.0f, i2);
+            float fScale = scale(1.0f, i2);
             updateRect(scale(0.40544835f, i2), scale(0.20288496f, i), scale(0.4820516f, i2), scale(1.1195517f, i));
             this.mPath.reset();
-            this.mPath.addRoundRect(this.mSlashRect, scale, scale, Path.Direction.CW);
+            this.mPath.addRoundRect(this.mSlashRect, fScale, fScale, Path.Direction.CW);
             float f = i2 / 2;
             float f2 = i / 2;
             matrix.setRotate(-45.0f, f, f2);
@@ -380,7 +380,7 @@ public class SignalDrawable extends Drawable {
             this.mPath.transform(matrix);
             matrix.setTranslate(this.mSlashRect.width(), 0.0f);
             this.mPath.transform(matrix);
-            this.mPath.addRoundRect(this.mSlashRect, scale, scale, Path.Direction.CW);
+            this.mPath.addRoundRect(this.mSlashRect, fScale, fScale, Path.Direction.CW);
             matrix.setRotate(-45.0f, f, f2);
             this.mPath.transform(matrix);
             canvas.clipOutPath(this.mPath);

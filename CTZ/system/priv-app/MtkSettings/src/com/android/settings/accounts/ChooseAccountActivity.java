@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class ChooseAccountActivity extends SettingsPreferenceFragment {
     public HashSet<String> mAccountTypesFilter;
@@ -45,9 +46,7 @@ public class ChooseAccountActivity extends SettingsPreferenceFragment {
     private HashMap<String, ArrayList<String>> mAccountTypeToAuthorities = null;
     private Map<String, AuthenticatorDescription> mTypeToAuthDescription = new HashMap();
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ProviderEntry implements Comparable<ProviderEntry> {
+    private static class ProviderEntry implements Comparable<ProviderEntry> {
         private final CharSequence name;
         private final String type;
 
@@ -56,6 +55,7 @@ public class ChooseAccountActivity extends SettingsPreferenceFragment {
             this.type = str;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // java.lang.Comparable
         public int compareTo(ProviderEntry providerEntry) {
             if (this.name == null) {
@@ -117,8 +117,9 @@ public class ChooseAccountActivity extends SettingsPreferenceFragment {
                     if (i2 < this.mAuthorities.length) {
                         if (authoritiesForAccountType.contains(this.mAuthorities[i2])) {
                             break;
+                        } else {
+                            i2++;
                         }
-                        i2++;
                     } else {
                         z = false;
                         break;
@@ -137,14 +138,17 @@ public class ChooseAccountActivity extends SettingsPreferenceFragment {
         }
         Context context = getPreferenceScreen().getContext();
         if (this.mProviderList.size() == 1) {
-            RestrictedLockUtils.EnforcedAdmin checkIfAccountManagementDisabled = RestrictedLockUtils.checkIfAccountManagementDisabled(context, this.mProviderList.get(0).type, this.mUserHandle.getIdentifier());
-            if (checkIfAccountManagementDisabled == null) {
+            RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfAccountManagementDisabled = RestrictedLockUtils.checkIfAccountManagementDisabled(context, this.mProviderList.get(0).type, this.mUserHandle.getIdentifier());
+            if (enforcedAdminCheckIfAccountManagementDisabled == null) {
                 finishWithAccountType(this.mProviderList.get(0).type);
                 return;
+            } else {
+                setResult(0, RestrictedLockUtils.getShowAdminSupportDetailsIntent(context, enforcedAdminCheckIfAccountManagementDisabled));
+                finish();
+                return;
             }
-            setResult(0, RestrictedLockUtils.getShowAdminSupportDetailsIntent(context, checkIfAccountManagementDisabled));
-            finish();
-        } else if (this.mProviderList.size() > 0) {
+        }
+        if (this.mProviderList.size() > 0) {
             Collections.sort(this.mProviderList);
             this.mAddAccountGroup.removeAll();
             Iterator<ProviderEntry> it = this.mProviderList.iterator();
@@ -155,18 +159,18 @@ public class ChooseAccountActivity extends SettingsPreferenceFragment {
                 this.mAddAccountGroup.addPreference(providerPreference);
             }
             addEnterpriseDisclosure();
-        } else {
-            if (Log.isLoggable("ChooseAccountActivity", 2)) {
-                StringBuilder sb = new StringBuilder();
-                for (String str2 : this.mAuthorities) {
-                    sb.append(str2);
-                    sb.append(' ');
-                }
-                Log.v("ChooseAccountActivity", "No providers found for authorities: " + ((Object) sb));
-            }
-            setResult(0);
-            finish();
+            return;
         }
+        if (Log.isLoggable("ChooseAccountActivity", 2)) {
+            StringBuilder sb = new StringBuilder();
+            for (String str2 : this.mAuthorities) {
+                sb.append(str2);
+                sb.append(' ');
+            }
+            Log.v("ChooseAccountActivity", "No providers found for authorities: " + ((Object) sb));
+        }
+        setResult(0);
+        finish();
     }
 
     private void addEnterpriseDisclosure() {
@@ -183,7 +187,6 @@ public class ChooseAccountActivity extends SettingsPreferenceFragment {
     }
 
     public ArrayList<String> getAuthoritiesForAccountType(String str) {
-        SyncAdapterType[] syncAdapterTypesAsUser;
         if (this.mAccountTypeToAuthorities == null) {
             this.mAccountTypeToAuthorities = Maps.newHashMap();
             for (SyncAdapterType syncAdapterType : ContentResolver.getSyncAdapterTypesAsUser(this.mUserHandle.getIdentifier())) {
@@ -201,11 +204,6 @@ public class ChooseAccountActivity extends SettingsPreferenceFragment {
         return this.mAccountTypeToAuthorities.get(str);
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:12:0x0062 A[RETURN] */
-    /* JADX WARN: Removed duplicated region for block: B:13:0x0063  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     protected Drawable getDrawableForType(String str) {
         Drawable userBadgedIcon;
         if (this.mTypeToAuthDescription.containsKey(str)) {
@@ -217,14 +215,13 @@ public class ChooseAccountActivity extends SettingsPreferenceFragment {
             } catch (Resources.NotFoundException e2) {
                 Log.w("ChooseAccountActivity", "No icon resource for account type " + str);
             }
-            if (userBadgedIcon == null) {
-                return userBadgedIcon;
-            }
-            return getPackageManager().getDefaultActivityIcon();
+        } else {
+            userBadgedIcon = null;
         }
-        userBadgedIcon = null;
-        if (userBadgedIcon == null) {
+        if (userBadgedIcon != null) {
+            return userBadgedIcon;
         }
+        return getPackageManager().getDefaultActivityIcon();
     }
 
     protected CharSequence getLabelForType(String str) {

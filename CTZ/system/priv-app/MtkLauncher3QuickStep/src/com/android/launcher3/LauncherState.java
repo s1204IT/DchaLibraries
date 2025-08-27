@@ -9,6 +9,7 @@ import com.android.launcher3.uioverrides.FastOverviewState;
 import com.android.launcher3.uioverrides.OverviewState;
 import com.android.launcher3.uioverrides.UiFactory;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class LauncherState {
     public static final int ALL_APPS_CONTENT = 16;
@@ -42,6 +43,10 @@ public class LauncherState {
     public final int workspaceAccessibilityFlag;
     public final boolean workspaceIconsCanBeDragged;
     protected static final PageAlphaProvider DEFAULT_ALPHA_PROVIDER = new PageAlphaProvider(Interpolators.ACCEL_2) { // from class: com.android.launcher3.LauncherState.1
+        AnonymousClass1(Interpolator interpolator) {
+            super(interpolator);
+        }
+
         @Override // com.android.launcher3.LauncherState.PageAlphaProvider
         public float getPageAlpha(int i) {
             return 1.0f;
@@ -54,6 +59,18 @@ public class LauncherState {
     public static final LauncherState FAST_OVERVIEW = new FastOverviewState(3);
     public static final LauncherState ALL_APPS = new AllAppsState(4);
     protected static final Rect sTempRect = new Rect();
+
+    /* renamed from: com.android.launcher3.LauncherState$1 */
+    class AnonymousClass1 extends PageAlphaProvider {
+        AnonymousClass1(Interpolator interpolator) {
+            super(interpolator);
+        }
+
+        @Override // com.android.launcher3.LauncherState.PageAlphaProvider
+        public float getPageAlpha(int i) {
+            return 1.0f;
+        }
+    }
 
     public LauncherState(int i, int i2, int i3, int i4) {
         this.containerType = i2;
@@ -114,13 +131,36 @@ public class LauncherState {
         if (this != NORMAL || !launcher.getDeviceProfile().shouldFadeAdjacentWorkspaceScreens()) {
             return DEFAULT_ALPHA_PROVIDER;
         }
-        final int nextPage = launcher.getWorkspace().getNextPage();
         return new PageAlphaProvider(Interpolators.ACCEL_2) { // from class: com.android.launcher3.LauncherState.2
+            final /* synthetic */ int val$centerPage;
+
+            /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+            AnonymousClass2(Interpolator interpolator, int i) {
+                super(interpolator);
+                i = i;
+            }
+
             @Override // com.android.launcher3.LauncherState.PageAlphaProvider
             public float getPageAlpha(int i) {
-                return i != nextPage ? 0.0f : 1.0f;
+                return i != i ? 0.0f : 1.0f;
             }
         };
+    }
+
+    /* renamed from: com.android.launcher3.LauncherState$2 */
+    class AnonymousClass2 extends PageAlphaProvider {
+        final /* synthetic */ int val$centerPage;
+
+        /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+        AnonymousClass2(Interpolator interpolator, int i) {
+            super(interpolator);
+            i = i;
+        }
+
+        @Override // com.android.launcher3.LauncherState.PageAlphaProvider
+        public float getPageAlpha(int i) {
+            return i != i ? 0.0f : 1.0f;
+        }
     }
 
     public LauncherState getHistoryForState(LauncherState launcherState) {
@@ -134,12 +174,10 @@ public class LauncherState {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static void dispatchWindowStateChanged(Launcher launcher) {
+    protected static void dispatchWindowStateChanged(Launcher launcher) {
         launcher.getWindow().getDecorView().sendAccessibilityEvent(32);
     }
 
-    /* loaded from: classes.dex */
     public static abstract class PageAlphaProvider {
         public final Interpolator interpolator;
 

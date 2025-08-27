@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class StorageWizardMoveProgress extends StorageWizardBase {
     private final PackageManager.MoveCallback mCallback = new PackageManager.MoveCallback() { // from class: com.android.settings.deviceinfo.StorageWizardMoveProgress.1
@@ -26,9 +27,8 @@ public class StorageWizardMoveProgress extends StorageWizardBase {
     };
     private int mMoveId;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.deviceinfo.StorageWizardBase, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         if (this.mVolume == null) {
             finish();
@@ -45,31 +45,18 @@ public class StorageWizardMoveProgress extends StorageWizardBase {
         this.mCallback.onStatusChanged(this.mMoveId, getPackageManager().getMoveStatus(this.mMoveId), -1L);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.deviceinfo.StorageWizardBase, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         getPackageManager().unregisterMoveCallback(this.mCallback);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public CharSequence moveStatusToMessage(int i) {
+    private CharSequence moveStatusToMessage(int i) {
         if (i == -8) {
             return getString(R.string.move_error_device_admin);
         }
         switch (i) {
-            case -5:
-                return getString(R.string.invalid_location);
-            case -4:
-                return getString(R.string.app_forward_locked);
-            case -3:
-                return getString(R.string.system_package);
-            case -2:
-                return getString(R.string.does_not_exist);
-            case -1:
-                return getString(R.string.insufficient_storage);
-            default:
-                return getString(R.string.insufficient_storage);
         }
+        return getString(R.string.insufficient_storage);
     }
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.text.TextUtils;
 import jp.co.benesse.dcha.dchaservice.util.Log;
+
 /* loaded from: classes.dex */
 public class ProxyService extends IntentService {
     public ProxyService() {

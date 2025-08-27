@@ -1,5 +1,6 @@
 package com.android.systemui.globalactions;
 
+import android.R;
 import android.app.Dialog;
 import android.app.KeyguardManager;
 import android.content.Context;
@@ -14,10 +15,10 @@ import com.android.systemui.Dependency;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.colorextraction.SysuiColorExtractor;
 import com.android.systemui.plugins.GlobalActions;
-import com.android.systemui.plugins.R;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
+
 /* loaded from: classes.dex */
 public class GlobalActionsImpl implements GlobalActions, CommandQueue.Callbacks {
     private final Context mContext;
@@ -51,7 +52,7 @@ public class GlobalActionsImpl implements GlobalActions, CommandQueue.Callbacks 
     public void showShutdownUi(boolean z, String str) {
         Drawable gradientDrawable = new GradientDrawable(this.mContext);
         gradientDrawable.setAlpha(242);
-        Dialog dialog = new Dialog(this.mContext, R.style.Theme_SystemUI_Dialog_GlobalActions);
+        Dialog dialog = new Dialog(this.mContext, 2131886645);
         Window window = dialog.getWindow();
         int i = 1;
         window.requestFeature(1);
@@ -64,21 +65,21 @@ public class GlobalActionsImpl implements GlobalActions, CommandQueue.Callbacks 
         window.clearFlags(2);
         window.addFlags(17629472);
         window.setBackgroundDrawable(gradientDrawable);
-        window.setWindowAnimations(16973828);
-        dialog.setContentView(17367278);
+        window.setWindowAnimations(R.style.Animation.Toast);
+        dialog.setContentView(R.layout.preference_information);
         dialog.setCancelable(false);
         int colorAttr = Utils.getColorAttr(this.mContext, com.android.systemui.R.attr.wallpaperTextColor);
-        boolean isKeyguardLocked = ((KeyguardManager) this.mContext.getSystemService(KeyguardManager.class)).isKeyguardLocked();
-        ((ProgressBar) dialog.findViewById(16908301)).getIndeterminateDrawable().setTint(colorAttr);
-        TextView textView = (TextView) dialog.findViewById(16908308);
+        boolean zIsKeyguardLocked = ((KeyguardManager) this.mContext.getSystemService(KeyguardManager.class)).isKeyguardLocked();
+        ((ProgressBar) dialog.findViewById(R.id.progress)).getIndeterminateDrawable().setTint(colorAttr);
+        TextView textView = (TextView) dialog.findViewById(R.id.text1);
         textView.setTextColor(colorAttr);
         if (z) {
-            textView.setText(17040742);
+            textView.setText(R.string.lockscreen_missing_sim_message_short);
         }
         Point point = new Point();
         this.mContext.getDisplay().getRealSize(point);
         SysuiColorExtractor sysuiColorExtractor = (SysuiColorExtractor) Dependency.get(SysuiColorExtractor.class);
-        if (isKeyguardLocked) {
+        if (zIsKeyguardLocked) {
             i = 2;
         }
         gradientDrawable.setColors(sysuiColorExtractor.getColors(i), false);

@@ -6,6 +6,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class WifiScanningPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     public WifiScanningPreferenceController(Context context) {

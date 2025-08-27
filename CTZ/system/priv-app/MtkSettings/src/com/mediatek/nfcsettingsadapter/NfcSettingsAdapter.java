@@ -10,6 +10,7 @@ import android.util.Log;
 import com.mediatek.nfcsettingsadapter.INfcSettingsAdapter;
 import java.util.HashMap;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NfcSettingsAdapter {
     static HashMap<Context, NfcSettingsAdapter> sNfcSettingsAdapters = new HashMap<>();
@@ -66,10 +67,10 @@ public class NfcSettingsAdapter {
         try {
             if (sService == null) {
                 Log.e("NfcSettingsAdapter", "setModeFlag sService = null");
-                return;
+            } else {
+                Log.d("NfcSettingsAdapter", "sService.setModeFlag(mode)");
+                sService.setModeFlag(i, i2);
             }
-            Log.d("NfcSettingsAdapter", "sService.setModeFlag(mode)");
-            sService.setModeFlag(i, i2);
         } catch (RemoteException e) {
             Log.e("NfcSettingsAdapter", "setModeFlag e = " + e.toString());
         }
@@ -80,13 +81,13 @@ public class NfcSettingsAdapter {
             if (!SystemProperties.get("persist.vendor.st_nfc_gsma_support").equals("1")) {
                 Log.v("NfcSettingsAdapter", "isShowOverflowMenu GSMA is disabled");
                 return false;
-            } else if (sService == null) {
+            }
+            if (sService == null) {
                 Log.e("NfcSettingsAdapter", "isShowOverflowMenu sService = null");
                 return false;
-            } else {
-                Log.d("NfcSettingsAdapter", "sService.isShowOverflowMenu()");
-                return sService.isShowOverflowMenu();
             }
+            Log.d("NfcSettingsAdapter", "sService.isShowOverflowMenu()");
+            return sService.isShowOverflowMenu();
         } catch (RemoteException e) {
             Log.e("NfcSettingsAdapter", "isShowOverflowMenu e = " + e.toString());
             return false;
@@ -98,13 +99,13 @@ public class NfcSettingsAdapter {
             if (!SystemProperties.get("persist.vendor.st_nfc_gsma_support").equals("1")) {
                 Log.v("NfcSettingsAdapter", "getServiceEntryList GSMA is disabled");
                 return null;
-            } else if (sService == null) {
+            }
+            if (sService == null) {
                 Log.e("NfcSettingsAdapter", "getServiceEntryList sService = null");
                 return null;
-            } else {
-                Log.d("NfcSettingsAdapter", "sService.getServiceEntryList()");
-                return sService.getServiceEntryList(i);
             }
+            Log.d("NfcSettingsAdapter", "sService.getServiceEntryList()");
+            return sService.getServiceEntryList(i);
         } catch (RemoteException e) {
             Log.e("NfcSettingsAdapter", "getServiceEntryList e = " + e.toString());
             return null;
@@ -116,13 +117,13 @@ public class NfcSettingsAdapter {
             if (!SystemProperties.get("persist.vendor.st_nfc_gsma_support").equals("1")) {
                 Log.v("NfcSettingsAdapter", "testServiceEntryList GSMA is disabled");
                 return false;
-            } else if (sService == null) {
+            }
+            if (sService == null) {
                 Log.e("NfcSettingsAdapter", "testServiceEntryList sService = null");
                 return false;
-            } else {
-                Log.d("NfcSettingsAdapter", "sService.testServiceEntryList()");
-                return sService.testServiceEntryList(list);
             }
+            Log.d("NfcSettingsAdapter", "sService.testServiceEntryList()");
+            return sService.testServiceEntryList(list);
         } catch (RemoteException e) {
             Log.e("NfcSettingsAdapter", "testServiceEntryList e = " + e.toString());
             return false;

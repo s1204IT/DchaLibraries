@@ -9,12 +9,15 @@ import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class HvacController {
     private Car mCar;
@@ -24,7 +27,7 @@ public class HvacController {
     private HashMap<HvacKey, List<TemperatureView>> mTempComponents = new HashMap<>();
     private ServiceConnection mServiceConnection = new ServiceConnection() { // from class: com.android.systemui.statusbar.car.hvac.HvacController.1
         @Override // android.content.ServiceConnection
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) throws RemoteException {
             try {
                 iBinder.linkToDeath(HvacController.this.mRestart, 0);
                 HvacController.this.mHvacManager = (CarHvacManager) HvacController.this.mCar.getCarManager("hvac");
@@ -45,11 +48,12 @@ public class HvacController {
         public void onChangeEvent(CarPropertyValue carPropertyValue) {
             try {
                 int areaId = carPropertyValue.getAreaId();
-                List<TemperatureView> list = (List) HvacController.this.mTempComponents.get(new HvacKey(carPropertyValue.getPropertyId(), areaId));
+                List list = (List) HvacController.this.mTempComponents.get(new HvacKey(carPropertyValue.getPropertyId(), areaId));
                 if (list != null && !list.isEmpty()) {
-                    float floatValue = ((Float) carPropertyValue.getValue()).floatValue();
-                    for (TemperatureView temperatureView : list) {
-                        temperatureView.setTemp(floatValue);
+                    float fFloatValue = ((Float) carPropertyValue.getValue()).floatValue();
+                    Iterator it = list.iterator();
+                    while (it.hasNext()) {
+                        ((TemperatureView) it.next()).setTemp(fFloatValue);
                     }
                 }
             } catch (Exception e) {
@@ -66,7 +70,7 @@ public class HvacController {
         this.mContext = context;
     }
 
-    public void connectToCarService() {
+    public void connectToCarService() throws IllegalStateException {
         this.mHandler = new Handler();
         this.mCar = Car.createCar(this.mContext, this.mServiceConnection, this.mHandler);
         if (this.mCar != null) {
@@ -74,18 +78,15 @@ public class HvacController {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void destroyHvacManager() {
+    private void destroyHvacManager() {
         if (this.mHvacManager != null) {
             this.mHvacManager.unregisterCallback(this.mHardwareCallback);
             this.mHvacManager = null;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.car.hvac.HvacController$2  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass2 implements IBinder.DeathRecipient {
+    /* renamed from: com.android.systemui.statusbar.car.hvac.HvacController$2, reason: invalid class name */
+    class AnonymousClass2 implements IBinder.DeathRecipient {
         AnonymousClass2() {
         }
 
@@ -98,7 +99,7 @@ public class HvacController {
             HvacController.this.destroyHvacManager();
             HvacController.this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.car.hvac.-$$Lambda$HvacController$2$iHT8Tpg8uVwfmNfI8JJMJYOK4tk
                 @Override // java.lang.Runnable
-                public final void run() {
+                public final void run() throws IllegalStateException {
                     HvacController.this.mCar.connect();
                 }
             }, 5000L);
@@ -114,11 +115,12 @@ public class HvacController {
         initComponent(temperatureView);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void initComponents() {
-        for (Map.Entry<HvacKey, List<TemperatureView>> entry : this.mTempComponents.entrySet()) {
-            for (TemperatureView temperatureView : entry.getValue()) {
-                initComponent(temperatureView);
+    private void initComponents() {
+        Iterator<Map.Entry<HvacKey, List<TemperatureView>>> it = this.mTempComponents.entrySet().iterator();
+        while (it.hasNext()) {
+            Iterator<TemperatureView> it2 = it.next().getValue().iterator();
+            while (it2.hasNext()) {
+                initComponent(it2.next());
             }
         }
     }
@@ -142,9 +144,7 @@ public class HvacController {
         this.mTempComponents.clear();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class HvacKey {
+    private static class HvacKey {
         int mAreaId;
         int mPropertyId;
 

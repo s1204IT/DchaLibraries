@@ -5,16 +5,17 @@ import android.os.Handler;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public abstract class UsbDetailsController extends AbstractPreferenceController implements PreferenceControllerMixin {
     protected final Context mContext;
     protected final UsbDetailsFragment mFragment;
+
     @VisibleForTesting
     Handler mHandler;
     protected final UsbBackend mUsbBackend;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public abstract void refresh(boolean z, long j, int i, int i2);
+    protected abstract void refresh(boolean z, long j, int i, int i2);
 
     public UsbDetailsController(Context context, UsbDetailsFragment usbDetailsFragment, UsbBackend usbBackend) {
         super(context);

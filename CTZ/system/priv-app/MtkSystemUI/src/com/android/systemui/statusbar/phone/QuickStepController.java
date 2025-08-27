@@ -30,6 +30,7 @@ import com.android.systemui.plugins.statusbar.phone.NavGesture;
 import com.android.systemui.shared.recents.IOverviewProxy;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import com.android.systemui.shared.system.NavigationBarCompat;
+
 /* loaded from: classes.dex */
 public class QuickStepController implements NavGesture.GestureHelper {
     private boolean mAllowGestureDetection;
@@ -60,30 +61,35 @@ public class QuickStepController implements NavGesture.GestureHelper {
     private final Matrix mTransformLocalMatrix = new Matrix();
     private final ArgbEvaluator mTrackColorEvaluator = new ArgbEvaluator();
     private final FloatProperty<QuickStepController> mTrackAlphaProperty = new FloatProperty<QuickStepController>("TrackAlpha") { // from class: com.android.systemui.statusbar.phone.QuickStepController.1
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(QuickStepController quickStepController, float f) {
             QuickStepController.this.mTrackAlpha = f;
             QuickStepController.this.mNavigationBarView.invalidate();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(QuickStepController quickStepController) {
             return Float.valueOf(QuickStepController.this.mTrackAlpha);
         }
     };
     private final FloatProperty<QuickStepController> mTrackScaleProperty = new FloatProperty<QuickStepController>("TrackScale") { // from class: com.android.systemui.statusbar.phone.QuickStepController.2
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(QuickStepController quickStepController, float f) {
             QuickStepController.this.mTrackScale = f;
             QuickStepController.this.mNavigationBarView.invalidate();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(QuickStepController quickStepController) {
             return Float.valueOf(QuickStepController.this.mTrackScale);
         }
     };
     private final FloatProperty<QuickStepController> mNavBarAlphaProperty = new FloatProperty<QuickStepController>("NavBarAlpha") { // from class: com.android.systemui.statusbar.phone.QuickStepController.3
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(QuickStepController quickStepController, float f) {
             if (QuickStepController.this.mCurrentNavigationBarView != null) {
@@ -91,6 +97,7 @@ public class QuickStepController implements NavGesture.GestureHelper {
             }
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(QuickStepController quickStepController) {
             if (QuickStepController.this.mCurrentNavigationBarView != null) {
@@ -133,8 +140,8 @@ public class QuickStepController implements NavGesture.GestureHelper {
         boolean z;
         boolean z2;
         int i;
-        int i2;
-        int width;
+        int iHeight;
+        int iWidth;
         if (this.mOverviewEventSender.getProxy() == null || !(this.mNavigationBarView.isQuickScrubEnabled() || this.mNavigationBarView.isQuickStepSwipeUpEnabled())) {
             return false;
         }
@@ -170,22 +177,22 @@ public class QuickStepController implements NavGesture.GestureHelper {
                 if (!this.mQuickStepStarted && this.mAllowGestureDetection) {
                     int x2 = (int) motionEvent.getX();
                     int y2 = (int) motionEvent.getY();
-                    int abs = Math.abs(x2 - this.mTouchDownX);
-                    int abs2 = Math.abs(y2 - this.mTouchDownY);
+                    int iAbs = Math.abs(x2 - this.mTouchDownX);
+                    int iAbs2 = Math.abs(y2 - this.mTouchDownY);
                     if (this.mIsVertical) {
-                        boolean z3 = abs2 > NavigationBarCompat.getQuickScrubTouchSlopPx() && abs2 > abs;
-                        z2 = abs > NavigationBarCompat.getQuickStepTouchSlopPx() && abs > abs2;
+                        boolean z3 = iAbs2 > NavigationBarCompat.getQuickScrubTouchSlopPx() && iAbs2 > iAbs;
+                        z2 = iAbs > NavigationBarCompat.getQuickStepTouchSlopPx() && iAbs > iAbs2;
                         i = this.mTouchDownY;
-                        i2 = y2 - this.mTrackRect.top;
-                        width = this.mTrackRect.height();
+                        iHeight = y2 - this.mTrackRect.top;
+                        iWidth = this.mTrackRect.height();
                         z = z3;
                         x2 = y2;
                     } else {
-                        z = abs > NavigationBarCompat.getQuickScrubTouchSlopPx() && abs > abs2;
-                        z2 = abs2 > NavigationBarCompat.getQuickStepTouchSlopPx() && abs2 > abs;
+                        z = iAbs > NavigationBarCompat.getQuickScrubTouchSlopPx() && iAbs > iAbs2;
+                        z2 = iAbs2 > NavigationBarCompat.getQuickStepTouchSlopPx() && iAbs2 > iAbs;
                         i = this.mTouchDownX;
-                        i2 = x2 - this.mTrackRect.left;
-                        width = this.mTrackRect.width();
+                        iHeight = x2 - this.mTrackRect.left;
+                        iWidth = this.mTrackRect.width();
                     }
                     if (!this.mQuickScrubActive && z2) {
                         if (this.mNavigationBarView.isQuickStepSwipeUpEnabled()) {
@@ -194,16 +201,16 @@ public class QuickStepController implements NavGesture.GestureHelper {
                         }
                     } else if (this.mNavigationBarView.isQuickScrubEnabled()) {
                         if (!this.mDragPositive) {
-                            i2 -= this.mIsVertical ? this.mTrackRect.height() : this.mTrackRect.width();
+                            iHeight -= this.mIsVertical ? this.mTrackRect.height() : this.mTrackRect.width();
                         }
-                        boolean z4 = this.mDragPositive ? !(i2 < 0 || x2 <= i) : !(i2 >= 0 || x2 >= i);
-                        float clamp = Utilities.clamp((Math.abs(i2) * 1.0f) / width, 0.0f, 1.0f);
+                        boolean z4 = this.mDragPositive ? !(iHeight < 0 || x2 <= i) : !(iHeight >= 0 || x2 >= i);
+                        float fClamp = Utilities.clamp((Math.abs(iHeight) * 1.0f) / iWidth, 0.0f, 1.0f);
                         if (z4 && !this.mQuickScrubActive && z) {
                             startQuickScrub();
                         }
-                        if (this.mQuickScrubActive && ((this.mDragPositive && i2 >= 0) || (!this.mDragPositive && i2 <= 0))) {
+                        if (this.mQuickScrubActive && ((this.mDragPositive && iHeight >= 0) || (!this.mDragPositive && iHeight <= 0))) {
                             try {
-                                this.mOverviewEventSender.getProxy().onQuickScrubProgress(clamp);
+                                this.mOverviewEventSender.getProxy().onQuickScrubProgress(fClamp);
                                 break;
                             } catch (RemoteException e) {
                                 Log.e("QuickStepController", "Failed to send progress of quick scrub.", e);
@@ -225,8 +232,7 @@ public class QuickStepController implements NavGesture.GestureHelper {
         if (!this.mNavigationBarView.isQuickScrubEnabled()) {
             return;
         }
-        int intValue = ((Integer) this.mTrackColorEvaluator.evaluate(this.mDarkIntensity, Integer.valueOf(this.mLightTrackColor), Integer.valueOf(this.mDarkTrackColor))).intValue();
-        this.mTrackDrawable.setTint(ColorUtils.setAlphaComponent(intValue, (int) (Color.alpha(intValue) * this.mTrackAlpha)));
+        this.mTrackDrawable.setTint(ColorUtils.setAlphaComponent(((Integer) this.mTrackColorEvaluator.evaluate(this.mDarkIntensity, Integer.valueOf(this.mLightTrackColor), Integer.valueOf(this.mDarkTrackColor))).intValue(), (int) (Color.alpha(r0) * this.mTrackAlpha)));
         canvas.save();
         canvas.scale(this.mTrackScale / this.mNavigationBarView.getScaleX(), 1.0f / this.mNavigationBarView.getScaleY(), this.mTrackRect.centerX(), this.mTrackRect.centerY());
         this.mTrackDrawable.draw(canvas);
@@ -245,9 +251,10 @@ public class QuickStepController implements NavGesture.GestureHelper {
         int paddingBottom = ((i4 - i2) - this.mNavigationBarView.getPaddingBottom()) - paddingTop;
         if (this.mIsVertical) {
             int i8 = ((paddingRight - this.mTrackThickness) / 2) + paddingLeft;
+            int i9 = this.mTrackThickness + i8;
             i5 = paddingTop + this.mTrackEndPadding;
             i6 = (paddingBottom + i5) - (2 * this.mTrackEndPadding);
-            i7 = this.mTrackThickness + i8;
+            i7 = i9;
             paddingStart = i8;
         } else {
             i5 = paddingTop + ((paddingBottom - this.mTrackThickness) / 2);
@@ -265,12 +272,7 @@ public class QuickStepController implements NavGesture.GestureHelper {
         this.mNavigationBarView.invalidate();
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:21:0x002c A[Catch: RemoteException -> 0x0032, TRY_LEAVE, TryCatch #0 {RemoteException -> 0x0032, blocks: (B:12:0x0018, B:19:0x0028, B:21:0x002c), top: B:26:0x0018 }] */
-    /* JADX WARN: Removed duplicated region for block: B:29:? A[RETURN, SYNTHETIC] */
     @Override // com.android.systemui.plugins.statusbar.phone.NavGesture.GestureHelper
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public void setBarState(boolean z, boolean z2) {
         boolean z3 = false;
         if ((this.mIsVertical == z && this.mIsRTL == z2) ? false : true) {
@@ -280,17 +282,12 @@ public class QuickStepController implements NavGesture.GestureHelper {
         this.mIsRTL = z2;
         try {
             int navBarPosition = WindowManagerGlobal.getWindowManagerService().getNavBarPosition();
-            if (navBarPosition != 1 && navBarPosition != 4) {
-                this.mDragPositive = z3;
-                if (!z2) {
-                    this.mDragPositive = !this.mDragPositive;
-                    return;
-                }
-                return;
+            if (navBarPosition == 1 || navBarPosition == 4) {
+                z3 = true;
             }
-            z3 = true;
             this.mDragPositive = z3;
-            if (!z2) {
+            if (z2) {
+                this.mDragPositive = !this.mDragPositive;
             }
         } catch (RemoteException e) {
             Slog.e("QuickStepController", "Failed to get nav bar position.", e);
@@ -330,14 +327,14 @@ public class QuickStepController implements NavGesture.GestureHelper {
             this.mQuickScrubActive = true;
             this.mLightTrackColor = this.mContext.getColor(R.color.quick_step_track_background_light);
             this.mDarkTrackColor = this.mContext.getColor(R.color.quick_step_track_background_dark);
-            ObjectAnimator ofPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofFloat(this.mTrackAlphaProperty, 1.0f), PropertyValuesHolder.ofFloat(this.mTrackScaleProperty, 1.0f));
-            ofPropertyValuesHolder.setInterpolator(Interpolators.ALPHA_IN);
-            ofPropertyValuesHolder.setDuration(150L);
-            ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this, this.mNavBarAlphaProperty, 0.0f);
-            ofFloat.setInterpolator(Interpolators.ALPHA_OUT);
-            ofFloat.setDuration(134L);
+            ObjectAnimator objectAnimatorOfPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofFloat(this.mTrackAlphaProperty, 1.0f), PropertyValuesHolder.ofFloat(this.mTrackScaleProperty, 1.0f));
+            objectAnimatorOfPropertyValuesHolder.setInterpolator(Interpolators.ALPHA_IN);
+            objectAnimatorOfPropertyValuesHolder.setDuration(150L);
+            ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, this.mNavBarAlphaProperty, 0.0f);
+            objectAnimatorOfFloat.setInterpolator(Interpolators.ALPHA_OUT);
+            objectAnimatorOfFloat.setDuration(134L);
             this.mTrackAnimator = new AnimatorSet();
-            this.mTrackAnimator.playTogether(ofPropertyValuesHolder, ofFloat);
+            this.mTrackAnimator.playTogether(objectAnimatorOfPropertyValuesHolder, objectAnimatorOfFloat);
             this.mTrackAnimator.start();
             try {
                 this.mOverviewEventSender.getProxy().onQuickScrubStart();
@@ -370,25 +367,25 @@ public class QuickStepController implements NavGesture.GestureHelper {
         if (this.mTrackAnimator != null) {
             this.mTrackAnimator.cancel();
         }
-        ObjectAnimator ofPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofFloat(this.mTrackAlphaProperty, 0.0f), PropertyValuesHolder.ofFloat(this.mTrackScaleProperty, 0.95f));
-        ofPropertyValuesHolder.setInterpolator(Interpolators.ALPHA_OUT);
-        ofPropertyValuesHolder.setDuration(134L);
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this, this.mNavBarAlphaProperty, 1.0f);
-        ofFloat.setInterpolator(Interpolators.ALPHA_IN);
-        ofFloat.setDuration(150L);
+        ObjectAnimator objectAnimatorOfPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(this, PropertyValuesHolder.ofFloat(this.mTrackAlphaProperty, 0.0f), PropertyValuesHolder.ofFloat(this.mTrackScaleProperty, 0.95f));
+        objectAnimatorOfPropertyValuesHolder.setInterpolator(Interpolators.ALPHA_OUT);
+        objectAnimatorOfPropertyValuesHolder.setDuration(134L);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, this.mNavBarAlphaProperty, 1.0f);
+        objectAnimatorOfFloat.setInterpolator(Interpolators.ALPHA_IN);
+        objectAnimatorOfFloat.setDuration(150L);
         this.mTrackAnimator = new AnimatorSet();
-        this.mTrackAnimator.playTogether(ofPropertyValuesHolder, ofFloat);
+        this.mTrackAnimator.playTogether(objectAnimatorOfPropertyValuesHolder, objectAnimatorOfFloat);
         this.mTrackAnimator.addListener(this.mQuickScrubEndListener);
         this.mTrackAnimator.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resetQuickScrub() {
+    private void resetQuickScrub() {
         this.mQuickScrubActive = false;
         this.mAllowGestureDetection = false;
         this.mCurrentNavigationBarView = null;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [503=4] */
     private boolean proxyMotionEvents(MotionEvent motionEvent) {
         IOverviewProxy proxy = this.mOverviewEventSender.getProxy();
         motionEvent.transform(this.mTransformGlobalMatrix);

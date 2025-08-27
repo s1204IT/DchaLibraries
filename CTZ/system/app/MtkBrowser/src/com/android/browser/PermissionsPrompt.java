@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import java.util.Enumeration;
 import java.util.Vector;
+
 /* loaded from: classes.dex */
 public class PermissionsPrompt extends RelativeLayout {
     private Button mAllowButton;
@@ -73,11 +74,11 @@ public class PermissionsPrompt extends RelativeLayout {
         if (vector.isEmpty()) {
             return;
         }
-        Enumeration elements = vector.elements();
-        StringBuilder sb = new StringBuilder((String) elements.nextElement());
-        if (elements.hasMoreElements()) {
+        Enumeration enumerationElements = vector.elements();
+        StringBuilder sb = new StringBuilder((String) enumerationElements.nextElement());
+        if (enumerationElements.hasMoreElements()) {
             sb.append(", ");
-            sb.append((String) elements.nextElement());
+            sb.append((String) enumerationElements.nextElement());
         }
         this.mMessage.setText(String.format(getResources().getString(R.string.permissions_prompt_message), this.mRequest.getOrigin(), sb.toString()));
     }
@@ -86,8 +87,7 @@ public class PermissionsPrompt extends RelativeLayout {
         setVisibility(8);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleButtonClick(boolean z) {
+    private void handleButtonClick(boolean z) {
         hide();
         if (z) {
             this.mRequest.grant(this.mRequest.getResources());

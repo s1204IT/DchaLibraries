@@ -50,6 +50,7 @@ import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IWifiSettingsExt;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WifiSettings extends RestrictedSettingsFragment implements Indexable, WifiDialog.WifiDialogListener, AccessPoint.AccessPointListener, WifiTracker.WifiListener {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.wifi.WifiSettings.5
@@ -115,13 +116,13 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         this.mUpdateAccessPointsRunnable = new Runnable() { // from class: com.android.settings.wifi.-$$Lambda$WifiSettings$Dc8tARLt9797q5fiCWMG56ysJZ4
             @Override // java.lang.Runnable
             public final void run() {
-                WifiSettings.this.updateAccessPointPreferences();
+                this.f$0.updateAccessPointPreferences();
             }
         };
         this.mHideProgressBarRunnable = new Runnable() { // from class: com.android.settings.wifi.-$$Lambda$WifiSettings$ojra5gZ2Zt1OL2cVDalsbhFOQY0
             @Override // java.lang.Runnable
             public final void run() {
-                WifiSettings.this.setProgressBarVisible(false);
+                this.f$0.setProgressBarVisible(false);
             }
         };
     }
@@ -185,7 +186,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
             public void onFailure(int i) {
                 Activity activity = WifiSettings.this.getActivity();
                 if (activity != null) {
-                    Toast.makeText(activity, (int) R.string.wifi_failed_connect_message, 0).show();
+                    Toast.makeText(activity, R.string.wifi_failed_connect_message, 0).show();
                 }
             }
         };
@@ -196,7 +197,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
             public void onFailure(int i) {
                 Activity activity = WifiSettings.this.getActivity();
                 if (activity != null) {
-                    Toast.makeText(activity, (int) R.string.wifi_failed_save_message, 0).show();
+                    Toast.makeText(activity, R.string.wifi_failed_save_message, 0).show();
                 }
             }
         };
@@ -207,7 +208,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
             public void onFailure(int i) {
                 Activity activity = WifiSettings.this.getActivity();
                 if (activity != null) {
-                    Toast.makeText(activity, (int) R.string.wifi_failed_forget_message, 0).show();
+                    Toast.makeText(activity, R.string.wifi_failed_forget_message, 0).show();
                 }
             }
         };
@@ -359,12 +360,12 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         }
         switch (menuItem.getItemId()) {
             case 7:
-                boolean isSaved = this.mSelectedAccessPoint.isSaved();
-                if (isSaved) {
-                    connect(this.mSelectedAccessPoint.getConfig(), isSaved);
+                boolean zIsSaved = this.mSelectedAccessPoint.isSaved();
+                if (zIsSaved) {
+                    connect(this.mSelectedAccessPoint.getConfig(), zIsSaved);
                 } else if (this.mSelectedAccessPoint.getSecurity() == 0) {
                     this.mSelectedAccessPoint.generateOpenNetworkConfig();
-                    connect(this.mSelectedAccessPoint.getConfig(), isSaved);
+                    connect(this.mSelectedAccessPoint.getConfig(), zIsSaved);
                 } else {
                     showDialog(this.mSelectedAccessPoint, 1);
                 }
@@ -375,7 +376,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
             case 9:
                 showDialog(this.mSelectedAccessPoint, 2);
                 return true;
-            case 10:
+            case AccessPoint.Speed.MODERATE /* 10 */:
                 showDialog(6);
                 return true;
             default:
@@ -391,35 +392,33 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         if (preference.getFragment() != null) {
             preference.setOnPreferenceClickListener(null);
             return super.onPreferenceTreeClick(preference);
-        } else if (this.mWifiSettingsExt.customRefreshButtonClick(preference)) {
-            return true;
-        } else {
-            if (preference instanceof LongPressAccessPointPreference) {
-                this.mSelectedAccessPoint = ((LongPressAccessPointPreference) preference).getAccessPoint();
-                if (this.mSelectedAccessPoint == null) {
-                    return false;
-                }
-                if (this.mSelectedAccessPoint.isActive()) {
-                    return super.onPreferenceTreeClick(preference);
-                }
-                WifiConfiguration config = this.mSelectedAccessPoint.getConfig();
-                if (this.mSelectedAccessPoint.getSecurity() == 0) {
-                    this.mSelectedAccessPoint.generateOpenNetworkConfig();
-                    connect(this.mSelectedAccessPoint.getConfig(), this.mSelectedAccessPoint.isSaved());
-                } else if (this.mSelectedAccessPoint.isSaved() && config != null && config.getNetworkSelectionStatus() != null && config.getNetworkSelectionStatus().getHasEverConnected()) {
-                    connect(config, true);
-                } else if (this.mSelectedAccessPoint.isPasspoint()) {
-                    connect(config, true);
-                } else {
-                    showDialog(this.mSelectedAccessPoint, 1);
-                }
-            } else if (preference == this.mAddPreference) {
-                onAddNetworkPressed();
-            } else {
-                return super.onPreferenceTreeClick(preference);
-            }
+        }
+        if (this.mWifiSettingsExt.customRefreshButtonClick(preference)) {
             return true;
         }
+        if (preference instanceof LongPressAccessPointPreference) {
+            this.mSelectedAccessPoint = ((LongPressAccessPointPreference) preference).getAccessPoint();
+            if (this.mSelectedAccessPoint == null) {
+                return false;
+            }
+            if (this.mSelectedAccessPoint.isActive()) {
+                return super.onPreferenceTreeClick(preference);
+            }
+            WifiConfiguration config = this.mSelectedAccessPoint.getConfig();
+            if (this.mSelectedAccessPoint.getSecurity() == 0) {
+                this.mSelectedAccessPoint.generateOpenNetworkConfig();
+                connect(this.mSelectedAccessPoint.getConfig(), this.mSelectedAccessPoint.isSaved());
+            } else if ((this.mSelectedAccessPoint.isSaved() && config != null && config.getNetworkSelectionStatus() != null && config.getNetworkSelectionStatus().getHasEverConnected()) || this.mSelectedAccessPoint.isPasspoint()) {
+                connect(config, true);
+            } else {
+                showDialog(this.mSelectedAccessPoint, 1);
+            }
+        } else if (preference == this.mAddPreference) {
+            onAddNetworkPressed();
+        } else {
+            return super.onPreferenceTreeClick(preference);
+        }
+        return true;
     }
 
     private void showDialog(AccessPoint accessPoint, int i) {
@@ -467,13 +466,13 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.DialogCreatable
     public int getDialogMetricsCategory(int i) {
-        if (i != 1) {
-            if (i == 6) {
-                return 606;
-            }
-            return 0;
+        if (i == 1) {
+            return 603;
         }
-        return 603;
+        if (i == 6) {
+            return 606;
+        }
+        return 0;
     }
 
     @Override // com.android.settingslib.wifi.WifiTracker.WifiListener
@@ -497,7 +496,6 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
     @Override // com.android.settingslib.wifi.WifiTracker.WifiListener
     public void onWifiStateChanged(int i) {
         if (this.mIsRestricted) {
-            return;
         }
         switch (this.mWifiManager.getWifiState()) {
             case 0:
@@ -505,25 +503,23 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
                 this.mAccessPointsPreferenceCategory.removeAll();
                 this.mWifiSettingsExt.emptyCategory(getPreferenceScreen());
                 addMessagePreference(R.string.wifi_stopping);
-                return;
+                break;
             case 1:
                 this.mWifiSettingsExt.emptyCategory(getPreferenceScreen());
                 setOffMessage();
                 setAdditionalSettingsSummaries();
                 setProgressBarVisible(false);
-                return;
+                break;
             case 2:
                 removeConnectedAccessPointPreference();
                 this.mAccessPointsPreferenceCategory.removeAll();
                 addMessagePreference(R.string.wifi_starting);
                 this.mWifiSettingsExt.emptyCategory(getPreferenceScreen());
                 setProgressBarVisible(true);
-                return;
+                break;
             case 3:
                 updateAccessPointPreferences();
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -539,18 +535,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         return (config == null || (networkSelectionStatus = config.getNetworkSelectionStatus()) == null || networkSelectionStatus.isNetworkEnabled() || 13 != networkSelectionStatus.getNetworkSelectionDisableReason()) ? false : true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Type inference failed for: r0v6, types: [android.support.v7.preference.Preference] */
-    /* JADX WARN: Type inference failed for: r0v9, types: [android.support.v7.preference.Preference] */
-    /* JADX WARN: Type inference failed for: r11v0, types: [com.android.settings.wifi.WifiSettings, com.android.settingslib.wifi.AccessPoint$AccessPointListener] */
-    /* JADX WARN: Type inference failed for: r1v10 */
-    /* JADX WARN: Type inference failed for: r1v5, types: [int] */
-    /* JADX WARN: Type inference failed for: r1v8, types: [com.mediatek.settings.ext.IWifiSettingsExt] */
-    /* JADX WARN: Type inference failed for: r4v6, types: [com.mediatek.settings.ext.IWifiSettingsExt] */
-    /* JADX WARN: Type inference failed for: r7v3, types: [com.android.settings.wifi.LongPressAccessPointPreference] */
-    /* JADX WARN: Type inference failed for: r7v4, types: [android.support.v7.preference.Preference, com.android.settings.wifi.LongPressAccessPointPreference] */
-    public void updateAccessPointPreferences() {
+    private void updateAccessPointPreferences() {
         if (!this.mWifiManager.isWifiEnabled()) {
             return;
         }
@@ -561,28 +546,28 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         }
         this.mAccessPointsPreferenceCategory.removePreference(this.mStatusMessagePreference);
         cacheRemoveAllPrefs(this.mAccessPointsPreferenceCategory);
-        boolean configureConnectedAccessPointPreferenceCategory = configureConnectedAccessPointPreferenceCategory(accessPoints);
+        boolean zConfigureConnectedAccessPointPreferenceCategory = configureConnectedAccessPointPreferenceCategory(accessPoints);
         int size = accessPoints.size();
         boolean z = false;
-        int i = configureConnectedAccessPointPreferenceCategory;
+        int i = zConfigureConnectedAccessPointPreferenceCategory;
         while (i < size) {
             AccessPoint accessPoint = accessPoints.get(i);
             if (accessPoint.isReachable()) {
                 String key = accessPoint.getKey();
-                ?? r7 = (LongPressAccessPointPreference) getCachedPreference(key);
-                if (r7 != 0) {
-                    r7.setOrder(i);
+                LongPressAccessPointPreference longPressAccessPointPreference = (LongPressAccessPointPreference) getCachedPreference(key);
+                if (longPressAccessPointPreference != null) {
+                    longPressAccessPointPreference.setOrder(i);
                 } else {
-                    ?? createLongPressAccessPointPreference = createLongPressAccessPointPreference(accessPoint);
-                    createLongPressAccessPointPreference.setKey(key);
-                    createLongPressAccessPointPreference.setOrder(i);
+                    LongPressAccessPointPreference longPressAccessPointPreferenceCreateLongPressAccessPointPreference = createLongPressAccessPointPreference(accessPoint);
+                    longPressAccessPointPreferenceCreateLongPressAccessPointPreference.setKey(key);
+                    longPressAccessPointPreferenceCreateLongPressAccessPointPreference.setOrder(i);
                     if (this.mOpenSsid != null && this.mOpenSsid.equals(accessPoint.getSsidStr()) && accessPoint.getSecurity() != 0 && (!accessPoint.isSaved() || isDisabledByWrongPassword(accessPoint))) {
-                        onPreferenceTreeClick(createLongPressAccessPointPreference);
+                        onPreferenceTreeClick(longPressAccessPointPreferenceCreateLongPressAccessPointPreference);
                         this.mOpenSsid = null;
                     }
-                    this.mWifiSettingsExt.addPreference(getPreferenceScreen(), this.mAccessPointsPreferenceCategory, createLongPressAccessPointPreference, accessPoint.getConfig() != null);
+                    this.mWifiSettingsExt.addPreference(getPreferenceScreen(), this.mAccessPointsPreferenceCategory, longPressAccessPointPreferenceCreateLongPressAccessPointPreference, accessPoint.getConfig() != null);
                     accessPoint.setListener(this);
-                    createLongPressAccessPointPreference.refresh();
+                    longPressAccessPointPreferenceCreateLongPressAccessPointPreference.refresh();
                 }
                 z = true;
             }
@@ -594,7 +579,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         setAdditionalSettingsSummaries();
         if (!z) {
             setProgressBarVisible(true);
-            ?? preference = new Preference(getPrefContext());
+            Preference preference = new Preference(getPrefContext());
             preference.setSelectable(false);
             preference.setSummary(R.string.wifi_empty_list_wifi_on);
             preference.setOrder(i);
@@ -625,39 +610,39 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         if (!accessPoint.isActive()) {
             removeConnectedAccessPointPreference();
             return false;
-        } else if (this.mConnectedAccessPointPreferenceCategory.getPreferenceCount() == 0) {
+        }
+        if (this.mConnectedAccessPointPreferenceCategory.getPreferenceCount() == 0) {
             addConnectedAccessPointPreference(accessPoint);
             return true;
-        } else {
-            ConnectedAccessPointPreference connectedAccessPointPreference = (ConnectedAccessPointPreference) this.mConnectedAccessPointPreferenceCategory.getPreference(0);
-            if (connectedAccessPointPreference.getAccessPoint() != accessPoint) {
-                removeConnectedAccessPointPreference();
-                addConnectedAccessPointPreference(accessPoint);
-                return true;
-            }
-            connectedAccessPointPreference.refresh();
-            registerCaptivePortalNetworkCallback(getCurrentWifiNetwork(), connectedAccessPointPreference);
+        }
+        ConnectedAccessPointPreference connectedAccessPointPreference = (ConnectedAccessPointPreference) this.mConnectedAccessPointPreferenceCategory.getPreference(0);
+        if (connectedAccessPointPreference.getAccessPoint() != accessPoint) {
+            removeConnectedAccessPointPreference();
+            addConnectedAccessPointPreference(accessPoint);
             return true;
         }
+        connectedAccessPointPreference.refresh();
+        registerCaptivePortalNetworkCallback(getCurrentWifiNetwork(), connectedAccessPointPreference);
+        return true;
     }
 
     private void addConnectedAccessPointPreference(AccessPoint accessPoint) {
-        final ConnectedAccessPointPreference createConnectedAccessPointPreference = createConnectedAccessPointPreference(accessPoint);
-        registerCaptivePortalNetworkCallback(getCurrentWifiNetwork(), createConnectedAccessPointPreference);
-        createConnectedAccessPointPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.wifi.-$$Lambda$WifiSettings$xBxQqI4PVRSANGJ1NAFPK4yzyyw
+        final ConnectedAccessPointPreference connectedAccessPointPreferenceCreateConnectedAccessPointPreference = createConnectedAccessPointPreference(accessPoint);
+        registerCaptivePortalNetworkCallback(getCurrentWifiNetwork(), connectedAccessPointPreferenceCreateConnectedAccessPointPreference);
+        connectedAccessPointPreferenceCreateConnectedAccessPointPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.wifi.-$$Lambda$WifiSettings$xBxQqI4PVRSANGJ1NAFPK4yzyyw
             @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
             public final boolean onPreferenceClick(Preference preference) {
-                return WifiSettings.lambda$addConnectedAccessPointPreference$2(WifiSettings.this, createConnectedAccessPointPreference, preference);
+                return WifiSettings.lambda$addConnectedAccessPointPreference$2(this.f$0, connectedAccessPointPreferenceCreateConnectedAccessPointPreference, preference);
             }
         });
-        createConnectedAccessPointPreference.setOnGearClickListener(new ConnectedAccessPointPreference.OnGearClickListener() { // from class: com.android.settings.wifi.-$$Lambda$WifiSettings$gxNoP_iqTz6xulv3o7cQv7agDKI
+        connectedAccessPointPreferenceCreateConnectedAccessPointPreference.setOnGearClickListener(new ConnectedAccessPointPreference.OnGearClickListener() { // from class: com.android.settings.wifi.-$$Lambda$WifiSettings$gxNoP_iqTz6xulv3o7cQv7agDKI
             @Override // com.android.settings.wifi.ConnectedAccessPointPreference.OnGearClickListener
             public final void onGearClick(ConnectedAccessPointPreference connectedAccessPointPreference) {
-                WifiSettings.lambda$addConnectedAccessPointPreference$3(WifiSettings.this, createConnectedAccessPointPreference, connectedAccessPointPreference);
+                WifiSettings.lambda$addConnectedAccessPointPreference$3(this.f$0, connectedAccessPointPreferenceCreateConnectedAccessPointPreference, connectedAccessPointPreference);
             }
         });
-        createConnectedAccessPointPreference.refresh();
-        this.mConnectedAccessPointPreferenceCategory.addPreference(createConnectedAccessPointPreference);
+        connectedAccessPointPreferenceCreateConnectedAccessPointPreference.refresh();
+        this.mConnectedAccessPointPreferenceCategory.addPreference(connectedAccessPointPreferenceCreateConnectedAccessPointPreference);
         this.mConnectedAccessPointPreferenceCategory.setVisible(true);
         if (this.mClickedConnect) {
             this.mClickedConnect = false;
@@ -683,8 +668,10 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
     private void registerCaptivePortalNetworkCallback(Network network, ConnectedAccessPointPreference connectedAccessPointPreference) {
         if (network == null || connectedAccessPointPreference == null) {
             Log.w("WifiSettings", "Network or Preference were null when registering callback.");
-        } else if (this.mCaptivePortalNetworkCallback != null && this.mCaptivePortalNetworkCallback.isSameNetworkAndPreference(network, connectedAccessPointPreference)) {
         } else {
+            if (this.mCaptivePortalNetworkCallback != null && this.mCaptivePortalNetworkCallback.isSameNetworkAndPreference(network, connectedAccessPointPreference)) {
+                return;
+            }
             unregisterCaptivePortalNetworkCallback();
             this.mCaptivePortalNetworkCallback = new CaptivePortalNetworkCallback(network, connectedAccessPointPreference);
             this.mConnectivityManager.registerNetworkCallback(new NetworkRequest.Builder().clearCapabilities().addTransportType(1).build(), this.mCaptivePortalNetworkCallback, new Handler(Looper.getMainLooper()));
@@ -734,9 +721,9 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         if (numSavedNetworks > 0) {
             this.mAdditionalSettingsPreferenceCategory.addPreference(this.mSavedNetworksPreference);
             this.mSavedNetworksPreference.setSummary(getResources().getQuantityString(R.plurals.wifi_saved_access_points_summary, numSavedNetworks, Integer.valueOf(numSavedNetworks)));
-            return;
+        } else {
+            this.mAdditionalSettingsPreferenceCategory.removePreference(this.mSavedNetworksPreference);
         }
-        this.mAdditionalSettingsPreferenceCategory.removePreference(this.mSavedNetworksPreference);
     }
 
     private boolean isWifiWakeupEnabled() {
@@ -749,7 +736,8 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         this.mStatusMessagePreference.setText(getText(R.string.wifi_empty_list_wifi_off), Settings.Global.getInt(getActivity().getContentResolver(), "wifi_scan_always_enabled", 0) == 1 ? getText(R.string.wifi_scan_notify_text) : getText(R.string.wifi_scan_notify_text_scanning_off), new LinkifyUtils.OnClickListener() { // from class: com.android.settings.wifi.-$$Lambda$WifiSettings$G0-vWzmi3g45SjhkhuPVMzYpO5w
             @Override // com.android.settings.LinkifyUtils.OnClickListener
             public final void onClick() {
-                new SubSettingLauncher(r0.getContext()).setDestination(ScanningSettings.class.getName()).setTitle(R.string.location_scanning_screen_title).setSourceMetricsCategory(WifiSettings.this.getMetricsCategory()).launch();
+                WifiSettings wifiSettings = this.f$0;
+                new SubSettingLauncher(wifiSettings.getContext()).setDestination(ScanningSettings.class.getName()).setTitle(R.string.location_scanning_screen_title).setSourceMetricsCategory(wifiSettings.getMetricsCategory()).launch();
             }
         });
         removeConnectedAccessPointPreference();
@@ -764,8 +752,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         this.mWifiSettingsExt.addPreference(getPreferenceScreen(), this.mAccessPointsPreferenceCategory, this.mStatusMessagePreference, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setProgressBarVisible(boolean z) {
+    protected void setProgressBarVisible(boolean z) {
         if (this.mProgressHeader != null) {
             this.mProgressHeader.setVisibility(z ? 0 : 8);
         }
@@ -864,7 +851,6 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         ((AccessPointPreference) accessPoint.getTag()).onLevelChanged();
     }
 
-    /* loaded from: classes.dex */
     private static class SummaryProvider implements SummaryLoader.SummaryProvider, SummaryUpdater.OnSummaryChangeListener {
         private final Context mContext;
         WifiSummaryUpdater mSummaryHelper;

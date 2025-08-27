@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.mediatek.settings.FeatureOption;
+
 /* loaded from: classes.dex */
 public class AodPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     public AodPreferenceController(Context context) {

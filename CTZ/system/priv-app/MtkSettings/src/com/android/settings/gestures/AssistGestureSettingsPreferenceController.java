@@ -10,6 +10,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.search.DatabaseIndexingUtils;
 import com.android.settings.search.InlineSwitchPayload;
 import com.android.settings.search.ResultPayload;
+
 /* loaded from: classes.dex */
 public class AssistGestureSettingsPreferenceController extends GesturePreferenceController {
     private static final int OFF = 0;
@@ -18,6 +19,7 @@ public class AssistGestureSettingsPreferenceController extends GesturePreference
     private static final String SECURE_KEY_ASSIST = "assist_gesture_enabled";
     private static final String SECURE_KEY_SILENCE = "assist_gesture_silence_alerts_enabled";
     private final String mAssistGesturePrefKey;
+
     @VisibleForTesting
     boolean mAssistOnly;
     private final AssistGestureFeatureProvider mFeatureProvider;

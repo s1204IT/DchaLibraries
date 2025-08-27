@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.RemoteException;
+
 /* loaded from: classes.dex */
 public class PackageManagerAdapter {
     private IPackageManager mIPackageManager = AppGlobals.getPackageManager();

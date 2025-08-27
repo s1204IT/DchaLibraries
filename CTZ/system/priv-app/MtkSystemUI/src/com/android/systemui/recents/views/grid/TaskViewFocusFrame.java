@@ -8,6 +8,7 @@ import android.view.ViewTreeObserver;
 import com.android.systemui.R;
 import com.android.systemui.recents.views.TaskStackView;
 import com.android.systemui.shared.recents.model.TaskStack;
+
 /* loaded from: classes.dex */
 public class TaskViewFocusFrame extends View implements ViewTreeObserver.OnGlobalFocusChangeListener {
     private TaskStackView mSv;
@@ -60,11 +61,10 @@ public class TaskViewFocusFrame extends View implements ViewTreeObserver.OnGloba
     public void moveGridTaskViewFocus(View view) {
         if (this.mSv.useGridLayout()) {
             if (view instanceof GridTaskView) {
-                int[] iArr = new int[2];
-                view.getLocationInWindow(iArr);
+                view.getLocationInWindow(new int[2]);
                 int focusFrameThickness = this.mTaskGridLayoutAlgorithm.getFocusFrameThickness();
-                setTranslationX(iArr[0] - focusFrameThickness);
-                setTranslationY(iArr[1] - focusFrameThickness);
+                setTranslationX(r0[0] - focusFrameThickness);
+                setTranslationY(r0[1] - focusFrameThickness);
                 show();
                 return;
             }
@@ -82,8 +82,8 @@ public class TaskViewFocusFrame extends View implements ViewTreeObserver.OnGloba
         } else if (view == null) {
             TaskStack stack = this.mSv.getStack();
             int taskCount = stack.getTaskCount();
-            int indexOfTask = stack.indexOfTask(this.mSv.getFocusedTask());
-            this.mSv.setFocusedTask(indexOfTask == -1 ? taskCount - 1 : indexOfTask % taskCount, false, true);
+            int iIndexOfTask = stack.indexOfTask(this.mSv.getFocusedTask());
+            this.mSv.setFocusedTask(iIndexOfTask == -1 ? taskCount - 1 : iIndexOfTask % taskCount, false, true);
         }
     }
 

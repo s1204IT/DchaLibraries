@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
     static final double VALUE_SET_LOAD_FACTOR = 1.0d;
@@ -21,9 +22,7 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
     private transient ValueEntry<K, V> multimapHeaderEntry;
     transient int valueSetCapacity;
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public interface ValueSetLink<K, V> {
+    private interface ValueSetLink<K, V> {
         ValueSetLink<K, V> getPredecessorInValueSet();
 
         ValueSetLink<K, V> getSuccessorInValueSet();
@@ -73,31 +72,25 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
         return super.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static <K, V> void succeedsInValueSet(ValueSetLink<K, V> valueSetLink, ValueSetLink<K, V> valueSetLink2) {
+    private static <K, V> void succeedsInValueSet(ValueSetLink<K, V> valueSetLink, ValueSetLink<K, V> valueSetLink2) {
         valueSetLink.setSuccessorInValueSet(valueSetLink2);
         valueSetLink2.setPredecessorInValueSet(valueSetLink);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static <K, V> void succeedsInMultimap(ValueEntry<K, V> valueEntry, ValueEntry<K, V> valueEntry2) {
+    private static <K, V> void succeedsInMultimap(ValueEntry<K, V> valueEntry, ValueEntry<K, V> valueEntry2) {
         valueEntry.setSuccessorInMultimap(valueEntry2);
         valueEntry2.setPredecessorInMultimap(valueEntry);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static <K, V> void deleteFromValueSet(ValueSetLink<K, V> valueSetLink) {
+    private static <K, V> void deleteFromValueSet(ValueSetLink<K, V> valueSetLink) {
         succeedsInValueSet(valueSetLink.getPredecessorInValueSet(), valueSetLink.getSuccessorInValueSet());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static <K, V> void deleteFromMultimap(ValueEntry<K, V> valueEntry) {
+    private static <K, V> void deleteFromMultimap(ValueEntry<K, V> valueEntry) {
         succeedsInMultimap(valueEntry.getPredecessorInMultimap(), valueEntry.getSuccessorInMultimap());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static final class ValueEntry<K, V> extends ImmutableEntry<K, V> implements ValueSetLink<K, V> {
+    static final class ValueEntry<K, V> extends ImmutableEntry<K, V> implements ValueSetLink<K, V> {
         ValueEntry<K, V> nextInValueBucket;
         ValueEntry<K, V> predecessorInMultimap;
         ValueSetLink<K, V> predecessorInValueSet;
@@ -152,9 +145,9 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
+    /* JADX DEBUG: Method merged with bridge method: createCollection()Ljava/util/Collection; */
     @Override // com.google.common.collect.AbstractSetMultimap, com.google.common.collect.AbstractMapBasedMultimap
-    public Set<V> createCollection() {
+    Set<V> createCollection() {
         return new LinkedHashSet(this.valueSetCapacity);
     }
 
@@ -163,14 +156,13 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
         return new ValueSet(k, this.valueSetCapacity);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: entries()Ljava/util/Collection; */
     @Override // com.google.common.collect.AbstractSetMultimap, com.google.common.collect.AbstractMapBasedMultimap, com.google.common.collect.AbstractMultimap
     public Set<Map.Entry<K, V>> entries() {
         return super.entries();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public final class ValueSet extends Sets.ImprovedAbstractSet<V> implements ValueSetLink<K, V> {
+    final class ValueSet extends Sets.ImprovedAbstractSet<V> implements ValueSetLink<K, V> {
         ValueEntry<K, V>[] hashTable;
         private final K key;
         private int size = 0;
@@ -261,9 +253,9 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
 
         @Override // java.util.AbstractCollection, java.util.Collection, java.util.Set
         public boolean contains(Object obj) {
-            int smearedHash = Hashing.smearedHash(obj);
-            for (ValueEntry<K, V> valueEntry = this.hashTable[mask() & smearedHash]; valueEntry != null; valueEntry = valueEntry.nextInValueBucket) {
-                if (valueEntry.matchesValue(obj, smearedHash)) {
+            int iSmearedHash = Hashing.smearedHash(obj);
+            for (ValueEntry<K, V> valueEntry = this.hashTable[mask() & iSmearedHash]; valueEntry != null; valueEntry = valueEntry.nextInValueBucket) {
+                if (valueEntry.matchesValue(obj, iSmearedHash)) {
                     return true;
                 }
             }
@@ -272,34 +264,33 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
 
         @Override // java.util.AbstractCollection, java.util.Collection, java.util.Set
         public boolean add(V v) {
-            int smearedHash = Hashing.smearedHash(v);
-            int mask = mask() & smearedHash;
-            ValueEntry<K, V> valueEntry = this.hashTable[mask];
+            int iSmearedHash = Hashing.smearedHash(v);
+            int iMask = mask() & iSmearedHash;
+            ValueEntry<K, V> valueEntry = this.hashTable[iMask];
             for (ValueEntry<K, V> valueEntry2 = valueEntry; valueEntry2 != null; valueEntry2 = valueEntry2.nextInValueBucket) {
-                if (valueEntry2.matchesValue(v, smearedHash)) {
+                if (valueEntry2.matchesValue(v, iSmearedHash)) {
                     return false;
                 }
             }
-            ValueEntry<K, V> valueEntry3 = new ValueEntry<>(this.key, v, smearedHash, valueEntry);
+            ValueEntry<K, V> valueEntry3 = new ValueEntry<>(this.key, v, iSmearedHash, valueEntry);
             LinkedHashMultimap.succeedsInValueSet(this.lastEntry, valueEntry3);
             LinkedHashMultimap.succeedsInValueSet(valueEntry3, this);
             LinkedHashMultimap.succeedsInMultimap(LinkedHashMultimap.this.multimapHeaderEntry.getPredecessorInMultimap(), valueEntry3);
             LinkedHashMultimap.succeedsInMultimap(valueEntry3, LinkedHashMultimap.this.multimapHeaderEntry);
-            this.hashTable[mask] = valueEntry3;
+            this.hashTable[iMask] = valueEntry3;
             this.size++;
             this.modCount++;
             rehashIfNecessary();
             return true;
         }
 
-        /* JADX WARN: Multi-variable type inference failed */
         private void rehashIfNecessary() {
             if (Hashing.needsResizing(this.size, this.hashTable.length, LinkedHashMultimap.VALUE_SET_LOAD_FACTOR)) {
                 ValueEntry<K, V>[] valueEntryArr = new ValueEntry[this.hashTable.length * 2];
                 this.hashTable = valueEntryArr;
                 int length = valueEntryArr.length - 1;
-                for (ValueSetLink valueSetLink = (ValueSetLink<K, V>) this.firstEntry; valueSetLink != this; valueSetLink = (ValueSetLink<K, V>) valueSetLink.getSuccessorInValueSet()) {
-                    ValueEntry<K, V> valueEntry = (ValueEntry) valueSetLink;
+                for (ValueSetLink<K, V> successorInValueSet = this.firstEntry; successorInValueSet != this; successorInValueSet = successorInValueSet.getSuccessorInValueSet()) {
+                    ValueEntry<K, V> valueEntry = (ValueEntry) successorInValueSet;
                     int i = valueEntry.smearedValueHash & length;
                     valueEntry.nextInValueBucket = valueEntryArr[i];
                     valueEntryArr[i] = valueEntry;
@@ -309,19 +300,19 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
 
         @Override // java.util.AbstractCollection, java.util.Collection, java.util.Set
         public boolean remove(Object obj) {
-            int smearedHash = Hashing.smearedHash(obj);
-            int mask = mask() & smearedHash;
-            ValueEntry<K, V> valueEntry = this.hashTable[mask];
+            int iSmearedHash = Hashing.smearedHash(obj);
+            int iMask = mask() & iSmearedHash;
+            ValueEntry<K, V> valueEntry = this.hashTable[iMask];
             ValueEntry<K, V> valueEntry2 = null;
             while (true) {
                 ValueEntry<K, V> valueEntry3 = valueEntry2;
                 valueEntry2 = valueEntry;
                 if (valueEntry2 != null) {
-                    if (!valueEntry2.matchesValue(obj, smearedHash)) {
+                    if (!valueEntry2.matchesValue(obj, iSmearedHash)) {
                         valueEntry = valueEntry2.nextInValueBucket;
                     } else {
                         if (valueEntry3 == null) {
-                            this.hashTable[mask] = valueEntry2.nextInValueBucket;
+                            this.hashTable[iMask] = valueEntry2.nextInValueBucket;
                         } else {
                             valueEntry3.nextInValueBucket = valueEntry2.nextInValueBucket;
                         }
@@ -341,8 +332,8 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
         public void clear() {
             Arrays.fill(this.hashTable, (Object) null);
             this.size = 0;
-            for (ValueSetLink<K, V> valueSetLink = this.firstEntry; valueSetLink != this; valueSetLink = valueSetLink.getSuccessorInValueSet()) {
-                LinkedHashMultimap.deleteFromMultimap((ValueEntry) valueSetLink);
+            for (ValueSetLink<K, V> successorInValueSet = this.firstEntry; successorInValueSet != this; successorInValueSet = successorInValueSet.getSuccessorInValueSet()) {
+                LinkedHashMultimap.deleteFromMultimap((ValueEntry) successorInValueSet);
             }
             LinkedHashMultimap.succeedsInValueSet(this, this);
             this.modCount++;
@@ -364,6 +355,7 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
                 return this.nextEntry != LinkedHashMultimap.this.multimapHeaderEntry;
             }
 
+            /* JADX DEBUG: Method merged with bridge method: next()Ljava/lang/Object; */
             @Override // java.util.Iterator
             public Map.Entry<K, V> next() {
                 if (!hasNext()) {
@@ -394,8 +386,9 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
         objectOutputStream.defaultWriteObject();
         objectOutputStream.writeInt(this.valueSetCapacity);
         objectOutputStream.writeInt(keySet().size());
-        for (Object obj : keySet()) {
-            objectOutputStream.writeObject(obj);
+        Iterator it = keySet().iterator();
+        while (it.hasNext()) {
+            objectOutputStream.writeObject(it.next());
         }
         objectOutputStream.writeInt(size());
         for (Map.Entry<K, V> entry : entries()) {
@@ -404,20 +397,22 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r2v2, resolved type: java.util.LinkedHashMap */
+    /* JADX DEBUG: Multi-variable search result rejected for r6v0, resolved type: com.google.common.collect.LinkedHashMultimap<K, V> */
     /* JADX WARN: Multi-variable type inference failed */
-    private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream objectInputStream) throws ClassNotFoundException, IOException {
         objectInputStream.defaultReadObject();
         this.multimapHeaderEntry = new ValueEntry<>(null, null, 0, null);
         succeedsInMultimap(this.multimapHeaderEntry, this.multimapHeaderEntry);
         this.valueSetCapacity = objectInputStream.readInt();
-        int readInt = objectInputStream.readInt();
-        LinkedHashMap linkedHashMap = new LinkedHashMap(Maps.capacity(readInt));
-        for (int i = 0; i < readInt; i++) {
-            Object readObject = objectInputStream.readObject();
-            linkedHashMap.put(readObject, createCollection(readObject));
+        int i = objectInputStream.readInt();
+        LinkedHashMap linkedHashMap = new LinkedHashMap(Maps.capacity(i));
+        for (int i2 = 0; i2 < i; i2++) {
+            Object object = objectInputStream.readObject();
+            linkedHashMap.put(object, createCollection(object));
         }
-        int readInt2 = objectInputStream.readInt();
-        for (int i2 = 0; i2 < readInt2; i2++) {
+        int i3 = objectInputStream.readInt();
+        for (int i4 = 0; i4 < i3; i4++) {
             ((Collection) linkedHashMap.get(objectInputStream.readObject())).add(objectInputStream.readObject());
         }
         setMap(linkedHashMap);

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class CursorBackedSuggestionExtras extends AbstractSuggestionExtras {
     private static final HashSet<String> DEFAULT_COLUMNS = new HashSet<>();
@@ -17,8 +18,7 @@ public class CursorBackedSuggestionExtras extends AbstractSuggestionExtras {
         DEFAULT_COLUMNS.addAll(Arrays.asList(SuggestionCursorBackedCursor.COLUMNS));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static CursorBackedSuggestionExtras createExtrasIfNecessary(Cursor cursor, int i) {
+    static CursorBackedSuggestionExtras createExtrasIfNecessary(Cursor cursor, int i) {
         List<String> extraColumns = getExtraColumns(cursor);
         if (extraColumns != null) {
             return new CursorBackedSuggestionExtras(cursor, i, extraColumns);
@@ -35,8 +35,7 @@ public class CursorBackedSuggestionExtras extends AbstractSuggestionExtras {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static List<String> getExtraColumns(Cursor cursor) {
+    static List<String> getExtraColumns(Cursor cursor) {
         String[] cursorColumns = getCursorColumns(cursor);
         ArrayList arrayList = null;
         if (cursorColumns == null) {

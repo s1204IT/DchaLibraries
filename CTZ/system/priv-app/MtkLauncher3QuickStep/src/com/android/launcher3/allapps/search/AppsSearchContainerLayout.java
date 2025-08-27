@@ -23,6 +23,7 @@ import com.android.launcher3.allapps.search.AllAppsSearchBarController;
 import com.android.launcher3.graphics.TintedDrawableSpan;
 import com.android.launcher3.util.ComponentKey;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AppsSearchContainerLayout extends ExtendedEditText implements SearchUiManager, AllAppsSearchBarController.Callbacks, AllAppsStore.OnUpdateListener, Insettable {
     private AlphabeticalAppsList mApps;
@@ -73,9 +74,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText implements Searc
         super.onMeasure(View.MeasureSpec.makeMeasureSpec((size - (DeviceProfile.calculateCellWidth(size, deviceProfile.inv.numHotseatIcons) - Math.round(0.92f * deviceProfile.iconSizePx))) + getPaddingLeft() + getPaddingRight(), 1073741824), i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.ExtendedEditText, android.widget.TextView, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         View view = (View) getParent();
         setTranslationX((view.getPaddingLeft() + ((((view.getWidth() - view.getPaddingLeft()) - view.getPaddingRight()) - (i3 - i)) / 2)) - i);
@@ -134,13 +134,12 @@ public class AppsSearchContainerLayout extends ExtendedEditText implements Searc
 
     @Override // com.android.launcher3.Insettable
     public void setInsets(Rect rect) {
-        ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
-        marginLayoutParams.topMargin = Math.round(Math.max(-this.mFixedTranslationY, rect.top - this.mMarginTopAdjusting));
+        ((ViewGroup.MarginLayoutParams) getLayoutParams()).topMargin = Math.round(Math.max(-this.mFixedTranslationY, rect.top - this.mMarginTopAdjusting));
         requestLayout();
         if (this.mLauncher.getDeviceProfile().isVerticalBarLayout()) {
             this.mLauncher.getAllAppsController().setScrollRangeDelta(0.0f);
         } else {
-            this.mLauncher.getAllAppsController().setScrollRangeDelta(rect.bottom + marginLayoutParams.topMargin + this.mFixedTranslationY);
+            this.mLauncher.getAllAppsController().setScrollRangeDelta(rect.bottom + r0.topMargin + this.mFixedTranslationY);
         }
     }
 }

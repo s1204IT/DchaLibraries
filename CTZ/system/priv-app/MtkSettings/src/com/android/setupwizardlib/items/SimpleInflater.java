@@ -8,6 +8,7 @@ import android.view.InflateException;
 import java.io.IOException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public abstract class SimpleInflater<T> {
     protected final Resources mResources;
@@ -16,8 +17,7 @@ public abstract class SimpleInflater<T> {
 
     protected abstract T onCreateItem(String str, AttributeSet attributeSet);
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public SimpleInflater(Resources resources) {
+    protected SimpleInflater(Resources resources) {
         this.mResources = resources;
     }
 
@@ -25,7 +25,7 @@ public abstract class SimpleInflater<T> {
         return this.mResources;
     }
 
-    public T inflate(int i) {
+    public T inflate(int i) throws Resources.NotFoundException {
         XmlResourceParser xml = getResources().getXml(i);
         try {
             return inflate(xml);
@@ -34,13 +34,13 @@ public abstract class SimpleInflater<T> {
         }
     }
 
-    public T inflate(XmlPullParser xmlPullParser) {
+    public T inflate(XmlPullParser xmlPullParser) throws XmlPullParserException, IOException {
         int next;
-        AttributeSet asAttributeSet = Xml.asAttributeSet(xmlPullParser);
-        while (true) {
+        AttributeSet attributeSetAsAttributeSet = Xml.asAttributeSet(xmlPullParser);
+        do {
             try {
                 next = xmlPullParser.next();
-                if (next == 2 || next == 1) {
+                if (next == 2) {
                     break;
                 }
             } catch (IOException e) {
@@ -48,13 +48,13 @@ public abstract class SimpleInflater<T> {
             } catch (XmlPullParserException e2) {
                 throw new InflateException(e2.getMessage(), e2);
             }
-        }
+        } while (next != 1);
         if (next != 2) {
             throw new InflateException(xmlPullParser.getPositionDescription() + ": No start tag found!");
         }
-        T createItemFromTag = createItemFromTag(xmlPullParser.getName(), asAttributeSet);
-        rInflate(xmlPullParser, createItemFromTag, asAttributeSet);
-        return createItemFromTag;
+        T tCreateItemFromTag = createItemFromTag(xmlPullParser.getName(), attributeSetAsAttributeSet);
+        rInflate(xmlPullParser, tCreateItemFromTag, attributeSetAsAttributeSet);
+        return tCreateItemFromTag;
     }
 
     private T createItemFromTag(String str, AttributeSet attributeSet) {
@@ -73,9 +73,9 @@ public abstract class SimpleInflater<T> {
             int next = xmlPullParser.next();
             if ((next != 3 || xmlPullParser.getDepth() > depth) && next != 1) {
                 if (next == 2 && !onInterceptCreateItem(xmlPullParser, t, attributeSet)) {
-                    T createItemFromTag = createItemFromTag(xmlPullParser.getName(), attributeSet);
-                    onAddChildItem(t, createItemFromTag);
-                    rInflate(xmlPullParser, createItemFromTag, attributeSet);
+                    T tCreateItemFromTag = createItemFromTag(xmlPullParser.getName(), attributeSet);
+                    onAddChildItem(t, tCreateItemFromTag);
+                    rInflate(xmlPullParser, tCreateItemFromTag, attributeSet);
                 }
             } else {
                 return;

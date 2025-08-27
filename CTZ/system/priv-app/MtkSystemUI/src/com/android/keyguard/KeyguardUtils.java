@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.mediatek.internal.telephony.MtkSubscriptionManager;
 import com.mediatek.telephony.MtkTelephonyManagerEx;
 import java.io.File;
+
 /* loaded from: classes.dex */
 public class KeyguardUtils {
     private SubscriptionManager mSubscriptionManager;
@@ -77,9 +78,9 @@ public class KeyguardUtils {
     }
 
     public static boolean isFlightModePowerOffMd() {
-        boolean equals = SystemProperties.get("ro.vendor.mtk_flight_mode_power_off_md").equals("1");
-        Log.d("KeyguardUtils", "powerOffMd = " + equals);
-        return equals;
+        boolean zEquals = SystemProperties.get("ro.vendor.mtk_flight_mode_power_off_md").equals("1");
+        Log.d("KeyguardUtils", "powerOffMd = " + zEquals);
+        return zEquals;
     }
 
     public static int getNumOfPhone() {
@@ -181,9 +182,8 @@ public class KeyguardUtils {
         }
     }
 
-    private final int parseValueFromConfig(Context context, String str, int i) {
-        Resources resources = context.getResources();
-        int identifier = resources.getIdentifier(str + i, "string", context.getPackageName());
+    private final int parseValueFromConfig(Context context, String str, int i) throws Resources.NotFoundException {
+        int identifier = context.getResources().getIdentifier(str + i, "string", context.getPackageName());
         if (identifier == 0) {
             Log.w("KeyguardUtils", "Cannot get valid source id for " + str + i);
             return -1;

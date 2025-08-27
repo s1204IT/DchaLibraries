@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
+
 /* loaded from: classes.dex */
 public class RotationHelper implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String ALLOW_ROTATION_PREFERENCE_KEY = "pref_allowRotation";
@@ -23,11 +24,11 @@ public class RotationHelper implements SharedPreferences.OnSharedPreferenceChang
     private int mLastActivityFlags = -1;
 
     public static boolean getAllowRotationDefaultValue() {
-        if (Utilities.ATLEAST_NOUGAT) {
-            Resources system = Resources.getSystem();
-            return (system.getConfiguration().smallestScreenWidthDp * system.getDisplayMetrics().densityDpi) / DisplayMetrics.DENSITY_DEVICE_STABLE >= 600;
+        if (!Utilities.ATLEAST_NOUGAT) {
+            return false;
         }
-        return false;
+        Resources system = Resources.getSystem();
+        return (system.getConfiguration().smallestScreenWidthDp * system.getDisplayMetrics().densityDpi) / DisplayMetrics.DENSITY_DEVICE_STABLE >= 600;
     }
 
     public RotationHelper(Activity activity) {
@@ -78,11 +79,7 @@ public class RotationHelper implements SharedPreferences.OnSharedPreferenceChang
         }
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:10:0x0013, code lost:
-        if (r4.mStateHandlerRequest == 2) goto L9;
-     */
-    /* JADX WARN: Removed duplicated region for block: B:27:0x0033  */
-    /* JADX WARN: Removed duplicated region for block: B:30:? A[RETURN, SYNTHETIC] */
+    /* JADX WARN: Removed duplicated region for block: B:15:0x001c  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
@@ -91,21 +88,18 @@ public class RotationHelper implements SharedPreferences.OnSharedPreferenceChang
             return;
         }
         int i = -1;
-        if (this.mStateHandlerRequest == 0) {
-            if (this.mCurrentStateRequest != 2) {
-                if (!this.mIgnoreAutoRotateSettings && this.mCurrentStateRequest != 1 && !this.mAutoRotateEnabled) {
-                    i = 5;
-                }
-                if (i == this.mLastActivityFlags) {
-                    this.mLastActivityFlags = i;
-                    this.mActivity.setRequestedOrientation(i);
-                    return;
-                }
-                return;
+        if (this.mStateHandlerRequest != 0) {
+            if (this.mStateHandlerRequest == 2) {
+                i = 14;
             }
-            i = 14;
-            if (i == this.mLastActivityFlags) {
+        } else if (this.mCurrentStateRequest != 2) {
+            if (!this.mIgnoreAutoRotateSettings && this.mCurrentStateRequest != 1 && !this.mAutoRotateEnabled) {
+                i = 5;
             }
+        }
+        if (i != this.mLastActivityFlags) {
+            this.mLastActivityFlags = i;
+            this.mActivity.setRequestedOrientation(i);
         }
     }
 

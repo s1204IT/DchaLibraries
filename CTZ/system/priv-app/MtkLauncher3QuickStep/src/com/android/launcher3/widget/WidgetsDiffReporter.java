@@ -6,6 +6,7 @@ import com.android.launcher3.model.PackageItemInfo;
 import com.android.launcher3.widget.WidgetsListAdapter;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class WidgetsDiffReporter {
     private static final boolean DEBUG = false;
@@ -33,30 +34,30 @@ public class WidgetsDiffReporter {
         WidgetListRowEntry widgetListRowEntry = (WidgetListRowEntry) it.next();
         WidgetListRowEntry next = it2.next();
         while (true) {
-            int comparePackageName = comparePackageName(widgetListRowEntry, next, widgetListRowEntryComparator);
-            if (comparePackageName < 0) {
-                int indexOf = arrayList.indexOf(widgetListRowEntry);
-                this.mListener.notifyItemRemoved(indexOf);
-                arrayList.remove(indexOf);
+            int iComparePackageName = comparePackageName(widgetListRowEntry, next, widgetListRowEntryComparator);
+            if (iComparePackageName < 0) {
+                int iIndexOf = arrayList.indexOf(widgetListRowEntry);
+                this.mListener.notifyItemRemoved(iIndexOf);
+                arrayList.remove(iIndexOf);
                 widgetListRowEntry = it.hasNext() ? (WidgetListRowEntry) it.next() : null;
             } else {
-                if (comparePackageName > 0) {
-                    int indexOf2 = widgetListRowEntry != null ? arrayList.indexOf(widgetListRowEntry) : arrayList.size();
-                    arrayList.add(indexOf2, next);
-                    r4 = it2.hasNext() ? it2.next() : null;
-                    this.mListener.notifyItemInserted(indexOf2);
+                if (iComparePackageName > 0) {
+                    int iIndexOf2 = widgetListRowEntry != null ? arrayList.indexOf(widgetListRowEntry) : arrayList.size();
+                    arrayList.add(iIndexOf2, next);
+                    next = it2.hasNext() ? it2.next() : null;
+                    this.mListener.notifyItemInserted(iIndexOf2);
                 } else {
                     if (!isSamePackageItemInfo(widgetListRowEntry.pkgItem, next.pkgItem) || !widgetListRowEntry.widgets.equals(next.widgets)) {
-                        int indexOf3 = arrayList.indexOf(widgetListRowEntry);
-                        arrayList.set(indexOf3, next);
-                        this.mListener.notifyItemChanged(indexOf3);
+                        int iIndexOf3 = arrayList.indexOf(widgetListRowEntry);
+                        arrayList.set(iIndexOf3, next);
+                        this.mListener.notifyItemChanged(iIndexOf3);
                     }
                     widgetListRowEntry = it.hasNext() ? (WidgetListRowEntry) it.next() : null;
                     if (it2.hasNext()) {
-                        r4 = it2.next();
+                        next = it2.next();
                     }
                 }
-                next = r4;
+                next = next;
             }
             if (widgetListRowEntry == null && next == null) {
                 return;

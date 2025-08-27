@@ -18,6 +18,7 @@ import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AssistFlashScreenPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private final AssistUtils mAssistUtils;
@@ -73,8 +74,7 @@ public class AssistFlashScreenPreferenceController extends AbstractPreferenceCon
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreference() {
+    private void updatePreference() {
         if (this.mPreference == null || !(this.mPreference instanceof TwoStatePreference)) {
             return;
         }
@@ -109,7 +109,6 @@ public class AssistFlashScreenPreferenceController extends AbstractPreferenceCon
         return this.mAssistUtils.getAssistComponentForUser(UserHandle.myUserId());
     }
 
-    /* loaded from: classes.dex */
     class SettingObserver extends AssistSettingObserver {
         private final Uri URI = Settings.Secure.getUriFor("assist_disclosure_enabled");
         private final Uri CONTEXT_URI = Settings.Secure.getUriFor("assist_structure_enabled");

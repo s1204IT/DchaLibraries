@@ -5,6 +5,7 @@ import android.provider.Settings;
 import android.util.FeatureFlagUtils;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.core.TogglePreferenceController;
+
 /* loaded from: classes.dex */
 public class BluetoothOnWhileDrivingPreferenceController extends TogglePreferenceController implements PreferenceControllerMixin {
     static final String KEY_BLUETOOTH_ON_DRIVING = "bluetooth_on_while_driving";

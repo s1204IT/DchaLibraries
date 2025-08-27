@@ -72,6 +72,7 @@ import com.android.systemui.shared.recents.utilities.Utilities;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreDrawListener, ColorExtractor.OnColorsChangedListener {
     private SysuiColorExtractor mColorExtractor;
@@ -115,9 +116,7 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
     };
     private final ViewTreeObserver.OnPreDrawListener mRecentsDrawnEventListener = new AnonymousClass3();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class LaunchHomeRunnable implements Runnable {
+    class LaunchHomeRunnable implements Runnable {
         Intent mLaunchIntent;
         ActivityOptions mOpts;
 
@@ -132,7 +131,7 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
                 RecentsActivity.this.mHandler.post(new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$RecentsActivity$LaunchHomeRunnable$K3jCoKVe41-EkTmSKH7i98xFt8k
                     @Override // java.lang.Runnable
                     public final void run() {
-                        RecentsActivity.LaunchHomeRunnable.lambda$run$0(RecentsActivity.LaunchHomeRunnable.this);
+                        RecentsActivity.LaunchHomeRunnable.lambda$run$0(this.f$0);
                     }
                 });
             } catch (Exception e) {
@@ -141,18 +140,16 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
         }
 
         public static /* synthetic */ void lambda$run$0(LaunchHomeRunnable launchHomeRunnable) {
-            ActivityOptions activityOptions = launchHomeRunnable.mOpts;
-            if (activityOptions == null) {
-                activityOptions = ActivityOptions.makeCustomAnimation(RecentsActivity.this, R.anim.recents_to_launcher_enter, R.anim.recents_to_launcher_exit);
+            ActivityOptions activityOptionsMakeCustomAnimation = launchHomeRunnable.mOpts;
+            if (activityOptionsMakeCustomAnimation == null) {
+                activityOptionsMakeCustomAnimation = ActivityOptions.makeCustomAnimation(RecentsActivity.this, R.anim.recents_to_launcher_enter, R.anim.recents_to_launcher_exit);
             }
-            RecentsActivity.this.startActivityAsUser(launchHomeRunnable.mLaunchIntent, activityOptions.toBundle(), UserHandle.CURRENT);
+            RecentsActivity.this.startActivityAsUser(launchHomeRunnable.mLaunchIntent, activityOptionsMakeCustomAnimation.toBundle(), UserHandle.CURRENT);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.recents.RecentsActivity$3  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass3 implements ViewTreeObserver.OnPreDrawListener {
+    /* renamed from: com.android.systemui.recents.RecentsActivity$3, reason: invalid class name */
+    class AnonymousClass3 implements ViewTreeObserver.OnPreDrawListener {
         AnonymousClass3() {
         }
 
@@ -171,7 +168,7 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
             DejankUtils.postAfterTraversal(new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$RecentsActivity$3$SXW_26Z-B_jvwD3qSXfVNpRowHM
                 @Override // java.lang.Runnable
                 public final void run() {
-                    RecentsActivity.AnonymousClass3.lambda$onPreDraw$1(RecentsActivity.AnonymousClass3.this);
+                    RecentsActivity.AnonymousClass3.lambda$onPreDraw$1(this.f$0);
                 }
             });
             return true;
@@ -195,14 +192,14 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
     }
 
     boolean dismissRecentsToFocusedTaskOrHome() {
-        if (Recents.getSystemServices().isRecentsActivityVisible()) {
-            if (this.mRecentsView.launchFocusedTask(0)) {
-                return true;
-            }
-            dismissRecentsToHome(true);
+        if (!Recents.getSystemServices().isRecentsActivityVisible()) {
+            return false;
+        }
+        if (this.mRecentsView.launchFocusedTask(0)) {
             return true;
         }
-        return false;
+        dismissRecentsToHome(true);
+        return true;
     }
 
     void dismissRecentsToHome(boolean z) {
@@ -225,7 +222,7 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
     }
 
     @Override // android.app.Activity
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws NoSuchMethodException, SecurityException {
         super.onCreate(bundle);
         this.mFinishedOnStartup = false;
         if (Recents.getSystemServices() == null) {
@@ -238,7 +235,7 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
         this.mColorExtractor = (SysuiColorExtractor) Dependency.get(SysuiColorExtractor.class);
         this.mColorExtractor.addOnColorsChangedListener(this);
         this.mUsingDarkText = this.mColorExtractor.getColors(1, 1, true).supportsDarkText();
-        setTheme(this.mUsingDarkText ? com.android.systemui.plugins.R.style.RecentsTheme_Wallpaper_Light : com.android.systemui.plugins.R.style.RecentsTheme_Wallpaper);
+        setTheme(this.mUsingDarkText ? 2131886357 : 2131886356);
         setContentView(R.layout.recents);
         takeKeyEvents(true);
         this.mRecentsView = (RecentsView) findViewById(R.id.recents_view);
@@ -281,10 +278,10 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
     public void onColorsChanged(ColorExtractor colorExtractor, int i) {
         if ((i & 1) != 0) {
             ColorExtractor.GradientColors colors = this.mColorExtractor.getColors(1, 1, true);
-            boolean supportsDarkText = colors.supportsDarkText();
-            if (supportsDarkText != this.mUsingDarkText) {
-                this.mUsingDarkText = supportsDarkText;
-                setTheme(this.mUsingDarkText ? com.android.systemui.plugins.R.style.RecentsTheme_Wallpaper_Light : com.android.systemui.plugins.R.style.RecentsTheme_Wallpaper);
+            boolean zSupportsDarkText = colors.supportsDarkText();
+            if (zSupportsDarkText != this.mUsingDarkText) {
+                this.mUsingDarkText = zSupportsDarkText;
+                setTheme(this.mUsingDarkText ? 2131886357 : 2131886356);
                 this.mRecentsView.reevaluateStyles();
             }
             this.mRecentsView.setScrimColors(colors, true);
@@ -293,20 +290,20 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
 
     private void reloadStackView() {
         RecentsTaskLoader taskLoader = Recents.getTaskLoader();
-        RecentsTaskLoadPlan consumeInstanceLoadPlan = RecentsImpl.consumeInstanceLoadPlan();
-        if (consumeInstanceLoadPlan == null) {
-            consumeInstanceLoadPlan = new RecentsTaskLoadPlan(this);
+        RecentsTaskLoadPlan recentsTaskLoadPlanConsumeInstanceLoadPlan = RecentsImpl.consumeInstanceLoadPlan();
+        if (recentsTaskLoadPlanConsumeInstanceLoadPlan == null) {
+            recentsTaskLoadPlanConsumeInstanceLoadPlan = new RecentsTaskLoadPlan(this);
         }
         RecentsActivityLaunchState launchState = Recents.getConfiguration().getLaunchState();
-        if (!consumeInstanceLoadPlan.hasTasks()) {
-            taskLoader.preloadTasks(consumeInstanceLoadPlan, launchState.launchedToTaskId);
+        if (!recentsTaskLoadPlanConsumeInstanceLoadPlan.hasTasks()) {
+            taskLoader.preloadTasks(recentsTaskLoadPlanConsumeInstanceLoadPlan, launchState.launchedToTaskId);
         }
         RecentsTaskLoadPlan.Options options = new RecentsTaskLoadPlan.Options();
         options.runningTaskId = launchState.launchedToTaskId;
         options.numVisibleTasks = launchState.launchedNumVisibleTasks;
         options.numVisibleTaskThumbnails = launchState.launchedNumVisibleThumbnails;
-        taskLoader.loadTasks(consumeInstanceLoadPlan, options);
-        TaskStack taskStack = consumeInstanceLoadPlan.getTaskStack();
+        taskLoader.loadTasks(recentsTaskLoadPlanConsumeInstanceLoadPlan, options);
+        TaskStack taskStack = recentsTaskLoadPlanConsumeInstanceLoadPlan.getTaskStack();
         this.mRecentsView.onReload(taskStack, this.mIsVisible);
         this.mScrimViews.updateNavBarScrim(!launchState.launchedViaDockGesture, taskStack.getTaskCount() > 0, null);
         if ((launchState.launchedFromHome || launchState.launchedFromApp) ? false : true) {
@@ -321,9 +318,9 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
             MetricsLogger.count(this, "overview_source_home", 1);
         } else {
             Task launchTarget = taskStack.getLaunchTarget();
-            int indexOfTask = launchTarget != null ? taskStack.indexOfTask(launchTarget) : 0;
+            int iIndexOfTask = launchTarget != null ? taskStack.indexOfTask(launchTarget) : 0;
             MetricsLogger.count(this, "overview_source_app", 1);
-            MetricsLogger.histogram(this, "overview_source_app_index", indexOfTask);
+            MetricsLogger.histogram(this, "overview_source_app_index", iIndexOfTask);
         }
         MetricsLogger.histogram(this, "overview_task_count", this.mRecentsView.getStack().getTaskCount());
         this.mIsVisible = true;
@@ -389,7 +386,7 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
     }
 
     @Override // android.app.Activity, android.view.Window.Callback
-    public void onAttachedToWindow() {
+    public void onAttachedToWindow() throws NoSuchMethodException, SecurityException {
         super.onAttachedToWindow();
         EventBus.getDefault().register(this.mScrimViews, 2);
     }
@@ -432,9 +429,11 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
                 case 21:
                 case 22:
                     EventBus.getDefault().send(new NavigateTaskViewEvent(NavigateTaskViewEvent.getDirectionFromKeyCode(i)));
-                    return true;
+                    break;
             }
-        } else if (keyEvent.getRepeatCount() <= 0) {
+            return true;
+        }
+        if (keyEvent.getRepeatCount() <= 0) {
             EventBus.getDefault().send(new DismissFocusedTaskViewEvent());
             MetricsLogger.histogram(this, "overview_task_dismissed_source", 0);
             return true;
@@ -512,7 +511,7 @@ public class RecentsActivity extends Activity implements ViewTreeObserver.OnPreD
 
     public final void onBusEvent(ShowIncompatibleAppOverlayEvent showIncompatibleAppOverlayEvent) {
         if (this.mIncompatibleAppOverlay == null) {
-            this.mIncompatibleAppOverlay = Utilities.findViewStubById(this, (int) R.id.incompatible_app_overlay_stub).inflate();
+            this.mIncompatibleAppOverlay = Utilities.findViewStubById(this, R.id.incompatible_app_overlay_stub).inflate();
             this.mIncompatibleAppOverlay.setWillNotDraw(false);
             this.mIncompatibleAppOverlay.setVisibility(0);
         }

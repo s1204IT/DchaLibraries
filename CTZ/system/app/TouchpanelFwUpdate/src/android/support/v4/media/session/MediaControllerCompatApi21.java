@@ -8,10 +8,10 @@ import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import java.util.List;
+
 /* loaded from: classes.dex */
 class MediaControllerCompatApi21 {
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onAudioInfoChanged(int i, int i2, int i3, int i4, int i5);
 
@@ -42,7 +42,6 @@ class MediaControllerCompatApi21 {
         ((MediaController) controllerObj).sendCommand(command, params, cb);
     }
 
-    /* loaded from: classes.dex */
     public static class PlaybackInfo {
         public static AudioAttributes getAudioAttributes(Object volumeInfoObj) {
             return ((MediaController.PlaybackInfo) volumeInfoObj).getAudioAttributes();
@@ -88,7 +87,6 @@ class MediaControllerCompatApi21 {
         }
     }
 
-    /* loaded from: classes.dex */
     static class CallbackProxy<T extends Callback> extends MediaController.Callback {
         protected final T mCallback;
 

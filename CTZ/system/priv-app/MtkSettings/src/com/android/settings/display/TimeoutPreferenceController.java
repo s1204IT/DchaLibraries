@@ -13,6 +13,7 @@ import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.ISettingsMiscExt;
+
 /* loaded from: classes.dex */
 public class TimeoutPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private ISettingsMiscExt mExt;
@@ -35,7 +36,7 @@ public class TimeoutPreferenceController extends AbstractPreferenceController im
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
-    public void updateState(Preference preference) {
+    public void updateState(Preference preference) throws NumberFormatException {
         TimeoutListPreference timeoutListPreference = (TimeoutListPreference) preference;
         long j = Settings.System.getLong(this.mContext.getContentResolver(), "screen_off_timeout", 30000L);
         timeoutListPreference.setValue(String.valueOf(j));
@@ -44,18 +45,18 @@ public class TimeoutPreferenceController extends AbstractPreferenceController im
             timeoutListPreference.removeUnusableTimeouts(devicePolicyManager.getMaximumTimeToLock(null, UserHandle.myUserId()), RestrictedLockUtils.checkIfMaximumTimeToLockIsSet(this.mContext));
         }
         updateTimeoutPreferenceDescription(timeoutListPreference, j);
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_config_screen_timeout", UserHandle.myUserId());
-        if (checkIfRestrictionEnforced != null) {
-            timeoutListPreference.removeUnusableTimeouts(0L, checkIfRestrictionEnforced);
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_config_screen_timeout", UserHandle.myUserId());
+        if (enforcedAdminCheckIfRestrictionEnforced != null) {
+            timeoutListPreference.removeUnusableTimeouts(0L, enforcedAdminCheckIfRestrictionEnforced);
         }
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         try {
-            int parseInt = Integer.parseInt((String) obj);
-            Settings.System.putInt(this.mContext.getContentResolver(), "screen_off_timeout", parseInt);
-            updateTimeoutPreferenceDescription((TimeoutListPreference) preference, parseInt);
+            int i = Integer.parseInt((String) obj);
+            Settings.System.putInt(this.mContext.getContentResolver(), "screen_off_timeout", i);
+            updateTimeoutPreferenceDescription((TimeoutListPreference) preference, i);
             return true;
         } catch (NumberFormatException e) {
             Log.e("TimeoutPrefContr", "could not persist screen timeout setting", e);

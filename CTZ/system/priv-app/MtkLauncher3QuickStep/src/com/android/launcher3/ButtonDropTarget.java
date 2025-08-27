@@ -25,6 +25,7 @@ import com.android.launcher3.dragndrop.DragLayer;
 import com.android.launcher3.dragndrop.DragOptions;
 import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public abstract class ButtonDropTarget extends TextView implements DropTarget, DragController.DragListener, View.OnClickListener {
     private static final int DRAG_VIEW_DROP_DURATION = 285;
@@ -76,31 +77,28 @@ public abstract class ButtonDropTarget extends TextView implements DropTarget, D
         this.mDragDistanceThreshold = resources.getDimensionPixelSize(R.dimen.drag_distanceThreshold);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mText = getText();
         this.mOriginalTextColor = getTextColors();
         setContentDescription(this.mText);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateText(int i) {
+    protected void updateText(int i) {
         setText(i);
         this.mText = getText();
         setContentDescription(this.mText);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setDrawable(int i) {
+    protected void setDrawable(int i) {
         if (this.mTextVisible) {
             setCompoundDrawablesRelativeWithIntrinsicBounds(i, 0, 0, 0);
             this.mDrawable = getCompoundDrawablesRelative()[0];
-            return;
+        } else {
+            setCompoundDrawablesRelativeWithIntrinsicBounds(0, i, 0, 0);
+            this.mDrawable = getCompoundDrawablesRelative()[1];
         }
-        setCompoundDrawablesRelativeWithIntrinsicBounds(0, i, 0, 0);
-        this.mDrawable = getCompoundDrawablesRelative()[1];
     }
 
     public void setDropTargetBar(DropTargetBar dropTargetBar) {
@@ -122,19 +120,19 @@ public abstract class ButtonDropTarget extends TextView implements DropTarget, D
             TextView textView = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.drop_target_tool_tip, (ViewGroup) null);
             textView.setText(this.mText);
             this.mToolTip = new PopupWindow(textView, -2, -2);
-            int i2 = 0;
+            int measuredWidth = 0;
             if (this.mToolTipLocation != 0) {
                 i = -getMeasuredHeight();
                 textView.measure(0, 0);
                 if (this.mToolTipLocation == 1) {
-                    i2 = (-getMeasuredWidth()) - (textView.getMeasuredWidth() / 2);
+                    measuredWidth = (-getMeasuredWidth()) - (textView.getMeasuredWidth() / 2);
                 } else {
-                    i2 = (getMeasuredWidth() / 2) + (textView.getMeasuredWidth() / 2);
+                    measuredWidth = (getMeasuredWidth() / 2) + (textView.getMeasuredWidth() / 2);
                 }
             } else {
                 i = 0;
             }
-            this.mToolTip.showAsDropDown(this, i2, i);
+            this.mToolTip.showAsDropDown(this, measuredWidth, i);
         }
         dragObject.dragView.setColor(this.mHoverColor);
         animateTextColor(this.mHoverColor);
@@ -166,14 +164,14 @@ public abstract class ButtonDropTarget extends TextView implements DropTarget, D
         int defaultColor = this.mOriginalTextColor.getDefaultColor();
         Themes.setColorChangeOnMatrix(defaultColor, getTextColor(), this.mSrcFilter);
         Themes.setColorChangeOnMatrix(defaultColor, i, this.mDstFilter);
-        ValueAnimator ofObject = ValueAnimator.ofObject(new FloatArrayEvaluator(this.mCurrentFilter.getArray()), this.mSrcFilter.getArray(), this.mDstFilter.getArray());
-        ofObject.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.-$$Lambda$ButtonDropTarget$N4YlzUmBPkqf317Di_jCKDNcDyE
+        ValueAnimator valueAnimatorOfObject = ValueAnimator.ofObject(new FloatArrayEvaluator(this.mCurrentFilter.getArray()), this.mSrcFilter.getArray(), this.mDstFilter.getArray());
+        valueAnimatorOfObject.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.-$$Lambda$ButtonDropTarget$N4YlzUmBPkqf317Di_jCKDNcDyE
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                ButtonDropTarget.lambda$animateTextColor$0(ButtonDropTarget.this, valueAnimator);
+                ButtonDropTarget.lambda$animateTextColor$0(this.f$0, valueAnimator);
             }
         });
-        this.mCurrentColorAnim.play(ofObject);
+        this.mCurrentColorAnim.play(valueAnimatorOfObject);
         this.mCurrentColorAnim.play(ObjectAnimator.ofArgb(this, "textColor", i));
         this.mCurrentColorAnim.start();
     }
@@ -189,9 +187,9 @@ public abstract class ButtonDropTarget extends TextView implements DropTarget, D
         if (!dragObject.dragComplete) {
             dragObject.dragView.setColor(0);
             resetHoverColor();
-            return;
+        } else {
+            dragObject.dragView.setColor(this.mHoverColor);
         }
-        dragObject.dragView.setColor(this.mHoverColor);
     }
 
     @Override // com.android.launcher3.dragndrop.DragController.DragListener
@@ -229,13 +227,11 @@ public abstract class ButtonDropTarget extends TextView implements DropTarget, D
         DragLayer dragLayer = this.mLauncher.getDragLayer();
         Rect rect = new Rect();
         dragLayer.getViewRectRelativeToSelf(dragObject.dragView, rect);
-        Rect iconRect = getIconRect(dragObject);
-        float width = iconRect.width() / rect.width();
         this.mDropTargetBar.deferOnDragEnd();
-        dragLayer.animateView(dragObject.dragView, rect, iconRect, width, 1.0f, 1.0f, 0.1f, 0.1f, DRAG_VIEW_DROP_DURATION, Interpolators.DEACCEL_2, Interpolators.LINEAR, new Runnable() { // from class: com.android.launcher3.-$$Lambda$ButtonDropTarget$qr2_DaqtDn0T6cPZLzHlj54aOQg
+        dragLayer.animateView(dragObject.dragView, rect, getIconRect(dragObject), r6.width() / rect.width(), 1.0f, 1.0f, 0.1f, 0.1f, DRAG_VIEW_DROP_DURATION, Interpolators.DEACCEL_2, Interpolators.LINEAR, new Runnable() { // from class: com.android.launcher3.-$$Lambda$ButtonDropTarget$qr2_DaqtDn0T6cPZLzHlj54aOQg
             @Override // java.lang.Runnable
             public final void run() {
-                ButtonDropTarget.lambda$onDrop$1(ButtonDropTarget.this, dragObject);
+                ButtonDropTarget.lambda$onDrop$1(this.f$0, dragObject);
             }
         }, 0, null);
     }
@@ -263,7 +259,7 @@ public abstract class ButtonDropTarget extends TextView implements DropTarget, D
 
     public Rect getIconRect(DropTarget.DragObject dragObject) {
         int paddingLeft;
-        int i;
+        int paddingRight;
         int measuredWidth = dragObject.dragView.getMeasuredWidth();
         int measuredHeight = dragObject.dragView.getMeasuredHeight();
         int intrinsicWidth = this.mDrawable.getIntrinsicWidth();
@@ -272,14 +268,14 @@ public abstract class ButtonDropTarget extends TextView implements DropTarget, D
         Rect rect = new Rect();
         dragLayer.getViewRectRelativeToSelf(this, rect);
         if (Utilities.isRtl(getResources())) {
-            i = rect.right - getPaddingRight();
-            paddingLeft = i - intrinsicWidth;
+            paddingRight = rect.right - getPaddingRight();
+            paddingLeft = paddingRight - intrinsicWidth;
         } else {
             paddingLeft = getPaddingLeft() + rect.left;
-            i = paddingLeft + intrinsicWidth;
+            paddingRight = paddingLeft + intrinsicWidth;
         }
         int measuredHeight2 = rect.top + ((getMeasuredHeight() - intrinsicHeight) / 2);
-        rect.set(paddingLeft, measuredHeight2, i, measuredHeight2 + intrinsicHeight);
+        rect.set(paddingLeft, measuredHeight2, paddingRight, measuredHeight2 + intrinsicHeight);
         rect.offset((-(measuredWidth - intrinsicWidth)) / 2, (-(measuredHeight - intrinsicHeight)) / 2);
         return rect;
     }

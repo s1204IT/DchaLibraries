@@ -1,6 +1,8 @@
 package com.android.systemui.statusbar.phone;
 
+import android.R;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.os.UserHandle;
@@ -10,7 +12,6 @@ import android.view.ViewGroup;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.systemui.Dependency;
 import com.android.systemui.Dumpable;
-import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.StatusIconDisplayable;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class StatusBarIconControllerImpl extends StatusBarIconList implements Dumpable, CommandQueue.Callbacks, StatusBarIconController, ConfigurationController.ConfigurationListener, TunerService.Tunable {
     private Context mContext;
@@ -35,7 +37,7 @@ public class StatusBarIconControllerImpl extends StatusBarIconList implements Du
     private boolean mIsDark;
 
     public StatusBarIconControllerImpl(Context context) {
-        super(context.getResources().getStringArray(17236037), context);
+        super(context.getResources().getStringArray(R.array.config_deviceTabletopRotations), context);
         this.mIconGroups = new ArrayList<>();
         this.mIconBlacklist = new ArraySet<>();
         this.mIconLogger = (IconLogger) Dependency.get(IconLogger.class);
@@ -54,10 +56,10 @@ public class StatusBarIconControllerImpl extends StatusBarIconList implements Du
         for (int i = 0; i < slots.size(); i++) {
             StatusBarIconList.Slot slot = slots.get(i);
             List<StatusBarIconHolder> holderListInViewOrder = slot.getHolderListInViewOrder();
-            boolean contains = this.mIconBlacklist.contains(slot.getName());
+            boolean zContains = this.mIconBlacklist.contains(slot.getName());
             for (StatusBarIconHolder statusBarIconHolder : holderListInViewOrder) {
                 statusBarIconHolder.getTag();
-                iconManager.onIconAdded(getViewIndex(getSlotIndex(slot.getName()), statusBarIconHolder.getTag()), slot.getName(), contains, statusBarIconHolder);
+                iconManager.onIconAdded(getViewIndex(getSlotIndex(slot.getName()), statusBarIconHolder.getTag()), slot.getName(), zContains, statusBarIconHolder);
             }
         }
     }
@@ -84,10 +86,11 @@ public class StatusBarIconControllerImpl extends StatusBarIconList implements Du
         }
         for (int i = 0; i < slots.size(); i++) {
             StatusBarIconList.Slot slot2 = slots.get(i);
-            List<StatusBarIconHolder> list = (List) arrayMap.get(slot2);
+            List list = (List) arrayMap.get(slot2);
             if (list != null) {
-                for (StatusBarIconHolder statusBarIconHolder : list) {
-                    setIcon(getSlotIndex(slot2.getName()), statusBarIconHolder);
+                Iterator it = list.iterator();
+                while (it.hasNext()) {
+                    setIcon(getSlotIndex(slot2.getName()), (StatusBarIconHolder) it.next());
                 }
             }
         }
@@ -99,12 +102,12 @@ public class StatusBarIconControllerImpl extends StatusBarIconList implements Du
     private void addSystemIcon(int i, final StatusBarIconHolder statusBarIconHolder) {
         final String slotName = getSlotName(i);
         final int viewIndex = getViewIndex(i, statusBarIconHolder.getTag());
-        final boolean contains = this.mIconBlacklist.contains(slotName);
+        final boolean zContains = this.mIconBlacklist.contains(slotName);
         this.mIconLogger.onIconVisibility(getSlotName(i), statusBarIconHolder.isVisible());
         this.mIconGroups.forEach(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBarIconControllerImpl$fL8PZXISckai-5GwvhWVS3QVTsY
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                ((StatusBarIconController.IconManager) obj).onIconAdded(viewIndex, slotName, contains, statusBarIconHolder);
+                ((StatusBarIconController.IconManager) obj).onIconAdded(viewIndex, slotName, zContains, statusBarIconHolder);
             }
         });
     }
@@ -132,10 +135,10 @@ public class StatusBarIconControllerImpl extends StatusBarIconList implements Du
         StatusBarIconHolder icon = getIcon(slotIndex, 0);
         if (icon == null) {
             setIcon(slotIndex, StatusBarIconHolder.fromWifiIconState(wifiIconState));
-            return;
+        } else {
+            icon.setWifiState(wifiIconState);
+            handleSet(slotIndex, icon);
         }
-        icon.setWifiState(wifiIconState);
-        handleSet(slotIndex, icon);
     }
 
     @Override // com.android.systemui.statusbar.phone.StatusBarIconController
@@ -154,9 +157,9 @@ public class StatusBarIconControllerImpl extends StatusBarIconList implements Du
     }
 
     @Override // com.android.systemui.statusbar.phone.StatusBarIconController
-    public void setExternalIcon(String str) {
+    public void setExternalIcon(String str) throws Resources.NotFoundException {
         final int viewIndex = getViewIndex(getSlotIndex(str), 0);
-        final int dimensionPixelSize = this.mContext.getResources().getDimensionPixelSize(R.dimen.status_bar_icon_drawing_size);
+        final int dimensionPixelSize = this.mContext.getResources().getDimensionPixelSize(com.android.systemui.R.dimen.status_bar_icon_drawing_size);
         this.mIconGroups.forEach(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBarIconControllerImpl$rsmVGSlXlU7ffeIAEgpWeyyu04I
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {

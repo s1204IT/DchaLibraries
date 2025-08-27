@@ -6,6 +6,7 @@ import android.support.v4.app.BundleCompat;
 import android.support.v4.media.IMediaSession2;
 import android.support.v4.media.SessionToken2;
 import android.text.TextUtils;
+
 /* loaded from: classes.dex */
 final class SessionToken2ImplBase implements SessionToken2.SupportLibraryImpl {
     private final ComponentName mComponentName;
@@ -31,11 +32,11 @@ final class SessionToken2ImplBase implements SessionToken2.SupportLibraryImpl {
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof SessionToken2ImplBase) {
-            SessionToken2ImplBase other = (SessionToken2ImplBase) obj;
-            return this.mUid == other.mUid && TextUtils.equals(this.mPackageName, other.mPackageName) && TextUtils.equals(this.mServiceName, other.mServiceName) && TextUtils.equals(this.mSessionId, other.mSessionId) && this.mType == other.mType && sessionBinderEquals(this.mISession2, other.mISession2);
+        if (!(obj instanceof SessionToken2ImplBase)) {
+            return false;
         }
-        return false;
+        SessionToken2ImplBase other = (SessionToken2ImplBase) obj;
+        return this.mUid == other.mUid && TextUtils.equals(this.mPackageName, other.mPackageName) && TextUtils.equals(this.mServiceName, other.mServiceName) && TextUtils.equals(this.mSessionId, other.mSessionId) && this.mType == other.mType && sessionBinderEquals(this.mISession2, other.mISession2);
     }
 
     private boolean sessionBinderEquals(IMediaSession2 a, IMediaSession2 b) {

@@ -2,10 +2,10 @@ package com.android.systemui.qs;
 
 import android.content.Context;
 import com.android.systemui.qs.external.TileServices;
+
 /* loaded from: classes.dex */
 public interface QSHost {
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onTilesChanged();
     }

@@ -14,6 +14,8 @@ import com.android.settings.widget.SwitchWidgetController;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class WifiTetherSwitchBarController implements DataSaverBackend.Listener, SwitchWidgetController.OnSwitchChangeListener, LifecycleObserver, OnStart, OnStop {
     private static final IntentFilter WIFI_INTENT_FILTER = new IntentFilter("android.net.wifi.WIFI_AP_STATE_CHANGED");
@@ -45,8 +47,7 @@ public class WifiTetherSwitchBarController implements DataSaverBackend.Listener,
         WIFI_INTENT_FILTER.addAction("android.intent.action.AIRPLANE_MODE");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WifiTetherSwitchBarController(Context context, SwitchWidgetController switchWidgetController) {
+    WifiTetherSwitchBarController(Context context, SwitchWidgetController switchWidgetController) {
         this.mContext = context;
         this.mSwitchBar = switchWidgetController;
         this.mDataSaverBackend = new DataSaverBackend(context);
@@ -76,57 +77,53 @@ public class WifiTetherSwitchBarController implements DataSaverBackend.Listener,
         if (!z) {
             stopTether();
             return true;
-        } else if (!this.mWifiManager.isWifiApEnabled()) {
+        }
+        if (!this.mWifiManager.isWifiApEnabled()) {
             startTether();
             return true;
-        } else {
-            return true;
         }
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void stopTether() {
+    void stopTether() {
         this.mSwitchBar.setEnabled(false);
         this.mConnectivityManager.stopTethering(0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void startTether() {
+    void startTether() {
         this.mSwitchBar.setEnabled(false);
         this.mConnectivityManager.startTethering(0, true, this.mOnStartTetheringCallback, new Handler(Looper.getMainLooper()));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleWifiApStateChanged(int i) {
+    private void handleWifiApStateChanged(int i) {
         switch (i) {
-            case 10:
+            case AccessPoint.Speed.MODERATE /* 10 */:
                 if (this.mSwitchBar.isChecked()) {
                     this.mSwitchBar.setChecked(false);
                 }
                 this.mSwitchBar.setEnabled(false);
-                return;
+                break;
             case 11:
                 this.mSwitchBar.setChecked(false);
                 updateWifiSwitch();
-                return;
+                break;
             case 12:
                 this.mSwitchBar.setEnabled(false);
-                return;
+                break;
             case 13:
                 if (!this.mSwitchBar.isChecked()) {
                     this.mSwitchBar.setChecked(true);
                 }
                 updateWifiSwitch();
-                return;
+                break;
             default:
                 this.mSwitchBar.setChecked(false);
                 updateWifiSwitch();
-                return;
+                break;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateWifiSwitch() {
+    private void updateWifiSwitch() {
         if (!(Settings.Global.getInt(this.mContext.getContentResolver(), "airplane_mode_on", 0) != 0)) {
             this.mSwitchBar.setEnabled(true ^ this.mDataSaverBackend.isDataSaverEnabled());
         } else {

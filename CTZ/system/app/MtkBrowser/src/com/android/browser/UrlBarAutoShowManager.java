@@ -1,11 +1,13 @@
 package com.android.browser;
 
+import android.content.res.Resources;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.webkit.WebView;
 import com.android.browser.BrowserWebView;
+
 /* loaded from: classes.dex */
 public class UrlBarAutoShowManager implements View.OnTouchListener, BrowserWebView.OnScrollChangedListener {
     private boolean mHasTriggered;
@@ -43,7 +45,7 @@ public class UrlBarAutoShowManager implements View.OnTouchListener, BrowserWebVi
     }
 
     @Override // com.android.browser.BrowserWebView.OnScrollChangedListener
-    public void onScrollChanged(int i, int i2, int i3, int i4) {
+    public void onScrollChanged(int i, int i2, int i3, int i4) throws Resources.NotFoundException {
         this.mLastScrollTime = SystemClock.uptimeMillis();
         this.mIsScrolling = true;
         if (i2 != 0) {
@@ -66,6 +68,7 @@ public class UrlBarAutoShowManager implements View.OnTouchListener, BrowserWebVi
         }
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // android.view.View.OnTouchListener
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (motionEvent.getPointerCount() > 1) {
@@ -78,32 +81,31 @@ public class UrlBarAutoShowManager implements View.OnTouchListener, BrowserWebVi
                     this.mStartTouchX = motionEvent.getX();
                     this.mIsTracking = true;
                     this.mHasTriggered = false;
-                    break;
                 }
-                break;
+                return false;
             case 1:
             case 3:
                 stopTracking();
-                break;
+                return false;
             case 2:
                 if (this.mIsTracking && !this.mHasTriggered) {
                     WebView webView = (WebView) view;
                     float y = motionEvent.getY() - this.mStartTouchY;
-                    float abs = Math.abs(y);
-                    float abs2 = Math.abs(motionEvent.getX() - this.mStartTouchX);
-                    if (abs > this.mSlop) {
+                    float fAbs = Math.abs(y);
+                    float fAbs2 = Math.abs(motionEvent.getX() - this.mStartTouchX);
+                    if (fAbs > this.mSlop) {
                         this.mHasTriggered = true;
-                        float atan2 = (float) Math.atan2(abs, abs2);
-                        if (y > this.mSlop && atan2 > V_TRIGGER_ANGLE && !this.mUi.isTitleBarShowing() && (webView.getVisibleTitleHeight() == 0 || (!this.mIsScrolling && webView.getScrollY() > 0))) {
+                        float fAtan2 = (float) Math.atan2(fAbs, fAbs2);
+                        if (y > this.mSlop && fAtan2 > V_TRIGGER_ANGLE && !this.mUi.isTitleBarShowing() && (webView.getVisibleTitleHeight() == 0 || (!this.mIsScrolling && webView.getScrollY() > 0))) {
                             this.mTriggeredTime = SystemClock.uptimeMillis();
                             this.mUi.showTitleBar();
                         }
                         this.mUi.showBottomBarForDuration(2000L);
-                        break;
                     }
                 }
-                break;
+                return false;
+            default:
+                return false;
         }
-        return false;
     }
 }

@@ -17,7 +17,9 @@ import android.widget.TextView;
 import com.android.browser.provider.BrowserProvider2;
 import com.android.browser.search.SearchEngine;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListener, Filterable {
     private static final String[] COMBINED_PROJECTION = {"_id", "title", "url", "bookmark"};
@@ -35,9 +37,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
     BrowserSettings mSettings = BrowserSettings.getInstance();
     final Filter mFilter = new SuggestFilter();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface CompletionListener {
+    interface CompletionListener {
         void onSearch(String str);
 
         void onSelect(String str, int i, String str2);
@@ -86,6 +86,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         return this.mMixedResults.getLineCount();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
     @Override // android.widget.Adapter
     public SuggestItem getItem(int i) {
         if (this.mMixedResults == null) {
@@ -101,9 +102,9 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
 
     @Override // android.widget.Adapter
     public View getView(int i, View view, ViewGroup viewGroup) {
-        LayoutInflater from = LayoutInflater.from(this.mContext);
+        LayoutInflater layoutInflaterFrom = LayoutInflater.from(this.mContext);
         if (view == null) {
-            view = from.inflate(R.layout.suggestion_item, viewGroup, false);
+            view = layoutInflaterFrom.inflate(R.layout.suggestion_item, viewGroup, false);
         }
         bindView(view, getItem(i));
         return view;
@@ -112,11 +113,11 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
     private void bindView(View view, SuggestItem suggestItem) {
         int i;
         view.setTag(suggestItem);
-        TextView textView = (TextView) view.findViewById(16908308);
-        TextView textView2 = (TextView) view.findViewById(16908309);
+        TextView textView = (TextView) view.findViewById(android.R.id.text1);
+        TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
         ImageView imageView = (ImageView) view.findViewById(R.id.icon1);
-        View findViewById = view.findViewById(R.id.icon2);
-        View findViewById2 = view.findViewById(R.id.divider);
+        View viewFindViewById = view.findViewById(R.id.icon2);
+        View viewFindViewById2 = view.findViewById(R.id.divider);
         textView.setText(Html.fromHtml(suggestItem.title));
         int i2 = 0;
         if (TextUtils.isEmpty(suggestItem.url)) {
@@ -151,22 +152,20 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         if (4 != suggestItem.type && 3 != suggestItem.type) {
             i2 = 8;
         }
-        findViewById.setVisibility(i2);
-        findViewById2.setVisibility(findViewById.getVisibility());
-        findViewById.setOnClickListener(this);
+        viewFindViewById.setVisibility(i2);
+        viewFindViewById2.setVisibility(viewFindViewById.getVisibility());
+        viewFindViewById.setOnClickListener(this);
         view.findViewById(R.id.suggestion).setOnClickListener(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class SlowFilterTask extends AsyncTask<CharSequence, Void, List<SuggestItem>> {
+    class SlowFilterTask extends AsyncTask<CharSequence, Void, List<SuggestItem>> {
         SlowFilterTask() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public List<SuggestItem> doInBackground(CharSequence... charSequenceArr) {
-            SuggestCursor suggestCursor = new SuggestCursor();
+        protected List<SuggestItem> doInBackground(CharSequence... charSequenceArr) {
+            SuggestCursor suggestCursor = SuggestionsAdapter.this.new SuggestCursor();
             suggestCursor.runQuery(charSequenceArr[0]);
             ArrayList arrayList = new ArrayList();
             int count = suggestCursor.getCount();
@@ -178,9 +177,9 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
             return arrayList;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(List<SuggestItem> list) {
+        protected void onPostExecute(List<SuggestItem> list) {
             SuggestionsAdapter.this.mSuggestResults = list;
             SuggestionsAdapter.this.mMixedResults = SuggestionsAdapter.this.buildSuggestionResults();
             SuggestionsAdapter.this.notifyDataSetChanged();
@@ -196,19 +195,20 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
             list2 = this.mSuggestResults;
         }
         if (list != null) {
-            for (SuggestItem suggestItem : list) {
-                suggestionResults.addResult(suggestItem);
+            Iterator<SuggestItem> it = list.iterator();
+            while (it.hasNext()) {
+                suggestionResults.addResult(it.next());
             }
         }
         if (list2 != null) {
-            for (SuggestItem suggestItem2 : list2) {
-                suggestionResults.addResult(suggestItem2);
+            Iterator<SuggestItem> it2 = list2.iterator();
+            while (it2.hasNext()) {
+                suggestionResults.addResult(it2.next());
             }
         }
         return suggestionResults;
     }
 
-    /* loaded from: classes.dex */
     class SuggestFilter extends Filter {
         SuggestFilter() {
         }
@@ -227,7 +227,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
 
         void startSuggestionsAsync(CharSequence charSequence) {
             if (!SuggestionsAdapter.this.mIncognitoMode) {
-                new SlowFilterTask().execute(charSequence);
+                SuggestionsAdapter.this.new SlowFilterTask().execute(charSequence);
             }
         }
 
@@ -246,17 +246,18 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
             startSuggestionsAsync(charSequence);
             ArrayList arrayList = new ArrayList();
             if (charSequence != null) {
-                for (CursorSource cursorSource : SuggestionsAdapter.this.mSources) {
-                    cursorSource.runQuery(charSequence);
+                Iterator<CursorSource> it = SuggestionsAdapter.this.mSources.iterator();
+                while (it.hasNext()) {
+                    it.next().runQuery(charSequence);
                 }
                 mixResults(arrayList);
             }
             synchronized (SuggestionsAdapter.this.mResultsLock) {
                 SuggestionsAdapter.this.mFilterResults = arrayList;
             }
-            SuggestionResults buildSuggestionResults = SuggestionsAdapter.this.buildSuggestionResults();
-            filterResults.count = buildSuggestionResults.getLineCount();
-            filterResults.values = buildSuggestionResults;
+            SuggestionResults suggestionResultsBuildSuggestionResults = SuggestionsAdapter.this.buildSuggestionResults();
+            filterResults.count = suggestionResultsBuildSuggestionResults.getLineCount();
+            filterResults.values = suggestionResultsBuildSuggestionResults;
             return filterResults;
         }
 
@@ -264,9 +265,9 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
             int maxLines = SuggestionsAdapter.this.getMaxLines();
             for (int i = 0; i < SuggestionsAdapter.this.mSources.size(); i++) {
                 CursorSource cursorSource = SuggestionsAdapter.this.mSources.get(i);
-                int min = Math.min(cursorSource.getCount(), maxLines);
-                maxLines -= min;
-                for (int i2 = 0; i2 < min; i2++) {
+                int iMin = Math.min(cursorSource.getCount(), maxLines);
+                maxLines -= iMin;
+                for (int i2 = 0; i2 < iMin; i2++) {
                     list.add(cursorSource.getItem());
                     cursorSource.moveToNext();
                 }
@@ -283,14 +284,11 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int getMaxLines() {
+    private int getMaxLines() {
         return (int) Math.ceil((this.mLandscapeMode ? this.mLinesLandscape : this.mLinesPortrait) / 2.0d);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class SuggestionResults {
+    class SuggestionResults {
         ArrayList<SuggestItem> items = new ArrayList<>(24);
         int[] counts = new int[5];
 
@@ -331,7 +329,6 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         }
     }
 
-    /* loaded from: classes.dex */
     public class SuggestItem {
         public String extra;
         public String title;
@@ -345,9 +342,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public abstract class CursorSource {
+    abstract class CursorSource {
         Cursor mCursor;
 
         public abstract SuggestItem getItem();
@@ -375,7 +370,6 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         }
     }
 
-    /* loaded from: classes.dex */
     class CombinedCursor extends CursorSource {
         CombinedCursor() {
             super();
@@ -392,7 +386,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
                 } else {
                     i = 1;
                 }
-                return new SuggestItem(getTitle(string, string2), getUrl(string, string2), 1 ^ i);
+                return SuggestionsAdapter.this.new SuggestItem(getTitle(string, string2), getUrl(string, string2), 1 ^ i);
             }
             return null;
         }
@@ -413,9 +407,9 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
                 str = "(url LIKE ? OR url LIKE ? OR url LIKE ? OR url LIKE ? OR title LIKE ?)";
             }
             String str3 = str;
-            Uri.Builder buildUpon = BrowserProvider2.OmniboxSuggestions.CONTENT_URI.buildUpon();
-            buildUpon.appendQueryParameter("limit", Integer.toString(Math.max(SuggestionsAdapter.this.mLinesLandscape, SuggestionsAdapter.this.mLinesPortrait)));
-            this.mCursor = SuggestionsAdapter.this.mContext.getContentResolver().query(buildUpon.build(), SuggestionsAdapter.COMBINED_PROJECTION, str3, charSequence != null ? strArr : null, null);
+            Uri.Builder builderBuildUpon = BrowserProvider2.OmniboxSuggestions.CONTENT_URI.buildUpon();
+            builderBuildUpon.appendQueryParameter("limit", Integer.toString(Math.max(SuggestionsAdapter.this.mLinesLandscape, SuggestionsAdapter.this.mLinesPortrait)));
+            this.mCursor = SuggestionsAdapter.this.mContext.getContentResolver().query(builderBuildUpon.build(), SuggestionsAdapter.COMBINED_PROJECTION, str3, charSequence != null ? strArr : null, null);
             if (this.mCursor != null) {
                 this.mCursor.moveToFirst();
             }
@@ -436,9 +430,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class SuggestCursor extends CursorSource {
+    class SuggestCursor extends CursorSource {
         SuggestCursor() {
             super();
         }
@@ -450,7 +442,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
                 this.mCursor.getString(this.mCursor.getColumnIndex("suggest_text_2"));
                 String string2 = this.mCursor.getString(this.mCursor.getColumnIndex("suggest_text_2_url"));
                 this.mCursor.getString(this.mCursor.getColumnIndex("suggest_intent_data"));
-                SuggestItem suggestItem = new SuggestItem(string, string2, TextUtils.isEmpty(string2) ? 4 : 2);
+                SuggestItem suggestItem = SuggestionsAdapter.this.new SuggestItem(string, string2, TextUtils.isEmpty(string2) ? 4 : 2);
                 suggestItem.extra = this.mCursor.getString(this.mCursor.getColumnIndex("suggest_intent_extra_data"));
                 return suggestItem;
             }
@@ -499,8 +491,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static String getSuggestionUrl(SuggestItem suggestItem) {
+    static String getSuggestionUrl(SuggestItem suggestItem) {
         String suggestionTitle = getSuggestionTitle(suggestItem);
         if (TextUtils.isEmpty(suggestItem.url)) {
             return suggestionTitle;

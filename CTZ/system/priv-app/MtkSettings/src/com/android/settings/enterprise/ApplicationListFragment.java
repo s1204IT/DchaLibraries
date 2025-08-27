@@ -9,6 +9,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class ApplicationListFragment extends DashboardFragment implements ApplicationListPreferenceController.ApplicationListBuilder {
     @Override // com.android.settings.dashboard.DashboardFragment
@@ -16,9 +17,8 @@ public abstract class ApplicationListFragment extends DashboardFragment implemen
         return "EnterprisePrivacySettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.app_list_disclosure_settings;
     }
 
@@ -29,7 +29,6 @@ public abstract class ApplicationListFragment extends DashboardFragment implemen
         return arrayList;
     }
 
-    /* loaded from: classes.dex */
     private static abstract class AdminGrantedPermission extends ApplicationListFragment {
         private final String[] mPermissions;
 
@@ -48,7 +47,6 @@ public abstract class ApplicationListFragment extends DashboardFragment implemen
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AdminGrantedPermissionCamera extends AdminGrantedPermission {
         @Override // com.android.settings.enterprise.ApplicationListFragment.AdminGrantedPermission, com.android.settings.enterprise.ApplicationListPreferenceController.ApplicationListBuilder
         public /* bridge */ /* synthetic */ void buildApplicationList(Context context, ApplicationFeatureProvider.ListOfAppsCallback listOfAppsCallback) {
@@ -65,7 +63,6 @@ public abstract class ApplicationListFragment extends DashboardFragment implemen
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AdminGrantedPermissionLocation extends AdminGrantedPermission {
         @Override // com.android.settings.enterprise.ApplicationListFragment.AdminGrantedPermission, com.android.settings.enterprise.ApplicationListPreferenceController.ApplicationListBuilder
         public /* bridge */ /* synthetic */ void buildApplicationList(Context context, ApplicationFeatureProvider.ListOfAppsCallback listOfAppsCallback) {
@@ -82,7 +79,6 @@ public abstract class ApplicationListFragment extends DashboardFragment implemen
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AdminGrantedPermissionMicrophone extends AdminGrantedPermission {
         @Override // com.android.settings.enterprise.ApplicationListFragment.AdminGrantedPermission, com.android.settings.enterprise.ApplicationListPreferenceController.ApplicationListBuilder
         public /* bridge */ /* synthetic */ void buildApplicationList(Context context, ApplicationFeatureProvider.ListOfAppsCallback listOfAppsCallback) {
@@ -99,7 +95,6 @@ public abstract class ApplicationListFragment extends DashboardFragment implemen
         }
     }
 
-    /* loaded from: classes.dex */
     public static class EnterpriseInstalledPackages extends ApplicationListFragment {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {

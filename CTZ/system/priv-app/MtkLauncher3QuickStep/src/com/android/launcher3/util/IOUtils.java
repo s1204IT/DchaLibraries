@@ -6,21 +6,29 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 /* loaded from: classes.dex */
 public class IOUtils {
     private static final int BUF_SIZE = 4096;
 
-    public static byte[] toByteArray(File file) throws IOException {
+    /* JADX WARN: Removed duplicated region for block: B:16:0x001e  */
+    /* JADX WARN: Removed duplicated region for block: B:20:0x0015 A[EXC_TOP_SPLITTER, SYNTHETIC] */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    public static byte[] toByteArray(File file) throws Throwable {
         FileInputStream fileInputStream = new FileInputStream(file);
         try {
             byte[] byteArray = toByteArray(fileInputStream);
             fileInputStream.close();
             return byteArray;
         } catch (Throwable th) {
+            th = th;
             try {
                 throw th;
             } catch (Throwable th2) {
-                if (th != null) {
+                th = th2;
+                if (th == null) {
                     try {
                         fileInputStream.close();
                     } catch (Throwable th3) {
@@ -29,7 +37,7 @@ public class IOUtils {
                 } else {
                     fileInputStream.close();
                 }
-                throw th2;
+                throw th;
             }
         }
     }
@@ -44,10 +52,10 @@ public class IOUtils {
         byte[] bArr = new byte[4096];
         long j = 0;
         while (true) {
-            int read = inputStream.read(bArr);
-            if (read != -1) {
-                outputStream.write(bArr, 0, read);
-                j += read;
+            int i = inputStream.read(bArr);
+            if (i != -1) {
+                outputStream.write(bArr, 0, i);
+                j += i;
             } else {
                 return j;
             }

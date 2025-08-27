@@ -37,14 +37,17 @@ import com.android.launcher3.anim.Interpolators;
 import com.android.launcher3.uioverrides.WallpaperColorInfo;
 import com.android.launcher3.util.Themes;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ScrimView extends View implements Insettable, WallpaperColorInfo.OnChangeListener, AccessibilityManager.AccessibilityStateChangeListener, LauncherStateManager.StateListener {
     public static final Property<ScrimView, Integer> DRAG_HANDLE_ALPHA = new Property<ScrimView, Integer>(Integer.TYPE, "dragHandleAlpha") { // from class: com.android.launcher3.views.ScrimView.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(ScrimView scrimView) {
             return Integer.valueOf(scrimView.mDragHandleAlpha);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(ScrimView scrimView, Integer num) {
             scrimView.setDragHandleAlpha(num.intValue());
@@ -56,6 +59,7 @@ public class ScrimView extends View implements Insettable, WallpaperColorInfo.On
     private final AccessibilityManager mAM;
     private final AccessibilityHelper mAccessibilityHelper;
     protected int mCurrentFlatColor;
+
     @Nullable
     protected Drawable mDragHandle;
     private int mDragHandleAlpha;
@@ -151,20 +155,17 @@ public class ScrimView extends View implements Insettable, WallpaperColorInfo.On
     public void reInitUi() {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateColors() {
+    protected void updateColors() {
         this.mCurrentFlatColor = this.mProgress >= 1.0f ? 0 : ColorUtils.setAlphaComponent(this.mEndFlatColor, Math.round((1.0f - this.mProgress) * this.mEndFlatColorAlpha));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateDragHandleAlpha() {
+    protected void updateDragHandleAlpha() {
         if (this.mDragHandle != null) {
             this.mDragHandle.setAlpha(this.mDragHandleAlpha);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setDragHandleAlpha(int i) {
+    private void setDragHandleAlpha(int i) {
         if (i != this.mDragHandleAlpha) {
             this.mDragHandleAlpha = i;
             if (this.mDragHandle != null) {
@@ -186,8 +187,8 @@ public class ScrimView extends View implements Insettable, WallpaperColorInfo.On
 
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
-        if (!onTouchEvent && this.mDragHandle != null && motionEvent.getAction() == 0 && this.mDragHandle.getAlpha() == 255 && this.mHitRect.contains(motionEvent.getX(), motionEvent.getY())) {
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
+        if (!zOnTouchEvent && this.mDragHandle != null && motionEvent.getAction() == 0 && this.mDragHandle.getAlpha() == 255 && this.mHitRect.contains(motionEvent.getX(), motionEvent.getY())) {
             final Drawable drawable = this.mDragHandle;
             this.mDragHandle = null;
             drawable.setBounds(this.mDragHandleBounds);
@@ -195,30 +196,30 @@ public class ScrimView extends View implements Insettable, WallpaperColorInfo.On
             rect.offset(0, (-this.mDragHandleBounds.height()) / 2);
             final Rect rect2 = new Rect(this.mDragHandleBounds);
             rect2.top = rect.top;
-            Keyframe ofObject = Keyframe.ofObject(0.6f, rect);
-            ofObject.setInterpolator(Interpolators.DEACCEL);
-            Keyframe ofObject2 = Keyframe.ofObject(1.0f, this.mDragHandleBounds);
-            ofObject2.setInterpolator(Interpolators.ACCEL);
-            PropertyValuesHolder ofKeyframe = PropertyValuesHolder.ofKeyframe("bounds", Keyframe.ofObject(0.0f, this.mDragHandleBounds), ofObject, ofObject2);
-            ofKeyframe.setEvaluator(new RectEvaluator());
-            ObjectAnimator ofPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(drawable, ofKeyframe);
-            ofPropertyValuesHolder.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.views.ScrimView.2
+            Keyframe keyframeOfObject = Keyframe.ofObject(0.6f, rect);
+            keyframeOfObject.setInterpolator(Interpolators.DEACCEL);
+            Keyframe keyframeOfObject2 = Keyframe.ofObject(1.0f, this.mDragHandleBounds);
+            keyframeOfObject2.setInterpolator(Interpolators.ACCEL);
+            PropertyValuesHolder propertyValuesHolderOfKeyframe = PropertyValuesHolder.ofKeyframe("bounds", Keyframe.ofObject(0.0f, this.mDragHandleBounds), keyframeOfObject, keyframeOfObject2);
+            propertyValuesHolderOfKeyframe.setEvaluator(new RectEvaluator());
+            ObjectAnimator objectAnimatorOfPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(drawable, propertyValuesHolderOfKeyframe);
+            objectAnimatorOfPropertyValuesHolder.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.views.ScrimView.2
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
                     ScrimView.this.getOverlay().remove(drawable);
                     ScrimView.this.updateDragHandleVisibility(drawable);
                 }
             });
-            ofPropertyValuesHolder.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.views.-$$Lambda$ScrimView$_h9CkBt1Jm9GRe9w8OUSZ-wzPrY
+            objectAnimatorOfPropertyValuesHolder.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.views.-$$Lambda$ScrimView$_h9CkBt1Jm9GRe9w8OUSZ-wzPrY
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    ScrimView.this.invalidate(rect2);
+                    this.f$0.invalidate(rect2);
                 }
             });
             getOverlay().add(drawable);
-            ofPropertyValuesHolder.start();
+            objectAnimatorOfPropertyValuesHolder.start();
         }
-        return onTouchEvent;
+        return zOnTouchEvent;
     }
 
     protected void updateDragHandleBounds() {
@@ -260,8 +261,7 @@ public class ScrimView extends View implements Insettable, WallpaperColorInfo.On
         updateDragHandleVisibility(null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDragHandleVisibility(Drawable drawable) {
+    private void updateDragHandleVisibility(Drawable drawable) {
         boolean z = this.mLauncher.getDeviceProfile().isVerticalBarLayout() || this.mAM.isEnabled();
         if (z != (this.mDragHandle != null)) {
             if (z) {
@@ -314,9 +314,7 @@ public class ScrimView extends View implements Insettable, WallpaperColorInfo.On
         setImportantForAccessibility(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class AccessibilityHelper extends ExploreByTouchHelper {
+    protected class AccessibilityHelper extends ExploreByTouchHelper {
         private static final int DRAG_HANDLE_ID = 1;
 
         public AccessibilityHelper() {
@@ -360,17 +358,17 @@ public class ScrimView extends View implements Insettable, WallpaperColorInfo.On
                 ScrimView.this.mLauncher.getUserEventDispatcher().logActionOnControl(0, 1, ScrimView.this.mLauncher.getStateManager().getState().containerType);
                 ScrimView.this.mLauncher.getStateManager().goToState(LauncherState.ALL_APPS);
                 return true;
-            } else if (i2 == R.string.wallpaper_button_text) {
-                return OptionsPopupView.startWallpaperPicker(ScrimView.this);
-            } else {
-                if (i2 == R.string.widget_button_text) {
-                    return OptionsPopupView.onWidgetsClicked(ScrimView.this);
-                }
-                if (i2 != R.string.settings_button_text) {
-                    return false;
-                }
-                return OptionsPopupView.startSettings(ScrimView.this);
             }
+            if (i2 == R.string.wallpaper_button_text) {
+                return OptionsPopupView.startWallpaperPicker(ScrimView.this);
+            }
+            if (i2 == R.string.widget_button_text) {
+                return OptionsPopupView.onWidgetsClicked(ScrimView.this);
+            }
+            if (i2 != R.string.settings_button_text) {
+                return false;
+            }
+            return OptionsPopupView.startSettings(ScrimView.this);
         }
     }
 

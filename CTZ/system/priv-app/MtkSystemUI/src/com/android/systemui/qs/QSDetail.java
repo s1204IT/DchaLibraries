@@ -24,6 +24,7 @@ import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.qs.DetailAdapter;
 import com.android.systemui.statusbar.CommandQueue;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class QSDetail extends LinearLayout {
     private boolean mAnimatingOpen;
@@ -52,7 +53,6 @@ public class QSDetail extends LinearLayout {
     private final AnimatorListenerAdapter mTeardownDetailWhenDone;
     private boolean mTriggeredExpand;
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onScanStateChanged(boolean z);
 
@@ -65,9 +65,32 @@ public class QSDetail extends LinearLayout {
         super(context, attributeSet);
         this.mDetailViews = new SparseArray<>();
         this.mQsPanelCallback = new Callback() { // from class: com.android.systemui.qs.QSDetail.3
+            AnonymousClass3() {
+            }
+
+            /* renamed from: com.android.systemui.qs.QSDetail$3$1 */
+            class AnonymousClass1 implements Runnable {
+                final /* synthetic */ boolean val$state;
+
+                AnonymousClass1(boolean z) {
+                    z = z;
+                }
+
+                @Override // java.lang.Runnable
+                public void run() {
+                    QSDetail.this.handleToggleStateChanged(z, QSDetail.this.mDetailAdapter != null && QSDetail.this.mDetailAdapter.getToggleEnabled());
+                }
+            }
+
             @Override // com.android.systemui.qs.QSDetail.Callback
-            public void onToggleStateChanged(final boolean z) {
+            public void onToggleStateChanged(boolean z) {
                 QSDetail.this.post(new Runnable() { // from class: com.android.systemui.qs.QSDetail.3.1
+                    final /* synthetic */ boolean val$state;
+
+                    AnonymousClass1(boolean z2) {
+                        z = z2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         QSDetail.this.handleToggleStateChanged(z, QSDetail.this.mDetailAdapter != null && QSDetail.this.mDetailAdapter.getToggleEnabled());
@@ -75,19 +98,67 @@ public class QSDetail extends LinearLayout {
                 });
             }
 
+            /* renamed from: com.android.systemui.qs.QSDetail$3$2 */
+            class AnonymousClass2 implements Runnable {
+                final /* synthetic */ DetailAdapter val$detail;
+                final /* synthetic */ int val$x;
+                final /* synthetic */ int val$y;
+
+                AnonymousClass2(DetailAdapter detailAdapter, int i, int i2) {
+                    detailAdapter = detailAdapter;
+                    i = i;
+                    i = i2;
+                }
+
+                @Override // java.lang.Runnable
+                public void run() {
+                    QSDetail.this.handleShowingDetail(detailAdapter, i, i, false);
+                }
+            }
+
             @Override // com.android.systemui.qs.QSDetail.Callback
-            public void onShowingDetail(final DetailAdapter detailAdapter, final int i, final int i2) {
+            public void onShowingDetail(DetailAdapter detailAdapter, int i, int i2) {
                 QSDetail.this.post(new Runnable() { // from class: com.android.systemui.qs.QSDetail.3.2
+                    final /* synthetic */ DetailAdapter val$detail;
+                    final /* synthetic */ int val$x;
+                    final /* synthetic */ int val$y;
+
+                    AnonymousClass2(DetailAdapter detailAdapter2, int i3, int i22) {
+                        detailAdapter = detailAdapter2;
+                        i = i3;
+                        i = i22;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
-                        QSDetail.this.handleShowingDetail(detailAdapter, i, i2, false);
+                        QSDetail.this.handleShowingDetail(detailAdapter, i, i, false);
                     }
                 });
             }
 
+            /* renamed from: com.android.systemui.qs.QSDetail$3$3 */
+            class RunnableC00033 implements Runnable {
+                final /* synthetic */ boolean val$state;
+
+                RunnableC00033(boolean z) {
+                    z = z;
+                }
+
+                @Override // java.lang.Runnable
+                public void run() {
+                    QSDetail.this.handleScanStateChanged(z);
+                }
+            }
+
             @Override // com.android.systemui.qs.QSDetail.Callback
-            public void onScanStateChanged(final boolean z) {
+            public void onScanStateChanged(boolean z) {
                 QSDetail.this.post(new Runnable() { // from class: com.android.systemui.qs.QSDetail.3.3
+                    final /* synthetic */ boolean val$state;
+
+                    RunnableC00033(boolean z2) {
+                        z = z2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         QSDetail.this.handleScanStateChanged(z);
@@ -96,6 +167,9 @@ public class QSDetail extends LinearLayout {
             }
         };
         this.mHideGridContentWhenDone = new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.QSDetail.4
+            AnonymousClass4() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationCancel(Animator animator) {
                 animator.removeListener(this);
@@ -115,6 +189,9 @@ public class QSDetail extends LinearLayout {
             }
         };
         this.mTeardownDetailWhenDone = new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.QSDetail.5
+            AnonymousClass5() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 QSDetail.this.mDetailContent.removeAllViews();
@@ -137,22 +214,37 @@ public class QSDetail extends LinearLayout {
     @Override // android.view.View
     protected void onFinishInflate() {
         super.onFinishInflate();
-        this.mDetailContent = (ViewGroup) findViewById(16908290);
-        this.mDetailSettingsButton = (TextView) findViewById(16908314);
-        this.mDetailDoneButton = (TextView) findViewById(16908313);
+        this.mDetailContent = (ViewGroup) findViewById(android.R.id.content);
+        this.mDetailSettingsButton = (TextView) findViewById(android.R.id.button2);
+        this.mDetailDoneButton = (TextView) findViewById(android.R.id.button1);
         this.mQsDetailHeader = findViewById(R.id.qs_detail_header);
-        this.mQsDetailHeaderTitle = (TextView) this.mQsDetailHeader.findViewById(16908310);
-        this.mQsDetailHeaderSwitch = (Switch) this.mQsDetailHeader.findViewById(16908311);
+        this.mQsDetailHeaderTitle = (TextView) this.mQsDetailHeader.findViewById(android.R.id.title);
+        this.mQsDetailHeaderSwitch = (Switch) this.mQsDetailHeader.findViewById(android.R.id.toggle);
         this.mQsDetailHeaderProgress = (ImageView) findViewById(R.id.qs_detail_header_progress);
         updateDetailText();
         this.mClipper = new QSDetailClipper(this);
         this.mDetailDoneButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.qs.QSDetail.1
+            AnonymousClass1() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 QSDetail.this.announceForAccessibility(QSDetail.this.mContext.getString(R.string.accessibility_desc_quick_settings));
                 QSDetail.this.mQsPanel.closeDetail();
             }
         });
+    }
+
+    /* renamed from: com.android.systemui.qs.QSDetail$1 */
+    class AnonymousClass1 implements View.OnClickListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            QSDetail.this.announceForAccessibility(QSDetail.this.mContext.getString(R.string.accessibility_desc_quick_settings));
+            QSDetail.this.mQsPanel.closeDetail();
+        }
     }
 
     public void setQsPanel(QSPanel qSPanel, QuickStatusBarHeader quickStatusBarHeader, View view) {
@@ -216,14 +308,14 @@ public class QSDetail extends LinearLayout {
         if (z3 || this.mDetailAdapter != detailAdapter) {
             if (detailAdapter != null) {
                 int metricsCategory = detailAdapter.getMetricsCategory();
-                View createDetailView = detailAdapter.createDetailView(this.mContext, this.mDetailViews.get(metricsCategory), this.mDetailContent);
-                if (createDetailView == null) {
+                View viewCreateDetailView = detailAdapter.createDetailView(this.mContext, this.mDetailViews.get(metricsCategory), this.mDetailContent);
+                if (viewCreateDetailView == null) {
                     throw new IllegalStateException("Must return detail view");
                 }
                 setupDetailFooter(detailAdapter);
                 this.mDetailContent.removeAllViews();
-                this.mDetailContent.addView(createDetailView);
-                this.mDetailViews.put(metricsCategory, createDetailView);
+                this.mDetailContent.addView(viewCreateDetailView);
+                this.mDetailViews.put(metricsCategory, viewCreateDetailView);
                 ((MetricsLogger) Dependency.get(MetricsLogger.class)).visible(detailAdapter.getMetricsCategory());
                 announceForAccessibility(this.mContext.getString(R.string.accessibility_quick_settings_detail, detailAdapter.getTitle()));
                 this.mDetailAdapter = detailAdapter;
@@ -252,9 +344,9 @@ public class QSDetail extends LinearLayout {
             if (this.mFullyExpanded || this.mDetailAdapter != null) {
                 setAlpha(1.0f);
                 this.mClipper.animateCircularClip(i, i2, this.mDetailAdapter != null, animatorListener);
-                return;
+            } else {
+                animate().alpha(0.0f).setDuration(300L).setListener(animatorListener).start();
             }
-            animate().alpha(0.0f).setDuration(300L).setListener(animatorListener).start();
         }
     }
 
@@ -264,18 +356,17 @@ public class QSDetail extends LinearLayout {
         this.mDetailSettingsButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.qs.-$$Lambda$QSDetail$NHQwfesA2Z6J0e0FBlLg3IIEATQ
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                QSDetail.lambda$setupDetailFooter$0(DetailAdapter.this, settingsIntent, view);
+                QSDetail.lambda$setupDetailFooter$0(detailAdapter, settingsIntent, view);
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$setupDetailFooter$0(DetailAdapter detailAdapter, Intent intent, View view) {
+    static /* synthetic */ void lambda$setupDetailFooter$0(DetailAdapter detailAdapter, Intent intent, View view) {
         ((MetricsLogger) Dependency.get(MetricsLogger.class)).action(929, detailAdapter.getMetricsCategory());
         ((ActivityStarter) Dependency.get(ActivityStarter.class)).postStartActivityDismissingKeyguard(intent, 0);
     }
 
-    protected void setupDetailHeader(final DetailAdapter detailAdapter) {
+    protected void setupDetailHeader(DetailAdapter detailAdapter) {
         this.mQsDetailHeaderTitle.setText(detailAdapter.getTitle());
         Boolean toggleState = detailAdapter.getToggleState();
         if (toggleState != null) {
@@ -283,6 +374,12 @@ public class QSDetail extends LinearLayout {
             handleToggleStateChanged(toggleState.booleanValue(), detailAdapter.getToggleEnabled());
             this.mQsDetailHeader.setClickable(true);
             this.mQsDetailHeader.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.qs.QSDetail.2
+                final /* synthetic */ DetailAdapter val$adapter;
+
+                AnonymousClass2(DetailAdapter detailAdapter2) {
+                    detailAdapter = detailAdapter2;
+                }
+
                 @Override // android.view.View.OnClickListener
                 public void onClick(View view) {
                     boolean z = !QSDetail.this.mQsDetailHeaderSwitch.isChecked();
@@ -296,8 +393,23 @@ public class QSDetail extends LinearLayout {
         this.mQsDetailHeader.setClickable(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleToggleStateChanged(boolean z, boolean z2) {
+    /* renamed from: com.android.systemui.qs.QSDetail$2 */
+    class AnonymousClass2 implements View.OnClickListener {
+        final /* synthetic */ DetailAdapter val$adapter;
+
+        AnonymousClass2(DetailAdapter detailAdapter2) {
+            detailAdapter = detailAdapter2;
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            boolean z = !QSDetail.this.mQsDetailHeaderSwitch.isChecked();
+            QSDetail.this.mQsDetailHeaderSwitch.setChecked(z);
+            detailAdapter.setToggleState(z);
+        }
+    }
+
+    private void handleToggleStateChanged(boolean z, boolean z2) {
         this.mSwitchState = z;
         if (this.mAnimatingOpen) {
             return;
@@ -307,8 +419,7 @@ public class QSDetail extends LinearLayout {
         this.mQsDetailHeaderSwitch.setEnabled(z2);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleScanStateChanged(boolean z) {
+    private void handleScanStateChanged(boolean z) {
         if (this.mScanState == z) {
             return;
         }
@@ -316,9 +427,9 @@ public class QSDetail extends LinearLayout {
         final Animatable animatable = (Animatable) this.mQsDetailHeaderProgress.getDrawable();
         if (z) {
             this.mQsDetailHeaderProgress.animate().cancel();
-            ViewPropertyAnimator alpha = this.mQsDetailHeaderProgress.animate().alpha(1.0f);
+            ViewPropertyAnimator viewPropertyAnimatorAlpha = this.mQsDetailHeaderProgress.animate().alpha(1.0f);
             Objects.requireNonNull(animatable);
-            alpha.withEndAction(new Runnable() { // from class: com.android.systemui.qs.-$$Lambda$dWuG3P2xqsast1TFpf_9V5OJbdM
+            viewPropertyAnimatorAlpha.withEndAction(new Runnable() { // from class: com.android.systemui.qs.-$$Lambda$dWuG3P2xqsast1TFpf_9V5OJbdM
                 @Override // java.lang.Runnable
                 public final void run() {
                     animatable.start();
@@ -327,9 +438,9 @@ public class QSDetail extends LinearLayout {
             return;
         }
         this.mQsDetailHeaderProgress.animate().cancel();
-        ViewPropertyAnimator alpha2 = this.mQsDetailHeaderProgress.animate().alpha(0.0f);
+        ViewPropertyAnimator viewPropertyAnimatorAlpha2 = this.mQsDetailHeaderProgress.animate().alpha(0.0f);
         Objects.requireNonNull(animatable);
-        alpha2.withEndAction(new Runnable() { // from class: com.android.systemui.qs.-$$Lambda$uWzoJtW0gRQtylxIzOBLYDei0eA
+        viewPropertyAnimatorAlpha2.withEndAction(new Runnable() { // from class: com.android.systemui.qs.-$$Lambda$uWzoJtW0gRQtylxIzOBLYDei0eA
             @Override // java.lang.Runnable
             public final void run() {
                 animatable.stop();
@@ -337,8 +448,148 @@ public class QSDetail extends LinearLayout {
         }).start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void checkPendingAnimations() {
+    private void checkPendingAnimations() {
         handleToggleStateChanged(this.mSwitchState, this.mDetailAdapter != null && this.mDetailAdapter.getToggleEnabled());
+    }
+
+    /* renamed from: com.android.systemui.qs.QSDetail$3 */
+    class AnonymousClass3 implements Callback {
+        AnonymousClass3() {
+        }
+
+        /* renamed from: com.android.systemui.qs.QSDetail$3$1 */
+        class AnonymousClass1 implements Runnable {
+            final /* synthetic */ boolean val$state;
+
+            AnonymousClass1(boolean z2) {
+                z = z2;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                QSDetail.this.handleToggleStateChanged(z, QSDetail.this.mDetailAdapter != null && QSDetail.this.mDetailAdapter.getToggleEnabled());
+            }
+        }
+
+        @Override // com.android.systemui.qs.QSDetail.Callback
+        public void onToggleStateChanged(boolean z2) {
+            QSDetail.this.post(new Runnable() { // from class: com.android.systemui.qs.QSDetail.3.1
+                final /* synthetic */ boolean val$state;
+
+                AnonymousClass1(boolean z22) {
+                    z = z22;
+                }
+
+                @Override // java.lang.Runnable
+                public void run() {
+                    QSDetail.this.handleToggleStateChanged(z, QSDetail.this.mDetailAdapter != null && QSDetail.this.mDetailAdapter.getToggleEnabled());
+                }
+            });
+        }
+
+        /* renamed from: com.android.systemui.qs.QSDetail$3$2 */
+        class AnonymousClass2 implements Runnable {
+            final /* synthetic */ DetailAdapter val$detail;
+            final /* synthetic */ int val$x;
+            final /* synthetic */ int val$y;
+
+            AnonymousClass2(DetailAdapter detailAdapter2, int i3, int i22) {
+                detailAdapter = detailAdapter2;
+                i = i3;
+                i = i22;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                QSDetail.this.handleShowingDetail(detailAdapter, i, i, false);
+            }
+        }
+
+        @Override // com.android.systemui.qs.QSDetail.Callback
+        public void onShowingDetail(DetailAdapter detailAdapter2, int i3, int i22) {
+            QSDetail.this.post(new Runnable() { // from class: com.android.systemui.qs.QSDetail.3.2
+                final /* synthetic */ DetailAdapter val$detail;
+                final /* synthetic */ int val$x;
+                final /* synthetic */ int val$y;
+
+                AnonymousClass2(DetailAdapter detailAdapter22, int i32, int i222) {
+                    detailAdapter = detailAdapter22;
+                    i = i32;
+                    i = i222;
+                }
+
+                @Override // java.lang.Runnable
+                public void run() {
+                    QSDetail.this.handleShowingDetail(detailAdapter, i, i, false);
+                }
+            });
+        }
+
+        /* renamed from: com.android.systemui.qs.QSDetail$3$3 */
+        class RunnableC00033 implements Runnable {
+            final /* synthetic */ boolean val$state;
+
+            RunnableC00033(boolean z2) {
+                z = z2;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                QSDetail.this.handleScanStateChanged(z);
+            }
+        }
+
+        @Override // com.android.systemui.qs.QSDetail.Callback
+        public void onScanStateChanged(boolean z2) {
+            QSDetail.this.post(new Runnable() { // from class: com.android.systemui.qs.QSDetail.3.3
+                final /* synthetic */ boolean val$state;
+
+                RunnableC00033(boolean z22) {
+                    z = z22;
+                }
+
+                @Override // java.lang.Runnable
+                public void run() {
+                    QSDetail.this.handleScanStateChanged(z);
+                }
+            });
+        }
+    }
+
+    /* renamed from: com.android.systemui.qs.QSDetail$4 */
+    class AnonymousClass4 extends AnimatorListenerAdapter {
+        AnonymousClass4() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            animator.removeListener(this);
+            QSDetail.this.mAnimatingOpen = false;
+            QSDetail.this.checkPendingAnimations();
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (QSDetail.this.mDetailAdapter != null) {
+                QSDetail.this.mQsPanel.setGridContentVisibility(false);
+                QSDetail.this.mHeader.setVisibility(4);
+                QSDetail.this.mFooter.setVisibility(4);
+            }
+            QSDetail.this.mAnimatingOpen = false;
+            QSDetail.this.checkPendingAnimations();
+        }
+    }
+
+    /* renamed from: com.android.systemui.qs.QSDetail$5 */
+    class AnonymousClass5 extends AnimatorListenerAdapter {
+        AnonymousClass5() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            QSDetail.this.mDetailContent.removeAllViews();
+            QSDetail.this.setVisibility(4);
+            QSDetail.this.mClosingDetail = false;
+        }
     }
 }

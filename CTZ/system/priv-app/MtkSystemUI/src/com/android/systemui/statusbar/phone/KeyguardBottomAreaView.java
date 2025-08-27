@@ -14,6 +14,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,6 +58,7 @@ import com.mediatek.keyguard.ext.IEmergencyButtonExt;
 import com.mediatek.keyguard.ext.OpKeyguardCustomizationFactoryBase;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
 /* loaded from: classes.dex */
 public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickListener, View.OnLongClickListener, UnlockMethodCache.OnUnlockMethodChangedListener, AccessibilityController.AccessibilityStateChangedCallback {
     private AccessibilityController mAccessibilityController;
@@ -136,27 +138,27 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         this.mLockscreenGestureLogger = new LockscreenGestureLogger();
         this.mAccessibilityDelegate = new View.AccessibilityDelegate() { // from class: com.android.systemui.statusbar.phone.KeyguardBottomAreaView.2
             @Override // android.view.View.AccessibilityDelegate
-            public void onInitializeAccessibilityNodeInfo(View view, AccessibilityNodeInfo accessibilityNodeInfo) {
-                String str;
+            public void onInitializeAccessibilityNodeInfo(View view, AccessibilityNodeInfo accessibilityNodeInfo) throws Resources.NotFoundException {
+                String string;
                 super.onInitializeAccessibilityNodeInfo(view, accessibilityNodeInfo);
                 if (view != KeyguardBottomAreaView.this.mLockIcon) {
                     if (view != KeyguardBottomAreaView.this.mRightAffordanceView) {
                         if (view == KeyguardBottomAreaView.this.mLeftAffordanceView) {
                             if (KeyguardBottomAreaView.this.mLeftIsVoiceAssist) {
-                                str = KeyguardBottomAreaView.this.getResources().getString(R.string.voice_assist_label);
+                                string = KeyguardBottomAreaView.this.getResources().getString(R.string.voice_assist_label);
                             } else {
-                                str = KeyguardBottomAreaView.this.getResources().getString(R.string.phone_label);
+                                string = KeyguardBottomAreaView.this.getResources().getString(R.string.phone_label);
                             }
                         } else {
-                            str = null;
+                            string = null;
                         }
                     } else {
-                        str = KeyguardBottomAreaView.this.getResources().getString(R.string.camera_label);
+                        string = KeyguardBottomAreaView.this.getResources().getString(R.string.camera_label);
                     }
                 } else {
-                    str = KeyguardBottomAreaView.this.getResources().getString(R.string.unlock_label);
+                    string = KeyguardBottomAreaView.this.getResources().getString(R.string.unlock_label);
                 }
-                accessibilityNodeInfo.addAction(new AccessibilityNodeInfo.AccessibilityAction(16, str));
+                accessibilityNodeInfo.addAction(new AccessibilityNodeInfo.AccessibilityAction(16, string));
             }
 
             @Override // android.view.View.AccessibilityDelegate
@@ -165,7 +167,8 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
                     if (view == KeyguardBottomAreaView.this.mLockIcon) {
                         KeyguardBottomAreaView.this.mStatusBar.animateCollapsePanels(2, true);
                         return true;
-                    } else if (view != KeyguardBottomAreaView.this.mRightAffordanceView) {
+                    }
+                    if (view != KeyguardBottomAreaView.this.mRightAffordanceView) {
                         if (view == KeyguardBottomAreaView.this.mLeftAffordanceView) {
                             KeyguardBottomAreaView.this.launchLeftAffordance();
                             return true;
@@ -196,37 +199,37 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
             }
 
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onStartedWakingUp() {
+            public void onStartedWakingUp() throws Resources.NotFoundException {
                 KeyguardBottomAreaView.this.mLockIcon.setDeviceInteractive(true);
             }
 
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onFinishedGoingToSleep(int i3) {
+            public void onFinishedGoingToSleep(int i3) throws Resources.NotFoundException {
                 KeyguardBottomAreaView.this.mLockIcon.setDeviceInteractive(false);
             }
 
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onScreenTurnedOn() {
+            public void onScreenTurnedOn() throws Resources.NotFoundException {
                 KeyguardBottomAreaView.this.mLockIcon.setScreenOn(true);
             }
 
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onScreenTurnedOff() {
+            public void onScreenTurnedOff() throws Resources.NotFoundException {
                 KeyguardBottomAreaView.this.mLockIcon.setScreenOn(false);
             }
 
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onKeyguardVisibilityChanged(boolean z) {
+            public void onKeyguardVisibilityChanged(boolean z) throws Resources.NotFoundException {
                 KeyguardBottomAreaView.this.mLockIcon.update();
             }
 
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onFingerprintRunningStateChanged(boolean z) {
+            public void onFingerprintRunningStateChanged(boolean z) throws Resources.NotFoundException {
                 KeyguardBottomAreaView.this.mLockIcon.update();
             }
 
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onStrongAuthStateChanged(int i3) {
+            public void onStrongAuthStateChanged(int i3) throws Resources.NotFoundException {
                 KeyguardBottomAreaView.this.mLockIcon.update();
             }
 
@@ -241,7 +244,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     }
 
     @Override // android.view.View
-    protected void onFinishInflate() {
+    protected void onFinishInflate() throws Resources.NotFoundException {
         super.onFinishInflate();
         this.mLockPatternUtils = new LockPatternUtils(this.mContext);
         this.mPreviewContainer = (ViewGroup) findViewById(R.id.preview_container);
@@ -286,37 +289,33 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         this.mRightExtension = ((ExtensionController) Dependency.get(ExtensionController.class)).newExtension(IntentButtonProvider.IntentButton.class).withPlugin(IntentButtonProvider.class, "com.android.systemui.action.PLUGIN_LOCKSCREEN_RIGHT_BUTTON", new ExtensionController.PluginConverter() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$KeyguardBottomAreaView$g4KaNPI9kzVsHrOlMY-mA_f9J2Y
             @Override // com.android.systemui.statusbar.policy.ExtensionController.PluginConverter
             public final Object getInterfaceFromPlugin(Object obj) {
-                IntentButtonProvider.IntentButton intentButton;
-                intentButton = ((IntentButtonProvider) obj).getIntentButton();
-                return intentButton;
+                return ((IntentButtonProvider) obj).getIntentButton();
             }
         }).withTunerFactory(new LockscreenFragment.LockButtonFactory(this.mContext, "sysui_keyguard_right")).withDefault(new Supplier() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$KeyguardBottomAreaView$41MKD52m3LHIf9RRtKFf6LfUif0
             @Override // java.util.function.Supplier
             public final Object get() {
-                return KeyguardBottomAreaView.lambda$onAttachedToWindow$1(KeyguardBottomAreaView.this);
+                return KeyguardBottomAreaView.lambda$onAttachedToWindow$1(this.f$0);
             }
         }).withCallback(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$KeyguardBottomAreaView$Z_R5g5wpXUcfPYLHCfZHekG4xK0
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                KeyguardBottomAreaView.this.setRightButton((IntentButtonProvider.IntentButton) obj);
+                this.f$0.setRightButton((IntentButtonProvider.IntentButton) obj);
             }
         }).build();
         this.mLeftExtension = ((ExtensionController) Dependency.get(ExtensionController.class)).newExtension(IntentButtonProvider.IntentButton.class).withPlugin(IntentButtonProvider.class, "com.android.systemui.action.PLUGIN_LOCKSCREEN_LEFT_BUTTON", new ExtensionController.PluginConverter() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$KeyguardBottomAreaView$Eh9_ou4HbbT4H4ZFilpDDtanY4k
             @Override // com.android.systemui.statusbar.policy.ExtensionController.PluginConverter
             public final Object getInterfaceFromPlugin(Object obj) {
-                IntentButtonProvider.IntentButton intentButton;
-                intentButton = ((IntentButtonProvider) obj).getIntentButton();
-                return intentButton;
+                return ((IntentButtonProvider) obj).getIntentButton();
             }
         }).withTunerFactory(new LockscreenFragment.LockButtonFactory(this.mContext, "sysui_keyguard_left")).withDefault(new Supplier() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$KeyguardBottomAreaView$W-hTEBW5YZVW2MsKtz0LzBCynHY
             @Override // java.util.function.Supplier
             public final Object get() {
-                return KeyguardBottomAreaView.lambda$onAttachedToWindow$4(KeyguardBottomAreaView.this);
+                return KeyguardBottomAreaView.lambda$onAttachedToWindow$4(this.f$0);
             }
         }).withCallback(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$KeyguardBottomAreaView$owXxFBBnubMOAUdfyf5a48bf-Zo
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                KeyguardBottomAreaView.this.setLeftButton((IntentButtonProvider.IntentButton) obj);
+                this.f$0.setLeftButton((IntentButtonProvider.IntentButton) obj);
             }
         }).build();
         IntentFilter intentFilter = new IntentFilter();
@@ -325,10 +324,18 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         KeyguardUpdateMonitor.getInstance(this.mContext).registerCallback(this.mUpdateMonitorCallback);
     }
 
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0003: CONSTRUCTOR 
+  (r2v0 com.android.systemui.statusbar.phone.KeyguardBottomAreaView)
+  (null com.android.systemui.statusbar.phone.KeyguardBottomAreaView$1)
+ A[MD:(com.android.systemui.statusbar.phone.KeyguardBottomAreaView, com.android.systemui.statusbar.phone.KeyguardBottomAreaView$1):void (m)] (LINE:302) call: com.android.systemui.statusbar.phone.KeyguardBottomAreaView.DefaultRightButton.<init>(com.android.systemui.statusbar.phone.KeyguardBottomAreaView, com.android.systemui.statusbar.phone.KeyguardBottomAreaView$1):void type: CONSTRUCTOR */
     public static /* synthetic */ IntentButtonProvider.IntentButton lambda$onAttachedToWindow$1(KeyguardBottomAreaView keyguardBottomAreaView) {
         return new DefaultRightButton();
     }
 
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0003: CONSTRUCTOR 
+  (r2v0 com.android.systemui.statusbar.phone.KeyguardBottomAreaView)
+  (null com.android.systemui.statusbar.phone.KeyguardBottomAreaView$1)
+ A[MD:(com.android.systemui.statusbar.phone.KeyguardBottomAreaView, com.android.systemui.statusbar.phone.KeyguardBottomAreaView$1):void (m)] (LINE:309) call: com.android.systemui.statusbar.phone.KeyguardBottomAreaView.DefaultLeftButton.<init>(com.android.systemui.statusbar.phone.KeyguardBottomAreaView, com.android.systemui.statusbar.phone.KeyguardBottomAreaView$1):void type: CONSTRUCTOR */
     public static /* synthetic */ IntentButtonProvider.IntentButton lambda$onAttachedToWindow$4(KeyguardBottomAreaView keyguardBottomAreaView) {
         return new DefaultLeftButton();
     }
@@ -350,13 +357,12 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     }
 
     @Override // android.view.View
-    protected void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) throws Resources.NotFoundException {
         super.onConfigurationChanged(configuration);
         this.mIndicationBottomMargin = getResources().getDimensionPixelSize(R.dimen.keyguard_indication_margin_bottom);
         this.mIndicationBottomMarginAmbient = getResources().getDimensionPixelSize(R.dimen.keyguard_indication_margin_bottom_ambient);
-        ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) this.mIndicationArea.getLayoutParams();
-        this.mEnterpriseDisclosure.setTextSize(0, getResources().getDimensionPixelSize(17105335));
-        this.mIndicationText.setTextSize(0, getResources().getDimensionPixelSize(17105335));
+        this.mEnterpriseDisclosure.setTextSize(0, getResources().getDimensionPixelSize(android.R.dimen.indeterminate_progress_alpha_42));
+        this.mIndicationText.setTextSize(0, getResources().getDimensionPixelSize(android.R.dimen.indeterminate_progress_alpha_42));
         ViewGroup.LayoutParams layoutParams = this.mRightAffordanceView.getLayoutParams();
         layoutParams.width = getResources().getDimensionPixelSize(R.dimen.keyguard_affordance_width);
         layoutParams.height = getResources().getDimensionPixelSize(R.dimen.keyguard_affordance_height);
@@ -405,8 +411,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         return this.mContext.getPackageManager().resolveActivityAsUser(getCameraIntent(), 65536, KeyguardUpdateMonitor.getCurrentUser());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateCameraVisibility() {
+    private void updateCameraVisibility() {
         if (this.mRightAffordanceView == null) {
             return;
         }
@@ -424,14 +429,13 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         return this.mLeftIsVoiceAssist;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isPhoneVisible() {
+    private boolean isPhoneVisible() {
         PackageManager packageManager = this.mContext.getPackageManager();
         return packageManager.hasSystemFeature("android.hardware.telephony") && packageManager.resolveActivity(PHONE_INTENT, 0) != null;
     }
 
     @Override // com.android.systemui.statusbar.policy.AccessibilityController.AccessibilityStateChangedCallback
-    public void onStateChanged(boolean z, boolean z2) {
+    public void onStateChanged(boolean z, boolean z2) throws Resources.NotFoundException {
         this.mRightAffordanceView.setClickable(z2);
         this.mLeftAffordanceView.setClickable(z2);
         this.mRightAffordanceView.setFocusable(z);
@@ -501,27 +505,27 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     public void launchCamera(String str) {
         final Intent cameraIntent = getCameraIntent();
         cameraIntent.putExtra("com.android.systemui.camera_launch_source", str);
-        boolean wouldLaunchResolverActivity = PreviewInflater.wouldLaunchResolverActivity(this.mContext, cameraIntent, KeyguardUpdateMonitor.getCurrentUser());
-        if (cameraIntent == SECURE_CAMERA_INTENT && !wouldLaunchResolverActivity) {
+        boolean zWouldLaunchResolverActivity = PreviewInflater.wouldLaunchResolverActivity(this.mContext, cameraIntent, KeyguardUpdateMonitor.getCurrentUser());
+        if (cameraIntent == SECURE_CAMERA_INTENT && !zWouldLaunchResolverActivity) {
             AsyncTask.execute(new Runnable() { // from class: com.android.systemui.statusbar.phone.KeyguardBottomAreaView.3
                 @Override // java.lang.Runnable
                 public void run() {
-                    int i;
-                    ActivityOptions makeBasic = ActivityOptions.makeBasic();
-                    makeBasic.setDisallowEnterPictureInPictureWhileLaunching(true);
-                    makeBasic.setRotationAnimationHint(3);
+                    int iStartActivityAsUser;
+                    ActivityOptions activityOptionsMakeBasic = ActivityOptions.makeBasic();
+                    activityOptionsMakeBasic.setDisallowEnterPictureInPictureWhileLaunching(true);
+                    activityOptionsMakeBasic.setRotationAnimationHint(3);
                     try {
                         cameraIntent.setFlags(67108864);
-                        i = ActivityManager.getService().startActivityAsUser((IApplicationThread) null, KeyguardBottomAreaView.this.getContext().getBasePackageName(), cameraIntent, cameraIntent.resolveTypeIfNeeded(KeyguardBottomAreaView.this.getContext().getContentResolver()), (IBinder) null, (String) null, 0, 268435456, (ProfilerInfo) null, makeBasic.toBundle(), UserHandle.CURRENT.getIdentifier());
+                        iStartActivityAsUser = ActivityManager.getService().startActivityAsUser((IApplicationThread) null, KeyguardBottomAreaView.this.getContext().getBasePackageName(), cameraIntent, cameraIntent.resolveTypeIfNeeded(KeyguardBottomAreaView.this.getContext().getContentResolver()), (IBinder) null, (String) null, 0, 268435456, (ProfilerInfo) null, activityOptionsMakeBasic.toBundle(), UserHandle.CURRENT.getIdentifier());
                     } catch (RemoteException e) {
                         Log.w("StatusBar/KeyguardBottomAreaView", "Unable to start camera activity", e);
-                        i = -96;
+                        iStartActivityAsUser = -96;
                     }
-                    final boolean isSuccessfulLaunch = KeyguardBottomAreaView.isSuccessfulLaunch(i);
+                    final boolean zIsSuccessfulLaunch = KeyguardBottomAreaView.isSuccessfulLaunch(iStartActivityAsUser);
                     KeyguardBottomAreaView.this.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.KeyguardBottomAreaView.3.1
                         @Override // java.lang.Runnable
                         public void run() {
-                            KeyguardBottomAreaView.this.unbindCameraPrewarmService(isSuccessfulLaunch);
+                            KeyguardBottomAreaView.this.unbindCameraPrewarmService(zIsSuccessfulLaunch);
                         }
                     });
                 }
@@ -548,8 +552,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         this.mIndicationArea.setTranslationY(MathUtils.lerp(0.0f, this.mIndicationBottomMargin - this.mIndicationBottomMarginAmbient, f));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static boolean isSuccessfulLaunch(int i) {
+    private static boolean isSuccessfulLaunch(int i) {
         return i == 0 || i == 3 || i == 2;
     }
 
@@ -575,28 +578,26 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean canLaunchVoiceAssist() {
+    private boolean canLaunchVoiceAssist() {
         return this.mAssistManager.canVoiceAssistBeLaunchedFromKeyguard();
     }
 
     private void launchPhone() {
-        final TelecomManager from = TelecomManager.from(this.mContext);
-        if (from.isInCall()) {
+        final TelecomManager telecomManagerFrom = TelecomManager.from(this.mContext);
+        if (telecomManagerFrom.isInCall()) {
             AsyncTask.execute(new Runnable() { // from class: com.android.systemui.statusbar.phone.KeyguardBottomAreaView.6
                 @Override // java.lang.Runnable
                 public void run() {
-                    from.showInCallScreen(false);
+                    telecomManagerFrom.showInCallScreen(false);
                 }
             });
-            return;
+        } else {
+            this.mActivityStarter.startActivity(this.mLeftButton.getIntent(), (TextUtils.isEmpty(this.mLeftButtonStr) || ((TunerService) Dependency.get(TunerService.class)).getValue("sysui_keyguard_left_unlock", 1) == 0) ? false : true);
         }
-        boolean z = true;
-        this.mActivityStarter.startActivity(this.mLeftButton.getIntent(), (TextUtils.isEmpty(this.mLeftButtonStr) || ((TunerService) Dependency.get(TunerService.class)).getValue("sysui_keyguard_left_unlock", 1) == 0) ? false : false);
     }
 
     @Override // android.view.View
-    protected void onVisibilityChanged(View view, int i) {
+    protected void onVisibilityChanged(View view, int i) throws Resources.NotFoundException {
         super.onVisibilityChanged(view, i);
         if (view == this && i == 0) {
             this.mLockIcon.update();
@@ -634,42 +635,29 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     }
 
     @Override // com.android.systemui.statusbar.phone.UnlockMethodCache.OnUnlockMethodChangedListener
-    public void onUnlockMethodStateChanged() {
+    public void onUnlockMethodStateChanged() throws Resources.NotFoundException {
         this.mLockIcon.update();
         updateCameraVisibility();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Removed duplicated region for block: B:10:0x0024  */
-    /* JADX WARN: Removed duplicated region for block: B:17:0x0038  */
-    /* JADX WARN: Removed duplicated region for block: B:19:? A[RETURN, SYNTHETIC] */
+    /* JADX WARN: Removed duplicated region for block: B:7:0x0013  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void inflateCameraPreview() {
+    private void inflateCameraPreview() {
         boolean z;
         View view = this.mCameraPreview;
         if (view != null) {
             this.mPreviewContainer.removeView(view);
-            if (view.getVisibility() == 0) {
-                z = true;
-                this.mCameraPreview = this.mPreviewInflater.inflatePreview(getCameraIntent());
-                if (this.mCameraPreview != null) {
-                    this.mPreviewContainer.addView(this.mCameraPreview);
-                    this.mCameraPreview.setVisibility(z ? 0 : 4);
-                }
-                if (this.mAffordanceHelper == null) {
-                    this.mAffordanceHelper.updatePreviews();
-                    return;
-                }
-                return;
-            }
+            z = view.getVisibility() == 0;
         }
-        z = false;
         this.mCameraPreview = this.mPreviewInflater.inflatePreview(getCameraIntent());
         if (this.mCameraPreview != null) {
+            this.mPreviewContainer.addView(this.mCameraPreview);
+            this.mCameraPreview.setVisibility(z ? 0 : 4);
         }
-        if (this.mAffordanceHelper == null) {
+        if (this.mAffordanceHelper != null) {
+            this.mAffordanceHelper.updatePreviews();
         }
     }
 
@@ -725,16 +713,14 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         inflateCameraPreview();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setRightButton(IntentButtonProvider.IntentButton intentButton) {
+    private void setRightButton(IntentButtonProvider.IntentButton intentButton) {
         this.mRightButton = intentButton;
         updateRightAffordanceIcon();
         updateCameraVisibility();
         inflateCameraPreview();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setLeftButton(IntentButtonProvider.IntentButton intentButton) {
+    private void setLeftButton(IntentButtonProvider.IntentButton intentButton) {
         this.mLeftButton = intentButton;
         if (!(this.mLeftButton instanceof DefaultLeftButton)) {
             this.mLeftIsVoiceAssist = false;
@@ -772,9 +758,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         this.mIndicationArea.setTranslationX(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class DefaultLeftButton implements IntentButtonProvider.IntentButton {
+    private class DefaultLeftButton implements IntentButtonProvider.IntentButton {
         private IntentButtonProvider.IntentButton.IconState mIconState;
 
         private DefaultLeftButton() {
@@ -782,7 +766,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         }
 
         @Override // com.android.systemui.plugins.IntentButtonProvider.IntentButton
-        public IntentButtonProvider.IntentButton.IconState getIcon() {
+        public IntentButtonProvider.IntentButton.IconState getIcon() throws Resources.NotFoundException {
             KeyguardBottomAreaView.this.mLeftIsVoiceAssist = KeyguardBottomAreaView.this.canLaunchVoiceAssist();
             boolean z = KeyguardBottomAreaView.this.getResources().getBoolean(R.bool.config_keyguardShowLeftAffordance);
             boolean z2 = false;
@@ -816,9 +800,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class DefaultRightButton implements IntentButtonProvider.IntentButton {
+    private class DefaultRightButton implements IntentButtonProvider.IntentButton {
         private IntentButtonProvider.IntentButton.IconState mIconState;
 
         private DefaultRightButton() {
@@ -827,11 +809,11 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
 
         @Override // com.android.systemui.plugins.IntentButtonProvider.IntentButton
         public IntentButtonProvider.IntentButton.IconState getIcon() {
-            ResolveInfo resolveCameraIntent = KeyguardBottomAreaView.this.resolveCameraIntent();
+            ResolveInfo resolveInfoResolveCameraIntent = KeyguardBottomAreaView.this.resolveCameraIntent();
             boolean z = false;
             boolean z2 = (KeyguardBottomAreaView.this.mStatusBar == null || KeyguardBottomAreaView.this.mStatusBar.isCameraAllowedByAdmin()) ? false : true;
             IntentButtonProvider.IntentButton.IconState iconState = this.mIconState;
-            if (!z2 && resolveCameraIntent != null && KeyguardBottomAreaView.this.getResources().getBoolean(R.bool.config_keyguardShowCameraAffordance) && KeyguardBottomAreaView.this.mUserSetupComplete) {
+            if (!z2 && resolveInfoResolveCameraIntent != null && KeyguardBottomAreaView.this.getResources().getBoolean(R.bool.config_keyguardShowCameraAffordance) && KeyguardBottomAreaView.this.mUserSetupComplete) {
                 z = true;
             }
             iconState.isVisible = z;

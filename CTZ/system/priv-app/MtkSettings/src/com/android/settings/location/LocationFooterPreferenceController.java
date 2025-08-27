@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LocationFooterPreferenceController extends LocationBasePreferenceController implements LifecycleObserver, OnPause {
     private static final Intent INJECT_INTENT = new Intent("com.android.settings.location.DISPLAYED_FOOTER");
@@ -85,17 +86,17 @@ public class LocationFooterPreferenceController extends LocationBasePreferenceCo
     }
 
     private Collection<FooterData> getFooterData() {
-        List<ResolveInfo> queryBroadcastReceivers = this.mPackageManager.queryBroadcastReceivers(INJECT_INTENT, 128);
-        if (queryBroadcastReceivers != null) {
+        List<ResolveInfo> listQueryBroadcastReceivers = this.mPackageManager.queryBroadcastReceivers(INJECT_INTENT, 128);
+        if (listQueryBroadcastReceivers != null) {
             if (Log.isLoggable("LocationFooter", 3)) {
-                Log.d("LocationFooter", "Found broadcast receivers: " + queryBroadcastReceivers);
+                Log.d("LocationFooter", "Found broadcast receivers: " + listQueryBroadcastReceivers);
             }
         } else if (Log.isLoggable("LocationFooter", 6)) {
             Log.e("LocationFooter", "Unable to resolve intent " + INJECT_INTENT);
             return Collections.emptyList();
         }
-        ArrayList arrayList = new ArrayList(queryBroadcastReceivers.size());
-        for (ResolveInfo resolveInfo : queryBroadcastReceivers) {
+        ArrayList arrayList = new ArrayList(listQueryBroadcastReceivers.size());
+        for (ResolveInfo resolveInfo : listQueryBroadcastReceivers) {
             ActivityInfo activityInfo = resolveInfo.activityInfo;
             ApplicationInfo applicationInfo = activityInfo.applicationInfo;
             if ((applicationInfo.flags & 1) == 0 && Log.isLoggable("LocationFooter", 5)) {
@@ -116,9 +117,7 @@ public class LocationFooterPreferenceController extends LocationBasePreferenceCo
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class FooterData {
+    private static class FooterData {
         final ApplicationInfo applicationInfo;
         final ComponentName componentName;
         final int footerStringRes;

@@ -1,5 +1,6 @@
 package com.android.systemui.shortcut;
 
+import android.content.res.Resources;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.IWindowManager;
@@ -10,6 +11,7 @@ import com.android.systemui.recents.Recents;
 import com.android.systemui.shortcut.ShortcutKeyServiceProxy;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.stackdivider.DividerView;
+
 /* loaded from: classes.dex */
 public class ShortcutKeyDispatcher extends SystemUI implements ShortcutKeyServiceProxy.Callbacks {
     private ShortcutKeyServiceProxy mShortcutKeyServiceProxy = new ShortcutKeyServiceProxy(this);
@@ -29,7 +31,7 @@ public class ShortcutKeyDispatcher extends SystemUI implements ShortcutKeyServic
     }
 
     @Override // com.android.systemui.shortcut.ShortcutKeyServiceProxy.Callbacks
-    public void onShortcutKeyPressed(long j) {
+    public void onShortcutKeyPressed(long j) throws Resources.NotFoundException {
         int i = this.mContext.getResources().getConfiguration().orientation;
         if ((j == 281474976710727L || j == 281474976710728L) && i == 2) {
             handleDockKey(j);
@@ -42,7 +44,7 @@ public class ShortcutKeyDispatcher extends SystemUI implements ShortcutKeyServic
         registerShortcutKey(281474976710728L);
     }
 
-    private void handleDockKey(long j) {
+    private void handleDockKey(long j) throws Resources.NotFoundException {
         DividerSnapAlgorithm.SnapTarget nextTarget;
         try {
             if (this.mWindowManagerService.getDockedStackSide() == -1) {
@@ -51,11 +53,11 @@ public class ShortcutKeyDispatcher extends SystemUI implements ShortcutKeyServic
             }
             DividerView view = ((Divider) getComponent(Divider.class)).getView();
             DividerSnapAlgorithm snapAlgorithm = view.getSnapAlgorithm();
-            DividerSnapAlgorithm.SnapTarget calculateNonDismissingSnapTarget = snapAlgorithm.calculateNonDismissingSnapTarget(view.getCurrentPosition());
+            DividerSnapAlgorithm.SnapTarget snapTargetCalculateNonDismissingSnapTarget = snapAlgorithm.calculateNonDismissingSnapTarget(view.getCurrentPosition());
             if (j == 281474976710727L) {
-                nextTarget = snapAlgorithm.getPreviousTarget(calculateNonDismissingSnapTarget);
+                nextTarget = snapAlgorithm.getPreviousTarget(snapTargetCalculateNonDismissingSnapTarget);
             } else {
-                nextTarget = snapAlgorithm.getNextTarget(calculateNonDismissingSnapTarget);
+                nextTarget = snapAlgorithm.getNextTarget(snapTargetCalculateNonDismissingSnapTarget);
             }
             view.startDragging(true, false);
             view.stopDragging(nextTarget.position, 0.0f, false, true);

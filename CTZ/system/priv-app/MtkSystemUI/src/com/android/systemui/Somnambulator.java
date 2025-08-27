@@ -3,6 +3,7 @@ package com.android.systemui;
 import android.app.Activity;
 import android.content.Intent;
 import android.service.dreams.Sandman;
+
 /* loaded from: classes.dex */
 public class Somnambulator extends Activity {
     @Override // android.app.Activity
@@ -10,7 +11,7 @@ public class Somnambulator extends Activity {
         super.onStart();
         Intent intent = getIntent();
         if ("android.intent.action.CREATE_SHORTCUT".equals(intent.getAction())) {
-            Intent intent2 = new Intent(this, Somnambulator.class);
+            Intent intent2 = new Intent(this, (Class<?>) Somnambulator.class);
             intent2.setFlags(276824064);
             Intent intent3 = new Intent();
             intent3.putExtra("android.intent.extra.shortcut.ICON_RESOURCE", Intent.ShortcutIconResource.fromContext(this, R.mipmap.ic_launcher_dreams));

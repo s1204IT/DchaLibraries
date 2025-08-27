@@ -3,6 +3,7 @@ package com.android.systemui.qs;
 import android.graphics.Path;
 import android.view.animation.BaseInterpolator;
 import android.view.animation.Interpolator;
+
 /* loaded from: classes.dex */
 public class PathInterpolatorBuilder {
     private float[] mDist;
@@ -21,9 +22,9 @@ public class PathInterpolatorBuilder {
     }
 
     private void initPath(Path path) {
-        float[] approximate = path.approximate(0.002f);
-        int length = approximate.length / 3;
-        if (approximate[1] != 0.0f || approximate[2] != 0.0f || approximate[approximate.length - 2] != 1.0f || approximate[approximate.length - 1] != 1.0f) {
+        float[] fArrApproximate = path.approximate(0.002f);
+        int length = fArrApproximate.length / 3;
+        if (fArrApproximate[1] != 0.0f || fArrApproximate[2] != 0.0f || fArrApproximate[fArrApproximate.length - 2] != 1.0f || fArrApproximate[fArrApproximate.length - 1] != 1.0f) {
             throw new IllegalArgumentException("The Path must start at (0,0) and end at (1,1)");
         }
         this.mX = new float[length];
@@ -35,11 +36,11 @@ public class PathInterpolatorBuilder {
         int i2 = 0;
         while (i2 < length) {
             int i3 = i + 1;
-            float f3 = approximate[i];
+            float f3 = fArrApproximate[i];
             int i4 = i3 + 1;
-            float f4 = approximate[i3];
+            float f4 = fArrApproximate[i3];
             int i5 = i4 + 1;
-            float f5 = approximate[i4];
+            float f5 = fArrApproximate[i4];
             if (f3 == f && f4 != f2) {
                 throw new IllegalArgumentException("The Path cannot have discontinuity in the X axis.");
             }
@@ -74,7 +75,6 @@ public class PathInterpolatorBuilder {
         return new PathInterpolator(this.mDist, this.mY);
     }
 
-    /* loaded from: classes.dex */
     private static class PathInterpolator extends BaseInterpolator {
         private final float[] mX;
         private final float[] mY;
@@ -106,8 +106,9 @@ public class PathInterpolatorBuilder {
             if (f2 == 0.0f) {
                 return this.mY[i];
             }
-            float f3 = this.mY[i];
-            return f3 + (((f - this.mX[i]) / f2) * (this.mY[length] - f3));
+            float f3 = (f - this.mX[i]) / f2;
+            float f4 = this.mY[i];
+            return f4 + (f3 * (this.mY[length] - f4));
         }
     }
 }

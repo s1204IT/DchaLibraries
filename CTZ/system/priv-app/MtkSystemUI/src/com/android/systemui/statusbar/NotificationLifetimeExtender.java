@@ -1,10 +1,10 @@
 package com.android.systemui.statusbar;
 
 import com.android.systemui.statusbar.NotificationData;
+
 /* loaded from: classes.dex */
 public interface NotificationLifetimeExtender {
 
-    /* loaded from: classes.dex */
     public interface NotificationSafeToRemoveCallback {
         void onSafeToRemove(String str);
     }

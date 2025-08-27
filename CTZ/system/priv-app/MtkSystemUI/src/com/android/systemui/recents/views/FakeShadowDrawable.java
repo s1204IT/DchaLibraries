@@ -15,9 +15,9 @@ import android.util.Log;
 import com.android.systemui.R;
 import com.android.systemui.recents.Recents;
 import com.android.systemui.recents.RecentsConfiguration;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class FakeShadowDrawable extends Drawable {
+class FakeShadowDrawable extends Drawable {
     static final double COS_45 = Math.cos(Math.toRadians(45.0d));
     final RectF mCardBounds;
     float mCornerRadius;
@@ -90,9 +90,9 @@ public class FakeShadowDrawable extends Drawable {
 
     @Override // android.graphics.drawable.Drawable
     public boolean getPadding(Rect rect) {
-        int ceil = (int) Math.ceil(calculateVerticalPadding(this.mRawMaxShadowSize, this.mCornerRadius, this.mAddPaddingForCorners));
-        int ceil2 = (int) Math.ceil(calculateHorizontalPadding(this.mRawMaxShadowSize, this.mCornerRadius, this.mAddPaddingForCorners));
-        rect.set(ceil2, ceil, ceil2, ceil);
+        int iCeil = (int) Math.ceil(calculateVerticalPadding(this.mRawMaxShadowSize, this.mCornerRadius, this.mAddPaddingForCorners));
+        int iCeil2 = (int) Math.ceil(calculateHorizontalPadding(this.mRawMaxShadowSize, this.mCornerRadius, this.mAddPaddingForCorners));
+        rect.set(iCeil2, iCeil, iCeil2, iCeil);
         return true;
     }
 
@@ -138,37 +138,37 @@ public class FakeShadowDrawable extends Drawable {
         float f3 = 2.0f * f2;
         boolean z = this.mCardBounds.width() - f3 > 0.0f;
         boolean z2 = this.mCardBounds.height() - f3 > 0.0f;
-        int save = canvas.save();
+        int iSave = canvas.save();
         canvas.translate(this.mCardBounds.left + f2, this.mCardBounds.top + f2);
         canvas.drawPath(this.mCornerShadowPath, this.mCornerShadowPaint);
         if (z) {
             canvas.drawRect(0.0f, f, this.mCardBounds.width() - f3, -this.mCornerRadius, this.mEdgeShadowPaint);
         }
-        canvas.restoreToCount(save);
-        int save2 = canvas.save();
+        canvas.restoreToCount(iSave);
+        int iSave2 = canvas.save();
         canvas.translate(this.mCardBounds.right - f2, this.mCardBounds.bottom - f2);
         canvas.rotate(180.0f);
         canvas.drawPath(this.mCornerShadowPath, this.mCornerShadowPaint);
         if (z) {
             canvas.drawRect(0.0f, f, this.mCardBounds.width() - f3, (-this.mCornerRadius) + this.mShadowSize, this.mEdgeShadowPaint);
         }
-        canvas.restoreToCount(save2);
-        int save3 = canvas.save();
+        canvas.restoreToCount(iSave2);
+        int iSave3 = canvas.save();
         canvas.translate(this.mCardBounds.left + f2, this.mCardBounds.bottom - f2);
         canvas.rotate(270.0f);
         canvas.drawPath(this.mCornerShadowPath, this.mCornerShadowPaint);
         if (z2) {
             canvas.drawRect(0.0f, f, this.mCardBounds.height() - f3, -this.mCornerRadius, this.mEdgeShadowPaint);
         }
-        canvas.restoreToCount(save3);
-        int save4 = canvas.save();
+        canvas.restoreToCount(iSave3);
+        int iSave4 = canvas.save();
         canvas.translate(this.mCardBounds.right - f2, this.mCardBounds.top + f2);
         canvas.rotate(90.0f);
         canvas.drawPath(this.mCornerShadowPath, this.mCornerShadowPaint);
         if (z2) {
             canvas.drawRect(0.0f, f, this.mCardBounds.height() - f3, -this.mCornerRadius, this.mEdgeShadowPaint);
         }
-        canvas.restoreToCount(save4);
+        canvas.restoreToCount(iSave4);
     }
 
     private void buildShadowCorners() {

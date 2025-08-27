@@ -1,5 +1,6 @@
 package com.google.common.collect;
 
+import android.Manifest;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.NavigableSet;
 import java.util.SortedSet;
+
 /* loaded from: classes.dex */
 public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxverideShim<E> implements SortedIterable<E>, NavigableSet<E> {
     final transient Comparator<? super E> comparator;
@@ -17,15 +19,15 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
     private static final Comparator<Comparable> NATURAL_ORDER = Ordering.natural();
     private static final ImmutableSortedSet<Comparable> NATURAL_EMPTY_SET = new EmptyImmutableSortedSet(NATURAL_ORDER);
 
+    /* JADX DEBUG: Method merged with bridge method: descendingIterator()Ljava/util/Iterator; */
     @Override // java.util.NavigableSet
     public abstract UnmodifiableIterator<E> descendingIterator();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract ImmutableSortedSet<E> headSetImpl(E e, boolean z);
+    abstract ImmutableSortedSet<E> headSetImpl(E e, boolean z);
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract int indexOf(Object obj);
+    abstract int indexOf(Object obj);
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public abstract UnmodifiableIterator<E> iterator();
 
@@ -33,30 +35,36 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
 
     abstract ImmutableSortedSet<E> tailSetImpl(E e, boolean z);
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableSet
     public /* bridge */ /* synthetic */ NavigableSet headSet(Object obj, boolean z) {
         return headSet((ImmutableSortedSet<E>) obj, z);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableSet, java.util.SortedSet
     public /* bridge */ /* synthetic */ SortedSet headSet(Object obj) {
         return headSet((ImmutableSortedSet<E>) obj);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableSet
     public /* bridge */ /* synthetic */ NavigableSet subSet(Object obj, boolean z, Object obj2, boolean z2) {
         return subSet((boolean) obj, z, (boolean) obj2, z2);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableSet
     public /* bridge */ /* synthetic */ NavigableSet tailSet(Object obj, boolean z) {
         return tailSet((ImmutableSortedSet<E>) obj, z);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableSet, java.util.SortedSet
     public /* bridge */ /* synthetic */ SortedSet tailSet(Object obj) {
@@ -67,14 +75,15 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         return (ImmutableSortedSet<E>) NATURAL_EMPTY_SET;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <E> ImmutableSortedSet<E> emptySet(Comparator<? super E> comparator) {
+    static <E> ImmutableSortedSet<E> emptySet(Comparator<? super E> comparator) {
         if (NATURAL_ORDER.equals(comparator)) {
             return emptySet();
         }
         return new EmptyImmutableSortedSet(comparator);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r2v1, resolved type: java.lang.Object[] */
+    /* JADX DEBUG: Multi-variable search result rejected for r3v4, resolved type: java.lang.Object[] */
     /* JADX WARN: Multi-variable type inference failed */
     static <E> ImmutableSortedSet<E> construct(Comparator<? super E> comparator, int i, E... eArr) {
         if (i == 0) {
@@ -84,9 +93,9 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         Arrays.sort(eArr, 0, i, comparator);
         int i2 = 1;
         for (int i3 = 1; i3 < i; i3++) {
-            Object obj = (Object) eArr[i3];
-            if (comparator.compare(obj, (Object) eArr[i2 - 1]) != 0) {
-                eArr[i2] = obj;
+            Manifest manifest = (Object) eArr[i3];
+            if (comparator.compare(manifest, (Object) eArr[i2 - 1]) != 0) {
+                eArr[i2] = manifest;
                 i2++;
             }
         }
@@ -94,22 +103,24 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         return new RegularImmutableSortedSet(ImmutableList.asImmutableList(eArr, i2), comparator);
     }
 
-    /* loaded from: classes.dex */
     public static final class Builder<E> extends ImmutableSet.Builder<E> {
         private final Comparator<? super E> comparator;
 
+        /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.ImmutableSet.Builder, com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public /* bridge */ /* synthetic */ ImmutableCollection.ArrayBasedBuilder add(Object obj) {
             return add((Builder<E>) obj);
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.ImmutableSet.Builder, com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public /* bridge */ /* synthetic */ ImmutableCollection.Builder add(Object obj) {
             return add((Builder<E>) obj);
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.ImmutableSet.Builder, com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public /* bridge */ /* synthetic */ ImmutableSet.Builder add(Object obj) {
@@ -126,28 +137,32 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: add([Ljava/lang/Object;)Lcom/google/common/collect/ImmutableCollection$Builder; */
+        /* JADX DEBUG: Method merged with bridge method: add([Ljava/lang/Object;)Lcom/google/common/collect/ImmutableSet$Builder; */
         @Override // com.google.common.collect.ImmutableSet.Builder, com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public Builder<E> add(E... eArr) {
             super.add((Object[]) eArr);
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: addAll(Ljava/lang/Iterable;)Lcom/google/common/collect/ImmutableCollection$Builder; */
+        /* JADX DEBUG: Method merged with bridge method: addAll(Ljava/lang/Iterable;)Lcom/google/common/collect/ImmutableSet$Builder; */
         @Override // com.google.common.collect.ImmutableSet.Builder, com.google.common.collect.ImmutableCollection.ArrayBasedBuilder, com.google.common.collect.ImmutableCollection.Builder
         public Builder<E> addAll(Iterable<? extends E> iterable) {
             super.addAll((Iterable) iterable);
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: build()Lcom/google/common/collect/ImmutableSet; */
         @Override // com.google.common.collect.ImmutableSet.Builder
         public ImmutableSortedSet<E> build() {
-            ImmutableSortedSet<E> construct = ImmutableSortedSet.construct(this.comparator, this.size, this.contents);
-            this.size = construct.size();
-            return construct;
+            ImmutableSortedSet<E> immutableSortedSetConstruct = ImmutableSortedSet.construct(this.comparator, this.size, this.contents);
+            this.size = immutableSortedSetConstruct.size();
+            return immutableSortedSetConstruct;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int unsafeCompare(Object obj, Object obj2) {
+    int unsafeCompare(Object obj, Object obj2) {
         return unsafeCompare(this.comparator, obj, obj2);
     }
 
@@ -155,8 +170,7 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         return comparator.compare(obj, obj2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ImmutableSortedSet(Comparator<? super E> comparator) {
+    ImmutableSortedSet(Comparator<? super E> comparator) {
         this.comparator = comparator;
     }
 
@@ -170,12 +184,14 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         return headSet((ImmutableSortedSet<E>) e, false);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r0v0, resolved type: com.google.common.collect.ImmutableSortedSet<E> */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableSet
     public ImmutableSortedSet<E> headSet(E e, boolean z) {
         return headSetImpl(Preconditions.checkNotNull(e), z);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: subSet(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedSet; */
     @Override // java.util.NavigableSet, java.util.SortedSet
     public ImmutableSortedSet<E> subSet(E e, E e2) {
         return subSet((boolean) e, true, (boolean) e2, false);
@@ -194,6 +210,7 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         return tailSet((ImmutableSortedSet<E>) e, true);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r0v0, resolved type: com.google.common.collect.ImmutableSortedSet<E> */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableSet
     public ImmutableSortedSet<E> tailSet(E e, boolean z) {
@@ -236,14 +253,15 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         throw new UnsupportedOperationException();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: descendingSet()Ljava/util/NavigableSet; */
     @Override // java.util.NavigableSet
     public ImmutableSortedSet<E> descendingSet() {
         ImmutableSortedSet<E> immutableSortedSet = this.descendingSet;
         if (immutableSortedSet == null) {
-            ImmutableSortedSet<E> createDescendingSet = createDescendingSet();
-            this.descendingSet = createDescendingSet;
-            createDescendingSet.descendingSet = this;
-            return createDescendingSet;
+            ImmutableSortedSet<E> immutableSortedSetCreateDescendingSet = createDescendingSet();
+            this.descendingSet = immutableSortedSetCreateDescendingSet;
+            immutableSortedSetCreateDescendingSet.descendingSet = this;
+            return immutableSortedSetCreateDescendingSet;
         }
         return immutableSortedSet;
     }
@@ -252,7 +270,6 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
         return new DescendingImmutableSortedSet(this);
     }
 
-    /* loaded from: classes.dex */
     private static class SerializedForm<E> implements Serializable {
         private static final long serialVersionUID = 0;
         final Comparator<? super E> comparator;
@@ -263,6 +280,7 @@ public abstract class ImmutableSortedSet<E> extends ImmutableSortedSetFauxveride
             this.elements = objArr;
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r0v0, resolved type: com.google.common.collect.ImmutableSortedSet$Builder */
         /* JADX WARN: Multi-variable type inference failed */
         Object readResolve() {
             return new Builder(this.comparator).add(this.elements).build();

@@ -18,6 +18,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.applications.ApplicationsState;
 import com.android.settingslib.widget.FooterPreference;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class PremiumSmsAccess extends EmptyTextSettings implements Preference.OnPreferenceChangeListener, AppStateBaseBridge.Callback, ApplicationsState.Callbacks {
     private ApplicationsState mApplicationsState;
@@ -56,9 +57,8 @@ public class PremiumSmsAccess extends EmptyTextSettings implements Preference.On
         super.onDestroy();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.premium_sms_settings;
     }
 
@@ -68,11 +68,11 @@ public class PremiumSmsAccess extends EmptyTextSettings implements Preference.On
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         PremiumSmsPreference premiumSmsPreference = (PremiumSmsPreference) preference;
-        int parseInt = Integer.parseInt((String) obj);
-        logSpecialPermissionChange(parseInt, premiumSmsPreference.mAppEntry.info.packageName);
-        this.mSmsBackend.setSmsState(premiumSmsPreference.mAppEntry.info.packageName, parseInt);
+        int i = Integer.parseInt((String) obj);
+        logSpecialPermissionChange(i, premiumSmsPreference.mAppEntry.info.packageName);
+        this.mSmsBackend.setSmsState(premiumSmsPreference.mAppEntry.info.packageName, i);
         return true;
     }
 
@@ -161,9 +161,7 @@ public class PremiumSmsAccess extends EmptyTextSettings implements Preference.On
     public void onLoadEntriesCompleted() {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PremiumSmsPreference extends DropDownPreference {
+    private class PremiumSmsPreference extends DropDownPreference {
         private final ApplicationsState.AppEntry mAppEntry;
 
         public PremiumSmsPreference(ApplicationsState.AppEntry appEntry, Context context) {

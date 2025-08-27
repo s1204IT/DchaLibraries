@@ -1,5 +1,6 @@
 package com.android.setupwizardlib.view;
 
+import android.R;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -14,7 +15,7 @@ import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.ListView;
-import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class StickyHeaderListView extends ListView {
     private int mStatusBarInset;
@@ -26,14 +27,14 @@ public class StickyHeaderListView extends ListView {
         super(context);
         this.mStatusBarInset = 0;
         this.mStickyRect = new RectF();
-        init(null, 16842868);
+        init(null, R.attr.listViewStyle);
     }
 
     public StickyHeaderListView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mStatusBarInset = 0;
         this.mStickyRect = new RectF();
-        init(attributeSet, 16842868);
+        init(attributeSet, R.attr.listViewStyle);
     }
 
     public StickyHeaderListView(Context context, AttributeSet attributeSet, int i) {
@@ -44,12 +45,12 @@ public class StickyHeaderListView extends ListView {
     }
 
     private void init(AttributeSet attributeSet, int i) {
-        TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwStickyHeaderListView, i, 0);
-        int resourceId = obtainStyledAttributes.getResourceId(R.styleable.SuwStickyHeaderListView_suwHeader, 0);
+        TypedArray typedArrayObtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, com.android.setupwizardlib.R.styleable.SuwStickyHeaderListView, i, 0);
+        int resourceId = typedArrayObtainStyledAttributes.getResourceId(com.android.setupwizardlib.R.styleable.SuwStickyHeaderListView_suwHeader, 0);
         if (resourceId != 0) {
             addHeaderView(LayoutInflater.from(getContext()).inflate(resourceId, (ViewGroup) this, false), null, false);
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     @Override // android.widget.AbsListView, android.widget.AdapterView, android.view.ViewGroup, android.view.View
@@ -78,18 +79,17 @@ public class StickyHeaderListView extends ListView {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         if (this.mSticky != null) {
-            int save = canvas.save();
+            int iSave = canvas.save();
             View view = this.mStickyContainer != null ? this.mStickyContainer : this.mSticky;
-            int top = this.mStickyContainer != null ? this.mSticky.getTop() : 0;
-            if (view.getTop() + top < this.mStatusBarInset || !view.isShown()) {
-                this.mStickyRect.set(0.0f, (-top) + this.mStatusBarInset, view.getWidth(), (view.getHeight() - top) + this.mStatusBarInset);
+            if (view.getTop() + (this.mStickyContainer != null ? this.mSticky.getTop() : 0) < this.mStatusBarInset || !view.isShown()) {
+                this.mStickyRect.set(0.0f, (-r2) + this.mStatusBarInset, view.getWidth(), (view.getHeight() - r2) + this.mStatusBarInset);
                 canvas.translate(0.0f, this.mStickyRect.top);
                 canvas.clipRect(0, 0, view.getWidth(), view.getHeight());
                 view.draw(canvas);
             } else {
                 this.mStickyRect.setEmpty();
             }
-            canvas.restoreToCount(save);
+            canvas.restoreToCount(iSave);
         }
     }
 

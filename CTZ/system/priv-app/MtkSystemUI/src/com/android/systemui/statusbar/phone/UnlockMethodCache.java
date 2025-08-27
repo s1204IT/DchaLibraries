@@ -7,6 +7,7 @@ import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class UnlockMethodCache {
     private static UnlockMethodCache sInstance;
@@ -45,9 +46,9 @@ public class UnlockMethodCache {
             if (UnlockMethodCache.this.mKeyguardUpdateMonitor.isUnlockingWithFingerprintAllowed()) {
                 UnlockMethodCache.this.update(false);
                 Trace.endSection();
-                return;
+            } else {
+                Trace.endSection();
             }
-            Trace.endSection();
         }
 
         @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
@@ -71,7 +72,6 @@ public class UnlockMethodCache {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface OnUnlockMethodChangedListener {
         void onUnlockMethodStateChanged();
     }
@@ -106,21 +106,20 @@ public class UnlockMethodCache {
         this.mListeners.add(onUnlockMethodChangedListener);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void update(boolean z) {
+    private void update(boolean z) {
         Trace.beginSection("UnlockMethodCache#update");
         int currentUser = KeyguardUpdateMonitor.getCurrentUser();
-        boolean isSecure = this.mLockPatternUtils.isSecure(currentUser);
+        boolean zIsSecure = this.mLockPatternUtils.isSecure(currentUser);
         boolean z2 = true;
-        boolean z3 = !isSecure || this.mKeyguardUpdateMonitor.getUserCanSkipBouncer(currentUser);
+        boolean z3 = !zIsSecure || this.mKeyguardUpdateMonitor.getUserCanSkipBouncer(currentUser);
         boolean userTrustIsManaged = this.mKeyguardUpdateMonitor.getUserTrustIsManaged(currentUser);
         boolean userHasTrust = this.mKeyguardUpdateMonitor.getUserHasTrust(currentUser);
         boolean z4 = this.mKeyguardUpdateMonitor.isFaceUnlockRunning(currentUser) && userTrustIsManaged;
-        if (isSecure == this.mSecure && z3 == this.mCanSkipBouncer && userTrustIsManaged == this.mTrustManaged && z4 == this.mFaceUnlockRunning) {
+        if (zIsSecure == this.mSecure && z3 == this.mCanSkipBouncer && userTrustIsManaged == this.mTrustManaged && z4 == this.mFaceUnlockRunning) {
             z2 = false;
         }
         if (z2 || z) {
-            this.mSecure = isSecure;
+            this.mSecure = zIsSecure;
             this.mCanSkipBouncer = z3;
             this.mTrusted = userHasTrust;
             this.mTrustManaged = userTrustIsManaged;

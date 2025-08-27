@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
+
 /* loaded from: classes.dex */
 public class StackStateAnimator {
     public static final int ANIMATION_DURATION_HEADS_UP_APPEAR_CLOSED = (int) (550.0f * HeadsUpAppearInterpolator.getFractionUntilOvershoot());
@@ -101,11 +102,11 @@ public class StackStateAnimator {
     }
 
     private void initAnimationProperties(StackScrollState stackScrollState, ExpandableView expandableView, ExpandableViewState expandableViewState) {
-        boolean wasAdded = this.mAnimationProperties.wasAdded(expandableView);
+        boolean zWasAdded = this.mAnimationProperties.wasAdded(expandableView);
         this.mAnimationProperties.duration = this.mCurrentLength;
-        adaptDurationWhenGoingToFullShade(expandableView, expandableViewState, wasAdded);
+        adaptDurationWhenGoingToFullShade(expandableView, expandableViewState, zWasAdded);
         this.mAnimationProperties.delay = 0L;
-        if (!wasAdded) {
+        if (!zWasAdded) {
             if (this.mAnimationFilter.hasDelays) {
                 if (expandableViewState.yTranslation == expandableView.getTranslationY() && expandableViewState.zTranslation == expandableView.getTranslationZ() && expandableViewState.alpha == expandableView.getAlpha() && expandableViewState.height == expandableView.getActualHeight() && expandableViewState.clipTopAmount == expandableView.getClipTopAmount() && expandableViewState.dark == expandableView.isDark() && expandableViewState.shadowAlpha == expandableView.getShadowAlpha()) {
                     return;
@@ -120,7 +121,7 @@ public class StackStateAnimator {
     private void adaptDurationWhenGoingToFullShade(ExpandableView expandableView, ExpandableViewState expandableViewState, boolean z) {
         if (z && this.mAnimationFilter.hasGoToFullShadeEvent) {
             expandableView.setTranslationY(expandableView.getTranslationY() + this.mGoToFullShadeAppearingTranslation);
-            this.mAnimationProperties.duration = 514 + (100.0f * ((float) Math.pow(expandableViewState.notGoneIndex - this.mCurrentLastNotAddedIndex, 0.699999988079071d)));
+            this.mAnimationProperties.duration = 514 + ((long) (100.0f * ((float) Math.pow(expandableViewState.notGoneIndex - this.mCurrentLastNotAddedIndex, 0.699999988079071d))));
         }
     }
 
@@ -144,57 +145,55 @@ public class StackStateAnimator {
     }
 
     private long calculateChildAnimationDelay(ExpandableViewState expandableViewState, StackScrollState stackScrollState) {
-        View view;
+        View lastChildNotGone;
         if (this.mAnimationFilter.hasGoToFullShadeEvent) {
             return calculateDelayGoToFullShade(expandableViewState);
         }
         if (this.mAnimationFilter.customDelay != -1) {
             return this.mAnimationFilter.customDelay;
         }
-        long j = 0;
+        long jMax = 0;
         Iterator<NotificationStackScrollLayout.AnimationEvent> it = this.mNewEvents.iterator();
         while (it.hasNext()) {
             NotificationStackScrollLayout.AnimationEvent next = it.next();
-            long j2 = 80;
+            long j = 80;
             switch (next.animationType) {
                 case 0:
-                    j = Math.max((2 - Math.max(0, Math.min(2, Math.abs(expandableViewState.notGoneIndex - stackScrollState.getViewStateForView(next.changingView).notGoneIndex) - 1))) * 80, j);
+                    jMax = Math.max((2 - Math.max(0, Math.min(2, Math.abs(expandableViewState.notGoneIndex - stackScrollState.getViewStateForView(next.changingView).notGoneIndex) - 1))) * 80, jMax);
                     continue;
                 case 2:
-                    j2 = 32;
+                    j = 32;
                     break;
             }
             int i = expandableViewState.notGoneIndex;
             if (next.viewAfterChangingView == null) {
-                view = this.mHostLayout.getLastChildNotGone();
+                lastChildNotGone = this.mHostLayout.getLastChildNotGone();
             } else {
-                view = next.viewAfterChangingView;
+                lastChildNotGone = next.viewAfterChangingView;
             }
-            if (view != null) {
-                int i2 = stackScrollState.getViewStateForView(view).notGoneIndex;
-                if (i >= i2) {
+            if (lastChildNotGone != null) {
+                if (i >= stackScrollState.getViewStateForView(lastChildNotGone).notGoneIndex) {
                     i++;
                 }
-                j = Math.max(Math.max(0, Math.min(2, Math.abs(i - i2) - 1)) * j2, j);
+                jMax = Math.max(Math.max(0, Math.min(2, Math.abs(i - r3) - 1)) * j, jMax);
             }
         }
-        return j;
+        return jMax;
     }
 
     private long calculateDelayGoToFullShade(ExpandableViewState expandableViewState) {
         int notGoneIndex = this.mShelf.getNotGoneIndex();
         float f = expandableViewState.notGoneIndex;
         float f2 = notGoneIndex;
-        long j = 0;
+        long jPow = 0;
         if (f > f2) {
-            j = 0 + ((long) (((float) Math.pow(f - f2, 0.699999988079071d)) * 48.0f * 0.25d));
+            jPow = 0 + ((long) (((float) Math.pow(f - f2, 0.699999988079071d)) * 48.0f * 0.25d));
             f = f2;
         }
-        return j + (((float) Math.pow(f, 0.699999988079071d)) * 48.0f);
+        return jPow + ((long) (((float) Math.pow(f, 0.699999988079071d)) * 48.0f));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public AnimatorListenerAdapter getGlobalAnimationFinishedListener() {
+    private AnimatorListenerAdapter getGlobalAnimationFinishedListener() {
         if (!this.mAnimationListenerPool.empty()) {
             return this.mAnimationListenerPool.pop();
         }
@@ -223,8 +222,7 @@ public class StackStateAnimator {
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onAnimationFinished() {
+    private void onAnimationFinished() {
         this.mHostLayout.onChildAnimationFinished();
         Iterator<ExpandableView> it = this.mTransientViewsToRemove.iterator();
         while (it.hasNext()) {
@@ -235,7 +233,7 @@ public class StackStateAnimator {
     }
 
     private void processAnimationEvents(ArrayList<NotificationStackScrollLayout.AnimationEvent> arrayList, StackScrollState stackScrollState) {
-        float f;
+        float fMax;
         Iterator<NotificationStackScrollLayout.AnimationEvent> it = arrayList.iterator();
         while (it.hasNext()) {
             NotificationStackScrollLayout.AnimationEvent next = it.next();
@@ -255,7 +253,7 @@ public class StackStateAnimator {
                         ExpandableViewState viewStateForView2 = stackScrollState.getViewStateForView(next.viewAfterChangingView);
                         int actualHeight = expandableView.getActualHeight();
                         if (viewStateForView2 == null) {
-                            f = -1.0f;
+                            fMax = -1.0f;
                         } else {
                             float translationY = expandableView.getTranslationY();
                             if ((expandableView instanceof ExpandableNotificationRow) && (next.viewAfterChangingView instanceof ExpandableNotificationRow)) {
@@ -265,10 +263,10 @@ public class StackStateAnimator {
                                     translationY = expandableNotificationRow.getTranslationWhenRemoved();
                                 }
                             }
-                            float f2 = actualHeight;
-                            f = Math.max(Math.min(((viewStateForView2.yTranslation - (translationY + (f2 / 2.0f))) * 2.0f) / f2, 1.0f), -1.0f);
+                            float f = actualHeight;
+                            fMax = Math.max(Math.min(((viewStateForView2.yTranslation - (translationY + (f / 2.0f))) * 2.0f) / f, 1.0f), -1.0f);
                         }
-                        expandableView.performRemoveAnimation(464L, 0L, f, false, 0.0f, new Runnable() { // from class: com.android.systemui.statusbar.stack.StackStateAnimator.3
+                        expandableView.performRemoveAnimation(464L, 0L, fMax, false, 0.0f, new Runnable() { // from class: com.android.systemui.statusbar.stack.StackStateAnimator.3
                             @Override // java.lang.Runnable
                             public void run() {
                                 StackStateAnimator.removeTransientView(expandableView);
@@ -282,7 +280,7 @@ public class StackStateAnimator {
                 } else if (next.animationType == 13) {
                     ((ExpandableNotificationRow) next.changingView).prepareExpansionChanged(stackScrollState);
                 } else {
-                    float f3 = 0.0f;
+                    float f2 = 0.0f;
                     if (next.animationType == 19) {
                         this.mTmpState.copyFrom(stackScrollState.getViewStateForView(expandableView));
                         this.mTmpState.yTranslation += this.mPulsingAppearingTranslation;
@@ -305,38 +303,38 @@ public class StackStateAnimator {
                     } else if (next.animationType == 15 || next.animationType == 16) {
                         this.mHeadsUpDisappearChildren.add(expandableView);
                         Runnable runnable = null;
-                        int i = next.animationType == 16 ? 120 : 0;
+                        int i = next.animationType == 16 ? com.android.systemui.plugins.R.styleable.AppCompatTheme_windowNoTitle : 0;
                         if (expandableView.getParent() == null) {
                             this.mHostLayout.addTransientView(expandableView, 0);
                             expandableView.setTransientContainer(this.mHostLayout);
                             this.mTmpState.initFrom(expandableView);
                             this.mTmpState.yTranslation = 0.0f;
                             this.mAnimationFilter.animateY = true;
-                            this.mAnimationProperties.delay = i + 120;
+                            this.mAnimationProperties.delay = i + com.android.systemui.plugins.R.styleable.AppCompatTheme_windowNoTitle;
                             this.mAnimationProperties.duration = 300L;
                             this.mTmpState.animateTo(expandableView, this.mAnimationProperties);
                             runnable = new Runnable() { // from class: com.android.systemui.statusbar.stack.-$$Lambda$StackStateAnimator$583ttX1KKMjNzUBxpRTbg9B4uQA
                                 @Override // java.lang.Runnable
                                 public final void run() {
-                                    StackStateAnimator.removeTransientView(ExpandableView.this);
+                                    StackStateAnimator.removeTransientView(expandableView);
                                 }
                             };
                         }
                         Runnable runnable2 = runnable;
                         if (expandableView instanceof ExpandableNotificationRow) {
                             ExpandableNotificationRow expandableNotificationRow3 = (ExpandableNotificationRow) expandableView;
-                            r6 = expandableNotificationRow3.isDismissed() ? false : true;
+                            z = expandableNotificationRow3.isDismissed() ? false : true;
                             StatusBarIconView statusBarIconView = expandableNotificationRow3.getEntry().icon;
                             if (statusBarIconView.getParent() != null) {
                                 statusBarIconView.getLocationOnScreen(this.mTmpLocation);
                                 float translationX = (this.mTmpLocation[0] - statusBarIconView.getTranslationX()) + ViewState.getFinalTranslationX(statusBarIconView) + (statusBarIconView.getWidth() * 0.25f);
                                 this.mHostLayout.getLocationOnScreen(this.mTmpLocation);
-                                f3 = translationX - this.mTmpLocation[0];
+                                f2 = translationX - this.mTmpLocation[0];
                             }
                         }
-                        float f4 = f3;
-                        if (r6) {
-                            expandableView.performRemoveAnimation(420L, i, 0.0f, true, f4, runnable2, getGlobalAnimationFinishedListener());
+                        float f3 = f2;
+                        if (z) {
+                            expandableView.performRemoveAnimation(420L, i, 0.0f, true, f3, runnable2, getGlobalAnimationFinishedListener());
                         } else if (runnable2 != null) {
                             runnable2.run();
                         }
@@ -359,16 +357,16 @@ public class StackStateAnimator {
             return;
         }
         cancelOverScrollAnimators(z);
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(currentOverScrollAmount, f);
-        ofFloat.setDuration(360L);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.stack.StackStateAnimator.4
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(currentOverScrollAmount, f);
+        valueAnimatorOfFloat.setDuration(360L);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.stack.StackStateAnimator.4
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 StackStateAnimator.this.mHostLayout.setOverScrollAmount(((Float) valueAnimator.getAnimatedValue()).floatValue(), z, false, false, z2);
             }
         });
-        ofFloat.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
-        ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.StackStateAnimator.5
+        valueAnimatorOfFloat.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
+        valueAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.stack.StackStateAnimator.5
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 if (z) {
@@ -378,11 +376,11 @@ public class StackStateAnimator {
                 }
             }
         });
-        ofFloat.start();
+        valueAnimatorOfFloat.start();
         if (z) {
-            this.mTopOverScrollAnimator = ofFloat;
+            this.mTopOverScrollAnimator = valueAnimatorOfFloat;
         } else {
-            this.mBottomOverScrollAnimator = ofFloat;
+            this.mBottomOverScrollAnimator = valueAnimatorOfFloat;
         }
     }
 

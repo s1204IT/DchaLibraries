@@ -6,6 +6,7 @@ import android.util.Log;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 /* loaded from: classes.dex */
 public class HdimReflectionHelper {
     public static final boolean HDMI_TB_SUPPORT = !"".equals(SystemProperties.get("ro.vendor.mtk_tb_hdmi"));
@@ -28,7 +29,7 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static int getHdmiDisplayTypeConstant(String str) {
+    public static int getHdmiDisplayTypeConstant(String str) throws ClassNotFoundException {
         try {
             Class<?> cls = Class.forName("com.mediatek.hdmi.HdmiDef", false, ClassLoader.getSystemClassLoader());
             return ((Integer) getNonPublicField(cls, str).get(cls)).intValue();
@@ -44,7 +45,7 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static boolean hasCapability(Object obj) {
+    public static boolean hasCapability(Object obj) throws NoSuchMethodException, SecurityException {
         try {
             Method declaredMethod = Class.forName(getHdmiManagerClass(), false, ClassLoader.getSystemClassLoader()).getDeclaredMethod("hasCapability", Integer.TYPE);
             declaredMethod.setAccessible(true);
@@ -55,7 +56,7 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static int[] getSupportedResolutions(Object obj) {
+    public static int[] getSupportedResolutions(Object obj) throws NoSuchMethodException, SecurityException {
         try {
             Method declaredMethod = Class.forName(getHdmiManagerClass(), false, ClassLoader.getSystemClassLoader()).getDeclaredMethod("getSupportedResolutions", new Class[0]);
             declaredMethod.setAccessible(true);
@@ -66,7 +67,7 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static int getAudioParameter(Object obj) {
+    public static int getAudioParameter(Object obj) throws NoSuchMethodException, SecurityException {
         try {
             Method declaredMethod = Class.forName(getHdmiManagerClass(), false, ClassLoader.getSystemClassLoader()).getDeclaredMethod("getAudioParameter", Integer.TYPE, Integer.TYPE);
             declaredMethod.setAccessible(true);
@@ -77,7 +78,7 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static boolean isSignalOutputting(Object obj) {
+    public static boolean isSignalOutputting(Object obj) throws NoSuchMethodException, SecurityException {
         try {
             Method declaredMethod = Class.forName(getHdmiManagerClass(), false, ClassLoader.getSystemClassLoader()).getDeclaredMethod("isSignalOutputting", new Class[0]);
             declaredMethod.setAccessible(true);
@@ -88,7 +89,7 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static void setVideoResolution(Object obj, int i) {
+    public static void setVideoResolution(Object obj, int i) throws IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
         try {
             Method declaredMethod = Class.forName(getHdmiManagerClass(), false, ClassLoader.getSystemClassLoader()).getDeclaredMethod("setVideoResolution", Integer.TYPE);
             declaredMethod.setAccessible(true);
@@ -98,7 +99,7 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static void setVideoScale(Object obj, int i) {
+    public static void setVideoScale(Object obj, int i) throws IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
         try {
             Method declaredMethod = Class.forName(getHdmiManagerClass(), false, ClassLoader.getSystemClassLoader()).getDeclaredMethod("setVideoScale", Integer.TYPE);
             declaredMethod.setAccessible(true);
@@ -108,7 +109,7 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static void enableHdmi(Object obj, boolean z) {
+    public static void enableHdmi(Object obj, boolean z) throws IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
         try {
             Method declaredMethod = Class.forName(getHdmiManagerClass(), false, ClassLoader.getSystemClassLoader()).getDeclaredMethod("enableHdmi", Boolean.TYPE);
             declaredMethod.setAccessible(true);
@@ -118,7 +119,7 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static void setAutoMode(Object obj, boolean z) {
+    public static void setAutoMode(Object obj, boolean z) throws IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
         try {
             Method declaredMethod = Class.forName(getHdmiManagerClass(), false, ClassLoader.getSystemClassLoader()).getDeclaredMethod("setAutoMode", Boolean.TYPE);
             declaredMethod.setAccessible(true);
@@ -129,8 +130,8 @@ public class HdimReflectionHelper {
         }
     }
 
-    public static Object getHdmiService() {
-        Object obj;
+    public static Object getHdmiService() throws IllegalAccessException, NoSuchMethodException, ClassNotFoundException, SecurityException, IllegalArgumentException, InvocationTargetException {
+        Object objInvoke;
         Log.d("HdimReflectionHelper", "getHdmiService, HDMI_TB_SUPPORT = " + HDMI_TB_SUPPORT);
         if (HDMI_TB_SUPPORT) {
             try {
@@ -138,38 +139,38 @@ public class HdimReflectionHelper {
                 Log.d("HdimReflectionHelper", "getHdmiService, hdmiManagerClass = " + cls);
                 Method declaredMethod = cls.getDeclaredMethod("getInstance", new Class[0]);
                 declaredMethod.setAccessible(true);
-                obj = declaredMethod.invoke(cls, new Object[0]);
-                Log.d("HdimReflectionHelper", "getHdmiService, obj = " + obj);
+                objInvoke = declaredMethod.invoke(cls, new Object[0]);
+                Log.d("HdimReflectionHelper", "getHdmiService, obj = " + objInvoke);
             } catch (Exception e) {
                 Log.d("HdimReflectionHelper", "getHdmiService, e = " + e);
-                obj = null;
+                objInvoke = null;
             }
         } else {
-            obj = ServiceManager.getService("mtkhdmi");
+            objInvoke = ServiceManager.getService("mtkhdmi");
         }
-        Log.d("HdimReflectionHelper", "getHdmiService, obj = " + obj);
-        return obj;
+        Log.d("HdimReflectionHelper", "getHdmiService, obj = " + objInvoke);
+        return objInvoke;
     }
 
-    public static Field getNonPublicField(Class<?> cls, String str) {
-        Field field;
+    public static Field getNonPublicField(Class<?> cls, String str) throws NoSuchFieldException {
+        Field declaredField;
         try {
-            field = cls.getDeclaredField(str);
-            try {
-                field.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                e = e;
-                e.printStackTrace();
-                return field;
-            }
+            declaredField = cls.getDeclaredField(str);
+        } catch (NoSuchFieldException e) {
+            e = e;
+            declaredField = null;
+        }
+        try {
+            declaredField.setAccessible(true);
         } catch (NoSuchFieldException e2) {
             e = e2;
-            field = null;
+            e.printStackTrace();
+            return declaredField;
         }
-        return field;
+        return declaredField;
     }
 
-    public static int getDeclaredMethod(Class<?> cls, Object obj, String str) {
+    public static int getDeclaredMethod(Class<?> cls, Object obj, String str) throws NoSuchMethodException, SecurityException {
         try {
             Method declaredMethod = cls.getDeclaredMethod(str, new Class[0]);
             declaredMethod.setAccessible(true);

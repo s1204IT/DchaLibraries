@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class DchaNetworkUtil {
     private static final String TAG = DchaNetworkUtil.class.getSimpleName();
@@ -22,8 +23,8 @@ public class DchaNetworkUtil {
             Logger.d(TAG, "isConnective 0003");
             return false;
         }
-        boolean isConnected = networkInfo.isConnected();
+        boolean zIsConnected = networkInfo.isConnected();
         Logger.d(TAG, "isConnective 0004");
-        return isConnected;
+        return zIsConnected;
     }
 }

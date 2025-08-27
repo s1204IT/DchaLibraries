@@ -7,12 +7,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ReverseLinearLayout extends LinearLayout {
     private boolean mIsAlternativeOrder;
     private boolean mIsLayoutReverse;
 
-    /* loaded from: classes.dex */
     public interface Reversable {
         void reverse(boolean z);
     }
@@ -74,6 +74,8 @@ public class ReverseLinearLayout extends LinearLayout {
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     private static void reverseParams(ViewGroup.LayoutParams layoutParams, View view, boolean z) {
         if (view instanceof Reversable) {
             ((Reversable) view).reverse(z);
@@ -89,7 +91,6 @@ public class ReverseLinearLayout extends LinearLayout {
         layoutParams.height = i;
     }
 
-    /* loaded from: classes.dex */
     public static class ReverseRelativeLayout extends RelativeLayout implements Reversable {
         private int mDefaultGravity;
 
@@ -121,8 +122,7 @@ public class ReverseLinearLayout extends LinearLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void reverseGroup(ViewGroup viewGroup, boolean z) {
+    private static void reverseGroup(ViewGroup viewGroup, boolean z) {
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View childAt = viewGroup.getChildAt(i);
             reverseParams(childAt.getLayoutParams(), childAt, z);

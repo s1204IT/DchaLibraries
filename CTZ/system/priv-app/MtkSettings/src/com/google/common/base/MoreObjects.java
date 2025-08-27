@@ -1,4 +1,5 @@
 package com.google.common.base;
+
 /* loaded from: classes.dex */
 public final class MoreObjects {
     public static <T> T firstNonNull(T t, T t2) {
@@ -10,15 +11,14 @@ public final class MoreObjects {
     }
 
     static String simpleName(Class<?> cls) {
-        String replaceAll = cls.getName().replaceAll("\\$[0-9]+", "\\$");
-        int lastIndexOf = replaceAll.lastIndexOf(36);
-        if (lastIndexOf == -1) {
-            lastIndexOf = replaceAll.lastIndexOf(46);
+        String strReplaceAll = cls.getName().replaceAll("\\$[0-9]+", "\\$");
+        int iLastIndexOf = strReplaceAll.lastIndexOf(36);
+        if (iLastIndexOf == -1) {
+            iLastIndexOf = strReplaceAll.lastIndexOf(46);
         }
-        return replaceAll.substring(lastIndexOf + 1);
+        return strReplaceAll.substring(iLastIndexOf + 1);
     }
 
-    /* loaded from: classes.dex */
     public static final class ToStringHelper {
         private final String className;
         private ValueHolder holderHead;
@@ -78,15 +78,13 @@ public final class MoreObjects {
         }
 
         private ToStringHelper addHolder(String str, Object obj) {
-            ValueHolder addHolder = addHolder();
-            addHolder.value = obj;
-            addHolder.name = (String) Preconditions.checkNotNull(str);
+            ValueHolder valueHolderAddHolder = addHolder();
+            valueHolderAddHolder.value = obj;
+            valueHolderAddHolder.name = (String) Preconditions.checkNotNull(str);
             return this;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public static final class ValueHolder {
+        private static final class ValueHolder {
             String name;
             ValueHolder next;
             Object value;

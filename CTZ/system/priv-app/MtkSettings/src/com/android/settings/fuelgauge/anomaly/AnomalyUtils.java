@@ -15,6 +15,7 @@ import com.android.settings.fuelgauge.anomaly.checker.WakeupAlarmAnomalyDetector
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AnomalyUtils {
     private static final SparseIntArray mMetricArray = new SparseIntArray();
@@ -68,7 +69,6 @@ public class AnomalyUtils {
     }
 
     public List<Anomaly> detectAnomalies(BatteryStatsHelper batteryStatsHelper, AnomalyDetectionPolicy anomalyDetectionPolicy, String str) {
-        int[] iArr;
         ArrayList arrayList = new ArrayList();
         for (int i : Anomaly.ANOMALY_TYPE_LIST) {
             if (anomalyDetectionPolicy.isAnomalyDetectorEnabled(i)) {

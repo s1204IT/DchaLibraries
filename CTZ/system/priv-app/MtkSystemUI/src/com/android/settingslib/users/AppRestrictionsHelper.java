@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.UserHandle;
 import android.os.UserManager;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class AppRestrictionsHelper {
     private final Context mContext;
@@ -28,7 +29,6 @@ public class AppRestrictionsHelper {
         this.mRestrictedProfile = this.mUserManager.getUserInfo(this.mUser.getIdentifier()).isRestricted();
     }
 
-    /* loaded from: classes.dex */
     static class Injector {
         private Context mContext;
         private UserHandle mUser;

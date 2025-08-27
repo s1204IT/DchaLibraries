@@ -1,4 +1,5 @@
 package com.android.systemui.statusbar.policy;
+
 /* loaded from: classes.dex */
 public interface IconLogger {
     void onIconHidden(String str);

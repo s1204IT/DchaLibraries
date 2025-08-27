@@ -5,10 +5,10 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
+
 /* loaded from: classes.dex */
 public interface IDchaService extends IInterface {
 
-    /* loaded from: classes.dex */
     public static class Default implements IDchaService {
         @Override // android.os.IInterface
         public IBinder asBinder() {
@@ -172,7 +172,6 @@ public interface IDchaService extends IInterface {
 
     boolean verifyUpdateImage(String str) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IDchaService {
         private static final String DESCRIPTOR = "jp.co.benesse.dcha.dchaservice.IDchaService";
         static final int TRANSACTION_cancelSetup = 10;
@@ -213,9 +212,9 @@ public interface IDchaService extends IInterface {
             if (iBinder == null) {
                 return null;
             }
-            IInterface queryLocalInterface = iBinder.queryLocalInterface(DESCRIPTOR);
-            if (queryLocalInterface != null && (queryLocalInterface instanceof IDchaService)) {
-                return (IDchaService) queryLocalInterface;
+            IInterface iInterfaceQueryLocalInterface = iBinder.queryLocalInterface(DESCRIPTOR);
+            if (iInterfaceQueryLocalInterface != null && (iInterfaceQueryLocalInterface instanceof IDchaService)) {
+                return (IDchaService) iInterfaceQueryLocalInterface;
             }
             return new Proxy(iBinder);
         }
@@ -229,15 +228,15 @@ public interface IDchaService extends IInterface {
             switch (i) {
                 case 1:
                     parcel.enforceInterface(DESCRIPTOR);
-                    boolean verifyUpdateImage = verifyUpdateImage(parcel.readString());
+                    boolean zVerifyUpdateImage = verifyUpdateImage(parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(verifyUpdateImage ? 1 : 0);
+                    parcel2.writeInt(zVerifyUpdateImage ? 1 : 0);
                     return true;
                 case 2:
                     parcel.enforceInterface(DESCRIPTOR);
-                    boolean copyUpdateImage = copyUpdateImage(parcel.readString(), parcel.readString());
+                    boolean zCopyUpdateImage = copyUpdateImage(parcel.readString(), parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(copyUpdateImage ? 1 : 0);
+                    parcel2.writeInt(zCopyUpdateImage ? 1 : 0);
                     return true;
                 case 3:
                     parcel.enforceInterface(DESCRIPTOR);
@@ -260,21 +259,21 @@ public interface IDchaService extends IInterface {
                     return true;
                 case 7:
                     parcel.enforceInterface(DESCRIPTOR);
-                    boolean checkPadRooted = checkPadRooted();
+                    boolean zCheckPadRooted = checkPadRooted();
                     parcel2.writeNoException();
-                    parcel2.writeInt(checkPadRooted ? 1 : 0);
+                    parcel2.writeInt(zCheckPadRooted ? 1 : 0);
                     return true;
                 case TRANSACTION_installApp /* 8 */:
                     parcel.enforceInterface(DESCRIPTOR);
-                    boolean installApp = installApp(parcel.readString(), parcel.readInt());
+                    boolean zInstallApp = installApp(parcel.readString(), parcel.readInt());
                     parcel2.writeNoException();
-                    parcel2.writeInt(installApp ? 1 : 0);
+                    parcel2.writeInt(zInstallApp ? 1 : 0);
                     return true;
                 case TRANSACTION_uninstallApp /* 9 */:
                     parcel.enforceInterface(DESCRIPTOR);
-                    boolean uninstallApp = uninstallApp(parcel.readString(), parcel.readInt());
+                    boolean zUninstallApp = uninstallApp(parcel.readString(), parcel.readInt());
                     parcel2.writeNoException();
-                    parcel2.writeInt(uninstallApp ? 1 : 0);
+                    parcel2.writeInt(zUninstallApp ? 1 : 0);
                     return true;
                 case 10:
                     parcel.enforceInterface(DESCRIPTOR);
@@ -320,15 +319,15 @@ public interface IDchaService extends IInterface {
                     return true;
                 case TRANSACTION_copyFile /* 18 */:
                     parcel.enforceInterface(DESCRIPTOR);
-                    boolean copyFile = copyFile(parcel.readString(), parcel.readString());
+                    boolean zCopyFile = copyFile(parcel.readString(), parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(copyFile ? 1 : 0);
+                    parcel2.writeInt(zCopyFile ? 1 : 0);
                     return true;
                 case TRANSACTION_deleteFile /* 19 */:
                     parcel.enforceInterface(DESCRIPTOR);
-                    boolean deleteFile = deleteFile(parcel.readString());
+                    boolean zDeleteFile = deleteFile(parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(deleteFile ? 1 : 0);
+                    parcel2.writeInt(zDeleteFile ? 1 : 0);
                     return true;
                 case TRANSACTION_getUserCount /* 20 */:
                     parcel.enforceInterface(DESCRIPTOR);
@@ -338,9 +337,9 @@ public interface IDchaService extends IInterface {
                     return true;
                 case TRANSACTION_isDeviceEncryptionEnabled /* 21 */:
                     parcel.enforceInterface(DESCRIPTOR);
-                    boolean isDeviceEncryptionEnabled = isDeviceEncryptionEnabled();
+                    boolean zIsDeviceEncryptionEnabled = isDeviceEncryptionEnabled();
                     parcel2.writeNoException();
-                    parcel2.writeInt(isDeviceEncryptionEnabled ? 1 : 0);
+                    parcel2.writeInt(zIsDeviceEncryptionEnabled ? 1 : 0);
                     return true;
                 case TRANSACTION_hideNavigationBar /* 22 */:
                     parcel.enforceInterface(DESCRIPTOR);
@@ -363,9 +362,7 @@ public interface IDchaService extends IInterface {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public static class Proxy implements IDchaService {
+        private static class Proxy implements IDchaService {
             public static IDchaService sDefaultImpl;
             private IBinder mRemote;
 
@@ -384,427 +381,427 @@ public interface IDchaService extends IInterface {
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean verifyUpdateImage(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    if (!this.mRemote.transact(1, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    if (!this.mRemote.transact(1, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().verifyUpdateImage(str);
                     }
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean copyUpdateImage(String str, String str2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    obtain.writeString(str2);
-                    if (!this.mRemote.transact(2, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeString(str2);
+                    if (!this.mRemote.transact(2, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().copyUpdateImage(str, str2);
                     }
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void rebootPad(int i, String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeInt(i);
-                    obtain.writeString(str);
-                    if (this.mRemote.transact(3, obtain, null, 1) || Stub.getDefaultImpl() == null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeInt(i);
+                    parcelObtain.writeString(str);
+                    if (this.mRemote.transact(3, parcelObtain, null, 1) || Stub.getDefaultImpl() == null) {
                         return;
                     }
                     Stub.getDefaultImpl().rebootPad(i, str);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setDefaultPreferredHomeApp(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    if (!this.mRemote.transact(4, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    if (!this.mRemote.transact(4, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().setDefaultPreferredHomeApp(str);
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void clearDefaultPreferredApp(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_clearDefaultPreferredApp, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_clearDefaultPreferredApp, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().clearDefaultPreferredApp(str);
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void disableADB() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_disableADB, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_disableADB, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().disableADB();
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean checkPadRooted() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (!this.mRemote.transact(7, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (!this.mRemote.transact(7, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().checkPadRooted();
                     }
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean installApp(String str, int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    obtain.writeInt(i);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_installApp, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeInt(i);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_installApp, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().installApp(str, i);
                     }
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean uninstallApp(String str, int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    obtain.writeInt(i);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_uninstallApp, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeInt(i);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_uninstallApp, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().uninstallApp(str, i);
                     }
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void cancelSetup() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (!this.mRemote.transact(10, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (!this.mRemote.transact(10, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().cancelSetup();
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setSetupStatus(int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeInt(i);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_setSetupStatus, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeInt(i);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_setSetupStatus, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().setSetupStatus(i);
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public int getSetupStatus() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_getSetupStatus, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_getSetupStatus, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().getSetupStatus();
                     }
-                    obtain2.readException();
-                    return obtain2.readInt();
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setSystemTime(String str, String str2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    obtain.writeString(str2);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_setSystemTime, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeString(str2);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_setSystemTime, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().setSystemTime(str, str2);
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void removeTask(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_removeTask, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_removeTask, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().removeTask(str);
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void sdUnmount() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_sdUnmount, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_sdUnmount, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().sdUnmount();
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setDefaultParam() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_setDefaultParam, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_setDefaultParam, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().setDefaultParam();
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public String getForegroundPackageName() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_getForegroundPackageName, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_getForegroundPackageName, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().getForegroundPackageName();
                     }
-                    obtain2.readException();
-                    return obtain2.readString();
+                    parcelObtain2.readException();
+                    return parcelObtain2.readString();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean copyFile(String str, String str2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    obtain.writeString(str2);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_copyFile, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeString(str2);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_copyFile, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().copyFile(str, str2);
                     }
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean deleteFile(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_deleteFile, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_deleteFile, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().deleteFile(str);
                     }
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public int getUserCount() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_getUserCount, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_getUserCount, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().getUserCount();
                     }
-                    obtain2.readException();
-                    return obtain2.readInt();
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean isDeviceEncryptionEnabled() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_isDeviceEncryptionEnabled, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_isDeviceEncryptionEnabled, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().isDeviceEncryptionEnabled();
                     }
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void hideNavigationBar(boolean z) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeInt(z ? 1 : 0);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_hideNavigationBar, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_hideNavigationBar, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().hideNavigationBar(z);
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setPermissionEnforced(boolean z) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeInt(z ? 1 : 0);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_setPermissionEnforced, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_setPermissionEnforced, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().setPermissionEnforced(z);
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public String getCanonicalExternalPath(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_getCanonicalExternalPath, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_getCanonicalExternalPath, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().getCanonicalExternalPath(str);
                     }
-                    obtain2.readException();
-                    return obtain2.readString();
+                    parcelObtain2.readException();
+                    return parcelObtain2.readString();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
         }

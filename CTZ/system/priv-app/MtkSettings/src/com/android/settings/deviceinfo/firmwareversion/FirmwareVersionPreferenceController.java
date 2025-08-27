@@ -8,6 +8,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.text.TextUtils;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class FirmwareVersionPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final Fragment mFragment;
@@ -25,9 +26,9 @@ public class FirmwareVersionPreferenceController extends AbstractPreferenceContr
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference(getPreferenceKey());
-        if (findPreference != null) {
-            findPreference.setSummary(Build.VERSION.RELEASE);
+        Preference preferenceFindPreference = preferenceScreen.findPreference(getPreferenceKey());
+        if (preferenceFindPreference != null) {
+            preferenceFindPreference.setSummary(Build.VERSION.RELEASE);
         }
     }
 

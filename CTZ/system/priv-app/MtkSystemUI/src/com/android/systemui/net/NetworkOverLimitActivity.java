@@ -10,6 +10,7 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class NetworkOverLimitActivity extends Activity {
     @Override // android.app.Activity
@@ -19,26 +20,25 @@ public class NetworkOverLimitActivity extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getLimitedDialogTitleForTemplate(parcelableExtra));
         builder.setMessage(R.string.data_usage_disabled_dialog);
-        builder.setPositiveButton(17039370, (DialogInterface.OnClickListener) null);
+        builder.setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null);
         builder.setNegativeButton(R.string.data_usage_disabled_dialog_enable, new DialogInterface.OnClickListener() { // from class: com.android.systemui.net.NetworkOverLimitActivity.1
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 NetworkOverLimitActivity.this.snoozePolicy(parcelableExtra);
             }
         });
-        AlertDialog create = builder.create();
-        create.getWindow().setType(2003);
-        create.setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.systemui.net.NetworkOverLimitActivity.2
+        AlertDialog alertDialogCreate = builder.create();
+        alertDialogCreate.getWindow().setType(2003);
+        alertDialogCreate.setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.systemui.net.NetworkOverLimitActivity.2
             @Override // android.content.DialogInterface.OnDismissListener
             public void onDismiss(DialogInterface dialogInterface) {
                 NetworkOverLimitActivity.this.finish();
             }
         });
-        create.show();
+        alertDialogCreate.show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void snoozePolicy(NetworkTemplate networkTemplate) {
+    private void snoozePolicy(NetworkTemplate networkTemplate) {
         try {
             INetworkPolicyManager.Stub.asInterface(ServiceManager.getService("netpolicy")).snoozeLimit(networkTemplate);
         } catch (RemoteException e) {

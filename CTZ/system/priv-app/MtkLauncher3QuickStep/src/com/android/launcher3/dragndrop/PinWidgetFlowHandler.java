@@ -10,16 +10,19 @@ import com.android.launcher3.ItemInfo;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.widget.WidgetAddFlowHandler;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class PinWidgetFlowHandler extends WidgetAddFlowHandler implements Parcelable {
     public static final Parcelable.Creator<PinWidgetFlowHandler> CREATOR = new Parcelable.Creator<PinWidgetFlowHandler>() { // from class: com.android.launcher3.dragndrop.PinWidgetFlowHandler.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public PinWidgetFlowHandler createFromParcel(Parcel parcel) {
             return new PinWidgetFlowHandler(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public PinWidgetFlowHandler[] newArray(int i) {

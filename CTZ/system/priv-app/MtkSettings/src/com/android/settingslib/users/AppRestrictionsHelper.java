@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class AppRestrictionsHelper {
     private final Context mContext;
@@ -39,7 +40,6 @@ public class AppRestrictionsHelper {
     private final UserManager mUserManager;
     private List<SelectableAppInfo> mVisibleApps;
 
-    /* loaded from: classes.dex */
     public interface OnDisableUiForPackageListener {
         void onDisableUiForPackage(String str);
     }
@@ -112,7 +112,7 @@ public class AppRestrictionsHelper {
         }
     }
 
-    public void fetchAndMergeApps() {
+    public void fetchAndMergeApps() throws PackageManager.NameNotFoundException {
         List<ApplicationInfo> list;
         this.mVisibleApps = new ArrayList();
         PackageManager packageManager = this.mPackageManager;
@@ -180,12 +180,12 @@ public class AppRestrictionsHelper {
                 hashSet2.add(str);
             }
         }
-        HashMap hashMap = new HashMap();
+        HashMap map = new HashMap();
         for (SelectableAppInfo selectableAppInfo4 : this.mVisibleApps) {
-            if (hashMap.containsKey(selectableAppInfo4.packageName)) {
-                selectableAppInfo4.masterEntry = (SelectableAppInfo) hashMap.get(selectableAppInfo4.packageName);
+            if (map.containsKey(selectableAppInfo4.packageName)) {
+                selectableAppInfo4.masterEntry = (SelectableAppInfo) map.get(selectableAppInfo4.packageName);
             } else {
-                hashMap.put(selectableAppInfo4.packageName, selectableAppInfo4);
+                map.put(selectableAppInfo4.packageName, selectableAppInfo4);
             }
         }
     }
@@ -226,7 +226,7 @@ public class AppRestrictionsHelper {
         }
     }
 
-    private boolean isSystemPackage(String str) {
+    private boolean isSystemPackage(String str) throws PackageManager.NameNotFoundException {
         PackageInfo packageInfo;
         try {
             packageInfo = this.mPackageManager.getPackageInfo(str, 0);
@@ -250,7 +250,6 @@ public class AppRestrictionsHelper {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class SelectableAppInfo {
         public CharSequence activityName;
         public CharSequence appName;
@@ -263,20 +262,18 @@ public class AppRestrictionsHelper {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class AppLabelComparator implements Comparator<SelectableAppInfo> {
         private AppLabelComparator() {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(SelectableAppInfo selectableAppInfo, SelectableAppInfo selectableAppInfo2) {
             return selectableAppInfo.activityName.toString().toLowerCase().compareTo(selectableAppInfo2.activityName.toString().toLowerCase());
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Injector {
+    static class Injector {
         private Context mContext;
         private UserHandle mUser;
 

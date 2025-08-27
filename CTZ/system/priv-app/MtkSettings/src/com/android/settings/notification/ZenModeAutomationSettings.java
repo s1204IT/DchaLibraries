@@ -12,6 +12,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ZenModeAutomationSettings extends ZenModeSettingsBase {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.notification.ZenModeAutomationSettings.1
@@ -46,17 +47,15 @@ public class ZenModeAutomationSettings extends ZenModeSettingsBase {
         return buildPreferenceControllers(context, this, zenServiceListing, getLifecycle());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Fragment fragment, ZenServiceListing zenServiceListing, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Fragment fragment, ZenServiceListing zenServiceListing, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModeAddAutomaticRulePreferenceController(context, fragment, zenServiceListing, lifecycle));
         arrayList.add(new ZenModeAutomaticRulesPreferenceController(context, fragment, lifecycle));
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.zen_mode_automation_settings;
     }
 
@@ -65,8 +64,7 @@ public class ZenModeAutomationSettings extends ZenModeSettingsBase {
         return 142;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static ManagedServiceSettings.Config getConditionProviderConfig() {
+    protected static ManagedServiceSettings.Config getConditionProviderConfig() {
         return new ManagedServiceSettings.Config.Builder().setTag("ZenModeSettings").setIntentAction("android.service.notification.ConditionProviderService").setPermission("android.permission.BIND_CONDITION_PROVIDER_SERVICE").setNoun("condition provider").build();
     }
 }

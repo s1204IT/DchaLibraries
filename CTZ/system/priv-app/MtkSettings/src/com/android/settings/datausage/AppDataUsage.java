@@ -36,6 +36,7 @@ import com.android.settingslib.net.UidDetail;
 import com.android.settingslib.net.UidDetailProvider;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class AppDataUsage extends DataUsageBase implements Preference.OnPreferenceChangeListener, DataSaverBackend.Listener {
     private AppItem mAppItem;
@@ -80,6 +81,7 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
             return new ChartDataLoader(AppDataUsage.this.getActivity(), AppDataUsage.this.mStatsSession, bundle);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<ChartData> loader, ChartData chartData) {
             AppDataUsage.this.mChartData = chartData;
@@ -97,6 +99,7 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
             return new AppPrefLoader(AppDataUsage.this.getPrefContext(), AppDataUsage.this.mPackages, AppDataUsage.this.getPackageManager());
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<ArraySet<Preference>> loader, ArraySet<Preference> arraySet) {
             if (arraySet != null && AppDataUsage.this.mAppList != null) {
@@ -113,7 +116,7 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
     };
 
     @Override // com.android.settings.datausage.DataUsageBase, com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
         super.onCreate(bundle);
         this.mPackageManagerWrapper = new PackageManagerWrapper(getPackageManager());
         Bundle arguments = getArguments();
@@ -189,9 +192,10 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
                     this.mAppList = (PreferenceCategory) findPreference("app_list");
                     getLoaderManager().initLoader(3, Bundle.EMPTY, this.mAppPrefCallbacks);
                     return;
+                } else {
+                    removePreference("app_list");
+                    return;
                 }
-                removePreference("app_list");
-                return;
             }
             Activity activity = getActivity();
             UidDetail uidDetail = new UidDetailProvider(activity).getUidDetail(this.mAppItem.key, true);
@@ -238,12 +242,12 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
             this.mDataSaverBackend.setIsBlacklisted(this.mAppItem.key, this.mPackageName, !((Boolean) obj).booleanValue());
             updatePrefs();
             return true;
-        } else if (preference == this.mUnrestrictedData) {
+        }
+        if (preference == this.mUnrestrictedData) {
             this.mDataSaverBackend.setIsWhitelisted(this.mAppItem.key, this.mPackageName, ((Boolean) obj).booleanValue());
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override // android.support.v14.preference.PreferenceFragment, android.support.v7.preference.PreferenceManager.OnPreferenceTreeClickListener
@@ -260,10 +264,10 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
     }
 
     private void updatePrefs(boolean z, boolean z2) {
-        RestrictedLockUtils.EnforcedAdmin checkIfMeteredDataRestricted = RestrictedLockUtils.checkIfMeteredDataRestricted(getContext(), this.mPackageName, UserHandle.getUserId(this.mAppItem.key));
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfMeteredDataRestricted = RestrictedLockUtils.checkIfMeteredDataRestricted(getContext(), this.mPackageName, UserHandle.getUserId(this.mAppItem.key));
         if (this.mRestrictBackground != null) {
             this.mRestrictBackground.setChecked(!z);
-            this.mRestrictBackground.setDisabledByAdmin(checkIfMeteredDataRestricted);
+            this.mRestrictBackground.setDisabledByAdmin(enforcedAdminCheckIfMeteredDataRestricted);
         }
         if (this.mUnrestrictedData != null) {
             if (z) {
@@ -272,7 +276,7 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
             }
             this.mUnrestrictedData.setVisible(true);
             this.mUnrestrictedData.setChecked(z2);
-            this.mUnrestrictedData.setDisabledByAdmin(checkIfMeteredDataRestricted);
+            this.mUnrestrictedData.setDisabledByAdmin(enforcedAdminCheckIfMeteredDataRestricted);
         }
     }
 
@@ -285,8 +289,7 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void bindData() {
+    private void bindData() {
         long j;
         long j2 = 0;
         if (this.mChartData == null || this.mStart == 0) {
@@ -294,10 +297,10 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
             j = 0;
         } else {
             this.mCycle.setVisible(true);
-            long currentTimeMillis = System.currentTimeMillis();
-            NetworkStatsHistory.Entry values = this.mChartData.detailDefault.getValues(this.mStart, this.mEnd, currentTimeMillis, (NetworkStatsHistory.Entry) null);
+            long jCurrentTimeMillis = System.currentTimeMillis();
+            NetworkStatsHistory.Entry values = this.mChartData.detailDefault.getValues(this.mStart, this.mEnd, jCurrentTimeMillis, (NetworkStatsHistory.Entry) null);
             long j3 = values.rxBytes + values.txBytes;
-            NetworkStatsHistory.Entry values2 = this.mChartData.detailForeground.getValues(this.mStart, this.mEnd, currentTimeMillis, values);
+            NetworkStatsHistory.Entry values2 = this.mChartData.detailForeground.getValues(this.mStart, this.mEnd, jCurrentTimeMillis, values);
             j = values2.rxBytes + values2.txBytes;
             j2 = j3;
         }
@@ -318,31 +321,23 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
         return false;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:14:0x0046  */
-    /* JADX WARN: Removed duplicated region for block: B:15:0x0048  */
     @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public void onViewCreated(View view, Bundle bundle) {
         int packageUidAsUser;
         super.onViewCreated(view, bundle);
-        String valueAt = this.mPackages.size() != 0 ? this.mPackages.valueAt(0) : null;
-        if (valueAt != null) {
+        String strValueAt = this.mPackages.size() != 0 ? this.mPackages.valueAt(0) : null;
+        if (strValueAt != null) {
             try {
-                packageUidAsUser = this.mPackageManagerWrapper.getPackageUidAsUser(valueAt, UserHandle.getUserId(this.mAppItem.key));
+                packageUidAsUser = this.mPackageManagerWrapper.getPackageUidAsUser(strValueAt, UserHandle.getUserId(this.mAppItem.key));
             } catch (PackageManager.NameNotFoundException e) {
-                Log.w("AppDataUsage", "Skipping UID because cannot find package " + valueAt);
+                Log.w("AppDataUsage", "Skipping UID because cannot find package " + strValueAt);
             }
-            boolean z = this.mAppItem.key <= 0;
-            Activity activity = getActivity();
-            getPreferenceScreen().addPreference(EntityHeaderController.newInstance(activity, this, null).setRecyclerView(getListView(), getLifecycle()).setUid(packageUidAsUser).setHasAppInfoLink(z).setButtonActions(0, 0).setIcon(this.mIcon).setLabel(this.mLabel).setPackageName(valueAt).done(activity, getPrefContext()));
+        } else {
+            packageUidAsUser = 0;
         }
-        packageUidAsUser = 0;
-        if (this.mAppItem.key <= 0) {
-        }
-        Activity activity2 = getActivity();
-        getPreferenceScreen().addPreference(EntityHeaderController.newInstance(activity2, this, null).setRecyclerView(getListView(), getLifecycle()).setUid(packageUidAsUser).setHasAppInfoLink(z).setButtonActions(0, 0).setIcon(this.mIcon).setLabel(this.mLabel).setPackageName(valueAt).done(activity2, getPrefContext()));
+        boolean z = this.mAppItem.key > 0;
+        Activity activity = getActivity();
+        getPreferenceScreen().addPreference(EntityHeaderController.newInstance(activity, this, null).setRecyclerView(getListView(), getLifecycle()).setUid(packageUidAsUser).setHasAppInfoLink(z).setButtonActions(0, 0).setIcon(this.mIcon).setLabel(this.mLabel).setPackageName(strValueAt).done(activity, getPrefContext()));
     }
 
     @Override // com.android.settingslib.core.instrumentation.Instrumentable

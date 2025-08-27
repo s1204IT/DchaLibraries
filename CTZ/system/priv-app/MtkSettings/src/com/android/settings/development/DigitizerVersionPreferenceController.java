@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class DigitizerVersionPreferenceController extends DeveloperOptionsPreferenceController implements PreferenceControllerMixin, OnActivityResultListener {
     private final PackageManagerWrapper mPackageManager;
@@ -31,28 +32,27 @@ public class DigitizerVersionPreferenceController extends DeveloperOptionsPrefer
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
-    public void updateState(Preference preference) {
+    public void updateState(Preference preference) throws IOException {
         updatePreferenceSummary();
     }
 
     @Override // com.android.settings.development.OnActivityResultListener
-    public boolean onActivityResult(int i, int i2, Intent intent) {
+    public boolean onActivityResult(int i, int i2, Intent intent) throws IOException {
         updatePreferenceSummary();
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
     }
 
     Intent getActivityStartIntent() {
-        return new Intent(this.mContext, AppPicker.class);
+        return new Intent(this.mContext, (Class<?>) AppPicker.class);
     }
 
-    private void updatePreferenceSummary() {
-        String readLine;
+    private void updatePreferenceSummary() throws IOException {
+        String line;
         String str = "";
         Log.e("PrefControllerMixin", "updatePreferenceSummary");
         File file = new File("/sys/devices/platform/soc/11007000.i2c/i2c-0/0-0009/digi_fwver");
@@ -61,34 +61,31 @@ public class DigitizerVersionPreferenceController extends DeveloperOptionsPrefer
             try {
                 FileReader fileReader = new FileReader(file);
                 BufferedReader bufferedReader = new BufferedReader(fileReader);
-                readLine = bufferedReader.readLine();
+                line = bufferedReader.readLine();
                 try {
                     bufferedReader.close();
                     fileReader.close();
+                    str = line;
                 } catch (IOException e) {
-                    str = readLine;
+                    str = line;
                 }
             } catch (IOException e2) {
             }
-        } else {
-            if (file2.exists()) {
+        } else if (file2.exists()) {
+            try {
+                FileReader fileReader2 = new FileReader(file2);
+                BufferedReader bufferedReader2 = new BufferedReader(fileReader2);
+                line = bufferedReader2.readLine();
                 try {
-                    FileReader fileReader2 = new FileReader(file2);
-                    BufferedReader bufferedReader2 = new BufferedReader(fileReader2);
-                    readLine = bufferedReader2.readLine();
-                    try {
-                        bufferedReader2.close();
-                        fileReader2.close();
-                    } catch (IOException e3) {
-                        str = readLine;
-                    }
-                } catch (IOException e4) {
+                    bufferedReader2.close();
+                    fileReader2.close();
+                    str = line;
+                } catch (IOException e3) {
+                    str = line;
                 }
+            } catch (IOException e4) {
             }
-            Log.e("PrefControllerMixin", "tmp_str : " + str);
-            this.mPreference.setSummary(str);
         }
-        str = readLine;
         Log.e("PrefControllerMixin", "tmp_str : " + str);
         this.mPreference.setSummary(str);
     }

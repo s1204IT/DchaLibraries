@@ -11,6 +11,7 @@ import com.android.systemui.shared.recents.view.RecentsTransition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RecentsTransitionComposer {
     private Context mContext;
@@ -21,21 +22,21 @@ public class RecentsTransitionComposer {
     }
 
     private static AppTransitionAnimationSpecCompat composeAnimationSpec(TaskStackView taskStackView, TaskView taskView, TaskViewTransform taskViewTransform, boolean z) {
-        Bitmap bitmap;
+        Bitmap bitmapComposeHeaderBitmap;
         if (z) {
-            bitmap = composeHeaderBitmap(taskView, taskViewTransform);
-            if (bitmap == null) {
+            bitmapComposeHeaderBitmap = composeHeaderBitmap(taskView, taskViewTransform);
+            if (bitmapComposeHeaderBitmap == null) {
                 return null;
             }
         } else {
-            bitmap = null;
+            bitmapComposeHeaderBitmap = null;
         }
         Rect rect = new Rect();
         taskViewTransform.rect.round(rect);
         if (!Recents.getConfiguration().isLowRamDevice && taskView.getTask() != taskStackView.getStack().getFrontMostTask()) {
             rect.bottom = rect.top + taskStackView.getMeasuredHeight();
         }
-        return new AppTransitionAnimationSpecCompat(taskView.getTask().key.id, bitmap, rect);
+        return new AppTransitionAnimationSpecCompat(taskView.getTask().key.id, bitmapComposeHeaderBitmap, rect);
     }
 
     public List<AppTransitionAnimationSpecCompat> composeDockAnimationSpec(TaskView taskView, Rect rect) {
@@ -56,9 +57,9 @@ public class RecentsTransitionComposer {
             } else {
                 this.mTmpTransform.fillIn(childViewForTask);
                 stackAlgorithm.transformToScreenCoordinates(this.mTmpTransform, rect);
-                AppTransitionAnimationSpecCompat composeAnimationSpec = composeAnimationSpec(taskStackView, childViewForTask, this.mTmpTransform, true);
-                if (composeAnimationSpec != null) {
-                    arrayList.add(composeAnimationSpec);
+                AppTransitionAnimationSpecCompat appTransitionAnimationSpecCompatComposeAnimationSpec = composeAnimationSpec(taskStackView, childViewForTask, this.mTmpTransform, true);
+                if (appTransitionAnimationSpecCompatComposeAnimationSpec != null) {
+                    arrayList.add(appTransitionAnimationSpecCompatComposeAnimationSpec);
                 }
             }
             return arrayList;
@@ -72,22 +73,22 @@ public class RecentsTransitionComposer {
 
     public static Bitmap composeTaskBitmap(TaskView taskView, TaskViewTransform taskViewTransform) {
         float f = taskViewTransform.scale;
-        int width = (int) (taskViewTransform.rect.width() * f);
-        int height = (int) (taskViewTransform.rect.height() * f);
-        if (width == 0 || height == 0) {
+        int iWidth = (int) (taskViewTransform.rect.width() * f);
+        int iHeight = (int) (taskViewTransform.rect.height() * f);
+        if (iWidth == 0 || iHeight == 0) {
             Log.e("RecentsTransitionComposer", "Could not compose thumbnail for task: " + taskView.getTask() + " at transform: " + taskViewTransform);
             return RecentsTransition.drawViewIntoHardwareBitmap(1, 1, null, 1.0f, 16777215);
         }
-        return RecentsTransition.drawViewIntoHardwareBitmap(width, height, taskView, f, 0);
+        return RecentsTransition.drawViewIntoHardwareBitmap(iWidth, iHeight, taskView, f, 0);
     }
 
     private static Bitmap composeHeaderBitmap(TaskView taskView, TaskViewTransform taskViewTransform) {
         float f = taskViewTransform.scale;
-        int width = (int) taskViewTransform.rect.width();
+        int iWidth = (int) taskViewTransform.rect.width();
         int measuredHeight = (int) (taskView.mHeaderView.getMeasuredHeight() * f);
-        if (width == 0 || measuredHeight == 0) {
+        if (iWidth == 0 || measuredHeight == 0) {
             return null;
         }
-        return RecentsTransition.drawViewIntoHardwareBitmap(width, measuredHeight, taskView.mHeaderView, f, 0);
+        return RecentsTransition.drawViewIntoHardwareBitmap(iWidth, measuredHeight, taskView.mHeaderView, f, 0);
     }
 }

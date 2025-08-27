@@ -16,6 +16,7 @@ import android.util.Property;
 import android.util.SparseArray;
 import com.android.launcher3.anim.Interpolators;
 import com.android.launcher3.graphics.BitmapInfo;
+
 /* loaded from: classes.dex */
 public class FastBitmapDrawable extends Drawable {
     public static final int CLICK_FEEDBACK_DURATION = 200;
@@ -38,11 +39,13 @@ public class FastBitmapDrawable extends Drawable {
     private static final ColorMatrix sTempBrightnessMatrix = new ColorMatrix();
     private static final ColorMatrix sTempFilterMatrix = new ColorMatrix();
     private static final Property<FastBitmapDrawable, Float> SCALE = new Property<FastBitmapDrawable, Float>(Float.TYPE, "scale") { // from class: com.android.launcher3.FastBitmapDrawable.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(FastBitmapDrawable fastBitmapDrawable) {
             return Float.valueOf(fastBitmapDrawable.mScale);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(FastBitmapDrawable fastBitmapDrawable, Float f) {
             fastBitmapDrawable.mScale = f.floatValue();
@@ -77,18 +80,17 @@ public class FastBitmapDrawable extends Drawable {
     @Override // android.graphics.drawable.Drawable
     public final void draw(Canvas canvas) {
         if (this.mScaleAnimation != null) {
-            int save = canvas.save();
+            int iSave = canvas.save();
             Rect bounds = getBounds();
             canvas.scale(this.mScale, this.mScale, bounds.exactCenterX(), bounds.exactCenterY());
             drawInternal(canvas, bounds);
-            canvas.restoreToCount(save);
+            canvas.restoreToCount(iSave);
             return;
         }
         drawInternal(canvas, getBounds());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void drawInternal(Canvas canvas, Rect rect) {
+    protected void drawInternal(Canvas canvas, Rect rect) {
         canvas.drawBitmap(this.mBitmap, (Rect) null, rect, this.mPaint);
     }
 
@@ -173,24 +175,24 @@ public class FastBitmapDrawable extends Drawable {
                 break;
             }
         }
-        if (this.mIsPressed != z) {
-            this.mIsPressed = z;
-            if (this.mScaleAnimation != null) {
-                this.mScaleAnimation.cancel();
-                this.mScaleAnimation = null;
-            }
-            if (this.mIsPressed) {
-                this.mScaleAnimation = ObjectAnimator.ofFloat(this, SCALE, PRESSED_SCALE);
-                this.mScaleAnimation.setDuration(200L);
-                this.mScaleAnimation.setInterpolator(Interpolators.ACCEL);
-                this.mScaleAnimation.start();
-            } else {
-                this.mScale = 1.0f;
-                invalidateSelf();
-            }
-            return true;
+        if (this.mIsPressed == z) {
+            return false;
         }
-        return false;
+        this.mIsPressed = z;
+        if (this.mScaleAnimation != null) {
+            this.mScaleAnimation.cancel();
+            this.mScaleAnimation = null;
+        }
+        if (this.mIsPressed) {
+            this.mScaleAnimation = ObjectAnimator.ofFloat(this, SCALE, PRESSED_SCALE);
+            this.mScaleAnimation.setDuration(200L);
+            this.mScaleAnimation.setInterpolator(Interpolators.ACCEL);
+            this.mScaleAnimation.start();
+        } else {
+            this.mScale = 1.0f;
+            invalidateSelf();
+        }
+        return true;
     }
 
     private void invalidateDesaturationAndBrightness() {
@@ -206,9 +208,9 @@ public class FastBitmapDrawable extends Drawable {
     }
 
     private void setDesaturation(float f) {
-        int floor = (int) Math.floor(f * 48.0f);
-        if (this.mDesaturation != floor) {
-            this.mDesaturation = floor;
+        int iFloor = (int) Math.floor(f * 48.0f);
+        if (this.mDesaturation != iFloor) {
+            this.mDesaturation = iFloor;
             updateFilter();
         }
     }
@@ -218,9 +220,9 @@ public class FastBitmapDrawable extends Drawable {
     }
 
     private void setBrightness(float f) {
-        int floor = (int) Math.floor(f * 48.0f);
-        if (this.mBrightness != floor) {
-            this.mBrightness = floor;
+        int iFloor = (int) Math.floor(f * 48.0f);
+        if (this.mBrightness != iFloor) {
+            this.mBrightness = iFloor;
             updateFilter();
         }
     }
@@ -239,45 +241,46 @@ public class FastBitmapDrawable extends Drawable {
         boolean z;
         if (this.mDesaturation > 0) {
             i = (this.mDesaturation << 16) | this.mBrightness;
-        } else if (this.mBrightness > 0) {
-            i = 65536 | this.mBrightness;
-            z = true;
-            if (i != this.mPrevUpdateKey) {
+        } else {
+            if (this.mBrightness > 0) {
+                i = 65536 | this.mBrightness;
+                z = true;
+                if (i != this.mPrevUpdateKey) {
+                    return;
+                }
+                this.mPrevUpdateKey = i;
+                if (i != -1) {
+                    ColorFilter colorMatrixColorFilter = sCachedFilter.get(i);
+                    if (colorMatrixColorFilter == null) {
+                        float brightness = getBrightness();
+                        int i2 = (int) (255.0f * brightness);
+                        if (z) {
+                            colorMatrixColorFilter = new PorterDuffColorFilter(Color.argb(i2, 255, 255, 255), PorterDuff.Mode.SRC_ATOP);
+                        } else {
+                            sTempFilterMatrix.setSaturation(1.0f - getDesaturation());
+                            if (this.mBrightness > 0) {
+                                float f = 1.0f - brightness;
+                                float[] array = sTempBrightnessMatrix.getArray();
+                                array[0] = f;
+                                array[6] = f;
+                                array[12] = f;
+                                float f2 = i2;
+                                array[4] = f2;
+                                array[9] = f2;
+                                array[14] = f2;
+                                sTempFilterMatrix.preConcat(sTempBrightnessMatrix);
+                            }
+                            colorMatrixColorFilter = new ColorMatrixColorFilter(sTempFilterMatrix);
+                        }
+                        sCachedFilter.append(i, colorMatrixColorFilter);
+                    }
+                    this.mPaint.setColorFilter(colorMatrixColorFilter);
+                } else {
+                    this.mPaint.setColorFilter(null);
+                }
+                invalidateSelf();
                 return;
             }
-            this.mPrevUpdateKey = i;
-            if (i != -1) {
-                ColorFilter colorFilter = sCachedFilter.get(i);
-                if (colorFilter == null) {
-                    float brightness = getBrightness();
-                    int i2 = (int) (255.0f * brightness);
-                    if (z) {
-                        colorFilter = new PorterDuffColorFilter(Color.argb(i2, 255, 255, 255), PorterDuff.Mode.SRC_ATOP);
-                    } else {
-                        sTempFilterMatrix.setSaturation(1.0f - getDesaturation());
-                        if (this.mBrightness > 0) {
-                            float f = 1.0f - brightness;
-                            float[] array = sTempBrightnessMatrix.getArray();
-                            array[0] = f;
-                            array[6] = f;
-                            array[12] = f;
-                            float f2 = i2;
-                            array[4] = f2;
-                            array[9] = f2;
-                            array[14] = f2;
-                            sTempFilterMatrix.preConcat(sTempBrightnessMatrix);
-                        }
-                        colorFilter = new ColorMatrixColorFilter(sTempFilterMatrix);
-                    }
-                    sCachedFilter.append(i, colorFilter);
-                }
-                this.mPaint.setColorFilter(colorFilter);
-            } else {
-                this.mPaint.setColorFilter(null);
-            }
-            invalidateSelf();
-            return;
-        } else {
             i = -1;
         }
         z = false;
@@ -290,7 +293,6 @@ public class FastBitmapDrawable extends Drawable {
         return new MyConstantState(this.mBitmap, this.mIconColor);
     }
 
-    /* loaded from: classes.dex */
     protected static class MyConstantState extends Drawable.ConstantState {
         protected final Bitmap mBitmap;
         protected final int mIconColor;

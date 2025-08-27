@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.mediatek.systemui.ext.ISystemUIStatusBarExt;
+
 /* loaded from: classes.dex */
 public class DefaultSystemUIStatusBarExt implements ISystemUIStatusBarExt {
     public DefaultSystemUIStatusBarExt(Context context) {

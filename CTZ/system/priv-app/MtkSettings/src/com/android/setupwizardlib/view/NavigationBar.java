@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class NavigationBar extends LinearLayout implements View.OnClickListener {
     private Button mBackButton;
@@ -17,7 +18,6 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
     private Button mMoreButton;
     private Button mNextButton;
 
-    /* loaded from: classes.dex */
     public interface NavigationBarListener {
         void onNavigateBack();
 
@@ -25,16 +25,16 @@ public class NavigationBar extends LinearLayout implements View.OnClickListener 
     }
 
     private static int getNavbarTheme(Context context) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{R.attr.suwNavBarTheme, 16842800, 16842801});
-        int resourceId = obtainStyledAttributes.getResourceId(0, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(new int[]{R.attr.suwNavBarTheme, android.R.attr.colorForeground, android.R.attr.colorBackground});
+        int resourceId = typedArrayObtainStyledAttributes.getResourceId(0, 0);
         if (resourceId == 0) {
             float[] fArr = new float[3];
             float[] fArr2 = new float[3];
-            Color.colorToHSV(obtainStyledAttributes.getColor(1, 0), fArr);
-            Color.colorToHSV(obtainStyledAttributes.getColor(2, 0), fArr2);
+            Color.colorToHSV(typedArrayObtainStyledAttributes.getColor(1, 0), fArr);
+            Color.colorToHSV(typedArrayObtainStyledAttributes.getColor(2, 0), fArr2);
             resourceId = fArr[2] > fArr2[2] ? R.style.SuwNavBarThemeDark : R.style.SuwNavBarThemeLight;
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
         return resourceId;
     }
 

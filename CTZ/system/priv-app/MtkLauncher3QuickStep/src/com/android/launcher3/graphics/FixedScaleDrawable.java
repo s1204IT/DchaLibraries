@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.DrawableWrapper;
 import android.util.AttributeSet;
 import org.xmlpull.v1.XmlPullParser;
+
 @TargetApi(24)
 /* loaded from: classes.dex */
 public class FixedScaleDrawable extends DrawableWrapper {
@@ -22,10 +23,10 @@ public class FixedScaleDrawable extends DrawableWrapper {
 
     @Override // android.graphics.drawable.DrawableWrapper, android.graphics.drawable.Drawable
     public void draw(Canvas canvas) {
-        int save = canvas.save();
+        int iSave = canvas.save();
         canvas.scale(this.mScaleX, this.mScaleY, getBounds().exactCenterX(), getBounds().exactCenterY());
         super.draw(canvas);
-        canvas.restoreToCount(save);
+        canvas.restoreToCount(iSave);
     }
 
     @Override // android.graphics.drawable.Drawable

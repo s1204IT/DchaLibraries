@@ -5,10 +5,10 @@ import com.google.protobuf.nano.InternalNano;
 import com.google.protobuf.nano.MessageNano;
 import com.google.protobuf.nano.WireFormatNano;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public interface TouchAnalyticsProto {
 
-    /* loaded from: classes.dex */
     public static final class Session extends MessageNano {
         private int bitField0_;
         private String build_;
@@ -22,7 +22,6 @@ public interface TouchAnalyticsProto {
         public TouchEvent[] touchEvents;
         private int type_;
 
-        /* loaded from: classes.dex */
         public static final class TouchEvent extends MessageNano {
             private static volatile TouchEvent[] _emptyArray;
             private int actionIndex_;
@@ -33,7 +32,6 @@ public interface TouchAnalyticsProto {
             private boolean removedRedacted_;
             private long timeOffsetNanos_;
 
-            /* loaded from: classes.dex */
             public static final class BoundingBox extends MessageNano {
                 private int bitField0_;
                 private float height_;
@@ -50,21 +48,19 @@ public interface TouchAnalyticsProto {
                     super.writeTo(codedOutputByteBufferNano);
                 }
 
-                /* JADX INFO: Access modifiers changed from: protected */
                 @Override // com.google.protobuf.nano.MessageNano
-                public int computeSerializedSize() {
-                    int computeSerializedSize = super.computeSerializedSize();
+                protected int computeSerializedSize() {
+                    int iComputeSerializedSize = super.computeSerializedSize();
                     if ((this.bitField0_ & 1) != 0) {
-                        computeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(1, this.width_);
+                        iComputeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(1, this.width_);
                     }
                     if ((this.bitField0_ & 2) != 0) {
-                        return computeSerializedSize + CodedOutputByteBufferNano.computeFloatSize(2, this.height_);
+                        return iComputeSerializedSize + CodedOutputByteBufferNano.computeFloatSize(2, this.height_);
                     }
-                    return computeSerializedSize;
+                    return iComputeSerializedSize;
                 }
             }
 
-            /* loaded from: classes.dex */
             public static final class Pointer extends MessageNano {
                 private static volatile Pointer[] _emptyArray;
                 private int bitField0_;
@@ -160,32 +156,31 @@ public interface TouchAnalyticsProto {
                     super.writeTo(codedOutputByteBufferNano);
                 }
 
-                /* JADX INFO: Access modifiers changed from: protected */
                 @Override // com.google.protobuf.nano.MessageNano
-                public int computeSerializedSize() {
-                    int computeSerializedSize = super.computeSerializedSize();
+                protected int computeSerializedSize() {
+                    int iComputeSerializedSize = super.computeSerializedSize();
                     if ((this.bitField0_ & 1) != 0) {
-                        computeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(1, this.x_);
+                        iComputeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(1, this.x_);
                     }
                     if ((this.bitField0_ & 2) != 0) {
-                        computeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(2, this.y_);
+                        iComputeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(2, this.y_);
                     }
                     if ((this.bitField0_ & 4) != 0) {
-                        computeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(3, this.size_);
+                        iComputeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(3, this.size_);
                     }
                     if ((this.bitField0_ & 8) != 0) {
-                        computeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(4, this.pressure_);
+                        iComputeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(4, this.pressure_);
                     }
                     if ((this.bitField0_ & 16) != 0) {
-                        computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(5, this.id_);
+                        iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(5, this.id_);
                     }
                     if ((this.bitField0_ & 32) != 0) {
-                        computeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(6, this.removedLength_);
+                        iComputeSerializedSize += CodedOutputByteBufferNano.computeFloatSize(6, this.removedLength_);
                     }
                     if (this.removedBoundingBox != null) {
-                        return computeSerializedSize + CodedOutputByteBufferNano.computeMessageSize(7, this.removedBoundingBox);
+                        return iComputeSerializedSize + CodedOutputByteBufferNano.computeMessageSize(7, this.removedBoundingBox);
                     }
-                    return computeSerializedSize;
+                    return iComputeSerializedSize;
                 }
             }
 
@@ -262,38 +257,36 @@ public interface TouchAnalyticsProto {
                 super.writeTo(codedOutputByteBufferNano);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
             @Override // com.google.protobuf.nano.MessageNano
-            public int computeSerializedSize() {
-                int computeSerializedSize = super.computeSerializedSize();
+            protected int computeSerializedSize() {
+                int iComputeSerializedSize = super.computeSerializedSize();
                 if ((this.bitField0_ & 1) != 0) {
-                    computeSerializedSize += CodedOutputByteBufferNano.computeUInt64Size(1, this.timeOffsetNanos_);
+                    iComputeSerializedSize += CodedOutputByteBufferNano.computeUInt64Size(1, this.timeOffsetNanos_);
                 }
                 if ((this.bitField0_ & 2) != 0) {
-                    computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(2, this.action_);
+                    iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(2, this.action_);
                 }
                 if ((this.bitField0_ & 4) != 0) {
-                    computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(3, this.actionIndex_);
+                    iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(3, this.actionIndex_);
                 }
                 if (this.pointers != null && this.pointers.length > 0) {
                     for (int i = 0; i < this.pointers.length; i++) {
                         Pointer pointer = this.pointers[i];
                         if (pointer != null) {
-                            computeSerializedSize += CodedOutputByteBufferNano.computeMessageSize(4, pointer);
+                            iComputeSerializedSize += CodedOutputByteBufferNano.computeMessageSize(4, pointer);
                         }
                     }
                 }
                 if ((this.bitField0_ & 8) != 0) {
-                    computeSerializedSize += CodedOutputByteBufferNano.computeBoolSize(5, this.removedRedacted_);
+                    iComputeSerializedSize += CodedOutputByteBufferNano.computeBoolSize(5, this.removedRedacted_);
                 }
                 if (this.removedBoundingBox != null) {
-                    return computeSerializedSize + CodedOutputByteBufferNano.computeMessageSize(6, this.removedBoundingBox);
+                    return iComputeSerializedSize + CodedOutputByteBufferNano.computeMessageSize(6, this.removedBoundingBox);
                 }
-                return computeSerializedSize;
+                return iComputeSerializedSize;
             }
         }
 
-        /* loaded from: classes.dex */
         public static final class SensorEvent extends MessageNano {
             private static volatile SensorEvent[] _emptyArray;
             private int bitField0_;
@@ -364,27 +357,25 @@ public interface TouchAnalyticsProto {
                 super.writeTo(codedOutputByteBufferNano);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
             @Override // com.google.protobuf.nano.MessageNano
-            public int computeSerializedSize() {
-                int computeSerializedSize = super.computeSerializedSize();
+            protected int computeSerializedSize() {
+                int iComputeSerializedSize = super.computeSerializedSize();
                 if ((this.bitField0_ & 1) != 0) {
-                    computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(1, this.type_);
+                    iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(1, this.type_);
                 }
                 if ((this.bitField0_ & 2) != 0) {
-                    computeSerializedSize += CodedOutputByteBufferNano.computeUInt64Size(2, this.timeOffsetNanos_);
+                    iComputeSerializedSize += CodedOutputByteBufferNano.computeUInt64Size(2, this.timeOffsetNanos_);
                 }
                 if (this.values != null && this.values.length > 0) {
-                    computeSerializedSize = computeSerializedSize + (this.values.length * 4) + (1 * this.values.length);
+                    iComputeSerializedSize = iComputeSerializedSize + (this.values.length * 4) + (1 * this.values.length);
                 }
                 if ((this.bitField0_ & 4) != 0) {
-                    return computeSerializedSize + CodedOutputByteBufferNano.computeUInt64Size(4, this.timestamp_);
+                    return iComputeSerializedSize + CodedOutputByteBufferNano.computeUInt64Size(4, this.timestamp_);
                 }
-                return computeSerializedSize;
+                return iComputeSerializedSize;
             }
         }
 
-        /* loaded from: classes.dex */
         public static final class PhoneEvent extends MessageNano {
             private static volatile PhoneEvent[] _emptyArray;
             private int bitField0_;
@@ -437,17 +428,16 @@ public interface TouchAnalyticsProto {
                 super.writeTo(codedOutputByteBufferNano);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
             @Override // com.google.protobuf.nano.MessageNano
-            public int computeSerializedSize() {
-                int computeSerializedSize = super.computeSerializedSize();
+            protected int computeSerializedSize() {
+                int iComputeSerializedSize = super.computeSerializedSize();
                 if ((this.bitField0_ & 1) != 0) {
-                    computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(1, this.type_);
+                    iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(1, this.type_);
                 }
                 if ((this.bitField0_ & 2) != 0) {
-                    return computeSerializedSize + CodedOutputByteBufferNano.computeUInt64Size(2, this.timeOffsetNanos_);
+                    return iComputeSerializedSize + CodedOutputByteBufferNano.computeUInt64Size(2, this.timeOffsetNanos_);
                 }
-                return computeSerializedSize;
+                return iComputeSerializedSize;
             }
         }
 
@@ -566,60 +556,59 @@ public interface TouchAnalyticsProto {
             super.writeTo(codedOutputByteBufferNano);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.google.protobuf.nano.MessageNano
-        public int computeSerializedSize() {
-            int computeSerializedSize = super.computeSerializedSize();
+        protected int computeSerializedSize() {
+            int iComputeSerializedSize = super.computeSerializedSize();
             if ((this.bitField0_ & 1) != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeUInt64Size(1, this.startTimestampMillis_);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeUInt64Size(1, this.startTimestampMillis_);
             }
             if ((this.bitField0_ & 2) != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeUInt64Size(2, this.durationMillis_);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeUInt64Size(2, this.durationMillis_);
             }
             if ((this.bitField0_ & 4) != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeStringSize(3, this.build_);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeStringSize(3, this.build_);
             }
             if ((this.bitField0_ & 8) != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(4, this.result_);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(4, this.result_);
             }
             if (this.touchEvents != null && this.touchEvents.length > 0) {
-                int i = computeSerializedSize;
-                for (int i2 = 0; i2 < this.touchEvents.length; i2++) {
-                    TouchEvent touchEvent = this.touchEvents[i2];
+                int iComputeMessageSize = iComputeSerializedSize;
+                for (int i = 0; i < this.touchEvents.length; i++) {
+                    TouchEvent touchEvent = this.touchEvents[i];
                     if (touchEvent != null) {
-                        i += CodedOutputByteBufferNano.computeMessageSize(5, touchEvent);
+                        iComputeMessageSize += CodedOutputByteBufferNano.computeMessageSize(5, touchEvent);
                     }
                 }
-                computeSerializedSize = i;
+                iComputeSerializedSize = iComputeMessageSize;
             }
             if (this.sensorEvents != null && this.sensorEvents.length > 0) {
-                int i3 = computeSerializedSize;
-                for (int i4 = 0; i4 < this.sensorEvents.length; i4++) {
-                    SensorEvent sensorEvent = this.sensorEvents[i4];
+                int iComputeMessageSize2 = iComputeSerializedSize;
+                for (int i2 = 0; i2 < this.sensorEvents.length; i2++) {
+                    SensorEvent sensorEvent = this.sensorEvents[i2];
                     if (sensorEvent != null) {
-                        i3 += CodedOutputByteBufferNano.computeMessageSize(6, sensorEvent);
+                        iComputeMessageSize2 += CodedOutputByteBufferNano.computeMessageSize(6, sensorEvent);
                     }
                 }
-                computeSerializedSize = i3;
+                iComputeSerializedSize = iComputeMessageSize2;
             }
             if ((this.bitField0_ & 16) != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(9, this.touchAreaWidth_);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(9, this.touchAreaWidth_);
             }
             if ((this.bitField0_ & 32) != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(10, this.touchAreaHeight_);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(10, this.touchAreaHeight_);
             }
             if ((this.bitField0_ & 64) != 0) {
-                computeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(11, this.type_);
+                iComputeSerializedSize += CodedOutputByteBufferNano.computeInt32Size(11, this.type_);
             }
             if (this.phoneEvents != null && this.phoneEvents.length > 0) {
-                for (int i5 = 0; i5 < this.phoneEvents.length; i5++) {
-                    PhoneEvent phoneEvent = this.phoneEvents[i5];
+                for (int i3 = 0; i3 < this.phoneEvents.length; i3++) {
+                    PhoneEvent phoneEvent = this.phoneEvents[i3];
                     if (phoneEvent != null) {
-                        computeSerializedSize += CodedOutputByteBufferNano.computeMessageSize(12, phoneEvent);
+                        iComputeSerializedSize += CodedOutputByteBufferNano.computeMessageSize(12, phoneEvent);
                     }
                 }
             }
-            return computeSerializedSize;
+            return iComputeSerializedSize;
         }
     }
 }

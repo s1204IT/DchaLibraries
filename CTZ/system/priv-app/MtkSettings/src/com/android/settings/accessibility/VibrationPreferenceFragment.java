@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
 /* loaded from: classes.dex */
 public abstract class VibrationPreferenceFragment extends RadioButtonPickerFragment {
     static final String KEY_INTENSITY_HIGH = "intensity_high";
@@ -65,10 +66,11 @@ public abstract class VibrationPreferenceFragment extends RadioButtonPickerFragm
     }
 
     protected void playVibrationPreview() {
+        Vibrator vibrator = (Vibrator) getContext().getSystemService(Vibrator.class);
         VibrationEffect vibrationEffect = VibrationEffect.get(0);
         AudioAttributes.Builder builder = new AudioAttributes.Builder();
         builder.setUsage(getPreviewVibrationAudioAttributesUsage());
-        ((Vibrator) getContext().getSystemService(Vibrator.class)).vibrate(vibrationEffect, builder.build());
+        vibrator.vibrate(vibrationEffect, builder.build());
     }
 
     protected int getPreviewVibrationAudioAttributesUsage() {
@@ -96,11 +98,9 @@ public abstract class VibrationPreferenceFragment extends RadioButtonPickerFragm
             if (vibrationIntensityCandidateInfo.getKey().equals(KEY_INTENSITY_ON) && i != 0) {
                 z = true;
             }
-            if (!z2) {
-                if (z) {
-                }
+            if (z2 || z) {
+                return vibrationIntensityCandidateInfo.getKey();
             }
-            return vibrationIntensityCandidateInfo.getKey();
         }
         return null;
     }
@@ -117,9 +117,7 @@ public abstract class VibrationPreferenceFragment extends RadioButtonPickerFragm
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class VibrationIntensityCandidateInfo extends CandidateInfo {
+    class VibrationIntensityCandidateInfo extends CandidateInfo {
         private int mIntensity;
         private String mKey;
         private int mLabelId;
@@ -151,7 +149,6 @@ public abstract class VibrationPreferenceFragment extends RadioButtonPickerFragm
         }
     }
 
-    /* loaded from: classes.dex */
     private class SettingsObserver extends ContentObserver {
         public SettingsObserver() {
             super(new Handler());

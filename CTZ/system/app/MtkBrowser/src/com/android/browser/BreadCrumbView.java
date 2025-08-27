@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BreadCrumbView extends LinearLayout implements View.OnClickListener {
     private ImageButton mBackButton;
@@ -25,7 +26,6 @@ public class BreadCrumbView extends LinearLayout implements View.OnClickListener
     private Drawable mSeparatorDrawable;
     private boolean mUseBackButton;
 
-    /* loaded from: classes.dex */
     public interface Controller {
         void onTop(BreadCrumbView breadCrumbView, int i, Object obj);
     }
@@ -53,9 +53,9 @@ public class BreadCrumbView extends LinearLayout implements View.OnClickListener
         setFocusable(true);
         this.mUseBackButton = false;
         this.mCrumbs = new ArrayList();
-        TypedArray obtainStyledAttributes = this.mContext.obtainStyledAttributes(com.android.internal.R.styleable.Theme);
-        this.mSeparatorDrawable = obtainStyledAttributes.getDrawable(155);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = this.mContext.obtainStyledAttributes(com.android.internal.R.styleable.Theme);
+        this.mSeparatorDrawable = typedArrayObtainStyledAttributes.getDrawable(155);
+        typedArrayObtainStyledAttributes.recycle();
         float f = this.mContext.getResources().getDisplayMetrics().density;
         this.mDividerPadding = 12.0f * f;
         this.mCrumbPadding = (int) (8.0f * f);
@@ -123,7 +123,7 @@ public class BreadCrumbView extends LinearLayout implements View.OnClickListener
         this.mBackButton = new ImageButton(this.mContext);
         this.mBackButton.setImageResource(R.drawable.ic_back_hierarchy_holo_dark);
         TypedValue typedValue = new TypedValue();
-        getContext().getTheme().resolveAttribute(16843534, typedValue, true);
+        getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, typedValue, true);
         this.mBackButton.setBackgroundResource(typedValue.resourceId);
         this.mBackButton.setLayoutParams(new LinearLayout.LayoutParams(-2, -1));
         this.mBackButton.setOnClickListener(this);
@@ -143,9 +143,9 @@ public class BreadCrumbView extends LinearLayout implements View.OnClickListener
     }
 
     private void addSeparator() {
-        ImageView makeDividerView = makeDividerView();
-        makeDividerView.setLayoutParams(makeDividerLayoutParams());
-        addView(makeDividerView);
+        ImageView imageViewMakeDividerView = makeDividerView();
+        imageViewMakeDividerView.setLayoutParams(makeDividerLayoutParams());
+        addView(imageViewMakeDividerView);
     }
 
     private ImageView makeDividerView() {
@@ -215,9 +215,9 @@ public class BreadCrumbView extends LinearLayout implements View.OnClickListener
         }
         if (this.mUseBackButton) {
             this.mBackButton.setVisibility(getTopCrumb() != null ? getTopCrumb().canGoBack : false ? 0 : 8);
-            return;
+        } else {
+            this.mBackButton.setVisibility(8);
         }
-        this.mBackButton.setVisibility(8);
     }
 
     private void removeLastView() {
@@ -239,12 +239,12 @@ public class BreadCrumbView extends LinearLayout implements View.OnClickListener
         if (this.mBackButton == view) {
             popView();
             notifyController();
-            return;
+        } else {
+            while (view != getTopCrumb().crumbView) {
+                pop(false);
+            }
+            notifyController();
         }
-        while (view != getTopCrumb().crumbView) {
-            pop(false);
-        }
-        notifyController();
     }
 
     @Override // android.widget.LinearLayout, android.view.View
@@ -273,9 +273,7 @@ public class BreadCrumbView extends LinearLayout implements View.OnClickListener
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class Crumb {
+    class Crumb {
         public boolean canGoBack;
         public View crumbView;
         public Object data;
@@ -292,7 +290,7 @@ public class BreadCrumbView extends LinearLayout implements View.OnClickListener
 
         private TextView makeCrumbView(String str) {
             TextView textView = new TextView(BreadCrumbView.this.mContext);
-            textView.setTextAppearance(BreadCrumbView.this.mContext, 16973892);
+            textView.setTextAppearance(BreadCrumbView.this.mContext, android.R.style.TextAppearance.Medium);
             textView.setPadding(BreadCrumbView.this.mCrumbPadding, 0, BreadCrumbView.this.mCrumbPadding, 0);
             textView.setGravity(16);
             textView.setText(str);

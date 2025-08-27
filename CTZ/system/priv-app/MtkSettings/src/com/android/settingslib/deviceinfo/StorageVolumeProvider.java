@@ -4,6 +4,7 @@ import android.app.usage.StorageStatsManager;
 import android.os.storage.VolumeInfo;
 import java.io.IOException;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface StorageVolumeProvider {
     VolumeInfo findEmulatedForPrivate(VolumeInfo volumeInfo);

@@ -5,6 +5,7 @@ import android.service.notification.StatusBarNotification;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationEntryManager;
+
 /* loaded from: classes.dex */
 public class CarNotificationEntryManager extends NotificationEntryManager {
     public CarNotificationEntryManager(Context context) {

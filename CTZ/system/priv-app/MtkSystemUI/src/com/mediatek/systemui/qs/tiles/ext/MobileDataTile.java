@@ -14,6 +14,7 @@ import com.mediatek.systemui.ext.IQuickSettingsPlugin;
 import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
 import com.mediatek.systemui.statusbar.extcb.IconIdWrapper;
 import com.mediatek.systemui.statusbar.util.SIMHelper;
+
 /* loaded from: classes.dex */
 public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
     private final MobileDataSignalCallback mCallback;
@@ -44,8 +45,7 @@ public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public void handleSetListening(boolean z) {
-        String str = this.TAG;
-        Log.d(str, "setListening = " + z);
+        Log.d(this.TAG, "setListening = " + z);
         if (z) {
             this.mController.addCallback((NetworkController.SignalCallback) this.mCallback);
         } else {
@@ -64,7 +64,7 @@ public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
         return null;
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.SignalState newTileState() {
         return new QSTile.SignalState();
@@ -72,7 +72,7 @@ public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 111;
+        return com.android.systemui.plugins.R.styleable.AppCompatTheme_windowActionBar;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
@@ -91,11 +91,10 @@ public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.SignalState signalState, Object obj) {
-        String str = this.TAG;
-        Log.d(str, "handleUpdateState arg=" + obj);
+    protected void handleUpdateState(QSTile.SignalState signalState, Object obj) {
+        Log.d(this.TAG, "handleUpdateState arg=" + obj);
         CallbackInfo callbackInfo = (CallbackInfo) obj;
         if (callbackInfo == null) {
             callbackInfo = this.mCallback.mInfo;
@@ -137,21 +136,17 @@ public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
             signalState.icon = QsIconWrapper.get(this.mDisableStateIconIdWrapper.getIconId(), this.mDisableStateIconIdWrapper);
         }
         this.mTileLabel = signalState.label;
-        String str2 = this.TAG;
-        Log.d(str2, "handleUpdateState state=" + signalState);
+        Log.d(this.TAG, "handleUpdateState state=" + signalState);
     }
 
     private final boolean isDefaultDataSimRadioOn() {
         int defaultDataSubscriptionId = SubscriptionManager.getDefaultDataSubscriptionId();
         boolean z = defaultDataSubscriptionId >= 0 && SIMHelper.isRadioOn(defaultDataSubscriptionId);
-        String str = this.TAG;
-        Log.d(str, "isDefaultDataSimRadioOn subId=" + defaultDataSubscriptionId + ", isRadioOn=" + z);
+        Log.d(this.TAG, "isDefaultDataSimRadioOn subId=" + defaultDataSubscriptionId + ", isRadioOn=" + z);
         return z;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class CallbackInfo {
+    private static final class CallbackInfo {
         public boolean activityIn;
         public boolean activityOut;
         public boolean airplaneModeEnabled;
@@ -171,9 +166,7 @@ public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class MobileDataSignalCallback implements NetworkController.SignalCallback {
+    private final class MobileDataSignalCallback implements NetworkController.SignalCallback {
         final CallbackInfo mInfo;
 
         private MobileDataSignalCallback() {
@@ -198,8 +191,7 @@ public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
             this.mInfo.activityIn = z;
             this.mInfo.activityOut = z2;
             this.mInfo.enabledDesc = str2;
-            String str3 = MobileDataTile.this.TAG;
-            Log.d(str3, "setMobileDataIndicators mInfo=" + this.mInfo);
+            Log.d(MobileDataTile.this.TAG, "setMobileDataIndicators mInfo=" + this.mInfo);
             MobileDataTile.this.refreshState(this.mInfo);
         }
 
@@ -210,8 +202,7 @@ public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
                 this.mInfo.mobileSignalIconId = 0;
                 this.mInfo.dataTypeIconId = 0;
                 this.mInfo.enabled = false;
-                String str = MobileDataTile.this.TAG;
-                Log.d(str, "setNoSims noSim=" + z);
+                Log.d(MobileDataTile.this.TAG, "setNoSims noSim=" + z);
             }
             MobileDataTile.this.refreshState(this.mInfo);
         }

@@ -16,6 +16,7 @@ import com.android.settingslib.bluetooth.LocalBluetoothManager;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class AvailableMediaDeviceGroupController extends BasePreferenceController implements DevicePreferenceCallback, BluetoothCallback, LifecycleObserver, OnStart, OnStop {
     private static final String KEY = "available_device_list";

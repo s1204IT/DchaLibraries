@@ -13,12 +13,12 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.FrameLayout;
 import com.android.setupwizardlib.DividerItemDecoration;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class HeaderRecyclerView extends RecyclerView {
     private View mHeader;
     private int mHeaderRes;
 
-    /* loaded from: classes.dex */
     private static class HeaderViewHolder extends RecyclerView.ViewHolder implements DividerItemDecoration.DividedViewHolder {
         HeaderViewHolder(View view) {
             super(view);
@@ -35,7 +35,6 @@ public class HeaderRecyclerView extends RecyclerView {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class HeaderAdapter<CVH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private RecyclerView.Adapter<CVH> mAdapter;
         private View mHeader;
@@ -171,9 +170,9 @@ public class HeaderRecyclerView extends RecyclerView {
     }
 
     private void init(AttributeSet attributeSet, int i) {
-        TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwHeaderRecyclerView, i, 0);
-        this.mHeaderRes = obtainStyledAttributes.getResourceId(R.styleable.SuwHeaderRecyclerView_suwHeader, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwHeaderRecyclerView, i, 0);
+        this.mHeaderRes = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwHeaderRecyclerView_suwHeader, 0);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     @Override // android.view.View

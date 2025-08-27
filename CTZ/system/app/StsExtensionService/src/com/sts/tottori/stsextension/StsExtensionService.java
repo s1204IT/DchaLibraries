@@ -12,11 +12,16 @@ import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.util.Log;
 import com.sts.tottori.stsextension.StsExtensionService;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+
 /* loaded from: classes.dex */
 public class StsExtensionService extends Service {
     private int tp_type;
@@ -28,20 +33,17 @@ public class StsExtensionService extends Service {
     Handler mHandler = new Handler(true);
     Context mContext = this;
 
-    static /* synthetic */ boolean access$000(StsExtensionService stsExtensionService) {
-        return stsExtensionService.mIsUpdating;
-    }
-
     public StsExtensionService() {
         this.tp_type = -1;
         if (!PROC_NVT_TP_VERSION.exists()) {
             if (!FTS_TP_VERSION.exists()) {
                 Log.e("StsExtensionService", "----- TP:Unkown -----");
                 return;
+            } else {
+                Log.i("StsExtensionService", "----- TP:FTS -----");
+                this.tp_type = 1;
+                return;
             }
-            Log.i("StsExtensionService", "----- TP:FTS -----");
-            this.tp_type = 1;
-            return;
         }
         Log.i("StsExtensionService", "----- TP:NVT -----");
         this.tp_type = 0;
@@ -54,72 +56,202 @@ public class StsExtensionService extends Service {
         return this.mPowerManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.sts.tottori.stsextension.StsExtensionService$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends IStsExtensionService.Stub {
+    /* renamed from: com.sts.tottori.stsextension.StsExtensionService$1, reason: invalid class name */
+    class AnonymousClass1 extends IStsExtensionService.Stub {
         AnonymousClass1() {
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [179=6] */
         public boolean updateTouchpanelFw(final String str) {
-            long clearCallingIdentity = Binder.clearCallingIdentity();
+            long jClearCallingIdentity = Binder.clearCallingIdentity();
             try {
                 if (!new File(str).isFile()) {
                     Log.e("StsExtensionService", "----- putString() : invalid file[" + str + "] -----");
                     return false;
-                } else if (StsExtensionService.this.mIsUpdating) {
+                }
+                if (StsExtensionService.this.mIsUpdating) {
                     Log.e("StsExtensionService", "----- FW update : already updating! -----");
                     return false;
-                } else {
-                    StsExtensionService.this.mIsUpdating = true;
-                    Log.e("StsExtensionService", "----- updateTouchpanelFw ----- " + StsExtensionService.this.tp_type);
-                    if (StsExtensionService.this.tp_type == 0) {
-                        new Thread(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$2k56XctykEVEWEJ1N9zz89Tl0kM
-                            @Override // java.lang.Runnable
-                            public final void run() {
-                                StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$1(StsExtensionService.AnonymousClass1.this, str);
-                            }
-                        }).start();
-                    } else {
-                        String substring = str.substring(str.lastIndexOf("/") + 1);
-                        if (substring.length() >= 95) {
-                            Log.e("StsExtensionService", "----- filename length(" + substring.length() + ") fail -----");
-                            StsExtensionService.this.mIsUpdating = false;
-                            return false;
-                        } else if (substring.indexOf("FT8205") != 0) {
-                            Log.e("StsExtensionService", "----- invalid file name [" + substring + "] -----");
-                            StsExtensionService.this.mIsUpdating = false;
-                            return false;
-                        } else {
-                            new Thread(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$tupqgzeAP6XLKCQr0ErO3KLVrmQ
-                                @Override // java.lang.Runnable
-                                public final void run() {
-                                    StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$3(StsExtensionService.AnonymousClass1.this, str);
-                                }
-                            }).start();
-                        }
-                    }
-                    return true;
                 }
+                StsExtensionService.this.mIsUpdating = true;
+                Log.e("StsExtensionService", "----- updateTouchpanelFw ----- " + StsExtensionService.this.tp_type);
+                if (StsExtensionService.this.tp_type == 0) {
+                    new Thread(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$2k56XctykEVEWEJ1N9zz89Tl0kM
+                        @Override // java.lang.Runnable
+                        public final void run() throws Throwable {
+                            StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$1(this.f$0, str);
+                        }
+                    }).start();
+                } else {
+                    String strSubstring = str.substring(str.lastIndexOf("/") + 1);
+                    if (strSubstring.length() >= 95) {
+                        Log.e("StsExtensionService", "----- filename length(" + strSubstring.length() + ") fail -----");
+                        StsExtensionService.this.mIsUpdating = false;
+                        return false;
+                    }
+                    if (strSubstring.indexOf("FT8205") != 0) {
+                        Log.e("StsExtensionService", "----- invalid file name [" + strSubstring + "] -----");
+                        StsExtensionService.this.mIsUpdating = false;
+                        return false;
+                    }
+                    new Thread(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$tupqgzeAP6XLKCQr0ErO3KLVrmQ
+                        @Override // java.lang.Runnable
+                        public final void run() throws Throwable {
+                            StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$3(this.f$0, str);
+                        }
+                    }).start();
+                }
+                return true;
             } finally {
-                Binder.restoreCallingIdentity(clearCallingIdentity);
+                Binder.restoreCallingIdentity(jClearCallingIdentity);
             }
         }
 
-        /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
-            jadx.core.utils.exceptions.JadxRuntimeException: Found unreachable blocks
-            	at jadx.core.dex.visitors.blocks.DominatorTree.sortBlocks(DominatorTree.java:35)
-            	at jadx.core.dex.visitors.blocks.DominatorTree.compute(DominatorTree.java:25)
-            	at jadx.core.dex.visitors.blocks.BlockProcessor.computeDominators(BlockProcessor.java:202)
-            	at jadx.core.dex.visitors.blocks.BlockProcessor.processBlocksTree(BlockProcessor.java:45)
-            	at jadx.core.dex.visitors.blocks.BlockProcessor.visit(BlockProcessor.java:39)
-            */
-        public static /* synthetic */ void lambda$updateTouchpanelFw$1(com.sts.tottori.stsextension.StsExtensionService.AnonymousClass1 r10, java.lang.String r11) {
-            /*
-                Method dump skipped, instructions count: 450
-                To view this dump add '--comments-level debug' option
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.sts.tottori.stsextension.StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$1(com.sts.tottori.stsextension.StsExtensionService$1, java.lang.String):void");
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [99=9, 106=10, 112=5, 117=21, 118=18, 124=5] */
+        /* JADX WARN: Removed duplicated region for block: B:117:0x015a  */
+        /* JADX WARN: Removed duplicated region for block: B:141:0x01aa  */
+        /* JADX WARN: Removed duplicated region for block: B:143:0x01b2  */
+        /* JADX WARN: Removed duplicated region for block: B:158:0x0092 A[EXC_TOP_SPLITTER, SYNTHETIC] */
+        /* JADX WARN: Removed duplicated region for block: B:165:0x00ac A[EXC_TOP_SPLITTER, SYNTHETIC] */
+        /* JADX WARN: Removed duplicated region for block: B:167:0x016f A[EXC_TOP_SPLITTER, SYNTHETIC] */
+        /* JADX WARN: Removed duplicated region for block: B:83:0x00e8  */
+        /* JADX WARN: Removed duplicated region for block: B:85:0x00f0  */
+        /*
+            Code decompiled incorrectly, please refer to instructions dump.
+        */
+        public static /* synthetic */ void lambda$updateTouchpanelFw$1(final AnonymousClass1 anonymousClass1, String str) throws Throwable {
+            String str2;
+            Handler handler;
+            Runnable runnable;
+            Handler handler2;
+            Runnable runnable2;
+            Process processStart;
+            Throwable th;
+            String str3;
+            InputStreamReader inputStreamReader;
+            Throwable th2;
+            Throwable th3;
+            Process process = null;
+            th = null;
+            th = null;
+            Throwable th4 = null;
+            process = null;
+            try {
+                StsExtensionService.this.getPowerManager().setKeepAwake(true);
+                SystemProperties.set("nvt.nvt_fw_updating", "1");
+                processStart = new ProcessBuilder("/bin/.NT36523_Cmd_v208", "-u", str).start();
+            } catch (Throwable th5) {
+                th = th5;
+                str2 = null;
+            }
+            try {
+                InputStream inputStream = processStart.getInputStream();
+                try {
+                    inputStreamReader = new InputStreamReader(inputStream);
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                        str3 = null;
+                        while (true) {
+                            try {
+                                try {
+                                    String line = bufferedReader.readLine();
+                                    if (line == null) {
+                                        break;
+                                    } else {
+                                        str3 = line;
+                                    }
+                                } catch (Throwable th6) {
+                                    th = th6;
+                                    str2 = str3;
+                                    th2 = null;
+                                    $closeResource(th2, inputStreamReader);
+                                    throw th;
+                                }
+                            } catch (Throwable th7) {
+                                th = th7;
+                                th3 = null;
+                                $closeResource(th3, bufferedReader);
+                                throw th;
+                            }
+                        }
+                        $closeResource(null, bufferedReader);
+                    } catch (Throwable th8) {
+                        th = th8;
+                        th2 = null;
+                        str2 = null;
+                    }
+                } catch (Throwable th9) {
+                    str2 = null;
+                    th4 = th9;
+                    throw th4;
+                }
+                try {
+                    $closeResource(null, inputStreamReader);
+                    if (inputStream != null) {
+                        try {
+                            $closeResource(null, inputStream);
+                        } catch (Throwable th10) {
+                            th = th10;
+                            str2 = str3;
+                            Log.e("StsExtensionService", "----- Exception occurred!!! -----", th);
+                            str3 = str2;
+                            if (processStart != null) {
+                            }
+                            handler.post(runnable);
+                        }
+                    }
+                } catch (Throwable th11) {
+                    throw th11;
+                }
+            } catch (Throwable th12) {
+                str2 = null;
+                th = th12;
+            }
+            try {
+                if (processStart != null) {
+                    try {
+                        processStart.waitFor();
+                        i = "Verify OK ".equals(str3) ? 0 : -1;
+                        handler = StsExtensionService.this.mHandler;
+                        runnable = new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$WpRMRUhj7TEva2-aEOltpRrtlEI
+                            @Override // java.lang.Runnable
+                            public final void run() {
+                                StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$0(this.f$0, i);
+                            }
+                        };
+                    } catch (Throwable th13) {
+                        Log.e("StsExtensionService", "----- Exception occurred!!! -----", th13);
+                        i = "Verify OK ".equals(str3) ? 0 : -1;
+                        handler = StsExtensionService.this.mHandler;
+                        runnable = new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$WpRMRUhj7TEva2-aEOltpRrtlEI
+                            @Override // java.lang.Runnable
+                            public final void run() {
+                                StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$0(this.f$0, i);
+                            }
+                        };
+                    }
+                } else {
+                    if ("Verify OK ".equals(str3)) {
+                    }
+                    handler = StsExtensionService.this.mHandler;
+                    runnable = new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$WpRMRUhj7TEva2-aEOltpRrtlEI
+                        @Override // java.lang.Runnable
+                        public final void run() {
+                            StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$0(this.f$0, i);
+                        }
+                    };
+                }
+                handler.post(runnable);
+            } catch (Throwable th14) {
+                i = "Verify OK ".equals(str3) ? 0 : -1;
+                StsExtensionService.this.mHandler.post(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$WpRMRUhj7TEva2-aEOltpRrtlEI
+                    @Override // java.lang.Runnable
+                    public final void run() {
+                        StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$0(this.f$0, i);
+                    }
+                });
+                throw th14;
+            }
         }
 
         public static /* synthetic */ void lambda$updateTouchpanelFw$0(AnonymousClass1 anonymousClass1, int i) {
@@ -129,139 +261,161 @@ public class StsExtensionService extends Service {
             StsExtensionService.this.mContext.sendBroadcastAsUser(new Intent("com.panasonic.sanyo.ts.intent.action.TOUCHPANEL_FIRMWARE_UPDATED").putExtra("result", i), UserHandle.ALL);
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [154=4, 169=4] */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:13:0x0071 */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:53:? */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:9:0x006c */
         /* JADX WARN: Multi-variable type inference failed */
-        /* JADX WARN: Removed duplicated region for block: B:44:0x00bd A[Catch: Exception -> 0x00b9, TryCatch #5 {Exception -> 0x00b9, blocks: (B:40:0x00b5, B:44:0x00bd, B:46:0x00c2, B:47:0x00c5), top: B:54:0x00b5 }] */
-        /* JADX WARN: Removed duplicated region for block: B:46:0x00c2 A[Catch: Exception -> 0x00b9, TryCatch #5 {Exception -> 0x00b9, blocks: (B:40:0x00b5, B:44:0x00bd, B:46:0x00c2, B:47:0x00c5), top: B:54:0x00b5 }] */
-        /* JADX WARN: Removed duplicated region for block: B:54:0x00b5 A[EXC_TOP_SPLITTER, SYNTHETIC] */
-        /* JADX WARN: Type inference failed for: r1v0, types: [java.lang.String] */
-        /* JADX WARN: Type inference failed for: r1v11, types: [java.io.OutputStream, java.io.FileOutputStream] */
-        /* JADX WARN: Type inference failed for: r1v12 */
+        /* JADX WARN: Removed duplicated region for block: B:44:0x00bd A[Catch: Exception -> 0x00b9, TryCatch #5 {Exception -> 0x00b9, blocks: (B:40:0x00b5, B:44:0x00bd, B:46:0x00c2, B:47:0x00c5), top: B:55:0x00b5 }] */
+        /* JADX WARN: Removed duplicated region for block: B:46:0x00c2 A[Catch: Exception -> 0x00b9, TryCatch #5 {Exception -> 0x00b9, blocks: (B:40:0x00b5, B:44:0x00bd, B:46:0x00c2, B:47:0x00c5), top: B:55:0x00b5 }] */
+        /* JADX WARN: Removed duplicated region for block: B:55:0x00b5 A[EXC_TOP_SPLITTER, SYNTHETIC] */
+        /* JADX WARN: Type inference failed for: r0v13, types: [com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$xX5WvrQaI0uqge2KCuBJqzt_JxI, java.lang.Runnable] */
+        /* JADX WARN: Type inference failed for: r0v8, types: [com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$xX5WvrQaI0uqge2KCuBJqzt_JxI, java.lang.Runnable] */
+        /* JADX WARN: Type inference failed for: r1v12, types: [java.io.FileOutputStream, java.io.OutputStream] */
+        /* JADX WARN: Type inference failed for: r1v13 */
+        /* JADX WARN: Type inference failed for: r1v14 */
+        /* JADX WARN: Type inference failed for: r1v15 */
+        /* JADX WARN: Type inference failed for: r1v16 */
         /* JADX WARN: Type inference failed for: r1v2, types: [java.io.FileOutputStream] */
         /* JADX WARN: Type inference failed for: r1v5 */
         /* JADX WARN: Type inference failed for: r1v6 */
         /* JADX WARN: Type inference failed for: r1v7 */
-        /* JADX WARN: Type inference failed for: r1v8, types: [java.io.FileOutputStream] */
+        /* JADX WARN: Type inference failed for: r1v8 */
+        /* JADX WARN: Type inference failed for: r1v9, types: [java.io.FileOutputStream] */
         /* JADX WARN: Type inference failed for: r3v0 */
         /* JADX WARN: Type inference failed for: r3v1, types: [java.io.BufferedWriter] */
         /* JADX WARN: Type inference failed for: r3v2 */
+        /* JADX WARN: Type inference failed for: r3v5, types: [java.io.BufferedWriter] */
+        /* JADX WARN: Type inference failed for: r7v18, types: [android.os.Handler] */
+        /* JADX WARN: Type inference failed for: r7v9, types: [android.os.Handler] */
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        public static /* synthetic */ void lambda$updateTouchpanelFw$3(final AnonymousClass1 anonymousClass1, String str) {
-            ?? r1;
-            BufferedWriter bufferedWriter;
+        public static /* synthetic */ void lambda$updateTouchpanelFw$3(final AnonymousClass1 anonymousClass1, String str) throws Throwable {
+            ?? bufferedWriter;
             OutputStreamWriter outputStreamWriter;
+            ?? fileOutputStream;
             String str2 = null;
-            r0 = null;
-            r0 = null;
+            bufferedWriter = null;
+            bufferedWriter = null;
             BufferedWriter bufferedWriter2 = null;
             try {
+            } catch (Exception e) {
+                Log.e("StsExtensionService", "----- Exception occurred!!! -----", e);
+                str2 = "StsExtensionService";
+                fileOutputStream = "----- Exception occurred!!! -----";
+            }
+            try {
                 try {
+                    StsExtensionService.this.getPowerManager().setKeepAwake(true);
+                    fileOutputStream = new FileOutputStream("/sys/devices/platform/soc/1100f000.i2c/i2c-3/3-0038/fts_upgrade_bin");
                     try {
-                        StsExtensionService.this.getPowerManager().setKeepAwake(true);
-                        r1 = new FileOutputStream("/sys/devices/platform/soc/1100f000.i2c/i2c-3/3-0038/fts_upgrade_bin");
-                    } catch (Throwable th) {
-                        th = th;
-                        bufferedWriter = str2;
-                    }
-                } catch (Exception e) {
-                    e = e;
-                    r1 = 0;
-                    outputStreamWriter = null;
-                } catch (Throwable th2) {
-                    th = th2;
-                    r1 = 0;
-                    outputStreamWriter = null;
-                }
-                try {
-                    outputStreamWriter = new OutputStreamWriter((OutputStream) r1, "UTF-8");
-                    try {
-                        bufferedWriter = new BufferedWriter(outputStreamWriter);
-                    } catch (Exception e2) {
-                        e = e2;
-                    }
-                    try {
-                        Log.e("StsExtensionService", "----- fts_upgrade_bin ----- " + str.substring(str.indexOf("FT8205")));
-                        bufferedWriter.write(str.substring(str.indexOf("FT8205")));
-                        bufferedWriter.write("\n");
-                        bufferedWriter.close();
-                        outputStreamWriter.close();
-                        r1.close();
-                        StsExtensionService.this.mHandler.post(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$xX5WvrQaI0uqge2KCuBJqzt_JxI
-                            @Override // java.lang.Runnable
-                            public final void run() {
-                                StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$2(StsExtensionService.AnonymousClass1.this);
-                            }
-                        });
-                    } catch (Exception e3) {
-                        e = e3;
-                        bufferedWriter2 = bufferedWriter;
-                        Log.e("StsExtensionService", "----- Exception occurred!!! -----", e);
-                        if (bufferedWriter2 != null) {
-                            bufferedWriter2.close();
-                        }
-                        if (outputStreamWriter != null) {
-                            outputStreamWriter.close();
-                        }
-                        if (r1 != 0) {
-                            r1.close();
-                        }
-                        StsExtensionService.this.mHandler.post(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$xX5WvrQaI0uqge2KCuBJqzt_JxI
-                            @Override // java.lang.Runnable
-                            public final void run() {
-                                StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$2(StsExtensionService.AnonymousClass1.this);
-                            }
-                        });
-                    } catch (Throwable th3) {
-                        th = th3;
-                        if (bufferedWriter != null) {
+                        outputStreamWriter = new OutputStreamWriter((OutputStream) fileOutputStream, "UTF-8");
+                        try {
+                            bufferedWriter = new BufferedWriter(outputStreamWriter);
                             try {
+                                Log.e("StsExtensionService", "----- fts_upgrade_bin ----- " + str.substring(str.indexOf("FT8205")));
+                                bufferedWriter.write(str.substring(str.indexOf("FT8205")));
+                                bufferedWriter.write("\n");
                                 bufferedWriter.close();
-                            } catch (Exception e4) {
-                                Log.e("StsExtensionService", "----- Exception occurred!!! -----", e4);
+                                outputStreamWriter.close();
+                                fileOutputStream.close();
+                                ?? r7 = StsExtensionService.this.mHandler;
+                                ?? r0 = new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$xX5WvrQaI0uqge2KCuBJqzt_JxI
+                                    @Override // java.lang.Runnable
+                                    public final void run() {
+                                        StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$2(this.f$0);
+                                    }
+                                };
+                                r7.post(r0);
+                                str2 = r0;
+                                fileOutputStream = fileOutputStream;
+                                outputStreamWriter = outputStreamWriter;
+                            } catch (Exception e2) {
+                                e = e2;
+                                bufferedWriter2 = bufferedWriter;
+                                Log.e("StsExtensionService", "----- Exception occurred!!! -----", e);
+                                if (bufferedWriter2 != null) {
+                                    bufferedWriter2.close();
+                                }
+                                if (outputStreamWriter != null) {
+                                    outputStreamWriter.close();
+                                }
+                                if (fileOutputStream != 0) {
+                                    fileOutputStream.close();
+                                }
+                                ?? r72 = StsExtensionService.this.mHandler;
+                                ?? r02 = new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$xX5WvrQaI0uqge2KCuBJqzt_JxI
+                                    @Override // java.lang.Runnable
+                                    public final void run() {
+                                        StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$2(this.f$0);
+                                    }
+                                };
+                                r72.post(r02);
+                                str2 = r02;
+                                fileOutputStream = fileOutputStream;
+                                outputStreamWriter = outputStreamWriter;
+                            } catch (Throwable th) {
+                                th = th;
+                                if (bufferedWriter != null) {
+                                    try {
+                                        bufferedWriter.close();
+                                    } catch (Exception e3) {
+                                        Log.e("StsExtensionService", "----- Exception occurred!!! -----", e3);
+                                        throw th;
+                                    }
+                                }
+                                if (outputStreamWriter != null) {
+                                    outputStreamWriter.close();
+                                }
+                                if (fileOutputStream != 0) {
+                                    fileOutputStream.close();
+                                }
+                                StsExtensionService.this.mHandler.post(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$xX5WvrQaI0uqge2KCuBJqzt_JxI
+                                    @Override // java.lang.Runnable
+                                    public final void run() {
+                                        StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$2(this.f$0);
+                                    }
+                                });
                                 throw th;
                             }
+                        } catch (Exception e4) {
+                            e = e4;
+                        }
+                    } catch (Exception e5) {
+                        e = e5;
+                        outputStreamWriter = null;
+                    } catch (Throwable th2) {
+                        th = th2;
+                        outputStreamWriter = null;
+                        fileOutputStream = fileOutputStream;
+                        bufferedWriter = outputStreamWriter;
+                        if (bufferedWriter != null) {
                         }
                         if (outputStreamWriter != null) {
-                            outputStreamWriter.close();
                         }
-                        if (r1 != 0) {
-                            r1.close();
+                        if (fileOutputStream != 0) {
                         }
                         StsExtensionService.this.mHandler.post(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$xX5WvrQaI0uqge2KCuBJqzt_JxI
                             @Override // java.lang.Runnable
                             public final void run() {
-                                StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$2(StsExtensionService.AnonymousClass1.this);
+                                StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$2(this.f$0);
                             }
                         });
                         throw th;
                     }
-                } catch (Exception e5) {
-                    e = e5;
+                } catch (Exception e6) {
+                    e = e6;
+                    fileOutputStream = 0;
                     outputStreamWriter = null;
-                } catch (Throwable th4) {
-                    th = th4;
+                } catch (Throwable th3) {
+                    th = th3;
+                    fileOutputStream = 0;
                     outputStreamWriter = null;
-                    r1 = r1;
-                    bufferedWriter = outputStreamWriter;
-                    if (bufferedWriter != null) {
-                    }
-                    if (outputStreamWriter != null) {
-                    }
-                    if (r1 != 0) {
-                    }
-                    StsExtensionService.this.mHandler.post(new Runnable() { // from class: com.sts.tottori.stsextension.-$$Lambda$StsExtensionService$1$xX5WvrQaI0uqge2KCuBJqzt_JxI
-                        @Override // java.lang.Runnable
-                        public final void run() {
-                            StsExtensionService.AnonymousClass1.lambda$updateTouchpanelFw$2(StsExtensionService.AnonymousClass1.this);
-                        }
-                    });
-                    throw th;
                 }
-            } catch (Exception e6) {
-                str2 = "StsExtensionService";
-                r1 = "----- Exception occurred!!! -----";
-                Log.e("StsExtensionService", "----- Exception occurred!!! -----", e6);
+            } catch (Throwable th4) {
+                th = th4;
+                bufferedWriter = str2;
             }
         }
 
@@ -271,136 +425,74 @@ public class StsExtensionService extends Service {
             StsExtensionService.this.mContext.sendBroadcastAsUser(new Intent("com.panasonic.sanyo.ts.intent.action.TOUCHPANEL_FIRMWARE_UPDATED").putExtra("result", 0), UserHandle.ALL);
         }
 
-        /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
-            jadx.core.utils.exceptions.JadxRuntimeException: Found unreachable blocks
-            	at jadx.core.dex.visitors.blocks.DominatorTree.sortBlocks(DominatorTree.java:35)
-            	at jadx.core.dex.visitors.blocks.DominatorTree.compute(DominatorTree.java:25)
-            	at jadx.core.dex.visitors.blocks.BlockProcessor.computeDominators(BlockProcessor.java:202)
-            	at jadx.core.dex.visitors.blocks.BlockProcessor.processBlocksTree(BlockProcessor.java:45)
-            	at jadx.core.dex.visitors.blocks.BlockProcessor.visit(BlockProcessor.java:39)
-            */
-        public java.lang.String getTouchpanelVersion() {
-            /*
-                r6 = this;
-                com.sts.tottori.stsextension.StsExtensionService r0 = com.sts.tottori.stsextension.StsExtensionService.this
-                boolean r0 = com.sts.tottori.stsextension.StsExtensionService.access$000(r0)
-                r1 = 0
-                if (r0 == 0) goto La
-                return r1
-            La:
-                java.io.File r0 = com.sts.tottori.stsextension.StsExtensionService.PROC_NVT_TP_VERSION
-                boolean r0 = r0.exists()
-                if (r0 != 0) goto L4f
-                java.io.File r0 = com.sts.tottori.stsextension.StsExtensionService.FTS_TP_VERSION
-                boolean r0 = r0.exists()
-                if (r0 != 0) goto L1d
-                java.lang.String r0 = ""
-                return r0
-            L1d:
-                java.io.FileReader r0 = new java.io.FileReader     // Catch: java.lang.Throwable -> L4b
-                java.io.File r2 = com.sts.tottori.stsextension.StsExtensionService.FTS_TP_VERSION     // Catch: java.lang.Throwable -> L4b
-                r0.<init>(r2)     // Catch: java.lang.Throwable -> L4b
-                java.io.BufferedReader r2 = new java.io.BufferedReader     // Catch: java.lang.Throwable -> L45
-                r2.<init>(r0)     // Catch: java.lang.Throwable -> L45
-                java.lang.String r3 = r2.readLine()     // Catch: java.lang.Throwable -> L39
-                $closeResource(r1, r2)     // Catch: java.lang.Throwable -> L45
-                $closeResource(r1, r0)     // Catch: java.lang.Throwable -> L4b
-                return r3
-            L36:
-                r3 = move-exception
-                r4 = r1
-                goto L3f
-            L39:
-                r3 = move-exception
-                throw r3     // Catch: java.lang.Throwable -> L3b
-            L3b:
-                r4 = move-exception
-                r5 = r4
-                r4 = r3
-                r3 = r5
-            L3f:
-                $closeResource(r4, r2)     // Catch: java.lang.Throwable -> L45
-                throw r3     // Catch: java.lang.Throwable -> L45
-            L43:
-                r2 = move-exception
-                goto L47
-            L45:
-                r1 = move-exception
-                throw r1     // Catch: java.lang.Throwable -> L43
-            L47:
-                $closeResource(r1, r0)     // Catch: java.lang.Throwable -> L4b
-                throw r2     // Catch: java.lang.Throwable -> L4b
-            L4b:
-                r0 = move-exception
-                java.lang.String r0 = ""
-                return r0
-            L4f:
-                java.io.FileReader r0 = new java.io.FileReader     // Catch: java.lang.Throwable -> Lb6
-                java.io.File r2 = com.sts.tottori.stsextension.StsExtensionService.PROC_NVT_TP_VERSION     // Catch: java.lang.Throwable -> Lb6
-                r0.<init>(r2)     // Catch: java.lang.Throwable -> Lb6
-                java.io.BufferedReader r2 = new java.io.BufferedReader     // Catch: java.lang.Throwable -> Lb0
-                r2.<init>(r0)     // Catch: java.lang.Throwable -> Lb0
-                java.lang.String r3 = r2.readLine()     // Catch: java.lang.Throwable -> La4
-                $closeResource(r1, r2)     // Catch: java.lang.Throwable -> Lb0
-                $closeResource(r1, r0)     // Catch: java.lang.Throwable -> Lb6
-                java.lang.String r0 = "fw_ver="
-                int r0 = r3.indexOf(r0)
-                java.lang.String r1 = ","
-                int r1 = r3.indexOf(r1)
-                r2 = -1
-                if (r0 == r2) goto L9e
-                if (r1 != r2) goto L79
-                goto L9e
-            L79:
-                java.lang.StringBuilder r2 = new java.lang.StringBuilder
-                r2.<init>()
-                java.lang.String r4 = "0x"
-                r2.append(r4)
-                java.lang.String r4 = "fw_ver="
-                int r4 = r4.length()
-                int r0 = r0 + r4
-                java.lang.String r0 = r3.substring(r0, r1)
-                int r0 = java.lang.Integer.parseInt(r0)
-                java.lang.String r0 = java.lang.Integer.toHexString(r0)
-                r2.append(r0)
-                java.lang.String r0 = r2.toString()
-                return r0
-            L9e:
-                java.lang.String r0 = ""
-                return r0
-            La1:
-                r3 = move-exception
-                r4 = r1
-                goto Laa
-            La4:
-                r3 = move-exception
-                throw r3     // Catch: java.lang.Throwable -> La6
-            La6:
-                r4 = move-exception
-                r5 = r4
-                r4 = r3
-                r3 = r5
-            Laa:
-                $closeResource(r4, r2)     // Catch: java.lang.Throwable -> Lb0
-                throw r3     // Catch: java.lang.Throwable -> Lb0
-            Lae:
-                r2 = move-exception
-                goto Lb2
-            Lb0:
-                r1 = move-exception
-                throw r1     // Catch: java.lang.Throwable -> Lae
-            Lb2:
-                $closeResource(r1, r0)     // Catch: java.lang.Throwable -> Lb6
-                throw r2     // Catch: java.lang.Throwable -> Lb6
-            Lb6:
-                r0 = move-exception
-                java.lang.String r0 = ""
-                return r0
-            */
-            throw new UnsupportedOperationException("Method not decompiled: com.sts.tottori.stsextension.StsExtensionService.AnonymousClass1.getTouchpanelVersion():java.lang.String");
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [196=4, 205=4] */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:73:0x0050 */
+        /* JADX WARN: Multi-variable type inference failed */
+        /* JADX WARN: Type inference failed for: r0v3, types: [boolean] */
+        /* JADX WARN: Type inference failed for: r0v4, types: [java.lang.AutoCloseable] */
+        /* JADX WARN: Type inference failed for: r0v7, types: [java.io.FileReader, java.io.Reader, java.lang.AutoCloseable] */
+        public String getTouchpanelVersion() {
+            FileReader fileReader;
+            Throwable th;
+            Throwable th2;
+            if (StsExtensionService.this.mIsUpdating) {
+                return null;
+            }
+            ?? Exists = StsExtensionService.PROC_NVT_TP_VERSION.exists();
+            if (Exists == 0) {
+                if (!StsExtensionService.FTS_TP_VERSION.exists()) {
+                    return "";
+                }
+                try {
+                    fileReader = new FileReader(StsExtensionService.FTS_TP_VERSION);
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(fileReader);
+                        try {
+                            String line = bufferedReader.readLine();
+                            $closeResource(null, bufferedReader);
+                            return line;
+                        } catch (Throwable th3) {
+                            th = th3;
+                            th2 = null;
+                            $closeResource(th2, bufferedReader);
+                            throw th;
+                        }
+                    } finally {
+                        $closeResource(null, fileReader);
+                    }
+                } catch (Throwable th4) {
+                    return "";
+                }
+            }
+            try {
+                try {
+                    fileReader = new FileReader(StsExtensionService.PROC_NVT_TP_VERSION);
+                    BufferedReader bufferedReader2 = new BufferedReader(fileReader);
+                    try {
+                        String line2 = bufferedReader2.readLine();
+                        $closeResource(null, bufferedReader2);
+                        int iIndexOf = line2.indexOf("fw_ver=");
+                        int iIndexOf2 = line2.indexOf(",");
+                        if (iIndexOf == -1 || iIndexOf2 == -1) {
+                            return "";
+                        }
+                        return "0x" + Integer.toHexString(Integer.parseInt(line2.substring(iIndexOf + "fw_ver=".length(), iIndexOf2)));
+                    } catch (Throwable th5) {
+                        th = th5;
+                        th = null;
+                        $closeResource(th, bufferedReader2);
+                        throw th;
+                    }
+                } catch (Throwable th6) {
+                    $closeResource(null, Exists);
+                    throw th6;
+                }
+            } catch (Throwable th7) {
+                return "";
+            }
         }
 
-        private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) {
+        private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) throws Exception {
             if (th == null) {
                 autoCloseable.close();
                 return;

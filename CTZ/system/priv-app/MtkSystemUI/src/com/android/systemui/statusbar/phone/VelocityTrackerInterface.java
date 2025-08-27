@@ -1,6 +1,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.view.MotionEvent;
+
 /* loaded from: classes.dex */
 public interface VelocityTrackerInterface {
     void addMovement(MotionEvent motionEvent);

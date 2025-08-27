@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class DefaultStatusBarPlmnDisplayExt extends ContextWrapper implements IStatusBarPlmnDisplayExt {
     static final String TAG = "DefaultStatusBarPlmnDisplayExt";

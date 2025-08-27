@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.os.IBinder;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class SystemUISecondaryUserService extends Service {
     @Override // android.app.Service
-    public void onCreate() {
+    public void onCreate() throws ClassNotFoundException {
         super.onCreate();
         ((SystemUIApplication) getApplication()).startSecondaryUserServicesIfNeeded();
     }

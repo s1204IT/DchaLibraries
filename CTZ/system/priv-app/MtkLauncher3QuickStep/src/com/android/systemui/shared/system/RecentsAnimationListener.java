@@ -1,6 +1,7 @@
 package com.android.systemui.shared.system;
 
 import android.graphics.Rect;
+
 /* loaded from: classes.dex */
 public interface RecentsAnimationListener {
     void onAnimationCanceled();

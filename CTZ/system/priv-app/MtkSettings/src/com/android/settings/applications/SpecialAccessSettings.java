@@ -11,6 +11,7 @@ import com.android.settings.search.Indexable;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SpecialAccessSettings extends DashboardFragment {
     private static final String[] DISABLED_FEATURES_LOW_RAM = {"notification_access", "zen_access", "enabled_vr_listeners", "picture_in_picture"};
@@ -35,15 +36,13 @@ public class SpecialAccessSettings extends DashboardFragment {
         return "SpecialAccessSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.special_access;
     }
 
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public void onCreate(Bundle bundle) {
-        String[] strArr;
         super.onCreate(bundle);
         if (ActivityManager.isLowRamDeviceStatic()) {
             for (String str : DISABLED_FEATURES_LOW_RAM) {
@@ -59,8 +58,7 @@ public class SpecialAccessSettings extends DashboardFragment {
         return buildPreferenceControllers(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new HighPowerAppsController(context));
         arrayList.add(new DeviceAdministratorsController(context));

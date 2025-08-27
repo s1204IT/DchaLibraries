@@ -3,6 +3,7 @@ package com.android.systemui.shared.recents.model;
 import android.app.ActivityManager;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+
 /* loaded from: classes.dex */
 public class ThumbnailData {
     public Rect insets;

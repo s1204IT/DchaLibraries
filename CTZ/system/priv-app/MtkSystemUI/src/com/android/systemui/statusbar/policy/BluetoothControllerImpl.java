@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.WeakHashMap;
+
 /* loaded from: classes.dex */
 public class BluetoothControllerImpl implements BluetoothCallback, CachedBluetoothDevice.Callback, LocalBluetoothProfileManager.ServiceListener, BluetoothController {
     private static final boolean DEBUG;
@@ -110,12 +111,14 @@ public class BluetoothControllerImpl implements BluetoothCallback, CachedBluetoo
         return this.mConnectedDevices;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(BluetoothController.Callback callback) {
         this.mHandler.obtainMessage(3, callback).sendToTarget();
         this.mHandler.sendEmptyMessage(2);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(BluetoothController.Callback callback) {
         this.mHandler.obtainMessage(4, callback).sendToTarget();
@@ -284,9 +287,7 @@ public class BluetoothControllerImpl implements BluetoothCallback, CachedBluetoo
     public void onServiceDisconnected() {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ActuallyCachedState implements Runnable {
+    private static class ActuallyCachedState implements Runnable {
         private int mBondState;
         private final WeakReference<CachedBluetoothDevice> mDevice;
         private int mMaxConnectionState;
@@ -311,9 +312,7 @@ public class BluetoothControllerImpl implements BluetoothCallback, CachedBluetoo
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class H extends Handler {
+    private final class H extends Handler {
         private final ArrayList<BluetoothController.Callback> mCallbacks;
 
         public H(Looper looper) {
@@ -326,18 +325,16 @@ public class BluetoothControllerImpl implements BluetoothCallback, CachedBluetoo
             switch (message.what) {
                 case 1:
                     firePairedDevicesChanged();
-                    return;
+                    break;
                 case 2:
                     fireStateChange();
-                    return;
+                    break;
                 case 3:
                     this.mCallbacks.add((BluetoothController.Callback) message.obj);
-                    return;
+                    break;
                 case 4:
                     this.mCallbacks.remove((BluetoothController.Callback) message.obj);
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
 

@@ -4,6 +4,7 @@ import android.os.LocaleList;
 import com.android.internal.app.LocaleHelper;
 import com.android.internal.app.LocalePicker;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class LocaleFeatureProviderImpl implements LocaleFeatureProvider {
     @Override // com.android.settings.localepicker.LocaleFeatureProvider

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class HotspotOffReceiver extends BroadcastReceiver {
     private static final boolean DEBUG = Log.isLoggable("HotspotOffReceiver", 3);

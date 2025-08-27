@@ -7,14 +7,18 @@ import com.android.systemui.Dependency;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.policy.ConfigurationController;
+
 /* loaded from: classes.dex */
 public class RemoteInputQuickSettingsDisabler implements ConfigurationController.ConfigurationListener {
+
     @VisibleForTesting
     CommandQueue mCommandQueue;
     private Context mContext;
     private int mLastOrientation;
+
     @VisibleForTesting
     boolean mRemoteInputActive;
+
     @VisibleForTesting
     boolean misLandscape;
 

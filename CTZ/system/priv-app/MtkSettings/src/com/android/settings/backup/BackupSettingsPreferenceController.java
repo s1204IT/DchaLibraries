@@ -6,6 +6,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class BackupSettingsPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private Intent mBackupSettingsIntent;
@@ -26,13 +27,13 @@ public class BackupSettingsPreferenceController extends AbstractPreferenceContro
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
-        Preference findPreference = preferenceScreen.findPreference("backup_settings");
-        Preference findPreference2 = preferenceScreen.findPreference("manufacturer_backup");
-        findPreference.setIntent(this.mBackupSettingsIntent);
-        findPreference.setTitle(this.mBackupSettingsTitle);
-        findPreference.setSummary(this.mBackupSettingsSummary);
-        findPreference2.setIntent(this.mManufacturerIntent);
-        findPreference2.setTitle(this.mManufacturerLabel);
+        Preference preferenceFindPreference = preferenceScreen.findPreference("backup_settings");
+        Preference preferenceFindPreference2 = preferenceScreen.findPreference("manufacturer_backup");
+        preferenceFindPreference.setIntent(this.mBackupSettingsIntent);
+        preferenceFindPreference.setTitle(this.mBackupSettingsTitle);
+        preferenceFindPreference.setSummary(this.mBackupSettingsSummary);
+        preferenceFindPreference2.setIntent(this.mManufacturerIntent);
+        preferenceFindPreference2.setTitle(this.mManufacturerLabel);
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController

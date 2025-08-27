@@ -3,6 +3,7 @@ package com.android.launcher3.keyboard;
 import android.graphics.Rect;
 import android.view.View;
 import com.android.launcher3.PagedView;
+
 /* loaded from: classes.dex */
 public class ViewGroupFocusHelper extends FocusIndicatorHelper {
     private final View mContainer;

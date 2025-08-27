@@ -4,11 +4,11 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Process;
 import android.os.UserHandle;
+
 @TargetApi(24)
 /* loaded from: classes.dex */
 public class UserManagerCompatVN extends UserManagerCompatVM {
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public UserManagerCompatVN(Context context) {
+    UserManagerCompatVN(Context context) {
         super(context);
     }
 

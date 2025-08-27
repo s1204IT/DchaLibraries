@@ -7,6 +7,7 @@ import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 import com.android.internal.R;
+
 /* loaded from: classes.dex */
 public class DisabledCheckBoxPreference extends CheckBoxPreference {
     private View mCheckBox;
@@ -34,14 +35,14 @@ public class DisabledCheckBoxPreference extends CheckBoxPreference {
     }
 
     private void setupDisabledCheckBoxPreference(Context context, AttributeSet attributeSet, int i, int i2) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.Preference, i, i2);
-        for (int indexCount = obtainStyledAttributes.getIndexCount() - 1; indexCount >= 0; indexCount--) {
-            int index = obtainStyledAttributes.getIndex(indexCount);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.Preference, i, i2);
+        for (int indexCount = typedArrayObtainStyledAttributes.getIndexCount() - 1; indexCount >= 0; indexCount--) {
+            int index = typedArrayObtainStyledAttributes.getIndex(indexCount);
             if (index == 2) {
-                this.mEnabledCheckBox = obtainStyledAttributes.getBoolean(index, true);
+                this.mEnabledCheckBox = typedArrayObtainStyledAttributes.getBoolean(index, true);
             }
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
         super.setEnabled(true);
         enableCheckbox(this.mEnabledCheckBox);
     }
@@ -58,13 +59,12 @@ public class DisabledCheckBoxPreference extends CheckBoxPreference {
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
         this.mViewHolder = preferenceViewHolder;
-        this.mCheckBox = preferenceViewHolder.findViewById(16908289);
+        this.mCheckBox = preferenceViewHolder.findViewById(android.R.id.checkbox);
         enableCheckbox(this.mEnabledCheckBox);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.CheckBoxPreference, android.support.v7.preference.Preference
-    public void performClick(View view) {
+    protected void performClick(View view) {
         if (this.mEnabledCheckBox) {
             super.performClick(view);
         }

@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.RelativeLayout;
+
 /* loaded from: classes.dex */
 public class BookmarkContainer extends RelativeLayout implements View.OnClickListener {
     private View.OnClickListener mClickListener;

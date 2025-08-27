@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.UserManager;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class BugReportPreferenceController extends DeveloperOptionsPreferenceController implements PreferenceControllerMixin {
     private final UserManager mUserManager;

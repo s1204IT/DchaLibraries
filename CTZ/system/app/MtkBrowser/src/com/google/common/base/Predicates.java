@@ -2,6 +2,7 @@ package com.google.common.base;
 
 import java.io.Serializable;
 import java.util.Collection;
+
 /* loaded from: classes.dex */
 public final class Predicates {
     private static final Joiner COMMA_JOINER = Joiner.on(',');
@@ -21,9 +22,7 @@ public final class Predicates {
         return new InPredicate(collection);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public enum ObjectPredicate implements Predicate<Object> {
+    enum ObjectPredicate implements Predicate<Object> {
         ALWAYS_TRUE { // from class: com.google.common.base.Predicates.ObjectPredicate.1
             @Override // com.google.common.base.Predicate
             public boolean apply(Object obj) {
@@ -74,7 +73,6 @@ public final class Predicates {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class IsEqualToPredicate<T> implements Predicate<T>, Serializable {
         private static final long serialVersionUID = 0;
         private final T target;
@@ -104,7 +102,6 @@ public final class Predicates {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class InPredicate<T> implements Predicate<T>, Serializable {
         private static final long serialVersionUID = 0;
         private final Collection<?> target;

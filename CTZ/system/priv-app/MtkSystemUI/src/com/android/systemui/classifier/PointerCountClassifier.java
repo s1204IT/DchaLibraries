@@ -1,6 +1,7 @@
 package com.android.systemui.classifier;
 
 import android.view.MotionEvent;
+
 /* loaded from: classes.dex */
 public class PointerCountClassifier extends GestureClassifier {
     private int mCount = 0;

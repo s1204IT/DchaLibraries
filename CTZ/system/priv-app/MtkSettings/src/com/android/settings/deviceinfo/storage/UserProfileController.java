@@ -1,5 +1,6 @@
 package com.android.settings.deviceinfo.storage;
 
+import android.R;
 import android.content.Context;
 import android.content.pm.UserInfo;
 import android.graphics.drawable.Drawable;
@@ -16,6 +17,7 @@ import com.android.settings.deviceinfo.StorageProfileFragment;
 import com.android.settings.deviceinfo.storage.StorageAsyncLoader;
 import com.android.settings.deviceinfo.storage.UserIconLoader;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class UserProfileController extends AbstractPreferenceController implements PreferenceControllerMixin, StorageAsyncLoader.ResultHandler, UserIconLoader.UserIconHandler {
     private final int mPreferenceOrder;
@@ -43,8 +45,7 @@ public class UserProfileController extends AbstractPreferenceController implemen
     public void displayPreference(PreferenceScreen preferenceScreen) {
         this.mStoragePreference = new StorageItemPreference(preferenceScreen.getContext());
         this.mStoragePreference.setOrder(this.mPreferenceOrder);
-        StorageItemPreference storageItemPreference = this.mStoragePreference;
-        storageItemPreference.setKey("pref_profile_" + this.mUser.id);
+        this.mStoragePreference.setKey("pref_profile_" + this.mUser.id);
         this.mStoragePreference.setTitle(this.mUser.name);
         preferenceScreen.addPreference(this.mStoragePreference);
     }
@@ -85,8 +86,8 @@ public class UserProfileController extends AbstractPreferenceController implemen
     }
 
     private static Drawable applyTint(Context context, Drawable drawable) {
-        Drawable mutate = drawable.mutate();
-        mutate.setTint(Utils.getColorAttr(context, 16843817));
-        return mutate;
+        Drawable drawableMutate = drawable.mutate();
+        drawableMutate.setTint(Utils.getColorAttr(context, R.attr.colorControlNormal));
+        return drawableMutate;
     }
 }

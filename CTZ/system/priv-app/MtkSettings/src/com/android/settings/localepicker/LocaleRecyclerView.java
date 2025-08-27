@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
 /* loaded from: classes.dex */
 class LocaleRecyclerView extends RecyclerView {
     public LocaleRecyclerView(Context context) {

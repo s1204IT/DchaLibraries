@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.android.systemui.R;
 import com.android.systemui.pip.tv.PipManager;
 import java.util.Collections;
+
 /* loaded from: classes.dex */
 public class PipMenuActivity extends Activity implements PipManager.Listener {
     private Animator mFadeInAnimation;

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /* loaded from: classes.dex */
 public class RequestHandler extends Thread {
     private static final String[] PROJECTION;
@@ -36,6 +37,7 @@ public class RequestHandler extends Thread {
         sUriMatcher.addURI("com.android.browser.home", "res/*/*", 2);
         PROJECTION = new String[]{"url", "title", "thumbnail"};
         sFileComparator = new Comparator<File>() { // from class: com.android.browser.homepages.RequestHandler.3
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(File file, File file2) {
                 if (file.isDirectory() != file2.isDirectory()) {
@@ -53,7 +55,7 @@ public class RequestHandler extends Thread {
     }
 
     @Override // java.lang.Thread, java.lang.Runnable
-    public void run() {
+    public void run() throws IOException {
         super.run();
         try {
             try {
@@ -66,20 +68,17 @@ public class RequestHandler extends Thread {
         }
     }
 
-    void doHandleRequest() throws IOException {
+    void doHandleRequest() throws Resources.NotFoundException, IOException {
         if ("file".equals(this.mUri.getScheme())) {
             writeFolderIndex();
-            return;
         }
         switch (sUriMatcher.match(this.mUri)) {
             case 1:
                 writeTemplatedIndex();
-                return;
+                break;
             case 2:
                 writeResource(getUriResourcePath());
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -89,23 +88,25 @@ public class RequestHandler extends Thread {
 
     void writeTemplatedIndex() throws IOException {
         Template cachedTemplate = Template.getCachedTemplate(this.mContext, R.raw.most_visited);
-        Cursor query = this.mContext.getContentResolver().query(BrowserContract.History.CONTENT_URI, PROJECTION, "url NOT LIKE 'content:%' AND thumbnail IS NOT NULL", null, "visits DESC LIMIT 12");
+        Cursor cursorQuery = this.mContext.getContentResolver().query(BrowserContract.History.CONTENT_URI, PROJECTION, "url NOT LIKE 'content:%' AND thumbnail IS NOT NULL", null, "visits DESC LIMIT 12");
         try {
-            if (query.getCount() < 12) {
-                query = new MergeCursor(new Cursor[]{query, this.mContext.getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, PROJECTION, "url NOT LIKE 'content:%' AND thumbnail IS NOT NULL", null, "created DESC LIMIT 12")}) { // from class: com.android.browser.homepages.RequestHandler.1
+            if (cursorQuery.getCount() < 12) {
+                cursorQuery = new MergeCursor(new Cursor[]{cursorQuery, this.mContext.getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, PROJECTION, "url NOT LIKE 'content:%' AND thumbnail IS NOT NULL", null, "created DESC LIMIT 12")}) { // from class: com.android.browser.homepages.RequestHandler.1
                     @Override // android.database.MergeCursor, android.database.AbstractCursor, android.database.Cursor
                     public int getCount() {
                         return Math.min(12, super.getCount());
                     }
                 };
             }
-            cachedTemplate.assignLoop("most_visited", new Template.CursorListEntityWrapper(query) { // from class: com.android.browser.homepages.RequestHandler.2
+            cachedTemplate.assignLoop("most_visited", new Template.CursorListEntityWrapper(cursorQuery) { // from class: com.android.browser.homepages.RequestHandler.2
                 @Override // com.android.browser.homepages.Template.EntityData
                 public void writeValue(OutputStream outputStream, String str) throws IOException {
                     Cursor cursor = getCursor();
                     if (str.equals("url")) {
                         outputStream.write(RequestHandler.this.htmlEncode(cursor.getString(0)));
-                    } else if (str.equals("title")) {
+                        return;
+                    }
+                    if (str.equals("title")) {
                         outputStream.write(RequestHandler.this.htmlEncode(cursor.getString(1)));
                     } else if (str.equals("thumbnail")) {
                         outputStream.write("data:image/png;base64,".getBytes());
@@ -115,14 +116,14 @@ public class RequestHandler extends Thread {
             });
             cachedTemplate.write(this.mOutput);
         } finally {
-            query.close();
+            cursorQuery.close();
         }
     }
 
     void writeFolderIndex() throws IOException {
         File file = new File(this.mUri.getPath());
-        final File[] listFiles = file.listFiles();
-        Arrays.sort(listFiles, sFileComparator);
+        final File[] fileArrListFiles = file.listFiles();
+        Arrays.sort(fileArrListFiles, sFileComparator);
         Template cachedTemplate = Template.getCachedTemplate(this.mContext, R.raw.folder_view);
         cachedTemplate.assign("path", this.mUri.getPath());
         cachedTemplate.assign("parent_url", file.getParent() != null ? file.getParent() : file.getPath());
@@ -131,7 +132,7 @@ public class RequestHandler extends Thread {
 
             @Override // com.android.browser.homepages.Template.EntityData
             public void writeValue(OutputStream outputStream, String str) throws IOException {
-                File file2 = listFiles[this.index];
+                File file2 = fileArrListFiles[this.index];
                 if ("name".equals(str)) {
                     outputStream.write(file2.getName().getBytes());
                 }
@@ -166,19 +167,19 @@ public class RequestHandler extends Thread {
             public boolean moveToNext() {
                 int i = this.index + 1;
                 this.index = i;
-                return i < listFiles.length;
+                return i < fileArrListFiles.length;
             }
         });
         cachedTemplate.write(this.mOutput);
     }
 
     static String readableFileSize(long j) {
-        double d;
         if (j <= 0) {
             return "0";
         }
-        int log10 = (int) (Math.log10(j) / Math.log10(1024.0d));
-        return new DecimalFormat("#,##0.#").format(d / Math.pow(1024.0d, log10)) + " " + new String[]{"B", "KB", "MB", "GB", "TB"}[log10];
+        double d = j;
+        int iLog10 = (int) (Math.log10(d) / Math.log10(1024.0d));
+        return new DecimalFormat("#,##0.#").format(d / Math.pow(1024.0d, iLog10)) + " " + new String[]{"B", "KB", "MB", "GB", "TB"}[iLog10];
     }
 
     String getUriResourcePath() {
@@ -189,16 +190,16 @@ public class RequestHandler extends Thread {
         return this.mUri.getPath();
     }
 
-    void writeResource(String str) throws IOException {
+    void writeResource(String str) throws Resources.NotFoundException, IOException {
         Resources resources = this.mContext.getResources();
         int identifier = resources.getIdentifier(str, null, R.class.getPackage().getName());
         if (identifier != 0) {
-            InputStream openRawResource = resources.openRawResource(identifier);
+            InputStream inputStreamOpenRawResource = resources.openRawResource(identifier);
             byte[] bArr = new byte[4096];
             while (true) {
-                int read = openRawResource.read(bArr);
-                if (read > 0) {
-                    this.mOutput.write(bArr, 0, read);
+                int i = inputStreamOpenRawResource.read(bArr);
+                if (i > 0) {
+                    this.mOutput.write(bArr, 0, i);
                 } else {
                     return;
                 }
@@ -206,7 +207,7 @@ public class RequestHandler extends Thread {
         }
     }
 
-    void cleanup() {
+    void cleanup() throws IOException {
         try {
             this.mOutput.close();
         } catch (Exception e) {

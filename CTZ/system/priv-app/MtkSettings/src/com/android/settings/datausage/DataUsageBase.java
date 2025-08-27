@@ -16,6 +16,7 @@ import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.datausage.TemplatePreference;
 import com.android.settingslib.NetworkPolicyEditor;
 import com.mediatek.settings.sim.SimHotSwapHandler;
+
 @Deprecated
 /* loaded from: classes.dex */
 public abstract class DataUsageBase extends SettingsPreferenceFragment {
@@ -51,8 +52,7 @@ public abstract class DataUsageBase extends SettingsPreferenceFragment {
         this.services.mPolicyEditor.read();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isMobileDataAvailable(int i) {
+    protected boolean isMobileDataAvailable(int i) {
         if (i != -1) {
             return this.services.mSubscriptionManager.getActiveSubscriptionInfo(i) != null;
         }
@@ -60,8 +60,7 @@ public abstract class DataUsageBase extends SettingsPreferenceFragment {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isNetworkPolicyModifiable(NetworkPolicy networkPolicy, int i) {
+    protected boolean isNetworkPolicyModifiable(NetworkPolicy networkPolicy, int i) {
         return networkPolicy != null && isBandwidthControlEnabled() && this.services.mUserManager.isAdminUser() && isDataEnabled(i);
     }
 
@@ -73,8 +72,7 @@ public abstract class DataUsageBase extends SettingsPreferenceFragment {
         return this.services.mTelephonyManager.getDataEnabled(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isBandwidthControlEnabled() {
+    protected boolean isBandwidthControlEnabled() {
         try {
             return this.services.mNetworkService.isBandwidthControlEnabled();
         } catch (RemoteException e) {

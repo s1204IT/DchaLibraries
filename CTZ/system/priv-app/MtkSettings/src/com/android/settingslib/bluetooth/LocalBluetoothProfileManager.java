@@ -1,5 +1,6 @@
 package com.android.settingslib.bluetooth;
 
+import android.R;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothUuid;
 import android.content.Context;
@@ -10,7 +11,9 @@ import com.android.settingslib.bluetooth.BluetoothEventManager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class LocalBluetoothProfileManager {
     private A2dpProfile mA2dpProfile;
@@ -35,21 +38,19 @@ public class LocalBluetoothProfileManager {
     private final boolean mUseMapClient;
     private final boolean mUsePbapPce;
 
-    /* loaded from: classes.dex */
     public interface ServiceListener {
         void onServiceConnected();
 
         void onServiceDisconnected();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public LocalBluetoothProfileManager(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, BluetoothEventManager bluetoothEventManager) {
+    LocalBluetoothProfileManager(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, BluetoothEventManager bluetoothEventManager) {
         this.mContext = context;
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;
         this.mEventManager = bluetoothEventManager;
-        this.mUsePbapPce = this.mContext.getResources().getBoolean(17957096);
-        this.mUseMapClient = this.mContext.getResources().getBoolean(17957096);
+        this.mUsePbapPce = this.mContext.getResources().getBoolean(R.^attr-private.panelMenuIsCompact);
+        this.mUseMapClient = this.mContext.getResources().getBoolean(R.^attr-private.panelMenuIsCompact);
         this.mLocalAdapter.setProfileManager(this);
         this.mEventManager.setProfileManager(this);
         ParcelUuid[] uuids = localBluetoothAdapter.getUuids();
@@ -204,8 +205,7 @@ public class LocalBluetoothProfileManager {
         return this.mProfileNameMap.get(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setBluetoothStateOn() {
+    void setBluetoothStateOn() {
         if (this.mHidProfile == null) {
             this.mHidProfile = new HidProfile(this.mContext, this.mLocalAdapter, this.mDeviceManager, this);
             addProfile(this.mHidProfile, "HID", "android.bluetooth.input.profile.action.CONNECTION_STATE_CHANGED");
@@ -244,9 +244,7 @@ public class LocalBluetoothProfileManager {
         this.mEventManager.readPairedDevices();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class StateChangedHandler implements BluetoothEventManager.Handler {
+    private class StateChangedHandler implements BluetoothEventManager.Handler {
         final LocalBluetoothProfile mProfile;
 
         StateChangedHandler(LocalBluetoothProfile localBluetoothProfile) {
@@ -255,12 +253,12 @@ public class LocalBluetoothProfileManager {
 
         @Override // com.android.settingslib.bluetooth.BluetoothEventManager.Handler
         public void onReceive(Context context, Intent intent, BluetoothDevice bluetoothDevice) {
-            CachedBluetoothDevice findDevice = LocalBluetoothProfileManager.this.mDeviceManager.findDevice(bluetoothDevice);
-            if (findDevice == null) {
+            CachedBluetoothDevice cachedBluetoothDeviceFindDevice = LocalBluetoothProfileManager.this.mDeviceManager.findDevice(bluetoothDevice);
+            if (cachedBluetoothDeviceFindDevice == null) {
                 Log.w("LocalBluetoothProfileManager", "StateChangedHandler found new device: " + bluetoothDevice);
-                findDevice = LocalBluetoothProfileManager.this.mDeviceManager.addDevice(LocalBluetoothProfileManager.this.mLocalAdapter, LocalBluetoothProfileManager.this, bluetoothDevice);
+                cachedBluetoothDeviceFindDevice = LocalBluetoothProfileManager.this.mDeviceManager.addDevice(LocalBluetoothProfileManager.this.mLocalAdapter, LocalBluetoothProfileManager.this, bluetoothDevice);
             }
-            onReceiveInternal(intent, findDevice);
+            onReceiveInternal(intent, cachedBluetoothDeviceFindDevice);
         }
 
         protected void onReceiveInternal(Intent intent, CachedBluetoothDevice cachedBluetoothDevice) {
@@ -282,9 +280,7 @@ public class LocalBluetoothProfileManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class HeadsetStateChangeHandler extends StateChangedHandler {
+    private class HeadsetStateChangeHandler extends StateChangedHandler {
         private final String mAudioChangeAction;
         private final int mAudioDisconnectedState;
 
@@ -307,17 +303,16 @@ public class LocalBluetoothProfileManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PanStateChangedHandler extends StateChangedHandler {
+    private class PanStateChangedHandler extends StateChangedHandler {
         PanStateChangedHandler(LocalBluetoothProfile localBluetoothProfile) {
             super(localBluetoothProfile);
         }
 
         @Override // com.android.settingslib.bluetooth.LocalBluetoothProfileManager.StateChangedHandler, com.android.settingslib.bluetooth.BluetoothEventManager.Handler
         public void onReceive(Context context, Intent intent, BluetoothDevice bluetoothDevice) {
+            PanProfile panProfile = (PanProfile) this.mProfile;
             int intExtra = intent.getIntExtra("android.bluetooth.pan.extra.LOCAL_ROLE", 0);
-            ((PanProfile) this.mProfile).setLocalRole(bluetoothDevice, intExtra);
+            panProfile.setLocalRole(bluetoothDevice, intExtra);
             Log.d("LocalBluetoothProfileManager", "pan profile state change, role is " + intExtra);
             super.onReceive(context, intent, bluetoothDevice);
         }
@@ -331,17 +326,17 @@ public class LocalBluetoothProfileManager {
         this.mServiceListeners.remove(serviceListener);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void callServiceConnectedListeners() {
-        for (ServiceListener serviceListener : this.mServiceListeners) {
-            serviceListener.onServiceConnected();
+    void callServiceConnectedListeners() {
+        Iterator<ServiceListener> it = this.mServiceListeners.iterator();
+        while (it.hasNext()) {
+            it.next().onServiceConnected();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void callServiceDisconnectedListeners() {
-        for (ServiceListener serviceListener : this.mServiceListeners) {
-            serviceListener.onServiceDisconnected();
+    void callServiceDisconnectedListeners() {
+        Iterator<ServiceListener> it = this.mServiceListeners.iterator();
+        while (it.hasNext()) {
+            it.next().onServiceDisconnected();
         }
     }
 
@@ -384,8 +379,7 @@ public class LocalBluetoothProfileManager {
         return this.mHidDeviceProfile;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public synchronized void updateProfiles(ParcelUuid[] parcelUuidArr, ParcelUuid[] parcelUuidArr2, Collection<LocalBluetoothProfile> collection, Collection<LocalBluetoothProfile> collection2, boolean z, BluetoothDevice bluetoothDevice) {
+    synchronized void updateProfiles(ParcelUuid[] parcelUuidArr, ParcelUuid[] parcelUuidArr2, Collection<LocalBluetoothProfile> collection, Collection<LocalBluetoothProfile> collection2, boolean z, BluetoothDevice bluetoothDevice) {
         collection2.clear();
         collection2.addAll(collection);
         Log.d("LocalBluetoothProfileManager", "Current Profiles" + collection.toString());

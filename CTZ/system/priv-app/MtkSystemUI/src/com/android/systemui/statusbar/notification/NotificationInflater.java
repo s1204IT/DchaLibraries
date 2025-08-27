@@ -21,11 +21,14 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 /* loaded from: classes.dex */
 public class NotificationInflater {
     private static final InflationExecutor EXECUTOR = new InflationExecutor();
+
     @VisibleForTesting
     static final int FLAG_REINFLATE_ALL = -1;
+
     @VisibleForTesting
     static final int FLAG_REINFLATE_EXPANDED_VIEW = 2;
     private InflationCallback mCallback;
@@ -95,13 +98,12 @@ public class NotificationInflater {
 
     @VisibleForTesting
     InflationProgress inflateNotificationViews(int i, Notification.Builder builder, Context context) {
-        InflationProgress createRemoteViews = createRemoteViews(i, builder, this.mIsLowPriority, this.mIsChildInGroup, this.mUsesIncreasedHeight, this.mUsesIncreasedHeadsUpHeight, this.mRedactAmbient, context);
-        apply(createRemoteViews, i, this.mRow, this.mRedactAmbient, this.mRemoteViewClickHandler, null);
-        return createRemoteViews;
+        InflationProgress inflationProgressCreateRemoteViews = createRemoteViews(i, builder, this.mIsLowPriority, this.mIsChildInGroup, this.mUsesIncreasedHeight, this.mUsesIncreasedHeadsUpHeight, this.mRedactAmbient, context);
+        apply(inflationProgressCreateRemoteViews, i, this.mRow, this.mRedactAmbient, this.mRemoteViewClickHandler, null);
+        return inflationProgressCreateRemoteViews;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static InflationProgress createRemoteViews(int i, Notification.Builder builder, boolean z, boolean z2, boolean z3, boolean z4, boolean z5, Context context) {
+    private static InflationProgress createRemoteViews(int i, Notification.Builder builder, boolean z, boolean z2, boolean z3, boolean z4, boolean z5, Context context) {
         InflationProgress inflationProgress = new InflationProgress();
         boolean z6 = z && !z2;
         if ((i & 1) != 0) {
@@ -126,7 +128,7 @@ public class NotificationInflater {
     }
 
     public static CancellationSignal apply(final InflationProgress inflationProgress, int i, ExpandableNotificationRow expandableNotificationRow, boolean z, RemoteViews.OnClickHandler onClickHandler, InflationCallback inflationCallback) {
-        HashMap hashMap;
+        HashMap map;
         NotificationContentView notificationContentView;
         NotificationContentView notificationContentView2;
         NotificationData.Entry entry;
@@ -143,25 +145,25 @@ public class NotificationInflater {
         NotificationData.Entry entry6 = expandableNotificationRow.getEntry();
         NotificationContentView privateLayout = expandableNotificationRow.getPrivateLayout();
         NotificationContentView publicLayout = expandableNotificationRow.getPublicLayout();
-        HashMap hashMap2 = new HashMap();
+        HashMap map2 = new HashMap();
         if ((i & 1) != 0) {
-            hashMap = hashMap2;
+            map = map2;
             notificationContentView = publicLayout;
             notificationContentView2 = privateLayout;
             entry = entry6;
-            applyRemoteView(inflationProgress, i, 1, expandableNotificationRow, z, !canReapplyRemoteView(inflationProgress.newContentView, entry6.cachedContentView), onClickHandler, inflationCallback, entry6, privateLayout, privateLayout.getContractedChild(), privateLayout.getVisibleWrapper(0), hashMap, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.1
+            applyRemoteView(inflationProgress, i, 1, expandableNotificationRow, z, !canReapplyRemoteView(inflationProgress.newContentView, entry6.cachedContentView), onClickHandler, inflationCallback, entry6, privateLayout, privateLayout.getContractedChild(), privateLayout.getVisibleWrapper(0), map, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.1
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public void setResultView(View view) {
-                    InflationProgress.this.inflatedContentView = view;
+                    inflationProgress.inflatedContentView = view;
                 }
 
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public RemoteViews getRemoteView() {
-                    return InflationProgress.this.newContentView;
+                    return inflationProgress.newContentView;
                 }
             });
         } else {
-            hashMap = hashMap2;
+            map = map2;
             notificationContentView = publicLayout;
             notificationContentView2 = privateLayout;
             entry = entry6;
@@ -172,15 +174,15 @@ public class NotificationInflater {
             notificationContentView3 = notificationContentView6;
             z2 = true;
             entry2 = entry7;
-            applyRemoteView(inflationProgress, i, 2, expandableNotificationRow, z, !canReapplyRemoteView(inflationProgress.newExpandedView, entry7.cachedBigContentView), onClickHandler, inflationCallback, entry7, notificationContentView6, notificationContentView6.getExpandedChild(), notificationContentView6.getVisibleWrapper(1), hashMap, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.2
+            applyRemoteView(inflationProgress, i, 2, expandableNotificationRow, z, !canReapplyRemoteView(inflationProgress.newExpandedView, entry7.cachedBigContentView), onClickHandler, inflationCallback, entry7, notificationContentView6, notificationContentView6.getExpandedChild(), notificationContentView6.getVisibleWrapper(1), map, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.2
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public void setResultView(View view) {
-                    InflationProgress.this.inflatedExpandedView = view;
+                    inflationProgress.inflatedExpandedView = view;
                 }
 
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public RemoteViews getRemoteView() {
-                    return InflationProgress.this.newExpandedView;
+                    return inflationProgress.newExpandedView;
                 }
             });
         } else {
@@ -193,15 +195,15 @@ public class NotificationInflater {
             NotificationContentView notificationContentView7 = notificationContentView3;
             notificationContentView4 = notificationContentView7;
             entry3 = entry8;
-            applyRemoteView(inflationProgress, i, 4, expandableNotificationRow, z, !canReapplyRemoteView(inflationProgress.newHeadsUpView, entry8.cachedHeadsUpContentView), onClickHandler, inflationCallback, entry8, notificationContentView7, notificationContentView7.getHeadsUpChild(), notificationContentView7.getVisibleWrapper(2), hashMap, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.3
+            applyRemoteView(inflationProgress, i, 4, expandableNotificationRow, z, !canReapplyRemoteView(inflationProgress.newHeadsUpView, entry8.cachedHeadsUpContentView), onClickHandler, inflationCallback, entry8, notificationContentView7, notificationContentView7.getHeadsUpChild(), notificationContentView7.getVisibleWrapper(2), map, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.3
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public void setResultView(View view) {
-                    InflationProgress.this.inflatedHeadsUpView = view;
+                    inflationProgress.inflatedHeadsUpView = view;
                 }
 
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public RemoteViews getRemoteView() {
-                    return InflationProgress.this.newHeadsUpView;
+                    return inflationProgress.newHeadsUpView;
                 }
             });
         } else {
@@ -214,15 +216,15 @@ public class NotificationInflater {
             z3 = false;
             notificationContentView5 = notificationContentView8;
             entry4 = entry9;
-            applyRemoteView(inflationProgress, i, 8, expandableNotificationRow, z, !canReapplyRemoteView(inflationProgress.newPublicView, entry9.cachedPublicContentView), onClickHandler, inflationCallback, entry9, notificationContentView8, notificationContentView8.getContractedChild(), notificationContentView8.getVisibleWrapper(0), hashMap, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.4
+            applyRemoteView(inflationProgress, i, 8, expandableNotificationRow, z, !canReapplyRemoteView(inflationProgress.newPublicView, entry9.cachedPublicContentView), onClickHandler, inflationCallback, entry9, notificationContentView8, notificationContentView8.getContractedChild(), notificationContentView8.getVisibleWrapper(0), map, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.4
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public void setResultView(View view) {
-                    InflationProgress.this.inflatedPublicView = view;
+                    inflationProgress.inflatedPublicView = view;
                 }
 
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public RemoteViews getRemoteView() {
-                    return InflationProgress.this.newPublicView;
+                    return inflationProgress.newPublicView;
                 }
             });
         } else {
@@ -238,62 +240,62 @@ public class NotificationInflater {
                 entry5 = entry4;
                 if (canReapplyRemoteView(inflationProgress.newAmbientView, entry5.cachedAmbientContentView)) {
                     z4 = z3;
-                    applyRemoteView(inflationProgress, i, 16, expandableNotificationRow, z, z4, onClickHandler, inflationCallback, entry5, notificationContentView9, notificationContentView9.getAmbientChild(), notificationContentView9.getVisibleWrapper(4), hashMap, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.5
-                        @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
-                        public void setResultView(View view) {
-                            InflationProgress.this.inflatedAmbientView = view;
-                        }
-
-                        @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
-                        public RemoteViews getRemoteView() {
-                            return InflationProgress.this.newAmbientView;
-                        }
-                    });
                 }
+                applyRemoteView(inflationProgress, i, 16, expandableNotificationRow, z, z4, onClickHandler, inflationCallback, entry5, notificationContentView9, notificationContentView9.getAmbientChild(), notificationContentView9.getVisibleWrapper(4), map, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.5
+                    @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
+                    public void setResultView(View view) {
+                        inflationProgress.inflatedAmbientView = view;
+                    }
+
+                    @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
+                    public RemoteViews getRemoteView() {
+                        return inflationProgress.newAmbientView;
+                    }
+                });
             }
             z4 = z2;
-            applyRemoteView(inflationProgress, i, 16, expandableNotificationRow, z, z4, onClickHandler, inflationCallback, entry5, notificationContentView9, notificationContentView9.getAmbientChild(), notificationContentView9.getVisibleWrapper(4), hashMap, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.5
+            applyRemoteView(inflationProgress, i, 16, expandableNotificationRow, z, z4, onClickHandler, inflationCallback, entry5, notificationContentView9, notificationContentView9.getAmbientChild(), notificationContentView9.getVisibleWrapper(4), map, new ApplyCallback() { // from class: com.android.systemui.statusbar.notification.NotificationInflater.5
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public void setResultView(View view) {
-                    InflationProgress.this.inflatedAmbientView = view;
+                    inflationProgress.inflatedAmbientView = view;
                 }
 
                 @Override // com.android.systemui.statusbar.notification.NotificationInflater.ApplyCallback
                 public RemoteViews getRemoteView() {
-                    return InflationProgress.this.newAmbientView;
+                    return inflationProgress.newAmbientView;
                 }
             });
         }
-        final HashMap hashMap3 = hashMap;
-        finishIfDone(inflationProgress, i, hashMap3, inflationCallback, expandableNotificationRow, z);
+        final HashMap map3 = map;
+        finishIfDone(inflationProgress, i, map3, inflationCallback, expandableNotificationRow, z);
         CancellationSignal cancellationSignal = new CancellationSignal();
         cancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$NotificationInflater$YqX46rBxwrjWs1TkaBTYm0eniC8
             @Override // android.os.CancellationSignal.OnCancelListener
             public final void onCancel() {
-                hashMap3.values().forEach($$Lambda$NotificationInflater$POlPJz26zF5Nt5Z2kVGSqFxN8Co.INSTANCE);
+                map3.values().forEach($$Lambda$NotificationInflater$POlPJz26zF5Nt5Z2kVGSqFxN8Co.INSTANCE);
             }
         });
         return cancellationSignal;
     }
 
     @VisibleForTesting
-    static void applyRemoteView(final InflationProgress inflationProgress, final int i, final int i2, final ExpandableNotificationRow expandableNotificationRow, final boolean z, final boolean z2, final RemoteViews.OnClickHandler onClickHandler, final InflationCallback inflationCallback, final NotificationData.Entry entry, final NotificationContentView notificationContentView, final View view, final NotificationViewWrapper notificationViewWrapper, final HashMap<Integer, CancellationSignal> hashMap, final ApplyCallback applyCallback) {
-        CancellationSignal reapplyAsync;
+    static void applyRemoteView(final InflationProgress inflationProgress, final int i, final int i2, final ExpandableNotificationRow expandableNotificationRow, final boolean z, final boolean z2, final RemoteViews.OnClickHandler onClickHandler, final InflationCallback inflationCallback, final NotificationData.Entry entry, final NotificationContentView notificationContentView, final View view, final NotificationViewWrapper notificationViewWrapper, final HashMap<Integer, CancellationSignal> map, final ApplyCallback applyCallback) {
+        CancellationSignal cancellationSignalReapplyAsync;
         final RemoteViews remoteView = applyCallback.getRemoteView();
         if (inflationCallback != null && inflationCallback.doInflateSynchronous()) {
             try {
                 if (z2) {
-                    View apply = remoteView.apply(inflationProgress.packageContext, notificationContentView, onClickHandler);
-                    apply.setIsRootNamespace(true);
-                    applyCallback.setResultView(apply);
+                    View viewApply = remoteView.apply(inflationProgress.packageContext, notificationContentView, onClickHandler);
+                    viewApply.setIsRootNamespace(true);
+                    applyCallback.setResultView(viewApply);
                 } else {
                     remoteView.reapply(inflationProgress.packageContext, view, onClickHandler);
                     notificationViewWrapper.onReinflated();
                 }
                 return;
             } catch (Exception e) {
-                handleInflationError(hashMap, e, entry.notification, inflationCallback);
-                hashMap.put(Integer.valueOf(i2), new CancellationSignal());
+                handleInflationError(map, e, entry.notification, inflationCallback);
+                map.put(Integer.valueOf(i2), new CancellationSignal());
                 return;
             }
         }
@@ -305,109 +307,107 @@ public class NotificationInflater {
                 } else if (notificationViewWrapper != null) {
                     notificationViewWrapper.onReinflated();
                 }
-                hashMap.remove(Integer.valueOf(i2));
-                NotificationInflater.finishIfDone(inflationProgress, i, hashMap, inflationCallback, expandableNotificationRow, z);
+                map.remove(Integer.valueOf(i2));
+                NotificationInflater.finishIfDone(inflationProgress, i, map, inflationCallback, expandableNotificationRow, z);
             }
 
             public void onError(Exception exc) {
                 try {
-                    View view2 = view;
+                    View viewApply2 = view;
                     if (z2) {
-                        view2 = remoteView.apply(inflationProgress.packageContext, notificationContentView, onClickHandler);
+                        viewApply2 = remoteView.apply(inflationProgress.packageContext, notificationContentView, onClickHandler);
                     } else {
                         remoteView.reapply(inflationProgress.packageContext, view, onClickHandler);
                     }
                     Log.wtf("NotificationInflater", "Async Inflation failed but normal inflation finished normally.", exc);
-                    onViewApplied(view2);
+                    onViewApplied(viewApply2);
                 } catch (Exception e2) {
-                    hashMap.remove(Integer.valueOf(i2));
-                    NotificationInflater.handleInflationError(hashMap, exc, entry.notification, inflationCallback);
+                    map.remove(Integer.valueOf(i2));
+                    NotificationInflater.handleInflationError(map, exc, entry.notification, inflationCallback);
                 }
             }
         };
         if (z2) {
-            reapplyAsync = remoteView.applyAsync(inflationProgress.packageContext, notificationContentView, EXECUTOR, onViewAppliedListener, onClickHandler);
+            cancellationSignalReapplyAsync = remoteView.applyAsync(inflationProgress.packageContext, notificationContentView, EXECUTOR, onViewAppliedListener, onClickHandler);
         } else {
-            reapplyAsync = remoteView.reapplyAsync(inflationProgress.packageContext, view, EXECUTOR, onViewAppliedListener, onClickHandler);
+            cancellationSignalReapplyAsync = remoteView.reapplyAsync(inflationProgress.packageContext, view, EXECUTOR, onViewAppliedListener, onClickHandler);
         }
-        hashMap.put(Integer.valueOf(i2), reapplyAsync);
+        map.put(Integer.valueOf(i2), cancellationSignalReapplyAsync);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void handleInflationError(HashMap<Integer, CancellationSignal> hashMap, Exception exc, StatusBarNotification statusBarNotification, InflationCallback inflationCallback) {
+    private static void handleInflationError(HashMap<Integer, CancellationSignal> map, Exception exc, StatusBarNotification statusBarNotification, InflationCallback inflationCallback) {
         Assert.isMainThread();
-        hashMap.values().forEach($$Lambda$NotificationInflater$POlPJz26zF5Nt5Z2kVGSqFxN8Co.INSTANCE);
+        map.values().forEach($$Lambda$NotificationInflater$POlPJz26zF5Nt5Z2kVGSqFxN8Co.INSTANCE);
         if (inflationCallback != null) {
             inflationCallback.handleInflationException(statusBarNotification, exc);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static boolean finishIfDone(InflationProgress inflationProgress, int i, HashMap<Integer, CancellationSignal> hashMap, InflationCallback inflationCallback, ExpandableNotificationRow expandableNotificationRow, boolean z) {
+    private static boolean finishIfDone(InflationProgress inflationProgress, int i, HashMap<Integer, CancellationSignal> map, InflationCallback inflationCallback, ExpandableNotificationRow expandableNotificationRow, boolean z) {
         Assert.isMainThread();
         NotificationData.Entry entry = expandableNotificationRow.getEntry();
         NotificationContentView privateLayout = expandableNotificationRow.getPrivateLayout();
         NotificationContentView publicLayout = expandableNotificationRow.getPublicLayout();
-        if (hashMap.isEmpty()) {
-            if ((i & 1) != 0) {
-                if (inflationProgress.inflatedContentView != null) {
-                    privateLayout.setContractedChild(inflationProgress.inflatedContentView);
-                }
-                entry.cachedContentView = inflationProgress.newContentView;
-            }
-            if ((i & 2) != 0) {
-                if (inflationProgress.inflatedExpandedView != null) {
-                    privateLayout.setExpandedChild(inflationProgress.inflatedExpandedView);
-                } else if (inflationProgress.newExpandedView == null) {
-                    privateLayout.setExpandedChild(null);
-                }
-                entry.cachedBigContentView = inflationProgress.newExpandedView;
-                expandableNotificationRow.setExpandable(inflationProgress.newExpandedView != null);
-            }
-            if ((i & 4) != 0) {
-                if (inflationProgress.inflatedHeadsUpView != null) {
-                    privateLayout.setHeadsUpChild(inflationProgress.inflatedHeadsUpView);
-                } else if (inflationProgress.newHeadsUpView == null) {
-                    privateLayout.setHeadsUpChild(null);
-                }
-                entry.cachedHeadsUpContentView = inflationProgress.newHeadsUpView;
-            }
-            if ((i & 8) != 0) {
-                if (inflationProgress.inflatedPublicView != null) {
-                    publicLayout.setContractedChild(inflationProgress.inflatedPublicView);
-                }
-                entry.cachedPublicContentView = inflationProgress.newPublicView;
-            }
-            if ((i & 16) != 0) {
-                if (inflationProgress.inflatedAmbientView != null) {
-                    NotificationContentView notificationContentView = z ? publicLayout : privateLayout;
-                    if (!z) {
-                        privateLayout = publicLayout;
-                    }
-                    notificationContentView.setAmbientChild(inflationProgress.inflatedAmbientView);
-                    privateLayout.setAmbientChild(null);
-                }
-                entry.cachedAmbientContentView = inflationProgress.newAmbientView;
-            }
-            entry.headsUpStatusBarText = inflationProgress.headsUpStatusBarText;
-            entry.headsUpStatusBarTextPublic = inflationProgress.headsUpStatusBarTextPublic;
-            if (inflationCallback != null) {
-                inflationCallback.onAsyncInflationFinished(expandableNotificationRow.getEntry());
-            }
-            return true;
+        if (!map.isEmpty()) {
+            return false;
         }
-        return false;
+        if ((i & 1) != 0) {
+            if (inflationProgress.inflatedContentView != null) {
+                privateLayout.setContractedChild(inflationProgress.inflatedContentView);
+            }
+            entry.cachedContentView = inflationProgress.newContentView;
+        }
+        if ((i & 2) != 0) {
+            if (inflationProgress.inflatedExpandedView != null) {
+                privateLayout.setExpandedChild(inflationProgress.inflatedExpandedView);
+            } else if (inflationProgress.newExpandedView == null) {
+                privateLayout.setExpandedChild(null);
+            }
+            entry.cachedBigContentView = inflationProgress.newExpandedView;
+            expandableNotificationRow.setExpandable(inflationProgress.newExpandedView != null);
+        }
+        if ((i & 4) != 0) {
+            if (inflationProgress.inflatedHeadsUpView != null) {
+                privateLayout.setHeadsUpChild(inflationProgress.inflatedHeadsUpView);
+            } else if (inflationProgress.newHeadsUpView == null) {
+                privateLayout.setHeadsUpChild(null);
+            }
+            entry.cachedHeadsUpContentView = inflationProgress.newHeadsUpView;
+        }
+        if ((i & 8) != 0) {
+            if (inflationProgress.inflatedPublicView != null) {
+                publicLayout.setContractedChild(inflationProgress.inflatedPublicView);
+            }
+            entry.cachedPublicContentView = inflationProgress.newPublicView;
+        }
+        if ((i & 16) != 0) {
+            if (inflationProgress.inflatedAmbientView != null) {
+                NotificationContentView notificationContentView = z ? publicLayout : privateLayout;
+                if (!z) {
+                    privateLayout = publicLayout;
+                }
+                notificationContentView.setAmbientChild(inflationProgress.inflatedAmbientView);
+                privateLayout.setAmbientChild(null);
+            }
+            entry.cachedAmbientContentView = inflationProgress.newAmbientView;
+        }
+        entry.headsUpStatusBarText = inflationProgress.headsUpStatusBarText;
+        entry.headsUpStatusBarTextPublic = inflationProgress.headsUpStatusBarTextPublic;
+        if (inflationCallback != null) {
+            inflationCallback.onAsyncInflationFinished(expandableNotificationRow.getEntry());
+        }
+        return true;
     }
 
     private static RemoteViews createExpandedView(Notification.Builder builder, boolean z) {
-        RemoteViews createBigContentView = builder.createBigContentView();
-        if (createBigContentView != null) {
-            return createBigContentView;
+        RemoteViews remoteViewsCreateBigContentView = builder.createBigContentView();
+        if (remoteViewsCreateBigContentView != null) {
+            return remoteViewsCreateBigContentView;
         }
         if (z) {
-            RemoteViews createContentView = builder.createContentView();
-            Notification.Builder.makeHeaderExpanded(createContentView);
-            return createContentView;
+            RemoteViews remoteViewsCreateContentView = builder.createContentView();
+            Notification.Builder.makeHeaderExpanded(remoteViewsCreateContentView);
+            return remoteViewsCreateContentView;
         }
         return null;
     }
@@ -428,7 +428,6 @@ public class NotificationInflater {
         this.mCallback = inflationCallback;
     }
 
-    /* loaded from: classes.dex */
     public interface InflationCallback {
         void handleInflationException(StatusBarNotification statusBarNotification, Exception exc);
 
@@ -453,7 +452,6 @@ public class NotificationInflater {
         return (z ? expandableNotificationRow.getPublicLayout() : expandableNotificationRow.getPrivateLayout()).getAmbientChild() != null;
     }
 
-    /* loaded from: classes.dex */
     public static class AsyncInflationTask extends AsyncTask<Void, Void, InflationProgress> implements InflationTask, InflationCallback {
         private final InflationCallback mCallback;
         private CancellationSignal mCancellationSignal;
@@ -489,26 +487,26 @@ public class NotificationInflater {
             return this.mReInflateFlags;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public InflationProgress doInBackground(Void... voidArr) {
+        protected InflationProgress doInBackground(Void... voidArr) {
             try {
-                Notification.Builder recoverBuilder = Notification.Builder.recoverBuilder(this.mContext, this.mSbn.getNotification());
+                Notification.Builder builderRecoverBuilder = Notification.Builder.recoverBuilder(this.mContext, this.mSbn.getNotification());
                 Context packageContext = this.mSbn.getPackageContext(this.mContext);
                 Notification notification = this.mSbn.getNotification();
                 if (notification.isMediaNotification()) {
-                    new MediaNotificationProcessor(this.mContext, packageContext).processNotification(notification, recoverBuilder);
+                    new MediaNotificationProcessor(this.mContext, packageContext).processNotification(notification, builderRecoverBuilder);
                 }
-                return NotificationInflater.createRemoteViews(this.mReInflateFlags, recoverBuilder, this.mIsLowPriority, this.mIsChildInGroup, this.mUsesIncreasedHeight, this.mUsesIncreasedHeadsUpHeight, this.mRedactAmbient, packageContext);
+                return NotificationInflater.createRemoteViews(this.mReInflateFlags, builderRecoverBuilder, this.mIsLowPriority, this.mIsChildInGroup, this.mUsesIncreasedHeight, this.mUsesIncreasedHeadsUpHeight, this.mRedactAmbient, packageContext);
             } catch (Exception e) {
                 this.mError = e;
                 return null;
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(InflationProgress inflationProgress) {
+        protected void onPostExecute(InflationProgress inflationProgress) {
             if (this.mError == null) {
                 this.mCancellationSignal = NotificationInflater.apply(inflationProgress, this.mReInflateFlags, this.mRow, this.mRedactAmbient, this.mRemoteViewClickHandler, this);
             } else {
@@ -556,10 +554,8 @@ public class NotificationInflater {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    /* loaded from: classes.dex */
-    public static class InflationProgress {
+    static class InflationProgress {
         private CharSequence headsUpStatusBarText;
         private CharSequence headsUpStatusBarTextPublic;
         private View inflatedAmbientView;
@@ -572,6 +568,7 @@ public class NotificationInflater {
         private RemoteViews newExpandedView;
         private RemoteViews newHeadsUpView;
         private RemoteViews newPublicView;
+
         @VisibleForTesting
         Context packageContext;
 
@@ -579,10 +576,8 @@ public class NotificationInflater {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    /* loaded from: classes.dex */
-    public static abstract class ApplyCallback {
+    static abstract class ApplyCallback {
         public abstract RemoteViews getRemoteView();
 
         public abstract void setResultView(View view);
@@ -591,9 +586,7 @@ public class NotificationInflater {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class InflationExecutor implements Executor {
+    private static class InflationExecutor implements Executor {
         private final ThreadPoolExecutor mExecutor;
         private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
         private static final int CORE_POOL_SIZE = Math.max(2, Math.min(CPU_COUNT + NotificationInflater.FLAG_REINFLATE_ALL, 4));

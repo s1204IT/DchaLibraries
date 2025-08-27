@@ -3,6 +3,7 @@ package com.android.quicksearchbox.util;
 import android.util.Log;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
+
 /* loaded from: classes.dex */
 public class SingleThreadNamedTaskExecutor implements NamedTaskExecutor {
     private volatile boolean mClosed = false;
@@ -22,7 +23,6 @@ public class SingleThreadNamedTaskExecutor implements NamedTaskExecutor {
         this.mQueue.add(namedTask);
     }
 
-    /* loaded from: classes.dex */
     private class Worker implements Runnable {
         private Worker() {
         }
@@ -39,12 +39,12 @@ public class SingleThreadNamedTaskExecutor implements NamedTaskExecutor {
         }
 
         private void loop() {
-            Thread currentThread = Thread.currentThread();
-            String name = currentThread.getName();
+            Thread threadCurrentThread = Thread.currentThread();
+            String name = threadCurrentThread.getName();
             while (!SingleThreadNamedTaskExecutor.this.mClosed) {
                 try {
                     NamedTask namedTask = (NamedTask) SingleThreadNamedTaskExecutor.this.mQueue.take();
-                    currentThread.setName(name + " " + namedTask.getName());
+                    threadCurrentThread.setName(name + " " + namedTask.getName());
                     try {
                         namedTask.run();
                     } catch (RuntimeException e) {
@@ -58,6 +58,7 @@ public class SingleThreadNamedTaskExecutor implements NamedTaskExecutor {
 
     public static Factory<NamedTaskExecutor> factory(final ThreadFactory threadFactory) {
         return new Factory<NamedTaskExecutor>() { // from class: com.android.quicksearchbox.util.SingleThreadNamedTaskExecutor.1
+            /* JADX DEBUG: Method merged with bridge method: create()Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // com.android.quicksearchbox.util.Factory
             public NamedTaskExecutor create() {

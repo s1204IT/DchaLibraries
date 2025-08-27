@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 abstract class SettingsContentObserver extends ContentObserver {
     private final List<String> mKeysToObserve;

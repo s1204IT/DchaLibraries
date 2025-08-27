@@ -9,12 +9,12 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityNodeProvider;
+
 /* loaded from: classes.dex */
 public class AccessibilityDelegateCompat {
     private static final View.AccessibilityDelegate DEFAULT_DELEGATE = new View.AccessibilityDelegate();
     private final View.AccessibilityDelegate mBridge = new AccessibilityDelegateAdapter(this);
 
-    /* loaded from: classes.dex */
     private static final class AccessibilityDelegateAdapter extends View.AccessibilityDelegate {
         private final AccessibilityDelegateCompat mCompat;
 
@@ -72,8 +72,7 @@ public class AccessibilityDelegateCompat {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public View.AccessibilityDelegate getBridge() {
+    View.AccessibilityDelegate getBridge() {
         return this.mBridge;
     }
 

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class InvariantDeviceProfile {
     private static final float ICON_SIZE_DEFINED_IN_APP_DP = 48.0f;
@@ -76,9 +77,9 @@ public class InvariantDeviceProfile {
         defaultDisplay.getCurrentSizeRange(point, point2);
         this.minWidthDps = Utilities.dpiFromPx(Math.min(point.x, point.y), displayMetrics);
         this.minHeightDps = Utilities.dpiFromPx(Math.min(point2.x, point2.y), displayMetrics);
-        ArrayList<InvariantDeviceProfile> findClosestDeviceProfiles = findClosestDeviceProfiles(this.minWidthDps, this.minHeightDps, getPredefinedDeviceProfiles(context));
-        InvariantDeviceProfile invDistWeightedInterpolate = invDistWeightedInterpolate(this.minWidthDps, this.minHeightDps, findClosestDeviceProfiles);
-        InvariantDeviceProfile invariantDeviceProfile = findClosestDeviceProfiles.get(0);
+        ArrayList<InvariantDeviceProfile> arrayListFindClosestDeviceProfiles = findClosestDeviceProfiles(this.minWidthDps, this.minHeightDps, getPredefinedDeviceProfiles(context));
+        InvariantDeviceProfile invariantDeviceProfileInvDistWeightedInterpolate = invDistWeightedInterpolate(this.minWidthDps, this.minHeightDps, arrayListFindClosestDeviceProfiles);
+        InvariantDeviceProfile invariantDeviceProfile = arrayListFindClosestDeviceProfiles.get(0);
         this.numRows = invariantDeviceProfile.numRows;
         this.numColumns = invariantDeviceProfile.numColumns;
         this.numHotseatIcons = invariantDeviceProfile.numHotseatIcons;
@@ -86,47 +87,62 @@ public class InvariantDeviceProfile {
         this.demoModeLayoutId = invariantDeviceProfile.demoModeLayoutId;
         this.numFolderRows = invariantDeviceProfile.numFolderRows;
         this.numFolderColumns = invariantDeviceProfile.numFolderColumns;
-        this.iconSize = invDistWeightedInterpolate.iconSize;
-        this.landscapeIconSize = invDistWeightedInterpolate.landscapeIconSize;
+        this.iconSize = invariantDeviceProfileInvDistWeightedInterpolate.iconSize;
+        this.landscapeIconSize = invariantDeviceProfileInvDistWeightedInterpolate.landscapeIconSize;
         this.iconBitmapSize = Utilities.pxFromDp(this.iconSize, displayMetrics);
-        this.iconTextSize = invDistWeightedInterpolate.iconTextSize;
+        this.iconTextSize = invariantDeviceProfileInvDistWeightedInterpolate.iconTextSize;
         this.fillResIconDpi = getLauncherIconDensity(this.iconBitmapSize);
         applyPartnerDeviceProfileOverrides(context, displayMetrics);
         Point point3 = new Point();
         defaultDisplay.getRealSize(point3);
-        int min = Math.min(point3.x, point3.y);
-        int max = Math.max(point3.x, point3.y);
-        this.landscapeProfile = new DeviceProfile(context, this, point, point2, max, min, true, false);
-        this.portraitProfile = new DeviceProfile(context, this, point, point2, min, max, false, false);
+        int iMin = Math.min(point3.x, point3.y);
+        int iMax = Math.max(point3.x, point3.y);
+        this.landscapeProfile = new DeviceProfile(context, this, point, point2, iMax, iMin, true, false);
+        this.portraitProfile = new DeviceProfile(context, this, point, point2, iMin, iMax, false, false);
         if (context.getResources().getConfiguration().smallestScreenWidthDp >= 720) {
-            this.defaultWallpaperSize = new Point((int) (max * wallpaperTravelToScreenWidthRatio(max, min)), max);
+            this.defaultWallpaperSize = new Point((int) (iMax * wallpaperTravelToScreenWidthRatio(iMax, iMin)), iMax);
         } else {
-            this.defaultWallpaperSize = new Point(Math.max(min * 2, max), max);
+            this.defaultWallpaperSize = new Point(Math.max(iMin * 2, iMax), iMax);
         }
     }
 
-    ArrayList<InvariantDeviceProfile> getPredefinedDeviceProfiles(Context context) {
+    /* JADX WARN: Removed duplicated region for block: B:115:? A[Catch: IOException | XmlPullParserException -> 0x00c0, IOException | XmlPullParserException -> 0x00c0, SYNTHETIC, TRY_LEAVE, TryCatch #1 {IOException | XmlPullParserException -> 0x00c0, blocks: (B:62:0x0005, B:78:0x009f, B:78:0x009f, B:90:0x00b2, B:90:0x00b2, B:95:0x00bc, B:95:0x00bc, B:94:0x00b8, B:94:0x00b8, B:96:0x00bf, B:96:0x00bf), top: B:100:0x0005 }] */
+    /* JADX WARN: Removed duplicated region for block: B:89:0x00b0  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    ArrayList<InvariantDeviceProfile> getPredefinedDeviceProfiles(Context context) throws Throwable {
+        Throwable th;
+        Throwable th2;
         ArrayList<InvariantDeviceProfile> arrayList = new ArrayList<>();
         try {
             XmlResourceParser xml = context.getResources().getXml(R.xml.device_profiles);
-            int depth = xml.getDepth();
-            while (true) {
-                int next = xml.next();
-                if ((next != 3 || xml.getDepth() > depth) && next != 1) {
+            try {
+                int depth = xml.getDepth();
+                while (true) {
+                    int next = xml.next();
+                    if ((next == 3 && xml.getDepth() <= depth) || next == 1) {
+                        break;
+                    }
                     if (next == 2 && "profile".equals(xml.getName())) {
-                        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(Xml.asAttributeSet(xml), R.styleable.InvariantDeviceProfile);
-                        int i = obtainStyledAttributes.getInt(12, 0);
-                        int i2 = obtainStyledAttributes.getInt(8, 0);
-                        float f = obtainStyledAttributes.getFloat(2, 0.0f);
-                        arrayList.add(new InvariantDeviceProfile(obtainStyledAttributes.getString(7), obtainStyledAttributes.getFloat(6, 0.0f), obtainStyledAttributes.getFloat(5, 0.0f), i, i2, obtainStyledAttributes.getInt(10, i), obtainStyledAttributes.getInt(9, i2), f, obtainStyledAttributes.getFloat(4, f), obtainStyledAttributes.getFloat(3, 0.0f), obtainStyledAttributes.getInt(11, i2), obtainStyledAttributes.getResourceId(0, 0), obtainStyledAttributes.getResourceId(1, 0)));
-                        obtainStyledAttributes.recycle();
+                        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(Xml.asAttributeSet(xml), R.styleable.InvariantDeviceProfile);
+                        int i = typedArrayObtainStyledAttributes.getInt(12, 0);
+                        int i2 = typedArrayObtainStyledAttributes.getInt(8, 0);
+                        float f = typedArrayObtainStyledAttributes.getFloat(2, 0.0f);
+                        arrayList.add(new InvariantDeviceProfile(typedArrayObtainStyledAttributes.getString(7), typedArrayObtainStyledAttributes.getFloat(6, 0.0f), typedArrayObtainStyledAttributes.getFloat(5, 0.0f), i, i2, typedArrayObtainStyledAttributes.getInt(10, i), typedArrayObtainStyledAttributes.getInt(9, i2), f, typedArrayObtainStyledAttributes.getFloat(4, f), typedArrayObtainStyledAttributes.getFloat(3, 0.0f), typedArrayObtainStyledAttributes.getInt(11, i2), typedArrayObtainStyledAttributes.getResourceId(0, 0), typedArrayObtainStyledAttributes.getResourceId(1, 0)));
+                        typedArrayObtainStyledAttributes.recycle();
                     }
                 }
+                if (xml != null) {
+                    xml.close();
+                }
+                return arrayList;
+            } catch (Throwable th3) {
+                th = th3;
+                th2 = null;
+                if (xml != null) {
+                }
             }
-            if (xml != null) {
-                xml.close();
-            }
-            return arrayList;
         } catch (IOException | XmlPullParserException e) {
             throw new RuntimeException(e);
         }
@@ -154,11 +170,37 @@ public class InvariantDeviceProfile {
         return (float) Math.hypot(f3 - f, f4 - f2);
     }
 
-    ArrayList<InvariantDeviceProfile> findClosestDeviceProfiles(final float f, final float f2, ArrayList<InvariantDeviceProfile> arrayList) {
+    /* renamed from: com.android.launcher3.InvariantDeviceProfile$1 */
+    class AnonymousClass1 implements Comparator<InvariantDeviceProfile> {
+        final /* synthetic */ float val$height;
+        final /* synthetic */ float val$width;
+
+        AnonymousClass1(float f, float f2) {
+            f = f;
+            f = f2;
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
+        @Override // java.util.Comparator
+        public int compare(InvariantDeviceProfile invariantDeviceProfile, InvariantDeviceProfile invariantDeviceProfile2) {
+            return Float.compare(InvariantDeviceProfile.this.dist(f, f, invariantDeviceProfile.minWidthDps, invariantDeviceProfile.minHeightDps), InvariantDeviceProfile.this.dist(f, f, invariantDeviceProfile2.minWidthDps, invariantDeviceProfile2.minHeightDps));
+        }
+    }
+
+    ArrayList<InvariantDeviceProfile> findClosestDeviceProfiles(float f, float f2, ArrayList<InvariantDeviceProfile> arrayList) {
         Collections.sort(arrayList, new Comparator<InvariantDeviceProfile>() { // from class: com.android.launcher3.InvariantDeviceProfile.1
+            final /* synthetic */ float val$height;
+            final /* synthetic */ float val$width;
+
+            AnonymousClass1(float f3, float f22) {
+                f = f3;
+                f = f22;
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(InvariantDeviceProfile invariantDeviceProfile, InvariantDeviceProfile invariantDeviceProfile2) {
-                return Float.compare(InvariantDeviceProfile.this.dist(f, f2, invariantDeviceProfile.minWidthDps, invariantDeviceProfile.minHeightDps), InvariantDeviceProfile.this.dist(f, f2, invariantDeviceProfile2.minWidthDps, invariantDeviceProfile2.minHeightDps));
+                return Float.compare(InvariantDeviceProfile.this.dist(f, f, invariantDeviceProfile.minWidthDps, invariantDeviceProfile.minHeightDps), InvariantDeviceProfile.this.dist(f, f, invariantDeviceProfile2.minWidthDps, invariantDeviceProfile2.minHeightDps));
             }
         });
         return arrayList;
@@ -173,9 +215,9 @@ public class InvariantDeviceProfile {
         InvariantDeviceProfile invariantDeviceProfile2 = new InvariantDeviceProfile();
         for (int i = 0; i < arrayList.size() && i < KNEARESTNEIGHBOR; i++) {
             InvariantDeviceProfile invariantDeviceProfile3 = new InvariantDeviceProfile(arrayList.get(i));
-            float weight = weight(f, f2, invariantDeviceProfile3.minWidthDps, invariantDeviceProfile3.minHeightDps, WEIGHT_POWER);
-            f3 += weight;
-            invariantDeviceProfile2.add(invariantDeviceProfile3.multiply(weight));
+            float fWeight = weight(f, f2, invariantDeviceProfile3.minWidthDps, invariantDeviceProfile3.minHeightDps, WEIGHT_POWER);
+            f3 += fWeight;
+            invariantDeviceProfile2.add(invariantDeviceProfile3.multiply(fWeight));
         }
         return invariantDeviceProfile2.multiply(1.0f / f3);
     }
@@ -206,11 +248,11 @@ public class InvariantDeviceProfile {
     }
 
     private float weight(float f, float f2, float f3, float f4, float f5) {
-        float dist = dist(f, f2, f3, f4);
-        if (Float.compare(dist, 0.0f) == 0) {
+        float fDist = dist(f, f2, f3, f4);
+        if (Float.compare(fDist, 0.0f) == 0) {
             return Float.POSITIVE_INFINITY;
         }
-        return (float) (WEIGHT_EFFICIENT / Math.pow(dist, f5));
+        return (float) (WEIGHT_EFFICIENT / Math.pow(fDist, f5));
     }
 
     private static float wallpaperTravelToScreenWidthRatio(int i, int i2) {

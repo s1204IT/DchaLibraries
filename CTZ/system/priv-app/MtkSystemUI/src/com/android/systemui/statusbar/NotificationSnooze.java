@@ -34,6 +34,7 @@ import com.android.systemui.statusbar.NotificationGuts;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public class NotificationSnooze extends LinearLayout implements View.OnClickListener, NotificationGuts.GutsContent {
     private int mCollapsedHeight;
@@ -144,8 +145,8 @@ public class NotificationSnooze extends LinearLayout implements View.OnClickList
         }
         this.mSnoozeOptions.clear();
         this.mSnoozeOptions = getDefaultSnoozeOptions();
-        int min = Math.min(1, list.size());
-        for (int i = 0; i < min; i++) {
+        int iMin = Math.min(1, list.size());
+        for (int i = 0; i < iMin; i++) {
             SnoozeCriterion snoozeCriterion = list.get(i);
             this.mSnoozeOptions.add(new NotificationSnoozeOption(snoozeCriterion, 0, snoozeCriterion.getExplanation(), snoozeCriterion.getConfirmation(), new AccessibilityNodeInfo.AccessibilityAction(R.id.action_snooze_assistant_suggestion_1, snoozeCriterion.getExplanation())));
         }
@@ -165,7 +166,7 @@ public class NotificationSnooze extends LinearLayout implements View.OnClickList
     }
 
     @VisibleForTesting
-    ArrayList<NotificationSwipeActionHelper.SnoozeOption> getDefaultSnoozeOptions() {
+    ArrayList<NotificationSwipeActionHelper.SnoozeOption> getDefaultSnoozeOptions() throws Resources.NotFoundException {
         Resources resources = getContext().getResources();
         ArrayList<NotificationSwipeActionHelper.SnoozeOption> arrayList = new ArrayList<>();
         try {
@@ -177,16 +178,16 @@ public class NotificationSnooze extends LinearLayout implements View.OnClickList
         int[] intArray = this.mParser.getIntArray("options_array", resources.getIntArray(R.array.config_notification_snooze_times));
         for (int i2 = 0; i2 < intArray.length && i2 < sAccessibilityActions.length; i2++) {
             int i3 = intArray[i2];
-            NotificationSwipeActionHelper.SnoozeOption createOption = createOption(i3, sAccessibilityActions[i2]);
+            NotificationSwipeActionHelper.SnoozeOption snoozeOptionCreateOption = createOption(i3, sAccessibilityActions[i2]);
             if (i2 == 0 || i3 == i) {
-                this.mDefaultOption = createOption;
+                this.mDefaultOption = snoozeOptionCreateOption;
             }
-            arrayList.add(createOption);
+            arrayList.add(snoozeOptionCreateOption);
         }
         return arrayList;
     }
 
-    private NotificationSwipeActionHelper.SnoozeOption createOption(int i, int i2) {
+    private NotificationSwipeActionHelper.SnoozeOption createOption(int i, int i2) throws Resources.NotFoundException {
         int i3;
         Resources resources = getResources();
         boolean z = i >= 60;
@@ -197,9 +198,9 @@ public class NotificationSnooze extends LinearLayout implements View.OnClickList
         }
         int i4 = z ? i / 60 : i;
         String quantityString = resources.getQuantityString(i3, i4, Integer.valueOf(i4));
-        String format = String.format(resources.getString(R.string.snoozed_for_time), quantityString);
-        SpannableString spannableString = new SpannableString(format);
-        spannableString.setSpan(new StyleSpan(1), format.length() - quantityString.length(), format.length(), 0);
+        String str = String.format(resources.getString(R.string.snoozed_for_time), quantityString);
+        SpannableString spannableString = new SpannableString(str);
+        spannableString.setSpan(new StyleSpan(1), str.length() - quantityString.length(), str.length(), 0);
         return new NotificationSnoozeOption(null, i, quantityString, spannableString, new AccessibilityNodeInfo.AccessibilityAction(i2, quantityString));
     }
 
@@ -225,7 +226,7 @@ public class NotificationSnooze extends LinearLayout implements View.OnClickList
     }
 
     private void showSnoozeOptions(boolean z) {
-        this.mExpandButton.setImageResource(z ? 17302312 : 17302369);
+        this.mExpandButton.setImageResource(z ? android.R.drawable.expander_group_material : android.R.drawable.ic_ab_back_material_dark);
         if (this.mExpanded != z) {
             this.mExpanded = z;
             animateSnoozeOptions(z);
@@ -244,16 +245,16 @@ public class NotificationSnooze extends LinearLayout implements View.OnClickList
         float[] fArr = new float[2];
         fArr[0] = this.mDivider.getAlpha();
         fArr[1] = z ? 1.0f : 0.0f;
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(view, property, fArr);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(view, (Property<View, Float>) property, fArr);
         ViewGroup viewGroup = this.mSnoozeOptionContainer;
         Property property2 = View.ALPHA;
         float[] fArr2 = new float[2];
         fArr2[0] = this.mSnoozeOptionContainer.getAlpha();
         fArr2[1] = z ? 1.0f : 0.0f;
-        ObjectAnimator ofFloat2 = ObjectAnimator.ofFloat(viewGroup, property2, fArr2);
+        ObjectAnimator objectAnimatorOfFloat2 = ObjectAnimator.ofFloat(viewGroup, (Property<ViewGroup, Float>) property2, fArr2);
         this.mSnoozeOptionContainer.setVisibility(0);
         this.mExpandAnimation = new AnimatorSet();
-        this.mExpandAnimation.playTogether(ofFloat, ofFloat2);
+        this.mExpandAnimation.playTogether(objectAnimatorOfFloat, objectAnimatorOfFloat2);
         this.mExpandAnimation.setDuration(150L);
         this.mExpandAnimation.setInterpolator(z ? Interpolators.ALPHA_IN : Interpolators.ALPHA_OUT);
         this.mExpandAnimation.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.NotificationSnooze.1
@@ -314,10 +315,12 @@ public class NotificationSnooze extends LinearLayout implements View.OnClickList
         int[] iArr2 = new int[2];
         this.mGutsContainer.getLocationOnScreen(iArr);
         view.getLocationOnScreen(iArr2);
-        int i = iArr2[0] - iArr[0];
-        int height = (iArr2[1] - iArr[1]) + (view.getHeight() / 2);
+        int width = view.getWidth() / 2;
+        int height = view.getHeight() / 2;
+        int i = (iArr2[0] - iArr[0]) + width;
+        int i2 = (iArr2[1] - iArr[1]) + height;
         showSnoozeOptions(false);
-        this.mGutsContainer.closeControls(i + (view.getWidth() / 2), height, false, false);
+        this.mGutsContainer.closeControls(i, i2, false, false);
     }
 
     @Override // com.android.systemui.statusbar.NotificationGuts.GutsContent
@@ -346,14 +349,14 @@ public class NotificationSnooze extends LinearLayout implements View.OnClickList
         if (this.mExpanded && !z2) {
             showSnoozeOptions(false);
             return true;
-        } else if (this.mSnoozeListener != null && this.mSelectedOption != null) {
+        }
+        if (this.mSnoozeListener != null && this.mSelectedOption != null) {
             this.mSnoozing = true;
             this.mSnoozeListener.snooze(this.mSbn, this.mSelectedOption);
             return true;
-        } else {
-            setSelected(this.mSnoozeOptions.get(0), false);
-            return false;
         }
+        setSelected(this.mSnoozeOptions.get(0), false);
+        return false;
     }
 
     @Override // com.android.systemui.statusbar.NotificationGuts.GutsContent
@@ -366,7 +369,6 @@ public class NotificationSnooze extends LinearLayout implements View.OnClickList
         return true;
     }
 
-    /* loaded from: classes.dex */
     public class NotificationSnoozeOption implements NotificationSwipeActionHelper.SnoozeOption {
         private AccessibilityNodeInfo.AccessibilityAction mAction;
         private CharSequence mConfirmation;

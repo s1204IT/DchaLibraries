@@ -11,14 +11,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.lang.ref.WeakReference;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class HealthCheckActivity extends ParentSettingActivity implements View.OnClickListener {
     private CheckNetworkTask checkNetworkTask;
     private HealthCheckDto healthCheckDto;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d("HealthCheckActivity", "onCreate 0001");
         super.onCreate(bundle);
         setContentView(R.layout.act_health_check);
@@ -38,9 +38,8 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         Logger.d("HealthCheckActivity", "onCreate 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         Logger.d("HealthCheckActivity", "onStart 0001");
         super.onStart();
         findViewById(R.id.hCheckResultSsid).setVisibility(4);
@@ -75,9 +74,8 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         Logger.d("HealthCheckActivity", "onStart 0005");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         Logger.d("HealthCheckActivity", "onStop 0001");
         super.onStop();
         if (this.checkNetworkTask != null && this.checkNetworkTask.getStatus() != AsyncTask.Status.FINISHED) {
@@ -98,25 +96,24 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         Logger.d("HealthCheckActivity", "onSaveInstanceState 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d("HealthCheckActivity", "onDestroy 0001");
         super.onDestroy();
-        View findViewById = findViewById(R.id.details_btn);
-        if (findViewById != null) {
+        View viewFindViewById = findViewById(R.id.details_btn);
+        if (viewFindViewById != null) {
             Logger.d("HealthCheckActivity", "onDestroy 0002");
-            findViewById.setOnClickListener(null);
+            viewFindViewById.setOnClickListener(null);
         }
-        View findViewById2 = findViewById(R.id.next_btn);
-        if (findViewById2 != null) {
+        View viewFindViewById2 = findViewById(R.id.next_btn);
+        if (viewFindViewById2 != null) {
             Logger.d("HealthCheckActivity", "onDestroy 0003");
-            findViewById2.setOnClickListener(null);
+            viewFindViewById2.setOnClickListener(null);
         }
-        View findViewById3 = findViewById(R.id.back_btn);
-        if (findViewById3 != null) {
+        View viewFindViewById3 = findViewById(R.id.back_btn);
+        if (viewFindViewById3 != null) {
             Logger.d("HealthCheckActivity", "onDestroy 0004");
-            findViewById3.setOnClickListener(null);
+            viewFindViewById3.setOnClickListener(null);
         }
         this.checkNetworkTask = null;
         this.healthCheckDto = null;
@@ -185,23 +182,22 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         Logger.d("HealthCheckActivity", "showDetailDialog 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void changeBtnClickable(boolean z) {
+    private void changeBtnClickable(boolean z) {
         Logger.d("HealthCheckActivity", "changeBtnClickable 0001");
-        View findViewById = findViewById(R.id.details_btn);
-        if (findViewById != null) {
+        View viewFindViewById = findViewById(R.id.details_btn);
+        if (viewFindViewById != null) {
             Logger.d("HealthCheckActivity", "changeBtnClickable 0002");
-            findViewById.setClickable(z);
+            viewFindViewById.setClickable(z);
         }
-        View findViewById2 = findViewById(R.id.next_btn);
-        if (findViewById2 != null) {
+        View viewFindViewById2 = findViewById(R.id.next_btn);
+        if (viewFindViewById2 != null) {
             Logger.d("HealthCheckActivity", "changeBtnClickable 0003");
-            findViewById2.setClickable(z);
+            viewFindViewById2.setClickable(z);
         }
-        View findViewById3 = findViewById(R.id.back_btn);
-        if (findViewById3 != null) {
+        View viewFindViewById3 = findViewById(R.id.back_btn);
+        if (viewFindViewById3 != null) {
             Logger.d("HealthCheckActivity", "changeBtnClickable 0004");
-            findViewById3.setClickable(z);
+            viewFindViewById3.setClickable(z);
         }
         Logger.d("HealthCheckActivity", "changeBtnClickable 0005");
     }
@@ -290,7 +286,6 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         Logger.d("HealthCheckActivity", "drawingPendingView 0003");
     }
 
-    /* loaded from: classes.dex */
     protected static class CheckNetworkTask extends AsyncTask<Void, HealthCheckDto, HealthCheckDto> {
         private final String TAG = "CheckNetworkTask";
         protected HealthCheckDto healthCheckDto = null;
@@ -320,9 +315,11 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
             this.healthCheckDto = new HealthCheckDto();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Another duplicated slice has different insns count: {[IGET]}, finally: {[IGET, IPUT, IF] complete} */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [738=6, 739=6] */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public HealthCheckDto doInBackground(Void... voidArr) {
+        protected HealthCheckDto doInBackground(Void... voidArr) {
             Logger.d("CheckNetworkTask", "doInBackground 0001");
             if (isCancelled()) {
                 Logger.d("CheckNetworkTask", "doInBackground 0002");
@@ -410,9 +407,9 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onProgressUpdate([Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onProgressUpdate(HealthCheckDto... healthCheckDtoArr) {
+        protected void onProgressUpdate(HealthCheckDto... healthCheckDtoArr) {
             Logger.d("CheckNetworkTask", "onProgressUpdate 0001");
             HealthCheckDto healthCheckDto = healthCheckDtoArr[0];
             HealthCheckActivity healthCheckActivity = (HealthCheckActivity) this.owner.get();
@@ -423,9 +420,9 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
             Logger.d("CheckNetworkTask", "onProgressUpdate 0003");
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(HealthCheckDto healthCheckDto) {
+        protected void onPostExecute(HealthCheckDto healthCheckDto) {
             Logger.d("CheckNetworkTask", "onPostExecute 0001");
             HealthCheckActivity healthCheckActivity = (HealthCheckActivity) this.owner.get();
             if (healthCheckActivity != null) {
@@ -436,9 +433,7 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public static class RotateAsyncTask extends AsyncTask<Void, Void, Void> {
+    protected static class RotateAsyncTask extends AsyncTask<Void, Void, Void> {
         private final int id;
         private WeakReference<Activity> owner;
         private final String TAG = "RotateAsyncTask";
@@ -450,9 +445,9 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
             this.id = i;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) throws InterruptedException {
             Logger.d("RotateAsyncTask", "doInBackground 0001");
             while (!isCancelled()) {
                 try {
@@ -465,9 +460,9 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
             return null;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onProgressUpdate([Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onProgressUpdate(Void... voidArr) {
+        protected void onProgressUpdate(Void... voidArr) {
             Logger.d("RotateAsyncTask", "onProgressUpdate 0001");
             Activity activity = this.owner.get();
             if (activity != null && !isCancelled()) {

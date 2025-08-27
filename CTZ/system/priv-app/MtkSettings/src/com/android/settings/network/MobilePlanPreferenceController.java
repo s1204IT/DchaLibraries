@@ -23,6 +23,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnCreate;
 import com.android.settingslib.core.lifecycle.events.OnSaveInstanceState;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class MobilePlanPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnCreate, OnSaveInstanceState {
     private ConnectivityManager mCm;
@@ -32,7 +33,6 @@ public class MobilePlanPreferenceController extends AbstractPreferenceController
     private TelephonyManager mTm;
     private final UserManager mUserManager;
 
-    /* loaded from: classes.dex */
     public interface MobilePlanPreferenceHost {
         void showMobilePlanMessageDialog();
     }
@@ -80,7 +80,7 @@ public class MobilePlanPreferenceController extends AbstractPreferenceController
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
-    public boolean isAvailable() {
+    public boolean isAvailable() throws Resources.NotFoundException {
         return (!this.mIsSecondaryUser && !Utils.isWifiOnly(this.mContext) && !RestrictedLockUtils.hasBaseUserRestriction(this.mContext, "no_config_mobile_networks", UserHandle.myUserId())) && this.mContext.getResources().getBoolean(R.bool.config_show_mobile_plan);
     }
 
@@ -105,11 +105,11 @@ public class MobilePlanPreferenceController extends AbstractPreferenceController
             }
             String mobileProvisioningUrl = this.mCm.getMobileProvisioningUrl();
             if (!TextUtils.isEmpty(mobileProvisioningUrl)) {
-                Intent makeMainSelectorActivity = Intent.makeMainSelectorActivity("android.intent.action.MAIN", "android.intent.category.APP_BROWSER");
-                makeMainSelectorActivity.setData(Uri.parse(mobileProvisioningUrl));
-                makeMainSelectorActivity.setFlags(272629760);
+                Intent intentMakeMainSelectorActivity = Intent.makeMainSelectorActivity("android.intent.action.MAIN", "android.intent.category.APP_BROWSER");
+                intentMakeMainSelectorActivity.setData(Uri.parse(mobileProvisioningUrl));
+                intentMakeMainSelectorActivity.setFlags(272629760);
                 try {
-                    this.mContext.startActivity(makeMainSelectorActivity);
+                    this.mContext.startActivity(intentMakeMainSelectorActivity);
                 } catch (ActivityNotFoundException e) {
                     Log.w("MobilePlanPrefContr", "onManageMobilePlanClick: startActivity failed" + e);
                 }

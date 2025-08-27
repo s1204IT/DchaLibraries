@@ -23,22 +23,29 @@ import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.shared.recents.model.Task;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class RecentsViewTouchHandler {
     private DividerSnapAlgorithm mDividerSnapAlgorithm;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private boolean mDragRequested;
     private float mDragSlop;
+
     @ViewDebug.ExportedProperty(deepExport = true, prefix = "drag_task")
     private Task mDragTask;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private boolean mIsDragging;
     private DropTarget mLastDropTarget;
     private RecentsView mRv;
+
     @ViewDebug.ExportedProperty(deepExport = true, prefix = "drag_task_view_")
     private TaskView mTaskView;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private Point mTaskViewOffset = new Point();
+
     @ViewDebug.ExportedProperty(category = "recents")
     private Point mDownPos = new Point();
     private int mDeviceId = -1;
@@ -79,7 +86,6 @@ public class RecentsViewTouchHandler {
 
     public final void onBusEvent(DragStartEvent dragStartEvent) {
         InputDevice device;
-        DockState[] dockStatesForCurrentOrientation;
         SystemServicesProxy systemServices = Recents.getSystemServices();
         this.mRv.getParent().requestDisallowInterceptTouchEvent(true);
         this.mDragRequested = true;
@@ -91,8 +97,10 @@ public class RecentsViewTouchHandler {
         this.mRv.getLocationInWindow(iArr);
         this.mTaskViewOffset.set((this.mTaskView.getLeft() - iArr[0]) + dragStartEvent.tlOffset.x, (this.mTaskView.getTop() - iArr[1]) + dragStartEvent.tlOffset.y);
         if (dragStartEvent.isUserTouchInitiated) {
-            this.mTaskView.setTranslationX(this.mDownPos.x - this.mTaskViewOffset.x);
-            this.mTaskView.setTranslationY(this.mDownPos.y - this.mTaskViewOffset.y);
+            float f = this.mDownPos.x - this.mTaskViewOffset.x;
+            float f2 = this.mDownPos.y - this.mTaskViewOffset.y;
+            this.mTaskView.setTranslationX(f);
+            this.mTaskView.setTranslationY(f2);
         }
         this.mVisibleDockStates.clear();
         if (ActivityManager.supportsMultiWindow(this.mRv.getContext()) && !systemServices.hasDockedTask() && this.mDividerSnapAlgorithm.isSplitScreenFeasible()) {
@@ -129,8 +137,7 @@ public class RecentsViewTouchHandler {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void cancelStackActionButtonClick() {
+    void cancelStackActionButtonClick() {
         this.mRv.getStackActionButton().setPressed(false);
     }
 
@@ -192,9 +199,9 @@ public class RecentsViewTouchHandler {
                         int measuredWidth = this.mRv.getMeasuredWidth();
                         int measuredHeight = this.mRv.getMeasuredHeight();
                         if (this.mLastDropTarget != null && this.mLastDropTarget.acceptsDrop((int) x, (int) y, measuredWidth, measuredHeight, this.mRv.mSystemInsets, true)) {
-                            r4 = this.mLastDropTarget;
+                            dropTarget = this.mLastDropTarget;
                         }
-                        if (r4 == null) {
+                        if (dropTarget == null) {
                             Iterator<DropTarget> it = this.mDropTargets.iterator();
                             while (true) {
                                 if (it.hasNext()) {
@@ -203,14 +210,14 @@ public class RecentsViewTouchHandler {
                                     if (!next.acceptsDrop((int) x, (int) y, measuredWidth, measuredHeight, this.mRv.mSystemInsets, false)) {
                                         it = it2;
                                     } else {
-                                        r4 = next;
+                                        dropTarget = next;
                                     }
                                 }
                             }
                         }
-                        if (this.mLastDropTarget != r4) {
-                            this.mLastDropTarget = r4;
-                            EventBus.getDefault().send(new DragDropTargetChangedEvent(this.mDragTask, r4));
+                        if (this.mLastDropTarget != dropTarget) {
+                            this.mLastDropTarget = dropTarget;
+                            EventBus.getDefault().send(new DragDropTargetChangedEvent(this.mDragTask, dropTarget));
                         }
                     }
                     this.mTaskView.setTranslationX(f);

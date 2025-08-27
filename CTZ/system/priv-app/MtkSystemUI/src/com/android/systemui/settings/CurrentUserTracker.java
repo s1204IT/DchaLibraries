@@ -9,6 +9,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public abstract class CurrentUserTracker {
     private Consumer<Integer> mCallback;
@@ -25,7 +26,7 @@ public abstract class CurrentUserTracker {
         this.mCallback = new Consumer() { // from class: com.android.systemui.settings.-$$Lambda$JYv4q5Exc5xk6WCK6WtC6eC0sA8
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                CurrentUserTracker.this.onUserSwitched(((Integer) obj).intValue());
+                this.f$0.onUserSwitched(((Integer) obj).intValue());
             }
         };
         this.mUserReceiver = userReceiver;
@@ -44,7 +45,6 @@ public abstract class CurrentUserTracker {
     }
 
     @VisibleForTesting
-    /* loaded from: classes.dex */
     static class UserReceiver extends BroadcastReceiver {
         private static UserReceiver sInstance;
         private Context mAppContext;
@@ -75,8 +75,7 @@ public abstract class CurrentUserTracker {
             return this.mCurrentUserId;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void addTracker(Consumer<Integer> consumer) {
+        private void addTracker(Consumer<Integer> consumer) {
             if (!this.mCallbacks.contains(consumer)) {
                 this.mCallbacks.add(consumer);
             }
@@ -87,8 +86,7 @@ public abstract class CurrentUserTracker {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void removeTracker(Consumer<Integer> consumer) {
+        private void removeTracker(Consumer<Integer> consumer) {
             if (this.mCallbacks.contains(consumer)) {
                 this.mCallbacks.remove(consumer);
                 if (this.mCallbacks.size() == 0 && this.mReceiverRegistered) {

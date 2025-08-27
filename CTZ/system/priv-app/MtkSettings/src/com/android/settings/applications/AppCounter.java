@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.UserHandle;
 import android.os.UserManager;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public abstract class AppCounter extends AsyncTask<Void, Void, Integer> {
     protected final PackageManagerWrapper mPm;
@@ -21,13 +23,14 @@ public abstract class AppCounter extends AsyncTask<Void, Void, Integer> {
         this.mUm = (UserManager) context.getSystemService("user");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
     @Override // android.os.AsyncTask
-    public Integer doInBackground(Void... voidArr) {
+    protected Integer doInBackground(Void... voidArr) {
         int i = 0;
         for (UserInfo userInfo : this.mUm.getProfiles(UserHandle.myUserId())) {
-            for (ApplicationInfo applicationInfo : this.mPm.getInstalledApplicationsAsUser(33280 | (userInfo.isAdmin() ? 4194304 : 0), userInfo.id)) {
-                if (includeInCount(applicationInfo)) {
+            Iterator<ApplicationInfo> it = this.mPm.getInstalledApplicationsAsUser(33280 | (userInfo.isAdmin() ? 4194304 : 0), userInfo.id).iterator();
+            while (it.hasNext()) {
+                if (includeInCount(it.next())) {
                     i++;
                 }
             }
@@ -35,14 +38,13 @@ public abstract class AppCounter extends AsyncTask<Void, Void, Integer> {
         return Integer.valueOf(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
     @Override // android.os.AsyncTask
-    public void onPostExecute(Integer num) {
+    protected void onPostExecute(Integer num) {
         onCountComplete(num.intValue());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void executeInForeground() {
+    void executeInForeground() {
         onPostExecute(doInBackground(new Void[0]));
     }
 }

@@ -22,6 +22,7 @@ import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
 import com.android.internal.logging.MetricsLogger;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public final class ForegroundServicesDialog extends AlertActivity implements DialogInterface.OnClickListener, AdapterView.OnItemSelectedListener, AlertController.AlertParams.OnPrepareListViewListener {
     private PackageItemAdapter mAdapter;
@@ -41,6 +42,7 @@ public final class ForegroundServicesDialog extends AlertActivity implements Dia
     private MetricsLogger mMetricsLogger;
     private String[] mPackages;
 
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: com.android.systemui.ForegroundServicesDialog */
     /* JADX WARN: Multi-variable type inference failed */
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -54,16 +56,16 @@ public final class ForegroundServicesDialog extends AlertActivity implements Dia
         alertParams.mCustomTitleView = this.mInflater.inflate(R.layout.foreground_service_title, (ViewGroup) null);
         alertParams.mIsSingleChoice = true;
         alertParams.mOnItemSelectedListener = this;
-        alertParams.mPositiveButtonText = getString(17039807);
+        alertParams.mPositiveButtonText = getString(android.R.string.capability_title_canRequestFilterKeyEvents);
         alertParams.mPositiveButtonListener = this;
         alertParams.mOnPrepareListViewListener = this;
         updateApps(getIntent());
         if (this.mPackages == null) {
             Log.w("ForegroundServicesDialog", "No packages supplied");
             finish();
-            return;
+        } else {
+            setupAlert();
         }
-        setupAlert();
     }
 
     protected void onResume() {
@@ -111,9 +113,7 @@ public final class ForegroundServicesDialog extends AlertActivity implements Dia
     public void onNothingSelected(AdapterView adapterView) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class PackageItemAdapter extends ArrayAdapter<ApplicationInfo> {
+    private static class PackageItemAdapter extends ArrayAdapter<ApplicationInfo> {
         final IconDrawableFactory mIconDrawableFactory;
         final LayoutInflater mInflater;
         final PackageManager mPm;

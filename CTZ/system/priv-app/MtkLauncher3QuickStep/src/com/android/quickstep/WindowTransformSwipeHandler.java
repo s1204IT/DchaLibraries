@@ -38,7 +38,6 @@ import com.android.launcher3.util.MultiValueAlpha;
 import com.android.launcher3.util.TraceHelper;
 import com.android.launcher3.views.BaseDragLayer;
 import com.android.quickstep.ActivityControlHelper;
-import com.android.quickstep.WindowTransformSwipeHandler;
 import com.android.quickstep.util.ClipAnimationHelper;
 import com.android.quickstep.util.RemoteAnimationTargetSet;
 import com.android.quickstep.util.TransformedRect;
@@ -55,6 +54,7 @@ import com.android.systemui.shared.system.WindowManagerWrapper;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
@@ -114,7 +114,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
     private final AnimatedFloat mCurrentShift = new AnimatedFloat(new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$_o6wAUXibcgiHBuNnSt2vs4EZ40
         @Override // java.lang.Runnable
         public final void run() {
-            WindowTransformSwipeHandler.this.updateFinalShift();
+            this.f$0.updateFinalShift();
         }
     });
     private final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
@@ -132,12 +132,10 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
     private boolean mUiLongSwipeMode = false;
     private float mLongSwipeDisplacement = 0.0f;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$new$0(long j, int i) {
+    static /* synthetic */ void lambda$new$0(long j, int i) {
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WindowTransformSwipeHandler(int i, ActivityManager.RunningTaskInfo runningTaskInfo, Context context, long j, ActivityControlHelper<T> activityControlHelper) {
+    WindowTransformSwipeHandler(int i, ActivityManager.RunningTaskInfo runningTaskInfo, Context context, long j, ActivityControlHelper<T> activityControlHelper) {
         this.id = i;
         this.mContext = context;
         this.mRunningTaskInfo = runningTaskInfo;
@@ -147,9 +145,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mActivityInitListener = this.mActivityControlHelper.createActivityInitListener(new BiPredicate() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$xkYtGAhXw1754_DaDTNxV_iBEyU
             @Override // java.util.function.BiPredicate
             public final boolean test(Object obj, Object obj2) {
-                boolean onActivityInit;
-                onActivityInit = WindowTransformSwipeHandler.this.onActivityInit((BaseDraggingActivity) obj, (Boolean) obj2);
-                return onActivityInit;
+                return this.f$0.onActivityInit((BaseDraggingActivity) obj, (Boolean) obj2);
             }
         });
         initStateCallbacks();
@@ -158,13 +154,28 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         executeOnUiThread(new Runnable() { // from class: com.android.quickstep.-$$Lambda$uDY6C_772m3f91--2BEsCWoTw-I
             @Override // java.lang.Runnable
             public final void run() {
-                InputConsumerController.this.registerInputConsumer();
+                inputConsumerController.registerInputConsumer();
             }
         });
     }
 
+    /* renamed from: com.android.quickstep.WindowTransformSwipeHandler$1 */
+    class AnonymousClass1 extends MultiStateCallback {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.quickstep.MultiStateCallback
+        public void setState(int i) {
+            WindowTransformSwipeHandler.this.debugNewState(i);
+            super.setState(i);
+        }
+    }
+
     private void initStateCallbacks() {
         this.mStateCallback = new MultiStateCallback() { // from class: com.android.quickstep.WindowTransformSwipeHandler.1
+            AnonymousClass1() {
+            }
+
             @Override // com.android.quickstep.MultiStateCallback
             public void setState(int i) {
                 WindowTransformSwipeHandler.this.debugNewState(i);
@@ -174,109 +185,109 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mStateCallback.addCallback(260, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$D5vbNV4bxsq8rVoE-i_oGhlL8SA
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.initializeLauncherAnimationController();
+                this.f$0.initializeLauncherAnimationController();
             }
         });
         this.mStateCallback.addCallback(5, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$fDWyfwHdv0bkcbrM1tKEDBg8Juc
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.launcherFrameDrawn();
+                this.f$0.launcherFrameDrawn();
             }
         });
         this.mStateCallback.addCallback(InputDeviceCompat.SOURCE_KEYBOARD, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$uPM78g3dmJQFfIligkz6nKCoQYM
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.notifyGestureStartedAsync();
+                this.f$0.notifyGestureStartedAsync();
             }
         });
         this.mStateCallback.addCallback(515, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$ufp7KV7A4ZxmVp01kL-HJqVq_6k
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.resetStateForAnimationCancel();
+                this.f$0.resetStateForAnimationCancel();
             }
         });
         this.mStateCallback.addCallback(18, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$T-uYruHnpO5zu1J7Sr-ZwkSOcws
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.sendRemoteAnimationsToAnimationFactory();
+                this.f$0.sendRemoteAnimationsToAnimationFactory();
             }
         });
         this.mStateCallback.addCallback(65, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$2fIBXEAGpgMZOGzzbKDk1ECbmAU
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.resumeLastTaskForQuickstep();
+                this.f$0.resumeLastTaskForQuickstep();
             }
         });
         this.mStateCallback.addCallback(65552, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$ReBKPKJUm0D82MQ4VDMhANnTnlY
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.resumeLastTask();
+                this.f$0.resumeLastTask();
             }
         });
         this.mStateCallback.addCallback(16409, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$wbwRicTS3LODLKMncpTzS0agA9s
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.switchToScreenshot();
+                this.f$0.switchToScreenshot();
             }
         });
         this.mStateCallback.addCallback(33824, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$jhbW7WfJ0m3MDKiTPbxvu2MiEfI
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.finishCurrentTransitionToHome();
+                this.f$0.finishCurrentTransitionToHome();
             }
         });
         this.mStateCallback.addCallback(3129, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$nVkIZDyrwlt_qJBdchnI-v7Clks
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.setupLauncherUiAfterSwipeUpAnimation();
+                this.f$0.setupLauncherUiAfterSwipeUpAnimation();
             }
         });
         this.mStateCallback.addCallback(128, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$yNlE7QZP9JpHsXLnlEBCe9U2yTo
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.invalidateHandler();
+                this.f$0.invalidateHandler();
             }
         });
         this.mStateCallback.addCallback(Cea708CCParser.Const.CODE_C1_CW1, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$vaj6vPSn8to-YxJ1FKLZyt05Ycc
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.invalidateHandlerWithLauncher();
+                this.f$0.invalidateHandlerWithLauncher();
             }
         });
         this.mStateCallback.addCallback(193, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$dWZdedMRd28Sj7qzwVSfm0HSr1Y
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.notifyTransitionCancelled();
+                this.f$0.notifyTransitionCancelled();
             }
         });
         this.mStateCallback.addCallback(4114, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$qIZ4mA0aVL2s1JRDFuXW1ks1Oa8
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.onQuickScrubStart();
+                this.f$0.onQuickScrubStart();
             }
         });
         this.mStateCallback.addCallback(4130, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$CKvWzVP65bzNF-wvQXDZgCRvUq8
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.onFinishedTransitionToQuickScrub();
+                this.f$0.onFinishedTransitionToQuickScrub();
             }
         });
         this.mStateCallback.addCallback(10242, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$V8Py6CkYhBHFh0F174w6Blon-hE
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.switchToFinalAppAfterQuickScrub();
+                this.f$0.switchToFinalAppAfterQuickScrub();
             }
         });
         this.mStateCallback.addCallback(26, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$Nt67n14zenGCzlsN_rZXk1uSVgQ
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.checkLongSwipeCanEnter();
+                this.f$0.checkLongSwipeCanEnter();
             }
         });
         this.mStateCallback.addCallback(LONG_SWIPE_START_STATE, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$HqNPGFLqPTVOBHoy1QPexWWLbTo
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.checkLongSwipeCanStart();
+                this.f$0.checkLongSwipeCanStart();
             }
         });
     }
@@ -289,15 +300,14 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setStateOnUiThread(final int i) {
+    private void setStateOnUiThread(final int i) {
         if (Looper.myLooper() == this.mMainThreadHandler.getLooper()) {
             this.mStateCallback.setState(i);
         } else {
             Utilities.postAsyncCallback(this.mMainThreadHandler, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$eXD4DYzJHA9dUfTFDBSndx_uSos
                 @Override // java.lang.Runnable
                 public final void run() {
-                    WindowTransformSwipeHandler.this.mStateCallback.setState(i);
+                    this.f$0.mStateCallback.setState(i);
                 }
             });
         }
@@ -311,25 +321,25 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
     }
 
     private long getFadeInDuration() {
-        if (this.mCurrentShift.getCurrentAnimation() != null) {
-            ObjectAnimator currentAnimation = this.mCurrentShift.getCurrentAnimation();
-            return Math.min(350L, Math.max(currentAnimation.getDuration() - currentAnimation.getCurrentPlayTime(), 80L));
+        if (this.mCurrentShift.getCurrentAnimation() == null) {
+            return 350L;
         }
-        return 350L;
+        ObjectAnimator currentAnimation = this.mCurrentShift.getCurrentAnimation();
+        return Math.min(350L, Math.max(currentAnimation.getDuration() - currentAnimation.getCurrentPlayTime(), 80L));
     }
 
     public void initWhenReady() {
         this.mActivityInitListener.register();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean onActivityInit(T t, Boolean bool) {
+    private boolean onActivityInit(T t, Boolean bool) {
         if (this.mActivity == t) {
             return true;
         }
         if (this.mActivity != null) {
+            int state = this.mStateCallback.getState() & (-16);
             initStateCallbacks();
-            this.mStateCallback.setState(this.mStateCallback.getState() & (-16));
+            this.mStateCallback.setState(state);
             this.mLayoutListener.setHandler(null);
         }
         this.mWasLauncherAlreadyVisible = bool.booleanValue();
@@ -349,22 +359,21 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
             t.setOnStartCallback(new BaseDraggingActivity.OnStartCallback() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$oTmdTx9KEnt4AhNDszi5oKfUOY4
                 @Override // com.android.launcher3.BaseDraggingActivity.OnStartCallback
                 public final void onActivityStart(BaseDraggingActivity baseDraggingActivity) {
-                    WindowTransformSwipeHandler.this.onLauncherStart(baseDraggingActivity);
+                    this.f$0.onLauncherStart(baseDraggingActivity);
                 }
             });
         }
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onLauncherStart(T t) {
+    private void onLauncherStart(T t) {
         if (this.mActivity != t || this.mStateCallback.hasStates(128)) {
             return;
         }
         this.mAnimationFactory = this.mActivityControlHelper.prepareRecentsUI(this.mActivity, this.mWasLauncherAlreadyVisible, new Consumer() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$gtOwtfGRmuJn7gvSGsWt7rLq4r4
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                WindowTransformSwipeHandler.this.onAnimatorPlaybackControllerCreated((AnimatorPlaybackController) obj);
+                this.f$0.onAnimatorPlaybackControllerCreated((AnimatorPlaybackController) obj);
             }
         });
         AbstractFloatingView.closeAllOpenViews(t, this.mWasLauncherAlreadyVisible);
@@ -383,10 +392,8 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mStateCallback.setState(2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.quickstep.WindowTransformSwipeHandler$2  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass2 implements ViewTreeObserver.OnDrawListener {
+    /* renamed from: com.android.quickstep.WindowTransformSwipeHandler$2 */
+    class AnonymousClass2 implements ViewTreeObserver.OnDrawListener {
         final /* synthetic */ BaseDraggingActivity val$activity;
         final /* synthetic */ View val$dragLayer;
 
@@ -403,7 +410,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
             view.post(new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$2$uKDKINCEs57gcAw5S9npG75WLKs
                 @Override // java.lang.Runnable
                 public final void run() {
-                    view2.getViewTreeObserver().removeOnDrawListener(WindowTransformSwipeHandler.AnonymousClass2.this);
+                    view2.getViewTreeObserver().removeOnDrawListener(this.f$0);
                 }
             });
             if (this.val$activity == WindowTransformSwipeHandler.this.mActivity) {
@@ -416,20 +423,25 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mLauncherDrawnCallback = runnable;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void launcherFrameDrawn() {
+    private void launcherFrameDrawn() {
         MultiValueAlpha.AlphaProperty alphaProperty = this.mActivityControlHelper.getAlphaProperty(this.mActivity);
         if (alphaProperty.getValue() < 1.0f) {
             if (this.mGestureStarted) {
-                final MultiStateCallback multiStateCallback = this.mStateCallback;
-                ObjectAnimator ofFloat = ObjectAnimator.ofFloat(alphaProperty, MultiValueAlpha.VALUE, 1.0f);
-                ofFloat.setDuration(getFadeInDuration()).addListener(new AnimatorListenerAdapter() { // from class: com.android.quickstep.WindowTransformSwipeHandler.3
+                MultiStateCallback multiStateCallback = this.mStateCallback;
+                ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(alphaProperty, MultiValueAlpha.VALUE, 1.0f);
+                objectAnimatorOfFloat.setDuration(getFadeInDuration()).addListener(new AnimatorListenerAdapter() { // from class: com.android.quickstep.WindowTransformSwipeHandler.3
+                    final /* synthetic */ MultiStateCallback val$callback;
+
+                    AnonymousClass3(MultiStateCallback multiStateCallback2) {
+                        multiStateCallback = multiStateCallback2;
+                    }
+
                     @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                     public void onAnimationEnd(Animator animator) {
                         multiStateCallback.setState(8);
                     }
                 });
-                ofFloat.start();
+                objectAnimatorOfFloat.start();
             } else {
                 alphaProperty.setValue(1.0f);
                 this.mStateCallback.setState(8);
@@ -441,13 +453,25 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mLauncherFrameDrawnTime = SystemClock.uptimeMillis();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void sendRemoteAnimationsToAnimationFactory() {
+    /* renamed from: com.android.quickstep.WindowTransformSwipeHandler$3 */
+    class AnonymousClass3 extends AnimatorListenerAdapter {
+        final /* synthetic */ MultiStateCallback val$callback;
+
+        AnonymousClass3(MultiStateCallback multiStateCallback2) {
+            multiStateCallback = multiStateCallback2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            multiStateCallback.setState(8);
+        }
+    }
+
+    private void sendRemoteAnimationsToAnimationFactory() {
         this.mAnimationFactory.onRemoteAnimationReceived(this.mRecentsAnimationWrapper.targetSet);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void initializeLauncherAnimationController() {
+    private void initializeLauncherAnimationController() {
         this.mLayoutListener.setHandler(this);
         buildAnimationController();
         if (LatencyTrackerCompat.isEnabled(this.mContext)) {
@@ -458,42 +482,41 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
     public void updateInteractionType(int i) {
         if (this.mInteractionType != 0) {
             throw new IllegalArgumentException("Can't change interaction type from " + this.mInteractionType);
-        } else if (i != 1) {
-            throw new IllegalArgumentException("Can't change interaction type to " + i);
-        } else {
-            this.mInteractionType = i;
-            this.mRecentsAnimationWrapper.runOnInit(new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$l_5fZspC7Bjh488BDsaCdx7rMtM
-                @Override // java.lang.Runnable
-                public final void run() {
-                    WindowTransformSwipeHandler.this.shiftAnimationDestinationForQuickscrub();
-                }
-            });
-            setStateOnUiThread(5120);
-            animateToProgress(this.mCurrentShift.value, 1.0f, 240L, Interpolators.LINEAR);
         }
+        if (i != 1) {
+            throw new IllegalArgumentException("Can't change interaction type to " + i);
+        }
+        this.mInteractionType = i;
+        this.mRecentsAnimationWrapper.runOnInit(new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$l_5fZspC7Bjh488BDsaCdx7rMtM
+            @Override // java.lang.Runnable
+            public final void run() {
+                this.f$0.shiftAnimationDestinationForQuickscrub();
+            }
+        });
+        setStateOnUiThread(5120);
+        animateToProgress(this.mCurrentShift.value, 1.0f, 240L, Interpolators.LINEAR);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void shiftAnimationDestinationForQuickscrub() {
+    private void shiftAnimationDestinationForQuickscrub() {
         float f;
         TransformedRect transformedRect = new TransformedRect();
         this.mActivityControlHelper.getSwipeUpDestinationAndLength(this.mDp, this.mContext, this.mInteractionType, transformedRect);
         this.mClipAnimationHelper.updateTargetRect(transformedRect);
         float translationYForQuickScrub = this.mActivityControlHelper.getTranslationYForQuickScrub(transformedRect, this.mDp, this.mContext);
         Resources resources = this.mContext.getResources();
-        float f2 = 1.0f;
+        float curveScaleForInterpolation = 1.0f;
         if (ActivityManagerWrapper.getInstance().getRecentTasks(2, UserHandle.myUserId()).size() < 2) {
             f = 0.0f;
         } else {
             float dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.recents_page_spacing) + transformedRect.rect.width();
-            f2 = TaskView.getCurveScaleForInterpolation(Math.min(1.0f, dimensionPixelSize / (((this.mDp.widthPx / 2) + (transformedRect.rect.width() / 2)) + resources.getDimensionPixelSize(R.dimen.recents_page_spacing))));
+            curveScaleForInterpolation = TaskView.getCurveScaleForInterpolation(Math.min(1.0f, dimensionPixelSize / (((this.mDp.widthPx / 2) + (transformedRect.rect.width() / 2)) + resources.getDimensionPixelSize(R.dimen.recents_page_spacing))));
             f = dimensionPixelSize;
         }
         ClipAnimationHelper clipAnimationHelper = this.mClipAnimationHelper;
         if (Utilities.isRtl(resources)) {
             f = -f;
         }
-        clipAnimationHelper.offsetTarget(f2, f, translationYForQuickScrub, QuickScrubController.QUICK_SCRUB_START_INTERPOLATOR);
+        clipAnimationHelper.offsetTarget(curveScaleForInterpolation, f, translationYForQuickScrub, QuickScrubController.QUICK_SCRUB_START_INTERPOLATOR);
     }
 
     @WorkerThread
@@ -506,7 +529,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
                 executeOnUiThread(new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$HTJl-1f8sUPfbYXN4PSm-fGlWdc
                     @Override // java.lang.Runnable
                     public final void run() {
-                        WindowTransformSwipeHandler.this.onLongSwipeEnabledUi();
+                        this.f$0.onLongSwipeEnabledUi();
                     }
                 });
             }
@@ -514,7 +537,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
             executeOnUiThread(new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$3KqUawC6cDg3a8xDvrEyMF8py-A
                 @Override // java.lang.Runnable
                 public final void run() {
-                    WindowTransformSwipeHandler.this.onLongSwipeDisplacementUpdated();
+                    this.f$0.onLongSwipeDisplacementUpdated();
                 }
             });
             return;
@@ -524,7 +547,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
             executeOnUiThread(new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$jrbQAEcKiAcXYujTeF_kWzYVpFU
                 @Override // java.lang.Runnable
                 public final void run() {
-                    WindowTransformSwipeHandler.this.onLongSwipeDisabledUi();
+                    this.f$0.onLongSwipeDisabledUi();
                 }
             });
         }
@@ -536,16 +559,14 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mAnimationFactory.createActivityController(this.mTransitionDragLength, this.mInteractionType);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onAnimatorPlaybackControllerCreated(AnimatorPlaybackController animatorPlaybackController) {
+    private void onAnimatorPlaybackControllerCreated(AnimatorPlaybackController animatorPlaybackController) {
         this.mLauncherTransitionController = animatorPlaybackController;
         this.mLauncherTransitionController.dispatchOnStart();
         this.mLauncherTransitionController.setPlayFraction(this.mCurrentShift.value);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     @WorkerThread
-    public void updateFinalShift() {
+    private void updateFinalShift() {
         boolean z;
         float f = this.mCurrentShift.value;
         if (this.mRecentsAnimationWrapper.getController() != null) {
@@ -563,13 +584,12 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         executeOnUiThread(new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$I9ePn2nv3_aEtnVdLe7ekbDR8Wk
             @Override // java.lang.Runnable
             public final void run() {
-                WindowTransformSwipeHandler.this.updateFinalShiftUi();
+                this.f$0.updateFinalShiftUi();
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateFinalShiftUi() {
+    private void updateFinalShiftUi() {
         if (this.mLauncherTransitionController == null) {
             return;
         }
@@ -578,27 +598,27 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
 
     public void onRecentsAnimationStart(RecentsAnimationControllerCompat recentsAnimationControllerCompat, RemoteAnimationTargetSet remoteAnimationTargetSet, Rect rect, Rect rect2) {
         Rect rect3;
-        DeviceProfile copy;
+        DeviceProfile deviceProfileCopy;
         LauncherAppState instanceNoCreate = LauncherAppState.getInstanceNoCreate();
         DeviceProfile deviceProfile = (instanceNoCreate == null ? new InvariantDeviceProfile(this.mContext) : instanceNoCreate.getInvariantDeviceProfile()).getDeviceProfile(this.mContext);
-        RemoteAnimationTargetCompat findTask = remoteAnimationTargetSet.findTask(this.mRunningTaskId);
-        if (rect2 != null && findTask != null) {
-            rect3 = this.mActivityControlHelper.getOverviewWindowBounds(rect2, findTask);
-            copy = deviceProfile.getMultiWindowProfile(this.mContext, new Point(rect2.width(), rect2.height()));
-            copy.updateInsets(rect);
+        RemoteAnimationTargetCompat remoteAnimationTargetCompatFindTask = remoteAnimationTargetSet.findTask(this.mRunningTaskId);
+        if (rect2 != null && remoteAnimationTargetCompatFindTask != null) {
+            rect3 = this.mActivityControlHelper.getOverviewWindowBounds(rect2, remoteAnimationTargetCompatFindTask);
+            deviceProfileCopy = deviceProfile.getMultiWindowProfile(this.mContext, new Point(rect2.width(), rect2.height()));
+            deviceProfileCopy.updateInsets(rect);
         } else {
             rect3 = new Rect(0, 0, deviceProfile.widthPx, deviceProfile.heightPx);
             Rect rect4 = new Rect();
             WindowManagerWrapper.getInstance().getStableInsets(rect4);
-            copy = deviceProfile.copy(this.mContext);
-            copy.updateInsets(rect4);
+            deviceProfileCopy = deviceProfile.copy(this.mContext);
+            deviceProfileCopy.updateInsets(rect4);
         }
-        copy.updateIsSeascape((WindowManager) this.mContext.getSystemService(WindowManager.class));
-        if (findTask != null) {
-            this.mClipAnimationHelper.updateSource(rect3, findTask);
+        deviceProfileCopy.updateIsSeascape((WindowManager) this.mContext.getSystemService(WindowManager.class));
+        if (remoteAnimationTargetCompatFindTask != null) {
+            this.mClipAnimationHelper.updateSource(rect3, remoteAnimationTargetCompatFindTask);
         }
         this.mClipAnimationHelper.prepareAnimation(false);
-        initTransitionEndpoints(copy);
+        initTransitionEndpoints(deviceProfileCopy);
         this.mRecentsAnimationWrapper.setController(recentsAnimationControllerCompat, remoteAnimationTargetSet);
         setStateOnUiThread(16);
     }
@@ -617,9 +637,8 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mRecentsAnimationWrapper.enableInputConsumer();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     @AnyThread
-    public void notifyGestureStartedAsync() {
+    private void notifyGestureStartedAsync() {
         if (this.mActivity != null) {
             this.mActivity.clearForceInvisibleFlag(1);
         }
@@ -634,7 +653,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
             executeOnUiThread(new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$mBQq44kZtxDM81nTc9lXIxILtLg
                 @Override // java.lang.Runnable
                 public final void run() {
-                    WindowTransformSwipeHandler.this.onLongSwipeGestureFinishUi(f, z);
+                    this.f$0.onLongSwipeGestureFinishUi(f, z);
                 }
             });
         } else {
@@ -643,28 +662,28 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
     }
 
     private void handleNormalGestureEnd(float f, boolean z) {
-        float boundToRange;
+        float fBoundToRange;
         float f2;
-        long j;
+        long jMin;
         float f3 = 1.0f;
-        long j2 = 350;
+        long jMin2 = 350;
         if (!z) {
             if (this.mCurrentShift.value < 0.5f || !this.mGestureStarted) {
                 f3 = 0.0f;
             }
-            j = Math.min(350L, Math.abs(Math.round((f3 - this.mCurrentShift.value) * 350.0f * SWIPE_DURATION_MULTIPLIER)));
+            jMin = Math.min(350L, Math.abs(Math.round((f3 - this.mCurrentShift.value) * 350.0f * SWIPE_DURATION_MULTIPLIER)));
             f2 = f3;
-            boundToRange = this.mCurrentShift.value;
+            fBoundToRange = this.mCurrentShift.value;
         } else {
             float f4 = f < 0.0f ? 1.0f : 0.0f;
             if (Math.abs(f) > this.mContext.getResources().getDimension(R.dimen.quickstep_fling_min_velocity) && this.mTransitionDragLength > 0) {
-                j2 = Math.min(350L, 2 * Math.round(1000.0f * Math.abs(((f4 - this.mCurrentShift.value) * this.mTransitionDragLength) / f)));
+                jMin2 = Math.min(350L, 2 * Math.round(1000.0f * Math.abs(((f4 - this.mCurrentShift.value) * this.mTransitionDragLength) / f)));
             }
-            boundToRange = Utilities.boundToRange(this.mCurrentShift.value - ((f * 16.0f) / (this.mTransitionDragLength * 1000)), 0.0f, 1.0f);
+            fBoundToRange = Utilities.boundToRange(this.mCurrentShift.value - ((f * 16.0f) / (this.mTransitionDragLength * 1000)), 0.0f, 1.0f);
             f2 = f4;
-            j = j2;
+            jMin = jMin2;
         }
-        animateToProgress(boundToRange, f2, j, Interpolators.DEACCEL);
+        animateToProgress(fBoundToRange, f2, jMin, Interpolators.DEACCEL);
     }
 
     private void doLogGesture(boolean z) {
@@ -682,6 +701,9 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         final ObjectAnimator duration = this.mCurrentShift.animateToValue(f, f2).setDuration(j);
         duration.setInterpolator(interpolator);
         duration.addListener(new AnimationSuccessListener() { // from class: com.android.quickstep.WindowTransformSwipeHandler.4
+            AnonymousClass4() {
+            }
+
             @Override // com.android.launcher3.anim.AnimationSuccessListener
             public void onAnimationSuccess(Animator animator) {
                 int i;
@@ -704,17 +726,33 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
+    /* renamed from: com.android.quickstep.WindowTransformSwipeHandler$4 */
+    class AnonymousClass4 extends AnimationSuccessListener {
+        AnonymousClass4() {
+        }
+
+        @Override // com.android.launcher3.anim.AnimationSuccessListener
+        public void onAnimationSuccess(Animator animator) {
+            int i;
+            WindowTransformSwipeHandler windowTransformSwipeHandler = WindowTransformSwipeHandler.this;
+            if (WindowTransformSwipeHandler.this.mIsGoingToHome) {
+                i = 16416;
+            } else {
+                i = 64;
+            }
+            windowTransformSwipeHandler.setStateOnUiThread(i);
+        }
+    }
+
     @UiThread
-    public void resumeLastTaskForQuickstep() {
+    private void resumeLastTaskForQuickstep() {
         setStateOnUiThread(65536);
         doLogGesture(false);
         reset();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     @UiThread
-    public void resumeLastTask() {
+    private void resumeLastTask() {
         this.mRecentsAnimationWrapper.finish(false, null);
     }
 
@@ -724,8 +762,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void invalidateHandler() {
+    private void invalidateHandler() {
         this.mCurrentShift.finishAnimation();
         if (this.mGestureEndCallback != null) {
             this.mGestureEndCallback.run();
@@ -735,8 +772,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mTaskSnapshot = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void invalidateHandlerWithLauncher() {
+    private void invalidateHandlerWithLauncher() {
         this.mLauncherTransitionController = null;
         this.mLayoutListener.finish();
         this.mActivityControlHelper.getAlphaProperty(this.mActivity).setValue(1.0f);
@@ -745,13 +781,11 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mQuickScrubController.cancelActiveQuickscrub();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyTransitionCancelled() {
+    private void notifyTransitionCancelled() {
         this.mAnimationFactory.onTransitionCancelled();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resetStateForAnimationCancel() {
+    private void resetStateForAnimationCancel() {
         this.mActivityControlHelper.onTransitionCancelled(this.mActivity, this.mWasLauncherAlreadyVisible || this.mGestureStarted);
     }
 
@@ -761,18 +795,21 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void switchToScreenshot() {
+    private void switchToScreenshot() {
         RecentsAnimationControllerCompat controller = this.mRecentsAnimationWrapper.getController();
-        boolean z = false;
+        boolean zAttach = false;
         if (controller != null) {
             if (this.mTaskSnapshot == null) {
                 this.mTaskSnapshot = controller.screenshotTask(this.mRunningTaskId);
             }
-            TaskView updateThumbnail = this.mRecentsView.updateThumbnail(this.mRunningTaskId, this.mTaskSnapshot);
+            TaskView taskViewUpdateThumbnail = this.mRecentsView.updateThumbnail(this.mRunningTaskId, this.mTaskSnapshot);
             this.mRecentsView.setRunningTaskHidden(false);
-            if (updateThumbnail != null) {
-                z = new WindowCallbacksCompat(updateThumbnail) { // from class: com.android.quickstep.WindowTransformSwipeHandler.5
+            if (taskViewUpdateThumbnail != null) {
+                zAttach = new WindowCallbacksCompat(taskViewUpdateThumbnail) { // from class: com.android.quickstep.WindowTransformSwipeHandler.5
+                    AnonymousClass5(View taskViewUpdateThumbnail2) {
+                        super(taskViewUpdateThumbnail2);
+                    }
+
                     @Override // com.android.systemui.shared.system.WindowCallbacksCompat
                     public void onPostDraw(Canvas canvas) {
                         WindowTransformSwipeHandler.this.setStateOnUiThread(32768);
@@ -781,25 +818,36 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
                 }.attach();
             }
         }
-        if (!z) {
+        if (!zAttach) {
             setStateOnUiThread(32768);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void finishCurrentTransitionToHome() {
+    /* renamed from: com.android.quickstep.WindowTransformSwipeHandler$5 */
+    class AnonymousClass5 extends WindowCallbacksCompat {
+        AnonymousClass5(View taskViewUpdateThumbnail2) {
+            super(taskViewUpdateThumbnail2);
+        }
+
+        @Override // com.android.systemui.shared.system.WindowCallbacksCompat
+        public void onPostDraw(Canvas canvas) {
+            WindowTransformSwipeHandler.this.setStateOnUiThread(32768);
+            detach();
+        }
+    }
+
+    private void finishCurrentTransitionToHome() {
         synchronized (this.mRecentsAnimationWrapper) {
             this.mRecentsAnimationWrapper.finish(true, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$tz2B3S9Hl7OB8nIDmCuCjhGpgtE
                 @Override // java.lang.Runnable
                 public final void run() {
-                    WindowTransformSwipeHandler.this.setStateOnUiThread(2048);
+                    this.f$0.setStateOnUiThread(2048);
                 }
             });
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setupLauncherUiAfterSwipeUpAnimation() {
+    private void setupLauncherUiAfterSwipeUpAnimation() {
         if (this.mLauncherTransitionController != null) {
             this.mLauncherTransitionController.getAnimationPlayer().end();
             this.mLauncherTransitionController = null;
@@ -812,8 +860,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         reset();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onQuickScrubStart() {
+    private void onQuickScrubStart() {
         if (!this.mQuickScrubController.prepareQuickScrub(TAG)) {
             this.mQuickScrubBlocked = true;
             setStateOnUiThread(65664);
@@ -827,8 +874,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mQuickScrubController.onQuickScrubProgress(this.mCurrentQuickScrubProgress);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onFinishedTransitionToQuickScrub() {
+    private void onFinishedTransitionToQuickScrub() {
         if (this.mQuickScrubBlocked) {
             return;
         }
@@ -847,8 +893,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         setStateOnUiThread(8192);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void switchToFinalAppAfterQuickScrub() {
+    private void switchToFinalAppAfterQuickScrub() {
         if (this.mQuickScrubBlocked) {
             return;
         }
@@ -856,23 +901,20 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         setStateOnUiThread(128);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void debugNewState(int i) {
+    private void debugNewState(int i) {
     }
 
     public void setGestureEndCallback(Runnable runnable) {
         this.mGestureEndCallback = runnable;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onLongSwipeEnabledUi() {
+    private void onLongSwipeEnabledUi() {
         this.mUiLongSwipeMode = true;
         checkLongSwipeCanEnter();
         checkLongSwipeCanStart();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onLongSwipeDisabledUi() {
+    private void onLongSwipeDisabledUi() {
         this.mUiLongSwipeMode = false;
         if (this.mLongSwipeController != null) {
             this.mLongSwipeController.destroy();
@@ -880,24 +922,21 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onLongSwipeDisplacementUpdated() {
+    private void onLongSwipeDisplacementUpdated() {
         if (!this.mUiLongSwipeMode || this.mLongSwipeController == null) {
             return;
         }
         this.mLongSwipeController.onMove(this.mLongSwipeDisplacement);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void checkLongSwipeCanEnter() {
+    private void checkLongSwipeCanEnter() {
         if (!this.mUiLongSwipeMode || !this.mStateCallback.hasStates(26) || !this.mActivityControlHelper.supportsLongSwipe(this.mActivity)) {
             return;
         }
         this.mStateCallback.setState(16384);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void checkLongSwipeCanStart() {
+    private void checkLongSwipeCanStart() {
         if (!this.mUiLongSwipeMode || !this.mStateCallback.hasStates(LONG_SWIPE_START_STATE) || !this.mActivityControlHelper.supportsLongSwipe(this.mActivity) || this.mRecentsAnimationWrapper.targetSet == null) {
             return;
         }
@@ -905,20 +944,19 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         onLongSwipeDisplacementUpdated();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onLongSwipeGestureFinishUi(float f, boolean z) {
+    private void onLongSwipeGestureFinishUi(float f, boolean z) {
         if (!this.mUiLongSwipeMode || this.mLongSwipeController == null) {
             this.mUiLongSwipeMode = false;
             handleNormalGestureEnd(f, z);
-            return;
+        } else {
+            this.mUiLongSwipeMode = false;
+            finishCurrentTransitionToHome();
+            this.mLongSwipeController.end(f, z, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$UlYAiBBFZWVupBaQsWT6bm2Rhtw
+                @Override // java.lang.Runnable
+                public final void run() {
+                    this.f$0.setStateOnUiThread(128);
+                }
+            });
         }
-        this.mUiLongSwipeMode = false;
-        finishCurrentTransitionToHome();
-        this.mLongSwipeController.end(f, z, new Runnable() { // from class: com.android.quickstep.-$$Lambda$WindowTransformSwipeHandler$UlYAiBBFZWVupBaQsWT6bm2Rhtw
-            @Override // java.lang.Runnable
-            public final void run() {
-                WindowTransformSwipeHandler.this.setStateOnUiThread(128);
-            }
-        });
     }
 }

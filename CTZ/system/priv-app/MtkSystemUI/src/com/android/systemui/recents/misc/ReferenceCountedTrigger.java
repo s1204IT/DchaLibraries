@@ -3,6 +3,7 @@ package com.android.systemui.recents.misc;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ReferenceCountedTrigger {
     int mCount;

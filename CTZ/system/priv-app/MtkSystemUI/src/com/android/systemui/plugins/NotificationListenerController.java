@@ -4,6 +4,7 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import com.android.systemui.plugins.annotations.DependsOn;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
+
 @ProvidesInterface(action = NotificationListenerController.ACTION, version = 1)
 @DependsOn(target = NotificationProvider.class)
 /* loaded from: classes.dex */
@@ -12,7 +13,6 @@ public interface NotificationListenerController extends Plugin {
     public static final int VERSION = 1;
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public interface NotificationProvider {
         public static final int VERSION = 1;
 

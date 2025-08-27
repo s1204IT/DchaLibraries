@@ -1,6 +1,7 @@
 package com.android.launcher3;
 
 import android.graphics.Bitmap;
+
 /* loaded from: classes.dex */
 public abstract class ItemInfoWithIcon extends ItemInfo {
     public static final int FLAG_ADAPTIVE_ICON = 256;
@@ -20,13 +21,11 @@ public abstract class ItemInfoWithIcon extends ItemInfo {
     public int runtimeStatusFlags;
     public boolean usingLowResIcon;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public ItemInfoWithIcon() {
+    protected ItemInfoWithIcon() {
         this.runtimeStatusFlags = 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public ItemInfoWithIcon(ItemInfoWithIcon itemInfoWithIcon) {
+    protected ItemInfoWithIcon(ItemInfoWithIcon itemInfoWithIcon) {
         super(itemInfoWithIcon);
         this.runtimeStatusFlags = 0;
         this.iconBitmap = itemInfoWithIcon.iconBitmap;

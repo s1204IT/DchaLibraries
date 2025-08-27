@@ -1,5 +1,6 @@
 package com.android.settingslib.accessibility;
 
+import android.R;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class AccessibilityUtils {
     static final TextUtils.SimpleStringSplitter sStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
@@ -45,9 +47,9 @@ public class AccessibilityUtils {
         TextUtils.SimpleStringSplitter simpleStringSplitter = sStringColonSplitter;
         simpleStringSplitter.setString(stringForUser);
         while (simpleStringSplitter.hasNext()) {
-            ComponentName unflattenFromString = ComponentName.unflattenFromString(simpleStringSplitter.next());
-            if (unflattenFromString != null) {
-                hashSet.add(unflattenFromString);
+            ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(simpleStringSplitter.next());
+            if (componentNameUnflattenFromString != null) {
+                hashSet.add(componentNameUnflattenFromString);
             }
         }
         return hashSet;
@@ -64,7 +66,7 @@ public class AccessibilityUtils {
     }
 
     public static void setAccessibilityServiceState(Context context, ComponentName componentName, boolean z, int i) {
-        Set<ComponentName> enabledServicesFromSettings = getEnabledServicesFromSettings(context, i);
+        Set enabledServicesFromSettings = getEnabledServicesFromSettings(context, i);
         if (enabledServicesFromSettings.isEmpty()) {
             enabledServicesFromSettings = new ArraySet(1);
         }
@@ -78,8 +80,9 @@ public class AccessibilityUtils {
             }
         }
         StringBuilder sb = new StringBuilder();
-        for (ComponentName componentName2 : enabledServicesFromSettings) {
-            sb.append(componentName2.flattenToString());
+        Iterator it2 = enabledServicesFromSettings.iterator();
+        while (it2.hasNext()) {
+            sb.append(((ComponentName) it2.next()).flattenToString());
             sb.append(':');
         }
         int length = sb.length();
@@ -94,7 +97,7 @@ public class AccessibilityUtils {
         if (stringForUser != null) {
             return stringForUser;
         }
-        return context.getString(17039649);
+        return context.getString(R.string.adb_active_notification_message);
     }
 
     public static boolean isShortcutEnabled(Context context, int i) {
@@ -108,8 +111,9 @@ public class AccessibilityUtils {
         if (installedAccessibilityServiceList == null) {
             return hashSet;
         }
-        for (AccessibilityServiceInfo accessibilityServiceInfo : installedAccessibilityServiceList) {
-            ResolveInfo resolveInfo = accessibilityServiceInfo.getResolveInfo();
+        Iterator<AccessibilityServiceInfo> it = installedAccessibilityServiceList.iterator();
+        while (it.hasNext()) {
+            ResolveInfo resolveInfo = it.next().getResolveInfo();
             hashSet.add(new ComponentName(resolveInfo.serviceInfo.packageName, resolveInfo.serviceInfo.name));
         }
         return hashSet;

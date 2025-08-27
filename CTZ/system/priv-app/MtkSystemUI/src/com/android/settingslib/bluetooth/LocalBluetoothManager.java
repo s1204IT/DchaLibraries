@@ -1,6 +1,7 @@
 package com.android.settingslib.bluetooth;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class LocalBluetoothManager {
     private static LocalBluetoothManager sInstance;
@@ -10,26 +11,23 @@ public class LocalBluetoothManager {
     private final LocalBluetoothAdapter mLocalAdapter;
     private final LocalBluetoothProfileManager mProfileManager;
 
-    /* loaded from: classes.dex */
     public interface BluetoothManagerCallback {
         void onBluetoothManagerInitialized(Context context, LocalBluetoothManager localBluetoothManager);
     }
 
     public static synchronized LocalBluetoothManager getInstance(Context context, BluetoothManagerCallback bluetoothManagerCallback) {
-        synchronized (LocalBluetoothManager.class) {
-            if (sInstance == null) {
-                LocalBluetoothAdapter localBluetoothAdapter = LocalBluetoothAdapter.getInstance();
-                if (localBluetoothAdapter == null) {
-                    return null;
-                }
-                Context applicationContext = context.getApplicationContext();
-                sInstance = new LocalBluetoothManager(localBluetoothAdapter, applicationContext);
-                if (bluetoothManagerCallback != null) {
-                    bluetoothManagerCallback.onBluetoothManagerInitialized(applicationContext, sInstance);
-                }
+        if (sInstance == null) {
+            LocalBluetoothAdapter localBluetoothAdapter = LocalBluetoothAdapter.getInstance();
+            if (localBluetoothAdapter == null) {
+                return null;
             }
-            return sInstance;
+            Context applicationContext = context.getApplicationContext();
+            sInstance = new LocalBluetoothManager(localBluetoothAdapter, applicationContext);
+            if (bluetoothManagerCallback != null) {
+                bluetoothManagerCallback.onBluetoothManagerInitialized(applicationContext, sInstance);
+            }
         }
+        return sInstance;
     }
 
     private LocalBluetoothManager(LocalBluetoothAdapter localBluetoothAdapter, Context context) {

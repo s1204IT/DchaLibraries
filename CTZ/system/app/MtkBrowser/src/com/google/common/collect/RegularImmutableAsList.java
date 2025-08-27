@@ -1,35 +1,32 @@
 package com.google.common.collect;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class RegularImmutableAsList<E> extends ImmutableAsList<E> {
+class RegularImmutableAsList<E> extends ImmutableAsList<E> {
     private final ImmutableCollection<E> delegate;
     private final ImmutableList<? extends E> delegateList;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RegularImmutableAsList(ImmutableCollection<E> immutableCollection, ImmutableList<? extends E> immutableList) {
+    RegularImmutableAsList(ImmutableCollection<E> immutableCollection, ImmutableList<? extends E> immutableList) {
         this.delegate = immutableCollection;
         this.delegateList = immutableList;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RegularImmutableAsList(ImmutableCollection<E> immutableCollection, Object[] objArr) {
+    RegularImmutableAsList(ImmutableCollection<E> immutableCollection, Object[] objArr) {
         this(immutableCollection, ImmutableList.asImmutableList(objArr));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableAsList
-    public ImmutableCollection<E> delegateCollection() {
+    ImmutableCollection<E> delegateCollection() {
         return this.delegate;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: listIterator(I)Ljava/util/ListIterator; */
     @Override // com.google.common.collect.ImmutableList, java.util.List
     public UnmodifiableListIterator<E> listIterator(int i) {
-        return (UnmodifiableListIterator<? extends E>) this.delegateList.listIterator(i);
+        return this.delegateList.listIterator(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableList, com.google.common.collect.ImmutableCollection
-    public int copyIntoArray(Object[] objArr, int i) {
+    int copyIntoArray(Object[] objArr, int i) {
         return this.delegateList.copyIntoArray(objArr, i);
     }
 

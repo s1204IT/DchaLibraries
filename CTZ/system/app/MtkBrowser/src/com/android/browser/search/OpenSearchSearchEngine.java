@@ -21,6 +21,7 @@ import libcore.net.http.ResponseUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 /* loaded from: classes.dex */
 public class OpenSearchSearchEngine implements SearchEngine {
     private static final String[] COLUMNS = {"_id", "suggest_intent_query", "suggest_icon_1", "suggest_text_1", "suggest_text_2"};
@@ -57,14 +58,8 @@ public class OpenSearchSearchEngine implements SearchEngine {
         context.startActivity(intent);
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:24:0x0075, code lost:
-        if (r5.length() == 0) goto L22;
-     */
     @Override // com.android.browser.search.SearchEngine
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    public Cursor getSuggestions(Context context, String str) {
+    public Cursor getSuggestions(Context context, String str) throws JSONException {
         JSONArray jSONArray;
         JSONArray jSONArray2;
         if (TextUtils.isEmpty(str)) {
@@ -79,21 +74,24 @@ public class OpenSearchSearchEngine implements SearchEngine {
             return null;
         }
         try {
-            String readUrl = readUrl(suggestUriForQuery);
-            if (readUrl == null) {
+            String url = readUrl(suggestUriForQuery);
+            if (url == null) {
                 return null;
             }
             if (this.mSearchEngine.getName().equals("baidu")) {
-                if (readUrl.length() < 19) {
+                if (url.length() < 19) {
                     return null;
                 }
-                jSONArray = new JSONObject(readUrl.substring(17, readUrl.length() - 2)).getJSONArray("s");
+                jSONArray = new JSONObject(url.substring(17, url.length() - 2)).getJSONArray("s");
             } else {
-                JSONArray jSONArray3 = new JSONArray(readUrl);
+                JSONArray jSONArray3 = new JSONArray(url);
                 jSONArray = jSONArray3.getJSONArray(1);
                 if (jSONArray3.length() > 2) {
                     jSONArray2 = jSONArray3.getJSONArray(2);
+                    if (jSONArray2.length() == 0) {
+                    }
                 }
+                return new SuggestionsCursor(jSONArray, jSONArray2);
             }
             jSONArray2 = null;
             return new SuggestionsCursor(jSONArray, jSONArray2);
@@ -145,7 +143,6 @@ public class OpenSearchSearchEngine implements SearchEngine {
         return connectivityManager.getActiveNetworkInfo();
     }
 
-    /* loaded from: classes.dex */
     private static class SuggestionsCursor extends AbstractCursor {
         private final JSONArray mDescriptions;
         private final JSONArray mSuggestions;
@@ -175,18 +172,19 @@ public class OpenSearchSearchEngine implements SearchEngine {
                         Log.w("OpenSearchSearchEngine", "Error", e);
                         return null;
                     }
-                } else if (i == 4) {
+                }
+                if (i == 4) {
                     try {
                         return this.mDescriptions.getString(this.mPos);
                     } catch (JSONException e2) {
                         Log.w("OpenSearchSearchEngine", "Error", e2);
                         return null;
                     }
-                } else if (i == 2) {
-                    return String.valueOf((int) R.drawable.magnifying_glass);
-                } else {
-                    return null;
                 }
+                if (i == 2) {
+                    return String.valueOf(R.drawable.magnifying_glass);
+                }
+                return null;
             }
             return null;
         }

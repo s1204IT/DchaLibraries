@@ -4,6 +4,7 @@ import android.content.Context;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.util.Preconditions;
+
 /* loaded from: classes.dex */
 public class OverviewCallbacks {
     private static OverviewCallbacks sInstance;

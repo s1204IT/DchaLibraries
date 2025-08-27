@@ -12,6 +12,7 @@ import android.graphics.RectF;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewCompat;
 import com.android.launcher3.LauncherAppState;
+
 /* loaded from: classes.dex */
 public class ShadowGenerator {
     private static final int AMBIENT_SHADOW_ALPHA = 30;
@@ -34,22 +35,21 @@ public class ShadowGenerator {
     }
 
     public synchronized void recreateIcon(Bitmap bitmap, BlurMaskFilter blurMaskFilter, int i, int i2, Canvas canvas) {
-        int[] iArr = new int[2];
         this.mBlurPaint.setMaskFilter(blurMaskFilter);
-        Bitmap extractAlpha = bitmap.extractAlpha(this.mBlurPaint, iArr);
+        Bitmap bitmapExtractAlpha = bitmap.extractAlpha(this.mBlurPaint, new int[2]);
         this.mDrawPaint.setAlpha(i);
-        canvas.drawBitmap(extractAlpha, iArr[0], iArr[1], this.mDrawPaint);
+        canvas.drawBitmap(bitmapExtractAlpha, r0[0], r0[1], this.mDrawPaint);
         this.mDrawPaint.setAlpha(i2);
-        canvas.drawBitmap(extractAlpha, iArr[0], iArr[1] + (0.020833334f * this.mIconSize), this.mDrawPaint);
+        canvas.drawBitmap(bitmapExtractAlpha, r0[0], r0[1] + (0.020833334f * this.mIconSize), this.mDrawPaint);
         this.mDrawPaint.setAlpha(255);
         canvas.drawBitmap(bitmap, 0.0f, 0.0f, this.mDrawPaint);
     }
 
     public static float getScaleForBounds(RectF rectF) {
         float f;
-        float min = Math.min(Math.min(rectF.left, rectF.right), rectF.top);
-        if (min < 0.010416667f) {
-            f = 0.48958334f / (0.5f - min);
+        float fMin = Math.min(Math.min(rectF.left, rectF.right), rectF.top);
+        if (fMin < 0.010416667f) {
+            f = 0.48958334f / (0.5f - fMin);
         } else {
             f = 1.0f;
         }
@@ -59,7 +59,6 @@ public class ShadowGenerator {
         return f;
     }
 
-    /* loaded from: classes.dex */
     public static class Builder {
         public final int color;
         public float keyShadowDistance;
@@ -81,16 +80,14 @@ public class ShadowGenerator {
         }
 
         public Bitmap createPill(int i, int i2) {
-            int i3 = i2 / 2;
-            this.radius = i3;
-            int i4 = i / 2;
-            int max = Math.max(Math.round(i4 + this.shadowBlur), Math.round(this.radius + this.shadowBlur + this.keyShadowDistance));
+            this.radius = i2 / 2;
+            int iMax = Math.max(Math.round((i / 2) + this.shadowBlur), Math.round(this.radius + this.shadowBlur + this.keyShadowDistance));
             this.bounds.set(0.0f, 0.0f, i, i2);
-            this.bounds.offsetTo(max - i4, max - i3);
-            int i5 = max * 2;
-            Bitmap createBitmap = Bitmap.createBitmap(i5, i5, Bitmap.Config.ARGB_8888);
-            drawShadow(new Canvas(createBitmap));
-            return createBitmap;
+            this.bounds.offsetTo(iMax - r1, iMax - r0);
+            int i3 = iMax * 2;
+            Bitmap bitmapCreateBitmap = Bitmap.createBitmap(i3, i3, Bitmap.Config.ARGB_8888);
+            drawShadow(new Canvas(bitmapCreateBitmap));
+            return bitmapCreateBitmap;
         }
 
         public void drawShadow(Canvas canvas) {

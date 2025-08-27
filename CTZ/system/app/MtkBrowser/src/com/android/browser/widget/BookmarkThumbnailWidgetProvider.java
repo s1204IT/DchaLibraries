@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.widget.RemoteViews;
 import com.android.browser.BrowserActivity;
 import com.android.browser.R;
+
 /* loaded from: classes.dex */
 public class BookmarkThumbnailWidgetProvider extends AppWidgetProvider {
     @Override // android.appwidget.AppWidgetProvider, android.content.BroadcastReceiver
@@ -17,9 +18,9 @@ public class BookmarkThumbnailWidgetProvider extends AppWidgetProvider {
         if ("com.android.browser.BOOKMARK_APPWIDGET_UPDATE".equals(intent.getAction())) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             performUpdate(context, appWidgetManager, appWidgetManager.getAppWidgetIds(getComponentName(context)));
-            return;
+        } else {
+            super.onReceive(context, intent);
         }
-        super.onReceive(context, intent);
     }
 
     @Override // android.appwidget.AppWidgetProvider
@@ -49,20 +50,20 @@ public class BookmarkThumbnailWidgetProvider extends AppWidgetProvider {
     private void performUpdate(Context context, AppWidgetManager appWidgetManager, int[] iArr) {
         PendingIntent activity = PendingIntent.getActivity(context, 0, new Intent("show_browser", null, context, BrowserActivity.class), 134217728);
         for (int i : iArr) {
-            Intent intent = new Intent(context, BookmarkThumbnailWidgetService.class);
+            Intent intent = new Intent(context, (Class<?>) BookmarkThumbnailWidgetService.class);
             intent.putExtra("appWidgetId", i);
             intent.setData(Uri.parse(intent.toUri(1)));
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), (int) R.layout.bookmarkthumbnailwidget);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.bookmarkthumbnailwidget);
             remoteViews.setOnClickPendingIntent(R.id.app_shortcut, activity);
             remoteViews.setRemoteAdapter(R.id.bookmarks_list, intent);
             appWidgetManager.notifyAppWidgetViewDataChanged(i, R.id.bookmarks_list);
-            remoteViews.setPendingIntentTemplate(R.id.bookmarks_list, PendingIntent.getBroadcast(context, 0, new Intent(context, BookmarkWidgetProxy.class), 134217728));
+            remoteViews.setPendingIntentTemplate(R.id.bookmarks_list, PendingIntent.getBroadcast(context, 0, new Intent(context, (Class<?>) BookmarkWidgetProxy.class), 134217728));
             appWidgetManager.updateAppWidget(i, remoteViews);
         }
     }
 
     static ComponentName getComponentName(Context context) {
-        return new ComponentName(context, BookmarkThumbnailWidgetProvider.class);
+        return new ComponentName(context, (Class<?>) BookmarkThumbnailWidgetProvider.class);
     }
 
     public static void refreshWidgets(Context context) {

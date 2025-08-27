@@ -7,6 +7,7 @@ import android.provider.Settings;
 import android.view.accessibility.AccessibilityManager;
 import com.android.settings.core.TogglePreferenceController;
 import com.android.settingslib.accessibility.AccessibilityUtils;
+
 /* loaded from: classes.dex */
 public class AccessibilitySlicePreferenceController extends TogglePreferenceController {
     private final int OFF;

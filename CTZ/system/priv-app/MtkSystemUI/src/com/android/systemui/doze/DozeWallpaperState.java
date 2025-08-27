@@ -9,6 +9,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.doze.DozeMachine;
 import com.android.systemui.statusbar.phone.DozeParameters;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class DozeWallpaperState implements DozeMachine.Part {
     private static final boolean DEBUG = Log.isLoggable("DozeWallpaperState", 3);
@@ -29,7 +30,7 @@ public class DozeWallpaperState implements DozeMachine.Part {
     @Override // com.android.systemui.doze.DozeMachine.Part
     public void transitionTo(DozeMachine.State state, DozeMachine.State state2) {
         boolean z;
-        boolean z2;
+        boolean zShouldControlScreenOff;
         switch (state2) {
             case DOZE:
             case DOZE_AOD:
@@ -45,17 +46,17 @@ public class DozeWallpaperState implements DozeMachine.Part {
                 break;
         }
         if (z) {
-            z2 = this.mDozeParameters.shouldControlScreenOff();
+            zShouldControlScreenOff = this.mDozeParameters.shouldControlScreenOff();
         } else {
-            z2 = !this.mDozeParameters.getDisplayNeedsBlanking() || (state == DozeMachine.State.DOZE_PULSING && state2 == DozeMachine.State.FINISH);
+            zShouldControlScreenOff = !this.mDozeParameters.getDisplayNeedsBlanking() || (state == DozeMachine.State.DOZE_PULSING && state2 == DozeMachine.State.FINISH);
         }
         if (z != this.mIsAmbientMode) {
             this.mIsAmbientMode = z;
             try {
                 if (DEBUG) {
-                    Log.i("DozeWallpaperState", "AOD wallpaper state changed to: " + this.mIsAmbientMode + ", animated: " + z2);
+                    Log.i("DozeWallpaperState", "AOD wallpaper state changed to: " + this.mIsAmbientMode + ", animated: " + zShouldControlScreenOff);
                 }
-                this.mWallpaperManagerService.setInAmbientMode(this.mIsAmbientMode, z2);
+                this.mWallpaperManagerService.setInAmbientMode(this.mIsAmbientMode, zShouldControlScreenOff);
             } catch (RemoteException e) {
                 Log.w("DozeWallpaperState", "Cannot notify state to WallpaperManagerService: " + this.mIsAmbientMode);
             }

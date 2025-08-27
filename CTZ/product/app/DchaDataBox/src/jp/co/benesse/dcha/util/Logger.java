@@ -1,6 +1,7 @@
 package jp.co.benesse.dcha.util;
 
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public final class Logger {
     public static final int ALL = 2;
@@ -39,17 +40,15 @@ public final class Logger {
     }
 
     private static final synchronized int write(int i, String str, Object... objArr) {
-        synchronized (Logger.class) {
-            if (7 > i) {
-                return 0;
-            }
-            int println = Log.println(i, str, getMessage(objArr));
-            Object obj = objArr[objArr.length - 1];
-            if (obj instanceof Throwable) {
-                println += Log.println(6, str, Log.getStackTraceString((Throwable) obj));
-            }
-            return println;
+        if (7 > i) {
+            return 0;
         }
+        int iPrintln = Log.println(i, str, getMessage(objArr));
+        Object obj = objArr[objArr.length - 1];
+        if (obj instanceof Throwable) {
+            iPrintln += Log.println(6, str, Log.getStackTraceString((Throwable) obj));
+        }
+        return iPrintln;
     }
 
     private static final String getMessage(Object[] objArr) {
@@ -61,9 +60,9 @@ public final class Logger {
                 MSG_BUFFER.append(obj);
             }
         }
-        String stringBuffer = MSG_BUFFER.toString();
+        String string = MSG_BUFFER.toString();
         MSG_BUFFER.setLength(0);
-        return stringBuffer;
+        return string;
     }
 
     private static final String getMetaInfo() {
@@ -74,12 +73,12 @@ public final class Logger {
 
     private static final String getMetaInfo(StackTraceElement stackTraceElement) {
         String className = stackTraceElement.getClassName();
-        String substring = className.substring(className.lastIndexOf(".") + 1);
+        String strSubstring = className.substring(className.lastIndexOf(".") + 1);
         String methodName = stackTraceElement.getMethodName();
         int lineNumber = stackTraceElement.getLineNumber();
         META_BUFFER.setLength(0);
         META_BUFFER.append("[");
-        META_BUFFER.append(substring);
+        META_BUFFER.append(strSubstring);
         META_BUFFER.append("#");
         META_BUFFER.append(methodName);
         META_BUFFER.append(":");

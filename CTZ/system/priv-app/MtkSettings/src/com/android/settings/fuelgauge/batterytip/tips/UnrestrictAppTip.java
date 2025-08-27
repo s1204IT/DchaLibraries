@@ -6,14 +6,17 @@ import android.os.Parcelable;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.fuelgauge.batterytip.AppInfo;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public class UnrestrictAppTip extends BatteryTip {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() { // from class: com.android.settings.fuelgauge.batterytip.tips.UnrestrictAppTip.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public BatteryTip createFromParcel(Parcel parcel) {
             return new UnrestrictAppTip(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public BatteryTip[] newArray(int i) {
             return new UnrestrictAppTip[i];

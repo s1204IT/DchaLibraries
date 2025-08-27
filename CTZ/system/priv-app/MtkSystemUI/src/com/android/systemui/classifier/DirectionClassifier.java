@@ -1,4 +1,5 @@
 package com.android.systemui.classifier;
+
 /* loaded from: classes.dex */
 public class DirectionClassifier extends StrokeClassifier {
     public DirectionClassifier(ClassifierData classifierData) {

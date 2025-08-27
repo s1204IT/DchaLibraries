@@ -9,6 +9,7 @@ import android.support.v14.preference.PreferenceFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.view.Menu;
+
 /* loaded from: classes.dex */
 public interface IApnSettingsExt {
     public static final int PAUSE = 1;

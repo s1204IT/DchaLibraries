@@ -2,6 +2,7 @@ package jp.co.benesse.dcha.systemsettings;
 
 import java.io.Serializable;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class HealthCheckDto implements Serializable {
     private static final long serialVersionUID = 4031444211707627400L;

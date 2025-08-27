@@ -6,6 +6,7 @@ import com.android.systemui.keyguard.WakefulnessLifecycle;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class WakefulnessLifecycle extends Lifecycle<Observer> implements Dumpable {
     private int mWakefulness = 0;
@@ -77,7 +78,6 @@ public class WakefulnessLifecycle extends Lifecycle<Observer> implements Dumpabl
         Trace.traceCounter(4096L, "wakefulness", i);
     }
 
-    /* loaded from: classes.dex */
     public interface Observer {
         default void onStartedWakingUp() {
         }

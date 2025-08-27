@@ -15,8 +15,10 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
 import com.android.settingslib.widget.FooterPreference;
+
 /* loaded from: classes.dex */
 public class BluetoothSwitchPreferenceController implements View.OnClickListener, SwitchWidgetController.OnSwitchChangeListener, LifecycleObserver, OnStart, OnStop {
+
     @VisibleForTesting
     LocalBluetoothAdapter mBluetoothAdapter;
     private BluetoothEnabler mBluetoothEnabler;
@@ -74,8 +76,8 @@ public class BluetoothSwitchPreferenceController implements View.OnClickListener
     void updateText(boolean z) {
         if (!z && Utils.isBluetoothScanningEnabled(this.mContext)) {
             this.mFooterPreference.setTitle(AnnotationSpan.linkify(this.mContext.getText(R.string.bluetooth_scanning_on_info_message), new AnnotationSpan.LinkInfo("link", this)));
-            return;
+        } else {
+            this.mFooterPreference.setTitle(R.string.bluetooth_empty_list_bluetooth_off);
         }
-        this.mFooterPreference.setTitle(R.string.bluetooth_empty_list_bluetooth_off);
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public abstract class DeveloperOptionsPreferenceController extends AbstractPreferenceController {
     protected Preference mPreference;
@@ -35,13 +36,11 @@ public abstract class DeveloperOptionsPreferenceController extends AbstractPrefe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDeveloperOptionsSwitchEnabled() {
+    protected void onDeveloperOptionsSwitchEnabled() {
         this.mPreference.setEnabled(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         this.mPreference.setEnabled(false);
     }
 }

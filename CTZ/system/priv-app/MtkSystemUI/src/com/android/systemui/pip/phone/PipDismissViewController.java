@@ -1,6 +1,7 @@
 package com.android.systemui.pip.phone;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.widget.FrameLayout;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import com.android.systemui.recents.misc.SystemServicesProxy;
+
 /* loaded from: classes.dex */
 public class PipDismissViewController {
     private Context mContext;
@@ -23,7 +25,7 @@ public class PipDismissViewController {
         this.mWindowManager = (WindowManager) context.getSystemService("window");
     }
 
-    public void createDismissTarget() {
+    public void createDismissTarget() throws Resources.NotFoundException {
         if (this.mDismissView == null) {
             Rect rect = new Rect();
             SystemServicesProxy.getInstance(this.mContext).getStableInsets(rect);

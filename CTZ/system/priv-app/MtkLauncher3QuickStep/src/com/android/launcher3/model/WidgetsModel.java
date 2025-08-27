@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class WidgetsModel {
     private static final boolean DEBUG = false;
@@ -55,11 +56,13 @@ public class WidgetsModel {
         try {
             PackageManager packageManager = context.getPackageManager();
             InvariantDeviceProfile invariantDeviceProfile = launcherAppState.getInvariantDeviceProfile();
-            for (AppWidgetProviderInfo appWidgetProviderInfo : AppWidgetManagerCompat.getInstance(context).getAllProviders(packageUserKey)) {
-                arrayList.add(new WidgetItem(LauncherAppWidgetProviderInfo.fromProviderInfo(context, appWidgetProviderInfo), packageManager, invariantDeviceProfile));
+            Iterator<AppWidgetProviderInfo> it = AppWidgetManagerCompat.getInstance(context).getAllProviders(packageUserKey).iterator();
+            while (it.hasNext()) {
+                arrayList.add(new WidgetItem(LauncherAppWidgetProviderInfo.fromProviderInfo(context, it.next()), packageManager, invariantDeviceProfile));
             }
-            for (ShortcutConfigActivityInfo shortcutConfigActivityInfo : LauncherAppsCompat.getInstance(context).getCustomShortcutActivityList(packageUserKey)) {
-                arrayList.add(new WidgetItem(shortcutConfigActivityInfo));
+            Iterator<ShortcutConfigActivityInfo> it2 = LauncherAppsCompat.getInstance(context).getCustomShortcutActivityList(packageUserKey).iterator();
+            while (it2.hasNext()) {
+                arrayList.add(new WidgetItem(it2.next()));
             }
             setWidgetsAndShortcuts(arrayList, launcherAppState, packageUserKey);
         } catch (Exception e) {
@@ -71,7 +74,7 @@ public class WidgetsModel {
     }
 
     private synchronized void setWidgetsAndShortcuts(ArrayList<WidgetItem> arrayList, LauncherAppState launcherAppState, @Nullable PackageUserKey packageUserKey) {
-        HashMap hashMap = new HashMap();
+        HashMap map = new HashMap();
         if (packageUserKey == null) {
             this.mWidgetsList.clear();
         } else {
@@ -88,7 +91,7 @@ public class WidgetsModel {
                 }
             }
             if (packageItemInfo != null) {
-                hashMap.put(packageItemInfo.packageName, packageItemInfo);
+                map.put(packageItemInfo.packageName, packageItemInfo);
                 Iterator it2 = ((ArrayList) this.mWidgetsList.get(packageItemInfo)).iterator();
                 while (it2.hasNext()) {
                     WidgetItem widgetItem = (WidgetItem) it2.next();
@@ -99,15 +102,15 @@ public class WidgetsModel {
             }
         }
         InvariantDeviceProfile invariantDeviceProfile = launcherAppState.getInvariantDeviceProfile();
-        UserHandle myUserHandle = Process.myUserHandle();
+        UserHandle userHandleMyUserHandle = Process.myUserHandle();
         Iterator<WidgetItem> it3 = arrayList.iterator();
         while (it3.hasNext()) {
             WidgetItem next2 = it3.next();
             if (next2.widgetInfo != null) {
                 if ((next2.widgetInfo.getWidgetFeatures() & 2) == 0) {
-                    int min = Math.min(next2.widgetInfo.spanX, next2.widgetInfo.minSpanX);
-                    int min2 = Math.min(next2.widgetInfo.spanY, next2.widgetInfo.minSpanY);
-                    if (min <= invariantDeviceProfile.numColumns && min2 <= invariantDeviceProfile.numRows) {
+                    int iMin = Math.min(next2.widgetInfo.spanX, next2.widgetInfo.minSpanX);
+                    int iMin2 = Math.min(next2.widgetInfo.spanY, next2.widgetInfo.minSpanY);
+                    if (iMin <= invariantDeviceProfile.numColumns && iMin2 <= invariantDeviceProfile.numRows) {
                     }
                 }
             }
@@ -117,12 +120,12 @@ public class WidgetsModel {
             if (this.mAppFilter.shouldShowApp(next2.componentName)) {
                 String packageName = next2.componentName.getPackageName();
                 if (!packageName.startsWith("com.android.deskclock") && !packageName.startsWith("com.android.email") && !packageName.startsWith("com.android.calendar") && !packageName.startsWith("com.android.gallery3d") && !packageName.startsWith("com.android.browser") && !packageName.startsWith("com.android.music") && !packageName.startsWith("com.android.quicksearchbox") && !packageName.startsWith("com.android.settings") && !packageName.startsWith("com.android.contacts")) {
-                    PackageItemInfo packageItemInfo2 = (PackageItemInfo) hashMap.get(packageName);
+                    PackageItemInfo packageItemInfo2 = (PackageItemInfo) map.get(packageName);
                     if (packageItemInfo2 == null) {
                         packageItemInfo2 = new PackageItemInfo(packageName);
                         packageItemInfo2.user = next2.user;
-                        hashMap.put(packageName, packageItemInfo2);
-                    } else if (!myUserHandle.equals(packageItemInfo2.user)) {
+                        map.put(packageName, packageItemInfo2);
+                    } else if (!userHandleMyUserHandle.equals(packageItemInfo2.user)) {
                         packageItemInfo2.user = next2.user;
                     }
                     this.mWidgetsList.addToList(packageItemInfo2, next2);
@@ -130,8 +133,9 @@ public class WidgetsModel {
             }
         }
         IconCache iconCache = launcherAppState.getIconCache();
-        for (PackageItemInfo packageItemInfo3 : hashMap.values()) {
-            iconCache.getTitleAndIconForApp(packageItemInfo3, true);
+        Iterator it4 = map.values().iterator();
+        while (it4.hasNext()) {
+            iconCache.getTitleAndIconForApp((PackageItemInfo) it4.next(), true);
         }
     }
 }

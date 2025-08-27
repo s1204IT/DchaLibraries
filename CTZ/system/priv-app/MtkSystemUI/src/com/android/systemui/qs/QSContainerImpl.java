@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import com.android.systemui.R;
 import com.android.systemui.qs.customize.QSCustomizer;
+
 /* loaded from: classes.dex */
 public class QSContainerImpl extends FrameLayout {
     private View mBackground;
@@ -96,7 +97,7 @@ public class QSContainerImpl extends FrameLayout {
 
     private void updateResources() {
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) this.mQSPanel.getLayoutParams();
-        layoutParams.topMargin = this.mContext.getResources().getDimensionPixelSize(17105286);
+        layoutParams.topMargin = this.mContext.getResources().getDimensionPixelSize(android.R.dimen.highlight_alpha_material_dark);
         this.mQSPanel.setLayoutParams(layoutParams);
     }
 
@@ -106,12 +107,12 @@ public class QSContainerImpl extends FrameLayout {
     }
 
     public void updateExpansion() {
-        int calculateContainerHeight = calculateContainerHeight();
-        setBottom(getTop() + calculateContainerHeight);
-        this.mQSDetail.setBottom(getTop() + calculateContainerHeight);
-        this.mQSFooter.setTranslationY(calculateContainerHeight - this.mQSFooter.getHeight());
+        int iCalculateContainerHeight = calculateContainerHeight();
+        setBottom(getTop() + iCalculateContainerHeight);
+        this.mQSDetail.setBottom(getTop() + iCalculateContainerHeight);
+        this.mQSFooter.setTranslationY(iCalculateContainerHeight - this.mQSFooter.getHeight());
         this.mBackground.setTop(this.mQSPanel.getTop());
-        this.mBackground.setBottom(calculateContainerHeight);
+        this.mBackground.setBottom(iCalculateContainerHeight);
     }
 
     protected int calculateContainerHeight() {

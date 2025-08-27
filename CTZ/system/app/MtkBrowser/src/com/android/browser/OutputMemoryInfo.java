@@ -2,15 +2,16 @@ package com.android.browser;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class OutputMemoryInfo extends AsyncTask<TabControl, Void, Void> {
     private String savedFileName;
     private TabControl tabController = null;
     private boolean logToFile = false;
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
     @Override // android.os.AsyncTask
-    public Void doInBackground(TabControl... tabControlArr) {
+    protected Void doInBackground(TabControl... tabControlArr) {
         if (tabControlArr.length != 2) {
             Log.d("browser", "Incorrect parameters to OutputMemoryInfo's doInBackground(): " + String.valueOf(tabControlArr.length));
             return null;

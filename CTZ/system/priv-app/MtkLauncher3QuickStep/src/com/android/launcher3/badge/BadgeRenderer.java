@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import com.android.launcher3.graphics.ShadowGenerator;
+
 /* loaded from: classes.dex */
 public class BadgeRenderer {
     private static final float DOT_SCALE = 0.6f;
@@ -38,9 +39,7 @@ public class BadgeRenderer {
             return;
         }
         canvas.save();
-        float f2 = rect.right - (this.mDotCenterOffset / 2.0f);
-        float f3 = rect.top + (this.mDotCenterOffset / 2.0f);
-        canvas.translate(f2 + Math.min(this.mOffset, point.x), f3 - Math.min(this.mOffset, point.y));
+        canvas.translate((rect.right - (this.mDotCenterOffset / 2.0f)) + Math.min(this.mOffset, point.x), (rect.top + (this.mDotCenterOffset / 2.0f)) - Math.min(this.mOffset, point.y));
         canvas.scale(f, f);
         this.mCirclePaint.setColor(ViewCompat.MEASURED_STATE_MASK);
         canvas.drawBitmap(this.mBackgroundWithShadow, this.mBitmapOffset, this.mBitmapOffset, this.mCirclePaint);

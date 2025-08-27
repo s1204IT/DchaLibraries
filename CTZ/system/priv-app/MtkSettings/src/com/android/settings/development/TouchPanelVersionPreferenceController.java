@@ -6,6 +6,7 @@ import android.provider.Settings;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class TouchPanelVersionPreferenceController extends DeveloperOptionsPreferenceController implements PreferenceControllerMixin, OnActivityResultListener {
     public TouchPanelVersionPreferenceController(Context context) {
@@ -34,7 +35,7 @@ public class TouchPanelVersionPreferenceController extends DeveloperOptionsPrefe
     }
 
     Intent getActivityStartIntent() {
-        return new Intent(this.mContext, AppPicker.class);
+        return new Intent(this.mContext, (Class<?>) AppPicker.class);
     }
 
     private void updatePreferenceSummary() {

@@ -1,4 +1,5 @@
 package com.mediatek.lbs.em2.utils;
+
 /* loaded from: classes.dex */
 public class UpSetting {
     public boolean caEnable = false;

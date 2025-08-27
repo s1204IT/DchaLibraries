@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.content.pm.UserInfo;
 import android.os.UserHandle;
 import android.os.UserManager;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class RestrictedLockUtils {
     static Proxy sProxy = new Proxy();
@@ -36,14 +38,14 @@ public class RestrictedLockUtils {
                 return getProfileOwner(context, str, identifier);
             }
             return EnforcedAdmin.createDefaultEnforcedAdminWithRestriction(str);
-        } else if (userRestrictionSource != 2) {
-            return null;
-        } else {
-            if (identifier == i) {
-                return getDeviceOwner(context, str);
-            }
-            return EnforcedAdmin.createDefaultEnforcedAdminWithRestriction(str);
         }
+        if (userRestrictionSource != 2) {
+            return null;
+        }
+        if (identifier == i) {
+            return getDeviceOwner(context, str);
+        }
+        return EnforcedAdmin.createDefaultEnforcedAdminWithRestriction(str);
     }
 
     public static boolean hasBaseUserRestriction(Context context, String str, int i) {
@@ -70,12 +72,12 @@ public class RestrictedLockUtils {
 
     public static void sendShowAdminSupportDetailsIntent(Context context, EnforcedAdmin enforcedAdmin) {
         Intent showAdminSupportDetailsIntent = getShowAdminSupportDetailsIntent(context, enforcedAdmin);
-        int myUserId = UserHandle.myUserId();
+        int iMyUserId = UserHandle.myUserId();
         if (enforcedAdmin != null && enforcedAdmin.userId != -10000 && isCurrentUserOrProfile(context, enforcedAdmin.userId)) {
-            myUserId = enforcedAdmin.userId;
+            iMyUserId = enforcedAdmin.userId;
         }
         showAdminSupportDetailsIntent.putExtra("android.app.extra.RESTRICTION", enforcedAdmin.enforcedRestriction);
-        context.startActivityAsUser(showAdminSupportDetailsIntent, new UserHandle(myUserId));
+        context.startActivityAsUser(showAdminSupportDetailsIntent, new UserHandle(iMyUserId));
     }
 
     public static Intent getShowAdminSupportDetailsIntent(Context context, EnforcedAdmin enforcedAdmin) {
@@ -84,25 +86,25 @@ public class RestrictedLockUtils {
             if (enforcedAdmin.component != null) {
                 intent.putExtra("android.app.extra.DEVICE_ADMIN", enforcedAdmin.component);
             }
-            int myUserId = UserHandle.myUserId();
+            int iMyUserId = UserHandle.myUserId();
             if (enforcedAdmin.userId != -10000) {
-                myUserId = enforcedAdmin.userId;
+                iMyUserId = enforcedAdmin.userId;
             }
-            intent.putExtra("android.intent.extra.USER_ID", myUserId);
+            intent.putExtra("android.intent.extra.USER_ID", iMyUserId);
         }
         return intent;
     }
 
     public static boolean isCurrentUserOrProfile(Context context, int i) {
-        for (UserInfo userInfo : UserManager.get(context).getProfiles(UserHandle.myUserId())) {
-            if (userInfo.id == i) {
+        Iterator it = UserManager.get(context).getProfiles(UserHandle.myUserId()).iterator();
+        while (it.hasNext()) {
+            if (((UserInfo) it.next()).id == i) {
                 return true;
             }
         }
         return false;
     }
 
-    /* loaded from: classes.dex */
     public static class EnforcedAdmin {
         public static final EnforcedAdmin MULTIPLE_ENFORCED_ADMIN = new EnforcedAdmin();
         public ComponentName component;
@@ -153,7 +155,6 @@ public class RestrictedLockUtils {
         }
     }
 
-    /* loaded from: classes.dex */
     static class Proxy {
         Proxy() {
         }

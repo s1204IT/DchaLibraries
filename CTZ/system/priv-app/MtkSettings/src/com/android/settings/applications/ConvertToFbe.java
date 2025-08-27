@@ -10,6 +10,7 @@ import com.android.settings.R;
 import com.android.settings.core.InstrumentedFragment;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.password.ChooseLockSettingsHelper;
+
 /* loaded from: classes.dex */
 public class ConvertToFbe extends InstrumentedFragment {
     private boolean runKeyguardConfirmation(int i) {
@@ -24,14 +25,14 @@ public class ConvertToFbe extends InstrumentedFragment {
 
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate = layoutInflater.inflate(R.layout.convert_fbe, (ViewGroup) null);
-        ((Button) inflate.findViewById(R.id.button_convert_fbe)).setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.-$$Lambda$ConvertToFbe$cKWuNkHe-dkbg8HKJCoDk07_9og
+        View viewInflate = layoutInflater.inflate(R.layout.convert_fbe, (ViewGroup) null);
+        ((Button) viewInflate.findViewById(R.id.button_convert_fbe)).setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.-$$Lambda$ConvertToFbe$cKWuNkHe-dkbg8HKJCoDk07_9og
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                ConvertToFbe.lambda$onCreateView$0(ConvertToFbe.this, view);
+                ConvertToFbe.lambda$onCreateView$0(this.f$0, view);
             }
         });
-        return inflate;
+        return viewInflate;
     }
 
     public static /* synthetic */ void lambda$onCreateView$0(ConvertToFbe convertToFbe, View view) {

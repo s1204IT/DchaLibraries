@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.TwoStatePreference;
 import com.android.settings.widget.MasterSwitchPreference;
+
 /* loaded from: classes.dex */
 public abstract class TogglePreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener {
     private static final String TAG = "TogglePrefController";

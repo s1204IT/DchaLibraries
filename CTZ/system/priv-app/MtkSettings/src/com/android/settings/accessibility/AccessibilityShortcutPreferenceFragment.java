@@ -19,6 +19,7 @@ import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.search.Indexable;
 import com.android.settings.widget.SwitchBar;
 import com.android.settingslib.accessibility.AccessibilityUtils;
+
 /* loaded from: classes.dex */
 public class AccessibilityShortcutPreferenceFragment extends ToggleFeaturePreferenceFragment implements Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.accessibility.AccessibilityShortcutPreferenceFragment.2
@@ -54,7 +55,7 @@ public class AccessibilityShortcutPreferenceFragment extends ToggleFeaturePrefer
         this.mOnLockScreenSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.accessibility.-$$Lambda$AccessibilityShortcutPreferenceFragment$v5UnURHl-V2dl7gTZw_kdUDDZ6E
             @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
             public final boolean onPreferenceChange(Preference preference, Object obj) {
-                return AccessibilityShortcutPreferenceFragment.lambda$onCreate$0(AccessibilityShortcutPreferenceFragment.this, preference, obj);
+                return AccessibilityShortcutPreferenceFragment.lambda$onCreate$0(this.f$0, preference, obj);
             }
         });
         this.mFooterPreferenceMixin.createFooterPreference().setTitle(R.string.accessibility_shortcut_description);
@@ -78,9 +79,8 @@ public class AccessibilityShortcutPreferenceFragment extends ToggleFeaturePrefer
         super.onPause();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.accessibility_shortcut_settings;
     }
 
@@ -90,7 +90,7 @@ public class AccessibilityShortcutPreferenceFragment extends ToggleFeaturePrefer
         this.mSwitchBar.addOnSwitchChangeListener(new SwitchBar.OnSwitchChangeListener() { // from class: com.android.settings.accessibility.-$$Lambda$AccessibilityShortcutPreferenceFragment$B1JGpZUcoOdF9ofKXLGiPDgZ6Bo
             @Override // com.android.settings.widget.SwitchBar.OnSwitchChangeListener
             public final void onSwitchChanged(Switch r2, boolean z) {
-                AccessibilityShortcutPreferenceFragment.lambda$onInstallSwitchBarToggleSwitch$1(AccessibilityShortcutPreferenceFragment.this, r2, z);
+                AccessibilityShortcutPreferenceFragment.lambda$onInstallSwitchBarToggleSwitch$1(this.f$0, r2, z);
             }
         });
     }
@@ -112,8 +112,7 @@ public class AccessibilityShortcutPreferenceFragment extends ToggleFeaturePrefer
         updatePreferences();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreferences() {
+    private void updatePreferences() {
         ContentResolver contentResolver = getContentResolver();
         Context context = getContext();
         this.mServicePreference.setSummary(getServiceName(context));

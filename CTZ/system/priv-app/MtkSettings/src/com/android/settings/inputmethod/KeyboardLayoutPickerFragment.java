@@ -12,6 +12,7 @@ import com.android.settings.SettingsPreferenceFragment;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class KeyboardLayoutPickerFragment extends SettingsPreferenceFragment implements InputManager.InputDeviceListener {
     private InputManager mIm;
@@ -45,10 +46,10 @@ public class KeyboardLayoutPickerFragment extends SettingsPreferenceFragment imp
         InputDevice inputDeviceByDescriptor = this.mIm.getInputDeviceByDescriptor(this.mInputDeviceIdentifier.getDescriptor());
         if (inputDeviceByDescriptor == null) {
             getActivity().finish();
-            return;
+        } else {
+            this.mInputDeviceId = inputDeviceByDescriptor.getId();
+            updateCheckedState();
         }
-        this.mInputDeviceId = inputDeviceByDescriptor.getId();
-        updateCheckedState();
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -92,16 +93,15 @@ public class KeyboardLayoutPickerFragment extends SettingsPreferenceFragment imp
     }
 
     private PreferenceScreen createPreferenceHierarchy() {
-        KeyboardLayout[] keyboardLayoutArr;
-        PreferenceScreen createPreferenceScreen = getPreferenceManager().createPreferenceScreen(getActivity());
+        PreferenceScreen preferenceScreenCreatePreferenceScreen = getPreferenceManager().createPreferenceScreen(getActivity());
         for (KeyboardLayout keyboardLayout : this.mKeyboardLayouts) {
             CheckBoxPreference checkBoxPreference = new CheckBoxPreference(getPrefContext());
             checkBoxPreference.setTitle(keyboardLayout.getLabel());
             checkBoxPreference.setSummary(keyboardLayout.getCollection());
-            createPreferenceScreen.addPreference(checkBoxPreference);
+            preferenceScreenCreatePreferenceScreen.addPreference(checkBoxPreference);
             this.mPreferenceMap.put(checkBoxPreference, keyboardLayout);
         }
-        return createPreferenceScreen;
+        return preferenceScreenCreatePreferenceScreen;
     }
 
     private void updateCheckedState() {

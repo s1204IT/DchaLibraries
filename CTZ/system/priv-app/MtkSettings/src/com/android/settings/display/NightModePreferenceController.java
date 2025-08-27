@@ -8,6 +8,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class NightModePreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     public NightModePreferenceController(Context context) {
@@ -38,7 +39,7 @@ public class NightModePreferenceController extends AbstractPreferenceController 
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         try {
             ((UiModeManager) this.mContext.getSystemService("uimode")).setNightMode(Integer.parseInt((String) obj));
             return true;

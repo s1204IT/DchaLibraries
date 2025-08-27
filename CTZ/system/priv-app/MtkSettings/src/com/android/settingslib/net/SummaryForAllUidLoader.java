@@ -7,6 +7,7 @@ import android.net.NetworkStats;
 import android.net.NetworkTemplate;
 import android.os.Bundle;
 import android.os.RemoteException;
+
 /* loaded from: classes.dex */
 public class SummaryForAllUidLoader extends AsyncTaskLoader<NetworkStats> {
     private final Bundle mArgs;
@@ -32,6 +33,7 @@ public class SummaryForAllUidLoader extends AsyncTaskLoader<NetworkStats> {
         forceLoad();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // android.content.AsyncTaskLoader
     public NetworkStats loadInBackground() {

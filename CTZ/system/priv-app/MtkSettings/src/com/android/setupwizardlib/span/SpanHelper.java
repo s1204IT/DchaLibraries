@@ -1,6 +1,7 @@
 package com.android.setupwizardlib.span;
 
 import android.text.Spannable;
+
 /* loaded from: classes.dex */
 public class SpanHelper {
     public static void replaceSpan(Spannable spannable, Object obj, Object obj2) {

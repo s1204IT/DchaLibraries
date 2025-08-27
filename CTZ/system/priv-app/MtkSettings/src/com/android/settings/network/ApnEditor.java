@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class ApnEditor extends SettingsPreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener, View.OnKeyListener {
     static final int APN_INDEX = 2;
@@ -103,27 +105,29 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
                 if (intent.getBooleanExtra("state", false)) {
                     Log.d(ApnEditor.TAG, "receiver: ACTION_AIRPLANE_MODE_CHANGED in ApnEditor");
                     ApnEditor.this.exitWithoutSave();
+                    return;
                 }
-            } else if (!action.equals("android.intent.action.ANY_DATA_STATE")) {
+                return;
+            }
+            if (!action.equals("android.intent.action.ANY_DATA_STATE")) {
                 if (action.equals("android.intent.action.SIM_STATE_CHANGED")) {
                     Log.d(ApnEditor.TAG, "receiver: ACTION_SIM_STATE_CHANGED");
                     ApnEditor.this.updateScreenEnableState();
+                    return;
                 }
-            } else {
-                String stringExtra = intent.getStringExtra("apnType");
-                String str = ApnEditor.TAG;
-                Log.d(str, "Receiver,send MMS status, get type = " + stringExtra);
-                if ("mms".equals(stringExtra)) {
-                    ApnEditor.this.updateScreenEnableState();
-                }
+                return;
+            }
+            String stringExtra = intent.getStringExtra("apnType");
+            Log.d(ApnEditor.TAG, "Receiver,send MMS status, get type = " + stringExtra);
+            if ("mms".equals(stringExtra)) {
+                ApnEditor.this.updateScreenEnableState();
             }
         }
     };
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws NumberFormatException {
         PersistableBundle config;
-        String[] strArr;
         super.onCreate(bundle);
         addPreferencesFromResource(R.xml.apn_editor);
         sNotSet = getResources().getString(R.string.apn_not_set);
@@ -149,8 +153,8 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         this.mCarrierEnabled = (SwitchPreference) findPreference("carrier_enabled");
         this.mBearerMulti = (MultiSelectListPreference) findPreference("bearer_multi");
         this.mBearerMulti.setOnPreferenceChangeListener(this);
-        this.mBearerMulti.setPositiveButtonText(17039370);
-        this.mBearerMulti.setNegativeButtonText(17039360);
+        this.mBearerMulti.setPositiveButtonText(android.R.string.ok);
+        this.mBearerMulti.setNegativeButtonText(android.R.string.cancel);
         this.mMvnoType = (ListPreference) findPreference("mvno_type");
         this.mMvnoType.setOnPreferenceChangeListener(this);
         this.mMvnoMatchData = (EditTextPreference) findPreference("mvno_match_data");
@@ -158,7 +162,7 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         String action = intent.getAction();
         this.mSubId = intent.getIntExtra("sub_id", -1);
         this.mReadOnlyApn = false;
-        Uri uri = null;
+        Uri data = null;
         this.mReadOnlyApnTypes = null;
         this.mReadOnlyApnFields = null;
         this.mApnExt = UtilsExt.getApnSettingsExt(getContext());
@@ -173,12 +177,12 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
             this.mReadOnlyApnFields = config.getStringArray("read_only_apn_fields_string_array");
         }
         if (action.equals("android.intent.action.EDIT")) {
-            uri = intent.getData();
-            if (uri.isPathPrefixMatch(Telephony.Carriers.CONTENT_URI)) {
+            data = intent.getData();
+            if (data.isPathPrefixMatch(Telephony.Carriers.CONTENT_URI)) {
                 this.mReadOnlyMode = intent.getBooleanExtra("readOnly", false);
                 Log.d(TAG, "Read only mode : " + this.mReadOnlyMode);
             } else {
-                Log.e(TAG, "Edit request not for carrier table. Uri: " + uri);
+                Log.e(TAG, "Edit request not for carrier table. Uri: " + data);
                 finish();
                 return;
             }
@@ -199,9 +203,9 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         }
         sProjection = this.mApnExt.customizeApnProjection(sProjection);
         this.mApnExt.customizePreference(this.mSubId, getPreferenceScreen());
-        if (uri != null) {
-            this.mApnData = getApnDataFromUri(uri);
-            Log.d(TAG, "uri = " + uri);
+        if (data != null) {
+            this.mApnData = getApnDataFromUri(data);
+            Log.d(TAG, "uri = " + data);
         } else {
             this.mApnData = new ApnData(sProjection.length);
             Log.d(TAG, "sProjection.length = " + sProjection.length);
@@ -243,18 +247,17 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean hasAllApns(String[] strArr) {
+    static boolean hasAllApns(String[] strArr) {
         if (ArrayUtils.isEmpty(strArr)) {
             return false;
         }
-        List asList = Arrays.asList(strArr);
-        if (asList.contains("*")) {
+        List listAsList = Arrays.asList(strArr);
+        if (listAsList.contains("*")) {
             Log.d(TAG, "hasAllApns: true because apnList.contains(PhoneConstants.APN_TYPE_ALL)");
             return true;
         }
         for (String str : PhoneConstants.APN_TYPES) {
-            if (!asList.contains(str)) {
+            if (!listAsList.contains(str)) {
                 return false;
             }
         }
@@ -269,9 +272,9 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         if (hasAllApns(strArr) || TextUtils.isEmpty(str)) {
             return true;
         }
-        List asList = Arrays.asList(strArr);
+        List listAsList = Arrays.asList(strArr);
         for (String str2 : str.split(",")) {
-            if (asList.contains(str2.trim())) {
+            if (listAsList.contains(str2.trim())) {
                 Log.d(TAG, "apnTypesMatch: true because match found for " + str2.trim());
                 return true;
             }
@@ -281,201 +284,52 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:68:0x00f4  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private Preference getPreferenceFromFieldName(String str) {
-        char c;
-        switch (str.hashCode()) {
-            case -2135515857:
-                if (str.equals("mvno_type")) {
-                    c = 19;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1954254981:
-                if (str.equals("mmsproxy")) {
-                    c = 7;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1640523526:
-                if (str.equals("carrier_enabled")) {
-                    c = 16;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1393032351:
-                if (str.equals("bearer")) {
-                    c = 17;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1230508389:
-                if (str.equals("bearer_bitmask")) {
-                    c = 18;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1039601666:
-                if (str.equals("roaming_protocol")) {
-                    c = 15;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -989163880:
-                if (str.equals("protocol")) {
-                    c = 14;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -905826493:
-                if (str.equals("server")) {
-                    c = 5;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -520149991:
-                if (str.equals("mvno_match_data")) {
-                    c = 20;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 96799:
-                if (str.equals("apn")) {
-                    c = 1;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 107917:
-                if (str.equals("mcc")) {
-                    c = '\n';
-                    break;
-                }
-                c = 65535;
-                break;
-            case 108258:
-                if (str.equals("mnc")) {
-                    c = 11;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3355632:
-                if (str.equals("mmsc")) {
-                    c = '\t';
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3373707:
-                if (str.equals("name")) {
-                    c = 0;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3446913:
-                if (str.equals("port")) {
-                    c = 3;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3575610:
-                if (str.equals("type")) {
-                    c = '\f';
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3599307:
-                if (str.equals("user")) {
-                    c = 4;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 106941038:
-                if (str.equals("proxy")) {
-                    c = 2;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1183882708:
-                if (str.equals("mmsport")) {
-                    c = '\b';
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1216985755:
-                if (str.equals("password")) {
-                    c = 6;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1433229538:
-                if (str.equals("authtype")) {
-                    c = '\r';
-                    break;
-                }
-                c = 65535;
-                break;
-            default:
-                c = 65535;
-                break;
-        }
-        switch (c) {
-            case 0:
+        switch (str) {
+            case "name":
                 return this.mName;
-            case 1:
+            case "apn":
                 return this.mApn;
-            case 2:
+            case "proxy":
                 return this.mProxy;
-            case 3:
+            case "port":
                 return this.mPort;
-            case 4:
+            case "user":
                 return this.mUser;
-            case 5:
+            case "server":
                 return this.mServer;
-            case 6:
+            case "password":
                 return this.mPassword;
-            case 7:
+            case "mmsproxy":
                 return this.mMmsProxy;
-            case '\b':
+            case "mmsport":
                 return this.mMmsPort;
-            case '\t':
+            case "mmsc":
                 return this.mMmsc;
-            case '\n':
+            case "mcc":
                 return this.mMcc;
-            case 11:
+            case "mnc":
                 return this.mMnc;
-            case '\f':
+            case "type":
                 return this.mApnType;
-            case '\r':
+            case "authtype":
                 return this.mAuthType;
-            case 14:
+            case "protocol":
                 return this.mProtocol;
-            case 15:
+            case "roaming_protocol":
                 return this.mRoamingProtocol;
-            case 16:
+            case "carrier_enabled":
                 return this.mCarrierEnabled;
-            case 17:
-            case 18:
+            case "bearer":
+            case "bearer_bitmask":
                 return this.mBearerMulti;
-            case 19:
+            case "mvno_type":
                 return this.mMvnoType;
-            case 20:
+            case "mvno_match_data":
                 return this.mMvnoMatchData;
             default:
                 return null;
@@ -519,7 +373,7 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         return 13;
     }
 
-    void fillUI(boolean z) {
+    void fillUI(boolean z) throws NumberFormatException {
         Log.d(TAG, "fillUi... firstTime = " + z);
         if (z) {
             this.mName.setText(this.mApnData.getString(1));
@@ -532,48 +386,48 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
             this.mMmsProxy.setText(this.mApnData.getString(12));
             this.mMmsPort.setText(this.mApnData.getString(13));
             this.mMmsc.setText(this.mApnData.getString(8));
-            this.mMcc.setText(this.mApnData.getString(9));
+            this.mMcc.setText(this.mApnData.getString(MCC_INDEX));
             this.mMnc.setText(this.mApnData.getString(10));
             this.mApnType.setText(this.mApnData.getString(15));
             if (this.mNewApn) {
                 String simOperator = this.mTelephonyManager.getSimOperator(this.mSubId);
                 Log.d(TAG, " fillUi, numeric = " + simOperator);
-                String updateMccMncForCdma = CdmaApnSetting.updateMccMncForCdma(simOperator, this.mSubId);
-                if (updateMccMncForCdma != null && updateMccMncForCdma.length() > 4) {
-                    String substring = updateMccMncForCdma.substring(0, 3);
-                    String substring2 = updateMccMncForCdma.substring(3);
-                    this.mMcc.setText(substring);
-                    this.mMnc.setText(substring2);
-                    this.mCurMnc = substring2;
-                    this.mCurMcc = substring;
+                String strUpdateMccMncForCdma = CdmaApnSetting.updateMccMncForCdma(simOperator, this.mSubId);
+                if (strUpdateMccMncForCdma != null && strUpdateMccMncForCdma.length() > 4) {
+                    String strSubstring = strUpdateMccMncForCdma.substring(0, 3);
+                    String strSubstring2 = strUpdateMccMncForCdma.substring(3);
+                    this.mMcc.setText(strSubstring);
+                    this.mMnc.setText(strSubstring2);
+                    this.mCurMnc = strSubstring2;
+                    this.mCurMcc = strSubstring;
                 }
                 this.mSourceType = 1;
             } else {
                 this.mSourceType = this.mApnData.getInteger(25).intValue();
             }
-            int intValue = this.mApnData.getInteger(14, -1).intValue();
-            if (intValue != -1) {
-                this.mAuthType.setValueIndex(intValue);
+            int iIntValue = this.mApnData.getInteger(14, -1).intValue();
+            if (iIntValue != -1) {
+                this.mAuthType.setValueIndex(iIntValue);
             } else {
                 this.mAuthType.setValue(null);
             }
             this.mProtocol.setValue(this.mApnData.getString(16));
             this.mRoamingProtocol.setValue(this.mApnData.getString(20));
-            this.mCarrierEnabled.setChecked(this.mApnData.getInteger(17, 1).intValue() == 1);
+            this.mCarrierEnabled.setChecked(this.mApnData.getInteger(CARRIER_ENABLED_INDEX, 1).intValue() == 1);
             this.mBearerInitialVal = this.mApnData.getInteger(18, 0).intValue();
             HashSet hashSet = new HashSet();
-            int intValue2 = this.mApnData.getInteger(19, 0).intValue();
-            if (intValue2 == 0) {
+            int iIntValue2 = this.mApnData.getInteger(19, 0).intValue();
+            if (iIntValue2 == 0) {
                 if (this.mBearerInitialVal == 0) {
                     hashSet.add("0");
                 }
             } else {
                 int i = 1;
-                while (intValue2 != 0) {
-                    if ((intValue2 & 1) == 1) {
+                while (iIntValue2 != 0) {
+                    if ((iIntValue2 & 1) == 1) {
                         hashSet.add("" + i);
                     }
-                    intValue2 >>= 1;
+                    iIntValue2 >>= 1;
                     i++;
                 }
             }
@@ -606,9 +460,9 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         this.mApnType.setSummary(checkNull(this.mApnType.getText()));
         String value = this.mAuthType.getValue();
         if (value != null) {
-            int parseInt = Integer.parseInt(value);
-            this.mAuthType.setValueIndex(parseInt);
-            this.mAuthType.setSummary(getResources().getStringArray(R.array.apn_auth_entries)[parseInt]);
+            int i2 = Integer.parseInt(value);
+            this.mAuthType.setValueIndex(i2);
+            this.mAuthType.setSummary(getResources().getStringArray(R.array.apn_auth_entries)[i2]);
         } else {
             this.mAuthType.setSummary(sNotSet);
         }
@@ -625,144 +479,142 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
     }
 
     private String protocolDescription(String str, ListPreference listPreference) {
-        int findIndexOfValue = listPreference.findIndexOfValue(str);
-        if (findIndexOfValue == -1) {
+        int iFindIndexOfValue = listPreference.findIndexOfValue(str);
+        if (iFindIndexOfValue == -1) {
             return null;
         }
         try {
-            return getResources().getStringArray(R.array.apn_protocol_entries)[findIndexOfValue];
+            return getResources().getStringArray(R.array.apn_protocol_entries)[iFindIndexOfValue];
         } catch (ArrayIndexOutOfBoundsException e) {
             return null;
         }
     }
 
-    private String bearerMultiDescription(Set<String> set) {
+    private String bearerMultiDescription(Set<String> set) throws Resources.NotFoundException {
         String[] stringArray = getResources().getStringArray(R.array.bearer_entries);
         StringBuilder sb = new StringBuilder();
+        Iterator<String> it = set.iterator();
         boolean z = true;
-        for (String str : set) {
-            int findIndexOfValue = this.mBearerMulti.findIndexOfValue(str);
+        while (it.hasNext()) {
+            int iFindIndexOfValue = this.mBearerMulti.findIndexOfValue(it.next());
             if (z) {
                 try {
-                    sb.append(stringArray[findIndexOfValue]);
+                    sb.append(stringArray[iFindIndexOfValue]);
                     z = false;
                 } catch (ArrayIndexOutOfBoundsException e) {
                 }
             } else {
-                sb.append(", " + stringArray[findIndexOfValue]);
+                sb.append(", " + stringArray[iFindIndexOfValue]);
             }
         }
-        String sb2 = sb.toString();
-        if (!TextUtils.isEmpty(sb2)) {
-            return sb2;
+        String string = sb.toString();
+        if (!TextUtils.isEmpty(string)) {
+            return string;
         }
         return null;
     }
 
-    private String mvnoDescription(String str) {
-        int findIndexOfValue = this.mMvnoType.findIndexOfValue(str);
+    private String mvnoDescription(String str) throws Resources.NotFoundException {
+        int iFindIndexOfValue = this.mMvnoType.findIndexOfValue(str);
         String value = this.mMvnoType.getValue();
-        if (findIndexOfValue == -1) {
+        if (iFindIndexOfValue == -1) {
             return null;
         }
         String[] stringArray = getResources().getStringArray(R.array.ext_mvno_type_entries);
-        boolean z = true;
-        boolean z2 = this.mReadOnlyApn || (this.mReadOnlyApnFields != null && Arrays.asList(this.mReadOnlyApnFields).contains("mvno_match_data"));
-        EditTextPreference editTextPreference = this.mMvnoMatchData;
-        if (z2 || findIndexOfValue == 0) {
-            z = false;
-        }
-        editTextPreference.setEnabled(z);
+        this.mMvnoMatchData.setEnabled(((this.mReadOnlyApn || (this.mReadOnlyApnFields != null && Arrays.asList(this.mReadOnlyApnFields).contains("mvno_match_data"))) || iFindIndexOfValue == 0) ? false : true);
         if (str != null && !str.equals(value)) {
-            if (stringArray[findIndexOfValue].equals("SPN")) {
+            if (stringArray[iFindIndexOfValue].equals("SPN")) {
                 this.mMvnoMatchData.setText(this.mTelephonyManager.getSimOperatorName());
-            } else if (stringArray[findIndexOfValue].equals("IMSI")) {
+            } else if (stringArray[iFindIndexOfValue].equals("IMSI")) {
                 String simOperator = this.mTelephonyManager.getSimOperator(this.mSubId);
                 this.mMvnoMatchData.setText(simOperator + "x");
-            } else if (stringArray[findIndexOfValue].equals("GID")) {
+            } else if (stringArray[iFindIndexOfValue].equals("GID")) {
                 this.mMvnoMatchData.setText(this.mTelephonyManager.getGroupIdLevel1());
             }
         }
         try {
-            return stringArray[findIndexOfValue];
+            return stringArray[iFindIndexOfValue];
         } catch (ArrayIndexOutOfBoundsException e) {
             return null;
         }
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws Resources.NotFoundException, NumberFormatException {
         String key = preference.getKey();
         if ("auth_type".equals(key)) {
             try {
-                int parseInt = Integer.parseInt((String) obj);
-                this.mAuthType.setValueIndex(parseInt);
-                this.mAuthType.setSummary(getResources().getStringArray(R.array.apn_auth_entries)[parseInt]);
+                int i = Integer.parseInt((String) obj);
+                this.mAuthType.setValueIndex(i);
+                this.mAuthType.setSummary(getResources().getStringArray(R.array.apn_auth_entries)[i]);
                 return true;
             } catch (NumberFormatException e) {
                 return false;
             }
-        } else if ("apn_protocol".equals(key)) {
+        }
+        if ("apn_protocol".equals(key)) {
             String str = (String) obj;
-            String protocolDescription = protocolDescription(str, this.mProtocol);
-            if (protocolDescription == null) {
+            String strProtocolDescription = protocolDescription(str, this.mProtocol);
+            if (strProtocolDescription == null) {
                 return false;
             }
-            this.mProtocol.setSummary(protocolDescription);
+            this.mProtocol.setSummary(strProtocolDescription);
             this.mProtocol.setValue(str);
             return true;
-        } else if ("apn_roaming_protocol".equals(key)) {
+        }
+        if ("apn_roaming_protocol".equals(key)) {
             String str2 = (String) obj;
-            String protocolDescription2 = protocolDescription(str2, this.mRoamingProtocol);
-            if (protocolDescription2 == null) {
+            String strProtocolDescription2 = protocolDescription(str2, this.mRoamingProtocol);
+            if (strProtocolDescription2 == null) {
                 return false;
             }
-            this.mRoamingProtocol.setSummary(protocolDescription2);
+            this.mRoamingProtocol.setSummary(strProtocolDescription2);
             this.mRoamingProtocol.setValue(str2);
             return true;
-        } else if ("bearer_multi".equals(key)) {
+        }
+        if ("bearer_multi".equals(key)) {
             Set<String> set = (Set) obj;
-            String bearerMultiDescription = bearerMultiDescription(set);
-            if (bearerMultiDescription == null) {
+            String strBearerMultiDescription = bearerMultiDescription(set);
+            if (strBearerMultiDescription == null) {
                 return false;
             }
             this.mBearerMulti.setValues(set);
-            this.mBearerMulti.setSummary(bearerMultiDescription);
+            this.mBearerMulti.setSummary(strBearerMultiDescription);
             return true;
-        } else if ("mvno_type".equals(key)) {
+        }
+        if ("mvno_type".equals(key)) {
             String str3 = (String) obj;
-            String mvnoDescription = mvnoDescription(str3);
-            if (mvnoDescription == null) {
+            String strMvnoDescription = mvnoDescription(str3);
+            if (strMvnoDescription == null) {
                 return false;
             }
             this.mMvnoType.setValue(str3);
-            this.mMvnoType.setSummary(mvnoDescription);
+            this.mMvnoType.setSummary(strMvnoDescription);
             return true;
-        } else if (!preference.equals(this.mPassword)) {
+        }
+        if (!preference.equals(this.mPassword)) {
             if (preference.equals(this.mCarrierEnabled) || preference.equals(this.mBearerMulti)) {
                 return true;
             }
             preference.setSummary(checkNull(obj != null ? String.valueOf(obj) : null));
             return true;
-        } else {
-            preference.setSummary(starify(obj != null ? String.valueOf(obj) : ""));
-            return true;
         }
+        preference.setSummary(starify(obj != null ? String.valueOf(obj) : ""));
+        return true;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
-        String str = TAG;
-        Log.d(str, "onCreateOptionsMenu mReadOnlyMode = " + this.mReadOnlyMode);
+        Log.d(TAG, "onCreateOptionsMenu mReadOnlyMode = " + this.mReadOnlyMode);
         if (this.mReadOnlyMode) {
             return;
         }
         if (!this.mNewApn && !this.mReadOnlyApn && this.mSourceType != 0) {
             menu.add(0, 1, 0, R.string.menu_delete).setIcon(R.drawable.ic_delete);
         }
-        menu.add(0, 2, 0, R.string.menu_save).setIcon(17301582);
-        menu.add(0, 3, 0, R.string.menu_cancel).setIcon(17301560);
+        menu.add(0, 2, 0, R.string.menu_save).setIcon(android.R.drawable.ic_menu_save);
+        menu.add(0, 3, 0, R.string.menu_cancel).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -797,14 +649,14 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
 
     @Override // android.view.View.OnKeyListener
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
-        if (keyEvent.getAction() == 0 && i == 4) {
-            if (validateAndSaveApnData()) {
-                finish();
-                return true;
-            }
+        if (keyEvent.getAction() != 0 || i != 4) {
+            return false;
+        }
+        if (validateAndSaveApnData()) {
+            finish();
             return true;
         }
-        return false;
+        return true;
     }
 
     boolean setStringValueAndCheckIfDiff(ContentValues contentValues, String str, String str2, boolean z, int i) {
@@ -831,38 +683,38 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         if (this.mReadOnlyApn) {
             return true;
         }
-        String checkNotSet = checkNotSet(this.mName.getText());
-        String checkNotSet2 = checkNotSet(this.mApn.getText());
-        String checkNotSet3 = checkNotSet(this.mMcc.getText());
-        String checkNotSet4 = checkNotSet(this.mMnc.getText());
+        String strCheckNotSet = checkNotSet(this.mName.getText());
+        String strCheckNotSet2 = checkNotSet(this.mApn.getText());
+        String strCheckNotSet3 = checkNotSet(this.mMcc.getText());
+        String strCheckNotSet4 = checkNotSet(this.mMnc.getText());
         if (validateApnData() != null) {
             showError();
             return false;
         }
         ContentValues contentValues = new ContentValues();
-        boolean stringValueAndCheckIfDiff = setStringValueAndCheckIfDiff(contentValues, "mmsc", checkNotSet(this.mMmsc.getText()), setStringValueAndCheckIfDiff(contentValues, "password", checkNotSet(this.mPassword.getText()), setStringValueAndCheckIfDiff(contentValues, "server", checkNotSet(this.mServer.getText()), setStringValueAndCheckIfDiff(contentValues, "user", checkNotSet(this.mUser.getText()), setStringValueAndCheckIfDiff(contentValues, "mmsport", checkNotSet(this.mMmsPort.getText()), setStringValueAndCheckIfDiff(contentValues, "mmsproxy", checkNotSet(this.mMmsProxy.getText()), setStringValueAndCheckIfDiff(contentValues, "port", checkNotSet(this.mPort.getText()), setStringValueAndCheckIfDiff(contentValues, "proxy", checkNotSet(this.mProxy.getText()), setStringValueAndCheckIfDiff(contentValues, "apn", checkNotSet2, setStringValueAndCheckIfDiff(contentValues, "name", checkNotSet, this.mNewApn, 1), 2), 3), 4), 12), 13), 5), 6), 7), 8);
+        boolean stringValueAndCheckIfDiff = setStringValueAndCheckIfDiff(contentValues, "mmsc", checkNotSet(this.mMmsc.getText()), setStringValueAndCheckIfDiff(contentValues, "password", checkNotSet(this.mPassword.getText()), setStringValueAndCheckIfDiff(contentValues, "server", checkNotSet(this.mServer.getText()), setStringValueAndCheckIfDiff(contentValues, "user", checkNotSet(this.mUser.getText()), setStringValueAndCheckIfDiff(contentValues, "mmsport", checkNotSet(this.mMmsPort.getText()), setStringValueAndCheckIfDiff(contentValues, "mmsproxy", checkNotSet(this.mMmsProxy.getText()), setStringValueAndCheckIfDiff(contentValues, "port", checkNotSet(this.mPort.getText()), setStringValueAndCheckIfDiff(contentValues, "proxy", checkNotSet(this.mProxy.getText()), setStringValueAndCheckIfDiff(contentValues, "apn", strCheckNotSet2, setStringValueAndCheckIfDiff(contentValues, "name", strCheckNotSet, this.mNewApn, 1), 2), 3), 4), 12), 13), 5), 6), 7), 8);
         String value = this.mAuthType.getValue();
         if (value != null) {
             stringValueAndCheckIfDiff = setIntValueAndCheckIfDiff(contentValues, "authtype", Integer.parseInt(value), stringValueAndCheckIfDiff, 14);
         }
-        boolean stringValueAndCheckIfDiff2 = setStringValueAndCheckIfDiff(contentValues, "mnc", checkNotSet4, setStringValueAndCheckIfDiff(contentValues, "mcc", checkNotSet3, setStringValueAndCheckIfDiff(contentValues, "type", checkNotSet(getUserEnteredApnType()), setStringValueAndCheckIfDiff(contentValues, "roaming_protocol", checkNotSet(this.mRoamingProtocol.getValue()), setStringValueAndCheckIfDiff(contentValues, "protocol", checkNotSet(this.mProtocol.getValue()), stringValueAndCheckIfDiff, 16), 20), 15), 9), 10);
-        contentValues.put("numeric", checkNotSet3 + checkNotSet4);
-        if (this.mCurMnc != null && this.mCurMcc != null && this.mCurMnc.equals(checkNotSet4) && this.mCurMcc.equals(checkNotSet3)) {
+        boolean stringValueAndCheckIfDiff2 = setStringValueAndCheckIfDiff(contentValues, "mnc", strCheckNotSet4, setStringValueAndCheckIfDiff(contentValues, "mcc", strCheckNotSet3, setStringValueAndCheckIfDiff(contentValues, "type", checkNotSet(getUserEnteredApnType()), setStringValueAndCheckIfDiff(contentValues, "roaming_protocol", checkNotSet(this.mRoamingProtocol.getValue()), setStringValueAndCheckIfDiff(contentValues, "protocol", checkNotSet(this.mProtocol.getValue()), stringValueAndCheckIfDiff, 16), 20), 15), MCC_INDEX), 10);
+        contentValues.put("numeric", strCheckNotSet3 + strCheckNotSet4);
+        if (this.mCurMnc != null && this.mCurMcc != null && this.mCurMnc.equals(strCheckNotSet4) && this.mCurMcc.equals(strCheckNotSet3)) {
             contentValues.put("current", (Integer) 1);
         }
         Iterator<String> it = this.mBearerMulti.getValues().iterator();
-        int i3 = 0;
+        int bitmaskForTech = 0;
         while (true) {
             if (it.hasNext()) {
                 String next = it.next();
                 if (Integer.parseInt(next) != 0) {
-                    i3 |= ServiceState.getBitmaskForTech(Integer.parseInt(next));
+                    bitmaskForTech |= ServiceState.getBitmaskForTech(Integer.parseInt(next));
                 } else {
                     i = 0;
                     break;
                 }
             } else {
-                i = i3;
+                i = bitmaskForTech;
                 break;
             }
         }
@@ -872,7 +724,7 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         } else {
             i2 = 0;
         }
-        boolean intValueAndCheckIfDiff2 = setIntValueAndCheckIfDiff(contentValues, "carrier_enabled", this.mCarrierEnabled.isChecked() ? 1 : 0, setStringValueAndCheckIfDiff(contentValues, "mvno_match_data", checkNotSet(this.mMvnoMatchData.getText()), setStringValueAndCheckIfDiff(contentValues, "mvno_type", checkNotSet(this.mMvnoType.getValue()), setIntValueAndCheckIfDiff(contentValues, "bearer", i2, intValueAndCheckIfDiff, 18), 21), 22), 17);
+        boolean intValueAndCheckIfDiff2 = setIntValueAndCheckIfDiff(contentValues, "carrier_enabled", this.mCarrierEnabled.isChecked() ? 1 : 0, setStringValueAndCheckIfDiff(contentValues, "mvno_match_data", checkNotSet(this.mMvnoMatchData.getText()), setStringValueAndCheckIfDiff(contentValues, "mvno_type", checkNotSet(this.mMvnoType.getValue()), setIntValueAndCheckIfDiff(contentValues, "bearer", i2, intValueAndCheckIfDiff, 18), 21), 22), CARRIER_ENABLED_INDEX);
         contentValues.put("edited", (Integer) 1);
         contentValues.put("sourcetype", Integer.valueOf(this.mSourceType));
         this.mApnExt.saveApnValues(contentValues);
@@ -887,7 +739,7 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.network.-$$Lambda$ApnEditor$1vSLgWOnd4pMuFU2qFaSz0HXNw8
             @Override // java.lang.Runnable
             public final void run() {
-                ApnEditor.lambda$updateApnDataToDatabase$0(ApnEditor.this, uri, contentValues);
+                ApnEditor.lambda$updateApnDataToDatabase$0(this.f$0, uri, contentValues);
             }
         });
     }
@@ -895,8 +747,7 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
     public static /* synthetic */ void lambda$updateApnDataToDatabase$0(ApnEditor apnEditor, Uri uri, ContentValues contentValues) {
         if (uri.equals(apnEditor.mCarrierUri)) {
             if (apnEditor.getContentResolver().insert(apnEditor.mCarrierUri, contentValues) == null) {
-                String str = TAG;
-                Log.e(str, "Can't add a new apn to database " + apnEditor.mCarrierUri);
+                Log.e(TAG, "Can't add a new apn to database " + apnEditor.mCarrierUri);
                 return;
             }
             return;
@@ -904,21 +755,20 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         apnEditor.getContentResolver().update(uri, contentValues, null, null);
     }
 
-    String validateApnData() {
+    String validateApnData() throws Resources.NotFoundException {
         String string;
-        String[] strArr;
-        String checkNotSet = checkNotSet(this.mName.getText());
-        String checkNotSet2 = checkNotSet(this.mApn.getText());
-        String checkNotSet3 = checkNotSet(this.mMcc.getText());
-        String checkNotSet4 = checkNotSet(this.mMnc.getText());
+        String strCheckNotSet = checkNotSet(this.mName.getText());
+        String strCheckNotSet2 = checkNotSet(this.mApn.getText());
+        String strCheckNotSet3 = checkNotSet(this.mMcc.getText());
+        String strCheckNotSet4 = checkNotSet(this.mMnc.getText());
         String text = this.mApnType.getText();
-        if (TextUtils.isEmpty(checkNotSet)) {
+        if (TextUtils.isEmpty(strCheckNotSet)) {
             string = getResources().getString(R.string.error_name_empty);
-        } else if (TextUtils.isEmpty(checkNotSet2) && (text == null || !text.contains("ia"))) {
+        } else if (TextUtils.isEmpty(strCheckNotSet2) && (text == null || !text.contains("ia"))) {
             string = getResources().getString(R.string.error_apn_empty);
-        } else if (checkNotSet3 == null || checkNotSet3.length() != 3) {
+        } else if (strCheckNotSet3 == null || strCheckNotSet3.length() != 3) {
             string = getResources().getString(R.string.error_mcc_not3);
-        } else if (checkNotSet4 == null || (checkNotSet4.length() & 65534) != 2) {
+        } else if (strCheckNotSet4 == null || (strCheckNotSet4.length() & 65534) != 2) {
             string = getResources().getString(R.string.error_mnc_not23);
         } else {
             string = null;
@@ -941,7 +791,7 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.DialogCreatable
     public Dialog onCreateDialog(int i) {
         if (i == 1) {
-            return new AlertDialog.Builder(getContext()).setIcon(17301543).setTitle(R.string.error_title).setMessage(getString(R.string.apn_predefine_change_dialog_notice)).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settings.network.ApnEditor.2
+            return new AlertDialog.Builder(getContext()).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.error_title).setMessage(getString(R.string.apn_predefine_change_dialog_notice)).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.network.ApnEditor.2
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i2) {
                     if (ApnEditor.this.validateAndSaveApnData()) {
@@ -995,17 +845,16 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
     }
 
     private String getUserEnteredApnType() {
-        String[] strArr;
         String text = this.mApnType.getText();
         if (text != null) {
             text = text.trim();
         }
         if ((TextUtils.isEmpty(text) || "*".equals(text)) && !ArrayUtils.isEmpty(this.mReadOnlyApnTypes)) {
             StringBuilder sb = new StringBuilder();
-            List asList = Arrays.asList(this.mReadOnlyApnTypes);
+            List listAsList = Arrays.asList(this.mReadOnlyApnTypes);
             boolean z = true;
             for (String str : MtkPhoneConstants.MTK_APN_TYPES) {
-                if ((!TextUtils.isEmpty(text) || !str.equals("ims")) && !asList.contains(str) && !str.equals("ia") && !str.equals("emergency")) {
+                if ((!TextUtils.isEmpty(text) || !str.equals("ims")) && !listAsList.contains(str) && !str.equals("ia") && !str.equals("emergency")) {
                     if (!z) {
                         sb.append(",");
                     } else {
@@ -1014,14 +863,13 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
                     sb.append(str);
                 }
             }
-            String sb2 = sb.toString();
-            Log.d(TAG, "getUserEnteredApnType: changed apn type to editable apn types: " + sb2);
-            return sb2;
+            String string = sb.toString();
+            Log.d(TAG, "getUserEnteredApnType: changed apn type to editable apn types: " + string);
+            return string;
         }
         return text;
     }
 
-    /* loaded from: classes.dex */
     public static class ErrorDialog extends InstrumentedDialogFragment {
         public static void showError(ApnEditor apnEditor) {
             ErrorDialog errorDialog = new ErrorDialog();
@@ -1030,8 +878,8 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         }
 
         @Override // android.app.DialogFragment
-        public Dialog onCreateDialog(Bundle bundle) {
-            return new AlertDialog.Builder(getContext()).setTitle(R.string.error_title).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).setMessage(((ApnEditor) getTargetFragment()).validateApnData()).create();
+        public Dialog onCreateDialog(Bundle bundle) throws Resources.NotFoundException {
+            return new AlertDialog.Builder(getContext()).setTitle(R.string.error_title).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null).setMessage(((ApnEditor) getTargetFragment()).validateApnData()).create();
         }
 
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -1041,44 +889,42 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
     }
 
     ApnData getApnDataFromUri(Uri uri) {
-        Cursor query = getContentResolver().query(uri, sProjection, null, null, null);
+        Cursor cursorQuery = getContentResolver().query(uri, sProjection, null, null, null);
         ApnData apnData = null;
-        if (query != null) {
+        th = null;
+        Throwable th = null;
+        if (cursorQuery != null) {
             try {
-                query.moveToFirst();
-                apnData = new ApnData(uri, query);
-            } catch (Throwable th) {
                 try {
-                    throw th;
-                } catch (Throwable th2) {
-                    if (query != null) {
-                        if (th != null) {
-                            try {
-                                query.close();
-                            } catch (Throwable th3) {
-                                th.addSuppressed(th3);
-                            }
-                        } else {
-                            query.close();
-                        }
-                    }
-                    throw th2;
+                    cursorQuery.moveToFirst();
+                    apnData = new ApnData(uri, cursorQuery);
+                } finally {
                 }
+            } catch (Throwable th2) {
+                if (cursorQuery != null) {
+                    if (th != null) {
+                        try {
+                            cursorQuery.close();
+                        } catch (Throwable th3) {
+                            th.addSuppressed(th3);
+                        }
+                    } else {
+                        cursorQuery.close();
+                    }
+                }
+                throw th2;
             }
         }
-        if (query != null) {
-            query.close();
+        if (cursorQuery != null) {
+            cursorQuery.close();
         }
         if (apnData == null) {
-            String str = TAG;
-            Log.d(str, "Can't get apnData from Uri " + uri);
+            Log.d(TAG, "Can't get apnData from Uri " + uri);
         }
         return apnData;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ApnData {
+    static class ApnData {
         Object[] mData;
         Uri mUri;
 
@@ -1139,20 +985,17 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         this.mApnExt.onDestroy();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void exitWithoutSave() {
+    private void exitWithoutSave() {
         if (this.mNewApn && this.mApnData.getUri() != null) {
             getContentResolver().delete(this.mApnData.getUri(), null, null);
         }
         finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateScreenEnableState() {
-        boolean isSimReadyAndRadioOn = isSimReadyAndRadioOn();
-        String str = TAG;
-        Log.d(str, "enable = " + isSimReadyAndRadioOn + " mReadOnlyMode = " + this.mReadOnlyMode);
-        getPreferenceScreen().setEnabled(isSimReadyAndRadioOn && !this.mReadOnlyMode && this.mApnExt.getScreenEnableState(this.mSubId, getActivity()));
+    private void updateScreenEnableState() {
+        boolean zIsSimReadyAndRadioOn = isSimReadyAndRadioOn();
+        Log.d(TAG, "enable = " + zIsSimReadyAndRadioOn + " mReadOnlyMode = " + this.mReadOnlyMode);
+        getPreferenceScreen().setEnabled(zIsSimReadyAndRadioOn && !this.mReadOnlyMode && this.mApnExt.getScreenEnableState(this.mSubId, getActivity()));
         this.mApnExt.setApnTypePreferenceState(this.mApnType, this.mApnType.getText());
         this.mApnExt.updateFieldsStatus(this.mSubId, this.mSourceType, getPreferenceScreen(), this.mApn.getText());
         this.mApnExt.setMvnoPreferenceState(this.mMvnoType, this.mMvnoMatchData);
@@ -1170,29 +1013,31 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
     }
 
     @Override // android.content.SharedPreferences.OnSharedPreferenceChangeListener
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String str) {
-        Preference findPreference = findPreference(str);
-        if (findPreference != null) {
-            if (findPreference.equals(this.mCarrierEnabled)) {
-                findPreference.setSummary(checkNull(String.valueOf(sharedPreferences.getBoolean(str, true))));
-            } else if (findPreference.equals(this.mPort)) {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String str) throws NumberFormatException {
+        Preference preferenceFindPreference = findPreference(str);
+        if (preferenceFindPreference != null) {
+            if (preferenceFindPreference.equals(this.mCarrierEnabled)) {
+                preferenceFindPreference.setSummary(checkNull(String.valueOf(sharedPreferences.getBoolean(str, true))));
+                return;
+            }
+            if (preferenceFindPreference.equals(this.mPort)) {
                 String string = sharedPreferences.getString(str, "");
                 if (!string.equals("")) {
                     try {
-                        int parseInt = Integer.parseInt(string);
-                        if (parseInt > 65535 || parseInt <= 0) {
+                        int i = Integer.parseInt(string);
+                        if (i > 65535 || i <= 0) {
                             Toast.makeText(getContext(), getString(R.string.apn_port_warning), 1).show();
-                            ((EditTextPreference) findPreference).setText("");
+                            ((EditTextPreference) preferenceFindPreference).setText("");
                         }
                     } catch (NumberFormatException e) {
                         Toast.makeText(getContext(), getString(R.string.apn_port_warning), 1).show();
-                        ((EditTextPreference) findPreference).setText("");
+                        ((EditTextPreference) preferenceFindPreference).setText("");
                     }
                 }
-                findPreference.setSummary(checkNull(sharedPreferences.getString(str, "")));
-            } else {
-                findPreference.setSummary(checkNull(sharedPreferences.getString(str, "")));
+                preferenceFindPreference.setSummary(checkNull(sharedPreferences.getString(str, "")));
+                return;
             }
+            preferenceFindPreference.setSummary(checkNull(sharedPreferences.getString(str, "")));
         }
     }
 }

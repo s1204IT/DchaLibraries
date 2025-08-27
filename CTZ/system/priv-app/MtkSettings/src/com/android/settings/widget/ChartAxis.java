@@ -2,6 +2,7 @@ package com.android.settings.widget;
 
 import android.content.res.Resources;
 import android.text.SpannableStringBuilder;
+
 /* loaded from: classes.dex */
 public interface ChartAxis {
     long buildLabel(Resources resources, SpannableStringBuilder spannableStringBuilder, long j);

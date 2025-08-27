@@ -7,6 +7,7 @@ import android.os.Bundle;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public abstract class SystemUI implements SysUiServiceProvider {
     public Map<Class<?>, Object> mComponents;
@@ -14,15 +15,13 @@ public abstract class SystemUI implements SysUiServiceProvider {
 
     public abstract void start();
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) {
     }
 
     public void dump(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onBootCompleted() {
+    protected void onBootCompleted() {
     }
 
     @Override // com.android.systemui.SysUiServiceProvider
@@ -43,9 +42,9 @@ public abstract class SystemUI implements SysUiServiceProvider {
         String string;
         Bundle bundle = new Bundle();
         if (z) {
-            string = context.getString(17040351);
+            string = context.getString(android.R.string.face_recalibrate_notification_title);
         } else {
-            string = context.getString(17040350);
+            string = context.getString(android.R.string.face_recalibrate_notification_name);
         }
         bundle.putString("android.substName", string);
         builder.addExtras(bundle);

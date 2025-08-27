@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+
 /* loaded from: classes.dex */
 public class SettingsSliceProvider extends SliceProvider {
     private final KeyValueListParser mParser;
@@ -66,7 +67,9 @@ public class SettingsSliceProvider extends SliceProvider {
     public void onSlicePinned(Uri uri) {
         if (WifiSliceBuilder.WIFI_URI.equals(uri)) {
             registerIntentToUri(WifiSliceBuilder.INTENT_FILTER, uri);
-        } else if (ZenModeSliceBuilder.ZEN_MODE_URI.equals(uri)) {
+            return;
+        }
+        if (ZenModeSliceBuilder.ZEN_MODE_URI.equals(uri)) {
             registerIntentToUri(ZenModeSliceBuilder.INTENT_FILTER, uri);
         } else if (BluetoothSliceBuilder.BLUETOOTH_URI.equals(uri)) {
             registerIntentToUri(BluetoothSliceBuilder.INTENT_FILTER, uri);
@@ -85,6 +88,7 @@ public class SettingsSliceProvider extends SliceProvider {
         this.mSliceDataCache.remove(uri);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [222=9] */
     @Override // androidx.slice.SliceProvider
     public Slice onBindSlice(Uri uri) {
         StrictMode.ThreadPolicy threadPolicy = StrictMode.getThreadPolicy();
@@ -95,31 +99,31 @@ public class SettingsSliceProvider extends SliceProvider {
             if (getBlockedKeys().contains(uri.getLastPathSegment())) {
                 Log.e("SettingsSliceProvider", "Requested blocked slice with Uri: " + uri);
                 return null;
-            } else if (WifiCallingSliceHelper.WIFI_CALLING_URI.equals(uri)) {
-                return FeatureFactory.getFactory(getContext()).getSlicesFeatureProvider().getNewWifiCallingSliceHelper(getContext()).createWifiCallingSlice(uri);
-            } else {
-                if (WifiSliceBuilder.WIFI_URI.equals(uri)) {
-                    return WifiSliceBuilder.getSlice(getContext());
-                }
-                if (ZenModeSliceBuilder.ZEN_MODE_URI.equals(uri)) {
-                    return ZenModeSliceBuilder.getSlice(getContext());
-                }
-                if (BluetoothSliceBuilder.BLUETOOTH_URI.equals(uri)) {
-                    return BluetoothSliceBuilder.getSlice(getContext());
-                }
-                if (LocationSliceBuilder.LOCATION_URI.equals(uri)) {
-                    return LocationSliceBuilder.getSlice(getContext());
-                }
-                SliceData sliceData = this.mSliceWeakDataCache.get(uri);
-                if (sliceData == null) {
-                    loadSliceInBackground(uri);
-                    return getSliceStub(uri);
-                }
-                if (!this.mSliceDataCache.containsKey(uri)) {
-                    this.mSliceWeakDataCache.remove(uri);
-                }
-                return SliceBuilderUtils.buildSlice(getContext(), sliceData);
             }
+            if (WifiCallingSliceHelper.WIFI_CALLING_URI.equals(uri)) {
+                return FeatureFactory.getFactory(getContext()).getSlicesFeatureProvider().getNewWifiCallingSliceHelper(getContext()).createWifiCallingSlice(uri);
+            }
+            if (WifiSliceBuilder.WIFI_URI.equals(uri)) {
+                return WifiSliceBuilder.getSlice(getContext());
+            }
+            if (ZenModeSliceBuilder.ZEN_MODE_URI.equals(uri)) {
+                return ZenModeSliceBuilder.getSlice(getContext());
+            }
+            if (BluetoothSliceBuilder.BLUETOOTH_URI.equals(uri)) {
+                return BluetoothSliceBuilder.getSlice(getContext());
+            }
+            if (LocationSliceBuilder.LOCATION_URI.equals(uri)) {
+                return LocationSliceBuilder.getSlice(getContext());
+            }
+            SliceData sliceData = this.mSliceWeakDataCache.get(uri);
+            if (sliceData == null) {
+                loadSliceInBackground(uri);
+                return getSliceStub(uri);
+            }
+            if (!this.mSliceDataCache.containsKey(uri)) {
+                this.mSliceWeakDataCache.remove(uri);
+            }
+            return SliceBuilderUtils.buildSlice(getContext(), sliceData);
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }
@@ -134,8 +138,8 @@ public class SettingsSliceProvider extends SliceProvider {
         }
         String authority = uri.getAuthority();
         String path = uri.getPath();
-        boolean isEmpty = path.isEmpty();
-        if (isEmpty && TextUtils.isEmpty(authority)) {
+        boolean zIsEmpty = path.isEmpty();
+        if (zIsEmpty && TextUtils.isEmpty(authority)) {
             List<String> sliceKeys = this.mSlicesDatabaseAccessor.getSliceKeys(true);
             List<String> sliceKeys2 = this.mSlicesDatabaseAccessor.getSliceKeys(false);
             arrayList.addAll(buildUrisFromKeys(sliceKeys, "android.settings.slices"));
@@ -143,30 +147,29 @@ public class SettingsSliceProvider extends SliceProvider {
             arrayList.addAll(getSpecialCaseUris(true));
             arrayList.addAll(getSpecialCaseUris(false));
             return arrayList;
-        } else if (!isEmpty && !TextUtils.equals(path, "/action") && !TextUtils.equals(path, "/intent")) {
-            return arrayList;
-        } else {
-            boolean equals = TextUtils.equals(authority, "android.settings.slices");
-            arrayList.addAll(buildUrisFromKeys(this.mSlicesDatabaseAccessor.getSliceKeys(equals), authority));
-            arrayList.addAll(getSpecialCaseUris(equals));
+        }
+        if (!zIsEmpty && !TextUtils.equals(path, "/action") && !TextUtils.equals(path, "/intent")) {
             return arrayList;
         }
+        boolean zEquals = TextUtils.equals(authority, "android.settings.slices");
+        arrayList.addAll(buildUrisFromKeys(this.mSlicesDatabaseAccessor.getSliceKeys(zEquals), authority));
+        arrayList.addAll(getSpecialCaseUris(zEquals));
+        return arrayList;
     }
 
     private List<Uri> buildUrisFromKeys(List<String> list, String str) {
         ArrayList arrayList = new ArrayList();
-        Uri.Builder appendPath = new Uri.Builder().scheme("content").authority(str).appendPath("action");
+        Uri.Builder builderAppendPath = new Uri.Builder().scheme("content").authority(str).appendPath("action");
         Iterator<String> it = list.iterator();
         while (it.hasNext()) {
-            appendPath.path("action/" + it.next());
-            arrayList.add(appendPath.build());
+            builderAppendPath.path("action/" + it.next());
+            arrayList.add(builderAppendPath.build());
         }
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void loadSlice(Uri uri) {
-        long currentTimeMillis = System.currentTimeMillis();
+    void loadSlice(Uri uri) {
+        long jCurrentTimeMillis = System.currentTimeMillis();
         try {
             SliceData sliceDataFromUri = this.mSlicesDatabaseAccessor.getSliceDataFromUri(uri);
             IntentFilter intentFilter = SliceBuilderUtils.getPreferenceController(getContext(), sliceDataFromUri).getIntentFilter();
@@ -178,7 +181,7 @@ public class SettingsSliceProvider extends SliceProvider {
             }
             this.mSliceWeakDataCache.put(uri, sliceDataFromUri);
             getContext().getContentResolver().notifyChange(uri, null);
-            Log.d("SettingsSliceProvider", "Built slice (" + uri + ") in: " + (System.currentTimeMillis() - currentTimeMillis));
+            Log.d("SettingsSliceProvider", "Built slice (" + uri + ") in: " + (System.currentTimeMillis() - jCurrentTimeMillis));
         } catch (IllegalStateException e) {
             Log.e("SettingsSliceProvider", "Could not get slice data for uri: " + uri, e);
         }
@@ -188,7 +191,7 @@ public class SettingsSliceProvider extends SliceProvider {
         ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.slices.-$$Lambda$SettingsSliceProvider$3mq4GNawZ0Wc-zLrSLnj1f92or0
             @Override // java.lang.Runnable
             public final void run() {
-                SettingsSliceProvider.this.loadSlice(uri);
+                this.f$0.loadSlice(uri);
             }
         });
     }
@@ -233,9 +236,9 @@ public class SettingsSliceProvider extends SliceProvider {
 
     private String[] parseStringArray(String str) {
         if (str != null) {
-            String[] split = str.split(":");
-            if (split.length > 0) {
-                return split;
+            String[] strArrSplit = str.split(":");
+            if (strArrSplit.length > 0) {
+                return strArrSplit;
             }
         }
         return new String[0];

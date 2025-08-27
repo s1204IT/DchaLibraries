@@ -1,8 +1,8 @@
 package android.arch.lifecycle;
+
 /* loaded from: classes.dex */
 public abstract class Lifecycle {
 
-    /* loaded from: classes.dex */
     public enum Event {
         ON_CREATE,
         ON_START,
@@ -19,7 +19,6 @@ public abstract class Lifecycle {
 
     public abstract void removeObserver(LifecycleObserver lifecycleObserver);
 
-    /* loaded from: classes.dex */
     public enum State {
         DESTROYED,
         INITIALIZED,

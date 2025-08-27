@@ -3,6 +3,7 @@ package com.android.settings.accounts;
 import android.accounts.Account;
 import android.content.Context;
 import android.util.FeatureFlagUtils;
+
 /* loaded from: classes.dex */
 public interface AccountFeatureProvider {
     String getAccountType();

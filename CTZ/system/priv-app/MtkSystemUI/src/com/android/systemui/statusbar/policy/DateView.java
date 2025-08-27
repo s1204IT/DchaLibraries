@@ -14,6 +14,7 @@ import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import java.util.Date;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class DateView extends TextView {
     private final Date mCurrentTime;
@@ -22,10 +23,8 @@ public class DateView extends TextView {
     private BroadcastReceiver mIntentReceiver;
     private String mLastText;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.policy.DateView$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends BroadcastReceiver {
+    /* renamed from: com.android.systemui.statusbar.policy.DateView$1 */
+    class AnonymousClass1 extends BroadcastReceiver {
         AnonymousClass1() {
         }
 
@@ -55,15 +54,15 @@ public class DateView extends TextView {
         super(context, attributeSet);
         this.mCurrentTime = new Date();
         this.mIntentReceiver = new AnonymousClass1();
-        TypedArray obtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.DateView, 0, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.DateView, 0, 0);
         try {
-            this.mDatePattern = obtainStyledAttributes.getString(0);
-            obtainStyledAttributes.recycle();
+            this.mDatePattern = typedArrayObtainStyledAttributes.getString(0);
+            typedArrayObtainStyledAttributes.recycle();
             if (this.mDatePattern == null) {
                 this.mDatePattern = getContext().getString(R.string.system_ui_date_pattern);
             }
         } catch (Throwable th) {
-            obtainStyledAttributes.recycle();
+            typedArrayObtainStyledAttributes.recycle();
             throw th;
         }
     }
@@ -87,18 +86,17 @@ public class DateView extends TextView {
         getContext().unregisterReceiver(this.mIntentReceiver);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateClock() {
+    protected void updateClock() {
         if (this.mDateFormat == null) {
             DateFormat instanceForSkeleton = DateFormat.getInstanceForSkeleton(this.mDatePattern, Locale.getDefault());
             instanceForSkeleton.setContext(DisplayContext.CAPITALIZATION_FOR_STANDALONE);
             this.mDateFormat = instanceForSkeleton;
         }
         this.mCurrentTime.setTime(System.currentTimeMillis());
-        String format = this.mDateFormat.format(this.mCurrentTime);
-        if (!format.equals(this.mLastText)) {
-            setText(format);
-            this.mLastText = format;
+        String str = this.mDateFormat.format(this.mCurrentTime);
+        if (!str.equals(this.mLastText)) {
+            setText(str);
+            this.mLastText = str;
         }
     }
 }

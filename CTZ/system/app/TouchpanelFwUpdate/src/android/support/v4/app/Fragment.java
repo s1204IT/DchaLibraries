@@ -33,6 +33,7 @@ import android.view.animation.Animation;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
+
 /* loaded from: classes.dex */
 public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentCallbacks, View.OnCreateContextMenuListener {
     boolean mAdded;
@@ -40,14 +41,14 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
     Bundle mArguments;
     int mBackStackNesting;
     boolean mCalled;
-    FragmentManagerImpl mChildFragmentManager;
+    FragmentManager2 mChildFragmentManager;
     FragmentManagerNonConfig mChildNonConfig;
     ViewGroup mContainer;
     int mContainerId;
     boolean mDeferStart;
     boolean mDetached;
     int mFragmentId;
-    FragmentManagerImpl mFragmentManager;
+    FragmentManager2 mFragmentManager;
     boolean mFromLayout;
     boolean mHasMenu;
     boolean mHidden;
@@ -86,9 +87,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
     LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
     MutableLiveData<LifecycleOwner> mViewLifecycleOwnerLiveData = new MutableLiveData<>();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface OnStartEnterTransitionListener {
+    interface OnStartEnterTransitionListener {
         void onStartEnterTransition();
 
         void startListening();
@@ -110,15 +109,16 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         return this.mViewModelStore;
     }
 
-    /* loaded from: classes.dex */
     public static class SavedState implements Parcelable {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() { // from class: android.support.v4.app.Fragment.SavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in, null);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState[] newArray(int size) {
@@ -145,14 +145,13 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* loaded from: classes.dex */
     public static class InstantiationException extends RuntimeException {
         public InstantiationException(String msg, Exception cause) {
             super(msg, cause);
         }
     }
 
-    public static Fragment instantiate(Context context, String fname, Bundle args) {
+    public static Fragment instantiate(Context context, String fname, Bundle args) throws ClassNotFoundException {
         try {
             Class<?> clazz = sClassMap.get(fname);
             if (clazz == null) {
@@ -178,8 +177,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean isSupportFragmentClass(Context context, String fname) {
+    static boolean isSupportFragmentClass(Context context, String fname) throws ClassNotFoundException {
         try {
             Class<?> clazz = sClassMap.get(fname);
             if (clazz == null) {
@@ -192,8 +190,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public final void restoreViewState(Bundle savedInstanceState) {
+    final void restoreViewState(Bundle savedInstanceState) {
         if (this.mSavedViewState != null) {
             this.mInnerView.restoreHierarchyState(this.mSavedViewState);
             this.mSavedViewState = null;
@@ -205,8 +202,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public final void setIndex(int index, Fragment parent) {
+    final void setIndex(int index, Fragment parent) {
         this.mIndex = index;
         if (parent != null) {
             this.mWho = parent.mWho + ":" + this.mIndex;
@@ -215,8 +211,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         this.mWho = "android:fragment:" + this.mIndex;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public final boolean isInBackStack() {
+    final boolean isInBackStack() {
         return this.mBackStackNesting > 0;
     }
 
@@ -307,8 +302,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         return this.mChildFragmentManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public FragmentManager peekChildFragmentManager() {
+    FragmentManager peekChildFragmentManager() {
         return this.mChildFragmentManager;
     }
 
@@ -329,15 +323,14 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         return getLayoutInflater(savedInstanceState);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public LayoutInflater performGetLayoutInflater(Bundle savedInstanceState) {
+    LayoutInflater performGetLayoutInflater(Bundle savedInstanceState) {
         LayoutInflater layoutInflater = onGetLayoutInflater(savedInstanceState);
         this.mLayoutInflater = layoutInflater;
         return this.mLayoutInflater;
     }
 
     @Deprecated
-    public LayoutInflater getLayoutInflater(Bundle savedFragmentState) {
+    public LayoutInflater getLayoutInflater(Bundle savedFragmentState) throws IllegalAccessException, IllegalArgumentException {
         if (this.mHost == null) {
             throw new IllegalStateException("onGetLayoutInflater() cannot be executed until the Fragment is attached to the FragmentManager.");
         }
@@ -394,8 +387,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void restoreChildFragmentState(Bundle savedInstanceState) {
+    void restoreChildFragmentState(Bundle savedInstanceState) {
         Parcelable p;
         if (savedInstanceState != null && (p = savedInstanceState.getParcelable("android:support:fragments")) != null) {
             if (this.mChildFragmentManager == null) {
@@ -478,8 +470,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void initState() {
+    void initState() {
         this.mIndex = -1;
         this.mWho = null;
         this.mAdded = false;
@@ -602,8 +593,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void callStartTransitionListener() {
+    private void callStartTransitionListener() {
         OnStartEnterTransitionListener listener;
         if (this.mAnimationInfo == null) {
             listener = null;
@@ -728,13 +718,11 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         if (this.mChildFragmentManager != null) {
             writer.print(prefix);
             writer.println("Child " + this.mChildFragmentManager + ":");
-            FragmentManagerImpl fragmentManagerImpl = this.mChildFragmentManager;
-            fragmentManagerImpl.dump(prefix + "  ", fd, writer, args);
+            this.mChildFragmentManager.dump(prefix + "  ", fd, writer, args);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Fragment findFragmentByWho(String who) {
+    Fragment findFragmentByWho(String who) {
         if (who.equals(this.mWho)) {
             return this;
         }
@@ -748,7 +736,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         if (this.mHost == null) {
             throw new IllegalStateException("Fragment has not been attached yet.");
         }
-        this.mChildFragmentManager = new FragmentManagerImpl();
+        this.mChildFragmentManager = new FragmentManager2();
         this.mChildFragmentManager.attachController(this.mHost, new FragmentContainer() { // from class: android.support.v4.app.Fragment.2
             @Override // android.support.v4.app.FragmentContainer
             public View onFindViewById(int id) {
@@ -770,8 +758,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }, this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performCreate(Bundle savedInstanceState) {
+    void performCreate(Bundle savedInstanceState) {
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.noteStateNotSaved();
         }
@@ -785,8 +772,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    void performCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.noteStateNotSaved();
         }
@@ -805,15 +791,15 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         if (this.mView != null) {
             this.mViewLifecycleOwner.getLifecycle();
             this.mViewLifecycleOwnerLiveData.setValue(this.mViewLifecycleOwner);
-        } else if (this.mViewLifecycleRegistry != null) {
-            throw new IllegalStateException("Called getViewLifecycleOwner() but onCreateView() returned null");
         } else {
+            if (this.mViewLifecycleRegistry != null) {
+                throw new IllegalStateException("Called getViewLifecycleOwner() but onCreateView() returned null");
+            }
             this.mViewLifecycleOwner = null;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performActivityCreated(Bundle savedInstanceState) {
+    void performActivityCreated(Bundle savedInstanceState) {
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.noteStateNotSaved();
         }
@@ -822,13 +808,13 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         onActivityCreated(savedInstanceState);
         if (!this.mCalled) {
             throw new SuperNotCalledException("Fragment " + this + " did not call through to super.onActivityCreated()");
-        } else if (this.mChildFragmentManager != null) {
+        }
+        if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.dispatchActivityCreated();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performStart() {
+    void performStart() {
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.noteStateNotSaved();
             this.mChildFragmentManager.execPendingActions();
@@ -848,8 +834,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performResume() {
+    void performResume() {
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.noteStateNotSaved();
             this.mChildFragmentManager.execPendingActions();
@@ -870,47 +855,41 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void noteStateNotSaved() {
+    void noteStateNotSaved() {
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.noteStateNotSaved();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performMultiWindowModeChanged(boolean isInMultiWindowMode) {
+    void performMultiWindowModeChanged(boolean isInMultiWindowMode) {
         onMultiWindowModeChanged(isInMultiWindowMode);
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.dispatchMultiWindowModeChanged(isInMultiWindowMode);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+    void performPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         onPictureInPictureModeChanged(isInPictureInPictureMode);
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.dispatchPictureInPictureModeChanged(isInPictureInPictureMode);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performConfigurationChanged(Configuration newConfig) {
+    void performConfigurationChanged(Configuration newConfig) {
         onConfigurationChanged(newConfig);
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.dispatchConfigurationChanged(newConfig);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performLowMemory() {
+    void performLowMemory() {
         onLowMemory();
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.dispatchLowMemory();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean performCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    boolean performCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         boolean show = false;
         if (this.mHidden) {
             return false;
@@ -925,8 +904,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         return show;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean performPrepareOptionsMenu(Menu menu) {
+    boolean performPrepareOptionsMenu(Menu menu) {
         boolean show = false;
         if (this.mHidden) {
             return false;
@@ -941,8 +919,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         return show;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean performOptionsItemSelected(MenuItem item) {
+    boolean performOptionsItemSelected(MenuItem item) {
         if (!this.mHidden) {
             if (this.mHasMenu && this.mMenuVisible && onOptionsItemSelected(item)) {
                 return true;
@@ -952,8 +929,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean performContextItemSelected(MenuItem item) {
+    boolean performContextItemSelected(MenuItem item) {
         if (!this.mHidden) {
             if (onContextItemSelected(item)) {
                 return true;
@@ -963,8 +939,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performOptionsMenuClosed(Menu menu) {
+    void performOptionsMenuClosed(Menu menu) {
         if (!this.mHidden) {
             if (this.mHasMenu && this.mMenuVisible) {
                 onOptionsMenuClosed(menu);
@@ -975,8 +950,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performSaveInstanceState(Bundle outState) {
+    void performSaveInstanceState(Bundle outState) {
         Parcelable p;
         onSaveInstanceState(outState);
         if (this.mChildFragmentManager != null && (p = this.mChildFragmentManager.saveAllState()) != null) {
@@ -984,8 +958,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performPause() {
+    void performPause() {
         if (this.mView != null) {
             this.mViewLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
         }
@@ -1001,8 +974,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performStop() {
+    void performStop() {
         this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.dispatchStop();
@@ -1015,16 +987,14 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performReallyStop() {
+    void performReallyStop() {
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.dispatchReallyStop();
         }
         this.mState = 2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performDestroyView() {
+    void performDestroyView() {
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.dispatchDestroyView();
         }
@@ -1038,8 +1008,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         this.mPerformedCreateView = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performDestroy() {
+    void performDestroy() {
         this.mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         if (this.mChildFragmentManager != null) {
             this.mChildFragmentManager.dispatchDestroy();
@@ -1054,14 +1023,14 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         this.mChildFragmentManager = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void performDetach() {
+    void performDetach() {
         this.mCalled = false;
         onDetach();
         this.mLayoutInflater = null;
         if (!this.mCalled) {
             throw new SuperNotCalledException("Fragment " + this + " did not call through to super.onDetach()");
-        } else if (this.mChildFragmentManager != null) {
+        }
+        if (this.mChildFragmentManager != null) {
             if (!this.mRetaining) {
                 throw new IllegalStateException("Child FragmentManager of " + this + " was not  destroyed and this fragment is not retaining instance");
             }
@@ -1070,8 +1039,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setOnStartEnterTransitionListener(OnStartEnterTransitionListener listener) {
+    void setOnStartEnterTransitionListener(OnStartEnterTransitionListener listener) {
         ensureAnimationInfo();
         if (listener == this.mAnimationInfo.mStartEnterTransitionListener) {
             return;
@@ -1094,32 +1062,28 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         return this.mAnimationInfo;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getNextAnim() {
+    int getNextAnim() {
         if (this.mAnimationInfo == null) {
             return 0;
         }
         return this.mAnimationInfo.mNextAnim;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setNextAnim(int animResourceId) {
+    void setNextAnim(int animResourceId) {
         if (this.mAnimationInfo == null && animResourceId == 0) {
             return;
         }
         ensureAnimationInfo().mNextAnim = animResourceId;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getNextTransition() {
+    int getNextTransition() {
         if (this.mAnimationInfo == null) {
             return 0;
         }
         return this.mAnimationInfo.mNextTransition;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setNextTransition(int nextTransition, int nextTransitionStyle) {
+    void setNextTransition(int nextTransition, int nextTransitionStyle) {
         if (this.mAnimationInfo == null && nextTransition == 0 && nextTransitionStyle == 0) {
             return;
         }
@@ -1128,93 +1092,79 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         this.mAnimationInfo.mNextTransitionStyle = nextTransitionStyle;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getNextTransitionStyle() {
+    int getNextTransitionStyle() {
         if (this.mAnimationInfo == null) {
             return 0;
         }
         return this.mAnimationInfo.mNextTransitionStyle;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public SharedElementCallback getEnterTransitionCallback() {
+    SharedElementCallback getEnterTransitionCallback() {
         if (this.mAnimationInfo == null) {
             return null;
         }
         return this.mAnimationInfo.mEnterTransitionCallback;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public SharedElementCallback getExitTransitionCallback() {
+    SharedElementCallback getExitTransitionCallback() {
         if (this.mAnimationInfo == null) {
             return null;
         }
         return this.mAnimationInfo.mExitTransitionCallback;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public View getAnimatingAway() {
+    View getAnimatingAway() {
         if (this.mAnimationInfo == null) {
             return null;
         }
         return this.mAnimationInfo.mAnimatingAway;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setAnimatingAway(View view) {
+    void setAnimatingAway(View view) {
         ensureAnimationInfo().mAnimatingAway = view;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setAnimator(Animator animator) {
+    void setAnimator(Animator animator) {
         ensureAnimationInfo().mAnimator = animator;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Animator getAnimator() {
+    Animator getAnimator() {
         if (this.mAnimationInfo == null) {
             return null;
         }
         return this.mAnimationInfo.mAnimator;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getStateAfterAnimating() {
+    int getStateAfterAnimating() {
         if (this.mAnimationInfo == null) {
             return 0;
         }
         return this.mAnimationInfo.mStateAfterAnimating;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setStateAfterAnimating(int state) {
+    void setStateAfterAnimating(int state) {
         ensureAnimationInfo().mStateAfterAnimating = state;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isPostponed() {
+    boolean isPostponed() {
         if (this.mAnimationInfo == null) {
             return false;
         }
         return this.mAnimationInfo.mEnterTransitionPostponed;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isHideReplaced() {
+    boolean isHideReplaced() {
         if (this.mAnimationInfo == null) {
             return false;
         }
         return this.mAnimationInfo.mIsHideReplaced;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setHideReplaced(boolean replaced) {
+    void setHideReplaced(boolean replaced) {
         ensureAnimationInfo().mIsHideReplaced = replaced;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class AnimationInfo {
+    static class AnimationInfo {
         private Boolean mAllowEnterTransitionOverlap;
         private Boolean mAllowReturnTransitionOverlap;
         View mAnimatingAway;

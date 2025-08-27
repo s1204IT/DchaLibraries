@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public final class VoiceInputHelper {
     final List<ResolveInfo> mAvailableRecognition;
@@ -31,7 +32,6 @@ public final class VoiceInputHelper {
     final ArrayList<InteractionInfo> mAvailableInteractionInfos = new ArrayList<>();
     final ArrayList<RecognizerInfo> mAvailableRecognizerInfos = new ArrayList<>();
 
-    /* loaded from: classes.dex */
     public static class BaseInfo implements Comparable {
         public final CharSequence appLabel;
         public final ComponentName componentName;
@@ -57,7 +57,6 @@ public final class VoiceInputHelper {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class InteractionInfo extends BaseInfo {
         public final VoiceInteractionServiceInfo serviceInfo;
 
@@ -67,7 +66,6 @@ public final class VoiceInputHelper {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class RecognizerInfo extends BaseInfo {
         public RecognizerInfo(PackageManager packageManager, ServiceInfo serviceInfo, String str) {
             super(packageManager, serviceInfo, str);
@@ -80,16 +78,29 @@ public final class VoiceInputHelper {
         this.mAvailableRecognition = this.mContext.getPackageManager().queryIntentServices(new Intent("android.speech.RecognitionService"), 128);
     }
 
-    public void buildUi() {
-        XmlResourceParser xmlResourceParser;
-        String str;
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [199=6] */
+    /* JADX WARN: Removed duplicated region for block: B:37:0x0129 A[PHI: r7 r8
+  0x0129: PHI (r7v11 android.content.res.XmlResourceParser) = 
+  (r7v7 android.content.res.XmlResourceParser)
+  (r7v8 android.content.res.XmlResourceParser)
+  (r7v9 android.content.res.XmlResourceParser)
+  (r7v14 android.content.res.XmlResourceParser)
+ binds: [B:69:0x0185, B:65:0x017a, B:60:0x016d, B:36:0x0127] A[DONT_GENERATE, DONT_INLINE]
+  0x0129: PHI (r8v9 java.lang.String) = (r8v5 java.lang.String), (r8v6 java.lang.String), (r8v7 java.lang.String), (r8v19 java.lang.String) binds: [B:69:0x0185, B:65:0x017a, B:60:0x016d, B:36:0x0127] A[DONT_GENERATE, DONT_INLINE]] */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    public void buildUi() throws Throwable {
+        XmlResourceParser xmlResourceParserLoadXmlMetaData;
+        String string;
         Resources resourcesForApplication;
-        AttributeSet asAttributeSet;
-        String string = Settings.Secure.getString(this.mContext.getContentResolver(), "voice_interaction_service");
-        if (string == null || string.isEmpty()) {
+        AttributeSet attributeSetAsAttributeSet;
+        int next;
+        String string2 = Settings.Secure.getString(this.mContext.getContentResolver(), "voice_interaction_service");
+        if (string2 == null || string2.isEmpty()) {
             this.mCurrentVoiceInteraction = null;
         } else {
-            this.mCurrentVoiceInteraction = ComponentName.unflattenFromString(string);
+            this.mCurrentVoiceInteraction = ComponentName.unflattenFromString(string2);
         }
         ArraySet arraySet = new ArraySet();
         int size = this.mAvailableVoiceInteractions.size();
@@ -104,11 +115,11 @@ public final class VoiceInputHelper {
             }
         }
         Collections.sort(this.mAvailableInteractionInfos);
-        String string2 = Settings.Secure.getString(this.mContext.getContentResolver(), "voice_recognition_service");
-        if (string2 == null || string2.isEmpty()) {
+        String string3 = Settings.Secure.getString(this.mContext.getContentResolver(), "voice_recognition_service");
+        if (string3 == null || string3.isEmpty()) {
             this.mCurrentRecognizer = null;
         } else {
-            this.mCurrentRecognizer = ComponentName.unflattenFromString(string2);
+            this.mCurrentRecognizer = ComponentName.unflattenFromString(string3);
         }
         int size2 = this.mAvailableRecognition.size();
         for (int i2 = 0; i2 < size2; i2++) {
@@ -116,92 +127,89 @@ public final class VoiceInputHelper {
             arraySet.contains(new ComponentName(resolveInfo2.serviceInfo.packageName, resolveInfo2.serviceInfo.name));
             ServiceInfo serviceInfo = resolveInfo2.serviceInfo;
             try {
-                xmlResourceParser = serviceInfo.loadXmlMetaData(this.mContext.getPackageManager(), "android.speech");
+                xmlResourceParserLoadXmlMetaData = serviceInfo.loadXmlMetaData(this.mContext.getPackageManager(), "android.speech");
             } catch (PackageManager.NameNotFoundException e) {
                 e = e;
-                xmlResourceParser = null;
-                str = null;
+                xmlResourceParserLoadXmlMetaData = null;
+                string = null;
             } catch (IOException e2) {
                 e = e2;
-                xmlResourceParser = null;
-                str = null;
+                xmlResourceParserLoadXmlMetaData = null;
+                string = null;
             } catch (XmlPullParserException e3) {
                 e = e3;
-                xmlResourceParser = null;
-                str = null;
+                xmlResourceParserLoadXmlMetaData = null;
+                string = null;
             } catch (Throwable th) {
                 th = th;
-                xmlResourceParser = null;
+                xmlResourceParserLoadXmlMetaData = null;
             }
-            if (xmlResourceParser == null) {
+            if (xmlResourceParserLoadXmlMetaData == null) {
                 throw new XmlPullParserException("No android.speech meta-data for " + serviceInfo.packageName);
             }
             try {
                 try {
                     resourcesForApplication = this.mContext.getPackageManager().getResourcesForApplication(serviceInfo.applicationInfo);
-                    asAttributeSet = Xml.asAttributeSet(xmlResourceParser);
-                    while (true) {
-                        int next = xmlResourceParser.next();
-                        if (next == 1 || next == 2) {
+                    attributeSetAsAttributeSet = Xml.asAttributeSet(xmlResourceParserLoadXmlMetaData);
+                    do {
+                        next = xmlResourceParserLoadXmlMetaData.next();
+                        if (next == 1) {
                             break;
                         }
+                    } while (next != 2);
+                } catch (PackageManager.NameNotFoundException e4) {
+                    e = e4;
+                    string = null;
+                } catch (IOException e5) {
+                    e = e5;
+                    string = null;
+                } catch (XmlPullParserException e6) {
+                    e = e6;
+                    string = null;
+                }
+                if (!"recognition-service".equals(xmlResourceParserLoadXmlMetaData.getName())) {
+                    throw new XmlPullParserException("Meta-data does not start with recognition-service tag");
+                }
+                TypedArray typedArrayObtainAttributes = resourcesForApplication.obtainAttributes(attributeSetAsAttributeSet, R.styleable.RecognitionService);
+                string = typedArrayObtainAttributes.getString(0);
+                try {
+                    typedArrayObtainAttributes.recycle();
+                } catch (PackageManager.NameNotFoundException e7) {
+                    e = e7;
+                    Log.e("VoiceInputHelper", "error parsing recognition service meta-data", e);
+                    if (xmlResourceParserLoadXmlMetaData != null) {
+                        xmlResourceParserLoadXmlMetaData.close();
+                        this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, string));
+                    } else {
+                        this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, string));
                     }
-                } catch (Throwable th2) {
-                    th = th2;
-                    if (xmlResourceParser != null) {
-                        xmlResourceParser.close();
+                } catch (IOException e8) {
+                    e = e8;
+                    Log.e("VoiceInputHelper", "error parsing recognition service meta-data", e);
+                    if (xmlResourceParserLoadXmlMetaData != null) {
+                        xmlResourceParserLoadXmlMetaData.close();
+                        this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, string));
+                    } else {
+                        this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, string));
                     }
-                    throw th;
+                } catch (XmlPullParserException e9) {
+                    e = e9;
+                    Log.e("VoiceInputHelper", "error parsing recognition service meta-data", e);
+                    if (xmlResourceParserLoadXmlMetaData != null) {
+                    }
+                    this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, string));
                 }
-            } catch (PackageManager.NameNotFoundException e4) {
-                e = e4;
-                str = null;
-            } catch (IOException e5) {
-                e = e5;
-                str = null;
-            } catch (XmlPullParserException e6) {
-                e = e6;
-                str = null;
-            }
-            if (!"recognition-service".equals(xmlResourceParser.getName())) {
-                throw new XmlPullParserException("Meta-data does not start with recognition-service tag");
-            }
-            TypedArray obtainAttributes = resourcesForApplication.obtainAttributes(asAttributeSet, R.styleable.RecognitionService);
-            str = obtainAttributes.getString(0);
-            try {
-                obtainAttributes.recycle();
-            } catch (PackageManager.NameNotFoundException e7) {
-                e = e7;
-                Log.e("VoiceInputHelper", "error parsing recognition service meta-data", e);
-                if (xmlResourceParser != null) {
-                    xmlResourceParser.close();
-                    this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, str));
-                } else {
-                    this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, str));
+                if (xmlResourceParserLoadXmlMetaData != null) {
+                    xmlResourceParserLoadXmlMetaData.close();
                 }
-            } catch (IOException e8) {
-                e = e8;
-                Log.e("VoiceInputHelper", "error parsing recognition service meta-data", e);
-                if (xmlResourceParser != null) {
-                    xmlResourceParser.close();
-                    this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, str));
-                } else {
-                    this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, str));
+                this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, string));
+            } catch (Throwable th2) {
+                th = th2;
+                if (xmlResourceParserLoadXmlMetaData != null) {
+                    xmlResourceParserLoadXmlMetaData.close();
                 }
-            } catch (XmlPullParserException e9) {
-                e = e9;
-                Log.e("VoiceInputHelper", "error parsing recognition service meta-data", e);
-                if (xmlResourceParser == null) {
-                    this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, str));
-                }
-                xmlResourceParser.close();
-                this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, str));
+                throw th;
             }
-            if (xmlResourceParser == null) {
-                this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, str));
-            }
-            xmlResourceParser.close();
-            this.mAvailableRecognizerInfos.add(new RecognizerInfo(this.mContext.getPackageManager(), resolveInfo2.serviceInfo, str));
         }
         Collections.sort(this.mAvailableRecognizerInfos);
     }

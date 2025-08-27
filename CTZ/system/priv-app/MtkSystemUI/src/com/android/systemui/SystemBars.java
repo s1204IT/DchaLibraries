@@ -3,6 +3,7 @@ package com.android.systemui;
 import android.util.Log;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class SystemBars extends SystemUI {
     private SystemUI mStatusBar;

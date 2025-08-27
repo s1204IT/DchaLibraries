@@ -8,6 +8,7 @@ import com.android.settings.accessibility.ToggleFontSizePreferenceFragment;
 import com.android.settings.core.BasePreferenceController;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IDisplaySettingsExt;
+
 /* loaded from: classes.dex */
 public class FontSizePreferenceController extends BasePreferenceController {
     private IDisplaySettingsExt customFontSizePref;

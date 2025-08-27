@@ -2,6 +2,7 @@ package com.android.settings.vpn2;
 
 import android.app.Activity;
 import android.app.AppOpsManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -44,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class VpnSettings extends RestrictedSettingsFragment implements Handler.Callback, Preference.OnPreferenceClickListener {
     private static final NetworkRequest VPN_REQUEST = new NetworkRequest.Builder().removeCapability(15).removeCapability(13).removeCapability(14).build();
@@ -56,6 +58,7 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
     private Map<String, LegacyVpnPreference> mLegacyVpnPreferences;
     private ConnectivityManager.NetworkCallback mNetworkCallback;
     private boolean mUnavailable;
+
     @GuardedBy("this")
     private Handler mUpdater;
     private HandlerThread mUpdaterThread;
@@ -130,11 +133,11 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.vpn_create) {
-            long currentTimeMillis = System.currentTimeMillis();
-            while (this.mLegacyVpnPreferences.containsKey(Long.toHexString(currentTimeMillis))) {
-                currentTimeMillis++;
+            long jCurrentTimeMillis = System.currentTimeMillis();
+            while (this.mLegacyVpnPreferences.containsKey(Long.toHexString(jCurrentTimeMillis))) {
+                jCurrentTimeMillis++;
             }
-            ConfigDialogFragment.show(this, new VpnProfile(Long.toHexString(currentTimeMillis)), true, false);
+            ConfigDialogFragment.show(this, new VpnProfile(Long.toHexString(jCurrentTimeMillis)), true, false);
             return true;
         }
         return super.onOptionsItemSelected(menuItem);
@@ -183,10 +186,10 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
             return true;
         }
         Context applicationContext = activity.getApplicationContext();
-        List<VpnProfile> loadVpnProfiles = loadVpnProfiles(this.mKeyStore, new int[0]);
+        List<VpnProfile> listLoadVpnProfiles = loadVpnProfiles(this.mKeyStore, new int[0]);
         List<AppVpnInfo> vpnApps = getVpnApps(applicationContext, true);
         Map<String, LegacyVpnInfo> connectedLegacyVpns = getConnectedLegacyVpns();
-        activity.runOnUiThread(new UpdatePreferences(this).legacyVpns(loadVpnProfiles, connectedLegacyVpns, VpnUtils.getLockdownVpn()).appVpns(vpnApps, getConnectedAppVpns(), getAlwaysOnAppVpnInfos()));
+        activity.runOnUiThread(new UpdatePreferences(this).legacyVpns(listLoadVpnProfiles, connectedLegacyVpns, VpnUtils.getLockdownVpn()).appVpns(vpnApps, getConnectedAppVpns(), getAlwaysOnAppVpnInfos()));
         synchronized (this) {
             if (this.mUpdater != null) {
                 this.mUpdater.removeMessages(0);
@@ -197,7 +200,6 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
     }
 
     @VisibleForTesting
-    /* loaded from: classes.dex */
     static class UpdatePreferences implements Runnable {
         private final VpnSettings mSettings;
         private List<VpnProfile> vpnProfiles = Collections.emptyList();
@@ -238,33 +240,33 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
                     break;
                 }
                 VpnProfile next = it.next();
-                LegacyVpnPreference findOrCreatePreference = this.mSettings.findOrCreatePreference(next, true);
+                LegacyVpnPreference legacyVpnPreferenceFindOrCreatePreference = this.mSettings.findOrCreatePreference(next, true);
                 if (this.connectedLegacyVpns.containsKey(next.key)) {
-                    findOrCreatePreference.setState(this.connectedLegacyVpns.get(next.key).state);
+                    legacyVpnPreferenceFindOrCreatePreference.setState(this.connectedLegacyVpns.get(next.key).state);
                 } else {
-                    findOrCreatePreference.setState(LegacyVpnPreference.STATE_NONE);
+                    legacyVpnPreferenceFindOrCreatePreference.setState(LegacyVpnPreference.STATE_NONE);
                 }
                 if (this.lockdownVpnKey != null && this.lockdownVpnKey.equals(next.key)) {
                     z = true;
                 }
-                findOrCreatePreference.setAlwaysOn(z);
-                arraySet.add(findOrCreatePreference);
+                legacyVpnPreferenceFindOrCreatePreference.setAlwaysOn(z);
+                arraySet.add(legacyVpnPreferenceFindOrCreatePreference);
             }
             for (LegacyVpnInfo legacyVpnInfo : this.connectedLegacyVpns.values()) {
-                LegacyVpnPreference findOrCreatePreference2 = this.mSettings.findOrCreatePreference(new VpnProfile(legacyVpnInfo.key), false);
-                findOrCreatePreference2.setState(legacyVpnInfo.state);
-                findOrCreatePreference2.setAlwaysOn(this.lockdownVpnKey != null && this.lockdownVpnKey.equals(legacyVpnInfo.key));
-                arraySet.add(findOrCreatePreference2);
+                LegacyVpnPreference legacyVpnPreferenceFindOrCreatePreference2 = this.mSettings.findOrCreatePreference(new VpnProfile(legacyVpnInfo.key), false);
+                legacyVpnPreferenceFindOrCreatePreference2.setState(legacyVpnInfo.state);
+                legacyVpnPreferenceFindOrCreatePreference2.setAlwaysOn(this.lockdownVpnKey != null && this.lockdownVpnKey.equals(legacyVpnInfo.key));
+                arraySet.add(legacyVpnPreferenceFindOrCreatePreference2);
             }
             for (AppVpnInfo appVpnInfo : this.vpnApps) {
-                AppPreference findOrCreatePreference3 = this.mSettings.findOrCreatePreference(appVpnInfo);
+                AppPreference appPreferenceFindOrCreatePreference = this.mSettings.findOrCreatePreference(appVpnInfo);
                 if (this.connectedAppVpns.contains(appVpnInfo)) {
-                    findOrCreatePreference3.setState(3);
+                    appPreferenceFindOrCreatePreference.setState(3);
                 } else {
-                    findOrCreatePreference3.setState(AppPreference.STATE_DISCONNECTED);
+                    appPreferenceFindOrCreatePreference.setState(AppPreference.STATE_DISCONNECTED);
                 }
-                findOrCreatePreference3.setAlwaysOn(this.alwaysOnAppVpnInfos.contains(appVpnInfo));
-                arraySet.add(findOrCreatePreference3);
+                appPreferenceFindOrCreatePreference.setAlwaysOn(this.alwaysOnAppVpnInfos.contains(appVpnInfo));
+                arraySet.add(appPreferenceFindOrCreatePreference);
             }
             this.mSettings.setShownPreferences(arraySet);
         }
@@ -288,13 +290,14 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
                 preferenceScreen.removePreference(preference);
             }
         }
-        for (Preference preference2 : collection) {
-            preferenceScreen.addPreference(preference2);
+        Iterator<Preference> it = collection.iterator();
+        while (it.hasNext()) {
+            preferenceScreen.addPreference(it.next());
         }
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
-    public boolean onPreferenceClick(Preference preference) {
+    public boolean onPreferenceClick(Preference preference) throws PendingIntent.CanceledException {
         if (preference instanceof LegacyVpnPreference) {
             VpnProfile profile = ((LegacyVpnPreference) preference).getProfile();
             if (this.mConnectedLegacyVpn != null && profile.key.equals(this.mConnectedLegacyVpn.key) && this.mConnectedLegacyVpn.state == 3) {
@@ -307,27 +310,27 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
             }
             ConfigDialogFragment.show(this, profile, false, true);
             return true;
-        } else if (preference instanceof AppPreference) {
-            AppPreference appPreference = (AppPreference) preference;
-            boolean z = appPreference.getState() == 3;
-            if (!z) {
-                try {
-                    UserHandle of = UserHandle.of(appPreference.getUserId());
-                    Context createPackageContextAsUser = getActivity().createPackageContextAsUser(getActivity().getPackageName(), 0, of);
-                    Intent launchIntentForPackage = createPackageContextAsUser.getPackageManager().getLaunchIntentForPackage(appPreference.getPackageName());
-                    if (launchIntentForPackage != null) {
-                        createPackageContextAsUser.startActivityAsUser(launchIntentForPackage, of);
-                        return true;
-                    }
-                } catch (PackageManager.NameNotFoundException e2) {
-                    Log.w("VpnSettings", "VPN provider does not exist: " + appPreference.getPackageName(), e2);
-                }
-            }
-            AppDialogFragment.show(this, appPreference.getPackageInfo(), appPreference.getLabel(), false, z);
-            return true;
-        } else {
+        }
+        if (!(preference instanceof AppPreference)) {
             return false;
         }
+        AppPreference appPreference = (AppPreference) preference;
+        boolean z = appPreference.getState() == 3;
+        if (!z) {
+            try {
+                UserHandle userHandleOf = UserHandle.of(appPreference.getUserId());
+                Context contextCreatePackageContextAsUser = getActivity().createPackageContextAsUser(getActivity().getPackageName(), 0, userHandleOf);
+                Intent launchIntentForPackage = contextCreatePackageContextAsUser.getPackageManager().getLaunchIntentForPackage(appPreference.getPackageName());
+                if (launchIntentForPackage != null) {
+                    contextCreatePackageContextAsUser.startActivityAsUser(launchIntentForPackage, userHandleOf);
+                    return true;
+                }
+            } catch (PackageManager.NameNotFoundException e2) {
+                Log.w("VpnSettings", "VPN provider does not exist: " + appPreference.getPackageName(), e2);
+            }
+        }
+        AppDialogFragment.show(this, appPreference.getPackageInfo(), appPreference.getLabel(), false, z);
+        return true;
     }
 
     @Override // com.android.settings.support.actionbar.HelpResourceProvider
@@ -396,8 +399,9 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
 
     private Set<AppVpnInfo> getAlwaysOnAppVpnInfos() {
         ArraySet arraySet = new ArraySet();
-        for (UserHandle userHandle : this.mUserManager.getUserProfiles()) {
-            int identifier = userHandle.getIdentifier();
+        Iterator<UserHandle> it = this.mUserManager.getUserProfiles().iterator();
+        while (it.hasNext()) {
+            int identifier = it.next().getIdentifier();
             String alwaysOnVpnPackageForUser = this.mConnectivityManager.getAlwaysOnVpnPackageForUser(identifier);
             if (alwaysOnVpnPackageForUser != null) {
                 arraySet.add(new AppVpnInfo(identifier, alwaysOnVpnPackageForUser));
@@ -407,21 +411,22 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
     }
 
     static List<AppVpnInfo> getVpnApps(Context context, boolean z) {
-        Set singleton;
-        ArrayList newArrayList = Lists.newArrayList();
+        Set setSingleton;
+        ArrayList arrayListNewArrayList = Lists.newArrayList();
         if (z) {
-            singleton = new ArraySet();
-            for (UserHandle userHandle : UserManager.get(context).getUserProfiles()) {
-                singleton.add(Integer.valueOf(userHandle.getIdentifier()));
+            setSingleton = new ArraySet();
+            Iterator<UserHandle> it = UserManager.get(context).getUserProfiles().iterator();
+            while (it.hasNext()) {
+                setSingleton.add(Integer.valueOf(it.next().getIdentifier()));
             }
         } else {
-            singleton = Collections.singleton(Integer.valueOf(UserHandle.myUserId()));
+            setSingleton = Collections.singleton(Integer.valueOf(UserHandle.myUserId()));
         }
         List<AppOpsManager.PackageOps> packagesForOps = ((AppOpsManager) context.getSystemService("appops")).getPackagesForOps(new int[]{47});
         if (packagesForOps != null) {
             for (AppOpsManager.PackageOps packageOps : packagesForOps) {
                 int userId = UserHandle.getUserId(packageOps.getUid());
-                if (singleton.contains(Integer.valueOf(userId))) {
+                if (setSingleton.contains(Integer.valueOf(userId))) {
                     boolean z2 = false;
                     for (AppOpsManager.OpEntry opEntry : packageOps.getOps()) {
                         if (opEntry.getOp() == 47 && opEntry.getMode() == 0) {
@@ -429,24 +434,23 @@ public class VpnSettings extends RestrictedSettingsFragment implements Handler.C
                         }
                     }
                     if (z2) {
-                        newArrayList.add(new AppVpnInfo(userId, packageOps.getPackageName()));
+                        arrayListNewArrayList.add(new AppVpnInfo(userId, packageOps.getPackageName()));
                     }
                 }
             }
         }
-        Collections.sort(newArrayList);
-        return newArrayList;
+        Collections.sort(arrayListNewArrayList);
+        return arrayListNewArrayList;
     }
 
     static List<VpnProfile> loadVpnProfiles(KeyStore keyStore, int... iArr) {
-        String[] list;
-        ArrayList newArrayList = Lists.newArrayList();
+        ArrayList arrayListNewArrayList = Lists.newArrayList();
         for (String str : keyStore.list("VPN_")) {
-            VpnProfile decode = VpnProfile.decode(str, keyStore.get("VPN_" + str));
-            if (decode != null && !ArrayUtils.contains(iArr, decode.type)) {
-                newArrayList.add(decode);
+            VpnProfile vpnProfileDecode = VpnProfile.decode(str, keyStore.get("VPN_" + str));
+            if (vpnProfileDecode != null && !ArrayUtils.contains(iArr, vpnProfileDecode.type)) {
+                arrayListNewArrayList.add(vpnProfileDecode);
             }
         }
-        return newArrayList;
+        return arrayListNewArrayList;
     }
 }

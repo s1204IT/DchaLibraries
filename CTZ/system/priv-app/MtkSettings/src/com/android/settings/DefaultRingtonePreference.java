@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.util.AttributeSet;
+
 /* loaded from: classes.dex */
 public class DefaultRingtonePreference extends RingtonePreference {
     public DefaultRingtonePreference(Context context, AttributeSet attributeSet) {

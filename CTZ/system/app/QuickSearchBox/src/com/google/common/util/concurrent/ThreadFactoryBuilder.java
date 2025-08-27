@@ -5,6 +5,7 @@ import java.lang.Thread;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
+
 /* loaded from: classes.dex */
 public final class ThreadFactoryBuilder {
     private String nameFormat = null;
@@ -29,35 +30,35 @@ public final class ThreadFactoryBuilder {
     }
 
     private static ThreadFactory build(ThreadFactoryBuilder threadFactoryBuilder) {
-        ThreadFactory defaultThreadFactory;
+        ThreadFactory threadFactoryDefaultThreadFactory;
         final String str = threadFactoryBuilder.nameFormat;
         final Boolean bool = threadFactoryBuilder.daemon;
         final Integer num = threadFactoryBuilder.priority;
         final Thread.UncaughtExceptionHandler uncaughtExceptionHandler = threadFactoryBuilder.uncaughtExceptionHandler;
         if (threadFactoryBuilder.backingThreadFactory != null) {
-            defaultThreadFactory = threadFactoryBuilder.backingThreadFactory;
+            threadFactoryDefaultThreadFactory = threadFactoryBuilder.backingThreadFactory;
         } else {
-            defaultThreadFactory = Executors.defaultThreadFactory();
+            threadFactoryDefaultThreadFactory = Executors.defaultThreadFactory();
         }
-        final ThreadFactory threadFactory = defaultThreadFactory;
+        final ThreadFactory threadFactory = threadFactoryDefaultThreadFactory;
         final AtomicLong atomicLong = str != null ? new AtomicLong(0L) : null;
         return new ThreadFactory() { // from class: com.google.common.util.concurrent.ThreadFactoryBuilder.1
             @Override // java.util.concurrent.ThreadFactory
             public Thread newThread(Runnable runnable) {
-                Thread newThread = threadFactory.newThread(runnable);
+                Thread threadNewThread = threadFactory.newThread(runnable);
                 if (str != null) {
-                    newThread.setName(String.format(str, Long.valueOf(atomicLong.getAndIncrement())));
+                    threadNewThread.setName(String.format(str, Long.valueOf(atomicLong.getAndIncrement())));
                 }
                 if (bool != null) {
-                    newThread.setDaemon(bool.booleanValue());
+                    threadNewThread.setDaemon(bool.booleanValue());
                 }
                 if (num != null) {
-                    newThread.setPriority(num.intValue());
+                    threadNewThread.setPriority(num.intValue());
                 }
                 if (uncaughtExceptionHandler != null) {
-                    newThread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
+                    threadNewThread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
                 }
-                return newThread;
+                return threadNewThread;
             }
         };
     }

@@ -1,6 +1,7 @@
 package com.android.settingslib.wrapper;
 
 import android.bluetooth.BluetoothA2dp;
+
 /* loaded from: classes.dex */
 public class BluetoothA2dpWrapper {
     private BluetoothA2dp mService;

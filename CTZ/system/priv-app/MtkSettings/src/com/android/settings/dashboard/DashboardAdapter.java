@@ -33,6 +33,7 @@ import com.android.settingslib.drawer.Tile;
 import com.android.settingslib.suggestions.SuggestionControllerMixin;
 import com.android.settingslib.utils.IconCache;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> implements SummaryLoader.SummaryConsumer, SuggestionAdapter.Callback, LifecycleObserver, OnSaveInstanceState {
     static final String STATE_CONDITION_EXPANDED = "condition_expanded";
@@ -101,10 +102,10 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
         }
         if (suggestions.size() == 1) {
             setSuggestions(null);
-            return;
+        } else {
+            suggestions.remove(suggestion);
+            setSuggestions(suggestions);
         }
-        suggestions.remove(suggestion);
-        setSuggestions(suggestions);
     }
 
     @Override // com.android.settings.dashboard.SummaryLoader.SummaryConsumer
@@ -115,21 +116,23 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public DashboardItemHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(i, viewGroup, false);
+        View viewInflate = LayoutInflater.from(viewGroup.getContext()).inflate(i, viewGroup, false);
         if (i == R.layout.condition_header) {
-            return new ConditionHeaderHolder(inflate);
+            return new ConditionHeaderHolder(viewInflate);
         }
         if (i == R.layout.condition_container) {
-            return new ConditionContainerHolder(inflate);
+            return new ConditionContainerHolder(viewInflate);
         }
         if (i == R.layout.suggestion_container) {
-            return new SuggestionContainerHolder(inflate);
+            return new SuggestionContainerHolder(viewInflate);
         }
-        return new DashboardItemHolder(inflate);
+        return new DashboardItemHolder(viewInflate);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(DashboardItemHolder dashboardItemHolder, int i) {
         int itemTypeByPosition = this.mDashboardData.getItemTypeByPosition(i);
@@ -138,24 +141,23 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
             onBindTile(dashboardItemHolder, tile);
             dashboardItemHolder.itemView.setTag(tile);
             dashboardItemHolder.itemView.setOnClickListener(this.mTileClickListener);
-        } else if (itemTypeByPosition != R.layout.suggestion_container) {
+        }
+        if (itemTypeByPosition != R.layout.suggestion_container) {
             switch (itemTypeByPosition) {
                 case R.layout.condition_container /* 2131558480 */:
                     onBindCondition((ConditionContainerHolder) dashboardItemHolder, i);
-                    return;
+                    break;
                 case R.layout.condition_footer /* 2131558481 */:
                     dashboardItemHolder.itemView.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardAdapter$EPKC8_9XatJQPDMMI1s2dy8ZY8c
                         @Override // android.view.View.OnClickListener
                         public final void onClick(View view) {
-                            DashboardAdapter.lambda$onBindViewHolder$0(DashboardAdapter.this, view);
+                            DashboardAdapter.lambda$onBindViewHolder$0(this.f$0, view);
                         }
                     });
-                    return;
+                    break;
                 case R.layout.condition_header /* 2131558482 */:
                     onBindConditionHeader((ConditionHeaderHolder) dashboardItemHolder, (DashboardData.ConditionHeaderData) this.mDashboardData.getItemEntityByPosition(i));
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }
@@ -192,10 +194,10 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
     void notifyDashboardDataChanged(DashboardData dashboardData) {
         if (this.mFirstFrameDrawn && dashboardData != null) {
             DiffUtil.calculateDiff(new DashboardData.ItemsDataDiffCallback(dashboardData.getItemList(), this.mDashboardData.getItemList())).dispatchUpdatesTo(this);
-            return;
+        } else {
+            this.mFirstFrameDrawn = true;
+            notifyDataSetChanged();
         }
-        this.mFirstFrameDrawn = true;
-        notifyDataSetChanged();
     }
 
     void onBindConditionHeader(ConditionHeaderHolder conditionHeaderHolder, DashboardData.ConditionHeaderData conditionHeaderData) {
@@ -213,7 +215,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
         conditionHeaderHolder.itemView.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardAdapter$rjSGP6Cnddhw6FvR740SjWmziQ4
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                DashboardAdapter.lambda$onBindConditionHeader$1(DashboardAdapter.this, view);
+                DashboardAdapter.lambda$onBindConditionHeader$1(this.f$0, view);
             }
         });
     }
@@ -264,9 +266,9 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
         if (!TextUtils.isEmpty(tile.summary)) {
             dashboardItemHolder.summary.setText(tile.summary);
             dashboardItemHolder.summary.setVisibility(0);
-            return;
+        } else {
+            dashboardItemHolder.summary.setVisibility(8);
         }
-        dashboardItemHolder.summary.setVisibility(8);
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnSaveInstanceState
@@ -283,11 +285,11 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
             viewGroup.setVisibility(4);
             return;
         }
-        LayoutInflater from = LayoutInflater.from(viewGroup.getContext());
+        LayoutInflater layoutInflaterFrom = LayoutInflater.from(viewGroup.getContext());
         viewGroup.removeAllViews();
         int size = list.size();
         for (int i = 1; i < size; i++) {
-            ImageView imageView = (ImageView) from.inflate(R.layout.condition_header_icon, viewGroup, false);
+            ImageView imageView = (ImageView) layoutInflaterFrom.inflate(R.layout.condition_header_icon, viewGroup, false);
             imageView.setImageDrawable(list.get(i));
             viewGroup.addView(imageView);
         }
@@ -298,7 +300,6 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
         this.mRecyclerView.scrollToPosition(this.mDashboardData.hasSuggestion() ? 1 : 0);
     }
 
-    /* loaded from: classes.dex */
     public static class DashboardItemHolder extends RecyclerView.ViewHolder {
         public final ImageView icon;
         public final TextView summary;
@@ -306,13 +307,12 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
 
         public DashboardItemHolder(View view) {
             super(view);
-            this.icon = (ImageView) view.findViewById(16908294);
-            this.title = (TextView) view.findViewById(16908310);
-            this.summary = (TextView) view.findViewById(16908304);
+            this.icon = (ImageView) view.findViewById(android.R.id.icon);
+            this.title = (TextView) view.findViewById(android.R.id.title);
+            this.summary = (TextView) view.findViewById(android.R.id.summary);
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ConditionHeaderHolder extends DashboardItemHolder {
         public final ImageView expandIndicator;
         public final LinearLayout icons;
@@ -324,7 +324,6 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ConditionContainerHolder extends DashboardItemHolder {
         public final RecyclerView data;
 
@@ -334,7 +333,6 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardItemHolder> 
         }
     }
 
-    /* loaded from: classes.dex */
     public static class SuggestionContainerHolder extends DashboardItemHolder {
         public final RecyclerView data;
 

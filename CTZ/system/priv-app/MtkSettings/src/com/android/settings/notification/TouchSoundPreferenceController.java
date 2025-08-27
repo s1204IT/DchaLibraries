@@ -6,14 +6,14 @@ import android.os.AsyncTask;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class TouchSoundPreferenceController extends SettingPrefController {
     public TouchSoundPreferenceController(Context context, SettingsPreferenceFragment settingsPreferenceFragment, Lifecycle lifecycle) {
         super(context, settingsPreferenceFragment, lifecycle);
         this.mPreference = new SettingPref(2, "touch_sounds", "sound_effects_enabled", 1, new int[0]) { // from class: com.android.settings.notification.TouchSoundPreferenceController.1
-            /* JADX INFO: Access modifiers changed from: protected */
             @Override // com.android.settings.notification.SettingPref
-            public boolean setSetting(final Context context2, final int i) {
+            protected boolean setSetting(final Context context2, final int i) {
                 AsyncTask.execute(new Runnable() { // from class: com.android.settings.notification.TouchSoundPreferenceController.1.1
                     @Override // java.lang.Runnable
                     public void run() {

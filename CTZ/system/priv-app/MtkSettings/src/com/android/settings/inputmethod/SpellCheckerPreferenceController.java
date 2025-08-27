@@ -9,6 +9,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.inputmethod.InputMethodAndSubtypeUtil;
+
 /* loaded from: classes.dex */
 public class SpellCheckerPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final TextServicesManager mTextServicesManager;
@@ -21,9 +22,9 @@ public class SpellCheckerPreferenceController extends AbstractPreferenceControll
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference("spellcheckers_settings");
-        if (findPreference != null) {
-            InputMethodAndSubtypeUtil.removeUnnecessaryNonPersistentPreference(findPreference);
+        Preference preferenceFindPreference = preferenceScreen.findPreference("spellcheckers_settings");
+        if (preferenceFindPreference != null) {
+            InputMethodAndSubtypeUtil.removeUnnecessaryNonPersistentPreference(preferenceFindPreference);
         }
     }
 

@@ -5,6 +5,7 @@ import android.service.notification.StatusBarNotification;
 import com.android.launcher3.ItemInfo;
 import com.android.launcher3.shortcuts.DeepShortcutManager;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class PackageUserKey {
     private int mHashCode;
@@ -42,10 +43,10 @@ public class PackageUserKey {
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof PackageUserKey) {
-            PackageUserKey packageUserKey = (PackageUserKey) obj;
-            return this.mPackageName.equals(packageUserKey.mPackageName) && this.mUser.equals(packageUserKey.mUser);
+        if (!(obj instanceof PackageUserKey)) {
+            return false;
         }
-        return false;
+        PackageUserKey packageUserKey = (PackageUserKey) obj;
+        return this.mPackageName.equals(packageUserKey.mPackageName) && this.mUser.equals(packageUserKey.mUser);
     }
 }

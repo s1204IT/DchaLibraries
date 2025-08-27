@@ -1,13 +1,14 @@
 package com.android.settings.gestures;
 
+import android.R;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.text.TextUtils;
-import com.android.settings.R;
 import com.android.settings.search.DatabaseIndexingUtils;
 import com.android.settings.search.InlineSwitchPayload;
 import com.android.settings.search.ResultPayload;
+
 /* loaded from: classes.dex */
 public class DoubleTapPowerPreferenceController extends GesturePreferenceController {
     static final int OFF = 1;
@@ -27,7 +28,7 @@ public class DoubleTapPowerPreferenceController extends GesturePreferenceControl
     }
 
     private static boolean isGestureAvailable(Context context) {
-        return context.getResources().getBoolean(17956908);
+        return context.getResources().getBoolean(R.^attr-private.colorListDivider);
     }
 
     @Override // com.android.settings.core.BasePreferenceController
@@ -57,6 +58,6 @@ public class DoubleTapPowerPreferenceController extends GesturePreferenceControl
 
     @Override // com.android.settings.core.BasePreferenceController
     public ResultPayload getResultPayload() {
-        return new InlineSwitchPayload("camera_double_tap_power_gesture_disabled", 2, 0, DatabaseIndexingUtils.buildSearchResultPageIntent(this.mContext, DoubleTapPowerSettings.class.getName(), this.mDoubleTapPowerKey, this.mContext.getString(R.string.display_settings)), isAvailable(), 0);
+        return new InlineSwitchPayload("camera_double_tap_power_gesture_disabled", 2, 0, DatabaseIndexingUtils.buildSearchResultPageIntent(this.mContext, DoubleTapPowerSettings.class.getName(), this.mDoubleTapPowerKey, this.mContext.getString(com.android.settings.R.string.display_settings)), isAvailable(), 0);
     }
 }

@@ -35,6 +35,7 @@ import com.android.browser.Tab;
 import com.android.browser.UI;
 import com.mediatek.browser.ext.IBrowserUrlExt;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class BaseUi implements UI {
     protected Tab mActiveTab;
@@ -72,8 +73,11 @@ public abstract class BaseUi implements UI {
     private boolean mInputUrlFlag = false;
     private IBrowserUrlExt mBrowserUrlExt = null;
     protected Handler mHandler = new Handler() { // from class: com.android.browser.BaseUi.2
+        AnonymousClass2() {
+        }
+
         @Override // android.os.Handler
-        public void handleMessage(Message message) {
+        public void handleMessage(Message message) throws Resources.NotFoundException {
             if (message.what == 1) {
                 BaseUi.this.suggestHideTitleBar();
             }
@@ -87,7 +91,7 @@ public abstract class BaseUi implements UI {
         }
     };
 
-    public BaseUi(Activity activity, UiController uiController) {
+    public BaseUi(Activity activity, UiController uiController) throws Resources.NotFoundException {
         this.mErrorConsoleContainer = null;
         this.mActivity = activity;
         this.mUiController = uiController;
@@ -96,7 +100,7 @@ public abstract class BaseUi implements UI {
         this.mInputManager = (InputMethodManager) activity.getSystemService("input_method");
         this.mLockIconSecure = resources.getDrawable(R.drawable.ic_secure_holo_dark);
         this.mLockIconMixed = resources.getDrawable(R.drawable.ic_secure_partial_holo_dark);
-        this.mFrameLayout = (FrameLayout) this.mActivity.getWindow().getDecorView().findViewById(16908290);
+        this.mFrameLayout = (FrameLayout) this.mActivity.getWindow().getDecorView().findViewById(android.R.id.content);
         LayoutInflater.from(this.mActivity).inflate(R.layout.custom_screen, this.mFrameLayout);
         this.mFixedTitlebarContainer = (FrameLayout) this.mFrameLayout.findViewById(R.id.fixed_titlebar_container);
         this.mContentView = (FrameLayout) this.mFrameLayout.findViewById(R.id.main_content);
@@ -131,7 +135,7 @@ public abstract class BaseUi implements UI {
     }
 
     @Override // com.android.browser.UI
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         this.mActivityPaused = false;
         Tab currentTab = this.mTabControl.getCurrentTab();
         if (currentTab != null) {
@@ -182,7 +186,7 @@ public abstract class BaseUi implements UI {
     }
 
     @Override // com.android.browser.UI
-    public void onTabDataChanged(Tab tab) {
+    public void onTabDataChanged(Tab tab) throws Resources.NotFoundException {
         if (DEBUG) {
             Log.d("browser", "BaseUi.onTabDataChanged()--->tab = " + tab);
         }
@@ -196,7 +200,7 @@ public abstract class BaseUi implements UI {
     }
 
     @Override // com.android.browser.UI
-    public void onProgressChanged(Tab tab) {
+    public void onProgressChanged(Tab tab) throws Resources.NotFoundException {
         int loadProgress = tab.getLoadProgress();
         if (tab.inForeground()) {
             this.mTitleBar.setProgress(loadProgress);
@@ -214,7 +218,7 @@ public abstract class BaseUi implements UI {
     public void onPageStopped(Tab tab) {
         cancelStopToast();
         if (tab.inForeground()) {
-            this.mStopToast = Toast.makeText(this.mActivity, (int) R.string.stopping, 0);
+            this.mStopToast = Toast.makeText(this.mActivity, R.string.stopping, 0);
             this.mStopToast.show();
         }
     }
@@ -232,7 +236,7 @@ public abstract class BaseUi implements UI {
     }
 
     @Override // com.android.browser.UI
-    public void setActiveTab(Tab tab) {
+    public void setActiveTab(Tab tab) throws Resources.NotFoundException {
         if (DEBUG) {
             Log.d("browser", "BaseUi.setActiveTab()--->tab = " + tab);
         }
@@ -286,8 +290,7 @@ public abstract class BaseUi implements UI {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab getActiveTab() {
+    Tab getActiveTab() {
         return this.mActiveTab;
     }
 
@@ -296,7 +299,7 @@ public abstract class BaseUi implements UI {
     }
 
     @Override // com.android.browser.UI
-    public void removeTab(Tab tab) {
+    public void removeTab(Tab tab) throws Resources.NotFoundException {
         if (DEBUG) {
             Log.d("browser", "BaseUi.removeTab()--->tab = " + tab);
         }
@@ -307,7 +310,7 @@ public abstract class BaseUi implements UI {
     }
 
     @Override // com.android.browser.UI
-    public void detachTab(Tab tab) {
+    public void detachTab(Tab tab) throws Resources.NotFoundException {
         if (DEBUG) {
             Log.d("browser", "BaseUi.detachTab()--->tab = " + tab);
         }
@@ -349,7 +352,7 @@ public abstract class BaseUi implements UI {
         this.mUiController.attachSubWindow(tab);
     }
 
-    private void removeTabFromContentView(Tab tab) {
+    private void removeTabFromContentView(Tab tab) throws Resources.NotFoundException {
         if (DEBUG) {
             Log.d("browser", "BaseUi.removeTabFromContentView()--->tab = " + tab);
         }
@@ -388,20 +391,40 @@ public abstract class BaseUi implements UI {
     }
 
     @Override // com.android.browser.UI
-    public void createSubWindow(Tab tab, final WebView webView) {
+    public void createSubWindow(Tab tab, WebView webView) {
         if (DEBUG && webView != null) {
             Log.d("browser", "BaseUi.createSubWindow()--->subView()--->width = " + webView.getWidth() + ", view.height = " + webView.getHeight());
         }
-        View inflate = this.mActivity.getLayoutInflater().inflate(R.layout.browser_subwindow, (ViewGroup) null);
-        ((ViewGroup) inflate.findViewById(R.id.inner_container)).addView(webView, new ViewGroup.LayoutParams(-1, -1));
-        ((ImageButton) inflate.findViewById(R.id.subwindow_close)).setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.BaseUi.1
+        View viewInflate = this.mActivity.getLayoutInflater().inflate(R.layout.browser_subwindow, (ViewGroup) null);
+        ((ViewGroup) viewInflate.findViewById(R.id.inner_container)).addView(webView, new ViewGroup.LayoutParams(-1, -1));
+        ((ImageButton) viewInflate.findViewById(R.id.subwindow_close)).setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.BaseUi.1
+            final /* synthetic */ WebView val$cancelSubView;
+
+            AnonymousClass1(WebView webView2) {
+                webView = webView2;
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 ((BrowserWebView) webView).getWebChromeClient().onCloseWindow(webView);
             }
         });
-        tab.setSubWebView(webView);
-        tab.setSubViewContainer(inflate);
+        tab.setSubWebView(webView2);
+        tab.setSubViewContainer(viewInflate);
+    }
+
+    /* renamed from: com.android.browser.BaseUi$1 */
+    class AnonymousClass1 implements View.OnClickListener {
+        final /* synthetic */ WebView val$cancelSubView;
+
+        AnonymousClass1(WebView webView2) {
+            webView = webView2;
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            ((BrowserWebView) webView).getWebChromeClient().onCloseWindow(webView);
+        }
     }
 
     @Override // com.android.browser.UI
@@ -424,8 +447,7 @@ public abstract class BaseUi implements UI {
         this.mContentView.addView(view, COVER_SCREEN_PARAMS);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void refreshWebView() {
+    protected void refreshWebView() {
         WebView webView = getWebView();
         if (webView != null) {
             webView.invalidate();
@@ -450,22 +472,20 @@ public abstract class BaseUi implements UI {
         return (isTitleBarShowing() || isActivityPaused() || getActiveTab() == null || getWebView() == null || this.mUiController.isInCustomActionMode()) ? false : true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void showTitleBar() {
+    protected void showTitleBar() {
         this.mHandler.removeMessages(1);
         if (canShowTitleBar()) {
             this.mTitleBar.show();
         }
     }
 
-    protected void hideTitleBarOnly() {
+    protected void hideTitleBarOnly() throws Resources.NotFoundException {
         if (this.mTitleBar.isShowing()) {
             this.mTitleBar.hide();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void hideTitleBar() {
+    protected void hideTitleBar() throws Resources.NotFoundException {
         if (this.mTitleBar.isShowing()) {
             this.mTitleBar.hide();
         }
@@ -478,15 +498,13 @@ public abstract class BaseUi implements UI {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void hideBottomBar() {
+    protected void hideBottomBar() {
         if (this.mNeedBottomBar && this.mBottomBar != null && this.mBottomBar.isShowing()) {
             this.mBottomBar.hide();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isTitleBarShowing() {
+    protected boolean isTitleBarShowing() {
         return this.mTitleBar.getVisibility() == 0;
     }
 
@@ -507,7 +525,7 @@ public abstract class BaseUi implements UI {
         if (DEBUG && comboViews != null) {
             Log.d("browser", "BaseUi.showComboView()--->startingView = " + comboViews.toString());
         }
-        Intent intent = new Intent(this.mActivity, ComboViewActivity.class);
+        Intent intent = new Intent(this.mActivity, (Class<?>) ComboViewActivity.class);
         intent.putExtra("initial_view", comboViews.name());
         intent.putExtra("combo_args", bundle);
         Tab activeTab = getActiveTab();
@@ -524,7 +542,6 @@ public abstract class BaseUi implements UI {
             return;
         }
         this.mOriginalOrientation = this.mActivity.getRequestedOrientation();
-        FrameLayout frameLayout = (FrameLayout) this.mActivity.getWindow().getDecorView();
         this.mFullscreenContainer = new FullscreenHolder(this.mActivity);
         this.mFullscreenContainer.addView(view, COVER_SCREEN_PARAMS);
         this.mFrameLayout.addView(this.mFullscreenContainer, COVER_SCREEN_PARAMS);
@@ -548,7 +565,6 @@ public abstract class BaseUi implements UI {
             return;
         }
         setFullscreen(BrowserSettings.getInstance().useFullscreen());
-        FrameLayout frameLayout = (FrameLayout) this.mActivity.getWindow().getDecorView();
         this.mFrameLayout.removeView(this.mFullscreenContainer);
         this.mFullscreenContainer = null;
         this.mCustomView = null;
@@ -584,8 +600,7 @@ public abstract class BaseUi implements UI {
         this.mTitleBar.updateAutoLogin(tab, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateLockIconToLatest(Tab tab) {
+    protected void updateLockIconToLatest(Tab tab) {
         if (tab != null && tab.inForeground()) {
             updateLockIconImage(tab.getSecurityState());
         }
@@ -603,8 +618,7 @@ public abstract class BaseUi implements UI {
         this.mNavigationBar.setLock(drawable);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setUrlTitle(Tab tab) {
+    protected void setUrlTitle(Tab tab) {
         String url = tab.getUrl();
         String title = tab.getTitle();
         Log.i("BaseUi", "Load Progress: " + tab.getLoadProgress() + "inPageLoad: " + tab.inPageLoad());
@@ -614,15 +628,14 @@ public abstract class BaseUi implements UI {
         if (tab.inForeground()) {
             if (url.startsWith("file://")) {
                 this.mNavigationBar.setDisplayTitle(title);
-                return;
+            } else {
+                this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mActivity);
+                this.mNavigationBar.setDisplayTitle(this.mBrowserUrlExt.getNavigationBarTitle(title, url));
             }
-            this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mActivity);
-            this.mNavigationBar.setDisplayTitle(this.mBrowserUrlExt.getNavigationBarTitle(title, url));
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setFavicon(Tab tab) {
+    protected void setFavicon(Tab tab) {
         if (tab.inForeground()) {
             this.mNavigationBar.setFavicon(tab.getFavicon());
         }
@@ -712,8 +725,7 @@ public abstract class BaseUi implements UI {
         Toast.makeText(this.mActivity, this.mActivity.getString(R.string.max_tabs_warning), 0).show();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public WebView getWebView() {
+    protected WebView getWebView() {
         if (this.mActiveTab != null) {
             return this.mActiveTab.getWebView();
         }
@@ -765,25 +777,22 @@ public abstract class BaseUi implements UI {
         return false;
     }
 
-    public void suggestHideTitleBar() {
+    public void suggestHideTitleBar() throws Resources.NotFoundException {
         if (!isLoading() && !isEditingUrl() && !this.mTitleBar.wantsToBeVisible() && !this.mNavigationBar.isMenuShowing()) {
             hideTitleBarOnly();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final void showTitleBarForDuration() {
+    protected final void showTitleBarForDuration() {
         showTitleBarForDuration(2000L);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final void showTitleBarForDuration(long j) {
+    protected final void showTitleBarForDuration(long j) {
         showTitleBar();
         this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 1), j);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final void showBottomBarForDuration(long j) {
+    protected final void showBottomBarForDuration(long j) {
         if (getWebView() != null) {
             this.mHandler.removeMessages(2);
             showBottomBarMust();
@@ -797,8 +806,27 @@ public abstract class BaseUi implements UI {
         this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 3, tab), 2000L);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void handleMessage(Message message) {
+    /* renamed from: com.android.browser.BaseUi$2 */
+    class AnonymousClass2 extends Handler {
+        AnonymousClass2() {
+        }
+
+        @Override // android.os.Handler
+        public void handleMessage(Message message) throws Resources.NotFoundException {
+            if (message.what == 1) {
+                BaseUi.this.suggestHideTitleBar();
+            }
+            if (message.what == 2 && BaseUi.this.mUiController != null && BaseUi.this.mUiController.getCurrentTab() != null && !BaseUi.this.mUiController.getCurrentTab().inPageLoad()) {
+                BaseUi.this.hideBottomBar();
+            }
+            if (message.what == 3 && BaseUi.this.mUiController != null) {
+                BaseUi.this.mUiController.closeTab((Tab) message.obj);
+            }
+            BaseUi.this.handleMessage(message);
+        }
+    }
+
+    protected void handleMessage(Message message) {
     }
 
     @Override // com.android.browser.UI
@@ -806,7 +834,6 @@ public abstract class BaseUi implements UI {
         this.mUiController.hideCustomView();
     }
 
-    /* loaded from: classes.dex */
     static class FullscreenHolder extends FrameLayout {
         public FullscreenHolder(Context context) {
             super(context);
@@ -819,8 +846,7 @@ public abstract class BaseUi implements UI {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setInputUrlFlag(boolean z) {
+    void setInputUrlFlag(boolean z) {
         this.mInputUrlFlag = z;
     }
 

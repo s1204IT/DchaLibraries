@@ -6,6 +6,7 @@ import com.android.systemui.keyguard.ScreenLifecycle;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class ScreenLifecycle extends Lifecycle<Observer> implements Dumpable {
     private int mScreenState = 0;
@@ -65,7 +66,6 @@ public class ScreenLifecycle extends Lifecycle<Observer> implements Dumpable {
         Trace.traceCounter(4096L, "screenState", i);
     }
 
-    /* loaded from: classes.dex */
     public interface Observer {
         default void onScreenTurningOn() {
         }

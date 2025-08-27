@@ -18,6 +18,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class AutoBatterySeekBarPreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener, LifecycleObserver, OnStart, OnStop {
     static final String KEY_AUTO_BATTERY_SEEK_BAR = "battery_saver_seek_bar";
@@ -96,7 +97,6 @@ public class AutoBatterySeekBarPreferenceController extends BasePreferenceContro
         seekBarPreference2.setSeekBarContentDescription(this.mContext.getString(R.string.battery_saver_turn_on_automatically_title));
     }
 
-    /* loaded from: classes.dex */
     private final class AutoBatterySaverSettingObserver extends ContentObserver {
         private final ContentResolver mContentResolver;
         private final Uri mUri;

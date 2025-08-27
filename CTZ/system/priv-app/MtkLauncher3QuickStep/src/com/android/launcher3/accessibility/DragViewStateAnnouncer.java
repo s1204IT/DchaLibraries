@@ -3,6 +3,7 @@ package com.android.launcher3.accessibility;
 import android.view.View;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.compat.AccessibilityManagerCompat;
+
 /* loaded from: classes.dex */
 public class DragViewStateAnnouncer implements Runnable {
     private static final int TIMEOUT_SEND_ACCESSIBILITY_EVENT = 200;

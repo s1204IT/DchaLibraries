@@ -16,6 +16,7 @@ import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.GlobalSetting;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
+
 /* loaded from: classes.dex */
 public class AirplaneModeTile extends QSTileImpl<QSTile.BooleanState> {
     private final QSTile.Icon mIcon;
@@ -38,15 +39,14 @@ public class AirplaneModeTile extends QSTileImpl<QSTile.BooleanState> {
             @Override // com.android.systemui.qs.GlobalSetting
             protected void handleValueChanged(int i) {
                 if (AirplaneModeTile.DEBUG) {
-                    String str = AirplaneModeTile.this.TAG;
-                    Log.d(str, "Received Gloable changes to " + i);
+                    Log.d(AirplaneModeTile.this.TAG, "Received Gloable changes to " + i);
                 }
                 AirplaneModeTile.this.handleRefreshState(Integer.valueOf(i));
             }
         };
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         QSTile.BooleanState booleanState = new QSTile.BooleanState();
@@ -74,8 +74,7 @@ public class AirplaneModeTile extends QSTileImpl<QSTile.BooleanState> {
     private void setEnabled(boolean z) {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.mContext.getSystemService("connectivity");
         if (DEBUG) {
-            String str = this.TAG;
-            Log.d(str, "AirplaneModeTile will set enable to " + z);
+            Log.d(this.TAG, "AirplaneModeTile will set enable to " + z);
         }
         connectivityManager.setAirplaneMode(z);
     }
@@ -90,9 +89,9 @@ public class AirplaneModeTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mContext.getString(R.string.airplane_mode);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         boolean z;
         checkIfRestrictionEnforcedByAdminOnly(booleanState, "no_airplane_mode");
         if ((obj instanceof Integer ? ((Integer) obj).intValue() : this.mSetting.getValue()) == 0) {
@@ -114,7 +113,7 @@ public class AirplaneModeTile extends QSTileImpl<QSTile.BooleanState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 112;
+        return com.android.systemui.plugins.R.styleable.AppCompatTheme_windowActionBarOverlay;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl

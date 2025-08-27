@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.android.settings.core.InstrumentedFragment;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.setupwizardlib.GlifLayout;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class EncryptionInterstitial extends SettingsActivity {
     private static final String TAG = EncryptionInterstitial.class.getSimpleName();
@@ -36,24 +38,21 @@ public class EncryptionInterstitial extends SettingsActivity {
         super.onApplyThemeResource(theme, SetupWizardUtils.getTheme(getIntent()), z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return EncryptionInterstitialFragment.class.getName().equals(str);
     }
 
     public static Intent createStartIntent(Context context, int i, boolean z, Intent intent) {
-        return new Intent(context, EncryptionInterstitial.class).putExtra("extra_password_quality", i).putExtra(":settings:show_fragment_title_resid", R.string.encryption_interstitial_header).putExtra("extra_require_password", z).putExtra("extra_unlock_method_intent", intent);
+        return new Intent(context, (Class<?>) EncryptionInterstitial.class).putExtra("extra_password_quality", i).putExtra(":settings:show_fragment_title_resid", R.string.encryption_interstitial_header).putExtra("extra_require_password", z).putExtra("extra_unlock_method_intent", intent);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity, com.android.settingslib.drawer.SettingsDrawerActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
         super.onCreate(bundle);
         ((LinearLayout) findViewById(R.id.content_parent)).setFitsSystemWindows(false);
     }
 
-    /* loaded from: classes.dex */
     public static class EncryptionInterstitialFragment extends InstrumentedFragment implements View.OnClickListener {
         private View mDontRequirePasswordToDecrypt;
         private boolean mPasswordRequired;
@@ -110,10 +109,10 @@ public class EncryptionInterstitial extends SettingsActivity {
             if (this.mUnlockMethodIntent == null) {
                 Log.wtf(EncryptionInterstitial.TAG, "no unlock intent to start");
                 finish();
-                return;
+            } else {
+                this.mUnlockMethodIntent.putExtra("extra_require_password", this.mPasswordRequired);
+                startActivityForResult(this.mUnlockMethodIntent, 100);
             }
-            this.mUnlockMethodIntent.putExtra("extra_require_password", this.mPasswordRequired);
-            startActivityForResult(this.mUnlockMethodIntent, 100);
         }
 
         @Override // android.app.Fragment
@@ -132,17 +131,17 @@ public class EncryptionInterstitial extends SettingsActivity {
                     setRequirePasswordState(false);
                     AccessibilityWarningDialogFragment.newInstance(this.mRequestedPasswordQuality).show(getChildFragmentManager(), "AccessibilityWarningDialog");
                     return;
+                } else {
+                    setRequirePasswordState(true);
+                    startLockIntent();
+                    return;
                 }
-                setRequirePasswordState(true);
-                startLockIntent();
-                return;
             }
             setRequirePasswordState(false);
             startLockIntent();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setRequirePasswordState(boolean z) {
+        private void setRequirePasswordState(boolean z) {
             this.mPasswordRequired = z;
         }
 
@@ -159,7 +158,6 @@ public class EncryptionInterstitial extends SettingsActivity {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AccessibilityWarningDialogFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
         public static AccessibilityWarningDialogFragment newInstance(int i) {
             AccessibilityWarningDialogFragment accessibilityWarningDialogFragment = new AccessibilityWarningDialogFragment();
@@ -173,7 +171,7 @@ public class EncryptionInterstitial extends SettingsActivity {
         public Dialog onCreateDialog(Bundle bundle) {
             int i;
             int i2;
-            CharSequence loadLabel;
+            CharSequence charSequenceLoadLabel;
             int i3 = getArguments().getInt("extra_password_quality");
             if (i3 == 65536) {
                 i = R.string.encrypt_talkback_dialog_require_pattern;
@@ -188,11 +186,11 @@ public class EncryptionInterstitial extends SettingsActivity {
             Activity activity = getActivity();
             List<AccessibilityServiceInfo> enabledAccessibilityServiceList = AccessibilityManager.getInstance(activity).getEnabledAccessibilityServiceList(-1);
             if (enabledAccessibilityServiceList.isEmpty()) {
-                loadLabel = "";
+                charSequenceLoadLabel = "";
             } else {
-                loadLabel = enabledAccessibilityServiceList.get(0).getResolveInfo().loadLabel(activity.getPackageManager());
+                charSequenceLoadLabel = enabledAccessibilityServiceList.get(0).getResolveInfo().loadLabel(activity.getPackageManager());
             }
-            return new AlertDialog.Builder(activity).setTitle(i).setMessage(getString(i2, new Object[]{loadLabel})).setCancelable(true).setPositiveButton(17039370, this).setNegativeButton(17039360, this).create();
+            return new AlertDialog.Builder(activity).setTitle(i).setMessage(getString(i2, new Object[]{charSequenceLoadLabel})).setCancelable(true).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this).create();
         }
 
         @Override // com.android.settingslib.core.instrumentation.Instrumentable

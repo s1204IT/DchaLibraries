@@ -1,6 +1,7 @@
 package com.android.quicksearchbox.util;
 
 import java.lang.reflect.Array;
+
 /* loaded from: classes.dex */
 public class LevenshteinDistance {
     private final int[][] mDistanceTable;
@@ -13,8 +14,8 @@ public class LevenshteinDistance {
         int length2 = tokenArr2.length;
         int i = length + 1;
         int i2 = length2 + 1;
-        int[][] iArr = (int[][]) Array.newInstance(int.class, i, i2);
-        int[][] iArr2 = (int[][]) Array.newInstance(int.class, i, i2);
+        int[][] iArr = (int[][]) Array.newInstance((Class<?>) int.class, i, i2);
+        int[][] iArr2 = (int[][]) Array.newInstance((Class<?>) int.class, i, i2);
         iArr[0][0] = 3;
         iArr2[0][0] = 0;
         for (int i3 = 1; i3 <= length; i3++) {
@@ -43,7 +44,7 @@ public class LevenshteinDistance {
             Token token = tokenArr[i2];
             for (int i3 = 1; i3 <= length2; i3++) {
                 int i4 = i3 - 1;
-                int i5 = !token.prefixOf(tokenArr2[i4]);
+                int i5 = !token.prefixOf(tokenArr2[i4]) ? 1 : 0;
                 int i6 = iArr[i2][i3] + 1;
                 int i7 = 0;
                 int i8 = iArr[i][i4] + 1;
@@ -89,7 +90,6 @@ public class LevenshteinDistance {
         return editOperationArr;
     }
 
-    /* loaded from: classes.dex */
     public static final class EditOperation {
         private final int mPosition;
         private final int mType;
@@ -108,7 +108,6 @@ public class LevenshteinDistance {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class Token implements CharSequence {
         private final char[] mContainer;
         public final int mEnd;
@@ -152,6 +151,7 @@ public class LevenshteinDistance {
             return this.mContainer[i + this.mStart];
         }
 
+        /* JADX DEBUG: Method merged with bridge method: subSequence(II)Ljava/lang/CharSequence; */
         @Override // java.lang.CharSequence
         public String subSequence(int i, int i2) {
             return new String(this.mContainer, this.mStart + i, length());

@@ -5,6 +5,7 @@ import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.widget.RadioButton;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class RestrictedRadioButton extends RadioButton {
     private Context mContext;
@@ -16,7 +17,7 @@ public class RestrictedRadioButton extends RadioButton {
     }
 
     public RestrictedRadioButton(Context context, AttributeSet attributeSet) {
-        this(context, attributeSet, 16842878);
+        this(context, attributeSet, android.R.attr.radioButtonStyle);
     }
 
     public RestrictedRadioButton(Context context, AttributeSet attributeSet, int i) {

@@ -15,6 +15,7 @@ import com.android.setupwizardlib.items.ItemInflater;
 import com.android.setupwizardlib.items.RecyclerItemAdapter;
 import com.android.setupwizardlib.util.DrawableLayoutDirectionHelper;
 import com.android.setupwizardlib.view.HeaderRecyclerView;
+
 /* loaded from: classes.dex */
 public class RecyclerMixin implements Mixin {
     private Drawable mDefaultDivider;
@@ -39,20 +40,20 @@ public class RecyclerMixin implements Mixin {
 
     public void parseAttributes(AttributeSet attributeSet, int i) {
         Context context = this.mTemplateLayout.getContext();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwRecyclerMixin, i, 0);
-        int resourceId = obtainStyledAttributes.getResourceId(R.styleable.SuwRecyclerMixin_android_entries, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwRecyclerMixin, i, 0);
+        int resourceId = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwRecyclerMixin_android_entries, 0);
         if (resourceId != 0) {
             RecyclerItemAdapter recyclerItemAdapter = new RecyclerItemAdapter(new ItemInflater(context).inflate(resourceId));
-            recyclerItemAdapter.setHasStableIds(obtainStyledAttributes.getBoolean(R.styleable.SuwRecyclerMixin_suwHasStableIds, false));
+            recyclerItemAdapter.setHasStableIds(typedArrayObtainStyledAttributes.getBoolean(R.styleable.SuwRecyclerMixin_suwHasStableIds, false));
             setAdapter(recyclerItemAdapter);
         }
-        int dimensionPixelSize = obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwRecyclerMixin_suwDividerInset, -1);
+        int dimensionPixelSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwRecyclerMixin_suwDividerInset, -1);
         if (dimensionPixelSize != -1) {
             setDividerInset(dimensionPixelSize);
         } else {
-            setDividerInsets(obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwRecyclerMixin_suwDividerInsetStart, 0), obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwRecyclerMixin_suwDividerInsetEnd, 0));
+            setDividerInsets(typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwRecyclerMixin_suwDividerInsetStart, 0), typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwRecyclerMixin_suwDividerInsetEnd, 0));
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public RecyclerView getRecyclerView() {
@@ -106,13 +107,13 @@ public class RecyclerMixin implements Mixin {
     }
 
     private void updateDivider() {
-        boolean z;
+        boolean zIsLayoutDirectionResolved;
         if (Build.VERSION.SDK_INT >= 19) {
-            z = this.mTemplateLayout.isLayoutDirectionResolved();
+            zIsLayoutDirectionResolved = this.mTemplateLayout.isLayoutDirectionResolved();
         } else {
-            z = true;
+            zIsLayoutDirectionResolved = true;
         }
-        if (z) {
+        if (zIsLayoutDirectionResolved) {
             if (this.mDefaultDivider == null) {
                 this.mDefaultDivider = this.mDividerDecoration.getDivider();
             }

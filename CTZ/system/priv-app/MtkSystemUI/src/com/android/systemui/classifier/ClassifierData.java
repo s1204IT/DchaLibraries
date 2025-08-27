@@ -3,6 +3,7 @@ package com.android.systemui.classifier;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ClassifierData {
     private final float mDpi;

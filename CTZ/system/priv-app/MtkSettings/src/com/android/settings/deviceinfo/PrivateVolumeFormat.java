@@ -13,12 +13,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.core.InstrumentedPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class PrivateVolumeFormat extends InstrumentedPreferenceFragment {
     private final View.OnClickListener mConfirmListener = new View.OnClickListener() { // from class: com.android.settings.deviceinfo.PrivateVolumeFormat.1
         @Override // android.view.View.OnClickListener
         public void onClick(View view) {
-            Intent intent = new Intent(PrivateVolumeFormat.this.getActivity(), StorageWizardFormatProgress.class);
+            Intent intent = new Intent(PrivateVolumeFormat.this.getActivity(), (Class<?>) StorageWizardFormatProgress.class);
             intent.putExtra("android.os.storage.extra.DISK_ID", PrivateVolumeFormat.this.mDisk.getId());
             intent.putExtra("format_private", false);
             intent.putExtra("format_forget_uuid", PrivateVolumeFormat.this.mVolume.getFsUuid());
@@ -39,9 +40,11 @@ public class PrivateVolumeFormat extends InstrumentedPreferenceFragment {
         StorageManager storageManager = (StorageManager) getActivity().getSystemService(StorageManager.class);
         this.mVolume = storageManager.findVolumeById(getArguments().getString("android.os.storage.extra.VOLUME_ID"));
         this.mDisk = storageManager.findDiskById(this.mVolume.getDiskId());
-        View inflate = layoutInflater.inflate(R.layout.storage_internal_format, viewGroup, false);
-        ((TextView) inflate.findViewById(R.id.body)).setText(TextUtils.expandTemplate(getText(R.string.storage_internal_format_details), this.mDisk.getDescription()));
-        ((Button) inflate.findViewById(R.id.confirm)).setOnClickListener(this.mConfirmListener);
-        return inflate;
+        View viewInflate = layoutInflater.inflate(R.layout.storage_internal_format, viewGroup, false);
+        TextView textView = (TextView) viewInflate.findViewById(R.id.body);
+        Button button = (Button) viewInflate.findViewById(R.id.confirm);
+        textView.setText(TextUtils.expandTemplate(getText(R.string.storage_internal_format_details), this.mDisk.getDescription()));
+        button.setOnClickListener(this.mConfirmListener);
+        return viewInflate;
     }
 }

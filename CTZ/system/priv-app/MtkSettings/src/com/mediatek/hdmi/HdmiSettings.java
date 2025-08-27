@@ -2,6 +2,7 @@ package com.mediatek.hdmi;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.media.AudioSystem;
 import android.os.Bundle;
@@ -16,10 +17,13 @@ import android.support.v7.preference.Preference;
 import android.util.Log;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
+import com.android.settingslib.wifi.AccessPoint;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class HdmiSettings extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener {
     private static final String HDMI_ENABLE;
@@ -35,37 +39,37 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
     private boolean isPlugIn = false;
     private final Handler mHandler = new Handler() { // from class: com.mediatek.hdmi.HdmiSettings.1
         @Override // android.os.Handler
-        public void handleMessage(Message message) {
+        public void handleMessage(Message message) throws NoSuchMethodException, Resources.NotFoundException, SecurityException, ClassNotFoundException {
             switch (message.what) {
-                case 10:
+                case AccessPoint.Speed.MODERATE /* 10 */:
                     if (HdmiSettings.this.mVideoResolutionPref != null) {
                         HdmiSettings.this.mVideoResolutionPref.setEnabled(true);
                         HdmiSettings.this.updatePref();
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 case 11:
                     if (HdmiSettings.this.mVideoResolutionPref != null) {
                         HdmiSettings.this.mVideoResolutionPref.setEnabled(false);
                         HdmiSettings.this.updatePref();
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 case 12:
                     if (HdmiSettings.this.mToggleHdmiPref != null) {
                         HdmiSettings.this.mToggleHdmiPref.setEnabled(true);
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 default:
                     super.handleMessage(message);
-                    return;
+                    break;
             }
         }
     };
     private ContentObserver mHdmiSettingsObserver = new ContentObserver(new Handler()) { // from class: com.mediatek.hdmi.HdmiSettings.2
         @Override // android.database.ContentObserver
-        public void onChange(boolean z) {
+        public void onChange(boolean z) throws NoSuchMethodException, Resources.NotFoundException, SecurityException, ClassNotFoundException {
             Log.d("@M_HDMISettings", "mHdmiSettingsObserver onChanged: " + z);
             HdmiSettings.this.updatePref();
         }
@@ -121,7 +125,7 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onActivityCreated(Bundle bundle) {
+    public void onActivityCreated(Bundle bundle) throws ClassNotFoundException {
         super.onActivityCreated(bundle);
         if (this.mHdmiManager == null) {
             finish();
@@ -154,7 +158,7 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onResume() {
+    public void onResume() throws NoSuchMethodException, Resources.NotFoundException, SecurityException, ClassNotFoundException {
         super.onResume();
         updatePref();
         this.mActivity.getContentResolver().registerContentObserver(Settings.System.getUriFor("hdmi_enable_status"), false, this.mHdmiSettingsObserver);
@@ -175,8 +179,7 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
         super.onDestroy();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePref() {
+    private void updatePref() throws NoSuchMethodException, Resources.NotFoundException, SecurityException, ClassNotFoundException {
         Log.i("@M_HDMISettings", "updatePref");
         updatePrefStatus();
         updateSelectedResolution();
@@ -184,16 +187,16 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
         updateSelectedAudioOutput();
     }
 
-    private void updatePrefStatus() {
+    private void updatePrefStatus() throws NoSuchMethodException, SecurityException {
         Log.i("@M_HDMISettings", "updatePrefStatus");
-        boolean isSignalOutputting = HdimReflectionHelper.isSignalOutputting(this.mHdmiManager);
-        Log.i("@M_HDMISettings", "updatePrefStatus, shouldEnable = " + isSignalOutputting);
+        boolean zIsSignalOutputting = HdimReflectionHelper.isSignalOutputting(this.mHdmiManager);
+        Log.i("@M_HDMISettings", "updatePrefStatus, shouldEnable = " + zIsSignalOutputting);
         if (HdimReflectionHelper.HDMI_TB_SUPPORT) {
             this.mVideoResolutionPref.setEnabled(this.isPlugIn);
         } else {
-            this.mVideoResolutionPref.setEnabled(isSignalOutputting);
+            this.mVideoResolutionPref.setEnabled(zIsSignalOutputting);
         }
-        this.mVideoScalePref.setEnabled(isSignalOutputting);
+        this.mVideoScalePref.setEnabled(zIsSignalOutputting);
         boolean z = Settings.System.getInt(this.mActivity.getContentResolver(), "hdmi_enable_status", 1) == 1;
         if (HdimReflectionHelper.HDMI_TB_SUPPORT) {
             z = SystemProperties.getInt(HDMI_ENABLE, 0) == 1;
@@ -201,7 +204,7 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
         this.mToggleHdmiPref.setChecked(z);
     }
 
-    private void updateSelectedResolution() {
+    private void updateSelectedResolution() throws NoSuchMethodException, Resources.NotFoundException, ClassNotFoundException, SecurityException {
         int i;
         Log.i("@M_HDMISettings", "updateSelectedResolution");
         int hdmiDisplayTypeConstant = HdimReflectionHelper.getHdmiDisplayTypeConstant("AUTO");
@@ -249,7 +252,7 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws IllegalAccessException, NoSuchMethodException, SecurityException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException {
         String key = preference.getKey();
         Log.d("@M_HDMISettings", key + " preference changed");
         if ("hdmi_toggler".equals(key)) {
@@ -272,26 +275,25 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
             }
             HdimReflectionHelper.setVideoResolution(this.mHdmiManager, Integer.parseInt((String) obj));
         } else if ("video_scale".equals(key)) {
-            int parseInt = Integer.parseInt((String) obj);
-            if (parseInt >= 0 && parseInt <= 10) {
-                HdimReflectionHelper.setVideoScale(this.mHdmiManager, parseInt);
+            int i = Integer.parseInt((String) obj);
+            if (i >= 0 && i <= 10) {
+                HdimReflectionHelper.setVideoScale(this.mHdmiManager, i);
             } else {
-                Log.d("@M_HDMISettings", "scaleValue error: " + parseInt);
+                Log.d("@M_HDMISettings", "scaleValue error: " + i);
             }
         } else if ("audio_output".equals(key)) {
-            int parseInt2 = Integer.parseInt((String) obj);
+            int i2 = Integer.parseInt((String) obj);
             int hdmiDisplayTypeConstant = HdimReflectionHelper.getHdmiDisplayTypeConstant("AUDIO_OUTPUT_STEREO");
-            if (parseInt2 == 1) {
+            if (i2 == 1) {
                 hdmiDisplayTypeConstant = HdimReflectionHelper.getAudioParameter(this.mHdmiManager);
             }
             AudioSystem.setParameters("HDMI_channel=" + hdmiDisplayTypeConstant);
-            Settings.System.putIntForUser(this.mActivity.getContentResolver(), "hdmi_audio_output_mode", parseInt2, -2);
-            Log.d("@M_HDMISettings", "AudioSystem.setParameters HDMI_channel = " + hdmiDisplayTypeConstant + ",which: " + parseInt2);
+            Settings.System.putIntForUser(this.mActivity.getContentResolver(), "hdmi_audio_output_mode", i2, -2);
+            Log.d("@M_HDMISettings", "AudioSystem.setParameters HDMI_channel = " + hdmiDisplayTypeConstant + ",which: " + i2);
         }
         return true;
     }
 
-    /* loaded from: classes.dex */
     private class HdmiObserver extends UEventObserver {
         private final Context mContext;
 
@@ -308,7 +310,7 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
             stopObserving();
         }
 
-        public void onUEvent(UEventObserver.UEvent uEvent) {
+        public void onUEvent(UEventObserver.UEvent uEvent) throws NumberFormatException {
             int i;
             try {
                 i = Integer.parseInt(uEvent.get("SWITCH_STATE"));
@@ -327,126 +329,134 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
             }
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [397=7, 399=5, 400=5, 401=5] */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:28:0x006b */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:70:0x0007 */
         /* JADX WARN: Multi-variable type inference failed */
         /* JADX WARN: Type inference failed for: r1v19, types: [java.lang.String] */
-        private String getContentFromFile(String str) {
+        private String getContentFromFile(String str) throws Throwable {
+            String strTrim;
             String str2;
-            String str3;
             StringBuilder sb;
+            FileReader fileReader;
+            ?? r1;
             char[] cArr = new char[1024];
-            FileReader fileReader = null;
+            FileReader fileReader2 = null;
+            FileReader fileReader3 = null;
+            FileReader fileReader4 = null;
+            FileReader fileReader5 = null;
             try {
                 try {
-                    FileReader fileReader2 = new FileReader(str);
+                    fileReader = new FileReader(str);
+                } catch (FileNotFoundException e) {
+                    strTrim = null;
+                } catch (IOException e2) {
+                    strTrim = null;
+                } catch (IndexOutOfBoundsException e3) {
+                    e = e3;
+                    strTrim = null;
+                }
+                try {
                     try {
-                        try {
-                            str2 = String.valueOf(cArr, 0, fileReader2.read(cArr, 0, cArr.length)).trim();
+                        strTrim = String.valueOf(cArr, 0, fileReader.read(cArr, 0, cArr.length)).trim();
+                    } catch (FileNotFoundException e4) {
+                        strTrim = null;
+                    } catch (IOException e5) {
+                        strTrim = null;
+                    } catch (IndexOutOfBoundsException e6) {
+                        e = e6;
+                        strTrim = null;
+                    }
+                    try {
+                        r1 = "HdmiReceiver.HdmiObserver";
+                        Log.d("HdmiReceiver.HdmiObserver", str + " content is " + strTrim);
+                    } catch (FileNotFoundException e7) {
+                        fileReader3 = fileReader;
+                        Log.w("HdmiReceiver.HdmiObserver", "can't find file " + str);
+                        fileReader2 = fileReader3;
+                        if (fileReader3 != null) {
                             try {
-                                ?? r1 = "HdmiReceiver.HdmiObserver";
-                                Log.d("HdmiReceiver.HdmiObserver", str + " content is " + str2);
-                                try {
-                                    fileReader2.close();
-                                    fileReader = r1;
-                                } catch (IOException e) {
-                                    e = e;
-                                    str3 = "HdmiReceiver.HdmiObserver";
-                                    sb = new StringBuilder();
-                                    sb.append("close reader fail: ");
-                                    sb.append(e.getMessage());
-                                    Log.w(str3, sb.toString());
-                                    return str2;
-                                }
-                            } catch (FileNotFoundException e2) {
-                                fileReader = fileReader2;
-                                Log.w("HdmiReceiver.HdmiObserver", "can't find file " + str);
-                                fileReader = fileReader;
-                                if (fileReader != null) {
-                                    try {
-                                        fileReader.close();
-                                        fileReader = fileReader;
-                                    } catch (IOException e3) {
-                                        e = e3;
-                                        str3 = "HdmiReceiver.HdmiObserver";
-                                        sb = new StringBuilder();
-                                        sb.append("close reader fail: ");
-                                        sb.append(e.getMessage());
-                                        Log.w(str3, sb.toString());
-                                        return str2;
-                                    }
-                                }
-                                return str2;
-                            } catch (IOException e4) {
-                                fileReader = fileReader2;
-                                Log.w("HdmiReceiver.HdmiObserver", "IO exception when read file " + str);
-                                fileReader = fileReader;
-                                if (fileReader != null) {
-                                    try {
-                                        fileReader.close();
-                                        fileReader = fileReader;
-                                    } catch (IOException e5) {
-                                        e = e5;
-                                        str3 = "HdmiReceiver.HdmiObserver";
-                                        sb = new StringBuilder();
-                                        sb.append("close reader fail: ");
-                                        sb.append(e.getMessage());
-                                        Log.w(str3, sb.toString());
-                                        return str2;
-                                    }
-                                }
-                                return str2;
-                            } catch (IndexOutOfBoundsException e6) {
-                                e = e6;
-                                fileReader = fileReader2;
-                                Log.w("HdmiReceiver.HdmiObserver", "index exception: " + e.getMessage());
-                                fileReader = fileReader;
-                                if (fileReader != null) {
-                                    try {
-                                        fileReader.close();
-                                        fileReader = fileReader;
-                                    } catch (IOException e7) {
-                                        e = e7;
-                                        str3 = "HdmiReceiver.HdmiObserver";
-                                        sb = new StringBuilder();
-                                        sb.append("close reader fail: ");
-                                        sb.append(e.getMessage());
-                                        Log.w(str3, sb.toString());
-                                        return str2;
-                                    }
-                                }
-                                return str2;
+                                fileReader3.close();
+                                fileReader2 = fileReader3;
+                            } catch (IOException e8) {
+                                e = e8;
+                                str2 = "HdmiReceiver.HdmiObserver";
+                                sb = new StringBuilder();
+                                sb.append("close reader fail: ");
+                                sb.append(e.getMessage());
+                                Log.w(str2, sb.toString());
+                                return strTrim;
                             }
-                        } catch (Throwable th) {
-                            th = th;
-                            fileReader = fileReader2;
-                            if (fileReader != null) {
-                                try {
-                                    fileReader.close();
-                                } catch (IOException e8) {
-                                    Log.w("HdmiReceiver.HdmiObserver", "close reader fail: " + e8.getMessage());
-                                }
-                            }
-                            throw th;
                         }
-                    } catch (FileNotFoundException e9) {
-                        str2 = null;
-                    } catch (IOException e10) {
-                        str2 = null;
+                        return strTrim;
+                    } catch (IOException e9) {
+                        fileReader4 = fileReader;
+                        Log.w("HdmiReceiver.HdmiObserver", "IO exception when read file " + str);
+                        fileReader2 = fileReader4;
+                        if (fileReader4 != null) {
+                            try {
+                                fileReader4.close();
+                                fileReader2 = fileReader4;
+                            } catch (IOException e10) {
+                                e = e10;
+                                str2 = "HdmiReceiver.HdmiObserver";
+                                sb = new StringBuilder();
+                                sb.append("close reader fail: ");
+                                sb.append(e.getMessage());
+                                Log.w(str2, sb.toString());
+                                return strTrim;
+                            }
+                        }
+                        return strTrim;
                     } catch (IndexOutOfBoundsException e11) {
                         e = e11;
-                        str2 = null;
+                        fileReader5 = fileReader;
+                        Log.w("HdmiReceiver.HdmiObserver", "index exception: " + e.getMessage());
+                        fileReader2 = fileReader5;
+                        if (fileReader5 != null) {
+                            try {
+                                fileReader5.close();
+                                fileReader2 = fileReader5;
+                            } catch (IOException e12) {
+                                e = e12;
+                                str2 = "HdmiReceiver.HdmiObserver";
+                                sb = new StringBuilder();
+                                sb.append("close reader fail: ");
+                                sb.append(e.getMessage());
+                                Log.w(str2, sb.toString());
+                                return strTrim;
+                            }
+                        }
+                        return strTrim;
                     }
-                } catch (Throwable th2) {
-                    th = th2;
+                    try {
+                        fileReader.close();
+                        fileReader2 = r1;
+                    } catch (IOException e13) {
+                        e = e13;
+                        str2 = "HdmiReceiver.HdmiObserver";
+                        sb = new StringBuilder();
+                        sb.append("close reader fail: ");
+                        sb.append(e.getMessage());
+                        Log.w(str2, sb.toString());
+                        return strTrim;
+                    }
+                    return strTrim;
+                } catch (Throwable th) {
+                    th = th;
+                    fileReader2 = fileReader;
+                    if (fileReader2 != null) {
+                        try {
+                            fileReader2.close();
+                        } catch (IOException e14) {
+                            Log.w("HdmiReceiver.HdmiObserver", "close reader fail: " + e14.getMessage());
+                        }
+                    }
+                    throw th;
                 }
-            } catch (FileNotFoundException e12) {
-                str2 = null;
-            } catch (IOException e13) {
-                str2 = null;
-            } catch (IndexOutOfBoundsException e14) {
-                e = e14;
-                str2 = null;
+            } catch (Throwable th2) {
+                th = th2;
             }
-            return str2;
         }
 
         private synchronized void update(int i) {

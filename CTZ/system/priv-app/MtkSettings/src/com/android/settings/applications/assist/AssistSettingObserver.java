@@ -5,7 +5,9 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.provider.Settings;
 import com.android.settingslib.utils.ThreadUtils;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class AssistSettingObserver extends ContentObserver {
     private final Uri ASSIST_URI;
@@ -24,8 +26,9 @@ public abstract class AssistSettingObserver extends ContentObserver {
             contentResolver.registerContentObserver(this.ASSIST_URI, false, this);
             List<Uri> settingUris = getSettingUris();
             if (settingUris != null) {
-                for (Uri uri : settingUris) {
-                    contentResolver.registerContentObserver(uri, false, this);
+                Iterator<Uri> it = settingUris.iterator();
+                while (it.hasNext()) {
+                    contentResolver.registerContentObserver(it.next(), false, this);
                 }
                 return;
             }
@@ -48,7 +51,7 @@ public abstract class AssistSettingObserver extends ContentObserver {
             ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.applications.assist.-$$Lambda$AssistSettingObserver$iBFvDXS30QMXzEK-zAgHqcs78mE
                 @Override // java.lang.Runnable
                 public final void run() {
-                    AssistSettingObserver.this.onSettingChange();
+                    this.f$0.onSettingChange();
                 }
             });
         }

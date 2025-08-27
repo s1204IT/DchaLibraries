@@ -11,10 +11,12 @@ import com.android.systemui.Prefs;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+
 /* loaded from: classes.dex */
 public class AutoAddTracker {
     private static final String[][] CONVERT_PREFS = {new String[]{"QsHotspotAdded", "hotspot"}, new String[]{"QsDataSaverAdded", "saver"}, new String[]{"QsInvertColorsAdded", "inversion"}, new String[]{"QsWorkAdded", "work"}, new String[]{"QsNightDisplayAdded", "night"}};
     private final Context mContext;
+
     @VisibleForTesting
     protected final ContentObserver mObserver = new ContentObserver(new Handler()) { // from class: com.android.systemui.qs.AutoAddTracker.1
         @Override // android.database.ContentObserver
@@ -25,12 +27,11 @@ public class AutoAddTracker {
     private final ArraySet<String> mAutoAdded = new ArraySet<>(getAdded());
 
     public AutoAddTracker(Context context) {
-        String[][] strArr;
         this.mContext = context;
-        for (String[] strArr2 : CONVERT_PREFS) {
-            if (Prefs.getBoolean(context, strArr2[0], false)) {
-                setTileAdded(strArr2[1]);
-                Prefs.remove(context, strArr2[0]);
+        for (String[] strArr : CONVERT_PREFS) {
+            if (Prefs.getBoolean(context, strArr[0], false)) {
+                setTileAdded(strArr[1]);
+                Prefs.remove(context, strArr[0]);
             }
         }
         this.mContext.getContentResolver().registerContentObserver(Settings.Secure.getUriFor("qs_auto_tiles"), false, this.mObserver);
@@ -50,8 +51,7 @@ public class AutoAddTracker {
         Settings.Secure.putString(this.mContext.getContentResolver(), "qs_auto_tiles", TextUtils.join(",", this.mAutoAdded));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Collection<String> getAdded() {
+    private Collection<String> getAdded() {
         String string = Settings.Secure.getString(this.mContext.getContentResolver(), "qs_auto_tiles");
         if (string == null) {
             return Collections.emptyList();

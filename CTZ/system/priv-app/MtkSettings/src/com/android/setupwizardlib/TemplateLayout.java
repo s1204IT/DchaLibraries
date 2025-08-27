@@ -13,6 +13,7 @@ import com.android.setupwizardlib.template.Mixin;
 import com.android.setupwizardlib.util.FallbackThemeWrapper;
 import java.util.HashMap;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class TemplateLayout extends FrameLayout {
     private ViewGroup mContainer;
@@ -40,19 +41,18 @@ public class TemplateLayout extends FrameLayout {
     }
 
     private void init(int i, int i2, AttributeSet attributeSet, int i3) {
-        TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwTemplateLayout, i3, 0);
+        TypedArray typedArrayObtainStyledAttributes = getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwTemplateLayout, i3, 0);
         if (i == 0) {
-            i = obtainStyledAttributes.getResourceId(R.styleable.SuwTemplateLayout_android_layout, 0);
+            i = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwTemplateLayout_android_layout, 0);
         }
         if (i2 == 0) {
-            i2 = obtainStyledAttributes.getResourceId(R.styleable.SuwTemplateLayout_suwContainer, 0);
+            i2 = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwTemplateLayout_suwContainer, 0);
         }
         inflateTemplate(i, i2);
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public <M extends Mixin> void registerMixin(Class<M> cls, M m) {
+    protected <M extends Mixin> void registerMixin(Class<M> cls, M m) {
         this.mMixins.put(cls, m);
     }
 
@@ -86,8 +86,7 @@ public class TemplateLayout extends FrameLayout {
         return inflateTemplate(layoutInflater, 0, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final View inflateTemplate(LayoutInflater layoutInflater, int i, int i2) {
+    protected final View inflateTemplate(LayoutInflater layoutInflater, int i, int i2) {
         if (i2 == 0) {
             throw new IllegalArgumentException("android:layout not specified for TemplateLayout");
         }
@@ -97,8 +96,7 @@ public class TemplateLayout extends FrameLayout {
         return layoutInflater.inflate(i2, (ViewGroup) this, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public ViewGroup findContainer(int i) {
+    protected ViewGroup findContainer(int i) {
         if (i == 0) {
             i = getContainerId();
         }

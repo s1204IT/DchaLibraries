@@ -1,10 +1,12 @@
 package com.android.settings.gestures;
 
+import android.R;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.text.TextUtils;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class SwipeToNotificationPreferenceController extends GesturePreferenceController {
     private static final int OFF = 0;
@@ -21,7 +23,7 @@ public class SwipeToNotificationPreferenceController extends GesturePreferenceCo
     }
 
     private static boolean isGestureAvailable(Context context) {
-        return Utils.hasFingerprintHardware(context) && context.getResources().getBoolean(17957040);
+        return Utils.hasFingerprintHardware(context) && context.getResources().getBoolean(R.^attr-private.materialColorOnSecondaryContainer);
     }
 
     @Override // com.android.settings.gestures.GesturePreferenceController

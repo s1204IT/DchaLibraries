@@ -13,6 +13,7 @@ import com.android.settings.R;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ChannelNotificationSettings extends NotificationSettingsBase {
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -47,9 +48,9 @@ public class ChannelNotificationSettings extends NotificationSettingsBase {
 
     @Override // android.app.Fragment
     public void onActivityResult(int i, int i2, Intent intent) {
-        for (NotificationPreferenceController notificationPreferenceController : this.mControllers) {
-            if (notificationPreferenceController instanceof PreferenceManager.OnActivityResultListener) {
-                ((PreferenceManager.OnActivityResultListener) notificationPreferenceController).onActivityResult(i, i2, intent);
+        for (Object obj : this.mControllers) {
+            if (obj instanceof PreferenceManager.OnActivityResultListener) {
+                ((PreferenceManager.OnActivityResultListener) obj).onActivityResult(i, i2, intent);
             }
         }
     }
@@ -59,9 +60,8 @@ public class ChannelNotificationSettings extends NotificationSettingsBase {
         return "ChannelSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.channel_notification_settings;
     }
 

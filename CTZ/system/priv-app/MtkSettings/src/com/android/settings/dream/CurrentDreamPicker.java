@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 /* loaded from: classes.dex */
 public final class CurrentDreamPicker extends RadioButtonPickerFragment {
     private DreamBackend mBackend;
@@ -24,9 +25,8 @@ public final class CurrentDreamPicker extends RadioButtonPickerFragment {
         this.mBackend = DreamBackend.getInstance(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.current_dream_settings;
     }
 
@@ -60,38 +60,39 @@ public final class CurrentDreamPicker extends RadioButtonPickerFragment {
         }).collect(Collectors.toList());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment
-    public void onSelectionPerformed(boolean z) {
+    protected void onSelectionPerformed(boolean z) {
         super.onSelectionPerformed(z);
         getActivity().finish();
     }
 
     private Map<String, ComponentName> getDreamComponentsMap() {
-        final HashMap hashMap = new HashMap();
+        final HashMap map = new HashMap();
         this.mBackend.getDreamInfos().forEach(new Consumer() { // from class: com.android.settings.dream.-$$Lambda$CurrentDreamPicker$t4o3LQXIuoDz_RsLdUZZYlwB3bA
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                CurrentDreamPicker.lambda$getDreamComponentsMap$0(hashMap, (DreamBackend.DreamInfo) obj);
+                CurrentDreamPicker.lambda$getDreamComponentsMap$0(map, (DreamBackend.DreamInfo) obj);
             }
         });
-        return hashMap;
+        return map;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$getDreamComponentsMap$0(Map map, DreamBackend.DreamInfo dreamInfo) {
-        ComponentName componentName = (ComponentName) map.put(dreamInfo.componentName.flattenToString(), dreamInfo.componentName);
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x000c: CHECK_CAST (r1v2 android.content.ComponentName) = (android.content.ComponentName) (wrap:java.lang.Object:0x0008: INVOKE 
+  (r1v0 java.util.Map)
+  (wrap:java.lang.String:0x0002: INVOKE 
+  (wrap:android.content.ComponentName:0x0000: IGET (r2v0 com.android.settingslib.dream.DreamBackend$DreamInfo) A[WRAPPED] (LINE:90) com.android.settingslib.dream.DreamBackend.DreamInfo.componentName android.content.ComponentName)
+ VIRTUAL call: android.content.ComponentName.flattenToString():java.lang.String A[MD:():java.lang.String (c), WRAPPED] (LINE:90))
+  (wrap:android.content.ComponentName:0x0006: IGET (r2v0 com.android.settingslib.dream.DreamBackend$DreamInfo) A[WRAPPED] com.android.settingslib.dream.DreamBackend.DreamInfo.componentName android.content.ComponentName)
+ INTERFACE call: java.util.Map.put(java.lang.Object, java.lang.Object):java.lang.Object A[MD:(K, V):V (c), WRAPPED] (LINE:90)) */
+    static /* synthetic */ void lambda$getDreamComponentsMap$0(Map map, DreamBackend.DreamInfo dreamInfo) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class DreamCandidateInfo extends CandidateInfo {
+    private static final class DreamCandidateInfo extends CandidateInfo {
         private final Drawable icon;
         private final String key;
         private final CharSequence name;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public DreamCandidateInfo(DreamBackend.DreamInfo dreamInfo) {
+        DreamCandidateInfo(DreamBackend.DreamInfo dreamInfo) {
             super(true);
             this.name = dreamInfo.caption;
             this.icon = dreamInfo.icon;

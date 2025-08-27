@@ -29,6 +29,8 @@ import com.android.settingslib.core.lifecycle.events.OnCreateOptionsMenu;
 import com.android.settingslib.core.lifecycle.events.OnOptionsItemSelected;
 import com.android.settingslib.core.lifecycle.events.OnPrepareOptionsMenu;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class InstantAppButtonsPreferenceController extends BasePreferenceController implements DialogInterface.OnClickListener, LifecycleObserver, OnCreateOptionsMenu, OnOptionsItemSelected, OnPrepareOptionsMenu {
     private static final String KEY_INSTANT_APP_BUTTONS = "instant_app_buttons";
@@ -97,8 +99,7 @@ public class InstantAppButtonsPreferenceController extends BasePreferenceControl
         this.mPackageManagerWrapper.deletePackageAsUser(this.mPackageName, null, 0, UserHandle.myUserId());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public AlertDialog createDialog(int i) {
+    AlertDialog createDialog(int i) {
         if (i != 4) {
             return null;
         }
@@ -119,7 +120,7 @@ public class InstantAppButtonsPreferenceController extends BasePreferenceControl
             button3.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.appinfo.-$$Lambda$InstantAppButtonsPreferenceController$2vM5nla3CEsaIUNVk7alr9UEbBA
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view2) {
-                    InstantAppButtonsPreferenceController.this.mParent.startActivity(intent);
+                    this.f$0.mParent.startActivity(intent);
                 }
             });
         } else {
@@ -129,7 +130,7 @@ public class InstantAppButtonsPreferenceController extends BasePreferenceControl
                 button.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.appinfo.-$$Lambda$InstantAppButtonsPreferenceController$oBWjqqdf33bi3sDY5lE6TGLlFJM
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view2) {
-                        InstantAppButtonsPreferenceController.this.mParent.startActivity(appStoreLink);
+                        this.f$0.mParent.startActivity(appStoreLink);
                     }
                 });
             } else {
@@ -139,7 +140,7 @@ public class InstantAppButtonsPreferenceController extends BasePreferenceControl
         button2.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.appinfo.-$$Lambda$InstantAppButtonsPreferenceController$f8slAx9lBDdGAmwfjMjp59JCarA
             @Override // android.view.View.OnClickListener
             public final void onClick(View view2) {
-                InstantAppButtonsPreferenceController.lambda$initButtons$2(InstantAppButtonsPreferenceController.this, view2);
+                InstantAppButtonsPreferenceController.lambda$initButtons$2(this.f$0, view2);
             }
         });
     }
@@ -155,8 +156,9 @@ public class InstantAppButtonsPreferenceController extends BasePreferenceControl
         Intent intent = new Intent("android.intent.action.MAIN");
         intent.addCategory("android.intent.category.LAUNCHER");
         intent.setPackage(this.mPackageName);
-        for (ResolveInfo resolveInfo : packageManager.queryIntentActivities(intent, 8388736)) {
-            Bundle bundle = resolveInfo.activityInfo.metaData;
+        Iterator<ResolveInfo> it = packageManager.queryIntentActivities(intent, 8388736).iterator();
+        while (it.hasNext()) {
+            Bundle bundle = it.next().activityInfo.metaData;
             if (bundle != null) {
                 String string = bundle.getString(META_DATA_DEFAULT_URI);
                 if (!TextUtils.isEmpty(string)) {

@@ -7,6 +7,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import com.android.settings.R;
 import com.android.settings.deviceinfo.simstatus.SimStatusDialogFragment;
+
 /* loaded from: classes.dex */
 public class CdmaSimStatus {
     private SimStatusDialogFragment mFragment;

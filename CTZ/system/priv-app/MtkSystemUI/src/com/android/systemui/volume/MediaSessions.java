@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class MediaSessions {
     private static final String TAG = Util.logTag(MediaSessions.class);
@@ -48,7 +49,6 @@ public class MediaSessions {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface Callbacks {
         void onRemoteRemoved(MediaSession.Token token);
 
@@ -70,10 +70,11 @@ public class MediaSessions {
         printWriter.println(this.mInit);
         printWriter.print("  mRecords.size: ");
         printWriter.println(this.mRecords.size());
+        Iterator<MediaControllerRecord> it = this.mRecords.values().iterator();
         int i = 0;
-        for (MediaControllerRecord mediaControllerRecord : this.mRecords.values()) {
+        while (it.hasNext()) {
             i++;
-            dump(i, printWriter, mediaControllerRecord.controller);
+            dump(i, printWriter, it.next().controller);
         }
     }
 
@@ -96,42 +97,35 @@ public class MediaSessions {
     public void setVolume(MediaSession.Token token, int i) {
         MediaControllerRecord mediaControllerRecord = this.mRecords.get(token);
         if (mediaControllerRecord == null) {
-            String str = TAG;
-            Log.w(str, "setVolume: No record found for token " + token);
+            Log.w(TAG, "setVolume: No record found for token " + token);
             return;
         }
         if (D.BUG) {
-            String str2 = TAG;
-            Log.d(str2, "Setting level to " + i);
+            Log.d(TAG, "Setting level to " + i);
         }
         mediaControllerRecord.controller.setVolumeTo(i, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onRemoteVolumeChangedH(ISessionController iSessionController, int i) {
+    private void onRemoteVolumeChangedH(ISessionController iSessionController, int i) {
         MediaController mediaController = new MediaController(this.mContext, iSessionController);
         if (D.BUG) {
-            String str = TAG;
-            Log.d(str, "remoteVolumeChangedH " + mediaController.getPackageName() + " " + Util.audioManagerFlagsToString(i));
+            Log.d(TAG, "remoteVolumeChangedH " + mediaController.getPackageName() + " " + Util.audioManagerFlagsToString(i));
         }
         this.mCallbacks.onRemoteVolumeChanged(mediaController.getSessionToken(), i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onUpdateRemoteControllerH(ISessionController iSessionController) {
+    private void onUpdateRemoteControllerH(ISessionController iSessionController) {
         MediaController mediaController = iSessionController != null ? new MediaController(this.mContext, iSessionController) : null;
         String packageName = mediaController != null ? mediaController.getPackageName() : null;
         if (D.BUG) {
-            String str = TAG;
-            Log.d(str, "updateRemoteControllerH " + packageName);
+            Log.d(TAG, "updateRemoteControllerH " + packageName);
         }
         postUpdateSessions();
     }
 
     protected void onActiveSessionsUpdatedH(List<MediaController> list) {
         if (D.BUG) {
-            String str = TAG;
-            Log.d(str, "onActiveSessionsUpdatedH n=" + list.size());
+            Log.d(TAG, "onActiveSessionsUpdatedH n=" + list.size());
         }
         HashSet<MediaSession.Token> hashSet = new HashSet(this.mRecords.keySet());
         for (MediaController mediaController : list) {
@@ -155,8 +149,7 @@ public class MediaSessions {
             mediaControllerRecord3.controller.unregisterCallback(mediaControllerRecord3);
             this.mRecords.remove(token);
             if (D.BUG) {
-                String str2 = TAG;
-                Log.d(str2, "Removing " + mediaControllerRecord3.name + " sentRemote=" + mediaControllerRecord3.sentRemote);
+                Log.d(TAG, "Removing " + mediaControllerRecord3.name + " sentRemote=" + mediaControllerRecord3.sentRemote);
             }
             if (mediaControllerRecord3.sentRemote) {
                 this.mCallbacks.onRemoteRemoved(token);
@@ -165,27 +158,25 @@ public class MediaSessions {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static boolean isRemote(MediaController.PlaybackInfo playbackInfo) {
+    private static boolean isRemote(MediaController.PlaybackInfo playbackInfo) {
         return playbackInfo != null && playbackInfo.getPlaybackType() == 2;
     }
 
     protected String getControllerName(MediaController mediaController) {
-        String trim;
+        String strTrim;
         PackageManager packageManager = this.mContext.getPackageManager();
         String packageName = mediaController.getPackageName();
         try {
-            trim = Objects.toString(packageManager.getApplicationInfo(packageName, 0).loadLabel(packageManager), "").trim();
+            strTrim = Objects.toString(packageManager.getApplicationInfo(packageName, 0).loadLabel(packageManager), "").trim();
         } catch (PackageManager.NameNotFoundException e) {
         }
-        if (trim.length() > 0) {
-            return trim;
+        if (strTrim.length() > 0) {
+            return strTrim;
         }
         return packageName;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateRemoteH(MediaSession.Token token, String str, MediaController.PlaybackInfo playbackInfo) {
+    private void updateRemoteH(MediaSession.Token token, String str, MediaController.PlaybackInfo playbackInfo) {
         if (this.mCallbacks != null) {
             this.mCallbacks.onRemoteUpdate(token, str, playbackInfo);
         }
@@ -230,9 +221,7 @@ public class MediaSessions {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class MediaControllerRecord extends MediaController.Callback {
+    private final class MediaControllerRecord extends MediaController.Callback {
         private final MediaController controller;
         private String name;
         private boolean sentRemote;
@@ -248,14 +237,13 @@ public class MediaSessions {
         @Override // android.media.session.MediaController.Callback
         public void onAudioInfoChanged(MediaController.PlaybackInfo playbackInfo) {
             if (D.BUG) {
-                String str = MediaSessions.TAG;
-                Log.d(str, cb("onAudioInfoChanged") + Util.playbackInfoToString(playbackInfo) + " sentRemote=" + this.sentRemote);
+                Log.d(MediaSessions.TAG, cb("onAudioInfoChanged") + Util.playbackInfoToString(playbackInfo) + " sentRemote=" + this.sentRemote);
             }
-            boolean isRemote = MediaSessions.isRemote(playbackInfo);
-            if (!isRemote && this.sentRemote) {
+            boolean zIsRemote = MediaSessions.isRemote(playbackInfo);
+            if (!zIsRemote && this.sentRemote) {
                 MediaSessions.this.mCallbacks.onRemoteRemoved(this.controller.getSessionToken());
                 this.sentRemote = false;
-            } else if (isRemote) {
+            } else if (zIsRemote) {
                 MediaSessions.this.updateRemoteH(this.controller.getSessionToken(), this.name, playbackInfo);
                 this.sentRemote = true;
             }
@@ -264,40 +252,35 @@ public class MediaSessions {
         @Override // android.media.session.MediaController.Callback
         public void onExtrasChanged(Bundle bundle) {
             if (D.BUG) {
-                String str = MediaSessions.TAG;
-                Log.d(str, cb("onExtrasChanged") + bundle);
+                Log.d(MediaSessions.TAG, cb("onExtrasChanged") + bundle);
             }
         }
 
         @Override // android.media.session.MediaController.Callback
         public void onMetadataChanged(MediaMetadata mediaMetadata) {
             if (D.BUG) {
-                String str = MediaSessions.TAG;
-                Log.d(str, cb("onMetadataChanged") + Util.mediaMetadataToString(mediaMetadata));
+                Log.d(MediaSessions.TAG, cb("onMetadataChanged") + Util.mediaMetadataToString(mediaMetadata));
             }
         }
 
         @Override // android.media.session.MediaController.Callback
         public void onPlaybackStateChanged(PlaybackState playbackState) {
             if (D.BUG) {
-                String str = MediaSessions.TAG;
-                Log.d(str, cb("onPlaybackStateChanged") + Util.playbackStateToString(playbackState));
+                Log.d(MediaSessions.TAG, cb("onPlaybackStateChanged") + Util.playbackStateToString(playbackState));
             }
         }
 
         @Override // android.media.session.MediaController.Callback
         public void onQueueChanged(List<MediaSession.QueueItem> list) {
             if (D.BUG) {
-                String str = MediaSessions.TAG;
-                Log.d(str, cb("onQueueChanged") + list);
+                Log.d(MediaSessions.TAG, cb("onQueueChanged") + list);
             }
         }
 
         @Override // android.media.session.MediaController.Callback
         public void onQueueTitleChanged(CharSequence charSequence) {
             if (D.BUG) {
-                String str = MediaSessions.TAG;
-                Log.d(str, cb("onQueueTitleChanged") + ((Object) charSequence));
+                Log.d(MediaSessions.TAG, cb("onQueueTitleChanged") + ((Object) charSequence));
             }
         }
 
@@ -311,15 +294,12 @@ public class MediaSessions {
         @Override // android.media.session.MediaController.Callback
         public void onSessionEvent(String str, Bundle bundle) {
             if (D.BUG) {
-                String str2 = MediaSessions.TAG;
-                Log.d(str2, cb("onSessionEvent") + "event=" + str + " extras=" + bundle);
+                Log.d(MediaSessions.TAG, cb("onSessionEvent") + "event=" + str + " extras=" + bundle);
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class H extends Handler {
+    private final class H extends Handler {
         private H(Looper looper) {
             super(looper);
         }
@@ -329,15 +309,13 @@ public class MediaSessions {
             switch (message.what) {
                 case 1:
                     MediaSessions.this.onActiveSessionsUpdatedH(MediaSessions.this.mMgr.getActiveSessions(null));
-                    return;
+                    break;
                 case 2:
                     MediaSessions.this.onRemoteVolumeChangedH((ISessionController) message.obj, message.arg1);
-                    return;
+                    break;
                 case 3:
                     MediaSessions.this.onUpdateRemoteControllerH((ISessionController) message.obj);
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }

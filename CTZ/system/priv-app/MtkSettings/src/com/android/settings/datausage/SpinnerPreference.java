@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import com.android.settings.R;
 import com.android.settings.datausage.CycleAdapter;
+
 /* loaded from: classes.dex */
 public class SpinnerPreference extends Preference implements CycleAdapter.SpinnerInterface {
     private CycleAdapter mAdapter;
@@ -71,9 +72,8 @@ public class SpinnerPreference extends Preference implements CycleAdapter.Spinne
         spinner.setOnItemSelectedListener(this.mOnSelectedListener);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void performClick(View view) {
+    protected void performClick(View view) {
         view.findViewById(R.id.cycles_spinner).performClick();
     }
 }

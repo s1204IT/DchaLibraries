@@ -6,15 +6,20 @@ import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public abstract class ImmutableCollection<E> extends AbstractCollection<E> implements Serializable {
     private transient ImmutableList<E> asList;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract boolean isPartialView();
+    abstract boolean isPartialView();
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public abstract UnmodifiableIterator<E> iterator();
+
+    ImmutableCollection() {
+    }
 
     @Override // java.util.AbstractCollection, java.util.Collection
     public final Object[] toArray() {
@@ -83,12 +88,12 @@ public abstract class ImmutableCollection<E> extends AbstractCollection<E> imple
 
     public ImmutableList<E> asList() {
         ImmutableList<E> immutableList = this.asList;
-        if (immutableList == null) {
-            ImmutableList<E> createAsList = createAsList();
-            this.asList = createAsList;
-            return createAsList;
+        if (immutableList != null) {
+            return immutableList;
         }
-        return immutableList;
+        ImmutableList<E> immutableListCreateAsList = createAsList();
+        this.asList = immutableListCreateAsList;
+        return immutableListCreateAsList;
     }
 
     ImmutableList<E> createAsList() {
@@ -115,23 +120,21 @@ public abstract class ImmutableCollection<E> extends AbstractCollection<E> imple
         return new ImmutableList.SerializedForm(toArray());
     }
 
-    /* loaded from: classes.dex */
     public static abstract class Builder<E> {
         public abstract Builder<E> add(E e);
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static int expandedCapacity(int i, int i2) {
+        static int expandedCapacity(int i, int i2) {
             if (i2 < 0) {
                 throw new AssertionError("cannot store more than MAX_VALUE elements");
             }
-            int i3 = i + (i >> 1) + 1;
-            if (i3 < i2) {
-                i3 = Integer.highestOneBit(i2 - 1) << 1;
+            int iHighestOneBit = i + (i >> 1) + 1;
+            if (iHighestOneBit < i2) {
+                iHighestOneBit = Integer.highestOneBit(i2 - 1) << 1;
             }
-            if (i3 < 0) {
+            if (iHighestOneBit < 0) {
                 return Preference.DEFAULT_ORDER;
             }
-            return i3;
+            return iHighestOneBit;
         }
 
         Builder() {
@@ -145,26 +148,26 @@ public abstract class ImmutableCollection<E> extends AbstractCollection<E> imple
         }
 
         public Builder<E> addAll(Iterable<? extends E> iterable) {
-            for (E e : iterable) {
-                add((Builder<E>) e);
+            Iterator<? extends E> it = iterable.iterator();
+            while (it.hasNext()) {
+                add((Builder<E>) it.next());
             }
             return this;
         }
     }
 
-    /* loaded from: classes.dex */
     static abstract class ArrayBasedBuilder<E> extends Builder<E> {
         Object[] contents;
         int size;
 
+        /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.ImmutableCollection.Builder
         public /* bridge */ /* synthetic */ Builder add(Object obj) {
             return add((ArrayBasedBuilder<E>) obj);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public ArrayBasedBuilder(int i) {
+        ArrayBasedBuilder(int i) {
             CollectPreconditions.checkNonnegative(i, "initialCapacity");
             this.contents = new Object[i];
             this.size = 0;

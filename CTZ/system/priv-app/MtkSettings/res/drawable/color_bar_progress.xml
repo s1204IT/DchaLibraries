@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
-        <shape android:tint="@android:color/car_blue_100" android:shape="rectangle">
-            <corners android:radius="@android:dimen/car_body2_size"/>
+        <shape
+            android:tint="@android:color/system_on_secondary_container_light"
+            android:shape="rectangle">
+            <corners android:radius="@android:dimen/autofill_save_custom_subtitle_max_height"/>
             <size android:height="10dp"/>
-            <solid android:color="@android:color/holo_light_control_activated"/>
+            <solid android:color="@android:color/car_grey_600"/>
         </shape>
     </item>r 
     <item android:id="@android:id/secondaryProgress">
         <scale android:scaleWidth="100%">
-            <shape android:tint="?android:attr/colorControlActivated" android:shape="rectangle">
-                <corners android:radius="@android:dimen/car_body2_size"/>
+            <shape
+                android:tint="?android:attr/colorControlActivated"
+                android:shape="rectangle">
+                <corners android:radius="@android:dimen/autofill_save_custom_subtitle_max_height"/>
                 <size android:height="10dp"/>
-                <solid android:color="@android:color/holo_light_control_activated"/>
+                <solid android:color="@android:color/car_grey_600"/>
             </shape>
         </scale>
     </item>
     <item android:id="@android:id/progress">
         <scale android:scaleWidth="100%">
-            <shape android:tint="?android:attr/colorControlActivated" android:shape="rectangle">
-                <corners android:radius="@android:dimen/car_body2_size"/>
+            <shape
+                android:tint="?android:attr/colorControlActivated"
+                android:shape="rectangle">
+                <corners android:radius="@android:dimen/autofill_save_custom_subtitle_max_height"/>
                 <size android:height="10dp"/>
                 <solid android:color="@android:color/white"/>
             </shape>

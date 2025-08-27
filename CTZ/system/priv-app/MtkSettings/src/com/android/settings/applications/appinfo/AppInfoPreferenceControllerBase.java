@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.applications.appinfo.AppInfoDashboardFragment;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public abstract class AppInfoPreferenceControllerBase extends BasePreferenceController implements AppInfoDashboardFragment.Callback {
     private final Class<? extends SettingsPreferenceFragment> mDetailFragmentClass;

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class AutoInstallsLayout {
     private static final String ACTION_APPWIDGET_DEFAULT_WORKSPACE_CONFIGURE = "com.android.launcher.action.APPWIDGET_DEFAULT_WORKSPACE_CONFIGURE";
@@ -75,40 +76,35 @@ public class AutoInstallsLayout {
     private final long[] mTemp = new long[2];
     final ContentValues mValues = new ContentValues();
 
-    /* loaded from: classes.dex */
     public interface LayoutParserCallback {
         long generateNewItemId();
 
         long insertAndCheck(SQLiteDatabase sQLiteDatabase, ContentValues contentValues);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public interface TagParser {
+    protected interface TagParser {
         long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, IOException;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static AutoInstallsLayout get(Context context, AppWidgetHost appWidgetHost, LayoutParserCallback layoutParserCallback) {
-        Pair<String, Resources> findSystemApk = Utilities.findSystemApk(ACTION_LAUNCHER_CUSTOMIZATION, context.getPackageManager());
-        if (findSystemApk == null) {
+    static AutoInstallsLayout get(Context context, AppWidgetHost appWidgetHost, LayoutParserCallback layoutParserCallback) {
+        Pair<String, Resources> pairFindSystemApk = Utilities.findSystemApk(ACTION_LAUNCHER_CUSTOMIZATION, context.getPackageManager());
+        if (pairFindSystemApk == null) {
             return null;
         }
-        return get(context, (String) findSystemApk.first, (Resources) findSystemApk.second, appWidgetHost, layoutParserCallback);
+        return get(context, (String) pairFindSystemApk.first, (Resources) pairFindSystemApk.second, appWidgetHost, layoutParserCallback);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static AutoInstallsLayout get(Context context, String str, Resources resources, AppWidgetHost appWidgetHost, LayoutParserCallback layoutParserCallback) {
+    static AutoInstallsLayout get(Context context, String str, Resources resources, AppWidgetHost appWidgetHost, LayoutParserCallback layoutParserCallback) {
         InvariantDeviceProfile idp = LauncherAppState.getIDP(context);
-        String format = String.format(Locale.ENGLISH, FORMATTED_LAYOUT_RES_WITH_HOSTEAT, Integer.valueOf(idp.numColumns), Integer.valueOf(idp.numRows), Integer.valueOf(idp.numHotseatIcons));
-        int identifier = resources.getIdentifier(format, "xml", str);
+        String str2 = String.format(Locale.ENGLISH, FORMATTED_LAYOUT_RES_WITH_HOSTEAT, Integer.valueOf(idp.numColumns), Integer.valueOf(idp.numRows), Integer.valueOf(idp.numHotseatIcons));
+        int identifier = resources.getIdentifier(str2, "xml", str);
         if (identifier == 0) {
-            Log.d(TAG, "Formatted layout: " + format + " not found. Trying layout without hosteat");
-            format = String.format(Locale.ENGLISH, FORMATTED_LAYOUT_RES, Integer.valueOf(idp.numColumns), Integer.valueOf(idp.numRows));
-            identifier = resources.getIdentifier(format, "xml", str);
+            Log.d(TAG, "Formatted layout: " + str2 + " not found. Trying layout without hosteat");
+            str2 = String.format(Locale.ENGLISH, FORMATTED_LAYOUT_RES, Integer.valueOf(idp.numColumns), Integer.valueOf(idp.numRows));
+            identifier = resources.getIdentifier(str2, "xml", str);
         }
         if (identifier == 0) {
-            Log.d(TAG, "Formatted layout: " + format + " not found. Trying the default layout");
+            Log.d(TAG, "Formatted layout: " + str2 + " not found. Trying the default layout");
             identifier = resources.getIdentifier(LAYOUT_RES, "xml", str);
         }
         int i = identifier;
@@ -142,31 +138,32 @@ public class AutoInstallsLayout {
         }
     }
 
-    protected int parseLayout(int i, ArrayList<Long> arrayList) throws XmlPullParserException, IOException {
+    protected int parseLayout(int i, ArrayList<Long> arrayList) throws XmlPullParserException, Resources.NotFoundException, IOException {
         XmlResourceParser xml = this.mSourceRes.getXml(i);
         beginDocument(xml, this.mRootTag);
         int depth = xml.getDepth();
         ArrayMap<String, TagParser> layoutElementsMap = getLayoutElementsMap();
-        int i2 = 0;
+        int andAddNode = 0;
         while (true) {
             int next = xml.next();
-            if ((next != 3 || xml.getDepth() > depth) && next != 1) {
-                if (next == 2) {
-                    i2 += parseAndAddNode(xml, layoutElementsMap, arrayList);
-                }
+            if ((next == 3 && xml.getDepth() <= depth) || next == 1) {
+                break;
+            }
+            if (next == 2) {
+                andAddNode += parseAndAddNode(xml, layoutElementsMap, arrayList);
             }
         }
-        return i2;
+        return andAddNode;
     }
 
     protected void parseContainerAndScreen(XmlResourceParser xmlResourceParser, long[] jArr) {
         if (HOTSEAT_CONTAINER_NAME.equals(getAttributeValue(xmlResourceParser, "container"))) {
             jArr[0] = -101;
             jArr[1] = Long.parseLong(getAttributeValue(xmlResourceParser, "rank"));
-            return;
+        } else {
+            jArr[0] = -100;
+            jArr[1] = Long.parseLong(getAttributeValue(xmlResourceParser, "screen"));
         }
-        jArr[0] = -100;
-        jArr[1] = Long.parseLong(getAttributeValue(xmlResourceParser, "screen"));
     }
 
     protected int parseAndAddNode(XmlResourceParser xmlResourceParser, ArrayMap<String, TagParser> arrayMap, ArrayList<Long> arrayList) throws XmlPullParserException, IOException {
@@ -186,28 +183,27 @@ public class AutoInstallsLayout {
         this.mValues.put(LauncherSettings.Favorites.CELLX, convertToDistanceFromEnd(getAttributeValue(xmlResourceParser, ATTR_X), this.mColumnCount));
         this.mValues.put(LauncherSettings.Favorites.CELLY, convertToDistanceFromEnd(getAttributeValue(xmlResourceParser, ATTR_Y), this.mRowCount));
         TagParser tagParser = arrayMap.get(xmlResourceParser.getName());
-        if (tagParser != null && tagParser.parseAndAdd(xmlResourceParser) >= 0) {
-            if (!arrayList.contains(Long.valueOf(j2)) && j == -100) {
-                arrayList.add(Long.valueOf(j2));
-            }
-            return 1;
+        if (tagParser == null || tagParser.parseAndAdd(xmlResourceParser) < 0) {
+            return 0;
         }
-        return 0;
+        if (!arrayList.contains(Long.valueOf(j2)) && j == -100) {
+            arrayList.add(Long.valueOf(j2));
+        }
+        return 1;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public long addShortcut(String str, Intent intent, int i) {
-        long generateNewItemId = this.mCallback.generateNewItemId();
+    protected long addShortcut(String str, Intent intent, int i) {
+        long jGenerateNewItemId = this.mCallback.generateNewItemId();
         this.mValues.put(LauncherSettings.BaseLauncherColumns.INTENT, intent.toUri(0));
         this.mValues.put("title", str);
         this.mValues.put(LauncherSettings.BaseLauncherColumns.ITEM_TYPE, Integer.valueOf(i));
         this.mValues.put("spanX", (Integer) 1);
         this.mValues.put("spanY", (Integer) 1);
-        this.mValues.put("_id", Long.valueOf(generateNewItemId));
+        this.mValues.put("_id", Long.valueOf(jGenerateNewItemId));
         if (this.mCallback.insertAndCheck(this.mDb, this.mValues) < 0) {
             return -1L;
         }
-        return generateNewItemId;
+        return jGenerateNewItemId;
     }
 
     protected ArrayMap<String, TagParser> getFolderElementsMap() {
@@ -228,15 +224,12 @@ public class AutoInstallsLayout {
         return arrayMap;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class AppShortcutParser implements TagParser {
-        /* JADX INFO: Access modifiers changed from: protected */
-        public AppShortcutParser() {
+    protected class AppShortcutParser implements TagParser {
+        protected AppShortcutParser() {
         }
 
         @Override // com.android.launcher3.AutoInstallsLayout.TagParser
-        public long parseAndAdd(XmlResourceParser xmlResourceParser) {
+        public long parseAndAdd(XmlResourceParser xmlResourceParser) throws PackageManager.NameNotFoundException {
             ActivityInfo activityInfo;
             ComponentName componentName;
             String attributeValue = AutoInstallsLayout.getAttributeValue(xmlResourceParser, AutoInstallsLayout.ATTR_PACKAGE_NAME);
@@ -266,9 +259,7 @@ public class AutoInstallsLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class AutoInstallParser implements TagParser {
+    protected class AutoInstallParser implements TagParser {
         protected AutoInstallParser() {
         }
 
@@ -284,9 +275,7 @@ public class AutoInstallsLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class ShortcutParser implements TagParser {
+    protected class ShortcutParser implements TagParser {
         private final Resources mIconRes;
 
         public ShortcutParser(Resources resources) {
@@ -295,20 +284,20 @@ public class AutoInstallsLayout {
 
         @Override // com.android.launcher3.AutoInstallsLayout.TagParser
         public long parseAndAdd(XmlResourceParser xmlResourceParser) {
-            Intent parseIntent;
+            Intent intent;
             Drawable drawable;
             int attributeResourceValue = AutoInstallsLayout.getAttributeResourceValue(xmlResourceParser, "title", 0);
             int attributeResourceValue2 = AutoInstallsLayout.getAttributeResourceValue(xmlResourceParser, "icon", 0);
-            if (attributeResourceValue == 0 || attributeResourceValue2 == 0 || (parseIntent = parseIntent(xmlResourceParser)) == null || (drawable = this.mIconRes.getDrawable(attributeResourceValue2)) == null) {
+            if (attributeResourceValue == 0 || attributeResourceValue2 == 0 || (intent = parseIntent(xmlResourceParser)) == null || (drawable = this.mIconRes.getDrawable(attributeResourceValue2)) == null) {
                 return -1L;
             }
-            LauncherIcons obtain = LauncherIcons.obtain(AutoInstallsLayout.this.mContext);
-            AutoInstallsLayout.this.mValues.put("icon", Utilities.flattenBitmap(obtain.createBadgedIconBitmap(drawable, Process.myUserHandle(), Build.VERSION.SDK_INT).icon));
-            obtain.recycle();
+            LauncherIcons launcherIconsObtain = LauncherIcons.obtain(AutoInstallsLayout.this.mContext);
+            AutoInstallsLayout.this.mValues.put("icon", Utilities.flattenBitmap(launcherIconsObtain.createBadgedIconBitmap(drawable, Process.myUserHandle(), Build.VERSION.SDK_INT).icon));
+            launcherIconsObtain.recycle();
             AutoInstallsLayout.this.mValues.put(LauncherSettings.BaseLauncherColumns.ICON_PACKAGE, this.mIconRes.getResourcePackageName(attributeResourceValue2));
             AutoInstallsLayout.this.mValues.put(LauncherSettings.BaseLauncherColumns.ICON_RESOURCE, this.mIconRes.getResourceName(attributeResourceValue2));
-            parseIntent.setFlags(270532608);
-            return AutoInstallsLayout.this.addShortcut(AutoInstallsLayout.this.mSourceRes.getString(attributeResourceValue), parseIntent, 1);
+            intent.setFlags(270532608);
+            return AutoInstallsLayout.this.addShortcut(AutoInstallsLayout.this.mSourceRes.getString(attributeResourceValue), intent, 1);
         }
 
         protected Intent parseIntent(XmlResourceParser xmlResourceParser) {
@@ -320,20 +309,11 @@ public class AutoInstallsLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class PendingWidgetParser implements TagParser {
-        /* JADX INFO: Access modifiers changed from: protected */
-        public PendingWidgetParser() {
+    protected class PendingWidgetParser implements TagParser {
+        protected PendingWidgetParser() {
         }
 
-        /* JADX WARN: Code restructure failed: missing block: B:25:0x0092, code lost:
-            throw new java.lang.RuntimeException("Widget extras must have a key and value");
-         */
         @Override // com.android.launcher3.AutoInstallsLayout.TagParser
-        /*
-            Code decompiled incorrectly, please refer to instructions dump.
-        */
         public long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, IOException {
             String attributeValue = AutoInstallsLayout.getAttributeValue(xmlResourceParser, AutoInstallsLayout.ATTR_PACKAGE_NAME);
             String attributeValue2 = AutoInstallsLayout.getAttributeValue(xmlResourceParser, AutoInstallsLayout.ATTR_CLASS_NAME);
@@ -364,6 +344,7 @@ public class AutoInstallsLayout {
                     return verifyAndInsert(new ComponentName(attributeValue, attributeValue2), bundle);
                 }
             }
+            throw new RuntimeException("Widget extras must have a key and value");
         }
 
         protected long verifyAndInsert(ComponentName componentName, Bundle bundle) {
@@ -373,17 +354,15 @@ public class AutoInstallsLayout {
             if (!bundle.isEmpty()) {
                 AutoInstallsLayout.this.mValues.put(LauncherSettings.BaseLauncherColumns.INTENT, new Intent().putExtras(bundle).toUri(0));
             }
-            long insertAndCheck = AutoInstallsLayout.this.mCallback.insertAndCheck(AutoInstallsLayout.this.mDb, AutoInstallsLayout.this.mValues);
-            if (insertAndCheck < 0) {
+            long jInsertAndCheck = AutoInstallsLayout.this.mCallback.insertAndCheck(AutoInstallsLayout.this.mDb, AutoInstallsLayout.this.mValues);
+            if (jInsertAndCheck < 0) {
                 return -1L;
             }
-            return insertAndCheck;
+            return jInsertAndCheck;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class FolderParser implements TagParser {
+    protected class FolderParser implements TagParser {
         private final ArrayMap<String, TagParser> mFolderElements;
 
         public FolderParser(AutoInstallsLayout autoInstallsLayout) {
@@ -395,7 +374,7 @@ public class AutoInstallsLayout {
         }
 
         @Override // com.android.launcher3.AutoInstallsLayout.TagParser
-        public long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, IOException {
+        public long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, Resources.NotFoundException, IOException {
             String string;
             int attributeResourceValue = AutoInstallsLayout.getAttributeResourceValue(xmlResourceParser, "title", 0);
             if (attributeResourceValue != 0) {
@@ -408,8 +387,8 @@ public class AutoInstallsLayout {
             AutoInstallsLayout.this.mValues.put("spanX", (Integer) 1);
             AutoInstallsLayout.this.mValues.put("spanY", (Integer) 1);
             AutoInstallsLayout.this.mValues.put("_id", Long.valueOf(AutoInstallsLayout.this.mCallback.generateNewItemId()));
-            long insertAndCheck = AutoInstallsLayout.this.mCallback.insertAndCheck(AutoInstallsLayout.this.mDb, AutoInstallsLayout.this.mValues);
-            if (insertAndCheck < 0) {
+            long jInsertAndCheck = AutoInstallsLayout.this.mCallback.insertAndCheck(AutoInstallsLayout.this.mDb, AutoInstallsLayout.this.mValues);
+            if (jInsertAndCheck < 0) {
                 return -1L;
             }
             ContentValues contentValues = new ContentValues(AutoInstallsLayout.this.mValues);
@@ -421,42 +400,42 @@ public class AutoInstallsLayout {
                 if (next != 3 || xmlResourceParser.getDepth() > depth) {
                     if (next == 2) {
                         AutoInstallsLayout.this.mValues.clear();
-                        AutoInstallsLayout.this.mValues.put("container", Long.valueOf(insertAndCheck));
+                        AutoInstallsLayout.this.mValues.put("container", Long.valueOf(jInsertAndCheck));
                         AutoInstallsLayout.this.mValues.put("rank", Integer.valueOf(i));
                         TagParser tagParser = this.mFolderElements.get(xmlResourceParser.getName());
                         if (tagParser != null) {
-                            long parseAndAdd = tagParser.parseAndAdd(xmlResourceParser);
-                            if (parseAndAdd >= 0) {
-                                arrayList.add(Long.valueOf(parseAndAdd));
+                            long andAdd = tagParser.parseAndAdd(xmlResourceParser);
+                            if (andAdd >= 0) {
+                                arrayList.add(Long.valueOf(andAdd));
                                 i++;
                             }
                         } else {
                             throw new RuntimeException("Invalid folder item " + xmlResourceParser.getName());
                         }
                     }
-                } else if (arrayList.size() < 2) {
-                    LauncherProvider.SqlArguments sqlArguments = new LauncherProvider.SqlArguments(LauncherSettings.Favorites.getContentUri(insertAndCheck), null, null);
-                    AutoInstallsLayout.this.mDb.delete(sqlArguments.table, sqlArguments.where, sqlArguments.args);
-                    if (arrayList.size() == 1) {
-                        ContentValues contentValues2 = new ContentValues();
-                        AutoInstallsLayout.copyInteger(contentValues, contentValues2, "container");
-                        AutoInstallsLayout.copyInteger(contentValues, contentValues2, "screen");
-                        AutoInstallsLayout.copyInteger(contentValues, contentValues2, LauncherSettings.Favorites.CELLX);
-                        AutoInstallsLayout.copyInteger(contentValues, contentValues2, LauncherSettings.Favorites.CELLY);
-                        long longValue = ((Long) arrayList.get(0)).longValue();
-                        AutoInstallsLayout.this.mDb.update(LauncherSettings.Favorites.TABLE_NAME, contentValues2, "_id=" + longValue, null);
-                        return longValue;
-                    }
-                    return -1L;
                 } else {
-                    return insertAndCheck;
+                    if (arrayList.size() >= 2) {
+                        return jInsertAndCheck;
+                    }
+                    LauncherProvider.SqlArguments sqlArguments = new LauncherProvider.SqlArguments(LauncherSettings.Favorites.getContentUri(jInsertAndCheck), null, null);
+                    AutoInstallsLayout.this.mDb.delete(sqlArguments.table, sqlArguments.where, sqlArguments.args);
+                    if (arrayList.size() != 1) {
+                        return -1L;
+                    }
+                    ContentValues contentValues2 = new ContentValues();
+                    AutoInstallsLayout.copyInteger(contentValues, contentValues2, "container");
+                    AutoInstallsLayout.copyInteger(contentValues, contentValues2, "screen");
+                    AutoInstallsLayout.copyInteger(contentValues, contentValues2, LauncherSettings.Favorites.CELLX);
+                    AutoInstallsLayout.copyInteger(contentValues, contentValues2, LauncherSettings.Favorites.CELLY);
+                    long jLongValue = ((Long) arrayList.get(0)).longValue();
+                    AutoInstallsLayout.this.mDb.update(LauncherSettings.Favorites.TABLE_NAME, contentValues2, "_id=" + jLongValue, null);
+                    return jLongValue;
                 }
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static void beginDocument(XmlPullParser xmlPullParser, String str) throws XmlPullParserException, IOException {
+    protected static void beginDocument(XmlPullParser xmlPullParser, String str) throws XmlPullParserException, IOException {
         int next;
         do {
             next = xmlPullParser.next();
@@ -473,15 +452,14 @@ public class AutoInstallsLayout {
     }
 
     private static String convertToDistanceFromEnd(String str, int i) {
-        int parseInt;
-        if (!TextUtils.isEmpty(str) && (parseInt = Integer.parseInt(str)) < 0) {
-            return Integer.toString(i + parseInt);
+        int i2;
+        if (!TextUtils.isEmpty(str) && (i2 = Integer.parseInt(str)) < 0) {
+            return Integer.toString(i + i2);
         }
         return str;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static String getAttributeValue(XmlResourceParser xmlResourceParser, String str) {
+    protected static String getAttributeValue(XmlResourceParser xmlResourceParser, String str) {
         String attributeValue = xmlResourceParser.getAttributeValue("http://schemas.android.com/apk/res-auto/com.android.launcher3", str);
         if (attributeValue == null) {
             return xmlResourceParser.getAttributeValue(null, str);
@@ -489,8 +467,7 @@ public class AutoInstallsLayout {
         return attributeValue;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static int getAttributeResourceValue(XmlResourceParser xmlResourceParser, String str, int i) {
+    protected static int getAttributeResourceValue(XmlResourceParser xmlResourceParser, String str, int i) {
         int attributeResourceValue = xmlResourceParser.getAttributeResourceValue("http://schemas.android.com/apk/res-auto/com.android.launcher3", str, i);
         if (attributeResourceValue == i) {
             return xmlResourceParser.getAttributeResourceValue(null, str, i);

@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
@@ -15,7 +16,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private int mDividerHeight;
     private int mDividerIntrinsicHeight;
 
-    /* loaded from: classes.dex */
     public interface DividedViewHolder {
         boolean isDividerAllowedAbove();
 
@@ -26,11 +26,11 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     public DividerItemDecoration(Context context) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(R.styleable.SuwDividerItemDecoration);
-        Drawable drawable = obtainStyledAttributes.getDrawable(R.styleable.SuwDividerItemDecoration_android_listDivider);
-        int dimensionPixelSize = obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwDividerItemDecoration_android_dividerHeight, 0);
-        int i = obtainStyledAttributes.getInt(R.styleable.SuwDividerItemDecoration_suwDividerCondition, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(R.styleable.SuwDividerItemDecoration);
+        Drawable drawable = typedArrayObtainStyledAttributes.getDrawable(R.styleable.SuwDividerItemDecoration_android_listDivider);
+        int dimensionPixelSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwDividerItemDecoration_android_dividerHeight, 0);
+        int i = typedArrayObtainStyledAttributes.getInt(R.styleable.SuwDividerItemDecoration_suwDividerCondition, 0);
+        typedArrayObtainStyledAttributes.recycle();
         setDivider(drawable);
         setDividerHeight(dimensionPixelSize);
         setDividerCondition(i);
@@ -75,13 +75,15 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         return layoutPosition >= itemCount || isDividerAllowedAbove(recyclerView.findViewHolderForLayoutPosition(layoutPosition + 1));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isDividerAllowedAbove(RecyclerView.ViewHolder viewHolder) {
+    /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: android.support.v7.widget.RecyclerView$ViewHolder */
+    /* JADX WARN: Multi-variable type inference failed */
+    protected boolean isDividerAllowedAbove(RecyclerView.ViewHolder viewHolder) {
         return !(viewHolder instanceof DividedViewHolder) || ((DividedViewHolder) viewHolder).isDividerAllowedAbove();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isDividerAllowedBelow(RecyclerView.ViewHolder viewHolder) {
+    /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: android.support.v7.widget.RecyclerView$ViewHolder */
+    /* JADX WARN: Multi-variable type inference failed */
+    protected boolean isDividerAllowedBelow(RecyclerView.ViewHolder viewHolder) {
         return !(viewHolder instanceof DividedViewHolder) || ((DividedViewHolder) viewHolder).isDividerAllowedBelow();
     }
 

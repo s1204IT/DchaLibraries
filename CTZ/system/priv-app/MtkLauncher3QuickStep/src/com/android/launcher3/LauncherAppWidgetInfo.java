@@ -7,6 +7,7 @@ import android.os.Process;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.model.PackageItemInfo;
 import com.android.launcher3.util.ContentWriter;
+
 /* loaded from: classes.dex */
 public class LauncherAppWidgetInfo extends ItemInfo {
     public static final int CUSTOM_WIDGET_ID = -100;
@@ -58,17 +59,15 @@ public class LauncherAppWidgetInfo extends ItemInfo {
         contentWriter.put(LauncherSettings.Favorites.APPWIDGET_ID, Integer.valueOf(this.appWidgetId)).put(LauncherSettings.Favorites.APPWIDGET_PROVIDER, this.providerName.flattenToString()).put(LauncherSettings.Favorites.RESTORED, Integer.valueOf(this.restoreStatus)).put(LauncherSettings.BaseLauncherColumns.INTENT, this.bindOptions);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onBindAppWidget(Launcher launcher, AppWidgetHostView appWidgetHostView) {
+    void onBindAppWidget(Launcher launcher, AppWidgetHostView appWidgetHostView) {
         if (!this.mHasNotifiedInitialWidgetSizeChanged) {
             AppWidgetResizeFrame.updateWidgetSizeRanges(appWidgetHostView, launcher, this.spanX, this.spanY);
             this.mHasNotifiedInitialWidgetSizeChanged = true;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.ItemInfo
-    public String dumpProperties() {
+    protected String dumpProperties() {
         return super.dumpProperties() + " appWidgetId=" + this.appWidgetId;
     }
 

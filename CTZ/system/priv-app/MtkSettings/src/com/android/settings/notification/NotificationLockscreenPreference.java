@@ -17,6 +17,7 @@ import com.android.settings.R;
 import com.android.settings.RestrictedListPreference;
 import com.android.settings.Utils;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class NotificationLockscreenPreference extends RestrictedListPreference {
     private RestrictedLockUtils.EnforcedAdmin mAdminRestrictingRemoteInput;
@@ -32,18 +33,16 @@ public class NotificationLockscreenPreference extends RestrictedListPreference {
         this.mUserId = UserHandle.myUserId();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.DialogPreference, android.support.v7.preference.Preference
-    public void onClick() {
+    protected void onClick() {
         Context context = getContext();
         if (!Utils.startQuietModeDialogIfNecessary(context, UserManager.get(context), this.mUserId)) {
             super.onClick();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.RestrictedListPreference, com.android.settings.CustomListPreference
-    public void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
         this.mListener = new Listener(onClickListener);
         builder.setSingleChoiceItems(createListAdapter(), getSelectedValuePos(), this.mListener);
         this.mShowRemoteInput = getEntryValues().length == 3;
@@ -51,9 +50,8 @@ public class NotificationLockscreenPreference extends RestrictedListPreference {
         builder.setView(R.layout.lockscreen_remote_input);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.CustomListPreference
-    public void onDialogCreated(Dialog dialog) {
+    protected void onDialogCreated(Dialog dialog) {
         super.onDialogCreated(dialog);
         dialog.create();
         CheckBox checkBox = (CheckBox) dialog.findViewById(R.id.lockscreen_remote_input);
@@ -63,18 +61,17 @@ public class NotificationLockscreenPreference extends RestrictedListPreference {
         dialog.findViewById(R.id.restricted_lock_icon_remote_input).setVisibility(this.mAdminRestrictingRemoteInput == null ? 8 : 0);
         if (this.mAdminRestrictingRemoteInput != null) {
             checkBox.setClickable(false);
-            dialog.findViewById(16908820).setOnClickListener(this.mListener);
+            dialog.findViewById(android.R.id.autofill_save_title).setOnClickListener(this.mListener);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.CustomListPreference
-    public void onDialogStateRestored(Dialog dialog, Bundle bundle) {
+    protected void onDialogStateRestored(Dialog dialog, Bundle bundle) {
         super.onDialogStateRestored(dialog, bundle);
         int checkedItemPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-        View findViewById = dialog.findViewById(16908820);
-        findViewById.setVisibility(checkboxVisibilityForSelectedIndex(checkedItemPosition, this.mShowRemoteInput));
-        this.mListener.setView(findViewById);
+        View viewFindViewById = dialog.findViewById(android.R.id.autofill_save_title);
+        viewFindViewById.setVisibility(checkboxVisibilityForSelectedIndex(checkedItemPosition, this.mShowRemoteInput));
+        this.mListener.setView(viewFindViewById);
     }
 
     @Override // com.android.settings.RestrictedListPreference
@@ -82,25 +79,21 @@ public class NotificationLockscreenPreference extends RestrictedListPreference {
         return new RestrictedListPreference.RestrictedArrayAdapter(getContext(), getEntries(), -1);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.CustomListPreference
-    public void onDialogClosed(boolean z) {
+    protected void onDialogClosed(boolean z) {
         super.onDialogClosed(z);
         Settings.Secure.putInt(getContext().getContentResolver(), "lock_screen_allow_remote_input", this.mAllowRemoteInput ? 1 : 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.CustomListPreference
-    public boolean isAutoClosePreference() {
+    protected boolean isAutoClosePreference() {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int checkboxVisibilityForSelectedIndex(int i, boolean z) {
+    private int checkboxVisibilityForSelectedIndex(int i, boolean z) {
         return (i == 1 && z && this.mRemoteInputCheckBoxEnabled) ? 0 : 8;
     }
 
-    /* loaded from: classes.dex */
     private class Listener implements DialogInterface.OnClickListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
         private final DialogInterface.OnClickListener mInner;
         private View mView;

@@ -4,6 +4,7 @@ import android.view.View;
 import com.android.setupwizardlib.R;
 import com.android.setupwizardlib.TemplateLayout;
 import com.android.setupwizardlib.view.NavigationBar;
+
 /* loaded from: classes.dex */
 public class NavigationBarMixin implements Mixin {
     private TemplateLayout mTemplateLayout;
@@ -13,9 +14,9 @@ public class NavigationBarMixin implements Mixin {
     }
 
     public NavigationBar getNavigationBar() {
-        View findManagedViewById = this.mTemplateLayout.findManagedViewById(R.id.suw_layout_navigation_bar);
-        if (findManagedViewById instanceof NavigationBar) {
-            return (NavigationBar) findManagedViewById;
+        View viewFindManagedViewById = this.mTemplateLayout.findManagedViewById(R.id.suw_layout_navigation_bar);
+        if (viewFindManagedViewById instanceof NavigationBar) {
+            return (NavigationBar) viewFindManagedViewById;
         }
         return null;
     }

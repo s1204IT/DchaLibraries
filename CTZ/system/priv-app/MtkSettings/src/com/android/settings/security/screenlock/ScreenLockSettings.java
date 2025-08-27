@@ -14,6 +14,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ScreenLockSettings extends DashboardFragment implements OwnerInfoPreferenceController.OwnerInfoCallback {
     private static final int MY_USER_ID = UserHandle.myUserId();
@@ -46,9 +47,8 @@ public class ScreenLockSettings extends DashboardFragment implements OwnerInfoPr
         return 1265;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.screen_lock_settings;
     }
 
@@ -68,8 +68,7 @@ public class ScreenLockSettings extends DashboardFragment implements OwnerInfoPr
         ((OwnerInfoPreferenceController) use(OwnerInfoPreferenceController.class)).updateSummary();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Fragment fragment, Lifecycle lifecycle, LockPatternUtils lockPatternUtils) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Fragment fragment, Lifecycle lifecycle, LockPatternUtils lockPatternUtils) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new PatternVisiblePreferenceController(context, MY_USER_ID, lockPatternUtils));
         arrayList.add(new PowerButtonInstantLockPreferenceController(context, MY_USER_ID, lockPatternUtils));

@@ -21,6 +21,7 @@ import com.android.settings.R;
 import com.mediatek.settings.FeatureOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class WfdChangeResolution {
     public static final ArrayList<Integer> DEVICE_RESOLUTION_LIST = new ArrayList<>(Arrays.asList(2, 3));
@@ -49,12 +50,7 @@ public class WfdChangeResolution {
         int i = Settings.Global.getInt(this.mContext.getContentResolver(), "wifi_display_max_resolution", 0);
         Log.d("@M_WfdChangeResolution", "current resolution is " + i);
         if (DEVICE_RESOLUTION_LIST.contains(Integer.valueOf(i))) {
-            MenuItem add = menu.add(0, 2, 0, R.string.wfd_change_resolution_menu_title);
-            boolean z = true;
-            if (wifiDisplayStatus.getFeatureState() != 3 || wifiDisplayStatus.getActiveDisplayState() == 1) {
-                z = false;
-            }
-            add.setEnabled(z).setShowAsAction(0);
+            menu.add(0, 2, 0, R.string.wfd_change_resolution_menu_title).setEnabled(wifiDisplayStatus.getFeatureState() == 3 && wifiDisplayStatus.getActiveDisplayState() != 1).setShowAsAction(0);
         }
     }
 
@@ -72,7 +68,7 @@ public class WfdChangeResolution {
         }
         if (this.mDevicePref == null) {
             this.mDevicePref = new SwitchPreference(this.mContext);
-            if (this.mContext.getResources().getBoolean(17957067)) {
+            if (this.mContext.getResources().getBoolean(android.R.^attr-private.materialColorSurfaceContainerLowest)) {
                 this.mDevicePref.setIcon(R.drawable.ic_wfd_cellphone);
             } else {
                 this.mDevicePref.setIcon(R.drawable.ic_wfd_laptop);
@@ -110,8 +106,7 @@ public class WfdChangeResolution {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDeviceName() {
+    private void updateDeviceName() {
         if (this.mP2pDevice != null && this.mDevicePref != null) {
             if (TextUtils.isEmpty(this.mP2pDevice.deviceName)) {
                 this.mDevicePref.setTitle(this.mP2pDevice.deviceAddress);
@@ -148,25 +143,22 @@ public class WfdChangeResolution {
                         Intent intent = new Intent();
                         intent.setClassName("com.mediatek.floatmenu", "com.mediatek.floatmenu.FloatMenuService");
                         this.mContext.stopServiceAsUser(intent, UserHandle.CURRENT);
-                        return;
+                        break;
                     }
-                    return;
                 }
-                return;
+                break;
             case 1:
                 if (!z && this.mDevicePref != null) {
                     this.mDevicePref.setEnabled(false);
-                    return;
+                    break;
                 }
-                return;
+                break;
             case 2:
                 if (!z && this.mDevicePref != null) {
                     this.mDevicePref.setEnabled(false);
-                    return;
+                    break;
                 }
-                return;
-            default:
-                return;
+                break;
         }
     }
 

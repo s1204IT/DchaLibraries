@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import com.android.settings.R;
 import com.android.settingslib.TwoTargetPreference;
+
 /* loaded from: classes.dex */
 public class MasterCheckBoxPreference extends TwoTargetPreference {
     private CheckBox mCheckBox;
@@ -41,9 +42,9 @@ public class MasterCheckBoxPreference extends TwoTargetPreference {
     @Override // com.android.settingslib.TwoTargetPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(16908312);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.widget.MasterCheckBoxPreference.1
+        View viewFindViewById = preferenceViewHolder.findViewById(android.R.id.widget_frame);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.widget.MasterCheckBoxPreference.1
                 @Override // android.view.View.OnClickListener
                 public void onClick(View view) {
                     if (MasterCheckBoxPreference.this.mCheckBox == null || MasterCheckBoxPreference.this.mCheckBox.isEnabled()) {

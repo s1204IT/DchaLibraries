@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.android.setupwizardlib.template.RecyclerMixin;
+
 /* loaded from: classes.dex */
 public class GlifPreferenceLayout extends GlifRecyclerLayout {
     public GlifPreferenceLayout(Context context) {

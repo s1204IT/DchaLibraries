@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settingslib.widget.AnimatedImageView;
+
 /* loaded from: classes.dex */
 public class SyncStateSwitchPreference extends SwitchPreference {
     private Account mAccount;
@@ -57,18 +58,18 @@ public class SyncStateSwitchPreference extends SwitchPreference {
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
         AnimatedImageView animatedImageView = (AnimatedImageView) preferenceViewHolder.findViewById(R.id.sync_active);
-        View findViewById = preferenceViewHolder.findViewById(R.id.sync_failed);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.sync_failed);
         boolean z = this.mIsActive || this.mIsPending;
         animatedImageView.setVisibility(z ? 0 : 8);
         animatedImageView.setAnimating(this.mIsActive);
-        findViewById.setVisibility(this.mFailed && !z ? 0 : 8);
-        View findViewById2 = preferenceViewHolder.findViewById(16908352);
+        viewFindViewById.setVisibility(this.mFailed && !z ? 0 : 8);
+        View viewFindViewById2 = preferenceViewHolder.findViewById(android.R.id.switch_widget);
         if (this.mOneTimeSyncMode) {
-            findViewById2.setVisibility(8);
-            ((TextView) preferenceViewHolder.findViewById(16908304)).setText(getContext().getString(R.string.sync_one_time_sync, getSummary()));
-            return;
+            viewFindViewById2.setVisibility(8);
+            ((TextView) preferenceViewHolder.findViewById(android.R.id.summary)).setText(getContext().getString(R.string.sync_one_time_sync, getSummary()));
+        } else {
+            viewFindViewById2.setVisibility(0);
         }
-        findViewById2.setVisibility(0);
     }
 
     public void setActive(boolean z) {
@@ -95,9 +96,8 @@ public class SyncStateSwitchPreference extends SwitchPreference {
         return this.mOneTimeSyncMode;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.TwoStatePreference, android.support.v7.preference.Preference
-    public void onClick() {
+    protected void onClick() {
         if (!this.mOneTimeSyncMode) {
             if (ActivityManager.isUserAMonkey()) {
                 Log.d("SyncState", "ignoring monkey's attempt to flip sync state");

@@ -5,6 +5,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import android.util.Log;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeRemindersPreferenceController extends AbstractZenModePreferenceController implements Preference.OnPreferenceChangeListener {
     public ZenModeRemindersPreferenceController(Context context, Lifecycle lifecycle) {
@@ -30,22 +31,22 @@ public class ZenModeRemindersPreferenceController extends AbstractZenModePrefere
             case 3:
                 switchPreference.setEnabled(false);
                 switchPreference.setChecked(false);
-                return;
+                break;
             default:
                 switchPreference.setEnabled(true);
                 switchPreference.setChecked(this.mBackend.isPriorityCategoryEnabled(1));
-                return;
+                break;
         }
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        boolean booleanValue = ((Boolean) obj).booleanValue();
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
         if (ZenModeSettingsBase.DEBUG) {
-            Log.d("PrefControllerMixin", "onPrefChange allowReminders=" + booleanValue);
+            Log.d("PrefControllerMixin", "onPrefChange allowReminders=" + zBooleanValue);
         }
-        this.mMetricsFeatureProvider.action(this.mContext, 167, booleanValue);
-        this.mBackend.saveSoundPolicy(1, booleanValue);
+        this.mMetricsFeatureProvider.action(this.mContext, 167, zBooleanValue);
+        this.mBackend.saveSoundPolicy(1, zBooleanValue);
         return true;
     }
 }

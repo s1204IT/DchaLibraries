@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 import com.android.settings.core.BasePreferenceController;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class SmartBatteryPreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener {
     private static final String KEY_SMART_BATTERY = "smart_battery";

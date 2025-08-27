@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class ForcedResizableInfoActivity extends Activity implements View.OnTouchListener {
     private final Runnable mFinishRunnable = new Runnable() { // from class: com.android.systemui.stackdivider.ForcedResizableInfoActivity.1
@@ -22,7 +23,7 @@ public class ForcedResizableInfoActivity extends Activity implements View.OnTouc
         String string;
         super.onCreate(bundle);
         setContentView(R.layout.forced_resizable_activity);
-        TextView textView = (TextView) findViewById(16908299);
+        TextView textView = (TextView) findViewById(android.R.id.message);
         int intExtra = getIntent().getIntExtra("extra_forced_resizeable_reason", -1);
         switch (intExtra) {
             case 1:

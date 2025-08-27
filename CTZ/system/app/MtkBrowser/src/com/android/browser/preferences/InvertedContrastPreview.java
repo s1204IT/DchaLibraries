@@ -2,15 +2,14 @@ package com.android.browser.preferences;
 
 import android.content.Context;
 import android.text.TextUtils;
+
 /* loaded from: classes.dex */
 public class InvertedContrastPreview extends WebViewPreview {
     static final String[] THUMBS = {"thumb_google", "thumb_amazon", "thumb_cnn", "thumb_espn", "", "thumb_bbc", "thumb_nytimes", "thumb_weatherchannel", "thumb_picasa"};
     String mHtml;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.browser.preferences.WebViewPreview
-    public void init(Context context) {
-        String[] strArr;
+    protected void init(Context context) {
         super.init(context);
         StringBuilder sb = new StringBuilder("<html><body style=\"width: 1000px\">");
         for (String str : THUMBS) {

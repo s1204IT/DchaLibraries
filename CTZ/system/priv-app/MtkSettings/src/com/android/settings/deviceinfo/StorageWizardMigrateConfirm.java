@@ -14,13 +14,13 @@ import com.android.settings.R;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.password.ChooseLockSettingsHelper;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class StorageWizardMigrateConfirm extends StorageWizardBase {
     private MigrateEstimateTask mEstimate;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.deviceinfo.StorageWizardBase, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.storage_wizard_generic);
         if (this.mVolume == null) {
@@ -50,7 +50,7 @@ public class StorageWizardMigrateConfirm extends StorageWizardBase {
     @Override // com.android.settings.deviceinfo.StorageWizardBase
     public void onNavigateBack(View view) {
         FeatureFactory.getFactory(this).getMetricsFeatureProvider().action(this, 1413, new Pair[0]);
-        Intent intent = new Intent(this, StorageWizardReady.class);
+        Intent intent = new Intent(this, (Class<?>) StorageWizardReady.class);
         intent.putExtra("migrate_skip", true);
         startActivity(intent);
     }
@@ -67,16 +67,16 @@ public class StorageWizardMigrateConfirm extends StorageWizardBase {
             }
         }
         try {
-            int movePrimaryStorage = getPackageManager().movePrimaryStorage(this.mVolume);
+            int iMovePrimaryStorage = getPackageManager().movePrimaryStorage(this.mVolume);
             FeatureFactory.getFactory(this).getMetricsFeatureProvider().action(this, 1412, new Pair[0]);
-            Intent intent = new Intent(this, StorageWizardMigrateProgress.class);
+            Intent intent = new Intent(this, (Class<?>) StorageWizardMigrateProgress.class);
             intent.putExtra("android.os.storage.extra.VOLUME_ID", this.mVolume.getId());
-            intent.putExtra("android.content.pm.extra.MOVE_ID", movePrimaryStorage);
+            intent.putExtra("android.content.pm.extra.MOVE_ID", iMovePrimaryStorage);
             startActivity(intent);
             finishAffinity();
         } catch (IllegalArgumentException e) {
             if (Objects.equals(this.mVolume.getFsUuid(), ((StorageManager) getSystemService("storage")).getPrimaryStorageVolume().getUuid())) {
-                Intent intent2 = new Intent(this, StorageWizardReady.class);
+                Intent intent2 = new Intent(this, (Class<?>) StorageWizardReady.class);
                 intent2.putExtra("android.os.storage.extra.DISK_ID", getIntent().getStringExtra("android.os.storage.extra.DISK_ID"));
                 startActivity(intent2);
                 finishAffinity();

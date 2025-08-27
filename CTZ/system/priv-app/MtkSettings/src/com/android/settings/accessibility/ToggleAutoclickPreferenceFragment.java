@@ -8,13 +8,13 @@ import android.widget.Switch;
 import com.android.settings.R;
 import com.android.settings.widget.SeekBarPreference;
 import com.android.settings.widget.SwitchBar;
+
 /* loaded from: classes.dex */
 public class ToggleAutoclickPreferenceFragment extends ToggleFeaturePreferenceFragment implements Preference.OnPreferenceChangeListener, SwitchBar.OnSwitchChangeListener {
     private static final int[] mAutoclickPreferenceSummaries = {R.plurals.accessibilty_autoclick_preference_subtitle_extremely_short_delay, R.plurals.accessibilty_autoclick_preference_subtitle_very_short_delay, R.plurals.accessibilty_autoclick_preference_subtitle_short_delay, R.plurals.accessibilty_autoclick_preference_subtitle_long_delay, R.plurals.accessibilty_autoclick_preference_subtitle_very_long_delay};
     private SeekBarPreference mDelay;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static CharSequence getAutoclickPreferenceSummary(Resources resources, int i) {
+    static CharSequence getAutoclickPreferenceSummary(Resources resources, int i) {
         return resources.getQuantityString(mAutoclickPreferenceSummaries[getAutoclickPreferenceSummaryIndex(i)], i, Integer.valueOf(i));
     }
 
@@ -44,9 +44,8 @@ public class ToggleAutoclickPreferenceFragment extends ToggleFeaturePreferenceFr
         return R.string.help_url_autoclick;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.accessibility_autoclick_settings;
     }
 

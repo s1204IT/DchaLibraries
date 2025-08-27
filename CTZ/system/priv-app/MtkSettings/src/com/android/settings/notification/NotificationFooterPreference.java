@@ -8,10 +8,11 @@ import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class NotificationFooterPreference extends Preference {
     public NotificationFooterPreference(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.footerPreferenceStyle, 16842894));
+        super(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.footerPreferenceStyle, android.R.attr.preferenceStyle));
         init();
     }
 
@@ -22,7 +23,7 @@ public class NotificationFooterPreference extends Preference {
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        TextView textView = (TextView) preferenceViewHolder.itemView.findViewById(16908310);
+        TextView textView = (TextView) preferenceViewHolder.itemView.findViewById(android.R.id.title);
         textView.setMovementMethod(new LinkMovementMethod());
         textView.setClickable(false);
         textView.setLongClickable(false);

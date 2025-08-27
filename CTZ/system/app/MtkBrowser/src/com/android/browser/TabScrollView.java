@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import com.android.browser.TabBar;
+
 /* loaded from: classes.dex */
 public class TabScrollView extends HorizontalScrollView {
     private int mAnimationDuration;
@@ -50,8 +51,7 @@ public class TabScrollView extends HorizontalScrollView {
         ensureChildVisible(getSelectedTab());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateLayout() {
+    protected void updateLayout() {
         int childCount = this.mContentView.getChildCount();
         for (int i = 0; i < childCount; i++) {
             ((TabBar.TabView) this.mContentView.getChildAt(i)).updateLayoutParams();
@@ -59,8 +59,7 @@ public class TabScrollView extends HorizontalScrollView {
         ensureChildVisible(getSelectedTab());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setSelectedTab(int i) {
+    void setSelectedTab(int i) {
         View selectedTab = getSelectedTab();
         if (selectedTab != null) {
             selectedTab.setActivated(false);
@@ -73,36 +72,31 @@ public class TabScrollView extends HorizontalScrollView {
         requestLayout();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getChildIndex(View view) {
+    int getChildIndex(View view) {
         return this.mContentView.indexOfChild(view);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public View getSelectedTab() {
+    View getSelectedTab() {
         if (this.mSelected >= 0 && this.mSelected < this.mContentView.getChildCount()) {
             return this.mContentView.getChildAt(this.mSelected);
         }
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void clearTabs() {
+    void clearTabs() {
         this.mContentView.removeAllViews();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void addTab(View view) {
+    void addTab(View view) {
         this.mContentView.addView(view);
         view.setActivated(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void removeTab(View view) {
-        int indexOfChild = this.mContentView.indexOfChild(view);
-        if (indexOfChild == this.mSelected) {
+    void removeTab(View view) {
+        int iIndexOfChild = this.mContentView.indexOfChild(view);
+        if (iIndexOfChild == this.mSelected) {
             this.mSelected = -1;
-        } else if (indexOfChild < this.mSelected) {
+        } else if (iIndexOfChild < this.mSelected) {
             this.mSelected--;
         }
         this.mContentView.removeView(view);
@@ -123,9 +117,9 @@ public class TabScrollView extends HorizontalScrollView {
     }
 
     private void animateScroll(int i) {
-        ObjectAnimator ofInt = ObjectAnimator.ofInt(this, "scroll", getScrollX(), i);
-        ofInt.setDuration(this.mAnimationDuration);
-        ofInt.start();
+        ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this, "scroll", getScrollX(), i);
+        objectAnimatorOfInt.setDuration(this.mAnimationDuration);
+        objectAnimatorOfInt.start();
     }
 
     public void setScroll(int i) {
@@ -147,9 +141,7 @@ public class TabScrollView extends HorizontalScrollView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class TabLayout extends LinearLayout {
+    class TabLayout extends LinearLayout {
         public TabLayout(Context context) {
             super(context);
             setChildrenDrawingOrderEnabled(true);

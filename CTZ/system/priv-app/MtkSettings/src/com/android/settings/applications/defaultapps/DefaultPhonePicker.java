@@ -8,7 +8,9 @@ import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settingslib.applications.DefaultAppInfo;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultPhonePicker extends DefaultAppPickerFragment {
     private DefaultKeyUpdater mDefaultKeyUpdater;
@@ -24,20 +26,20 @@ public class DefaultPhonePicker extends DefaultAppPickerFragment {
         this.mDefaultKeyUpdater = new DefaultKeyUpdater((TelecomManager) context.getSystemService("telecom"));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.default_phone_settings;
     }
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected List<DefaultAppInfo> getCandidates() {
         ArrayList arrayList = new ArrayList();
-        List<String> installedDialerApplications = DefaultDialerManager.getInstalledDialerApplications(getContext(), this.mUserId);
+        List installedDialerApplications = DefaultDialerManager.getInstalledDialerApplications(getContext(), this.mUserId);
         Context context = getContext();
-        for (String str : installedDialerApplications) {
+        Iterator it = installedDialerApplications.iterator();
+        while (it.hasNext()) {
             try {
-                arrayList.add(new DefaultAppInfo(context, this.mPm, this.mPm.getApplicationInfoAsUser(str, 0, this.mUserId)));
+                arrayList.add(new DefaultAppInfo(context, this.mPm, this.mPm.getApplicationInfoAsUser((String) it.next(), 0, this.mUserId)));
             } catch (PackageManager.NameNotFoundException e) {
             }
         }
@@ -62,9 +64,7 @@ public class DefaultPhonePicker extends DefaultAppPickerFragment {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class DefaultKeyUpdater {
+    static class DefaultKeyUpdater {
         private final TelecomManager mTelecomManager;
 
         public DefaultKeyUpdater(TelecomManager telecomManager) {

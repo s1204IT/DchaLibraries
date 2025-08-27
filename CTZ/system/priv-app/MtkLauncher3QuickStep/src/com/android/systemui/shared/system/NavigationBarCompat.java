@@ -3,6 +3,7 @@ package com.android.systemui.shared.system;
 import android.content.res.Resources;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 /* loaded from: classes.dex */
 public class NavigationBarCompat {
     public static final int FLAG_DISABLE_QUICK_SCRUB = 2;
@@ -15,12 +16,10 @@ public class NavigationBarCompat {
     public static final int HIT_TARGET_ROTATION = 4;
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     public @interface HitTarget {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     public @interface InteractionType {
     }
 

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public class HighUsageDetector {
     private BatteryStatsHelper mBatteryStatsHelper;
@@ -32,7 +33,7 @@ public class HighUsageDetector {
     }
 
     public BatteryTip detect() {
-        long calculateLastFullChargeTime = this.mBatteryUtils.calculateLastFullChargeTime(this.mBatteryStatsHelper, System.currentTimeMillis());
+        long jCalculateLastFullChargeTime = this.mBatteryUtils.calculateLastFullChargeTime(this.mBatteryStatsHelper, System.currentTimeMillis());
         if (this.mPolicy.highUsageEnabled && this.mDischarging) {
             parseBatteryData();
             if (this.mDataParser.isDeviceHeavilyUsed() || this.mPolicy.testHighUsageTip) {
@@ -54,7 +55,7 @@ public class HighUsageDetector {
                 this.mHighUsageAppList = this.mHighUsageAppList.subList(0, Math.min(this.mPolicy.highUsageAppCount, this.mHighUsageAppList.size()));
             }
         }
-        return new HighUsageTip(calculateLastFullChargeTime, this.mHighUsageAppList);
+        return new HighUsageTip(jCalculateLastFullChargeTime, this.mHighUsageAppList);
     }
 
     void parseBatteryData() {

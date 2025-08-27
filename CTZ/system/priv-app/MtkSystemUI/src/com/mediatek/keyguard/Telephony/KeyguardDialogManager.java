@@ -10,6 +10,7 @@ import com.android.keyguard.KeyguardUtils;
 import com.mediatek.keyguard.PowerOffAlarm.PowerOffAlarmManager;
 import java.util.LinkedList;
 import java.util.Queue;
+
 /* loaded from: classes.dex */
 public class KeyguardDialogManager {
     private static KeyguardDialogManager sInstance;
@@ -17,7 +18,6 @@ public class KeyguardDialogManager {
     private DialogSequenceManager mDialogSequenceManager = new DialogSequenceManager();
     private KeyguardUpdateMonitor mUpdateMonitor;
 
-    /* loaded from: classes.dex */
     public interface DialogShowCallBack {
         void show();
     }
@@ -42,7 +42,6 @@ public class KeyguardDialogManager {
         this.mDialogSequenceManager.reportDialogClose();
     }
 
-    /* loaded from: classes.dex */
     private class DialogSequenceManager {
         private Queue<DialogShowCallBack> mDialogShowCallbackQueue;
         private boolean mInnerDialogShowing = false;
@@ -50,12 +49,12 @@ public class KeyguardDialogManager {
         private ContentObserver mDialogSequenceObserver = new ContentObserver(new Handler()) { // from class: com.mediatek.keyguard.Telephony.KeyguardDialogManager.DialogSequenceManager.1
             @Override // android.database.ContentObserver
             public void onChange(boolean z) {
-                int queryDialogSequenceSeetings = DialogSequenceManager.this.queryDialogSequenceSeetings();
-                Log.d("KeyguardDialogManager", "DialogSequenceManager DialogSequenceObserver--onChange()--dialog_sequence_settings = " + queryDialogSequenceSeetings);
-                if (queryDialogSequenceSeetings == 0) {
+                int iQueryDialogSequenceSeetings = DialogSequenceManager.this.queryDialogSequenceSeetings();
+                Log.d("KeyguardDialogManager", "DialogSequenceManager DialogSequenceObserver--onChange()--dialog_sequence_settings = " + iQueryDialogSequenceSeetings);
+                if (iQueryDialogSequenceSeetings == 0) {
                     DialogSequenceManager.this.setLocked(false);
                     DialogSequenceManager.this.handleShowDialog();
-                } else if (queryDialogSequenceSeetings == 1) {
+                } else if (iQueryDialogSequenceSeetings == 1) {
                     DialogSequenceManager.this.setLocked(true);
                     DialogSequenceManager.this.handleShowDialog();
                 }
@@ -78,10 +77,10 @@ public class KeyguardDialogManager {
             Log.d("KeyguardDialogManager", "DialogSequenceManager --handleShowDialog()--enableShow() = " + enableShow());
             if (enableShow()) {
                 if (getLocked()) {
-                    DialogShowCallBack poll = this.mDialogShowCallbackQueue.poll();
-                    Log.d("KeyguardDialogManager", "DialogSequenceManager --handleShowDialog()--dialogCallBack = " + poll);
-                    if (poll != null) {
-                        poll.show();
+                    DialogShowCallBack dialogShowCallBackPoll = this.mDialogShowCallbackQueue.poll();
+                    Log.d("KeyguardDialogManager", "DialogSequenceManager --handleShowDialog()--dialogCallBack = " + dialogShowCallBackPoll);
+                    if (dialogShowCallBackPoll != null) {
+                        dialogShowCallBackPoll.show();
                         setInnerDialogShowing(true);
                         return;
                     }
@@ -121,9 +120,9 @@ public class KeyguardDialogManager {
         }
 
         private boolean isOtherModuleShowing() {
-            int queryDialogSequenceSeetings = queryDialogSequenceSeetings();
-            Log.d("KeyguardDialogManager", "DialogSequenceManager --isOtherModuleShowing()--dialog_sequence_settings = " + queryDialogSequenceSeetings);
-            return (queryDialogSequenceSeetings == 0 || queryDialogSequenceSeetings == 1) ? false : true;
+            int iQueryDialogSequenceSeetings = queryDialogSequenceSeetings();
+            Log.d("KeyguardDialogManager", "DialogSequenceManager --isOtherModuleShowing()--dialog_sequence_settings = " + iQueryDialogSequenceSeetings);
+            return (iQueryDialogSequenceSeetings == 0 || iQueryDialogSequenceSeetings == 1) ? false : true;
         }
 
         private void setInnerDialogShowing(boolean z) {
@@ -134,8 +133,7 @@ public class KeyguardDialogManager {
             return this.mInnerDialogShowing;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setLocked(boolean z) {
+        private void setLocked(boolean z) {
             this.mLocked = z;
         }
 
@@ -143,8 +141,7 @@ public class KeyguardDialogManager {
             return this.mLocked;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public int queryDialogSequenceSeetings() {
+        private int queryDialogSequenceSeetings() {
             return Settings.System.getInt(KeyguardDialogManager.this.mContext.getContentResolver(), "dialog_sequence_settings", 0);
         }
     }

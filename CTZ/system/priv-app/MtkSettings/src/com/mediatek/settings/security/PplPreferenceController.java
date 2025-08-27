@@ -11,6 +11,7 @@ import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.mediatek.settings.ext.DefaultPplSettingsEntryExt;
 import com.mediatek.settings.ext.IPplSettingsEntryExt;
+
 /* loaded from: classes.dex */
 public class PplPreferenceController extends AbstractPreferenceController implements LifecycleObserver, OnPause, OnResume {
     private IPplSettingsEntryExt mPplSettingsEntryExt;
@@ -37,9 +38,9 @@ public class PplPreferenceController extends AbstractPreferenceController implem
     public void displayPreference(PreferenceScreen preferenceScreen) {
         if (this.mPplSettingsEntryExt != null) {
             this.mPplSettingsEntryExt.addPplPrf((PreferenceGroup) preferenceScreen.findPreference("security_settings_device_admin_category"));
-            return;
+        } else {
+            Log.e("PplPrefContr", "[displayPreference] mPplSettingsEntryExt should not be null !!!");
         }
-        Log.e("PplPrefContr", "[displayPreference] mPplSettingsEntryExt should not be null !!!");
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnResume

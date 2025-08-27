@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class DefaultAppListExt extends ContextWrapper implements IAppListExt {
     private static final String TAG = "DefaultAppListExt";

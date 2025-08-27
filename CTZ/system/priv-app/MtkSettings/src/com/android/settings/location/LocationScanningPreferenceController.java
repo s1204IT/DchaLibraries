@@ -3,6 +3,7 @@ package com.android.settings.location;
 import android.content.Context;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class LocationScanningPreferenceController extends BasePreferenceController {
     static final String KEY_LOCATION_SCANNING = "location_scanning";

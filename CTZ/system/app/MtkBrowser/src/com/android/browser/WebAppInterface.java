@@ -2,6 +2,7 @@ package com.android.browser;
 
 import android.util.Log;
 import android.webkit.JavascriptInterface;
+
 /* loaded from: classes.dex */
 public class WebAppInterface {
     private final BrowserWebView mWebView;

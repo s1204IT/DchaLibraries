@@ -8,6 +8,7 @@ import android.os.UserManager;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class AppLister extends AsyncTask<Void, Void, List<UserAppInfo>> {
     protected final PackageManagerWrapper mPm;
@@ -22,9 +23,9 @@ public abstract class AppLister extends AsyncTask<Void, Void, List<UserAppInfo>>
         this.mUm = userManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
     @Override // android.os.AsyncTask
-    public List<UserAppInfo> doInBackground(Void... voidArr) {
+    protected List<UserAppInfo> doInBackground(Void... voidArr) {
         ArrayList arrayList = new ArrayList();
         for (UserInfo userInfo : this.mUm.getProfiles(UserHandle.myUserId())) {
             for (ApplicationInfo applicationInfo : this.mPm.getInstalledApplicationsAsUser(33280 | (userInfo.isAdmin() ? 4194304 : 0), userInfo.id)) {
@@ -36,9 +37,9 @@ public abstract class AppLister extends AsyncTask<Void, Void, List<UserAppInfo>>
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
     @Override // android.os.AsyncTask
-    public void onPostExecute(List<UserAppInfo> list) {
+    protected void onPostExecute(List<UserAppInfo> list) {
         onAppListBuilt(list);
     }
 }

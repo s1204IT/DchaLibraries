@@ -10,12 +10,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public final class FileLog {
     private static final String FILE_NAME_PREFIX = "log-";
@@ -65,11 +67,11 @@ public final class FileLog {
         if (!ENABLED) {
             return;
         }
-        String format = String.format("%s %s %s", DATE_FORMAT.format(new Date()), str, str2);
+        String str3 = String.format("%s %s %s", DATE_FORMAT.format(new Date()), str, str2);
         if (exc != null) {
-            format = format + "\n" + Log.getStackTraceString(exc);
+            str3 = str3 + "\n" + Log.getStackTraceString(exc);
         }
-        Message.obtain(getHandler(), 1, format).sendToTarget();
+        Message.obtain(getHandler(), 1, str3).sendToTarget();
     }
 
     private static Handler getHandler() {
@@ -92,9 +94,7 @@ public final class FileLog {
         countDownLatch.await(2L, TimeUnit.SECONDS);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class LogWriterCallback implements Handler.Callback {
+    private static class LogWriterCallback implements Handler.Callback {
         private static final long CLOSE_DELAY = 5000;
         private static final int MSG_CLOSE = 2;
         private static final int MSG_FLUSH = 3;
@@ -107,13 +107,13 @@ public final class FileLog {
             this.mCurrentWriter = null;
         }
 
-        private void closeWriter() {
+        private void closeWriter() throws IOException {
             Utilities.closeSilently(this.mCurrentWriter);
             this.mCurrentWriter = null;
         }
 
         @Override // android.os.Handler.Callback
-        public boolean handleMessage(Message message) {
+        public boolean handleMessage(Message message) throws Throwable {
             if (FileLog.sLogsDirectory == null || !FileLog.ENABLED) {
                 return true;
             }
@@ -143,14 +143,16 @@ public final class FileLog {
                         this.mCurrentWriter.flush();
                         FileLog.sHandler.removeMessages(2);
                         FileLog.sHandler.sendEmptyMessageDelayed(2, CLOSE_DELAY);
+                        break;
                     } catch (Exception e) {
                         Log.e("FileLog", "Error writing logs to file", e);
                         closeWriter();
+                        break;
                     }
-                    return true;
+                    break;
                 case 2:
                     closeWriter();
-                    return true;
+                    break;
                 case 3:
                     closeWriter();
                     Pair pair = (Pair) message.obj;
@@ -159,41 +161,41 @@ public final class FileLog {
                         FileLog.dumpFile((PrintWriter) pair.first, "log-1");
                     }
                     ((CountDownLatch) pair.second).countDown();
-                    return true;
-                default:
-                    return true;
+                    break;
             }
+            return true;
+            return true;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void dumpFile(PrintWriter printWriter, String str) {
+    private static void dumpFile(PrintWriter printWriter, String str) throws Throwable {
         BufferedReader bufferedReader;
         File file = new File(sLogsDirectory, str);
         if (file.exists()) {
             try {
                 bufferedReader = new BufferedReader(new FileReader(file));
-                try {
-                    printWriter.println();
-                    printWriter.println("--- logfile: " + str + " ---");
-                    while (true) {
-                        String readLine = bufferedReader.readLine();
-                        if (readLine == null) {
-                            break;
-                        }
-                        printWriter.println(readLine);
+            } catch (Exception e) {
+                bufferedReader = null;
+            } catch (Throwable th) {
+                th = th;
+                bufferedReader = null;
+            }
+            try {
+                printWriter.println();
+                printWriter.println("--- logfile: " + str + " ---");
+                while (true) {
+                    String line = bufferedReader.readLine();
+                    if (line == null) {
+                        break;
+                    } else {
+                        printWriter.println(line);
                     }
-                } catch (Exception e) {
-                } catch (Throwable th) {
-                    th = th;
-                    Utilities.closeSilently(bufferedReader);
-                    throw th;
                 }
             } catch (Exception e2) {
-                bufferedReader = null;
             } catch (Throwable th2) {
                 th = th2;
-                bufferedReader = null;
+                Utilities.closeSilently(bufferedReader);
+                throw th;
             }
             Utilities.closeSilently(bufferedReader);
         }

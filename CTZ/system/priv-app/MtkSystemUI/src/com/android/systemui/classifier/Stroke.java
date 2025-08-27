@@ -1,6 +1,7 @@
 package com.android.systemui.classifier;
 
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class Stroke {
     private final float mDpi;
@@ -42,7 +43,7 @@ public class Stroke {
     }
 
     public float getDurationSeconds() {
-        return ((float) getDurationNanos()) / 1.0E9f;
+        return getDurationNanos() / 1.0E9f;
     }
 
     public ArrayList<Point> getPoints() {

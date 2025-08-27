@@ -2,6 +2,7 @@ package com.mediatek.systemui.statusbar.extcb;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+
 /* loaded from: classes.dex */
 public class IconIdWrapper implements Cloneable {
     private int mIconId;
@@ -41,6 +42,7 @@ public class IconIdWrapper implements Cloneable {
         return null;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: clone()Ljava/lang/Object; */
     /* renamed from: clone */
     public IconIdWrapper m29clone() {
         try {

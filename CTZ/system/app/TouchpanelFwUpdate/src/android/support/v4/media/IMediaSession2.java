@@ -10,6 +10,7 @@ import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.support.v4.media.IMediaController2;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface IMediaSession2 extends IInterface {
     void addPlaylistItem(IMediaController2 iMediaController2, int i, Bundle bundle) throws RemoteException;
@@ -92,7 +93,6 @@ public interface IMediaSession2 extends IInterface {
 
     void updatePlaylistMetadata(IMediaController2 iMediaController2, Bundle bundle) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IMediaSession2 {
         public static IMediaSession2 asInterface(IBinder obj) {
             if (obj == null) {
@@ -111,291 +111,205 @@ public interface IMediaSession2 extends IInterface {
         }
 
         @Override // android.os.Binder
-        public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
-            Bundle _arg1;
-            Bundle _arg2;
-            Uri _arg12;
-            Uri _arg13;
-            if (code == 1598968902) {
-                reply.writeString("android.support.v4.media.IMediaSession2");
+        public boolean onTransact(int i, Parcel parcel, Parcel parcel2, int i2) throws RemoteException {
+            Bundle bundle;
+            Bundle bundle2;
+            Uri uri;
+            Uri uri2;
+            if (i == 1598968902) {
+                parcel2.writeString("android.support.v4.media.IMediaSession2");
                 return true;
             }
-            switch (code) {
+            switch (i) {
                 case 1:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg0 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg14 = data.readString();
-                    connect(_arg0, _arg14);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    connect(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString());
                     return true;
                 case 2:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg02 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    release(_arg02);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    release(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 3:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg03 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    int _arg15 = data.readInt();
-                    int _arg22 = data.readInt();
-                    setVolumeTo(_arg03, _arg15, _arg22);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    setVolumeTo(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt(), parcel.readInt());
                     return true;
                 case 4:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg04 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    int _arg16 = data.readInt();
-                    int _arg23 = data.readInt();
-                    adjustVolume(_arg04, _arg16, _arg23);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    adjustVolume(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt(), parcel.readInt());
                     return true;
                 case 5:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg05 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    play(_arg05);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    play(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 6:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg06 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    pause(_arg06);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    pause(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 7:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg07 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    reset(_arg07);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    reset(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 8:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg08 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    prepare(_arg08);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    prepare(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 9:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg09 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    fastForward(_arg09);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    fastForward(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 10:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg010 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    rewind(_arg010);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    rewind(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 11:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg011 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    long _arg17 = data.readLong();
-                    seekTo(_arg011, _arg17);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    seekTo(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readLong());
                     return true;
                 case 12:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg012 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    if (data.readInt() != 0) {
-                        _arg1 = (Bundle) Bundle.CREATOR.createFromParcel(data);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    IMediaController2 iMediaController2AsInterface = IMediaController2.Stub.asInterface(parcel.readStrongBinder());
+                    if (parcel.readInt() != 0) {
+                        bundle = (Bundle) Bundle.CREATOR.createFromParcel(parcel);
                     } else {
-                        _arg1 = null;
+                        bundle = null;
                     }
-                    if (data.readInt() != 0) {
-                        _arg2 = (Bundle) Bundle.CREATOR.createFromParcel(data);
+                    if (parcel.readInt() != 0) {
+                        bundle2 = (Bundle) Bundle.CREATOR.createFromParcel(parcel);
                     } else {
-                        _arg2 = null;
+                        bundle2 = null;
                     }
-                    ResultReceiver _arg3 = data.readInt() != 0 ? (ResultReceiver) ResultReceiver.CREATOR.createFromParcel(data) : null;
-                    sendCustomCommand(_arg012, _arg1, _arg2, _arg3);
+                    sendCustomCommand(iMediaController2AsInterface, bundle, bundle2, parcel.readInt() != 0 ? (ResultReceiver) ResultReceiver.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 13:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg013 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    if (data.readInt() != 0) {
-                        _arg12 = (Uri) Uri.CREATOR.createFromParcel(data);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    IMediaController2 iMediaController2AsInterface2 = IMediaController2.Stub.asInterface(parcel.readStrongBinder());
+                    if (parcel.readInt() != 0) {
+                        uri = (Uri) Uri.CREATOR.createFromParcel(parcel);
                     } else {
-                        _arg12 = null;
+                        uri = null;
                     }
-                    Bundle _arg24 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    prepareFromUri(_arg013, _arg12, _arg24);
+                    prepareFromUri(iMediaController2AsInterface2, uri, parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 14:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg014 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg18 = data.readString();
-                    Bundle _arg25 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    prepareFromSearch(_arg014, _arg18, _arg25);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    prepareFromSearch(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 15:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg015 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg19 = data.readString();
-                    Bundle _arg26 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    prepareFromMediaId(_arg015, _arg19, _arg26);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    prepareFromMediaId(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 16:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg016 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    if (data.readInt() != 0) {
-                        _arg13 = (Uri) Uri.CREATOR.createFromParcel(data);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    IMediaController2 iMediaController2AsInterface3 = IMediaController2.Stub.asInterface(parcel.readStrongBinder());
+                    if (parcel.readInt() != 0) {
+                        uri2 = (Uri) Uri.CREATOR.createFromParcel(parcel);
                     } else {
-                        _arg13 = null;
+                        uri2 = null;
                     }
-                    Bundle _arg27 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    playFromUri(_arg016, _arg13, _arg27);
+                    playFromUri(iMediaController2AsInterface3, uri2, parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 17:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg017 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg110 = data.readString();
-                    Bundle _arg28 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    playFromSearch(_arg017, _arg110, _arg28);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    playFromSearch(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 18:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg018 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg111 = data.readString();
-                    Bundle _arg29 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    playFromMediaId(_arg018, _arg111, _arg29);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    playFromMediaId(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 19:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg019 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg112 = data.readString();
-                    Bundle _arg210 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    setRating(_arg019, _arg112, _arg210);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    setRating(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 20:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg020 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    float _arg113 = data.readFloat();
-                    setPlaybackSpeed(_arg020, _arg113);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    setPlaybackSpeed(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readFloat());
                     return true;
                 case 21:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg021 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    List<Bundle> _arg114 = data.createTypedArrayList(Bundle.CREATOR);
-                    Bundle _arg211 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    setPlaylist(_arg021, _arg114, _arg211);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    setPlaylist(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.createTypedArrayList(Bundle.CREATOR), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 22:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg022 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    Bundle _arg115 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    updatePlaylistMetadata(_arg022, _arg115);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    updatePlaylistMetadata(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 23:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg023 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    int _arg116 = data.readInt();
-                    Bundle _arg212 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    addPlaylistItem(_arg023, _arg116, _arg212);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    addPlaylistItem(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 24:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg024 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    Bundle _arg117 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    removePlaylistItem(_arg024, _arg117);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    removePlaylistItem(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 25:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg025 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    int _arg118 = data.readInt();
-                    Bundle _arg213 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    replacePlaylistItem(_arg025, _arg118, _arg213);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    replacePlaylistItem(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 26:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg026 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    Bundle _arg119 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    skipToPlaylistItem(_arg026, _arg119);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    skipToPlaylistItem(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 27:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg027 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    skipToPreviousItem(_arg027);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    skipToPreviousItem(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 28:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg028 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    skipToNextItem(_arg028);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    skipToNextItem(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 29:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg029 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    int _arg120 = data.readInt();
-                    setRepeatMode(_arg029, _arg120);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    setRepeatMode(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt());
                     return true;
                 case 30:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg030 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    int _arg121 = data.readInt();
-                    setShuffleMode(_arg030, _arg121);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    setShuffleMode(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt());
                     return true;
                 case 31:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg031 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    subscribeRoutesInfo(_arg031);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    subscribeRoutesInfo(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 32:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg032 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    unsubscribeRoutesInfo(_arg032);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    unsubscribeRoutesInfo(IMediaController2.Stub.asInterface(parcel.readStrongBinder()));
                     return true;
                 case 33:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg033 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    Bundle _arg122 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    selectRoute(_arg033, _arg122);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    selectRoute(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 34:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg034 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    Bundle _arg123 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    getLibraryRoot(_arg034, _arg123);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    getLibraryRoot(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 35:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg035 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg124 = data.readString();
-                    getItem(_arg035, _arg124);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    getItem(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString());
                     return true;
                 case 36:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg036 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg125 = data.readString();
-                    int _arg214 = data.readInt();
-                    int _arg32 = data.readInt();
-                    Bundle _arg4 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    getChildren(_arg036, _arg125, _arg214, _arg32, _arg4);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    getChildren(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString(), parcel.readInt(), parcel.readInt(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 37:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg037 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg126 = data.readString();
-                    Bundle _arg215 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    search(_arg037, _arg126, _arg215);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    search(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 38:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg038 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg127 = data.readString();
-                    int _arg216 = data.readInt();
-                    int _arg33 = data.readInt();
-                    Bundle _arg42 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    getSearchResult(_arg038, _arg127, _arg216, _arg33, _arg42);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    getSearchResult(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString(), parcel.readInt(), parcel.readInt(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 39:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg039 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg128 = data.readString();
-                    Bundle _arg217 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    subscribe(_arg039, _arg128, _arg217);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    subscribe(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 40:
-                    data.enforceInterface("android.support.v4.media.IMediaSession2");
-                    IMediaController2 _arg040 = IMediaController2.Stub.asInterface(data.readStrongBinder());
-                    String _arg129 = data.readString();
-                    unsubscribe(_arg040, _arg129);
+                    parcel.enforceInterface("android.support.v4.media.IMediaSession2");
+                    unsubscribe(IMediaController2.Stub.asInterface(parcel.readStrongBinder()), parcel.readString());
                     return true;
                 default:
-                    return super.onTransact(code, data, reply, flags);
+                    return super.onTransact(i, parcel, parcel2, i2);
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public static class Proxy implements IMediaSession2 {
+        private static class Proxy implements IMediaSession2 {
             private IBinder mRemote;
 
             Proxy(IBinder remote) {

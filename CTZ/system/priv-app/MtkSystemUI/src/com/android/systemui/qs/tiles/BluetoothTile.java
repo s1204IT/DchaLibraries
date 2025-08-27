@@ -24,6 +24,7 @@ import com.android.systemui.statusbar.policy.BluetoothController;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
     private static final Intent BLUETOOTH_SETTINGS = new Intent("android.settings.BLUETOOTH_SETTINGS");
@@ -64,7 +65,7 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mDetailAdapter;
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -108,14 +109,14 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mContext.getString(R.string.quick_settings_bluetooth_label);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         boolean z = obj == ARG_SHOW_TRANSIENT_ENABLING;
         boolean z2 = z || this.mController.isBluetoothEnabled();
-        boolean isBluetoothConnected = this.mController.isBluetoothConnected();
-        boolean isBluetoothConnecting = this.mController.isBluetoothConnecting();
-        booleanState.isTransient = z || isBluetoothConnecting || this.mController.getBluetoothState() == 11;
+        boolean zIsBluetoothConnected = this.mController.isBluetoothConnected();
+        boolean zIsBluetoothConnecting = this.mController.isBluetoothConnecting();
+        booleanState.isTransient = z || zIsBluetoothConnecting || this.mController.getBluetoothState() == 11;
         booleanState.dualTarget = true;
         booleanState.value = z2;
         if (booleanState.slash == null) {
@@ -123,9 +124,9 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
         }
         booleanState.slash.isSlashed = !z2;
         booleanState.label = this.mContext.getString(R.string.quick_settings_bluetooth_label);
-        booleanState.secondaryLabel = TextUtils.emptyIfNull(getSecondaryLabel(z2, isBluetoothConnecting, isBluetoothConnected, booleanState.isTransient));
+        booleanState.secondaryLabel = TextUtils.emptyIfNull(getSecondaryLabel(z2, zIsBluetoothConnecting, zIsBluetoothConnected, booleanState.isTransient));
         if (z2) {
-            if (isBluetoothConnected) {
+            if (zIsBluetoothConnected) {
                 booleanState.icon = new BluetoothConnectedTileIcon();
                 if (!TextUtils.isEmpty(this.mController.getConnectedDeviceName())) {
                     booleanState.label = this.mController.getConnectedDeviceName();
@@ -185,7 +186,7 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 113;
+        return com.android.systemui.plugins.R.styleable.AppCompatTheme_windowActionModeOverlay;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
@@ -206,9 +207,7 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
         return new BluetoothDetailAdapter();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class BluetoothBatteryTileIcon extends QSTile.Icon {
+    private class BluetoothBatteryTileIcon extends QSTile.Icon {
         private int mBatteryLevel;
         private float mIconScale;
 
@@ -223,9 +222,7 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class BluetoothConnectedTileIcon extends QSTile.Icon {
+    private class BluetoothConnectedTileIcon extends QSTile.Icon {
         BluetoothConnectedTileIcon() {
         }
 
@@ -235,9 +232,7 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class BluetoothDetailAdapter implements DetailAdapter, QSDetailItems.Callback {
+    protected class BluetoothDetailAdapter implements DetailAdapter, QSDetailItems.Callback {
         private QSDetailItems mItems;
 
         protected BluetoothDetailAdapter() {
@@ -291,8 +286,7 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
             this.mItems.setItemsVisible(z);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateItems() {
+        private void updateItems() {
             if (this.mItems == null) {
                 return;
             }
@@ -319,7 +313,7 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
                             if (batteryLevel == -1) {
                                 item.line2 = BluetoothTile.this.mContext.getString(R.string.quick_settings_connected);
                             } else {
-                                item.icon = new BluetoothBatteryTileIcon(batteryLevel, 1.0f);
+                                item.icon = BluetoothTile.this.new BluetoothBatteryTileIcon(batteryLevel, 1.0f);
                                 item.line2 = BluetoothTile.this.mContext.getString(R.string.quick_settings_connected_battery_level, Utils.formatPercentage(batteryLevel));
                             }
                             item.canDisconnect = true;

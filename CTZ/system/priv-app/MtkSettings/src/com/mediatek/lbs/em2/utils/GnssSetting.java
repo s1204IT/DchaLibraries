@@ -1,4 +1,5 @@
 package com.mediatek.lbs.em2.utils;
+
 /* loaded from: classes.dex */
 public class GnssSetting {
     public boolean sib8sib16Enable = true;

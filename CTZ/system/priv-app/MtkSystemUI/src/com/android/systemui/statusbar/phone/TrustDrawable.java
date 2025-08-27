@@ -15,6 +15,7 @@ import android.view.animation.Interpolator;
 import com.android.settingslib.Utils;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class TrustDrawable extends Drawable {
     private int mAlpha;
@@ -122,30 +123,15 @@ public class TrustDrawable extends Drawable {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Code restructure failed: missing block: B:11:0x0018, code lost:
-        if (r6.mTrustManaged != false) goto L39;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:12:0x001a, code lost:
-        r0 = 1;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:16:0x0022, code lost:
-        if (r6.mTrustManaged == false) goto L44;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:17:0x0024, code lost:
-        r0 = 3;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:21:0x002c, code lost:
-        if (r6.mTrustManaged == false) goto L44;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:26:0x0035, code lost:
-        if (r6.mTrustManaged != false) goto L39;
-     */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:32:0x003e */
+    /* JADX DEBUG: Multi-variable search result rejected for r0v9, resolved type: boolean */
     /* JADX WARN: Multi-variable type inference failed */
+    /* JADX WARN: Removed duplicated region for block: B:12:0x001a  */
+    /* JADX WARN: Removed duplicated region for block: B:17:0x0024  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void updateState(boolean z) {
+    private void updateState(boolean z) {
         int i;
         if (!this.mAnimating) {
             return;
@@ -155,14 +141,24 @@ public class TrustDrawable extends Drawable {
             i = this.mTrustManaged;
         } else if (this.mState == 0) {
             i = i2;
+            if (this.mTrustManaged) {
+                i = 1;
+            }
         } else if (this.mState == 1) {
             i = i2;
+            if (!this.mTrustManaged) {
+                i = 3;
+            }
         } else if (this.mState == 2) {
             i = i2;
+            if (!this.mTrustManaged) {
+            }
         } else {
             i = i2;
             if (this.mState == 3) {
                 i = i2;
+                if (this.mTrustManaged) {
+                }
             }
         }
         i = i;
@@ -215,10 +211,10 @@ public class TrustDrawable extends Drawable {
     }
 
     private Animator makeAnimators(float f, float f2, int i, int i2, long j, Interpolator interpolator, boolean z, boolean z2) {
-        ValueAnimator configureAnimator = configureAnimator(ValueAnimator.ofInt(i, i2), j, this.mAlphaUpdateListener, interpolator, z);
-        ValueAnimator configureAnimator2 = configureAnimator(ValueAnimator.ofFloat(f, f2), j, this.mRadiusUpdateListener, interpolator, z);
+        ValueAnimator valueAnimatorConfigureAnimator = configureAnimator(ValueAnimator.ofInt(i, i2), j, this.mAlphaUpdateListener, interpolator, z);
+        ValueAnimator valueAnimatorConfigureAnimator2 = configureAnimator(ValueAnimator.ofFloat(f, f2), j, this.mRadiusUpdateListener, interpolator, z);
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(configureAnimator, configureAnimator2);
+        animatorSet.playTogether(valueAnimatorConfigureAnimator, valueAnimatorConfigureAnimator2);
         if (z2) {
             animatorSet.addListener(new StateUpdateAnimatorListener());
         }
@@ -236,9 +232,7 @@ public class TrustDrawable extends Drawable {
         return valueAnimator;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class StateUpdateAnimatorListener extends AnimatorListenerAdapter {
+    private class StateUpdateAnimatorListener extends AnimatorListenerAdapter {
         boolean mCancelled;
 
         private StateUpdateAnimatorListener() {

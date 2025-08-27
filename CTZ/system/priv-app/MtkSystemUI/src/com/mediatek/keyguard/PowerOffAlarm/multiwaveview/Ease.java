@@ -1,10 +1,10 @@
 package com.mediatek.keyguard.PowerOffAlarm.multiwaveview;
 
 import android.animation.TimeInterpolator;
+
 /* loaded from: classes.dex */
 class Ease {
 
-    /* loaded from: classes.dex */
     static class Cubic {
         public static final TimeInterpolator easeIn = new TimeInterpolator() { // from class: com.mediatek.keyguard.PowerOffAlarm.multiwaveview.Ease.Cubic.1
             @Override // android.animation.TimeInterpolator
@@ -33,7 +33,6 @@ class Ease {
         };
     }
 
-    /* loaded from: classes.dex */
     static class Quad {
         public static final TimeInterpolator easeIn = new TimeInterpolator() { // from class: com.mediatek.keyguard.PowerOffAlarm.multiwaveview.Ease.Quad.1
             @Override // android.animation.TimeInterpolator
@@ -62,7 +61,6 @@ class Ease {
         };
     }
 
-    /* loaded from: classes.dex */
     static class Quart {
         public static final TimeInterpolator easeIn = new TimeInterpolator() { // from class: com.mediatek.keyguard.PowerOffAlarm.multiwaveview.Ease.Quart.1
             @Override // android.animation.TimeInterpolator

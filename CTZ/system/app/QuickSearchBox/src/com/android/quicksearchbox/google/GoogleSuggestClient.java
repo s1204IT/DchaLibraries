@@ -25,6 +25,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
+
 /* loaded from: classes.dex */
 public class GoogleSuggestClient extends AbstractGoogleSource {
     private static final String USER_AGENT = "Android/" + Build.VERSION.RELEASE;
@@ -40,7 +41,7 @@ public class GoogleSuggestClient extends AbstractGoogleSource {
 
     @Override // com.android.quicksearchbox.Source
     public ComponentName getIntentComponent() {
-        return new ComponentName(getContext(), GoogleSearch.class);
+        return new ComponentName(getContext(), (Class<?>) GoogleSearch.class);
     }
 
     @Override // com.android.quicksearchbox.google.AbstractGoogleSource
@@ -53,7 +54,7 @@ public class GoogleSuggestClient extends AbstractGoogleSource {
         return query(str);
     }
 
-    private SourceResult query(String str) {
+    private SourceResult query(String str) throws IOException {
         if (TextUtils.isEmpty(str)) {
             return null;
         }
@@ -62,13 +63,13 @@ public class GoogleSuggestClient extends AbstractGoogleSource {
             return null;
         }
         try {
-            String encode = URLEncoder.encode(str, "UTF-8");
+            String strEncode = URLEncoder.encode(str, "UTF-8");
             if (this.mSuggestUri == null) {
                 this.mSuggestUri = getContext().getResources().getString(R.string.google_suggest_base, GoogleSearch.getLanguage(Locale.getDefault()));
             }
-            HttpResponse execute = this.mHttpClient.execute(new HttpGet(this.mSuggestUri + encode));
-            if (execute.getStatusLine().getStatusCode() == 200) {
-                JSONArray jSONArray = new JSONArray(EntityUtils.toString(execute.getEntity()));
+            HttpResponse httpResponseExecute = this.mHttpClient.execute(new HttpGet(this.mSuggestUri + strEncode));
+            if (httpResponseExecute.getStatusLine().getStatusCode() == 200) {
+                JSONArray jSONArray = new JSONArray(EntityUtils.toString(httpResponseExecute.getEntity()));
                 return new GoogleSuggestCursor(this, str, jSONArray.getJSONArray(1), jSONArray.getJSONArray(2));
             }
         } catch (UnsupportedEncodingException e) {
@@ -99,9 +100,7 @@ public class GoogleSuggestClient extends AbstractGoogleSource {
         return connectivityManager.getActiveNetworkInfo();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class GoogleSuggestCursor extends AbstractGoogleSourceResult {
+    private static class GoogleSuggestCursor extends AbstractGoogleSourceResult {
         private final JSONArray mPopularity;
         private final JSONArray mSuggestions;
 

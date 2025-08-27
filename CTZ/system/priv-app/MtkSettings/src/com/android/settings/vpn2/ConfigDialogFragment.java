@@ -21,6 +21,7 @@ import com.android.internal.net.VpnProfile;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settings.vpn2.ConfirmLockdownFragment;
+
 /* loaded from: classes.dex */
 public class ConfigDialogFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener, DialogInterface.OnShowListener, View.OnClickListener, ConfirmLockdownFragment.ConfirmLockdownListener {
     private Context mContext;
@@ -69,9 +70,7 @@ public class ConfigDialogFragment extends InstrumentedDialogFragment implements 
     @Override // android.app.DialogFragment
     public Dialog onCreateDialog(Bundle bundle) {
         Bundle arguments = getArguments();
-        boolean z = arguments.getBoolean("editing");
-        boolean z2 = arguments.getBoolean("exists");
-        ConfigDialog configDialog = new ConfigDialog(getActivity(), this, arguments.getParcelable("profile"), z, z2);
+        ConfigDialog configDialog = new ConfigDialog(getActivity(), this, arguments.getParcelable("profile"), arguments.getBoolean("editing"), arguments.getBoolean("exists"));
         configDialog.setOnShowListener(this);
         return configDialog;
     }
@@ -103,21 +102,21 @@ public class ConfigDialogFragment extends InstrumentedDialogFragment implements 
         ConfigDialog configDialog = (ConfigDialog) getDialog();
         Parcelable profile = configDialog.getProfile();
         if (i == -1) {
-            boolean isVpnAlwaysOn = configDialog.isVpnAlwaysOn();
-            if (isVpnAlwaysOn || !configDialog.isEditing()) {
+            boolean zIsVpnAlwaysOn = configDialog.isVpnAlwaysOn();
+            if (zIsVpnAlwaysOn || !configDialog.isEditing()) {
                 z = true;
             } else {
                 z = false;
             }
-            boolean isAnyLockdownActive = VpnUtils.isAnyLockdownActive(this.mContext);
+            boolean zIsAnyLockdownActive = VpnUtils.isAnyLockdownActive(this.mContext);
             try {
-                boolean isVpnActive = VpnUtils.isVpnActive(this.mContext);
-                if (z && !isConnected(profile) && ConfirmLockdownFragment.shouldShow(isVpnActive, isAnyLockdownActive, isVpnAlwaysOn)) {
+                boolean zIsVpnActive = VpnUtils.isVpnActive(this.mContext);
+                if (z && !isConnected(profile) && ConfirmLockdownFragment.shouldShow(zIsVpnActive, zIsAnyLockdownActive, zIsVpnAlwaysOn)) {
                     Bundle bundle = new Bundle();
                     bundle.putParcelable("profile", profile);
-                    ConfirmLockdownFragment.show(this, isVpnActive, isVpnAlwaysOn, isAnyLockdownActive, isVpnAlwaysOn, bundle);
+                    ConfirmLockdownFragment.show(this, zIsVpnActive, zIsVpnAlwaysOn, zIsAnyLockdownActive, zIsVpnAlwaysOn, bundle);
                 } else if (z) {
-                    connect(profile, isVpnAlwaysOn);
+                    connect(profile, zIsVpnAlwaysOn);
                 } else {
                     save(profile, false);
                 }
@@ -144,19 +143,21 @@ public class ConfigDialogFragment extends InstrumentedDialogFragment implements 
     private void updateLockdownVpn(boolean z, VpnProfile vpnProfile) {
         if (z) {
             if (!vpnProfile.isValidLockdownProfile()) {
-                Toast.makeText(this.mContext, (int) R.string.vpn_lockdown_config_error, 1).show();
+                Toast.makeText(this.mContext, R.string.vpn_lockdown_config_error, 1).show();
+                return;
+            } else {
+                ConnectivityManager.from(this.mContext).setAlwaysOnVpnPackageForUser(UserHandle.myUserId(), null, false);
+                VpnUtils.setLockdownVpn(this.mContext, vpnProfile.key);
                 return;
             }
-            ConnectivityManager.from(this.mContext).setAlwaysOnVpnPackageForUser(UserHandle.myUserId(), null, false);
-            VpnUtils.setLockdownVpn(this.mContext, vpnProfile.key);
-        } else if (VpnUtils.isVpnLockdown(vpnProfile.key)) {
+        }
+        if (VpnUtils.isVpnLockdown(vpnProfile.key)) {
             VpnUtils.clearLockdownVpn(this.mContext);
         }
     }
 
     private void save(VpnProfile vpnProfile, boolean z) {
-        KeyStore keyStore = KeyStore.getInstance();
-        keyStore.put("VPN_" + vpnProfile.key, vpnProfile.encode(), -1, 0);
+        KeyStore.getInstance().put("VPN_" + vpnProfile.key, vpnProfile.encode(), -1, 0);
         disconnect(vpnProfile);
         updateLockdownVpn(z, vpnProfile);
     }
@@ -170,7 +171,7 @@ public class ConfigDialogFragment extends InstrumentedDialogFragment implements 
             } catch (RemoteException e) {
                 Log.e("ConfigDialogFragment", "Failed to connect", e);
             } catch (IllegalStateException e2) {
-                Toast.makeText(this.mContext, (int) R.string.vpn_no_network, 1).show();
+                Toast.makeText(this.mContext, R.string.vpn_no_network, 1).show();
             }
         }
     }

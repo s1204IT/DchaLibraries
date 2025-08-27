@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.media.MediaSession2;
 import java.util.List;
+
 @TargetApi(19)
 /* loaded from: classes.dex */
 public class MediaController2 implements AutoCloseable {
     private final SupportLibraryImpl mImpl;
 
-    /* loaded from: classes.dex */
     interface SupportLibraryImpl extends AutoCloseable {
     }
 
@@ -22,7 +22,6 @@ public class MediaController2 implements AutoCloseable {
         }
     }
 
-    /* loaded from: classes.dex */
     public static abstract class ControllerCallback {
         public void onConnected(MediaController2 controller, SessionCommandGroup2 allowedCommands) {
         }
@@ -76,7 +75,6 @@ public class MediaController2 implements AutoCloseable {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class PlaybackInfo {
         private final AudioAttributesCompat mAudioAttrsCompat;
         private final int mControlType;
@@ -96,8 +94,7 @@ public class MediaController2 implements AutoCloseable {
             return new PlaybackInfo(playbackType, attrs, controlType, max, current);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static PlaybackInfo fromBundle(Bundle bundle) {
+        static PlaybackInfo fromBundle(Bundle bundle) {
             if (bundle == null) {
                 return null;
             }

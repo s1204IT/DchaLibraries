@@ -4,6 +4,7 @@ import android.content.Context;
 import android.security.KeyStore;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class CredentialStoragePreferenceController extends RestrictedEncryptionPreferenceController {
     private final KeyStore mKeyStore;

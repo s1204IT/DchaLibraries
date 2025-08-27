@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
+
 /* loaded from: classes.dex */
 public class NotificationsOffPreferenceController extends NotificationPreferenceController implements PreferenceControllerMixin {
     public NotificationsOffPreferenceController(Context context) {

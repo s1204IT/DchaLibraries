@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class StorageAsyncLoader extends AsyncLoader<SparseArray<AppsStorageResult>> {
     private PackageManagerWrapper mPackageManager;
@@ -24,7 +25,6 @@ public class StorageAsyncLoader extends AsyncLoader<SparseArray<AppsStorageResul
     private UserManager mUserManager;
     private String mUuid;
 
-    /* loaded from: classes.dex */
     public static class AppsStorageResult {
         public long cacheSize;
         public StorageStatsSource.ExternalStorageStats externalStats;
@@ -35,7 +35,6 @@ public class StorageAsyncLoader extends AsyncLoader<SparseArray<AppsStorageResul
         public long videoAppsSize;
     }
 
-    /* loaded from: classes.dex */
     public interface ResultHandler {
         void handleResult(SparseArray<AppsStorageResult> sparseArray);
     }
@@ -48,6 +47,7 @@ public class StorageAsyncLoader extends AsyncLoader<SparseArray<AppsStorageResul
         this.mPackageManager = packageManagerWrapper;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
     public SparseArray<AppsStorageResult> loadInBackground() {
         return loadApps();
@@ -58,6 +58,7 @@ public class StorageAsyncLoader extends AsyncLoader<SparseArray<AppsStorageResul
         SparseArray<AppsStorageResult> sparseArray = new SparseArray<>();
         List users = this.mUserManager.getUsers();
         Collections.sort(users, new Comparator<UserInfo>() { // from class: com.android.settings.deviceinfo.storage.StorageAsyncLoader.1
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(UserInfo userInfo, UserInfo userInfo2) {
                 return Integer.compare(userInfo.id, userInfo2.id);
@@ -75,12 +76,12 @@ public class StorageAsyncLoader extends AsyncLoader<SparseArray<AppsStorageResul
         Log.d("StorageAsyncLoader", "Loading apps");
         List<ApplicationInfo> installedApplicationsAsUser = this.mPackageManager.getInstalledApplicationsAsUser(0, i);
         AppsStorageResult appsStorageResult = new AppsStorageResult();
-        UserHandle of = UserHandle.of(i);
+        UserHandle userHandleOf = UserHandle.of(i);
         int size = installedApplicationsAsUser.size();
         for (int i2 = 0; i2 < size; i2++) {
             ApplicationInfo applicationInfo = installedApplicationsAsUser.get(i2);
             try {
-                StorageStatsSource.AppStorageStats statsForPackage = this.mStatsManager.getStatsForPackage(this.mUuid, applicationInfo.packageName, of);
+                StorageStatsSource.AppStorageStats statsForPackage = this.mStatsManager.getStatsForPackage(this.mUuid, applicationInfo.packageName, userHandleOf);
                 long dataBytes = statsForPackage.getDataBytes();
                 long cacheQuotaBytes = this.mStatsManager.getCacheQuotaBytes(this.mUuid, applicationInfo.uid);
                 long cacheBytes = statsForPackage.getCacheBytes();
@@ -94,23 +95,23 @@ public class StorageAsyncLoader extends AsyncLoader<SparseArray<AppsStorageResul
                 switch (applicationInfo.category) {
                     case 0:
                         appsStorageResult.gamesSize += dataBytes;
-                        continue;
+                        break;
                     case 1:
                         appsStorageResult.musicAppsSize += dataBytes;
-                        continue;
+                        break;
                     case 2:
                         appsStorageResult.videoAppsSize += dataBytes;
-                        continue;
+                        break;
                     case 3:
                         appsStorageResult.photosAppsSize += dataBytes;
-                        continue;
+                        break;
                     default:
                         if ((applicationInfo.flags & 33554432) == 0) {
                             appsStorageResult.otherAppsSize += dataBytes;
                             break;
                         } else {
                             appsStorageResult.gamesSize += dataBytes;
-                            continue;
+                            break;
                         }
                 }
             } catch (PackageManager.NameNotFoundException | IOException e) {
@@ -127,8 +128,8 @@ public class StorageAsyncLoader extends AsyncLoader<SparseArray<AppsStorageResul
         return appsStorageResult;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(SparseArray<AppsStorageResult> sparseArray) {
+    protected void onDiscardResult(SparseArray<AppsStorageResult> sparseArray) {
     }
 }

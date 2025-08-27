@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
+
 /* loaded from: classes.dex */
 public class ObservableScrollView extends ScrollView {
     private boolean mBlockFlinging;
@@ -15,7 +16,6 @@ public class ObservableScrollView extends ScrollView {
     private boolean mTouchCancelled;
     private boolean mTouchEnabled;
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onOverscrolled(float f, float f2, int i);
 
@@ -39,9 +39,9 @@ public class ObservableScrollView extends ScrollView {
         this.mHandlingTouchEvent = true;
         this.mLastX = motionEvent.getX();
         this.mLastY = motionEvent.getY();
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
         this.mHandlingTouchEvent = false;
-        return onTouchEvent;
+        return zOnTouchEvent;
     }
 
     @Override // android.widget.ScrollView, android.view.ViewGroup
@@ -49,9 +49,9 @@ public class ObservableScrollView extends ScrollView {
         this.mHandlingTouchEvent = true;
         this.mLastX = motionEvent.getX();
         this.mLastY = motionEvent.getY();
-        boolean onInterceptTouchEvent = super.onInterceptTouchEvent(motionEvent);
+        boolean zOnInterceptTouchEvent = super.onInterceptTouchEvent(motionEvent);
         this.mHandlingTouchEvent = false;
-        return onInterceptTouchEvent;
+        return zOnInterceptTouchEvent;
     }
 
     @Override // android.view.ViewGroup, android.view.View
@@ -62,14 +62,15 @@ public class ObservableScrollView extends ScrollView {
                 return false;
             }
             this.mTouchCancelled = false;
-        } else if (this.mTouchCancelled) {
-            return false;
         } else {
+            if (this.mTouchCancelled) {
+                return false;
+            }
             if (!this.mTouchEnabled) {
-                MotionEvent obtain = MotionEvent.obtain(motionEvent);
-                obtain.setAction(3);
-                super.dispatchTouchEvent(obtain);
-                obtain.recycle();
+                MotionEvent motionEventObtain = MotionEvent.obtain(motionEvent);
+                motionEventObtain.setAction(3);
+                super.dispatchTouchEvent(motionEventObtain);
+                motionEventObtain.recycle();
                 this.mTouchCancelled = true;
                 return false;
             }

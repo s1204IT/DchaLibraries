@@ -9,6 +9,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.InflationTask;
 import com.android.systemui.statusbar.NotificationData;
+
 /* loaded from: classes.dex */
 public class RowInflaterTask implements AsyncLayoutInflater.OnInflateFinishedListener, InflationTask {
     private boolean mCancelled;
@@ -16,7 +17,6 @@ public class RowInflaterTask implements AsyncLayoutInflater.OnInflateFinishedLis
     private Throwable mInflateOrigin;
     private RowInflationFinishedListener mListener;
 
-    /* loaded from: classes.dex */
     public interface RowInflationFinishedListener {
         void onInflationFinished(ExpandableNotificationRow expandableNotificationRow);
     }

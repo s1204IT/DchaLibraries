@@ -3,6 +3,7 @@ package com.android.systemui.tuner;
 import android.content.Context;
 import android.support.v7.preference.ListPreference;
 import android.util.AttributeSet;
+
 /* loaded from: classes.dex */
 public class BetterListPreference extends ListPreference {
     private CharSequence mSummary;

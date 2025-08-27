@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -50,9 +51,11 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class NotificationEntryManager implements Dumpable, ExpandableNotificationRow.ExpansionLogger, NotificationInflater.InflationCallback, VisualStabilityManager.Callback {
     protected static final boolean CHATTY = StatusBar.DEBUG;
@@ -89,6 +92,9 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
     protected boolean mUseHeadsUp = false;
     private final ArraySet<String> mKeysKeptForRemoteInput = new ArraySet<>();
     private final DeviceProvisionedController.DeviceProvisionedListener mDeviceProvisionedListener = new DeviceProvisionedController.DeviceProvisionedListener() { // from class: com.android.systemui.statusbar.NotificationEntryManager.1
+        AnonymousClass1() {
+        }
+
         @Override // com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener
         public void onDeviceProvisionedChanged() {
             NotificationEntryManager.this.updateNotifications();
@@ -96,7 +102,6 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
     };
     protected IStatusBarService mBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService("statusbar"));
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onBindRow(NotificationData.Entry entry, PackageManager packageManager, StatusBarNotification statusBarNotification, ExpandableNotificationRow expandableNotificationRow);
 
@@ -113,10 +118,12 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         boolean shouldPeek(NotificationData.Entry entry, StatusBarNotification statusBarNotification);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class NotificationClicker implements View.OnClickListener {
+    private final class NotificationClicker implements View.OnClickListener {
         private NotificationClicker() {
+        }
+
+        /* synthetic */ NotificationClicker(NotificationEntryManager notificationEntryManager, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // android.view.View.OnClickListener
@@ -130,18 +137,20 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
             StatusBarNotification statusBarNotification = expandableNotificationRow.getStatusBarNotification();
             if (statusBarNotification == null) {
                 Log.e("NotificationEntryMgr", "NotificationClicker called on an unclickable notification,");
-            } else if (expandableNotificationRow.getProvider() != null && expandableNotificationRow.getProvider().isMenuVisible()) {
-                expandableNotificationRow.animateTranslateNotification(0.0f);
-            } else {
-                expandableNotificationRow.setJustClicked(true);
-                DejankUtils.postAfterTraversal(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationEntryManager$NotificationClicker$LBMGOladLjt5equMOv9trf31Q8s
-                    @Override // java.lang.Runnable
-                    public final void run() {
-                        ExpandableNotificationRow.this.setJustClicked(false);
-                    }
-                });
-                NotificationEntryManager.this.mCallback.onNotificationClicked(statusBarNotification, expandableNotificationRow);
+                return;
             }
+            if (expandableNotificationRow.getProvider() != null && expandableNotificationRow.getProvider().isMenuVisible()) {
+                expandableNotificationRow.animateTranslateNotification(0.0f);
+                return;
+            }
+            expandableNotificationRow.setJustClicked(true);
+            DejankUtils.postAfterTraversal(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationEntryManager$NotificationClicker$LBMGOladLjt5equMOv9trf31Q8s
+                @Override // java.lang.Runnable
+                public final void run() {
+                    expandableNotificationRow.setJustClicked(false);
+                }
+            });
+            NotificationEntryManager.this.mCallback.onNotificationClicked(statusBarNotification, expandableNotificationRow);
         }
 
         public void register(ExpandableNotificationRow expandableNotificationRow, StatusBarNotification statusBarNotification) {
@@ -151,6 +160,17 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
             } else {
                 expandableNotificationRow.setOnClickListener(null);
             }
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.NotificationEntryManager$1 */
+    class AnonymousClass1 implements DeviceProvisionedController.DeviceProvisionedListener {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener
+        public void onDeviceProvisionedChanged() {
+            NotificationEntryManager.this.updateNotifications();
         }
     }
 
@@ -187,16 +207,17 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         if (this.mPendingNotifications.size() == 0) {
             printWriter.println("null");
         } else {
-            for (NotificationData.Entry entry : this.mPendingNotifications.values()) {
-                printWriter.println(entry.notification);
+            Iterator<NotificationData.Entry> it = this.mPendingNotifications.values().iterator();
+            while (it.hasNext()) {
+                printWriter.println(it.next().notification);
             }
         }
         printWriter.println("  Lifetime-extended notifications:");
         if (this.mRetainedNotifications.isEmpty()) {
             printWriter.println("    None");
         } else {
-            for (Map.Entry<NotificationData.Entry, NotificationLifetimeExtender> entry2 : this.mRetainedNotifications.entrySet()) {
-                printWriter.println("    " + entry2.getKey().notification + " retained by " + entry2.getValue().getClass().getName());
+            for (Map.Entry<NotificationData.Entry, NotificationLifetimeExtender> entry : this.mRetainedNotifications.entrySet()) {
+                printWriter.println("    " + entry.getKey().notification + " retained by " + entry.getValue().getClass().getName());
             }
         }
         printWriter.print("  mUseHeadsUp=");
@@ -214,7 +235,8 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         this.mFGSExtender.setCallback(new NotificationLifetimeExtender.NotificationSafeToRemoveCallback() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationEntryManager$iv3ZXz4UNYv0IroYYN1fLGff62s
             @Override // com.android.systemui.statusbar.NotificationLifetimeExtender.NotificationSafeToRemoveCallback
             public final void onSafeToRemove(String str) {
-                r0.removeNotification(str, NotificationEntryManager.this.mLatestRankingMap);
+                NotificationEntryManager notificationEntryManager = this.f$0;
+                notificationEntryManager.removeNotification(str, notificationEntryManager.mLatestRankingMap);
             }
         });
     }
@@ -227,6 +249,10 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         this.mNotificationData.setHeadsUpManager(this.mHeadsUpManager);
         this.mListContainer = notificationListContainer;
         this.mHeadsUpObserver = new ContentObserver(this.mPresenter.getHandler()) { // from class: com.android.systemui.statusbar.NotificationEntryManager.2
+            AnonymousClass2(Handler handler) {
+                super(handler);
+            }
+
             @Override // android.database.ContentObserver
             public void onChange(boolean z) {
                 boolean z2 = NotificationEntryManager.this.mUseHeadsUp;
@@ -255,9 +281,35 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         this.mOnAppOpsClickListener = new ExpandableNotificationRow.OnAppOpsClickListener() { // from class: com.android.systemui.statusbar.-$$Lambda$UXhQQT1EcpQ7iahyyi282W5mE2Q
             @Override // com.android.systemui.statusbar.ExpandableNotificationRow.OnAppOpsClickListener
             public final boolean onClick(View view, int i, int i2, NotificationMenuRowPlugin.MenuItem menuItem) {
-                return NotificationGutsManager.this.openGuts(view, i, i2, menuItem);
+                return notificationGutsManager.openGuts(view, i, i2, menuItem);
             }
         };
+    }
+
+    /* renamed from: com.android.systemui.statusbar.NotificationEntryManager$2 */
+    class AnonymousClass2 extends ContentObserver {
+        AnonymousClass2(Handler handler) {
+            super(handler);
+        }
+
+        @Override // android.database.ContentObserver
+        public void onChange(boolean z) {
+            boolean z2 = NotificationEntryManager.this.mUseHeadsUp;
+            NotificationEntryManager notificationEntryManager = NotificationEntryManager.this;
+            boolean z3 = false;
+            if (!NotificationEntryManager.this.mDisableNotificationAlerts && Settings.Global.getInt(NotificationEntryManager.this.mContext.getContentResolver(), "heads_up_notifications_enabled", 0) != 0) {
+                z3 = true;
+            }
+            notificationEntryManager.mUseHeadsUp = z3;
+            StringBuilder sb = new StringBuilder();
+            sb.append("heads up is ");
+            sb.append(NotificationEntryManager.this.mUseHeadsUp ? "enabled" : "disabled");
+            Log.d("NotificationEntryMgr", sb.toString());
+            if (z2 != NotificationEntryManager.this.mUseHeadsUp && !NotificationEntryManager.this.mUseHeadsUp) {
+                Log.d("NotificationEntryMgr", "dismissing any existing heads up notification on disable event");
+                NotificationEntryManager.this.mHeadsUpManager.releaseAllImmediately();
+            }
+        }
     }
 
     @VisibleForTesting
@@ -275,7 +327,7 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         return new ExpandableNotificationRow.LongPressListener() { // from class: com.android.systemui.statusbar.-$$Lambda$c60ntPGLw0RNAFWdGf1n1pJttuQ
             @Override // com.android.systemui.statusbar.ExpandableNotificationRow.LongPressListener
             public final boolean onLongPress(View view, int i, int i2, NotificationMenuRowPlugin.MenuItem menuItem) {
-                return NotificationGutsManager.this.openGuts(view, i, i2, menuItem);
+                return notificationGutsManager.openGuts(view, i, i2, menuItem);
             }
         };
     }
@@ -285,7 +337,7 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationEntryManager$sDpXPCQ-YxMoOyZYF2g-q9o9PaQ
             @Override // java.lang.Runnable
             public final void run() {
-                NotificationEntryManager.this.mBarService.onNotificationExpansionChanged(str, z, z2);
+                this.f$0.mBarService.onNotificationExpansionChanged(str, z, z2);
             }
         });
     }
@@ -308,22 +360,22 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         if (entry.row != null) {
             entry.reset();
             updateNotification(entry, packageManagerForUser, statusBarNotification, entry.row);
-            return;
+        } else {
+            new RowInflaterTask().inflate(this.mContext, viewGroup, entry, new RowInflaterTask.RowInflationFinishedListener() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationEntryManager$9-WZSsUAqFuZSzfJs1MZiwS4QQY
+                @Override // com.android.systemui.statusbar.notification.RowInflaterTask.RowInflationFinishedListener
+                public final void onInflationFinished(ExpandableNotificationRow expandableNotificationRow) throws PackageManager.NameNotFoundException {
+                    NotificationEntryManager.lambda$inflateViews$2(this.f$0, entry, packageManagerForUser, statusBarNotification, expandableNotificationRow);
+                }
+            });
         }
-        new RowInflaterTask().inflate(this.mContext, viewGroup, entry, new RowInflaterTask.RowInflationFinishedListener() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationEntryManager$9-WZSsUAqFuZSzfJs1MZiwS4QQY
-            @Override // com.android.systemui.statusbar.notification.RowInflaterTask.RowInflationFinishedListener
-            public final void onInflationFinished(ExpandableNotificationRow expandableNotificationRow) {
-                NotificationEntryManager.lambda$inflateViews$2(NotificationEntryManager.this, entry, packageManagerForUser, statusBarNotification, expandableNotificationRow);
-            }
-        });
     }
 
-    public static /* synthetic */ void lambda$inflateViews$2(NotificationEntryManager notificationEntryManager, NotificationData.Entry entry, PackageManager packageManager, StatusBarNotification statusBarNotification, ExpandableNotificationRow expandableNotificationRow) {
+    public static /* synthetic */ void lambda$inflateViews$2(NotificationEntryManager notificationEntryManager, NotificationData.Entry entry, PackageManager packageManager, StatusBarNotification statusBarNotification, ExpandableNotificationRow expandableNotificationRow) throws PackageManager.NameNotFoundException {
         notificationEntryManager.bindRow(entry, packageManager, statusBarNotification, expandableNotificationRow);
         notificationEntryManager.updateNotification(entry, packageManager, statusBarNotification, expandableNotificationRow);
     }
 
-    private void bindRow(NotificationData.Entry entry, PackageManager packageManager, StatusBarNotification statusBarNotification, final ExpandableNotificationRow expandableNotificationRow) {
+    private void bindRow(NotificationData.Entry entry, PackageManager packageManager, StatusBarNotification statusBarNotification, final ExpandableNotificationRow expandableNotificationRow) throws PackageManager.NameNotFoundException {
         expandableNotificationRow.setExpansionLogger(this, entry.notification.getKey());
         expandableNotificationRow.setGroupManager(this.mGroupManager);
         expandableNotificationRow.setHeadsUpManager(this.mHeadsUpManager);
@@ -344,7 +396,7 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         expandableNotificationRow.setOnDismissRunnable(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationEntryManager$FtVLTfjpGJ6N_j30Hzj-eE-u1n4
             @Override // java.lang.Runnable
             public final void run() {
-                NotificationEntryManager.this.performRemoveNotification(expandableNotificationRow.getStatusBarNotification());
+                this.f$0.performRemoveNotification(expandableNotificationRow.getStatusBarNotification());
             }
         });
         expandableNotificationRow.setDescendantFocusability(393216);
@@ -358,7 +410,7 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
     public void performRemoveNotification(StatusBarNotification statusBarNotification) {
         int i;
         int i2 = 1;
-        NotificationVisibility obtain = NotificationVisibility.obtain(statusBarNotification.getKey(), this.mNotificationData.getRank(statusBarNotification.getKey()), this.mNotificationData.getActiveNotifications().size(), true);
+        NotificationVisibility notificationVisibilityObtain = NotificationVisibility.obtain(statusBarNotification.getKey(), this.mNotificationData.getRank(statusBarNotification.getKey()), this.mNotificationData.getActiveNotifications().size(), true);
         NotificationData.Entry entry = this.mNotificationData.get(statusBarNotification.getKey());
         if (NotificationRemoteInputManager.FORCE_REMOTE_INPUT_HISTORY && this.mKeysKeptForRemoteInput.contains(statusBarNotification.getKey())) {
             this.mKeysKeptForRemoteInput.remove(statusBarNotification.getKey());
@@ -368,19 +420,25 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         String tag = statusBarNotification.getTag();
         int id = statusBarNotification.getId();
         int userId = statusBarNotification.getUserId();
-        if (!isHeadsUp(statusBarNotification.getKey())) {
-            if (this.mListContainer.hasPulsingNotifications()) {
-                i2 = 2;
+        try {
+            if (!isHeadsUp(statusBarNotification.getKey())) {
+                if (this.mListContainer.hasPulsingNotifications()) {
+                    i2 = 2;
+                    i = i2;
+                    this.mBarService.onNotificationClear(packageName, tag, id, userId, statusBarNotification.getKey(), i, notificationVisibilityObtain);
+                    removeNotification(statusBarNotification.getKey(), null);
+                } else {
+                    i = 3;
+                    this.mBarService.onNotificationClear(packageName, tag, id, userId, statusBarNotification.getKey(), i, notificationVisibilityObtain);
+                    removeNotification(statusBarNotification.getKey(), null);
+                }
             } else {
-                i = 3;
-                this.mBarService.onNotificationClear(packageName, tag, id, userId, statusBarNotification.getKey(), i, obtain);
+                i = i2;
+                this.mBarService.onNotificationClear(packageName, tag, id, userId, statusBarNotification.getKey(), i, notificationVisibilityObtain);
                 removeNotification(statusBarNotification.getKey(), null);
-                this.mCallback.onPerformRemoveNotification(statusBarNotification);
             }
+        } catch (RemoteException e) {
         }
-        i = i2;
-        this.mBarService.onNotificationClear(packageName, tag, id, userId, statusBarNotification.getKey(), i, obtain);
-        removeNotification(statusBarNotification.getKey(), null);
         this.mCallback.onPerformRemoveNotification(statusBarNotification);
     }
 
@@ -409,16 +467,16 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
     }
 
     private void addEntry(NotificationData.Entry entry) {
-        boolean shouldPeek = shouldPeek(entry);
+        boolean zShouldPeek = shouldPeek(entry);
         if (CHATTY) {
             StringBuilder sb = new StringBuilder();
             sb.append("addEntry, isHeadsUped: ");
-            sb.append(shouldPeek);
+            sb.append(zShouldPeek);
             sb.append(", key: ");
             sb.append(entry != null ? entry.key : null);
             Log.d("NotificationEntryMgr", sb.toString());
         }
-        if (shouldPeek) {
+        if (zShouldPeek) {
             this.mHeadsUpManager.showNotification(entry);
             setNotificationShown(entry.notification);
         }
@@ -472,10 +530,10 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
             if (TextUtils.isEmpty(charSequence)) {
                 charSequence = entry2.remoteInputTextWhenReset;
             }
-            StatusBarNotification rebuildNotificationWithRemoteInput = rebuildNotificationWithRemoteInput(entry2, charSequence, false);
+            StatusBarNotification statusBarNotificationRebuildNotificationWithRemoteInput = rebuildNotificationWithRemoteInput(entry2, charSequence, false);
             entry2.onRemoteInputInserted();
             try {
-                updateNotificationInternal(rebuildNotificationWithRemoteInput, null);
+                updateNotificationInternal(statusBarNotificationRebuildNotificationWithRemoteInput, null);
                 z3 = z;
                 z2 = true;
             } catch (InflationException e) {
@@ -510,25 +568,29 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         if (z) {
             this.mLatestRankingMap = rankingMap;
             this.mHeadsUpEntriesToRemoveOnSwitch.add(this.mHeadsUpManager.getEntry(str));
-        } else if (this.mRemoteInputManager.onRemoveNotification(entry2)) {
+            return;
+        }
+        if (this.mRemoteInputManager.onRemoveNotification(entry2)) {
             this.mLatestRankingMap = rankingMap;
-        } else if (entry2 != null && this.mGutsManager.getExposedGuts() != null && this.mGutsManager.getExposedGuts() == entry2.row.getGuts() && entry2.row.getGuts() != null && !entry2.row.getGuts().isLeavebehind()) {
+            return;
+        }
+        if (entry2 != null && this.mGutsManager.getExposedGuts() != null && this.mGutsManager.getExposedGuts() == entry2.row.getGuts() && entry2.row.getGuts() != null && !entry2.row.getGuts().isLeavebehind()) {
             Log.w("NotificationEntryMgr", "Keeping notification because it's showing guts. " + str);
             this.mLatestRankingMap = rankingMap;
             this.mGutsManager.setKeyToRemoveOnGutsClosed(str);
-        } else {
-            if (entry2 != null) {
-                this.mForegroundServiceController.removeNotification(entry2.notification);
-            }
-            if (entry2 != null && entry2.row != null) {
-                entry2.row.setRemoved();
-                this.mListContainer.cleanUpViewState(entry2.row);
-            }
-            handleGroupSummaryRemoved(str);
-            StatusBarNotification removeNotificationViews = removeNotificationViews(str, rankingMap);
-            cancelLifetimeExtension(entry2);
-            this.mCallback.onNotificationRemoved(str, removeNotificationViews);
+            return;
         }
+        if (entry2 != null) {
+            this.mForegroundServiceController.removeNotification(entry2.notification);
+        }
+        if (entry2 != null && entry2.row != null) {
+            entry2.row.setRemoved();
+            this.mListContainer.cleanUpViewState(entry2.row);
+        }
+        handleGroupSummaryRemoved(str);
+        StatusBarNotification statusBarNotificationRemoveNotificationViews = removeNotificationViews(str, rankingMap);
+        cancelLifetimeExtension(entry2);
+        this.mCallback.onNotificationRemoved(str, statusBarNotificationRemoveNotificationViews);
     }
 
     private void extendLifetime(NotificationData.Entry entry, NotificationLifetimeExtender notificationLifetimeExtender) {
@@ -541,16 +603,16 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
     }
 
     private void cancelLifetimeExtension(NotificationData.Entry entry) {
-        NotificationLifetimeExtender remove = this.mRetainedNotifications.remove(entry);
-        if (remove != null) {
-            remove.setShouldManageLifetime(entry, false);
+        NotificationLifetimeExtender notificationLifetimeExtenderRemove = this.mRetainedNotifications.remove(entry);
+        if (notificationLifetimeExtenderRemove != null) {
+            notificationLifetimeExtenderRemove.setShouldManageLifetime(entry, false);
         }
     }
 
     public StatusBarNotification rebuildNotificationWithRemoteInput(NotificationData.Entry entry, CharSequence charSequence, boolean z) {
         CharSequence[] charSequenceArr;
         StatusBarNotification statusBarNotification = entry.notification;
-        Notification.Builder recoverBuilder = Notification.Builder.recoverBuilder(this.mContext, statusBarNotification.getNotification().clone());
+        Notification.Builder builderRecoverBuilder = Notification.Builder.recoverBuilder(this.mContext, statusBarNotification.getNotification().clone());
         if (charSequence != null) {
             CharSequence[] charSequenceArray = statusBarNotification.getNotification().extras.getCharSequenceArray("android.remoteInputHistory");
             if (charSequenceArray != null) {
@@ -561,15 +623,15 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
                 charSequenceArr = new CharSequence[1];
             }
             charSequenceArr[0] = String.valueOf(charSequence);
-            recoverBuilder.setRemoteInputHistory(charSequenceArr);
+            builderRecoverBuilder.setRemoteInputHistory(charSequenceArr);
         }
-        recoverBuilder.setShowRemoteInputSpinner(z);
-        recoverBuilder.setHideSmartReplies(true);
-        Notification build = recoverBuilder.build();
-        build.contentView = statusBarNotification.getNotification().contentView;
-        build.bigContentView = statusBarNotification.getNotification().bigContentView;
-        build.headsUpContentView = statusBarNotification.getNotification().headsUpContentView;
-        return new StatusBarNotification(statusBarNotification.getPackageName(), statusBarNotification.getOpPkg(), statusBarNotification.getId(), statusBarNotification.getTag(), statusBarNotification.getUid(), statusBarNotification.getInitialPid(), build, statusBarNotification.getUser(), statusBarNotification.getOverrideGroupKey(), statusBarNotification.getPostTime());
+        builderRecoverBuilder.setShowRemoteInputSpinner(z);
+        builderRecoverBuilder.setHideSmartReplies(true);
+        Notification notificationBuild = builderRecoverBuilder.build();
+        notificationBuild.contentView = statusBarNotification.getNotification().contentView;
+        notificationBuild.bigContentView = statusBarNotification.getNotification().bigContentView;
+        notificationBuild.headsUpContentView = statusBarNotification.getNotification().headsUpContentView;
+        return new StatusBarNotification(statusBarNotification.getPackageName(), statusBarNotification.getOpPkg(), statusBarNotification.getId(), statusBarNotification.getTag(), statusBarNotification.getUid(), statusBarNotification.getInitialPid(), notificationBuild, statusBarNotification.getUser(), statusBarNotification.getOverrideGroupKey(), statusBarNotification.getPostTime());
     }
 
     @VisibleForTesting
@@ -589,14 +651,14 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
     }
 
     private StatusBarNotification removeNotificationViews(String str, NotificationListenerService.RankingMap rankingMap) {
-        NotificationData.Entry remove = this.mNotificationData.remove(str, rankingMap);
-        if (remove == null) {
+        NotificationData.Entry entryRemove = this.mNotificationData.remove(str, rankingMap);
+        if (entryRemove == null) {
             Log.w("NotificationEntryMgr", "removeNotification for unknown key: " + str);
             return null;
         }
         updateNotifications();
-        ((LeakDetector) Dependency.get(LeakDetector.class)).trackGarbage(remove);
-        return remove.notification;
+        ((LeakDetector) Dependency.get(LeakDetector.class)).trackGarbage(entryRemove);
+        return entryRemove.notification;
     }
 
     private void handleGroupSummaryRemoved(String str) {
@@ -633,12 +695,11 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
 
     protected void updateNotification(NotificationData.Entry entry, PackageManager packageManager, StatusBarNotification statusBarNotification, ExpandableNotificationRow expandableNotificationRow) {
         expandableNotificationRow.setNeedsRedaction(this.mLockscreenUserManager.needsRedaction(entry));
-        boolean isAmbient = this.mNotificationData.isAmbient(statusBarNotification.getKey());
-        boolean z = true;
-        boolean z2 = this.mNotificationData.get(entry.key) != null;
-        boolean isLowPriority = expandableNotificationRow.isLowPriority();
-        expandableNotificationRow.setIsLowPriority(isAmbient);
-        expandableNotificationRow.setLowPriorityStateUpdated(z2 && isLowPriority != isAmbient);
+        boolean zIsAmbient = this.mNotificationData.isAmbient(statusBarNotification.getKey());
+        boolean z = this.mNotificationData.get(entry.key) != null;
+        boolean zIsLowPriority = expandableNotificationRow.isLowPriority();
+        expandableNotificationRow.setIsLowPriority(zIsAmbient);
+        expandableNotificationRow.setLowPriorityStateUpdated(z && zIsLowPriority != zIsAmbient);
         this.mNotificationClicker.register(expandableNotificationRow, statusBarNotification);
         try {
             entry.targetSdk = packageManager.getApplicationInfo(statusBarNotification.getPackageName(), 0).targetSdkVersion;
@@ -650,12 +711,10 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         entry.autoRedacted = entry.notification.getNotification().publicVersion == null;
         entry.row = expandableNotificationRow;
         entry.row.setOnActivatedListener(this.mPresenter);
-        boolean isImportantMessaging = this.mMessagingUtil.isImportantMessaging(statusBarNotification, this.mNotificationData.getImportance(statusBarNotification.getKey()));
-        if (!isImportantMessaging || this.mPresenter.isPresenterFullyCollapsed()) {
-            z = false;
-        }
-        expandableNotificationRow.setUseIncreasedCollapsedHeight(isImportantMessaging);
-        expandableNotificationRow.setUseIncreasedHeadsUpHeight(z);
+        boolean zIsImportantMessaging = this.mMessagingUtil.isImportantMessaging(statusBarNotification, this.mNotificationData.getImportance(statusBarNotification.getKey()));
+        boolean z2 = zIsImportantMessaging && !this.mPresenter.isPresenterFullyCollapsed();
+        expandableNotificationRow.setUseIncreasedCollapsedHeight(zIsImportantMessaging);
+        expandableNotificationRow.setUseIncreasedHeadsUpHeight(z2);
         expandableNotificationRow.updateNotification(entry);
     }
 
@@ -679,15 +738,15 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         return entry;
     }
 
-    private void addNotificationInternal(StatusBarNotification statusBarNotification, NotificationListenerService.RankingMap rankingMap) throws InflationException {
+    private void addNotificationInternal(StatusBarNotification statusBarNotification, NotificationListenerService.RankingMap rankingMap) throws InflationException, PendingIntent.CanceledException {
         String key = statusBarNotification.getKey();
         if (CHATTY) {
             Log.d("NotificationEntryMgr", "addNotification key=" + key);
         }
         this.mNotificationData.updateRanking(rankingMap);
-        NotificationData.Entry createNotificationViews = createNotificationViews(statusBarNotification);
-        if (!shouldPeek(createNotificationViews) && statusBarNotification.getNotification().fullScreenIntent != null) {
-            if (shouldSuppressFullScreenIntent(createNotificationViews)) {
+        NotificationData.Entry entryCreateNotificationViews = createNotificationViews(statusBarNotification);
+        if (!shouldPeek(entryCreateNotificationViews) && statusBarNotification.getNotification().fullScreenIntent != null) {
+            if (shouldSuppressFullScreenIntent(entryCreateNotificationViews)) {
                 if (CHATTY) {
                     Log.d("NotificationEntryMgr", "No Fullscreen intent: suppressed by DND: " + key);
                 }
@@ -703,7 +762,7 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
                 try {
                     EventLog.writeEvent(36002, key);
                     statusBarNotification.getNotification().fullScreenIntent.send();
-                    createNotificationViews.notifyFullScreenIntentLaunched();
+                    entryCreateNotificationViews.notifyFullScreenIntentLaunched();
                     this.mMetricsLogger.count("note_fullscreen", 1);
                 } catch (PendingIntent.CanceledException e) {
                 }
@@ -711,8 +770,8 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         }
         abortExistingInflation(key);
         this.mForegroundServiceController.addNotification(statusBarNotification, this.mNotificationData.getImportance(key));
-        this.mPendingNotifications.put(key, createNotificationViews);
-        this.mGroupManager.onPendingEntryAdded(createNotificationViews);
+        this.mPendingNotifications.put(key, entryCreateNotificationViews);
+        this.mGroupManager.onPendingEntryAdded(entryCreateNotificationViews);
     }
 
     @VisibleForTesting
@@ -726,7 +785,7 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         }
     }
 
-    public void addNotification(StatusBarNotification statusBarNotification, NotificationListenerService.RankingMap rankingMap) {
+    public void addNotification(StatusBarNotification statusBarNotification, NotificationListenerService.RankingMap rankingMap) throws PendingIntent.CanceledException {
         try {
             addNotificationInternal(statusBarNotification, rankingMap);
         } catch (InflationException e) {
@@ -810,19 +869,19 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         if (!this.mUseHeadsUp || this.mPresenter.isDeviceInVrMode() || this.mNotificationData.shouldFilterOut(entry)) {
             return false;
         }
-        if ((this.mPowerManager.isScreenOn() && !this.mSystemServicesProxy.isDreaming()) || this.mPresenter.isDozing()) {
-            if (this.mPresenter.isDozing() || !this.mNotificationData.shouldSuppressPeek(entry)) {
-                if ((this.mPresenter.isDozing() && this.mNotificationData.shouldSuppressAmbient(entry)) || entry.hasJustLaunchedFullScreenIntent() || isSnoozedPackage(statusBarNotification)) {
-                    return false;
-                }
-                if (this.mNotificationData.getImportance(statusBarNotification.getKey()) < (this.mPresenter.isDozing() ? 3 : 4)) {
-                    return false;
-                }
-                return !(statusBarNotification.isGroup() && statusBarNotification.getNotification().suppressAlertingDueToGrouping()) && this.mCallback.shouldPeek(entry, statusBarNotification);
-            }
+        if (!(this.mPowerManager.isScreenOn() && !this.mSystemServicesProxy.isDreaming()) && !this.mPresenter.isDozing()) {
             return false;
         }
-        return false;
+        if (!this.mPresenter.isDozing() && this.mNotificationData.shouldSuppressPeek(entry)) {
+            return false;
+        }
+        if ((this.mPresenter.isDozing() && this.mNotificationData.shouldSuppressAmbient(entry)) || entry.hasJustLaunchedFullScreenIntent() || isSnoozedPackage(statusBarNotification)) {
+            return false;
+        }
+        if (this.mNotificationData.getImportance(statusBarNotification.getKey()) < (this.mPresenter.isDozing() ? 3 : 4)) {
+            return false;
+        }
+        return !(statusBarNotification.isGroup() && statusBarNotification.getNotification().suppressAlertingDueToGrouping()) && this.mCallback.shouldPeek(entry, statusBarNotification);
     }
 
     protected void setNotificationShown(StatusBarNotification statusBarNotification) {
@@ -854,7 +913,9 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
                 Log.d("NotificationEntryMgr", "updateHeadsUp, updateNotification: " + str);
             }
             this.mHeadsUpManager.updateNotification(entry, z2);
-        } else if (z && z2) {
+            return;
+        }
+        if (z && z2) {
             if (CHATTY) {
                 Log.d("NotificationEntryMgr", "updateHeadsUp, showNotification: " + str);
             }

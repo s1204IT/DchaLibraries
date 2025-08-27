@@ -10,9 +10,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class TabControl {
+class TabControl {
     private static final boolean DEBUG = Browser.DEBUG;
     private static long sNextId = 1;
     private final Controller mController;
@@ -24,36 +24,29 @@ public class TabControl {
     private ArrayList<Tab> mTabQueue;
     private ArrayList<Tab> mTabs;
 
-    /* loaded from: classes.dex */
     public interface OnTabCountChangedListener {
         void onTabCountChanged();
     }
 
-    /* loaded from: classes.dex */
     public interface OnThumbnailUpdatedListener {
         void onThumbnailUpdated(Tab tab);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public TabControl(Controller controller) {
+    TabControl(Controller controller) {
         this.mController = controller;
         this.mMaxTabs = this.mController.getMaxTabs();
         this.mTabs = new ArrayList<>(this.mMaxTabs);
         this.mTabQueue = new ArrayList<>(this.mMaxTabs);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static synchronized long getNextId() {
+    static synchronized long getNextId() {
         long j;
-        synchronized (TabControl.class) {
-            j = sNextId;
-            sNextId = 1 + j;
-        }
+        j = sNextId;
+        sNextId = 1 + j;
         return j;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WebView getCurrentWebView() {
+    WebView getCurrentWebView() {
         Tab tab = getTab(this.mCurrentTab);
         if (tab == null) {
             return null;
@@ -61,8 +54,7 @@ public class TabControl {
         return tab.getWebView();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WebView getCurrentTopWebView() {
+    WebView getCurrentTopWebView() {
         Tab tab = getTab(this.mCurrentTab);
         if (tab == null) {
             return null;
@@ -70,8 +62,7 @@ public class TabControl {
         return tab.getTopWindow();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WebView getCurrentSubWindow() {
+    WebView getCurrentSubWindow() {
         Tab tab = getTab(this.mCurrentTab);
         if (tab == null) {
             return null;
@@ -79,44 +70,37 @@ public class TabControl {
         return tab.getSubWebView();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public List<Tab> getTabs() {
+    List<Tab> getTabs() {
         return this.mTabs;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab getTab(int i) {
+    Tab getTab(int i) {
         if (i >= 0 && i < this.mTabs.size()) {
             return this.mTabs.get(i);
         }
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab getCurrentTab() {
+    Tab getCurrentTab() {
         return getTab(this.mCurrentTab);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getCurrentPosition() {
+    int getCurrentPosition() {
         return this.mCurrentTab;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getTabPosition(Tab tab) {
+    int getTabPosition(Tab tab) {
         if (tab == null) {
             return -1;
         }
         return this.mTabs.indexOf(tab);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean canCreateNewTab() {
+    boolean canCreateNewTab() {
         return this.mMaxTabs > this.mTabs.size();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void addPreloadedTab(Tab tab) {
+    void addPreloadedTab(Tab tab) {
         Iterator<Tab> it = this.mTabs.iterator();
         while (it.hasNext()) {
             Tab next = it.next();
@@ -133,8 +117,7 @@ public class TabControl {
         tab.putInBackground();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab createNewTab(boolean z) {
+    Tab createNewTab(boolean z) {
         return createNewTab(null, z);
     }
 
@@ -152,16 +135,14 @@ public class TabControl {
         return tab;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void removeParentChildRelationShips() {
+    void removeParentChildRelationShips() {
         Iterator<Tab> it = this.mTabs.iterator();
         while (it.hasNext()) {
             it.next().removeFromTree();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean removeTab(Tab tab) {
+    boolean removeTab(Tab tab) {
         if (tab == null) {
             return false;
         }
@@ -183,8 +164,7 @@ public class TabControl {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void destroy() {
+    void destroy() {
         Log.d("TabControl", "TabControl.destroy()--->Destroy all the tabs");
         Iterator<Tab> it = this.mTabs.iterator();
         while (it.hasNext()) {
@@ -194,13 +174,11 @@ public class TabControl {
         this.mTabQueue.clear();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getTabCount() {
+    int getTabCount() {
         return this.mTabs.size();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void saveState(Bundle bundle) {
+    void saveState(Bundle bundle) {
         int tabCount = getTabCount();
         if (tabCount == 0) {
             return;
@@ -211,12 +189,12 @@ public class TabControl {
         while (true) {
             if (it.hasNext()) {
                 Tab next = it.next();
-                Bundle saveState = next.saveState();
-                if (saveState != null) {
+                Bundle bundleSaveState = next.saveState();
+                if (bundleSaveState != null) {
                     int i2 = i + 1;
                     jArr[i] = next.getId();
-                    String l = Long.toString(next.getId());
-                    if (bundle.containsKey(l)) {
+                    String string = Long.toString(next.getId());
+                    if (bundle.containsKey(string)) {
                         Iterator<Tab> it2 = this.mTabs.iterator();
                         while (it2.hasNext()) {
                             Tab next2 = it2.next();
@@ -226,26 +204,26 @@ public class TabControl {
                         }
                         throw new IllegalStateException("Error saving state, duplicate tab ids!");
                     }
-                    bundle.putBundle(l, saveState);
+                    bundle.putBundle(string, bundleSaveState);
                     i = i2;
                 } else {
                     jArr[i] = -1;
                     next.deleteThumbnail();
                     i++;
                 }
-            } else if (!bundle.isEmpty()) {
-                bundle.putLongArray("positions", jArr);
-                Tab currentTab = getCurrentTab();
-                bundle.putLong("current", currentTab != null ? currentTab.getId() : -1L);
-                return;
             } else {
+                if (!bundle.isEmpty()) {
+                    bundle.putLongArray("positions", jArr);
+                    Tab currentTab = getCurrentTab();
+                    bundle.putLong("current", currentTab != null ? currentTab.getId() : -1L);
+                    return;
+                }
                 return;
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public long canRestoreState(Bundle bundle, boolean z) {
+    long canRestoreState(Bundle bundle, boolean z) {
         long[] longArray = bundle == null ? null : bundle.getLongArray("positions");
         if (longArray == null) {
             return -1L;
@@ -275,15 +253,14 @@ public class TabControl {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void restoreState(Bundle bundle, long j, boolean z, boolean z2) {
+    void restoreState(Bundle bundle, long j, boolean z, boolean z2) {
         int i;
         Tab tab;
         if (j == -1) {
             return;
         }
         long[] longArray = bundle.getLongArray("positions");
-        HashMap hashMap = new HashMap();
+        HashMap map = new HashMap();
         long j2 = -9223372036854775807L;
         for (long j3 : longArray) {
             if (j3 > j2) {
@@ -291,18 +268,17 @@ public class TabControl {
             }
             Bundle bundle2 = bundle.getBundle(Long.toString(j3));
             if (bundle2 != null && !bundle2.isEmpty() && (z || !bundle2.getBoolean("privateBrowsingEnabled"))) {
-                int i2 = (j3 > j ? 1 : (j3 == j ? 0 : -1));
-                if (i2 == 0 || z2) {
-                    Tab createNewTab = createNewTab(bundle2, false);
-                    if (createNewTab != null) {
-                        hashMap.put(Long.valueOf(j3), createNewTab);
-                        if (i2 == 0) {
-                            setCurrentTab(createNewTab);
+                if (j3 == j || z2) {
+                    Tab tabCreateNewTab = createNewTab(bundle2, false);
+                    if (tabCreateNewTab != null) {
+                        map.put(Long.valueOf(j3), tabCreateNewTab);
+                        if (j3 == j) {
+                            setCurrentTab(tabCreateNewTab);
                         }
                     }
                 } else {
                     Tab tab2 = new Tab(this.mController, bundle2);
-                    hashMap.put(Long.valueOf(j3), tab2);
+                    map.put(Long.valueOf(j3), tab2);
                     this.mTabs.add(tab2);
                     if (this.mOnTabCountChangedListener != null) {
                         this.mOnTabCountChangedListener.onTabCountChanged();
@@ -321,11 +297,11 @@ public class TabControl {
         int length = longArray.length;
         while (i < length) {
             long j4 = longArray[i];
-            Tab tab3 = (Tab) hashMap.get(Long.valueOf(j4));
+            Tab tab3 = (Tab) map.get(Long.valueOf(j4));
             Bundle bundle3 = bundle.getBundle(Long.toString(j4));
             if (bundle3 != null && tab3 != null) {
                 long j5 = bundle3.getLong("parentTab", -1L);
-                if (j5 != -1 && (tab = (Tab) hashMap.get(Long.valueOf(j5))) != null) {
+                if (j5 != -1 && (tab = (Tab) map.get(Long.valueOf(j5))) != null) {
                     tab.addChildTab(tab3);
                 }
             }
@@ -333,8 +309,7 @@ public class TabControl {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void freeMemory() {
+    void freeMemory() {
         if (getTabCount() == 0) {
             return;
         }
@@ -361,8 +336,7 @@ public class TabControl {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getVisibleWebviewNums() {
+    int getVisibleWebviewNums() {
         int i = 0;
         if (this.mTabs.size() == 0) {
             return 0;
@@ -377,18 +351,14 @@ public class TabControl {
         return i;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public CopyOnWriteArrayList<Integer> getFreeTabIndex() {
+    protected CopyOnWriteArrayList<Integer> getFreeTabIndex() {
         return this.mFreeTabIndex;
     }
 
     private Vector<Tab> getHalfLeastUsedTabs(Tab tab) {
         int i;
         Vector<Tab> vector = new Vector<>();
-        if (getTabCount() == 1 || tab == null) {
-            return vector;
-        }
-        if (this.mTabQueue.size() == 0) {
+        if (getTabCount() == 1 || tab == null || this.mTabQueue.size() == 0) {
             return vector;
         }
         int i2 = 0;
@@ -414,8 +384,7 @@ public class TabControl {
         return vector;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab getLeastUsedTab(Tab tab) {
+    Tab getLeastUsedTab(Tab tab) {
         if (getTabCount() == 1 || tab == null || this.mTabQueue.size() == 0) {
             return null;
         }
@@ -429,26 +398,18 @@ public class TabControl {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* JADX WARN: Removed duplicated region for block: B:5:0x000c  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    public Tab getTabFromView(WebView webView) {
+    Tab getTabFromView(WebView webView) {
         Iterator<Tab> it = this.mTabs.iterator();
         while (it.hasNext()) {
             Tab next = it.next();
             if (next.getSubWebView() == webView || next.getWebView() == webView) {
                 return next;
             }
-            while (it.hasNext()) {
-            }
         }
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab getTabFromAppId(String str) {
+    Tab getTabFromAppId(String str) {
         if (str == null) {
             return null;
         }
@@ -462,8 +423,7 @@ public class TabControl {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void stopAllLoading() {
+    void stopAllLoading() {
         Iterator<Tab> it = this.mTabs.iterator();
         while (it.hasNext()) {
             Tab next = it.next();
@@ -482,8 +442,7 @@ public class TabControl {
         return str.equals(tab.getUrl()) || str.equals(tab.getOriginalUrl());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Tab findTabWithUrl(String str) {
+    Tab findTabWithUrl(String str) {
         if (str == null) {
             return null;
         }
@@ -501,8 +460,7 @@ public class TabControl {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void recreateWebView(Tab tab) {
+    void recreateWebView(Tab tab) {
         if (tab.getWebView() != null) {
             tab.destroy();
         }
@@ -520,8 +478,7 @@ public class TabControl {
         return this.mController.getWebViewFactory().createWebView(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean setCurrentTab(Tab tab) {
+    boolean setCurrentTab(Tab tab) {
         return setCurrentTab(tab, false);
     }
 
@@ -538,9 +495,9 @@ public class TabControl {
         if (tab == null) {
             return false;
         }
-        int indexOf = this.mTabQueue.indexOf(tab);
-        if (indexOf != -1) {
-            this.mTabQueue.remove(indexOf);
+        int iIndexOf = this.mTabQueue.indexOf(tab);
+        if (iIndexOf != -1) {
+            this.mTabQueue.remove(iIndexOf);
         }
         this.mTabQueue.add(tab);
         this.mCurrentTab = this.mTabs.indexOf(tab);
@@ -557,8 +514,7 @@ public class TabControl {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setActiveTab(Tab tab) {
+    void setActiveTab(Tab tab) {
         this.mController.setActiveTab(tab);
     }
 

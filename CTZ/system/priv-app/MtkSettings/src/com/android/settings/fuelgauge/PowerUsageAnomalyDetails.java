@@ -20,18 +20,25 @@ import com.android.settings.fuelgauge.anomaly.AnomalyDialogFragment;
 import com.android.settings.fuelgauge.anomaly.AnomalyPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PowerUsageAnomalyDetails extends DashboardFragment implements AnomalyDialogFragment.AnomalyDialogListener {
+
     @VisibleForTesting
     static final String EXTRA_ANOMALY_LIST = "anomaly_list";
+
     @VisibleForTesting
     PreferenceGroup mAbnormalListGroup;
+
     @VisibleForTesting
     List<Anomaly> mAnomalies;
+
     @VisibleForTesting
     BatteryUtils mBatteryUtils;
+
     @VisibleForTesting
     IconDrawableFactory mIconDrawableFactory;
+
     @VisibleForTesting
     PackageManager mPackageManager;
 
@@ -61,9 +68,9 @@ public class PowerUsageAnomalyDetails extends DashboardFragment implements Anoma
     @Override // com.android.settings.dashboard.DashboardFragment, android.support.v14.preference.PreferenceFragment, android.support.v7.preference.PreferenceManager.OnPreferenceTreeClickListener
     public boolean onPreferenceTreeClick(Preference preference) {
         if (preference instanceof AnomalyPreference) {
-            AnomalyDialogFragment newInstance = AnomalyDialogFragment.newInstance(((AnomalyPreference) preference).getAnomaly(), 987);
-            newInstance.setTargetFragment(this, 0);
-            newInstance.show(getFragmentManager(), "PowerAbnormalUsageDetail");
+            AnomalyDialogFragment anomalyDialogFragmentNewInstance = AnomalyDialogFragment.newInstance(((AnomalyPreference) preference).getAnomaly(), 987);
+            anomalyDialogFragmentNewInstance.setTargetFragment(this, 0);
+            anomalyDialogFragmentNewInstance.show(getFragmentManager(), "PowerAbnormalUsageDetail");
             return true;
         }
         return super.onPreferenceTreeClick(preference);
@@ -74,9 +81,8 @@ public class PowerUsageAnomalyDetails extends DashboardFragment implements Anoma
         return "PowerAbnormalUsageDetail";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.power_abnormal_detail;
     }
 

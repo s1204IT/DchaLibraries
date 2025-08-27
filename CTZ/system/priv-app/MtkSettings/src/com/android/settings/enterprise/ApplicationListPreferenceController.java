@@ -11,12 +11,12 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.widget.AppPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ApplicationListPreferenceController extends AbstractPreferenceController implements ApplicationFeatureProvider.ListOfAppsCallback, PreferenceControllerMixin {
     private SettingsPreferenceFragment mParent;
     private final PackageManager mPm;
 
-    /* loaded from: classes.dex */
     public interface ApplicationListBuilder {
         void buildApplicationList(Context context, ApplicationFeatureProvider.ListOfAppsCallback listOfAppsCallback);
     }
@@ -44,13 +44,13 @@ public class ApplicationListPreferenceController extends AbstractPreferenceContr
         if (preferenceScreen == null) {
             return;
         }
-        IconDrawableFactory newInstance = IconDrawableFactory.newInstance(this.mContext);
+        IconDrawableFactory iconDrawableFactoryNewInstance = IconDrawableFactory.newInstance(this.mContext);
         Context context = this.mParent.getPreferenceManager().getContext();
         for (int i = 0; i < list.size(); i++) {
             UserAppInfo userAppInfo = list.get(i);
             AppPreference appPreference = new AppPreference(context);
             appPreference.setTitle(userAppInfo.appInfo.loadLabel(this.mPm));
-            appPreference.setIcon(newInstance.getBadgedIcon(userAppInfo.appInfo));
+            appPreference.setIcon(iconDrawableFactoryNewInstance.getBadgedIcon(userAppInfo.appInfo));
             appPreference.setOrder(i);
             appPreference.setSelectable(false);
             preferenceScreen.addPreference(appPreference);

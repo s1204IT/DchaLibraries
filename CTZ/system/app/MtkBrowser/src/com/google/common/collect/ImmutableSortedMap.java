@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.SortedMap;
+
 /* loaded from: classes.dex */
 public abstract class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxverideShim<K, V> implements NavigableMap<K, V> {
     private static final long serialVersionUID = 0;
@@ -19,44 +20,52 @@ public abstract class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxver
 
     public abstract ImmutableSortedMap<K, V> headMap(K k, boolean z);
 
+    /* JADX DEBUG: Method merged with bridge method: keySet()Lcom/google/common/collect/ImmutableSet; */
+    /* JADX DEBUG: Method merged with bridge method: keySet()Ljava/util/Set; */
     @Override // com.google.common.collect.ImmutableMap, java.util.Map
     public abstract ImmutableSortedSet<K> keySet();
 
     public abstract ImmutableSortedMap<K, V> tailMap(K k, boolean z);
 
+    /* JADX DEBUG: Method merged with bridge method: values()Ljava/util/Collection; */
     @Override // com.google.common.collect.ImmutableMap, java.util.Map, java.util.SortedMap
     public abstract ImmutableCollection<V> values();
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     public /* bridge */ /* synthetic */ NavigableMap headMap(Object obj, boolean z) {
         return headMap((ImmutableSortedMap<K, V>) obj, z);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableMap, java.util.SortedMap
     public /* bridge */ /* synthetic */ SortedMap headMap(Object obj) {
         return headMap((ImmutableSortedMap<K, V>) obj);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableMap
     public /* bridge */ /* synthetic */ NavigableMap subMap(Object obj, boolean z, Object obj2, boolean z2) {
         return subMap((boolean) obj, z, (boolean) obj2, z2);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     public /* bridge */ /* synthetic */ NavigableMap tailMap(Object obj, boolean z) {
         return tailMap((ImmutableSortedMap<K, V>) obj, z);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // java.util.NavigableMap, java.util.SortedMap
     public /* bridge */ /* synthetic */ SortedMap tailMap(Object obj) {
         return tailMap((ImmutableSortedMap<K, V>) obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <K, V> ImmutableSortedMap<K, V> emptyMap(Comparator<? super K> comparator) {
+    static <K, V> ImmutableSortedMap<K, V> emptyMap(Comparator<? super K> comparator) {
         if (Ordering.natural().equals(comparator)) {
             return of();
         }
@@ -77,8 +86,7 @@ public abstract class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxver
         return new RegularImmutableSortedMap(new RegularImmutableSortedSet(builder.build(), comparator), builder2.build());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <K, V> ImmutableSortedMap<K, V> from(ImmutableSortedSet<K> immutableSortedSet, ImmutableList<V> immutableList) {
+    static <K, V> ImmutableSortedMap<K, V> from(ImmutableSortedSet<K> immutableSortedSet, ImmutableList<V> immutableList) {
         if (immutableSortedSet.isEmpty()) {
             return emptyMap(immutableSortedSet.comparator());
         }
@@ -112,10 +120,11 @@ public abstract class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxver
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Builder<K, V> extends ImmutableMap.Builder<K, V> {
         private final Comparator<? super K> comparator;
 
+        /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
+        /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.ImmutableMap.Builder
         public /* bridge */ /* synthetic */ ImmutableMap.Builder put(Object obj, Object obj2) {
@@ -132,18 +141,17 @@ public abstract class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxver
             return this;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: build()Lcom/google/common/collect/ImmutableMap; */
         @Override // com.google.common.collect.ImmutableMap.Builder
         public ImmutableSortedMap<K, V> build() {
             return ImmutableSortedMap.fromEntries(this.comparator, false, this.size, this.entries);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ImmutableSortedMap() {
+    ImmutableSortedMap() {
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ImmutableSortedMap(ImmutableSortedMap<K, V> immutableSortedMap) {
+    ImmutableSortedMap(ImmutableSortedMap<K, V> immutableSortedMap) {
         this.descendingMap = immutableSortedMap;
     }
 
@@ -161,6 +169,7 @@ public abstract class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxver
         return keySet().isPartialView() || values().isPartialView();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: entrySet()Ljava/util/Set; */
     @Override // com.google.common.collect.ImmutableMap, java.util.Map
     public ImmutableSet<Map.Entry<K, V>> entrySet() {
         return super.entrySet();
@@ -186,6 +195,7 @@ public abstract class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxver
         return headMap((ImmutableSortedMap<K, V>) k, false);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: subMap(Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/SortedMap; */
     @Override // java.util.NavigableMap, java.util.SortedMap
     public ImmutableSortedMap<K, V> subMap(K k, K k2) {
         return subMap((boolean) k, true, (boolean) k2, false);
@@ -272,28 +282,30 @@ public abstract class ImmutableSortedMap<K, V> extends ImmutableSortedMapFauxver
         throw new UnsupportedOperationException();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: descendingMap()Ljava/util/NavigableMap; */
     @Override // java.util.NavigableMap
     public ImmutableSortedMap<K, V> descendingMap() {
         ImmutableSortedMap<K, V> immutableSortedMap = this.descendingMap;
         if (immutableSortedMap == null) {
-            ImmutableSortedMap<K, V> createDescendingMap = createDescendingMap();
-            this.descendingMap = createDescendingMap;
-            return createDescendingMap;
+            ImmutableSortedMap<K, V> immutableSortedMapCreateDescendingMap = createDescendingMap();
+            this.descendingMap = immutableSortedMapCreateDescendingMap;
+            return immutableSortedMapCreateDescendingMap;
         }
         return immutableSortedMap;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: navigableKeySet()Ljava/util/NavigableSet; */
     @Override // java.util.NavigableMap
     public ImmutableSortedSet<K> navigableKeySet() {
         return keySet();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: descendingKeySet()Ljava/util/NavigableSet; */
     @Override // java.util.NavigableMap
     public ImmutableSortedSet<K> descendingKeySet() {
         return keySet().descendingSet();
     }
 
-    /* loaded from: classes.dex */
     private static class SerializedForm extends ImmutableMap.SerializedForm {
         private static final long serialVersionUID = 0;
         private final Comparator<Object> comparator;

@@ -11,6 +11,7 @@ import android.text.format.DateFormat;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.Calendar;
+
 /* loaded from: classes.dex */
 public class TimeFormatPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final Calendar mDummyDate;
@@ -61,8 +62,7 @@ public class TimeFormatPreferenceController extends AbstractPreferenceController
         return DateFormat.is24HourFormat(this.mContext);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void update24HourFormat(Context context, Boolean bool) {
+    static void update24HourFormat(Context context, Boolean bool) {
         set24Hour(context, bool);
         timeUpdated(context, bool);
     }

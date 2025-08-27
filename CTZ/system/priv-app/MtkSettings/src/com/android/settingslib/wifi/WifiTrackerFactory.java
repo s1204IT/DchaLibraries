@@ -3,6 +3,7 @@ package com.android.settingslib.wifi;
 import android.content.Context;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.wifi.WifiTracker;
+
 /* loaded from: classes.dex */
 public class WifiTrackerFactory {
     private static WifiTracker sTestingWifiTracker;

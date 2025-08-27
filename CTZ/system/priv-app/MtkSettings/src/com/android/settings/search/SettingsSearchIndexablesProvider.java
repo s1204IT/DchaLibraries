@@ -16,7 +16,9 @@ import com.android.settingslib.drawer.DashboardCategory;
 import com.android.settingslib.drawer.Tile;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SettingsSearchIndexablesProvider extends SearchIndexablesProvider {
     private static final Collection<String> INVALID_KEYS = new ArraySet();
@@ -85,12 +87,12 @@ public class SettingsSearchIndexablesProvider extends SearchIndexablesProvider {
             String str = DashboardFragmentRegistry.CATEGORY_KEY_TO_PARENT_MAP.get(dashboardCategory.key);
             if (str != null) {
                 for (Tile tile : dashboardCategory.getTiles()) {
-                    String str2 = null;
+                    String string = null;
                     if (tile.metaData != null) {
-                        str2 = tile.metaData.getString("com.android.settings.FRAGMENT_CLASS");
+                        string = tile.metaData.getString("com.android.settings.FRAGMENT_CLASS");
                     }
-                    if (str2 != null) {
-                        matrixCursor.newRow().add("parent_class", str).add("child_class", str2);
+                    if (string != null) {
+                        matrixCursor.newRow().add("parent_class", str).add("child_class", string);
                     }
                 }
             }
@@ -123,7 +125,7 @@ public class SettingsSearchIndexablesProvider extends SearchIndexablesProvider {
     }
 
     private List<SearchIndexableResource> getSearchIndexableResourcesFromProvider(Context context) {
-        String str;
+        String name;
         Collection<Class> providerValues = FeatureFactory.getFactory(context).getSearchFeatureProvider().getSearchIndexableResources().getProviderValues();
         ArrayList arrayList = new ArrayList();
         for (Class cls : providerValues) {
@@ -131,11 +133,11 @@ public class SettingsSearchIndexablesProvider extends SearchIndexablesProvider {
             if (xmlResourcesToIndex != null) {
                 for (SearchIndexableResource searchIndexableResource : xmlResourcesToIndex) {
                     if (TextUtils.isEmpty(searchIndexableResource.className)) {
-                        str = cls.getName();
+                        name = cls.getName();
                     } else {
-                        str = searchIndexableResource.className;
+                        name = searchIndexableResource.className;
                     }
-                    searchIndexableResource.className = str;
+                    searchIndexableResource.className = name;
                 }
                 arrayList.addAll(xmlResourcesToIndex);
             }
@@ -149,8 +151,9 @@ public class SettingsSearchIndexablesProvider extends SearchIndexablesProvider {
         for (Class cls : providerValues) {
             List<SearchIndexableRaw> rawDataToIndex = DatabaseIndexingUtils.getSearchIndexProvider(cls).getRawDataToIndex(context, true);
             if (rawDataToIndex != null) {
-                for (SearchIndexableRaw searchIndexableRaw : rawDataToIndex) {
-                    searchIndexableRaw.className = cls.getName();
+                Iterator<SearchIndexableRaw> it = rawDataToIndex.iterator();
+                while (it.hasNext()) {
+                    it.next().className = cls.getName();
                 }
                 arrayList.addAll(rawDataToIndex);
             }

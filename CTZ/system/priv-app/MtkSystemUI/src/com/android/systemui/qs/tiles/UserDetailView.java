@@ -10,6 +10,7 @@ import com.android.settingslib.RestrictedLockUtils;
 import com.android.systemui.R;
 import com.android.systemui.qs.PseudoGridView;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
+
 /* loaded from: classes.dex */
 public class UserDetailView extends PseudoGridView {
     protected Adapter mAdapter;
@@ -31,7 +32,6 @@ public class UserDetailView extends PseudoGridView {
         this.mAdapter.refresh();
     }
 
-    /* loaded from: classes.dex */
     public static class Adapter extends UserSwitcherController.BaseUserAdapter implements View.OnClickListener {
         private final Context mContext;
         protected UserSwitcherController mController;
@@ -48,23 +48,23 @@ public class UserDetailView extends PseudoGridView {
         }
 
         public UserDetailItemView createUserDetailItemView(View view, ViewGroup viewGroup, UserSwitcherController.UserRecord userRecord) {
-            UserDetailItemView convertOrInflate = UserDetailItemView.convertOrInflate(this.mContext, view, viewGroup);
-            if (convertOrInflate != view) {
-                convertOrInflate.setOnClickListener(this);
+            UserDetailItemView userDetailItemViewConvertOrInflate = UserDetailItemView.convertOrInflate(this.mContext, view, viewGroup);
+            if (userDetailItemViewConvertOrInflate != view) {
+                userDetailItemViewConvertOrInflate.setOnClickListener(this);
             }
             String name = getName(this.mContext, userRecord);
             if (userRecord.picture == null) {
-                convertOrInflate.bind(name, getDrawable(this.mContext, userRecord), userRecord.resolveId());
+                userDetailItemViewConvertOrInflate.bind(name, getDrawable(this.mContext, userRecord), userRecord.resolveId());
             } else {
-                convertOrInflate.bind(name, userRecord.picture, userRecord.info.id);
+                userDetailItemViewConvertOrInflate.bind(name, userRecord.picture, userRecord.info.id);
             }
-            convertOrInflate.setActivated(userRecord.isCurrent);
-            convertOrInflate.setDisabledByAdmin(userRecord.isDisabledByAdmin);
+            userDetailItemViewConvertOrInflate.setActivated(userRecord.isCurrent);
+            userDetailItemViewConvertOrInflate.setDisabledByAdmin(userRecord.isDisabledByAdmin);
             if (!userRecord.isSwitchToEnabled) {
-                convertOrInflate.setEnabled(false);
+                userDetailItemViewConvertOrInflate.setEnabled(false);
             }
-            convertOrInflate.setTag(userRecord);
-            return convertOrInflate;
+            userDetailItemViewConvertOrInflate.setTag(userRecord);
+            return userDetailItemViewConvertOrInflate;
         }
 
         @Override // android.view.View.OnClickListener

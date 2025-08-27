@@ -5,6 +5,7 @@ import com.android.internal.util.ArrayUtils;
 import com.android.settings.applications.AppStateAppOpsBridge;
 import com.android.settings.applications.AppStateBaseBridge;
 import com.android.settingslib.applications.ApplicationsState;
+
 /* loaded from: classes.dex */
 public class AppStateChangeWifiStateBridge extends AppStateAppOpsBridge {
     private static final String[] PM_PERMISSIONS = {"android.permission.CHANGE_WIFI_STATE"};
@@ -46,7 +47,6 @@ public class AppStateChangeWifiStateBridge extends AppStateAppOpsBridge {
         return new WifiSettingsState(super.getPermissionInfo(str, i));
     }
 
-    /* loaded from: classes.dex */
     public static class WifiSettingsState extends AppStateAppOpsBridge.PermissionState {
         public WifiSettingsState(AppStateAppOpsBridge.PermissionState permissionState) {
             super(permissionState.packageName, permissionState.userHandle);

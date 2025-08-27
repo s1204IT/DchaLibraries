@@ -4,14 +4,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.arch.lifecycle.Lifecycle;
+import android.content.ComponentCallbacks2;
 import android.os.Bundle;
+
 /* loaded from: classes.dex */
 public class ReportFragment extends Fragment {
     private ActivityInitializationListener mProcessListener;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface ActivityInitializationListener {
+    interface ActivityInitializationListener {
         void onCreate();
 
         void onResume();
@@ -86,7 +86,7 @@ public class ReportFragment extends Fragment {
     }
 
     private void dispatch(Lifecycle.Event event) {
-        Activity activity = getActivity();
+        ComponentCallbacks2 activity = getActivity();
         if (activity instanceof LifecycleRegistryOwner) {
             ((LifecycleRegistryOwner) activity).getLifecycle().handleLifecycleEvent(event);
         } else if (activity instanceof LifecycleOwner) {

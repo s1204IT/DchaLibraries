@@ -2,6 +2,7 @@ package com.android.systemui.recents.events.activity;
 
 import com.android.systemui.recents.events.EventBus;
 import com.android.systemui.shared.recents.model.TaskStack;
+
 /* loaded from: classes.dex */
 public class MultiWindowStateChangedEvent extends EventBus.AnimatedEvent {
     public final boolean inMultiWindow;

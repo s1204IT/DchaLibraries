@@ -8,6 +8,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.PathInterpolator;
 import com.android.systemui.statusbar.stack.HeadsUpAppearInterpolator;
+
 /* loaded from: classes.dex */
 public class Interpolators {
     public static final Interpolator FAST_OUT_SLOW_IN = new PathInterpolator(0.4f, 0.0f, 0.2f, 1.0f);

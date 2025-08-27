@@ -44,6 +44,7 @@ import com.android.launcher3.touch.ItemClickHandler;
 import com.android.launcher3.widget.PendingAddShortcutInfo;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener {
     static final int DROP_IN_ANIMATION_DURATION = 400;
@@ -73,17 +74,43 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
     private PreviewItemDrawingParams mTmpParams;
     static boolean sStaticValuesDirty = true;
     private static final Property<FolderIcon, Float> BADGE_SCALE_PROPERTY = new Property<FolderIcon, Float>(Float.TYPE, "badgeScale") { // from class: com.android.launcher3.folder.FolderIcon.1
+        AnonymousClass1(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(FolderIcon folderIcon) {
             return Float.valueOf(folderIcon.mBadgeScale);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(FolderIcon folderIcon, Float f) {
             folderIcon.mBadgeScale = f.floatValue();
             folderIcon.invalidate();
         }
     };
+
+    /* renamed from: com.android.launcher3.folder.FolderIcon$1 */
+    class AnonymousClass1 extends Property<FolderIcon, Float> {
+        AnonymousClass1(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.util.Property
+        public Float get(FolderIcon folderIcon) {
+            return Float.valueOf(folderIcon.mBadgeScale);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
+        @Override // android.util.Property
+        public void set(FolderIcon folderIcon, Float f) {
+            folderIcon.mBadgeScale = f.floatValue();
+            folderIcon.invalidate();
+        }
+    }
 
     public FolderIcon(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -97,6 +124,9 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
         this.mBadgeInfo = new FolderBadgeInfo();
         this.mTempSpaceForBadgeOffset = new Point();
         this.mOnOpenListener = new OnAlarmListener() { // from class: com.android.launcher3.folder.FolderIcon.2
+            AnonymousClass2() {
+            }
+
             @Override // com.android.launcher3.OnAlarmListener
             public void onAlarm(Alarm alarm) {
                 FolderIcon.this.mFolder.beginExternalDrag();
@@ -118,6 +148,9 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
         this.mBadgeInfo = new FolderBadgeInfo();
         this.mTempSpaceForBadgeOffset = new Point();
         this.mOnOpenListener = new OnAlarmListener() { // from class: com.android.launcher3.folder.FolderIcon.2
+            AnonymousClass2() {
+            }
+
             @Override // com.android.launcher3.OnAlarmListener
             public void onAlarm(Alarm alarm) {
                 FolderIcon.this.mFolder.beginExternalDrag();
@@ -149,11 +182,11 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
         folderIcon.mLauncher = launcher;
         folderIcon.mBadgeRenderer = launcher.getDeviceProfile().mBadgeRenderer;
         folderIcon.setContentDescription(launcher.getString(R.string.folder_name_format, new Object[]{folderInfo.title}));
-        Folder fromXml = Folder.fromXml(launcher);
-        fromXml.setDragController(launcher.getDragController());
-        fromXml.setFolderIcon(folderIcon);
-        fromXml.bind(folderInfo);
-        folderIcon.setFolder(fromXml);
+        Folder folderFromXml = Folder.fromXml(launcher);
+        folderFromXml.setDragController(launcher.getDragController());
+        folderFromXml.setFolderIcon(folderIcon);
+        folderFromXml.bind(folderInfo);
+        folderIcon.setFolder(folderFromXml);
         folderIcon.setAccessibilityDelegate(launcher.getAccessibilityDelegate());
         folderInfo.addListener(folderIcon);
         folderIcon.setOnFocusChangeListener(launcher.mFocusHandler);
@@ -209,6 +242,18 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
         }
     }
 
+    /* renamed from: com.android.launcher3.folder.FolderIcon$2 */
+    class AnonymousClass2 implements OnAlarmListener {
+        AnonymousClass2() {
+        }
+
+        @Override // com.android.launcher3.OnAlarmListener
+        public void onAlarm(Alarm alarm) {
+            FolderIcon.this.mFolder.beginExternalDrag();
+            FolderIcon.this.mFolder.animateOpen();
+        }
+    }
+
     public Drawable prepareCreateAnimation(View view) {
         return this.mPreviewItemManager.prepareCreateAnimation(view);
     }
@@ -229,20 +274,12 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
         this.mOpenAlarm.cancelAlarm();
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:24:0x00b8  */
-    /* JADX WARN: Removed duplicated region for block: B:27:0x00eb  */
-    /* JADX WARN: Removed duplicated region for block: B:29:0x00ef  */
-    /* JADX WARN: Removed duplicated region for block: B:32:0x011a  */
-    /* JADX WARN: Removed duplicated region for block: B:33:0x0123  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    private void onDrop(final ShortcutInfo shortcutInfo, DragView dragView, Rect rect, float f, int i, boolean z) {
+    private void onDrop(ShortcutInfo shortcutInfo, DragView dragView, Rect rect, float f, int i, boolean z) {
         Rect rect2;
-        float f2;
+        float descendantRectRelativeToSelf;
         int i2;
         boolean z2;
-        final int i3;
+        int i3;
         shortcutInfo.cellX = -1;
         shortcutInfo.cellY = -1;
         if (dragView != null) {
@@ -257,15 +294,15 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
                 float scaleY = getScaleY();
                 setScaleX(1.0f);
                 setScaleY(1.0f);
-                f2 = dragLayer.getDescendantRectRelativeToSelf(this, rect2);
+                descendantRectRelativeToSelf = dragLayer.getDescendantRectRelativeToSelf(this, rect2);
                 setScaleX(scaleX);
                 setScaleY(scaleY);
                 workspace.resetTransitionTransform();
             } else {
                 rect2 = rect;
-                f2 = f;
+                descendantRectRelativeToSelf = f;
             }
-            int min = Math.min(4, i + 1);
+            int iMin = Math.min(4, i + 1);
             if (z || i >= 4) {
                 ArrayList arrayList = new ArrayList(this.mCurrentPreviewItems);
                 addItem(shortcutInfo, false);
@@ -282,58 +319,70 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
                     this.mPreviewItemManager.onDrop(arrayList, this.mCurrentPreviewItems, shortcutInfo);
                     i2 = i4;
                     z2 = true;
-                    if (!z2) {
-                        addItem(shortcutInfo);
-                    }
-                    float localCenterForIndex = getLocalCenterForIndex(i2, min, r11);
-                    int[] iArr = {Math.round(iArr[0] * f2), Math.round(iArr[1] * f2)};
-                    rect2.offset(iArr[0] - (dragView.getMeasuredWidth() / 2), iArr[1] - (dragView.getMeasuredHeight() / 2));
-                    float f3 = f2 * localCenterForIndex;
-                    int i6 = i2;
-                    dragLayer.animateView(dragView, rect3, rect2, i2 >= 4 ? 0.5f : 0.0f, 1.0f, 1.0f, f3, f3, DROP_IN_ANIMATION_DURATION, Interpolators.DEACCEL_2, Interpolators.ACCEL_2, null, 0, null);
-                    this.mFolder.hideItem(shortcutInfo);
-                    if (z2) {
-                        i3 = i6;
-                        this.mPreviewItemManager.hidePreviewItem(i3, true);
-                    } else {
-                        i3 = i6;
-                    }
-                    postDelayed(new Runnable() { // from class: com.android.launcher3.folder.FolderIcon.3
-                        @Override // java.lang.Runnable
-                        public void run() {
-                            FolderIcon.this.mPreviewItemManager.hidePreviewItem(i3, false);
-                            FolderIcon.this.mFolder.showItem(shortcutInfo);
-                            FolderIcon.this.invalidate();
-                        }
-                    }, 400L);
-                    return;
+                } else {
+                    removeItem(shortcutInfo, false);
+                    i2 = i;
+                    z2 = false;
                 }
-                removeItem(shortcutInfo, false);
+            } else {
+                i2 = i;
+                z2 = false;
             }
-            i2 = i;
-            z2 = false;
             if (!z2) {
+                addItem(shortcutInfo);
             }
-            float localCenterForIndex2 = getLocalCenterForIndex(i2, min, iArr);
-            int[] iArr2 = {Math.round(iArr2[0] * f2), Math.round(iArr2[1] * f2)};
-            rect2.offset(iArr2[0] - (dragView.getMeasuredWidth() / 2), iArr2[1] - (dragView.getMeasuredHeight() / 2));
-            float f32 = f2 * localCenterForIndex2;
-            int i62 = i2;
-            dragLayer.animateView(dragView, rect3, rect2, i2 >= 4 ? 0.5f : 0.0f, 1.0f, 1.0f, f32, f32, DROP_IN_ANIMATION_DURATION, Interpolators.DEACCEL_2, Interpolators.ACCEL_2, null, 0, null);
+            int[] iArr = new int[2];
+            float localCenterForIndex = getLocalCenterForIndex(i2, iMin, iArr);
+            iArr[0] = Math.round(iArr[0] * descendantRectRelativeToSelf);
+            iArr[1] = Math.round(iArr[1] * descendantRectRelativeToSelf);
+            rect2.offset(iArr[0] - (dragView.getMeasuredWidth() / 2), iArr[1] - (dragView.getMeasuredHeight() / 2));
+            float f2 = descendantRectRelativeToSelf * localCenterForIndex;
+            int i6 = i2;
+            dragLayer.animateView(dragView, rect3, rect2, i2 < 4 ? 0.5f : 0.0f, 1.0f, 1.0f, f2, f2, DROP_IN_ANIMATION_DURATION, Interpolators.DEACCEL_2, Interpolators.ACCEL_2, null, 0, null);
             this.mFolder.hideItem(shortcutInfo);
             if (z2) {
+                i3 = i6;
+            } else {
+                i3 = i6;
+                this.mPreviewItemManager.hidePreviewItem(i3, true);
             }
             postDelayed(new Runnable() { // from class: com.android.launcher3.folder.FolderIcon.3
+                final /* synthetic */ int val$finalIndex;
+                final /* synthetic */ ShortcutInfo val$item;
+
+                AnonymousClass3(int i32, ShortcutInfo shortcutInfo2) {
+                    i = i32;
+                    shortcutInfo = shortcutInfo2;
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
-                    FolderIcon.this.mPreviewItemManager.hidePreviewItem(i3, false);
+                    FolderIcon.this.mPreviewItemManager.hidePreviewItem(i, false);
                     FolderIcon.this.mFolder.showItem(shortcutInfo);
                     FolderIcon.this.invalidate();
                 }
             }, 400L);
             return;
         }
-        addItem(shortcutInfo);
+        addItem(shortcutInfo2);
+    }
+
+    /* renamed from: com.android.launcher3.folder.FolderIcon$3 */
+    class AnonymousClass3 implements Runnable {
+        final /* synthetic */ int val$finalIndex;
+        final /* synthetic */ ShortcutInfo val$item;
+
+        AnonymousClass3(int i32, ShortcutInfo shortcutInfo2) {
+            i = i32;
+            shortcutInfo = shortcutInfo2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            FolderIcon.this.mPreviewItemManager.hidePreviewItem(i, false);
+            FolderIcon.this.mFolder.showItem(shortcutInfo);
+            FolderIcon.this.invalidate();
+        }
     }
 
     public void onDrop(DropTarget.DragObject dragObject, boolean z) {
@@ -364,9 +413,9 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
         if (!(z ^ z2) || !isShown()) {
             this.mBadgeScale = f;
             invalidate();
-            return;
+        } else {
+            createBadgeScaleAnimator(f).start();
         }
-        createBadgeScaleAnimator(f).start();
     }
 
     public Animator createBadgeScaleAnimator(float... fArr) {
@@ -382,8 +431,10 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
         this.mTmpParams.transX += this.mBackground.basePreviewOffsetX;
         this.mTmpParams.transY += this.mBackground.basePreviewOffsetY;
         float intrinsicIconSize = this.mPreviewItemManager.getIntrinsicIconSize();
-        iArr[0] = Math.round(this.mTmpParams.transX + ((this.mTmpParams.scale * intrinsicIconSize) / 2.0f));
-        iArr[1] = Math.round(this.mTmpParams.transY + ((this.mTmpParams.scale * intrinsicIconSize) / 2.0f));
+        float f = this.mTmpParams.transX + ((this.mTmpParams.scale * intrinsicIconSize) / 2.0f);
+        float f2 = this.mTmpParams.transY + ((this.mTmpParams.scale * intrinsicIconSize) / 2.0f);
+        iArr[0] = Math.round(f);
+        iArr[1] = Math.round(f2);
         return this.mTmpParams.scale;
     }
 
@@ -407,7 +458,7 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
 
     @Override // android.view.ViewGroup, android.view.View
     protected void dispatchDraw(Canvas canvas) {
-        int save;
+        int iSave;
         super.dispatchDraw(canvas);
         if (this.mBackgroundIsVisible) {
             this.mPreviewItemManager.recomputePreviewDrawingParams();
@@ -419,16 +470,16 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
             }
             if (this.mFolder.getItemCount() != 0 || this.mAnimating) {
                 if (canvas.isHardwareAccelerated()) {
-                    save = canvas.saveLayer(0.0f, 0.0f, getWidth(), getHeight(), null);
+                    iSave = canvas.saveLayer(0.0f, 0.0f, getWidth(), getHeight(), null);
                 } else {
-                    save = canvas.save();
+                    iSave = canvas.save();
                     canvas.clipPath(this.mBackground.getClipPath());
                 }
                 this.mPreviewItemManager.draw(canvas);
                 if (canvas.isHardwareAccelerated()) {
                     this.mBackground.clipCanvasHardware(canvas);
                 }
-                canvas.restoreToCount(save);
+                canvas.restoreToCount(iSave);
                 if (!this.mBackground.drawingDelegated()) {
                     this.mBackground.drawBackgroundStroke(canvas);
                 }
@@ -443,9 +494,9 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
             int offsetY = this.mBackground.getOffsetY();
             int i = (int) (this.mBackground.previewSize * this.mBackground.mScale);
             this.mTempBounds.set(offsetX, offsetY, offsetX + i, i + offsetY);
-            float max = Math.max(0.0f, this.mBadgeScale - this.mBackground.getScaleProgress());
+            float fMax = Math.max(0.0f, this.mBadgeScale - this.mBackground.getScaleProgress());
             this.mTempSpaceForBadgeOffset.set(getWidth() - this.mTempBounds.right, this.mTempBounds.top);
-            this.mBadgeRenderer.draw(canvas, this.mBackground.getBadgeColor(), this.mTempBounds, max, this.mTempSpaceForBadgeOffset);
+            this.mBadgeRenderer.draw(canvas, this.mBackground.getBadgeColor(), this.mTempBounds, fMax, this.mTempSpaceForBadgeOffset);
         }
     }
 
@@ -505,18 +556,18 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
 
     @Override // com.android.launcher3.FolderInfo.FolderListener
     public void onAdd(ShortcutInfo shortcutInfo, int i) {
-        boolean hasBadge = this.mBadgeInfo.hasBadge();
+        boolean zHasBadge = this.mBadgeInfo.hasBadge();
         this.mBadgeInfo.addBadgeInfo(this.mLauncher.getBadgeInfoForItem(shortcutInfo));
-        updateBadgeScale(hasBadge, this.mBadgeInfo.hasBadge());
+        updateBadgeScale(zHasBadge, this.mBadgeInfo.hasBadge());
         invalidate();
         requestLayout();
     }
 
     @Override // com.android.launcher3.FolderInfo.FolderListener
     public void onRemove(ShortcutInfo shortcutInfo) {
-        boolean hasBadge = this.mBadgeInfo.hasBadge();
+        boolean zHasBadge = this.mBadgeInfo.hasBadge();
         this.mBadgeInfo.subtractBadgeInfo(this.mLauncher.getBadgeInfoForItem(shortcutInfo));
-        updateBadgeScale(hasBadge, this.mBadgeInfo.hasBadge());
+        updateBadgeScale(zHasBadge, this.mBadgeInfo.hasBadge());
         invalidate();
         requestLayout();
     }
@@ -527,9 +578,10 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
         setContentDescription(getContext().getString(R.string.folder_name_format, charSequence));
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
         if (this.mStylusEventHelper.onMotionEvent(motionEvent)) {
             this.mLongPressHelper.cancelLongPress();
             return true;
@@ -537,19 +589,19 @@ public class FolderIcon extends FrameLayout implements FolderInfo.FolderListener
         switch (motionEvent.getAction()) {
             case 0:
                 this.mLongPressHelper.postCheckForLongPress();
-                break;
+                return zOnTouchEvent;
             case 1:
             case 3:
                 this.mLongPressHelper.cancelLongPress();
-                break;
+                return zOnTouchEvent;
             case 2:
                 if (!Utilities.pointInView(this, motionEvent.getX(), motionEvent.getY(), this.mSlop)) {
                     this.mLongPressHelper.cancelLongPress();
-                    break;
                 }
-                break;
+                return zOnTouchEvent;
+            default:
+                return zOnTouchEvent;
         }
-        return onTouchEvent;
     }
 
     @Override // android.view.View

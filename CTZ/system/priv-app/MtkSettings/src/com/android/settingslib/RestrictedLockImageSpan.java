@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.style.ImageSpan;
+
 /* loaded from: classes.dex */
 public class RestrictedLockImageSpan extends ImageSpan {
     private Context mContext;

@@ -1,17 +1,18 @@
 package com.android.systemui.qs.tiles;
 
+import android.R;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.widget.Switch;
 import com.android.systemui.Dependency;
 import com.android.systemui.Prefs;
-import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
 import com.android.systemui.statusbar.policy.DataSaverController;
 import com.android.systemui.statusbar.policy.NetworkController;
+
 /* loaded from: classes.dex */
 public class DataSaverTile extends QSTileImpl<QSTile.BooleanState> implements DataSaverController.Listener {
     private final DataSaverController mDataSaverController;
@@ -21,7 +22,7 @@ public class DataSaverTile extends QSTileImpl<QSTile.BooleanState> implements Da
         this.mDataSaverController = ((NetworkController) Dependency.get(NetworkController.class)).getDataSaverController();
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -48,22 +49,21 @@ public class DataSaverTile extends QSTileImpl<QSTile.BooleanState> implements Da
             return;
         }
         SystemUIDialog systemUIDialog = new SystemUIDialog(this.mContext);
-        systemUIDialog.setTitle(17039737);
-        systemUIDialog.setMessage(17039735);
-        systemUIDialog.setPositiveButton(17039736, new DialogInterface.OnClickListener() { // from class: com.android.systemui.qs.tiles.-$$Lambda$DataSaverTile$7vpE4nfIgph7ByTloh1_igU2EhI
+        systemUIDialog.setTitle(R.string.autofill_save_type_address);
+        systemUIDialog.setMessage(R.string.autofill_save_title_with_3types);
+        systemUIDialog.setPositiveButton(R.string.autofill_save_title_with_type, new DialogInterface.OnClickListener() { // from class: com.android.systemui.qs.tiles.-$$Lambda$DataSaverTile$7vpE4nfIgph7ByTloh1_igU2EhI
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                DataSaverTile.this.toggleDataSaver();
+                this.f$0.toggleDataSaver();
             }
         });
-        systemUIDialog.setNegativeButton(17039360, null);
+        systemUIDialog.setNegativeButton(R.string.cancel, null);
         systemUIDialog.setShowForAllUsers(true);
         systemUIDialog.show();
         Prefs.putBoolean(this.mContext, "QsDataSaverDialogShown", true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void toggleDataSaver() {
+    private void toggleDataSaver() {
         ((QSTile.BooleanState) this.mState).value = !this.mDataSaverController.isDataSaverEnabled();
         this.mDataSaverController.setDataSaverEnabled(((QSTile.BooleanState) this.mState).value);
         refreshState(Boolean.valueOf(((QSTile.BooleanState) this.mState).value));
@@ -71,17 +71,17 @@ public class DataSaverTile extends QSTileImpl<QSTile.BooleanState> implements Da
 
     @Override // com.android.systemui.plugins.qs.QSTile
     public CharSequence getTileLabel() {
-        return this.mContext.getString(R.string.data_saver);
+        return this.mContext.getString(com.android.systemui.R.string.data_saver);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         booleanState.value = obj instanceof Boolean ? ((Boolean) obj).booleanValue() : this.mDataSaverController.isDataSaverEnabled();
         booleanState.state = booleanState.value ? 2 : 1;
-        booleanState.label = this.mContext.getString(R.string.data_saver);
+        booleanState.label = this.mContext.getString(com.android.systemui.R.string.data_saver);
         booleanState.contentDescription = booleanState.label;
-        booleanState.icon = QSTileImpl.ResourceIcon.get(booleanState.value ? R.drawable.ic_data_saver : R.drawable.ic_data_saver_off);
+        booleanState.icon = QSTileImpl.ResourceIcon.get(booleanState.value ? com.android.systemui.R.drawable.ic_data_saver : com.android.systemui.R.drawable.ic_data_saver_off);
         booleanState.expandedAccessibilityClassName = Switch.class.getName();
     }
 
@@ -93,9 +93,9 @@ public class DataSaverTile extends QSTileImpl<QSTile.BooleanState> implements Da
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     protected String composeChangeAnnouncement() {
         if (((QSTile.BooleanState) this.mState).value) {
-            return this.mContext.getString(R.string.accessibility_quick_settings_data_saver_changed_on);
+            return this.mContext.getString(com.android.systemui.R.string.accessibility_quick_settings_data_saver_changed_on);
         }
-        return this.mContext.getString(R.string.accessibility_quick_settings_data_saver_changed_off);
+        return this.mContext.getString(com.android.systemui.R.string.accessibility_quick_settings_data_saver_changed_off);
     }
 
     @Override // com.android.systemui.statusbar.policy.DataSaverController.Listener

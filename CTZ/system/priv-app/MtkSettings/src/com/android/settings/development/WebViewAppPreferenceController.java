@@ -11,6 +11,7 @@ import com.android.settings.webview.WebViewUpdateServiceWrapper;
 import com.android.settingslib.applications.DefaultAppInfo;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class WebViewAppPreferenceController extends DeveloperOptionsPreferenceController implements PreferenceControllerMixin {
     private final PackageManagerWrapper mPackageManager;
@@ -32,10 +33,10 @@ public class WebViewAppPreferenceController extends DeveloperOptionsPreferenceCo
         CharSequence defaultAppLabel = getDefaultAppLabel();
         if (!TextUtils.isEmpty(defaultAppLabel)) {
             this.mPreference.setSummary(defaultAppLabel);
-            return;
+        } else {
+            Log.d("WebViewAppPrefCtrl", "No default app");
+            this.mPreference.setSummary(R.string.app_list_preference_none);
         }
-        Log.d("WebViewAppPrefCtrl", "No default app");
-        this.mPreference.setSummary(R.string.app_list_preference_none);
     }
 
     DefaultAppInfo getDefaultAppInfo() {

@@ -36,6 +36,7 @@ import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import com.android.systemui.shared.system.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class TaskViewHeader extends FrameLayout implements View.OnClickListener, View.OnLongClickListener {
     private static IconDrawableFactory sDrawableFactory;
@@ -49,6 +50,7 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
     Drawable mDarkDismissDrawable;
     Drawable mDarkFullscreenIcon;
     Drawable mDarkInfoIcon;
+
     @ViewDebug.ExportedProperty(category = "recents")
     float mDimAlpha;
     private Paint mDimLayerPaint;
@@ -70,15 +72,14 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
     Task mTask;
     int mTaskBarViewDarkTextColor;
     int mTaskBarViewLightTextColor;
+
     @ViewDebug.ExportedProperty(category = "recents")
     Rect mTaskViewRect;
     int mTaskWindowingMode;
     TextView mTitleView;
     private float[] mTmpHSL;
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class HighlightColorDrawable extends Drawable {
+    private class HighlightColorDrawable extends Drawable {
         private int mColor;
         private float mDimAlpha;
         private Paint mHighlightPaint = new Paint();
@@ -142,9 +143,9 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
         this(context, attributeSet, i, 0);
     }
 
-    public TaskViewHeader(Context context, AttributeSet attributeSet, int i, int i2) {
-        super(context, attributeSet, i, i2);
+    public TaskViewHeader(Context context, AttributeSet attributeSet, int i, int i2) throws Resources.NotFoundException {
         int dimensionPixelSize;
+        super(context, attributeSet, i, i2);
         this.mTaskViewRect = new Rect();
         this.mTaskWindowingMode = 0;
         this.mTmpHSL = new float[3];
@@ -350,8 +351,7 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void unbindFromTask(boolean z) {
+    void unbindFromTask(boolean z) {
         this.mTask = null;
         this.mIconView.setImageDrawable(null);
         if (z) {
@@ -359,8 +359,7 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void startNoUserInteractionAnimation() {
+    void startNoUserInteractionAnimation() {
         int integer = getResources().getInteger(R.integer.recents_task_enter_from_app_duration);
         this.mDismissButton.setVisibility(0);
         this.mDismissButton.setClickable(true);
@@ -393,8 +392,7 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void resetNoUserInteractionState() {
+    void resetNoUserInteractionState() {
         this.mDismissButton.setVisibility(4);
         this.mDismissButton.setAlpha(0.0f);
         this.mDismissButton.setClickable(false);
@@ -414,7 +412,9 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
     public void onClick(View view) {
         if (view == this.mIconView) {
             EventBus.getDefault().send(new ShowApplicationInfoEvent(this.mTask));
-        } else if (view == this.mDismissButton) {
+            return;
+        }
+        if (view == this.mDismissButton) {
             ((TaskView) Utilities.findParent(this, TaskView.class)).dismissTask();
             MetricsLogger.histogram(getContext(), "overview_task_dismissed_source", 2);
         } else if (view == this.mMoveTaskButton) {
@@ -431,12 +431,12 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
         if (view == this.mIconView) {
             showAppOverlay();
             return true;
-        } else if (view == this.mAppIconView) {
-            hideAppOverlay(false);
-            return true;
-        } else {
+        }
+        if (view != this.mAppIconView) {
             return false;
         }
+        hideAppOverlay(false);
+        return true;
     }
 
     private void showAppOverlay() {
@@ -449,7 +449,7 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
             return;
         }
         if (this.mAppOverlayView == null) {
-            this.mAppOverlayView = (FrameLayout) Utilities.findViewStubById(this, (int) R.id.app_overlay_stub).inflate();
+            this.mAppOverlayView = (FrameLayout) Utilities.findViewStubById(this, R.id.app_overlay_stub).inflate();
             this.mAppOverlayView.setBackground(this.mOverlayBackground);
             this.mAppIconView = (ImageView) this.mAppOverlayView.findViewById(R.id.app_icon);
             this.mAppIconView.setOnClickListener(this);
@@ -470,10 +470,10 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
         }
         imageView.setImageDrawable(drawable);
         this.mAppOverlayView.setVisibility(0);
-        Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(this.mAppOverlayView, this.mIconView.getLeft() + (this.mIconView.getWidth() / 2), this.mIconView.getTop() + (this.mIconView.getHeight() / 2), 0.0f, getWidth());
-        createCircularReveal.setDuration(250L);
-        createCircularReveal.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
-        createCircularReveal.start();
+        Animator animatorCreateCircularReveal = ViewAnimationUtils.createCircularReveal(this.mAppOverlayView, this.mIconView.getLeft() + (this.mIconView.getWidth() / 2), this.mIconView.getTop() + (this.mIconView.getHeight() / 2), 0.0f, getWidth());
+        animatorCreateCircularReveal.setDuration(250L);
+        animatorCreateCircularReveal.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
+        animatorCreateCircularReveal.start();
     }
 
     private void hideAppOverlay(boolean z) {
@@ -484,16 +484,16 @@ public class TaskViewHeader extends FrameLayout implements View.OnClickListener,
             this.mAppOverlayView.setVisibility(8);
             return;
         }
-        Animator createCircularReveal = ViewAnimationUtils.createCircularReveal(this.mAppOverlayView, this.mIconView.getLeft() + (this.mIconView.getWidth() / 2), this.mIconView.getTop() + (this.mIconView.getHeight() / 2), getWidth(), 0.0f);
-        createCircularReveal.setDuration(250L);
-        createCircularReveal.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
-        createCircularReveal.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.recents.views.TaskViewHeader.2
+        Animator animatorCreateCircularReveal = ViewAnimationUtils.createCircularReveal(this.mAppOverlayView, this.mIconView.getLeft() + (this.mIconView.getWidth() / 2), this.mIconView.getTop() + (this.mIconView.getHeight() / 2), getWidth(), 0.0f);
+        animatorCreateCircularReveal.setDuration(250L);
+        animatorCreateCircularReveal.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
+        animatorCreateCircularReveal.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.recents.views.TaskViewHeader.2
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 TaskViewHeader.this.mAppOverlayView.setVisibility(8);
             }
         });
-        createCircularReveal.start();
+        animatorCreateCircularReveal.start();
     }
 
     private static IconDrawableFactory getIconDrawableFactory() {

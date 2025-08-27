@@ -16,6 +16,7 @@ import com.android.settingslib.TwoTargetPreference;
 import com.android.settingslib.applications.DefaultAppInfo;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public abstract class DefaultAppPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     protected final PackageManagerWrapper mPackageManager;
@@ -58,7 +59,7 @@ public abstract class DefaultAppPreferenceController extends AbstractPreferenceC
             ((GearPreference) preference).setOnGearClickListener(new GearPreference.OnGearClickListener() { // from class: com.android.settings.applications.defaultapps.-$$Lambda$DefaultAppPreferenceController$P93yGe3NhKzPqeqQwHkMaXpVB1M
                 @Override // com.android.settings.widget.GearPreference.OnGearClickListener
                 public final void onGearClick(GearPreference gearPreference) {
-                    DefaultAppPreferenceController.this.mContext.startActivity(settingIntent);
+                    this.f$0.mContext.startActivity(settingIntent);
                 }
             });
         } else {

@@ -18,6 +18,7 @@ import com.mediatek.keyguard.PowerOffAlarm.Alarms;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.TimeZone;
+
 /* loaded from: classes.dex */
 public class MediatekDigitalClock extends LinearLayout {
     private AmPm mAmPm;
@@ -32,9 +33,7 @@ public class MediatekDigitalClock extends LinearLayout {
     private TextView mTimeDisplayMinutes;
     private String mTimeZoneId;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class AmPm {
+    static class AmPm {
         private final TextView mAmPm;
         private final String mAmString;
         private final String mPmString;
@@ -60,7 +59,6 @@ public class MediatekDigitalClock extends LinearLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     private class FormatChangeObserver extends ContentObserver {
         public FormatChangeObserver() {
             super(new Handler());
@@ -139,8 +137,7 @@ public class MediatekDigitalClock extends LinearLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateTime() {
+    private void updateTime() {
         if (this.mLive) {
             this.mCalendar.setTimeInMillis(System.currentTimeMillis());
         }
@@ -148,12 +145,12 @@ public class MediatekDigitalClock extends LinearLayout {
             this.mCalendar.setTimeZone(TimeZone.getTimeZone(this.mTimeZoneId));
         }
         StringBuilder sb = new StringBuilder();
-        CharSequence format = DateFormat.format(this.mHoursFormat, this.mCalendar);
-        this.mTimeDisplayHours.setText(format);
-        sb.append(format);
-        CharSequence format2 = DateFormat.format(":mm", this.mCalendar);
-        sb.append(format2);
-        this.mTimeDisplayMinutes.setText(format2);
+        CharSequence charSequence = DateFormat.format(this.mHoursFormat, this.mCalendar);
+        this.mTimeDisplayHours.setText(charSequence);
+        sb.append(charSequence);
+        CharSequence charSequence2 = DateFormat.format(":mm", this.mCalendar);
+        sb.append(charSequence2);
+        this.mTimeDisplayMinutes.setText(charSequence2);
         this.mAmPm.setIsMorning(this.mCalendar.get(9) == 0);
         if (!Alarms.get24HourMode(getContext())) {
             sb.append(this.mAmPm.getAmPmText());
@@ -161,8 +158,7 @@ public class MediatekDigitalClock extends LinearLayout {
         setContentDescription(sb);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setDateFormat() {
+    private void setDateFormat() {
         this.mHoursFormat = Alarms.get24HourMode(getContext()) ? "kk" : "h";
         this.mAmPm.setShowAmPm(!Alarms.get24HourMode(getContext()));
     }

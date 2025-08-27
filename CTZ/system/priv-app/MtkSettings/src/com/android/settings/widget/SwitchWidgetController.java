@@ -1,11 +1,11 @@
 package com.android.settings.widget;
 
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public abstract class SwitchWidgetController {
     protected OnSwitchChangeListener mListener;
 
-    /* loaded from: classes.dex */
     public interface OnSwitchChangeListener {
         boolean onSwitchToggled(boolean z);
     }

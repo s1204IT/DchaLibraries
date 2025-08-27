@@ -19,11 +19,13 @@ import com.android.settings.Settings;
 import com.android.settings.Utils;
 import com.android.settings.password.ChooseLockSettingsHelper;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class AddAccountSettings extends Activity {
     private PendingIntent mPendingIntent;
     private UserHandle mUserHandle;
     private final AccountManagerCallback<Bundle> mCallback = new AccountManagerCallback<Bundle>() { // from class: com.android.settings.accounts.AddAccountSettings.1
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [125=5] */
         @Override // android.accounts.AccountManagerCallback
         public void run(AccountManagerFuture<Bundle> accountManagerFuture) {
             Log.v("AddAccountSettings", "callback called");
@@ -56,24 +58,24 @@ public class AddAccountSettings extends Activity {
                         if (!z) {
                             return;
                         }
-                    } catch (IOException e) {
+                    } catch (AuthenticatorException e) {
                         if (Log.isLoggable("AddAccountSettings", 2)) {
                             Log.v("AddAccountSettings", "addAccount failed: " + e);
                         }
                         if (!z) {
                             return;
                         }
+                    } catch (OperationCanceledException e2) {
+                        if (Log.isLoggable("AddAccountSettings", 2)) {
+                            Log.v("AddAccountSettings", "addAccount was canceled");
+                        }
+                        if (!z) {
+                            return;
+                        }
                     }
-                } catch (AuthenticatorException e2) {
+                } catch (IOException e3) {
                     if (Log.isLoggable("AddAccountSettings", 2)) {
-                        Log.v("AddAccountSettings", "addAccount failed: " + e2);
-                    }
-                    if (!z) {
-                        return;
-                    }
-                } catch (OperationCanceledException e3) {
-                    if (Log.isLoggable("AddAccountSettings", 2)) {
-                        Log.v("AddAccountSettings", "addAccount was canceled");
+                        Log.v("AddAccountSettings", "addAccount failed: " + e3);
                     }
                     if (!z) {
                         return;
@@ -104,11 +106,15 @@ public class AddAccountSettings extends Activity {
         UserManager userManager = (UserManager) getSystemService("user");
         this.mUserHandle = Utils.getSecureTargetUser(getActivityToken(), userManager, null, getIntent().getExtras());
         if (userManager.hasUserRestriction("no_modify_accounts", this.mUserHandle)) {
-            Toast.makeText(this, (int) R.string.user_cannot_add_accounts_message, 1).show();
+            Toast.makeText(this, R.string.user_cannot_add_accounts_message, 1).show();
             finish();
-        } else if (this.mAddAccountCalled) {
+            return;
+        }
+        if (this.mAddAccountCalled) {
             finish();
-        } else if (Utils.startQuietModeDialogIfNecessary(this, userManager, this.mUserHandle.getIdentifier())) {
+            return;
+        }
+        if (Utils.startQuietModeDialogIfNecessary(this, userManager, this.mUserHandle.getIdentifier())) {
             finish();
         } else if (userManager.isUserUnlocked(this.mUserHandle)) {
             requestChooseAccount();
@@ -145,10 +151,11 @@ public class AddAccountSettings extends Activity {
                     }
                     setResult(i2);
                     finish();
-                    return;
+                    break;
+                } else {
+                    addAccount(intent.getStringExtra("selected_account"));
+                    break;
                 }
-                addAccount(intent.getStringExtra("selected_account"));
-                return;
             case 2:
                 setResult(i2);
                 if (this.mPendingIntent != null) {
@@ -156,17 +163,15 @@ public class AddAccountSettings extends Activity {
                     this.mPendingIntent = null;
                 }
                 finish();
-                return;
+                break;
             case 3:
                 if (i2 == -1) {
                     requestChooseAccount();
-                    return;
+                    break;
                 } else {
                     finish();
-                    return;
+                    break;
                 }
-            default:
-                return;
         }
     }
 
@@ -182,7 +187,7 @@ public class AddAccountSettings extends Activity {
     private void requestChooseAccount() {
         String[] stringArrayExtra = getIntent().getStringArrayExtra("authorities");
         String[] stringArrayExtra2 = getIntent().getStringArrayExtra("account_types");
-        Intent intent = new Intent(this, Settings.ChooseAccountActivity.class);
+        Intent intent = new Intent(this, (Class<?>) Settings.ChooseAccountActivity.class);
         if (stringArrayExtra != null) {
             intent.putExtra("authorities", stringArrayExtra);
         }

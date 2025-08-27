@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settingslib.notification.EnableZenModeDialog;
+
 /* loaded from: classes.dex */
 public class SettingsEnableZenModeDialog extends InstrumentedDialogFragment {
     @Override // android.app.DialogFragment

@@ -2,6 +2,7 @@ package com.android.settings.fuelgauge.anomaly.action;
 
 import android.content.Context;
 import com.android.settings.fuelgauge.anomaly.Anomaly;
+
 /* loaded from: classes.dex */
 public class StopAndBackgroundCheckAction extends AnomalyAction {
     BackgroundCheckAction mBackgroundCheckAction;

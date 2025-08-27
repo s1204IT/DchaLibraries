@@ -16,6 +16,7 @@ import com.android.systemui.statusbar.policy.OnHeadsUpChangedListener;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class HeadsUpAppearanceController implements DarkIconDispatcher.DarkReceiver, OnHeadsUpChangedListener {
     private final View mClockView;
@@ -45,25 +46,25 @@ public class HeadsUpAppearanceController implements DarkIconDispatcher.DarkRecei
         this.mSetTrackingHeadsUp = new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$Ndod8fRabzshTVmNSVHx_M0XNU4
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                HeadsUpAppearanceController.this.setTrackingHeadsUp((ExpandableNotificationRow) obj);
+                this.f$0.setTrackingHeadsUp((ExpandableNotificationRow) obj);
             }
         };
         this.mUpdatePanelTranslation = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$22QZFjoGlQJQoKOrFe-bHbZltB4
             @Override // java.lang.Runnable
             public final void run() {
-                HeadsUpAppearanceController.this.updatePanelTranslation();
+                this.f$0.updatePanelTranslation();
             }
         };
         this.mSetExpandedHeight = new BiConsumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$DialNTWPBOn27MISeLu6p9klZxI
             @Override // java.util.function.BiConsumer
             public final void accept(Object obj, Object obj2) {
-                HeadsUpAppearanceController.this.setExpandedHeight(((Float) obj).floatValue(), ((Float) obj2).floatValue());
+                this.f$0.setExpandedHeight(((Float) obj).floatValue(), ((Float) obj2).floatValue());
             }
         };
         this.mStackScrollLayoutChangeListener = new View.OnLayoutChangeListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$HeadsUpAppearanceController$hwNOwOgXItDjQM7QwL00pigpnrk
             @Override // android.view.View.OnLayoutChangeListener
             public final void onLayoutChange(View view2, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
-                HeadsUpAppearanceController.this.updatePanelTranslation();
+                this.f$0.updatePanelTranslation();
             }
         };
         this.mNotificationIconAreaController = notificationIconAreaController;
@@ -73,7 +74,7 @@ public class HeadsUpAppearanceController implements DarkIconDispatcher.DarkRecei
         headsUpStatusBarView.setOnDrawingRectChangedListener(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$HeadsUpAppearanceController$1d3l5klDiH8maZOdHwrJBKgigPE
             @Override // java.lang.Runnable
             public final void run() {
-                HeadsUpAppearanceController.this.updateIsolatedIconLocation(true);
+                this.f$0.updateIsolatedIconLocation(true);
             }
         });
         this.mStackScroller = notificationStackScrollLayout;
@@ -100,8 +101,7 @@ public class HeadsUpAppearanceController implements DarkIconDispatcher.DarkRecei
         this.mDarkIconDispatcher.removeDarkReceiver(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateIsolatedIconLocation(boolean z) {
+    private void updateIsolatedIconLocation(boolean z) {
         this.mNotificationIconAreaController.setIsolatedIconLocation(this.mHeadsUpStatusBarView.getIconDrawingRect(), z);
     }
 
@@ -139,18 +139,18 @@ public class HeadsUpAppearanceController implements DarkIconDispatcher.DarkRecei
         Code decompiled incorrectly, please refer to instructions dump.
     */
     private void updateTopEntry() {
-        NotificationData.Entry entry;
+        NotificationData.Entry topEntry;
         boolean z;
         boolean z2;
         if (!this.mIsExpanded && this.mHeadsUpManager.hasPinnedHeadsUp()) {
-            entry = this.mHeadsUpManager.getTopEntry();
+            topEntry = this.mHeadsUpManager.getTopEntry();
         } else {
-            entry = null;
+            topEntry = null;
         }
         NotificationData.Entry showingEntry = this.mHeadsUpStatusBarView.getShowingEntry();
-        this.mHeadsUpStatusBarView.setEntry(entry);
-        if (entry != showingEntry) {
-            if (entry == null) {
+        this.mHeadsUpStatusBarView.setEntry(topEntry);
+        if (topEntry != showingEntry) {
+            if (topEntry == null) {
                 setShown(false);
                 z2 = this.mIsExpanded;
             } else if (showingEntry == null) {
@@ -159,11 +159,11 @@ public class HeadsUpAppearanceController implements DarkIconDispatcher.DarkRecei
             } else {
                 z = false;
                 updateIsolatedIconLocation(false);
-                this.mNotificationIconAreaController.showIconIsolated(entry != null ? entry.icon : null, z);
+                this.mNotificationIconAreaController.showIconIsolated(topEntry != null ? topEntry.icon : null, z);
             }
             z = !z2;
             updateIsolatedIconLocation(false);
-            this.mNotificationIconAreaController.showIconIsolated(entry != null ? entry.icon : null, z);
+            this.mNotificationIconAreaController.showIconIsolated(topEntry != null ? topEntry.icon : null, z);
         }
     }
 
@@ -175,19 +175,19 @@ public class HeadsUpAppearanceController implements DarkIconDispatcher.DarkRecei
                 CrossFadeHelper.fadeOut(this.mHeadsUpStatusBarView, 110L, 0, new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$HeadsUpAppearanceController$5yJ6zXPrjSk_KB2fbcTxEu2j2TI
                     @Override // java.lang.Runnable
                     public final void run() {
-                        HeadsUpAppearanceController.this.mHeadsUpStatusBarView.setVisibility(8);
+                        this.f$0.mHeadsUpStatusBarView.setVisibility(8);
                     }
                 });
-                return;
+            } else {
+                this.mHeadsUpStatusBarView.setVisibility(0);
+                CrossFadeHelper.fadeIn(this.mHeadsUpStatusBarView, 110L, 100);
+                CrossFadeHelper.fadeOut(this.mClockView, 110L, 0, new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$HeadsUpAppearanceController$iMPD_c-MpkAUOLIdQAujzNCdyYQ
+                    @Override // java.lang.Runnable
+                    public final void run() {
+                        this.f$0.mClockView.setVisibility(4);
+                    }
+                });
             }
-            this.mHeadsUpStatusBarView.setVisibility(0);
-            CrossFadeHelper.fadeIn(this.mHeadsUpStatusBarView, 110L, 100);
-            CrossFadeHelper.fadeOut(this.mClockView, 110L, 0, new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$HeadsUpAppearanceController$iMPD_c-MpkAUOLIdQAujzNCdyYQ
-                @Override // java.lang.Runnable
-                public final void run() {
-                    HeadsUpAppearanceController.this.mClockView.setVisibility(4);
-                }
-            });
         }
     }
 
@@ -232,7 +232,7 @@ public class HeadsUpAppearanceController implements DarkIconDispatcher.DarkRecei
         this.mHeadsUpManager.getAllEntries().forEach(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$HeadsUpAppearanceController$1KnuQ6evxsUDWWnSk6M2Hz6dh50
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                HeadsUpAppearanceController.this.updateHeader((NotificationData.Entry) obj);
+                this.f$0.updateHeader((NotificationData.Entry) obj);
             }
         });
     }

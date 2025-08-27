@@ -2,6 +2,7 @@ package com.android.systemui.recents.events.component;
 
 import android.content.Context;
 import com.android.systemui.recents.events.EventBus;
+
 /* loaded from: classes.dex */
 public class ScreenPinningRequestEvent extends EventBus.Event {
     public final Context applicationContext;

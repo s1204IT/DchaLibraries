@@ -15,6 +15,7 @@ import android.util.Log;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settings.vpn2.AppDialog;
+
 /* loaded from: classes.dex */
 public class AppDialogFragment extends InstrumentedDialogFragment implements AppDialog.Listener {
     private Listener mListener;
@@ -22,7 +23,6 @@ public class AppDialogFragment extends InstrumentedDialogFragment implements App
     private final IConnectivityManager mService = IConnectivityManager.Stub.asInterface(ServiceManager.getService("connectivity"));
     private UserManager mUserManager;
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onCancel();
 
@@ -111,8 +111,7 @@ public class AppDialogFragment extends InstrumentedDialogFragment implements App
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onDisconnect(DialogInterface dialogInterface) {
+    private void onDisconnect(DialogInterface dialogInterface) {
         if (isUiRestricted()) {
             return;
         }

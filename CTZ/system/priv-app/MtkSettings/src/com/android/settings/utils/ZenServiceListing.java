@@ -12,8 +12,10 @@ import android.util.ArraySet;
 import android.util.Slog;
 import com.android.settings.utils.ManagedServiceSettings;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class ZenServiceListing {
     private final ManagedServiceSettings.Config mConfig;
@@ -22,7 +24,6 @@ public class ZenServiceListing {
     private final Set<ServiceInfo> mApprovedServices = new ArraySet();
     private final List<Callback> mZenCallbacks = new ArrayList();
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onServicesReloaded(Set<ServiceInfo> set);
     }
@@ -62,8 +63,9 @@ public class ZenServiceListing {
             }
         }
         if (!this.mApprovedServices.isEmpty()) {
-            for (Callback callback : this.mZenCallbacks) {
-                callback.onServicesReloaded(this.mApprovedServices);
+            Iterator<Callback> it = this.mZenCallbacks.iterator();
+            while (it.hasNext()) {
+                it.next().onServicesReloaded(this.mApprovedServices);
             }
         }
     }
@@ -72,11 +74,11 @@ public class ZenServiceListing {
         if (list != null) {
             list.clear();
         }
-        List queryIntentServicesAsUser = packageManager.queryIntentServicesAsUser(new Intent(config.intentAction), 132, ActivityManager.getCurrentUser());
-        int size = queryIntentServicesAsUser.size();
+        List listQueryIntentServicesAsUser = packageManager.queryIntentServicesAsUser(new Intent(config.intentAction), 132, ActivityManager.getCurrentUser());
+        int size = listQueryIntentServicesAsUser.size();
         int i = 0;
         for (int i2 = 0; i2 < size; i2++) {
-            ServiceInfo serviceInfo = ((ResolveInfo) queryIntentServicesAsUser.get(i2)).serviceInfo;
+            ServiceInfo serviceInfo = ((ResolveInfo) listQueryIntentServicesAsUser.get(i2)).serviceInfo;
             if (!config.permission.equals(serviceInfo.permission)) {
                 Slog.w(config.tag, "Skipping " + config.noun + " service " + serviceInfo.packageName + "/" + serviceInfo.name + ": it does not require the permission " + config.permission);
             } else {

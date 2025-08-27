@@ -2,6 +2,7 @@ package com.mediatek.systemui.ext;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+
 /* loaded from: classes.dex */
 public class DefaultNavigationBarPlugin implements INavigationBarPlugin {
     private Context mContext;

@@ -9,6 +9,7 @@ import com.android.settings.R;
 import com.android.settings.applications.DefaultAppSettings;
 import com.android.settings.core.BasePreferenceController;
 import com.android.settings.core.SubSettingLauncher;
+
 /* loaded from: classes.dex */
 public abstract class DefaultAppShortcutPreferenceControllerBase extends BasePreferenceController {
     protected final String mPackageName;
@@ -37,12 +38,12 @@ public abstract class DefaultAppShortcutPreferenceControllerBase extends BasePre
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        if (TextUtils.equals(this.mPreferenceKey, preference.getKey())) {
-            Bundle bundle = new Bundle();
-            bundle.putString(":settings:fragment_args_key", this.mPreferenceKey);
-            new SubSettingLauncher(this.mContext).setDestination(DefaultAppSettings.class.getName()).setArguments(bundle).setTitle(R.string.configure_apps).setSourceMetricsCategory(0).launch();
-            return true;
+        if (!TextUtils.equals(this.mPreferenceKey, preference.getKey())) {
+            return false;
         }
-        return false;
+        Bundle bundle = new Bundle();
+        bundle.putString(":settings:fragment_args_key", this.mPreferenceKey);
+        new SubSettingLauncher(this.mContext).setDestination(DefaultAppSettings.class.getName()).setArguments(bundle).setTitle(R.string.configure_apps).setSourceMetricsCategory(0).launch();
+        return true;
     }
 }

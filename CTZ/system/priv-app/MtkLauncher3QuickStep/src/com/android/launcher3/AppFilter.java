@@ -2,6 +2,7 @@ package com.android.launcher3;
 
 import android.content.ComponentName;
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class AppFilter {
     public static AppFilter newInstance(Context context) {

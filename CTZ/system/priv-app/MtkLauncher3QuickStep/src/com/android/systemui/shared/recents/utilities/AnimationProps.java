@@ -10,6 +10,7 @@ import android.view.animation.LinearInterpolator;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AnimationProps {
     public static final int ALL = 0;
@@ -28,7 +29,6 @@ public class AnimationProps {
     public static final AnimationProps IMMEDIATE = new AnimationProps(0, LINEAR_INTERPOLATOR);
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     public @interface PropType {
     }
 
@@ -79,14 +79,14 @@ public class AnimationProps {
     }
 
     public long getStartDelay(int propertyType) {
-        if (this.mPropStartDelay != null) {
-            long startDelay = this.mPropStartDelay.get(propertyType, -1L);
-            if (startDelay != -1) {
-                return startDelay;
-            }
-            return this.mPropStartDelay.get(0, 0L);
+        if (this.mPropStartDelay == null) {
+            return 0L;
         }
-        return 0L;
+        long startDelay = this.mPropStartDelay.get(propertyType, -1L);
+        if (startDelay != -1) {
+            return startDelay;
+        }
+        return this.mPropStartDelay.get(0, 0L);
     }
 
     public AnimationProps setDuration(int propertyType, int duration) {
@@ -98,14 +98,14 @@ public class AnimationProps {
     }
 
     public long getDuration(int propertyType) {
-        if (this.mPropDuration != null) {
-            long duration = this.mPropDuration.get(propertyType, -1L);
-            if (duration != -1) {
-                return duration;
-            }
-            return this.mPropDuration.get(0, 0L);
+        if (this.mPropDuration == null) {
+            return 0L;
         }
-        return 0L;
+        long duration = this.mPropDuration.get(propertyType, -1L);
+        if (duration != -1) {
+            return duration;
+        }
+        return this.mPropDuration.get(0, 0L);
     }
 
     public AnimationProps setInterpolator(int propertyType, Interpolator interpolator) {

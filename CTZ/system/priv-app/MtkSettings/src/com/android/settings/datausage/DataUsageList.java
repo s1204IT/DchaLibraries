@@ -6,6 +6,7 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.INetworkStatsSession;
@@ -42,7 +43,9 @@ import com.android.settingslib.net.SummaryForAllUidLoader;
 import com.android.settingslib.net.UidDetailProvider;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DataUsageList extends DataUsageBase {
     private PreferenceGroup mApps;
@@ -81,8 +84,9 @@ public class DataUsageList extends DataUsageBase {
             return new ChartDataLoader(DataUsageList.this.getActivity(), DataUsageList.this.mStatsSession, bundle);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
-        public void onLoadFinished(Loader<ChartData> loader, ChartData chartData) {
+        public void onLoadFinished(Loader<ChartData> loader, ChartData chartData) throws Resources.NotFoundException {
             DataUsageList.this.mLoadingViewController.showContent(false);
             DataUsageList.this.mChartData = chartData;
             DataUsageList.this.mChart.setNetworkStats(DataUsageList.this.mChartData.network);
@@ -101,6 +105,7 @@ public class DataUsageList extends DataUsageBase {
             return new SummaryForAllUidLoader(DataUsageList.this.getActivity(), DataUsageList.this.mStatsSession, bundle);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<NetworkStats> loader, NetworkStats networkStats) {
             DataUsageList.this.bindStats(networkStats, DataUsageList.this.services.mPolicyManager.getUidsWithPolicy(1));
@@ -118,9 +123,9 @@ public class DataUsageList extends DataUsageBase {
                 if (DataUsageList.this.mApps.getPreferenceCount() != 0) {
                     DataUsageList.this.getPreferenceScreen().addPreference(DataUsageList.this.mUsageAmount);
                     DataUsageList.this.getPreferenceScreen().addPreference(DataUsageList.this.mApps);
-                    return;
+                } else {
+                    DataUsageList.this.getPreferenceScreen().removeAll();
                 }
-                DataUsageList.this.getPreferenceScreen().removeAll();
             }
         }
     };
@@ -158,7 +163,7 @@ public class DataUsageList extends DataUsageBase {
         this.mHeader.findViewById(R.id.filter_settings).setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.datausage.-$$Lambda$DataUsageList$YolaBauY8HvHsYGl5vfnCCKHiAQ
             @Override // android.view.View.OnClickListener
             public final void onClick(View view2) {
-                DataUsageList.lambda$onViewCreated$0(DataUsageList.this, view2);
+                DataUsageList.lambda$onViewCreated$0(this.f$0, view2);
             }
         });
         this.mCycleSpinner = (Spinner) this.mHeader.findViewById(R.id.filter_spinner);
@@ -200,9 +205,9 @@ public class DataUsageList extends DataUsageBase {
         this.mDataStateListener.setListener(true, this.mSubId, getContext());
         updateBody();
         new AsyncTask<Void, Void, Void>() { // from class: com.android.settings.datausage.DataUsageList.3
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public Void doInBackground(Void... voidArr) {
+            protected Void doInBackground(Void... voidArr) throws InterruptedException {
                 try {
                     Thread.sleep(2000L);
                     DataUsageList.this.services.mStatsService.forceUpdate();
@@ -214,9 +219,9 @@ public class DataUsageList extends DataUsageBase {
                 }
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(Void r1) {
+            protected void onPostExecute(Void r1) {
                 if (DataUsageList.this.isAdded()) {
                     DataUsageList.this.updateBody();
                 }
@@ -251,8 +256,7 @@ public class DataUsageList extends DataUsageBase {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateBody() {
+    private void updateBody() {
         SubscriptionInfo activeSubscriptionInfo;
         if (isAdded()) {
             Activity activity = getActivity();
@@ -266,36 +270,34 @@ public class DataUsageList extends DataUsageBase {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePolicy() {
+    private void updatePolicy() {
         NetworkPolicy policy = this.services.mPolicyEditor.getPolicy(this.mTemplate);
-        View findViewById = this.mHeader.findViewById(R.id.filter_settings);
+        View viewFindViewById = this.mHeader.findViewById(R.id.filter_settings);
         if (isNetworkPolicyModifiable(policy, this.mSubId) && isMobileDataAvailable(this.mSubId)) {
             this.mChart.setNetworkPolicy(policy);
-            findViewById.setVisibility(0);
+            viewFindViewById.setVisibility(0);
         } else {
             this.mChart.setNetworkPolicy(null);
-            findViewById.setVisibility(8);
+            viewFindViewById.setVisibility(8);
         }
         if (this.mCycleAdapter.updateCycleList(policy, this.mChartData)) {
             updateDetailData();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDetailData() {
-        NetworkStatsHistory.Entry entry;
+    private void updateDetailData() {
+        NetworkStatsHistory.Entry values;
         long inspectStart = this.mChart.getInspectStart();
         long inspectEnd = this.mChart.getInspectEnd();
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         Activity activity = getActivity();
         if (this.mChartData != null) {
-            entry = this.mChartData.network.getValues(inspectStart, inspectEnd, currentTimeMillis, (NetworkStatsHistory.Entry) null);
+            values = this.mChartData.network.getValues(inspectStart, inspectEnd, jCurrentTimeMillis, (NetworkStatsHistory.Entry) null);
         } else {
-            entry = null;
+            values = null;
         }
         getLoaderManager().restartLoader(3, SummaryForAllUidLoader.buildArgs(this.mTemplate, inspectStart, inspectEnd), this.mSummaryCallbacks);
-        this.mUsageAmount.setTitle(getString(R.string.data_used_template, new Object[]{DataUsageUtils.formatDataUsage(activity, entry != null ? entry.rxBytes + entry.txBytes : 0L)}));
+        this.mUsageAmount.setTitle(getString(R.string.data_used_template, new Object[]{DataUsageUtils.formatDataUsage(activity, values != null ? values.rxBytes + values.txBytes : 0L)}));
     }
 
     public void bindStats(NetworkStats networkStats, int[] iArr) {
@@ -309,16 +311,15 @@ public class DataUsageList extends DataUsageBase {
         UserManager userManager = UserManager.get(getContext());
         List<UserHandle> userProfiles = userManager.getUserProfiles();
         SparseArray sparseArray = new SparseArray();
-        int size = networkStats != null ? networkStats.size() : 0;
         NetworkStats.Entry entry2 = null;
-        long j = 0;
+        long jAccumulate = 0;
         int i5 = 0;
-        while (i5 < size) {
+        for (int size = networkStats != null ? networkStats.size() : 0; i5 < size; size = i2) {
             NetworkStats.Entry values = networkStats.getValues(i5, entry2);
             int i6 = values.uid;
             int userId = UserHandle.getUserId(i6);
-            int i7 = -4;
-            int i8 = 2;
+            int iBuildKeyForUser = -4;
+            int i7 = 2;
             if (UserHandle.isApp(i6)) {
                 if (userProfiles.contains(new UserHandle(userId))) {
                     if (userId != currentUser) {
@@ -326,56 +327,39 @@ public class DataUsageList extends DataUsageBase {
                         entry = values;
                         i2 = size;
                         i3 = i5;
-                        j = accumulate(UidDetailProvider.buildKeyForUser(userId), sparseArray, values, 0, arrayList, j);
+                        jAccumulate = accumulate(UidDetailProvider.buildKeyForUser(userId), sparseArray, values, 0, arrayList, jAccumulate);
                     } else {
                         i = i6;
                         entry = values;
                         i2 = size;
                         i3 = i5;
                     }
-                    i4 = i;
-                    j = accumulate(i4, sparseArray, entry, i8, arrayList, j);
-                    i5 = i3 + 1;
-                    entry2 = entry;
-                    size = i2;
                 } else {
                     entry = values;
                     i2 = size;
                     i3 = i5;
                     if (userManager.getUserInfo(userId) != null) {
-                        i7 = UidDetailProvider.buildKeyForUser(userId);
-                        i8 = 0;
+                        iBuildKeyForUser = UidDetailProvider.buildKeyForUser(userId);
+                        i7 = 0;
                     }
-                    i4 = i7;
-                    j = accumulate(i4, sparseArray, entry, i8, arrayList, j);
-                    i5 = i3 + 1;
-                    entry2 = entry;
-                    size = i2;
+                    i4 = iBuildKeyForUser;
                 }
             } else {
                 i = i6;
                 entry = values;
                 i2 = size;
                 i3 = i5;
-                if (i != -4 && i != -5) {
-                    i4 = 1000;
-                    j = accumulate(i4, sparseArray, entry, i8, arrayList, j);
-                    i5 = i3 + 1;
-                    entry2 = entry;
-                    size = i2;
-                }
-                i4 = i;
-                j = accumulate(i4, sparseArray, entry, i8, arrayList, j);
-                i5 = i3 + 1;
-                entry2 = entry;
-                size = i2;
+                i4 = (i == -4 || i == -5) ? i : 1000;
             }
+            jAccumulate = accumulate(i4, sparseArray, entry, i7, arrayList, jAccumulate);
+            i5 = i3 + 1;
+            entry2 = entry;
         }
-        for (int i9 : iArr) {
-            if (userProfiles.contains(new UserHandle(UserHandle.getUserId(i9)))) {
-                AppItem appItem = (AppItem) sparseArray.get(i9);
+        for (int i8 : iArr) {
+            if (userProfiles.contains(new UserHandle(UserHandle.getUserId(i8)))) {
+                AppItem appItem = (AppItem) sparseArray.get(i8);
                 if (appItem == null) {
-                    appItem = new AppItem(i9);
+                    appItem = new AppItem(i8);
                     appItem.total = -1L;
                     arrayList.add(appItem);
                     sparseArray.put(appItem.key, appItem);
@@ -385,8 +369,8 @@ public class DataUsageList extends DataUsageBase {
         }
         Collections.sort(arrayList);
         this.mApps.removeAll();
-        for (int i10 = 0; i10 < arrayList.size(); i10++) {
-            AppDataUsagePreference appDataUsagePreference = new AppDataUsagePreference(getContext(), (AppItem) arrayList.get(i10), j != 0 ? (int) ((((AppItem) arrayList.get(i10)).total * 100) / j) : 0, this.mUidDetailProvider);
+        for (int i9 = 0; i9 < arrayList.size(); i9++) {
+            AppDataUsagePreference appDataUsagePreference = new AppDataUsagePreference(getContext(), (AppItem) arrayList.get(i9), jAccumulate != 0 ? (int) ((((AppItem) arrayList.get(i9)).total * 100) / jAccumulate) : 0, this.mUidDetailProvider);
             appDataUsagePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.datausage.DataUsageList.4
                 @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
                 public boolean onPreferenceClick(Preference preference) {
@@ -398,8 +382,7 @@ public class DataUsageList extends DataUsageBase {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startAppDataUsage(AppItem appItem) {
+    private void startAppDataUsage(AppItem appItem) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("app_item", appItem);
         bundle.putParcelable("network_template", this.mTemplate);
@@ -421,16 +404,17 @@ public class DataUsageList extends DataUsageBase {
     }
 
     public static boolean hasReadyMobileRadio(Context context) {
-        ConnectivityManager from = ConnectivityManager.from(context);
-        TelephonyManager from2 = TelephonyManager.from(context);
+        ConnectivityManager connectivityManagerFrom = ConnectivityManager.from(context);
+        TelephonyManager telephonyManagerFrom = TelephonyManager.from(context);
         List<SubscriptionInfo> activeSubscriptionInfoList = SubscriptionManager.from(context).getActiveSubscriptionInfoList();
         if (activeSubscriptionInfoList == null) {
             return false;
         }
+        Iterator<SubscriptionInfo> it = activeSubscriptionInfoList.iterator();
         boolean z = true;
-        for (SubscriptionInfo subscriptionInfo : activeSubscriptionInfoList) {
-            z &= from2.getSimState(subscriptionInfo.getSimSlotIndex()) == 5;
+        while (it.hasNext()) {
+            z &= telephonyManagerFrom.getSimState(it.next().getSimSlotIndex()) == 5;
         }
-        return from.isNetworkSupported(0) && z;
+        return connectivityManagerFrom.isNetworkSupported(0) && z;
     }
 }

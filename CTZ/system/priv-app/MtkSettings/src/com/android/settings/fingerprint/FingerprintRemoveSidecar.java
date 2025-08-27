@@ -7,6 +7,7 @@ import android.util.Log;
 import com.android.settings.core.InstrumentedFragment;
 import java.util.LinkedList;
 import java.util.Queue;
+
 /* loaded from: classes.dex */
 public class FingerprintRemoveSidecar extends InstrumentedFragment {
     FingerprintManager mFingerprintManager;
@@ -26,23 +27,20 @@ public class FingerprintRemoveSidecar extends InstrumentedFragment {
             if (FingerprintRemoveSidecar.this.mListener != null) {
                 FingerprintRemoveSidecar.this.mListener.onRemovalError(fingerprint, i, charSequence);
             } else {
-                FingerprintRemoveSidecar.this.mFingerprintsRemoved.add(new RemovalError(fingerprint, i, charSequence));
+                FingerprintRemoveSidecar.this.mFingerprintsRemoved.add(FingerprintRemoveSidecar.this.new RemovalError(fingerprint, i, charSequence));
             }
             FingerprintRemoveSidecar.this.mFingerprintRemoving = null;
         }
     };
     private Queue<Object> mFingerprintsRemoved = new LinkedList();
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onRemovalError(Fingerprint fingerprint, int i, CharSequence charSequence);
 
         void onRemovalSucceeded(Fingerprint fingerprint);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class RemovalError {
+    private class RemovalError {
         int errMsgId;
         CharSequence errString;
         Fingerprint fingerprint;
@@ -79,11 +77,11 @@ public class FingerprintRemoveSidecar extends InstrumentedFragment {
     public void setListener(Listener listener) {
         if (this.mListener == null && listener != null) {
             while (!this.mFingerprintsRemoved.isEmpty()) {
-                Object poll = this.mFingerprintsRemoved.poll();
-                if (poll instanceof Fingerprint) {
-                    listener.onRemovalSucceeded((Fingerprint) poll);
-                } else if (poll instanceof RemovalError) {
-                    RemovalError removalError = (RemovalError) poll;
+                Object objPoll = this.mFingerprintsRemoved.poll();
+                if (objPoll instanceof Fingerprint) {
+                    listener.onRemovalSucceeded((Fingerprint) objPoll);
+                } else if (objPoll instanceof RemovalError) {
+                    RemovalError removalError = (RemovalError) objPoll;
                     listener.onRemovalError(removalError.fingerprint, removalError.errMsgId, removalError.errString);
                 }
             }
@@ -91,13 +89,11 @@ public class FingerprintRemoveSidecar extends InstrumentedFragment {
         this.mListener = listener;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public final boolean isRemovingFingerprint(int i) {
+    final boolean isRemovingFingerprint(int i) {
         return inProgress() && this.mFingerprintRemoving.getFingerId() == i;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public final boolean inProgress() {
+    final boolean inProgress() {
         return this.mFingerprintRemoving != null;
     }
 

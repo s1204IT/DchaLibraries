@@ -15,6 +15,7 @@ import com.android.settings.deviceinfo.storage.UserIconLoader;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SecondaryUserController extends AbstractPreferenceController implements PreferenceControllerMixin, StorageAsyncLoader.ResultHandler, UserIconLoader.UserIconHandler {
     private long mSize;
@@ -58,8 +59,7 @@ public class SecondaryUserController extends AbstractPreferenceController implem
             this.mStoragePreference = new StorageItemPreference(preferenceScreen.getContext());
             PreferenceGroup preferenceGroup = (PreferenceGroup) preferenceScreen.findPreference("pref_secondary_users");
             this.mStoragePreference.setTitle(this.mUser.name);
-            StorageItemPreference storageItemPreference = this.mStoragePreference;
-            storageItemPreference.setKey("pref_user_" + this.mUser.id);
+            this.mStoragePreference.setKey("pref_user_" + this.mUser.id);
             if (this.mSize != -1) {
                 this.mStoragePreference.setStorageSize(this.mSize, this.mTotalSizeBytes);
             }
@@ -117,9 +117,7 @@ public class SecondaryUserController extends AbstractPreferenceController implem
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class NoSecondaryUserController extends AbstractPreferenceController implements PreferenceControllerMixin {
+    private static class NoSecondaryUserController extends AbstractPreferenceController implements PreferenceControllerMixin {
         public NoSecondaryUserController(Context context) {
             super(context);
         }

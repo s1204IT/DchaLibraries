@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 /* loaded from: classes.dex */
 public class UserCredentialsSettings extends SettingsPreferenceFragment implements View.OnClickListener {
     private static final SparseArray<Credential.Type> credentialViewTypes = new SparseArray<>();
@@ -73,7 +74,6 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
         }
     }
 
-    /* loaded from: classes.dex */
     public static class CredentialDialogFragment extends InstrumentedDialogFragment {
         public static void show(Fragment fragment, Credential credential) {
             Bundle bundle = new Bundle();
@@ -89,20 +89,20 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
             final Credential credential = (Credential) getArguments().getParcelable("credential");
-            View inflate = getActivity().getLayoutInflater().inflate(R.layout.user_credential_dialog, (ViewGroup) null);
-            ViewGroup viewGroup = (ViewGroup) inflate.findViewById(R.id.credential_container);
+            View viewInflate = getActivity().getLayoutInflater().inflate(R.layout.user_credential_dialog, (ViewGroup) null);
+            ViewGroup viewGroup = (ViewGroup) viewInflate.findViewById(R.id.credential_container);
             viewGroup.addView(UserCredentialsSettings.getCredentialView(credential, R.layout.user_credential, null, viewGroup, true));
-            AlertDialog.Builder positiveButton = new AlertDialog.Builder(getActivity()).setView(inflate).setTitle(R.string.user_credential_title).setPositiveButton(R.string.done, (DialogInterface.OnClickListener) null);
-            final int myUserId = UserHandle.myUserId();
-            if (!RestrictedLockUtils.hasBaseUserRestriction(getContext(), "no_config_credentials", myUserId)) {
+            AlertDialog.Builder positiveButton = new AlertDialog.Builder(getActivity()).setView(viewInflate).setTitle(R.string.user_credential_title).setPositiveButton(R.string.done, (DialogInterface.OnClickListener) null);
+            final int iMyUserId = UserHandle.myUserId();
+            if (!RestrictedLockUtils.hasBaseUserRestriction(getContext(), "no_config_credentials", iMyUserId)) {
                 DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() { // from class: com.android.settings.UserCredentialsSettings.CredentialDialogFragment.1
                     @Override // android.content.DialogInterface.OnClickListener
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(CredentialDialogFragment.this.getContext(), "no_config_credentials", myUserId);
-                        if (checkIfRestrictionEnforced != null) {
-                            RestrictedLockUtils.sendShowAdminSupportDetailsIntent(CredentialDialogFragment.this.getContext(), checkIfRestrictionEnforced);
+                        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(CredentialDialogFragment.this.getContext(), "no_config_credentials", iMyUserId);
+                        if (enforcedAdminCheckIfRestrictionEnforced != null) {
+                            RestrictedLockUtils.sendShowAdminSupportDetailsIntent(CredentialDialogFragment.this.getContext(), enforcedAdminCheckIfRestrictionEnforced);
                         } else {
-                            new RemoveCredentialsTask(CredentialDialogFragment.this.getContext(), CredentialDialogFragment.this.getTargetFragment()).execute(credential);
+                            CredentialDialogFragment.this.new RemoveCredentialsTask(CredentialDialogFragment.this.getContext(), CredentialDialogFragment.this.getTargetFragment()).execute(credential);
                         }
                         dialogInterface.dismiss();
                     }
@@ -119,7 +119,6 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
             return 533;
         }
 
-        /* loaded from: classes.dex */
         private class RemoveCredentialsTask extends AsyncTask<Credential, Void, Credential[]> {
             private Context context;
             private Fragment targetFragment;
@@ -129,9 +128,9 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
                 this.targetFragment = fragment;
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public Credential[] doInBackground(Credential... credentialArr) {
+            protected Credential[] doInBackground(Credential... credentialArr) {
                 for (Credential credential : credentialArr) {
                     if (credential.isSystem()) {
                         removeGrantsAndDelete(credential);
@@ -144,24 +143,24 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
 
             private void removeGrantsAndDelete(Credential credential) {
                 try {
-                    KeyChain.KeyChainConnection bind = KeyChain.bind(CredentialDialogFragment.this.getContext());
+                    KeyChain.KeyChainConnection keyChainConnectionBind = KeyChain.bind(CredentialDialogFragment.this.getContext());
                     try {
                         try {
-                            bind.getService().removeKeyPair(credential.alias);
+                            keyChainConnectionBind.getService().removeKeyPair(credential.alias);
                         } catch (RemoteException e) {
                             Log.w("CredentialDialogFragment", "Removing credentials", e);
                         }
                     } finally {
-                        bind.close();
+                        keyChainConnectionBind.close();
                     }
                 } catch (InterruptedException e2) {
                     Log.w("CredentialDialogFragment", "Connecting to KeyChain", e2);
                 }
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(Credential... credentialArr) {
+            protected void onPostExecute(Credential... credentialArr) {
                 if ((this.targetFragment instanceof UserCredentialsSettings) && this.targetFragment.isAdded()) {
                     UserCredentialsSettings userCredentialsSettings = (UserCredentialsSettings) this.targetFragment;
                     for (Credential credential : credentialArr) {
@@ -173,19 +172,17 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AliasLoader extends AsyncTask<Void, Void, List<Credential>> {
+    private class AliasLoader extends AsyncTask<Void, Void, List<Credential>> {
         private AliasLoader() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public List<Credential> doInBackground(Void... voidArr) {
+        protected List<Credential> doInBackground(Void... voidArr) {
             KeyStore keyStore = KeyStore.getInstance();
-            int myUserId = UserHandle.myUserId();
-            int uid = UserHandle.getUid(myUserId, 1000);
-            int uid2 = UserHandle.getUid(myUserId, 1010);
+            int iMyUserId = UserHandle.myUserId();
+            int uid = UserHandle.getUid(iMyUserId, 1000);
+            int uid2 = UserHandle.getUid(iMyUserId, 1010);
             ArrayList arrayList = new ArrayList();
             arrayList.addAll(getCredentialsForUid(keyStore, uid).values());
             arrayList.addAll(getCredentialsForUid(keyStore, uid2).values());
@@ -209,11 +206,11 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
             KeyStore keyStore2 = keyStore;
             int i2 = i;
             TreeMap treeMap = new TreeMap();
-            Credential.Type[] values = Credential.Type.values();
-            int length = values.length;
+            Credential.Type[] typeArrValues = Credential.Type.values();
+            int length = typeArrValues.length;
             int i3 = 0;
             while (i3 < length) {
-                Credential.Type type = values[i3];
+                Credential.Type type = typeArrValues[i3];
                 String[] strArr = type.prefix;
                 int length2 = strArr.length;
                 int i4 = 0;
@@ -224,7 +221,7 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
                     int i5 = 0;
                     while (i5 < length3) {
                         String str2 = list[i5];
-                        Credential.Type[] typeArr = values;
+                        Credential.Type[] typeArr = typeArrValues;
                         if (UserHandle.getAppId(i) != 1000 || (!str2.startsWith("profile_key_name_encrypt_") && !str2.startsWith("profile_key_name_decrypt_") && !str2.startsWith("synthetic_password_"))) {
                             try {
                                 if (type == Credential.Type.USER_KEY) {
@@ -235,7 +232,7 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
                                         e = e;
                                         Log.e("UserCredentialsSettings", "Unable to determine algorithm of key: " + str + str2, e);
                                         i5++;
-                                        values = typeArr;
+                                        typeArrValues = typeArr;
                                         keyStore2 = keyStore;
                                         i2 = i;
                                     }
@@ -251,7 +248,7 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
                             }
                         }
                         i5++;
-                        values = typeArr;
+                        typeArrValues = typeArr;
                         keyStore2 = keyStore;
                         i2 = i;
                     }
@@ -266,14 +263,14 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
             return treeMap;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(List<Credential> list) {
+        protected void onPostExecute(List<Credential> list) {
             if (!UserCredentialsSettings.this.isAdded()) {
                 return;
             }
             if (list == null || list.size() == 0) {
-                TextView textView = (TextView) UserCredentialsSettings.this.getActivity().findViewById(16908292);
+                TextView textView = (TextView) UserCredentialsSettings.this.getActivity().findViewById(android.R.id.empty);
                 textView.setText(R.string.user_credential_none_installed);
                 UserCredentialsSettings.this.setEmptyView(textView);
             } else {
@@ -283,9 +280,7 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class CredentialAdapter extends RecyclerView.Adapter<ViewHolder> {
+    private static class CredentialAdapter extends RecyclerView.Adapter<ViewHolder> {
         private final List<Credential> mItems;
         private final View.OnClickListener mListener;
 
@@ -294,11 +289,13 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
             this.mListener = onClickListener;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
         @Override // android.support.v7.widget.RecyclerView.Adapter
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             return new ViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.user_credential_preference, viewGroup, false));
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
         @Override // android.support.v7.widget.RecyclerView.Adapter
         public void onBindViewHolder(ViewHolder viewHolder, int i) {
             UserCredentialsSettings.getCredentialView(this.mItems.get(i), R.layout.user_credential_preference, viewHolder.itemView, null, false);
@@ -312,9 +309,7 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    private static class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View view) {
             super(view);
         }
@@ -348,16 +343,16 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
         return view;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Credential implements Parcelable {
+    static class Credential implements Parcelable {
         public static final Parcelable.Creator<Credential> CREATOR = new Parcelable.Creator<Credential>() { // from class: com.android.settings.UserCredentialsSettings.Credential.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public Credential createFromParcel(Parcel parcel) {
                 return new Credential(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public Credential[] newArray(int i) {
@@ -368,13 +363,11 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
         final EnumSet<Type> storedTypes;
         final int uid;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        /* loaded from: classes.dex */
-        public enum Type {
+        enum Type {
             CA_CERTIFICATE("CACERT_"),
             USER_CERTIFICATE("USRCERT_"),
             USER_KEY("USRPKEY_", "USRSKEY_");
-            
+
             final String[] prefix;
 
             Type(String... strArr) {
@@ -390,10 +383,9 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
 
         Credential(Parcel parcel) {
             this(parcel.readString(), parcel.readInt());
-            Type[] values;
-            long readLong = parcel.readLong();
+            long j = parcel.readLong();
             for (Type type : Type.values()) {
-                if (((1 << type.ordinal()) & readLong) != 0) {
+                if (((1 << type.ordinal()) & j) != 0) {
                     this.storedTypes.add(type);
                 }
             }
@@ -404,11 +396,11 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
             parcel.writeString(this.alias);
             parcel.writeInt(this.uid);
             Iterator it = this.storedTypes.iterator();
-            long j = 0;
+            long jOrdinal = 0;
             while (it.hasNext()) {
-                j |= 1 << ((Type) it.next()).ordinal();
+                jOrdinal |= 1 << ((Type) it.next()).ordinal();
             }
-            parcel.writeLong(j);
+            parcel.writeLong(jOrdinal);
         }
 
         @Override // android.os.Parcelable

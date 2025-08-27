@@ -5,6 +5,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import android.util.Log;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeAlarmsPreferenceController extends AbstractZenModePreferenceController implements Preference.OnPreferenceChangeListener {
     public ZenModeAlarmsPreferenceController(Context context, Lifecycle lifecycle) {
@@ -29,26 +30,26 @@ public class ZenModeAlarmsPreferenceController extends AbstractZenModePreference
             case 2:
                 switchPreference.setEnabled(false);
                 switchPreference.setChecked(false);
-                return;
+                break;
             case 3:
                 switchPreference.setEnabled(false);
                 switchPreference.setChecked(true);
-                return;
+                break;
             default:
                 switchPreference.setEnabled(true);
                 switchPreference.setChecked(this.mBackend.isPriorityCategoryEnabled(32));
-                return;
+                break;
         }
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        boolean booleanValue = ((Boolean) obj).booleanValue();
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
         if (ZenModeSettingsBase.DEBUG) {
-            Log.d("PrefControllerMixin", "onPrefChange allowAlarms=" + booleanValue);
+            Log.d("PrefControllerMixin", "onPrefChange allowAlarms=" + zBooleanValue);
         }
-        this.mMetricsFeatureProvider.action(this.mContext, 1226, booleanValue);
-        this.mBackend.saveSoundPolicy(32, booleanValue);
+        this.mMetricsFeatureProvider.action(this.mContext, 1226, zBooleanValue);
+        this.mBackend.saveSoundPolicy(32, zBooleanValue);
         return true;
     }
 }

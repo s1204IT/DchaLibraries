@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.widget.ProgressBar;
 import com.android.settings.R;
 import com.android.settings.utils.FileSizeFormatter;
+
 /* loaded from: classes.dex */
 public class StorageItemPreference extends Preference {
     private ProgressBar mProgressBar;
@@ -45,7 +46,7 @@ public class StorageItemPreference extends Preference {
 
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
-        this.mProgressBar = (ProgressBar) preferenceViewHolder.findViewById(16908301);
+        this.mProgressBar = (ProgressBar) preferenceViewHolder.findViewById(android.R.id.progress);
         updateProgressBar();
         super.onBindViewHolder(preferenceViewHolder);
     }

@@ -5,6 +5,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import android.util.Log;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeMediaPreferenceController extends AbstractZenModePreferenceController implements Preference.OnPreferenceChangeListener {
     private final ZenModeBackend mBackend;
@@ -32,25 +33,25 @@ public class ZenModeMediaPreferenceController extends AbstractZenModePreferenceC
             case 2:
                 switchPreference.setEnabled(false);
                 switchPreference.setChecked(false);
-                return;
+                break;
             case 3:
                 switchPreference.setEnabled(false);
                 switchPreference.setChecked(true);
-                return;
+                break;
             default:
                 switchPreference.setEnabled(true);
                 switchPreference.setChecked(this.mBackend.isPriorityCategoryEnabled(64));
-                return;
+                break;
         }
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        boolean booleanValue = ((Boolean) obj).booleanValue();
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
         if (ZenModeSettingsBase.DEBUG) {
-            Log.d("PrefControllerMixin", "onPrefChange allowMedia=" + booleanValue);
+            Log.d("PrefControllerMixin", "onPrefChange allowMedia=" + zBooleanValue);
         }
-        this.mBackend.saveSoundPolicy(64, booleanValue);
+        this.mBackend.saveSoundPolicy(64, zBooleanValue);
         return true;
     }
 }

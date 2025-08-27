@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar;
 
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.RemoteException;
@@ -9,6 +10,7 @@ import android.util.Log;
 import com.android.systemui.Dependency;
 import com.android.systemui.statusbar.phone.NotificationListenerWithPlugins;
 import com.android.systemui.statusbar.phone.StatusBar;
+
 /* loaded from: classes.dex */
 public class NotificationListener extends NotificationListenerWithPlugins {
     private final Context mContext;
@@ -29,18 +31,18 @@ public class NotificationListener extends NotificationListenerWithPlugins {
         final StatusBarNotification[] activeNotifications = getActiveNotifications();
         if (activeNotifications == null) {
             Log.w("NotificationListener", "onListenerConnected unable to get active notifications.");
-            return;
+        } else {
+            final NotificationListenerService.RankingMap currentRanking = getCurrentRanking();
+            this.mPresenter.getHandler().post(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationListener$IqvG8K3BFQSXJ_G1S_U_QONW3G4
+                @Override // java.lang.Runnable
+                public final void run() throws PendingIntent.CanceledException {
+                    NotificationListener.lambda$onListenerConnected$0(this.f$0, activeNotifications, currentRanking);
+                }
+            });
         }
-        final NotificationListenerService.RankingMap currentRanking = getCurrentRanking();
-        this.mPresenter.getHandler().post(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationListener$IqvG8K3BFQSXJ_G1S_U_QONW3G4
-            @Override // java.lang.Runnable
-            public final void run() {
-                NotificationListener.lambda$onListenerConnected$0(NotificationListener.this, activeNotifications, currentRanking);
-            }
-        });
     }
 
-    public static /* synthetic */ void lambda$onListenerConnected$0(NotificationListener notificationListener, StatusBarNotification[] statusBarNotificationArr, NotificationListenerService.RankingMap rankingMap) {
+    public static /* synthetic */ void lambda$onListenerConnected$0(NotificationListener notificationListener, StatusBarNotification[] statusBarNotificationArr, NotificationListenerService.RankingMap rankingMap) throws PendingIntent.CanceledException {
         for (StatusBarNotification statusBarNotification : statusBarNotificationArr) {
             notificationListener.mEntryManager.addNotification(statusBarNotification, rankingMap);
         }
@@ -54,14 +56,14 @@ public class NotificationListener extends NotificationListenerWithPlugins {
         if (statusBarNotification != null && !onPluginNotificationPosted(statusBarNotification, rankingMap)) {
             this.mPresenter.getHandler().post(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationListener$NvFmU0XrVPuc5pizHcri9I0apkw
                 @Override // java.lang.Runnable
-                public final void run() {
-                    NotificationListener.lambda$onNotificationPosted$1(NotificationListener.this, statusBarNotification, rankingMap);
+                public final void run() throws PendingIntent.CanceledException {
+                    NotificationListener.lambda$onNotificationPosted$1(this.f$0, statusBarNotification, rankingMap);
                 }
             });
         }
     }
 
-    public static /* synthetic */ void lambda$onNotificationPosted$1(NotificationListener notificationListener, StatusBarNotification statusBarNotification, NotificationListenerService.RankingMap rankingMap) {
+    public static /* synthetic */ void lambda$onNotificationPosted$1(NotificationListener notificationListener, StatusBarNotification statusBarNotification, NotificationListenerService.RankingMap rankingMap) throws PendingIntent.CanceledException {
         RemoteInputController.processForRemoteInput(statusBarNotification.getNotification(), notificationListener.mContext);
         String key = statusBarNotification.getKey();
         notificationListener.mEntryManager.removeKeyKeptForRemoteInput(key);
@@ -81,7 +83,9 @@ public class NotificationListener extends NotificationListenerWithPlugins {
                 Log.d("NotificationListener", "onNotificationPosted, updateRanking: " + statusBarNotification);
             }
             notificationListener.mEntryManager.getNotificationData().updateRanking(rankingMap);
-        } else if (z) {
+            return;
+        }
+        if (z) {
             notificationListener.mEntryManager.updateNotification(statusBarNotification, rankingMap);
         } else {
             notificationListener.mEntryManager.addNotification(statusBarNotification, rankingMap);
@@ -98,7 +102,7 @@ public class NotificationListener extends NotificationListenerWithPlugins {
             this.mPresenter.getHandler().post(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationListener$15M-1M8BYwmsVSJz5K4jyc_ZHWo
                 @Override // java.lang.Runnable
                 public final void run() {
-                    NotificationListener.this.mEntryManager.removeNotification(key, rankingMap);
+                    this.f$0.mEntryManager.removeNotification(key, rankingMap);
                 }
             });
         }
@@ -110,11 +114,11 @@ public class NotificationListener extends NotificationListenerWithPlugins {
             Log.d("NotificationListener", "onRankingUpdate");
         }
         if (rankingMap != null) {
-            final NotificationListenerService.RankingMap onPluginRankingUpdate = onPluginRankingUpdate(rankingMap);
+            final NotificationListenerService.RankingMap rankingMapOnPluginRankingUpdate = onPluginRankingUpdate(rankingMap);
             this.mPresenter.getHandler().post(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationListener$MPB4hTnfgfJz099PViVIkkbEBIE
                 @Override // java.lang.Runnable
                 public final void run() {
-                    NotificationListener.this.mEntryManager.updateNotificationRanking(onPluginRankingUpdate);
+                    this.f$0.mEntryManager.updateNotificationRanking(rankingMapOnPluginRankingUpdate);
                 }
             });
         }

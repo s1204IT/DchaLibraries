@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.ArraySet;
-import android.view.View;
+import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +20,7 @@ import com.android.systemui.statusbar.phone.StatusBarSignalPolicy;
 import com.android.systemui.statusbar.policy.DarkIconDispatcher;
 import com.android.systemui.util.Utils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface StatusBarIconController {
     void addIconGroup(IconManager iconManager);
@@ -41,7 +42,6 @@ public interface StatusBarIconController {
     void setSignalIcon(String str, StatusBarSignalPolicy.WifiIconState wifiIconState);
 
     static ArraySet<String> getIconBlacklist(String str) {
-        String[] split;
         ArraySet<String> arraySet = new ArraySet<>();
         if (str == null) {
             str = "rotate,";
@@ -54,7 +54,6 @@ public interface StatusBarIconController {
         return arraySet;
     }
 
-    /* loaded from: classes.dex */
     public static class DarkIconManager extends IconManager {
         private final DarkIconDispatcher mDarkIconDispatcher;
         private int mIconHPadding;
@@ -99,9 +98,9 @@ public interface StatusBarIconController {
 
         @Override // com.android.systemui.statusbar.phone.StatusBarIconController.IconManager
         protected DemoStatusIcons createDemoStatusIcons() {
-            DemoStatusIcons createDemoStatusIcons = super.createDemoStatusIcons();
-            this.mDarkIconDispatcher.addDarkReceiver(createDemoStatusIcons);
-            return createDemoStatusIcons;
+            DemoStatusIcons demoStatusIconsCreateDemoStatusIcons = super.createDemoStatusIcons();
+            this.mDarkIconDispatcher.addDarkReceiver(demoStatusIconsCreateDemoStatusIcons);
+            return demoStatusIconsCreateDemoStatusIcons;
         }
 
         @Override // com.android.systemui.statusbar.phone.StatusBarIconController.IconManager
@@ -111,7 +110,6 @@ public interface StatusBarIconController {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class TintedIconManager extends IconManager {
         private int mColor;
 
@@ -119,18 +117,17 @@ public interface StatusBarIconController {
             super(viewGroup);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.android.systemui.statusbar.phone.StatusBarIconController.IconManager
-        public void onIconAdded(int i, String str, boolean z, StatusBarIconHolder statusBarIconHolder) {
-            StatusIconDisplayable addHolder = addHolder(i, str, z, statusBarIconHolder);
-            addHolder.setStaticDrawableColor(this.mColor);
-            addHolder.setDecorColor(this.mColor);
+        protected void onIconAdded(int i, String str, boolean z, StatusBarIconHolder statusBarIconHolder) {
+            StatusIconDisplayable statusIconDisplayableAddHolder = addHolder(i, str, z, statusBarIconHolder);
+            statusIconDisplayableAddHolder.setStaticDrawableColor(this.mColor);
+            statusIconDisplayableAddHolder.setDecorColor(this.mColor);
         }
 
         public void setTint(int i) {
             this.mColor = i;
             for (int i2 = 0; i2 < this.mGroup.getChildCount(); i2++) {
-                View childAt = this.mGroup.getChildAt(i2);
+                KeyEvent.Callback childAt = this.mGroup.getChildAt(i2);
                 if (childAt instanceof StatusIconDisplayable) {
                     StatusIconDisplayable statusIconDisplayable = (StatusIconDisplayable) childAt;
                     statusIconDisplayable.setStaticDrawableColor(this.mColor);
@@ -141,13 +138,12 @@ public interface StatusBarIconController {
 
         @Override // com.android.systemui.statusbar.phone.StatusBarIconController.IconManager
         protected DemoStatusIcons createDemoStatusIcons() {
-            DemoStatusIcons createDemoStatusIcons = super.createDemoStatusIcons();
-            createDemoStatusIcons.setColor(this.mColor);
-            return createDemoStatusIcons;
+            DemoStatusIcons demoStatusIconsCreateDemoStatusIcons = super.createDemoStatusIcons();
+            demoStatusIconsCreateDemoStatusIcons.setColor(this.mColor);
+            return demoStatusIconsCreateDemoStatusIcons;
         }
     }
 
-    /* loaded from: classes.dex */
     public static class IconManager implements DemoMode {
         protected final Context mContext;
         protected DemoStatusIcons mDemoStatusIcons;
@@ -160,7 +156,7 @@ public interface StatusBarIconController {
         public IconManager(ViewGroup viewGroup) {
             this.mGroup = viewGroup;
             this.mContext = viewGroup.getContext();
-            this.mIconSize = this.mContext.getResources().getDimensionPixelSize(17105312);
+            this.mIconSize = this.mContext.getResources().getDimensionPixelSize(android.R.dimen.indeterminate_progress_alpha_19);
             Utils.DisableStateTracker disableStateTracker = new Utils.DisableStateTracker(0, 2);
             this.mGroup.addOnAttachStateChangeListener(disableStateTracker);
             if (this.mGroup.isAttachedToWindow()) {
@@ -180,8 +176,7 @@ public interface StatusBarIconController {
             return this.mShouldLog;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public void onIconAdded(int i, String str, boolean z, StatusBarIconHolder statusBarIconHolder) {
+        protected void onIconAdded(int i, String str, boolean z, StatusBarIconHolder statusBarIconHolder) {
             addHolder(i, str, z, statusBarIconHolder);
         }
 
@@ -199,30 +194,30 @@ public interface StatusBarIconController {
         }
 
         protected StatusBarIconView addIcon(int i, String str, boolean z, StatusBarIcon statusBarIcon) {
-            StatusBarIconView onCreateStatusBarIconView = onCreateStatusBarIconView(str, z);
-            onCreateStatusBarIconView.set(statusBarIcon);
-            this.mGroup.addView(onCreateStatusBarIconView, i, onCreateLayoutParams());
-            return onCreateStatusBarIconView;
+            StatusBarIconView statusBarIconViewOnCreateStatusBarIconView = onCreateStatusBarIconView(str, z);
+            statusBarIconViewOnCreateStatusBarIconView.set(statusBarIcon);
+            this.mGroup.addView(statusBarIconViewOnCreateStatusBarIconView, i, onCreateLayoutParams());
+            return statusBarIconViewOnCreateStatusBarIconView;
         }
 
         protected StatusBarWifiView addSignalIcon(int i, String str, StatusBarSignalPolicy.WifiIconState wifiIconState) {
-            StatusBarWifiView onCreateStatusBarWifiView = onCreateStatusBarWifiView(str);
-            onCreateStatusBarWifiView.applyWifiState(wifiIconState);
-            this.mGroup.addView(onCreateStatusBarWifiView, i, onCreateLayoutParams());
+            StatusBarWifiView statusBarWifiViewOnCreateStatusBarWifiView = onCreateStatusBarWifiView(str);
+            statusBarWifiViewOnCreateStatusBarWifiView.applyWifiState(wifiIconState);
+            this.mGroup.addView(statusBarWifiViewOnCreateStatusBarWifiView, i, onCreateLayoutParams());
             if (this.mIsInDemoMode) {
                 this.mDemoStatusIcons.addDemoWifiView(wifiIconState);
             }
-            return onCreateStatusBarWifiView;
+            return statusBarWifiViewOnCreateStatusBarWifiView;
         }
 
         protected StatusBarMobileView addMobileIcon(int i, String str, StatusBarSignalPolicy.MobileIconState mobileIconState) {
-            StatusBarMobileView onCreateStatusBarMobileView = onCreateStatusBarMobileView(str);
-            onCreateStatusBarMobileView.applyMobileState(mobileIconState);
-            this.mGroup.addView(onCreateStatusBarMobileView, i, onCreateLayoutParams());
+            StatusBarMobileView statusBarMobileViewOnCreateStatusBarMobileView = onCreateStatusBarMobileView(str);
+            statusBarMobileViewOnCreateStatusBarMobileView.applyMobileState(mobileIconState);
+            this.mGroup.addView(statusBarMobileViewOnCreateStatusBarMobileView, i, onCreateLayoutParams());
             if (this.mIsInDemoMode) {
                 this.mDemoStatusIcons.addMobileView(mobileIconState);
             }
-            return onCreateStatusBarMobileView;
+            return statusBarMobileViewOnCreateStatusBarMobileView;
         }
 
         private StatusBarIconView onCreateStatusBarIconView(String str, boolean z) {
@@ -241,13 +236,11 @@ public interface StatusBarIconController {
             return new LinearLayout.LayoutParams(-2, this.mIconSize);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public void destroy() {
+        protected void destroy() {
             this.mGroup.removeAllViews();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public void onIconExternal(int i, int i2) {
+        protected void onIconExternal(int i, int i2) {
             ImageView imageView = (ImageView) this.mGroup.getChildAt(i);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             imageView.setAdjustViewBounds(true);
@@ -263,8 +256,7 @@ public interface StatusBarIconController {
             imageView.setLayoutParams(layoutParams);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public void onRemoveIcon(int i) {
+        protected void onRemoveIcon(int i) {
             if (this.mIsInDemoMode) {
                 this.mDemoStatusIcons.onRemoveIcon((StatusIconDisplayable) this.mGroup.getChildAt(i));
             }
@@ -279,15 +271,13 @@ public interface StatusBarIconController {
             switch (statusBarIconHolder.getType()) {
                 case 0:
                     onSetIcon(i, statusBarIconHolder.getIcon());
-                    return;
+                    break;
                 case 1:
                     onSetSignalIcon(i, statusBarIconHolder.getWifiState());
-                    return;
+                    break;
                 case 2:
                     onSetMobileIcon(i, statusBarIconHolder.getMobileState());
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
 

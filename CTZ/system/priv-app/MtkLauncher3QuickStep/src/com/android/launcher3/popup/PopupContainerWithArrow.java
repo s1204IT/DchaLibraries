@@ -4,6 +4,7 @@ import android.animation.AnimatorSet;
 import android.animation.LayoutTransition;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -45,9 +46,11 @@ import com.android.launcher3.touch.ItemLongClickListener;
 import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.launcher3.util.PackageUserKey;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 @TargetApi(24)
 /* loaded from: classes.dex */
 public class PopupContainerWithArrow extends ArrowPopup implements DragSource, DragController.DragListener, View.OnLongClickListener, View.OnTouchListener {
@@ -78,6 +81,7 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
         this(context, null, 0);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getAccessibilityDelegate()Landroid/view/View$AccessibilityDelegate; */
     @Override // android.view.View
     public LauncherAccessibilityDelegate getAccessibilityDelegate() {
         return this.mAccessibilityDelegate;
@@ -129,16 +133,16 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
             return null;
         }
         ItemInfo itemInfo = (ItemInfo) bubbleTextView.getTag();
-        if (DeepShortcutManager.supportsShortcuts(itemInfo)) {
-            PopupDataProvider popupDataProvider = launcher.getPopupDataProvider();
-            List<String> shortcutIdsForItem = popupDataProvider.getShortcutIdsForItem(itemInfo);
-            List<NotificationKeyData> notificationKeysForItem = popupDataProvider.getNotificationKeysForItem(itemInfo);
-            List<SystemShortcut> enabledSystemShortcutsForItem = popupDataProvider.getEnabledSystemShortcutsForItem(itemInfo);
-            PopupContainerWithArrow popupContainerWithArrow = (PopupContainerWithArrow) launcher.getLayoutInflater().inflate(R.layout.popup_container, (ViewGroup) launcher.getDragLayer(), false);
-            popupContainerWithArrow.populateAndShow(bubbleTextView, shortcutIdsForItem, notificationKeysForItem, enabledSystemShortcutsForItem);
-            return popupContainerWithArrow;
+        if (!DeepShortcutManager.supportsShortcuts(itemInfo)) {
+            return null;
         }
-        return null;
+        PopupDataProvider popupDataProvider = launcher.getPopupDataProvider();
+        List<String> shortcutIdsForItem = popupDataProvider.getShortcutIdsForItem(itemInfo);
+        List<NotificationKeyData> notificationKeysForItem = popupDataProvider.getNotificationKeysForItem(itemInfo);
+        List<SystemShortcut> enabledSystemShortcutsForItem = popupDataProvider.getEnabledSystemShortcutsForItem(itemInfo);
+        PopupContainerWithArrow popupContainerWithArrow = (PopupContainerWithArrow) launcher.getLayoutInflater().inflate(R.layout.popup_container, (ViewGroup) launcher.getDragLayer(), false);
+        popupContainerWithArrow.populateAndShow(bubbleTextView, shortcutIdsForItem, notificationKeysForItem, enabledSystemShortcutsForItem);
+        return popupContainerWithArrow;
     }
 
     @Override // com.android.launcher3.popup.ArrowPopup
@@ -162,7 +166,7 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
     }
 
     @TargetApi(28)
-    private void populateAndShow(BubbleTextView bubbleTextView, List<String> list, List<NotificationKeyData> list2, List<SystemShortcut> list3) {
+    private void populateAndShow(BubbleTextView bubbleTextView, List<String> list, List<NotificationKeyData> list2, List<SystemShortcut> list3) throws Resources.NotFoundException {
         this.mNumNotifications = list2.size();
         this.mOriginalIcon = bubbleTextView;
         if (this.mNumNotifications > 0) {
@@ -185,16 +189,18 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
             updateHiddenShortcuts();
             if (!list3.isEmpty()) {
                 this.mSystemShortcutContainer = (ViewGroup) inflateAndAdd(R.layout.system_shortcut_icons, this);
-                for (SystemShortcut systemShortcut : list3) {
-                    initializeSystemShortcut(R.layout.system_shortcut_icon_only, this.mSystemShortcutContainer, systemShortcut);
+                Iterator<SystemShortcut> it = list3.iterator();
+                while (it.hasNext()) {
+                    initializeSystemShortcut(R.layout.system_shortcut_icon_only, this.mSystemShortcutContainer, it.next());
                 }
             }
         } else if (!list3.isEmpty()) {
             if (this.mNotificationItemView != null) {
                 this.mNotificationItemView.addGutter();
             }
-            for (SystemShortcut systemShortcut2 : list3) {
-                initializeSystemShortcut(R.layout.system_shortcut, this, systemShortcut2);
+            Iterator<SystemShortcut> it2 = list3.iterator();
+            while (it2.hasNext()) {
+                initializeSystemShortcut(R.layout.system_shortcut, this, it2.next());
             }
         }
         reorderAndShow(childCount);
@@ -244,25 +250,25 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
         this.mNotificationItemView.applyNotificationInfos(list);
     }
 
-    private void updateHiddenShortcuts() {
-        int i;
-        int i2 = this.mNotificationItemView != null ? 2 : 4;
-        int dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.bg_popup_item_height);
+    private void updateHiddenShortcuts() throws Resources.NotFoundException {
+        int dimensionPixelSize;
+        int i = this.mNotificationItemView != null ? 2 : 4;
+        int dimensionPixelSize2 = getResources().getDimensionPixelSize(R.dimen.bg_popup_item_height);
         if (this.mNotificationItemView != null) {
-            i = getResources().getDimensionPixelSize(R.dimen.bg_popup_item_condensed_height);
+            dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.bg_popup_item_condensed_height);
         } else {
-            i = dimensionPixelSize;
+            dimensionPixelSize = dimensionPixelSize2;
         }
-        float f = i / dimensionPixelSize;
+        float f = dimensionPixelSize / dimensionPixelSize2;
         int size = this.mShortcuts.size();
-        int i3 = 0;
-        while (i3 < size) {
-            DeepShortcutView deepShortcutView = this.mShortcuts.get(i3);
-            deepShortcutView.setVisibility(i3 >= i2 ? 8 : 0);
-            deepShortcutView.getLayoutParams().height = i;
+        int i2 = 0;
+        while (i2 < size) {
+            DeepShortcutView deepShortcutView = this.mShortcuts.get(i2);
+            deepShortcutView.setVisibility(i2 >= i ? 8 : 0);
+            deepShortcutView.getLayoutParams().height = dimensionPixelSize;
             deepShortcutView.getIconView().setScaleX(f);
             deepShortcutView.getIconView().setScaleY(f);
-            i3++;
+            i2++;
         }
     }
 
@@ -282,60 +288,102 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.AbstractFloatingView
-    public void onWidgetsBound() {
-        View view;
+    protected void onWidgetsBound() {
+        View childAt;
+        ItemInfo itemInfo = (ItemInfo) this.mOriginalIcon.getTag();
         SystemShortcut.Widgets widgets = new SystemShortcut.Widgets();
-        View.OnClickListener onClickListener = widgets.getOnClickListener((SystemShortcut.Widgets) this.mLauncher, (ItemInfo) this.mOriginalIcon.getTag());
+        View.OnClickListener onClickListener = widgets.getOnClickListener((SystemShortcut.Widgets) this.mLauncher, itemInfo);
         int childCount = this.mSystemShortcutContainer.getChildCount();
         int i = 0;
         while (true) {
             if (i < childCount) {
-                view = this.mSystemShortcutContainer.getChildAt(i);
-                if (view.getTag() instanceof SystemShortcut.Widgets) {
+                childAt = this.mSystemShortcutContainer.getChildAt(i);
+                if (childAt.getTag() instanceof SystemShortcut.Widgets) {
                     break;
+                } else {
+                    i++;
                 }
-                i++;
             } else {
-                view = null;
+                childAt = null;
                 break;
             }
         }
-        if (onClickListener != null && view == null) {
+        if (onClickListener != null && childAt == null) {
             if (this.mSystemShortcutContainer != this) {
                 initializeSystemShortcut(R.layout.system_shortcut_icon_only, this.mSystemShortcutContainer, widgets);
                 return;
-            }
-            close(false);
-            showForIcon(this.mOriginalIcon);
-        } else if (onClickListener == null && view != null) {
-            if (this.mSystemShortcutContainer != this) {
-                this.mSystemShortcutContainer.removeView(view);
+            } else {
+                close(false);
+                showForIcon(this.mOriginalIcon);
                 return;
             }
-            close(false);
-            showForIcon(this.mOriginalIcon);
+        }
+        if (onClickListener == null && childAt != null) {
+            if (this.mSystemShortcutContainer != this) {
+                this.mSystemShortcutContainer.removeView(childAt);
+            } else {
+                close(false);
+                showForIcon(this.mOriginalIcon);
+            }
         }
     }
 
     private void initializeSystemShortcut(int i, ViewGroup viewGroup, SystemShortcut systemShortcut) {
-        View inflateAndAdd = inflateAndAdd(i, viewGroup);
-        if (inflateAndAdd instanceof DeepShortcutView) {
-            DeepShortcutView deepShortcutView = (DeepShortcutView) inflateAndAdd;
+        View viewInflateAndAdd = inflateAndAdd(i, viewGroup);
+        if (viewInflateAndAdd instanceof DeepShortcutView) {
+            DeepShortcutView deepShortcutView = (DeepShortcutView) viewInflateAndAdd;
             deepShortcutView.getIconView().setBackgroundResource(systemShortcut.iconResId);
             deepShortcutView.getBubbleText().setText(systemShortcut.labelResId);
-        } else if (inflateAndAdd instanceof ImageView) {
-            ImageView imageView = (ImageView) inflateAndAdd;
+        } else if (viewInflateAndAdd instanceof ImageView) {
+            ImageView imageView = (ImageView) viewInflateAndAdd;
             imageView.setImageResource(systemShortcut.iconResId);
             imageView.setContentDescription(getContext().getText(systemShortcut.labelResId));
         }
-        inflateAndAdd.setTag(systemShortcut);
-        inflateAndAdd.setOnClickListener(systemShortcut.getOnClickListener(this.mLauncher, (ItemInfo) this.mOriginalIcon.getTag()));
+        viewInflateAndAdd.setTag(systemShortcut);
+        viewInflateAndAdd.setOnClickListener(systemShortcut.getOnClickListener(this.mLauncher, (ItemInfo) this.mOriginalIcon.getTag()));
+    }
+
+    /* renamed from: com.android.launcher3.popup.PopupContainerWithArrow$1 */
+    class AnonymousClass1 implements DragOptions.PreDragCondition {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.launcher3.dragndrop.DragOptions.PreDragCondition
+        public boolean shouldStartDrag(double d) {
+            return d > ((double) PopupContainerWithArrow.this.mStartDragThreshold);
+        }
+
+        @Override // com.android.launcher3.dragndrop.DragOptions.PreDragCondition
+        public void onPreDragStart(DropTarget.DragObject dragObject) {
+            if (PopupContainerWithArrow.this.mIsAboveIcon) {
+                PopupContainerWithArrow.this.mOriginalIcon.setIconVisible(false);
+                PopupContainerWithArrow.this.mOriginalIcon.setVisibility(0);
+            } else {
+                PopupContainerWithArrow.this.mOriginalIcon.setVisibility(4);
+            }
+        }
+
+        @Override // com.android.launcher3.dragndrop.DragOptions.PreDragCondition
+        public void onPreDragEnd(DropTarget.DragObject dragObject, boolean z) {
+            PopupContainerWithArrow.this.mOriginalIcon.setIconVisible(true);
+            if (z) {
+                PopupContainerWithArrow.this.mOriginalIcon.setVisibility(4);
+                return;
+            }
+            PopupContainerWithArrow.this.mLauncher.getUserEventDispatcher().logDeepShortcutsOpen(PopupContainerWithArrow.this.mOriginalIcon);
+            if (!PopupContainerWithArrow.this.mIsAboveIcon) {
+                PopupContainerWithArrow.this.mOriginalIcon.setVisibility(0);
+                PopupContainerWithArrow.this.mOriginalIcon.setTextVisibility(false);
+            }
+        }
     }
 
     public DragOptions.PreDragCondition createPreDragCondition() {
         return new DragOptions.PreDragCondition() { // from class: com.android.launcher3.popup.PopupContainerWithArrow.1
+            AnonymousClass1() {
+            }
+
             @Override // com.android.launcher3.dragndrop.DragOptions.PreDragCondition
             public boolean shouldStartDrag(double d) {
                 return d > ((double) PopupContainerWithArrow.this.mStartDragThreshold);
@@ -346,9 +394,9 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
                 if (PopupContainerWithArrow.this.mIsAboveIcon) {
                     PopupContainerWithArrow.this.mOriginalIcon.setIconVisible(false);
                     PopupContainerWithArrow.this.mOriginalIcon.setVisibility(0);
-                    return;
+                } else {
+                    PopupContainerWithArrow.this.mOriginalIcon.setVisibility(4);
                 }
-                PopupContainerWithArrow.this.mOriginalIcon.setVisibility(4);
             }
 
             @Override // com.android.launcher3.dragndrop.DragOptions.PreDragCondition
@@ -381,7 +429,7 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
         }
     }
 
-    public void trimNotifications(Map<PackageUserKey, BadgeInfo> map) {
+    public void trimNotifications(Map<PackageUserKey, BadgeInfo> map) throws Resources.NotFoundException {
         if (this.mNotificationItemView == null) {
             return;
         }
@@ -434,9 +482,8 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
         this.mOriginalIcon.forceHideBadge(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.popup.ArrowPopup
-    public void closeComplete() {
+    protected void closeComplete() {
         super.closeComplete();
         this.mOriginalIcon.setTextVisibility(this.mOriginalIcon.shouldTextBeVisible());
         this.mOriginalIcon.forceHideBadge(false);
@@ -454,16 +501,16 @@ public class PopupContainerWithArrow extends ArrowPopup implements DragSource, D
 
     @Override // android.view.View.OnLongClickListener
     public boolean onLongClick(View view) {
-        if (ItemLongClickListener.canStartDrag(this.mLauncher) && (view.getParent() instanceof DeepShortcutView)) {
-            DeepShortcutView deepShortcutView = (DeepShortcutView) view.getParent();
-            deepShortcutView.setWillDrawIcon(false);
-            Point point = new Point();
-            point.x = this.mIconLastTouchPos.x - deepShortcutView.getIconCenter().x;
-            point.y = this.mIconLastTouchPos.y - this.mLauncher.getDeviceProfile().iconSizePx;
-            this.mLauncher.getWorkspace().beginDragShared(deepShortcutView.getIconView(), this, deepShortcutView.getFinalInfo(), new ShortcutDragPreviewProvider(deepShortcutView.getIconView(), point), new DragOptions()).animateShift(-point.x, -point.y);
-            AbstractFloatingView.closeOpenContainer(this.mLauncher, 1);
+        if (!ItemLongClickListener.canStartDrag(this.mLauncher) || !(view.getParent() instanceof DeepShortcutView)) {
             return false;
         }
+        DeepShortcutView deepShortcutView = (DeepShortcutView) view.getParent();
+        deepShortcutView.setWillDrawIcon(false);
+        Point point = new Point();
+        point.x = this.mIconLastTouchPos.x - deepShortcutView.getIconCenter().x;
+        point.y = this.mIconLastTouchPos.y - this.mLauncher.getDeviceProfile().iconSizePx;
+        this.mLauncher.getWorkspace().beginDragShared(deepShortcutView.getIconView(), this, deepShortcutView.getFinalInfo(), new ShortcutDragPreviewProvider(deepShortcutView.getIconView(), point), new DragOptions()).animateShift(-point.x, -point.y);
+        AbstractFloatingView.closeOpenContainer(this.mLauncher, 1);
         return false;
     }
 

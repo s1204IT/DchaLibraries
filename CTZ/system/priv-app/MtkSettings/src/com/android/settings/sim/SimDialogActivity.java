@@ -33,6 +33,7 @@ import com.mediatek.settings.sim.SimHotSwapHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+
 /* loaded from: classes.dex */
 public class SimDialogActivity extends Activity {
     private static ISimManagementExt mSimManagementExt;
@@ -54,8 +55,7 @@ public class SimDialogActivity extends Activity {
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            String str = SimDialogActivity.TAG;
-            Log.d(str, "onReceive, action=" + action);
+            Log.d(SimDialogActivity.TAG, "onReceive, action=" + action);
             SimDialogActivity.this.dismissSimDialog();
             SimDialogActivity.this.finish();
         }
@@ -67,8 +67,7 @@ public class SimDialogActivity extends Activity {
         setSimStateCheck();
         mSimManagementExt = UtilsExt.getSimManagementExt(getApplicationContext());
         int intExtra = getIntent().getIntExtra(DIALOG_TYPE_KEY, -1);
-        String str = TAG;
-        Log.d(str, "onCreate, dialogType=" + intExtra);
+        Log.d(TAG, "onCreate, dialogType=" + intExtra);
         showSimDialog(intExtra);
     }
 
@@ -82,8 +81,7 @@ public class SimDialogActivity extends Activity {
                 }
                 this.mDialog = createDialog(this, i);
                 this.mDialog.show();
-                String str = TAG;
-                Log.d(str, "show selection dialog=" + this.mDialog);
+                Log.d(TAG, "show selection dialog=" + this.mDialog);
                 return;
             case 3:
                 List<SubscriptionInfo> activeSubscriptionInfoList = SubscriptionManager.from(this).getActiveSubscriptionInfoList();
@@ -91,9 +89,10 @@ public class SimDialogActivity extends Activity {
                     Log.w(TAG, "Subscription count is not 1, skip preferred SIM dialog");
                     finish();
                     return;
+                } else {
+                    displayPreferredDialog(getIntent().getIntExtra(PREFERRED_SIM, 0));
+                    return;
                 }
-                displayPreferredDialog(getIntent().getIntExtra(PREFERRED_SIM, 0));
-                return;
             default:
                 throw new IllegalArgumentException("Invalid dialog type " + i + " sent.");
         }
@@ -111,10 +110,10 @@ public class SimDialogActivity extends Activity {
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i2) {
                     int subscriptionId = activeSubscriptionInfoForSimSlotIndex.getSubscriptionId();
-                    PhoneAccountHandle subscriptionIdToPhoneAccountHandle = SimDialogActivity.this.subscriptionIdToPhoneAccountHandle(subscriptionId);
+                    PhoneAccountHandle phoneAccountHandleSubscriptionIdToPhoneAccountHandle = SimDialogActivity.this.subscriptionIdToPhoneAccountHandle(subscriptionId);
                     SimDialogActivity.this.setDefaultDataSubId(applicationContext, subscriptionId);
                     SimDialogActivity.setDefaultSmsSubId(applicationContext, subscriptionId);
-                    SimDialogActivity.this.setUserSelectedOutgoingPhoneAccount(subscriptionIdToPhoneAccountHandle);
+                    SimDialogActivity.this.setUserSelectedOutgoingPhoneAccount(phoneAccountHandleSubscriptionIdToPhoneAccountHandle);
                     SimDialogActivity.this.dismissSimDialog();
                     SimDialogActivity.this.finish();
                 }
@@ -134,51 +133,41 @@ public class SimDialogActivity extends Activity {
             });
             this.mDialog = builder.create();
             this.mDialog.show();
-            String str = TAG;
-            Log.d(str, "show preferred dialog=" + this.mDialog);
+            Log.d(TAG, "show preferred dialog=" + this.mDialog);
             return;
         }
         finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setDefaultDataSubId(Context context, int i) {
-        String str = TAG;
-        Log.d(str, "setDefaultDataSubId, sub=" + i);
-        SubscriptionManager from = SubscriptionManager.from(context);
+    private void setDefaultDataSubId(Context context, int i) {
+        Log.d(TAG, "setDefaultDataSubId, sub=" + i);
+        SubscriptionManager subscriptionManagerFrom = SubscriptionManager.from(context);
         mSimManagementExt.setDataState(i);
-        from.setDefaultDataSubId(i);
+        subscriptionManagerFrom.setDefaultDataSubId(i);
         mSimManagementExt.setDataStateEnable(i);
         this.mNewDataSubId = i;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void setDefaultSmsSubId(Context context, int i) {
-        String str = TAG;
-        Log.d(str, "setDefaultSmsSubId, sub=" + i);
+    private static void setDefaultSmsSubId(Context context, int i) {
+        Log.d(TAG, "setDefaultSmsSubId, sub=" + i);
         SubscriptionManager.from(context).setDefaultSmsSubId(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setUserSelectedOutgoingPhoneAccount(PhoneAccountHandle phoneAccountHandle) {
-        String str = TAG;
-        Log.d(str, "setUserSelectedOutgoingPhoneAccount, phoneAccount=" + phoneAccountHandle);
+    private void setUserSelectedOutgoingPhoneAccount(PhoneAccountHandle phoneAccountHandle) {
+        Log.d(TAG, "setUserSelectedOutgoingPhoneAccount, phoneAccount=" + phoneAccountHandle);
         TelecomManager.from(this).setUserSelectedOutgoingPhoneAccount(phoneAccountHandle);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public PhoneAccountHandle subscriptionIdToPhoneAccountHandle(int i) {
-        TelecomManager from = TelecomManager.from(this);
-        TelephonyManager from2 = TelephonyManager.from(this);
-        ListIterator<PhoneAccountHandle> listIterator = from.getCallCapablePhoneAccounts().listIterator();
-        String str = TAG;
-        Log.d(str, "Match phone account, subId=" + i + ", phone account list exist=" + listIterator.hasNext());
+    private PhoneAccountHandle subscriptionIdToPhoneAccountHandle(int i) {
+        TelecomManager telecomManagerFrom = TelecomManager.from(this);
+        TelephonyManager telephonyManagerFrom = TelephonyManager.from(this);
+        ListIterator<PhoneAccountHandle> listIterator = telecomManagerFrom.getCallCapablePhoneAccounts().listIterator();
+        Log.d(TAG, "Match phone account, subId=" + i + ", phone account list exist=" + listIterator.hasNext());
         while (listIterator.hasNext()) {
             PhoneAccountHandle next = listIterator.next();
-            PhoneAccount phoneAccount = from.getPhoneAccount(next);
-            int subIdForPhoneAccount = from2.getSubIdForPhoneAccount(phoneAccount);
-            String str2 = TAG;
-            Log.d(str2, "Match phone account, phoneAccountSubId=" + subIdForPhoneAccount + ", phoneAccount=" + phoneAccount);
+            PhoneAccount phoneAccount = telecomManagerFrom.getPhoneAccount(next);
+            int subIdForPhoneAccount = telephonyManagerFrom.getSubIdForPhoneAccount(phoneAccount);
+            Log.d(TAG, "Match phone account, phoneAccountSubId=" + subIdForPhoneAccount + ", phoneAccount=" + phoneAccount);
             if (i == subIdForPhoneAccount) {
                 return next;
             }
@@ -218,14 +207,13 @@ public class SimDialogActivity extends Activity {
                             break;
                         } else {
                             int defaultDataSubscriptionId = SubscriptionManager.getDefaultDataSubscriptionId();
-                            String str = SimDialogActivity.TAG;
-                            Log.d(str, "currnt default subId=" + defaultDataSubscriptionId + ", targetId=" + subscriptionId);
+                            Log.d(SimDialogActivity.TAG, "currnt default subId=" + defaultDataSubscriptionId + ", targetId=" + subscriptionId);
                             if (defaultDataSubscriptionId != subscriptionId) {
                                 if (!TelecomManager.from(context).isInCall()) {
                                     SimDialogActivity.this.setDefaultDataSubId(context, subscriptionId);
                                     break;
                                 } else {
-                                    Toast.makeText(context, (int) R.string.default_data_switch_err_msg1, 0).show();
+                                    Toast.makeText(context, R.string.default_data_switch_err_msg1, 0).show();
                                     break;
                                 }
                             }
@@ -233,11 +221,9 @@ public class SimDialogActivity extends Activity {
                         break;
                     case 1:
                         List<PhoneAccountHandle> callCapablePhoneAccounts = TelecomManager.from(context).getCallCapablePhoneAccounts();
-                        String str2 = SimDialogActivity.TAG;
-                        Log.d(str2, "value=" + i2 + ", phoneAccountsList=" + callCapablePhoneAccounts);
+                        Log.d(SimDialogActivity.TAG, "value=" + i2 + ", phoneAccountsList=" + callCapablePhoneAccounts);
                         if (i2 > callCapablePhoneAccounts.size()) {
-                            String str3 = SimDialogActivity.TAG;
-                            Log.w(str3, "phone account changed, do noting. value=" + i2 + ", phone account size=" + callCapablePhoneAccounts.size());
+                            Log.w(SimDialogActivity.TAG, "phone account changed, do noting. value=" + i2 + ", phone account size=" + callCapablePhoneAccounts.size());
                             break;
                         } else {
                             SimDialogActivity.this.setUserSelectedOutgoingPhoneAccount(i2 < 1 ? null : callCapablePhoneAccounts.get(i2 - 1));
@@ -278,45 +264,44 @@ public class SimDialogActivity extends Activity {
                 }
             }
         } else {
-            TelecomManager from = TelecomManager.from(context);
-            TelephonyManager from2 = TelephonyManager.from(context);
-            ListIterator<PhoneAccountHandle> listIterator = from.getCallCapablePhoneAccounts().listIterator();
-            int size2 = from.getCallCapablePhoneAccounts().size();
+            TelecomManager telecomManagerFrom = TelecomManager.from(context);
+            TelephonyManager telephonyManagerFrom = TelephonyManager.from(context);
+            ListIterator<PhoneAccountHandle> listIterator = telecomManagerFrom.getCallCapablePhoneAccounts().listIterator();
+            int size2 = telecomManagerFrom.getCallCapablePhoneAccounts().size();
             mSimManagementExt.updateList(arrayList, arrayList2, size2);
-            String str = TAG;
-            Log.d(str, "phone account size=" + size2);
+            Log.d(TAG, "phone account size=" + size2);
             if (size2 > 1) {
                 arrayList.add(getResources().getString(R.string.sim_calls_ask_first_prefs_title));
                 arrayList2.add(null);
             }
             while (listIterator.hasNext()) {
-                PhoneAccount phoneAccount = from.getPhoneAccount(listIterator.next());
+                PhoneAccount phoneAccount = telecomManagerFrom.getPhoneAccount(listIterator.next());
                 if (phoneAccount == null) {
                     Log.d(TAG, "phoneAccount is null");
                 } else {
                     arrayList.add((String) phoneAccount.getLabel());
-                    int subIdForPhoneAccount = from2.getSubIdForPhoneAccount(phoneAccount);
-                    String str2 = TAG;
+                    int subIdForPhoneAccount = telephonyManagerFrom.getSubIdForPhoneAccount(phoneAccount);
+                    String str = TAG;
                     StringBuilder sb = new StringBuilder();
-                    TelecomManager telecomManager = from;
+                    TelecomManager telecomManager = telecomManagerFrom;
                     sb.append("phoneAccount label=");
                     sb.append((Object) phoneAccount.getLabel());
                     sb.append(", subId=");
                     sb.append(subIdForPhoneAccount);
-                    Log.d(str2, sb.toString());
+                    Log.d(str, sb.toString());
                     if (subIdForPhoneAccount != -1) {
                         arrayList2.add(SubscriptionManager.from(context).getActiveSubscriptionInfo(subIdForPhoneAccount));
                     } else {
                         arrayList2.add(null);
                     }
-                    from = telecomManager;
+                    telecomManagerFrom = telecomManager;
                 }
             }
-            String str3 = TAG;
-            Log.d(str3, "callsSubInfoList=" + arrayList2 + ", list=" + arrayList);
+            Log.d(TAG, "callsSubInfoList=" + arrayList2 + ", list=" + arrayList);
         }
+        String[] strArr = (String[]) arrayList.toArray(new String[0]);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        SelectAccountListAdapter selectAccountListAdapter = new SelectAccountListAdapter(getAdapterData(i, activeSubscriptionInfoList, arrayList2, arrayList3), builder.getContext(), R.layout.select_account_list_item, (String[]) arrayList.toArray(new String[0]), i);
+        SelectAccountListAdapter selectAccountListAdapter = new SelectAccountListAdapter(getAdapterData(i, activeSubscriptionInfoList, arrayList2, arrayList3), builder.getContext(), R.layout.select_account_list_item, strArr, i);
         switch (i) {
             case 0:
                 builder.setTitle(R.string.select_sim_for_data);
@@ -330,20 +315,18 @@ public class SimDialogActivity extends Activity {
             default:
                 throw new IllegalArgumentException("Invalid dialog type " + i + " in SIM dialog.");
         }
-        AlertDialog create = builder.setAdapter(selectAccountListAdapter, onClickListener).create();
-        create.setOnKeyListener(onKeyListener);
-        create.setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.settings.sim.SimDialogActivity.8
+        AlertDialog alertDialogCreate = builder.setAdapter(selectAccountListAdapter, onClickListener).create();
+        alertDialogCreate.setOnKeyListener(onKeyListener);
+        alertDialogCreate.setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.settings.sim.SimDialogActivity.8
             @Override // android.content.DialogInterface.OnCancelListener
             public void onCancel(DialogInterface dialogInterface) {
                 SimDialogActivity.this.finish();
             }
         });
-        return create;
+        return alertDialogCreate;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SelectAccountListAdapter extends ArrayAdapter<String> {
+    private class SelectAccountListAdapter extends ArrayAdapter<String> {
         private final float OPACITY;
         private Context mContext;
         private int mDialogId;
@@ -360,7 +343,7 @@ public class SimDialogActivity extends Activity {
         }
 
         @Override // android.widget.ArrayAdapter, android.widget.Adapter
-        public View getView(int i, View view, ViewGroup viewGroup) {
+        public View getView(int i, View view, ViewGroup viewGroup) throws Resources.NotFoundException {
             ViewHolder viewHolder;
             LayoutInflater layoutInflater = (LayoutInflater) this.mContext.getSystemService("layout_inflater");
             if (view == null) {
@@ -394,9 +377,7 @@ public class SimDialogActivity extends Activity {
             return view;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class ViewHolder {
+        private class ViewHolder {
             ImageView icon;
             TextView summary;
             TextView title;
@@ -405,17 +386,19 @@ public class SimDialogActivity extends Activity {
             }
         }
 
-        private void setPhoneAccountIcon(ViewHolder viewHolder, int i) {
+        private void setPhoneAccountIcon(ViewHolder viewHolder, int i) throws Resources.NotFoundException {
             Log.d(SimDialogActivity.TAG, "setPhoneAccountIcon, location=" + i);
-            TelecomManager from = TelecomManager.from(this.mContext);
-            List<PhoneAccountHandle> callCapablePhoneAccounts = from.getCallCapablePhoneAccounts();
-            if (!SimDialogActivity.this.getResources().getString(R.string.sim_calls_ask_first_prefs_title).equals(getItem(i))) {
+            String string = SimDialogActivity.this.getResources().getString(R.string.sim_calls_ask_first_prefs_title);
+            String item = getItem(i);
+            TelecomManager telecomManagerFrom = TelecomManager.from(this.mContext);
+            List<PhoneAccountHandle> callCapablePhoneAccounts = telecomManagerFrom.getCallCapablePhoneAccounts();
+            if (!string.equals(item)) {
                 if (callCapablePhoneAccounts.size() > 1) {
                     i--;
                 }
                 PhoneAccount phoneAccount = null;
                 if (i >= 0 && i < callCapablePhoneAccounts.size()) {
-                    phoneAccount = from.getPhoneAccount(callCapablePhoneAccounts.get(i));
+                    phoneAccount = telecomManagerFrom.getPhoneAccount(callCapablePhoneAccounts.get(i));
                 }
                 Log.d(SimDialogActivity.TAG, "setPhoneAccountIcon(), location=" + i + ", account=" + phoneAccount);
                 if (phoneAccount != null && phoneAccount.getIcon() != null) {
@@ -443,8 +426,7 @@ public class SimDialogActivity extends Activity {
     @Override // android.app.Activity
     protected void onNewIntent(Intent intent) {
         int intExtra = intent.getIntExtra(DIALOG_TYPE_KEY, -1);
-        String str = TAG;
-        Log.d(str, "onNewIntent, dialogType=" + intExtra);
+        Log.d(TAG, "onNewIntent, dialogType=" + intExtra);
         setIntent(intent);
         if (this.mDialog != null && this.mDialog.isShowing()) {
             this.mDialog.setOnCancelListener(null);
@@ -465,30 +447,28 @@ public class SimDialogActivity extends Activity {
         unsetSimStateCheck();
         dismissSimDialog();
         if (this.mNewDataSubId != -1) {
-            Toast.makeText(this, (int) R.string.data_switch_started, 1).show();
+            Toast.makeText(this, R.string.data_switch_started, 1).show();
         }
         super.onDestroy();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int getPickSmsDefaultSub(List<SubscriptionInfo> list, int i) {
-        int i2;
+    private int getPickSmsDefaultSub(List<SubscriptionInfo> list, int i) {
+        int subscriptionId;
         if (i >= 1) {
             if (i >= 1 && i < list.size() + 1) {
-                i2 = list.get(i - 1).getSubscriptionId();
+                subscriptionId = list.get(i - 1).getSubscriptionId();
             } else {
-                i2 = -1;
+                subscriptionId = -1;
             }
         } else {
             if ((list == null ? 0 : list.size()) == 1) {
-                i2 = list.get(i).getSubscriptionId();
+                subscriptionId = list.get(i).getSubscriptionId();
             } else {
-                i2 = -2;
+                subscriptionId = -2;
             }
         }
-        int defaultSmsClickContentExt = mSimManagementExt.getDefaultSmsClickContentExt(list, i, i2);
-        String str = TAG;
-        Log.d(str, "getPickSmsDefaultSub, value=" + i + ", subId=" + defaultSmsClickContentExt);
+        int defaultSmsClickContentExt = mSimManagementExt.getDefaultSmsClickContentExt(list, i, subscriptionId);
+        Log.d(TAG, "getPickSmsDefaultSub, value=" + i + ", subId=" + defaultSmsClickContentExt);
         return defaultSmsClickContentExt;
     }
 
@@ -510,6 +490,7 @@ public class SimDialogActivity extends Activity {
         mSimManagementExt.initAutoItemForSms(arrayList, arrayList2);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [734=4] */
     private List<SubscriptionInfo> getAdapterData(int i, List<SubscriptionInfo> list, ArrayList<SubscriptionInfo> arrayList, ArrayList<SubscriptionInfo> arrayList2) {
         switch (i) {
             case 0:
@@ -519,14 +500,12 @@ public class SimDialogActivity extends Activity {
             case 2:
                 return arrayList2;
             default:
-                String str = TAG;
-                Log.e(str, "Invalid dialog type=" + i);
+                Log.e(TAG, "Invalid dialog type=" + i);
                 return null;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dismissSimDialog() {
+    private void dismissSimDialog() {
         if (this.mDialog != null && this.mDialog.isShowing()) {
             this.mDialog.dismiss();
             this.mDialog = null;

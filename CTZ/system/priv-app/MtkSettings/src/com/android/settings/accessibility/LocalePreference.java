@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import com.android.internal.app.LocalePicker;
 import com.android.settings.R;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LocalePreference extends ListPreference {
     public LocalePreference(Context context, AttributeSet attributeSet) {

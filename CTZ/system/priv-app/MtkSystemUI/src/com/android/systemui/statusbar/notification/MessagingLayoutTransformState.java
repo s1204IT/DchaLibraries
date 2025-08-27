@@ -13,6 +13,7 @@ import com.android.systemui.statusbar.notification.TransformState;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class MessagingLayoutTransformState extends TransformState {
     private static Pools.SimplePool<MessagingLayoutTransformState> sInstancePool = new Pools.SimplePool<>(40);
@@ -57,47 +58,50 @@ public class MessagingLayoutTransformState extends TransformState {
         }
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [101=4] */
     private void transformViewInternal(MessagingLayoutTransformState messagingLayoutTransformState, float f, boolean z) {
-        float f2;
+        float fMax;
         ensureVisible();
-        ArrayList<MessagingGroup> filterHiddenGroups = filterHiddenGroups(this.mMessagingLayout.getMessagingGroups());
-        HashMap<MessagingGroup, MessagingGroup> findPairs = findPairs(filterHiddenGroups, filterHiddenGroups(messagingLayoutTransformState.mMessagingLayout.getMessagingGroups()));
+        ArrayList<MessagingGroup> arrayListFilterHiddenGroups = filterHiddenGroups(this.mMessagingLayout.getMessagingGroups());
+        HashMap<MessagingGroup, MessagingGroup> mapFindPairs = findPairs(arrayListFilterHiddenGroups, filterHiddenGroups(messagingLayoutTransformState.mMessagingLayout.getMessagingGroups()));
         MessagingGroup messagingGroup = null;
-        float f3 = 0.0f;
-        float f4 = 0.0f;
-        for (int size = filterHiddenGroups.size() - 1; size >= 0; size--) {
-            MessagingGroup messagingGroup2 = filterHiddenGroups.get(size);
-            MessagingGroup messagingGroup3 = findPairs.get(messagingGroup2);
+        float translationY = 0.0f;
+        float f2 = 0.0f;
+        for (int size = arrayListFilterHiddenGroups.size() - 1; size >= 0; size--) {
+            MessagingGroup messagingGroup2 = arrayListFilterHiddenGroups.get(size);
+            MessagingGroup messagingGroup3 = mapFindPairs.get(messagingGroup2);
             if (!isGone(messagingGroup2)) {
                 if (messagingGroup3 != null) {
                     transformGroups(messagingGroup2, messagingGroup3, f, z);
                     if (messagingGroup == null) {
                         if (z) {
-                            float translationY = messagingGroup3.getAvatar().getTranslationY();
-                            f4 = translationY;
-                            f3 = translationY - (messagingGroup2.getTop() - messagingGroup3.getTop());
+                            float top = messagingGroup2.getTop() - messagingGroup3.getTop();
+                            float translationY2 = messagingGroup3.getAvatar().getTranslationY();
+                            f2 = translationY2;
+                            translationY = translationY2 - top;
                         } else {
-                            f3 = messagingGroup2.getAvatar().getTranslationY();
-                            f4 = f3 - (messagingGroup3.getTop() - messagingGroup2.getTop());
+                            float top2 = messagingGroup3.getTop() - messagingGroup2.getTop();
+                            translationY = messagingGroup2.getAvatar().getTranslationY();
+                            f2 = translationY - top2;
                         }
                         messagingGroup = messagingGroup2;
                     }
                 } else {
                     if (messagingGroup != null) {
-                        adaptGroupAppear(messagingGroup2, f, f3, z);
-                        int top = messagingGroup.getTop() - messagingGroup2.getTop();
-                        float height = this.mTransformInfo.isAnimating() ? top : messagingGroup2.getHeight() * 0.75f;
-                        f2 = Math.max(0.0f, Math.min(1.0f, (f4 - (top - height)) / height));
+                        adaptGroupAppear(messagingGroup2, f, translationY, z);
+                        int top3 = messagingGroup.getTop() - messagingGroup2.getTop();
+                        float height = this.mTransformInfo.isAnimating() ? top3 : messagingGroup2.getHeight() * 0.75f;
+                        fMax = Math.max(0.0f, Math.min(1.0f, (f2 - (top3 - height)) / height));
                         if (z) {
-                            f2 = 1.0f - f2;
+                            fMax = 1.0f - fMax;
                         }
                     } else {
-                        f2 = f;
+                        fMax = f;
                     }
                     if (z) {
-                        disappear(messagingGroup2, f2);
+                        disappear(messagingGroup2, fMax);
                     } else {
-                        appear(messagingGroup2, f2);
+                        appear(messagingGroup2, fMax);
                     }
                 }
             }
@@ -154,18 +158,18 @@ public class MessagingLayoutTransformState extends TransformState {
         if (view == null || view.getVisibility() == 8) {
             return;
         }
-        TransformState createFrom = TransformState.createFrom(view, this.mTransformInfo);
-        createFrom.appear(f, null);
-        createFrom.recycle();
+        TransformState transformStateCreateFrom = TransformState.createFrom(view, this.mTransformInfo);
+        transformStateCreateFrom.appear(f, null);
+        transformStateCreateFrom.recycle();
     }
 
     private void disappear(View view, float f) {
         if (view == null || view.getVisibility() == 8) {
             return;
         }
-        TransformState createFrom = TransformState.createFrom(view, this.mTransformInfo);
-        createFrom.disappear(f, null);
-        createFrom.recycle();
+        TransformState transformStateCreateFrom = TransformState.createFrom(view, this.mTransformInfo);
+        transformStateCreateFrom.disappear(f, null);
+        transformStateCreateFrom.recycle();
     }
 
     private ArrayList<MessagingGroup> filterHiddenGroups(ArrayList<MessagingGroup> arrayList) {
@@ -181,112 +185,89 @@ public class MessagingLayoutTransformState extends TransformState {
         return arrayList2;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [240=4] */
     /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Removed duplicated region for block: B:22:0x0084  */
-    /* JADX WARN: Removed duplicated region for block: B:28:0x00ba  */
-    /* JADX WARN: Removed duplicated region for block: B:33:0x00cc  */
-    /* JADX WARN: Removed duplicated region for block: B:34:0x00d5  */
+    /* JADX WARN: Removed duplicated region for block: B:20:0x0081  */
+    /* JADX WARN: Removed duplicated region for block: B:25:0x00a4 A[PHI: r0
+  0x00a4: PHI (r0v5 float) = (r0v3 float), (r0v17 float) binds: [B:21:0x0082, B:23:0x009f] A[DONT_GENERATE, DONT_INLINE]] */
+    /* JADX WARN: Type inference failed for: r9v0 */
+    /* JADX WARN: Type inference failed for: r9v1, types: [int] */
     /* JADX WARN: Type inference failed for: r9v3 */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
     private void transformGroups(MessagingGroup messagingGroup, MessagingGroup messagingGroup2, float f, boolean z) {
-        View view;
         float f2;
-        View view2;
         boolean z2;
         int i = 0;
-        int i2 = 1;
+        ?? r9 = 1;
         boolean z3 = messagingGroup2.getIsolatedMessage() == null && !this.mTransformInfo.isAnimating();
         boolean z4 = z3;
         transformView(f, z, messagingGroup.getSenderView(), messagingGroup2.getSenderView(), true, z4);
         transformView(f, z, messagingGroup.getAvatar(), messagingGroup2.getAvatar(), true, z4);
         List messages = messagingGroup.getMessages();
         List messages2 = messagingGroup2.getMessages();
-        float f3 = f;
-        float f4 = 0.0f;
+        float fMax = f;
+        float translationY = 0.0f;
         while (i < messages.size()) {
-            View view3 = ((MessagingMessage) messages.get((messages.size() - i2) - i)).getView();
-            if (isGone(view3)) {
-                f2 = f3;
-                z2 = i2;
+            View view = ((MessagingMessage) messages.get((messages.size() - r9) - i)).getView();
+            if (isGone(view)) {
+                f2 = fMax;
+                z2 = r9;
             } else {
-                int size = (messages2.size() - i2) - i;
+                int size = (messages2.size() - r9) - i;
                 if (size >= 0) {
-                    View view4 = ((MessagingMessage) messages2.get(size)).getView();
-                    if (!isGone(view4)) {
-                        view = view4;
-                        if (view == null) {
-                            f3 = Math.max(0.0f, Math.min(1.0f, ((view3.getTop() + view3.getHeight()) + f4) / view3.getHeight()));
-                            if (z) {
-                                f2 = 1.0f - f3;
-                                view2 = view;
-                                transformView(f2, z, view3, view, false, z3);
-                                if (f2 == 0.0f || messagingGroup2.getIsolatedMessage() != view2) {
-                                    z2 = true;
-                                } else {
-                                    z2 = true;
-                                    messagingGroup.setTransformingImages(true);
-                                }
-                                if (view2 == null) {
-                                    view3.setTranslationY(f4);
-                                    setClippingDeactivated(view3, z2);
-                                } else {
-                                    f4 = z ? view2.getTranslationY() - (((view3.getTop() + messagingGroup.getTop()) - view2.getTop()) - view2.getTop()) : view3.getTranslationY();
-                                }
-                            }
+                    View view2 = ((MessagingMessage) messages2.get(size)).getView();
+                    View view3 = isGone(view2) ? null : view2;
+                    if (view3 == null) {
+                        fMax = Math.max(0.0f, Math.min(1.0f, ((view.getTop() + view.getHeight()) + translationY) / view.getHeight()));
+                        f2 = z ? 1.0f - fMax : fMax;
+                        View view4 = view3;
+                        transformView(f2, z, view, view3, false, z3);
+                        if (f2 == 0.0f && messagingGroup2.getIsolatedMessage() == view4) {
+                            z2 = true;
+                            messagingGroup.setTransformingImages(true);
+                        } else {
+                            z2 = true;
                         }
-                        f2 = f3;
-                        view2 = view;
-                        transformView(f2, z, view3, view, false, z3);
-                        if (f2 == 0.0f) {
-                        }
-                        z2 = true;
-                        if (view2 == null) {
+                        if (view4 == null) {
+                            view.setTranslationY(translationY);
+                            setClippingDeactivated(view, z2);
+                        } else {
+                            translationY = z ? view4.getTranslationY() - (((view.getTop() + messagingGroup.getTop()) - view4.getTop()) - view4.getTop()) : view.getTranslationY();
                         }
                     }
                 }
-                view = null;
-                if (view == null) {
-                }
-                f2 = f3;
-                view2 = view;
-                transformView(f2, z, view3, view, false, z3);
-                if (f2 == 0.0f) {
-                }
-                z2 = true;
-                if (view2 == null) {
-                }
             }
             i++;
-            i2 = z2;
-            f3 = f2;
+            r9 = z2;
+            fMax = f2;
         }
         messagingGroup.updateClipRect();
     }
 
     private void transformView(float f, boolean z, View view, View view2, boolean z2, boolean z3) {
-        TransformState createFrom = TransformState.createFrom(view, this.mTransformInfo);
+        TransformState transformStateCreateFrom = TransformState.createFrom(view, this.mTransformInfo);
         if (z3) {
-            createFrom.setDefaultInterpolator(Interpolators.LINEAR);
+            transformStateCreateFrom.setDefaultInterpolator(Interpolators.LINEAR);
         }
-        createFrom.setIsSameAsAnyView(z2);
+        transformStateCreateFrom.setIsSameAsAnyView(z2);
         if (z) {
             if (view2 != null) {
-                TransformState createFrom2 = TransformState.createFrom(view2, this.mTransformInfo);
-                createFrom.transformViewTo(createFrom2, f);
-                createFrom2.recycle();
+                TransformState transformStateCreateFrom2 = TransformState.createFrom(view2, this.mTransformInfo);
+                transformStateCreateFrom.transformViewTo(transformStateCreateFrom2, f);
+                transformStateCreateFrom2.recycle();
             } else {
-                createFrom.disappear(f, null);
+                transformStateCreateFrom.disappear(f, null);
             }
         } else if (view2 != null) {
-            TransformState createFrom3 = TransformState.createFrom(view2, this.mTransformInfo);
-            createFrom.transformViewFrom(createFrom3, f);
-            createFrom3.recycle();
+            TransformState transformStateCreateFrom3 = TransformState.createFrom(view2, this.mTransformInfo);
+            transformStateCreateFrom.transformViewFrom(transformStateCreateFrom3, f);
+            transformStateCreateFrom3.recycle();
         } else {
-            createFrom.appear(f, null);
+            transformStateCreateFrom.appear(f, null);
         }
-        createFrom.recycle();
+        transformStateCreateFrom.recycle();
     }
 
     private HashMap<MessagingGroup, MessagingGroup> findPairs(ArrayList<MessagingGroup> arrayList, ArrayList<MessagingGroup> arrayList2) {
@@ -296,13 +277,13 @@ public class MessagingLayoutTransformState extends TransformState {
             MessagingGroup messagingGroup = arrayList.get(size);
             MessagingGroup messagingGroup2 = null;
             int i2 = 0;
-            for (int min = Math.min(arrayList2.size(), i) - 1; min >= 0; min--) {
-                MessagingGroup messagingGroup3 = arrayList2.get(min);
-                int calculateGroupCompatibility = messagingGroup.calculateGroupCompatibility(messagingGroup3);
-                if (calculateGroupCompatibility > i2) {
-                    i = min;
+            for (int iMin = Math.min(arrayList2.size(), i) - 1; iMin >= 0; iMin--) {
+                MessagingGroup messagingGroup3 = arrayList2.get(iMin);
+                int iCalculateGroupCompatibility = messagingGroup.calculateGroupCompatibility(messagingGroup3);
+                if (iCalculateGroupCompatibility > i2) {
+                    i = iMin;
                     messagingGroup2 = messagingGroup3;
-                    i2 = calculateGroupCompatibility;
+                    i2 = iCalculateGroupCompatibility;
                 }
             }
             if (messagingGroup2 != null) {
@@ -346,14 +327,13 @@ public class MessagingLayoutTransformState extends TransformState {
         if (isGone(view) || MessagingPropertyAnimator.isAnimatingAlpha(view)) {
             return;
         }
-        TransformState createFrom = TransformState.createFrom(view, this.mTransformInfo);
-        createFrom.setVisible(z, z2);
-        createFrom.recycle();
+        TransformState transformStateCreateFrom = TransformState.createFrom(view, this.mTransformInfo);
+        transformStateCreateFrom.setVisible(z, z2);
+        transformStateCreateFrom.recycle();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.TransformState
-    public void resetTransformedView() {
+    protected void resetTransformedView() {
         super.resetTransformedView();
         ArrayList messagingGroups = this.mMessagingLayout.getMessagingGroups();
         for (int i = 0; i < messagingGroups.size(); i++) {
@@ -390,14 +370,13 @@ public class MessagingLayoutTransformState extends TransformState {
     }
 
     private void resetTransformedView(View view) {
-        TransformState createFrom = TransformState.createFrom(view, this.mTransformInfo);
-        createFrom.resetTransformedView();
-        createFrom.recycle();
+        TransformState transformStateCreateFrom = TransformState.createFrom(view, this.mTransformInfo);
+        transformStateCreateFrom.resetTransformedView();
+        transformStateCreateFrom.recycle();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.TransformState
-    public void reset() {
+    protected void reset() {
         super.reset();
         this.mMessageContainer = null;
         this.mMessagingLayout = null;

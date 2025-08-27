@@ -25,22 +25,29 @@ import com.android.settings.R;
 import com.android.settings.bluetooth.Utils;
 import com.android.settingslib.bluetooth.LocalBluetoothAdapter;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
+import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class SettingsAppWidgetProvider extends AppWidgetProvider {
+    private static final StateTracker sBluetoothState;
+    private static final StateTracker sLocationState;
     private static SettingsObserver sSettingsObserver;
+    private static final StateTracker sSyncState;
+    private static final StateTracker sWifiState;
     static final ComponentName THIS_APPWIDGET = new ComponentName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
     private static LocalBluetoothAdapter sLocalBluetoothAdapter = null;
     private static final int[] IND_DRAWABLE_OFF = {R.drawable.appwidget_settings_ind_off_l_holo, R.drawable.appwidget_settings_ind_off_c_holo, R.drawable.appwidget_settings_ind_off_r_holo};
     private static final int[] IND_DRAWABLE_MID = {R.drawable.appwidget_settings_ind_mid_l_holo, R.drawable.appwidget_settings_ind_mid_c_holo, R.drawable.appwidget_settings_ind_mid_r_holo};
     private static final int[] IND_DRAWABLE_ON = {R.drawable.appwidget_settings_ind_on_l_holo, R.drawable.appwidget_settings_ind_on_c_holo, R.drawable.appwidget_settings_ind_on_r_holo};
-    private static final StateTracker sWifiState = new WifiStateTracker();
-    private static final StateTracker sBluetoothState = new BluetoothStateTracker();
-    private static final StateTracker sLocationState = new LocationStateTracker();
-    private static final StateTracker sSyncState = new SyncStateTracker();
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static abstract class StateTracker {
+    static {
+        sWifiState = new WifiStateTracker();
+        sBluetoothState = new BluetoothStateTracker();
+        sLocationState = new LocationStateTracker();
+        sSyncState = new SyncStateTracker();
+    }
+
+    private static abstract class StateTracker {
         private Boolean mActualState;
         private boolean mDeferredStateChangeRequestNeeded;
         private boolean mInTransition;
@@ -86,10 +93,10 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
             this.mIntendedState = Boolean.valueOf(z);
             if (this.mInTransition) {
                 this.mDeferredStateChangeRequestNeeded = true;
-                return;
+            } else {
+                this.mInTransition = true;
+                requestStateChange(context, z);
             }
-            this.mInTransition = true;
-            requestStateChange(context, z);
         }
 
         public int getPosition() {
@@ -108,16 +115,15 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
                         remoteViews.setContentDescription(containerId, getContentDescription(context, R.string.gadget_state_off));
                         remoteViews.setImageViewResource(buttonId, getButtonImageId(false));
                         remoteViews.setImageViewResource(indicatorId, SettingsAppWidgetProvider.IND_DRAWABLE_OFF[position]);
-                        return;
+                        break;
                     case 1:
                         remoteViews.setContentDescription(containerId, getContentDescription(context, R.string.gadget_state_on));
                         remoteViews.setImageViewResource(buttonId, getButtonImageId(true));
                         remoteViews.setImageViewResource(indicatorId, SettingsAppWidgetProvider.IND_DRAWABLE_ON[position]);
-                        return;
-                    default:
-                        return;
+                        break;
                 }
-            } else if (isTurningOn()) {
+            }
+            if (isTurningOn()) {
                 remoteViews.setContentDescription(containerId, getContentDescription(context, R.string.gadget_state_turning_on));
                 remoteViews.setImageViewResource(buttonId, getButtonImageId(true));
                 remoteViews.setImageViewResource(indicatorId, SettingsAppWidgetProvider.IND_DRAWABLE_MID[position]);
@@ -173,17 +179,11 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
                 return 5;
             }
             switch (getActualState(context)) {
-                case 0:
-                    return 0;
-                case 1:
-                    return 1;
-                default:
-                    return 5;
             }
+            return 5;
         }
     }
 
-    /* loaded from: classes.dex */
     private static final class WifiStateTracker extends StateTracker {
         private WifiStateTracker() {
             super();
@@ -236,9 +236,9 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
                 Log.d("SettingsAppWidgetProvider", "No wifiManager.");
             } else {
                 new AsyncTask<Void, Void, Void>() { // from class: com.android.settings.widget.SettingsAppWidgetProvider.WifiStateTracker.1
-                    /* JADX INFO: Access modifiers changed from: protected */
+                    /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                     @Override // android.os.AsyncTask
-                    public Void doInBackground(Void... voidArr) {
+                    protected Void doInBackground(Void... voidArr) {
                         int wifiApState = wifiManager.getWifiApState();
                         if (z && (wifiApState == 12 || wifiApState == 13)) {
                             ((ConnectivityManager) context.getSystemService("connectivity")).stopTethering(0);
@@ -274,7 +274,6 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    /* loaded from: classes.dex */
     private static final class BluetoothStateTracker extends StateTracker {
         private BluetoothStateTracker() {
             super();
@@ -328,9 +327,9 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
                 Log.d("SettingsAppWidgetProvider", "No LocalBluetoothManager");
             } else {
                 new AsyncTask<Void, Void, Void>() { // from class: com.android.settings.widget.SettingsAppWidgetProvider.BluetoothStateTracker.1
-                    /* JADX INFO: Access modifiers changed from: protected */
+                    /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                     @Override // android.os.AsyncTask
-                    public Void doInBackground(Void... voidArr) {
+                    protected Void doInBackground(Void... voidArr) {
                         SettingsAppWidgetProvider.sLocalBluetoothAdapter.setBluetoothEnabled(z);
                         return null;
                     }
@@ -348,7 +347,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
 
         private static int bluetoothStateToFiveState(int i) {
             switch (i) {
-                case 10:
+                case AccessPoint.Speed.MODERATE /* 10 */:
                     return 0;
                 case 11:
                     return 2;
@@ -362,9 +361,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class LocationStateTracker extends StateTracker {
+    private static final class LocationStateTracker extends StateTracker {
         private int mCurrentLocationMode;
 
         private LocationStateTracker() {
@@ -420,9 +417,9 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
         public void requestStateChange(final Context context, boolean z) {
             context.getContentResolver();
             new AsyncTask<Void, Void, Boolean>() { // from class: com.android.settings.widget.SettingsAppWidgetProvider.LocationStateTracker.1
-                /* JADX INFO: Access modifiers changed from: protected */
+                /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // android.os.AsyncTask
-                public Boolean doInBackground(Void... voidArr) {
+                protected Boolean doInBackground(Void... voidArr) {
                     if (((UserManager) context.getSystemService("user")).hasUserRestriction("no_share_location")) {
                         return Boolean.valueOf(LocationStateTracker.this.getActualState(context) == 1);
                     }
@@ -431,9 +428,9 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
                     return Boolean.valueOf(locationManager.isLocationEnabled());
                 }
 
-                /* JADX INFO: Access modifiers changed from: protected */
+                /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
                 @Override // android.os.AsyncTask
-                public void onPostExecute(Boolean bool) {
+                protected void onPostExecute(Boolean bool) {
                     LocationStateTracker.this.setCurrentState(context, bool.booleanValue() ? 1 : 0);
                     SettingsAppWidgetProvider.updateWidget(context);
                 }
@@ -441,9 +438,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class SyncStateTracker extends StateTracker {
+    private static final class SyncStateTracker extends StateTracker {
         private SyncStateTracker() {
             super();
         }
@@ -486,12 +481,11 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
         /* JADX WARN: Type inference failed for: r1v0, types: [com.android.settings.widget.SettingsAppWidgetProvider$SyncStateTracker$1] */
         @Override // com.android.settings.widget.SettingsAppWidgetProvider.StateTracker
         public void requestStateChange(final Context context, final boolean z) {
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService("connectivity");
             final boolean masterSyncAutomatically = ContentResolver.getMasterSyncAutomatically();
             new AsyncTask<Void, Void, Boolean>() { // from class: com.android.settings.widget.SettingsAppWidgetProvider.SyncStateTracker.1
-                /* JADX INFO: Access modifiers changed from: protected */
+                /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // android.os.AsyncTask
-                public Boolean doInBackground(Void... voidArr) {
+                protected Boolean doInBackground(Void... voidArr) {
                     if (z) {
                         if (!masterSyncAutomatically) {
                             ContentResolver.setMasterSyncAutomatically(true);
@@ -504,9 +498,9 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
                     return false;
                 }
 
-                /* JADX INFO: Access modifiers changed from: protected */
+                /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
                 @Override // android.os.AsyncTask
-                public void onPostExecute(Boolean bool) {
+                protected void onPostExecute(Boolean bool) {
                     SyncStateTracker.this.setCurrentState(context, bool.booleanValue() ? 1 : 0);
                     SettingsAppWidgetProvider.updateWidget(context);
                 }
@@ -523,9 +517,9 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
 
     @Override // android.appwidget.AppWidgetProvider
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] iArr) {
-        RemoteViews buildUpdate = buildUpdate(context);
+        RemoteViews remoteViewsBuildUpdate = buildUpdate(context);
         for (int i : iArr) {
-            appWidgetManager.updateAppWidget(i, buildUpdate);
+            appWidgetManager.updateAppWidget(i, remoteViewsBuildUpdate);
         }
     }
 
@@ -543,7 +537,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
     }
 
     static RemoteViews buildUpdate(Context context) {
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), (int) R.layout.widget);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
         remoteViews.setOnClickPendingIntent(R.id.btn_wifi, getLaunchPendingIntent(context, 0));
         remoteViews.setOnClickPendingIntent(R.id.btn_brightness, getLaunchPendingIntent(context, 1));
         remoteViews.setOnClickPendingIntent(R.id.btn_sync, getLaunchPendingIntent(context, 2));
@@ -599,7 +593,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
     }
 
     @Override // android.appwidget.AppWidgetProvider, android.content.BroadcastReceiver
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) throws NumberFormatException, Settings.SettingNotFoundException {
         super.onReceive(context, intent);
         String action = intent.getAction();
         if ("android.net.wifi.WIFI_STATE_CHANGED".equals(action)) {
@@ -611,16 +605,16 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
         } else if (ContentResolver.ACTION_SYNC_CONN_STATUS_CHANGED.equals(action)) {
             sSyncState.onActualStateChange(context, intent);
         } else if (intent.hasCategory("android.intent.category.ALTERNATIVE")) {
-            int parseInt = Integer.parseInt(intent.getData().getSchemeSpecificPart());
-            if (parseInt == 0) {
+            int i = Integer.parseInt(intent.getData().getSchemeSpecificPart());
+            if (i == 0) {
                 sWifiState.toggleState(context);
-            } else if (parseInt == 1) {
+            } else if (i == 1) {
                 toggleBrightness(context);
-            } else if (parseInt == 2) {
+            } else if (i == 2) {
                 sSyncState.toggleState(context);
-            } else if (parseInt == 3) {
+            } else if (i == 3) {
                 sLocationState.toggleState(context);
-            } else if (parseInt == 4) {
+            } else if (i == 4) {
                 sBluetoothState.toggleState(context);
             }
         } else {
@@ -649,7 +643,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    private void toggleBrightness(Context context) {
+    private void toggleBrightness(Context context) throws Settings.SettingNotFoundException {
         int i;
         int minimumScreenBrightnessSetting;
         try {
@@ -657,7 +651,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
             PowerManager powerManager = (PowerManager) context.getSystemService(PowerManager.class);
             ContentResolver contentResolver = context.getContentResolver();
             int i2 = Settings.System.getInt(contentResolver, "screen_brightness");
-            if (context.getResources().getBoolean(17956895)) {
+            if (context.getResources().getBoolean(android.R.^attr-private.borderRight)) {
                 i = Settings.System.getInt(contentResolver, "screen_brightness_mode");
             } else {
                 i = 0;
@@ -673,7 +667,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
                 minimumScreenBrightnessSetting = powerManager.getMinimumScreenBrightnessSetting();
                 i = 1;
             }
-            if (context.getResources().getBoolean(17956895)) {
+            if (context.getResources().getBoolean(android.R.^attr-private.borderRight)) {
                 Settings.System.putInt(context.getContentResolver(), "screen_brightness_mode", i);
             } else {
                 i = 0;
@@ -687,9 +681,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SettingsObserver extends ContentObserver {
+    private static class SettingsObserver extends ContentObserver {
         private Context mContext;
 
         SettingsObserver(Handler handler, Context context) {

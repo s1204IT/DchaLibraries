@@ -13,6 +13,7 @@ import com.android.settings.SetupRedactionInterstitial;
 import com.android.settings.password.ChooseLockPattern;
 import com.android.settings.password.ChooseLockTypeDialogFragment;
 import com.android.settings.password.SetupChooseLockPattern;
+
 /* loaded from: classes.dex */
 public class SetupChooseLockPattern extends ChooseLockPattern {
     public static Intent modifyIntentForSetup(Context context, Intent intent) {
@@ -20,9 +21,8 @@ public class SetupChooseLockPattern extends ChooseLockPattern {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.password.ChooseLockPattern, com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return SetupChooseLockPatternFragment.class.getName().equals(str);
     }
 
@@ -31,33 +31,34 @@ public class SetupChooseLockPattern extends ChooseLockPattern {
         return SetupChooseLockPatternFragment.class;
     }
 
-    /* loaded from: classes.dex */
     public static class SetupChooseLockPatternFragment extends ChooseLockPattern.ChooseLockPatternFragment implements ChooseLockTypeDialogFragment.OnLockTypeSelectedListener {
         private Button mOptionsButton;
 
         @Override // com.android.settings.password.ChooseLockPattern.ChooseLockPatternFragment, android.app.Fragment
         public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-            View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+            View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
             if (!getResources().getBoolean(R.bool.config_lock_pattern_minimal_ui)) {
-                this.mOptionsButton = (Button) onCreateView.findViewById(R.id.screen_lock_options);
+                this.mOptionsButton = (Button) viewOnCreateView.findViewById(R.id.screen_lock_options);
                 this.mOptionsButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.password.-$$Lambda$SetupChooseLockPattern$SetupChooseLockPatternFragment$oe1sL-LLbUw3chjlv8P3cpGYEWs
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        ChooseLockTypeDialogFragment.newInstance(r0.mUserId).show(SetupChooseLockPattern.SetupChooseLockPatternFragment.this.getChildFragmentManager(), (String) null);
+                        SetupChooseLockPattern.SetupChooseLockPatternFragment setupChooseLockPatternFragment = this.f$0;
+                        ChooseLockTypeDialogFragment.newInstance(setupChooseLockPatternFragment.mUserId).show(setupChooseLockPatternFragment.getChildFragmentManager(), (String) null);
                     }
                 });
             }
             if (!this.mForFingerprint) {
-                Button button = (Button) onCreateView.findViewById(R.id.skip_button);
+                Button button = (Button) viewOnCreateView.findViewById(R.id.skip_button);
                 button.setVisibility(0);
                 button.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.password.-$$Lambda$SetupChooseLockPattern$SetupChooseLockPatternFragment$klleXh-HZ7yoRQxNNtN-WzAt_fY
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        SetupSkipDialog.newInstance(r0.getActivity().getIntent().getBooleanExtra(":settings:frp_supported", false)).show(SetupChooseLockPattern.SetupChooseLockPatternFragment.this.getFragmentManager());
+                        SetupChooseLockPattern.SetupChooseLockPatternFragment setupChooseLockPatternFragment = this.f$0;
+                        SetupSkipDialog.newInstance(setupChooseLockPatternFragment.getActivity().getIntent().getBooleanExtra(":settings:frp_supported", false)).show(setupChooseLockPatternFragment.getFragmentManager());
                     }
                 });
             }
-            return onCreateView;
+            return viewOnCreateView;
         }
 
         @Override // com.android.settings.password.ChooseLockTypeDialogFragment.OnLockTypeSelectedListener
@@ -68,9 +69,8 @@ public class SetupChooseLockPattern extends ChooseLockPattern {
             startChooseLockActivity(screenLockType, getActivity());
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.android.settings.password.ChooseLockPattern.ChooseLockPatternFragment
-        public void updateStage(ChooseLockPattern.ChooseLockPatternFragment.Stage stage) {
+        protected void updateStage(ChooseLockPattern.ChooseLockPatternFragment.Stage stage) {
             super.updateStage(stage);
             if (!getResources().getBoolean(R.bool.config_lock_pattern_minimal_ui) && this.mOptionsButton != null) {
                 this.mOptionsButton.setVisibility(stage == ChooseLockPattern.ChooseLockPatternFragment.Stage.Introduction ? 0 : 4);

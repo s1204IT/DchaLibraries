@@ -8,6 +8,7 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.util.Log;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SimHotSwapHandler {
     private Context mContext;
@@ -21,7 +22,6 @@ public class SimHotSwapHandler {
     private List<SubscriptionInfo> mSubscriptionInfoList;
     private SubscriptionManager mSubscriptionManager;
 
-    /* loaded from: classes.dex */
     public interface OnSimHotSwapListener {
         void onSimHotSwap();
     }
@@ -49,8 +49,7 @@ public class SimHotSwapHandler {
         this.mListener = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleHotSwap() {
+    private void handleHotSwap() {
         List<SubscriptionInfo> activeSubscriptionInfoList = this.mSubscriptionManager.getActiveSubscriptionInfoList();
         Log.d("SimHotSwapHandler", "handleHotSwap, handler=" + this + ", currentSubIdList=" + activeSubscriptionInfoList);
         if (hasHotSwapHappened(this.mSubscriptionInfoList, activeSubscriptionInfoList) && this.mListener != null) {
@@ -83,7 +82,8 @@ public class SimHotSwapHandler {
         while (true) {
             if (i >= list2.size()) {
                 break;
-            } else if (list2.get(i).getIccId().equals(list.get(i).getIccId())) {
+            }
+            if (list2.get(i).getIccId().equals(list.get(i).getIccId())) {
                 i++;
             } else {
                 z = true;

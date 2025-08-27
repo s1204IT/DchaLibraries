@@ -3,6 +3,7 @@ package com.android.keyguard;
 import android.os.SystemClock;
 import com.android.internal.telephony.IccCardConstants;
 import com.android.keyguard.KeyguardUpdateMonitor;
+
 /* loaded from: classes.dex */
 public class KeyguardUpdateMonitorCallback {
     private boolean mShowing;
@@ -27,12 +28,12 @@ public class KeyguardUpdateMonitorCallback {
     }
 
     public void onKeyguardVisibilityChangedRaw(boolean z) {
-        long elapsedRealtime = SystemClock.elapsedRealtime();
-        if (z == this.mShowing && elapsedRealtime - this.mVisibilityChangedCalled < 1000) {
+        long jElapsedRealtime = SystemClock.elapsedRealtime();
+        if (z == this.mShowing && jElapsedRealtime - this.mVisibilityChangedCalled < 1000) {
             return;
         }
         onKeyguardVisibilityChanged(z);
-        this.mVisibilityChangedCalled = elapsedRealtime;
+        this.mVisibilityChangedCalled = jElapsedRealtime;
         this.mShowing = z;
     }
 

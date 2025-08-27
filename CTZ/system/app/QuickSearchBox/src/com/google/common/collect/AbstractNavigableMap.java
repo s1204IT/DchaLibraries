@@ -9,12 +9,15 @@ import java.util.NavigableSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedMap;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public abstract class AbstractNavigableMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, V> {
+abstract class AbstractNavigableMap<K, V> extends AbstractMap<K, V> implements NavigableMap<K, V> {
     abstract Iterator<Map.Entry<K, V>> descendingEntryIterator();
 
     abstract Iterator<Map.Entry<K, V>> entryIterator();
+
+    AbstractNavigableMap() {
+    }
 
     @Override // java.util.NavigableMap
     public Map.Entry<K, V> firstEntry() {
@@ -38,20 +41,20 @@ public abstract class AbstractNavigableMap<K, V> extends AbstractMap<K, V> imple
 
     @Override // java.util.SortedMap
     public K firstKey() {
-        Map.Entry<K, V> firstEntry = firstEntry();
-        if (firstEntry == null) {
+        Map.Entry<K, V> entryFirstEntry = firstEntry();
+        if (entryFirstEntry == null) {
             throw new NoSuchElementException();
         }
-        return firstEntry.getKey();
+        return entryFirstEntry.getKey();
     }
 
     @Override // java.util.SortedMap
     public K lastKey() {
-        Map.Entry<K, V> lastEntry = lastEntry();
-        if (lastEntry == null) {
+        Map.Entry<K, V> entryLastEntry = lastEntry();
+        if (entryLastEntry == null) {
             throw new NoSuchElementException();
         }
-        return lastEntry.getKey();
+        return entryLastEntry.getKey();
     }
 
     @Override // java.util.NavigableMap
@@ -144,9 +147,7 @@ public abstract class AbstractNavigableMap<K, V> extends AbstractMap<K, V> imple
         return new DescendingMap();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class DescendingMap extends Maps.DescendingMap<K, V> {
+    private final class DescendingMap extends Maps.DescendingMap<K, V> {
         private DescendingMap() {
         }
 

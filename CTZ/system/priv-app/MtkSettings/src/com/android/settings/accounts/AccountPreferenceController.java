@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AccountPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceClickListener, PreferenceControllerMixin, AuthenticatorHelper.OnAccountsUpdateListener, LifecycleObserver, OnPause, OnResume {
     private int mAccountProfileOrder;
@@ -52,7 +53,6 @@ public class AccountPreferenceController extends AbstractPreferenceController im
     private SparseArray<ProfileData> mProfiles;
     private UserManager mUm;
 
-    /* loaded from: classes.dex */
     public static class ProfileData {
         public ArrayMap<String, AccountTypePreference> accountPreferences = new ArrayMap<>();
         public RestrictedPreference addAccountPreference;
@@ -128,19 +128,21 @@ public class AccountPreferenceController extends AbstractPreferenceController im
     public boolean onPreferenceClick(Preference preference) {
         int size = this.mProfiles.size();
         for (int i = 0; i < size; i++) {
-            ProfileData valueAt = this.mProfiles.valueAt(i);
-            if (preference == valueAt.addAccountPreference) {
+            ProfileData profileDataValueAt = this.mProfiles.valueAt(i);
+            if (preference == profileDataValueAt.addAccountPreference) {
                 Intent intent = new Intent("android.settings.ADD_ACCOUNT_SETTINGS");
-                intent.putExtra("android.intent.extra.USER", valueAt.userInfo.getUserHandle());
+                intent.putExtra("android.intent.extra.USER", profileDataValueAt.userInfo.getUserHandle());
                 intent.putExtra("authorities", this.mAuthorities);
                 this.mContext.startActivity(intent);
                 return true;
-            } else if (preference == valueAt.removeWorkProfilePreference) {
-                RemoveUserFragment.newInstance(valueAt.userInfo.id).show(this.mParent.getFragmentManager(), "removeUser");
+            }
+            if (preference == profileDataValueAt.removeWorkProfilePreference) {
+                RemoveUserFragment.newInstance(profileDataValueAt.userInfo.id).show(this.mParent.getFragmentManager(), "removeUser");
                 return true;
-            } else if (preference == valueAt.managedProfilePreference) {
+            }
+            if (preference == profileDataValueAt.managedProfilePreference) {
                 Bundle bundle = new Bundle();
-                bundle.putParcelable("android.intent.extra.USER", valueAt.userInfo.getUserHandle());
+                bundle.putParcelable("android.intent.extra.USER", profileDataValueAt.userInfo.getUserHandle());
                 new SubSettingLauncher(this.mContext).setSourceMetricsCategory(this.mParent.getMetricsCategory()).setDestination(ManagedProfileSettings.class.getName()).setTitle(R.string.managed_profile_settings_title).setArguments(bundle).launch();
                 return true;
             }
@@ -148,8 +150,7 @@ public class AccountPreferenceController extends AbstractPreferenceController im
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateUi() {
+    private void updateUi() {
         if (!isAvailable()) {
             Log.e("AccountPrefController", "We should not be showing settings for a managed profile");
             return;
@@ -190,30 +191,30 @@ public class AccountPreferenceController extends AbstractPreferenceController im
         Context context = this.mContext;
         ProfileData profileData2 = new ProfileData();
         profileData2.userInfo = userInfo;
-        AccessiblePreferenceCategory createAccessiblePreferenceCategory = this.mHelper.createAccessiblePreferenceCategory(this.mParent.getPreferenceManager().getContext());
+        AccessiblePreferenceCategory accessiblePreferenceCategoryCreateAccessiblePreferenceCategory = this.mHelper.createAccessiblePreferenceCategory(this.mParent.getPreferenceManager().getContext());
         int i = this.mAccountProfileOrder;
         this.mAccountProfileOrder = i + 1;
-        createAccessiblePreferenceCategory.setOrder(i);
+        accessiblePreferenceCategoryCreateAccessiblePreferenceCategory.setOrder(i);
         if (isSingleProfile()) {
-            createAccessiblePreferenceCategory.setTitle(context.getString(R.string.account_for_section_header, BidiFormatter.getInstance().unicodeWrap(userInfo.name)));
-            createAccessiblePreferenceCategory.setContentDescription(this.mContext.getString(R.string.account_settings));
+            accessiblePreferenceCategoryCreateAccessiblePreferenceCategory.setTitle(context.getString(R.string.account_for_section_header, BidiFormatter.getInstance().unicodeWrap(userInfo.name)));
+            accessiblePreferenceCategoryCreateAccessiblePreferenceCategory.setContentDescription(this.mContext.getString(R.string.account_settings));
         } else if (userInfo.isManagedProfile()) {
-            createAccessiblePreferenceCategory.setTitle(R.string.category_work);
+            accessiblePreferenceCategoryCreateAccessiblePreferenceCategory.setTitle(R.string.category_work);
             String workGroupSummary = getWorkGroupSummary(context, userInfo);
-            createAccessiblePreferenceCategory.setSummary(workGroupSummary);
-            createAccessiblePreferenceCategory.setContentDescription(this.mContext.getString(R.string.accessibility_category_work, workGroupSummary));
+            accessiblePreferenceCategoryCreateAccessiblePreferenceCategory.setSummary(workGroupSummary);
+            accessiblePreferenceCategoryCreateAccessiblePreferenceCategory.setContentDescription(this.mContext.getString(R.string.accessibility_category_work, workGroupSummary));
             profileData2.removeWorkProfilePreference = newRemoveWorkProfilePreference();
             this.mHelper.enforceRestrictionOnPreference(profileData2.removeWorkProfilePreference, "no_remove_managed_profile", UserHandle.myUserId());
             profileData2.managedProfilePreference = newManagedProfileSettings();
         } else {
-            createAccessiblePreferenceCategory.setTitle(R.string.category_personal);
-            createAccessiblePreferenceCategory.setContentDescription(this.mContext.getString(R.string.accessibility_category_personal));
+            accessiblePreferenceCategoryCreateAccessiblePreferenceCategory.setTitle(R.string.category_personal);
+            accessiblePreferenceCategoryCreateAccessiblePreferenceCategory.setContentDescription(this.mContext.getString(R.string.accessibility_category_personal));
         }
         PreferenceScreen preferenceScreen = this.mParent.getPreferenceScreen();
         if (preferenceScreen != null) {
-            preferenceScreen.addPreference(createAccessiblePreferenceCategory);
+            preferenceScreen.addPreference(accessiblePreferenceCategoryCreateAccessiblePreferenceCategory);
         }
-        profileData2.preferenceGroup = createAccessiblePreferenceCategory;
+        profileData2.preferenceGroup = accessiblePreferenceCategoryCreateAccessiblePreferenceCategory;
         if (userInfo.isEnabled()) {
             profileData2.authenticatorHelper = new AuthenticatorHelper(context, userInfo.getUserHandle(), this);
             profileData2.addAccountPreference = newAddAccountPreference();
@@ -264,16 +265,15 @@ public class AccountPreferenceController extends AbstractPreferenceController im
             return;
         }
         for (int size = this.mProfiles.size() - 1; size >= 0; size--) {
-            ProfileData valueAt = this.mProfiles.valueAt(size);
-            if (valueAt.pendingRemoval) {
-                preferenceScreen.removePreference(valueAt.preferenceGroup);
+            ProfileData profileDataValueAt = this.mProfiles.valueAt(size);
+            if (profileDataValueAt.pendingRemoval) {
+                preferenceScreen.removePreference(profileDataValueAt.preferenceGroup);
                 this.mProfiles.removeAt(size);
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void listenToAccountUpdates() {
+    private void listenToAccountUpdates() {
         int size = this.mProfiles.size();
         for (int i = 0; i < size; i++) {
             AuthenticatorHelper authenticatorHelper = this.mProfiles.valueAt(i).authenticatorHelper;
@@ -283,8 +283,7 @@ public class AccountPreferenceController extends AbstractPreferenceController im
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void stopListeningToAccountUpdates() {
+    private void stopListeningToAccountUpdates() {
         int size = this.mProfiles.size();
         for (int i = 0; i < size; i++) {
             AuthenticatorHelper authenticatorHelper = this.mProfiles.valueAt(i).authenticatorHelper;
@@ -363,23 +362,25 @@ public class AccountPreferenceController extends AbstractPreferenceController im
                 int i5 = 0;
                 while (i5 < length) {
                     Account account = accountsByTypeAsUser[i5];
-                    AccountTypePreference remove = arrayMap.remove(AccountTypePreference.buildKey(account));
-                    if (remove != null) {
-                        arrayList.add(remove);
-                    } else if (AccountRestrictionHelper.showAccount(this.mAuthorities, authenticatorHelper.getAuthoritiesForAccountType(account.type))) {
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("account", account);
-                        bundle.putParcelable("user_handle", userHandle2);
-                        bundle.putString("account_type", str);
-                        strArr2 = enabledAccountTypes;
-                        bundle.putString("account_label", labelForType.toString());
-                        bundle.putInt("account_title_res", labelIdForType);
-                        bundle.putParcelable("android.intent.extra.USER", userHandle2);
-                        i = i5;
-                        i2 = length;
-                        accountArr = accountsByTypeAsUser;
-                        i3 = labelIdForType;
-                        arrayList.add(new AccountTypePreference(context, this.mMetricsFeatureProvider.getMetricsCategory(this.mParent), account, packageForType, labelIdForType, labelForType, AccountDetailDashboardFragment.class.getName(), bundle, drawableForType));
+                    AccountTypePreference accountTypePreferenceRemove = arrayMap.remove(AccountTypePreference.buildKey(account));
+                    if (accountTypePreferenceRemove != null) {
+                        arrayList.add(accountTypePreferenceRemove);
+                    } else {
+                        if (AccountRestrictionHelper.showAccount(this.mAuthorities, authenticatorHelper.getAuthoritiesForAccountType(account.type))) {
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable("account", account);
+                            bundle.putParcelable("user_handle", userHandle2);
+                            bundle.putString("account_type", str);
+                            strArr2 = enabledAccountTypes;
+                            bundle.putString("account_label", labelForType.toString());
+                            bundle.putInt("account_title_res", labelIdForType);
+                            bundle.putParcelable("android.intent.extra.USER", userHandle2);
+                            i = i5;
+                            i2 = length;
+                            accountArr = accountsByTypeAsUser;
+                            i3 = labelIdForType;
+                            arrayList.add(new AccountTypePreference(context, this.mMetricsFeatureProvider.getMetricsCategory(this.mParent), account, packageForType, labelIdForType, labelForType, AccountDetailDashboardFragment.class.getName(), bundle, drawableForType));
+                        }
                         i5 = i + 1;
                         enabledAccountTypes = strArr2;
                         length = i2;
@@ -407,10 +408,11 @@ public class AccountPreferenceController extends AbstractPreferenceController im
             userHandle2 = userHandle;
         }
         Collections.sort(arrayList, new Comparator<AccountTypePreference>() { // from class: com.android.settings.accounts.AccountPreferenceController.1
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(AccountTypePreference accountTypePreference, AccountTypePreference accountTypePreference2) {
-                int compareTo = accountTypePreference.getSummary().toString().compareTo(accountTypePreference2.getSummary().toString());
-                return compareTo != 0 ? compareTo : accountTypePreference.getTitle().toString().compareTo(accountTypePreference2.getTitle().toString());
+                int iCompareTo = accountTypePreference.getSummary().toString().compareTo(accountTypePreference2.getSummary().toString());
+                return iCompareTo != 0 ? iCompareTo : accountTypePreference.getTitle().toString().compareTo(accountTypePreference2.getTitle().toString());
             }
         });
         return arrayList;
@@ -437,7 +439,6 @@ public class AccountPreferenceController extends AbstractPreferenceController im
         return this.mUm.isLinkedUser() || this.mUm.getProfiles(UserHandle.myUserId()).size() == 1;
     }
 
-    /* loaded from: classes.dex */
     private class ManagedProfileBroadcastReceiver extends BroadcastReceiver {
         private boolean mListeningToManagedProfileEvents;
 
@@ -452,9 +453,9 @@ public class AccountPreferenceController extends AbstractPreferenceController im
                 AccountPreferenceController.this.stopListeningToAccountUpdates();
                 AccountPreferenceController.this.updateUi();
                 AccountPreferenceController.this.listenToAccountUpdates();
-                return;
+            } else {
+                Log.w("AccountPrefController", "Cannot handle received broadcast: " + intent.getAction());
             }
-            Log.w("AccountPrefController", "Cannot handle received broadcast: " + intent.getAction());
         }
 
         public void register(Context context) {

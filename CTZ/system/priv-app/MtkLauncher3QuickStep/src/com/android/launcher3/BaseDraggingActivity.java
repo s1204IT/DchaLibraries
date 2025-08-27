@@ -20,6 +20,7 @@ import com.android.launcher3.shortcuts.DeepShortcutManager;
 import com.android.launcher3.uioverrides.DisplayRotationListener;
 import com.android.launcher3.uioverrides.WallpaperColorInfo;
 import com.android.launcher3.views.BaseDragLayer;
+
 /* loaded from: classes.dex */
 public abstract class BaseDraggingActivity extends BaseActivity implements WallpaperColorInfo.OnChangeListener {
     public static final Object AUTO_CANCEL_ACTION_MODE = new Object();
@@ -31,7 +32,6 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
     private DisplayRotationListener mRotationListener;
     private int mThemeRes = R.style.LauncherTheme;
 
-    /* loaded from: classes.dex */
     public interface OnStartCallback<T extends BaseDraggingActivity> {
         void onActivityStart(T t);
     }
@@ -50,15 +50,14 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
 
     protected abstract void reapplyUi();
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         this.mIsSafeModeEnabled = getPackageManager().isSafeMode();
         this.mRotationListener = new DisplayRotationListener(this, new Runnable() { // from class: com.android.launcher3.-$$Lambda$BaseDraggingActivity$ctewqkchuXx55CyR37m9tHwD3xM
             @Override // java.lang.Runnable
             public final void run() {
-                BaseDraggingActivity.this.onDeviceRotationChanged();
+                this.f$0.onDeviceRotationChanged();
             }
         });
         WallpaperColorInfo wallpaperColorInfo = WallpaperColorInfo.getInstance(this);
@@ -83,11 +82,11 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
                 return 2131886093;
             }
             return R.style.LauncherThemeDark;
-        } else if (wallpaperColorInfo.supportsDarkText()) {
-            return 2131886091;
-        } else {
-            return R.style.LauncherTheme;
         }
+        if (wallpaperColorInfo.supportsDarkText()) {
+            return 2131886091;
+        }
+        return R.style.LauncherTheme;
     }
 
     @Override // android.app.Activity, android.view.Window.Callback
@@ -132,15 +131,15 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
     }
 
     public boolean startActivitySafely(View view, Intent intent, ItemInfo itemInfo) {
-        Bundle bundle;
+        Bundle activityLaunchOptionsAsBundle;
         if (this.mIsSafeModeEnabled && !Utilities.isSystemApp(this, intent)) {
-            Toast.makeText(this, (int) R.string.safemode_shortcut_error, 0).show();
+            Toast.makeText(this, R.string.safemode_shortcut_error, 0).show();
             return false;
         }
         if ((view == null || intent.hasExtra(INTENT_EXTRA_IGNORE_LAUNCH_ANIMATION)) ? false : true) {
-            bundle = getActivityLaunchOptionsAsBundle(view);
+            activityLaunchOptionsAsBundle = getActivityLaunchOptionsAsBundle(view);
         } else {
-            bundle = null;
+            activityLaunchOptionsAsBundle = null;
         }
         UserHandle userHandle = itemInfo != null ? itemInfo.user : null;
         intent.addFlags(268435456);
@@ -149,17 +148,16 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
         }
         try {
             if (Utilities.ATLEAST_MARSHMALLOW && (itemInfo instanceof ShortcutInfo) && (itemInfo.itemType == 1 || itemInfo.itemType == 6) && !((ShortcutInfo) itemInfo).isPromise()) {
-                startShortcutIntentSafely(intent, bundle, itemInfo);
+                startShortcutIntentSafely(intent, activityLaunchOptionsAsBundle, itemInfo);
+            } else if (userHandle == null || userHandle.equals(Process.myUserHandle())) {
+                startActivity(intent, activityLaunchOptionsAsBundle);
             } else {
-                if (userHandle != null && !userHandle.equals(Process.myUserHandle())) {
-                    LauncherAppsCompat.getInstance(this).startActivityForProfile(intent.getComponent(), userHandle, intent.getSourceBounds(), bundle);
-                }
-                startActivity(intent, bundle);
+                LauncherAppsCompat.getInstance(this).startActivityForProfile(intent.getComponent(), userHandle, intent.getSourceBounds(), activityLaunchOptionsAsBundle);
             }
             getUserEventDispatcher().logAppLaunch(view, intent);
             return true;
         } catch (ActivityNotFoundException | SecurityException e) {
-            Toast.makeText(this, (int) R.string.activity_not_found, 0).show();
+            Toast.makeText(this, R.string.activity_not_found, 0).show();
             Log.e(TAG, "Unable to launch. tag=" + itemInfo + " intent=" + intent, e);
             return false;
         }
@@ -168,14 +166,19 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
     private void startShortcutIntentSafely(Intent intent, Bundle bundle, ItemInfo itemInfo) {
         try {
             StrictMode.VmPolicy vmPolicy = StrictMode.getVmPolicy();
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
-            if (itemInfo.itemType == 6) {
-                String deepShortcutId = ((ShortcutInfo) itemInfo).getDeepShortcutId();
-                DeepShortcutManager.getInstance(this).startShortcut(intent.getPackage(), deepShortcutId, intent.getSourceBounds(), bundle, itemInfo.user);
-            } else {
-                startActivity(intent, bundle);
+            try {
+                StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
+                if (itemInfo.itemType == 6) {
+                    String deepShortcutId = ((ShortcutInfo) itemInfo).getDeepShortcutId();
+                    DeepShortcutManager.getInstance(this).startShortcut(intent.getPackage(), deepShortcutId, intent.getSourceBounds(), bundle, itemInfo.user);
+                } else {
+                    startActivity(intent, bundle);
+                }
+                StrictMode.setVmPolicy(vmPolicy);
+            } catch (Throwable th) {
+                StrictMode.setVmPolicy(vmPolicy);
+                throw th;
             }
-            StrictMode.setVmPolicy(vmPolicy);
         } catch (SecurityException e) {
             if (!onErrorStartingShortcut(intent, itemInfo)) {
                 throw e;
@@ -187,9 +190,8 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.BaseActivity, android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         if (this.mOnStartCallback != null) {
             this.mOnStartCallback.onActivityStart(this);
@@ -197,9 +199,8 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         WallpaperColorInfo.getInstance(this).removeOnChangeListener(this);
         this.mRotationListener.disable();
@@ -209,18 +210,16 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
         this.mOnStartCallback = onStartCallback;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDeviceProfileInitiated() {
+    protected void onDeviceProfileInitiated() {
         if (this.mDeviceProfile.isVerticalBarLayout()) {
             this.mRotationListener.enable();
             this.mDeviceProfile.updateIsSeascape(getWindowManager());
-            return;
+        } else {
+            this.mRotationListener.disable();
         }
-        this.mRotationListener.disable();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onDeviceRotationChanged() {
+    private void onDeviceRotationChanged() {
         if (this.mDeviceProfile.updateIsSeascape(getWindowManager())) {
             reapplyUi();
         }

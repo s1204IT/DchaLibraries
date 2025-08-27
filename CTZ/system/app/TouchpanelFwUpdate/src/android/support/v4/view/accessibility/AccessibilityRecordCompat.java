@@ -2,6 +2,7 @@ package android.support.v4.view.accessibility;
 
 import android.os.Build;
 import android.view.accessibility.AccessibilityRecord;
+
 /* loaded from: classes.dex */
 public class AccessibilityRecordCompat {
     private final AccessibilityRecord mRecord;

@@ -19,6 +19,7 @@ import com.android.settings.support.actionbar.HelpResourceProvider;
 import com.android.settings.widget.RtlCompatibleViewPager;
 import com.android.settings.widget.SlidingTabLayout;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WifiCallingSettings extends InstrumentedFragment implements HelpResourceProvider {
     private WifiCallingViewPagerAdapter mPagerAdapter;
@@ -33,12 +34,12 @@ public class WifiCallingSettings extends InstrumentedFragment implements HelpRes
 
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate = layoutInflater.inflate(R.layout.wifi_calling_settings_tabs, viewGroup, false);
-        this.mTabLayout = (SlidingTabLayout) inflate.findViewById(R.id.sliding_tabs);
-        this.mViewPager = (RtlCompatibleViewPager) inflate.findViewById(R.id.view_pager);
+        View viewInflate = layoutInflater.inflate(R.layout.wifi_calling_settings_tabs, viewGroup, false);
+        this.mTabLayout = (SlidingTabLayout) viewInflate.findViewById(R.id.sliding_tabs);
+        this.mViewPager = (RtlCompatibleViewPager) viewInflate.findViewById(R.id.view_pager);
         this.mPagerAdapter = new WifiCallingViewPagerAdapter(getChildFragmentManager(), this.mViewPager);
         this.mViewPager.setAdapter(this.mPagerAdapter);
-        return inflate;
+        return viewInflate;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservableFragment, android.app.Fragment
@@ -65,7 +66,6 @@ public class WifiCallingSettings extends InstrumentedFragment implements HelpRes
         return R.string.help_uri_wifi_calling;
     }
 
-    /* loaded from: classes.dex */
     private final class WifiCallingViewPagerAdapter extends FragmentPagerAdapter {
         private final RtlCompatibleViewPager mViewPager;
 

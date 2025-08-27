@@ -1,6 +1,7 @@
 package com.android.systemui.shared.system;
 
 import android.view.RemoteAnimationDefinition;
+
 /* loaded from: classes.dex */
 public class RemoteAnimationDefinitionCompat {
     private final RemoteAnimationDefinition mWrapped = new RemoteAnimationDefinition();
@@ -13,8 +14,7 @@ public class RemoteAnimationDefinitionCompat {
         this.mWrapped.addRemoteAnimation(transition, activityTypeFilter, adapter.getWrapped());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RemoteAnimationDefinition getWrapped() {
+    RemoteAnimationDefinition getWrapped() {
         return this.mWrapped;
     }
 }

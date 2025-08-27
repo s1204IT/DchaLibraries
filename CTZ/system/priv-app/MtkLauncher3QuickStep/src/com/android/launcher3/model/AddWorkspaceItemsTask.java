@@ -20,6 +20,7 @@ import com.android.launcher3.util.GridOccupancy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
     private final List<Pair<ItemInfo, Object>> mItemList;
@@ -36,36 +37,37 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
         Context context = launcherAppState.getContext();
         final ArrayList arrayList = new ArrayList();
         final ArrayList<Long> arrayList2 = new ArrayList<>();
-        ArrayList<Long> loadWorkspaceScreensDb = LauncherModel.loadWorkspaceScreensDb(context);
+        ArrayList<Long> arrayListLoadWorkspaceScreensDb = LauncherModel.loadWorkspaceScreensDb(context);
         synchronized (bgDataModel) {
             ArrayList<ItemInfo> arrayList3 = new ArrayList();
-            for (Pair<ItemInfo, Object> pair : this.mItemList) {
-                ItemInfo itemInfo = (ItemInfo) pair.first;
-                if ((itemInfo.itemType != 0 && itemInfo.itemType != 1) || !shortcutExists(bgDataModel, itemInfo.getIntent(), itemInfo.user)) {
-                    if (itemInfo.itemType == 0 && (itemInfo instanceof AppInfo)) {
-                        itemInfo = ((AppInfo) itemInfo).makeShortcut();
+            Iterator<Pair<ItemInfo, Object>> it = this.mItemList.iterator();
+            while (it.hasNext()) {
+                ItemInfo itemInfoMakeShortcut = (ItemInfo) it.next().first;
+                if ((itemInfoMakeShortcut.itemType != 0 && itemInfoMakeShortcut.itemType != 1) || !shortcutExists(bgDataModel, itemInfoMakeShortcut.getIntent(), itemInfoMakeShortcut.user)) {
+                    if (itemInfoMakeShortcut.itemType == 0 && (itemInfoMakeShortcut instanceof AppInfo)) {
+                        itemInfoMakeShortcut = ((AppInfo) itemInfoMakeShortcut).makeShortcut();
                     }
-                    if (itemInfo != null) {
-                        arrayList3.add(itemInfo);
+                    if (itemInfoMakeShortcut != null) {
+                        arrayList3.add(itemInfoMakeShortcut);
                     }
                 }
             }
-            for (ItemInfo itemInfo2 : arrayList3) {
-                Pair<Long, int[]> findSpaceForItem = findSpaceForItem(launcherAppState, bgDataModel, loadWorkspaceScreensDb, arrayList2, itemInfo2.spanX, itemInfo2.spanY);
-                long longValue = ((Long) findSpaceForItem.first).longValue();
-                int[] iArr = (int[]) findSpaceForItem.second;
-                if (!(itemInfo2 instanceof ShortcutInfo) && !(itemInfo2 instanceof FolderInfo) && !(itemInfo2 instanceof LauncherAppWidgetInfo)) {
-                    if (itemInfo2 instanceof AppInfo) {
-                        itemInfo2 = ((AppInfo) itemInfo2).makeShortcut();
+            for (ItemInfo itemInfoMakeShortcut2 : arrayList3) {
+                Pair<Long, int[]> pairFindSpaceForItem = findSpaceForItem(launcherAppState, bgDataModel, arrayListLoadWorkspaceScreensDb, arrayList2, itemInfoMakeShortcut2.spanX, itemInfoMakeShortcut2.spanY);
+                long jLongValue = ((Long) pairFindSpaceForItem.first).longValue();
+                int[] iArr = (int[]) pairFindSpaceForItem.second;
+                if (!(itemInfoMakeShortcut2 instanceof ShortcutInfo) && !(itemInfoMakeShortcut2 instanceof FolderInfo) && !(itemInfoMakeShortcut2 instanceof LauncherAppWidgetInfo)) {
+                    if (itemInfoMakeShortcut2 instanceof AppInfo) {
+                        itemInfoMakeShortcut2 = ((AppInfo) itemInfoMakeShortcut2).makeShortcut();
                     } else {
                         throw new RuntimeException("Unexpected info type");
                     }
                 }
-                getModelWriter().addItemToDatabase(itemInfo2, -100L, longValue, iArr[0], iArr[1]);
-                arrayList.add(itemInfo2);
+                getModelWriter().addItemToDatabase(itemInfoMakeShortcut2, -100L, jLongValue, iArr[0], iArr[1]);
+                arrayList.add(itemInfoMakeShortcut2);
             }
         }
-        updateScreens(context, loadWorkspaceScreensDb);
+        updateScreens(context, arrayListLoadWorkspaceScreensDb);
         if (!arrayList.isEmpty()) {
             scheduleCallbackTask(new LauncherModel.CallbackTask() { // from class: com.android.launcher3.model.AddWorkspaceItemsTask.1
                 @Override // com.android.launcher3.LauncherModel.CallbackTask
@@ -74,13 +76,13 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                     ArrayList<ItemInfo> arrayList5 = new ArrayList<>();
                     if (!arrayList.isEmpty()) {
                         long j = ((ItemInfo) arrayList.get(arrayList.size() - 1)).screenId;
-                        Iterator it = arrayList.iterator();
-                        while (it.hasNext()) {
-                            ItemInfo itemInfo3 = (ItemInfo) it.next();
-                            if (itemInfo3.screenId == j) {
-                                arrayList4.add(itemInfo3);
+                        Iterator it2 = arrayList.iterator();
+                        while (it2.hasNext()) {
+                            ItemInfo itemInfo = (ItemInfo) it2.next();
+                            if (itemInfo.screenId == j) {
+                                arrayList4.add(itemInfo);
                             } else {
-                                arrayList5.add(itemInfo3);
+                                arrayList5.add(itemInfo);
                             }
                         }
                     }
@@ -97,25 +99,25 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
     protected boolean shortcutExists(BgDataModel bgDataModel, Intent intent, UserHandle userHandle) {
         String uri;
         String uri2;
-        String str;
+        String packageName;
         if (intent == null) {
             return true;
         }
         if (intent.getComponent() != null) {
-            str = intent.getComponent().getPackageName();
+            packageName = intent.getComponent().getPackageName();
             if (intent.getPackage() != null) {
                 uri = intent.toUri(0);
                 uri2 = new Intent(intent).setPackage(null).toUri(0);
             } else {
-                uri = new Intent(intent).setPackage(str).toUri(0);
+                uri = new Intent(intent).setPackage(packageName).toUri(0);
                 uri2 = intent.toUri(0);
             }
         } else {
             uri = intent.toUri(0);
             uri2 = intent.toUri(0);
-            str = null;
+            packageName = null;
         }
-        boolean isLauncherAppTarget = Utilities.isLauncherAppTarget(intent);
+        boolean zIsLauncherAppTarget = Utilities.isLauncherAppTarget(intent);
         synchronized (bgDataModel) {
             Iterator<ItemInfo> it = bgDataModel.itemsIdMap.iterator();
             while (it.hasNext()) {
@@ -127,7 +129,7 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                         intent2.setSourceBounds(intent.getSourceBounds());
                         String uri3 = intent2.toUri(0);
                         if (!uri.equals(uri3) && !uri2.equals(uri3)) {
-                            if (isLauncherAppTarget && shortcutInfo.isPromise() && shortcutInfo.hasStatusFlag(2) && shortcutInfo.getTargetComponent() != null && str != null && str.equals(shortcutInfo.getTargetComponent().getPackageName())) {
+                            if (zIsLauncherAppTarget && shortcutInfo.isPromise() && shortcutInfo.hasStatusFlag(2) && shortcutInfo.getTargetComponent() != null && packageName != null && packageName.equals(shortcutInfo.getTargetComponent().getPackageName())) {
                                 return true;
                             }
                         }
@@ -140,7 +142,7 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
     }
 
     protected Pair<Long, int[]> findSpaceForItem(LauncherAppState launcherAppState, BgDataModel bgDataModel, ArrayList<Long> arrayList, ArrayList<Long> arrayList2, int i, int i2) {
-        long j;
+        long jLongValue;
         LongSparseArray longSparseArray = new LongSparseArray();
         synchronized (bgDataModel) {
             Iterator<ItemInfo> it = bgDataModel.itemsIdMap.iterator();
@@ -156,47 +158,47 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                 }
             }
         }
-        long j2 = 0;
+        long jLongValue2 = 0;
         int[] iArr = new int[2];
-        boolean z = false;
+        boolean zFindNextAvailableIconSpaceInScreen = false;
         int size = arrayList.size();
         int i3 = !arrayList.isEmpty() ? 1 : 0;
         if (i3 < size) {
-            j2 = arrayList.get(i3).longValue();
-            z = findNextAvailableIconSpaceInScreen(launcherAppState, (ArrayList) longSparseArray.get(j2), iArr, i, i2);
+            jLongValue2 = arrayList.get(i3).longValue();
+            zFindNextAvailableIconSpaceInScreen = findNextAvailableIconSpaceInScreen(launcherAppState, (ArrayList) longSparseArray.get(jLongValue2), iArr, i, i2);
         }
-        long j3 = j2;
-        boolean z2 = z;
-        if (!z2) {
-            long j4 = j3;
+        long j = jLongValue2;
+        boolean z = zFindNextAvailableIconSpaceInScreen;
+        if (!z) {
+            long j2 = j;
             int i4 = 1;
             while (true) {
                 if (i4 < size) {
-                    j = arrayList.get(i4).longValue();
-                    if (!findNextAvailableIconSpaceInScreen(launcherAppState, (ArrayList) longSparseArray.get(j), iArr, i, i2)) {
+                    jLongValue = arrayList.get(i4).longValue();
+                    if (!findNextAvailableIconSpaceInScreen(launcherAppState, (ArrayList) longSparseArray.get(jLongValue), iArr, i, i2)) {
                         i4++;
-                        j4 = j;
+                        j2 = jLongValue;
                     } else {
-                        z2 = true;
+                        z = true;
                         break;
                     }
                 } else {
-                    j = j4;
+                    jLongValue = j2;
                     break;
                 }
             }
         } else {
-            j = j3;
+            jLongValue = j;
         }
-        if (!z2) {
-            j = LauncherSettings.Settings.call(launcherAppState.getContext().getContentResolver(), LauncherSettings.Settings.METHOD_NEW_SCREEN_ID).getLong(LauncherSettings.Settings.EXTRA_VALUE);
-            arrayList.add(Long.valueOf(j));
-            arrayList2.add(Long.valueOf(j));
-            if (!findNextAvailableIconSpaceInScreen(launcherAppState, (ArrayList) longSparseArray.get(j), iArr, i, i2)) {
+        if (!z) {
+            jLongValue = LauncherSettings.Settings.call(launcherAppState.getContext().getContentResolver(), LauncherSettings.Settings.METHOD_NEW_SCREEN_ID).getLong(LauncherSettings.Settings.EXTRA_VALUE);
+            arrayList.add(Long.valueOf(jLongValue));
+            arrayList2.add(Long.valueOf(jLongValue));
+            if (!findNextAvailableIconSpaceInScreen(launcherAppState, (ArrayList) longSparseArray.get(jLongValue), iArr, i, i2)) {
                 throw new RuntimeException("Can't find space to add the item");
             }
         }
-        return Pair.create(Long.valueOf(j), iArr);
+        return Pair.create(Long.valueOf(jLongValue), iArr);
     }
 
     private boolean findNextAvailableIconSpaceInScreen(LauncherAppState launcherAppState, ArrayList<ItemInfo> arrayList, int[] iArr, int i, int i2) {

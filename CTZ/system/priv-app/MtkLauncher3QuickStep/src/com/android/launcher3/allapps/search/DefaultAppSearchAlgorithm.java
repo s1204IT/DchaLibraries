@@ -7,6 +7,7 @@ import com.android.launcher3.util.ComponentKey;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultAppSearchAlgorithm implements SearchAlgorithm {
     private final List<AppInfo> mApps;
@@ -47,27 +48,27 @@ public class DefaultAppSearchAlgorithm implements SearchAlgorithm {
     }
 
     public static boolean matches(AppInfo appInfo, String str, StringMatcher stringMatcher) {
-        int i;
+        int type;
         int length = str.length();
-        String charSequence = appInfo.title.toString();
-        int length2 = charSequence.length();
+        String string = appInfo.title.toString();
+        int length2 = string.length();
         if (length2 < length || length <= 0) {
             return false;
         }
-        int i2 = length2 - length;
+        int i = length2 - length;
+        int i2 = 0;
+        int type2 = Character.getType(string.codePointAt(0));
         int i3 = 0;
-        int type = Character.getType(charSequence.codePointAt(0));
-        int i4 = 0;
-        while (i4 <= i2) {
-            if (i4 < length2 - 1) {
-                i = Character.getType(charSequence.codePointAt(i4 + 1));
+        while (i3 <= i) {
+            if (i3 < length2 - 1) {
+                type = Character.getType(string.codePointAt(i3 + 1));
             } else {
-                i = 0;
+                type = 0;
             }
-            if (!isBreak(type, i3, i) || !stringMatcher.matches(str, charSequence.substring(i4, i4 + length))) {
-                i4++;
-                i3 = type;
-                type = i;
+            if (!isBreak(type2, i2, type) || !stringMatcher.matches(str, string.substring(i3, i3 + length))) {
+                i3++;
+                i2 = type2;
+                type2 = type;
             } else {
                 return true;
             }
@@ -76,6 +77,10 @@ public class DefaultAppSearchAlgorithm implements SearchAlgorithm {
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:31:0x0033  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private static boolean isBreak(int i, int i2, int i3) {
         if (i2 != 0) {
             switch (i2) {
@@ -88,39 +93,42 @@ public class DefaultAppSearchAlgorithm implements SearchAlgorithm {
                         switch (i) {
                             case 1:
                                 if (i3 == 1) {
-                                    return true;
+                                }
+                                if (i2 != 1) {
+                                    break;
                                 }
                                 break;
                             case 2:
-                                return i2 > 5 || i2 <= 0;
+                                if (i2 <= 5 && i2 > 0) {
+                                    break;
+                                }
+                                break;
                             case 3:
+                                if (i2 != 1) {
+                                }
                                 break;
                             default:
                                 switch (i) {
                                     case 9:
                                     case 10:
                                     case 11:
-                                        return (i2 == 9 || i2 == 10 || i2 == 11) ? false : true;
+                                        if (i2 == 9 || i2 == 10 || i2 == 11) {
+                                            break;
+                                        }
+                                        break;
                                     default:
                                         switch (i) {
-                                            case 24:
-                                            case 25:
-                                            case 26:
-                                                break;
-                                            default:
-                                                return false;
                                         }
                                 }
                         }
-                        return i2 != 1;
                     }
-                    return true;
+                    break;
             }
+            return false;
         }
         return true;
     }
 
-    /* loaded from: classes.dex */
     public static class StringMatcher {
         private static final char MAX_UNICODE = 65535;
         private final Collator mCollator = Collator.getInstance();

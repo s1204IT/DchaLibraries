@@ -1,2 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.android.browser.BreadCrumbView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/crumbs" android:layout_width="match_parent" android:layout_height="match_parent"/>
+<com.android.browser.BreadCrumbView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/crumbs"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>

@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.hardware.fingerprint.Fingerprint;
 import android.hardware.fingerprint.FingerprintManager;
@@ -40,6 +41,7 @@ import com.android.settingslib.TwoTargetPreference;
 import com.android.settingslib.widget.FooterPreference;
 import java.util.HashMap;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class FingerprintSettings extends SubSettings {
     @Override // com.android.settings.SettingsActivity, android.app.Activity
@@ -49,9 +51,8 @@ public class FingerprintSettings extends SubSettings {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SubSettings, com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return FingerprintSettingsFragment.class.getName().equals(str);
     }
 
@@ -61,7 +62,6 @@ public class FingerprintSettings extends SubSettings {
         setTitle(getText(R.string.security_settings_fingerprint_preference_title));
     }
 
-    /* loaded from: classes.dex */
     public static class FingerprintSettingsFragment extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, FingerprintPreference.OnDeleteClickListener {
         private FingerprintAuthenticateSidecar mAuthenticateSidecar;
         private FingerprintManager mFingerprintManager;
@@ -118,23 +118,20 @@ public class FingerprintSettings extends SubSettings {
         };
         private final Handler mHandler = new Handler() { // from class: com.android.settings.fingerprint.FingerprintSettings.FingerprintSettingsFragment.3
             @Override // android.os.Handler
-            public void handleMessage(Message message) {
+            public void handleMessage(Message message) throws Resources.NotFoundException {
                 switch (message.what) {
                     case 1000:
                         FingerprintSettingsFragment.this.removeFingerprintPreference(message.arg1);
                         FingerprintSettingsFragment.this.updateAddPreference();
                         FingerprintSettingsFragment.this.retryFingerprint();
-                        return;
+                        break;
                     case 1001:
                         FingerprintSettingsFragment.this.highlightFingerprintItem(message.arg1);
                         FingerprintSettingsFragment.this.retryFingerprint();
-                        return;
-                    case 1002:
-                    default:
-                        return;
+                        break;
                     case 1003:
                         FingerprintSettingsFragment.this.handleError(message.arg1, (CharSequence) message.obj);
-                        return;
+                        break;
                 }
             }
         };
@@ -165,8 +162,7 @@ public class FingerprintSettings extends SubSettings {
             retryFingerprint();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void retryFingerprint() {
+        private void retryFingerprint() {
             if (!this.mRemovalSidecar.inProgress() && this.mFingerprintManager.getEnrolledFingerprints(this.mUserId).size() != 0 && !this.mLaunchedConfirm && !this.mInFingerprintLockout) {
                 this.mAuthenticateSidecar.startAuthentication(this.mUserId);
                 this.mAuthenticateSidecar.setListener(this.mAuthenticateListener);
@@ -212,37 +208,37 @@ public class FingerprintSettings extends SubSettings {
                 this.mLaunchedConfirm = true;
                 launchChooseOrConfirmLock();
             }
-            FooterPreference createFooterPreference = this.mFooterPreferenceMixin.createFooterPreference();
-            final RestrictedLockUtils.EnforcedAdmin checkIfKeyguardFeaturesDisabled = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(activity, 32, this.mUserId);
+            FooterPreference footerPreferenceCreateFooterPreference = this.mFooterPreferenceMixin.createFooterPreference();
+            final RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfKeyguardFeaturesDisabled = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(activity, 32, this.mUserId);
             AnnotationSpan.LinkInfo linkInfo = new AnnotationSpan.LinkInfo("admin_details", new View.OnClickListener() { // from class: com.android.settings.fingerprint.-$$Lambda$FingerprintSettings$FingerprintSettingsFragment$yE_lJ-MtxexMYsEgD8_Zrh5Z2iY
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    RestrictedLockUtils.sendShowAdminSupportDetailsIntent(activity, checkIfKeyguardFeaturesDisabled);
+                    RestrictedLockUtils.sendShowAdminSupportDetailsIntent(activity, enforcedAdminCheckIfKeyguardFeaturesDisabled);
                 }
             });
             AnnotationSpan.LinkInfo linkInfo2 = new AnnotationSpan.LinkInfo(activity, "url", HelpUtils.getHelpIntent(activity, getString(getHelpResource()), activity.getClass().getName()));
-            if (checkIfKeyguardFeaturesDisabled != null) {
+            if (enforcedAdminCheckIfKeyguardFeaturesDisabled != null) {
                 i = R.string.security_settings_fingerprint_enroll_disclaimer_lockscreen_disabled;
             } else {
                 i = R.string.security_settings_fingerprint_enroll_disclaimer;
             }
-            createFooterPreference.setTitle(AnnotationSpan.linkify(getText(i), linkInfo2, linkInfo));
+            footerPreferenceCreateFooterPreference.setTitle(AnnotationSpan.linkify(getText(i), linkInfo2, linkInfo));
         }
 
         protected void removeFingerprintPreference(int i) {
-            String genKey = genKey(i);
-            Preference findPreference = findPreference(genKey);
-            if (findPreference != null) {
-                if (!getPreferenceScreen().removePreference(findPreference)) {
-                    Log.w("FingerprintSettings", "Failed to remove preference with key " + genKey);
+            String strGenKey = genKey(i);
+            Preference preferenceFindPreference = findPreference(strGenKey);
+            if (preferenceFindPreference != null) {
+                if (!getPreferenceScreen().removePreference(preferenceFindPreference)) {
+                    Log.w("FingerprintSettings", "Failed to remove preference with key " + strGenKey);
                     return;
                 }
                 return;
             }
-            Log.w("FingerprintSettings", "Can't find preference to remove: " + genKey);
+            Log.w("FingerprintSettings", "Can't find preference to remove: " + strGenKey);
         }
 
-        private PreferenceScreen createPreferenceHierarchy() {
+        private PreferenceScreen createPreferenceHierarchy() throws Resources.NotFoundException {
             PreferenceScreen preferenceScreen = getPreferenceScreen();
             if (preferenceScreen != null) {
                 preferenceScreen.removeAll();
@@ -254,7 +250,7 @@ public class FingerprintSettings extends SubSettings {
             return preferenceScreen2;
         }
 
-        private void addFingerprintItemPreferences(PreferenceGroup preferenceGroup) {
+        private void addFingerprintItemPreferences(PreferenceGroup preferenceGroup) throws Resources.NotFoundException {
             preferenceGroup.removeAll();
             List enrolledFingerprints = this.mFingerprintManager.getEnrolledFingerprints(this.mUserId);
             int size = enrolledFingerprints.size();
@@ -284,22 +280,21 @@ public class FingerprintSettings extends SubSettings {
             updateAddPreference();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateAddPreference() {
+        private void updateAddPreference() throws Resources.NotFoundException {
             if (getActivity() == null) {
                 return;
             }
-            int integer = getContext().getResources().getInteger(17694789);
+            int integer = getContext().getResources().getInteger(android.R.integer.config_datause_polling_period_sec);
             boolean z = false;
             boolean z2 = this.mFingerprintManager.getEnrolledFingerprints(this.mUserId).size() >= integer;
-            boolean inProgress = this.mRemovalSidecar.inProgress();
+            boolean zInProgress = this.mRemovalSidecar.inProgress();
             String string = z2 ? getContext().getString(R.string.fingerprint_add_max, Integer.valueOf(integer)) : "";
-            Preference findPreference = findPreference("key_fingerprint_add");
-            findPreference.setSummary(string);
-            if (!z2 && !inProgress) {
+            Preference preferenceFindPreference = findPreference("key_fingerprint_add");
+            preferenceFindPreference.setSummary(string);
+            if (!z2 && !zInProgress) {
                 z = true;
             }
-            findPreference.setEnabled(z);
+            preferenceFindPreference.setEnabled(z);
         }
 
         private static String genKey(int i) {
@@ -307,7 +302,7 @@ public class FingerprintSettings extends SubSettings {
         }
 
         @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-        public void onResume() {
+        public void onResume() throws Resources.NotFoundException {
             super.onResume();
             this.mInFingerprintLockout = false;
             updatePreferences();
@@ -316,7 +311,7 @@ public class FingerprintSettings extends SubSettings {
             }
         }
 
-        private void updatePreferences() {
+        private void updatePreferences() throws Resources.NotFoundException {
             createPreferenceHierarchy();
             retryFingerprint();
         }
@@ -368,10 +363,10 @@ public class FingerprintSettings extends SubSettings {
                 }
             }
             ConfirmLastDeleteDialog confirmLastDeleteDialog = new ConfirmLastDeleteDialog();
-            boolean isManagedProfile = UserManager.get(getContext()).isManagedProfile(this.mUserId);
+            boolean zIsManagedProfile = UserManager.get(getContext()).isManagedProfile(this.mUserId);
             Bundle bundle = new Bundle();
             bundle.putParcelable("fingerprint", fingerprint);
-            bundle.putBoolean("isProfileChallengeUser", isManagedProfile);
+            bundle.putBoolean("isProfileChallengeUser", zIsManagedProfile);
             confirmLastDeleteDialog.setArguments(bundle);
             confirmLastDeleteDialog.setTargetFragment(this, 0);
             confirmLastDeleteDialog.show(getFragmentManager(), ConfirmLastDeleteDialog.class.getName());
@@ -426,10 +421,10 @@ public class FingerprintSettings extends SubSettings {
 
         @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
         public void onDestroy() {
-            int postEnroll;
+            int iPostEnroll;
             super.onDestroy();
-            if (getActivity().isFinishing() && (postEnroll = this.mFingerprintManager.postEnroll()) < 0) {
-                Log.w("FingerprintSettings", "postEnroll failed: result = " + postEnroll);
+            if (getActivity().isFinishing() && (iPostEnroll = this.mFingerprintManager.postEnroll()) < 0) {
+                Log.w("FingerprintSettings", "postEnroll failed: result = " + iPostEnroll);
             }
         }
 
@@ -441,8 +436,7 @@ public class FingerprintSettings extends SubSettings {
             return this.mHighlightDrawable;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void highlightFingerprintItem(int i) {
+        private void highlightFingerprintItem(int i) {
             FingerprintPreference fingerprintPreference = (FingerprintPreference) findPreference(genKey(i));
             Drawable highlightDrawable = getHighlightDrawable();
             if (highlightDrawable != null && fingerprintPreference != null) {
@@ -462,27 +456,26 @@ public class FingerprintSettings extends SubSettings {
 
         private void launchChooseOrConfirmLock() {
             Intent intent = new Intent();
-            long preEnroll = this.mFingerprintManager.preEnroll();
-            if (!new ChooseLockSettingsHelper(getActivity(), this).launchConfirmationActivity(101, getString(R.string.security_settings_fingerprint_preference_title), (CharSequence) null, (CharSequence) null, preEnroll, this.mUserId)) {
+            long jPreEnroll = this.mFingerprintManager.preEnroll();
+            if (!new ChooseLockSettingsHelper(getActivity(), this).launchConfirmationActivity(101, getString(R.string.security_settings_fingerprint_preference_title), (CharSequence) null, (CharSequence) null, jPreEnroll, this.mUserId)) {
                 intent.setClassName("com.android.settings", ChooseLockGeneric.class.getName());
                 intent.putExtra("minimum_quality", 65536);
                 intent.putExtra("hide_disabled_prefs", true);
                 intent.putExtra("has_challenge", true);
                 intent.putExtra("android.intent.extra.USER_ID", this.mUserId);
-                intent.putExtra("challenge", preEnroll);
+                intent.putExtra("challenge", jPreEnroll);
                 intent.putExtra("android.intent.extra.USER_ID", this.mUserId);
                 startActivityForResult(intent, 102);
             }
         }
 
-        void deleteFingerPrint(Fingerprint fingerprint) {
+        void deleteFingerPrint(Fingerprint fingerprint) throws Resources.NotFoundException {
             this.mRemovalSidecar.startRemove(fingerprint, this.mUserId);
             findPreference(genKey(fingerprint.getFingerId())).setEnabled(false);
             updateAddPreference();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void renameFingerPrint(int i, String str) {
+        private void renameFingerPrint(int i, String str) throws Resources.NotFoundException {
             this.mFingerprintManager.rename(i, this.mUserId, str);
             if (!TextUtils.isEmpty(str)) {
                 this.mFingerprintsRenaming.put(Integer.valueOf(i), str);
@@ -490,7 +483,6 @@ public class FingerprintSettings extends SubSettings {
             updatePreferences();
         }
 
-        /* loaded from: classes.dex */
         public static class DeleteFingerprintDialog extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
             private AlertDialog mAlertDialog;
             private Fingerprint mFp;
@@ -517,7 +509,7 @@ public class FingerprintSettings extends SubSettings {
             }
 
             @Override // android.content.DialogInterface.OnClickListener
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(DialogInterface dialogInterface, int i) throws Resources.NotFoundException {
                 if (i == -1) {
                     int fingerId = this.mFp.getFingerId();
                     Log.v("FingerprintSettings", "Removing fpId=" + fingerId);
@@ -527,7 +519,6 @@ public class FingerprintSettings extends SubSettings {
             }
         }
 
-        /* loaded from: classes.dex */
         public static class RenameDialog extends InstrumentedDialogFragment {
             private AlertDialog mAlertDialog;
             private boolean mDeleteInProgress;
@@ -553,13 +544,13 @@ public class FingerprintSettings extends SubSettings {
                 }
                 this.mAlertDialog = new AlertDialog.Builder(getActivity()).setView(R.layout.fingerprint_rename_dialog).setPositiveButton(R.string.security_settings_fingerprint_enroll_dialog_ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.fingerprint.FingerprintSettings.FingerprintSettingsFragment.RenameDialog.1
                     @Override // android.content.DialogInterface.OnClickListener
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String obj = RenameDialog.this.mDialogTextField.getText().toString();
+                    public void onClick(DialogInterface dialogInterface, int i) throws Resources.NotFoundException {
+                        String string = RenameDialog.this.mDialogTextField.getText().toString();
                         CharSequence name = RenameDialog.this.mFp.getName();
-                        if (!TextUtils.equals(obj, name)) {
-                            Log.d("FingerprintSettings", "rename " + ((Object) name) + " to " + obj);
+                        if (!TextUtils.equals(string, name)) {
+                            Log.d("FingerprintSettings", "rename " + ((Object) name) + " to " + string);
                             RenameDialog.this.mMetricsFeatureProvider.action(RenameDialog.this.getContext(), 254, RenameDialog.this.mFp.getFingerId());
-                            ((FingerprintSettingsFragment) RenameDialog.this.getTargetFragment()).renameFingerPrint(RenameDialog.this.mFp.getFingerId(), obj);
+                            ((FingerprintSettingsFragment) RenameDialog.this.getTargetFragment()).renameFingerPrint(RenameDialog.this.mFp.getFingerId(), string);
                         }
                         dialogInterface.dismiss();
                     }
@@ -610,7 +601,6 @@ public class FingerprintSettings extends SubSettings {
             }
         }
 
-        /* loaded from: classes.dex */
         public static class ConfirmLastDeleteDialog extends InstrumentedDialogFragment {
             private Fingerprint mFp;
 
@@ -632,7 +622,7 @@ public class FingerprintSettings extends SubSettings {
                 }
                 return title.setMessage(i).setPositiveButton(R.string.fingerprint_last_delete_confirm, new DialogInterface.OnClickListener() { // from class: com.android.settings.fingerprint.FingerprintSettings.FingerprintSettingsFragment.ConfirmLastDeleteDialog.2
                     @Override // android.content.DialogInterface.OnClickListener
-                    public void onClick(DialogInterface dialogInterface, int i2) {
+                    public void onClick(DialogInterface dialogInterface, int i2) throws Resources.NotFoundException {
                         ((FingerprintSettingsFragment) ConfirmLastDeleteDialog.this.getTargetFragment()).deleteFingerPrint(ConfirmLastDeleteDialog.this.mFp);
                         dialogInterface.dismiss();
                     }
@@ -646,14 +636,12 @@ public class FingerprintSettings extends SubSettings {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class FingerprintPreference extends TwoTargetPreference {
         private View mDeleteView;
         private Fingerprint mFingerprint;
         private final OnDeleteClickListener mOnDeleteClickListener;
         private View mView;
 
-        /* loaded from: classes.dex */
         public interface OnDeleteClickListener {
             void onDeleteClick(FingerprintPreference fingerprintPreference);
         }

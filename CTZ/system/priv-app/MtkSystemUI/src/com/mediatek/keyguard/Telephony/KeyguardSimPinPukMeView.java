@@ -40,6 +40,7 @@ import com.mediatek.internal.telephony.IMtkTelephonyEx;
 import com.mediatek.keyguard.ext.IKeyguardUtilExt;
 import com.mediatek.keyguard.ext.IOperatorSIMString;
 import com.mediatek.keyguard.ext.OpKeyguardCustomizationFactoryBase;
+
 /* loaded from: classes.dex */
 public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
     private Button mDismissButton;
@@ -86,7 +87,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         };
         this.mUpdateMonitorCallback = new KeyguardUpdateMonitorCallback() { // from class: com.mediatek.keyguard.Telephony.KeyguardSimPinPukMeView.2
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onSimStateChangedUsingPhoneId(int i, IccCardConstants.State state) {
+            public void onSimStateChangedUsingPhoneId(int i, IccCardConstants.State state) throws Resources.NotFoundException {
                 Log.d("KeyguardSimPinPukMeView", "onSimStateChangedUsingPhoneId: " + state + ", phoneId = " + i + ", mPhoneId = " + KeyguardSimPinPukMeView.this.mPhoneId);
                 StringBuilder sb = new StringBuilder();
                 sb.append("onSimStateChangedUsingPhoneId: mCallback = ");
@@ -102,10 +103,11 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
                             KeyguardSimPinPukMeView.this.mCallback.dismiss(true, KeyguardUpdateMonitor.getCurrentUser());
                             KeyguardSimPinPukMeView.this.mLastSimState = state;
                             return;
+                        } else {
+                            KeyguardSimPinPukMeView.this.mLastSimState = IccCardConstants.State.NETWORK_LOCKED;
+                            KeyguardSimPinPukMeView.this.simStateReadyProcess();
+                            return;
                         }
-                        KeyguardSimPinPukMeView.this.mLastSimState = IccCardConstants.State.NETWORK_LOCKED;
-                        KeyguardSimPinPukMeView.this.simStateReadyProcess();
-                        return;
                     }
                     return;
                 }
@@ -169,7 +171,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
     }
 
     @Override // com.android.keyguard.KeyguardPinBasedInputView, com.android.keyguard.KeyguardAbsKeyInputView
-    public void resetState() {
+    public void resetState() throws Resources.NotFoundException {
         resetState(false);
     }
 
@@ -177,28 +179,27 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void resetState(boolean z) {
-        String str;
+    public void resetState(boolean z) throws Resources.NotFoundException {
+        String string;
         Log.v("KeyguardSimPinPukMeView", "Resetting state");
         super.resetState();
         TextView textView = (TextView) findViewById(R.id.slot_num_text);
         textView.setText(this.mContext.getString(R.string.kg_slot_id, Integer.valueOf(this.mPhoneId + 1)) + " ");
         Resources resources = getResources();
-        String str2 = "";
+        String string2 = "";
         int numOfPhone = KeyguardUtils.getNumOfPhone();
         IccCardConstants.State simStateOfPhoneId = this.mUpdateMonitor.getSimStateOfPhoneId(this.mPhoneId);
         showDismissIfNeed(simStateOfPhoneId);
-        int i = -1;
+        int iconTint = -1;
         if (numOfPhone < 2) {
             if (simStateOfPhoneId == IccCardConstants.State.PIN_REQUIRED) {
-                str2 = resources.getString(R.string.kg_sim_pin_instructions);
+                string2 = resources.getString(R.string.kg_sim_pin_instructions);
                 this.mUnlockEnterState = 0;
             } else if (simStateOfPhoneId == IccCardConstants.State.PUK_REQUIRED) {
-                str2 = resources.getString(R.string.kg_puk_enter_puk_hint);
+                string2 = resources.getString(R.string.kg_puk_enter_puk_hint);
                 this.mUnlockEnterState = 1;
             } else if (IccCardConstants.State.NETWORK_LOCKED == simStateOfPhoneId && KeyguardUtils.isMediatekSimMeLockSupport()) {
-                int simMeCategoryOfPhoneId = this.mUpdateMonitor.getSimMeCategoryOfPhoneId(this.mPhoneId);
-                str2 = resources.getString(R.string.simlock_entersimmelock) + this.strLockName[simMeCategoryOfPhoneId] + getRetryMeString(this.mPhoneId);
+                string2 = resources.getString(R.string.simlock_entersimmelock) + this.strLockName[this.mUpdateMonitor.getSimMeCategoryOfPhoneId(this.mPhoneId)] + getRetryMeString(this.mPhoneId);
                 this.mUnlockEnterState = 5;
             }
         } else {
@@ -211,34 +212,32 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
             }
             Log.d("KeyguardSimPinPukMeView", "resetState() - subId = " + subIdUsingPhoneId + ", displayName = " + ((Object) displayName));
             if (simStateOfPhoneId == IccCardConstants.State.PIN_REQUIRED) {
-                str = resources.getString(R.string.kg_sim_pin_instructions_multi, displayName);
+                string = resources.getString(R.string.kg_sim_pin_instructions_multi, displayName);
                 this.mUnlockEnterState = 0;
             } else if (simStateOfPhoneId == IccCardConstants.State.PUK_REQUIRED) {
-                str = resources.getString(R.string.kg_puk_enter_puk_hint_multi, displayName);
+                string = resources.getString(R.string.kg_puk_enter_puk_hint_multi, displayName);
                 this.mUnlockEnterState = 1;
             } else {
                 if (IccCardConstants.State.NETWORK_LOCKED == simStateOfPhoneId && KeyguardUtils.isMediatekSimMeLockSupport()) {
-                    int simMeCategoryOfPhoneId2 = this.mUpdateMonitor.getSimMeCategoryOfPhoneId(this.mPhoneId);
-                    str = resources.getString(R.string.simlock_entersimmelock) + this.strLockName[simMeCategoryOfPhoneId2] + getRetryMeString(this.mPhoneId);
+                    string = resources.getString(R.string.simlock_entersimmelock) + this.strLockName[this.mUpdateMonitor.getSimMeCategoryOfPhoneId(this.mPhoneId)] + getRetryMeString(this.mPhoneId);
                     this.mUnlockEnterState = 5;
                 }
                 if (subscriptionInfoForSubId != null) {
-                    i = subscriptionInfoForSubId.getIconTint();
+                    iconTint = subscriptionInfoForSubId.getIconTint();
                 }
             }
-            str2 = str;
+            string2 = string;
             if (subscriptionInfoForSubId != null) {
             }
         }
         this.mKeyguardUtilExt.customizePinPukLockView(this.mPhoneId, this.mSimImageView, textView);
-        this.mSimImageView.setImageTintList(ColorStateList.valueOf(i));
-        String operatorSIMString = this.mIOperatorSIMString.getOperatorSIMString(str2, this.mPhoneId, IOperatorSIMString.SIMChangedTag.DELSIM, this.mContext);
+        this.mSimImageView.setImageTintList(ColorStateList.valueOf(iconTint));
+        String operatorSIMString = this.mIOperatorSIMString.getOperatorSIMString(string2, this.mPhoneId, IOperatorSIMString.SIMChangedTag.DELSIM, this.mContext);
         Log.d("KeyguardSimPinPukMeView", "resetState() - mSecurityMessageDisplay.setMessage = " + operatorSIMString);
         this.mSecurityMessageDisplay.setMessage(operatorSIMString);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getPinPasswordErrorMessage(int i) {
+    private String getPinPasswordErrorMessage(int i) throws Resources.NotFoundException {
         String string;
         if (i == 0) {
             string = getContext().getString(R.string.kg_password_wrong_pin_code_pukked);
@@ -251,8 +250,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         return string;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getPukPasswordErrorMessage(int i) {
+    private String getPukPasswordErrorMessage(int i) throws Resources.NotFoundException {
         String string;
         if (i == 0) {
             string = getContext().getString(R.string.kg_password_wrong_puk_code_dead);
@@ -270,15 +268,13 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public int getPasswordTextViewId() {
+    protected int getPasswordTextViewId() {
         return R.id.simPinPukMeEntry;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardPinBasedInputView, com.android.keyguard.KeyguardAbsKeyInputView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mPhoneId = -1;
         if (this.mEcaView instanceof EmergencyCarrierArea) {
@@ -325,32 +321,27 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setInputInvalidAlertDialog(CharSequence charSequence, boolean z) {
+    private void setInputInvalidAlertDialog(CharSequence charSequence, boolean z) {
         StringBuilder sb = new StringBuilder(charSequence);
         if (z) {
-            AlertDialog create = new AlertDialog.Builder(this.mContext).setMessage(sb).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).setCancelable(true).create();
-            create.getWindow().setType(2009);
-            create.getWindow().addFlags(2);
-            create.show();
+            AlertDialog alertDialogCreate = new AlertDialog.Builder(this.mContext).setMessage(sb).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null).setCancelable(true).create();
+            alertDialogCreate.getWindow().setType(2009);
+            alertDialogCreate.getWindow().addFlags(2);
+            alertDialogCreate.show();
             return;
         }
         Toast.makeText(this.mContext, sb).show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getRetryMeString(int i) {
-        int retryMeCount = getRetryMeCount(i);
-        return "(" + this.mContext.getString(R.string.retries_left, Integer.valueOf(retryMeCount)) + ")";
+    private String getRetryMeString(int i) {
+        return "(" + this.mContext.getString(R.string.retries_left, Integer.valueOf(getRetryMeCount(i))) + ")";
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int getRetryMeCount(int i) {
+    private int getRetryMeCount(int i) {
         return this.mUpdateMonitor.getSimMeLeftRetryCountOfPhoneId(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void minusRetryMeCount(int i) {
+    private void minusRetryMeCount(int i) {
         this.mUpdateMonitor.minusSimMeLeftRetryCountOfPhoneId(i);
     }
 
@@ -417,7 +408,6 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         this.mCallback.userActivity();
     }
 
-    /* loaded from: classes.dex */
     private abstract class CheckSimPinPuk extends Thread {
         private final String mPin;
         private final String mPuk;
@@ -441,17 +431,17 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
                 Log.d("KeyguardSimPinPukMeView", "CheckSimPinPuk, mPhoneId =" + KeyguardSimPinPukMeView.this.mPhoneId);
                 if (KeyguardSimPinPukMeView.this.mUpdateMonitor.getSimStateOfPhoneId(KeyguardSimPinPukMeView.this.mPhoneId) != IccCardConstants.State.PIN_REQUIRED) {
                     if (KeyguardSimPinPukMeView.this.mUpdateMonitor.getSimStateOfPhoneId(KeyguardSimPinPukMeView.this.mPhoneId) == IccCardConstants.State.PUK_REQUIRED) {
-                        ITelephony asInterface = ITelephony.Stub.asInterface(ServiceManager.checkService("phone"));
-                        if (asInterface != null) {
-                            this.mResult = asInterface.supplyPukReportResultForSubscriber(KeyguardUtils.getSubIdUsingPhoneId(KeyguardSimPinPukMeView.this.mPhoneId), this.mPuk, this.mPin);
+                        ITelephony iTelephonyAsInterface = ITelephony.Stub.asInterface(ServiceManager.checkService("phone"));
+                        if (iTelephonyAsInterface != null) {
+                            this.mResult = iTelephonyAsInterface.supplyPukReportResultForSubscriber(KeyguardUtils.getSubIdUsingPhoneId(KeyguardSimPinPukMeView.this.mPhoneId), this.mPuk, this.mPin);
                         } else {
                             Log.d("KeyguardSimPinPukMeView", "phoneService is gone, skip supplyPukForSubscriber().");
                         }
                     }
                 } else {
-                    ITelephony asInterface2 = ITelephony.Stub.asInterface(ServiceManager.checkService("phone"));
-                    if (asInterface2 != null) {
-                        this.mResult = asInterface2.supplyPinReportResultForSubscriber(KeyguardUtils.getSubIdUsingPhoneId(KeyguardSimPinPukMeView.this.mPhoneId), this.mPin);
+                    ITelephony iTelephonyAsInterface2 = ITelephony.Stub.asInterface(ServiceManager.checkService("phone"));
+                    if (iTelephonyAsInterface2 != null) {
+                        this.mResult = iTelephonyAsInterface2.supplyPinReportResultForSubscriber(KeyguardUtils.getSubIdUsingPhoneId(KeyguardSimPinPukMeView.this.mPhoneId), this.mPin);
                     } else {
                         Log.d("KeyguardSimPinPukMeView", "phoneService is gone, skip supplyPinForSubscriber().");
                     }
@@ -485,7 +475,6 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         }
     }
 
-    /* loaded from: classes.dex */
     private abstract class CheckSimMe extends Thread {
         private final String mPasswd;
         private int mResult;
@@ -535,9 +524,8 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         return this.mSimUnlockProgressDialog;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public void verifyPasswordAndUnlock() {
+    protected void verifyPasswordAndUnlock() {
         if (!validatePin(this.mPasswordEntry.getText().toString(), false) && (this.mUpdateMonitor.getSimStateOfPhoneId(this.mPhoneId) == IccCardConstants.State.PIN_REQUIRED || (this.mUpdateMonitor.getSimStateOfPhoneId(this.mPhoneId) == IccCardConstants.State.NETWORK_LOCKED && KeyguardUtils.isMediatekSimMeLockSupport()))) {
             if (this.mUpdateMonitor.getSimStateOfPhoneId(this.mPhoneId) == IccCardConstants.State.PIN_REQUIRED) {
                 this.mSecurityMessageDisplay.setMessage(R.string.kg_invalid_sim_pin_hint);
@@ -557,15 +545,19 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         if (this.mUpdateMonitor.getSimStateOfPhoneId(this.mPhoneId) == IccCardConstants.State.PIN_REQUIRED) {
             Log.d("KeyguardSimPinPukMeView", "onClick, checkPin, mPhoneId=" + this.mPhoneId);
             checkPin(this.mPhoneId);
-        } else if (this.mUpdateMonitor.getSimStateOfPhoneId(this.mPhoneId) == IccCardConstants.State.PUK_REQUIRED) {
+            return;
+        }
+        if (this.mUpdateMonitor.getSimStateOfPhoneId(this.mPhoneId) == IccCardConstants.State.PUK_REQUIRED) {
             Log.d("KeyguardSimPinPukMeView", "onClick, checkPuk, mPhoneId=" + this.mPhoneId);
             checkPuk(this.mPhoneId);
-        } else if (this.mUpdateMonitor.getSimStateOfPhoneId(this.mPhoneId) == IccCardConstants.State.NETWORK_LOCKED && KeyguardUtils.isMediatekSimMeLockSupport()) {
+            return;
+        }
+        if (this.mUpdateMonitor.getSimStateOfPhoneId(this.mPhoneId) == IccCardConstants.State.NETWORK_LOCKED && KeyguardUtils.isMediatekSimMeLockSupport()) {
             Log.d("KeyguardSimPinPukMeView", "onClick, checkMe, mPhoneId=" + this.mPhoneId);
             checkMe(this.mPhoneId);
-        } else {
-            Log.d("KeyguardSimPinPukMeView", "wrong status, mPhoneId=" + this.mPhoneId);
+            return;
         }
+        Log.d("KeyguardSimPinPukMeView", "wrong status, mPhoneId=" + this.mPhoneId);
     }
 
     /* JADX WARN: Type inference failed for: r0v4, types: [com.mediatek.keyguard.Telephony.KeyguardSimPinPukMeView$3] */
@@ -673,8 +665,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
                                 int simMeCategoryOfPhoneId = KeyguardSimPinPukMeView.this.mUpdateMonitor.getSimMeCategoryOfPhoneId(KeyguardSimPinPukMeView.this.mPhoneId);
                                 KeyguardSimPinPukMeView.this.mSb.append(KeyguardSimPinPukMeView.this.mContext.getText(R.string.keyguard_wrong_code_input));
                                 KeyguardSimPinPukMeView.this.mSb.append(KeyguardSimPinPukMeView.this.mContext.getText(R.string.simlock_entersimmelock));
-                                StringBuffer stringBuffer = KeyguardSimPinPukMeView.this.mSb;
-                                stringBuffer.append(KeyguardSimPinPukMeView.this.strLockName[simMeCategoryOfPhoneId] + KeyguardSimPinPukMeView.this.getRetryMeString(KeyguardSimPinPukMeView.this.mPhoneId));
+                                KeyguardSimPinPukMeView.this.mSb.append(KeyguardSimPinPukMeView.this.strLockName[simMeCategoryOfPhoneId] + KeyguardSimPinPukMeView.this.getRetryMeString(KeyguardSimPinPukMeView.this.mPhoneId));
                             }
                             Log.d("KeyguardSimPinPukMeView", "checkMe() - VERIFY_INCORRECT_PASSWORD == ret, mSecurityMessageDisplay.setMessage = " + KeyguardSimPinPukMeView.this.mSb.toString());
                             KeyguardSimPinPukMeView.this.mSecurityMessageDisplay.setMessage(KeyguardSimPinPukMeView.this.mSb.toString());
@@ -694,8 +685,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Dialog getSimRemainingAttemptsDialog(int i) {
+    private Dialog getSimRemainingAttemptsDialog(int i) throws Resources.NotFoundException {
         String pinPasswordErrorMessage = getPinPasswordErrorMessage(i);
         if (this.mRemainingAttemptsDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
@@ -710,8 +700,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         return this.mRemainingAttemptsDialog;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Dialog getPukRemainingAttemptsDialog(int i) {
+    private Dialog getPukRemainingAttemptsDialog(int i) throws Resources.NotFoundException {
         String pukPasswordErrorMessage = getPukPasswordErrorMessage(i);
         if (this.mRemainingAttemptsDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
@@ -726,8 +715,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         return this.mRemainingAttemptsDialog;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void simStateReadyProcess() {
+    private void simStateReadyProcess() {
         this.mNextRepollStatePhoneId = getNextRepollStatePhoneId();
         Log.d("KeyguardSimPinPukMeView", "simStateReadyProcess mNextRepollStatePhoneId =" + this.mNextRepollStatePhoneId);
         if (this.mNextRepollStatePhoneId != -1) {
@@ -750,9 +738,8 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
                 if (this.mSecurityModel.isPinPukOrMeRequiredOfPhoneId(i)) {
                     if (this.mUpdateMonitor.getSimStateOfPhoneId(i) == IccCardConstants.State.NETWORK_LOCKED) {
                         return i;
-                    } else {
-                        return -1;
                     }
+                    return -1;
                 }
             }
             return -1;
@@ -760,7 +747,6 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         return -1;
     }
 
-    /* loaded from: classes.dex */
     public static class Toast {
         final Context mContext;
         private INotificationManager mService;
@@ -772,14 +758,14 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
 
         public Toast(Context context) {
             this.mContext = context;
-            this.mY = context.getResources().getDimensionPixelSize(17105361);
+            this.mY = context.getResources().getDimensionPixelSize(android.R.dimen.input_method_navigation_key_width);
         }
 
         public static Toast makeText(Context context, CharSequence charSequence) {
             Toast toast = new Toast(context);
-            View inflate = ((LayoutInflater) context.getSystemService("layout_inflater")).inflate(17367317, (ViewGroup) null);
-            ((TextView) inflate.findViewById(16908299)).setText(charSequence);
-            toast.mView = inflate;
+            View viewInflate = ((LayoutInflater) context.getSystemService("layout_inflater")).inflate(android.R.layout.screen_toolbar, (ViewGroup) null);
+            ((TextView) viewInflate.findViewById(android.R.id.message)).setText(charSequence);
+            toast.mView = viewInflate;
             return toast;
         }
 
@@ -801,9 +787,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
             return this.mService;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class TN extends ITransientNotification.Stub {
+        private class TN extends ITransientNotification.Stub {
             WindowManagerImpl mWM;
             final Runnable mShow = new Runnable() { // from class: com.mediatek.keyguard.Telephony.KeyguardSimPinPukMeView.Toast.TN.1
                 @Override // java.lang.Runnable
@@ -825,7 +809,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
                 layoutParams.width = -2;
                 layoutParams.flags = 152;
                 layoutParams.format = -3;
-                layoutParams.windowAnimations = 16973828;
+                layoutParams.windowAnimations = android.R.style.Animation.Toast;
                 layoutParams.type = 2009;
                 layoutParams.setTitle("Toast");
             }
@@ -845,7 +829,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
                 if ((i & 7) == 7) {
                     this.mParams.horizontalWeight = 1.0f;
                 }
-                if ((i & 112) == 112) {
+                if ((i & com.android.systemui.plugins.R.styleable.AppCompatTheme_windowActionBarOverlay) == 112) {
                     this.mParams.verticalWeight = 1.0f;
                 }
                 this.mParams.y = Toast.this.mY;
@@ -897,9 +881,9 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
                     KeyguardSimPinPukMeView.this.mCallback.dismiss(true, KeyguardUpdateMonitor.getCurrentUser());
                 }
             });
-            return;
+        } else {
+            this.mDismissButton.setVisibility(4);
+            this.mDismissButton.setOnClickListener(null);
         }
-        this.mDismissButton.setVisibility(4);
-        this.mDismissButton.setOnClickListener(null);
     }
 }

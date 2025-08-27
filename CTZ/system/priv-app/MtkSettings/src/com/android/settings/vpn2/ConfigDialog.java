@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.android.internal.net.VpnProfile;
 import com.android.settings.R;
 import java.net.InetAddress;
+
 /* loaded from: classes.dex */
 class ConfigDialog extends AlertDialog implements TextWatcher, View.OnClickListener, AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
     private TextView mAlwaysOnInvalidReason;
@@ -48,8 +49,7 @@ class ConfigDialog extends AlertDialog implements TextWatcher, View.OnClickListe
     private TextView mUsername;
     private View mView;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ConfigDialog(Context context, DialogInterface.OnClickListener onClickListener, VpnProfile vpnProfile, boolean z, boolean z2) {
+    ConfigDialog(Context context, DialogInterface.OnClickListener onClickListener, VpnProfile vpnProfile, boolean z, boolean z2) {
         super(context);
         this.mKeyStore = KeyStore.getInstance();
         this.mListener = onClickListener;
@@ -225,6 +225,7 @@ class ConfigDialog extends AlertDialog implements TextWatcher, View.OnClickListe
         this.mShowOptions.setVisibility(8);
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     private void changeType(int i) {
         this.mMppe.setVisibility(8);
         this.mView.findViewById(R.id.l2tp).setVisibility(8);
@@ -234,66 +235,65 @@ class ConfigDialog extends AlertDialog implements TextWatcher, View.OnClickListe
         switch (i) {
             case 0:
                 this.mMppe.setVisibility(0);
-                return;
+                break;
             case 1:
                 this.mView.findViewById(R.id.l2tp).setVisibility(0);
                 this.mView.findViewById(R.id.ipsec_psk).setVisibility(0);
-                return;
+                break;
             case 2:
                 this.mView.findViewById(R.id.l2tp).setVisibility(0);
                 this.mView.findViewById(R.id.ipsec_user).setVisibility(0);
                 this.mView.findViewById(R.id.ipsec_peer).setVisibility(0);
-                return;
+                break;
             case 3:
                 this.mView.findViewById(R.id.ipsec_psk).setVisibility(0);
-                return;
+                break;
             case 4:
                 this.mView.findViewById(R.id.ipsec_user).setVisibility(0);
                 this.mView.findViewById(R.id.ipsec_peer).setVisibility(0);
-                return;
+                break;
             case 5:
                 this.mView.findViewById(R.id.ipsec_peer).setVisibility(0);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
     private boolean validate(boolean z) {
-        if (!this.mAlwaysOnVpn.isChecked() || getProfile().isValidLockdownProfile()) {
-            if (!z) {
-                return (this.mUsername.getText().length() == 0 || this.mPassword.getText().length() == 0) ? false : true;
-            } else if (this.mName.getText().length() == 0 || this.mServer.getText().length() == 0 || !validateAddresses(this.mDnsServers.getText().toString(), false) || !validateAddresses(this.mRoutes.getText().toString(), true)) {
-                return false;
-            } else {
-                switch (this.mType.getSelectedItemPosition()) {
-                    case 0:
-                    case 5:
-                        return true;
-                    case 1:
-                    case 3:
-                        return this.mIpsecSecret.getText().length() != 0;
-                    case 2:
-                    case 4:
-                        return this.mIpsecUserCert.getSelectedItemPosition() != 0;
-                    default:
-                        return false;
+        if (this.mAlwaysOnVpn.isChecked() && !getProfile().isValidLockdownProfile()) {
+            return false;
+        }
+        if (!z) {
+            return (this.mUsername.getText().length() == 0 || this.mPassword.getText().length() == 0) ? false : true;
+        }
+        if (this.mName.getText().length() == 0 || this.mServer.getText().length() == 0 || !validateAddresses(this.mDnsServers.getText().toString(), false) || !validateAddresses(this.mRoutes.getText().toString(), true)) {
+            return false;
+        }
+        switch (this.mType.getSelectedItemPosition()) {
+            case 1:
+            case 3:
+                if (this.mIpsecSecret.getText().length() == 0) {
+                    break;
                 }
-            }
+                break;
+            case 2:
+            case 4:
+                if (this.mIpsecUserCert.getSelectedItemPosition() == 0) {
+                    break;
+                }
+                break;
         }
         return false;
     }
 
-    private boolean validateAddresses(String str, boolean z) {
-        String[] split;
+    private boolean validateAddresses(String str, boolean z) throws NumberFormatException {
         int i;
         try {
             for (String str2 : str.split(" ")) {
                 if (!str2.isEmpty()) {
                     if (z) {
-                        String[] split2 = str2.split("/", 2);
-                        String str3 = split2[0];
-                        i = Integer.parseInt(split2[1]);
+                        String[] strArrSplit = str2.split("/", 2);
+                        String str3 = strArrSplit[0];
+                        i = Integer.parseInt(strArrSplit[1]);
                         str2 = str3;
                     } else {
                         i = 32;
@@ -323,8 +323,8 @@ class ConfigDialog extends AlertDialog implements TextWatcher, View.OnClickListe
             strArr[0] = string;
             System.arraycopy(list, 0, strArr, 1, list.length);
         }
-        ArrayAdapter arrayAdapter = new ArrayAdapter(context, 17367048, strArr);
-        arrayAdapter.setDropDownViewResource(17367049);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, strArr);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter((SpinnerAdapter) arrayAdapter);
         for (int i2 = 1; i2 < strArr.length; i2++) {
             if (strArr[i2].equals(str2)) {
@@ -334,12 +334,10 @@ class ConfigDialog extends AlertDialog implements TextWatcher, View.OnClickListe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isEditing() {
+    boolean isEditing() {
         return this.mEditing;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     /* JADX WARN: Removed duplicated region for block: B:11:0x00a1  */
     /* JADX WARN: Removed duplicated region for block: B:14:0x00b3  */
@@ -347,7 +345,7 @@ class ConfigDialog extends AlertDialog implements TextWatcher, View.OnClickListe
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public VpnProfile getProfile() {
+    VpnProfile getProfile() {
         VpnProfile vpnProfile = new VpnProfile(this.mProfile.key);
         vpnProfile.name = this.mName.getText().toString();
         vpnProfile.type = this.mType.getSelectedItemPosition();

@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public abstract class AppStateBaseBridge implements ApplicationsState.Callbacks {
     protected final ApplicationsState.Session mAppSession;
@@ -13,7 +14,6 @@ public abstract class AppStateBaseBridge implements ApplicationsState.Callbacks 
     protected final BackgroundHandler mHandler;
     protected final MainHandler mMainHandler;
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onExtraInfoUpdated();
     }
@@ -81,7 +81,6 @@ public abstract class AppStateBaseBridge implements ApplicationsState.Callbacks 
     public void onLauncherInfoChanged() {
     }
 
-    /* loaded from: classes.dex */
     private class MainHandler extends Handler {
         private MainHandler() {
         }
@@ -94,9 +93,7 @@ public abstract class AppStateBaseBridge implements ApplicationsState.Callbacks 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class BackgroundHandler extends Handler {
+    private class BackgroundHandler extends Handler {
         public BackgroundHandler(Looper looper) {
             super(looper);
         }
@@ -107,7 +104,7 @@ public abstract class AppStateBaseBridge implements ApplicationsState.Callbacks 
                 case 1:
                     AppStateBaseBridge.this.loadAllExtraInfo();
                     AppStateBaseBridge.this.mMainHandler.sendEmptyMessage(1);
-                    return;
+                    break;
                 case 2:
                     ArrayList<ApplicationsState.AppEntry> allApps = AppStateBaseBridge.this.mAppSession.getAllApps();
                     int size = allApps.size();
@@ -120,9 +117,7 @@ public abstract class AppStateBaseBridge implements ApplicationsState.Callbacks 
                         }
                     }
                     AppStateBaseBridge.this.mMainHandler.sendEmptyMessage(1);
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }

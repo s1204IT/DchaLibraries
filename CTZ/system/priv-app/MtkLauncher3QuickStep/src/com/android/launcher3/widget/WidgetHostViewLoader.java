@@ -14,6 +14,7 @@ import com.android.launcher3.compat.AppWidgetManagerCompat;
 import com.android.launcher3.dragndrop.DragController;
 import com.android.launcher3.dragndrop.DragOptions;
 import com.android.launcher3.views.BaseDragLayer;
+
 /* loaded from: classes.dex */
 public class WidgetHostViewLoader implements DragController.DragListener {
     private static final boolean LOGD = false;
@@ -78,17 +79,17 @@ public class WidgetHostViewLoader implements DragController.DragListener {
                 if (WidgetHostViewLoader.this.mWidgetLoadingId == -1) {
                     return;
                 }
-                AppWidgetHostView createView = WidgetHostViewLoader.this.mLauncher.getAppWidgetHost().createView((Context) WidgetHostViewLoader.this.mLauncher, WidgetHostViewLoader.this.mWidgetLoadingId, launcherAppWidgetProviderInfo);
-                WidgetHostViewLoader.this.mInfo.boundWidget = createView;
+                AppWidgetHostView appWidgetHostViewCreateView = WidgetHostViewLoader.this.mLauncher.getAppWidgetHost().createView((Context) WidgetHostViewLoader.this.mLauncher, WidgetHostViewLoader.this.mWidgetLoadingId, launcherAppWidgetProviderInfo);
+                WidgetHostViewLoader.this.mInfo.boundWidget = appWidgetHostViewCreateView;
                 WidgetHostViewLoader.this.mWidgetLoadingId = -1;
-                createView.setVisibility(4);
-                int[] estimateItemSize = WidgetHostViewLoader.this.mLauncher.getWorkspace().estimateItemSize(WidgetHostViewLoader.this.mInfo);
-                BaseDragLayer.LayoutParams layoutParams = new BaseDragLayer.LayoutParams(estimateItemSize[0], estimateItemSize[1]);
+                appWidgetHostViewCreateView.setVisibility(4);
+                int[] iArrEstimateItemSize = WidgetHostViewLoader.this.mLauncher.getWorkspace().estimateItemSize(WidgetHostViewLoader.this.mInfo);
+                BaseDragLayer.LayoutParams layoutParams = new BaseDragLayer.LayoutParams(iArrEstimateItemSize[0], iArrEstimateItemSize[1]);
                 layoutParams.y = 0;
                 layoutParams.x = 0;
                 layoutParams.customPosition = true;
-                createView.setLayoutParams(layoutParams);
-                WidgetHostViewLoader.this.mLauncher.getDragLayer().addView(createView);
+                appWidgetHostViewCreateView.setLayoutParams(layoutParams);
+                WidgetHostViewLoader.this.mLauncher.getDragLayer().addView(appWidgetHostViewCreateView);
                 WidgetHostViewLoader.this.mView.setTag(WidgetHostViewLoader.this.mInfo);
             }
         };

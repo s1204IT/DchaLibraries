@@ -4,6 +4,7 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.SystemClock;
+
 /* loaded from: classes.dex */
 public class VisibilityLoggerMixin implements LifecycleObserver {
     private MetricsFeatureProvider mMetricsFeature;

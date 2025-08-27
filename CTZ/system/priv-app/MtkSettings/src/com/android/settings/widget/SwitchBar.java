@@ -23,6 +23,7 @@ import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedChangeListener {
     private static final int[] XML_ATTRIBUTES = {R.attr.switchBarMarginStart, R.attr.switchBarMarginEnd, R.attr.switchBarBackgroundColor, R.attr.switchBarBackgroundActivatedColor};
@@ -43,7 +44,6 @@ public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedC
     private final List<OnSwitchChangeListener> mSwitchChangeListeners;
     private TextView mTextView;
 
-    /* loaded from: classes.dex */
     public interface OnSwitchChangeListener {
         void onSwitchChanged(Switch r1, boolean z);
     }
@@ -65,22 +65,24 @@ public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedC
         this.mSwitchChangeListeners = new ArrayList();
         this.mEnforcedAdmin = null;
         LayoutInflater.from(context).inflate(R.layout.switch_bar, this);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, XML_ATTRIBUTES);
-        this.mBackgroundColor = obtainStyledAttributes.getColor(2, 0);
-        this.mBackgroundActivatedColor = obtainStyledAttributes.getColor(3, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, XML_ATTRIBUTES);
+        int dimension = (int) typedArrayObtainStyledAttributes.getDimension(0, 0.0f);
+        int dimension2 = (int) typedArrayObtainStyledAttributes.getDimension(1, 0.0f);
+        this.mBackgroundColor = typedArrayObtainStyledAttributes.getColor(2, 0);
+        this.mBackgroundActivatedColor = typedArrayObtainStyledAttributes.getColor(3, 0);
+        typedArrayObtainStyledAttributes.recycle();
         this.mTextView = (TextView) findViewById(R.id.switch_text);
-        this.mSummarySpan = new TextAppearanceSpan(this.mContext, 2131952040);
-        ((ViewGroup.MarginLayoutParams) this.mTextView.getLayoutParams()).setMarginStart((int) obtainStyledAttributes.getDimension(0, 0.0f));
+        this.mSummarySpan = new TextAppearanceSpan(this.mContext, R.style.TextAppearance_Small_SwitchBar);
+        ((ViewGroup.MarginLayoutParams) this.mTextView.getLayoutParams()).setMarginStart(dimension);
         this.mSwitch = (ToggleSwitch) findViewById(R.id.switch_widget);
         this.mSwitch.setSaveEnabled(false);
-        ((ViewGroup.MarginLayoutParams) this.mSwitch.getLayoutParams()).setMarginEnd((int) obtainStyledAttributes.getDimension(1, 0.0f));
+        ((ViewGroup.MarginLayoutParams) this.mSwitch.getLayoutParams()).setMarginEnd(dimension2);
         setBackgroundColor(this.mBackgroundColor);
         setSwitchBarText(R.string.switch_on_text, R.string.switch_off_text);
         addOnSwitchChangeListener(new OnSwitchChangeListener() { // from class: com.android.settings.widget.-$$Lambda$SwitchBar$xcPsCGGwUScwZOtx6bxg2zuPXc8
             @Override // com.android.settings.widget.SwitchBar.OnSwitchChangeListener
             public final void onSwitchChanged(Switch r2, boolean z) {
-                SwitchBar.this.setTextViewLabelAndBackground(z);
+                this.f$0.setTextViewLabelAndBackground(z);
             }
         });
         this.mRestrictedIcon = findViewById(R.id.restricted_icon);
@@ -88,9 +90,7 @@ public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedC
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 if (SwitchBar.this.mDisabledByAdmin) {
-                    MetricsFeatureProvider metricsFeatureProvider = SwitchBar.this.mMetricsFeatureProvider;
-                    Context context2 = SwitchBar.this.mContext;
-                    metricsFeatureProvider.count(context2, SwitchBar.this.mMetricsTag + "/switch_bar|restricted", 1);
+                    SwitchBar.this.mMetricsFeatureProvider.count(SwitchBar.this.mContext, SwitchBar.this.mMetricsTag + "/switch_bar|restricted", 1);
                     RestrictedLockUtils.sendShowAdminSupportDetailsIntent(context, SwitchBar.this.mEnforcedAdmin);
                 }
             }
@@ -125,11 +125,11 @@ public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedC
             this.mTextView.setText(this.mLabel);
             return;
         }
-        SpannableStringBuilder append = new SpannableStringBuilder(this.mLabel).append('\n');
-        int length = append.length();
-        append.append((CharSequence) this.mSummary);
-        append.setSpan(this.mSummarySpan, length, append.length(), 0);
-        this.mTextView.setText(append);
+        SpannableStringBuilder spannableStringBuilderAppend = new SpannableStringBuilder(this.mLabel).append('\n');
+        int length = spannableStringBuilderAppend.length();
+        spannableStringBuilderAppend.append((CharSequence) this.mSummary);
+        spannableStringBuilderAppend.setSpan(this.mSummarySpan, length, spannableStringBuilderAppend.length(), 0);
+        this.mTextView.setText(spannableStringBuilderAppend);
     }
 
     public void setChecked(boolean z) {
@@ -190,7 +190,8 @@ public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedC
             post(new Runnable() { // from class: com.android.settings.widget.-$$Lambda$SwitchBar$H3bwEmU9c2USPE1paf4Zlyfzp3I
                 @Override // java.lang.Runnable
                 public final void run() {
-                    r0.setTouchDelegate(new TouchDelegate(new Rect(0, 0, r0.getWidth(), r0.getHeight()), SwitchBar.this.getDelegatingView()));
+                    SwitchBar switchBar = this.f$0;
+                    switchBar.setTouchDelegate(new TouchDelegate(new Rect(0, 0, switchBar.getWidth(), switchBar.getHeight()), switchBar.getDelegatingView()));
                 }
             });
         }
@@ -224,9 +225,7 @@ public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedC
     @Override // android.widget.CompoundButton.OnCheckedChangeListener
     public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
         if (this.mLoggingIntialized) {
-            MetricsFeatureProvider metricsFeatureProvider = this.mMetricsFeatureProvider;
-            Context context = this.mContext;
-            metricsFeatureProvider.count(context, this.mMetricsTag + "/switch_bar|" + z, 1);
+            this.mMetricsFeatureProvider.count(this.mContext, this.mMetricsTag + "/switch_bar|" + z, 1);
         }
         this.mLoggingIntialized = true;
         propagateChecked(z);
@@ -246,16 +245,16 @@ public class SwitchBar extends LinearLayout implements CompoundButton.OnCheckedC
         this.mSwitchChangeListeners.remove(onSwitchChangeListener);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SavedState extends View.BaseSavedState {
+    static class SavedState extends View.BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() { // from class: com.android.settings.widget.SwitchBar.SavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState createFromParcel(Parcel parcel) {
                 return new SavedState(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState[] newArray(int i) {

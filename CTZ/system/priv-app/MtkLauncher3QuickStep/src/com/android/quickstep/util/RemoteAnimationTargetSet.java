@@ -2,6 +2,7 @@ package com.android.quickstep.util;
 
 import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class RemoteAnimationTargetSet {
     public final RemoteAnimationTargetCompat[] apps;
@@ -21,7 +22,6 @@ public class RemoteAnimationTargetSet {
     }
 
     public RemoteAnimationTargetCompat findTask(int i) {
-        RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr;
         for (RemoteAnimationTargetCompat remoteAnimationTargetCompat : this.apps) {
             if (remoteAnimationTargetCompat.taskId == i) {
                 return remoteAnimationTargetCompat;

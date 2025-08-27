@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetHostView;
 import android.os.Bundle;
 import com.android.launcher3.LauncherAppWidgetProviderInfo;
 import com.android.launcher3.PendingAddItemInfo;
+
 /* loaded from: classes.dex */
 public class PendingAddWidgetInfo extends PendingAddItemInfo {
     public Bundle bindOptions = null;

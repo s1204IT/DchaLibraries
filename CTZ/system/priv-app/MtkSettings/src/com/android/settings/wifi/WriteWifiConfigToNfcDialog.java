@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.android.settings.R;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = WriteWifiConfigToNfcDialog.class.getName().toString();
@@ -44,8 +45,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
     private WifiManager mWifiManager;
     private String mWpsNfcConfigurationToken;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WriteWifiConfigToNfcDialog(Context context, int i) {
+    WriteWifiConfigToNfcDialog(Context context, int i) {
         super(context);
         this.mContext = context;
         this.mWakeLock = ((PowerManager) context.getSystemService("power")).newWakeLock(1, "WriteWifiConfigToNfcDialog:wakeLock");
@@ -53,8 +53,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
         this.mWifiManager = (WifiManager) context.getSystemService("wifi");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WriteWifiConfigToNfcDialog(Context context, Bundle bundle) {
+    WriteWifiConfigToNfcDialog(Context context, Bundle bundle) {
         super(context);
         this.mContext = context;
         this.mWakeLock = ((PowerManager) context.getSystemService("power")).newWakeLock(1, "WriteWifiConfigToNfcDialog:wakeLock");
@@ -70,9 +69,9 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
         setInverseBackgroundForced(true);
         setTitle(R.string.setup_wifi_nfc_tag);
         setCancelable(true);
-        DialogInterface.OnClickListener onClickListener = null;
+        DialogInterface.OnClickListener onClickListener = (DialogInterface.OnClickListener) null;
         setButton(-3, this.mContext.getResources().getString(R.string.write_tag), onClickListener);
-        setButton(-2, this.mContext.getResources().getString(17039360), onClickListener);
+        setButton(-2, this.mContext.getResources().getString(android.R.string.cancel), onClickListener);
         this.mPasswordView = (TextView) this.mView.findViewById(R.id.password);
         this.mLabelView = (TextView) this.mView.findViewById(R.id.password_label);
         this.mPasswordView.addTextChangedListener(this);
@@ -91,8 +90,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
         Activity ownerActivity;
         NfcAdapter defaultAdapter;
         super.onStop();
-        String str = TAG;
-        Log.d(str, "it's onStop(),release the wakelock=" + this.mWakeLock.isHeld());
+        Log.d(TAG, "it's onStop(),release the wakelock=" + this.mWakeLock.isHeld());
         if (this.mWakeLock.isHeld()) {
             this.mWakeLock.release();
         }
@@ -104,8 +102,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
 
     @Override // android.app.Dialog
     public Bundle onSaveInstanceState() {
-        String str = TAG;
-        Log.d(str, "it's onSaveInstanceState(),release the wakelock=" + this.mWakeLock.isHeld());
+        Log.d(TAG, "it's onSaveInstanceState(),release the wakelock=" + this.mWakeLock.isHeld());
         if (this.mWakeLock.isHeld()) {
             this.mWakeLock.release();
         }
@@ -114,26 +111,26 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
 
     @Override // android.view.View.OnClickListener
     public void onClick(View view) {
-        String str;
+        String string;
         Log.d(TAG, "it's onClick(),release the wakelock=" + this.mWakeLock.isHeld());
         if (!this.mWakeLock.isHeld()) {
             this.mWakeLock.acquire();
         }
-        String charSequence = this.mPasswordView.getText().toString();
+        String string2 = this.mPasswordView.getText().toString();
         String currentNetworkWpsNfcConfigurationToken = this.mWifiManager.getCurrentNetworkWpsNfcConfigurationToken();
-        String byteArrayToHexString = byteArrayToHexString(charSequence.getBytes());
-        if (charSequence.length() >= 16) {
-            str = Integer.toString(charSequence.length(), 16);
+        String strByteArrayToHexString = byteArrayToHexString(string2.getBytes());
+        if (string2.length() >= 16) {
+            string = Integer.toString(string2.length(), 16);
         } else {
-            str = "0" + Character.forDigit(charSequence.length(), 16);
+            string = "0" + Character.forDigit(string2.length(), 16);
         }
-        String lowerCase = String.format("102700%s%s", str, byteArrayToHexString).toLowerCase();
+        String lowerCase = String.format("102700%s%s", string, strByteArrayToHexString).toLowerCase();
         if (currentNetworkWpsNfcConfigurationToken != null && currentNetworkWpsNfcConfigurationToken.contains(lowerCase)) {
             this.mWpsNfcConfigurationToken = currentNetworkWpsNfcConfigurationToken;
             Activity ownerActivity = getOwnerActivity();
             NfcAdapter.getDefaultAdapter(ownerActivity).enableReaderMode(ownerActivity, new NfcAdapter.ReaderCallback() { // from class: com.android.settings.wifi.WriteWifiConfigToNfcDialog.1
                 @Override // android.nfc.NfcAdapter.ReaderCallback
-                public void onTagDiscovered(Tag tag) {
+                public void onTagDiscovered(Tag tag) throws IOException, FormatException {
                     WriteWifiConfigToNfcDialog.this.handleWriteNfcEvent(tag);
                 }
             }, 31, null);
@@ -153,43 +150,43 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
         bundle.putInt("security", this.mSecurity);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleWriteNfcEvent(Tag tag) {
+    private void handleWriteNfcEvent(Tag tag) throws IOException, FormatException {
         Ndef ndef = Ndef.get(tag);
         if (ndef == null) {
             setViewText(this.mLabelView, R.string.status_tag_not_writable);
             Log.e(TAG, "Tag does not support NDEF");
-        } else if (!ndef.isWritable()) {
+            return;
+        }
+        if (!ndef.isWritable()) {
             setViewText(this.mLabelView, R.string.status_tag_not_writable);
             Log.e(TAG, "Tag is not writable");
-        } else {
-            NdefRecord createMime = NdefRecord.createMime("application/vnd.wfa.wsc", hexStringToByteArray(this.mWpsNfcConfigurationToken));
-            try {
-                ndef.connect();
-                ndef.writeNdefMessage(new NdefMessage(createMime, new NdefRecord[0]));
-                getOwnerActivity().runOnUiThread(new Runnable() { // from class: com.android.settings.wifi.WriteWifiConfigToNfcDialog.2
-                    @Override // java.lang.Runnable
-                    public void run() {
-                        WriteWifiConfigToNfcDialog.this.mProgressBar.setVisibility(8);
-                    }
-                });
-                setViewText(this.mLabelView, R.string.status_write_success);
-                setViewText(this.mCancelButton, 17039807);
-                this.mNFCTagWritingSucceed = true;
-            } catch (FormatException e) {
-                setViewText(this.mLabelView, R.string.status_failed_to_write);
-                Log.e(TAG, "Unable to write Wi-Fi config to NFC tag.", e);
-            } catch (IOException e2) {
-                setViewText(this.mLabelView, R.string.status_failed_to_write);
-                Log.e(TAG, "Unable to write Wi-Fi config to NFC tag.", e2);
-            }
+            return;
+        }
+        NdefRecord ndefRecordCreateMime = NdefRecord.createMime("application/vnd.wfa.wsc", hexStringToByteArray(this.mWpsNfcConfigurationToken));
+        try {
+            ndef.connect();
+            ndef.writeNdefMessage(new NdefMessage(ndefRecordCreateMime, new NdefRecord[0]));
+            getOwnerActivity().runOnUiThread(new Runnable() { // from class: com.android.settings.wifi.WriteWifiConfigToNfcDialog.2
+                @Override // java.lang.Runnable
+                public void run() {
+                    WriteWifiConfigToNfcDialog.this.mProgressBar.setVisibility(8);
+                }
+            });
+            setViewText(this.mLabelView, R.string.status_write_success);
+            setViewText(this.mCancelButton, android.R.string.capability_title_canRequestFilterKeyEvents);
+            this.mNFCTagWritingSucceed = true;
+        } catch (FormatException e) {
+            setViewText(this.mLabelView, R.string.status_failed_to_write);
+            Log.e(TAG, "Unable to write Wi-Fi config to NFC tag.", e);
+        } catch (IOException e2) {
+            setViewText(this.mLabelView, R.string.status_failed_to_write);
+            Log.e(TAG, "Unable to write Wi-Fi config to NFC tag.", e2);
         }
     }
 
     @Override // android.app.Dialog, android.content.DialogInterface
     public void dismiss() {
-        String str = TAG;
-        Log.d(str, "it's dismiss(),release the wakelock=" + this.mWakeLock.isHeld());
+        Log.d(TAG, "it's dismiss(),release the wakelock=" + this.mWakeLock.isHeld());
         if (this.mWakeLock.isHeld()) {
             this.mWakeLock.release();
         }
@@ -206,10 +203,11 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
             if (this.mSecurity == 1) {
                 this.mSubmitButton.setEnabled(this.mPasswordView.length() > 0);
                 return;
-            } else if (this.mSecurity == 2) {
-                this.mSubmitButton.setEnabled(this.mPasswordView.length() >= 8);
-                return;
             } else {
+                if (this.mSecurity == 2) {
+                    this.mSubmitButton.setEnabled(this.mPasswordView.length() >= 8);
+                    return;
+                }
                 return;
             }
         }

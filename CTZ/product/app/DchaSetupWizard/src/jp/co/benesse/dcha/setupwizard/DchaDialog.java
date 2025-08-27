@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class DchaDialog extends DialogFragment {
     public static final int DIALOG_TYPE_NETWORK_ERROR = 3;

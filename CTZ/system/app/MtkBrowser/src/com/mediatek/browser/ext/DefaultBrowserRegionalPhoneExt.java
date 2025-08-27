@@ -1,6 +1,5 @@
 package com.mediatek.browser.ext;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,6 +16,7 @@ import com.android.browser.provider.BrowserContract;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt {
     public static final boolean DEBUG;
@@ -46,17 +46,16 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
         Log.d("DefaultBrowserRegionalPhoneExt", "system property = " + str);
         String string = defaultSharedPreferences.getString("operator_bookmarks", "OPNONE");
         Log.d("DefaultBrowserRegionalPhoneExt", "currentOperator = " + string);
-        boolean equals = str.equals(string) ^ true;
-        if (equals) {
-            equals = string.equals("OP03");
+        boolean zEquals = str.equals(string) ^ true;
+        if (zEquals) {
+            zEquals = string.equals("OP03");
         }
-        SharedPreferences.Editor edit = defaultSharedPreferences.edit();
-        edit.putString("operator_bookmarks", str);
-        edit.commit();
-        return equals;
+        SharedPreferences.Editor editorEdit = defaultSharedPreferences.edit();
+        editorEdit.putString("operator_bookmarks", str);
+        editorEdit.commit();
+        return zEquals;
     }
 
-    /* loaded from: classes.dex */
     private static class UpdateBookmarkTask extends AsyncTask<Void, Void, Void> {
         Context mContext;
 
@@ -64,15 +63,15 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
             this.mContext = context;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) throws Resources.NotFoundException, PackageManager.NameNotFoundException, IOException {
             removeOperatorBookmarks(this.mContext);
             addOMBookmarks(this.mContext);
             return null;
         }
 
-        private void removeOperatorBookmarks(Context context) {
+        private void removeOperatorBookmarks(Context context) throws PackageManager.NameNotFoundException {
             Uri uri = BrowserContract.Bookmarks.CONTENT_URI;
             try {
                 Resources resourcesForApplication = context.getPackageManager().getResourcesForApplication("com.android.browser");
@@ -86,49 +85,47 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
                     for (int i = 0; i < length; i++) {
                         strArr[i] = textArray[(2 * i) + 1].toString();
                     }
-                    ContentResolver contentResolver = context.getContentResolver();
-                    int delete = contentResolver.delete(uri, "url" + makeInQueryString(length), strArr);
-                    Log.d("DefaultBrowserRegionalPhoneExt", "Delete count = " + delete);
+                    Log.d("DefaultBrowserRegionalPhoneExt", "Delete count = " + context.getContentResolver().delete(uri, "url" + makeInQueryString(length), strArr));
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
         }
 
-        private void addOMBookmarks(Context context) {
-            CharSequence[] charSequenceArr;
-            TypedArray typedArray;
-            CharSequence[] charSequenceArr2;
+        private void addOMBookmarks(Context context) throws Resources.NotFoundException, PackageManager.NameNotFoundException, IOException {
+            CharSequence[] textArray;
+            TypedArray typedArrayObtainTypedArray;
+            CharSequence[] textArray2;
             try {
                 Resources resourcesForApplication = context.getPackageManager().getResourcesForApplication("com.android.browser");
                 int identifier = resourcesForApplication.getIdentifier("com.android.browser:array/bookmarks_for_yahoo", null, null);
                 Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), first resourceId = " + identifier);
                 if (identifier != 0) {
-                    charSequenceArr = resourcesForApplication.getTextArray(identifier);
+                    textArray = resourcesForApplication.getTextArray(identifier);
                 } else {
-                    charSequenceArr = null;
+                    textArray = null;
                 }
                 int identifier2 = resourcesForApplication.getIdentifier("com.android.browser:array/bookmark_preloads_for_yahoo", null, null);
                 Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), first Preload resourceId = " + identifier2);
                 if (identifier2 != 0) {
-                    typedArray = resourcesForApplication.obtainTypedArray(identifier2);
+                    typedArrayObtainTypedArray = resourcesForApplication.obtainTypedArray(identifier2);
                 } else {
-                    typedArray = null;
+                    typedArrayObtainTypedArray = null;
                 }
-                if (charSequenceArr != null && typedArray != null) {
-                    int addDefaultBookmarks = addDefaultBookmarks(context, charSequenceArr, typedArray, 2);
+                if (textArray != null && typedArrayObtainTypedArray != null) {
+                    int iAddDefaultBookmarks = addDefaultBookmarks(context, textArray, typedArrayObtainTypedArray, 2);
                     int identifier3 = resourcesForApplication.getIdentifier("com.android.browser:array/bookmarks", null, null);
                     Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), Other resourceId = " + identifier3);
                     if (identifier3 != 0) {
-                        charSequenceArr2 = resourcesForApplication.getTextArray(identifier3);
+                        textArray2 = resourcesForApplication.getTextArray(identifier3);
                     } else {
-                        charSequenceArr2 = null;
+                        textArray2 = null;
                     }
                     int identifier4 = resourcesForApplication.getIdentifier("com.android.browser:array/bookmark_preloads", null, null);
                     Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), other Preload resourceId = " + identifier4);
-                    TypedArray obtainTypedArray = identifier4 != 0 ? resourcesForApplication.obtainTypedArray(identifier4) : null;
-                    if (charSequenceArr2 != null && obtainTypedArray != null) {
-                        addDefaultBookmarks(context, charSequenceArr2, obtainTypedArray, addDefaultBookmarks);
+                    TypedArray typedArrayObtainTypedArray2 = identifier4 != 0 ? resourcesForApplication.obtainTypedArray(identifier4) : null;
+                    if (textArray2 != null && typedArrayObtainTypedArray2 != null) {
+                        addDefaultBookmarks(context, textArray2, typedArrayObtainTypedArray2, iAddDefaultBookmarks);
                     }
                 }
             } catch (PackageManager.NameNotFoundException e) {
@@ -143,9 +140,9 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        private int addDefaultBookmarks(Context context, CharSequence[] charSequenceArr, TypedArray typedArray, int i) {
+        private int addDefaultBookmarks(Context context, CharSequence[] charSequenceArr, TypedArray typedArray, int i) throws Resources.NotFoundException, IOException {
             int i2;
-            byte[] bArr;
+            byte[] raw;
             Resources resources = context.getResources();
             int length = charSequenceArr.length;
             if (DefaultBrowserRegionalPhoneExt.DEBUG) {
@@ -153,8 +150,8 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
             }
             try {
                 try {
-                    String l = Long.toString(1L);
-                    String l2 = Long.toString(System.currentTimeMillis());
+                    String string = Long.toString(1L);
+                    String string2 = Long.toString(System.currentTimeMillis());
                     int i3 = 0;
                     int i4 = 0;
                     while (i4 < length) {
@@ -167,43 +164,43 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
                         }
                         int resourceId = typedArray.getResourceId(i5, i3);
                         int resourceId2 = typedArray.getResourceId(i4, i3);
-                        byte[] bArr2 = null;
+                        byte[] raw2 = null;
                         try {
-                            bArr = readRaw(resources, resourceId);
-                        } catch (IOException e) {
-                            bArr = null;
-                        }
-                        try {
-                            bArr2 = readRaw(resources, resourceId2);
+                            raw = readRaw(resources, resourceId);
+                            try {
+                                raw2 = readRaw(resources, resourceId2);
+                            } catch (IOException e) {
+                                Log.i("DefaultBrowserRegionalPhoneExt", "IOException for thumb");
+                                byte[] bArr = raw;
+                                ContentValues contentValues = new ContentValues();
+                                contentValues.put("title", charSequenceArr[i4].toString());
+                                contentValues.put("url", charSequence.toString());
+                                contentValues.put("folder", (Integer) 0);
+                                contentValues.put("thumbnail", bArr);
+                                contentValues.put("favicon", raw2);
+                                contentValues.put("parent", string);
+                                contentValues.put("position", Integer.toString(i2));
+                                contentValues.put("created", string2);
+                                if (context.getContentResolver().insert(BrowserContract.Bookmarks.CONTENT_URI, contentValues) == null) {
+                                }
+                                if (!DefaultBrowserRegionalPhoneExt.DEBUG) {
+                                }
+                                i4 += 2;
+                                i3 = 0;
+                            }
                         } catch (IOException e2) {
-                            Log.i("DefaultBrowserRegionalPhoneExt", "IOException for thumb");
-                            byte[] bArr3 = bArr;
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put("title", charSequenceArr[i4].toString());
-                            contentValues.put("url", charSequence.toString());
-                            contentValues.put("folder", (Integer) 0);
-                            contentValues.put("thumbnail", bArr3);
-                            contentValues.put("favicon", bArr2);
-                            contentValues.put("parent", l);
-                            contentValues.put("position", Integer.toString(i2));
-                            contentValues.put("created", l2);
-                            if (context.getContentResolver().insert(BrowserContract.Bookmarks.CONTENT_URI, contentValues) == null) {
-                            }
-                            if (!DefaultBrowserRegionalPhoneExt.DEBUG) {
-                            }
-                            i4 += 2;
-                            i3 = 0;
+                            raw = null;
                         }
-                        byte[] bArr32 = bArr;
+                        byte[] bArr2 = raw;
                         ContentValues contentValues2 = new ContentValues();
                         contentValues2.put("title", charSequenceArr[i4].toString());
                         contentValues2.put("url", charSequence.toString());
                         contentValues2.put("folder", (Integer) 0);
-                        contentValues2.put("thumbnail", bArr32);
-                        contentValues2.put("favicon", bArr2);
-                        contentValues2.put("parent", l);
+                        contentValues2.put("thumbnail", bArr2);
+                        contentValues2.put("favicon", raw2);
+                        contentValues2.put("parent", string);
                         contentValues2.put("position", Integer.toString(i2));
-                        contentValues2.put("created", l2);
+                        contentValues2.put("created", string2);
                         boolean z = context.getContentResolver().insert(BrowserContract.Bookmarks.CONTENT_URI, contentValues2) == null;
                         if (!DefaultBrowserRegionalPhoneExt.DEBUG) {
                             Log.i("DefaultBrowserRegionalPhoneExt", "for " + i4 + "update result = " + z);
@@ -235,25 +232,25 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
             return sb.toString();
         }
 
-        private byte[] readRaw(Resources resources, int i) throws IOException {
+        private byte[] readRaw(Resources resources, int i) throws Resources.NotFoundException, IOException {
             if (i == 0) {
                 return null;
             }
-            InputStream openRawResource = resources.openRawResource(i);
+            InputStream inputStreamOpenRawResource = resources.openRawResource(i);
             try {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 byte[] bArr = new byte[4096];
                 while (true) {
-                    int read = openRawResource.read(bArr);
-                    if (read > 0) {
-                        byteArrayOutputStream.write(bArr, 0, read);
+                    int i2 = inputStreamOpenRawResource.read(bArr);
+                    if (i2 > 0) {
+                        byteArrayOutputStream.write(bArr, 0, i2);
                     } else {
                         byteArrayOutputStream.flush();
                         return byteArrayOutputStream.toByteArray();
                     }
                 }
             } finally {
-                openRawResource.close();
+                inputStreamOpenRawResource.close();
             }
         }
     }

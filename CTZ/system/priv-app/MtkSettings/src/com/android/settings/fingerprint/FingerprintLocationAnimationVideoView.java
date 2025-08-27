@@ -10,6 +10,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class FingerprintLocationAnimationVideoView extends TextureView implements FingerprintFindSensorAnimation {
     protected float mAspect;
@@ -36,7 +37,7 @@ public class FingerprintLocationAnimationVideoView extends TextureView implement
             private SurfaceTexture mTextureToDestroy = null;
 
             @Override // android.view.TextureView.SurfaceTextureListener
-            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i2) {
+            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i2) throws IllegalStateException {
                 FingerprintLocationAnimationVideoView.this.setVisibility(4);
                 Uri fingerprintLocationAnimation = FingerprintLocationAnimationVideoView.this.getFingerprintLocationAnimation();
                 if (FingerprintLocationAnimationVideoView.this.mMediaPlayer != null) {
@@ -97,14 +98,14 @@ public class FingerprintLocationAnimationVideoView extends TextureView implement
     }
 
     @Override // com.android.settings.fingerprint.FingerprintFindSensorAnimation
-    public void startAnimation() {
+    public void startAnimation() throws IllegalStateException {
         if (this.mMediaPlayer != null && !this.mMediaPlayer.isPlaying()) {
             this.mMediaPlayer.start();
         }
     }
 
     @Override // com.android.settings.fingerprint.FingerprintFindSensorAnimation
-    public void stopAnimation() {
+    public void stopAnimation() throws IllegalStateException {
         if (this.mMediaPlayer != null) {
             this.mMediaPlayer.stop();
             this.mMediaPlayer.release();
@@ -113,7 +114,7 @@ public class FingerprintLocationAnimationVideoView extends TextureView implement
     }
 
     @Override // com.android.settings.fingerprint.FingerprintFindSensorAnimation
-    public void pauseAnimation() {
+    public void pauseAnimation() throws IllegalStateException {
         if (this.mMediaPlayer != null && this.mMediaPlayer.isPlaying()) {
             this.mMediaPlayer.pause();
         }

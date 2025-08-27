@@ -5,6 +5,7 @@ import android.view.View;
 import com.android.quicksearchbox.SourceResult;
 import com.android.quicksearchbox.SuggestionPosition;
 import com.android.quicksearchbox.Suggestions;
+
 /* loaded from: classes.dex */
 public class DelayingSuggestionsAdapter<A> implements SuggestionsAdapter<A> {
     private final SuggestionsAdapterBase<A> mDelayedAdapter;
@@ -69,10 +70,12 @@ public class DelayingSuggestionsAdapter<A> implements SuggestionsAdapter<A> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PendingSuggestionsObserver extends DataSetObserver {
+    private class PendingSuggestionsObserver extends DataSetObserver {
         private PendingSuggestionsObserver() {
+        }
+
+        /* synthetic */ PendingSuggestionsObserver(DelayingSuggestionsAdapter delayingSuggestionsAdapter, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // android.database.DataSetObserver

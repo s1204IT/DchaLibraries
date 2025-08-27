@@ -10,6 +10,7 @@ import android.os.UserHandle;
 import com.android.launcher3.compat.UserManagerCompat;
 import com.android.launcher3.util.ComponentKey;
 import com.android.launcher3.util.PackageManagerHelper;
+
 /* loaded from: classes.dex */
 public class AppInfo extends ItemInfoWithIcon {
     public ComponentName componentName;
@@ -46,9 +47,8 @@ public class AppInfo extends ItemInfoWithIcon {
         this.intent = new Intent(appInfo.intent);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.ItemInfo
-    public String dumpProperties() {
+    protected String dumpProperties() {
         return super.dumpProperties() + " componentName=" + this.componentName;
     }
 

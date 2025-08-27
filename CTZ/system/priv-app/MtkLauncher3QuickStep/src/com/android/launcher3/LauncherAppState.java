@@ -2,6 +2,7 @@ package com.android.launcher3;
 
 import android.content.ComponentName;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Looper;
@@ -15,6 +16,7 @@ import com.android.launcher3.util.Preconditions;
 import com.android.launcher3.util.SettingsObserver;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+
 /* loaded from: classes.dex */
 public class LauncherAppState {
     public static final String ACTION_FORCE_ROLOAD = "force-reload-launcher";
@@ -26,14 +28,20 @@ public class LauncherAppState {
     private final SettingsObserver mNotificationBadgingObserver;
     private final WidgetPreviewLoader mWidgetCache;
 
-    public static LauncherAppState getInstance(final Context context) {
+    public static LauncherAppState getInstance(Context context) {
         if (INSTANCE == null) {
             if (Looper.myLooper() == Looper.getMainLooper()) {
                 INSTANCE = new LauncherAppState(context.getApplicationContext());
             } else {
                 try {
                     return (LauncherAppState) new MainThreadExecutor().submit(new Callable<LauncherAppState>() { // from class: com.android.launcher3.LauncherAppState.1
-                        /* JADX WARN: Can't rename method to resolve collision */
+                        final /* synthetic */ Context val$context;
+
+                        AnonymousClass1(Context context2) {
+                            context = context2;
+                        }
+
+                        /* JADX DEBUG: Method merged with bridge method: call()Ljava/lang/Object; */
                         @Override // java.util.concurrent.Callable
                         public LauncherAppState call() throws Exception {
                             return LauncherAppState.getInstance(context);
@@ -45,6 +53,21 @@ public class LauncherAppState {
             }
         }
         return INSTANCE;
+    }
+
+    /* renamed from: com.android.launcher3.LauncherAppState$1 */
+    class AnonymousClass1 implements Callable<LauncherAppState> {
+        final /* synthetic */ Context val$context;
+
+        AnonymousClass1(Context context2) {
+            context = context2;
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: call()Ljava/lang/Object; */
+        @Override // java.util.concurrent.Callable
+        public LauncherAppState call() throws Exception {
+            return LauncherAppState.getInstance(context);
+        }
     }
 
     public static LauncherAppState getInstanceNoCreate() {
@@ -79,17 +102,35 @@ public class LauncherAppState {
         new ConfigMonitor(this.mContext).register();
         if (!this.mContext.getResources().getBoolean(R.bool.notification_badging_enabled)) {
             this.mNotificationBadgingObserver = null;
-            return;
-        }
-        this.mNotificationBadgingObserver = new SettingsObserver.Secure(this.mContext.getContentResolver()) { // from class: com.android.launcher3.LauncherAppState.2
-            @Override // com.android.launcher3.util.SettingsObserver
-            public void onSettingChanged(boolean z) {
-                if (z) {
-                    NotificationListener.requestRebind(new ComponentName(LauncherAppState.this.mContext, NotificationListener.class));
+        } else {
+            this.mNotificationBadgingObserver = new SettingsObserver.Secure(this.mContext.getContentResolver()) { // from class: com.android.launcher3.LauncherAppState.2
+                AnonymousClass2(ContentResolver contentResolver) {
+                    super(contentResolver);
                 }
+
+                @Override // com.android.launcher3.util.SettingsObserver
+                public void onSettingChanged(boolean z) {
+                    if (z) {
+                        NotificationListener.requestRebind(new ComponentName(LauncherAppState.this.mContext, (Class<?>) NotificationListener.class));
+                    }
+                }
+            };
+            this.mNotificationBadgingObserver.register(SettingsActivity.NOTIFICATION_BADGING, new String[0]);
+        }
+    }
+
+    /* renamed from: com.android.launcher3.LauncherAppState$2 */
+    class AnonymousClass2 extends SettingsObserver.Secure {
+        AnonymousClass2(ContentResolver contentResolver) {
+            super(contentResolver);
+        }
+
+        @Override // com.android.launcher3.util.SettingsObserver
+        public void onSettingChanged(boolean z) {
+            if (z) {
+                NotificationListener.requestRebind(new ComponentName(LauncherAppState.this.mContext, (Class<?>) NotificationListener.class));
             }
-        };
-        this.mNotificationBadgingObserver.register(SettingsActivity.NOTIFICATION_BADGING, new String[0]);
+        }
     }
 
     public void onTerminate() {
@@ -101,8 +142,7 @@ public class LauncherAppState {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public LauncherModel setLauncher(Launcher launcher) {
+    LauncherModel setLauncher(Launcher launcher) {
         getLocalProvider(this.mContext).setLauncherProviderChangeListener(launcher);
         this.mModel.initialize(launcher);
         return this.mModel;
@@ -129,30 +169,27 @@ public class LauncherAppState {
     }
 
     private static LauncherProvider getLocalProvider(Context context) {
-        ContentProviderClient acquireContentProviderClient = context.getContentResolver().acquireContentProviderClient(LauncherProvider.AUTHORITY);
+        ContentProviderClient contentProviderClientAcquireContentProviderClient = context.getContentResolver().acquireContentProviderClient(LauncherProvider.AUTHORITY);
+        Throwable th = null;
         try {
-            LauncherProvider launcherProvider = (LauncherProvider) acquireContentProviderClient.getLocalContentProvider();
-            if (acquireContentProviderClient != null) {
-                acquireContentProviderClient.close();
+            LauncherProvider launcherProvider = (LauncherProvider) contentProviderClientAcquireContentProviderClient.getLocalContentProvider();
+            if (contentProviderClientAcquireContentProviderClient != null) {
+                contentProviderClientAcquireContentProviderClient.close();
             }
             return launcherProvider;
-        } catch (Throwable th) {
-            try {
-                throw th;
-            } catch (Throwable th2) {
-                if (acquireContentProviderClient != null) {
-                    if (th != null) {
-                        try {
-                            acquireContentProviderClient.close();
-                        } catch (Throwable th3) {
-                            th.addSuppressed(th3);
-                        }
-                    } else {
-                        acquireContentProviderClient.close();
+        } catch (Throwable th2) {
+            if (contentProviderClientAcquireContentProviderClient != null) {
+                if (th != null) {
+                    try {
+                        contentProviderClientAcquireContentProviderClient.close();
+                    } catch (Throwable th3) {
+                        th.addSuppressed(th3);
                     }
+                } else {
+                    contentProviderClientAcquireContentProviderClient.close();
                 }
-                throw th2;
             }
+            throw th2;
         }
     }
 }

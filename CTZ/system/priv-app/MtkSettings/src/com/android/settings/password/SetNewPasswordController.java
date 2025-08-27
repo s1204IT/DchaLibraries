@@ -13,6 +13,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.util.Preconditions;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 final class SetNewPasswordController {
     private final DevicePolicyManager mDevicePolicyManager;
@@ -21,22 +22,21 @@ final class SetNewPasswordController {
     private final int mTargetUserId;
     private final Ui mUi;
 
-    /* loaded from: classes.dex */
     interface Ui {
         void launchChooseLock(Bundle bundle);
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:7:0x0030  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public static SetNewPasswordController create(Context context, Ui ui, Intent intent, IBinder iBinder) {
         int i;
         int currentUser = ActivityManager.getCurrentUser();
         if ("android.app.action.SET_NEW_PASSWORD".equals(intent.getAction())) {
             int identifier = Utils.getSecureTargetUser(iBinder, UserManager.get(context), null, intent.getExtras()).getIdentifier();
-            if (new LockPatternUtils(context).isSeparateProfileChallengeAllowed(identifier)) {
-                i = identifier;
-                return new SetNewPasswordController(i, context.getPackageManager(), Utils.getFingerprintManagerOrNull(context), (DevicePolicyManager) context.getSystemService("device_policy"), ui);
-            }
+            i = new LockPatternUtils(context).isSeparateProfileChallengeAllowed(identifier) ? identifier : currentUser;
         }
-        i = currentUser;
         return new SetNewPasswordController(i, context.getPackageManager(), Utils.getFingerprintManagerOrNull(context), (DevicePolicyManager) context.getSystemService("device_policy"), ui);
     }
 
@@ -62,11 +62,11 @@ final class SetNewPasswordController {
 
     private Bundle getFingerprintChooseLockExtras() {
         Bundle bundle = new Bundle();
-        long preEnroll = this.mFingerprintManager.preEnroll();
+        long jPreEnroll = this.mFingerprintManager.preEnroll();
         bundle.putInt("minimum_quality", 65536);
         bundle.putBoolean("hide_disabled_prefs", true);
         bundle.putBoolean("has_challenge", true);
-        bundle.putLong("challenge", preEnroll);
+        bundle.putLong("challenge", jPreEnroll);
         bundle.putBoolean("for_fingerprint", true);
         return bundle;
     }

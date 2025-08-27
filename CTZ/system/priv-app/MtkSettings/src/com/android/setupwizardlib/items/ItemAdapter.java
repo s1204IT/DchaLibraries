@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import com.android.setupwizardlib.items.ItemHierarchy;
+
 /* loaded from: classes.dex */
 public class ItemAdapter extends BaseAdapter implements ItemHierarchy.Observer {
     private final ItemHierarchy mItemHierarchy;
@@ -22,6 +23,7 @@ public class ItemAdapter extends BaseAdapter implements ItemHierarchy.Observer {
         return this.mItemHierarchy.getCount();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
     @Override // android.widget.Adapter
     public IItem getItem(int i) {
         return this.mItemHierarchy.getItemAt(i);
@@ -78,9 +80,7 @@ public class ItemAdapter extends BaseAdapter implements ItemHierarchy.Observer {
         return getItem(i).isEnabled();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ViewTypes {
+    private static class ViewTypes {
         private SparseIntArray mPositionMap;
         private int nextPosition;
 

@@ -14,10 +14,13 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.logging.MetricsLogger;
 import com.android.settings.R;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class ZenOnboardingActivity extends Activity {
+
     @VisibleForTesting
     static final long ALWAYS_SHOW_THRESHOLD = 1209600000;
+
     @VisibleForTesting
     static final String PREF_KEY_SUGGESTION_FIRST_DISPLAY_TIME = "pref_zen_suggestion_first_display_time_ms";
     View mKeepCurrentSetting;
@@ -115,14 +118,14 @@ public class ZenOnboardingActivity extends Activity {
     private static boolean withinShowTimeThreshold(Context context) {
         long j;
         SharedPreferences sharedPrefs = FeatureFactory.getFactory(context).getSuggestionFeatureProvider(context).getSharedPrefs(context);
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         if (!sharedPrefs.contains(PREF_KEY_SUGGESTION_FIRST_DISPLAY_TIME)) {
-            sharedPrefs.edit().putLong(PREF_KEY_SUGGESTION_FIRST_DISPLAY_TIME, currentTimeMillis).commit();
-            j = currentTimeMillis;
+            sharedPrefs.edit().putLong(PREF_KEY_SUGGESTION_FIRST_DISPLAY_TIME, jCurrentTimeMillis).commit();
+            j = jCurrentTimeMillis;
         } else {
             j = sharedPrefs.getLong(PREF_KEY_SUGGESTION_FIRST_DISPLAY_TIME, -1L);
         }
-        boolean z = currentTimeMillis < j + ALWAYS_SHOW_THRESHOLD;
+        boolean z = jCurrentTimeMillis < j + ALWAYS_SHOW_THRESHOLD;
         Log.d("ZenOnboardingActivity", "still show zen suggestion based on time: " + z);
         return z;
     }

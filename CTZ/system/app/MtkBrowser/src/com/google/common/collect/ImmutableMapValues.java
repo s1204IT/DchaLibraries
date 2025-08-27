@@ -2,13 +2,12 @@ package com.google.common.collect;
 
 import java.io.Serializable;
 import java.util.Map;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class ImmutableMapValues<K, V> extends ImmutableCollection<V> {
+final class ImmutableMapValues<K, V> extends ImmutableCollection<V> {
     private final ImmutableMap<K, V> map;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ImmutableMapValues(ImmutableMap<K, V> immutableMap) {
+    ImmutableMapValues(ImmutableMap<K, V> immutableMap) {
         this.map = immutableMap;
     }
 
@@ -17,6 +16,7 @@ public final class ImmutableMapValues<K, V> extends ImmutableCollection<V> {
         return this.map.size();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<V> iterator() {
         return Maps.valueIterator((UnmodifiableIterator) this.map.entrySet().iterator());
@@ -27,19 +27,42 @@ public final class ImmutableMapValues<K, V> extends ImmutableCollection<V> {
         return obj != null && Iterators.contains(iterator(), obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return true;
+    }
+
+    /* renamed from: com.google.common.collect.ImmutableMapValues$1 */
+    class AnonymousClass1 extends ImmutableAsList<V> {
+        final /* synthetic */ ImmutableList val$entryList;
+
+        AnonymousClass1(ImmutableList immutableList) {
+            immutableList = immutableList;
+        }
+
+        @Override // java.util.List
+        public V get(int i) {
+            return (V) ((Map.Entry) immutableList.get(i)).getValue();
+        }
+
+        @Override // com.google.common.collect.ImmutableAsList
+        ImmutableCollection<V> delegateCollection() {
+            return ImmutableMapValues.this;
+        }
     }
 
     @Override // com.google.common.collect.ImmutableCollection
     ImmutableList<V> createAsList() {
-        final ImmutableList<Map.Entry<K, V>> asList = this.map.entrySet().asList();
         return new ImmutableAsList<V>() { // from class: com.google.common.collect.ImmutableMapValues.1
+            final /* synthetic */ ImmutableList val$entryList;
+
+            AnonymousClass1(ImmutableList immutableList) {
+                immutableList = immutableList;
+            }
+
             @Override // java.util.List
             public V get(int i) {
-                return (V) ((Map.Entry) asList.get(i)).getValue();
+                return (V) ((Map.Entry) immutableList.get(i)).getValue();
             }
 
             @Override // com.google.common.collect.ImmutableAsList
@@ -54,7 +77,6 @@ public final class ImmutableMapValues<K, V> extends ImmutableCollection<V> {
         return new SerializedForm(this.map);
     }
 
-    /* loaded from: classes.dex */
     private static class SerializedForm<V> implements Serializable {
         private static final long serialVersionUID = 0;
         final ImmutableMap<?, V> map;

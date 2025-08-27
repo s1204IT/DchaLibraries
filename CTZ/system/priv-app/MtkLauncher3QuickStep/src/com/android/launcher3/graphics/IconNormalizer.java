@@ -21,6 +21,7 @@ import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.dragndrop.FolderAdaptiveIcon;
 import java.nio.ByteBuffer;
+
 /* loaded from: classes.dex */
 public class IconNormalizer {
     private static final float BOUND_RATIO_MARGIN = 0.05f;
@@ -48,8 +49,7 @@ public class IconNormalizer {
     private final Rect mAdaptiveIconBounds = new Rect();
     private final Paint mPaintMaskShape = new Paint();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public IconNormalizer(Context context) {
+    IconNormalizer(Context context) {
         this.mMaxSize = LauncherAppState.getIDP(context).iconBitmapSize * 2;
         this.mBitmap = Bitmap.createBitmap(this.mMaxSize, this.mMaxSize, Bitmap.Config.ALPHA_8);
         this.mCanvas = new Canvas(this.mBitmap);
@@ -83,9 +83,9 @@ public class IconNormalizer {
     }
 
     private boolean isTransparentBitmap() {
-        ByteBuffer wrap = ByteBuffer.wrap(this.mPixels);
-        wrap.rewind();
-        this.mBitmap.copyPixelsToBuffer(wrap);
+        ByteBuffer byteBufferWrap = ByteBuffer.wrap(this.mPixels);
+        byteBufferWrap.rewind();
+        this.mBitmap.copyPixelsToBuffer(byteBufferWrap);
         int i = this.mBounds.top;
         int i2 = this.mMaxSize * i;
         int i3 = this.mMaxSize - this.mBounds.right;
@@ -104,180 +104,118 @@ public class IconNormalizer {
         return ((float) i4) / ((float) (this.mBounds.width() * this.mBounds.height())) < PIXEL_DIFF_PERCENTAGE_THRESHOLD;
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:29:0x005c, code lost:
-        if (r4 <= r18.mMaxSize) goto L93;
-     */
-    /* JADX WARN: Removed duplicated region for block: B:37:0x0098  */
-    /* JADX WARN: Removed duplicated region for block: B:58:0x00fc A[Catch: all -> 0x01a3, TryCatch #0 {, blocks: (B:4:0x0009, B:6:0x000e, B:8:0x0012, B:11:0x001a, B:12:0x001f, B:15:0x0023, B:17:0x0027, B:18:0x0034, B:22:0x0041, B:24:0x0045, B:35:0x0068, B:39:0x009f, B:45:0x00b1, B:46:0x00b8, B:50:0x00ce, B:51:0x00d9, B:56:0x00eb, B:58:0x00fc, B:62:0x0112, B:61:0x0107, B:63:0x0115, B:67:0x0135, B:69:0x0147, B:71:0x016a, B:73:0x016d, B:74:0x0176, B:76:0x017d, B:77:0x0185, B:79:0x0189, B:81:0x018f, B:83:0x0196, B:66:0x012a, B:26:0x0049, B:28:0x005a, B:32:0x0062, B:34:0x0066, B:30:0x005e), top: B:91:0x0009 }] */
-    /* JADX WARN: Removed duplicated region for block: B:65:0x0126  */
-    /* JADX WARN: Removed duplicated region for block: B:66:0x012a A[Catch: all -> 0x01a3, TryCatch #0 {, blocks: (B:4:0x0009, B:6:0x000e, B:8:0x0012, B:11:0x001a, B:12:0x001f, B:15:0x0023, B:17:0x0027, B:18:0x0034, B:22:0x0041, B:24:0x0045, B:35:0x0068, B:39:0x009f, B:45:0x00b1, B:46:0x00b8, B:50:0x00ce, B:51:0x00d9, B:56:0x00eb, B:58:0x00fc, B:62:0x0112, B:61:0x0107, B:63:0x0115, B:67:0x0135, B:69:0x0147, B:71:0x016a, B:73:0x016d, B:74:0x0176, B:76:0x017d, B:77:0x0185, B:79:0x0189, B:81:0x018f, B:83:0x0196, B:66:0x012a, B:26:0x0049, B:28:0x005a, B:32:0x0062, B:34:0x0066, B:30:0x005e), top: B:91:0x0009 }] */
-    /* JADX WARN: Removed duplicated region for block: B:69:0x0147 A[Catch: all -> 0x01a3, TryCatch #0 {, blocks: (B:4:0x0009, B:6:0x000e, B:8:0x0012, B:11:0x001a, B:12:0x001f, B:15:0x0023, B:17:0x0027, B:18:0x0034, B:22:0x0041, B:24:0x0045, B:35:0x0068, B:39:0x009f, B:45:0x00b1, B:46:0x00b8, B:50:0x00ce, B:51:0x00d9, B:56:0x00eb, B:58:0x00fc, B:62:0x0112, B:61:0x0107, B:63:0x0115, B:67:0x0135, B:69:0x0147, B:71:0x016a, B:73:0x016d, B:74:0x0176, B:76:0x017d, B:77:0x0185, B:79:0x0189, B:81:0x018f, B:83:0x0196, B:66:0x012a, B:26:0x0049, B:28:0x005a, B:32:0x0062, B:34:0x0066, B:30:0x005e), top: B:91:0x0009 }] */
-    /* JADX WARN: Removed duplicated region for block: B:76:0x017d A[Catch: all -> 0x01a3, TryCatch #0 {, blocks: (B:4:0x0009, B:6:0x000e, B:8:0x0012, B:11:0x001a, B:12:0x001f, B:15:0x0023, B:17:0x0027, B:18:0x0034, B:22:0x0041, B:24:0x0045, B:35:0x0068, B:39:0x009f, B:45:0x00b1, B:46:0x00b8, B:50:0x00ce, B:51:0x00d9, B:56:0x00eb, B:58:0x00fc, B:62:0x0112, B:61:0x0107, B:63:0x0115, B:67:0x0135, B:69:0x0147, B:71:0x016a, B:73:0x016d, B:74:0x0176, B:76:0x017d, B:77:0x0185, B:79:0x0189, B:81:0x018f, B:83:0x0196, B:66:0x012a, B:26:0x0049, B:28:0x005a, B:32:0x0062, B:34:0x0066, B:30:0x005e), top: B:91:0x0009 }] */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public synchronized float getScale(@NonNull Drawable drawable, @Nullable RectF rectF, @Nullable Path path, @Nullable boolean[] zArr) {
-        int i;
-        int i2;
-        int i3;
-        int i4;
-        int i5;
-        int i6;
         float f;
-        float f2;
-        float f3;
-        float sqrt;
-        Drawable drawable2 = drawable;
+        Drawable adaptiveIconDrawable = drawable;
         synchronized (this) {
-            if (Utilities.ATLEAST_OREO && (drawable2 instanceof AdaptiveIconDrawable)) {
+            if (Utilities.ATLEAST_OREO && (adaptiveIconDrawable instanceof AdaptiveIconDrawable)) {
                 if (this.mAdaptiveIconScale != 0.0f) {
                     if (rectF != null) {
                         rectF.set(this.mAdaptiveIconBounds);
                     }
                     return this.mAdaptiveIconScale;
-                } else if (drawable2 instanceof FolderAdaptiveIcon) {
-                    drawable2 = new AdaptiveIconDrawable(new ColorDrawable(ViewCompat.MEASURED_STATE_MASK), null);
+                }
+                if (adaptiveIconDrawable instanceof FolderAdaptiveIcon) {
+                    adaptiveIconDrawable = new AdaptiveIconDrawable(new ColorDrawable(ViewCompat.MEASURED_STATE_MASK), null);
                 }
             }
-            int intrinsicWidth = drawable2.getIntrinsicWidth();
-            int intrinsicHeight = drawable2.getIntrinsicHeight();
-            if (intrinsicWidth > 0 && intrinsicHeight > 0) {
-                if (intrinsicWidth > this.mMaxSize || intrinsicHeight > this.mMaxSize) {
-                    int max = Math.max(intrinsicWidth, intrinsicHeight);
-                    intrinsicWidth = (this.mMaxSize * intrinsicWidth) / max;
-                    intrinsicHeight = (this.mMaxSize * intrinsicHeight) / max;
+            int intrinsicWidth = adaptiveIconDrawable.getIntrinsicWidth();
+            int intrinsicHeight = adaptiveIconDrawable.getIntrinsicHeight();
+            if (intrinsicWidth <= 0 || intrinsicHeight <= 0) {
+                if (intrinsicWidth <= 0 || intrinsicWidth > this.mMaxSize) {
+                    intrinsicWidth = this.mMaxSize;
                 }
-                int i7 = 0;
-                this.mBitmap.eraseColor(0);
-                drawable2.setBounds(0, 0, intrinsicWidth, intrinsicHeight);
-                drawable2.draw(this.mCanvas);
-                ByteBuffer wrap = ByteBuffer.wrap(this.mPixels);
-                wrap.rewind();
-                this.mBitmap.copyPixelsToBuffer(wrap);
-                int i8 = this.mMaxSize - intrinsicWidth;
-                i = this.mMaxSize + 1;
-                i2 = 0;
-                int i9 = 0;
-                i3 = -1;
-                i4 = -1;
-                i5 = -1;
-                while (i2 < intrinsicHeight) {
-                    int i10 = i9;
-                    int i11 = -1;
-                    int i12 = i7;
-                    int i13 = -1;
-                    while (i12 < intrinsicWidth) {
-                        Drawable drawable3 = drawable2;
-                        if ((this.mPixels[i10] & 255) > 40) {
-                            if (i13 == -1) {
-                                i13 = i12;
-                            }
-                            i11 = i12;
-                        }
-                        i10++;
-                        i12++;
-                        drawable2 = drawable3;
-                    }
-                    Drawable drawable4 = drawable2;
-                    i9 = i10 + i8;
-                    this.mLeftBorder[i2] = i13;
-                    this.mRightBorder[i2] = i11;
-                    if (i13 != -1) {
-                        if (i3 == -1) {
-                            i3 = i2;
-                        }
-                        int min = Math.min(i, i13);
-                        i4 = Math.max(i4, i11);
-                        i5 = i2;
-                        i = min;
-                    }
-                    i2++;
-                    drawable2 = drawable4;
-                    i7 = 0;
+                if (intrinsicHeight <= 0 || intrinsicHeight > this.mMaxSize) {
+                    intrinsicHeight = this.mMaxSize;
                 }
-                Drawable drawable5 = drawable2;
-                if (i3 != -1 && i4 != -1) {
-                    convertToConvexArray(this.mLeftBorder, 1, i3, i5);
-                    convertToConvexArray(this.mRightBorder, -1, i3, i5);
-                    float f4 = 0.0f;
-                    for (i6 = 0; i6 < intrinsicHeight; i6++) {
-                        if (this.mLeftBorder[i6] > -1.0f) {
-                            f4 += (this.mRightBorder[i6] - this.mLeftBorder[i6]) + 1.0f;
-                        }
-                    }
-                    f = f4 / (((i5 + 1) - i3) * ((i4 + 1) - i));
-                    if (f >= CIRCLE_AREA_BY_RECT) {
-                        f2 = MAX_CIRCLE_AREA_FACTOR;
-                    } else {
-                        f2 = MAX_SQUARE_AREA_FACTOR + (LINEAR_SCALE_SLOPE * (1.0f - f));
-                    }
-                    this.mBounds.left = i;
-                    this.mBounds.right = i4;
-                    this.mBounds.top = i3;
-                    this.mBounds.bottom = i5;
-                    if (rectF != null) {
-                        float f5 = intrinsicWidth;
-                        float f6 = intrinsicHeight;
-                        rectF.set(this.mBounds.left / f5, this.mBounds.top / f6, 1.0f - (this.mBounds.right / f5), 1.0f - (this.mBounds.bottom / f6));
-                    }
-                    if (zArr != null && zArr.length > 0) {
-                        zArr[0] = isShape(path);
-                    }
-                    sqrt = f4 / (intrinsicWidth * intrinsicHeight) > f2 ? (float) Math.sqrt(f2 / f3) : 1.0f;
-                    if (Utilities.ATLEAST_OREO && (drawable5 instanceof AdaptiveIconDrawable) && this.mAdaptiveIconScale == 0.0f) {
-                        this.mAdaptiveIconScale = sqrt;
-                        this.mAdaptiveIconBounds.set(this.mBounds);
-                    }
-                    return sqrt;
-                }
-                return 1.0f;
+            } else if (intrinsicWidth > this.mMaxSize || intrinsicHeight > this.mMaxSize) {
+                int iMax = Math.max(intrinsicWidth, intrinsicHeight);
+                intrinsicWidth = (this.mMaxSize * intrinsicWidth) / iMax;
+                intrinsicHeight = (this.mMaxSize * intrinsicHeight) / iMax;
             }
-            intrinsicWidth = this.mMaxSize;
-            if (intrinsicHeight <= 0 || intrinsicHeight > this.mMaxSize) {
-                intrinsicHeight = this.mMaxSize;
-            }
-            int i72 = 0;
+            int i = 0;
             this.mBitmap.eraseColor(0);
-            drawable2.setBounds(0, 0, intrinsicWidth, intrinsicHeight);
-            drawable2.draw(this.mCanvas);
-            ByteBuffer wrap2 = ByteBuffer.wrap(this.mPixels);
-            wrap2.rewind();
-            this.mBitmap.copyPixelsToBuffer(wrap2);
-            int i82 = this.mMaxSize - intrinsicWidth;
-            i = this.mMaxSize + 1;
-            i2 = 0;
-            int i92 = 0;
-            i3 = -1;
-            i4 = -1;
-            i5 = -1;
-            while (i2 < intrinsicHeight) {
+            adaptiveIconDrawable.setBounds(0, 0, intrinsicWidth, intrinsicHeight);
+            adaptiveIconDrawable.draw(this.mCanvas);
+            ByteBuffer byteBufferWrap = ByteBuffer.wrap(this.mPixels);
+            byteBufferWrap.rewind();
+            this.mBitmap.copyPixelsToBuffer(byteBufferWrap);
+            int i2 = this.mMaxSize + 1;
+            int i3 = this.mMaxSize - intrinsicWidth;
+            int i4 = i2;
+            int i5 = 0;
+            int i6 = 0;
+            int i7 = -1;
+            int iMax2 = -1;
+            int i8 = -1;
+            while (i5 < intrinsicHeight) {
+                int i9 = i6;
+                int i10 = -1;
+                int i11 = i;
+                int i12 = -1;
+                while (i11 < intrinsicWidth) {
+                    Drawable drawable2 = adaptiveIconDrawable;
+                    if ((this.mPixels[i9] & 255) > 40) {
+                        if (i12 == -1) {
+                            i12 = i11;
+                        }
+                        i10 = i11;
+                    }
+                    i9++;
+                    i11++;
+                    adaptiveIconDrawable = drawable2;
+                }
+                Drawable drawable3 = adaptiveIconDrawable;
+                i6 = i9 + i3;
+                this.mLeftBorder[i5] = i12;
+                this.mRightBorder[i5] = i10;
+                if (i12 != -1) {
+                    if (i7 == -1) {
+                        i7 = i5;
+                    }
+                    int iMin = Math.min(i4, i12);
+                    iMax2 = Math.max(iMax2, i10);
+                    i8 = i5;
+                    i4 = iMin;
+                }
+                i5++;
+                adaptiveIconDrawable = drawable3;
+                i = 0;
             }
-            Drawable drawable52 = drawable2;
-            if (i3 != -1) {
-                convertToConvexArray(this.mLeftBorder, 1, i3, i5);
-                convertToConvexArray(this.mRightBorder, -1, i3, i5);
-                float f42 = 0.0f;
-                while (i6 < intrinsicHeight) {
+            Drawable drawable4 = adaptiveIconDrawable;
+            if (i7 != -1 && iMax2 != -1) {
+                convertToConvexArray(this.mLeftBorder, 1, i7, i8);
+                convertToConvexArray(this.mRightBorder, -1, i7, i8);
+                float f2 = 0.0f;
+                for (int i13 = 0; i13 < intrinsicHeight; i13++) {
+                    if (this.mLeftBorder[i13] > -1.0f) {
+                        f2 += (this.mRightBorder[i13] - this.mLeftBorder[i13]) + 1.0f;
+                    }
                 }
-                f = f42 / (((i5 + 1) - i3) * ((i4 + 1) - i));
-                if (f >= CIRCLE_AREA_BY_RECT) {
+                float f3 = f2 / (((i8 + 1) - i7) * ((iMax2 + 1) - i4));
+                if (f3 < CIRCLE_AREA_BY_RECT) {
+                    f = MAX_CIRCLE_AREA_FACTOR;
+                } else {
+                    f = MAX_SQUARE_AREA_FACTOR + (LINEAR_SCALE_SLOPE * (1.0f - f3));
                 }
-                this.mBounds.left = i;
-                this.mBounds.right = i4;
-                this.mBounds.top = i3;
-                this.mBounds.bottom = i5;
+                this.mBounds.left = i4;
+                this.mBounds.right = iMax2;
+                this.mBounds.top = i7;
+                this.mBounds.bottom = i8;
                 if (rectF != null) {
+                    float f4 = intrinsicWidth;
+                    float f5 = intrinsicHeight;
+                    rectF.set(this.mBounds.left / f4, this.mBounds.top / f5, 1.0f - (this.mBounds.right / f4), 1.0f - (this.mBounds.bottom / f5));
                 }
-                if (zArr != null) {
+                if (zArr != null && zArr.length > 0) {
                     zArr[0] = isShape(path);
                 }
-                if (f42 / (intrinsicWidth * intrinsicHeight) > f2) {
-                }
-                if (Utilities.ATLEAST_OREO) {
-                    this.mAdaptiveIconScale = sqrt;
+                float fSqrt = f2 / (intrinsicWidth * intrinsicHeight) > f ? (float) Math.sqrt(f / r8) : 1.0f;
+                if (Utilities.ATLEAST_OREO && (drawable4 instanceof AdaptiveIconDrawable) && this.mAdaptiveIconScale == 0.0f) {
+                    this.mAdaptiveIconScale = fSqrt;
                     this.mAdaptiveIconBounds.set(this.mBounds);
                 }
-                return sqrt;
+                return fSqrt;
             }
             return 1.0f;
         }

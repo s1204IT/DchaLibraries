@@ -1,6 +1,7 @@
 package com.android.systemui.shared.system;
 
 import android.view.SurfaceControl;
+
 /* loaded from: classes.dex */
 public class SurfaceControlCompat {
     SurfaceControl mSurfaceControl;

@@ -3,6 +3,7 @@ package com.android.settings.system;
 import android.content.Context;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class AdditionalSystemUpdatePreferenceController extends BasePreferenceController {
     private static final String KEY_UPDATE_SETTING = "additional_system_update_settings";

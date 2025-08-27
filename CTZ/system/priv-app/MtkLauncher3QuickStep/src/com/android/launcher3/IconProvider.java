@@ -5,6 +5,7 @@ import android.content.pm.LauncherActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class IconProvider {
     protected String mSystemState;
@@ -16,13 +17,13 @@ public class IconProvider {
     }
 
     public void updateSystemStateString(Context context) {
-        String locale;
+        String string;
         if (Utilities.ATLEAST_NOUGAT) {
-            locale = context.getResources().getConfiguration().getLocales().toLanguageTags();
+            string = context.getResources().getConfiguration().getLocales().toLanguageTags();
         } else {
-            locale = Locale.getDefault().toString();
+            string = Locale.getDefault().toString();
         }
-        this.mSystemState = locale + "," + Build.VERSION.SDK_INT;
+        this.mSystemState = string + "," + Build.VERSION.SDK_INT;
     }
 
     public String getIconSystemState(String str) {

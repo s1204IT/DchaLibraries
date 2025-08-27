@@ -5,12 +5,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+
 /* loaded from: classes.dex */
 public class FolderSpinner extends Spinner implements AdapterView.OnItemSelectedListener {
     private boolean mFireSetSelection;
     private OnSetSelectionListener mOnSetSelectionListener;
 
-    /* loaded from: classes.dex */
     public interface OnSetSelectionListener {
         void onSetSelection(long j);
     }

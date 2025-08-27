@@ -14,6 +14,7 @@ import com.android.settings.core.BasePreferenceController;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public abstract class VibrationIntensityPreferenceController extends BasePreferenceController implements LifecycleObserver, OnStart, OnStop {
     private Preference mPreference;
@@ -70,14 +71,13 @@ public abstract class VibrationIntensityPreferenceController extends BasePrefere
                 default:
                     return "";
             }
-        } else if (i == 0) {
-            return context.getString(R.string.switch_off_text);
-        } else {
-            return context.getString(R.string.switch_on_text);
         }
+        if (i == 0) {
+            return context.getString(R.string.switch_off_text);
+        }
+        return context.getString(R.string.switch_on_text);
     }
 
-    /* loaded from: classes.dex */
     private static class SettingObserver extends ContentObserver {
         public final Uri uri;
 

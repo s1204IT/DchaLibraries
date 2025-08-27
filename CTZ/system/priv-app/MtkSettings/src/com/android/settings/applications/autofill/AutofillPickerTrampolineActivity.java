@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.autofill.AutofillManager;
 import com.android.settings.applications.defaultapps.DefaultAutofillPicker;
+
 /* loaded from: classes.dex */
 public class AutofillPickerTrampolineActivity extends Activity {
     @Override // android.app.Activity
@@ -22,9 +23,9 @@ public class AutofillPickerTrampolineActivity extends Activity {
         if (autofillManager == null || !autofillManager.hasAutofillFeature() || !autofillManager.isAutofillSupported()) {
             setResult(0);
             finish();
-            return;
+        } else {
+            startActivity(new Intent(this, (Class<?>) AutofillPickerActivity.class).setFlags(33554432).setData(intent.getData()));
+            finish();
         }
-        startActivity(new Intent(this, AutofillPickerActivity.class).setFlags(33554432).setData(intent.getData()));
-        finish();
     }
 }

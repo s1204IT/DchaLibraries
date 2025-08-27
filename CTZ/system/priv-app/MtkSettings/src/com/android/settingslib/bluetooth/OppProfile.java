@@ -3,8 +3,12 @@ package com.android.settingslib.bluetooth;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import com.android.settingslib.R;
+
 /* loaded from: classes.dex */
 final class OppProfile implements LocalBluetoothProfile {
+    OppProfile() {
+    }
+
     @Override // com.android.settingslib.bluetooth.LocalBluetoothProfile
     public boolean isConnectable() {
         return false;

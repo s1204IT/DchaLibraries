@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.android.quicksearchbox.R;
 import com.android.quicksearchbox.Suggestion;
+
 /* loaded from: classes.dex */
 public abstract class BaseSuggestionView extends RelativeLayout implements SuggestionView {
     private SuggestionsAdapter<?> mAdapter;
@@ -30,9 +31,8 @@ public abstract class BaseSuggestionView extends RelativeLayout implements Sugge
         super(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mText1 = (TextView) findViewById(R.id.text1);
         this.mText2 = (TextView) findViewById(R.id.text2);
@@ -51,13 +51,11 @@ public abstract class BaseSuggestionView extends RelativeLayout implements Sugge
         this.mSuggestionId = j;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setText1(CharSequence charSequence) {
+    protected void setText1(CharSequence charSequence) {
         this.mText1.setText(charSequence);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setText2(CharSequence charSequence) {
+    protected void setText2(CharSequence charSequence) {
         this.mText2.setText(charSequence);
         if (TextUtils.isEmpty(charSequence)) {
             this.mText2.setVisibility(8);
@@ -72,14 +70,12 @@ public abstract class BaseSuggestionView extends RelativeLayout implements Sugge
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onSuggestionQueryRefineClicked() {
+    protected void onSuggestionQueryRefineClicked() {
         if (this.mAdapter != null) {
             this.mAdapter.onSuggestionQueryRefineClicked(this.mSuggestionId);
         }
     }
 
-    /* loaded from: classes.dex */
     private class ClickListener implements View.OnClickListener {
         private ClickListener() {
         }

@@ -17,6 +17,7 @@ import com.android.systemui.statusbar.phone.nano.TouchAnalyticsProto;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class DataCollector implements SensorEventListener {
     private static DataCollector sInstance = null;
@@ -51,15 +52,10 @@ public class DataCollector implements SensorEventListener {
         return sInstance;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateConfiguration() {
-        boolean z = true;
+    private void updateConfiguration() {
         this.mEnableCollector = Build.IS_DEBUGGABLE && Settings.Secure.getInt(this.mContext.getContentResolver(), "data_collector_enable", 0) != 0;
         this.mCollectBadTouches = this.mEnableCollector && Settings.Secure.getInt(this.mContext.getContentResolver(), "data_collector_collect_bad_touches", 0) != 0;
-        if (!Build.IS_DEBUGGABLE || Settings.Secure.getInt(this.mContext.getContentResolver(), "data_collector_allow_rejected_touch_reports", 0) == 0) {
-            z = false;
-        }
-        this.mAllowReportRejectedTouch = z;
+        this.mAllowReportRejectedTouch = Build.IS_DEBUGGABLE && Settings.Secure.getInt(this.mContext.getContentResolver(), "data_collector_allow_rejected_touch_reports", 0) != 0;
     }
 
     private boolean sessionEntrypoint() {
@@ -91,7 +87,7 @@ public class DataCollector implements SensorEventListener {
         }
     }
 
-    public Uri reportRejectedTouch() {
+    public Uri reportRejectedTouch() throws IOException {
         if (this.mCurrentSession == null) {
             Toast.makeText(this.mContext, "Generating rejected touch report failed: session timed out.", 1).show();
             return null;
@@ -114,7 +110,7 @@ public class DataCollector implements SensorEventListener {
     private void queueSession(final SensorLoggerSession sensorLoggerSession) {
         AsyncTask.execute(new Runnable() { // from class: com.android.systemui.analytics.DataCollector.2
             @Override // java.lang.Runnable
-            public void run() {
+            public void run() throws IOException {
                 String str;
                 byte[] byteArray = TouchAnalyticsProto.Session.toByteArray(sensorLoggerSession.toProto());
                 String absolutePath = DataCollector.this.mContext.getFilesDir().getAbsolutePath();

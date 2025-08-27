@@ -2,6 +2,7 @@ package com.android.settings.fuelgauge;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 import libcore.icu.LocaleData;
+
 /* loaded from: classes.dex */
 public class BatteryHistoryChart extends View {
     final Path mBatCriticalPath;
@@ -119,9 +121,7 @@ public class BatteryHistoryChart extends View {
     final Paint mWifiRunningPaint;
     final Path mWifiRunningPath;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ChartData {
+    static class ChartData {
         int[] mColors;
         int mLastBin;
         int mNumTicks;
@@ -184,7 +184,6 @@ public class BatteryHistoryChart extends View {
         }
     }
 
-    /* loaded from: classes.dex */
     static class TextAttrs {
         ColorStateList textColor = null;
         int textSize = 15;
@@ -194,34 +193,34 @@ public class BatteryHistoryChart extends View {
         TextAttrs() {
         }
 
-        void retrieve(Context context, TypedArray typedArray, int i) {
-            TypedArray typedArray2;
+        void retrieve(Context context, TypedArray typedArray, int i) throws Resources.NotFoundException {
+            TypedArray typedArrayObtainStyledAttributes;
             int resourceId = typedArray.getResourceId(i, -1);
             if (resourceId != -1) {
-                typedArray2 = context.obtainStyledAttributes(resourceId, R.styleable.TextAppearance);
+                typedArrayObtainStyledAttributes = context.obtainStyledAttributes(resourceId, R.styleable.TextAppearance);
             } else {
-                typedArray2 = null;
+                typedArrayObtainStyledAttributes = null;
             }
-            if (typedArray2 != null) {
-                int indexCount = typedArray2.getIndexCount();
+            if (typedArrayObtainStyledAttributes != null) {
+                int indexCount = typedArrayObtainStyledAttributes.getIndexCount();
                 for (int i2 = 0; i2 < indexCount; i2++) {
-                    int index = typedArray2.getIndex(i2);
+                    int index = typedArrayObtainStyledAttributes.getIndex(i2);
                     switch (index) {
                         case 0:
-                            this.textSize = typedArray2.getDimensionPixelSize(index, this.textSize);
+                            this.textSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(index, this.textSize);
                             break;
                         case 1:
-                            this.typefaceIndex = typedArray2.getInt(index, -1);
+                            this.typefaceIndex = typedArrayObtainStyledAttributes.getInt(index, -1);
                             break;
                         case 2:
-                            this.styleIndex = typedArray2.getInt(index, -1);
+                            this.styleIndex = typedArrayObtainStyledAttributes.getInt(index, -1);
                             break;
                         case 3:
-                            this.textColor = typedArray2.getColorStateList(index);
+                            this.textColor = typedArrayObtainStyledAttributes.getColorStateList(index);
                             break;
                     }
                 }
-                typedArray2.recycle();
+                typedArrayObtainStyledAttributes.recycle();
             }
         }
 
@@ -249,15 +248,15 @@ public class BatteryHistoryChart extends View {
         }
 
         public void setTypeface(TextPaint textPaint, Typeface typeface, int i) {
-            Typeface create;
+            Typeface typefaceCreate;
             if (i > 0) {
                 if (typeface == null) {
-                    create = Typeface.defaultFromStyle(i);
+                    typefaceCreate = Typeface.defaultFromStyle(i);
                 } else {
-                    create = Typeface.create(typeface, i);
+                    typefaceCreate = Typeface.create(typeface, i);
                 }
-                textPaint.setTypeface(create);
-                int i2 = (~(create != null ? create.getStyle() : 0)) & i;
+                textPaint.setTypeface(typefaceCreate);
+                int i2 = (~(typefaceCreate != null ? typefaceCreate.getStyle() : 0)) & i;
                 textPaint.setFakeBoldText((i2 & 1) != 0);
                 textPaint.setTextSkewX((i2 & 2) != 0 ? -0.25f : 0.0f);
                 return;
@@ -268,9 +267,7 @@ public class BatteryHistoryChart extends View {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class TimeLabel {
+    static class TimeLabel {
         final String label;
         final int width;
         final int x;
@@ -282,9 +279,7 @@ public class BatteryHistoryChart extends View {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class DateLabel {
+    static class DateLabel {
         final String label;
         final int width;
         final int x;
@@ -296,9 +291,9 @@ public class BatteryHistoryChart extends View {
         }
     }
 
-    public BatteryHistoryChart(Context context, AttributeSet attributeSet) {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [408=6] */
+    public BatteryHistoryChart(Context context, AttributeSet attributeSet) throws Resources.NotFoundException {
         super(context, attributeSet);
-        int i;
         this.mBatteryBackgroundPaint = new Paint(1);
         this.mBatteryGoodPaint = new Paint(1);
         this.mBatteryWarnPaint = new Paint(1);
@@ -333,8 +328,8 @@ public class BatteryHistoryChart extends View {
         this.mLastHeight = -1;
         this.mTimeLabels = new ArrayList<>();
         this.mDateLabels = new ArrayList<>();
-        this.mBatteryWarnLevel = this.mContext.getResources().getInteger(17694805);
-        this.mBatteryCriticalLevel = this.mContext.getResources().getInteger(17694757);
+        this.mBatteryWarnLevel = this.mContext.getResources().getInteger(android.R.integer.config_defaultNotificationLedOff);
+        this.mBatteryCriticalLevel = this.mContext.getResources().getInteger(android.R.integer.config_batterySaver_full_locationMode);
         this.mThinLineWidth = (int) TypedValue.applyDimension(1, 2.0f, getResources().getDisplayMetrics());
         int colorAccent = Utils.getColorAccent(this.mContext);
         this.mBatteryBackgroundPaint.setColor(colorAccent);
@@ -364,75 +359,75 @@ public class BatteryHistoryChart extends View {
         this.mWifiRunningPaint.setColor(colorAccent);
         this.mCpuRunningPaint.setColor(colorAccent);
         this.mChargingPaint.setColor(colorAccent);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, com.android.settings.R.styleable.BatteryHistoryChart, 0, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, com.android.settings.R.styleable.BatteryHistoryChart, 0, 0);
         TextAttrs textAttrs = new TextAttrs();
         TextAttrs textAttrs2 = new TextAttrs();
-        textAttrs.retrieve(context, obtainStyledAttributes, 0);
-        textAttrs2.retrieve(context, obtainStyledAttributes, 12);
-        int indexCount = obtainStyledAttributes.getIndexCount();
-        int i2 = 0;
+        textAttrs.retrieve(context, typedArrayObtainStyledAttributes, 0);
+        textAttrs2.retrieve(context, typedArrayObtainStyledAttributes, 12);
+        int indexCount = typedArrayObtainStyledAttributes.getIndexCount();
+        int i = 0;
         float f = 0.0f;
         float f2 = 0.0f;
         float f3 = 0.0f;
-        for (int i3 = 0; i3 < indexCount; i3++) {
-            int index = obtainStyledAttributes.getIndex(i3);
+        for (int i2 = 0; i2 < indexCount; i2++) {
+            int index = typedArrayObtainStyledAttributes.getIndex(i2);
             switch (index) {
                 case 1:
-                    textAttrs.textSize = obtainStyledAttributes.getDimensionPixelSize(index, textAttrs.textSize);
-                    textAttrs2.textSize = obtainStyledAttributes.getDimensionPixelSize(index, textAttrs2.textSize);
+                    textAttrs.textSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(index, textAttrs.textSize);
+                    textAttrs2.textSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(index, textAttrs2.textSize);
                     break;
                 case 2:
-                    textAttrs.typefaceIndex = obtainStyledAttributes.getInt(index, textAttrs.typefaceIndex);
-                    textAttrs2.typefaceIndex = obtainStyledAttributes.getInt(index, textAttrs2.typefaceIndex);
+                    textAttrs.typefaceIndex = typedArrayObtainStyledAttributes.getInt(index, textAttrs.typefaceIndex);
+                    textAttrs2.typefaceIndex = typedArrayObtainStyledAttributes.getInt(index, textAttrs2.typefaceIndex);
                     break;
                 case 3:
-                    textAttrs.styleIndex = obtainStyledAttributes.getInt(index, textAttrs.styleIndex);
-                    textAttrs2.styleIndex = obtainStyledAttributes.getInt(index, textAttrs2.styleIndex);
+                    textAttrs.styleIndex = typedArrayObtainStyledAttributes.getInt(index, textAttrs.styleIndex);
+                    textAttrs2.styleIndex = typedArrayObtainStyledAttributes.getInt(index, textAttrs2.styleIndex);
                     break;
                 case 4:
-                    textAttrs.textColor = obtainStyledAttributes.getColorStateList(index);
-                    textAttrs2.textColor = obtainStyledAttributes.getColorStateList(index);
+                    textAttrs.textColor = typedArrayObtainStyledAttributes.getColorStateList(index);
+                    textAttrs2.textColor = typedArrayObtainStyledAttributes.getColorStateList(index);
                     break;
                 case 5:
-                    i2 = obtainStyledAttributes.getInt(index, 0);
+                    i = typedArrayObtainStyledAttributes.getInt(index, 0);
                     break;
                 case 6:
-                    f2 = obtainStyledAttributes.getFloat(index, 0.0f);
+                    f2 = typedArrayObtainStyledAttributes.getFloat(index, 0.0f);
                     break;
                 case 7:
-                    f3 = obtainStyledAttributes.getFloat(index, 0.0f);
+                    f3 = typedArrayObtainStyledAttributes.getFloat(index, 0.0f);
                     break;
                 case 8:
-                    f = obtainStyledAttributes.getFloat(index, 0.0f);
+                    f = typedArrayObtainStyledAttributes.getFloat(index, 0.0f);
                     break;
                 case 9:
-                    this.mTimeRemainPaint.setColor(obtainStyledAttributes.getInt(index, 0));
+                    this.mTimeRemainPaint.setColor(typedArrayObtainStyledAttributes.getInt(index, 0));
                     break;
-                case 10:
-                    this.mBatteryBackgroundPaint.setColor(obtainStyledAttributes.getInt(index, 0));
-                    this.mScreenOnPaint.setColor(obtainStyledAttributes.getInt(index, 0));
-                    this.mGpsOnPaint.setColor(obtainStyledAttributes.getInt(index, 0));
-                    this.mCameraOnPaint.setColor(obtainStyledAttributes.getInt(index, 0));
-                    this.mFlashlightOnPaint.setColor(obtainStyledAttributes.getInt(index, 0));
-                    this.mWifiRunningPaint.setColor(obtainStyledAttributes.getInt(index, 0));
-                    this.mCpuRunningPaint.setColor(obtainStyledAttributes.getInt(index, 0));
-                    this.mChargingPaint.setColor(obtainStyledAttributes.getInt(index, 0));
+                case AccessPoint.Speed.MODERATE /* 10 */:
+                    this.mBatteryBackgroundPaint.setColor(typedArrayObtainStyledAttributes.getInt(index, 0));
+                    this.mScreenOnPaint.setColor(typedArrayObtainStyledAttributes.getInt(index, 0));
+                    this.mGpsOnPaint.setColor(typedArrayObtainStyledAttributes.getInt(index, 0));
+                    this.mCameraOnPaint.setColor(typedArrayObtainStyledAttributes.getInt(index, 0));
+                    this.mFlashlightOnPaint.setColor(typedArrayObtainStyledAttributes.getInt(index, 0));
+                    this.mWifiRunningPaint.setColor(typedArrayObtainStyledAttributes.getInt(index, 0));
+                    this.mCpuRunningPaint.setColor(typedArrayObtainStyledAttributes.getInt(index, 0));
+                    this.mChargingPaint.setColor(typedArrayObtainStyledAttributes.getInt(index, 0));
                     break;
                 case 11:
-                    this.mChartMinHeight = obtainStyledAttributes.getDimensionPixelSize(index, 0);
+                    this.mChartMinHeight = typedArrayObtainStyledAttributes.getDimensionPixelSize(index, 0);
                     break;
             }
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
         textAttrs.apply(context, this.mTextPaint);
         textAttrs2.apply(context, this.mHeaderTextPaint);
         this.mDateLinePaint.set(this.mTextPaint);
         this.mDateLinePaint.setStyle(Paint.Style.STROKE);
-        this.mDateLinePaint.setStrokeWidth(this.mThinLineWidth / 2 < 1 ? 1 : i);
+        this.mDateLinePaint.setStrokeWidth(this.mThinLineWidth / 2 < 1 ? 1 : r3);
         this.mDateLinePaint.setPathEffect(new DashPathEffect(new float[]{this.mThinLineWidth * 2, this.mThinLineWidth * 2}, 0.0f));
-        if (i2 != 0) {
-            this.mTextPaint.setShadowLayer(f, f2, f3, i2);
-            this.mHeaderTextPaint.setShadowLayer(f, f2, f3, i2);
+        if (i != 0) {
+            this.mTextPaint.setShadowLayer(f, f2, f3, i);
+            this.mHeaderTextPaint.setShadowLayer(f, f2, f3, i);
         }
     }
 
@@ -1055,7 +1050,7 @@ public class BatteryHistoryChart extends View {
             i12 = 0;
         }
         if (batteryHistoryChart.mStartWallTime > 0 && batteryHistoryChart.mEndWallTime > batteryHistoryChart.mStartWallTime) {
-            boolean is24Hour = is24Hour();
+            boolean zIs24Hour = is24Hour();
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(batteryHistoryChart.mStartWallTime);
             calendar.set(14, i12);
@@ -1073,20 +1068,21 @@ public class BatteryHistoryChart extends View {
             calendar2.set(12, i12);
             long timeInMillis2 = calendar2.getTimeInMillis();
             if (timeInMillis < timeInMillis2) {
-                batteryHistoryChart.addTimeLabel(calendar, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, is24Hour);
+                batteryHistoryChart.addTimeLabel(calendar, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, zIs24Hour);
                 Calendar calendar3 = Calendar.getInstance();
+                long j14 = timeInMillis;
                 calendar3.setTimeInMillis(batteryHistoryChart.mStartWallTime + ((batteryHistoryChart.mEndWallTime - batteryHistoryChart.mStartWallTime) / 2));
                 calendar3.set(14, i12);
                 calendar3.set(13, i12);
                 calendar3.set(12, i12);
                 long timeInMillis3 = calendar3.getTimeInMillis();
-                if (timeInMillis3 > timeInMillis && timeInMillis3 < timeInMillis2) {
-                    batteryHistoryChart.addTimeLabel(calendar3, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, is24Hour);
+                if (timeInMillis3 > j14 && timeInMillis3 < timeInMillis2) {
+                    batteryHistoryChart.addTimeLabel(calendar3, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, zIs24Hour);
                 }
-                batteryHistoryChart.addTimeLabel(calendar2, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, is24Hour);
+                batteryHistoryChart.addTimeLabel(calendar2, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, zIs24Hour);
             }
             if (calendar.get(6) != calendar2.get(6) || calendar.get(1) != calendar2.get(1)) {
-                boolean isDayFirst = isDayFirst();
+                boolean zIsDayFirst = isDayFirst();
                 calendar.set(11, i12);
                 long timeInMillis4 = calendar.getTimeInMillis();
                 if (timeInMillis4 < batteryHistoryChart.mStartWallTime) {
@@ -1096,26 +1092,26 @@ public class BatteryHistoryChart extends View {
                 calendar2.set(11, i12);
                 long timeInMillis5 = calendar2.getTimeInMillis();
                 if (timeInMillis4 < timeInMillis5) {
-                    batteryHistoryChart.addDateLabel(calendar, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, isDayFirst);
+                    batteryHistoryChart.addDateLabel(calendar, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, zIsDayFirst);
                     Calendar calendar4 = Calendar.getInstance();
                     calendar4.setTimeInMillis(((timeInMillis5 - timeInMillis4) / 2) + timeInMillis4 + 7200000);
                     calendar4.set(11, i12);
                     calendar4.set(12, i12);
                     long timeInMillis6 = calendar4.getTimeInMillis();
                     if (timeInMillis6 > timeInMillis4 && timeInMillis6 < timeInMillis5) {
-                        batteryHistoryChart.addDateLabel(calendar4, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, isDayFirst);
+                        batteryHistoryChart.addDateLabel(calendar4, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, zIsDayFirst);
                     }
                 }
-                batteryHistoryChart.addDateLabel(calendar2, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, isDayFirst);
+                batteryHistoryChart.addDateLabel(calendar2, batteryHistoryChart.mLevelLeft, batteryHistoryChart.mLevelRight, zIsDayFirst);
             }
         }
         if (batteryHistoryChart.mTimeLabels.size() < 2) {
             batteryHistoryChart.mDurationString = Formatter.formatShortElapsedTime(getContext(), batteryHistoryChart.mEndWallTime - batteryHistoryChart.mStartWallTime);
             batteryHistoryChart.mDurationStringWidth = (int) batteryHistoryChart.mTextPaint.measureText(batteryHistoryChart.mDurationString);
-            return;
+        } else {
+            batteryHistoryChart.mDurationString = null;
+            batteryHistoryChart.mDurationStringWidth = i12;
         }
-        batteryHistoryChart.mDurationString = null;
-        batteryHistoryChart.mDurationStringWidth = i12;
     }
 
     void addTimeLabel(Calendar calendar, int i, int i2, boolean z) {
@@ -1144,11 +1140,11 @@ public class BatteryHistoryChart extends View {
         int i6;
         int i7;
         int i8;
-        boolean isLayoutRtl = isLayoutRtl();
-        int i9 = isLayoutRtl ? i : 0;
-        int i10 = isLayoutRtl ? 0 : i;
-        Paint.Align align3 = isLayoutRtl ? Paint.Align.RIGHT : Paint.Align.LEFT;
-        Paint.Align align4 = isLayoutRtl ? Paint.Align.LEFT : Paint.Align.RIGHT;
+        boolean zIsLayoutRtl = isLayoutRtl();
+        int i9 = zIsLayoutRtl ? i : 0;
+        int i10 = zIsLayoutRtl ? 0 : i;
+        Paint.Align align3 = zIsLayoutRtl ? Paint.Align.RIGHT : Paint.Align.LEFT;
+        Paint.Align align4 = zIsLayoutRtl ? Paint.Align.LEFT : Paint.Align.RIGHT;
         canvas.drawPath(this.mBatLevelPath, this.mBatteryBackgroundPaint);
         if (!this.mTimeRemainPath.isEmpty()) {
             canvas.drawPath(this.mTimeRemainPath, this.mTimeRemainPaint);
@@ -1228,10 +1224,10 @@ public class BatteryHistoryChart extends View {
         float f2 = i20;
         canvas.drawText(this.mInfo.chargeLabel.toString(), f, f2, this.mHeaderTextPaint);
         int i21 = this.mChargeDurationStringWidth / 2;
-        if (isLayoutRtl) {
+        if (zIsLayoutRtl) {
             i21 = -i21;
         }
-        canvas.drawText(this.mChargeDurationString, ((((i - this.mChargeDurationStringWidth) - this.mDrainStringWidth) / 2) + (isLayoutRtl ? this.mDrainStringWidth : this.mChargeLabelStringWidth)) - i21, f2, this.mHeaderTextPaint);
+        canvas.drawText(this.mChargeDurationString, ((((i - this.mChargeDurationStringWidth) - this.mDrainStringWidth) / 2) + (zIsLayoutRtl ? this.mDrainStringWidth : this.mChargeLabelStringWidth)) - i21, f2, this.mHeaderTextPaint);
         this.mHeaderTextPaint.setTextAlign(align);
         canvas.drawText(this.mDrainString, i3, f2, this.mHeaderTextPaint);
         if (!this.mBatGoodPath.isEmpty()) {

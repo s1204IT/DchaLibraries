@@ -3,6 +3,7 @@ package com.google.common.base;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class Joiner {
     private final String separator;
@@ -67,7 +68,6 @@ public class Joiner {
         return new MapJoiner(str);
     }
 
-    /* loaded from: classes.dex */
     public static final class MapJoiner {
         private final Joiner joiner;
         private final String keyValueSeparator;

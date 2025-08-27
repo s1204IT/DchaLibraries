@@ -10,6 +10,7 @@ import com.android.settings.core.TogglePreferenceController;
 import com.android.settings.search.DatabaseIndexingUtils;
 import com.android.settings.search.InlineSwitchPayload;
 import com.android.settings.search.ResultPayload;
+
 /* loaded from: classes.dex */
 public class AmbientDisplayAlwaysOnPreferenceController extends TogglePreferenceController {
     private static final int MY_USER = UserHandle.myUserId();
@@ -18,7 +19,6 @@ public class AmbientDisplayAlwaysOnPreferenceController extends TogglePreference
     private OnPreferenceChangedCallback mCallback;
     private AmbientDisplayConfiguration mConfig;
 
-    /* loaded from: classes.dex */
     public interface OnPreferenceChangedCallback {
         void onPreferenceChanged();
     }

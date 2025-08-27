@@ -1,6 +1,7 @@
 package com.android.launcher3.badge;
 
 import com.android.launcher3.Utilities;
+
 /* loaded from: classes.dex */
 public class FolderBadgeInfo extends BadgeInfo {
     private static final int MIN_COUNT = 0;
@@ -15,7 +16,7 @@ public class FolderBadgeInfo extends BadgeInfo {
             return;
         }
         this.mNumNotifications += badgeInfo.getNotificationKeys().size();
-        this.mNumNotifications = Utilities.boundToRange(this.mNumNotifications, 0, (int) BadgeInfo.MAX_COUNT);
+        this.mNumNotifications = Utilities.boundToRange(this.mNumNotifications, 0, BadgeInfo.MAX_COUNT);
     }
 
     public void subtractBadgeInfo(BadgeInfo badgeInfo) {
@@ -23,7 +24,7 @@ public class FolderBadgeInfo extends BadgeInfo {
             return;
         }
         this.mNumNotifications -= badgeInfo.getNotificationKeys().size();
-        this.mNumNotifications = Utilities.boundToRange(this.mNumNotifications, 0, (int) BadgeInfo.MAX_COUNT);
+        this.mNumNotifications = Utilities.boundToRange(this.mNumNotifications, 0, BadgeInfo.MAX_COUNT);
     }
 
     @Override // com.android.launcher3.badge.BadgeInfo

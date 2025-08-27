@@ -2,6 +2,7 @@ package com.android.settings.notification;
 
 import android.content.ComponentName;
 import android.net.Uri;
+
 /* loaded from: classes.dex */
 public class ZenRuleInfo {
     public ComponentName configurationActivity;

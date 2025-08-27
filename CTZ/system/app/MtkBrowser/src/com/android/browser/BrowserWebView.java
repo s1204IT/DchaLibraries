@@ -1,6 +1,7 @@
 package com.android.browser;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -10,6 +11,7 @@ import android.view.ViewRootImpl;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
 /* loaded from: classes.dex */
 public class BrowserWebView extends WebView {
     private String LOGTAG;
@@ -20,7 +22,6 @@ public class BrowserWebView extends WebView {
     private WebChromeClient mWebChromeClient;
     private WebViewClient mWebViewClient;
 
-    /* loaded from: classes.dex */
     public interface OnScrollChangedListener {
         void onScrollChanged(int i, int i2, int i3, int i4);
     }
@@ -83,7 +84,7 @@ public class BrowserWebView extends WebView {
     }
 
     @Override // android.webkit.WebView, android.view.View
-    protected void onScrollChanged(int i, int i2, int i3, int i4) {
+    protected void onScrollChanged(int i, int i2, int i3, int i4) throws Resources.NotFoundException {
         super.onScrollChanged(i, i2, i3, i4);
         if (this.mTitleBar != null) {
             this.mTitleBar.onScrollChanged();
@@ -106,9 +107,9 @@ public class BrowserWebView extends WebView {
     public void destroy() {
         BrowserSettings.getInstance().stopManagingSettings(getSettings());
         super.destroy();
-        RenderNode updateDisplayListIfDirty = updateDisplayListIfDirty();
-        if (updateDisplayListIfDirty != null) {
-            updateDisplayListIfDirty.discardDisplayList();
+        RenderNode renderNodeUpdateDisplayListIfDirty = updateDisplayListIfDirty();
+        if (renderNodeUpdateDisplayListIfDirty != null) {
+            renderNodeUpdateDisplayListIfDirty.discardDisplayList();
         }
     }
 

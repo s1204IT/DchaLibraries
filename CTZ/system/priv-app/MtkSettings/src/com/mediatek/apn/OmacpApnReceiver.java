@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class OmacpApnReceiver extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver
@@ -18,7 +19,7 @@ public class OmacpApnReceiver extends BroadcastReceiver {
     }
 
     private void startOmacpService(Context context, Intent intent) {
-        Intent intent2 = new Intent(context, OmacpApnReceiverService.class);
+        Intent intent2 = new Intent(context, (Class<?>) OmacpApnReceiverService.class);
         intent2.setAction("com.mediatek.apn.action.start.omacpservice");
         intent2.putExtra("android.intent.extra.INTENT", intent);
         Log.d("OmacpApnReceiver", "startService");

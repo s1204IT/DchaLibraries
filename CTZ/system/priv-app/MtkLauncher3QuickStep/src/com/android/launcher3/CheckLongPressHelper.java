@@ -1,6 +1,7 @@
 package com.android.launcher3;
 
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class CheckLongPressHelper {
     public static final int DEFAULT_LONG_PRESS_TIMEOUT = 300;
@@ -10,21 +11,20 @@ public class CheckLongPressHelper {
     private CheckForLongPress mPendingCheckForLongPress;
     View mView;
 
-    /* loaded from: classes.dex */
     class CheckForLongPress implements Runnable {
         CheckForLongPress() {
         }
 
         @Override // java.lang.Runnable
         public void run() {
-            boolean performLongClick;
+            boolean zPerformLongClick;
             if (CheckLongPressHelper.this.mView.getParent() != null && CheckLongPressHelper.this.mView.hasWindowFocus() && !CheckLongPressHelper.this.mHasPerformedLongPress) {
                 if (CheckLongPressHelper.this.mListener != null) {
-                    performLongClick = CheckLongPressHelper.this.mListener.onLongClick(CheckLongPressHelper.this.mView);
+                    zPerformLongClick = CheckLongPressHelper.this.mListener.onLongClick(CheckLongPressHelper.this.mView);
                 } else {
-                    performLongClick = CheckLongPressHelper.this.mView.performLongClick();
+                    zPerformLongClick = CheckLongPressHelper.this.mView.performLongClick();
                 }
-                if (performLongClick) {
+                if (zPerformLongClick) {
                     CheckLongPressHelper.this.mView.setPressed(false);
                     CheckLongPressHelper.this.mHasPerformedLongPress = true;
                 }

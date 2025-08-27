@@ -7,6 +7,7 @@ import com.android.launcher3.AllAppsList;
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherModel;
 import java.util.concurrent.Executor;
+
 /* loaded from: classes.dex */
 public class ModelPreload implements LauncherModel.ModelUpdateTask {
     private static final String TAG = "ModelPreload";

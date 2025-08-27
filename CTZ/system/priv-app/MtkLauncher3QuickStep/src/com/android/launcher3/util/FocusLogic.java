@@ -7,6 +7,7 @@ import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.ShortcutAndWidgetContainer;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class FocusLogic {
     public static final int ALL_APPS_COLUMN = -11;
@@ -32,7 +33,7 @@ public class FocusLogic {
     public static int handleKeyEvent(int i, int[][] iArr, int i2, int i3, int i4, boolean z) {
         int length;
         int length2;
-        int handleDpadHorizontal;
+        int iHandleDpadHorizontal;
         if (iArr != null) {
             length = iArr.length;
         } else {
@@ -49,20 +50,20 @@ public class FocusLogic {
             case 20:
                 return handleDpadVertical(i2, length, length2, iArr, 1);
             case 21:
-                handleDpadHorizontal = handleDpadHorizontal(i2, length, length2, iArr, -1, z);
-                if (!z && handleDpadHorizontal == -1 && i3 > 0) {
+                iHandleDpadHorizontal = handleDpadHorizontal(i2, length, length2, iArr, -1, z);
+                if (!z && iHandleDpadHorizontal == -1 && i3 > 0) {
                     return -2;
                 }
-                if (z && handleDpadHorizontal == -1 && i3 < i4 - 1) {
+                if (z && iHandleDpadHorizontal == -1 && i3 < i4 - 1) {
                     return -10;
                 }
                 break;
             case 22:
-                handleDpadHorizontal = handleDpadHorizontal(i2, length, length2, iArr, 1, z);
-                if (!z && handleDpadHorizontal == -1 && i3 < i4 - 1) {
+                iHandleDpadHorizontal = handleDpadHorizontal(i2, length, length2, iArr, 1, z);
+                if (!z && iHandleDpadHorizontal == -1 && i3 < i4 - 1) {
                     return -9;
                 }
-                if (z && handleDpadHorizontal == -1 && i3 > 0) {
+                if (z && iHandleDpadHorizontal == -1 && i3 > 0) {
                     return -5;
                 }
                 break;
@@ -77,11 +78,11 @@ public class FocusLogic {
             default:
                 return -1;
         }
-        return handleDpadHorizontal;
+        return iHandleDpadHorizontal;
     }
 
     private static int[][] createFullMatrix(int i, int i2) {
-        int[][] iArr = (int[][]) Array.newInstance(int.class, i, i2);
+        int[][] iArr = (int[][]) Array.newInstance((Class<?>) int.class, i, i2);
         for (int i3 = 0; i3 < i; i3++) {
             Arrays.fill(iArr[i3], -1);
         }
@@ -92,22 +93,22 @@ public class FocusLogic {
         ShortcutAndWidgetContainer shortcutsAndWidgets = cellLayout.getShortcutsAndWidgets();
         int countX = cellLayout.getCountX();
         int countY = cellLayout.getCountY();
-        boolean invertLayoutHorizontally = shortcutsAndWidgets.invertLayoutHorizontally();
-        int[][] createFullMatrix = createFullMatrix(countX, countY);
+        boolean zInvertLayoutHorizontally = shortcutsAndWidgets.invertLayoutHorizontally();
+        int[][] iArrCreateFullMatrix = createFullMatrix(countX, countY);
         for (int i = 0; i < shortcutsAndWidgets.getChildCount(); i++) {
             View childAt = shortcutsAndWidgets.getChildAt(i);
             if (childAt.isFocusable()) {
                 int i2 = ((CellLayout.LayoutParams) childAt.getLayoutParams()).cellX;
                 int i3 = ((CellLayout.LayoutParams) childAt.getLayoutParams()).cellY;
-                if (invertLayoutHorizontally) {
+                if (zInvertLayoutHorizontally) {
                     i2 = (countX - i2) - 1;
                 }
                 if (i2 < countX && i3 < countY) {
-                    createFullMatrix[i2][i3] = i;
+                    iArrCreateFullMatrix[i2][i3] = i;
                 }
             }
         }
-        return createFullMatrix;
+        return iArrCreateFullMatrix;
     }
 
     public static int[][] createSparseMatrixWithHotseat(CellLayout cellLayout, CellLayout cellLayout2, DeviceProfile deviceProfile) {
@@ -123,44 +124,44 @@ public class FocusLogic {
             countX = cellLayout.getCountX() + cellLayout2.getCountX();
             countY = cellLayout2.getCountY();
         }
-        int[][] createFullMatrix = createFullMatrix(countX, countY);
+        int[][] iArrCreateFullMatrix = createFullMatrix(countX, countY);
         for (int i = 0; i < shortcutsAndWidgets.getChildCount(); i++) {
             View childAt = shortcutsAndWidgets.getChildAt(i);
             if (childAt.isFocusable()) {
-                createFullMatrix[((CellLayout.LayoutParams) childAt.getLayoutParams()).cellX][((CellLayout.LayoutParams) childAt.getLayoutParams()).cellY] = i;
+                iArrCreateFullMatrix[((CellLayout.LayoutParams) childAt.getLayoutParams()).cellX][((CellLayout.LayoutParams) childAt.getLayoutParams()).cellY] = i;
             }
         }
         for (int childCount = shortcutsAndWidgets2.getChildCount() - 1; childCount >= 0; childCount--) {
             if (z) {
-                createFullMatrix[((CellLayout.LayoutParams) shortcutsAndWidgets2.getChildAt(childCount).getLayoutParams()).cellX][cellLayout.getCountY()] = shortcutsAndWidgets.getChildCount() + childCount;
+                iArrCreateFullMatrix[((CellLayout.LayoutParams) shortcutsAndWidgets2.getChildAt(childCount).getLayoutParams()).cellX][cellLayout.getCountY()] = shortcutsAndWidgets.getChildCount() + childCount;
             } else {
-                createFullMatrix[cellLayout.getCountX()][((CellLayout.LayoutParams) shortcutsAndWidgets2.getChildAt(childCount).getLayoutParams()).cellY] = shortcutsAndWidgets.getChildCount() + childCount;
+                iArrCreateFullMatrix[cellLayout.getCountX()][((CellLayout.LayoutParams) shortcutsAndWidgets2.getChildAt(childCount).getLayoutParams()).cellY] = shortcutsAndWidgets.getChildCount() + childCount;
             }
         }
-        return createFullMatrix;
+        return iArrCreateFullMatrix;
     }
 
     public static int[][] createSparseMatrixWithPivotColumn(CellLayout cellLayout, int i, int i2) {
         ShortcutAndWidgetContainer shortcutsAndWidgets = cellLayout.getShortcutsAndWidgets();
-        int[][] createFullMatrix = createFullMatrix(cellLayout.getCountX() + 1, cellLayout.getCountY());
+        int[][] iArrCreateFullMatrix = createFullMatrix(cellLayout.getCountX() + 1, cellLayout.getCountY());
         for (int i3 = 0; i3 < shortcutsAndWidgets.getChildCount(); i3++) {
             View childAt = shortcutsAndWidgets.getChildAt(i3);
             if (childAt.isFocusable()) {
                 int i4 = ((CellLayout.LayoutParams) childAt.getLayoutParams()).cellX;
                 int i5 = ((CellLayout.LayoutParams) childAt.getLayoutParams()).cellY;
                 if (i < 0) {
-                    createFullMatrix[i4 - i][i5] = i3;
+                    iArrCreateFullMatrix[i4 - i][i5] = i3;
                 } else {
-                    createFullMatrix[i4][i5] = i3;
+                    iArrCreateFullMatrix[i4][i5] = i3;
                 }
             }
         }
         if (i < 0) {
-            createFullMatrix[0][i2] = 100;
+            iArrCreateFullMatrix[0][i2] = 100;
         } else {
-            createFullMatrix[i][i2] = 100;
+            iArrCreateFullMatrix[i][i2] = 100;
         }
-        return createFullMatrix;
+        return iArrCreateFullMatrix;
     }
 
     private static int handleDpadHorizontal(int i, int i2, int i3, int[][] iArr, int i4, boolean z) {
@@ -184,46 +185,46 @@ public class FocusLogic {
             i6 = i8;
         }
         int i11 = i5 + i4;
-        int i12 = -1;
+        int iInspectMatrix = -1;
         while (i11 >= 0 && i11 < i2) {
-            i12 = inspectMatrix(i11, i6, i2, i3, iArr);
-            if (i12 == -1 || i12 == -11) {
+            iInspectMatrix = inspectMatrix(i11, i6, i2, i3, iArr);
+            if (iInspectMatrix == -1 || iInspectMatrix == -11) {
                 i11 += i4;
             } else {
-                return i12;
+                return iInspectMatrix;
             }
         }
-        int i13 = i12;
+        int iInspectMatrix2 = iInspectMatrix;
         boolean z2 = false;
         boolean z3 = false;
-        for (int i14 = 1; i14 < i3; i14++) {
-            int i15 = i14 * i4;
-            int i16 = i6 + i15;
-            int i17 = i6 - i15;
-            int i18 = i15 + i5;
-            if (inspectMatrix(i18, i16, i2, i3, iArr) == -11) {
+        for (int i12 = 1; i12 < i3; i12++) {
+            int i13 = i12 * i4;
+            int i14 = i6 + i13;
+            int i15 = i6 - i13;
+            int i16 = i13 + i5;
+            if (inspectMatrix(i16, i14, i2, i3, iArr) == -11) {
                 z2 = true;
             }
-            if (inspectMatrix(i18, i17, i2, i3, iArr) == -11) {
+            if (inspectMatrix(i16, i15, i2, i3, iArr) == -11) {
                 z3 = true;
             }
-            while (i18 >= 0 && i18 < i2) {
-                int inspectMatrix = inspectMatrix(i18, ((!z2 || i18 >= i2 + (-1)) ? 0 : i4) + i16, i2, i3, iArr);
-                if (inspectMatrix != -1) {
-                    return inspectMatrix;
+            while (i16 >= 0 && i16 < i2) {
+                int iInspectMatrix3 = inspectMatrix(i16, ((!z2 || i16 >= i2 + (-1)) ? 0 : i4) + i14, i2, i3, iArr);
+                if (iInspectMatrix3 != -1) {
+                    return iInspectMatrix3;
                 }
-                i13 = inspectMatrix(i18, ((!z3 || i18 >= i2 + (-1)) ? 0 : -i4) + i17, i2, i3, iArr);
-                if (i13 == -1) {
-                    i18 += i4;
+                iInspectMatrix2 = inspectMatrix(i16, ((!z3 || i16 >= i2 + (-1)) ? 0 : -i4) + i15, i2, i3, iArr);
+                if (iInspectMatrix2 == -1) {
+                    i16 += i4;
                 } else {
-                    return i13;
+                    return iInspectMatrix2;
                 }
             }
         }
         if (i == 100) {
             return z ? i4 < 0 ? -8 : -4 : i4 < 0 ? -4 : -8;
         }
-        return i13;
+        return iInspectMatrix2;
     }
 
     private static int handleDpadVertical(int i, int i2, int i3, int[][] iArr, int i4) {
@@ -248,48 +249,48 @@ public class FocusLogic {
             i7 = i9;
         }
         int i12 = i6 + i4;
-        int i13 = -1;
+        int iInspectMatrix = -1;
         while (i12 >= 0 && i12 < i3 && i12 >= 0) {
-            i13 = inspectMatrix(i7, i12, i2, i3, iArr);
-            if (i13 == -1 || i13 == -11) {
+            iInspectMatrix = inspectMatrix(i7, i12, i2, i3, iArr);
+            if (iInspectMatrix == -1 || iInspectMatrix == -11) {
                 i12 += i4;
             } else {
-                return i13;
+                return iInspectMatrix;
             }
         }
-        int i14 = i13;
+        int iInspectMatrix2 = iInspectMatrix;
         boolean z = false;
         boolean z2 = false;
-        for (int i15 = 1; i15 < i2; i15++) {
-            int i16 = i15 * i4;
-            int i17 = i7 + i16;
-            int i18 = i7 - i16;
-            int i19 = i16 + i6;
-            if (inspectMatrix(i17, i19, i2, i3, iArr) == -11) {
+        for (int i13 = 1; i13 < i2; i13++) {
+            int i14 = i13 * i4;
+            int i15 = i7 + i14;
+            int i16 = i7 - i14;
+            int i17 = i14 + i6;
+            if (inspectMatrix(i15, i17, i2, i3, iArr) == -11) {
                 z = true;
             }
-            if (inspectMatrix(i18, i19, i2, i3, iArr) == -11) {
+            if (inspectMatrix(i16, i17, i2, i3, iArr) == -11) {
                 z2 = true;
             }
-            while (i19 >= 0 && i19 < i3) {
-                int inspectMatrix = inspectMatrix(((!z || i19 >= i3 + (-1)) ? 0 : i4) + i17, i19, i2, i3, iArr);
-                if (inspectMatrix != -1) {
-                    return inspectMatrix;
+            while (i17 >= 0 && i17 < i3) {
+                int iInspectMatrix3 = inspectMatrix(((!z || i17 >= i3 + (-1)) ? 0 : i4) + i15, i17, i2, i3, iArr);
+                if (iInspectMatrix3 != -1) {
+                    return iInspectMatrix3;
                 }
-                if (z2 && i19 < i3 - 1) {
+                if (z2 && i17 < i3 - 1) {
                     i5 = -i4;
                 } else {
                     i5 = 0;
                 }
-                i14 = inspectMatrix(i5 + i18, i19, i2, i3, iArr);
-                if (i14 == -1) {
-                    i19 += i4;
+                iInspectMatrix2 = inspectMatrix(i5 + i16, i17, i2, i3, iArr);
+                if (iInspectMatrix2 == -1) {
+                    i17 += i4;
                 } else {
-                    return i14;
+                    return iInspectMatrix2;
                 }
             }
         }
-        return i14;
+        return iInspectMatrix2;
     }
 
     private static int handleMoveHome() {
@@ -354,12 +355,11 @@ public class FocusLogic {
 
     private static void printMatrix(int[][] iArr) {
         Log.v(TAG, "\tprintMap:");
-        int length = iArr.length;
-        int length2 = iArr[0].length;
-        for (int i = 0; i < length2; i++) {
+        int length = iArr[0].length;
+        for (int i = 0; i < length; i++) {
             String str = "\t\t";
-            for (int i2 = 0; i2 < length; i2++) {
-                str = str + String.format("%3d", Integer.valueOf(iArr[i2][i]));
+            for (int[] iArr2 : iArr) {
+                str = str + String.format("%3d", Integer.valueOf(iArr2[i]));
             }
             Log.v(TAG, str);
         }

@@ -14,6 +14,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class SavedDeviceGroupController extends BasePreferenceController implements DevicePreferenceCallback, PreferenceControllerMixin, LifecycleObserver, OnStart, OnStop {
     private static final String KEY = "saved_device_list";

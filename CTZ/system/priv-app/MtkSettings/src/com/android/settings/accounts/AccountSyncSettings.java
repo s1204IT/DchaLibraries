@@ -15,6 +15,7 @@ import android.content.SyncStatusInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.UserInfo;
+import android.content.res.Resources;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.UserHandle;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AccountSyncSettings extends AccountPreferenceBase {
     private Account mAccount;
@@ -56,7 +58,7 @@ public class AccountSyncSettings extends AccountPreferenceBase {
         if (i != 102) {
             return null;
         }
-        return new AlertDialog.Builder(getActivity()).setTitle(R.string.cant_sync_dialog_title).setMessage(R.string.cant_sync_dialog_message).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).create();
+        return new AlertDialog.Builder(getActivity()).setTitle(R.string.cant_sync_dialog_title).setMessage(R.string.cant_sync_dialog_message).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null).create();
     }
 
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -83,13 +85,13 @@ public class AccountSyncSettings extends AccountPreferenceBase {
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate = layoutInflater.inflate(R.layout.account_sync_screen, viewGroup, false);
-        ViewGroup viewGroup2 = (ViewGroup) inflate.findViewById(R.id.prefs_container);
-        Utils.prepareCustomPreferencesList(viewGroup, inflate, viewGroup2, false);
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) throws Resources.NotFoundException {
+        View viewInflate = layoutInflater.inflate(R.layout.account_sync_screen, viewGroup, false);
+        ViewGroup viewGroup2 = (ViewGroup) viewInflate.findViewById(R.id.prefs_container);
+        Utils.prepareCustomPreferencesList(viewGroup, viewInflate, viewGroup2, false);
         viewGroup2.addView(super.onCreateView(layoutInflater, viewGroup2, bundle));
-        initializeUi(inflate);
-        return inflate;
+        initializeUi(viewInflate);
+        return viewInflate;
     }
 
     protected void initializeUi(View view) {
@@ -125,9 +127,9 @@ public class AccountSyncSettings extends AccountPreferenceBase {
     private void setAccessibilityTitle() {
         int i;
         UserInfo userInfo = ((UserManager) getSystemService("user")).getUserInfo(this.mUserHandle.getIdentifier());
-        boolean isManagedProfile = userInfo != null ? userInfo.isManagedProfile() : false;
+        boolean zIsManagedProfile = userInfo != null ? userInfo.isManagedProfile() : false;
         CharSequence title = getActivity().getTitle();
-        if (isManagedProfile) {
+        if (zIsManagedProfile) {
             i = R.string.accessibility_work_account_title;
         } else {
             i = R.string.accessibility_personal_account_title;
@@ -160,23 +162,23 @@ public class AccountSyncSettings extends AccountPreferenceBase {
         }
         PackageManager packageManager = getPackageManager();
         syncStateSwitchPreference.setPersistent(false);
-        ProviderInfo resolveContentProviderAsUser = packageManager.resolveContentProviderAsUser(str, 0, this.mUserHandle.getIdentifier());
-        if (resolveContentProviderAsUser == null) {
+        ProviderInfo providerInfoResolveContentProviderAsUser = packageManager.resolveContentProviderAsUser(str, 0, this.mUserHandle.getIdentifier());
+        if (providerInfoResolveContentProviderAsUser == null) {
             return;
         }
-        CharSequence loadLabel = resolveContentProviderAsUser.loadLabel(packageManager);
-        if (TextUtils.isEmpty(loadLabel)) {
+        CharSequence charSequenceLoadLabel = providerInfoResolveContentProviderAsUser.loadLabel(packageManager);
+        if (TextUtils.isEmpty(charSequenceLoadLabel)) {
             Log.e("AccountPreferenceBase", "Provider needs a label for authority '" + str + "'");
             return;
         }
-        syncStateSwitchPreference.setTitle(loadLabel);
+        syncStateSwitchPreference.setTitle(charSequenceLoadLabel);
         syncStateSwitchPreference.setKey(str);
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         MenuItem icon = menu.add(0, 1, 0, getString(R.string.sync_menu_sync_now)).setIcon(R.drawable.ic_menu_refresh_holo_dark);
-        MenuItem icon2 = menu.add(0, 2, 0, getString(R.string.sync_menu_sync_cancel)).setIcon(17301560);
+        MenuItem icon2 = menu.add(0, 2, 0, getString(R.string.sync_menu_sync_cancel)).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
         icon.setShowAsAction(4);
         icon2.setShowAsAction(4);
         super.onCreateOptionsMenu(menu, menuInflater);
@@ -239,13 +241,13 @@ public class AccountSyncSettings extends AccountPreferenceBase {
                 }
                 requestOrCancelSync(account, authority, true);
             } else {
-                boolean isChecked = syncStateSwitchPreference.isChecked();
-                if (isChecked == syncAutomaticallyAsUser || (isChecked && requestAccountAccessIfNeeded(packageName))) {
+                boolean zIsChecked = syncStateSwitchPreference.isChecked();
+                if (zIsChecked == syncAutomaticallyAsUser || (zIsChecked && requestAccountAccessIfNeeded(packageName))) {
                     return true;
                 }
-                ContentResolver.setSyncAutomaticallyAsUser(account, authority, isChecked, identifier);
-                if (!ContentResolver.getMasterSyncAutomaticallyAsUser(identifier) || !isChecked) {
-                    requestOrCancelSync(account, authority, isChecked);
+                ContentResolver.setSyncAutomaticallyAsUser(account, authority, zIsChecked, identifier);
+                if (!ContentResolver.getMasterSyncAutomaticallyAsUser(identifier) || !zIsChecked) {
+                    requestOrCancelSync(account, authority, zIsChecked);
                 }
             }
             return true;
@@ -254,16 +256,16 @@ public class AccountSyncSettings extends AccountPreferenceBase {
     }
 
     private boolean requestAccountAccessIfNeeded(String str) {
-        IntentSender createRequestAccountAccessIntentSenderAsUser;
+        IntentSender intentSenderCreateRequestAccountAccessIntentSenderAsUser;
         if (str == null) {
             return false;
         }
         try {
             int packageUidAsUser = getContext().getPackageManager().getPackageUidAsUser(str, this.mUserHandle.getIdentifier());
             AccountManager accountManager = (AccountManager) getContext().getSystemService(AccountManager.class);
-            if (!accountManager.hasAccountAccess(this.mAccount, str, this.mUserHandle) && (createRequestAccountAccessIntentSenderAsUser = accountManager.createRequestAccountAccessIntentSenderAsUser(this.mAccount, str, this.mUserHandle)) != null) {
+            if (!accountManager.hasAccountAccess(this.mAccount, str, this.mUserHandle) && (intentSenderCreateRequestAccountAccessIntentSenderAsUser = accountManager.createRequestAccountAccessIntentSenderAsUser(this.mAccount, str, this.mUserHandle)) != null) {
                 try {
-                    startIntentSenderForResult(createRequestAccountAccessIntentSenderAsUser, packageUidAsUser, null, 0, 0, 0, null);
+                    startIntentSenderForResult(intentSenderCreateRequestAccountAccessIntentSenderAsUser, packageUidAsUser, null, 0, 0, 0, null);
                     return true;
                 } catch (IntentSender.SendIntentException e) {
                     Log.e("AccountPreferenceBase", "Error requesting account access", e);
@@ -330,9 +332,8 @@ public class AccountSyncSettings extends AccountPreferenceBase {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.accounts.AccountPreferenceBase
-    public void onSyncStateUpdated() {
+    protected void onSyncStateUpdated() {
         if (isResumed()) {
             setFeedsState();
             Activity activity = getActivity();
@@ -350,8 +351,8 @@ public class AccountSyncSettings extends AccountPreferenceBase {
     /* JADX WARN: Removed duplicated region for block: B:37:0x00c6  */
     /* JADX WARN: Removed duplicated region for block: B:39:0x00d0  */
     /* JADX WARN: Removed duplicated region for block: B:47:0x0109 A[ADDED_TO_REGION] */
-    /* JADX WARN: Removed duplicated region for block: B:53:0x0115 A[ADDED_TO_REGION] */
-    /* JADX WARN: Removed duplicated region for block: B:59:0x012d A[ADDED_TO_REGION] */
+    /* JADX WARN: Removed duplicated region for block: B:50:0x010f  */
+    /* JADX WARN: Removed duplicated region for block: B:56:0x011b  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
@@ -397,78 +398,82 @@ public class AccountSyncSettings extends AccountPreferenceBase {
                 } else {
                     z2 = false;
                 }
-                boolean isSyncing = isSyncing(currentSyncsAsUser, account, authority);
+                boolean zIsSyncing = isSyncing(currentSyncsAsUser, account, authority);
                 if (syncStatusAsUser != null) {
                     i = i3;
                     if (syncStatusAsUser.lastFailureTime != 0 && syncStatusAsUser.getLastFailureMesgAsInt(0) != 1) {
                         z3 = true;
-                        if (!syncAutomaticallyAsUser) {
-                            z3 = false;
-                        }
-                        if (z3 && !isSyncing && !z) {
-                            z7 = true;
-                        }
-                        list = currentSyncsAsUser;
-                        if (!Log.isLoggable("AccountPreferenceBase", 3)) {
-                            StringBuilder sb = new StringBuilder();
-                            i2 = preferenceCount;
-                            sb.append("Update sync status: ");
-                            sb.append(account);
-                            sb.append(" ");
-                            sb.append(authority);
-                            sb.append(" active = ");
-                            sb.append(isSyncing);
-                            sb.append(" pend =");
-                            sb.append(z);
-                            Log.d("AccountPreferenceBase", sb.toString());
+                    }
+                    if (!syncAutomaticallyAsUser) {
+                        z3 = false;
+                    }
+                    if (z3 && !zIsSyncing && !z) {
+                        z7 = true;
+                    }
+                    list = currentSyncsAsUser;
+                    if (!Log.isLoggable("AccountPreferenceBase", 3)) {
+                        StringBuilder sb = new StringBuilder();
+                        i2 = preferenceCount;
+                        sb.append("Update sync status: ");
+                        sb.append(account);
+                        sb.append(" ");
+                        sb.append(authority);
+                        sb.append(" active = ");
+                        sb.append(zIsSyncing);
+                        sb.append(" pend =");
+                        sb.append(z);
+                        Log.d("AccountPreferenceBase", sb.toString());
+                    } else {
+                        i2 = preferenceCount;
+                    }
+                    if (syncStatusAsUser == null) {
+                        j = syncStatusAsUser.lastSuccessTime;
+                    } else {
+                        j = 0;
+                    }
+                    if (syncAutomaticallyAsUser) {
+                        syncStateSwitchPreference.setSummary(R.string.sync_disabled);
+                    } else if (zIsSyncing) {
+                        syncStateSwitchPreference.setSummary(R.string.sync_in_progress);
+                    } else {
+                        if (j != 0) {
+                            date2.setTime(j);
+                            date = date2;
+                            z4 = false;
+                            syncStateSwitchPreference.setSummary(getResources().getString(R.string.last_synced, formatSyncDate(date2)));
                         } else {
-                            i2 = preferenceCount;
+                            date = date2;
+                            z4 = false;
+                            syncStateSwitchPreference.setSummary("");
                         }
-                        if (syncStatusAsUser == null) {
-                            j = syncStatusAsUser.lastSuccessTime;
-                        } else {
-                            j = 0;
-                        }
-                        if (syncAutomaticallyAsUser) {
-                            syncStateSwitchPreference.setSummary(R.string.sync_disabled);
-                        } else if (isSyncing) {
-                            syncStateSwitchPreference.setSummary(R.string.sync_in_progress);
-                        } else {
-                            if (j != 0) {
-                                date2.setTime(j);
-                                date = date2;
-                                z4 = false;
-                                syncStateSwitchPreference.setSummary(getResources().getString(R.string.last_synced, formatSyncDate(date2)));
-                            } else {
-                                date = date2;
-                                z4 = false;
-                                syncStateSwitchPreference.setSummary("");
-                            }
-                            int isSyncableAsUser = ContentResolver.getIsSyncableAsUser(account, authority, identifier);
-                            syncStateSwitchPreference.setActive((isSyncing || isSyncableAsUser < 0 || z2) ? z4 : true);
-                            syncStateSwitchPreference.setPending((z || isSyncableAsUser < 0 || z2) ? z4 : true);
-                            syncStateSwitchPreference.setFailed(z3);
-                            z5 = true;
-                            z6 = !ContentResolver.getMasterSyncAutomaticallyAsUser(identifier);
-                            syncStateSwitchPreference.setOneTimeSyncMode(z6);
-                            if (!z6 && !syncAutomaticallyAsUser) {
-                                z5 = z4;
-                            }
-                            syncStateSwitchPreference.setChecked(z5);
-                        }
-                        date = date2;
-                        z4 = false;
-                        int isSyncableAsUser2 = ContentResolver.getIsSyncableAsUser(account, authority, identifier);
-                        syncStateSwitchPreference.setActive((isSyncing || isSyncableAsUser2 < 0 || z2) ? z4 : true);
-                        syncStateSwitchPreference.setPending((z || isSyncableAsUser2 < 0 || z2) ? z4 : true);
+                        int isSyncableAsUser = ContentResolver.getIsSyncableAsUser(account, authority, identifier);
+                        syncStateSwitchPreference.setActive((!zIsSyncing || isSyncableAsUser < 0 || z2) ? z4 : true);
+                        syncStateSwitchPreference.setPending((z || isSyncableAsUser < 0 || z2) ? z4 : true);
                         syncStateSwitchPreference.setFailed(z3);
                         z5 = true;
                         z6 = !ContentResolver.getMasterSyncAutomaticallyAsUser(identifier);
                         syncStateSwitchPreference.setOneTimeSyncMode(z6);
-                        if (!z6) {
+                        if (!z6 && !syncAutomaticallyAsUser) {
                             z5 = z4;
                         }
                         syncStateSwitchPreference.setChecked(z5);
+                    }
+                    date = date2;
+                    z4 = false;
+                    int isSyncableAsUser2 = ContentResolver.getIsSyncableAsUser(account, authority, identifier);
+                    if (zIsSyncing) {
+                        syncStateSwitchPreference.setActive((!zIsSyncing || isSyncableAsUser2 < 0 || z2) ? z4 : true);
+                        if (z) {
+                            syncStateSwitchPreference.setPending((z || isSyncableAsUser2 < 0 || z2) ? z4 : true);
+                            syncStateSwitchPreference.setFailed(z3);
+                            z5 = true;
+                            z6 = !ContentResolver.getMasterSyncAutomaticallyAsUser(identifier);
+                            syncStateSwitchPreference.setOneTimeSyncMode(z6);
+                            if (!z6) {
+                                z5 = z4;
+                            }
+                            syncStateSwitchPreference.setChecked(z5);
+                        }
                     }
                 } else {
                     i = i3;
@@ -489,15 +494,6 @@ public class AccountSyncSettings extends AccountPreferenceBase {
                 date = date2;
                 z4 = false;
                 int isSyncableAsUser22 = ContentResolver.getIsSyncableAsUser(account, authority, identifier);
-                syncStateSwitchPreference.setActive((isSyncing || isSyncableAsUser22 < 0 || z2) ? z4 : true);
-                syncStateSwitchPreference.setPending((z || isSyncableAsUser22 < 0 || z2) ? z4 : true);
-                syncStateSwitchPreference.setFailed(z3);
-                z5 = true;
-                z6 = !ContentResolver.getMasterSyncAutomaticallyAsUser(identifier);
-                syncStateSwitchPreference.setOneTimeSyncMode(z6);
-                if (!z6) {
-                }
-                syncStateSwitchPreference.setChecked(z5);
             }
             i3 = i + 1;
             currentSyncsAsUser = list;
@@ -512,10 +508,10 @@ public class AccountSyncSettings extends AccountPreferenceBase {
         super.onAccountsUpdate(userHandle);
         if (!accountExists(this.mAccount)) {
             finish();
-            return;
+        } else {
+            updateAccountSwitches();
+            onSyncStateUpdated();
         }
-        updateAccountSwitches();
-        onSyncStateUpdated();
     }
 
     private boolean accountExists(Account account) {
@@ -568,9 +564,8 @@ public class AccountSyncSettings extends AccountPreferenceBase {
         removeCachedPrefs(getPreferenceScreen());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.accounts.AccountPreferenceBase
-    public void onAuthDescriptionsUpdated() {
+    protected void onAuthDescriptionsUpdated() {
         super.onAuthDescriptionsUpdated();
         if (this.mAccount != null) {
             this.mProviderIcon.setImageDrawable(getDrawableForType(this.mAccount.type));

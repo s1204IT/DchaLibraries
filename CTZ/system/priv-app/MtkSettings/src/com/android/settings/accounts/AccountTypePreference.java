@@ -10,6 +10,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.Utils;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.widget.AppPreference;
+
 /* loaded from: classes.dex */
 public class AccountTypePreference extends AppPreference implements Preference.OnPreferenceClickListener {
     private final String mFragment;

@@ -14,6 +14,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppAndNotificationDashboardFragment extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.applications.AppAndNotificationDashboardFragment.1
@@ -52,9 +53,8 @@ public class AppAndNotificationDashboardFragment extends DashboardFragment {
         return R.string.help_url_apps_and_notifications;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.app_and_notification;
     }
 
@@ -70,8 +70,7 @@ public class AppAndNotificationDashboardFragment extends DashboardFragment {
         return buildPreferenceControllers(context, application, this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Application application, Fragment fragment) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Application application, Fragment fragment) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new EmergencyBroadcastPreferenceController(context, "app_and_notif_cell_broadcast_settings"));
         arrayList.add(new SpecialAppAccessPreferenceController(context));

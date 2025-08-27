@@ -5,6 +5,7 @@ import android.util.MathUtils;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.notification.NotificationUtils;
+
 /* loaded from: classes.dex */
 public class KeyguardClockPositionAlgorithm {
     private static float CLOCK_HEIGHT_WEIGHT = 0.7f;
@@ -24,7 +25,6 @@ public class KeyguardClockPositionAlgorithm {
     private boolean mPulsing;
     private int mPulsingPadding;
 
-    /* loaded from: classes.dex */
     public static class Result {
         public float clockAlpha;
         public int clockX;
@@ -100,11 +100,11 @@ public class KeyguardClockPositionAlgorithm {
     }
 
     private float burnInPreventionOffsetY() {
-        return zigzag((float) (System.currentTimeMillis() / 60000), this.mBurnInPreventionOffsetY * 2, 521.0f) - this.mBurnInPreventionOffsetY;
+        return zigzag(System.currentTimeMillis() / 60000, this.mBurnInPreventionOffsetY * 2, 521.0f) - this.mBurnInPreventionOffsetY;
     }
 
     private float burnInPreventionOffsetX() {
-        return zigzag((float) (System.currentTimeMillis() / 60000), this.mBurnInPreventionOffsetX * 2, 83.0f) - this.mBurnInPreventionOffsetX;
+        return zigzag(System.currentTimeMillis() / 60000, this.mBurnInPreventionOffsetX * 2, 83.0f) - this.mBurnInPreventionOffsetX;
     }
 
     private float zigzag(float f, float f2, float f3) {

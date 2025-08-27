@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Process;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class ConfigMonitor extends BroadcastReceiver {
     private final Context mContext;

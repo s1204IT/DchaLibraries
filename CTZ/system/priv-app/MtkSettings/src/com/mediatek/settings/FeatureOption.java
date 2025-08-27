@@ -1,6 +1,7 @@
 package com.mediatek.settings;
 
 import android.os.SystemProperties;
+
 /* loaded from: classes.dex */
 public class FeatureOption {
     public static final boolean MTK_WFD_SINK_SUPPORT = getValue("ro.vendor.mtk_wfd_sink_support");

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
@@ -16,6 +17,7 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 import com.android.settings.R;
 import com.mediatek.settings.sim.SimHotSwapHandler;
+
 /* loaded from: classes.dex */
 public class CdmaSimDialogActivity extends Activity {
     private Dialog mDialog;
@@ -27,8 +29,7 @@ public class CdmaSimDialogActivity extends Activity {
     private BroadcastReceiver mSubReceiver = new BroadcastReceiver() { // from class: com.mediatek.settings.cdma.CdmaSimDialogActivity.1
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Log.d("CdmaSimDialogActivity", "mSubReceiver action = " + action);
+            Log.d("CdmaSimDialogActivity", "mSubReceiver action = " + intent.getAction());
             CdmaSimDialogActivity.this.finish();
         }
     };
@@ -47,7 +48,7 @@ public class CdmaSimDialogActivity extends Activity {
     }
 
     @Override // android.app.Activity
-    protected void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) throws Resources.NotFoundException {
         Log.d("CdmaSimDialogActivity", "onCreate");
         super.onCreate(bundle);
         Bundle extras = getIntent().getExtras();
@@ -88,7 +89,7 @@ public class CdmaSimDialogActivity extends Activity {
         Log.d("CdmaSimDialogActivity", "displayDualCdmaDialog...");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.two_cdma_dialog_msg);
-        builder.setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.cdma.CdmaSimDialogActivity.3
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.cdma.CdmaSimDialogActivity.3
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (dialogInterface != null) {
@@ -120,20 +121,19 @@ public class CdmaSimDialogActivity extends Activity {
         this.mDialog.show();
     }
 
-    private void displayAlertCdmaDialog() {
-        int[] activeSubscriptionIdList;
+    private void displayAlertCdmaDialog() throws Resources.NotFoundException {
         Log.d("CdmaSimDialogActivity", "displayAlertCdmaDialog...");
-        SubscriptionInfo subscriptionInfo = null;
+        SubscriptionInfo activeSubscriptionInfo = null;
         for (int i : SubscriptionManager.from(this).getActiveSubscriptionIdList()) {
             if (i != this.mTargetSubId) {
-                subscriptionInfo = SubscriptionManager.from(this).getActiveSubscriptionInfo(i);
+                activeSubscriptionInfo = SubscriptionManager.from(this).getActiveSubscriptionInfo(i);
             }
         }
-        if (subscriptionInfo != null) {
-            String string = getResources().getString(R.string.default_data_switch_msg, subscriptionInfo.getDisplayName());
+        if (activeSubscriptionInfo != null) {
+            String string = getResources().getString(R.string.default_data_switch_msg, activeSubscriptionInfo.getDisplayName());
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(string);
-            builder.setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.cdma.CdmaSimDialogActivity.6
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.cdma.CdmaSimDialogActivity.6
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i2) {
                     if (dialogInterface != null) {
@@ -144,7 +144,7 @@ public class CdmaSimDialogActivity extends Activity {
                     CdmaSimDialogActivity.this.finish();
                 }
             });
-            builder.setNegativeButton(17039360, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.cdma.CdmaSimDialogActivity.7
+            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.cdma.CdmaSimDialogActivity.7
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i2) {
                     if (dialogInterface != null) {
@@ -176,11 +176,10 @@ public class CdmaSimDialogActivity extends Activity {
         Log.d("CdmaSimDialogActivity", "no need to show the alert dialog");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setDefaultDataSubId(Context context, int i) {
+    private void setDefaultDataSubId(Context context, int i) {
         SubscriptionManager.from(context).setDefaultDataSubId(i);
         if (this.mActionType == 0) {
-            Toast.makeText(context, (int) R.string.data_switch_started, 1).show();
+            Toast.makeText(context, R.string.data_switch_started, 1).show();
         }
     }
 }

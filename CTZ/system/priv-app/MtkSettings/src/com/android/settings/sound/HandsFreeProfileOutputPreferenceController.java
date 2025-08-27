@@ -7,6 +7,7 @@ import com.android.settings.R;
 import com.android.settingslib.Utils;
 import com.android.settingslib.bluetooth.HeadsetProfile;
 import com.android.settingslib.bluetooth.HearingAidProfile;
+
 /* loaded from: classes.dex */
 public class HandsFreeProfileOutputPreferenceController extends AudioSwitchPreferenceController {
     public HandsFreeProfileOutputPreferenceController(Context context, String str) {

@@ -4,6 +4,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import com.android.settingslib.drawer.Tile;
+
 /* loaded from: classes.dex */
 public class DashboardItemAnimator extends DefaultItemAnimator {
     @Override // android.support.v7.widget.DefaultItemAnimator, android.support.v7.widget.SimpleItemAnimator

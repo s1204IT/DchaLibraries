@@ -4,25 +4,26 @@ import com.google.common.base.Preconditions;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.NavigableMap;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class EmptyImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
+final class EmptyImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
     private final transient ImmutableSortedSet<K> keySet;
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // com.google.common.collect.ImmutableSortedMap, java.util.NavigableMap
     public /* bridge */ /* synthetic */ NavigableMap headMap(Object obj, boolean z) {
         return headMap((EmptyImmutableSortedMap<K, V>) obj, z);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // com.google.common.collect.ImmutableSortedMap, java.util.NavigableMap
     public /* bridge */ /* synthetic */ NavigableMap tailMap(Object obj, boolean z) {
         return tailMap((EmptyImmutableSortedMap<K, V>) obj, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public EmptyImmutableSortedMap(Comparator<? super K> comparator) {
+    EmptyImmutableSortedMap(Comparator<? super K> comparator) {
         this.keySet = ImmutableSortedSet.emptySet(comparator);
     }
 
@@ -36,6 +37,8 @@ public final class EmptyImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V
         return null;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: keySet()Lcom/google/common/collect/ImmutableSet; */
+    /* JADX DEBUG: Method merged with bridge method: keySet()Ljava/util/Set; */
     @Override // com.google.common.collect.ImmutableSortedMap, com.google.common.collect.ImmutableMap, java.util.Map
     public ImmutableSortedSet<K> keySet() {
         return this.keySet;
@@ -51,6 +54,7 @@ public final class EmptyImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V
         return true;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: values()Ljava/util/Collection; */
     @Override // com.google.common.collect.ImmutableSortedMap, com.google.common.collect.ImmutableMap, java.util.Map, java.util.SortedMap
     public ImmutableCollection<V> values() {
         return ImmutableList.of();
@@ -66,6 +70,7 @@ public final class EmptyImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V
         return false;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: entrySet()Ljava/util/Set; */
     @Override // com.google.common.collect.ImmutableSortedMap, com.google.common.collect.ImmutableMap, java.util.Map
     public ImmutableSet<Map.Entry<K, V>> entrySet() {
         return ImmutableSet.of();

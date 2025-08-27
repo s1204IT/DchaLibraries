@@ -8,7 +8,9 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.text.TextUtils;
 import com.android.settings.core.BasePreferenceController;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TimeSpentInAppPreferenceController extends BasePreferenceController {
     static final Intent SEE_TIME_IN_APP_TEMPLATE = new Intent("com.android.settings.action.TIME_SPENT_IN_APP");
@@ -28,12 +30,13 @@ public class TimeSpentInAppPreferenceController extends BasePreferenceController
 
     @Override // com.android.settings.core.BasePreferenceController
     public int getAvailabilityStatus() {
-        List<ResolveInfo> queryIntentActivities;
-        if (TextUtils.isEmpty(this.mPackageName) || (queryIntentActivities = this.mPackageManager.queryIntentActivities(this.mIntent, 0)) == null || queryIntentActivities.isEmpty()) {
+        List<ResolveInfo> listQueryIntentActivities;
+        if (TextUtils.isEmpty(this.mPackageName) || (listQueryIntentActivities = this.mPackageManager.queryIntentActivities(this.mIntent, 0)) == null || listQueryIntentActivities.isEmpty()) {
             return 2;
         }
-        for (ResolveInfo resolveInfo : queryIntentActivities) {
-            if (isSystemApp(resolveInfo)) {
+        Iterator<ResolveInfo> it = listQueryIntentActivities.iterator();
+        while (it.hasNext()) {
+            if (isSystemApp(it.next())) {
                 return 0;
             }
         }
@@ -43,9 +46,9 @@ public class TimeSpentInAppPreferenceController extends BasePreferenceController
     @Override // com.android.settings.core.BasePreferenceController, com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference(getPreferenceKey());
-        if (findPreference != null) {
-            findPreference.setIntent(this.mIntent);
+        Preference preferenceFindPreference = preferenceScreen.findPreference(getPreferenceKey());
+        if (preferenceFindPreference != null) {
+            preferenceFindPreference.setIntent(this.mIntent);
         }
     }
 

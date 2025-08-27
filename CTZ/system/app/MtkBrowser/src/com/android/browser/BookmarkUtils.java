@@ -26,12 +26,11 @@ import android.net.Uri;
 import android.os.Message;
 import android.util.Log;
 import com.android.browser.provider.BrowserContract;
+
 /* loaded from: classes.dex */
 public class BookmarkUtils {
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public enum BookmarkIconType {
+    enum BookmarkIconType {
         ICON_INSTALLABLE_WEB_APP,
         ICON_HOME_SHORTCUT,
         ICON_WIDGET
@@ -42,8 +41,7 @@ public class BookmarkUtils {
         return createIcon(context, bitmap, bitmap2, bookmarkIconType, activityManager.getLauncherLargeIconSize(), activityManager.getLauncherLargeIconDensity());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static Drawable createListFaviconBackground(Context context) {
+    static Drawable createListFaviconBackground(Context context) throws Resources.NotFoundException {
         PaintDrawable paintDrawable = new PaintDrawable();
         Resources resources = context.getResources();
         int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.list_favicon_padding);
@@ -53,10 +51,10 @@ public class BookmarkUtils {
         return paintDrawable;
     }
 
-    private static Bitmap createIcon(Context context, Bitmap bitmap, Bitmap bitmap2, BookmarkIconType bookmarkIconType, int i, int i2) {
-        Bitmap createBitmap = Bitmap.createBitmap(i, i, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(createBitmap);
-        Rect rect = new Rect(0, 0, createBitmap.getWidth(), createBitmap.getHeight());
+    private static Bitmap createIcon(Context context, Bitmap bitmap, Bitmap bitmap2, BookmarkIconType bookmarkIconType, int i, int i2) throws Resources.NotFoundException {
+        Bitmap bitmapCreateBitmap = Bitmap.createBitmap(i, i, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmapCreateBitmap);
+        Rect rect = new Rect(0, 0, bitmapCreateBitmap.getWidth(), bitmapCreateBitmap.getHeight());
         if (bitmap != null) {
             drawTouchIconToCanvas(bitmap, canvas, rect);
         } else {
@@ -69,11 +67,10 @@ public class BookmarkUtils {
             }
         }
         canvas.setBitmap(null);
-        return createBitmap;
+        return bitmapCreateBitmap;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static Intent createAddToHomeIntent(Context context, String str, String str2, Bitmap bitmap, Bitmap bitmap2) {
+    static Intent createAddToHomeIntent(Context context, String str, String str2, Bitmap bitmap, Bitmap bitmap2) {
         Intent intent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
         intent.putExtra("android.intent.extra.shortcut.INTENT", createShortcutIntent(str));
         intent.putExtra("android.intent.extra.shortcut.NAME", str2);
@@ -82,13 +79,10 @@ public class BookmarkUtils {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void createShortcutToHome(Context context, String str, String str2, Bitmap bitmap, Bitmap bitmap2) {
+    static void createShortcutToHome(Context context, String str, String str2, Bitmap bitmap, Bitmap bitmap2) {
         ShortcutManager shortcutManager = (ShortcutManager) context.getSystemService(ShortcutManager.class);
         if (shortcutManager.isRequestPinShortcutSupported()) {
-            Bitmap createIcon = createIcon(context, bitmap, bitmap2, BookmarkIconType.ICON_HOME_SHORTCUT);
-            boolean requestPinShortcut = shortcutManager.requestPinShortcut(new ShortcutInfo.Builder(context, "bookmark" + str.hashCode()).setShortLabel(str2).setIcon(Icon.createWithBitmap(createIcon)).setIntent(createShortcutIntent(str)).build(), null);
-            Log.d("TestShortcut", "isRequestPinShortcutSupported true." + requestPinShortcut);
+            Log.d("TestShortcut", "isRequestPinShortcutSupported true." + shortcutManager.requestPinShortcut(new ShortcutInfo.Builder(context, "bookmark" + str.hashCode()).setShortLabel(str2).setIcon(Icon.createWithBitmap(createIcon(context, bitmap, bitmap2, BookmarkIconType.ICON_HOME_SHORTCUT))).setIntent(createShortcutIntent(str)).build(), null));
             return;
         }
         Log.d("TestShortcut", "isRequestPinShortcutSupported false.");
@@ -100,22 +94,22 @@ public class BookmarkUtils {
         return intent;
     }
 
-    private static Bitmap getIconBackground(Context context, BookmarkIconType bookmarkIconType, int i) {
+    private static Bitmap getIconBackground(Context context, BookmarkIconType bookmarkIconType, int i) throws Resources.NotFoundException {
         if (bookmarkIconType == BookmarkIconType.ICON_HOME_SHORTCUT) {
             Drawable drawableForDensity = context.getResources().getDrawableForDensity(R.mipmap.ic_launcher_shortcut_browser_bookmark, i);
             if (drawableForDensity instanceof BitmapDrawable) {
                 return ((BitmapDrawable) drawableForDensity).getBitmap();
             }
             return null;
-        } else if (bookmarkIconType == BookmarkIconType.ICON_INSTALLABLE_WEB_APP) {
+        }
+        if (bookmarkIconType == BookmarkIconType.ICON_INSTALLABLE_WEB_APP) {
             Drawable drawableForDensity2 = context.getResources().getDrawableForDensity(R.mipmap.ic_launcher_browser, i);
             if (drawableForDensity2 instanceof BitmapDrawable) {
                 return ((BitmapDrawable) drawableForDensity2).getBitmap();
             }
             return null;
-        } else {
-            return null;
         }
+        return null;
     }
 
     private static void drawTouchIconToCanvas(Bitmap bitmap, Canvas canvas, Rect rect) {
@@ -132,7 +126,7 @@ public class BookmarkUtils {
         canvas.drawPath(path, paint);
     }
 
-    private static void drawFaviconToCanvas(Context context, Bitmap bitmap, Canvas canvas, Rect rect, BookmarkIconType bookmarkIconType) {
+    private static void drawFaviconToCanvas(Context context, Bitmap bitmap, Canvas canvas, Rect rect, BookmarkIconType bookmarkIconType) throws Resources.NotFoundException {
         int dimensionPixelSize;
         Paint paint = new Paint(3);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -149,26 +143,24 @@ public class BookmarkUtils {
         }
         float f = (dimensionPixelSize - dimensionPixelSize2) / 2;
         float f2 = dimensionPixelSize / 2;
-        float exactCenterX = rect.exactCenterX() - f2;
-        float exactCenterY = rect.exactCenterY() - f2;
+        float fExactCenterX = rect.exactCenterX() - f2;
+        float fExactCenterY = rect.exactCenterY() - f2;
         if (bookmarkIconType != BookmarkIconType.ICON_WIDGET) {
-            exactCenterY -= f;
+            fExactCenterY -= f;
         }
         float f3 = dimensionPixelSize;
-        RectF rectF = new RectF(exactCenterX, exactCenterY, exactCenterX + f3, f3 + exactCenterY);
+        RectF rectF = new RectF(fExactCenterX, fExactCenterY, fExactCenterX + f3, f3 + fExactCenterY);
         canvas.drawRoundRect(rectF, 3.0f, 3.0f, paint);
         rectF.inset(f, f);
         canvas.drawBitmap(bitmap, (Rect) null, rectF, (Paint) null);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static Uri getBookmarksUri(Context context) {
+    static Uri getBookmarksUri(Context context) {
         return BrowserContract.Bookmarks.CONTENT_URI;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void displayRemoveBookmarkDialog(final long j, String str, final Context context, final Message message) {
-        new AlertDialog.Builder(context).setIconAttribute(16843605).setMessage(context.getString(R.string.delete_bookmark_warning, str)).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.BookmarkUtils.1
+    static void displayRemoveBookmarkDialog(final long j, String str, final Context context, final Message message) {
+        new AlertDialog.Builder(context).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(context.getString(R.string.delete_bookmark_warning, str)).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.BookmarkUtils.1
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (message != null) {
@@ -184,9 +176,8 @@ public class BookmarkUtils {
         }).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).show();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void displayRemoveFolderDialog(final long j, String str, final Context context, final Message message) {
-        new AlertDialog.Builder(context).setIcon(17301543).setMessage(context.getString(R.string.delete_folder_warning, str)).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.BookmarkUtils.2
+    static void displayRemoveFolderDialog(final long j, String str, final Context context, final Message message) {
+        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert).setMessage(context.getString(R.string.delete_folder_warning, str)).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.BookmarkUtils.2
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (message != null) {
@@ -199,12 +190,12 @@ public class BookmarkUtils {
                     }
 
                     private void deleteFoldBookmarks(long j2) {
-                        Cursor query = context.getContentResolver().query(BookmarkUtils.getBookmarksUri(context), new String[]{"_id"}, "parent = ? AND deleted = ?", new String[]{j2 + "", "0"}, null);
+                        Cursor cursorQuery = context.getContentResolver().query(BookmarkUtils.getBookmarksUri(context), new String[]{"_id"}, "parent = ? AND deleted = ?", new String[]{j2 + "", "0"}, null);
                         deleteBookmarkById(j2);
-                        while (query.moveToNext()) {
-                            deleteFoldBookmarks(query.getInt(0));
+                        while (cursorQuery.moveToNext()) {
+                            deleteFoldBookmarks(cursorQuery.getInt(0));
                         }
-                        query.close();
+                        cursorQuery.close();
                     }
 
                     private void deleteBookmarkById(long j2) {

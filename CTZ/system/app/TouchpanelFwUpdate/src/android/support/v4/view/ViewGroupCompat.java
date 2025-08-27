@@ -3,6 +3,7 @@ package android.support.v4.view;
 import android.os.Build;
 import android.support.compat.R;
 import android.view.ViewGroup;
+
 /* loaded from: classes.dex */
 public final class ViewGroupCompat {
     public static boolean isTransitionGroup(ViewGroup group) {

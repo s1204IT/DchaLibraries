@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Adapter;
 import com.android.browser.view.PieMenu;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public abstract class BasePieView implements PieMenu.PieView {
     protected Adapter mAdapter;
@@ -56,8 +57,7 @@ public abstract class BasePieView implements PieMenu.PieView {
         this.mCurrent = i;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void buildViews() {
+    protected void buildViews() {
         if (this.mAdapter != null) {
             int count = this.mAdapter.getCount();
             if (this.mViews == null) {
@@ -84,14 +84,14 @@ public abstract class BasePieView implements PieMenu.PieView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void drawView(View view, Canvas canvas) {
-        int save = canvas.save();
+    protected void drawView(View view, Canvas canvas) {
+        int iSave = canvas.save();
         canvas.translate(view.getLeft(), view.getTop());
         view.draw(canvas);
-        canvas.restoreToCount(save);
+        canvas.restoreToCount(iSave);
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // com.android.browser.view.PieMenu.PieView
     public boolean onTouchEvent(MotionEvent motionEvent) {
         int actionMasked = motionEvent.getActionMasked();
@@ -104,7 +104,7 @@ public abstract class BasePieView implements PieMenu.PieView {
             case 1:
                 this.mViews.get(this.mCurrent).performClick();
                 this.mViews.get(this.mCurrent).setPressed(false);
-                break;
+                return true;
             case 2:
                 View view = this.mViews.get(this.mCurrent);
                 setCurrent(Math.max(0, Math.min(this.mViews.size() - 1, findChildAt(y))));
@@ -112,10 +112,10 @@ public abstract class BasePieView implements PieMenu.PieView {
                 if (view != view2) {
                     view.setPressed(false);
                     view2.setPressed(true);
-                    break;
                 }
-                break;
+                return true;
+            default:
+                return true;
         }
-        return true;
     }
 }

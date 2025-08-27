@@ -5,6 +5,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AssistGestureFeatureProviderImpl implements AssistGestureFeatureProvider {
     @Override // com.android.settings.gestures.AssistGestureFeatureProvider

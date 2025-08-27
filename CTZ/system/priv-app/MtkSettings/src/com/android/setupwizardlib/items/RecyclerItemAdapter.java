@@ -11,12 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.android.setupwizardlib.R;
 import com.android.setupwizardlib.items.ItemHierarchy;
+
 /* loaded from: classes.dex */
 public class RecyclerItemAdapter extends RecyclerView.Adapter<ItemViewHolder> implements ItemHierarchy.Observer {
     private final ItemHierarchy mItemHierarchy;
     private OnItemSelectedListener mListener;
 
-    /* loaded from: classes.dex */
     public interface OnItemSelectedListener {
         void onItemSelected(IItem iItem);
     }
@@ -45,28 +45,29 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<ItemViewHolder> im
         return this.mItemHierarchy.getCount();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public ItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(i, viewGroup, false);
-        final ItemViewHolder itemViewHolder = new ItemViewHolder(inflate);
-        if (!"noBackground".equals(inflate.getTag())) {
-            TypedArray obtainStyledAttributes = viewGroup.getContext().obtainStyledAttributes(R.styleable.SuwRecyclerItemAdapter);
-            Drawable drawable = obtainStyledAttributes.getDrawable(R.styleable.SuwRecyclerItemAdapter_android_selectableItemBackground);
+        View viewInflate = LayoutInflater.from(viewGroup.getContext()).inflate(i, viewGroup, false);
+        final ItemViewHolder itemViewHolder = new ItemViewHolder(viewInflate);
+        if (!"noBackground".equals(viewInflate.getTag())) {
+            TypedArray typedArrayObtainStyledAttributes = viewGroup.getContext().obtainStyledAttributes(R.styleable.SuwRecyclerItemAdapter);
+            Drawable drawable = typedArrayObtainStyledAttributes.getDrawable(R.styleable.SuwRecyclerItemAdapter_android_selectableItemBackground);
             if (drawable == null) {
-                drawable = obtainStyledAttributes.getDrawable(R.styleable.SuwRecyclerItemAdapter_selectableItemBackground);
+                drawable = typedArrayObtainStyledAttributes.getDrawable(R.styleable.SuwRecyclerItemAdapter_selectableItemBackground);
             }
-            Drawable background = inflate.getBackground();
+            Drawable background = viewInflate.getBackground();
             if (background == null) {
-                background = obtainStyledAttributes.getDrawable(R.styleable.SuwRecyclerItemAdapter_android_colorBackground);
+                background = typedArrayObtainStyledAttributes.getDrawable(R.styleable.SuwRecyclerItemAdapter_android_colorBackground);
             }
             if (drawable == null || background == null) {
                 Log.e("RecyclerItemAdapter", "Cannot resolve required attributes. selectableItemBackground=" + drawable + " background=" + background);
             } else {
-                inflate.setBackgroundDrawable(new PatchedLayerDrawable(new Drawable[]{background, drawable}));
+                viewInflate.setBackgroundDrawable(new PatchedLayerDrawable(new Drawable[]{background, drawable}));
             }
-            obtainStyledAttributes.recycle();
+            typedArrayObtainStyledAttributes.recycle();
         }
-        inflate.setOnClickListener(new View.OnClickListener() { // from class: com.android.setupwizardlib.items.RecyclerItemAdapter.1
+        viewInflate.setOnClickListener(new View.OnClickListener() { // from class: com.android.setupwizardlib.items.RecyclerItemAdapter.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 IItem item = itemViewHolder.getItem();
@@ -78,6 +79,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<ItemViewHolder> im
         return itemViewHolder;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(ItemViewHolder itemViewHolder, int i) {
         IItem item = getItem(i);
@@ -101,9 +103,7 @@ public class RecyclerItemAdapter extends RecyclerView.Adapter<ItemViewHolder> im
         notifyItemRangeInserted(i, i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class PatchedLayerDrawable extends LayerDrawable {
+    static class PatchedLayerDrawable extends LayerDrawable {
         PatchedLayerDrawable(Drawable[] drawableArr) {
             super(drawableArr);
         }

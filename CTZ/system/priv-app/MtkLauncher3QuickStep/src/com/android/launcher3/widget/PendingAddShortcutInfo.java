@@ -2,6 +2,7 @@ package com.android.launcher3.widget;
 
 import com.android.launcher3.PendingAddItemInfo;
 import com.android.launcher3.compat.ShortcutConfigActivityInfo;
+
 /* loaded from: classes.dex */
 public class PendingAddShortcutInfo extends PendingAddItemInfo {
     public ShortcutConfigActivityInfo activityInfo;

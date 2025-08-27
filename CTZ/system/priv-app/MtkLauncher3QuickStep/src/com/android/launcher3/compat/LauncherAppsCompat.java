@@ -13,12 +13,12 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.shortcuts.ShortcutInfoCompat;
 import com.android.launcher3.util.PackageUserKey;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class LauncherAppsCompat {
     private static LauncherAppsCompat sInstance;
     private static final Object sInstanceLock = new Object();
 
-    /* loaded from: classes.dex */
     public interface OnAppsChangedCallbackCompat {
         void onPackageAdded(String str, UserHandle userHandle);
 
@@ -56,6 +56,9 @@ public abstract class LauncherAppsCompat {
     public abstract void showAppDetailsForProfile(ComponentName componentName, UserHandle userHandle, Rect rect, Bundle bundle);
 
     public abstract void startActivityForProfile(ComponentName componentName, UserHandle userHandle, Rect rect, Bundle bundle);
+
+    protected LauncherAppsCompat() {
+    }
 
     public static LauncherAppsCompat getInstance(Context context) {
         LauncherAppsCompat launcherAppsCompat;

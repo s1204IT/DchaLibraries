@@ -6,13 +6,18 @@ import android.util.ArraySet;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationLifetimeExtender;
+
 /* loaded from: classes.dex */
 public class ForegroundServiceLifetimeExtender implements NotificationLifetimeExtender {
+
     @VisibleForTesting
     static final int MIN_FGS_TIME_MS = 5000;
     private NotificationLifetimeExtender.NotificationSafeToRemoveCallback mNotificationSafeToRemoveCallback;
     private ArraySet<NotificationData.Entry> mManagedEntries = new ArraySet<>();
     private Handler mHandler = new Handler(Looper.getMainLooper());
+
+    ForegroundServiceLifetimeExtender() {
+    }
 
     @Override // com.android.systemui.statusbar.NotificationLifetimeExtender
     public void setCallback(NotificationLifetimeExtender.NotificationSafeToRemoveCallback notificationSafeToRemoveCallback) {
@@ -39,7 +44,7 @@ public class ForegroundServiceLifetimeExtender implements NotificationLifetimeEx
         this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$ForegroundServiceLifetimeExtender$Mvrg70o5Dvq2zdoQZB_HrCnGC_w
             @Override // java.lang.Runnable
             public final void run() {
-                ForegroundServiceLifetimeExtender.lambda$setShouldManageLifetime$0(ForegroundServiceLifetimeExtender.this, entry);
+                ForegroundServiceLifetimeExtender.lambda$setShouldManageLifetime$0(this.f$0, entry);
             }
         }, 5000 - (System.currentTimeMillis() - entry.notification.getPostTime()));
     }

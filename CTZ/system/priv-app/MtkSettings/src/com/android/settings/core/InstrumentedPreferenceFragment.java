@@ -11,6 +11,7 @@ import com.android.settingslib.core.instrumentation.Instrumentable;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.core.instrumentation.VisibilityLoggerMixin;
 import com.android.settingslib.core.lifecycle.ObservablePreferenceFragment;
+
 /* loaded from: classes.dex */
 public abstract class InstrumentedPreferenceFragment extends ObservablePreferenceFragment implements Instrumentable {
     private static final String TAG = "InstrumentedPrefFrag";
@@ -47,18 +48,15 @@ public abstract class InstrumentedPreferenceFragment extends ObservablePreferenc
         updateActivityTitleWithScreenTitle(getPreferenceScreen());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final Context getPrefContext() {
+    protected final Context getPrefContext() {
         return getPreferenceManager().getContext();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final VisibilityLoggerMixin getVisibilityLogger() {
+    protected final VisibilityLoggerMixin getVisibilityLogger() {
         return this.mVisibilityLoggerMixin;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return -1;
     }
 

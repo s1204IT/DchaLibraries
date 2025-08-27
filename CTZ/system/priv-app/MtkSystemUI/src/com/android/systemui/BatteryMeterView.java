@@ -28,6 +28,7 @@ import com.android.systemui.statusbar.policy.IconLogger;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.Utils;
 import java.text.NumberFormat;
+
 /* loaded from: classes.dex */
 public class BatteryMeterView extends LinearLayout implements BatteryController.BatteryStateChangeCallback, ConfigurationController.ConfigurationListener, DarkIconDispatcher.DarkReceiver, TunerService.Tunable {
     private BatteryController mBatteryController;
@@ -62,12 +63,12 @@ public class BatteryMeterView extends LinearLayout implements BatteryController.
         super(context, attributeSet, i);
         setOrientation(0);
         setGravity(8388627);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.BatteryMeterView, i, 0);
-        this.mDrawable = new BatteryMeterDrawableBase(context, obtainStyledAttributes.getColor(0, context.getColor(R.color.meter_background_color)));
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.BatteryMeterView, i, 0);
+        this.mDrawable = new BatteryMeterDrawableBase(context, typedArrayObtainStyledAttributes.getColor(0, context.getColor(R.color.meter_background_color)));
+        typedArrayObtainStyledAttributes.recycle();
         this.mSettingObserver = new SettingObserver(new Handler(context.getMainLooper()));
         addOnAttachStateChangeListener(new Utils.DisableStateTracker(0, 2));
-        this.mSlotBattery = context.getString(17040910);
+        this.mSlotBattery = context.getString(android.R.string.mime_type_generic);
         this.mBatteryIconView = new ImageView(context);
         this.mBatteryIconView.setImageDrawable(this.mDrawable);
         ViewGroup.MarginLayoutParams marginLayoutParams = new ViewGroup.MarginLayoutParams(getResources().getDimensionPixelSize(R.dimen.status_bar_battery_icon_width), getResources().getDimensionPixelSize(R.dimen.status_bar_battery_icon_height));
@@ -125,9 +126,9 @@ public class BatteryMeterView extends LinearLayout implements BatteryController.
     @Override // com.android.systemui.tuner.TunerService.Tunable
     public void onTuningChanged(String str, String str2) {
         if ("icon_blacklist".equals(str)) {
-            boolean contains = StatusBarIconController.getIconBlacklist(str2).contains(this.mSlotBattery);
-            ((IconLogger) Dependency.get(IconLogger.class)).onIconVisibility(this.mSlotBattery, !contains);
-            setVisibility(contains ? 8 : 0);
+            boolean zContains = StatusBarIconController.getIconBlacklist(str2).contains(this.mSlotBattery);
+            ((IconLogger) Dependency.get(IconLogger.class)).onIconVisibility(this.mSlotBattery, !zContains);
+            setVisibility(zContains ? 8 : 0);
         }
     }
 
@@ -178,8 +179,7 @@ public class BatteryMeterView extends LinearLayout implements BatteryController.
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateShowPercent() {
+    private void updateShowPercent() {
         boolean z = this.mBatteryPercentView != null;
         if (Settings.System.getIntForUser(getContext().getContentResolver(), "status_bar_show_battery_percent", 0, this.mUser) != 0 || this.mForceShowPercent) {
             if (!z) {
@@ -189,19 +189,22 @@ public class BatteryMeterView extends LinearLayout implements BatteryController.
                 }
                 updatePercentText();
                 addView(this.mBatteryPercentView, new ViewGroup.LayoutParams(-2, -1));
+                return;
             }
-        } else if (z) {
+            return;
+        }
+        if (z) {
             removeView(this.mBatteryPercentView);
             this.mBatteryPercentView = null;
         }
     }
 
     @Override // com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener
-    public void onDensityOrFontScaleChanged() {
+    public void onDensityOrFontScaleChanged() throws Resources.NotFoundException {
         scaleBatteryMeterViews();
     }
 
-    private void scaleBatteryMeterViews() {
+    private void scaleBatteryMeterViews() throws Resources.NotFoundException {
         Resources resources = getContext().getResources();
         TypedValue typedValue = new TypedValue();
         resources.getValue(R.dimen.status_bar_icon_scale_factor, typedValue, true);
@@ -248,7 +251,6 @@ public class BatteryMeterView extends LinearLayout implements BatteryController.
         return ((Integer) ArgbEvaluator.getInstance().evaluate(f, Integer.valueOf(i), Integer.valueOf(i2))).intValue();
     }
 
-    /* loaded from: classes.dex */
     private final class SettingObserver extends ContentObserver {
         public SettingObserver(Handler handler) {
             super(handler);

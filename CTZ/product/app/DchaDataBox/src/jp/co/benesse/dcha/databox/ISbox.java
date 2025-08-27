@@ -5,10 +5,10 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
+
 /* loaded from: classes.dex */
 public interface ISbox extends IInterface {
 
-    /* loaded from: classes.dex */
     public static class Default implements ISbox {
         @Override // android.os.IInterface
         public IBinder asBinder() {
@@ -56,7 +56,6 @@ public interface ISbox extends IInterface {
 
     void setStringValue(String str, String str2) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements ISbox {
         private static final String DESCRIPTOR = "jp.co.benesse.dcha.databox.ISbox";
         static final int TRANSACTION_getAppIdentifier = 5;
@@ -79,9 +78,9 @@ public interface ISbox extends IInterface {
             if (iBinder == null) {
                 return null;
             }
-            IInterface queryLocalInterface = iBinder.queryLocalInterface(DESCRIPTOR);
-            if (queryLocalInterface != null && (queryLocalInterface instanceof ISbox)) {
-                return (ISbox) queryLocalInterface;
+            IInterface iInterfaceQueryLocalInterface = iBinder.queryLocalInterface(DESCRIPTOR);
+            if (iInterfaceQueryLocalInterface != null && (iInterfaceQueryLocalInterface instanceof ISbox)) {
+                return (ISbox) iInterfaceQueryLocalInterface;
             }
             return new Proxy(iBinder);
         }
@@ -132,9 +131,7 @@ public interface ISbox extends IInterface {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public static class Proxy implements ISbox {
+        private static class Proxy implements ISbox {
             public static ISbox sDefaultImpl;
             private IBinder mRemote;
 
@@ -153,111 +150,111 @@ public interface ISbox extends IInterface {
 
             @Override // jp.co.benesse.dcha.databox.ISbox
             public String getStringValue(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_getStringValue, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_getStringValue, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().getStringValue(str);
                     }
-                    obtain2.readException();
-                    return obtain2.readString();
+                    parcelObtain2.readException();
+                    return parcelObtain2.readString();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.databox.ISbox
             public void setStringValue(String str, String str2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    obtain.writeString(str2);
-                    if (!this.mRemote.transact(2, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeString(str2);
+                    if (!this.mRemote.transact(2, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().setStringValue(str, str2);
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.databox.ISbox
             public String getArrayValues(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    if (!this.mRemote.transact(3, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    if (!this.mRemote.transact(3, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().getArrayValues(str);
                     }
-                    obtain2.readException();
-                    return obtain2.readString();
+                    parcelObtain2.readException();
+                    return parcelObtain2.readString();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.databox.ISbox
             public void setArrayValues(String str, String str2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeString(str);
-                    obtain.writeString(str2);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_setArrayValues, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeString(str2);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_setArrayValues, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         Stub.getDefaultImpl().setArrayValues(str, str2);
                     } else {
-                        obtain2.readException();
+                        parcelObtain2.readException();
                     }
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.databox.ISbox
             public String getAppIdentifier(int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeInt(i);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_getAppIdentifier, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeInt(i);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_getAppIdentifier, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().getAppIdentifier(i);
                     }
-                    obtain2.readException();
-                    return obtain2.readString();
+                    parcelObtain2.readException();
+                    return parcelObtain2.readString();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.databox.ISbox
             public String getAuthUrl(int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken(Stub.DESCRIPTOR);
-                    obtain.writeInt(i);
-                    if (!this.mRemote.transact(Stub.TRANSACTION_getAuthUrl, obtain, obtain2, 0) && Stub.getDefaultImpl() != null) {
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeInt(i);
+                    if (!this.mRemote.transact(Stub.TRANSACTION_getAuthUrl, parcelObtain, parcelObtain2, 0) && Stub.getDefaultImpl() != null) {
                         return Stub.getDefaultImpl().getAuthUrl(i);
                     }
-                    obtain2.readException();
-                    return obtain2.readString();
+                    parcelObtain2.readException();
+                    return parcelObtain2.readString();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
         }

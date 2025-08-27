@@ -1,6 +1,7 @@
 package com.google.protobuf.nano;
 
 import java.nio.charset.Charset;
+
 /* loaded from: classes.dex */
 public final class InternalNano {
     protected static final Charset UTF_8 = Charset.forName("UTF-8");

@@ -25,9 +25,11 @@ import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
 /* loaded from: classes.dex */
 public class TileServices extends IQSService.Stub {
     private static final Comparator<TileServiceManager> SERVICE_SORT = new Comparator<TileServiceManager>() { // from class: com.android.systemui.qs.external.TileServices.3
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(TileServiceManager tileServiceManager, TileServiceManager tileServiceManager2) {
             return -Integer.compare(tileServiceManager.getBindPriority(), tileServiceManager2.getBindPriority());
@@ -68,13 +70,13 @@ public class TileServices extends IQSService.Stub {
 
     public TileServiceManager getTileWrapper(CustomTile customTile) {
         ComponentName component = customTile.getComponent();
-        TileServiceManager onCreateTileService = onCreateTileService(component, customTile.getQsTile());
+        TileServiceManager tileServiceManagerOnCreateTileService = onCreateTileService(component, customTile.getQsTile());
         synchronized (this.mServices) {
-            this.mServices.put(customTile, onCreateTileService);
+            this.mServices.put(customTile, tileServiceManagerOnCreateTileService);
             this.mTiles.put(component, customTile);
-            this.mTokenMap.put(onCreateTileService.getToken(), customTile);
+            this.mTokenMap.put(tileServiceManagerOnCreateTileService.getToken(), customTile);
         }
-        return onCreateTileService;
+        return tileServiceManagerOnCreateTileService;
     }
 
     protected TileServiceManager onCreateTileService(ComponentName componentName, Tile tile) {
@@ -92,7 +94,7 @@ public class TileServices extends IQSService.Stub {
             this.mMainHandler.post(new Runnable() { // from class: com.android.systemui.qs.external.-$$Lambda$TileServices$m2qCzd8BVbBUzSnClFn7o_chF7k
                 @Override // java.lang.Runnable
                 public final void run() {
-                    TileServices.this.mHost.getIconController().removeAllIconsForSlot(className);
+                    this.f$0.mHost.getIconController().removeAllIconsForSlot(className);
                 }
             });
         }
@@ -105,9 +107,9 @@ public class TileServices extends IQSService.Stub {
         }
         int size = arrayList.size();
         if (size > this.mMaxBound) {
-            long currentTimeMillis = System.currentTimeMillis();
+            long jCurrentTimeMillis = System.currentTimeMillis();
             for (int i = 0; i < size; i++) {
-                ((TileServiceManager) arrayList.get(i)).calculateBindPriority(currentTimeMillis);
+                ((TileServiceManager) arrayList.get(i)).calculateBindPriority(jCurrentTimeMillis);
             }
             Collections.sort(arrayList, SERVICE_SORT);
         }
@@ -132,8 +134,7 @@ public class TileServices extends IQSService.Stub {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void requestListening(ComponentName componentName) {
+    private void requestListening(ComponentName componentName) {
         synchronized (this.mServices) {
             CustomTile tileForComponent = getTileForComponent(componentName);
             if (tileForComponent == null) {

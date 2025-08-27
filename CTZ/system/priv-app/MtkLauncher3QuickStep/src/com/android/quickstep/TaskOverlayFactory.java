@@ -8,6 +8,7 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.util.Preconditions;
 import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.recents.model.ThumbnailData;
+
 /* loaded from: classes.dex */
 public class TaskOverlayFactory {
     private static TaskOverlayFactory sInstance;
@@ -24,7 +25,6 @@ public class TaskOverlayFactory {
         return new TaskOverlay();
     }
 
-    /* loaded from: classes.dex */
     public static class TaskOverlay {
         public void setTaskInfo(Task task, ThumbnailData thumbnailData, Matrix matrix) {
         }

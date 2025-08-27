@@ -9,15 +9,15 @@ import android.view.View;
 import android.widget.Button;
 import com.android.settings.R;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class StorageWizardInit extends StorageWizardBase {
     private Button mExternal;
     private Button mInternal;
     private boolean mIsPermittedToAdopt;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.deviceinfo.StorageWizardBase, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         if (this.mDisk == null) {
             finish();
@@ -47,7 +47,7 @@ public class StorageWizardInit extends StorageWizardBase {
         }
         if (this.mVolume != null && this.mVolume.getType() == 0 && this.mVolume.getState() != 6) {
             this.mStorage.setVolumeInited(this.mVolume.getFsUuid(), true);
-            Intent intent = new Intent(this, StorageWizardReady.class);
+            Intent intent = new Intent(this, (Class<?>) StorageWizardReady.class);
             intent.putExtra("android.os.storage.extra.DISK_ID", this.mDisk.getId());
             startActivity(intent);
             finish();

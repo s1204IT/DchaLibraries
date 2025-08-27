@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.InflateException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public abstract class ReflectionInflater<T> extends SimpleInflater<T> {
     private static final Class<?>[] CONSTRUCTOR_SIGNATURE = {Context.class, AttributeSet.class};
@@ -13,28 +14,27 @@ public abstract class ReflectionInflater<T> extends SimpleInflater<T> {
     private String mDefaultPackage;
     private final Object[] mTempConstructorArgs;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public ReflectionInflater(Context context) {
+    protected ReflectionInflater(Context context) {
         super(context.getResources());
         this.mTempConstructorArgs = new Object[2];
         this.mContext = context;
     }
 
-    public final T createItem(String str, String str2, AttributeSet attributeSet) {
-        String str3;
+    public final T createItem(String str, String str2, AttributeSet attributeSet) throws NoSuchMethodException, SecurityException {
+        String strConcat;
         if (str2 != null && str.indexOf(46) == -1) {
-            str3 = str2.concat(str);
+            strConcat = str2.concat(str);
         } else {
-            str3 = str;
+            strConcat = str;
         }
-        Constructor<?> constructor = sConstructorMap.get(str3);
+        Constructor<?> constructor = sConstructorMap.get(strConcat);
         if (constructor == null) {
             try {
-                constructor = this.mContext.getClassLoader().loadClass(str3).getConstructor(CONSTRUCTOR_SIGNATURE);
+                constructor = this.mContext.getClassLoader().loadClass(strConcat).getConstructor(CONSTRUCTOR_SIGNATURE);
                 constructor.setAccessible(true);
                 sConstructorMap.put(str, constructor);
             } catch (Exception e) {
-                throw new InflateException(attributeSet.getPositionDescription() + ": Error inflating class " + str3, e);
+                throw new InflateException(attributeSet.getPositionDescription() + ": Error inflating class " + strConcat, e);
             }
         }
         this.mTempConstructorArgs[0] = this.mContext;

@@ -10,6 +10,7 @@ import com.android.internal.util.Preconditions;
 import com.android.settings.widget.SwitchBar;
 import com.android.settingslib.Utils;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public class AutomaticStorageManagerSwitchBarController implements SwitchBar.OnSwitchChangeListener {
     private Context mContext;

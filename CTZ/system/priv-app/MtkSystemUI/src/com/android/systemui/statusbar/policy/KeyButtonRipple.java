@@ -19,6 +19,7 @@ import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import java.util.ArrayList;
 import java.util.HashSet;
+
 /* loaded from: classes.dex */
 public class KeyButtonRipple extends Drawable {
     private CanvasProperty<Float> mBottomProp;
@@ -82,12 +83,12 @@ public class KeyButtonRipple extends Drawable {
         if (this.mGlowAlpha > 0.0f) {
             Paint ripplePaint = getRipplePaint();
             ripplePaint.setAlpha((int) (this.mGlowAlpha * 255.0f));
-            float width = getBounds().width();
-            float height = getBounds().height();
-            boolean z = width > height;
+            float fWidth = getBounds().width();
+            float fHeight = getBounds().height();
+            boolean z = fWidth > fHeight;
             float rippleSize = getRippleSize() * this.mGlowScale * 0.5f;
-            float f = width * 0.5f;
-            float f2 = height * 0.5f;
+            float f = fWidth * 0.5f;
+            float f2 = fHeight * 0.5f;
             float f3 = z ? rippleSize : f;
             if (z) {
                 rippleSize = f2;
@@ -228,14 +229,15 @@ public class KeyButtonRipple extends Drawable {
                     this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$KeyButtonRipple$_NjSlP8uc8G3rFUDxQkVsRHA4H4
                         @Override // java.lang.Runnable
                         public final void run() {
-                            KeyButtonRipple.this.enterSoftware();
+                            this.f$0.enterSoftware();
                         }
                     }, ViewConfiguration.getTapTimeout());
                     return;
-                } else if (this.mVisible) {
-                    enterSoftware();
-                    return;
                 } else {
+                    if (this.mVisible) {
+                        enterSoftware();
+                        return;
+                    }
                     return;
                 }
             }
@@ -245,29 +247,28 @@ public class KeyButtonRipple extends Drawable {
         exitSoftware();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void enterSoftware() {
+    private void enterSoftware() {
         cancelAnimations();
         this.mVisible = true;
         this.mGlowAlpha = getMaxGlowAlpha();
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this, "glowScale", 0.0f, 1.35f);
-        ofFloat.setInterpolator(this.mInterpolator);
-        ofFloat.setDuration(350L);
-        ofFloat.addListener(this.mAnimatorListener);
-        ofFloat.start();
-        this.mRunningAnimations.add(ofFloat);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, "glowScale", 0.0f, 1.35f);
+        objectAnimatorOfFloat.setInterpolator(this.mInterpolator);
+        objectAnimatorOfFloat.setDuration(350L);
+        objectAnimatorOfFloat.addListener(this.mAnimatorListener);
+        objectAnimatorOfFloat.start();
+        this.mRunningAnimations.add(objectAnimatorOfFloat);
         if (this.mDelayTouchFeedback && !this.mPressed) {
             exitSoftware();
         }
     }
 
     private void exitSoftware() {
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this, "glowAlpha", this.mGlowAlpha, 0.0f);
-        ofFloat.setInterpolator(Interpolators.ALPHA_OUT);
-        ofFloat.setDuration(450L);
-        ofFloat.addListener(this.mAnimatorListener);
-        ofFloat.start();
-        this.mRunningAnimations.add(ofFloat);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, "glowAlpha", this.mGlowAlpha, 0.0f);
+        objectAnimatorOfFloat.setInterpolator(Interpolators.ALPHA_OUT);
+        objectAnimatorOfFloat.setDuration(450L);
+        objectAnimatorOfFloat.addListener(this.mAnimatorListener);
+        objectAnimatorOfFloat.start();
+        this.mRunningAnimations.add(objectAnimatorOfFloat);
     }
 
     private void setPressedHardware(boolean z) {
@@ -278,14 +279,15 @@ public class KeyButtonRipple extends Drawable {
                     this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$KeyButtonRipple$Xl4rWJU_4TFxkXeTg6i8PM566MQ
                         @Override // java.lang.Runnable
                         public final void run() {
-                            KeyButtonRipple.this.enterHardware();
+                            this.f$0.enterHardware();
                         }
                     }, ViewConfiguration.getTapTimeout());
                     return;
-                } else if (this.mVisible) {
-                    enterHardware();
-                    return;
                 } else {
+                    if (this.mVisible) {
+                        enterHardware();
+                        return;
+                    }
                     return;
                 }
             }
@@ -327,8 +329,7 @@ public class KeyButtonRipple extends Drawable {
         return Math.min(isHorizontal() ? getBounds().width() : getBounds().height(), this.mMaxWidth);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void enterHardware() {
+    private void enterHardware() {
         cancelAnimations();
         this.mVisible = true;
         this.mDrawingHardwareGlow = true;
@@ -382,7 +383,6 @@ public class KeyButtonRipple extends Drawable {
         invalidateSelf();
     }
 
-    /* loaded from: classes.dex */
     private static final class LogInterpolator implements Interpolator {
         private LogInterpolator() {
         }

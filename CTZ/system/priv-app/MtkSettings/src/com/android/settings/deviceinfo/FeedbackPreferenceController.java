@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.DeviceInfoUtils;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class FeedbackPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final Intent intent;
@@ -43,10 +44,10 @@ public class FeedbackPreferenceController extends AbstractPreferenceController i
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        if (TextUtils.equals(preference.getKey(), "device_feedback") && isAvailable()) {
-            this.mHost.startActivityForResult(this.intent, 0);
-            return true;
+        if (!TextUtils.equals(preference.getKey(), "device_feedback") || !isAvailable()) {
+            return false;
         }
-        return false;
+        this.mHost.startActivityForResult(this.intent, 0);
+        return true;
     }
 }

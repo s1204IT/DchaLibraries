@@ -12,6 +12,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.settingslib.wrapper.BluetoothA2dpWrapper;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class A2dpProfile implements LocalBluetoothProfile {
     private Context mContext;
@@ -24,9 +25,12 @@ public class A2dpProfile implements LocalBluetoothProfile {
     private static boolean V = false;
     static final ParcelUuid[] SINK_UUIDS = {BluetoothUuid.AudioSink, BluetoothUuid.AdvAudioDist};
 
-    /* loaded from: classes.dex */
     private final class A2dpServiceListener implements BluetoothProfile.ServiceListener {
         private A2dpServiceListener() {
+        }
+
+        /* synthetic */ A2dpServiceListener(A2dpProfile a2dpProfile, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // android.bluetooth.BluetoothProfile.ServiceListener
@@ -38,14 +42,14 @@ public class A2dpProfile implements LocalBluetoothProfile {
             A2dpProfile.this.mServiceWrapper = new BluetoothA2dpWrapper(A2dpProfile.this.mService);
             List<BluetoothDevice> connectedDevices = A2dpProfile.this.mService.getConnectedDevices();
             while (!connectedDevices.isEmpty()) {
-                BluetoothDevice remove = connectedDevices.remove(0);
-                CachedBluetoothDevice findDevice = A2dpProfile.this.mDeviceManager.findDevice(remove);
-                if (findDevice == null) {
-                    Log.w("A2dpProfile", "A2dpProfile found new device: " + remove);
-                    findDevice = A2dpProfile.this.mDeviceManager.addDevice(A2dpProfile.this.mLocalAdapter, A2dpProfile.this.mProfileManager, remove);
+                BluetoothDevice bluetoothDeviceRemove = connectedDevices.remove(0);
+                CachedBluetoothDevice cachedBluetoothDeviceFindDevice = A2dpProfile.this.mDeviceManager.findDevice(bluetoothDeviceRemove);
+                if (cachedBluetoothDeviceFindDevice == null) {
+                    Log.w("A2dpProfile", "A2dpProfile found new device: " + bluetoothDeviceRemove);
+                    cachedBluetoothDeviceFindDevice = A2dpProfile.this.mDeviceManager.addDevice(A2dpProfile.this.mLocalAdapter, A2dpProfile.this.mProfileManager, bluetoothDeviceRemove);
                 }
-                findDevice.onProfileStateChanged(A2dpProfile.this, 2);
-                findDevice.refresh();
+                cachedBluetoothDeviceFindDevice.onProfileStateChanged(A2dpProfile.this, 2);
+                cachedBluetoothDeviceFindDevice.refresh();
             }
             A2dpProfile.this.mIsProfileReady = true;
         }
@@ -64,8 +68,7 @@ public class A2dpProfile implements LocalBluetoothProfile {
         return 2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public A2dpProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
+    A2dpProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mContext = context;
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;

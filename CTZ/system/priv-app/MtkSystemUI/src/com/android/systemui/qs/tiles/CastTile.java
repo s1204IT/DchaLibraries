@@ -23,6 +23,7 @@ import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class CastTile extends QSTileImpl<QSTile.BooleanState> {
     private static final Intent CAST_SETTINGS = new Intent("android.settings.CAST_SETTINGS");
@@ -52,7 +53,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mDetailAdapter;
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -61,22 +62,20 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public void handleSetListening(boolean z) {
         if (DEBUG) {
-            String str = this.TAG;
-            Log.d(str, "handleSetListening " + z);
+            Log.d(this.TAG, "handleSetListening " + z);
         }
         if (z) {
             this.mController.addCallback(this.mCallback);
             this.mKeyguard.addCallback(this.mCallback);
-            return;
+        } else {
+            this.mController.setDiscovering(false);
+            this.mController.removeCallback(this.mCallback);
+            this.mKeyguard.removeCallback(this.mCallback);
         }
-        this.mController.setDiscovering(false);
-        this.mController.removeCallback(this.mCallback);
-        this.mKeyguard.removeCallback(this.mCallback);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUserSwitch(int i) {
+    protected void handleUserSwitch(int i) {
         super.handleUserSwitch(i);
         this.mController.setCurrentUserId(i);
     }
@@ -97,7 +96,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
             this.mActivityStarter.postQSRunnableDismissingKeyguard(new Runnable() { // from class: com.android.systemui.qs.tiles.-$$Lambda$CastTile$0TU5SvbFGUs5F0udF1tvlhHVObs
                 @Override // java.lang.Runnable
                 public final void run() {
-                    CastTile.this.showDetail(true);
+                    this.f$0.showDetail(true);
                 }
             });
         } else {
@@ -110,7 +109,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
         this.mUiHandler.post(new Runnable() { // from class: com.android.systemui.qs.tiles.-$$Lambda$CastTile$WPXsuhhRJ1um-wt53q0kaFd3rzI
             @Override // java.lang.Runnable
             public final void run() {
-                CastTile.lambda$showDetail$3(CastTile.this);
+                CastTile.lambda$showDetail$3(this.f$0);
             }
         });
     }
@@ -119,7 +118,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
         castTile.mDialog = MediaRouteDialogPresenter.createDialog(castTile.mContext, 4, new View.OnClickListener() { // from class: com.android.systemui.qs.tiles.-$$Lambda$CastTile$4kXW6ECEqBpSUmuEtdBz8p9QY1w
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                CastTile.lambda$showDetail$1(CastTile.this, view);
+                CastTile.lambda$showDetail$1(this.f$0, view);
             }
         });
         castTile.mDialog.getWindow().setType(2009);
@@ -129,7 +128,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
         castTile.mUiHandler.post(new Runnable() { // from class: com.android.systemui.qs.tiles.-$$Lambda$CastTile$MhJepZXXVH2Vaj80AOmfpppL58s
             @Override // java.lang.Runnable
             public final void run() {
-                CastTile.this.mDialog.show();
+                this.f$0.mDialog.show();
             }
         });
         castTile.mHost.collapsePanels();
@@ -145,9 +144,9 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
         return this.mContext.getString(R.string.quick_settings_cast_title);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         booleanState.label = this.mContext.getString(R.string.quick_settings_cast_title);
         booleanState.contentDescription = booleanState.label;
         booleanState.value = false;
@@ -179,7 +178,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 114;
+        return com.android.systemui.plugins.R.styleable.AppCompatTheme_windowFixedHeightMajor;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
@@ -190,12 +189,10 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getDeviceName(CastController.CastDevice castDevice) {
+    private String getDeviceName(CastController.CastDevice castDevice) {
         return castDevice.name != null ? castDevice.name : this.mContext.getString(R.string.quick_settings_cast_device_default_name);
     }
 
-    /* loaded from: classes.dex */
     private final class Callback implements CastController.Callback, KeyguardMonitor.Callback {
         private Callback() {
         }
@@ -211,9 +208,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class CastDetailAdapter implements DetailAdapter, QSDetailItems.Callback {
+    private final class CastDetailAdapter implements DetailAdapter, QSDetailItems.Callback {
         private QSDetailItems mItems;
         private final LinkedHashMap<String, CastController.CastDevice> mVisibleOrder;
 
@@ -277,8 +272,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
             return this.mItems;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateItems(Set<CastController.CastDevice> set) {
+        private void updateItems(Set<CastController.CastDevice> set) {
             int i;
             if (this.mItems == null) {
                 return;
@@ -308,8 +302,9 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
                         this.mVisibleOrder.put(castDevice.id, castDevice);
                     }
                     itemArr = new QSDetailItems.Item[set.size()];
-                    for (String str : this.mVisibleOrder.keySet()) {
-                        CastController.CastDevice castDevice2 = this.mVisibleOrder.get(str);
+                    Iterator<String> it2 = this.mVisibleOrder.keySet().iterator();
+                    while (it2.hasNext()) {
+                        CastController.CastDevice castDevice2 = this.mVisibleOrder.get(it2.next());
                         if (set.contains(castDevice2)) {
                             QSDetailItems.Item item2 = new QSDetailItems.Item();
                             item2.iconResId = R.drawable.ic_qs_cast_off;

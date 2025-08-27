@@ -3,9 +3,10 @@ package jp.co.benesse.dcha.util;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class FileUtils {
-    public static final void close(Closeable closeable) {
+    public static final void close(Closeable closeable) throws IOException {
         if (closeable == null) {
             return;
         }

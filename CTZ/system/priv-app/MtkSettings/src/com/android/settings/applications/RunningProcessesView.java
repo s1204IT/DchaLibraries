@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class RunningProcessesView extends FrameLayout implements AbsListView.RecyclerListener, AdapterView.OnItemClickListener, RunningState.OnRefreshUiListener {
     long SECONDARY_SERVER_MEM;
@@ -62,7 +63,6 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
     SettingsPreferenceFragment mOwner;
     RunningState mState;
 
-    /* loaded from: classes.dex */
     public static class ActiveItem {
         long mFirstRunTime;
         ViewHolder mHolder;
@@ -70,8 +70,7 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
         View mRootView;
         boolean mSetBackground;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void updateTime(Context context, StringBuilder sb) {
+        void updateTime(Context context, StringBuilder sb) {
             TextView textView;
             if (this.mItem instanceof RunningState.ServiceItem) {
                 textView = this.mHolder.size;
@@ -110,7 +109,6 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ViewHolder {
         public TextView description;
         public ImageView icon;
@@ -158,9 +156,7 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class ServiceListAdapter extends BaseAdapter {
+    class ServiceListAdapter extends BaseAdapter {
         final LayoutInflater mInflater;
         final ArrayList<RunningState.MergedItem> mItems = new ArrayList<>();
         ArrayList<RunningState.MergedItem> mOrigItems;
@@ -173,8 +169,7 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
             refreshItems();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void setShowBackground(boolean z) {
+        void setShowBackground(boolean z) {
             if (this.mShowBackground != z) {
                 this.mShowBackground = z;
                 this.mState.setWatchingBackgroundItems(z);
@@ -183,8 +178,7 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public boolean getShowBackground() {
+        boolean getShowBackground() {
             return this.mShowBackground;
         }
 
@@ -249,9 +243,9 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
         }
 
         public View newView(ViewGroup viewGroup) {
-            View inflate = this.mInflater.inflate(R.layout.running_processes_item, viewGroup, false);
-            new ViewHolder(inflate);
-            return inflate;
+            View viewInflate = this.mInflater.inflate(R.layout.running_processes_item, viewGroup, false);
+            new ViewHolder(viewInflate);
+            return viewInflate;
         }
 
         public void bindView(View view, int i) {
@@ -306,10 +300,10 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
                 this.mBackgroundProcessText.setText(getResources().getString(R.string.running_processes_header_ram, bidiFormatter.unicodeWrap(Formatter.formatShortFileSize(getContext(), freeSize))));
                 this.mAppsProcessText.setText(getResources().getString(R.string.running_processes_header_ram, bidiFormatter.unicodeWrap(Formatter.formatShortFileSize(getContext(), j))));
                 this.mForegroundProcessText.setText(getResources().getString(R.string.running_processes_header_ram, bidiFormatter.unicodeWrap(Formatter.formatShortFileSize(getContext(), j2))));
-                float f = (float) totalSize;
-                int i = (int) ((((float) j2) / f) * 100.0f);
+                float f = totalSize;
+                int i = (int) ((j2 / f) * 100.0f);
                 this.mColorBar.setProgress(i);
-                this.mColorBar.setSecondaryProgress(i + ((int) ((((float) j) / f) * 100.0f)));
+                this.mColorBar.setSecondaryProgress(i + ((int) ((j / f) * 100.0f)));
             }
         }
     }
@@ -357,10 +351,10 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
         this.mState = RunningState.getInstance(getContext());
         LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService("layout_inflater");
         layoutInflater.inflate(R.layout.running_processes_view, this);
-        this.mListView = (ListView) findViewById(16908298);
-        View findViewById = findViewById(16908292);
-        if (findViewById != null) {
-            this.mListView.setEmptyView(findViewById);
+        this.mListView = (ListView) findViewById(android.R.id.list);
+        View viewFindViewById = findViewById(android.R.id.empty);
+        if (viewFindViewById != null) {
+            this.mListView.setEmptyView(viewFindViewById);
         }
         this.mListView.setOnItemClickListener(this);
         this.mListView.setRecyclerListener(this);
@@ -420,17 +414,15 @@ public class RunningProcessesView extends FrameLayout implements AbsListView.Rec
         switch (i) {
             case 0:
                 updateTimes();
-                return;
+                break;
             case 1:
                 refreshUi(false);
                 updateTimes();
-                return;
+                break;
             case 2:
                 refreshUi(true);
                 updateTimes();
-                return;
-            default:
-                return;
+                break;
         }
     }
 }

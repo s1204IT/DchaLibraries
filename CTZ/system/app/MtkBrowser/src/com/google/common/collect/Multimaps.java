@@ -2,12 +2,15 @@ package com.google.common.collect;
 
 import java.util.AbstractCollection;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public final class Multimaps {
 
-    /* loaded from: classes.dex */
     static abstract class Entries<K, V> extends AbstractCollection<Map.Entry<K, V>> {
         abstract Multimap<K, V> multimap();
+
+        Entries() {
+        }
 
         @Override // java.util.AbstractCollection, java.util.Collection
         public int size() {
@@ -38,8 +41,7 @@ public final class Multimaps {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean equalsImpl(Multimap<?, ?> multimap, Object obj) {
+    static boolean equalsImpl(Multimap<?, ?> multimap, Object obj) {
         if (obj == multimap) {
             return true;
         }

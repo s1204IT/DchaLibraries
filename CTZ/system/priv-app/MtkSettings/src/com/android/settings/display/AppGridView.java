@@ -19,6 +19,7 @@ import com.android.settings.R;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppGridView extends GridView {
     public AppGridView(Context context) {
@@ -37,10 +38,9 @@ public class AppGridView extends GridView {
         super(context, attributeSet, i, i2);
         setNumColumns(-1);
         setColumnWidth(getResources().getDimensionPixelSize(R.dimen.screen_zoom_preview_app_icon_width));
-        setAdapter((ListAdapter) new AppsAdapter(context, R.layout.screen_zoom_preview_app_icon, 16908308, 16908295));
+        setAdapter((ListAdapter) new AppsAdapter(context, R.layout.screen_zoom_preview_app_icon, android.R.id.text1, android.R.id.icon1));
     }
 
-    /* loaded from: classes.dex */
     public static class AppsAdapter extends ArrayAdapter<ActivityEntry> {
         private final int mIconResId;
         private final PackageManager mPackageManager;
@@ -79,12 +79,12 @@ public class AppGridView extends GridView {
             intent.addCategory("android.intent.category.LAUNCHER");
             PackageManager packageManager = this.mPackageManager;
             ArrayList arrayList = new ArrayList();
-            List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent, 0);
-            IconDrawableFactory newInstance = IconDrawableFactory.newInstance(getContext());
-            for (ResolveInfo resolveInfo : queryIntentActivities) {
-                CharSequence loadLabel = resolveInfo.loadLabel(packageManager);
-                if (loadLabel != null) {
-                    arrayList.add(new ActivityEntry(resolveInfo, loadLabel.toString(), newInstance));
+            List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent, 0);
+            IconDrawableFactory iconDrawableFactoryNewInstance = IconDrawableFactory.newInstance(getContext());
+            for (ResolveInfo resolveInfo : listQueryIntentActivities) {
+                CharSequence charSequenceLoadLabel = resolveInfo.loadLabel(packageManager);
+                if (charSequenceLoadLabel != null) {
+                    arrayList.add(new ActivityEntry(resolveInfo, charSequenceLoadLabel.toString(), iconDrawableFactoryNewInstance));
                 }
             }
             Collections.sort(arrayList);
@@ -92,7 +92,6 @@ public class AppGridView extends GridView {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ActivityEntry implements Comparable<ActivityEntry> {
         public final ResolveInfo info;
         public final String label;
@@ -105,6 +104,7 @@ public class AppGridView extends GridView {
             this.mIconFactory = iconDrawableFactory;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // java.lang.Comparable
         public int compareTo(ActivityEntry activityEntry) {
             return this.label.compareToIgnoreCase(activityEntry.label);

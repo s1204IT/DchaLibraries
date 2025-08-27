@@ -23,6 +23,7 @@ import jp.co.benesse.dcha.setupwizard.http.Request;
 import jp.co.benesse.dcha.setupwizard.http.Response;
 import jp.co.benesse.dcha.util.Logger;
 import jp.co.benesse.dcha.util.UrlUtil;
+
 /* loaded from: classes.dex */
 public class DownloadSettingActivity extends ParentSettingActivity {
     public static final String DOWNLOAD_APK_PATH = "open/TouchSetupLogin.apk";
@@ -79,9 +80,8 @@ public class DownloadSettingActivity extends ParentSettingActivity {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d(TAG, "onCreate 0001");
         super.onCreate(bundle);
         setContentView(R.layout.act_download);
@@ -101,9 +101,8 @@ public class DownloadSettingActivity extends ParentSettingActivity {
         Logger.d(TAG, "onCreate 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         Logger.d(TAG, "onStart 0001");
         super.onStart();
         IntentFilter intentFilter = new IntentFilter();
@@ -112,9 +111,8 @@ public class DownloadSettingActivity extends ParentSettingActivity {
         Logger.d(TAG, "onStart 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         Logger.d(TAG, "onStop 0001");
         if (this.mWifiReceiver != null) {
@@ -124,9 +122,8 @@ public class DownloadSettingActivity extends ParentSettingActivity {
         Logger.d(TAG, "onStop 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         Logger.d(TAG, "onDestroy 0001");
         this.mProgressBar = null;
@@ -150,9 +147,7 @@ public class DownloadSettingActivity extends ParentSettingActivity {
         Logger.d(TAG, "onDestroy 0005");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class DownloadTask extends AsyncTask<FileDownloadRequest, Integer, FileDownloadResponse> implements Request.ResponseListener {
+    class DownloadTask extends AsyncTask<FileDownloadRequest, Integer, FileDownloadResponse> implements Request.ResponseListener {
         protected CountDownLatch mCountDownLatch = null;
         protected HttpThread mThread = new HttpThread();
         protected FileDownloadResponse mResponse = null;
@@ -160,9 +155,9 @@ public class DownloadSettingActivity extends ParentSettingActivity {
         DownloadTask() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public FileDownloadResponse doInBackground(FileDownloadRequest... fileDownloadRequestArr) {
+        protected FileDownloadResponse doInBackground(FileDownloadRequest... fileDownloadRequestArr) {
             Logger.d(DownloadSettingActivity.TAG, "doInBackground 0001");
             this.mCountDownLatch = new CountDownLatch(1);
             this.mThread.setResponseListener(this);
@@ -173,61 +168,61 @@ public class DownloadSettingActivity extends ParentSettingActivity {
                     this.mThread.start();
                     this.mCountDownLatch.await();
                     Logger.d(DownloadSettingActivity.TAG, "doInBackground 0004");
-                } catch (InterruptedException e) {
-                    Logger.d(DownloadSettingActivity.TAG, "doInBackground 0003");
-                    Logger.d(DownloadSettingActivity.TAG, "doInBackground InterruptedException", e);
-                    DownloadSettingActivity.this.callSystemErrorDialog(DownloadSettingActivity.this.getString(R.string.error_code_fail_download));
-                    cancel(true);
+                } catch (Throwable th) {
                     Logger.d(DownloadSettingActivity.TAG, "doInBackground 0004");
+                    this.mThread.stopRunning();
+                    throw th;
                 }
-                this.mThread.stopRunning();
-                FileDownloadResponse fileDownloadResponse = this.mResponse;
-                if (fileDownloadResponse != null && fileDownloadResponse.isSuccess()) {
-                    Logger.d(DownloadSettingActivity.TAG, "doInBackground 0005");
+            } catch (InterruptedException e) {
+                Logger.d(DownloadSettingActivity.TAG, "doInBackground 0003");
+                Logger.d(DownloadSettingActivity.TAG, "doInBackground InterruptedException", e);
+                DownloadSettingActivity.this.callSystemErrorDialog(DownloadSettingActivity.this.getString(R.string.error_code_fail_download));
+                cancel(true);
+                Logger.d(DownloadSettingActivity.TAG, "doInBackground 0004");
+            }
+            this.mThread.stopRunning();
+            FileDownloadResponse fileDownloadResponse = this.mResponse;
+            if (fileDownloadResponse != null && fileDownloadResponse.isSuccess()) {
+                Logger.d(DownloadSettingActivity.TAG, "doInBackground 0005");
+                try {
                     try {
-                        try {
-                            Logger.d(DownloadSettingActivity.TAG, "doInBackground 0006");
-                            this.mResponse.outFile.setReadable(true, false);
-                            if (!DownloadSettingActivity.this.mDchaService.installApp(this.mResponse.outFile.getCanonicalPath(), 0)) {
-                                Logger.d(DownloadSettingActivity.TAG, "doInBackground 0007");
-                                DownloadSettingActivity.this.callSystemErrorDialog(DownloadSettingActivity.this.getString(R.string.error_code_fail_install));
-                                cancel(true);
-                            }
-                            Logger.d(DownloadSettingActivity.TAG, "doInBackground 0009");
-                        } catch (Exception e2) {
-                            Logger.d(DownloadSettingActivity.TAG, "doInBackground 0008");
-                            Logger.d(DownloadSettingActivity.TAG, "doInBackground Exception", e2);
+                        Logger.d(DownloadSettingActivity.TAG, "doInBackground 0006");
+                        this.mResponse.outFile.setReadable(true, false);
+                        if (!DownloadSettingActivity.this.mDchaService.installApp(this.mResponse.outFile.getCanonicalPath(), 0)) {
+                            Logger.d(DownloadSettingActivity.TAG, "doInBackground 0007");
                             DownloadSettingActivity.this.callSystemErrorDialog(DownloadSettingActivity.this.getString(R.string.error_code_fail_install));
                             cancel(true);
-                            Logger.d(DownloadSettingActivity.TAG, "doInBackground 0009");
                         }
-                        this.mResponse.outFile.delete();
-                    } catch (Throwable th) {
+                        Logger.d(DownloadSettingActivity.TAG, "doInBackground 0009");
+                    } catch (Throwable th2) {
                         Logger.d(DownloadSettingActivity.TAG, "doInBackground 0009");
                         this.mResponse.outFile.delete();
-                        throw th;
+                        throw th2;
                     }
+                } catch (Exception e2) {
+                    Logger.d(DownloadSettingActivity.TAG, "doInBackground 0008");
+                    Logger.d(DownloadSettingActivity.TAG, "doInBackground Exception", e2);
+                    DownloadSettingActivity.this.callSystemErrorDialog(DownloadSettingActivity.this.getString(R.string.error_code_fail_install));
+                    cancel(true);
+                    Logger.d(DownloadSettingActivity.TAG, "doInBackground 0009");
                 }
-                Logger.d(DownloadSettingActivity.TAG, "doInBackground 0010");
-                return this.mResponse;
-            } catch (Throwable th2) {
-                Logger.d(DownloadSettingActivity.TAG, "doInBackground 0004");
-                this.mThread.stopRunning();
-                throw th2;
+                this.mResponse.outFile.delete();
             }
+            Logger.d(DownloadSettingActivity.TAG, "doInBackground 0010");
+            return this.mResponse;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onProgressUpdate([Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onProgressUpdate(Integer... numArr) {
+        protected void onProgressUpdate(Integer... numArr) {
             Logger.d(DownloadSettingActivity.TAG, "onProgressUpdate 0001");
             DownloadSettingActivity.this.mProgressBar.setProgress(numArr[0].intValue());
             Logger.d(DownloadSettingActivity.TAG, "onProgressUpdate 0002");
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(FileDownloadResponse fileDownloadResponse) {
+        protected void onPostExecute(FileDownloadResponse fileDownloadResponse) {
             Logger.d(DownloadSettingActivity.TAG, "onPostExecute 0001");
             DownloadSettingActivity.this.mProgressBar.setProgress(100);
             if (fileDownloadResponse == null) {

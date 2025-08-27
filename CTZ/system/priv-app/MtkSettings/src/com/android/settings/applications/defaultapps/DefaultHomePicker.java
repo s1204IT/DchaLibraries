@@ -11,7 +11,9 @@ import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settingslib.applications.DefaultAppInfo;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultHomePicker extends DefaultAppPickerFragment {
     private String mPackageName;
@@ -22,9 +24,8 @@ public class DefaultHomePicker extends DefaultAppPickerFragment {
         this.mPackageName = context.getPackageName();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.default_home_settings;
     }
 
@@ -35,8 +36,8 @@ public class DefaultHomePicker extends DefaultAppPickerFragment {
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected List<DefaultAppInfo> getCandidates() {
-        String str;
-        boolean hasManagedProfile = hasManagedProfile();
+        String string;
+        boolean zHasManagedProfile = hasManagedProfile();
         ArrayList arrayList = new ArrayList();
         ArrayList<ResolveInfo> arrayList2 = new ArrayList();
         Context context = getContext();
@@ -46,13 +47,13 @@ public class DefaultHomePicker extends DefaultAppPickerFragment {
             ComponentName componentName = new ComponentName(activityInfo.packageName, activityInfo.name);
             if (!activityInfo.packageName.equals(this.mPackageName)) {
                 boolean z = true;
-                if (hasManagedProfile && !launcherHasManagedProfilesFeature(resolveInfo)) {
-                    str = getContext().getString(R.string.home_work_profile_not_supported);
+                if (zHasManagedProfile && !launcherHasManagedProfilesFeature(resolveInfo)) {
+                    string = getContext().getString(R.string.home_work_profile_not_supported);
                     z = false;
                 } else {
-                    str = null;
+                    string = null;
                 }
-                arrayList.add(new DefaultAppInfo(context, this.mPm, this.mUserId, componentName, str, z));
+                arrayList.add(new DefaultAppInfo(context, this.mPm, this.mUserId, componentName, string, z));
             }
         }
         return arrayList;
@@ -72,15 +73,16 @@ public class DefaultHomePicker extends DefaultAppPickerFragment {
         if (TextUtils.isEmpty(str)) {
             return false;
         }
-        ComponentName unflattenFromString = ComponentName.unflattenFromString(str);
-        ArrayList<ResolveInfo> arrayList = new ArrayList();
+        ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(str);
+        ArrayList arrayList = new ArrayList();
         this.mPm.getHomeActivities(arrayList);
         ArrayList arrayList2 = new ArrayList();
-        for (ResolveInfo resolveInfo : arrayList) {
-            ActivityInfo activityInfo = resolveInfo.activityInfo;
+        Iterator it = arrayList.iterator();
+        while (it.hasNext()) {
+            ActivityInfo activityInfo = ((ResolveInfo) it.next()).activityInfo;
             arrayList2.add(new ComponentName(activityInfo.packageName, activityInfo.name));
         }
-        this.mPm.replacePreferredActivity(DefaultHomePreferenceController.HOME_FILTER, 1048576, (ComponentName[]) arrayList2.toArray(new ComponentName[0]), unflattenFromString);
+        this.mPm.replacePreferredActivity(DefaultHomePreferenceController.HOME_FILTER, 1048576, (ComponentName[]) arrayList2.toArray(new ComponentName[0]), componentNameUnflattenFromString);
         Context context = getContext();
         Intent intent = new Intent("android.intent.action.MAIN");
         intent.addCategory("android.intent.category.HOME");
@@ -90,8 +92,9 @@ public class DefaultHomePicker extends DefaultAppPickerFragment {
     }
 
     private boolean hasManagedProfile() {
-        for (UserInfo userInfo : this.mUserManager.getProfiles(getContext().getUserId())) {
-            if (userInfo.isManagedProfile()) {
+        Iterator it = this.mUserManager.getProfiles(getContext().getUserId()).iterator();
+        while (it.hasNext()) {
+            if (((UserInfo) it.next()).isManagedProfile()) {
                 return true;
             }
         }

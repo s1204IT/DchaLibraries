@@ -2,6 +2,7 @@ package com.android.settings.localepicker;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.LocaleList;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import com.android.settings.R;
 import com.android.settings.RestrictedSettingsFragment;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LocaleListEditor extends RestrictedSettingsFragment implements LocalePickerWithRegion.LocaleSelectedListener {
     private LocaleDragAndDropAdapter mAdapter;
@@ -47,9 +49,9 @@ public class LocaleListEditor extends RestrictedSettingsFragment implements Loca
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
-        configureDragAndDrop(layoutInflater.inflate(R.layout.locale_order_list, (ViewGroup) onCreateView));
-        return onCreateView;
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        configureDragAndDrop(layoutInflater.inflate(R.layout.locale_order_list, (ViewGroup) viewOnCreateView));
+        return viewOnCreateView;
     }
 
     @Override // com.android.settings.RestrictedSettingsFragment, com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -69,7 +71,7 @@ public class LocaleListEditor extends RestrictedSettingsFragment implements Loca
     }
 
     @Override // android.app.Fragment
-    public void onViewStateRestored(Bundle bundle) {
+    public void onViewStateRestored(Bundle bundle) throws Resources.NotFoundException {
         super.onViewStateRestored(bundle);
         if (bundle != null) {
             this.mRemoveMode = bundle.getBoolean("localeRemoveMode", false);
@@ -91,7 +93,7 @@ public class LocaleListEditor extends RestrictedSettingsFragment implements Loca
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
+    public boolean onOptionsItemSelected(MenuItem menuItem) throws Resources.NotFoundException {
         int itemId = menuItem.getItemId();
         if (itemId == 2) {
             if (this.mRemoveMode) {
@@ -100,29 +102,30 @@ public class LocaleListEditor extends RestrictedSettingsFragment implements Loca
                 setRemoveMode(true);
             }
             return true;
-        } else if (itemId == 16908332 && this.mRemoveMode) {
+        }
+        if (itemId == 16908332 && this.mRemoveMode) {
             setRemoveMode(false);
             return true;
-        } else {
-            return super.onOptionsItemSelected(menuItem);
         }
+        return super.onOptionsItemSelected(menuItem);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setRemoveMode(boolean z) {
+    private void setRemoveMode(boolean z) {
         this.mRemoveMode = z;
         this.mAdapter.setRemoveMode(z);
         this.mAddLanguage.setVisibility(z ? 4 : 0);
         updateVisibilityOfRemoveMenu();
     }
 
-    private void showRemoveLocaleWarningDialog() {
+    private void showRemoveLocaleWarningDialog() throws Resources.NotFoundException {
         int checkedCount = this.mAdapter.getCheckedCount();
         if (checkedCount == 0) {
             setRemoveMode(!this.mRemoveMode);
-        } else if (checkedCount == this.mAdapter.getItemCount()) {
+            return;
+        }
+        if (checkedCount == this.mAdapter.getItemCount()) {
             this.mShowingRemoveDialog = true;
-            new AlertDialog.Builder(getActivity()).setTitle(R.string.dlg_remove_locales_error_title).setMessage(R.string.dlg_remove_locales_error_message).setPositiveButton(17039379, new DialogInterface.OnClickListener() { // from class: com.android.settings.localepicker.LocaleListEditor.2
+            new AlertDialog.Builder(getActivity()).setTitle(R.string.dlg_remove_locales_error_title).setMessage(R.string.dlg_remove_locales_error_message).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() { // from class: com.android.settings.localepicker.LocaleListEditor.2
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i) {
                 }
@@ -135,12 +138,12 @@ public class LocaleListEditor extends RestrictedSettingsFragment implements Loca
         } else {
             String quantityString = getResources().getQuantityString(R.plurals.dlg_remove_locales_title, checkedCount);
             this.mShowingRemoveDialog = true;
-            new AlertDialog.Builder(getActivity()).setTitle(quantityString).setMessage(R.string.dlg_remove_locales_message).setNegativeButton(17039369, new DialogInterface.OnClickListener() { // from class: com.android.settings.localepicker.LocaleListEditor.5
+            new AlertDialog.Builder(getActivity()).setTitle(quantityString).setMessage(R.string.dlg_remove_locales_message).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() { // from class: com.android.settings.localepicker.LocaleListEditor.5
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i) {
                     LocaleListEditor.this.setRemoveMode(false);
                 }
-            }).setPositiveButton(17039379, new DialogInterface.OnClickListener() { // from class: com.android.settings.localepicker.LocaleListEditor.4
+            }).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() { // from class: com.android.settings.localepicker.LocaleListEditor.4
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i) {
                     LocaleListEditor.this.mRemoveMode = false;
@@ -159,9 +162,9 @@ public class LocaleListEditor extends RestrictedSettingsFragment implements Loca
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        MenuItem add = menu.add(0, 2, 0, R.string.locale_remove_menu);
-        add.setShowAsAction(4);
-        add.setIcon(R.drawable.ic_delete);
+        MenuItem menuItemAdd = menu.add(0, 2, 0, R.string.locale_remove_menu);
+        menuItemAdd.setShowAsAction(4);
+        menuItemAdd.setIcon(R.drawable.ic_delete);
         super.onCreateOptionsMenu(menu, menuInflater);
         this.mMenu = menu;
         updateVisibilityOfRemoveMenu();
@@ -202,14 +205,10 @@ public class LocaleListEditor extends RestrictedSettingsFragment implements Loca
         if (this.mMenu == null) {
             return;
         }
-        MenuItem findItem = this.mMenu.findItem(2);
-        if (findItem != null) {
-            findItem.setShowAsAction(this.mRemoveMode ? 2 : 0);
-            boolean z = true;
-            if (!(this.mAdapter.getItemCount() > 1) || this.mIsUiRestricted) {
-                z = false;
-            }
-            findItem.setVisible(z);
+        MenuItem menuItemFindItem = this.mMenu.findItem(2);
+        if (menuItemFindItem != null) {
+            menuItemFindItem.setShowAsAction(this.mRemoveMode ? 2 : 0);
+            menuItemFindItem.setVisible((this.mAdapter.getItemCount() > 1) && !this.mIsUiRestricted);
         }
     }
 }

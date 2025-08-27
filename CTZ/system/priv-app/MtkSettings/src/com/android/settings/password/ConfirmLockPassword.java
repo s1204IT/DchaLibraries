@@ -26,11 +26,11 @@ import com.android.settings.widget.ImeAwareEditText;
 import com.android.settingslib.animation.AppearAnimationUtils;
 import com.android.settingslib.animation.DisappearAnimationUtils;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
     private static final int[] DETAIL_TEXTS = {R.string.lockpassword_confirm_your_pin_generic, R.string.lockpassword_confirm_your_password_generic, R.string.lockpassword_confirm_your_pin_generic_profile, R.string.lockpassword_confirm_your_password_generic_profile, R.string.lockpassword_strong_auth_required_device_pin, R.string.lockpassword_strong_auth_required_device_password, R.string.lockpassword_strong_auth_required_work_pin, R.string.lockpassword_strong_auth_required_work_password};
 
-    /* loaded from: classes.dex */
     public static class InternalActivity extends ConfirmLockPassword {
     }
 
@@ -41,22 +41,20 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return ConfirmLockPasswordFragment.class.getName().equals(str);
     }
 
     @Override // android.app.Activity, android.view.Window.Callback
     public void onWindowFocusChanged(boolean z) {
         super.onWindowFocusChanged(z);
-        Fragment findFragmentById = getFragmentManager().findFragmentById(R.id.main_content);
-        if (findFragmentById != null && (findFragmentById instanceof ConfirmLockPasswordFragment)) {
-            ((ConfirmLockPasswordFragment) findFragmentById).onWindowFocusChanged(z);
+        Fragment fragmentFindFragmentById = getFragmentManager().findFragmentById(R.id.main_content);
+        if (fragmentFindFragmentById != null && (fragmentFindFragmentById instanceof ConfirmLockPasswordFragment)) {
+            ((ConfirmLockPasswordFragment) fragmentFindFragmentById).onWindowFocusChanged(z);
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ConfirmLockPasswordFragment extends ConfirmDeviceCredentialBaseFragment implements View.OnClickListener, TextView.OnEditorActionListener, CredentialCheckResultTracker.Listener {
         private AppearAnimationUtils mAppearAnimationUtils;
         private CountDownTimer mCountdownTimer;
@@ -81,17 +79,17 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
             } else {
                 i = R.layout.confirm_lock_password;
             }
-            View inflate = layoutInflater.inflate(i, viewGroup, false);
-            this.mPasswordEntry = (ImeAwareEditText) inflate.findViewById(R.id.password_entry);
+            View viewInflate = layoutInflater.inflate(i, viewGroup, false);
+            this.mPasswordEntry = (ImeAwareEditText) viewInflate.findViewById(R.id.password_entry);
             this.mPasswordEntry.setOnEditorActionListener(this);
             this.mPasswordEntry.requestFocus();
             this.mPasswordEntryInputDisabler = new TextViewInputDisabler(this.mPasswordEntry);
-            this.mHeaderTextView = (TextView) inflate.findViewById(R.id.headerText);
+            this.mHeaderTextView = (TextView) viewInflate.findViewById(R.id.headerText);
             if (this.mHeaderTextView == null) {
-                this.mHeaderTextView = (TextView) inflate.findViewById(R.id.suw_layout_title);
+                this.mHeaderTextView = (TextView) viewInflate.findViewById(R.id.suw_layout_title);
             }
-            this.mDetailsTextView = (TextView) inflate.findViewById(R.id.detailsText);
-            this.mErrorTextView = (TextView) inflate.findViewById(R.id.errorText);
+            this.mDetailsTextView = (TextView) viewInflate.findViewById(R.id.detailsText);
+            this.mErrorTextView = (TextView) viewInflate.findViewById(R.id.errorText);
             this.mIsAlpha = 262144 == keyguardStoredPasswordQuality || 327680 == keyguardStoredPasswordQuality || 393216 == keyguardStoredPasswordQuality || 524288 == keyguardStoredPasswordQuality;
             this.mImm = (InputMethodManager) getActivity().getSystemService("input_method");
             Intent intent = getActivity().getIntent();
@@ -113,16 +111,16 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
                 inputType = 18;
             }
             imeAwareEditText.setInputType(inputType);
-            this.mPasswordEntry.setTypeface(Typeface.create(getContext().getString(17039680), 0));
-            this.mAppearAnimationUtils = new AppearAnimationUtils(getContext(), 220L, 2.0f, 1.0f, AnimationUtils.loadInterpolator(getContext(), 17563662));
-            this.mDisappearAnimationUtils = new DisappearAnimationUtils(getContext(), 110L, 1.0f, 0.5f, AnimationUtils.loadInterpolator(getContext(), 17563663));
+            this.mPasswordEntry.setTypeface(Typeface.create(getContext().getString(android.R.string.android_system_label), 0));
+            this.mAppearAnimationUtils = new AppearAnimationUtils(getContext(), 220L, 2.0f, 1.0f, AnimationUtils.loadInterpolator(getContext(), android.R.interpolator.linear_out_slow_in));
+            this.mDisappearAnimationUtils = new DisappearAnimationUtils(getContext(), 110L, 1.0f, 0.5f, AnimationUtils.loadInterpolator(getContext(), android.R.interpolator.fast_out_linear_in));
             setAccessibilityTitle(this.mHeaderTextView.getText());
             this.mCredentialCheckResultTracker = (CredentialCheckResultTracker) getFragmentManager().findFragmentByTag("check_lock_result");
             if (this.mCredentialCheckResultTracker == null) {
                 this.mCredentialCheckResultTracker = new CredentialCheckResultTracker();
                 getFragmentManager().beginTransaction().add(this.mCredentialCheckResultTracker, "check_lock_result").commit();
             }
-            return inflate;
+            return viewInflate;
         }
 
         private int getDefaultHeader() {
@@ -226,7 +224,7 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
             this.mUsingFingerprint = z;
         }
 
-        public void updatePasswordEntry() {
+        private void updatePasswordEntry() {
             boolean z = this.mLockPatternUtils.getLockoutAttemptDeadline(this.mEffectiveUserId) != 0;
             this.mPasswordEntry.setEnabled(!z);
             this.mPasswordEntryInputDisabler.setInputEnabled(!z);
@@ -248,8 +246,8 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
             if (this.mPendingLockCheck != null || this.mDisappearing) {
                 return;
             }
-            String obj = this.mPasswordEntry.getText().toString();
-            if (TextUtils.isEmpty(obj)) {
+            String string = this.mPasswordEntry.getText().toString();
+            if (TextUtils.isEmpty(string)) {
                 return;
             }
             this.mPasswordEntryInputDisabler.setInputEnabled(false);
@@ -257,30 +255,26 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
             Intent intent = new Intent();
             if (booleanExtra) {
                 if (isInternalActivity()) {
-                    startVerifyPassword(obj, intent);
+                    startVerifyPassword(string, intent);
                     return;
                 } else {
                     this.mCredentialCheckResultTracker.setResult(false, intent, 0, this.mEffectiveUserId);
                     return;
                 }
             }
-            startCheckPassword(obj, intent);
+            startCheckPassword(string, intent);
         }
 
-        public boolean isInternalActivity() {
+        private boolean isInternalActivity() {
             return getActivity() instanceof InternalActivity;
         }
 
         private void startVerifyPassword(String str, final Intent intent) {
-            AsyncTask<?, ?, ?> verifyTiedProfileChallenge;
+            AsyncTask<?, ?, ?> asyncTaskVerifyTiedProfileChallenge;
             long longExtra = getActivity().getIntent().getLongExtra("challenge", 0L);
             final int i = this.mEffectiveUserId;
             int i2 = this.mUserId;
             LockPatternChecker.OnVerifyCallback onVerifyCallback = new LockPatternChecker.OnVerifyCallback() { // from class: com.android.settings.password.ConfirmLockPassword.ConfirmLockPasswordFragment.1
-                {
-                    ConfirmLockPasswordFragment.this = this;
-                }
-
                 public void onVerified(byte[] bArr, int i3) {
                     boolean z;
                     ConfirmLockPasswordFragment.this.mPendingLockCheck = null;
@@ -296,20 +290,16 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
                 }
             };
             if (i == i2) {
-                verifyTiedProfileChallenge = LockPatternChecker.verifyPassword(this.mLockPatternUtils, str, longExtra, i2, onVerifyCallback);
+                asyncTaskVerifyTiedProfileChallenge = LockPatternChecker.verifyPassword(this.mLockPatternUtils, str, longExtra, i2, onVerifyCallback);
             } else {
-                verifyTiedProfileChallenge = LockPatternChecker.verifyTiedProfileChallenge(this.mLockPatternUtils, str, false, longExtra, i2, onVerifyCallback);
+                asyncTaskVerifyTiedProfileChallenge = LockPatternChecker.verifyTiedProfileChallenge(this.mLockPatternUtils, str, false, longExtra, i2, onVerifyCallback);
             }
-            this.mPendingLockCheck = verifyTiedProfileChallenge;
+            this.mPendingLockCheck = asyncTaskVerifyTiedProfileChallenge;
         }
 
         private void startCheckPassword(final String str, final Intent intent) {
             final int i = this.mEffectiveUserId;
             this.mPendingLockCheck = LockPatternChecker.checkPassword(this.mLockPatternUtils, str, i, new LockPatternChecker.OnCheckCallback() { // from class: com.android.settings.password.ConfirmLockPassword.ConfirmLockPasswordFragment.2
-                {
-                    ConfirmLockPasswordFragment.this = this;
-                }
-
                 public void onChecked(boolean z, int i2) {
                     ConfirmLockPasswordFragment.this.mPendingLockCheck = null;
                     if (z && ConfirmLockPasswordFragment.this.isInternalActivity() && ConfirmLockPasswordFragment.this.mReturnCredentials) {
@@ -334,16 +324,16 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
                 this.mDisappearAnimationUtils.startAnimation(getActiveViews(), new Runnable() { // from class: com.android.settings.password.-$$Lambda$ConfirmLockPassword$ConfirmLockPasswordFragment$hwD4uLqRx_u_wyU3V7MV_afxC5o
                     @Override // java.lang.Runnable
                     public final void run() {
-                        ConfirmLockPassword.ConfirmLockPasswordFragment.lambda$startDisappearAnimation$0(ConfirmLockPassword.this, intent);
+                        ConfirmLockPassword.ConfirmLockPasswordFragment.lambda$startDisappearAnimation$0(confirmLockPassword, intent);
                     }
                 });
-                return;
+            } else {
+                confirmLockPassword.setResult(-1, intent);
+                confirmLockPassword.finish();
             }
-            confirmLockPassword.setResult(-1, intent);
-            confirmLockPassword.finish();
         }
 
-        public static /* synthetic */ void lambda$startDisappearAnimation$0(ConfirmLockPassword confirmLockPassword, Intent intent) {
+        static /* synthetic */ void lambda$startDisappearAnimation$0(ConfirmLockPassword confirmLockPassword, Intent intent) {
             confirmLockPassword.setResult(-1, intent);
             confirmLockPassword.finish();
             confirmLockPassword.overridePendingTransition(R.anim.confirm_credential_close_enter, R.anim.confirm_credential_close_exit);
@@ -383,10 +373,6 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
         /* JADX WARN: Type inference failed for: r6v0, types: [com.android.settings.password.ConfirmLockPassword$ConfirmLockPasswordFragment$3] */
         private void handleAttemptLockout(long j) {
             this.mCountdownTimer = new CountDownTimer(j - SystemClock.elapsedRealtime(), 1000L) { // from class: com.android.settings.password.ConfirmLockPassword.ConfirmLockPasswordFragment.3
-                {
-                    ConfirmLockPasswordFragment.this = this;
-                }
-
                 @Override // android.os.CountDownTimer
                 public void onTick(long j2) {
                     ConfirmLockPasswordFragment.this.showError(ConfirmLockPasswordFragment.this.getString(R.string.lockpattern_too_many_failed_confirmation_attempts, new Object[]{Integer.valueOf((int) (j2 / 1000))}), 0L);

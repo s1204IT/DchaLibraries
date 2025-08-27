@@ -9,6 +9,7 @@ import android.util.SparseArray;
 import com.android.systemui.plugins.annotations.Dependencies;
 import com.android.systemui.plugins.annotations.DependsOn;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
+
 @Dependencies({@DependsOn(target = StreamState.class), @DependsOn(target = State.class), @DependsOn(target = Callbacks.class)})
 @ProvidesInterface(version = 1)
 /* loaded from: classes.dex */
@@ -16,7 +17,6 @@ public interface VolumeDialogController {
     public static final int VERSION = 1;
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public interface Callbacks {
         public static final int VERSION = 1;
 
@@ -66,7 +66,6 @@ public interface VolumeDialogController {
     void vibrate(VibrationEffect vibrationEffect);
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public static final class StreamState {
         public static final int VERSION = 1;
         public boolean dynamic;
@@ -95,7 +94,6 @@ public interface VolumeDialogController {
     }
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public static final class State {
         public static int NO_ACTIVE_STREAM = -1;
         public static final int VERSION = 1;
@@ -144,20 +142,20 @@ public interface VolumeDialogController {
                 if (i2 > 0) {
                     sep(sb, i);
                 }
-                int keyAt = this.states.keyAt(i2);
-                StreamState valueAt = this.states.valueAt(i2);
-                sb.append(AudioSystem.streamToString(keyAt));
+                int iKeyAt = this.states.keyAt(i2);
+                StreamState streamStateValueAt = this.states.valueAt(i2);
+                sb.append(AudioSystem.streamToString(iKeyAt));
                 sb.append(":");
-                sb.append(valueAt.level);
+                sb.append(streamStateValueAt.level);
                 sb.append('[');
-                sb.append(valueAt.levelMin);
+                sb.append(streamStateValueAt.levelMin);
                 sb.append("..");
-                sb.append(valueAt.levelMax);
+                sb.append(streamStateValueAt.levelMax);
                 sb.append(']');
-                if (valueAt.muted) {
+                if (streamStateValueAt.muted) {
                     sb.append(" [MUTED]");
                 }
-                if (valueAt.dynamic) {
+                if (streamStateValueAt.dynamic) {
                     sb.append(" [DYNAMIC]");
                 }
             }

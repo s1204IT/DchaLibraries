@@ -9,6 +9,7 @@ import android.support.v7.preference.Preference;
 import android.view.IWindowManager;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class StrictModePreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final String STRICT_MODE_DISABLED = "";
@@ -36,9 +37,8 @@ public class StrictModePreferenceController extends DeveloperOptionsPreferenceCo
         ((SwitchPreference) this.mPreference).setChecked(isStrictModeEnabled());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         writeStrictModeVisualOptions(false);
         ((SwitchPreference) this.mPreference).setChecked(false);

@@ -18,6 +18,7 @@ import com.android.settings.search.Indexable;
 import com.android.settings.search.SearchIndexableRaw;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PaymentSettings extends SettingsPreferenceFragment implements Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.nfc.PaymentSettings.1
@@ -51,9 +52,8 @@ public class PaymentSettings extends SettingsPreferenceFragment implements Index
         return 70;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.nfc_payment_settings;
     }
 
@@ -76,9 +76,9 @@ public class PaymentSettings extends SettingsPreferenceFragment implements Index
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
         ViewGroup viewGroup = (ViewGroup) getListView().getParent();
-        View inflate = getActivity().getLayoutInflater().inflate(R.layout.nfc_payment_empty, viewGroup, false);
-        viewGroup.addView(inflate);
-        setEmptyView(inflate);
+        View viewInflate = getActivity().getLayoutInflater().inflate(R.layout.nfc_payment_empty, viewGroup, false);
+        viewGroup.addView(viewInflate);
+        setEmptyView(viewInflate);
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -96,8 +96,8 @@ public class PaymentSettings extends SettingsPreferenceFragment implements Index
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
-        MenuItem add = menu.add(R.string.nfc_payment_how_it_works);
-        add.setIntent(new Intent(getActivity(), HowItWorks.class));
-        add.setShowAsActionFlags(0);
+        MenuItem menuItemAdd = menu.add(R.string.nfc_payment_how_it_works);
+        menuItemAdd.setIntent(new Intent(getActivity(), (Class<?>) HowItWorks.class));
+        menuItemAdd.setShowAsActionFlags(0);
     }
 }

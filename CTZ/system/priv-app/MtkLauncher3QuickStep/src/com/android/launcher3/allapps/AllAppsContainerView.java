@@ -39,6 +39,7 @@ import com.android.launcher3.views.BottomUserEducationView;
 import com.android.launcher3.views.RecyclerViewFastScroller;
 import com.android.launcher3.views.SpringRelativeLayout;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class AllAppsContainerView extends SpringRelativeLayout implements DragSource, Insettable, DeviceProfile.OnDeviceProfileChangeListener {
     private static final float FLING_ANIMATION_THRESHOLD = 0.55f;
@@ -89,7 +90,7 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
         this.mAllAppsStore.addUpdateListener(new AllAppsStore.OnUpdateListener() { // from class: com.android.launcher3.allapps.-$$Lambda$AllAppsContainerView$NGv9lLb-21_YfP50YgkH4gojlD8
             @Override // com.android.launcher3.allapps.AllAppsStore.OnUpdateListener
             public final void onAppsUpdated() {
-                AllAppsContainerView.this.onAppsUpdated();
+                this.f$0.onAppsUpdated();
             }
         });
         addSpringView(R.id.all_apps_header);
@@ -101,9 +102,8 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
         return this.mAllAppsStore;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.views.SpringRelativeLayout
-    public void setDampedScrollShift(float f) {
+    protected void setDampedScrollShift(float f) {
         if (getSearchView() == null) {
             return;
         }
@@ -113,7 +113,6 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
 
     @Override // com.android.launcher3.DeviceProfile.OnDeviceProfileChangeListener
     public void onDeviceProfileChanged(DeviceProfile deviceProfile) {
-        AdapterHolder[] adapterHolderArr;
         for (AdapterHolder adapterHolder : this.mAH) {
             if (adapterHolder.recyclerView != null) {
                 adapterHolder.recyclerView.swapAdapter(adapterHolder.recyclerView.getAdapter(), true);
@@ -122,8 +121,7 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onAppsUpdated() {
+    private void onAppsUpdated() {
         boolean z;
         Iterator<AppInfo> it = this.mAllAppsStore.getApps().iterator();
         while (true) {
@@ -142,13 +140,13 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
 
     public boolean shouldContainerScroll(MotionEvent motionEvent) {
         AllAppsRecyclerView activeRecyclerView;
-        if ((this.mSearchContainer == null || !this.mLauncher.getDragLayer().isEventOverView(this.mSearchContainer, motionEvent)) && (activeRecyclerView = getActiveRecyclerView()) != null) {
-            if (activeRecyclerView.getScrollbar().getThumbOffsetY() >= 0 && this.mLauncher.getDragLayer().isEventOverView(activeRecyclerView.getScrollbar(), motionEvent)) {
-                return false;
-            }
-            return activeRecyclerView.shouldContainerScroll(motionEvent, this.mLauncher.getDragLayer());
+        if ((this.mSearchContainer != null && this.mLauncher.getDragLayer().isEventOverView(this.mSearchContainer, motionEvent)) || (activeRecyclerView = getActiveRecyclerView()) == null) {
+            return true;
         }
-        return true;
+        if (activeRecyclerView.getScrollbar().getThumbOffsetY() >= 0 && this.mLauncher.getDragLayer().isEventOverView(activeRecyclerView.getScrollbar(), motionEvent)) {
+            return false;
+        }
+        return activeRecyclerView.shouldContainerScroll(motionEvent, this.mLauncher.getDragLayer());
     }
 
     @Override // android.view.ViewGroup
@@ -213,7 +211,7 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
         setOnFocusChangeListener(new View.OnFocusChangeListener() { // from class: com.android.launcher3.allapps.-$$Lambda$AllAppsContainerView$Ie_dilnu7rHF372CEXg0SYftSqs
             @Override // android.view.View.OnFocusChangeListener
             public final void onFocusChange(View view, boolean z) {
-                AllAppsContainerView.lambda$onFinishInflate$0(AllAppsContainerView.this, view, z);
+                AllAppsContainerView.lambda$onFinishInflate$0(this.f$0, view, z);
             }
         });
         this.mHeader = (FloatingHeaderView) findViewById(R.id.all_apps_header);
@@ -317,12 +315,12 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
             }
         }
         View recyclerViewContainer = getRecyclerViewContainer();
-        int indexOfChild = indexOfChild(recyclerViewContainer);
+        int iIndexOfChild = indexOfChild(recyclerViewContainer);
         removeView(recyclerViewContainer);
-        View inflate = LayoutInflater.from(getContext()).inflate(z ? R.layout.all_apps_tabs : R.layout.all_apps_rv_layout, (ViewGroup) this, false);
-        addView(inflate, indexOfChild);
+        View viewInflate = LayoutInflater.from(getContext()).inflate(z ? R.layout.all_apps_tabs : R.layout.all_apps_rv_layout, (ViewGroup) this, false);
+        addView(viewInflate, iIndexOfChild);
         if (z) {
-            this.mViewPager = (AllAppsPagedView) inflate;
+            this.mViewPager = (AllAppsPagedView) viewInflate;
             this.mViewPager.initParentViews(this);
             this.mViewPager.getPageIndicator().setContainerView(this);
             return;
@@ -342,13 +340,13 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
             findViewById(R.id.tab_personal).setOnClickListener(new View.OnClickListener() { // from class: com.android.launcher3.allapps.-$$Lambda$AllAppsContainerView$B39Kl1fKfqwhUd1leVXWHjoqw68
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    AllAppsContainerView.this.mViewPager.snapToPage(0);
+                    this.f$0.mViewPager.snapToPage(0);
                 }
             });
             findViewById(R.id.tab_work).setOnClickListener(new View.OnClickListener() { // from class: com.android.launcher3.allapps.-$$Lambda$AllAppsContainerView$nL3UFRjyGZF1mrhe66f7640Uuas
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    AllAppsContainerView.this.mViewPager.snapToPage(1);
+                    this.f$0.mViewPager.snapToPage(1);
                 }
             });
         }
@@ -438,29 +436,99 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
         }
     }
 
-    public void addSpringFromFlingUpdateListener(ValueAnimator valueAnimator, final float f) {
+    /* renamed from: com.android.launcher3.allapps.AllAppsContainerView$1 */
+    class AnonymousClass1 implements ValueAnimator.AnimatorUpdateListener {
+        boolean shouldSpring = true;
+        final /* synthetic */ float val$velocity;
+
+        AnonymousClass1(float f) {
+            f = f;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            if (!this.shouldSpring || valueAnimator.getAnimatedFraction() < AllAppsContainerView.FLING_ANIMATION_THRESHOLD || AllAppsContainerView.this.getSearchView() == null) {
+                return;
+            }
+            int id = AllAppsContainerView.this.getSearchView().getId();
+            AllAppsContainerView.this.addSpringView(id);
+            AllAppsContainerView.this.finishWithShiftAndVelocity(1.0f, f * AllAppsContainerView.FLING_VELOCITY_MULTIPLIER, new DynamicAnimation.OnAnimationEndListener() { // from class: com.android.launcher3.allapps.AllAppsContainerView.1.1
+                final /* synthetic */ int val$searchViewId;
+
+                C00071(int id2) {
+                    i = id2;
+                }
+
+                @Override // android.support.animation.DynamicAnimation.OnAnimationEndListener
+                public void onAnimationEnd(DynamicAnimation dynamicAnimation, boolean z, float f, float f2) {
+                    AllAppsContainerView.this.removeSpringView(i);
+                }
+            });
+            this.shouldSpring = false;
+        }
+
+        /* renamed from: com.android.launcher3.allapps.AllAppsContainerView$1$1 */
+        class C00071 implements DynamicAnimation.OnAnimationEndListener {
+            final /* synthetic */ int val$searchViewId;
+
+            C00071(int id2) {
+                i = id2;
+            }
+
+            @Override // android.support.animation.DynamicAnimation.OnAnimationEndListener
+            public void onAnimationEnd(DynamicAnimation dynamicAnimation, boolean z, float f, float f2) {
+                AllAppsContainerView.this.removeSpringView(i);
+            }
+        }
+    }
+
+    public void addSpringFromFlingUpdateListener(ValueAnimator valueAnimator, float f) {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.allapps.AllAppsContainerView.1
             boolean shouldSpring = true;
+            final /* synthetic */ float val$velocity;
+
+            AnonymousClass1(float f2) {
+                f = f2;
+            }
 
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator2) {
                 if (!this.shouldSpring || valueAnimator2.getAnimatedFraction() < AllAppsContainerView.FLING_ANIMATION_THRESHOLD || AllAppsContainerView.this.getSearchView() == null) {
                     return;
                 }
-                final int id = AllAppsContainerView.this.getSearchView().getId();
-                AllAppsContainerView.this.addSpringView(id);
+                int id2 = AllAppsContainerView.this.getSearchView().getId();
+                AllAppsContainerView.this.addSpringView(id2);
                 AllAppsContainerView.this.finishWithShiftAndVelocity(1.0f, f * AllAppsContainerView.FLING_VELOCITY_MULTIPLIER, new DynamicAnimation.OnAnimationEndListener() { // from class: com.android.launcher3.allapps.AllAppsContainerView.1.1
+                    final /* synthetic */ int val$searchViewId;
+
+                    C00071(int id22) {
+                        i = id22;
+                    }
+
                     @Override // android.support.animation.DynamicAnimation.OnAnimationEndListener
-                    public void onAnimationEnd(DynamicAnimation dynamicAnimation, boolean z, float f2, float f3) {
-                        AllAppsContainerView.this.removeSpringView(id);
+                    public void onAnimationEnd(DynamicAnimation dynamicAnimation, boolean z, float f2, float f22) {
+                        AllAppsContainerView.this.removeSpringView(i);
                     }
                 });
                 this.shouldSpring = false;
             }
+
+            /* renamed from: com.android.launcher3.allapps.AllAppsContainerView$1$1 */
+            class C00071 implements DynamicAnimation.OnAnimationEndListener {
+                final /* synthetic */ int val$searchViewId;
+
+                C00071(int id22) {
+                    i = id22;
+                }
+
+                @Override // android.support.animation.DynamicAnimation.OnAnimationEndListener
+                public void onAnimationEnd(DynamicAnimation dynamicAnimation, boolean z, float f2, float f22) {
+                    AllAppsContainerView.this.removeSpringView(i);
+                }
+            }
         });
     }
 
-    /* loaded from: classes.dex */
     public class AdapterHolder {
         public static final int MAIN = 0;
         public static final int WORK = 1;

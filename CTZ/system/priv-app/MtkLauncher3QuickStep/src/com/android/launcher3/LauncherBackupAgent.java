@@ -6,6 +6,7 @@ import android.app.backup.BackupDataOutput;
 import android.os.ParcelFileDescriptor;
 import com.android.launcher3.logging.FileLog;
 import com.android.launcher3.provider.RestoreDbTask;
+
 /* loaded from: classes.dex */
 public class LauncherBackupAgent extends BackupAgent {
     @Override // android.app.backup.BackupAgent

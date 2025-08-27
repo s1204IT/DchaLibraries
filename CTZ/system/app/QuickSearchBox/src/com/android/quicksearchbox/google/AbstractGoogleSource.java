@@ -9,6 +9,7 @@ import com.android.quicksearchbox.CursorBackedSourceResult;
 import com.android.quicksearchbox.R;
 import com.android.quicksearchbox.SourceResult;
 import com.android.quicksearchbox.util.NamedTaskExecutor;
+
 /* loaded from: classes.dex */
 public abstract class AbstractGoogleSource extends AbstractInternalSource implements GoogleSource {
     public abstract SourceResult queryInternal(String str);
@@ -37,7 +38,7 @@ public abstract class AbstractGoogleSource extends AbstractInternalSource implem
         return R.mipmap.google_icon;
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: getSuggestions(Ljava/lang/String;I)Lcom/android/quicksearchbox/SuggestionCursor; */
     @Override // com.android.quicksearchbox.SuggestionCursorProvider
     public SourceResult getSuggestions(String str, int i) {
         return emptyIfNull(queryInternal(str), str);

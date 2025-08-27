@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class AssistOrbContainer extends FrameLayout {
     private boolean mAnimatingOut;
@@ -39,11 +40,15 @@ public class AssistOrbContainer extends FrameLayout {
                 setVisibility(0);
                 if (z2) {
                     startEnterAnimation();
+                    return;
                 } else {
                     reset();
+                    return;
                 }
             }
-        } else if (z2) {
+            return;
+        }
+        if (z2) {
             startExitAnimation(new Runnable() { // from class: com.android.systemui.assist.AssistOrbContainer.1
                 @Override // java.lang.Runnable
                 public void run() {
@@ -83,14 +88,13 @@ public class AssistOrbContainer extends FrameLayout {
         if (this.mAnimatingOut) {
             if (runnable != null) {
                 runnable.run();
-                return;
             }
-            return;
+        } else {
+            this.mAnimatingOut = true;
+            this.mOrb.startExitAnimation(150L);
+            this.mScrim.animate().alpha(0.0f).setDuration(250L).setStartDelay(150L).setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
+            this.mNavbarScrim.animate().alpha(0.0f).setDuration(250L).setStartDelay(150L).setInterpolator(Interpolators.FAST_OUT_SLOW_IN).withEndAction(runnable);
         }
-        this.mAnimatingOut = true;
-        this.mOrb.startExitAnimation(150L);
-        this.mScrim.animate().alpha(0.0f).setDuration(250L).setStartDelay(150L).setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
-        this.mNavbarScrim.animate().alpha(0.0f).setDuration(250L).setStartDelay(150L).setInterpolator(Interpolators.FAST_OUT_SLOW_IN).withEndAction(runnable);
     }
 
     public boolean isShowing() {

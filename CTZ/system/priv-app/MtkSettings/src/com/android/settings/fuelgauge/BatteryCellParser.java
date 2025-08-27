@@ -5,6 +5,7 @@ import android.util.SparseIntArray;
 import com.android.settings.Utils;
 import com.android.settings.fuelgauge.BatteryActiveView;
 import com.android.settings.fuelgauge.BatteryInfo;
+
 /* loaded from: classes.dex */
 public class BatteryCellParser implements BatteryActiveView.BatteryActiveProvider, BatteryInfo.BatteryDataParser {
     private final SparseIntArray mData = new SparseIntArray();

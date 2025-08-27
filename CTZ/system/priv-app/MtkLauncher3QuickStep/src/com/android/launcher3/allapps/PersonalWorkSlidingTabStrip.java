@@ -15,6 +15,7 @@ import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.pageindicators.PageIndicator;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class PersonalWorkSlidingTabStrip extends LinearLayout implements PageIndicator {
     private static final String KEY_SHOWED_PEEK_WORK_TAB = "showed_peek_work_tab";
@@ -42,9 +43,9 @@ public class PersonalWorkSlidingTabStrip extends LinearLayout implements PageInd
         setWillNotDraw(false);
         this.mSelectedIndicatorHeight = getResources().getDimensionPixelSize(R.dimen.all_apps_tabs_indicator_height);
         this.mSelectedIndicatorPaint = new Paint();
-        this.mSelectedIndicatorPaint.setColor(Themes.getAttrColor(context, 16843829));
+        this.mSelectedIndicatorPaint.setColor(Themes.getAttrColor(context, android.R.attr.colorAccent));
         this.mDividerPaint = new Paint();
-        this.mDividerPaint.setColor(Themes.getAttrColor(context, 16843820));
+        this.mDividerPaint.setColor(Themes.getAttrColor(context, android.R.attr.colorControlHighlight));
         this.mDividerPaint.setStrokeWidth(getResources().getDimensionPixelSize(R.dimen.all_apps_divider_height));
         this.mSharedPreferences = Launcher.getLauncher(getContext()).getSharedPrefs();
         this.mIsRtl = Utilities.isRtl(getResources());
@@ -72,16 +73,16 @@ public class PersonalWorkSlidingTabStrip extends LinearLayout implements PageInd
     }
 
     private void updateIndicatorPosition() {
-        int i;
+        int width;
         View leftTab = getLeftTab();
-        int i2 = -1;
+        int left = -1;
         if (leftTab != null) {
-            i2 = (int) (leftTab.getLeft() + (leftTab.getWidth() * this.mScrollOffset));
-            i = leftTab.getWidth() + i2;
+            left = (int) (leftTab.getLeft() + (leftTab.getWidth() * this.mScrollOffset));
+            width = leftTab.getWidth() + left;
         } else {
-            i = -1;
+            width = -1;
         }
-        setIndicatorPosition(i2, i);
+        setIndicatorPosition(left, width);
     }
 
     private View getLeftTab() {
@@ -122,8 +123,7 @@ public class PersonalWorkSlidingTabStrip extends LinearLayout implements PageInd
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$highlightWorkTab$0(View view) {
+    static /* synthetic */ void lambda$highlightWorkTab$0(View view) {
         view.setPressed(true);
         view.setPressed(false);
     }

@@ -1,6 +1,7 @@
 package com.android.settings.display;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.internal.app.ColorDisplayController;
@@ -10,6 +11,7 @@ import com.android.settings.widget.RadioButtonPickerFragment;
 import com.android.settingslib.widget.CandidateInfo;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ColorModePreferenceFragment extends RadioButtonPickerFragment implements ColorDisplayController.Callback {
     static final String KEY_COLOR_MODE_AUTOMATIC = "color_mode_automatic";
@@ -34,9 +36,8 @@ public class ColorModePreferenceFragment extends RadioButtonPickerFragment imple
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.color_mode_settings;
     }
 
@@ -47,13 +48,13 @@ public class ColorModePreferenceFragment extends RadioButtonPickerFragment imple
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected void addStaticPreferences(PreferenceScreen preferenceScreen) {
-        configureAndInstallPreview(new LayoutPreference(preferenceScreen.getContext(), (int) R.layout.color_mode_preview), preferenceScreen);
+        configureAndInstallPreview(new LayoutPreference(preferenceScreen.getContext(), R.layout.color_mode_preview), preferenceScreen);
     }
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
-    protected List<? extends CandidateInfo> getCandidates() {
+    protected List<? extends CandidateInfo> getCandidates() throws Resources.NotFoundException {
         Context context = getContext();
-        int[] intArray = context.getResources().getIntArray(17235987);
+        int[] intArray = context.getResources().getIntArray(android.R.array.config_autoBrightnessDisplayValuesNitsIdle);
         ArrayList arrayList = new ArrayList();
         if (intArray != null) {
             for (int i : intArray) {
@@ -86,46 +87,44 @@ public class ColorModePreferenceFragment extends RadioButtonPickerFragment imple
         return KEY_COLOR_MODE_NATURAL;
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:23:0x0045  */
     @Override // com.android.settings.widget.RadioButtonPickerFragment
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     protected boolean setDefaultKey(String str) {
         char c;
-        int hashCode = str.hashCode();
-        if (hashCode == -2029194174) {
-            if (str.equals(KEY_COLOR_MODE_BOOSTED)) {
-                c = 1;
-            }
-            c = 65535;
-        } else if (hashCode == -739564821) {
-            if (str.equals(KEY_COLOR_MODE_AUTOMATIC)) {
+        int iHashCode = str.hashCode();
+        if (iHashCode != -2029194174) {
+            if (iHashCode != -739564821) {
+                if (iHashCode != -365217559) {
+                    c = (iHashCode == 765917269 && str.equals(KEY_COLOR_MODE_SATURATED)) ? (char) 2 : (char) 65535;
+                } else if (str.equals(KEY_COLOR_MODE_NATURAL)) {
+                    c = 0;
+                }
+            } else if (str.equals(KEY_COLOR_MODE_AUTOMATIC)) {
                 c = 3;
             }
-            c = 65535;
-        } else if (hashCode != -365217559) {
-            if (hashCode == 765917269 && str.equals(KEY_COLOR_MODE_SATURATED)) {
-                c = 2;
-            }
-            c = 65535;
-        } else {
-            if (str.equals(KEY_COLOR_MODE_NATURAL)) {
-                c = 0;
-            }
-            c = 65535;
+        } else if (str.equals(KEY_COLOR_MODE_BOOSTED)) {
+            c = 1;
         }
         switch (c) {
             case 0:
                 this.mController.setColorMode(0);
-                break;
+                return true;
             case 1:
                 this.mController.setColorMode(1);
-                break;
+                return true;
             case 2:
                 this.mController.setColorMode(2);
-                break;
+                return true;
             case 3:
                 this.mController.setColorMode(3);
-                break;
+                return true;
+            default:
+                return true;
         }
-        return true;
     }
 
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -133,7 +132,6 @@ public class ColorModePreferenceFragment extends RadioButtonPickerFragment imple
         return 1143;
     }
 
-    /* loaded from: classes.dex */
     static class ColorModeCandidateInfo extends CandidateInfo {
         private final String mKey;
         private final CharSequence mLabel;

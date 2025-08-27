@@ -20,6 +20,7 @@ import com.android.launcher3.graphics.BitmapRenderer;
 import com.android.launcher3.util.UiThreadHelper;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
 import java.nio.ByteBuffer;
+
 /* loaded from: classes.dex */
 public class DragPreviewProvider {
     protected final int blurSizeOutline;
@@ -40,13 +41,12 @@ public class DragPreviewProvider {
         if (this.mView instanceof BubbleTextView) {
             Rect drawableBounds = getDrawableBounds(((BubbleTextView) this.mView).getIcon());
             this.previewPadding = (this.blurSizeOutline - drawableBounds.left) - drawableBounds.top;
-            return;
+        } else {
+            this.previewPadding = this.blurSizeOutline;
         }
-        this.previewPadding = this.blurSizeOutline;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void drawDragView(Canvas canvas, float f) {
+    protected void drawDragView(Canvas canvas, float f) {
         canvas.save();
         canvas.scale(f, f);
         if (this.mView instanceof BubbleTextView) {
@@ -77,22 +77,22 @@ public class DragPreviewProvider {
         int height = this.mView.getHeight();
         if (this.mView instanceof BubbleTextView) {
             Rect drawableBounds = getDrawableBounds(((BubbleTextView) this.mView).getIcon());
-            int width2 = drawableBounds.width();
+            int iWidth = drawableBounds.width();
             height = drawableBounds.height();
-            width = width2;
+            width = iWidth;
         } else if (this.mView instanceof LauncherAppWidgetHostView) {
             final float scaleToFit = ((LauncherAppWidgetHostView) this.mView).getScaleToFit();
             return BitmapRenderer.createSoftwareBitmap(((int) (this.mView.getWidth() * scaleToFit)) + this.blurSizeOutline, ((int) (this.mView.getHeight() * scaleToFit)) + this.blurSizeOutline, new BitmapRenderer.Renderer() { // from class: com.android.launcher3.graphics.-$$Lambda$DragPreviewProvider$mOiJTXeJnD_eeMi0HJ3nPr-nzk4
                 @Override // com.android.launcher3.graphics.BitmapRenderer.Renderer
                 public final void draw(Canvas canvas) {
-                    DragPreviewProvider.this.drawDragView(canvas, scaleToFit);
+                    this.f$0.drawDragView(canvas, scaleToFit);
                 }
             });
         }
         return BitmapRenderer.createHardwareBitmap(width + this.blurSizeOutline, height + this.blurSizeOutline, new BitmapRenderer.Renderer() { // from class: com.android.launcher3.graphics.-$$Lambda$DragPreviewProvider$ku63NENVzwDPH8dVoEkuHh0oxUk
             @Override // com.android.launcher3.graphics.BitmapRenderer.Renderer
             public final void draw(Canvas canvas) {
-                DragPreviewProvider.this.drawDragView(canvas, 1.0f);
+                this.f$0.drawDragView(canvas, 1.0f);
             }
         });
     }
@@ -102,8 +102,7 @@ public class DragPreviewProvider {
         new Handler(UiThreadHelper.getBackgroundLooper()).post(this.mOutlineGeneratorCallback);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static Rect getDrawableBounds(Drawable drawable) {
+    protected static Rect getDrawableBounds(Drawable drawable) {
         Rect rect = new Rect();
         drawable.copyBounds(rect);
         if (rect.width() == 0 || rect.height() == 0) {
@@ -124,14 +123,11 @@ public class DragPreviewProvider {
         return locationInDragLayer;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Bitmap convertPreviewToAlphaBitmap(Bitmap bitmap) {
+    protected Bitmap convertPreviewToAlphaBitmap(Bitmap bitmap) {
         return bitmap.copy(Bitmap.Config.ALPHA_8, true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class OutlineGeneratorCallback implements Runnable {
+    private class OutlineGeneratorCallback implements Runnable {
         private final Context mContext;
         private final Bitmap mPreviewSnapshot;
 
@@ -142,48 +138,45 @@ public class DragPreviewProvider {
 
         @Override // java.lang.Runnable
         public void run() {
-            int[] iArr;
-            int[] iArr2;
-            int[] iArr3;
-            Bitmap convertPreviewToAlphaBitmap = DragPreviewProvider.this.convertPreviewToAlphaBitmap(this.mPreviewSnapshot);
-            byte[] bArr = new byte[convertPreviewToAlphaBitmap.getWidth() * convertPreviewToAlphaBitmap.getHeight()];
-            ByteBuffer wrap = ByteBuffer.wrap(bArr);
-            wrap.rewind();
-            convertPreviewToAlphaBitmap.copyPixelsToBuffer(wrap);
+            Bitmap bitmapConvertPreviewToAlphaBitmap = DragPreviewProvider.this.convertPreviewToAlphaBitmap(this.mPreviewSnapshot);
+            byte[] bArr = new byte[bitmapConvertPreviewToAlphaBitmap.getWidth() * bitmapConvertPreviewToAlphaBitmap.getHeight()];
+            ByteBuffer byteBufferWrap = ByteBuffer.wrap(bArr);
+            byteBufferWrap.rewind();
+            bitmapConvertPreviewToAlphaBitmap.copyPixelsToBuffer(byteBufferWrap);
             for (int i = 0; i < bArr.length; i++) {
                 if ((bArr[i] & 255) < 188) {
                     bArr[i] = 0;
                 }
             }
-            wrap.rewind();
-            convertPreviewToAlphaBitmap.copyPixelsFromBuffer(wrap);
+            byteBufferWrap.rewind();
+            bitmapConvertPreviewToAlphaBitmap.copyPixelsFromBuffer(byteBufferWrap);
             Paint paint = new Paint(3);
             Canvas canvas = new Canvas();
             paint.setMaskFilter(new BlurMaskFilter(DragPreviewProvider.this.blurSizeOutline, BlurMaskFilter.Blur.OUTER));
-            Bitmap extractAlpha = convertPreviewToAlphaBitmap.extractAlpha(paint, new int[2]);
+            Bitmap bitmapExtractAlpha = bitmapConvertPreviewToAlphaBitmap.extractAlpha(paint, new int[2]);
             paint.setMaskFilter(new BlurMaskFilter(this.mContext.getResources().getDimension(R.dimen.blur_size_thin_outline), BlurMaskFilter.Blur.OUTER));
-            Bitmap extractAlpha2 = convertPreviewToAlphaBitmap.extractAlpha(paint, new int[2]);
-            canvas.setBitmap(convertPreviewToAlphaBitmap);
+            Bitmap bitmapExtractAlpha2 = bitmapConvertPreviewToAlphaBitmap.extractAlpha(paint, new int[2]);
+            canvas.setBitmap(bitmapConvertPreviewToAlphaBitmap);
             canvas.drawColor(ViewCompat.MEASURED_STATE_MASK, PorterDuff.Mode.SRC_OUT);
             paint.setMaskFilter(new BlurMaskFilter(DragPreviewProvider.this.blurSizeOutline, BlurMaskFilter.Blur.NORMAL));
-            Bitmap extractAlpha3 = convertPreviewToAlphaBitmap.extractAlpha(paint, new int[2]);
+            Bitmap bitmapExtractAlpha3 = bitmapConvertPreviewToAlphaBitmap.extractAlpha(paint, new int[2]);
             paint.setMaskFilter(null);
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-            canvas.setBitmap(extractAlpha3);
-            canvas.drawBitmap(convertPreviewToAlphaBitmap, -iArr3[0], -iArr3[1], paint);
-            canvas.drawRect(0.0f, 0.0f, -iArr3[0], extractAlpha3.getHeight(), paint);
-            canvas.drawRect(0.0f, 0.0f, extractAlpha3.getWidth(), -iArr3[1], paint);
+            canvas.setBitmap(bitmapExtractAlpha3);
+            canvas.drawBitmap(bitmapConvertPreviewToAlphaBitmap, -r5[0], -r5[1], paint);
+            canvas.drawRect(0.0f, 0.0f, -r5[0], bitmapExtractAlpha3.getHeight(), paint);
+            canvas.drawRect(0.0f, 0.0f, bitmapExtractAlpha3.getWidth(), -r5[1], paint);
             paint.setXfermode(null);
-            canvas.setBitmap(convertPreviewToAlphaBitmap);
+            canvas.setBitmap(bitmapConvertPreviewToAlphaBitmap);
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-            canvas.drawBitmap(extractAlpha3, iArr3[0], iArr3[1], paint);
-            canvas.drawBitmap(extractAlpha, iArr[0], iArr[1], paint);
-            canvas.drawBitmap(extractAlpha2, iArr2[0], iArr2[1], paint);
+            canvas.drawBitmap(bitmapExtractAlpha3, r5[0], r5[1], paint);
+            canvas.drawBitmap(bitmapExtractAlpha, r12[0], r12[1], paint);
+            canvas.drawBitmap(bitmapExtractAlpha2, r14[0], r14[1], paint);
             canvas.setBitmap(null);
-            extractAlpha2.recycle();
-            extractAlpha.recycle();
-            extractAlpha3.recycle();
-            DragPreviewProvider.this.generatedDragOutline = convertPreviewToAlphaBitmap;
+            bitmapExtractAlpha2.recycle();
+            bitmapExtractAlpha.recycle();
+            bitmapExtractAlpha3.recycle();
+            DragPreviewProvider.this.generatedDragOutline = bitmapConvertPreviewToAlphaBitmap;
         }
     }
 }

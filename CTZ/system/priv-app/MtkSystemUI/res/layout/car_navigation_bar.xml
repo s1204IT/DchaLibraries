@@ -1,12 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.android.systemui.statusbar.car.CarNavigationBarView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:systemui="http://schemas.android.com/apk/res-auto" android:background="@drawable/system_bar_background" android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout android:gravity="left" android:orientation="horizontal" android:id="@+id/nav_buttons" android:paddingLeft="30dp" android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_weight="1" android:animateLayoutChanges="true">
-        <com.android.systemui.statusbar.car.CarNavigationButton android:id="@+id/home" android:background="?android:attr/selectableItemBackground" android:paddingLeft="30dp" android:paddingRight="30dp" android:layout_width="wrap_content" android:layout_height="match_parent" android:src="@drawable/car_ic_overview" systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"/>
-        <com.android.systemui.statusbar.car.CarNavigationButton android:id="@+id/hvac" android:background="?android:attr/selectableItemBackground" android:paddingLeft="30dp" android:paddingRight="30dp" android:layout_width="wrap_content" android:layout_height="match_parent" android:src="@drawable/car_ic_hvac" systemui:broadcast="true" systemui:intent="intent:#Intent;action=android.car.intent.action.TOGGLE_HVAC_CONTROLS;end"/>
+<com.android.systemui.statusbar.car.CarNavigationBarView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:systemui="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/system_bar_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:gravity="left"
+        android:orientation="horizontal"
+        android:id="@+id/nav_buttons"
+        android:paddingLeft="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:animateLayoutChanges="true">
+        <com.android.systemui.statusbar.car.CarNavigationButton
+            android:id="@+id/home"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/car_ic_overview"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"/>
+        <com.android.systemui.statusbar.car.CarNavigationButton
+            android:id="@+id/hvac"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/car_ic_hvac"
+            systemui:broadcast="true"
+            systemui:intent="intent:#Intent;action=android.car.intent.action.TOGGLE_HVAC_CONTROLS;end"/>
     </LinearLayout>
-    <LinearLayout android:gravity="right" android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="match_parent" android:layout_weight="1">
-        <com.android.keyguard.AlphaOptimizedImageButton android:id="@+id/notifications" android:background="?android:attr/selectableItemBackground" android:paddingLeft="20dp" android:paddingRight="20dp" android:layout_width="wrap_content" android:layout_height="match_parent" android:src="@drawable/car_ic_notification" android:alpha="0.7"/>
-        <com.android.systemui.statusbar.policy.Clock android:textAppearance="@style/TextAppearance.StatusBar.Clock" android:gravity="center_vertical" android:id="@+id/clock" android:paddingRight="20dp" android:layout_width="wrap_content" android:layout_height="match_parent" android:singleLine="true" android:paddingStart="@dimen/status_bar_clock_starting_padding" android:paddingEnd="@dimen/status_bar_clock_end_padding"/>
-        <Space android:layout_width="10dp" android:layout_height="match_parent"/>
+    <LinearLayout
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <com.android.keyguard.AlphaOptimizedImageButton
+            android:id="@+id/notifications"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/car_ic_notification"
+            android:alpha="0.7"/>
+        <com.android.systemui.statusbar.policy.Clock
+            android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+            android:gravity="center_vertical"
+            android:id="@+id/clock"
+            android:paddingRight="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:singleLine="true"
+            android:paddingStart="@dimen/status_bar_clock_starting_padding"
+            android:paddingEnd="@dimen/status_bar_clock_end_padding"/>
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 </com.android.systemui.statusbar.car.CarNavigationBarView>

@@ -17,6 +17,7 @@ import com.android.systemui.shared.recents.model.TaskKeyLruCache;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import java.io.PrintWriter;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class RecentsTaskLoader {
     private final LruCache<ComponentName, ActivityInfo> mActivityInfoCache;
@@ -33,8 +34,10 @@ public class RecentsTaskLoader {
     private final int mMaxThumbnailCacheSize;
     private int mNumVisibleTasksLoaded;
     private int mSvelteLevel;
+
     @GuardedBy("this")
     private final TaskKeyStrongCache<ThumbnailData> mThumbnailCache = new TaskKeyStrongCache<>();
+
     @GuardedBy("this")
     private final TaskKeyStrongCache<ThumbnailData> mTempCache = new TaskKeyStrongCache<>();
     private TaskKeyLruCache.EvictionCallback mClearActivityInfoOnEviction = new TaskKeyLruCache.EvictionCallback() { // from class: com.android.systemui.shared.recents.model.RecentsTaskLoader.1
@@ -65,7 +68,7 @@ public class RecentsTaskLoader {
         this.mLoader = new BackgroundTaskLoader(taskResourceLoadQueue, iconLoader, new BackgroundTaskLoader.OnIdleChangedListener() { // from class: com.android.systemui.shared.recents.model.-$$Lambda$vKccogRiJjM5FBa4zs196J3w_Fs
             @Override // com.android.systemui.shared.recents.model.BackgroundTaskLoader.OnIdleChangedListener
             public final void onIdleChanged(boolean z) {
-                HighResThumbnailLoader.this.setTaskLoadQueueIdle(z);
+                highResThumbnailLoader.setTaskLoadQueueIdle(z);
             }
         });
     }
@@ -96,9 +99,12 @@ public class RecentsTaskLoader {
     }
 
     public synchronized void preloadTasks(RecentsTaskLoadPlan recentsTaskLoadPlan, int i, int i2) {
-        Trace.beginSection("preloadPlan");
-        recentsTaskLoadPlan.preloadPlan(new RecentsTaskLoadPlan.PreloadOptions(), this, i, i2);
-        Trace.endSection();
+        try {
+            Trace.beginSection("preloadPlan");
+            recentsTaskLoadPlan.preloadPlan(new RecentsTaskLoadPlan.PreloadOptions(), this, i, i2);
+        } finally {
+            Trace.endSection();
+        }
     }
 
     public synchronized void loadTasks(RecentsTaskLoadPlan recentsTaskLoadPlan, RecentsTaskLoadPlan.Options options) {
@@ -141,7 +147,8 @@ public class RecentsTaskLoader {
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:16:0x001b, code lost:
-        if (r3 != 80) goto L17;
+    
+        if (r3 != 80) goto L22;
      */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -179,8 +186,7 @@ public class RecentsTaskLoader {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getAndUpdateActivityTitle(Task.TaskKey taskKey, ActivityManager.TaskDescription taskDescription) {
+    String getAndUpdateActivityTitle(Task.TaskKey taskKey, ActivityManager.TaskDescription taskDescription) {
         if (taskDescription != null && taskDescription.getLabel() != null) {
             return taskDescription.getLabel();
         }
@@ -197,8 +203,7 @@ public class RecentsTaskLoader {
         return "";
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getAndUpdateContentDescription(Task.TaskKey taskKey, ActivityManager.TaskDescription taskDescription) {
+    String getAndUpdateContentDescription(Task.TaskKey taskKey, ActivityManager.TaskDescription taskDescription) {
         String andInvalidateIfModified = this.mContentDescriptionCache.getAndInvalidateIfModified(taskKey);
         if (andInvalidateIfModified != null) {
             return andInvalidateIfModified;
@@ -214,13 +219,11 @@ public class RecentsTaskLoader {
         return "";
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Drawable getAndUpdateActivityIcon(Task.TaskKey taskKey, ActivityManager.TaskDescription taskDescription, boolean z) {
+    Drawable getAndUpdateActivityIcon(Task.TaskKey taskKey, ActivityManager.TaskDescription taskDescription, boolean z) {
         return this.mIconLoader.getAndInvalidateIfModified(taskKey, taskDescription, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public synchronized ThumbnailData getAndUpdateThumbnail(Task.TaskKey taskKey, boolean z, boolean z2) {
+    synchronized ThumbnailData getAndUpdateThumbnail(Task.TaskKey taskKey, boolean z, boolean z2) {
         ThumbnailData andInvalidateIfModified = this.mThumbnailCache.getAndInvalidateIfModified(taskKey);
         if (andInvalidateIfModified != null) {
             return andInvalidateIfModified;
@@ -242,24 +245,21 @@ public class RecentsTaskLoader {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getActivityPrimaryColor(ActivityManager.TaskDescription taskDescription) {
+    int getActivityPrimaryColor(ActivityManager.TaskDescription taskDescription) {
         if (taskDescription != null && taskDescription.getPrimaryColor() != 0) {
             return taskDescription.getPrimaryColor();
         }
         return this.mDefaultTaskBarBackgroundColor;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getActivityBackgroundColor(ActivityManager.TaskDescription taskDescription) {
+    int getActivityBackgroundColor(ActivityManager.TaskDescription taskDescription) {
         if (taskDescription != null && taskDescription.getBackgroundColor() != 0) {
             return taskDescription.getBackgroundColor();
         }
         return this.mDefaultTaskViewBackgroundColor;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ActivityInfo getAndUpdateActivityInfo(Task.TaskKey taskKey) {
+    ActivityInfo getAndUpdateActivityInfo(Task.TaskKey taskKey) {
         return this.mIconLoader.getAndUpdateActivityInfo(taskKey);
     }
 

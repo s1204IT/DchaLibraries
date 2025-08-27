@@ -9,6 +9,7 @@ import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
 import com.android.settings.fuelgauge.PowerUsageFeatureProvider;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class BatteryManagerPreferenceController extends BasePreferenceController {
     private static final String KEY_BATTERY_MANAGER = "smart_battery_manager";

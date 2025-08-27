@@ -6,6 +6,7 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.wifi.tether.WifiTetherBasePreferenceController;
+
 /* loaded from: classes.dex */
 public class WifiTetherSecurityPreferenceController extends WifiTetherBasePreferenceController {
     private final String[] mSecurityEntries;
@@ -54,7 +55,8 @@ public class WifiTetherSecurityPreferenceController extends WifiTetherBasePrefer
     }
 
     public void setSecurityType() {
+        ListPreference listPreference = (ListPreference) this.mPreference;
         this.mSecurityValue = 4;
-        ((ListPreference) this.mPreference).setSummary(this.mSecurityEntries[0]);
+        listPreference.setSummary(this.mSecurityEntries[0]);
     }
 }

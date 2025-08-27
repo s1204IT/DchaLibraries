@@ -1,10 +1,12 @@
 package com.android.systemui.qs;
 
+import android.R;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.UserInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
@@ -26,7 +28,6 @@ import com.android.settingslib.Utils;
 import com.android.settingslib.drawable.UserIconDrawable;
 import com.android.settingslib.graph.SignalDrawable;
 import com.android.systemui.Dependency;
-import com.android.systemui.R;
 import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.qs.TouchAnimator;
 import com.android.systemui.statusbar.phone.MultiUserSwitch;
@@ -37,6 +38,8 @@ import com.android.systemui.statusbar.policy.UserInfoController;
 import com.android.systemui.tuner.TunerService;
 import com.mediatek.systemui.ext.ISystemUIStatusBarExt;
 import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class QSFooterImpl extends FrameLayout implements View.OnClickListener, QSFooter, NetworkController.EmergencyListener, NetworkController.SignalCallback, UserInfoController.OnUserInfoChangedListener {
     private View mActionsContainer;
@@ -70,57 +73,56 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
     public QSFooterImpl(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mInfo = new CellSignalState();
-        this.mColorForeground = Utils.getColorAttr(context, 16842800);
+        this.mColorForeground = Utils.getColorAttr(context, R.attr.colorForeground);
         this.mStatusBarExt = OpSystemUICustomizationFactoryBase.getOpFactory(this.mContext).makeSystemUIStatusBar(this.mContext);
     }
 
     @Override // android.view.View
     protected void onFinishInflate() {
         super.onFinishInflate();
-        this.mDivider = findViewById(R.id.qs_footer_divider);
-        this.mEdit = findViewById(16908291);
+        this.mDivider = findViewById(com.android.systemui.R.id.qs_footer_divider);
+        this.mEdit = findViewById(R.id.edit);
         this.mEdit.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.qs.-$$Lambda$QSFooterImpl$3QBg0cgvu2IRpUDq3RvpL257x8c
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
                 ((ActivityStarter) Dependency.get(ActivityStarter.class)).postQSRunnableDismissingKeyguard(new Runnable() { // from class: com.android.systemui.qs.-$$Lambda$QSFooterImpl$BPGtDaa2eU-tTCTVDpjGrKOXYOs
                     @Override // java.lang.Runnable
                     public final void run() {
-                        QSFooterImpl.this.mQsPanel.showEdit(view);
+                        qSFooterImpl.mQsPanel.showEdit(view);
                     }
                 });
             }
         });
-        this.mPageIndicator = (PageIndicator) findViewById(R.id.footer_page_indicator);
-        this.mSettingsButton = (SettingsButton) findViewById(R.id.settings_button);
-        this.mSettingsContainer = findViewById(R.id.settings_button_container);
+        this.mPageIndicator = (PageIndicator) findViewById(com.android.systemui.R.id.footer_page_indicator);
+        this.mSettingsButton = (SettingsButton) findViewById(com.android.systemui.R.id.settings_button);
+        this.mSettingsContainer = findViewById(com.android.systemui.R.id.settings_button_container);
         this.mSettingsButton.setOnClickListener(this);
-        this.mMobileGroup = findViewById(R.id.mobile_combo);
-        this.mMobileSignal = (ImageView) findViewById(R.id.mobile_signal);
-        this.mMobileRoaming = (ImageView) findViewById(R.id.mobile_roaming);
-        this.mCarrierText = (CarrierText) findViewById(R.id.qs_carrier_text);
+        this.mMobileGroup = findViewById(com.android.systemui.R.id.mobile_combo);
+        this.mMobileSignal = (ImageView) findViewById(com.android.systemui.R.id.mobile_signal);
+        this.mMobileRoaming = (ImageView) findViewById(com.android.systemui.R.id.mobile_roaming);
+        this.mCarrierText = (CarrierText) findViewById(com.android.systemui.R.id.qs_carrier_text);
         this.mCarrierText.setDisplayFlags(3);
-        this.mMultiUserSwitch = (MultiUserSwitch) findViewById(R.id.multi_user_switch);
-        this.mMultiUserAvatar = (ImageView) this.mMultiUserSwitch.findViewById(R.id.multi_user_avatar);
-        this.mDragHandle = findViewById(R.id.qs_drag_handle_view);
-        this.mActionsContainer = findViewById(R.id.qs_footer_actions_container);
+        this.mMultiUserSwitch = (MultiUserSwitch) findViewById(com.android.systemui.R.id.multi_user_switch);
+        this.mMultiUserAvatar = (ImageView) this.mMultiUserSwitch.findViewById(com.android.systemui.R.id.multi_user_avatar);
+        this.mDragHandle = findViewById(com.android.systemui.R.id.qs_drag_handle_view);
+        this.mActionsContainer = findViewById(com.android.systemui.R.id.qs_footer_actions_container);
         ((RippleDrawable) this.mSettingsButton.getBackground()).setForceSoftware(true);
         updateResources();
         this.mUserInfoController = (UserInfoController) Dependency.get(UserInfoController.class);
         this.mActivityStarter = (ActivityStarter) Dependency.get(ActivityStarter.class);
         addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // from class: com.android.systemui.qs.-$$Lambda$QSFooterImpl$GSAG9gEF755NpvH4khVvAa75uPs
             @Override // android.view.View.OnLayoutChangeListener
-            public final void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
-                QSFooterImpl.this.updateAnimator(i3 - i);
+            public final void onLayoutChange(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) throws Resources.NotFoundException {
+                this.f$0.updateAnimator(i3 - i);
             }
         });
         setImportantForAccessibility(1);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateAnimator(int i) {
+    private void updateAnimator(int i) throws Resources.NotFoundException {
         int numQuickTiles = QuickQSPanel.getNumQuickTiles(this.mContext);
-        int dimensionPixelSize = (i - ((this.mContext.getResources().getDimensionPixelSize(R.dimen.qs_quick_tile_size) - this.mContext.getResources().getDimensionPixelSize(R.dimen.qs_quick_tile_padding)) * numQuickTiles)) / (numQuickTiles - 1);
-        int dimensionPixelOffset = this.mContext.getResources().getDimensionPixelOffset(R.dimen.default_gear_space);
+        int dimensionPixelSize = (i - ((this.mContext.getResources().getDimensionPixelSize(com.android.systemui.R.dimen.qs_quick_tile_size) - this.mContext.getResources().getDimensionPixelSize(com.android.systemui.R.dimen.qs_quick_tile_padding)) * numQuickTiles)) / (numQuickTiles - 1);
+        int dimensionPixelOffset = this.mContext.getResources().getDimensionPixelOffset(com.android.systemui.R.dimen.default_gear_space);
         TouchAnimator.Builder builder = new TouchAnimator.Builder();
         View view = this.mSettingsContainer;
         float[] fArr = new float[2];
@@ -145,8 +147,8 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
     private void updateResources() {
         updateFooterAnimator();
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) this.mActionsContainer.getLayoutParams();
-        layoutParams.width = this.mContext.getResources().getInteger(R.integer.qs_footer_actions_width);
-        layoutParams.weight = this.mContext.getResources().getInteger(R.integer.qs_footer_actions_weight);
+        layoutParams.width = this.mContext.getResources().getInteger(com.android.systemui.R.integer.qs_footer_actions_width);
+        layoutParams.weight = this.mContext.getResources().getInteger(com.android.systemui.R.integer.qs_footer_actions_weight);
         this.mActionsContainer.setLayoutParams(layoutParams);
     }
 
@@ -232,7 +234,7 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
         post(new Runnable() { // from class: com.android.systemui.qs.-$$Lambda$QSFooterImpl$FK1In3z-Y3ppRrcllMggnruYa_s
             @Override // java.lang.Runnable
             public final void run() {
-                QSFooterImpl.lambda$updateEverything$3(QSFooterImpl.this);
+                QSFooterImpl.lambda$updateEverything$3(this.f$0);
             }
         });
     }
@@ -243,34 +245,30 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
     }
 
     private void updateVisibilities() {
-        int i = 0;
         this.mSettingsContainer.setVisibility(this.mQsDisabled ? 8 : 0);
-        this.mSettingsContainer.findViewById(R.id.tuner_icon).setVisibility(TunerService.isTunerEnabled(this.mContext) ? 0 : 4);
-        boolean isDeviceInDemoMode = UserManager.isDeviceInDemoMode(this.mContext);
-        this.mMultiUserSwitch.setVisibility(showUserSwitcher(isDeviceInDemoMode) ? 0 : 4);
-        this.mEdit.setVisibility((isDeviceInDemoMode || !this.mExpanded) ? 4 : 0);
-        SettingsButton settingsButton = this.mSettingsButton;
-        if (isDeviceInDemoMode || !this.mExpanded) {
-            i = 4;
-        }
-        settingsButton.setVisibility(i);
+        this.mSettingsContainer.findViewById(com.android.systemui.R.id.tuner_icon).setVisibility(TunerService.isTunerEnabled(this.mContext) ? 0 : 4);
+        boolean zIsDeviceInDemoMode = UserManager.isDeviceInDemoMode(this.mContext);
+        this.mMultiUserSwitch.setVisibility(showUserSwitcher(zIsDeviceInDemoMode) ? 0 : 4);
+        this.mEdit.setVisibility((zIsDeviceInDemoMode || !this.mExpanded) ? 4 : 0);
+        this.mSettingsButton.setVisibility((zIsDeviceInDemoMode || !this.mExpanded) ? 4 : 0);
     }
 
     private boolean showUserSwitcher(boolean z) {
         int i = 0;
-        if (this.mExpanded && !z && UserManager.supportsMultipleUsers()) {
-            UserManager userManager = UserManager.get(this.mContext);
-            if (userManager.hasUserRestriction("no_user_switch")) {
-                return false;
-            }
-            for (UserInfo userInfo : userManager.getUsers(true)) {
-                if (userInfo.supportsSwitchToByUser() && (i = i + 1) > 1) {
-                    return true;
-                }
-            }
-            return getResources().getBoolean(R.bool.qs_show_user_switcher_for_single_user);
+        if (!this.mExpanded || z || !UserManager.supportsMultipleUsers()) {
+            return false;
         }
-        return false;
+        UserManager userManager = UserManager.get(this.mContext);
+        if (userManager.hasUserRestriction("no_user_switch")) {
+            return false;
+        }
+        Iterator it = userManager.getUsers(true).iterator();
+        while (it.hasNext()) {
+            if (((UserInfo) it.next()).supportsSwitchToByUser() && (i = i + 1) > 1) {
+                return true;
+            }
+        }
+        return getResources().getBoolean(com.android.systemui.R.bool.qs_show_user_switcher_for_single_user);
     }
 
     private void updateListeners() {
@@ -314,7 +312,7 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
                 ((ActivityStarter) Dependency.get(ActivityStarter.class)).postQSRunnableDismissingKeyguard(new Runnable() { // from class: com.android.systemui.qs.-$$Lambda$QSFooterImpl$QqFCwKmpQEaqoIsbaA3_odDeJWo
                     @Override // java.lang.Runnable
                     public final void run() {
-                        QSFooterImpl.lambda$onClick$6(QSFooterImpl.this);
+                        QSFooterImpl.lambda$onClick$6(this.f$0);
                     }
                 });
             } else {
@@ -323,8 +321,7 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$onClick$4() {
+    static /* synthetic */ void lambda$onClick$4() {
     }
 
     public static /* synthetic */ void lambda$onClick$6(final QSFooterImpl qSFooterImpl) {
@@ -332,18 +329,17 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
             TunerService.showResetRequest(qSFooterImpl.mContext, new Runnable() { // from class: com.android.systemui.qs.-$$Lambda$QSFooterImpl$p6Eelc3uV5Rv_Va6Mn0QpjivHN4
                 @Override // java.lang.Runnable
                 public final void run() {
-                    QSFooterImpl.this.startSettingsActivity();
+                    this.f$0.startSettingsActivity();
                 }
             });
         } else {
-            Toast.makeText(qSFooterImpl.getContext(), (int) R.string.tuner_toast, 1).show();
+            Toast.makeText(qSFooterImpl.getContext(), com.android.systemui.R.string.tuner_toast, 1).show();
             TunerService.setTunerEnabled(qSFooterImpl.mContext, true);
         }
         qSFooterImpl.startSettingsActivity();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startSettingsActivity() {
+    private void startSettingsActivity() {
         if (BenesseExtension.getDchaState() != 0) {
             return;
         }
@@ -364,7 +360,7 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
     public void onUserInfoChanged(String str, Drawable drawable, String str2) {
         if (drawable != null && UserManager.get(this.mContext).isGuestUser(KeyguardUpdateMonitor.getCurrentUser()) && !(drawable instanceof UserIconDrawable)) {
             drawable = drawable.getConstantState().newDrawable(this.mContext.getResources()).mutate();
-            drawable.setColorFilter(Utils.getColorAttr(this.mContext, 16842800), PorterDuff.Mode.SRC_IN);
+            drawable.setColorFilter(Utils.getColorAttr(this.mContext, R.attr.colorForeground), PorterDuff.Mode.SRC_IN);
         }
         this.mMultiUserAvatar.setImageDrawable(drawable);
     }
@@ -384,10 +380,10 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
                 sb.append(", ");
             }
             if (this.mInfo.roaming) {
-                sb.append(this.mContext.getString(R.string.data_connection_roaming));
+                sb.append(this.mContext.getString(com.android.systemui.R.string.data_connection_roaming));
                 sb.append(", ");
             }
-            if (TextUtils.equals(this.mInfo.typeContentDescription, this.mContext.getString(R.string.data_connection_no_internet)) || TextUtils.equals(this.mInfo.typeContentDescription, this.mContext.getString(R.string.cell_data_off_content_description))) {
+            if (TextUtils.equals(this.mInfo.typeContentDescription, this.mContext.getString(com.android.systemui.R.string.data_connection_no_internet)) || TextUtils.equals(this.mInfo.typeContentDescription, this.mContext.getString(com.android.systemui.R.string.cell_data_off_content_description))) {
                 sb.append(this.mInfo.typeContentDescription);
             }
             this.mMobileSignal.setContentDescription(sb);
@@ -412,9 +408,7 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
         handleUpdateState();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class CellSignalState {
+    private final class CellSignalState {
         public String contentDescription;
         int mobileSignalIconId;
         boolean roaming;

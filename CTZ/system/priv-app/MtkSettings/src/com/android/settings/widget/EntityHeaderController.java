@@ -26,6 +26,7 @@ import com.android.settings.applications.appinfo.AppInfoDashboardFragment;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.applications.ApplicationsState;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class EntityHeaderController {
     private int mAction1;
@@ -174,9 +175,12 @@ public class EntityHeaderController {
     }
 
     public EntityHeaderController bindHeaderButtons() {
-        bindAppInfoLink(this.mHeader.findViewById(R.id.entity_header_content));
-        bindButton((ImageButton) this.mHeader.findViewById(16908313), this.mAction1);
-        bindButton((ImageButton) this.mHeader.findViewById(16908314), this.mAction2);
+        View viewFindViewById = this.mHeader.findViewById(R.id.entity_header_content);
+        ImageButton imageButton = (ImageButton) this.mHeader.findViewById(android.R.id.button1);
+        ImageButton imageButton2 = (ImageButton) this.mHeader.findViewById(android.R.id.button2);
+        bindAppInfoLink(viewFindViewById);
+        bindButton(imageButton, this.mAction1);
+        bindButton(imageButton2, this.mAction2);
         return this;
     }
 
@@ -206,7 +210,7 @@ public class EntityHeaderController {
             Log.w("AppDetailFeature", "No actionbar, cannot style actionbar.");
             return this;
         }
-        actionBar.setBackgroundDrawable(new ColorDrawable(Utils.getColorAttr(activity, 16843827)));
+        actionBar.setBackgroundDrawable(new ColorDrawable(Utils.getColorAttr(activity, android.R.attr.colorPrimary)));
         actionBar.setElevation(0.0f);
         if (this.mRecyclerView != null && this.mLifecycle != null) {
             ActionBarShadowController.attachToRecyclerView(this.mActivity, this.mLifecycle, this.mRecyclerView);
@@ -220,37 +224,36 @@ public class EntityHeaderController {
 
     private void bindButton(ImageButton imageButton, int i) {
         if (imageButton == null) {
-            return;
         }
         switch (i) {
             case 0:
                 imageButton.setVisibility(8);
-                return;
+                break;
             case 1:
                 if (this.mAppNotifPrefIntent == null) {
                     imageButton.setVisibility(8);
-                    return;
+                    break;
+                } else {
+                    imageButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.widget.EntityHeaderController.2
+                        @Override // android.view.View.OnClickListener
+                        public void onClick(View view) {
+                            FeatureFactory.getFactory(EntityHeaderController.this.mAppContext).getMetricsFeatureProvider().actionWithSource(EntityHeaderController.this.mAppContext, EntityHeaderController.this.mMetricsCategory, 1016);
+                            EntityHeaderController.this.mFragment.startActivity(EntityHeaderController.this.mAppNotifPrefIntent);
+                        }
+                    });
+                    imageButton.setVisibility(0);
+                    break;
                 }
-                imageButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.widget.EntityHeaderController.2
-                    @Override // android.view.View.OnClickListener
-                    public void onClick(View view) {
-                        FeatureFactory.getFactory(EntityHeaderController.this.mAppContext).getMetricsFeatureProvider().actionWithSource(EntityHeaderController.this.mAppContext, EntityHeaderController.this.mMetricsCategory, 1016);
-                        EntityHeaderController.this.mFragment.startActivity(EntityHeaderController.this.mAppNotifPrefIntent);
-                    }
-                });
-                imageButton.setVisibility(0);
-                return;
             case 2:
                 if (this.mEditRuleNameOnClickListener == null) {
                     imageButton.setVisibility(8);
-                    return;
+                    break;
+                } else {
+                    imageButton.setImageResource(R.drawable.ic_mode_edit);
+                    imageButton.setVisibility(0);
+                    imageButton.setOnClickListener(this.mEditRuleNameOnClickListener);
+                    break;
                 }
-                imageButton.setImageResource(R.drawable.ic_mode_edit);
-                imageButton.setVisibility(0);
-                imageButton.setOnClickListener(this.mEditRuleNameOnClickListener);
-                return;
-            default:
-                return;
         }
     }
 

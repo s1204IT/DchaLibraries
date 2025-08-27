@@ -4,18 +4,27 @@ import android.util.Log;
 import android.view.View;
 import com.android.systemui.Interpolators;
 import com.android.systemui.statusbar.phone.StatusBar;
+
 /* loaded from: classes.dex */
 public class CrossFadeHelper {
     public static void fadeOut(View view, Runnable runnable) {
         fadeOut(view, 210L, 0, runnable);
     }
 
-    public static void fadeOut(final View view, long j, int i, final Runnable runnable) {
+    public static void fadeOut(View view, long j, int i, Runnable runnable) {
         view.animate().cancel();
         if (StatusBar.DEBUG) {
             Log.d("CrossFadeHelper", "<fadeOut> view: " + view + ", duration: " + j + ", delay: " + i + ", endRunnable: " + runnable);
         }
         view.animate().alpha(0.0f).setDuration(j).setInterpolator(Interpolators.ALPHA_OUT).setStartDelay(i).withEndAction(new Runnable() { // from class: com.android.systemui.statusbar.CrossFadeHelper.1
+            final /* synthetic */ Runnable val$endRunnable;
+            final /* synthetic */ View val$view;
+
+            AnonymousClass1(Runnable runnable2, View view2) {
+                runnable = runnable2;
+                view = view2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 if (runnable != null) {
@@ -27,8 +36,30 @@ public class CrossFadeHelper {
                 }
             }
         });
-        if (view.hasOverlappingRendering()) {
-            view.animate().withLayer();
+        if (view2.hasOverlappingRendering()) {
+            view2.animate().withLayer();
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.CrossFadeHelper$1 */
+    class AnonymousClass1 implements Runnable {
+        final /* synthetic */ Runnable val$endRunnable;
+        final /* synthetic */ View val$view;
+
+        AnonymousClass1(Runnable runnable2, View view2) {
+            runnable = runnable2;
+            view = view2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (runnable != null) {
+                runnable.run();
+            }
+            view.setVisibility(4);
+            if (StatusBar.DEBUG) {
+                Log.d("CrossFadeHelper", "<fadeOut> execute endRunnable, view: " + view + ", " + runnable);
+            }
         }
     }
 

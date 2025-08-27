@@ -10,6 +10,7 @@ import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.notification.NotificationSettingsBase;
+
 /* loaded from: classes.dex */
 public class SoundPreferenceController extends NotificationPreferenceController implements PreferenceManager.OnActivityResultListener, Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final SettingsPreferenceFragment mFragment;
@@ -80,8 +81,7 @@ public class SoundPreferenceController extends NotificationPreferenceController 
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static boolean hasValidSound(NotificationChannel notificationChannel) {
+    protected static boolean hasValidSound(NotificationChannel notificationChannel) {
         return (notificationChannel == null || notificationChannel.getSound() == null || Uri.EMPTY.equals(notificationChannel.getSound())) ? false : true;
     }
 }

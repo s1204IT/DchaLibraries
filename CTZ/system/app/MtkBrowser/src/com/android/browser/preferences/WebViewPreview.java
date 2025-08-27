@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import com.android.browser.R;
+
 /* loaded from: classes.dex */
 public abstract class WebViewPreview extends Preference implements SharedPreferences.OnSharedPreferenceChangeListener {
     protected WebView mWebView;
@@ -30,19 +31,17 @@ public abstract class WebViewPreview extends Preference implements SharedPrefere
         init(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void init(Context context) {
+    protected void init(Context context) {
         setLayoutResource(R.layout.webview_preview);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setupWebView(WebView webView) {
+    protected void setupWebView(WebView webView) {
     }
 
     @Override // android.preference.Preference
     protected View onCreateView(ViewGroup viewGroup) {
-        View onCreateView = super.onCreateView(viewGroup);
-        WebView webView = (WebView) onCreateView.findViewById(R.id.webview);
+        View viewOnCreateView = super.onCreateView(viewGroup);
+        WebView webView = (WebView) viewOnCreateView.findViewById(R.id.webview);
         webView.setFocusable(false);
         webView.setFocusableInTouchMode(false);
         webView.setClickable(false);
@@ -50,7 +49,7 @@ public abstract class WebViewPreview extends Preference implements SharedPrefere
         webView.setHorizontalScrollBarEnabled(false);
         webView.setVerticalScrollBarEnabled(false);
         setupWebView(webView);
-        return onCreateView;
+        return viewOnCreateView;
     }
 
     @Override // android.preference.Preference

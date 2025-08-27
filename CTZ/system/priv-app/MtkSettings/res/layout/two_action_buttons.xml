@@ -1,12 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:gravity="center" android:orientation="horizontal" android:paddingTop="24dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="68dp" android:paddingEnd="24dp">
-    <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
-        <Button android:id="@+id/button1_positive" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp" style="@style/ActionPrimaryButton"/>
-        <Button android:id="@+id/button1_negative" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp" style="@style/ActionSecondaryButton"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingTop="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="68dp"
+    android:paddingEnd="24dp">
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <Button
+            android:id="@+id/button1_positive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            style="@style/ActionPrimaryButton"/>
+        <Button
+            android:id="@+id/button1_negative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            style="@style/ActionSecondaryButton"/>
     </FrameLayout>
-    <Space android:layout_width="16dp" android:layout_height="wrap_content"/>
-    <FrameLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
-        <Button android:id="@+id/button2_positive" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp" style="@style/ActionPrimaryButton"/>
-        <Button android:id="@+id/button2_negative" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp" style="@style/ActionSecondaryButton"/>
+    <Space
+        android:layout_width="16dp"
+        android:layout_height="wrap_content"/>
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <Button
+            android:id="@+id/button2_positive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            style="@style/ActionPrimaryButton"/>
+        <Button
+            android:id="@+id/button2_negative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            style="@style/ActionSecondaryButton"/>
     </FrameLayout>
 </LinearLayout>

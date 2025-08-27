@@ -42,6 +42,7 @@ import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
 import com.android.systemui.statusbar.policy.RemoteInputQuickSettingsDisabler;
 import com.android.systemui.statusbar.policy.SmartReplyConstants;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class SystemUIFactory {
     static SystemUIFactory mFactory;
@@ -180,58 +181,47 @@ public class SystemUIFactory {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$0(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$0(Context context) {
         return new NotificationLockscreenUserManager(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$1(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$1(Context context) {
         return new NotificationMediaManager(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$2(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$2(Context context) {
         return new NotificationGutsManager(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$3(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$3(Context context) {
         return new NotificationBlockingHelperManager(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$4(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$4(Context context) {
         return new NotificationRemoteInputManager(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$5(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$5(Context context) {
         return new SmartReplyConstants((Handler) Dependency.get(Dependency.MAIN_HANDLER), context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$6(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$6(Context context) {
         return new NotificationListener(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$7(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$7(Context context) {
         return new NotificationViewHierarchyManager(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$8(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$8(Context context) {
         return new NotificationEntryManager(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$9() {
+    static /* synthetic */ Object lambda$injectDependencies$9() {
         return new SmartReplyController();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$10(Context context) {
+    static /* synthetic */ Object lambda$injectDependencies$10(Context context) {
         return new RemoteInputQuickSettingsDisabler(context);
     }
 }

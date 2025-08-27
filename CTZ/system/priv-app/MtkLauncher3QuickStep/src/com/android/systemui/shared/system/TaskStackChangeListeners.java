@@ -12,6 +12,7 @@ import android.util.Log;
 import com.android.systemui.shared.recents.model.ThumbnailData;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TaskStackChangeListeners extends TaskStackListener {
     private static final String TAG = TaskStackChangeListeners.class.getSimpleName();
@@ -62,9 +63,9 @@ public class TaskStackChangeListeners extends TaskStackListener {
         this.mHandler.sendEmptyMessage(10);
     }
 
-    public void onPinnedActivityRestartAttempt(boolean clearedTask) throws RemoteException {
+    public void onPinnedActivityRestartAttempt(boolean z) throws RemoteException {
         this.mHandler.removeMessages(4);
-        this.mHandler.obtainMessage(4, clearedTask ? 1 : 0, 0).sendToTarget();
+        this.mHandler.obtainMessage(4, z ? 1 : 0, 0).sendToTarget();
     }
 
     public void onPinnedStackAnimationStarted() throws RemoteException {
@@ -109,7 +110,6 @@ public class TaskStackChangeListeners extends TaskStackListener {
         this.mHandler.obtainMessage(14, taskId, requestedOrientation).sendToTarget();
     }
 
-    /* loaded from: classes.dex */
     private final class H extends Handler {
         private static final int ON_ACTIVITY_DISMISSING_DOCKED_STACK = 7;
         private static final int ON_ACTIVITY_FORCED_RESIZABLE = 6;
@@ -220,7 +220,6 @@ public class TaskStackChangeListeners extends TaskStackListener {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class PinnedActivityInfo {
         final String mPackageName;
         final int mStackId;

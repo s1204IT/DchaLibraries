@@ -8,6 +8,7 @@ import com.android.setupwizardlib.R;
 import com.android.setupwizardlib.items.ItemHierarchy;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public abstract class AbstractItemHierarchy implements ItemHierarchy {
     private int mId;
@@ -21,9 +22,9 @@ public abstract class AbstractItemHierarchy implements ItemHierarchy {
     public AbstractItemHierarchy(Context context, AttributeSet attributeSet) {
         this.mObservers = new ArrayList<>();
         this.mId = 0;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwAbstractItem);
-        this.mId = obtainStyledAttributes.getResourceId(R.styleable.SuwAbstractItem_android_id, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwAbstractItem);
+        this.mId = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwAbstractItem_android_id, 0);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public int getId() {
@@ -42,26 +43,30 @@ public abstract class AbstractItemHierarchy implements ItemHierarchy {
     public void notifyItemRangeChanged(int i, int i2) {
         if (i < 0) {
             Log.w("AbstractItemHierarchy", "notifyItemRangeChanged: Invalid position=" + i);
-        } else if (i2 < 0) {
+            return;
+        }
+        if (i2 < 0) {
             Log.w("AbstractItemHierarchy", "notifyItemRangeChanged: Invalid itemCount=" + i2);
-        } else {
-            Iterator<ItemHierarchy.Observer> it = this.mObservers.iterator();
-            while (it.hasNext()) {
-                it.next().onItemRangeChanged(this, i, i2);
-            }
+            return;
+        }
+        Iterator<ItemHierarchy.Observer> it = this.mObservers.iterator();
+        while (it.hasNext()) {
+            it.next().onItemRangeChanged(this, i, i2);
         }
     }
 
     public void notifyItemRangeInserted(int i, int i2) {
         if (i < 0) {
             Log.w("AbstractItemHierarchy", "notifyItemRangeInserted: Invalid position=" + i);
-        } else if (i2 < 0) {
+            return;
+        }
+        if (i2 < 0) {
             Log.w("AbstractItemHierarchy", "notifyItemRangeInserted: Invalid itemCount=" + i2);
-        } else {
-            Iterator<ItemHierarchy.Observer> it = this.mObservers.iterator();
-            while (it.hasNext()) {
-                it.next().onItemRangeInserted(this, i, i2);
-            }
+            return;
+        }
+        Iterator<ItemHierarchy.Observer> it = this.mObservers.iterator();
+        while (it.hasNext()) {
+            it.next().onItemRangeInserted(this, i, i2);
         }
     }
 }

@@ -14,6 +14,7 @@ import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.mediatek.settings.FeatureOption;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NfcPreferenceController extends TogglePreferenceController implements LifecycleObserver, OnPause, OnResume {
     private static final String KEY_MTK_TOGGLE_NFC = "toggle_mtk_nfc";

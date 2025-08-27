@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.UserHandle;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class AutoSyncWorkDataPreferenceController extends AutoSyncPersonalDataPreferenceController {
     public AutoSyncWorkDataPreferenceController(Context context, Fragment fragment) {

@@ -2,6 +2,7 @@ package com.android.settings.fingerprint;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.os.UserManager;
@@ -16,6 +17,8 @@ import com.android.settings.password.ChooseLockSettingsHelper;
 import com.android.settingslib.HelpUtils;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.setupwizardlib.span.LinkSpan;
+import java.net.URISyntaxException;
+
 /* loaded from: classes.dex */
 public class FingerprintEnrollIntroduction extends FingerprintEnrollBase implements View.OnClickListener, LinkSpan.OnClickListener {
     private TextView mErrorText;
@@ -23,9 +26,8 @@ public class FingerprintEnrollIntroduction extends FingerprintEnrollBase impleme
     private boolean mHasPassword;
     private UserManager mUserManager;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.fingerprint.FingerprintEnrollBase, com.android.settings.core.InstrumentedActivity, com.android.settingslib.core.lifecycle.ObservableActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         this.mFingerprintUnlockDisabledByAdmin = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(this, 32, this.mUserId) != null;
         setContentView(R.layout.fingerprint_enroll_introduction);
@@ -41,12 +43,12 @@ public class FingerprintEnrollIntroduction extends FingerprintEnrollBase impleme
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservableActivity, android.app.Activity
-    protected void onResume() {
+    protected void onResume() throws Resources.NotFoundException {
         int i;
         super.onResume();
         FingerprintManager fingerprintManagerOrNull = Utils.getFingerprintManagerOrNull(this);
         if (fingerprintManagerOrNull != null) {
-            if (fingerprintManagerOrNull.getEnrolledFingerprints(this.mUserId).size() >= getResources().getInteger(17694789)) {
+            if (fingerprintManagerOrNull.getEnrolledFingerprints(this.mUserId).size() >= getResources().getInteger(android.R.integer.config_datause_polling_period_sec)) {
                 i = R.string.fingerprint_intro_error_max;
             } else {
                 i = 0;
@@ -57,19 +59,18 @@ public class FingerprintEnrollIntroduction extends FingerprintEnrollBase impleme
         if (i == 0) {
             this.mErrorText.setText((CharSequence) null);
             getNextButton().setVisibility(0);
-            return;
+        } else {
+            this.mErrorText.setText(i);
+            getNextButton().setVisibility(8);
         }
-        this.mErrorText.setText(i);
-        getNextButton().setVisibility(8);
     }
 
     private void updatePasswordQuality() {
         this.mHasPassword = new ChooseLockSettingsHelper(this).utils().getActivePasswordQuality(this.mUserManager.getCredentialOwnerProfile(this.mUserId)) != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.fingerprint.FingerprintEnrollBase
-    public Button getNextButton() {
+    protected Button getNextButton() {
         return (Button) findViewById(R.id.fingerprint_next_button);
     }
 
@@ -84,11 +85,11 @@ public class FingerprintEnrollIntroduction extends FingerprintEnrollBase impleme
 
     private void launchChooseLock() {
         Intent chooseLockIntent = getChooseLockIntent();
-        long preEnroll = Utils.getFingerprintManagerOrNull(this).preEnroll();
+        long jPreEnroll = Utils.getFingerprintManagerOrNull(this).preEnroll();
         chooseLockIntent.putExtra("minimum_quality", 65536);
         chooseLockIntent.putExtra("hide_disabled_prefs", true);
         chooseLockIntent.putExtra("has_challenge", true);
-        chooseLockIntent.putExtra("challenge", preEnroll);
+        chooseLockIntent.putExtra("challenge", jPreEnroll);
         chooseLockIntent.putExtra("for_fingerprint", true);
         if (this.mUserId != -10000) {
             chooseLockIntent.putExtra("android.intent.extra.USER_ID", this.mUserId);
@@ -108,16 +109,15 @@ public class FingerprintEnrollIntroduction extends FingerprintEnrollBase impleme
     }
 
     protected Intent getChooseLockIntent() {
-        return new Intent(this, ChooseLockGeneric.class);
+        return new Intent(this, (Class<?>) ChooseLockGeneric.class);
     }
 
     protected Intent getFindSensorIntent() {
-        return new Intent(this, FingerprintEnrollFindSensor.class);
+        return new Intent(this, (Class<?>) FingerprintEnrollFindSensor.class);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onActivityResult(int i, int i2, Intent intent) {
+    protected void onActivityResult(int i, int i2, Intent intent) {
         boolean z;
         if (i2 != 1) {
             z = false;
@@ -160,9 +160,8 @@ public class FingerprintEnrollIntroduction extends FingerprintEnrollBase impleme
         finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.fingerprint.FingerprintEnrollBase
-    public void initViews() {
+    protected void initViews() {
         super.initViews();
         TextView textView = (TextView) findViewById(R.id.description_text);
         if (this.mFingerprintUnlockDisabledByAdmin) {
@@ -171,7 +170,7 @@ public class FingerprintEnrollIntroduction extends FingerprintEnrollBase impleme
     }
 
     @Override // com.android.setupwizardlib.span.LinkSpan.OnClickListener
-    public void onClick(LinkSpan linkSpan) {
+    public void onClick(LinkSpan linkSpan) throws Resources.NotFoundException, URISyntaxException {
         if ("url".equals(linkSpan.getId())) {
             Intent helpIntent = HelpUtils.getHelpIntent(this, getString(R.string.help_url_fingerprint), getClass().getName());
             if (helpIntent == null) {

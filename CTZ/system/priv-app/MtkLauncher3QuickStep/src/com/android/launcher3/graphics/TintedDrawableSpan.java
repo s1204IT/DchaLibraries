@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.style.DynamicDrawableSpan;
+
 /* loaded from: classes.dex */
 public class TintedDrawableSpan extends DynamicDrawableSpan {
     private final Drawable mDrawable;

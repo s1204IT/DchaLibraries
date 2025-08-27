@@ -6,6 +6,7 @@ import android.support.v7.preference.PreferenceScreen;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.SetPreferenceScreen;
+
 /* loaded from: classes.dex */
 public class FooterPreferenceMixin implements LifecycleObserver, SetPreferenceScreen {
     private FooterPreference mFooterPreference;

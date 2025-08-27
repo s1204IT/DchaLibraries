@@ -1,6 +1,7 @@
 package com.android.quicksearchbox.util;
 
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class PerNameExecutor implements NamedTaskExecutor {
     private final Factory<NamedTaskExecutor> mExecutorFactory;
@@ -16,11 +17,11 @@ public class PerNameExecutor implements NamedTaskExecutor {
             this.mExecutors = new HashMap<>();
         }
         String name = namedTask.getName();
-        NamedTaskExecutor namedTaskExecutor = this.mExecutors.get(name);
-        if (namedTaskExecutor == null) {
-            namedTaskExecutor = this.mExecutorFactory.create();
-            this.mExecutors.put(name, namedTaskExecutor);
+        NamedTaskExecutor namedTaskExecutorCreate = this.mExecutors.get(name);
+        if (namedTaskExecutorCreate == null) {
+            namedTaskExecutorCreate = this.mExecutorFactory.create();
+            this.mExecutors.put(name, namedTaskExecutorCreate);
         }
-        namedTaskExecutor.execute(namedTask);
+        namedTaskExecutorCreate.execute(namedTask);
     }
 }

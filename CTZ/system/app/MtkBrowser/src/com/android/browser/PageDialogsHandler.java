@@ -16,6 +16,7 @@ import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.browser.HttpAuthenticationDialog;
+
 /* loaded from: classes.dex */
 public class PageDialogsHandler {
     private Context mContext;
@@ -64,11 +65,16 @@ public class PageDialogsHandler {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void showHttpAuthentication(final Tab tab, final HttpAuthHandler httpAuthHandler, String str, String str2) {
+    void showHttpAuthentication(Tab tab, HttpAuthHandler httpAuthHandler, String str, String str2) {
         this.mHttpAuthenticationDialog = new HttpAuthenticationDialog(this.mContext, str, str2);
         this.mHttpAuthenticationHandler = httpAuthHandler;
         this.mHttpAuthenticationDialog.setOkListener(new HttpAuthenticationDialog.OkListener() { // from class: com.android.browser.PageDialogsHandler.1
+            final /* synthetic */ HttpAuthHandler val$handler;
+
+            AnonymousClass1(HttpAuthHandler httpAuthHandler2) {
+                httpAuthHandler = httpAuthHandler2;
+            }
+
             @Override // com.android.browser.HttpAuthenticationDialog.OkListener
             public void onOk(String str3, String str4, String str5, String str6) {
                 PageDialogsHandler.this.setHttpAuthUsernamePassword(str3, str4, str5, str6);
@@ -77,6 +83,14 @@ public class PageDialogsHandler {
             }
         });
         this.mHttpAuthenticationDialog.setCancelListener(new HttpAuthenticationDialog.CancelListener() { // from class: com.android.browser.PageDialogsHandler.2
+            final /* synthetic */ HttpAuthHandler val$handler;
+            final /* synthetic */ Tab val$tab;
+
+            AnonymousClass2(HttpAuthHandler httpAuthHandler2, Tab tab2) {
+                httpAuthHandler = httpAuthHandler2;
+                tab = tab2;
+            }
+
             @Override // com.android.browser.HttpAuthenticationDialog.CancelListener
             public void onCancel() {
                 httpAuthHandler.cancel();
@@ -87,6 +101,40 @@ public class PageDialogsHandler {
         this.mHttpAuthenticationDialog.show();
     }
 
+    /* renamed from: com.android.browser.PageDialogsHandler$1 */
+    class AnonymousClass1 implements HttpAuthenticationDialog.OkListener {
+        final /* synthetic */ HttpAuthHandler val$handler;
+
+        AnonymousClass1(HttpAuthHandler httpAuthHandler2) {
+            httpAuthHandler = httpAuthHandler2;
+        }
+
+        @Override // com.android.browser.HttpAuthenticationDialog.OkListener
+        public void onOk(String str3, String str4, String str5, String str6) {
+            PageDialogsHandler.this.setHttpAuthUsernamePassword(str3, str4, str5, str6);
+            httpAuthHandler.proceed(str5, str6);
+            PageDialogsHandler.this.mHttpAuthenticationDialog = null;
+        }
+    }
+
+    /* renamed from: com.android.browser.PageDialogsHandler$2 */
+    class AnonymousClass2 implements HttpAuthenticationDialog.CancelListener {
+        final /* synthetic */ HttpAuthHandler val$handler;
+        final /* synthetic */ Tab val$tab;
+
+        AnonymousClass2(HttpAuthHandler httpAuthHandler2, Tab tab2) {
+            httpAuthHandler = httpAuthHandler2;
+            tab = tab2;
+        }
+
+        @Override // com.android.browser.HttpAuthenticationDialog.CancelListener
+        public void onCancel() {
+            httpAuthHandler.cancel();
+            PageDialogsHandler.this.mController.onUpdatedSecurityState(tab);
+            PageDialogsHandler.this.mHttpAuthenticationDialog = null;
+        }
+    }
+
     public void setHttpAuthUsernamePassword(String str, String str2, String str3, String str4) {
         WebView currentTopWebView = this.mController.getCurrentTopWebView();
         if (currentTopWebView != null) {
@@ -94,13 +142,12 @@ public class PageDialogsHandler {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void showPageInfo(final Tab tab, final boolean z, String str) {
+    void showPageInfo(Tab tab, boolean z, String str) {
         String url;
         if (tab == null) {
             return;
         }
-        View inflate = LayoutInflater.from(this.mContext).inflate(R.layout.page_info, (ViewGroup) null);
+        View viewInflate = LayoutInflater.from(this.mContext).inflate(R.layout.page_info, (ViewGroup) null);
         WebView webView = tab.getWebView();
         if (!z) {
             url = tab.getUrl();
@@ -114,12 +161,18 @@ public class PageDialogsHandler {
         if (title == null) {
             title = "";
         }
-        ((TextView) inflate.findViewById(R.id.address)).setText(url);
-        ((TextView) inflate.findViewById(R.id.title)).setText(title);
+        ((TextView) viewInflate.findViewById(R.id.address)).setText(url);
+        ((TextView) viewInflate.findViewById(R.id.title)).setText(title);
         this.mPageInfoView = tab;
         this.mPageInfoFromShowSSLCertificateOnError = z;
         this.mUrlCertificateOnError = str;
-        AlertDialog.Builder onCancelListener = new AlertDialog.Builder(this.mContext).setTitle(R.string.page_info).setIcon(17301659).setView(inflate).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.4
+        AlertDialog.Builder onCancelListener = new AlertDialog.Builder(this.mContext).setTitle(R.string.page_info).setIcon(android.R.drawable.ic_dialog_info).setView(viewInflate).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.4
+            final /* synthetic */ boolean val$fromShowSSLCertificateOnError;
+
+            AnonymousClass4(boolean z2) {
+                z = z2;
+            }
+
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 PageDialogsHandler.this.mPageInfoDialog = null;
@@ -129,6 +182,12 @@ public class PageDialogsHandler {
                 }
             }
         }).setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.browser.PageDialogsHandler.3
+            final /* synthetic */ boolean val$fromShowSSLCertificateOnError;
+
+            AnonymousClass3(boolean z2) {
+                z = z2;
+            }
+
             @Override // android.content.DialogInterface.OnCancelListener
             public void onCancel(DialogInterface dialogInterface) {
                 PageDialogsHandler.this.mPageInfoDialog = null;
@@ -138,8 +197,16 @@ public class PageDialogsHandler {
                 }
             }
         });
-        if (z || (webView != null && webView.getCertificate() != null)) {
+        if (z2 || (webView != null && webView.getCertificate() != null)) {
             onCancelListener.setNeutralButton(R.string.view_certificate, new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.5
+                final /* synthetic */ boolean val$fromShowSSLCertificateOnError;
+                final /* synthetic */ Tab val$tab;
+
+                AnonymousClass5(boolean z2, Tab tab2) {
+                    z = z2;
+                    tab = tab2;
+                }
+
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i) {
                     PageDialogsHandler.this.mPageInfoDialog = null;
@@ -155,14 +222,77 @@ public class PageDialogsHandler {
         this.mPageInfoDialog = onCancelListener.show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showSSLCertificate(final Tab tab) {
+    /* renamed from: com.android.browser.PageDialogsHandler$4 */
+    class AnonymousClass4 implements DialogInterface.OnClickListener {
+        final /* synthetic */ boolean val$fromShowSSLCertificateOnError;
+
+        AnonymousClass4(boolean z2) {
+            z = z2;
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialogInterface, int i) {
+            PageDialogsHandler.this.mPageInfoDialog = null;
+            PageDialogsHandler.this.mPageInfoView = null;
+            if (z) {
+                PageDialogsHandler.this.showSSLCertificateOnError(PageDialogsHandler.this.mSSLCertificateOnErrorView, PageDialogsHandler.this.mSSLCertificateOnErrorHandler, PageDialogsHandler.this.mSSLCertificateOnErrorError);
+            }
+        }
+    }
+
+    /* renamed from: com.android.browser.PageDialogsHandler$3 */
+    class AnonymousClass3 implements DialogInterface.OnCancelListener {
+        final /* synthetic */ boolean val$fromShowSSLCertificateOnError;
+
+        AnonymousClass3(boolean z2) {
+            z = z2;
+        }
+
+        @Override // android.content.DialogInterface.OnCancelListener
+        public void onCancel(DialogInterface dialogInterface) {
+            PageDialogsHandler.this.mPageInfoDialog = null;
+            PageDialogsHandler.this.mPageInfoView = null;
+            if (z) {
+                PageDialogsHandler.this.showSSLCertificateOnError(PageDialogsHandler.this.mSSLCertificateOnErrorView, PageDialogsHandler.this.mSSLCertificateOnErrorHandler, PageDialogsHandler.this.mSSLCertificateOnErrorError);
+            }
+        }
+    }
+
+    /* renamed from: com.android.browser.PageDialogsHandler$5 */
+    class AnonymousClass5 implements DialogInterface.OnClickListener {
+        final /* synthetic */ boolean val$fromShowSSLCertificateOnError;
+        final /* synthetic */ Tab val$tab;
+
+        AnonymousClass5(boolean z2, Tab tab2) {
+            z = z2;
+            tab = tab2;
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialogInterface, int i) {
+            PageDialogsHandler.this.mPageInfoDialog = null;
+            PageDialogsHandler.this.mPageInfoView = null;
+            if (!z) {
+                PageDialogsHandler.this.showSSLCertificate(tab);
+            } else {
+                PageDialogsHandler.this.showSSLCertificateOnError(PageDialogsHandler.this.mSSLCertificateOnErrorView, PageDialogsHandler.this.mSSLCertificateOnErrorHandler, PageDialogsHandler.this.mSSLCertificateOnErrorError);
+            }
+        }
+    }
+
+    private void showSSLCertificate(Tab tab) {
         SslCertificate certificate = tab.getWebView().getCertificate();
         if (certificate == null) {
             return;
         }
         this.mSSLCertificateView = tab;
         this.mSSLCertificateDialog = createSslCertificateDialog(certificate, tab.getSslCertificateError()).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.7
+            final /* synthetic */ Tab val$tab;
+
+            AnonymousClass7(Tab tab2) {
+                tab = tab2;
+            }
+
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 PageDialogsHandler.this.mSSLCertificateDialog = null;
@@ -170,6 +300,12 @@ public class PageDialogsHandler {
                 PageDialogsHandler.this.showPageInfo(tab, false, null);
             }
         }).setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.browser.PageDialogsHandler.6
+            final /* synthetic */ Tab val$tab;
+
+            AnonymousClass6(Tab tab2) {
+                tab = tab2;
+            }
+
             @Override // android.content.DialogInterface.OnCancelListener
             public void onCancel(DialogInterface dialogInterface) {
                 PageDialogsHandler.this.mSSLCertificateDialog = null;
@@ -179,8 +315,39 @@ public class PageDialogsHandler {
         }).show();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void showSSLCertificateOnError(final WebView webView, final SslErrorHandler sslErrorHandler, final SslError sslError) {
+    /* renamed from: com.android.browser.PageDialogsHandler$7 */
+    class AnonymousClass7 implements DialogInterface.OnClickListener {
+        final /* synthetic */ Tab val$tab;
+
+        AnonymousClass7(Tab tab2) {
+            tab = tab2;
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialogInterface, int i) {
+            PageDialogsHandler.this.mSSLCertificateDialog = null;
+            PageDialogsHandler.this.mSSLCertificateView = null;
+            PageDialogsHandler.this.showPageInfo(tab, false, null);
+        }
+    }
+
+    /* renamed from: com.android.browser.PageDialogsHandler$6 */
+    class AnonymousClass6 implements DialogInterface.OnCancelListener {
+        final /* synthetic */ Tab val$tab;
+
+        AnonymousClass6(Tab tab2) {
+            tab = tab2;
+        }
+
+        @Override // android.content.DialogInterface.OnCancelListener
+        public void onCancel(DialogInterface dialogInterface) {
+            PageDialogsHandler.this.mSSLCertificateDialog = null;
+            PageDialogsHandler.this.mSSLCertificateView = null;
+            PageDialogsHandler.this.showPageInfo(tab, false, null);
+        }
+    }
+
+    void showSSLCertificateOnError(WebView webView, SslErrorHandler sslErrorHandler, SslError sslError) {
         SslCertificate certificate;
         if (sslError == null || (certificate = sslError.getCertificate()) == null) {
             return;
@@ -189,6 +356,16 @@ public class PageDialogsHandler {
         this.mSSLCertificateOnErrorView = webView;
         this.mSSLCertificateOnErrorError = sslError;
         this.mSSLCertificateOnErrorDialog = createSslCertificateDialog(certificate, sslError).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.10
+            final /* synthetic */ SslError val$error;
+            final /* synthetic */ SslErrorHandler val$handler;
+            final /* synthetic */ WebView val$view;
+
+            AnonymousClass10(WebView webView2, SslErrorHandler sslErrorHandler2, SslError sslError2) {
+                webView = webView2;
+                sslErrorHandler = sslErrorHandler2;
+                sslError = sslError2;
+            }
+
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 PageDialogsHandler.this.mSSLCertificateOnErrorDialog = null;
@@ -198,12 +375,30 @@ public class PageDialogsHandler {
                 ((BrowserWebView) webView).getWebViewClient().onReceivedSslError(webView, sslErrorHandler, sslError);
             }
         }).setNeutralButton(R.string.page_info_view, new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.9
+            final /* synthetic */ SslError val$error;
+            final /* synthetic */ WebView val$view;
+
+            AnonymousClass9(WebView webView2, SslError sslError2) {
+                webView = webView2;
+                sslError = sslError2;
+            }
+
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 PageDialogsHandler.this.mSSLCertificateOnErrorDialog = null;
                 PageDialogsHandler.this.showPageInfo(PageDialogsHandler.this.mController.getTabControl().getTabFromView(webView), true, sslError.getUrl());
             }
         }).setOnCancelListener(new DialogInterface.OnCancelListener() { // from class: com.android.browser.PageDialogsHandler.8
+            final /* synthetic */ SslError val$error;
+            final /* synthetic */ SslErrorHandler val$handler;
+            final /* synthetic */ WebView val$view;
+
+            AnonymousClass8(WebView webView2, SslErrorHandler sslErrorHandler2, SslError sslError2) {
+                webView = webView2;
+                sslErrorHandler = sslErrorHandler2;
+                sslError = sslError2;
+            }
+
             @Override // android.content.DialogInterface.OnCancelListener
             public void onCancel(DialogInterface dialogInterface) {
                 PageDialogsHandler.this.mSSLCertificateOnErrorDialog = null;
@@ -215,39 +410,100 @@ public class PageDialogsHandler {
         }).show();
     }
 
+    /* renamed from: com.android.browser.PageDialogsHandler$10 */
+    class AnonymousClass10 implements DialogInterface.OnClickListener {
+        final /* synthetic */ SslError val$error;
+        final /* synthetic */ SslErrorHandler val$handler;
+        final /* synthetic */ WebView val$view;
+
+        AnonymousClass10(WebView webView2, SslErrorHandler sslErrorHandler2, SslError sslError2) {
+            webView = webView2;
+            sslErrorHandler = sslErrorHandler2;
+            sslError = sslError2;
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialogInterface, int i) {
+            PageDialogsHandler.this.mSSLCertificateOnErrorDialog = null;
+            PageDialogsHandler.this.mSSLCertificateOnErrorView = null;
+            PageDialogsHandler.this.mSSLCertificateOnErrorHandler = null;
+            PageDialogsHandler.this.mSSLCertificateOnErrorError = null;
+            ((BrowserWebView) webView).getWebViewClient().onReceivedSslError(webView, sslErrorHandler, sslError);
+        }
+    }
+
+    /* renamed from: com.android.browser.PageDialogsHandler$9 */
+    class AnonymousClass9 implements DialogInterface.OnClickListener {
+        final /* synthetic */ SslError val$error;
+        final /* synthetic */ WebView val$view;
+
+        AnonymousClass9(WebView webView2, SslError sslError2) {
+            webView = webView2;
+            sslError = sslError2;
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialogInterface, int i) {
+            PageDialogsHandler.this.mSSLCertificateOnErrorDialog = null;
+            PageDialogsHandler.this.showPageInfo(PageDialogsHandler.this.mController.getTabControl().getTabFromView(webView), true, sslError.getUrl());
+        }
+    }
+
+    /* renamed from: com.android.browser.PageDialogsHandler$8 */
+    class AnonymousClass8 implements DialogInterface.OnCancelListener {
+        final /* synthetic */ SslError val$error;
+        final /* synthetic */ SslErrorHandler val$handler;
+        final /* synthetic */ WebView val$view;
+
+        AnonymousClass8(WebView webView2, SslErrorHandler sslErrorHandler2, SslError sslError2) {
+            webView = webView2;
+            sslErrorHandler = sslErrorHandler2;
+            sslError = sslError2;
+        }
+
+        @Override // android.content.DialogInterface.OnCancelListener
+        public void onCancel(DialogInterface dialogInterface) {
+            PageDialogsHandler.this.mSSLCertificateOnErrorDialog = null;
+            PageDialogsHandler.this.mSSLCertificateOnErrorView = null;
+            PageDialogsHandler.this.mSSLCertificateOnErrorHandler = null;
+            PageDialogsHandler.this.mSSLCertificateOnErrorError = null;
+            ((BrowserWebView) webView).getWebViewClient().onReceivedSslError(webView, sslErrorHandler, sslError);
+        }
+    }
+
     private AlertDialog.Builder createSslCertificateDialog(SslCertificate sslCertificate, SslError sslError) {
         int i;
-        View inflateCertificateView = sslCertificate.inflateCertificateView(this.mContext);
-        LinearLayout linearLayout = (LinearLayout) inflateCertificateView.findViewById(16909187);
-        LayoutInflater from = LayoutInflater.from(this.mContext);
+        View viewInflateCertificateView = sslCertificate.inflateCertificateView(this.mContext);
+        LinearLayout linearLayout = (LinearLayout) viewInflateCertificateView.findViewById(android.R.id.knownSigner);
+        LayoutInflater layoutInflaterFrom = LayoutInflater.from(this.mContext);
         if (sslError == null) {
             i = R.drawable.ic_dialog_browser_certificate_secure;
-            ((TextView) ((LinearLayout) from.inflate(R.layout.ssl_success, linearLayout)).findViewById(R.id.success)).setText(17040907);
+            ((TextView) ((LinearLayout) layoutInflaterFrom.inflate(R.layout.ssl_success, linearLayout)).findViewById(R.id.success)).setText(android.R.string.mime_type_document);
         } else {
             if (sslError.hasError(3)) {
-                addError(from, linearLayout, R.string.ssl_untrusted);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_untrusted);
             }
             if (sslError.hasError(2)) {
-                addError(from, linearLayout, R.string.ssl_mismatch);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_mismatch);
             }
             if (sslError.hasError(1)) {
-                addError(from, linearLayout, R.string.ssl_expired);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_expired);
             }
             if (sslError.hasError(0)) {
-                addError(from, linearLayout, R.string.ssl_not_yet_valid);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_not_yet_valid);
             }
             if (sslError.hasError(4)) {
-                addError(from, linearLayout, R.string.ssl_date_invalid);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_date_invalid);
             }
             if (sslError.hasError(5)) {
-                addError(from, linearLayout, R.string.ssl_invalid);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_invalid);
             }
             if (linearLayout.getChildCount() == 0) {
-                addError(from, linearLayout, R.string.ssl_unknown);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_unknown);
             }
             i = R.drawable.ic_dialog_browser_certificate_partially_secure;
         }
-        return new AlertDialog.Builder(this.mContext).setTitle(17040906).setIcon(i).setView(inflateCertificateView);
+        return new AlertDialog.Builder(this.mContext).setTitle(android.R.string.mime_type_compressed_ext).setIcon(i).setView(viewInflateCertificateView);
     }
 
     private void addError(LayoutInflater layoutInflater, LinearLayout linearLayout, int i) {
@@ -256,12 +512,21 @@ public class PageDialogsHandler {
         linearLayout.addView(textView);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void showPopupWindowAttempt(final Tab tab, final boolean z, final Message message) {
+    void showPopupWindowAttempt(Tab tab, boolean z, Message message) {
         this.mPopupWindowAttemptView = tab;
         this.mPopupWindowAttemptIsDialog = z;
         this.mPopupWindowAttemptMessage = message;
-        DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.11
+        AnonymousClass11 anonymousClass11 = new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.11
+            final /* synthetic */ boolean val$dialog;
+            final /* synthetic */ Message val$resultMsg;
+            final /* synthetic */ Tab val$tab;
+
+            AnonymousClass11(Message message2, boolean z2, Tab tab2) {
+                message = message2;
+                z = z2;
+                tab = tab2;
+            }
+
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 PageDialogsHandler.this.mPopupWindowAttemptDialog = null;
@@ -280,7 +545,15 @@ public class PageDialogsHandler {
                 message.sendToTarget();
             }
         };
-        this.mPopupWindowAttemptDialog = new AlertDialog.Builder(this.mContext).setIconAttribute(16843605).setMessage(R.string.popup_window_attempt).setPositiveButton(R.string.allow, onClickListener).setNegativeButton(R.string.block, new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.12
+        this.mPopupWindowAttemptDialog = new AlertDialog.Builder(this.mContext).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(R.string.popup_window_attempt).setPositiveButton(R.string.allow, anonymousClass11).setNegativeButton(R.string.block, new DialogInterface.OnClickListener() { // from class: com.android.browser.PageDialogsHandler.12
+            final /* synthetic */ Message val$resultMsg;
+            final /* synthetic */ Tab val$tab;
+
+            AnonymousClass12(Message message2, Tab tab2) {
+                message = message2;
+                tab = tab2;
+            }
+
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 PageDialogsHandler.this.mPopupWindowAttemptDialog = null;
@@ -292,13 +565,64 @@ public class PageDialogsHandler {
             }
         }).setCancelable(false).create();
         this.mPopupWindowAttemptDialog.show();
-        if (z) {
-            tab.PopupWindowShown(true);
+        if (z2) {
+            tab2.PopupWindowShown(true);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void destroyDialogs() {
+    /* renamed from: com.android.browser.PageDialogsHandler$11 */
+    class AnonymousClass11 implements DialogInterface.OnClickListener {
+        final /* synthetic */ boolean val$dialog;
+        final /* synthetic */ Message val$resultMsg;
+        final /* synthetic */ Tab val$tab;
+
+        AnonymousClass11(Message message2, boolean z2, Tab tab2) {
+            message = message2;
+            z = z2;
+            tab = tab2;
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialogInterface, int i) {
+            PageDialogsHandler.this.mPopupWindowAttemptDialog = null;
+            PageDialogsHandler.this.mPopupWindowAttemptView = null;
+            PageDialogsHandler.this.mPopupWindowAttemptIsDialog = false;
+            PageDialogsHandler.this.mPopupWindowAttemptMessage = null;
+            WebView.WebViewTransport webViewTransport = (WebView.WebViewTransport) message.obj;
+            if (z) {
+                tab.createSubWindow();
+                PageDialogsHandler.this.mController.attachSubWindow(tab);
+                webViewTransport.setWebView(tab.getSubWebView());
+                tab.PopupWindowShown(false);
+            } else {
+                webViewTransport.setWebView(PageDialogsHandler.this.mController.openTab((String) null, tab, true, true).getWebView());
+            }
+            message.sendToTarget();
+        }
+    }
+
+    /* renamed from: com.android.browser.PageDialogsHandler$12 */
+    class AnonymousClass12 implements DialogInterface.OnClickListener {
+        final /* synthetic */ Message val$resultMsg;
+        final /* synthetic */ Tab val$tab;
+
+        AnonymousClass12(Message message2, Tab tab2) {
+            message = message2;
+            tab = tab2;
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialogInterface, int i) {
+            PageDialogsHandler.this.mPopupWindowAttemptDialog = null;
+            PageDialogsHandler.this.mPopupWindowAttemptView = null;
+            PageDialogsHandler.this.mPopupWindowAttemptIsDialog = false;
+            PageDialogsHandler.this.mPopupWindowAttemptMessage = null;
+            message.sendToTarget();
+            tab.PopupWindowShown(false);
+        }
+    }
+
+    void destroyDialogs() {
         if (this.mPageInfoDialog != null) {
             this.mPageInfoDialog.dismiss();
             this.mPageInfoDialog = null;

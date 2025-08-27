@@ -18,6 +18,7 @@ import com.android.systemui.R;
 import com.android.systemui.pip.tv.PipManager;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PipControlsView extends LinearLayout {
     private static final String TAG = PipControlsView.class.getSimpleName();
@@ -36,7 +37,6 @@ public class PipControlsView extends LinearLayout {
     private final PipManager.MediaListener mPipMediaListener;
     private PipControlButtonView mPlayPauseButtonView;
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onClosed();
     }
@@ -143,8 +143,7 @@ public class PipControlsView extends LinearLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateMediaController() {
+    private void updateMediaController() {
         MediaController mediaController = this.mPipManager.getMediaController();
         if (this.mMediaController == mediaController) {
             return;
@@ -159,8 +158,7 @@ public class PipControlsView extends LinearLayout {
         updateUserActions();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateUserActions() {
+    private void updateUserActions() {
         int i = 0;
         if (!this.mCustomActions.isEmpty()) {
             while (this.mCustomButtonViews.size() < this.mCustomActions.size()) {
@@ -179,14 +177,14 @@ public class PipControlsView extends LinearLayout {
                 remoteAction.getIcon().loadDrawableAsync(getContext(), new Icon.OnDrawableLoadedListener() { // from class: com.android.systemui.pip.tv.-$$Lambda$PipControlsView$ZwQyQkGsN0bsRufZ6MVGwaQtJA8
                     @Override // android.graphics.drawable.Icon.OnDrawableLoadedListener
                     public final void onDrawableLoaded(Drawable drawable) {
-                        PipControlsView.lambda$updateUserActions$0(PipControlButtonView.this, drawable);
+                        PipControlsView.lambda$updateUserActions$0(pipControlButtonView2, drawable);
                     }
                 }, this.mHandler);
                 pipControlButtonView2.setText(remoteAction.getContentDescription());
                 if (remoteAction.isEnabled()) {
                     pipControlButtonView2.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.pip.tv.-$$Lambda$PipControlsView$HMvSX-xIxW1kpM7rGrVPgysk-xY
                         @Override // android.view.View.OnClickListener
-                        public final void onClick(View view) {
+                        public final void onClick(View view) throws PendingIntent.CanceledException {
                             PipControlsView.lambda$updateUserActions$1(remoteAction, view);
                         }
                     });
@@ -217,14 +215,12 @@ public class PipControlsView extends LinearLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$updateUserActions$0(PipControlButtonView pipControlButtonView, Drawable drawable) {
+    static /* synthetic */ void lambda$updateUserActions$0(PipControlButtonView pipControlButtonView, Drawable drawable) {
         drawable.setTint(-1);
         pipControlButtonView.setImageDrawable(drawable);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$updateUserActions$1(RemoteAction remoteAction, View view) {
+    static /* synthetic */ void lambda$updateUserActions$1(RemoteAction remoteAction, View view) throws PendingIntent.CanceledException {
         try {
             remoteAction.getActionIntent().send();
         } catch (PendingIntent.CanceledException e) {

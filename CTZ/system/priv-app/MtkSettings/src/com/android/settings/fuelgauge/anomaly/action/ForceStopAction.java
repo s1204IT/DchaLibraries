@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import com.android.settings.fuelgauge.anomaly.Anomaly;
+
 /* loaded from: classes.dex */
 public class ForceStopAction extends AnomalyAction {
     private ActivityManager mActivityManager;

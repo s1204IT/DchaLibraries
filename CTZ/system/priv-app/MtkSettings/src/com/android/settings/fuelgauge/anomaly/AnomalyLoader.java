@@ -10,6 +10,7 @@ import com.android.settings.fuelgauge.anomaly.Anomaly;
 import com.android.settingslib.utils.AsyncLoader;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AnomalyLoader extends AsyncLoader<List<Anomaly>> {
     AnomalyUtils mAnomalyUtils;
@@ -31,11 +32,12 @@ public class AnomalyLoader extends AsyncLoader<List<Anomaly>> {
         this.mPolicy = anomalyDetectionPolicy;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(List<Anomaly> list) {
+    protected void onDiscardResult(List<Anomaly> list) {
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
     public List<Anomaly> loadInBackground() {
         if (this.mBatteryStatsHelper == null) {
@@ -46,7 +48,7 @@ public class AnomalyLoader extends AsyncLoader<List<Anomaly>> {
         return this.mAnomalyUtils.detectAnomalies(this.mBatteryStatsHelper, this.mPolicy, this.mPackageName);
     }
 
-    List<Anomaly> generateFakeData() {
+    List<Anomaly> generateFakeData() throws PackageManager.NameNotFoundException {
         ArrayList arrayList = new ArrayList();
         try {
             int packageUid = getContext().getPackageManager().getPackageUid("com.android.settings", 0);

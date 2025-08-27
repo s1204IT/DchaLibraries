@@ -2,11 +2,13 @@ package com.android.settings.development;
 
 import android.app.UiModeManager;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class DarkUIPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final UiModeManager mUiModeManager;
@@ -43,45 +45,42 @@ public class DarkUIPreferenceController extends DeveloperOptionsPreferenceContro
         preference.setSummary(modeToDescription(nightMode));
     }
 
-    private String modeToDescription(int i) {
+    private String modeToDescription(int i) throws Resources.NotFoundException {
         String[] stringArray = this.mContext.getResources().getStringArray(R.array.dark_ui_mode_entries);
-        if (i != 0) {
-            if (i == 2) {
-                return stringArray[1];
-            }
-            return stringArray[2];
+        if (i == 0) {
+            return stringArray[0];
         }
-        return stringArray[0];
+        if (i == 2) {
+            return stringArray[1];
+        }
+        return stringArray[2];
     }
 
     private String modeToString(int i) {
-        if (i != 0) {
-            if (i == 2) {
-                return "yes";
-            }
-            return "no";
+        if (i == 0) {
+            return "auto";
         }
-        return "auto";
+        if (i == 2) {
+            return "yes";
+        }
+        return "no";
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:18:0x0034  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private int modeToInt(String str) {
         char c;
-        int hashCode = str.hashCode();
-        if (hashCode == 3521) {
-            if (str.equals("no")) {
-                c = 2;
-            }
-            c = 65535;
-        } else if (hashCode != 119527) {
-            if (hashCode == 3005871 && str.equals("auto")) {
-                c = 0;
-            }
-            c = 65535;
-        } else {
-            if (str.equals("yes")) {
+        int iHashCode = str.hashCode();
+        if (iHashCode != 3521) {
+            if (iHashCode != 119527) {
+                c = (iHashCode == 3005871 && str.equals("auto")) ? (char) 0 : (char) 65535;
+            } else if (str.equals("yes")) {
                 c = 1;
             }
-            c = 65535;
+        } else if (str.equals("no")) {
+            c = 2;
         }
         switch (c) {
             case 0:

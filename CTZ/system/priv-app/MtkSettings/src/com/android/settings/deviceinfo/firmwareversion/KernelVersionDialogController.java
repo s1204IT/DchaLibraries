@@ -2,6 +2,7 @@ package com.android.settings.deviceinfo.firmwareversion;
 
 import com.android.settings.R;
 import com.android.settingslib.DeviceInfoUtils;
+
 /* loaded from: classes.dex */
 public class KernelVersionDialogController {
     static int KERNEL_VERSION_VALUE_ID = R.id.kernel_version_value;

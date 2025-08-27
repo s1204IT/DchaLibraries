@@ -7,6 +7,7 @@ import com.android.settings.applications.ApplicationFeatureProvider;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class EnterpriseInstalledPackagesPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final boolean mAsync;
@@ -23,7 +24,7 @@ public class EnterpriseInstalledPackagesPreferenceController extends AbstractPre
         this.mFeatureProvider.calculateNumberOfPolicyInstalledApps(true, new ApplicationFeatureProvider.NumberOfAppsCallback() { // from class: com.android.settings.enterprise.-$$Lambda$EnterpriseInstalledPackagesPreferenceController$ywnQ5T98AEytxQMBHl3WTR7fuAo
             @Override // com.android.settings.applications.ApplicationFeatureProvider.NumberOfAppsCallback
             public final void onNumberOfAppsResult(int i) {
-                EnterpriseInstalledPackagesPreferenceController.lambda$updateState$0(EnterpriseInstalledPackagesPreferenceController.this, preference, i);
+                EnterpriseInstalledPackagesPreferenceController.lambda$updateState$0(this.f$0, preference, i);
             }
         });
     }
@@ -53,8 +54,12 @@ public class EnterpriseInstalledPackagesPreferenceController extends AbstractPre
         return boolArr[0].booleanValue();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$isAvailable$1(Boolean[] boolArr, int i) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x000a: APUT 
+  (r1v0 java.lang.Boolean[])
+  (0 ??[int, short, byte, char])
+  (wrap:java.lang.Boolean:0x0006: INVOKE (wrap:boolean:?: TERNARY null = ((r2v0 int) > (0 int)) ? true : false) STATIC call: java.lang.Boolean.valueOf(boolean):java.lang.Boolean A[MD:(boolean):java.lang.Boolean (c), WRAPPED] (LINE:72))
+ (LINE:72) */
+    static /* synthetic */ void lambda$isAvailable$1(Boolean[] boolArr, int i) {
         boolArr[0] = Boolean.valueOf(i > 0);
     }
 

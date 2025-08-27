@@ -10,6 +10,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class HeadsetProfile implements LocalBluetoothProfile {
     private final CachedBluetoothDeviceManager mDeviceManager;
@@ -20,9 +21,12 @@ public class HeadsetProfile implements LocalBluetoothProfile {
     private static boolean V = true;
     static final ParcelUuid[] UUIDS = {BluetoothUuid.HSP, BluetoothUuid.Handsfree};
 
-    /* loaded from: classes.dex */
     private final class HeadsetServiceListener implements BluetoothProfile.ServiceListener {
         private HeadsetServiceListener() {
+        }
+
+        /* synthetic */ HeadsetServiceListener(HeadsetProfile headsetProfile, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // android.bluetooth.BluetoothProfile.ServiceListener
@@ -33,14 +37,14 @@ public class HeadsetProfile implements LocalBluetoothProfile {
             HeadsetProfile.this.mService = (BluetoothHeadset) bluetoothProfile;
             List<BluetoothDevice> connectedDevices = HeadsetProfile.this.mService.getConnectedDevices();
             while (!connectedDevices.isEmpty()) {
-                BluetoothDevice remove = connectedDevices.remove(0);
-                CachedBluetoothDevice findDevice = HeadsetProfile.this.mDeviceManager.findDevice(remove);
-                if (findDevice == null) {
-                    Log.w("HeadsetProfile", "HeadsetProfile found new device: " + remove);
-                    findDevice = HeadsetProfile.this.mDeviceManager.addDevice(HeadsetProfile.this.mLocalAdapter, HeadsetProfile.this.mProfileManager, remove);
+                BluetoothDevice bluetoothDeviceRemove = connectedDevices.remove(0);
+                CachedBluetoothDevice cachedBluetoothDeviceFindDevice = HeadsetProfile.this.mDeviceManager.findDevice(bluetoothDeviceRemove);
+                if (cachedBluetoothDeviceFindDevice == null) {
+                    Log.w("HeadsetProfile", "HeadsetProfile found new device: " + bluetoothDeviceRemove);
+                    cachedBluetoothDeviceFindDevice = HeadsetProfile.this.mDeviceManager.addDevice(HeadsetProfile.this.mLocalAdapter, HeadsetProfile.this.mProfileManager, bluetoothDeviceRemove);
                 }
-                findDevice.onProfileStateChanged(HeadsetProfile.this, 2);
-                findDevice.refresh();
+                cachedBluetoothDeviceFindDevice.onProfileStateChanged(HeadsetProfile.this, 2);
+                cachedBluetoothDeviceFindDevice.refresh();
             }
             HeadsetProfile.this.mProfileManager.callServiceConnectedListeners();
             HeadsetProfile.this.mIsProfileReady = true;
@@ -61,8 +65,7 @@ public class HeadsetProfile implements LocalBluetoothProfile {
         return 1;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public HeadsetProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
+    HeadsetProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;
         this.mProfileManager = localBluetoothProfileManager;
@@ -101,8 +104,9 @@ public class HeadsetProfile implements LocalBluetoothProfile {
         }
         List<BluetoothDevice> connectedDevices = this.mService.getConnectedDevices();
         if (!connectedDevices.isEmpty()) {
-            for (BluetoothDevice bluetoothDevice2 : connectedDevices) {
-                if (bluetoothDevice2.equals(bluetoothDevice)) {
+            Iterator<BluetoothDevice> it = connectedDevices.iterator();
+            while (it.hasNext()) {
+                if (it.next().equals(bluetoothDevice)) {
                     if (V) {
                         Log.d("HeadsetProfile", "Downgrade priority as useris disconnecting the headset");
                     }
@@ -123,8 +127,9 @@ public class HeadsetProfile implements LocalBluetoothProfile {
         }
         List<BluetoothDevice> connectedDevices = this.mService.getConnectedDevices();
         if (!connectedDevices.isEmpty()) {
-            for (BluetoothDevice bluetoothDevice2 : connectedDevices) {
-                if (bluetoothDevice2.equals(bluetoothDevice)) {
+            Iterator<BluetoothDevice> it = connectedDevices.iterator();
+            while (it.hasNext()) {
+                if (it.next().equals(bluetoothDevice)) {
                     return this.mService.getConnectionState(bluetoothDevice);
                 }
             }

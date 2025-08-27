@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Stack;
+
 /* loaded from: classes.dex */
 public class CellLayout extends ViewGroup {
     private static final boolean DEBUG_VISUALIZE_OCCUPIED = false;
@@ -67,14 +68,18 @@ public class CellLayout extends ViewGroup {
     public static final int WORKSPACE = 0;
     public static final int WORKSPACE_ACCESSIBILITY_DRAG = 2;
     private final Drawable mBackground;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     int mCellHeight;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     int mCellWidth;
     private final float mChildScale;
     private final int mContainerType;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private int mCountX;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private int mCountY;
     private final int[] mDirectionVector;
@@ -113,12 +118,11 @@ public class CellLayout extends ViewGroup {
     final int[] mTmpPoint;
     private DragAndDropAccessibilityDelegate mTouchHelper;
     private boolean mUseTouchHelper;
-    private static final int[] BACKGROUND_STATE_ACTIVE = {16842914};
+    private static final int[] BACKGROUND_STATE_ACTIVE = {android.R.attr.state_active};
     private static final int[] BACKGROUND_STATE_DEFAULT = EMPTY_STATE_SET;
     private static final Paint sPaint = new Paint();
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     public @interface ContainerType {
     }
 
@@ -130,7 +134,7 @@ public class CellLayout extends ViewGroup {
         this(context, attributeSet, 0);
     }
 
-    public CellLayout(Context context, AttributeSet attributeSet, int i) {
+    public CellLayout(Context context, AttributeSet attributeSet, int i) throws Resources.NotFoundException {
         super(context, attributeSet, i);
         this.mDropPending = false;
         this.mTmpPoint = new int[2];
@@ -158,9 +162,9 @@ public class CellLayout extends ViewGroup {
         this.mTempRect = new Rect();
         this.mUseTouchHelper = false;
         this.mTempRectStack = new Stack<>();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.CellLayout, i, 0);
-        this.mContainerType = obtainStyledAttributes.getInteger(0, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.CellLayout, i, 0);
+        this.mContainerType = typedArrayObtainStyledAttributes.getInteger(0, 0);
+        typedArrayObtainStyledAttributes.recycle();
         setWillNotDraw(false);
         setClipToPadding(false);
         this.mLauncher = Launcher.getLauncher(context);
@@ -194,21 +198,35 @@ public class CellLayout extends ViewGroup {
         int integer = resources.getInteger(R.integer.config_dragOutlineFadeTime);
         float integer2 = resources.getInteger(R.integer.config_dragOutlineMaxAlpha);
         Arrays.fill(this.mDragOutlineAlphas, 0.0f);
-        for (final int i3 = 0; i3 < this.mDragOutlineAnims.length; i3++) {
-            final InterruptibleInOutAnimator interruptibleInOutAnimator = new InterruptibleInOutAnimator(this, integer, 0.0f, integer2);
+        for (int i3 = 0; i3 < this.mDragOutlineAnims.length; i3++) {
+            InterruptibleInOutAnimator interruptibleInOutAnimator = new InterruptibleInOutAnimator(this, integer, 0.0f, integer2);
             interruptibleInOutAnimator.getAnimator().setInterpolator(this.mEaseOutInterpolator);
             interruptibleInOutAnimator.getAnimator().addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.CellLayout.1
+                final /* synthetic */ InterruptibleInOutAnimator val$anim;
+                final /* synthetic */ int val$thisIndex;
+
+                AnonymousClass1(InterruptibleInOutAnimator interruptibleInOutAnimator2, int i32) {
+                    interruptibleInOutAnimator = interruptibleInOutAnimator2;
+                    i = i32;
+                }
+
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
                     if (((Bitmap) interruptibleInOutAnimator.getTag()) == null) {
                         valueAnimator.cancel();
-                        return;
+                    } else {
+                        CellLayout.this.mDragOutlineAlphas[i] = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+                        CellLayout.this.invalidate(CellLayout.this.mDragOutlines[i]);
                     }
-                    CellLayout.this.mDragOutlineAlphas[i3] = ((Float) valueAnimator.getAnimatedValue()).floatValue();
-                    CellLayout.this.invalidate(CellLayout.this.mDragOutlines[i3]);
                 }
             });
-            interruptibleInOutAnimator.getAnimator().addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.CellLayout.2
+            interruptibleInOutAnimator2.getAnimator().addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.CellLayout.2
+                final /* synthetic */ InterruptibleInOutAnimator val$anim;
+
+                AnonymousClass2(InterruptibleInOutAnimator interruptibleInOutAnimator2) {
+                    interruptibleInOutAnimator = interruptibleInOutAnimator2;
+                }
+
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
                     if (((Float) ((ValueAnimator) animator).getAnimatedValue()).floatValue() == 0.0f) {
@@ -216,12 +234,49 @@ public class CellLayout extends ViewGroup {
                     }
                 }
             });
-            this.mDragOutlineAnims[i3] = interruptibleInOutAnimator;
+            this.mDragOutlineAnims[i32] = interruptibleInOutAnimator2;
         }
         this.mShortcutsAndWidgets = new ShortcutAndWidgetContainer(context, this.mContainerType);
         this.mShortcutsAndWidgets.setCellDimensions(this.mCellWidth, this.mCellHeight, this.mCountX, this.mCountY);
         this.mStylusEventHelper = new StylusEventHelper(new SimpleOnStylusPressListener(this), this);
         addView(this.mShortcutsAndWidgets);
+    }
+
+    /* renamed from: com.android.launcher3.CellLayout$1 */
+    class AnonymousClass1 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ InterruptibleInOutAnimator val$anim;
+        final /* synthetic */ int val$thisIndex;
+
+        AnonymousClass1(InterruptibleInOutAnimator interruptibleInOutAnimator2, int i32) {
+            interruptibleInOutAnimator = interruptibleInOutAnimator2;
+            i = i32;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            if (((Bitmap) interruptibleInOutAnimator.getTag()) == null) {
+                valueAnimator.cancel();
+            } else {
+                CellLayout.this.mDragOutlineAlphas[i] = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+                CellLayout.this.invalidate(CellLayout.this.mDragOutlines[i]);
+            }
+        }
+    }
+
+    /* renamed from: com.android.launcher3.CellLayout$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        final /* synthetic */ InterruptibleInOutAnimator val$anim;
+
+        AnonymousClass2(InterruptibleInOutAnimator interruptibleInOutAnimator2) {
+            interruptibleInOutAnimator = interruptibleInOutAnimator2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (((Float) ((ValueAnimator) animator).getAnimatedValue()).floatValue() == 0.0f) {
+                interruptibleInOutAnimator.setTag(null);
+            }
+        }
     }
 
     public void enableAccessibleDrag(boolean z, int i) {
@@ -268,11 +323,11 @@ public class CellLayout extends ViewGroup {
 
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
         if (this.mLauncher.isInState(LauncherState.OVERVIEW) && this.mStylusEventHelper.onMotionEvent(motionEvent)) {
             return true;
         }
-        return onTouchEvent;
+        return zOnTouchEvent;
     }
 
     public void enableHardwareLayer(boolean z) {
@@ -309,8 +364,7 @@ public class CellLayout extends ViewGroup {
         return this.mDropPending;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setIsDragOverlapping(boolean z) {
+    void setIsDragOverlapping(boolean z) {
         if (this.mIsDragOverlapping != z) {
             this.mIsDragOverlapping = z;
             this.mBackground.setState(this.mIsDragOverlapping ? BACKGROUND_STATE_ACTIVE : BACKGROUND_STATE_DEFAULT);
@@ -348,8 +402,9 @@ public class CellLayout extends ViewGroup {
         for (int i = 0; i < this.mDragOutlines.length; i++) {
             float f = this.mDragOutlineAlphas[i];
             if (f > 0.0f) {
+                Bitmap bitmap = (Bitmap) this.mDragOutlineAnims[i].getTag();
                 paint.setAlpha((int) (f + 0.5f));
-                canvas.drawBitmap((Bitmap) this.mDragOutlineAnims[i].getTag(), (Rect) null, this.mDragOutlines[i], paint);
+                canvas.drawBitmap(bitmap, (Rect) null, this.mDragOutlines[i], paint);
             }
         }
         for (int i2 = 0; i2 < this.mFolderBackgrounds.size(); i2++) {
@@ -596,11 +651,11 @@ public class CellLayout extends ViewGroup {
         int paddingLeft = size - (getPaddingLeft() + getPaddingRight());
         int paddingTop = size2 - (getPaddingTop() + getPaddingBottom());
         if (this.mFixedCellWidth < 0 || this.mFixedCellHeight < 0) {
-            int calculateCellWidth = DeviceProfile.calculateCellWidth(paddingLeft, this.mCountX);
-            int calculateCellHeight = DeviceProfile.calculateCellHeight(paddingTop, this.mCountY);
-            if (calculateCellWidth != this.mCellWidth || calculateCellHeight != this.mCellHeight) {
-                this.mCellWidth = calculateCellWidth;
-                this.mCellHeight = calculateCellHeight;
+            int iCalculateCellWidth = DeviceProfile.calculateCellWidth(paddingLeft, this.mCountX);
+            int iCalculateCellHeight = DeviceProfile.calculateCellHeight(paddingTop, this.mCountY);
+            if (iCalculateCellWidth != this.mCellWidth || iCalculateCellHeight != this.mCellHeight) {
+                this.mCellWidth = iCalculateCellWidth;
+                this.mCellHeight = iCalculateCellHeight;
                 this.mShortcutsAndWidgets.setCellDimensions(this.mCellWidth, this.mCellHeight, this.mCountX, this.mCountY);
             }
         }
@@ -652,88 +707,166 @@ public class CellLayout extends ViewGroup {
         return this.mShortcutsAndWidgets.getChildAt(i, i2);
     }
 
-    public boolean animateChildToPosition(final View view, int i, int i2, int i3, int i4, boolean z, boolean z2) {
+    public boolean animateChildToPosition(View view, int i, int i2, int i3, int i4, boolean z, boolean z2) {
         int i5;
         ShortcutAndWidgetContainer shortcutsAndWidgets = getShortcutsAndWidgets();
-        if (shortcutsAndWidgets.indexOfChild(view) != -1) {
-            final LayoutParams layoutParams = (LayoutParams) view.getLayoutParams();
-            ItemInfo itemInfo = (ItemInfo) view.getTag();
-            if (this.mReorderAnimators.containsKey(layoutParams)) {
-                this.mReorderAnimators.get(layoutParams).cancel();
-                this.mReorderAnimators.remove(layoutParams);
-            }
-            final int i6 = layoutParams.x;
-            int i7 = layoutParams.y;
-            if (z2) {
-                GridOccupancy gridOccupancy = z ? this.mOccupied : this.mTmpOccupied;
-                gridOccupancy.markCells(layoutParams.cellX, layoutParams.cellY, layoutParams.cellHSpan, layoutParams.cellVSpan, false);
-                i5 = i7;
-                gridOccupancy.markCells(i, i2, layoutParams.cellHSpan, layoutParams.cellVSpan, true);
-            } else {
-                i5 = i7;
-            }
+        if (shortcutsAndWidgets.indexOfChild(view) == -1) {
+            return false;
+        }
+        LayoutParams layoutParams = (LayoutParams) view.getLayoutParams();
+        ItemInfo itemInfo = (ItemInfo) view.getTag();
+        if (this.mReorderAnimators.containsKey(layoutParams)) {
+            this.mReorderAnimators.get(layoutParams).cancel();
+            this.mReorderAnimators.remove(layoutParams);
+        }
+        int i6 = layoutParams.x;
+        int i7 = layoutParams.y;
+        if (z2) {
+            GridOccupancy gridOccupancy = z ? this.mOccupied : this.mTmpOccupied;
+            gridOccupancy.markCells(layoutParams.cellX, layoutParams.cellY, layoutParams.cellHSpan, layoutParams.cellVSpan, false);
+            i5 = i7;
+            gridOccupancy.markCells(i, i2, layoutParams.cellHSpan, layoutParams.cellVSpan, true);
+        } else {
+            i5 = i7;
+        }
+        layoutParams.isLockedToGrid = true;
+        if (z) {
+            itemInfo.cellX = i;
+            layoutParams.cellX = i;
+            itemInfo.cellY = i2;
+            layoutParams.cellY = i2;
+        } else {
+            layoutParams.tmpCellX = i;
+            layoutParams.tmpCellY = i2;
+        }
+        shortcutsAndWidgets.setupLp(view);
+        layoutParams.isLockedToGrid = false;
+        int i8 = layoutParams.x;
+        int i9 = layoutParams.y;
+        layoutParams.x = i6;
+        int i10 = i5;
+        layoutParams.y = i10;
+        if (i6 == i8 && i10 == i9) {
             layoutParams.isLockedToGrid = true;
-            if (z) {
-                itemInfo.cellX = i;
-                layoutParams.cellX = i;
-                itemInfo.cellY = i2;
-                layoutParams.cellY = i2;
-            } else {
-                layoutParams.tmpCellX = i;
-                layoutParams.tmpCellY = i2;
-            }
-            shortcutsAndWidgets.setupLp(view);
-            layoutParams.isLockedToGrid = false;
-            final int i8 = layoutParams.x;
-            final int i9 = layoutParams.y;
-            layoutParams.x = i6;
-            final int i10 = i5;
-            layoutParams.y = i10;
-            if (i6 == i8 && i10 == i9) {
-                layoutParams.isLockedToGrid = true;
-                return true;
-            }
-            ValueAnimator ofFloat = LauncherAnimUtils.ofFloat(0.0f, 1.0f);
-            ofFloat.setDuration(i3);
-            this.mReorderAnimators.put(layoutParams, ofFloat);
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.CellLayout.3
-                @Override // android.animation.ValueAnimator.AnimatorUpdateListener
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    float floatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
-                    float f = 1.0f - floatValue;
-                    layoutParams.x = (int) ((i6 * f) + (i8 * floatValue));
-                    layoutParams.y = (int) ((f * i10) + (floatValue * i9));
-                    view.requestLayout();
-                }
-            });
-            ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.CellLayout.4
-                boolean cancelled = false;
-
-                @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
-                public void onAnimationEnd(Animator animator) {
-                    if (!this.cancelled) {
-                        layoutParams.isLockedToGrid = true;
-                        view.requestLayout();
-                    }
-                    if (CellLayout.this.mReorderAnimators.containsKey(layoutParams)) {
-                        CellLayout.this.mReorderAnimators.remove(layoutParams);
-                    }
-                }
-
-                @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
-                public void onAnimationCancel(Animator animator) {
-                    this.cancelled = true;
-                }
-            });
-            ofFloat.setStartDelay(i4);
-            ofFloat.start();
             return true;
         }
-        return false;
+        ValueAnimator valueAnimatorOfFloat = LauncherAnimUtils.ofFloat(0.0f, 1.0f);
+        valueAnimatorOfFloat.setDuration(i3);
+        this.mReorderAnimators.put(layoutParams, valueAnimatorOfFloat);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.CellLayout.3
+            final /* synthetic */ View val$child;
+            final /* synthetic */ LayoutParams val$lp;
+            final /* synthetic */ int val$newX;
+            final /* synthetic */ int val$newY;
+            final /* synthetic */ int val$oldX;
+            final /* synthetic */ int val$oldY;
+
+            AnonymousClass3(LayoutParams layoutParams2, int i62, int i82, int i102, int i92, View view2) {
+                layoutParams = layoutParams2;
+                i = i62;
+                i = i82;
+                i = i102;
+                i = i92;
+                view = view2;
+            }
+
+            @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+                float f = 1.0f - fFloatValue;
+                layoutParams.x = (int) ((i * f) + (i * fFloatValue));
+                layoutParams.y = (int) ((f * i) + (fFloatValue * i));
+                view.requestLayout();
+            }
+        });
+        valueAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.CellLayout.4
+            boolean cancelled = false;
+            final /* synthetic */ View val$child;
+            final /* synthetic */ LayoutParams val$lp;
+
+            AnonymousClass4(LayoutParams layoutParams2, View view2) {
+                layoutParams = layoutParams2;
+                view = view2;
+            }
+
+            @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+            public void onAnimationEnd(Animator animator) {
+                if (!this.cancelled) {
+                    layoutParams.isLockedToGrid = true;
+                    view.requestLayout();
+                }
+                if (CellLayout.this.mReorderAnimators.containsKey(layoutParams)) {
+                    CellLayout.this.mReorderAnimators.remove(layoutParams);
+                }
+            }
+
+            @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+            public void onAnimationCancel(Animator animator) {
+                this.cancelled = true;
+            }
+        });
+        valueAnimatorOfFloat.setStartDelay(i4);
+        valueAnimatorOfFloat.start();
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void visualizeDropLocation(View view, DragPreviewProvider dragPreviewProvider, int i, int i2, int i3, int i4, boolean z, DropTarget.DragObject dragObject) {
+    /* renamed from: com.android.launcher3.CellLayout$3 */
+    class AnonymousClass3 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ View val$child;
+        final /* synthetic */ LayoutParams val$lp;
+        final /* synthetic */ int val$newX;
+        final /* synthetic */ int val$newY;
+        final /* synthetic */ int val$oldX;
+        final /* synthetic */ int val$oldY;
+
+        AnonymousClass3(LayoutParams layoutParams2, int i62, int i82, int i102, int i92, View view2) {
+            layoutParams = layoutParams2;
+            i = i62;
+            i = i82;
+            i = i102;
+            i = i92;
+            view = view2;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+            float f = 1.0f - fFloatValue;
+            layoutParams.x = (int) ((i * f) + (i * fFloatValue));
+            layoutParams.y = (int) ((f * i) + (fFloatValue * i));
+            view.requestLayout();
+        }
+    }
+
+    /* renamed from: com.android.launcher3.CellLayout$4 */
+    class AnonymousClass4 extends AnimatorListenerAdapter {
+        boolean cancelled = false;
+        final /* synthetic */ View val$child;
+        final /* synthetic */ LayoutParams val$lp;
+
+        AnonymousClass4(LayoutParams layoutParams2, View view2) {
+            layoutParams = layoutParams2;
+            view = view2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (!this.cancelled) {
+                layoutParams.isLockedToGrid = true;
+                view.requestLayout();
+            }
+            if (CellLayout.this.mReorderAnimators.containsKey(layoutParams)) {
+                CellLayout.this.mReorderAnimators.remove(layoutParams);
+            }
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            this.cancelled = true;
+        }
+    }
+
+    void visualizeDropLocation(View view, DragPreviewProvider dragPreviewProvider, int i, int i2, int i3, int i4, boolean z, DropTarget.DragObject dragObject) {
         int width;
         int height;
         int i5 = this.mDragCell[0];
@@ -769,8 +902,7 @@ public class CellLayout extends ViewGroup {
                     width = i10 + (((this.mCellWidth * i3) - bitmap.getWidth()) / 2);
                 } else if (dragVisualizeOffset != null && dragRegion != null) {
                     width = i8 + dragVisualizeOffset.x + (((this.mCellWidth * i3) - dragRegion.width()) / 2);
-                    int cellContentHeight = getShortcutsAndWidgets().getCellContentHeight();
-                    height = i9 + dragVisualizeOffset.y + ((int) Math.max(0.0f, (this.mCellHeight - cellContentHeight) / 2.0f));
+                    height = i9 + dragVisualizeOffset.y + ((int) Math.max(0.0f, (this.mCellHeight - getShortcutsAndWidgets().getCellContentHeight()) / 2.0f));
                 } else {
                     width = i8 + (((this.mCellWidth * i3) - bitmap.getWidth()) / 2);
                     height = i9 + (((this.mCellHeight * i4) - bitmap.getHeight()) / 2);
@@ -824,7 +956,6 @@ public class CellLayout extends ViewGroup {
         int i7;
         int[] iArr4;
         Rect rect;
-        int[] iArr5;
         boolean z2;
         int i8;
         Rect rect2;
@@ -934,12 +1065,12 @@ public class CellLayout extends ViewGroup {
                     i11 = -1;
                 }
                 cellToCenterPoint(i19, i18, this.mTmpPoint);
-                Rect pop = this.mTempRectStack.pop();
-                pop.set(i19, i18, i19 + i10, i18 + i11);
+                Rect rectPop = this.mTempRectStack.pop();
+                rectPop.set(i19, i18, i19 + i10, i18 + i11);
                 Iterator<Rect> it = stack.iterator();
                 while (true) {
                     if (it.hasNext()) {
-                        if (it.next().contains(pop)) {
+                        if (it.next().contains(rectPop)) {
                             z2 = true;
                             break;
                         }
@@ -948,22 +1079,22 @@ public class CellLayout extends ViewGroup {
                         break;
                     }
                 }
-                stack.push(pop);
+                stack.push(rectPop);
                 i8 = i14;
-                double hypot = Math.hypot(iArr5[0] - i14, iArr5[1] - i7);
-                if (hypot > d || z2) {
+                double dHypot = Math.hypot(r5[0] - i14, r5[1] - i7);
+                if (dHypot > d || z2) {
                     rect2 = rect;
-                    if (!pop.contains(rect2)) {
-                        i19++;
-                        rect4 = rect2;
-                        iArr3 = iArr4;
-                        i15 = i7;
-                        i14 = i8;
-                        i10 = i3;
-                        i11 = i4;
-                        i12 = i5;
-                        i13 = i6;
+                    if (rectPop.contains(rect2)) {
                     }
+                    i19++;
+                    rect4 = rect2;
+                    iArr3 = iArr4;
+                    i15 = i7;
+                    i14 = i8;
+                    i10 = i3;
+                    i11 = i4;
+                    i12 = i5;
+                    i13 = i6;
                 } else {
                     rect2 = rect;
                 }
@@ -973,8 +1104,8 @@ public class CellLayout extends ViewGroup {
                     iArr2[0] = i10;
                     iArr2[1] = i11;
                 }
-                rect2.set(pop);
-                d = hypot;
+                rect2.set(rectPop);
+                d = dHypot;
                 i19++;
                 rect4 = rect2;
                 iArr3 = iArr4;
@@ -991,13 +1122,13 @@ public class CellLayout extends ViewGroup {
             i12 = i5;
             i13 = i6;
         }
-        int[] iArr6 = iArr3;
+        int[] iArr5 = iArr3;
         if (d == Double.MAX_VALUE) {
-            iArr6[0] = -1;
-            iArr6[1] = -1;
+            iArr5[0] = -1;
+            iArr5[1] = -1;
         }
         recycleTempRects(stack);
-        return iArr6;
+        return iArr5;
     }
 
     private int[] findNearestArea(int i, int i2, int i3, int i4, int[] iArr, boolean[][] zArr, boolean[][] zArr2, int[] iArr2) {
@@ -1031,14 +1162,14 @@ public class CellLayout extends ViewGroup {
                 int i16 = i13 - i;
                 i5 = i13;
                 int i17 = i11 - i2;
-                float hypot = (float) Math.hypot(i16, i17);
+                float fHypot = (float) Math.hypot(i16, i17);
                 int[] iArr4 = this.mTmpPoint;
                 computeDirectionVector(i16, i17, iArr4);
                 int i18 = (iArr[0] * iArr4[0]) + (iArr[1] * iArr4[1]);
-                if (Float.compare(hypot, f2) < 0 || (Float.compare(hypot, f2) == 0 && i18 > i12)) {
+                if (Float.compare(fHypot, f2) < 0 || (Float.compare(fHypot, f2) == 0 && i18 > i12)) {
                     iArr3[0] = i5;
                     iArr3[1] = i11;
-                    f2 = hypot;
+                    f2 = fHypot;
                     i12 = i18;
                 }
                 i13 = i5 + 1;
@@ -1073,9 +1204,7 @@ public class CellLayout extends ViewGroup {
         return z;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ViewCluster {
+    private class ViewCluster {
         static final int BOTTOM = 8;
         static final int LEFT = 1;
         static final int RIGHT = 4;
@@ -1134,7 +1263,7 @@ public class CellLayout extends ViewGroup {
                                     this.leftEdge[i6] = i5;
                                 }
                             }
-                            continue;
+                            break;
                         case 2:
                             int i7 = cellAndSpan.cellY;
                             for (int i8 = cellAndSpan.cellX; i8 < cellAndSpan.cellX + cellAndSpan.spanX; i8++) {
@@ -1142,7 +1271,7 @@ public class CellLayout extends ViewGroup {
                                     this.topEdge[i8] = i7;
                                 }
                             }
-                            continue;
+                            break;
                     }
                 } else {
                     int i9 = cellAndSpan.cellY + cellAndSpan.spanY;
@@ -1168,33 +1297,32 @@ public class CellLayout extends ViewGroup {
                     }
                 }
                 return false;
-            } else if (i != 8) {
+            }
+            if (i != 8) {
                 switch (i) {
                     case 1:
                         for (int i3 = cellAndSpan.cellY; i3 < cellAndSpan.cellY + cellAndSpan.spanY; i3++) {
                             if (this.leftEdge[i3] == cellAndSpan.cellX + cellAndSpan.spanX) {
-                                return true;
+                                break;
                             }
                         }
-                        return false;
+                        break;
                     case 2:
                         for (int i4 = cellAndSpan.cellX; i4 < cellAndSpan.cellX + cellAndSpan.spanX; i4++) {
                             if (this.topEdge[i4] == cellAndSpan.cellY + cellAndSpan.spanY) {
-                                return true;
+                                break;
                             }
                         }
-                        return false;
-                    default:
-                        return false;
+                        break;
                 }
-            } else {
-                for (int i5 = cellAndSpan.cellX; i5 < cellAndSpan.cellX + cellAndSpan.spanX; i5++) {
-                    if (this.bottomEdge[i5] == cellAndSpan.cellY) {
-                        return true;
-                    }
-                }
-                return false;
+                return true;
             }
+            for (int i5 = cellAndSpan.cellX; i5 < cellAndSpan.cellX + cellAndSpan.spanX; i5++) {
+                if (this.bottomEdge[i5] == cellAndSpan.cellY) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         void shift(int i, int i2) {
@@ -1205,13 +1333,13 @@ public class CellLayout extends ViewGroup {
                     switch (i) {
                         case 1:
                             cellAndSpan.cellX -= i2;
-                            continue;
+                            break;
                         case 2:
                             cellAndSpan.cellY -= i2;
-                            continue;
+                            break;
                         default:
                             cellAndSpan.cellY += i2;
-                            continue;
+                            break;
                     }
                 } else {
                     cellAndSpan.cellX += i2;
@@ -1232,14 +1360,13 @@ public class CellLayout extends ViewGroup {
             return this.boundingRect;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        /* loaded from: classes.dex */
-        public class PositionComparator implements Comparator<View> {
+        class PositionComparator implements Comparator<View> {
             int whichEdge = 0;
 
             PositionComparator() {
             }
 
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(View view, View view2) {
                 CellAndSpan cellAndSpan = ViewCluster.this.config.map.get(view);
@@ -1399,9 +1526,10 @@ public class CellLayout extends ViewGroup {
             iArr[0] = i4;
             iArr[0] = iArr[0] * (-1);
             iArr[1] = iArr[1] * (-1);
-        } else if (pushViewsToTempLocation(arrayList, rect, iArr, view, itemConfiguration)) {
-            return true;
         } else {
+            if (pushViewsToTempLocation(arrayList, rect, iArr, view, itemConfiguration)) {
+                return true;
+            }
             iArr[0] = iArr[0] * (-1);
             iArr[1] = iArr[1] * (-1);
             if (pushViewsToTempLocation(arrayList, rect, iArr, view, itemConfiguration)) {
@@ -1451,9 +1579,10 @@ public class CellLayout extends ViewGroup {
                 rect2.set(cellAndSpan2.cellX, cellAndSpan2.cellY, cellAndSpan2.cellX + cellAndSpan2.spanX, cellAndSpan2.cellY + cellAndSpan2.spanY);
                 if (!Rect.intersects(rect, rect2)) {
                     continue;
-                } else if (!layoutParams.canReorder) {
-                    return false;
                 } else {
+                    if (!layoutParams.canReorder) {
+                        return false;
+                    }
                     this.mIntersectingViews.add(view2);
                 }
             }
@@ -1472,13 +1601,13 @@ public class CellLayout extends ViewGroup {
     }
 
     private void computeDirectionVector(float f, float f2, int[] iArr) {
-        double atan = Math.atan(f2 / f);
+        double dAtan = Math.atan(f2 / f);
         iArr[0] = 0;
         iArr[1] = 0;
-        if (Math.abs(Math.cos(atan)) > 0.5d) {
+        if (Math.abs(Math.cos(dAtan)) > 0.5d) {
             iArr[0] = (int) Math.signum(f);
         }
-        if (Math.abs(Math.sin(atan)) > 0.5d) {
+        if (Math.abs(Math.sin(dAtan)) > 0.5d) {
             iArr[1] = (int) Math.signum(f2);
         }
     }
@@ -1486,8 +1615,8 @@ public class CellLayout extends ViewGroup {
     private ItemConfiguration findReorderSolution(int i, int i2, int i3, int i4, int i5, int i6, int[] iArr, View view, boolean z, ItemConfiguration itemConfiguration) {
         copyCurrentStateToSolution(itemConfiguration, false);
         this.mOccupied.copyTo(this.mTmpOccupied);
-        int[] findNearestArea = findNearestArea(i, i2, i5, i6, new int[2]);
-        if (!rearrangementExists(findNearestArea[0], findNearestArea[1], i5, i6, iArr, view, itemConfiguration)) {
+        int[] iArrFindNearestArea = findNearestArea(i, i2, i5, i6, new int[2]);
+        if (!rearrangementExists(iArrFindNearestArea[0], iArrFindNearestArea[1], i5, i6, iArr, view, itemConfiguration)) {
             if (i5 > i3 && (i4 == i6 || z)) {
                 return findReorderSolution(i, i2, i3, i4, i5 - 1, i6, iArr, view, false, itemConfiguration);
             }
@@ -1497,8 +1626,8 @@ public class CellLayout extends ViewGroup {
             itemConfiguration.isSolution = false;
         } else {
             itemConfiguration.isSolution = true;
-            itemConfiguration.cellX = findNearestArea[0];
-            itemConfiguration.cellY = findNearestArea[1];
+            itemConfiguration.cellX = iArrFindNearestArea[0];
+            itemConfiguration.cellY = iArrFindNearestArea[1];
             itemConfiguration.spanX = i5;
             itemConfiguration.spanY = i6;
         }
@@ -1572,9 +1701,7 @@ public class CellLayout extends ViewGroup {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class ReorderPreviewAnimation {
+    class ReorderPreviewAnimation {
         private static final float CHILD_DIVIDEND = 4.0f;
         private static final int HINT_DURATION = 650;
         public static final int MODE_HINT = 0;
@@ -1608,16 +1735,18 @@ public class CellLayout extends ViewGroup {
             if (i10 != i11 || i10 != 0) {
                 if (i11 == 0) {
                     this.finalDeltaX += (-i12) * Math.signum(i10) * CellLayout.this.mReorderPreviewAnimationMagnitude;
-                } else if (i10 == 0) {
-                    this.finalDeltaY += (-i12) * Math.signum(i11) * CellLayout.this.mReorderPreviewAnimationMagnitude;
-                } else {
-                    float f = i11;
-                    float f2 = i10;
-                    double atan = Math.atan(f / f2);
-                    float f3 = -i12;
-                    this.finalDeltaX += (int) (Math.signum(f2) * f3 * Math.abs(Math.cos(atan) * CellLayout.this.mReorderPreviewAnimationMagnitude));
-                    this.finalDeltaY += (int) (f3 * Math.signum(f) * Math.abs(Math.sin(atan) * CellLayout.this.mReorderPreviewAnimationMagnitude));
+                    return;
                 }
+                if (i10 == 0) {
+                    this.finalDeltaY += (-i12) * Math.signum(i11) * CellLayout.this.mReorderPreviewAnimationMagnitude;
+                    return;
+                }
+                float f = i11;
+                float f2 = i10;
+                double dAtan = Math.atan(f / f2);
+                float f3 = -i12;
+                this.finalDeltaX += (int) (Math.signum(f2) * f3 * Math.abs(Math.cos(dAtan) * CellLayout.this.mReorderPreviewAnimationMagnitude));
+                this.finalDeltaY += (int) (f3 * Math.signum(f) * Math.abs(Math.sin(dAtan) * CellLayout.this.mReorderPreviewAnimationMagnitude));
             }
         }
 
@@ -1653,30 +1782,36 @@ public class CellLayout extends ViewGroup {
             if (z) {
                 return;
             }
-            ValueAnimator ofFloat = LauncherAnimUtils.ofFloat(0.0f, 1.0f);
-            this.a = ofFloat;
+            ValueAnimator valueAnimatorOfFloat = LauncherAnimUtils.ofFloat(0.0f, 1.0f);
+            this.a = valueAnimatorOfFloat;
             if (!Utilities.isPowerSaverPreventingAnimation(CellLayout.this.getContext())) {
-                ofFloat.setRepeatMode(2);
-                ofFloat.setRepeatCount(-1);
+                valueAnimatorOfFloat.setRepeatMode(2);
+                valueAnimatorOfFloat.setRepeatCount(-1);
             }
-            ofFloat.setDuration(this.mode == 0 ? 650L : 300L);
-            ofFloat.setStartDelay((int) (Math.random() * 60.0d));
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.CellLayout.ReorderPreviewAnimation.1
+            valueAnimatorOfFloat.setDuration(this.mode == 0 ? 650L : 300L);
+            valueAnimatorOfFloat.setStartDelay((int) (Math.random() * 60.0d));
+            valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.CellLayout.ReorderPreviewAnimation.1
+                AnonymousClass1() {
+                }
+
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    float floatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
-                    float f = (ReorderPreviewAnimation.this.mode == 0 && ReorderPreviewAnimation.this.repeating) ? 1.0f : floatValue;
+                    float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+                    float f = (ReorderPreviewAnimation.this.mode == 0 && ReorderPreviewAnimation.this.repeating) ? 1.0f : fFloatValue;
                     float f2 = 1.0f - f;
                     float f3 = (ReorderPreviewAnimation.this.finalDeltaX * f) + (ReorderPreviewAnimation.this.initDeltaX * f2);
                     float f4 = (f * ReorderPreviewAnimation.this.finalDeltaY) + (f2 * ReorderPreviewAnimation.this.initDeltaY);
                     ReorderPreviewAnimation.this.child.setTranslationX(f3);
                     ReorderPreviewAnimation.this.child.setTranslationY(f4);
-                    float f5 = (ReorderPreviewAnimation.this.finalScale * floatValue) + ((1.0f - floatValue) * ReorderPreviewAnimation.this.initScale);
+                    float f5 = (ReorderPreviewAnimation.this.finalScale * fFloatValue) + ((1.0f - fFloatValue) * ReorderPreviewAnimation.this.initScale);
                     ReorderPreviewAnimation.this.child.setScaleX(f5);
                     ReorderPreviewAnimation.this.child.setScaleY(f5);
                 }
             });
-            ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.CellLayout.ReorderPreviewAnimation.2
+            valueAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.CellLayout.ReorderPreviewAnimation.2
+                AnonymousClass2() {
+                }
+
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationRepeat(Animator animator) {
                     ReorderPreviewAnimation.this.setInitialAnimationValues(true);
@@ -1684,7 +1819,39 @@ public class CellLayout extends ViewGroup {
                 }
             });
             CellLayout.this.mShakeAnimators.put(this.child, this);
-            ofFloat.start();
+            valueAnimatorOfFloat.start();
+        }
+
+        /* renamed from: com.android.launcher3.CellLayout$ReorderPreviewAnimation$1 */
+        class AnonymousClass1 implements ValueAnimator.AnimatorUpdateListener {
+            AnonymousClass1() {
+            }
+
+            @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+                float f = (ReorderPreviewAnimation.this.mode == 0 && ReorderPreviewAnimation.this.repeating) ? 1.0f : fFloatValue;
+                float f2 = 1.0f - f;
+                float f3 = (ReorderPreviewAnimation.this.finalDeltaX * f) + (ReorderPreviewAnimation.this.initDeltaX * f2);
+                float f4 = (f * ReorderPreviewAnimation.this.finalDeltaY) + (f2 * ReorderPreviewAnimation.this.initDeltaY);
+                ReorderPreviewAnimation.this.child.setTranslationX(f3);
+                ReorderPreviewAnimation.this.child.setTranslationY(f4);
+                float f5 = (ReorderPreviewAnimation.this.finalScale * fFloatValue) + ((1.0f - fFloatValue) * ReorderPreviewAnimation.this.initScale);
+                ReorderPreviewAnimation.this.child.setScaleX(f5);
+                ReorderPreviewAnimation.this.child.setScaleY(f5);
+            }
+        }
+
+        /* renamed from: com.android.launcher3.CellLayout$ReorderPreviewAnimation$2 */
+        class AnonymousClass2 extends AnimatorListenerAdapter {
+            AnonymousClass2() {
+            }
+
+            @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+            public void onAnimationRepeat(Animator animator) {
+                ReorderPreviewAnimation.this.setInitialAnimationValues(true);
+                ReorderPreviewAnimation.this.repeating = true;
+            }
         }
 
         private void cancel() {
@@ -1705,12 +1872,17 @@ public class CellLayout extends ViewGroup {
     }
 
     private void completeAndClearReorderPreviewAnimations() {
-        for (ReorderPreviewAnimation reorderPreviewAnimation : this.mShakeAnimators.values()) {
-            reorderPreviewAnimation.completeAnimationImmediately();
+        Iterator<ReorderPreviewAnimation> it = this.mShakeAnimators.values().iterator();
+        while (it.hasNext()) {
+            it.next().completeAnimationImmediately();
         }
         this.mShakeAnimators.clear();
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:54:0x0091  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private void commitTempPlacement() {
         int i;
         int i2;
@@ -1728,7 +1900,9 @@ public class CellLayout extends ViewGroup {
             View childAt = this.mShortcutsAndWidgets.getChildAt(i3);
             LayoutParams layoutParams = (LayoutParams) childAt.getLayoutParams();
             ItemInfo itemInfo = (ItemInfo) childAt.getTag();
-            if (itemInfo != null) {
+            if (itemInfo == null) {
+                i2 = i3;
+            } else {
                 boolean z = (itemInfo.cellX == layoutParams.tmpCellX && itemInfo.cellY == layoutParams.tmpCellY && itemInfo.spanX == layoutParams.cellHSpan && itemInfo.spanY == layoutParams.cellVSpan) ? false : true;
                 int i4 = layoutParams.tmpCellX;
                 layoutParams.cellX = i4;
@@ -1741,10 +1915,8 @@ public class CellLayout extends ViewGroup {
                 if (z) {
                     i2 = i3;
                     this.mLauncher.getModelWriter().modifyItemInDatabase(itemInfo, i, idForScreen, itemInfo.cellX, itemInfo.cellY, itemInfo.spanX, itemInfo.spanY);
-                    i3 = i2 + 1;
                 }
             }
-            i2 = i3;
             i3 = i2 + 1;
         }
     }
@@ -1781,19 +1953,23 @@ public class CellLayout extends ViewGroup {
         rect.offset(i - rect.centerX(), i2 - rect.centerY());
         Rect rect2 = new Rect();
         getViewsIntersectingRegion(iArr2[0], iArr2[1], i3, i4, view, rect2, this.mIntersectingViews);
-        int width = rect2.width();
-        int height = rect2.height();
+        int iWidth = rect2.width();
+        int iHeight = rect2.height();
         regionToRect(rect2.left, rect2.top, rect2.width(), rect2.height(), rect2);
-        int centerX = (rect2.centerX() - i) / i3;
-        int centerY = (rect2.centerY() - i2) / i4;
-        centerX = (width == this.mCountX || i3 == this.mCountX) ? 0 : 0;
-        centerY = (height == this.mCountY || i4 == this.mCountY) ? 0 : 0;
-        if (centerX != 0 || centerY != 0) {
-            computeDirectionVector(centerX, centerY, iArr);
-            return;
+        int iCenterX = (rect2.centerX() - i) / i3;
+        int iCenterY = (rect2.centerY() - i2) / i4;
+        if (iWidth == this.mCountX || i3 == this.mCountX) {
+            iCenterX = 0;
         }
-        iArr[0] = 1;
-        iArr[1] = 0;
+        if (iHeight == this.mCountY || i4 == this.mCountY) {
+            iCenterY = 0;
+        }
+        if (iCenterX != 0 || iCenterY != 0) {
+            computeDirectionVector(iCenterX, iCenterY, iArr);
+        } else {
+            iArr[0] = 1;
+            iArr[1] = 0;
+        }
     }
 
     private void getViewsIntersectingRegion(int i, int i2, int i3, int i4, View view, Rect rect, ArrayList<View> arrayList) {
@@ -1819,15 +1995,13 @@ public class CellLayout extends ViewGroup {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isNearestDropLocationOccupied(int i, int i2, int i3, int i4, View view, int[] iArr) {
-        int[] findNearestArea = findNearestArea(i, i2, i3, i4, iArr);
-        getViewsIntersectingRegion(findNearestArea[0], findNearestArea[1], i3, i4, view, null, this.mIntersectingViews);
+    boolean isNearestDropLocationOccupied(int i, int i2, int i3, int i4, View view, int[] iArr) {
+        int[] iArrFindNearestArea = findNearestArea(i, i2, i3, i4, iArr);
+        getViewsIntersectingRegion(iArrFindNearestArea[0], iArrFindNearestArea[1], i3, i4, view, null, this.mIntersectingViews);
         return !this.mIntersectingViews.isEmpty();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void revertTempState() {
+    void revertTempState() {
         completeAndClearReorderPreviewAnimations();
         if (isItemPlacementDirty()) {
             int childCount = this.mShortcutsAndWidgets.getChildCount();
@@ -1844,37 +2018,30 @@ public class CellLayout extends ViewGroup {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean createAreaForResize(int i, int i2, int i3, int i4, View view, int[] iArr, boolean z) {
+    boolean createAreaForResize(int i, int i2, int i3, int i4, View view, int[] iArr, boolean z) {
         int[] iArr2 = new int[2];
         regionToCenterPoint(i, i2, i3, i4, iArr2);
-        ItemConfiguration findReorderSolution = findReorderSolution(iArr2[0], iArr2[1], i3, i4, i3, i4, iArr, view, true, new ItemConfiguration());
+        ItemConfiguration itemConfigurationFindReorderSolution = findReorderSolution(iArr2[0], iArr2[1], i3, i4, i3, i4, iArr, view, true, new ItemConfiguration());
         setUseTempCoords(true);
-        if (findReorderSolution != null && findReorderSolution.isSolution) {
-            copySolutionToTempState(findReorderSolution, view);
+        if (itemConfigurationFindReorderSolution != null && itemConfigurationFindReorderSolution.isSolution) {
+            copySolutionToTempState(itemConfigurationFindReorderSolution, view);
             setItemPlacementDirty(true);
-            animateItemsToSolution(findReorderSolution, view, z);
+            animateItemsToSolution(itemConfigurationFindReorderSolution, view, z);
             if (z) {
                 commitTempPlacement();
                 completeAndClearReorderPreviewAnimations();
                 setItemPlacementDirty(false);
             } else {
-                beginOrAdjustReorderPreviewAnimations(findReorderSolution, view, 150, 1);
+                beginOrAdjustReorderPreviewAnimations(itemConfigurationFindReorderSolution, view, 150, 1);
             }
             this.mShortcutsAndWidgets.requestLayout();
         }
-        return findReorderSolution.isSolution;
+        return itemConfigurationFindReorderSolution.isSolution;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* JADX WARN: Code restructure failed: missing block: B:40:0x00f5, code lost:
-        if (r30 == 3) goto L36;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    public int[] performReorder(int i, int i2, int i3, int i4, int i5, int i6, View view, int[] iArr, int[] iArr2, int i7) {
-        int[] findNearestArea = findNearestArea(i, i2, i5, i6, iArr);
+    int[] performReorder(int i, int i2, int i3, int i4, int i5, int i6, View view, int[] iArr, int[] iArr2, int i7) {
+        int i8;
+        int[] iArrFindNearestArea = findNearestArea(i, i2, i5, i6, iArr);
         int[] iArr3 = iArr2 == null ? new int[2] : iArr2;
         if ((i7 == 2 || i7 == 3 || i7 == 4) && this.mPreviousReorderDirection[0] != -100) {
             this.mDirectionVector[0] = this.mPreviousReorderDirection[0];
@@ -1888,60 +2055,66 @@ public class CellLayout extends ViewGroup {
             this.mPreviousReorderDirection[0] = this.mDirectionVector[0];
             this.mPreviousReorderDirection[1] = this.mDirectionVector[1];
         }
-        ItemConfiguration findReorderSolution = findReorderSolution(i, i2, i3, i4, i5, i6, this.mDirectionVector, view, true, new ItemConfiguration());
-        ItemConfiguration findConfigurationNoShuffle = findConfigurationNoShuffle(i, i2, i3, i4, i5, i6, view, new ItemConfiguration());
-        if (!findReorderSolution.isSolution || findReorderSolution.area() < findConfigurationNoShuffle.area()) {
-            if (!findConfigurationNoShuffle.isSolution) {
-                findConfigurationNoShuffle = null;
+        ItemConfiguration itemConfigurationFindReorderSolution = findReorderSolution(i, i2, i3, i4, i5, i6, this.mDirectionVector, view, true, new ItemConfiguration());
+        ItemConfiguration itemConfigurationFindConfigurationNoShuffle = findConfigurationNoShuffle(i, i2, i3, i4, i5, i6, view, new ItemConfiguration());
+        if (!itemConfigurationFindReorderSolution.isSolution || itemConfigurationFindReorderSolution.area() < itemConfigurationFindConfigurationNoShuffle.area()) {
+            if (!itemConfigurationFindConfigurationNoShuffle.isSolution) {
+                itemConfigurationFindConfigurationNoShuffle = null;
             }
         } else {
-            findConfigurationNoShuffle = findReorderSolution;
+            itemConfigurationFindConfigurationNoShuffle = itemConfigurationFindReorderSolution;
         }
         if (i7 == 0) {
-            if (findConfigurationNoShuffle != null) {
-                beginOrAdjustReorderPreviewAnimations(findConfigurationNoShuffle, view, 0, 0);
-                findNearestArea[0] = findConfigurationNoShuffle.cellX;
-                findNearestArea[1] = findConfigurationNoShuffle.cellY;
-                iArr3[0] = findConfigurationNoShuffle.spanX;
-                iArr3[1] = findConfigurationNoShuffle.spanY;
+            if (itemConfigurationFindConfigurationNoShuffle != null) {
+                beginOrAdjustReorderPreviewAnimations(itemConfigurationFindConfigurationNoShuffle, view, 0, 0);
+                iArrFindNearestArea[0] = itemConfigurationFindConfigurationNoShuffle.cellX;
+                iArrFindNearestArea[1] = itemConfigurationFindConfigurationNoShuffle.cellY;
+                iArr3[0] = itemConfigurationFindConfigurationNoShuffle.spanX;
+                iArr3[1] = itemConfigurationFindConfigurationNoShuffle.spanY;
             } else {
                 iArr3[1] = -1;
                 iArr3[0] = -1;
-                findNearestArea[1] = -1;
-                findNearestArea[0] = -1;
+                iArrFindNearestArea[1] = -1;
+                iArrFindNearestArea[0] = -1;
             }
-            return findNearestArea;
+            return iArrFindNearestArea;
         }
         boolean z = true;
         setUseTempCoords(true);
-        if (findConfigurationNoShuffle != null) {
-            findNearestArea[0] = findConfigurationNoShuffle.cellX;
-            findNearestArea[1] = findConfigurationNoShuffle.cellY;
-            iArr3[0] = findConfigurationNoShuffle.spanX;
-            iArr3[1] = findConfigurationNoShuffle.spanY;
-            int i8 = (i7 == 1 || i7 == 2) ? 3 : 3;
-            copySolutionToTempState(findConfigurationNoShuffle, view);
+        if (itemConfigurationFindConfigurationNoShuffle != null) {
+            iArrFindNearestArea[0] = itemConfigurationFindConfigurationNoShuffle.cellX;
+            iArrFindNearestArea[1] = itemConfigurationFindConfigurationNoShuffle.cellY;
+            iArr3[0] = itemConfigurationFindConfigurationNoShuffle.spanX;
+            iArr3[1] = itemConfigurationFindConfigurationNoShuffle.spanY;
+            if (i7 != 1 && i7 != 2) {
+                i8 = 3;
+                if (i7 == 3) {
+                }
+            } else {
+                i8 = 3;
+            }
+            copySolutionToTempState(itemConfigurationFindConfigurationNoShuffle, view);
             setItemPlacementDirty(true);
-            animateItemsToSolution(findConfigurationNoShuffle, view, i7 == 2);
+            animateItemsToSolution(itemConfigurationFindConfigurationNoShuffle, view, i7 == 2);
             if (i7 == 2 || i7 == i8) {
                 commitTempPlacement();
                 completeAndClearReorderPreviewAnimations();
                 setItemPlacementDirty(false);
             } else {
-                beginOrAdjustReorderPreviewAnimations(findConfigurationNoShuffle, view, 150, 1);
+                beginOrAdjustReorderPreviewAnimations(itemConfigurationFindConfigurationNoShuffle, view, 150, 1);
             }
         } else {
             iArr3[1] = -1;
             iArr3[0] = -1;
-            findNearestArea[1] = -1;
-            findNearestArea[0] = -1;
+            iArrFindNearestArea[1] = -1;
+            iArrFindNearestArea[0] = -1;
             z = false;
         }
         if (i7 == 2 || !z) {
             setUseTempCoords(false);
         }
         this.mShortcutsAndWidgets.requestLayout();
-        return findNearestArea;
+        return iArrFindNearestArea;
     }
 
     void setItemPlacementDirty(boolean z) {
@@ -1952,9 +2125,7 @@ public class CellLayout extends ViewGroup {
         return this.mItemPlacementDirty;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ItemConfiguration extends CellAndSpan {
+    private static class ItemConfiguration extends CellAndSpan {
         ArrayList<View> intersectingViews;
         boolean isSolution;
         final ArrayMap<View, CellAndSpan> map;
@@ -1966,6 +2137,10 @@ public class CellLayout extends ViewGroup {
             this.savedMap = new ArrayMap<>();
             this.sortedViews = new ArrayList<>();
             this.isSolution = false;
+        }
+
+        /* synthetic */ ItemConfiguration(AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         void save() {
@@ -2020,13 +2195,11 @@ public class CellLayout extends ViewGroup {
         return this.mOccupied.findVacantCell(iArr, i, i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onDragEnter() {
+    void onDragEnter() {
         this.mDragging = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onDragExit() {
+    void onDragExit() {
         if (this.mDragging) {
             this.mDragging = false;
         }
@@ -2039,8 +2212,7 @@ public class CellLayout extends ViewGroup {
         setIsDragOverlapping(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onDropChild(View view) {
+    void onDropChild(View view) {
         if (view != null) {
             ((LayoutParams) view.getLayoutParams()).dropped = true;
             view.requestLayout();
@@ -2102,15 +2274,18 @@ public class CellLayout extends ViewGroup {
         return new LayoutParams(layoutParams);
     }
 
-    /* loaded from: classes.dex */
     public static class LayoutParams extends ViewGroup.MarginLayoutParams {
         public boolean canReorder;
+
         @ViewDebug.ExportedProperty
         public int cellHSpan;
+
         @ViewDebug.ExportedProperty
         public int cellVSpan;
+
         @ViewDebug.ExportedProperty
         public int cellX;
+
         @ViewDebug.ExportedProperty
         public int cellY;
         boolean dropped;
@@ -2118,8 +2293,10 @@ public class CellLayout extends ViewGroup {
         public int tmpCellX;
         public int tmpCellY;
         public boolean useTmpCoords;
+
         @ViewDebug.ExportedProperty
         public int x;
+
         @ViewDebug.ExportedProperty
         public int y;
 
@@ -2216,7 +2393,6 @@ public class CellLayout extends ViewGroup {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class CellInfo extends CellAndSpan {
         public final View cell;
         final long container;

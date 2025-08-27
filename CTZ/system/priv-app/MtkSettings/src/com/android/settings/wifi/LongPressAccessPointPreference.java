@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v7.preference.PreferenceViewHolder;
 import com.android.settingslib.wifi.AccessPoint;
 import com.android.settingslib.wifi.AccessPointPreference;
+
 /* loaded from: classes.dex */
 public class LongPressAccessPointPreference extends AccessPointPreference {
     private final Fragment mFragment;

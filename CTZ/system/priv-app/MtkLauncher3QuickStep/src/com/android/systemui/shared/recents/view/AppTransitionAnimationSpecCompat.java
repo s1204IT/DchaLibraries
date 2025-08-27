@@ -3,6 +3,7 @@ package com.android.systemui.shared.recents.view;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.view.AppTransitionAnimationSpec;
+
 /* loaded from: classes.dex */
 public class AppTransitionAnimationSpecCompat {
     private Bitmap mBuffer;

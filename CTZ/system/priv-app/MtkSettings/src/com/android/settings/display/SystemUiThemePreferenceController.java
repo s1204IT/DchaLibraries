@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.FeatureFlagUtils;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class SystemUiThemePreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener {
     private ListPreference mSystemUiThemePref;
@@ -28,7 +29,7 @@ public class SystemUiThemePreferenceController extends BasePreferenceController 
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         Settings.Secure.putInt(this.mContext.getContentResolver(), "theme_mode", Integer.parseInt((String) obj));
         refreshSummary(preference);
         return true;

@@ -14,6 +14,7 @@ import com.android.settings.applications.AppStateAppOpsBridge;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.wifi.AppStateChangeWifiStateBridge;
 import com.android.settingslib.applications.ApplicationsState;
+
 /* loaded from: classes.dex */
 public class ChangeWifiStateDetails extends AppInfoWithHeader implements Preference.OnPreferenceChangeListener {
     private AppStateChangeWifiStateBridge mAppBridge;

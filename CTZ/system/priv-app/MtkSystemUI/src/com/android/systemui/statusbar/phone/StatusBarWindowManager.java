@@ -16,6 +16,7 @@ import com.android.systemui.statusbar.RemoteInputController;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+
 /* loaded from: classes.dex */
 public class StatusBarWindowManager implements Dumpable, RemoteInputController.Callback {
     private int mBarHeight;
@@ -33,7 +34,6 @@ public class StatusBarWindowManager implements Dumpable, RemoteInputController.C
     private final IActivityManager mActivityManager = ActivityManager.getService();
     private final boolean mKeyguardScreenRotation = shouldEnableKeyguardScreenRotation();
 
-    /* loaded from: classes.dex */
     public interface OtherwisedCollapsedListener {
         void setWouldOtherwiseCollapse(boolean z);
     }
@@ -92,9 +92,9 @@ public class StatusBarWindowManager implements Dumpable, RemoteInputController.C
         }
         if (z && !state.backdropShowing && !z2) {
             this.mLpChanged.flags |= 1048576;
-            return;
+        } else {
+            this.mLpChanged.flags &= -1048577;
         }
-        this.mLpChanged.flags &= -1048577;
     }
 
     private void adjustScreenOrientation(State state) {
@@ -126,16 +126,16 @@ public class StatusBarWindowManager implements Dumpable, RemoteInputController.C
     }
 
     private void applyHeight(State state) {
-        boolean isExpanded = isExpanded(state);
+        boolean zIsExpanded = isExpanded(state);
         if (state.forcePluginOpen) {
-            this.mListener.setWouldOtherwiseCollapse(isExpanded);
-            isExpanded = true;
+            this.mListener.setWouldOtherwiseCollapse(zIsExpanded);
+            zIsExpanded = true;
         }
-        if (isExpanded) {
+        if (zIsExpanded) {
             this.mLpChanged.height = -1;
-            return;
+        } else {
+            this.mLpChanged.height = this.mBarHeight;
         }
-        this.mLpChanged.height = this.mBarHeight;
     }
 
     private boolean isExpanded(State state) {
@@ -161,9 +161,9 @@ public class StatusBarWindowManager implements Dumpable, RemoteInputController.C
     private void applyInputFeatures(State state) {
         if (state.isKeyguardShowingAndNotOccluded() && state.statusBarState == 1 && !state.qsExpanded && !state.forceUserActivity) {
             this.mLpChanged.inputFeatures |= 4;
-            return;
+        } else {
+            this.mLpChanged.inputFeatures &= -5;
         }
-        this.mLpChanged.inputFeatures &= -5;
     }
 
     private void apply(State state) {
@@ -195,25 +195,25 @@ public class StatusBarWindowManager implements Dumpable, RemoteInputController.C
     private void applyForceStatusBarVisibleFlag(State state) {
         if (state.forceStatusBarVisible) {
             this.mLpChanged.privateFlags |= 4096;
-            return;
+        } else {
+            this.mLpChanged.privateFlags &= -4097;
         }
-        this.mLpChanged.privateFlags &= -4097;
     }
 
     private void applyModalFlag(State state) {
         if (state.headsUpShowing) {
             this.mLpChanged.flags |= 32;
-            return;
+        } else {
+            this.mLpChanged.flags &= -33;
         }
-        this.mLpChanged.flags &= -33;
     }
 
     private void applyBrightness(State state) {
         if (state.forceDozeBrightness) {
             this.mLpChanged.screenBrightness = this.mScreenBrightnessDoze;
-            return;
+        } else {
+            this.mLpChanged.screenBrightness = -1.0f;
         }
-        this.mLpChanged.screenBrightness = -1.0f;
     }
 
     private void applyHasTopUi(State state) {
@@ -223,9 +223,9 @@ public class StatusBarWindowManager implements Dumpable, RemoteInputController.C
     private void applySleepToken(State state) {
         if (state.dozing) {
             this.mLpChanged.privateFlags |= 2097152;
-            return;
+        } else {
+            this.mLpChanged.privateFlags &= -2097153;
         }
-        this.mLpChanged.privateFlags &= -2097153;
     }
 
     public void setKeyguardShowing(boolean z) {
@@ -349,9 +349,7 @@ public class StatusBarWindowManager implements Dumpable, RemoteInputController.C
         return !this.mCurrentState.backdropShowing;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class State {
+    private static class State {
         boolean backdropShowing;
         boolean bouncerShowing;
         boolean dozing;
@@ -377,13 +375,15 @@ public class StatusBarWindowManager implements Dumpable, RemoteInputController.C
         private State() {
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public boolean isKeyguardShowingAndNotOccluded() {
+        /* synthetic */ State(AnonymousClass1 anonymousClass1) {
+            this();
+        }
+
+        private boolean isKeyguardShowingAndNotOccluded() {
             return this.keyguardShowing && !this.keyguardOccluded;
         }
 
         public String toString() {
-            Field[] declaredFields;
             StringBuilder sb = new StringBuilder();
             sb.append("Window State {");
             sb.append("\n");

@@ -22,6 +22,7 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class RingtonePlayer extends SystemUI {
     private IAudioService mAudioService;
@@ -33,7 +34,7 @@ public class RingtonePlayer extends SystemUI {
             synchronized (RingtonePlayer.this.mClients) {
                 client = (Client) RingtonePlayer.this.mClients.get(iBinder);
                 if (client == null) {
-                    client = new Client(iBinder, uri, Binder.getCallingUserHandle(), audioAttributes);
+                    client = RingtonePlayer.this.new Client(iBinder, uri, Binder.getCallingUserHandle(), audioAttributes);
                     iBinder.linkToDeath(client, 0);
                     RingtonePlayer.this.mClients.put(iBinder, client);
                 }
@@ -101,32 +102,33 @@ public class RingtonePlayer extends SystemUI {
         public ParcelFileDescriptor openRingtone(Uri uri) {
             ContentResolver contentResolver = RingtonePlayer.this.getContextForUser(Binder.getCallingUserHandle()).getContentResolver();
             if (uri.toString().startsWith(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.toString())) {
-                Cursor query = contentResolver.query(uri, new String[]{"is_ringtone", "is_alarm", "is_notification"}, null, null, null);
+                Cursor cursorQuery = contentResolver.query(uri, new String[]{"is_ringtone", "is_alarm", "is_notification"}, null, null, null);
                 Throwable th = null;
                 try {
-                    if (query.moveToFirst() && (query.getInt(0) != 0 || query.getInt(1) != 0 || query.getInt(2) != 0)) {
+                    if (cursorQuery.moveToFirst() && (cursorQuery.getInt(0) != 0 || cursorQuery.getInt(1) != 0 || cursorQuery.getInt(2) != 0)) {
                         try {
-                            ParcelFileDescriptor openFileDescriptor = contentResolver.openFileDescriptor(uri, "r");
-                            if (query != null) {
-                                query.close();
+                            ParcelFileDescriptor parcelFileDescriptorOpenFileDescriptor = contentResolver.openFileDescriptor(uri, "r");
+                            if (cursorQuery != null) {
+                                cursorQuery.close();
                             }
-                            return openFileDescriptor;
+                            return parcelFileDescriptorOpenFileDescriptor;
                         } catch (IOException e) {
                             throw new SecurityException(e);
                         }
-                    } else if (query != null) {
-                        query.close();
+                    }
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
                     }
                 } catch (Throwable th2) {
-                    if (query != null) {
+                    if (cursorQuery != null) {
                         if (0 != 0) {
                             try {
-                                query.close();
+                                cursorQuery.close();
                             } catch (Throwable th3) {
                                 th.addSuppressed(th3);
                             }
                         } else {
-                            query.close();
+                            cursorQuery.close();
                         }
                     }
                     throw th2;
@@ -147,12 +149,11 @@ public class RingtonePlayer extends SystemUI {
         }
     }
 
-    /* loaded from: classes.dex */
     private class Client implements IBinder.DeathRecipient {
         private final Ringtone mRingtone;
         private final IBinder mToken;
 
-        public Client(IBinder iBinder, Uri uri, UserHandle userHandle, AudioAttributes audioAttributes) {
+        public Client(IBinder iBinder, Uri uri, UserHandle userHandle, AudioAttributes audioAttributes) throws IllegalArgumentException {
             this.mToken = iBinder;
             this.mRingtone = new Ringtone(RingtonePlayer.this.getContextForUser(userHandle), false);
             this.mRingtone.setAudioAttributes(audioAttributes);
@@ -168,8 +169,7 @@ public class RingtonePlayer extends SystemUI {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Context getContextForUser(UserHandle userHandle) {
+    private Context getContextForUser(UserHandle userHandle) {
         try {
             return this.mContext.createPackageContextAsUser(this.mContext.getPackageName(), 0, userHandle);
         } catch (PackageManager.NameNotFoundException e) {

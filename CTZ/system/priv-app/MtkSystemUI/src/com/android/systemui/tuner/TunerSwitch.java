@@ -9,6 +9,7 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.tuner.TunerService;
+
 /* loaded from: classes.dex */
 public class TunerSwitch extends SwitchPreference implements TunerService.Tunable {
     private final int mAction;
@@ -16,9 +17,9 @@ public class TunerSwitch extends SwitchPreference implements TunerService.Tunabl
 
     public TunerSwitch(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.TunerSwitch);
-        this.mDefault = obtainStyledAttributes.getBoolean(0, false);
-        this.mAction = obtainStyledAttributes.getInt(1, -1);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.TunerSwitch);
+        this.mDefault = typedArrayObtainStyledAttributes.getBoolean(0, false);
+        this.mAction = typedArrayObtainStyledAttributes.getInt(1, -1);
     }
 
     @Override // android.support.v7.preference.Preference
@@ -38,18 +39,16 @@ public class TunerSwitch extends SwitchPreference implements TunerService.Tunabl
         setChecked(str2 != null ? Integer.parseInt(str2) != 0 : this.mDefault);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.TwoStatePreference, android.support.v7.preference.Preference
-    public void onClick() {
+    protected void onClick() {
         super.onClick();
         if (this.mAction != -1) {
             MetricsLogger.action(getContext(), this.mAction, isChecked());
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public boolean persistBoolean(boolean z) {
+    protected boolean persistBoolean(boolean z) {
         for (String str : getKey().split(",")) {
             Settings.Secure.putString(getContext().getContentResolver(), str, z ? "1" : "0");
         }

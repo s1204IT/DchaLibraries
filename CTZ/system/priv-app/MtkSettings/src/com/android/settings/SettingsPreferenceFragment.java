@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceGroup;
@@ -34,7 +35,9 @@ import com.android.settings.widget.LoadingViewController;
 import com.android.settingslib.CustomDialogPreference;
 import com.android.settingslib.CustomEditTextPreference;
 import com.android.settingslib.widget.FooterPreferenceMixin;
+import java.util.Iterator;
 import java.util.UUID;
+
 /* loaded from: classes.dex */
 public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceFragment implements DialogCreatable, HelpResourceProvider {
     private static final int ORDER_FIRST = -1;
@@ -99,10 +102,10 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
 
     @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
-        this.mPinnedHeaderFrameLayout = (ViewGroup) onCreateView.findViewById(R.id.pinned_header);
-        this.mButtonBar = (ViewGroup) onCreateView.findViewById(R.id.button_bar);
-        return onCreateView;
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        this.mPinnedHeaderFrameLayout = (ViewGroup) viewOnCreateView.findViewById(R.id.pinned_header);
+        this.mButtonBar = (ViewGroup) viewOnCreateView.findViewById(R.id.button_bar);
+        return viewOnCreateView;
     }
 
     @Override // com.android.settings.core.InstrumentedPreferenceFragment, android.support.v14.preference.PreferenceFragment
@@ -111,6 +114,8 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         checkAvailablePrefs(getPreferenceScreen());
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v1, resolved type: android.support.v7.preference.Preference */
+    /* JADX WARN: Multi-variable type inference failed */
     private void checkAvailablePrefs(PreferenceGroup preferenceGroup) {
         if (preferenceGroup == null) {
             return;
@@ -130,9 +135,9 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
     }
 
     public View setPinnedHeaderView(int i) {
-        View inflate = getActivity().getLayoutInflater().inflate(i, this.mPinnedHeaderFrameLayout, false);
-        setPinnedHeaderView(inflate);
-        return inflate;
+        View viewInflate = getActivity().getLayoutInflater().inflate(i, this.mPinnedHeaderFrameLayout, false);
+        setPinnedHeaderView(viewInflate);
+        return viewInflate;
     }
 
     public void setPinnedHeaderView(View view) {
@@ -170,7 +175,7 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         unregisterObserverIfNeeded();
     }
 
-    public void setLoading(boolean z, boolean z2) {
+    public void setLoading(boolean z, boolean z2) throws Resources.NotFoundException {
         LoadingViewController.handleLoadingContainer(getView().findViewById(R.id.loading_container), getListView(), !z, z2);
     }
 
@@ -206,8 +211,7 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         return 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDataSetChanged() {
+    protected void onDataSetChanged() {
         highlightPreferenceIfNeeded();
         updateEmptyView();
     }
@@ -216,8 +220,7 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         return this.mHeader;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setHeaderView(int i) {
+    protected void setHeaderView(int i) {
         this.mHeader = new LayoutPreference(getPrefContext(), i);
         addPreferenceToTop(this.mHeader);
     }
@@ -250,9 +253,9 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
             return;
         }
         if (getPreferenceScreen() != null) {
-            View findViewById = getActivity().findViewById(16908351);
+            View viewFindViewById = getActivity().findViewById(android.R.id.list_container);
             boolean z = true;
-            if ((getPreferenceScreen().getPreferenceCount() - (this.mHeader != null ? 1 : 0)) - (this.mFooterPreferenceMixin.hasFooter() ? 1 : 0) > 0 && (findViewById == null || findViewById.getVisibility() == 0)) {
+            if ((getPreferenceScreen().getPreferenceCount() - (this.mHeader != null ? 1 : 0)) - (this.mFooterPreferenceMixin.hasFooter() ? 1 : 0) > 0 && (viewFindViewById == null || viewFindViewById.getVisibility() == 0)) {
                 z = false;
             }
             this.mEmptyView.setVisibility(z ? 0 : 8);
@@ -286,13 +289,11 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         return this.mAdapter;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setAnimationAllowed(boolean z) {
+    protected void setAnimationAllowed(boolean z) {
         this.mAnimationAllowed = z;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void cacheRemoveAllPrefs(PreferenceGroup preferenceGroup) {
+    protected void cacheRemoveAllPrefs(PreferenceGroup preferenceGroup) {
         this.mPreferenceCache = new ArrayMap<>();
         int preferenceCount = preferenceGroup.getPreferenceCount();
         for (int i = 0; i < preferenceCount; i++) {
@@ -303,18 +304,17 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Preference getCachedPreference(String str) {
+    protected Preference getCachedPreference(String str) {
         if (this.mPreferenceCache != null) {
             return this.mPreferenceCache.remove(str);
         }
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void removeCachedPrefs(PreferenceGroup preferenceGroup) {
-        for (Preference preference : this.mPreferenceCache.values()) {
-            preferenceGroup.removePreference(preference);
+    protected void removeCachedPrefs(PreferenceGroup preferenceGroup) {
+        Iterator<Preference> it = this.mPreferenceCache.values().iterator();
+        while (it.hasNext()) {
+            preferenceGroup.removePreference(it.next());
         }
         this.mPreferenceCache = null;
     }
@@ -348,8 +348,7 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         getActivity().onBackPressed();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public ContentResolver getContentResolver() {
+    protected ContentResolver getContentResolver() {
         Activity activity = getActivity();
         if (activity != null) {
             this.mContentResolver = activity.getContentResolver();
@@ -357,13 +356,11 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         return this.mContentResolver;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Object getSystemService(String str) {
+    protected Object getSystemService(String str) {
         return getActivity().getSystemService(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public PackageManager getPackageManager() {
+    protected PackageManager getPackageManager() {
         return getActivity().getPackageManager();
     }
 
@@ -376,8 +373,7 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         super.onDetach();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void showDialog(int i) {
+    protected void showDialog(int i) {
         if (this.mDialogFragment != null) {
             Log.e(TAG, "Old dialog fragment not null!");
         }
@@ -393,24 +389,21 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         return 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void removeDialog(int i) {
+    protected void removeDialog(int i) {
         if (this.mDialogFragment != null && this.mDialogFragment.getDialogId() == i) {
             this.mDialogFragment.dismissAllowingStateLoss();
         }
         this.mDialogFragment = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setOnCancelListener(DialogInterface.OnCancelListener onCancelListener) {
+    protected void setOnCancelListener(DialogInterface.OnCancelListener onCancelListener) {
         if (this.mDialogFragment == null) {
             return;
         }
         this.mDialogFragment.mOnCancelListener = onCancelListener;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+    protected void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
         if (this.mDialogFragment == null) {
             return;
         }
@@ -422,28 +415,27 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
 
     @Override // android.support.v14.preference.PreferenceFragment, android.support.v7.preference.PreferenceManager.OnDisplayPreferenceDialogListener
     public void onDisplayPreferenceDialog(Preference preference) {
-        DialogFragment newInstance;
+        DialogFragment dialogFragmentNewInstance;
         if (preference.getKey() == null) {
             preference.setKey(UUID.randomUUID().toString());
         }
         if (preference instanceof RestrictedListPreference) {
-            newInstance = RestrictedListPreference.RestrictedListPreferenceDialogFragment.newInstance(preference.getKey());
+            dialogFragmentNewInstance = RestrictedListPreference.RestrictedListPreferenceDialogFragment.newInstance(preference.getKey());
         } else if (preference instanceof CustomListPreference) {
-            newInstance = CustomListPreference.CustomListPreferenceDialogFragment.newInstance(preference.getKey());
+            dialogFragmentNewInstance = CustomListPreference.CustomListPreferenceDialogFragment.newInstance(preference.getKey());
         } else if (preference instanceof CustomDialogPreference) {
-            newInstance = CustomDialogPreference.CustomPreferenceDialogFragment.newInstance(preference.getKey());
+            dialogFragmentNewInstance = CustomDialogPreference.CustomPreferenceDialogFragment.newInstance(preference.getKey());
         } else if (preference instanceof CustomEditTextPreference) {
-            newInstance = CustomEditTextPreference.CustomPreferenceDialogFragment.newInstance(preference.getKey());
+            dialogFragmentNewInstance = CustomEditTextPreference.CustomPreferenceDialogFragment.newInstance(preference.getKey());
         } else {
             super.onDisplayPreferenceDialog(preference);
             return;
         }
-        newInstance.setTargetFragment(this, 0);
-        newInstance.show(getFragmentManager(), "dialog_preference");
+        dialogFragmentNewInstance.setTargetFragment(this, 0);
+        dialogFragmentNewInstance.show(getFragmentManager(), "dialog_preference");
         onDialogShowing();
     }
 
-    /* loaded from: classes.dex */
     public static class SettingsDialogFragment extends InstrumentedDialogFragment {
         private DialogInterface.OnCancelListener mOnCancelListener;
         private DialogInterface.OnDismissListener mOnDismissListener;
@@ -452,6 +444,8 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         public SettingsDialogFragment() {
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: com.android.settings.DialogCreatable */
+        /* JADX WARN: Multi-variable type inference failed */
         public SettingsDialogFragment(DialogCreatable dialogCreatable, int i) {
             super(dialogCreatable, i);
             if (!(dialogCreatable instanceof Fragment)) {
@@ -491,7 +485,7 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            Object valueOf;
+            Object objValueOf;
             if (bundle != null) {
                 this.mDialogId = bundle.getInt("key_dialog_id", 0);
                 this.mParentFragment = getParentFragment();
@@ -502,15 +496,16 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
                 if (!(this.mParentFragment instanceof DialogCreatable)) {
                     StringBuilder sb = new StringBuilder();
                     if (this.mParentFragment != null) {
-                        valueOf = this.mParentFragment.getClass().getName();
+                        objValueOf = this.mParentFragment.getClass().getName();
                     } else {
-                        valueOf = Integer.valueOf(i);
+                        objValueOf = Integer.valueOf(i);
                     }
-                    sb.append(valueOf);
+                    sb.append(objValueOf);
                     sb.append(" must implement ");
                     sb.append(DialogCreatable.class.getName());
                     throw new IllegalArgumentException(sb.toString());
-                } else if (this.mParentFragment instanceof SettingsPreferenceFragment) {
+                }
+                if (this.mParentFragment instanceof SettingsPreferenceFragment) {
                     ((SettingsPreferenceFragment) this.mParentFragment).mDialogFragment = this;
                 }
             }
@@ -546,13 +541,11 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean hasNextButton() {
+    protected boolean hasNextButton() {
         return ((ButtonBarHandler) getActivity()).hasNextButton();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Button getNextButton() {
+    protected Button getNextButton() {
         return ((ButtonBarHandler) getActivity()).getNextButton();
     }
 
@@ -568,24 +561,21 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Intent getIntent() {
+    protected Intent getIntent() {
         if (getActivity() == null) {
             return null;
         }
         return getActivity().getIntent();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setResult(int i, Intent intent) {
+    protected void setResult(int i, Intent intent) {
         if (getActivity() == null) {
             return;
         }
         getActivity().setResult(i, intent);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setResult(int i) {
+    protected void setResult(int i) {
         if (getActivity() == null) {
             return;
         }

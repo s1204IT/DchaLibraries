@@ -11,6 +11,7 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.wrapper.OverlayManagerWrapper;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class EmulateDisplayCutoutPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final boolean mAvailable;
@@ -55,7 +56,6 @@ public class EmulateDisplayCutoutPreferenceController extends DeveloperOptionsPr
     }
 
     private boolean setEmulationOverlay(String str) {
-        OverlayManagerWrapper.OverlayInfo[] overlayInfos;
         boolean enabledExclusiveInCategory;
         String str2 = null;
         for (OverlayManagerWrapper.OverlayInfo overlayInfo : getOverlayInfos()) {
@@ -115,9 +115,8 @@ public class EmulateDisplayCutoutPreferenceController extends DeveloperOptionsPr
         return (OverlayManagerWrapper.OverlayInfo[]) overlayInfosForTarget.toArray(new OverlayManagerWrapper.OverlayInfo[overlayInfosForTarget.size()]);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         setEmulationOverlay("");
         updateState(this.mPreference);

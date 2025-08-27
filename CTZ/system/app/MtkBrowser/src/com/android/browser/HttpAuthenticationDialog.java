@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class HttpAuthenticationDialog {
     private CancelListener mCancelListener;
@@ -19,12 +20,10 @@ public class HttpAuthenticationDialog {
     private final String mRealm;
     private TextView mUsernameView;
 
-    /* loaded from: classes.dex */
     public interface CancelListener {
         void onCancel();
     }
 
-    /* loaded from: classes.dex */
     public interface OkListener {
         void onOk(String str, String str2, String str3, String str4);
     }
@@ -36,13 +35,11 @@ public class HttpAuthenticationDialog {
         createDialog();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getUsername() {
+    private String getUsername() {
         return this.mUsernameView.getText().toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getPassword() {
+    private String getPassword() {
         return this.mPasswordView.getText().toString();
     }
 
@@ -80,9 +77,9 @@ public class HttpAuthenticationDialog {
     }
 
     private void createDialog() {
-        View inflate = LayoutInflater.from(this.mContext).inflate(R.layout.http_authentication, (ViewGroup) null);
-        this.mUsernameView = (TextView) inflate.findViewById(R.id.username_edit);
-        this.mPasswordView = (TextView) inflate.findViewById(R.id.password_edit);
+        View viewInflate = LayoutInflater.from(this.mContext).inflate(R.layout.http_authentication, (ViewGroup) null);
+        this.mUsernameView = (TextView) viewInflate.findViewById(R.id.username_edit);
+        this.mPasswordView = (TextView) viewInflate.findViewById(R.id.password_edit);
         this.mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() { // from class: com.android.browser.HttpAuthenticationDialog.1
             @Override // android.widget.TextView.OnEditorActionListener
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -93,7 +90,7 @@ public class HttpAuthenticationDialog {
                 return false;
             }
         });
-        this.mDialog = new AlertDialog.Builder(this.mContext).setTitle(this.mContext.getText(R.string.sign_in_to).toString().replace("%s1", this.mHost).replace("%s2", this.mRealm)).setIconAttribute(16843605).setView(inflate).setPositiveButton(R.string.action, new DialogInterface.OnClickListener() { // from class: com.android.browser.HttpAuthenticationDialog.4
+        this.mDialog = new AlertDialog.Builder(this.mContext).setTitle(this.mContext.getText(R.string.sign_in_to).toString().replace("%s1", this.mHost).replace("%s2", this.mRealm)).setIconAttribute(android.R.attr.alertDialogIcon).setView(viewInflate).setPositiveButton(R.string.action, new DialogInterface.OnClickListener() { // from class: com.android.browser.HttpAuthenticationDialog.4
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (HttpAuthenticationDialog.this.mOkListener != null) {

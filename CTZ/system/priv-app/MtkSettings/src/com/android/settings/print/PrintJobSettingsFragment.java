@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class PrintJobSettingsFragment extends SettingsPreferenceFragment {
     private static final String LOG_TAG = PrintJobSettingsFragment.class.getSimpleName();
@@ -39,7 +40,7 @@ public class PrintJobSettingsFragment extends SettingsPreferenceFragment {
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
         addPreferencesFromResource(R.xml.print_job_settings);
         this.mPrintJobPreference = findPreference("print_job_preference");
         this.mMessagePreference = findPreference("print_job_message_preference");
@@ -47,7 +48,7 @@ public class PrintJobSettingsFragment extends SettingsPreferenceFragment {
         getActivity().getActionBar().setTitle(R.string.print_print_job);
         processArguments();
         setHasOptionsMenu(true);
-        return onCreateView;
+        return viewOnCreateView;
     }
 
     @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
@@ -92,12 +93,13 @@ public class PrintJobSettingsFragment extends SettingsPreferenceFragment {
                 case 1:
                     printJob.cancel();
                     finish();
-                    return true;
+                    break;
                 case 2:
                     printJob.restart();
                     finish();
-                    return true;
+                    break;
             }
+            return true;
         }
         return super.onOptionsItemSelected(menuItem);
     }
@@ -107,89 +109,86 @@ public class PrintJobSettingsFragment extends SettingsPreferenceFragment {
         if (string == null && (string = getIntent().getStringExtra("EXTRA_PRINT_JOB_ID")) == null) {
             Log.w(LOG_TAG, "EXTRA_PRINT_JOB_ID not set");
             finish();
-            return;
+        } else {
+            this.mPrintJobId = PrintJobId.unflattenFromString(string);
         }
-        this.mPrintJobId = PrintJobId.unflattenFromString(string);
     }
 
     private PrintJob getPrintJob() {
         return this.mPrintManager.getPrintJob(this.mPrintJobId);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Removed duplicated region for block: B:34:0x0134  */
-    /* JADX WARN: Removed duplicated region for block: B:38:0x014f  */
+    /* JADX WARN: Removed duplicated region for block: B:31:0x0112  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void updateUi() {
-        CharSequence status;
+    private void updateUi() {
         PrintJob printJob = getPrintJob();
         if (printJob == null) {
             finish();
-        } else if (printJob.isCancelled() || printJob.isCompleted()) {
-            finish();
-        } else {
-            PrintJobInfo info = printJob.getInfo();
-            int state = info.getState();
-            if (state != 6) {
-                switch (state) {
-                    case 1:
-                        this.mPrintJobPreference.setTitle(getString(R.string.print_configuring_state_title_template, new Object[]{info.getLabel()}));
-                        break;
-                    case 2:
-                    case 3:
-                        if (!printJob.getInfo().isCancelling()) {
-                            this.mPrintJobPreference.setTitle(getString(R.string.print_printing_state_title_template, new Object[]{info.getLabel()}));
-                            break;
-                        } else {
-                            this.mPrintJobPreference.setTitle(getString(R.string.print_cancelling_state_title_template, new Object[]{info.getLabel()}));
-                            break;
-                        }
-                    case 4:
-                        if (!printJob.getInfo().isCancelling()) {
-                            this.mPrintJobPreference.setTitle(getString(R.string.print_blocked_state_title_template, new Object[]{info.getLabel()}));
-                            break;
-                        } else {
-                            this.mPrintJobPreference.setTitle(getString(R.string.print_cancelling_state_title_template, new Object[]{info.getLabel()}));
-                            break;
-                        }
-                }
-            } else {
-                this.mPrintJobPreference.setTitle(getString(R.string.print_failed_state_title_template, new Object[]{info.getLabel()}));
-            }
-            this.mPrintJobPreference.setSummary(getString(R.string.print_job_summary, new Object[]{info.getPrinterName(), DateUtils.formatSameDayTime(info.getCreationTime(), info.getCreationTime(), 3, 3)}));
-            TypedArray obtainStyledAttributes = getActivity().obtainStyledAttributes(new int[]{16843817});
-            int color = obtainStyledAttributes.getColor(0, 0);
-            obtainStyledAttributes.recycle();
-            int state2 = info.getState();
-            if (state2 != 6) {
-                switch (state2) {
-                    case 2:
-                    case 3:
-                        Drawable drawable = getActivity().getDrawable(17302724);
-                        drawable.setTint(color);
-                        this.mPrintJobPreference.setIcon(drawable);
-                        break;
-                }
-                status = info.getStatus(getPackageManager());
-                if (TextUtils.isEmpty(status)) {
-                    if (getPreferenceScreen().findPreference("print_job_message_preference") == null) {
-                        getPreferenceScreen().addPreference(this.mMessagePreference);
-                    }
-                    this.mMessagePreference.setSummary(status);
-                } else {
-                    getPreferenceScreen().removePreference(this.mMessagePreference);
-                }
-                getActivity().invalidateOptionsMenu();
-            }
-            Drawable drawable2 = getActivity().getDrawable(17302725);
-            drawable2.setTint(color);
-            this.mPrintJobPreference.setIcon(drawable2);
-            status = info.getStatus(getPackageManager());
-            if (TextUtils.isEmpty(status)) {
-            }
-            getActivity().invalidateOptionsMenu();
+            return;
         }
+        if (printJob.isCancelled() || printJob.isCompleted()) {
+            finish();
+            return;
+        }
+        PrintJobInfo info = printJob.getInfo();
+        int state = info.getState();
+        if (state != 6) {
+            switch (state) {
+                case 1:
+                    this.mPrintJobPreference.setTitle(getString(R.string.print_configuring_state_title_template, new Object[]{info.getLabel()}));
+                    break;
+                case 2:
+                case 3:
+                    if (!printJob.getInfo().isCancelling()) {
+                        this.mPrintJobPreference.setTitle(getString(R.string.print_printing_state_title_template, new Object[]{info.getLabel()}));
+                        break;
+                    } else {
+                        this.mPrintJobPreference.setTitle(getString(R.string.print_cancelling_state_title_template, new Object[]{info.getLabel()}));
+                        break;
+                    }
+                case 4:
+                    if (!printJob.getInfo().isCancelling()) {
+                        this.mPrintJobPreference.setTitle(getString(R.string.print_blocked_state_title_template, new Object[]{info.getLabel()}));
+                        break;
+                    } else {
+                        this.mPrintJobPreference.setTitle(getString(R.string.print_cancelling_state_title_template, new Object[]{info.getLabel()}));
+                        break;
+                    }
+            }
+        } else {
+            this.mPrintJobPreference.setTitle(getString(R.string.print_failed_state_title_template, new Object[]{info.getLabel()}));
+        }
+        this.mPrintJobPreference.setSummary(getString(R.string.print_job_summary, new Object[]{info.getPrinterName(), DateUtils.formatSameDayTime(info.getCreationTime(), info.getCreationTime(), 3, 3)}));
+        TypedArray typedArrayObtainStyledAttributes = getActivity().obtainStyledAttributes(new int[]{android.R.attr.colorControlNormal});
+        int color = typedArrayObtainStyledAttributes.getColor(0, 0);
+        typedArrayObtainStyledAttributes.recycle();
+        int state2 = info.getState();
+        if (state2 != 6) {
+            switch (state2) {
+                case 2:
+                case 3:
+                    Drawable drawable = getActivity().getDrawable(android.R.drawable.ic_media_route_connecting_dark_26_mtrl);
+                    drawable.setTint(color);
+                    this.mPrintJobPreference.setIcon(drawable);
+                    break;
+                case 4:
+                    Drawable drawable2 = getActivity().getDrawable(android.R.drawable.ic_media_route_connecting_dark_27_mtrl);
+                    drawable2.setTint(color);
+                    this.mPrintJobPreference.setIcon(drawable2);
+                    break;
+            }
+        }
+        CharSequence status = info.getStatus(getPackageManager());
+        if (!TextUtils.isEmpty(status)) {
+            if (getPreferenceScreen().findPreference("print_job_message_preference") == null) {
+                getPreferenceScreen().addPreference(this.mMessagePreference);
+            }
+            this.mMessagePreference.setSummary(status);
+        } else {
+            getPreferenceScreen().removePreference(this.mMessagePreference);
+        }
+        getActivity().invalidateOptionsMenu();
     }
 }

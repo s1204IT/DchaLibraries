@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -26,6 +27,7 @@ import com.android.launcher3.anim.RoundedRectRevealOutlineProvider;
 import com.android.launcher3.shortcuts.DeepShortcutView;
 import com.android.quickstep.TaskSystemShortcut;
 import com.android.quickstep.TaskUtils;
+
 /* loaded from: classes.dex */
 public class TaskMenuView extends AbstractFloatingView {
     private static final long OPEN_CLOSE_DURATION = 220;
@@ -86,11 +88,11 @@ public class TaskMenuView extends AbstractFloatingView {
     }
 
     public static boolean showForTask(TaskView taskView) {
-        BaseDraggingActivity fromContext = BaseDraggingActivity.fromContext(taskView.getContext());
-        return ((TaskMenuView) fromContext.getLayoutInflater().inflate(R.layout.task_menu, (ViewGroup) fromContext.getDragLayer(), false)).populateAndShowForTask(taskView);
+        BaseDraggingActivity baseDraggingActivityFromContext = BaseDraggingActivity.fromContext(taskView.getContext());
+        return ((TaskMenuView) baseDraggingActivityFromContext.getLayoutInflater().inflate(R.layout.task_menu, (ViewGroup) baseDraggingActivityFromContext.getDragLayer(), false)).populateAndShowForTask(taskView);
     }
 
-    private boolean populateAndShowForTask(TaskView taskView) {
+    private boolean populateAndShowForTask(TaskView taskView) throws Resources.NotFoundException {
         if (isAttachedToWindow()) {
             return false;
         }
@@ -101,23 +103,22 @@ public class TaskMenuView extends AbstractFloatingView {
         post(new Runnable() { // from class: com.android.quickstep.views.-$$Lambda$TaskMenuView$i1_L2zRdfbslE_LOFUO_SzggAws
             @Override // java.lang.Runnable
             public final void run() {
-                TaskMenuView.this.animateOpen();
+                this.f$0.animateOpen();
             }
         });
         return true;
     }
 
-    private void addMenuOptions(TaskView taskView) {
-        TaskSystemShortcut[] taskSystemShortcutArr;
-        Drawable newDrawable = taskView.getTask().icon.getConstantState().newDrawable();
+    private void addMenuOptions(TaskView taskView) throws Resources.NotFoundException {
+        Drawable drawableNewDrawable = taskView.getTask().icon.getConstantState().newDrawable();
         int dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.task_thumbnail_icon_size);
-        newDrawable.setBounds(0, 0, dimensionPixelSize, dimensionPixelSize);
-        this.mTaskIconAndName.setCompoundDrawables(null, newDrawable, null, null);
+        drawableNewDrawable.setBounds(0, 0, dimensionPixelSize, dimensionPixelSize);
+        this.mTaskIconAndName.setCompoundDrawables(null, drawableNewDrawable, null, null);
         this.mTaskIconAndName.setText(TaskUtils.getTitle(getContext(), taskView.getTask()));
         this.mTaskIconAndName.setOnClickListener(new View.OnClickListener() { // from class: com.android.quickstep.views.-$$Lambda$TaskMenuView$KkF9yfMo_QBp8m4wdkrjtzMAaSk
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                TaskMenuView.this.close(true);
+                this.f$0.close(true);
             }
         });
         for (TaskSystemShortcut taskSystemShortcut : MENU_OPTIONS) {
@@ -139,17 +140,15 @@ public class TaskMenuView extends AbstractFloatingView {
     private void orientAroundTaskView(TaskView taskView) {
         measure(0, 0);
         this.mActivity.getDragLayer().getDescendantRectRelativeToSelf(taskView, sTempRect);
-        Rect insets = this.mActivity.getDragLayer().getInsets();
-        int width = (sTempRect.left + ((sTempRect.width() - getMeasuredWidth()) / 2)) - insets.left;
+        int iWidth = (sTempRect.left + ((sTempRect.width() - getMeasuredWidth()) / 2)) - this.mActivity.getDragLayer().getInsets().left;
         if (Utilities.isRtl(getResources())) {
-            width = -width;
+            iWidth = -iWidth;
         }
-        setX(width);
-        setY((sTempRect.top - this.mTaskIconAndName.getPaddingTop()) - insets.top);
+        setX(iWidth);
+        setY((sTempRect.top - this.mTaskIconAndName.getPaddingTop()) - r4.top);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void animateOpen() {
+    private void animateOpen() {
         animateOpenOrClosed(false);
         this.mIsOpen = true;
     }
@@ -181,14 +180,13 @@ public class TaskMenuView extends AbstractFloatingView {
         Property property = ALPHA;
         float[] fArr = new float[1];
         fArr[0] = z ? 0.0f : 1.0f;
-        animatorSet.play(ObjectAnimator.ofFloat(this, property, fArr));
+        animatorSet.play(ObjectAnimator.ofFloat(this, (Property<TaskMenuView, Float>) property, fArr));
         this.mOpenCloseAnimator.setDuration(OPEN_CLOSE_DURATION);
         this.mOpenCloseAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         this.mOpenCloseAnimator.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void closeComplete() {
+    private void closeComplete() {
         this.mIsOpen = false;
         this.mActivity.getDragLayer().removeView(this);
     }

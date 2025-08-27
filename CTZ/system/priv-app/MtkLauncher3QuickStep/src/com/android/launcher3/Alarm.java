@@ -2,6 +2,7 @@ package com.android.launcher3;
 
 import android.os.Handler;
 import android.os.SystemClock;
+
 /* loaded from: classes.dex */
 public class Alarm implements Runnable {
     private OnAlarmListener mAlarmListener;
@@ -15,16 +16,16 @@ public class Alarm implements Runnable {
     }
 
     public void setAlarm(long j) {
-        long uptimeMillis = SystemClock.uptimeMillis();
+        long jUptimeMillis = SystemClock.uptimeMillis();
         this.mAlarmPending = true;
         long j2 = this.mAlarmTriggerTime;
-        this.mAlarmTriggerTime = j + uptimeMillis;
+        this.mAlarmTriggerTime = j + jUptimeMillis;
         if (this.mWaitingForCallback && j2 > this.mAlarmTriggerTime) {
             this.mHandler.removeCallbacks(this);
             this.mWaitingForCallback = false;
         }
         if (!this.mWaitingForCallback) {
-            this.mHandler.postDelayed(this, this.mAlarmTriggerTime - uptimeMillis);
+            this.mHandler.postDelayed(this, this.mAlarmTriggerTime - jUptimeMillis);
             this.mWaitingForCallback = true;
         }
     }
@@ -37,15 +38,15 @@ public class Alarm implements Runnable {
     public void run() {
         this.mWaitingForCallback = false;
         if (this.mAlarmPending) {
-            long uptimeMillis = SystemClock.uptimeMillis();
-            if (this.mAlarmTriggerTime > uptimeMillis) {
-                this.mHandler.postDelayed(this, Math.max(0L, this.mAlarmTriggerTime - uptimeMillis));
+            long jUptimeMillis = SystemClock.uptimeMillis();
+            if (this.mAlarmTriggerTime > jUptimeMillis) {
+                this.mHandler.postDelayed(this, Math.max(0L, this.mAlarmTriggerTime - jUptimeMillis));
                 this.mWaitingForCallback = true;
-                return;
-            }
-            this.mAlarmPending = false;
-            if (this.mAlarmListener != null) {
-                this.mAlarmListener.onAlarm(this);
+            } else {
+                this.mAlarmPending = false;
+                if (this.mAlarmListener != null) {
+                    this.mAlarmListener.onAlarm(this);
+                }
             }
         }
     }

@@ -3,6 +3,7 @@ package android.arch.core.internal;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
+
 /* loaded from: classes.dex */
 public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
     private Entry<K, V> mEnd;
@@ -10,9 +11,7 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
     private int mSize = 0;
     private Entry<K, V> mStart;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface SupportRemove<K, V> {
+    interface SupportRemove<K, V> {
         void supportRemove(Entry<K, V> entry);
     }
 
@@ -33,8 +32,7 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Entry<K, V> put(K key, V v) {
+    protected Entry<K, V> put(K key, V v) {
         Entry<K, V> newEntry = new Entry<>(key, v);
         this.mSize++;
         if (this.mEnd == null) {
@@ -109,23 +107,23 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof SafeIterableMap) {
-            SafeIterableMap map = (SafeIterableMap) obj;
-            if (size() != map.size()) {
+        if (!(obj instanceof SafeIterableMap)) {
+            return false;
+        }
+        SafeIterableMap map = (SafeIterableMap) obj;
+        if (size() != map.size()) {
+            return false;
+        }
+        Iterator<Map.Entry<K, V>> iterator1 = iterator();
+        Iterator iterator2 = map.iterator();
+        while (iterator1.hasNext() && iterator2.hasNext()) {
+            Map.Entry<K, V> next1 = iterator1.next();
+            Object next2 = iterator2.next();
+            if ((next1 == null && next2 != null) || (next1 != null && !next1.equals(next2))) {
                 return false;
             }
-            Iterator<Map.Entry<K, V>> iterator1 = iterator();
-            Iterator iterator2 = map.iterator();
-            while (iterator1.hasNext() && iterator2.hasNext()) {
-                Map.Entry<K, V> next1 = iterator1.next();
-                Object next2 = iterator2.next();
-                if ((next1 == null && next2 != null) || (next1 != null && !next1.equals(next2))) {
-                    return false;
-                }
-            }
-            return (iterator1.hasNext() || iterator2.hasNext()) ? false : true;
         }
-        return false;
+        return (iterator1.hasNext() || iterator2.hasNext()) ? false : true;
     }
 
     public int hashCode() {
@@ -151,7 +149,6 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
         return builder.toString();
     }
 
-    /* loaded from: classes.dex */
     private static abstract class ListIterator<K, V> implements SupportRemove<K, V>, Iterator<Map.Entry<K, V>> {
         Entry<K, V> mExpectedEnd;
         Entry<K, V> mNext;
@@ -191,6 +188,7 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
             return forward(this.mNext);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: next()Ljava/lang/Object; */
         @Override // java.util.Iterator
         public Map.Entry<K, V> next() {
             Map.Entry<K, V> result = this.mNext;
@@ -199,9 +197,7 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class AscendingIterator<K, V> extends ListIterator<K, V> {
+    static class AscendingIterator<K, V> extends ListIterator<K, V> {
         AscendingIterator(Entry<K, V> start, Entry<K, V> expectedEnd) {
             super(start, expectedEnd);
         }
@@ -217,7 +213,6 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class DescendingIterator<K, V> extends ListIterator<K, V> {
         DescendingIterator(Entry<K, V> start, Entry<K, V> expectedEnd) {
             super(start, expectedEnd);
@@ -234,7 +229,6 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
         }
     }
 
-    /* loaded from: classes.dex */
     private class IteratorWithAdditions implements SupportRemove<K, V>, Iterator<Map.Entry<K, V>> {
         private boolean mBeforeStart;
         private Entry<K, V> mCurrent;
@@ -256,6 +250,7 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
             return this.mBeforeStart ? SafeIterableMap.this.mStart != null : (this.mCurrent == null || this.mCurrent.mNext == null) ? false : true;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: next()Ljava/lang/Object; */
         @Override // java.util.Iterator
         public Map.Entry<K, V> next() {
             if (this.mBeforeStart) {
@@ -268,9 +263,7 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Entry<K, V> implements Map.Entry<K, V> {
+    static class Entry<K, V> implements Map.Entry<K, V> {
         final K mKey;
         Entry<K, V> mNext;
         Entry<K, V> mPrevious;
@@ -305,11 +298,11 @@ public class SafeIterableMap<K, V> implements Iterable<Map.Entry<K, V>> {
             if (obj == this) {
                 return true;
             }
-            if (obj instanceof Entry) {
-                Entry entry = (Entry) obj;
-                return this.mKey.equals(entry.mKey) && this.mValue.equals(entry.mValue);
+            if (!(obj instanceof Entry)) {
+                return false;
             }
-            return false;
+            Entry entry = (Entry) obj;
+            return this.mKey.equals(entry.mKey) && this.mValue.equals(entry.mValue);
         }
 
         @Override // java.util.Map.Entry

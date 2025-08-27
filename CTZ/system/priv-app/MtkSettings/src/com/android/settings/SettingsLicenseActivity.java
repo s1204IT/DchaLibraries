@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.android.settingslib.license.LicenseHtmlLoader;
 import java.io.File;
+
 /* loaded from: classes.dex */
 public class SettingsLicenseActivity extends Activity implements LoaderManager.LoaderCallbacks<File> {
     @Override // android.app.Activity
@@ -38,6 +39,7 @@ public class SettingsLicenseActivity extends Activity implements LoaderManager.L
         return new LicenseHtmlLoader(this);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<File> loader, File file) {
         showGeneratedHtmlFile(file);
@@ -58,10 +60,10 @@ public class SettingsLicenseActivity extends Activity implements LoaderManager.L
     private void showGeneratedHtmlFile(File file) {
         if (file != null) {
             showHtmlFromUri(getUriFromGeneratedHtmlFile(file));
-            return;
+        } else {
+            Log.e("SettingsLicenseActivity", "Failed to generate.");
+            showErrorAndFinish();
         }
-        Log.e("SettingsLicenseActivity", "Failed to generate.");
-        showErrorAndFinish();
     }
 
     private void showSelectedFile(String str) {
@@ -98,7 +100,7 @@ public class SettingsLicenseActivity extends Activity implements LoaderManager.L
     }
 
     private void showErrorAndFinish() {
-        Toast.makeText(this, (int) R.string.settings_license_activity_unavailable, 1).show();
+        Toast.makeText(this, R.string.settings_license_activity_unavailable, 1).show();
         finish();
     }
 

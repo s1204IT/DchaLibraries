@@ -18,6 +18,7 @@ import com.android.settingslib.core.lifecycle.events.OnDestroy;
 import com.android.settingslib.deviceinfo.AbstractSimStatusImeiInfoPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SimStatusPreferenceController extends AbstractSimStatusImeiInfoPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnCreate, OnDestroy {
     private final Fragment mFragment;
@@ -52,18 +53,18 @@ public class SimStatusPreferenceController extends AbstractSimStatusImeiInfoPref
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference(getPreferenceKey());
-        if (!isAvailable() || findPreference == null || !findPreference.isVisible()) {
+        Preference preferenceFindPreference = preferenceScreen.findPreference(getPreferenceKey());
+        if (!isAvailable() || preferenceFindPreference == null || !preferenceFindPreference.isVisible()) {
             return;
         }
-        this.mPreferenceList.add(findPreference);
-        int order = findPreference.getOrder();
+        this.mPreferenceList.add(preferenceFindPreference);
+        int order = preferenceFindPreference.getOrder();
         for (int i = 1; i < this.mTelephonyManager.getPhoneCount(); i++) {
-            Preference createNewPreference = createNewPreference(preferenceScreen.getContext());
-            createNewPreference.setOrder(order + i);
-            createNewPreference.setKey("sim_status" + i);
-            preferenceScreen.addPreference(createNewPreference);
-            this.mPreferenceList.add(createNewPreference);
+            Preference preferenceCreateNewPreference = createNewPreference(preferenceScreen.getContext());
+            preferenceCreateNewPreference.setOrder(order + i);
+            preferenceCreateNewPreference.setKey("sim_status" + i);
+            preferenceScreen.addPreference(preferenceCreateNewPreference);
+            this.mPreferenceList.add(preferenceCreateNewPreference);
         }
     }
 
@@ -78,11 +79,11 @@ public class SimStatusPreferenceController extends AbstractSimStatusImeiInfoPref
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        int indexOf = this.mPreferenceList.indexOf(preference);
-        if (indexOf == -1) {
+        int iIndexOf = this.mPreferenceList.indexOf(preference);
+        if (iIndexOf == -1) {
             return false;
         }
-        SimStatusDialogFragment.show(this.mFragment, indexOf, getPreferenceTitle(indexOf));
+        SimStatusDialogFragment.show(this.mFragment, iIndexOf, getPreferenceTitle(iIndexOf));
         return true;
     }
 

@@ -24,6 +24,7 @@ import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppBatteryPreferenceController extends BasePreferenceController implements LoaderManager.LoaderCallbacks<BatteryStatsHelper>, LifecycleObserver, OnPause, OnResume {
     private static final String KEY_BATTERY = "battery";
@@ -94,6 +95,7 @@ public class AppBatteryPreferenceController extends BasePreferenceController imp
         return new BatteryStatsHelperLoader(this.mContext);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<BatteryStatsHelper> loader, BatteryStatsHelper batteryStatsHelper) {
         this.mBatteryHelper = batteryStatsHelper;

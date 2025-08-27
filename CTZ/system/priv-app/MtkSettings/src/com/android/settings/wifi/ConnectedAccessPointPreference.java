@@ -6,12 +6,12 @@ import android.view.View;
 import com.android.settings.R;
 import com.android.settingslib.wifi.AccessPoint;
 import com.android.settingslib.wifi.AccessPointPreference;
+
 /* loaded from: classes.dex */
 public class ConnectedAccessPointPreference extends AccessPointPreference implements View.OnClickListener {
     private boolean mIsCaptivePortal;
     private OnGearClickListener mOnGearClickListener;
 
-    /* loaded from: classes.dex */
     public interface OnGearClickListener {
         void onGearClick(ConnectedAccessPointPreference connectedAccessPointPreference);
     }
@@ -42,10 +42,10 @@ public class ConnectedAccessPointPreference extends AccessPointPreference implem
     @Override // com.android.settingslib.wifi.AccessPointPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.settings_button);
-        findViewById.setOnClickListener(this);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.settings_button);
+        viewFindViewById.setOnClickListener(this);
         preferenceViewHolder.findViewById(R.id.settings_button_no_background).setVisibility(this.mIsCaptivePortal ? 4 : 0);
-        findViewById.setVisibility(this.mIsCaptivePortal ? 0 : 4);
+        viewFindViewById.setVisibility(this.mIsCaptivePortal ? 0 : 4);
     }
 
     @Override // android.view.View.OnClickListener

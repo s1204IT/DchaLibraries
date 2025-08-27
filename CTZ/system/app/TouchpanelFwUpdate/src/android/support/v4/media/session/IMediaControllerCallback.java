@@ -10,6 +10,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface IMediaControllerCallback extends IInterface {
     void onCaptioningEnabledChanged(boolean z) throws RemoteException;
@@ -38,7 +39,6 @@ public interface IMediaControllerCallback extends IInterface {
 
     void onVolumeInfoChanged(ParcelableVolumeInfo parcelableVolumeInfo) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IMediaControllerCallback {
         public Stub() {
             attachInterface(this, "android.support.v4.media.session.IMediaControllerCallback");
@@ -61,77 +61,70 @@ public interface IMediaControllerCallback extends IInterface {
         }
 
         @Override // android.os.Binder
-        public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
-            boolean _arg0;
-            if (code == 1598968902) {
-                reply.writeString("android.support.v4.media.session.IMediaControllerCallback");
+        public boolean onTransact(int i, Parcel parcel, Parcel parcel2, int i2) throws RemoteException {
+            if (i == 1598968902) {
+                parcel2.writeString("android.support.v4.media.session.IMediaControllerCallback");
                 return true;
             }
-            switch (code) {
+            switch (i) {
                 case 1:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    String _arg02 = data.readString();
-                    Bundle _arg1 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                    onEvent(_arg02, _arg1);
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onEvent(parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 2:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
                     onSessionDestroyed();
                     return true;
                 case 3:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    onPlaybackStateChanged(data.readInt() != 0 ? PlaybackStateCompat.CREATOR.createFromParcel(data) : null);
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onPlaybackStateChanged(parcel.readInt() != 0 ? PlaybackStateCompat.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 4:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    onMetadataChanged(data.readInt() != 0 ? MediaMetadataCompat.CREATOR.createFromParcel(data) : null);
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onMetadataChanged(parcel.readInt() != 0 ? MediaMetadataCompat.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 5:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    onQueueChanged(data.createTypedArrayList(MediaSessionCompat.QueueItem.CREATOR));
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onQueueChanged(parcel.createTypedArrayList(MediaSessionCompat.QueueItem.CREATOR));
                     return true;
                 case 6:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    onQueueTitleChanged(data.readInt() != 0 ? (CharSequence) TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(data) : null);
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onQueueTitleChanged(parcel.readInt() != 0 ? (CharSequence) TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 7:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    onExtrasChanged(data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null);
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onExtrasChanged(parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 8:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    onVolumeInfoChanged(data.readInt() != 0 ? ParcelableVolumeInfo.CREATOR.createFromParcel(data) : null);
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onVolumeInfoChanged(parcel.readInt() != 0 ? ParcelableVolumeInfo.CREATOR.createFromParcel(parcel) : null);
                     return true;
                 case 9:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    onRepeatModeChanged(data.readInt());
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onRepeatModeChanged(parcel.readInt());
                     return true;
                 case 10:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    _arg0 = data.readInt() != 0;
-                    onShuffleModeChangedRemoved(_arg0);
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onShuffleModeChangedRemoved(parcel.readInt() != 0);
                     return true;
                 case 11:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    _arg0 = data.readInt() != 0;
-                    onCaptioningEnabledChanged(_arg0);
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onCaptioningEnabledChanged(parcel.readInt() != 0);
                     return true;
                 case 12:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
-                    onShuffleModeChanged(data.readInt());
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    onShuffleModeChanged(parcel.readInt());
                     return true;
                 case 13:
-                    data.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaControllerCallback");
                     onSessionReady();
                     return true;
                 default:
-                    return super.onTransact(code, data, reply, flags);
+                    return super.onTransact(i, parcel, parcel2, i2);
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public static class Proxy implements IMediaControllerCallback {
+        private static class Proxy implements IMediaControllerCallback {
             private IBinder mRemote;
 
             Proxy(IBinder remote) {
@@ -282,26 +275,26 @@ public interface IMediaControllerCallback extends IInterface {
             }
 
             @Override // android.support.v4.media.session.IMediaControllerCallback
-            public void onShuffleModeChangedRemoved(boolean enabled) throws RemoteException {
-                Parcel _data = Parcel.obtain();
+            public void onShuffleModeChangedRemoved(boolean z) throws RemoteException {
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    _data.writeInterfaceToken("android.support.v4.media.session.IMediaControllerCallback");
-                    _data.writeInt(enabled ? 1 : 0);
-                    this.mRemote.transact(10, _data, null, 1);
+                    parcelObtain.writeInterfaceToken("android.support.v4.media.session.IMediaControllerCallback");
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(10, parcelObtain, null, 1);
                 } finally {
-                    _data.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // android.support.v4.media.session.IMediaControllerCallback
-            public void onCaptioningEnabledChanged(boolean enabled) throws RemoteException {
-                Parcel _data = Parcel.obtain();
+            public void onCaptioningEnabledChanged(boolean z) throws RemoteException {
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    _data.writeInterfaceToken("android.support.v4.media.session.IMediaControllerCallback");
-                    _data.writeInt(enabled ? 1 : 0);
-                    this.mRemote.transact(11, _data, null, 1);
+                    parcelObtain.writeInterfaceToken("android.support.v4.media.session.IMediaControllerCallback");
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(11, parcelObtain, null, 1);
                 } finally {
-                    _data.recycle();
+                    parcelObtain.recycle();
                 }
             }
 

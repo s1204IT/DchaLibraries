@@ -15,6 +15,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.drawer.Tile;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AccountDetailDashboardFragment extends DashboardFragment {
     Account mAccount;
@@ -69,9 +70,8 @@ public class AccountDetailDashboardFragment extends DashboardFragment {
         return R.string.help_url_account_detail;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.account_type_settings;
     }
 
@@ -92,11 +92,11 @@ public class AccountDetailDashboardFragment extends DashboardFragment {
         if (this.mAccountType == null || (bundle = tile.metaData) == null) {
             return false;
         }
-        boolean equals = this.mAccountType.equals(bundle.getString("com.android.settings.ia.account"));
-        if (equals && tile.intent != null) {
+        boolean zEquals = this.mAccountType.equals(bundle.getString("com.android.settings.ia.account"));
+        if (zEquals && tile.intent != null) {
             tile.intent.putExtra("extra.accountName", this.mAccount.name);
         }
-        return equals;
+        return zEquals;
     }
 
     void updateUi() {
@@ -109,9 +109,9 @@ public class AccountDetailDashboardFragment extends DashboardFragment {
             userHandle = null;
         }
         AccountTypePreferenceLoader accountTypePreferenceLoader = new AccountTypePreferenceLoader(this, new AuthenticatorHelper(context, userHandle, null), userHandle);
-        PreferenceScreen addPreferencesForType = accountTypePreferenceLoader.addPreferencesForType(this.mAccountType, getPreferenceScreen());
-        if (addPreferencesForType != null) {
-            accountTypePreferenceLoader.updatePreferenceIntents(addPreferencesForType, this.mAccountType, this.mAccount);
+        PreferenceScreen preferenceScreenAddPreferencesForType = accountTypePreferenceLoader.addPreferencesForType(this.mAccountType, getPreferenceScreen());
+        if (preferenceScreenAddPreferencesForType != null) {
+            accountTypePreferenceLoader.updatePreferenceIntents(preferenceScreenAddPreferencesForType, this.mAccountType, this.mAccount);
         }
     }
 }

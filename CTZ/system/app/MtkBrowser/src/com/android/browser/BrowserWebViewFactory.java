@@ -6,6 +6,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
+
 /* loaded from: classes.dex */
 public class BrowserWebViewFactory implements WebViewFactory {
     private final Context mContext;
@@ -20,11 +21,11 @@ public class BrowserWebViewFactory implements WebViewFactory {
 
     @Override // com.android.browser.WebViewFactory
     public WebView createWebView(boolean z) {
-        BrowserWebView instantiateWebView = instantiateWebView(null, 16842885, z);
-        initWebViewSettings(instantiateWebView);
-        instantiateWebView.getSettings().setJavaScriptEnabled(true);
-        instantiateWebView.addJavascriptInterface(new WebAppInterface(instantiateWebView), "injectedObject");
-        return instantiateWebView;
+        BrowserWebView browserWebViewInstantiateWebView = instantiateWebView(null, android.R.attr.webViewStyle, z);
+        initWebViewSettings(browserWebViewInstantiateWebView);
+        browserWebViewInstantiateWebView.getSettings().setJavaScriptEnabled(true);
+        browserWebViewInstantiateWebView.addJavascriptInterface(new WebAppInterface(browserWebViewInstantiateWebView), "injectedObject");
+        return browserWebViewInstantiateWebView;
     }
 
     protected void initWebViewSettings(WebView webView) {

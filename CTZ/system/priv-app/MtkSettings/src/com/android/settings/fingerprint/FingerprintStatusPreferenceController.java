@@ -12,6 +12,7 @@ import com.android.settings.Utils;
 import com.android.settings.core.BasePreferenceController;
 import com.android.settings.overlay.FeatureFactory;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class FingerprintStatusPreferenceController extends BasePreferenceController {
     private static final String KEY_FINGERPRINT_SETTINGS = "fingerprint_settings";
@@ -74,8 +75,7 @@ public class FingerprintStatusPreferenceController extends BasePreferenceControl
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$updateState$0(int i, String str, Preference preference) {
+    static /* synthetic */ boolean lambda$updateState$0(int i, String str, Preference preference) {
         Context context = preference.getContext();
         if (Utils.startQuietModeDialogIfNecessary(context, UserManager.get(context), i)) {
             return false;

@@ -13,16 +13,17 @@ import com.android.settings.datetime.timezone.BaseTimeZonePicker;
 import com.android.settings.datetime.timezone.model.TimeZoneData;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public abstract class BaseTimeZoneInfoPicker extends BaseTimeZonePicker {
     protected ZoneAdapter mAdapter;
 
     public abstract List<TimeZoneInfo> getAllTimeZoneInfos(TimeZoneData timeZoneData);
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public BaseTimeZoneInfoPicker(int i, int i2, boolean z, boolean z2) {
+    protected BaseTimeZoneInfoPicker(int i, int i2, boolean z, boolean z2) {
         super(i, i2, z, z2);
     }
 
@@ -31,7 +32,7 @@ public abstract class BaseTimeZoneInfoPicker extends BaseTimeZonePicker {
         this.mAdapter = new ZoneAdapter(getContext(), getAllTimeZoneInfos(timeZoneData), new BaseTimeZonePicker.OnListItemClickListener() { // from class: com.android.settings.datetime.timezone.-$$Lambda$BaseTimeZoneInfoPicker$rmIiAzryW5v4Oz5tFaKKhXINMbA
             @Override // com.android.settings.datetime.timezone.BaseTimeZonePicker.OnListItemClickListener
             public final void onListItemClick(BaseTimeZoneAdapter.AdapterItem adapterItem) {
-                BaseTimeZoneInfoPicker.this.onListItemClick((BaseTimeZoneInfoPicker.TimeZoneInfoItem) adapterItem);
+                this.f$0.onListItemClick((BaseTimeZoneInfoPicker.TimeZoneInfoItem) adapterItem);
             }
         }, getLocale(), getHeaderText());
         return this.mAdapter;
@@ -41,18 +42,15 @@ public abstract class BaseTimeZoneInfoPicker extends BaseTimeZonePicker {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onListItemClick(TimeZoneInfoItem timeZoneInfoItem) {
+    private void onListItemClick(TimeZoneInfoItem timeZoneInfoItem) {
         getActivity().setResult(-1, prepareResultData(timeZoneInfoItem.mTimeZoneInfo));
         getActivity().finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Intent prepareResultData(TimeZoneInfo timeZoneInfo) {
+    protected Intent prepareResultData(TimeZoneInfo timeZoneInfo) {
         return new Intent().putExtra("com.android.settings.datetime.timezone.result_time_zone_id", timeZoneInfo.getId());
     }
 
-    /* loaded from: classes.dex */
     protected static class ZoneAdapter extends BaseTimeZoneAdapter<TimeZoneInfoItem> {
         public ZoneAdapter(Context context, List<TimeZoneInfo> list, BaseTimeZonePicker.OnListItemClickListener<TimeZoneInfoItem> onListItemClickListener, Locale locale, CharSequence charSequence) {
             super(createTimeZoneInfoItems(context, list, locale), onListItemClickListener, locale, true, charSequence);
@@ -62,18 +60,17 @@ public abstract class BaseTimeZoneInfoPicker extends BaseTimeZonePicker {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateFormat.getTimeFormatString(context), locale);
             ArrayList arrayList = new ArrayList(list.size());
             Resources resources = context.getResources();
+            Iterator<TimeZoneInfo> it = list.iterator();
             long j = 0;
-            for (TimeZoneInfo timeZoneInfo : list) {
-                arrayList.add(new TimeZoneInfoItem(j, timeZoneInfo, resources, simpleDateFormat));
+            while (it.hasNext()) {
+                arrayList.add(new TimeZoneInfoItem(j, it.next(), resources, simpleDateFormat));
                 j++;
             }
             return arrayList;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class TimeZoneInfoItem implements BaseTimeZoneAdapter.AdapterItem {
+    private static class TimeZoneInfoItem implements BaseTimeZoneAdapter.AdapterItem {
         private final long mItemId;
         private final Resources mResources;
         private final String[] mSearchKeys;

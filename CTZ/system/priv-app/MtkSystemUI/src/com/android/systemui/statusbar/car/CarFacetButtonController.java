@@ -9,6 +9,7 @@ import android.view.Display;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class CarFacetButtonController {
     protected Context mContext;
@@ -42,40 +43,40 @@ public class CarFacetButtonController {
     }
 
     public void taskChanged(List<ActivityManager.StackInfo> list) {
-        ActivityManager.StackInfo stackInfo;
+        ActivityManager.StackInfo next;
         String packageCategory;
         int displayId = getDisplayId();
         Iterator<ActivityManager.StackInfo> it = list.iterator();
         while (true) {
             if (it.hasNext()) {
-                stackInfo = it.next();
-                if (displayId == -1 || displayId == stackInfo.displayId) {
-                    if (stackInfo.topActivity != null) {
+                next = it.next();
+                if (displayId == -1 || displayId == next.displayId) {
+                    if (next.topActivity != null) {
                         break;
                     }
                 }
             } else {
-                stackInfo = null;
+                next = null;
                 break;
             }
         }
-        if (stackInfo == null) {
+        if (next == null) {
             return;
         }
         if (this.mSelectedFacetButton != null) {
             this.mSelectedFacetButton.setSelected(false);
         }
-        String packageName = stackInfo.topActivity.getPackageName();
-        CarFacetButton findFacetButtongByComponentName = findFacetButtongByComponentName(stackInfo.topActivity);
-        if (findFacetButtongByComponentName == null) {
-            findFacetButtongByComponentName = this.mButtonsByPackage.get(packageName);
+        String packageName = next.topActivity.getPackageName();
+        CarFacetButton carFacetButtonFindFacetButtongByComponentName = findFacetButtongByComponentName(next.topActivity);
+        if (carFacetButtonFindFacetButtongByComponentName == null) {
+            carFacetButtonFindFacetButtongByComponentName = this.mButtonsByPackage.get(packageName);
         }
-        if (findFacetButtongByComponentName == null && (packageCategory = getPackageCategory(packageName)) != null) {
-            findFacetButtongByComponentName = this.mButtonsByCategory.get(packageCategory);
+        if (carFacetButtonFindFacetButtongByComponentName == null && (packageCategory = getPackageCategory(packageName)) != null) {
+            carFacetButtonFindFacetButtongByComponentName = this.mButtonsByCategory.get(packageCategory);
         }
-        if (findFacetButtongByComponentName != null && findFacetButtongByComponentName.getVisibility() == 0) {
-            findFacetButtongByComponentName.setSelected(true);
-            this.mSelectedFacetButton = findFacetButtongByComponentName;
+        if (carFacetButtonFindFacetButtongByComponentName != null && carFacetButtonFindFacetButtongByComponentName.getVisibility() == 0) {
+            carFacetButtonFindFacetButtongByComponentName.setSelected(true);
+            this.mSelectedFacetButton = carFacetButtonFindFacetButtongByComponentName;
         }
     }
 

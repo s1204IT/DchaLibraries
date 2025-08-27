@@ -2,6 +2,7 @@ package com.android.settings.search;
 
 import android.content.Intent;
 import android.os.Parcel;
+
 /* loaded from: classes.dex */
 public abstract class InlinePayload extends ResultPayload {
     final int mDefaultvalue;
@@ -17,8 +18,7 @@ public abstract class InlinePayload extends ResultPayload {
         this.mDefaultvalue = i2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public InlinePayload(Parcel parcel) {
+    InlinePayload(Parcel parcel) {
         super((Intent) parcel.readParcelable(Intent.class.getClassLoader()));
         this.mSettingKey = parcel.readString();
         this.mSettingSource = parcel.readInt();

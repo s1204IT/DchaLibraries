@@ -15,6 +15,7 @@ import android.service.quicksettings.Tile;
 import android.util.Log;
 import com.android.systemui.qs.external.TileLifecycleManager;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class TileServiceManager {
     static final String PREFS_FILE = "CustomTileModes";
@@ -33,14 +34,16 @@ public class TileServiceManager {
     private final Runnable mUnbind;
     private final BroadcastReceiver mUninstallReceiver;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public TileServiceManager(TileServices tileServices, Handler handler, ComponentName componentName, Tile tile) {
+    TileServiceManager(TileServices tileServices, Handler handler, ComponentName componentName, Tile tile) {
         this(tileServices, handler, new TileLifecycleManager(handler, tileServices.getContext(), tileServices, tile, new Intent().setComponent(componentName), new UserHandle(ActivityManager.getCurrentUser())));
     }
 
     TileServiceManager(TileServices tileServices, Handler handler, TileLifecycleManager tileLifecycleManager) {
         this.mPendingBind = true;
         this.mUnbind = new Runnable() { // from class: com.android.systemui.qs.external.TileServiceManager.1
+            AnonymousClass1() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 if (TileServiceManager.this.mBound && !TileServiceManager.this.mBindRequested) {
@@ -49,6 +52,9 @@ public class TileServiceManager {
             }
         };
         this.mJustBoundOver = new Runnable() { // from class: com.android.systemui.qs.external.TileServiceManager.2
+            AnonymousClass2() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 TileServiceManager.this.mJustBound = false;
@@ -56,6 +62,9 @@ public class TileServiceManager {
             }
         };
         this.mUninstallReceiver = new BroadcastReceiver() { // from class: com.android.systemui.qs.external.TileServiceManager.3
+            AnonymousClass3() {
+            }
+
             @Override // android.content.BroadcastReceiver
             public void onReceive(Context context, Intent intent) {
                 if (!"android.intent.action.PACKAGE_REMOVED".equals(intent.getAction())) {
@@ -177,8 +186,7 @@ public class TileServiceManager {
         this.mStateManager.setBindService(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void unbindService() {
+    private void unbindService() {
         if (!this.mBound) {
             Log.e("TileServiceManager", "Service not bound");
             return;
@@ -191,23 +199,82 @@ public class TileServiceManager {
     public void calculateBindPriority(long j) {
         if (this.mStateManager.hasPendingClick()) {
             this.mPriority = Integer.MAX_VALUE;
-        } else if (this.mShowingDialog) {
+            return;
+        }
+        if (this.mShowingDialog) {
             this.mPriority = 2147483646;
-        } else if (this.mJustBound) {
+            return;
+        }
+        if (this.mJustBound) {
             this.mPriority = 2147483645;
-        } else if (!this.mBindRequested) {
+            return;
+        }
+        if (!this.mBindRequested) {
             this.mPriority = Integer.MIN_VALUE;
+            return;
+        }
+        long j2 = j - this.mLastUpdate;
+        if (j2 > 2147483644) {
+            this.mPriority = 2147483644;
         } else {
-            long j2 = j - this.mLastUpdate;
-            if (j2 > 2147483644) {
-                this.mPriority = 2147483644;
-            } else {
-                this.mPriority = (int) j2;
-            }
+            this.mPriority = (int) j2;
         }
     }
 
     public int getBindPriority() {
         return this.mPriority;
+    }
+
+    /* renamed from: com.android.systemui.qs.external.TileServiceManager$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (TileServiceManager.this.mBound && !TileServiceManager.this.mBindRequested) {
+                TileServiceManager.this.unbindService();
+            }
+        }
+    }
+
+    /* renamed from: com.android.systemui.qs.external.TileServiceManager$2 */
+    class AnonymousClass2 implements Runnable {
+        AnonymousClass2() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            TileServiceManager.this.mJustBound = false;
+            TileServiceManager.this.mServices.recalculateBindAllowance();
+        }
+    }
+
+    /* renamed from: com.android.systemui.qs.external.TileServiceManager$3 */
+    class AnonymousClass3 extends BroadcastReceiver {
+        AnonymousClass3() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            if (!"android.intent.action.PACKAGE_REMOVED".equals(intent.getAction())) {
+                return;
+            }
+            String encodedSchemeSpecificPart = intent.getData().getEncodedSchemeSpecificPart();
+            ComponentName component = TileServiceManager.this.mStateManager.getComponent();
+            if (!Objects.equals(encodedSchemeSpecificPart, component.getPackageName())) {
+                return;
+            }
+            if (intent.getBooleanExtra("android.intent.extra.REPLACING", false)) {
+                Intent intent2 = new Intent("android.service.quicksettings.action.QS_TILE");
+                intent2.setPackage(encodedSchemeSpecificPart);
+                for (ResolveInfo resolveInfo : context.getPackageManager().queryIntentServicesAsUser(intent2, 0, ActivityManager.getCurrentUser())) {
+                    if (Objects.equals(resolveInfo.serviceInfo.packageName, component.getPackageName()) && Objects.equals(resolveInfo.serviceInfo.name, component.getClassName())) {
+                        return;
+                    }
+                }
+            }
+            TileServiceManager.this.mServices.getHost().removeTile(component);
+        }
     }
 }

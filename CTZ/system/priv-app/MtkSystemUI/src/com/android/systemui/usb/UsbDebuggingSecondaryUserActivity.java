@@ -11,10 +11,12 @@ import android.os.SystemProperties;
 import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class UsbDebuggingSecondaryUserActivity extends AlertActivity implements DialogInterface.OnClickListener {
     private UsbDisconnectedReceiver mDisconnectedReceiver;
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: com.android.systemui.usb.UsbDebuggingSecondaryUserActivity */
     /* JADX WARN: Multi-variable type inference failed */
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -24,12 +26,11 @@ public class UsbDebuggingSecondaryUserActivity extends AlertActivity implements 
         AlertController.AlertParams alertParams = this.mAlertParams;
         alertParams.mTitle = getString(R.string.usb_debugging_secondary_user_title);
         alertParams.mMessage = getString(R.string.usb_debugging_secondary_user_message);
-        alertParams.mPositiveButtonText = getString(17039370);
+        alertParams.mPositiveButtonText = getString(android.R.string.ok);
         alertParams.mPositiveButtonListener = this;
         setupAlert();
     }
 
-    /* loaded from: classes.dex */
     private class UsbDisconnectedReceiver extends BroadcastReceiver {
         private final Activity mActivity;
 

@@ -28,6 +28,7 @@ import com.android.settings.vpn2.AppDialogFragment;
 import com.android.settings.vpn2.ConfirmLockdownFragment;
 import com.android.settingslib.RestrictedPreference;
 import com.android.settingslib.RestrictedSwitchPreference;
+
 /* loaded from: classes.dex */
 public class AppManagementFragment extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, ConfirmLockdownFragment.ConfirmLockdownListener {
     private ConnectivityManager mConnectivityManager;
@@ -83,9 +84,9 @@ public class AppManagementFragment extends SettingsPreferenceFragment implements
         if (loadInfo()) {
             this.mPreferenceVersion.setTitle(getPrefContext().getString(R.string.vpn_version, this.mPackageInfo.versionName));
             updateUI();
-            return;
+        } else {
+            finish();
         }
-        finish();
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
@@ -98,21 +99,19 @@ public class AppManagementFragment extends SettingsPreferenceFragment implements
         return false;
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:13:0x0028  */
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public boolean onPreferenceChange(Preference preference, Object obj) {
         char c;
         String key = preference.getKey();
-        int hashCode = key.hashCode();
-        if (hashCode != -2008102204) {
-            if (hashCode == -1808701950 && key.equals("lockdown_vpn")) {
-                c = 1;
-            }
-            c = 65535;
-        } else {
-            if (key.equals("always_on_vpn")) {
-                c = 0;
-            }
-            c = 65535;
+        int iHashCode = key.hashCode();
+        if (iHashCode != -2008102204) {
+            c = (iHashCode == -1808701950 && key.equals("lockdown_vpn")) ? (char) 1 : (char) 65535;
+        } else if (key.equals("always_on_vpn")) {
+            c = 0;
         }
         switch (c) {
             case 0:
@@ -140,10 +139,10 @@ public class AppManagementFragment extends SettingsPreferenceFragment implements
     }
 
     private boolean onAlwaysOnVpnClick(boolean z, boolean z2) {
-        boolean isAnotherVpnActive = isAnotherVpnActive();
-        boolean isAnyLockdownActive = VpnUtils.isAnyLockdownActive(getActivity());
-        if (ConfirmLockdownFragment.shouldShow(isAnotherVpnActive, isAnyLockdownActive, z2)) {
-            ConfirmLockdownFragment.show(this, isAnotherVpnActive, z, isAnyLockdownActive, z2, null);
+        boolean zIsAnotherVpnActive = isAnotherVpnActive();
+        boolean zIsAnyLockdownActive = VpnUtils.isAnyLockdownActive(getActivity());
+        if (ConfirmLockdownFragment.shouldShow(zIsAnotherVpnActive, zIsAnyLockdownActive, z2)) {
+            ConfirmLockdownFragment.show(this, zIsAnotherVpnActive, z, zIsAnyLockdownActive, z2, null);
             return false;
         }
         return setAlwaysOnVpnByUI(z, z2);
@@ -171,16 +170,15 @@ public class AppManagementFragment extends SettingsPreferenceFragment implements
         return alwaysOnVpn;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean setAlwaysOnVpn(boolean z, boolean z2) {
+    private boolean setAlwaysOnVpn(boolean z, boolean z2) {
         return this.mConnectivityManager.setAlwaysOnVpnPackageForUser(this.mUserId, z ? this.mPackageName : null, z2);
     }
 
     private void updateUI() {
         if (isAdded()) {
-            boolean isVpnAlwaysOn = isVpnAlwaysOn();
-            boolean z = isVpnAlwaysOn && VpnUtils.isAnyLockdownActive(getActivity());
-            this.mPreferenceAlwaysOn.setChecked(isVpnAlwaysOn);
+            boolean zIsVpnAlwaysOn = isVpnAlwaysOn();
+            boolean z = zIsVpnAlwaysOn && VpnUtils.isAnyLockdownActive(getActivity());
+            this.mPreferenceAlwaysOn.setChecked(zIsVpnAlwaysOn);
             this.mPreferenceLockdown.setChecked(z);
             updateRestrictedViews();
         }
@@ -205,8 +203,7 @@ public class AppManagementFragment extends SettingsPreferenceFragment implements
         return this.mConnectivityManager.getAlwaysOnVpnPackageForUser(this.mUserId);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isVpnAlwaysOn() {
+    private boolean isVpnAlwaysOn() {
         return this.mPackageName.equals(getAlwaysOnVpnPackage());
     }
 
@@ -224,12 +221,12 @@ public class AppManagementFragment extends SettingsPreferenceFragment implements
                 if (this.mPackageInfo.applicationInfo == null) {
                     Log.e("AppManagementFragment", "package does not include an application");
                     return false;
-                } else if (!appHasVpnPermission(getContext(), this.mPackageInfo.applicationInfo)) {
+                }
+                if (!appHasVpnPermission(getContext(), this.mPackageInfo.applicationInfo)) {
                     Log.e("AppManagementFragment", "package didn't register VPN profile");
                     return false;
-                } else {
-                    return true;
                 }
+                return true;
             } catch (PackageManager.NameNotFoundException e) {
                 Log.e("AppManagementFragment", "package not found", e);
                 return false;
@@ -257,7 +254,6 @@ public class AppManagementFragment extends SettingsPreferenceFragment implements
         }
     }
 
-    /* loaded from: classes.dex */
     public static class CannotConnectFragment extends InstrumentedDialogFragment {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {

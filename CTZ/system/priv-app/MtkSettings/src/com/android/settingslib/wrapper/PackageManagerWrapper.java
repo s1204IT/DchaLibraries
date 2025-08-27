@@ -11,6 +11,7 @@ import android.content.pm.ResolveInfo;
 import android.os.UserHandle;
 import android.os.storage.VolumeInfo;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PackageManagerWrapper {
     private final PackageManager mPm;

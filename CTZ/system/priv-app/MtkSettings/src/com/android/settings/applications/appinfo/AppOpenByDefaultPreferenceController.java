@@ -11,6 +11,7 @@ import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.applications.AppLaunchSettings;
 import com.android.settingslib.applications.AppUtils;
 import com.android.settingslib.applications.ApplicationsState;
+
 /* loaded from: classes.dex */
 public class AppOpenByDefaultPreferenceController extends AppInfoPreferenceControllerBase {
     private PackageManager mPackageManager;
@@ -39,9 +40,9 @@ public class AppOpenByDefaultPreferenceController extends AppInfoPreferenceContr
         if (packageInfo != null && !AppUtils.isInstant(packageInfo.applicationInfo)) {
             preference.setVisible(true);
             preference.setSummary(AppUtils.getLaunchByDefaultSummary(this.mParent.getAppEntry(), this.mUsbManager, this.mPackageManager, this.mContext));
-            return;
+        } else {
+            preference.setVisible(false);
         }
-        preference.setVisible(false);
     }
 
     @Override // com.android.settings.applications.appinfo.AppInfoPreferenceControllerBase

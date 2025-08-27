@@ -18,6 +18,7 @@ import android.view.View;
 import com.android.settings.R;
 import com.android.settings.Utils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppLaunchSettings extends AppInfoWithHeader implements Preference.OnPreferenceChangeListener, View.OnClickListener {
     private static final Intent sBrowserIntent = new Intent().setAction("android.intent.action.VIEW").addCategory("android.intent.category.BROWSABLE").setData(Uri.parse("http:"));
@@ -52,10 +53,10 @@ public class AppLaunchSettings extends AppInfoWithHeader implements Preference.O
 
     private boolean isBrowserApp(String str) {
         sBrowserIntent.setPackage(str);
-        List queryIntentActivitiesAsUser = this.mPm.queryIntentActivitiesAsUser(sBrowserIntent, 131072, UserHandle.myUserId());
-        int size = queryIntentActivitiesAsUser.size();
+        List listQueryIntentActivitiesAsUser = this.mPm.queryIntentActivitiesAsUser(sBrowserIntent, 131072, UserHandle.myUserId());
+        int size = listQueryIntentActivitiesAsUser.size();
         for (int i = 0; i < size; i++) {
-            ResolveInfo resolveInfo = (ResolveInfo) queryIntentActivitiesAsUser.get(i);
+            ResolveInfo resolveInfo = (ResolveInfo) listQueryIntentActivitiesAsUser.get(i);
             if (resolveInfo.activityInfo != null && resolveInfo.handleAllWebDataURI) {
                 return true;
             }
@@ -90,21 +91,20 @@ public class AppLaunchSettings extends AppInfoWithHeader implements Preference.O
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateAppLinkState(int i) {
+    private boolean updateAppLinkState(int i) {
         if (this.mIsBrowser) {
             return false;
         }
-        int myUserId = UserHandle.myUserId();
-        if (this.mPm.getIntentVerificationStatusAsUser(this.mPackageName, myUserId) == i) {
+        int iMyUserId = UserHandle.myUserId();
+        if (this.mPm.getIntentVerificationStatusAsUser(this.mPackageName, iMyUserId) == i) {
             return false;
         }
-        boolean updateIntentVerificationStatusAsUser = this.mPm.updateIntentVerificationStatusAsUser(this.mPackageName, i, myUserId);
-        if (updateIntentVerificationStatusAsUser) {
-            return i == this.mPm.getIntentVerificationStatusAsUser(this.mPackageName, myUserId);
+        boolean zUpdateIntentVerificationStatusAsUser = this.mPm.updateIntentVerificationStatusAsUser(this.mPackageName, i, iMyUserId);
+        if (zUpdateIntentVerificationStatusAsUser) {
+            return i == this.mPm.getIntentVerificationStatusAsUser(this.mPackageName, iMyUserId);
         }
         Log.e("AppLaunchSettings", "Couldn't update intent verification status!");
-        return updateIntentVerificationStatusAsUser;
+        return zUpdateIntentVerificationStatusAsUser;
     }
 
     private CharSequence[] getEntries(String str, List<IntentFilterVerificationInfo> list, List<IntentFilter> list2) {

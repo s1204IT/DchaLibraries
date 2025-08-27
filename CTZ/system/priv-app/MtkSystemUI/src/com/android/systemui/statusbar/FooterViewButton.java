@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+
 /* loaded from: classes.dex */
 public class FooterViewButton extends AlphaOptimizedButton {
     public FooterViewButton(Context context) {

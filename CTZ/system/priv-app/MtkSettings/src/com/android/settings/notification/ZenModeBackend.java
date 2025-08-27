@@ -8,6 +8,7 @@ import android.provider.Settings;
 import android.service.notification.ZenModeConfig;
 import android.util.Log;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ZenModeBackend {
     protected static final String ZEN_MODE_FROM_ANYONE = "zen_mode_from_anyone";
@@ -35,31 +36,26 @@ public class ZenModeBackend {
         updatePolicy();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updatePolicy() {
+    protected void updatePolicy() {
         if (this.mNotificationManager != null) {
             this.mPolicy = this.mNotificationManager.getNotificationPolicy();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateZenMode() {
+    protected void updateZenMode() {
         this.mZenMode = Settings.Global.getInt(this.mContext.getContentResolver(), "zen_mode", this.mZenMode);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean setZenRule(String str, AutomaticZenRule automaticZenRule) {
+    protected boolean setZenRule(String str, AutomaticZenRule automaticZenRule) {
         return NotificationManager.from(this.mContext).updateAutomaticZenRule(str, automaticZenRule);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setZenMode(int i) {
+    protected void setZenMode(int i) {
         NotificationManager.from(this.mContext).setZenMode(i, null, this.TAG);
         this.mZenMode = getZenMode();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setZenModeForDuration(int i) {
+    protected void setZenModeForDuration(int i) {
         this.mNotificationManager.setZenMode(1, ZenModeConfig.toTimeCondition(this.mContext, i, ActivityManager.getCurrentUser(), true).id, this.TAG);
         this.mZenMode = getZenMode();
     }
@@ -69,13 +65,11 @@ public class ZenModeBackend {
         return this.mZenMode;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isVisualEffectSuppressed(int i) {
+    protected boolean isVisualEffectSuppressed(int i) {
         return (i & this.mPolicy.suppressedVisualEffects) != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isPriorityCategoryEnabled(int i) {
+    protected boolean isPriorityCategoryEnabled(int i) {
         return (i & this.mPolicy.priorityCategories) != 0;
     }
 
@@ -87,30 +81,26 @@ public class ZenModeBackend {
         return (~i) & i2;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getPriorityCallSenders() {
+    protected int getPriorityCallSenders() {
         if (isPriorityCategoryEnabled(8)) {
             return this.mPolicy.priorityCallSenders;
         }
         return -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getPriorityMessageSenders() {
+    protected int getPriorityMessageSenders() {
         if (isPriorityCategoryEnabled(4)) {
             return this.mPolicy.priorityMessageSenders;
         }
         return -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void saveVisualEffectsPolicy(int i, boolean z) {
+    protected void saveVisualEffectsPolicy(int i, boolean z) {
         Settings.Global.putInt(this.mContext.getContentResolver(), "zen_settings_updated", 1);
         savePolicy(this.mPolicy.priorityCategories, this.mPolicy.priorityCallSenders, this.mPolicy.priorityMessageSenders, getNewSuppressedEffects(z, i));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void saveSoundPolicy(int i, boolean z) {
+    protected void saveSoundPolicy(int i, boolean z) {
         savePolicy(getNewPriorityCategories(z, i), this.mPolicy.priorityCallSenders, this.mPolicy.priorityMessageSenders, this.mPolicy.suppressedVisualEffects);
     }
 
@@ -134,8 +124,7 @@ public class ZenModeBackend {
         return i & (-4);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void saveSenders(int i, int i2) {
+    protected void saveSenders(int i, int i2) {
         int priorityCallSenders = getPriorityCallSenders();
         int priorityMessageSenders = getPriorityMessageSenders();
         int prioritySenders = getPrioritySenders(i);
@@ -154,8 +143,7 @@ public class ZenModeBackend {
         }
         savePolicy(getNewPriorityCategories(z, i), priorityCallSenders, priorityMessageSenders, this.mPolicy.suppressedVisualEffects);
         if (ZenModeSettingsBase.DEBUG) {
-            String str2 = this.TAG;
-            Log.d(str2, "onPrefChange allow" + str + "=" + z + " allow" + str + "From=" + ZenModeConfig.sourceToString(i2));
+            Log.d(this.TAG, "onPrefChange allow" + str + "=" + z + " allow" + str + "From=" + ZenModeConfig.sourceToString(i2));
         }
     }
 
@@ -169,8 +157,7 @@ public class ZenModeBackend {
         return -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static String getKeyFromSetting(int i) {
+    protected static String getKeyFromSetting(int i) {
         switch (i) {
             case 0:
                 return ZEN_MODE_FROM_ANYONE;
@@ -183,55 +170,42 @@ public class ZenModeBackend {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getContactsSummary(int i) {
-        int i2 = -1;
+    protected int getContactsSummary(int i) {
+        int priorityCallSenders = -1;
         if (i == -1) {
             return R.string.zen_mode_from_none;
         }
         if (i == 4) {
             if (isPriorityCategoryEnabled(i)) {
-                i2 = getPriorityMessageSenders();
+                priorityCallSenders = getPriorityMessageSenders();
             }
         } else if (i == 8 && isPriorityCategoryEnabled(i)) {
-            i2 = getPriorityCallSenders();
+            priorityCallSenders = getPriorityCallSenders();
         }
-        switch (i2) {
-            case 0:
-                return R.string.zen_mode_from_anyone;
-            case 1:
-                return R.string.zen_mode_from_contacts;
-            case 2:
-                return R.string.zen_mode_from_starred;
-            default:
-                return R.string.zen_mode_from_none;
+        switch (priorityCallSenders) {
         }
+        return R.string.zen_mode_from_none;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static int getSettingFromPrefKey(String str) {
+    /* JADX WARN: Removed duplicated region for block: B:23:0x0045  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    protected static int getSettingFromPrefKey(String str) {
         char c;
-        int hashCode = str.hashCode();
-        if (hashCode == -946901971) {
-            if (str.equals(ZEN_MODE_FROM_NONE)) {
-                c = 3;
-            }
-            c = 65535;
-        } else if (hashCode == -423126328) {
-            if (str.equals(ZEN_MODE_FROM_CONTACTS)) {
+        int iHashCode = str.hashCode();
+        if (iHashCode != -946901971) {
+            if (iHashCode != -423126328) {
+                if (iHashCode != 187510959) {
+                    c = (iHashCode == 462773226 && str.equals(ZEN_MODE_FROM_STARRED)) ? (char) 2 : (char) 65535;
+                } else if (str.equals(ZEN_MODE_FROM_ANYONE)) {
+                    c = 0;
+                }
+            } else if (str.equals(ZEN_MODE_FROM_CONTACTS)) {
                 c = 1;
             }
-            c = 65535;
-        } else if (hashCode != 187510959) {
-            if (hashCode == 462773226 && str.equals(ZEN_MODE_FROM_STARRED)) {
-                c = 2;
-            }
-            c = 65535;
-        } else {
-            if (str.equals(ZEN_MODE_FROM_ANYONE)) {
-                c = 0;
-            }
-            c = 65535;
+        } else if (str.equals(ZEN_MODE_FROM_NONE)) {
+            c = 3;
         }
         switch (c) {
             case 0:
@@ -249,12 +223,11 @@ public class ZenModeBackend {
         return NotificationManager.from(this.mContext).removeAutomaticZenRule(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public String addZenRule(AutomaticZenRule automaticZenRule) {
+    protected String addZenRule(AutomaticZenRule automaticZenRule) {
         try {
-            String addAutomaticZenRule = NotificationManager.from(this.mContext).addAutomaticZenRule(automaticZenRule);
-            NotificationManager.from(this.mContext).getAutomaticZenRule(addAutomaticZenRule);
-            return addAutomaticZenRule;
+            String strAddAutomaticZenRule = NotificationManager.from(this.mContext).addAutomaticZenRule(automaticZenRule);
+            NotificationManager.from(this.mContext).getAutomaticZenRule(strAddAutomaticZenRule);
+            return strAddAutomaticZenRule;
         } catch (Exception e) {
             return null;
         }

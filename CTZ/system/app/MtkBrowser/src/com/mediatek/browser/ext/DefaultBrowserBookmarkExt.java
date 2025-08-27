@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserBookmarkExt implements IBrowserBookmarkExt {
     @Override // com.mediatek.browser.ext.IBrowserBookmarkExt

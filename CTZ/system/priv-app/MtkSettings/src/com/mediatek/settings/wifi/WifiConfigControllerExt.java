@@ -20,6 +20,7 @@ import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IWifiExt;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class WifiConfigControllerExt {
     private WifiConfigUiBase mConfigUi;
@@ -40,11 +41,11 @@ public class WifiConfigControllerExt {
 
     public void addViews(WifiConfigUiBase wifiConfigUiBase, String str) {
         ViewGroup viewGroup = (ViewGroup) this.mView.findViewById(R.id.info);
-        View inflate = wifiConfigUiBase.getLayoutInflater().inflate(R.layout.wifi_dialog_row, viewGroup, false);
-        ((TextView) inflate.findViewById(R.id.name)).setText(wifiConfigUiBase.getContext().getString(R.string.wifi_security));
-        this.mExt.setSecurityText((TextView) inflate.findViewById(R.id.name));
-        ((TextView) inflate.findViewById(R.id.value)).setText(str);
-        viewGroup.addView(inflate);
+        View viewInflate = wifiConfigUiBase.getLayoutInflater().inflate(R.layout.wifi_dialog_row, viewGroup, false);
+        ((TextView) viewInflate.findViewById(R.id.name)).setText(wifiConfigUiBase.getContext().getString(R.string.wifi_security));
+        this.mExt.setSecurityText((TextView) viewInflate.findViewById(R.id.name));
+        ((TextView) viewInflate.findViewById(R.id.value)).setText(str);
+        viewGroup.addView(viewInflate);
     }
 
     public void setConfig(WifiConfiguration wifiConfiguration, int i, TextView textView, Spinner spinner) {
@@ -63,29 +64,26 @@ public class WifiConfigControllerExt {
                         wifiConfiguration.enterpriseConfig.setSimNum(addQuote(selectedItemPosition));
                     }
                     Log.d("WifiConfigControllerExt", "EAP SIM/AKA config: " + wifiConfiguration.toString());
-                    return;
+                    break;
                 }
-                return;
+                break;
             case 4:
                 wifiConfiguration.allowedKeyManagement.set(8);
                 wifiConfiguration.allowedProtocols.set(3);
                 if (textView.length() != 0) {
-                    String charSequence = textView.getText().toString();
-                    wifiConfiguration.preSharedKey = '\"' + charSequence + '\"';
-                    return;
+                    wifiConfiguration.preSharedKey = '\"' + textView.getText().toString() + '\"';
+                    break;
                 }
-                return;
+                break;
             case 5:
                 wifiConfiguration.allowedKeyManagement.set(9);
                 wifiConfiguration.allowedProtocols.set(3);
                 if (this.mWapiCert.getSelectedItemPosition() != 0) {
                     wifiConfiguration.wapiCertSel = (String) this.mWapiCert.getSelectedItem();
                     wifiConfiguration.wapiCertSelMode = 1;
-                    return;
+                    break;
                 }
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -95,11 +93,11 @@ public class WifiConfigControllerExt {
 
     public void setEapmethodSpinnerAdapter() {
         Context context = this.mConfigUi.getContext();
-        ArrayAdapter arrayAdapter = new ArrayAdapter(context, 17367048, new ArrayList(Arrays.asList(context.getResources().getStringArray(R.array.wifi_eap_method))));
+        ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, new ArrayList(Arrays.asList(context.getResources().getStringArray(R.array.wifi_eap_method))));
         if (this.mController.getAccessPoint() != null) {
             this.mExt.setEapMethodArray(arrayAdapter, getAccessPointSsid(), getAccessPointSecurity());
         }
-        arrayAdapter.setDropDownViewResource(17367049);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ((Spinner) this.mView.findViewById(R.id.method)).setAdapter((SpinnerAdapter) arrayAdapter);
     }
 
@@ -131,21 +129,25 @@ public class WifiConfigControllerExt {
                     if (i3 < stringArray.length) {
                         strArr[i3] = stringArray[i3];
                     } else {
-                        String str = stringArray[1];
-                        strArr[i3] = str.replaceAll("1", "" + i3);
+                        strArr[i3] = stringArray[1].replaceAll("1", "" + i3);
                     }
                 }
-                ArrayAdapter arrayAdapter = new ArrayAdapter(context, 17367048, strArr);
-                arrayAdapter.setDropDownViewResource(17367049);
+                ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, strArr);
+                arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 this.mSimSlot.setAdapter((SpinnerAdapter) arrayAdapter);
                 if (this.mController.getAccessPoint() != null && this.mController.getAccessPoint().isSaved() && (accessPointConfig = getAccessPointConfig()) != null && accessPointConfig.enterpriseConfig != null && accessPointConfig.enterpriseConfig.getSimNum() != null) {
-                    String replace = accessPointConfig.enterpriseConfig.getSimNum().replace("\"", "");
-                    if (!replace.isEmpty()) {
-                        this.mSimSlot.setSelection(Integer.parseInt(replace) + 1);
+                    String strReplace = accessPointConfig.enterpriseConfig.getSimNum().replace("\"", "");
+                    if (!strReplace.isEmpty()) {
+                        this.mSimSlot.setSelection(Integer.parseInt(strReplace) + 1);
+                        return;
                     }
+                    return;
                 }
+                return;
             }
-        } else if (TelephonyManager.getDefault().getPhoneCount() == 2) {
+            return;
+        }
+        if (TelephonyManager.getDefault().getPhoneCount() == 2) {
             this.mView.findViewById(R.id.sim_slot_fields).setVisibility(8);
         }
     }
@@ -184,18 +186,18 @@ public class WifiConfigControllerExt {
     }
 
     public boolean enableSubmitIfAppropriate(TextView textView, int i, boolean z) {
-        if (textView != null) {
-            if ((i != 1 || isWepKeyValid(textView.getText().toString())) && (i != 2 || textView.length() >= 8)) {
-                if (i != 4) {
-                    return z;
-                }
-                if (textView.length() >= 8 && 64 >= textView.length()) {
-                    return z;
-                }
-            }
-            return true;
+        if (textView == null) {
+            return z;
         }
-        return z;
+        if ((i != 1 || isWepKeyValid(textView.getText().toString())) && (i != 2 || textView.length() >= 8)) {
+            if (i != 4) {
+                return z;
+            }
+            if (textView.length() >= 8 && 64 >= textView.length()) {
+                return z;
+            }
+        }
+        return true;
     }
 
     public int getEapMethod(int i) {
@@ -208,14 +210,14 @@ public class WifiConfigControllerExt {
     }
 
     public void setEapMethodSelection(Spinner spinner, int i) {
-        int i2;
+        int posByEapMethod;
         if (this.mController.getAccessPoint() != null) {
-            i2 = this.mExt.getPosByEapMethod(i, getAccessPointSsid(), getAccessPointSecurity());
+            posByEapMethod = this.mExt.getPosByEapMethod(i, getAccessPointSsid(), getAccessPointSecurity());
         } else {
-            i2 = i;
+            posByEapMethod = i;
         }
-        spinner.setSelection(i2);
-        Log.d("WifiConfigControllerExt", "[skyfyx]showSecurityFields modify pos = " + i2);
+        spinner.setSelection(posByEapMethod);
+        Log.d("WifiConfigControllerExt", "[skyfyx]showSecurityFields modify pos = " + posByEapMethod);
         Log.d("WifiConfigControllerExt", "[skyfyx]showSecurityFields modify method = " + i);
     }
 
@@ -238,8 +240,8 @@ public class WifiConfigControllerExt {
                     i = R.array.wapi_only_security;
                 }
             }
-            ArrayAdapter arrayAdapter = new ArrayAdapter(this.mContext, 17367048, this.mContext.getResources().getStringArray(i));
-            arrayAdapter.setDropDownViewResource(17367049);
+            ArrayAdapter arrayAdapter = new ArrayAdapter(this.mContext, android.R.layout.simple_spinner_item, this.mContext.getResources().getStringArray(i));
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter((SpinnerAdapter) arrayAdapter);
         } else {
             WifiConfiguration accessPointConfig = getAccessPointConfig();
@@ -274,8 +276,8 @@ public class WifiConfigControllerExt {
             strArr[0] = string;
             System.arraycopy(list, 0, strArr, 1, list.length);
         }
-        ArrayAdapter arrayAdapter = new ArrayAdapter(context, 17367048, strArr);
-        arrayAdapter.setDropDownViewResource(17367049);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, strArr);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter((SpinnerAdapter) arrayAdapter);
     }
 

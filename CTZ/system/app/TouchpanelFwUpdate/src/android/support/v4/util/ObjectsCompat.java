@@ -3,6 +3,7 @@ package android.support.v4.util;
 import android.os.Build;
 import java.util.Arrays;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class ObjectsCompat {
     public static boolean equals(Object a, Object b) {

@@ -11,6 +11,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RecentLocationRequestSeeAllFragment extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.location.RecentLocationRequestSeeAllFragment.1
@@ -32,9 +33,8 @@ public class RecentLocationRequestSeeAllFragment extends DashboardFragment {
         return 1325;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.location_recent_requests_see_all;
     }
 
@@ -48,8 +48,7 @@ public class RecentLocationRequestSeeAllFragment extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle(), this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, RecentLocationRequestSeeAllFragment recentLocationRequestSeeAllFragment) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, RecentLocationRequestSeeAllFragment recentLocationRequestSeeAllFragment) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new RecentLocationRequestSeeAllPreferenceController(context, lifecycle, recentLocationRequestSeeAllFragment));
         return arrayList;

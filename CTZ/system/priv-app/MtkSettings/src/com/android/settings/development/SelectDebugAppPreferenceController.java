@@ -9,6 +9,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class SelectDebugAppPreferenceController extends DeveloperOptionsPreferenceController implements PreferenceControllerMixin, OnActivityResultListener {
     private final DevelopmentSettingsDashboardFragment mFragment;
@@ -51,15 +52,14 @@ public class SelectDebugAppPreferenceController extends DeveloperOptionsPreferen
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         this.mPreference.setSummary(this.mContext.getResources().getString(R.string.debug_app_not_set));
     }
 
     Intent getActivityStartIntent() {
-        return new Intent(this.mContext, AppPicker.class);
+        return new Intent(this.mContext, (Class<?>) AppPicker.class);
     }
 
     private void updatePreferenceSummary() {

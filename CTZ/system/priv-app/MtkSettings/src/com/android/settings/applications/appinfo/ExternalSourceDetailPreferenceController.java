@@ -6,6 +6,7 @@ import android.os.UserManager;
 import android.support.v7.preference.Preference;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.applications.AppStateInstallAppsBridge;
+
 /* loaded from: classes.dex */
 public class ExternalSourceDetailPreferenceController extends AppInfoPreferenceControllerBase {
     private String mPackageName;

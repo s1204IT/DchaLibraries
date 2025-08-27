@@ -8,6 +8,7 @@ import android.content.UriMatcher;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.FileUtils;
 import android.text.TextUtils;
 import java.io.File;
+
 /* loaded from: classes.dex */
 public class SnapshotProvider extends ContentProvider {
     static final String[] DELETE_PROJECTION;
@@ -23,7 +25,6 @@ public class SnapshotProvider extends ContentProvider {
     static final UriMatcher URI_MATCHER = new UriMatcher(-1);
     static final byte[] NULL_BLOB_HACK = new byte[0];
 
-    /* loaded from: classes.dex */
     public interface Snapshots {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(SnapshotProvider.AUTHORITY_URI, "snapshots");
     }
@@ -34,20 +35,18 @@ public class SnapshotProvider extends ContentProvider {
         DELETE_PROJECTION = new String[]{"viewstate_path", "job_id"};
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static final class SnapshotDatabaseHelper extends SQLiteOpenHelper {
+    static final class SnapshotDatabaseHelper extends SQLiteOpenHelper {
         public SnapshotDatabaseHelper(Context context) {
             super(context, "snapshots.db", (SQLiteDatabase.CursorFactory) null, 4);
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onCreate(SQLiteDatabase sQLiteDatabase) {
+        public void onCreate(SQLiteDatabase sQLiteDatabase) throws SQLException {
             sQLiteDatabase.execSQL("CREATE TABLE snapshots(_id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,url TEXT NOT NULL,date_created INTEGER,favicon BLOB,thumbnail BLOB,background INTEGER,view_state BLOB NOT NULL,viewstate_path TEXT,viewstate_size INTEGER,job_id INTEGER,progress INTEGER,is_done INTEGER);");
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) throws SQLException {
             if (i < 2) {
                 sQLiteDatabase.execSQL("DROP TABLE snapshots");
                 onCreate(sQLiteDatabase);
@@ -109,24 +108,24 @@ public class SnapshotProvider extends ContentProvider {
         }
         readableDatabase.beginTransaction();
         try {
-            int match = URI_MATCHER.match(uri);
+            int iMatch = URI_MATCHER.match(uri);
             SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
             String queryParameter = uri.getQueryParameter("limit");
-            switch (match) {
+            switch (iMatch) {
                 case 10:
                     break;
-                default:
-                    throw new UnsupportedOperationException("Unknown URL " + uri.toString());
                 case 11:
                     str = DatabaseUtils.concatenateWhere(str, "_id=?");
                     strArr2 = DatabaseUtils.appendSelectionArgs(strArr2, new String[]{Long.toString(ContentUris.parseId(uri))});
                     break;
+                default:
+                    throw new UnsupportedOperationException("Unknown URL " + uri.toString());
             }
             sQLiteQueryBuilder.setTables("snapshots");
-            Cursor query = sQLiteQueryBuilder.query(readableDatabase, strArr, str, strArr2, null, null, str2, queryParameter);
-            query.setNotificationUri(getContext().getContentResolver(), AUTHORITY_URI);
+            Cursor cursorQuery = sQLiteQueryBuilder.query(readableDatabase, strArr, str, strArr2, null, null, str2, queryParameter);
+            cursorQuery.setNotificationUri(getContext().getContentResolver(), AUTHORITY_URI);
             readableDatabase.setTransactionSuccessful();
-            return query;
+            return cursorQuery;
         } finally {
             readableDatabase.endTransaction();
         }
@@ -149,14 +148,14 @@ public class SnapshotProvider extends ContentProvider {
                 if (!contentValues.containsKey("view_state")) {
                     contentValues.put("view_state", NULL_BLOB_HACK);
                 }
-                long insert = writableDatabase.insert("snapshots", "title", contentValues);
-                if (insert < 0) {
+                long jInsert = writableDatabase.insert("snapshots", "title", contentValues);
+                if (jInsert < 0) {
                     return null;
                 }
-                Uri withAppendedId = ContentUris.withAppendedId(uri, insert);
-                getContext().getContentResolver().notifyChange(withAppendedId, (ContentObserver) null, false);
+                Uri uriWithAppendedId = ContentUris.withAppendedId(uri, jInsert);
+                getContext().getContentResolver().notifyChange(uriWithAppendedId, (ContentObserver) null, false);
                 writableDatabase.setTransactionSuccessful();
-                return withAppendedId;
+                return uriWithAppendedId;
             }
             throw new UnsupportedOperationException("Unknown insert URI " + uri);
         } finally {
@@ -165,42 +164,45 @@ public class SnapshotProvider extends ContentProvider {
     }
 
     private void deleteDataFiles(SQLiteDatabase sQLiteDatabase, String str, String[] strArr) {
-        Cursor query = sQLiteDatabase.query("snapshots", DELETE_PROJECTION, str, strArr, null, null, null);
+        Cursor cursorQuery = sQLiteDatabase.query("snapshots", DELETE_PROJECTION, str, strArr, null, null, null);
         Context context = getContext();
-        while (query.moveToNext()) {
-            String string = query.getString(0);
+        while (cursorQuery.moveToNext()) {
+            String string = cursorQuery.getString(0);
             if (!TextUtils.isEmpty(string)) {
-                if (query.getInt(1) == -1) {
+                if (cursorQuery.getInt(1) == -1) {
                     File fileStreamPath = context.getFileStreamPath(string);
                     if (fileStreamPath.exists() && !fileStreamPath.delete()) {
                         fileStreamPath.deleteOnExit();
                     }
                 } else {
-                    int lastIndexOf = string.lastIndexOf(File.separator);
-                    if (lastIndexOf != -1) {
-                        deleteSavePageDir(new File(string.substring(0, lastIndexOf)));
+                    int iLastIndexOf = string.lastIndexOf(File.separator);
+                    if (iLastIndexOf != -1) {
+                        deleteSavePageDir(new File(string.substring(0, iLastIndexOf)));
                     }
                 }
             }
         }
-        query.close();
+        cursorQuery.close();
     }
 
     private void deleteSavePageDir(File file) {
         if (file.isFile()) {
             if (!file.delete()) {
                 file.deleteOnExit();
+                return;
             }
-        } else if (file.isDirectory()) {
-            File[] listFiles = file.listFiles();
-            if (listFiles == null || listFiles.length == 0) {
+            return;
+        }
+        if (file.isDirectory()) {
+            File[] fileArrListFiles = file.listFiles();
+            if (fileArrListFiles == null || fileArrListFiles.length == 0) {
                 if (!file.delete()) {
                     file.deleteOnExit();
                     return;
                 }
                 return;
             }
-            for (File file2 : listFiles) {
+            for (File file2 : fileArrListFiles) {
                 deleteSavePageDir(file2);
             }
             if (!file.delete()) {
@@ -220,20 +222,20 @@ public class SnapshotProvider extends ContentProvider {
             switch (URI_MATCHER.match(uri)) {
                 case 10:
                     break;
-                default:
-                    throw new UnsupportedOperationException("Unknown delete URI " + uri);
                 case 11:
                     str = DatabaseUtils.concatenateWhere(str, "snapshots._id=?");
                     strArr = DatabaseUtils.appendSelectionArgs(strArr, new String[]{Long.toString(ContentUris.parseId(uri))});
                     break;
+                default:
+                    throw new UnsupportedOperationException("Unknown delete URI " + uri);
             }
             deleteDataFiles(writableDatabase, str, strArr);
-            int delete = writableDatabase.delete("snapshots", str, strArr);
-            if (delete > 0) {
+            int iDelete = writableDatabase.delete("snapshots", str, strArr);
+            if (iDelete > 0) {
                 getContext().getContentResolver().notifyChange(uri, (ContentObserver) null, false);
             }
             writableDatabase.setTransactionSuccessful();
-            return delete;
+            return iDelete;
         } finally {
             writableDatabase.endTransaction();
         }
@@ -247,10 +249,10 @@ public class SnapshotProvider extends ContentProvider {
         }
         writableDatabase.beginTransaction();
         try {
-            int update = writableDatabase.update("snapshots", contentValues, str, strArr);
+            int iUpdate = writableDatabase.update("snapshots", contentValues, str, strArr);
             getContext().getContentResolver().notifyChange(uri, (ContentObserver) null, false);
             writableDatabase.setTransactionSuccessful();
-            return update;
+            return iUpdate;
         } finally {
             writableDatabase.endTransaction();
         }

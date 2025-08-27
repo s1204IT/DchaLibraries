@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class MultiHashMap<K, V> extends HashMap<K, ArrayList<V>> {
     public MultiHashMap() {
@@ -24,6 +25,7 @@ public class MultiHashMap<K, V> extends HashMap<K, ArrayList<V>> {
         arrayList.add(v);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: clone()Ljava/lang/Object; */
     @Override // java.util.HashMap, java.util.AbstractMap
     public MultiHashMap<K, V> clone() {
         MultiHashMap<K, V> multiHashMap = new MultiHashMap<>(size());

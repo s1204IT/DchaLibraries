@@ -16,6 +16,7 @@ import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.Utils;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedSwitchPreference;
+
 /* loaded from: classes.dex */
 public class ManagedProfileSettings extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener {
     private RestrictedSwitchPreference mContactPrefrence;
@@ -79,8 +80,7 @@ public class ManagedProfileSettings extends SettingsPreferenceFragment implement
         return 401;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateWorkModePreference() {
+    private void updateWorkModePreference() {
         int i;
         boolean z = !this.mUserManager.isQuietModeEnabled(this.mManagedUser);
         this.mWorkModePreference.setChecked(z);
@@ -99,14 +99,13 @@ public class ManagedProfileSettings extends SettingsPreferenceFragment implement
             this.mUserManager.requestQuietModeEnabled(!((Boolean) obj).booleanValue(), this.mManagedUser);
             return true;
         }
-        if (preference == this.mContactPrefrence) {
-            Settings.Secure.putIntForUser(getContentResolver(), "managed_profile_contact_remote_search", ((Boolean) obj).booleanValue() ? 1 : 0, this.mManagedUser.getIdentifier());
-            return true;
+        if (preference != this.mContactPrefrence) {
+            return false;
         }
-        return false;
+        Settings.Secure.putIntForUser(getContentResolver(), "managed_profile_contact_remote_search", ((Boolean) obj).booleanValue() ? 1 : 0, this.mManagedUser.getIdentifier());
+        return true;
     }
 
-    /* loaded from: classes.dex */
     private class ManagedProfileBroadcastReceiver extends BroadcastReceiver {
         private ManagedProfileBroadcastReceiver() {
         }

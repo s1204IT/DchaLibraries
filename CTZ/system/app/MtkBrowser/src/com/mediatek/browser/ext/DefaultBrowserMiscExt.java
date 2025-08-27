@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.webkit.WebView;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserMiscExt implements IBrowserMiscExt {
     @Override // com.mediatek.browser.ext.IBrowserMiscExt

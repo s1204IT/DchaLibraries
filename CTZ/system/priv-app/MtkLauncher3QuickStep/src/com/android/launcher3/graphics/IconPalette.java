@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.v4.graphics.ColorUtils;
 import com.android.launcher3.R;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class IconPalette {
     private static final boolean DEBUG = false;
@@ -18,7 +19,7 @@ public class IconPalette {
         if (fArr[1] < 0.2f) {
             return Themes.getColorAccent(context);
         }
-        fArr[2] = Math.max((float) MIN_PRELOAD_COLOR_LIGHTNESS, fArr[2]);
+        fArr[2] = Math.max(MIN_PRELOAD_COLOR_LIGHTNESS, fArr[2]);
         return Color.HSVToColor(fArr);
     }
 

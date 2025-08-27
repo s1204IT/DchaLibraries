@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultSimManagementExt implements ISimManagementExt {
     @Override // com.mediatek.settings.ext.ISimManagementExt

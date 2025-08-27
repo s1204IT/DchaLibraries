@@ -6,6 +6,11 @@
             <target android:targetId="@+id/container_list"/>
         </targets>
     </changeTransform>
-    <fade android:interpolator="@android:interpolator/fast_out_linear_in" android:startDelay="@integer/lb_browse_headers_transition_delay" android:transitionVisibilityMode="mode_in"/>
-    <fade android:interpolator="@android:interpolator/fast_out_linear_in" android:transitionVisibilityMode="mode_out"/>
+    <fade
+        android:interpolator="@android:interpolator/fast_out_linear_in"
+        android:startDelay="@integer/lb_browse_headers_transition_delay"
+        android:transitionVisibilityMode="mode_in"/>
+    <fade
+        android:interpolator="@android:interpolator/fast_out_linear_in"
+        android:transitionVisibilityMode="mode_out"/>
 </transitionSet>

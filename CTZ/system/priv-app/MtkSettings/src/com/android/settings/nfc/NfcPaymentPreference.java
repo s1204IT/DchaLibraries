@@ -21,6 +21,7 @@ import com.android.settings.nfc.PaymentBackend;
 import com.android.settingslib.CustomDialogPreference;
 import com.mediatek.settings.FeatureOption;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NfcPaymentPreference extends CustomDialogPreference implements View.OnClickListener, PaymentBackend.Callback {
     private final NfcPaymentAdapter mAdapter;
@@ -64,9 +65,8 @@ public class NfcPaymentPreference extends CustomDialogPreference implements View
         updateSettingsVisibility();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomDialogPreference
-    public void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
         super.onPrepareDialogBuilder(builder, onClickListener);
         builder.setSingleChoiceItems(this.mAdapter, 0, onClickListener);
     }
@@ -102,9 +102,7 @@ public class NfcPaymentPreference extends CustomDialogPreference implements View
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class NfcPaymentAdapter extends BaseAdapter implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
+    class NfcPaymentAdapter extends BaseAdapter implements View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
         private PaymentBackend.PaymentAppInfo[] appInfos;
 
         public NfcPaymentAdapter() {
@@ -120,6 +118,7 @@ public class NfcPaymentPreference extends CustomDialogPreference implements View
             return this.appInfos.length;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
         @Override // android.widget.Adapter
         public PaymentBackend.PaymentAppInfo getItem(int i) {
             return this.appInfos[i];
@@ -158,7 +157,6 @@ public class NfcPaymentPreference extends CustomDialogPreference implements View
             return view;
         }
 
-        /* loaded from: classes.dex */
         public class ViewHolder {
             public ImageView imageView;
             public RadioButton radioButton;
@@ -194,9 +192,9 @@ public class NfcPaymentPreference extends CustomDialogPreference implements View
                 Log.d("NfcPaymentPreference", "onLongClick " + paymentAppInfo.componentName.toString());
                 Intent intent = new Intent("com.gsma.services.nfc.SELECT_DEFAULT_SERVICE");
                 intent.addFlags(32);
-                List<ResolveInfo> queryIntentActivities = NfcPaymentPreference.this.mContext.getPackageManager().queryIntentActivities(intent, 65536);
-                if (queryIntentActivities != null && queryIntentActivities.size() != 0) {
-                    for (ResolveInfo resolveInfo : queryIntentActivities) {
+                List<ResolveInfo> listQueryIntentActivities = NfcPaymentPreference.this.mContext.getPackageManager().queryIntentActivities(intent, 65536);
+                if (listQueryIntentActivities != null && listQueryIntentActivities.size() != 0) {
+                    for (ResolveInfo resolveInfo : listQueryIntentActivities) {
                         String str = resolveInfo.activityInfo.packageName;
                         if (paymentAppInfo.componentName.getPackageName().equals(str)) {
                             intent.setClassName(str, resolveInfo.activityInfo.name);

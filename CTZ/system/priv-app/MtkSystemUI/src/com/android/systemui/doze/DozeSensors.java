@@ -25,6 +25,7 @@ import com.android.systemui.util.AlarmTimeout;
 import com.android.systemui.util.wakelock.WakeLock;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class DozeSensors {
     private static final boolean DEBUG = DozeService.DEBUG;
@@ -52,7 +53,6 @@ public class DozeSensors {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onSensorPulse(int i, boolean z, float f, float f2);
     }
@@ -77,8 +77,7 @@ public class DozeSensors {
         return findSensorWithType(this.mSensorManager, str);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static Sensor findSensorWithType(SensorManager sensorManager, String str) {
+    static Sensor findSensorWithType(SensorManager sensorManager, String str) {
         if (TextUtils.isEmpty(str)) {
             return null;
         }
@@ -91,7 +90,6 @@ public class DozeSensors {
     }
 
     public void setListening(boolean z) {
-        TriggerSensor[] triggerSensorArr;
         for (TriggerSensor triggerSensor : this.mSensors) {
             triggerSensor.setListening(z);
             if (z) {
@@ -104,7 +102,6 @@ public class DozeSensors {
     }
 
     public void setTouchscreenSensorsListening(boolean z) {
-        TriggerSensor[] triggerSensorArr;
         for (TriggerSensor triggerSensor : this.mSensors) {
             if (triggerSensor.mRequiresTouchscreen) {
                 triggerSensor.setListening(z);
@@ -136,7 +133,6 @@ public class DozeSensors {
     }
 
     public void dump(PrintWriter printWriter) {
-        TriggerSensor[] triggerSensorArr;
         for (TriggerSensor triggerSensor : this.mSensors) {
             printWriter.print("Sensor: ");
             printWriter.println(triggerSensor.toString());
@@ -149,9 +145,7 @@ public class DozeSensors {
         return this.mProxSensor.mCurrentlyFar;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ProxSensor implements SensorEventListener {
+    private class ProxSensor implements SensorEventListener {
         final AlarmTimeout mCooldownTimer;
         Boolean mCurrentlyFar;
         long mLastNear;
@@ -164,7 +158,7 @@ public class DozeSensors {
             this.mCooldownTimer = new AlarmTimeout(DozeSensors.this.mAlarmManager, new AlarmManager.OnAlarmListener() { // from class: com.android.systemui.doze.-$$Lambda$DozeSensors$ProxSensor$1rrJyrK-R8bANwbetqs61eKIcvs
                 @Override // android.app.AlarmManager.OnAlarmListener
                 public final void onAlarm() {
-                    DozeSensors.ProxSensor.this.updateRegistered();
+                    this.f$0.updateRegistered();
                 }
             }, "prox_cooldown", DozeSensors.this.mHandler);
         }
@@ -174,13 +168,13 @@ public class DozeSensors {
                 DozeSensors.this.mHandler.post(new Runnable() { // from class: com.android.systemui.doze.-$$Lambda$DozeSensors$ProxSensor$ocSoA7n0sI8mkM1nacSopw2_2Oc
                     @Override // java.lang.Runnable
                     public final void run() {
-                        DozeSensors.ProxSensor.lambda$setRequested$0(DozeSensors.ProxSensor.this);
+                        DozeSensors.ProxSensor.lambda$setRequested$0(this.f$0);
                     }
                 });
-                return;
+            } else {
+                this.mRequested = z;
+                updateRegistered();
             }
-            this.mRequested = z;
-            updateRegistered();
         }
 
         public static /* synthetic */ void lambda$setRequested$0(ProxSensor proxSensor) {
@@ -189,8 +183,7 @@ public class DozeSensors {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateRegistered() {
+        private void updateRegistered() {
             setRegistered(this.mRequested && !this.mCooldownTimer.isScheduled());
         }
 
@@ -214,11 +207,11 @@ public class DozeSensors {
             }
             this.mCurrentlyFar = Boolean.valueOf(sensorEvent.values[0] >= sensorEvent.sensor.getMaximumRange());
             DozeSensors.this.mProxCallback.accept(this.mCurrentlyFar);
-            long elapsedRealtime = SystemClock.elapsedRealtime();
+            long jElapsedRealtime = SystemClock.elapsedRealtime();
             if (this.mCurrentlyFar != null) {
                 if (!this.mCurrentlyFar.booleanValue()) {
-                    this.mLastNear = elapsedRealtime;
-                } else if (this.mCurrentlyFar.booleanValue() && elapsedRealtime - this.mLastNear < this.mPolicy.proxCooldownTriggerMs) {
+                    this.mLastNear = jElapsedRealtime;
+                } else if (this.mCurrentlyFar.booleanValue() && jElapsedRealtime - this.mLastNear < this.mPolicy.proxCooldownTriggerMs) {
                     this.mCooldownTimer.schedule(this.mPolicy.proxCooldownPeriodMs, 1);
                     updateRegistered();
                 }
@@ -234,9 +227,7 @@ public class DozeSensors {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class TriggerSensor extends TriggerEventListener {
+    private class TriggerSensor extends TriggerEventListener {
         final boolean mConfigured;
         private boolean mDisabled;
         final int mPulseReason;
@@ -286,11 +277,14 @@ public class DozeSensors {
                 this.mRegistered = DozeSensors.this.mSensorManager.requestTriggerSensor(this, this.mSensor);
                 if (DozeSensors.DEBUG) {
                     Log.d("DozeSensors", "requestTriggerSensor " + this.mRegistered);
+                    return;
                 }
-            } else if (this.mRegistered) {
-                boolean cancelTriggerSensor = DozeSensors.this.mSensorManager.cancelTriggerSensor(this, this.mSensor);
+                return;
+            }
+            if (this.mRegistered) {
+                boolean zCancelTriggerSensor = DozeSensors.this.mSensorManager.cancelTriggerSensor(this, this.mSensor);
                 if (DozeSensors.DEBUG) {
-                    Log.d("DozeSensors", "cancelTriggerSensor " + cancelTriggerSensor);
+                    Log.d("DozeSensors", "cancelTriggerSensor " + zCancelTriggerSensor);
                 }
                 this.mRegistered = false;
             }
@@ -310,13 +304,13 @@ public class DozeSensors {
             DozeSensors.this.mHandler.post(DozeSensors.this.mWakeLock.wrap(new Runnable() { // from class: com.android.systemui.doze.-$$Lambda$DozeSensors$TriggerSensor$O2XJN2HKJ96bSF_1qNx6jPK-eFk
                 @Override // java.lang.Runnable
                 public final void run() {
-                    DozeSensors.TriggerSensor.lambda$onTrigger$0(DozeSensors.TriggerSensor.this, triggerEvent);
+                    DozeSensors.TriggerSensor.lambda$onTrigger$0(this.f$0, triggerEvent);
                 }
             }));
         }
 
         public static /* synthetic */ void lambda$onTrigger$0(TriggerSensor triggerSensor, TriggerEvent triggerEvent) {
-            boolean z;
+            boolean pickupSubtypePerformsProxCheck;
             float f;
             if (DozeSensors.DEBUG) {
                 Log.d("DozeSensors", "onTrigger: " + triggerSensor.triggerEventToString(triggerEvent));
@@ -324,9 +318,9 @@ public class DozeSensors {
             if (triggerSensor.mSensor.getType() == 25) {
                 int i = (int) triggerEvent.values[0];
                 MetricsLogger.action(DozeSensors.this.mContext, 411, i);
-                z = DozeSensors.this.mDozeParameters.getPickupSubtypePerformsProxCheck(i);
+                pickupSubtypePerformsProxCheck = DozeSensors.this.mDozeParameters.getPickupSubtypePerformsProxCheck(i);
             } else {
-                z = false;
+                pickupSubtypePerformsProxCheck = false;
             }
             triggerSensor.mRegistered = false;
             float f2 = -1.0f;
@@ -336,7 +330,7 @@ public class DozeSensors {
             } else {
                 f = -1.0f;
             }
-            DozeSensors.this.mCallback.onSensorPulse(triggerSensor.mPulseReason, z, f2, f);
+            DozeSensors.this.mCallback.onSensorPulse(triggerSensor.mPulseReason, pickupSubtypePerformsProxCheck, f2, f);
             triggerSensor.updateListener();
         }
 

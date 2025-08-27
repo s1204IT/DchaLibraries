@@ -1,6 +1,7 @@
 package androidx.versionedparcelable;
 
 import java.lang.reflect.InvocationTargetException;
+
 /* loaded from: classes.dex */
 public abstract class VersionedParcel {
     protected abstract void closeField();
@@ -11,8 +12,7 @@ public abstract class VersionedParcel {
 
     protected abstract void writeString(String str);
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void writeVersionedParcelable(VersionedParcelable p) {
+    protected void writeVersionedParcelable(VersionedParcelable p) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (p == null) {
             writeString(null);
             return;
@@ -32,18 +32,17 @@ public abstract class VersionedParcel {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public <T extends VersionedParcelable> T readVersionedParcelable() {
-        String name = readString();
-        if (name == null) {
+    protected <T extends VersionedParcelable> T readVersionedParcelable() {
+        String string = readString();
+        if (string == null) {
             return null;
         }
-        return (T) readFromParcel(name, createSubParcel());
+        return (T) readFromParcel(string, createSubParcel());
     }
 
-    protected static <T extends VersionedParcelable> T readFromParcel(String parcelCls, VersionedParcel versionedParcel) {
+    protected static <T extends VersionedParcelable> T readFromParcel(String parcelCls, VersionedParcel versionedParcel) throws ClassNotFoundException {
         try {
-            Class cls = Class.forName(parcelCls, true, VersionedParcel.class.getClassLoader());
+            Class<?> cls = Class.forName(parcelCls, true, VersionedParcel.class.getClassLoader());
             return (T) cls.getDeclaredMethod("read", VersionedParcel.class).invoke(null, versionedParcel);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("VersionedParcel encountered ClassNotFoundException", e);
@@ -59,7 +58,7 @@ public abstract class VersionedParcel {
         }
     }
 
-    protected static <T extends VersionedParcelable> void writeToParcel(T val, VersionedParcel versionedParcel) {
+    protected static <T extends VersionedParcelable> void writeToParcel(T val, VersionedParcel versionedParcel) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         try {
             Class cls = findParcelClass(val);
             cls.getDeclaredMethod("write", val.getClass(), VersionedParcel.class).invoke(null, val, versionedParcel);

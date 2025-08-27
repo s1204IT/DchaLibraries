@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.HashMap;
 import libcore.io.Streams;
 import libcore.net.http.ResponseUtils;
+
 /* loaded from: classes.dex */
 public class GoogleAccountLogin implements AccountManagerCallback<Bundle>, DialogInterface.OnCancelListener, Runnable {
     private static final boolean DEBUG = Browser.DEBUG;
@@ -45,6 +46,9 @@ public class GoogleAccountLogin implements AccountManagerCallback<Bundle>, Dialo
         this.mUserAgent = this.mWebView.getSettings().getUserAgentString();
         WebViewTimersControl.getInstance().onBrowserActivityResume(this.mWebView, ((BrowserActivity) this.mActivity).getController());
         this.mWebView.setWebViewClient(new WebViewClient() { // from class: com.android.browser.GoogleAccountLogin.1
+            AnonymousClass1() {
+            }
+
             @Override // android.webkit.WebViewClient
             public boolean shouldOverrideUrlLoading(WebView webView, String str) {
                 return false;
@@ -57,14 +61,32 @@ public class GoogleAccountLogin implements AccountManagerCallback<Bundle>, Dialo
         });
     }
 
-    private void saveLoginTime() {
-        SharedPreferences.Editor edit = BrowserSettings.getInstance().getPreferences().edit();
-        edit.putLong("last_autologin_time", System.currentTimeMillis());
-        edit.apply();
+    /* renamed from: com.android.browser.GoogleAccountLogin$1 */
+    class AnonymousClass1 extends WebViewClient {
+        AnonymousClass1() {
+        }
+
+        @Override // android.webkit.WebViewClient
+        public boolean shouldOverrideUrlLoading(WebView webView, String str) {
+            return false;
+        }
+
+        @Override // android.webkit.WebViewClient
+        public void onPageFinished(WebView webView, String str) {
+            GoogleAccountLogin.this.done();
+        }
     }
 
+    private void saveLoginTime() {
+        SharedPreferences.Editor editorEdit = BrowserSettings.getInstance().getPreferences().edit();
+        editorEdit.putLong("last_autologin_time", System.currentTimeMillis());
+        editorEdit.apply();
+    }
+
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [157=6, 158=5] */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:78:0x00fd */
     /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Removed duplicated region for block: B:36:0x0100  */
+    /* JADX WARN: Removed duplicated region for block: B:80:0x0100  */
     /* JADX WARN: Type inference failed for: r0v10, types: [java.net.HttpURLConnection] */
     /* JADX WARN: Type inference failed for: r0v5, types: [java.lang.String] */
     /* JADX WARN: Type inference failed for: r0v7 */
@@ -72,77 +94,103 @@ public class GoogleAccountLogin implements AccountManagerCallback<Bundle>, Dialo
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void run() {
+    public void run() throws Throwable {
         Throwable th;
         Exception e;
         HttpURLConnection httpURLConnection;
-        ?? uri = this.ISSUE_AUTH_TOKEN_URL.buildUpon().appendQueryParameter("SID", this.mSid).appendQueryParameter("LSID", this.mLsid).build().toString();
+        ?? string = this.ISSUE_AUTH_TOKEN_URL.buildUpon().appendQueryParameter("SID", this.mSid).appendQueryParameter("LSID", this.mLsid).build().toString();
         try {
             try {
-                httpURLConnection = (HttpURLConnection) new URL(uri).openConnection(Proxy.NO_PROXY);
-                try {
-                    httpURLConnection.setRequestMethod("POST");
-                    httpURLConnection.setRequestProperty("User-Agent", this.mUserAgent);
-                    int responseCode = httpURLConnection.getResponseCode();
-                    if (responseCode == 200) {
-                        String str = new String(Streams.readFully(httpURLConnection.getInputStream()), ResponseUtils.responseCharset(httpURLConnection.getContentType()));
-                        if (httpURLConnection != null) {
-                            httpURLConnection.disconnect();
-                        }
-                        final String uri2 = TOKEN_AUTH_URL.buildUpon().appendQueryParameter("source", "android-browser").appendQueryParameter("auth", str).appendQueryParameter("continue", BrowserSettings.getFactoryResetHomeUrl(this.mActivity)).build().toString();
-                        this.mActivity.runOnUiThread(new Runnable() { // from class: com.android.browser.GoogleAccountLogin.2
-                            @Override // java.lang.Runnable
-                            public void run() {
-                                synchronized (GoogleAccountLogin.this) {
-                                    if (GoogleAccountLogin.this.mRunnable == null) {
-                                        return;
-                                    }
-                                    HashMap hashMap = new HashMap();
-                                    hashMap.put(Browser.HEADER, Browser.UAPROF);
-                                    GoogleAccountLogin.this.mWebView.loadUrl(uri2, hashMap);
-                                }
-                            }
-                        });
-                        return;
-                    }
-                    Log.d("BrowserLogin", "LOGIN_FAIL: Bad status from auth url " + responseCode + ": " + httpURLConnection.getResponseMessage());
-                    if (responseCode != 403 || this.mTokensInvalidated) {
-                        done();
-                        if (httpURLConnection != null) {
-                            httpURLConnection.disconnect();
-                            return;
-                        }
-                        return;
-                    }
-                    Log.d("BrowserLogin", "LOGIN_FAIL: Invalidating tokens...");
-                    invalidateTokens();
-                    if (httpURLConnection != null) {
-                        httpURLConnection.disconnect();
-                    }
-                } catch (Exception e2) {
-                    e = e2;
-                    Log.d("BrowserLogin", "LOGIN_FAIL: Exception acquiring uber token " + e);
-                    done();
-                    if (httpURLConnection != null) {
-                        httpURLConnection.disconnect();
-                    }
-                }
+                httpURLConnection = (HttpURLConnection) new URL(string).openConnection(Proxy.NO_PROXY);
+            } catch (Exception e2) {
+                e = e2;
+                httpURLConnection = null;
             } catch (Throwable th2) {
                 th = th2;
-                if (uri != 0) {
-                    uri.disconnect();
+                string = 0;
+                if (string != 0) {
                 }
                 throw th;
             }
-        } catch (Exception e3) {
-            e = e3;
-            httpURLConnection = null;
+            try {
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setRequestProperty("User-Agent", this.mUserAgent);
+                int responseCode = httpURLConnection.getResponseCode();
+                if (responseCode == 200) {
+                    String str = new String(Streams.readFully(httpURLConnection.getInputStream()), ResponseUtils.responseCharset(httpURLConnection.getContentType()));
+                    if (httpURLConnection != null) {
+                        httpURLConnection.disconnect();
+                    }
+                    this.mActivity.runOnUiThread(new Runnable() { // from class: com.android.browser.GoogleAccountLogin.2
+                        final /* synthetic */ String val$newUrl;
+
+                        AnonymousClass2(String str2) {
+                            str = str2;
+                        }
+
+                        @Override // java.lang.Runnable
+                        public void run() {
+                            synchronized (GoogleAccountLogin.this) {
+                                if (GoogleAccountLogin.this.mRunnable == null) {
+                                    return;
+                                }
+                                HashMap map = new HashMap();
+                                map.put(Browser.HEADER, Browser.UAPROF);
+                                GoogleAccountLogin.this.mWebView.loadUrl(str, map);
+                            }
+                        }
+                    });
+                    return;
+                }
+                Log.d("BrowserLogin", "LOGIN_FAIL: Bad status from auth url " + responseCode + ": " + httpURLConnection.getResponseMessage());
+                if (responseCode != 403 || this.mTokensInvalidated) {
+                    done();
+                    if (httpURLConnection != null) {
+                        httpURLConnection.disconnect();
+                        return;
+                    }
+                    return;
+                }
+                Log.d("BrowserLogin", "LOGIN_FAIL: Invalidating tokens...");
+                invalidateTokens();
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                }
+            } catch (Exception e3) {
+                e = e3;
+                Log.d("BrowserLogin", "LOGIN_FAIL: Exception acquiring uber token " + e);
+                done();
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                }
+            }
         } catch (Throwable th3) {
             th = th3;
-            uri = 0;
-            if (uri != 0) {
+            if (string != 0) {
+                string.disconnect();
             }
             throw th;
+        }
+    }
+
+    /* renamed from: com.android.browser.GoogleAccountLogin$2 */
+    class AnonymousClass2 implements Runnable {
+        final /* synthetic */ String val$newUrl;
+
+        AnonymousClass2(String str2) {
+            str = str2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            synchronized (GoogleAccountLogin.this) {
+                if (GoogleAccountLogin.this.mRunnable == null) {
+                    return;
+                }
+                HashMap map = new HashMap();
+                map.put(Browser.HEADER, Browser.UAPROF);
+                GoogleAccountLogin.this.mWebView.loadUrl(str, map);
+            }
         }
     }
 
@@ -209,8 +257,7 @@ public class GoogleAccountLogin implements AccountManagerCallback<Bundle>, Dialo
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public synchronized void done() {
+    private synchronized void done() {
         if (this.mRunnable != null) {
             if (DEBUG) {
                 Log.d("BrowserLogin", "Finished login attempt for " + this.mAccount.name);
@@ -223,11 +270,25 @@ public class GoogleAccountLogin implements AccountManagerCallback<Bundle>, Dialo
             }
             this.mRunnable = null;
             this.mActivity.runOnUiThread(new Runnable() { // from class: com.android.browser.GoogleAccountLogin.3
+                AnonymousClass3() {
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     GoogleAccountLogin.this.mWebView.destroy();
                 }
             });
+        }
+    }
+
+    /* renamed from: com.android.browser.GoogleAccountLogin$3 */
+    class AnonymousClass3 implements Runnable {
+        AnonymousClass3() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            GoogleAccountLogin.this.mWebView.destroy();
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import com.android.settings.applications.AppStateAppOpsBridge;
 import com.android.settings.applications.AppStateBaseBridge;
 import com.android.settingslib.applications.ApplicationsState;
+
 /* loaded from: classes.dex */
 public class AppStateWriteSettingsBridge extends AppStateAppOpsBridge {
     private static final String[] PM_PERMISSIONS = {"android.permission.WRITE_SETTINGS"};
@@ -31,7 +32,6 @@ public class AppStateWriteSettingsBridge extends AppStateAppOpsBridge {
         return new WriteSettingsState(super.getPermissionInfo(str, i));
     }
 
-    /* loaded from: classes.dex */
     public static class WriteSettingsState extends AppStateAppOpsBridge.PermissionState {
         public WriteSettingsState(AppStateAppOpsBridge.PermissionState permissionState) {
             super(permissionState.packageName, permissionState.userHandle);

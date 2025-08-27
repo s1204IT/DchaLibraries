@@ -16,6 +16,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class NotifyOpenNetworksPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private SettingObserver mSettingObserver;
@@ -52,11 +53,11 @@ public class NotifyOpenNetworksPreferenceController extends AbstractPreferenceCo
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        if (TextUtils.equals(preference.getKey(), "notify_open_networks") && (preference instanceof SwitchPreference)) {
-            Settings.Global.putInt(this.mContext.getContentResolver(), "wifi_networks_available_notification_on", ((SwitchPreference) preference).isChecked() ? 1 : 0);
-            return true;
+        if (!TextUtils.equals(preference.getKey(), "notify_open_networks") || !(preference instanceof SwitchPreference)) {
+            return false;
         }
-        return false;
+        Settings.Global.putInt(this.mContext.getContentResolver(), "wifi_networks_available_notification_on", ((SwitchPreference) preference).isChecked() ? 1 : 0);
+        return true;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
@@ -72,7 +73,6 @@ public class NotifyOpenNetworksPreferenceController extends AbstractPreferenceCo
         ((SwitchPreference) preference).setChecked(Settings.Global.getInt(this.mContext.getContentResolver(), "wifi_networks_available_notification_on", 0) == 1);
     }
 
-    /* loaded from: classes.dex */
     class SettingObserver extends ContentObserver {
         private final Uri NETWORKS_AVAILABLE_URI;
         private final Preference mPreference;

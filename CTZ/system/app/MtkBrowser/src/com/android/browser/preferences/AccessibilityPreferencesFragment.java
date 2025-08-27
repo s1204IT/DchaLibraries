@@ -9,6 +9,7 @@ import com.android.browser.Extensions;
 import com.android.browser.R;
 import com.mediatek.browser.ext.IBrowserSettingExt;
 import java.text.NumberFormat;
+
 /* loaded from: classes.dex */
 public class AccessibilityPreferencesFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
     private IBrowserSettingExt mBrowserSettingExt = null;
@@ -22,15 +23,15 @@ public class AccessibilityPreferencesFragment extends PreferenceFragment impleme
         addPreferencesFromResource(R.xml.accessibility_preferences);
         BrowserSettings browserSettings = BrowserSettings.getInstance();
         this.mFormat = NumberFormat.getPercentInstance();
-        Preference findPreference = findPreference("min_font_size");
-        findPreference.setOnPreferenceChangeListener(this);
-        updateMinFontSummary(findPreference, browserSettings.getMinimumFontSize());
-        Preference findPreference2 = findPreference("text_zoom");
-        findPreference2.setOnPreferenceChangeListener(this);
-        updateTextZoomSummary(findPreference2, browserSettings.getTextZoom());
-        Preference findPreference3 = findPreference("double_tap_zoom");
-        findPreference3.setOnPreferenceChangeListener(this);
-        updateDoubleTapZoomSummary(findPreference3, browserSettings.getDoubleTapZoom());
+        Preference preferenceFindPreference = findPreference("min_font_size");
+        preferenceFindPreference.setOnPreferenceChangeListener(this);
+        updateMinFontSummary(preferenceFindPreference, browserSettings.getMinimumFontSize());
+        Preference preferenceFindPreference2 = findPreference("text_zoom");
+        preferenceFindPreference2.setOnPreferenceChangeListener(this);
+        updateTextZoomSummary(preferenceFindPreference2, browserSettings.getTextZoom());
+        Preference preferenceFindPreference3 = findPreference("double_tap_zoom");
+        preferenceFindPreference3.setOnPreferenceChangeListener(this);
+        updateDoubleTapZoomSummary(preferenceFindPreference3, browserSettings.getDoubleTapZoom());
         this.mBrowserSettingExt = Extensions.getSettingPlugin(getActivity());
         this.mBrowserSettingExt.customizePreference(130, getPreferenceScreen(), this, browserSettings.getPreferences(), this);
     }

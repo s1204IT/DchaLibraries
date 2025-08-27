@@ -18,6 +18,8 @@ import com.android.settingslib.Utils;
 import com.mediatek.keyguard.AntiTheft.AntiTheftManager;
 import com.mediatek.keyguard.VoiceWakeup.VoiceWakeupManagerProxy;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+
 /* loaded from: classes.dex */
 public class KeyguardHostView extends FrameLayout implements KeyguardSecurityContainer.SecurityCallback {
     public static final boolean DEBUG = KeyguardConstants.DEBUG;
@@ -30,7 +32,6 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
     private final KeyguardUpdateMonitorCallback mUpdateCallback;
     protected ViewMediatorCallback mViewMediatorCallback;
 
-    /* loaded from: classes.dex */
     public interface OnDismissAction {
         boolean onDismiss();
     }
@@ -44,19 +45,19 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
         this.mTelephonyManager = null;
         this.mUpdateCallback = new KeyguardUpdateMonitorCallback() { // from class: com.android.keyguard.KeyguardHostView.1
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onUserSwitchComplete(int i) {
+            public void onUserSwitchComplete(int i) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
                 KeyguardHostView.this.getSecurityContainer().showPrimarySecurityScreen(false);
             }
 
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
             public void onTrustGrantedWithFlags(int i, int i2) {
                 if (i2 == KeyguardUpdateMonitor.getCurrentUser() && KeyguardHostView.this.isAttachedToWindow()) {
-                    boolean isVisibleToUser = KeyguardHostView.this.isVisibleToUser();
+                    boolean zIsVisibleToUser = KeyguardHostView.this.isVisibleToUser();
                     boolean z = (i & 1) != 0;
                     boolean z2 = (i & 2) != 0;
                     if (z || z2) {
-                        if (KeyguardHostView.this.mViewMediatorCallback.isScreenOn() && (isVisibleToUser || z2)) {
-                            if (!isVisibleToUser) {
+                        if (KeyguardHostView.this.mViewMediatorCallback.isScreenOn() && (zIsVisibleToUser || z2)) {
+                            if (!zIsVisibleToUser) {
                                 Log.i("KeyguardViewBase", "TrustAgent dismissed Keyguard.");
                             }
                             KeyguardHostView.this.dismiss(false, i2);
@@ -96,7 +97,7 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
     }
 
     @Override // android.view.View
-    protected void onFinishInflate() {
+    protected void onFinishInflate() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         this.mSecurityContainer = (KeyguardSecurityContainer) findViewById(com.android.systemui.R.id.keyguard_security_container);
         this.mLockPatternUtils = new LockPatternUtils(this.mContext);
         this.mSecurityContainer.setLockPatternUtils(this.mLockPatternUtils);
@@ -104,7 +105,7 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
         this.mSecurityContainer.showPrimarySecurityScreen(false);
     }
 
-    public void showPrimarySecurityScreen() {
+    public void showPrimarySecurityScreen() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (DEBUG) {
             Log.d("KeyguardViewBase", "show()");
         }
@@ -141,9 +142,9 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
 
     @Override // com.android.keyguard.KeyguardSecurityContainer.SecurityCallback
     public void finish(boolean z, int i) {
-        boolean z2 = false;
+        boolean zOnDismiss = false;
         if (this.mDismissAction != null) {
-            z2 = this.mDismissAction.onDismiss();
+            zOnDismiss = this.mDismissAction.onDismiss();
             this.mDismissAction = null;
             this.mCancelAction = null;
         } else if (VoiceWakeupManagerProxy.getInstance().isDismissAndLaunchApp()) {
@@ -153,7 +154,7 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
             VoiceWakeupManagerProxy.getInstance().onDismiss();
         }
         if (this.mViewMediatorCallback != null) {
-            if (z2) {
+            if (zOnDismiss) {
                 this.mViewMediatorCallback.keyguardDonePending(z, i);
             } else {
                 this.mViewMediatorCallback.keyguardDone(z, i);
@@ -188,7 +189,7 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
         }
     }
 
-    public void onPause() {
+    public void onPause() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (DEBUG) {
             Log.d("KeyguardViewBase", String.format("screen off, instance %s at %s", Integer.toHexString(hashCode()), Long.valueOf(SystemClock.uptimeMillis())));
         }
@@ -227,6 +228,7 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
         return super.dispatchKeyEvent(keyEvent);
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     /* JADX WARN: Removed duplicated region for block: B:13:0x0026  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -269,9 +271,13 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
             }
             handleMediaKeyEvent(keyEvent);
             return true;
-        } else if (keyEvent.getAction() == 1) {
+        }
+        if (keyEvent.getAction() == 1) {
             if (keyCode != 79 && keyCode != 130 && keyCode != 222) {
                 switch (keyCode) {
+                    default:
+                        switch (keyCode) {
+                        }
                     case com.android.systemui.plugins.R.styleable.AppCompatTheme_radioButtonStyle /* 85 */:
                     case com.android.systemui.plugins.R.styleable.AppCompatTheme_ratingBarStyle /* 86 */:
                     case com.android.systemui.plugins.R.styleable.AppCompatTheme_ratingBarStyleIndicator /* 87 */:
@@ -279,10 +285,8 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
                     case com.android.systemui.plugins.R.styleable.AppCompatTheme_searchViewStyle /* 89 */:
                     case com.android.systemui.plugins.R.styleable.AppCompatTheme_seekBarStyle /* 90 */:
                     case com.android.systemui.plugins.R.styleable.AppCompatTheme_selectableItemBackground /* 91 */:
-                        break;
-                    default:
-                        switch (keyCode) {
-                        }
+                        handleMediaKeyEvent(keyEvent);
+                        return true;
                 }
             }
             handleMediaKeyEvent(keyEvent);

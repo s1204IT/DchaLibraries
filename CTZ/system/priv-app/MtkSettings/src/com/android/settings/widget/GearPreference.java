@@ -6,11 +6,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.android.settings.R;
 import com.android.settingslib.RestrictedPreference;
+
 /* loaded from: classes.dex */
 public class GearPreference extends RestrictedPreference implements View.OnClickListener {
     private OnGearClickListener mOnGearClickListener;
 
-    /* loaded from: classes.dex */
     public interface OnGearClickListener {
         void onGearClick(GearPreference gearPreference);
     }
@@ -37,15 +37,15 @@ public class GearPreference extends RestrictedPreference implements View.OnClick
     @Override // com.android.settingslib.RestrictedPreference, com.android.settingslib.TwoTargetPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.settings_button);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.settings_button);
         if (this.mOnGearClickListener != null) {
-            findViewById.setVisibility(0);
-            findViewById.setOnClickListener(this);
+            viewFindViewById.setVisibility(0);
+            viewFindViewById.setOnClickListener(this);
         } else {
-            findViewById.setVisibility(8);
-            findViewById.setOnClickListener(null);
+            viewFindViewById.setVisibility(8);
+            viewFindViewById.setOnClickListener(null);
         }
-        findViewById.setEnabled(true);
+        viewFindViewById.setEnabled(true);
     }
 
     public void onClick(View view) {

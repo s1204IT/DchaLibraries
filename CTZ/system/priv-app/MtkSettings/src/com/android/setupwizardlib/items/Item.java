@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class Item extends AbstractItem {
     private boolean mEnabled;
@@ -27,14 +28,14 @@ public class Item extends AbstractItem {
         super(context, attributeSet);
         this.mEnabled = true;
         this.mVisible = true;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwItem);
-        this.mEnabled = obtainStyledAttributes.getBoolean(R.styleable.SuwItem_android_enabled, true);
-        this.mIcon = obtainStyledAttributes.getDrawable(R.styleable.SuwItem_android_icon);
-        this.mTitle = obtainStyledAttributes.getText(R.styleable.SuwItem_android_title);
-        this.mSummary = obtainStyledAttributes.getText(R.styleable.SuwItem_android_summary);
-        this.mLayoutRes = obtainStyledAttributes.getResourceId(R.styleable.SuwItem_android_layout, getDefaultLayoutResource());
-        this.mVisible = obtainStyledAttributes.getBoolean(R.styleable.SuwItem_android_visible, true);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwItem);
+        this.mEnabled = typedArrayObtainStyledAttributes.getBoolean(R.styleable.SuwItem_android_enabled, true);
+        this.mIcon = typedArrayObtainStyledAttributes.getDrawable(R.styleable.SuwItem_android_icon);
+        this.mTitle = typedArrayObtainStyledAttributes.getText(R.styleable.SuwItem_android_title);
+        this.mSummary = typedArrayObtainStyledAttributes.getText(R.styleable.SuwItem_android_summary);
+        this.mLayoutRes = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwItem_android_layout, getDefaultLayoutResource());
+        this.mVisible = typedArrayObtainStyledAttributes.getBoolean(R.styleable.SuwItem_android_visible, true);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     protected int getDefaultLayoutResource() {
@@ -87,16 +88,16 @@ public class Item extends AbstractItem {
         } else {
             textView.setVisibility(8);
         }
-        View findViewById = view.findViewById(R.id.suw_items_icon_container);
+        View viewFindViewById = view.findViewById(R.id.suw_items_icon_container);
         Drawable icon = getIcon();
         if (icon != null) {
             ImageView imageView = (ImageView) view.findViewById(R.id.suw_items_icon);
             imageView.setImageDrawable(null);
             onMergeIconStateAndLevels(imageView, icon);
             imageView.setImageDrawable(icon);
-            findViewById.setVisibility(0);
+            viewFindViewById.setVisibility(0);
         } else {
-            findViewById.setVisibility(8);
+            viewFindViewById.setVisibility(8);
         }
         view.setId(getViewId());
     }

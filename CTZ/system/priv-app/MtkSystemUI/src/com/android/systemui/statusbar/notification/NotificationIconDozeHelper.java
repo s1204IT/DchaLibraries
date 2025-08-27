@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class NotificationIconDozeHelper extends NotificationDozeHelper {
     private final int mImageDarkAlpha;

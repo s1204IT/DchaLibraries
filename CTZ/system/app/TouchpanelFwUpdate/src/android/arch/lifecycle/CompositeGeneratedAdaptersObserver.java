@@ -1,19 +1,17 @@
 package android.arch.lifecycle;
 
 import android.arch.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class CompositeGeneratedAdaptersObserver implements GenericLifecycleObserver {
     private final GeneratedAdapter[] mGeneratedAdapters;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public CompositeGeneratedAdaptersObserver(GeneratedAdapter[] generatedAdapters) {
+    CompositeGeneratedAdaptersObserver(GeneratedAdapter[] generatedAdapters) {
         this.mGeneratedAdapters = generatedAdapters;
     }
 
     @Override // android.arch.lifecycle.GenericLifecycleObserver
     public void onStateChanged(LifecycleOwner source, Lifecycle.Event event) {
-        GeneratedAdapter[] generatedAdapterArr;
-        GeneratedAdapter[] generatedAdapterArr2;
         MethodCallsLogger logger = new MethodCallsLogger();
         for (GeneratedAdapter mGenerated : this.mGeneratedAdapters) {
             mGenerated.callMethods(source, event, false, logger);

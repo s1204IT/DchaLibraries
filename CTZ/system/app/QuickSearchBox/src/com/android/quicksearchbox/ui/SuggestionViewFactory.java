@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import com.android.quicksearchbox.Suggestion;
 import com.android.quicksearchbox.SuggestionCursor;
 import java.util.Collection;
+
 /* loaded from: classes.dex */
 public interface SuggestionViewFactory {
     boolean canCreateView(Suggestion suggestion);

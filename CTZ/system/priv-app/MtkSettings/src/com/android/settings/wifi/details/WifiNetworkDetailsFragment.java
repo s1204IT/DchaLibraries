@@ -17,6 +17,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.wifi.AccessPoint;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WifiNetworkDetailsFragment extends DashboardFragment {
     private AccessPoint mAccessPoint;
@@ -38,9 +39,8 @@ public class WifiNetworkDetailsFragment extends DashboardFragment {
         return "WifiNetworkDetailsFrg";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.wifi_network_details_fragment;
     }
 
@@ -62,9 +62,9 @@ public class WifiNetworkDetailsFragment extends DashboardFragment {
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        MenuItem add = menu.add(0, 1, 0, R.string.wifi_modify);
-        add.setIcon(R.drawable.ic_mode_edit);
-        add.setShowAsAction(2);
+        MenuItem menuItemAdd = menu.add(0, 1, 0, R.string.wifi_modify);
+        menuItemAdd.setIcon(R.drawable.ic_mode_edit);
+        menuItemAdd.setShowAsAction(2);
         super.onCreateOptionsMenu(menu, menuInflater);
     }
 

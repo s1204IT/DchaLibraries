@@ -3,11 +3,11 @@ package com.android.launcher3.compat;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.UserHandle;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public class UserManagerCompatVP extends UserManagerCompatVNMr1 {
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public UserManagerCompatVP(Context context) {
+    UserManagerCompatVP(Context context) {
         super(context);
     }
 

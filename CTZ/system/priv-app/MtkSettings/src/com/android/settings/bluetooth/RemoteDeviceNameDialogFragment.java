@@ -8,6 +8,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
 import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
+
 /* loaded from: classes.dex */
 public class RemoteDeviceNameDialogFragment extends BluetoothNameDialogFragment {
     private CachedBluetoothDevice mDevice;
@@ -86,9 +87,8 @@ public class RemoteDeviceNameDialogFragment extends BluetoothNameDialogFragment 
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.bluetooth.BluetoothNameDialogFragment
-    public void setDeviceName(String str) {
+    protected void setDeviceName(String str) {
         if (this.mDevice != null) {
             this.mDevice.setName(str);
         }

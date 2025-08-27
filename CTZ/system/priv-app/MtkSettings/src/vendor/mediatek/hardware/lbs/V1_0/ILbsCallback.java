@@ -12,13 +12,13 @@ import android.os.RemoteException;
 import com.android.settingslib.wifi.AccessPoint;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public interface ILbsCallback extends IBase {
     IHwBinder asBinder();
 
     boolean callbackToClient(ArrayList<Byte> arrayList) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends HwBinder implements ILbsCallback {
         @Override // vendor.mediatek.hardware.lbs.V1_0.ILbsCallback
         public IHwBinder asBinder() {
@@ -78,129 +78,136 @@ public interface ILbsCallback extends IBase {
             switch (i) {
                 case 1:
                     if ((i2 & 1) != 0) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
+                    } else {
+                        hwParcel.enforceInterface("vendor.mediatek.hardware.lbs@1.0::ILbsCallback");
+                        boolean zCallbackToClient = callbackToClient(hwParcel.readInt8Vector());
+                        hwParcel2.writeStatus(0);
+                        hwParcel2.writeBool(zCallbackToClient);
+                        hwParcel2.send();
+                        break;
                     }
-                    hwParcel.enforceInterface("vendor.mediatek.hardware.lbs@1.0::ILbsCallback");
-                    boolean callbackToClient = callbackToClient(hwParcel.readInt8Vector());
-                    hwParcel2.writeStatus(0);
-                    hwParcel2.writeBool(callbackToClient);
-                    hwParcel2.send();
-                    return;
                 case 256067662:
                     if ((i2 & 1) != 0) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
+                    } else {
+                        hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
+                        ArrayList<String> arrayListInterfaceChain = interfaceChain();
+                        hwParcel2.writeStatus(0);
+                        hwParcel2.writeStringVector(arrayListInterfaceChain);
+                        hwParcel2.send();
+                        break;
                     }
-                    hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
-                    ArrayList<String> interfaceChain = interfaceChain();
-                    hwParcel2.writeStatus(0);
-                    hwParcel2.writeStringVector(interfaceChain);
-                    hwParcel2.send();
-                    return;
                 case 256131655:
                     if ((i2 & 1) != 0) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
+                    } else {
+                        hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
+                        hwParcel2.writeStatus(0);
+                        hwParcel2.send();
+                        break;
                     }
-                    hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
-                    hwParcel2.writeStatus(0);
-                    hwParcel2.send();
-                    return;
                 case 256136003:
                     if ((i2 & 1) != 0) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
+                    } else {
+                        hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
+                        String strInterfaceDescriptor = interfaceDescriptor();
+                        hwParcel2.writeStatus(0);
+                        hwParcel2.writeString(strInterfaceDescriptor);
+                        hwParcel2.send();
+                        break;
                     }
-                    hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
-                    String interfaceDescriptor = interfaceDescriptor();
-                    hwParcel2.writeStatus(0);
-                    hwParcel2.writeString(interfaceDescriptor);
-                    hwParcel2.send();
-                    return;
                 case 256398152:
                     if ((i2 & 1) != 0) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
+                    } else {
+                        hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
+                        ArrayList<byte[]> hashChain = getHashChain();
+                        hwParcel2.writeStatus(0);
+                        HwBlob hwBlob = new HwBlob(16);
+                        int size = hashChain.size();
+                        hwBlob.putInt32(8L, size);
+                        hwBlob.putBool(12L, false);
+                        HwBlob hwBlob2 = new HwBlob(size * 32);
+                        while (i < size) {
+                            hwBlob2.putInt8Array(i * 32, hashChain.get(i));
+                            i++;
+                        }
+                        hwBlob.putBlob(0L, hwBlob2);
+                        hwParcel2.writeBuffer(hwBlob);
+                        hwParcel2.send();
+                        break;
                     }
-                    hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
-                    ArrayList<byte[]> hashChain = getHashChain();
-                    hwParcel2.writeStatus(0);
-                    HwBlob hwBlob = new HwBlob(16);
-                    int size = hashChain.size();
-                    hwBlob.putInt32(8L, size);
-                    hwBlob.putBool(12L, false);
-                    HwBlob hwBlob2 = new HwBlob(size * 32);
-                    while (r1 < size) {
-                        hwBlob2.putInt8Array(r1 * 32, hashChain.get(r1));
-                        r1++;
-                    }
-                    hwBlob.putBlob(0L, hwBlob2);
-                    hwParcel2.writeBuffer(hwBlob);
-                    hwParcel2.send();
-                    return;
                 case 256462420:
                     if (((i2 & 1) != 0 ? 1 : 0) != 1) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
+                    } else {
+                        hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
+                        setHALInstrumentation();
+                        break;
                     }
-                    hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
-                    setHALInstrumentation();
-                    return;
                 case 256660548:
                     if (((i2 & 1) != 0 ? 1 : 0) != 0) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 case 256921159:
                     if ((i2 & 1) != 0) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
+                    } else {
+                        hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
+                        ping();
+                        hwParcel2.writeStatus(0);
+                        hwParcel2.send();
+                        break;
                     }
-                    hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
-                    ping();
-                    hwParcel2.writeStatus(0);
-                    hwParcel2.send();
-                    return;
                 case 257049926:
                     if ((i2 & 1) != 0) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
+                    } else {
+                        hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
+                        DebugInfo debugInfo = getDebugInfo();
+                        hwParcel2.writeStatus(0);
+                        debugInfo.writeToParcel(hwParcel2);
+                        hwParcel2.send();
+                        break;
                     }
-                    hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
-                    DebugInfo debugInfo = getDebugInfo();
-                    hwParcel2.writeStatus(0);
-                    debugInfo.writeToParcel(hwParcel2);
-                    hwParcel2.send();
-                    return;
                 case 257120595:
                     if (((i2 & 1) != 0 ? 1 : 0) != 1) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
+                    } else {
+                        hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
+                        notifySyspropsChanged();
+                        break;
                     }
-                    hwParcel.enforceInterface("android.hidl.base@1.0::IBase");
-                    notifySyspropsChanged();
-                    return;
                 case 257250372:
                     if (((i2 & 1) != 0 ? 1 : 0) != 0) {
-                        hwParcel2.writeStatus((int) AccessPoint.UNREACHABLE_RSSI);
+                        hwParcel2.writeStatus(AccessPoint.UNREACHABLE_RSSI);
                         hwParcel2.send();
-                        return;
+                        break;
                     }
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.android.settingslib.wifi.AccessPoint;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class FillContentLayout extends FrameLayout {
     private int mMaxHeight;
@@ -27,10 +28,10 @@ public class FillContentLayout extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attributeSet, int i) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwFillContentLayout, i, 0);
-        this.mMaxHeight = obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwFillContentLayout_android_maxHeight, -1);
-        this.mMaxWidth = obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwFillContentLayout_android_maxWidth, -1);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwFillContentLayout, i, 0);
+        this.mMaxHeight = typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwFillContentLayout_android_maxHeight, -1);
+        this.mMaxWidth = typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwFillContentLayout_android_maxWidth, -1);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     @Override // android.widget.FrameLayout, android.view.View
@@ -48,15 +49,15 @@ public class FillContentLayout extends FrameLayout {
     }
 
     private static int getMaxSizeMeasureSpec(int i, int i2, int i3) {
-        int max = Math.max(0, i - i2);
+        int iMax = Math.max(0, i - i2);
         if (i3 >= 0) {
             return View.MeasureSpec.makeMeasureSpec(i3, 1073741824);
         }
         if (i3 == -1) {
-            return View.MeasureSpec.makeMeasureSpec(max, 1073741824);
+            return View.MeasureSpec.makeMeasureSpec(iMax, 1073741824);
         }
         if (i3 == -2) {
-            return View.MeasureSpec.makeMeasureSpec(max, AccessPoint.UNREACHABLE_RSSI);
+            return View.MeasureSpec.makeMeasureSpec(iMax, AccessPoint.UNREACHABLE_RSSI);
         }
         return 0;
     }

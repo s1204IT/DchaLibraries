@@ -21,48 +21,65 @@ import com.android.systemui.shared.recents.model.TaskStack;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class TaskStackLayoutAlgorithm {
+
     @ViewDebug.ExportedProperty(category = "recents")
     private int mBaseBottomMargin;
     private int mBaseInitialBottomOffset;
     private int mBaseInitialTopOffset;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private int mBaseSideMargin;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private int mBaseTopMargin;
     private TaskStackLayoutAlgorithmCallbacks mCb;
     Context mContext;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private int mFocusState;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private int mFocusedBottomPeekHeight;
     private Path mFocusedCurve;
     private FreePathInterpolator mFocusedCurveInterpolator;
     private Path mFocusedDimCurve;
     private FreePathInterpolator mFocusedDimCurveInterpolator;
-    private Range mFocusedRange;
+    private TaskStackLayoutAlgorithm2 mFocusedRange;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private int mFocusedTopPeekHeight;
+
     @ViewDebug.ExportedProperty(category = "recents")
     float mFrontMostTaskP;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private int mInitialBottomOffset;
+
     @ViewDebug.ExportedProperty(category = "recents")
     float mInitialScrollP;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private int mInitialTopOffset;
+
     @ViewDebug.ExportedProperty(category = "recents")
     float mMaxScrollP;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public int mMaxTranslationZ;
     private int mMinMargin;
+
     @ViewDebug.ExportedProperty(category = "recents")
     float mMinScrollP;
+
     @ViewDebug.ExportedProperty(category = "recents")
     int mMinTranslationZ;
+
     @ViewDebug.ExportedProperty(category = "recents")
     int mNumStackTasks;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private int mStackBottomOffset;
     TaskGridLayoutAlgorithm mTaskGridLayoutAlgorithm;
@@ -72,13 +89,17 @@ public class TaskStackLayoutAlgorithm {
     private FreePathInterpolator mUnfocusedCurveInterpolator;
     private Path mUnfocusedDimCurve;
     private FreePathInterpolator mUnfocusedDimCurveInterpolator;
-    private Range mUnfocusedRange;
+    private TaskStackLayoutAlgorithm2 mUnfocusedRange;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public Rect mTaskRect = new Rect();
+
     @ViewDebug.ExportedProperty(category = "recents")
     public Rect mStackRect = new Rect();
+
     @ViewDebug.ExportedProperty(category = "recents")
     public Rect mSystemInsets = new Rect();
+
     @ViewDebug.ExportedProperty(category = "recents")
     private Rect mStackActionButtonRect = new Rect();
     private SparseIntArray mTaskIndexMap = new SparseIntArray();
@@ -86,17 +107,14 @@ public class TaskStackLayoutAlgorithm {
     TaskViewTransform mBackOfStackTransform = new TaskViewTransform();
     TaskViewTransform mFrontOfStackTransform = new TaskViewTransform();
 
-    /* loaded from: classes.dex */
     public interface TaskStackLayoutAlgorithmCallbacks {
         void onFocusStateChanged(int i, int i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean useGridLayout() {
+    boolean useGridLayout() {
         return Recents.getConfiguration().isGridEnabled;
     }
 
-    /* loaded from: classes.dex */
     public static class VisibilityReport {
         public int numVisibleTasks;
         public int numVisibleThumbnails;
@@ -117,8 +135,8 @@ public class TaskStackLayoutAlgorithm {
 
     public void reloadOnConfigurationChange(Context context) {
         Resources resources = context.getResources();
-        this.mFocusedRange = new Range(resources.getFloat(R.integer.recents_layout_focused_range_min), resources.getFloat(R.integer.recents_layout_focused_range_max));
-        this.mUnfocusedRange = new Range(resources.getFloat(R.integer.recents_layout_unfocused_range_min), resources.getFloat(R.integer.recents_layout_unfocused_range_max));
+        this.mFocusedRange = new TaskStackLayoutAlgorithm2(resources.getFloat(R.integer.recents_layout_focused_range_min), resources.getFloat(R.integer.recents_layout_focused_range_max));
+        this.mUnfocusedRange = new TaskStackLayoutAlgorithm2(resources.getFloat(R.integer.recents_layout_unfocused_range_min), resources.getFloat(R.integer.recents_layout_unfocused_range_max));
         this.mFocusState = getInitialFocusState();
         this.mFocusedTopPeekHeight = resources.getDimensionPixelSize(R.dimen.recents_layout_top_peek_size);
         this.mFocusedBottomPeekHeight = resources.getDimensionPixelSize(R.dimen.recents_layout_bottom_peek_size);
@@ -191,9 +209,9 @@ public class TaskStackLayoutAlgorithm {
     }
 
     public void update(TaskStack taskStack, ArraySet<Task.TaskKey> arraySet, RecentsActivityLaunchState recentsActivityLaunchState, float f) {
-        int i;
-        float f2;
-        float max;
+        int iIndexOfTask;
+        float minScrollP;
+        float fMax;
         Recents.getSystemServices();
         this.mTaskIndexMap.clear();
         ArrayList<Task> tasks = taskStack.getTasks();
@@ -206,23 +224,23 @@ public class TaskStackLayoutAlgorithm {
             return;
         }
         ArrayList arrayList = new ArrayList();
-        for (int i2 = 0; i2 < tasks.size(); i2++) {
-            Task task = tasks.get(i2);
+        for (int i = 0; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
             if (!arraySet.contains(task.key)) {
                 arrayList.add(task);
             }
         }
         this.mNumStackTasks = arrayList.size();
         int size = arrayList.size();
-        for (int i3 = 0; i3 < size; i3++) {
-            this.mTaskIndexMap.put(((Task) arrayList.get(i3)).key.id, i3);
+        for (int i2 = 0; i2 < size; i2++) {
+            this.mTaskIndexMap.put(((Task) arrayList.get(i2)).key.id, i2);
         }
         Task launchTarget = taskStack.getLaunchTarget();
         boolean z = true;
         if (launchTarget == null) {
-            i = this.mNumStackTasks - 1;
+            iIndexOfTask = this.mNumStackTasks - 1;
         } else {
-            i = taskStack.indexOfTask(launchTarget);
+            iIndexOfTask = taskStack.indexOfTask(launchTarget);
         }
         if (getInitialFocusState() == 1) {
             float normalizedXFromFocusedY = getNormalizedXFromFocusedY(this.mStackBottomOffset + this.mTaskRect.height(), 1);
@@ -230,54 +248,69 @@ public class TaskStackLayoutAlgorithm {
             this.mMinScrollP = 0.0f;
             this.mMaxScrollP = Math.max(this.mMinScrollP, (this.mNumStackTasks - 1) - Math.max(0.0f, this.mFocusedRange.getAbsoluteX(normalizedXFromFocusedY)));
             if (recentsActivityLaunchState.launchedFromHome || recentsActivityLaunchState.launchedFromPipApp || recentsActivityLaunchState.launchedWithNextPipApp) {
-                this.mInitialScrollP = Utilities.clamp(i, this.mMinScrollP, this.mMaxScrollP);
+                this.mInitialScrollP = Utilities.clamp(iIndexOfTask, this.mMinScrollP, this.mMaxScrollP);
+                return;
             } else {
-                this.mInitialScrollP = Utilities.clamp(i - 1, this.mMinScrollP, this.mMaxScrollP);
+                this.mInitialScrollP = Utilities.clamp(iIndexOfTask - 1, this.mMinScrollP, this.mMaxScrollP);
+                return;
             }
-        } else if (this.mNumStackTasks != 1) {
+        }
+        if (this.mNumStackTasks != 1) {
             float normalizedXFromUnfocusedY = getNormalizedXFromUnfocusedY(this.mStackBottomOffset + this.mTaskRect.height(), 1);
             this.mUnfocusedRange.offset(0.0f);
             if (Recents.getConfiguration().isLowRamDevice) {
-                f2 = this.mTaskStackLowRamLayoutAlgorithm.getMinScrollP();
+                minScrollP = this.mTaskStackLowRamLayoutAlgorithm.getMinScrollP();
             } else {
-                f2 = 0.0f;
+                minScrollP = 0.0f;
             }
-            this.mMinScrollP = f2;
+            this.mMinScrollP = minScrollP;
             if (Recents.getConfiguration().isLowRamDevice) {
-                max = this.mTaskStackLowRamLayoutAlgorithm.getMaxScrollP(size);
+                fMax = this.mTaskStackLowRamLayoutAlgorithm.getMaxScrollP(size);
             } else {
-                max = Math.max(this.mMinScrollP, (this.mNumStackTasks - 1) - Math.max(0.0f, this.mUnfocusedRange.getAbsoluteX(normalizedXFromUnfocusedY)));
+                fMax = Math.max(this.mMinScrollP, (this.mNumStackTasks - 1) - Math.max(0.0f, this.mUnfocusedRange.getAbsoluteX(normalizedXFromUnfocusedY)));
             }
-            this.mMaxScrollP = max;
+            this.mMaxScrollP = fMax;
             if (!recentsActivityLaunchState.launchedFromHome && !recentsActivityLaunchState.launchedFromPipApp && !recentsActivityLaunchState.launchedWithNextPipApp && !recentsActivityLaunchState.launchedViaDockGesture) {
                 z = false;
             }
             if (recentsActivityLaunchState.launchedWithAltTab) {
-                this.mInitialScrollP = Utilities.clamp(i, this.mMinScrollP, this.mMaxScrollP);
-            } else if (0.0f <= f && f <= 1.0f) {
+                this.mInitialScrollP = Utilities.clamp(iIndexOfTask, this.mMinScrollP, this.mMaxScrollP);
+                return;
+            }
+            if (0.0f <= f && f <= 1.0f) {
                 this.mInitialScrollP = Utilities.mapRange(f, this.mMinScrollP, this.mMaxScrollP);
-            } else if (Recents.getConfiguration().isLowRamDevice) {
+                return;
+            }
+            if (Recents.getConfiguration().isLowRamDevice) {
                 this.mInitialScrollP = this.mTaskStackLowRamLayoutAlgorithm.getInitialScrollP(this.mNumStackTasks, z);
+                return;
             } else if (z) {
-                this.mInitialScrollP = Utilities.clamp(i, this.mMinScrollP, this.mMaxScrollP);
+                this.mInitialScrollP = Utilities.clamp(iIndexOfTask, this.mMinScrollP, this.mMaxScrollP);
+                return;
             } else {
                 this.mInitialScrollP = Math.max(this.mMinScrollP, Math.min(this.mMaxScrollP, this.mNumStackTasks - 2) - Math.max(0.0f, this.mUnfocusedRange.getAbsoluteX(getNormalizedXFromUnfocusedY(this.mInitialTopOffset, 0))));
+                return;
             }
-        } else {
-            this.mMinScrollP = 0.0f;
-            this.mMaxScrollP = 0.0f;
-            this.mInitialScrollP = 0.0f;
         }
+        this.mMinScrollP = 0.0f;
+        this.mMaxScrollP = 0.0f;
+        this.mInitialScrollP = 0.0f;
     }
 
     public void setTaskOverridesForInitialState(TaskStack taskStack, boolean z) {
+        float[] fArr;
         RecentsActivityLaunchState launchState = Recents.getConfiguration().getLaunchState();
         this.mTaskIndexOverrideMap.clear();
         boolean z2 = launchState.launchedFromHome || launchState.launchedFromPipApp || launchState.launchedWithNextPipApp || launchState.launchedViaDockGesture;
         if (getInitialFocusState() == 0 && this.mNumStackTasks > 1) {
             if (z || (!launchState.launchedWithAltTab && !z2)) {
                 float normalizedXFromUnfocusedY = getNormalizedXFromUnfocusedY(this.mSystemInsets.bottom + this.mInitialBottomOffset, 1);
-                float[] fArr = this.mNumStackTasks <= 2 ? new float[]{Math.min(getNormalizedXFromUnfocusedY((this.mFocusedTopPeekHeight + this.mTaskRect.height()) - this.mMinMargin, 0), normalizedXFromUnfocusedY), getNormalizedXFromUnfocusedY(this.mFocusedTopPeekHeight, 0)} : new float[]{normalizedXFromUnfocusedY, getNormalizedXFromUnfocusedY(this.mInitialTopOffset, 0)};
+                float normalizedXFromUnfocusedY2 = getNormalizedXFromUnfocusedY((this.mFocusedTopPeekHeight + this.mTaskRect.height()) - this.mMinMargin, 0);
+                if (this.mNumStackTasks <= 2) {
+                    fArr = new float[]{Math.min(normalizedXFromUnfocusedY2, normalizedXFromUnfocusedY), getNormalizedXFromUnfocusedY(this.mFocusedTopPeekHeight, 0)};
+                } else {
+                    fArr = new float[]{normalizedXFromUnfocusedY, getNormalizedXFromUnfocusedY(this.mInitialTopOffset, 0)};
+                }
                 this.mUnfocusedRange.offset(0.0f);
                 ArrayList<Task> tasks = taskStack.getTasks();
                 int size = tasks.size();
@@ -331,20 +364,20 @@ public class TaskStackLayoutAlgorithm {
         float f5 = f2 - f;
         this.mUnfocusedRange.offset(f2);
         for (int size = this.mTaskIndexOverrideMap.size() - 1; size >= 0; size--) {
-            int keyAt = this.mTaskIndexOverrideMap.keyAt(size);
-            float f6 = this.mTaskIndexMap.get(keyAt);
-            float floatValue = this.mTaskIndexOverrideMap.get(keyAt, Float.valueOf(0.0f)).floatValue();
-            float f7 = floatValue + f4;
-            if (isInvalidOverrideX(f6, floatValue, f7)) {
+            int iKeyAt = this.mTaskIndexOverrideMap.keyAt(size);
+            float f6 = this.mTaskIndexMap.get(iKeyAt);
+            float fFloatValue = this.mTaskIndexOverrideMap.get(iKeyAt, Float.valueOf(0.0f)).floatValue();
+            float f7 = fFloatValue + f4;
+            if (isInvalidOverrideX(f6, fFloatValue, f7)) {
                 this.mTaskIndexOverrideMap.removeAt(size);
-            } else if ((floatValue >= f6 && f4 <= 0.0f) || (floatValue <= f6 && f4 >= 0.0f)) {
-                this.mTaskIndexOverrideMap.put(keyAt, Float.valueOf(f7));
+            } else if ((fFloatValue >= f6 && f4 <= 0.0f) || (fFloatValue <= f6 && f4 >= 0.0f)) {
+                this.mTaskIndexOverrideMap.put(iKeyAt, Float.valueOf(f7));
             } else {
-                float f8 = floatValue - f5;
-                if (isInvalidOverrideX(f6, floatValue, f8)) {
+                float f8 = fFloatValue - f5;
+                if (isInvalidOverrideX(f6, fFloatValue, f8)) {
                     this.mTaskIndexOverrideMap.removeAt(size);
                 } else {
-                    this.mTaskIndexOverrideMap.put(keyAt, Float.valueOf(f8));
+                    this.mTaskIndexOverrideMap.put(iKeyAt, Float.valueOf(f8));
                 }
                 f2 = f3;
             }
@@ -387,7 +420,7 @@ public class TaskStackLayoutAlgorithm {
         return !this.mStackRect.isEmpty();
     }
 
-    public VisibilityReport computeStackVisibilityReport(ArrayList<Task> arrayList) {
+    public VisibilityReport computeStackVisibilityReport(ArrayList<Task> arrayList) throws Resources.NotFoundException {
         int i;
         int i2;
         if (useGridLayout()) {
@@ -400,17 +433,17 @@ public class TaskStackLayoutAlgorithm {
             return new VisibilityReport(1, 1);
         }
         TaskViewTransform taskViewTransform = new TaskViewTransform();
-        Range range = ((float) getInitialFocusState()) > 0.0f ? this.mFocusedRange : this.mUnfocusedRange;
-        range.offset(this.mInitialScrollP);
+        TaskStackLayoutAlgorithm2 taskStackLayoutAlgorithm2 = ((float) getInitialFocusState()) > 0.0f ? this.mFocusedRange : this.mUnfocusedRange;
+        taskStackLayoutAlgorithm2.offset(this.mInitialScrollP);
         int dimensionPixelSize = this.mContext.getResources().getDimensionPixelSize(R.dimen.recents_task_view_header_height);
-        float f = 2.14748365E9f;
+        float f = 2.1474836E9f;
         int size = arrayList.size() - 1;
         int i3 = 0;
         int i4 = 0;
         while (true) {
             if (size >= 0) {
                 float stackScrollForTask = getStackScrollForTask(arrayList.get(size));
-                if (!range.isInRange(stackScrollForTask)) {
+                if (!taskStackLayoutAlgorithm2.isInRange(stackScrollForTask)) {
                     i2 = size;
                 } else {
                     i = i3;
@@ -422,7 +455,7 @@ public class TaskStackLayoutAlgorithm {
                         i4++;
                         f = f2;
                     } else {
-                        for (int i5 = i2; i5 >= 0 && range.isInRange(getStackScrollForTask(arrayList.get(i5))); i5--) {
+                        for (int i5 = i2; i5 >= 0 && taskStackLayoutAlgorithm2.isInRange(getStackScrollForTask(arrayList.get(i5))); i5--) {
                             i4++;
                         }
                     }
@@ -449,35 +482,34 @@ public class TaskStackLayoutAlgorithm {
         if (useGridLayout()) {
             this.mTaskGridLayoutAlgorithm.getTransform(this.mTaskIndexMap.get(task.key.id), this.mTaskIndexMap.size(), taskViewTransform, this);
             return taskViewTransform;
-        } else if (Recents.getConfiguration().isLowRamDevice) {
+        }
+        if (Recents.getConfiguration().isLowRamDevice) {
             if (task == null) {
                 taskViewTransform.reset();
                 return taskViewTransform;
             }
             this.mTaskStackLowRamLayoutAlgorithm.getTransform(this.mTaskIndexMap.get(task.key.id), f, taskViewTransform, this.mNumStackTasks, this);
             return taskViewTransform;
-        } else {
-            int i2 = this.mTaskIndexMap.get(task.key.id, -1);
-            if (task == null || i2 == -1) {
-                taskViewTransform.reset();
-                return taskViewTransform;
-            }
-            if (z2) {
-                stackScrollForTask = i2;
-            } else {
-                stackScrollForTask = getStackScrollForTask(task);
-            }
-            getStackTransform(stackScrollForTask, i2, f, i, taskViewTransform, taskViewTransform2, false, z);
+        }
+        int i2 = this.mTaskIndexMap.get(task.key.id, -1);
+        if (task == null || i2 == -1) {
+            taskViewTransform.reset();
             return taskViewTransform;
         }
+        if (z2) {
+            stackScrollForTask = i2;
+        } else {
+            stackScrollForTask = getStackScrollForTask(task);
+        }
+        getStackTransform(stackScrollForTask, i2, f, i, taskViewTransform, taskViewTransform2, false, z);
+        return taskViewTransform;
     }
 
     public TaskViewTransform getStackTransformScreenCoordinates(Task task, float f, TaskViewTransform taskViewTransform, TaskViewTransform taskViewTransform2, Rect rect) {
         return transformToScreenCoordinates(getStackTransform(task, f, this.mFocusState, taskViewTransform, taskViewTransform2, true, false), rect);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public TaskViewTransform transformToScreenCoordinates(TaskViewTransform taskViewTransform, Rect rect) {
+    TaskViewTransform transformToScreenCoordinates(TaskViewTransform taskViewTransform, Rect rect) {
         if (rect == null) {
             rect = Recents.getSystemServices().getWindowRect();
         }
@@ -491,13 +523,13 @@ public class TaskStackLayoutAlgorithm {
     public void getStackTransform(float f, float f2, float f3, int i, TaskViewTransform taskViewTransform, TaskViewTransform taskViewTransform2, boolean z, boolean z2) {
         float f4;
         int i2;
-        float mapRange;
+        float fMapRange;
         Recents.getSystemServices();
         this.mUnfocusedRange.offset(f3);
         this.mFocusedRange.offset(f3);
-        boolean isInRange = this.mUnfocusedRange.isInRange(f);
-        boolean isInRange2 = this.mFocusedRange.isInRange(f);
-        if (!z2 && !isInRange && !isInRange2) {
+        boolean zIsInRange = this.mUnfocusedRange.isInRange(f);
+        boolean zIsInRange2 = this.mFocusedRange.isInRange(f);
+        if (!z2 && !zIsInRange && !zIsInRange2) {
             taskViewTransform.reset();
             return;
         }
@@ -505,24 +537,24 @@ public class TaskStackLayoutAlgorithm {
         this.mFocusedRange.offset(f3);
         float normalizedX = this.mUnfocusedRange.getNormalizedX(f);
         float normalizedX2 = this.mFocusedRange.getNormalizedX(f);
-        float clamp = Utilities.clamp(f3, this.mMinScrollP, this.mMaxScrollP);
-        this.mUnfocusedRange.offset(clamp);
-        this.mFocusedRange.offset(clamp);
+        float fClamp = Utilities.clamp(f3, this.mMinScrollP, this.mMaxScrollP);
+        this.mUnfocusedRange.offset(fClamp);
+        this.mFocusedRange.offset(fClamp);
         float normalizedX3 = this.mUnfocusedRange.getNormalizedX(f);
         float normalizedX4 = this.mUnfocusedRange.getNormalizedX(f2);
-        float clamp2 = Utilities.clamp(f3, -3.4028235E38f, this.mMaxScrollP);
-        this.mUnfocusedRange.offset(clamp2);
-        this.mFocusedRange.offset(clamp2);
+        float fClamp2 = Utilities.clamp(f3, -3.4028235E38f, this.mMaxScrollP);
+        this.mUnfocusedRange.offset(fClamp2);
+        this.mFocusedRange.offset(fClamp2);
         float normalizedX5 = this.mUnfocusedRange.getNormalizedX(f);
         float normalizedX6 = this.mFocusedRange.getNormalizedX(f);
-        int width = (this.mStackRect.width() - this.mTaskRect.width()) / 2;
+        int iWidth = (this.mStackRect.width() - this.mTaskRect.width()) / 2;
         boolean z3 = true;
-        float f5 = 0.0f;
+        float fMapRange2 = 0.0f;
         if (this.mNumStackTasks == 1 && !z) {
-            int height = (this.mStackRect.top - this.mTaskRect.top) + (((this.mStackRect.height() - this.mSystemInsets.bottom) - this.mTaskRect.height()) / 2) + getYForDeltaP((this.mMinScrollP - f3) / this.mNumStackTasks, 0.0f);
+            int iHeight = (this.mStackRect.top - this.mTaskRect.top) + (((this.mStackRect.height() - this.mSystemInsets.bottom) - this.mTaskRect.height()) / 2) + getYForDeltaP((this.mMinScrollP - f3) / this.mNumStackTasks, 0.0f);
             f4 = this.mMaxTranslationZ;
-            i2 = height;
-            mapRange = 1.0f;
+            i2 = iHeight;
+            fMapRange = 1.0f;
         } else {
             int interpolation = (int) ((1.0f - this.mUnfocusedCurveInterpolator.getInterpolation(normalizedX)) * this.mStackRect.height());
             int interpolation2 = (int) ((1.0f - this.mFocusedCurveInterpolator.getInterpolation(normalizedX2)) * this.mStackRect.height());
@@ -536,21 +568,21 @@ public class TaskStackLayoutAlgorithm {
                     interpolation3 = 0.0f;
                 }
             }
-            float f6 = i;
-            int mapRange2 = (this.mStackRect.top - this.mTaskRect.top) + ((int) Utilities.mapRange(f6, interpolation, interpolation2));
-            float mapRange3 = Utilities.mapRange(Utilities.clamp01(normalizedX4), this.mMinTranslationZ, this.mMaxTranslationZ);
-            f5 = Utilities.mapRange(f6, interpolation3, interpolation4);
-            f4 = mapRange3;
-            i2 = mapRange2;
-            mapRange = Utilities.mapRange(Utilities.clamp01(normalizedX3), 0.0f, 2.0f);
+            float f5 = i;
+            int iMapRange = (this.mStackRect.top - this.mTaskRect.top) + ((int) Utilities.mapRange(f5, interpolation, interpolation2));
+            float fMapRange3 = Utilities.mapRange(Utilities.clamp01(normalizedX4), this.mMinTranslationZ, this.mMaxTranslationZ);
+            fMapRange2 = Utilities.mapRange(f5, interpolation3, interpolation4);
+            f4 = fMapRange3;
+            i2 = iMapRange;
+            fMapRange = Utilities.mapRange(Utilities.clamp01(normalizedX3), 0.0f, 2.0f);
         }
         taskViewTransform.scale = 1.0f;
         taskViewTransform.alpha = 1.0f;
         taskViewTransform.translationZ = f4;
-        taskViewTransform.dimAlpha = f5;
-        taskViewTransform.viewOutlineAlpha = mapRange;
+        taskViewTransform.dimAlpha = fMapRange2;
+        taskViewTransform.viewOutlineAlpha = fMapRange;
         taskViewTransform.rect.set(this.mTaskRect);
-        taskViewTransform.rect.offset(width, i2);
+        taskViewTransform.rect.offset(iWidth, i2);
         Utilities.scaleRectAboutCenter(taskViewTransform.rect, taskViewTransform.scale);
         if (taskViewTransform.rect.top >= this.mStackRect.bottom || (taskViewTransform2 != null && taskViewTransform.rect.top == taskViewTransform2.rect.top)) {
             z3 = false;
@@ -562,8 +594,7 @@ public class TaskStackLayoutAlgorithm {
         return new Rect(this.mTaskRect);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getStackScrollForTask(Task task) {
+    float getStackScrollForTask(Task task) {
         Float f = this.mTaskIndexOverrideMap.get(task.key.id, null);
         if (Recents.getConfiguration().isLowRamDevice || f == null) {
             return this.mTaskIndexMap.get(task.key.id, 0);
@@ -571,17 +602,14 @@ public class TaskStackLayoutAlgorithm {
         return f.floatValue();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getStackScrollForTaskIgnoreOverrides(Task task) {
+    float getStackScrollForTaskIgnoreOverrides(Task task) {
         return this.mTaskIndexMap.get(task.key.id, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getStackScrollForTaskAtInitialOffset(Task task) {
-        boolean z = false;
+    float getStackScrollForTaskAtInitialOffset(Task task) {
         if (Recents.getConfiguration().isLowRamDevice) {
             RecentsActivityLaunchState launchState = Recents.getConfiguration().getLaunchState();
-            return this.mTaskStackLowRamLayoutAlgorithm.getInitialScrollP(this.mNumStackTasks, (launchState.launchedFromHome || launchState.launchedFromPipApp || launchState.launchedWithNextPipApp) ? true : true);
+            return this.mTaskStackLowRamLayoutAlgorithm.getInitialScrollP(this.mNumStackTasks, launchState.launchedFromHome || launchState.launchedFromPipApp || launchState.launchedWithNextPipApp);
         }
         float normalizedXFromUnfocusedY = getNormalizedXFromUnfocusedY(this.mInitialTopOffset, 0);
         this.mUnfocusedRange.offset(0.0f);
@@ -604,12 +632,12 @@ public class TaskStackLayoutAlgorithm {
 
     public void getTaskStackBounds(Rect rect, Rect rect2, int i, int i2, int i3, Rect rect3) {
         rect3.set(rect2.left + i2, rect2.top + i, rect2.right - i3, rect2.bottom);
-        int width = rect3.width() - (getScaleForExtent(rect2, rect, this.mBaseSideMargin, this.mMinMargin, 0) * 2);
+        int iWidth = rect3.width() - (getScaleForExtent(rect2, rect, this.mBaseSideMargin, this.mMinMargin, 0) * 2);
         if (Utilities.getAppConfiguration(this.mContext).orientation == 2) {
             Rect rect4 = new Rect(0, 0, Math.min(rect.width(), rect.height()), Math.max(rect.width(), rect.height()));
-            width = Math.min(width, rect4.width() - (getScaleForExtent(rect4, rect4, this.mBaseSideMargin, this.mMinMargin, 0) * 2));
+            iWidth = Math.min(iWidth, rect4.width() - (getScaleForExtent(rect4, rect4, this.mBaseSideMargin, this.mMinMargin, 0) * 2));
         }
-        rect3.inset((rect3.width() - width) / 2, 0);
+        rect3.inset((rect3.width() - iWidth) / 2, 0);
     }
 
     public static int getDimensionForDevice(Context context, int i, int i2, int i3, int i4) {
@@ -628,17 +656,17 @@ public class TaskStackLayoutAlgorithm {
                 i5 = i6;
             }
             return resources.getDimensionPixelSize(i5);
-        } else if (configuration.isLargeScreen) {
+        }
+        if (configuration.isLargeScreen) {
             if (z) {
                 i3 = i4;
             }
             return resources.getDimensionPixelSize(i3);
-        } else {
-            if (z) {
-                i = i2;
-            }
-            return resources.getDimensionPixelSize(i);
         }
+        if (z) {
+            i = i2;
+        }
+        return resources.getDimensionPixelSize(i);
     }
 
     private float getNormalizedXFromUnfocusedY(float f, int i) {
@@ -656,24 +684,21 @@ public class TaskStackLayoutAlgorithm {
     }
 
     private Path constructFocusedCurve() {
-        float height = this.mFocusedTopPeekHeight / this.mStackRect.height();
-        float height2 = (this.mStackBottomOffset + this.mFocusedBottomPeekHeight) / this.mStackRect.height();
-        float height3 = ((this.mFocusedTopPeekHeight + this.mTaskRect.height()) - this.mMinMargin) / this.mStackRect.height();
         Path path = new Path();
         path.moveTo(0.0f, 1.0f);
-        path.lineTo(0.5f, 1.0f - height);
-        path.lineTo(1.0f - (0.5f / this.mFocusedRange.relativeMax), Math.max(1.0f - height3, height2));
+        path.lineTo(0.5f, 1.0f - (this.mFocusedTopPeekHeight / this.mStackRect.height()));
+        path.lineTo(1.0f - (0.5f / this.mFocusedRange.relativeMax), Math.max(1.0f - (((this.mFocusedTopPeekHeight + this.mTaskRect.height()) - this.mMinMargin) / this.mStackRect.height()), (this.mStackBottomOffset + this.mFocusedBottomPeekHeight) / this.mStackRect.height()));
         path.lineTo(1.0f, 0.0f);
         return path;
     }
 
     private Path constructUnfocusedCurve() {
-        float height = 1.0f - (this.mFocusedTopPeekHeight / this.mStackRect.height());
-        float f = (height - 0.975f) / 0.099999994f;
+        float fHeight = 1.0f - (this.mFocusedTopPeekHeight / this.mStackRect.height());
+        float f = (fHeight - 0.975f) / 0.099999994f;
         Path path = new Path();
         path.moveTo(0.0f, 1.0f);
-        path.cubicTo(0.0f, 1.0f, 0.4f, 0.975f, 0.5f, height);
-        path.cubicTo(0.5f, height, 0.65f, (f * 0.65f) + (1.0f - (0.4f * f)), 1.0f, 0.0f);
+        path.cubicTo(0.0f, 1.0f, 0.4f, 0.975f, 0.5f, fHeight);
+        path.cubicTo(0.5f, fHeight, 0.65f, (f * 0.65f) + (1.0f - (0.4f * f)), 1.0f, 0.0f);
         return path;
     }
 
@@ -715,10 +740,10 @@ public class TaskStackLayoutAlgorithm {
             this.mTaskStackLowRamLayoutAlgorithm.getFrontOfStackTransform(this.mFrontOfStackTransform, this);
             return;
         }
-        float mapRange = Utilities.mapRange(this.mFocusState, this.mUnfocusedRange.relativeMin, this.mFocusedRange.relativeMin);
-        float mapRange2 = Utilities.mapRange(this.mFocusState, this.mUnfocusedRange.relativeMax, this.mFocusedRange.relativeMax);
-        getStackTransform(mapRange, mapRange, 0.0f, this.mFocusState, this.mBackOfStackTransform, null, true, true);
-        getStackTransform(mapRange2, mapRange2, 0.0f, this.mFocusState, this.mFrontOfStackTransform, null, true, true);
+        float fMapRange = Utilities.mapRange(this.mFocusState, this.mUnfocusedRange.relativeMin, this.mFocusedRange.relativeMin);
+        float fMapRange2 = Utilities.mapRange(this.mFocusState, this.mUnfocusedRange.relativeMax, this.mFocusedRange.relativeMax);
+        getStackTransform(fMapRange, fMapRange, 0.0f, this.mFocusState, this.mBackOfStackTransform, null, true, true);
+        getStackTransform(fMapRange2, fMapRange2, 0.0f, this.mFocusState, this.mFrontOfStackTransform, null, true, true);
         this.mBackOfStackTransform.visible = true;
         this.mFrontOfStackTransform.visible = true;
     }
@@ -761,15 +786,16 @@ public class TaskStackLayoutAlgorithm {
         printWriter.println();
         if (this.mTaskIndexOverrideMap.size() > 0) {
             for (int size = this.mTaskIndexOverrideMap.size() - 1; size >= 0; size--) {
-                int keyAt = this.mTaskIndexOverrideMap.keyAt(size);
-                float floatValue = this.mTaskIndexOverrideMap.get(keyAt, Float.valueOf(0.0f)).floatValue();
+                int iKeyAt = this.mTaskIndexOverrideMap.keyAt(size);
+                float f = this.mTaskIndexMap.get(iKeyAt);
+                float fFloatValue = this.mTaskIndexOverrideMap.get(iKeyAt, Float.valueOf(0.0f)).floatValue();
                 printWriter.print(str2);
                 printWriter.print("taskId= ");
-                printWriter.print(keyAt);
+                printWriter.print(iKeyAt);
                 printWriter.print(" x= ");
-                printWriter.print(this.mTaskIndexMap.get(keyAt));
+                printWriter.print(f);
                 printWriter.print(" overrideX= ");
-                printWriter.print(floatValue);
+                printWriter.print(fFloatValue);
                 printWriter.println();
             }
         }

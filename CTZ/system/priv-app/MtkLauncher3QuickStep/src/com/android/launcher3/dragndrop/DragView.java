@@ -46,6 +46,7 @@ import com.android.launcher3.views.BaseDragLayer;
 import com.android.launcher3.widget.PendingAddShortcutInfo;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DragView extends View {
     public static final int COLOR_CHANGE_DURATION = 120;
@@ -87,7 +88,7 @@ public class DragView extends View {
     private static final ColorMatrix sTempMatrix2 = new ColorMatrix();
     static float sDragAlpha = 1.0f;
 
-    public DragView(Launcher launcher, Bitmap bitmap, int i, int i2, final float f, float f2, float f3) {
+    public DragView(Launcher launcher, Bitmap bitmap, int i, int i2, float f, float f2, float f3) {
         super(launcher);
         this.mDrawBitmap = true;
         this.mTempLoc = new int[2];
@@ -100,19 +101,26 @@ public class DragView extends View {
         this.mLauncher = launcher;
         this.mDragLayer = launcher.getDragLayer();
         this.mDragController = launcher.getDragController();
-        final float width = (bitmap.getWidth() + f3) / bitmap.getWidth();
         setScaleX(f);
         setScaleY(f);
         this.mAnim = LauncherAnimUtils.ofFloat(0.0f, 1.0f);
         this.mAnim.setDuration(150L);
         this.mAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.dragndrop.DragView.1
+            final /* synthetic */ float val$initialScale;
+            final /* synthetic */ float val$scale;
+
+            AnonymousClass1(float f4, float f5) {
+                f = f4;
+                f = f5;
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float floatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
-                DragView.this.setScaleX(f + ((width - f) * floatValue));
-                DragView.this.setScaleY(f + ((width - f) * floatValue));
+                float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+                DragView.this.setScaleX(f + ((f - f) * fFloatValue));
+                DragView.this.setScaleY(f + ((f - f) * fFloatValue));
                 if (DragView.sDragAlpha != 1.0f) {
-                    DragView.this.setAlpha((DragView.sDragAlpha * floatValue) + (1.0f - floatValue));
+                    DragView.this.setAlpha((DragView.sDragAlpha * fFloatValue) + (1.0f - fFloatValue));
                 }
                 if (DragView.this.getParent() == null) {
                     valueAnimator.cancel();
@@ -120,6 +128,9 @@ public class DragView extends View {
             }
         });
         this.mAnim.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.dragndrop.DragView.2
+            AnonymousClass2() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 if (!DragView.this.mAnimationCancelled) {
@@ -131,17 +142,54 @@ public class DragView extends View {
         setDragRegion(new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()));
         this.mRegistrationX = i;
         this.mRegistrationY = i2;
-        this.mInitialScale = f;
+        this.mInitialScale = f4;
         this.mScaleOnDrop = f2;
-        int makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, 0);
-        measure(makeMeasureSpec, makeMeasureSpec);
+        int iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, 0);
+        measure(iMakeMeasureSpec, iMakeMeasureSpec);
         this.mPaint = new Paint(2);
         this.mBlurSizeOutline = getResources().getDimensionPixelSize(R.dimen.blur_size_medium_outline);
         setElevation(getResources().getDimension(R.dimen.drag_elevation));
     }
 
+    /* renamed from: com.android.launcher3.dragndrop.DragView$1 */
+    class AnonymousClass1 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ float val$initialScale;
+        final /* synthetic */ float val$scale;
+
+        AnonymousClass1(float f4, float f5) {
+            f = f4;
+            f = f5;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            float fFloatValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+            DragView.this.setScaleX(f + ((f - f) * fFloatValue));
+            DragView.this.setScaleY(f + ((f - f) * fFloatValue));
+            if (DragView.sDragAlpha != 1.0f) {
+                DragView.this.setAlpha((DragView.sDragAlpha * fFloatValue) + (1.0f - fFloatValue));
+            }
+            if (DragView.this.getParent() == null) {
+                valueAnimator.cancel();
+            }
+        }
+    }
+
+    /* renamed from: com.android.launcher3.dragndrop.DragView$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        AnonymousClass2() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (!DragView.this.mAnimationCancelled) {
+                DragView.this.mDragController.onDragViewAnimationEnd();
+            }
+        }
+    }
+
     @TargetApi(26)
-    public void setItemInfo(final ItemInfo itemInfo) {
+    public void setItemInfo(ItemInfo itemInfo) {
         if (!Utilities.ATLEAST_OREO) {
             return;
         }
@@ -149,11 +197,17 @@ public class DragView extends View {
             return;
         }
         new Handler(LauncherModel.getWorkerLooper()).postAtFrontOfQueue(new Runnable() { // from class: com.android.launcher3.dragndrop.DragView.3
+            final /* synthetic */ ItemInfo val$info;
+
+            AnonymousClass3(ItemInfo itemInfo2) {
+                itemInfo = itemInfo2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 LauncherAppState launcherAppState = LauncherAppState.getInstance(DragView.this.mLauncher);
                 Object[] objArr = new Object[1];
-                final Drawable fullDrawable = DragView.this.getFullDrawable(itemInfo, launcherAppState, objArr);
+                Drawable fullDrawable = DragView.this.getFullDrawable(itemInfo, launcherAppState, objArr);
                 if (fullDrawable instanceof AdaptiveIconDrawable) {
                     int width = DragView.this.mBitmap.getWidth();
                     int height = DragView.this.mBitmap.getHeight();
@@ -163,14 +217,14 @@ public class DragView extends View {
                     Rect rect2 = new Rect(rect);
                     DragView.this.mBadge = DragView.this.getBadge(itemInfo, launcherAppState, objArr[0]);
                     DragView.this.mBadge.setBounds(rect2);
-                    LauncherIcons obtain = LauncherIcons.obtain(DragView.this.mLauncher);
-                    Utilities.scaleRectAboutCenter(rect, obtain.getNormalizer().getScale(fullDrawable, null, null, null));
-                    obtain.recycle();
+                    LauncherIcons launcherIconsObtain = LauncherIcons.obtain(DragView.this.mLauncher);
+                    Utilities.scaleRectAboutCenter(rect, launcherIconsObtain.getNormalizer().getScale(fullDrawable, null, null, null));
+                    launcherIconsObtain.recycle();
                     AdaptiveIconDrawable adaptiveIconDrawable = (AdaptiveIconDrawable) fullDrawable;
                     Rect rect3 = new Rect(rect);
                     Utilities.scaleRectAboutCenter(rect3, 0.98f);
                     adaptiveIconDrawable.setBounds(rect3);
-                    final Path iconMask = adaptiveIconDrawable.getIconMask();
+                    Path iconMask = adaptiveIconDrawable.getIconMask();
                     DragView.this.mTranslateX = new SpringFloatValue(DragView.this, width * AdaptiveIconDrawable.getExtraInsetFraction());
                     DragView.this.mTranslateY = new SpringFloatValue(DragView.this, height * AdaptiveIconDrawable.getExtraInsetFraction());
                     rect.inset((int) ((-rect.width()) * AdaptiveIconDrawable.getExtraInsetFraction()), (int) ((-rect.height()) * AdaptiveIconDrawable.getExtraInsetFraction()));
@@ -185,10 +239,18 @@ public class DragView extends View {
                     }
                     DragView.this.mFgSpringDrawable.setBounds(rect);
                     new Handler(Looper.getMainLooper()).post(new Runnable() { // from class: com.android.launcher3.dragndrop.DragView.3.1
+                        final /* synthetic */ Drawable val$dr;
+                        final /* synthetic */ Path val$mask;
+
+                        AnonymousClass1(Path iconMask2, Drawable fullDrawable2) {
+                            path = iconMask2;
+                            drawable = fullDrawable2;
+                        }
+
                         @Override // java.lang.Runnable
                         public void run() {
-                            DragView.this.mScaledMaskPath = iconMask;
-                            DragView.this.mDrawBitmap = !(fullDrawable instanceof FolderAdaptiveIcon);
+                            DragView.this.mScaledMaskPath = path;
+                            DragView.this.mDrawBitmap = !(drawable instanceof FolderAdaptiveIcon);
                             if (itemInfo.isDisabled()) {
                                 FastBitmapDrawable fastBitmapDrawable = new FastBitmapDrawable((Bitmap) null);
                                 fastBitmapDrawable.setIsDisabled(true);
@@ -199,12 +261,125 @@ public class DragView extends View {
                     });
                 }
             }
+
+            /* renamed from: com.android.launcher3.dragndrop.DragView$3$1 */
+            class AnonymousClass1 implements Runnable {
+                final /* synthetic */ Drawable val$dr;
+                final /* synthetic */ Path val$mask;
+
+                AnonymousClass1(Path iconMask2, Drawable fullDrawable2) {
+                    path = iconMask2;
+                    drawable = fullDrawable2;
+                }
+
+                @Override // java.lang.Runnable
+                public void run() {
+                    DragView.this.mScaledMaskPath = path;
+                    DragView.this.mDrawBitmap = !(drawable instanceof FolderAdaptiveIcon);
+                    if (itemInfo.isDisabled()) {
+                        FastBitmapDrawable fastBitmapDrawable = new FastBitmapDrawable((Bitmap) null);
+                        fastBitmapDrawable.setIsDisabled(true);
+                        DragView.this.mBaseFilter = (ColorMatrixColorFilter) fastBitmapDrawable.getColorFilter();
+                    }
+                    DragView.this.updateColorFilter();
+                }
+            }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
+    /* renamed from: com.android.launcher3.dragndrop.DragView$3 */
+    class AnonymousClass3 implements Runnable {
+        final /* synthetic */ ItemInfo val$info;
+
+        AnonymousClass3(ItemInfo itemInfo2) {
+            itemInfo = itemInfo2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            LauncherAppState launcherAppState = LauncherAppState.getInstance(DragView.this.mLauncher);
+            Object[] objArr = new Object[1];
+            Drawable fullDrawable2 = DragView.this.getFullDrawable(itemInfo, launcherAppState, objArr);
+            if (fullDrawable2 instanceof AdaptiveIconDrawable) {
+                int width = DragView.this.mBitmap.getWidth();
+                int height = DragView.this.mBitmap.getHeight();
+                int dimension = ((int) DragView.this.mLauncher.getResources().getDimension(R.dimen.blur_size_medium_outline)) / 2;
+                Rect rect = new Rect(0, 0, width, height);
+                rect.inset(dimension, dimension);
+                Rect rect2 = new Rect(rect);
+                DragView.this.mBadge = DragView.this.getBadge(itemInfo, launcherAppState, objArr[0]);
+                DragView.this.mBadge.setBounds(rect2);
+                LauncherIcons launcherIconsObtain = LauncherIcons.obtain(DragView.this.mLauncher);
+                Utilities.scaleRectAboutCenter(rect, launcherIconsObtain.getNormalizer().getScale(fullDrawable2, null, null, null));
+                launcherIconsObtain.recycle();
+                AdaptiveIconDrawable adaptiveIconDrawable = (AdaptiveIconDrawable) fullDrawable2;
+                Rect rect3 = new Rect(rect);
+                Utilities.scaleRectAboutCenter(rect3, 0.98f);
+                adaptiveIconDrawable.setBounds(rect3);
+                Path iconMask2 = adaptiveIconDrawable.getIconMask();
+                DragView.this.mTranslateX = new SpringFloatValue(DragView.this, width * AdaptiveIconDrawable.getExtraInsetFraction());
+                DragView.this.mTranslateY = new SpringFloatValue(DragView.this, height * AdaptiveIconDrawable.getExtraInsetFraction());
+                rect.inset((int) ((-rect.width()) * AdaptiveIconDrawable.getExtraInsetFraction()), (int) ((-rect.height()) * AdaptiveIconDrawable.getExtraInsetFraction()));
+                DragView.this.mBgSpringDrawable = adaptiveIconDrawable.getBackground();
+                if (DragView.this.mBgSpringDrawable == null) {
+                    DragView.this.mBgSpringDrawable = new ColorDrawable(0);
+                }
+                DragView.this.mBgSpringDrawable.setBounds(rect);
+                DragView.this.mFgSpringDrawable = adaptiveIconDrawable.getForeground();
+                if (DragView.this.mFgSpringDrawable == null) {
+                    DragView.this.mFgSpringDrawable = new ColorDrawable(0);
+                }
+                DragView.this.mFgSpringDrawable.setBounds(rect);
+                new Handler(Looper.getMainLooper()).post(new Runnable() { // from class: com.android.launcher3.dragndrop.DragView.3.1
+                    final /* synthetic */ Drawable val$dr;
+                    final /* synthetic */ Path val$mask;
+
+                    AnonymousClass1(Path iconMask22, Drawable fullDrawable22) {
+                        path = iconMask22;
+                        drawable = fullDrawable22;
+                    }
+
+                    @Override // java.lang.Runnable
+                    public void run() {
+                        DragView.this.mScaledMaskPath = path;
+                        DragView.this.mDrawBitmap = !(drawable instanceof FolderAdaptiveIcon);
+                        if (itemInfo.isDisabled()) {
+                            FastBitmapDrawable fastBitmapDrawable = new FastBitmapDrawable((Bitmap) null);
+                            fastBitmapDrawable.setIsDisabled(true);
+                            DragView.this.mBaseFilter = (ColorMatrixColorFilter) fastBitmapDrawable.getColorFilter();
+                        }
+                        DragView.this.updateColorFilter();
+                    }
+                });
+            }
+        }
+
+        /* renamed from: com.android.launcher3.dragndrop.DragView$3$1 */
+        class AnonymousClass1 implements Runnable {
+            final /* synthetic */ Drawable val$dr;
+            final /* synthetic */ Path val$mask;
+
+            AnonymousClass1(Path iconMask22, Drawable fullDrawable22) {
+                path = iconMask22;
+                drawable = fullDrawable22;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                DragView.this.mScaledMaskPath = path;
+                DragView.this.mDrawBitmap = !(drawable instanceof FolderAdaptiveIcon);
+                if (itemInfo.isDisabled()) {
+                    FastBitmapDrawable fastBitmapDrawable = new FastBitmapDrawable((Bitmap) null);
+                    fastBitmapDrawable.setIsDisabled(true);
+                    DragView.this.mBaseFilter = (ColorMatrixColorFilter) fastBitmapDrawable.getColorFilter();
+                }
+                DragView.this.updateColorFilter();
+            }
+        }
+    }
+
     @TargetApi(26)
-    public void updateColorFilter() {
+    private void updateColorFilter() {
         if (this.mCurrentFilter == null) {
             this.mPaint.setColorFilter(null);
             if (this.mScaledMaskPath != null) {
@@ -230,58 +405,57 @@ public class DragView extends View {
         invalidate();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Drawable getFullDrawable(ItemInfo itemInfo, LauncherAppState launcherAppState, Object[] objArr) {
-        FolderAdaptiveIcon createFolderAdaptiveIcon;
+    private Drawable getFullDrawable(ItemInfo itemInfo, LauncherAppState launcherAppState, Object[] objArr) {
+        FolderAdaptiveIcon folderAdaptiveIconCreateFolderAdaptiveIcon;
         if (itemInfo.itemType == 0) {
-            LauncherActivityInfo resolveActivity = LauncherAppsCompat.getInstance(this.mLauncher).resolveActivity(itemInfo.getIntent(), itemInfo.user);
-            objArr[0] = resolveActivity;
-            if (resolveActivity != null) {
-                return launcherAppState.getIconCache().getFullResIcon(resolveActivity, false);
+            LauncherActivityInfo launcherActivityInfoResolveActivity = LauncherAppsCompat.getInstance(this.mLauncher).resolveActivity(itemInfo.getIntent(), itemInfo.user);
+            objArr[0] = launcherActivityInfoResolveActivity;
+            if (launcherActivityInfoResolveActivity != null) {
+                return launcherAppState.getIconCache().getFullResIcon(launcherActivityInfoResolveActivity, false);
             }
             return null;
-        } else if (itemInfo.itemType == 6) {
+        }
+        if (itemInfo.itemType == 6) {
             if (itemInfo instanceof PendingAddShortcutInfo) {
                 ShortcutConfigActivityInfo shortcutConfigActivityInfo = ((PendingAddShortcutInfo) itemInfo).activityInfo;
                 objArr[0] = shortcutConfigActivityInfo;
                 return shortcutConfigActivityInfo.getFullResIcon(launcherAppState.getIconCache());
             }
-            ShortcutKey fromItemInfo = ShortcutKey.fromItemInfo(itemInfo);
+            ShortcutKey shortcutKeyFromItemInfo = ShortcutKey.fromItemInfo(itemInfo);
             DeepShortcutManager deepShortcutManager = DeepShortcutManager.getInstance(this.mLauncher);
-            List<ShortcutInfoCompat> queryForFullDetails = deepShortcutManager.queryForFullDetails(fromItemInfo.componentName.getPackageName(), Arrays.asList(fromItemInfo.getId()), fromItemInfo.user);
-            if (queryForFullDetails.isEmpty()) {
+            List<ShortcutInfoCompat> listQueryForFullDetails = deepShortcutManager.queryForFullDetails(shortcutKeyFromItemInfo.componentName.getPackageName(), Arrays.asList(shortcutKeyFromItemInfo.getId()), shortcutKeyFromItemInfo.user);
+            if (listQueryForFullDetails.isEmpty()) {
                 return null;
             }
-            objArr[0] = queryForFullDetails.get(0);
-            return deepShortcutManager.getShortcutIconDrawable(queryForFullDetails.get(0), launcherAppState.getInvariantDeviceProfile().fillResIconDpi);
-        } else if (itemInfo.itemType != 2 || (createFolderAdaptiveIcon = FolderAdaptiveIcon.createFolderAdaptiveIcon(this.mLauncher, itemInfo.id, new Point(this.mBitmap.getWidth(), this.mBitmap.getHeight()))) == null) {
-            return null;
-        } else {
-            objArr[0] = createFolderAdaptiveIcon;
-            return createFolderAdaptiveIcon;
+            objArr[0] = listQueryForFullDetails.get(0);
+            return deepShortcutManager.getShortcutIconDrawable(listQueryForFullDetails.get(0), launcherAppState.getInvariantDeviceProfile().fillResIconDpi);
         }
+        if (itemInfo.itemType != 2 || (folderAdaptiveIconCreateFolderAdaptiveIcon = FolderAdaptiveIcon.createFolderAdaptiveIcon(this.mLauncher, itemInfo.id, new Point(this.mBitmap.getWidth(), this.mBitmap.getHeight()))) == null) {
+            return null;
+        }
+        objArr[0] = folderAdaptiveIconCreateFolderAdaptiveIcon;
+        return folderAdaptiveIconCreateFolderAdaptiveIcon;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     @TargetApi(26)
-    public Drawable getBadge(ItemInfo itemInfo, LauncherAppState launcherAppState, Object obj) {
+    private Drawable getBadge(ItemInfo itemInfo, LauncherAppState launcherAppState, Object obj) {
         int i = launcherAppState.getInvariantDeviceProfile().iconBitmapSize;
         if (itemInfo.itemType == 6) {
             boolean z = (itemInfo instanceof ItemInfoWithIcon) && (((ItemInfoWithIcon) itemInfo).runtimeStatusFlags & 512) > 0;
             if ((itemInfo.id == -1 && !z) || !(obj instanceof ShortcutInfoCompat)) {
                 return new FixedSizeEmptyDrawable(i);
             }
-            LauncherIcons obtain = LauncherIcons.obtain(launcherAppState.getContext());
-            Bitmap bitmap = obtain.getShortcutInfoBadge((ShortcutInfoCompat) obj, launcherAppState.getIconCache()).iconBitmap;
-            obtain.recycle();
+            LauncherIcons launcherIconsObtain = LauncherIcons.obtain(launcherAppState.getContext());
+            Bitmap bitmap = launcherIconsObtain.getShortcutInfoBadge((ShortcutInfoCompat) obj, launcherAppState.getIconCache()).iconBitmap;
+            launcherIconsObtain.recycle();
             float f = i;
             float dimension = (f - this.mLauncher.getResources().getDimension(R.dimen.profile_badge_size)) / f;
             return new InsetDrawable(new FastBitmapDrawable(bitmap), dimension, dimension, 0.0f, 0.0f);
-        } else if (itemInfo.itemType == 2) {
-            return ((FolderAdaptiveIcon) obj).getBadge();
-        } else {
-            return this.mLauncher.getPackageManager().getUserBadgedIcon(new FixedSizeEmptyDrawable(i), itemInfo.user);
         }
+        if (itemInfo.itemType == 2) {
+            return ((FolderAdaptiveIcon) obj).getBadge();
+        }
+        return this.mLauncher.getPackageManager().getUserBadgedIcon(new FixedSizeEmptyDrawable(i), itemInfo.user);
     }
 
     @Override // android.view.View
@@ -335,29 +509,28 @@ public class DragView extends View {
 
     @Override // android.view.View
     protected void onDraw(Canvas canvas) {
-        boolean z = true;
         this.mHasDrawn = true;
         if (this.mDrawBitmap) {
-            z = (this.mCrossFadeProgress <= 0.0f || this.mCrossFadeBitmap == null) ? false : false;
+            boolean z = this.mCrossFadeProgress > 0.0f && this.mCrossFadeBitmap != null;
             if (z) {
                 this.mPaint.setAlpha(z ? (int) ((1.0f - this.mCrossFadeProgress) * 255.0f) : 255);
             }
             canvas.drawBitmap(this.mBitmap, 0.0f, 0.0f, this.mPaint);
             if (z) {
                 this.mPaint.setAlpha((int) (255.0f * this.mCrossFadeProgress));
-                int save = canvas.save();
+                int iSave = canvas.save();
                 canvas.scale((this.mBitmap.getWidth() * 1.0f) / this.mCrossFadeBitmap.getWidth(), (this.mBitmap.getHeight() * 1.0f) / this.mCrossFadeBitmap.getHeight());
                 canvas.drawBitmap(this.mCrossFadeBitmap, 0.0f, 0.0f, this.mPaint);
-                canvas.restoreToCount(save);
+                canvas.restoreToCount(iSave);
             }
         }
         if (this.mScaledMaskPath != null) {
-            int save2 = canvas.save();
+            int iSave2 = canvas.save();
             canvas.clipPath(this.mScaledMaskPath);
             this.mBgSpringDrawable.draw(canvas);
             canvas.translate(this.mTranslateX.mValue, this.mTranslateY.mValue);
             this.mFgSpringDrawable.draw(canvas);
-            canvas.restoreToCount(save2);
+            canvas.restoreToCount(iSave2);
             this.mBadge.draw(canvas);
         }
     }
@@ -367,17 +540,32 @@ public class DragView extends View {
     }
 
     public void crossFade(int i) {
-        ValueAnimator ofFloat = LauncherAnimUtils.ofFloat(0.0f, 1.0f);
-        ofFloat.setDuration(i);
-        ofFloat.setInterpolator(Interpolators.DEACCEL_1_5);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.dragndrop.DragView.4
+        ValueAnimator valueAnimatorOfFloat = LauncherAnimUtils.ofFloat(0.0f, 1.0f);
+        valueAnimatorOfFloat.setDuration(i);
+        valueAnimatorOfFloat.setInterpolator(Interpolators.DEACCEL_1_5);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.dragndrop.DragView.4
+            AnonymousClass4() {
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 DragView.this.mCrossFadeProgress = valueAnimator.getAnimatedFraction();
                 DragView.this.invalidate();
             }
         });
-        ofFloat.start();
+        valueAnimatorOfFloat.start();
+    }
+
+    /* renamed from: com.android.launcher3.dragndrop.DragView$4 */
+    class AnonymousClass4 implements ValueAnimator.AnimatorUpdateListener {
+        AnonymousClass4() {
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            DragView.this.mCrossFadeProgress = valueAnimator.getAnimatedFraction();
+            DragView.this.invalidate();
+        }
     }
 
     public void setColor(int i) {
@@ -391,7 +579,9 @@ public class DragView extends View {
             Themes.setColorScaleOnMatrix(i, colorMatrix2);
             colorMatrix.postConcat(colorMatrix2);
             animateFilterTo(colorMatrix.getArray());
-        } else if (this.mCurrentFilter == null) {
+            return;
+        }
+        if (this.mCurrentFilter == null) {
             updateColorFilter();
         } else {
             animateFilterTo(new ColorMatrix().getArray());
@@ -407,12 +597,26 @@ public class DragView extends View {
         this.mFilterAnimator = ValueAnimator.ofObject(new FloatArrayEvaluator(this.mCurrentFilter), array, fArr);
         this.mFilterAnimator.setDuration(120L);
         this.mFilterAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.dragndrop.DragView.5
+            AnonymousClass5() {
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 DragView.this.updateColorFilter();
             }
         });
         this.mFilterAnimator.start();
+    }
+
+    /* renamed from: com.android.launcher3.dragndrop.DragView$5 */
+    class AnonymousClass5 implements ValueAnimator.AnimatorUpdateListener {
+        AnonymousClass5() {
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            DragView.this.updateColorFilter();
+        }
     }
 
     public boolean hasDrawn() {
@@ -435,11 +639,25 @@ public class DragView extends View {
         setLayoutParams(layoutParams);
         move(i, i2);
         post(new Runnable() { // from class: com.android.launcher3.dragndrop.DragView.6
+            AnonymousClass6() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 DragView.this.mAnim.start();
             }
         });
+    }
+
+    /* renamed from: com.android.launcher3.dragndrop.DragView$6 */
+    class AnonymousClass6 implements Runnable {
+        AnonymousClass6() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            DragView.this.mAnim.start();
+        }
     }
 
     public void cancelAnimation() {
@@ -465,7 +683,7 @@ public class DragView extends View {
         this.mDragLayer.animateViewIntoPosition(this, this.mTempLoc, 1.0f, this.mScaleOnDrop, this.mScaleOnDrop, 0, runnable, i3);
     }
 
-    public void animateShift(final int i, final int i2) {
+    public void animateShift(int i, int i2) {
         if (this.mAnim.isStarted()) {
             return;
         }
@@ -473,18 +691,44 @@ public class DragView extends View {
         this.mAnimatedShiftY = i2;
         applyTranslation();
         this.mAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.dragndrop.DragView.7
+            final /* synthetic */ int val$shiftX;
+            final /* synthetic */ int val$shiftY;
+
+            AnonymousClass7(int i3, int i22) {
+                i = i3;
+                i = i22;
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float animatedFraction = 1.0f - valueAnimator.getAnimatedFraction();
                 DragView.this.mAnimatedShiftX = (int) (i * animatedFraction);
-                DragView.this.mAnimatedShiftY = (int) (animatedFraction * i2);
+                DragView.this.mAnimatedShiftY = (int) (animatedFraction * i);
                 DragView.this.applyTranslation();
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void applyTranslation() {
+    /* renamed from: com.android.launcher3.dragndrop.DragView$7 */
+    class AnonymousClass7 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ int val$shiftX;
+        final /* synthetic */ int val$shiftY;
+
+        AnonymousClass7(int i3, int i22) {
+            i = i3;
+            i = i22;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            float animatedFraction = 1.0f - valueAnimator.getAnimatedFraction();
+            DragView.this.mAnimatedShiftX = (int) (i * animatedFraction);
+            DragView.this.mAnimatedShiftY = (int) (animatedFraction * i);
+            DragView.this.applyTranslation();
+        }
+    }
+
+    private void applyTranslation() {
         setTranslationX((this.mLastTouchX - this.mRegistrationX) + this.mAnimatedShiftX);
         setTranslationY((this.mLastTouchY - this.mRegistrationY) + this.mAnimatedShiftY);
     }
@@ -503,18 +747,22 @@ public class DragView extends View {
         return this.mInitialScale;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SpringFloatValue {
+    private static class SpringFloatValue {
         private static final float DAMPENING_RATIO = 1.0f;
         private static final int PARALLAX_MAX_IN_DP = 8;
         private static final int STIFFNESS = 4000;
         private static final FloatPropertyCompat<SpringFloatValue> VALUE = new FloatPropertyCompat<SpringFloatValue>(LauncherSettings.Settings.EXTRA_VALUE) { // from class: com.android.launcher3.dragndrop.DragView.SpringFloatValue.1
+            AnonymousClass1(String str) {
+                super(str);
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: getValue(Ljava/lang/Object;)F */
             @Override // android.support.animation.FloatPropertyCompat
             public float getValue(SpringFloatValue springFloatValue) {
                 return springFloatValue.mValue;
             }
 
+            /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
             @Override // android.support.animation.FloatPropertyCompat
             public void setValue(SpringFloatValue springFloatValue, float f) {
                 springFloatValue.mValue = f;
@@ -525,6 +773,26 @@ public class DragView extends View {
         private final SpringAnimation mSpring;
         private float mValue;
         private final View mView;
+
+        /* renamed from: com.android.launcher3.dragndrop.DragView$SpringFloatValue$1 */
+        class AnonymousClass1 extends FloatPropertyCompat<SpringFloatValue> {
+            AnonymousClass1(String str) {
+                super(str);
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: getValue(Ljava/lang/Object;)F */
+            @Override // android.support.animation.FloatPropertyCompat
+            public float getValue(SpringFloatValue springFloatValue) {
+                return springFloatValue.mValue;
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
+            @Override // android.support.animation.FloatPropertyCompat
+            public void setValue(SpringFloatValue springFloatValue, float f) {
+                springFloatValue.mValue = f;
+                springFloatValue.mView.invalidate();
+            }
+        }
 
         public SpringFloatValue(View view, float f) {
             this.mView = view;
@@ -537,9 +805,7 @@ public class DragView extends View {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class FixedSizeEmptyDrawable extends ColorDrawable {
+    private static class FixedSizeEmptyDrawable extends ColorDrawable {
         private final int mSize;
 
         public FixedSizeEmptyDrawable(int i) {

@@ -18,6 +18,7 @@ import com.mediatek.settings.wifi.WapiCertPreferenceController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ConfigureWifiSettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.wifi.ConfigureWifiSettings.1
@@ -65,9 +66,8 @@ public class ConfigureWifiSettings extends DashboardFragment {
         return 2;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.wifi_configure_settings;
     }
 

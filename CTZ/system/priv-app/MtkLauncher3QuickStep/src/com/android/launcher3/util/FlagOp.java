@@ -1,4 +1,5 @@
 package com.android.launcher3.util;
+
 /* loaded from: classes.dex */
 public abstract class FlagOp {
     public static FlagOp NO_OP = new FlagOp() { // from class: com.android.launcher3.util.FlagOp.1

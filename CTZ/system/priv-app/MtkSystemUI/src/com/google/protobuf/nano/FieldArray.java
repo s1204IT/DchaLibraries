@@ -1,4 +1,5 @@
 package com.google.protobuf.nano;
+
 /* loaded from: classes.dex */
 public final class FieldArray implements Cloneable {
     private static final FieldData DELETED = new FieldData();
@@ -13,9 +14,9 @@ public final class FieldArray implements Cloneable {
 
     FieldArray(int i) {
         this.mGarbage = false;
-        int idealIntArraySize = idealIntArraySize(i);
-        this.mFieldNumbers = new int[idealIntArraySize];
-        this.mData = new FieldData[idealIntArraySize];
+        int iIdealIntArraySize = idealIntArraySize(i);
+        this.mFieldNumbers = new int[iIdealIntArraySize];
+        this.mData = new FieldData[iIdealIntArraySize];
         this.mSize = 0;
     }
 
@@ -50,25 +51,25 @@ public final class FieldArray implements Cloneable {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof FieldArray) {
-            FieldArray fieldArray = (FieldArray) obj;
-            if (size() != fieldArray.size()) {
-                return false;
-            }
-            return arrayEquals(this.mFieldNumbers, fieldArray.mFieldNumbers, this.mSize) && arrayEquals(this.mData, fieldArray.mData, this.mSize);
+        if (!(obj instanceof FieldArray)) {
+            return false;
         }
-        return false;
+        FieldArray fieldArray = (FieldArray) obj;
+        if (size() != fieldArray.size()) {
+            return false;
+        }
+        return arrayEquals(this.mFieldNumbers, fieldArray.mFieldNumbers, this.mSize) && arrayEquals(this.mData, fieldArray.mData, this.mSize);
     }
 
     public int hashCode() {
         if (this.mGarbage) {
             gc();
         }
-        int i = 17;
-        for (int i2 = 0; i2 < this.mSize; i2++) {
-            i = this.mData[i2].hashCode() + (31 * ((i * 31) + this.mFieldNumbers[i2]));
+        int iHashCode = 17;
+        for (int i = 0; i < this.mSize; i++) {
+            iHashCode = this.mData[i].hashCode() + (31 * ((iHashCode * 31) + this.mFieldNumbers[i]));
         }
-        return i;
+        return iHashCode;
     }
 
     private int idealIntArraySize(int i) {
@@ -103,6 +104,7 @@ public final class FieldArray implements Cloneable {
         return true;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: clone()Ljava/lang/Object; */
     /* renamed from: clone */
     public final FieldArray m27clone() {
         int size = size();

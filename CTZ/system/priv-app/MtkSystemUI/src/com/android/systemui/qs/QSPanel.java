@@ -36,6 +36,7 @@ import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class QSPanel extends LinearLayout implements QSHost.Callback, BrightnessMirrorController.BrightnessMirrorListener, TunerService.Tunable {
     private BrightnessController mBrightnessController;
@@ -60,7 +61,6 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
     protected final ArrayList<TileRecord> mRecords;
     protected QSTileLayout mTileLayout;
 
-    /* loaded from: classes.dex */
     public static final class TileRecord extends Record {
         public QSTile.Callback callback;
         public boolean scanState;
@@ -123,9 +123,8 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         return this.mCustomizePanel != null && this.mCustomizePanel.isCustomizing();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.ViewGroup, android.view.View
-    public void onAttachedToWindow() {
+    protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         ((TunerService) Dependency.get(TunerService.class)).addTunable(this, "qs_show_brightness");
         if (this.mHost != null) {
@@ -136,9 +135,8 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.ViewGroup, android.view.View
-    public void onDetachedFromWindow() {
+    protected void onDetachedFromWindow() {
         ((TunerService) Dependency.get(TunerService.class)).removeTunable(this);
         if (this.mHost != null) {
             this.mHost.removeCallback(this);
@@ -198,8 +196,7 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         updateBrightnessMirror();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public View getBrightnessView() {
+    View getBrightnessView() {
         return this.mBrightnessView;
     }
 
@@ -272,7 +269,7 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         }
     }
 
-    public void setExpanded(boolean z) {
+    public void setExpanded(boolean z) throws Resources.NotFoundException {
         if (this.mExpanded == z) {
             return;
         }
@@ -280,7 +277,7 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         if (!this.mExpanded && (this.mTileLayout instanceof PagedTileLayout)) {
             ((PagedTileLayout) this.mTileLayout).setCurrentItem(0, false);
         }
-        this.mMetricsLogger.visibility(111, this.mExpanded);
+        this.mMetricsLogger.visibility(com.android.systemui.plugins.R.styleable.AppCompatTheme_windowActionBar, this.mExpanded);
         if (!this.mExpanded) {
             closeDetail();
         } else {
@@ -367,13 +364,13 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
             next.tile.removeCallback(next.callback);
         }
         this.mRecords.clear();
-        for (QSTile qSTile : collection) {
-            addTile(qSTile, z);
+        Iterator<QSTile> it2 = collection.iterator();
+        while (it2.hasNext()) {
+            addTile(it2.next(), z);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void drawTile(TileRecord tileRecord, QSTile.State state) {
+    protected void drawTile(TileRecord tileRecord, QSTile.State state) {
         tileRecord.tileView.onStateChanged(state);
     }
 
@@ -499,15 +496,14 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         fireScanStateChanged((this.mDetailRecord instanceof TileRecord) && ((TileRecord) this.mDetailRecord).scanState);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setGridContentVisibility(boolean z) {
+    void setGridContentVisibility(boolean z) {
         int i = z ? 0 : 4;
         setVisibility(i);
         if (this.mQuickSettingsExt != null) {
             this.mQuickSettingsExt.setViewsVisibility(i);
         }
         if (this.mGridContentVisible != z) {
-            this.mMetricsLogger.visibility(111, i);
+            this.mMetricsLogger.visibility(com.android.systemui.plugins.R.styleable.AppCompatTheme_windowActionBar, i);
         }
         this.mGridContentVisible = z;
     }
@@ -525,15 +521,13 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireToggleStateChanged(boolean z) {
+    private void fireToggleStateChanged(boolean z) {
         if (this.mCallback != null) {
             this.mCallback.onToggleStateChanged(z);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireScanStateChanged(boolean z) {
+    private void fireScanStateChanged(boolean z) {
         if (this.mCallback != null) {
             this.mCallback.onScanStateChanged(z);
         }
@@ -550,13 +544,11 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public QSTileLayout getTileLayout() {
+    QSTileLayout getTileLayout() {
         return this.mTileLayout;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public QSTileView getTileView(QSTile qSTile) {
+    QSTileView getTileView(QSTile qSTile) {
         Iterator<TileRecord> it = this.mRecords.iterator();
         while (it.hasNext()) {
             TileRecord next = it.next();
@@ -586,9 +578,7 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class H extends Handler {
+    private class H extends Handler {
         private H() {
         }
 
@@ -602,9 +592,7 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public static class Record {
+    protected static class Record {
         DetailAdapter detailAdapter;
         int x;
         int y;
@@ -613,7 +601,6 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         }
     }
 
-    /* loaded from: classes.dex */
     public interface QSTileLayout {
         void addTile(TileRecord tileRecord);
 

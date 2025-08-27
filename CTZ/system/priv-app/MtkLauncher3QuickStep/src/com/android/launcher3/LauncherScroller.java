@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
+
 /* loaded from: classes.dex */
 public class LauncherScroller {
     private static final int DEFAULT_DURATION = 250;
@@ -180,16 +181,17 @@ public class LauncherScroller {
         return this.mFinalY;
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     public boolean computeScrollOffset() {
         float interpolation;
         if (this.mFinished) {
             return false;
         }
-        int currentAnimationTimeMillis = (int) (AnimationUtils.currentAnimationTimeMillis() - this.mStartTime);
-        if (currentAnimationTimeMillis < this.mDuration) {
+        int iCurrentAnimationTimeMillis = (int) (AnimationUtils.currentAnimationTimeMillis() - this.mStartTime);
+        if (iCurrentAnimationTimeMillis < this.mDuration) {
             switch (this.mMode) {
                 case 0:
-                    float f = currentAnimationTimeMillis * this.mDurationReciprocal;
+                    float f = iCurrentAnimationTimeMillis * this.mDurationReciprocal;
                     if (this.mInterpolator == null) {
                         interpolation = viscousFluid(f);
                     } else {
@@ -199,7 +201,7 @@ public class LauncherScroller {
                     this.mCurrY = this.mStartY + Math.round(interpolation * this.mDeltaY);
                     break;
                 case 1:
-                    float f2 = currentAnimationTimeMillis / this.mDuration;
+                    float f2 = iCurrentAnimationTimeMillis / this.mDuration;
                     int i = (int) (100.0f * f2);
                     float f3 = 1.0f;
                     float f4 = 0.0f;
@@ -255,9 +257,9 @@ public class LauncherScroller {
             float currVelocity = getCurrVelocity();
             float f2 = this.mFinalX - this.mStartX;
             float f3 = this.mFinalY - this.mStartY;
-            float hypot = (float) Math.hypot(f2, f3);
-            float f4 = (f2 / hypot) * currVelocity;
-            float f5 = (f3 / hypot) * currVelocity;
+            float fHypot = (float) Math.hypot(f2, f3);
+            float f4 = (f2 / fHypot) * currVelocity;
+            float f5 = (f3 / fHypot) * currVelocity;
             float f6 = i3;
             if (Math.signum(f6) == Math.signum(f4)) {
                 float f7 = i4;
@@ -269,21 +271,20 @@ public class LauncherScroller {
         }
         this.mMode = 1;
         this.mFinished = false;
-        float hypot2 = (float) Math.hypot(i3, i4);
-        this.mVelocity = hypot2;
-        this.mDuration = getSplineFlingDuration(hypot2);
+        float fHypot2 = (float) Math.hypot(i3, i4);
+        this.mVelocity = fHypot2;
+        this.mDuration = getSplineFlingDuration(fHypot2);
         this.mStartTime = AnimationUtils.currentAnimationTimeMillis();
         this.mStartX = i;
         this.mStartY = i2;
-        int i9 = (hypot2 > 0.0f ? 1 : (hypot2 == 0.0f ? 0 : -1));
-        if (i9 != 0) {
-            f = i3 / hypot2;
+        if (fHypot2 != 0.0f) {
+            f = i3 / fHypot2;
         } else {
             f = 1.0f;
         }
-        float f8 = i9 != 0 ? i4 / hypot2 : 1.0f;
-        double splineFlingDistance = getSplineFlingDistance(hypot2);
-        this.mDistance = (int) (Math.signum(hypot2) * splineFlingDistance);
+        float f8 = fHypot2 != 0.0f ? i4 / fHypot2 : 1.0f;
+        double splineFlingDistance = getSplineFlingDistance(fHypot2);
+        this.mDistance = (int) (Math.signum(fHypot2) * splineFlingDistance);
         this.mMinX = i5;
         this.mMaxX = i6;
         this.mMinY = i7;
@@ -305,19 +306,18 @@ public class LauncherScroller {
     }
 
     private double getSplineFlingDistance(float f) {
-        double splineDeceleration = getSplineDeceleration(f);
-        return this.mFlingFriction * this.mPhysicalCoeff * Math.exp((DECELERATION_RATE / (DECELERATION_RATE - 1.0d)) * splineDeceleration);
+        return this.mFlingFriction * this.mPhysicalCoeff * Math.exp((DECELERATION_RATE / (DECELERATION_RATE - 1.0d)) * getSplineDeceleration(f));
     }
 
     static float viscousFluid(float f) {
-        float exp;
+        float fExp;
         float f2 = f * sViscousFluidScale;
         if (f2 < 1.0f) {
-            exp = f2 - (1.0f - ((float) Math.exp(-f2)));
+            fExp = f2 - (1.0f - ((float) Math.exp(-f2)));
         } else {
-            exp = 0.36787945f + ((1.0f - ((float) Math.exp(1.0f - f2))) * 0.63212055f);
+            fExp = 0.36787945f + ((1.0f - ((float) Math.exp(1.0f - f2))) * 0.63212055f);
         }
-        return exp * sViscousFluidNormalize;
+        return fExp * sViscousFluidNormalize;
     }
 
     public void abortAnimation() {

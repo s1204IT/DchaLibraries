@@ -9,6 +9,7 @@ import android.util.ArrayMap;
 import android.util.ArraySet;
 import android.util.SparseArray;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class ForegroundServiceControllerImpl implements ForegroundServiceController {
     private final Context mContext;
@@ -137,9 +138,7 @@ public class ForegroundServiceControllerImpl implements ForegroundServiceControl
         return statusBarNotification.getPackageName().equals("android") && statusBarNotification.getTag() != null && statusBarNotification.getTag().contains("AlertWindowNotification");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class UserServices {
+    private static class UserServices {
         private ArrayMap<String, ArraySet<Integer>> mAppOps;
         private ArrayMap<String, ArraySet<String>> mImportantNotifications;
         private String[] mRunning;
@@ -171,11 +170,11 @@ public class ForegroundServiceControllerImpl implements ForegroundServiceControl
             if (arraySet == null) {
                 return false;
             }
-            boolean remove = arraySet.remove(Integer.valueOf(i));
+            boolean zRemove = arraySet.remove(Integer.valueOf(i));
             if (arraySet.size() == 0) {
                 this.mAppOps.remove(str);
             }
-            return remove;
+            return zRemove;
         }
 
         public void addImportantNotification(String str, String str2) {
@@ -210,11 +209,11 @@ public class ForegroundServiceControllerImpl implements ForegroundServiceControl
             if (arraySet == null) {
                 return false;
             }
-            boolean remove = arraySet.remove(str2);
+            boolean zRemove = arraySet.remove(str2);
             if (arraySet.size() == 0) {
                 arrayMap.remove(str);
             }
-            return remove;
+            return zRemove;
         }
 
         public boolean isDungeonNeeded() {

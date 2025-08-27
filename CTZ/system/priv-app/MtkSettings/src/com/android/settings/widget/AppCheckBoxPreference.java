@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.preference.CheckBoxPreference;
 import android.util.AttributeSet;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class AppCheckBoxPreference extends CheckBoxPreference {
     public AppCheckBoxPreference(Context context, AttributeSet attributeSet) {

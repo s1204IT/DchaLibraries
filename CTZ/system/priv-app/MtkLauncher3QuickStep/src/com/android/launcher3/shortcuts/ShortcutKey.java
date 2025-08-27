@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.UserHandle;
 import com.android.launcher3.ItemInfo;
 import com.android.launcher3.util.ComponentKey;
+
 /* loaded from: classes.dex */
 public class ShortcutKey extends ComponentKey {
     public ShortcutKey(String str, UserHandle userHandle, String str2) {

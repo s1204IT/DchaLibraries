@@ -23,6 +23,7 @@ import com.android.settings.fuelgauge.batterytip.tips.RestrictAppTip;
 import com.android.settings.fuelgauge.batterytip.tips.UnrestrictAppTip;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BatteryTipUtils {
     public static List<AppInfo> getRestrictedAppsList(AppOpsManager appOpsManager, UserManager userManager) {
@@ -51,7 +52,8 @@ public class BatteryTipUtils {
                 return new OpenBatterySaverAction(settingsActivity);
             }
             return new BatterySaverAction(settingsActivity);
-        } else if (type != 7) {
+        }
+        if (type != 7) {
             switch (type) {
                 case 0:
                     return new SmartBatteryAction(settingsActivity, instrumentedPreferenceFragment);
@@ -63,12 +65,11 @@ public class BatteryTipUtils {
                 default:
                     return null;
             }
-        } else {
-            return new UnrestrictAppAction(settingsActivity, (UnrestrictAppTip) batteryTip);
         }
+        return new UnrestrictAppAction(settingsActivity, (UnrestrictAppTip) batteryTip);
     }
 
     public static void uploadAnomalyPendingIntent(Context context, StatsManager statsManager) throws StatsManager.StatsUnavailableException {
-        statsManager.setBroadcastSubscriber(PendingIntent.getBroadcast(context, 0, new Intent(context, AnomalyDetectionReceiver.class), 134217728), 1L, 1L);
+        statsManager.setBroadcastSubscriber(PendingIntent.getBroadcast(context, 0, new Intent(context, (Class<?>) AnomalyDetectionReceiver.class), 134217728), 1L, 1L);
     }
 }

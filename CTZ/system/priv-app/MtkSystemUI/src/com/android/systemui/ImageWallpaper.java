@@ -16,10 +16,10 @@ import android.view.Display;
 import android.view.DisplayInfo;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
-import com.android.systemui.ImageWallpaper;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class ImageWallpaper extends WallpaperService {
     private DrawableEngine mEngine;
@@ -44,9 +44,7 @@ public class ImageWallpaper extends WallpaperService {
         return this.mEngine;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class DrawableEngine extends WallpaperService.Engine {
+    class DrawableEngine extends WallpaperService.Engine {
         Bitmap mBackground;
         int mBackgroundHeight;
         int mBackgroundWidth;
@@ -78,7 +76,7 @@ public class ImageWallpaper extends WallpaperService {
             this.mUnloadWallpaperCallback = new Runnable() { // from class: com.android.systemui.-$$Lambda$ImageWallpaper$DrawableEngine$NJnw285KGKe6wEAiXHs5XJx5qSc
                 @Override // java.lang.Runnable
                 public final void run() {
-                    ImageWallpaper.DrawableEngine.this.unloadWallpaper(false);
+                    this.f$0.unloadWallpaper(false);
                 }
             };
             this.mBackgroundWidth = -1;
@@ -128,11 +126,11 @@ public class ImageWallpaper extends WallpaperService {
             } else {
                 z2 = true;
             }
-            int max = Math.max(displayInfo.logicalWidth, this.mBackgroundWidth);
-            int max2 = Math.max(displayInfo.logicalHeight, this.mBackgroundHeight);
-            surfaceHolder.setFixedSize(max, max2);
-            this.mLastRequestedWidth = max;
-            this.mLastRequestedHeight = max2;
+            int iMax = Math.max(displayInfo.logicalWidth, this.mBackgroundWidth);
+            int iMax2 = Math.max(displayInfo.logicalHeight, this.mBackgroundHeight);
+            surfaceHolder.setFixedSize(iMax, iMax2);
+            this.mLastRequestedWidth = iMax;
+            this.mLastRequestedHeight = iMax2;
             return z2;
         }
 
@@ -193,93 +191,55 @@ public class ImageWallpaper extends WallpaperService {
             return this.mTmpDisplayInfo;
         }
 
-        /* JADX WARN: Removed duplicated region for block: B:29:0x005e A[Catch: all -> 0x00e0, TRY_LEAVE, TryCatch #0 {all -> 0x00e0, blocks: (B:6:0x0007, B:8:0x0017, B:12:0x0025, B:13:0x002f, B:15:0x0044, B:21:0x004f, B:23:0x0053, B:29:0x005e, B:33:0x0066, B:35:0x006e, B:39:0x0078, B:41:0x00bb, B:43:0x00c1, B:45:0x00c5, B:49:0x00cd), top: B:55:0x0007 }] */
-        /* JADX WARN: Removed duplicated region for block: B:35:0x006e A[Catch: all -> 0x00e0, TRY_LEAVE, TryCatch #0 {all -> 0x00e0, blocks: (B:6:0x0007, B:8:0x0017, B:12:0x0025, B:13:0x002f, B:15:0x0044, B:21:0x004f, B:23:0x0053, B:29:0x005e, B:33:0x0066, B:35:0x006e, B:39:0x0078, B:41:0x00bb, B:43:0x00c1, B:45:0x00c5, B:49:0x00cd), top: B:55:0x0007 }] */
-        /* JADX WARN: Removed duplicated region for block: B:38:0x0075  */
-        /*
-            Code decompiled incorrectly, please refer to instructions dump.
-        */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [343=6] */
         void drawFrame() {
-            boolean z;
-            boolean z2;
-            if (!this.mSurfaceValid) {
-                return;
-            }
-            try {
-                Trace.traceBegin(8L, "drawWallpaper");
-                DisplayInfo defaultDisplayInfo = getDefaultDisplayInfo();
-                int i = defaultDisplayInfo.rotation;
-                if (i != this.mLastRotation) {
-                    if (!updateSurfaceSize(getSurfaceHolder(), defaultDisplayInfo, true)) {
-                        return;
-                    }
-                    this.mRotationAtLastSurfaceSizeUpdate = i;
-                    this.mDisplayWidthAtLastSurfaceSizeUpdate = defaultDisplayInfo.logicalWidth;
-                    this.mDisplayHeightAtLastSurfaceSizeUpdate = defaultDisplayInfo.logicalHeight;
-                }
-                SurfaceHolder surfaceHolder = getSurfaceHolder();
-                Rect surfaceFrame = surfaceHolder.getSurfaceFrame();
-                int width = surfaceFrame.width();
-                int height = surfaceFrame.height();
-                if (width == this.mLastSurfaceWidth && height == this.mLastSurfaceHeight) {
-                    z = false;
-                    if (!z && i == this.mLastRotation && !this.mSurfaceRedrawNeeded) {
-                        z2 = false;
-                        if (!z2 || this.mOffsetsChanged) {
-                            this.mLastRotation = i;
-                            this.mSurfaceRedrawNeeded = false;
-                            if (this.mBackground != null) {
-                                loadWallpaper(true);
-                                return;
-                            }
-                            this.mScale = Math.max(1.0f, Math.max(width / this.mBackground.getWidth(), height / this.mBackground.getHeight()));
-                            int width2 = ((int) (this.mBackground.getWidth() * this.mScale)) - width;
-                            int height2 = ((int) (this.mBackground.getHeight() * this.mScale)) - height;
-                            int i2 = (int) (width2 * this.mXOffset);
-                            int i3 = (int) (height2 * this.mYOffset);
-                            this.mOffsetsChanged = false;
-                            if (z) {
-                                this.mLastSurfaceWidth = width;
-                                this.mLastSurfaceHeight = height;
-                            }
-                            if (!z2 && i2 == this.mLastXTranslation && i3 == this.mLastYTranslation) {
-                                return;
-                            }
-                            this.mLastXTranslation = i2;
-                            this.mLastYTranslation = i3;
-                            drawWallpaperWithCanvas(surfaceHolder, width2, height2, i2, i3);
-                            scheduleUnloadWallpaper();
+            if (this.mSurfaceValid) {
+                try {
+                    Trace.traceBegin(8L, "drawWallpaper");
+                    DisplayInfo defaultDisplayInfo = getDefaultDisplayInfo();
+                    int i = defaultDisplayInfo.rotation;
+                    if (i != this.mLastRotation) {
+                        if (!updateSurfaceSize(getSurfaceHolder(), defaultDisplayInfo, true)) {
                             return;
                         }
-                        return;
+                        this.mRotationAtLastSurfaceSizeUpdate = i;
+                        this.mDisplayWidthAtLastSurfaceSizeUpdate = defaultDisplayInfo.logicalWidth;
+                        this.mDisplayHeightAtLastSurfaceSizeUpdate = defaultDisplayInfo.logicalHeight;
                     }
-                    z2 = true;
-                    if (z2) {
+                    SurfaceHolder surfaceHolder = getSurfaceHolder();
+                    Rect surfaceFrame = surfaceHolder.getSurfaceFrame();
+                    int iWidth = surfaceFrame.width();
+                    int iHeight = surfaceFrame.height();
+                    boolean z = (iWidth == this.mLastSurfaceWidth && iHeight == this.mLastSurfaceHeight) ? false : true;
+                    boolean z2 = z || i != this.mLastRotation || this.mSurfaceRedrawNeeded;
+                    if (z2 || this.mOffsetsChanged) {
+                        this.mLastRotation = i;
+                        this.mSurfaceRedrawNeeded = false;
+                        if (this.mBackground == null) {
+                            loadWallpaper(true);
+                            return;
+                        }
+                        this.mScale = Math.max(1.0f, Math.max(iWidth / this.mBackground.getWidth(), iHeight / this.mBackground.getHeight()));
+                        int width = ((int) (this.mBackground.getWidth() * this.mScale)) - iWidth;
+                        int height = ((int) (this.mBackground.getHeight() * this.mScale)) - iHeight;
+                        int i2 = (int) (width * this.mXOffset);
+                        int i3 = (int) (height * this.mYOffset);
+                        this.mOffsetsChanged = false;
+                        if (z) {
+                            this.mLastSurfaceWidth = iWidth;
+                            this.mLastSurfaceHeight = iHeight;
+                        }
+                        if (!z2 && i2 == this.mLastXTranslation && i3 == this.mLastYTranslation) {
+                            return;
+                        }
+                        this.mLastXTranslation = i2;
+                        this.mLastYTranslation = i3;
+                        drawWallpaperWithCanvas(surfaceHolder, width, height, i2, i3);
+                        scheduleUnloadWallpaper();
                     }
-                    this.mLastRotation = i;
-                    this.mSurfaceRedrawNeeded = false;
-                    if (this.mBackground != null) {
-                    }
+                } finally {
+                    Trace.traceEnd(8L);
                 }
-                z = true;
-                if (!z) {
-                    z2 = false;
-                    if (z2) {
-                    }
-                    this.mLastRotation = i;
-                    this.mSurfaceRedrawNeeded = false;
-                    if (this.mBackground != null) {
-                    }
-                }
-                z2 = true;
-                if (z2) {
-                }
-                this.mLastRotation = i;
-                this.mSurfaceRedrawNeeded = false;
-                if (this.mBackground != null) {
-                }
-            } finally {
-                Trace.traceEnd(8L);
             }
         }
 
@@ -290,9 +250,9 @@ public class ImageWallpaper extends WallpaperService {
                 return;
             }
             this.mLoader = new AsyncTask<Void, Void, Bitmap>() { // from class: com.android.systemui.ImageWallpaper.DrawableEngine.1
-                /* JADX INFO: Access modifiers changed from: protected */
+                /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // android.os.AsyncTask
-                public Bitmap doInBackground(Void... voidArr) {
+                protected Bitmap doInBackground(Void... voidArr) throws IOException {
                     try {
                         return ImageWallpaper.this.mWallpaperManager.getBitmap(true);
                     } catch (OutOfMemoryError | RuntimeException e) {
@@ -317,9 +277,9 @@ public class ImageWallpaper extends WallpaperService {
                     }
                 }
 
-                /* JADX INFO: Access modifiers changed from: protected */
+                /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
                 @Override // android.os.AsyncTask
-                public void onPostExecute(Bitmap bitmap) {
+                protected void onPostExecute(Bitmap bitmap) {
                     DrawableEngine.this.updateBitmap(bitmap);
                     if (DrawableEngine.this.mNeedsDrawAfterLoadingWallpaper) {
                         DrawableEngine.this.drawFrame();
@@ -330,8 +290,7 @@ public class ImageWallpaper extends WallpaperService {
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[0]);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateBitmap(Bitmap bitmap) {
+        private void updateBitmap(Bitmap bitmap) {
             this.mBackground = null;
             this.mBackgroundWidth = -1;
             this.mBackgroundHeight = -1;
@@ -343,8 +302,7 @@ public class ImageWallpaper extends WallpaperService {
             updateSurfaceSize(getSurfaceHolder(), getDefaultDisplayInfo(), false);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void unloadWallpaper(boolean z) {
+        private void unloadWallpaper(boolean z) {
             if (this.mLoader != null) {
                 this.mLoader.cancel(false);
                 this.mLoader = null;
@@ -417,26 +375,26 @@ public class ImageWallpaper extends WallpaperService {
         }
 
         private void drawWallpaperWithCanvas(SurfaceHolder surfaceHolder, int i, int i2, int i3, int i4) {
-            Canvas lockHardwareCanvas = surfaceHolder.lockHardwareCanvas();
-            if (lockHardwareCanvas != null) {
+            Canvas canvasLockHardwareCanvas = surfaceHolder.lockHardwareCanvas();
+            if (canvasLockHardwareCanvas != null) {
                 float f = i3;
                 try {
                     float width = f + (this.mBackground.getWidth() * this.mScale);
                     float f2 = i4;
                     float height = f2 + (this.mBackground.getHeight() * this.mScale);
                     if (i < 0 || i2 < 0) {
-                        lockHardwareCanvas.save(2);
-                        lockHardwareCanvas.clipRect(f, f2, width, height, Region.Op.DIFFERENCE);
-                        lockHardwareCanvas.drawColor(-16777216);
-                        lockHardwareCanvas.restore();
+                        canvasLockHardwareCanvas.save(2);
+                        canvasLockHardwareCanvas.clipRect(f, f2, width, height, Region.Op.DIFFERENCE);
+                        canvasLockHardwareCanvas.drawColor(-16777216);
+                        canvasLockHardwareCanvas.restore();
                     }
                     if (this.mBackground != null) {
                         RectF rectF = new RectF(f, f2, width, height);
                         Log.i("ImageWallpaper", "Redrawing in rect: " + rectF + " with surface size: " + this.mLastRequestedWidth + "x" + this.mLastRequestedHeight);
-                        lockHardwareCanvas.drawBitmap(this.mBackground, (Rect) null, rectF, (Paint) null);
+                        canvasLockHardwareCanvas.drawBitmap(this.mBackground, (Rect) null, rectF, (Paint) null);
                     }
                 } finally {
-                    surfaceHolder.unlockCanvasAndPost(lockHardwareCanvas);
+                    surfaceHolder.unlockCanvasAndPost(canvasLockHardwareCanvas);
                 }
             }
         }

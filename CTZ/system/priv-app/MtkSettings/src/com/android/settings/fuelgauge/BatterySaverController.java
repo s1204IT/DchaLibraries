@@ -17,6 +17,7 @@ import com.android.settings.fuelgauge.BatterySaverReceiver;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class BatterySaverController extends BasePreferenceController implements BatterySaverReceiver.BatterySaverListener, LifecycleObserver, OnStart, OnStop {
     private static final String KEY_BATTERY_SAVER = "battery_saver_summary";
@@ -73,9 +74,9 @@ public class BatterySaverController extends BasePreferenceController implements 
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public CharSequence getSummary() {
-        boolean isPowerSaveMode = this.mPowerManager.isPowerSaveMode();
+        boolean zIsPowerSaveMode = this.mPowerManager.isPowerSaveMode();
         int i = Settings.Global.getInt(this.mContext.getContentResolver(), "low_power_trigger_level", 0);
-        if (isPowerSaveMode) {
+        if (zIsPowerSaveMode) {
             return this.mContext.getString(R.string.battery_saver_on_summary);
         }
         if (i != 0) {
@@ -84,8 +85,7 @@ public class BatterySaverController extends BasePreferenceController implements 
         return this.mContext.getString(R.string.battery_saver_off_summary);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSummary() {
+    private void updateSummary() {
         this.mBatterySaverPref.setSummary(getSummary());
     }
 

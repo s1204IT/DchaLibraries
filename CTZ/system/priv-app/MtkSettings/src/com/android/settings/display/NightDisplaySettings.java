@@ -17,6 +17,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NightDisplaySettings extends DashboardFragment implements ColorDisplayController.Callback, Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.display.NightDisplaySettings.1
@@ -64,12 +65,12 @@ public class NightDisplaySettings extends DashboardFragment implements ColorDisp
         if ("night_display_end_time".equals(preference.getKey())) {
             showDialog(1);
             return true;
-        } else if ("night_display_start_time".equals(preference.getKey())) {
+        }
+        if ("night_display_start_time".equals(preference.getKey())) {
             showDialog(0);
             return true;
-        } else {
-            return super.onPreferenceTreeClick(preference);
         }
+        return super.onPreferenceTreeClick(preference);
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.DialogCreatable
@@ -85,7 +86,7 @@ public class NightDisplaySettings extends DashboardFragment implements ColorDisp
             return new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() { // from class: com.android.settings.display.-$$Lambda$NightDisplaySettings$EHQrigX4B__bQ2Ww7B-DCA-KncQ
                 @Override // android.app.TimePickerDialog.OnTimeSetListener
                 public final void onTimeSet(TimePicker timePicker, int i2, int i3) {
-                    NightDisplaySettings.lambda$onCreateDialog$0(NightDisplaySettings.this, i, timePicker, i2, i3);
+                    NightDisplaySettings.lambda$onCreateDialog$0(this.f$0, i, timePicker, i2, i3);
                 }
             }, customEndTime.getHour(), customEndTime.getMinute(), DateFormat.is24HourFormat(context));
         }
@@ -93,11 +94,11 @@ public class NightDisplaySettings extends DashboardFragment implements ColorDisp
     }
 
     public static /* synthetic */ void lambda$onCreateDialog$0(NightDisplaySettings nightDisplaySettings, int i, TimePicker timePicker, int i2, int i3) {
-        LocalTime of = LocalTime.of(i2, i3);
+        LocalTime localTimeOf = LocalTime.of(i2, i3);
         if (i == 0) {
-            nightDisplaySettings.mController.setCustomStartTime(of);
+            nightDisplaySettings.mController.setCustomStartTime(localTimeOf);
         } else {
-            nightDisplaySettings.mController.setCustomEndTime(of);
+            nightDisplaySettings.mController.setCustomEndTime(localTimeOf);
         }
     }
 
@@ -133,9 +134,8 @@ public class NightDisplaySettings extends DashboardFragment implements ColorDisp
         updatePreferenceStates();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.night_display_settings;
     }
 
@@ -159,8 +159,7 @@ public class NightDisplaySettings extends DashboardFragment implements ColorDisp
         return buildPreferenceControllers(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList(1);
         arrayList.add(new NightDisplayFooterPreferenceController(context));
         return arrayList;

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class NavTabView extends LinearLayout {
     private View.OnClickListener mClickListener;
@@ -33,18 +34,15 @@ public class NavTabView extends LinearLayout {
         this.mImage = (ImageView) findViewById(R.id.tab_view);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isClose(View view) {
+    protected boolean isClose(View view) {
         return view == this.mClose;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isTitle(View view) {
+    protected boolean isTitle(View view) {
         return view == this.mTitleBar;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isWebView(View view) {
+    protected boolean isWebView(View view) {
         return view == this.mImage;
     }
 
@@ -79,8 +77,7 @@ public class NavTabView extends LinearLayout {
         this.mTitle.setCompoundDrawablesWithIntrinsicBounds(i, 0, 0, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setWebView(Tab tab) {
+    protected void setWebView(Tab tab) {
         this.mTab = tab;
         setTitle();
         Bitmap screenshot = tab.getScreenshot();

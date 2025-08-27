@@ -8,11 +8,11 @@ import com.android.settings.R;
 import com.android.settingslib.applications.DefaultAppInfo;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserPicker extends DefaultAppPickerFragment {
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.default_browser_settings;
     }
 
@@ -35,11 +35,11 @@ public class DefaultBrowserPicker extends DefaultAppPickerFragment {
     protected List<DefaultAppInfo> getCandidates() {
         ArrayList arrayList = new ArrayList();
         Context context = getContext();
-        List<ResolveInfo> queryIntentActivitiesAsUser = this.mPm.queryIntentActivitiesAsUser(DefaultBrowserPreferenceController.BROWSE_PROBE, 131072, this.mUserId);
-        int size = queryIntentActivitiesAsUser.size();
+        List<ResolveInfo> listQueryIntentActivitiesAsUser = this.mPm.queryIntentActivitiesAsUser(DefaultBrowserPreferenceController.BROWSE_PROBE, 131072, this.mUserId);
+        int size = listQueryIntentActivitiesAsUser.size();
         ArraySet arraySet = new ArraySet();
         for (int i = 0; i < size; i++) {
-            ResolveInfo resolveInfo = queryIntentActivitiesAsUser.get(i);
+            ResolveInfo resolveInfo = listQueryIntentActivitiesAsUser.get(i);
             if (resolveInfo.activityInfo != null && resolveInfo.handleAllWebDataURI) {
                 String str = resolveInfo.activityInfo.packageName;
                 if (!arraySet.contains(str)) {

@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class PipMenuActivityController {
     private IActivityManager mActivityManager;
@@ -48,18 +49,20 @@ public class PipMenuActivityController {
     private Runnable mStartActivityRequestedTimeoutRunnable = new Runnable() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipMenuActivityController$46Yr3xVHMZsGyZiGhSKF_IPBnzk
         @Override // java.lang.Runnable
         public final void run() {
-            PipMenuActivityController.lambda$new$0(PipMenuActivityController.this);
+            PipMenuActivityController.lambda$new$0(this.f$0);
         }
     };
     private PipMediaController.ActionListener mMediaActionListener = new PipMediaController.ActionListener() { // from class: com.android.systemui.pip.phone.PipMenuActivityController.2
+        AnonymousClass2() {
+        }
+
         @Override // com.android.systemui.pip.phone.PipMediaController.ActionListener
-        public void onMediaActionsChanged(List<RemoteAction> list) {
+        public void onMediaActionsChanged(List<RemoteAction> list) throws RemoteException {
             PipMenuActivityController.this.mMediaActions = new ParceledListSlice(list);
             PipMenuActivityController.this.updateMenuActions();
         }
     };
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onPipDismiss();
 
@@ -72,8 +75,7 @@ public class PipMenuActivityController {
         void onPipShowMenu();
     }
 
-    /* renamed from: com.android.systemui.pip.phone.PipMenuActivityController$1  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.systemui.pip.phone.PipMenuActivityController$1 */
     class AnonymousClass1 extends Handler {
         AnonymousClass1() {
         }
@@ -83,7 +85,7 @@ public class PipMenuActivityController {
             switch (message.what) {
                 case R.styleable.AppCompatTheme_textAppearancePopupMenuHeader /* 100 */:
                     PipMenuActivityController.this.onMenuStateChanged(message.arg1, true);
-                    return;
+                    break;
                 case R.styleable.AppCompatTheme_textAppearanceSearchResultSubtitle /* 101 */:
                     PipMenuActivityController.this.mListeners.forEach(new Consumer() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipMenuActivityController$1$8btqC3E6FFjbjLWUhiNmbnKUlfI
                         @Override // java.util.function.Consumer
@@ -91,7 +93,7 @@ public class PipMenuActivityController {
                             ((PipMenuActivityController.Listener) obj).onPipExpand();
                         }
                     });
-                    return;
+                    break;
                 case R.styleable.AppCompatTheme_textAppearanceSearchResultTitle /* 102 */:
                     PipMenuActivityController.this.mListeners.forEach(new Consumer() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipMenuActivityController$1$o9fLqvuiKIYwdsSexRT0X4Ty0V4
                         @Override // java.util.function.Consumer
@@ -99,7 +101,7 @@ public class PipMenuActivityController {
                             ((PipMenuActivityController.Listener) obj).onPipMinimize();
                         }
                     });
-                    return;
+                    break;
                 case R.styleable.AppCompatTheme_textAppearanceSmallPopupMenu /* 103 */:
                     PipMenuActivityController.this.mListeners.forEach(new Consumer() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipMenuActivityController$1$rDXDKqpw1CLC0fwevwYEng68Bps
                         @Override // java.util.function.Consumer
@@ -107,7 +109,7 @@ public class PipMenuActivityController {
                             ((PipMenuActivityController.Listener) obj).onPipDismiss();
                         }
                     });
-                    return;
+                    break;
                 case R.styleable.AppCompatTheme_textColorAlertDialogListItem /* 104 */:
                     PipMenuActivityController.this.mToActivityMessenger = message.replyTo;
                     PipMenuActivityController.this.setStartActivityRequested(false);
@@ -117,15 +119,15 @@ public class PipMenuActivityController {
                     }
                     if (PipMenuActivityController.this.mToActivityMessenger == null) {
                         PipMenuActivityController.this.onMenuStateChanged(0, true);
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 case R.styleable.AppCompatTheme_textColorSearchUrl /* 105 */:
                     PipMenuActivityController.this.mInputConsumerController.registerInputConsumer();
-                    return;
+                    break;
                 case R.styleable.AppCompatTheme_toolbarNavigationButtonStyle /* 106 */:
                     PipMenuActivityController.this.mInputConsumerController.unregisterInputConsumer();
-                    return;
+                    break;
                 case R.styleable.AppCompatTheme_toolbarStyle /* 107 */:
                     PipMenuActivityController.this.mListeners.forEach(new Consumer() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipMenuActivityController$1$nEDJFK5X-9H1WAx_9S8qUwV6KLY
                         @Override // java.util.function.Consumer
@@ -133,9 +135,7 @@ public class PipMenuActivityController {
                             ((PipMenuActivityController.Listener) obj).onPipShowMenu();
                         }
                     });
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }
@@ -149,7 +149,19 @@ public class PipMenuActivityController {
         Log.e("PipMenuActController", "Expected start menu activity request timed out");
     }
 
-    public PipMenuActivityController(Context context, IActivityManager iActivityManager, PipMediaController pipMediaController, InputConsumerController inputConsumerController) {
+    /* renamed from: com.android.systemui.pip.phone.PipMenuActivityController$2 */
+    class AnonymousClass2 implements PipMediaController.ActionListener {
+        AnonymousClass2() {
+        }
+
+        @Override // com.android.systemui.pip.phone.PipMediaController.ActionListener
+        public void onMediaActionsChanged(List<RemoteAction> list) throws RemoteException {
+            PipMenuActivityController.this.mMediaActions = new ParceledListSlice(list);
+            PipMenuActivityController.this.updateMenuActions();
+        }
+    }
+
+    public PipMenuActivityController(Context context, IActivityManager iActivityManager, PipMediaController pipMediaController, InputConsumerController inputConsumerController) throws NoSuchMethodException, SecurityException {
         this.mContext = context;
         this.mActivityManager = iActivityManager;
         this.mMediaController = pipMediaController;
@@ -167,17 +179,17 @@ public class PipMenuActivityController {
         }
     }
 
-    public void onActivityUnpinned() {
+    public void onActivityUnpinned() throws RemoteException {
         hideMenu();
         setStartActivityRequested(false);
     }
 
-    public void onPinnedStackAnimationEnded() {
+    public void onPinnedStackAnimationEnded() throws RemoteException {
         if (this.mToActivityMessenger != null) {
-            Message obtain = Message.obtain();
-            obtain.what = 6;
+            Message messageObtain = Message.obtain();
+            messageObtain.what = 6;
             try {
-                this.mToActivityMessenger.send(obtain);
+                this.mToActivityMessenger.send(messageObtain);
             } catch (RemoteException e) {
                 Log.e("PipMenuActController", "Could not notify menu pinned animation ended", e);
             }
@@ -190,7 +202,7 @@ public class PipMenuActivityController {
         }
     }
 
-    public void setDismissFraction(float f) {
+    public void setDismissFraction(float f) throws RemoteException {
         if (this.mToActivityMessenger == null) {
             if (!this.mStartActivityRequested || isStartActivityRequestedElapsed()) {
                 startMenuActivity(0, null, null, false, false);
@@ -200,17 +212,17 @@ public class PipMenuActivityController {
         }
         this.mTmpDismissFractionData.clear();
         this.mTmpDismissFractionData.putFloat("dismiss_fraction", f);
-        Message obtain = Message.obtain();
-        obtain.what = 5;
-        obtain.obj = this.mTmpDismissFractionData;
+        Message messageObtain = Message.obtain();
+        messageObtain.what = 5;
+        messageObtain.obj = this.mTmpDismissFractionData;
         try {
-            this.mToActivityMessenger.send(obtain);
+            this.mToActivityMessenger.send(messageObtain);
         } catch (RemoteException e) {
             Log.e("PipMenuActController", "Could not notify menu to update dismiss fraction", e);
         }
     }
 
-    public void showMenu(int i, Rect rect, Rect rect2, boolean z, boolean z2) {
+    public void showMenu(int i, Rect rect, Rect rect2, boolean z, boolean z2) throws RemoteException {
         if (this.mToActivityMessenger == null) {
             if (!this.mStartActivityRequested || isStartActivityRequestedElapsed()) {
                 startMenuActivity(i, rect, rect2, z, z2);
@@ -224,34 +236,34 @@ public class PipMenuActivityController {
         bundle.putParcelable("movement_bounds", rect2);
         bundle.putBoolean("allow_timeout", z);
         bundle.putBoolean("resize_menu_on_show", z2);
-        Message obtain = Message.obtain();
-        obtain.what = 1;
-        obtain.obj = bundle;
+        Message messageObtain = Message.obtain();
+        messageObtain.what = 1;
+        messageObtain.obj = bundle;
         try {
-            this.mToActivityMessenger.send(obtain);
+            this.mToActivityMessenger.send(messageObtain);
         } catch (RemoteException e) {
             Log.e("PipMenuActController", "Could not notify menu to show", e);
         }
     }
 
-    public void pokeMenu() {
+    public void pokeMenu() throws RemoteException {
         if (this.mToActivityMessenger != null) {
-            Message obtain = Message.obtain();
-            obtain.what = 2;
+            Message messageObtain = Message.obtain();
+            messageObtain.what = 2;
             try {
-                this.mToActivityMessenger.send(obtain);
+                this.mToActivityMessenger.send(messageObtain);
             } catch (RemoteException e) {
                 Log.e("PipMenuActController", "Could not notify poke menu", e);
             }
         }
     }
 
-    public void hideMenu() {
+    public void hideMenu() throws RemoteException {
         if (this.mToActivityMessenger != null) {
-            Message obtain = Message.obtain();
-            obtain.what = 3;
+            Message messageObtain = Message.obtain();
+            messageObtain.what = 3;
             try {
-                this.mToActivityMessenger.send(obtain);
+                this.mToActivityMessenger.send(messageObtain);
             } catch (RemoteException e) {
                 Log.e("PipMenuActController", "Could not notify menu to hide", e);
             }
@@ -262,7 +274,7 @@ public class PipMenuActivityController {
         onMenuStateChanged(0, false);
     }
 
-    public void setAppActions(ParceledListSlice parceledListSlice) {
+    public void setAppActions(ParceledListSlice parceledListSlice) throws RemoteException {
         this.mAppActions = parceledListSlice;
         updateMenuActions();
     }
@@ -278,7 +290,7 @@ public class PipMenuActivityController {
         try {
             ActivityManager.StackInfo stackInfo = this.mActivityManager.getStackInfo(2, 0);
             if (stackInfo != null && stackInfo.taskIds != null && stackInfo.taskIds.length > 0) {
-                Intent intent = new Intent(this.mContext, PipMenuActivity.class);
+                Intent intent = new Intent(this.mContext, (Class<?>) PipMenuActivity.class);
                 intent.putExtra("messenger", this.mMessenger);
                 intent.putExtra("actions", (Parcelable) resolveMenuActions());
                 if (rect != null) {
@@ -290,10 +302,10 @@ public class PipMenuActivityController {
                 intent.putExtra("menu_state", i);
                 intent.putExtra("allow_timeout", z);
                 intent.putExtra("resize_menu_on_show", z2);
-                ActivityOptions makeCustomAnimation = ActivityOptions.makeCustomAnimation(this.mContext, 0, 0);
-                makeCustomAnimation.setLaunchTaskId(stackInfo.taskIds[stackInfo.taskIds.length - 1]);
-                makeCustomAnimation.setTaskOverlay(true, true);
-                this.mContext.startActivityAsUser(intent, makeCustomAnimation.toBundle(), UserHandle.CURRENT);
+                ActivityOptions activityOptionsMakeCustomAnimation = ActivityOptions.makeCustomAnimation(this.mContext, 0, 0);
+                activityOptionsMakeCustomAnimation.setLaunchTaskId(stackInfo.taskIds[stackInfo.taskIds.length - 1]);
+                activityOptionsMakeCustomAnimation.setTaskOverlay(true, true);
+                this.mContext.startActivityAsUser(intent, activityOptionsMakeCustomAnimation.toBundle(), UserHandle.CURRENT);
                 setStartActivityRequested(true);
                 return;
             }
@@ -304,8 +316,7 @@ public class PipMenuActivityController {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateMenuActions() {
+    private void updateMenuActions() throws RemoteException {
         if (this.mToActivityMessenger != null) {
             Rect rect = null;
             try {
@@ -319,11 +330,11 @@ public class PipMenuActivityController {
             Bundle bundle = new Bundle();
             bundle.putParcelable("stack_bounds", rect);
             bundle.putParcelable("actions", resolveMenuActions());
-            Message obtain = Message.obtain();
-            obtain.what = 4;
-            obtain.obj = bundle;
+            Message messageObtain = Message.obtain();
+            messageObtain.what = 4;
+            messageObtain.obj = bundle;
             try {
-                this.mToActivityMessenger.send(obtain);
+                this.mToActivityMessenger.send(messageObtain);
             } catch (RemoteException e2) {
                 Log.e("PipMenuActController", "Could not notify menu activity to update actions", e2);
             }
@@ -338,8 +349,7 @@ public class PipMenuActivityController {
         return SystemClock.uptimeMillis() - this.mStartActivityRequestedTime >= 300;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onMenuStateChanged(final int i, final boolean z) {
+    private void onMenuStateChanged(final int i, final boolean z) {
         if (i == 0) {
             this.mInputConsumerController.registerInputConsumer();
         } else {
@@ -361,8 +371,7 @@ public class PipMenuActivityController {
         this.mMenuState = i;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setStartActivityRequested(boolean z) {
+    private void setStartActivityRequested(boolean z) {
         this.mHandler.removeCallbacks(this.mStartActivityRequestedTimeoutRunnable);
         this.mStartActivityRequested = z;
         this.mStartActivityRequestedTime = z ? SystemClock.uptimeMillis() : 0L;

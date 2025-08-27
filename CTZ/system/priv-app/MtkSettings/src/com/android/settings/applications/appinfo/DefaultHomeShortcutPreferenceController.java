@@ -3,6 +3,7 @@ package com.android.settings.applications.appinfo;
 import android.content.Context;
 import com.android.settings.applications.defaultapps.DefaultHomePreferenceController;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class DefaultHomeShortcutPreferenceController extends DefaultAppShortcutPreferenceControllerBase {
     private static final String KEY = "default_home";

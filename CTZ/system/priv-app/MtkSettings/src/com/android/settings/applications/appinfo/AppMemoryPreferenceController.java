@@ -3,6 +3,7 @@ package com.android.settings.applications.appinfo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
@@ -18,7 +19,9 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.development.DevelopmentSettingsEnabler;
+import java.io.IOException;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class AppMemoryPreferenceController extends BasePreferenceController implements LifecycleObserver, OnResume {
     private static final String KEY_MEMORY = "memory";
@@ -27,14 +30,13 @@ public class AppMemoryPreferenceController extends BasePreferenceController impl
     private ProcStatsPackageEntry mStats;
     private ProcStatsData mStatsManager;
 
-    /* loaded from: classes.dex */
     private class MemoryUpdater extends AsyncTask<Void, Void, ProcStatsPackageEntry> {
         private MemoryUpdater() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public ProcStatsPackageEntry doInBackground(Void... voidArr) {
+        protected ProcStatsPackageEntry doInBackground(Void... voidArr) throws PackageManager.NameNotFoundException, IOException {
             PackageInfo packageInfo;
             Activity activity = AppMemoryPreferenceController.this.mParent.getActivity();
             if (activity != null && (packageInfo = AppMemoryPreferenceController.this.mParent.getPackageInfo()) != null) {
@@ -57,9 +59,9 @@ public class AppMemoryPreferenceController extends BasePreferenceController impl
             return null;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(ProcStatsPackageEntry procStatsPackageEntry) {
+        protected void onPostExecute(ProcStatsPackageEntry procStatsPackageEntry) {
             if (AppMemoryPreferenceController.this.mParent.getActivity() == null) {
                 return;
             }
@@ -98,11 +100,11 @@ public class AppMemoryPreferenceController extends BasePreferenceController impl
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        if (KEY_MEMORY.equals(preference.getKey())) {
-            ProcessStatsBase.launchMemoryDetail((SettingsActivity) this.mParent.getActivity(), this.mStatsManager.getMemInfo(), this.mStats, false);
-            return true;
+        if (!KEY_MEMORY.equals(preference.getKey())) {
+            return false;
         }
-        return false;
+        ProcessStatsBase.launchMemoryDetail((SettingsActivity) this.mParent.getActivity(), this.mStatsManager.getMemInfo(), this.mStats, false);
+        return true;
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnResume

@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
 /* loaded from: classes.dex */
 public class PageProgressView extends ImageView {
     private Rect mBounds;
@@ -58,8 +59,7 @@ public class PageProgressView extends ImageView {
         this.mBounds.bottom = i4 - i2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setProgress(int i) {
+    void setProgress(int i) {
         this.mCurrentProgress = this.mTargetProgress;
         this.mTargetProgress = i;
         this.mIncrement = (this.mTargetProgress - this.mCurrentProgress) / 10;

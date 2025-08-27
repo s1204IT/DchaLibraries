@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class AppStateNotificationBridge extends AppStateBaseBridge {
     private NotificationBackend mBackend;
@@ -50,51 +51,52 @@ public class AppStateNotificationBridge extends AppStateBaseBridge {
         }
     };
     public static final Comparator<ApplicationsState.AppEntry> RECENT_NOTIFICATION_COMPARATOR = new Comparator<ApplicationsState.AppEntry>() { // from class: com.android.settings.applications.AppStateNotificationBridge.3
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ApplicationsState.AppEntry appEntry, ApplicationsState.AppEntry appEntry2) {
             NotificationsSentState notificationsSentState = AppStateNotificationBridge.getNotificationsSentState(appEntry);
             NotificationsSentState notificationsSentState2 = AppStateNotificationBridge.getNotificationsSentState(appEntry2);
-            if (notificationsSentState != null || notificationsSentState2 == null) {
-                if (notificationsSentState != null && notificationsSentState2 == null) {
+            if (notificationsSentState == null && notificationsSentState2 != null) {
+                return -1;
+            }
+            if (notificationsSentState != null && notificationsSentState2 == null) {
+                return 1;
+            }
+            if (notificationsSentState != null && notificationsSentState2 != null) {
+                if (notificationsSentState.lastSent < notificationsSentState2.lastSent) {
                     return 1;
                 }
-                if (notificationsSentState != null && notificationsSentState2 != null) {
-                    if (notificationsSentState.lastSent < notificationsSentState2.lastSent) {
-                        return 1;
-                    }
-                    if (notificationsSentState.lastSent > notificationsSentState2.lastSent) {
-                        return -1;
-                    }
+                if (notificationsSentState.lastSent > notificationsSentState2.lastSent) {
+                    return -1;
                 }
-                return ApplicationsState.ALPHA_COMPARATOR.compare(appEntry, appEntry2);
             }
-            return -1;
+            return ApplicationsState.ALPHA_COMPARATOR.compare(appEntry, appEntry2);
         }
     };
     public static final Comparator<ApplicationsState.AppEntry> FREQUENCY_NOTIFICATION_COMPARATOR = new Comparator<ApplicationsState.AppEntry>() { // from class: com.android.settings.applications.AppStateNotificationBridge.4
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ApplicationsState.AppEntry appEntry, ApplicationsState.AppEntry appEntry2) {
             NotificationsSentState notificationsSentState = AppStateNotificationBridge.getNotificationsSentState(appEntry);
             NotificationsSentState notificationsSentState2 = AppStateNotificationBridge.getNotificationsSentState(appEntry2);
-            if (notificationsSentState != null || notificationsSentState2 == null) {
-                if (notificationsSentState != null && notificationsSentState2 == null) {
+            if (notificationsSentState == null && notificationsSentState2 != null) {
+                return -1;
+            }
+            if (notificationsSentState != null && notificationsSentState2 == null) {
+                return 1;
+            }
+            if (notificationsSentState != null && notificationsSentState2 != null) {
+                if (notificationsSentState.sentCount < notificationsSentState2.sentCount) {
                     return 1;
                 }
-                if (notificationsSentState != null && notificationsSentState2 != null) {
-                    if (notificationsSentState.sentCount < notificationsSentState2.sentCount) {
-                        return 1;
-                    }
-                    if (notificationsSentState.sentCount > notificationsSentState2.sentCount) {
-                        return -1;
-                    }
+                if (notificationsSentState.sentCount > notificationsSentState2.sentCount) {
+                    return -1;
                 }
-                return ApplicationsState.ALPHA_COMPARATOR.compare(appEntry, appEntry2);
             }
-            return -1;
+            return ApplicationsState.ALPHA_COMPARATOR.compare(appEntry, appEntry2);
         }
     };
 
-    /* loaded from: classes.dex */
     public static class NotificationsSentState {
         public boolean blockable;
         public boolean blocked;
@@ -149,11 +151,11 @@ public class AppStateNotificationBridge extends AppStateBaseBridge {
                 return context.getString(R.string.notifications_sent_never);
             }
             return StringUtil.formatRelativeTime(context, System.currentTimeMillis() - notificationsSentState.lastSent, true);
-        } else if (notificationsSentState.avgSentWeekly > 0) {
-            return context.getString(R.string.notifications_sent_weekly, Integer.valueOf(notificationsSentState.avgSentWeekly));
-        } else {
-            return context.getString(R.string.notifications_sent_daily, Integer.valueOf(notificationsSentState.avgSentDaily));
         }
+        if (notificationsSentState.avgSentWeekly > 0) {
+            return context.getString(R.string.notifications_sent_weekly, Integer.valueOf(notificationsSentState.avgSentWeekly));
+        }
+        return context.getString(R.string.notifications_sent_daily, Integer.valueOf(notificationsSentState.avgSentDaily));
     }
 
     private void addBlockStatus(ApplicationsState.AppEntry appEntry, NotificationsSentState notificationsSentState) {
@@ -175,24 +177,25 @@ public class AppStateNotificationBridge extends AppStateBaseBridge {
 
     protected Map<String, NotificationsSentState> getAggregatedUsageEvents() {
         ArrayMap arrayMap = new ArrayMap();
-        long currentTimeMillis = System.currentTimeMillis();
-        long j = currentTimeMillis - 604800000;
-        for (Integer num : this.mUserIds) {
-            int intValue = num.intValue();
-            UsageEvents usageEvents = null;
+        long jCurrentTimeMillis = System.currentTimeMillis();
+        long j = jCurrentTimeMillis - 604800000;
+        Iterator<Integer> it = this.mUserIds.iterator();
+        while (it.hasNext()) {
+            int iIntValue = it.next().intValue();
+            UsageEvents usageEventsQueryEventsForUser = null;
             try {
-                usageEvents = this.mUsageStatsManager.queryEventsForUser(j, currentTimeMillis, intValue, this.mContext.getPackageName());
+                usageEventsQueryEventsForUser = this.mUsageStatsManager.queryEventsForUser(j, jCurrentTimeMillis, iIntValue, this.mContext.getPackageName());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            if (usageEvents != null) {
+            if (usageEventsQueryEventsForUser != null) {
                 UsageEvents.Event event = new UsageEvents.Event();
-                while (usageEvents.hasNextEvent()) {
-                    usageEvents.getNextEvent(event);
-                    NotificationsSentState notificationsSentState = (NotificationsSentState) arrayMap.get(getKey(intValue, event.getPackageName()));
+                while (usageEventsQueryEventsForUser.hasNextEvent()) {
+                    usageEventsQueryEventsForUser.getNextEvent(event);
+                    NotificationsSentState notificationsSentState = (NotificationsSentState) arrayMap.get(getKey(iIntValue, event.getPackageName()));
                     if (notificationsSentState == null) {
                         notificationsSentState = new NotificationsSentState();
-                        arrayMap.put(getKey(intValue, event.getPackageName()), notificationsSentState);
+                        arrayMap.put(getKey(iIntValue, event.getPackageName()), notificationsSentState);
                     }
                     if (event.getEventType() == 12) {
                         if (event.getTimeStamp() > notificationsSentState.lastSent) {
@@ -207,19 +210,19 @@ public class AppStateNotificationBridge extends AppStateBaseBridge {
     }
 
     protected NotificationsSentState getAggregatedUsageEvents(int i, String str) {
-        UsageEvents usageEvents;
-        long currentTimeMillis = System.currentTimeMillis();
+        UsageEvents usageEventsQueryEventsForPackageForUser;
+        long jCurrentTimeMillis = System.currentTimeMillis();
         NotificationsSentState notificationsSentState = null;
         try {
-            usageEvents = this.mUsageStatsManager.queryEventsForPackageForUser(currentTimeMillis - 604800000, currentTimeMillis, i, str, this.mContext.getPackageName());
+            usageEventsQueryEventsForPackageForUser = this.mUsageStatsManager.queryEventsForPackageForUser(jCurrentTimeMillis - 604800000, jCurrentTimeMillis, i, str, this.mContext.getPackageName());
         } catch (RemoteException e) {
             e.printStackTrace();
-            usageEvents = null;
+            usageEventsQueryEventsForPackageForUser = null;
         }
-        if (usageEvents != null) {
+        if (usageEventsQueryEventsForPackageForUser != null) {
             UsageEvents.Event event = new UsageEvents.Event();
-            while (usageEvents.hasNextEvent()) {
-                usageEvents.getNextEvent(event);
+            while (usageEventsQueryEventsForPackageForUser.hasNextEvent()) {
+                usageEventsQueryEventsForPackageForUser.getNextEvent(event);
                 if (event.getEventType() == 12) {
                     if (notificationsSentState == null) {
                         notificationsSentState = new NotificationsSentState();
@@ -234,8 +237,7 @@ public class AppStateNotificationBridge extends AppStateBaseBridge {
         return notificationsSentState;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static NotificationsSentState getNotificationsSentState(ApplicationsState.AppEntry appEntry) {
+    private static NotificationsSentState getNotificationsSentState(ApplicationsState.AppEntry appEntry) {
         if (appEntry == null || appEntry.extraInfo == null || !(appEntry.extraInfo instanceof NotificationsSentState)) {
             return null;
         }
@@ -251,7 +253,7 @@ public class AppStateNotificationBridge extends AppStateBaseBridge {
             return new View.OnClickListener() { // from class: com.android.settings.applications.-$$Lambda$AppStateNotificationBridge$3yb6PrF82n91FG3YEHY_Ccl1JyI
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    AppStateNotificationBridge.lambda$getSwitchOnClickListener$0(AppStateNotificationBridge.this, appEntry, view);
+                    AppStateNotificationBridge.lambda$getSwitchOnClickListener$0(this.f$0, appEntry, view);
                 }
             };
         }
@@ -280,10 +282,9 @@ public class AppStateNotificationBridge extends AppStateBaseBridge {
     }
 
     public static final boolean checkSwitch(ApplicationsState.AppEntry appEntry) {
-        NotificationsSentState notificationsSentState = getNotificationsSentState(appEntry);
-        if (notificationsSentState == null) {
+        if (getNotificationsSentState(appEntry) == null) {
             return false;
         }
-        return !notificationsSentState.blocked;
+        return !r0.blocked;
     }
 }

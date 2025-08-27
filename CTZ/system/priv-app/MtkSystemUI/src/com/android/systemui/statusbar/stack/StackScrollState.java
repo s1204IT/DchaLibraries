@@ -5,8 +5,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.ExpandableView;
+import java.util.Iterator;
 import java.util.List;
 import java.util.WeakHashMap;
+
 /* loaded from: classes.dex */
 public class StackScrollState {
     private final ViewGroup mHostView;
@@ -29,8 +31,9 @@ public class StackScrollState {
                 ExpandableNotificationRow expandableNotificationRow = (ExpandableNotificationRow) expandableView;
                 List<ExpandableNotificationRow> notificationChildren = expandableNotificationRow.getNotificationChildren();
                 if (expandableNotificationRow.isSummaryWithChildren() && notificationChildren != null) {
-                    for (ExpandableNotificationRow expandableNotificationRow2 : notificationChildren) {
-                        resetViewState(expandableNotificationRow2);
+                    Iterator<ExpandableNotificationRow> it = notificationChildren.iterator();
+                    while (it.hasNext()) {
+                        resetViewState(it.next());
                     }
                 }
             }
@@ -38,22 +41,22 @@ public class StackScrollState {
     }
 
     private void resetViewState(ExpandableView expandableView) {
-        ExpandableViewState expandableViewState = this.mStateMap.get(expandableView);
-        if (expandableViewState == null) {
-            expandableViewState = expandableView.createNewViewState(this);
-            this.mStateMap.put(expandableView, expandableViewState);
+        ExpandableViewState expandableViewStateCreateNewViewState = this.mStateMap.get(expandableView);
+        if (expandableViewStateCreateNewViewState == null) {
+            expandableViewStateCreateNewViewState = expandableView.createNewViewState(this);
+            this.mStateMap.put(expandableView, expandableViewStateCreateNewViewState);
         }
-        expandableViewState.height = expandableView.getIntrinsicHeight();
-        expandableViewState.gone = expandableView.getVisibility() == 8;
-        expandableViewState.alpha = 1.0f;
-        expandableViewState.shadowAlpha = 1.0f;
-        expandableViewState.notGoneIndex = -1;
-        expandableViewState.xTranslation = expandableView.getTranslationX();
-        expandableViewState.hidden = false;
-        expandableViewState.scaleX = expandableView.getScaleX();
-        expandableViewState.scaleY = expandableView.getScaleY();
-        expandableViewState.inShelf = false;
-        expandableViewState.headsUpIsVisible = false;
+        expandableViewStateCreateNewViewState.height = expandableView.getIntrinsicHeight();
+        expandableViewStateCreateNewViewState.gone = expandableView.getVisibility() == 8;
+        expandableViewStateCreateNewViewState.alpha = 1.0f;
+        expandableViewStateCreateNewViewState.shadowAlpha = 1.0f;
+        expandableViewStateCreateNewViewState.notGoneIndex = -1;
+        expandableViewStateCreateNewViewState.xTranslation = expandableView.getTranslationX();
+        expandableViewStateCreateNewViewState.hidden = false;
+        expandableViewStateCreateNewViewState.scaleX = expandableView.getScaleX();
+        expandableViewStateCreateNewViewState.scaleY = expandableView.getScaleY();
+        expandableViewStateCreateNewViewState.inShelf = false;
+        expandableViewStateCreateNewViewState.headsUpIsVisible = false;
     }
 
     public ExpandableViewState getViewStateForView(View view) {

@@ -1,6 +1,7 @@
 package com.android.quicksearchbox;
 
 import android.util.EventLog;
+
 /* loaded from: classes.dex */
 public class EventLogTags {
     public static void writeQsbStart(String str, int i, String str2, int i2, String str3, String str4, int i3) {

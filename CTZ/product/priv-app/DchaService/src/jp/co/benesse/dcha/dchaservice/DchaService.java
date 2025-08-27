@@ -62,7 +62,6 @@ import com.android.internal.widget.LockPatternUtils;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -76,6 +75,7 @@ import java.util.List;
 import java.util.Locale;
 import jp.co.benesse.dcha.dchaservice.IDchaService;
 import jp.co.benesse.dcha.dchaservice.util.Log;
+
 /* loaded from: classes.dex */
 public class DchaService extends Service {
     private static boolean doCancelDigichalizedFlg = false;
@@ -87,192 +87,260 @@ public class DchaService extends Service {
             return true;
         }
 
-        /* JADX WARN: Multi-variable type inference failed */
-        /* JADX WARN: Type inference failed for: r0v11, types: [java.lang.String] */
-        /* JADX WARN: Type inference failed for: r0v13, types: [java.lang.String] */
-        /* JADX WARN: Type inference failed for: r0v15, types: [java.lang.String] */
-        /* JADX WARN: Type inference failed for: r0v32, types: [java.lang.String] */
-        /* JADX WARN: Type inference failed for: r12v0, types: [java.lang.CharSequence, java.lang.String] */
-        /* JADX WARN: Type inference failed for: r12v14 */
-        /* JADX WARN: Type inference failed for: r12v15 */
-        /* JADX WARN: Type inference failed for: r12v18 */
-        /* JADX WARN: Type inference failed for: r12v2 */
-        /* JADX WARN: Type inference failed for: r12v28 */
-        /* JADX WARN: Type inference failed for: r12v29 */
-        /* JADX WARN: Type inference failed for: r12v3, types: [java.nio.channels.FileChannel] */
-        /* JADX WARN: Type inference failed for: r12v30 */
-        /* JADX WARN: Type inference failed for: r12v31 */
-        /* JADX WARN: Type inference failed for: r12v5 */
+        /*  JADX ERROR: Type inference failed
+            jadx.core.utils.exceptions.JadxOverflowException: Type inference error: updates count limit reached
+            	at jadx.core.utils.ErrorsCounter.addError(ErrorsCounter.java:59)
+            	at jadx.core.utils.ErrorsCounter.error(ErrorsCounter.java:31)
+            	at jadx.core.dex.attributes.nodes.NotificationAttrNode.addError(NotificationAttrNode.java:19)
+            	at jadx.core.dex.visitors.typeinference.TypeInferenceVisitor.visit(TypeInferenceVisitor.java:77)
+            */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [288=8, 289=5, 290=5, 292=5, 293=5, 294=5, 296=5, 297=5, 299=5] */
         @Override // jp.co.benesse.dcha.dchaservice.IDchaService
-        public boolean copyUpdateImage(String str, String str2) {
-            FileChannel channel;
-            FileChannel channel2;
-            Log.d("DchaService", "copyUpdateImage 0001 srcFile:" + str + " dstFile:" + ((String) str2));
-            boolean z = false;
-            if (TextUtils.isEmpty(str) || TextUtils.isEmpty(str2)) {
-                Log.d("DchaService", "copyUpdateImage 0009");
-                return false;
-            } else if (!str2.startsWith("/cache")) {
-                Log.d("DchaService", "copyUpdateImage 0010");
-                return false;
-            } else {
-                FileChannel fileChannel = null;
-                try {
-                    try {
-                        try {
-                            File file = new File(str);
-                            File file2 = new File((String) str2);
-                            channel = new FileInputStream(file).getChannel();
-                            try {
-                                channel2 = new FileOutputStream(file2).getChannel();
-                            } catch (FileNotFoundException e) {
-                                e = e;
-                                fileChannel = channel;
-                                str2 = null;
-                            } catch (IOException e2) {
-                                e = e2;
-                                fileChannel = channel;
-                                str2 = null;
-                            } catch (Exception e3) {
-                                e = e3;
-                                fileChannel = channel;
-                                str2 = null;
-                            } catch (Throwable th) {
-                                th = th;
-                                fileChannel = channel;
-                                str2 = 0;
-                            }
-                        } catch (IOException e4) {
-                        }
-                        try {
-                            channel.transferTo(0L, channel.size(), channel2);
-                            z = true;
-                            Log.d("DchaService", "copyUpdateImage 0005");
-                            if (channel != null) {
-                                Log.d("DchaService", "copyUpdateImage 0006");
-                                try {
-                                    channel.close();
-                                } catch (IOException e5) {
-                                }
-                            }
-                        } catch (FileNotFoundException e6) {
-                            str2 = channel2;
-                            e = e6;
-                            fileChannel = channel;
-                            Log.e("DchaService", "copyUpdateImage 0002", e);
-                            Log.d("DchaService", "copyUpdateImage 0005");
-                            if (fileChannel != null) {
-                                Log.d("DchaService", "copyUpdateImage 0006");
-                                try {
-                                    fileChannel.close();
-                                } catch (IOException e7) {
-                                }
-                            }
-                            if (str2 != null) {
-                                ?? r0 = "copyUpdateImage 0007";
-                                Log.d("DchaService", "copyUpdateImage 0007");
-                                str2.close();
-                                fileChannel = r0;
-                                str2 = str2;
-                            }
-                            Log.d("DchaService", "copyUpdateImage 0008 return:" + z);
-                            return z;
-                        } catch (IOException e8) {
-                            str2 = channel2;
-                            e = e8;
-                            fileChannel = channel;
-                            Log.e("DchaService", "copyUpdateImage 0003", e);
-                            Log.d("DchaService", "copyUpdateImage 0005");
-                            if (fileChannel != null) {
-                                Log.d("DchaService", "copyUpdateImage 0006");
-                                try {
-                                    fileChannel.close();
-                                } catch (IOException e9) {
-                                }
-                            }
-                            if (str2 != null) {
-                                ?? r02 = "copyUpdateImage 0007";
-                                Log.d("DchaService", "copyUpdateImage 0007");
-                                str2.close();
-                                fileChannel = r02;
-                                str2 = str2;
-                            }
-                            Log.d("DchaService", "copyUpdateImage 0008 return:" + z);
-                            return z;
-                        } catch (Exception e10) {
-                            str2 = channel2;
-                            e = e10;
-                            fileChannel = channel;
-                            Log.e("DchaService", "copyUpdateImage 0004", e);
-                            Log.d("DchaService", "copyUpdateImage 0005");
-                            if (fileChannel != null) {
-                                Log.d("DchaService", "copyUpdateImage 0006");
-                                try {
-                                    fileChannel.close();
-                                } catch (IOException e11) {
-                                }
-                            }
-                            if (str2 != null) {
-                                ?? r03 = "copyUpdateImage 0007";
-                                Log.d("DchaService", "copyUpdateImage 0007");
-                                str2.close();
-                                fileChannel = r03;
-                                str2 = str2;
-                            }
-                            Log.d("DchaService", "copyUpdateImage 0008 return:" + z);
-                            return z;
-                        } catch (Throwable th2) {
-                            str2 = channel2;
-                            th = th2;
-                            fileChannel = channel;
-                            Log.d("DchaService", "copyUpdateImage 0005");
-                            if (fileChannel != null) {
-                                Log.d("DchaService", "copyUpdateImage 0006");
-                                try {
-                                    fileChannel.close();
-                                } catch (IOException e12) {
-                                }
-                            }
-                            if (str2 != 0) {
-                                Log.d("DchaService", "copyUpdateImage 0007");
-                                try {
-                                    str2.close();
-                                } catch (IOException e13) {
-                                }
-                            }
-                            throw th;
-                        }
-                    } catch (FileNotFoundException e14) {
-                        e = e14;
-                        str2 = null;
-                    } catch (IOException e15) {
-                        e = e15;
-                        str2 = null;
-                    } catch (Exception e16) {
-                        e = e16;
-                        str2 = null;
-                    } catch (Throwable th3) {
-                        th = th3;
-                        str2 = 0;
-                    }
-                    if (channel2 != null) {
-                        String str3 = "DchaService";
-                        ?? r04 = "copyUpdateImage 0007";
-                        Log.d("DchaService", "copyUpdateImage 0007");
-                        channel2.close();
-                        fileChannel = r04;
-                        str2 = str3;
-                    }
-                    Log.d("DchaService", "copyUpdateImage 0008 return:" + z);
-                    return z;
-                } catch (Throwable th4) {
-                    th = th4;
-                }
-            }
+        public boolean copyUpdateImage(java.lang.String r11, java.lang.String r12) {
+            /*
+                r10 = this;
+                java.lang.String r0 = "DchaService"
+                java.lang.StringBuilder r1 = new java.lang.StringBuilder
+                r1.<init>()
+                java.lang.String r2 = "copyUpdateImage 0001 srcFile:"
+                r1.append(r2)
+                r1.append(r11)
+                java.lang.String r2 = " dstFile:"
+                r1.append(r2)
+                r1.append(r12)
+                java.lang.String r1 = r1.toString()
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r0, r1)
+                boolean r0 = android.text.TextUtils.isEmpty(r11)
+                r1 = 0
+                if (r0 != 0) goto L181
+                boolean r0 = android.text.TextUtils.isEmpty(r12)
+                if (r0 == 0) goto L2d
+                goto L181
+            L2d:
+                java.lang.String r0 = "/cache"
+                boolean r0 = r12.startsWith(r0)
+                if (r0 != 0) goto L3d
+                java.lang.String r11 = "DchaService"
+                java.lang.String r12 = "copyUpdateImage 0010"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r12)
+                return r1
+            L3d:
+                r0 = 0
+                java.io.File r2 = new java.io.File     // Catch: java.lang.Throwable -> Lbe java.lang.Exception -> Lc2 java.io.IOException -> Led java.io.FileNotFoundException -> L119
+                r2.<init>(r11)     // Catch: java.lang.Throwable -> Lbe java.lang.Exception -> Lc2 java.io.IOException -> Led java.io.FileNotFoundException -> L119
+                java.io.File r11 = new java.io.File     // Catch: java.lang.Throwable -> Lbe java.lang.Exception -> Lc2 java.io.IOException -> Led java.io.FileNotFoundException -> L119
+                r11.<init>(r12)     // Catch: java.lang.Throwable -> Lbe java.lang.Exception -> Lc2 java.io.IOException -> Led java.io.FileNotFoundException -> L119
+                java.io.FileInputStream r12 = new java.io.FileInputStream     // Catch: java.lang.Throwable -> Lbe java.lang.Exception -> Lc2 java.io.IOException -> Led java.io.FileNotFoundException -> L119
+                r12.<init>(r2)     // Catch: java.lang.Throwable -> Lbe java.lang.Exception -> Lc2 java.io.IOException -> Led java.io.FileNotFoundException -> L119
+                java.nio.channels.FileChannel r12 = r12.getChannel()     // Catch: java.lang.Throwable -> Lbe java.lang.Exception -> Lc2 java.io.IOException -> Led java.io.FileNotFoundException -> L119
+                java.io.FileOutputStream r2 = new java.io.FileOutputStream     // Catch: java.lang.Throwable -> La9 java.lang.Exception -> Laf java.io.IOException -> Lb4 java.io.FileNotFoundException -> Lb9
+                r2.<init>(r11)     // Catch: java.lang.Throwable -> La9 java.lang.Exception -> Laf java.io.IOException -> Lb4 java.io.FileNotFoundException -> Lb9
+                java.nio.channels.FileChannel r11 = r2.getChannel()     // Catch: java.lang.Throwable -> La9 java.lang.Exception -> Laf java.io.IOException -> Lb4 java.io.FileNotFoundException -> Lb9
+                r4 = 0
+                long r6 = r12.size()     // Catch: java.lang.Throwable -> L8e java.lang.Exception -> L95 java.io.IOException -> L9b java.io.FileNotFoundException -> La2
+                r3 = r12
+                r8 = r11
+                r3.transferTo(r4, r6, r8)     // Catch: java.lang.Throwable -> L8e java.lang.Exception -> L95 java.io.IOException -> L9b java.io.FileNotFoundException -> La2
+                r1 = 1
+                java.lang.String r0 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0005"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r0, r2)
+                if (r12 == 0) goto L7e
+                java.lang.String r0 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0006"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r0, r2)
+                r12.close()     // Catch: java.io.IOException -> L7d
+                goto L7e
+            L7d:
+                r12 = move-exception
+            L7e:
+                if (r11 == 0) goto L145
+                java.lang.String r12 = "DchaService"
+                java.lang.String r0 = "copyUpdateImage 0007"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r12, r0)
+                r11.close()     // Catch: java.io.IOException -> L8c
+            L8a:
+                goto L145
+            L8c:
+                r11 = move-exception
+                goto L8a
+            L8e:
+                r0 = move-exception
+                r9 = r12
+                r12 = r11
+                r11 = r0
+                r0 = r9
+                goto L15d
+            L95:
+                r0 = move-exception
+                r9 = r12
+                r12 = r11
+                r11 = r0
+                r0 = r9
+                goto Lc4
+            L9b:
+                r0 = move-exception
+                r9 = r12
+                r12 = r11
+                r11 = r0
+                r0 = r9
+                goto Lef
+            La2:
+                r0 = move-exception
+                r9 = r12
+                r12 = r11
+                r11 = r0
+                r0 = r9
+                goto L11b
+            La9:
+                r11 = move-exception
+                r9 = r0
+                r0 = r12
+                r12 = r9
+                goto L15d
+            Laf:
+                r11 = move-exception
+                r9 = r0
+                r0 = r12
+                r12 = r9
+                goto Lc4
+            Lb4:
+                r11 = move-exception
+                r9 = r0
+                r0 = r12
+                r12 = r9
+                goto Lef
+            Lb9:
+                r11 = move-exception
+                r9 = r0
+                r0 = r12
+                r12 = r9
+                goto L11b
+            Lbe:
+                r11 = move-exception
+                r12 = r0
+                goto L15d
+            Lc2:
+                r11 = move-exception
+                r12 = r0
+            Lc4:
+                java.lang.String r2 = "DchaService"
+                java.lang.String r3 = "copyUpdateImage 0004"
+                jp.co.benesse.dcha.dchaservice.util.Log.e(r2, r3, r11)     // Catch: java.lang.Throwable -> L15c
+                java.lang.String r11 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0005"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r2)
+                if (r0 == 0) goto Le0
+                java.lang.String r11 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0006"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r2)
+                r0.close()     // Catch: java.io.IOException -> Ldf
+                goto Le0
+            Ldf:
+                r11 = move-exception
+            Le0:
+                if (r12 == 0) goto L145
+                java.lang.String r11 = "DchaService"
+                java.lang.String r0 = "copyUpdateImage 0007"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r0)
+                r12.close()     // Catch: java.io.IOException -> L8c
+                goto L8a
+            Led:
+                r11 = move-exception
+                r12 = r0
+            Lef:
+                java.lang.String r2 = "DchaService"
+                java.lang.String r3 = "copyUpdateImage 0003"
+                jp.co.benesse.dcha.dchaservice.util.Log.e(r2, r3, r11)     // Catch: java.lang.Throwable -> L15c
+                java.lang.String r11 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0005"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r2)
+                if (r0 == 0) goto L10b
+                java.lang.String r11 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0006"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r2)
+                r0.close()     // Catch: java.io.IOException -> L10a
+                goto L10b
+            L10a:
+                r11 = move-exception
+            L10b:
+                if (r12 == 0) goto L145
+                java.lang.String r11 = "DchaService"
+                java.lang.String r0 = "copyUpdateImage 0007"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r0)
+                r12.close()     // Catch: java.io.IOException -> L8c
+                goto L8a
+            L119:
+                r11 = move-exception
+                r12 = r0
+            L11b:
+                java.lang.String r2 = "DchaService"
+                java.lang.String r3 = "copyUpdateImage 0002"
+                jp.co.benesse.dcha.dchaservice.util.Log.e(r2, r3, r11)     // Catch: java.lang.Throwable -> L15c
+                java.lang.String r11 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0005"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r2)
+                if (r0 == 0) goto L137
+                java.lang.String r11 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0006"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r2)
+                r0.close()     // Catch: java.io.IOException -> L136
+                goto L137
+            L136:
+                r11 = move-exception
+            L137:
+                if (r12 == 0) goto L145
+                java.lang.String r11 = "DchaService"
+                java.lang.String r0 = "copyUpdateImage 0007"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r0)
+                r12.close()     // Catch: java.io.IOException -> L8c
+                goto L8a
+            L145:
+                java.lang.String r11 = "DchaService"
+                java.lang.StringBuilder r12 = new java.lang.StringBuilder
+                r12.<init>()
+                java.lang.String r0 = "copyUpdateImage 0008 return:"
+                r12.append(r0)
+                r12.append(r1)
+                java.lang.String r12 = r12.toString()
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r12)
+                return r1
+            L15c:
+                r11 = move-exception
+            L15d:
+                java.lang.String r1 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0005"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r1, r2)
+                if (r0 == 0) goto L172
+                java.lang.String r1 = "DchaService"
+                java.lang.String r2 = "copyUpdateImage 0006"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r1, r2)
+                r0.close()     // Catch: java.io.IOException -> L171
+                goto L172
+            L171:
+                r0 = move-exception
+            L172:
+                if (r12 == 0) goto L180
+                java.lang.String r0 = "DchaService"
+                java.lang.String r1 = "copyUpdateImage 0007"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r0, r1)
+                r12.close()     // Catch: java.io.IOException -> L17f
+                goto L180
+            L17f:
+                r12 = move-exception
+            L180:
+                throw r11
+            L181:
+                java.lang.String r11 = "DchaService"
+                java.lang.String r12 = "copyUpdateImage 0009"
+                jp.co.benesse.dcha.dchaservice.util.Log.d(r11, r12)
+                return r1
+            */
+            throw new UnsupportedOperationException("Method not decompiled: jp.co.benesse.dcha.dchaservice.DchaService.AnonymousClass1.copyUpdateImage(java.lang.String, java.lang.String):boolean");
         }
 
         @Override // jp.co.benesse.dcha.dchaservice.IDchaService
-        public void rebootPad(int i, String str) throws RemoteException {
+        public void rebootPad(int i, String str) throws IOException, RemoteException {
             Log.d("DchaService", "rebootPad 0001 rebootMode:" + i + " srcFile:" + str);
             try {
                 PowerManager powerManager = (PowerManager) DchaService.this.getSystemService("power");
@@ -315,10 +383,10 @@ public class DchaService extends Service {
                 Intent intent = new Intent("android.intent.action.MAIN");
                 intent.addCategory("android.intent.category.HOME");
                 intent.addCategory("android.intent.category.DEFAULT");
-                List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent, 0);
+                List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent, 0);
                 ArrayList arrayList = new ArrayList();
                 ComponentName componentName = null;
-                for (ResolveInfo resolveInfo : queryIntentActivities) {
+                for (ResolveInfo resolveInfo : listQueryIntentActivities) {
                     String str2 = resolveInfo.activityInfo.applicationInfo.packageName;
                     String str3 = resolveInfo.activityInfo.name;
                     Log.d("DchaService", "setDefalutPreferredHomeApp packName:" + str2);
@@ -367,7 +435,6 @@ public class DchaService extends Service {
         }
 
         /* renamed from: jp.co.benesse.dcha.dchaservice.DchaService$1$PackageInstallSessionCallback */
-        /* loaded from: classes.dex */
         class PackageInstallSessionCallback extends PackageInstaller.SessionCallback {
             boolean finished;
             boolean result;
@@ -406,8 +473,9 @@ public class DchaService extends Service {
             }
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [573=5] */
         @Override // jp.co.benesse.dcha.dchaservice.IDchaService
-        public boolean installApp(String str, int i) throws RemoteException {
+        public boolean installApp(String str, int i) throws Throwable {
             HandlerThread handlerThread;
             Log.d("DchaService", "installApp 0001 path:" + str + " installFlag:" + i);
             try {
@@ -420,9 +488,9 @@ public class DchaService extends Service {
                         z = false;
                     }
                     sessionParams.setAllowDowngrade(z);
-                    int createSession = packageInstaller.createSession(sessionParams);
-                    PackageInstaller.Session openSession = packageInstaller.openSession(createSession);
-                    if (openSession == null) {
+                    int iCreateSession = packageInstaller.createSession(sessionParams);
+                    PackageInstaller.Session sessionOpenSession = packageInstaller.openSession(iCreateSession);
+                    if (sessionOpenSession == null) {
                         Log.d("DchaService", "installApp 0002");
                         return false;
                     }
@@ -432,150 +500,157 @@ public class DchaService extends Service {
                         Handler handler = new Handler(handlerThread.getLooper());
                         PackageInstallSessionCallback packageInstallSessionCallback = new PackageInstallSessionCallback();
                         packageInstaller.registerSessionCallback(packageInstallSessionCallback, handler);
-                        installAppSession(openSession, str);
-                        Intent intent = new Intent("jp.co.benesse.dcha.dchaservice.INSTALL_COMPLETE");
-                        intent.setPackage(DchaService.this.getPackageNameFromPid(Binder.getCallingPid()));
-                        openSession.commit(PendingIntent.getBroadcast(DchaService.this.getBaseContext(), createSession, intent, 0).getIntentSender());
-                        synchronized (packageInstallSessionCallback) {
-                            while (!packageInstallSessionCallback.finished) {
-                                try {
-                                    Log.d("DchaService", "installApp 0003");
-                                    packageInstallSessionCallback.wait();
-                                } catch (InterruptedException e) {
-                                    Log.d("DchaService", "installApp 0004");
+                        try {
+                            installAppSession(sessionOpenSession, str);
+                            Intent intent = new Intent("jp.co.benesse.dcha.dchaservice.INSTALL_COMPLETE");
+                            intent.setPackage(DchaService.this.getPackageNameFromPid(Binder.getCallingPid()));
+                            sessionOpenSession.commit(PendingIntent.getBroadcast(DchaService.this.getBaseContext(), iCreateSession, intent, 0).getIntentSender());
+                            synchronized (packageInstallSessionCallback) {
+                                while (!packageInstallSessionCallback.finished) {
+                                    try {
+                                        Log.d("DchaService", "installApp 0003");
+                                        packageInstallSessionCallback.wait();
+                                    } catch (InterruptedException e) {
+                                        Log.d("DchaService", "installApp 0004");
+                                    }
                                 }
                             }
+                            Log.d("DchaService", "installApp 0005");
+                            packageInstaller.unregisterSessionCallback(packageInstallSessionCallback);
+                            sessionOpenSession.close();
+                            Log.d("DchaService", "installApp 0006");
+                            boolean z2 = packageInstallSessionCallback.result;
+                            Log.d("DchaService", "installApp 0008");
+                            handlerThread.quit();
+                            return z2;
+                        } catch (Throwable th) {
+                            Log.d("DchaService", "installApp 0005");
+                            packageInstaller.unregisterSessionCallback(packageInstallSessionCallback);
+                            sessionOpenSession.close();
+                            throw th;
                         }
-                        Log.d("DchaService", "installApp 0005");
-                        packageInstaller.unregisterSessionCallback(packageInstallSessionCallback);
-                        openSession.close();
-                        Log.d("DchaService", "installApp 0006");
-                        boolean z2 = packageInstallSessionCallback.result;
-                        Log.d("DchaService", "installApp 0008");
-                        handlerThread.quit();
-                        return z2;
                     } catch (Exception e2) {
                         e = e2;
                         Log.e("DchaService", "installApp 0007", e);
                         throw new RemoteException();
-                    } catch (Throwable th) {
-                        th = th;
+                    } catch (Throwable th2) {
+                        th = th2;
                         if (handlerThread != null) {
                             Log.d("DchaService", "installApp 0008");
                             handlerThread.quit();
                         }
                         throw th;
                     }
-                } catch (Exception e3) {
-                    e = e3;
+                } catch (Throwable th3) {
+                    th = th3;
+                    handlerThread = null;
                 }
-            } catch (Throwable th2) {
-                th = th2;
-                handlerThread = null;
+            } catch (Exception e3) {
+                e = e3;
             }
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [619=4] */
         /* JADX WARN: Removed duplicated region for block: B:63:0x009a A[EXC_TOP_SPLITTER, SYNTHETIC] */
         /* JADX WARN: Removed duplicated region for block: B:65:0x008a A[EXC_TOP_SPLITTER, SYNTHETIC] */
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        private void installAppSession(PackageInstaller.Session session, String str) throws IOException {
-            long j;
-            OutputStream outputStream;
-            FileInputStream fileInputStream;
+        private void installAppSession(PackageInstaller.Session session, String str) throws Throwable {
+            long length;
+            OutputStream outputStreamOpenWrite;
             Log.d("DchaService", "installAppSession 0001");
             File file = new File(str);
             if (file.isFile()) {
                 Log.d("DchaService", "installAppSession 0002");
-                j = file.length();
+                length = file.length();
             } else {
-                j = -1;
+                length = -1;
             }
-            long j2 = j;
-            FileInputStream fileInputStream2 = null;
+            long j = length;
+            FileInputStream fileInputStream = null;
             try {
-                fileInputStream = new FileInputStream(str);
+                FileInputStream fileInputStream2 = new FileInputStream(str);
                 try {
-                    outputStream = session.openWrite("jp.co.benesse.dcha.dchaservice", 0L, j2);
-                } catch (IOException e) {
-                    e = e;
-                    outputStream = null;
-                } catch (Throwable th) {
-                    th = th;
-                    outputStream = null;
-                }
-            } catch (IOException e2) {
-                e = e2;
-                outputStream = null;
-            } catch (Throwable th2) {
-                th = th2;
-                outputStream = null;
-            }
-            try {
-                byte[] bArr = new byte[65536];
-                while (true) {
-                    int read = fileInputStream.read(bArr);
-                    if (read == -1) {
-                        break;
-                    }
-                    outputStream.write(bArr, 0, read);
-                }
-                session.fsync(outputStream);
-                if (outputStream != null) {
+                    outputStreamOpenWrite = session.openWrite("jp.co.benesse.dcha.dchaservice", 0L, j);
                     try {
-                        outputStream.close();
-                    } catch (IOException e3) {
-                        Log.e("DchaService", "installAppSession 0004", e3);
-                        throw e3;
-                    }
-                }
-                try {
-                    fileInputStream.close();
-                    Log.d("DchaService", "installAppSession 0006");
-                } catch (IOException e4) {
-                    Log.e("DchaService", "installAppSession 0005", e4);
-                    throw e4;
-                }
-            } catch (IOException e5) {
-                e = e5;
-                fileInputStream2 = fileInputStream;
-                try {
-                    Log.e("DchaService", "installAppSession 0003", e);
-                    throw e;
-                } catch (Throwable th3) {
-                    th = th3;
-                    if (outputStream != null) {
-                        try {
-                            outputStream.close();
-                        } catch (IOException e6) {
-                            Log.e("DchaService", "installAppSession 0004", e6);
-                            throw e6;
+                        byte[] bArr = new byte[65536];
+                        while (true) {
+                            int i = fileInputStream2.read(bArr);
+                            if (i == -1) {
+                                break;
+                            } else {
+                                outputStreamOpenWrite.write(bArr, 0, i);
+                            }
                         }
-                    }
-                    if (fileInputStream2 != null) {
+                        session.fsync(outputStreamOpenWrite);
+                        if (outputStreamOpenWrite != null) {
+                            try {
+                                outputStreamOpenWrite.close();
+                            } catch (IOException e) {
+                                Log.e("DchaService", "installAppSession 0004", e);
+                                throw e;
+                            }
+                        }
                         try {
                             fileInputStream2.close();
-                        } catch (IOException e7) {
-                            Log.e("DchaService", "installAppSession 0005", e7);
-                            throw e7;
+                            Log.d("DchaService", "installAppSession 0006");
+                        } catch (IOException e2) {
+                            Log.e("DchaService", "installAppSession 0005", e2);
+                            throw e2;
                         }
+                    } catch (IOException e3) {
+                        e = e3;
+                        fileInputStream = fileInputStream2;
+                        try {
+                            Log.e("DchaService", "installAppSession 0003", e);
+                            throw e;
+                        } catch (Throwable th) {
+                            th = th;
+                            if (outputStreamOpenWrite != null) {
+                                try {
+                                    outputStreamOpenWrite.close();
+                                } catch (IOException e4) {
+                                    Log.e("DchaService", "installAppSession 0004", e4);
+                                    throw e4;
+                                }
+                            }
+                            if (fileInputStream != null) {
+                                try {
+                                    fileInputStream.close();
+                                } catch (IOException e5) {
+                                    Log.e("DchaService", "installAppSession 0005", e5);
+                                    throw e5;
+                                }
+                            }
+                            throw th;
+                        }
+                    } catch (Throwable th2) {
+                        th = th2;
+                        fileInputStream = fileInputStream2;
+                        if (outputStreamOpenWrite != null) {
+                        }
+                        if (fileInputStream != null) {
+                        }
+                        throw th;
                     }
-                    throw th;
+                } catch (IOException e6) {
+                    e = e6;
+                    outputStreamOpenWrite = null;
+                } catch (Throwable th3) {
+                    th = th3;
+                    outputStreamOpenWrite = null;
                 }
+            } catch (IOException e7) {
+                e = e7;
+                outputStreamOpenWrite = null;
             } catch (Throwable th4) {
                 th = th4;
-                fileInputStream2 = fileInputStream;
-                if (outputStream != null) {
-                }
-                if (fileInputStream2 != null) {
-                }
-                throw th;
+                outputStreamOpenWrite = null;
             }
         }
 
         /* renamed from: jp.co.benesse.dcha.dchaservice.DchaService$1$PackageDeleteObserver */
-        /* loaded from: classes.dex */
         class PackageDeleteObserver extends IPackageDeleteObserver.Stub {
             boolean finished;
             boolean result;
@@ -602,8 +677,7 @@ public class DchaService extends Service {
             Log.d("DchaService", "uninstallApp 0001 packageName:" + str + " uninstallFlag:" + i);
             try {
                 String packageNameFromPid = DchaService.this.getPackageNameFromPid(getCallingPid());
-                DchaService dchaService = DchaService.this;
-                EmergencyLog.write(dchaService, "ELK002", str + " " + packageNameFromPid);
+                EmergencyLog.write(DchaService.this, "ELK002", str + " " + packageNameFromPid);
                 PackageManager packageManager = DchaService.this.getPackageManager();
                 int i2 = 2;
                 if (i == 1) {
@@ -655,21 +729,20 @@ public class DchaService extends Service {
         public void setSystemTime(String str, String str2) {
             Log.d("DchaService", "setSystemTime 0001 time:" + str + " timeFormat:" + str2);
             try {
-                Date parse = new SimpleDateFormat(str2, Locale.JAPAN).parse(str);
+                Date date = new SimpleDateFormat(str2, Locale.JAPAN).parse(str);
                 String packageNameFromPid = DchaService.this.getPackageNameFromPid(Binder.getCallingPid());
                 Calendar calendar = Calendar.getInstance(Locale.JAPAN);
                 calendar.set(2016, 1, 1, 0, 0);
                 Calendar calendar2 = Calendar.getInstance(Locale.JAPAN);
-                calendar2.setTime(parse);
+                calendar2.setTime(date);
                 if (calendar.compareTo(calendar2) > 0) {
                     Log.d("DchaService", "setSystemTime 0002");
-                    DchaService dchaService = DchaService.this;
-                    EmergencyLog.write(dchaService, "ELK008", str + " " + packageNameFromPid);
+                    EmergencyLog.write(DchaService.this, "ELK008", str + " " + packageNameFromPid);
                 } else {
                     Log.d("DchaService", "setSystemTime 0003");
-                    SystemClock.setCurrentTimeMillis(parse.getTime());
+                    SystemClock.setCurrentTimeMillis(date.getTime());
                 }
-                Log.d("DchaService", "setSystemTime set time :" + parse);
+                Log.d("DchaService", "setSystemTime set time :" + date);
             } catch (Exception e) {
                 Log.e("DchaService", "setSystemTime 0004", e);
             }
@@ -692,8 +765,9 @@ public class DchaService extends Service {
                     }
                 } else {
                     Log.d("DchaService", "removeTask 0004");
-                    for (ActivityManager.RecentTaskInfo recentTaskInfo2 : list) {
-                        service.removeTask(recentTaskInfo2.persistentId);
+                    Iterator it = list.iterator();
+                    while (it.hasNext()) {
+                        service.removeTask(((ActivityManager.RecentTaskInfo) it.next()).persistentId);
                     }
                 }
                 Log.d("DchaService", "removeTask 0006");
@@ -722,7 +796,7 @@ public class DchaService extends Service {
         }
 
         @Override // jp.co.benesse.dcha.dchaservice.IDchaService
-        public void setDefaultParam() throws RemoteException {
+        public void setDefaultParam() throws PackageManager.NameNotFoundException, NumberFormatException, RemoteException {
             Log.d("DchaService", "setDefaultParam 0001");
             try {
                 DchaService.this.setInitialSettingsWirelessNetwork();
@@ -759,15 +833,15 @@ public class DchaService extends Service {
         }
 
         @Override // jp.co.benesse.dcha.dchaservice.IDchaService
-        public boolean copyFile(String str, String str2) throws RemoteException {
-            boolean z;
+        public boolean copyFile(String str, String str2) throws Throwable {
+            boolean zFileCopy;
             String canonicalExternalPath;
             Log.d("DchaService", "copyFile 0001 srcFilePath:" + str + " dstFilePath:" + str2);
             try {
                 canonicalExternalPath = getCanonicalExternalPath(System.getenv("SECONDARY_STORAGE"));
             } catch (Exception e) {
                 Log.e("DchaService", "copyFile 0006", e);
-                z = false;
+                zFileCopy = false;
             }
             if (TextUtils.isEmpty(str) || TextUtils.isEmpty(str2)) {
                 Log.d("DchaService", "copyFile 0002");
@@ -783,15 +857,19 @@ public class DchaService extends Service {
             File file2 = new File(canonicalExternalPath3);
             if (file.isFile() && (file2.isDirectory() || file2.isFile() || (!file2.exists() && file2.getParentFile().isDirectory()))) {
                 Log.d("DchaService", "copyFile 0004");
-                z = fileCopy(file, file2);
-                Log.d("DchaService", "copyFile 0007 result:" + z);
-                return z;
+                zFileCopy = fileCopy(file, file2);
+                Log.d("DchaService", "copyFile 0007 result:" + zFileCopy);
+                return zFileCopy;
             }
             Log.d("DchaService", "copyFile 0005");
             throw new IllegalArgumentException();
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [1050=5, 1053=8] */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:15:0x0093 */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:17:0x0095 */
         /* JADX WARN: Multi-variable type inference failed */
+        /* JADX WARN: Type inference failed for: r10v1 */
         /* JADX WARN: Type inference failed for: r10v10, types: [java.io.Closeable, java.io.FileOutputStream] */
         /* JADX WARN: Type inference failed for: r10v11 */
         /* JADX WARN: Type inference failed for: r10v12 */
@@ -802,12 +880,12 @@ public class DchaService extends Service {
         /* JADX WARN: Type inference failed for: r10v8 */
         /* JADX WARN: Type inference failed for: r10v9 */
         /* JADX WARN: Type inference failed for: r12v0, types: [jp.co.benesse.dcha.dchaservice.DchaService$1] */
-        protected boolean fileCopy(File file, File file2) {
+        protected boolean fileCopy(File file, File file2) throws Throwable {
             FileInputStream fileInputStream;
+            FileChannel channel;
             FileChannel fileChannel;
-            FileChannel fileChannel2;
-            FileChannel fileChannel3;
-            FileChannel fileChannel4;
+            ?? fileOutputStream;
+            FileChannel channel2;
             Log.d("DchaService", "fileCopy 0001");
             if (file2.isDirectory()) {
                 Log.d("DchaService", "fileCopy 0002");
@@ -815,120 +893,120 @@ public class DchaService extends Service {
             } else {
                 Log.d("DchaService", "fileCopy 0003");
             }
-            FileChannel fileChannel5 = null;
+            FileChannel fileChannel2 = null;
             try {
                 file2.createNewFile();
                 fileInputStream = new FileInputStream(file);
+            } catch (Exception e) {
+                e = e;
+                fileInputStream = null;
+                fileChannel = null;
+            } catch (Throwable th) {
+                th = th;
+                fileInputStream = null;
+                channel = null;
+            }
+            try {
+                channel = fileInputStream.getChannel();
+            } catch (Exception e2) {
+                e = e2;
+                fileChannel = null;
+                channel2 = fileChannel;
+                fileOutputStream = fileChannel;
                 try {
-                    fileChannel = fileInputStream.getChannel();
-                    try {
-                        fileChannel3 = new FileOutputStream(file2);
-                        try {
-                            fileChannel4 = fileChannel3.getChannel();
-                            try {
-                                fileChannel.transferTo(0L, fileChannel.size(), fileChannel4);
-                                file2.setLastModified(file.lastModified());
-                                file2.setReadable(true, false);
-                                file2.setWritable(true, false);
-                                file2.setExecutable(true, false);
-                                Log.d("DchaService", "fileCopy 0004");
-                                Log.d("DchaService", "fileCopy 0006");
-                                close(fileChannel);
-                                close(fileChannel4);
-                                close(fileInputStream);
-                                close(fileChannel3);
-                                return true;
-                            } catch (Exception e) {
-                                e = e;
-                                fileChannel5 = fileChannel;
-                                fileChannel3 = fileChannel3;
-                                try {
-                                    Log.e("DchaService", "fileCopy 0005", e);
-                                    Log.d("DchaService", "fileCopy 0006");
-                                    close(fileChannel5);
-                                    close(fileChannel4);
-                                    close(fileInputStream);
-                                    close(fileChannel3);
-                                    Log.d("DchaService", "fileCopy 0007");
-                                    return false;
-                                } catch (Throwable th) {
-                                    th = th;
-                                    fileChannel = fileChannel5;
-                                    Log.d("DchaService", "fileCopy 0006");
-                                    close(fileChannel);
-                                    close(fileChannel4);
-                                    close(fileInputStream);
-                                    close(fileChannel3);
-                                    throw th;
-                                }
-                            } catch (Throwable th2) {
-                                th = th2;
-                                Log.d("DchaService", "fileCopy 0006");
-                                close(fileChannel);
-                                close(fileChannel4);
-                                close(fileInputStream);
-                                close(fileChannel3);
-                                throw th;
-                            }
-                        } catch (Exception e2) {
-                            e = e2;
-                            fileChannel4 = null;
-                        } catch (Throwable th3) {
-                            th = th3;
-                            fileChannel4 = null;
-                        }
-                    } catch (Exception e3) {
-                        e = e3;
-                        fileChannel3 = 0;
-                        fileChannel4 = null;
-                    } catch (Throwable th4) {
-                        th = th4;
-                        fileChannel3 = 0;
-                        fileChannel4 = fileChannel3;
-                        Log.d("DchaService", "fileCopy 0006");
-                        close(fileChannel);
-                        close(fileChannel4);
-                        close(fileInputStream);
-                        close(fileChannel3);
-                        throw th;
-                    }
-                } catch (Exception e4) {
-                    e = e4;
-                    fileChannel2 = null;
-                    fileChannel4 = fileChannel2;
-                    fileChannel3 = fileChannel2;
                     Log.e("DchaService", "fileCopy 0005", e);
                     Log.d("DchaService", "fileCopy 0006");
-                    close(fileChannel5);
-                    close(fileChannel4);
+                    close(fileChannel2);
+                    close(channel2);
                     close(fileInputStream);
-                    close(fileChannel3);
+                    close(fileOutputStream);
+                    Log.d("DchaService", "fileCopy 0007");
+                    return false;
+                } catch (Throwable th2) {
+                    th = th2;
+                    channel = fileChannel2;
+                    Log.d("DchaService", "fileCopy 0006");
+                    close(channel);
+                    close(channel2);
+                    close(fileInputStream);
+                    close(fileOutputStream);
+                    throw th;
+                }
+            } catch (Throwable th3) {
+                th = th3;
+                channel = null;
+                fileOutputStream = channel;
+                channel2 = fileOutputStream;
+                Log.d("DchaService", "fileCopy 0006");
+                close(channel);
+                close(channel2);
+                close(fileInputStream);
+                close(fileOutputStream);
+                throw th;
+            }
+            try {
+                fileOutputStream = new FileOutputStream(file2);
+                try {
+                    channel2 = fileOutputStream.getChannel();
+                } catch (Exception e3) {
+                    e = e3;
+                    channel2 = null;
+                } catch (Throwable th4) {
+                    th = th4;
+                    channel2 = null;
+                }
+                try {
+                    channel.transferTo(0L, channel.size(), channel2);
+                    file2.setLastModified(file.lastModified());
+                    file2.setReadable(true, false);
+                    file2.setWritable(true, false);
+                    file2.setExecutable(true, false);
+                    Log.d("DchaService", "fileCopy 0004");
+                    Log.d("DchaService", "fileCopy 0006");
+                    close(channel);
+                    close(channel2);
+                    close(fileInputStream);
+                    close(fileOutputStream);
+                    return true;
+                } catch (Exception e4) {
+                    e = e4;
+                    fileChannel2 = channel;
+                    fileOutputStream = fileOutputStream;
+                    Log.e("DchaService", "fileCopy 0005", e);
+                    Log.d("DchaService", "fileCopy 0006");
+                    close(fileChannel2);
+                    close(channel2);
+                    close(fileInputStream);
+                    close(fileOutputStream);
                     Log.d("DchaService", "fileCopy 0007");
                     return false;
                 } catch (Throwable th5) {
                     th = th5;
-                    fileChannel = null;
-                    fileChannel3 = fileChannel;
-                    fileChannel4 = fileChannel3;
                     Log.d("DchaService", "fileCopy 0006");
-                    close(fileChannel);
-                    close(fileChannel4);
+                    close(channel);
+                    close(channel2);
                     close(fileInputStream);
-                    close(fileChannel3);
+                    close(fileOutputStream);
                     throw th;
                 }
             } catch (Exception e5) {
                 e = e5;
-                fileInputStream = null;
-                fileChannel2 = null;
+                fileOutputStream = 0;
+                channel2 = null;
             } catch (Throwable th6) {
                 th = th6;
-                fileInputStream = null;
-                fileChannel = null;
+                fileOutputStream = 0;
+                channel2 = fileOutputStream;
+                Log.d("DchaService", "fileCopy 0006");
+                close(channel);
+                close(channel2);
+                close(fileInputStream);
+                close(fileOutputStream);
+                throw th;
             }
         }
 
-        protected void close(Closeable closeable) {
+        protected void close(Closeable closeable) throws IOException {
             Log.d("DchaService", "close 0001");
             if (closeable == null) {
                 Log.d("DchaService", "close 0002");
@@ -944,14 +1022,14 @@ public class DchaService extends Service {
 
         @Override // jp.co.benesse.dcha.dchaservice.IDchaService
         public boolean deleteFile(String str) throws RemoteException {
-            boolean z;
+            boolean zDelete;
             String canonicalExternalPath;
             Log.d("DchaService", "deleteFile 0001 path:" + str);
             try {
                 canonicalExternalPath = getCanonicalExternalPath(System.getenv("SECONDARY_STORAGE"));
             } catch (Exception e) {
                 Log.e("DchaService", "deleteFile 0007", e);
-                z = false;
+                zDelete = false;
             }
             if (TextUtils.isEmpty(str)) {
                 Log.d("DchaService", "deleteFile 0002");
@@ -965,21 +1043,21 @@ public class DchaService extends Service {
             File file = new File(canonicalExternalPath2);
             if (file.isDirectory()) {
                 Log.d("DchaService", "deleteFile 0004");
-                File[] listFiles = file.listFiles();
-                if (listFiles == null) {
+                File[] fileArrListFiles = file.listFiles();
+                if (fileArrListFiles == null) {
                     Log.d("DchaService", "deleteFile 0005");
                     return false;
                 }
-                for (File file2 : listFiles) {
+                for (File file2 : fileArrListFiles) {
                     if (!deleteFile(file2.getCanonicalPath())) {
                         Log.d("DchaService", "deleteFile 0006");
                         return false;
                     }
                 }
             }
-            z = file.delete();
-            Log.d("DchaService", "deleteFile 0008 result:" + z);
-            return z;
+            zDelete = file.delete();
+            Log.d("DchaService", "deleteFile 0008 result:" + zDelete);
+            return zDelete;
         }
 
         @Override // jp.co.benesse.dcha.dchaservice.IDchaService
@@ -1010,17 +1088,19 @@ public class DchaService extends Service {
         }
 
         /* JADX WARN: Code restructure failed: missing block: B:21:0x0077, code lost:
+        
             r1 = r2.getInternalPath();
             jp.co.benesse.dcha.dchaservice.util.Log.d("DchaService", "getCanonicalExternalPath 0005 path:" + r1);
          */
         /* JADX WARN: Code restructure failed: missing block: B:22:0x0096, code lost:
+        
             r6 = r6.replace(r0, r1);
          */
         @Override // jp.co.benesse.dcha.dchaservice.IDchaService
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        public String getCanonicalExternalPath(String str) throws RemoteException {
+        public String getCanonicalExternalPath(String str) throws IOException, RemoteException {
             Log.d("DchaService", "getCanonicalExternalPath 0001 linkPath:" + str);
             if (TextUtils.isEmpty(str)) {
                 Log.d("DchaService", "getCanonicalExternalPath 0002");
@@ -1070,47 +1150,47 @@ public class DchaService extends Service {
         }
     }
 
-    protected void writeShowUpdatesOption() {
+    protected void writeShowUpdatesOption() throws RemoteException {
         Log.d("DchaService", "writeShowUpdatesOption 0001");
         try {
             IBinder service = ServiceManager.getService("SurfaceFlinger");
             if (service != null) {
                 Log.d("DchaService", "writeShowUpdatesOption 0002");
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
-                obtain.writeInterfaceToken("android.ui.ISurfaceComposer");
-                service.transact(1010, obtain, obtain2, 0);
-                obtain2.readInt();
-                obtain2.readInt();
-                int readInt = obtain2.readInt();
-                obtain2.readInt();
-                obtain2.readInt();
-                obtain2.recycle();
-                obtain.recycle();
-                if (readInt != 0) {
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
+                parcelObtain.writeInterfaceToken("android.ui.ISurfaceComposer");
+                service.transact(1010, parcelObtain, parcelObtain2, 0);
+                parcelObtain2.readInt();
+                parcelObtain2.readInt();
+                int i = parcelObtain2.readInt();
+                parcelObtain2.readInt();
+                parcelObtain2.readInt();
+                parcelObtain2.recycle();
+                parcelObtain.recycle();
+                if (i != 0) {
                     Log.d("DchaService", "writeShowUpdatesOption 0003");
-                    Parcel obtain3 = Parcel.obtain();
-                    obtain3.writeInterfaceToken("android.ui.ISurfaceComposer");
-                    obtain3.writeInt(0);
-                    service.transact(1002, obtain3, null, 0);
-                    obtain3.recycle();
+                    Parcel parcelObtain3 = Parcel.obtain();
+                    parcelObtain3.writeInterfaceToken("android.ui.ISurfaceComposer");
+                    parcelObtain3.writeInt(0);
+                    service.transact(1002, parcelObtain3, null, 0);
+                    parcelObtain3.recycle();
                 }
             }
         } catch (RemoteException e) {
         }
     }
 
-    protected void writeDisableOverlaysOption() {
+    protected void writeDisableOverlaysOption() throws RemoteException {
         Log.d("DchaService", "writeDisableOverlaysOption 0001");
         try {
             IBinder service = ServiceManager.getService("SurfaceFlinger");
             if (service != null) {
                 Log.d("DchaService", "writeDisableOverlaysOption 0002");
-                Parcel obtain = Parcel.obtain();
-                obtain.writeInterfaceToken("android.ui.ISurfaceComposer");
-                obtain.writeInt(0);
-                service.transact(1008, obtain, null, 0);
-                obtain.recycle();
+                Parcel parcelObtain = Parcel.obtain();
+                parcelObtain.writeInterfaceToken("android.ui.ISurfaceComposer");
+                parcelObtain.writeInt(0);
+                service.transact(1008, parcelObtain, null, 0);
+                parcelObtain.recycle();
             }
         } catch (RemoteException e) {
         }
@@ -1140,33 +1220,34 @@ public class DchaService extends Service {
         }
     }
 
-    protected void writeAppProcessLimitOptions(Object obj) {
-        int parseInt;
+    protected void writeAppProcessLimitOptions(Object obj) throws NumberFormatException {
+        int i;
         Log.d("DchaService", "writeAppProcessLimitOptions 0001");
         if (obj == null) {
-            parseInt = -1;
+            i = -1;
         } else {
             try {
-                parseInt = Integer.parseInt(obj.toString());
+                i = Integer.parseInt(obj.toString());
             } catch (RemoteException e) {
                 return;
             }
         }
-        ActivityManagerNative.getDefault().setProcessLimit(parseInt);
+        ActivityManagerNative.getDefault().setProcessLimit(i);
     }
 
     protected void writeQsTileDisable() {
         Log.d("DchaService", "writeQsTileDisable 0001");
         PackageManager packageManager = getApplicationContext().getPackageManager();
-        IStatusBarService asInterface = IStatusBarService.Stub.asInterface(ServiceManager.checkService("statusbar"));
-        for (ResolveInfo resolveInfo : packageManager.queryIntentServices(new Intent("android.service.quicksettings.action.QS_TILE"), 512)) {
-            ServiceInfo serviceInfo = resolveInfo.serviceInfo;
+        IStatusBarService iStatusBarServiceAsInterface = IStatusBarService.Stub.asInterface(ServiceManager.checkService("statusbar"));
+        Iterator<ResolveInfo> it = packageManager.queryIntentServices(new Intent("android.service.quicksettings.action.QS_TILE"), 512).iterator();
+        while (it.hasNext()) {
+            ServiceInfo serviceInfo = it.next().serviceInfo;
             ComponentName componentName = new ComponentName(serviceInfo.packageName, serviceInfo.name);
             packageManager.setComponentEnabledSetting(componentName, 2, 1);
-            if (asInterface != null) {
+            if (iStatusBarServiceAsInterface != null) {
                 try {
                     Log.d("DchaService", "writeQsTileDisable 0002");
-                    asInterface.remTile(componentName);
+                    iStatusBarServiceAsInterface.remTile(componentName);
                 } catch (RemoteException e) {
                     Log.e("DchaService", "writeQsTileDisable 0003", e);
                 }
@@ -1179,33 +1260,30 @@ public class DchaService extends Service {
         new SystemPropPoker().execute(new Void[0]);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SystemPropPoker extends AsyncTask<Void, Void, Void> {
+    static class SystemPropPoker extends AsyncTask<Void, Void, Void> {
         private final String TAG = "SystemPropPoker";
 
         SystemPropPoker() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(Void... voidArr) {
-            String[] listServices;
+        protected Void doInBackground(Void... voidArr) throws RemoteException {
             Log.d("SystemPropPoker", "doInBackground 0001");
             for (String str : ServiceManager.listServices()) {
-                IBinder checkService = ServiceManager.checkService(str);
-                if (checkService != null) {
+                IBinder iBinderCheckService = ServiceManager.checkService(str);
+                if (iBinderCheckService != null) {
                     Log.d("SystemPropPoker", "doInBackground 0003");
-                    Parcel obtain = Parcel.obtain();
+                    Parcel parcelObtain = Parcel.obtain();
                     try {
-                        checkService.transact(1599295570, obtain, null, 0);
+                        iBinderCheckService.transact(1599295570, parcelObtain, null, 0);
                     } catch (RemoteException e) {
                         Log.e("SystemPropPoker", "doInBackground 0004", e);
                     } catch (Exception e2) {
                         Log.v("DevSettings", "Somone wrote a bad service '" + str + "' that doesn't like to be poked: " + e2);
                         Log.e("SystemPropPoker", "doInBackground 0005", e2);
                     }
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
             Log.d("SystemPropPoker", "doInBackground 0006");
@@ -1371,7 +1449,7 @@ public class DchaService extends Service {
         Log.d("DchaService", "setInitialSettingsWirelessNetwork 0003");
     }
 
-    protected void setInitialSettingsTerminal() throws RemoteException {
+    protected void setInitialSettingsTerminal() throws PackageManager.NameNotFoundException, RemoteException {
         Log.d("DchaService", "setInitialSettingsTerminal 0001");
         try {
             Settings.System.putInt(getContentResolver(), "screen_brightness_mode", 0);
@@ -1382,13 +1460,13 @@ public class DchaService extends Service {
             configuration.fontScale = Float.parseFloat("1.0");
             ActivityManagerNative.getDefault().updatePersistentConfiguration(configuration);
             Settings.System.putInt(getContentResolver(), "accelerometer_rotation", 0);
-            INotificationManager asInterface = INotificationManager.Stub.asInterface(ServiceManager.getService("notification"));
+            INotificationManager iNotificationManagerAsInterface = INotificationManager.Stub.asInterface(ServiceManager.getService("notification"));
             Context applicationContext = getApplicationContext();
             NotificationManager.Policy notificationPolicy = NotificationManager.from(applicationContext).getNotificationPolicy();
-            NotificationManager.Policy savePolicy = savePolicy(notificationPolicy, getNewPriorityCategories(notificationPolicy, false, 1), notificationPolicy.priorityCallSenders, notificationPolicy.priorityMessageSenders, notificationPolicy.suppressedVisualEffects);
-            NotificationManager.Policy savePolicy2 = savePolicy(savePolicy, getNewPriorityCategories(savePolicy, false, 2), savePolicy.priorityCallSenders, savePolicy.priorityMessageSenders, savePolicy.suppressedVisualEffects);
-            NotificationManager.Policy savePolicy3 = savePolicy(savePolicy2, getNewPriorityCategories(savePolicy2, false, 4), savePolicy2.priorityCallSenders, savePolicy2.priorityMessageSenders, savePolicy2.suppressedVisualEffects);
-            savePolicy(savePolicy3, getNewPriorityCategories(savePolicy3, false, 8), savePolicy3.priorityCallSenders, savePolicy3.priorityMessageSenders, savePolicy3.suppressedVisualEffects);
+            NotificationManager.Policy policySavePolicy = savePolicy(notificationPolicy, getNewPriorityCategories(notificationPolicy, false, 1), notificationPolicy.priorityCallSenders, notificationPolicy.priorityMessageSenders, notificationPolicy.suppressedVisualEffects);
+            NotificationManager.Policy policySavePolicy2 = savePolicy(policySavePolicy, getNewPriorityCategories(policySavePolicy, false, 2), policySavePolicy.priorityCallSenders, policySavePolicy.priorityMessageSenders, policySavePolicy.suppressedVisualEffects);
+            NotificationManager.Policy policySavePolicy3 = savePolicy(policySavePolicy2, getNewPriorityCategories(policySavePolicy2, false, 4), policySavePolicy2.priorityCallSenders, policySavePolicy2.priorityMessageSenders, policySavePolicy2.suppressedVisualEffects);
+            savePolicy(policySavePolicy3, getNewPriorityCategories(policySavePolicy3, false, 8), policySavePolicy3.priorityCallSenders, policySavePolicy3.priorityMessageSenders, policySavePolicy3.suppressedVisualEffects);
             int i = 3;
             if (this.mDchaServiceStub.getSetupStatus() != 3) {
                 Log.d("DchaService", "setInitialSettingsTerminal 0002");
@@ -1407,7 +1485,7 @@ public class DchaService extends Service {
                 try {
                     if (!isSystemPackage(packageManager, packageManager.getPackageInfo(applicationInfo.packageName, 64))) {
                         Log.d("DchaService", "setInitialSettingsTerminal 0003:" + applicationInfo.packageName);
-                        asInterface.setNotificationsEnabledWithImportanceLockForPackage(applicationInfo.packageName, applicationInfo.uid, true);
+                        iNotificationManagerAsInterface.setNotificationsEnabledWithImportanceLockForPackage(applicationInfo.packageName, applicationInfo.uid, true);
                     }
                 } catch (Exception e2) {
                 }
@@ -1443,12 +1521,12 @@ public class DchaService extends Service {
                 appOpsManager2.setMode(24, applicationInfo2.uid, applicationInfo2.packageName, 0);
                 appOpsManager2.setMode(23, applicationInfo2.uid, applicationInfo2.packageName, 0);
             }
-            NetworkPolicyManager from = NetworkPolicyManager.from(applicationContext);
-            int[] uidsWithPolicy = from.getUidsWithPolicy(1);
+            NetworkPolicyManager networkPolicyManagerFrom = NetworkPolicyManager.from(applicationContext);
+            int[] uidsWithPolicy = networkPolicyManagerFrom.getUidsWithPolicy(1);
             int currentUser = ActivityManager.getCurrentUser();
             for (int i4 : uidsWithPolicy) {
                 if (UserHandle.getUserId(i4) == currentUser) {
-                    from.setUidPolicy(i4, 0);
+                    networkPolicyManagerFrom.setUidPolicy(i4, 0);
                 }
             }
             Settings.Secure.putInt(getContentResolver(), "lock_screen_show_notifications", 1);
@@ -1537,7 +1615,7 @@ public class DchaService extends Service {
         Log.d("DchaService", "setInitialSettingsSystem 0003");
     }
 
-    protected void setInitialSettingsDevelopmentOptions() throws RemoteException {
+    protected void setInitialSettingsDevelopmentOptions() throws RemoteException, NumberFormatException {
         Log.d("DchaService", "setInitialSettingsDevelopmentOptions start");
         getApplicationContext();
         Settings.Global.putInt(getContentResolver(), "development_settings_enabled", 0);

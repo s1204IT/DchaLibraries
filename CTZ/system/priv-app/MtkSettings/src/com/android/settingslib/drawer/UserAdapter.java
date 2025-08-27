@@ -20,12 +20,12 @@ import com.android.settingslib.R;
 import com.android.settingslib.drawable.UserIconDrawable;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class UserAdapter implements ListAdapter, SpinnerAdapter {
     private ArrayList<UserDetails> data;
     private final LayoutInflater mInflater;
 
-    /* loaded from: classes.dex */
     public static class UserDetails {
         private final Drawable mIcon;
         private final String mName;
@@ -37,7 +37,7 @@ public class UserAdapter implements ListAdapter, SpinnerAdapter {
             UserInfo userInfo = userManager.getUserInfo(this.mUserHandle.getIdentifier());
             if (userInfo.isManagedProfile()) {
                 this.mName = context.getString(R.string.managed_user_title);
-                defaultUserIcon = context.getDrawable(17302325);
+                defaultUserIcon = context.getDrawable(android.R.drawable.fastscroll_thumb_holo);
             } else {
                 this.mName = userInfo.name;
                 int i = userInfo.id;
@@ -76,8 +76,8 @@ public class UserAdapter implements ListAdapter, SpinnerAdapter {
             view = createUser(viewGroup);
         }
         UserDetails userDetails = this.data.get(i);
-        ((ImageView) view.findViewById(16908294)).setImageDrawable(userDetails.mIcon);
-        ((TextView) view.findViewById(16908310)).setText(getTitle(userDetails));
+        ((ImageView) view.findViewById(android.R.id.icon)).setImageDrawable(userDetails.mIcon);
+        ((TextView) view.findViewById(android.R.id.title)).setText(getTitle(userDetails));
         return view;
     }
 
@@ -106,6 +106,7 @@ public class UserAdapter implements ListAdapter, SpinnerAdapter {
         return this.data.size();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
     @Override // android.widget.Adapter
     public UserDetails getItem(int i) {
         return this.data.get(i);

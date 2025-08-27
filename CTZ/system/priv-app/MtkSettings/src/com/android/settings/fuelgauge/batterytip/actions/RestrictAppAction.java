@@ -9,6 +9,7 @@ import com.android.settings.fuelgauge.batterytip.BatteryDatabaseManager;
 import com.android.settings.fuelgauge.batterytip.tips.RestrictAppTip;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RestrictAppAction extends BatteryTipAction {
     BatteryDatabaseManager mBatteryDatabaseManager;

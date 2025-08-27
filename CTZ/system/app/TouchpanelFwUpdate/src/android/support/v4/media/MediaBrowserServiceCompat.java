@@ -28,11 +28,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class MediaBrowserServiceCompat extends Service {
     static final boolean DEBUG = Log.isLoggable("MBServiceCompat", 3);
@@ -42,16 +44,13 @@ public abstract class MediaBrowserServiceCompat extends Service {
     private MediaBrowserServiceImpl mImpl;
     MediaSessionCompat.Token mSession;
 
-    /* loaded from: classes.dex */
     interface MediaBrowserServiceImpl {
         IBinder onBind(Intent intent);
 
         void onCreate();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public interface ServiceCallbacks {
+    private interface ServiceCallbacks {
         IBinder asBinder();
 
         void onConnect(String str, MediaSessionCompat.Token token, Bundle bundle) throws RemoteException;
@@ -65,7 +64,6 @@ public abstract class MediaBrowserServiceCompat extends Service {
 
     public abstract void onLoadChildren(String str, Result<List<MediaBrowserCompat.MediaItem>> result);
 
-    /* loaded from: classes.dex */
     class MediaBrowserServiceImplBase implements MediaBrowserServiceImpl {
         private Messenger mMessenger;
 
@@ -86,7 +84,6 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
     }
 
-    /* loaded from: classes.dex */
     class MediaBrowserServiceImplApi21 implements MediaBrowserServiceImpl, MediaBrowserServiceCompatApi21.ServiceCompatProxy {
         Messenger mMessenger;
         final List<Bundle> mRootExtrasList = new ArrayList();
@@ -107,8 +104,8 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
 
         @Override // android.support.v4.media.MediaBrowserServiceCompatApi21.ServiceCompatProxy
-        public MediaBrowserServiceCompatApi21.BrowserRoot onGetRoot(String clientPackageName, int clientUid, Bundle rootHints) {
-            IBinder asBinder;
+        public MediaBrowserServiceCompatApi21.BrowserRoot onGetRoot(String clientPackageName, int clientUid, Bundle rootHints) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+            IBinder iBinderAsBinder;
             Bundle rootExtras = null;
             if (rootHints != null && rootHints.getInt("extra_client_version", 0) != 0) {
                 rootHints.remove("extra_client_version");
@@ -119,16 +116,16 @@ public abstract class MediaBrowserServiceCompat extends Service {
                 if (MediaBrowserServiceCompat.this.mSession != null) {
                     IMediaSession extraBinder = MediaBrowserServiceCompat.this.mSession.getExtraBinder();
                     if (extraBinder == null) {
-                        asBinder = null;
+                        iBinderAsBinder = null;
                     } else {
-                        asBinder = extraBinder.asBinder();
+                        iBinderAsBinder = extraBinder.asBinder();
                     }
-                    BundleCompat.putBinder(rootExtras, "extra_session_binder", asBinder);
+                    BundleCompat.putBinder(rootExtras, "extra_session_binder", iBinderAsBinder);
                 } else {
                     this.mRootExtrasList.add(rootExtras);
                 }
             }
-            MediaBrowserServiceCompat.this.mCurConnection = new ConnectionRecord(clientPackageName, -1, clientUid, rootHints, null);
+            MediaBrowserServiceCompat.this.mCurConnection = MediaBrowserServiceCompat.this.new ConnectionRecord(clientPackageName, -1, clientUid, rootHints, null);
             BrowserRoot root = MediaBrowserServiceCompat.this.onGetRoot(clientPackageName, clientUid, rootHints);
             MediaBrowserServiceCompat.this.mCurConnection = null;
             if (root == null) {
@@ -145,9 +142,9 @@ public abstract class MediaBrowserServiceCompat extends Service {
         @Override // android.support.v4.media.MediaBrowserServiceCompatApi21.ServiceCompatProxy
         public void onLoadChildren(String parentId, final MediaBrowserServiceCompatApi21.ResultWrapper<List<Parcel>> resultWrapper) {
             Result<List<MediaBrowserCompat.MediaItem>> result = new Result<List<MediaBrowserCompat.MediaItem>>(parentId) { // from class: android.support.v4.media.MediaBrowserServiceCompat.MediaBrowserServiceImplApi21.2
-                /* JADX INFO: Access modifiers changed from: package-private */
+                /* JADX DEBUG: Method merged with bridge method: onResultSent(Ljava/lang/Object;)V */
                 @Override // android.support.v4.media.MediaBrowserServiceCompat.Result
-                public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+                void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
                     ArrayList arrayList = null;
                     if (list != null) {
                         arrayList = new ArrayList();
@@ -164,7 +161,6 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
     }
 
-    /* loaded from: classes.dex */
     class MediaBrowserServiceImplApi23 extends MediaBrowserServiceImplApi21 implements MediaBrowserServiceCompatApi23.ServiceCompatProxy {
         MediaBrowserServiceImplApi23() {
             super();
@@ -179,9 +175,9 @@ public abstract class MediaBrowserServiceCompat extends Service {
         @Override // android.support.v4.media.MediaBrowserServiceCompatApi23.ServiceCompatProxy
         public void onLoadItem(String itemId, final MediaBrowserServiceCompatApi21.ResultWrapper<Parcel> resultWrapper) {
             Result<MediaBrowserCompat.MediaItem> result = new Result<MediaBrowserCompat.MediaItem>(itemId) { // from class: android.support.v4.media.MediaBrowserServiceCompat.MediaBrowserServiceImplApi23.1
-                /* JADX INFO: Access modifiers changed from: package-private */
+                /* JADX DEBUG: Method merged with bridge method: onResultSent(Ljava/lang/Object;)V */
                 @Override // android.support.v4.media.MediaBrowserServiceCompat.Result
-                public void onResultSent(MediaBrowserCompat.MediaItem item) {
+                void onResultSent(MediaBrowserCompat.MediaItem item) {
                     if (item == null) {
                         resultWrapper.sendResult(null);
                         return;
@@ -195,7 +191,6 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
     }
 
-    /* loaded from: classes.dex */
     class MediaBrowserServiceImplApi26 extends MediaBrowserServiceImplApi23 implements MediaBrowserServiceCompatApi26.ServiceCompatProxy {
         MediaBrowserServiceImplApi26() {
             super();
@@ -210,9 +205,9 @@ public abstract class MediaBrowserServiceCompat extends Service {
         @Override // android.support.v4.media.MediaBrowserServiceCompatApi26.ServiceCompatProxy
         public void onLoadChildren(String parentId, final MediaBrowserServiceCompatApi26.ResultWrapper resultWrapper, Bundle options) {
             Result<List<MediaBrowserCompat.MediaItem>> result = new Result<List<MediaBrowserCompat.MediaItem>>(parentId) { // from class: android.support.v4.media.MediaBrowserServiceCompat.MediaBrowserServiceImplApi26.1
-                /* JADX INFO: Access modifiers changed from: package-private */
+                /* JADX DEBUG: Method merged with bridge method: onResultSent(Ljava/lang/Object;)V */
                 @Override // android.support.v4.media.MediaBrowserServiceCompat.Result
-                public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+                void onResultSent(List<MediaBrowserCompat.MediaItem> list) throws IllegalAccessException, IllegalArgumentException {
                     List<Parcel> parcelList = null;
                     if (list != null) {
                         parcelList = new ArrayList<>();
@@ -229,16 +224,13 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
     }
 
-    /* loaded from: classes.dex */
     class MediaBrowserServiceImplApi28 extends MediaBrowserServiceImplApi26 {
         MediaBrowserServiceImplApi28() {
             super();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class ServiceHandler extends Handler {
+    private final class ServiceHandler extends Handler {
         private final ServiceBinderImpl mServiceBinderImpl;
 
         @Override // android.os.Handler
@@ -247,34 +239,34 @@ public abstract class MediaBrowserServiceCompat extends Service {
             switch (msg.what) {
                 case 1:
                     this.mServiceBinderImpl.connect(data.getString("data_package_name"), data.getInt("data_calling_pid"), data.getInt("data_calling_uid"), data.getBundle("data_root_hints"), new ServiceCallbacksCompat(msg.replyTo));
-                    return;
+                    break;
                 case 2:
                     this.mServiceBinderImpl.disconnect(new ServiceCallbacksCompat(msg.replyTo));
-                    return;
+                    break;
                 case 3:
                     this.mServiceBinderImpl.addSubscription(data.getString("data_media_item_id"), BundleCompat.getBinder(data, "data_callback_token"), data.getBundle("data_options"), new ServiceCallbacksCompat(msg.replyTo));
-                    return;
+                    break;
                 case 4:
                     this.mServiceBinderImpl.removeSubscription(data.getString("data_media_item_id"), BundleCompat.getBinder(data, "data_callback_token"), new ServiceCallbacksCompat(msg.replyTo));
-                    return;
+                    break;
                 case 5:
                     this.mServiceBinderImpl.getMediaItem(data.getString("data_media_item_id"), (ResultReceiver) data.getParcelable("data_result_receiver"), new ServiceCallbacksCompat(msg.replyTo));
-                    return;
+                    break;
                 case 6:
                     this.mServiceBinderImpl.registerCallbacks(new ServiceCallbacksCompat(msg.replyTo), data.getString("data_package_name"), data.getInt("data_calling_pid"), data.getInt("data_calling_uid"), data.getBundle("data_root_hints"));
-                    return;
+                    break;
                 case 7:
                     this.mServiceBinderImpl.unregisterCallbacks(new ServiceCallbacksCompat(msg.replyTo));
-                    return;
+                    break;
                 case 8:
                     this.mServiceBinderImpl.search(data.getString("data_search_query"), data.getBundle("data_search_extras"), (ResultReceiver) data.getParcelable("data_result_receiver"), new ServiceCallbacksCompat(msg.replyTo));
-                    return;
+                    break;
                 case 9:
                     this.mServiceBinderImpl.sendCustomAction(data.getString("data_custom_action"), data.getBundle("data_custom_action_extras"), (ResultReceiver) data.getParcelable("data_result_receiver"), new ServiceCallbacksCompat(msg.replyTo));
-                    return;
+                    break;
                 default:
                     Log.w("MBServiceCompat", "Unhandled message: " + msg + "\n  Service version: 2\n  Client version: " + msg.arg1);
-                    return;
+                    break;
             }
         }
 
@@ -296,9 +288,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ConnectionRecord implements IBinder.DeathRecipient {
+    private class ConnectionRecord implements IBinder.DeathRecipient {
         public final MediaSessionManager.RemoteUserInfo browserInfo;
         public final ServiceCallbacks callbacks;
         public final int pid;
@@ -328,7 +318,6 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Result<T> {
         private final Object mDebug;
         private boolean mDetachCalled;
@@ -376,7 +365,6 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
     }
 
-    /* loaded from: classes.dex */
     private class ServiceBinderImpl {
         final /* synthetic */ MediaBrowserServiceCompat this$0;
 
@@ -386,10 +374,10 @@ public abstract class MediaBrowserServiceCompat extends Service {
             }
             this.this$0.mHandler.postOrRun(new Runnable() { // from class: android.support.v4.media.MediaBrowserServiceCompat.ServiceBinderImpl.1
                 @Override // java.lang.Runnable
-                public void run() {
+                public void run() throws RemoteException {
                     IBinder b = callbacks.asBinder();
                     ServiceBinderImpl.this.this$0.mConnections.remove(b);
-                    ConnectionRecord connection = new ConnectionRecord(pkg, pid, uid, rootHints, callbacks);
+                    ConnectionRecord connection = ServiceBinderImpl.this.this$0.new ConnectionRecord(pkg, pid, uid, rootHints, callbacks);
                     ServiceBinderImpl.this.this$0.mCurConnection = connection;
                     connection.root = ServiceBinderImpl.this.this$0.onGetRoot(pkg, uid, rootHints);
                     ServiceBinderImpl.this.this$0.mCurConnection = null;
@@ -453,7 +441,9 @@ public abstract class MediaBrowserServiceCompat extends Service {
                     ConnectionRecord connection = ServiceBinderImpl.this.this$0.mConnections.get(b);
                     if (connection == null) {
                         Log.w("MBServiceCompat", "removeSubscription for callback that isn't registered id=" + id);
-                    } else if (!ServiceBinderImpl.this.this$0.removeSubscription(id, connection, token)) {
+                        return;
+                    }
+                    if (!ServiceBinderImpl.this.this$0.removeSubscription(id, connection, token)) {
                         Log.w("MBServiceCompat", "removeSubscription called for " + id + " which is not subscribed");
                     }
                 }
@@ -481,10 +471,10 @@ public abstract class MediaBrowserServiceCompat extends Service {
         public void registerCallbacks(final ServiceCallbacks callbacks, final String pkg, final int pid, final int uid, final Bundle rootHints) {
             this.this$0.mHandler.postOrRun(new Runnable() { // from class: android.support.v4.media.MediaBrowserServiceCompat.ServiceBinderImpl.6
                 @Override // java.lang.Runnable
-                public void run() {
+                public void run() throws RemoteException {
                     IBinder b = callbacks.asBinder();
                     ServiceBinderImpl.this.this$0.mConnections.remove(b);
-                    ConnectionRecord connection = new ConnectionRecord(pkg, pid, uid, rootHints, callbacks);
+                    ConnectionRecord connection = ServiceBinderImpl.this.this$0.new ConnectionRecord(pkg, pid, uid, rootHints, callbacks);
                     ServiceBinderImpl.this.this$0.mConnections.put(b, connection);
                     try {
                         b.linkToDeath(connection, 0);
@@ -545,7 +535,6 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class ServiceCallbacksCompat implements ServiceCallbacks {
         final Messenger mCallbacks;
 
@@ -694,9 +683,9 @@ public abstract class MediaBrowserServiceCompat extends Service {
 
     void performLoadChildren(final String parentId, final ConnectionRecord connection, final Bundle subscribeOptions, final Bundle notifyChildrenChangedOptions) {
         Result<List<MediaBrowserCompat.MediaItem>> result = new Result<List<MediaBrowserCompat.MediaItem>>(parentId) { // from class: android.support.v4.media.MediaBrowserServiceCompat.1
-            /* JADX INFO: Access modifiers changed from: package-private */
+            /* JADX DEBUG: Method merged with bridge method: onResultSent(Ljava/lang/Object;)V */
             @Override // android.support.v4.media.MediaBrowserServiceCompat.Result
-            public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+            void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
                 if (MediaBrowserServiceCompat.this.mConnections.get(connection.callbacks.asBinder()) != connection) {
                     if (MediaBrowserServiceCompat.DEBUG) {
                         Log.d("MBServiceCompat", "Not sending onLoadChildren result for connection that has been disconnected. pkg=" + connection.pkg + " id=" + parentId);
@@ -746,9 +735,9 @@ public abstract class MediaBrowserServiceCompat extends Service {
 
     void performLoadItem(String itemId, ConnectionRecord connection, final ResultReceiver receiver) {
         Result<MediaBrowserCompat.MediaItem> result = new Result<MediaBrowserCompat.MediaItem>(itemId) { // from class: android.support.v4.media.MediaBrowserServiceCompat.2
-            /* JADX INFO: Access modifiers changed from: package-private */
+            /* JADX DEBUG: Method merged with bridge method: onResultSent(Ljava/lang/Object;)V */
             @Override // android.support.v4.media.MediaBrowserServiceCompat.Result
-            public void onResultSent(MediaBrowserCompat.MediaItem item) {
+            void onResultSent(MediaBrowserCompat.MediaItem item) {
                 if ((getFlags() & 2) != 0) {
                     receiver.send(-1, null);
                     return;
@@ -768,9 +757,9 @@ public abstract class MediaBrowserServiceCompat extends Service {
 
     void performSearch(String query, Bundle extras, ConnectionRecord connection, final ResultReceiver receiver) {
         Result<List<MediaBrowserCompat.MediaItem>> result = new Result<List<MediaBrowserCompat.MediaItem>>(query) { // from class: android.support.v4.media.MediaBrowserServiceCompat.3
-            /* JADX INFO: Access modifiers changed from: package-private */
+            /* JADX DEBUG: Method merged with bridge method: onResultSent(Ljava/lang/Object;)V */
             @Override // android.support.v4.media.MediaBrowserServiceCompat.Result
-            public void onResultSent(List<MediaBrowserCompat.MediaItem> items) {
+            void onResultSent(List<MediaBrowserCompat.MediaItem> items) {
                 if ((getFlags() & 4) != 0 || items == null) {
                     receiver.send(-1, null);
                     return;
@@ -790,9 +779,9 @@ public abstract class MediaBrowserServiceCompat extends Service {
 
     void performCustomAction(String action, Bundle extras, ConnectionRecord connection, final ResultReceiver receiver) {
         Result<Bundle> result = new Result<Bundle>(action) { // from class: android.support.v4.media.MediaBrowserServiceCompat.4
-            /* JADX INFO: Access modifiers changed from: package-private */
+            /* JADX DEBUG: Method merged with bridge method: onResultSent(Ljava/lang/Object;)V */
             @Override // android.support.v4.media.MediaBrowserServiceCompat.Result
-            public void onResultSent(Bundle result2) {
+            void onResultSent(Bundle result2) {
                 receiver.send(0, result2);
             }
 
@@ -809,7 +798,6 @@ public abstract class MediaBrowserServiceCompat extends Service {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class BrowserRoot {
         private final Bundle mExtras;
         private final String mRootId;

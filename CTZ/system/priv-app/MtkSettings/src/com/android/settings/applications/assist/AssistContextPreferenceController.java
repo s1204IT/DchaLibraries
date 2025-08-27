@@ -16,6 +16,7 @@ import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AssistContextPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private final AssistUtils mAssistUtils;
@@ -65,8 +66,7 @@ public class AssistContextPreferenceController extends AbstractPreferenceControl
         this.mSettingObserver.register(this.mContext.getContentResolver(), false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreference() {
+    private void updatePreference() {
         if (this.mPreference == null || !(this.mPreference instanceof TwoStatePreference)) {
             return;
         }
@@ -86,12 +86,10 @@ public class AssistContextPreferenceController extends AbstractPreferenceControl
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean isChecked(Context context) {
+    static boolean isChecked(Context context) {
         return Settings.Secure.getInt(context.getContentResolver(), "assist_structure_enabled", 1) != 0;
     }
 
-    /* loaded from: classes.dex */
     class SettingObserver extends AssistSettingObserver {
         private final Uri URI = Settings.Secure.getUriFor("assist_structure_enabled");
 

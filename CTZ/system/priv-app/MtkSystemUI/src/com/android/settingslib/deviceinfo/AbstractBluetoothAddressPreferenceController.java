@@ -1,4 +1,5 @@
 package com.android.settingslib.deviceinfo;
+
 /* loaded from: classes.dex */
 public abstract class AbstractBluetoothAddressPreferenceController extends AbstractConnectivityPreferenceController {
     private static final String[] CONNECTIVITY_INTENTS = {"android.bluetooth.adapter.action.STATE_CHANGED"};

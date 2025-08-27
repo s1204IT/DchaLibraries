@@ -2,6 +2,7 @@ package com.android.settingslib.drawer;
 
 import java.util.HashMap;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public final class CategoryKey {
     public static final Map<String, String> KEY_COMPAT_MAP = new HashMap();

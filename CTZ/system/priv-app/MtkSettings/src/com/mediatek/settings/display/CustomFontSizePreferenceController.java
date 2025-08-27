@@ -8,6 +8,7 @@ import com.android.settings.core.BasePreferenceController;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.accessibility.CustomToggleFontSizePreferenceFragment;
 import com.mediatek.settings.ext.IDisplaySettingsExt;
+
 /* loaded from: classes.dex */
 public class CustomFontSizePreferenceController extends BasePreferenceController {
     private static final String KEY_CUSTOM_FONT_SIZE = "custom_font_size";

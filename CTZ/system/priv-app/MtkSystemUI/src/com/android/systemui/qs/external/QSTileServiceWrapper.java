@@ -3,6 +3,7 @@ package com.android.systemui.qs.external;
 import android.os.IBinder;
 import android.service.quicksettings.IQSTileService;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class QSTileServiceWrapper {
     private final IQSTileService mService;

@@ -9,6 +9,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.Button;
+
 @SuppressLint({"AppCompatCustomView"})
 /* loaded from: classes.dex */
 public class NavigationBarButton extends Button {
@@ -77,7 +78,6 @@ public class NavigationBarButton extends Button {
     }
 
     private void tintDrawables() {
-        Drawable[] allCompoundDrawables;
         ColorStateList textColors = getTextColors();
         if (textColors != null) {
             for (Drawable drawable : getAllCompoundDrawables()) {
@@ -104,9 +104,7 @@ public class NavigationBarButton extends Button {
         return drawableArr;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class TintedDrawable extends LayerDrawable {
+    private static class TintedDrawable extends LayerDrawable {
         private ColorStateList mTintList;
 
         public static TintedDrawable wrap(Drawable drawable) {
@@ -139,11 +137,11 @@ public class NavigationBarButton extends Button {
         }
 
         private boolean updateState() {
-            if (this.mTintList != null) {
-                setColorFilter(this.mTintList.getColorForState(getState(), 0), PorterDuff.Mode.SRC_IN);
-                return true;
+            if (this.mTintList == null) {
+                return false;
             }
-            return false;
+            setColorFilter(this.mTintList.getColorForState(getState(), 0), PorterDuff.Mode.SRC_IN);
+            return true;
         }
     }
 }

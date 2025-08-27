@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.webkit.WebView;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class Preloader {
     private static Preloader sInstance;
@@ -33,13 +34,13 @@ public class Preloader {
             this.mSession = new PreloaderSession(str);
             WebViewTimersControl.getInstance().onPrerenderStart(this.mSession.getWebView());
             return this.mSession;
-        } else if (this.mSession.mId.equals(str)) {
+        }
+        if (this.mSession.mId.equals(str)) {
             Log.d("browser.preloader", "Returning existing preload session " + str);
             return this.mSession;
-        } else {
-            Log.d("browser.preloader", "Existing session in progress : " + this.mSession.mId + " returning null.");
-            return null;
         }
+        Log.d("browser.preloader", "Existing session in progress : " + this.mSession.mId + " returning null.");
+        return null;
     }
 
     private PreloaderSession takeSession(String str) {
@@ -67,9 +68,9 @@ public class Preloader {
         if (str3 != null) {
             tabControl.loadUrlIfChanged(str2, map);
             tabControl.setQuery(str3);
-            return;
+        } else {
+            tabControl.loadUrl(str2, map);
         }
-        tabControl.loadUrl(str2, map);
     }
 
     public void cancelSearchBoxPreload(String str) {
@@ -81,28 +82,26 @@ public class Preloader {
     }
 
     public void discardPreload(String str) {
-        PreloaderSession takeSession = takeSession(str);
-        if (takeSession != null) {
+        PreloaderSession preloaderSessionTakeSession = takeSession(str);
+        if (preloaderSessionTakeSession != null) {
             Log.d("browser.preloader", "Discard preload session " + str);
-            WebViewTimersControl.getInstance().onPrerenderDone(takeSession == null ? null : takeSession.getWebView());
-            takeSession.getTabControl().destroy();
+            WebViewTimersControl.getInstance().onPrerenderDone(preloaderSessionTakeSession == null ? null : preloaderSessionTakeSession.getWebView());
+            preloaderSessionTakeSession.getTabControl().destroy();
             return;
         }
         Log.d("browser.preloader", "Ignored discard request " + str);
     }
 
     public PreloadedTabControl getPreloadedTab(String str) {
-        PreloaderSession takeSession = takeSession(str);
-        Log.d("browser.preloader", "Showing preload session " + str + "=" + takeSession);
-        if (takeSession == null) {
+        PreloaderSession preloaderSessionTakeSession = takeSession(str);
+        Log.d("browser.preloader", "Showing preload session " + str + "=" + preloaderSessionTakeSession);
+        if (preloaderSessionTakeSession == null) {
             return null;
         }
-        return takeSession.getTabControl();
+        return preloaderSessionTakeSession.getTabControl();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PreloaderSession {
+    private class PreloaderSession {
         private final String mId;
         private final PreloadedTabControl mTabControl;
         private final Runnable mTimeoutTask = new Runnable() { // from class: com.android.browser.Preloader.PreloaderSession.1

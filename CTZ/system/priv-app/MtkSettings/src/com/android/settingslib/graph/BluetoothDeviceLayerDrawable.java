@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import com.android.settingslib.R;
 import com.android.settingslib.Utils;
+
 /* loaded from: classes.dex */
 public class BluetoothDeviceLayerDrawable extends LayerDrawable {
     private BluetoothDeviceLayerDrawableState mState;
@@ -16,7 +17,7 @@ public class BluetoothDeviceLayerDrawable extends LayerDrawable {
         super(drawableArr);
     }
 
-    public static BluetoothDeviceLayerDrawable createLayerDrawable(Context context, int i, int i2, float f) {
+    public static BluetoothDeviceLayerDrawable createLayerDrawable(Context context, int i, int i2, float f) throws Resources.NotFoundException {
         Drawable drawable = context.getDrawable(i);
         BatteryMeterDrawable batteryMeterDrawable = new BatteryMeterDrawable(context, context.getColor(R.color.meter_background_color), i2);
         int dimensionPixelSize = context.getResources().getDimensionPixelSize(R.dimen.bt_battery_padding);
@@ -38,9 +39,7 @@ public class BluetoothDeviceLayerDrawable extends LayerDrawable {
         return this.mState;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class BatteryMeterDrawable extends BatteryMeterDrawableBase {
+    static class BatteryMeterDrawable extends BatteryMeterDrawableBase {
         private final float mAspectRatio;
         int mFrameColor;
 
@@ -49,7 +48,7 @@ public class BluetoothDeviceLayerDrawable extends LayerDrawable {
             Resources resources = context.getResources();
             this.mButtonHeightFraction = resources.getFraction(R.fraction.bt_battery_button_height_fraction, 1, 1);
             this.mAspectRatio = resources.getFraction(R.fraction.bt_battery_ratio_fraction, 1, 1);
-            setColorFilter(new PorterDuffColorFilter(Utils.getColorAttr(context, 16843817), PorterDuff.Mode.SRC_IN));
+            setColorFilter(new PorterDuffColorFilter(Utils.getColorAttr(context, android.R.attr.colorControlNormal), PorterDuff.Mode.SRC_IN));
             setBatteryLevel(i2);
             this.mFrameColor = i;
         }
@@ -65,9 +64,7 @@ public class BluetoothDeviceLayerDrawable extends LayerDrawable {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class BluetoothDeviceLayerDrawableState extends Drawable.ConstantState {
+    private static class BluetoothDeviceLayerDrawableState extends Drawable.ConstantState {
         int batteryLevel;
         Context context;
         float iconScale;

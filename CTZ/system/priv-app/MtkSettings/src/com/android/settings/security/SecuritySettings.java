@@ -28,6 +28,7 @@ import com.mediatek.settings.security.PermissionControlPreferenceController;
 import com.mediatek.settings.security.PplPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SecuritySettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.security.SecuritySettings.1
@@ -57,9 +58,8 @@ public class SecuritySettings extends DashboardFragment {
         return 87;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.security_dashboard_settings;
     }
 
@@ -86,23 +86,19 @@ public class SecuritySettings extends DashboardFragment {
         super.onActivityResult(i, i2, intent);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void launchConfirmDeviceLockForUnification() {
+    void launchConfirmDeviceLockForUnification() {
         ((LockUnificationPreferenceController) use(LockUnificationPreferenceController.class)).launchConfirmDeviceLockForUnification();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void unifyUncompliantLocks() {
+    void unifyUncompliantLocks() {
         ((LockUnificationPreferenceController) use(LockUnificationPreferenceController.class)).unifyUncompliantLocks();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updateUnificationPreference() {
+    void updateUnificationPreference() {
         ((LockUnificationPreferenceController) use(LockUnificationPreferenceController.class)).updateState(null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, SecuritySettings securitySettings) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, SecuritySettings securitySettings) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new LocationPreferenceController(context, lifecycle));
         arrayList.add(new ManageDeviceAdminPreferenceController(context));
@@ -133,7 +129,6 @@ public class SecuritySettings extends DashboardFragment {
         return arrayList;
     }
 
-    /* loaded from: classes.dex */
     static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;

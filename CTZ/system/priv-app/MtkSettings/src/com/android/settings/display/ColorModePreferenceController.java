@@ -10,6 +10,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.app.ColorDisplayController;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class ColorModePreferenceController extends BasePreferenceController {
     private static final String KEY_COLOR_MODE = "color_mode";
@@ -52,26 +53,26 @@ public class ColorModePreferenceController extends BasePreferenceController {
     }
 
     @VisibleForTesting
-    /* loaded from: classes.dex */
     static class ConfigurationWrapper {
         private final IBinder mSurfaceFlinger = ServiceManager.getService("SurfaceFlinger");
 
         ConfigurationWrapper() {
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [92=4] */
         boolean isScreenWideColorGamut() {
             if (this.mSurfaceFlinger != null) {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
-                obtain.writeInterfaceToken("android.ui.ISurfaceComposer");
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
+                parcelObtain.writeInterfaceToken("android.ui.ISurfaceComposer");
                 try {
-                    this.mSurfaceFlinger.transact(ColorModePreferenceController.SURFACE_FLINGER_TRANSACTION_QUERY_WIDE_COLOR, obtain, obtain2, 0);
-                    return obtain2.readBoolean();
+                    this.mSurfaceFlinger.transact(ColorModePreferenceController.SURFACE_FLINGER_TRANSACTION_QUERY_WIDE_COLOR, parcelObtain, parcelObtain2, 0);
+                    return parcelObtain2.readBoolean();
                 } catch (RemoteException e) {
                     Log.e(ColorModePreferenceController.TAG, "Failed to query wide color support", e);
                 } finally {
-                    obtain.recycle();
-                    obtain2.recycle();
+                    parcelObtain.recycle();
+                    parcelObtain2.recycle();
                 }
             }
             return false;

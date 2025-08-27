@@ -5,6 +5,7 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class TransformingTouchDelegate extends TouchDelegate {
     private static final Rect sTempRect = new Rect();
@@ -42,7 +43,11 @@ public class TransformingTouchDelegate extends TouchDelegate {
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:10:0x0039  */
     @Override // android.view.TouchDelegate
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public boolean onTouchEvent(MotionEvent motionEvent) {
         boolean z = true;
         switch (motionEvent.getAction()) {
@@ -51,9 +56,10 @@ public class TransformingTouchDelegate extends TouchDelegate {
                 if (this.mDelegateTargeted) {
                     this.mWasTouchOutsideBounds = !this.mBounds.contains(motionEvent.getX(), motionEvent.getY());
                     break;
+                } else {
+                    z = false;
+                    break;
                 }
-                z = false;
-                break;
             case 1:
             case 3:
                 z = this.mDelegateTargeted;
@@ -62,22 +68,19 @@ public class TransformingTouchDelegate extends TouchDelegate {
             case 2:
                 z = this.mDelegateTargeted;
                 break;
-            default:
-                z = false;
-                break;
         }
-        if (z) {
-            float x = motionEvent.getX();
-            float y = motionEvent.getY();
-            if (this.mWasTouchOutsideBounds) {
-                motionEvent.setLocation(this.mBounds.centerX(), this.mBounds.centerY());
-            } else {
-                motionEvent.offsetLocation(-this.mBounds.left, -this.mBounds.top);
-            }
-            boolean dispatchTouchEvent = this.mDelegateView.dispatchTouchEvent(motionEvent);
-            motionEvent.setLocation(x, y);
-            return dispatchTouchEvent;
+        if (!z) {
+            return false;
         }
-        return false;
+        float x = motionEvent.getX();
+        float y = motionEvent.getY();
+        if (this.mWasTouchOutsideBounds) {
+            motionEvent.setLocation(this.mBounds.centerX(), this.mBounds.centerY());
+        } else {
+            motionEvent.offsetLocation(-this.mBounds.left, -this.mBounds.top);
+        }
+        boolean zDispatchTouchEvent = this.mDelegateView.dispatchTouchEvent(motionEvent);
+        motionEvent.setLocation(x, y);
+        return zDispatchTouchEvent;
     }
 }

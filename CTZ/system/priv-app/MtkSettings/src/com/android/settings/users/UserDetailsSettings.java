@@ -18,6 +18,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class UserDetailsSettings extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     private static final String TAG = UserDetailsSettings.class.getSimpleName();
@@ -99,11 +100,12 @@ public class UserDetailsSettings extends SettingsPreferenceFragment implements P
                 if (userInfo == null) {
                     dismissDialogAndFinish();
                     return;
-                } else if (!userInfo.isEnabled()) {
-                    showDeleteUserDialog();
-                    this.mHandler.postDelayed(this.mCheckDeleteComplete, 500L);
-                    return;
                 } else {
+                    if (!userInfo.isEnabled()) {
+                        showDeleteUserDialog();
+                        this.mHandler.postDelayed(this.mCheckDeleteComplete, 500L);
+                        return;
+                    }
                     return;
                 }
             }
@@ -147,17 +149,17 @@ public class UserDetailsSettings extends SettingsPreferenceFragment implements P
             this.mUserManager.setDefaultGuestRestrictions(this.mDefaultGuestRestrictions);
             for (UserInfo userInfo : this.mUserManager.getUsers(true)) {
                 if (userInfo.isGuest()) {
-                    UserHandle of = UserHandle.of(userInfo.id);
+                    UserHandle userHandleOf = UserHandle.of(userInfo.id);
                     for (String str : this.mDefaultGuestRestrictions.keySet()) {
-                        this.mUserManager.setUserRestriction(str, this.mDefaultGuestRestrictions.getBoolean(str), of);
+                        this.mUserManager.setUserRestriction(str, this.mDefaultGuestRestrictions.getBoolean(str), userHandleOf);
                     }
                 }
             }
             return;
         }
-        UserHandle of2 = UserHandle.of(this.mUserInfo.id);
-        this.mUserManager.setUserRestriction("no_outgoing_calls", !z, of2);
-        this.mUserManager.setUserRestriction("no_sms", !z, of2);
+        UserHandle userHandleOf2 = UserHandle.of(this.mUserInfo.id);
+        this.mUserManager.setUserRestriction("no_outgoing_calls", !z, userHandleOf2);
+        this.mUserManager.setUserRestriction("no_sms", !z, userHandleOf2);
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.DialogCreatable
@@ -229,8 +231,7 @@ public class UserDetailsSettings extends SettingsPreferenceFragment implements P
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dismissDialogAndFinish() {
+    private void dismissDialogAndFinish() {
         dismissDeleteUserDialog();
         finish();
     }

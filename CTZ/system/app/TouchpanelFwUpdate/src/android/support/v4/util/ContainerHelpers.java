@@ -1,4 +1,5 @@
 package android.support.v4.util;
+
 /* loaded from: classes.dex */
 class ContainerHelpers {
     static final int[] EMPTY_INTS = new int[0];
@@ -22,8 +23,7 @@ class ContainerHelpers {
         return a == b || (a != null && a.equals(b));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int binarySearch(int[] array, int size, int value) {
+    static int binarySearch(int[] array, int size, int value) {
         int lo = 0;
         int hi = size - 1;
         while (lo <= hi) {

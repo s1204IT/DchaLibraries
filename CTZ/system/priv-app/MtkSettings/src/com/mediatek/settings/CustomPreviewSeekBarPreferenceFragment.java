@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.view.ViewPager;
@@ -23,6 +24,7 @@ import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.widget.DotsPageIndicator;
 import com.android.settings.widget.LabeledSeekBar;
 import com.mediatek.settings.accessibility.CustomToggleFontSizePreferenceFragment;
+
 /* loaded from: classes.dex */
 public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPreferenceFragment {
     protected int mActivityLayoutResId;
@@ -74,7 +76,6 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
 
     protected abstract Configuration createConfig(Configuration configuration, int i);
 
-    /* loaded from: classes.dex */
     private class onPreviewSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
         private Context context;
         private boolean mSeekByTouch;
@@ -125,11 +126,10 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
                     if (CustomPreviewSeekBarPreferenceFragment.this.mDontShowAgain.isChecked()) {
                         str = "checked";
                     }
-                    SharedPreferences.Editor edit = onPreviewSeekBarChangeListener.this.context.getSharedPreferences("check_box_pref", 0).edit();
-                    edit.putString("skipMessage", str);
-                    edit.commit();
-                    float f2 = Settings.System.getFloat(onPreviewSeekBarChangeListener.this.context.getContentResolver(), "font_scale", 1.0f);
-                    CustomPreviewSeekBarPreferenceFragment.this.mOldProgress = CustomToggleFontSizePreferenceFragment.fontSizeValueToIndex(f2, onPreviewSeekBarChangeListener.this.getFontEntryValues());
+                    SharedPreferences.Editor editorEdit = onPreviewSeekBarChangeListener.this.context.getSharedPreferences("check_box_pref", 0).edit();
+                    editorEdit.putString("skipMessage", str);
+                    editorEdit.commit();
+                    CustomPreviewSeekBarPreferenceFragment.this.mOldProgress = CustomToggleFontSizePreferenceFragment.fontSizeValueToIndex(Settings.System.getFloat(onPreviewSeekBarChangeListener.this.context.getContentResolver(), "font_scale", 1.0f), onPreviewSeekBarChangeListener.this.getFontEntryValues());
                     Log.d("CustomPreviewSeekBarPreferenceFragment", "@M_onCancel mOldProgress: " + CustomPreviewSeekBarPreferenceFragment.this.mOldProgress);
                     seekBar.setProgress(CustomPreviewSeekBarPreferenceFragment.this.mOldProgress);
                     Intent intent = activity.getIntent();
@@ -145,12 +145,11 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
                     if (CustomPreviewSeekBarPreferenceFragment.this.mDontShowAgain.isChecked()) {
                         str = "checked";
                     }
-                    SharedPreferences.Editor edit = onPreviewSeekBarChangeListener.this.context.getSharedPreferences("check_box_pref", 0).edit();
-                    edit.putString("skipMessage", str);
-                    edit.commit();
+                    SharedPreferences.Editor editorEdit = onPreviewSeekBarChangeListener.this.context.getSharedPreferences("check_box_pref", 0).edit();
+                    editorEdit.putString("skipMessage", str);
+                    editorEdit.commit();
                     CustomPreviewSeekBarPreferenceFragment.this.commit();
-                    float f2 = Settings.System.getFloat(onPreviewSeekBarChangeListener.this.context.getContentResolver(), "font_scale", 1.0f);
-                    CustomPreviewSeekBarPreferenceFragment.this.mOldProgress = CustomToggleFontSizePreferenceFragment.fontSizeValueToIndex(f2, onPreviewSeekBarChangeListener.this.getFontEntryValues());
+                    CustomPreviewSeekBarPreferenceFragment.this.mOldProgress = CustomToggleFontSizePreferenceFragment.fontSizeValueToIndex(Settings.System.getFloat(onPreviewSeekBarChangeListener.this.context.getContentResolver(), "font_scale", 1.0f), onPreviewSeekBarChangeListener.this.getFontEntryValues());
                     Log.d("CustomPreviewSeekBarPreferenceFragment", "@M_onPositiveClick mOldProgress: " + CustomPreviewSeekBarPreferenceFragment.this.mOldProgress);
                     CustomPreviewSeekBarPreferenceFragment.this.setPreviewLayer(i, true);
                     if (!onPreviewSeekBarChangeListener.this.mSeekByTouch) {
@@ -166,11 +165,10 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
                     if (CustomPreviewSeekBarPreferenceFragment.this.mDontShowAgain.isChecked()) {
                         str = "checked";
                     }
-                    SharedPreferences.Editor edit = onPreviewSeekBarChangeListener.this.context.getSharedPreferences("check_box_pref", 0).edit();
-                    edit.putString("skipMessage", str);
-                    edit.commit();
-                    float f2 = Settings.System.getFloat(onPreviewSeekBarChangeListener.this.context.getContentResolver(), "font_scale", 1.0f);
-                    CustomPreviewSeekBarPreferenceFragment.this.mOldProgress = CustomToggleFontSizePreferenceFragment.fontSizeValueToIndex(f2, onPreviewSeekBarChangeListener.this.getFontEntryValues());
+                    SharedPreferences.Editor editorEdit = onPreviewSeekBarChangeListener.this.context.getSharedPreferences("check_box_pref", 0).edit();
+                    editorEdit.putString("skipMessage", str);
+                    editorEdit.commit();
+                    CustomPreviewSeekBarPreferenceFragment.this.mOldProgress = CustomToggleFontSizePreferenceFragment.fontSizeValueToIndex(Settings.System.getFloat(onPreviewSeekBarChangeListener.this.context.getContentResolver(), "font_scale", 1.0f), onPreviewSeekBarChangeListener.this.getFontEntryValues());
                     Log.d("CustomPreviewSeekBarPreferenceFragment", "@M_onNegativeClick mOldProgress: " + CustomPreviewSeekBarPreferenceFragment.this.mOldProgress);
                     seekBar.setProgress(CustomPreviewSeekBarPreferenceFragment.this.mOldProgress);
                     Intent intent = activity.getIntent();
@@ -180,9 +178,9 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
             });
             if (string.equals("checked") || CustomPreviewSeekBarPreferenceFragment.this.mOldProgress == i) {
                 CustomPreviewSeekBarPreferenceFragment.this.mResponse = true;
-                return;
+            } else {
+                CustomPreviewSeekBarPreferenceFragment.this.mDialog = builder.show();
             }
-            CustomPreviewSeekBarPreferenceFragment.this.mDialog = builder.show();
         }
 
         @Override // android.widget.SeekBar.OnSeekBarChangeListener
@@ -207,18 +205,18 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
-        ViewGroup viewGroup2 = (ViewGroup) onCreateView.findViewById(16908351);
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) throws Resources.NotFoundException {
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        ViewGroup viewGroup2 = (ViewGroup) viewOnCreateView.findViewById(android.R.id.list_container);
         viewGroup2.removeAllViews();
-        View inflate = layoutInflater.inflate(this.mActivityLayoutResId, viewGroup2, false);
-        viewGroup2.addView(inflate);
-        this.mLabel = (TextView) inflate.findViewById(R.id.current_label);
-        int max = Math.max(1, this.mEntries.length - 1);
-        this.mSeekBar = (LabeledSeekBar) inflate.findViewById(R.id.seek_bar);
+        View viewInflate = layoutInflater.inflate(this.mActivityLayoutResId, viewGroup2, false);
+        viewGroup2.addView(viewInflate);
+        this.mLabel = (TextView) viewInflate.findViewById(R.id.current_label);
+        int iMax = Math.max(1, this.mEntries.length - 1);
+        this.mSeekBar = (LabeledSeekBar) viewInflate.findViewById(R.id.seek_bar);
         this.mSeekBar.setLabels(this.mEntries);
-        this.mSeekBar.setMax(max);
-        this.mSmaller = inflate.findViewById(R.id.smaller);
+        this.mSeekBar.setMax(iMax);
+        this.mSmaller = viewInflate.findViewById(R.id.smaller);
         this.mSmaller.setOnClickListener(new View.OnClickListener() { // from class: com.mediatek.settings.CustomPreviewSeekBarPreferenceFragment.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
@@ -228,7 +226,7 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
                 }
             }
         });
-        this.mLarger = inflate.findViewById(R.id.larger);
+        this.mLarger = viewInflate.findViewById(R.id.larger);
         this.mLarger.setOnClickListener(new View.OnClickListener() { // from class: com.mediatek.settings.CustomPreviewSeekBarPreferenceFragment.2
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
@@ -248,12 +246,12 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
         for (int i = 0; i < this.mEntries.length; i++) {
             configurationArr[i] = createConfig(configuration, i);
         }
-        this.mPreviewPager = (ViewPager) inflate.findViewById(R.id.preview_pager);
+        this.mPreviewPager = (ViewPager) viewInflate.findViewById(R.id.preview_pager);
         this.mPreviewPagerAdapter = new PreviewPagerAdapter(context, z, this.mPreviewSampleResIds, configurationArr);
         this.mPreviewPager.setAdapter(this.mPreviewPagerAdapter);
         this.mPreviewPager.setCurrentItem(z ? this.mPreviewSampleResIds.length - 1 : 0);
         this.mPreviewPager.addOnPageChangeListener(this.mPreviewPageChangeListener);
-        this.mPageIndicator = (DotsPageIndicator) inflate.findViewById(R.id.page_indicator);
+        this.mPageIndicator = (DotsPageIndicator) viewInflate.findViewById(R.id.page_indicator);
         if (this.mPreviewSampleResIds.length > 1) {
             this.mPageIndicator.setViewPager(this.mPreviewPager);
             this.mPageIndicator.setVisibility(0);
@@ -262,7 +260,7 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
             this.mPageIndicator.setVisibility(8);
         }
         setPreviewLayer(this.mInitialIndex, false);
-        return onCreateView;
+        return viewOnCreateView;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
@@ -278,8 +276,7 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
         this.mSeekBar.setOnSeekBarChangeListener(null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setPreviewLayer(int i, boolean z) {
+    private void setPreviewLayer(int i, boolean z) {
         Log.d("CustomPreviewSeekBarPreferenceFragment", "setPreviewLayer mCurrentIndex: " + this.mCurrentIndex + "newIndex" + i);
         this.mLabel.setText(this.mEntries[i]);
         this.mSmaller.setEnabled(i > 0);
@@ -289,8 +286,7 @@ public abstract class CustomPreviewSeekBarPreferenceFragment extends SettingsPre
         this.mCurrentIndex = i;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setPagerIndicatorContentDescription(int i) {
+    private void setPagerIndicatorContentDescription(int i) {
         this.mPageIndicator.setContentDescription(getPrefContext().getString(R.string.preview_page_indicator_content_description, Integer.valueOf(i + 1), Integer.valueOf(this.mPreviewSampleResIds.length)));
     }
 }

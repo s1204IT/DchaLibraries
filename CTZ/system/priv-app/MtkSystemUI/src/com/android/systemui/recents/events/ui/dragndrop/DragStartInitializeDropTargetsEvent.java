@@ -4,6 +4,7 @@ import com.android.systemui.recents.events.EventBus;
 import com.android.systemui.recents.views.RecentsViewTouchHandler;
 import com.android.systemui.recents.views.TaskView;
 import com.android.systemui.shared.recents.model.Task;
+
 /* loaded from: classes.dex */
 public class DragStartInitializeDropTargetsEvent extends EventBus.Event {
     public final RecentsViewTouchHandler handler;

@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import java.io.File;
+
 /* loaded from: classes.dex */
 public class ManualDisplayActivity extends Activity {
     @Override // android.app.Activity
@@ -45,7 +46,7 @@ public class ManualDisplayActivity extends Activity {
     }
 
     private void showErrorAndFinish() {
-        Toast.makeText(this, (int) R.string.settings_manual_activity_unavailable, 1).show();
+        Toast.makeText(this, R.string.settings_manual_activity_unavailable, 1).show();
         finish();
     }
 }

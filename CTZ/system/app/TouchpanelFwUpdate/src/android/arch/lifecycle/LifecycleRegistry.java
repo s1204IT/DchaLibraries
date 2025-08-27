@@ -8,6 +8,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class LifecycleRegistry extends Lifecycle {
     private final WeakReference<LifecycleOwner> mLifecycleOwner;
@@ -153,7 +154,6 @@ public class LifecycleRegistry extends Lifecycle {
         }
     }
 
-    /* JADX WARN: Multi-variable type inference failed */
     private void forwardPass(LifecycleOwner lifecycleOwner) {
         SafeIterableMap<LifecycleObserver, ObserverWithState>.IteratorWithAdditions iteratorWithAdditions = this.mObserverMap.iteratorWithAdditions();
         while (iteratorWithAdditions.hasNext() && !this.mNewEventOccurred) {
@@ -204,9 +204,7 @@ public class LifecycleRegistry extends Lifecycle {
         return (state2 == null || state2.compareTo(state1) >= 0) ? state1 : state2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ObserverWithState {
+    static class ObserverWithState {
         GenericLifecycleObserver mLifecycleObserver;
         Lifecycle.State mState;
 

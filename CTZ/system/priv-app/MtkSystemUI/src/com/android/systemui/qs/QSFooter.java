@@ -1,6 +1,7 @@
 package com.android.systemui.qs;
 
 import android.view.View;
+
 /* loaded from: classes.dex */
 public interface QSFooter {
     int getHeight();

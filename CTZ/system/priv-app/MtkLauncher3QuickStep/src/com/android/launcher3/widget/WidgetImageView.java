@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
+
 /* loaded from: classes.dex */
 public class WidgetImageView extends View {
     private Drawable mBadge;
@@ -78,9 +79,9 @@ public class WidgetImageView extends View {
         }
         if (this.mBadge != null) {
             Rect bounds = this.mBadge.getBounds();
-            int boundToRange = Utilities.boundToRange((int) ((this.mDstRectF.right + this.mBadgeMargin) - bounds.width()), this.mBadgeMargin, getWidth() - bounds.width());
-            int boundToRange2 = Utilities.boundToRange((int) ((this.mDstRectF.bottom + this.mBadgeMargin) - bounds.height()), this.mBadgeMargin, getHeight() - bounds.height());
-            this.mBadge.setBounds(boundToRange, boundToRange2, bounds.width() + boundToRange, bounds.height() + boundToRange2);
+            int iBoundToRange = Utilities.boundToRange((int) ((this.mDstRectF.right + this.mBadgeMargin) - bounds.width()), this.mBadgeMargin, getWidth() - bounds.width());
+            int iBoundToRange2 = Utilities.boundToRange((int) ((this.mDstRectF.bottom + this.mBadgeMargin) - bounds.height()), this.mBadgeMargin, getHeight() - bounds.height());
+            this.mBadge.setBounds(iBoundToRange, iBoundToRange2, bounds.width() + iBoundToRange, bounds.height() + iBoundToRange2);
         }
     }
 

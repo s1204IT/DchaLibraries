@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/tts_engine_preference_title" android:key="tts_engine_picker_screen">
-    <PreferenceCategory android:key="tts_engine_preference_category"/>
-</PreferenceScreen>

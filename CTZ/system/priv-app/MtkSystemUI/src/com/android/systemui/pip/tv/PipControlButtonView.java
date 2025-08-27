@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class PipControlButtonView extends RelativeLayout {
     private Animator mButtonFocusGainAnimator;
@@ -55,10 +56,10 @@ public class PipControlButtonView extends RelativeLayout {
         this.mIconImageView = (ImageView) findViewById(R.id.icon);
         this.mButtonImageView = (ImageView) findViewById(R.id.button);
         this.mDescriptionTextView = (TextView) findViewById(R.id.desc);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, new int[]{16843033, 16843087}, i, i2);
-        setImageResource(obtainStyledAttributes.getResourceId(0, 0));
-        setText(obtainStyledAttributes.getResourceId(1, 0));
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, new int[]{android.R.attr.src, android.R.attr.text}, i, i2);
+        setImageResource(typedArrayObtainStyledAttributes.getResourceId(0, 0));
+        setText(typedArrayObtainStyledAttributes.getResourceId(1, 0));
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     @Override // android.view.View

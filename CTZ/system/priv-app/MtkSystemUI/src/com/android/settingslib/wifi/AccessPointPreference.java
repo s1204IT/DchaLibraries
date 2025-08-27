@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.settingslib.R;
+
 /* loaded from: classes.dex */
 public class AccessPointPreference extends Preference {
     private AccessPoint mAccessPoint;
@@ -32,7 +33,6 @@ public class AccessPointPreference extends Preference {
     private static final int[] FRICTION_ATTRS = {R.attr.wifi_friction};
     private static final int[] WIFI_CONNECTION_STRENGTH = {R.string.accessibility_no_wifi, R.string.accessibility_wifi_one_bar, R.string.accessibility_wifi_two_bars, R.string.accessibility_wifi_three_bars, R.string.accessibility_wifi_signal_full};
 
-    /* loaded from: classes.dex */
     public static class UserBadgeCache {
     }
 
@@ -89,7 +89,7 @@ public class AccessPointPreference extends Preference {
         if (icon != null) {
             icon.setLevel(this.mLevel);
         }
-        this.mTitleView = (TextView) preferenceViewHolder.findViewById(16908310);
+        this.mTitleView = (TextView) preferenceViewHolder.findViewById(android.R.id.title);
         if (this.mTitleView != null) {
             this.mTitleView.setCompoundDrawablesRelativeWithIntrinsicBounds((Drawable) null, (Drawable) null, this.mBadge, (Drawable) null);
             this.mTitleView.setCompoundDrawablePadding(this.mBadgePadding);
@@ -115,9 +115,8 @@ public class AccessPointPreference extends Preference {
         imageView.setImageDrawable(this.mFrictionSld.getCurrent());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void notifyChanged() {
+    protected void notifyChanged() {
         if (Looper.getMainLooper() != Looper.myLooper()) {
             postNotifyChanged();
         } else {
@@ -162,7 +161,6 @@ public class AccessPointPreference extends Preference {
         }
     }
 
-    /* loaded from: classes.dex */
     static class IconInjector {
         private final Context mContext;
 

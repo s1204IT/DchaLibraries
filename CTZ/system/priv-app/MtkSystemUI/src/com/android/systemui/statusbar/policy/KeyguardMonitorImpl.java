@@ -8,6 +8,7 @@ import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class KeyguardMonitorImpl extends KeyguardUpdateMonitorCallback implements KeyguardMonitor {
     private final CopyOnWriteArrayList<KeyguardMonitor.Callback> mCallbacks = new CopyOnWriteArrayList<>();
@@ -37,6 +38,7 @@ public class KeyguardMonitorImpl extends KeyguardUpdateMonitorCallback implement
         };
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(KeyguardMonitor.Callback callback) {
         this.mCallbacks.add(callback);
@@ -49,6 +51,7 @@ public class KeyguardMonitorImpl extends KeyguardUpdateMonitorCallback implement
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(KeyguardMonitor.Callback callback) {
         if (this.mCallbacks.remove(callback) && this.mCallbacks.size() == 0 && this.mListening) {
@@ -98,8 +101,7 @@ public class KeyguardMonitorImpl extends KeyguardUpdateMonitorCallback implement
         return this.mKeyguardUpdateMonitor.isDeviceInteractive();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateCanSkipBouncerState() {
+    private void updateCanSkipBouncerState() {
         this.mCanSkipBouncer = this.mKeyguardUpdateMonitor.getUserCanSkipBouncer(this.mCurrentUser);
     }
 

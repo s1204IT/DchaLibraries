@@ -8,6 +8,7 @@ import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class ZenModeAutomaticRulesPreferenceController extends AbstractZenModeAutomaticRulePreferenceController {
     protected PreferenceCategory mPreferenceCategory;

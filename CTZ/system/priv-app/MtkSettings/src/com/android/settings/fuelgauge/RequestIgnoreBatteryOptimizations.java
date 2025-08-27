@@ -13,12 +13,13 @@ import android.util.Log;
 import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class RequestIgnoreBatteryOptimizations extends AlertActivity implements DialogInterface.OnClickListener {
     IDeviceIdleController mDeviceIdleService;
     String mPackageName;
 
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
         super.onCreate(bundle);
         this.mDeviceIdleService = IDeviceIdleController.Stub.asInterface(ServiceManager.getService("deviceidle"));
         Uri data = getIntent().getData();
@@ -31,29 +32,31 @@ public class RequestIgnoreBatteryOptimizations extends AlertActivity implements 
         if (this.mPackageName == null) {
             Log.w("RequestIgnoreBatteryOptimizations", "No data supplied for IGNORE_BATTERY_OPTIMIZATION_SETTINGS in: " + getIntent());
             finish();
-        } else if (((PowerManager) getSystemService(PowerManager.class)).isIgnoringBatteryOptimizations(this.mPackageName)) {
+            return;
+        }
+        if (((PowerManager) getSystemService(PowerManager.class)).isIgnoringBatteryOptimizations(this.mPackageName)) {
             Log.i("RequestIgnoreBatteryOptimizations", "Not should prompt, already ignoring optimizations: " + this.mPackageName);
             finish();
-        } else {
-            try {
-                ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(this.mPackageName, 0);
-                if (getPackageManager().checkPermission("android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS", this.mPackageName) != 0) {
-                    Log.w("RequestIgnoreBatteryOptimizations", "Requested package " + this.mPackageName + " does not hold permission android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS");
-                    finish();
-                    return;
-                }
-                AlertController.AlertParams alertParams = this.mAlertParams;
-                alertParams.mTitle = getText(R.string.high_power_prompt_title);
-                alertParams.mMessage = getString(R.string.high_power_prompt_body, new Object[]{applicationInfo.loadLabel(getPackageManager())});
-                alertParams.mPositiveButtonText = getText(R.string.allow);
-                alertParams.mNegativeButtonText = getText(R.string.deny);
-                alertParams.mPositiveButtonListener = this;
-                alertParams.mNegativeButtonListener = this;
-                setupAlert();
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.w("RequestIgnoreBatteryOptimizations", "Requested package doesn't exist: " + this.mPackageName);
+            return;
+        }
+        try {
+            ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(this.mPackageName, 0);
+            if (getPackageManager().checkPermission("android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS", this.mPackageName) != 0) {
+                Log.w("RequestIgnoreBatteryOptimizations", "Requested package " + this.mPackageName + " does not hold permission android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS");
                 finish();
+                return;
             }
+            AlertController.AlertParams alertParams = this.mAlertParams;
+            alertParams.mTitle = getText(R.string.high_power_prompt_title);
+            alertParams.mMessage = getString(R.string.high_power_prompt_body, new Object[]{applicationInfo.loadLabel(getPackageManager())});
+            alertParams.mPositiveButtonText = getText(R.string.allow);
+            alertParams.mNegativeButtonText = getText(R.string.deny);
+            alertParams.mPositiveButtonListener = this;
+            alertParams.mNegativeButtonListener = this;
+            setupAlert();
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.w("RequestIgnoreBatteryOptimizations", "Requested package doesn't exist: " + this.mPackageName);
+            finish();
         }
     }
 

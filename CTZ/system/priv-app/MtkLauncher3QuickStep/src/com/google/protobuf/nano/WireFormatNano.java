@@ -1,6 +1,7 @@
 package com.google.protobuf.nano;
 
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public final class WireFormatNano {
     static final int TAG_TYPE_BITS = 3;
@@ -17,14 +18,13 @@ public final class WireFormatNano {
     public static final double[] EMPTY_DOUBLE_ARRAY = new double[0];
     public static final boolean[] EMPTY_BOOLEAN_ARRAY = new boolean[0];
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
-    public static final byte[][] EMPTY_BYTES_ARRAY = new byte[0];
+    public static final byte[][] EMPTY_BYTES_ARRAY = new byte[0][];
     public static final byte[] EMPTY_BYTES = new byte[0];
 
     private WireFormatNano() {
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int getTagWireType(int i) {
+    static int getTagWireType(int i) {
         return i & 7;
     }
 
@@ -32,8 +32,7 @@ public final class WireFormatNano {
         return i >>> 3;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int makeTag(int i, int i2) {
+    static int makeTag(int i, int i2) {
         return (i << 3) | i2;
     }
 

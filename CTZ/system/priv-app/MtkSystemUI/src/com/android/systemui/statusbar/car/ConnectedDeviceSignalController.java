@@ -13,6 +13,7 @@ import com.android.settingslib.graph.SignalDrawable;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.StatusBar;
 import com.android.systemui.statusbar.policy.BluetoothController;
+
 /* loaded from: classes.dex */
 public class ConnectedDeviceSignalController extends BroadcastReceiver implements BluetoothController.Callback {
     private static final int[] SIGNAL_STRENGTH_ICONS = {0, 0, 1, 2, 3, 4};
@@ -50,8 +51,7 @@ public class ConnectedDeviceSignalController extends BroadcastReceiver implement
         } else if ("android.bluetooth.headsetclient.profile.action.CONNECTION_STATE_CHANGED".equals(action)) {
             int intExtra = intent.getIntExtra("android.bluetooth.profile.extra.STATE", -1);
             if (StatusBar.DEBUG) {
-                int intExtra2 = intent.getIntExtra("android.bluetooth.profile.extra.PREVIOUS_STATE", -1);
-                Log.d("DeviceSignalCtlr", "ACTION_CONNECTION_STATE_CHANGED event: " + intExtra2 + " -> " + intExtra);
+                Log.d("DeviceSignalCtlr", "ACTION_CONNECTION_STATE_CHANGED event: " + intent.getIntExtra("android.bluetooth.profile.extra.PREVIOUS_STATE", -1) + " -> " + intExtra);
             }
             updateViewVisibility((BluetoothDevice) intent.getExtra("android.bluetooth.device.extra.DEVICE"), intExtra);
         }
@@ -98,8 +98,11 @@ public class ConnectedDeviceSignalController extends BroadcastReceiver implement
                     Log.d("DeviceSignalCtlr", "EXTRA_NETWORK_SIGNAL_STRENGTH: " + i2);
                 }
                 setNetworkSignalIcon(SIGNAL_STRENGTH_ICONS[i2]);
+                return;
             }
-        } else if (i == 0) {
+            return;
+        }
+        if (i == 0) {
             if (StatusBar.DEBUG) {
                 Log.d("DeviceSignalCtlr", "Device disconnected");
             }

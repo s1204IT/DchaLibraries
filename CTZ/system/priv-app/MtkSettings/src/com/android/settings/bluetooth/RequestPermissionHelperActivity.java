@@ -11,6 +11,7 @@ import com.android.internal.app.AlertController;
 import com.android.settings.R;
 import com.android.settingslib.bluetooth.LocalBluetoothAdapter;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
+
 /* loaded from: classes.dex */
 public class RequestPermissionHelperActivity extends AlertActivity implements DialogInterface.OnClickListener {
     private CharSequence mAppLabel;
@@ -82,25 +83,25 @@ public class RequestPermissionHelperActivity extends AlertActivity implements Di
             case 1:
             case 2:
                 if (((UserManager) getSystemService(UserManager.class)).hasUserRestriction("no_bluetooth")) {
-                    Intent createAdminSupportIntent = ((DevicePolicyManager) getSystemService(DevicePolicyManager.class)).createAdminSupportIntent("no_bluetooth");
-                    if (createAdminSupportIntent != null) {
-                        startActivity(createAdminSupportIntent);
-                        return;
+                    Intent intentCreateAdminSupportIntent = ((DevicePolicyManager) getSystemService(DevicePolicyManager.class)).createAdminSupportIntent("no_bluetooth");
+                    if (intentCreateAdminSupportIntent != null) {
+                        startActivity(intentCreateAdminSupportIntent);
+                        break;
                     }
-                    return;
+                } else {
+                    this.mLocalAdapter.enable();
+                    setResult(-1);
+                    break;
                 }
-                this.mLocalAdapter.enable();
-                setResult(-1);
-                return;
+                break;
             case 3:
                 this.mLocalAdapter.disable();
                 setResult(-1);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r5v0, resolved type: com.android.settings.bluetooth.RequestPermissionHelperActivity */
     /* JADX WARN: Multi-variable type inference failed */
     private boolean parseIntent() {
         Intent intent = getIntent();
@@ -111,11 +112,12 @@ public class RequestPermissionHelperActivity extends AlertActivity implements Di
         if ("com.android.settings.bluetooth.ACTION_INTERNAL_REQUEST_BT_ON".equals(action)) {
             this.mRequest = 1;
             if (intent.hasExtra("android.bluetooth.adapter.extra.DISCOVERABLE_DURATION")) {
-                this.mTimeout = intent.getIntExtra("android.bluetooth.adapter.extra.DISCOVERABLE_DURATION", android.support.v7.appcompat.R.styleable.AppCompatTheme_windowNoTitle);
+                this.mTimeout = intent.getIntExtra("android.bluetooth.adapter.extra.DISCOVERABLE_DURATION", 120);
             }
-        } else if (!"com.android.settings.bluetooth.ACTION_INTERNAL_REQUEST_BT_OFF".equals(action)) {
-            return false;
         } else {
+            if (!"com.android.settings.bluetooth.ACTION_INTERNAL_REQUEST_BT_OFF".equals(action)) {
+                return false;
+            }
             this.mRequest = 3;
         }
         LocalBluetoothManager localBtManager = Utils.getLocalBtManager(this);

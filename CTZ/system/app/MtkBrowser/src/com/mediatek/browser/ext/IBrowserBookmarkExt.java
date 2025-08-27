@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public interface IBrowserBookmarkExt {
     int addDefaultBookmarksForCustomer(SQLiteDatabase sQLiteDatabase);

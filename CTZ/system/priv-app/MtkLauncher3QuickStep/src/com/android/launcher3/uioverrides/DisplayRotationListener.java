@@ -3,6 +3,7 @@ package com.android.launcher3.uioverrides;
 import android.content.Context;
 import android.os.Handler;
 import com.android.systemui.shared.system.RotationWatcher;
+
 /* loaded from: classes.dex */
 public class DisplayRotationListener extends RotationWatcher {
     private final Runnable mCallback;

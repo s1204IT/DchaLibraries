@@ -3,6 +3,7 @@ package com.google.protobuf.nano;
 import com.google.protobuf.nano.ExtendableMessageNano;
 import java.io.IOException;
 import java.lang.reflect.Array;
+
 /* loaded from: classes.dex */
 public class Extension<M extends ExtendableMessageNano<M>, T> {
     protected final Class<T> clazz;
@@ -10,8 +11,7 @@ public class Extension<M extends ExtendableMessageNano<M>, T> {
     public final int tag;
     protected final int type;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void writeTo(Object obj, CodedOutputByteBufferNano codedOutputByteBufferNano) throws IOException {
+    void writeTo(Object obj, CodedOutputByteBufferNano codedOutputByteBufferNano) throws IOException, ArrayIndexOutOfBoundsException, IllegalArgumentException {
         if (this.repeated) {
             writeRepeatedData(obj, codedOutputByteBufferNano);
         } else {
@@ -39,7 +39,7 @@ public class Extension<M extends ExtendableMessageNano<M>, T> {
         }
     }
 
-    protected void writeRepeatedData(Object obj, CodedOutputByteBufferNano codedOutputByteBufferNano) {
+    protected void writeRepeatedData(Object obj, CodedOutputByteBufferNano codedOutputByteBufferNano) throws ArrayIndexOutOfBoundsException, IllegalArgumentException {
         int length = Array.getLength(obj);
         for (int i = 0; i < length; i++) {
             Object obj2 = Array.get(obj, i);
@@ -49,8 +49,7 @@ public class Extension<M extends ExtendableMessageNano<M>, T> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int computeSerializedSize(Object obj) {
+    int computeSerializedSize(Object obj) {
         if (this.repeated) {
             return computeRepeatedSerializedSize(obj);
         }
@@ -59,13 +58,13 @@ public class Extension<M extends ExtendableMessageNano<M>, T> {
 
     protected int computeRepeatedSerializedSize(Object obj) {
         int length = Array.getLength(obj);
-        int i = 0;
-        for (int i2 = 0; i2 < length; i2++) {
-            if (Array.get(obj, i2) != null) {
-                i += computeSingularSerializedSize(Array.get(obj, i2));
+        int iComputeSingularSerializedSize = 0;
+        for (int i = 0; i < length; i++) {
+            if (Array.get(obj, i) != null) {
+                iComputeSingularSerializedSize += computeSingularSerializedSize(Array.get(obj, i));
             }
         }
-        return i;
+        return iComputeSingularSerializedSize;
     }
 
     protected int computeSingularSerializedSize(Object obj) {

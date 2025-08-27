@@ -14,6 +14,7 @@ import com.android.settings.R;
 import com.android.settings.SettingsActivity;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.widget.SwitchBar;
+
 /* loaded from: classes.dex */
 public class SpellCheckersSettings extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, SwitchBar.OnSwitchChangeListener {
     private static final String TAG = SpellCheckersSettings.class.getSimpleName();
@@ -76,30 +77,29 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         updatePreferenceScreen();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreferenceScreen() {
-        SpellCheckerSubtype spellCheckerSubtype;
+    private void updatePreferenceScreen() {
+        SpellCheckerSubtype currentSpellCheckerSubtype;
         this.mCurrentSci = this.mTsm.getCurrentSpellChecker();
-        boolean isSpellCheckerEnabled = this.mTsm.isSpellCheckerEnabled();
-        this.mSwitchBar.setChecked(isSpellCheckerEnabled);
+        boolean zIsSpellCheckerEnabled = this.mTsm.isSpellCheckerEnabled();
+        this.mSwitchBar.setChecked(zIsSpellCheckerEnabled);
         boolean z = false;
         if (this.mCurrentSci != null) {
-            spellCheckerSubtype = this.mTsm.getCurrentSpellCheckerSubtype(false);
+            currentSpellCheckerSubtype = this.mTsm.getCurrentSpellCheckerSubtype(false);
         } else {
-            spellCheckerSubtype = null;
+            currentSpellCheckerSubtype = null;
         }
-        this.mSpellCheckerLanaguagePref.setSummary(getSpellCheckerSubtypeLabel(this.mCurrentSci, spellCheckerSubtype));
+        this.mSpellCheckerLanaguagePref.setSummary(getSpellCheckerSubtypeLabel(this.mCurrentSci, currentSpellCheckerSubtype));
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         int preferenceCount = preferenceScreen.getPreferenceCount();
         for (int i = 0; i < preferenceCount; i++) {
             Preference preference = preferenceScreen.getPreference(i);
-            preference.setEnabled(isSpellCheckerEnabled);
+            preference.setEnabled(zIsSpellCheckerEnabled);
             if (preference instanceof SpellCheckerPreference) {
                 ((SpellCheckerPreference) preference).setSelected(this.mCurrentSci);
             }
         }
         Preference preference2 = this.mSpellCheckerLanaguagePref;
-        if (isSpellCheckerEnabled && this.mCurrentSci != null) {
+        if (zIsSpellCheckerEnabled && this.mCurrentSci != null) {
             z = true;
         }
         preference2.setEnabled(z);
@@ -139,8 +139,7 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         return i + 1;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static int convertDialogItemIdToSubtypeIndex(int i) {
+    private static int convertDialogItemIdToSubtypeIndex(int i) {
         return i - 1;
     }
 
@@ -161,22 +160,22 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         int i = 0;
         for (int i2 = 0; i2 < subtypeCount; i2++) {
             SpellCheckerSubtype subtypeAt = currentSpellChecker.getSubtypeAt(i2);
-            int convertSubtypeIndexToDialogItemId = convertSubtypeIndexToDialogItemId(i2);
-            charSequenceArr[convertSubtypeIndexToDialogItemId] = getSpellCheckerSubtypeLabel(currentSpellChecker, subtypeAt);
+            int iConvertSubtypeIndexToDialogItemId = convertSubtypeIndexToDialogItemId(i2);
+            charSequenceArr[iConvertSubtypeIndexToDialogItemId] = getSpellCheckerSubtypeLabel(currentSpellChecker, subtypeAt);
             if (subtypeAt.equals(currentSpellCheckerSubtype)) {
-                i = convertSubtypeIndexToDialogItemId;
+                i = iConvertSubtypeIndexToDialogItemId;
             }
         }
         builder.setSingleChoiceItems(charSequenceArr, i, new DialogInterface.OnClickListener() { // from class: com.android.settings.inputmethod.SpellCheckersSettings.1
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i3) {
-                int hashCode;
+                int iHashCode;
                 if (i3 != 0) {
-                    hashCode = currentSpellChecker.getSubtypeAt(SpellCheckersSettings.convertDialogItemIdToSubtypeIndex(i3)).hashCode();
+                    iHashCode = currentSpellChecker.getSubtypeAt(SpellCheckersSettings.convertDialogItemIdToSubtypeIndex(i3)).hashCode();
                 } else {
-                    hashCode = 0;
+                    iHashCode = 0;
                 }
-                Settings.Secure.putInt(SpellCheckersSettings.this.getContentResolver(), "selected_spell_checker_subtype", hashCode);
+                Settings.Secure.putInt(SpellCheckersSettings.this.getContentResolver(), "selected_spell_checker_subtype", iHashCode);
                 dialogInterface.dismiss();
                 SpellCheckersSettings.this.updatePreferenceScreen();
             }
@@ -190,16 +189,16 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
             this.mDialog.dismiss();
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(17039380);
+        builder.setTitle(android.R.string.dialog_alert_title);
         builder.setMessage(getString(R.string.spellchecker_security_warning, new Object[]{spellCheckerInfo.loadLabel(getPackageManager())}));
         builder.setCancelable(true);
-        builder.setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settings.inputmethod.SpellCheckersSettings.2
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.inputmethod.SpellCheckersSettings.2
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 SpellCheckersSettings.this.changeCurrentSpellChecker(spellCheckerInfo);
             }
         });
-        builder.setNegativeButton(17039360, new DialogInterface.OnClickListener() { // from class: com.android.settings.inputmethod.SpellCheckersSettings.3
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.settings.inputmethod.SpellCheckersSettings.3
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
             }
@@ -208,8 +207,7 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         this.mDialog.show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void changeCurrentSpellChecker(SpellCheckerInfo spellCheckerInfo) {
+    private void changeCurrentSpellChecker(SpellCheckerInfo spellCheckerInfo) {
         Settings.Secure.putString(getContentResolver(), "selected_spell_checker", spellCheckerInfo.getId());
         Settings.Secure.putInt(getContentResolver(), "selected_spell_checker_subtype", 0);
         updatePreferenceScreen();

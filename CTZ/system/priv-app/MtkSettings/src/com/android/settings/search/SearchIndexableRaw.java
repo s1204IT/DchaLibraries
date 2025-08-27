@@ -2,6 +2,7 @@ package com.android.settings.search;
 
 import android.content.Context;
 import android.provider.SearchIndexableData;
+
 /* loaded from: classes.dex */
 public class SearchIndexableRaw extends SearchIndexableData {
     public String entries;

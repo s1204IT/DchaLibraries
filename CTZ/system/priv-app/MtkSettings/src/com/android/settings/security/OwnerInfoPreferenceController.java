@@ -15,6 +15,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class OwnerInfoPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnResume {
     private static final int MY_USER_ID = UserHandle.myUserId();
@@ -22,7 +23,6 @@ public class OwnerInfoPreferenceController extends AbstractPreferenceController 
     private RestrictedPreference mOwnerInfoPref;
     private final Fragment mParent;
 
-    /* loaded from: classes.dex */
     public interface OwnerInfoCallback {
         void onOwnerInfoUpdated();
     }

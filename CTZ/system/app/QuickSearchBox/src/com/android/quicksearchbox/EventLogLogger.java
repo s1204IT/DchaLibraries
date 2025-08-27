@@ -2,6 +2,7 @@ package com.android.quicksearchbox;
 
 import android.content.Context;
 import java.util.Random;
+
 /* loaded from: classes.dex */
 public class EventLogLogger implements Logger {
     private final Config mConfig;

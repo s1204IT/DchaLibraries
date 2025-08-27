@@ -8,6 +8,7 @@ import android.widget.Switch;
 import com.android.settings.R;
 import com.android.settings.widget.MasterSwitchPreference;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class NotificationAppPreference extends MasterSwitchPreference {
     private boolean mChecked;
@@ -42,9 +43,9 @@ public class NotificationAppPreference extends MasterSwitchPreference {
     @Override // com.android.settings.widget.MasterSwitchPreference, com.android.settingslib.TwoTargetPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(16908312);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.notification.NotificationAppPreference.1
+        View viewFindViewById = preferenceViewHolder.findViewById(android.R.id.widget_frame);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.notification.NotificationAppPreference.1
                 @Override // android.view.View.OnClickListener
                 public void onClick(View view) {
                     if (NotificationAppPreference.this.mSwitch == null || NotificationAppPreference.this.mSwitch.isEnabled()) {

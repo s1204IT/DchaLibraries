@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.KeyEvent;
 import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
+
 /* loaded from: classes.dex */
 public interface ISmsDialogExt {
     void buildMessage(AlertController.AlertParams alertParams, String str, Intent intent, String str2, String str3);

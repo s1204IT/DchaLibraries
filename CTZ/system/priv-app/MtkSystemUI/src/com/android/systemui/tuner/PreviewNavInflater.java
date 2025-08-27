@@ -5,15 +5,15 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import com.android.systemui.Dependency;
 import com.android.systemui.statusbar.phone.NavigationBarInflaterView;
+
 /* loaded from: classes.dex */
 public class PreviewNavInflater extends NavigationBarInflaterView {
     public PreviewNavInflater(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.phone.NavigationBarInflaterView, android.view.ViewGroup, android.view.View
-    public void onAttachedToWindow() {
+    protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         ((TunerService) Dependency.get(TunerService.class)).removeTunable(this);
     }
@@ -24,7 +24,7 @@ public class PreviewNavInflater extends NavigationBarInflaterView {
     }
 
     @Override // com.android.systemui.statusbar.phone.NavigationBarInflaterView, com.android.systemui.tuner.TunerService.Tunable
-    public void onTuningChanged(String str, String str2) {
+    public void onTuningChanged(String str, String str2) throws NumberFormatException {
         if ("sysui_nav_bar".equals(str)) {
             if (isValidLayout(str2)) {
                 super.onTuningChanged(str, str2);

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 class Util {
     private static final SimpleDateFormat HMMAA = new SimpleDateFormat("h:mm aa", Locale.US);

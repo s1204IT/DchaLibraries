@@ -3,6 +3,7 @@ package com.android.systemui.plugins.annotations;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 @Repeatable(Requirements.class)
 @Retention(RetentionPolicy.RUNTIME)
 /* loaded from: classes.dex */

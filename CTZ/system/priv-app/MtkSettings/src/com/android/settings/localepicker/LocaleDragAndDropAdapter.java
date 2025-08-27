@@ -20,11 +20,12 @@ import com.android.settings.R;
 import com.android.settings.shortcut.CreateShortcut;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHolder> {
+class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHolder> {
     private final Context mContext;
     private final List<LocaleStore.LocaleInfo> mFeedItemList;
     private final ItemTouchHelper mItemTouchHelper;
@@ -35,9 +36,7 @@ public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHol
     private LocaleList mLocalesToSetNext = null;
     private LocaleList mLocalesSetLast = null;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener {
+    class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener {
         private final LocaleDragCell mLocaleDragCell;
 
         public CustomViewHolder(LocaleDragCell localeDragCell) {
@@ -63,7 +62,7 @@ public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHol
     public LocaleDragAndDropAdapter(Context context, List<LocaleStore.LocaleInfo> list) {
         this.mFeedItemList = list;
         this.mContext = context;
-        final float applyDimension = TypedValue.applyDimension(1, 8.0f, context.getResources().getDisplayMetrics());
+        final float fApplyDimension = TypedValue.applyDimension(1, 8.0f, context.getResources().getDisplayMetrics());
         this.mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(3, 0) { // from class: com.android.settings.localepicker.LocaleDragAndDropAdapter.1
             private int mSelectionStatus = -1;
 
@@ -81,7 +80,7 @@ public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHol
             public void onChildDraw(Canvas canvas, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float f, float f2, int i, boolean z) {
                 super.onChildDraw(canvas, recyclerView, viewHolder, f, f2, i, z);
                 if (this.mSelectionStatus != -1) {
-                    viewHolder.itemView.setElevation(this.mSelectionStatus == 1 ? applyDimension : 0.0f);
+                    viewHolder.itemView.setElevation(this.mSelectionStatus == 1 ? fApplyDimension : 0.0f);
                     this.mSelectionStatus = -1;
                 }
             }
@@ -103,31 +102,29 @@ public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHol
         this.mItemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new CustomViewHolder((LocaleDragCell) LayoutInflater.from(this.mContext).inflate(R.layout.locale_drag_cell, viewGroup, false));
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
         LocaleStore.LocaleInfo localeInfo = this.mFeedItemList.get(i);
         final LocaleDragCell localeDragCell = customViewHolder.getLocaleDragCell();
         localeDragCell.setLabelAndDescription(localeInfo.getFullNameNative(), localeInfo.getFullNameInUiLanguage());
         localeDragCell.setLocalized(localeInfo.isTranslated());
-        boolean z = true;
         localeDragCell.setMiniLabel(this.mNumberFormatter.format(i + 1));
         localeDragCell.setShowCheckbox(this.mRemoveMode);
         localeDragCell.setShowMiniLabel(!this.mRemoveMode);
-        if (this.mRemoveMode || !this.mDragEnabled) {
-            z = false;
-        }
-        localeDragCell.setShowHandle(z);
+        localeDragCell.setShowHandle(!this.mRemoveMode && this.mDragEnabled);
         localeDragCell.setChecked(this.mRemoveMode ? localeInfo.getChecked() : false);
         localeDragCell.setTag(localeInfo);
         localeDragCell.getCheckbox().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() { // from class: com.android.settings.localepicker.LocaleDragAndDropAdapter.2
             @Override // android.widget.CompoundButton.OnCheckedChangeListener
-            public void onCheckedChanged(CompoundButton compoundButton, boolean z2) {
-                ((LocaleStore.LocaleInfo) localeDragCell.getTag()).setChecked(z2);
+            public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
+                ((LocaleStore.LocaleInfo) localeDragCell.getTag()).setChecked(z);
             }
         });
     }
@@ -143,11 +140,11 @@ public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHol
         return size;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onItemMove(int i, int i2) {
+    void onItemMove(int i, int i2) {
         if (i >= 0 && i2 >= 0) {
+            LocaleStore.LocaleInfo localeInfo = this.mFeedItemList.get(i);
             this.mFeedItemList.remove(i);
-            this.mFeedItemList.add(i2, this.mFeedItemList.get(i));
+            this.mFeedItemList.add(i2, localeInfo);
         } else {
             Log.e("LocaleDragAndDropAdapter", String.format(Locale.US, "Negative position in onItemMove %d -> %d", Integer.valueOf(i), Integer.valueOf(i2)));
         }
@@ -156,8 +153,7 @@ public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHol
         notifyItemMoved(i, i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setRemoveMode(boolean z) {
+    void setRemoveMode(boolean z) {
         this.mRemoveMode = z;
         int size = this.mFeedItemList.size();
         for (int i = 0; i < size; i++) {
@@ -166,13 +162,11 @@ public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHol
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isRemoveMode() {
+    boolean isRemoveMode() {
         return this.mRemoveMode;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void removeItem(int i) {
+    void removeItem(int i) {
         int size = this.mFeedItemList.size();
         if (size <= 1 || i < 0 || i >= size) {
             return;
@@ -181,8 +175,7 @@ public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHol
         notifyDataSetChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void removeChecked() {
+    void removeChecked() {
         for (int size = this.mFeedItemList.size() - 1; size >= 0; size--) {
             if (this.mFeedItemList.get(size).getChecked()) {
                 this.mFeedItemList.remove(size);
@@ -192,19 +185,18 @@ public class LocaleDragAndDropAdapter extends RecyclerView.Adapter<CustomViewHol
         doTheUpdate();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getCheckedCount() {
+    int getCheckedCount() {
+        Iterator<LocaleStore.LocaleInfo> it = this.mFeedItemList.iterator();
         int i = 0;
-        for (LocaleStore.LocaleInfo localeInfo : this.mFeedItemList) {
-            if (localeInfo.getChecked()) {
+        while (it.hasNext()) {
+            if (it.next().getChecked()) {
                 i++;
             }
         }
         return i;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void addLocale(LocaleStore.LocaleInfo localeInfo) {
+    void addLocale(LocaleStore.LocaleInfo localeInfo) {
         this.mFeedItemList.add(localeInfo);
         notifyItemInserted(this.mFeedItemList.size() - 1);
         doTheUpdate();

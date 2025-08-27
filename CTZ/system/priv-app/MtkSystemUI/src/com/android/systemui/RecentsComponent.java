@@ -1,6 +1,7 @@
 package com.android.systemui;
 
 import android.graphics.Rect;
+
 /* loaded from: classes.dex */
 public interface RecentsComponent {
     void onDraggingInRecents(float f);

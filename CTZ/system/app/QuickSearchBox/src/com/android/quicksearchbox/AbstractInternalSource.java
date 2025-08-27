@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import com.android.quicksearchbox.util.NamedTaskExecutor;
+
 /* loaded from: classes.dex */
 public abstract class AbstractInternalSource extends AbstractSource {
     protected abstract int getSourceIconResource();

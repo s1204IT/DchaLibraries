@@ -33,28 +33,38 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class EnableZenModeDialog {
+
     @VisibleForTesting
     protected static final int COUNTDOWN_ALARM_CONDITION_INDEX = 2;
+
     @VisibleForTesting
     protected static final int COUNTDOWN_CONDITION_INDEX = 1;
+
     @VisibleForTesting
     protected static final int FOREVER_CONDITION_INDEX = 0;
     private AlarmManager mAlarmManager;
     private boolean mAttached;
+
     @VisibleForTesting
     protected Context mContext;
+
     @VisibleForTesting
     protected Uri mForeverId;
+
     @VisibleForTesting
     protected LayoutInflater mLayoutInflater;
+
     @VisibleForTesting
     protected NotificationManager mNotificationManager;
     private int mUserId;
+
     @VisibleForTesting
     protected TextView mZenAlarmWarning;
     private RadioGroup mZenRadioGroup;
+
     @VisibleForTesting
     protected LinearLayout mZenRadioGroupContent;
     private static final boolean DEBUG = Log.isLoggable("EnableZenModeDialog", 3);
@@ -109,21 +119,21 @@ public class EnableZenModeDialog {
         if (this.mLayoutInflater == null) {
             this.mLayoutInflater = new PhoneWindow(this.mContext).getLayoutInflater();
         }
-        View inflate = this.mLayoutInflater.inflate(R.layout.zen_mode_turn_on_dialog_container, (ViewGroup) null);
-        ScrollView scrollView = (ScrollView) inflate.findViewById(R.id.container);
+        View viewInflate = this.mLayoutInflater.inflate(R.layout.zen_mode_turn_on_dialog_container, (ViewGroup) null);
+        ScrollView scrollView = (ScrollView) viewInflate.findViewById(R.id.container);
         this.mZenRadioGroup = (RadioGroup) scrollView.findViewById(R.id.zen_radio_buttons);
         this.mZenRadioGroupContent = (LinearLayout) scrollView.findViewById(R.id.zen_radio_buttons_content);
         this.mZenAlarmWarning = (TextView) scrollView.findViewById(R.id.zen_alarm_warning);
         for (int i = 0; i < this.MAX_MANUAL_DND_OPTIONS; i++) {
-            View inflate2 = this.mLayoutInflater.inflate(R.layout.zen_mode_radio_button, (ViewGroup) this.mZenRadioGroup, false);
-            this.mZenRadioGroup.addView(inflate2);
-            inflate2.setId(i);
-            View inflate3 = this.mLayoutInflater.inflate(R.layout.zen_mode_condition, (ViewGroup) this.mZenRadioGroupContent, false);
-            inflate3.setId(this.MAX_MANUAL_DND_OPTIONS + i);
-            this.mZenRadioGroupContent.addView(inflate3);
+            View viewInflate2 = this.mLayoutInflater.inflate(R.layout.zen_mode_radio_button, (ViewGroup) this.mZenRadioGroup, false);
+            this.mZenRadioGroup.addView(viewInflate2);
+            viewInflate2.setId(i);
+            View viewInflate3 = this.mLayoutInflater.inflate(R.layout.zen_mode_condition, (ViewGroup) this.mZenRadioGroupContent, false);
+            viewInflate3.setId(this.MAX_MANUAL_DND_OPTIONS + i);
+            this.mZenRadioGroupContent.addView(viewInflate3);
         }
         hideAllConditions();
-        return inflate;
+        return viewInflate;
     }
 
     @VisibleForTesting
@@ -172,7 +182,9 @@ public class EnableZenModeDialog {
         if (condition == null) {
             bindGenericCountdown();
             bindNextAlarm(getTimeUntilNextAlarmCondition());
-        } else if (isForever(condition)) {
+            return;
+        }
+        if (isForever(condition)) {
             getConditionTagAt(0).rb.setChecked(true);
             bindGenericCountdown();
             bindNextAlarm(getTimeUntilNextAlarmCondition());
@@ -218,13 +230,11 @@ public class EnableZenModeDialog {
         return condition != null && ZenModeConfig.isValidCountdownConditionId(condition.id);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isForever(Condition condition) {
+    private boolean isForever(Condition condition) {
         return condition != null && this.mForeverId.equals(condition.id);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Uri getRealConditionId(Condition condition) {
+    private Uri getRealConditionId(Condition condition) {
         if (isForever(condition)) {
             return null;
         }
@@ -232,7 +242,7 @@ public class EnableZenModeDialog {
     }
 
     private String foreverSummary(Context context) {
-        return context.getString(17041145);
+        return context.getString(android.R.string.permdesc_foregroundServiceMediaPlayback);
     }
 
     private static void setToMidnight(Calendar calendar) {
@@ -271,14 +281,14 @@ public class EnableZenModeDialog {
 
     private void updateUi(final ConditionTag conditionTag, final View view, Condition condition, boolean z, final int i, Uri uri) {
         if (conditionTag.lines == null) {
-            conditionTag.lines = view.findViewById(16908290);
+            conditionTag.lines = view.findViewById(android.R.id.content);
             conditionTag.lines.setAccessibilityLiveRegion(1);
         }
         if (conditionTag.line1 == null) {
-            conditionTag.line1 = (TextView) view.findViewById(16908308);
+            conditionTag.line1 = (TextView) view.findViewById(android.R.id.text1);
         }
         if (conditionTag.line2 == null) {
-            conditionTag.line2 = (TextView) view.findViewById(16908309);
+            conditionTag.line2 = (TextView) view.findViewById(android.R.id.text2);
         }
         String str = !TextUtils.isEmpty(condition.line1) ? condition.line1 : condition.summary;
         String str2 = condition.line2;
@@ -297,29 +307,29 @@ public class EnableZenModeDialog {
                 conditionTag.rb.setChecked(true);
             }
         });
-        ImageView imageView = (ImageView) view.findViewById(16908313);
+        ImageView imageView = (ImageView) view.findViewById(android.R.id.button1);
         imageView.setOnClickListener(new View.OnClickListener() { // from class: com.android.settingslib.notification.EnableZenModeDialog.4
             @Override // android.view.View.OnClickListener
             public void onClick(View view2) {
                 EnableZenModeDialog.this.onClickTimeButton(view, conditionTag, false, i);
             }
         });
-        ImageView imageView2 = (ImageView) view.findViewById(16908314);
+        ImageView imageView2 = (ImageView) view.findViewById(android.R.id.button2);
         imageView2.setOnClickListener(new View.OnClickListener() { // from class: com.android.settingslib.notification.EnableZenModeDialog.5
             @Override // android.view.View.OnClickListener
             public void onClick(View view2) {
                 EnableZenModeDialog.this.onClickTimeButton(view, conditionTag, true, i);
             }
         });
-        long tryParseCountdownConditionId = ZenModeConfig.tryParseCountdownConditionId(uri);
-        if (i == 1 && tryParseCountdownConditionId > 0) {
+        long jTryParseCountdownConditionId = ZenModeConfig.tryParseCountdownConditionId(uri);
+        if (i == 1 && jTryParseCountdownConditionId > 0) {
             imageView.setVisibility(0);
             imageView2.setVisibility(0);
             if (this.mBucketIndex > -1) {
                 imageView.setEnabled(this.mBucketIndex > 0);
                 imageView2.setEnabled(this.mBucketIndex < MINUTE_BUCKETS.length - 1);
             } else {
-                imageView.setEnabled(tryParseCountdownConditionId - System.currentTimeMillis() > ((long) (MIN_BUCKET_MINUTES * 60000)));
+                imageView.setEnabled(jTryParseCountdownConditionId - System.currentTimeMillis() > ((long) (MIN_BUCKET_MINUTES * 60000)));
                 imageView2.setEnabled(!Objects.equals(condition.summary, ZenModeConfig.toTimeCondition(this.mContext, MAX_BUCKET_MINUTES, ActivityManager.getCurrentUser()).summary));
             }
             imageView.setAlpha(imageView.isEnabled() ? 1.0f : 0.5f);
@@ -347,15 +357,14 @@ public class EnableZenModeDialog {
         childAt.setVisibility(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onClickTimeButton(View view, ConditionTag conditionTag, boolean z, int i) {
+    private void onClickTimeButton(View view, ConditionTag conditionTag, boolean z, int i) {
         Condition timeCondition;
         int i2;
         MetricsLogger.action(this.mContext, 163, z);
         int length = MINUTE_BUCKETS.length;
         if (this.mBucketIndex == -1) {
-            long tryParseCountdownConditionId = ZenModeConfig.tryParseCountdownConditionId(getConditionId(conditionTag.condition));
-            long currentTimeMillis = System.currentTimeMillis();
+            long jTryParseCountdownConditionId = ZenModeConfig.tryParseCountdownConditionId(getConditionId(conditionTag.condition));
+            long jCurrentTimeMillis = System.currentTimeMillis();
             for (int i3 = 0; i3 < length; i3++) {
                 if (!z) {
                     i2 = (length - 1) - i3;
@@ -363,8 +372,8 @@ public class EnableZenModeDialog {
                     i2 = i3;
                 }
                 int i4 = MINUTE_BUCKETS[i2];
-                long j = currentTimeMillis + (60000 * i4);
-                if ((z && j > tryParseCountdownConditionId) || (!z && j < tryParseCountdownConditionId)) {
+                long j = jCurrentTimeMillis + (60000 * i4);
+                if ((z && j > jTryParseCountdownConditionId) || (!z && j < jTryParseCountdownConditionId)) {
                     this.mBucketIndex = i2;
                     timeCondition = ZenModeConfig.toTimeCondition(this.mContext, j, i4, ActivityManager.getCurrentUser(), false);
                     break;
@@ -384,11 +393,10 @@ public class EnableZenModeDialog {
         conditionTag.rb.setChecked(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateAlarmWarningText(Condition condition) {
-        String computeAlarmWarningText = computeAlarmWarningText(condition);
-        this.mZenAlarmWarning.setText(computeAlarmWarningText);
-        this.mZenAlarmWarning.setVisibility(computeAlarmWarningText == null ? 8 : 0);
+    private void updateAlarmWarningText(Condition condition) {
+        String strComputeAlarmWarningText = computeAlarmWarningText(condition);
+        this.mZenAlarmWarning.setText(strComputeAlarmWarningText);
+        this.mZenAlarmWarning.setVisibility(strComputeAlarmWarningText == null ? 8 : 0);
     }
 
     @VisibleForTesting
@@ -397,16 +405,16 @@ public class EnableZenModeDialog {
         if ((this.mNotificationManager.getNotificationPolicy().priorityCategories & 32) != 0) {
             return null;
         }
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         long nextAlarm = getNextAlarm();
-        if (nextAlarm < currentTimeMillis) {
+        if (nextAlarm < jCurrentTimeMillis) {
             return null;
         }
         if (condition == null || isForever(condition)) {
             i = R.string.zen_alarm_warning_indef;
         } else {
-            long tryParseCountdownConditionId = ZenModeConfig.tryParseCountdownConditionId(condition.id);
-            if (tryParseCountdownConditionId > currentTimeMillis && nextAlarm < tryParseCountdownConditionId) {
+            long jTryParseCountdownConditionId = ZenModeConfig.tryParseCountdownConditionId(condition.id);
+            if (jTryParseCountdownConditionId > jCurrentTimeMillis && nextAlarm < jTryParseCountdownConditionId) {
                 i = R.string.zen_alarm_warning;
             } else {
                 i = 0;
@@ -415,20 +423,18 @@ public class EnableZenModeDialog {
         if (i == 0) {
             return null;
         }
-        return this.mContext.getResources().getString(i, getTime(nextAlarm, currentTimeMillis));
+        return this.mContext.getResources().getString(i, getTime(nextAlarm, jCurrentTimeMillis));
     }
 
     @VisibleForTesting
     protected String getTime(long j, long j2) {
         boolean z = j - j2 < 86400000;
-        boolean is24HourFormat = DateFormat.is24HourFormat(this.mContext, ActivityManager.getCurrentUser());
-        return this.mContext.getResources().getString(z ? R.string.alarm_template : R.string.alarm_template_far, DateFormat.format(DateFormat.getBestDateTimePattern(Locale.getDefault(), z ? is24HourFormat ? "Hm" : "hma" : is24HourFormat ? "EEEHm" : "EEEhma"), j));
+        boolean zIs24HourFormat = DateFormat.is24HourFormat(this.mContext, ActivityManager.getCurrentUser());
+        return this.mContext.getResources().getString(z ? R.string.alarm_template : R.string.alarm_template_far, DateFormat.format(DateFormat.getBestDateTimePattern(Locale.getDefault(), z ? zIs24HourFormat ? "Hm" : "hma" : zIs24HourFormat ? "EEEHm" : "EEEhma"), j));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @VisibleForTesting
-    /* loaded from: classes.dex */
-    public static class ConditionTag {
+    protected static class ConditionTag {
         public Condition condition;
         public TextView line1;
         public TextView line2;

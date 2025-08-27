@@ -1,5 +1,6 @@
 package com.android.settings.sim;
 
+import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -27,11 +28,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import com.android.settings.R;
 import com.android.settings.Utils;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.ISimManagementExt;
 import com.mediatek.settings.sim.SimHotSwapHandler;
+
 /* loaded from: classes.dex */
 public class SimPreferenceDialog extends Activity {
     private final String SIM_NAME = "sim_name";
@@ -61,11 +62,11 @@ public class SimPreferenceDialog extends Activity {
             finish();
             return;
         }
-        this.mTintArr = this.mContext.getResources().getIntArray(17236076);
-        this.mColorStrings = this.mContext.getResources().getStringArray(R.array.color_picker);
+        this.mTintArr = this.mContext.getResources().getIntArray(R.array.config_ephemeralResolverPackage);
+        this.mColorStrings = this.mContext.getResources().getStringArray(com.android.settings.R.array.color_picker);
         this.mTintSelectorPos = 0;
         this.mBuilder = new AlertDialog.Builder(this.mContext);
-        this.mDialogLayout = ((LayoutInflater) this.mContext.getSystemService("layout_inflater")).inflate(R.layout.multi_sim_dialog, (ViewGroup) null);
+        this.mDialogLayout = ((LayoutInflater) this.mContext.getSystemService("layout_inflater")).inflate(com.android.settings.R.layout.multi_sim_dialog, (ViewGroup) null);
         this.mBuilder.setView(this.mDialogLayout);
         this.mSimManagementExt = UtilsExt.getSimManagementExt(getApplicationContext());
         createEditDialog(bundle);
@@ -82,7 +83,7 @@ public class SimPreferenceDialog extends Activity {
     @Override // android.app.Activity
     public void onSaveInstanceState(Bundle bundle) {
         bundle.putInt("tint_pos", this.mTintSelectorPos);
-        bundle.putString("sim_name", ((EditText) this.mDialogLayout.findViewById(R.id.sim_name)).getText().toString());
+        bundle.putString("sim_name", ((EditText) this.mDialogLayout.findViewById(com.android.settings.R.id.sim_name)).getText().toString());
         super.onSaveInstanceState(bundle);
     }
 
@@ -90,27 +91,28 @@ public class SimPreferenceDialog extends Activity {
     public void onRestoreInstanceState(Bundle bundle) {
         super.onRestoreInstanceState(bundle);
         int i = bundle.getInt("tint_pos");
-        ((Spinner) this.mDialogLayout.findViewById(R.id.spinner)).setSelection(i);
+        ((Spinner) this.mDialogLayout.findViewById(com.android.settings.R.id.spinner)).setSelection(i);
         this.mTintSelectorPos = i;
-        EditText editText = (EditText) this.mDialogLayout.findViewById(R.id.sim_name);
+        EditText editText = (EditText) this.mDialogLayout.findViewById(com.android.settings.R.id.sim_name);
         editText.setText(bundle.getString("sim_name"));
         Utils.setEditTextCursorPosition(editText);
     }
 
     private void createEditDialog(Bundle bundle) {
         Resources resources = this.mContext.getResources();
-        EditText editText = (EditText) this.mDialogLayout.findViewById(R.id.sim_name);
+        EditText editText = (EditText) this.mDialogLayout.findViewById(com.android.settings.R.id.sim_name);
         editText.setText(this.mSubInfoRecord.getDisplayName());
         Utils.setEditTextCursorPosition(editText);
-        final Spinner spinner = (Spinner) this.mDialogLayout.findViewById(R.id.spinner);
-        SelectColorAdapter selectColorAdapter = new SelectColorAdapter(this.mContext, R.layout.settings_color_picker_item, this.mColorStrings);
-        selectColorAdapter.setDropDownViewResource(17367049);
+        final Spinner spinner = (Spinner) this.mDialogLayout.findViewById(com.android.settings.R.id.spinner);
+        SelectColorAdapter selectColorAdapter = new SelectColorAdapter(this.mContext, com.android.settings.R.layout.settings_color_picker_item, this.mColorStrings);
+        selectColorAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter((SpinnerAdapter) selectColorAdapter);
         int i = 0;
         while (true) {
             if (i >= this.mTintArr.length) {
                 break;
-            } else if (this.mTintArr[i] != this.mSubInfoRecord.getIconTint()) {
+            }
+            if (this.mTintArr[i] != this.mSubInfoRecord.getIconTint()) {
                 i++;
             } else {
                 spinner.setSelection(i);
@@ -130,29 +132,29 @@ public class SimPreferenceDialog extends Activity {
             }
         });
         TelephonyManager telephonyManager = (TelephonyManager) this.mContext.getSystemService("phone");
-        TextView textView = (TextView) this.mDialogLayout.findViewById(R.id.number);
+        TextView textView = (TextView) this.mDialogLayout.findViewById(com.android.settings.R.id.number);
         String line1Number = telephonyManager.getLine1Number(this.mSubInfoRecord.getSubscriptionId());
         if (TextUtils.isEmpty(line1Number)) {
-            textView.setText(resources.getString(17039374));
+            textView.setText(resources.getString(R.string.unknownName));
         } else {
             textView.setText(PhoneNumberUtils.formatNumber(line1Number));
         }
         String simOperatorName = telephonyManager.getSimOperatorName(this.mSubInfoRecord.getSubscriptionId());
-        TextView textView2 = (TextView) this.mDialogLayout.findViewById(R.id.carrier);
+        TextView textView2 = (TextView) this.mDialogLayout.findViewById(com.android.settings.R.id.carrier);
         if (TextUtils.isEmpty(simOperatorName)) {
-            simOperatorName = this.mContext.getString(17039374);
+            simOperatorName = this.mContext.getString(R.string.unknownName);
         }
         textView2.setText(simOperatorName);
-        this.mBuilder.setTitle(String.format(resources.getString(R.string.sim_editor_title), Integer.valueOf(this.mSubInfoRecord.getSimSlotIndex() + 1)));
-        this.mBuilder.setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() { // from class: com.android.settings.sim.SimPreferenceDialog.3
+        this.mBuilder.setTitle(String.format(resources.getString(com.android.settings.R.string.sim_editor_title), Integer.valueOf(this.mSubInfoRecord.getSimSlotIndex() + 1)));
+        this.mBuilder.setPositiveButton(com.android.settings.R.string.okay, new DialogInterface.OnClickListener() { // from class: com.android.settings.sim.SimPreferenceDialog.3
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i2) {
-                EditText editText2 = (EditText) SimPreferenceDialog.this.mDialogLayout.findViewById(R.id.sim_name);
+                EditText editText2 = (EditText) SimPreferenceDialog.this.mDialogLayout.findViewById(com.android.settings.R.id.sim_name);
                 Utils.setEditTextCursorPosition(editText2);
-                String obj = editText2.getText().toString();
+                String string = editText2.getText().toString();
                 int subscriptionId = SimPreferenceDialog.this.mSubInfoRecord.getSubscriptionId();
-                SimPreferenceDialog.this.mSubInfoRecord.setDisplayName(obj);
-                SimPreferenceDialog.this.mSubscriptionManager.setDisplayName(obj, subscriptionId, 2L);
+                SimPreferenceDialog.this.mSubInfoRecord.setDisplayName(string);
+                SimPreferenceDialog.this.mSubscriptionManager.setDisplayName(string, subscriptionId, 2L);
                 int selectedItemPosition = spinner.getSelectedItemPosition();
                 int subscriptionId2 = SimPreferenceDialog.this.mSubInfoRecord.getSubscriptionId();
                 int i3 = SimPreferenceDialog.this.mTintArr[selectedItemPosition];
@@ -161,7 +163,7 @@ public class SimPreferenceDialog extends Activity {
                 dialogInterface.dismiss();
             }
         });
-        this.mBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.settings.sim.SimPreferenceDialog.4
+        this.mBuilder.setNegativeButton(com.android.settings.R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.settings.sim.SimPreferenceDialog.4
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i2) {
                 dialogInterface.dismiss();
@@ -194,9 +196,7 @@ public class SimPreferenceDialog extends Activity {
         this.mDialog.show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SelectColorAdapter extends ArrayAdapter<CharSequence> {
+    private class SelectColorAdapter extends ArrayAdapter<CharSequence> {
         private Context mContext;
         private int mResId;
 
@@ -207,12 +207,12 @@ public class SimPreferenceDialog extends Activity {
         }
 
         @Override // android.widget.ArrayAdapter, android.widget.Adapter
-        public View getView(int i, View view, ViewGroup viewGroup) {
+        public View getView(int i, View view, ViewGroup viewGroup) throws Resources.NotFoundException {
             ViewHolder viewHolder;
             LayoutInflater layoutInflater = (LayoutInflater) this.mContext.getSystemService("layout_inflater");
             Resources resources = this.mContext.getResources();
-            int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.color_swatch_size);
-            int dimensionPixelSize2 = resources.getDimensionPixelSize(R.dimen.color_swatch_stroke_width);
+            int dimensionPixelSize = resources.getDimensionPixelSize(com.android.settings.R.dimen.color_swatch_size);
+            int dimensionPixelSize2 = resources.getDimensionPixelSize(com.android.settings.R.dimen.color_swatch_stroke_width);
             if (view == null) {
                 view = layoutInflater.inflate(this.mResId, (ViewGroup) null);
                 viewHolder = new ViewHolder();
@@ -220,8 +220,8 @@ public class SimPreferenceDialog extends Activity {
                 shapeDrawable.setIntrinsicHeight(dimensionPixelSize);
                 shapeDrawable.setIntrinsicWidth(dimensionPixelSize);
                 shapeDrawable.getPaint().setStrokeWidth(dimensionPixelSize2);
-                viewHolder.label = (TextView) view.findViewById(R.id.color_text);
-                viewHolder.icon = (ImageView) view.findViewById(R.id.color_icon);
+                viewHolder.label = (TextView) view.findViewById(com.android.settings.R.id.color_text);
+                viewHolder.icon = (ImageView) view.findViewById(com.android.settings.R.id.color_icon);
                 viewHolder.swatch = shapeDrawable;
                 view.setTag(viewHolder);
             } else {
@@ -236,7 +236,7 @@ public class SimPreferenceDialog extends Activity {
         }
 
         @Override // android.widget.ArrayAdapter, android.widget.BaseAdapter, android.widget.SpinnerAdapter
-        public View getDropDownView(int i, View view, ViewGroup viewGroup) {
+        public View getDropDownView(int i, View view, ViewGroup viewGroup) throws Resources.NotFoundException {
             View view2 = getView(i, view, viewGroup);
             ViewHolder viewHolder = (ViewHolder) view2.getTag();
             if (SimPreferenceDialog.this.mTintSelectorPos == i) {
@@ -248,9 +248,7 @@ public class SimPreferenceDialog extends Activity {
             return view2;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class ViewHolder {
+        private class ViewHolder {
             ImageView icon;
             TextView label;
             ShapeDrawable swatch;

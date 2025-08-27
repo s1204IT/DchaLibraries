@@ -9,11 +9,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import java.util.concurrent.CountDownLatch;
+
 /* loaded from: classes.dex */
 public class NfcHandler implements NfcAdapter.CreateNdefMessageCallback {
     final Controller mController;
     Tab mCurrentTab;
     final Handler mHandler = new Handler() { // from class: com.android.browser.NfcHandler.1
+        AnonymousClass1() {
+        }
+
         @Override // android.os.Handler
         public void handleMessage(Message message) {
             if (message.what == 100) {
@@ -45,8 +49,22 @@ public class NfcHandler implements NfcAdapter.CreateNdefMessageCallback {
         this.mController = controller;
     }
 
+    /* renamed from: com.android.browser.NfcHandler$1 */
+    class AnonymousClass1 extends Handler {
+        AnonymousClass1() {
+        }
+
+        @Override // android.os.Handler
+        public void handleMessage(Message message) {
+            if (message.what == 100) {
+                NfcHandler.this.mIsPrivate = NfcHandler.this.mCurrentTab.getWebView().isPrivateBrowsingEnabled();
+                NfcHandler.this.mPrivateBrowsingSignal.countDown();
+            }
+        }
+    }
+
     @Override // android.nfc.NfcAdapter.CreateNdefMessageCallback
-    public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
+    public NdefMessage createNdefMessage(NfcEvent nfcEvent) throws InterruptedException {
         String url;
         this.mCurrentTab = this.mController.getCurrentTab();
         if (this.mCurrentTab != null && this.mCurrentTab.getWebView() != null) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
+
 /* loaded from: classes.dex */
 public class NonInterceptingScrollView extends ScrollView {
     public NonInterceptingScrollView(Context context, AttributeSet attributeSet) {

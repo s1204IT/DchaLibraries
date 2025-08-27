@@ -23,6 +23,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
 /* loaded from: classes.dex */
 public class VolumeDialogComponent implements TunerService.Tunable, VolumeComponent, VolumeDialogControllerImpl.UserActivityListener {
     private final Context mContext;
@@ -55,21 +56,17 @@ public class VolumeDialogComponent implements TunerService.Tunable, VolumeCompon
         ((ExtensionController) Dependency.get(ExtensionController.class)).newExtension(VolumeDialog.class).withPlugin(VolumeDialog.class).withDefault(new Supplier() { // from class: com.android.systemui.volume.-$$Lambda$VolumeDialogComponent$ZrIXH_vbJQUohqzHD9D7gJaZLEI
             @Override // java.util.function.Supplier
             public final Object get() {
-                VolumeDialog createDefault;
-                createDefault = VolumeDialogComponent.this.createDefault();
-                return createDefault;
+                return this.f$0.createDefault();
             }
         }).withFeature("android.hardware.type.automotive", new Supplier() { // from class: com.android.systemui.volume.-$$Lambda$VolumeDialogComponent$_YDQvDgAZa0Z1NSD02XWqisctiE
             @Override // java.util.function.Supplier
             public final Object get() {
-                VolumeDialog createCarDefault;
-                createCarDefault = VolumeDialogComponent.this.createCarDefault();
-                return createCarDefault;
+                return this.f$0.createCarDefault();
             }
         }).withCallback(new Consumer() { // from class: com.android.systemui.volume.-$$Lambda$VolumeDialogComponent$vZvGMkdhFGTZ9hLE1BnozIW6Wb0
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                VolumeDialogComponent.lambda$new$0(VolumeDialogComponent.this, (VolumeDialog) obj);
+                VolumeDialogComponent.lambda$new$0(this.f$0, (VolumeDialog) obj);
             }
         }).build();
         applyConfiguration();
@@ -84,8 +81,7 @@ public class VolumeDialogComponent implements TunerService.Tunable, VolumeCompon
         volumeDialogComponent.mDialog.init(2020, volumeDialogComponent.mVolumeDialogCallback);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public VolumeDialog createDefault() {
+    private VolumeDialog createDefault() {
         VolumeDialogImpl volumeDialogImpl = new VolumeDialogImpl(this.mContext);
         volumeDialogImpl.setStreamImportant(1, false);
         volumeDialogImpl.setAutomute(true);
@@ -93,8 +89,7 @@ public class VolumeDialogComponent implements TunerService.Tunable, VolumeCompon
         return volumeDialogImpl;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public VolumeDialog createCarDefault() {
+    private VolumeDialog createCarDefault() {
         return new CarVolumeDialogImpl(this.mContext);
     }
 
@@ -106,12 +101,16 @@ public class VolumeDialogComponent implements TunerService.Tunable, VolumeCompon
                 z = true;
             }
             setVolumePolicy(z, this.mVolumePolicy.volumeUpToExitSilent, this.mVolumePolicy.doNotDisturbWhenSilent, this.mVolumePolicy.vibrateToSilentDebounce);
-        } else if ("sysui_volume_up_silent".equals(str)) {
+            return;
+        }
+        if ("sysui_volume_up_silent".equals(str)) {
             if (str2 != null && Integer.parseInt(str2) != 0) {
                 z = true;
             }
             setVolumePolicy(this.mVolumePolicy.volumeDownToEnterSilent, z, this.mVolumePolicy.doNotDisturbWhenSilent, this.mVolumePolicy.vibrateToSilentDebounce);
-        } else if ("sysui_do_not_disturb".equals(str)) {
+            return;
+        }
+        if ("sysui_do_not_disturb".equals(str)) {
             if (str2 != null && Integer.parseInt(str2) != 0) {
                 z = true;
             }
@@ -124,8 +123,7 @@ public class VolumeDialogComponent implements TunerService.Tunable, VolumeCompon
         this.mController.setVolumePolicy(this.mVolumePolicy);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setEnableDialogs(boolean z, boolean z2) {
+    void setEnableDialogs(boolean z, boolean z2) {
         this.mController.setEnableDialogs(z, z2);
     }
 
@@ -168,8 +166,7 @@ public class VolumeDialogComponent implements TunerService.Tunable, VolumeCompon
     public void dump(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startSettings(Intent intent) {
+    private void startSettings(Intent intent) {
         ((ActivityStarter) Dependency.get(ActivityStarter.class)).startActivity(intent, true, true);
     }
 }

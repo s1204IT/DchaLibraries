@@ -18,6 +18,7 @@ import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class ThemePreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final MetricsFeatureProvider mMetricsFeatureProvider;
@@ -64,23 +65,22 @@ public class ThemePreferenceController extends AbstractPreferenceController impl
         listPreference.setEntries(charSequenceArr);
         listPreference.setEntryValues(availableThemes);
         String currentTheme = getCurrentTheme();
-        String str = null;
+        CharSequence string = null;
         while (true) {
-            if (i < availableThemes.length) {
-                if (!TextUtils.equals(availableThemes[i], currentTheme)) {
-                    i++;
-                } else {
-                    str = charSequenceArr[i];
-                    break;
-                }
+            if (i >= availableThemes.length) {
+                break;
+            }
+            if (!TextUtils.equals(availableThemes[i], currentTheme)) {
+                i++;
             } else {
+                string = charSequenceArr[i];
                 break;
             }
         }
-        if (TextUtils.isEmpty(str)) {
-            str = this.mContext.getString(R.string.default_theme);
+        if (TextUtils.isEmpty(string)) {
+            string = this.mContext.getString(R.string.default_theme);
         }
-        listPreference.setSummary(str);
+        listPreference.setSummary(string);
         listPreference.setValue(currentTheme);
     }
 
@@ -93,19 +93,19 @@ public class ThemePreferenceController extends AbstractPreferenceController impl
         return true;
     }
 
-    private boolean isTheme(OverlayManagerWrapper.OverlayInfo overlayInfo) {
-        if ("android.theme".equals(overlayInfo.category)) {
-            try {
-                PackageInfo packageInfo = this.mPackageManager.getPackageInfo(overlayInfo.packageName, 0);
-                if (packageInfo != null) {
-                    return !packageInfo.isStaticOverlayPackage();
-                }
-                return false;
-            } catch (PackageManager.NameNotFoundException e) {
-                return false;
-            }
+    private boolean isTheme(OverlayManagerWrapper.OverlayInfo overlayInfo) throws PackageManager.NameNotFoundException {
+        if (!"android.theme".equals(overlayInfo.category)) {
+            return false;
         }
-        return false;
+        try {
+            PackageInfo packageInfo = this.mPackageManager.getPackageInfo(overlayInfo.packageName, 0);
+            if (packageInfo != null) {
+                return !packageInfo.isStaticOverlayPackage();
+            }
+            return false;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     private String getTheme() {

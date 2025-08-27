@@ -12,6 +12,7 @@ import com.android.settings.core.TogglePreferenceController;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class GameControllerPreferenceController extends TogglePreferenceController implements InputManager.InputDeviceListener, PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private final InputManager mIm;

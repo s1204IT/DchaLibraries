@@ -17,6 +17,7 @@ import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.search.Indexable;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class MagnificationPreferenceFragment extends DashboardFragment {
     static final int OFF = 0;
@@ -58,9 +59,8 @@ public final class MagnificationPreferenceFragment extends DashboardFragment {
         return R.string.help_url_magnification;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.accessibility_magnification_settings;
     }
 
@@ -86,39 +86,35 @@ public final class MagnificationPreferenceFragment extends DashboardFragment {
         return super.onPreferenceTreeClick(preference);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static CharSequence getConfigurationWarningStringForSecureSettingsKey(String str, Context context) {
-        if ("accessibility_display_magnification_navbar_enabled".equals(str) && Settings.Secure.getInt(context.getContentResolver(), "accessibility_display_magnification_navbar_enabled", 0) != 0) {
-            AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService("accessibility");
-            String string = Settings.Secure.getString(context.getContentResolver(), "accessibility_button_target_component");
-            if (!TextUtils.isEmpty(string) && !"com.android.server.accessibility.MagnificationController".equals(string)) {
-                ComponentName unflattenFromString = ComponentName.unflattenFromString(string);
-                List<AccessibilityServiceInfo> enabledAccessibilityServiceList = accessibilityManager.getEnabledAccessibilityServiceList(-1);
-                int size = enabledAccessibilityServiceList.size();
-                for (int i = 0; i < size; i++) {
-                    AccessibilityServiceInfo accessibilityServiceInfo = enabledAccessibilityServiceList.get(i);
-                    if (accessibilityServiceInfo.getComponentName().equals(unflattenFromString)) {
-                        return context.getString(R.string.accessibility_screen_magnification_navbar_configuration_warning, accessibilityServiceInfo.getResolveInfo().loadLabel(context.getPackageManager()));
-                    }
+    static CharSequence getConfigurationWarningStringForSecureSettingsKey(String str, Context context) {
+        if (!"accessibility_display_magnification_navbar_enabled".equals(str) || Settings.Secure.getInt(context.getContentResolver(), "accessibility_display_magnification_navbar_enabled", 0) == 0) {
+            return null;
+        }
+        AccessibilityManager accessibilityManager = (AccessibilityManager) context.getSystemService("accessibility");
+        String string = Settings.Secure.getString(context.getContentResolver(), "accessibility_button_target_component");
+        if (!TextUtils.isEmpty(string) && !"com.android.server.accessibility.MagnificationController".equals(string)) {
+            ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(string);
+            List<AccessibilityServiceInfo> enabledAccessibilityServiceList = accessibilityManager.getEnabledAccessibilityServiceList(-1);
+            int size = enabledAccessibilityServiceList.size();
+            for (int i = 0; i < size; i++) {
+                AccessibilityServiceInfo accessibilityServiceInfo = enabledAccessibilityServiceList.get(i);
+                if (accessibilityServiceInfo.getComponentName().equals(componentNameUnflattenFromString)) {
+                    return context.getString(R.string.accessibility_screen_magnification_navbar_configuration_warning, accessibilityServiceInfo.getResolveInfo().loadLabel(context.getPackageManager()));
                 }
             }
-            return null;
         }
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean isChecked(ContentResolver contentResolver, String str) {
+    static boolean isChecked(ContentResolver contentResolver, String str) {
         return Settings.Secure.getInt(contentResolver, str, 0) == 1;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean setChecked(ContentResolver contentResolver, String str, boolean z) {
+    static boolean setChecked(ContentResolver contentResolver, String str, boolean z) {
         return Settings.Secure.putInt(contentResolver, str, z ? 1 : 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean isApplicable(Resources resources) {
-        return resources.getBoolean(17957019);
+    static boolean isApplicable(Resources resources) {
+        return resources.getBoolean(android.R.^attr-private.lockPatternStyle);
     }
 }

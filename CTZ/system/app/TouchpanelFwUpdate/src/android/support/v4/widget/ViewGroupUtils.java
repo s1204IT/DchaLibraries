@@ -6,6 +6,7 @@ import android.graphics.RectF;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
 /* loaded from: classes.dex */
 public class ViewGroupUtils {
     private static final ThreadLocal<Matrix> sMatrix = new ThreadLocal<>();
@@ -36,7 +37,7 @@ public class ViewGroupUtils {
     }
 
     private static void offsetDescendantMatrix(ViewParent target, View view, Matrix m) {
-        ViewParent parent = view.getParent();
+        Object parent = view.getParent();
         if ((parent instanceof View) && parent != target) {
             View vp = (View) parent;
             offsetDescendantMatrix(target, vp, m);

@@ -4,12 +4,13 @@ import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import java.lang.reflect.Field;
+
 /* loaded from: classes.dex */
 public final class LayoutInflaterCompat {
     private static boolean sCheckedField;
     private static Field sLayoutInflaterFactory2Field;
 
-    private static void forceSetFactory2(LayoutInflater inflater, LayoutInflater.Factory2 factory) {
+    private static void forceSetFactory2(LayoutInflater inflater, LayoutInflater.Factory2 factory) throws IllegalAccessException, IllegalArgumentException {
         if (!sCheckedField) {
             try {
                 sLayoutInflaterFactory2Field = LayoutInflater.class.getDeclaredField("mFactory2");
@@ -28,7 +29,7 @@ public final class LayoutInflaterCompat {
         }
     }
 
-    public static void setFactory2(LayoutInflater inflater, LayoutInflater.Factory2 factory) {
+    public static void setFactory2(LayoutInflater inflater, LayoutInflater.Factory2 factory) throws IllegalAccessException, IllegalArgumentException {
         inflater.setFactory2(factory);
         if (Build.VERSION.SDK_INT < 21) {
             LayoutInflater.Factory f = inflater.getFactory();

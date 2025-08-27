@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class FragmentController {
     private final FragmentHostCallback<?> mHost;

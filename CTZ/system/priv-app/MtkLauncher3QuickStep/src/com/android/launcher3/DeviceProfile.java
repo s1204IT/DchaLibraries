@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import com.android.launcher3.badge.BadgeRenderer;
 import com.android.launcher3.graphics.IconNormalizer;
+
 /* loaded from: classes.dex */
 public class DeviceProfile {
     private static final float MAX_HORIZONTAL_PADDING_PERCENT = 0.14f;
@@ -68,7 +69,6 @@ public class DeviceProfile {
     public final Rect workspacePadding = new Rect();
     private final Rect mHotseatPadding = new Rect();
 
-    /* loaded from: classes.dex */
     public interface OnDeviceProfileChangeListener {
         void onDeviceProfileChanged(DeviceProfile deviceProfile);
     }
@@ -170,13 +170,13 @@ public class DeviceProfile {
     }
 
     private void updateIconSize(float f, Resources resources, DisplayMetrics displayMetrics) {
-        boolean isVerticalBarLayout = isVerticalBarLayout();
-        this.iconSizePx = (int) (Utilities.pxFromDp(isVerticalBarLayout ? this.inv.landscapeIconSize : this.inv.iconSize, displayMetrics) * f);
+        boolean zIsVerticalBarLayout = isVerticalBarLayout();
+        this.iconSizePx = (int) (Utilities.pxFromDp(zIsVerticalBarLayout ? this.inv.landscapeIconSize : this.inv.iconSize, displayMetrics) * f);
         this.iconTextSizePx = (int) (Utilities.pxFromSp(this.inv.iconTextSize, displayMetrics) * f);
         this.iconDrawablePaddingPx = (int) (this.iconDrawablePaddingOriginalPx * f);
         this.cellHeightPx = this.iconSizePx + this.iconDrawablePaddingPx + Utilities.calculateTextHeight(this.iconTextSizePx);
         int i = (getCellSize().y - this.cellHeightPx) / 2;
-        if (this.iconDrawablePaddingPx > i && !isVerticalBarLayout && !this.isMultiWindowMode) {
+        if (this.iconDrawablePaddingPx > i && !zIsVerticalBarLayout && !this.isMultiWindowMode) {
             this.cellHeightPx -= this.iconDrawablePaddingPx - i;
             this.iconDrawablePaddingPx = i;
         }
@@ -185,14 +185,14 @@ public class DeviceProfile {
         this.allAppsIconSizePx = this.iconSizePx;
         this.allAppsIconDrawablePaddingPx = this.iconDrawablePaddingPx;
         this.allAppsCellHeightPx = getCellSize().y;
-        if (isVerticalBarLayout) {
+        if (zIsVerticalBarLayout) {
             adjustToHideWorkspaceLabels();
         }
-        if (isVerticalBarLayout) {
+        if (zIsVerticalBarLayout) {
             this.hotseatBarSizePx = this.iconSizePx;
         }
         this.hotseatCellHeightPx = this.iconSizePx;
-        if (isVerticalBarLayout) {
+        if (zIsVerticalBarLayout) {
             this.workspaceSpringLoadShrinkFactor = resources.getInteger(R.integer.config_workspaceSpringLoadShrinkPercentage) / 100.0f;
         } else {
             this.workspaceSpringLoadShrinkFactor = Math.min(resources.getInteger(R.integer.config_workspaceSpringLoadShrinkPercentage) / 100.0f, 1.0f - ((this.dropTargetBarSizePx + this.workspaceSpringLoadedBottomSpace) / (((this.availableHeightPx - this.hotseatBarSizePx) - this.verticalDragHandleSizePx) - this.topWorkspacePadding)));
@@ -202,23 +202,24 @@ public class DeviceProfile {
     }
 
     private void updateAvailableFolderCellDimensions(DisplayMetrics displayMetrics, Resources resources) {
+        int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.folder_label_padding_top) + resources.getDimensionPixelSize(R.dimen.folder_label_padding_bottom) + Utilities.calculateTextHeight(resources.getDimension(R.dimen.folder_label_text_size));
         updateFolderCellSize(1.0f, displayMetrics, resources);
         int i = this.edgeMarginPx;
         Point totalWorkspacePadding = getTotalWorkspacePadding();
-        float min = Math.min(((this.availableWidthPx - totalWorkspacePadding.x) - i) / (this.folderCellWidthPx * this.inv.numFolderColumns), ((this.availableHeightPx - totalWorkspacePadding.y) - i) / ((this.folderCellHeightPx * this.inv.numFolderRows) + ((resources.getDimensionPixelSize(R.dimen.folder_label_padding_top) + resources.getDimensionPixelSize(R.dimen.folder_label_padding_bottom)) + Utilities.calculateTextHeight(resources.getDimension(R.dimen.folder_label_text_size)))));
-        if (min < 1.0f) {
-            updateFolderCellSize(min, displayMetrics, resources);
+        float fMin = Math.min(((this.availableWidthPx - totalWorkspacePadding.x) - i) / (this.folderCellWidthPx * this.inv.numFolderColumns), ((this.availableHeightPx - totalWorkspacePadding.y) - i) / ((this.folderCellHeightPx * this.inv.numFolderRows) + dimensionPixelSize));
+        if (fMin < 1.0f) {
+            updateFolderCellSize(fMin, displayMetrics, resources);
         }
     }
 
     private void updateFolderCellSize(float f, DisplayMetrics displayMetrics, Resources resources) {
         this.folderChildIconSizePx = (int) (Utilities.pxFromDp(this.inv.iconSize, displayMetrics) * f);
         this.folderChildTextSizePx = (int) (resources.getDimensionPixelSize(R.dimen.folder_child_text_size) * f);
-        int calculateTextHeight = Utilities.calculateTextHeight(this.folderChildTextSizePx);
-        int dimensionPixelSize = (int) (resources.getDimensionPixelSize(R.dimen.folder_cell_y_padding) * f);
-        this.folderCellWidthPx = this.folderChildIconSizePx + (((int) (resources.getDimensionPixelSize(R.dimen.folder_cell_x_padding) * f)) * 2);
-        this.folderCellHeightPx = this.folderChildIconSizePx + (2 * dimensionPixelSize) + calculateTextHeight;
-        this.folderChildDrawablePaddingPx = Math.max(0, ((this.folderCellHeightPx - this.folderChildIconSizePx) - calculateTextHeight) / 3);
+        int iCalculateTextHeight = Utilities.calculateTextHeight(this.folderChildTextSizePx);
+        int dimensionPixelSize = (int) (resources.getDimensionPixelSize(R.dimen.folder_cell_x_padding) * f);
+        this.folderCellWidthPx = this.folderChildIconSizePx + (dimensionPixelSize * 2);
+        this.folderCellHeightPx = this.folderChildIconSizePx + (2 * ((int) (resources.getDimensionPixelSize(R.dimen.folder_cell_y_padding) * f))) + iCalculateTextHeight;
+        this.folderChildDrawablePaddingPx = Math.max(0, ((this.folderCellHeightPx - this.folderChildIconSizePx) - iCalculateTextHeight) / 3);
     }
 
     public void updateInsets(Rect rect) {
@@ -254,17 +255,17 @@ public class DeviceProfile {
                 rect.left += this.hotseatBarSizePx;
                 rect.right += this.verticalDragHandleSizePx;
                 return;
+            } else {
+                rect.left += this.verticalDragHandleSizePx;
+                rect.right += this.hotseatBarSizePx;
+                return;
             }
-            rect.left += this.verticalDragHandleSizePx;
-            rect.right += this.hotseatBarSizePx;
-            return;
         }
         int i = this.hotseatBarSizePx + this.verticalDragHandleSizePx;
         if (this.isTablet) {
-            int max = Math.max(0, ((((this.heightPx - this.topWorkspacePadding) - i) - ((this.inv.numRows * 2) * this.cellHeightPx)) - this.hotseatBarTopPaddingPx) - this.hotseatBarBottomPaddingPx);
-            int min = ((int) Math.min(Math.max(0, this.widthPx - ((this.inv.numColumns * this.cellWidthPx) + ((this.inv.numColumns - 1) * this.cellWidthPx))), this.widthPx * MAX_HORIZONTAL_PADDING_PERCENT)) / 2;
-            int i2 = max / 2;
-            rect.set(min, this.topWorkspacePadding + i2, min, i + i2);
+            int iMin = ((int) Math.min(Math.max(0, this.widthPx - ((this.inv.numColumns * this.cellWidthPx) + ((this.inv.numColumns - 1) * this.cellWidthPx))), this.widthPx * MAX_HORIZONTAL_PADDING_PERCENT)) / 2;
+            int iMax = Math.max(0, ((((this.heightPx - this.topWorkspacePadding) - i) - ((this.inv.numRows * 2) * this.cellHeightPx)) - this.hotseatBarTopPaddingPx) - this.hotseatBarBottomPaddingPx) / 2;
+            rect.set(iMin, this.topWorkspacePadding + iMax, iMin, i + iMax);
             return;
         }
         rect.set(this.desiredWorkspaceLeftRightMarginPx, this.topWorkspacePadding, this.desiredWorkspaceLeftRightMarginPx, i);
@@ -278,8 +279,8 @@ public class DeviceProfile {
                 this.mHotseatPadding.set(this.hotseatBarSidePaddingPx, this.mInsets.top, this.mInsets.right, this.mInsets.bottom);
             }
         } else {
-            int round = Math.round(((this.widthPx / this.inv.numColumns) - (this.widthPx / this.inv.numHotseatIcons)) / TALL_DEVICE_ASPECT_RATIO_THRESHOLD);
-            this.mHotseatPadding.set(this.workspacePadding.left + round + this.cellLayoutPaddingLeftRightPx, this.hotseatBarTopPaddingPx, round + this.workspacePadding.right + this.cellLayoutPaddingLeftRightPx, this.hotseatBarBottomPaddingPx + this.mInsets.bottom + this.cellLayoutBottomPaddingPx);
+            int iRound = Math.round(((this.widthPx / this.inv.numColumns) - (this.widthPx / this.inv.numHotseatIcons)) / TALL_DEVICE_ASPECT_RATIO_THRESHOLD);
+            this.mHotseatPadding.set(this.workspacePadding.left + iRound + this.cellLayoutPaddingLeftRightPx, this.hotseatBarTopPaddingPx, iRound + this.workspacePadding.right + this.cellLayoutPaddingLeftRightPx, this.hotseatBarBottomPaddingPx + this.mInsets.bottom + this.cellLayoutBottomPaddingPx);
         }
         return this.mHotseatPadding;
     }

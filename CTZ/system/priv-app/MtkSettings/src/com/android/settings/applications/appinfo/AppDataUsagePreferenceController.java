@@ -25,6 +25,7 @@ import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.net.ChartData;
 import com.android.settingslib.net.ChartDataLoader;
+
 /* loaded from: classes.dex */
 public class AppDataUsagePreferenceController extends AppInfoPreferenceControllerBase implements LoaderManager.LoaderCallbacks<ChartData>, LifecycleObserver, OnPause, OnResume {
     private ChartData mChartData;
@@ -36,7 +37,7 @@ public class AppDataUsagePreferenceController extends AppInfoPreferenceControlle
 
     @Override // com.android.settings.applications.appinfo.AppInfoPreferenceControllerBase, com.android.settings.core.BasePreferenceController
     public int getAvailabilityStatus() {
-        return !isBandwidthControlEnabled();
+        return !isBandwidthControlEnabled() ? 1 : 0;
     }
 
     @Override // com.android.settings.applications.appinfo.AppInfoPreferenceControllerBase, com.android.settings.core.BasePreferenceController, com.android.settingslib.core.AbstractPreferenceController
@@ -80,6 +81,7 @@ public class AppDataUsagePreferenceController extends AppInfoPreferenceControlle
         return new ChartDataLoader(this.mContext, this.mStatsSession, bundle);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<ChartData> loader, ChartData chartData) {
         this.mChartData = chartData;

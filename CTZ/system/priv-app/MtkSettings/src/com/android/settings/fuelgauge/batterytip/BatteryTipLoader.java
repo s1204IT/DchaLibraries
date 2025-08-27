@@ -1,6 +1,7 @@
 package com.android.settings.fuelgauge.batterytip;
 
 import android.content.Context;
+import android.content.res.Resources;
 import com.android.internal.os.BatteryStatsHelper;
 import com.android.settings.fuelgauge.BatteryInfo;
 import com.android.settings.fuelgauge.BatteryUtils;
@@ -15,6 +16,7 @@ import com.android.settingslib.utils.AsyncLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BatteryTipLoader extends AsyncLoader<List<BatteryTip>> {
     private BatteryStatsHelper mBatteryStatsHelper;
@@ -26,8 +28,9 @@ public class BatteryTipLoader extends AsyncLoader<List<BatteryTip>> {
         this.mBatteryUtils = BatteryUtils.getInstance(context);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
-    public List<BatteryTip> loadInBackground() {
+    public List<BatteryTip> loadInBackground() throws Resources.NotFoundException {
         ArrayList arrayList = new ArrayList();
         BatteryTipPolicy batteryTipPolicy = new BatteryTipPolicy(getContext());
         BatteryInfo batteryInfo = this.mBatteryUtils.getBatteryInfo(this.mBatteryStatsHelper, "BatteryTipLoader");
@@ -42,8 +45,8 @@ public class BatteryTipLoader extends AsyncLoader<List<BatteryTip>> {
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(List<BatteryTip> list) {
+    protected void onDiscardResult(List<BatteryTip> list) {
     }
 }

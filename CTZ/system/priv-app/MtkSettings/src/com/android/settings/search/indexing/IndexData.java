@@ -2,6 +2,7 @@ package com.android.settings.search.indexing;
 
 import java.text.Normalizer;
 import java.util.regex.Pattern;
+
 /* loaded from: classes.dex */
 public class IndexData {
     private static final Pattern REMOVE_DIACRITICALS_PATTERN = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
@@ -13,15 +14,15 @@ public class IndexData {
     }
 
     public static String normalizeJapaneseString(String str) {
-        String normalize = Normalizer.normalize(str != null ? str.replaceAll("-", "") : "", Normalizer.Form.NFKD);
+        String strNormalize = Normalizer.normalize(str != null ? str.replaceAll("-", "") : "", Normalizer.Form.NFKD);
         StringBuffer stringBuffer = new StringBuffer();
-        int length = normalize.length();
+        int length = strNormalize.length();
         for (int i = 0; i < length; i++) {
-            char charAt = normalize.charAt(i);
-            if (charAt >= 12353 && charAt <= 12438) {
-                stringBuffer.append((char) ((charAt - 12353) + 12449));
+            char cCharAt = strNormalize.charAt(i);
+            if (cCharAt >= 12353 && cCharAt <= 12438) {
+                stringBuffer.append((char) ((cCharAt - 12353) + 12449));
             } else {
-                stringBuffer.append(charAt);
+                stringBuffer.append(cCharAt);
             }
         }
         return REMOVE_DIACRITICALS_PATTERN.matcher(stringBuffer.toString()).replaceAll("").toLowerCase();

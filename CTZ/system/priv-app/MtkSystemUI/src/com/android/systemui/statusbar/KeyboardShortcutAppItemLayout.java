@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class KeyboardShortcutAppItemLayout extends RelativeLayout {
     public KeyboardShortcutAppItemLayout(Context context) {

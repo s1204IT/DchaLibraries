@@ -3,6 +3,7 @@ package com.mediatek.browser.ext;
 import android.content.Context;
 import android.text.InputFilter;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserUrlExt implements IBrowserUrlExt {
     @Override // com.mediatek.browser.ext.IBrowserUrlExt

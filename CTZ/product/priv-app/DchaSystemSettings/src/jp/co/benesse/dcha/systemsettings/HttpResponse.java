@@ -1,6 +1,7 @@
 package jp.co.benesse.dcha.systemsettings;
 
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class HttpResponse {
     private StringBuffer sb;

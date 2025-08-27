@@ -18,6 +18,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ConnectedDeviceDashboardFragment extends DashboardFragment {
     static final String KEY_AVAILABLE_DEVICES = "available_device_list";
@@ -66,9 +67,8 @@ public class ConnectedDeviceDashboardFragment extends DashboardFragment {
         return R.string.help_url_connected_devices;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.connected_devices;
     }
 
@@ -77,8 +77,7 @@ public class ConnectedDeviceDashboardFragment extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         DiscoverableFooterPreferenceController discoverableFooterPreferenceController = new DiscoverableFooterPreferenceController(context);
         arrayList.add(discoverableFooterPreferenceController);
@@ -98,7 +97,7 @@ public class ConnectedDeviceDashboardFragment extends DashboardFragment {
         ((AvailableMediaDeviceGroupController) use(AvailableMediaDeviceGroupController.class)).init(this);
         ((ConnectedDeviceGroupController) use(ConnectedDeviceGroupController.class)).init(this);
         ((PreviouslyConnectedDevicePreferenceController) use(PreviouslyConnectedDevicePreferenceController.class)).init(this);
-        ((DiscoverableFooterPreferenceController) use(DiscoverableFooterPreferenceController.class)).init(this, (TextUtils.equals("com.android.settings", callingAppPackageName) || TextUtils.equals("com.android.systemui", callingAppPackageName)) ? true : DEBUG);
+        ((DiscoverableFooterPreferenceController) use(DiscoverableFooterPreferenceController.class)).init(this, TextUtils.equals("com.android.settings", callingAppPackageName) || TextUtils.equals("com.android.systemui", callingAppPackageName));
     }
 
     private String getCallingAppPackageName(IBinder iBinder) {
@@ -110,7 +109,6 @@ public class ConnectedDeviceDashboardFragment extends DashboardFragment {
         }
     }
 
-    /* loaded from: classes.dex */
     static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;

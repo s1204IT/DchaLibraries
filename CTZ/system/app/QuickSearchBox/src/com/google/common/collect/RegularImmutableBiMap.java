@@ -3,9 +3,9 @@ package com.google.common.collect;
 import com.google.common.collect.ImmutableMapEntry;
 import java.io.Serializable;
 import java.util.Map;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
+class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     private final transient ImmutableMapEntry<K, V>[] entries;
     private final transient int hashCode;
     private transient ImmutableBiMap<V, K> inverse;
@@ -13,58 +13,56 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     private final transient int mask;
     private final transient ImmutableMapEntry<K, V>[] valueTable;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RegularImmutableBiMap(int i, ImmutableMapEntry.TerminalEntry<?, ?>[] terminalEntryArr) {
+    RegularImmutableBiMap(int i, ImmutableMapEntry.TerminalEntry<?, ?>[] terminalEntryArr) {
         ImmutableMapEntry<K, V> nonTerminalBiMapEntry;
         int i2 = i;
-        int closedTableSize = Hashing.closedTableSize(i2, 1.2d);
-        this.mask = closedTableSize - 1;
-        ImmutableMapEntry<K, V>[] createEntryArray = createEntryArray(closedTableSize);
-        ImmutableMapEntry<K, V>[] createEntryArray2 = createEntryArray(closedTableSize);
-        ImmutableMapEntry<K, V>[] createEntryArray3 = createEntryArray(i);
+        int iClosedTableSize = Hashing.closedTableSize(i2, 1.2d);
+        this.mask = iClosedTableSize - 1;
+        ImmutableMapEntry<K, V>[] immutableMapEntryArrCreateEntryArray = createEntryArray(iClosedTableSize);
+        ImmutableMapEntry<K, V>[] immutableMapEntryArrCreateEntryArray2 = createEntryArray(iClosedTableSize);
+        ImmutableMapEntry<K, V>[] immutableMapEntryArrCreateEntryArray3 = createEntryArray(i);
         int i3 = 0;
         int i4 = 0;
         while (i3 < i2) {
             ImmutableMapEntry.TerminalEntry<?, ?> terminalEntry = terminalEntryArr[i3];
             Object key = terminalEntry.getKey();
             Object value = terminalEntry.getValue();
-            int hashCode = key.hashCode();
-            int hashCode2 = value.hashCode();
-            int smear = Hashing.smear(hashCode) & this.mask;
-            int smear2 = Hashing.smear(hashCode2) & this.mask;
-            ImmutableMapEntry<K, V> immutableMapEntry = createEntryArray[smear];
-            ImmutableMapEntry<K, V> immutableMapEntry2 = immutableMapEntry;
-            while (immutableMapEntry2 != null) {
-                checkNoConflict(!key.equals(immutableMapEntry2.getKey()), "key", terminalEntry, immutableMapEntry2);
-                immutableMapEntry2 = immutableMapEntry2.getNextInKeyBucket();
+            int iHashCode = key.hashCode();
+            int iHashCode2 = value.hashCode();
+            int iSmear = Hashing.smear(iHashCode) & this.mask;
+            int iSmear2 = Hashing.smear(iHashCode2) & this.mask;
+            ImmutableMapEntry<K, V> immutableMapEntry = immutableMapEntryArrCreateEntryArray[iSmear];
+            ImmutableMapEntry<K, V> nextInKeyBucket = immutableMapEntry;
+            while (nextInKeyBucket != null) {
+                checkNoConflict(!key.equals(nextInKeyBucket.getKey()), "key", terminalEntry, nextInKeyBucket);
+                nextInKeyBucket = nextInKeyBucket.getNextInKeyBucket();
                 key = key;
             }
-            ImmutableMapEntry<K, V> immutableMapEntry3 = createEntryArray2[smear2];
-            ImmutableMapEntry<K, V> immutableMapEntry4 = immutableMapEntry3;
-            while (immutableMapEntry4 != null) {
-                checkNoConflict(!value.equals(immutableMapEntry4.getValue()), "value", terminalEntry, immutableMapEntry4);
-                immutableMapEntry4 = immutableMapEntry4.getNextInValueBucket();
+            ImmutableMapEntry<K, V> immutableMapEntry2 = immutableMapEntryArrCreateEntryArray2[iSmear2];
+            ImmutableMapEntry<K, V> nextInValueBucket = immutableMapEntry2;
+            while (nextInValueBucket != null) {
+                checkNoConflict(!value.equals(nextInValueBucket.getValue()), "value", terminalEntry, nextInValueBucket);
+                nextInValueBucket = nextInValueBucket.getNextInValueBucket();
                 value = value;
             }
-            if (immutableMapEntry != null || immutableMapEntry3 != null) {
-                nonTerminalBiMapEntry = new NonTerminalBiMapEntry<>(terminalEntry, immutableMapEntry, immutableMapEntry3);
+            if (immutableMapEntry != null || immutableMapEntry2 != null) {
+                nonTerminalBiMapEntry = new NonTerminalBiMapEntry<>(terminalEntry, immutableMapEntry, immutableMapEntry2);
             } else {
                 nonTerminalBiMapEntry = terminalEntry;
             }
-            createEntryArray[smear] = nonTerminalBiMapEntry;
-            createEntryArray2[smear2] = nonTerminalBiMapEntry;
-            createEntryArray3[i3] = nonTerminalBiMapEntry;
-            i4 += hashCode ^ hashCode2;
+            immutableMapEntryArrCreateEntryArray[iSmear] = nonTerminalBiMapEntry;
+            immutableMapEntryArrCreateEntryArray2[iSmear2] = nonTerminalBiMapEntry;
+            immutableMapEntryArrCreateEntryArray3[i3] = nonTerminalBiMapEntry;
+            i4 += iHashCode ^ iHashCode2;
             i3++;
             i2 = i;
         }
-        this.keyTable = createEntryArray;
-        this.valueTable = createEntryArray2;
-        this.entries = createEntryArray3;
+        this.keyTable = immutableMapEntryArrCreateEntryArray;
+        this.valueTable = immutableMapEntryArrCreateEntryArray2;
+        this.entries = immutableMapEntryArrCreateEntryArray3;
         this.hashCode = i4;
     }
 
-    /* loaded from: classes.dex */
     private static final class NonTerminalBiMapEntry<K, V> extends ImmutableMapEntry<K, V> {
         private final ImmutableMapEntry<K, V> nextInKeyBucket;
         private final ImmutableMapEntry<K, V> nextInValueBucket;
@@ -75,15 +73,13 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
             this.nextInValueBucket = immutableMapEntry3;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
         @Override // com.google.common.collect.ImmutableMapEntry
-        public ImmutableMapEntry<K, V> getNextInKeyBucket() {
+        ImmutableMapEntry<K, V> getNextInKeyBucket() {
             return this.nextInKeyBucket;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
         @Override // com.google.common.collect.ImmutableMapEntry
-        public ImmutableMapEntry<K, V> getNextInValueBucket() {
+        ImmutableMapEntry<K, V> getNextInValueBucket() {
             return this.nextInValueBucket;
         }
     }
@@ -97,9 +93,9 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
         if (obj == null) {
             return null;
         }
-        for (ImmutableMapEntry<K, V> immutableMapEntry = this.keyTable[Hashing.smear(obj.hashCode()) & this.mask]; immutableMapEntry != null; immutableMapEntry = immutableMapEntry.getNextInKeyBucket()) {
-            if (obj.equals(immutableMapEntry.getKey())) {
-                return immutableMapEntry.getValue();
+        for (ImmutableMapEntry<K, V> nextInKeyBucket = this.keyTable[Hashing.smear(obj.hashCode()) & this.mask]; nextInKeyBucket != null; nextInKeyBucket = nextInKeyBucket.getNextInKeyBucket()) {
+            if (obj.equals(nextInKeyBucket.getKey())) {
+                return nextInKeyBucket.getValue();
             }
         }
         return null;
@@ -113,6 +109,7 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
                 return RegularImmutableBiMap.this;
             }
 
+            /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
             @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
             public UnmodifiableIterator<Map.Entry<K, V>> iterator() {
                 return asList().iterator();
@@ -135,9 +132,8 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableMap
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return false;
     }
 
@@ -149,17 +145,15 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     @Override // com.google.common.collect.ImmutableBiMap
     public ImmutableBiMap<V, K> inverse() {
         ImmutableBiMap<V, K> immutableBiMap = this.inverse;
-        if (immutableBiMap == null) {
-            Inverse inverse = new Inverse();
-            this.inverse = inverse;
-            return inverse;
+        if (immutableBiMap != null) {
+            return immutableBiMap;
         }
-        return immutableBiMap;
+        Inverse inverse = new Inverse();
+        this.inverse = inverse;
+        return inverse;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class Inverse extends ImmutableBiMap<V, K> {
+    private final class Inverse extends ImmutableBiMap<V, K> {
         private Inverse() {
         }
 
@@ -176,9 +170,9 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
         @Override // com.google.common.collect.ImmutableMap, java.util.Map
         public K get(Object obj) {
             if (obj != null) {
-                for (ImmutableMapEntry immutableMapEntry = RegularImmutableBiMap.this.valueTable[Hashing.smear(obj.hashCode()) & RegularImmutableBiMap.this.mask]; immutableMapEntry != null; immutableMapEntry = immutableMapEntry.getNextInValueBucket()) {
-                    if (obj.equals(immutableMapEntry.getValue())) {
-                        return immutableMapEntry.getKey();
+                for (ImmutableMapEntry nextInValueBucket = RegularImmutableBiMap.this.valueTable[Hashing.smear(obj.hashCode()) & RegularImmutableBiMap.this.mask]; nextInValueBucket != null; nextInValueBucket = nextInValueBucket.getNextInValueBucket()) {
+                    if (obj.equals(nextInValueBucket.getValue())) {
+                        return nextInValueBucket.getKey();
                     }
                 }
                 return null;
@@ -191,9 +185,7 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
             return new InverseEntrySet();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        /* loaded from: classes.dex */
-        public final class InverseEntrySet extends ImmutableMapEntrySet<V, K> {
+        final class InverseEntrySet extends ImmutableMapEntrySet<V, K> {
             InverseEntrySet() {
             }
 
@@ -212,14 +204,16 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
                 return RegularImmutableBiMap.this.hashCode;
             }
 
+            /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
             @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
             public UnmodifiableIterator<Map.Entry<V, K>> iterator() {
-                return (UnmodifiableIterator<Map.Entry<K, V>>) asList().iterator();
+                return asList().iterator();
             }
 
             @Override // com.google.common.collect.ImmutableCollection
             ImmutableList<Map.Entry<V, K>> createAsList() {
                 return new ImmutableAsList<Map.Entry<V, K>>() { // from class: com.google.common.collect.RegularImmutableBiMap.Inverse.InverseEntrySet.1
+                    /* JADX DEBUG: Method merged with bridge method: get(I)Ljava/lang/Object; */
                     @Override // java.util.List
                     public Map.Entry<V, K> get(int i) {
                         ImmutableMapEntry immutableMapEntry = RegularImmutableBiMap.this.entries[i];
@@ -234,9 +228,8 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
         @Override // com.google.common.collect.ImmutableMap
-        public boolean isPartialView() {
+        boolean isPartialView() {
             return false;
         }
 
@@ -246,7 +239,6 @@ public class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class InverseSerializedForm<K, V> implements Serializable {
         private static final long serialVersionUID = 1;
         private final ImmutableBiMap<K, V> forward;

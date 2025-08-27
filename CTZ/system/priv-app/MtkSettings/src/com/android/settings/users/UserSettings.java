@@ -21,7 +21,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Process;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.UserManager;
@@ -58,6 +57,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class UserSettings extends SettingsPreferenceFragment implements DialogInterface.OnDismissListener, Preference.OnPreferenceClickListener, View.OnClickListener, Indexable, EditUserInfoController.OnContentChangedCallback {
     private RestrictedPreference mAddUser;
@@ -93,7 +93,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
 
         @Override // com.android.settings.search.BaseSearchIndexProvider
-        public List<String> getNonIndexableKeysFromXml(Context context, int i) {
+        public List<String> getNonIndexableKeysFromXml(Context context, int i) throws Resources.NotFoundException {
             List<String> nonIndexableKeysFromXml = super.getNonIndexableKeysFromXml(context, i);
             new AddUserWhenLockedPreferenceController(context, "user_settings_add_users_when_locked", null).updateNonIndexableKeys(nonIndexableKeysFromXml);
             new AutoSyncDataPreferenceController(context, null).updateNonIndexableKeys(nonIndexableKeysFromXml);
@@ -115,15 +115,13 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
             switch (message.what) {
                 case 1:
                     UserSettings.this.updateUserList();
-                    return;
+                    break;
                 case 2:
                     UserSettings.this.onUserCreated(message.arg1);
-                    return;
+                    break;
                 case 3:
                     UserSettings.this.onManageUserClicked(message.arg1, true);
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     };
@@ -173,9 +171,9 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         if (!this.mUserCaps.mEnabled) {
             return;
         }
-        int myUserId = UserHandle.myUserId();
+        int iMyUserId = UserHandle.myUserId();
         this.mUserListCategory = (PreferenceGroup) findPreference("user_list");
-        this.mMePreference = new UserPreference(getPrefContext(), null, myUserId, null, null);
+        this.mMePreference = new UserPreference(getPrefContext(), null, iMyUserId, null, null);
         this.mMePreference.setKey("user_me");
         this.mMePreference.setOnPreferenceClickListener(this);
         if (this.mUserCaps.mIsAdmin) {
@@ -250,8 +248,8 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         UserManager userManager = (UserManager) getContext().getSystemService(UserManager.class);
         boolean z = !userManager.hasUserRestriction("no_remove_user");
-        boolean canSwitchUsers = userManager.canSwitchUsers();
-        if (!this.mUserCaps.mIsAdmin && z && canSwitchUsers) {
+        boolean zCanSwitchUsers = userManager.canSwitchUsers();
+        if (!this.mUserCaps.mIsAdmin && z && zCanSwitchUsers) {
             menu.add(0, 1, 0, getResources().getString(R.string.user_remove_user_menu, this.mUserManager.getUserName())).setShowAsAction(0);
         }
         super.onCreateOptionsMenu(menu, menuInflater);
@@ -271,39 +269,38 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         if (this.mUserCaps.mIsGuest) {
             this.mMePreference.setIcon(getEncircledDefaultIcon());
             this.mMePreference.setTitle(R.string.user_exit_guest_title);
-            return;
-        }
-        new AsyncTask<Void, Void, String>() { // from class: com.android.settings.users.UserSettings.3
-            /* JADX INFO: Access modifiers changed from: protected */
-            @Override // android.os.AsyncTask
-            public void onPostExecute(String str) {
-                UserSettings.this.finishLoadProfile(str);
-            }
-
-            /* JADX INFO: Access modifiers changed from: protected */
-            @Override // android.os.AsyncTask
-            public String doInBackground(Void... voidArr) {
-                Activity activity;
-                UserInfo userInfo = UserSettings.this.mUserManager.getUserInfo(UserHandle.myUserId());
-                if ((userInfo.iconPath == null || userInfo.iconPath.equals("")) && (activity = UserSettings.this.getActivity()) != null) {
-                    UserSettings.copyMeProfilePhoto(activity.getApplicationContext(), userInfo);
+        } else {
+            new AsyncTask<Void, Void, String>() { // from class: com.android.settings.users.UserSettings.3
+                /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
+                @Override // android.os.AsyncTask
+                protected void onPostExecute(String str) {
+                    UserSettings.this.finishLoadProfile(str);
                 }
-                return userInfo.name;
-            }
-        }.execute(new Void[0]);
+
+                /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
+                @Override // android.os.AsyncTask
+                protected String doInBackground(Void... voidArr) throws IOException {
+                    Activity activity;
+                    UserInfo userInfo = UserSettings.this.mUserManager.getUserInfo(UserHandle.myUserId());
+                    if ((userInfo.iconPath == null || userInfo.iconPath.equals("")) && (activity = UserSettings.this.getActivity()) != null) {
+                        UserSettings.copyMeProfilePhoto(activity.getApplicationContext(), userInfo);
+                    }
+                    return userInfo.name;
+                }
+            }.execute(new Void[0]);
+        }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void finishLoadProfile(String str) {
+    private void finishLoadProfile(String str) {
         if (getActivity() == null) {
             return;
         }
         this.mMePreference.setTitle(getString(R.string.user_you, new Object[]{str}));
-        int myUserId = UserHandle.myUserId();
-        Bitmap userIcon = this.mUserManager.getUserIcon(myUserId);
+        int iMyUserId = UserHandle.myUserId();
+        Bitmap userIcon = this.mUserManager.getUserIcon(iMyUserId);
         if (userIcon != null) {
             this.mMePreference.setIcon(encircle(userIcon));
-            this.mUserIcons.put(myUserId, userIcon);
+            this.mUserIcons.put(iMyUserId, userIcon);
         }
     }
 
@@ -311,8 +308,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         return new LockPatternUtils(getActivity()).isSecure(UserHandle.myUserId());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void launchChooseLockscreen() {
+    private void launchChooseLockscreen() {
         Intent intent = new Intent("android.app.action.SET_NEW_PASSWORD");
         intent.putExtra("minimum_quality", 65536);
         startActivityForResult(intent, 10);
@@ -331,8 +327,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         this.mEditUserInfoController.onActivityResult(i, i2, intent);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onAddUserClicked(int i) {
+    private void onAddUserClicked(int i) {
         synchronized (this.mUserLock) {
             if (this.mRemovingUserId == -1 && !this.mAddingUser) {
                 switch (i) {
@@ -361,26 +356,23 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public UserInfo createRestrictedProfile() {
-        UserInfo createRestrictedProfile = this.mUserManager.createRestrictedProfile(this.mAddingUserName);
-        if (createRestrictedProfile != null && !assignDefaultPhoto(getActivity(), createRestrictedProfile.id)) {
+    private UserInfo createRestrictedProfile() {
+        UserInfo userInfoCreateRestrictedProfile = this.mUserManager.createRestrictedProfile(this.mAddingUserName);
+        if (userInfoCreateRestrictedProfile != null && !assignDefaultPhoto(getActivity(), userInfoCreateRestrictedProfile.id)) {
             return null;
         }
-        return createRestrictedProfile;
+        return userInfoCreateRestrictedProfile;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public UserInfo createTrustedUser() {
-        UserInfo createUser = this.mUserManager.createUser(this.mAddingUserName, 0);
-        if (createUser != null && !assignDefaultPhoto(getActivity(), createUser.id)) {
+    private UserInfo createTrustedUser() {
+        UserInfo userInfoCreateUser = this.mUserManager.createUser(this.mAddingUserName, 0);
+        if (userInfoCreateUser != null && !assignDefaultPhoto(getActivity(), userInfoCreateUser.id)) {
             return null;
         }
-        return createUser;
+        return userInfoCreateUser;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onManageUserClicked(int i, boolean z) {
+    private void onManageUserClicked(int i, boolean z) {
         this.mAddingUser = false;
         if (i == -11) {
             Bundle bundle = new Bundle();
@@ -394,7 +386,9 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
             bundle2.putInt("user_id", i);
             bundle2.putBoolean("new_user", z);
             new SubSettingLauncher(getContext()).setDestination(RestrictedProfileSettings.class.getName()).setArguments(bundle2).setTitle(R.string.user_restrictions_title).setSourceMetricsCategory(getMetricsCategory()).launch();
-        } else if (userInfo.id == UserHandle.myUserId()) {
+            return;
+        }
+        if (userInfo.id == UserHandle.myUserId()) {
             OwnerInfoSettings.show(this);
         } else if (this.mUserCaps.mIsAdmin) {
             Bundle bundle3 = new Bundle();
@@ -403,8 +397,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onUserCreated(int i) {
+    private void onUserCreated(int i) {
         this.mAddedUserId = i;
         this.mAddingUser = false;
         if (!isResumed()) {
@@ -430,13 +423,6 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
             return null;
         }
         switch (i) {
-            case 1:
-                return UserDialogs.createRemoveDialog(getActivity(), this.mRemovingUserId, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.UserSettings.4
-                    @Override // android.content.DialogInterface.OnClickListener
-                    public void onClick(DialogInterface dialogInterface, int i3) {
-                        UserSettings.this.removeUserNow();
-                    }
-                });
             case 2:
                 final SharedPreferences preferences = getActivity().getPreferences(0);
                 final boolean z = preferences.getBoolean("key_add_user_long_message_displayed", false);
@@ -446,41 +432,17 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
                     i2 = R.string.user_add_user_message_long;
                 }
                 final int i3 = i == 2 ? 1 : 2;
-                return new AlertDialog.Builder(activity).setTitle(R.string.user_add_user_title).setMessage(i2).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.UserSettings.5
-                    @Override // android.content.DialogInterface.OnClickListener
-                    public void onClick(DialogInterface dialogInterface, int i4) {
-                        UserSettings.this.addUserNow(i3);
-                        if (!z) {
-                            preferences.edit().putBoolean("key_add_user_long_message_displayed", true).apply();
-                        }
-                    }
-                }).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
-            case 3:
-                return new AlertDialog.Builder(activity).setTitle(R.string.user_setup_dialog_title).setMessage(R.string.user_setup_dialog_message).setPositiveButton(R.string.user_setup_button_setup_now, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.UserSettings.6
-                    @Override // android.content.DialogInterface.OnClickListener
-                    public void onClick(DialogInterface dialogInterface, int i4) {
-                        UserSettings.this.switchUserNow(UserSettings.this.mAddedUserId);
-                    }
-                }).setNegativeButton(R.string.user_setup_button_setup_later, (DialogInterface.OnClickListener) null).create();
-            case 4:
-                return new AlertDialog.Builder(activity).setMessage(R.string.user_setup_profile_dialog_message).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.UserSettings.7
-                    @Override // android.content.DialogInterface.OnClickListener
-                    public void onClick(DialogInterface dialogInterface, int i4) {
-                        UserSettings.this.switchUserNow(UserSettings.this.mAddedUserId);
-                    }
-                }).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
-            case 5:
-                return new AlertDialog.Builder(activity).setMessage(R.string.user_cannot_manage_message).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).create();
+                break;
             case 6:
                 ArrayList arrayList = new ArrayList();
-                HashMap hashMap = new HashMap();
-                hashMap.put("title", getString(R.string.user_add_user_item_title));
-                hashMap.put("summary", getString(R.string.user_add_user_item_summary));
-                HashMap hashMap2 = new HashMap();
-                hashMap2.put("title", getString(R.string.user_add_profile_item_title));
-                hashMap2.put("summary", getString(R.string.user_add_profile_item_summary));
-                arrayList.add(hashMap);
-                arrayList.add(hashMap2);
+                HashMap map = new HashMap();
+                map.put("title", getString(R.string.user_add_user_item_title));
+                map.put("summary", getString(R.string.user_add_user_item_summary));
+                HashMap map2 = new HashMap();
+                map2.put("title", getString(R.string.user_add_profile_item_title));
+                map2.put("summary", getString(R.string.user_add_profile_item_summary));
+                arrayList.add(map);
+                arrayList.add(map2);
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 SimpleAdapter simpleAdapter = new SimpleAdapter(builder.getContext(), arrayList, R.layout.two_line_list_item, new String[]{"title", "summary"}, new int[]{R.id.title, R.id.summary});
                 builder.setTitle(R.string.user_add_user_type_title);
@@ -497,26 +459,9 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
                         userSettings.onAddUserClicked(i5);
                     }
                 });
-                return builder.create();
-            case 7:
-                return new AlertDialog.Builder(activity).setMessage(R.string.user_need_lock_message).setPositiveButton(R.string.user_set_lock_button, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.UserSettings.9
-                    @Override // android.content.DialogInterface.OnClickListener
-                    public void onClick(DialogInterface dialogInterface, int i4) {
-                        UserSettings.this.launchChooseLockscreen();
-                    }
-                }).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
-            case 8:
-                return new AlertDialog.Builder(activity).setTitle(R.string.user_exit_guest_confirm_title).setMessage(R.string.user_exit_guest_confirm_message).setPositiveButton(R.string.user_exit_guest_dialog_remove, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.UserSettings.10
-                    @Override // android.content.DialogInterface.OnClickListener
-                    public void onClick(DialogInterface dialogInterface, int i4) {
-                        UserSettings.this.exitGuest();
-                    }
-                }).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
-            case 9:
-                return this.mEditUserInfoController.createDialog(this, null, this.mMePreference.getTitle(), R.string.profile_info_settings_title, this, Process.myUserHandle());
-            default:
-                return null;
+                break;
         }
+        return null;
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.DialogCreatable
@@ -545,23 +490,22 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     /* JADX WARN: Type inference failed for: r0v1, types: [com.android.settings.users.UserSettings$11] */
-    public void removeUserNow() {
+    private void removeUserNow() {
         if (this.mRemovingUserId == UserHandle.myUserId()) {
             removeThisUser();
-            return;
-        }
-        showDeleteUserDialog();
-        new Thread() { // from class: com.android.settings.users.UserSettings.11
-            @Override // java.lang.Thread, java.lang.Runnable
-            public void run() {
-                synchronized (UserSettings.this.mUserLock) {
-                    UserSettings.this.mUserManager.removeUser(UserSettings.this.mRemovingUserId);
-                    UserSettings.this.mHandler.sendEmptyMessage(1);
+        } else {
+            showDeleteUserDialog();
+            new Thread() { // from class: com.android.settings.users.UserSettings.11
+                @Override // java.lang.Thread, java.lang.Runnable
+                public void run() {
+                    synchronized (UserSettings.this.mUserLock) {
+                        UserSettings.this.mUserManager.removeUser(UserSettings.this.mRemovingUserId);
+                        UserSettings.this.mHandler.sendEmptyMessage(1);
+                    }
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 
     private void removeThisUser() {
@@ -577,17 +521,16 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     /* JADX WARN: Type inference failed for: r1v4, types: [com.android.settings.users.UserSettings$12] */
-    public void addUserNow(final int i) {
+    private void addUserNow(final int i) {
         synchronized (this.mUserLock) {
             this.mAddingUser = true;
             this.mAddingUserName = i == 1 ? getString(R.string.user_new_user_name) : getString(R.string.user_new_profile_name);
             new Thread() { // from class: com.android.settings.users.UserSettings.12
                 @Override // java.lang.Thread, java.lang.Runnable
                 public void run() {
-                    UserInfo createTrustedUser = i == 1 ? UserSettings.this.createTrustedUser() : UserSettings.this.createRestrictedProfile();
-                    if (createTrustedUser == null) {
+                    UserInfo userInfoCreateTrustedUser = i == 1 ? UserSettings.this.createTrustedUser() : UserSettings.this.createRestrictedProfile();
+                    if (userInfoCreateTrustedUser == null) {
                         UserSettings.this.mAddingUser = false;
                         return;
                     }
@@ -595,10 +538,10 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
                         if (i == 1) {
                             UserSettings.this.mHandler.sendEmptyMessage(1);
                             if (!UserSettings.this.mUserCaps.mDisallowSwitchUser) {
-                                UserSettings.this.mHandler.sendMessage(UserSettings.this.mHandler.obtainMessage(2, createTrustedUser.id, createTrustedUser.serialNumber));
+                                UserSettings.this.mHandler.sendMessage(UserSettings.this.mHandler.obtainMessage(2, userInfoCreateTrustedUser.id, userInfoCreateTrustedUser.serialNumber));
                             }
                         } else {
-                            UserSettings.this.mHandler.sendMessage(UserSettings.this.mHandler.obtainMessage(3, createTrustedUser.id, createTrustedUser.serialNumber));
+                            UserSettings.this.mHandler.sendMessage(UserSettings.this.mHandler.obtainMessage(3, userInfoCreateTrustedUser.id, userInfoCreateTrustedUser.serialNumber));
                         }
                     }
                 }
@@ -606,24 +549,21 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void switchUserNow(int i) {
+    private void switchUserNow(int i) {
         try {
             ActivityManager.getService().switchUser(i);
         } catch (RemoteException e) {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void exitGuest() {
+    private void exitGuest() {
         if (!this.mUserCaps.mIsGuest) {
             return;
         }
         removeThisUser();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateUserList() {
+    private void updateUserList() {
         Preference preference;
         this.mUpdateUserListOperate = true;
         if (getActivity() == null) {
@@ -631,7 +571,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
         List users = this.mUserManager.getUsers(true);
         Activity activity = getActivity();
-        boolean isVoiceCapable = Utils.isVoiceCapable(activity);
+        boolean zIsVoiceCapable = Utils.isVoiceCapable(activity);
         ArrayList arrayList = new ArrayList();
         ArrayList arrayList2 = new ArrayList();
         final int i = -11;
@@ -648,7 +588,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
                 } else if (userInfo.isGuest()) {
                     i = userInfo.id;
                 } else {
-                    UserPreference userPreference = new UserPreference(getPrefContext(), null, userInfo.id, this.mUserCaps.mIsAdmin && (isVoiceCapable || userInfo.isRestricted()) ? this : null, this.mUserCaps.mIsAdmin && !isVoiceCapable && !userInfo.isRestricted() && !userInfo.isGuest() ? this : null);
+                    UserPreference userPreference = new UserPreference(getPrefContext(), null, userInfo.id, this.mUserCaps.mIsAdmin && (zIsVoiceCapable || userInfo.isRestricted()) ? this : null, this.mUserCaps.mIsAdmin && !zIsVoiceCapable && !userInfo.isRestricted() && !userInfo.isGuest() ? this : null);
                     userPreference.setKey("id=" + userInfo.id);
                     arrayList2.add(userPreference);
                     if (userInfo.isAdmin()) {
@@ -693,7 +633,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
             arrayList2.add(userPreference2);
         }
         if (!this.mUserCaps.mIsGuest && (this.mUserCaps.mCanAddGuest || this.mUserCaps.mDisallowAddUserSetByAdmin)) {
-            UserPreference userPreference3 = new UserPreference(getPrefContext(), null, -11, (this.mUserCaps.mIsAdmin && isVoiceCapable) ? this : null, null);
+            UserPreference userPreference3 = new UserPreference(getPrefContext(), null, -11, (this.mUserCaps.mIsAdmin && zIsVoiceCapable) ? this : null, null);
             userPreference3.setTitle(R.string.user_guest);
             userPreference3.setIcon(getEncircledDefaultIcon());
             arrayList2.add(userPreference3);
@@ -707,7 +647,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
             userPreference3.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.users.-$$Lambda$UserSettings$wMqzhBHYMbgNNY7TSuzlNB8n9UY
                 @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
                 public final boolean onPreferenceClick(Preference preference2) {
-                    return UserSettings.lambda$updateUserList$0(UserSettings.this, i, preference2);
+                    return UserSettings.lambda$updateUserList$0(this.f$0, i, preference2);
                 }
             });
         }
@@ -729,9 +669,9 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
             this.mUserListCategory.addPreference(userPreference4);
         }
         if ((this.mUserCaps.mCanAddUser || this.mUserCaps.mDisallowAddUserSetByAdmin) && Utils.isDeviceProvisioned(getActivity())) {
-            boolean canAddMoreUsers = this.mUserManager.canAddMoreUsers();
-            this.mAddUser.setEnabled(canAddMoreUsers && !this.mAddingUser);
-            if (!canAddMoreUsers) {
+            boolean zCanAddMoreUsers = this.mUserManager.canAddMoreUsers();
+            this.mAddUser.setEnabled(zCanAddMoreUsers && !this.mAddingUser);
+            if (!zCanAddMoreUsers) {
                 this.mAddUser.setSummary(getString(R.string.user_add_max_count, new Object[]{Integer.valueOf(getMaxRealUsers())}));
             } else {
                 this.mAddUser.setSummary((CharSequence) null);
@@ -744,9 +684,9 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
     }
 
     public static /* synthetic */ boolean lambda$updateUserList$0(UserSettings userSettings, int i, Preference preference) {
-        UserInfo createGuest;
-        if (i == -11 && (createGuest = userSettings.mUserManager.createGuest(userSettings.getContext(), preference.getTitle().toString())) != null) {
-            i = createGuest.id;
+        UserInfo userInfoCreateGuest;
+        if (i == -11 && (userInfoCreateGuest = userSettings.mUserManager.createGuest(userSettings.getContext(), preference.getTitle().toString())) != null) {
+            i = userInfoCreateGuest.id;
         }
         try {
             ActivityManager.getService().switchUser(i);
@@ -759,9 +699,10 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
 
     private int getMaxRealUsers() {
         int maxSupportedUsers = UserManager.getMaxSupportedUsers() + 1;
+        Iterator it = this.mUserManager.getUsers().iterator();
         int i = 0;
-        for (UserInfo userInfo : this.mUserManager.getUsers()) {
-            if (userInfo.isManagedProfile()) {
+        while (it.hasNext()) {
+            if (((UserInfo) it.next()).isManagedProfile()) {
                 i++;
             }
         }
@@ -771,22 +712,23 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
     /* JADX WARN: Type inference failed for: r0v0, types: [com.android.settings.users.UserSettings$13] */
     private void loadIconsAsync(List<Integer> list) {
         new AsyncTask<List<Integer>, Void, Void>() { // from class: com.android.settings.users.UserSettings.13
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(Void r1) {
+            protected void onPostExecute(Void r1) {
                 UserSettings.this.updateUserList();
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public Void doInBackground(List<Integer>... listArr) {
-                for (Integer num : listArr[0]) {
-                    int intValue = num.intValue();
-                    Bitmap userIcon = UserSettings.this.mUserManager.getUserIcon(intValue);
+            protected Void doInBackground(List<Integer>... listArr) {
+                Iterator<Integer> it = listArr[0].iterator();
+                while (it.hasNext()) {
+                    int iIntValue = it.next().intValue();
+                    Bitmap userIcon = UserSettings.this.mUserManager.getUserIcon(iIntValue);
                     if (userIcon == null) {
-                        userIcon = UserSettings.getDefaultUserIconAsBitmap(UserSettings.this.getContext().getResources(), intValue);
+                        userIcon = UserSettings.getDefaultUserIconAsBitmap(UserSettings.this.getContext().getResources(), iIntValue);
                     }
-                    UserSettings.this.mUserIcons.append(intValue, userIcon);
+                    UserSettings.this.mUserIcons.append(iIntValue, userIcon);
                 }
                 return null;
             }
@@ -813,7 +755,8 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
             if (this.mUserCaps.mIsGuest) {
                 showDialog(8);
                 return true;
-            } else if (this.mUserManager.isLinkedUser()) {
+            }
+            if (this.mUserManager.isLinkedUser()) {
                 onManageUserClicked(UserHandle.myUserId(), false);
             } else {
                 showDialog(9);
@@ -850,9 +793,9 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
                 if (id != R.id.trash_user || this.mUpdateUserListOperate) {
                     return;
                 }
-                RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getContext(), "no_remove_user", UserHandle.myUserId());
-                if (checkIfRestrictionEnforced != null) {
-                    RestrictedLockUtils.sendShowAdminSupportDetailsIntent(getContext(), checkIfRestrictionEnforced);
+                RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getContext(), "no_remove_user", UserHandle.myUserId());
+                if (enforcedAdminCheckIfRestrictionEnforced != null) {
+                    RestrictedLockUtils.sendShowAdminSupportDetailsIntent(getContext(), enforcedAdminCheckIfRestrictionEnforced);
                     return;
                 } else {
                     onRemoveUserClicked(userId);
@@ -886,13 +829,12 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         this.mMePreference.setTitle(charSequence);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static Bitmap getDefaultUserIconAsBitmap(Resources resources, int i) {
+    private static Bitmap getDefaultUserIconAsBitmap(Resources resources, int i) {
         Bitmap bitmap = sDarkDefaultUserBitmapCache.get(i);
         if (bitmap == null) {
-            Bitmap convertToBitmap = UserIcons.convertToBitmap(UserIcons.getDefaultUserIcon(resources, i, false));
-            sDarkDefaultUserBitmapCache.put(i, convertToBitmap);
-            return convertToBitmap;
+            Bitmap bitmapConvertToBitmap = UserIcons.convertToBitmap(UserIcons.getDefaultUserIcon(resources, i, false));
+            sDarkDefaultUserBitmapCache.put(i, bitmapConvertToBitmap);
+            return bitmapConvertToBitmap;
         }
         return bitmap;
     }
@@ -905,18 +847,17 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void copyMeProfilePhoto(Context context, UserInfo userInfo) {
+    static void copyMeProfilePhoto(Context context, UserInfo userInfo) throws IOException {
         Uri uri = ContactsContract.Profile.CONTENT_URI;
-        int myUserId = userInfo != null ? userInfo.id : UserHandle.myUserId();
-        InputStream openContactPhotoInputStream = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(), uri, true);
-        if (openContactPhotoInputStream == null) {
-            assignDefaultPhoto(context, myUserId);
+        int iMyUserId = userInfo != null ? userInfo.id : UserHandle.myUserId();
+        InputStream inputStreamOpenContactPhotoInputStream = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(), uri, true);
+        if (inputStreamOpenContactPhotoInputStream == null) {
+            assignDefaultPhoto(context, iMyUserId);
             return;
         }
-        ((UserManager) context.getSystemService("user")).setUserIcon(myUserId, BitmapFactory.decodeStream(openContactPhotoInputStream));
+        ((UserManager) context.getSystemService("user")).setUserIcon(iMyUserId, BitmapFactory.decodeStream(inputStreamOpenContactPhotoInputStream));
         try {
-            openContactPhotoInputStream.close();
+            inputStreamOpenContactPhotoInputStream.close();
         } catch (IOException e) {
         }
     }
@@ -933,16 +874,13 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dismissDeleteUserDialog() {
+    private void dismissDeleteUserDialog() {
         if (this.mDeletingUserDialog != null && this.mDeletingUserDialog.isShowing()) {
             this.mDeletingUserDialog.dismiss();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;
 
@@ -959,8 +897,8 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$1(Activity activity, SummaryLoader summaryLoader) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0002: CONSTRUCTOR (r1v0 android.app.Activity), (r2v0 com.android.settings.dashboard.SummaryLoader) A[MD:(android.content.Context, com.android.settings.dashboard.SummaryLoader):void (m)] (LINE:1199) call: com.android.settings.users.UserSettings.SummaryProvider.<init>(android.content.Context, com.android.settings.dashboard.SummaryLoader):void type: CONSTRUCTOR */
+    static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$1(Activity activity, SummaryLoader summaryLoader) {
         return new SummaryProvider(activity, summaryLoader);
     }
 }

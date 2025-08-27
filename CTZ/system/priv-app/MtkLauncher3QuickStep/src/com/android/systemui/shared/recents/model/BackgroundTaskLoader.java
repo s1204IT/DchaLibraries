@@ -1,14 +1,15 @@
 package com.android.systemui.shared.recents.model;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class BackgroundTaskLoader implements Runnable {
+class BackgroundTaskLoader implements Runnable {
     private boolean mCancelled;
     private Context mContext;
     private final IconLoader mIconLoader;
@@ -22,9 +23,7 @@ public class BackgroundTaskLoader implements Runnable {
     private final Handler mMainThreadHandler = new Handler();
     private final HandlerThread mLoadThread = new HandlerThread("Recents-TaskResourceLoader", 10);
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface OnIdleChangedListener {
+    interface OnIdleChangedListener {
         void onIdleChanged(boolean z);
     }
 
@@ -36,22 +35,20 @@ public class BackgroundTaskLoader implements Runnable {
         this.mLoadThreadHandler = new Handler(this.mLoadThread.getLooper());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void start(Context context) {
+    void start(Context context) {
         this.mContext = context;
         this.mCancelled = false;
         if (!this.mStarted) {
             this.mStarted = true;
             this.mLoadThreadHandler.post(this);
-            return;
-        }
-        synchronized (this.mLoadThread) {
-            this.mLoadThread.notifyAll();
+        } else {
+            synchronized (this.mLoadThread) {
+                this.mLoadThread.notifyAll();
+            }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void stop() {
+    void stop() {
         this.mCancelled = true;
         if (this.mWaitingOnLoadQueue) {
             this.mContext = null;
@@ -59,7 +56,7 @@ public class BackgroundTaskLoader implements Runnable {
     }
 
     @Override // java.lang.Runnable
-    public void run() {
+    public void run() throws PackageManager.NameNotFoundException {
         while (true) {
             if (this.mCancelled) {
                 this.mContext = null;
@@ -79,14 +76,14 @@ public class BackgroundTaskLoader implements Runnable {
                             this.mMainThreadHandler.post(new Runnable() { // from class: com.android.systemui.shared.recents.model.-$$Lambda$BackgroundTaskLoader$gaMb8n3irXHj3SpODGi50cngupE
                                 @Override // java.lang.Runnable
                                 public final void run() {
-                                    BackgroundTaskLoader.this.mOnIdleChangedListener.onIdleChanged(true);
+                                    this.f$0.mOnIdleChangedListener.onIdleChanged(true);
                                 }
                             });
                             this.mLoadQueue.wait();
                             this.mMainThreadHandler.post(new Runnable() { // from class: com.android.systemui.shared.recents.model.-$$Lambda$BackgroundTaskLoader$XRsMGIp0x8MAJ36UKSTd3DJ9dTg
                                 @Override // java.lang.Runnable
                                 public final void run() {
-                                    BackgroundTaskLoader.this.mOnIdleChangedListener.onIdleChanged(false);
+                                    this.f$0.mOnIdleChangedListener.onIdleChanged(false);
                                 }
                             });
                             this.mWaitingOnLoadQueue = false;
@@ -99,20 +96,19 @@ public class BackgroundTaskLoader implements Runnable {
         }
     }
 
-    private void processLoadQueueItem() {
+    private void processLoadQueueItem() throws PackageManager.NameNotFoundException {
         final Task t = this.mLoadQueue.nextTask();
         if (t != null) {
             final Drawable icon = this.mIconLoader.getIcon(t);
             if (DEBUG) {
-                String str = TAG;
-                Log.d(str, "Loading thumbnail: " + t.key);
+                Log.d(TAG, "Loading thumbnail: " + t.key);
             }
             final ThumbnailData thumbnailData = ActivityManagerWrapper.getInstance().getTaskThumbnail(t.key.id, true);
             if (!this.mCancelled) {
                 this.mMainThreadHandler.post(new Runnable() { // from class: com.android.systemui.shared.recents.model.-$$Lambda$BackgroundTaskLoader$mJeiv3P4w5EJwXqKPoDi48s7tFI
                     @Override // java.lang.Runnable
                     public final void run() {
-                        Task.this.notifyTaskDataLoaded(thumbnailData, icon);
+                        t.notifyTaskDataLoaded(thumbnailData, icon);
                     }
                 });
             }

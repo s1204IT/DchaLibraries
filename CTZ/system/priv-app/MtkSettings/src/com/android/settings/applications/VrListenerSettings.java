@@ -6,6 +6,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.utils.ManagedServiceSettings;
+
 /* loaded from: classes.dex */
 public class VrListenerSettings extends ManagedServiceSettings {
     private static final String TAG = VrListenerSettings.class.getSimpleName();
@@ -21,16 +22,14 @@ public class VrListenerSettings extends ManagedServiceSettings {
         return 334;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.utils.ManagedServiceSettings
-    public boolean setEnabled(ComponentName componentName, String str, boolean z) {
+    protected boolean setEnabled(ComponentName componentName, String str, boolean z) {
         logSpecialPermissionChange(z, componentName.getPackageName());
         return super.setEnabled(componentName, str, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.vr_listeners_settings;
     }
 

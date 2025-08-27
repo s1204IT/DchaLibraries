@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public interface ActivityController {
     boolean dispatchGenericMotionEvent(MotionEvent motionEvent);

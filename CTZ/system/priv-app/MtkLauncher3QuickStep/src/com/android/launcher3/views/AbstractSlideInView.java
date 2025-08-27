@@ -16,14 +16,17 @@ import com.android.launcher3.LauncherAnimUtils;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.anim.Interpolators;
 import com.android.launcher3.touch.SwipeDetector;
+
 /* loaded from: classes.dex */
 public abstract class AbstractSlideInView extends AbstractFloatingView implements SwipeDetector.Listener {
     protected static Property<AbstractSlideInView, Float> TRANSLATION_SHIFT = new Property<AbstractSlideInView, Float>(Float.class, "translationShift") { // from class: com.android.launcher3.views.AbstractSlideInView.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(AbstractSlideInView abstractSlideInView) {
             return Float.valueOf(abstractSlideInView.mTranslationShift);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(AbstractSlideInView abstractSlideInView, Float f) {
             abstractSlideInView.setTranslationShift(f.floatValue());
@@ -55,8 +58,7 @@ public abstract class AbstractSlideInView extends AbstractFloatingView implement
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setTranslationShift(float f) {
+    protected void setTranslationShift(float f) {
         this.mTranslationShift = f;
         this.mContent.setTranslationY(this.mTranslationShift * this.mContent.getHeight());
     }
@@ -103,21 +105,22 @@ public abstract class AbstractSlideInView extends AbstractFloatingView implement
             this.mScrollInterpolator = Interpolators.scrollInterpolatorForVelocity(f);
             this.mOpenCloseAnimator.setDuration(SwipeDetector.calculateDuration(f, 1.0f - this.mTranslationShift));
             close(true);
-            return;
+        } else {
+            this.mOpenCloseAnimator.setValues(PropertyValuesHolder.ofFloat(TRANSLATION_SHIFT, 0.0f));
+            this.mOpenCloseAnimator.setDuration(SwipeDetector.calculateDuration(f, this.mTranslationShift)).setInterpolator(Interpolators.DEACCEL);
+            this.mOpenCloseAnimator.start();
         }
-        this.mOpenCloseAnimator.setValues(PropertyValuesHolder.ofFloat(TRANSLATION_SHIFT, 0.0f));
-        this.mOpenCloseAnimator.setDuration(SwipeDetector.calculateDuration(f, this.mTranslationShift)).setInterpolator(Interpolators.DEACCEL);
-        this.mOpenCloseAnimator.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void handleClose(boolean z, long j) {
+    protected void handleClose(boolean z, long j) {
         if (this.mIsOpen && !z) {
             this.mOpenCloseAnimator.cancel();
             setTranslationShift(1.0f);
             onCloseComplete();
-        } else if (!this.mIsOpen || this.mOpenCloseAnimator.isRunning()) {
         } else {
+            if (!this.mIsOpen || this.mOpenCloseAnimator.isRunning()) {
+                return;
+            }
             this.mOpenCloseAnimator.setValues(PropertyValuesHolder.ofFloat(TRANSLATION_SHIFT, 1.0f));
             this.mOpenCloseAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.views.AbstractSlideInView.3
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
@@ -134,8 +137,7 @@ public abstract class AbstractSlideInView extends AbstractFloatingView implement
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onCloseComplete() {
+    protected void onCloseComplete() {
         this.mIsOpen = false;
         this.mLauncher.getDragLayer().removeView(this);
     }

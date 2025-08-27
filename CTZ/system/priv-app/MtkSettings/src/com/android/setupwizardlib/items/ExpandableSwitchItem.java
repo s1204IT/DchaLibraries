@@ -12,6 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import com.android.setupwizardlib.R;
 import com.android.setupwizardlib.view.CheckableLinearLayout;
+
 /* loaded from: classes.dex */
 public class ExpandableSwitchItem extends SwitchItem implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private CharSequence mCollapsedSummary;
@@ -25,10 +26,10 @@ public class ExpandableSwitchItem extends SwitchItem implements View.OnClickList
     public ExpandableSwitchItem(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mIsExpanded = false;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwExpandableSwitchItem);
-        this.mCollapsedSummary = obtainStyledAttributes.getText(R.styleable.SuwExpandableSwitchItem_suwCollapsedSummary);
-        this.mExpandedSummary = obtainStyledAttributes.getText(R.styleable.SuwExpandableSwitchItem_suwExpandedSummary);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwExpandableSwitchItem);
+        this.mCollapsedSummary = typedArrayObtainStyledAttributes.getText(R.styleable.SuwExpandableSwitchItem_suwCollapsedSummary);
+        this.mExpandedSummary = typedArrayObtainStyledAttributes.getText(R.styleable.SuwExpandableSwitchItem_suwExpandedSummary);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     @Override // com.android.setupwizardlib.items.SwitchItem, com.android.setupwizardlib.items.Item
@@ -64,10 +65,10 @@ public class ExpandableSwitchItem extends SwitchItem implements View.OnClickList
     @Override // com.android.setupwizardlib.items.SwitchItem, com.android.setupwizardlib.items.Item, com.android.setupwizardlib.items.IItem
     public void onBindView(View view) {
         super.onBindView(view);
-        View findViewById = view.findViewById(R.id.suw_items_expandable_switch_content);
-        findViewById.setOnClickListener(this);
-        if (findViewById instanceof CheckableLinearLayout) {
-            ((CheckableLinearLayout) findViewById).setChecked(isExpanded());
+        View viewFindViewById = view.findViewById(R.id.suw_items_expandable_switch_content);
+        viewFindViewById.setOnClickListener(this);
+        if (viewFindViewById instanceof CheckableLinearLayout) {
+            ((CheckableLinearLayout) viewFindViewById).setChecked(isExpanded());
         }
         tintCompoundDrawables(view);
         view.setFocusable(false);
@@ -79,11 +80,9 @@ public class ExpandableSwitchItem extends SwitchItem implements View.OnClickList
     }
 
     private void tintCompoundDrawables(View view) {
-        Drawable[] compoundDrawables;
-        Drawable[] compoundDrawablesRelative;
-        TypedArray obtainStyledAttributes = view.getContext().obtainStyledAttributes(new int[]{16842806});
-        ColorStateList colorStateList = obtainStyledAttributes.getColorStateList(0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = view.getContext().obtainStyledAttributes(new int[]{android.R.attr.textColorPrimary});
+        ColorStateList colorStateList = typedArrayObtainStyledAttributes.getColorStateList(0);
+        typedArrayObtainStyledAttributes.recycle();
         if (colorStateList != null) {
             TextView textView = (TextView) view.findViewById(R.id.suw_items_title);
             for (Drawable drawable : textView.getCompoundDrawables()) {

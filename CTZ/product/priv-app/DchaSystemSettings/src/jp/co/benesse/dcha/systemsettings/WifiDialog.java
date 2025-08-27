@@ -10,9 +10,9 @@ import android.widget.Button;
 import jp.co.benesse.dcha.util.Logger;
 import jp.co.benesse.dcha.util.RestrictedLockUtils;
 import jp.co.benesse.dcha.util.WifiSettings;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class WifiDialog extends AlertDialog implements DialogInterface.OnClickListener, WifiConfigUiBase {
+class WifiDialog extends AlertDialog implements DialogInterface.OnClickListener, WifiConfigUiBase {
     private final AccessPoint mAccessPoint;
     private Context mContext;
     private WifiConfigController mController;
@@ -20,7 +20,6 @@ public class WifiDialog extends AlertDialog implements DialogInterface.OnClickLi
     private final WifiDialogListener mListener;
     private final int mMode;
 
-    /* loaded from: classes.dex */
     public interface WifiDialogListener {
         void onForget(WifiDialog wifiDialog);
 
@@ -28,7 +27,7 @@ public class WifiDialog extends AlertDialog implements DialogInterface.OnClickLi
     }
 
     public WifiDialog(Context context, WifiDialogListener wifiDialogListener, AccessPoint accessPoint, int i) {
-        super(context, 2131296274);
+        super(context, R.style.Theme_WifiDialog);
         Logger.d("WifiDialog", "WifiDialog 0003");
         this.mMode = i;
         this.mListener = wifiDialogListener;
@@ -41,10 +40,10 @@ public class WifiDialog extends AlertDialog implements DialogInterface.OnClickLi
     @Override // android.app.AlertDialog, android.app.Dialog
     protected void onCreate(Bundle bundle) {
         Logger.d("WifiDialog", "onCreate 0001");
-        View inflate = getLayoutInflater().inflate(R.layout.wifi_dialog, (ViewGroup) null);
-        setView(inflate);
+        View viewInflate = getLayoutInflater().inflate(R.layout.wifi_dialog, (ViewGroup) null);
+        setView(viewInflate);
         setInverseBackgroundForced(false);
-        this.mController = new WifiConfigController((NetworkSettingActivity) this.mContext, this, inflate, this.mAccessPoint, this.mMode);
+        this.mController = new WifiConfigController((NetworkSettingActivity) this.mContext, this, viewInflate, this.mAccessPoint, this.mMode);
         super.onCreate(bundle);
         this.mController.setSubmitOrEnable();
         if (this.mHideSubmitButton) {

@@ -11,6 +11,7 @@ import com.android.systemui.statusbar.car.CarFacetButtonController;
 import com.android.systemui.statusbar.car.CarStatusBarKeyguardViewManager;
 import com.android.systemui.statusbar.car.hvac.HvacController;
 import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
+
 /* loaded from: classes.dex */
 public class CarSystemUIFactory extends SystemUIFactory {
     @Override // com.android.systemui.SystemUIFactory
@@ -41,18 +42,18 @@ public class CarSystemUIFactory extends SystemUIFactory {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$0(Context context) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0002: CONSTRUCTOR (r1v0 android.content.Context) A[MD:(android.content.Context):void (m)] (LINE:48) call: com.android.systemui.car.CarNotificationEntryManager.<init>(android.content.Context):void type: CONSTRUCTOR */
+    static /* synthetic */ Object lambda$injectDependencies$0(Context context) {
         return new CarNotificationEntryManager(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$1(Context context) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0002: CONSTRUCTOR (r1v0 android.content.Context) A[MD:(android.content.Context):void (m)] (LINE:49) call: com.android.systemui.statusbar.car.CarFacetButtonController.<init>(android.content.Context):void type: CONSTRUCTOR */
+    static /* synthetic */ Object lambda$injectDependencies$1(Context context) {
         return new CarFacetButtonController(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$injectDependencies$2(Context context) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0002: CONSTRUCTOR (r1v0 android.content.Context) A[MD:(android.content.Context):void (m)] (LINE:50) call: com.android.systemui.statusbar.car.hvac.HvacController.<init>(android.content.Context):void type: CONSTRUCTOR */
+    static /* synthetic */ Object lambda$injectDependencies$2(Context context) {
         return new HvacController(context);
     }
 }

@@ -12,14 +12,13 @@ import java.lang.ref.ReferenceQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReferenceArray;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> {
+class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> {
     private static final long serialVersionUID = 4;
     final Function<? super K, ? extends V> computingFunction;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ComputingConcurrentHashMap(MapMaker mapMaker, Function<? super K, ? extends V> function) {
+    ComputingConcurrentHashMap(MapMaker mapMaker, Function<? super K, ? extends V> function) {
         super(mapMaker);
         this.computingFunction = (Function) Preconditions.checkNotNull(function);
     }
@@ -29,34 +28,77 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
         return new ComputingSegment(this, i, i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
+    /* JADX DEBUG: Method merged with bridge method: segmentFor(I)Lcom/google/common/collect/MapMakerInternalMap$Segment; */
     @Override // com.google.common.collect.MapMakerInternalMap
-    public ComputingSegment<K, V> segmentFor(int i) {
+    ComputingSegment<K, V> segmentFor(int i) {
         return (ComputingSegment) super.segmentFor(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public V getOrCompute(K k) throws ExecutionException {
-        int hash = hash(Preconditions.checkNotNull(k));
-        return segmentFor(hash).getOrCompute(k, hash, this.computingFunction);
+    V getOrCompute(K k) throws ExecutionException {
+        int iHash = hash(Preconditions.checkNotNull(k));
+        return segmentFor(iHash).getOrCompute(k, iHash, this.computingFunction);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static final class ComputingSegment<K, V> extends MapMakerInternalMap.Segment<K, V> {
+    static final class ComputingSegment<K, V> extends MapMakerInternalMap.Segment<K, V> {
         ComputingSegment(MapMakerInternalMap<K, V> mapMakerInternalMap, int i, int i2) {
             super(mapMakerInternalMap, i, i2);
         }
 
-        /* JADX WARN: Removed duplicated region for block: B:63:0x00c9 A[SYNTHETIC] */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [145=4, 167=5] */
+        /* JADX WARN: Code restructure failed: missing block: B:23:0x005b, code lost:
+        
+            if (r6.getValueReference().isComputingReference() == false) goto L25;
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:24:0x005d, code lost:
+        
+            r2 = false;
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:25:0x005f, code lost:
+        
+            r8 = r6.getValueReference().get();
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:26:0x0067, code lost:
+        
+            if (r8 != null) goto L28;
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:27:0x0069, code lost:
+        
+            enqueueNotification(r7, r12, r8, com.google.common.collect.MapMaker.RemovalCause.COLLECTED);
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:29:0x0075, code lost:
+        
+            if (r10.map.expires() == false) goto L66;
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:31:0x007d, code lost:
+        
+            if (r10.map.isExpired(r6) == false) goto L67;
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:32:0x007f, code lost:
+        
+            enqueueNotification(r7, r12, r8, com.google.common.collect.MapMaker.RemovalCause.EXPIRED);
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:33:0x0084, code lost:
+        
+            r10.evictionQueue.remove(r6);
+            r10.expirationQueue.remove(r6);
+            r10.count = r2;
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:34:0x0091, code lost:
+        
+            recordLockedRead(r6);
+         */
+        /* JADX WARN: Code restructure failed: missing block: B:37:0x009e, code lost:
+        
+            return r8;
+         */
+        /* JADX WARN: Removed duplicated region for block: B:68:0x00c9 A[SYNTHETIC] */
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
         V getOrCompute(K k, int i, Function<? super K, ? extends V> function) throws ExecutionException {
             MapMakerInternalMap.ReferenceEntry<K, V> entry;
-            boolean z;
             ComputingValueReference<K, V> computingValueReference;
-            V waitForValue;
+            V vWaitForValue;
             V liveValue;
             do {
                 try {
@@ -68,71 +110,61 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
                     if (entry == null || !entry.getValueReference().isComputingReference()) {
                         ComputingValueReference<K, V> computingValueReference2 = null;
                         lock();
-                        preWriteCleanup();
-                        int i2 = this.count - 1;
-                        AtomicReferenceArray<MapMakerInternalMap.ReferenceEntry<K, V>> atomicReferenceArray = this.table;
-                        int length = (atomicReferenceArray.length() - 1) & i;
-                        MapMakerInternalMap.ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(length);
-                        MapMakerInternalMap.ReferenceEntry<K, V> referenceEntry2 = referenceEntry;
-                        while (true) {
-                            if (referenceEntry2 == null) {
-                                break;
+                        try {
+                            preWriteCleanup();
+                            int i2 = this.count - 1;
+                            AtomicReferenceArray<MapMakerInternalMap.ReferenceEntry<K, V>> atomicReferenceArray = this.table;
+                            int length = (atomicReferenceArray.length() - 1) & i;
+                            MapMakerInternalMap.ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(length);
+                            MapMakerInternalMap.ReferenceEntry<K, V> next = referenceEntry;
+                            while (true) {
+                                if (next == null) {
+                                    break;
+                                }
+                                K key = next.getKey();
+                                if (next.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
+                                    break;
+                                }
+                                next = next.getNext();
                             }
-                            K key = referenceEntry2.getKey();
-                            if (referenceEntry2.getHash() != i || key == null || !this.map.keyEquivalence.equivalent(k, key)) {
-                                referenceEntry2 = referenceEntry2.getNext();
-                            } else if (referenceEntry2.getValueReference().isComputingReference()) {
-                                z = false;
-                            } else {
-                                V v = referenceEntry2.getValueReference().get();
-                                if (v == null) {
-                                    enqueueNotification(key, i, v, MapMaker.RemovalCause.COLLECTED);
-                                } else if (!this.map.expires() || !this.map.isExpired(referenceEntry2)) {
-                                    recordLockedRead(referenceEntry2);
-                                    unlock();
-                                    postWriteCleanup();
-                                    return v;
+                            boolean z = true;
+                            if (z) {
+                                computingValueReference2 = new ComputingValueReference<>(function);
+                                if (next == null) {
+                                    MapMakerInternalMap.ReferenceEntry<K, V> referenceEntryNewEntry = newEntry(k, i, referenceEntry);
+                                    referenceEntryNewEntry.setValueReference(computingValueReference2);
+                                    atomicReferenceArray.set(length, referenceEntryNewEntry);
+                                    computingValueReference = computingValueReference2;
+                                    entry = referenceEntryNewEntry;
+                                    if (z) {
+                                        return compute(k, i, entry, computingValueReference);
+                                    }
                                 } else {
-                                    enqueueNotification(key, i, v, MapMaker.RemovalCause.EXPIRED);
-                                }
-                                this.evictionQueue.remove(referenceEntry2);
-                                this.expirationQueue.remove(referenceEntry2);
-                                this.count = i2;
-                            }
-                        }
-                        z = true;
-                        if (z) {
-                            computingValueReference2 = new ComputingValueReference<>(function);
-                            if (referenceEntry2 == null) {
-                                MapMakerInternalMap.ReferenceEntry<K, V> newEntry = newEntry(k, i, referenceEntry);
-                                newEntry.setValueReference(computingValueReference2);
-                                atomicReferenceArray.set(length, newEntry);
-                                computingValueReference = computingValueReference2;
-                                entry = newEntry;
-                                unlock();
-                                postWriteCleanup();
-                                if (z) {
-                                    return compute(k, i, entry, computingValueReference);
+                                    next.setValueReference(computingValueReference2);
+                                    computingValueReference = computingValueReference2;
+                                    entry = next;
+                                    if (z) {
+                                    }
                                 }
                             } else {
-                                referenceEntry2.setValueReference(computingValueReference2);
+                                computingValueReference = computingValueReference2;
+                                entry = next;
+                                if (z) {
+                                }
                             }
-                        }
-                        computingValueReference = computingValueReference2;
-                        entry = referenceEntry2;
-                        unlock();
-                        postWriteCleanup();
-                        if (z) {
+                        } finally {
+                            unlock();
+                            postWriteCleanup();
                         }
                     }
                     Preconditions.checkState(true ^ Thread.holdsLock(entry), "Recursive computation");
-                    waitForValue = entry.getValueReference().waitForValue();
+                    vWaitForValue = entry.getValueReference().waitForValue();
                 } finally {
                     postReadCleanup();
                 }
-            } while (waitForValue == null);
+            } while (vWaitForValue == null);
             recordRead(entry);
-            return waitForValue;
+            return vWaitForValue;
         }
 
         /* JADX WARN: Removed duplicated region for block: B:32:0x0043  */
@@ -140,42 +172,39 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        V compute(K k, int i, MapMakerInternalMap.ReferenceEntry<K, V> referenceEntry, ComputingValueReference<K, V> computingValueReference) throws ExecutionException {
-            V compute;
+        V compute(K k, int i, MapMakerInternalMap.ReferenceEntry<K, V> referenceEntry, ComputingValueReference<K, V> computingValueReference) throws Throwable {
             System.nanoTime();
             try {
                 try {
                     try {
                         synchronized (referenceEntry) {
                             try {
-                                compute = computingValueReference.compute(k, i);
-                            } catch (Throwable th) {
-                                th = th;
-                            }
-                            try {
-                                long nanoTime = System.nanoTime();
-                                if (compute != null && put(k, i, compute, true) != null) {
-                                    enqueueNotification(k, i, compute, MapMaker.RemovalCause.REPLACED);
+                                V vCompute = computingValueReference.compute(k, i);
+                                try {
+                                    long jNanoTime = System.nanoTime();
+                                    if (vCompute != null && put(k, i, vCompute, true) != null) {
+                                        enqueueNotification(k, i, vCompute, MapMaker.RemovalCause.REPLACED);
+                                    }
+                                    if (jNanoTime == 0) {
+                                        System.nanoTime();
+                                    }
+                                    if (vCompute == null) {
+                                        clearValue(k, i, computingValueReference);
+                                    }
+                                    return vCompute;
+                                } catch (Throwable th) {
+                                    th = th;
+                                    throw th;
                                 }
-                                if (nanoTime == 0) {
-                                    System.nanoTime();
-                                }
-                                if (compute == null) {
-                                    clearValue(k, i, computingValueReference);
-                                }
-                                return compute;
                             } catch (Throwable th2) {
                                 th = th2;
-                                throw th;
                             }
                         }
                     } catch (Throwable th3) {
                         th = th3;
                         if (0 == 0) {
-                            System.nanoTime();
                         }
                         if (0 == 0) {
-                            clearValue(k, i, computingValueReference);
                         }
                         throw th;
                     }
@@ -185,17 +214,17 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
             } catch (Throwable th5) {
                 th = th5;
                 if (0 == 0) {
+                    System.nanoTime();
                 }
                 if (0 == 0) {
+                    clearValue(k, i, computingValueReference);
                 }
                 throw th;
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class ComputationExceptionReference<K, V> implements MapMakerInternalMap.ValueReference<K, V> {
+    private static final class ComputationExceptionReference<K, V> implements MapMakerInternalMap.ValueReference<K, V> {
         final Throwable t;
 
         ComputationExceptionReference(Throwable th) {
@@ -232,9 +261,7 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class ComputedReference<K, V> implements MapMakerInternalMap.ValueReference<K, V> {
+    private static final class ComputedReference<K, V> implements MapMakerInternalMap.ValueReference<K, V> {
         final V value;
 
         ComputedReference(V v) {
@@ -271,9 +298,7 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class ComputingValueReference<K, V> implements MapMakerInternalMap.ValueReference<K, V> {
+    private static final class ComputingValueReference<K, V> implements MapMakerInternalMap.ValueReference<K, V> {
         volatile MapMakerInternalMap.ValueReference<K, V> computedReference = MapMakerInternalMap.unset();
         final Function<? super K, ? extends V> computingFunction;
 
@@ -302,7 +327,7 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
         }
 
         @Override // com.google.common.collect.MapMakerInternalMap.ValueReference
-        public V waitForValue() throws ExecutionException {
+        public V waitForValue() throws Throwable {
             boolean z;
             Throwable th;
             if (this.computedReference == MapMakerInternalMap.UNSET) {
@@ -347,9 +372,9 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
 
         V compute(K k, int i) throws ExecutionException {
             try {
-                V apply = this.computingFunction.apply(k);
-                setValueReference(new ComputedReference(apply));
-                return apply;
+                V vApply = this.computingFunction.apply(k);
+                setValueReference(new ComputedReference(vApply));
+                return vApply;
             } catch (Throwable th) {
                 setValueReference(new ComputationExceptionReference(th));
                 throw new ExecutionException(th);
@@ -371,7 +396,6 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
         return new ComputingSerializationProxy(this.keyStrength, this.valueStrength, this.keyEquivalence, this.valueEquivalence, this.expireAfterWriteNanos, this.expireAfterAccessNanos, this.maximumSize, this.concurrencyLevel, this.removalListener, this, this.computingFunction);
     }
 
-    /* loaded from: classes.dex */
     static final class ComputingSerializationProxy<K, V> extends MapMakerInternalMap.AbstractSerializationProxy<K, V> {
         private static final long serialVersionUID = 4;
         final Function<? super K, ? extends V> computingFunction;
@@ -386,7 +410,7 @@ public class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> 
             writeMapTo(objectOutputStream);
         }
 
-        private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        private void readObject(ObjectInputStream objectInputStream) throws ClassNotFoundException, IOException {
             objectInputStream.defaultReadObject();
             this.delegate = readMapMaker(objectInputStream).makeComputingMap(this.computingFunction);
             readEntries(objectInputStream);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.AttributeSet;
 import com.android.settings.DefaultRingtonePreference;
+
 /* loaded from: classes.dex */
 public class DefaultNotificationTonePreference extends DefaultRingtonePreference {
     private Uri mRingtone;

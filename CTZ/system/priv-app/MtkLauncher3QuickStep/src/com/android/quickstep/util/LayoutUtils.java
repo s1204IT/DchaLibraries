@@ -8,17 +8,17 @@ import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.R;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 /* loaded from: classes.dex */
 public class LayoutUtils {
     private static final int MULTI_WINDOW_STRATEGY_DEVICE_PROFILE = 2;
     private static final int MULTI_WINDOW_STRATEGY_HALF_SCREEN = 1;
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     private @interface MultiWindowStrategy {
     }
 
-    public static void calculateLauncherTaskSize(Context context, DeviceProfile deviceProfile, Rect rect) {
+    public static void calculateLauncherTaskSize(Context context, DeviceProfile deviceProfile, Rect rect) throws Resources.NotFoundException {
         float f;
         if (deviceProfile.isVerticalBarLayout()) {
             f = 0.0f;
@@ -28,12 +28,12 @@ public class LayoutUtils {
         calculateTaskSize(context, deviceProfile, f, 1, rect);
     }
 
-    public static void calculateFallbackTaskSize(Context context, DeviceProfile deviceProfile, Rect rect) {
+    public static void calculateFallbackTaskSize(Context context, DeviceProfile deviceProfile, Rect rect) throws Resources.NotFoundException {
         calculateTaskSize(context, deviceProfile, 0.0f, 2, rect);
     }
 
     @AnyThread
-    public static void calculateTaskSize(Context context, DeviceProfile deviceProfile, float f, int i, Rect rect) {
+    public static void calculateTaskSize(Context context, DeviceProfile deviceProfile, float f, int i, Rect rect) throws Resources.NotFoundException {
         float f2;
         float f3;
         int i2;
@@ -72,11 +72,11 @@ public class LayoutUtils {
         float f4 = (deviceProfile.heightPx - insets.top) - insets.bottom;
         float f5 = ((f4 - dimension3) - f) - dimension4;
         float f6 = i3;
-        float min = Math.min((f6 - dimension) / f2, f5 / f3);
-        float f7 = f2 * min;
-        float f8 = min * f3;
+        float fMin = Math.min((f6 - dimension) / f2, f5 / f3);
+        float f7 = f2 * fMin;
+        float f8 = fMin * f3;
         float f9 = insets.left + ((f6 - f7) / 2.0f);
-        float max = insets.top + Math.max(dimension3, ((f4 - f) - f8) / 2.0f);
-        rect.set(Math.round(f9), Math.round(max), Math.round(f9 + f7), Math.round(max + f8));
+        float fMax = insets.top + Math.max(dimension3, ((f4 - f) - f8) / 2.0f);
+        rect.set(Math.round(f9), Math.round(fMax), Math.round(f9 + f7), Math.round(fMax + f8));
     }
 }

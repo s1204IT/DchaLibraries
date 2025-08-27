@@ -1,10 +1,10 @@
 package android.arch.lifecycle;
+
 /* loaded from: classes.dex */
 public class ViewModelProvider {
     private final Factory mFactory;
     private final ViewModelStore mViewModelStore;
 
-    /* loaded from: classes.dex */
     public interface Factory {
         <T extends ViewModel> T create(Class<T> cls);
     }
@@ -14,22 +14,21 @@ public class ViewModelProvider {
         this.mViewModelStore = store;
     }
 
-    public <T extends ViewModel> T get(Class<T> modelClass) {
-        String canonicalName = modelClass.getCanonicalName();
+    public <T extends ViewModel> T get(Class<T> cls) {
+        String canonicalName = cls.getCanonicalName();
         if (canonicalName == null) {
             throw new IllegalArgumentException("Local and anonymous classes can not be ViewModels");
         }
-        return (T) get("android.arch.lifecycle.ViewModelProvider.DefaultKey:" + canonicalName, modelClass);
+        return (T) get("android.arch.lifecycle.ViewModelProvider.DefaultKey:" + canonicalName, cls);
     }
 
-    public <T extends ViewModel> T get(String key, Class<T> modelClass) {
-        T t = (T) this.mViewModelStore.get(key);
-        if (modelClass.isInstance(t)) {
+    public <T extends ViewModel> T get(String str, Class<T> cls) {
+        T t = (T) this.mViewModelStore.get(str);
+        if (cls.isInstance(t)) {
             return t;
         }
-        ViewModel viewModel = this.mFactory.create(modelClass);
-        T t2 = (T) viewModel;
-        this.mViewModelStore.put(key, t2);
+        T t2 = (T) this.mFactory.create(cls);
+        this.mViewModelStore.put(str, t2);
         return t2;
     }
 }

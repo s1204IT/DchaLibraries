@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ShortcutsChangedTask extends BaseModelUpdateTask {
     private final String mPackageName;
@@ -53,16 +54,16 @@ public class ShortcutsChangedTask extends BaseModelUpdateTask {
         ArrayList<ShortcutInfo> arrayList = new ArrayList<>();
         if (!multiHashMap.isEmpty()) {
             for (ShortcutInfoCompat shortcutInfoCompat : deepShortcutManager.queryForFullDetails(this.mPackageName, new ArrayList(hashSet2), this.mUser)) {
-                ShortcutKey fromInfo = ShortcutKey.fromInfo(shortcutInfoCompat);
-                List<ShortcutInfo> remove = multiHashMap.remove(fromInfo);
+                ShortcutKey shortcutKeyFromInfo = ShortcutKey.fromInfo(shortcutInfoCompat);
+                List<ShortcutInfo> listRemove = multiHashMap.remove(shortcutKeyFromInfo);
                 if (!shortcutInfoCompat.isPinned()) {
-                    hashSet.add(fromInfo);
+                    hashSet.add(shortcutKeyFromInfo);
                 } else {
-                    for (ShortcutInfo shortcutInfo2 : remove) {
+                    for (ShortcutInfo shortcutInfo2 : listRemove) {
                         shortcutInfo2.updateFromDeepShortcutInfo(shortcutInfoCompat, context);
-                        LauncherIcons obtain = LauncherIcons.obtain(context);
-                        obtain.createShortcutIcon(shortcutInfoCompat, true, Provider.of(shortcutInfo2.iconBitmap)).applyTo(shortcutInfo2);
-                        obtain.recycle();
+                        LauncherIcons launcherIconsObtain = LauncherIcons.obtain(context);
+                        launcherIconsObtain.createShortcutIcon(shortcutInfoCompat, true, Provider.of(shortcutInfo2.iconBitmap)).applyTo(shortcutInfo2);
+                        launcherIconsObtain.recycle();
                         arrayList.add(shortcutInfo2);
                     }
                 }

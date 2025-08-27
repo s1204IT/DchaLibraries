@@ -14,6 +14,7 @@ import com.android.settings.applications.AppInfoWithHeader;
 import com.android.settings.applications.AppStateInstallAppsBridge;
 import com.android.settingslib.RestrictedSwitchPreference;
 import com.android.settingslib.applications.ApplicationsState;
+
 /* loaded from: classes.dex */
 public class ExternalSourcesDetails extends AppInfoWithHeader implements Preference.OnPreferenceChangeListener {
     private AppStateInstallAppsBridge mAppBridge;
@@ -39,19 +40,19 @@ public class ExternalSourcesDetails extends AppInfoWithHeader implements Prefere
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        boolean booleanValue = ((Boolean) obj).booleanValue();
-        if (preference == this.mSwitchPref) {
-            if (this.mInstallAppsState != null && booleanValue != this.mInstallAppsState.canInstallApps()) {
-                if (Settings.ManageAppExternalSourcesActivity.class.getName().equals(getIntent().getComponent().getClassName())) {
-                    setResult(booleanValue ? -1 : 0);
-                }
-                setCanInstallApps(booleanValue);
-                refreshUi();
-                return true;
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
+        if (preference != this.mSwitchPref) {
+            return false;
+        }
+        if (this.mInstallAppsState != null && zBooleanValue != this.mInstallAppsState.canInstallApps()) {
+            if (Settings.ManageAppExternalSourcesActivity.class.getName().equals(getIntent().getComponent().getClassName())) {
+                setResult(zBooleanValue ? -1 : 0);
             }
+            setCanInstallApps(zBooleanValue);
+            refreshUi();
             return true;
         }
-        return false;
+        return true;
     }
 
     public static CharSequence getPreferenceSummary(Context context, ApplicationsState.AppEntry appEntry) {

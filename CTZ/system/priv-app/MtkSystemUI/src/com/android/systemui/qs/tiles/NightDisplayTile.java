@@ -13,6 +13,7 @@ import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+
 /* loaded from: classes.dex */
 public class NightDisplayTile extends QSTileImpl<QSTile.BooleanState> implements ColorDisplayController.Callback {
     private ColorDisplayController mController;
@@ -28,7 +29,7 @@ public class NightDisplayTile extends QSTileImpl<QSTile.BooleanState> implements
         return ColorDisplayController.isAvailable(this.mContext);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -43,9 +44,8 @@ public class NightDisplayTile extends QSTileImpl<QSTile.BooleanState> implements
         this.mController.setActivated(!((QSTile.BooleanState) this.mState).value);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUserSwitch(int i) {
+    protected void handleUserSwitch(int i) {
         if (this.mIsListening) {
             this.mController.setListener((ColorDisplayController.Callback) null);
         }
@@ -56,9 +56,9 @@ public class NightDisplayTile extends QSTileImpl<QSTile.BooleanState> implements
         super.handleUserSwitch(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         booleanState.value = this.mController.isActivated();
         String string = this.mContext.getString(R.string.quick_settings_night_display_label);
         booleanState.contentDescription = string;
@@ -113,9 +113,9 @@ public class NightDisplayTile extends QSTileImpl<QSTile.BooleanState> implements
         if (z) {
             this.mController.setListener(this);
             refreshState();
-            return;
+        } else {
+            this.mController.setListener((ColorDisplayController.Callback) null);
         }
-        this.mController.setListener((ColorDisplayController.Callback) null);
     }
 
     @Override // com.android.systemui.plugins.qs.QSTile

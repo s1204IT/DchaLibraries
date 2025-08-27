@@ -6,7 +6,7 @@
     <style name="DockedDividerBackground" parent="">
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:layout_width">10dp</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">-1</item>
     </style>
     <style name="DockedDividerHandle" parent="">
         <item name="android:layout_gravity">center_vertical</item>
@@ -15,7 +15,7 @@
     </style>
     <style name="DockedDividerMinimizedShadow" parent="">
         <item name="android:layout_width">8dp</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">-1</item>
     </style>
     <style name="Widget.Design.TabLayout" parent="@style/Base.Widget.Design.TabLayout">
         <item name="tabGravity">center</item>

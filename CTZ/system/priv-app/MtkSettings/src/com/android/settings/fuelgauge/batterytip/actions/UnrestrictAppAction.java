@@ -5,6 +5,7 @@ import android.util.Pair;
 import com.android.settings.fuelgauge.BatteryUtils;
 import com.android.settings.fuelgauge.batterytip.AppInfo;
 import com.android.settings.fuelgauge.batterytip.tips.UnrestrictAppTip;
+
 /* loaded from: classes.dex */
 public class UnrestrictAppAction extends BatteryTipAction {
     BatteryUtils mBatteryUtils;

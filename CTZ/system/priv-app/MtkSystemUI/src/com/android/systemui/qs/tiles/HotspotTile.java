@@ -11,6 +11,7 @@ import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.DataSaverController;
 import com.android.systemui.statusbar.policy.HotspotController;
+
 /* loaded from: classes.dex */
 public class HotspotTile extends QSTileImpl<QSTile.AirplaneBooleanState> {
     private static final Intent TETHER_SETTINGS = new Intent().setComponent(new ComponentName("com.android.settings", "com.android.settings.TetherSettings"));
@@ -40,13 +41,12 @@ public class HotspotTile extends QSTileImpl<QSTile.AirplaneBooleanState> {
         return this.mHotspotController.isHotspotSupported();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleDestroy() {
+    protected void handleDestroy() {
         super.handleDestroy();
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.AirplaneBooleanState newTileState() {
         return new QSTile.AirplaneBooleanState();
@@ -89,11 +89,11 @@ public class HotspotTile extends QSTileImpl<QSTile.AirplaneBooleanState> {
         return this.mContext.getString(R.string.quick_settings_hotspot_label);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.AirplaneBooleanState airplaneBooleanState, Object obj) {
+    protected void handleUpdateState(QSTile.AirplaneBooleanState airplaneBooleanState, Object obj) {
         int numConnectedDevices;
-        boolean isDataSaverEnabled;
+        boolean zIsDataSaverEnabled;
         boolean z = obj == ARG_SHOW_TRANSIENT_ENABLING;
         if (airplaneBooleanState.slash == null) {
             airplaneBooleanState.slash = new QSTile.SlashState();
@@ -104,11 +104,11 @@ public class HotspotTile extends QSTileImpl<QSTile.AirplaneBooleanState> {
             CallbackInfo callbackInfo = (CallbackInfo) obj;
             airplaneBooleanState.value = z || callbackInfo.isHotspotEnabled;
             numConnectedDevices = callbackInfo.numConnectedDevices;
-            isDataSaverEnabled = callbackInfo.isDataSaverEnabled;
+            zIsDataSaverEnabled = callbackInfo.isDataSaverEnabled;
         } else {
             airplaneBooleanState.value = z || this.mHotspotController.isHotspotEnabled();
             numConnectedDevices = this.mHotspotController.getNumConnectedDevices();
-            isDataSaverEnabled = this.mDataSaverController.isDataSaverEnabled();
+            zIsDataSaverEnabled = this.mDataSaverController.isDataSaverEnabled();
         }
         airplaneBooleanState.icon = this.mEnabledStatic;
         airplaneBooleanState.label = this.mContext.getString(R.string.quick_settings_hotspot_label);
@@ -120,14 +120,14 @@ public class HotspotTile extends QSTileImpl<QSTile.AirplaneBooleanState> {
         }
         airplaneBooleanState.expandedAccessibilityClassName = Switch.class.getName();
         airplaneBooleanState.contentDescription = airplaneBooleanState.label;
-        boolean z3 = airplaneBooleanState.isAirplaneMode || isDataSaverEnabled;
+        boolean z3 = airplaneBooleanState.isAirplaneMode || zIsDataSaverEnabled;
         boolean z4 = airplaneBooleanState.value || airplaneBooleanState.isTransient;
         if (z3) {
             airplaneBooleanState.state = 0;
         } else {
             airplaneBooleanState.state = z4 ? 2 : 1;
         }
-        airplaneBooleanState.secondaryLabel = getSecondaryLabel(z4, z2, isDataSaverEnabled, numConnectedDevices);
+        airplaneBooleanState.secondaryLabel = getSecondaryLabel(z4, z2, zIsDataSaverEnabled, numConnectedDevices);
     }
 
     private String getSecondaryLabel(boolean z, boolean z2, boolean z3, int i) {
@@ -145,7 +145,7 @@ public class HotspotTile extends QSTileImpl<QSTile.AirplaneBooleanState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 120;
+        return com.android.systemui.plugins.R.styleable.AppCompatTheme_windowNoTitle;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
@@ -156,7 +156,6 @@ public class HotspotTile extends QSTileImpl<QSTile.AirplaneBooleanState> {
         return this.mContext.getString(R.string.accessibility_quick_settings_hotspot_changed_off);
     }
 
-    /* loaded from: classes.dex */
     private final class HotspotAndDataSaverCallbacks implements DataSaverController.Listener, HotspotController.Callback {
         CallbackInfo mCallbackInfo;
 
@@ -178,9 +177,7 @@ public class HotspotTile extends QSTileImpl<QSTile.AirplaneBooleanState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public static final class CallbackInfo {
+    protected static final class CallbackInfo {
         boolean isDataSaverEnabled;
         boolean isHotspotEnabled;
         int numConnectedDevices;

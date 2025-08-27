@@ -11,6 +11,7 @@ import com.android.settings.RestrictedListPreference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.RestrictedLockUtils;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class VisibilityPreferenceController extends NotificationPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private LockPatternUtils mLockPatternUtils;
@@ -39,17 +40,17 @@ public class VisibilityPreferenceController extends NotificationPreferenceContro
             restrictedListPreference.clearRestrictedItems();
             if (getLockscreenNotificationsEnabled() && getLockscreenAllowPrivateNotifications()) {
                 String string = this.mContext.getString(R.string.lock_screen_notifications_summary_show);
-                String num = Integer.toString(-1000);
+                String string2 = Integer.toString(-1000);
                 arrayList.add(string);
-                arrayList2.add(num);
-                setRestrictedIfNotificationFeaturesDisabled(restrictedListPreference, string, num, 12);
+                arrayList2.add(string2);
+                setRestrictedIfNotificationFeaturesDisabled(restrictedListPreference, string, string2, 12);
             }
             if (getLockscreenNotificationsEnabled()) {
-                String string2 = this.mContext.getString(R.string.lock_screen_notifications_summary_hide);
-                String num2 = Integer.toString(0);
-                arrayList.add(string2);
-                arrayList2.add(num2);
-                setRestrictedIfNotificationFeaturesDisabled(restrictedListPreference, string2, num2, 4);
+                String string3 = this.mContext.getString(R.string.lock_screen_notifications_summary_hide);
+                String string4 = Integer.toString(0);
+                arrayList.add(string3);
+                arrayList2.add(string4);
+                setRestrictedIfNotificationFeaturesDisabled(restrictedListPreference, string3, string4, 4);
             }
             arrayList.add(this.mContext.getString(R.string.lock_screen_notifications_summary_disable));
             arrayList2.add(Integer.toString(-1));
@@ -65,13 +66,13 @@ public class VisibilityPreferenceController extends NotificationPreferenceContro
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         if (this.mChannel != null) {
-            int parseInt = Integer.parseInt((String) obj);
-            if (parseInt == getGlobalVisibility()) {
-                parseInt = -1000;
+            int i = Integer.parseInt((String) obj);
+            if (i == getGlobalVisibility()) {
+                i = -1000;
             }
-            this.mChannel.setLockscreenVisibility(parseInt);
+            this.mChannel.setLockscreenVisibility(i);
             this.mChannel.lockFields(2);
             saveChannel();
             return true;
@@ -80,9 +81,9 @@ public class VisibilityPreferenceController extends NotificationPreferenceContro
     }
 
     private void setRestrictedIfNotificationFeaturesDisabled(RestrictedListPreference restrictedListPreference, CharSequence charSequence, CharSequence charSequence2, int i) {
-        RestrictedLockUtils.EnforcedAdmin checkIfKeyguardFeaturesDisabled = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(this.mContext, i, this.mAppRow.userId);
-        if (checkIfKeyguardFeaturesDisabled != null) {
-            restrictedListPreference.addRestrictedItem(new RestrictedListPreference.RestrictedItem(charSequence, charSequence2, checkIfKeyguardFeaturesDisabled));
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfKeyguardFeaturesDisabled = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(this.mContext, i, this.mAppRow.userId);
+        if (enforcedAdminCheckIfKeyguardFeaturesDisabled != null) {
+            restrictedListPreference.addRestrictedItem(new RestrictedListPreference.RestrictedItem(charSequence, charSequence2, enforcedAdminCheckIfKeyguardFeaturesDisabled));
         }
     }
 
@@ -106,11 +107,11 @@ public class VisibilityPreferenceController extends NotificationPreferenceContro
     }
 
     protected boolean isLockScreenSecure() {
-        boolean isSecure = this.mLockPatternUtils.isSecure(UserHandle.myUserId());
+        boolean zIsSecure = this.mLockPatternUtils.isSecure(UserHandle.myUserId());
         UserInfo profileParent = this.mUm.getProfileParent(UserHandle.myUserId());
         if (profileParent != null) {
-            return isSecure | this.mLockPatternUtils.isSecure(profileParent.id);
+            return zIsSecure | this.mLockPatternUtils.isSecure(profileParent.id);
         }
-        return isSecure;
+        return zIsSecure;
     }
 }

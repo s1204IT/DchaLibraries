@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.os.IBinder;
 import android.view.Surface;
 import android.view.SurfaceControl;
+
 /* loaded from: classes.dex */
 public class TransactionCompat {
     private final float[] mTmpValues = new float[9];

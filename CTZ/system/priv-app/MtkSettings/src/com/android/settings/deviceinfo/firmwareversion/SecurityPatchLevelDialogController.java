@@ -9,6 +9,7 @@ import android.view.View;
 import com.android.settings.R;
 import com.android.settingslib.DeviceInfoUtils;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class SecurityPatchLevelDialogController implements View.OnClickListener {
     private static final Uri INTENT_URI_DATA = Uri.parse("https://source.android.com/security/bulletin/");
@@ -41,10 +42,10 @@ public class SecurityPatchLevelDialogController implements View.OnClickListener 
         if (TextUtils.isEmpty(this.mCurrentPatch)) {
             this.mDialog.removeSettingFromScreen(R.id.security_patch_level_label);
             this.mDialog.removeSettingFromScreen(R.id.security_patch_level_value);
-            return;
+        } else {
+            registerListeners();
+            this.mDialog.setText(R.id.security_patch_level_value, this.mCurrentPatch);
         }
-        registerListeners();
-        this.mDialog.setText(R.id.security_patch_level_value, this.mCurrentPatch);
     }
 
     private void registerListeners() {

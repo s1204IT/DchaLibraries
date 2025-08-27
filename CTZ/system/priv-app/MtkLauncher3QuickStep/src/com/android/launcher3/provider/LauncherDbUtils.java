@@ -10,38 +10,43 @@ import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherSettings;
 import java.util.ArrayList;
 import java.util.Collection;
+
 /* loaded from: classes.dex */
 public class LauncherDbUtils {
     private static final String TAG = "LauncherDbUtils";
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [83=5] */
     public static boolean prepareScreenZeroToHostQsb(Context context, SQLiteDatabase sQLiteDatabase) {
         try {
             SQLiteTransaction sQLiteTransaction = new SQLiteTransaction(sQLiteDatabase);
-            ArrayList<Long> screenIdsFromCursor = getScreenIdsFromCursor(sQLiteDatabase.query(LauncherSettings.WorkspaceScreens.TABLE_NAME, null, null, null, null, null, LauncherSettings.WorkspaceScreens.SCREEN_RANK));
-            if (screenIdsFromCursor.isEmpty()) {
-                sQLiteTransaction.commit();
-                sQLiteTransaction.close();
-                return true;
-            }
-            if (screenIdsFromCursor.get(0).longValue() != 0) {
-                if (screenIdsFromCursor.indexOf(0L) > -1) {
-                    long j = 1;
-                    while (screenIdsFromCursor.indexOf(Long.valueOf(j)) > -1) {
-                        j++;
-                    }
-                    renameScreen(sQLiteDatabase, 0L, j);
+            try {
+                ArrayList<Long> screenIdsFromCursor = getScreenIdsFromCursor(sQLiteDatabase.query(LauncherSettings.WorkspaceScreens.TABLE_NAME, null, null, null, null, null, LauncherSettings.WorkspaceScreens.SCREEN_RANK));
+                if (screenIdsFromCursor.isEmpty()) {
+                    sQLiteTransaction.commit();
+                    sQLiteTransaction.close();
+                    return true;
                 }
-                renameScreen(sQLiteDatabase, screenIdsFromCursor.get(0).longValue(), 0L);
-            }
-            if (DatabaseUtils.queryNumEntries(sQLiteDatabase, LauncherSettings.Favorites.TABLE_NAME, "container = -100 and screen = 0 and cellY = 0") == 0) {
+                if (screenIdsFromCursor.get(0).longValue() != 0) {
+                    if (screenIdsFromCursor.indexOf(0L) > -1) {
+                        long j = 1;
+                        while (screenIdsFromCursor.indexOf(Long.valueOf(j)) > -1) {
+                            j++;
+                        }
+                        renameScreen(sQLiteDatabase, 0L, j);
+                    }
+                    renameScreen(sQLiteDatabase, screenIdsFromCursor.get(0).longValue(), 0L);
+                }
+                if (DatabaseUtils.queryNumEntries(sQLiteDatabase, LauncherSettings.Favorites.TABLE_NAME, "container = -100 and screen = 0 and cellY = 0") == 0) {
+                    sQLiteTransaction.commit();
+                    sQLiteTransaction.close();
+                    return true;
+                }
+                new LossyScreenMigrationTask(context, LauncherAppState.getIDP(context), sQLiteDatabase).migrateScreen0();
                 sQLiteTransaction.commit();
                 sQLiteTransaction.close();
                 return true;
+            } finally {
             }
-            new LossyScreenMigrationTask(context, LauncherAppState.getIDP(context), sQLiteDatabase).migrateScreen0();
-            sQLiteTransaction.commit();
-            sQLiteTransaction.close();
-            return true;
         } catch (Exception e) {
             Log.e(TAG, "Failed to update workspace size", e);
             return false;
@@ -73,7 +78,6 @@ public class LauncherDbUtils {
         return t;
     }
 
-    /* loaded from: classes.dex */
     public static class SQLiteTransaction implements AutoCloseable {
         private final SQLiteDatabase mDb;
 

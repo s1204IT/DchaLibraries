@@ -7,6 +7,7 @@ import com.android.launcher3.LauncherModel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
+
 /* loaded from: classes.dex */
 public class ViewOnDrawExecutor implements Executor, ViewTreeObserver.OnDrawListener, Runnable, View.OnAttachStateChangeListener {
     private View mAttachedView;

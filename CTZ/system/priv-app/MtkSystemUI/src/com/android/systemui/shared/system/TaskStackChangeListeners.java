@@ -13,6 +13,7 @@ import android.util.Log;
 import com.android.systemui.shared.recents.model.ThumbnailData;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TaskStackChangeListeners extends TaskStackListener {
     private static final String TAG = TaskStackChangeListeners.class.getSimpleName();
@@ -114,7 +115,6 @@ public class TaskStackChangeListeners extends TaskStackListener {
         this.mHandler.obtainMessage(15, i, i2).sendToTarget();
     }
 
-    /* loaded from: classes.dex */
     private final class H extends Handler {
         public H(Looper looper) {
             super(looper);
@@ -209,7 +209,6 @@ public class TaskStackChangeListeners extends TaskStackListener {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class PinnedActivityInfo {
         final String mPackageName;
         final int mStackId;

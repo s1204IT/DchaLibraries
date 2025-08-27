@@ -3,6 +3,7 @@ package com.android.systemui.statusbar;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+
 /* loaded from: classes.dex */
 public class NeutralGoodDrawable extends LayerDrawable {
     public static NeutralGoodDrawable create(Context context, Context context2, int i) {

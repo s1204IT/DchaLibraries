@@ -7,18 +7,19 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
 /* loaded from: classes.dex */
 public class ObservableActivity extends Activity implements LifecycleOwner {
     private final Lifecycle mLifecycle = new Lifecycle(this);
 
+    /* JADX DEBUG: Method merged with bridge method: getLifecycle()Landroid/arch/lifecycle/Lifecycle; */
     @Override // android.arch.lifecycle.LifecycleOwner
     public Lifecycle getLifecycle() {
         return this.mLifecycle;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         this.mLifecycle.onAttach(this);
         this.mLifecycle.onCreate(bundle);
         this.mLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
@@ -33,16 +34,14 @@ public class ObservableActivity extends Activity implements LifecycleOwner {
         super.onCreate(bundle, persistableBundle);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         this.mLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START);
         super.onStart();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onResume() {
+    protected void onResume() {
         this.mLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
         super.onResume();
     }
@@ -53,16 +52,14 @@ public class ObservableActivity extends Activity implements LifecycleOwner {
         super.onPause();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         this.mLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
         super.onStop();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         this.mLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
         super.onDestroy();
     }
@@ -87,10 +84,10 @@ public class ObservableActivity extends Activity implements LifecycleOwner {
 
     @Override // android.app.Activity
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        boolean onOptionsItemSelected = this.mLifecycle.onOptionsItemSelected(menuItem);
-        if (!onOptionsItemSelected) {
+        boolean zOnOptionsItemSelected = this.mLifecycle.onOptionsItemSelected(menuItem);
+        if (!zOnOptionsItemSelected) {
             return super.onOptionsItemSelected(menuItem);
         }
-        return onOptionsItemSelected;
+        return zOnOptionsItemSelected;
     }
 }

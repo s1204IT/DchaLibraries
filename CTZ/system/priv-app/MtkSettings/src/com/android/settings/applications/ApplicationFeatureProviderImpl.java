@@ -19,6 +19,7 @@ import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class ApplicationFeatureProviderImpl implements ApplicationFeatureProvider {
     private final Context mContext;
@@ -72,15 +73,15 @@ public class ApplicationFeatureProviderImpl implements ApplicationFeatureProvide
         UserInfo userInfo = this.mUm.getUserInfo(i);
         for (Intent intent : intentArr) {
             try {
-                ResolveInfo findPersistentPreferredActivity = this.mPms.findPersistentPreferredActivity(intent, i);
-                if (findPersistentPreferredActivity != null) {
+                ResolveInfo resolveInfoFindPersistentPreferredActivity = this.mPms.findPersistentPreferredActivity(intent, i);
+                if (resolveInfoFindPersistentPreferredActivity != null) {
                     ComponentInfo componentInfo = null;
-                    if (findPersistentPreferredActivity.activityInfo != null) {
-                        componentInfo = findPersistentPreferredActivity.activityInfo;
-                    } else if (findPersistentPreferredActivity.serviceInfo != null) {
-                        componentInfo = findPersistentPreferredActivity.serviceInfo;
-                    } else if (findPersistentPreferredActivity.providerInfo != null) {
-                        componentInfo = findPersistentPreferredActivity.providerInfo;
+                    if (resolveInfoFindPersistentPreferredActivity.activityInfo != null) {
+                        componentInfo = resolveInfoFindPersistentPreferredActivity.activityInfo;
+                    } else if (resolveInfoFindPersistentPreferredActivity.serviceInfo != null) {
+                        componentInfo = resolveInfoFindPersistentPreferredActivity.serviceInfo;
+                    } else if (resolveInfoFindPersistentPreferredActivity.providerInfo != null) {
+                        componentInfo = resolveInfoFindPersistentPreferredActivity.providerInfo;
                     }
                     if (componentInfo != null) {
                         UserAppInfo userAppInfo = new UserAppInfo(userInfo, componentInfo.applicationInfo);
@@ -109,7 +110,6 @@ public class ApplicationFeatureProviderImpl implements ApplicationFeatureProvide
         return arraySet;
     }
 
-    /* loaded from: classes.dex */
     private static class CurrentUserAndManagedProfilePolicyInstalledAppCounter extends InstalledAppCounter {
         private ApplicationFeatureProvider.NumberOfAppsCallback mCallback;
 
@@ -124,7 +124,6 @@ public class ApplicationFeatureProviderImpl implements ApplicationFeatureProvide
         }
     }
 
-    /* loaded from: classes.dex */
     private static class CurrentUserAndManagedProfileAppWithAdminGrantedPermissionsCounter extends AppWithAdminGrantedPermissionsCounter {
         private ApplicationFeatureProvider.NumberOfAppsCallback mCallback;
 
@@ -139,7 +138,6 @@ public class ApplicationFeatureProviderImpl implements ApplicationFeatureProvide
         }
     }
 
-    /* loaded from: classes.dex */
     private static class CurrentUserPolicyInstalledAppLister extends InstalledAppLister {
         private ApplicationFeatureProvider.ListOfAppsCallback mCallback;
 
@@ -154,7 +152,6 @@ public class ApplicationFeatureProviderImpl implements ApplicationFeatureProvide
         }
     }
 
-    /* loaded from: classes.dex */
     private static class CurrentUserAppWithAdminGrantedPermissionsLister extends AppWithAdminGrantedPermissionsLister {
         private ApplicationFeatureProvider.ListOfAppsCallback mCallback;
 

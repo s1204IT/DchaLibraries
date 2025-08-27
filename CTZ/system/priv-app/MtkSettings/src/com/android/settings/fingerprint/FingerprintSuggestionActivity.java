@@ -6,11 +6,11 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.widget.Button;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class FingerprintSuggestionActivity extends SetupFingerprintEnrollIntroduction {
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.fingerprint.SetupFingerprintEnrollIntroduction, com.android.settings.fingerprint.FingerprintEnrollIntroduction, com.android.settings.fingerprint.FingerprintEnrollBase
-    public void initViews() {
+    protected void initViews() {
         super.initViews();
         ((Button) findViewById(R.id.fingerprint_cancel_button)).setText(R.string.security_settings_fingerprint_enroll_introduction_cancel);
     }
@@ -30,8 +30,7 @@ public class FingerprintSuggestionActivity extends SetupFingerprintEnrollIntrodu
         return fingerprintManagerOrNull == null || fingerprintManagerOrNull.getEnrolledFingerprints().size() != 1;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean isFingerprintEnabled(Context context) {
+    static boolean isFingerprintEnabled(Context context) {
         return (((DevicePolicyManager) context.getSystemService("device_policy")).getKeyguardDisabledFeatures(null, context.getUserId()) & 32) == 0;
     }
 }

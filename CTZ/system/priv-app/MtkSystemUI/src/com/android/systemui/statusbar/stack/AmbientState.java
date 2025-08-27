@@ -11,6 +11,7 @@ import com.android.systemui.statusbar.NotificationShelf;
 import com.android.systemui.statusbar.policy.HeadsUpManager;
 import java.util.ArrayList;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class AmbientState {
     private ActivatableNotificationView mActivatedChild;
@@ -283,13 +284,12 @@ public class AmbientState {
         return this.mHeadsUpManager.getAllEntries().anyMatch(new Predicate() { // from class: com.android.systemui.statusbar.stack.-$$Lambda$AmbientState$05gi9X6uLduWjWHWb7e4F7kHS2o
             @Override // java.util.function.Predicate
             public final boolean test(Object obj) {
-                return AmbientState.lambda$isPulsing$0(NotificationData.Entry.this, (NotificationData.Entry) obj);
+                return AmbientState.lambda$isPulsing$0(entry, (NotificationData.Entry) obj);
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$isPulsing$0(NotificationData.Entry entry, NotificationData.Entry entry2) {
+    static /* synthetic */ boolean lambda$isPulsing$0(NotificationData.Entry entry, NotificationData.Entry entry2) {
         return entry2 == entry;
     }
 

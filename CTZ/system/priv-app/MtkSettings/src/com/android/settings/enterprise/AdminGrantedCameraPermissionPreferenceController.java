@@ -1,6 +1,7 @@
 package com.android.settings.enterprise;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class AdminGrantedCameraPermissionPreferenceController extends AdminGrantedPermissionsPreferenceControllerBase {
     public AdminGrantedCameraPermissionPreferenceController(Context context, boolean z) {

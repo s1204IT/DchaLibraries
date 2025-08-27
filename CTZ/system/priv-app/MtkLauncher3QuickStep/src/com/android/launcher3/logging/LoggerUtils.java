@@ -11,6 +11,7 @@ import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.launcher3.util.InstantAppResolver;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+
 /* loaded from: classes.dex */
 public class LoggerUtils {
     private static final String UNKNOWN = "UNKNOWN";
@@ -18,7 +19,6 @@ public class LoggerUtils {
 
     public static String getFieldName(int i, Class cls) {
         SparseArray<String> sparseArray;
-        Field[] declaredFields;
         synchronized (sNameCache) {
             sparseArray = sNameCache.get(cls);
             if (sparseArray == null) {
@@ -107,9 +107,9 @@ public class LoggerUtils {
     }
 
     public static LauncherLogProto.Target newItemTarget(int i) {
-        LauncherLogProto.Target newTarget = newTarget(1);
-        newTarget.itemType = i;
-        return newTarget;
+        LauncherLogProto.Target targetNewTarget = newTarget(1);
+        targetNewTarget.itemType = i;
+        return targetNewTarget;
     }
 
     public static LauncherLogProto.Target newItemTarget(View view, InstantAppResolver instantAppResolver) {
@@ -119,32 +119,33 @@ public class LoggerUtils {
         return newTarget(1);
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     public static LauncherLogProto.Target newItemTarget(ItemInfo itemInfo, InstantAppResolver instantAppResolver) {
         int i = 1;
-        LauncherLogProto.Target newTarget = newTarget(1);
+        LauncherLogProto.Target targetNewTarget = newTarget(1);
         int i2 = itemInfo.itemType;
         if (i2 == 4) {
-            newTarget.itemType = 3;
+            targetNewTarget.itemType = 3;
         } else if (i2 != 6) {
             switch (i2) {
                 case 0:
                     if (instantAppResolver != null && (itemInfo instanceof AppInfo) && instantAppResolver.isInstantApp((AppInfo) itemInfo)) {
                         i = 10;
                     }
-                    newTarget.itemType = i;
-                    newTarget.predictedRank = -100;
+                    targetNewTarget.itemType = i;
+                    targetNewTarget.predictedRank = -100;
                     break;
                 case 1:
-                    newTarget.itemType = 2;
+                    targetNewTarget.itemType = 2;
                     break;
                 case 2:
-                    newTarget.itemType = 4;
+                    targetNewTarget.itemType = 4;
                     break;
             }
         } else {
-            newTarget.itemType = 5;
+            targetNewTarget.itemType = 5;
         }
-        return newTarget;
+        return targetNewTarget;
     }
 
     public static LauncherLogProto.Target newDropTarget(View view) {
@@ -172,15 +173,15 @@ public class LoggerUtils {
     }
 
     public static LauncherLogProto.Target newControlTarget(int i) {
-        LauncherLogProto.Target newTarget = newTarget(2);
-        newTarget.controlType = i;
-        return newTarget;
+        LauncherLogProto.Target targetNewTarget = newTarget(2);
+        targetNewTarget.controlType = i;
+        return targetNewTarget;
     }
 
     public static LauncherLogProto.Target newContainerTarget(int i) {
-        LauncherLogProto.Target newTarget = newTarget(3);
-        newTarget.containerType = i;
-        return newTarget;
+        LauncherLogProto.Target targetNewTarget = newTarget(3);
+        targetNewTarget.containerType = i;
+        return targetNewTarget;
     }
 
     public static LauncherLogProto.Action newAction(int i) {
@@ -190,15 +191,15 @@ public class LoggerUtils {
     }
 
     public static LauncherLogProto.Action newCommandAction(int i) {
-        LauncherLogProto.Action newAction = newAction(2);
-        newAction.command = i;
-        return newAction;
+        LauncherLogProto.Action actionNewAction = newAction(2);
+        actionNewAction.command = i;
+        return actionNewAction;
     }
 
     public static LauncherLogProto.Action newTouchAction(int i) {
-        LauncherLogProto.Action newAction = newAction(0);
-        newAction.touch = i;
-        return newAction;
+        LauncherLogProto.Action actionNewAction = newAction(0);
+        actionNewAction.touch = i;
+        return actionNewAction;
     }
 
     public static LauncherLogProto.LauncherEvent newLauncherEvent(LauncherLogProto.Action action, LauncherLogProto.Target... targetArr) {

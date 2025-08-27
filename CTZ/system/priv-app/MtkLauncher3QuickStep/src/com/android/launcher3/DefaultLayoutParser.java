@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class DefaultLayoutParser extends AutoInstallsLayout {
     private static final String ACTION_APPWIDGET_DEFAULT_WORKSPACE_CONFIGURE = "com.android.launcher.action.APPWIDGET_DEFAULT_WORKSPACE_CONFIGURE";
@@ -74,7 +75,6 @@ public class DefaultLayoutParser extends AutoInstallsLayout {
         jArr[1] = Long.parseLong(getAttributeValue(xmlResourceParser, "screen"));
     }
 
-    /* loaded from: classes.dex */
     public class AppShortcutWithUriParser extends AutoInstallsLayout.AppShortcutParser {
         public AppShortcutWithUriParser() {
             super();
@@ -86,21 +86,21 @@ public class DefaultLayoutParser extends AutoInstallsLayout {
         }
 
         @Override // com.android.launcher3.AutoInstallsLayout.AppShortcutParser
-        protected long invalidPackageOrClass(XmlResourceParser xmlResourceParser) {
+        protected long invalidPackageOrClass(XmlResourceParser xmlResourceParser) throws URISyntaxException {
             String attributeValue = AutoInstallsLayout.getAttributeValue(xmlResourceParser, DefaultLayoutParser.ATTR_URI);
             if (TextUtils.isEmpty(attributeValue)) {
                 Log.e(DefaultLayoutParser.TAG, "Skipping invalid <favorite> with no component or uri");
                 return -1L;
             }
             try {
-                Intent parseUri = Intent.parseUri(attributeValue, 0);
-                ResolveInfo resolveActivity = DefaultLayoutParser.this.mPackageManager.resolveActivity(parseUri, 65536);
-                List<ResolveInfo> queryIntentActivities = DefaultLayoutParser.this.mPackageManager.queryIntentActivities(parseUri, 65536);
-                if (wouldLaunchResolverActivity(resolveActivity, queryIntentActivities) && (resolveActivity = getSingleSystemActivity(queryIntentActivities)) == null) {
-                    Log.w(DefaultLayoutParser.TAG, "No preference or single system activity found for " + parseUri.toString());
+                Intent uri = Intent.parseUri(attributeValue, 0);
+                ResolveInfo resolveInfoResolveActivity = DefaultLayoutParser.this.mPackageManager.resolveActivity(uri, 65536);
+                List<ResolveInfo> listQueryIntentActivities = DefaultLayoutParser.this.mPackageManager.queryIntentActivities(uri, 65536);
+                if (wouldLaunchResolverActivity(resolveInfoResolveActivity, listQueryIntentActivities) && (resolveInfoResolveActivity = getSingleSystemActivity(listQueryIntentActivities)) == null) {
+                    Log.w(DefaultLayoutParser.TAG, "No preference or single system activity found for " + uri.toString());
                     return -1L;
                 }
-                ActivityInfo activityInfo = resolveActivity.activityInfo;
+                ActivityInfo activityInfo = resolveInfoResolveActivity.activityInfo;
                 Intent launchIntentForPackage = DefaultLayoutParser.this.mPackageManager.getLaunchIntentForPackage(activityInfo.packageName);
                 if (launchIntentForPackage == null) {
                     return -1L;
@@ -146,7 +146,6 @@ public class DefaultLayoutParser extends AutoInstallsLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     public class UriShortcutParser extends AutoInstallsLayout.ShortcutParser {
         @Override // com.android.launcher3.AutoInstallsLayout.ShortcutParser, com.android.launcher3.AutoInstallsLayout.TagParser
         public /* bridge */ /* synthetic */ long parseAndAdd(XmlResourceParser xmlResourceParser) {
@@ -159,58 +158,56 @@ public class DefaultLayoutParser extends AutoInstallsLayout {
 
         @Override // com.android.launcher3.AutoInstallsLayout.ShortcutParser
         protected Intent parseIntent(XmlResourceParser xmlResourceParser) {
-            String str;
+            String attributeValue;
             try {
-                str = AutoInstallsLayout.getAttributeValue(xmlResourceParser, DefaultLayoutParser.ATTR_URI);
-            } catch (URISyntaxException e) {
-                str = null;
-            }
-            try {
-                return Intent.parseUri(str, 0);
+                attributeValue = AutoInstallsLayout.getAttributeValue(xmlResourceParser, DefaultLayoutParser.ATTR_URI);
+                try {
+                    return Intent.parseUri(attributeValue, 0);
+                } catch (URISyntaxException e) {
+                    Log.w(DefaultLayoutParser.TAG, "Shortcut has malformed uri: " + attributeValue);
+                    return null;
+                }
             } catch (URISyntaxException e2) {
-                Log.w(DefaultLayoutParser.TAG, "Shortcut has malformed uri: " + str);
-                return null;
+                attributeValue = null;
             }
         }
     }
 
-    /* loaded from: classes.dex */
     public class ResolveParser implements AutoInstallsLayout.TagParser {
         private final AppShortcutWithUriParser mChildParser;
 
         public ResolveParser() {
-            this.mChildParser = new AppShortcutWithUriParser();
+            this.mChildParser = DefaultLayoutParser.this.new AppShortcutWithUriParser();
         }
 
         @Override // com.android.launcher3.AutoInstallsLayout.TagParser
         public long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, IOException {
             int depth = xmlResourceParser.getDepth();
-            long j = -1;
+            long andAdd = -1;
             while (true) {
                 int next = xmlResourceParser.next();
                 if (next != 3 || xmlResourceParser.getDepth() > depth) {
-                    if (next == 2 && j <= -1) {
+                    if (next == 2 && andAdd <= -1) {
                         String name = xmlResourceParser.getName();
                         if (DefaultLayoutParser.TAG_FAVORITE.equals(name)) {
-                            j = this.mChildParser.parseAndAdd(xmlResourceParser);
+                            andAdd = this.mChildParser.parseAndAdd(xmlResourceParser);
                         } else {
                             Log.e(DefaultLayoutParser.TAG, "Fallback groups can contain only favorites, found " + name);
                         }
                     }
                 } else {
-                    return j;
+                    return andAdd;
                 }
             }
         }
     }
 
-    /* loaded from: classes.dex */
     class PartnerFolderParser implements AutoInstallsLayout.TagParser {
         PartnerFolderParser() {
         }
 
         @Override // com.android.launcher3.AutoInstallsLayout.TagParser
-        public long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, IOException {
+        public long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, Resources.NotFoundException, IOException {
             Resources resources;
             int identifier;
             Partner partner = Partner.get(DefaultLayoutParser.this.mPackageManager);
@@ -223,14 +220,13 @@ public class DefaultLayoutParser extends AutoInstallsLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     class MyFolderParser extends AutoInstallsLayout.FolderParser {
         MyFolderParser() {
             super(DefaultLayoutParser.this);
         }
 
         @Override // com.android.launcher3.AutoInstallsLayout.FolderParser, com.android.launcher3.AutoInstallsLayout.TagParser
-        public long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, IOException {
+        public long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, Resources.NotFoundException, IOException {
             int attributeResourceValue = AutoInstallsLayout.getAttributeResourceValue(xmlResourceParser, DefaultLayoutParser.ATTR_FOLDER_ITEMS, 0);
             if (attributeResourceValue != 0) {
                 xmlResourceParser = DefaultLayoutParser.this.mSourceRes.getXml(attributeResourceValue);
@@ -240,16 +236,15 @@ public class DefaultLayoutParser extends AutoInstallsLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     protected class AppWidgetParser extends AutoInstallsLayout.PendingWidgetParser {
         protected AppWidgetParser() {
             super();
         }
 
         @Override // com.android.launcher3.AutoInstallsLayout.PendingWidgetParser
-        protected long verifyAndInsert(ComponentName componentName, Bundle bundle) {
-            long j;
-            int allocateAppWidgetId;
+        protected long verifyAndInsert(ComponentName componentName, Bundle bundle) throws PackageManager.NameNotFoundException {
+            long jInsertAndCheck;
+            int iAllocateAppWidgetId;
             try {
                 DefaultLayoutParser.this.mPackageManager.getReceiverInfo(componentName, 0);
             } catch (Exception e) {
@@ -264,38 +259,38 @@ public class DefaultLayoutParser extends AutoInstallsLayout {
             }
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(DefaultLayoutParser.this.mContext);
             try {
-                allocateAppWidgetId = DefaultLayoutParser.this.mAppWidgetHost.allocateAppWidgetId();
+                iAllocateAppWidgetId = DefaultLayoutParser.this.mAppWidgetHost.allocateAppWidgetId();
             } catch (RuntimeException e3) {
                 e = e3;
-                j = -1;
+                jInsertAndCheck = -1;
             }
-            if (!appWidgetManager.bindAppWidgetIdIfAllowed(allocateAppWidgetId, componentName)) {
+            if (!appWidgetManager.bindAppWidgetIdIfAllowed(iAllocateAppWidgetId, componentName)) {
                 Log.e(DefaultLayoutParser.TAG, "Unable to bind app widget id " + componentName);
-                DefaultLayoutParser.this.mAppWidgetHost.deleteAppWidgetId(allocateAppWidgetId);
+                DefaultLayoutParser.this.mAppWidgetHost.deleteAppWidgetId(iAllocateAppWidgetId);
                 return -1L;
             }
-            DefaultLayoutParser.this.mValues.put(LauncherSettings.Favorites.APPWIDGET_ID, Integer.valueOf(allocateAppWidgetId));
+            DefaultLayoutParser.this.mValues.put(LauncherSettings.Favorites.APPWIDGET_ID, Integer.valueOf(iAllocateAppWidgetId));
             DefaultLayoutParser.this.mValues.put(LauncherSettings.Favorites.APPWIDGET_PROVIDER, componentName.flattenToString());
             DefaultLayoutParser.this.mValues.put("_id", Long.valueOf(DefaultLayoutParser.this.mCallback.generateNewItemId()));
-            j = DefaultLayoutParser.this.mCallback.insertAndCheck(DefaultLayoutParser.this.mDb, DefaultLayoutParser.this.mValues);
+            jInsertAndCheck = DefaultLayoutParser.this.mCallback.insertAndCheck(DefaultLayoutParser.this.mDb, DefaultLayoutParser.this.mValues);
             try {
             } catch (RuntimeException e4) {
                 e = e4;
                 Log.e(DefaultLayoutParser.TAG, "Problem allocating appWidgetId", e);
-                return j;
+                return jInsertAndCheck;
             }
-            if (j < 0) {
-                DefaultLayoutParser.this.mAppWidgetHost.deleteAppWidgetId(allocateAppWidgetId);
-                return j;
+            if (jInsertAndCheck < 0) {
+                DefaultLayoutParser.this.mAppWidgetHost.deleteAppWidgetId(iAllocateAppWidgetId);
+                return jInsertAndCheck;
             }
             if (!bundle.isEmpty()) {
                 Intent intent = new Intent(DefaultLayoutParser.ACTION_APPWIDGET_DEFAULT_WORKSPACE_CONFIGURE);
                 intent.setComponent(componentName);
                 intent.putExtras(bundle);
-                intent.putExtra(LauncherSettings.Favorites.APPWIDGET_ID, allocateAppWidgetId);
+                intent.putExtra(LauncherSettings.Favorites.APPWIDGET_ID, iAllocateAppWidgetId);
                 DefaultLayoutParser.this.mContext.sendBroadcast(intent);
             }
-            return j;
+            return jInsertAndCheck;
         }
     }
 }

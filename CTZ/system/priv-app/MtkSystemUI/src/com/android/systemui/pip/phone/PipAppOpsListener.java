@@ -8,6 +8,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Pair;
+
 /* loaded from: classes.dex */
 public class PipAppOpsListener {
     private static final String TAG = PipAppOpsListener.class.getSimpleName();
@@ -18,10 +19,8 @@ public class PipAppOpsListener {
     private Handler mHandler;
     private PipMotionHelper mMotionHelper;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.pip.phone.PipAppOpsListener$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 implements AppOpsManager.OnOpChangedListener {
+    /* renamed from: com.android.systemui.pip.phone.PipAppOpsListener$1, reason: invalid class name */
+    class AnonymousClass1 implements AppOpsManager.OnOpChangedListener {
         AnonymousClass1() {
         }
 
@@ -66,8 +65,7 @@ public class PipAppOpsListener {
         this.mAppOpsManager.startWatchingMode(67, str, this.mAppOpsChangedListener);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void unregisterAppOpsListener() {
+    private void unregisterAppOpsListener() {
         this.mAppOpsManager.stopWatchingMode(this.mAppOpsChangedListener);
     }
 }

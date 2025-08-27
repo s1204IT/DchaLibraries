@@ -35,6 +35,7 @@ import com.mediatek.settings.sim.SimHotSwapHandler;
 import com.mediatek.settings.sim.TelephonyUtils;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SimSettings extends RestrictedSettingsFragment implements Indexable {
     private static final boolean ENG_LOAD;
@@ -78,18 +79,26 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         this.mIsAirplaneModeOn = false;
         this.mReceiver = new BroadcastReceiver() { // from class: com.android.settings.sim.SimSettings.1
             @Override // android.content.BroadcastReceiver
-            public void onReceive(Context context, Intent intent) {
+            public void onReceive(Context context, Intent intent) throws Resources.NotFoundException {
                 String action = intent.getAction();
                 Log.d("SimSettings", "onReceive, action=" + action);
                 if (action.equals("android.intent.action.AIRPLANE_MODE")) {
                     SimSettings.this.handleAirplaneModeChange(intent);
-                } else if (action.equals("android.intent.action.ACTION_DEFAULT_DATA_SUBSCRIPTION_CHANGED")) {
+                    return;
+                }
+                if (action.equals("android.intent.action.ACTION_DEFAULT_DATA_SUBSCRIPTION_CHANGED")) {
                     SimSettings.this.updateCellularDataValues();
-                } else if (action.equals("android.telecom.action.PHONE_ACCOUNT_REGISTERED") || action.equals("android.telecom.action.PHONE_ACCOUNT_UNREGISTERED")) {
+                    return;
+                }
+                if (action.equals("android.telecom.action.PHONE_ACCOUNT_REGISTERED") || action.equals("android.telecom.action.PHONE_ACCOUNT_UNREGISTERED")) {
                     SimSettings.this.updateCallValues();
-                } else if (action.equals("android.intent.action.ACTION_SET_RADIO_CAPABILITY_DONE") || action.equals("android.intent.action.ACTION_SET_RADIO_CAPABILITY_FAILED")) {
+                    return;
+                }
+                if (action.equals("android.intent.action.ACTION_SET_RADIO_CAPABILITY_DONE") || action.equals("android.intent.action.ACTION_SET_RADIO_CAPABILITY_FAILED")) {
                     SimSettings.this.updateActivitesCategory();
-                } else if (action.equals("android.intent.action.PHONE_STATE")) {
+                    return;
+                }
+                if (action.equals("android.intent.action.PHONE_STATE")) {
                     SimSettings.this.updateActivitesCategory();
                 } else if (action.equals("com.mediatek.intent.action.RADIO_STATE_CHANGED")) {
                     if (SimSettings.this.mRadioController.isRadioSwitchComplete(intent.getIntExtra("subId", -1))) {
@@ -100,7 +109,7 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         };
         this.mOnSubscriptionsChangeListener = new SubscriptionManager.OnSubscriptionsChangedListener() { // from class: com.android.settings.sim.SimSettings.2
             @Override // android.telephony.SubscriptionManager.OnSubscriptionsChangedListener
-            public void onSubscriptionsChanged() {
+            public void onSubscriptionsChanged() throws Resources.NotFoundException {
                 SimSettings.this.log("onSubscriptionsChanged:");
                 SimSettings.this.updateSubscriptions();
             }
@@ -117,8 +126,9 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         super.onCreate(bundle);
         this.mContext = getActivity();
         this.mSubscriptionManager = SubscriptionManager.from(getActivity());
+        TelephonyManager telephonyManager = (TelephonyManager) getActivity().getSystemService("phone");
         addPreferencesFromResource(R.xml.sim_settings);
-        this.mNumSlots = ((TelephonyManager) getActivity().getSystemService("phone")).getSimCount();
+        this.mNumSlots = telephonyManager.getSimCount();
         this.mSimCards = (PreferenceScreen) findPreference("sim_cards");
         this.mAvailableSubInfos = new ArrayList(this.mNumSlots);
         this.mSelectableSubInfos = new ArrayList();
@@ -132,13 +142,12 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         this.mSimManagementExt.initPrimarySim(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSubscriptions() {
+    private void updateSubscriptions() throws Resources.NotFoundException {
         this.mSubInfoList = this.mSubscriptionManager.getActiveSubscriptionInfoList();
         for (int i = 0; i < this.mNumSlots; i++) {
-            Preference findPreference = this.mSimCards.findPreference("sim" + i);
-            if (findPreference instanceof SimPreference) {
-                this.mSimCards.removePreference(findPreference);
+            Preference preferenceFindPreference = this.mSimCards.findPreference("sim" + i);
+            if (preferenceFindPreference instanceof SimPreference) {
+                this.mSimCards.removePreference(preferenceFindPreference);
             }
         }
         this.mAvailableSubInfos.clear();
@@ -151,8 +160,8 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
                 simPreference.bindRadioPowerState(-1, false, false, this.mIsAirplaneModeOn);
             } else {
                 int subscriptionId = activeSubscriptionInfoForSimSlotIndex.getSubscriptionId();
-                boolean isRadioOn = TelephonyUtils.isRadioOn(subscriptionId, this.mContext);
-                simPreference.bindRadioPowerState(subscriptionId, !this.mIsAirplaneModeOn && this.mRadioController.isRadioSwitchComplete(subscriptionId, isRadioOn), isRadioOn, this.mIsAirplaneModeOn);
+                boolean zIsRadioOn = TelephonyUtils.isRadioOn(subscriptionId, this.mContext);
+                simPreference.bindRadioPowerState(subscriptionId, !this.mIsAirplaneModeOn && this.mRadioController.isRadioSwitchComplete(subscriptionId, zIsRadioOn), zIsRadioOn, this.mIsAirplaneModeOn);
             }
             StringBuilder sb = new StringBuilder();
             sb.append("addPreference slot=");
@@ -179,8 +188,7 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateActivitesCategory() {
+    private void updateActivitesCategory() throws Resources.NotFoundException {
         updateCellularDataValues();
         updateCallValues();
         updateSmsValues();
@@ -188,74 +196,72 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
     }
 
     private void updateSmsValues() {
-        Preference findPreference = findPreference("sim_sms");
-        if (findPreference == null) {
+        Preference preferenceFindPreference = findPreference("sim_sms");
+        if (preferenceFindPreference == null) {
             return;
         }
         SubscriptionInfo defaultSmsSubscriptionInfo = this.mSubscriptionManager.getDefaultSmsSubscriptionInfo();
-        findPreference.setTitle(R.string.sms_messages_title);
+        preferenceFindPreference.setTitle(R.string.sms_messages_title);
         log("[updateSmsValues] mSubInfoList=" + this.mSubInfoList);
         if (defaultSmsSubscriptionInfo != null) {
-            findPreference.setSummary(defaultSmsSubscriptionInfo.getDisplayName());
-            findPreference.setEnabled(this.mSelectableSubInfos.size() > 1);
+            preferenceFindPreference.setSummary(defaultSmsSubscriptionInfo.getDisplayName());
+            preferenceFindPreference.setEnabled(this.mSelectableSubInfos.size() > 1);
         } else if (defaultSmsSubscriptionInfo == null) {
-            findPreference.setSummary(R.string.sim_calls_ask_first_prefs_title);
-            findPreference.setEnabled(this.mSelectableSubInfos.size() >= 1);
-            this.mSimManagementExt.updateDefaultSmsSummary(findPreference);
+            preferenceFindPreference.setSummary(R.string.sim_calls_ask_first_prefs_title);
+            preferenceFindPreference.setEnabled(this.mSelectableSubInfos.size() >= 1);
+            this.mSimManagementExt.updateDefaultSmsSummary(preferenceFindPreference);
         }
-        this.mSimManagementExt.configSimPreferenceScreen(findPreference, "sim_sms", this.mSelectableSubInfos.size());
-        this.mSimManagementExt.setPrefSummary(findPreference, "sim_sms");
+        this.mSimManagementExt.configSimPreferenceScreen(preferenceFindPreference, "sim_sms", this.mSelectableSubInfos.size());
+        this.mSimManagementExt.setPrefSummary(preferenceFindPreference, "sim_sms");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateCellularDataValues() {
-        Preference findPreference = findPreference("sim_cellular_data");
-        if (findPreference == null) {
+    private void updateCellularDataValues() {
+        Preference preferenceFindPreference = findPreference("sim_cellular_data");
+        if (preferenceFindPreference == null) {
             return;
         }
         SubscriptionInfo defaultDataSubscriptionInfo = this.mSubscriptionManager.getDefaultDataSubscriptionInfo();
-        findPreference.setTitle(R.string.cellular_data_title);
+        preferenceFindPreference.setTitle(R.string.cellular_data_title);
         log("[updateCellularDataValues] mSubInfoList=" + this.mSubInfoList);
         log("default subInfo=" + defaultDataSubscriptionInfo);
         SubscriptionInfo defaultSubId = this.mSimManagementExt.setDefaultSubId(getActivity(), defaultDataSubscriptionInfo, "sim_cellular_data");
         log("updated subInfo=" + defaultSubId);
         boolean z = this.mSelectableSubInfos.size() > 1;
         if (defaultSubId != null) {
-            findPreference.setSummary(defaultSubId.getDisplayName());
+            preferenceFindPreference.setSummary(defaultSubId.getDisplayName());
         } else if (defaultSubId == null) {
-            findPreference.setSummary(R.string.sim_selection_required_pref);
+            preferenceFindPreference.setSummary(R.string.sim_selection_required_pref);
             z = this.mSelectableSubInfos.size() >= 1;
         }
-        findPreference.setEnabled(shouldEnableSimPref(z));
-        this.mSimManagementExt.configSimPreferenceScreen(findPreference, "sim_cellular_data", -1);
+        preferenceFindPreference.setEnabled(shouldEnableSimPref(z));
+        this.mSimManagementExt.configSimPreferenceScreen(preferenceFindPreference, "sim_cellular_data", -1);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateCallValues() {
-        String str;
-        Preference findPreference = findPreference("sim_calls");
-        if (findPreference == null) {
+    private void updateCallValues() throws Resources.NotFoundException {
+        String string;
+        Preference preferenceFindPreference = findPreference("sim_calls");
+        if (preferenceFindPreference == null) {
             return;
         }
-        TelecomManager from = TelecomManager.from(this.mContext);
-        PhoneAccountHandle userSelectedOutgoingPhoneAccount = from.getUserSelectedOutgoingPhoneAccount();
-        List<PhoneAccountHandle> callCapablePhoneAccounts = from.getCallCapablePhoneAccounts();
-        findPreference.setTitle(R.string.calls_title);
+        TelecomManager telecomManagerFrom = TelecomManager.from(this.mContext);
+        PhoneAccountHandle userSelectedOutgoingPhoneAccount = telecomManagerFrom.getUserSelectedOutgoingPhoneAccount();
+        List<PhoneAccountHandle> callCapablePhoneAccounts = telecomManagerFrom.getCallCapablePhoneAccounts();
+        preferenceFindPreference.setTitle(R.string.calls_title);
         PhoneAccountHandle defaultCallValue = this.mSimManagementExt.setDefaultCallValue(userSelectedOutgoingPhoneAccount);
         log("updateCallValues, PhoneAccountSize=" + callCapablePhoneAccounts.size() + ", phoneAccount=" + defaultCallValue);
-        PhoneAccount phoneAccount = defaultCallValue == null ? null : from.getPhoneAccount(defaultCallValue);
+        PhoneAccount phoneAccount = defaultCallValue == null ? null : telecomManagerFrom.getPhoneAccount(defaultCallValue);
         if (phoneAccount == null) {
-            str = this.mContext.getResources().getString(R.string.sim_calls_ask_first_prefs_title);
+            string = this.mContext.getResources().getString(R.string.sim_calls_ask_first_prefs_title);
         } else {
-            str = (String) phoneAccount.getLabel();
+            string = (String) phoneAccount.getLabel();
         }
-        findPreference.setSummary(str);
-        findPreference.setEnabled(callCapablePhoneAccounts.size() > 1);
-        this.mSimManagementExt.configSimPreferenceScreen(findPreference, "sim_calls", callCapablePhoneAccounts.size());
+        preferenceFindPreference.setSummary(string);
+        preferenceFindPreference.setEnabled(callCapablePhoneAccounts.size() > 1);
+        this.mSimManagementExt.configSimPreferenceScreen(preferenceFindPreference, "sim_calls", callCapablePhoneAccounts.size());
     }
 
     @Override // com.android.settings.RestrictedSettingsFragment, com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         super.onResume();
         this.mSubscriptionManager.addOnSubscriptionsChangedListener(this.mOnSubscriptionsChangeListener);
         updateSubscriptions();
@@ -273,10 +279,10 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
     @Override // android.support.v14.preference.PreferenceFragment, android.support.v7.preference.PreferenceManager.OnPreferenceTreeClickListener
     public boolean onPreferenceTreeClick(Preference preference) {
         Context context = this.mContext;
-        Intent intent = new Intent(context, SimDialogActivity.class);
+        Intent intent = new Intent(context, (Class<?>) SimDialogActivity.class);
         intent.addFlags(268435456);
         if (preference instanceof SimPreference) {
-            Intent intent2 = new Intent(context, SimPreferenceDialog.class);
+            Intent intent2 = new Intent(context, (Class<?>) SimPreferenceDialog.class);
             intent2.putExtra("slot_id", ((SimPreference) preference).getSlotId());
             startActivity(intent2);
         } else if (findPreference("sim_cellular_data") == preference) {
@@ -288,19 +294,18 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         } else if (findPreference("sim_sms") == preference) {
             intent.putExtra(SimDialogActivity.DIALOG_TYPE_KEY, 2);
             context.startActivity(intent);
-        } else if (findPreference("primary_SIM_key") == preference) {
-            log("host onPreferenceTreeClick 1");
-            this.mSimManagementExt.onPreferenceClick(context);
-            return true;
         } else {
+            if (findPreference("primary_SIM_key") == preference) {
+                log("host onPreferenceTreeClick 1");
+                this.mSimManagementExt.onPreferenceClick(context);
+                return true;
+            }
             this.mSimManagementExt.handleEvent(this, context, preference);
         }
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SimPreference extends RadioPowerPreference {
+    private class SimPreference extends RadioPowerPreference {
         Context mContext;
         private int mSlotId;
         private SubscriptionInfo mSubInfoRecord;
@@ -316,7 +321,6 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
 
         public void update() {
             Resources resources = this.mContext.getResources();
-            boolean z = true;
             setTitle(String.format(this.mContext.getResources().getString(R.string.sim_editor_title), Integer.valueOf(this.mSlotId + 1)));
             if (this.mSubInfoRecord != null) {
                 String phoneNumber = SimSettings.this.getPhoneNumber(this.mSubInfoRecord);
@@ -329,14 +333,11 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
                 }
                 setIcon(new BitmapDrawable(resources, this.mSubInfoRecord.createIconBitmap(this.mContext)));
                 int subscriptionId = this.mSubInfoRecord.getSubscriptionId();
-                boolean isRadioOn = TelephonyUtils.isRadioOn(subscriptionId, getContext());
-                boolean isRadioSwitchComplete = SimSettings.this.mRadioController.isRadioSwitchComplete(subscriptionId, isRadioOn);
-                setRadioEnabled(!SimSettings.this.mIsAirplaneModeOn && isRadioSwitchComplete);
-                if (isRadioSwitchComplete) {
-                    if (SimSettings.this.mIsAirplaneModeOn || !isRadioOn) {
-                        z = false;
-                    }
-                    setRadioOn(z);
+                boolean zIsRadioOn = TelephonyUtils.isRadioOn(subscriptionId, getContext());
+                boolean zIsRadioSwitchComplete = SimSettings.this.mRadioController.isRadioSwitchComplete(subscriptionId, zIsRadioOn);
+                setRadioEnabled(!SimSettings.this.mIsAirplaneModeOn && zIsRadioSwitchComplete);
+                if (zIsRadioSwitchComplete) {
+                    setRadioOn(!SimSettings.this.mIsAirplaneModeOn && zIsRadioOn);
                     return;
                 }
                 return;
@@ -346,19 +347,16 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
             setEnabled(false);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public int getSlotId() {
+        private int getSlotId() {
             return this.mSlotId;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getPhoneNumber(SubscriptionInfo subscriptionInfo) {
+    private String getPhoneNumber(SubscriptionInfo subscriptionInfo) {
         return ((TelephonyManager) this.mContext.getSystemService("phone")).getLine1Number(subscriptionInfo.getSubscriptionId());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void log(String str) {
+    private void log(String str) {
         Log.d("SimSettings", str);
     }
 
@@ -386,15 +384,13 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         getActivity().registerReceiver(this.mReceiver, intentFilter);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleRadioPowerSwitchComplete() {
+    private void handleRadioPowerSwitchComplete() throws Resources.NotFoundException {
         logInEng("handleRadioPowerSwitchComplete");
         updateSimSlotValues();
         updateActivitesCategory();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleAirplaneModeChange(Intent intent) {
+    private void handleAirplaneModeChange(Intent intent) throws Resources.NotFoundException {
         this.mIsAirplaneModeOn = intent.getBooleanExtra("state", false);
         Log.d("SimSettings", "airplaneMode=" + this.mIsAirplaneModeOn);
         updateSimSlotValues();
@@ -405,20 +401,20 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
 
     private void removeItemsForTablet() {
         if (FeatureOption.MTK_PRODUCT_IS_TABLET) {
-            Preference findPreference = findPreference("sim_calls");
-            Preference findPreference2 = findPreference("sim_sms");
-            Preference findPreference3 = findPreference("sim_cellular_data");
+            Preference preferenceFindPreference = findPreference("sim_calls");
+            Preference preferenceFindPreference2 = findPreference("sim_sms");
+            Preference preferenceFindPreference3 = findPreference("sim_cellular_data");
             PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference("sim_activities");
-            TelephonyManager from = TelephonyManager.from(getActivity());
-            if (!from.isSmsCapable() && findPreference2 != null) {
-                preferenceCategory.removePreference(findPreference2);
+            TelephonyManager telephonyManagerFrom = TelephonyManager.from(getActivity());
+            if (!telephonyManagerFrom.isSmsCapable() && preferenceFindPreference2 != null) {
+                preferenceCategory.removePreference(preferenceFindPreference2);
             }
-            if (!from.isMultiSimEnabled() && findPreference3 != null && findPreference2 != null) {
-                preferenceCategory.removePreference(findPreference3);
-                preferenceCategory.removePreference(findPreference2);
+            if (!telephonyManagerFrom.isMultiSimEnabled() && preferenceFindPreference3 != null && preferenceFindPreference2 != null) {
+                preferenceCategory.removePreference(preferenceFindPreference3);
+                preferenceCategory.removePreference(preferenceFindPreference2);
             }
-            if (!from.isVoiceCapable() && findPreference != null) {
-                preferenceCategory.removePreference(findPreference);
+            if (!telephonyManagerFrom.isVoiceCapable() && preferenceFindPreference != null) {
+                preferenceCategory.removePreference(preferenceFindPreference);
             }
         }
     }
@@ -436,19 +432,18 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         int i;
         String str = SystemProperties.get("ril.cdma.inecmmode", "false");
         boolean z2 = str != null && str.contains("true");
-        boolean isCapabilitySwitching = TelephonyUtils.isCapabilitySwitching();
-        boolean isInCall = TelecomManager.from(this.mContext).isInCall();
+        boolean zIsCapabilitySwitching = TelephonyUtils.isCapabilitySwitching();
+        boolean zIsInCall = TelecomManager.from(this.mContext).isInCall();
         if (SystemProperties.getInt("ro.vendor.mtk_non_dsda_rsim_support", 0) == 1) {
             i = SystemProperties.getInt("vendor.gsm.prefered.rsim.slot", -1);
         } else {
             i = -1;
         }
-        log("defaultState=" + z + ", capSwitching=" + isCapabilitySwitching + ", airplaneModeOn=" + this.mIsAirplaneModeOn + ", inCall=" + isInCall + ", ecbMode=" + str + ", rsimPhoneId=" + i);
-        return (!z || isCapabilitySwitching || this.mIsAirplaneModeOn || isInCall || z2 || i != -1) ? false : true;
+        log("defaultState=" + z + ", capSwitching=" + zIsCapabilitySwitching + ", airplaneModeOn=" + this.mIsAirplaneModeOn + ", inCall=" + zIsInCall + ", ecbMode=" + str + ", rsimPhoneId=" + i);
+        return (!z || zIsCapabilitySwitching || this.mIsAirplaneModeOn || zIsInCall || z2 || i != -1) ? false : true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void logInEng(String str) {
+    private void logInEng(String str) {
         if (ENG_LOAD) {
             Log.d("SimSettings", str);
         }

@@ -14,6 +14,7 @@ import com.android.settings.search.DatabaseIndexingUtils;
 import com.android.settings.search.InlineSwitchPayload;
 import com.android.settings.search.ResultPayload;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public class AmbientDisplayNotificationsPreferenceController extends TogglePreferenceController implements Preference.OnPreferenceChangeListener {
     static final String KEY_AMBIENT_DISPLAY_NOTIFICATIONS = "ambient_display_notification";

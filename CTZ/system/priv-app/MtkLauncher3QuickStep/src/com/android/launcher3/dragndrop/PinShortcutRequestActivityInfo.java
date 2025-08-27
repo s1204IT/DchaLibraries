@@ -14,6 +14,7 @@ import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.R;
 import com.android.launcher3.compat.LauncherAppsCompatVO;
 import com.android.launcher3.compat.ShortcutConfigActivityInfo;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 class PinShortcutRequestActivityInfo extends ShortcutConfigActivityInfo {

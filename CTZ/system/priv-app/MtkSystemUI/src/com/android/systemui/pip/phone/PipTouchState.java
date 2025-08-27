@@ -8,8 +8,10 @@ import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
 import com.android.internal.annotations.VisibleForTesting;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class PipTouchState {
+
     @VisibleForTesting
     static final long DOUBLE_TAP_TIMEOUT = 200;
     private int mActivePointerId;
@@ -47,13 +49,15 @@ public class PipTouchState {
         this.mIsUserInteracting = false;
     }
 
-    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX DEBUG: Multi-variable search result rejected for r0v34, resolved type: byte */
+    /* JADX DEBUG: Multi-variable search result rejected for r0v35, resolved type: byte */
+    /* JADX DEBUG: Multi-variable search result rejected for r0v37, resolved type: byte */
+    /* JADX WARN: Multi-variable type inference failed */
     public void onTouchEvent(MotionEvent motionEvent) {
         int action = motionEvent.getAction();
-        r2 = false;
-        r2 = false;
+        z = false;
+        z = false;
         boolean z = false;
-        boolean z2 = true;
         if (action != 6) {
             switch (action) {
                 case 0:
@@ -67,10 +71,7 @@ public class PipTouchState {
                     this.mAllowDraggingOffscreen = true;
                     this.mIsUserInteracting = true;
                     this.mDownTouchTime = motionEvent.getEventTime();
-                    if (this.mPreviouslyDragging || this.mDownTouchTime - this.mLastDownTouchTime >= DOUBLE_TAP_TIMEOUT) {
-                        z2 = false;
-                    }
-                    this.mIsDoubleTap = z2;
+                    this.mIsDoubleTap = !this.mPreviouslyDragging && this.mDownTouchTime - this.mLastDownTouchTime < DOUBLE_TAP_TIMEOUT;
                     this.mIsWaitingForDoubleTap = false;
                     this.mLastDownTouchTime = this.mDownTouchTime;
                     if (this.mDoubleTapTimeoutCallback != null) {
@@ -83,13 +84,13 @@ public class PipTouchState {
                         this.mVelocityTracker.addMovement(motionEvent);
                         this.mVelocityTracker.computeCurrentVelocity(1000, this.mViewConfig.getScaledMaximumFlingVelocity());
                         this.mVelocity.set(this.mVelocityTracker.getXVelocity(), this.mVelocityTracker.getYVelocity());
-                        int findPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
-                        if (findPointerIndex == -1) {
+                        int iFindPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
+                        if (iFindPointerIndex == -1) {
                             Log.e("PipTouchHandler", "Invalid active pointer id on UP: " + this.mActivePointerId);
                             return;
                         }
                         this.mUpTouchTime = motionEvent.getEventTime();
-                        this.mLastTouch.set(motionEvent.getX(findPointerIndex), motionEvent.getY(findPointerIndex));
+                        this.mLastTouch.set(motionEvent.getX(iFindPointerIndex), motionEvent.getY(iFindPointerIndex));
                         this.mPreviouslyDragging = this.mIsDragging;
                         if (!this.mIsDoubleTap && !this.mIsDragging && this.mUpTouchTime - this.mDownTouchTime < DOUBLE_TAP_TIMEOUT) {
                             z = true;
@@ -102,18 +103,18 @@ public class PipTouchState {
                 case 2:
                     if (this.mIsUserInteracting) {
                         this.mVelocityTracker.addMovement(motionEvent);
-                        int findPointerIndex2 = motionEvent.findPointerIndex(this.mActivePointerId);
-                        if (findPointerIndex2 == -1) {
+                        int iFindPointerIndex2 = motionEvent.findPointerIndex(this.mActivePointerId);
+                        if (iFindPointerIndex2 == -1) {
                             Log.e("PipTouchHandler", "Invalid active pointer id on MOVE: " + this.mActivePointerId);
                             return;
                         }
-                        float x = motionEvent.getX(findPointerIndex2);
-                        float y = motionEvent.getY(findPointerIndex2);
+                        float x = motionEvent.getX(iFindPointerIndex2);
+                        float y = motionEvent.getY(iFindPointerIndex2);
                         this.mLastDelta.set(x - this.mLastTouch.x, y - this.mLastTouch.y);
                         this.mDownDelta.set(x - this.mDownTouch.x, y - this.mDownTouch.y);
-                        Object[] objArr = this.mDownDelta.length() > ((float) this.mViewConfig.getScaledTouchSlop()) ? 1 : null;
+                        byte b = this.mDownDelta.length() > ((float) this.mViewConfig.getScaledTouchSlop());
                         if (!this.mIsDragging) {
-                            if (objArr != null) {
+                            if (b != false) {
                                 this.mIsDragging = true;
                                 this.mStartedDragging = true;
                             }
@@ -130,7 +131,9 @@ public class PipTouchState {
                     return;
             }
             recycleVelocityTracker();
-        } else if (this.mIsUserInteracting) {
+            return;
+        }
+        if (this.mIsUserInteracting) {
             this.mVelocityTracker.addMovement(motionEvent);
             int actionIndex = motionEvent.getActionIndex();
             if (motionEvent.getPointerId(actionIndex) == this.mActivePointerId) {

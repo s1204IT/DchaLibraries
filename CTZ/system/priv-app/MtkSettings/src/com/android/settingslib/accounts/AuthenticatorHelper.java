@@ -18,6 +18,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public final class AuthenticatorHelper extends BroadcastReceiver {
     private final Context mContext;
@@ -29,7 +30,6 @@ public final class AuthenticatorHelper extends BroadcastReceiver {
     private final Map<String, Drawable> mAccTypeIconCache = new HashMap();
     private final HashMap<String, ArrayList<String>> mAccountTypeToAuthorities = new HashMap<>();
 
-    /* loaded from: classes.dex */
     public interface OnAccountsUpdateListener {
         void onAccountsUpdate(UserHandle userHandle);
     }
@@ -48,13 +48,13 @@ public final class AuthenticatorHelper extends BroadcastReceiver {
     /* JADX WARN: Type inference failed for: r0v0, types: [com.android.settingslib.accounts.AuthenticatorHelper$1] */
     public void preloadDrawableForType(final Context context, final String str) {
         new AsyncTask<Void, Void, Void>() { // from class: com.android.settingslib.accounts.AuthenticatorHelper.1
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public Void doInBackground(Void... voidArr) {
+            protected Void doInBackground(Void... voidArr) {
                 AuthenticatorHelper.this.getDrawableForType(context, str);
                 return null;
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
     }
 
     public Drawable getDrawableForType(Context context, String str) {
@@ -173,7 +173,6 @@ public final class AuthenticatorHelper extends BroadcastReceiver {
     }
 
     private void buildAccountTypeToAuthoritiesMap() {
-        SyncAdapterType[] syncAdapterTypesAsUser;
         this.mAccountTypeToAuthorities.clear();
         for (SyncAdapterType syncAdapterType : ContentResolver.getSyncAdapterTypesAsUser(this.mUserHandle.getIdentifier())) {
             ArrayList<String> arrayList = this.mAccountTypeToAuthorities.get(syncAdapterType.accountType);

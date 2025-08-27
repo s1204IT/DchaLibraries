@@ -6,6 +6,7 @@ import android.support.v7.preference.CheckBoxPreference;
 import android.util.TypedValue;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.ScalingDrawableWrapper;
+
 /* loaded from: classes.dex */
 public class SelectablePreference extends CheckBoxPreference {
     private final int mSize;

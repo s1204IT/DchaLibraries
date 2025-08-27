@@ -2,12 +2,12 @@ package android.support.v4.media;
 
 import android.annotation.TargetApi;
 import android.os.Bundle;
+
 @TargetApi(19)
 /* loaded from: classes.dex */
 public class MediaSession2 implements AutoCloseable {
     private final SupportLibraryImpl mImpl;
 
-    /* loaded from: classes.dex */
     interface SupportLibraryImpl extends AutoCloseable {
     }
 
@@ -19,7 +19,6 @@ public class MediaSession2 implements AutoCloseable {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class CommandButton {
         private SessionCommand2 mCommand;
         private String mDisplayName;
@@ -52,7 +51,6 @@ public class MediaSession2 implements AutoCloseable {
             }
         }
 
-        /* loaded from: classes.dex */
         public static final class Builder {
             private SessionCommand2 mCommand;
             private String mDisplayName;

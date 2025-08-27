@@ -22,6 +22,7 @@ import com.android.settings.R;
 import com.android.settings.SettingsActivity;
 import com.android.settings.core.InstrumentedPreferenceFragment;
 import com.android.settings.password.ChooseLockSettingsHelper;
+
 /* loaded from: classes.dex */
 public class CryptKeeperSettings extends InstrumentedPreferenceFragment {
     private View mBatteryWarning;
@@ -36,16 +37,11 @@ public class CryptKeeperSettings extends InstrumentedPreferenceFragment {
                 int intExtra = intent.getIntExtra("level", 0);
                 int intExtra2 = intent.getIntExtra("plugged", 0);
                 int intExtra3 = intent.getIntExtra("invalid_charger", 0);
-                boolean z = true;
-                boolean z2 = intExtra >= 80;
-                boolean z3 = (intExtra2 & 7) != 0 && intExtra3 == 0;
-                Button button = CryptKeeperSettings.this.mInitiateButton;
-                if (!z2 || !z3) {
-                    z = false;
-                }
-                button.setEnabled(z);
-                CryptKeeperSettings.this.mPowerWarning.setVisibility(z3 ? 8 : 0);
-                CryptKeeperSettings.this.mBatteryWarning.setVisibility(z2 ? 8 : 0);
+                boolean z = intExtra >= 80;
+                boolean z2 = (intExtra2 & 7) != 0 && intExtra3 == 0;
+                CryptKeeperSettings.this.mInitiateButton.setEnabled(z && z2);
+                CryptKeeperSettings.this.mPowerWarning.setVisibility(z2 ? 8 : 0);
+                CryptKeeperSettings.this.mBatteryWarning.setVisibility(z ? 8 : 0);
             }
         }
     };
@@ -53,7 +49,7 @@ public class CryptKeeperSettings extends InstrumentedPreferenceFragment {
         @Override // android.view.View.OnClickListener
         public void onClick(View view) {
             if (!CryptKeeperSettings.this.runKeyguardConfirmation(55)) {
-                new AlertDialog.Builder(CryptKeeperSettings.this.getActivity()).setTitle(R.string.crypt_keeper_dialog_need_password_title).setMessage(R.string.crypt_keeper_dialog_need_password_message).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).create().show();
+                new AlertDialog.Builder(CryptKeeperSettings.this.getActivity()).setTitle(R.string.crypt_keeper_dialog_need_password_title).setMessage(R.string.crypt_keeper_dialog_need_password_message).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null).create().show();
             }
         }
     };
@@ -99,8 +95,7 @@ public class CryptKeeperSettings extends InstrumentedPreferenceFragment {
         activity.setTitle(R.string.crypt_keeper_encrypt_title);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean runKeyguardConfirmation(int i) {
+    private boolean runKeyguardConfirmation(int i) {
         Resources resources = getActivity().getResources();
         ChooseLockSettingsHelper chooseLockSettingsHelper = new ChooseLockSettingsHelper(getActivity(), this);
         if (chooseLockSettingsHelper.utils().getKeyguardStoredPasswordQuality(UserHandle.myUserId()) == 0) {
@@ -134,9 +129,9 @@ public class CryptKeeperSettings extends InstrumentedPreferenceFragment {
         if (((DevicePolicyManager) getActivity().getSystemService("device_policy")).getDoNotAskCredentialsOnBoot()) {
             preference.getExtras().putInt("type", 1);
             preference.getExtras().putString("password", "");
-            return;
+        } else {
+            preference.getExtras().putInt("type", i);
+            preference.getExtras().putString("password", str);
         }
-        preference.getExtras().putInt("type", i);
-        preference.getExtras().putString("password", str);
     }
 }

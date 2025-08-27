@@ -1,5 +1,6 @@
 package com.android.systemui.usb;
 
+import android.R;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -17,9 +18,9 @@ import android.util.Log;
 import android.widget.CheckBox;
 import com.android.internal.app.IntentForwarderActivity;
 import com.android.internal.app.ResolverActivity;
-import com.android.systemui.R;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class UsbResolverActivity extends ResolverActivity {
     private UsbAccessory mAccessory;
@@ -28,6 +29,7 @@ public class UsbResolverActivity extends ResolverActivity {
     private ResolveInfo mForwardResolveInfo;
     private Intent mOtherProfileIntent;
 
+    /* JADX DEBUG: Multi-variable search result rejected for r8v0, resolved type: com.android.systemui.usb.UsbResolverActivity */
     /* JADX WARN: Multi-variable type inference failed */
     protected void onCreate(Bundle bundle) {
         Intent intent = getIntent();
@@ -78,13 +80,13 @@ public class UsbResolverActivity extends ResolverActivity {
                 }
             }
         }
-        super.onCreate(bundle, intent2, getResources().getText(17039618), (Intent[]) null, arrayList, true);
-        CheckBox checkBox = (CheckBox) findViewById(16908711);
+        super.onCreate(bundle, intent2, getResources().getText(R.string.accessibility_system_action_dpad_center_label), (Intent[]) null, arrayList, true);
+        CheckBox checkBox = (CheckBox) findViewById(R.id.accessibility_permissionDialog_title);
         if (checkBox != null) {
             if (this.mDevice == null) {
-                checkBox.setText(R.string.always_use_accessory);
+                checkBox.setText(com.android.systemui.R.string.always_use_accessory);
             } else {
-                checkBox.setText(R.string.always_use_device);
+                checkBox.setText(com.android.systemui.R.string.always_use_device);
             }
         }
     }
@@ -96,6 +98,7 @@ public class UsbResolverActivity extends ResolverActivity {
         super.onDestroy();
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r7v0, resolved type: com.android.systemui.usb.UsbResolverActivity */
     /* JADX WARN: Multi-variable type inference failed */
     protected boolean onTargetSelected(ResolverActivity.TargetInfo targetInfo, boolean z) {
         ResolveInfo resolveInfo = targetInfo.getResolveInfo();
@@ -104,26 +107,26 @@ public class UsbResolverActivity extends ResolverActivity {
             return true;
         }
         try {
-            IUsbManager asInterface = IUsbManager.Stub.asInterface(ServiceManager.getService("usb"));
+            IUsbManager iUsbManagerAsInterface = IUsbManager.Stub.asInterface(ServiceManager.getService("usb"));
             int i = resolveInfo.activityInfo.applicationInfo.uid;
-            int myUserId = UserHandle.myUserId();
+            int iMyUserId = UserHandle.myUserId();
             if (this.mDevice != null) {
-                asInterface.grantDevicePermission(this.mDevice, i);
+                iUsbManagerAsInterface.grantDevicePermission(this.mDevice, i);
                 if (z) {
-                    asInterface.setDevicePackage(this.mDevice, resolveInfo.activityInfo.packageName, myUserId);
+                    iUsbManagerAsInterface.setDevicePackage(this.mDevice, resolveInfo.activityInfo.packageName, iMyUserId);
                 } else {
-                    asInterface.setDevicePackage(this.mDevice, (String) null, myUserId);
+                    iUsbManagerAsInterface.setDevicePackage(this.mDevice, (String) null, iMyUserId);
                 }
             } else if (this.mAccessory != null) {
-                asInterface.grantAccessoryPermission(this.mAccessory, i);
+                iUsbManagerAsInterface.grantAccessoryPermission(this.mAccessory, i);
                 if (z) {
-                    asInterface.setAccessoryPackage(this.mAccessory, resolveInfo.activityInfo.packageName, myUserId);
+                    iUsbManagerAsInterface.setAccessoryPackage(this.mAccessory, resolveInfo.activityInfo.packageName, iMyUserId);
                 } else {
-                    asInterface.setAccessoryPackage(this.mAccessory, (String) null, myUserId);
+                    iUsbManagerAsInterface.setAccessoryPackage(this.mAccessory, (String) null, iMyUserId);
                 }
             }
             try {
-                targetInfo.startAsUser(this, (Bundle) null, UserHandle.of(myUserId));
+                targetInfo.startAsUser(this, (Bundle) null, UserHandle.of(iMyUserId));
             } catch (ActivityNotFoundException e) {
                 Log.e("UsbResolverActivity", "startActivity failed", e);
             }

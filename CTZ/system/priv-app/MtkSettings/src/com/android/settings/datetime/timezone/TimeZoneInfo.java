@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.android.settingslib.datetime.ZoneGetter;
 import java.util.Date;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class TimeZoneInfo {
     private final String mDaylightName;
@@ -55,7 +56,6 @@ public class TimeZoneInfo {
         return this.mGmtOffset;
     }
 
-    /* loaded from: classes.dex */
     public static class Builder {
         private String mDaylightName;
         private String mExemplarLocation;
@@ -104,7 +104,6 @@ public class TimeZoneInfo {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Formatter {
         private final Locale mLocale;
         private final Date mNow;

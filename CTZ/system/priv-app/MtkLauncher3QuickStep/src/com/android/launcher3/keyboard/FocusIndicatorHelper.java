@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.RectEvaluator;
 import android.animation.ValueAnimator;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,6 +15,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.Property;
 import android.view.View;
 import com.android.launcher3.R;
+
 /* loaded from: classes.dex */
 public abstract class FocusIndicatorHelper implements View.OnFocusChangeListener, ValueAnimator.AnimatorUpdateListener {
     private static final long ANIM_DURATION = 150;
@@ -27,22 +29,26 @@ public abstract class FocusIndicatorHelper implements View.OnFocusChangeListener
     private float mShift;
     private View mTargetView;
     public static final Property<FocusIndicatorHelper, Float> ALPHA = new Property<FocusIndicatorHelper, Float>(Float.TYPE, "alpha") { // from class: com.android.launcher3.keyboard.FocusIndicatorHelper.1
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(FocusIndicatorHelper focusIndicatorHelper, Float f) {
             focusIndicatorHelper.setAlpha(f.floatValue());
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(FocusIndicatorHelper focusIndicatorHelper) {
             return Float.valueOf(focusIndicatorHelper.mAlpha);
         }
     };
     public static final Property<FocusIndicatorHelper, Float> SHIFT = new Property<FocusIndicatorHelper, Float>(Float.TYPE, "shift") { // from class: com.android.launcher3.keyboard.FocusIndicatorHelper.2
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(FocusIndicatorHelper focusIndicatorHelper, Float f) {
             focusIndicatorHelper.mShift = f.floatValue();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(FocusIndicatorHelper focusIndicatorHelper) {
             return Float.valueOf(focusIndicatorHelper.mShift);
@@ -57,7 +63,7 @@ public abstract class FocusIndicatorHelper implements View.OnFocusChangeListener
 
     public abstract void viewToRect(View view, Rect rect);
 
-    public FocusIndicatorHelper(View view) {
+    public FocusIndicatorHelper(View view) throws Resources.NotFoundException {
         this.mContainer = view;
         int color = view.getResources().getColor(R.color.focused_background);
         this.mMaxAlpha = Color.alpha(color);
@@ -151,7 +157,6 @@ public abstract class FocusIndicatorHelper implements View.OnFocusChangeListener
         this.mTargetView = null;
     }
 
-    /* loaded from: classes.dex */
     private class ViewSetListener extends AnimatorListenerAdapter {
         private final boolean mCallOnCancel;
         private boolean mCalled = false;
@@ -178,7 +183,6 @@ public abstract class FocusIndicatorHelper implements View.OnFocusChangeListener
         }
     }
 
-    /* loaded from: classes.dex */
     public static class SimpleFocusIndicatorHelper extends FocusIndicatorHelper {
         public SimpleFocusIndicatorHelper(View view) {
             super(view);

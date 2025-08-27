@@ -9,6 +9,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.inputmethod.InputMethodUtils;
 import java.text.Collator;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class InputMethodSubtypePreference extends SwitchWithNoTextPreference {
     private final boolean mIsSystemLanguage;
@@ -21,17 +22,16 @@ public class InputMethodSubtypePreference extends SwitchWithNoTextPreference {
     @VisibleForTesting
     InputMethodSubtypePreference(Context context, String str, CharSequence charSequence, String str2, Locale locale) {
         super(context);
-        boolean z = false;
         setPersistent(false);
         setKey(str);
         setTitle(charSequence);
         if (TextUtils.isEmpty(str2)) {
             this.mIsSystemLocale = false;
             this.mIsSystemLanguage = false;
-            return;
+        } else {
+            this.mIsSystemLocale = str2.equals(locale.toString());
+            this.mIsSystemLanguage = this.mIsSystemLocale || InputMethodUtils.getLanguageFromLocaleString(str2).equals(locale.getLanguage());
         }
-        this.mIsSystemLocale = str2.equals(locale.toString());
-        this.mIsSystemLanguage = (this.mIsSystemLocale || InputMethodUtils.getLanguageFromLocaleString(str2).equals(locale.getLanguage())) ? true : true;
     }
 
     public int compareTo(Preference preference, Collator collator) {
@@ -40,26 +40,26 @@ public class InputMethodSubtypePreference extends SwitchWithNoTextPreference {
         }
         if (preference instanceof InputMethodSubtypePreference) {
             InputMethodSubtypePreference inputMethodSubtypePreference = (InputMethodSubtypePreference) preference;
-            if (!this.mIsSystemLocale || inputMethodSubtypePreference.mIsSystemLocale) {
-                if (this.mIsSystemLocale || !inputMethodSubtypePreference.mIsSystemLocale) {
-                    if (!this.mIsSystemLanguage || inputMethodSubtypePreference.mIsSystemLanguage) {
-                        if (this.mIsSystemLanguage || !inputMethodSubtypePreference.mIsSystemLanguage) {
-                            CharSequence title = getTitle();
-                            CharSequence title2 = preference.getTitle();
-                            boolean isEmpty = TextUtils.isEmpty(title);
-                            boolean isEmpty2 = TextUtils.isEmpty(title2);
-                            if (isEmpty || isEmpty2) {
-                                return (isEmpty ? -1 : 0) - (isEmpty2 ? -1 : 0);
-                            }
-                            return collator.compare(title.toString(), title2.toString());
-                        }
-                        return 1;
-                    }
-                    return -1;
-                }
+            if (this.mIsSystemLocale && !inputMethodSubtypePreference.mIsSystemLocale) {
+                return -1;
+            }
+            if (!this.mIsSystemLocale && inputMethodSubtypePreference.mIsSystemLocale) {
                 return 1;
             }
-            return -1;
+            if (this.mIsSystemLanguage && !inputMethodSubtypePreference.mIsSystemLanguage) {
+                return -1;
+            }
+            if (!this.mIsSystemLanguage && inputMethodSubtypePreference.mIsSystemLanguage) {
+                return 1;
+            }
+            CharSequence title = getTitle();
+            CharSequence title2 = preference.getTitle();
+            boolean zIsEmpty = TextUtils.isEmpty(title);
+            boolean zIsEmpty2 = TextUtils.isEmpty(title2);
+            if (zIsEmpty || zIsEmpty2) {
+                return (zIsEmpty ? -1 : 0) - (zIsEmpty2 ? -1 : 0);
+            }
+            return collator.compare(title.toString(), title2.toString());
         }
         return super.compareTo(preference);
     }

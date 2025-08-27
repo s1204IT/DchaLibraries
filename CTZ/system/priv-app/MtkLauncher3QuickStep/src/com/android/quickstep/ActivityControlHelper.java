@@ -8,6 +8,7 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
@@ -38,11 +39,11 @@ import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public interface ActivityControlHelper<T extends BaseDraggingActivity> {
 
-    /* loaded from: classes.dex */
     public interface ActivityInitListener {
         void register();
 
@@ -51,7 +52,6 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
         void unregister();
     }
 
-    /* loaded from: classes.dex */
     public interface LayoutListener {
         void finish();
 
@@ -102,18 +102,19 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
     @UiThread
     boolean switchToRecentsIfVisible(boolean z);
 
-    /* loaded from: classes.dex */
     public static class LauncherActivityControllerHelper implements ActivityControlHelper<Launcher> {
         @Override // com.android.quickstep.ActivityControlHelper
-        public /* bridge */ /* synthetic */ AnimationFactory prepareRecentsUI(Launcher launcher, boolean z, Consumer consumer) {
-            return prepareRecentsUI2(launcher, z, (Consumer<AnimatorPlaybackController>) consumer);
+        public /* bridge */ /* synthetic */ AnimationFactory prepareRecentsUI(BaseDraggingActivity baseDraggingActivity, boolean z, Consumer consumer) {
+            return prepareRecentsUI((Launcher) baseDraggingActivity, z, (Consumer<AnimatorPlaybackController>) consumer);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: createLayoutListener(Lcom/android/launcher3/BaseDraggingActivity;)Lcom/android/quickstep/ActivityControlHelper$LayoutListener; */
         @Override // com.android.quickstep.ActivityControlHelper
         public LayoutListener createLayoutListener(Launcher launcher) {
             return new LauncherLayoutListener(launcher);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onQuickInteractionStart(Lcom/android/launcher3/BaseDraggingActivity;Landroid/app/ActivityManager$RunningTaskInfo;Z)V */
         @Override // com.android.quickstep.ActivityControlHelper
         public void onQuickInteractionStart(Launcher launcher, ActivityManager.RunningTaskInfo runningTaskInfo, boolean z) {
             LauncherState state = launcher.getStateManager().getState();
@@ -122,17 +123,18 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
         }
 
         @Override // com.android.quickstep.ActivityControlHelper
-        public float getTranslationYForQuickScrub(TransformedRect transformedRect, DeviceProfile deviceProfile, Context context) {
+        public float getTranslationYForQuickScrub(TransformedRect transformedRect, DeviceProfile deviceProfile, Context context) throws Resources.NotFoundException {
             return 0.4f * (((deviceProfile.availableHeightPx + deviceProfile.getInsets().top) - transformedRect.rect.bottom) - ((transformedRect.rect.top - context.getResources().getDimensionPixelSize(R.dimen.task_thumbnail_top_margin)) - deviceProfile.getInsets().top));
         }
 
+        /* JADX DEBUG: Method merged with bridge method: executeOnWindowAvailable(Lcom/android/launcher3/BaseDraggingActivity;Ljava/lang/Runnable;)V */
         @Override // com.android.quickstep.ActivityControlHelper
         public void executeOnWindowAvailable(Launcher launcher, Runnable runnable) {
             launcher.getWorkspace().runOnOverlayHidden(runnable);
         }
 
         @Override // com.android.quickstep.ActivityControlHelper
-        public int getSwipeUpDestinationAndLength(DeviceProfile deviceProfile, Context context, int i, TransformedRect transformedRect) {
+        public int getSwipeUpDestinationAndLength(DeviceProfile deviceProfile, Context context, int i, TransformedRect transformedRect) throws Resources.NotFoundException {
             LayoutUtils.calculateLauncherTaskSize(context, deviceProfile, transformedRect.rect);
             if (i == 1) {
                 transformedRect.scale = FastOverviewState.getOverviewScale(deviceProfile, transformedRect.rect, context);
@@ -144,27 +146,28 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             return deviceProfile.heightPx - transformedRect.rect.bottom;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onTransitionCancelled(Lcom/android/launcher3/BaseDraggingActivity;Z)V */
         @Override // com.android.quickstep.ActivityControlHelper
         public void onTransitionCancelled(Launcher launcher, boolean z) {
             launcher.getStateManager().goToState(launcher.getStateManager().getRestState(), z);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onSwipeUpComplete(Lcom/android/launcher3/BaseDraggingActivity;)V */
         @Override // com.android.quickstep.ActivityControlHelper
         public void onSwipeUpComplete(Launcher launcher) {
             launcher.getStateManager().reapplyState();
             DiscoveryBounce.showForOverviewIfNeeded(launcher);
         }
 
-        /* renamed from: prepareRecentsUI  reason: avoid collision after fix types in other method */
-        public AnimationFactory prepareRecentsUI2(final Launcher launcher, final boolean z, final Consumer<AnimatorPlaybackController> consumer) {
-            LauncherState launcherState;
+        public AnimationFactory prepareRecentsUI(final Launcher launcher, final boolean z, final Consumer<AnimatorPlaybackController> consumer) {
+            LauncherState restState;
             final LauncherState state = launcher.getStateManager().getState();
             if (state.disableRestore) {
-                launcherState = launcher.getStateManager().getRestState();
+                restState = launcher.getStateManager().getRestState();
             } else {
-                launcherState = state;
+                restState = state;
             }
-            launcher.getStateManager().setRestState(launcherState);
+            launcher.getStateManager().setRestState(restState);
             if (!z) {
                 launcher.getAppsView().reset(false);
                 launcher.getStateManager().goToState(LauncherState.OVERVIEW, false);
@@ -183,26 +186,29 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             };
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void createActivityControllerInternal(Launcher launcher, boolean z, LauncherState launcherState, long j, int i, Consumer<AnimatorPlaybackController> consumer) {
+        private void createActivityControllerInternal(Launcher launcher, boolean z, LauncherState launcherState, long j, int i, Consumer<AnimatorPlaybackController> consumer) {
             LauncherState launcherState2 = i == 1 ? LauncherState.FAST_OVERVIEW : LauncherState.OVERVIEW;
             if (z) {
                 DeviceProfile deviceProfile = launcher.getDeviceProfile();
+                long jMax = 2 * Math.max(deviceProfile.widthPx, deviceProfile.heightPx);
                 launcher.getStateManager().goToState(launcherState, false);
-                consumer.accept(launcher.getStateManager().createAnimationToNewWorkspace(launcherState2, 2 * Math.max(deviceProfile.widthPx, deviceProfile.heightPx)));
-            } else if (launcher.getDeviceProfile().isVerticalBarLayout()) {
-            } else {
-                AllAppsTransitionController allAppsController = launcher.getAllAppsController();
-                AnimatorSet animatorSet = new AnimatorSet();
-                float verticalProgress = launcherState2.getVerticalProgress(launcher);
-                ObjectAnimator ofFloat = ObjectAnimator.ofFloat(allAppsController, AllAppsTransitionController.ALL_APPS_PROGRESS, (((float) j) / Math.max(allAppsController.getShiftRange(), 1.0f)) + verticalProgress, verticalProgress);
-                ofFloat.setInterpolator(Interpolators.LINEAR);
-                animatorSet.play(ofFloat);
-                long j2 = j * 2;
-                animatorSet.setDuration(j2);
-                launcher.getStateManager().setCurrentAnimation(animatorSet, new Animator[0]);
-                consumer.accept(AnimatorPlaybackController.wrap(animatorSet, j2));
+                consumer.accept(launcher.getStateManager().createAnimationToNewWorkspace(launcherState2, jMax));
+                return;
             }
+            if (launcher.getDeviceProfile().isVerticalBarLayout()) {
+                return;
+            }
+            AllAppsTransitionController allAppsController = launcher.getAllAppsController();
+            AnimatorSet animatorSet = new AnimatorSet();
+            float fMax = j / Math.max(allAppsController.getShiftRange(), 1.0f);
+            float verticalProgress = launcherState2.getVerticalProgress(launcher);
+            ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(allAppsController, AllAppsTransitionController.ALL_APPS_PROGRESS, fMax + verticalProgress, verticalProgress);
+            objectAnimatorOfFloat.setInterpolator(Interpolators.LINEAR);
+            animatorSet.play(objectAnimatorOfFloat);
+            long j2 = j * 2;
+            animatorSet.setDuration(j2);
+            launcher.getStateManager().setCurrentAnimation(animatorSet, new Animator[0]);
+            consumer.accept(AnimatorPlaybackController.wrap(animatorSet, j2));
         }
 
         @Override // com.android.quickstep.ActivityControlHelper
@@ -210,6 +216,7 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             return new LauncherInitListener(biPredicate);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getCreatedActivity()Lcom/android/launcher3/BaseDraggingActivity; */
         @Override // com.android.quickstep.ActivityControlHelper
         @Nullable
         public Launcher getCreatedActivity() {
@@ -268,11 +275,13 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             return true;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: supportsLongSwipe(Lcom/android/launcher3/BaseDraggingActivity;)Z */
         @Override // com.android.quickstep.ActivityControlHelper
         public boolean supportsLongSwipe(Launcher launcher) {
             return !launcher.getDeviceProfile().isVerticalBarLayout();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getLongSwipeController(Lcom/android/launcher3/BaseDraggingActivity;Lcom/android/quickstep/util/RemoteAnimationTargetSet;)Lcom/android/quickstep/LongSwipeHelper; */
         @Override // com.android.quickstep.ActivityControlHelper
         public LongSwipeHelper getLongSwipeController(Launcher launcher, RemoteAnimationTargetSet remoteAnimationTargetSet) {
             if (launcher.getDeviceProfile().isVerticalBarLayout()) {
@@ -281,6 +290,7 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             return new LongSwipeHelper(launcher, remoteAnimationTargetSet);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getAlphaProperty(Lcom/android/launcher3/BaseDraggingActivity;)Lcom/android/launcher3/util/MultiValueAlpha$AlphaProperty; */
         @Override // com.android.quickstep.ActivityControlHelper
         public MultiValueAlpha.AlphaProperty getAlphaProperty(Launcher launcher) {
             return launcher.getDragLayer().getAlphaProperty(3);
@@ -296,20 +306,20 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class FallbackActivityControllerHelper implements ActivityControlHelper<RecentsActivity> {
         private final ComponentName mHomeComponent;
         private final Handler mUiHandler = new Handler(Looper.getMainLooper());
 
         @Override // com.android.quickstep.ActivityControlHelper
-        public /* bridge */ /* synthetic */ AnimationFactory prepareRecentsUI(RecentsActivity recentsActivity, boolean z, Consumer consumer) {
-            return prepareRecentsUI2(recentsActivity, z, (Consumer<AnimatorPlaybackController>) consumer);
+        public /* bridge */ /* synthetic */ AnimationFactory prepareRecentsUI(BaseDraggingActivity baseDraggingActivity, boolean z, Consumer consumer) {
+            return prepareRecentsUI((RecentsActivity) baseDraggingActivity, z, (Consumer<AnimatorPlaybackController>) consumer);
         }
 
         public FallbackActivityControllerHelper(ComponentName componentName) {
             this.mHomeComponent = componentName;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onQuickInteractionStart(Lcom/android/launcher3/BaseDraggingActivity;Landroid/app/ActivityManager$RunningTaskInfo;Z)V */
         @Override // com.android.quickstep.ActivityControlHelper
         public void onQuickInteractionStart(RecentsActivity recentsActivity, ActivityManager.RunningTaskInfo runningTaskInfo, boolean z) {
             final QuickScrubController quickScrubController = ((RecentsView) recentsActivity.getOverviewPanel()).getQuickScrubController();
@@ -320,7 +330,7 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
                 handler.postDelayed(new Runnable() { // from class: com.android.quickstep.-$$Lambda$td222kNA73L1CFdKbwzs-qgIBcg
                     @Override // java.lang.Runnable
                     public final void run() {
-                        QuickScrubController.this.onFinishedTransitionToQuickScrub();
+                        quickScrubController.onFinishedTransitionToQuickScrub();
                     }
                 }, 250L);
             }
@@ -331,17 +341,19 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             return 0.0f;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: executeOnWindowAvailable(Lcom/android/launcher3/BaseDraggingActivity;Ljava/lang/Runnable;)V */
         @Override // com.android.quickstep.ActivityControlHelper
         public void executeOnWindowAvailable(RecentsActivity recentsActivity, Runnable runnable) {
             runnable.run();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onTransitionCancelled(Lcom/android/launcher3/BaseDraggingActivity;Z)V */
         @Override // com.android.quickstep.ActivityControlHelper
         public void onTransitionCancelled(RecentsActivity recentsActivity, boolean z) {
         }
 
         @Override // com.android.quickstep.ActivityControlHelper
-        public int getSwipeUpDestinationAndLength(DeviceProfile deviceProfile, Context context, int i, TransformedRect transformedRect) {
+        public int getSwipeUpDestinationAndLength(DeviceProfile deviceProfile, Context context, int i, TransformedRect transformedRect) throws Resources.NotFoundException {
             LayoutUtils.calculateFallbackTaskSize(context, deviceProfile, transformedRect.rect);
             if (deviceProfile.isVerticalBarLayout()) {
                 Rect insets = deviceProfile.getInsets();
@@ -350,12 +362,12 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             return deviceProfile.heightPx - transformedRect.rect.bottom;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onSwipeUpComplete(Lcom/android/launcher3/BaseDraggingActivity;)V */
         @Override // com.android.quickstep.ActivityControlHelper
         public void onSwipeUpComplete(RecentsActivity recentsActivity) {
         }
 
-        /* renamed from: prepareRecentsUI  reason: avoid collision after fix types in other method */
-        public AnimationFactory prepareRecentsUI2(final RecentsActivity recentsActivity, boolean z, final Consumer<AnimatorPlaybackController> consumer) {
+        public AnimationFactory prepareRecentsUI(final RecentsActivity recentsActivity, boolean z, final Consumer<AnimatorPlaybackController> consumer) {
             if (z) {
                 return new AnimationFactory() { // from class: com.android.quickstep.-$$Lambda$ActivityControlHelper$FallbackActivityControllerHelper$na8EFVH2JvC3dmTt0x9CezgYGmc
                     @Override // com.android.quickstep.ActivityControlHelper.AnimationFactory
@@ -383,19 +395,19 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
                     if (!this.isAnimatingHome) {
                         return;
                     }
-                    ObjectAnimator ofFloat = ObjectAnimator.ofFloat(overviewPanelContainer, RecentsViewContainer.CONTENT_ALPHA, 0.0f, 1.0f);
-                    ofFloat.setDuration(j).setInterpolator(Interpolators.LINEAR);
+                    ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(overviewPanelContainer, RecentsViewContainer.CONTENT_ALPHA, 0.0f, 1.0f);
+                    objectAnimatorOfFloat.setDuration(j).setInterpolator(Interpolators.LINEAR);
                     AnimatorSet animatorSet = new AnimatorSet();
-                    animatorSet.play(ofFloat);
+                    animatorSet.play(objectAnimatorOfFloat);
                     consumer.accept(AnimatorPlaybackController.wrap(animatorSet, j));
                 }
             };
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$prepareRecentsUI$0(long j, int i) {
+        static /* synthetic */ void lambda$prepareRecentsUI$0(long j, int i) {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: createLayoutListener(Lcom/android/launcher3/BaseDraggingActivity;)Lcom/android/quickstep/ActivityControlHelper$LayoutListener; */
         @Override // com.android.quickstep.ActivityControlHelper
         public LayoutListener createLayoutListener(RecentsActivity recentsActivity) {
             return new LayoutListener() { // from class: com.android.quickstep.ActivityControlHelper.FallbackActivityControllerHelper.2
@@ -418,6 +430,7 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             return new RecentsActivityTracker(biPredicate);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getCreatedActivity()Lcom/android/launcher3/BaseDraggingActivity; */
         @Override // com.android.quickstep.ActivityControlHelper
         @Nullable
         public RecentsActivity getCreatedActivity() {
@@ -454,16 +467,19 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             return false;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: supportsLongSwipe(Lcom/android/launcher3/BaseDraggingActivity;)Z */
         @Override // com.android.quickstep.ActivityControlHelper
         public boolean supportsLongSwipe(RecentsActivity recentsActivity) {
             return false;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getLongSwipeController(Lcom/android/launcher3/BaseDraggingActivity;Lcom/android/quickstep/util/RemoteAnimationTargetSet;)Lcom/android/quickstep/LongSwipeHelper; */
         @Override // com.android.quickstep.ActivityControlHelper
         public LongSwipeHelper getLongSwipeController(RecentsActivity recentsActivity, RemoteAnimationTargetSet remoteAnimationTargetSet) {
             return null;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getAlphaProperty(Lcom/android/launcher3/BaseDraggingActivity;)Lcom/android/launcher3/util/MultiValueAlpha$AlphaProperty; */
         @Override // com.android.quickstep.ActivityControlHelper
         public MultiValueAlpha.AlphaProperty getAlphaProperty(RecentsActivity recentsActivity) {
             return recentsActivity.getDragLayer().getAlphaProperty(0);
@@ -475,7 +491,6 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
         }
     }
 
-    /* loaded from: classes.dex */
     public interface AnimationFactory {
         void createActivityController(long j, int i);
 

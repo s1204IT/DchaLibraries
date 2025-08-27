@@ -19,6 +19,7 @@ import com.android.systemui.analytics.DataCollector;
 import com.android.systemui.statusbar.StatusBarState;
 import com.android.systemui.util.AsyncSensorManager;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class FalsingManager implements SensorEventListener {
     private static final int[] CLASSIFIER_SENSORS = {8};
@@ -64,8 +65,7 @@ public class FalsingManager implements SensorEventListener {
         return sInstance;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateConfiguration() {
+    private void updateConfiguration() {
         this.mEnforceBouncer = Settings.Secure.getInt(this.mContext.getContentResolver(), "falsing_manager_enforce_bouncer", 0) != 0;
     }
 
@@ -89,7 +89,8 @@ public class FalsingManager implements SensorEventListener {
                 this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.classifier.-$$Lambda$FalsingManager$y6A_bA-S5VQwPHuaVePl4zXiK1I
                     @Override // java.lang.Runnable
                     public final void run() {
-                        r0.mSensorManager.unregisterListener(FalsingManager.this);
+                        FalsingManager falsingManager = this.f$0;
+                        falsingManager.mSensorManager.unregisterListener(falsingManager);
                     }
                 });
             }
@@ -129,7 +130,8 @@ public class FalsingManager implements SensorEventListener {
                 this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.classifier.-$$Lambda$FalsingManager$XiT4szturm5rmaM7rTzbChKqPRY
                     @Override // java.lang.Runnable
                     public final void run() {
-                        r0.mSensorManager.registerListener(FalsingManager.this, defaultSensor, 1);
+                        FalsingManager falsingManager = this.f$0;
+                        falsingManager.mSensorManager.registerListener(falsingManager, defaultSensor, 1);
                     }
                 });
             }
@@ -146,18 +148,18 @@ public class FalsingManager implements SensorEventListener {
 
     public boolean isFalseTouch() {
         if (FalsingLog.ENABLED && !this.mSessionActive && ((PowerManager) this.mContext.getSystemService(PowerManager.class)).isInteractive() && this.mPendingWtf == null) {
-            boolean isEnabled = isEnabled();
+            boolean zIsEnabled = isEnabled();
             boolean z = this.mScreenOn;
             final String shortString = StatusBarState.toShortString(this.mState);
             final Throwable th = new Throwable("here");
-            FalsingLog.wLogcat("isFalseTouch", "Session is not active, yet there's a query for a false touch. enabled=" + (isEnabled ? 1 : 0) + " mScreenOn=" + (z ? 1 : 0) + " mState=" + shortString + ". Escalating to WTF if screen does not turn on soon.");
-            final int i = isEnabled ? 1 : 0;
+            FalsingLog.wLogcat("isFalseTouch", "Session is not active, yet there's a query for a false touch. enabled=" + (zIsEnabled ? 1 : 0) + " mScreenOn=" + (z ? 1 : 0) + " mState=" + shortString + ". Escalating to WTF if screen does not turn on soon.");
+            final int i = zIsEnabled ? 1 : 0;
             final int i2 = z ? 1 : 0;
             this.mPendingWtf = new Runnable() { // from class: com.android.systemui.classifier.-$$Lambda$FalsingManager$ysaxoOhQjefK1Np-0ekN-RBwhN8
                 @Override // java.lang.Runnable
                 public final void run() {
-                    FalsingManager falsingManager = FalsingManager.this;
-                    FalsingLog.wtf("isFalseTouch", "Session did not become active after query for a false touch. enabled=" + i + '/' + (r3.isEnabled() ? 1 : 0) + " mScreenOn=" + i2 + '/' + (r3.mScreenOn ? 1 : 0) + " mState=" + shortString + '/' + StatusBarState.toShortString(falsingManager.mState) + ". Look for warnings ~1000ms earlier to see root cause.", th);
+                    FalsingManager falsingManager = this.f$0;
+                    FalsingLog.wtf("isFalseTouch", "Session did not become active after query for a false touch. enabled=" + i + '/' + (falsingManager.isEnabled() ? 1 : 0) + " mScreenOn=" + i2 + '/' + (falsingManager.mScreenOn ? 1 : 0) + " mState=" + shortString + '/' + StatusBarState.toShortString(falsingManager.mState) + ". Look for warnings ~1000ms earlier to see root cause.", th);
                 }
             };
             this.mHandler.postDelayed(this.mPendingWtf, 1000L);

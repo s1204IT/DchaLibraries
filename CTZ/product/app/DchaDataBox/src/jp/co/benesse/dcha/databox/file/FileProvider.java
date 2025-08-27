@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import java.io.IOException;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public final class FileProvider extends ContentProvider {
     private static final String TAG = FileProvider.class.getSimpleName();

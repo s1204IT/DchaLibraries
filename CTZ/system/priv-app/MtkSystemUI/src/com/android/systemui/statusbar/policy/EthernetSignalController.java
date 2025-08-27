@@ -4,6 +4,7 @@ import android.content.Context;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.SignalController;
 import java.util.BitSet;
+
 /* loaded from: classes.dex */
 public class EthernetSignalController extends SignalController<SignalController.State, SignalController.IconGroup> {
     public EthernetSignalController(Context context, CallbackHandler callbackHandler, NetworkControllerImpl networkControllerImpl) {

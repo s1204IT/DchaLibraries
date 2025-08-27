@@ -17,6 +17,7 @@ import com.android.settings.connecteddevice.BluetoothDashboardFragment;
 import com.android.settings.search.DatabaseIndexingUtils;
 import com.android.settings.slices.SliceBroadcastReceiver;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
+
 /* loaded from: classes.dex */
 public class BluetoothSliceBuilder {
     public static final Uri BLUETOOTH_URI = new Uri.Builder().scheme("content").authority("android.settings.slices").appendPath("action").appendPath("bluetooth").build();
@@ -28,13 +29,13 @@ public class BluetoothSliceBuilder {
     }
 
     public static Slice getSlice(Context context) {
-        boolean isBluetoothEnabled = isBluetoothEnabled();
+        boolean zIsBluetoothEnabled = isBluetoothEnabled();
         final CharSequence text = context.getText(R.string.bluetooth_settings);
-        IconCompat createWithResource = IconCompat.createWithResource(context, (int) R.drawable.ic_settings_bluetooth);
+        IconCompat iconCompatCreateWithResource = IconCompat.createWithResource(context, R.drawable.ic_settings_bluetooth);
         int colorAccent = com.android.settings.Utils.getColorAccent(context);
         PendingIntent broadcastIntent = getBroadcastIntent(context);
-        final SliceAction sliceAction = new SliceAction(getPrimaryAction(context), createWithResource, text);
-        final SliceAction sliceAction2 = new SliceAction(broadcastIntent, (CharSequence) null, isBluetoothEnabled);
+        final SliceAction sliceAction = new SliceAction(getPrimaryAction(context), iconCompatCreateWithResource, text);
+        final SliceAction sliceAction2 = new SliceAction(broadcastIntent, (CharSequence) null, zIsBluetoothEnabled);
         return new ListBuilder(context, BLUETOOTH_URI, -1L).setAccentColor(colorAccent).addRow(new Consumer() { // from class: com.android.settings.bluetooth.-$$Lambda$BluetoothSliceBuilder$t1meuX4HmFYfZCMXndFcRlc9eII
             @Override // android.support.v4.util.Consumer
             public final void accept(Object obj) {
@@ -45,8 +46,8 @@ public class BluetoothSliceBuilder {
     }
 
     public static Intent getIntent(Context context) {
-        String charSequence = context.getText(R.string.bluetooth_settings_title).toString();
-        return DatabaseIndexingUtils.buildSearchResultPageIntent(context, BluetoothDashboardFragment.class.getName(), null, charSequence, 747).setClassName(context.getPackageName(), SubSettings.class.getName()).setData(new Uri.Builder().appendPath("bluetooth").build());
+        String string = context.getText(R.string.bluetooth_settings_title).toString();
+        return DatabaseIndexingUtils.buildSearchResultPageIntent(context, BluetoothDashboardFragment.class.getName(), null, string, 747).setClassName(context.getPackageName(), SubSettings.class.getName()).setData(new Uri.Builder().appendPath("bluetooth").build());
     }
 
     public static void handleUriChange(Context context, Intent intent) {

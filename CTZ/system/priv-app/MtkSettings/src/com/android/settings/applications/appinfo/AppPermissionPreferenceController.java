@@ -12,6 +12,7 @@ import com.android.settings.R;
 import com.android.settingslib.applications.PermissionsSummaryHelper;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppPermissionPreferenceController extends AppInfoPreferenceControllerBase {
     private static final String EXTRA_HIDE_INFO_BUTTON = "hideInfoButton";
@@ -23,12 +24,12 @@ public class AppPermissionPreferenceController extends AppInfoPreferenceControll
         super(context, str);
         this.mPermissionCallback = new PermissionsSummaryHelper.PermissionsResultCallback() { // from class: com.android.settings.applications.appinfo.AppPermissionPreferenceController.1
             @Override // com.android.settingslib.applications.PermissionsSummaryHelper.PermissionsResultCallback
-            public void onPermissionSummaryResult(int i, int i2, int i3, List<CharSequence> list) {
-                String format;
+            public void onPermissionSummaryResult(int i, int i2, int i3, List<CharSequence> list) throws Resources.NotFoundException {
+                String string;
                 if (AppPermissionPreferenceController.this.mParent.getActivity() != null) {
                     Resources resources = AppPermissionPreferenceController.this.mContext.getResources();
                     if (i2 == 0) {
-                        format = resources.getString(R.string.runtime_permissions_summary_no_permissions_requested);
+                        string = resources.getString(R.string.runtime_permissions_summary_no_permissions_requested);
                         AppPermissionPreferenceController.this.mPreference.setEnabled(false);
                     } else {
                         ArrayList arrayList = new ArrayList(list);
@@ -36,13 +37,13 @@ public class AppPermissionPreferenceController extends AppInfoPreferenceControll
                             arrayList.add(resources.getQuantityString(R.plurals.runtime_permissions_additional_count, i3, Integer.valueOf(i3)));
                         }
                         if (arrayList.size() == 0) {
-                            format = resources.getString(R.string.runtime_permissions_summary_no_permissions_granted);
+                            string = resources.getString(R.string.runtime_permissions_summary_no_permissions_granted);
                         } else {
-                            format = ListFormatter.getInstance().format(arrayList);
+                            string = ListFormatter.getInstance().format(arrayList);
                         }
                         AppPermissionPreferenceController.this.mPreference.setEnabled(true);
                     }
-                    AppPermissionPreferenceController.this.mPreference.setSummary(format);
+                    AppPermissionPreferenceController.this.mPreference.setSummary(string);
                 }
             }
         };

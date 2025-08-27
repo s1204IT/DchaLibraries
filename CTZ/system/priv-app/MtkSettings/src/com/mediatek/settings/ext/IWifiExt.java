@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public interface IWifiExt {
     void addDisconnectButton(AlertDialog alertDialog, boolean z, NetworkInfo.DetailedState detailedState, WifiConfiguration wifiConfiguration);
@@ -51,7 +52,6 @@ public interface IWifiExt {
 
     void setSleepPolicyPreference(ListPreference listPreference, String[] strArr, String[] strArr2);
 
-    /* loaded from: classes.dex */
     public static class Builder {
         private AccessPoint mAccessPoint;
         private boolean mEdit;

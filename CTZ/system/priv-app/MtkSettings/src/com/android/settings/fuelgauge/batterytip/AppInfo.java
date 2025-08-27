@@ -5,14 +5,17 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.ArraySet;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class AppInfo implements Parcelable, Comparable<AppInfo> {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() { // from class: com.android.settings.fuelgauge.batterytip.AppInfo.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public AppInfo createFromParcel(Parcel parcel) {
             return new AppInfo(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public AppInfo[] newArray(int i) {
             return new AppInfo[i];
@@ -37,6 +40,7 @@ public class AppInfo implements Parcelable, Comparable<AppInfo> {
         this.uid = parcel.readInt();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     @Override // java.lang.Comparable
     public int compareTo(AppInfo appInfo) {
         return Long.compare(this.screenOnTimeMs, appInfo.screenOnTimeMs);
@@ -63,14 +67,13 @@ public class AppInfo implements Parcelable, Comparable<AppInfo> {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof AppInfo) {
-            AppInfo appInfo = (AppInfo) obj;
-            return Objects.equals(this.anomalyTypes, appInfo.anomalyTypes) && this.uid == appInfo.uid && this.screenOnTimeMs == appInfo.screenOnTimeMs && TextUtils.equals(this.packageName, appInfo.packageName);
+        if (!(obj instanceof AppInfo)) {
+            return false;
         }
-        return false;
+        AppInfo appInfo = (AppInfo) obj;
+        return Objects.equals(this.anomalyTypes, appInfo.anomalyTypes) && this.uid == appInfo.uid && this.screenOnTimeMs == appInfo.screenOnTimeMs && TextUtils.equals(this.packageName, appInfo.packageName);
     }
 
-    /* loaded from: classes.dex */
     public static final class Builder {
         private ArraySet<Integer> mAnomalyTypes = new ArraySet<>();
         private String mPackageName;

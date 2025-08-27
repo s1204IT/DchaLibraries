@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.text.BidiFormatter;
 import android.text.format.Formatter;
+
 /* loaded from: classes.dex */
 public final class FileSizeFormatter {
     public static String formatFileSize(Context context, long j, int i, long j2) {
         if (context == null) {
             return "";
         }
-        Formatter.BytesResult formatBytes = formatBytes(context.getResources(), j, i, j2);
-        return BidiFormatter.getInstance().unicodeWrap(context.getString(getFileSizeSuffix(context), formatBytes.value, formatBytes.units));
+        Formatter.BytesResult bytes = formatBytes(context.getResources(), j, i, j2);
+        return BidiFormatter.getInstance().unicodeWrap(context.getString(getFileSizeSuffix(context), bytes.value, bytes.units));
     }
 
     private static int getFileSizeSuffix(Context context) {
@@ -31,7 +32,7 @@ public final class FileSizeFormatter {
         if (z) {
             j = -j;
         }
-        float f = ((float) j) / ((float) j2);
+        float f = j / j2;
         if (j2 == 1) {
             str = "%.0f";
         } else {

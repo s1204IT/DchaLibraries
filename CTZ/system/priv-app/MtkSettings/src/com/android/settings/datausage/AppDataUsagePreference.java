@@ -10,6 +10,7 @@ import com.android.settingslib.AppItem;
 import com.android.settingslib.net.UidDetail;
 import com.android.settingslib.net.UidDetailProvider;
 import com.android.settingslib.utils.ThreadUtils;
+
 /* loaded from: classes.dex */
 public class AppDataUsagePreference extends AppPreference {
     private UidDetail mDetail;
@@ -32,7 +33,7 @@ public class AppDataUsagePreference extends AppPreference {
             ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.datausage.-$$Lambda$AppDataUsagePreference$1CecIqCNArEHKTwkPb92cZEWQPk
                 @Override // java.lang.Runnable
                 public final void run() {
-                    AppDataUsagePreference.lambda$new$1(AppDataUsagePreference.this, uidDetailProvider);
+                    AppDataUsagePreference.lambda$new$1(this.f$0, uidDetailProvider);
                 }
             });
         }
@@ -43,7 +44,7 @@ public class AppDataUsagePreference extends AppPreference {
         ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.datausage.-$$Lambda$AppDataUsagePreference$xD2zZCrk9HJ-DejIPEhSoFp3K8o
             @Override // java.lang.Runnable
             public final void run() {
-                AppDataUsagePreference.this.setAppInfo();
+                this.f$0.setAppInfo();
             }
         });
     }
@@ -51,7 +52,7 @@ public class AppDataUsagePreference extends AppPreference {
     @Override // com.android.settings.widget.AppPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        ProgressBar progressBar = (ProgressBar) preferenceViewHolder.findViewById(16908301);
+        ProgressBar progressBar = (ProgressBar) preferenceViewHolder.findViewById(android.R.id.progress);
         if (this.mItem.restricted && this.mItem.total <= 0) {
             progressBar.setVisibility(8);
         } else {
@@ -60,15 +61,14 @@ public class AppDataUsagePreference extends AppPreference {
         progressBar.setProgress(this.mPercent);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setAppInfo() {
+    private void setAppInfo() {
         if (this.mDetail != null) {
             setIcon(this.mDetail.icon);
             setTitle(this.mDetail.label);
-            return;
+        } else {
+            setIcon((Drawable) null);
+            setTitle((CharSequence) null);
         }
-        setIcon((Drawable) null);
-        setTitle((CharSequence) null);
     }
 
     public AppItem getItem() {

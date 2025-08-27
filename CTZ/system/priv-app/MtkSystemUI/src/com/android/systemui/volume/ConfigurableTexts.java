@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.util.ArrayMap;
 import android.view.View;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class ConfigurableTexts {
     private final Context mContext;
@@ -59,13 +60,11 @@ public class ConfigurableTexts {
         this.mTexts.keyAt(0).post(this.mUpdateAll);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setTextSizeH(TextView textView, int i) {
+    private void setTextSizeH(TextView textView, int i) {
         textView.setTextSize(2, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setTextLabelH(TextView textView, int i) {
+    private void setTextLabelH(TextView textView, int i) {
         if (i >= 0) {
             try {
                 Util.setText(textView, this.mContext.getString(i));

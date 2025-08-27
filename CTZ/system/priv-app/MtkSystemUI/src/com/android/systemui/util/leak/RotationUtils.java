@@ -2,6 +2,7 @@ package com.android.systemui.util.leak;
 
 import android.content.Context;
 import android.content.res.Configuration;
+
 /* loaded from: classes.dex */
 public class RotationUtils {
     public static int getRotation(Context context) {

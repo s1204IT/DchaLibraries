@@ -14,6 +14,7 @@ import com.android.launcher3.uioverrides.UiFactory;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class LauncherStateManager {
     public static final int ANIM_ALL = 3;
@@ -31,18 +32,15 @@ public class LauncherStateManager {
     private final Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     public @interface AnimationComponents {
     }
 
-    /* loaded from: classes.dex */
     public interface StateHandler {
         void setState(LauncherState launcherState);
 
         void setStateWithAnimation(LauncherState launcherState, AnimatorSetBuilder animatorSetBuilder, AnimationConfig animationConfig);
     }
 
-    /* loaded from: classes.dex */
     public interface StateListener {
         void onStateSetImmediately(LauncherState launcherState);
 
@@ -109,7 +107,7 @@ public class LauncherStateManager {
         }
     }
 
-    private void goToState(LauncherState launcherState, boolean z, long j, final Runnable runnable) {
+    private void goToState(LauncherState launcherState, boolean z, long j, Runnable runnable) {
         if (this.mLauncher.isInState(launcherState)) {
             if (this.mConfig.mCurrentAnimation == null) {
                 if (runnable != null) {
@@ -122,6 +120,12 @@ public class LauncherStateManager {
                     return;
                 }
                 this.mConfig.mCurrentAnimation.addListener(new AnimationSuccessListener() { // from class: com.android.launcher3.LauncherStateManager.1
+                    final /* synthetic */ Runnable val$onCompleteRunnable;
+
+                    AnonymousClass1(Runnable runnable2) {
+                        runnable = runnable2;
+                    }
+
                     @Override // com.android.launcher3.anim.AnimationSuccessListener
                     public void onAnimationSuccess(Animator animator) {
                         runnable.run();
@@ -141,8 +145,8 @@ public class LauncherStateManager {
                 this.mListeners.get(size).onStateSetImmediately(launcherState);
             }
             onStateTransitionEnd(launcherState);
-            if (runnable != null) {
-                runnable.run();
+            if (runnable2 != null) {
+                runnable2.run();
                 return;
             }
             return;
@@ -150,11 +154,25 @@ public class LauncherStateManager {
         this.mConfig.duration = launcherState == LauncherState.NORMAL ? launcherState2.transitionDuration : launcherState.transitionDuration;
         AnimatorSetBuilder animatorSetBuilder = new AnimatorSetBuilder();
         prepareForAtomicAnimation(launcherState2, launcherState, animatorSetBuilder);
-        StartAnimRunnable startAnimRunnable = new StartAnimRunnable(createAnimationToNewWorkspaceInternal(launcherState, animatorSetBuilder, runnable));
+        StartAnimRunnable startAnimRunnable = new StartAnimRunnable(createAnimationToNewWorkspaceInternal(launcherState, animatorSetBuilder, runnable2));
         if (j > 0) {
             this.mUiHandler.postDelayed(startAnimRunnable, j);
         } else {
             this.mUiHandler.post(startAnimRunnable);
+        }
+    }
+
+    /* renamed from: com.android.launcher3.LauncherStateManager$1 */
+    class AnonymousClass1 extends AnimationSuccessListener {
+        final /* synthetic */ Runnable val$onCompleteRunnable;
+
+        AnonymousClass1(Runnable runnable2) {
+            runnable = runnable2;
+        }
+
+        @Override // com.android.launcher3.anim.AnimationSuccessListener
+        public void onAnimationSuccess(Animator animator) {
+            runnable.run();
         }
     }
 
@@ -165,7 +183,9 @@ public class LauncherStateManager {
             animatorSetBuilder.setInterpolator(3, Interpolators.OVERSHOOT_1_2);
             animatorSetBuilder.setInterpolator(4, Interpolators.OVERSHOOT_1_2);
             UiFactory.prepareToShowOverview(this.mLauncher);
-        } else if (launcherState.overviewUi && launcherState2 == LauncherState.NORMAL) {
+            return;
+        }
+        if (launcherState.overviewUi && launcherState2 == LauncherState.NORMAL) {
             animatorSetBuilder.setInterpolator(1, Interpolators.DEACCEL);
             animatorSetBuilder.setInterpolator(2, Interpolators.ACCEL);
             animatorSetBuilder.setInterpolator(3, Interpolators.clampToProgress(Interpolators.ACCEL, 0.0f, 0.9f));
@@ -200,14 +220,21 @@ public class LauncherStateManager {
         return this.mConfig.playbackController;
     }
 
-    protected AnimatorSet createAnimationToNewWorkspaceInternal(final LauncherState launcherState, AnimatorSetBuilder animatorSetBuilder, final Runnable runnable) {
-        StateHandler[] stateHandlers;
+    protected AnimatorSet createAnimationToNewWorkspaceInternal(LauncherState launcherState, AnimatorSetBuilder animatorSetBuilder, Runnable runnable) {
         for (StateHandler stateHandler : getStateHandlers()) {
             animatorSetBuilder.startTag(stateHandler);
             stateHandler.setStateWithAnimation(launcherState, animatorSetBuilder, this.mConfig);
         }
-        AnimatorSet build = animatorSetBuilder.build();
-        build.addListener(new AnimationSuccessListener() { // from class: com.android.launcher3.LauncherStateManager.2
+        AnimatorSet animatorSetBuild = animatorSetBuilder.build();
+        animatorSetBuild.addListener(new AnimationSuccessListener() { // from class: com.android.launcher3.LauncherStateManager.2
+            final /* synthetic */ Runnable val$onCompleteRunnable;
+            final /* synthetic */ LauncherState val$state;
+
+            AnonymousClass2(LauncherState launcherState2, Runnable runnable2) {
+                launcherState = launcherState2;
+                runnable = runnable2;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationStart(Animator animator) {
                 LauncherStateManager.this.onStateTransitionStart(launcherState);
@@ -233,12 +260,47 @@ public class LauncherStateManager {
                 }
             }
         });
-        this.mConfig.setAnimation(build, launcherState);
+        this.mConfig.setAnimation(animatorSetBuild, launcherState2);
         return this.mConfig.mCurrentAnimation;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onStateTransitionStart(LauncherState launcherState) {
+    /* renamed from: com.android.launcher3.LauncherStateManager$2 */
+    class AnonymousClass2 extends AnimationSuccessListener {
+        final /* synthetic */ Runnable val$onCompleteRunnable;
+        final /* synthetic */ LauncherState val$state;
+
+        AnonymousClass2(LauncherState launcherState2, Runnable runnable2) {
+            launcherState = launcherState2;
+            runnable = runnable2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationStart(Animator animator) {
+            LauncherStateManager.this.onStateTransitionStart(launcherState);
+            for (int size = LauncherStateManager.this.mListeners.size() - 1; size >= 0; size--) {
+                ((StateListener) LauncherStateManager.this.mListeners.get(size)).onStateTransitionStart(launcherState);
+            }
+        }
+
+        @Override // com.android.launcher3.anim.AnimationSuccessListener, android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            super.onAnimationCancel(animator);
+            LauncherStateManager.this.mState = LauncherStateManager.this.mCurrentStableState;
+        }
+
+        @Override // com.android.launcher3.anim.AnimationSuccessListener
+        public void onAnimationSuccess(Animator animator) {
+            if (runnable != null) {
+                runnable.run();
+            }
+            LauncherStateManager.this.onStateTransitionEnd(launcherState);
+            for (int size = LauncherStateManager.this.mListeners.size() - 1; size >= 0; size--) {
+                ((StateListener) LauncherStateManager.this.mListeners.get(size)).onStateTransitionComplete(launcherState);
+            }
+        }
+    }
+
+    private void onStateTransitionStart(LauncherState launcherState) {
         this.mState.onStateDisabled(this.mLauncher);
         this.mState = launcherState;
         this.mState.onStateEnabled(this.mLauncher);
@@ -249,8 +311,7 @@ public class LauncherStateManager {
         UiFactory.onLauncherStateOrResumeChanged(this.mLauncher);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onStateTransitionEnd(LauncherState launcherState) {
+    private void onStateTransitionEnd(LauncherState launcherState) {
         if (launcherState != this.mCurrentStableState) {
             this.mLastStableState = launcherState.getHistoryForState(this.mCurrentStableState);
             this.mCurrentStableState = launcherState;
@@ -333,9 +394,7 @@ public class LauncherStateManager {
         this.mConfig.playbackController = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class StartAnimRunnable implements Runnable {
+    private class StartAnimRunnable implements Runnable {
         private final AnimatorSet mAnim;
 
         public StartAnimRunnable(AnimatorSet animatorSet) {
@@ -351,7 +410,6 @@ public class LauncherStateManager {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AnimationConfig extends AnimatorListenerAdapter {
         public int animComponents = 3;
         public long duration;

@@ -36,6 +36,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.IllegalFormatConversionException;
+
 /* loaded from: classes.dex */
 public class KeyguardIndicationController {
     private final IBatteryStats mBatteryInfo;
@@ -77,7 +78,7 @@ public class KeyguardIndicationController {
         this.mTickReceiver = new AnonymousClass2();
         this.mHandler = new Handler() { // from class: com.android.systemui.statusbar.KeyguardIndicationController.3
             @Override // android.os.Handler
-            public void handleMessage(Message message) {
+            public void handleMessage(Message message) throws Resources.NotFoundException {
                 if (message.what == 1) {
                     KeyguardIndicationController.this.hideTransientIndication();
                 } else if (message.what == 2) {
@@ -113,8 +114,7 @@ public class KeyguardIndicationController {
         return this.mUpdateMonitorCallback;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDisclosure() {
+    private void updateDisclosure() {
         if (this.mDevicePolicyManager == null) {
             return;
         }
@@ -160,11 +160,11 @@ public class KeyguardIndicationController {
         showTransientIndication(this.mContext.getResources().getString(i));
     }
 
-    public void showTransientIndication(CharSequence charSequence) {
+    public void showTransientIndication(CharSequence charSequence) throws Resources.NotFoundException {
         showTransientIndication(charSequence, this.mInitialTextColor);
     }
 
-    public void showTransientIndication(CharSequence charSequence, int i) {
+    public void showTransientIndication(CharSequence charSequence, int i) throws Resources.NotFoundException {
         this.mTransientIndication = charSequence;
         this.mTransientTextColor = i;
         this.mHandler.removeMessages(1);
@@ -183,7 +183,7 @@ public class KeyguardIndicationController {
         }
     }
 
-    protected final void updateIndication(boolean z) {
+    protected final void updateIndication(boolean z) throws Resources.NotFoundException {
         if (TextUtils.isEmpty(this.mTransientIndication)) {
             this.mWakeLock.setAcquired(false);
         }
@@ -193,42 +193,51 @@ public class KeyguardIndicationController {
                 if (!TextUtils.isEmpty(this.mTransientIndication)) {
                     this.mTextView.switchIndication(this.mTransientIndication);
                     return;
-                } else if (this.mPowerPluggedIn) {
-                    String computePowerIndication = computePowerIndication();
+                }
+                if (this.mPowerPluggedIn) {
+                    String strComputePowerIndication = computePowerIndication();
                     if (z) {
-                        animateText(this.mTextView, computePowerIndication);
+                        animateText(this.mTextView, strComputePowerIndication);
                         return;
                     } else {
-                        this.mTextView.switchIndication(computePowerIndication);
+                        this.mTextView.switchIndication(strComputePowerIndication);
                         return;
                     }
-                } else {
-                    this.mTextView.switchIndication(NumberFormat.getPercentInstance().format(this.mBatteryLevel / 100.0f));
-                    return;
                 }
+                this.mTextView.switchIndication(NumberFormat.getPercentInstance().format(this.mBatteryLevel / 100.0f));
+                return;
             }
             KeyguardUpdateMonitor keyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(this.mContext);
             int currentUser = KeyguardUpdateMonitor.getCurrentUser();
             String trustGrantedIndication = getTrustGrantedIndication();
             String trustManagedIndication = getTrustManagedIndication();
             if (!this.mUserManager.isUserUnlocked(currentUser)) {
-                this.mTextView.switchIndication(17040176);
+                this.mTextView.switchIndication(android.R.string.demo_starting_message);
                 this.mTextView.setTextColor(this.mInitialTextColor);
-            } else if (!TextUtils.isEmpty(this.mTransientIndication)) {
+                return;
+            }
+            if (!TextUtils.isEmpty(this.mTransientIndication)) {
                 this.mTextView.switchIndication(this.mTransientIndication);
                 this.mTextView.setTextColor(this.mTransientTextColor);
-            } else if (!TextUtils.isEmpty(trustGrantedIndication) && keyguardUpdateMonitor.getUserHasTrust(currentUser)) {
+                return;
+            }
+            if (!TextUtils.isEmpty(trustGrantedIndication) && keyguardUpdateMonitor.getUserHasTrust(currentUser)) {
                 this.mTextView.switchIndication(trustGrantedIndication);
                 this.mTextView.setTextColor(this.mInitialTextColor);
-            } else if (this.mPowerPluggedIn) {
-                String computePowerIndication2 = computePowerIndication();
+                return;
+            }
+            if (this.mPowerPluggedIn) {
+                String strComputePowerIndication2 = computePowerIndication();
                 this.mTextView.setTextColor(this.mInitialTextColor);
                 if (z) {
-                    animateText(this.mTextView, computePowerIndication2);
+                    animateText(this.mTextView, strComputePowerIndication2);
+                    return;
                 } else {
-                    this.mTextView.switchIndication(computePowerIndication2);
+                    this.mTextView.switchIndication(strComputePowerIndication2);
+                    return;
                 }
-            } else if (!TextUtils.isEmpty(trustManagedIndication) && keyguardUpdateMonitor.getUserTrustIsManaged(currentUser) && !keyguardUpdateMonitor.getUserHasTrust(currentUser)) {
+            }
+            if (!TextUtils.isEmpty(trustManagedIndication) && keyguardUpdateMonitor.getUserTrustIsManaged(currentUser) && !keyguardUpdateMonitor.getUserHasTrust(currentUser)) {
                 this.mTextView.switchIndication(trustManagedIndication);
                 this.mTextView.setTextColor(this.mInitialTextColor);
             } else {
@@ -238,7 +247,7 @@ public class KeyguardIndicationController {
         }
     }
 
-    private void animateText(final KeyguardIndicationTextView keyguardIndicationTextView, final String str) {
+    private void animateText(final KeyguardIndicationTextView keyguardIndicationTextView, final String str) throws Resources.NotFoundException {
         final int integer = this.mContext.getResources().getInteger(R.integer.wired_charging_keyguard_text_animation_distance);
         int integer2 = this.mContext.getResources().getInteger(R.integer.wired_charging_keyguard_text_animation_duration_up);
         final int integer3 = this.mContext.getResources().getInteger(R.integer.wired_charging_keyguard_text_animation_duration_down);
@@ -255,20 +264,19 @@ public class KeyguardIndicationController {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String computePowerIndication() {
-        long j;
+    private String computePowerIndication() {
+        long jComputeChargeTimeRemaining;
         int i;
         if (this.mPowerCharged) {
             return this.mContext.getResources().getString(R.string.keyguard_charged);
         }
         try {
-            j = this.mBatteryInfo.computeChargeTimeRemaining();
+            jComputeChargeTimeRemaining = this.mBatteryInfo.computeChargeTimeRemaining();
         } catch (RemoteException e) {
             Log.e("KeyguardIndication", "Error calling IBatteryStats: ", e);
-            j = 0;
+            jComputeChargeTimeRemaining = 0;
         }
-        boolean z = j > 0;
+        boolean z = jComputeChargeTimeRemaining > 0;
         int i2 = this.mChargingSpeed;
         if (i2 != 0) {
             if (i2 == 2) {
@@ -287,17 +295,17 @@ public class KeyguardIndicationController {
         } else {
             i = R.string.keyguard_plugged_in_charging_slowly;
         }
-        String format = NumberFormat.getPercentInstance().format(this.mBatteryLevel / 100.0f);
+        String str = NumberFormat.getPercentInstance().format(this.mBatteryLevel / 100.0f);
         if (z) {
-            String formatShortElapsedTimeRoundingUpToMinutes = Formatter.formatShortElapsedTimeRoundingUpToMinutes(this.mContext, j);
+            String shortElapsedTimeRoundingUpToMinutes = Formatter.formatShortElapsedTimeRoundingUpToMinutes(this.mContext, jComputeChargeTimeRemaining);
             try {
-                return this.mContext.getResources().getString(i, formatShortElapsedTimeRoundingUpToMinutes, format);
+                return this.mContext.getResources().getString(i, shortElapsedTimeRoundingUpToMinutes, str);
             } catch (IllegalFormatConversionException e2) {
-                return this.mContext.getResources().getString(i, formatShortElapsedTimeRoundingUpToMinutes);
+                return this.mContext.getResources().getString(i, shortElapsedTimeRoundingUpToMinutes);
             }
         }
         try {
-            return this.mContext.getResources().getString(i, format);
+            return this.mContext.getResources().getString(i, str);
         } catch (IllegalFormatConversionException e3) {
             return this.mContext.getResources().getString(i);
         }
@@ -307,10 +315,8 @@ public class KeyguardIndicationController {
         this.mStatusBarKeyguardViewManager = statusBarKeyguardViewManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.KeyguardIndicationController$2  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass2 extends BroadcastReceiver {
+    /* renamed from: com.android.systemui.statusbar.KeyguardIndicationController$2, reason: invalid class name */
+    class AnonymousClass2 extends BroadcastReceiver {
         AnonymousClass2() {
         }
 
@@ -318,13 +324,13 @@ public class KeyguardIndicationController {
         public void onReceive(Context context, Intent intent) {
             KeyguardIndicationController.this.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$KeyguardIndicationController$2$zESedvrtrUKx0fqXwwlgga5A3WM
                 @Override // java.lang.Runnable
-                public final void run() {
-                    KeyguardIndicationController.AnonymousClass2.lambda$onReceive$0(KeyguardIndicationController.AnonymousClass2.this);
+                public final void run() throws Resources.NotFoundException {
+                    KeyguardIndicationController.AnonymousClass2.lambda$onReceive$0(this.f$0);
                 }
             });
         }
 
-        public static /* synthetic */ void lambda$onReceive$0(AnonymousClass2 anonymousClass2) {
+        public static /* synthetic */ void lambda$onReceive$0(AnonymousClass2 anonymousClass2) throws Resources.NotFoundException {
             if (KeyguardIndicationController.this.mVisible) {
                 KeyguardIndicationController.this.updateIndication(false);
             }
@@ -359,35 +365,28 @@ public class KeyguardIndicationController {
         printWriter.println("  computePowerIndication(): " + computePowerIndication());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class BaseKeyguardCallback extends KeyguardUpdateMonitorCallback {
+    protected class BaseKeyguardCallback extends KeyguardUpdateMonitorCallback {
         private int mLastSuccessiveErrorMessage = -1;
 
         protected BaseKeyguardCallback() {
         }
 
         @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-        public void onRefreshBatteryInfo(KeyguardUpdateMonitor.BatteryStatus batteryStatus) {
-            boolean z = true;
-            boolean z2 = batteryStatus.status == 2 || batteryStatus.status == 5;
-            boolean z3 = KeyguardIndicationController.this.mPowerPluggedIn;
-            KeyguardIndicationController.this.mPowerPluggedInWired = batteryStatus.isPluggedInWired() && z2;
-            KeyguardIndicationController.this.mPowerPluggedIn = batteryStatus.isPluggedIn() && z2;
+        public void onRefreshBatteryInfo(KeyguardUpdateMonitor.BatteryStatus batteryStatus) throws Resources.NotFoundException {
+            boolean z = batteryStatus.status == 2 || batteryStatus.status == 5;
+            boolean z2 = KeyguardIndicationController.this.mPowerPluggedIn;
+            KeyguardIndicationController.this.mPowerPluggedInWired = batteryStatus.isPluggedInWired() && z;
+            KeyguardIndicationController.this.mPowerPluggedIn = batteryStatus.isPluggedIn() && z;
             KeyguardIndicationController.this.mPowerCharged = batteryStatus.isCharged();
             KeyguardIndicationController.this.mChargingWattage = batteryStatus.maxChargingWattage;
             KeyguardIndicationController.this.mChargingSpeed = batteryStatus.getChargingSpeed(KeyguardIndicationController.this.mSlowThreshold, KeyguardIndicationController.this.mFastThreshold);
             KeyguardIndicationController.this.mBatteryLevel = batteryStatus.level;
-            KeyguardIndicationController keyguardIndicationController = KeyguardIndicationController.this;
-            if (z3 || !KeyguardIndicationController.this.mPowerPluggedInWired) {
-                z = false;
-            }
-            keyguardIndicationController.updateIndication(z);
+            KeyguardIndicationController.this.updateIndication(!z2 && KeyguardIndicationController.this.mPowerPluggedInWired);
             if (KeyguardIndicationController.this.mDozing) {
-                if (!z3 && KeyguardIndicationController.this.mPowerPluggedIn) {
+                if (!z2 && KeyguardIndicationController.this.mPowerPluggedIn) {
                     KeyguardIndicationController.this.showTransientIndication(KeyguardIndicationController.this.computePowerIndication());
                     KeyguardIndicationController.this.hideTransientIndicationDelayed(5000L);
-                } else if (z3 && !KeyguardIndicationController.this.mPowerPluggedIn) {
+                } else if (z2 && !KeyguardIndicationController.this.mPowerPluggedIn) {
                     KeyguardIndicationController.this.hideTransientIndication();
                 }
             }
@@ -401,7 +400,7 @@ public class KeyguardIndicationController {
         }
 
         @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-        public void onFingerprintHelp(int i, String str) {
+        public void onFingerprintHelp(int i, String str) throws Resources.NotFoundException {
             KeyguardUpdateMonitor keyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(KeyguardIndicationController.this.mContext);
             if (keyguardUpdateMonitor.isUnlockingWithFingerprintAllowed()) {
                 int colorError = Utils.getColorError(KeyguardIndicationController.this.mContext);
@@ -419,7 +418,7 @@ public class KeyguardIndicationController {
         }
 
         @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-        public void onFingerprintError(int i, String str) {
+        public void onFingerprintError(int i, String str) throws Resources.NotFoundException {
             KeyguardUpdateMonitor keyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(KeyguardIndicationController.this.mContext);
             if ((keyguardUpdateMonitor.isUnlockingWithFingerprintAllowed() || i == 9) && i != 5) {
                 int colorError = Utils.getColorError(KeyguardIndicationController.this.mContext);
@@ -438,12 +437,12 @@ public class KeyguardIndicationController {
         }
 
         @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-        public void onTrustAgentErrorMessage(CharSequence charSequence) {
+        public void onTrustAgentErrorMessage(CharSequence charSequence) throws Resources.NotFoundException {
             KeyguardIndicationController.this.showTransientIndication(charSequence, Utils.getColorError(KeyguardIndicationController.this.mContext));
         }
 
         @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-        public void onScreenTurnedOn() {
+        public void onScreenTurnedOn() throws Resources.NotFoundException {
             if (KeyguardIndicationController.this.mMessageToShowOnScreenOn != null) {
                 KeyguardIndicationController.this.showTransientIndication(KeyguardIndicationController.this.mMessageToShowOnScreenOn, Utils.getColorError(KeyguardIndicationController.this.mContext));
                 KeyguardIndicationController.this.hideTransientIndicationDelayed(5000L);
@@ -471,7 +470,7 @@ public class KeyguardIndicationController {
         }
 
         @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-        public void onUserUnlocked() {
+        public void onUserUnlocked() throws Resources.NotFoundException {
             if (KeyguardIndicationController.this.mVisible) {
                 KeyguardIndicationController.this.updateIndication(false);
             }

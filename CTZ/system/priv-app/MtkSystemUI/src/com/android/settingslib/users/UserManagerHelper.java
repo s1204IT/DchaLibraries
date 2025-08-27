@@ -14,6 +14,7 @@ import android.util.Log;
 import com.android.internal.util.UserIcons;
 import java.util.Iterator;
 import java.util.List;
+
 @Deprecated
 /* loaded from: classes.dex */
 public final class UserManagerHelper {
@@ -28,7 +29,6 @@ public final class UserManagerHelper {
     };
     private final UserManager mUserManager;
 
-    /* loaded from: classes.dex */
     public interface OnUsersUpdateListener {
         void onUsersUpdate();
     }
@@ -100,13 +100,13 @@ public final class UserManagerHelper {
     }
 
     public UserInfo createNewUser(String str) {
-        UserInfo createUser = this.mUserManager.createUser(str, 0);
-        if (createUser == null) {
+        UserInfo userInfoCreateUser = this.mUserManager.createUser(str, 0);
+        if (userInfoCreateUser == null) {
             Log.w("UserManagerHelper", "can't create user.");
             return null;
         }
-        assignDefaultIcon(createUser);
-        return createUser;
+        assignDefaultIcon(userInfoCreateUser);
+        return userInfoCreateUser;
     }
 
     public void switchToUser(UserInfo userInfo) {
@@ -117,13 +117,13 @@ public final class UserManagerHelper {
     }
 
     public void startNewGuestSession(String str) {
-        UserInfo createGuest = this.mUserManager.createGuest(this.mContext, str);
-        if (createGuest == null) {
+        UserInfo userInfoCreateGuest = this.mUserManager.createGuest(this.mContext, str);
+        if (userInfoCreateGuest == null) {
             Log.w("UserManagerHelper", "can't create user.");
-            return;
+        } else {
+            assignDefaultIcon(userInfoCreateGuest);
+            switchToUserId(userInfoCreateGuest.id);
         }
-        assignDefaultIcon(createGuest);
-        switchToUserId(createGuest.id);
     }
 
     public Bitmap getUserIcon(UserInfo userInfo) {

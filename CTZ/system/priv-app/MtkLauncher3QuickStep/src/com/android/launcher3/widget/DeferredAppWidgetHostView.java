@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import com.android.launcher3.R;
+
 /* loaded from: classes.dex */
 public class DeferredAppWidgetHostView extends LauncherAppWidgetHostView {
     private final TextPaint mPaint;

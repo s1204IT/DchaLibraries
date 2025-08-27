@@ -1,6 +1,7 @@
 package com.android.settings.wifi.p2p;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class P2pPeerCategoryPreferenceController extends P2pCategoryPreferenceController {
     public P2pPeerCategoryPreferenceController(Context context) {

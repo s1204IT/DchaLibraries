@@ -10,6 +10,7 @@ import com.android.settings.fuelgauge.batterytip.tips.BatteryTip;
 import com.android.settings.fuelgauge.batterytip.tips.RestrictAppTip;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RestrictAppDetector {
     static final boolean USE_FAKE_DATA = false;
@@ -29,15 +30,15 @@ public class RestrictAppDetector {
 
     public BatteryTip detect() {
         if (this.mPolicy.appRestrictionEnabled) {
-            long currentTimeMillis = System.currentTimeMillis() - 86400000;
-            List<AppInfo> queryAllAnomalies = this.mBatteryDatabaseManager.queryAllAnomalies(currentTimeMillis, 0);
-            queryAllAnomalies.removeIf(this.mAppLabelPredicate.or(this.mAppRestrictionPredicate));
-            if (!queryAllAnomalies.isEmpty()) {
-                return new RestrictAppTip(0, queryAllAnomalies);
+            long jCurrentTimeMillis = System.currentTimeMillis() - 86400000;
+            List<AppInfo> listQueryAllAnomalies = this.mBatteryDatabaseManager.queryAllAnomalies(jCurrentTimeMillis, 0);
+            listQueryAllAnomalies.removeIf(this.mAppLabelPredicate.or(this.mAppRestrictionPredicate));
+            if (!listQueryAllAnomalies.isEmpty()) {
+                return new RestrictAppTip(0, listQueryAllAnomalies);
             }
-            List<AppInfo> queryAllAnomalies2 = this.mBatteryDatabaseManager.queryAllAnomalies(currentTimeMillis, 2);
-            queryAllAnomalies2.removeIf(this.mAppLabelPredicate.or(this.mAppRestrictionPredicate.negate()));
-            return new RestrictAppTip(queryAllAnomalies2.isEmpty() ? 2 : 1, queryAllAnomalies2);
+            List<AppInfo> listQueryAllAnomalies2 = this.mBatteryDatabaseManager.queryAllAnomalies(jCurrentTimeMillis, 2);
+            listQueryAllAnomalies2.removeIf(this.mAppLabelPredicate.or(this.mAppRestrictionPredicate.negate()));
+            return new RestrictAppTip(listQueryAllAnomalies2.isEmpty() ? 2 : 1, listQueryAllAnomalies2);
         }
         return new RestrictAppTip(2, new ArrayList());
     }

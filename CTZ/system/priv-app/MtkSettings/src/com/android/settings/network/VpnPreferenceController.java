@@ -26,6 +26,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.utils.ThreadUtils;
+
 /* loaded from: classes.dex */
 public class VpnPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private static final NetworkRequest REQUEST = new NetworkRequest.Builder().removeCapability(15).removeCapability(13).removeCapability(14).build();
@@ -118,7 +119,7 @@ public class VpnPreferenceController extends AbstractPreferenceController implem
             ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.network.-$$Lambda$VpnPreferenceController$iDQ0RgxaDkCLoaHHZ6-UO2xSI_c
                 @Override // java.lang.Runnable
                 public final void run() {
-                    VpnPreferenceController.this.mPreference.setSummary(nameForVpnConfig);
+                    this.f$0.mPreference.setSummary(nameForVpnConfig);
                 }
             });
         } catch (RemoteException e) {

@@ -16,6 +16,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import java.util.List;
 import java.util.concurrent.Executor;
+
 @TargetApi(16)
 /* loaded from: classes.dex */
 class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl {
@@ -88,6 +89,8 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
         }
     }
 
+    /* JADX DEBUG: Another duplicated slice has different insns count: {[IF]}, finally: {[IF, INVOKE] complete} */
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [823=4, 826=4] */
     void onConnectedNotLocked(Bundle data) {
         data.setClassLoader(MediaSession2.class.getClassLoader());
         final SessionCommandGroup2 allowedCommands = SessionCommandGroup2.fromBundle(data.getBundle("android.support.v4.media.argument.ALLOWED_COMMANDS"));
@@ -106,32 +109,39 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
         try {
             synchronized (this.mLock) {
                 if (this.mIsReleased) {
-                } else if (this.mConnected) {
+                    if (close) {
+                        return;
+                    } else {
+                        return;
+                    }
+                }
+                if (this.mConnected) {
                     Log.e("MC2ImplLegacy", "Cannot be notified about the connection result many times. Probably a bug or malicious app.");
                     if (1 != 0) {
                         close();
+                        return;
                     }
-                } else {
-                    this.mAllowedCommands = allowedCommands;
-                    this.mPlayerState = playerState;
-                    this.mCurrentMediaItem = currentMediaItem;
-                    this.mBufferingState = bufferingState;
-                    this.mPlaybackStateCompat = playbackStateCompat;
-                    this.mRepeatMode = repeatMode;
-                    this.mShuffleMode = shuffleMode;
-                    this.mPlaylist = playlist;
-                    this.mPlaylistMetadata = metadata;
-                    this.mConnected = true;
-                    this.mPlaybackInfo = playbackInfo;
-                    this.mCallbackExecutor.execute(new Runnable() { // from class: android.support.v4.media.MediaController2ImplLegacy.2
-                        @Override // java.lang.Runnable
-                        public void run() {
-                            MediaController2ImplLegacy.this.mCallback.onConnected(MediaController2ImplLegacy.this.mInstance, allowedCommands);
-                        }
-                    });
-                    if (0 != 0) {
-                        close();
+                    return;
+                }
+                this.mAllowedCommands = allowedCommands;
+                this.mPlayerState = playerState;
+                this.mCurrentMediaItem = currentMediaItem;
+                this.mBufferingState = bufferingState;
+                this.mPlaybackStateCompat = playbackStateCompat;
+                this.mRepeatMode = repeatMode;
+                this.mShuffleMode = shuffleMode;
+                this.mPlaylist = playlist;
+                this.mPlaylistMetadata = metadata;
+                this.mConnected = true;
+                this.mPlaybackInfo = playbackInfo;
+                this.mCallbackExecutor.execute(new Runnable() { // from class: android.support.v4.media.MediaController2ImplLegacy.2
+                    @Override // java.lang.Runnable
+                    public void run() {
+                        MediaController2ImplLegacy.this.mCallback.onConnected(MediaController2ImplLegacy.this.mInstance, allowedCommands);
                     }
+                });
+                if (0 != 0) {
+                    close();
                 }
             }
         } finally {
@@ -141,8 +151,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
         }
     }
 
-    /* renamed from: android.support.v4.media.MediaController2ImplLegacy$3  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: android.support.v4.media.MediaController2ImplLegacy$3, reason: invalid class name */
     class AnonymousClass3 extends ResultReceiver {
         final /* synthetic */ MediaController2ImplLegacy this$0;
 
@@ -158,65 +167,60 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                             }
                         });
                         this.this$0.close();
-                        return;
+                        break;
                     case 0:
                         this.this$0.onConnectedNotLocked(resultData);
-                        return;
-                    default:
-                        return;
+                        break;
                 }
             }
         }
     }
 
-    private void sendCommand(String command) {
+    private void sendCommand(String command) throws Throwable {
         sendCommand(command, null, null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void sendCommand(String command, ResultReceiver receiver) {
+    private void sendCommand(String command, ResultReceiver receiver) throws Throwable {
         sendCommand(command, null, receiver);
     }
 
-    private void sendCommand(String command, Bundle args, ResultReceiver receiver) {
+    private void sendCommand(String command, Bundle args, ResultReceiver receiver) throws Throwable {
+        MediaControllerCompat controller;
         if (args == null) {
             args = new Bundle();
         }
         synchronized (this.mLock) {
             ControllerCompatCallback callback = null;
             try {
-                MediaControllerCompat controller = this.mControllerCompat;
-                try {
-                    callback = this.mControllerCompatCallback;
-                    BundleCompat.putBinder(args, "android.support.v4.media.argument.ICONTROLLER_CALLBACK", callback.getIControllerCallback().asBinder());
-                    args.putString("android.support.v4.media.argument.PACKAGE_NAME", this.mContext.getPackageName());
-                    args.putInt("android.support.v4.media.argument.UID", Process.myUid());
-                    args.putInt("android.support.v4.media.argument.PID", Process.myPid());
-                    controller.sendCommand(command, args, receiver);
-                } catch (Throwable th) {
-                    th = th;
-                    while (true) {
-                        try {
-                            break;
-                        } catch (Throwable th2) {
-                            th = th2;
-                        }
+                controller = this.mControllerCompat;
+            } catch (Throwable th) {
+                th = th;
+            }
+            try {
+                callback = this.mControllerCompatCallback;
+                BundleCompat.putBinder(args, "android.support.v4.media.argument.ICONTROLLER_CALLBACK", callback.getIControllerCallback().asBinder());
+                args.putString("android.support.v4.media.argument.PACKAGE_NAME", this.mContext.getPackageName());
+                args.putInt("android.support.v4.media.argument.UID", Process.myUid());
+                args.putInt("android.support.v4.media.argument.PID", Process.myPid());
+                controller.sendCommand(command, args, receiver);
+            } catch (Throwable th2) {
+                th = th2;
+                while (true) {
+                    try {
+                        throw th;
+                    } catch (Throwable th3) {
+                        th = th3;
                     }
-                    throw th;
                 }
-            } catch (Throwable th3) {
-                th = th3;
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class ControllerCompatCallback extends MediaControllerCompat.Callback {
+    private final class ControllerCompatCallback extends MediaControllerCompat.Callback {
         final /* synthetic */ MediaController2ImplLegacy this$0;
 
         @Override // android.support.v4.media.session.MediaControllerCompat.Callback
-        public void onSessionReady() {
+        public void onSessionReady() throws Throwable {
             this.this$0.sendCommand("android.support.v4.media.controller.command.CONNECT", new ResultReceiver(this.this$0.mHandler) { // from class: android.support.v4.media.MediaController2ImplLegacy.ControllerCompatCallback.1
                 @Override // android.os.ResultReceiver
                 protected void onReceiveResult(int resultCode, Bundle resultData) {
@@ -230,12 +234,10 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                                     }
                                 });
                                 ControllerCompatCallback.this.this$0.close();
-                                return;
+                                break;
                             case 0:
                                 ControllerCompatCallback.this.this$0.onConnectedNotLocked(resultData);
-                                return;
-                            default:
-                                return;
+                                break;
                         }
                     }
                 }
@@ -266,101 +268,8 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
             if (extras != null) {
                 extras.setClassLoader(MediaSession2.class.getClassLoader());
             }
-            char c = 65535;
-            switch (event.hashCode()) {
-                case -2076894204:
-                    if (event.equals("android.support.v4.media.session.event.ON_BUFFERING_STATE_CHANGED")) {
-                        c = '\r';
-                        break;
-                    }
-                    break;
-                case -2060536131:
-                    if (event.equals("android.support.v4.media.session.event.ON_PLAYBACK_SPEED_CHANGED")) {
-                        c = '\f';
-                        break;
-                    }
-                    break;
-                case -1588811870:
-                    if (event.equals("android.support.v4.media.session.event.ON_PLAYBACK_INFO_CHANGED")) {
-                        c = 11;
-                        break;
-                    }
-                    break;
-                case -1471144819:
-                    if (event.equals("android.support.v4.media.session.event.ON_PLAYER_STATE_CHANGED")) {
-                        c = 1;
-                        break;
-                    }
-                    break;
-                case -1021916189:
-                    if (event.equals("android.support.v4.media.session.event.ON_ERROR")) {
-                        c = 3;
-                        break;
-                    }
-                    break;
-                case -617184370:
-                    if (event.equals("android.support.v4.media.session.event.ON_CURRENT_MEDIA_ITEM_CHANGED")) {
-                        c = 2;
-                        break;
-                    }
-                    break;
-                case -92092013:
-                    if (event.equals("android.support.v4.media.session.event.ON_ROUTES_INFO_CHANGED")) {
-                        c = 4;
-                        break;
-                    }
-                    break;
-                case -53555497:
-                    if (event.equals("android.support.v4.media.session.event.ON_REPEAT_MODE_CHANGED")) {
-                        c = 7;
-                        break;
-                    }
-                    break;
-                case 229988025:
-                    if (event.equals("android.support.v4.media.session.event.SEND_CUSTOM_COMMAND")) {
-                        c = '\t';
-                        break;
-                    }
-                    break;
-                case 306321100:
-                    if (event.equals("android.support.v4.media.session.event.ON_PLAYLIST_METADATA_CHANGED")) {
-                        c = 6;
-                        break;
-                    }
-                    break;
-                case 408969344:
-                    if (event.equals("android.support.v4.media.session.event.SET_CUSTOM_LAYOUT")) {
-                        c = '\n';
-                        break;
-                    }
-                    break;
-                case 806201420:
-                    if (event.equals("android.support.v4.media.session.event.ON_PLAYLIST_CHANGED")) {
-                        c = 5;
-                        break;
-                    }
-                    break;
-                case 896576579:
-                    if (event.equals("android.support.v4.media.session.event.ON_SHUFFLE_MODE_CHANGED")) {
-                        c = '\b';
-                        break;
-                    }
-                    break;
-                case 1696119769:
-                    if (event.equals("android.support.v4.media.session.event.ON_ALLOWED_COMMANDS_CHANGED")) {
-                        c = 0;
-                        break;
-                    }
-                    break;
-                case 1871849865:
-                    if (event.equals("android.support.v4.media.session.event.ON_SEEK_COMPLETED")) {
-                        c = 14;
-                        break;
-                    }
-                    break;
-            }
-            switch (c) {
-                case 0:
+            switch (event) {
+                case "android.support.v4.media.session.event.ON_ALLOWED_COMMANDS_CHANGED":
                     final SessionCommandGroup2 allowedCommands = SessionCommandGroup2.fromBundle(extras.getBundle("android.support.v4.media.argument.ALLOWED_COMMANDS"));
                     synchronized (this.this$0.mLock) {
                         this.this$0.mAllowedCommands = allowedCommands;
@@ -372,7 +281,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case 1:
+                case "android.support.v4.media.session.event.ON_PLAYER_STATE_CHANGED":
                     final int playerState = extras.getInt("android.support.v4.media.argument.PLAYER_STATE");
                     PlaybackStateCompat state = (PlaybackStateCompat) extras.getParcelable("android.support.v4.media.argument.PLAYBACK_STATE_COMPAT");
                     if (state == null) {
@@ -389,7 +298,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case 2:
+                case "android.support.v4.media.session.event.ON_CURRENT_MEDIA_ITEM_CHANGED":
                     final MediaItem2 item = MediaItem2.fromBundle(extras.getBundle("android.support.v4.media.argument.MEDIA_ITEM"));
                     synchronized (this.this$0.mLock) {
                         this.this$0.mCurrentMediaItem = item;
@@ -401,7 +310,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case 3:
+                case "android.support.v4.media.session.event.ON_ERROR":
                     final int errorCode = extras.getInt("android.support.v4.media.argument.ERROR_CODE");
                     final Bundle errorExtras = extras.getBundle("android.support.v4.media.argument.EXTRAS");
                     this.this$0.mCallbackExecutor.execute(new Runnable() { // from class: android.support.v4.media.MediaController2ImplLegacy.ControllerCompatCallback.5
@@ -411,7 +320,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case 4:
+                case "android.support.v4.media.session.event.ON_ROUTES_INFO_CHANGED":
                     final List<Bundle> routes = MediaUtils2.convertToBundleList(extras.getParcelableArray("android.support.v4.media.argument.ROUTE_BUNDLE"));
                     this.this$0.mCallbackExecutor.execute(new Runnable() { // from class: android.support.v4.media.MediaController2ImplLegacy.ControllerCompatCallback.6
                         @Override // java.lang.Runnable
@@ -420,7 +329,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case 5:
+                case "android.support.v4.media.session.event.ON_PLAYLIST_CHANGED":
                     final MediaMetadata2 playlistMetadata = MediaMetadata2.fromBundle(extras.getBundle("android.support.v4.media.argument.PLAYLIST_METADATA"));
                     final List<MediaItem2> playlist = MediaUtils2.convertToMediaItem2List(extras.getParcelableArray("android.support.v4.media.argument.PLAYLIST"));
                     synchronized (this.this$0.mLock) {
@@ -434,7 +343,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case 6:
+                case "android.support.v4.media.session.event.ON_PLAYLIST_METADATA_CHANGED":
                     final MediaMetadata2 playlistMetadata2 = MediaMetadata2.fromBundle(extras.getBundle("android.support.v4.media.argument.PLAYLIST_METADATA"));
                     synchronized (this.this$0.mLock) {
                         this.this$0.mPlaylistMetadata = playlistMetadata2;
@@ -446,7 +355,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case 7:
+                case "android.support.v4.media.session.event.ON_REPEAT_MODE_CHANGED":
                     final int repeatMode = extras.getInt("android.support.v4.media.argument.REPEAT_MODE");
                     synchronized (this.this$0.mLock) {
                         this.this$0.mRepeatMode = repeatMode;
@@ -458,7 +367,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case '\b':
+                case "android.support.v4.media.session.event.ON_SHUFFLE_MODE_CHANGED":
                     final int shuffleMode = extras.getInt("android.support.v4.media.argument.SHUFFLE_MODE");
                     synchronized (this.this$0.mLock) {
                         this.this$0.mShuffleMode = shuffleMode;
@@ -470,7 +379,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case '\t':
+                case "android.support.v4.media.session.event.SEND_CUSTOM_COMMAND":
                     Bundle commandBundle = extras.getBundle("android.support.v4.media.argument.CUSTOM_COMMAND");
                     if (commandBundle == null) {
                         return;
@@ -485,7 +394,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case '\n':
+                case "android.support.v4.media.session.event.SET_CUSTOM_LAYOUT":
                     final List<MediaSession2.CommandButton> layout = MediaUtils2.convertToCommandButtonList(extras.getParcelableArray("android.support.v4.media.argument.COMMAND_BUTTONS"));
                     if (layout != null) {
                         this.this$0.mCallbackExecutor.execute(new Runnable() { // from class: android.support.v4.media.MediaController2ImplLegacy.ControllerCompatCallback.12
@@ -497,7 +406,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         return;
                     }
                     return;
-                case 11:
+                case "android.support.v4.media.session.event.ON_PLAYBACK_INFO_CHANGED":
                     final MediaController2.PlaybackInfo info = MediaController2.PlaybackInfo.fromBundle(extras.getBundle("android.support.v4.media.argument.PLAYBACK_INFO"));
                     if (info == null) {
                         return;
@@ -512,7 +421,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case '\f':
+                case "android.support.v4.media.session.event.ON_PLAYBACK_SPEED_CHANGED":
                     final PlaybackStateCompat state2 = (PlaybackStateCompat) extras.getParcelable("android.support.v4.media.argument.PLAYBACK_STATE_COMPAT");
                     if (state2 == null) {
                         return;
@@ -527,7 +436,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case '\r':
+                case "android.support.v4.media.session.event.ON_BUFFERING_STATE_CHANGED":
                     final MediaItem2 item2 = MediaItem2.fromBundle(extras.getBundle("android.support.v4.media.argument.MEDIA_ITEM"));
                     final int bufferingState = extras.getInt("android.support.v4.media.argument.BUFFERING_STATE");
                     PlaybackStateCompat state3 = (PlaybackStateCompat) extras.getParcelable("android.support.v4.media.argument.PLAYBACK_STATE_COMPAT");
@@ -545,7 +454,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
                         }
                     });
                     return;
-                case 14:
+                case "android.support.v4.media.session.event.ON_SEEK_COMPLETED":
                     final long position = extras.getLong("android.support.v4.media.argument.SEEK_POSITION");
                     PlaybackStateCompat state4 = (PlaybackStateCompat) extras.getParcelable("android.support.v4.media.argument.PLAYBACK_STATE_COMPAT");
                     if (state4 == null) {

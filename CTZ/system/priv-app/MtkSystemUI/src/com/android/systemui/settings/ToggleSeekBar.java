@@ -8,6 +8,7 @@ import android.widget.SeekBar;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.systemui.Dependency;
 import com.android.systemui.plugins.ActivityStarter;
+
 /* loaded from: classes.dex */
 public class ToggleSeekBar extends SeekBar {
     private String mAccessibilityLabel;

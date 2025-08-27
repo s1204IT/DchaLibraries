@@ -15,6 +15,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.MatrixCursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class BrowserProvider2 extends SQLiteContentProvider {
     DatabaseHelper mOpenHelper;
@@ -58,12 +60,10 @@ public class BrowserProvider2 extends SQLiteContentProvider {
     boolean mUpdateWidgets = false;
     boolean mSyncToNetwork = true;
 
-    /* loaded from: classes.dex */
     public interface OmniboxSuggestions {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BrowserContract.AUTHORITY_URI, "omnibox_suggestions");
     }
 
-    /* loaded from: classes.dex */
     public interface Thumbnails {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BrowserContract.AUTHORITY_URI, "thumbnails");
     }
@@ -98,91 +98,91 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         uriMatcher.addURI("MtkBrowserProvider", "bookmarks/#", 9001);
         uriMatcher.addURI("MtkBrowserProvider", "search_suggest_query", 1004);
         uriMatcher.addURI("MtkBrowserProvider", "bookmarks/search_suggest_query", 1004);
-        HashMap<String, String> hashMap = ACCOUNTS_PROJECTION_MAP;
-        hashMap.put("account_type", "account_type");
-        hashMap.put("account_name", "account_name");
-        hashMap.put("root_id", "root_id");
-        HashMap<String, String> hashMap2 = BOOKMARKS_PROJECTION_MAP;
-        hashMap2.put("_id", qualifyColumn("bookmarks", "_id"));
-        hashMap2.put("title", "title");
-        hashMap2.put("url", "url");
-        hashMap2.put("favicon", "favicon");
-        hashMap2.put("thumbnail", "thumbnail");
-        hashMap2.put("touch_icon", "touch_icon");
-        hashMap2.put("folder", "folder");
-        hashMap2.put("parent", "parent");
-        hashMap2.put("position", "position");
-        hashMap2.put("insert_after", "insert_after");
-        hashMap2.put("deleted", "deleted");
-        hashMap2.put("account_name", "account_name");
-        hashMap2.put("account_type", "account_type");
-        hashMap2.put("sourceid", "sourceid");
-        hashMap2.put("version", "version");
-        hashMap2.put("created", "created");
-        hashMap2.put("modified", "modified");
-        hashMap2.put("dirty", "dirty");
-        hashMap2.put("sync1", "sync1");
-        hashMap2.put("sync2", "sync2");
-        hashMap2.put("sync3", "sync3");
-        hashMap2.put("sync4", "sync4");
-        hashMap2.put("sync5", "sync5");
-        hashMap2.put("parent_source", "(SELECT sourceid FROM bookmarks A WHERE A._id=bookmarks.parent) AS parent_source");
-        hashMap2.put("insert_after_source", "(SELECT sourceid FROM bookmarks A WHERE A._id=bookmarks.insert_after) AS insert_after_source");
-        hashMap2.put("type", "CASE  WHEN folder=0 THEN 1 WHEN sync3='bookmark_bar' THEN 3 WHEN sync3='other_bookmarks' THEN 4 ELSE 2 END AS type");
+        HashMap<String, String> map = ACCOUNTS_PROJECTION_MAP;
+        map.put("account_type", "account_type");
+        map.put("account_name", "account_name");
+        map.put("root_id", "root_id");
+        HashMap<String, String> map2 = BOOKMARKS_PROJECTION_MAP;
+        map2.put("_id", qualifyColumn("bookmarks", "_id"));
+        map2.put("title", "title");
+        map2.put("url", "url");
+        map2.put("favicon", "favicon");
+        map2.put("thumbnail", "thumbnail");
+        map2.put("touch_icon", "touch_icon");
+        map2.put("folder", "folder");
+        map2.put("parent", "parent");
+        map2.put("position", "position");
+        map2.put("insert_after", "insert_after");
+        map2.put("deleted", "deleted");
+        map2.put("account_name", "account_name");
+        map2.put("account_type", "account_type");
+        map2.put("sourceid", "sourceid");
+        map2.put("version", "version");
+        map2.put("created", "created");
+        map2.put("modified", "modified");
+        map2.put("dirty", "dirty");
+        map2.put("sync1", "sync1");
+        map2.put("sync2", "sync2");
+        map2.put("sync3", "sync3");
+        map2.put("sync4", "sync4");
+        map2.put("sync5", "sync5");
+        map2.put("parent_source", "(SELECT sourceid FROM bookmarks A WHERE A._id=bookmarks.parent) AS parent_source");
+        map2.put("insert_after_source", "(SELECT sourceid FROM bookmarks A WHERE A._id=bookmarks.insert_after) AS insert_after_source");
+        map2.put("type", "CASE  WHEN folder=0 THEN 1 WHEN sync3='bookmark_bar' THEN 3 WHEN sync3='other_bookmarks' THEN 4 ELSE 2 END AS type");
         OTHER_BOOKMARKS_PROJECTION_MAP.putAll(BOOKMARKS_PROJECTION_MAP);
         OTHER_BOOKMARKS_PROJECTION_MAP.put("position", Long.toString(Long.MAX_VALUE) + " AS position");
-        HashMap<String, String> hashMap3 = HISTORY_PROJECTION_MAP;
-        hashMap3.put("_id", qualifyColumn("history", "_id"));
-        hashMap3.put("title", "title");
-        hashMap3.put("url", "url");
-        hashMap3.put("favicon", "favicon");
-        hashMap3.put("thumbnail", "thumbnail");
-        hashMap3.put("touch_icon", "touch_icon");
-        hashMap3.put("created", "created");
-        hashMap3.put("date", "date");
-        hashMap3.put("visits", "visits");
-        hashMap3.put("user_entered", "user_entered");
-        HashMap<String, String> hashMap4 = SYNC_STATE_PROJECTION_MAP;
-        hashMap4.put("_id", "_id");
-        hashMap4.put("account_name", "account_name");
-        hashMap4.put("account_type", "account_type");
-        hashMap4.put("data", "data");
-        HashMap<String, String> hashMap5 = IMAGES_PROJECTION_MAP;
-        hashMap5.put("url_key", "url_key");
-        hashMap5.put("favicon", "favicon");
-        hashMap5.put("thumbnail", "thumbnail");
-        hashMap5.put("touch_icon", "touch_icon");
-        HashMap<String, String> hashMap6 = COMBINED_HISTORY_PROJECTION_MAP;
-        hashMap6.put("_id", bookmarkOrHistoryColumn("_id"));
-        hashMap6.put("title", bookmarkOrHistoryColumn("title"));
-        hashMap6.put("url", qualifyColumn("history", "url"));
-        hashMap6.put("created", qualifyColumn("history", "created"));
-        hashMap6.put("date", "date");
-        hashMap6.put("bookmark", "CASE WHEN bookmarks._id IS NOT NULL THEN 1 ELSE 0 END AS bookmark");
-        hashMap6.put("visits", "visits");
-        hashMap6.put("favicon", "favicon");
-        hashMap6.put("thumbnail", "thumbnail");
-        hashMap6.put("touch_icon", "touch_icon");
-        hashMap6.put("user_entered", "NULL AS user_entered");
-        HashMap<String, String> hashMap7 = COMBINED_BOOKMARK_PROJECTION_MAP;
-        hashMap7.put("_id", "_id");
-        hashMap7.put("title", "title");
-        hashMap7.put("url", "url");
-        hashMap7.put("created", "created");
-        hashMap7.put("date", "NULL AS date");
-        hashMap7.put("bookmark", "1 AS bookmark");
-        hashMap7.put("visits", "0 AS visits");
-        hashMap7.put("favicon", "favicon");
-        hashMap7.put("thumbnail", "thumbnail");
-        hashMap7.put("touch_icon", "touch_icon");
-        hashMap7.put("user_entered", "NULL AS user_entered");
-        HashMap<String, String> hashMap8 = SEARCHES_PROJECTION_MAP;
-        hashMap8.put("_id", "_id");
-        hashMap8.put("search", "search");
-        hashMap8.put("date", "date");
-        HashMap<String, String> hashMap9 = SETTINGS_PROJECTION_MAP;
-        hashMap9.put("key", "key");
-        hashMap9.put("value", "value");
+        HashMap<String, String> map3 = HISTORY_PROJECTION_MAP;
+        map3.put("_id", qualifyColumn("history", "_id"));
+        map3.put("title", "title");
+        map3.put("url", "url");
+        map3.put("favicon", "favicon");
+        map3.put("thumbnail", "thumbnail");
+        map3.put("touch_icon", "touch_icon");
+        map3.put("created", "created");
+        map3.put("date", "date");
+        map3.put("visits", "visits");
+        map3.put("user_entered", "user_entered");
+        HashMap<String, String> map4 = SYNC_STATE_PROJECTION_MAP;
+        map4.put("_id", "_id");
+        map4.put("account_name", "account_name");
+        map4.put("account_type", "account_type");
+        map4.put("data", "data");
+        HashMap<String, String> map5 = IMAGES_PROJECTION_MAP;
+        map5.put("url_key", "url_key");
+        map5.put("favicon", "favicon");
+        map5.put("thumbnail", "thumbnail");
+        map5.put("touch_icon", "touch_icon");
+        HashMap<String, String> map6 = COMBINED_HISTORY_PROJECTION_MAP;
+        map6.put("_id", bookmarkOrHistoryColumn("_id"));
+        map6.put("title", bookmarkOrHistoryColumn("title"));
+        map6.put("url", qualifyColumn("history", "url"));
+        map6.put("created", qualifyColumn("history", "created"));
+        map6.put("date", "date");
+        map6.put("bookmark", "CASE WHEN bookmarks._id IS NOT NULL THEN 1 ELSE 0 END AS bookmark");
+        map6.put("visits", "visits");
+        map6.put("favicon", "favicon");
+        map6.put("thumbnail", "thumbnail");
+        map6.put("touch_icon", "touch_icon");
+        map6.put("user_entered", "NULL AS user_entered");
+        HashMap<String, String> map7 = COMBINED_BOOKMARK_PROJECTION_MAP;
+        map7.put("_id", "_id");
+        map7.put("title", "title");
+        map7.put("url", "url");
+        map7.put("created", "created");
+        map7.put("date", "NULL AS date");
+        map7.put("bookmark", "1 AS bookmark");
+        map7.put("visits", "0 AS visits");
+        map7.put("favicon", "favicon");
+        map7.put("thumbnail", "thumbnail");
+        map7.put("touch_icon", "touch_icon");
+        map7.put("user_entered", "NULL AS user_entered");
+        HashMap<String, String> map8 = SEARCHES_PROJECTION_MAP;
+        map8.put("_id", "_id");
+        map8.put("search", "search");
+        map8.put("date", "date");
+        HashMap<String, String> map9 = SETTINGS_PROJECTION_MAP;
+        map9.put("key", "key");
+        map9.put("value", "value");
     }
 
     static final String bookmarkOrHistoryColumn(String str) {
@@ -197,16 +197,14 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         return str + "." + str2 + " AS " + str2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public final class DatabaseHelper extends SQLiteOpenHelper {
+    final class DatabaseHelper extends SQLiteOpenHelper {
         public DatabaseHelper(Context context) {
             super(context, "browser2.db", (SQLiteDatabase.CursorFactory) null, 32);
             setWriteAheadLoggingEnabled(true);
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onCreate(SQLiteDatabase sQLiteDatabase) {
+        public void onCreate(SQLiteDatabase sQLiteDatabase) throws Throwable {
             sQLiteDatabase.execSQL("CREATE TABLE bookmarks(_id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,url TEXT,folder INTEGER NOT NULL DEFAULT 0,parent INTEGER,position INTEGER NOT NULL,insert_after INTEGER,deleted INTEGER NOT NULL DEFAULT 0,account_name TEXT,account_type TEXT,sourceid TEXT,version INTEGER NOT NULL DEFAULT 1,created INTEGER,modified INTEGER,dirty INTEGER NOT NULL DEFAULT 0,sync1 TEXT,sync2 TEXT,sync3 TEXT,sync4 TEXT,sync5 TEXT);");
             sQLiteDatabase.execSQL("CREATE TABLE history(_id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,url TEXT NOT NULL,created INTEGER,date INTEGER,visits INTEGER NOT NULL DEFAULT 0,user_entered INTEGER);");
             sQLiteDatabase.execSQL("CREATE TABLE images (url_key TEXT UNIQUE NOT NULL,favicon BLOB,thumbnail BLOB,touch_icon BLOB);");
@@ -223,15 +221,15 @@ public class BrowserProvider2 extends SQLiteContentProvider {
             createOmniboxSuggestions(sQLiteDatabase);
         }
 
-        void createOmniboxSuggestions(SQLiteDatabase sQLiteDatabase) {
+        void createOmniboxSuggestions(SQLiteDatabase sQLiteDatabase) throws SQLException {
             sQLiteDatabase.execSQL("CREATE VIEW IF NOT EXISTS v_omnibox_suggestions  AS   SELECT _id, url, title, 1 AS bookmark, 0 AS visits, 0 AS date  FROM bookmarks   WHERE deleted = 0 AND folder = 0   UNION ALL   SELECT _id, url, title, 0 AS bookmark, visits, date   FROM history   WHERE url NOT IN (SELECT url FROM bookmarks    WHERE deleted = 0 AND folder = 0)   ORDER BY bookmark DESC, visits DESC, date DESC ");
         }
 
-        void createThumbnails(SQLiteDatabase sQLiteDatabase) {
+        void createThumbnails(SQLiteDatabase sQLiteDatabase) throws SQLException {
             sQLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS thumbnails (_id INTEGER PRIMARY KEY,thumbnail BLOB NOT NULL);");
         }
 
-        void enableSync(SQLiteDatabase sQLiteDatabase) {
+        void enableSync(SQLiteDatabase sQLiteDatabase) throws Throwable {
             Account[] accountsByType;
             ContentValues contentValues = new ContentValues();
             contentValues.put("key", "sync_enabled");
@@ -249,12 +247,13 @@ public class BrowserProvider2 extends SQLiteContentProvider {
             }
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [689=4] */
         /* JADX WARN: Removed duplicated region for block: B:55:0x023e  */
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        boolean importFromBrowserProvider(SQLiteDatabase sQLiteDatabase) {
-            Cursor cursor;
+        boolean importFromBrowserProvider(SQLiteDatabase sQLiteDatabase) throws Throwable {
+            Cursor cursorQuery;
             int i;
             Context context = BrowserProvider2.this.getContext();
             File databasePath = context.getDatabasePath("browser.db");
@@ -275,92 +274,92 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 sQLiteDatabase.insertOrThrow("bookmarks", null, contentValues);
                 String str = BrowserProvider.TABLE_NAMES[2];
                 writableDatabase.execSQL("CREATE TABLE IF NOT EXISTS bookmark_folders (_id INTEGER PRIMARY KEY,parent_id INTEGER,folder_level INTEGER,name TEXT,date LONG,visits INTEGER);");
-                Cursor query = writableDatabase.query(str, BrowserProvider2.BOOKMARK_FOLDERS_PROJECTION, null, null, null, null, "visits DESC");
-                if (query != null) {
+                cursorQuery = writableDatabase.query(str, BrowserProvider2.BOOKMARK_FOLDERS_PROJECTION, null, null, null, null, "visits DESC");
+                if (cursorQuery != null) {
                     int i2 = 0;
-                    while (query.moveToNext()) {
+                    while (cursorQuery.moveToNext()) {
                         try {
                             i2++;
                             ContentValues contentValues2 = new ContentValues();
-                            contentValues2.put("_id", Integer.valueOf(query.getInt(0) + 1));
-                            contentValues2.put("title", query.getString(3));
-                            contentValues2.put("created", Integer.valueOf(query.getInt(4)));
+                            contentValues2.put("_id", Integer.valueOf(cursorQuery.getInt(0) + 1));
+                            contentValues2.put("title", cursorQuery.getString(3));
+                            contentValues2.put("created", Integer.valueOf(cursorQuery.getInt(4)));
                             contentValues2.put("position", Integer.valueOf(i2));
                             contentValues2.put("folder", (Boolean) true);
-                            contentValues2.put("parent", Integer.valueOf(query.getInt(1) + 1));
+                            contentValues2.put("parent", Integer.valueOf(cursorQuery.getInt(1) + 1));
                             sQLiteDatabase.insertOrThrow("bookmarks", "dirty", contentValues2);
                         } catch (Throwable th) {
                             th = th;
-                            if (cursor != null) {
+                            if (cursorQuery != null) {
                             }
                             writableDatabase.close();
                             databaseHelper.close();
                             throw th;
                         }
                     }
-                    query.close();
+                    cursorQuery.close();
                     i = i2;
                 } else {
                     i = 0;
                 }
                 try {
                     String str2 = BrowserProvider.TABLE_NAMES[0];
-                    Cursor cursor2 = query;
+                    Cursor cursor = cursorQuery;
                     try {
-                        Cursor query2 = writableDatabase.query(str2, new String[]{"url", "title", "favicon", "touch_icon", "created", "folder_id"}, "bookmark!=0", null, null, null, "visits DESC");
-                        if (query2 != null) {
-                            while (query2.moveToNext()) {
-                                String string = query2.getString(0);
+                        cursorQuery = writableDatabase.query(str2, new String[]{"url", "title", "favicon", "touch_icon", "created", "folder_id"}, "bookmark!=0", null, null, null, "visits DESC");
+                        if (cursorQuery != null) {
+                            while (cursorQuery.moveToNext()) {
+                                String string = cursorQuery.getString(0);
                                 if (!TextUtils.isEmpty(string)) {
                                     int i3 = i + 1;
                                     ContentValues contentValues3 = new ContentValues();
                                     contentValues3.put("url", string);
-                                    contentValues3.put("title", query2.getString(1));
-                                    contentValues3.put("created", Integer.valueOf(query2.getInt(4)));
+                                    contentValues3.put("title", cursorQuery.getString(1));
+                                    contentValues3.put("created", Integer.valueOf(cursorQuery.getInt(4)));
                                     contentValues3.put("position", Integer.valueOf(i3));
-                                    contentValues3.put("parent", Integer.valueOf(query2.getInt(5) + 1));
+                                    contentValues3.put("parent", Integer.valueOf(cursorQuery.getInt(5) + 1));
                                     ContentValues contentValues4 = new ContentValues();
                                     contentValues4.put("url_key", string);
-                                    contentValues4.put("favicon", query2.getBlob(2));
-                                    contentValues4.put("touch_icon", query2.getBlob(3));
+                                    contentValues4.put("favicon", cursorQuery.getBlob(2));
+                                    contentValues4.put("touch_icon", cursorQuery.getBlob(3));
                                     sQLiteDatabase.insert("images", "thumbnail", contentValues4);
                                     sQLiteDatabase.insert("bookmarks", "dirty", contentValues3);
                                     i = i3;
                                 }
                             }
-                            query2.close();
+                            cursorQuery.close();
                         }
-                        cursor2 = query2;
-                        Cursor query3 = writableDatabase.query(str2, new String[]{"url", "title", "visits", "date", "created"}, "visits > 0 OR bookmark = 0", null, null, null, null);
-                        if (query3 != null) {
-                            while (query3.moveToNext()) {
+                        cursor = cursorQuery;
+                        Cursor cursorQuery2 = writableDatabase.query(str2, new String[]{"url", "title", "visits", "date", "created"}, "visits > 0 OR bookmark = 0", null, null, null, null);
+                        if (cursorQuery2 != null) {
+                            while (cursorQuery2.moveToNext()) {
                                 try {
                                     ContentValues contentValues5 = new ContentValues();
-                                    String string2 = query3.getString(0);
+                                    String string2 = cursorQuery2.getString(0);
                                     if (!TextUtils.isEmpty(string2)) {
                                         contentValues5.put("url", string2);
-                                        contentValues5.put("title", query3.getString(1));
-                                        contentValues5.put("visits", Integer.valueOf(query3.getInt(2)));
-                                        contentValues5.put("date", Long.valueOf(query3.getLong(3)));
-                                        contentValues5.put("created", Long.valueOf(query3.getLong(4)));
+                                        contentValues5.put("title", cursorQuery2.getString(1));
+                                        contentValues5.put("visits", Integer.valueOf(cursorQuery2.getInt(2)));
+                                        contentValues5.put("date", Long.valueOf(cursorQuery2.getLong(3)));
+                                        contentValues5.put("created", Long.valueOf(cursorQuery2.getLong(4)));
                                         sQLiteDatabase.insert("history", "favicon", contentValues5);
                                     }
                                 } catch (Throwable th2) {
                                     th = th2;
-                                    cursor = query3;
-                                    if (cursor != null) {
-                                        cursor.close();
+                                    cursorQuery = cursorQuery2;
+                                    if (cursorQuery != null) {
+                                        cursorQuery.close();
                                     }
                                     writableDatabase.close();
                                     databaseHelper.close();
                                     throw th;
                                 }
                             }
-                            query3.close();
+                            cursorQuery2.close();
                         }
                         writableDatabase.delete(str2, null, null);
-                        if (query3 != null) {
-                            query3.close();
+                        if (cursorQuery2 != null) {
+                            cursorQuery2.close();
                         }
                         writableDatabase.close();
                         databaseHelper.close();
@@ -370,23 +369,23 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                         return true;
                     } catch (Throwable th3) {
                         th = th3;
-                        cursor = cursor2;
+                        cursorQuery = cursor;
                     }
                 } catch (Throwable th4) {
                     th = th4;
                 }
             } catch (Throwable th5) {
                 th = th5;
-                cursor = null;
+                cursorQuery = null;
             }
         }
 
-        void createAccountsView(SQLiteDatabase sQLiteDatabase) {
+        void createAccountsView(SQLiteDatabase sQLiteDatabase) throws SQLException {
             sQLiteDatabase.execSQL("CREATE VIEW IF NOT EXISTS v_accounts AS SELECT NULL AS account_name, NULL AS account_type, 1 AS root_id UNION ALL SELECT account_name, account_type, _id AS root_id FROM bookmarks WHERE sync3 = \"bookmark_bar\" AND deleted = 0");
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) throws Throwable {
             if (i < 32) {
                 createOmniboxSuggestions(sQLiteDatabase);
             }
@@ -419,11 +418,11 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onOpen(SQLiteDatabase sQLiteDatabase) {
+        public void onOpen(SQLiteDatabase sQLiteDatabase) throws SQLException {
             BrowserProvider2.this.mSyncHelper.onDatabaseOpened(sQLiteDatabase);
         }
 
-        private void createDefaultBookmarks(SQLiteDatabase sQLiteDatabase) {
+        private void createDefaultBookmarks(SQLiteDatabase sQLiteDatabase) throws Resources.NotFoundException, SQLException {
             ContentValues contentValues = new ContentValues();
             contentValues.put("_id", (Long) 1L);
             contentValues.put("sync3", "google_chrome_bookmarks");
@@ -433,38 +432,38 @@ public class BrowserProvider2 extends SQLiteContentProvider {
             contentValues.put("folder", (Boolean) true);
             contentValues.put("dirty", (Boolean) true);
             sQLiteDatabase.insertOrThrow("bookmarks", null, contentValues);
-            int addDefaultBookmarksForCustomer = Extensions.getBookmarkPlugin(BrowserProvider2.this.getContext()).addDefaultBookmarksForCustomer(sQLiteDatabase);
-            if (addDefaultBookmarksForCustomer == 0) {
-                addDefaultBookmarks(sQLiteDatabase, 1L, addDefaultBookmarksForYahoo(sQLiteDatabase, 1L, addDefaultBookmarksForCustomer + (addDefaultBookmarksForCustomer <= 0 ? 2 : 1)));
+            int iAddDefaultBookmarksForCustomer = Extensions.getBookmarkPlugin(BrowserProvider2.this.getContext()).addDefaultBookmarksForCustomer(sQLiteDatabase);
+            if (iAddDefaultBookmarksForCustomer == 0) {
+                addDefaultBookmarks(sQLiteDatabase, 1L, addDefaultBookmarksForYahoo(sQLiteDatabase, 1L, iAddDefaultBookmarksForCustomer + (iAddDefaultBookmarksForCustomer <= 0 ? 2 : 1)));
             }
         }
 
-        public int addDefaultBookmarks(SQLiteDatabase sQLiteDatabase, long j, int i) {
+        public int addDefaultBookmarks(SQLiteDatabase sQLiteDatabase, long j, int i) throws Resources.NotFoundException {
             Resources resources = BrowserProvider2.this.getContext().getResources();
             CharSequence[] textArray = resources.getTextArray(R.array.bookmarks);
             int length = textArray.length;
             return addDefaultBookmarks(sQLiteDatabase, j, textArray, resources.obtainTypedArray(R.array.bookmark_preloads), i);
         }
 
-        public int addDefaultBookmarksForYahoo(SQLiteDatabase sQLiteDatabase, long j, int i) {
+        public int addDefaultBookmarksForYahoo(SQLiteDatabase sQLiteDatabase, long j, int i) throws Resources.NotFoundException {
             Resources resources = BrowserProvider2.this.getContext().getResources();
             CharSequence[] textArray = resources.getTextArray(R.array.bookmarks_for_yahoo);
             int length = textArray.length;
             return addDefaultBookmarks(sQLiteDatabase, j, textArray, resources.obtainTypedArray(R.array.bookmark_preloads_for_yahoo), i);
         }
 
-        private int addDefaultBookmarks(SQLiteDatabase sQLiteDatabase, long j, CharSequence[] charSequenceArr, TypedArray typedArray, int i) {
+        private int addDefaultBookmarks(SQLiteDatabase sQLiteDatabase, long j, CharSequence[] charSequenceArr, TypedArray typedArray, int i) throws Resources.NotFoundException, IOException {
             boolean z;
-            byte[] bArr;
+            byte[] raw;
             Resources resources = BrowserProvider2.this.getContext().getResources();
             int length = charSequenceArr.length;
             try {
-                String l = Long.toString(j);
-                String l2 = Long.toString(System.currentTimeMillis());
+                String string = Long.toString(j);
+                String string2 = Long.toString(System.currentTimeMillis());
                 for (int i2 = 0; i2 < length; i2 += 2) {
                     int i3 = i2 + 1;
-                    CharSequence replaceSystemPropertyInString = BrowserProvider2.replaceSystemPropertyInString(BrowserProvider2.this.getContext(), charSequenceArr[i3]);
-                    if (!"http://www.google.com/".equals(replaceSystemPropertyInString.toString())) {
+                    CharSequence charSequenceReplaceSystemPropertyInString = BrowserProvider2.replaceSystemPropertyInString(BrowserProvider2.this.getContext(), charSequenceArr[i3]);
+                    if (!"http://www.google.com/".equals(charSequenceReplaceSystemPropertyInString.toString())) {
                         z = false;
                     } else {
                         z = true;
@@ -473,35 +472,35 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                     sb.append("INSERT INTO bookmarks (title, url, folder,parent,position,created) VALUES ('");
                     sb.append((Object) charSequenceArr[i2]);
                     sb.append("', '");
-                    sb.append((Object) replaceSystemPropertyInString);
+                    sb.append((Object) charSequenceReplaceSystemPropertyInString);
                     sb.append("', 0,");
-                    sb.append(l);
+                    sb.append(string);
                     sb.append(",");
                     sb.append(z ? 1 : Integer.toString(i + i2));
                     sb.append(",");
-                    sb.append(l2);
+                    sb.append(string2);
                     sb.append(");");
                     sQLiteDatabase.execSQL(sb.toString());
                     int resourceId = typedArray.getResourceId(i2, 0);
                     int resourceId2 = typedArray.getResourceId(i3, 0);
-                    byte[] bArr2 = null;
+                    byte[] raw2 = null;
                     try {
-                        bArr = readRaw(resources, resourceId2);
+                        raw = readRaw(resources, resourceId2);
                     } catch (IOException e) {
-                        bArr = null;
+                        raw = null;
                     }
                     try {
-                        bArr2 = readRaw(resources, resourceId);
+                        raw2 = readRaw(resources, resourceId);
                     } catch (IOException e2) {
                     }
-                    if (bArr != null || bArr2 != null) {
+                    if (raw != null || raw2 != null) {
                         ContentValues contentValues = new ContentValues();
-                        contentValues.put("url_key", replaceSystemPropertyInString.toString());
-                        if (bArr2 != null) {
-                            contentValues.put("favicon", bArr2);
+                        contentValues.put("url_key", charSequenceReplaceSystemPropertyInString.toString());
+                        if (raw2 != null) {
+                            contentValues.put("favicon", raw2);
                         }
-                        if (bArr != null) {
-                            contentValues.put("thumbnail", bArr);
+                        if (raw != null) {
+                            contentValues.put("thumbnail", raw);
                         }
                         sQLiteDatabase.insert("images", "favicon", contentValues);
                     }
@@ -515,66 +514,67 @@ public class BrowserProvider2 extends SQLiteContentProvider {
             return length;
         }
 
-        private byte[] readRaw(Resources resources, int i) throws IOException {
+        private byte[] readRaw(Resources resources, int i) throws Resources.NotFoundException, IOException {
             if (i == 0) {
                 return null;
             }
-            InputStream openRawResource = resources.openRawResource(i);
+            InputStream inputStreamOpenRawResource = resources.openRawResource(i);
             try {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 byte[] bArr = new byte[4096];
                 while (true) {
-                    int read = openRawResource.read(bArr);
-                    if (read > 0) {
-                        byteArrayOutputStream.write(bArr, 0, read);
+                    int i2 = inputStreamOpenRawResource.read(bArr);
+                    if (i2 > 0) {
+                        byteArrayOutputStream.write(bArr, 0, i2);
                     } else {
                         byteArrayOutputStream.flush();
                         return byteArrayOutputStream.toByteArray();
                     }
                 }
             } finally {
-                openRawResource.close();
+                inputStreamOpenRawResource.close();
             }
         }
     }
 
-    private static String getClientId(Context context) {
-        String str = "android-google";
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [919=4] */
+    private static String getClientId(Context context) throws Throwable {
+        String string = "android-google";
         ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = null;
         try {
-            Cursor query = contentResolver.query(Uri.parse("content://com.google.settings/partner"), new String[]{"value"}, "name='client_id'", null, null);
-            if (query != null) {
+            Cursor cursorQuery = contentResolver.query(Uri.parse("content://com.google.settings/partner"), new String[]{"value"}, "name='client_id'", null, null);
+            if (cursorQuery != null) {
                 try {
-                    if (query.moveToNext()) {
-                        str = query.getString(0);
+                    if (cursorQuery.moveToNext()) {
+                        string = cursorQuery.getString(0);
                     }
                 } catch (RuntimeException e) {
-                    cursor = query;
+                    cursor = cursorQuery;
                     if (cursor != null) {
                         cursor.close();
                     }
-                    return str;
+                    return string;
                 } catch (Throwable th) {
                     th = th;
-                    cursor = query;
+                    cursor = cursorQuery;
                     if (cursor != null) {
                         cursor.close();
                     }
                     throw th;
                 }
             }
-            if (query != null) {
-                query.close();
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
         } catch (RuntimeException e2) {
         } catch (Throwable th2) {
             th = th2;
         }
-        return str;
+        return string;
     }
 
-    public static CharSequence replaceSystemPropertyInString(Context context, CharSequence charSequence) {
+    public static CharSequence replaceSystemPropertyInString(Context context, CharSequence charSequence) throws Throwable {
         StringBuffer stringBuffer = new StringBuffer();
         String clientId = getClientId(context);
         int i = 0;
@@ -587,7 +587,8 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                     if (i3 >= charSequence.length()) {
                         i2 = i;
                         break;
-                    } else if (charSequence.charAt(i3) != '}') {
+                    }
+                    if (charSequence.charAt(i3) != '}') {
                         i3++;
                     } else {
                         if (charSequence.subSequence(i + 1, i3).toString().equals("CLIENT_ID")) {
@@ -634,9 +635,8 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         this.mUpdateWidgets = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.browser.provider.SQLiteContentProvider
-    public void onEndTransaction(boolean z) {
+    protected void onEndTransaction(boolean z) {
         super.onEndTransaction(z);
         if (this.mUpdateWidgets) {
             if (this.mWidgetObserver == null) {
@@ -675,8 +675,8 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         if (str == null) {
             return true;
         }
-        String trim = str.trim();
-        return trim.length() == 0 || trim.equals("null");
+        String strTrim = str.trim();
+        return strTrim.length() == 0 || strTrim.equals("null");
     }
 
     Object[] getSelectionWithAccounts(Uri uri, String str, String[] strArr) {
@@ -688,14 +688,17 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 str = DatabaseUtils.concatenateWhere(str, "account_type=? AND account_name=? ");
                 strArr = DatabaseUtils.appendSelectionArgs(strArr, new String[]{queryParameter, queryParameter2});
                 z = true;
-                return new Object[]{str, strArr, Boolean.valueOf(z)};
+            } else {
+                str = DatabaseUtils.concatenateWhere(str, "account_name IS NULL AND account_type IS NULL");
+                z = false;
             }
-            str = DatabaseUtils.concatenateWhere(str, "account_name IS NULL AND account_type IS NULL");
+        } else {
+            z = false;
         }
-        z = false;
         return new Object[]{str, strArr, Boolean.valueOf(z)};
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [1312=8] */
     /* JADX WARN: Removed duplicated region for block: B:44:0x0169  */
     /* JADX WARN: Removed duplicated region for block: B:45:0x016c  */
     @Override // android.content.ContentProvider
@@ -703,240 +706,261 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) {
-        String str3;
+        String strConcatenateWhere;
+        String[] strArrAppendSelectionArgs;
         String[] strArr3;
-        String[] strArr4;
+        String str3;
         String str4;
+        String[] strArr4;
         String str5;
-        String[] strArr5;
+        String strBuildUnionQuery;
+        String[] strArrAppendSelectionArgs2;
+        String[] strArrAppendSelectionArgs3;
+        String[] strArrAppendSelectionArgs4;
         String str6;
-        String buildUnionQuery;
-        String[] appendSelectionArgs;
-        String[] strArr6;
-        String[] strArr7;
-        String str7;
-        String str8 = str;
-        String[] strArr8 = strArr2;
+        String strConcatenateWhere2 = str;
+        String[] strArrAppendSelectionArgs5 = strArr2;
         SQLiteDatabase readableDatabase = this.mOpenHelper.getReadableDatabase();
-        int match = URI_MATCHER.match(uri);
+        int iMatch = URI_MATCHER.match(uri);
         SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
         String queryParameter = uri.getQueryParameter("limit");
         String queryParameter2 = uri.getQueryParameter("groupBy");
-        switch (match) {
+        switch (iMatch) {
             case 10:
-                str3 = str8;
-                strArr3 = strArr8;
+                strConcatenateWhere = strConcatenateWhere2;
+                strArrAppendSelectionArgs = strArrAppendSelectionArgs5;
                 sQLiteQueryBuilder.setTables("thumbnails");
-                strArr4 = strArr;
-                str4 = str2;
-                str5 = str3;
-                strArr5 = strArr3;
-                break;
+                strArr3 = strArr;
+                str3 = str2;
+                str4 = strConcatenateWhere;
+                strArr4 = strArrAppendSelectionArgs;
+                Cursor cursorQuery = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery;
             case 11:
-                str3 = DatabaseUtils.concatenateWhere(str8, "_id = ?");
-                strArr3 = DatabaseUtils.appendSelectionArgs(strArr8, new String[]{Long.toString(ContentUris.parseId(uri))});
+                strConcatenateWhere = DatabaseUtils.concatenateWhere(strConcatenateWhere2, "_id = ?");
+                strArrAppendSelectionArgs = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs5, new String[]{Long.toString(ContentUris.parseId(uri))});
                 sQLiteQueryBuilder.setTables("thumbnails");
-                strArr4 = strArr;
-                str4 = str2;
-                str5 = str3;
-                strArr5 = strArr3;
-                break;
+                strArr3 = strArr;
+                str3 = str2;
+                str4 = strConcatenateWhere;
+                strArr4 = strArrAppendSelectionArgs;
+                Cursor cursorQuery2 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery2.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery2;
             case 20:
-                str6 = str8;
+                str5 = strConcatenateWhere2;
                 sQLiteQueryBuilder.setTables("v_omnibox_suggestions");
-                strArr4 = strArr;
-                str4 = str2;
-                str5 = str6;
-                strArr5 = strArr8;
-                break;
+                strArr3 = strArr;
+                str3 = str2;
+                str4 = str5;
+                strArr4 = strArrAppendSelectionArgs5;
+                Cursor cursorQuery22 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery22.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery22;
             case 30:
                 String homePage = getHomePage(getContext());
                 if (homePage == null) {
                     return null;
                 }
-                String[] strArr9 = {homePage};
+                String[] strArr5 = {homePage};
                 MatrixCursor matrixCursor = new MatrixCursor(new String[]{"homepage"}, 1);
-                matrixCursor.addRow(strArr9);
+                matrixCursor.addRow(strArr5);
                 return matrixCursor;
             case 1000:
             case 1001:
             case 1003:
-                String str9 = str8;
+                String strConcatenateWhere3 = strConcatenateWhere2;
                 if (!uri.getBooleanQueryParameter("show_deleted", false)) {
-                    str9 = DatabaseUtils.concatenateWhere("deleted=0", str9);
+                    strConcatenateWhere3 = DatabaseUtils.concatenateWhere("deleted=0", strConcatenateWhere3);
                 }
-                if (match == 1001) {
-                    str9 = DatabaseUtils.concatenateWhere(str9, "bookmarks._id=?");
-                    strArr8 = DatabaseUtils.appendSelectionArgs(strArr8, new String[]{Long.toString(ContentUris.parseId(uri))});
-                } else if (match == 1003) {
-                    str9 = DatabaseUtils.concatenateWhere(str9, "bookmarks.parent=?");
-                    strArr8 = DatabaseUtils.appendSelectionArgs(strArr8, new String[]{Long.toString(ContentUris.parseId(uri))});
+                if (iMatch == 1001) {
+                    strConcatenateWhere3 = DatabaseUtils.concatenateWhere(strConcatenateWhere3, "bookmarks._id=?");
+                    strArrAppendSelectionArgs5 = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs5, new String[]{Long.toString(ContentUris.parseId(uri))});
+                } else if (iMatch == 1003) {
+                    strConcatenateWhere3 = DatabaseUtils.concatenateWhere(strConcatenateWhere3, "bookmarks.parent=?");
+                    strArrAppendSelectionArgs5 = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs5, new String[]{Long.toString(ContentUris.parseId(uri))});
                 }
-                Object[] selectionWithAccounts = getSelectionWithAccounts(uri, str9, strArr8);
-                String str10 = (String) selectionWithAccounts[0];
-                String[] strArr10 = (String[]) selectionWithAccounts[1];
-                String str11 = TextUtils.isEmpty(str2) ? ((Boolean) selectionWithAccounts[2]).booleanValue() ? "position ASC, _id ASC" : "folder DESC, position ASC, _id ASC" : str2;
+                Object[] selectionWithAccounts = getSelectionWithAccounts(uri, strConcatenateWhere3, strArrAppendSelectionArgs5);
+                String str7 = (String) selectionWithAccounts[0];
+                String[] strArr6 = (String[]) selectionWithAccounts[1];
+                String str8 = TextUtils.isEmpty(str2) ? ((Boolean) selectionWithAccounts[2]).booleanValue() ? "position ASC, _id ASC" : "folder DESC, position ASC, _id ASC" : str2;
                 sQLiteQueryBuilder.setProjectionMap(BOOKMARKS_PROJECTION_MAP);
                 sQLiteQueryBuilder.setTables("bookmarks LEFT OUTER JOIN images ON bookmarks.url = images.url_key");
-                strArr4 = strArr;
-                str4 = str11;
-                str5 = str10;
-                strArr5 = strArr10;
-                break;
+                strArr3 = strArr;
+                str3 = str8;
+                str4 = str7;
+                strArr4 = strArr6;
+                Cursor cursorQuery222 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery222.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery222;
             case 1002:
                 String queryParameter3 = uri.getQueryParameter("acct_type");
                 String queryParameter4 = uri.getQueryParameter("acct_name");
                 boolean z = (isNullAccount(queryParameter3) || isNullAccount(queryParameter4)) ? false : true;
                 sQLiteQueryBuilder.setTables("bookmarks LEFT OUTER JOIN images ON bookmarks.url = images.url_key");
-                String str12 = TextUtils.isEmpty(str2) ? z ? "position ASC, _id ASC" : "folder DESC, position ASC, _id ASC" : str2;
+                String str9 = TextUtils.isEmpty(str2) ? z ? "position ASC, _id ASC" : "folder DESC, position ASC, _id ASC" : str2;
                 if (z) {
                     sQLiteQueryBuilder.setProjectionMap(BOOKMARKS_PROJECTION_MAP);
-                    String buildQuery = sQLiteQueryBuilder.buildQuery(strArr, DatabaseUtils.concatenateWhere("account_type=? AND account_name=? AND parent = (SELECT _id FROM bookmarks WHERE sync3='bookmark_bar' AND account_type = ? AND account_name = ?) AND deleted=0", str8), null, null, null, null);
-                    String[] strArr11 = {queryParameter3, queryParameter4, queryParameter3, queryParameter4};
-                    if (strArr8 != null) {
-                        strArr11 = DatabaseUtils.appendSelectionArgs(strArr11, strArr8);
+                    String strBuildQuery = sQLiteQueryBuilder.buildQuery(strArr, DatabaseUtils.concatenateWhere("account_type=? AND account_name=? AND parent = (SELECT _id FROM bookmarks WHERE sync3='bookmark_bar' AND account_type = ? AND account_name = ?) AND deleted=0", strConcatenateWhere2), null, null, null, null);
+                    String[] strArrAppendSelectionArgs6 = {queryParameter3, queryParameter4, queryParameter3, queryParameter4};
+                    if (strArrAppendSelectionArgs5 != null) {
+                        strArrAppendSelectionArgs6 = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs6, strArrAppendSelectionArgs5);
                     }
-                    String concatenateWhere = DatabaseUtils.concatenateWhere("account_type=? AND account_name=? AND sync3=?", str8);
+                    String strConcatenateWhere4 = DatabaseUtils.concatenateWhere("account_type=? AND account_name=? AND sync3=?", strConcatenateWhere2);
                     sQLiteQueryBuilder.setProjectionMap(OTHER_BOOKMARKS_PROJECTION_MAP);
-                    buildUnionQuery = sQLiteQueryBuilder.buildUnionQuery(new String[]{buildQuery, sQLiteQueryBuilder.buildQuery(strArr, concatenateWhere, null, null, null, null)}, str12, queryParameter);
-                    appendSelectionArgs = DatabaseUtils.appendSelectionArgs(strArr11, new String[]{queryParameter3, queryParameter4, "other_bookmarks"});
-                    if (strArr8 != null) {
-                        appendSelectionArgs = DatabaseUtils.appendSelectionArgs(appendSelectionArgs, strArr8);
+                    strBuildUnionQuery = sQLiteQueryBuilder.buildUnionQuery(new String[]{strBuildQuery, sQLiteQueryBuilder.buildQuery(strArr, strConcatenateWhere4, null, null, null, null)}, str9, queryParameter);
+                    strArrAppendSelectionArgs2 = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs6, new String[]{queryParameter3, queryParameter4, "other_bookmarks"});
+                    if (strArrAppendSelectionArgs5 != null) {
+                        strArrAppendSelectionArgs2 = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs2, strArrAppendSelectionArgs5);
                     }
                 } else {
                     sQLiteQueryBuilder.setProjectionMap(BOOKMARKS_PROJECTION_MAP);
-                    String concatenateWhere2 = DatabaseUtils.concatenateWhere("parent=? AND deleted=0", str8);
-                    appendSelectionArgs = new String[]{Long.toString(1L)};
-                    if (strArr8 != null) {
-                        appendSelectionArgs = DatabaseUtils.appendSelectionArgs(appendSelectionArgs, strArr8);
+                    String strConcatenateWhere5 = DatabaseUtils.concatenateWhere("parent=? AND deleted=0", strConcatenateWhere2);
+                    strArrAppendSelectionArgs2 = new String[]{Long.toString(1L)};
+                    if (strArrAppendSelectionArgs5 != null) {
+                        strArrAppendSelectionArgs2 = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs2, strArrAppendSelectionArgs5);
                     }
-                    buildUnionQuery = sQLiteQueryBuilder.buildQuery(strArr, concatenateWhere2, null, null, str12, null);
+                    strBuildUnionQuery = sQLiteQueryBuilder.buildQuery(strArr, strConcatenateWhere5, null, null, str9, null);
                 }
-                Cursor rawQuery = readableDatabase.rawQuery(buildUnionQuery, appendSelectionArgs);
-                if (rawQuery != null) {
-                    rawQuery.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                Cursor cursorRawQuery = readableDatabase.rawQuery(strBuildUnionQuery, strArrAppendSelectionArgs2);
+                if (cursorRawQuery != null) {
+                    cursorRawQuery.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
                 }
-                return rawQuery;
+                return cursorRawQuery;
             case 1004:
-                return doSuggestQuery(str8, strArr8, queryParameter);
+                return doSuggestQuery(strConcatenateWhere2, strArrAppendSelectionArgs5, queryParameter);
             case 1005:
-                long queryDefaultFolderId = queryDefaultFolderId(uri.getQueryParameter("acct_name"), uri.getQueryParameter("acct_type"));
+                long jQueryDefaultFolderId = queryDefaultFolderId(uri.getQueryParameter("acct_name"), uri.getQueryParameter("acct_type"));
                 MatrixCursor matrixCursor2 = new MatrixCursor(new String[]{"_id"});
-                matrixCursor2.newRow().add(Long.valueOf(queryDefaultFolderId));
+                matrixCursor2.newRow().add(Long.valueOf(jQueryDefaultFolderId));
                 return matrixCursor2;
             case 2000:
-                strArr6 = strArr8;
-                filterSearchClient(strArr6);
-                String str13 = str2 != null ? "date DESC" : str2;
+                strArrAppendSelectionArgs3 = strArrAppendSelectionArgs5;
+                filterSearchClient(strArrAppendSelectionArgs3);
+                String str10 = str2 != null ? "date DESC" : str2;
                 sQLiteQueryBuilder.setProjectionMap(HISTORY_PROJECTION_MAP);
                 sQLiteQueryBuilder.setTables("history LEFT OUTER JOIN images ON history.url = images.url_key");
-                strArr4 = strArr;
-                strArr5 = strArr6;
-                str5 = str8;
-                str4 = str13;
-                break;
+                strArr3 = strArr;
+                strArr4 = strArrAppendSelectionArgs3;
+                str4 = strConcatenateWhere2;
+                str3 = str10;
+                Cursor cursorQuery2222 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery2222.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery2222;
             case 2001:
-                str8 = DatabaseUtils.concatenateWhere(str8, "history._id=?");
-                strArr6 = DatabaseUtils.appendSelectionArgs(strArr8, new String[]{Long.toString(ContentUris.parseId(uri))});
-                filterSearchClient(strArr6);
+                strConcatenateWhere2 = DatabaseUtils.concatenateWhere(strConcatenateWhere2, "history._id=?");
+                strArrAppendSelectionArgs3 = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs5, new String[]{Long.toString(ContentUris.parseId(uri))});
+                filterSearchClient(strArrAppendSelectionArgs3);
                 if (str2 != null) {
                 }
                 sQLiteQueryBuilder.setProjectionMap(HISTORY_PROJECTION_MAP);
                 sQLiteQueryBuilder.setTables("history LEFT OUTER JOIN images ON history.url = images.url_key");
-                strArr4 = strArr;
-                strArr5 = strArr6;
-                str5 = str8;
-                str4 = str13;
-                break;
+                strArr3 = strArr;
+                strArr4 = strArrAppendSelectionArgs3;
+                str4 = strConcatenateWhere2;
+                str3 = str10;
+                Cursor cursorQuery22222 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery22222.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery22222;
             case 3000:
-                strArr7 = strArr8;
+                strArrAppendSelectionArgs4 = strArrAppendSelectionArgs5;
                 sQLiteQueryBuilder.setTables("searches");
                 sQLiteQueryBuilder.setProjectionMap(SEARCHES_PROJECTION_MAP);
-                strArr4 = strArr;
-                str4 = str2;
-                strArr5 = strArr7;
-                str5 = str8;
-                break;
+                strArr3 = strArr;
+                str3 = str2;
+                strArr4 = strArrAppendSelectionArgs4;
+                str4 = strConcatenateWhere2;
+                Cursor cursorQuery222222 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery222222.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery222222;
             case 3001:
-                str8 = DatabaseUtils.concatenateWhere(str8, "searches._id=?");
-                strArr7 = DatabaseUtils.appendSelectionArgs(strArr8, new String[]{Long.toString(ContentUris.parseId(uri))});
+                strConcatenateWhere2 = DatabaseUtils.concatenateWhere(strConcatenateWhere2, "searches._id=?");
+                strArrAppendSelectionArgs4 = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs5, new String[]{Long.toString(ContentUris.parseId(uri))});
                 sQLiteQueryBuilder.setTables("searches");
                 sQLiteQueryBuilder.setProjectionMap(SEARCHES_PROJECTION_MAP);
-                strArr4 = strArr;
-                str4 = str2;
-                strArr5 = strArr7;
-                str5 = str8;
-                break;
+                strArr3 = strArr;
+                str3 = str2;
+                strArr4 = strArrAppendSelectionArgs4;
+                str4 = strConcatenateWhere2;
+                Cursor cursorQuery2222222 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery2222222.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery2222222;
             case 4000:
-                return this.mSyncHelper.query(readableDatabase, strArr, str8, strArr8, str2);
+                return this.mSyncHelper.query(readableDatabase, strArr, strConcatenateWhere2, strArrAppendSelectionArgs5, str2);
             case 4001:
-                String appendAccountToSelection = appendAccountToSelection(uri, str8);
+                String strAppendAccountToSelection = appendAccountToSelection(uri, strConcatenateWhere2);
                 StringBuilder sb = new StringBuilder();
                 sb.append("_id=");
                 sb.append(ContentUris.parseId(uri));
                 sb.append(" ");
-                if (appendAccountToSelection == null) {
-                    str7 = "";
+                if (strAppendAccountToSelection == null) {
+                    str6 = "";
                 } else {
-                    str7 = " AND (" + appendAccountToSelection + ")";
+                    str6 = " AND (" + strAppendAccountToSelection + ")";
                 }
-                sb.append(str7);
-                return this.mSyncHelper.query(readableDatabase, strArr, sb.toString(), strArr8, str2);
+                sb.append(str6);
+                return this.mSyncHelper.query(readableDatabase, strArr, sb.toString(), strArrAppendSelectionArgs5, str2);
             case 5000:
                 sQLiteQueryBuilder.setTables("images");
                 sQLiteQueryBuilder.setProjectionMap(IMAGES_PROJECTION_MAP);
-                str6 = str8;
-                strArr4 = strArr;
-                str4 = str2;
-                str5 = str6;
-                strArr5 = strArr8;
-                break;
+                str5 = strConcatenateWhere2;
+                strArr3 = strArr;
+                str3 = str2;
+                str4 = str5;
+                strArr4 = strArrAppendSelectionArgs5;
+                Cursor cursorQuery22222222 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery22222222.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery22222222;
             case 6001:
             case 9001:
-                str8 = DatabaseUtils.concatenateWhere(str8, "_id = CAST(? AS INTEGER)");
-                strArr8 = DatabaseUtils.appendSelectionArgs(strArr8, new String[]{Long.toString(ContentUris.parseId(uri))});
+                strConcatenateWhere2 = DatabaseUtils.concatenateWhere(strConcatenateWhere2, "_id = CAST(? AS INTEGER)");
+                strArrAppendSelectionArgs5 = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs5, new String[]{Long.toString(ContentUris.parseId(uri))});
             case 6000:
             case 9000:
-                String[] strArr12 = ((match == 9000 || match == 9001) && strArr == null) ? Browser.HISTORY_PROJECTION : strArr;
-                String[] createCombinedQuery = createCombinedQuery(uri, strArr12, sQLiteQueryBuilder);
-                if (strArr8 != null) {
-                    createCombinedQuery = DatabaseUtils.appendSelectionArgs(createCombinedQuery, strArr8);
+                String[] strArr7 = ((iMatch == 9000 || iMatch == 9001) && strArr == null) ? Browser.HISTORY_PROJECTION : strArr;
+                String[] strArrCreateCombinedQuery = createCombinedQuery(uri, strArr7, sQLiteQueryBuilder);
+                if (strArrAppendSelectionArgs5 != null) {
+                    strArrCreateCombinedQuery = DatabaseUtils.appendSelectionArgs(strArrCreateCombinedQuery, strArrAppendSelectionArgs5);
                 }
-                str4 = str2;
-                strArr5 = createCombinedQuery;
-                strArr4 = strArr12;
-                str5 = str8;
-                break;
+                str3 = str2;
+                strArr4 = strArrCreateCombinedQuery;
+                strArr3 = strArr7;
+                str4 = strConcatenateWhere2;
+                Cursor cursorQuery222222222 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery222222222.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery222222222;
             case 7000:
                 sQLiteQueryBuilder.setTables("v_accounts");
                 sQLiteQueryBuilder.setProjectionMap(ACCOUNTS_PROJECTION_MAP);
-                String concatenateWhere3 = "false".equals(uri.getQueryParameter("allowEmptyAccounts")) ? DatabaseUtils.concatenateWhere(str8, "0 < ( SELECT count(*) FROM bookmarks WHERE deleted = 0 AND folder = 0   AND (     v_accounts.account_name = bookmarks.account_name     OR (v_accounts.account_name IS NULL AND bookmarks.account_name IS NULL)   )   AND (     v_accounts.account_type = bookmarks.account_type     OR (v_accounts.account_type IS NULL AND bookmarks.account_type IS NULL)   ) )") : str8;
+                String strConcatenateWhere6 = "false".equals(uri.getQueryParameter("allowEmptyAccounts")) ? DatabaseUtils.concatenateWhere(strConcatenateWhere2, "0 < ( SELECT count(*) FROM bookmarks WHERE deleted = 0 AND folder = 0   AND (     v_accounts.account_name = bookmarks.account_name     OR (v_accounts.account_name IS NULL AND bookmarks.account_name IS NULL)   )   AND (     v_accounts.account_type = bookmarks.account_type     OR (v_accounts.account_type IS NULL AND bookmarks.account_type IS NULL)   ) )") : strConcatenateWhere2;
                 if (str2 == null) {
-                    strArr4 = strArr;
-                    str5 = concatenateWhere3;
-                    str4 = "account_name IS NOT NULL DESC, account_name ASC";
+                    strArr3 = strArr;
+                    str4 = strConcatenateWhere6;
+                    str3 = "account_name IS NOT NULL DESC, account_name ASC";
                 } else {
-                    strArr4 = strArr;
-                    str4 = str2;
-                    str5 = concatenateWhere3;
+                    strArr3 = strArr;
+                    str3 = str2;
+                    str4 = strConcatenateWhere6;
                 }
-                strArr5 = strArr8;
-                break;
+                strArr4 = strArrAppendSelectionArgs5;
+                Cursor cursorQuery2222222222 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery2222222222.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery2222222222;
             case 8000:
                 sQLiteQueryBuilder.setTables("settings");
                 sQLiteQueryBuilder.setProjectionMap(SETTINGS_PROJECTION_MAP);
-                str6 = str8;
-                strArr4 = strArr;
-                str4 = str2;
-                str5 = str6;
-                strArr5 = strArr8;
-                break;
+                str5 = strConcatenateWhere2;
+                strArr3 = strArr;
+                str3 = str2;
+                str4 = str5;
+                strArr4 = strArrAppendSelectionArgs5;
+                Cursor cursorQuery22222222222 = sQLiteQueryBuilder.query(readableDatabase, strArr3, str4, strArr4, queryParameter2, null, str3, queryParameter);
+                cursorQuery22222222222.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
+                return cursorQuery22222222222;
             default:
                 throw new UnsupportedOperationException("Unknown URL " + uri.toString());
         }
-        Cursor query = sQLiteQueryBuilder.query(readableDatabase, strArr4, str5, strArr5, queryParameter2, null, str4, queryParameter);
-        query.setNotificationUri(getContext().getContentResolver(), BrowserContract.AUTHORITY_URI);
-        return query;
     }
 
     private Cursor doSuggestQuery(String str, String[] strArr, String str2) {
@@ -967,6 +991,10 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         return new SuggestionsCursor(this.mOpenHelper.getReadableDatabase().query("history LEFT OUTER JOIN bookmarks ON (history.url = bookmarks.url AND bookmarks.deleted=0 AND bookmarks.folder=0)", SUGGEST_PROJECTION, str3, strArr, null, null, null, null));
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:7:0x004d  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private String[] createCombinedQuery(Uri uri, String[] strArr, SQLiteQueryBuilder sQLiteQueryBuilder) {
         String[] strArr2;
         StringBuilder sb = new StringBuilder(128);
@@ -977,32 +1005,23 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         String[] strArr3 = (String[]) selectionWithAccounts[1];
         if (str != null) {
             sb.append(" AND " + str);
-            if (strArr3 != null) {
+            if (strArr3 == null) {
+                strArr2 = null;
+            } else {
                 String[] strArr4 = new String[strArr3.length * 2];
                 System.arraycopy(strArr3, 0, strArr4, 0, strArr3.length);
                 System.arraycopy(strArr3, 0, strArr4, strArr3.length, strArr3.length);
                 strArr2 = strArr4;
-                String sb2 = sb.toString();
-                sQLiteQueryBuilder.setTables("bookmarks");
-                sQLiteQueryBuilder.setTables(String.format("history LEFT OUTER JOIN (%s) bookmarks ON history.url = bookmarks.url LEFT OUTER JOIN images ON history.url = images.url_key", sQLiteQueryBuilder.buildQuery(null, sb2, null, null, null, null)));
-                sQLiteQueryBuilder.setProjectionMap(COMBINED_HISTORY_PROJECTION_MAP);
-                String buildQuery = sQLiteQueryBuilder.buildQuery(null, null, null, null, null, null);
-                sQLiteQueryBuilder.setTables("bookmarks LEFT OUTER JOIN images ON bookmarks.url = images.url_key");
-                sQLiteQueryBuilder.setProjectionMap(COMBINED_BOOKMARK_PROJECTION_MAP);
-                sQLiteQueryBuilder.setTables("(" + sQLiteQueryBuilder.buildUnionQuery(new String[]{buildQuery, sQLiteQueryBuilder.buildQuery(null, sb2 + String.format(" AND %s NOT IN (SELECT %s FROM %s)", "url", "url", "history"), null, null, null, null)}, null, null) + ")");
-                sQLiteQueryBuilder.setProjectionMap(null);
-                return strArr2;
             }
         }
-        strArr2 = null;
-        String sb22 = sb.toString();
+        String string = sb.toString();
         sQLiteQueryBuilder.setTables("bookmarks");
-        sQLiteQueryBuilder.setTables(String.format("history LEFT OUTER JOIN (%s) bookmarks ON history.url = bookmarks.url LEFT OUTER JOIN images ON history.url = images.url_key", sQLiteQueryBuilder.buildQuery(null, sb22, null, null, null, null)));
+        sQLiteQueryBuilder.setTables(String.format("history LEFT OUTER JOIN (%s) bookmarks ON history.url = bookmarks.url LEFT OUTER JOIN images ON history.url = images.url_key", sQLiteQueryBuilder.buildQuery(null, string, null, null, null, null)));
         sQLiteQueryBuilder.setProjectionMap(COMBINED_HISTORY_PROJECTION_MAP);
-        String buildQuery2 = sQLiteQueryBuilder.buildQuery(null, null, null, null, null, null);
+        String strBuildQuery = sQLiteQueryBuilder.buildQuery(null, null, null, null, null, null);
         sQLiteQueryBuilder.setTables("bookmarks LEFT OUTER JOIN images ON bookmarks.url = images.url_key");
         sQLiteQueryBuilder.setProjectionMap(COMBINED_BOOKMARK_PROJECTION_MAP);
-        sQLiteQueryBuilder.setTables("(" + sQLiteQueryBuilder.buildUnionQuery(new String[]{buildQuery2, sQLiteQueryBuilder.buildQuery(null, sb22 + String.format(" AND %s NOT IN (SELECT %s FROM %s)", "url", "url", "history"), null, null, null, null)}, null, null) + ")");
+        sQLiteQueryBuilder.setTables("(" + sQLiteQueryBuilder.buildUnionQuery(new String[]{strBuildQuery, sQLiteQueryBuilder.buildQuery(null, string + String.format(" AND %s NOT IN (SELECT %s FROM %s)", "url", "url", "history"), null, null, null, null)}, null, null) + ")");
         sQLiteQueryBuilder.setProjectionMap(null);
         return strArr2;
     }
@@ -1019,135 +1038,148 @@ public class BrowserProvider2 extends SQLiteContentProvider {
     }
 
     /* JADX WARN: Removed duplicated region for block: B:38:0x0178  */
+    /* JADX WARN: Removed duplicated region for block: B:42:0x019c  */
     @Override // com.android.browser.provider.SQLiteContentProvider
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public int deleteInTransaction(Uri uri, String str, String[] strArr, boolean z) {
-        int delete;
+        int iDelete;
         char c;
         String str2;
-        String str3 = str;
-        String[] strArr2 = strArr;
-        int match = URI_MATCHER.match(uri);
+        String strConcatenateWhere = str;
+        String[] strArrAppendSelectionArgs = strArr;
+        int iMatch = URI_MATCHER.match(uri);
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
-        switch (match) {
+        switch (iMatch) {
             case 11:
-                str3 = DatabaseUtils.concatenateWhere(str3, "_id = ?");
-                strArr2 = DatabaseUtils.appendSelectionArgs(strArr2, new String[]{Long.toString(ContentUris.parseId(uri))});
+                strConcatenateWhere = DatabaseUtils.concatenateWhere(strConcatenateWhere, "_id = ?");
+                strArrAppendSelectionArgs = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs, new String[]{Long.toString(ContentUris.parseId(uri))});
             case 10:
-                delete = writableDatabase.delete("thumbnails", str3, strArr2);
-                break;
+                iDelete = writableDatabase.delete("thumbnails", strConcatenateWhere, strArrAppendSelectionArgs);
+                if (iDelete > 0) {
+                    postNotifyUri(uri);
+                    if (shouldNotifyLegacy(uri)) {
+                        postNotifyUri(LEGACY_AUTHORITY_URI);
+                    }
+                }
+                return iDelete;
             case 1000:
                 c = 0;
-                Object[] selectionWithAccounts = getSelectionWithAccounts(uri, str3, strArr2);
-                delete = deleteBookmarks((String) selectionWithAccounts[c], (String[]) selectionWithAccounts[1], z);
+                Object[] selectionWithAccounts = getSelectionWithAccounts(uri, strConcatenateWhere, strArrAppendSelectionArgs);
+                iDelete = deleteBookmarks((String) selectionWithAccounts[c], (String[]) selectionWithAccounts[1], z);
                 pruneImages();
-                if (delete > 0) {
+                if (iDelete > 0) {
                     refreshWidgets();
-                    break;
                 }
-                break;
+                if (iDelete > 0) {
+                }
+                return iDelete;
             case 1001:
                 c = 0;
-                str3 = DatabaseUtils.concatenateWhere(str3, "bookmarks._id=?");
-                strArr2 = DatabaseUtils.appendSelectionArgs(strArr2, new String[]{Long.toString(ContentUris.parseId(uri))});
-                Object[] selectionWithAccounts2 = getSelectionWithAccounts(uri, str3, strArr2);
-                delete = deleteBookmarks((String) selectionWithAccounts2[c], (String[]) selectionWithAccounts2[1], z);
+                strConcatenateWhere = DatabaseUtils.concatenateWhere(strConcatenateWhere, "bookmarks._id=?");
+                strArrAppendSelectionArgs = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs, new String[]{Long.toString(ContentUris.parseId(uri))});
+                Object[] selectionWithAccounts2 = getSelectionWithAccounts(uri, strConcatenateWhere, strArrAppendSelectionArgs);
+                iDelete = deleteBookmarks((String) selectionWithAccounts2[c], (String[]) selectionWithAccounts2[1], z);
                 pruneImages();
-                if (delete > 0) {
+                if (iDelete > 0) {
                 }
-                break;
+                if (iDelete > 0) {
+                }
+                return iDelete;
             case 2001:
-                str3 = DatabaseUtils.concatenateWhere(str3, "history._id=?");
-                strArr2 = DatabaseUtils.appendSelectionArgs(strArr2, new String[]{Long.toString(ContentUris.parseId(uri))});
+                strConcatenateWhere = DatabaseUtils.concatenateWhere(strConcatenateWhere, "history._id=?");
+                strArrAppendSelectionArgs = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs, new String[]{Long.toString(ContentUris.parseId(uri))});
             case 2000:
-                filterSearchClient(strArr2);
-                delete = writableDatabase.delete("history", str3, strArr2);
+                filterSearchClient(strArrAppendSelectionArgs);
+                iDelete = writableDatabase.delete("history", strConcatenateWhere, strArrAppendSelectionArgs);
                 pruneImages();
-                break;
+                if (iDelete > 0) {
+                }
+                return iDelete;
             case 3001:
-                str3 = DatabaseUtils.concatenateWhere(str3, "searches._id=?");
-                strArr2 = DatabaseUtils.appendSelectionArgs(strArr2, new String[]{Long.toString(ContentUris.parseId(uri))});
+                strConcatenateWhere = DatabaseUtils.concatenateWhere(strConcatenateWhere, "searches._id=?");
+                strArrAppendSelectionArgs = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs, new String[]{Long.toString(ContentUris.parseId(uri))});
             case 3000:
-                delete = writableDatabase.delete("searches", str3, strArr2);
-                break;
+                iDelete = writableDatabase.delete("searches", strConcatenateWhere, strArrAppendSelectionArgs);
+                if (iDelete > 0) {
+                }
+                return iDelete;
             case 4000:
-                delete = this.mSyncHelper.delete(writableDatabase, str3, strArr2);
-                break;
+                iDelete = this.mSyncHelper.delete(writableDatabase, strConcatenateWhere, strArrAppendSelectionArgs);
+                if (iDelete > 0) {
+                }
+                return iDelete;
             case 4001:
                 StringBuilder sb = new StringBuilder();
                 sb.append("_id=");
                 sb.append(ContentUris.parseId(uri));
                 sb.append(" ");
-                if (str3 == null) {
+                if (strConcatenateWhere == null) {
                     str2 = "";
                 } else {
-                    str2 = " AND (" + str3 + ")";
+                    str2 = " AND (" + strConcatenateWhere + ")";
                 }
                 sb.append(str2);
-                delete = this.mSyncHelper.delete(writableDatabase, sb.toString(), strArr2);
-                break;
-            case 9001:
-                str3 = DatabaseUtils.concatenateWhere(str3, "_id = CAST(? AS INTEGER)");
-                strArr2 = DatabaseUtils.appendSelectionArgs(strArr2, new String[]{Long.toString(ContentUris.parseId(uri))});
-            case 9000:
-                String str4 = str3;
-                String[] strArr3 = {"_id", "bookmark", "url"};
-                SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
-                String[] createCombinedQuery = createCombinedQuery(uri, strArr3, sQLiteQueryBuilder);
-                if (strArr2 != null) {
-                    createCombinedQuery = DatabaseUtils.appendSelectionArgs(createCombinedQuery, strArr2);
+                iDelete = this.mSyncHelper.delete(writableDatabase, sb.toString(), strArrAppendSelectionArgs);
+                if (iDelete > 0) {
                 }
-                Cursor query = sQLiteQueryBuilder.query(writableDatabase, strArr3, str4, createCombinedQuery, null, null, null);
-                delete = 0;
-                while (query.moveToNext()) {
-                    long j = query.getLong(0);
-                    boolean z2 = query.getInt(1) != 0;
-                    String string = query.getString(2);
+                return iDelete;
+            case 9001:
+                strConcatenateWhere = DatabaseUtils.concatenateWhere(strConcatenateWhere, "_id = CAST(? AS INTEGER)");
+                strArrAppendSelectionArgs = DatabaseUtils.appendSelectionArgs(strArrAppendSelectionArgs, new String[]{Long.toString(ContentUris.parseId(uri))});
+            case 9000:
+                String str3 = strConcatenateWhere;
+                String[] strArr2 = {"_id", "bookmark", "url"};
+                SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
+                String[] strArrCreateCombinedQuery = createCombinedQuery(uri, strArr2, sQLiteQueryBuilder);
+                if (strArrAppendSelectionArgs != null) {
+                    strArrCreateCombinedQuery = DatabaseUtils.appendSelectionArgs(strArrCreateCombinedQuery, strArrAppendSelectionArgs);
+                }
+                Cursor cursorQuery = sQLiteQueryBuilder.query(writableDatabase, strArr2, str3, strArrCreateCombinedQuery, null, null, null);
+                iDelete = 0;
+                while (cursorQuery.moveToNext()) {
+                    long j = cursorQuery.getLong(0);
+                    boolean z2 = cursorQuery.getInt(1) != 0;
+                    String string = cursorQuery.getString(2);
                     if (z2) {
-                        delete += deleteBookmarks("_id=?", new String[]{Long.toString(j)}, z);
+                        iDelete += deleteBookmarks("_id=?", new String[]{Long.toString(j)}, z);
                         writableDatabase.delete("history", "url=?", new String[]{string});
                     } else {
-                        delete += writableDatabase.delete("history", "_id=?", new String[]{Long.toString(j)});
+                        iDelete += writableDatabase.delete("history", "_id=?", new String[]{Long.toString(j)});
                     }
                 }
-                query.close();
-                break;
+                cursorQuery.close();
+                if (iDelete > 0) {
+                }
+                return iDelete;
             default:
                 throw new UnsupportedOperationException("Unknown delete URI " + uri);
         }
-        if (delete > 0) {
-            postNotifyUri(uri);
-            if (shouldNotifyLegacy(uri)) {
-                postNotifyUri(LEGACY_AUTHORITY_URI);
-            }
-        }
-        return delete;
     }
 
     long queryDefaultFolderId(String str, String str2) {
         if (!isNullAccount(str) && !isNullAccount(str2)) {
-            Cursor query = this.mOpenHelper.getReadableDatabase().query("bookmarks", new String[]{"_id"}, "sync3 = ? AND account_type = ? AND account_name = ?", new String[]{"bookmark_bar", str2, str}, null, null, null);
+            Cursor cursorQuery = this.mOpenHelper.getReadableDatabase().query("bookmarks", new String[]{"_id"}, "sync3 = ? AND account_type = ? AND account_name = ?", new String[]{"bookmark_bar", str2, str}, null, null, null);
             try {
-                if (query.moveToFirst()) {
-                    return query.getLong(0);
+                if (cursorQuery.moveToFirst()) {
+                    return cursorQuery.getLong(0);
                 }
                 return 1L;
             } finally {
-                query.close();
+                cursorQuery.close();
             }
         }
         return 1L;
     }
 
     @Override // com.android.browser.provider.SQLiteContentProvider
-    public Uri insertInTransaction(Uri uri, ContentValues contentValues, boolean z) {
-        long replaceOrThrow;
+    public Uri insertInTransaction(Uri uri, ContentValues contentValues, boolean z) throws Throwable {
+        long jReplaceOrThrow;
         String asString;
-        int match = URI_MATCHER.match(uri);
+        int iMatch = URI_MATCHER.match(uri);
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
-        if (match == 9000) {
+        if (iMatch == 9000) {
             Integer asInteger = contentValues.getAsInteger("bookmark");
             contentValues.remove("bookmark");
             if (asInteger != null && asInteger.intValue() != 0) {
@@ -1155,31 +1187,31 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 contentValues.remove("visits");
                 contentValues.remove("user_entered");
                 contentValues.put("folder", (Integer) 0);
-                match = 1000;
+                iMatch = 1000;
             } else {
-                match = 2000;
+                iMatch = 2000;
             }
         }
-        if (match == 10) {
-            replaceOrThrow = writableDatabase.replaceOrThrow("thumbnails", null, contentValues);
-        } else if (match != 1000) {
-            if (match == 2000) {
+        if (iMatch == 10) {
+            jReplaceOrThrow = writableDatabase.replaceOrThrow("thumbnails", null, contentValues);
+        } else if (iMatch != 1000) {
+            if (iMatch == 2000) {
                 if (!contentValues.containsKey("created")) {
                     contentValues.put("created", Long.valueOf(System.currentTimeMillis()));
                 }
                 contentValues.put("url", filterSearchClient(contentValues.getAsString("url")));
-                ContentValues extractImageValues = extractImageValues(contentValues, contentValues.getAsString("url"));
-                if (extractImageValues != null) {
-                    writableDatabase.insertOrThrow("images", "favicon", extractImageValues);
+                ContentValues contentValuesExtractImageValues = extractImageValues(contentValues, contentValues.getAsString("url"));
+                if (contentValuesExtractImageValues != null) {
+                    writableDatabase.insertOrThrow("images", "favicon", contentValuesExtractImageValues);
                 }
-                replaceOrThrow = writableDatabase.insertOrThrow("history", "visits", contentValues);
-            } else if (match == 3000) {
-                replaceOrThrow = insertSearchesInTransaction(writableDatabase, contentValues);
-            } else if (match == 4000) {
-                replaceOrThrow = this.mSyncHelper.insert(writableDatabase, contentValues);
-            } else if (match == 8000) {
+                jReplaceOrThrow = writableDatabase.insertOrThrow("history", "visits", contentValues);
+            } else if (iMatch == 3000) {
+                jReplaceOrThrow = insertSearchesInTransaction(writableDatabase, contentValues);
+            } else if (iMatch == 4000) {
+                jReplaceOrThrow = this.mSyncHelper.insert(writableDatabase, contentValues);
+            } else if (iMatch == 8000) {
                 insertSettingsInTransaction(writableDatabase, contentValues);
-                replaceOrThrow = 0;
+                jReplaceOrThrow = 0;
             } else {
                 throw new UnsupportedOperationException("Unknown insert URI " + uri);
             }
@@ -1188,20 +1220,20 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 contentValues.put("url", asString.trim());
             }
             if (!z) {
-                long currentTimeMillis = System.currentTimeMillis();
-                contentValues.put("created", Long.valueOf(currentTimeMillis));
-                contentValues.put("modified", Long.valueOf(currentTimeMillis));
+                long jCurrentTimeMillis = System.currentTimeMillis();
+                contentValues.put("created", Long.valueOf(jCurrentTimeMillis));
+                contentValues.put("modified", Long.valueOf(jCurrentTimeMillis));
                 contentValues.put("dirty", (Integer) 1);
                 boolean z2 = contentValues.containsKey("account_type") || contentValues.containsKey("account_name");
                 String asString2 = contentValues.getAsString("account_type");
                 String asString3 = contentValues.getAsString("account_name");
-                boolean containsKey = contentValues.containsKey("parent");
-                if (containsKey && z2) {
-                    containsKey = isValidParent(asString2, asString3, contentValues.getAsLong("parent").longValue());
-                } else if (containsKey && !z2) {
-                    containsKey = setParentValues(contentValues.getAsLong("parent").longValue(), contentValues);
+                boolean zContainsKey = contentValues.containsKey("parent");
+                if (zContainsKey && z2) {
+                    zContainsKey = isValidParent(asString2, asString3, contentValues.getAsLong("parent").longValue());
+                } else if (zContainsKey && !z2) {
+                    zContainsKey = setParentValues(contentValues.getAsLong("parent").longValue(), contentValues);
                 }
-                if (!containsKey) {
+                if (!zContainsKey) {
                     contentValues.put("parent", Long.valueOf(queryDefaultFolderId(asString3, asString2)));
                 }
             }
@@ -1212,99 +1244,109 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 contentValues.put("position", Long.toString(Long.MIN_VALUE));
             }
             String asString4 = contentValues.getAsString("url");
-            ContentValues extractImageValues2 = extractImageValues(contentValues, asString4);
+            ContentValues contentValuesExtractImageValues2 = extractImageValues(contentValues, asString4);
             Boolean asBoolean = contentValues.getAsBoolean("folder");
-            if ((asBoolean == null || !asBoolean.booleanValue()) && extractImageValues2 != null && !TextUtils.isEmpty(asString4) && writableDatabase.update("images", extractImageValues2, "url_key=?", new String[]{asString4}) == 0) {
-                writableDatabase.insertOrThrow("images", "favicon", extractImageValues2);
+            if ((asBoolean == null || !asBoolean.booleanValue()) && contentValuesExtractImageValues2 != null && !TextUtils.isEmpty(asString4) && writableDatabase.update("images", contentValuesExtractImageValues2, "url_key=?", new String[]{asString4}) == 0) {
+                writableDatabase.insertOrThrow("images", "favicon", contentValuesExtractImageValues2);
             }
-            replaceOrThrow = writableDatabase.insertOrThrow("bookmarks", "dirty", contentValues);
+            jReplaceOrThrow = writableDatabase.insertOrThrow("bookmarks", "dirty", contentValues);
             refreshWidgets();
         }
-        if (replaceOrThrow >= 0) {
-            postNotifyUri(uri);
-            if (shouldNotifyLegacy(uri)) {
-                postNotifyUri(LEGACY_AUTHORITY_URI);
-            }
-            return ContentUris.withAppendedId(uri, replaceOrThrow);
+        if (jReplaceOrThrow < 0) {
+            return null;
         }
-        return null;
+        postNotifyUri(uri);
+        if (shouldNotifyLegacy(uri)) {
+            postNotifyUri(LEGACY_AUTHORITY_URI);
+        }
+        return ContentUris.withAppendedId(uri, jReplaceOrThrow);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [1750=7, 1751=5] */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:21:0x0080 */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:31:0x0093 */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:33:0x0095 */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:43:0x0032 */
     /* JADX WARN: Multi-variable type inference failed */
     /* JADX WARN: Type inference failed for: r0v10 */
     /* JADX WARN: Type inference failed for: r0v12, types: [boolean] */
+    /* JADX WARN: Type inference failed for: r0v15 */
+    /* JADX WARN: Type inference failed for: r0v4 */
+    /* JADX WARN: Type inference failed for: r0v5 */
+    /* JADX WARN: Type inference failed for: r0v6, types: [android.database.Cursor] */
     /* JADX WARN: Type inference failed for: r0v7, types: [android.database.Cursor] */
     /* JADX WARN: Type inference failed for: r0v8 */
-    private boolean isValidAccountName(long j, String str) {
-        Cursor query;
+    /* JADX WARN: Type inference failed for: r0v9 */
+    private boolean isValidAccountName(long j, String str) throws Throwable {
+        Cursor cursorQuery;
         Log.e("browser/BrowserProvider", "BrowserProvider2.isValidAccountName parentId:" + j + " title:" + str);
         if (j <= 0 || str == null || str.length() == 0) {
             return true;
         }
-        Uri uri = BrowserContract.Bookmarks.CONTENT_URI;
-        Cursor cursor = 0;
+        ?? MoveToNext = 0;
+        MoveToNext = 0;
         try {
             try {
-                query = query(uri, new String[]{"title"}, "parent = ? AND deleted = ? AND folder = ?", new String[]{j + "", "0", "1"}, null);
-            } catch (Throwable th) {
-                th = th;
+                cursorQuery = query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"title"}, "parent = ? AND deleted = ? AND folder = ?", new String[]{j + "", "0", "1"}, null);
+            } catch (IllegalStateException e) {
+                e = e;
             }
-        } catch (IllegalStateException e) {
-            e = e;
-        }
-        if (query != null) {
-            try {
-            } catch (IllegalStateException e2) {
-                e = e2;
-                cursor = query;
-                Log.e("browser/BrowserProvider", e.getMessage());
-                if (cursor != 0) {
-                    cursor.close();
-                }
-                return true;
-            } catch (Throwable th2) {
-                th = th2;
-                cursor = query;
-                if (cursor != null) {
-                    cursor.close();
-                }
-                throw th;
-            }
-            if (query.getCount() != 0) {
-                do {
-                    cursor = query.moveToNext();
-                    if (cursor == 0) {
-                        if (query != null) {
-                            query.close();
-                        }
-                        return true;
+            if (cursorQuery != null) {
+                try {
+                } catch (IllegalStateException e2) {
+                    e = e2;
+                    MoveToNext = cursorQuery;
+                    Log.e("browser/BrowserProvider", e.getMessage());
+                    if (MoveToNext != 0) {
+                        MoveToNext.close();
                     }
-                } while (!str.equals(query.getString(0)));
-                if (query != null) {
-                    query.close();
+                    return true;
+                } catch (Throwable th) {
+                    th = th;
+                    MoveToNext = cursorQuery;
+                    if (MoveToNext != 0) {
+                        MoveToNext.close();
+                    }
+                    throw th;
                 }
-                return false;
+                if (cursorQuery.getCount() != 0) {
+                    do {
+                        MoveToNext = cursorQuery.moveToNext();
+                        if (MoveToNext == 0) {
+                            if (cursorQuery != null) {
+                                cursorQuery.close();
+                            }
+                            return true;
+                        }
+                    } while (!str.equals(cursorQuery.getString(0)));
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
+                    }
+                    return false;
+                }
             }
+            if (cursorQuery != null) {
+                cursorQuery.close();
+            }
+            return true;
+        } catch (Throwable th2) {
+            th = th2;
         }
-        if (query != null) {
-            query.close();
-        }
-        return true;
     }
 
     private String[] getAccountNameAndType(long j) {
-        Cursor query;
-        if (j > 0 && (query = query(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, j), new String[]{"account_name", "account_type"}, null, null, null)) != null) {
-            try {
-                if (query.moveToFirst()) {
-                    return new String[]{query.getString(0), query.getString(1)};
-                }
-                return null;
-            } finally {
-                query.close();
-            }
+        Cursor cursorQuery;
+        if (j <= 0 || (cursorQuery = query(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, j), new String[]{"account_name", "account_type"}, null, null, null)) == null) {
+            return null;
         }
-        return null;
+        try {
+            if (cursorQuery.moveToFirst()) {
+                return new String[]{cursorQuery.getString(0), cursorQuery.getString(1)};
+            }
+            return null;
+        } finally {
+            cursorQuery.close();
+        }
     }
 
     private boolean setParentValues(long j, ContentValues contentValues) {
@@ -1331,121 +1373,131 @@ public class BrowserProvider2 extends SQLiteContentProvider {
     }
 
     private String filterSearchClient(String str) {
-        int indexOf = str.indexOf("client=");
-        if (indexOf > 0 && str.contains(".google.")) {
-            int indexOf2 = str.indexOf(38, indexOf);
-            if (indexOf2 <= 0) {
-                return str.substring(0, indexOf - 1);
+        int iIndexOf = str.indexOf("client=");
+        if (iIndexOf > 0 && str.contains(".google.")) {
+            int iIndexOf2 = str.indexOf(38, iIndexOf);
+            if (iIndexOf2 <= 0) {
+                return str.substring(0, iIndexOf - 1);
             }
-            return str.substring(0, indexOf).concat(str.substring(indexOf2 + 1));
+            return str.substring(0, iIndexOf).concat(str.substring(iIndexOf2 + 1));
         }
         return str;
     }
 
-    private long insertSearchesInTransaction(SQLiteDatabase sQLiteDatabase, ContentValues contentValues) {
-        Cursor cursor;
+    private long insertSearchesInTransaction(SQLiteDatabase sQLiteDatabase, ContentValues contentValues) throws Throwable {
+        Cursor cursorQuery;
         String asString = contentValues.getAsString("search");
         if (TextUtils.isEmpty(asString)) {
             throw new IllegalArgumentException("Must include the SEARCH field");
         }
         try {
-            cursor = sQLiteDatabase.query("searches", new String[]{"_id"}, "search=?", new String[]{asString}, null, null, null);
-            try {
-                if (cursor.moveToNext()) {
-                    long j = cursor.getLong(0);
-                    sQLiteDatabase.update("searches", contentValues, "_id=?", new String[]{Long.toString(j)});
-                    if (cursor != null) {
-                        cursor.close();
-                    }
-                    return j;
+            cursorQuery = sQLiteDatabase.query("searches", new String[]{"_id"}, "search=?", new String[]{asString}, null, null, null);
+        } catch (Throwable th) {
+            th = th;
+            cursorQuery = null;
+        }
+        try {
+            if (cursorQuery.moveToNext()) {
+                long j = cursorQuery.getLong(0);
+                sQLiteDatabase.update("searches", contentValues, "_id=?", new String[]{Long.toString(j)});
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
-                long insertOrThrow = sQLiteDatabase.insertOrThrow("searches", "search", contentValues);
-                if (cursor != null) {
-                    cursor.close();
-                }
-                return insertOrThrow;
-            } catch (Throwable th) {
-                th = th;
-                if (cursor != null) {
-                    cursor.close();
-                }
-                throw th;
+                return j;
             }
+            long jInsertOrThrow = sQLiteDatabase.insertOrThrow("searches", "search", contentValues);
+            if (cursorQuery != null) {
+                cursorQuery.close();
+            }
+            return jInsertOrThrow;
         } catch (Throwable th2) {
             th = th2;
-            cursor = null;
+            if (cursorQuery != null) {
+                cursorQuery.close();
+            }
+            throw th;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public long insertSettingsInTransaction(SQLiteDatabase sQLiteDatabase, ContentValues contentValues) {
-        Cursor cursor;
+    private long insertSettingsInTransaction(SQLiteDatabase sQLiteDatabase, ContentValues contentValues) throws Throwable {
+        Cursor cursorQuery;
         String asString = contentValues.getAsString("key");
         if (TextUtils.isEmpty(asString)) {
             throw new IllegalArgumentException("Must include the KEY field");
         }
         String[] strArr = {asString};
         try {
-            cursor = sQLiteDatabase.query("settings", new String[]{"key"}, "key=?", strArr, null, null, null);
-            try {
-                if (cursor.moveToNext()) {
-                    long j = cursor.getLong(0);
-                    sQLiteDatabase.update("settings", contentValues, "key=?", strArr);
-                    if (cursor != null) {
-                        cursor.close();
-                    }
-                    return j;
+            cursorQuery = sQLiteDatabase.query("settings", new String[]{"key"}, "key=?", strArr, null, null, null);
+        } catch (Throwable th) {
+            th = th;
+            cursorQuery = null;
+        }
+        try {
+            if (cursorQuery.moveToNext()) {
+                long j = cursorQuery.getLong(0);
+                sQLiteDatabase.update("settings", contentValues, "key=?", strArr);
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
-                long insertOrThrow = sQLiteDatabase.insertOrThrow("settings", "value", contentValues);
-                if (cursor != null) {
-                    cursor.close();
-                }
-                return insertOrThrow;
-            } catch (Throwable th) {
-                th = th;
-                if (cursor != null) {
-                    cursor.close();
-                }
-                throw th;
+                return j;
             }
+            long jInsertOrThrow = sQLiteDatabase.insertOrThrow("settings", "value", contentValues);
+            if (cursorQuery != null) {
+                cursorQuery.close();
+            }
+            return jInsertOrThrow;
         } catch (Throwable th2) {
             th = th2;
-            cursor = null;
+            if (cursorQuery != null) {
+                cursorQuery.close();
+            }
+            throw th;
         }
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:70:0x01a9  */
     @Override // com.android.browser.provider.SQLiteContentProvider
-    public int updateInTransaction(Uri uri, ContentValues contentValues, String str, String[] strArr, boolean z) {
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    public int updateInTransaction(Uri uri, ContentValues contentValues, String str, String[] strArr, boolean z) throws SQLException {
         String asString;
         String str2;
-        boolean z2;
-        int match = URI_MATCHER.match(uri);
+        boolean zContainsKey;
+        int iMatch = URI_MATCHER.match(uri);
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
-        if (match == 9000 || match == 9001) {
+        if (iMatch == 9000 || iMatch == 9001) {
             Integer asInteger = contentValues.getAsInteger("bookmark");
             contentValues.remove("bookmark");
             if (asInteger == null || asInteger.intValue() == 0) {
-                if (match == 9000) {
-                    match = 2000;
+                if (iMatch == 9000) {
+                    iMatch = 2000;
                 } else {
-                    match = 2001;
+                    iMatch = 2001;
                 }
             } else {
-                if (match == 9000) {
-                    match = 1000;
+                if (iMatch == 9000) {
+                    iMatch = 1000;
                 } else {
-                    match = 1001;
+                    iMatch = 1001;
                 }
                 contentValues.remove("date");
                 contentValues.remove("visits");
                 contentValues.remove("user_entered");
             }
         }
-        int i = 0;
-        switch (match) {
+        int iUpdate = 0;
+        switch (iMatch) {
             case 10:
-                i = writableDatabase.update("thumbnails", contentValues, str, strArr);
-                break;
+                iUpdate = writableDatabase.update("thumbnails", contentValues, str, strArr);
+                pruneImages();
+                if (iUpdate > 0) {
+                    postNotifyUri(uri);
+                    if (shouldNotifyLegacy(uri)) {
+                        postNotifyUri(LEGACY_AUTHORITY_URI);
+                    }
+                }
+                return iUpdate;
             case 30:
                 return (contentValues == null || (asString = contentValues.getAsString("homepage")) == null || !setHomePage(getContext(), asString)) ? 0 : 1;
             case 1001:
@@ -1453,154 +1505,164 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 strArr = DatabaseUtils.appendSelectionArgs(strArr, new String[]{Long.toString(ContentUris.parseId(uri))});
             case 1000:
                 Object[] selectionWithAccounts = getSelectionWithAccounts(uri, str, strArr);
-                i = updateBookmarksInTransaction(contentValues, (String) selectionWithAccounts[0], (String[]) selectionWithAccounts[1], z);
-                if (i > 0) {
+                iUpdate = updateBookmarksInTransaction(contentValues, (String) selectionWithAccounts[0], (String[]) selectionWithAccounts[1], z);
+                if (iUpdate > 0) {
                     refreshWidgets();
-                    break;
                 }
-                break;
+                pruneImages();
+                if (iUpdate > 0) {
+                }
+                return iUpdate;
             case 2001:
                 str = DatabaseUtils.concatenateWhere(str, "history._id=?");
                 strArr = DatabaseUtils.appendSelectionArgs(strArr, new String[]{Long.toString(ContentUris.parseId(uri))});
             case 2000:
-                i = updateHistoryInTransaction(contentValues, str, strArr);
-                break;
+                iUpdate = updateHistoryInTransaction(contentValues, str, strArr);
+                pruneImages();
+                if (iUpdate > 0) {
+                }
+                return iUpdate;
             case 3000:
-                i = writableDatabase.update("searches", contentValues, str, strArr);
-                break;
+                iUpdate = writableDatabase.update("searches", contentValues, str, strArr);
+                pruneImages();
+                if (iUpdate > 0) {
+                }
+                return iUpdate;
             case 4000:
-                i = this.mSyncHelper.update(this.mDb, contentValues, appendAccountToSelection(uri, str), strArr);
-                break;
+                iUpdate = this.mSyncHelper.update(this.mDb, contentValues, appendAccountToSelection(uri, str), strArr);
+                pruneImages();
+                if (iUpdate > 0) {
+                }
+                return iUpdate;
             case 4001:
-                String appendAccountToSelection = appendAccountToSelection(uri, str);
+                String strAppendAccountToSelection = appendAccountToSelection(uri, str);
                 StringBuilder sb = new StringBuilder();
                 sb.append("_id=");
                 sb.append(ContentUris.parseId(uri));
                 sb.append(" ");
-                if (appendAccountToSelection == null) {
+                if (strAppendAccountToSelection == null) {
                     str2 = "";
                 } else {
-                    str2 = " AND (" + appendAccountToSelection + ")";
+                    str2 = " AND (" + strAppendAccountToSelection + ")";
                 }
                 sb.append(str2);
-                i = this.mSyncHelper.update(this.mDb, contentValues, sb.toString(), strArr);
-                break;
+                iUpdate = this.mSyncHelper.update(this.mDb, contentValues, sb.toString(), strArr);
+                pruneImages();
+                if (iUpdate > 0) {
+                }
+                return iUpdate;
             case 5000:
                 String asString2 = contentValues.getAsString("url_key");
                 if (TextUtils.isEmpty(asString2)) {
                     throw new IllegalArgumentException("Images.URL is required");
                 }
-                if (shouldUpdateImages(writableDatabase, asString2, contentValues)) {
-                    int update = writableDatabase.update("images", contentValues, "url_key=?", new String[]{asString2});
-                    if (update == 0) {
-                        writableDatabase.insertOrThrow("images", "favicon", contentValues);
-                        update = 1;
-                    }
-                    if (getUrlCount(writableDatabase, "bookmarks", asString2) > 0) {
-                        postNotifyUri(BrowserContract.Bookmarks.CONTENT_URI);
-                        z2 = contentValues.containsKey("favicon");
-                        refreshWidgets();
-                    } else {
-                        z2 = false;
-                    }
-                    if (getUrlCount(writableDatabase, "history", asString2) > 0) {
-                        postNotifyUri(BrowserContract.History.CONTENT_URI);
-                        z2 = contentValues.containsKey("favicon");
-                    }
-                    if (pruneImages() > 0 || z2) {
-                        postNotifyUri(LEGACY_AUTHORITY_URI);
-                    }
-                    this.mSyncToNetwork = false;
-                    return update;
+                if (!shouldUpdateImages(writableDatabase, asString2, contentValues)) {
+                    return 0;
                 }
-                return 0;
+                int iUpdate2 = writableDatabase.update("images", contentValues, "url_key=?", new String[]{asString2});
+                if (iUpdate2 == 0) {
+                    writableDatabase.insertOrThrow("images", "favicon", contentValues);
+                    iUpdate2 = 1;
+                }
+                if (getUrlCount(writableDatabase, "bookmarks", asString2) > 0) {
+                    postNotifyUri(BrowserContract.Bookmarks.CONTENT_URI);
+                    zContainsKey = contentValues.containsKey("favicon");
+                    refreshWidgets();
+                } else {
+                    zContainsKey = false;
+                }
+                if (getUrlCount(writableDatabase, "history", asString2) > 0) {
+                    postNotifyUri(BrowserContract.History.CONTENT_URI);
+                    zContainsKey = contentValues.containsKey("favicon");
+                }
+                if (pruneImages() > 0 || zContainsKey) {
+                    postNotifyUri(LEGACY_AUTHORITY_URI);
+                }
+                this.mSyncToNetwork = false;
+                return iUpdate2;
             case 7000:
                 this.mSyncHelper.onAccountsChanged(this.mDb, AccountManager.get(getContext()).getAccounts());
-                break;
+                pruneImages();
+                if (iUpdate > 0) {
+                }
+                return iUpdate;
             default:
                 throw new UnsupportedOperationException("Unknown update URI " + uri);
         }
-        pruneImages();
-        if (i > 0) {
-            postNotifyUri(uri);
-            if (shouldNotifyLegacy(uri)) {
-                postNotifyUri(LEGACY_AUTHORITY_URI);
-            }
-        }
-        return i;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [2081=7] */
     private boolean shouldUpdateImages(SQLiteDatabase sQLiteDatabase, String str, ContentValues contentValues) {
         boolean z = true;
-        Cursor query = sQLiteDatabase.query("images", new String[]{"favicon", "thumbnail", "touch_icon"}, "url_key=?", new String[]{str}, null, null, null);
+        Cursor cursorQuery = sQLiteDatabase.query("images", new String[]{"favicon", "thumbnail", "touch_icon"}, "url_key=?", new String[]{str}, null, null, null);
         byte[] asByteArray = contentValues.getAsByteArray("favicon");
         byte[] asByteArray2 = contentValues.getAsByteArray("thumbnail");
         byte[] asByteArray3 = contentValues.getAsByteArray("touch_icon");
         try {
-            if (query.getCount() <= 0) {
+            if (cursorQuery.getCount() <= 0) {
                 if (asByteArray == null && asByteArray2 == null && asByteArray3 == null) {
                     z = false;
                 }
                 return z;
             }
-            while (query.moveToNext()) {
-                if (asByteArray != null && !Arrays.equals(asByteArray, query.getBlob(0))) {
+            while (cursorQuery.moveToNext()) {
+                if (asByteArray != null && !Arrays.equals(asByteArray, cursorQuery.getBlob(0))) {
                     return true;
                 }
-                if (asByteArray2 != null && !Arrays.equals(asByteArray2, query.getBlob(1))) {
+                if (asByteArray2 != null && !Arrays.equals(asByteArray2, cursorQuery.getBlob(1))) {
                     return true;
                 }
-                if (asByteArray3 != null && !Arrays.equals(asByteArray3, query.getBlob(2))) {
+                if (asByteArray3 != null && !Arrays.equals(asByteArray3, cursorQuery.getBlob(2))) {
                     return true;
                 }
             }
             return false;
         } finally {
-            query.close();
+            cursorQuery.close();
         }
     }
 
     int getUrlCount(SQLiteDatabase sQLiteDatabase, String str, String str2) {
-        Cursor query = sQLiteDatabase.query(str, new String[]{"COUNT(*)"}, "url = ?", new String[]{str2}, null, null, null);
+        Cursor cursorQuery = sQLiteDatabase.query(str, new String[]{"COUNT(*)"}, "url = ?", new String[]{str2}, null, null, null);
         try {
-            return query.moveToFirst() ? query.getInt(0) : 0;
+            return cursorQuery.moveToFirst() ? cursorQuery.getInt(0) : 0;
         } finally {
-            query.close();
+            cursorQuery.close();
         }
     }
 
     int updateBookmarksInTransaction(ContentValues contentValues, String str, String[] strArr, boolean z) {
         int i;
+        String string;
+        String string2;
+        String asString;
         String str2;
         String str3;
-        String str4;
-        String str5;
-        String str6;
         boolean z2;
         int i2;
-        String str7;
+        String string3;
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
-        Cursor query = writableDatabase.query("bookmarks", new String[]{"_id", "version", "url", "title", "folder", "account_name", "account_type"}, str, strArr, null, null, null);
-        boolean containsKey = contentValues.containsKey("parent");
+        Cursor cursorQuery = writableDatabase.query("bookmarks", new String[]{"_id", "version", "url", "title", "folder", "account_name", "account_type"}, str, strArr, null, null, null);
+        boolean zContainsKey = contentValues.containsKey("parent");
         int i3 = 0;
-        if (containsKey) {
+        if (zContainsKey) {
             i = 1;
-            Cursor query2 = writableDatabase.query("bookmarks", new String[]{"account_name", "account_type"}, "_id = ?", new String[]{Long.toString(contentValues.getAsLong("parent").longValue())}, null, null, null);
-            if (query2.moveToFirst()) {
-                str2 = query2.getString(0);
-                str3 = query2.getString(1);
+            Cursor cursorQuery2 = writableDatabase.query("bookmarks", new String[]{"account_name", "account_type"}, "_id = ?", new String[]{Long.toString(contentValues.getAsLong("parent").longValue())}, null, null, null);
+            if (cursorQuery2.moveToFirst()) {
+                string = cursorQuery2.getString(0);
+                string2 = cursorQuery2.getString(1);
             } else {
-                str2 = null;
-                str3 = null;
+                string = null;
+                string2 = null;
             }
-            query2.close();
+            cursorQuery2.close();
         } else {
             i = 1;
             if (!contentValues.containsKey("account_name")) {
                 contentValues.containsKey("account_type");
             }
-            str2 = null;
-            str3 = null;
+            string = null;
+            string2 = null;
         }
         try {
             String[] strArr2 = new String[i];
@@ -1608,81 +1670,81 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 contentValues.put("modified", Long.valueOf(System.currentTimeMillis()));
                 contentValues.put("dirty", Integer.valueOf(i));
             }
-            boolean containsKey2 = contentValues.containsKey("url");
-            if (containsKey2) {
-                str4 = contentValues.getAsString("url");
+            boolean zContainsKey2 = contentValues.containsKey("url");
+            if (zContainsKey2) {
+                asString = contentValues.getAsString("url");
             } else {
-                str4 = null;
+                asString = null;
             }
-            ContentValues extractImageValues = extractImageValues(contentValues, str4);
-            String str8 = str4;
-            int i4 = 0;
-            while (query.moveToNext()) {
-                String str9 = str8;
-                long j = query.getLong(i3);
+            ContentValues contentValuesExtractImageValues = extractImageValues(contentValues, asString);
+            String str4 = asString;
+            int iUpdate = 0;
+            while (cursorQuery.moveToNext()) {
+                String str5 = str4;
+                long j = cursorQuery.getLong(i3);
                 strArr2[i3] = Long.toString(j);
-                String string = query.getString(5);
-                String string2 = query.getString(6);
-                if (containsKey && (!TextUtils.equals(string, str2) || !TextUtils.equals(string2, str3))) {
-                    ContentValues valuesFromCursor = valuesFromCursor(query);
-                    valuesFromCursor.putAll(contentValues);
-                    valuesFromCursor.remove("_id");
-                    valuesFromCursor.remove("version");
-                    valuesFromCursor.put("account_name", str2);
-                    valuesFromCursor.put("account_type", str3);
-                    long parseId = ContentUris.parseId(insertInTransaction(BrowserContract.Bookmarks.CONTENT_URI, valuesFromCursor, z));
-                    str5 = str2;
-                    if (query.getInt(4) != 0) {
-                        str6 = str3;
+                String string4 = cursorQuery.getString(5);
+                String string5 = cursorQuery.getString(6);
+                if (zContainsKey && (!TextUtils.equals(string4, string) || !TextUtils.equals(string5, string2))) {
+                    ContentValues contentValuesValuesFromCursor = valuesFromCursor(cursorQuery);
+                    contentValuesValuesFromCursor.putAll(contentValues);
+                    contentValuesValuesFromCursor.remove("_id");
+                    contentValuesValuesFromCursor.remove("version");
+                    contentValuesValuesFromCursor.put("account_name", string);
+                    contentValuesValuesFromCursor.put("account_type", string2);
+                    long id = ContentUris.parseId(insertInTransaction(BrowserContract.Bookmarks.CONTENT_URI, contentValuesValuesFromCursor, z));
+                    str2 = string;
+                    if (cursorQuery.getInt(4) != 0) {
+                        str3 = string2;
                         ContentValues contentValues2 = new ContentValues(1);
-                        contentValues2.put("parent", Long.valueOf(parseId));
-                        i4 += updateBookmarksInTransaction(contentValues2, "parent=?", new String[]{Long.toString(j)}, z);
+                        contentValues2.put("parent", Long.valueOf(id));
+                        iUpdate += updateBookmarksInTransaction(contentValues2, "parent=?", new String[]{Long.toString(j)}, z);
                     } else {
-                        str6 = str3;
+                        str3 = string2;
                     }
                     deleteInTransaction(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, j), null, null, z);
-                    i4++;
+                    iUpdate++;
                     z2 = true;
                 } else {
-                    str5 = str2;
-                    str6 = str3;
+                    str2 = string;
+                    str3 = string2;
                     if (!z) {
                         z2 = true;
-                        contentValues.put("version", Long.valueOf(query.getLong(1) + 1));
+                        contentValues.put("version", Long.valueOf(cursorQuery.getLong(1) + 1));
                     } else {
                         z2 = true;
                     }
-                    i4 += writableDatabase.update("bookmarks", contentValues, "_id=?", strArr2);
+                    iUpdate += writableDatabase.update("bookmarks", contentValues, "_id=?", strArr2);
                 }
-                if (extractImageValues != null) {
-                    if (!containsKey2) {
-                        str7 = query.getString(2);
-                        extractImageValues.put("url_key", str7);
+                if (contentValuesExtractImageValues != null) {
+                    if (!zContainsKey2) {
+                        string3 = cursorQuery.getString(2);
+                        contentValuesExtractImageValues.put("url_key", string3);
                     } else {
-                        str7 = str9;
+                        string3 = str5;
                     }
-                    if (!TextUtils.isEmpty(str7)) {
+                    if (!TextUtils.isEmpty(string3)) {
                         i2 = 0;
-                        strArr2[0] = str7;
-                        if (writableDatabase.update("images", extractImageValues, "url_key=?", strArr2) == 0) {
-                            writableDatabase.insert("images", "favicon", extractImageValues);
+                        strArr2[0] = string3;
+                        if (writableDatabase.update("images", contentValuesExtractImageValues, "url_key=?", strArr2) == 0) {
+                            writableDatabase.insert("images", "favicon", contentValuesExtractImageValues);
                         }
                     } else {
                         i2 = 0;
                     }
-                    str9 = str7;
+                    str5 = string3;
                 } else {
                     i2 = 0;
                 }
                 i3 = i2;
-                str8 = str9;
-                str2 = str5;
-                str3 = str6;
+                str4 = str5;
+                string = str2;
+                string2 = str3;
             }
-            return i4;
+            return iUpdate;
         } finally {
-            if (query != null) {
-                query.close();
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
         }
     }
@@ -1713,39 +1775,39 @@ public class BrowserProvider2 extends SQLiteContentProvider {
     int updateHistoryInTransaction(ContentValues contentValues, String str, String[] strArr) {
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
         filterSearchClient(strArr);
-        Cursor query = query(BrowserContract.History.CONTENT_URI, new String[]{"_id", "url"}, str, strArr, null);
-        if (query == null) {
+        Cursor cursorQuery = query(BrowserContract.History.CONTENT_URI, new String[]{"_id", "url"}, str, strArr, null);
+        if (cursorQuery == null) {
             return 0;
         }
         try {
             String[] strArr2 = new String[1];
-            boolean containsKey = contentValues.containsKey("url");
-            String str2 = null;
-            if (containsKey) {
-                str2 = filterSearchClient(contentValues.getAsString("url"));
-                contentValues.put("url", str2);
+            boolean zContainsKey = contentValues.containsKey("url");
+            String strFilterSearchClient = null;
+            if (zContainsKey) {
+                strFilterSearchClient = filterSearchClient(contentValues.getAsString("url"));
+                contentValues.put("url", strFilterSearchClient);
             }
-            ContentValues extractImageValues = extractImageValues(contentValues, str2);
-            String str3 = str2;
-            int i = 0;
-            while (query.moveToNext()) {
-                strArr2[0] = query.getString(0);
-                i += writableDatabase.update("history", contentValues, "_id=?", strArr2);
-                if (extractImageValues != null) {
-                    if (!containsKey) {
-                        str3 = query.getString(1);
-                        extractImageValues.put("url_key", str3);
+            ContentValues contentValuesExtractImageValues = extractImageValues(contentValues, strFilterSearchClient);
+            String string = strFilterSearchClient;
+            int iUpdate = 0;
+            while (cursorQuery.moveToNext()) {
+                strArr2[0] = cursorQuery.getString(0);
+                iUpdate += writableDatabase.update("history", contentValues, "_id=?", strArr2);
+                if (contentValuesExtractImageValues != null) {
+                    if (!zContainsKey) {
+                        string = cursorQuery.getString(1);
+                        contentValuesExtractImageValues.put("url_key", string);
                     }
-                    strArr2[0] = str3;
-                    if (writableDatabase.update("images", extractImageValues, "url_key=?", strArr2) == 0) {
-                        writableDatabase.insert("images", "favicon", extractImageValues);
+                    strArr2[0] = string;
+                    if (writableDatabase.update("images", contentValuesExtractImageValues, "url_key=?", strArr2) == 0) {
+                        writableDatabase.insert("images", "favicon", contentValuesExtractImageValues);
                     }
                 }
             }
-            return i;
+            return iUpdate;
         } finally {
-            if (query != null) {
-                query.close();
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
         }
     }
@@ -1755,7 +1817,8 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         String queryParameter2 = uri.getQueryParameter("account_type");
         if (TextUtils.isEmpty(queryParameter) ^ TextUtils.isEmpty(queryParameter2)) {
             throw new IllegalArgumentException("Must specify both or neither of ACCOUNT_NAME and ACCOUNT_TYPE for " + uri);
-        } else if (!TextUtils.isEmpty(queryParameter)) {
+        }
+        if (!TextUtils.isEmpty(queryParameter)) {
             StringBuilder sb = new StringBuilder("account_name=" + DatabaseUtils.sqlEscapeString(queryParameter) + " AND account_type=" + DatabaseUtils.sqlEscapeString(queryParameter2));
             if (!TextUtils.isEmpty(str)) {
                 sb.append(" AND (");
@@ -1763,9 +1826,8 @@ public class BrowserProvider2 extends SQLiteContentProvider {
                 sb.append(')');
             }
             return sb.toString();
-        } else {
-            return str;
         }
+        return str;
     }
 
     ContentValues extractImageValues(ContentValues contentValues, String str) {
@@ -1823,9 +1885,9 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         if (str == null || str.length() <= 0) {
             return false;
         }
-        SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        edit.putString("homepage", str);
-        edit.commit();
+        SharedPreferences.Editor editorEdit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editorEdit.putString("homepage", str);
+        editorEdit.commit();
         return true;
     }
 
@@ -1833,9 +1895,7 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         return PreferenceManager.getDefaultSharedPreferences(context).getString("homepage", BrowserSettings.getFactoryResetUrlFromRes(context));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SuggestionsCursor extends AbstractCursor {
+    static class SuggestionsCursor extends AbstractCursor {
         private static final String[] COLUMNS = {"_id", "suggest_intent_action", "suggest_intent_data", "suggest_text_1", "suggest_text_2", "suggest_text_2_url", "suggest_icon_1", "suggest_last_access_hint"};
         private final Cursor mSource;
 
@@ -1896,13 +1956,13 @@ public class BrowserProvider2 extends SQLiteContentProvider {
 
         @Override // android.database.AbstractCursor, android.database.Cursor
         public long getLong(int i) {
-            if (i != 0) {
-                if (i == 7) {
-                    return this.mSource.getLong(4);
-                }
-                throw new UnsupportedOperationException();
+            if (i == 0) {
+                return this.mSource.getLong(0);
             }
-            return this.mSource.getLong(0);
+            if (i == 7) {
+                return this.mSource.getLong(4);
+            }
+            throw new UnsupportedOperationException();
         }
 
         @Override // android.database.AbstractCursor, android.database.Cursor

@@ -11,6 +11,7 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.util.ComponentKey;
 import com.android.launcher3.util.PackageManagerHelper;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AllAppsSearchBarController implements TextWatcher, TextView.OnEditorActionListener, ExtendedEditText.OnBackKeyListener {
     protected Callbacks mCb;
@@ -19,7 +20,6 @@ public class AllAppsSearchBarController implements TextWatcher, TextView.OnEdito
     protected String mQuery;
     protected SearchAlgorithm mSearchAlgorithm;
 
-    /* loaded from: classes.dex */
     public interface Callbacks {
         void clearSearchResult();
 
@@ -54,10 +54,10 @@ public class AllAppsSearchBarController implements TextWatcher, TextView.OnEdito
         if (this.mQuery.isEmpty()) {
             this.mSearchAlgorithm.cancel(true);
             this.mCb.clearSearchResult();
-            return;
+        } else {
+            this.mSearchAlgorithm.cancel(false);
+            this.mSearchAlgorithm.doSearch(this.mQuery, this.mCb);
         }
-        this.mSearchAlgorithm.cancel(false);
-        this.mSearchAlgorithm.doSearch(this.mQuery, this.mCb);
     }
 
     public void refreshSearchResult() {
@@ -73,11 +73,11 @@ public class AllAppsSearchBarController implements TextWatcher, TextView.OnEdito
         if (i != 3) {
             return false;
         }
-        String charSequence = textView.getText().toString();
-        if (charSequence.isEmpty()) {
+        String string = textView.getText().toString();
+        if (string.isEmpty()) {
             return false;
         }
-        return this.mLauncher.startActivitySafely(textView, PackageManagerHelper.getMarketSearchIntent(this.mLauncher, charSequence), null);
+        return this.mLauncher.startActivitySafely(textView, PackageManagerHelper.getMarketSearchIntent(this.mLauncher, string), null);
     }
 
     @Override // com.android.launcher3.ExtendedEditText.OnBackKeyListener

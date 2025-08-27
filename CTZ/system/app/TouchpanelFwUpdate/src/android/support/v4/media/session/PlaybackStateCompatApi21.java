@@ -3,6 +3,7 @@ package android.support.v4.media.session;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 import java.util.List;
+
 /* loaded from: classes.dex */
 class PlaybackStateCompatApi21 {
     public static int getState(Object stateObj) {
@@ -41,7 +42,6 @@ class PlaybackStateCompatApi21 {
         return ((PlaybackState) stateObj).getActiveQueueItemId();
     }
 
-    /* loaded from: classes.dex */
     static final class CustomAction {
         public static String getAction(Object customActionObj) {
             return ((PlaybackState.CustomAction) customActionObj).getAction();

@@ -3,6 +3,7 @@ package com.android.systemui.statusbar;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class AlphaOptimizedView extends View {
     public AlphaOptimizedView(Context context) {

@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class StatusBarBackgroundLayout extends FrameLayout {
     private Object mLastInsets;
@@ -32,9 +33,9 @@ public class StatusBarBackgroundLayout extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attributeSet, int i) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwStatusBarBackgroundLayout, i, 0);
-        setStatusBarBackground(obtainStyledAttributes.getDrawable(R.styleable.SuwStatusBarBackgroundLayout_suwStatusBarBackground));
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwStatusBarBackgroundLayout, i, 0);
+        setStatusBarBackground(typedArrayObtainStyledAttributes.getDrawable(R.styleable.SuwStatusBarBackgroundLayout_suwStatusBarBackground));
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     @Override // android.view.ViewGroup, android.view.View

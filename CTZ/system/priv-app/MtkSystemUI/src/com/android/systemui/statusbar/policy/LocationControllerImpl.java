@@ -18,6 +18,7 @@ import com.android.systemui.statusbar.policy.LocationController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class LocationControllerImpl extends BroadcastReceiver implements LocationController {
     private static final int[] mHighPowerRequestAppOpArray = {42};
@@ -39,12 +40,14 @@ public class LocationControllerImpl extends BroadcastReceiver implements Locatio
         updateActiveLocationRequests();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(LocationController.LocationChangeCallback locationChangeCallback) {
         this.mSettingsChangeCallbacks.add(locationChangeCallback);
         this.mHandler.sendEmptyMessage(1);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(LocationController.LocationChangeCallback locationChangeCallback) {
         this.mSettingsChangeCallbacks.remove(locationChangeCallback);
@@ -88,7 +91,6 @@ public class LocationControllerImpl extends BroadcastReceiver implements Locatio
                             return true;
                         }
                     }
-                    continue;
                 }
             }
         }
@@ -113,9 +115,7 @@ public class LocationControllerImpl extends BroadcastReceiver implements Locatio
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class H extends Handler {
+    private final class H extends Handler {
         private H() {
         }
 
@@ -124,12 +124,10 @@ public class LocationControllerImpl extends BroadcastReceiver implements Locatio
             switch (message.what) {
                 case 1:
                     locationSettingsChanged();
-                    return;
+                    break;
                 case 2:
                     locationActiveChanged();
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
 
@@ -143,11 +141,11 @@ public class LocationControllerImpl extends BroadcastReceiver implements Locatio
         }
 
         private void locationSettingsChanged() {
-            final boolean isLocationEnabled = LocationControllerImpl.this.isLocationEnabled();
+            final boolean zIsLocationEnabled = LocationControllerImpl.this.isLocationEnabled();
             com.android.systemui.util.Utils.safeForeach(LocationControllerImpl.this.mSettingsChangeCallbacks, new Consumer() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$LocationControllerImpl$H$xXVOboFsQOHoRY-EFzvZu-IOYh0
                 @Override // java.util.function.Consumer
                 public final void accept(Object obj) {
-                    ((LocationController.LocationChangeCallback) obj).onLocationSettingsChanged(isLocationEnabled);
+                    ((LocationController.LocationChangeCallback) obj).onLocationSettingsChanged(zIsLocationEnabled);
                 }
             });
         }

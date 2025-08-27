@@ -7,6 +7,7 @@ import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.fuelgauge.BatterySaverReceiver;
 import com.android.settings.fuelgauge.batterysaver.BatterySaverSettings;
 import com.android.settingslib.fuelgauge.BatterySaverUtils;
+
 /* loaded from: classes.dex */
 public class BatterySaverCondition extends Condition implements BatterySaverReceiver.BatterySaverListener {
     private final BatterySaverReceiver mReceiver;
@@ -52,9 +53,9 @@ public class BatterySaverCondition extends Condition implements BatterySaverRece
         if (i == 0) {
             BatterySaverUtils.setPowerSaveMode(this.mManager.getContext(), false, false);
             refreshState();
-            return;
+        } else {
+            throw new IllegalArgumentException("Unexpected index " + i);
         }
-        throw new IllegalArgumentException("Unexpected index " + i);
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition

@@ -17,6 +17,7 @@ import com.android.systemui.util.wakelock.WakeLock;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class DozeUi implements DozeMachine.Part {
     private final boolean mCanAnimateTransition;
@@ -48,14 +49,13 @@ public class DozeUi implements DozeMachine.Part {
         this.mTimeTicker = new AlarmTimeout(alarmManager, new AlarmManager.OnAlarmListener() { // from class: com.android.systemui.doze.-$$Lambda$DozeUi$FO90hbI6xqXYUh2DtwuwM-uzJzs
             @Override // android.app.AlarmManager.OnAlarmListener
             public final void onAlarm() {
-                DozeUi.this.onTimeTick();
+                this.f$0.onTimeTick();
             }
         }, "doze_time_tick", handler);
         keyguardUpdateMonitor.registerCallback(this.mKeyguardVisibilityCallback);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateAnimateScreenOff() {
+    private void updateAnimateScreenOff() {
         if (this.mCanAnimateTransition) {
             boolean z = this.mDozeParameters.getAlwaysOn() && this.mKeyguardShowing;
             this.mDozeParameters.setControlScreenOffAnimation(z);
@@ -90,7 +90,7 @@ public class DozeUi implements DozeMachine.Part {
                     handler.postDelayed(wakeLock.wrap(new Runnable() { // from class: com.android.systemui.doze.-$$Lambda$TvDuFxrq6WnRSNRP7k8oBY4uOBc
                         @Override // java.lang.Runnable
                         public final void run() {
-                            DozeHost.this.dozeTimeTick();
+                            dozeHost.dozeTimeTick();
                         }
                     }), 100L);
                     Handler handler2 = this.mHandler;
@@ -100,7 +100,7 @@ public class DozeUi implements DozeMachine.Part {
                     handler2.postDelayed(wakeLock2.wrap(new Runnable() { // from class: com.android.systemui.doze.-$$Lambda$TvDuFxrq6WnRSNRP7k8oBY4uOBc
                         @Override // java.lang.Runnable
                         public final void run() {
-                            DozeHost.this.dozeTimeTick();
+                            dozeHost2.dozeTimeTick();
                         }
                     }), 1000L);
                 }
@@ -129,17 +129,16 @@ public class DozeUi implements DozeMachine.Part {
 
     private void updateAnimateWakeup(DozeMachine.State state) {
         int i = AnonymousClass3.$SwitchMap$com$android$systemui$doze$DozeMachine$State[state.ordinal()];
-        boolean z = true;
         if (i != 5) {
             switch (i) {
                 case 7:
-                    return;
+                    break;
                 case 8:
                 case 9:
                     break;
                 default:
-                    this.mHost.setAnimateWakeup((this.mCanAnimateTransition && this.mDozeParameters.getAlwaysOn()) ? false : false);
-                    return;
+                    this.mHost.setAnimateWakeup(this.mCanAnimateTransition && this.mDozeParameters.getAlwaysOn());
+                    break;
             }
         }
         this.mHost.setAnimateWakeup(true);
@@ -162,11 +161,11 @@ public class DozeUi implements DozeMachine.Part {
     }
 
     private void verifyLastTimeTick() {
-        long elapsedRealtime = SystemClock.elapsedRealtime() - this.mLastTimeTickElapsed;
-        if (elapsedRealtime > 90000) {
-            String formatShortElapsedTime = Formatter.formatShortElapsedTime(this.mContext, elapsedRealtime);
-            DozeLog.traceMissedTick(formatShortElapsedTime);
-            Log.e("DozeMachine", "Missed AOD time tick by " + formatShortElapsedTime);
+        long jElapsedRealtime = SystemClock.elapsedRealtime() - this.mLastTimeTickElapsed;
+        if (jElapsedRealtime > 90000) {
+            String shortElapsedTime = Formatter.formatShortElapsedTime(this.mContext, jElapsedRealtime);
+            DozeLog.traceMissedTick(shortElapsedTime);
+            Log.e("DozeMachine", "Missed AOD time tick by " + shortElapsedTime);
         }
     }
 
@@ -179,8 +178,7 @@ public class DozeUi implements DozeMachine.Part {
         return gregorianCalendar.getTimeInMillis();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onTimeTick() {
+    private void onTimeTick() {
         verifyLastTimeTick();
         this.mHost.dozeTimeTick();
         this.mHandler.post(this.mWakeLock.wrap(new Runnable() { // from class: com.android.systemui.doze.-$$Lambda$DozeUi$lHTcknku1GKi6pFF17CHlz1K3H8
@@ -192,8 +190,7 @@ public class DozeUi implements DozeMachine.Part {
         scheduleTimeTick();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$onTimeTick$0() {
+    static /* synthetic */ void lambda$onTimeTick$0() {
     }
 
     @VisibleForTesting

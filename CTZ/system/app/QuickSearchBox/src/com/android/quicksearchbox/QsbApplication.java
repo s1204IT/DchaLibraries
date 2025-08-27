@@ -18,6 +18,7 @@ import com.android.quicksearchbox.util.PriorityThreadFactory;
 import com.android.quicksearchbox.util.SingleThreadNamedTaskExecutor;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.concurrent.ThreadFactory;
+
 /* loaded from: classes.dex */
 public class QsbApplication {
     private Config mConfig;
@@ -39,7 +40,7 @@ public class QsbApplication {
     private VoiceSearch mVoiceSearch;
 
     public QsbApplication(Context context) {
-        this.mContext = new ContextThemeWrapper(context, 2131558410);
+        this.mContext = new ContextThemeWrapper(context, R.style.Theme_QuickSearchBox);
     }
 
     public static QsbApplication get(Context context) {
@@ -67,8 +68,7 @@ public class QsbApplication {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void close() {
+    protected void close() {
         checkThread();
         if (this.mConfig != null) {
             this.mConfig.close();
@@ -148,8 +148,7 @@ public class QsbApplication {
         return new ThreadFactoryBuilder().setNameFormat("QSB #%d").setThreadFactory(new PriorityThreadFactory(getConfig().getQueryThreadPriority())).build();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public SuggestionsProvider getSuggestionsProvider() {
+    protected SuggestionsProvider getSuggestionsProvider() {
         checkThread();
         if (this.mSuggestionsProvider == null) {
             this.mSuggestionsProvider = createSuggestionsProvider();

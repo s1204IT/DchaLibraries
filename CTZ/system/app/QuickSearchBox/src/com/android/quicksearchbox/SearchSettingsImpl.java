@@ -3,6 +3,8 @@ package com.android.quicksearchbox;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.android.common.SharedPreferencesCompat;
+import java.lang.reflect.InvocationTargetException;
+
 /* loaded from: classes.dex */
 public class SearchSettingsImpl implements SearchSettings {
     private final Config mConfig;
@@ -41,10 +43,10 @@ public class SearchSettingsImpl implements SearchSettings {
     }
 
     @Override // com.android.quicksearchbox.SearchSettings
-    public void setSearchBaseDomain(String str) {
-        SharedPreferences.Editor edit = getSearchPreferences().edit();
-        edit.putString("search_base_domain", str);
-        edit.putLong("search_base_domain_apply_time", System.currentTimeMillis());
-        SharedPreferencesCompat.apply(edit);
+    public void setSearchBaseDomain(String str) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        SharedPreferences.Editor editorEdit = getSearchPreferences().edit();
+        editorEdit.putString("search_base_domain", str);
+        editorEdit.putLong("search_base_domain_apply_time", System.currentTimeMillis());
+        SharedPreferencesCompat.apply(editorEdit);
     }
 }

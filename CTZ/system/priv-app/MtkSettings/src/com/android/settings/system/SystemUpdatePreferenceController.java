@@ -18,6 +18,7 @@ import com.android.settings.core.BasePreferenceController;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+
 /* loaded from: classes.dex */
 public class SystemUpdatePreferenceController extends BasePreferenceController {
     private static final String KEY_SYSTEM_UPDATE_SETTINGS = "system_update_settings";
@@ -57,16 +58,13 @@ public class SystemUpdatePreferenceController extends BasePreferenceController {
         return false;
     }
 
-    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public CharSequence getSummary() {
         String string = this.mContext.getString(R.string.android_version_summary, Build.VERSION.RELEASE);
         FutureTask futureTask = new FutureTask(new Callable() { // from class: com.android.settings.system.-$$Lambda$SystemUpdatePreferenceController$XHnSEfghEOzLX1wZid9rCEinHuU
             @Override // java.util.concurrent.Callable
             public final Object call() {
-                Bundle retrieveSystemUpdateInfo;
-                retrieveSystemUpdateInfo = SystemUpdatePreferenceController.this.mUpdateManager.retrieveSystemUpdateInfo();
-                return retrieveSystemUpdateInfo;
+                return this.f$0.mUpdateManager.retrieveSystemUpdateInfo();
             }
         });
         try {

@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
 import com.android.systemui.plugins.qs.QSTile;
+
 @ProvidesInterface(version = 1)
 /* loaded from: classes.dex */
 public abstract class QSIconView extends ViewGroup {

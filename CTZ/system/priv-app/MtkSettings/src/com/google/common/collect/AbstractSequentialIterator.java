@@ -1,14 +1,14 @@
 package com.google.common.collect;
 
 import java.util.NoSuchElementException;
+
 /* loaded from: classes.dex */
 public abstract class AbstractSequentialIterator<T> extends UnmodifiableIterator<T> {
     private T nextOrNull;
 
     protected abstract T computeNext(T t);
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public AbstractSequentialIterator(T t) {
+    protected AbstractSequentialIterator(T t) {
         this.nextOrNull = t;
     }
 

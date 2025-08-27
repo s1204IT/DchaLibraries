@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class ShortcutParser {
     private AttributeSet mAttrs;
@@ -44,8 +45,8 @@ public class ShortcutParser {
         this.mName = str2;
     }
 
-    public List<Shortcut> getShortcuts() {
-        Shortcut parseShortcut;
+    public List<Shortcut> getShortcuts() throws Resources.NotFoundException {
+        Shortcut shortcut;
         ArrayList arrayList = new ArrayList();
         if (this.mResId != 0) {
             try {
@@ -56,8 +57,9 @@ public class ShortcutParser {
                     int next = xml.next();
                     if (next == 1) {
                         break;
-                    } else if (next == 2 && xml.getName().equals("shortcut") && (parseShortcut = parseShortcut(xml)) != null) {
-                        arrayList.add(parseShortcut);
+                    }
+                    if (next == 2 && xml.getName().equals("shortcut") && (shortcut = parseShortcut(xml)) != null) {
+                        arrayList.add(shortcut);
                     }
                 }
             } catch (Exception e) {
@@ -67,15 +69,15 @@ public class ShortcutParser {
         return arrayList;
     }
 
-    private Shortcut parseShortcut(XmlResourceParser xmlResourceParser) throws IOException, XmlPullParserException {
-        TypedArray obtainAttributes = this.mResources.obtainAttributes(this.mAttrs, R.styleable.Shortcut);
+    private Shortcut parseShortcut(XmlResourceParser xmlResourceParser) throws XmlPullParserException, IOException {
+        TypedArray typedArrayObtainAttributes = this.mResources.obtainAttributes(this.mAttrs, R.styleable.Shortcut);
         Shortcut shortcut = new Shortcut();
-        if (!obtainAttributes.getBoolean(1, true)) {
+        if (!typedArrayObtainAttributes.getBoolean(1, true)) {
             return null;
         }
-        String string = obtainAttributes.getString(2);
-        int resourceId = obtainAttributes.getResourceId(0, 0);
-        int resourceId2 = obtainAttributes.getResourceId(3, 0);
+        String string = typedArrayObtainAttributes.getString(2);
+        int resourceId = typedArrayObtainAttributes.getResourceId(0, 0);
+        int resourceId2 = typedArrayObtainAttributes.getResourceId(3, 0);
         shortcut.pkg = this.mPkg;
         shortcut.icon = Icon.createWithResource(this.mPkg, resourceId);
         shortcut.id = string;
@@ -85,7 +87,8 @@ public class ShortcutParser {
             int next = xmlResourceParser.next();
             if (next == 3) {
                 break;
-            } else if (next == 2 && xmlResourceParser.getName().equals("intent")) {
+            }
+            if (next == 2 && xmlResourceParser.getName().equals("intent")) {
                 shortcut.intent = Intent.parseIntent(this.mResources, xmlResourceParser, this.mAttrs);
             }
         }
@@ -95,7 +98,6 @@ public class ShortcutParser {
         return null;
     }
 
-    /* loaded from: classes.dex */
     public static class Shortcut {
         public Icon icon;
         public String id;
@@ -105,10 +107,10 @@ public class ShortcutParser {
         public String pkg;
 
         public static Shortcut create(Context context, String str) {
-            String[] split = str.split("::");
+            String[] strArrSplit = str.split("::");
             try {
-                for (Shortcut shortcut : new ShortcutParser(context, new ComponentName(split[0], split[1])).getShortcuts()) {
-                    if (shortcut.id.equals(split[2])) {
+                for (Shortcut shortcut : new ShortcutParser(context, new ComponentName(strArrSplit[0], strArrSplit[1])).getShortcuts()) {
+                    if (shortcut.id.equals(strArrSplit[2])) {
                         return shortcut;
                     }
                 }

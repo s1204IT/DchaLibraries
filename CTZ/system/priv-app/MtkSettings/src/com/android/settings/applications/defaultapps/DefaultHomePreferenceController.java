@@ -10,7 +10,9 @@ import com.android.settings.R;
 import com.android.settingslib.applications.DefaultAppInfo;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultHomePreferenceController extends DefaultAppPreferenceController {
     static final IntentFilter HOME_FILTER = new IntentFilter("android.intent.action.MAIN");
@@ -53,8 +55,9 @@ public class DefaultHomePreferenceController extends DefaultAppPreferenceControl
     private ActivityInfo getOnlyAppInfo(List<ResolveInfo> list) {
         ArrayList arrayList = new ArrayList();
         this.mPackageManager.getHomeActivities(list);
-        for (ResolveInfo resolveInfo : list) {
-            ActivityInfo activityInfo = resolveInfo.activityInfo;
+        Iterator<ResolveInfo> it = list.iterator();
+        while (it.hasNext()) {
+            ActivityInfo activityInfo = it.next().activityInfo;
             if (!activityInfo.packageName.equals(this.mPackageName)) {
                 arrayList.add(activityInfo);
             }
@@ -67,20 +70,21 @@ public class DefaultHomePreferenceController extends DefaultAppPreferenceControl
 
     @Override // com.android.settings.applications.defaultapps.DefaultAppPreferenceController
     protected Intent getSettingIntent(DefaultAppInfo defaultAppInfo) {
-        String str;
+        String packageName;
         if (defaultAppInfo == null) {
             return null;
         }
         if (defaultAppInfo.componentName != null) {
-            str = defaultAppInfo.componentName.getPackageName();
-        } else if (defaultAppInfo.packageItemInfo == null) {
-            return null;
+            packageName = defaultAppInfo.componentName.getPackageName();
         } else {
-            str = defaultAppInfo.packageItemInfo.packageName;
+            if (defaultAppInfo.packageItemInfo == null) {
+                return null;
+            }
+            packageName = defaultAppInfo.packageItemInfo.packageName;
         }
-        Intent addFlags = new Intent("android.intent.action.APPLICATION_PREFERENCES").setPackage(str).addFlags(268468224);
-        if (this.mPackageManager.queryIntentActivities(addFlags, 0).size() == 1) {
-            return addFlags;
+        Intent intentAddFlags = new Intent("android.intent.action.APPLICATION_PREFERENCES").setPackage(packageName).addFlags(268468224);
+        if (this.mPackageManager.queryIntentActivities(intentAddFlags, 0).size() == 1) {
+            return intentAddFlags;
         }
         return null;
     }

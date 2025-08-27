@@ -20,6 +20,7 @@ import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IWifiSettingsExt;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 /* loaded from: classes.dex */
 public class WifiEnabler implements SwitchWidgetController.OnSwitchChangeListener {
     private AtomicBoolean mConnected;
@@ -47,7 +48,9 @@ public class WifiEnabler implements SwitchWidgetController.OnSwitchChangeListene
                 String action = intent.getAction();
                 if ("android.net.wifi.WIFI_STATE_CHANGED".equals(action)) {
                     WifiEnabler.this.handleWifiStateChanged(WifiEnabler.this.mWifiManager.getWifiState());
-                } else if ("android.net.wifi.supplicant.STATE_CHANGE".equals(action)) {
+                    return;
+                }
+                if ("android.net.wifi.supplicant.STATE_CHANGE".equals(action)) {
                     if (!WifiEnabler.this.mConnected.get()) {
                         WifiEnabler.this.handleStateChanged(android.net.wifi.WifiInfo.getDetailedStateOf((SupplicantState) intent.getParcelableExtra("newState")));
                     }
@@ -105,8 +108,7 @@ public class WifiEnabler implements SwitchWidgetController.OnSwitchChangeListene
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleWifiStateChanged(int i) {
+    private void handleWifiStateChanged(int i) {
         Log.d("WifiEnabler", "handleWifiStateChanged, state = " + i);
         this.mSwitchWidget.setDisabledByAdmin(null);
         switch (i) {
@@ -128,9 +130,9 @@ public class WifiEnabler implements SwitchWidgetController.OnSwitchChangeListene
         }
         if (RestrictedLockUtils.hasBaseUserRestriction(this.mContext, "no_config_tethering", UserHandle.myUserId())) {
             this.mSwitchWidget.setEnabled(false);
-            return;
+        } else {
+            this.mSwitchWidget.setDisabledByAdmin(RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_config_tethering", UserHandle.myUserId()));
         }
-        this.mSwitchWidget.setDisabledByAdmin(RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_config_tethering", UserHandle.myUserId()));
     }
 
     private void setSwitchBarChecked(boolean z) {
@@ -140,8 +142,7 @@ public class WifiEnabler implements SwitchWidgetController.OnSwitchChangeListene
         this.mStateMachineEvent = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleStateChanged(NetworkInfo.DetailedState detailedState) {
+    private void handleStateChanged(NetworkInfo.DetailedState detailedState) {
     }
 
     @Override // com.android.settings.widget.SwitchWidgetController.OnSwitchChangeListener
@@ -150,7 +151,7 @@ public class WifiEnabler implements SwitchWidgetController.OnSwitchChangeListene
             return true;
         }
         if (z && !WirelessUtils.isRadioAllowed(this.mContext, "wifi")) {
-            Toast.makeText(this.mContext, (int) R.string.wifi_in_airplane_mode, 0).show();
+            Toast.makeText(this.mContext, R.string.wifi_in_airplane_mode, 0).show();
             this.mSwitchWidget.setChecked(false);
             this.mWifiSettingsExt.customRefreshButtonStatus(false);
             return false;
@@ -163,7 +164,7 @@ public class WifiEnabler implements SwitchWidgetController.OnSwitchChangeListene
         Log.d("WifiEnabler", "onSwitchToggled11, isChecked = " + z);
         if (!this.mWifiManager.setWifiEnabled(z)) {
             this.mSwitchWidget.setEnabled(true);
-            Toast.makeText(this.mContext, (int) R.string.wifi_error, 0).show();
+            Toast.makeText(this.mContext, R.string.wifi_error, 0).show();
         }
         return true;
     }

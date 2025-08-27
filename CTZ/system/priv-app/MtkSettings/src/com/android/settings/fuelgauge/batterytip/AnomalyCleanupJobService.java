@@ -10,13 +10,14 @@ import android.util.Log;
 import com.android.settings.R;
 import com.android.settingslib.utils.ThreadUtils;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public class AnomalyCleanupJobService extends JobService {
     static final long CLEAN_UP_FREQUENCY_MS = TimeUnit.DAYS.toMillis(1);
 
     public static void scheduleCleanUp(Context context) {
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(JobScheduler.class);
-        JobInfo.Builder persisted = new JobInfo.Builder(R.integer.job_anomaly_clean_up, new ComponentName(context, AnomalyCleanupJobService.class)).setPeriodic(CLEAN_UP_FREQUENCY_MS).setRequiresDeviceIdle(true).setRequiresCharging(true).setPersisted(true);
+        JobInfo.Builder persisted = new JobInfo.Builder(R.integer.job_anomaly_clean_up, new ComponentName(context, (Class<?>) AnomalyCleanupJobService.class)).setPeriodic(CLEAN_UP_FREQUENCY_MS).setRequiresDeviceIdle(true).setRequiresCharging(true).setPersisted(true);
         if (jobScheduler.getPendingJob(R.integer.job_anomaly_clean_up) == null && jobScheduler.schedule(persisted.build()) != 1) {
             Log.i("AnomalyCleanUpJobService", "Anomaly clean up job service schedule failed.");
         }
@@ -29,7 +30,7 @@ public class AnomalyCleanupJobService extends JobService {
         ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.fuelgauge.batterytip.-$$Lambda$AnomalyCleanupJobService$Wvu3W97OjsnNVurAIkZXTma9fMg
             @Override // java.lang.Runnable
             public final void run() {
-                AnomalyCleanupJobService.lambda$onStartJob$0(AnomalyCleanupJobService.this, batteryDatabaseManager, batteryTipPolicy, jobParameters);
+                AnomalyCleanupJobService.lambda$onStartJob$0(this.f$0, batteryDatabaseManager, batteryTipPolicy, jobParameters);
             }
         });
         return true;

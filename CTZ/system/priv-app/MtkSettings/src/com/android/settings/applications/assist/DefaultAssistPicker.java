@@ -16,6 +16,7 @@ import com.android.settingslib.applications.DefaultAppInfo;
 import com.android.settingslib.widget.CandidateInfo;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultAssistPicker extends DefaultAppPickerFragment {
     private AssistUtils mAssistUtils;
@@ -39,9 +40,8 @@ public class DefaultAssistPicker extends DefaultAppPickerFragment {
         this.mAssistUtils = new AssistUtils(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.default_assist_settings;
     }
 
@@ -71,9 +71,9 @@ public class DefaultAssistPicker extends DefaultAppPickerFragment {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: getConfirmationMessage(Lcom/android/settingslib/widget/CandidateInfo;)Ljava/lang/CharSequence; */
     @Override // com.android.settings.applications.defaultapps.DefaultAppPickerFragment
-    public String getConfirmationMessage(CandidateInfo candidateInfo) {
+    protected String getConfirmationMessage(CandidateInfo candidateInfo) {
         if (candidateInfo == null) {
             return null;
         }
@@ -86,15 +86,15 @@ public class DefaultAssistPicker extends DefaultAppPickerFragment {
             setAssistNone();
             return true;
         }
-        Info findAssistantByPackageName = findAssistantByPackageName(ComponentName.unflattenFromString(str).getPackageName());
-        if (findAssistantByPackageName == null) {
+        Info infoFindAssistantByPackageName = findAssistantByPackageName(ComponentName.unflattenFromString(str).getPackageName());
+        if (infoFindAssistantByPackageName == null) {
             setAssistNone();
             return true;
         }
-        if (findAssistantByPackageName.isVoiceInteractionService()) {
-            setAssistService(findAssistantByPackageName);
+        if (infoFindAssistantByPackageName.isVoiceInteractionService()) {
+            setAssistService(infoFindAssistantByPackageName);
         } else {
-            setAssistActivity(findAssistantByPackageName);
+            setAssistActivity(infoFindAssistantByPackageName);
         }
         return true;
     }
@@ -135,11 +135,11 @@ public class DefaultAssistPicker extends DefaultAppPickerFragment {
     }
 
     private void setAssistService(Info info) {
-        String flattenToShortString = info.component.flattenToShortString();
-        String flattenToShortString2 = new ComponentName(info.component.getPackageName(), info.voiceInteractionServiceInfo.getRecognitionService()).flattenToShortString();
-        Settings.Secure.putString(getContext().getContentResolver(), "assistant", flattenToShortString);
-        Settings.Secure.putString(getContext().getContentResolver(), "voice_interaction_service", flattenToShortString);
-        Settings.Secure.putString(getContext().getContentResolver(), "voice_recognition_service", flattenToShortString2);
+        String strFlattenToShortString = info.component.flattenToShortString();
+        String strFlattenToShortString2 = new ComponentName(info.component.getPackageName(), info.voiceInteractionServiceInfo.getRecognitionService()).flattenToShortString();
+        Settings.Secure.putString(getContext().getContentResolver(), "assistant", strFlattenToShortString);
+        Settings.Secure.putString(getContext().getContentResolver(), "voice_interaction_service", strFlattenToShortString);
+        Settings.Secure.putString(getContext().getContentResolver(), "voice_recognition_service", strFlattenToShortString2);
     }
 
     private void setAssistActivity(Info info) {
@@ -149,17 +149,15 @@ public class DefaultAssistPicker extends DefaultAppPickerFragment {
     }
 
     private String getDefaultRecognizer() {
-        ResolveInfo resolveService = this.mPm.getPackageManager().resolveService(new Intent("android.speech.RecognitionService"), 128);
-        if (resolveService == null || resolveService.serviceInfo == null) {
+        ResolveInfo resolveInfoResolveService = this.mPm.getPackageManager().resolveService(new Intent("android.speech.RecognitionService"), 128);
+        if (resolveInfoResolveService == null || resolveInfoResolveService.serviceInfo == null) {
             Log.w("DefaultAssistPicker", "Unable to resolve default voice recognition service.");
             return "";
         }
-        return new ComponentName(resolveService.serviceInfo.packageName, resolveService.serviceInfo.name).flattenToShortString();
+        return new ComponentName(resolveInfoResolveService.serviceInfo.packageName, resolveInfoResolveService.serviceInfo.name).flattenToShortString();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Info {
+    static class Info {
         public final ComponentName component;
         public final VoiceInteractionServiceInfo voiceInteractionServiceInfo;
 

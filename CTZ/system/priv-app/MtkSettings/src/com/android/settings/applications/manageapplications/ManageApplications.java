@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageItemInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.ServiceManager;
@@ -65,12 +66,14 @@ import com.android.settingslib.applications.ApplicationsState;
 import com.android.settingslib.applications.StorageStatsSource;
 import com.android.settingslib.fuelgauge.PowerWhitelistBackend;
 import com.android.settingslib.utils.ThreadUtils;
+import com.android.settingslib.wifi.AccessPoint;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class ManageApplications extends InstrumentedFragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     static final boolean DEBUG = Log.isLoggable("ManageApplications", 3);
@@ -196,7 +199,7 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
         this.mLoadingContainer = this.mRootView.findViewById(R.id.loading_container);
         this.mListContainer = this.mRootView.findViewById(R.id.list_container);
         if (this.mListContainer != null) {
-            this.mEmptyView = this.mListContainer.findViewById(16908292);
+            this.mEmptyView = this.mListContainer.findViewById(android.R.id.empty);
             this.mApplications = new ApplicationsAdapter(this.mApplicationsState, this, this.mFilter, bundle);
             if (bundle != null) {
                 this.mApplications.mHasReceivedLoadEntries = bundle.getBoolean("hasEntries", false);
@@ -264,59 +267,32 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
                 return new ApplicationsState.CompoundFilter(ApplicationsState.FILTER_OTHER_APPS, volumeFilter);
             }
             return volumeFilter;
-        } else if (i == 9) {
-            return new ApplicationsState.CompoundFilter(ApplicationsState.FILTER_GAMES, volumeFilter);
-        } else {
-            if (i == 10) {
-                return new ApplicationsState.CompoundFilter(ApplicationsState.FILTER_MOVIES, volumeFilter);
-            }
-            if (i == 11) {
-                return new ApplicationsState.CompoundFilter(ApplicationsState.FILTER_PHOTOS, volumeFilter);
-            }
-            return null;
         }
+        if (i == 9) {
+            return new ApplicationsState.CompoundFilter(ApplicationsState.FILTER_GAMES, volumeFilter);
+        }
+        if (i == 10) {
+            return new ApplicationsState.CompoundFilter(ApplicationsState.FILTER_MOVIES, volumeFilter);
+        }
+        if (i == 11) {
+            return new ApplicationsState.CompoundFilter(ApplicationsState.FILTER_PHOTOS, volumeFilter);
+        }
+        return null;
     }
 
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
     public int getMetricsCategory() {
         switch (this.mListType) {
-            case 0:
-                return 65;
-            case 1:
-                return 133;
-            case 2:
-            default:
-                return 0;
             case 3:
                 if (this.mStorageType == 1) {
-                    return 839;
                 }
-                return 182;
-            case 4:
-                return 95;
-            case 5:
-                return 184;
-            case 6:
-                return 221;
-            case 7:
-                return 221;
-            case 8:
-                return 808;
-            case 9:
-                return 838;
-            case 10:
-                return 935;
-            case 11:
-                return 1092;
-            case 12:
-                return 1283;
-            case 13:
-                return 338;
+                break;
         }
+        return 221;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservableFragment, android.app.Fragment
-    public void onStart() {
+    public void onStart() throws Resources.NotFoundException {
         super.onStart();
         updateView();
         if (this.mApplications != null) {
@@ -376,45 +352,44 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
         int i = this.mListType;
         if (i == 1) {
             startAppInfoFragment(AppNotificationSettings.class, R.string.notifications_title);
-            return;
         }
         switch (i) {
             case 3:
                 startAppInfoFragment(AppStorageSettings.class, R.string.storage_settings);
-                return;
+                break;
             case 4:
                 startAppInfoFragment(UsageAccessDetails.class, R.string.usage_access);
-                return;
+                break;
             case 5:
                 HighPowerDetail.show(this, this.mCurrentUid, this.mCurrentPkgName, 1);
-                return;
+                break;
             case 6:
                 startAppInfoFragment(DrawOverlayDetails.class, R.string.overlay_settings);
-                return;
+                break;
             case 7:
                 startAppInfoFragment(WriteSettingsDetails.class, R.string.write_system_settings);
-                return;
+                break;
             case 8:
                 startAppInfoFragment(ExternalSourcesDetails.class, R.string.install_other_apps);
-                return;
+                break;
             case 9:
                 startAppInfoFragment(AppStorageSettings.class, R.string.game_storage_settings);
-                return;
-            case 10:
+                break;
+            case AccessPoint.Speed.MODERATE /* 10 */:
                 startAppInfoFragment(AppStorageSettings.class, R.string.storage_movies_tv);
-                return;
+                break;
             case 11:
                 startAppInfoFragment(AppStorageSettings.class, R.string.storage_photos_videos);
-                return;
+                break;
             case 12:
                 startAppInfoFragment(DirectoryAccessDetails.class, R.string.directory_access);
-                return;
+                break;
             case 13:
                 startAppInfoFragment(ChangeWifiStateDetails.class, R.string.change_wifi_state_title);
-                return;
+                break;
             default:
                 startAppInfoFragment(AppInfoDashboardFragment.class, R.string.application_info_label);
-                return;
+                break;
         }
     }
 
@@ -509,14 +484,16 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
         int childAdapterPosition = this.mRecyclerView.getChildAdapterPosition(view);
         if (childAdapterPosition == -1) {
             Log.w("ManageApplications", "Cannot find position for child, skipping onClick handling");
-        } else if (this.mApplications.getApplicationCount() > childAdapterPosition) {
+            return;
+        }
+        if (this.mApplications.getApplicationCount() > childAdapterPosition) {
             ApplicationsState.AppEntry appEntry = this.mApplications.getAppEntry(childAdapterPosition);
             this.mCurrentPkgName = appEntry.info.packageName;
             this.mCurrentUid = appEntry.info.uid;
             startApplicationDetailsActivity();
-        } else {
-            this.mApplications.mExtraViewController.onClick(this);
+            return;
         }
+        this.mApplications.mExtraViewController.onClick(this);
     }
 
     @Override // android.widget.AdapterView.OnItemSelectedListener
@@ -554,9 +531,7 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class FilterSpinnerAdapter extends ArrayAdapter<CharSequence> {
+    static class FilterSpinnerAdapter extends ArrayAdapter<CharSequence> {
         private final Context mContext;
         private final ArrayList<AppFilterItem> mFilterOptions;
         private final ManageApplications mManageApplications;
@@ -566,7 +541,7 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
             this.mFilterOptions = new ArrayList<>();
             this.mContext = manageApplications.getContext();
             this.mManageApplications = manageApplications;
-            setDropDownViewResource(17367049);
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         }
 
         public AppFilterItem getFilter(int i) {
@@ -641,15 +616,14 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
             return this.mFilterOptions.size();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
         @Override // android.widget.ArrayAdapter, android.widget.Adapter
         public CharSequence getItem(int i) {
             return this.mContext.getText(this.mFilterOptions.get(i).getTitle());
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationViewHolder> implements AppStateBaseBridge.Callback, ApplicationsState.Callbacks {
+    static class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationViewHolder> implements AppStateBaseBridge.Callback, ApplicationsState.Callbacks {
         private AppFilterItem mAppFilter;
         private ApplicationsState.AppFilter mCompositeFilter;
         private final Context mContext;
@@ -739,7 +713,7 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
             ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.applications.manageapplications.-$$Lambda$ManageApplications$ApplicationsAdapter$qMEtWjKuRu1RgrWKYhF-ScJDD7E
                 @Override // java.lang.Runnable
                 public final void run() {
-                    ManageApplications.ApplicationsAdapter.lambda$setExtraViewController$1(ManageApplications.ApplicationsAdapter.this);
+                    ManageApplications.ApplicationsAdapter.lambda$setExtraViewController$1(this.f$0);
                 }
             });
         }
@@ -749,7 +723,7 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
             ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.applications.manageapplications.-$$Lambda$ManageApplications$ApplicationsAdapter$zUDf4sT2ElTE4vuQaXRj16znehk
                 @Override // java.lang.Runnable
                 public final void run() {
-                    ManageApplications.ApplicationsAdapter.this.onExtraViewCompleted();
+                    this.f$0.onExtraViewCompleted();
                 }
             });
         }
@@ -801,15 +775,16 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
             rebuild();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
         @Override // android.support.v7.widget.RecyclerView.Adapter
         public ApplicationViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            View newView;
+            View viewNewView;
             if (this.mManageApplications.mListType == 1) {
-                newView = ApplicationViewHolder.newView(viewGroup, true);
+                viewNewView = ApplicationViewHolder.newView(viewGroup, true);
             } else {
-                newView = ApplicationViewHolder.newView(viewGroup, false);
+                viewNewView = ApplicationViewHolder.newView(viewGroup, false);
             }
-            return new ApplicationViewHolder(newView, shouldUseStableItemHeight(this.mManageApplications.mListType));
+            return new ApplicationViewHolder(viewNewView, shouldUseStableItemHeight(this.mManageApplications.mListType));
         }
 
         @Override // android.support.v7.widget.RecyclerView.Adapter
@@ -818,7 +793,7 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
         }
 
         public void rebuild() {
-            ApplicationsState.AppFilter appFilter;
+            ApplicationsState.AppFilter compoundFilter;
             final Comparator<ApplicationsState.AppEntry> comparator;
             if (this.mHasReceivedLoadEntries) {
                 if (this.mExtraInfoBridge != null && !this.mHasReceivedBridgeCallback) {
@@ -835,12 +810,12 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
                 }
                 if (!this.mManageApplications.mShowSystem) {
                     if (ManageApplications.LIST_TYPES_WITH_INSTANT.contains(Integer.valueOf(this.mManageApplications.mListType))) {
-                        appFilter = new ApplicationsState.CompoundFilter(filter, ApplicationsState.FILTER_DOWNLOADED_AND_LAUNCHER_AND_INSTANT);
+                        compoundFilter = new ApplicationsState.CompoundFilter(filter, ApplicationsState.FILTER_DOWNLOADED_AND_LAUNCHER_AND_INSTANT);
                     } else {
-                        appFilter = new ApplicationsState.CompoundFilter(filter, ApplicationsState.FILTER_DOWNLOADED_AND_LAUNCHER);
+                        compoundFilter = new ApplicationsState.CompoundFilter(filter, ApplicationsState.FILTER_DOWNLOADED_AND_LAUNCHER);
                     }
                 } else {
-                    appFilter = filter;
+                    compoundFilter = filter;
                 }
                 switch (this.mLastSortMode) {
                     case R.id.sort_order_frequent_notification /* 2131362578 */:
@@ -865,23 +840,23 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
                         comparator = ApplicationsState.ALPHA_COMPARATOR;
                         break;
                 }
-                final ApplicationsState.CompoundFilter compoundFilter = new ApplicationsState.CompoundFilter(appFilter, ApplicationsState.FILTER_NOT_HIDE);
+                final ApplicationsState.CompoundFilter compoundFilter2 = new ApplicationsState.CompoundFilter(compoundFilter, ApplicationsState.FILTER_NOT_HIDE);
                 ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.applications.manageapplications.-$$Lambda$ManageApplications$ApplicationsAdapter$z53WdtAYQ69qQ4PsDaqCwHe1hfA
                     @Override // java.lang.Runnable
                     public final void run() {
-                        ManageApplications.ApplicationsAdapter.lambda$rebuild$3(ManageApplications.ApplicationsAdapter.this, compoundFilter, comparator);
+                        ManageApplications.ApplicationsAdapter.lambda$rebuild$3(this.f$0, compoundFilter2, comparator);
                     }
                 });
             }
         }
 
         public static /* synthetic */ void lambda$rebuild$3(final ApplicationsAdapter applicationsAdapter, ApplicationsState.AppFilter appFilter, Comparator comparator) {
-            final ArrayList<ApplicationsState.AppEntry> rebuild = applicationsAdapter.mSession.rebuild(appFilter, comparator, false);
-            if (rebuild != null) {
+            final ArrayList<ApplicationsState.AppEntry> arrayListRebuild = applicationsAdapter.mSession.rebuild(appFilter, comparator, false);
+            if (arrayListRebuild != null) {
                 ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.applications.manageapplications.-$$Lambda$ManageApplications$ApplicationsAdapter$u5dJjouyXSv-EkAyCVJkIO0SEV0
                     @Override // java.lang.Runnable
-                    public final void run() {
-                        ManageApplications.ApplicationsAdapter.this.onRebuildComplete(rebuild);
+                    public final void run() throws Resources.NotFoundException {
+                        this.f$0.onRebuildComplete(arrayListRebuild);
                     }
                 });
             }
@@ -920,7 +895,7 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
         }
 
         @Override // com.android.settingslib.applications.ApplicationsState.Callbacks
-        public void onRebuildComplete(ArrayList<ApplicationsState.AppEntry> arrayList) {
+        public void onRebuildComplete(ArrayList<ApplicationsState.AppEntry> arrayList) throws Resources.NotFoundException {
             int filterType = this.mAppFilter.getFilterType();
             if (filterType == 0 || filterType == 1) {
                 arrayList = removeDuplicateIgnoringUser(arrayList);
@@ -948,7 +923,7 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
             this.mManageApplications.setHasInstant(this.mState.haveInstantApps());
         }
 
-        void updateLoading() {
+        void updateLoading() throws Resources.NotFoundException {
             if (this.mHasReceivedLoadEntries && this.mSession.getAllApps().size() != 0) {
                 this.mLoadingViewController.showContent(false);
             } else {
@@ -1055,6 +1030,7 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
             return !PowerWhitelistBackend.getInstance(this.mContext).isSysWhitelisted(this.mEntries.get(i).info.packageName);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
         @Override // android.support.v7.widget.RecyclerView.Adapter
         public void onBindViewHolder(ApplicationViewHolder applicationViewHolder, int i) {
             if (this.mEntries != null && this.mExtraViewController != null && i == this.mEntries.size()) {
@@ -1080,7 +1056,6 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
             if (i2 == 1) {
                 if (appEntry.extraInfo == null) {
                     applicationViewHolder.setSummary((CharSequence) null);
-                    return;
                 } else {
                     applicationViewHolder.setSummary(AppStateNotificationBridge.getSummary(this.mContext, (AppStateNotificationBridge.NotificationsSentState) appEntry.extraInfo, this.mLastSortMode == R.id.sort_order_recent_notification));
                     return;
@@ -1095,33 +1070,34 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
                             i = R.string.app_permission_summary_not_allowed;
                         }
                         applicationViewHolder.setSummary(i);
-                        return;
+                        break;
+                    } else {
+                        applicationViewHolder.setSummary((CharSequence) null);
+                        break;
                     }
-                    applicationViewHolder.setSummary((CharSequence) null);
-                    return;
                 case 5:
                     applicationViewHolder.setSummary(HighPowerDetail.getSummary(this.mContext, appEntry));
-                    return;
+                    break;
                 case 6:
                     applicationViewHolder.setSummary(DrawOverlayDetails.getSummary(this.mContext, appEntry));
-                    return;
+                    break;
                 case 7:
                     applicationViewHolder.setSummary(WriteSettingsDetails.getSummary(this.mContext, appEntry));
-                    return;
+                    break;
                 case 8:
                     applicationViewHolder.setSummary(ExternalSourcesDetails.getPreferenceSummary(this.mContext, appEntry));
-                    return;
+                    break;
                 default:
                     switch (i2) {
                         case 12:
                             applicationViewHolder.setSummary((CharSequence) null);
-                            return;
+                            break;
                         case 13:
                             applicationViewHolder.setSummary(ChangeWifiStateDetails.getSummary(this.mContext, appEntry));
-                            return;
+                            break;
                         default:
                             applicationViewHolder.updateSizeText(appEntry, this.mManageApplications.mInvalidSizeStr, this.mWhichSize);
-                            return;
+                            break;
                     }
             }
         }
@@ -1141,7 +1117,6 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
             return this.mExtraViewController != null && this.mExtraViewController.shouldShow();
         }
 
-        /* loaded from: classes.dex */
         public static class OnScrollListener extends RecyclerView.OnScrollListener {
             private ApplicationsAdapter mAdapter;
             private boolean mDelayNotifyDataChange;
@@ -1170,7 +1145,6 @@ public class ManageApplications extends InstrumentedFragment implements View.OnC
         }
     }
 
-    /* loaded from: classes.dex */
     private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mLoader;

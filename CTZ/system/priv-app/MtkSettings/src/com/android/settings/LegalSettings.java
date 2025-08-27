@@ -11,6 +11,7 @@ import com.android.settings.search.BaseSearchIndexProvider;
 import com.android.settings.search.Indexable;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LegalSettings extends SettingsPreferenceFragment implements Indexable {
     static final String KEY_WALLPAPER_ATTRIBUTIONS = "wallpaper_attributions";
@@ -42,10 +43,10 @@ public class LegalSettings extends SettingsPreferenceFragment implements Indexab
         }
 
         private boolean checkIntentAction(Context context, String str) {
-            List<ResolveInfo> queryIntentActivities = context.getPackageManager().queryIntentActivities(new Intent(str), 0);
-            int size = queryIntentActivities.size();
+            List<ResolveInfo> listQueryIntentActivities = context.getPackageManager().queryIntentActivities(new Intent(str), 0);
+            int size = listQueryIntentActivities.size();
             for (int i = 0; i < size; i++) {
-                if ((queryIntentActivities.get(i).activityInfo.applicationInfo.flags & 1) != 0) {
+                if ((listQueryIntentActivities.get(i).activityInfo.applicationInfo.flags & 1) != 0) {
                     return true;
                 }
             }

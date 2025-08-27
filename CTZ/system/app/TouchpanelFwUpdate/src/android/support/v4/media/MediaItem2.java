@@ -3,6 +3,7 @@ package android.support.v4.media;
 import android.os.Bundle;
 import android.text.TextUtils;
 import java.util.UUID;
+
 /* loaded from: classes.dex */
 public class MediaItem2 {
     private DataSourceDesc mDataSourceDesc;
@@ -34,16 +35,16 @@ public class MediaItem2 {
     }
 
     static MediaItem2 fromBundle(Bundle bundle, UUID uuid) {
-        MediaMetadata2 mediaMetadata2 = null;
+        MediaMetadata2 mediaMetadata2FromBundle = null;
         if (bundle == null) {
             return null;
         }
         String id = bundle.getString("android.media.mediaitem2.id");
         Bundle metadataBundle = bundle.getBundle("android.media.mediaitem2.metadata");
         if (metadataBundle != null) {
-            mediaMetadata2 = MediaMetadata2.fromBundle(metadataBundle);
+            mediaMetadata2FromBundle = MediaMetadata2.fromBundle(metadataBundle);
         }
-        MediaMetadata2 metadata = mediaMetadata2;
+        MediaMetadata2 metadata = mediaMetadata2FromBundle;
         int flags = bundle.getInt("android.media.mediaitem2.flags");
         return new MediaItem2(id, null, metadata, flags, uuid);
     }

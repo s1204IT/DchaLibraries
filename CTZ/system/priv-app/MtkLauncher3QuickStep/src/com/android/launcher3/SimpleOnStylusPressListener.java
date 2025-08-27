@@ -3,6 +3,7 @@ package com.android.launcher3;
 import android.view.MotionEvent;
 import android.view.View;
 import com.android.launcher3.StylusEventHelper;
+
 /* loaded from: classes.dex */
 public class SimpleOnStylusPressListener implements StylusEventHelper.StylusButtonListener {
     private View mView;

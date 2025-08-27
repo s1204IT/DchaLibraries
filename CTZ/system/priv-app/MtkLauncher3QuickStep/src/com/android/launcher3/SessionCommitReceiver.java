@@ -2,7 +2,6 @@ package com.android.launcher3;
 
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +17,7 @@ import android.util.Log;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.compat.LauncherAppsCompat;
 import java.util.List;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class SessionCommitReceiver extends BroadcastReceiver {
@@ -63,7 +63,6 @@ public class SessionCommitReceiver extends BroadcastReceiver {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class PrefInitTask extends AsyncTask<Void, Void, Void> {
         private final Context mContext;
 
@@ -71,64 +70,68 @@ public class SessionCommitReceiver extends BroadcastReceiver {
             this.mContext = context;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) throws Throwable {
             Utilities.getPrefs(this.mContext).edit().putBoolean(SessionCommitReceiver.ADD_ICON_PREFERENCE_KEY, readValueFromMarketApp()).putBoolean(SessionCommitReceiver.ADD_ICON_PREFERENCE_INITIALIZED_KEY, true).apply();
             return null;
         }
 
-        public boolean readValueFromMarketApp() {
-            Cursor query;
-            boolean moveToNext;
-            ResolveInfo resolveActivity = this.mContext.getPackageManager().resolveActivity(new Intent("android.intent.action.MAIN").addCategory("android.intent.category.APP_MARKET"), 1114112);
-            if (resolveActivity == null) {
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [148=6, 149=4] */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:60:0x0072 */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:62:0x0074 */
+        /* JADX DEBUG: Failed to insert an additional move for type inference into block B:71:0x001e */
+        public boolean readValueFromMarketApp() throws Throwable {
+            Cursor cursorQuery;
+            boolean zMoveToNext;
+            ResolveInfo resolveInfoResolveActivity = this.mContext.getPackageManager().resolveActivity(new Intent("android.intent.action.MAIN").addCategory("android.intent.category.APP_MARKET"), 1114112);
+            if (resolveInfoResolveActivity == null) {
                 return true;
             }
             Cursor cursor = null;
+            Cursor cursor2 = null;
             try {
                 try {
-                    ContentResolver contentResolver = this.mContext.getContentResolver();
-                    query = contentResolver.query(Uri.parse("content://" + resolveActivity.activityInfo.packageName + SessionCommitReceiver.MARKER_PROVIDER_PREFIX), null, null, null, null);
-                } catch (Throwable th) {
-                    th = th;
+                    cursorQuery = this.mContext.getContentResolver().query(Uri.parse("content://" + resolveInfoResolveActivity.activityInfo.packageName + SessionCommitReceiver.MARKER_PROVIDER_PREFIX), null, null, null, null);
+                    try {
+                        zMoveToNext = cursorQuery.moveToNext();
+                        cursor = zMoveToNext;
+                    } catch (Exception e) {
+                        cursor2 = cursorQuery;
+                        e = e;
+                        Log.d(SessionCommitReceiver.TAG, "Error reading add to homescreen preference", e);
+                        cursor = cursor2;
+                        if (cursor2 != null) {
+                            cursor2.close();
+                            cursor = cursor2;
+                        }
+                        return true;
+                    } catch (Throwable th) {
+                        th = th;
+                        cursor = cursorQuery;
+                        if (cursor != null) {
+                            cursor.close();
+                        }
+                        throw th;
+                    }
+                } catch (Exception e2) {
+                    e = e2;
                 }
-            } catch (Exception e) {
-                e = e;
-            }
-            try {
-                moveToNext = query.moveToNext();
-                cursor = moveToNext;
-            } catch (Exception e2) {
-                cursor = query;
-                e = e2;
-                Log.d(SessionCommitReceiver.TAG, "Error reading add to homescreen preference", e);
-                cursor = cursor;
-                if (cursor != null) {
-                    cursor.close();
-                    cursor = cursor;
+                if (zMoveToNext) {
+                    boolean z = cursorQuery.getInt(cursorQuery.getColumnIndexOrThrow(LauncherSettings.Settings.EXTRA_VALUE)) != 0;
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
+                    }
+                    return z;
+                }
+                if (cursorQuery != null) {
+                    cursorQuery.close();
+                    cursor = zMoveToNext;
                 }
                 return true;
             } catch (Throwable th2) {
                 th = th2;
-                cursor = query;
-                if (cursor != null) {
-                    cursor.close();
-                }
-                throw th;
             }
-            if (moveToNext) {
-                boolean z = query.getInt(query.getColumnIndexOrThrow(LauncherSettings.Settings.EXTRA_VALUE)) != 0;
-                if (query != null) {
-                    query.close();
-                }
-                return z;
-            }
-            if (query != null) {
-                query.close();
-                cursor = moveToNext;
-            }
-            return true;
         }
     }
 }

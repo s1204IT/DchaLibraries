@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import com.android.settingslib.CustomDialogPreference;
+
 /* loaded from: classes.dex */
 public class SeekBarDialogPreference extends CustomDialogPreference {
     private final Drawable mMyIcon;
@@ -24,15 +25,14 @@ public class SeekBarDialogPreference extends CustomDialogPreference {
     }
 
     public void createActionButtons() {
-        setPositiveButtonText(17039370);
-        setNegativeButtonText(17039360);
+        setPositiveButtonText(android.R.string.ok);
+        setNegativeButtonText(android.R.string.cancel);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomDialogPreference
-    public void onBindDialogView(View view) {
+    protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        ImageView imageView = (ImageView) view.findViewById(16908294);
+        ImageView imageView = (ImageView) view.findViewById(android.R.id.icon);
         if (this.mMyIcon != null) {
             imageView.setImageDrawable(this.mMyIcon);
         } else {
@@ -40,8 +40,7 @@ public class SeekBarDialogPreference extends CustomDialogPreference {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static SeekBar getSeekBar(View view) {
+    protected static SeekBar getSeekBar(View view) {
         return (SeekBar) view.findViewById(R.id.seekbar);
     }
 }

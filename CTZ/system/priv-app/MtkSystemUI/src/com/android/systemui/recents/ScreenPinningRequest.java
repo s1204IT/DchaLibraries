@@ -23,12 +23,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.settingslib.Utils;
-import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
+import com.android.systemui.plugins.R;
 import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.phone.StatusBar;
 import com.android.systemui.util.leak.RotationUtils;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ScreenPinningRequest implements View.OnClickListener {
     private final AccessibilityManager mAccessibilityService;
@@ -72,13 +73,13 @@ public class ScreenPinningRequest implements View.OnClickListener {
         layoutParams.token = new Binder();
         layoutParams.privateFlags |= 16;
         layoutParams.setTitle("ScreenPinningConfirmation");
-        layoutParams.gravity = 119;
+        layoutParams.gravity = R.styleable.AppCompatTheme_windowMinWidthMinor;
         return layoutParams;
     }
 
     @Override // android.view.View.OnClickListener
     public void onClick(View view) {
-        if (view.getId() == R.id.screen_pinning_ok_button || this.mRequestWindow == view) {
+        if (view.getId() == com.android.systemui.R.id.screen_pinning_ok_button || this.mRequestWindow == view) {
             try {
                 ActivityManager.getService().startSystemLockTaskMode(this.taskId);
             } catch (RemoteException e) {
@@ -97,9 +98,7 @@ public class ScreenPinningRequest implements View.OnClickListener {
         return new FrameLayout.LayoutParams(-2, -2, i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class RequestWindowView extends FrameLayout {
+    private class RequestWindowView extends FrameLayout {
         private final ColorDrawable mColor;
         private ValueAnimator mColorAnim;
         private ViewGroup mLayout;
@@ -141,7 +140,7 @@ public class ScreenPinningRequest implements View.OnClickListener {
             float f = displayMetrics.density;
             int rotation = RotationUtils.getRotation(this.mContext);
             inflateView(rotation);
-            int color = this.mContext.getColor(R.color.screen_pinning_request_window_bg);
+            int color = this.mContext.getColor(com.android.systemui.R.color.screen_pinning_request_window_bg);
             if (ActivityManager.isHighEndGfx()) {
                 this.mLayout.setAlpha(0.0f);
                 if (rotation != 2) {
@@ -178,63 +177,63 @@ public class ScreenPinningRequest implements View.OnClickListener {
             Context context = getContext();
             boolean z = true;
             if (i == 2) {
-                i2 = R.layout.screen_pinning_request_sea_phone;
+                i2 = com.android.systemui.R.layout.screen_pinning_request_sea_phone;
             } else {
-                i2 = i == 1 ? R.layout.screen_pinning_request_land_phone : R.layout.screen_pinning_request;
+                i2 = i == 1 ? com.android.systemui.R.layout.screen_pinning_request_land_phone : com.android.systemui.R.layout.screen_pinning_request;
             }
             this.mLayout = (ViewGroup) View.inflate(context, i2, null);
             this.mLayout.setClickable(true);
             this.mLayout.setLayoutDirection(0);
-            this.mLayout.findViewById(R.id.screen_pinning_text_area).setLayoutDirection(3);
-            View findViewById = this.mLayout.findViewById(R.id.screen_pinning_buttons);
+            this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_text_area).setLayoutDirection(3);
+            View viewFindViewById = this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_buttons);
             if (Recents.getSystemServices() != null && Recents.getSystemServices().hasSoftNavigationBar()) {
-                findViewById.setLayoutDirection(3);
-                swapChildrenIfRtlAndVertical(findViewById);
+                viewFindViewById.setLayoutDirection(3);
+                swapChildrenIfRtlAndVertical(viewFindViewById);
             } else {
-                findViewById.setVisibility(8);
+                viewFindViewById.setVisibility(8);
             }
-            ((Button) this.mLayout.findViewById(R.id.screen_pinning_ok_button)).setOnClickListener(ScreenPinningRequest.this);
+            ((Button) this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_ok_button)).setOnClickListener(ScreenPinningRequest.this);
             if (this.mShowCancel) {
-                ((Button) this.mLayout.findViewById(R.id.screen_pinning_cancel_button)).setOnClickListener(ScreenPinningRequest.this);
+                ((Button) this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_cancel_button)).setOnClickListener(ScreenPinningRequest.this);
             } else {
-                ((Button) this.mLayout.findViewById(R.id.screen_pinning_cancel_button)).setVisibility(4);
+                ((Button) this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_cancel_button)).setVisibility(4);
             }
             StatusBar statusBar = (StatusBar) SysUiServiceProvider.getComponent(this.mContext, StatusBar.class);
             NavigationBarView navigationBarView = statusBar != null ? statusBar.getNavigationBarView() : null;
             if (navigationBarView == null || !navigationBarView.isRecentsButtonVisible()) {
                 z = false;
             }
-            boolean isTouchExplorationEnabled = ScreenPinningRequest.this.mAccessibilityService.isTouchExplorationEnabled();
+            boolean zIsTouchExplorationEnabled = ScreenPinningRequest.this.mAccessibilityService.isTouchExplorationEnabled();
             if (z) {
-                this.mLayout.findViewById(R.id.screen_pinning_recents_group).setVisibility(0);
-                this.mLayout.findViewById(R.id.screen_pinning_home_bg_light).setVisibility(4);
-                this.mLayout.findViewById(R.id.screen_pinning_home_bg).setVisibility(4);
-                if (isTouchExplorationEnabled) {
-                    i3 = R.string.screen_pinning_description_accessible;
+                this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_recents_group).setVisibility(0);
+                this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_home_bg_light).setVisibility(4);
+                this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_home_bg).setVisibility(4);
+                if (zIsTouchExplorationEnabled) {
+                    i3 = com.android.systemui.R.string.screen_pinning_description_accessible;
                 } else {
-                    i3 = R.string.screen_pinning_description;
+                    i3 = com.android.systemui.R.string.screen_pinning_description;
                 }
             } else {
-                this.mLayout.findViewById(R.id.screen_pinning_recents_group).setVisibility(4);
-                this.mLayout.findViewById(R.id.screen_pinning_home_bg_light).setVisibility(0);
-                this.mLayout.findViewById(R.id.screen_pinning_home_bg).setVisibility(0);
-                if (isTouchExplorationEnabled) {
-                    i3 = R.string.screen_pinning_description_recents_invisible_accessible;
+                this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_recents_group).setVisibility(4);
+                this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_home_bg_light).setVisibility(0);
+                this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_home_bg).setVisibility(0);
+                if (zIsTouchExplorationEnabled) {
+                    i3 = com.android.systemui.R.string.screen_pinning_description_recents_invisible_accessible;
                 } else {
-                    i3 = R.string.screen_pinning_description_recents_invisible;
+                    i3 = com.android.systemui.R.string.screen_pinning_description_recents_invisible;
                 }
             }
             if (navigationBarView != null) {
-                int themeAttr = Utils.getThemeAttr(getContext(), R.attr.darkIconTheme);
-                ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getContext(), Utils.getThemeAttr(getContext(), R.attr.lightIconTheme));
+                int themeAttr = Utils.getThemeAttr(getContext(), com.android.systemui.R.attr.darkIconTheme);
+                ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(getContext(), Utils.getThemeAttr(getContext(), com.android.systemui.R.attr.lightIconTheme));
                 ContextThemeWrapper contextThemeWrapper2 = new ContextThemeWrapper(getContext(), themeAttr);
-                ((ImageView) this.mLayout.findViewById(R.id.screen_pinning_back_icon)).setImageDrawable(navigationBarView.getBackDrawable(contextThemeWrapper, contextThemeWrapper2));
-                ((ImageView) this.mLayout.findViewById(R.id.screen_pinning_home_icon)).setImageDrawable(navigationBarView.getHomeDrawable(contextThemeWrapper, contextThemeWrapper2));
+                ((ImageView) this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_back_icon)).setImageDrawable(navigationBarView.getBackDrawable(contextThemeWrapper, contextThemeWrapper2));
+                ((ImageView) this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_home_icon)).setImageDrawable(navigationBarView.getHomeDrawable(contextThemeWrapper, contextThemeWrapper2));
             }
-            ((TextView) this.mLayout.findViewById(R.id.screen_pinning_description)).setText(i3);
-            int i4 = isTouchExplorationEnabled ? 4 : 0;
-            this.mLayout.findViewById(R.id.screen_pinning_back_bg).setVisibility(i4);
-            this.mLayout.findViewById(R.id.screen_pinning_back_bg_light).setVisibility(i4);
+            ((TextView) this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_description)).setText(i3);
+            int i4 = zIsTouchExplorationEnabled ? 4 : 0;
+            this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_back_bg).setVisibility(i4);
+            this.mLayout.findViewById(com.android.systemui.R.id.screen_pinning_back_bg_light).setVisibility(i4);
             addView(this.mLayout, ScreenPinningRequest.this.getRequestLayoutParams(i));
         }
 

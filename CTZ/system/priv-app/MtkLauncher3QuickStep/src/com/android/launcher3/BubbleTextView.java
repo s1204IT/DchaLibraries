@@ -31,6 +31,7 @@ import com.android.launcher3.graphics.IconPalette;
 import com.android.launcher3.graphics.PreloadIconDrawable;
 import com.android.launcher3.model.PackageItemInfo;
 import java.text.NumberFormat;
+
 /* loaded from: classes.dex */
 public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdateReceiver, Launcher.OnResumeCallback {
     private static final int DISPLAY_ALL_APPS = 1;
@@ -42,35 +43,47 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
     private BadgeRenderer mBadgeRenderer;
     private float mBadgeScale;
     private final boolean mCenterVertically;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private boolean mDisableRelayout;
     private boolean mForceHideBadge;
     private Drawable mIcon;
     private IconCache.IconLoadRequest mIconLoadRequest;
     private final int mIconSize;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private boolean mIgnorePressedStateChange;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private boolean mIsIconVisible;
     private final boolean mLayoutHorizontal;
     private final CheckLongPressHelper mLongPressHelper;
     private final float mSlop;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private boolean mStayPressed;
     private final StylusEventHelper mStylusEventHelper;
     private Rect mTempIconBounds;
     private Point mTempSpaceForBadgeOffset;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private float mTextAlpha;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private int mTextColor;
-    private static final int[] STATE_PRESSED = {16842919};
+    private static final int[] STATE_PRESSED = {android.R.attr.state_pressed};
     private static final Property<BubbleTextView, Float> BADGE_SCALE_PROPERTY = new Property<BubbleTextView, Float>(Float.TYPE, "badgeScale") { // from class: com.android.launcher3.BubbleTextView.1
+        AnonymousClass1(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(BubbleTextView bubbleTextView) {
             return Float.valueOf(bubbleTextView.mBadgeScale);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(BubbleTextView bubbleTextView, Float f) {
             bubbleTextView.mBadgeScale = f.floatValue();
@@ -78,16 +91,61 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
         }
     };
     public static final Property<BubbleTextView, Float> TEXT_ALPHA_PROPERTY = new Property<BubbleTextView, Float>(Float.class, "textAlpha") { // from class: com.android.launcher3.BubbleTextView.2
+        AnonymousClass2(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(BubbleTextView bubbleTextView) {
             return Float.valueOf(bubbleTextView.mTextAlpha);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(BubbleTextView bubbleTextView, Float f) {
             bubbleTextView.setTextAlpha(f.floatValue());
         }
     };
+
+    /* renamed from: com.android.launcher3.BubbleTextView$1 */
+    class AnonymousClass1 extends Property<BubbleTextView, Float> {
+        AnonymousClass1(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.util.Property
+        public Float get(BubbleTextView bubbleTextView) {
+            return Float.valueOf(bubbleTextView.mBadgeScale);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
+        @Override // android.util.Property
+        public void set(BubbleTextView bubbleTextView, Float f) {
+            bubbleTextView.mBadgeScale = f.floatValue();
+            bubbleTextView.invalidate();
+        }
+    }
+
+    /* renamed from: com.android.launcher3.BubbleTextView$2 */
+    class AnonymousClass2 extends Property<BubbleTextView, Float> {
+        AnonymousClass2(Class cls, String str) {
+            super(cls, str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.util.Property
+        public Float get(BubbleTextView bubbleTextView) {
+            return Float.valueOf(bubbleTextView.mTextAlpha);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
+        @Override // android.util.Property
+        public void set(BubbleTextView bubbleTextView, Float f) {
+            bubbleTextView.setTextAlpha(f.floatValue());
+        }
+    }
 
     public BubbleTextView(Context context) {
         this(context, null, 0);
@@ -107,9 +165,9 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
         this.mActivity = BaseDraggingActivity.fromContext(context);
         DeviceProfile deviceProfile = this.mActivity.getDeviceProfile();
         this.mSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.BubbleTextView, i, 0);
-        this.mLayoutHorizontal = obtainStyledAttributes.getBoolean(3, false);
-        int integer = obtainStyledAttributes.getInteger(1, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.BubbleTextView, i, 0);
+        this.mLayoutHorizontal = typedArrayObtainStyledAttributes.getBoolean(3, false);
+        int integer = typedArrayObtainStyledAttributes.getInteger(1, 0);
         int i2 = deviceProfile.iconSizePx;
         if (integer == 0) {
             setTextSize(0, deviceProfile.iconTextSizePx);
@@ -123,9 +181,9 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
             setCompoundDrawablePadding(deviceProfile.folderChildDrawablePaddingPx);
             i2 = deviceProfile.folderChildIconSizePx;
         }
-        this.mCenterVertically = obtainStyledAttributes.getBoolean(0, false);
-        this.mIconSize = obtainStyledAttributes.getDimensionPixelSize(2, i2);
-        obtainStyledAttributes.recycle();
+        this.mCenterVertically = typedArrayObtainStyledAttributes.getBoolean(0, false);
+        this.mIconSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(2, i2);
+        typedArrayObtainStyledAttributes.recycle();
         this.mLongPressHelper = new CheckLongPressHelper(this);
         this.mStylusEventHelper = new StylusEventHelper(new SimpleOnStylusPressListener(this), this);
         setEllipsize(TextUtils.TruncateAt.END);
@@ -176,18 +234,18 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
     }
 
     private void applyIconAndLabel(ItemInfoWithIcon itemInfoWithIcon) {
-        CharSequence charSequence;
-        FastBitmapDrawable newIcon = DrawableFactory.get(getContext()).newIcon(itemInfoWithIcon);
+        CharSequence string;
+        FastBitmapDrawable fastBitmapDrawableNewIcon = DrawableFactory.get(getContext()).newIcon(itemInfoWithIcon);
         this.mBadgeColor = IconPalette.getMutedColor(itemInfoWithIcon.iconColor, 0.54f);
-        setIcon(newIcon);
+        setIcon(fastBitmapDrawableNewIcon);
         setText(itemInfoWithIcon.title);
         if (itemInfoWithIcon.contentDescription != null) {
             if (itemInfoWithIcon.isDisabled()) {
-                charSequence = getContext().getString(R.string.disabled_app_label, itemInfoWithIcon.contentDescription);
+                string = getContext().getString(R.string.disabled_app_label, itemInfoWithIcon.contentDescription);
             } else {
-                charSequence = itemInfoWithIcon.contentDescription;
+                string = itemInfoWithIcon.contentDescription;
             }
-            setContentDescription(charSequence);
+            setContentDescription(string);
         }
     }
 
@@ -212,47 +270,46 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
 
     @Override // android.widget.TextView, android.view.View
     protected int[] onCreateDrawableState(int i) {
-        int[] onCreateDrawableState = super.onCreateDrawableState(i + 1);
+        int[] iArrOnCreateDrawableState = super.onCreateDrawableState(i + 1);
         if (this.mStayPressed) {
-            mergeDrawableStates(onCreateDrawableState, STATE_PRESSED);
+            mergeDrawableStates(iArrOnCreateDrawableState, STATE_PRESSED);
         }
-        return onCreateDrawableState;
+        return iArrOnCreateDrawableState;
     }
 
     public Drawable getIcon() {
         return this.mIcon;
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // android.widget.TextView, android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
         if (this.mStylusEventHelper.onMotionEvent(motionEvent)) {
             this.mLongPressHelper.cancelLongPress();
-            onTouchEvent = true;
+            zOnTouchEvent = true;
         }
         switch (motionEvent.getAction()) {
             case 0:
                 if (!this.mStylusEventHelper.inStylusButtonPressed()) {
                     this.mLongPressHelper.postCheckForLongPress();
-                    break;
                 }
-                break;
+                return zOnTouchEvent;
             case 1:
             case 3:
                 this.mLongPressHelper.cancelLongPress();
-                break;
+                return zOnTouchEvent;
             case 2:
                 if (!Utilities.pointInView(this, motionEvent.getX(), motionEvent.getY(), this.mSlop)) {
                     this.mLongPressHelper.cancelLongPress();
-                    break;
                 }
-                break;
+                return zOnTouchEvent;
+            default:
+                return zOnTouchEvent;
         }
-        return onTouchEvent;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setStayPressed(boolean z) {
+    void setStayPressed(boolean z) {
         this.mStayPressed = z;
         refreshDrawableState();
     }
@@ -262,8 +319,7 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
         setStayPressed(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void clearPressedBackground() {
+    void clearPressedBackground() {
         setPressed(false);
         setStayPressed(false);
     }
@@ -271,14 +327,13 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
     @Override // android.widget.TextView, android.view.View, android.view.KeyEvent.Callback
     public boolean onKeyUp(int i, KeyEvent keyEvent) {
         this.mIgnorePressedStateChange = true;
-        boolean onKeyUp = super.onKeyUp(i, keyEvent);
+        boolean zOnKeyUp = super.onKeyUp(i, keyEvent);
         this.mIgnorePressedStateChange = false;
         refreshDrawableState();
-        return onKeyUp;
+        return zOnKeyUp;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void drawWithoutBadge(Canvas canvas) {
+    protected void drawWithoutBadge(Canvas canvas) {
         super.onDraw(canvas);
     }
 
@@ -288,19 +343,16 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
         drawBadgeIfNecessary(canvas);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void drawBadgeIfNecessary(Canvas canvas) {
+    protected void drawBadgeIfNecessary(Canvas canvas) {
         if (this.mForceHideBadge) {
             return;
         }
         if (hasBadge() || this.mBadgeScale > 0.0f) {
             getIconBounds(this.mTempIconBounds);
             this.mTempSpaceForBadgeOffset.set((getWidth() - this.mIconSize) / 2, getPaddingTop());
-            int scrollX = getScrollX();
-            int scrollY = getScrollY();
-            canvas.translate(scrollX, scrollY);
+            canvas.translate(getScrollX(), getScrollY());
             this.mBadgeRenderer.draw(canvas, this.mBadgeColor, this.mTempIconBounds, this.mBadgeScale, this.mTempSpaceForBadgeOffset);
-            canvas.translate(-scrollX, -scrollY);
+            canvas.translate(-r0, -r1);
         }
     }
 
@@ -326,13 +378,11 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
         rect.set(width, paddingTop, this.mIconSize + width, this.mIconSize + paddingTop);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.widget.TextView, android.view.View
-    public void onMeasure(int i, int i2) {
+    protected void onMeasure(int i, int i2) {
         if (this.mCenterVertically) {
             Paint.FontMetrics fontMetrics = getPaint().getFontMetrics();
-            int compoundDrawablePadding = this.mIconSize + getCompoundDrawablePadding() + ((int) Math.ceil(fontMetrics.bottom - fontMetrics.top));
-            setPadding(getPaddingLeft(), (View.MeasureSpec.getSize(i2) - compoundDrawablePadding) / 2, getPaddingRight(), getPaddingBottom());
+            setPadding(getPaddingLeft(), (View.MeasureSpec.getSize(i2) - ((this.mIconSize + getCompoundDrawablePadding()) + ((int) Math.ceil(fontMetrics.bottom - fontMetrics.top)))) / 2, getPaddingRight(), getPaddingBottom());
         }
         super.onMeasure(i, i2);
     }
@@ -363,8 +413,7 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
         setTextAlpha(z ? 1.0f : 0.0f);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setTextAlpha(float f) {
+    private void setTextAlpha(float f) {
         this.mTextAlpha = f;
         super.setTextColor(getModifiedColor());
     }
@@ -387,17 +436,17 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
     }
 
     public void applyPromiseState(boolean z) {
-        int i;
+        int installProgress;
         if (getTag() instanceof ShortcutInfo) {
             ShortcutInfo shortcutInfo = (ShortcutInfo) getTag();
             if (shortcutInfo.hasPromiseIconUi()) {
-                i = shortcutInfo.hasStatusFlag(4) ? shortcutInfo.getInstallProgress() : 0;
+                installProgress = shortcutInfo.hasStatusFlag(4) ? shortcutInfo.getInstallProgress() : 0;
             } else {
-                i = 100;
+                installProgress = 100;
             }
-            PreloadIconDrawable applyProgressLevel = applyProgressLevel(i);
-            if (applyProgressLevel != null && z) {
-                applyProgressLevel.maybePerformFinishedAnimation();
+            PreloadIconDrawable preloadIconDrawableApplyProgressLevel = applyProgressLevel(installProgress);
+            if (preloadIconDrawableApplyProgressLevel != null && z) {
+                preloadIconDrawableApplyProgressLevel.maybePerformFinishedAnimation();
             }
         }
     }
@@ -418,10 +467,10 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
                     preloadIconDrawable.setLevel(i);
                     return preloadIconDrawable;
                 }
-                PreloadIconDrawable newPendingIcon = DrawableFactory.get(getContext()).newPendingIcon(itemInfoWithIcon, getContext());
-                newPendingIcon.setLevel(i);
-                setIcon(newPendingIcon);
-                return newPendingIcon;
+                PreloadIconDrawable preloadIconDrawableNewPendingIcon = DrawableFactory.get(getContext()).newPendingIcon(itemInfoWithIcon, getContext());
+                preloadIconDrawableNewPendingIcon.setLevel(i);
+                setIcon(preloadIconDrawableNewPendingIcon);
+                return preloadIconDrawableNewPendingIcon;
             }
             return null;
         }
@@ -447,9 +496,9 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
                 if (hasBadge()) {
                     int notificationCount = this.mBadgeInfo.getNotificationCount();
                     setContentDescription(getContext().getResources().getQuantityString(R.plurals.badged_app_label, notificationCount, itemInfo.contentDescription, Integer.valueOf(notificationCount)));
-                    return;
+                } else {
+                    setContentDescription(itemInfo.contentDescription);
                 }
-                setContentDescription(itemInfo.contentDescription);
             }
         }
     }

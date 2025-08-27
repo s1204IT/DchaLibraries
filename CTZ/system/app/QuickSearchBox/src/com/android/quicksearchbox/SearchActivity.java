@@ -15,6 +15,7 @@ import com.android.quicksearchbox.ui.SuggestionClickListener;
 import com.android.quicksearchbox.ui.SuggestionsAdapter;
 import com.google.common.base.CharMatcher;
 import java.io.File;
+
 /* loaded from: classes.dex */
 public class SearchActivity extends Activity {
     private Bundle mAppSearchData;
@@ -29,21 +30,48 @@ public class SearchActivity extends Activity {
     private boolean mTraceStartUp;
     private final Handler mHandler = new Handler();
     private final Runnable mUpdateSuggestionsTask = new Runnable() { // from class: com.android.quicksearchbox.SearchActivity.1
+        AnonymousClass1() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             SearchActivity.this.updateSuggestions();
         }
     };
     private final Runnable mShowInputMethodTask = new Runnable() { // from class: com.android.quicksearchbox.SearchActivity.2
+        AnonymousClass2() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             SearchActivity.this.mSearchActivityView.showInputMethodForQuery();
         }
     };
 
-    /* loaded from: classes.dex */
     public interface OnDestroyListener {
         void onDestroyed();
+    }
+
+    /* renamed from: com.android.quicksearchbox.SearchActivity$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            SearchActivity.this.updateSuggestions();
+        }
+    }
+
+    /* renamed from: com.android.quicksearchbox.SearchActivity$2 */
+    class AnonymousClass2 implements Runnable {
+        AnonymousClass2() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            SearchActivity.this.mSearchActivityView.showInputMethodForQuery();
+        }
     }
 
     @Override // android.app.Activity
@@ -65,12 +93,18 @@ public class SearchActivity extends Activity {
             this.mSearchActivityView.limitResultsToViewHeight();
         }
         this.mSearchActivityView.setSearchClickListener(new SearchActivityView.SearchClickListener() { // from class: com.android.quicksearchbox.SearchActivity.3
+            AnonymousClass3() {
+            }
+
             @Override // com.android.quicksearchbox.ui.SearchActivityView.SearchClickListener
             public boolean onSearchClicked(int i) {
                 return SearchActivity.this.onSearchClicked(i);
             }
         });
         this.mSearchActivityView.setQueryListener(new SearchActivityView.QueryListener() { // from class: com.android.quicksearchbox.SearchActivity.4
+            AnonymousClass4() {
+            }
+
             @Override // com.android.quicksearchbox.ui.SearchActivityView.QueryListener
             public void onQueryChanged() {
                 SearchActivity.this.updateSuggestionsBuffered();
@@ -78,12 +112,18 @@ public class SearchActivity extends Activity {
         });
         this.mSearchActivityView.setSuggestionClickListener(new ClickHandler());
         this.mSearchActivityView.setVoiceSearchButtonClickListener(new View.OnClickListener() { // from class: com.android.quicksearchbox.SearchActivity.5
+            AnonymousClass5() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 SearchActivity.this.onVoiceSearchClicked();
             }
         });
         this.mSearchActivityView.setExitClickListener(new View.OnClickListener() { // from class: com.android.quicksearchbox.SearchActivity.6
+            AnonymousClass6() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 SearchActivity.this.finish();
@@ -93,6 +133,50 @@ public class SearchActivity extends Activity {
         restoreInstanceState(bundle);
         this.mSearchActivityView.start();
         recordOnCreateDone();
+    }
+
+    /* renamed from: com.android.quicksearchbox.SearchActivity$3 */
+    class AnonymousClass3 implements SearchActivityView.SearchClickListener {
+        AnonymousClass3() {
+        }
+
+        @Override // com.android.quicksearchbox.ui.SearchActivityView.SearchClickListener
+        public boolean onSearchClicked(int i) {
+            return SearchActivity.this.onSearchClicked(i);
+        }
+    }
+
+    /* renamed from: com.android.quicksearchbox.SearchActivity$4 */
+    class AnonymousClass4 implements SearchActivityView.QueryListener {
+        AnonymousClass4() {
+        }
+
+        @Override // com.android.quicksearchbox.ui.SearchActivityView.QueryListener
+        public void onQueryChanged() {
+            SearchActivity.this.updateSuggestionsBuffered();
+        }
+    }
+
+    /* renamed from: com.android.quicksearchbox.SearchActivity$5 */
+    class AnonymousClass5 implements View.OnClickListener {
+        AnonymousClass5() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            SearchActivity.this.onVoiceSearchClicked();
+        }
+    }
+
+    /* renamed from: com.android.quicksearchbox.SearchActivity$6 */
+    class AnonymousClass6 implements View.OnClickListener {
+        AnonymousClass6() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            SearchActivity.this.finish();
+        }
     }
 
     protected SearchActivityView setupContentView() {
@@ -234,13 +318,13 @@ public class SearchActivity extends Activity {
     }
 
     protected boolean onSearchClicked(int i) {
-        String trimAndCollapseFrom = CharMatcher.WHITESPACE.trimAndCollapseFrom(getQuery(), ' ');
-        if (TextUtils.getTrimmedLength(trimAndCollapseFrom) == 0) {
+        String strTrimAndCollapseFrom = CharMatcher.WHITESPACE.trimAndCollapseFrom(getQuery(), ' ');
+        if (TextUtils.getTrimmedLength(strTrimAndCollapseFrom) == 0) {
             return false;
         }
         this.mTookAction = true;
-        getLogger().logSearch(i, trimAndCollapseFrom.length());
-        startSearch(this.mSource, trimAndCollapseFrom);
+        getLogger().logSearch(i, strTrimAndCollapseFrom.length());
+        startSearch(this.mSource, strTrimAndCollapseFrom);
         return true;
     }
 
@@ -292,8 +376,7 @@ public class SearchActivity extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean launchSuggestion(SuggestionsAdapter<?> suggestionsAdapter, long j) {
+    private boolean launchSuggestion(SuggestionsAdapter<?> suggestionsAdapter, long j) {
         SuggestionPosition currentSuggestions = getCurrentSuggestions(suggestionsAdapter, j);
         if (currentSuggestions == null) {
             return false;
@@ -324,8 +407,7 @@ public class SearchActivity extends Activity {
         this.mSearchActivityView.focusQueryTextView();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSuggestionsBuffered() {
+    private void updateSuggestionsBuffered() {
         this.mHandler.removeCallbacks(this.mUpdateSuggestionsTask);
         this.mHandler.postDelayed(this.mUpdateSuggestionsTask, getConfig().getTypingUpdateSuggestionsDelayMillis());
     }
@@ -353,9 +435,12 @@ public class SearchActivity extends Activity {
         this.mSearchActivityView.setSuggestions(suggestions);
     }
 
-    /* loaded from: classes.dex */
     private class ClickHandler implements SuggestionClickListener {
         private ClickHandler() {
+        }
+
+        /* synthetic */ ClickHandler(SearchActivity searchActivity, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // com.android.quicksearchbox.ui.SuggestionClickListener

@@ -1,5 +1,6 @@
 package com.android.systemui.power;
 
+import android.R;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -25,7 +26,6 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.logging.MetricsLogger;
 import com.android.settingslib.utils.ThreadUtils;
 import com.android.systemui.Dependency;
-import com.android.systemui.R;
 import com.android.systemui.SystemUI;
 import com.android.systemui.power.PowerUI;
 import com.android.systemui.statusbar.phone.StatusBar;
@@ -33,6 +33,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class PowerUI extends SystemUI {
     static final boolean DEBUG = Log.isLoggable("PowerUI", 3);
@@ -49,6 +50,7 @@ public class PowerUI extends SystemUI {
     private float mThresholdTemp;
     private WarningsUI mWarnings;
     private final Handler mHandler = new Handler();
+
     @VisibleForTesting
     final Receiver mReceiver = new Receiver();
     private final Configuration mLastConfiguration = new Configuration();
@@ -58,18 +60,19 @@ public class PowerUI extends SystemUI {
     private final int[] mLowBatteryReminderLevels = new int[2];
     private long mScreenOffTime = -1;
     private float[] mRecentTemps = new float[125];
+
     @VisibleForTesting
     int mBatteryLevel = 100;
+
     @VisibleForTesting
     int mBatteryStatus = 1;
     private final Runnable mUpdateTempCallback = new Runnable() { // from class: com.android.systemui.power.-$$Lambda$Xy1vzUdmCVpH_1hTsQ2L8yUibUw
         @Override // java.lang.Runnable
         public final void run() {
-            PowerUI.this.updateTemperatureWarning();
+            this.f$0.updateTemperatureWarning();
         }
     };
 
-    /* loaded from: classes.dex */
     public interface WarningsUI {
         void dismissHighTemperatureWarning();
 
@@ -101,7 +104,7 @@ public class PowerUI extends SystemUI {
     }
 
     @Override // com.android.systemui.SystemUI
-    public void start() {
+    public void start() throws Resources.NotFoundException {
         this.mPowerManager = (PowerManager) this.mContext.getSystemService("power");
         this.mHardwarePropertiesManager = (HardwarePropertiesManager) this.mContext.getSystemService("hardware_properties");
         this.mScreenOffTime = this.mPowerManager.isScreenOn() ? -1L : SystemClock.elapsedRealtime();
@@ -110,7 +113,7 @@ public class PowerUI extends SystemUI {
         this.mLastConfiguration.setTo(this.mContext.getResources().getConfiguration());
         this.mContext.getContentResolver().registerContentObserver(Settings.Global.getUriFor("low_power_trigger_level"), false, new ContentObserver(this.mHandler) { // from class: com.android.systemui.power.PowerUI.1
             @Override // android.database.ContentObserver
-            public void onChange(boolean z) {
+            public void onChange(boolean z) throws Resources.NotFoundException {
                 PowerUI.this.updateBatteryWarningLevels();
             }
         }, -1);
@@ -120,32 +123,30 @@ public class PowerUI extends SystemUI {
         initTemperatureWarning();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.SystemUI
-    public void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) {
         if ((this.mLastConfiguration.updateFrom(configuration) & 3) != 0) {
             this.mHandler.post(new Runnable() { // from class: com.android.systemui.power.-$$Lambda$PowerUI$UShUnCLjyLd54pAqMZk3QJ-gMNs
                 @Override // java.lang.Runnable
                 public final void run() {
-                    PowerUI.this.initTemperatureWarning();
+                    this.f$0.initTemperatureWarning();
                 }
             });
         }
     }
 
-    void updateBatteryWarningLevels() {
-        int integer = this.mContext.getResources().getInteger(17694757);
-        int integer2 = this.mContext.getResources().getInteger(17694805);
+    void updateBatteryWarningLevels() throws Resources.NotFoundException {
+        int integer = this.mContext.getResources().getInteger(R.integer.config_batterySaver_full_locationMode);
+        int integer2 = this.mContext.getResources().getInteger(R.integer.config_defaultNotificationLedOff);
         if (integer2 < integer) {
             integer2 = integer;
         }
         this.mLowBatteryReminderLevels[0] = integer2;
         this.mLowBatteryReminderLevels[1] = integer;
-        this.mLowBatteryAlertCloseLevel = this.mLowBatteryReminderLevels[0] + this.mContext.getResources().getInteger(17694804);
+        this.mLowBatteryAlertCloseLevel = this.mLowBatteryReminderLevels[0] + this.mContext.getResources().getInteger(R.integer.config_defaultNightMode);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int findBatteryLevelBucket(int i) {
+    private int findBatteryLevelBucket(int i) {
         if (i >= this.mLowBatteryAlertCloseLevel) {
             return 1;
         }
@@ -160,10 +161,8 @@ public class PowerUI extends SystemUI {
         throw new RuntimeException("not possible!");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    /* loaded from: classes.dex */
-    public final class Receiver extends BroadcastReceiver {
+    final class Receiver extends BroadcastReceiver {
         Receiver() {
         }
 
@@ -184,66 +183,72 @@ public class PowerUI extends SystemUI {
                 ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.systemui.power.-$$Lambda$PowerUI$Receiver$r1RcZjs8DVXWaC4Afqm8W0WAvm8
                     @Override // java.lang.Runnable
                     public final void run() {
-                        PowerUI.Receiver.lambda$onReceive$0(PowerUI.Receiver.this);
+                        PowerUI.Receiver.lambda$onReceive$0(this.f$0);
                     }
                 });
-            } else if (!"android.intent.action.BATTERY_CHANGED".equals(action)) {
+                return;
+            }
+            if (!"android.intent.action.BATTERY_CHANGED".equals(action)) {
                 if ("android.intent.action.SCREEN_OFF".equals(action)) {
                     PowerUI.this.mScreenOffTime = SystemClock.elapsedRealtime();
-                } else if ("android.intent.action.SCREEN_ON".equals(action)) {
-                    PowerUI.this.mScreenOffTime = -1L;
-                } else if ("android.intent.action.USER_SWITCHED".equals(action)) {
-                    PowerUI.this.mWarnings.userSwitched();
-                } else {
-                    Slog.w("PowerUI", "unknown intent: " + intent);
-                }
-            } else {
-                int i = PowerUI.this.mBatteryLevel;
-                PowerUI.this.mBatteryLevel = intent.getIntExtra("level", 100);
-                int i2 = PowerUI.this.mBatteryStatus;
-                PowerUI.this.mBatteryStatus = intent.getIntExtra("status", 1);
-                int i3 = PowerUI.this.mPlugType;
-                PowerUI.this.mPlugType = intent.getIntExtra("plugged", 1);
-                int i4 = PowerUI.this.mInvalidCharger;
-                PowerUI.this.mInvalidCharger = intent.getIntExtra("invalid_charger", 0);
-                final boolean z = PowerUI.this.mPlugType != 0;
-                final boolean z2 = i3 != 0;
-                final int findBatteryLevelBucket = PowerUI.this.findBatteryLevelBucket(i);
-                final int findBatteryLevelBucket2 = PowerUI.this.findBatteryLevelBucket(PowerUI.this.mBatteryLevel);
-                if (PowerUI.DEBUG) {
-                    Slog.d("PowerUI", "buckets   ....." + PowerUI.this.mLowBatteryAlertCloseLevel + " .. " + PowerUI.this.mLowBatteryReminderLevels[0] + " .. " + PowerUI.this.mLowBatteryReminderLevels[1]);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("level          ");
-                    sb.append(i);
-                    sb.append(" --> ");
-                    sb.append(PowerUI.this.mBatteryLevel);
-                    Slog.d("PowerUI", sb.toString());
-                    Slog.d("PowerUI", "status         " + i2 + " --> " + PowerUI.this.mBatteryStatus);
-                    Slog.d("PowerUI", "plugType       " + i3 + " --> " + PowerUI.this.mPlugType);
-                    Slog.d("PowerUI", "invalidCharger " + i4 + " --> " + PowerUI.this.mInvalidCharger);
-                    Slog.d("PowerUI", "bucket         " + findBatteryLevelBucket + " --> " + findBatteryLevelBucket2);
-                    Slog.d("PowerUI", "plugged        " + z2 + " --> " + z);
-                }
-                PowerUI.this.mWarnings.update(PowerUI.this.mBatteryLevel, findBatteryLevelBucket2, PowerUI.this.mScreenOffTime);
-                if (i4 == 0 && PowerUI.this.mInvalidCharger != 0) {
-                    Slog.d("PowerUI", "showing invalid charger warning");
-                    PowerUI.this.mWarnings.showInvalidChargerWarning();
                     return;
                 }
-                if (i4 == 0 || PowerUI.this.mInvalidCharger != 0) {
-                    if (PowerUI.this.mWarnings.isInvalidChargerWarningShowing()) {
-                        return;
-                    }
-                } else {
-                    PowerUI.this.mWarnings.dismissInvalidChargerWarning();
+                if ("android.intent.action.SCREEN_ON".equals(action)) {
+                    PowerUI.this.mScreenOffTime = -1L;
+                    return;
                 }
-                ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.systemui.power.-$$Lambda$PowerUI$Receiver$XpoeE7Ggw3F6pRcjNXG1tX721LM
-                    @Override // java.lang.Runnable
-                    public final void run() {
-                        PowerUI.this.maybeShowBatteryWarning(z, z2, findBatteryLevelBucket, findBatteryLevelBucket2);
-                    }
-                });
+                if ("android.intent.action.USER_SWITCHED".equals(action)) {
+                    PowerUI.this.mWarnings.userSwitched();
+                    return;
+                }
+                Slog.w("PowerUI", "unknown intent: " + intent);
+                return;
             }
+            int i = PowerUI.this.mBatteryLevel;
+            PowerUI.this.mBatteryLevel = intent.getIntExtra("level", 100);
+            int i2 = PowerUI.this.mBatteryStatus;
+            PowerUI.this.mBatteryStatus = intent.getIntExtra("status", 1);
+            int i3 = PowerUI.this.mPlugType;
+            PowerUI.this.mPlugType = intent.getIntExtra("plugged", 1);
+            int i4 = PowerUI.this.mInvalidCharger;
+            PowerUI.this.mInvalidCharger = intent.getIntExtra("invalid_charger", 0);
+            final boolean z = PowerUI.this.mPlugType != 0;
+            final boolean z2 = i3 != 0;
+            final int iFindBatteryLevelBucket = PowerUI.this.findBatteryLevelBucket(i);
+            final int iFindBatteryLevelBucket2 = PowerUI.this.findBatteryLevelBucket(PowerUI.this.mBatteryLevel);
+            if (PowerUI.DEBUG) {
+                Slog.d("PowerUI", "buckets   ....." + PowerUI.this.mLowBatteryAlertCloseLevel + " .. " + PowerUI.this.mLowBatteryReminderLevels[0] + " .. " + PowerUI.this.mLowBatteryReminderLevels[1]);
+                StringBuilder sb = new StringBuilder();
+                sb.append("level          ");
+                sb.append(i);
+                sb.append(" --> ");
+                sb.append(PowerUI.this.mBatteryLevel);
+                Slog.d("PowerUI", sb.toString());
+                Slog.d("PowerUI", "status         " + i2 + " --> " + PowerUI.this.mBatteryStatus);
+                Slog.d("PowerUI", "plugType       " + i3 + " --> " + PowerUI.this.mPlugType);
+                Slog.d("PowerUI", "invalidCharger " + i4 + " --> " + PowerUI.this.mInvalidCharger);
+                Slog.d("PowerUI", "bucket         " + iFindBatteryLevelBucket + " --> " + iFindBatteryLevelBucket2);
+                Slog.d("PowerUI", "plugged        " + z2 + " --> " + z);
+            }
+            PowerUI.this.mWarnings.update(PowerUI.this.mBatteryLevel, iFindBatteryLevelBucket2, PowerUI.this.mScreenOffTime);
+            if (i4 == 0 && PowerUI.this.mInvalidCharger != 0) {
+                Slog.d("PowerUI", "showing invalid charger warning");
+                PowerUI.this.mWarnings.showInvalidChargerWarning();
+                return;
+            }
+            if (i4 == 0 || PowerUI.this.mInvalidCharger != 0) {
+                if (PowerUI.this.mWarnings.isInvalidChargerWarningShowing()) {
+                    return;
+                }
+            } else {
+                PowerUI.this.mWarnings.dismissInvalidChargerWarning();
+            }
+            ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.systemui.power.-$$Lambda$PowerUI$Receiver$XpoeE7Ggw3F6pRcjNXG1tX721LM
+                @Override // java.lang.Runnable
+                public final void run() {
+                    PowerUI.this.maybeShowBatteryWarning(z, z2, iFindBatteryLevelBucket, iFindBatteryLevelBucket2);
+                }
+            });
         }
 
         public static /* synthetic */ void lambda$onReceive$0(Receiver receiver) {
@@ -253,13 +258,12 @@ public class PowerUI extends SystemUI {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void maybeShowBatteryWarning(boolean z, boolean z2, int i, int i2) {
+    protected void maybeShowBatteryWarning(boolean z, boolean z2, int i, int i2) {
         Estimate estimate;
-        boolean isPowerSaveMode = this.mPowerManager.isPowerSaveMode();
+        boolean zIsPowerSaveMode = this.mPowerManager.isPowerSaveMode();
         boolean z3 = i2 != i || z2;
-        boolean isHybridNotificationEnabled = this.mEnhancedEstimates.isHybridNotificationEnabled();
-        if (isHybridNotificationEnabled && (estimate = this.mEnhancedEstimates.getEstimate()) != null) {
+        boolean zIsHybridNotificationEnabled = this.mEnhancedEstimates.isHybridNotificationEnabled();
+        if (zIsHybridNotificationEnabled && (estimate = this.mEnhancedEstimates.getEstimate()) != null) {
             this.mTimeRemaining = estimate.estimateMillis;
             this.mWarnings.updateEstimate(estimate);
             this.mWarnings.updateThresholds(this.mEnhancedEstimates.getLowWarningThreshold(), this.mEnhancedEstimates.getSevereWarningThreshold());
@@ -268,16 +272,20 @@ public class PowerUI extends SystemUI {
                 this.mSevereWarningShownThisChargeCycle = false;
             }
         }
-        if (shouldShowLowBatteryWarning(z, z2, i, i2, this.mTimeRemaining, isPowerSaveMode, this.mBatteryStatus)) {
+        if (shouldShowLowBatteryWarning(z, z2, i, i2, this.mTimeRemaining, zIsPowerSaveMode, this.mBatteryStatus)) {
             this.mWarnings.showLowBatteryWarning(z3);
-            if (isHybridNotificationEnabled) {
+            if (zIsHybridNotificationEnabled) {
                 if (this.mTimeRemaining < this.mEnhancedEstimates.getSevereWarningThreshold() || this.mBatteryLevel < this.mLowBatteryReminderLevels[1]) {
                     this.mSevereWarningShownThisChargeCycle = true;
+                    return;
                 } else {
                     this.mLowWarningShownThisChargeCycle = true;
+                    return;
                 }
             }
-        } else if (shouldDismissLowBatteryWarning(z, i, i2, this.mTimeRemaining, isPowerSaveMode)) {
+            return;
+        }
+        if (shouldDismissLowBatteryWarning(z, i, i2, this.mTimeRemaining, zIsPowerSaveMode)) {
             this.mWarnings.dismissLowBatteryWarning();
         } else {
             this.mWarnings.updateLowBatteryWarning();
@@ -314,20 +322,19 @@ public class PowerUI extends SystemUI {
         return (!this.mLowWarningShownThisChargeCycle && ((j > this.mEnhancedEstimates.getLowWarningThreshold() ? 1 : (j == this.mEnhancedEstimates.getLowWarningThreshold() ? 0 : -1)) < 0 || this.mBatteryLevel <= this.mLowBatteryReminderLevels[0])) || (!this.mSevereWarningShownThisChargeCycle && ((j > this.mEnhancedEstimates.getSevereWarningThreshold() ? 1 : (j == this.mEnhancedEstimates.getSevereWarningThreshold() ? 0 : -1)) < 0 || this.mBatteryLevel <= this.mLowBatteryReminderLevels[1]));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void initTemperatureWarning() {
+    private void initTemperatureWarning() {
         ContentResolver contentResolver = this.mContext.getContentResolver();
-        Resources resources = this.mContext.getResources();
-        if (Settings.Global.getInt(contentResolver, "show_temperature_warning", resources.getInteger(R.integer.config_showTemperatureWarning)) == 0) {
+        if (Settings.Global.getInt(contentResolver, "show_temperature_warning", this.mContext.getResources().getInteger(com.android.systemui.R.integer.config_showTemperatureWarning)) == 0) {
             return;
         }
-        this.mThresholdTemp = Settings.Global.getFloat(contentResolver, "warning_temperature", resources.getInteger(R.integer.config_warningTemperature));
+        this.mThresholdTemp = Settings.Global.getFloat(contentResolver, "warning_temperature", r1.getInteger(com.android.systemui.R.integer.config_warningTemperature));
         if (this.mThresholdTemp < 0.0f) {
             float[] deviceTemperatures = this.mHardwarePropertiesManager.getDeviceTemperatures(3, 2);
             if (deviceTemperatures == null || deviceTemperatures.length == 0 || deviceTemperatures[0] == -3.4028235E38f) {
                 return;
+            } else {
+                this.mThresholdTemp = deviceTemperatures[0] - r1.getInteger(com.android.systemui.R.integer.config_warningTemperatureTolerance);
             }
-            this.mThresholdTemp = deviceTemperatures[0] - resources.getInteger(R.integer.config_warningTemperatureTolerance);
         }
         if (this.mThermalService == null) {
             IBinder service = ServiceManager.getService("thermalservice");
@@ -352,9 +359,8 @@ public class PowerUI extends SystemUI {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @VisibleForTesting
-    public void updateTemperatureWarning() {
+    protected void updateTemperatureWarning() {
         float[] deviceTemperatures = this.mHardwarePropertiesManager.getDeviceTemperatures(3, 0);
         if (deviceTemperatures.length != 0) {
             float f = deviceTemperatures[0];
@@ -455,9 +461,7 @@ public class PowerUI extends SystemUI {
         this.mWarnings.dump(printWriter);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class ThermalEventListener extends IThermalEventListener.Stub {
+    private final class ThermalEventListener extends IThermalEventListener.Stub {
         private ThermalEventListener() {
         }
 

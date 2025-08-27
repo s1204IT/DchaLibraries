@@ -20,6 +20,7 @@ import com.android.settings.fingerprint.SetupFingerprintEnrollFindSensor;
 import com.android.settings.password.ChooseLockGeneric;
 import com.android.settings.utils.SettingsDividerItemDecoration;
 import com.android.setupwizardlib.GlifPreferenceLayout;
+
 /* loaded from: classes.dex */
 public class SetupChooseLockGeneric extends ChooseLockGeneric {
     @Override // com.android.settings.password.ChooseLockGeneric, com.android.settings.SettingsActivity
@@ -37,14 +38,12 @@ public class SetupChooseLockGeneric extends ChooseLockGeneric {
         super.onApplyThemeResource(theme, SetupWizardUtils.getTheme(getIntent()), z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity, com.android.settingslib.drawer.SettingsDrawerActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         ((LinearLayout) findViewById(R.id.content_parent)).setFitsSystemWindows(false);
     }
 
-    /* loaded from: classes.dex */
     public static class SetupChooseLockGenericFragment extends ChooseLockGeneric.ChooseLockGenericFragment {
         @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
         public void onViewCreated(View view, Bundle bundle) {
@@ -114,28 +113,28 @@ public class SetupChooseLockGeneric extends ChooseLockGeneric {
 
         @Override // com.android.settings.password.ChooseLockGeneric.ChooseLockGenericFragment
         protected Intent getLockPasswordIntent(int i, int i2, int i3) {
-            Intent modifyIntentForSetup = SetupChooseLockPassword.modifyIntentForSetup(getContext(), super.getLockPasswordIntent(i, i2, i3));
-            SetupWizardUtils.copySetupExtras(getActivity().getIntent(), modifyIntentForSetup);
-            return modifyIntentForSetup;
+            Intent intentModifyIntentForSetup = SetupChooseLockPassword.modifyIntentForSetup(getContext(), super.getLockPasswordIntent(i, i2, i3));
+            SetupWizardUtils.copySetupExtras(getActivity().getIntent(), intentModifyIntentForSetup);
+            return intentModifyIntentForSetup;
         }
 
         @Override // com.android.settings.password.ChooseLockGeneric.ChooseLockGenericFragment
         protected Intent getLockPatternIntent() {
-            Intent modifyIntentForSetup = SetupChooseLockPattern.modifyIntentForSetup(getContext(), super.getLockPatternIntent());
-            SetupWizardUtils.copySetupExtras(getActivity().getIntent(), modifyIntentForSetup);
-            return modifyIntentForSetup;
+            Intent intentModifyIntentForSetup = SetupChooseLockPattern.modifyIntentForSetup(getContext(), super.getLockPatternIntent());
+            SetupWizardUtils.copySetupExtras(getActivity().getIntent(), intentModifyIntentForSetup);
+            return intentModifyIntentForSetup;
         }
 
         @Override // com.android.settings.password.ChooseLockGeneric.ChooseLockGenericFragment
         protected Intent getEncryptionInterstitialIntent(Context context, int i, boolean z, Intent intent) {
-            Intent createStartIntent = SetupEncryptionInterstitial.createStartIntent(context, i, z, intent);
-            SetupWizardUtils.copySetupExtras(getActivity().getIntent(), createStartIntent);
-            return createStartIntent;
+            Intent intentCreateStartIntent = SetupEncryptionInterstitial.createStartIntent(context, i, z, intent);
+            SetupWizardUtils.copySetupExtras(getActivity().getIntent(), intentCreateStartIntent);
+            return intentCreateStartIntent;
         }
 
         @Override // com.android.settings.password.ChooseLockGeneric.ChooseLockGenericFragment
         protected Intent getFindSensorIntent(Context context) {
-            Intent intent = new Intent(context, SetupFingerprintEnrollFindSensor.class);
+            Intent intent = new Intent(context, (Class<?>) SetupFingerprintEnrollFindSensor.class);
             SetupWizardUtils.copySetupExtras(getActivity().getIntent(), intent);
             return intent;
         }

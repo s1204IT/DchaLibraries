@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.android.setupwizardlib.template.ListMixin;
 import com.android.setupwizardlib.template.ListViewScrollHandlingDelegate;
 import com.android.setupwizardlib.template.RequireScrollMixin;
+
 /* loaded from: classes.dex */
 public class SetupWizardListLayout extends SetupWizardLayout {
     private ListMixin mListMixin;
@@ -43,20 +44,18 @@ public class SetupWizardListLayout extends SetupWizardLayout {
         requireScrollMixin.setScrollHandlingDelegate(new ListViewScrollHandlingDelegate(requireScrollMixin, getListView()));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.SetupWizardLayout, com.android.setupwizardlib.TemplateLayout
-    public View onInflateTemplate(LayoutInflater layoutInflater, int i) {
+    protected View onInflateTemplate(LayoutInflater layoutInflater, int i) {
         if (i == 0) {
             i = R.layout.suw_list_template;
         }
         return super.onInflateTemplate(layoutInflater, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.SetupWizardLayout, com.android.setupwizardlib.TemplateLayout
-    public ViewGroup findContainer(int i) {
+    protected ViewGroup findContainer(int i) {
         if (i == 0) {
-            i = 16908298;
+            i = android.R.id.list;
         }
         return super.findContainer(i);
     }

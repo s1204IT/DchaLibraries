@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class WifiDetailPreference extends Preference {
     private String mDetailText;

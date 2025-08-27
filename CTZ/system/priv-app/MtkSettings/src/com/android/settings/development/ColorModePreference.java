@@ -11,6 +11,7 @@ import android.view.Display;
 import com.android.settings.R;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ColorModePreference extends SwitchPreference implements DisplayManager.DisplayListener {
     private int mCurrentIndex;
@@ -18,7 +19,7 @@ public class ColorModePreference extends SwitchPreference implements DisplayMana
     private Display mDisplay;
     private DisplayManager mDisplayManager;
 
-    public static List<ColorModeDescription> getColorModeDescriptions(Context context) {
+    public static List<ColorModeDescription> getColorModeDescriptions(Context context) throws Resources.NotFoundException {
         ArrayList arrayList = new ArrayList();
         Resources resources = context.getResources();
         int[] intArray = resources.getIntArray(R.array.color_mode_ids);
@@ -76,7 +77,8 @@ public class ColorModePreference extends SwitchPreference implements DisplayMana
         while (true) {
             if (i >= this.mDescriptions.size()) {
                 break;
-            } else if (this.mDescriptions.get(i).colorMode != colorMode) {
+            }
+            if (this.mDescriptions.get(i).colorMode != colorMode) {
                 i++;
             } else {
                 this.mCurrentIndex = i;
@@ -86,9 +88,8 @@ public class ColorModePreference extends SwitchPreference implements DisplayMana
         setChecked(this.mCurrentIndex == 1);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public boolean persistBoolean(boolean z) {
+    protected boolean persistBoolean(boolean z) {
         if (this.mDescriptions.size() == 2) {
             ColorModeDescription colorModeDescription = this.mDescriptions.get(z ? 1 : 0);
             this.mDisplay.requestColorMode(colorModeDescription.colorMode);
@@ -98,9 +99,7 @@ public class ColorModePreference extends SwitchPreference implements DisplayMana
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ColorModeDescription {
+    private static class ColorModeDescription {
         private int colorMode;
         private String summary;
         private String title;

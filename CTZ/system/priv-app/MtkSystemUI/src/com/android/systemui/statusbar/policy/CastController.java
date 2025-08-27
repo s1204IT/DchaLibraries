@@ -2,15 +2,14 @@ package com.android.systemui.statusbar.policy;
 
 import com.android.systemui.Dumpable;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public interface CastController extends Dumpable, CallbackController<Callback> {
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onCastDevicesChanged();
     }
 
-    /* loaded from: classes.dex */
     public static final class CastDevice {
         public String description;
         public String id;

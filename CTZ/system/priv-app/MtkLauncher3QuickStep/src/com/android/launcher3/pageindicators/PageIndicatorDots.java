@@ -18,6 +18,7 @@ import android.view.animation.OvershootInterpolator;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class PageIndicatorDots extends View implements PageIndicator {
     private static final long ANIMATION_DURATION = 150;
@@ -40,11 +41,13 @@ public class PageIndicatorDots extends View implements PageIndicator {
     private int mNumPages;
     private static final RectF sTempRect = new RectF();
     private static final Property<PageIndicatorDots, Float> CURRENT_POSITION = new Property<PageIndicatorDots, Float>(Float.TYPE, "current_position") { // from class: com.android.launcher3.pageindicators.PageIndicatorDots.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(PageIndicatorDots pageIndicatorDots) {
             return Float.valueOf(pageIndicatorDots.mCurrentPosition);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(PageIndicatorDots pageIndicatorDots, Float f) {
             pageIndicatorDots.mCurrentPosition = f.floatValue();
@@ -68,7 +71,7 @@ public class PageIndicatorDots extends View implements PageIndicator {
         this.mDotRadius = getResources().getDimension(R.dimen.page_indicator_dot_size) / 2.0f;
         setOutlineProvider(new MyOutlineProver());
         this.mActiveColor = Themes.getColorAccent(context);
-        this.mInActiveColor = Themes.getAttrColor(context, 16843820);
+        this.mInActiveColor = Themes.getAttrColor(context, android.R.attr.colorControlHighlight);
         this.mIsRtl = Utilities.isRtl(getResources());
     }
 
@@ -94,8 +97,7 @@ public class PageIndicatorDots extends View implements PageIndicator {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void animateToPosition(float f) {
+    private void animateToPosition(float f) {
         this.mFinalPosition = f;
         if (Math.abs(this.mCurrentPosition - this.mFinalPosition) < 0.1f) {
             this.mCurrentPosition = this.mFinalPosition;
@@ -202,30 +204,30 @@ public class PageIndicatorDots extends View implements PageIndicator {
         canvas.drawRoundRect(getActiveRect(), this.mDotRadius, this.mDotRadius, this.mCirclePaint);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public RectF getActiveRect() {
+    private RectF getActiveRect() {
         float f = (int) this.mCurrentPosition;
         float f2 = this.mCurrentPosition - f;
-        float f3 = 3.0f * this.mDotRadius;
+        float f3 = this.mDotRadius * 2.0f;
+        float f4 = 3.0f * this.mDotRadius;
+        float width = ((getWidth() - (this.mNumPages * f4)) + this.mDotRadius) / 2.0f;
         sTempRect.top = (getHeight() * 0.5f) - this.mDotRadius;
         sTempRect.bottom = (getHeight() * 0.5f) + this.mDotRadius;
-        sTempRect.left = (((getWidth() - (this.mNumPages * f3)) + this.mDotRadius) / 2.0f) + (f * f3);
-        sTempRect.right = sTempRect.left + (this.mDotRadius * 2.0f);
+        sTempRect.left = width + (f * f4);
+        sTempRect.right = sTempRect.left + f3;
         if (f2 < 0.5f) {
-            sTempRect.right += f2 * f3 * 2.0f;
+            sTempRect.right += f2 * f4 * 2.0f;
         } else {
-            sTempRect.right += f3;
-            sTempRect.left += (f2 - 0.5f) * f3 * 2.0f;
+            sTempRect.right += f4;
+            sTempRect.left += (f2 - 0.5f) * f4 * 2.0f;
         }
         if (this.mIsRtl) {
-            float width = sTempRect.width();
+            float fWidth = sTempRect.width();
             sTempRect.right = getWidth() - sTempRect.left;
-            sTempRect.left = sTempRect.right - width;
+            sTempRect.left = sTempRect.right - fWidth;
         }
         return sTempRect;
     }
 
-    /* loaded from: classes.dex */
     private class MyOutlineProver extends ViewOutlineProvider {
         private MyOutlineProver() {
         }
@@ -239,9 +241,7 @@ public class PageIndicatorDots extends View implements PageIndicator {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AnimationCycleListener extends AnimatorListenerAdapter {
+    private class AnimationCycleListener extends AnimatorListenerAdapter {
         private boolean mCancelled;
 
         private AnimationCycleListener() {

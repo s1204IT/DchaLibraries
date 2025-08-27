@@ -23,6 +23,7 @@ import com.android.launcher3.util.TouchController;
 import com.android.launcher3.util.UiThreadHelper;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class DragController implements DragDriver.EventListener, TouchController {
     private static final boolean PROFILE_DRAWING_DURING_DRAG = false;
@@ -47,7 +48,6 @@ public class DragController implements DragDriver.EventListener, TouchController
     private int[] mTmpPoint = new int[2];
     private Rect mDragLayerRect = new Rect();
 
-    /* loaded from: classes.dex */
     public interface DragListener {
         void onDragEnd();
 
@@ -196,8 +196,37 @@ public class DragController implements DragDriver.EventListener, TouchController
         this.mFlingToDeleteHelper.releaseVelocityTracker();
     }
 
-    public void animateDragViewToOriginalPosition(final Runnable runnable, final View view, int i) {
+    /* renamed from: com.android.launcher3.dragndrop.DragController$1 */
+    class AnonymousClass1 implements Runnable {
+        final /* synthetic */ Runnable val$onComplete;
+        final /* synthetic */ View val$originalIcon;
+
+        AnonymousClass1(View view, Runnable runnable) {
+            view = view;
+            runnable = runnable;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (view != null) {
+                view.setVisibility(0);
+            }
+            if (runnable != null) {
+                runnable.run();
+            }
+        }
+    }
+
+    public void animateDragViewToOriginalPosition(Runnable runnable, View view, int i) {
         this.mDragObject.dragView.animateTo(this.mMotionDownX, this.mMotionDownY, new Runnable() { // from class: com.android.launcher3.dragndrop.DragController.1
+            final /* synthetic */ Runnable val$onComplete;
+            final /* synthetic */ View val$originalIcon;
+
+            AnonymousClass1(View view2, Runnable runnable2) {
+                view = view2;
+                runnable = runnable2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 if (view != null) {
@@ -222,8 +251,7 @@ public class DragController implements DragDriver.EventListener, TouchController
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onDeferredEndDrag(DragView dragView) {
+    void onDeferredEndDrag(DragView dragView) {
         dragView.remove();
         if (this.mDragObject.deferDragViewCleanupPostAnimation) {
             callOnDragEnd();
@@ -264,14 +292,14 @@ public class DragController implements DragDriver.EventListener, TouchController
 
     @Override // com.android.launcher3.dragndrop.DragDriver.EventListener
     public void onDriverDragEnd(float f, float f2) {
-        DropTarget findDropTarget;
+        DropTarget dropTargetFindDropTarget;
         Runnable flingAnimation = this.mFlingToDeleteHelper.getFlingAnimation(this.mDragObject);
         if (flingAnimation != null) {
-            findDropTarget = this.mFlingToDeleteHelper.getDropTarget();
+            dropTargetFindDropTarget = this.mFlingToDeleteHelper.getDropTarget();
         } else {
-            findDropTarget = findDropTarget((int) f, (int) f2, this.mCoordinatesTemp);
+            dropTargetFindDropTarget = findDropTarget((int) f, (int) f2, this.mCoordinatesTemp);
         }
-        drop(findDropTarget, flingAnimation);
+        drop(dropTargetFindDropTarget, flingAnimation);
         endDrag();
     }
 
@@ -282,24 +310,24 @@ public class DragController implements DragDriver.EventListener, TouchController
 
     @Override // com.android.launcher3.util.TouchController
     public boolean onControllerInterceptTouchEvent(MotionEvent motionEvent) {
-        if (this.mOptions == null || !this.mOptions.isAccessibleDrag) {
-            this.mFlingToDeleteHelper.recordMotionEvent(motionEvent);
-            int action = motionEvent.getAction();
-            int[] clampedDragLayerPos = getClampedDragLayerPos(motionEvent.getX(), motionEvent.getY());
-            int i = clampedDragLayerPos[0];
-            int i2 = clampedDragLayerPos[1];
-            switch (action) {
-                case 0:
-                    this.mMotionDownX = i;
-                    this.mMotionDownY = i2;
-                    break;
-                case 1:
-                    this.mLastTouchUpTime = System.currentTimeMillis();
-                    break;
-            }
-            return this.mDragDriver != null && this.mDragDriver.onInterceptTouchEvent(motionEvent);
+        if (this.mOptions != null && this.mOptions.isAccessibleDrag) {
+            return false;
         }
-        return false;
+        this.mFlingToDeleteHelper.recordMotionEvent(motionEvent);
+        int action = motionEvent.getAction();
+        int[] clampedDragLayerPos = getClampedDragLayerPos(motionEvent.getX(), motionEvent.getY());
+        int i = clampedDragLayerPos[0];
+        int i2 = clampedDragLayerPos[1];
+        switch (action) {
+            case 0:
+                this.mMotionDownX = i;
+                this.mMotionDownY = i2;
+                break;
+            case 1:
+                this.mLastTouchUpTime = System.currentTimeMillis();
+                break;
+        }
+        return this.mDragDriver != null && this.mDragDriver.onInterceptTouchEvent(motionEvent);
     }
 
     public boolean onDragEvent(long j, DragEvent dragEvent) {
@@ -324,10 +352,10 @@ public class DragController implements DragDriver.EventListener, TouchController
     private void handleMoveEvent(int i, int i2) {
         this.mDragObject.dragView.move(i, i2);
         int[] iArr = this.mCoordinatesTemp;
-        DropTarget findDropTarget = findDropTarget(i, i2, iArr);
+        DropTarget dropTargetFindDropTarget = findDropTarget(i, i2, iArr);
         this.mDragObject.x = iArr[0];
         this.mDragObject.y = iArr[1];
-        checkTouchMove(findDropTarget);
+        checkTouchMove(dropTargetFindDropTarget);
         this.mDistanceSinceScroll = (int) (this.mDistanceSinceScroll + Math.hypot(this.mLastTouch[0] - i, this.mLastTouch[1] - i2));
         this.mLastTouch[0] = i;
         this.mLastTouch[1] = i2;
@@ -342,10 +370,10 @@ public class DragController implements DragDriver.EventListener, TouchController
 
     public void forceTouchMove() {
         int[] iArr = this.mCoordinatesTemp;
-        DropTarget findDropTarget = findDropTarget(this.mLastTouch[0], this.mLastTouch[1], iArr);
+        DropTarget dropTargetFindDropTarget = findDropTarget(this.mLastTouch[0], this.mLastTouch[1], iArr);
         this.mDragObject.x = iArr[0];
         this.mDragObject.y = iArr[1];
-        checkTouchMove(findDropTarget);
+        checkTouchMove(dropTargetFindDropTarget);
     }
 
     private void checkTouchMove(DropTarget dropTarget) {
@@ -387,15 +415,17 @@ public class DragController implements DragDriver.EventListener, TouchController
 
     public void completeAccessibleDrag(int[] iArr) {
         int[] iArr2 = this.mCoordinatesTemp;
-        DropTarget findDropTarget = findDropTarget(iArr[0], iArr[1], iArr2);
+        DropTarget dropTargetFindDropTarget = findDropTarget(iArr[0], iArr[1], iArr2);
         this.mDragObject.x = iArr2[0];
         this.mDragObject.y = iArr2[1];
-        checkTouchMove(findDropTarget);
-        findDropTarget.prepareAccessibilityDrop();
-        drop(findDropTarget, null);
+        checkTouchMove(dropTargetFindDropTarget);
+        dropTargetFindDropTarget.prepareAccessibilityDrop();
+        drop(dropTargetFindDropTarget, null);
         endDrag();
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r5v0, resolved type: com.android.launcher3.DropTarget */
+    /* JADX WARN: Multi-variable type inference failed */
     private void drop(DropTarget dropTarget, Runnable runnable) {
         int[] iArr = this.mCoordinatesTemp;
         boolean z = false;
@@ -406,19 +436,19 @@ public class DragController implements DragDriver.EventListener, TouchController
                 this.mLastDropTarget.onDragExit(this.mDragObject);
             }
             this.mLastDropTarget = dropTarget;
-            if (dropTarget != null) {
+            if (dropTarget != 0) {
                 dropTarget.onDragEnter(this.mDragObject);
             }
         }
         this.mDragObject.dragComplete = true;
         if (this.mIsInPreDrag) {
-            if (dropTarget != null) {
+            if (dropTarget != 0) {
                 dropTarget.onDragExit(this.mDragObject);
                 return;
             }
             return;
         }
-        if (dropTarget != null) {
+        if (dropTarget != 0) {
             dropTarget.onDragExit(this.mDragObject);
             if (dropTarget.acceptDrop(this.mDragObject)) {
                 if (runnable != null) {
@@ -434,6 +464,8 @@ public class DragController implements DragDriver.EventListener, TouchController
         dispatchDropComplete(view, z);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r5v1, resolved type: com.android.launcher3.DropTarget */
+    /* JADX WARN: Multi-variable type inference failed */
     private DropTarget findDropTarget(int i, int i2, int[] iArr) {
         this.mDragObject.x = i;
         this.mDragObject.y = i2;

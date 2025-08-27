@@ -1,6 +1,7 @@
 package com.mediatek.browser.ext;
 
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserSiteNavigationExt implements IBrowserSiteNavigationExt {
     @Override // com.mediatek.browser.ext.IBrowserSiteNavigationExt

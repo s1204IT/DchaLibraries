@@ -18,6 +18,7 @@ import com.android.settings.Utils;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TreeSet;
+
 /* loaded from: classes.dex */
 public class UserDictionaryList extends SettingsPreferenceFragment {
     private String mLocale;
@@ -61,51 +62,41 @@ public class UserDictionaryList extends SettingsPreferenceFragment {
         this.mLocale = stringExtra;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:17:0x0053  */
-    /* JADX WARN: Removed duplicated region for block: B:27:0x008f  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public static TreeSet<String> getUserDictionaryLocalesSet(Context context) {
-        Cursor query = context.getContentResolver().query(UserDictionary.Words.CONTENT_URI, new String[]{"locale"}, null, null, null);
+        Cursor cursorQuery = context.getContentResolver().query(UserDictionary.Words.CONTENT_URI, new String[]{"locale"}, null, null, null);
         TreeSet<String> treeSet = new TreeSet<>();
-        if (query == null) {
+        if (cursorQuery == null) {
             return treeSet;
         }
         try {
-            if (query.moveToFirst()) {
-                int columnIndex = query.getColumnIndex("locale");
+            if (cursorQuery.moveToFirst()) {
+                int columnIndex = cursorQuery.getColumnIndex("locale");
                 do {
-                    String string = query.getString(columnIndex);
+                    String string = cursorQuery.getString(columnIndex);
                     if (string == null) {
                         string = "";
                     }
                     treeSet.add(string);
-                } while (query.moveToNext());
-                query.close();
-                InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService("input_method");
-                for (InputMethodInfo inputMethodInfo : inputMethodManager.getEnabledInputMethodList()) {
-                    for (InputMethodSubtype inputMethodSubtype : inputMethodManager.getEnabledInputMethodSubtypeList(inputMethodInfo, true)) {
-                        String locale = inputMethodSubtype.getLocale();
-                        if (!TextUtils.isEmpty(locale)) {
-                            treeSet.add(locale);
-                        }
+                } while (cursorQuery.moveToNext());
+            }
+            cursorQuery.close();
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService("input_method");
+            Iterator<InputMethodInfo> it = inputMethodManager.getEnabledInputMethodList().iterator();
+            while (it.hasNext()) {
+                Iterator<InputMethodSubtype> it2 = inputMethodManager.getEnabledInputMethodSubtypeList(it.next(), true).iterator();
+                while (it2.hasNext()) {
+                    String locale = it2.next().getLocale();
+                    if (!TextUtils.isEmpty(locale)) {
+                        treeSet.add(locale);
                     }
                 }
-                if (!treeSet.contains(Locale.getDefault().getLanguage().toString())) {
-                    treeSet.add(Locale.getDefault().toString());
-                }
-                return treeSet;
-            }
-            query.close();
-            InputMethodManager inputMethodManager2 = (InputMethodManager) context.getSystemService("input_method");
-            while (r0.hasNext()) {
             }
             if (!treeSet.contains(Locale.getDefault().getLanguage().toString())) {
+                treeSet.add(Locale.getDefault().toString());
             }
             return treeSet;
         } catch (Throwable th) {
-            query.close();
+            cursorQuery.close();
             throw th;
         }
     }

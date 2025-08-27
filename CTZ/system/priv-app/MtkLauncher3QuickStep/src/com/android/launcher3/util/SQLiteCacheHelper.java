@@ -3,10 +3,12 @@ package com.android.launcher3.util;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteFullException;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public abstract class SQLiteCacheHelper {
     private static final boolean NO_ICON_CACHE = false;
@@ -59,11 +61,10 @@ public abstract class SQLiteCacheHelper {
         return this.mOpenHelper.getReadableDatabase().query(this.mTableName, strArr, str, strArr2, null, null, null);
     }
 
-    public void clear() {
+    public void clear() throws SQLException {
         this.mOpenHelper.clearDB(this.mOpenHelper.getWritableDatabase());
     }
 
-    /* loaded from: classes.dex */
     private class MySQLiteOpenHelper extends NoLocaleSQLiteHelper {
         public MySQLiteOpenHelper(Context context, String str, int i) {
             super(context, str, i);
@@ -75,21 +76,20 @@ public abstract class SQLiteCacheHelper {
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) throws SQLException {
             if (i != i2) {
                 clearDB(sQLiteDatabase);
             }
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onDowngrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+        public void onDowngrade(SQLiteDatabase sQLiteDatabase, int i, int i2) throws SQLException {
             if (i != i2) {
                 clearDB(sQLiteDatabase);
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void clearDB(SQLiteDatabase sQLiteDatabase) {
+        private void clearDB(SQLiteDatabase sQLiteDatabase) throws SQLException {
             sQLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SQLiteCacheHelper.this.mTableName);
             onCreate(sQLiteDatabase);
         }

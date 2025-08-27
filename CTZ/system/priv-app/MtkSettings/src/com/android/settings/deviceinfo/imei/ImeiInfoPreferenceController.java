@@ -17,6 +17,7 @@ import com.android.settingslib.core.lifecycle.events.OnDestroy;
 import com.android.settingslib.deviceinfo.AbstractSimStatusImeiInfoPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ImeiInfoPreferenceController extends AbstractSimStatusImeiInfoPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnCreate, OnDestroy {
     private final Fragment mFragment;
@@ -55,42 +56,41 @@ public class ImeiInfoPreferenceController extends AbstractSimStatusImeiInfoPrefe
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference(getPreferenceKey());
-        if (!isAvailable() || findPreference == null || !findPreference.isVisible()) {
+        Preference preferenceFindPreference = preferenceScreen.findPreference(getPreferenceKey());
+        if (!isAvailable() || preferenceFindPreference == null || !preferenceFindPreference.isVisible()) {
             return;
         }
-        this.mPreferenceList.add(findPreference);
-        updatePreference(findPreference, 0);
-        int order = findPreference.getOrder();
+        this.mPreferenceList.add(preferenceFindPreference);
+        updatePreference(preferenceFindPreference, 0);
+        int order = preferenceFindPreference.getOrder();
         for (int i = 1; i < this.mTelephonyManager.getPhoneCount(); i++) {
-            Preference createNewPreference = createNewPreference(preferenceScreen.getContext());
-            createNewPreference.setOrder(order + i);
-            createNewPreference.setKey("imei_info" + i);
-            preferenceScreen.addPreference(createNewPreference);
-            this.mPreferenceList.add(createNewPreference);
-            updatePreference(createNewPreference, i);
+            Preference preferenceCreateNewPreference = createNewPreference(preferenceScreen.getContext());
+            preferenceCreateNewPreference.setOrder(order + i);
+            preferenceCreateNewPreference.setKey("imei_info" + i);
+            preferenceScreen.addPreference(preferenceCreateNewPreference);
+            this.mPreferenceList.add(preferenceCreateNewPreference);
+            updatePreference(preferenceCreateNewPreference, i);
         }
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        int indexOf = this.mPreferenceList.indexOf(preference);
-        if (indexOf == -1) {
+        int iIndexOf = this.mPreferenceList.indexOf(preference);
+        if (iIndexOf == -1) {
             return false;
         }
-        ImeiInfoDialogFragment.show(this.mFragment, indexOf, preference.getTitle().toString());
+        ImeiInfoDialogFragment.show(this.mFragment, iIndexOf, preference.getTitle().toString());
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreference(Preference preference, int i) {
+    private void updatePreference(Preference preference, int i) {
         if (this.mTelephonyManager.getCurrentPhoneTypeForSlot(i) == 2) {
             preference.setTitle(getTitleForCdmaPhone(i));
             preference.setSummary(getMeid(i));
-            return;
+        } else {
+            preference.setTitle(getTitleForGsmPhone(i));
+            preference.setSummary(this.mTelephonyManager.getImei(i));
         }
-        preference.setTitle(getTitleForGsmPhone(i));
-        preference.setSummary(this.mTelephonyManager.getImei(i));
     }
 
     private CharSequence getTitleForGsmPhone(int i) {

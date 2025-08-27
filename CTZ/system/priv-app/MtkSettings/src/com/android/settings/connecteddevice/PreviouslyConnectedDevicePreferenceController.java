@@ -10,6 +10,7 @@ import com.android.settings.dashboard.DashboardFragment;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class PreviouslyConnectedDevicePreferenceController extends BasePreferenceController implements DevicePreferenceCallback, LifecycleObserver, OnStart, OnStop {
     private BluetoothDeviceUpdater mBluetoothDeviceUpdater;

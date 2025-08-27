@@ -1,4 +1,5 @@
 package jp.co.benesse.touch.sbox;
+
 /* loaded from: classes.dex */
 public final class BuildConfig {
     public static final String APPLICATION_ID = "jp.co.benesse.touch.sbox";

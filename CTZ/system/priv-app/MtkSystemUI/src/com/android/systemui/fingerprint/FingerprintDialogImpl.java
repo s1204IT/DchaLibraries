@@ -1,5 +1,6 @@
 package com.android.systemui.fingerprint;
 
+import android.R;
 import android.hardware.biometrics.IBiometricPromptReceiver;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.view.WindowManager;
 import com.android.internal.os.SomeArgs;
 import com.android.systemui.SystemUI;
 import com.android.systemui.statusbar.CommandQueue;
+
 /* loaded from: classes.dex */
 public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Callbacks {
     private boolean mDialogShowing;
@@ -20,33 +22,31 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
             switch (message.what) {
                 case 1:
                     FingerprintDialogImpl.this.handleShowDialog((SomeArgs) message.obj);
-                    return;
+                    break;
                 case 2:
                     FingerprintDialogImpl.this.handleFingerprintAuthenticated();
-                    return;
+                    break;
                 case 3:
                     FingerprintDialogImpl.this.handleFingerprintHelp((String) message.obj);
-                    return;
+                    break;
                 case 4:
                     FingerprintDialogImpl.this.handleFingerprintError((String) message.obj);
-                    return;
+                    break;
                 case 5:
                     FingerprintDialogImpl.this.handleHideDialog(((Boolean) message.obj).booleanValue());
-                    return;
+                    break;
                 case 6:
                     FingerprintDialogImpl.this.handleButtonNegative();
-                    return;
+                    break;
                 case 7:
                     FingerprintDialogImpl.this.handleUserCanceled();
-                    return;
+                    break;
                 case 8:
                     FingerprintDialogImpl.this.handleButtonPositive();
-                    return;
+                    break;
                 case 9:
                     FingerprintDialogImpl.this.handleClearMessage();
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     };
@@ -69,10 +69,10 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         this.mHandler.removeMessages(4);
         this.mHandler.removeMessages(3);
         this.mHandler.removeMessages(2);
-        SomeArgs obtain = SomeArgs.obtain();
-        obtain.arg1 = bundle;
-        obtain.arg2 = iBiometricPromptReceiver;
-        this.mHandler.obtainMessage(1, obtain).sendToTarget();
+        SomeArgs someArgsObtain = SomeArgs.obtain();
+        someArgsObtain.arg1 = bundle;
+        someArgsObtain.arg2 = iBiometricPromptReceiver;
+        this.mHandler.obtainMessage(1, someArgsObtain).sendToTarget();
     }
 
     @Override // com.android.systemui.statusbar.CommandQueue.Callbacks
@@ -99,8 +99,7 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         this.mHandler.obtainMessage(5, false).sendToTarget();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleShowDialog(SomeArgs someArgs) {
+    private void handleShowDialog(SomeArgs someArgs) {
         Log.d("FingerprintDialogImpl", "handleShowDialog, isAnimatingAway: " + this.mDialogView.isAnimatingAway());
         if (this.mDialogView.isAnimatingAway()) {
             this.mDialogView.forceRemove();
@@ -114,21 +113,18 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         this.mDialogShowing = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFingerprintAuthenticated() {
+    private void handleFingerprintAuthenticated() {
         Log.d("FingerprintDialogImpl", "handleFingerprintAuthenticated");
-        this.mDialogView.announceForAccessibility(this.mContext.getResources().getText(17039903));
+        this.mDialogView.announceForAccessibility(this.mContext.getResources().getText(R.string.config_defaultContextualSearchKey));
         handleHideDialog(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFingerprintHelp(String str) {
+    private void handleFingerprintHelp(String str) {
         Log.d("FingerprintDialogImpl", "handleFingerprintHelp: " + str);
         this.mDialogView.showHelpMessage(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFingerprintError(String str) {
+    private void handleFingerprintError(String str) {
         Log.d("FingerprintDialogImpl", "handleFingerprintError: " + str);
         if (!this.mDialogShowing) {
             Log.d("FingerprintDialogImpl", "Dialog already dismissed");
@@ -137,8 +133,7 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleHideDialog(boolean z) {
+    private void handleHideDialog(boolean z) {
         Log.d("FingerprintDialogImpl", "handleHideDialog, userCanceled: " + z);
         if (!this.mDialogShowing) {
             Log.w("FingerprintDialogImpl", "Dialog already dismissed, userCanceled: " + z);
@@ -156,8 +151,7 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         this.mDialogView.startDismiss();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleButtonNegative() {
+    private void handleButtonNegative() {
         if (this.mReceiver == null) {
             Log.e("FingerprintDialogImpl", "Receiver is null");
             return;
@@ -170,8 +164,7 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         handleHideDialog(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleButtonPositive() {
+    private void handleButtonPositive() {
         if (this.mReceiver == null) {
             Log.e("FingerprintDialogImpl", "Receiver is null");
             return;
@@ -184,13 +177,11 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         handleHideDialog(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleClearMessage() {
+    private void handleClearMessage() {
         this.mDialogView.resetMessage();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleUserCanceled() {
+    private void handleUserCanceled() {
         handleHideDialog(true);
     }
 }

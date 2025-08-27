@@ -16,7 +16,9 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.drawer.DashboardCategory;
 import com.android.settingslib.drawer.Tile;
 import com.android.settingslib.utils.ThreadUtils;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SummaryLoader {
     public static final String SUMMARY_PROVIDER_FACTORY = "SUMMARY_PROVIDER_FACTORY";
@@ -32,17 +34,14 @@ public class SummaryLoader {
     private ArraySet<BroadcastReceiver> mReceivers = new ArraySet<>();
     private final HandlerThread mWorkerThread = new HandlerThread("SummaryLoader", 10);
 
-    /* loaded from: classes.dex */
     public interface SummaryConsumer {
         void notifySummaryChanged(Tile tile);
     }
 
-    /* loaded from: classes.dex */
     public interface SummaryProvider {
         void setListening(boolean z);
     }
 
-    /* loaded from: classes.dex */
     public interface SummaryProviderFactory {
         SummaryProvider createSummaryProvider(Activity activity, SummaryLoader summaryLoader);
     }
@@ -69,7 +68,7 @@ public class SummaryLoader {
         ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.dashboard.-$$Lambda$SummaryLoader$EirySW2ETuFFjqqH756jJXvHagg
             @Override // java.lang.Runnable
             public final void run() {
-                SummaryLoader.lambda$setSummary$0(SummaryLoader.this, componentName, charSequence);
+                SummaryLoader.lambda$setSummary$0(this.f$0, componentName, charSequence);
             }
         });
     }
@@ -105,11 +104,14 @@ public class SummaryLoader {
         this.mWorker.removeMessages(3);
         if (!z) {
             this.mWorker.obtainMessage(3, 0).sendToTarget();
-        } else if (this.mSummaryProviderMap.isEmpty()) {
-            if (!this.mWorker.hasMessages(1)) {
-                this.mWorker.sendEmptyMessage(1);
-            }
         } else {
+            if (this.mSummaryProviderMap.isEmpty()) {
+                if (!this.mWorker.hasMessages(1)) {
+                    this.mWorker.sendEmptyMessage(1);
+                    return;
+                }
+                return;
+            }
             this.mWorker.obtainMessage(3, 1).sendToTarget();
         }
     }
@@ -143,23 +145,22 @@ public class SummaryLoader {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public synchronized void setListeningW(boolean z) {
+    private synchronized void setListeningW(boolean z) {
         if (this.mWorkerListening == z) {
             return;
         }
         this.mWorkerListening = z;
-        for (SummaryProvider summaryProvider : this.mSummaryProviderMap.keySet()) {
+        Iterator<SummaryProvider> it = this.mSummaryProviderMap.keySet().iterator();
+        while (it.hasNext()) {
             try {
-                summaryProvider.setListening(z);
+                it.next().setListening(z);
             } catch (Exception e) {
                 Log.d("SummaryLoader", "Problem in setListening", e);
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public synchronized void makeProviderW(Tile tile) {
+    private synchronized void makeProviderW(Tile tile) {
         SummaryProvider summaryProvider = getSummaryProvider(tile);
         if (summaryProvider != null) {
             this.mSummaryProviderMap.put(summaryProvider, tile.intent.getComponent());
@@ -181,35 +182,31 @@ public class SummaryLoader {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class Worker extends Handler {
+    private class Worker extends Handler {
         public Worker(Looper looper) {
             super(looper);
         }
 
         @Override // android.os.Handler
         public void handleMessage(Message message) {
-            boolean z = true;
             switch (message.what) {
                 case 1:
                     DashboardCategory tilesForCategory = SummaryLoader.this.mDashboardFeatureProvider.getTilesForCategory(SummaryLoader.this.mCategoryKey);
-                    if (tilesForCategory == null || tilesForCategory.getTilesCount() == 0) {
-                        return;
+                    if (tilesForCategory != null && tilesForCategory.getTilesCount() != 0) {
+                        Iterator<Tile> it = tilesForCategory.getTiles().iterator();
+                        while (it.hasNext()) {
+                            SummaryLoader.this.makeProviderW(it.next());
+                        }
+                        SummaryLoader.this.setListeningW(true);
+                        break;
                     }
-                    for (Tile tile : tilesForCategory.getTiles()) {
-                        SummaryLoader.this.makeProviderW(tile);
-                    }
-                    SummaryLoader.this.setListeningW(true);
-                    return;
+                    break;
                 case 2:
                     SummaryLoader.this.makeProviderW((Tile) message.obj);
-                    return;
+                    break;
                 case 3:
-                    SummaryLoader.this.setListeningW((message.obj == null || !message.obj.equals(1)) ? false : false);
-                    return;
-                default:
-                    return;
+                    SummaryLoader.this.setListeningW(message.obj != null && message.obj.equals(1));
+                    break;
             }
         }
     }

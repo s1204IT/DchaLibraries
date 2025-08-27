@@ -2,12 +2,14 @@ package com.android.settings.fingerprint;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import com.android.settings.R;
 import com.android.settings.Utils;
 import com.android.settings.fingerprint.FingerprintEnrollSidecar;
 import com.android.settings.password.ChooseLockSettingsHelper;
+
 /* loaded from: classes.dex */
 public class FingerprintEnrollFindSensor extends FingerprintEnrollBase {
     private FingerprintFindSensorAnimation mAnimation;
@@ -15,9 +17,8 @@ public class FingerprintEnrollFindSensor extends FingerprintEnrollBase {
     private boolean mNextClicked;
     private FingerprintEnrollSidecar mSidecar;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.fingerprint.FingerprintEnrollBase, com.android.settings.core.InstrumentedActivity, com.android.settingslib.core.lifecycle.ObservableActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(getContentView());
         ((Button) findViewById(R.id.skip_button)).setOnClickListener(this);
@@ -31,9 +32,9 @@ public class FingerprintEnrollFindSensor extends FingerprintEnrollBase {
         } else if (this.mToken != null) {
             startLookingForFingerprint();
         }
-        View findViewById = findViewById(R.id.fingerprint_sensor_location_animation);
-        if (findViewById instanceof FingerprintFindSensorAnimation) {
-            this.mAnimation = (FingerprintFindSensorAnimation) findViewById;
+        KeyEvent.Callback callbackFindViewById = findViewById(R.id.fingerprint_sensor_location_animation);
+        if (callbackFindViewById instanceof FingerprintFindSensorAnimation) {
+            this.mAnimation = (FingerprintFindSensorAnimation) callbackFindViewById;
         } else {
             this.mAnimation = null;
         }
@@ -43,9 +44,8 @@ public class FingerprintEnrollFindSensor extends FingerprintEnrollBase {
         return R.layout.fingerprint_enroll_find_sensor;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.core.lifecycle.ObservableActivity, android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         if (this.mAnimation != null) {
             this.mAnimation.startAnimation();
@@ -79,18 +79,16 @@ public class FingerprintEnrollFindSensor extends FingerprintEnrollBase {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.core.lifecycle.ObservableActivity, android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         if (this.mAnimation != null) {
             this.mAnimation.pauseAnimation();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.core.lifecycle.ObservableActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         if (this.mAnimation != null) {
             this.mAnimation.stopAnimation();
@@ -118,8 +116,7 @@ public class FingerprintEnrollFindSensor extends FingerprintEnrollBase {
         finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void proceedToEnrolling(boolean z) {
+    private void proceedToEnrolling(boolean z) {
         if (this.mSidecar != null) {
             if (z && this.mSidecar.cancelEnrollment()) {
                 return;
@@ -141,36 +138,43 @@ public class FingerprintEnrollFindSensor extends FingerprintEnrollBase {
                 return;
             }
             finish();
-        } else if (i == 2) {
+            return;
+        }
+        if (i == 2) {
             if (i2 == 1) {
                 setResult(1);
                 finish();
-            } else if (i2 == 2) {
+                return;
+            }
+            if (i2 == 2) {
                 setResult(2);
                 finish();
+                return;
             } else if (i2 == 3) {
                 setResult(3);
                 finish();
-            } else if (Utils.getFingerprintManagerOrNull(this).getEnrolledFingerprints().size() >= getResources().getInteger(17694789)) {
+                return;
+            } else if (Utils.getFingerprintManagerOrNull(this).getEnrolledFingerprints().size() >= getResources().getInteger(android.R.integer.config_datause_polling_period_sec)) {
                 finish();
+                return;
             } else {
                 startLookingForFingerprint();
+                return;
             }
-        } else {
-            super.onActivityResult(i, i2, intent);
         }
+        super.onActivityResult(i, i2, intent);
     }
 
     private void launchConfirmLock() {
-        boolean launchConfirmationActivity;
-        long preEnroll = Utils.getFingerprintManagerOrNull(this).preEnroll();
+        boolean zLaunchConfirmationActivity;
+        long jPreEnroll = Utils.getFingerprintManagerOrNull(this).preEnroll();
         ChooseLockSettingsHelper chooseLockSettingsHelper = new ChooseLockSettingsHelper(this);
         if (this.mUserId == -10000) {
-            launchConfirmationActivity = chooseLockSettingsHelper.launchConfirmationActivity(1, getString(R.string.security_settings_fingerprint_preference_title), null, null, preEnroll);
+            zLaunchConfirmationActivity = chooseLockSettingsHelper.launchConfirmationActivity(1, getString(R.string.security_settings_fingerprint_preference_title), null, null, jPreEnroll);
         } else {
-            launchConfirmationActivity = chooseLockSettingsHelper.launchConfirmationActivity(1, getString(R.string.security_settings_fingerprint_preference_title), (CharSequence) null, (CharSequence) null, preEnroll, this.mUserId);
+            zLaunchConfirmationActivity = chooseLockSettingsHelper.launchConfirmationActivity(1, getString(R.string.security_settings_fingerprint_preference_title), (CharSequence) null, (CharSequence) null, jPreEnroll, this.mUserId);
         }
-        if (!launchConfirmationActivity) {
+        if (!zLaunchConfirmationActivity) {
             finish();
         } else {
             this.mLaunchedConfirmLock = true;

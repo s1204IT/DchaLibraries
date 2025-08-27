@@ -19,14 +19,21 @@ import com.android.systemui.shared.recents.utilities.AnimationProps;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import com.android.systemui.statusbar.FlingAnimationUtils;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class TaskStackViewScroller {
     private static final Property<TaskStackViewScroller, Float> STACK_SCROLL = new FloatProperty<TaskStackViewScroller>("stackScroll") { // from class: com.android.systemui.recents.views.TaskStackViewScroller.1
+        AnonymousClass1(String str) {
+            super(str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(TaskStackViewScroller taskStackViewScroller, float f) {
             taskStackViewScroller.setStackScroll(f);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(TaskStackViewScroller taskStackViewScroller) {
             return Float.valueOf(taskStackViewScroller.getStackScroll());
@@ -38,17 +45,37 @@ public class TaskStackViewScroller {
     final FlingAnimationUtils mFlingAnimationUtils;
     float mFlingDownScrollP;
     int mFlingDownY;
+
     @ViewDebug.ExportedProperty(category = "recents")
     float mLastDeltaP = 0.0f;
     TaskStackLayoutAlgorithm mLayoutAlgorithm;
     ObjectAnimator mScrollAnimator;
     OverScroller mScroller;
+
     @ViewDebug.ExportedProperty(category = "recents")
     float mStackScrollP;
 
-    /* loaded from: classes.dex */
     public interface TaskStackViewScrollerCallbacks {
         void onStackScrollChanged(float f, float f2, AnimationProps animationProps);
+    }
+
+    /* renamed from: com.android.systemui.recents.views.TaskStackViewScroller$1 */
+    class AnonymousClass1 extends FloatProperty<TaskStackViewScroller> {
+        AnonymousClass1(String str) {
+            super(str);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
+        @Override // android.util.FloatProperty
+        public void setValue(TaskStackViewScroller taskStackViewScroller, float f) {
+            taskStackViewScroller.setStackScroll(f);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.util.Property
+        public Float get(TaskStackViewScroller taskStackViewScroller) {
+            return Float.valueOf(taskStackViewScroller.getStackScroll());
+        }
     }
 
     public TaskStackViewScroller(Context context, TaskStackViewScrollerCallbacks taskStackViewScrollerCallbacks, TaskStackLayoutAlgorithm taskStackLayoutAlgorithm) {
@@ -62,14 +89,12 @@ public class TaskStackViewScroller {
         this.mFlingAnimationUtils = new FlingAnimationUtils(context, 0.3f);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void reset() {
+    void reset() {
         this.mStackScrollP = 0.0f;
         this.mLastDeltaP = 0.0f;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void resetDeltaScroll() {
+    void resetDeltaScroll() {
         this.mLastDeltaP = 0.0f;
     }
 
@@ -83,10 +108,10 @@ public class TaskStackViewScroller {
 
     public float setDeltaStackScroll(float f, float f2) {
         float f3 = f + f2;
-        float updateFocusStateOnScroll = this.mLayoutAlgorithm.updateFocusStateOnScroll(f + this.mLastDeltaP, f3, this.mStackScrollP);
-        setStackScroll(updateFocusStateOnScroll, AnimationProps.IMMEDIATE);
+        float fUpdateFocusStateOnScroll = this.mLayoutAlgorithm.updateFocusStateOnScroll(f + this.mLastDeltaP, f3, this.mStackScrollP);
+        setStackScroll(fUpdateFocusStateOnScroll, AnimationProps.IMMEDIATE);
         this.mLastDeltaP = f2;
-        return updateFocusStateOnScroll - f3;
+        return fUpdateFocusStateOnScroll - f3;
     }
 
     public void setStackScroll(float f, AnimationProps animationProps) {
@@ -119,8 +144,7 @@ public class TaskStackViewScroller {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getBoundedStackScroll(float f) {
+    float getBoundedStackScroll(float f) {
         return Utilities.clamp(f, this.mLayoutAlgorithm.mMinScrollP, this.mLayoutAlgorithm.mMaxScrollP);
     }
 
@@ -134,13 +158,11 @@ public class TaskStackViewScroller {
         return 0.0f;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isScrollOutOfBounds() {
+    boolean isScrollOutOfBounds() {
         return Float.compare(getScrollAmountOutOfBounds(this.mStackScrollP), 0.0f) != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void scrollToClosestTask(int i) {
+    void scrollToClosestTask(int i) {
         float stackScroll = getStackScroll();
         if (!Recents.getConfiguration().isLowRamDevice || stackScroll < this.mLayoutAlgorithm.mMinScrollP || stackScroll > this.mLayoutAlgorithm.mMaxScrollP) {
             return;
@@ -149,16 +171,15 @@ public class TaskStackViewScroller {
         if (Math.abs(i) > ViewConfiguration.get(this.mContext).getScaledMinimumFlingVelocity()) {
             fling(0.0f, 0, taskStackLowRamLayoutAlgorithm.percentageToScroll(stackScroll), -i, taskStackLowRamLayoutAlgorithm.percentageToScroll(this.mLayoutAlgorithm.mMinScrollP), taskStackLowRamLayoutAlgorithm.percentageToScroll(this.mLayoutAlgorithm.mMaxScrollP), 0);
             float closestTaskP = taskStackLowRamLayoutAlgorithm.getClosestTaskP(taskStackLowRamLayoutAlgorithm.scrollToPercentage(this.mScroller.getFinalY()), this.mLayoutAlgorithm.mNumStackTasks, i);
-            ValueAnimator ofFloat = ObjectAnimator.ofFloat(stackScroll, closestTaskP);
-            this.mFlingAnimationUtils.apply(ofFloat, taskStackLowRamLayoutAlgorithm.percentageToScroll(stackScroll), taskStackLowRamLayoutAlgorithm.percentageToScroll(closestTaskP), i);
-            animateScroll(closestTaskP, (int) ofFloat.getDuration(), ofFloat.getInterpolator(), null);
+            ValueAnimator valueAnimatorOfFloat = ObjectAnimator.ofFloat(stackScroll, closestTaskP);
+            this.mFlingAnimationUtils.apply(valueAnimatorOfFloat, taskStackLowRamLayoutAlgorithm.percentageToScroll(stackScroll), taskStackLowRamLayoutAlgorithm.percentageToScroll(closestTaskP), i);
+            animateScroll(closestTaskP, (int) valueAnimatorOfFloat.getDuration(), valueAnimatorOfFloat.getInterpolator(), null);
             return;
         }
         animateScroll(taskStackLowRamLayoutAlgorithm.getClosestTaskP(stackScroll, this.mLayoutAlgorithm.mNumStackTasks, i), 300, Interpolators.ACCELERATE_DECELERATE, null);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ObjectAnimator animateBoundScroll() {
+    ObjectAnimator animateBoundScroll() {
         float stackScroll = getStackScroll();
         float boundedStackScroll = getBoundedStackScroll(stackScroll);
         if (Float.compare(boundedStackScroll, stackScroll) != 0) {
@@ -171,19 +192,18 @@ public class TaskStackViewScroller {
         animateScroll(f, this.mContext.getResources().getInteger(R.integer.recents_animate_task_stack_scroll_duration), runnable);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void animateScroll(float f, int i, Runnable runnable) {
+    void animateScroll(float f, int i, Runnable runnable) {
         animateScroll(f, i, Interpolators.LINEAR_OUT_SLOW_IN, runnable);
     }
 
     void animateScroll(float f, int i, TimeInterpolator timeInterpolator, Runnable runnable) {
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this, STACK_SCROLL, getStackScroll(), f);
-        ofFloat.setDuration(i);
-        ofFloat.setInterpolator(timeInterpolator);
-        animateScroll(f, ofFloat, runnable);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, STACK_SCROLL, getStackScroll(), f);
+        objectAnimatorOfFloat.setDuration(i);
+        objectAnimatorOfFloat.setInterpolator(timeInterpolator);
+        animateScroll(f, objectAnimatorOfFloat, runnable);
     }
 
-    private void animateScroll(float f, ObjectAnimator objectAnimator, final Runnable runnable) {
+    private void animateScroll(float f, ObjectAnimator objectAnimator, Runnable runnable) {
         if (this.mScrollAnimator != null && this.mScrollAnimator.isRunning()) {
             setStackScroll(this.mFinalAnimatedScroll);
             this.mScroller.forceFinished(true);
@@ -194,6 +214,12 @@ public class TaskStackViewScroller {
             this.mFinalAnimatedScroll = f;
             this.mScrollAnimator = objectAnimator;
             this.mScrollAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.recents.views.TaskStackViewScroller.2
+                final /* synthetic */ Runnable val$postRunnable;
+
+                AnonymousClass2(Runnable runnable2) {
+                    runnable = runnable2;
+                }
+
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
                     if (runnable != null) {
@@ -203,18 +229,35 @@ public class TaskStackViewScroller {
                 }
             });
             this.mScrollAnimator.start();
-        } else if (runnable != null) {
-            runnable.run();
+            return;
+        }
+        if (runnable2 != null) {
+            runnable2.run();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void stopBoundScrollAnimation() {
+    /* renamed from: com.android.systemui.recents.views.TaskStackViewScroller$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        final /* synthetic */ Runnable val$postRunnable;
+
+        AnonymousClass2(Runnable runnable2) {
+            runnable = runnable2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (runnable != null) {
+                runnable.run();
+            }
+            TaskStackViewScroller.this.mScrollAnimator.removeAllListeners();
+        }
+    }
+
+    void stopBoundScrollAnimation() {
         Utilities.cancelAnimationWithoutCallbacks(this.mScrollAnimator);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean computeScroll() {
+    boolean computeScroll() {
         if (this.mScroller.computeScrollOffset()) {
             this.mFlingDownScrollP += setDeltaStackScroll(this.mFlingDownScrollP, this.mLayoutAlgorithm.getDeltaPForY(this.mFlingDownY, this.mScroller.getCurrY()));
             return true;
@@ -222,13 +265,11 @@ public class TaskStackViewScroller {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getScrollVelocity() {
+    float getScrollVelocity() {
         return this.mScroller.getCurrVelocity();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void stopScroller() {
+    void stopScroller() {
         if (!this.mScroller.isFinished()) {
             this.mScroller.abortAnimation();
         }

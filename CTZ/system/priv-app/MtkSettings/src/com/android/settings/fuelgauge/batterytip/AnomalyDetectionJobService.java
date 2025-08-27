@@ -26,6 +26,7 @@ import com.android.settingslib.utils.ThreadUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public class AnomalyDetectionJobService extends JobService {
     static final long MAX_DELAY_MS = TimeUnit.MINUTES.toMillis(30);
@@ -35,7 +36,7 @@ public class AnomalyDetectionJobService extends JobService {
     boolean mIsJobCanceled = false;
 
     public static void scheduleAnomalyDetection(Context context, Intent intent) {
-        if (((JobScheduler) context.getSystemService(JobScheduler.class)).enqueue(new JobInfo.Builder(R.integer.job_anomaly_detection, new ComponentName(context, AnomalyDetectionJobService.class)).setOverrideDeadline(MAX_DELAY_MS).build(), new JobWorkItem(intent)) != 1) {
+        if (((JobScheduler) context.getSystemService(JobScheduler.class)).enqueue(new JobInfo.Builder(R.integer.job_anomaly_detection, new ComponentName(context, (Class<?>) AnomalyDetectionJobService.class)).setOverrideDeadline(MAX_DELAY_MS).build(), new JobWorkItem(intent)) != 1) {
             Log.i("AnomalyDetectionService", "Anomaly detection job service enqueue failed.");
         }
     }
@@ -48,7 +49,7 @@ public class AnomalyDetectionJobService extends JobService {
         ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.fuelgauge.batterytip.-$$Lambda$AnomalyDetectionJobService$7JxJe3rza0cCkIc77iCS-ZKPfL4
             @Override // java.lang.Runnable
             public final void run() {
-                AnomalyDetectionJobService.lambda$onStartJob$0(AnomalyDetectionJobService.this, jobParameters);
+                AnomalyDetectionJobService.lambda$onStartJob$0(this.f$0, jobParameters);
             }
         });
         return true;
@@ -63,11 +64,11 @@ public class AnomalyDetectionJobService extends JobService {
         PowerWhitelistBackend powerWhitelistBackend = PowerWhitelistBackend.getInstance(anomalyDetectionJobService);
         PowerUsageFeatureProvider powerUsageFeatureProvider = FeatureFactory.getFactory(anomalyDetectionJobService).getPowerUsageFeatureProvider(anomalyDetectionJobService);
         MetricsFeatureProvider metricsFeatureProvider = FeatureFactory.getFactory(anomalyDetectionJobService).getMetricsFeatureProvider();
-        JobWorkItem dequeueWork = anomalyDetectionJobService.dequeueWork(jobParameters);
-        while (dequeueWork != null) {
-            anomalyDetectionJobService.saveAnomalyToDatabase(anomalyDetectionJobService, userManager, batteryDatabaseManager, batteryUtils, batteryTipPolicy, powerWhitelistBackend, contentResolver, powerUsageFeatureProvider, metricsFeatureProvider, dequeueWork.getIntent().getExtras());
-            anomalyDetectionJobService.completeWork(jobParameters, dequeueWork);
-            dequeueWork = anomalyDetectionJobService.dequeueWork(jobParameters);
+        JobWorkItem jobWorkItemDequeueWork = anomalyDetectionJobService.dequeueWork(jobParameters);
+        while (jobWorkItemDequeueWork != null) {
+            anomalyDetectionJobService.saveAnomalyToDatabase(anomalyDetectionJobService, userManager, batteryDatabaseManager, batteryUtils, batteryTipPolicy, powerWhitelistBackend, contentResolver, powerUsageFeatureProvider, metricsFeatureProvider, jobWorkItemDequeueWork.getIntent().getExtras());
+            anomalyDetectionJobService.completeWork(jobParameters, jobWorkItemDequeueWork);
+            jobWorkItemDequeueWork = anomalyDetectionJobService.dequeueWork(jobParameters);
             batteryDatabaseManager = batteryDatabaseManager;
         }
     }
@@ -80,12 +81,6 @@ public class AnomalyDetectionJobService extends JobService {
         return true;
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:10:0x0064, code lost:
-        if (android.provider.Settings.Global.getInt(r25, "adaptive_battery_management_enabled", 1) == 1) goto L10;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     void saveAnomalyToDatabase(Context context, UserManager userManager, BatteryDatabaseManager batteryDatabaseManager, BatteryUtils batteryUtils, BatteryTipPolicy batteryTipPolicy, PowerWhitelistBackend powerWhitelistBackend, ContentResolver contentResolver, PowerUsageFeatureProvider powerUsageFeatureProvider, MetricsFeatureProvider metricsFeatureProvider, Bundle bundle) {
         boolean z;
         int i;
@@ -97,27 +92,30 @@ public class AnomalyDetectionJobService extends JobService {
         AnomalyInfo anomalyInfo = new AnomalyInfo(!ArrayUtils.isEmpty(stringArrayList) ? stringArrayList.get(0) : "");
         Log.i("AnomalyDetectionService", "Extra stats value: " + statsDimensionsValue.toString());
         try {
-            int extractUidFromStatsDimensionsValue = extractUidFromStatsDimensionsValue(statsDimensionsValue);
+            int iExtractUidFromStatsDimensionsValue = extractUidFromStatsDimensionsValue(statsDimensionsValue);
             if (!powerUsageFeatureProvider.isSmartBatterySupported()) {
-                z = Settings.Global.getInt(contentResolver, "app_auto_restriction_enabled", 1) == 1;
+                if (Settings.Global.getInt(contentResolver, "app_auto_restriction_enabled", 1) == 1) {
+                }
+            } else {
+                z = Settings.Global.getInt(contentResolver, "adaptive_battery_management_enabled", 1) == 1;
             }
-            String packageName = batteryUtils.getPackageName(extractUidFromStatsDimensionsValue);
+            String packageName = batteryUtils.getPackageName(iExtractUidFromStatsDimensionsValue);
             long appLongVersionCode = batteryUtils.getAppLongVersionCode(packageName);
-            if (batteryUtils.shouldHideAnomaly(powerWhitelistBackend, extractUidFromStatsDimensionsValue, anomalyInfo)) {
+            if (batteryUtils.shouldHideAnomaly(powerWhitelistBackend, iExtractUidFromStatsDimensionsValue, anomalyInfo)) {
                 metricsFeatureProvider.action(context, 1387, packageName, Pair.create(833, anomalyInfo.anomalyType), Pair.create(1389, Long.valueOf(appLongVersionCode)));
                 return;
             }
             if (z && anomalyInfo.autoRestriction) {
-                batteryUtils.setForceAppStandby(extractUidFromStatsDimensionsValue, packageName, 1);
+                batteryUtils.setForceAppStandby(iExtractUidFromStatsDimensionsValue, packageName, 1);
                 i = 2;
                 i2 = 1389;
                 j = appLongVersionCode;
-                batteryDatabaseManager.insertAnomaly(extractUidFromStatsDimensionsValue, packageName, anomalyInfo.anomalyType.intValue(), 2, j2);
+                batteryDatabaseManager.insertAnomaly(iExtractUidFromStatsDimensionsValue, packageName, anomalyInfo.anomalyType.intValue(), 2, j2);
             } else {
                 i = 2;
                 i2 = 1389;
                 j = appLongVersionCode;
-                batteryDatabaseManager.insertAnomaly(extractUidFromStatsDimensionsValue, packageName, anomalyInfo.anomalyType.intValue(), 0, j2);
+                batteryDatabaseManager.insertAnomaly(iExtractUidFromStatsDimensionsValue, packageName, anomalyInfo.anomalyType.intValue(), 0, j2);
             }
             Pair<Integer, Object>[] pairArr = new Pair[i];
             pairArr[0] = Pair.create(1366, anomalyInfo.anomalyType);
@@ -139,9 +137,9 @@ public class AnomalyDetectionJobService extends JobService {
             List tupleValueList = statsDimensionsValue.getTupleValueList();
             int size = tupleValueList.size();
             for (int i = 0; i < size; i++) {
-                int extractUidFromStatsDimensionsValue = extractUidFromStatsDimensionsValue((StatsDimensionsValue) tupleValueList.get(i));
-                if (extractUidFromStatsDimensionsValue != UID_NULL) {
-                    return extractUidFromStatsDimensionsValue;
+                int iExtractUidFromStatsDimensionsValue = extractUidFromStatsDimensionsValue((StatsDimensionsValue) tupleValueList.get(i));
+                if (iExtractUidFromStatsDimensionsValue != UID_NULL) {
+                    return iExtractUidFromStatsDimensionsValue;
                 }
             }
         }

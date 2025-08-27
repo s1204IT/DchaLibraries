@@ -20,6 +20,7 @@ import com.android.systemui.R;
 import com.android.systemui.recents.Recents;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class DockState implements DropTarget {
     public final int createMode;
@@ -46,15 +47,16 @@ public class DockState implements DropTarget {
         return mTmpRect.contains(i, i2);
     }
 
-    /* loaded from: classes.dex */
     public static class ViewState {
         private static final IntProperty<ViewState> HINT_ALPHA = new IntProperty<ViewState>("drawableAlpha") { // from class: com.android.systemui.recents.views.DockState.ViewState.1
+            /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;I)V */
             @Override // android.util.IntProperty
             public void setValue(ViewState viewState, int i) {
                 viewState.mHintTextAlpha = i;
                 viewState.dockAreaOverlay.invalidateSelf();
             }
 
+            /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.util.Property
             public Integer get(ViewState viewState) {
                 return Integer.valueOf(viewState.mHintTextAlpha);
@@ -100,14 +102,14 @@ public class DockState implements DropTarget {
             }
             if (this.mHintTextAlpha > 0) {
                 Rect bounds = this.dockAreaOverlay.getBounds();
-                int width = bounds.left + ((bounds.width() - this.mHintTextBounds.x) / 2);
-                int height = bounds.top + ((bounds.height() + this.mHintTextBounds.y) / 2);
+                int iWidth = bounds.left + ((bounds.width() - this.mHintTextBounds.x) / 2);
+                int iHeight = bounds.top + ((bounds.height() + this.mHintTextBounds.y) / 2);
                 this.mHintTextPaint.setAlpha(this.mHintTextAlpha);
                 if (this.hintTextOrientation == 1) {
                     canvas.save();
                     canvas.rotate(-90.0f, bounds.centerX(), bounds.centerY());
                 }
-                canvas.drawText(this.mHintText, width, height, this.mHintTextPaint);
+                canvas.drawText(this.mHintText, iWidth, iHeight, this.mHintTextPaint);
                 if (this.hintTextOrientation == 1) {
                     canvas.restore();
                 }
@@ -122,25 +124,25 @@ public class DockState implements DropTarget {
             ArrayList arrayList = new ArrayList();
             if (this.dockAreaOverlay.getAlpha() != i) {
                 if (z) {
-                    ObjectAnimator ofInt = ObjectAnimator.ofInt(this.dockAreaOverlay, (Property<ColorDrawable, Integer>) Utilities.DRAWABLE_ALPHA, this.dockAreaOverlay.getAlpha(), i);
-                    ofInt.setDuration(i3);
-                    ofInt.setInterpolator(interpolator);
-                    arrayList.add(ofInt);
+                    ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this.dockAreaOverlay, (Property<ColorDrawable, Integer>) Utilities.DRAWABLE_ALPHA, this.dockAreaOverlay.getAlpha(), i);
+                    objectAnimatorOfInt.setDuration(i3);
+                    objectAnimatorOfInt.setInterpolator(interpolator);
+                    arrayList.add(objectAnimatorOfInt);
                 } else {
                     this.dockAreaOverlay.setAlpha(i);
                 }
             }
             if (this.mHintTextAlpha != i2) {
                 if (z) {
-                    ObjectAnimator ofInt2 = ObjectAnimator.ofInt(this, HINT_ALPHA, this.mHintTextAlpha, i2);
-                    ofInt2.setDuration(150L);
+                    ObjectAnimator objectAnimatorOfInt2 = ObjectAnimator.ofInt(this, HINT_ALPHA, this.mHintTextAlpha, i2);
+                    objectAnimatorOfInt2.setDuration(150L);
                     if (i2 > this.mHintTextAlpha) {
                         interpolator2 = Interpolators.ALPHA_IN;
                     } else {
                         interpolator2 = Interpolators.ALPHA_OUT;
                     }
-                    ofInt2.setInterpolator(interpolator2);
-                    arrayList.add(ofInt2);
+                    objectAnimatorOfInt2.setInterpolator(interpolator2);
+                    arrayList.add(objectAnimatorOfInt2);
                 } else {
                     this.mHintTextAlpha = i2;
                     this.dockAreaOverlay.invalidateSelf();
@@ -148,10 +150,10 @@ public class DockState implements DropTarget {
             }
             if (rect != null && !this.dockAreaOverlay.getBounds().equals(rect)) {
                 if (z2) {
-                    ObjectAnimator ofPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(this.dockAreaOverlay, PropertyValuesHolder.ofObject(Utilities.DRAWABLE_RECT, Utilities.RECT_EVALUATOR, new Rect(this.dockAreaOverlay.getBounds()), rect));
-                    ofPropertyValuesHolder.setDuration(i3);
-                    ofPropertyValuesHolder.setInterpolator(interpolator);
-                    arrayList.add(ofPropertyValuesHolder);
+                    ObjectAnimator objectAnimatorOfPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(this.dockAreaOverlay, PropertyValuesHolder.ofObject(Utilities.DRAWABLE_RECT, Utilities.RECT_EVALUATOR, new Rect(this.dockAreaOverlay.getBounds()), rect));
+                    objectAnimatorOfPropertyValuesHolder.setDuration(i3);
+                    objectAnimatorOfPropertyValuesHolder.setInterpolator(interpolator);
+                    arrayList.add(objectAnimatorOfPropertyValuesHolder);
                 } else {
                     this.dockAreaOverlay.setBounds(rect);
                 }
@@ -183,9 +185,9 @@ public class DockState implements DropTarget {
     }
 
     public Rect getDockedBounds(int i, int i2, int i3, Rect rect, Resources resources) {
-        int calculateMiddlePosition = DockedDividerUtils.calculateMiddlePosition(resources.getConfiguration().orientation == 1, rect, i, i2, i3);
+        int iCalculateMiddlePosition = DockedDividerUtils.calculateMiddlePosition(resources.getConfiguration().orientation == 1, rect, i, i2, i3);
         Rect rect2 = new Rect();
-        DockedDividerUtils.calculateBoundsForPosition(calculateMiddlePosition, this.dockSide, rect2, i, i2, i3);
+        DockedDividerUtils.calculateBoundsForPosition(iCalculateMiddlePosition, this.dockSide, rect2, i, i2, i3);
         return rect2;
     }
 

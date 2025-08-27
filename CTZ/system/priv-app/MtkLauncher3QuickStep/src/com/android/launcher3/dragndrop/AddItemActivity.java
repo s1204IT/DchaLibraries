@@ -31,6 +31,7 @@ import com.android.launcher3.widget.PendingAddShortcutInfo;
 import com.android.launcher3.widget.PendingAddWidgetInfo;
 import com.android.launcher3.widget.WidgetHostViewLoader;
 import com.android.launcher3.widget.WidgetImageView;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class AddItemActivity extends BaseActivity implements View.OnLongClickListener, View.OnTouchListener {
@@ -90,9 +91,9 @@ public class AddItemActivity extends BaseActivity implements View.OnLongClickLis
         Rect bitmapBounds = widgetView.getBitmapBounds();
         bitmapBounds.offset(widgetView.getLeft() - ((int) this.mLastTouchPos.x), widgetView.getTop() - ((int) this.mLastTouchPos.y));
         PinItemDragListener pinItemDragListener = new PinItemDragListener(this.mRequest, bitmapBounds, widgetView.getBitmap().getWidth(), widgetView.getWidth());
-        Intent addToIntent = pinItemDragListener.addToIntent(new Intent("android.intent.action.MAIN").addCategory("android.intent.category.HOME").setPackage(getPackageName()).setFlags(268435456));
+        Intent intentAddToIntent = pinItemDragListener.addToIntent(new Intent("android.intent.action.MAIN").addCategory("android.intent.category.HOME").setPackage(getPackageName()).setFlags(268435456));
         pinItemDragListener.initWhenReady();
-        startActivity(addToIntent, ActivityOptions.makeCustomAnimation(this, 0, 17432577).toBundle());
+        startActivity(intentAddToIntent, ActivityOptions.makeCustomAnimation(this, 0, android.R.anim.fade_out).toBundle());
         this.mFinishOnPause = true;
         view.startDragAndDrop(new ClipData(new ClipDescription("", new String[]{pinItemDragListener.getMimeType()}), new ClipData.Item("")), new View.DragShadowBuilder(view) { // from class: com.android.launcher3.dragndrop.AddItemActivity.1
             @Override // android.view.View.DragShadowBuilder
@@ -108,9 +109,8 @@ public class AddItemActivity extends BaseActivity implements View.OnLongClickLis
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.BaseActivity, android.app.Activity
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         if (this.mFinishOnPause) {
             finish();
@@ -126,18 +126,18 @@ public class AddItemActivity extends BaseActivity implements View.OnLongClickLis
     }
 
     private boolean setupWidget() {
-        LauncherAppWidgetProviderInfo fromProviderInfo = LauncherAppWidgetProviderInfo.fromProviderInfo(this, this.mRequest.getAppWidgetProviderInfo(this));
-        if (fromProviderInfo.minSpanX > this.mIdp.numColumns || fromProviderInfo.minSpanY > this.mIdp.numRows) {
+        LauncherAppWidgetProviderInfo launcherAppWidgetProviderInfoFromProviderInfo = LauncherAppWidgetProviderInfo.fromProviderInfo(this, this.mRequest.getAppWidgetProviderInfo(this));
+        if (launcherAppWidgetProviderInfoFromProviderInfo.minSpanX > this.mIdp.numColumns || launcherAppWidgetProviderInfoFromProviderInfo.minSpanY > this.mIdp.numRows) {
             return false;
         }
         this.mWidgetCell.setPreview(PinItemDragListener.getPreview(this.mRequest));
         this.mAppWidgetManager = AppWidgetManagerCompat.getInstance(this);
         this.mAppWidgetHost = new LauncherAppWidgetHost(this);
-        this.mPendingWidgetInfo = new PendingAddWidgetInfo(fromProviderInfo);
-        this.mPendingWidgetInfo.spanX = Math.min(this.mIdp.numColumns, fromProviderInfo.spanX);
-        this.mPendingWidgetInfo.spanY = Math.min(this.mIdp.numRows, fromProviderInfo.spanY);
+        this.mPendingWidgetInfo = new PendingAddWidgetInfo(launcherAppWidgetProviderInfoFromProviderInfo);
+        this.mPendingWidgetInfo.spanX = Math.min(this.mIdp.numColumns, launcherAppWidgetProviderInfoFromProviderInfo.spanX);
+        this.mPendingWidgetInfo.spanY = Math.min(this.mIdp.numRows, launcherAppWidgetProviderInfoFromProviderInfo.spanY);
         this.mWidgetOptions = WidgetHostViewLoader.getDefaultOptionsForWidget(this, this.mPendingWidgetInfo);
-        WidgetItem widgetItem = new WidgetItem(fromProviderInfo, getPackageManager(), this.mIdp);
+        WidgetItem widgetItem = new WidgetItem(launcherAppWidgetProviderInfoFromProviderInfo, getPackageManager(), this.mIdp);
         this.mWidgetCell.getWidgetView().setTag(this.mPendingWidgetInfo);
         this.mWidgetCell.applyFromCellItem(widgetItem, this.mApp.getWidgetCache());
         this.mWidgetCell.ensurePreview();
@@ -181,20 +181,21 @@ public class AddItemActivity extends BaseActivity implements View.OnLongClickLis
 
     @Override // com.android.launcher3.BaseActivity, android.app.Activity
     public void onActivityResult(int i, int i2, Intent intent) {
-        int i3;
+        int intExtra;
         if (i == 1) {
             if (intent != null) {
-                i3 = intent.getIntExtra(LauncherSettings.Favorites.APPWIDGET_ID, this.mPendingBindWidgetId);
+                intExtra = intent.getIntExtra(LauncherSettings.Favorites.APPWIDGET_ID, this.mPendingBindWidgetId);
             } else {
-                i3 = this.mPendingBindWidgetId;
+                intExtra = this.mPendingBindWidgetId;
             }
             if (i2 == -1) {
-                acceptWidget(i3);
+                acceptWidget(intExtra);
+                return;
+            } else {
+                this.mAppWidgetHost.deleteAppWidgetId(intExtra);
+                this.mPendingBindWidgetId = -1;
                 return;
             }
-            this.mAppWidgetHost.deleteAppWidgetId(i3);
-            this.mPendingBindWidgetId = -1;
-            return;
         }
         super.onActivityResult(i, i2, intent);
     }

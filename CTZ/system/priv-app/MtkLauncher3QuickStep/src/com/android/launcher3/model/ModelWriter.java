@@ -4,9 +4,11 @@ import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.RemoteException;
 import android.util.Log;
 import com.android.launcher3.FolderInfo;
 import com.android.launcher3.ItemInfo;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
+
 /* loaded from: classes.dex */
 public class ModelWriter {
     private static final String TAG = "ModelWriter";
@@ -61,8 +64,7 @@ public class ModelWriter {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void checkItemInfoLocked(long j, ItemInfo itemInfo, StackTraceElement[] stackTraceElementArr) {
+    private void checkItemInfoLocked(long j, ItemInfo itemInfo, StackTraceElement[] stackTraceElementArr) {
         ItemInfo itemInfo2 = this.mBgDataModel.itemsIdMap.get(j);
         if (itemInfo2 != null && itemInfo != itemInfo2) {
             if ((itemInfo2 instanceof ShortcutInfo) && (itemInfo instanceof ShortcutInfo)) {
@@ -81,6 +83,7 @@ public class ModelWriter {
             RuntimeException runtimeException = new RuntimeException(sb.toString());
             if (stackTraceElementArr != null) {
                 runtimeException.setStackTrace(stackTraceElementArr);
+                throw runtimeException;
             }
             throw runtimeException;
         }
@@ -133,7 +136,7 @@ public class ModelWriter {
         this.mWorkerExecutor.execute(new Runnable() { // from class: com.android.launcher3.model.-$$Lambda$ModelWriter$ItEGbDR_6cXLsuu8tWhEMI90Ypo
             @Override // java.lang.Runnable
             public final void run() {
-                ModelWriter.lambda$addItemToDatabase$0(ModelWriter.this, contentResolver, contentWriter, itemInfo, stackTrace, modelVerifier);
+                ModelWriter.lambda$addItemToDatabase$0(this.f$0, contentResolver, contentWriter, itemInfo, stackTrace, modelVerifier);
             }
         });
     }
@@ -160,7 +163,7 @@ public class ModelWriter {
         this.mWorkerExecutor.execute(new Runnable() { // from class: com.android.launcher3.model.-$$Lambda$ModelWriter$dBgTNmWSiHJipdaOvZxnLBfkuno
             @Override // java.lang.Runnable
             public final void run() {
-                ModelWriter.lambda$deleteItemsFromDatabase$1(ModelWriter.this, iterable, modelVerifier);
+                ModelWriter.lambda$deleteItemsFromDatabase$1(this.f$0, iterable, modelVerifier);
             }
         });
     }
@@ -180,15 +183,14 @@ public class ModelWriter {
         this.mWorkerExecutor.execute(new Runnable() { // from class: com.android.launcher3.model.-$$Lambda$ModelWriter$L-XuB8STDjB_-Q2myy_RxlNLmeY
             @Override // java.lang.Runnable
             public final void run() {
-                ModelWriter.lambda$deleteFolderAndContentsFromDatabase$2(ModelWriter.this, folderInfo, modelVerifier);
+                ModelWriter.lambda$deleteFolderAndContentsFromDatabase$2(this.f$0, folderInfo, modelVerifier);
             }
         });
     }
 
     public static /* synthetic */ void lambda$deleteFolderAndContentsFromDatabase$2(ModelWriter modelWriter, FolderInfo folderInfo, ModelVerifier modelVerifier) {
         ContentResolver contentResolver = modelWriter.mContext.getContentResolver();
-        Uri uri = LauncherSettings.Favorites.CONTENT_URI;
-        contentResolver.delete(uri, "container=" + folderInfo.id, null);
+        contentResolver.delete(LauncherSettings.Favorites.CONTENT_URI, "container=" + folderInfo.id, null);
         modelWriter.mBgDataModel.removeItem(modelWriter.mContext, folderInfo.contents);
         folderInfo.contents.clear();
         contentResolver.delete(LauncherSettings.Favorites.getContentUri(folderInfo.id), null, null);
@@ -196,9 +198,7 @@ public class ModelWriter {
         modelVerifier.verifyModel();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class UpdateItemRunnable extends UpdateItemBaseRunnable {
+    private class UpdateItemRunnable extends UpdateItemBaseRunnable {
         private final ItemInfo mItem;
         private final long mItemId;
         private final ContentWriter mWriter;
@@ -217,9 +217,7 @@ public class ModelWriter {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class UpdateItemsRunnable extends UpdateItemBaseRunnable {
+    private class UpdateItemsRunnable extends UpdateItemBaseRunnable {
         private final ArrayList<ItemInfo> mItems;
         private final ArrayList<ContentValues> mValues;
 
@@ -230,13 +228,14 @@ public class ModelWriter {
         }
 
         @Override // java.lang.Runnable
-        public void run() {
+        public void run() throws RemoteException, OperationApplicationException {
             ArrayList<ContentProviderOperation> arrayList = new ArrayList<>();
             int size = this.mItems.size();
             for (int i = 0; i < size; i++) {
                 ItemInfo itemInfo = this.mItems.get(i);
                 long j = itemInfo.id;
-                arrayList.add(ContentProviderOperation.newUpdate(LauncherSettings.Favorites.getContentUri(j)).withValues(this.mValues.get(i)).build());
+                Uri contentUri = LauncherSettings.Favorites.getContentUri(j);
+                arrayList.add(ContentProviderOperation.newUpdate(contentUri).withValues(this.mValues.get(i)).build());
                 updateItemArrays(itemInfo, j);
             }
             try {
@@ -247,15 +246,18 @@ public class ModelWriter {
         }
     }
 
-    /* loaded from: classes.dex */
     private abstract class UpdateItemBaseRunnable implements Runnable {
         private final StackTraceElement[] mStackTrace = new Throwable().getStackTrace();
         private final ModelVerifier mVerifier;
 
         UpdateItemBaseRunnable() {
-            this.mVerifier = new ModelVerifier();
+            this.mVerifier = ModelWriter.this.new ModelVerifier();
         }
 
+        /* JADX WARN: Removed duplicated region for block: B:54:0x0078 A[Catch: all -> 0x00a4, TryCatch #0 {, blocks: (B:37:0x0007, B:39:0x0018, B:41:0x001e, B:43:0x002e, B:44:0x0053, B:46:0x0063, B:48:0x0069, B:50:0x006f, B:52:0x0074, B:58:0x009d, B:59:0x00a2, B:54:0x0078, B:56:0x0086, B:57:0x0092), top: B:64:0x0007 }] */
+        /*
+            Code decompiled incorrectly, please refer to instructions dump.
+        */
         protected void updateItemArrays(ItemInfo itemInfo, long j) {
             synchronized (ModelWriter.this.mBgDataModel) {
                 ModelWriter.this.checkItemInfoLocked(j, itemInfo, this.mStackTrace);
@@ -269,10 +271,15 @@ public class ModelWriter {
                     int i = itemInfo2.itemType;
                     if (i != 6) {
                         switch (i) {
+                            case 0:
+                            case 1:
+                            case 2:
+                                if (!ModelWriter.this.mBgDataModel.workspaceItems.contains(itemInfo2)) {
+                                    ModelWriter.this.mBgDataModel.workspaceItems.add(itemInfo2);
+                                    break;
+                                }
+                                break;
                         }
-                    }
-                    if (!ModelWriter.this.mBgDataModel.workspaceItems.contains(itemInfo2)) {
-                        ModelWriter.this.mBgDataModel.workspaceItems.add(itemInfo2);
                     }
                 }
                 this.mVerifier.verifyModel();
@@ -280,7 +287,6 @@ public class ModelWriter {
         }
     }
 
-    /* loaded from: classes.dex */
     public class ModelVerifier {
         final int startId;
 
@@ -294,7 +300,7 @@ public class ModelWriter {
                 ModelWriter.this.mUiHandler.post(new Runnable() { // from class: com.android.launcher3.model.-$$Lambda$ModelWriter$ModelVerifier$4mPDQaepj-58Crw1v-HLJXgf78A
                     @Override // java.lang.Runnable
                     public final void run() {
-                        ModelWriter.ModelVerifier.lambda$verifyModel$0(ModelWriter.ModelVerifier.this, i);
+                        ModelWriter.ModelVerifier.lambda$verifyModel$0(this.f$0, i);
                     }
                 });
             }

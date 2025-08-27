@@ -5,6 +5,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import android.util.Log;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeEventsPreferenceController extends AbstractZenModePreferenceController implements Preference.OnPreferenceChangeListener {
     public ZenModeEventsPreferenceController(Context context, Lifecycle lifecycle) {
@@ -30,22 +31,22 @@ public class ZenModeEventsPreferenceController extends AbstractZenModePreference
             case 3:
                 switchPreference.setEnabled(false);
                 switchPreference.setChecked(false);
-                return;
+                break;
             default:
                 switchPreference.setChecked(this.mBackend.isPriorityCategoryEnabled(2));
                 switchPreference.setEnabled(true);
-                return;
+                break;
         }
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        boolean booleanValue = ((Boolean) obj).booleanValue();
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
         if (ZenModeSettingsBase.DEBUG) {
-            Log.d("PrefControllerMixin", "onPrefChange allowEvents=" + booleanValue);
+            Log.d("PrefControllerMixin", "onPrefChange allowEvents=" + zBooleanValue);
         }
-        this.mMetricsFeatureProvider.action(this.mContext, 168, booleanValue);
-        this.mBackend.saveSoundPolicy(2, booleanValue);
+        this.mMetricsFeatureProvider.action(this.mContext, 168, zBooleanValue);
+        this.mBackend.saveSoundPolicy(2, zBooleanValue);
         return true;
     }
 }

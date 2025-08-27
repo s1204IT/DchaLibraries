@@ -6,6 +6,7 @@ import com.android.internal.widget.MessagingImageMessage;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.ViewTransformationHelper;
 import com.android.systemui.statusbar.notification.TransformState;
+
 /* loaded from: classes.dex */
 public class MessagingImageTransformState extends ImageTransformState {
     private static Pools.SimplePool<MessagingImageTransformState> sInstancePool = new Pools.SimplePool<>(40);
@@ -17,9 +18,8 @@ public class MessagingImageTransformState extends ImageTransformState {
         this.mImageMessage = (MessagingImageMessage) view;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.ImageTransformState, com.android.systemui.statusbar.notification.TransformState
-    public boolean sameAs(TransformState transformState) {
+    protected boolean sameAs(TransformState transformState) {
         if (super.sameAs(transformState)) {
             return true;
         }
@@ -42,9 +42,8 @@ public class MessagingImageTransformState extends ImageTransformState {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.TransformState
-    public void transformViewFrom(TransformState transformState, int i, ViewTransformationHelper.CustomTransformation customTransformation, float f) {
+    protected void transformViewFrom(TransformState transformState, int i, ViewTransformationHelper.CustomTransformation customTransformation, float f) {
         super.transformViewFrom(transformState, i, customTransformation, f);
         float interpolation = this.mDefaultInterpolator.getInterpolation(f);
         if ((transformState instanceof MessagingImageTransformState) && sameAs(transformState)) {
@@ -90,17 +89,15 @@ public class MessagingImageTransformState extends ImageTransformState {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.TransformState
-    public void resetTransformedView() {
+    protected void resetTransformedView() {
         super.resetTransformedView();
         this.mImageMessage.setActualWidth(this.mImageMessage.getStaticWidth());
         this.mImageMessage.setActualHeight(this.mImageMessage.getHeight());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.ImageTransformState, com.android.systemui.statusbar.notification.TransformState
-    public void reset() {
+    protected void reset() {
         super.reset();
         this.mImageMessage = null;
     }

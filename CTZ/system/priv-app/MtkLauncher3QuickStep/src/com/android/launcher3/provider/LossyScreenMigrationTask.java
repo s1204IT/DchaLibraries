@@ -12,14 +12,14 @@ import com.android.launcher3.model.GridSizeMigrationTask;
 import com.android.launcher3.util.LongArrayMap;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class LossyScreenMigrationTask extends GridSizeMigrationTask {
     private final SQLiteDatabase mDb;
     private final LongArrayMap<GridSizeMigrationTask.DbEntry> mOriginalItems;
     private final LongArrayMap<GridSizeMigrationTask.DbEntry> mUpdates;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public LossyScreenMigrationTask(Context context, InvariantDeviceProfile invariantDeviceProfile, SQLiteDatabase sQLiteDatabase) {
+    protected LossyScreenMigrationTask(Context context, InvariantDeviceProfile invariantDeviceProfile, SQLiteDatabase sQLiteDatabase) {
         super(context, invariantDeviceProfile, getValidPackages(context), new Point(invariantDeviceProfile.numColumns, invariantDeviceProfile.numRows + 1), new Point(invariantDeviceProfile.numColumns, invariantDeviceProfile.numRows));
         this.mDb = sQLiteDatabase;
         this.mOriginalItems = new LongArrayMap<>();
@@ -38,15 +38,15 @@ public class LossyScreenMigrationTask extends GridSizeMigrationTask {
 
     @Override // com.android.launcher3.model.GridSizeMigrationTask
     protected ArrayList<GridSizeMigrationTask.DbEntry> loadWorkspaceEntries(long j) {
-        ArrayList<GridSizeMigrationTask.DbEntry> loadWorkspaceEntries = super.loadWorkspaceEntries(j);
-        Iterator<GridSizeMigrationTask.DbEntry> it = loadWorkspaceEntries.iterator();
+        ArrayList<GridSizeMigrationTask.DbEntry> arrayListLoadWorkspaceEntries = super.loadWorkspaceEntries(j);
+        Iterator<GridSizeMigrationTask.DbEntry> it = arrayListLoadWorkspaceEntries.iterator();
         while (it.hasNext()) {
             GridSizeMigrationTask.DbEntry next = it.next();
             this.mOriginalItems.put(next.id, next.copy());
             next.cellY++;
             this.mUpdates.put(next.id, next.copy());
         }
-        return loadWorkspaceEntries;
+        return arrayListLoadWorkspaceEntries;
     }
 
     public void migrateScreen0() {

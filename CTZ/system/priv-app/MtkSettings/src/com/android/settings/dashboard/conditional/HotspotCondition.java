@@ -13,6 +13,7 @@ import com.android.settings.R;
 import com.android.settings.TetherSettings;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class HotspotCondition extends Condition {
     private static final IntentFilter WIFI_AP_STATE_FILTER = new IntentFilter("android.net.wifi.WIFI_AP_STATE_CHANGED");
@@ -48,7 +49,7 @@ public class HotspotCondition extends Condition {
     private String getSsid() {
         WifiConfiguration wifiApConfiguration = this.mWifiManager.getWifiApConfiguration();
         if (wifiApConfiguration == null) {
-            return this.mManager.getContext().getString(17041118);
+            return this.mManager.getContext().getString(android.R.string.permdesc_callCompanionApp);
         }
         return wifiApConfiguration.SSID;
     }
@@ -66,7 +67,10 @@ public class HotspotCondition extends Condition {
     @Override // com.android.settings.dashboard.conditional.Condition
     public CharSequence[] getActions() {
         Context context = this.mManager.getContext();
-        return RestrictedLockUtils.hasBaseUserRestriction(context, "no_config_tethering", UserHandle.myUserId()) ? new CharSequence[0] : new CharSequence[]{context.getString(R.string.condition_turn_off)};
+        if (RestrictedLockUtils.hasBaseUserRestriction(context, "no_config_tethering", UserHandle.myUserId())) {
+            return new CharSequence[0];
+        }
+        return new CharSequence[]{context.getString(R.string.condition_turn_off)};
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
@@ -78,14 +82,15 @@ public class HotspotCondition extends Condition {
     public void onActionClick(int i) {
         if (i == 0) {
             Context context = this.mManager.getContext();
-            RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(context, "no_config_tethering", UserHandle.myUserId());
-            if (checkIfRestrictionEnforced != null) {
-                RestrictedLockUtils.sendShowAdminSupportDetailsIntent(context, checkIfRestrictionEnforced);
+            RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(context, "no_config_tethering", UserHandle.myUserId());
+            if (enforcedAdminCheckIfRestrictionEnforced != null) {
+                RestrictedLockUtils.sendShowAdminSupportDetailsIntent(context, enforcedAdminCheckIfRestrictionEnforced);
+                return;
+            } else {
+                ((ConnectivityManager) context.getSystemService("connectivity")).stopTethering(0);
+                setActive(false);
                 return;
             }
-            ((ConnectivityManager) context.getSystemService("connectivity")).stopTethering(0);
-            setActive(false);
-            return;
         }
         throw new IllegalArgumentException("Unexpected index " + i);
     }
@@ -95,7 +100,6 @@ public class HotspotCondition extends Condition {
         return 382;
     }
 
-    /* loaded from: classes.dex */
     public static class Receiver extends BroadcastReceiver {
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {

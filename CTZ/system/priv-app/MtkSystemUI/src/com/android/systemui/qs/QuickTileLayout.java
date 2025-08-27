@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
 /* loaded from: classes.dex */
 public class QuickTileLayout extends LinearLayout {
     public QuickTileLayout(Context context, AttributeSet attributeSet) {

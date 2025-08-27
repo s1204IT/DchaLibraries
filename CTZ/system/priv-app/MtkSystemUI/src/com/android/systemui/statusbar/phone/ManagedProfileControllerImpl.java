@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ManagedProfileControllerImpl implements ManagedProfileController {
     private final Context mContext;
@@ -25,8 +26,9 @@ public class ManagedProfileControllerImpl implements ManagedProfileController {
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             ManagedProfileControllerImpl.this.reloadManagedProfiles();
-            for (ManagedProfileController.Callback callback : ManagedProfileControllerImpl.this.mCallbacks) {
-                callback.onManagedProfileChanged();
+            Iterator it = ManagedProfileControllerImpl.this.mCallbacks.iterator();
+            while (it.hasNext()) {
+                ((ManagedProfileController.Callback) it.next()).onManagedProfileChanged();
             }
         }
     };
@@ -37,6 +39,7 @@ public class ManagedProfileControllerImpl implements ManagedProfileController {
         this.mUserManager = UserManager.get(this.mContext);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(ManagedProfileController.Callback callback) {
         this.mCallbacks.add(callback);
@@ -46,6 +49,7 @@ public class ManagedProfileControllerImpl implements ManagedProfileController {
         callback.onManagedProfileChanged();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(ManagedProfileController.Callback callback) {
         if (this.mCallbacks.remove(callback) && this.mCallbacks.size() == 0) {
@@ -65,8 +69,7 @@ public class ManagedProfileControllerImpl implements ManagedProfileController {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void reloadManagedProfiles() {
+    private void reloadManagedProfiles() {
         synchronized (this.mProfiles) {
             boolean z = this.mProfiles.size() > 0;
             int currentUser = ActivityManager.getCurrentUser();
@@ -77,8 +80,9 @@ public class ManagedProfileControllerImpl implements ManagedProfileController {
                 }
             }
             if (this.mProfiles.size() == 0 && z && currentUser == this.mCurrentUser) {
-                for (ManagedProfileController.Callback callback : this.mCallbacks) {
-                    callback.onManagedProfileRemoved();
+                Iterator<ManagedProfileController.Callback> it = this.mCallbacks.iterator();
+                while (it.hasNext()) {
+                    it.next().onManagedProfileRemoved();
                 }
             }
             this.mCurrentUser = currentUser;

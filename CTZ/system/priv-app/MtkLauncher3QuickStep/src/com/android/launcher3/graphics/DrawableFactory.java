@@ -19,6 +19,7 @@ import com.android.launcher3.ItemInfoWithIcon;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.allapps.AllAppsBackgroundDrawable;
+
 /* loaded from: classes.dex */
 public class DrawableFactory {
     private static final Object LOCK = new Object();
@@ -95,18 +96,18 @@ public class DrawableFactory {
         }
         Resources resources = context.getApplicationContext().getResources();
         int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.profile_badge_size);
-        Bitmap createBitmap = Bitmap.createBitmap(dimensionPixelSize, dimensionPixelSize, Bitmap.Config.ARGB_8888);
-        Drawable userBadgedDrawableForDensity = context.getPackageManager().getUserBadgedDrawableForDensity(new BitmapDrawable(resources, createBitmap), userHandle, new Rect(0, 0, dimensionPixelSize, dimensionPixelSize), 0);
+        Bitmap bitmapCreateBitmap = Bitmap.createBitmap(dimensionPixelSize, dimensionPixelSize, Bitmap.Config.ARGB_8888);
+        Drawable userBadgedDrawableForDensity = context.getPackageManager().getUserBadgedDrawableForDensity(new BitmapDrawable(resources, bitmapCreateBitmap), userHandle, new Rect(0, 0, dimensionPixelSize, dimensionPixelSize), 0);
         if (userBadgedDrawableForDensity instanceof BitmapDrawable) {
-            createBitmap = ((BitmapDrawable) userBadgedDrawableForDensity).getBitmap();
+            bitmapCreateBitmap = ((BitmapDrawable) userBadgedDrawableForDensity).getBitmap();
         } else {
-            createBitmap.eraseColor(0);
-            Canvas canvas = new Canvas(createBitmap);
+            bitmapCreateBitmap.eraseColor(0);
+            Canvas canvas = new Canvas(bitmapCreateBitmap);
             userBadgedDrawableForDensity.setBounds(0, 0, dimensionPixelSize, dimensionPixelSize);
             userBadgedDrawableForDensity.draw(canvas);
             canvas.setBitmap(null);
         }
-        this.mUserBadges.put(userHandle, createBitmap);
-        return createBitmap;
+        this.mUserBadges.put(userHandle, bitmapCreateBitmap);
+        return bitmapCreateBitmap;
     }
 }

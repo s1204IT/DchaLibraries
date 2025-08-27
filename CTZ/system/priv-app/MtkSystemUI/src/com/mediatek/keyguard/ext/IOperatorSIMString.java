@@ -1,10 +1,10 @@
 package com.mediatek.keyguard.ext;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public interface IOperatorSIMString {
 
-    /* loaded from: classes.dex */
     public enum SIMChangedTag {
         SIMTOUIM,
         UIMSIM,

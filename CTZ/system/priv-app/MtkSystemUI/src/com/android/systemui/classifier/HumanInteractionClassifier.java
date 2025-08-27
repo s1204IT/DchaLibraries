@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import com.android.systemui.R;
 import java.util.ArrayDeque;
+
 /* loaded from: classes.dex */
 public class HumanInteractionClassifier extends Classifier {
     private static HumanInteractionClassifier sInstance = null;
@@ -23,11 +24,27 @@ public class HumanInteractionClassifier extends Classifier {
     private boolean mEnableClassifier = false;
     private int mCurrentType = 7;
     protected final ContentObserver mSettingsObserver = new ContentObserver(this.mHandler) { // from class: com.android.systemui.classifier.HumanInteractionClassifier.1
+        AnonymousClass1(Handler handler) {
+            super(handler);
+        }
+
         @Override // android.database.ContentObserver
         public void onChange(boolean z) {
             HumanInteractionClassifier.this.updateConfiguration();
         }
     };
+
+    /* renamed from: com.android.systemui.classifier.HumanInteractionClassifier$1 */
+    class AnonymousClass1 extends ContentObserver {
+        AnonymousClass1(Handler handler) {
+            super(handler);
+        }
+
+        @Override // android.database.ContentObserver
+        public void onChange(boolean z) {
+            HumanInteractionClassifier.this.updateConfiguration();
+        }
+    }
 
     private HumanInteractionClassifier(Context context) {
         this.mContext = context;
@@ -48,8 +65,7 @@ public class HumanInteractionClassifier extends Classifier {
         return sInstance;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateConfiguration() {
+    private void updateConfiguration() {
         this.mEnableClassifier = Settings.Global.getInt(this.mContext.getContentResolver(), "HIC_enable", this.mContext.getResources().getBoolean(R.bool.config_lockscreenAntiFalsingClassifierEnabled) ? 1 : 0) != 0;
     }
 
@@ -83,8 +99,6 @@ public class HumanInteractionClassifier extends Classifier {
     private void addTouchEvent(MotionEvent motionEvent) {
         float f;
         StringBuilder sb;
-        GestureClassifier[] gestureClassifierArr;
-        StrokeClassifier[] strokeClassifierArr;
         this.mClassifierData.update(motionEvent);
         for (StrokeClassifier strokeClassifier : this.mStrokeClassifiers) {
             strokeClassifier.onTouchEvent(motionEvent);
@@ -158,20 +172,21 @@ public class HumanInteractionClassifier extends Classifier {
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: java.lang.StringBuilder */
     /* JADX WARN: Multi-variable type inference failed */
     /* JADX WARN: Type inference failed for: r1v0 */
     /* JADX WARN: Type inference failed for: r1v1, types: [boolean, int] */
     /* JADX WARN: Type inference failed for: r1v2 */
     public boolean isFalseTouch() {
-        if (this.mEnableClassifier) {
-            float evaluation = this.mHistoryEvaluator.getEvaluation();
-            ?? r1 = evaluation >= 5.0f ? 1 : 0;
-            if (FalsingLog.ENABLED) {
-                FalsingLog.i("isFalseTouch", "eval=" + evaluation + " result=" + ((int) r1));
-            }
-            return r1;
+        if (!this.mEnableClassifier) {
+            return false;
         }
-        return false;
+        float evaluation = this.mHistoryEvaluator.getEvaluation();
+        ?? r1 = evaluation >= 5.0f ? 1 : 0;
+        if (FalsingLog.ENABLED) {
+            FalsingLog.i("isFalseTouch", "eval=" + evaluation + " result=" + ((int) r1));
+        }
+        return r1;
     }
 
     public boolean isEnabled() {

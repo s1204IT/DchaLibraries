@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.net.NetworkTemplate;
 import android.net.Uri;
@@ -35,6 +36,7 @@ import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IDataUsageSummaryExt;
 import com.mediatek.settings.sim.TelephonyUtils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class CellDataPreference extends CustomDialogPreference implements TemplatePreference {
     private boolean mAlertForCdmaCompetition;
@@ -50,7 +52,7 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
     private TelephonyManager mTelephonyManager;
 
     public CellDataPreference(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.switchPreferenceStyle, 16843629));
+        super(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.switchPreferenceStyle, android.R.attr.switchPreferenceStyle));
         this.mSubId = -1;
         this.mOnSubscriptionsChangeListener = new SubscriptionManager.OnSubscriptionsChangedListener() { // from class: com.android.settings.datausage.CellDataPreference.2
             @Override // android.telephony.SubscriptionManager.OnSubscriptionsChangedListener
@@ -70,8 +72,7 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
             @Override // android.content.BroadcastReceiver
             public void onReceive(Context context2, Intent intent) {
                 String action = intent.getAction();
-                CellDataPreference cellDataPreference = CellDataPreference.this;
-                cellDataPreference.log("onReceive broadcast , action =  " + action);
+                CellDataPreference.this.log("onReceive broadcast , action =  " + action);
                 if (action.equals("android.intent.action.AIRPLANE_MODE")) {
                     CellDataPreference.this.mIsAirplaneModeOn = intent.getBooleanExtra("state", false);
                     CellDataPreference.this.updateScreenEnableState();
@@ -85,9 +86,8 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void onRestoreInstanceState(Parcelable parcelable) {
+    protected void onRestoreInstanceState(Parcelable parcelable) {
         CellDataState cellDataState = (CellDataState) parcelable;
         super.onRestoreInstanceState(cellDataState.getSuperState());
         this.mTelephonyManager = TelephonyManager.from(getContext());
@@ -100,9 +100,8 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         notifyChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public Parcelable onSaveInstanceState() {
+    protected Parcelable onSaveInstanceState() {
         CellDataState cellDataState = new CellDataState(super.onSaveInstanceState());
         cellDataState.mChecked = this.mChecked;
         cellDataState.mMultiSimDialog = this.mMultiSimDialog;
@@ -161,14 +160,12 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         updateChecked();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateChecked() {
+    private void updateChecked() {
         setChecked(this.mTelephonyManager.getDataEnabled(this.mSubId));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void performClick(View view) {
+    protected void performClick(View view) {
         Context context = getContext();
         FeatureFactory.getFactory(context).getMetricsFeatureProvider().action(context, 178, !this.mChecked);
         SubscriptionInfo activeSubscriptionInfo = this.mSubscriptionManager.getActiveSubscriptionInfo(this.mSubId);
@@ -185,7 +182,9 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
             }
             this.mMultiSimDialog = false;
             super.performClick(view);
-        } else if (Utils.showSimCardTile(getContext())) {
+            return;
+        }
+        if (Utils.showSimCardTile(getContext())) {
             this.mMultiSimDialog = true;
             if (defaultDataSubscriptionInfo != null && activeSubscriptionInfo != null && activeSubscriptionInfo.getSubscriptionId() == defaultDataSubscriptionInfo.getSubscriptionId()) {
                 setMobileDataEnabled(true);
@@ -196,9 +195,9 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
                 return;
             }
             super.performClick(view);
-        } else {
-            setMobileDataEnabled(true);
+            return;
         }
+        setMobileDataEnabled(true);
     }
 
     private void setMobileDataEnabled(boolean z) {
@@ -215,12 +214,14 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         notifyChanged();
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r0v1, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(16908352);
-        findViewById.setClickable(false);
-        ((Checkable) findViewById).setChecked(this.mChecked);
+        View viewFindViewById = preferenceViewHolder.findViewById(android.R.id.switch_widget);
+        viewFindViewById.setClickable(false);
+        ((Checkable) viewFindViewById).setChecked(this.mChecked);
         this.mDataUsageSummaryExt.onBindViewHolder(getContext(), preferenceViewHolder.itemView, new View.OnClickListener() { // from class: com.android.settings.datausage.CellDataPreference.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
@@ -229,9 +230,8 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomDialogPreference
-    public void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) throws Resources.NotFoundException {
         if (this.mMultiSimDialog) {
             showMultiSimDialog(builder, onClickListener);
         } else if (this.mDataUsageSummaryExt.onDisablingData(this.mSubId)) {
@@ -240,23 +240,23 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
     }
 
     private void showDisableDialog(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
-        builder.setTitle((CharSequence) null).setMessage(R.string.data_usage_disable_mobile).setPositiveButton(17039370, onClickListener).setNegativeButton(17039360, (DialogInterface.OnClickListener) null);
+        builder.setTitle((CharSequence) null).setMessage(R.string.data_usage_disable_mobile).setPositiveButton(android.R.string.ok, onClickListener).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null);
     }
 
-    private void showMultiSimDialog(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
-        String charSequence;
+    private void showMultiSimDialog(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) throws Resources.NotFoundException {
+        String string;
         SubscriptionInfo activeSubscriptionInfo = this.mSubscriptionManager.getActiveSubscriptionInfo(this.mSubId);
         SubscriptionInfo defaultDataSubscriptionInfo = this.mSubscriptionManager.getDefaultDataSubscriptionInfo();
         if (defaultDataSubscriptionInfo == null) {
-            charSequence = getContext().getResources().getString(R.string.sim_selection_required_pref);
+            string = getContext().getResources().getString(R.string.sim_selection_required_pref);
         } else {
-            charSequence = defaultDataSubscriptionInfo.getDisplayName().toString();
+            string = defaultDataSubscriptionInfo.getDisplayName().toString();
         }
         builder.setTitle(R.string.sim_change_data_title);
         Context context = getContext();
         Object[] objArr = new Object[2];
         objArr[0] = String.valueOf(activeSubscriptionInfo != null ? activeSubscriptionInfo.getDisplayName() : null);
-        objArr[1] = charSequence;
+        objArr[1] = string;
         builder.setMessage(context.getString(R.string.sim_change_data_message, objArr));
         builder.setPositiveButton(R.string.okay, onClickListener);
         builder.setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null);
@@ -281,7 +281,7 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         log("onClick, mMultiSimDialog = " + this.mMultiSimDialog);
         if (this.mMultiSimDialog) {
             if (TelecomManager.from(getContext()).isInCall()) {
-                Toast.makeText(getContext(), (int) R.string.default_data_switch_err_msg1, 0).show();
+                Toast.makeText(getContext(), R.string.default_data_switch_err_msg1, 0).show();
                 log("in Call, RETURN!");
                 return;
             }
@@ -296,7 +296,6 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         setMobileDataEnabled(false);
     }
 
-    /* loaded from: classes.dex */
     public static abstract class DataStateListener extends ContentObserver {
         public DataStateListener() {
             super(new Handler(Looper.getMainLooper()));
@@ -315,15 +314,16 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         }
     }
 
-    /* loaded from: classes.dex */
     public static class CellDataState extends Preference.BaseSavedState {
         public static final Parcelable.Creator<CellDataState> CREATOR = new Parcelable.Creator<CellDataState>() { // from class: com.android.settings.datausage.CellDataPreference.CellDataState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public CellDataState createFromParcel(Parcel parcel) {
                 return new CellDataState(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public CellDataState[] newArray(int i) {
@@ -354,8 +354,7 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onCdmaCompetitionHandled(Intent intent) {
+    private void onCdmaCompetitionHandled(Intent intent) {
         int intExtra = intent.getIntExtra("subscription", -1);
         log("defaultDataSubId: " + intExtra + " mAlertForCdmaCompetition: " + this.mAlertForCdmaCompetition);
         if (this.mAlertForCdmaCompetition && intExtra == this.mSubId) {
@@ -367,11 +366,10 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateScreenEnableState() {
-        boolean isCapabilitySwitching = TelephonyUtils.isCapabilitySwitching();
-        log("updateScreenEnableState, mIsAirplaneModeOn = " + this.mIsAirplaneModeOn + ", isCapabilitySwitching = " + isCapabilitySwitching);
-        boolean z = (this.mIsAirplaneModeOn || isCapabilitySwitching) ? false : true;
+    private void updateScreenEnableState() {
+        boolean zIsCapabilitySwitching = TelephonyUtils.isCapabilitySwitching();
+        log("updateScreenEnableState, mIsAirplaneModeOn = " + this.mIsAirplaneModeOn + ", isCapabilitySwitching = " + zIsCapabilitySwitching);
+        boolean z = (this.mIsAirplaneModeOn || zIsCapabilitySwitching) ? false : true;
         if (this.mDataUsageSummaryExt != null) {
             z = z && this.mDataUsageSummaryExt.isAllowDataEnable(this.mSubId);
             log("enabled = " + z);
@@ -379,8 +377,7 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         setEnabled(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void log(String str) {
+    private void log(String str) {
         Log.d("CellDataPreference[" + this.mSubId + "]", str);
     }
 }

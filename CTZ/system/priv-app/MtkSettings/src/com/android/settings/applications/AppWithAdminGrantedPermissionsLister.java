@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageManager;
 import android.os.UserManager;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public abstract class AppWithAdminGrantedPermissionsLister extends AppLister {
     private final DevicePolicyManager mDevicePolicyManager;

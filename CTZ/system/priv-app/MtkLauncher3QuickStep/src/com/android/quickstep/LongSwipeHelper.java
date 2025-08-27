@@ -16,6 +16,7 @@ import com.android.quickstep.views.RecentsView;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
 import com.android.systemui.shared.system.TransactionCompat;
+
 /* loaded from: classes.dex */
 public class LongSwipeHelper {
     private static final float SWIPE_DURATION_MULTIPLIER = Math.min(2.0f, 2.0f);
@@ -25,8 +26,7 @@ public class LongSwipeHelper {
     private float mMaxSwipeDistance = 1.0f;
     private FlingBlockCheck mFlingBlockCheck = new FlingBlockCheck();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public LongSwipeHelper(Launcher launcher, RemoteAnimationTargetSet remoteAnimationTargetSet) {
+    LongSwipeHelper(Launcher launcher, RemoteAnimationTargetSet remoteAnimationTargetSet) {
         this.mLauncher = launcher;
         this.mTargetSet = remoteAnimationTargetSet;
         init();
@@ -57,36 +57,35 @@ public class LongSwipeHelper {
         float progressFraction = this.mAnimator.getProgressFraction();
         boolean z3 = z && this.mFlingBlockCheck.isBlocked();
         final boolean z4 = z3 ? false : z;
-        long j = 350;
+        long jMin = 350;
         if (!z4) {
             boolean z5 = progressFraction > 0.5f;
             f2 = z5 ? 1.0f : 0.0f;
-            j = Math.min(350L, Math.abs(Math.round((f2 - progressFraction) * 350.0f * SWIPE_DURATION_MULTIPLIER)));
+            jMin = Math.min(350L, Math.abs(Math.round((f2 - progressFraction) * 350.0f * SWIPE_DURATION_MULTIPLIER)));
             z2 = z5;
         } else {
             z2 = f < 0.0f;
             f2 = z2 ? 1.0f : 0.0f;
             if (Math.abs(f) > this.mLauncher.getResources().getDimension(R.dimen.quickstep_fling_min_velocity) && this.mMaxSwipeDistance > 0.0f) {
-                j = Math.min(350L, 2 * Math.round(1000.0f * Math.abs(((f2 - progressFraction) * this.mMaxSwipeDistance) / f)));
+                jMin = Math.min(350L, 2 * Math.round(1000.0f * Math.abs(((f2 - progressFraction) * this.mMaxSwipeDistance) / f)));
             }
         }
         if (z3 && !z2) {
-            j *= LauncherAnimUtils.blockedFlingDurationFactor(0.0f);
+            jMin *= LauncherAnimUtils.blockedFlingDurationFactor(0.0f);
         }
         this.mAnimator.setEndAction(new Runnable() { // from class: com.android.quickstep.-$$Lambda$LongSwipeHelper$mOFzRYVjuMEjiJwoO3jAiRT4Zxg
             @Override // java.lang.Runnable
             public final void run() {
-                LongSwipeHelper.this.onSwipeAnimationComplete(z2, z4, runnable);
+                this.f$0.onSwipeAnimationComplete(z2, z4, runnable);
             }
         });
         ValueAnimator animationPlayer = this.mAnimator.getAnimationPlayer();
-        animationPlayer.setDuration(j).setInterpolator(Interpolators.DEACCEL);
+        animationPlayer.setDuration(jMin).setInterpolator(Interpolators.DEACCEL);
         animationPlayer.setFloatValues(progressFraction, f2);
         animationPlayer.start();
     }
 
     private void setTargetAlpha(float f, boolean z) {
-        RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr;
         Surface surface = Utilities.getSurface(this.mLauncher.getDragLayer());
         long nextFrameNumber = (!z || surface == null) ? -1L : Utilities.getNextFrameNumber(surface);
         if (z) {
@@ -109,8 +108,7 @@ public class LongSwipeHelper {
         transactionCompat.apply();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSwipeAnimationComplete(boolean z, boolean z2, Runnable runnable) {
+    private void onSwipeAnimationComplete(boolean z, boolean z2, Runnable runnable) {
         this.mLauncher.getStateManager().goToState(z ? LauncherState.ALL_APPS : LauncherState.OVERVIEW, false);
         if (!z) {
             DiscoveryBounce.showForOverviewIfNeeded(this.mLauncher);

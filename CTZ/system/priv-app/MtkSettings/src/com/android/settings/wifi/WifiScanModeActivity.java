@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class WifiScanModeActivity extends Activity {
     private String mApp;
@@ -52,15 +53,13 @@ public class WifiScanModeActivity extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void doPositiveClick() {
+    private void doPositiveClick() {
         Settings.Global.putInt(getContentResolver(), "wifi_scan_always_enabled", 1);
         setResult(-1);
         finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void doNegativeClick() {
+    private void doNegativeClick() {
         setResult(0);
         finish();
     }
@@ -83,7 +82,6 @@ public class WifiScanModeActivity extends Activity {
         createDialog();
     }
 
-    /* loaded from: classes.dex */
     public static class AlertDialogFragment extends InstrumentedDialogFragment {
         private final String mApp;
 

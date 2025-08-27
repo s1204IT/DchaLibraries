@@ -15,6 +15,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import com.android.internal.telephony.Phone;
 import com.android.internal.telephony.PhoneFactory;
+
 /* loaded from: classes.dex */
 public class BandMode extends Activity {
     private static final String[] BAND_NAMES = {"Automatic", "Europe", "United States", "Japan", "Australia", "Australia 2", "Cellular 800", "PCS", "Class 3 (JTACS)", "Class 4 (Korea-PCS)", "Class 5", "Class 6 (IMT2000)", "Class 7 (700Mhz-Upper)", "Class 8 (1800Mhz-Upper)", "Class 9 (900Mhz)", "Class 10 (800Mhz-Secondary)", "Class 11 (Europe PAMR 400Mhz)", "Class 15 (US-AWS)", "Class 16 (US-2500Mhz)"};
@@ -56,15 +57,13 @@ public class BandMode extends Activity {
         getWindow().setLayout(-1, -2);
         this.mPhone = PhoneFactory.getDefaultPhone();
         this.mBandList = (ListView) findViewById(R.id.band);
-        this.mBandListAdapter = new ArrayAdapter(this, 17367043);
+        this.mBandListAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1);
         this.mBandList.setAdapter((ListAdapter) this.mBandListAdapter);
         this.mBandList.setOnItemClickListener(this.mBandSelectionHandler);
         loadBandList();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class BandListItem {
+    private static class BandListItem {
         private int mBandMode;
 
         public BandListItem(int i) {
@@ -77,10 +76,10 @@ public class BandMode extends Activity {
         }
 
         public String toString() {
-            if (this.mBandMode >= BandMode.BAND_NAMES.length) {
-                return "Band mode " + this.mBandMode;
+            if (this.mBandMode < BandMode.BAND_NAMES.length) {
+                return BandMode.BAND_NAMES[this.mBandMode];
             }
-            return BandMode.BAND_NAMES[this.mBandMode];
+            return "Band mode " + this.mBandMode;
         }
     }
 
@@ -89,13 +88,11 @@ public class BandMode extends Activity {
         this.mPhone.queryAvailableBandMode(this.mHandler.obtainMessage(100));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* JADX WARN: Removed duplicated region for block: B:23:0x004b A[LOOP:1: B:23:0x004b->B:25:0x004f, LOOP_START, PHI: r2 
-      PHI: (r2v1 int) = (r2v0 int), (r2v2 int) binds: [B:22:0x0049, B:25:0x004f] A[DONT_GENERATE, DONT_INLINE]] */
+    /* JADX WARN: Removed duplicated region for block: B:21:0x0048  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void bandListLoaded(AsyncResult asyncResult) {
+    private void bandListLoaded(AsyncResult asyncResult) {
         if (this.mProgressPanel != null) {
             this.mProgressPanel.dismiss();
         }
@@ -115,22 +112,19 @@ public class BandMode extends Activity {
                         this.mBandListAdapter.add(new BandListItem(iArr[i2]));
                     }
                 }
-                if (!z) {
-                    for (int i3 = 0; i3 < 19; i3++) {
-                        this.mBandListAdapter.add(new BandListItem(i3));
-                    }
-                }
-                this.mBandList.requestFocus();
+            } else {
+                z = false;
             }
         }
-        z = false;
         if (!z) {
+            for (int i3 = 0; i3 < 19; i3++) {
+                this.mBandListAdapter.add(new BandListItem(i3));
+            }
         }
         this.mBandList.requestFocus();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void displayBandSelectionResult(Throwable th) {
+    private void displayBandSelectionResult(Throwable th) {
         String str;
         String str2 = getString(R.string.band_mode_set) + " [" + this.mTargetBand.toString() + "] ";
         if (th != null) {
@@ -138,7 +132,7 @@ public class BandMode extends Activity {
         } else {
             str = str2 + getString(R.string.band_mode_succeeded);
         }
-        this.mProgressPanel = new AlertDialog.Builder(this).setMessage(str).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).show();
+        this.mProgressPanel = new AlertDialog.Builder(this).setMessage(str).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null).show();
     }
 
     private void clearList() {

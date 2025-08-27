@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class EnableOemUnlockSettingWarningDialog extends InstrumentedDialogFragment implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
     public static void show(Fragment fragment) {
@@ -26,7 +27,7 @@ public class EnableOemUnlockSettingWarningDialog extends InstrumentedDialogFragm
 
     @Override // android.app.DialogFragment
     public Dialog onCreateDialog(Bundle bundle) {
-        return new AlertDialog.Builder(getActivity()).setTitle(R.string.confirm_enable_oem_unlock_title).setMessage(R.string.confirm_enable_oem_unlock_text).setPositiveButton(R.string.enable_text, this).setNegativeButton(17039360, this).create();
+        return new AlertDialog.Builder(getActivity()).setTitle(R.string.confirm_enable_oem_unlock_title).setMessage(R.string.confirm_enable_oem_unlock_text).setPositiveButton(R.string.enable_text, this).setNegativeButton(android.R.string.cancel, this).create();
     }
 
     @Override // android.content.DialogInterface.OnClickListener

@@ -3,6 +3,7 @@ package com.android.settings.datausage;
 import com.android.settings.applications.AppStateBaseBridge;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AppStateDataUsageBridge extends AppStateBaseBridge {
     private final DataSaverBackend mDataSaverBackend;
@@ -27,7 +28,6 @@ public class AppStateDataUsageBridge extends AppStateBaseBridge {
         appEntry.extraInfo = new DataUsageState(this.mDataSaverBackend.isWhitelisted(i), this.mDataSaverBackend.isBlacklisted(i));
     }
 
-    /* loaded from: classes.dex */
     public static class DataUsageState {
         public boolean isDataSaverBlacklisted;
         public boolean isDataSaverWhitelisted;

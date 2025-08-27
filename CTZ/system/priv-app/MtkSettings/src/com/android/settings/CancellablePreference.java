@@ -6,12 +6,12 @@ import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+
 /* loaded from: classes.dex */
 public class CancellablePreference extends Preference implements View.OnClickListener {
     private boolean mCancellable;
     private OnCancelListener mListener;
 
-    /* loaded from: classes.dex */
     public interface OnCancelListener {
         void onCancel(CancellablePreference cancellablePreference);
     }

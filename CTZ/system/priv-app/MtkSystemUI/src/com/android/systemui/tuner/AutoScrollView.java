@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.widget.ScrollView;
+
 /* loaded from: classes.dex */
 public class AutoScrollView extends ScrollView {
     public AutoScrollView(Context context, AttributeSet attributeSet) {

@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.content.res.XmlResourceParser;
 import android.os.Parcel;
@@ -16,30 +17,31 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class CustomWidgetParser {
     private static List<LauncherAppWidgetProviderInfo> sCustomWidgets;
     private static SparseArray<ComponentName> sWidgetsIdMap;
 
-    public static List<LauncherAppWidgetProviderInfo> getCustomWidgets(Context context) {
+    public static List<LauncherAppWidgetProviderInfo> getCustomWidgets(Context context) throws Resources.NotFoundException {
         if (sCustomWidgets == null) {
             parseCustomWidgets(context);
         }
         return sCustomWidgets;
     }
 
-    public static int getWidgetIdForCustomProvider(Context context, ComponentName componentName) {
+    public static int getWidgetIdForCustomProvider(Context context, ComponentName componentName) throws Resources.NotFoundException {
         if (sWidgetsIdMap == null) {
             parseCustomWidgets(context);
         }
-        int indexOfValue = sWidgetsIdMap.indexOfValue(componentName);
-        if (indexOfValue >= 0) {
-            return (-100) - sWidgetsIdMap.keyAt(indexOfValue);
+        int iIndexOfValue = sWidgetsIdMap.indexOfValue(componentName);
+        if (iIndexOfValue >= 0) {
+            return (-100) - sWidgetsIdMap.keyAt(iIndexOfValue);
         }
         return 0;
     }
 
-    public static LauncherAppWidgetProviderInfo getWidgetProvider(Context context, int i) {
+    public static LauncherAppWidgetProviderInfo getWidgetProvider(Context context, int i) throws Resources.NotFoundException {
         if (sWidgetsIdMap == null || sCustomWidgets == null) {
             parseCustomWidgets(context);
         }
@@ -52,7 +54,7 @@ public class CustomWidgetParser {
         return null;
     }
 
-    private static void parseCustomWidgets(Context context) {
+    private static void parseCustomWidgets(Context context) throws Resources.NotFoundException {
         ArrayList arrayList = new ArrayList();
         SparseArray<ComponentName> sparseArray = new SparseArray<>();
         List<AppWidgetProviderInfo> installedProvidersForProfile = AppWidgetManager.getInstance(context).getInstalledProvidersForProfile(Process.myUserHandle());
@@ -61,30 +63,50 @@ public class CustomWidgetParser {
             sWidgetsIdMap = sparseArray;
             return;
         }
-        Parcel obtain = Parcel.obtain();
-        installedProvidersForProfile.get(0).writeToParcel(obtain, 0);
+        Parcel parcelObtain = Parcel.obtain();
+        installedProvidersForProfile.get(0).writeToParcel(parcelObtain, 0);
         try {
             XmlResourceParser xml = context.getResources().getXml(R.xml.custom_widgets);
-            int depth = xml.getDepth();
-            while (true) {
-                int next = xml.next();
-                if ((next != 3 || xml.getDepth() > depth) && next != 1) {
-                    if (next == 2 && "widget".equals(xml.getName())) {
-                        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(Xml.asAttributeSet(xml), R.styleable.CustomAppWidgetProviderInfo);
-                        obtain.setDataPosition(0);
-                        CustomAppWidgetProviderInfo newInfo = newInfo(obtainStyledAttributes, obtain, context);
-                        arrayList.add(newInfo);
-                        obtainStyledAttributes.recycle();
-                        sparseArray.put(newInfo.providerId, newInfo.provider);
+            Throwable th = null;
+            try {
+                try {
+                    int depth = xml.getDepth();
+                    while (true) {
+                        int next = xml.next();
+                        if ((next == 3 && xml.getDepth() <= depth) || next == 1) {
+                            break;
+                        }
+                        if (next == 2 && "widget".equals(xml.getName())) {
+                            TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(Xml.asAttributeSet(xml), R.styleable.CustomAppWidgetProviderInfo);
+                            parcelObtain.setDataPosition(0);
+                            CustomAppWidgetProviderInfo customAppWidgetProviderInfoNewInfo = newInfo(typedArrayObtainStyledAttributes, parcelObtain, context);
+                            arrayList.add(customAppWidgetProviderInfoNewInfo);
+                            typedArrayObtainStyledAttributes.recycle();
+                            sparseArray.put(customAppWidgetProviderInfoNewInfo.providerId, customAppWidgetProviderInfoNewInfo.provider);
+                        }
+                    }
+                    if (xml != null) {
+                        xml.close();
+                    }
+                    parcelObtain.recycle();
+                    sCustomWidgets = arrayList;
+                    sWidgetsIdMap = sparseArray;
+                } finally {
+                }
+            } catch (Throwable th2) {
+                if (xml != null) {
+                    if (th != null) {
+                        try {
+                            xml.close();
+                        } catch (Throwable th3) {
+                            th.addSuppressed(th3);
+                        }
+                    } else {
+                        xml.close();
                     }
                 }
+                throw th2;
             }
-            if (xml != null) {
-                xml.close();
-            }
-            obtain.recycle();
-            sCustomWidgets = arrayList;
-            sWidgetsIdMap = sparseArray;
         } catch (IOException | XmlPullParserException e) {
             throw new RuntimeException(e);
         }
@@ -93,8 +115,7 @@ public class CustomWidgetParser {
     private static CustomAppWidgetProviderInfo newInfo(TypedArray typedArray, Parcel parcel, Context context) {
         int i = typedArray.getInt(9, 0);
         CustomAppWidgetProviderInfo customAppWidgetProviderInfo = new CustomAppWidgetProviderInfo(parcel, false, i);
-        String packageName = context.getPackageName();
-        customAppWidgetProviderInfo.provider = new ComponentName(packageName, LauncherAppWidgetProviderInfo.CLS_CUSTOM_WIDGET_PREFIX + i);
+        customAppWidgetProviderInfo.provider = new ComponentName(context.getPackageName(), LauncherAppWidgetProviderInfo.CLS_CUSTOM_WIDGET_PREFIX + i);
         customAppWidgetProviderInfo.label = typedArray.getString(0);
         customAppWidgetProviderInfo.initialLayout = typedArray.getResourceId(2, 0);
         customAppWidgetProviderInfo.icon = typedArray.getResourceId(1, 0);

@@ -6,12 +6,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public final class Sets {
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static abstract class ImprovedAbstractSet<E> extends AbstractSet<E> {
+    static abstract class ImprovedAbstractSet<E> extends AbstractSet<E> {
+        ImprovedAbstractSet() {
+        }
+
         @Override // java.util.AbstractSet, java.util.AbstractCollection, java.util.Collection, java.util.Set
         public boolean removeAll(Collection<?> collection) {
             return Sets.removeAllImpl(this, collection);
@@ -31,51 +33,47 @@ public final class Sets {
         return new HashSet<>(Maps.capacity(i));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int hashCodeImpl(Set<?> set) {
+    static int hashCodeImpl(Set<?> set) {
         Iterator<?> it = set.iterator();
-        int i = 0;
+        int iHashCode = 0;
         while (it.hasNext()) {
             Object next = it.next();
-            i = ((i + (next != null ? next.hashCode() : 0)) ^ (-1)) ^ (-1);
+            iHashCode = ((iHashCode + (next != null ? next.hashCode() : 0)) ^ (-1)) ^ (-1);
         }
-        return i;
+        return iHashCode;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean equalsImpl(Set<?> set, Object obj) {
+    static boolean equalsImpl(Set<?> set, Object obj) {
         if (set == obj) {
             return true;
         }
-        if (obj instanceof Set) {
-            Set set2 = (Set) obj;
-            try {
-                if (set.size() == set2.size()) {
-                    if (set.containsAll(set2)) {
-                        return true;
-                    }
+        if (!(obj instanceof Set)) {
+            return false;
+        }
+        Set set2 = (Set) obj;
+        try {
+            if (set.size() == set2.size()) {
+                if (set.containsAll(set2)) {
+                    return true;
                 }
-                return false;
-            } catch (ClassCastException e) {
-                return false;
-            } catch (NullPointerException e2) {
-                return false;
             }
+            return false;
+        } catch (ClassCastException e) {
+            return false;
+        } catch (NullPointerException e2) {
+            return false;
         }
-        return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean removeAllImpl(Set<?> set, Iterator<?> it) {
-        boolean z = false;
+    static boolean removeAllImpl(Set<?> set, Iterator<?> it) {
+        boolean zRemove = false;
         while (it.hasNext()) {
-            z |= set.remove(it.next());
+            zRemove |= set.remove(it.next());
         }
-        return z;
+        return zRemove;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean removeAllImpl(Set<?> set, Collection<?> collection) {
+    static boolean removeAllImpl(Set<?> set, Collection<?> collection) {
         Preconditions.checkNotNull(collection);
         if (collection instanceof Multiset) {
             collection = ((Multiset) collection).elementSet();

@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.android.settings.R;
 import com.mediatek.settings.FeatureOption;
+
 /* loaded from: classes.dex */
 public final class WfdSinkSurfaceFragment extends DialogFragment implements SurfaceHolder.Callback, View.OnLongClickListener {
     private static final String TAG = WfdSinkSurfaceFragment.class.getSimpleName();
@@ -82,8 +83,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         super.onStop();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void disconnect() {
+    private void disconnect() {
         if (this.mSurfaceShowing) {
             this.mExt.disconnectWfdSinkConnection();
         }
@@ -126,8 +126,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         this.mGuideShowing = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void removeWfdSinkGuide() {
+    private void removeWfdSinkGuide() {
         View view;
         if (this.mGuideShowing && (view = (View) this.mSinkViewLayout.getTag(R.string.wfd_sink_guide_content)) != null) {
             this.mSinkViewLayout.removeView(view);
@@ -137,8 +136,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         this.mGuideShowing = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void addCountdownView(String str) {
+    private void addCountdownView(String str) {
         if (this.mCountdownShowing) {
             return;
         }
@@ -149,8 +147,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         this.mCountdownShowing = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void removeCountDown() {
+    private void removeCountDown() {
         View view;
         if (this.mCountdownShowing && (view = (View) this.mSinkViewLayout.getTag(R.id.wfd_sink_countdown_num)) != null) {
             this.mSinkViewLayout.removeView(view);
@@ -170,13 +167,12 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         }
     }
 
-    /* loaded from: classes.dex */
     private class FullScreenDialog extends Dialog {
         private Activity mActivity;
         private int mSystemUiBak;
 
         public FullScreenDialog(Activity activity) {
-            super(activity, 16973841);
+            super(activity, android.R.style.Theme.Translucent.NoTitleBar.Fullscreen);
             this.mActivity = activity;
         }
 
@@ -185,7 +181,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
             super.onCreate(bundle);
             Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "dialog onCreate");
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(-1, -1);
-            WfdSinkSurfaceFragment.this.mSinkViewLayout = new WfdSinkLayout(this.mActivity);
+            WfdSinkSurfaceFragment.this.mSinkViewLayout = WfdSinkSurfaceFragment.this.new WfdSinkLayout(this.mActivity);
             WfdSinkSurfaceFragment.this.mSinkViewLayout.setFocusableInTouchMode(true);
             setContentView(WfdSinkSurfaceFragment.this.mSinkViewLayout);
             WfdSinkSurfaceFragment.this.mSinkView = new SurfaceView(this.mActivity);
@@ -248,15 +244,14 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
             Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "dialog onBackPressed");
             if (WfdSinkSurfaceFragment.this.mGuideShowing) {
                 WfdSinkSurfaceFragment.this.removeWfdSinkGuide();
-                return;
+            } else {
+                WfdSinkSurfaceFragment.this.disconnect();
+                super.onBackPressed();
             }
-            WfdSinkSurfaceFragment.this.disconnect();
-            super.onBackPressed();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void requestFullScreen(final int i) {
+    private void requestFullScreen(final int i) {
         if (Build.VERSION.SDK_INT >= 14) {
             i |= 2;
         }
@@ -275,9 +270,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         }, 500L);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class WfdSinkLayout extends FrameLayout {
+    private class WfdSinkLayout extends FrameLayout {
         private boolean mCatchEvents;
         private CountDown mCountDown;
         private Runnable mFocusGetCallback;
@@ -297,43 +290,44 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
             this.mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         }
 
+        /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
         @Override // android.view.View
         public boolean onTouchEvent(MotionEvent motionEvent) {
-            if (this.mCatchEvents) {
-                int action = motionEvent.getAction();
-                Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "onTouchEvent action=" + action);
-                switch (action & 255) {
-                    case 0:
-                        if (FeatureOption.MTK_WFD_SINK_UIBC_SUPPORT) {
-                            sendUibcInputEvent(String.valueOf(0) + "," + getTouchEventDesc(motionEvent));
-                        }
-                        this.mInitX = motionEvent.getX();
-                        this.mInitY = motionEvent.getY();
-                        this.mHasPerformedLongPress = false;
-                        checkForLongClick(0);
-                        break;
-                    case 1:
-                        if (FeatureOption.MTK_WFD_SINK_UIBC_SUPPORT) {
-                            sendUibcInputEvent(String.valueOf(1) + "," + getTouchEventDesc(motionEvent));
-                        }
-                        removePendingCallback();
-                        break;
-                    case 2:
-                        if (FeatureOption.MTK_WFD_SINK_UIBC_SUPPORT) {
-                            sendUibcInputEvent(String.valueOf(2) + "," + getTouchEventDesc(motionEvent));
-                        }
-                        if (Math.hypot(motionEvent.getX() - this.mInitX, motionEvent.getY() - this.mInitY) > this.mTouchSlop) {
-                            removePendingCallback();
-                            break;
-                        }
-                        break;
-                    case 3:
-                        removePendingCallback();
-                        break;
-                }
-                return true;
+            if (!this.mCatchEvents) {
+                return false;
             }
-            return false;
+            int action = motionEvent.getAction();
+            Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "onTouchEvent action=" + action);
+            switch (action & 255) {
+                case 0:
+                    if (FeatureOption.MTK_WFD_SINK_UIBC_SUPPORT) {
+                        sendUibcInputEvent(String.valueOf(0) + "," + getTouchEventDesc(motionEvent));
+                    }
+                    this.mInitX = motionEvent.getX();
+                    this.mInitY = motionEvent.getY();
+                    this.mHasPerformedLongPress = false;
+                    checkForLongClick(0);
+                    return true;
+                case 1:
+                    if (FeatureOption.MTK_WFD_SINK_UIBC_SUPPORT) {
+                        sendUibcInputEvent(String.valueOf(1) + "," + getTouchEventDesc(motionEvent));
+                    }
+                    removePendingCallback();
+                    return true;
+                case 2:
+                    if (FeatureOption.MTK_WFD_SINK_UIBC_SUPPORT) {
+                        sendUibcInputEvent(String.valueOf(2) + "," + getTouchEventDesc(motionEvent));
+                    }
+                    if (Math.hypot(motionEvent.getX() - this.mInitX, motionEvent.getY() - this.mInitY) > this.mTouchSlop) {
+                        removePendingCallback();
+                    }
+                    return true;
+                case 3:
+                    removePendingCallback();
+                    return true;
+                default:
+                    return true;
+            }
         }
 
         @Override // android.view.View
@@ -346,50 +340,49 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
                 switch (motionEvent.getAction()) {
                     case 7:
                         sendUibcInputEvent(String.valueOf(2) + "," + getTouchEventDesc(motionEvent));
-                        return true;
-                    case 8:
-                        return true;
+                        break;
                 }
+                return true;
             }
             return true;
         }
 
         @Override // android.view.View
         public boolean onKeyPreIme(int i, KeyEvent keyEvent) {
-            if (this.mCatchEvents && this.mFullScreenFlag) {
-                Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "onKeyPreIme keyCode=" + i + ", action=" + keyEvent.getAction());
-                if (FeatureOption.MTK_WFD_SINK_UIBC_SUPPORT) {
-                    int unicodeChar = keyEvent.getUnicodeChar();
-                    if (unicodeChar == 0 || unicodeChar < 32) {
-                        Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "Can't find unicode for keyCode=" + i);
-                        unicodeChar = KeyCodeConverter.keyCodeToAscii(i);
-                    }
-                    boolean z = keyEvent.getAction() == 1;
-                    if (WfdSinkSurfaceFragment.this.mLatinCharTest && i == 131) {
-                        Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "Latin Test Mode enabled");
-                        unicodeChar = WfdSinkSurfaceFragment.this.mTestLatinChar;
-                        if (z) {
-                            if (WfdSinkSurfaceFragment.this.mTestLatinChar == 255) {
-                                WfdSinkSurfaceFragment.this.mTestLatinChar = 160;
-                            } else {
-                                WfdSinkSurfaceFragment.access$1308(WfdSinkSurfaceFragment.this);
-                            }
+            if (!this.mCatchEvents || !this.mFullScreenFlag) {
+                return false;
+            }
+            Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "onKeyPreIme keyCode=" + i + ", action=" + keyEvent.getAction());
+            if (FeatureOption.MTK_WFD_SINK_UIBC_SUPPORT) {
+                int unicodeChar = keyEvent.getUnicodeChar();
+                if (unicodeChar == 0 || unicodeChar < 32) {
+                    Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "Can't find unicode for keyCode=" + i);
+                    unicodeChar = KeyCodeConverter.keyCodeToAscii(i);
+                }
+                boolean z = keyEvent.getAction() == 1;
+                if (WfdSinkSurfaceFragment.this.mLatinCharTest && i == 131) {
+                    Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "Latin Test Mode enabled");
+                    unicodeChar = WfdSinkSurfaceFragment.this.mTestLatinChar;
+                    if (z) {
+                        if (WfdSinkSurfaceFragment.this.mTestLatinChar == 255) {
+                            WfdSinkSurfaceFragment.this.mTestLatinChar = 160;
+                        } else {
+                            WfdSinkSurfaceFragment.access$1308(WfdSinkSurfaceFragment.this);
                         }
                     }
-                    Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "onKeyPreIme asciiCode=" + unicodeChar);
-                    if (unicodeChar == 0) {
-                        Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "Can't find control for keyCode=" + i);
-                    } else {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(String.valueOf(z ? 4 : 3));
-                        sb.append(",");
-                        sb.append(String.format("0x%04x", Integer.valueOf(unicodeChar)));
-                        sb.append(", 0x0000");
-                        sendUibcInputEvent(sb.toString());
-                        return true;
-                    }
                 }
-                return false;
+                Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "onKeyPreIme asciiCode=" + unicodeChar);
+                if (unicodeChar == 0) {
+                    Log.d("@M_" + WfdSinkSurfaceFragment.TAG, "Can't find control for keyCode=" + i);
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(String.valueOf(z ? 4 : 3));
+                    sb.append(",");
+                    sb.append(String.format("0x%04x", Integer.valueOf(unicodeChar)));
+                    sb.append(", 0x0000");
+                    sendUibcInputEvent(sb.toString());
+                    return true;
+                }
             }
             return false;
         }
@@ -405,20 +398,19 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         }
 
         private String getTouchEventDesc(MotionEvent motionEvent) {
-            String sb;
             int pointerCount = motionEvent.getPointerCount();
-            StringBuilder sb2 = new StringBuilder();
-            sb2.append(String.valueOf(pointerCount));
-            sb2.append(",");
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.valueOf(pointerCount));
+            sb.append(",");
             for (int i = 0; i < pointerCount; i++) {
-                sb2.append(String.valueOf(motionEvent.getPointerId(i)));
-                sb2.append(",");
-                sb2.append(String.valueOf((int) (motionEvent.getXPrecision() * motionEvent.getX(i))));
-                sb2.append(",");
-                sb2.append(String.valueOf((int) (motionEvent.getYPrecision() * motionEvent.getY(i))));
-                sb2.append(",");
+                sb.append(String.valueOf(motionEvent.getPointerId(i)));
+                sb.append(",");
+                sb.append(String.valueOf((int) (motionEvent.getXPrecision() * motionEvent.getX(i))));
+                sb.append(",");
+                sb.append(String.valueOf((int) (motionEvent.getYPrecision() * motionEvent.getY(i))));
+                sb.append(",");
             }
-            return sb2.toString().substring(0, sb.length() - 1);
+            return sb.toString().substring(0, r7.length() - 1);
         }
 
         private void sendUibcInputEvent(String str) {
@@ -443,18 +435,15 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setCatchEvents(boolean z) {
+        private void setCatchEvents(boolean z) {
             this.mCatchEvents = z;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setFullScreenFlag(boolean z) {
+        private void setFullScreenFlag(boolean z) {
             this.mFullScreenFlag = z;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setOnFocusGetCallback(Runnable runnable) {
+        private void setOnFocusGetCallback(Runnable runnable) {
             this.mFocusGetCallback = runnable;
         }
 
@@ -464,9 +453,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
             super.onDetachedFromWindow();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        /* loaded from: classes.dex */
-        public class CountDown implements Runnable {
+        class CountDown implements Runnable {
             private int mCountDownNum;
             private int mOriginalWindowAttachCount;
 
@@ -487,10 +474,11 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
                             textView.setText(this.mCountDownNum + "");
                             textView.postInvalidate();
                         }
-                    } else if (WfdSinkLayout.this.mParent != null && this.mOriginalWindowAttachCount == WfdSinkLayout.this.getWindowAttachCount() && WfdSinkSurfaceFragment.this.onLongClick(WfdSinkSurfaceFragment.this.mSinkViewLayout)) {
-                        WfdSinkLayout.this.mHasPerformedLongPress = true;
-                        return;
                     } else {
+                        if (WfdSinkLayout.this.mParent != null && this.mOriginalWindowAttachCount == WfdSinkLayout.this.getWindowAttachCount() && WfdSinkSurfaceFragment.this.onLongClick(WfdSinkSurfaceFragment.this.mSinkViewLayout)) {
+                            WfdSinkLayout.this.mHasPerformedLongPress = true;
+                            return;
+                        }
                         return;
                     }
                 }
@@ -535,7 +523,6 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         return true;
     }
 
-    /* loaded from: classes.dex */
     private static class KeyCodeConverter {
         private static final SparseIntArray KEYCODE_ASCII = new SparseIntArray();
 
@@ -547,18 +534,18 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
             SparseIntArray sparseIntArray = KEYCODE_ASCII;
             sparseIntArray.put(57, 18);
             sparseIntArray.put(58, 18);
-            sparseIntArray.put(android.support.v7.appcompat.R.styleable.AppCompatTheme_windowActionBar, 27);
+            sparseIntArray.put(111, 27);
             sparseIntArray.put(59, 15);
             sparseIntArray.put(60, 15);
             sparseIntArray.put(123, 0);
             sparseIntArray.put(122, 0);
-            sparseIntArray.put(android.support.v7.appcompat.R.styleable.AppCompatTheme_windowActionModeOverlay, 0);
-            sparseIntArray.put(android.support.v7.appcompat.R.styleable.AppCompatTheme_windowFixedHeightMajor, 0);
-            sparseIntArray.put(android.support.v7.appcompat.R.styleable.AppCompatTheme_windowFixedHeightMinor, 0);
+            sparseIntArray.put(113, 0);
+            sparseIntArray.put(114, 0);
+            sparseIntArray.put(115, 0);
             sparseIntArray.put(67, 8);
             sparseIntArray.put(93, 12);
             sparseIntArray.put(66, 13);
-            sparseIntArray.put(android.support.v7.appcompat.R.styleable.AppCompatTheme_windowActionBarOverlay, 127);
+            sparseIntArray.put(112, 127);
             sparseIntArray.put(61, 9);
         }
 

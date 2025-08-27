@@ -1,5 +1,6 @@
 package com.android.settings.datausage;
 
+import android.R;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.INetworkStatsService;
@@ -14,33 +15,34 @@ import android.telephony.TelephonyManager;
 import android.text.BidiFormatter;
 import android.text.format.Formatter;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class DataUsageUtils {
     public static CharSequence formatDataUsage(Context context, long j) {
-        Formatter.BytesResult formatBytes = Formatter.formatBytes(context.getResources(), j, 8);
-        return BidiFormatter.getInstance().unicodeWrap(context.getString(17039893, formatBytes.value, formatBytes.units));
+        Formatter.BytesResult bytes = Formatter.formatBytes(context.getResources(), j, 8);
+        return BidiFormatter.getInstance().unicodeWrap(context.getString(R.string.config_defaultAssistantAccessComponent, bytes.value, bytes.units));
     }
 
     public static boolean hasEthernet(Context context) {
-        long j;
-        boolean isNetworkSupported = ConnectivityManager.from(context).isNetworkSupported(9);
+        long totalBytes;
+        boolean zIsNetworkSupported = ConnectivityManager.from(context).isNetworkSupported(9);
         try {
-            INetworkStatsSession openSession = INetworkStatsService.Stub.asInterface(ServiceManager.getService("netstats")).openSession();
-            if (openSession != null) {
-                j = openSession.getSummaryForNetwork(NetworkTemplate.buildTemplateEthernet(), Long.MIN_VALUE, Long.MAX_VALUE).getTotalBytes();
-                TrafficStats.closeQuietly(openSession);
+            INetworkStatsSession iNetworkStatsSessionOpenSession = INetworkStatsService.Stub.asInterface(ServiceManager.getService("netstats")).openSession();
+            if (iNetworkStatsSessionOpenSession != null) {
+                totalBytes = iNetworkStatsSessionOpenSession.getSummaryForNetwork(NetworkTemplate.buildTemplateEthernet(), Long.MIN_VALUE, Long.MAX_VALUE).getTotalBytes();
+                TrafficStats.closeQuietly(iNetworkStatsSessionOpenSession);
             } else {
-                j = 0;
+                totalBytes = 0;
             }
-            return isNetworkSupported && j > 0;
+            return zIsNetworkSupported && totalBytes > 0;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static boolean hasMobileData(Context context) {
-        ConnectivityManager from = ConnectivityManager.from(context);
-        return from != null && from.isNetworkSupported(0);
+        ConnectivityManager connectivityManagerFrom = ConnectivityManager.from(context);
+        return connectivityManagerFrom != null && connectivityManagerFrom.isNetworkSupported(0);
     }
 
     public static boolean hasWifiRadio(Context context) {
@@ -54,13 +56,13 @@ public final class DataUsageUtils {
     }
 
     public static int getDefaultSubscriptionId(Context context) {
-        SubscriptionManager from = SubscriptionManager.from(context);
-        if (from == null) {
+        SubscriptionManager subscriptionManagerFrom = SubscriptionManager.from(context);
+        if (subscriptionManagerFrom == null) {
             return -1;
         }
-        SubscriptionInfo defaultDataSubscriptionInfo = from.getDefaultDataSubscriptionInfo();
+        SubscriptionInfo defaultDataSubscriptionInfo = subscriptionManagerFrom.getDefaultDataSubscriptionInfo();
         if (defaultDataSubscriptionInfo == null) {
-            List<SubscriptionInfo> activeSubscriptionInfoList = from.getActiveSubscriptionInfoList();
+            List<SubscriptionInfo> activeSubscriptionInfoList = subscriptionManagerFrom.getActiveSubscriptionInfoList();
             if (activeSubscriptionInfoList == null || activeSubscriptionInfoList.size() == 0) {
                 return -1;
             }
@@ -69,15 +71,14 @@ public final class DataUsageUtils {
         return defaultDataSubscriptionInfo.getSubscriptionId();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static NetworkTemplate getDefaultTemplate(Context context, int i) {
+    static NetworkTemplate getDefaultTemplate(Context context, int i) {
         if (hasMobileData(context) && i != -1) {
-            TelephonyManager from = TelephonyManager.from(context);
-            return NetworkTemplate.normalize(NetworkTemplate.buildTemplateMobileAll(from.getSubscriberId(i)), from.getMergedSubscriberIds());
-        } else if (hasWifiRadio(context)) {
-            return NetworkTemplate.buildTemplateWifiWildcard();
-        } else {
-            return NetworkTemplate.buildTemplateEthernet();
+            TelephonyManager telephonyManagerFrom = TelephonyManager.from(context);
+            return NetworkTemplate.normalize(NetworkTemplate.buildTemplateMobileAll(telephonyManagerFrom.getSubscriberId(i)), telephonyManagerFrom.getMergedSubscriberIds());
         }
+        if (hasWifiRadio(context)) {
+            return NetworkTemplate.buildTemplateWifiWildcard();
+        }
+        return NetworkTemplate.buildTemplateEthernet();
     }
 }

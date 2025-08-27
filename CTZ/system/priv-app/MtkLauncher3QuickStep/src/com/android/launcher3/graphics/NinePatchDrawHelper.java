@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+
 /* loaded from: classes.dex */
 public class NinePatchDrawHelper {
     public static final int EXTENSION_PX = 20;

@@ -1,8 +1,8 @@
 package com.android.setupwizardlib.items;
+
 /* loaded from: classes.dex */
 public interface ItemHierarchy {
 
-    /* loaded from: classes.dex */
     public interface Observer {
         void onItemRangeChanged(ItemHierarchy itemHierarchy, int i, int i2);
 

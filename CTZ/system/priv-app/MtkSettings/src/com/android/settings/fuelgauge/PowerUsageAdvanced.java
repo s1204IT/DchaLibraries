@@ -16,6 +16,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PowerUsageAdvanced extends PowerUsageBase {
     static final int MENU_TOGGLE_APPS = 2;
@@ -69,9 +70,8 @@ public class PowerUsageAdvanced extends PowerUsageBase {
         return "AdvancedBatteryUsage";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.power_usage_advanced;
     }
 

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import com.android.launcher3.R;
+
 /* loaded from: classes.dex */
 public class ListViewHighlighter implements AbsListView.OnScrollListener, AbsListView.RecyclerListener, View.OnLayoutChangeListener {
     private boolean mColorAnimated = false;
@@ -29,7 +30,7 @@ public class ListViewHighlighter implements AbsListView.OnScrollListener, AbsLis
         this.mListView.post(new $$Lambda$ListViewHighlighter$LHpR61dAsd_XsBT1HxobUwT3h4(this));
     }
 
-    public void tryHighlight() {
+    private void tryHighlight() {
         if (this.mPosHighlight >= 0 && this.mListView.getChildCount() != 0 && !highlightIfVisible(this.mListView.getFirstVisiblePosition(), this.mListView.getLastVisiblePosition())) {
             this.mListView.smoothScrollToPosition(this.mPosHighlight);
         }
@@ -68,13 +69,13 @@ public class ListViewHighlighter implements AbsListView.OnScrollListener, AbsLis
             view.postDelayed(new Runnable() { // from class: com.android.launcher3.util.-$$Lambda$ListViewHighlighter$Z_XONGZw1Qjdi0BQdkUZpYybff4
                 @Override // java.lang.Runnable
                 public final void run() {
-                    ListViewHighlighter.this.unhighlightView(view);
+                    this.f$0.unhighlightView(view);
                 }
             }, 15000L);
         }
     }
 
-    public void unhighlightView(View view) {
+    private void unhighlightView(View view) {
         if (Boolean.TRUE.equals(view.getTag(R.id.view_highlighted))) {
             Object tag = view.getTag(R.id.view_unhighlight_background);
             if (tag instanceof Drawable) {
@@ -92,12 +93,12 @@ public class ListViewHighlighter implements AbsListView.OnScrollListener, AbsLis
         }
         this.mColorAnimated = true;
         ColorDrawable colorDrawable = new ColorDrawable(-1);
-        ObjectAnimator ofInt = ObjectAnimator.ofInt(colorDrawable, "color", -1, alphaComponent);
-        ofInt.setEvaluator(new ArgbEvaluator());
-        ofInt.setDuration(200L);
-        ofInt.setRepeatMode(2);
-        ofInt.setRepeatCount(4);
-        ofInt.start();
+        ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(colorDrawable, "color", -1, alphaComponent);
+        objectAnimatorOfInt.setEvaluator(new ArgbEvaluator());
+        objectAnimatorOfInt.setDuration(200L);
+        objectAnimatorOfInt.setRepeatMode(2);
+        objectAnimatorOfInt.setRepeatCount(4);
+        objectAnimatorOfInt.start();
         return colorDrawable;
     }
 }

@@ -5,6 +5,7 @@ import com.android.internal.view.RotationPolicy;
 import com.android.systemui.statusbar.policy.RotationLockController;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 /* loaded from: classes.dex */
 public final class RotationLockControllerImpl implements RotationLockController {
     private final Context mContext;
@@ -20,12 +21,14 @@ public final class RotationLockControllerImpl implements RotationLockController 
         setListening(true);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(RotationLockController.RotationLockControllerCallback rotationLockControllerCallback) {
         this.mCallbacks.add(rotationLockControllerCallback);
         notifyChanged(rotationLockControllerCallback);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(RotationLockController.RotationLockControllerCallback rotationLockControllerCallback) {
         this.mCallbacks.remove(rotationLockControllerCallback);
@@ -59,8 +62,7 @@ public final class RotationLockControllerImpl implements RotationLockController 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyChanged() {
+    private void notifyChanged() {
         Iterator<RotationLockController.RotationLockControllerCallback> it = this.mCallbacks.iterator();
         while (it.hasNext()) {
             notifyChanged(it.next());

@@ -10,6 +10,7 @@ import com.android.systemui.shared.system.PackageManagerWrapper;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TaskStack {
     private static final String TAG = "TaskStack";
@@ -17,7 +18,6 @@ public class TaskStack {
     private final ArrayList<Task> mRawTaskList = new ArrayList<>();
     private final FilteredTaskList mStackTaskList = new FilteredTaskList();
 
-    /* loaded from: classes.dex */
     public interface TaskStackCallbacks {
         void onStackTaskAdded(TaskStack taskStack, Task task);
 
@@ -32,9 +32,7 @@ public class TaskStack {
         this.mStackTaskList.setFilter(new TaskFilter() { // from class: com.android.systemui.shared.recents.model.-$$Lambda$TaskStack$gkuBLLtJ6FV7PDAxT-_KECDzTOI
             @Override // com.android.systemui.shared.recents.model.TaskFilter
             public final boolean acceptTask(SparseArray sparseArray, Task task, int i) {
-                boolean z;
-                z = task.isStackTask;
-                return z;
+                return task.isStackTask;
             }
         });
     }

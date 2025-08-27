@@ -1,4 +1,5 @@
 package com.android.systemui.power;
+
 /* loaded from: classes.dex */
 public class EnhancedEstimatesImpl implements EnhancedEstimates {
     @Override // com.android.systemui.power.EnhancedEstimates

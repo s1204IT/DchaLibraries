@@ -9,6 +9,7 @@ import android.os.StatFs;
 import android.webkit.WebStorage;
 import com.android.browser.preferences.WebsiteSettingsFragment;
 import java.io.File;
+
 /* loaded from: classes.dex */
 public class WebStorageSizeManager {
     private static long mLastOutOfSpaceNotificationTime = -1;
@@ -17,19 +18,16 @@ public class WebStorageSizeManager {
     private DiskInfo mDiskInfo;
     private final long mGlobalLimit = getGlobalLimit();
 
-    /* loaded from: classes.dex */
     public interface AppCacheInfo {
         long getAppCacheSizeBytes();
     }
 
-    /* loaded from: classes.dex */
     public interface DiskInfo {
         long getFreeSpaceSizeBytes();
 
         long getTotalSizeBytes();
     }
 
-    /* loaded from: classes.dex */
     public static class StatFsDiskInfo implements DiskInfo {
         private StatFs mFs;
 
@@ -48,7 +46,6 @@ public class WebStorageSizeManager {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class WebKitAppCacheInfo implements AppCacheInfo {
         private String mAppCachePath;
 
@@ -102,10 +99,10 @@ public class WebStorageSizeManager {
                 scheduleOutOfSpaceNotification();
             }
             quotaUpdater.updateQuota(0L);
-            return;
+        } else {
+            this.mAppCacheMaxSize += j3;
+            quotaUpdater.updateQuota(this.mAppCacheMaxSize);
         }
-        this.mAppCacheMaxSize += j3;
-        quotaUpdater.updateQuota(this.mAppCacheMaxSize);
     }
 
     public static void resetLastOutOfSpaceNotificationTime() {
@@ -120,26 +117,26 @@ public class WebStorageSizeManager {
         if (j <= 0 || j2 <= 0 || j2 > j) {
             return 0L;
         }
-        long min = (long) Math.min(Math.floor(j / (2 << ((int) Math.floor(Math.log10(j / 1048576))))), Math.floor(j2 / 2));
-        if (min < 1048576) {
+        long jMin = (long) Math.min(Math.floor(j / (2 << ((int) Math.floor(Math.log10(j / 1048576))))), Math.floor(j2 / 2));
+        if (jMin < 1048576) {
             return 0L;
         }
-        return 1048576 * ((min / 1048576) + (min % 1048576 != 0 ? 1L : 0L));
+        return 1048576 * ((jMin / 1048576) + (jMin % 1048576 != 0 ? 1L : 0L));
     }
 
     private void scheduleOutOfSpaceNotification() {
         if (mLastOutOfSpaceNotificationTime == -1 || System.currentTimeMillis() - mLastOutOfSpaceNotificationTime > 300000) {
             String string = this.mContext.getString(R.string.webstorage_outofspace_notification_title);
             String string2 = this.mContext.getString(R.string.webstorage_outofspace_notification_text);
-            long currentTimeMillis = System.currentTimeMillis();
-            Intent intent = new Intent(this.mContext, BrowserPreferencesPage.class);
+            long jCurrentTimeMillis = System.currentTimeMillis();
+            Intent intent = new Intent(this.mContext, (Class<?>) BrowserPreferencesPage.class);
             intent.putExtra(":android:show_fragment", WebsiteSettingsFragment.class.getName());
-            Notification build = new Notification.Builder(this.mContext).setContentTitle(string).setContentText(string2).setSmallIcon(17301642).setWhen(currentTimeMillis).setContentIntent(PendingIntent.getActivity(this.mContext, 0, intent, 0)).build();
-            build.flags |= 16;
+            Notification notificationBuild = new Notification.Builder(this.mContext).setContentTitle(string).setContentText(string2).setSmallIcon(android.R.drawable.stat_sys_warning).setWhen(jCurrentTimeMillis).setContentIntent(PendingIntent.getActivity(this.mContext, 0, intent, 0)).build();
+            notificationBuild.flags |= 16;
             NotificationManager notificationManager = (NotificationManager) this.mContext.getSystemService("notification");
             if (notificationManager != null) {
                 mLastOutOfSpaceNotificationTime = System.currentTimeMillis();
-                notificationManager.notify(1, build);
+                notificationManager.notify(1, notificationBuild);
             }
         }
     }

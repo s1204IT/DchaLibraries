@@ -8,6 +8,7 @@ import android.util.Log;
 import com.android.launcher3.Utilities;
 import java.lang.reflect.Method;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class AlphabeticIndexCompat {
     private static final String MID_DOT = "∙";
@@ -16,25 +17,25 @@ public class AlphabeticIndexCompat {
     private final String mDefaultMiscLabel;
 
     public AlphabeticIndexCompat(Context context) {
-        BaseIndex baseIndex;
+        BaseIndex alphabeticIndexV16;
         try {
             if (Utilities.ATLEAST_NOUGAT) {
-                baseIndex = new AlphabeticIndexVN(context);
+                alphabeticIndexV16 = new AlphabeticIndexVN(context);
             } else {
-                baseIndex = null;
+                alphabeticIndexV16 = null;
             }
         } catch (Exception e) {
             Log.d(TAG, "Unable to load the system index", e);
-            baseIndex = null;
+            alphabeticIndexV16 = null;
         }
-        if (baseIndex == null) {
+        if (alphabeticIndexV16 == null) {
             try {
-                baseIndex = new AlphabeticIndexV16(context);
+                alphabeticIndexV16 = new AlphabeticIndexV16(context);
             } catch (Exception e2) {
                 Log.d(TAG, "Unable to load the system index", e2);
             }
         }
-        this.mBaseIndex = baseIndex == null ? new BaseIndex() : baseIndex;
+        this.mBaseIndex = alphabeticIndexV16 == null ? new BaseIndex() : alphabeticIndexV16;
         if (context.getResources().getConfiguration().locale.getLanguage().equals(Locale.JAPANESE.getLanguage())) {
             this.mDefaultMiscLabel = "他";
         } else {
@@ -43,14 +44,14 @@ public class AlphabeticIndexCompat {
     }
 
     public String computeSectionName(CharSequence charSequence) {
-        String trim = Utilities.trim(charSequence);
-        String bucketLabel = this.mBaseIndex.getBucketLabel(this.mBaseIndex.getBucketIndex(trim));
-        if (Utilities.trim(bucketLabel).isEmpty() && trim.length() > 0) {
-            int codePointAt = trim.codePointAt(0);
-            if (Character.isDigit(codePointAt)) {
+        String strTrim = Utilities.trim(charSequence);
+        String bucketLabel = this.mBaseIndex.getBucketLabel(this.mBaseIndex.getBucketIndex(strTrim));
+        if (Utilities.trim(bucketLabel).isEmpty() && strTrim.length() > 0) {
+            int iCodePointAt = strTrim.codePointAt(0);
+            if (Character.isDigit(iCodePointAt)) {
                 return "#";
             }
-            if (Character.isLetter(codePointAt)) {
+            if (Character.isLetter(iCodePointAt)) {
                 return this.mDefaultMiscLabel;
             }
             return MID_DOT;
@@ -58,7 +59,6 @@ public class AlphabeticIndexCompat {
         return bucketLabel;
     }
 
-    /* loaded from: classes.dex */
     private static class BaseIndex {
         private static final String BUCKETS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-";
         private static final int UNKNOWN_BUCKET_INDEX = BUCKETS.length() - 1;
@@ -70,9 +70,9 @@ public class AlphabeticIndexCompat {
             if (str.isEmpty()) {
                 return UNKNOWN_BUCKET_INDEX;
             }
-            int indexOf = BUCKETS.indexOf(str.substring(0, 1).toUpperCase());
-            if (indexOf != -1) {
-                return indexOf;
+            int iIndexOf = BUCKETS.indexOf(str.substring(0, 1).toUpperCase());
+            if (iIndexOf != -1) {
+                return iIndexOf;
             }
             return UNKNOWN_BUCKET_INDEX;
         }
@@ -82,7 +82,6 @@ public class AlphabeticIndexCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class AlphabeticIndexV16 extends BaseIndex {
         private Object mAlphabeticIndex;
         private Method mGetBucketIndexMethod;
@@ -122,7 +121,6 @@ public class AlphabeticIndexCompat {
     }
 
     @TargetApi(24)
-    /* loaded from: classes.dex */
     private static class AlphabeticIndexVN extends BaseIndex {
         private final AlphabeticIndex.ImmutableIndex mAlphabeticIndex;
 

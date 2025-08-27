@@ -18,6 +18,7 @@ import com.android.settings.password.ChooseLockSettingsHelper;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedSwitchPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class LockUnificationPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private static final int MY_USER_ID = UserHandle.myUserId();
@@ -75,9 +76,9 @@ public class LockUnificationPreferenceController extends AbstractPreferenceContr
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void updateState(Preference preference) {
         if (this.mUnifyProfile != null) {
-            boolean isSeparateProfileChallengeEnabled = this.mLockPatternUtils.isSeparateProfileChallengeEnabled(this.mProfileChallengeUserId);
-            this.mUnifyProfile.setChecked(!isSeparateProfileChallengeEnabled);
-            if (isSeparateProfileChallengeEnabled) {
+            boolean zIsSeparateProfileChallengeEnabled = this.mLockPatternUtils.isSeparateProfileChallengeEnabled(this.mProfileChallengeUserId);
+            this.mUnifyProfile.setChecked(!zIsSeparateProfileChallengeEnabled);
+            if (zIsSeparateProfileChallengeEnabled) {
                 this.mUnifyProfile.setDisabledByAdmin(RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_unified_password", this.mProfileChallengeUserId));
             }
         }
@@ -87,17 +88,18 @@ public class LockUnificationPreferenceController extends AbstractPreferenceContr
         if (i == 130 && i2 == -1) {
             ununifyLocks();
             return true;
-        } else if (i == 128 && i2 == -1) {
+        }
+        if (i == 128 && i2 == -1) {
             this.mCurrentDevicePassword = intent.getStringExtra("password");
             launchConfirmProfileLockForUnification();
             return true;
-        } else if (i == 129 && i2 == -1) {
+        }
+        if (i == 129 && i2 == -1) {
             this.mCurrentProfilePassword = intent.getStringExtra("password");
             unifyLocks();
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     private void ununifyLocks() {
@@ -106,8 +108,7 @@ public class LockUnificationPreferenceController extends AbstractPreferenceContr
         new SubSettingLauncher(this.mContext).setDestination(ChooseLockGeneric.ChooseLockGenericFragment.class.getName()).setTitle(R.string.lock_settings_picker_title_profile).setSourceMetricsCategory(this.mHost.getMetricsCategory()).setArguments(bundle).launch();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void launchConfirmDeviceLockForUnification() {
+    void launchConfirmDeviceLockForUnification() {
         if (!new ChooseLockSettingsHelper(this.mHost.getActivity(), this.mHost).launchConfirmationActivity(128, this.mContext.getString(R.string.unlock_set_unlock_launch_picker_title), true, MY_USER_ID)) {
             launchConfirmProfileLockForUnification();
         }
@@ -132,8 +133,7 @@ public class LockUnificationPreferenceController extends AbstractPreferenceContr
         this.mCurrentProfilePassword = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void unifyUncompliantLocks() {
+    void unifyUncompliantLocks() {
         this.mLockPatternUtils.setSeparateProfileChallengeEnabled(this.mProfileChallengeUserId, false, this.mCurrentProfilePassword);
         new SubSettingLauncher(this.mContext).setDestination(ChooseLockGeneric.ChooseLockGenericFragment.class.getName()).setTitle(R.string.lock_settings_picker_title).setSourceMetricsCategory(this.mHost.getMetricsCategory()).launch();
     }

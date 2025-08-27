@@ -12,6 +12,7 @@ import android.view.ContextThemeWrapper;
 import com.android.launcher3.LauncherAnimUtils;
 import com.android.launcher3.R;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class AllAppsBackgroundDrawable extends Drawable {
     private ObjectAnimator mBackgroundAnim;
@@ -20,9 +21,7 @@ public class AllAppsBackgroundDrawable extends Drawable {
     protected final TransformedImageDrawable[] mIcons;
     private final int mWidth;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public static class TransformedImageDrawable {
+    protected static class TransformedImageDrawable {
         private int mAlpha;
         private int mGravity;
         private Drawable mImage;
@@ -48,15 +47,15 @@ public class AllAppsBackgroundDrawable extends Drawable {
         public void updateBounds(Rect rect) {
             int intrinsicWidth = this.mImage.getIntrinsicWidth();
             int intrinsicHeight = this.mImage.getIntrinsicHeight();
-            int width = rect.left + ((int) (this.mXPercent * rect.width()));
-            int height = rect.top + ((int) (this.mYPercent * rect.height()));
+            int iWidth = rect.left + ((int) (this.mXPercent * rect.width()));
+            int iHeight = rect.top + ((int) (this.mYPercent * rect.height()));
             if ((this.mGravity & 1) == 1) {
-                width -= intrinsicWidth / 2;
+                iWidth -= intrinsicWidth / 2;
             }
             if ((this.mGravity & 16) == 16) {
-                height -= intrinsicHeight / 2;
+                iHeight -= intrinsicHeight / 2;
             }
-            this.mImage.setBounds(width, height, intrinsicWidth + width, intrinsicHeight + height);
+            this.mImage.setBounds(iWidth, iHeight, intrinsicWidth + iWidth, intrinsicHeight + iHeight);
         }
 
         public void draw(Canvas canvas) {

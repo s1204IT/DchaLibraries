@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AnglesClassifier extends StrokeClassifier {
     private HashMap<Stroke, Data> mStrokeMap = new HashMap<>();
@@ -41,7 +42,6 @@ public class AnglesClassifier extends StrokeClassifier {
         return AnglesVarianceEvaluator.evaluate(data.getAnglesVariance(), i) + AnglesPercentageEvaluator.evaluate(data.getAnglesPercentage(), i);
     }
 
-    /* loaded from: classes.dex */
     private static class Data {
         private final float ANGLE_DEVIATION = 0.15707964f;
         private List<Point> mLastThreePoints = new ArrayList();
@@ -108,18 +108,14 @@ public class AnglesClassifier extends StrokeClassifier {
         public float getAnglesVariance() {
             float anglesVariance = getAnglesVariance(this.mSumSquares, this.mSum, this.mCount);
             if (AnglesClassifier.VERBOSE) {
-                String str = AnglesClassifier.TAG;
-                FalsingLog.i(str, "getAnglesVariance: (first pass) " + anglesVariance);
-                String str2 = AnglesClassifier.TAG;
-                FalsingLog.i(str2, "   - mFirstLength=" + this.mFirstLength);
-                String str3 = AnglesClassifier.TAG;
-                FalsingLog.i(str3, "   - mLength=" + this.mLength);
+                FalsingLog.i(AnglesClassifier.TAG, "getAnglesVariance: (first pass) " + anglesVariance);
+                FalsingLog.i(AnglesClassifier.TAG, "   - mFirstLength=" + this.mFirstLength);
+                FalsingLog.i(AnglesClassifier.TAG, "   - mLength=" + this.mLength);
             }
             if (this.mFirstLength < this.mLength / 2.0f) {
                 anglesVariance = Math.min(anglesVariance, this.mFirstAngleVariance + getAnglesVariance(this.mSecondSumSquares, this.mSecondSum, this.mSecondCount));
                 if (AnglesClassifier.VERBOSE) {
-                    String str4 = AnglesClassifier.TAG;
-                    FalsingLog.i(str4, "getAnglesVariance: (second pass) " + anglesVariance);
+                    FalsingLog.i(AnglesClassifier.TAG, "getAnglesVariance: (second pass) " + anglesVariance);
                 }
             }
             return anglesVariance;
@@ -133,12 +129,11 @@ public class AnglesClassifier extends StrokeClassifier {
                 }
                 return 1.0f;
             }
-            float max = (Math.max(this.mLeftAngles, this.mRightAngles) + this.mStraightAngles) / this.mAnglesCount;
+            float fMax = (Math.max(this.mLeftAngles, this.mRightAngles) + this.mStraightAngles) / this.mAnglesCount;
             if (AnglesClassifier.VERBOSE) {
-                String str = AnglesClassifier.TAG;
-                FalsingLog.i(str, "getAnglesPercentage: left=" + this.mLeftAngles + " right=" + this.mRightAngles + " straight=" + this.mStraightAngles + " count=" + this.mAnglesCount + " result=" + max);
+                FalsingLog.i(AnglesClassifier.TAG, "getAnglesPercentage: left=" + this.mLeftAngles + " right=" + this.mRightAngles + " straight=" + this.mStraightAngles + " count=" + this.mAnglesCount + " result=" + fMax);
             }
-            return max;
+            return fMax;
         }
     }
 }

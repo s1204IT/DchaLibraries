@@ -1,4 +1,5 @@
 package com.android.systemui.classifier;
+
 /* loaded from: classes.dex */
 public class EndPointRatioEvaluator {
     public static float evaluate(float f) {

@@ -36,6 +36,7 @@ import com.mediatek.systemui.qs.tiles.ext.DualSimSettingsTile;
 import com.mediatek.systemui.qs.tiles.ext.MobileDataTile;
 import com.mediatek.systemui.qs.tiles.ext.SimDataConnectionTile;
 import com.mediatek.systemui.statusbar.util.SIMHelper;
+
 /* loaded from: classes.dex */
 public class QSFactoryImpl implements QSFactory {
     private final QSTileHost mHost;
@@ -46,189 +47,69 @@ public class QSFactoryImpl implements QSFactory {
 
     @Override // com.android.systemui.plugins.qs.QSFactory
     public QSTile createTile(String str) {
-        QSTileImpl createTileInternal = createTileInternal(str);
-        if (createTileInternal != null) {
-            createTileInternal.handleStale();
+        QSTileImpl qSTileImplCreateTileInternal = createTileInternal(str);
+        if (qSTileImplCreateTileInternal != null) {
+            qSTileImplCreateTileInternal.handleStale();
         }
-        return createTileInternal;
+        return qSTileImplCreateTileInternal;
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:56:0x00d2  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private QSTileImpl createTileInternal(String str) {
-        char c;
+        IQuickSettingsPlugin iQuickSettingsPluginMakeQuickSettings;
         Context context = this.mHost.getContext();
-        IQuickSettingsPlugin makeQuickSettings = OpSystemUICustomizationFactoryBase.getOpFactory(context).makeQuickSettings(context);
-        switch (str.hashCode()) {
-            case -2016941037:
-                if (str.equals("inversion")) {
-                    c = 4;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1183073498:
-                if (str.equals("flashlight")) {
-                    c = '\b';
-                    break;
-                }
-                c = 65535;
-                break;
-            case -677011630:
-                if (str.equals("airplane")) {
-                    c = 5;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -331239923:
-                if (str.equals("battery")) {
-                    c = '\r';
-                    break;
-                }
-                c = 65535;
-                break;
-            case -40300674:
-                if (str.equals("rotation")) {
-                    c = 7;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3154:
-                if (str.equals("bt")) {
-                    c = 1;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 99610:
-                if (str.equals("dnd")) {
-                    c = 3;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 108971:
-                if (str.equals("nfc")) {
-                    c = 16;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3046207:
-                if (str.equals("cast")) {
-                    c = '\n';
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3049826:
-                if (str.equals("cell")) {
-                    c = 2;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3599307:
-                if (str.equals("user")) {
-                    c = '\f';
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3649301:
-                if (str.equals("wifi")) {
-                    c = 0;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 3655441:
-                if (str.equals("work")) {
-                    c = 6;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 104817688:
-                if (str.equals("night")) {
-                    c = 15;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 109211285:
-                if (str.equals("saver")) {
-                    c = 14;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1099603663:
-                if (str.equals("hotspot")) {
-                    c = 11;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1901043637:
-                if (str.equals("location")) {
-                    c = '\t';
-                    break;
-                }
-                c = 65535;
-                break;
-            default:
-                c = 65535;
-                break;
-        }
-        switch (c) {
-            case 0:
+        iQuickSettingsPluginMakeQuickSettings = OpSystemUICustomizationFactoryBase.getOpFactory(context).makeQuickSettings(context);
+        switch (str) {
+            case "wifi":
                 return new WifiTile(this.mHost);
-            case 1:
+            case "bt":
                 return new BluetoothTile(this.mHost);
-            case 2:
+            case "cell":
                 return new CellularTile(this.mHost);
-            case 3:
+            case "dnd":
                 return new DndTile(this.mHost);
-            case 4:
+            case "inversion":
                 return new ColorInversionTile(this.mHost);
-            case 5:
+            case "airplane":
                 return new AirplaneModeTile(this.mHost);
-            case 6:
+            case "work":
                 return new WorkModeTile(this.mHost);
-            case 7:
+            case "rotation":
                 return new RotationLockTile(this.mHost);
-            case '\b':
+            case "flashlight":
                 return new FlashlightTile(this.mHost);
-            case '\t':
+            case "location":
                 return new LocationTile(this.mHost);
-            case '\n':
+            case "cast":
                 return new CastTile(this.mHost);
-            case 11:
+            case "hotspot":
                 return new HotspotTile(this.mHost);
-            case '\f':
+            case "user":
                 return new UserTile(this.mHost);
-            case '\r':
+            case "battery":
                 return new BatterySaverTile(this.mHost);
-            case 14:
+            case "saver":
                 return new DataSaverTile(this.mHost);
-            case 15:
+            case "night":
                 return new NightDisplayTile(this.mHost);
-            case 16:
+            case "nfc":
                 return new NfcTile(this.mHost);
             default:
                 if (str.equals("dataconnection") && !SIMHelper.isWifiOnlyDevice()) {
                     return new MobileDataTile(this.mHost);
                 }
-                if (str.equals("simdataconnection") && !SIMHelper.isWifiOnlyDevice() && makeQuickSettings.customizeAddQSTile(new SimDataConnectionTile(this.mHost)) != null) {
-                    return (SimDataConnectionTile) makeQuickSettings.customizeAddQSTile(new SimDataConnectionTile(this.mHost));
+                if (str.equals("simdataconnection") && !SIMHelper.isWifiOnlyDevice() && iQuickSettingsPluginMakeQuickSettings.customizeAddQSTile(new SimDataConnectionTile(this.mHost)) != null) {
+                    return (SimDataConnectionTile) iQuickSettingsPluginMakeQuickSettings.customizeAddQSTile(new SimDataConnectionTile(this.mHost));
                 }
-                if (str.equals("dulsimsettings") && !SIMHelper.isWifiOnlyDevice() && makeQuickSettings.customizeAddQSTile(new DualSimSettingsTile(this.mHost)) != null) {
-                    return (DualSimSettingsTile) makeQuickSettings.customizeAddQSTile(new DualSimSettingsTile(this.mHost));
+                if (str.equals("dulsimsettings") && !SIMHelper.isWifiOnlyDevice() && iQuickSettingsPluginMakeQuickSettings.customizeAddQSTile(new DualSimSettingsTile(this.mHost)) != null) {
+                    return (DualSimSettingsTile) iQuickSettingsPluginMakeQuickSettings.customizeAddQSTile(new DualSimSettingsTile(this.mHost));
                 }
-                if (str.equals("apnsettings") && !SIMHelper.isWifiOnlyDevice() && makeQuickSettings.customizeAddQSTile(new ApnSettingsTile(this.mHost)) != null) {
-                    return (ApnSettingsTile) makeQuickSettings.customizeAddQSTile(new ApnSettingsTile(this.mHost));
+                if (str.equals("apnsettings") && !SIMHelper.isWifiOnlyDevice() && iQuickSettingsPluginMakeQuickSettings.customizeAddQSTile(new ApnSettingsTile(this.mHost)) != null) {
+                    return (ApnSettingsTile) iQuickSettingsPluginMakeQuickSettings.customizeAddQSTile(new ApnSettingsTile(this.mHost));
                 }
                 if (str.startsWith("intent(")) {
                     return IntentTile.create(this.mHost, str);
@@ -246,11 +127,11 @@ public class QSFactoryImpl implements QSFactory {
 
     @Override // com.android.systemui.plugins.qs.QSFactory
     public com.android.systemui.plugins.qs.QSTileView createTileView(QSTile qSTile, boolean z) {
-        ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(this.mHost.getContext(), (int) R.style.qs_theme);
-        QSIconView createTileView = qSTile.createTileView(contextThemeWrapper);
+        ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(this.mHost.getContext(), R.style.qs_theme);
+        QSIconView qSIconViewCreateTileView = qSTile.createTileView(contextThemeWrapper);
         if (z) {
-            return new QSTileBaseView(contextThemeWrapper, createTileView, z);
+            return new QSTileBaseView(contextThemeWrapper, qSIconViewCreateTileView, z);
         }
-        return new QSTileView(contextThemeWrapper, createTileView);
+        return new QSTileView(contextThemeWrapper, qSIconViewCreateTileView);
     }
 }

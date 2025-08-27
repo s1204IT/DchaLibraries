@@ -1,6 +1,7 @@
 package com.mediatek.keyguard.ext;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class DefaultCarrierTextExt implements ICarrierTextExt {
     @Override // com.mediatek.keyguard.ext.ICarrierTextExt

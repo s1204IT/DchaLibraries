@@ -6,6 +6,7 @@ import com.android.systemui.doze.DozeMachine;
 import com.android.systemui.statusbar.phone.DozeParameters;
 import com.android.systemui.util.wakelock.SettableWakeLock;
 import com.android.systemui.util.wakelock.WakeLock;
+
 /* loaded from: classes.dex */
 public class DozeScreenState implements DozeMachine.Part {
     private static final boolean DEBUG = DozeService.DEBUG;
@@ -16,7 +17,7 @@ public class DozeScreenState implements DozeMachine.Part {
     private final Runnable mApplyPendingScreenState = new Runnable() { // from class: com.android.systemui.doze.-$$Lambda$DozeScreenState$eRrLSFQgxPfG2I_jJDfdCLwKzVE
         @Override // java.lang.Runnable
         public final void run() {
-            DozeScreenState.this.applyPendingScreenState();
+            this.f$0.applyPendingScreenState();
         }
     };
     private int mPendingScreenState = 0;
@@ -30,54 +31,55 @@ public class DozeScreenState implements DozeMachine.Part {
 
     @Override // com.android.systemui.doze.DozeMachine.Part
     public void transitionTo(DozeMachine.State state, DozeMachine.State state2) {
-        int screenState = state2.screenState(this.mParameters);
+        int iScreenState = state2.screenState(this.mParameters);
         boolean z = false;
         if (state2 == DozeMachine.State.FINISH) {
             this.mPendingScreenState = 0;
             this.mHandler.removeCallbacks(this.mApplyPendingScreenState);
-            applyScreenState(screenState);
+            applyScreenState(iScreenState);
             this.mWakeLock.setAcquired(false);
-        } else if (screenState == 0) {
-        } else {
-            boolean hasCallbacks = this.mHandler.hasCallbacks(this.mApplyPendingScreenState);
-            boolean z2 = state == DozeMachine.State.DOZE_PULSE_DONE && state2 == DozeMachine.State.DOZE_AOD;
-            if (hasCallbacks || state == DozeMachine.State.INITIALIZED || z2) {
-                this.mPendingScreenState = screenState;
-                if (state2 == DozeMachine.State.DOZE_AOD && this.mParameters.shouldControlScreenOff()) {
-                    z = true;
+            return;
+        }
+        if (iScreenState == 0) {
+            return;
+        }
+        boolean zHasCallbacks = this.mHandler.hasCallbacks(this.mApplyPendingScreenState);
+        boolean z2 = state == DozeMachine.State.DOZE_PULSE_DONE && state2 == DozeMachine.State.DOZE_AOD;
+        if (zHasCallbacks || state == DozeMachine.State.INITIALIZED || z2) {
+            this.mPendingScreenState = iScreenState;
+            if (state2 == DozeMachine.State.DOZE_AOD && this.mParameters.shouldControlScreenOff()) {
+                z = true;
+            }
+            if (z) {
+                this.mWakeLock.setAcquired(true);
+            }
+            if (!zHasCallbacks) {
+                if (DEBUG) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Display state changed to ");
+                    sb.append(iScreenState);
+                    sb.append(" delayed by ");
+                    sb.append(z ? 6000 : 1);
+                    Log.d("DozeScreenState", sb.toString());
                 }
                 if (z) {
-                    this.mWakeLock.setAcquired(true);
-                }
-                if (!hasCallbacks) {
-                    if (DEBUG) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Display state changed to ");
-                        sb.append(screenState);
-                        sb.append(" delayed by ");
-                        sb.append(z ? 6000 : 1);
-                        Log.d("DozeScreenState", sb.toString());
-                    }
-                    if (z) {
-                        this.mHandler.postDelayed(this.mApplyPendingScreenState, 6000L);
-                        return;
-                    } else {
-                        this.mHandler.post(this.mApplyPendingScreenState);
-                        return;
-                    }
-                } else if (DEBUG) {
-                    Log.d("DozeScreenState", "Pending display state change to " + screenState);
+                    this.mHandler.postDelayed(this.mApplyPendingScreenState, 6000L);
                     return;
                 } else {
+                    this.mHandler.post(this.mApplyPendingScreenState);
                     return;
                 }
             }
-            applyScreenState(screenState);
+            if (DEBUG) {
+                Log.d("DozeScreenState", "Pending display state change to " + iScreenState);
+                return;
+            }
+            return;
         }
+        applyScreenState(iScreenState);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void applyPendingScreenState() {
+    private void applyPendingScreenState() {
         applyScreenState(this.mPendingScreenState);
         this.mPendingScreenState = 0;
     }

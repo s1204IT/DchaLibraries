@@ -26,6 +26,7 @@ import com.android.settings.core.InstrumentedFragment;
 import com.android.settings.enterprise.ActionDisabledByAdminDialogHelper;
 import com.android.settingslib.RestrictedLockUtils;
 import com.mediatek.ims.internal.MtkImsManager;
+
 /* loaded from: classes.dex */
 public class ResetNetworkConfirm extends InstrumentedFragment {
     private View mContentView;
@@ -75,9 +76,7 @@ public class ResetNetworkConfirm extends InstrumentedFragment {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class EraseEsimAsyncTask extends AsyncTask<Void, Void, Boolean> {
+    private static class EraseEsimAsyncTask extends AsyncTask<Void, Void, Boolean> {
         private final Context mContext;
         private final String mPackageName;
 
@@ -86,25 +85,24 @@ public class ResetNetworkConfirm extends InstrumentedFragment {
             this.mPackageName = str;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             return Boolean.valueOf(RecoverySystem.wipeEuiccData(this.mContext, this.mPackageName));
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) {
             if (bool.booleanValue()) {
-                Toast.makeText(this.mContext, (int) R.string.reset_network_complete_toast, 0).show();
+                Toast.makeText(this.mContext, R.string.reset_network_complete_toast, 0).show();
             } else {
-                new AlertDialog.Builder(this.mContext).setTitle(R.string.reset_esim_error_title).setMessage(R.string.reset_esim_error_msg).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).show();
+                new AlertDialog.Builder(this.mContext).setTitle(R.string.reset_esim_error_title).setMessage(R.string.reset_esim_error_msg).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null).show();
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resetImsNetwork(Context context, int i) {
+    private void resetImsNetwork(Context context, int i) {
         int phoneId;
         if (i == -1) {
             phoneId = 0;
@@ -114,8 +112,7 @@ public class ResetNetworkConfirm extends InstrumentedFragment {
         MtkImsManager.factoryReset(context, phoneId);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void cleanUpSmsRawTable(Context context) {
+    private void cleanUpSmsRawTable(Context context) {
         context.getContentResolver().delete(Uri.withAppendedPath(Telephony.Sms.CONTENT_URI, "raw/permanentDelete"), null, null);
     }
 
@@ -123,18 +120,17 @@ public class ResetNetworkConfirm extends InstrumentedFragment {
         if (this.mEraseEsim) {
             this.mEraseEsimTask = new EraseEsimAsyncTask(context, str);
             this.mEraseEsimTask.execute(new Void[0]);
-            return;
+        } else {
+            Toast.makeText(context, R.string.reset_network_complete_toast, 0).show();
         }
-        Toast.makeText(context, (int) R.string.reset_network_complete_toast, 0).show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void restoreDefaultApn(Context context) {
-        Uri parse = Uri.parse("content://telephony/carriers/restore");
+    private void restoreDefaultApn(Context context) {
+        Uri uriWithAppendedPath = Uri.parse("content://telephony/carriers/restore");
         if (SubscriptionManager.isUsableSubIdValue(this.mSubId)) {
-            parse = Uri.withAppendedPath(parse, "subId/" + String.valueOf(this.mSubId));
+            uriWithAppendedPath = Uri.withAppendedPath(uriWithAppendedPath, "subId/" + String.valueOf(this.mSubId));
         }
-        context.getContentResolver().delete(parse, null, null);
+        context.getContentResolver().delete(uriWithAppendedPath, null, null);
     }
 
     private void establishFinalConfirmationState() {
@@ -143,15 +139,15 @@ public class ResetNetworkConfirm extends InstrumentedFragment {
 
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getActivity(), "no_network_reset", UserHandle.myUserId());
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getActivity(), "no_network_reset", UserHandle.myUserId());
         if (RestrictedLockUtils.hasBaseUserRestriction(getActivity(), "no_network_reset", UserHandle.myUserId())) {
             return layoutInflater.inflate(R.layout.network_reset_disallowed_screen, (ViewGroup) null);
         }
-        if (checkIfRestrictionEnforced != null) {
-            new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_network_reset", checkIfRestrictionEnforced).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.-$$Lambda$ResetNetworkConfirm$YTG2-gTxf5vyFkKGLAaR8nzFOxo
+        if (enforcedAdminCheckIfRestrictionEnforced != null) {
+            new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_network_reset", enforcedAdminCheckIfRestrictionEnforced).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.-$$Lambda$ResetNetworkConfirm$YTG2-gTxf5vyFkKGLAaR8nzFOxo
                 @Override // android.content.DialogInterface.OnDismissListener
                 public final void onDismiss(DialogInterface dialogInterface) {
-                    ResetNetworkConfirm.this.getActivity().finish();
+                    this.f$0.getActivity().finish();
                 }
             }).show();
             return new View(getContext());

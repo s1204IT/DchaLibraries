@@ -18,13 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class FallbackHome extends Activity {
     private boolean mProvisioned;
     private final Runnable mProgressTimeoutRunnable = new Runnable() { // from class: com.android.settings.-$$Lambda$FallbackHome$t1fq3k7x_PY-DiX5Fz-YbaIlCdg
         @Override // java.lang.Runnable
         public final void run() {
-            FallbackHome.lambda$new$0(FallbackHome.this);
+            FallbackHome.lambda$new$0(this.f$0);
         }
     };
     private BroadcastReceiver mReceiver = new BroadcastReceiver() { // from class: com.android.settings.FallbackHome.1
@@ -41,10 +42,10 @@ public class FallbackHome extends Activity {
     };
 
     public static /* synthetic */ void lambda$new$0(FallbackHome fallbackHome) {
-        View inflate = fallbackHome.getLayoutInflater().inflate(R.layout.fallback_home_finishing_boot, (ViewGroup) null);
-        fallbackHome.setContentView(inflate);
-        inflate.setAlpha(0.0f);
-        inflate.animate().alpha(1.0f).setDuration(500L).setInterpolator(AnimationUtils.loadInterpolator(fallbackHome, 17563661)).start();
+        View viewInflate = fallbackHome.getLayoutInflater().inflate(R.layout.fallback_home_finishing_boot, (ViewGroup) null);
+        fallbackHome.setContentView(viewInflate);
+        viewInflate.setAlpha(0.0f);
+        viewInflate.animate().alpha(1.0f).setDuration(500L).setInterpolator(AnimationUtils.loadInterpolator(fallbackHome, android.R.interpolator.fast_out_slow_in)).start();
         fallbackHome.getWindow().addFlags(128);
     }
 
@@ -53,7 +54,7 @@ public class FallbackHome extends Activity {
         super.onCreate(bundle);
         this.mProvisioned = Settings.Global.getInt(getContentResolver(), "device_provisioned", 0) != 0;
         if (!this.mProvisioned) {
-            setTheme(2131951792);
+            setTheme(R.style.FallbackHome_SetupWizard);
             getWindow().getDecorView().setSystemUiVisibility(4102);
         } else {
             getWindow().getDecorView().setSystemUiVisibility(1536);
@@ -82,8 +83,7 @@ public class FallbackHome extends Activity {
         unregisterReceiver(this.mReceiver);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void maybeFinish() {
+    private void maybeFinish() {
         if (((UserManager) getSystemService(UserManager.class)).isUserUnlocked()) {
             if (Objects.equals(getPackageName(), getPackageManager().resolveActivity(new Intent("android.intent.action.MAIN").addCategory("android.intent.category.HOME"), 0).activityInfo.packageName)) {
                 if (UserManager.isSplitSystemUser() && UserHandle.myUserId() == 0) {

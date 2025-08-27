@@ -14,6 +14,7 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import java.lang.reflect.Array;
+
 /* loaded from: classes.dex */
 public class PreviewPagerAdapter extends PagerAdapter {
     private static final Interpolator FADE_IN_INTERPOLATOR = new DecelerateInterpolator();
@@ -39,16 +40,16 @@ public class PreviewPagerAdapter extends PagerAdapter {
     public PreviewPagerAdapter(Context context, boolean z, int[] iArr, Configuration[] configurationArr) {
         this.mIsLayoutRtl = z;
         this.mPreviewFrames = new FrameLayout[iArr.length];
-        this.mViewStubInflated = (boolean[][]) Array.newInstance(boolean.class, iArr.length, configurationArr.length);
+        this.mViewStubInflated = (boolean[][]) Array.newInstance((Class<?>) boolean.class, iArr.length, configurationArr.length);
         for (final int i = 0; i < iArr.length; i++) {
             int length = this.mIsLayoutRtl ? (iArr.length - 1) - i : i;
             this.mPreviewFrames[length] = new FrameLayout(context);
             this.mPreviewFrames[length].setLayoutParams(new LinearLayout.LayoutParams(-1, -1));
             for (final int i2 = 0; i2 < configurationArr.length; i2++) {
-                Context createConfigurationContext = context.createConfigurationContext(configurationArr[i2]);
-                createConfigurationContext.getTheme().setTo(context.getTheme());
-                LayoutInflater.from(createConfigurationContext);
-                ViewStub viewStub = new ViewStub(createConfigurationContext);
+                Context contextCreateConfigurationContext = context.createConfigurationContext(configurationArr[i2]);
+                contextCreateConfigurationContext.getTheme().setTo(context.getTheme());
+                LayoutInflater.from(contextCreateConfigurationContext);
+                ViewStub viewStub = new ViewStub(contextCreateConfigurationContext);
                 viewStub.setLayoutResource(iArr[i]);
                 viewStub.setOnInflateListener(new ViewStub.OnInflateListener() { // from class: com.android.settings.PreviewPagerAdapter.1
                     @Override // android.view.ViewStub.OnInflateListener
@@ -92,7 +93,6 @@ public class PreviewPagerAdapter extends PagerAdapter {
     }
 
     public void setPreviewLayer(int i, int i2, int i3, boolean z) {
-        FrameLayout[] frameLayoutArr;
         for (FrameLayout frameLayout : this.mPreviewFrames) {
             if (i2 >= 0) {
                 View childAt = frameLayout.getChildAt(i2);
@@ -146,17 +146,14 @@ public class PreviewPagerAdapter extends PagerAdapter {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void runAnimationEndAction() {
+    private void runAnimationEndAction() {
         if (this.mAnimationEndAction != null && !isAnimating()) {
             this.mAnimationEndAction.run();
             this.mAnimationEndAction = null;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PreviewFrameAnimatorListener implements Animator.AnimatorListener {
+    private class PreviewFrameAnimatorListener implements Animator.AnimatorListener {
         private PreviewFrameAnimatorListener() {
         }
 

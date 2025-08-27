@@ -4,15 +4,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class Anomaly implements Parcelable {
     public static final int[] ANOMALY_TYPE_LIST = {0, 1, 2};
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() { // from class: com.android.settings.fuelgauge.anomaly.Anomaly.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public Anomaly createFromParcel(Parcel parcel) {
             return new Anomaly(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public Anomaly[] newArray(int i) {
             return new Anomaly[i];
@@ -74,11 +77,11 @@ public class Anomaly implements Parcelable {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Anomaly) {
-            Anomaly anomaly = (Anomaly) obj;
-            return this.type == anomaly.type && this.uid == anomaly.uid && this.wakelockTimeMs == anomaly.wakelockTimeMs && TextUtils.equals(this.displayName, anomaly.displayName) && TextUtils.equals(this.packageName, anomaly.packageName) && this.targetSdkVersion == anomaly.targetSdkVersion && this.backgroundRestrictionEnabled == anomaly.backgroundRestrictionEnabled && this.wakeupAlarmCount == anomaly.wakeupAlarmCount && this.bluetoothScanningTimeMs == anomaly.bluetoothScanningTimeMs;
+        if (!(obj instanceof Anomaly)) {
+            return false;
         }
-        return false;
+        Anomaly anomaly = (Anomaly) obj;
+        return this.type == anomaly.type && this.uid == anomaly.uid && this.wakelockTimeMs == anomaly.wakelockTimeMs && TextUtils.equals(this.displayName, anomaly.displayName) && TextUtils.equals(this.packageName, anomaly.packageName) && this.targetSdkVersion == anomaly.targetSdkVersion && this.backgroundRestrictionEnabled == anomaly.backgroundRestrictionEnabled && this.wakeupAlarmCount == anomaly.wakeupAlarmCount && this.bluetoothScanningTimeMs == anomaly.bluetoothScanningTimeMs;
     }
 
     public int hashCode() {
@@ -102,7 +105,6 @@ public class Anomaly implements Parcelable {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class Builder {
         private boolean mBgRestrictionEnabled;
         private long mBluetoothScanningTimeMs;

@@ -91,6 +91,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class Dependency extends SystemUI {
     private static Dependency sDependency;
@@ -101,7 +102,6 @@ public class Dependency extends SystemUI {
     public static final DependencyKey<Handler> MAIN_HANDLER = new DependencyKey<>("main_handler");
     public static final DependencyKey<String> LEAK_REPORT_EMAIL = new DependencyKey<>("leak_report_email");
 
-    /* loaded from: classes.dex */
     public interface DependencyProvider<T> {
         T createDependency();
     }
@@ -135,141 +135,139 @@ public class Dependency extends SystemUI {
         this.mProviders.put(ActivityStarterDelegate.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$YD3dFPIT9OLLCV0VFjYTtnEZZWg
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$4(Dependency.this);
+                return Dependency.lambda$start$4(this.f$0);
             }
         });
         this.mProviders.put(AsyncSensorManager.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$0H2oe1HD8YElVF7xZWH_GrR9Fus
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$5(Dependency.this);
+                return Dependency.lambda$start$5(this.f$0);
             }
         });
         this.mProviders.put(BluetoothController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$Gy4QudNezotljEgQKa6AZ5wLN8g
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$6(Dependency.this);
+                return Dependency.lambda$start$6(this.f$0);
             }
         });
         this.mProviders.put(LocationController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$vhpQrWxDbweIViML-8LCC1Ml6HA
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$7(Dependency.this);
+                return Dependency.lambda$start$7(this.f$0);
             }
         });
         this.mProviders.put(RotationLockController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$Cqshp7K51OogqPsBzd-8WkWLscw
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$8(Dependency.this);
+                return Dependency.lambda$start$8(this.f$0);
             }
         });
         this.mProviders.put(NetworkController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$sXmtIDKunu8wBZvqigyneB02fuU
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$9(Dependency.this);
+                return Dependency.lambda$start$9(this.f$0);
             }
         });
         this.mProviders.put(ZenModeController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$MqeklNs0Y4sjPiwGncegTIKljdU
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$10(Dependency.this);
+                return Dependency.lambda$start$10(this.f$0);
             }
         });
         this.mProviders.put(HotspotController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$bE-oHFBo0SQuS0prD0vCrQd97eU
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$11(Dependency.this);
+                return Dependency.lambda$start$11(this.f$0);
             }
         });
         this.mProviders.put(CastController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$JOKZfAg6ZDkkuCsSsy35IBCARTA
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$12(Dependency.this);
+                return Dependency.lambda$start$12(this.f$0);
             }
         });
         this.mProviders.put(FlashlightController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$oOQ0donQppauaJPERDAkKBaeXo8
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$13(Dependency.this);
+                return Dependency.lambda$start$13(this.f$0);
             }
         });
         this.mProviders.put(KeyguardMonitor.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$3n6-QJ1ZEPH6TMbkEd7wabHPggc
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$14(Dependency.this);
+                return Dependency.lambda$start$14(this.f$0);
             }
         });
         this.mProviders.put(UserSwitcherController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$3ZrNl_prM_QqXnWtMCTUroZBqig
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$15(Dependency.this);
+                return Dependency.lambda$start$15(this.f$0);
             }
         });
         this.mProviders.put(UserInfoController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$R9x9Mcq_hw4LFHdUOV1HoHSjDFY
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$16(Dependency.this);
+                return Dependency.lambda$start$16(this.f$0);
             }
         });
         this.mProviders.put(BatteryController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$eVB3qUthhFg102GpQdjdNlDgpHI
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$17(Dependency.this);
+                return Dependency.lambda$start$17(this.f$0);
             }
         });
         this.mProviders.put(ColorDisplayController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$sN7_PX5fS0mTAWfUtAOWiOYYsEw
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$18(Dependency.this);
+                return Dependency.lambda$start$18(this.f$0);
             }
         });
         this.mProviders.put(ManagedProfileController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$Mc2Shc0BcQYa_D2DsNwT5hqVOkg
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$19(Dependency.this);
+                return Dependency.lambda$start$19(this.f$0);
             }
         });
         this.mProviders.put(NextAlarmController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$8AJ7IdA5m7Auk6hpJZHZYOfed1g
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$20(Dependency.this);
+                return Dependency.lambda$start$20(this.f$0);
             }
         });
         this.mProviders.put(DataSaverController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$LnsjDzhCyDXdveXQDCR8F1i775w
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                Object dataSaverController;
-                dataSaverController = ((NetworkController) Dependency.get(NetworkController.class)).getDataSaverController();
-                return dataSaverController;
+                return ((NetworkController) Dependency.get(NetworkController.class)).getDataSaverController();
             }
         });
         this.mProviders.put(AccessibilityController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$ZJP4QYkVPngEF6sUOIH8Lf0Fxw8
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$22(Dependency.this);
+                return Dependency.lambda$start$22(this.f$0);
             }
         });
         this.mProviders.put(DeviceProvisionedController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$F2PwPFK8ZYOsuPFjafNl1Rs3pss
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$23(Dependency.this);
+                return Dependency.lambda$start$23(this.f$0);
             }
         });
         this.mProviders.put(PluginManager.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$Rf9lPinWct-b4zmu1RmuBA1cyzQ
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$24(Dependency.this);
+                return Dependency.lambda$start$24(this.f$0);
             }
         });
         this.mProviders.put(AssistManager.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$bjwY1_gMs7pb_0dTeSR6EhvnTDY
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$25(Dependency.this);
+                return Dependency.lambda$start$25(this.f$0);
             }
         });
         this.mProviders.put(SecurityController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$FS-BHneeFfLq-XLo_OH5s3NDjq4
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$26(Dependency.this);
+                return Dependency.lambda$start$26(this.f$0);
             }
         });
         this.mProviders.put(LeakDetector.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$u_O28tKtf6m63SoPms2fLLKgf0U
@@ -287,43 +285,43 @@ public class Dependency extends SystemUI {
         this.mProviders.put(LeakReporter.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$TzkdpsFpcokB9wOdq8_AL394wXI
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$28(Dependency.this);
+                return Dependency.lambda$start$28(this.f$0);
             }
         });
         this.mProviders.put(GarbageMonitor.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$ObCj7gbBEIdh7uotev0wUsDF-gs
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$29(Dependency.this);
+                return Dependency.lambda$start$29(this.f$0);
             }
         });
         this.mProviders.put(TunerService.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$QeSLOyPvKnxd4T4ZD6vNH_c8Vsk
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$30(Dependency.this);
+                return Dependency.lambda$start$30(this.f$0);
             }
         });
         this.mProviders.put(StatusBarWindowManager.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$SfpVegTBkHb9tOvXbeeDUXrzjtM
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$31(Dependency.this);
+                return Dependency.lambda$start$31(this.f$0);
             }
         });
         this.mProviders.put(DarkIconDispatcher.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$fk0IwG2aHV8HxJ2AG1DMnwxab4Y
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$32(Dependency.this);
+                return Dependency.lambda$start$32(this.f$0);
             }
         });
         this.mProviders.put(ConfigurationController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$QZywXZS1w5xNhq0ThGkucw65zmw
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$33(Dependency.this);
+                return Dependency.lambda$start$33(this.f$0);
             }
         });
         this.mProviders.put(StatusBarIconController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$u55GtmTwAT7rU__EQu5suMFE5Gk
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$34(Dependency.this);
+                return Dependency.lambda$start$34(this.f$0);
             }
         });
         this.mProviders.put(ScreenLifecycle.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$QunsbUyDkSTDqQ3J4kJXl60dFCs
@@ -341,13 +339,13 @@ public class Dependency extends SystemUI {
         this.mProviders.put(FragmentService.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$uCOraqIWfgaprFSzzqWhj1-gO30
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$37(Dependency.this);
+                return Dependency.lambda$start$37(this.f$0);
             }
         });
         this.mProviders.put(ExtensionController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$OdqeWGmU3r9_3T8q2CUebkYRzKg
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$38(Dependency.this);
+                return Dependency.lambda$start$38(this.f$0);
             }
         });
         this.mProviders.put(PluginDependencyProvider.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$mPl0hCzOT52s_1iFpnvMri2oLWc
@@ -359,15 +357,13 @@ public class Dependency extends SystemUI {
         this.mProviders.put(LocalBluetoothManager.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$RVNdlgnkHnvqc-7IeeJkxsAw71Y
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                Object localBluetoothManager;
-                localBluetoothManager = LocalBluetoothManager.getInstance(Dependency.this.mContext, null);
-                return localBluetoothManager;
+                return LocalBluetoothManager.getInstance(this.f$0.mContext, null);
             }
         });
         this.mProviders.put(VolumeDialogController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$ls_TAyxiP1x3eCUsnULK7QhAD1A
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$41(Dependency.this);
+                return Dependency.lambda$start$41(this.f$0);
             }
         });
         this.mProviders.put(MetricsLogger.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$Lgnz5tvjLnGXZv1_9doKGIuk72U
@@ -379,13 +375,13 @@ public class Dependency extends SystemUI {
         this.mProviders.put(AccessibilityManagerWrapper.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$3dskHwqhnk7rl6uWrynTBOpqoso
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$43(Dependency.this);
+                return Dependency.lambda$start$43(this.f$0);
             }
         });
         this.mProviders.put(SysuiColorExtractor.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$2EP6AlwVDwhJzblZCh1s1Kry3Yc
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$44(Dependency.this);
+                return Dependency.lambda$start$44(this.f$0);
             }
         });
         this.mProviders.put(TunablePadding.TunablePaddingService.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$SmuD-tT2siPWGoltmIITupDKFcI
@@ -397,7 +393,7 @@ public class Dependency extends SystemUI {
         this.mProviders.put(ForegroundServiceController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$2AIelcCUvrZwK3gYlXHEDjszYXo
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$46(Dependency.this);
+                return Dependency.lambda$start$46(this.f$0);
             }
         });
         this.mProviders.put(UiOffloadThread.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$LSvgWTdQP87rDjd24R3t79hv97w
@@ -409,33 +405,31 @@ public class Dependency extends SystemUI {
         this.mProviders.put(PowerUI.WarningsUI.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$e-mzOcMSKyC2QbVIh_F62iw7WG8
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$47(Dependency.this);
+                return Dependency.lambda$start$47(this.f$0);
             }
         });
         this.mProviders.put(IconLogger.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$8d8ig7vA4dwKAi4m3UtJ-Z6-PlY
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$48(Dependency.this);
+                return Dependency.lambda$start$48(this.f$0);
             }
         });
         this.mProviders.put(LightBarController.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$tkMMgMiU67KrMuzMbk7S3dN7VvI
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$49(Dependency.this);
+                return Dependency.lambda$start$49(this.f$0);
             }
         });
         this.mProviders.put(IWindowManager.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$oi9PlpgtZI6Kz81pWN68RRJldvc
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                Object windowManagerService;
-                windowManagerService = WindowManagerGlobal.getWindowManagerService();
-                return windowManagerService;
+                return WindowManagerGlobal.getWindowManagerService();
             }
         });
         this.mProviders.put(OverviewProxyService.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$SOM1e6JLs0G26jRrrkR2E4IG8oA
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$51(Dependency.this);
+                return Dependency.lambda$start$51(this.f$0);
             }
         });
         this.mProviders.put(EnhancedEstimates.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$raxiz2FnXijKOrBPKw9rTGb9hMM
@@ -447,48 +441,42 @@ public class Dependency extends SystemUI {
         this.mProviders.put(AppOpsListener.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$nXKCbmpz8yBWU1XC5ocPwPoCMew
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$53(Dependency.this);
+                return Dependency.lambda$start$53(this.f$0);
             }
         });
         this.mProviders.put(VibratorHelper.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$LfG73zT4wzmAr13SlabcbmGRhQg
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                return Dependency.lambda$start$54(Dependency.this);
+                return Dependency.lambda$start$54(this.f$0);
             }
         });
         this.mProviders.put(IStatusBarService.class, new DependencyProvider() { // from class: com.android.systemui.-$$Lambda$Dependency$YlrCQnToKQLXsi6GJYR6UeEdAHE
             @Override // com.android.systemui.Dependency.DependencyProvider
             public final Object createDependency() {
-                Object asInterface;
-                asInterface = IStatusBarService.Stub.asInterface(ServiceManager.getService("statusbar"));
-                return asInterface;
+                return IStatusBarService.Stub.asInterface(ServiceManager.getService("statusbar"));
             }
         });
         SystemUIFactory.getInstance().injectDependencies(this.mProviders, this.mContext);
         sDependency = this;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$0() {
+    static /* synthetic */ Object lambda$start$0() {
         HandlerThread handlerThread = new HandlerThread("TimeTick");
         handlerThread.start();
         return new Handler(handlerThread.getLooper());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$1() {
+    static /* synthetic */ Object lambda$start$1() {
         HandlerThread handlerThread = new HandlerThread("SysUiBg", 10);
         handlerThread.start();
         return handlerThread.getLooper();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$2() {
+    static /* synthetic */ Object lambda$start$2() {
         return new Handler(Looper.getMainLooper());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$3() {
+    static /* synthetic */ Object lambda$start$3() {
         return new ActivityStarterDelegate();
     }
 
@@ -580,8 +568,7 @@ public class Dependency extends SystemUI {
         return new SecurityControllerImpl(dependency.mContext);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$27() {
+    static /* synthetic */ Object lambda$start$27() {
         return null;
     }
 
@@ -613,13 +600,11 @@ public class Dependency extends SystemUI {
         return new StatusBarIconControllerImpl(dependency.mContext);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$35() {
+    static /* synthetic */ Object lambda$start$35() {
         return new ScreenLifecycle();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$36() {
+    static /* synthetic */ Object lambda$start$36() {
         return new WakefulnessLifecycle();
     }
 
@@ -631,8 +616,7 @@ public class Dependency extends SystemUI {
         return new ExtensionControllerImpl(dependency.mContext);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$39() {
+    static /* synthetic */ Object lambda$start$39() {
         return new PluginDependencyProvider((PluginManager) get(PluginManager.class));
     }
 
@@ -640,8 +624,7 @@ public class Dependency extends SystemUI {
         return new VolumeDialogControllerImpl(dependency.mContext);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$42() {
+    static /* synthetic */ Object lambda$start$42() {
         return new MetricsLogger();
     }
 
@@ -653,8 +636,7 @@ public class Dependency extends SystemUI {
         return new SysuiColorExtractor(dependency.mContext);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$45() {
+    static /* synthetic */ Object lambda$start$45() {
         return new TunablePadding.TunablePaddingService();
     }
 
@@ -678,8 +660,7 @@ public class Dependency extends SystemUI {
         return new OverviewProxyService(dependency.mContext);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ Object lambda$start$52() {
+    static /* synthetic */ Object lambda$start$52() {
         return new EnhancedEstimatesImpl();
     }
 
@@ -708,14 +689,12 @@ public class Dependency extends SystemUI {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$dump$56(Object obj) {
+    static /* synthetic */ boolean lambda$dump$56(Object obj) {
         return obj instanceof Dumpable;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.SystemUI
-    public synchronized void onConfigurationChanged(final Configuration configuration) {
+    protected synchronized void onConfigurationChanged(final Configuration configuration) {
         super.onConfigurationChanged(configuration);
         this.mDependencies.values().stream().filter(new Predicate() { // from class: com.android.systemui.-$$Lambda$Dependency$Ma05gsMMbRDr3AMGfZ5wtGQFpwU
             @Override // java.util.function.Predicate
@@ -730,8 +709,7 @@ public class Dependency extends SystemUI {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$onConfigurationChanged$58(Object obj) {
+    static /* synthetic */ boolean lambda$onConfigurationChanged$58(Object obj) {
         return obj instanceof ConfigurationChangedReceiver;
     }
 
@@ -763,11 +741,12 @@ public class Dependency extends SystemUI {
         return (T) dependencyProvider.createDependency();
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: java.util.function.Consumer<T> */
     /* JADX WARN: Multi-variable type inference failed */
     private <T> void destroyDependency(Class<T> cls, Consumer<T> consumer) {
-        Object remove = this.mDependencies.remove(cls);
-        if (remove != null && consumer != 0) {
-            consumer.accept(remove);
+        Object objRemove = this.mDependencies.remove(cls);
+        if (objRemove != null && consumer != 0) {
+            consumer.accept(objRemove);
         }
     }
 
@@ -797,7 +776,6 @@ public class Dependency extends SystemUI {
         return (T) sDependency.getDependency(dependencyKey);
     }
 
-    /* loaded from: classes.dex */
     public static final class DependencyKey<V> {
         private final String mDisplayName;
 

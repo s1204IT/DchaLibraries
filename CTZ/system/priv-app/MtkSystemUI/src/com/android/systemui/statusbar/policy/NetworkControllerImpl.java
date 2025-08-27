@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class NetworkControllerImpl extends BroadcastReceiver implements DataUsageController.NetworkNameProvider, ConfigurationChangedReceiver, DemoMode, Dumpable, NetworkController {
     static final boolean CHATTY;
@@ -73,17 +74,21 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
     private WifiSignalController.WifiState mDemoWifiState;
     private boolean[] mEmergencyPhone;
     private int mEmergencySource;
+
     @VisibleForTesting
     final EthernetSignalController mEthernetSignalController;
     private final boolean mHasMobileDataFeature;
     private boolean mHasNoSubs;
     private boolean mInetCondition;
     private boolean mIsEmergency;
+
     @VisibleForTesting
     ServiceState mLastServiceState;
+
     @VisibleForTesting
     boolean mListening;
     private Locale mLocale;
+
     @VisibleForTesting
     final SparseArray<MobileSignalController> mMobileSignalControllers;
     String[] mNetworkName;
@@ -102,6 +107,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
     private final CurrentUserTracker mUserTracker;
     private final BitSet mValidatedTransports;
     private final WifiManager mWifiManager;
+
     @VisibleForTesting
     final WifiSignalController mWifiSignalController;
 
@@ -120,7 +126,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
     }
 
     @VisibleForTesting
-    NetworkControllerImpl(Context context, ConnectivityManager connectivityManager, TelephonyManager telephonyManager, WifiManager wifiManager, SubscriptionManager subscriptionManager, Config config, Looper looper, CallbackHandler callbackHandler, AccessPointControllerImpl accessPointControllerImpl, DataUsageController dataUsageController, SubscriptionDefaults subscriptionDefaults, final DeviceProvisionedController deviceProvisionedController) {
+    NetworkControllerImpl(Context context, ConnectivityManager connectivityManager, TelephonyManager telephonyManager, WifiManager wifiManager, SubscriptionManager subscriptionManager, Config config, Looper looper, CallbackHandler callbackHandler, AccessPointControllerImpl accessPointControllerImpl, DataUsageController dataUsageController, SubscriptionDefaults subscriptionDefaults, DeviceProvisionedController deviceProvisionedController) {
         this.mMobileSignalControllers = new SparseArray<>();
         this.mConnectedTransports = new BitSet();
         this.mValidatedTransports = new BitSet();
@@ -130,6 +136,9 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         this.mCellularSubId = -1;
         this.mSlotCount = 0;
         this.mRegisterListeners = new Runnable() { // from class: com.android.systemui.statusbar.policy.NetworkControllerImpl.8
+            AnonymousClass8() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 NetworkControllerImpl.this.registerListeners();
@@ -154,6 +163,9 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         this.mDataUsageController = dataUsageController;
         this.mDataUsageController.setNetworkController(this);
         this.mDataUsageController.setCallback(new DataUsageController.Callback() { // from class: com.android.systemui.statusbar.policy.NetworkControllerImpl.1
+            AnonymousClass1() {
+            }
+
             @Override // com.android.settingslib.net.DataUsageController.Callback
             public void onMobileDataEnabled(boolean z) {
                 NetworkControllerImpl.this.mCallbackHandler.setMobileDataEnabled(z);
@@ -163,6 +175,10 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         this.mEthernetSignalController = new EthernetSignalController(this.mContext, this.mCallbackHandler, this);
         updateAirplaneMode(true);
         this.mUserTracker = new CurrentUserTracker(this.mContext) { // from class: com.android.systemui.statusbar.policy.NetworkControllerImpl.2
+            AnonymousClass2(Context context2) {
+                super(context2);
+            }
+
             @Override // com.android.systemui.settings.CurrentUserTracker
             public void onUserSwitched(int i) {
                 NetworkControllerImpl.this.onUserSwitched(i);
@@ -170,6 +186,12 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         };
         this.mUserTracker.startTracking();
         deviceProvisionedController.addCallback(new DeviceProvisionedController.DeviceProvisionedListener() { // from class: com.android.systemui.statusbar.policy.NetworkControllerImpl.3
+            final /* synthetic */ DeviceProvisionedController val$deviceProvisionedController;
+
+            AnonymousClass3(DeviceProvisionedController deviceProvisionedController2) {
+                deviceProvisionedController = deviceProvisionedController2;
+            }
+
             @Override // com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener
             public void onUserSetupChanged() {
                 NetworkControllerImpl.this.setUserSetupComplete(deviceProvisionedController.isUserSetup(deviceProvisionedController.getCurrentUser()));
@@ -179,11 +201,14 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
             private Network mLastNetwork;
             private NetworkCapabilities mLastNetworkCapabilities;
 
+            AnonymousClass4() {
+            }
+
             @Override // android.net.ConnectivityManager.NetworkCallback
             public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
                 boolean z = this.mLastNetworkCapabilities != null && this.mLastNetworkCapabilities.hasCapability(16);
-                boolean hasCapability = networkCapabilities.hasCapability(16);
-                if (network.equals(this.mLastNetwork) && networkCapabilities.equalsTransportTypes(this.mLastNetworkCapabilities) && hasCapability == z) {
+                boolean zHasCapability = networkCapabilities.hasCapability(16);
+                if (network.equals(this.mLastNetwork) && networkCapabilities.equalsTransportTypes(this.mLastNetworkCapabilities) && zHasCapability == z) {
                     return;
                 }
                 this.mLastNetwork = network;
@@ -195,13 +220,70 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         this.mStatusBarPlmnPlugin = OpSystemUICustomizationFactoryBase.getOpFactory(context).makeStatusBarPlmn(context);
     }
 
+    /* renamed from: com.android.systemui.statusbar.policy.NetworkControllerImpl$1 */
+    class AnonymousClass1 implements DataUsageController.Callback {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.settingslib.net.DataUsageController.Callback
+        public void onMobileDataEnabled(boolean z) {
+            NetworkControllerImpl.this.mCallbackHandler.setMobileDataEnabled(z);
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.policy.NetworkControllerImpl$2 */
+    class AnonymousClass2 extends CurrentUserTracker {
+        AnonymousClass2(Context context2) {
+            super(context2);
+        }
+
+        @Override // com.android.systemui.settings.CurrentUserTracker
+        public void onUserSwitched(int i) {
+            NetworkControllerImpl.this.onUserSwitched(i);
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.policy.NetworkControllerImpl$3 */
+    class AnonymousClass3 implements DeviceProvisionedController.DeviceProvisionedListener {
+        final /* synthetic */ DeviceProvisionedController val$deviceProvisionedController;
+
+        AnonymousClass3(DeviceProvisionedController deviceProvisionedController2) {
+            deviceProvisionedController = deviceProvisionedController2;
+        }
+
+        @Override // com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener
+        public void onUserSetupChanged() {
+            NetworkControllerImpl.this.setUserSetupComplete(deviceProvisionedController.isUserSetup(deviceProvisionedController.getCurrentUser()));
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.policy.NetworkControllerImpl$4 */
+    class AnonymousClass4 extends ConnectivityManager.NetworkCallback {
+        private Network mLastNetwork;
+        private NetworkCapabilities mLastNetworkCapabilities;
+
+        AnonymousClass4() {
+        }
+
+        @Override // android.net.ConnectivityManager.NetworkCallback
+        public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
+            boolean z = this.mLastNetworkCapabilities != null && this.mLastNetworkCapabilities.hasCapability(16);
+            boolean zHasCapability = networkCapabilities.hasCapability(16);
+            if (network.equals(this.mLastNetwork) && networkCapabilities.equalsTransportTypes(this.mLastNetworkCapabilities) && zHasCapability == z) {
+                return;
+            }
+            this.mLastNetwork = network;
+            this.mLastNetworkCapabilities = networkCapabilities;
+            NetworkControllerImpl.this.updateConnectivity();
+        }
+    }
+
     @Override // com.android.systemui.statusbar.policy.NetworkController
     public DataSaverController getDataSaverController() {
         return this.mDataSaverController;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void registerListeners() {
+    private void registerListeners() {
         for (int i = 0; i < this.mMobileSignalControllers.size(); i++) {
             this.mMobileSignalControllers.valueAt(i).registerListener();
         }
@@ -281,14 +363,14 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
                 Log.e("NetworkController", "No data sim selected");
             }
             return this.mDefaultSignalController;
-        } else if (this.mMobileSignalControllers.indexOfKey(defaultDataSubId) >= 0) {
-            return this.mMobileSignalControllers.get(defaultDataSubId);
-        } else {
-            if (DEBUG) {
-                Log.e("NetworkController", "Cannot find controller for data sub: " + defaultDataSubId);
-            }
-            return this.mDefaultSignalController;
         }
+        if (this.mMobileSignalControllers.indexOfKey(defaultDataSubId) >= 0) {
+            return this.mMobileSignalControllers.get(defaultDataSubId);
+        }
+        if (DEBUG) {
+            Log.e("NetworkController", "Cannot find controller for data sub: " + defaultDataSubId);
+        }
+        return this.mDefaultSignalController;
     }
 
     @Override // com.android.settingslib.net.DataUsageController.NetworkNameProvider, com.android.systemui.statusbar.policy.NetworkController
@@ -314,11 +396,11 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         int defaultVoiceSubId = this.mSubDefaults.getDefaultVoiceSubId();
         if (!SubscriptionManager.isValidSubscriptionId(defaultVoiceSubId)) {
             for (int i2 = 0; i2 < this.mMobileSignalControllers.size(); i2++) {
-                MobileSignalController valueAt = this.mMobileSignalControllers.valueAt(i2);
-                if (!valueAt.getState().isEmergency) {
-                    this.mEmergencySource = 100 + valueAt.mSubscriptionInfo.getSubscriptionId();
+                MobileSignalController mobileSignalControllerValueAt = this.mMobileSignalControllers.valueAt(i2);
+                if (!mobileSignalControllerValueAt.getState().isEmergency) {
+                    this.mEmergencySource = 100 + mobileSignalControllerValueAt.mSubscriptionInfo.getSubscriptionId();
                     if (DEBUG) {
-                        Log.d("NetworkController", "Found emergency " + valueAt.mTag);
+                        Log.d("NetworkController", "Found emergency " + mobileSignalControllerValueAt.mTag);
                     }
                     return false;
                 }
@@ -330,28 +412,27 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
                 Log.d("NetworkController", "Getting emergency from " + defaultVoiceSubId);
             }
             return this.mMobileSignalControllers.get(defaultVoiceSubId).getState().isEmergency;
-        } else if (this.mMobileSignalControllers.size() == 1) {
+        }
+        if (this.mMobileSignalControllers.size() == 1) {
             this.mEmergencySource = 400 + this.mMobileSignalControllers.keyAt(0);
             if (DEBUG) {
                 Log.d("NetworkController", "Getting assumed emergency from " + this.mMobileSignalControllers.keyAt(0));
             }
             return this.mMobileSignalControllers.valueAt(0).getState().isEmergency;
-        } else {
-            if (DEBUG) {
-                Log.e("NetworkController", "Cannot find controller for voice sub: " + defaultVoiceSubId);
-            }
-            this.mEmergencySource = 300 + defaultVoiceSubId;
-            return true;
         }
+        if (DEBUG) {
+            Log.e("NetworkController", "Cannot find controller for voice sub: " + defaultVoiceSubId);
+        }
+        this.mEmergencySource = 300 + defaultVoiceSubId;
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void recalculateEmergency() {
+    void recalculateEmergency() {
         this.mIsEmergency = isEmergencyOnly();
         this.mCallbackHandler.setEmergencyCallsOnly(this.mIsEmergency);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(NetworkController.SignalCallback signalCallback) {
         if (CHATTY) {
@@ -368,7 +449,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         signalCallback.setNoSims(this.mHasNoSubs, this.mSimDetected);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(NetworkController.SignalCallback signalCallback) {
         if (CHATTY) {
@@ -377,141 +458,81 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         this.mCallbackHandler.setListening(signalCallback, false);
     }
 
-    /* JADX WARN: Type inference failed for: r0v0, types: [com.android.systemui.statusbar.policy.NetworkControllerImpl$5] */
+    /* renamed from: com.android.systemui.statusbar.policy.NetworkControllerImpl$5 */
+    class AnonymousClass5 extends AsyncTask<Void, Void, Void> {
+        final /* synthetic */ boolean val$enabled;
+
+        AnonymousClass5(boolean z) {
+            z = z;
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.os.AsyncTask
+        protected Void doInBackground(Void... voidArr) {
+            NetworkControllerImpl.this.mWifiManager.setWifiEnabled(z);
+            return null;
+        }
+    }
+
     @Override // com.android.systemui.statusbar.policy.NetworkController
-    public void setWifiEnabled(final boolean z) {
+    public void setWifiEnabled(boolean z) {
         new AsyncTask<Void, Void, Void>() { // from class: com.android.systemui.statusbar.policy.NetworkControllerImpl.5
-            /* JADX INFO: Access modifiers changed from: protected */
+            final /* synthetic */ boolean val$enabled;
+
+            AnonymousClass5(boolean z2) {
+                z = z2;
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public Void doInBackground(Void... voidArr) {
+            protected Void doInBackground(Void... voidArr) {
                 NetworkControllerImpl.this.mWifiManager.setWifiEnabled(z);
                 return null;
             }
         }.execute(new Void[0]);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onUserSwitched(int i) {
+    private void onUserSwitched(int i) {
         this.mCurrentUserId = i;
         this.mAccessPoints.onUserSwitched(i);
         updateConnectivity();
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:132:0x009b  */
     @Override // android.content.BroadcastReceiver
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public void onReceive(Context context, Intent intent) {
-        char c;
         if (CHATTY) {
             Log.d("NetworkController", "onReceive: intent=" + intent);
         }
-        String action = intent.getAction();
-        switch (action.hashCode()) {
-            case -2104353374:
-                if (action.equals("android.intent.action.SERVICE_STATE")) {
-                    c = 7;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1465084191:
-                if (action.equals("android.intent.action.ACTION_DEFAULT_VOICE_SUBSCRIPTION_CHANGED")) {
-                    c = 3;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1172645946:
-                if (action.equals("android.net.conn.CONNECTIVITY_CHANGE")) {
-                    c = 0;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1138588223:
-                if (action.equals("android.telephony.action.CARRIER_CONFIG_CHANGED")) {
-                    c = '\b';
-                    break;
-                }
-                c = 65535;
-                break;
-            case -1076576821:
-                if (action.equals("android.intent.action.AIRPLANE_MODE")) {
-                    c = 2;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -337898046:
-                if (action.equals("android.intent.action.ACTION_SUBINFO_RECORD_UPDATED")) {
-                    c = 6;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -229777127:
-                if (action.equals("android.intent.action.SIM_STATE_CHANGED")) {
-                    c = 5;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -194455430:
-                if (action.equals("com.mediatek.ims.MTK_IMS_SERVICE_UP")) {
-                    c = '\n';
-                    break;
-                }
-                c = 65535;
-                break;
-            case -25388475:
-                if (action.equals("android.intent.action.ACTION_DEFAULT_DATA_SUBSCRIPTION_CHANGED")) {
-                    c = 4;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 623179603:
-                if (action.equals("android.net.conn.INET_CONDITION_ACTION")) {
-                    c = 1;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1533991190:
-                if (action.equals("com.mediatek.server.lwa.LWA_STATE_CHANGE_ACTION")) {
-                    c = '\t';
-                    break;
-                }
-                c = 65535;
-                break;
-            default:
-                c = 65535;
-                break;
-        }
-        switch (c) {
-            case 0:
-            case 1:
+        switch (intent.getAction()) {
+            case "android.net.conn.CONNECTIVITY_CHANGE":
+            case "android.net.conn.INET_CONDITION_ACTION":
                 updateConnectivity();
                 return;
-            case 2:
+            case "android.intent.action.AIRPLANE_MODE":
                 refreshLocale();
                 updateAirplaneMode(false);
                 return;
-            case 3:
+            case "android.intent.action.ACTION_DEFAULT_VOICE_SUBSCRIPTION_CHANGED":
                 recalculateEmergency();
                 return;
-            case 4:
+            case "android.intent.action.ACTION_DEFAULT_DATA_SUBSCRIPTION_CHANGED":
                 break;
-            case 5:
+            case "android.intent.action.SIM_STATE_CHANGED":
                 if (!intent.getBooleanExtra("rebroadcastOnUnlock", false)) {
                     updateMobileControllers();
                     return;
                 }
                 return;
-            case 6:
+            case "android.intent.action.ACTION_SUBINFO_RECORD_UPDATED":
                 refreshPlmnCarrierLabel();
                 updateMobileControllersEx(intent);
                 return;
-            case 7:
+            case "android.intent.action.SERVICE_STATE":
                 this.mLastServiceState = ServiceState.newFromBundle(intent.getExtras());
                 if (this.mLastServiceState != null) {
                     int intExtra = intent.getIntExtra("phone", 0);
@@ -526,19 +547,19 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
                     return;
                 }
                 return;
-            case '\b':
+            case "android.telephony.action.CARRIER_CONFIG_CHANGED":
                 this.mConfig = Config.readConfig(this.mContext);
                 this.mReceiverHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$ybM43k5QVX_SxWbQACu1XwL3Knk
                     @Override // java.lang.Runnable
                     public final void run() {
-                        NetworkControllerImpl.this.handleConfigurationChanged();
+                        this.f$0.handleConfigurationChanged();
                     }
                 });
                 return;
-            case '\t':
+            case "com.mediatek.server.lwa.LWA_STATE_CHANGE_ACTION":
                 handleLwaAction(intent);
                 return;
-            case '\n':
+            case "com.mediatek.ims.MTK_IMS_SERVICE_UP":
                 handleIMSServiceUp();
                 return;
             default:
@@ -560,10 +581,24 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         }
     }
 
+    /* renamed from: com.android.systemui.statusbar.policy.NetworkControllerImpl$6 */
+    class AnonymousClass6 implements Runnable {
+        AnonymousClass6() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            NetworkControllerImpl.this.handleConfigurationChanged();
+        }
+    }
+
     @Override // com.android.systemui.ConfigurationChangedReceiver
     public void onConfigurationChanged(Configuration configuration) {
         this.mConfig = Config.readConfig(this.mContext);
         this.mReceiverHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.policy.NetworkControllerImpl.6
+            AnonymousClass6() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 NetworkControllerImpl.this.handleConfigurationChanged();
@@ -571,9 +606,8 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    public void handleConfigurationChanged() {
+    void handleConfigurationChanged() {
         for (int i = 0; i < this.mMobileSignalControllers.size(); i++) {
             this.mMobileSignalControllers.valueAt(i).setConfiguration(this.mConfig);
         }
@@ -581,22 +615,21 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
     }
 
     private void updateMobileControllersEx(Intent intent) {
-        int i;
+        int intExtra;
         if (intent != null) {
-            i = intent.getIntExtra("simDetectStatus", 0);
-            Log.d("NetworkController", "updateMobileControllers detectedType: " + i);
+            intExtra = intent.getIntExtra("simDetectStatus", 0);
+            Log.d("NetworkController", "updateMobileControllers detectedType: " + intExtra);
         } else {
-            i = 4;
+            intExtra = 4;
         }
-        if (i != 3) {
+        if (intExtra != 3) {
             updateNoSims();
         } else {
             updateMobileControllers();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateMobileControllers() {
+    private void updateMobileControllers() {
         SIMHelper.updateSIMInfos(this.mContext);
         if (!this.mListening) {
             if (DEBUG) {
@@ -630,10 +663,10 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
     @VisibleForTesting
     protected void updateNoSims() {
         boolean z = this.mHasMobileDataFeature && this.mMobileSignalControllers.size() == 0;
-        boolean hasAnySim = hasAnySim();
-        if (z != this.mHasNoSubs || hasAnySim != this.mSimDetected) {
+        boolean zHasAnySim = hasAnySim();
+        if (z != this.mHasNoSubs || zHasAnySim != this.mSimDetected) {
             this.mHasNoSubs = z;
-            this.mSimDetected = hasAnySim;
+            this.mSimDetected = zHasAnySim;
             this.mCallbackHandler.setNoSims(this.mHasNoSubs, this.mSimDetected);
         }
     }
@@ -649,10 +682,29 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         return false;
     }
 
+    /* renamed from: com.android.systemui.statusbar.policy.NetworkControllerImpl$7 */
+    class AnonymousClass7 implements Comparator<SubscriptionInfo> {
+        AnonymousClass7() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
+        @Override // java.util.Comparator
+        public int compare(SubscriptionInfo subscriptionInfo, SubscriptionInfo subscriptionInfo2) {
+            if (subscriptionInfo.getSimSlotIndex() == subscriptionInfo2.getSimSlotIndex()) {
+                return subscriptionInfo.getSubscriptionId() - subscriptionInfo2.getSubscriptionId();
+            }
+            return subscriptionInfo.getSimSlotIndex() - subscriptionInfo2.getSimSlotIndex();
+        }
+    }
+
     @VisibleForTesting
     void setCurrentSubscriptions(List<SubscriptionInfo> list) {
         int i;
         Collections.sort(list, new Comparator<SubscriptionInfo>() { // from class: com.android.systemui.statusbar.policy.NetworkControllerImpl.7
+            AnonymousClass7() {
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(SubscriptionInfo subscriptionInfo, SubscriptionInfo subscriptionInfo2) {
                 if (subscriptionInfo.getSimSlotIndex() == subscriptionInfo2.getSimSlotIndex()) {
@@ -701,11 +753,11 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         }
         if (this.mListening) {
             for (int i4 = 0; i4 < sparseArray.size(); i4++) {
-                int keyAt = sparseArray.keyAt(i4);
-                if (sparseArray.get(keyAt) == this.mDefaultSignalController) {
+                int iKeyAt = sparseArray.keyAt(i4);
+                if (sparseArray.get(iKeyAt) == this.mDefaultSignalController) {
                     this.mDefaultSignalController = null;
                 }
-                ((MobileSignalController) sparseArray.get(keyAt)).unregisterListener();
+                ((MobileSignalController) sparseArray.get(iKeyAt)).unregisterListener();
             }
         }
         this.mCallbackHandler.setSubs(list);
@@ -714,30 +766,24 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         updateAirplaneMode(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setUserSetupComplete(final boolean z) {
+    private void setUserSetupComplete(final boolean z) {
         this.mReceiverHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$NetworkControllerImpl$ip_KPuTyKF5u8IR4L3OPJ6WObYU
             @Override // java.lang.Runnable
             public final void run() {
-                NetworkControllerImpl.this.handleSetUserSetupComplete(z);
+                this.f$0.handleSetUserSetupComplete(z);
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    public void handleSetUserSetupComplete(boolean z) {
+    void handleSetUserSetupComplete(boolean z) {
         this.mUserSetup = z;
         for (int i = 0; i < this.mMobileSignalControllers.size(); i++) {
             this.mMobileSignalControllers.valueAt(i).setUserSetupComplete(this.mUserSetup);
         }
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:9:0x001f  */
     @VisibleForTesting
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     boolean hasCorrectMobileControllers(List<SubscriptionInfo> list) {
         if (list.size() != this.mMobileSignalControllers.size()) {
             Log.d("NetworkController", "size not equals, reset subInfo");
@@ -748,8 +794,6 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
             if (mobileSignalController == null || mobileSignalController.mSubscriptionInfo.getSimSlotIndex() != subscriptionInfo.getSimSlotIndex()) {
                 Log.d("NetworkController", "info_subId = " + subscriptionInfo.getSubscriptionId() + " info_slotId = " + subscriptionInfo.getSimSlotIndex());
                 return false;
-            }
-            while (r5.hasNext()) {
             }
         }
         if (this.mSignalCallbackCount != this.mCallbackHandler.getSignalCallbackCount()) {
@@ -800,10 +844,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         this.mCallbackHandler.setNoSims(this.mHasNoSubs, this.mSimDetected);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateConnectivity() {
-        NetworkCapabilities[] defaultNetworkCapabilitiesForUser;
-        int[] transportTypes;
+    private void updateConnectivity() {
         this.mConnectedTransports.clear();
         this.mValidatedTransports.clear();
         SubscriptionManager subscriptionManager = this.mSubscriptionManager;
@@ -828,8 +869,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         pushConnectivityToSignals();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isCellularConnected(int i) {
+    boolean isCellularConnected(int i) {
         return this.mCellularSubId == i;
     }
 
@@ -887,29 +927,33 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
     private static final String emergencyToString(int i) {
         if (i > 300) {
             return "ASSUMED_VOICE_CONTROLLER(" + (i - 200) + ")";
-        } else if (i > 300) {
-            return "NO_SUB(" + (i - 300) + ")";
-        } else if (i > 200) {
-            return "VOICE_CONTROLLER(" + (i - 200) + ")";
-        } else if (i > 100) {
-            return "FIRST_CONTROLLER(" + (i - 100) + ")";
-        } else if (i == 0) {
-            return "NO_CONTROLLERS";
-        } else {
-            return "UNKNOWN_SOURCE";
         }
+        if (i > 300) {
+            return "NO_SUB(" + (i - 300) + ")";
+        }
+        if (i > 200) {
+            return "VOICE_CONTROLLER(" + (i - 200) + ")";
+        }
+        if (i > 100) {
+            return "FIRST_CONTROLLER(" + (i - 100) + ")";
+        }
+        if (i == 0) {
+            return "NO_CONTROLLERS";
+        }
+        return "UNKNOWN_SOURCE";
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:72:0x0162  */
-    /* JADX WARN: Removed duplicated region for block: B:73:0x0168  */
-    /* JADX WARN: Removed duplicated region for block: B:74:0x016e  */
-    /* JADX WARN: Removed duplicated region for block: B:75:0x0174  */
+    /* JADX WARN: Removed duplicated region for block: B:287:0x015e  */
+    /* JADX WARN: Removed duplicated region for block: B:289:0x0162  */
+    /* JADX WARN: Removed duplicated region for block: B:290:0x0168  */
+    /* JADX WARN: Removed duplicated region for block: B:291:0x016e  */
+    /* JADX WARN: Removed duplicated region for block: B:292:0x0174  */
     @Override // com.android.systemui.DemoMode
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void dispatchDemoCommand(String str, Bundle bundle) {
-        int parseInt;
+    public void dispatchDemoCommand(String str, Bundle bundle) throws NumberFormatException {
+        int i;
         MobileSignalController.MobileIconGroup mobileIconGroup;
         boolean z;
         if (!this.mDemoMode && str.equals("enter")) {
@@ -923,21 +967,23 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
             this.mDemoWifiState.ssid = "DemoMode";
             return;
         }
-        int i = 0;
+        int i2 = 0;
         if (this.mDemoMode && str.equals("exit")) {
             if (DEBUG) {
                 Log.d("NetworkController", "Exiting demo mode");
             }
             this.mDemoMode = false;
             updateMobileControllers();
-            while (i < this.mMobileSignalControllers.size()) {
-                this.mMobileSignalControllers.valueAt(i).resetLastState();
-                i++;
+            while (i2 < this.mMobileSignalControllers.size()) {
+                this.mMobileSignalControllers.valueAt(i2).resetLastState();
+                i2++;
             }
             this.mWifiSignalController.resetLastState();
             this.mReceiverHandler.post(this.mRegisterListeners);
             notifyAllListeners();
-        } else if (this.mDemoMode && str.equals("network")) {
+            return;
+        }
+        if (this.mDemoMode && str.equals("network")) {
             String string = bundle.getString("airplane");
             if (string != null) {
                 this.mCallbackHandler.setIsAirplaneMode(new NetworkController.IconState(string.equals("show"), R.drawable.stat_sys_airplane_mode, R.string.accessibility_airplane_mode, this.mContext));
@@ -950,18 +996,18 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
                     bitSet.set(this.mWifiSignalController.mTransportType);
                 }
                 this.mWifiSignalController.updateConnectivity(bitSet, bitSet);
-                for (int i2 = 0; i2 < this.mMobileSignalControllers.size(); i2++) {
-                    MobileSignalController valueAt = this.mMobileSignalControllers.valueAt(i2);
+                for (int i3 = 0; i3 < this.mMobileSignalControllers.size(); i3++) {
+                    MobileSignalController mobileSignalControllerValueAt = this.mMobileSignalControllers.valueAt(i3);
                     if (this.mDemoInetCondition) {
-                        bitSet.set(valueAt.mTransportType);
+                        bitSet.set(mobileSignalControllerValueAt.mTransportType);
                     }
-                    valueAt.updateConnectivity(bitSet, bitSet);
+                    mobileSignalControllerValueAt.updateConnectivity(bitSet, bitSet);
                 }
             }
             String string3 = bundle.getString("wifi");
             char c = 65535;
             if (string3 != null) {
-                boolean equals = string3.equals("show");
+                boolean zEquals = string3.equals("show");
                 String string4 = bundle.getString("level");
                 if (string4 != null) {
                     this.mDemoWifiState.level = string4.equals("null") ? -1 : Math.min(Integer.parseInt(string4), WifiIcons.WIFI_LEVEL_COUNT - 1);
@@ -969,44 +1015,33 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
                 }
                 String string5 = bundle.getString("activity");
                 if (string5 != null) {
-                    int hashCode = string5.hashCode();
-                    if (hashCode == 3365) {
+                    int iHashCode = string5.hashCode();
+                    if (iHashCode == 3365) {
                         if (string5.equals("in")) {
                             z = true;
-                            switch (z) {
-                            }
                         }
-                        z = true;
                         switch (z) {
                         }
-                    } else if (hashCode != 110414) {
-                        if (hashCode == 100357129 && string5.equals("inout")) {
-                            z = false;
-                            switch (z) {
-                                case false:
-                                    this.mWifiSignalController.setActivity(3);
-                                    break;
-                                case true:
-                                    this.mWifiSignalController.setActivity(1);
-                                    break;
-                                case true:
-                                    this.mWifiSignalController.setActivity(2);
-                                    break;
-                                default:
-                                    this.mWifiSignalController.setActivity(0);
-                                    break;
-                            }
-                        }
-                        z = true;
+                    } else if (iHashCode != 110414) {
+                        z = (iHashCode == 100357129 && string5.equals("inout")) ? false : -1;
                         switch (z) {
+                            case false:
+                                this.mWifiSignalController.setActivity(3);
+                                break;
+                            case true:
+                                this.mWifiSignalController.setActivity(1);
+                                break;
+                            case true:
+                                this.mWifiSignalController.setActivity(2);
+                                break;
+                            default:
+                                this.mWifiSignalController.setActivity(0);
+                                break;
                         }
                     } else {
                         if (string5.equals("out")) {
-                            z = true;
-                            switch (z) {
-                            }
+                            z = 2;
                         }
-                        z = true;
                         switch (z) {
                         }
                     }
@@ -1017,22 +1052,22 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
                 if (string6 != null) {
                     this.mDemoWifiState.ssid = string6;
                 }
-                this.mDemoWifiState.enabled = equals;
+                this.mDemoWifiState.enabled = zEquals;
                 this.mWifiSignalController.notifyListeners();
             }
             String string7 = bundle.getString("sims");
             if (string7 != null) {
-                int constrain = MathUtils.constrain(Integer.parseInt(string7), 1, 8);
+                int iConstrain = MathUtils.constrain(Integer.parseInt(string7), 1, 8);
                 ArrayList arrayList = new ArrayList();
-                if (constrain != this.mMobileSignalControllers.size()) {
+                if (iConstrain != this.mMobileSignalControllers.size()) {
                     this.mMobileSignalControllers.clear();
                     int activeSubscriptionInfoCountMax = this.mSubscriptionManager.getActiveSubscriptionInfoCountMax();
-                    for (int i3 = activeSubscriptionInfoCountMax; i3 < activeSubscriptionInfoCountMax + constrain; i3++) {
-                        arrayList.add(addSignalController(i3, i3));
+                    for (int i4 = activeSubscriptionInfoCountMax; i4 < activeSubscriptionInfoCountMax + iConstrain; i4++) {
+                        arrayList.add(addSignalController(i4, i4));
                     }
                     this.mCallbackHandler.setSubs(arrayList);
-                    for (int i4 = 0; i4 < this.mMobileSignalControllers.size(); i4++) {
-                        this.mMobileSignalControllers.get(this.mMobileSignalControllers.keyAt(i4)).notifyListeners();
+                    for (int i5 = 0; i5 < this.mMobileSignalControllers.size(); i5++) {
+                        this.mMobileSignalControllers.get(this.mMobileSignalControllers.keyAt(i5)).notifyListeners();
                     }
                 }
             }
@@ -1043,29 +1078,29 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
             }
             String string9 = bundle.getString("mobile");
             if (string9 != null) {
-                boolean equals2 = string9.equals("show");
+                boolean zEquals2 = string9.equals("show");
                 String string10 = bundle.getString("datatype");
                 String string11 = bundle.getString("slot");
                 if (!TextUtils.isEmpty(string11)) {
-                    parseInt = Integer.parseInt(string11);
+                    i = Integer.parseInt(string11);
                 } else {
-                    parseInt = 0;
+                    i = 0;
                 }
-                int constrain2 = MathUtils.constrain(parseInt, 0, 8);
+                int iConstrain2 = MathUtils.constrain(i, 0, 8);
                 ArrayList arrayList2 = new ArrayList();
-                while (this.mMobileSignalControllers.size() <= constrain2) {
+                while (this.mMobileSignalControllers.size() <= iConstrain2) {
                     int size = this.mMobileSignalControllers.size();
                     arrayList2.add(addSignalController(size, size));
                 }
                 if (!arrayList2.isEmpty()) {
                     this.mCallbackHandler.setSubs(arrayList2);
                 }
-                MobileSignalController valueAt2 = this.mMobileSignalControllers.valueAt(constrain2);
-                valueAt2.getState().dataSim = string10 != null;
-                valueAt2.getState().isDefault = string10 != null;
-                valueAt2.getState().dataConnected = string10 != null;
+                MobileSignalController mobileSignalControllerValueAt2 = this.mMobileSignalControllers.valueAt(iConstrain2);
+                mobileSignalControllerValueAt2.getState().dataSim = string10 != null;
+                mobileSignalControllerValueAt2.getState().isDefault = string10 != null;
+                mobileSignalControllerValueAt2.getState().dataConnected = string10 != null;
                 if (string10 != null) {
-                    MobileSignalController.MobileState state = valueAt2.getState();
+                    MobileSignalController.MobileState state = mobileSignalControllerValueAt2.getState();
                     if (string10.equals("1x")) {
                         mobileIconGroup = TelephonyIcons.ONE_X;
                     } else if (string10.equals("3g")) {
@@ -1092,20 +1127,20 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
                     state.iconGroup = mobileIconGroup;
                 }
                 if (bundle.containsKey("roam")) {
-                    valueAt2.getState().roaming = "show".equals(bundle.getString("roam"));
+                    mobileSignalControllerValueAt2.getState().roaming = "show".equals(bundle.getString("roam"));
                 }
                 String string12 = bundle.getString("level");
                 if (string12 != null) {
-                    valueAt2.getState().level = string12.equals("null") ? -1 : Math.min(Integer.parseInt(string12), 5);
-                    valueAt2.getState().connected = valueAt2.getState().level >= 0;
+                    mobileSignalControllerValueAt2.getState().level = string12.equals("null") ? -1 : Math.min(Integer.parseInt(string12), 5);
+                    mobileSignalControllerValueAt2.getState().connected = mobileSignalControllerValueAt2.getState().level >= 0;
                 }
                 String string13 = bundle.getString("activity");
                 if (string13 != null) {
-                    valueAt2.getState().dataConnected = true;
-                    int hashCode2 = string13.hashCode();
-                    if (hashCode2 != 3365) {
-                        if (hashCode2 != 110414) {
-                            if (hashCode2 == 100357129 && string13.equals("inout")) {
+                    mobileSignalControllerValueAt2.getState().dataConnected = true;
+                    int iHashCode2 = string13.hashCode();
+                    if (iHashCode2 != 3365) {
+                        if (iHashCode2 != 110414) {
+                            if (iHashCode2 == 100357129 && string13.equals("inout")) {
                                 c = 0;
                             }
                         } else if (string13.equals("out")) {
@@ -1116,30 +1151,30 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
                     }
                     switch (c) {
                         case 0:
-                            valueAt2.setActivity(3);
+                            mobileSignalControllerValueAt2.setActivity(3);
                             break;
                         case 1:
-                            valueAt2.setActivity(1);
+                            mobileSignalControllerValueAt2.setActivity(1);
                             break;
                         case 2:
-                            valueAt2.setActivity(2);
+                            mobileSignalControllerValueAt2.setActivity(2);
                             break;
                         default:
-                            valueAt2.setActivity(0);
+                            mobileSignalControllerValueAt2.setActivity(0);
                             break;
                     }
                 } else {
-                    valueAt2.setActivity(0);
+                    mobileSignalControllerValueAt2.setActivity(0);
                 }
-                valueAt2.getState().enabled = equals2;
-                valueAt2.notifyListeners();
+                mobileSignalControllerValueAt2.getState().enabled = zEquals2;
+                mobileSignalControllerValueAt2.notifyListeners();
             }
             String string14 = bundle.getString("carriernetworkchange");
             if (string14 != null) {
-                boolean equals3 = string14.equals("show");
-                while (i < this.mMobileSignalControllers.size()) {
-                    this.mMobileSignalControllers.valueAt(i).setCarrierNetworkChangeMode(equals3);
-                    i++;
+                boolean zEquals3 = string14.equals("show");
+                while (i2 < this.mMobileSignalControllers.size()) {
+                    this.mMobileSignalControllers.valueAt(i2).setCarrierNetworkChangeMode(zEquals3);
+                    i2++;
                 }
             }
         }
@@ -1163,10 +1198,12 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         return !this.mAirplaneMode;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SubListener extends SubscriptionManager.OnSubscriptionsChangedListener {
+    private class SubListener extends SubscriptionManager.OnSubscriptionsChangedListener {
         private SubListener() {
+        }
+
+        /* synthetic */ SubListener(NetworkControllerImpl networkControllerImpl, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // android.telephony.SubscriptionManager.OnSubscriptionsChangedListener
@@ -1175,7 +1212,17 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         }
     }
 
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.systemui.statusbar.policy.NetworkControllerImpl$8 */
+    class AnonymousClass8 implements Runnable {
+        AnonymousClass8() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            NetworkControllerImpl.this.registerListeners();
+        }
+    }
+
     public static class SubscriptionDefaults {
         public int getDefaultVoiceSubId() {
             return SubscriptionManager.getDefaultVoiceSubscriptionId();
@@ -1187,7 +1234,6 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
     }
 
     @VisibleForTesting
-    /* loaded from: classes.dex */
     public static class Config {
         public boolean hspaDataDistinguishable;
         public boolean showAtLeast3G = false;
@@ -1201,7 +1247,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
             Config config = new Config();
             Resources resources = context.getResources();
             config.showAtLeast3G = resources.getBoolean(R.bool.config_showMin3G);
-            config.alwaysShowCdmaRssi = resources.getBoolean(17956887);
+            config.alwaysShowCdmaRssi = resources.getBoolean(android.R.^attr-private.autofillSaveCustomSubtitleMaxHeight);
             config.show4gForLte = resources.getBoolean(R.bool.config_show4GForLTE);
             config.hspaDataDistinguishable = resources.getBoolean(R.bool.config_hspa_data_distinguishable);
             config.hideLtePlus = resources.getBoolean(R.bool.config_hideLtePlus);
@@ -1216,12 +1262,11 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
 
     private void handleLwaAction(Intent intent) {
         int intExtra = intent.getIntExtra("com.mediatek.server.lwa.EXTRA_PHONE_ID", -1);
-        int intExtra2 = intent.getIntExtra("com.mediatek.server.lwa.EXTRA_STATE", -1);
-        Log.d("NetworkController", "onRecevie ACTION_LWA:" + intExtra + ",lwa: state" + intExtra2);
+        Log.d("NetworkController", "onRecevie ACTION_LWA:" + intExtra + ",lwa: state" + intent.getIntExtra("com.mediatek.server.lwa.EXTRA_STATE", -1));
         for (int i = 0; i < this.mMobileSignalControllers.size(); i++) {
-            MobileSignalController valueAt = this.mMobileSignalControllers.valueAt(i);
-            if (valueAt.getControllerSubInfo().getSimSlotIndex() == intExtra) {
-                valueAt.handleBroadcast(intent);
+            MobileSignalController mobileSignalControllerValueAt = this.mMobileSignalControllers.valueAt(i);
+            if (mobileSignalControllerValueAt.getControllerSubInfo().getSimSlotIndex() == intExtra) {
+                mobileSignalControllerValueAt.handleBroadcast(intent);
                 return;
             }
         }
@@ -1234,16 +1279,16 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
             while (true) {
                 z = true;
                 if (i2 < this.mMobileSignalControllers.size()) {
-                    MobileSignalController valueAt = this.mMobileSignalControllers.valueAt(i2);
-                    int i3 = -1;
-                    if (valueAt.getControllerSubInfo() != null) {
-                        i3 = valueAt.getControllerSubInfo().getSimSlotIndex();
+                    MobileSignalController mobileSignalControllerValueAt = this.mMobileSignalControllers.valueAt(i2);
+                    int simSlotIndex = -1;
+                    if (mobileSignalControllerValueAt.getControllerSubInfo() != null) {
+                        simSlotIndex = mobileSignalControllerValueAt.getControllerSubInfo().getSimSlotIndex();
                     }
-                    if (i != i3) {
+                    if (i != simSlotIndex) {
                         i2++;
                     } else {
-                        this.mNetworkName[i3] = ((MobileSignalController.MobileState) valueAt.mCurrentState).networkName;
-                        this.mStatusBarPlmnPlugin.updateCarrierLabel(i, true, valueAt.getControllserHasService(), this.mNetworkName);
+                        this.mNetworkName[simSlotIndex] = ((MobileSignalController.MobileState) mobileSignalControllerValueAt.mCurrentState).networkName;
+                        this.mStatusBarPlmnPlugin.updateCarrierLabel(i, true, mobileSignalControllerValueAt.getControllserHasService(), this.mNetworkName);
                         this.mStatusBarSystemUIExt.setSimInserted(i, true);
                         break;
                     }
@@ -1253,7 +1298,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
                 }
             }
             if (!z) {
-                this.mNetworkName[i] = this.mContext.getString(17040140);
+                this.mNetworkName[i] = this.mContext.getString(android.R.string.date_picker_decrement_month_button);
                 this.mStatusBarPlmnPlugin.updateCarrierLabel(i, false, false, this.mNetworkName);
                 this.mStatusBarSystemUIExt.setSimInserted(i, false);
             }

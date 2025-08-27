@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.android.launcher3.keyboard.FocusIndicatorHelper;
+
 /* loaded from: classes.dex */
 public class FocusedItemDecorator extends RecyclerView.ItemDecoration {
     private FocusIndicatorHelper mHelper;

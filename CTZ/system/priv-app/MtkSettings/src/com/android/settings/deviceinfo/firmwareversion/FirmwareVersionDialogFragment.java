@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class FirmwareVersionDialogFragment extends InstrumentedDialogFragment {
     private View mRootView;
@@ -30,7 +31,7 @@ public class FirmwareVersionDialogFragment extends InstrumentedDialogFragment {
 
     @Override // android.app.DialogFragment
     public Dialog onCreateDialog(Bundle bundle) {
-        AlertDialog.Builder positiveButton = new AlertDialog.Builder(getActivity()).setTitle(R.string.firmware_title).setPositiveButton(17039370, (DialogInterface.OnClickListener) null);
+        AlertDialog.Builder positiveButton = new AlertDialog.Builder(getActivity()).setTitle(R.string.firmware_title).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null);
         this.mRootView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_firmware_version, (ViewGroup) null);
         initializeControllers();
         return positiveButton.setView(this.mRootView).create();
@@ -44,16 +45,16 @@ public class FirmwareVersionDialogFragment extends InstrumentedDialogFragment {
     }
 
     public void removeSettingFromScreen(int i) {
-        View findViewById = this.mRootView.findViewById(i);
-        if (findViewById != null) {
-            findViewById.setVisibility(8);
+        View viewFindViewById = this.mRootView.findViewById(i);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(8);
         }
     }
 
     public void registerClickListener(int i, View.OnClickListener onClickListener) {
-        View findViewById = this.mRootView.findViewById(i);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(onClickListener);
+        View viewFindViewById = this.mRootView.findViewById(i);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(onClickListener);
         }
     }
 

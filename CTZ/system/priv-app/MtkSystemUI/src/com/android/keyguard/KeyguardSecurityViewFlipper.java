@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewDebug;
@@ -13,6 +14,7 @@ import android.view.ViewHierarchyEncoder;
 import android.widget.FrameLayout;
 import android.widget.ViewFlipper;
 import com.android.internal.widget.LockPatternUtils;
+
 /* loaded from: classes.dex */
 public class KeyguardSecurityViewFlipper extends ViewFlipper implements KeyguardSecurityView {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
@@ -29,9 +31,9 @@ public class KeyguardSecurityViewFlipper extends ViewFlipper implements Keyguard
 
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
         this.mTempRect.set(0, 0, 0, 0);
-        boolean z = onTouchEvent;
+        boolean z = zOnTouchEvent;
         for (int i = 0; i < getChildCount(); i++) {
             View childAt = getChildAt(i);
             if (childAt.getVisibility() == 0) {
@@ -45,7 +47,7 @@ public class KeyguardSecurityViewFlipper extends ViewFlipper implements Keyguard
     }
 
     KeyguardSecurityView getSecurityView() {
-        View childAt = getChildAt(getDisplayedChild());
+        KeyEvent.Callback childAt = getChildAt(getDisplayedChild());
         if (childAt instanceof KeyguardSecurityView) {
             return (KeyguardSecurityView) childAt;
         }
@@ -153,6 +155,8 @@ public class KeyguardSecurityViewFlipper extends ViewFlipper implements Keyguard
         return layoutParams instanceof LayoutParams ? new LayoutParams((LayoutParams) layoutParams) : new LayoutParams(layoutParams);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/util/AttributeSet;)Landroid/view/ViewGroup$LayoutParams; */
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/util/AttributeSet;)Landroid/widget/FrameLayout$LayoutParams; */
     @Override // android.widget.FrameLayout, android.view.ViewGroup
     public LayoutParams generateLayoutParams(AttributeSet attributeSet) {
         return new LayoutParams(getContext(), attributeSet);
@@ -184,18 +188,18 @@ public class KeyguardSecurityViewFlipper extends ViewFlipper implements Keyguard
         }
         int paddingLeft = getPaddingLeft() + getPaddingRight();
         int paddingTop = getPaddingTop() + getPaddingBottom();
-        int max = Math.max(0, i3 - paddingLeft);
-        int max2 = Math.max(0, i4 - paddingTop);
-        int i6 = mode == 1073741824 ? size : 0;
-        int i7 = mode2 == 1073741824 ? size2 : 0;
-        for (int i8 = 0; i8 < childCount; i8++) {
-            View childAt = getChildAt(i8);
+        int iMax = Math.max(0, i3 - paddingLeft);
+        int iMax2 = Math.max(0, i4 - paddingTop);
+        int iMax3 = mode == 1073741824 ? size : 0;
+        int iMax4 = mode2 == 1073741824 ? size2 : 0;
+        for (int i6 = 0; i6 < childCount; i6++) {
+            View childAt = getChildAt(i6);
             LayoutParams layoutParams2 = (LayoutParams) childAt.getLayoutParams();
-            childAt.measure(makeChildMeasureSpec(max, layoutParams2.width), makeChildMeasureSpec(max2, layoutParams2.height));
-            i6 = Math.max(i6, Math.min(childAt.getMeasuredWidth(), size - paddingLeft));
-            i7 = Math.max(i7, Math.min(childAt.getMeasuredHeight(), size2 - paddingTop));
+            childAt.measure(makeChildMeasureSpec(iMax, layoutParams2.width), makeChildMeasureSpec(iMax2, layoutParams2.height));
+            iMax3 = Math.max(iMax3, Math.min(childAt.getMeasuredWidth(), size - paddingLeft));
+            iMax4 = Math.max(iMax4, Math.min(childAt.getMeasuredHeight(), size2 - paddingTop));
         }
-        setMeasuredDimension(i6 + paddingLeft, i7 + paddingTop);
+        setMeasuredDimension(iMax3 + paddingLeft, iMax4 + paddingTop);
     }
 
     private int makeChildMeasureSpec(int i, int i2) {
@@ -213,10 +217,11 @@ public class KeyguardSecurityViewFlipper extends ViewFlipper implements Keyguard
         return View.MeasureSpec.makeMeasureSpec(i, i3);
     }
 
-    /* loaded from: classes.dex */
     public static class LayoutParams extends FrameLayout.LayoutParams {
+
         @ViewDebug.ExportedProperty(category = "layout")
         public int maxHeight;
+
         @ViewDebug.ExportedProperty(category = "layout")
         public int maxWidth;
 
@@ -232,10 +237,10 @@ public class KeyguardSecurityViewFlipper extends ViewFlipper implements Keyguard
 
         public LayoutParams(Context context, AttributeSet attributeSet) {
             super(context, attributeSet);
-            TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.KeyguardSecurityViewFlipper_Layout, 0, 0);
-            this.maxWidth = obtainStyledAttributes.getDimensionPixelSize(1, 0);
-            this.maxHeight = obtainStyledAttributes.getDimensionPixelSize(0, 0);
-            obtainStyledAttributes.recycle();
+            TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.KeyguardSecurityViewFlipper_Layout, 0, 0);
+            this.maxWidth = typedArrayObtainStyledAttributes.getDimensionPixelSize(1, 0);
+            this.maxHeight = typedArrayObtainStyledAttributes.getDimensionPixelSize(0, 0);
+            typedArrayObtainStyledAttributes.recycle();
         }
 
         protected void encodeProperties(ViewHierarchyEncoder viewHierarchyEncoder) {

@@ -4,15 +4,14 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import com.android.internal.util.Preconditions;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class CaptivePortalNetworkCallback extends ConnectivityManager.NetworkCallback {
+final class CaptivePortalNetworkCallback extends ConnectivityManager.NetworkCallback {
     private final ConnectedAccessPointPreference mConnectedApPreference;
     private boolean mIsCaptivePortal;
     private final Network mNetwork;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public CaptivePortalNetworkCallback(Network network, ConnectedAccessPointPreference connectedAccessPointPreference) {
+    CaptivePortalNetworkCallback(Network network, ConnectedAccessPointPreference connectedAccessPointPreference) {
         this.mNetwork = (Network) Preconditions.checkNotNull(network);
         this.mConnectedApPreference = (ConnectedAccessPointPreference) Preconditions.checkNotNull(connectedAccessPointPreference);
     }

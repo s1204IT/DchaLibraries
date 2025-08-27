@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import java.util.HashSet;
 import java.util.LinkedList;
+
 /* loaded from: classes.dex */
 public class GestureRecorder {
     public static final String TAG = GestureRecorder.class.getSimpleName();
@@ -11,14 +12,12 @@ public class GestureRecorder {
     private LinkedList<Gesture> mGestures;
     private Handler mHandler;
 
-    /* loaded from: classes.dex */
     public class Gesture {
         private LinkedList<Record> mRecords = new LinkedList<>();
         private HashSet<String> mTags = new HashSet<>();
         long mDownTime = -1;
         boolean mComplete = false;
 
-        /* loaded from: classes.dex */
         public abstract class Record {
             long time;
 
@@ -29,7 +28,6 @@ public class GestureRecorder {
         public Gesture() {
         }
 
-        /* loaded from: classes.dex */
         public class TagRecord extends Record {
             public String info;
             public String tag;

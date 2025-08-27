@@ -26,16 +26,14 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
 
-    /* loaded from: classes.dex */
     public static class InternalActivity extends ConfirmLockPattern {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public enum Stage {
+    private enum Stage {
         NeedToUnlock,
         NeedToUnlockWrong,
         LockedOut
@@ -48,13 +46,11 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return ConfirmLockPatternFragment.class.getName().equals(str);
     }
 
-    /* loaded from: classes.dex */
     public static class ConfirmLockPatternFragment extends ConfirmDeviceCredentialBaseFragment implements CredentialCheckResultTracker.Listener, AppearAnimationCreator<Object> {
         private AppearAnimationUtils mAppearAnimationUtils;
         private CountDownTimer mCountdownTimer;
@@ -105,13 +101,12 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
                 }
             }
 
-            /* JADX INFO: Access modifiers changed from: private */
-            public boolean isInternalActivity() {
+            private boolean isInternalActivity() {
                 return ConfirmLockPatternFragment.this.getActivity() instanceof InternalActivity;
             }
 
             private void startVerifyPattern(List<LockPatternView.Cell> list, final Intent intent) {
-                AsyncTask verifyTiedProfileChallenge;
+                AsyncTask asyncTaskVerifyTiedProfileChallenge;
                 final int i = ConfirmLockPatternFragment.this.mEffectiveUserId;
                 int i2 = ConfirmLockPatternFragment.this.mUserId;
                 long longExtra = ConfirmLockPatternFragment.this.getActivity().getIntent().getLongExtra("challenge", 0L);
@@ -132,11 +127,11 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
                 };
                 ConfirmLockPatternFragment confirmLockPatternFragment = ConfirmLockPatternFragment.this;
                 if (i == i2) {
-                    verifyTiedProfileChallenge = LockPatternChecker.verifyPattern(ConfirmLockPatternFragment.this.mLockPatternUtils, list, longExtra, i2, onVerifyCallback);
+                    asyncTaskVerifyTiedProfileChallenge = LockPatternChecker.verifyPattern(ConfirmLockPatternFragment.this.mLockPatternUtils, list, longExtra, i2, onVerifyCallback);
                 } else {
-                    verifyTiedProfileChallenge = LockPatternChecker.verifyTiedProfileChallenge(ConfirmLockPatternFragment.this.mLockPatternUtils, LockPatternUtils.patternToString(list), true, longExtra, i2, onVerifyCallback);
+                    asyncTaskVerifyTiedProfileChallenge = LockPatternChecker.verifyTiedProfileChallenge(ConfirmLockPatternFragment.this.mLockPatternUtils, LockPatternUtils.patternToString(list), true, longExtra, i2, onVerifyCallback);
                 }
-                confirmLockPatternFragment.mPendingLockCheck = verifyTiedProfileChallenge;
+                confirmLockPatternFragment.mPendingLockCheck = asyncTaskVerifyTiedProfileChallenge;
             }
 
             private void startCheckPattern(final List<LockPatternView.Cell> list, final Intent intent) {
@@ -166,14 +161,14 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
             } else {
                 i = R.layout.confirm_lock_pattern;
             }
-            View inflate = layoutInflater.inflate(i, viewGroup, false);
-            this.mHeaderTextView = (TextView) inflate.findViewById(R.id.headerText);
-            this.mLockPatternView = inflate.findViewById(R.id.lockPattern);
-            this.mDetailsTextView = (TextView) inflate.findViewById(R.id.detailsText);
-            this.mErrorTextView = (TextView) inflate.findViewById(R.id.errorText);
-            this.mLeftSpacerLandscape = inflate.findViewById(R.id.leftSpacer);
-            this.mRightSpacerLandscape = inflate.findViewById(R.id.rightSpacer);
-            inflate.findViewById(R.id.topLayout).setDefaultTouchRecepient(this.mLockPatternView);
+            View viewInflate = layoutInflater.inflate(i, viewGroup, false);
+            this.mHeaderTextView = (TextView) viewInflate.findViewById(R.id.headerText);
+            this.mLockPatternView = viewInflate.findViewById(R.id.lockPattern);
+            this.mDetailsTextView = (TextView) viewInflate.findViewById(R.id.detailsText);
+            this.mErrorTextView = (TextView) viewInflate.findViewById(R.id.errorText);
+            this.mLeftSpacerLandscape = viewInflate.findViewById(R.id.leftSpacer);
+            this.mRightSpacerLandscape = viewInflate.findViewById(R.id.rightSpacer);
+            viewInflate.findViewById(R.id.topLayout).setDefaultTouchRecepient(this.mLockPatternView);
             Intent intent = getActivity().getIntent();
             if (intent != null) {
                 this.mHeaderText = intent.getCharSequenceExtra("com.android.settings.ConfirmCredentials.header");
@@ -187,8 +182,8 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
                 getActivity().setResult(-1);
                 getActivity().finish();
             }
-            this.mAppearAnimationUtils = new AppearAnimationUtils(getContext(), 220L, 2.0f, 1.3f, AnimationUtils.loadInterpolator(getContext(), 17563662));
-            this.mDisappearAnimationUtils = new DisappearAnimationUtils(getContext(), 125L, 4.0f, 0.3f, AnimationUtils.loadInterpolator(getContext(), 17563663), new AppearAnimationUtils.RowTranslationScaler() { // from class: com.android.settings.password.ConfirmLockPattern.ConfirmLockPatternFragment.1
+            this.mAppearAnimationUtils = new AppearAnimationUtils(getContext(), 220L, 2.0f, 1.3f, AnimationUtils.loadInterpolator(getContext(), android.R.interpolator.linear_out_slow_in));
+            this.mDisappearAnimationUtils = new DisappearAnimationUtils(getContext(), 125L, 4.0f, 0.3f, AnimationUtils.loadInterpolator(getContext(), android.R.interpolator.fast_out_linear_in), new AppearAnimationUtils.RowTranslationScaler() { // from class: com.android.settings.password.ConfirmLockPattern.ConfirmLockPatternFragment.1
                 @Override // com.android.settingslib.animation.AppearAnimationUtils.RowTranslationScaler
                 public float getRowTranslationScale(int i2, int i3) {
                     return (i3 - i2) / i3;
@@ -200,7 +195,7 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
                 this.mCredentialCheckResultTracker = new CredentialCheckResultTracker();
                 getFragmentManager().beginTransaction().add(this.mCredentialCheckResultTracker, "check_lock_result").commit();
             }
-            return inflate;
+            return viewInflate;
         }
 
         @Override // com.android.settingslib.core.lifecycle.ObservableFragment, android.app.Fragment
@@ -252,17 +247,17 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
             if (this.mFrp) {
                 return R.string.lockpassword_confirm_your_pattern_details_frp;
             }
-            boolean isStrongAuthRequired = isStrongAuthRequired();
+            boolean zIsStrongAuthRequired = isStrongAuthRequired();
             if (UserManager.get(getActivity()).isManagedProfile(this.mEffectiveUserId)) {
-                if (isStrongAuthRequired) {
+                if (zIsStrongAuthRequired) {
                     return R.string.lockpassword_strong_auth_required_work_pattern;
                 }
                 return R.string.lockpassword_confirm_your_pattern_generic_profile;
-            } else if (isStrongAuthRequired) {
-                return R.string.lockpassword_strong_auth_required_device_pattern;
-            } else {
-                return R.string.lockpassword_confirm_your_pattern_generic;
             }
+            if (zIsStrongAuthRequired) {
+                return R.string.lockpassword_strong_auth_required_device_pattern;
+            }
+            return R.string.lockpassword_confirm_your_pattern_generic;
         }
 
         private Object[][] getActiveViews() {
@@ -283,7 +278,7 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
             if (this.mFingerprintIcon.getVisibility() == 0) {
                 arrayList.add(new ArrayList(Collections.singletonList(this.mFingerprintIcon)));
             }
-            Object[][] objArr = (Object[][]) Array.newInstance(Object.class, arrayList.size(), cellStates[0].length);
+            Object[][] objArr = (Object[][]) Array.newInstance((Class<?>) Object.class, arrayList.size(), cellStates[0].length);
             for (int i3 = 0; i3 < arrayList.size(); i3++) {
                 ArrayList arrayList3 = (ArrayList) arrayList.get(i3);
                 for (int i4 = 0; i4 < arrayList3.size(); i4++) {
@@ -300,8 +295,7 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
             this.mAppearAnimationUtils.startAnimation2d(getActiveViews(), null, this);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateStage(Stage stage) {
+        private void updateStage(Stage stage) {
             switch (stage) {
                 case NeedToUnlock:
                     if (this.mHeaderText != null) {
@@ -362,17 +356,16 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
                 this.mDisappearAnimationUtils.startAnimation2d(getActiveViews(), new Runnable() { // from class: com.android.settings.password.-$$Lambda$ConfirmLockPattern$ConfirmLockPatternFragment$5mgp_p2Jjy9apKG7HsLV4Zu-sXo
                     @Override // java.lang.Runnable
                     public final void run() {
-                        ConfirmLockPattern.ConfirmLockPatternFragment.lambda$startDisappearAnimation$0(ConfirmLockPattern.this, intent);
+                        ConfirmLockPattern.ConfirmLockPatternFragment.lambda$startDisappearAnimation$0(confirmLockPattern, intent);
                     }
                 }, this);
-                return;
+            } else {
+                confirmLockPattern.setResult(-1, intent);
+                confirmLockPattern.finish();
             }
-            confirmLockPattern.setResult(-1, intent);
-            confirmLockPattern.finish();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$startDisappearAnimation$0(ConfirmLockPattern confirmLockPattern, Intent intent) {
+        static /* synthetic */ void lambda$startDisappearAnimation$0(ConfirmLockPattern confirmLockPattern, Intent intent) {
             confirmLockPattern.setResult(-1, intent);
             confirmLockPattern.finish();
             confirmLockPattern.overridePendingTransition(R.anim.confirm_credential_close_enter, R.anim.confirm_credential_close_exit);
@@ -386,8 +379,7 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void onPatternChecked(boolean z, Intent intent, int i, int i2, boolean z2) {
+        private void onPatternChecked(boolean z, Intent intent, int i, int i2, boolean z2) {
             this.mLockPatternView.setEnabled(true);
             if (z) {
                 if (z2) {
@@ -448,9 +440,9 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
         public void createAnimation(Object obj, long j, long j2, float f, boolean z, Interpolator interpolator, Runnable runnable) {
             if (obj instanceof LockPatternView.CellState) {
                 this.mLockPatternView.startCellStateAnimation((LockPatternView.CellState) obj, 1.0f, z ? 1.0f : 0.0f, z ? f : 0.0f, z ? 0.0f : f, z ? 0.0f : 1.0f, 1.0f, j, j2, interpolator, runnable);
-                return;
+            } else {
+                this.mAppearAnimationUtils.createAnimation((View) obj, j, j2, f, z, interpolator, runnable);
             }
-            this.mAppearAnimationUtils.createAnimation((View) obj, j, j2, f, z, interpolator, runnable);
         }
     }
 }

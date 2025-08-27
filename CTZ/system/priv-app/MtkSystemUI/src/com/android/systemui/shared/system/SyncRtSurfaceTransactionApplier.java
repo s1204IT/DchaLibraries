@@ -7,6 +7,7 @@ import android.view.SurfaceControl;
 import android.view.ThreadedRenderer;
 import android.view.View;
 import android.view.ViewRootImpl;
+
 /* loaded from: classes.dex */
 public class SyncRtSurfaceTransactionApplier {
     private final Surface mTargetSurface;
@@ -24,7 +25,7 @@ public class SyncRtSurfaceTransactionApplier {
         }
         this.mTargetViewRootImpl.registerRtFrameCallback(new ThreadedRenderer.FrameDrawingCallback() { // from class: com.android.systemui.shared.system.-$$Lambda$SyncRtSurfaceTransactionApplier$odiZXJPwVQjUmyGhNuNxcMPZIOM
             public final void onFrameDraw(long j) {
-                SyncRtSurfaceTransactionApplier.lambda$scheduleApply$0(SyncRtSurfaceTransactionApplier.this, surfaceParamsArr, j);
+                SyncRtSurfaceTransactionApplier.lambda$scheduleApply$0(this.f$0, surfaceParamsArr, j);
             }
         });
         this.mTargetViewRootImpl.getView().invalidate();
@@ -52,7 +53,6 @@ public class SyncRtSurfaceTransactionApplier {
         transaction.show(surfaceParams.surface);
     }
 
-    /* loaded from: classes.dex */
     public static class SurfaceParams {
         final float alpha;
         final int layer;

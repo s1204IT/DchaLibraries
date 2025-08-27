@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.android.browser.BrowserSettings;
 import com.android.browser.R;
 import com.android.browser.UrlUtils;
+
 /* loaded from: classes.dex */
 public class GeneralPreferencesFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
     String[] mChoices;
@@ -54,7 +55,8 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements Pr
         if (getActivity() == null) {
             Log.w("PageContentPreferences", "onPreferenceChange called from detached fragment!");
             return false;
-        } else if (preference.getKey().equals("homepage_picker")) {
+        }
+        if (preference.getKey().equals("homepage_picker")) {
             BrowserSettings browserSettings = BrowserSettings.getInstance();
             if ("current".equals(obj)) {
                 browserSettings.setHomePage(this.mCurrentPage);
@@ -70,9 +72,8 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements Pr
             }
             preference.setSummary(getHomepageSummary((String) obj));
             return true;
-        } else {
-            return true;
         }
+        return true;
     }
 
     void promptForHomepage(final ListPreference listPreference, final String str) {
@@ -84,14 +85,14 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements Pr
         editText.setSelectAllOnFocus(true);
         editText.setSingleLine(true);
         editText.setImeActionLabel(null, 6);
-        final AlertDialog create = new AlertDialog.Builder(getActivity()).setView(editText).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.browser.preferences.GeneralPreferencesFragment.2
+        final AlertDialog alertDialogCreate = new AlertDialog.Builder(getActivity()).setView(editText).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.browser.preferences.GeneralPreferencesFragment.2
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 browserSettings.setHomePage(UrlUtils.smartUrlFilter(editText.getText().toString().trim()));
                 listPreference.setValue(str);
                 listPreference.setSummary(GeneralPreferencesFragment.this.getHomepageSummary(str));
             }
-        }).setNegativeButton(17039360, new DialogInterface.OnClickListener() { // from class: com.android.browser.preferences.GeneralPreferencesFragment.1
+        }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.browser.preferences.GeneralPreferencesFragment.1
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
@@ -101,14 +102,14 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements Pr
             @Override // android.widget.TextView.OnEditorActionListener
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == 6) {
-                    create.getButton(-1).performClick();
+                    alertDialogCreate.getButton(-1).performClick();
                     return true;
                 }
                 return false;
             }
         });
-        create.getWindow().setSoftInputMode(5);
-        create.show();
+        alertDialogCreate.getWindow().setSoftInputMode(5);
+        alertDialogCreate.show();
     }
 
     String getHomepageValue() {
@@ -137,7 +138,9 @@ public class GeneralPreferencesFragment extends PreferenceFragment implements Pr
             return getHomepageLabel("most_visited");
         }
         String homePage = browserSettings.getHomePage();
-        str = (TextUtils.isEmpty(homePage) || "about:blank".equals(homePage)) ? "blank" : "blank";
+        if (TextUtils.isEmpty(homePage) || "about:blank".equals(homePage)) {
+            str = "blank";
+        }
         if (str.equals("current") || str.equals("other")) {
             return homePage;
         }

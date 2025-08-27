@@ -2,6 +2,7 @@ package com.android.launcher3.anim;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+
 /* loaded from: classes.dex */
 public abstract class AnimationSuccessListener extends AnimatorListenerAdapter {
     protected boolean mCancelled = false;

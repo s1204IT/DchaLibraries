@@ -2,6 +2,7 @@ package com.android.setupwizardlib.items;
 
 import android.content.Context;
 import android.util.AttributeSet;
+
 /* loaded from: classes.dex */
 public abstract class AbstractItem extends AbstractItemHierarchy implements IItem {
     public AbstractItem() {

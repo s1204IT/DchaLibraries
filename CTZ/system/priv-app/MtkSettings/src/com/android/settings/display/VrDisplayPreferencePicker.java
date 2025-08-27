@@ -9,11 +9,11 @@ import com.android.settings.widget.RadioButtonPickerFragment;
 import com.android.settingslib.widget.CandidateInfo;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class VrDisplayPreferencePicker extends RadioButtonPickerFragment {
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.vr_display_settings;
     }
 
@@ -33,8 +33,7 @@ public class VrDisplayPreferencePicker extends RadioButtonPickerFragment {
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected String getDefaultKey() {
-        int intForUser = Settings.Secure.getIntForUser(getContext().getContentResolver(), "vr_display_mode", 0, this.mUserId);
-        return "vr_display_pref_" + intForUser;
+        return "vr_display_pref_" + Settings.Secure.getIntForUser(getContext().getContentResolver(), "vr_display_mode", 0, this.mUserId);
     }
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
@@ -42,32 +41,11 @@ public class VrDisplayPreferencePicker extends RadioButtonPickerFragment {
         if (TextUtils.isEmpty(str)) {
             return false;
         }
-        char c = 65535;
-        switch (str.hashCode()) {
-            case 1581655828:
-                if (str.equals("vr_display_pref_0")) {
-                    c = 0;
-                    break;
-                }
-                break;
-            case 1581655829:
-                if (str.equals("vr_display_pref_1")) {
-                    c = 1;
-                    break;
-                }
-                break;
+        switch (str) {
         }
-        switch (c) {
-            case 0:
-                return Settings.Secure.putIntForUser(getContext().getContentResolver(), "vr_display_mode", 0, this.mUserId);
-            case 1:
-                return Settings.Secure.putIntForUser(getContext().getContentResolver(), "vr_display_mode", 1, this.mUserId);
-            default:
-                return false;
-        }
+        return false;
     }
 
-    /* loaded from: classes.dex */
     static class VrCandidateInfo extends CandidateInfo {
         public final String label;
         public final int value;

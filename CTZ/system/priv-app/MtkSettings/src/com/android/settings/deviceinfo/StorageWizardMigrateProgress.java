@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class StorageWizardMigrateProgress extends StorageWizardBase {
     private final PackageManager.MoveCallback mCallback = new PackageManager.MoveCallback() { // from class: com.android.settings.deviceinfo.StorageWizardMigrateProgress.1
@@ -23,7 +24,7 @@ public class StorageWizardMigrateProgress extends StorageWizardBase {
                         intent.addFlags(1073741824);
                         StorageWizardMigrateProgress.this.sendBroadcast(intent);
                         if (!StorageWizardMigrateProgress.this.isFinishing()) {
-                            Intent intent2 = new Intent(storageWizardMigrateProgress, StorageWizardReady.class);
+                            Intent intent2 = new Intent(storageWizardMigrateProgress, (Class<?>) StorageWizardReady.class);
                             intent2.putExtra("android.os.storage.extra.DISK_ID", StorageWizardMigrateProgress.this.mDisk.getId());
                             StorageWizardMigrateProgress.this.startActivity(intent2);
                         }
@@ -39,9 +40,8 @@ public class StorageWizardMigrateProgress extends StorageWizardBase {
     };
     private int mMoveId;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.deviceinfo.StorageWizardBase, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         if (this.mVolume == null) {
             finish();

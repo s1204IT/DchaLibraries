@@ -27,6 +27,7 @@ import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class ShortcutServicePickerFragment extends RadioButtonPickerFragment {
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -34,9 +35,8 @@ public class ShortcutServicePickerFragment extends RadioButtonPickerFragment {
         return 6;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.accessibility_shortcut_service_settings;
     }
 
@@ -65,10 +65,10 @@ public class ShortcutServicePickerFragment extends RadioButtonPickerFragment {
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected String getDefaultKey() {
-        ComponentName unflattenFromString;
+        ComponentName componentNameUnflattenFromString;
         String shortcutTargetServiceComponentNameString = AccessibilityUtils.getShortcutTargetServiceComponentNameString(getContext(), UserHandle.myUserId());
-        if (shortcutTargetServiceComponentNameString != null && (unflattenFromString = ComponentName.unflattenFromString(shortcutTargetServiceComponentNameString)) != null) {
-            return unflattenFromString.flattenToString();
+        if (shortcutTargetServiceComponentNameString != null && (componentNameUnflattenFromString = ComponentName.unflattenFromString(shortcutTargetServiceComponentNameString)) != null) {
+            return componentNameUnflattenFromString.flattenToString();
         }
         return null;
     }
@@ -96,12 +96,10 @@ public class ShortcutServicePickerFragment extends RadioButtonPickerFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onServiceConfirmed(String str) {
+    private void onServiceConfirmed(String str) {
         onRadioButtonConfirmed(str);
     }
 
-    /* loaded from: classes.dex */
     public static class ConfirmationDialogFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
         private IBinder mToken;
 
@@ -134,7 +132,6 @@ public class ShortcutServicePickerFragment extends RadioButtonPickerFragment {
         }
     }
 
-    /* loaded from: classes.dex */
     private class FrameworkCandidateInfo extends CandidateInfo {
         final int mIconResId;
         final String mKey;
@@ -163,7 +160,6 @@ public class ShortcutServicePickerFragment extends RadioButtonPickerFragment {
         }
     }
 
-    /* loaded from: classes.dex */
     private class ServiceCandidateInfo extends CandidateInfo {
         final AccessibilityServiceInfo mServiceInfo;
 
@@ -175,9 +171,9 @@ public class ShortcutServicePickerFragment extends RadioButtonPickerFragment {
         @Override // com.android.settingslib.widget.CandidateInfo
         public CharSequence loadLabel() {
             PackageManagerWrapper packageManagerWrapper = new PackageManagerWrapper(ShortcutServicePickerFragment.this.getContext().getPackageManager());
-            CharSequence loadLabel = this.mServiceInfo.getResolveInfo().serviceInfo.loadLabel(packageManagerWrapper.getPackageManager());
-            if (loadLabel != null) {
-                return loadLabel;
+            CharSequence charSequenceLoadLabel = this.mServiceInfo.getResolveInfo().serviceInfo.loadLabel(packageManagerWrapper.getPackageManager());
+            if (charSequenceLoadLabel != null) {
+                return charSequenceLoadLabel;
             }
             ComponentName componentName = this.mServiceInfo.getComponentName();
             if (componentName == null) {

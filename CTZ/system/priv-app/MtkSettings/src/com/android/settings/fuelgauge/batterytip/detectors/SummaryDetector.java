@@ -3,6 +3,7 @@ package com.android.settings.fuelgauge.batterytip.detectors;
 import com.android.settings.fuelgauge.batterytip.BatteryTipPolicy;
 import com.android.settings.fuelgauge.batterytip.tips.BatteryTip;
 import com.android.settings.fuelgauge.batterytip.tips.SummaryTip;
+
 /* loaded from: classes.dex */
 public class SummaryDetector {
     private long mAverageTimeMs;

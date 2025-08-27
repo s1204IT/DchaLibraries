@@ -23,6 +23,7 @@ import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.uioverrides.WallpaperColorInfo;
+
 /* loaded from: classes.dex */
 public class WorkspacePageIndicator extends View implements Insettable, PageIndicator {
     private static final int ANIMATOR_COUNT = 3;
@@ -46,11 +47,13 @@ public class WorkspacePageIndicator extends View implements Insettable, PageIndi
     private static final int LINE_ANIMATE_DURATION = ViewConfiguration.getScrollBarFadeDuration();
     private static final int LINE_FADE_DELAY = ViewConfiguration.getScrollDefaultDelay();
     private static final Property<WorkspacePageIndicator, Integer> PAINT_ALPHA = new Property<WorkspacePageIndicator, Integer>(Integer.class, "paint_alpha") { // from class: com.android.launcher3.pageindicators.WorkspacePageIndicator.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(WorkspacePageIndicator workspacePageIndicator) {
             return Integer.valueOf(workspacePageIndicator.mLinePaint.getAlpha());
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(WorkspacePageIndicator workspacePageIndicator, Integer num) {
             workspacePageIndicator.mLinePaint.setAlpha(num.intValue());
@@ -58,11 +61,13 @@ public class WorkspacePageIndicator extends View implements Insettable, PageIndi
         }
     };
     private static final Property<WorkspacePageIndicator, Float> NUM_PAGES = new Property<WorkspacePageIndicator, Float>(Float.class, "num_pages") { // from class: com.android.launcher3.pageindicators.WorkspacePageIndicator.2
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(WorkspacePageIndicator workspacePageIndicator) {
             return Float.valueOf(workspacePageIndicator.mNumPagesFloat);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(WorkspacePageIndicator workspacePageIndicator, Float f) {
             workspacePageIndicator.mNumPagesFloat = f.floatValue();
@@ -70,11 +75,13 @@ public class WorkspacePageIndicator extends View implements Insettable, PageIndi
         }
     };
     private static final Property<WorkspacePageIndicator, Integer> TOTAL_SCROLL = new Property<WorkspacePageIndicator, Integer>(Integer.class, "total_scroll") { // from class: com.android.launcher3.pageindicators.WorkspacePageIndicator.3
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(WorkspacePageIndicator workspacePageIndicator) {
             return Integer.valueOf(workspacePageIndicator.mTotalScroll);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(WorkspacePageIndicator workspacePageIndicator, Integer num) {
             workspacePageIndicator.mTotalScroll = num.intValue();
@@ -99,7 +106,7 @@ public class WorkspacePageIndicator extends View implements Insettable, PageIndi
         this.mHideLineRunnable = new Runnable() { // from class: com.android.launcher3.pageindicators.-$$Lambda$WorkspacePageIndicator$GYuf5FtWPkL7Rkj0jPXaiUr4HE0
             @Override // java.lang.Runnable
             public final void run() {
-                WorkspacePageIndicator.this.animateLineToAlpha(0);
+                this.f$0.animateLineToAlpha(0);
             }
         };
         Resources resources = context.getResources();
@@ -107,9 +114,9 @@ public class WorkspacePageIndicator extends View implements Insettable, PageIndi
         this.mLinePaint.setAlpha(0);
         this.mLauncher = Launcher.getLauncher(context);
         this.mLineHeight = resources.getDimensionPixelSize(R.dimen.dynamic_grid_page_indicator_line_height);
-        boolean supportsDarkText = WallpaperColorInfo.getInstance(context).supportsDarkText();
-        this.mActiveAlpha = supportsDarkText ? BLACK_ALPHA : WHITE_ALPHA;
-        this.mLinePaint.setColor(supportsDarkText ? ViewCompat.MEASURED_STATE_MASK : -1);
+        boolean zSupportsDarkText = WallpaperColorInfo.getInstance(context).supportsDarkText();
+        this.mActiveAlpha = zSupportsDarkText ? BLACK_ALPHA : WHITE_ALPHA;
+        this.mLinePaint.setColor(zSupportsDarkText ? ViewCompat.MEASURED_STATE_MASK : -1);
     }
 
     @Override // android.view.View
@@ -117,11 +124,9 @@ public class WorkspacePageIndicator extends View implements Insettable, PageIndi
         if (this.mTotalScroll == 0 || this.mNumPagesFloat == 0.0f) {
             return;
         }
-        float boundToRange = Utilities.boundToRange(this.mCurrentScroll / this.mTotalScroll, 0.0f, 1.0f);
-        int width = getWidth();
-        int i = (int) (width / this.mNumPagesFloat);
-        int i2 = (int) (boundToRange * (width - i));
-        canvas.drawRoundRect(i2, (getHeight() / 2) - (this.mLineHeight / 2), i + i2, (getHeight() / 2) + (this.mLineHeight / 2), this.mLineHeight, this.mLineHeight, this.mLinePaint);
+        float fBoundToRange = Utilities.boundToRange(this.mCurrentScroll / this.mTotalScroll, 0.0f, 1.0f);
+        int width = (int) (getWidth() / this.mNumPagesFloat);
+        canvas.drawRoundRect((int) (fBoundToRange * (r1 - width)), (getHeight() / 2) - (this.mLineHeight / 2), width + r0, (getHeight() / 2) + (this.mLineHeight / 2), this.mLineHeight, this.mLineHeight, this.mLinePaint);
     }
 
     @Override // com.android.launcher3.pageindicators.PageIndicator
@@ -175,8 +180,7 @@ public class WorkspacePageIndicator extends View implements Insettable, PageIndi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void animateLineToAlpha(int i) {
+    private void animateLineToAlpha(int i) {
         if (i == this.mToAlpha) {
             return;
         }

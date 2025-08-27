@@ -1,6 +1,7 @@
 package com.android.quickstep.fallback;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -9,6 +10,7 @@ import com.android.launcher3.DeviceProfile;
 import com.android.quickstep.RecentsActivity;
 import com.android.quickstep.util.LayoutUtils;
 import com.android.quickstep.views.RecentsView;
+
 /* loaded from: classes.dex */
 public class FallbackRecentsView extends RecentsView<RecentsActivity> {
     public FallbackRecentsView(Context context, AttributeSet attributeSet) {
@@ -45,7 +47,7 @@ public class FallbackRecentsView extends RecentsView<RecentsActivity> {
     }
 
     @Override // com.android.quickstep.views.RecentsView
-    protected void getTaskSize(DeviceProfile deviceProfile, Rect rect) {
+    protected void getTaskSize(DeviceProfile deviceProfile, Rect rect) throws Resources.NotFoundException {
         LayoutUtils.calculateFallbackTaskSize(getContext(), deviceProfile, rect);
     }
 

@@ -3,6 +3,7 @@ package com.android.browser;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import com.android.browser.NavTabScroller;
 import com.android.browser.TabControl;
 import com.android.browser.UI;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class NavScreen extends RelativeLayout implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, TabControl.OnThumbnailUpdatedListener {
     private static final boolean DEBUG = Browser.DEBUG;
@@ -113,6 +115,9 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         navTabScroller.setOrientation(i);
         this.mScroller.setAdapter(this.mAdapter, this.mUiController.getTabControl().getTabPosition(this.mUi.getActiveTab()));
         this.mScroller.setOnRemoveListener(new NavTabScroller.OnRemoveListener() { // from class: com.android.browser.NavScreen.1
+            AnonymousClass1() {
+            }
+
             @Override // com.android.browser.NavTabScroller.OnRemoveListener
             public void onRemovePosition(int i2) {
                 NavScreen.this.onCloseTab(NavScreen.this.mAdapter.getItem(i2));
@@ -127,15 +132,27 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         updateBookMarkButton();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateBookMarkButton() {
+    /* renamed from: com.android.browser.NavScreen$1 */
+    class AnonymousClass1 implements NavTabScroller.OnRemoveListener {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.browser.NavTabScroller.OnRemoveListener
+        public void onRemovePosition(int i2) {
+            NavScreen.this.onCloseTab(NavScreen.this.mAdapter.getItem(i2));
+            NavScreen.this.mNewTab.setClickable(true);
+            NavScreen.this.updateBookMarkButton();
+        }
+    }
+
+    private void updateBookMarkButton() {
         if (this.mUiController.getTabControl().getTabCount() == 0) {
             this.mBookmarks.setVisibility(8);
             this.mNewTab.setVisibility(8);
-            return;
+        } else {
+            this.mBookmarks.setVisibility(0);
+            this.mNewTab.setVisibility(0);
         }
-        this.mBookmarks.setVisibility(0);
-        this.mNewTab.setVisibility(0);
     }
 
     @Override // android.view.View.OnClickListener
@@ -149,8 +166,7 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onCloseTab(Tab tab) {
+    private void onCloseTab(Tab tab) {
         if (DEBUG) {
             Log.d("browser", "NavScreen.onCloseTab()--->tab : " + tab);
         }
@@ -170,15 +186,21 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
     }
 
     private void openNewTab() {
-        final Tab openTab = this.mUiController.openTab("about:blank", false, false, false);
-        if (openTab != null) {
+        Tab tabOpenTab = this.mUiController.openTab("about:blank", false, false, false);
+        if (tabOpenTab != null) {
             this.mUiController.setBlockEvents(true);
-            int tabPosition = this.mUi.mTabControl.getTabPosition(openTab);
+            int tabPosition = this.mUi.mTabControl.getTabPosition(tabOpenTab);
             this.mScroller.setOnLayoutListener(new NavTabScroller.OnLayoutListener() { // from class: com.android.browser.NavScreen.2
+                final /* synthetic */ Tab val$tab;
+
+                AnonymousClass2(Tab tabOpenTab2) {
+                    tab = tabOpenTab2;
+                }
+
                 @Override // com.android.browser.NavTabScroller.OnLayoutListener
-                public void onLayout(int i, int i2, int i3, int i4) {
-                    NavScreen.this.mUi.hideNavScreen(NavScreen.this.mUi.mTabControl.getTabPosition(openTab), true);
-                    NavScreen.this.switchToTab(openTab);
+                public void onLayout(int i, int i2, int i3, int i4) throws Resources.NotFoundException {
+                    NavScreen.this.mUi.hideNavScreen(NavScreen.this.mUi.mTabControl.getTabPosition(tab), true);
+                    NavScreen.this.switchToTab(tab);
                 }
             });
             this.mScroller.handleDataChanged(tabPosition);
@@ -186,34 +208,44 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         }
         updateBookMarkButton();
         if (DEBUG) {
-            Log.d("browser", "NavScreen.openNewTab()--->new tab is " + openTab);
+            Log.d("browser", "NavScreen.openNewTab()--->new tab is " + tabOpenTab2);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void switchToTab(Tab tab) {
+    /* renamed from: com.android.browser.NavScreen$2 */
+    class AnonymousClass2 implements NavTabScroller.OnLayoutListener {
+        final /* synthetic */ Tab val$tab;
+
+        AnonymousClass2(Tab tabOpenTab2) {
+            tab = tabOpenTab2;
+        }
+
+        @Override // com.android.browser.NavTabScroller.OnLayoutListener
+        public void onLayout(int i, int i2, int i3, int i4) throws Resources.NotFoundException {
+            NavScreen.this.mUi.hideNavScreen(NavScreen.this.mUi.mTabControl.getTabPosition(tab), true);
+            NavScreen.this.switchToTab(tab);
+        }
+    }
+
+    private void switchToTab(Tab tab) {
         if (tab != this.mUi.getActiveTab()) {
             this.mUiController.setActiveTab(tab);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void close(int i) {
+    protected void close(int i) throws Resources.NotFoundException {
         close(i, true);
     }
 
-    protected void close(int i, boolean z) {
+    protected void close(int i, boolean z) throws Resources.NotFoundException {
         this.mUi.hideNavScreen(i, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public NavTabView getTabView(int i) {
+    protected NavTabView getTabView(int i) {
         return this.mScroller.getTabView(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class TabAdapter extends BaseAdapter {
+    class TabAdapter extends BaseAdapter {
         Context context;
         TabControl tabControl;
 
@@ -227,6 +259,7 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
             return this.tabControl.getTabCount();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
         @Override // android.widget.Adapter
         public Tab getItem(int i) {
             return this.tabControl.getTab(i);
@@ -238,30 +271,78 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         }
 
         @Override // android.widget.Adapter
-        public View getView(final int i, View view, ViewGroup viewGroup) {
-            final NavTabView navTabView = new NavTabView(NavScreen.this.mActivity);
-            final Tab item = getItem(i);
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            NavTabView navTabView = new NavTabView(NavScreen.this.mActivity);
+            Tab item = getItem(i);
             navTabView.setWebView(item);
             NavScreen.this.mTabViews.put(item, navTabView.mImage);
             navTabView.setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.NavScreen.TabAdapter.1
+                final /* synthetic */ int val$position;
+                final /* synthetic */ Tab val$tab;
+                final /* synthetic */ NavTabView val$tabview;
+
+                AnonymousClass1(NavTabView navTabView2, Tab item2, int i2) {
+                    navTabView = navTabView2;
+                    tab = item2;
+                    i = i2;
+                }
+
                 @Override // android.view.View.OnClickListener
-                public void onClick(View view2) {
+                public void onClick(View view2) throws Resources.NotFoundException {
                     if (navTabView.isClose(view2)) {
                         NavScreen.this.mNewTab.setClickable(false);
                         NavScreen.this.mScroller.animateOut(navTabView);
-                        NavScreen.this.mTabViews.remove(item);
-                    } else if (navTabView.isTitle(view2)) {
-                        NavScreen.this.switchToTab(item);
+                        NavScreen.this.mTabViews.remove(tab);
+                    } else {
+                        if (navTabView.isTitle(view2)) {
+                            NavScreen.this.switchToTab(tab);
+                            NavScreen.this.mUi.getTitleBar().setSkipTitleBarAnimations(true);
+                            NavScreen.this.close(i, false);
+                            NavScreen.this.mUi.editUrl(false, true);
+                            NavScreen.this.mUi.getTitleBar().setSkipTitleBarAnimations(false);
+                            return;
+                        }
+                        if (navTabView.isWebView(view2)) {
+                            NavScreen.this.close(i);
+                        }
+                    }
+                }
+            });
+            return navTabView2;
+        }
+
+        /* renamed from: com.android.browser.NavScreen$TabAdapter$1 */
+        class AnonymousClass1 implements View.OnClickListener {
+            final /* synthetic */ int val$position;
+            final /* synthetic */ Tab val$tab;
+            final /* synthetic */ NavTabView val$tabview;
+
+            AnonymousClass1(NavTabView navTabView2, Tab item2, int i2) {
+                navTabView = navTabView2;
+                tab = item2;
+                i = i2;
+            }
+
+            @Override // android.view.View.OnClickListener
+            public void onClick(View view2) throws Resources.NotFoundException {
+                if (navTabView.isClose(view2)) {
+                    NavScreen.this.mNewTab.setClickable(false);
+                    NavScreen.this.mScroller.animateOut(navTabView);
+                    NavScreen.this.mTabViews.remove(tab);
+                } else {
+                    if (navTabView.isTitle(view2)) {
+                        NavScreen.this.switchToTab(tab);
                         NavScreen.this.mUi.getTitleBar().setSkipTitleBarAnimations(true);
                         NavScreen.this.close(i, false);
                         NavScreen.this.mUi.editUrl(false, true);
                         NavScreen.this.mUi.getTitleBar().setSkipTitleBarAnimations(false);
-                    } else if (navTabView.isWebView(view2)) {
+                        return;
+                    }
+                    if (navTabView.isWebView(view2)) {
                         NavScreen.this.close(i);
                     }
                 }
-            });
-            return navTabView;
+            }
         }
     }
 

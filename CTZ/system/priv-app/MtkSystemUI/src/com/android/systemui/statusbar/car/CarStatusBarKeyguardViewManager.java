@@ -5,6 +5,7 @@ import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
+
 /* loaded from: classes.dex */
 public class CarStatusBarKeyguardViewManager extends StatusBarKeyguardViewManager {
     protected boolean mShouldHideNavBar;

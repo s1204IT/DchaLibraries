@@ -21,6 +21,7 @@ import com.android.settingslib.core.lifecycle.events.OnCreate;
 import com.android.settingslib.core.lifecycle.events.OnDestroy;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PhoneNumberPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnCreate, OnDestroy {
     private final SubscriptionManager.OnSubscriptionsChangedListener mOnSubscriptionsChangeListener;
@@ -58,15 +59,15 @@ public class PhoneNumberPreferenceController extends AbstractPreferenceControlle
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference(getPreferenceKey());
-        this.mPreferenceList.add(findPreference);
-        int order = findPreference.getOrder();
+        Preference preferenceFindPreference = preferenceScreen.findPreference(getPreferenceKey());
+        this.mPreferenceList.add(preferenceFindPreference);
+        int order = preferenceFindPreference.getOrder();
         for (int i = 1; i < this.mTelephonyManager.getPhoneCount(); i++) {
-            Preference createNewPreference = createNewPreference(preferenceScreen.getContext());
-            createNewPreference.setOrder(order + i);
-            createNewPreference.setKey("phone_number" + i);
-            preferenceScreen.addPreference(createNewPreference);
-            this.mPreferenceList.add(createNewPreference);
+            Preference preferenceCreateNewPreference = createNewPreference(preferenceScreen.getContext());
+            preferenceCreateNewPreference.setOrder(order + i);
+            preferenceCreateNewPreference.setKey("phone_number" + i);
+            preferenceScreen.addPreference(preferenceCreateNewPreference);
+            this.mPreferenceList.add(preferenceCreateNewPreference);
         }
     }
 

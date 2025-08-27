@@ -12,6 +12,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class RestrictedSwitchPreference extends SwitchPreference {
     RestrictedPreferenceHelper mHelper;
@@ -24,17 +25,17 @@ public class RestrictedSwitchPreference extends SwitchPreference {
         setWidgetLayoutResource(R.layout.restricted_switch_widget);
         this.mHelper = new RestrictedPreferenceHelper(context, this, attributeSet);
         if (attributeSet != null) {
-            TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.RestrictedSwitchPreference);
-            TypedValue peekValue = obtainStyledAttributes.peekValue(R.styleable.RestrictedSwitchPreference_useAdditionalSummary);
-            if (peekValue != null) {
-                this.mUseAdditionalSummary = peekValue.type == 18 && peekValue.data != 0;
+            TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.RestrictedSwitchPreference);
+            TypedValue typedValuePeekValue = typedArrayObtainStyledAttributes.peekValue(R.styleable.RestrictedSwitchPreference_useAdditionalSummary);
+            if (typedValuePeekValue != null) {
+                this.mUseAdditionalSummary = typedValuePeekValue.type == 18 && typedValuePeekValue.data != 0;
             }
-            TypedValue peekValue2 = obtainStyledAttributes.peekValue(R.styleable.RestrictedSwitchPreference_restrictedSwitchSummary);
-            if (peekValue2 != null && peekValue2.type == 3) {
-                if (peekValue2.resourceId != 0) {
-                    this.mRestrictedSwitchSummary = context.getText(peekValue2.resourceId);
+            TypedValue typedValuePeekValue2 = typedArrayObtainStyledAttributes.peekValue(R.styleable.RestrictedSwitchPreference_restrictedSwitchSummary);
+            if (typedValuePeekValue2 != null && typedValuePeekValue2.type == 3) {
+                if (typedValuePeekValue2.resourceId != 0) {
+                    this.mRestrictedSwitchSummary = context.getText(typedValuePeekValue2.resourceId);
                 } else {
-                    this.mRestrictedSwitchSummary = peekValue2.string;
+                    this.mRestrictedSwitchSummary = typedValuePeekValue2.string;
                 }
             }
         }
@@ -49,7 +50,7 @@ public class RestrictedSwitchPreference extends SwitchPreference {
     }
 
     public RestrictedSwitchPreference(Context context, AttributeSet attributeSet) {
-        this(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.switchPreferenceStyle, 16843629));
+        this(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.switchPreferenceStyle, android.R.attr.switchPreferenceStyle));
     }
 
     public RestrictedSwitchPreference(Context context) {
@@ -58,38 +59,39 @@ public class RestrictedSwitchPreference extends SwitchPreference {
 
     @Override // android.support.v14.preference.SwitchPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
-        CharSequence charSequence;
+        CharSequence text;
         super.onBindViewHolder(preferenceViewHolder);
         this.mHelper.onBindViewHolder(preferenceViewHolder);
         if (this.mRestrictedSwitchSummary == null) {
-            charSequence = getContext().getText(isChecked() ? R.string.enabled_by_admin : R.string.disabled_by_admin);
+            text = getContext().getText(isChecked() ? R.string.enabled_by_admin : R.string.disabled_by_admin);
         } else {
-            charSequence = this.mRestrictedSwitchSummary;
+            text = this.mRestrictedSwitchSummary;
         }
-        View findViewById = preferenceViewHolder.findViewById(R.id.restricted_icon);
-        View findViewById2 = preferenceViewHolder.findViewById(16908352);
-        if (findViewById != null) {
-            findViewById.setVisibility(isDisabledByAdmin() ? 0 : 8);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.restricted_icon);
+        View viewFindViewById2 = preferenceViewHolder.findViewById(android.R.id.switch_widget);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(isDisabledByAdmin() ? 0 : 8);
         }
-        if (findViewById2 != null) {
-            findViewById2.setVisibility(isDisabledByAdmin() ? 8 : 0);
+        if (viewFindViewById2 != null) {
+            viewFindViewById2.setVisibility(isDisabledByAdmin() ? 8 : 0);
         }
         if (this.mUseAdditionalSummary) {
             TextView textView = (TextView) preferenceViewHolder.findViewById(R.id.additional_summary);
             if (textView != null) {
                 if (isDisabledByAdmin()) {
-                    textView.setText(charSequence);
+                    textView.setText(text);
                     textView.setVisibility(0);
                     return;
+                } else {
+                    textView.setVisibility(8);
+                    return;
                 }
-                textView.setVisibility(8);
-                return;
             }
             return;
         }
-        TextView textView2 = (TextView) preferenceViewHolder.findViewById(16908304);
+        TextView textView2 = (TextView) preferenceViewHolder.findViewById(android.R.id.summary);
         if (textView2 != null && isDisabledByAdmin()) {
-            textView2.setText(charSequence);
+            textView2.setText(text);
             textView2.setVisibility(0);
         }
     }
@@ -105,9 +107,8 @@ public class RestrictedSwitchPreference extends SwitchPreference {
         this.mHelper.useAdminDisabledSummary(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void onAttachedToHierarchy(PreferenceManager preferenceManager) {
+    protected void onAttachedToHierarchy(PreferenceManager preferenceManager) {
         this.mHelper.onAttachedToHierarchy();
         super.onAttachedToHierarchy(preferenceManager);
     }

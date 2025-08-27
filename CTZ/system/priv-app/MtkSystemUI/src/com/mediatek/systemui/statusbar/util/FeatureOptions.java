@@ -2,6 +2,7 @@ package com.mediatek.systemui.statusbar.util;
 
 import android.os.SystemProperties;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class FeatureOptions {
     public static final boolean LOG_ENABLE;

@@ -2,6 +2,7 @@ package com.android.systemui.plugins;
 
 import android.view.View;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
+
 @ProvidesInterface(action = OverlayPlugin.ACTION, version = 2)
 /* loaded from: classes.dex */
 public interface OverlayPlugin extends Plugin {

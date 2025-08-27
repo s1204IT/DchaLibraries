@@ -7,6 +7,7 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.AbstractEnableAdbPreferenceController;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IDevExt;
+
 /* loaded from: classes.dex */
 public class AdbPreferenceController extends AbstractEnableAdbPreferenceController implements PreferenceControllerMixin {
     private IDevExt mDevExt;
@@ -43,9 +44,8 @@ public class AdbPreferenceController extends AbstractEnableAdbPreferenceControll
         EnableAdbWarningDialog.show(this.mFragment);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         writeAdbSetting(false);
         this.mPreference.setChecked(false);

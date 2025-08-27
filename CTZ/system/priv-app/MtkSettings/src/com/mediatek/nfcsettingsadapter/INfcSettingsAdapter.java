@@ -6,6 +6,7 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface INfcSettingsAdapter extends IInterface {
     void commitServiceEntryList(List<ServiceEntry> list) throws RemoteException;
@@ -22,15 +23,14 @@ public interface INfcSettingsAdapter extends IInterface {
 
     boolean testServiceEntryList(List<ServiceEntry> list) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements INfcSettingsAdapter {
         public static INfcSettingsAdapter asInterface(IBinder iBinder) {
             if (iBinder == null) {
                 return null;
             }
-            IInterface queryLocalInterface = iBinder.queryLocalInterface("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-            if (queryLocalInterface != null && (queryLocalInterface instanceof INfcSettingsAdapter)) {
-                return (INfcSettingsAdapter) queryLocalInterface;
+            IInterface iInterfaceQueryLocalInterface = iBinder.queryLocalInterface("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
+            if (iInterfaceQueryLocalInterface != null && (iInterfaceQueryLocalInterface instanceof INfcSettingsAdapter)) {
+                return (INfcSettingsAdapter) iInterfaceQueryLocalInterface;
             }
             return new Proxy(iBinder);
         }
@@ -55,15 +55,15 @@ public interface INfcSettingsAdapter extends IInterface {
                     return true;
                 case 3:
                     parcel.enforceInterface("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    boolean isRoutingTableOverflow = isRoutingTableOverflow();
+                    boolean zIsRoutingTableOverflow = isRoutingTableOverflow();
                     parcel2.writeNoException();
-                    parcel2.writeInt(isRoutingTableOverflow ? 1 : 0);
+                    parcel2.writeInt(zIsRoutingTableOverflow ? 1 : 0);
                     return true;
                 case 4:
                     parcel.enforceInterface("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    boolean isShowOverflowMenu = isShowOverflowMenu();
+                    boolean zIsShowOverflowMenu = isShowOverflowMenu();
                     parcel2.writeNoException();
-                    parcel2.writeInt(isShowOverflowMenu ? 1 : 0);
+                    parcel2.writeInt(zIsShowOverflowMenu ? 1 : 0);
                     return true;
                 case 5:
                     parcel.enforceInterface("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
@@ -73,9 +73,9 @@ public interface INfcSettingsAdapter extends IInterface {
                     return true;
                 case 6:
                     parcel.enforceInterface("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    boolean testServiceEntryList = testServiceEntryList(parcel.createTypedArrayList(ServiceEntry.CREATOR));
+                    boolean zTestServiceEntryList = testServiceEntryList(parcel.createTypedArrayList(ServiceEntry.CREATOR));
                     parcel2.writeNoException();
-                    parcel2.writeInt(testServiceEntryList ? 1 : 0);
+                    parcel2.writeInt(zTestServiceEntryList ? 1 : 0);
                     return true;
                 case 7:
                     parcel.enforceInterface("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
@@ -87,7 +87,6 @@ public interface INfcSettingsAdapter extends IInterface {
             }
         }
 
-        /* loaded from: classes.dex */
         private static class Proxy implements INfcSettingsAdapter {
             private IBinder mRemote;
 
@@ -102,110 +101,110 @@ public interface INfcSettingsAdapter extends IInterface {
 
             @Override // com.mediatek.nfcsettingsadapter.INfcSettingsAdapter
             public int getModeFlag(int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    obtain.writeInt(i);
-                    this.mRemote.transact(1, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt();
+                    parcelObtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
+                    parcelObtain.writeInt(i);
+                    this.mRemote.transact(1, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.mediatek.nfcsettingsadapter.INfcSettingsAdapter
             public void setModeFlag(int i, int i2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    obtain.writeInt(i);
-                    obtain.writeInt(i2);
-                    this.mRemote.transact(2, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
+                    parcelObtain.writeInt(i);
+                    parcelObtain.writeInt(i2);
+                    this.mRemote.transact(2, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.mediatek.nfcsettingsadapter.INfcSettingsAdapter
             public boolean isRoutingTableOverflow() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    this.mRemote.transact(3, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
+                    this.mRemote.transact(3, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.mediatek.nfcsettingsadapter.INfcSettingsAdapter
             public boolean isShowOverflowMenu() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    this.mRemote.transact(4, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
+                    this.mRemote.transact(4, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.mediatek.nfcsettingsadapter.INfcSettingsAdapter
             public List<ServiceEntry> getServiceEntryList(int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    obtain.writeInt(i);
-                    this.mRemote.transact(5, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.createTypedArrayList(ServiceEntry.CREATOR);
+                    parcelObtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
+                    parcelObtain.writeInt(i);
+                    this.mRemote.transact(5, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.createTypedArrayList(ServiceEntry.CREATOR);
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.mediatek.nfcsettingsadapter.INfcSettingsAdapter
             public boolean testServiceEntryList(List<ServiceEntry> list) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    obtain.writeTypedList(list);
-                    this.mRemote.transact(6, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
+                    parcelObtain.writeTypedList(list);
+                    this.mRemote.transact(6, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.mediatek.nfcsettingsadapter.INfcSettingsAdapter
             public void commitServiceEntryList(List<ServiceEntry> list) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
-                    obtain.writeTypedList(list);
-                    this.mRemote.transact(7, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("com.mediatek.nfcsettingsadapter.INfcSettingsAdapter");
+                    parcelObtain.writeTypedList(list);
+                    this.mRemote.transact(7, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
         }

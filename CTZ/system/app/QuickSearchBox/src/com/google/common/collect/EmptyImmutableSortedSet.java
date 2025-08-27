@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 class EmptyImmutableSortedSet<E> extends ImmutableSortedSet<E> {
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public EmptyImmutableSortedSet(Comparator<? super E> comparator) {
+    EmptyImmutableSortedSet(Comparator<? super E> comparator) {
         super(comparator);
     }
 
@@ -31,19 +31,20 @@ class EmptyImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return collection.isEmpty();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSortedSet, com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<E> iterator() {
         return Iterators.emptyIterator();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: descendingIterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSortedSet, java.util.NavigableSet
     public UnmodifiableIterator<E> descendingIterator() {
         return Iterators.emptyIterator();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return false;
     }
 

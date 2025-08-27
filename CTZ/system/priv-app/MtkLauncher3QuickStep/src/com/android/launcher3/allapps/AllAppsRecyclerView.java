@@ -20,6 +20,7 @@ import com.android.launcher3.logging.UserEventDispatcher;
 import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.launcher3.views.RecyclerViewFastScroller;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AllAppsRecyclerView extends BaseRecyclerView implements UserEventDispatcher.LogContainerProvider {
     private AlphabeticalAppsList mApps;
@@ -62,10 +63,11 @@ public class AllAppsRecyclerView extends BaseRecyclerView implements UserEventDi
     private void updatePoolSize() {
         DeviceProfile deviceProfile = Launcher.getLauncher(getContext()).getDeviceProfile();
         RecyclerView.RecycledViewPool recycledViewPool = getRecycledViewPool();
+        int iCeil = (int) Math.ceil(deviceProfile.availableHeightPx / deviceProfile.allAppsIconSizePx);
         recycledViewPool.setMaxRecycledViews(4, 1);
         recycledViewPool.setMaxRecycledViews(16, 1);
         recycledViewPool.setMaxRecycledViews(8, 1);
-        recycledViewPool.setMaxRecycledViews(2, ((int) Math.ceil(deviceProfile.availableHeightPx / deviceProfile.allAppsIconSizePx)) * this.mNumAppsPerRow);
+        recycledViewPool.setMaxRecycledViews(2, iCeil * this.mNumAppsPerRow);
         this.mViewHeights.clear();
         this.mViewHeights.put(2, deviceProfile.allAppsCellHeightPx);
     }
@@ -115,18 +117,20 @@ public class AllAppsRecyclerView extends BaseRecyclerView implements UserEventDi
                 updateEmptySearchBackgroundBounds();
             }
             this.mEmptySearchBackground.animateBgAlpha(1.0f, 150);
-        } else if (this.mEmptySearchBackground != null) {
+            return;
+        }
+        if (this.mEmptySearchBackground != null) {
             this.mEmptySearchBackground.setBgAlpha(0.0f);
         }
     }
 
     @Override // android.support.v7.widget.RecyclerView, android.view.ViewGroup
     public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
-        boolean onInterceptTouchEvent = super.onInterceptTouchEvent(motionEvent);
-        if (!onInterceptTouchEvent && motionEvent.getAction() == 0 && this.mEmptySearchBackground != null && this.mEmptySearchBackground.getAlpha() > 0) {
+        boolean zOnInterceptTouchEvent = super.onInterceptTouchEvent(motionEvent);
+        if (!zOnInterceptTouchEvent && motionEvent.getAction() == 0 && this.mEmptySearchBackground != null && this.mEmptySearchBackground.getAlpha() > 0) {
             this.mEmptySearchBackground.setHotspot(motionEvent.getX(), motionEvent.getY());
         }
-        return onInterceptTouchEvent;
+        return zOnInterceptTouchEvent;
     }
 
     @Override // com.android.launcher3.BaseRecyclerView
@@ -185,7 +189,7 @@ public class AllAppsRecyclerView extends BaseRecyclerView implements UserEventDi
 
     @Override // com.android.launcher3.BaseRecyclerView
     public void onUpdateScrollbar(int i) {
-        int min;
+        int iMin;
         if (this.mApps == null) {
             return;
         }
@@ -202,30 +206,33 @@ public class AllAppsRecyclerView extends BaseRecyclerView implements UserEventDi
         int availableScrollHeight = getAvailableScrollHeight();
         if (availableScrollHeight <= 0) {
             this.mScrollbar.setThumbOffsetY(-1);
-        } else if (this.mScrollbar.isThumbDetached()) {
+            return;
+        }
+        if (this.mScrollbar.isThumbDetached()) {
             if (!this.mScrollbar.isDraggingThumb()) {
                 int i2 = (int) ((currentScrollY / availableScrollHeight) * availableScrollBarHeight);
                 int thumbOffsetY = this.mScrollbar.getThumbOffsetY();
                 int i3 = i2 - thumbOffsetY;
                 if (i3 * i > 0.0f) {
                     if (i < 0) {
-                        min = thumbOffsetY + Math.max((int) ((i * thumbOffsetY) / i2), i3);
+                        iMin = thumbOffsetY + Math.max((int) ((i * thumbOffsetY) / i2), i3);
                     } else {
-                        min = thumbOffsetY + Math.min((int) ((i * (availableScrollBarHeight - thumbOffsetY)) / (availableScrollBarHeight - i2)), i3);
+                        iMin = thumbOffsetY + Math.min((int) ((i * (availableScrollBarHeight - thumbOffsetY)) / (availableScrollBarHeight - i2)), i3);
                     }
-                    int max = Math.max(0, Math.min(availableScrollBarHeight, min));
-                    this.mScrollbar.setThumbOffsetY(max);
-                    if (i2 == max) {
+                    int iMax = Math.max(0, Math.min(availableScrollBarHeight, iMin));
+                    this.mScrollbar.setThumbOffsetY(iMax);
+                    if (i2 == iMax) {
                         this.mScrollbar.reattachThumbToScroll();
                         return;
                     }
                     return;
                 }
                 this.mScrollbar.setThumbOffsetY(thumbOffsetY);
+                return;
             }
-        } else {
-            synchronizeScrollBarThumbOffsetToViewScroll(currentScrollY, availableScrollHeight);
+            return;
         }
+        synchronizeScrollBarThumbOffsetToViewScroll(currentScrollY, availableScrollHeight);
     }
 
     @Override // com.android.launcher3.BaseRecyclerView
@@ -254,24 +261,25 @@ public class AllAppsRecyclerView extends BaseRecyclerView implements UserEventDi
                 if (AllAppsGridAdapter.isIconViewType(adapterItem2.viewType)) {
                     if (adapterItem != null && adapterItem.viewType == adapterItem2.viewType && adapterItem.rowIndex == adapterItem2.rowIndex) {
                         break;
-                    } else if (adapterItem2.rowAppIndex == 0) {
+                    }
+                    if (adapterItem2.rowAppIndex == 0) {
                         i4 += this.mViewHeights.get(adapterItem2.viewType, 0);
                     }
                 } else {
-                    int i6 = this.mViewHeights.get(adapterItem2.viewType);
-                    if (i6 == 0) {
-                        RecyclerView.ViewHolder findViewHolderForAdapterPosition = findViewHolderForAdapterPosition(i5);
-                        if (findViewHolderForAdapterPosition == null) {
-                            RecyclerView.ViewHolder createViewHolder = getAdapter().createViewHolder(this, adapterItem2.viewType);
-                            getAdapter().onBindViewHolder(createViewHolder, i5);
-                            createViewHolder.itemView.measure(0, 0);
-                            i6 = createViewHolder.itemView.getMeasuredHeight();
-                            getRecycledViewPool().putRecycledView(createViewHolder);
+                    int measuredHeight = this.mViewHeights.get(adapterItem2.viewType);
+                    if (measuredHeight == 0) {
+                        RecyclerView.ViewHolder viewHolderFindViewHolderForAdapterPosition = findViewHolderForAdapterPosition(i5);
+                        if (viewHolderFindViewHolderForAdapterPosition == null) {
+                            RecyclerView.ViewHolder viewHolderCreateViewHolder = getAdapter().createViewHolder(this, adapterItem2.viewType);
+                            getAdapter().onBindViewHolder(viewHolderCreateViewHolder, i5);
+                            viewHolderCreateViewHolder.itemView.measure(0, 0);
+                            measuredHeight = viewHolderCreateViewHolder.itemView.getMeasuredHeight();
+                            getRecycledViewPool().putRecycledView(viewHolderCreateViewHolder);
                         } else {
-                            i6 = findViewHolderForAdapterPosition.itemView.getMeasuredHeight();
+                            measuredHeight = viewHolderFindViewHolderForAdapterPosition.itemView.getMeasuredHeight();
                         }
                     }
-                    i4 += i6;
+                    i4 += measuredHeight;
                 }
             }
             this.mCachedScrollPositions.put(i, i4);

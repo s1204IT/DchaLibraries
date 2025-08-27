@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.browser.provider.BrowserContract;
 import com.mediatek.browser.ext.IBrowserHistoryExt;
+
 /* loaded from: classes.dex */
 public class BrowserHistoryPage extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ExpandableListView.OnChildClickListener {
     HistoryAdapter mAdapter;
@@ -63,7 +64,6 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
         }
     };
 
-    /* loaded from: classes.dex */
     interface HistoryQuery {
         public static final String[] PROJECTION = {"_id", "date", "title", "url", "favicon", "visits", "bookmark"};
     }
@@ -74,12 +74,12 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
 
     @Override // android.app.LoaderManager.LoaderCallbacks
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Uri.Builder buildUpon = BrowserContract.Combined.CONTENT_URI.buildUpon();
+        Uri.Builder builderBuildUpon = BrowserContract.Combined.CONTENT_URI.buildUpon();
         switch (i) {
             case 1:
-                return new CursorLoader(getActivity(), buildUpon.build(), HistoryQuery.PROJECTION, "visits > 0", null, "date DESC");
+                return new CursorLoader(getActivity(), builderBuildUpon.build(), HistoryQuery.PROJECTION, "visits > 0", null, "date DESC");
             case 2:
-                return new CursorLoader(getActivity(), buildUpon.appendQueryParameter("limit", this.mMostVisitsLimit).build(), HistoryQuery.PROJECTION, "visits > 0", null, "visits DESC");
+                return new CursorLoader(getActivity(), builderBuildUpon.appendQueryParameter("limit", this.mMostVisitsLimit).build(), HistoryQuery.PROJECTION, "visits > 0", null, "visits DESC");
             default:
                 throw new IllegalArgumentException();
         }
@@ -91,25 +91,26 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
 
     void checkIfEmpty() {
         if (this.mAdapter.mMostVisited != null && this.mAdapter.mHistoryCursor != null) {
-            boolean isTablet = BrowserActivity.isTablet(getActivity());
+            boolean zIsTablet = BrowserActivity.isTablet(getActivity());
             if (this.mAdapter.isEmpty()) {
-                if (isTablet) {
+                if (zIsTablet) {
                     this.mRoot.findViewById(R.id.tab_history).setVisibility(8);
                 } else {
                     this.mRoot.findViewById(R.id.history).setVisibility(8);
                 }
-                this.mRoot.findViewById(16908292).setVisibility(0);
+                this.mRoot.findViewById(android.R.id.empty).setVisibility(0);
                 return;
             }
-            if (isTablet) {
+            if (zIsTablet) {
                 this.mRoot.findViewById(R.id.tab_history).setVisibility(0);
             } else {
                 this.mRoot.findViewById(R.id.history).setVisibility(0);
             }
-            this.mRoot.findViewById(16908292).setVisibility(8);
+            this.mRoot.findViewById(android.R.id.empty).setVisibility(8);
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         switch (loader.getId()) {
@@ -167,9 +168,9 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
     private void inflateTwoPane(ViewStub viewStub) {
         viewStub.setLayoutResource(R.layout.preference_list_content);
         viewStub.inflate();
-        this.mGroupList = (ListView) this.mRoot.findViewById(16908298);
+        this.mGroupList = (ListView) this.mRoot.findViewById(android.R.id.list);
         this.mPrefsContainer = (ViewGroup) this.mRoot.findViewById(R.id.prefs_frame);
-        this.mFragmentBreadCrumbs = (FragmentBreadCrumbs) this.mRoot.findViewById(16908310);
+        this.mFragmentBreadCrumbs = (FragmentBreadCrumbs) this.mRoot.findViewById(android.R.id.title);
         this.mFragmentBreadCrumbs.setMaxVisible(1);
         this.mFragmentBreadCrumbs.setActivity(getActivity());
         this.mPrefsContainer.setVisibility(0);
@@ -220,9 +221,7 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
         this.mBrowserHistoryExt.prepareHistoryPageOptionsMenuItem(menu, this.mAdapter == null, this.mAdapter.isEmpty());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ClearHistoryTask extends Thread {
+    static class ClearHistoryTask extends Thread {
         ContentResolver mResolver;
 
         public ClearHistoryTask(ContentResolver contentResolver) {
@@ -230,7 +229,7 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
         }
 
         @Override // java.lang.Thread, java.lang.Runnable
-        public void run() {
+        public void run() throws Throwable {
             com.android.browser.provider.Browser.clearHistory(this.mResolver);
             com.android.browser.provider.Browser.clearSearches(this.mResolver);
         }
@@ -277,7 +276,7 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
     }
 
     @Override // android.app.Fragment
-    public boolean onContextItemSelected(MenuItem menuItem) {
+    public boolean onContextItemSelected(MenuItem menuItem) throws Throwable {
         ContextMenu.ContextMenuInfo menuInfo = menuItem.getMenuInfo();
         if (menuInfo == null) {
             return false;
@@ -295,30 +294,29 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
             switch (itemId) {
                 case R.id.open_context_menu_id /* 2131558433 */:
                     this.mCallback.openUrl(url);
-                    return true;
+                    break;
                 case R.id.new_window_context_menu_id /* 2131558434 */:
                     this.mCallback.openInNewTab(url);
-                    return true;
+                    break;
                 default:
                     switch (itemId) {
                         case R.id.share_link_context_menu_id /* 2131558565 */:
                             com.android.browser.provider.Browser.sendString(activity, url, activity.getText(R.string.choosertitle_sharevia).toString());
-                            return true;
+                            break;
                         case R.id.copy_url_context_menu_id /* 2131558566 */:
                             copy(url);
-                            return true;
+                            break;
                         case R.id.delete_context_menu_id /* 2131558567 */:
                             com.android.browser.provider.Browser.deleteFromHistory(activity.getContentResolver(), url);
-                            return true;
+                            break;
                         case R.id.homepage_context_menu_id /* 2131558568 */:
                             BrowserSettings.getInstance().setHomePage(url);
                             BrowserSettings.getInstance().setHomePagePicker("other");
-                            Toast.makeText(activity, (int) R.string.homepage_set, 1).show();
-                            return true;
-                        default:
-                            return super.onContextItemSelected(menuItem);
+                            Toast.makeText(activity, R.string.homepage_set, 1).show();
+                            break;
                     }
             }
+            return false;
         }
         if (historyItem.isBookmark()) {
             Bookmarks.removeFromBookmarks(activity, activity.getContentResolver(), url, name);
@@ -328,7 +326,6 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
         return true;
     }
 
-    /* loaded from: classes.dex */
     private static abstract class HistoryWrapper extends BaseAdapter {
         protected HistoryAdapter mAdapter;
         private DataSetObserver mObserver = new DataSetObserver() { // from class: com.android.browser.BrowserHistoryPage.HistoryWrapper.1
@@ -351,9 +348,7 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class HistoryGroupWrapper extends HistoryWrapper {
+    private static class HistoryGroupWrapper extends HistoryWrapper {
         public HistoryGroupWrapper(HistoryAdapter historyAdapter) {
             super(historyAdapter);
         }
@@ -379,9 +374,7 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class HistoryChildWrapper extends HistoryWrapper {
+    private static class HistoryChildWrapper extends HistoryWrapper {
         private int mSelectedGroup;
 
         public HistoryChildWrapper(HistoryAdapter historyAdapter) {
@@ -414,9 +407,7 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class HistoryAdapter extends DateSortedExpandableListAdapter {
+    private class HistoryAdapter extends DateSortedExpandableListAdapter {
         Drawable mFaviconBackground;
         private Cursor mHistoryCursor;
         private Cursor mMostVisited;
@@ -508,9 +499,8 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
             return super.getGroupView(i, z, view, viewGroup);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
         @Override // com.android.browser.DateSortedExpandableListAdapter
-        public boolean moveCursorToChildPosition(int i, int i2) {
+        boolean moveCursorToChildPosition(int i, int i2) {
             if (i >= super.getGroupCount()) {
                 if (this.mMostVisited != null && !this.mMostVisited.isClosed()) {
                     this.mMostVisited.moveToPosition(i2);

@@ -5,6 +5,7 @@ import android.widget.TextView;
 import com.android.systemui.plugins.qs.QSIconView;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.tileimpl.QSTileView;
+
 /* loaded from: classes.dex */
 public class CustomizeTileView extends QSTileView {
     private boolean mShowAppLabel;
@@ -19,9 +20,8 @@ public class CustomizeTileView extends QSTileView {
         this.mLabel.setSingleLine(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileView, com.android.systemui.qs.tileimpl.QSTileBaseView
-    public void handleStateChanged(QSTile.State state) {
+    protected void handleStateChanged(QSTile.State state) {
         super.handleStateChanged(state);
         this.mSecondLine.setVisibility(this.mShowAppLabel ? 0 : 8);
     }

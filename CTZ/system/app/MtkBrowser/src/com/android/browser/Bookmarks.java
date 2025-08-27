@@ -14,13 +14,13 @@ import android.webkit.WebIconDatabase;
 import android.widget.Toast;
 import com.android.browser.provider.BrowserContract;
 import java.io.ByteArrayOutputStream;
+
 /* loaded from: classes.dex */
 public class Bookmarks {
     private static final String[] acceptableBookmarkSchemes = {"http:", "https:", "about:", "data:", "javascript:", "file:", "content:", "rtsp:"};
     private static final boolean DEBUG = Browser.DEBUG;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void addBookmark(Context context, boolean z, String str, String str2, Bitmap bitmap, long j) {
+    static void addBookmark(Context context, boolean z, String str, String str2, Bitmap bitmap, long j) {
         ContentValues contentValues = new ContentValues();
         deleteSameTitle(context, str2, j);
         deleteSameUrl(context, str, j);
@@ -35,7 +35,7 @@ public class Bookmarks {
             Log.e("Bookmarks", "addBookmark", e);
         }
         if (z) {
-            Toast.makeText(context, (int) R.string.added_to_bookmarks, 1).show();
+            Toast.makeText(context, R.string.added_to_bookmarks, 1).show();
         }
     }
 
@@ -48,8 +48,7 @@ public class Bookmarks {
         }
         ContentValues contentValues = new ContentValues();
         contentValues.put("deleted", (Integer) 1);
-        int update = context.getContentResolver().update(BrowserContract.Bookmarks.CONTENT_URI, contentValues, "url =? AND parent =? AND deleted =?", new String[]{str, String.valueOf(j), String.valueOf(0)});
-        Log.d("browser/Bookmarks", "same url delete :" + update);
+        Log.d("browser/Bookmarks", "same url delete :" + context.getContentResolver().update(BrowserContract.Bookmarks.CONTENT_URI, contentValues, "url =? AND parent =? AND deleted =?", new String[]{str, String.valueOf(j), String.valueOf(0)}));
     }
 
     private static void deleteSameTitle(Context context, String str, long j) {
@@ -59,53 +58,51 @@ public class Bookmarks {
         }
         ContentValues contentValues = new ContentValues();
         contentValues.put("deleted", (Integer) 1);
-        int update = context.getContentResolver().update(BrowserContract.Bookmarks.CONTENT_URI, contentValues, "title =? AND parent =? AND deleted =? AND folder =0 ", new String[]{str, String.valueOf(j), String.valueOf(0)});
-        Log.d("browser/Bookmarks", "same title delete :" + update);
+        Log.d("browser/Bookmarks", "same title delete :" + context.getContentResolver().update(BrowserContract.Bookmarks.CONTENT_URI, contentValues, "title =? AND parent =? AND deleted =? AND folder =0 ", new String[]{str, String.valueOf(j), String.valueOf(0)}));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void removeFromBookmarks(Context context, ContentResolver contentResolver, String str, String str2) {
-        Cursor query;
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [184=5] */
+    static void removeFromBookmarks(Context context, ContentResolver contentResolver, String str, String str2) throws Throwable {
+        Cursor cursorQuery;
         Cursor cursor = null;
         try {
             try {
-                query = contentResolver.query(BookmarkUtils.getBookmarksUri(context), new String[]{"_id"}, "url = ? AND title = ?", new String[]{str, str2}, null);
-            } catch (Throwable th) {
-                th = th;
-            }
-        } catch (IllegalStateException e) {
-            e = e;
-        }
-        try {
-            if (!query.moveToFirst()) {
-                if (query != null) {
-                    query.close();
-                    return;
+                cursorQuery = contentResolver.query(BookmarkUtils.getBookmarksUri(context), new String[]{"_id"}, "url = ? AND title = ?", new String[]{str, str2}, null);
+                try {
+                } catch (IllegalStateException e) {
+                    e = e;
+                    cursor = cursorQuery;
+                    Log.e("Bookmarks", "removeFromBookmarks", e);
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                } catch (Throwable th) {
+                    th = th;
+                    cursor = cursorQuery;
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                    throw th;
                 }
-                return;
+            } catch (IllegalStateException e2) {
+                e = e2;
             }
-            WebIconDatabase.getInstance().releaseIconForPageUrl(str);
-            contentResolver.delete(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, query.getLong(0)), null, null);
-            if (context != null) {
-                Toast.makeText(context, (int) R.string.removed_from_bookmarks, 1).show();
-            }
-            if (query != null) {
-                query.close();
-            }
-        } catch (IllegalStateException e2) {
-            e = e2;
-            cursor = query;
-            Log.e("Bookmarks", "removeFromBookmarks", e);
-            if (cursor != null) {
-                cursor.close();
+            if (!cursorQuery.moveToFirst()) {
+                if (cursorQuery != null) {
+                    cursorQuery.close();
+                }
+            } else {
+                WebIconDatabase.getInstance().releaseIconForPageUrl(str);
+                contentResolver.delete(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, cursorQuery.getLong(0)), null, null);
+                if (context != null) {
+                    Toast.makeText(context, R.string.removed_from_bookmarks, 1).show();
+                }
+                if (cursorQuery != null) {
+                    cursorQuery.close();
+                }
             }
         } catch (Throwable th2) {
             th = th2;
-            cursor = query;
-            if (cursor != null) {
-                cursor.close();
-            }
-            throw th;
         }
     }
 
@@ -118,8 +115,7 @@ public class Bookmarks {
         return byteArrayOutputStream.toByteArray();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean urlHasAcceptableScheme(String str) {
+    static boolean urlHasAcceptableScheme(String str) {
         if (str == null) {
             return false;
         }
@@ -152,20 +148,19 @@ public class Bookmarks {
         if (str == null) {
             return null;
         }
-        int indexOf = str.indexOf(63);
-        if (indexOf != -1) {
-            return str.substring(0, indexOf);
+        int iIndexOf = str.indexOf(63);
+        if (iIndexOf != -1) {
+            return str.substring(0, iIndexOf);
         }
         return str;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     /* JADX WARN: Type inference failed for: r0v0, types: [com.android.browser.Bookmarks$1] */
-    public static void updateFavicon(final ContentResolver contentResolver, final String str, final String str2, final Bitmap bitmap) {
+    static void updateFavicon(final ContentResolver contentResolver, final String str, final String str2, final Bitmap bitmap) {
         new AsyncTask<Void, Void, Void>() { // from class: com.android.browser.Bookmarks.1
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public Void doInBackground(Void... voidArr) {
+            protected Void doInBackground(Void... voidArr) {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 ContentValues contentValues = new ContentValues();
@@ -176,23 +171,22 @@ public class Bookmarks {
             }
 
             private void updateImages(ContentResolver contentResolver2, String str3, ContentValues contentValues) {
-                String removeQuery = Bookmarks.removeQuery(str3);
-                if (!TextUtils.isEmpty(removeQuery)) {
-                    contentValues.put("url_key", removeQuery);
+                String strRemoveQuery = Bookmarks.removeQuery(str3);
+                if (!TextUtils.isEmpty(strRemoveQuery)) {
+                    contentValues.put("url_key", strRemoveQuery);
                     contentResolver2.update(BrowserContract.Images.CONTENT_URI, contentValues, null, null);
                 }
             }
         }.execute(new Void[0]);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int getIdByNameOrUrl(ContentResolver contentResolver, String str, String str2, long j, long j2) {
-        String str3;
-        String str4 = "parent = ? AND (title = ? OR url = ? OR url = ?) AND folder= 0";
+    static int getIdByNameOrUrl(ContentResolver contentResolver, String str, String str2, long j, long j2) {
+        String strSubstring;
+        String str3 = "parent = ? AND (title = ? OR url = ? OR url = ?) AND folder= 0";
         if (j2 > 0) {
-            str4 = "parent = ? AND (title = ? OR url = ? OR url = ?) AND folder= 0 AND _id <> " + j2;
+            str3 = "parent = ? AND (title = ? OR url = ? OR url = ?) AND folder= 0 AND _id <> " + j2;
         }
-        Log.v("browser/Bookmarks", "getIdByNameOrUrl() sql:" + str4);
+        Log.v("browser/Bookmarks", "getIdByNameOrUrl() sql:" + str3);
         String[] strArr = {"_id"};
         Uri uri = BrowserContract.Bookmarks.CONTENT_URI;
         String[] strArr2 = new String[4];
@@ -200,20 +194,20 @@ public class Bookmarks {
         strArr2[1] = str;
         strArr2[2] = str2;
         if (str2.endsWith("/")) {
-            str3 = str2.substring(0, str2.lastIndexOf("/"));
+            strSubstring = str2.substring(0, str2.lastIndexOf("/"));
         } else {
-            str3 = str2 + "/";
+            strSubstring = str2 + "/";
         }
-        strArr2[3] = str3;
-        Cursor query = contentResolver.query(uri, strArr, str4, strArr2, "_id DESC");
-        if (query != null) {
+        strArr2[3] = strSubstring;
+        Cursor cursorQuery = contentResolver.query(uri, strArr, str3, strArr2, "_id DESC");
+        if (cursorQuery != null) {
             try {
-                if (query.moveToFirst()) {
-                    return query.getInt(0);
+                if (cursorQuery.moveToFirst()) {
+                    return cursorQuery.getInt(0);
                 }
                 return -1;
             } finally {
-                query.close();
+                cursorQuery.close();
             }
         }
         return -1;

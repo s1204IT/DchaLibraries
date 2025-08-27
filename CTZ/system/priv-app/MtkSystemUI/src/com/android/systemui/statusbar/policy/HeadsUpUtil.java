@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.policy;
 
 import android.view.View;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public final class HeadsUpUtil {
     public static void setIsClickedHeadsUpNotification(View view, boolean z) {

@@ -5,6 +5,7 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public abstract class RestrictedEncryptionPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final UserHandle mUserHandle;

@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.android.settings.R;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class WifiDialog extends AlertDialog implements DialogInterface.OnClickListener, WifiConfigUiBase {
     private final AccessPoint mAccessPoint;
@@ -19,7 +20,6 @@ public class WifiDialog extends AlertDialog implements DialogInterface.OnClickLi
     private final int mMode;
     private View mView;
 
-    /* loaded from: classes.dex */
     public interface WifiDialogListener {
         void onForget(WifiDialog wifiDialog);
 
@@ -27,7 +27,7 @@ public class WifiDialog extends AlertDialog implements DialogInterface.OnClickLi
     }
 
     public static WifiDialog createFullscreen(Context context, WifiDialogListener wifiDialogListener, AccessPoint accessPoint, int i) {
-        return new WifiDialog(context, wifiDialogListener, accessPoint, i, 2131952094, false);
+        return new WifiDialog(context, wifiDialogListener, accessPoint, i, R.style.Theme_Settings_NoActionBar, false);
     }
 
     public static WifiDialog createModal(Context context, WifiDialogListener wifiDialogListener, AccessPoint accessPoint, int i) {

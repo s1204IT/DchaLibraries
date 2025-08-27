@@ -3,6 +3,7 @@ package com.android.settings.applications;
 import android.content.Context;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class HighPowerAppsController extends BasePreferenceController {
     static final String KEY_HIGH_POWER_APPS = "high_power_apps";

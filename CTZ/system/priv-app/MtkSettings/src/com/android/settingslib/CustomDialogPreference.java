@@ -9,6 +9,7 @@ import android.support.v14.preference.PreferenceDialogFragment;
 import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class CustomDialogPreference extends DialogPreference {
     private CustomPreferenceDialogFragment mFragment;
@@ -41,32 +42,26 @@ public class CustomDialogPreference extends DialogPreference {
         this.mOnShowListener = onShowListener;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDialogClosed(boolean z) {
+    protected void onDialogClosed(boolean z) {
     }
 
     protected void onClick(DialogInterface dialogInterface, int i) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onBindDialogView(View view) {
+    protected void onBindDialogView(View view) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setFragment(CustomPreferenceDialogFragment customPreferenceDialogFragment) {
+    private void setFragment(CustomPreferenceDialogFragment customPreferenceDialogFragment) {
         this.mFragment = customPreferenceDialogFragment;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public DialogInterface.OnShowListener getOnShowListener() {
+    private DialogInterface.OnShowListener getOnShowListener() {
         return this.mOnShowListener;
     }
 
-    /* loaded from: classes.dex */
     public static class CustomPreferenceDialogFragment extends PreferenceDialogFragment {
         public static CustomPreferenceDialogFragment newInstance(String str) {
             CustomPreferenceDialogFragment customPreferenceDialogFragment = new CustomPreferenceDialogFragment();
@@ -100,9 +95,9 @@ public class CustomDialogPreference extends DialogPreference {
 
         @Override // android.support.v14.preference.PreferenceDialogFragment, android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            Dialog onCreateDialog = super.onCreateDialog(bundle);
-            onCreateDialog.setOnShowListener(getCustomizablePreference().getOnShowListener());
-            return onCreateDialog;
+            Dialog dialogOnCreateDialog = super.onCreateDialog(bundle);
+            dialogOnCreateDialog.setOnShowListener(getCustomizablePreference().getOnShowListener());
+            return dialogOnCreateDialog;
         }
 
         @Override // android.support.v14.preference.PreferenceDialogFragment, android.content.DialogInterface.OnClickListener

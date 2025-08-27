@@ -2,6 +2,7 @@ package com.android.settings.applications.appinfo;
 
 import android.content.Context;
 import com.android.settings.applications.defaultapps.DefaultEmergencyPreferenceController;
+
 /* loaded from: classes.dex */
 public class DefaultEmergencyShortcutPreferenceController extends DefaultAppShortcutPreferenceControllerBase {
     private static final String KEY = "default_emergency_app";

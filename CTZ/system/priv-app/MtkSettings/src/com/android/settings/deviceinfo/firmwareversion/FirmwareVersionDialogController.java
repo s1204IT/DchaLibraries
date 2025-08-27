@@ -11,6 +11,7 @@ import android.view.View;
 import com.android.internal.app.PlatLogoActivity;
 import com.android.settings.R;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class FirmwareVersionDialogController implements View.OnClickListener {
     static final int FIRMWARE_VERSION_LABEL_ID = 2131362140;

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+
 /* loaded from: classes.dex */
 public final class Lists {
     public static <E> ArrayList<E> newArrayList() {
@@ -28,25 +29,23 @@ public final class Lists {
     }
 
     public static <E> ArrayList<E> newArrayList(Iterator<? extends E> it) {
-        ArrayList<E> newArrayList = newArrayList();
-        Iterators.addAll(newArrayList, it);
-        return newArrayList;
+        ArrayList<E> arrayListNewArrayList = newArrayList();
+        Iterators.addAll(arrayListNewArrayList, it);
+        return arrayListNewArrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean equalsImpl(List<?> list, Object obj) {
+    static boolean equalsImpl(List<?> list, Object obj) {
         if (obj == Preconditions.checkNotNull(list)) {
             return true;
         }
-        if (obj instanceof List) {
-            List list2 = (List) obj;
-            return list.size() == list2.size() && Iterators.elementsEqual(list.iterator(), list2.iterator());
+        if (!(obj instanceof List)) {
+            return false;
         }
-        return false;
+        List list2 = (List) obj;
+        return list.size() == list2.size() && Iterators.elementsEqual(list.iterator(), list2.iterator());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int indexOfImpl(List<?> list, Object obj) {
+    static int indexOfImpl(List<?> list, Object obj) {
         ListIterator<?> listIterator = list.listIterator();
         while (listIterator.hasNext()) {
             if (Objects.equal(obj, listIterator.next())) {
@@ -56,8 +55,7 @@ public final class Lists {
         return -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int lastIndexOfImpl(List<?> list, Object obj) {
+    static int lastIndexOfImpl(List<?> list, Object obj) {
         ListIterator<?> listIterator = list.listIterator(list.size());
         while (listIterator.hasPrevious()) {
             if (Objects.equal(obj, listIterator.previous())) {

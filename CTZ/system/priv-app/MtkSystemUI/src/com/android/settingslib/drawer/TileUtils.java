@@ -1,5 +1,6 @@
 package com.android.settingslib.drawer;
 
+import android.R;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.IContentProvider;
@@ -27,16 +28,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class TileUtils {
     private static final Comparator<DashboardCategory> CATEGORY_COMPARATOR = new Comparator<DashboardCategory>() { // from class: com.android.settingslib.drawer.TileUtils.1
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(DashboardCategory dashboardCategory, DashboardCategory dashboardCategory2) {
             return dashboardCategory2.priority - dashboardCategory.priority;
         }
     };
 
-    public static List<DashboardCategory> getCategories(Context context, Map<Pair<String, String>, Tile> map, boolean z, String str, String str2) {
+    public static List<DashboardCategory> getCategories(Context context, Map<Pair<String, String>, Tile> map, boolean z, String str, String str2) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         System.currentTimeMillis();
         boolean z2 = Settings.Global.getInt(context.getContentResolver(), "device_provisioned", 0) != 0;
         ArrayList arrayList = new ArrayList();
@@ -56,22 +59,22 @@ public class TileUtils {
                 }
             }
         }
-        HashMap hashMap = new HashMap();
+        HashMap map2 = new HashMap();
         Iterator it = arrayList.iterator();
         while (it.hasNext()) {
             Tile tile = (Tile) it.next();
-            DashboardCategory dashboardCategory = (DashboardCategory) hashMap.get(tile.category);
-            if (dashboardCategory == null) {
-                dashboardCategory = createCategory(context, tile.category, z);
-                if (dashboardCategory == null) {
+            DashboardCategory dashboardCategoryCreateCategory = (DashboardCategory) map2.get(tile.category);
+            if (dashboardCategoryCreateCategory == null) {
+                dashboardCategoryCreateCategory = createCategory(context, tile.category, z);
+                if (dashboardCategoryCreateCategory == null) {
                     Log.w("TileUtils", "Couldn't find category " + tile.category);
                 } else {
-                    hashMap.put(dashboardCategory.key, dashboardCategory);
+                    map2.put(dashboardCategoryCreateCategory.key, dashboardCategoryCreateCategory);
                 }
             }
-            dashboardCategory.addTile(tile);
+            dashboardCategoryCreateCategory.addTile(tile);
         }
-        ArrayList arrayList2 = new ArrayList(hashMap.values());
+        ArrayList arrayList2 = new ArrayList(map2.values());
         Iterator it2 = arrayList2.iterator();
         while (it2.hasNext()) {
             ((DashboardCategory) it2.next()).sortTiles();
@@ -87,11 +90,11 @@ public class TileUtils {
             return dashboardCategory;
         }
         PackageManager packageManager = context.getPackageManager();
-        List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(new Intent(str), 0);
-        if (queryIntentActivities.size() == 0) {
+        List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(new Intent(str), 0);
+        if (listQueryIntentActivities.size() == 0) {
             return null;
         }
-        for (ResolveInfo resolveInfo : queryIntentActivities) {
+        for (ResolveInfo resolveInfo : listQueryIntentActivities) {
             if (resolveInfo.system) {
                 dashboardCategory.title = resolveInfo.activityInfo.loadLabel(packageManager);
                 dashboardCategory.priority = "com.android.settings".equals(resolveInfo.activityInfo.applicationInfo.packageName) ? resolveInfo.priority : 0;
@@ -100,11 +103,11 @@ public class TileUtils {
         return dashboardCategory;
     }
 
-    private static void getTilesForAction(Context context, UserHandle userHandle, String str, Map<Pair<String, String>, Tile> map, String str2, ArrayList<Tile> arrayList, boolean z, String str3) {
+    private static void getTilesForAction(Context context, UserHandle userHandle, String str, Map<Pair<String, String>, Tile> map, String str2, ArrayList<Tile> arrayList, boolean z, String str3) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         getTilesForAction(context, userHandle, str, map, str2, arrayList, z, z, str3);
     }
 
-    private static void getTilesForAction(Context context, UserHandle userHandle, String str, Map<Pair<String, String>, Tile> map, String str2, ArrayList<Tile> arrayList, boolean z, boolean z2, String str3) {
+    private static void getTilesForAction(Context context, UserHandle userHandle, String str, Map<Pair<String, String>, Tile> map, String str2, ArrayList<Tile> arrayList, boolean z, boolean z2, String str3) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         Intent intent = new Intent(str);
         if (z) {
             intent.setPackage(str3);
@@ -112,17 +115,17 @@ public class TileUtils {
         getTilesForIntent(context, userHandle, intent, map, str2, arrayList, z2, true, true);
     }
 
-    public static void getTilesForIntent(Context context, UserHandle userHandle, Intent intent, Map<Pair<String, String>, Tile> map, String str, List<Tile> list, boolean z, boolean z2, boolean z3) {
+    public static void getTilesForIntent(Context context, UserHandle userHandle, Intent intent, Map<Pair<String, String>, Tile> map, String str, List<Tile> list, boolean z, boolean z2, boolean z3) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         getTilesForIntent(context, userHandle, intent, map, str, list, z, z2, z3, false);
     }
 
-    public static void getTilesForIntent(Context context, UserHandle userHandle, Intent intent, Map<Pair<String, String>, Tile> map, String str, List<Tile> list, boolean z, boolean z2, boolean z3, boolean z4) {
+    public static void getTilesForIntent(Context context, UserHandle userHandle, Intent intent, Map<Pair<String, String>, Tile> map, String str, List<Tile> list, boolean z, boolean z2, boolean z3, boolean z4) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         PackageManager packageManager;
         Intent intent2 = intent;
         PackageManager packageManager2 = context.getPackageManager();
-        List<ResolveInfo> queryIntentActivitiesAsUser = packageManager2.queryIntentActivitiesAsUser(intent2, 128, userHandle.getIdentifier());
-        HashMap hashMap = new HashMap();
-        for (ResolveInfo resolveInfo : queryIntentActivitiesAsUser) {
+        List<ResolveInfo> listQueryIntentActivitiesAsUser = packageManager2.queryIntentActivitiesAsUser(intent2, 128, userHandle.getIdentifier());
+        HashMap map2 = new HashMap();
+        for (ResolveInfo resolveInfo : listQueryIntentActivitiesAsUser) {
             if (resolveInfo.system) {
                 ActivityInfo activityInfo = resolveInfo.activityInfo;
                 Bundle bundle = activityInfo.metaData;
@@ -146,13 +149,13 @@ public class TileUtils {
                         tile2.priority = z ? resolveInfo.priority : 0;
                         tile2.metaData = activityInfo.metaData;
                         packageManager = packageManager2;
-                        updateTileData(context, tile2, activityInfo, activityInfo.applicationInfo, packageManager2, hashMap, z3);
+                        updateTileData(context, tile2, activityInfo, activityInfo.applicationInfo, packageManager2, map2, z3);
                         map.put(pair, tile2);
                         tile = tile2;
                     } else {
                         packageManager = packageManager2;
                         if (z4) {
-                            updateSummaryAndTitle(context, hashMap, tile);
+                            updateSummaryAndTitle(context, map2, tile);
                         }
                     }
                     if (!tile.userHandle.contains(userHandle)) {
@@ -168,6 +171,7 @@ public class TileUtils {
         }
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:10:0x002a  */
     /* JADX WARN: Removed duplicated region for block: B:26:0x0070 A[Catch: NameNotFoundException | NotFoundException -> 0x00fb, TryCatch #4 {NameNotFoundException | NotFoundException -> 0x00fb, blocks: (B:24:0x0068, B:26:0x0070, B:28:0x007a, B:29:0x0085), top: B:83:0x0068 }] */
     /* JADX WARN: Removed duplicated region for block: B:31:0x008c  */
     /* JADX WARN: Removed duplicated region for block: B:34:0x0095 A[Catch: NameNotFoundException | NotFoundException -> 0x00f6, TryCatch #1 {NameNotFoundException | NotFoundException -> 0x00f6, blocks: (B:32:0x008d, B:34:0x0095, B:36:0x009f, B:37:0x00aa), top: B:79:0x008d }] */
@@ -180,169 +184,156 @@ public class TileUtils {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private static boolean updateTileData(Context context, Tile tile, ActivityInfo activityInfo, ApplicationInfo applicationInfo, PackageManager packageManager, Map<String, IContentProvider> map, boolean z) {
+    private static boolean updateTileData(Context context, Tile tile, ActivityInfo activityInfo, ApplicationInfo applicationInfo, PackageManager packageManager, Map<String, IContentProvider> map, boolean z) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         boolean z2;
         String str;
-        String str2;
-        Resources resourcesForApplication;
-        Bundle bundle;
-        boolean z3;
-        boolean z4;
-        String str3;
         String string;
-        if (applicationInfo.isSystemApp()) {
-            String str4 = null;
-            try {
-                resourcesForApplication = packageManager.getResourcesForApplication(applicationInfo.packageName);
-                bundle = activityInfo.metaData;
-            } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e) {
-                z2 = false;
-            }
+        String string2;
+        String string3;
+        if (!applicationInfo.isSystemApp()) {
+            return false;
+        }
+        String string4 = null;
+        try {
+            Resources resourcesForApplication = packageManager.getResourcesForApplication(applicationInfo.packageName);
+            Bundle bundle = activityInfo.metaData;
             if (z) {
-                if (!context.getPackageName().equals(applicationInfo.packageName)) {
-                    z3 = true;
-                    z4 = z3;
-                    if (resourcesForApplication == null && bundle != null) {
-                        try {
-                            r1 = bundle.containsKey("com.android.settings.icon") ? bundle.getInt("com.android.settings.icon") : 0;
-                        } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e2) {
-                            str = null;
-                            str2 = null;
+                boolean z3 = !context.getPackageName().equals(applicationInfo.packageName);
+                boolean z4 = z3;
+                if (resourcesForApplication != null && bundle != null) {
+                    try {
+                        i = bundle.containsKey("com.android.settings.icon") ? bundle.getInt("com.android.settings.icon") : 0;
+                        if (bundle.containsKey("com.android.settings.icon_tintable")) {
+                            if (z3) {
+                                Log.w("TileUtils", "Ignoring icon tintable for " + activityInfo);
+                                z2 = z4;
+                                if (bundle.containsKey("com.android.settings.title")) {
+                                }
+                                if (bundle.containsKey("com.android.settings.summary")) {
+                                }
+                                if (bundle.containsKey("com.android.settings.keyhint")) {
+                                }
+                                if (bundle.containsKey("com.android.settings.custom_view")) {
+                                }
+                                str = string4;
+                                string4 = string2;
+                            } else {
+                                z2 = bundle.getBoolean("com.android.settings.icon_tintable");
+                                if (bundle.containsKey("com.android.settings.title")) {
+                                }
+                                if (bundle.containsKey("com.android.settings.summary")) {
+                                }
+                                if (bundle.containsKey("com.android.settings.keyhint")) {
+                                }
+                                if (bundle.containsKey("com.android.settings.custom_view")) {
+                                }
+                                str = string4;
+                                string4 = string2;
+                            }
+                        } else {
                             z2 = z4;
-                        }
-                        try {
                             try {
+                                if (bundle.containsKey("com.android.settings.title")) {
+                                    if (bundle.get("com.android.settings.title") instanceof Integer) {
+                                        string2 = resourcesForApplication.getString(bundle.getInt("com.android.settings.title"));
+                                    } else {
+                                        string2 = bundle.getString("com.android.settings.title");
+                                    }
+                                } else {
+                                    string2 = null;
+                                }
                                 try {
-                                    if (bundle.containsKey("com.android.settings.icon_tintable")) {
-                                        if (z3) {
-                                            Log.w("TileUtils", "Ignoring icon tintable for " + activityInfo);
+                                    if (bundle.containsKey("com.android.settings.summary")) {
+                                        if (bundle.get("com.android.settings.summary") instanceof Integer) {
+                                            string = resourcesForApplication.getString(bundle.getInt("com.android.settings.summary"));
                                         } else {
-                                            z2 = bundle.getBoolean("com.android.settings.icon_tintable");
-                                            if (!bundle.containsKey("com.android.settings.title")) {
-                                                if (bundle.get("com.android.settings.title") instanceof Integer) {
-                                                    str3 = resourcesForApplication.getString(bundle.getInt("com.android.settings.title"));
-                                                } else {
-                                                    str3 = bundle.getString("com.android.settings.title");
-                                                }
-                                            } else {
-                                                str3 = null;
-                                            }
-                                            if (!bundle.containsKey("com.android.settings.summary")) {
-                                                if (bundle.get("com.android.settings.summary") instanceof Integer) {
-                                                    str2 = resourcesForApplication.getString(bundle.getInt("com.android.settings.summary"));
-                                                } else {
-                                                    str2 = bundle.getString("com.android.settings.summary");
-                                                }
-                                            } else {
-                                                str2 = null;
-                                            }
-                                            if (bundle.containsKey("com.android.settings.keyhint")) {
-                                                if (bundle.get("com.android.settings.keyhint") instanceof Integer) {
-                                                    string = resourcesForApplication.getString(bundle.getInt("com.android.settings.keyhint"));
-                                                } else {
-                                                    string = bundle.getString("com.android.settings.keyhint");
-                                                }
-                                                str4 = string;
-                                            }
-                                            if (bundle.containsKey("com.android.settings.custom_view")) {
-                                                tile.remoteViews = new RemoteViews(applicationInfo.packageName, bundle.getInt("com.android.settings.custom_view"));
-                                                updateSummaryAndTitle(context, map, tile);
-                                            }
-                                            str = str4;
-                                            str4 = str3;
+                                            string = bundle.getString("com.android.settings.summary");
                                         }
+                                    } else {
+                                        string = null;
                                     }
-                                    if (bundle.containsKey("com.android.settings.keyhint")) {
-                                    }
-                                    if (bundle.containsKey("com.android.settings.custom_view")) {
-                                    }
-                                    str = str4;
-                                    str4 = str3;
-                                } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e3) {
-                                    str = str4;
-                                    str4 = str3;
-                                    if (TextUtils.isEmpty(str4)) {
-                                    }
-                                    if (r1 == 0) {
-                                    }
-                                    if (r1 != 0) {
-                                    }
-                                    tile.title = str4;
-                                    tile.summary = str2;
-                                    tile.intent = new Intent().setClassName(activityInfo.packageName, activityInfo.name);
-                                    tile.key = str;
-                                    tile.isIconTintable = z2;
-                                    return true;
+                                } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e) {
+                                    str = null;
+                                    string = null;
                                 }
-                                if (!bundle.containsKey("com.android.settings.summary")) {
-                                }
-                            } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e4) {
+                            } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e2) {
                                 str = null;
-                                str2 = null;
+                                string = null;
+                                if (TextUtils.isEmpty(string4)) {
+                                }
+                                if (i == 0) {
+                                }
+                                if (i != 0) {
+                                }
+                                tile.title = string4;
+                                tile.summary = string;
+                                tile.intent = new Intent().setClassName(activityInfo.packageName, activityInfo.name);
+                                tile.key = str;
+                                tile.isIconTintable = z2;
+                                return true;
                             }
-                            if (!bundle.containsKey("com.android.settings.title")) {
+                            try {
+                                if (bundle.containsKey("com.android.settings.keyhint")) {
+                                    if (bundle.get("com.android.settings.keyhint") instanceof Integer) {
+                                        string3 = resourcesForApplication.getString(bundle.getInt("com.android.settings.keyhint"));
+                                    } else {
+                                        string3 = bundle.getString("com.android.settings.keyhint");
+                                    }
+                                    string4 = string3;
+                                }
+                                if (bundle.containsKey("com.android.settings.custom_view")) {
+                                    tile.remoteViews = new RemoteViews(applicationInfo.packageName, bundle.getInt("com.android.settings.custom_view"));
+                                    updateSummaryAndTitle(context, map, tile);
+                                }
+                                str = string4;
+                                string4 = string2;
+                            } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e3) {
+                                str = string4;
+                                string4 = string2;
+                                if (TextUtils.isEmpty(string4)) {
+                                }
+                                if (i == 0) {
+                                    i = activityInfo.icon;
+                                }
+                                if (i != 0) {
+                                }
+                                tile.title = string4;
+                                tile.summary = string;
+                                tile.intent = new Intent().setClassName(activityInfo.packageName, activityInfo.name);
+                                tile.key = str;
+                                tile.isIconTintable = z2;
+                                return true;
                             }
-                        } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e5) {
-                            str = null;
-                            str2 = null;
-                            if (TextUtils.isEmpty(str4)) {
-                            }
-                            if (r1 == 0) {
-                            }
-                            if (r1 != 0) {
-                            }
-                            tile.title = str4;
-                            tile.summary = str2;
-                            tile.intent = new Intent().setClassName(activityInfo.packageName, activityInfo.name);
-                            tile.key = str;
-                            tile.isIconTintable = z2;
-                            return true;
                         }
-                        z2 = z4;
-                    } else {
+                    } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e4) {
                         str = null;
-                        str2 = null;
+                        string = null;
                         z2 = z4;
                     }
-                    if (TextUtils.isEmpty(str4)) {
-                        str4 = activityInfo.loadLabel(packageManager).toString();
-                    }
-                    if (r1 == 0 && !tile.metaData.containsKey("com.android.settings.icon_uri")) {
-                        r1 = activityInfo.icon;
-                    }
-                    if (r1 != 0) {
-                        tile.icon = Icon.createWithResource(activityInfo.packageName, r1);
-                    }
-                    tile.title = str4;
-                    tile.summary = str2;
-                    tile.intent = new Intent().setClassName(activityInfo.packageName, activityInfo.name);
-                    tile.key = str;
-                    tile.isIconTintable = z2;
-                    return true;
+                } else {
+                    str = null;
+                    string = null;
+                    z2 = z4;
                 }
             }
-            z3 = false;
-            z4 = z3;
-            if (resourcesForApplication == null) {
-            }
-            str = null;
-            str2 = null;
-            z2 = z4;
-            if (TextUtils.isEmpty(str4)) {
-            }
-            if (r1 == 0) {
-                r1 = activityInfo.icon;
-            }
-            if (r1 != 0) {
-            }
-            tile.title = str4;
-            tile.summary = str2;
-            tile.intent = new Intent().setClassName(activityInfo.packageName, activityInfo.name);
-            tile.key = str;
-            tile.isIconTintable = z2;
-            return true;
+        } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e5) {
+            z2 = false;
         }
-        return false;
+        if (TextUtils.isEmpty(string4)) {
+            string4 = activityInfo.loadLabel(packageManager).toString();
+        }
+        if (i == 0 && !tile.metaData.containsKey("com.android.settings.icon_uri")) {
+            i = activityInfo.icon;
+        }
+        if (i != 0) {
+            tile.icon = Icon.createWithResource(activityInfo.packageName, i);
+        }
+        tile.title = string4;
+        tile.summary = string;
+        tile.intent = new Intent().setClassName(activityInfo.packageName, activityInfo.name);
+        tile.key = str;
+        tile.isIconTintable = z2;
+        return true;
     }
 
     private static void updateSummaryAndTitle(Context context, Map<String, IContentProvider> map, Tile tile) {
@@ -353,10 +344,10 @@ public class TileUtils {
         String string = getString(bundleFromUri, "com.android.settings.summary");
         String string2 = getString(bundleFromUri, "com.android.settings.title");
         if (string != null) {
-            tile.remoteViews.setTextViewText(16908304, string);
+            tile.remoteViews.setTextViewText(R.id.summary, string);
         }
         if (string2 != null) {
-            tile.remoteViews.setTextViewText(16908310, string2);
+            tile.remoteViews.setTextViewText(R.id.title, string2);
         }
     }
 
@@ -365,9 +356,9 @@ public class TileUtils {
         if (TextUtils.isEmpty(str)) {
             return null;
         }
-        Uri parse = Uri.parse(str);
-        String methodFromUri = getMethodFromUri(parse);
-        if (TextUtils.isEmpty(methodFromUri) || (providerFromUri = getProviderFromUri(context, parse, map)) == null) {
+        Uri uri = Uri.parse(str);
+        String methodFromUri = getMethodFromUri(uri);
+        if (TextUtils.isEmpty(methodFromUri) || (providerFromUri = getProviderFromUri(context, uri, map)) == null) {
             return null;
         }
         try {

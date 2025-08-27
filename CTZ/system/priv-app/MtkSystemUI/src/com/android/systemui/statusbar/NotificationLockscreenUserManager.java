@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.pm.UserInfo;
+import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.os.Handler;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.UserHandle;
@@ -31,6 +33,7 @@ import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class NotificationLockscreenUserManager implements Dumpable {
     private boolean mAllowLockscreenRemoteInput;
@@ -48,6 +51,9 @@ public class NotificationLockscreenUserManager implements Dumpable {
     private final SparseBooleanArray mUsersAllowingNotifications = new SparseBooleanArray();
     private final DeviceProvisionedController mDeviceProvisionedController = (DeviceProvisionedController) Dependency.get(DeviceProvisionedController.class);
     protected final BroadcastReceiver mAllUsersReceiver = new BroadcastReceiver() { // from class: com.android.systemui.statusbar.NotificationLockscreenUserManager.1
+        AnonymousClass1() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -62,8 +68,11 @@ public class NotificationLockscreenUserManager implements Dumpable {
         }
     };
     protected final BroadcastReceiver mBaseBroadcastReceiver = new BroadcastReceiver() { // from class: com.android.systemui.statusbar.NotificationLockscreenUserManager.2
+        AnonymousClass2() {
+        }
+
         @Override // android.content.BroadcastReceiver
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, Intent intent) throws Resources.NotFoundException, IntentSender.SendIntentException {
             String action = intent.getAction();
             if ("android.intent.action.USER_SWITCHED".equals(action)) {
                 NotificationLockscreenUserManager.this.mCurrentUserId = intent.getIntExtra("android.intent.extra.user_handle", -1);
@@ -71,18 +80,28 @@ public class NotificationLockscreenUserManager implements Dumpable {
                 Log.v("LockscreenUserManager", "userId " + NotificationLockscreenUserManager.this.mCurrentUserId + " is in the house");
                 NotificationLockscreenUserManager.this.updateLockscreenNotificationSetting();
                 NotificationLockscreenUserManager.this.mPresenter.onUserSwitched(NotificationLockscreenUserManager.this.mCurrentUserId);
-            } else if ("android.intent.action.USER_ADDED".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.USER_ADDED".equals(action)) {
                 NotificationLockscreenUserManager.this.updateCurrentProfilesCache();
-            } else if ("android.intent.action.USER_UNLOCKED".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.USER_UNLOCKED".equals(action)) {
                 ((OverviewProxyService) Dependency.get(OverviewProxyService.class)).startConnectionToCurrentUser();
-            } else if ("android.intent.action.USER_PRESENT".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.USER_PRESENT".equals(action)) {
                 try {
                     if (NotificationLockscreenUserManager.this.mUserManager.isManagedProfile(ActivityManager.getService().getLastResumedActivityUserId())) {
                         NotificationLockscreenUserManager.this.showForegroundManagedProfileActivityToast();
+                        return;
                     }
+                    return;
                 } catch (RemoteException e) {
+                    return;
                 }
-            } else if ("com.android.systemui.statusbar.work_challenge_unlocked_notification_action".equals(action)) {
+            }
+            if ("com.android.systemui.statusbar.work_challenge_unlocked_notification_action".equals(action)) {
                 IntentSender intentSender = (IntentSender) intent.getParcelableExtra("android.intent.extra.INTENT");
                 String stringExtra = intent.getStringExtra("android.intent.extra.INDEX");
                 if (intentSender != null) {
@@ -103,6 +122,79 @@ public class NotificationLockscreenUserManager implements Dumpable {
     protected final SparseArray<UserInfo> mCurrentProfiles = new SparseArray<>();
     private final IStatusBarService mBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService("statusbar"));
 
+    /* renamed from: com.android.systemui.statusbar.NotificationLockscreenUserManager$1 */
+    class AnonymousClass1 extends BroadcastReceiver {
+        AnonymousClass1() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            int intExtra = intent.getIntExtra("android.intent.extra.user_handle", -10000);
+            if ("android.app.action.DEVICE_POLICY_MANAGER_STATE_CHANGED".equals(action) && NotificationLockscreenUserManager.this.isCurrentProfile(getSendingUserId())) {
+                NotificationLockscreenUserManager.this.mUsersAllowingPrivateNotifications.clear();
+                NotificationLockscreenUserManager.this.updateLockscreenNotificationSetting();
+                NotificationLockscreenUserManager.this.mEntryManager.updateNotifications();
+            } else if ("android.intent.action.DEVICE_LOCKED_CHANGED".equals(action) && intExtra != NotificationLockscreenUserManager.this.mCurrentUserId && NotificationLockscreenUserManager.this.isCurrentProfile(intExtra)) {
+                NotificationLockscreenUserManager.this.mPresenter.onWorkChallengeChanged();
+            }
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.NotificationLockscreenUserManager$2 */
+    class AnonymousClass2 extends BroadcastReceiver {
+        AnonymousClass2() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) throws Resources.NotFoundException, IntentSender.SendIntentException {
+            String action = intent.getAction();
+            if ("android.intent.action.USER_SWITCHED".equals(action)) {
+                NotificationLockscreenUserManager.this.mCurrentUserId = intent.getIntExtra("android.intent.extra.user_handle", -1);
+                NotificationLockscreenUserManager.this.updateCurrentProfilesCache();
+                Log.v("LockscreenUserManager", "userId " + NotificationLockscreenUserManager.this.mCurrentUserId + " is in the house");
+                NotificationLockscreenUserManager.this.updateLockscreenNotificationSetting();
+                NotificationLockscreenUserManager.this.mPresenter.onUserSwitched(NotificationLockscreenUserManager.this.mCurrentUserId);
+                return;
+            }
+            if ("android.intent.action.USER_ADDED".equals(action)) {
+                NotificationLockscreenUserManager.this.updateCurrentProfilesCache();
+                return;
+            }
+            if ("android.intent.action.USER_UNLOCKED".equals(action)) {
+                ((OverviewProxyService) Dependency.get(OverviewProxyService.class)).startConnectionToCurrentUser();
+                return;
+            }
+            if ("android.intent.action.USER_PRESENT".equals(action)) {
+                try {
+                    if (NotificationLockscreenUserManager.this.mUserManager.isManagedProfile(ActivityManager.getService().getLastResumedActivityUserId())) {
+                        NotificationLockscreenUserManager.this.showForegroundManagedProfileActivityToast();
+                        return;
+                    }
+                    return;
+                } catch (RemoteException e) {
+                    return;
+                }
+            }
+            if ("com.android.systemui.statusbar.work_challenge_unlocked_notification_action".equals(action)) {
+                IntentSender intentSender = (IntentSender) intent.getParcelableExtra("android.intent.extra.INTENT");
+                String stringExtra = intent.getStringExtra("android.intent.extra.INDEX");
+                if (intentSender != null) {
+                    try {
+                        NotificationLockscreenUserManager.this.mContext.startIntentSender(intentSender, null, 0, 0, 0);
+                    } catch (IntentSender.SendIntentException e2) {
+                    }
+                }
+                if (stringExtra != null) {
+                    try {
+                        NotificationLockscreenUserManager.this.mBarService.onNotificationClick(stringExtra, NotificationVisibility.obtain(stringExtra, NotificationLockscreenUserManager.this.mEntryManager.getNotificationData().getRank(stringExtra), NotificationLockscreenUserManager.this.mEntryManager.getNotificationData().getActiveNotifications().size(), true));
+                    } catch (RemoteException e3) {
+                    }
+                }
+            }
+        }
+    }
+
     public NotificationLockscreenUserManager(Context context) {
         this.mCurrentUserId = 0;
         this.mContext = context;
@@ -115,6 +207,10 @@ public class NotificationLockscreenUserManager implements Dumpable {
         this.mPresenter = notificationPresenter;
         this.mEntryManager = notificationEntryManager;
         this.mLockscreenSettingsObserver = new ContentObserver(this.mPresenter.getHandler()) { // from class: com.android.systemui.statusbar.NotificationLockscreenUserManager.3
+            AnonymousClass3(Handler handler) {
+                super(handler);
+            }
+
             @Override // android.database.ContentObserver
             public void onChange(boolean z) {
                 NotificationLockscreenUserManager.this.mUsersAllowingPrivateNotifications.clear();
@@ -124,6 +220,10 @@ public class NotificationLockscreenUserManager implements Dumpable {
             }
         };
         this.mSettingsObserver = new ContentObserver(this.mPresenter.getHandler()) { // from class: com.android.systemui.statusbar.NotificationLockscreenUserManager.4
+            AnonymousClass4(Handler handler) {
+                super(handler);
+            }
+
             @Override // android.database.ContentObserver
             public void onChange(boolean z) {
                 NotificationLockscreenUserManager.this.updateLockscreenNotificationSetting();
@@ -152,13 +252,42 @@ public class NotificationLockscreenUserManager implements Dumpable {
         this.mSettingsObserver.onChange(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showForegroundManagedProfileActivityToast() {
-        Toast makeText = Toast.makeText(this.mContext, (int) R.string.managed_profile_foreground_toast, 0);
-        TextView textView = (TextView) makeText.getView().findViewById(16908299);
+    /* renamed from: com.android.systemui.statusbar.NotificationLockscreenUserManager$3 */
+    class AnonymousClass3 extends ContentObserver {
+        AnonymousClass3(Handler handler) {
+            super(handler);
+        }
+
+        @Override // android.database.ContentObserver
+        public void onChange(boolean z) {
+            NotificationLockscreenUserManager.this.mUsersAllowingPrivateNotifications.clear();
+            NotificationLockscreenUserManager.this.mUsersAllowingNotifications.clear();
+            NotificationLockscreenUserManager.this.updateLockscreenNotificationSetting();
+            NotificationLockscreenUserManager.this.mEntryManager.updateNotifications();
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.NotificationLockscreenUserManager$4 */
+    class AnonymousClass4 extends ContentObserver {
+        AnonymousClass4(Handler handler) {
+            super(handler);
+        }
+
+        @Override // android.database.ContentObserver
+        public void onChange(boolean z) {
+            NotificationLockscreenUserManager.this.updateLockscreenNotificationSetting();
+            if (NotificationLockscreenUserManager.this.mDeviceProvisionedController.isDeviceProvisioned()) {
+                NotificationLockscreenUserManager.this.mEntryManager.updateNotifications();
+            }
+        }
+    }
+
+    private void showForegroundManagedProfileActivityToast() throws Resources.NotFoundException {
+        Toast toastMakeText = Toast.makeText(this.mContext, R.string.managed_profile_foreground_toast, 0);
+        TextView textView = (TextView) toastMakeText.getView().findViewById(android.R.id.message);
         textView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.stat_sys_managed_profile_status, 0, 0, 0);
         textView.setCompoundDrawablePadding(this.mContext.getResources().getDimensionPixelSize(R.dimen.managed_profile_toast_padding));
-        makeText.show();
+        toastMakeText.show();
     }
 
     public boolean shouldShowLockscreenNotifications() {
@@ -174,13 +303,10 @@ public class NotificationLockscreenUserManager implements Dumpable {
         synchronized (this.mCurrentProfiles) {
             if (i != -1) {
                 try {
-                    if (this.mCurrentProfiles.get(i) == null) {
-                        z = false;
-                    }
+                    z = this.mCurrentProfiles.get(i) != null;
                 } finally {
                 }
             }
-            z = true;
         }
         return z;
     }
@@ -221,13 +347,7 @@ public class NotificationLockscreenUserManager implements Dumpable {
     }
 
     protected void updateLockscreenNotificationSetting() {
-        boolean z = true;
-        boolean z2 = Settings.Secure.getIntForUser(this.mContext.getContentResolver(), "lock_screen_show_notifications", 1, this.mCurrentUserId) != 0;
-        boolean z3 = (this.mDevicePolicyManager.getKeyguardDisabledFeatures(null, this.mCurrentUserId) & 4) == 0;
-        if (!z2 || !z3) {
-            z = false;
-        }
-        setShowLockscreenNotifications(z);
+        setShowLockscreenNotifications((Settings.Secure.getIntForUser(this.mContext.getContentResolver(), "lock_screen_show_notifications", 1, this.mCurrentUserId) != 0) && ((this.mDevicePolicyManager.getKeyguardDisabledFeatures(null, this.mCurrentUserId) & 4) == 0));
         setLockscreenAllowRemoteInput(false);
     }
 
@@ -238,8 +358,8 @@ public class NotificationLockscreenUserManager implements Dumpable {
         }
         if (this.mUsersAllowingPrivateNotifications.indexOfKey(i) < 0) {
             boolean z2 = Settings.Secure.getIntForUser(this.mContext.getContentResolver(), "lock_screen_allow_private_notifications", 0, i) != 0;
-            boolean adminAllowsKeyguardFeature = adminAllowsKeyguardFeature(i, 8);
-            if (!z2 || !adminAllowsKeyguardFeature) {
+            boolean zAdminAllowsKeyguardFeature = adminAllowsKeyguardFeature(i, 8);
+            if (!z2 || !zAdminAllowsKeyguardFeature) {
                 z = false;
             }
             this.mUsersAllowingPrivateNotifications.append(i, z);
@@ -261,20 +381,15 @@ public class NotificationLockscreenUserManager implements Dumpable {
     }
 
     private boolean userAllowsNotificationsInPublic(int i) {
-        boolean z = true;
-        if (!isCurrentProfile(i) || i == this.mCurrentUserId) {
-            if (this.mUsersAllowingNotifications.indexOfKey(i) < 0) {
-                boolean z2 = Settings.Secure.getIntForUser(this.mContext.getContentResolver(), "lock_screen_show_notifications", 0, i) != 0;
-                boolean adminAllowsKeyguardFeature = adminAllowsKeyguardFeature(i, 4);
-                if (!z2 || !adminAllowsKeyguardFeature) {
-                    z = false;
-                }
-                this.mUsersAllowingNotifications.append(i, z);
-                return z;
-            }
-            return this.mUsersAllowingNotifications.get(i);
+        if (isCurrentProfile(i) && i != this.mCurrentUserId) {
+            return true;
         }
-        return true;
+        if (this.mUsersAllowingNotifications.indexOfKey(i) < 0) {
+            boolean z = (Settings.Secure.getIntForUser(this.mContext.getContentResolver(), "lock_screen_show_notifications", 0, i) != 0) && adminAllowsKeyguardFeature(i, 4);
+            this.mUsersAllowingNotifications.append(i, z);
+            return z;
+        }
+        return this.mUsersAllowingNotifications.get(i);
     }
 
     public boolean needsRedaction(NotificationData.Entry entry) {
@@ -294,8 +409,7 @@ public class NotificationLockscreenUserManager implements Dumpable {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateCurrentProfilesCache() {
+    private void updateCurrentProfilesCache() {
         synchronized (this.mCurrentProfiles) {
             this.mCurrentProfiles.clear();
             if (this.mUserManager != null) {

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerService.Tunable {
     private static final boolean DEBUG = Log.isLoggable("QSTileHost", 3);
@@ -70,16 +71,18 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
         return this.mIconController;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginConnected(Lcom/android/systemui/plugins/Plugin;Landroid/content/Context;)V */
     @Override // com.android.systemui.plugins.PluginListener
-    public void onPluginConnected(QSFactory qSFactory, Context context) {
+    public void onPluginConnected(QSFactory qSFactory, Context context) throws Resources.NotFoundException {
         this.mQsFactories.add(0, qSFactory);
         String value = ((TunerService) Dependency.get(TunerService.class)).getValue("sysui_qs_tiles");
         onTuningChanged("sysui_qs_tiles", "");
         onTuningChanged("sysui_qs_tiles", value);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginDisconnected(Lcom/android/systemui/plugins/Plugin;)V */
     @Override // com.android.systemui.plugins.PluginListener
-    public void onPluginDisconnected(QSFactory qSFactory) {
+    public void onPluginDisconnected(QSFactory qSFactory) throws Resources.NotFoundException {
         this.mQsFactories.remove(qSFactory);
         String value = ((TunerService) Dependency.get(TunerService.class)).getValue("sysui_qs_tiles");
         onTuningChanged("sysui_qs_tiles", "");
@@ -132,7 +135,7 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
     }
 
     @Override // com.android.systemui.tuner.TunerService.Tunable
-    public void onTuningChanged(String str, String str2) {
+    public void onTuningChanged(String str, String str2) throws Resources.NotFoundException {
         boolean z;
         if (!"sysui_qs_tiles".equals(str)) {
             return;
@@ -143,15 +146,15 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
         if (str2 == null && UserManager.isDeviceInDemoMode(this.mContext)) {
             str2 = this.mContext.getResources().getString(R.string.quick_settings_tiles_retail_mode);
         }
-        final List<String> loadTileSpecs = loadTileSpecs(this.mContext, str2);
+        final List<String> listLoadTileSpecs = loadTileSpecs(this.mContext, str2);
         int currentUser = ActivityManager.getCurrentUser();
-        if (loadTileSpecs.equals(this.mTileSpecs) && currentUser == this.mCurrentUser) {
+        if (listLoadTileSpecs.equals(this.mTileSpecs) && currentUser == this.mCurrentUser) {
             return;
         }
         this.mTiles.entrySet().stream().filter(new Predicate() { // from class: com.android.systemui.qs.-$$Lambda$QSTileHost$yU-sQWBVZ_STOuSxrKNWIDPkScE
             @Override // java.util.function.Predicate
             public final boolean test(Object obj) {
-                return QSTileHost.lambda$onTuningChanged$1(loadTileSpecs, (Map.Entry) obj);
+                return QSTileHost.lambda$onTuningChanged$1(listLoadTileSpecs, (Map.Entry) obj);
             }
         }).forEach(new Consumer() { // from class: com.android.systemui.qs.-$$Lambda$QSTileHost$3Sm37Dy1JWpLe_hn88f-6UG0Q-M
             @Override // java.util.function.Consumer
@@ -160,7 +163,7 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
             }
         });
         LinkedHashMap linkedHashMap = new LinkedHashMap();
-        for (String str3 : loadTileSpecs) {
+        for (String str3 : listLoadTileSpecs) {
             QSTile qSTile = this.mTiles.get(str3);
             if (qSTile != null && (!((z = qSTile instanceof CustomTile)) || ((CustomTile) qSTile).getUser() == currentUser)) {
                 if (qSTile.isAvailable()) {
@@ -180,13 +183,13 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
                     Log.d("QSTileHost", "Creating tile: " + str3);
                 }
                 try {
-                    QSTile createTile = createTile(str3);
-                    if (createTile != null) {
-                        if (createTile.isAvailable()) {
-                            createTile.setTileSpec(str3);
-                            linkedHashMap.put(str3, createTile);
+                    QSTile qSTileCreateTile = createTile(str3);
+                    if (qSTileCreateTile != null) {
+                        if (qSTileCreateTile.isAvailable()) {
+                            qSTileCreateTile.setTileSpec(str3);
+                            linkedHashMap.put(str3, qSTileCreateTile);
                         } else {
-                            createTile.destroy();
+                            qSTileCreateTile.destroy();
                         }
                     }
                 } catch (Throwable th) {
@@ -196,7 +199,7 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
         }
         this.mCurrentUser = currentUser;
         this.mTileSpecs.clear();
-        this.mTileSpecs.addAll(loadTileSpecs);
+        this.mTileSpecs.addAll(listLoadTileSpecs);
         this.mTiles.clear();
         this.mTiles.putAll(linkedHashMap);
         for (int i = 0; i < this.mCallbacks.size(); i++) {
@@ -204,13 +207,11 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$onTuningChanged$1(List list, Map.Entry entry) {
+    static /* synthetic */ boolean lambda$onTuningChanged$1(List list, Map.Entry entry) {
         return !list.contains(entry.getKey());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$onTuningChanged$2(Map.Entry entry) {
+    static /* synthetic */ void lambda$onTuningChanged$2(Map.Entry entry) {
         if (DEBUG) {
             Log.d("QSTileHost", "Destroying tile: " + ((String) entry.getKey()));
         }
@@ -224,13 +225,13 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
         Settings.Secure.putStringForUser(this.mContext.getContentResolver(), "sysui_qs_tiles", TextUtils.join(",", arrayList), ActivityManager.getCurrentUser());
     }
 
-    public void addTile(String str) {
-        List<String> loadTileSpecs = loadTileSpecs(this.mContext, Settings.Secure.getStringForUser(this.mContext.getContentResolver(), "sysui_qs_tiles", ActivityManager.getCurrentUser()));
-        if (loadTileSpecs.contains(str)) {
+    public void addTile(String str) throws Resources.NotFoundException {
+        List<String> listLoadTileSpecs = loadTileSpecs(this.mContext, Settings.Secure.getStringForUser(this.mContext.getContentResolver(), "sysui_qs_tiles", ActivityManager.getCurrentUser()));
+        if (listLoadTileSpecs.contains(str)) {
             return;
         }
-        loadTileSpecs.add(str);
-        Settings.Secure.putStringForUser(this.mContext.getContentResolver(), "sysui_qs_tiles", TextUtils.join(",", loadTileSpecs), ActivityManager.getCurrentUser());
+        listLoadTileSpecs.add(str);
+        Settings.Secure.putStringForUser(this.mContext.getContentResolver(), "sysui_qs_tiles", TextUtils.join(",", listLoadTileSpecs), ActivityManager.getCurrentUser());
     }
 
     public void addTile(ComponentName componentName) {
@@ -267,9 +268,9 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
 
     public QSTile createTile(String str) {
         for (int i = 0; i < this.mQsFactories.size(); i++) {
-            QSTile createTile = this.mQsFactories.get(i).createTile(str);
-            if (createTile != null) {
-                return createTile;
+            QSTile qSTileCreateTile = this.mQsFactories.get(i).createTile(str);
+            if (qSTileCreateTile != null) {
+                return qSTileCreateTile;
             }
         }
         if (this.mQuickSettingsExt != null && this.mQuickSettingsExt.doOperatorSupportTile(str)) {
@@ -280,15 +281,15 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
 
     public QSTileView createTileView(QSTile qSTile, boolean z) {
         for (int i = 0; i < this.mQsFactories.size(); i++) {
-            QSTileView createTileView = this.mQsFactories.get(i).createTileView(qSTile, z);
-            if (createTileView != null) {
-                return createTileView;
+            QSTileView qSTileViewCreateTileView = this.mQsFactories.get(i).createTileView(qSTile, z);
+            if (qSTileViewCreateTileView != null) {
+                return qSTileViewCreateTileView;
             }
         }
         throw new RuntimeException("Default factory didn't create view for " + qSTile.getTileSpec());
     }
 
-    protected List<String> loadTileSpecs(Context context, String str) {
+    protected List<String> loadTileSpecs(Context context, String str) throws Resources.NotFoundException {
         Resources resources = context.getResources();
         String string = resources.getString(R.string.quick_settings_tiles_default);
         if (this.mQuickSettingsExt != null) {
@@ -306,15 +307,15 @@ public class QSTileHost implements PluginListener<QSFactory>, QSHost, TunerServi
         ArrayList arrayList = new ArrayList();
         boolean z = false;
         for (String str2 : str.split(",")) {
-            String trim = str2.trim();
-            if (!trim.isEmpty()) {
-                if (trim.equals("default")) {
+            String strTrim = str2.trim();
+            if (!strTrim.isEmpty()) {
+                if (strTrim.equals("default")) {
                     if (!z) {
                         arrayList.addAll(Arrays.asList(string.split(",")));
                         z = true;
                     }
                 } else {
-                    arrayList.add(trim);
+                    arrayList.add(strTrim);
                 }
             }
         }

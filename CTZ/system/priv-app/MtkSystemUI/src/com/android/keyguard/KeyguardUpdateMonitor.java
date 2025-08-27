@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 /* loaded from: classes.dex */
 public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     public static final boolean CORE_APPS_ONLY;
@@ -96,6 +97,10 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     private int mFingerprintRunningState = 0;
     private int mHardwareUnavailableRetryCount = 0;
     private final Handler mHandler = new Handler(Looper.getMainLooper()) { // from class: com.android.keyguard.KeyguardUpdateMonitor.1
+        AnonymousClass1(Looper looper) {
+            super(looper);
+        }
+
         @Override // android.os.Handler
         public void handleMessage(Message message) {
             int i = message.what;
@@ -103,108 +108,108 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                 switch (i) {
                     case 301:
                         KeyguardUpdateMonitor.this.handleTimeUpdate();
-                        return;
+                        break;
                     case 302:
                         KeyguardUpdateMonitor.this.handleBatteryUpdate((BatteryStatus) message.obj);
-                        return;
+                        break;
                     default:
                         switch (i) {
                             case 304:
                                 KeyguardUpdateMonitor.this.handleSimStateChange((SimData) message.obj);
-                                return;
+                                break;
                             case 305:
                                 KeyguardUpdateMonitor.this.handleRingerModeChange(message.arg1);
-                                return;
+                                break;
                             case 306:
                                 KeyguardUpdateMonitor.this.handlePhoneStateChanged();
-                                return;
+                                break;
                             default:
                                 switch (i) {
                                     case 308:
                                         KeyguardUpdateMonitor.this.handleDeviceProvisioned();
-                                        return;
+                                        break;
                                     case 309:
                                         KeyguardUpdateMonitor.this.handleDevicePolicyManagerStateChanged();
-                                        return;
+                                        break;
                                     case 310:
                                         KeyguardUpdateMonitor.this.handleUserSwitching(message.arg1, (IRemoteCallback) message.obj);
-                                        return;
+                                        break;
                                     default:
                                         switch (i) {
                                             case 312:
                                                 KeyguardUpdateMonitor.this.handleKeyguardReset();
-                                                return;
+                                                break;
                                             case 313:
                                                 KeyguardUpdateMonitor.this.handleBootCompleted();
-                                                return;
+                                                break;
                                             case 314:
                                                 KeyguardUpdateMonitor.this.handleUserSwitchComplete(message.arg1);
-                                                return;
+                                                break;
                                             default:
                                                 switch (i) {
                                                     case 317:
                                                         KeyguardUpdateMonitor.this.handleUserInfoChanged(message.arg1);
-                                                        return;
+                                                        break;
                                                     case 318:
                                                         KeyguardUpdateMonitor.this.handleReportEmergencyCallAction();
-                                                        return;
+                                                        break;
                                                     case 319:
                                                         Trace.beginSection("KeyguardUpdateMonitor#handler MSG_STARTED_WAKING_UP");
                                                         KeyguardUpdateMonitor.this.handleStartedWakingUp();
                                                         Trace.endSection();
-                                                        return;
+                                                        break;
                                                     case 320:
                                                         KeyguardUpdateMonitor.this.handleFinishedGoingToSleep(message.arg1);
-                                                        return;
+                                                        break;
                                                     case 321:
                                                         KeyguardUpdateMonitor.this.handleStartedGoingToSleep(message.arg1);
-                                                        return;
+                                                        break;
                                                     case 322:
                                                         KeyguardUpdateMonitor.this.handleKeyguardBouncerChanged(message.arg1);
-                                                        return;
+                                                        break;
                                                     default:
                                                         switch (i) {
                                                             case 327:
                                                                 Trace.beginSection("KeyguardUpdateMonitor#handler MSG_FACE_UNLOCK_STATE_CHANGED");
                                                                 KeyguardUpdateMonitor.this.handleFaceUnlockStateChanged(message.arg1 != 0, message.arg2);
                                                                 Trace.endSection();
-                                                                return;
+                                                                break;
                                                             case 328:
                                                                 KeyguardUpdateMonitor.this.handleSimSubscriptionInfoChanged();
-                                                                return;
+                                                                break;
                                                             case 329:
                                                                 KeyguardUpdateMonitor.this.handleAirplaneModeChanged();
-                                                                return;
+                                                                break;
                                                             case 330:
                                                                 KeyguardUpdateMonitor.this.handleServiceStateChange(message.arg1, (ServiceState) message.obj);
-                                                                return;
+                                                                break;
                                                             case 331:
                                                                 KeyguardUpdateMonitor.this.handleScreenTurnedOn();
-                                                                return;
+                                                                break;
                                                             case 332:
                                                                 Trace.beginSection("KeyguardUpdateMonitor#handler MSG_SCREEN_TURNED_ON");
                                                                 KeyguardUpdateMonitor.this.handleScreenTurnedOff();
                                                                 Trace.endSection();
-                                                                return;
+                                                                break;
                                                             case 333:
                                                                 KeyguardUpdateMonitor.this.handleDreamingStateChanged(message.arg1);
-                                                                return;
+                                                                break;
                                                             case 334:
                                                                 KeyguardUpdateMonitor.this.handleUserUnlocked();
-                                                                return;
+                                                                break;
                                                             case 335:
                                                                 KeyguardUpdateMonitor.this.mAssistantVisible = ((Boolean) message.obj).booleanValue();
                                                                 KeyguardUpdateMonitor.this.updateFingerprintListeningState();
-                                                                return;
+                                                                break;
                                                             case 336:
                                                                 KeyguardUpdateMonitor.this.updateFingerprintListeningState();
-                                                                return;
+                                                                break;
                                                             case 337:
                                                                 KeyguardUpdateMonitor.this.updateLogoutEnabled();
-                                                                return;
+                                                                break;
                                                             default:
                                                                 super.handleMessage(message);
-                                                                return;
+                                                                break;
                                                         }
                                                 }
                                         }
@@ -216,6 +221,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     };
     private SubscriptionManager.OnSubscriptionsChangedListener mSubscriptionListener = new SubscriptionManager.OnSubscriptionsChangedListener() { // from class: com.android.keyguard.KeyguardUpdateMonitor.2
+        AnonymousClass2() {
+        }
+
         @Override // android.telephony.SubscriptionManager.OnSubscriptionsChangedListener
         public void onSubscriptionsChanged() {
             KeyguardUpdateMonitor.this.mHandler.removeMessages(328);
@@ -229,10 +237,13 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     private Runnable mUpdateFingerprintListeningState = new Runnable() { // from class: com.android.keyguard.-$$Lambda$KeyguardUpdateMonitor$3psLIyI5yDs2IBHa8rcm6IwKZfM
         @Override // java.lang.Runnable
         public final void run() {
-            KeyguardUpdateMonitor.this.updateFingerprintListeningState();
+            this.f$0.updateFingerprintListeningState();
         }
     };
     private Runnable mRetryFingerprintAuthentication = new Runnable() { // from class: com.android.keyguard.KeyguardUpdateMonitor.3
+        AnonymousClass3() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             Log.w("KeyguardUpdateMonitor", "Retrying fingerprint after HW unavailable, attempt " + KeyguardUpdateMonitor.this.mHardwareUnavailableRetryCount);
@@ -240,8 +251,12 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     };
     private DisplayClientState mDisplayClientState = new DisplayClientState();
+
     @VisibleForTesting
     protected final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() { // from class: com.android.keyguard.KeyguardUpdateMonitor.4
+        AnonymousClass4() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -268,7 +283,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                     return;
                 }
                 Log.d("KeyguardUpdateMonitor", "SPN_STRINGS_UPDATED_ACTION, invalid phoneId = " + phoneIdUsingSubId);
-            } else if ("android.intent.action.BATTERY_CHANGED".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.BATTERY_CHANGED".equals(action)) {
                 int intExtra2 = intent.getIntExtra("status", 1);
                 int intExtra3 = intent.getIntExtra("plugged", 0);
                 int intExtra4 = intent.getIntExtra("level", 0);
@@ -279,56 +296,76 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                     intExtra7 = 5000000;
                 }
                 KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(302, new BatteryStatus(intExtra2, intExtra4, intExtra3, intExtra5, intExtra6 > 0 ? (intExtra6 / 1000) * (intExtra7 / 1000) : -1)));
-            } else if ("android.intent.action.SIM_STATE_CHANGED".equals(action) || "com.mediatek.phone.ACTION_UNLOCK_SIM_LOCK".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.SIM_STATE_CHANGED".equals(action) || "com.mediatek.phone.ACTION_UNLOCK_SIM_LOCK".equals(action)) {
                 if (intent.getBooleanExtra("rebroadcastOnUnlock", false)) {
                     return;
                 }
                 String stringExtra = intent.getStringExtra("ss");
-                SimData fromIntent = SimData.fromIntent(intent);
+                SimData simDataFromIntent = SimData.fromIntent(intent);
                 if (KeyguardUpdateMonitor.DEBUG_SIM_STATES) {
-                    Log.v("KeyguardUpdateMonitor", "action=" + action + ", state=" + stringExtra + ", slotId=" + fromIntent.phoneId + ", subId=" + fromIntent.subId + ", simArgs.simState = " + fromIntent.simState);
+                    Log.v("KeyguardUpdateMonitor", "action=" + action + ", state=" + stringExtra + ", slotId=" + simDataFromIntent.phoneId + ", subId=" + simDataFromIntent.subId + ", simArgs.simState = " + simDataFromIntent.simState);
                 }
                 if ("com.mediatek.phone.ACTION_UNLOCK_SIM_LOCK".equals(action)) {
                     Log.d("KeyguardUpdateMonitor", "ACTION_UNLOCK_SIM_LOCK, set sim state as UNKNOWN");
-                    KeyguardUpdateMonitor.this.mSimStateOfPhoneId.put(Integer.valueOf(fromIntent.phoneId), IccCardConstants.State.UNKNOWN);
+                    KeyguardUpdateMonitor.this.mSimStateOfPhoneId.put(Integer.valueOf(simDataFromIntent.phoneId), IccCardConstants.State.UNKNOWN);
                 }
-                KeyguardUpdateMonitor.this.proceedToHandleSimStateChanged(fromIntent);
-            } else if ("android.media.RINGER_MODE_CHANGED".equals(action)) {
+                KeyguardUpdateMonitor.this.proceedToHandleSimStateChanged(simDataFromIntent);
+                return;
+            }
+            if ("android.media.RINGER_MODE_CHANGED".equals(action)) {
                 KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(305, intent.getIntExtra("android.media.EXTRA_RINGER_MODE", -1), 0));
-            } else if ("android.intent.action.PHONE_STATE".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.PHONE_STATE".equals(action)) {
                 KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(306, intent.getStringExtra("state")));
-            } else if ("android.intent.action.BOOT_COMPLETED".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.BOOT_COMPLETED".equals(action)) {
                 KeyguardUpdateMonitor.this.dispatchBootCompleted();
-            } else if ("android.intent.action.AIRPLANE_MODE".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.AIRPLANE_MODE".equals(action)) {
                 boolean booleanExtra = intent.getBooleanExtra("state", false);
                 Log.d("KeyguardUpdateMonitor", "Receive ACTION_AIRPLANE_MODE_CHANGED, state = " + booleanExtra);
                 Message message = new Message();
                 message.what = 1015;
                 message.obj = new Boolean(booleanExtra);
                 KeyguardUpdateMonitor.this.mHandler.sendMessage(message);
-            } else if (!"android.intent.action.SERVICE_STATE".equals(action)) {
+                return;
+            }
+            if (!"android.intent.action.SERVICE_STATE".equals(action)) {
                 if ("android.app.action.DEVICE_POLICY_MANAGER_STATE_CHANGED".equals(action)) {
                     KeyguardUpdateMonitor.this.mHandler.sendEmptyMessage(337);
+                    return;
                 }
-            } else {
-                ServiceState newFromBundle = ServiceState.newFromBundle(intent.getExtras());
-                int intExtra8 = intent.getIntExtra("subscription", -1);
-                if (KeyguardUpdateMonitor.DEBUG) {
-                    Log.v("KeyguardUpdateMonitor", "action " + action + " serviceState=" + newFromBundle + " subId=" + intExtra8);
-                }
-                KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(330, intExtra8, 0, newFromBundle));
+                return;
             }
+            ServiceState serviceStateNewFromBundle = ServiceState.newFromBundle(intent.getExtras());
+            int intExtra8 = intent.getIntExtra("subscription", -1);
+            if (KeyguardUpdateMonitor.DEBUG) {
+                Log.v("KeyguardUpdateMonitor", "action " + action + " serviceState=" + serviceStateNewFromBundle + " subId=" + intExtra8);
+            }
+            KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(330, intExtra8, 0, serviceStateNewFromBundle));
         }
     };
     private final BroadcastReceiver mBroadcastAllReceiver = new BroadcastReceiver() { // from class: com.android.keyguard.KeyguardUpdateMonitor.5
+        AnonymousClass5() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if ("android.app.action.NEXT_ALARM_CLOCK_CHANGED".equals(action)) {
                 KeyguardUpdateMonitor.this.mHandler.sendEmptyMessage(301);
-            } else if ("android.intent.action.USER_INFO_CHANGED".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.USER_INFO_CHANGED".equals(action)) {
                 KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(317, intent.getIntExtra("android.intent.extra.user_handle", getSendingUserId()), 0));
-            } else if ("com.android.facelock.FACE_UNLOCK_STARTED".equals(action)) {
+                return;
+            }
+            if ("com.android.facelock.FACE_UNLOCK_STARTED".equals(action)) {
                 Trace.beginSection("KeyguardUpdateMonitor.mBroadcastAllReceiver#onReceive ACTION_FACE_UNLOCK_STARTED");
                 KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(327, 1, getSendingUserId()));
                 Trace.endSection();
@@ -342,11 +379,17 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     };
     private final FingerprintManager.LockoutResetCallback mLockoutResetCallback = new FingerprintManager.LockoutResetCallback() { // from class: com.android.keyguard.KeyguardUpdateMonitor.6
+        AnonymousClass6() {
+        }
+
         public void onLockoutReset() {
             KeyguardUpdateMonitor.this.handleFingerprintLockoutReset();
         }
     };
     private FingerprintManager.AuthenticationCallback mAuthenticationCallback = new FingerprintManager.AuthenticationCallback() { // from class: com.android.keyguard.KeyguardUpdateMonitor.7
+        AnonymousClass7() {
+        }
+
         @Override // android.hardware.fingerprint.FingerprintManager.AuthenticationCallback
         public void onAuthenticationFailed() {
             KeyguardUpdateMonitor.this.handleFingerprintAuthFailed();
@@ -374,6 +417,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     };
     private final SysUiTaskStackChangeListener mTaskStackListener = new SysUiTaskStackChangeListener() { // from class: com.android.keyguard.KeyguardUpdateMonitor.10
+        AnonymousClass10() {
+        }
+
         @Override // com.android.systemui.shared.system.TaskStackChangeListener
         public void onTaskStackChangedBackground() {
             try {
@@ -406,18 +452,150 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public static synchronized void setCurrentUser(int i) {
-        synchronized (KeyguardUpdateMonitor.class) {
-            sCurrentUser = i;
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$1 */
+    class AnonymousClass1 extends Handler {
+        AnonymousClass1(Looper looper) {
+            super(looper);
+        }
+
+        @Override // android.os.Handler
+        public void handleMessage(Message message) {
+            int i = message.what;
+            if (i != 1015) {
+                switch (i) {
+                    case 301:
+                        KeyguardUpdateMonitor.this.handleTimeUpdate();
+                        break;
+                    case 302:
+                        KeyguardUpdateMonitor.this.handleBatteryUpdate((BatteryStatus) message.obj);
+                        break;
+                    default:
+                        switch (i) {
+                            case 304:
+                                KeyguardUpdateMonitor.this.handleSimStateChange((SimData) message.obj);
+                                break;
+                            case 305:
+                                KeyguardUpdateMonitor.this.handleRingerModeChange(message.arg1);
+                                break;
+                            case 306:
+                                KeyguardUpdateMonitor.this.handlePhoneStateChanged();
+                                break;
+                            default:
+                                switch (i) {
+                                    case 308:
+                                        KeyguardUpdateMonitor.this.handleDeviceProvisioned();
+                                        break;
+                                    case 309:
+                                        KeyguardUpdateMonitor.this.handleDevicePolicyManagerStateChanged();
+                                        break;
+                                    case 310:
+                                        KeyguardUpdateMonitor.this.handleUserSwitching(message.arg1, (IRemoteCallback) message.obj);
+                                        break;
+                                    default:
+                                        switch (i) {
+                                            case 312:
+                                                KeyguardUpdateMonitor.this.handleKeyguardReset();
+                                                break;
+                                            case 313:
+                                                KeyguardUpdateMonitor.this.handleBootCompleted();
+                                                break;
+                                            case 314:
+                                                KeyguardUpdateMonitor.this.handleUserSwitchComplete(message.arg1);
+                                                break;
+                                            default:
+                                                switch (i) {
+                                                    case 317:
+                                                        KeyguardUpdateMonitor.this.handleUserInfoChanged(message.arg1);
+                                                        break;
+                                                    case 318:
+                                                        KeyguardUpdateMonitor.this.handleReportEmergencyCallAction();
+                                                        break;
+                                                    case 319:
+                                                        Trace.beginSection("KeyguardUpdateMonitor#handler MSG_STARTED_WAKING_UP");
+                                                        KeyguardUpdateMonitor.this.handleStartedWakingUp();
+                                                        Trace.endSection();
+                                                        break;
+                                                    case 320:
+                                                        KeyguardUpdateMonitor.this.handleFinishedGoingToSleep(message.arg1);
+                                                        break;
+                                                    case 321:
+                                                        KeyguardUpdateMonitor.this.handleStartedGoingToSleep(message.arg1);
+                                                        break;
+                                                    case 322:
+                                                        KeyguardUpdateMonitor.this.handleKeyguardBouncerChanged(message.arg1);
+                                                        break;
+                                                    default:
+                                                        switch (i) {
+                                                            case 327:
+                                                                Trace.beginSection("KeyguardUpdateMonitor#handler MSG_FACE_UNLOCK_STATE_CHANGED");
+                                                                KeyguardUpdateMonitor.this.handleFaceUnlockStateChanged(message.arg1 != 0, message.arg2);
+                                                                Trace.endSection();
+                                                                break;
+                                                            case 328:
+                                                                KeyguardUpdateMonitor.this.handleSimSubscriptionInfoChanged();
+                                                                break;
+                                                            case 329:
+                                                                KeyguardUpdateMonitor.this.handleAirplaneModeChanged();
+                                                                break;
+                                                            case 330:
+                                                                KeyguardUpdateMonitor.this.handleServiceStateChange(message.arg1, (ServiceState) message.obj);
+                                                                break;
+                                                            case 331:
+                                                                KeyguardUpdateMonitor.this.handleScreenTurnedOn();
+                                                                break;
+                                                            case 332:
+                                                                Trace.beginSection("KeyguardUpdateMonitor#handler MSG_SCREEN_TURNED_ON");
+                                                                KeyguardUpdateMonitor.this.handleScreenTurnedOff();
+                                                                Trace.endSection();
+                                                                break;
+                                                            case 333:
+                                                                KeyguardUpdateMonitor.this.handleDreamingStateChanged(message.arg1);
+                                                                break;
+                                                            case 334:
+                                                                KeyguardUpdateMonitor.this.handleUserUnlocked();
+                                                                break;
+                                                            case 335:
+                                                                KeyguardUpdateMonitor.this.mAssistantVisible = ((Boolean) message.obj).booleanValue();
+                                                                KeyguardUpdateMonitor.this.updateFingerprintListeningState();
+                                                                break;
+                                                            case 336:
+                                                                KeyguardUpdateMonitor.this.updateFingerprintListeningState();
+                                                                break;
+                                                            case 337:
+                                                                KeyguardUpdateMonitor.this.updateLogoutEnabled();
+                                                                break;
+                                                            default:
+                                                                super.handleMessage(message);
+                                                                break;
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                }
+            }
+            KeyguardUpdateMonitor.this.handleAirPlaneModeUpdate(((Boolean) message.obj).booleanValue());
         }
     }
 
-    public static synchronized int getCurrentUser() {
-        int i;
-        synchronized (KeyguardUpdateMonitor.class) {
-            i = sCurrentUser;
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$2 */
+    class AnonymousClass2 extends SubscriptionManager.OnSubscriptionsChangedListener {
+        AnonymousClass2() {
         }
-        return i;
+
+        @Override // android.telephony.SubscriptionManager.OnSubscriptionsChangedListener
+        public void onSubscriptionsChanged() {
+            KeyguardUpdateMonitor.this.mHandler.removeMessages(328);
+            KeyguardUpdateMonitor.this.mHandler.sendEmptyMessage(328);
+        }
+    }
+
+    public static synchronized void setCurrentUser(int i) {
+        sCurrentUser = i;
+    }
+
+    public static synchronized int getCurrentUser() {
+        return sCurrentUser;
     }
 
     public void onTrustChanged(boolean z, int i, int i2) {
@@ -438,8 +616,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         dispatchErrorMessage(charSequence);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleSimSubscriptionInfoChanged() {
+    private void handleSimSubscriptionInfoChanged() {
         if (DEBUG_SIM_STATES) {
             Log.v("KeyguardUpdateMonitor", "onSubscriptionInfoChanged()");
             List<SubscriptionInfo> activeSubscriptionInfoList = this.mSubscriptionManager.getActiveSubscriptionInfoList();
@@ -479,8 +656,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleAirplaneModeChanged() {
+    private void handleAirplaneModeChanged() {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i).get();
             if (keyguardUpdateMonitorCallback != null) {
@@ -490,14 +666,14 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     }
 
     public List<SubscriptionInfo> getSubscriptionInfo(boolean z) {
-        List<SubscriptionInfo> list = this.mSubscriptionInfo;
-        if (list == null || z || (list != null && list.size() == 0)) {
-            list = this.mSubscriptionManager.getActiveSubscriptionInfoList();
+        List<SubscriptionInfo> activeSubscriptionInfoList = this.mSubscriptionInfo;
+        if (activeSubscriptionInfoList == null || z || (activeSubscriptionInfoList != null && activeSubscriptionInfoList.size() == 0)) {
+            activeSubscriptionInfoList = this.mSubscriptionManager.getActiveSubscriptionInfoList();
         }
-        if (list == null) {
+        if (activeSubscriptionInfoList == null) {
             this.mSubscriptionInfo = new ArrayList();
         } else {
-            this.mSubscriptionInfo = list;
+            this.mSubscriptionInfo = activeSubscriptionInfoList;
         }
         return this.mSubscriptionInfo;
     }
@@ -555,8 +731,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         Trace.endSection();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFingerprintAuthFailed() {
+    private void handleFingerprintAuthFailed() {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i).get();
             if (keyguardUpdateMonitorCallback != null) {
@@ -566,8 +741,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         handleFingerprintHelp(-1, this.mContext.getString(com.android.systemui.R.string.fingerprint_not_recognized));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFingerprintAcquired(int i) {
+    private void handleFingerprintAcquired(int i) {
         if (i != 0) {
             return;
         }
@@ -579,14 +753,16 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFingerprintAuthenticated(int i) {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [612=6] */
+    private void handleFingerprintAuthenticated(int i) {
         Trace.beginSection("KeyGuardUpdateMonitor#handlerFingerPrintAuthenticated");
         try {
             int i2 = ActivityManager.getService().getCurrentUser().id;
             if (i2 != i) {
                 Log.d("KeyguardUpdateMonitor", "Fingerprint authenticated for wrong user: " + i);
-            } else if (!isFingerprintDisabled(i2)) {
+                return;
+            }
+            if (!isFingerprintDisabled(i2)) {
                 onFingerprintAuthenticated(i2);
                 setFingerprintRunningState(0);
                 Trace.endSection();
@@ -600,8 +776,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFingerprintHelp(int i, String str) {
+    private void handleFingerprintHelp(int i, String str) {
         for (int i2 = 0; i2 < this.mCallbacks.size(); i2++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i2).get();
             if (keyguardUpdateMonitorCallback != null) {
@@ -610,8 +785,19 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFingerprintError(int i, String str) {
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$3 */
+    class AnonymousClass3 implements Runnable {
+        AnonymousClass3() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            Log.w("KeyguardUpdateMonitor", "Retrying fingerprint after HW unavailable, attempt " + KeyguardUpdateMonitor.this.mHardwareUnavailableRetryCount);
+            KeyguardUpdateMonitor.this.updateFingerprintListeningState();
+        }
+    }
+
+    private void handleFingerprintError(int i, String str) {
         if (i == 5 && this.mFingerprintRunningState == 3) {
             setFingerprintRunningState(0);
             startListeningForFingerprint();
@@ -634,8 +820,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFingerprintLockoutReset() {
+    private void handleFingerprintLockoutReset() {
         updateFingerprintListeningState();
     }
 
@@ -658,8 +843,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFaceUnlockStateChanged(boolean z, int i) {
+    private void handleFaceUnlockStateChanged(boolean z, int i) {
         this.mUserFaceUnlockRunning.put(i, z);
         for (int i2 = 0; i2 < this.mCallbacks.size(); i2++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i2).get();
@@ -714,8 +898,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         return this.mStrongAuthTracker;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyStrongAuthStateChanged(int i) {
+    private void notifyStrongAuthStateChanged(int i) {
         checkIsHandlerThread();
         for (int i2 = 0; i2 < this.mCallbacks.size(); i2++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i2).get();
@@ -738,15 +921,183 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* loaded from: classes.dex */
     static class DisplayClientState {
         DisplayClientState() {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SimData {
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$4 */
+    class AnonymousClass4 extends BroadcastReceiver {
+        AnonymousClass4() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (KeyguardUpdateMonitor.DEBUG) {
+                Log.d("KeyguardUpdateMonitor", "received broadcast " + action);
+            }
+            if ("android.intent.action.TIME_TICK".equals(action) || "android.intent.action.TIME_SET".equals(action) || "android.intent.action.TIMEZONE_CHANGED".equals(action)) {
+                KeyguardUpdateMonitor.this.mHandler.sendEmptyMessage(301);
+                return;
+            }
+            if ("android.provider.Telephony.SPN_STRINGS_UPDATED".equals(action)) {
+                int intExtra = intent.getIntExtra("subscription", -1);
+                Log.d("KeyguardUpdateMonitor", "SPN_STRINGS_UPDATED_ACTION, sub Id = " + intExtra);
+                int phoneIdUsingSubId = KeyguardUtils.getPhoneIdUsingSubId(intExtra);
+                if (KeyguardUtils.isValidPhoneId(phoneIdUsingSubId)) {
+                    KeyguardUpdateMonitor.this.mTelephonyPlmn.put(Integer.valueOf(phoneIdUsingSubId), KeyguardUpdateMonitor.this.getTelephonyPlmnFrom(intent));
+                    KeyguardUpdateMonitor.this.mTelephonySpn.put(Integer.valueOf(phoneIdUsingSubId), KeyguardUpdateMonitor.this.getTelephonySpnFrom(intent));
+                    KeyguardUpdateMonitor.this.mTelephonyCsgId.put(Integer.valueOf(phoneIdUsingSubId), KeyguardUpdateMonitor.this.getTelephonyCsgIdFrom(intent));
+                    KeyguardUpdateMonitor.this.mTelephonyHnbName.put(Integer.valueOf(phoneIdUsingSubId), KeyguardUpdateMonitor.this.getTelephonyHnbNameFrom(intent));
+                    if (KeyguardUpdateMonitor.DEBUG) {
+                        Log.d("KeyguardUpdateMonitor", "SPN_STRINGS_UPDATED_ACTION, update phoneId=" + phoneIdUsingSubId + ", plmn=" + KeyguardUpdateMonitor.this.mTelephonyPlmn.get(Integer.valueOf(phoneIdUsingSubId)) + ", spn=" + KeyguardUpdateMonitor.this.mTelephonySpn.get(Integer.valueOf(phoneIdUsingSubId)) + ", csgId=" + KeyguardUpdateMonitor.this.mTelephonyCsgId.get(Integer.valueOf(phoneIdUsingSubId)) + ", hnbName=" + KeyguardUpdateMonitor.this.mTelephonyHnbName.get(Integer.valueOf(phoneIdUsingSubId)));
+                    }
+                    KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(303, Integer.valueOf(phoneIdUsingSubId)));
+                    return;
+                }
+                Log.d("KeyguardUpdateMonitor", "SPN_STRINGS_UPDATED_ACTION, invalid phoneId = " + phoneIdUsingSubId);
+                return;
+            }
+            if ("android.intent.action.BATTERY_CHANGED".equals(action)) {
+                int intExtra2 = intent.getIntExtra("status", 1);
+                int intExtra3 = intent.getIntExtra("plugged", 0);
+                int intExtra4 = intent.getIntExtra("level", 0);
+                int intExtra5 = intent.getIntExtra("health", 1);
+                int intExtra6 = intent.getIntExtra("max_charging_current", -1);
+                int intExtra7 = intent.getIntExtra("max_charging_voltage", -1);
+                if (intExtra7 <= 0) {
+                    intExtra7 = 5000000;
+                }
+                KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(302, new BatteryStatus(intExtra2, intExtra4, intExtra3, intExtra5, intExtra6 > 0 ? (intExtra6 / 1000) * (intExtra7 / 1000) : -1)));
+                return;
+            }
+            if ("android.intent.action.SIM_STATE_CHANGED".equals(action) || "com.mediatek.phone.ACTION_UNLOCK_SIM_LOCK".equals(action)) {
+                if (intent.getBooleanExtra("rebroadcastOnUnlock", false)) {
+                    return;
+                }
+                String stringExtra = intent.getStringExtra("ss");
+                SimData simDataFromIntent = SimData.fromIntent(intent);
+                if (KeyguardUpdateMonitor.DEBUG_SIM_STATES) {
+                    Log.v("KeyguardUpdateMonitor", "action=" + action + ", state=" + stringExtra + ", slotId=" + simDataFromIntent.phoneId + ", subId=" + simDataFromIntent.subId + ", simArgs.simState = " + simDataFromIntent.simState);
+                }
+                if ("com.mediatek.phone.ACTION_UNLOCK_SIM_LOCK".equals(action)) {
+                    Log.d("KeyguardUpdateMonitor", "ACTION_UNLOCK_SIM_LOCK, set sim state as UNKNOWN");
+                    KeyguardUpdateMonitor.this.mSimStateOfPhoneId.put(Integer.valueOf(simDataFromIntent.phoneId), IccCardConstants.State.UNKNOWN);
+                }
+                KeyguardUpdateMonitor.this.proceedToHandleSimStateChanged(simDataFromIntent);
+                return;
+            }
+            if ("android.media.RINGER_MODE_CHANGED".equals(action)) {
+                KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(305, intent.getIntExtra("android.media.EXTRA_RINGER_MODE", -1), 0));
+                return;
+            }
+            if ("android.intent.action.PHONE_STATE".equals(action)) {
+                KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(306, intent.getStringExtra("state")));
+                return;
+            }
+            if ("android.intent.action.BOOT_COMPLETED".equals(action)) {
+                KeyguardUpdateMonitor.this.dispatchBootCompleted();
+                return;
+            }
+            if ("android.intent.action.AIRPLANE_MODE".equals(action)) {
+                boolean booleanExtra = intent.getBooleanExtra("state", false);
+                Log.d("KeyguardUpdateMonitor", "Receive ACTION_AIRPLANE_MODE_CHANGED, state = " + booleanExtra);
+                Message message = new Message();
+                message.what = 1015;
+                message.obj = new Boolean(booleanExtra);
+                KeyguardUpdateMonitor.this.mHandler.sendMessage(message);
+                return;
+            }
+            if (!"android.intent.action.SERVICE_STATE".equals(action)) {
+                if ("android.app.action.DEVICE_POLICY_MANAGER_STATE_CHANGED".equals(action)) {
+                    KeyguardUpdateMonitor.this.mHandler.sendEmptyMessage(337);
+                    return;
+                }
+                return;
+            }
+            ServiceState serviceStateNewFromBundle = ServiceState.newFromBundle(intent.getExtras());
+            int intExtra8 = intent.getIntExtra("subscription", -1);
+            if (KeyguardUpdateMonitor.DEBUG) {
+                Log.v("KeyguardUpdateMonitor", "action " + action + " serviceState=" + serviceStateNewFromBundle + " subId=" + intExtra8);
+            }
+            KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(330, intExtra8, 0, serviceStateNewFromBundle));
+        }
+    }
+
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$5 */
+    class AnonymousClass5 extends BroadcastReceiver {
+        AnonymousClass5() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if ("android.app.action.NEXT_ALARM_CLOCK_CHANGED".equals(action)) {
+                KeyguardUpdateMonitor.this.mHandler.sendEmptyMessage(301);
+                return;
+            }
+            if ("android.intent.action.USER_INFO_CHANGED".equals(action)) {
+                KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(317, intent.getIntExtra("android.intent.extra.user_handle", getSendingUserId()), 0));
+                return;
+            }
+            if ("com.android.facelock.FACE_UNLOCK_STARTED".equals(action)) {
+                Trace.beginSection("KeyguardUpdateMonitor.mBroadcastAllReceiver#onReceive ACTION_FACE_UNLOCK_STARTED");
+                KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(327, 1, getSendingUserId()));
+                Trace.endSection();
+            } else if ("com.android.facelock.FACE_UNLOCK_STOPPED".equals(action)) {
+                KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(327, 0, getSendingUserId()));
+            } else if ("android.app.action.DEVICE_POLICY_MANAGER_STATE_CHANGED".equals(action)) {
+                KeyguardUpdateMonitor.this.mHandler.sendEmptyMessage(309);
+            } else if ("android.intent.action.USER_UNLOCKED".equals(action)) {
+                KeyguardUpdateMonitor.this.mHandler.sendEmptyMessage(334);
+            }
+        }
+    }
+
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$6 */
+    class AnonymousClass6 extends FingerprintManager.LockoutResetCallback {
+        AnonymousClass6() {
+        }
+
+        public void onLockoutReset() {
+            KeyguardUpdateMonitor.this.handleFingerprintLockoutReset();
+        }
+    }
+
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$7 */
+    class AnonymousClass7 extends FingerprintManager.AuthenticationCallback {
+        AnonymousClass7() {
+        }
+
+        @Override // android.hardware.fingerprint.FingerprintManager.AuthenticationCallback
+        public void onAuthenticationFailed() {
+            KeyguardUpdateMonitor.this.handleFingerprintAuthFailed();
+        }
+
+        @Override // android.hardware.fingerprint.FingerprintManager.AuthenticationCallback
+        public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult authenticationResult) {
+            Trace.beginSection("KeyguardUpdateMonitor#onAuthenticationSucceeded");
+            KeyguardUpdateMonitor.this.handleFingerprintAuthenticated(authenticationResult.getUserId());
+            Trace.endSection();
+        }
+
+        @Override // android.hardware.fingerprint.FingerprintManager.AuthenticationCallback
+        public void onAuthenticationHelp(int i, CharSequence charSequence) {
+            KeyguardUpdateMonitor.this.handleFingerprintHelp(i, charSequence.toString());
+        }
+
+        @Override // android.hardware.fingerprint.FingerprintManager.AuthenticationCallback
+        public void onAuthenticationError(int i, CharSequence charSequence) {
+            KeyguardUpdateMonitor.this.handleFingerprintError(i, charSequence.toString());
+        }
+
+        public void onAuthenticationAcquired(int i) {
+            KeyguardUpdateMonitor.this.handleFingerprintAcquired(i);
+        }
+    }
+
+    private static class SimData {
         public int phoneId;
         public int simMECategory;
         public final IccCardConstants.State simState;
@@ -836,7 +1187,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class BatteryStatus {
         public final int health;
         public final int level;
@@ -879,7 +1229,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* loaded from: classes.dex */
     public class StrongAuthTracker extends LockPatternUtils.StrongAuthTracker {
         public StrongAuthTracker(Context context) {
             super(context);
@@ -943,8 +1292,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         updateFingerprintListeningState();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleScreenTurnedOn() {
+    private void handleScreenTurnedOn() {
         int size = this.mCallbacks.size();
         for (int i = 0; i < size; i++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i).get();
@@ -954,8 +1302,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleScreenTurnedOff() {
+    private void handleScreenTurnedOff() {
         this.mHardwareUnavailableRetryCount = 0;
         int size = this.mCallbacks.size();
         for (int i = 0; i < size; i++) {
@@ -966,8 +1313,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleDreamingStateChanged(int i) {
+    private void handleDreamingStateChanged(int i) {
         int size = this.mCallbacks.size();
         this.mIsDreaming = i == 1;
         for (int i2 = 0; i2 < size; i2++) {
@@ -979,8 +1325,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         updateFingerprintListeningState();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleUserInfoChanged(int i) {
+    private void handleUserInfoChanged(int i) {
         for (int i2 = 0; i2 < this.mCallbacks.size(); i2++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i2).get();
             if (keyguardUpdateMonitorCallback != null) {
@@ -989,8 +1334,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleUserUnlocked() {
+    private void handleUserUnlocked() {
         this.mNeedsSlowUnlockTransition = resolveNeedsSlowUnlockTransition();
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i).get();
@@ -1042,6 +1386,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         this.mSubscriptionManager.addOnSubscriptionsChangedListener(this.mSubscriptionListener);
         try {
             ActivityManager.getService().registerUserSwitchObserver(new UserSwitchObserver() { // from class: com.android.keyguard.KeyguardUpdateMonitor.8
+                AnonymousClass8() {
+                }
+
                 public void onUserSwitching(int i, IRemoteCallback iRemoteCallback) {
                     KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(310, i, 0, iRemoteCallback));
                 }
@@ -1071,16 +1418,29 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         this.mLogoutEnabled = this.mDevicePolicyManager.isLogoutEnabled();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateFingerprintListeningState() {
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$8 */
+    class AnonymousClass8 extends UserSwitchObserver {
+        AnonymousClass8() {
+        }
+
+        public void onUserSwitching(int i, IRemoteCallback iRemoteCallback) {
+            KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(310, i, 0, iRemoteCallback));
+        }
+
+        public void onUserSwitchComplete(int i) throws RemoteException {
+            KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(314, i, 0));
+        }
+    }
+
+    private void updateFingerprintListeningState() {
         if (this.mHandler.hasMessages(336)) {
             return;
         }
         this.mHandler.removeCallbacks(this.mRetryFingerprintAuthentication);
-        boolean shouldListenForFingerprint = shouldListenForFingerprint();
-        if (this.mFingerprintRunningState == 1 && !shouldListenForFingerprint) {
+        boolean zShouldListenForFingerprint = shouldListenForFingerprint();
+        if (this.mFingerprintRunningState == 1 && !zShouldListenForFingerprint) {
             stopListeningForFingerprint();
-        } else if (this.mFingerprintRunningState != 1 && shouldListenForFingerprint) {
+        } else if (this.mFingerprintRunningState != 1 && zShouldListenForFingerprint) {
             startListeningForFingerprint();
         }
     }
@@ -1132,13 +1492,35 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isDeviceProvisionedInSettingsDb() {
+    private boolean isDeviceProvisionedInSettingsDb() {
         return Settings.Global.getInt(this.mContext.getContentResolver(), "device_provisioned", 0) != 0;
+    }
+
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$9 */
+    class AnonymousClass9 extends ContentObserver {
+        AnonymousClass9(Handler handler) {
+            super(handler);
+        }
+
+        @Override // android.database.ContentObserver
+        public void onChange(boolean z) {
+            super.onChange(z);
+            KeyguardUpdateMonitor.this.mDeviceProvisioned = KeyguardUpdateMonitor.this.isDeviceProvisionedInSettingsDb();
+            if (KeyguardUpdateMonitor.this.mDeviceProvisioned) {
+                KeyguardUpdateMonitor.this.mHandler.sendEmptyMessage(308);
+            }
+            if (KeyguardUpdateMonitor.DEBUG) {
+                Log.d("KeyguardUpdateMonitor", "DEVICE_PROVISIONED state = " + KeyguardUpdateMonitor.this.mDeviceProvisioned);
+            }
+        }
     }
 
     private void watchForDeviceProvisioning() {
         this.mDeviceProvisionedObserver = new ContentObserver(this.mHandler) { // from class: com.android.keyguard.KeyguardUpdateMonitor.9
+            AnonymousClass9(Handler handler) {
+                super(handler);
+            }
+
             @Override // android.database.ContentObserver
             public void onChange(boolean z) {
                 super.onChange(z);
@@ -1152,9 +1534,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             }
         };
         this.mContext.getContentResolver().registerContentObserver(Settings.Global.getUriFor("device_provisioned"), false, this.mDeviceProvisionedObserver);
-        boolean isDeviceProvisionedInSettingsDb = isDeviceProvisionedInSettingsDb();
-        if (isDeviceProvisionedInSettingsDb != this.mDeviceProvisioned) {
-            this.mDeviceProvisioned = isDeviceProvisionedInSettingsDb;
+        boolean zIsDeviceProvisionedInSettingsDb = isDeviceProvisionedInSettingsDb();
+        if (zIsDeviceProvisionedInSettingsDb != this.mDeviceProvisioned) {
+            this.mDeviceProvisioned = zIsDeviceProvisionedInSettingsDb;
             if (this.mDeviceProvisioned) {
                 this.mHandler.sendEmptyMessage(308);
             }
@@ -1178,8 +1560,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         return this.mHasLockscreenWallpaper;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleDevicePolicyManagerStateChanged() {
+    private void handleDevicePolicyManagerStateChanged() {
         updateFingerprintListeningState();
         for (int size = this.mCallbacks.size() - 1; size >= 0; size--) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(size).get();
@@ -1189,8 +1570,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleUserSwitching(int i, IRemoteCallback iRemoteCallback) {
+    private void handleUserSwitching(int i, IRemoteCallback iRemoteCallback) {
         for (int i2 = 0; i2 < this.mCallbacks.size(); i2++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i2).get();
             if (keyguardUpdateMonitorCallback != null) {
@@ -1203,8 +1583,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleUserSwitchComplete(int i) {
+    private void handleUserSwitchComplete(int i) {
         for (int i2 = 0; i2 < this.mCallbacks.size(); i2++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i2).get();
             if (keyguardUpdateMonitorCallback != null) {
@@ -1217,8 +1596,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         this.mHandler.sendEmptyMessage(313);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleBootCompleted() {
+    private void handleBootCompleted() {
         if (this.mBootCompleted) {
             return;
         }
@@ -1231,8 +1609,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleDeviceProvisioned() {
+    private void handleDeviceProvisioned() {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i).get();
             if (keyguardUpdateMonitorCallback != null) {
@@ -1267,8 +1644,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleRingerModeChange(int i) {
+    private void handleRingerModeChange(int i) {
         if (DEBUG) {
             Log.d("KeyguardUpdateMonitor", "handleRingerModeChange(" + i + ")");
         }
@@ -1281,8 +1657,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleTimeUpdate() {
+    private void handleTimeUpdate() {
         if (DEBUG) {
             Log.d("KeyguardUpdateMonitor", "handleTimeUpdate");
         }
@@ -1294,14 +1669,13 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleBatteryUpdate(BatteryStatus batteryStatus) {
+    private void handleBatteryUpdate(BatteryStatus batteryStatus) {
         if (DEBUG) {
             Log.d("KeyguardUpdateMonitor", "handleBatteryUpdate");
         }
-        boolean isBatteryUpdateInteresting = isBatteryUpdateInteresting(this.mBatteryStatus, batteryStatus);
+        boolean zIsBatteryUpdateInteresting = isBatteryUpdateInteresting(this.mBatteryStatus, batteryStatus);
         this.mBatteryStatus = batteryStatus;
-        if (isBatteryUpdateInteresting) {
+        if (zIsBatteryUpdateInteresting) {
             for (int i = 0; i < this.mCallbacks.size(); i++) {
                 KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i).get();
                 if (keyguardUpdateMonitorCallback != null) {
@@ -1316,8 +1690,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         checkIsHandlerThread();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleSimStateChange(SimData simData) {
+    private void handleSimStateChange(SimData simData) {
         handleSimStateChange(simData.subId, simData.phoneId, simData.simState);
         IccCardConstants.State state = simData.simState;
         if (DEBUG) {
@@ -1341,8 +1714,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleServiceStateChange(int i, ServiceState serviceState) {
+    private void handleServiceStateChange(int i, ServiceState serviceState) {
         if (DEBUG) {
             Log.d("KeyguardUpdateMonitor", "handleServiceStateChange(subId=" + i + ", serviceState=" + serviceState);
         }
@@ -1370,8 +1742,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         updateFingerprintListeningState();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleKeyguardReset() {
+    private void handleKeyguardReset() {
         if (DEBUG) {
             Log.d("KeyguardUpdateMonitor", "handleKeyguardReset");
         }
@@ -1386,8 +1757,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         return FALLBACK_HOME_COMPONENT.equals(this.mContext.getPackageManager().resolveActivity(new Intent("android.intent.action.MAIN").addCategory("android.intent.category.HOME"), 0).getComponentInfo().getComponentName());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleKeyguardBouncerChanged(int i) {
+    private void handleKeyguardBouncerChanged(int i) {
         if (DEBUG) {
             Log.d("KeyguardUpdateMonitor", "handleKeyguardBouncerChanged(" + i + ")");
         }
@@ -1402,8 +1772,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         updateFingerprintListeningState();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleReportEmergencyCallAction() {
+    private void handleReportEmergencyCallAction() {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i).get();
             if (keyguardUpdateMonitorCallback != null) {
@@ -1413,11 +1782,11 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     }
 
     private boolean isBatteryUpdateInteresting(BatteryStatus batteryStatus, BatteryStatus batteryStatus2) {
-        boolean isPluggedIn = batteryStatus2.isPluggedIn();
-        boolean isPluggedIn2 = batteryStatus.isPluggedIn();
-        boolean z = isPluggedIn2 && isPluggedIn && batteryStatus.status != batteryStatus2.status;
-        if (isPluggedIn2 == isPluggedIn && !z && batteryStatus.level == batteryStatus2.level) {
-            return isPluggedIn && batteryStatus2.maxChargingWattage != batteryStatus.maxChargingWattage;
+        boolean zIsPluggedIn = batteryStatus2.isPluggedIn();
+        boolean zIsPluggedIn2 = batteryStatus.isPluggedIn();
+        boolean z = zIsPluggedIn2 && zIsPluggedIn && batteryStatus.status != batteryStatus2.status;
+        if (zIsPluggedIn2 == zIsPluggedIn && !z && batteryStatus.level == batteryStatus2.level) {
+            return zIsPluggedIn && batteryStatus2.maxChargingWattage != batteryStatus.maxChargingWattage;
         }
         return true;
     }
@@ -1444,9 +1813,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                 if (DEBUG) {
                     Log.e("KeyguardUpdateMonitor", "Object tried to add another callback", new Exception("Called by"));
                     return;
-                } else {
-                    return;
                 }
+                return;
             }
         }
         this.mCallbacks.add(new WeakReference<>(keyguardUpdateMonitorCallback));
@@ -1484,9 +1852,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         if (DEBUG) {
             Log.d("KeyguardUpdateMonitor", "sendKeyguardBouncerChanged(" + z + ")");
         }
-        Message obtainMessage = this.mHandler.obtainMessage(322);
-        obtainMessage.arg1 = z ? 1 : 0;
-        obtainMessage.sendToTarget();
+        Message messageObtainMessage = this.mHandler.obtainMessage(322);
+        messageObtainMessage.arg1 = z ? 1 : 0;
+        messageObtainMessage.sendToTarget();
     }
 
     public void reportSimUnlocked(int i) {
@@ -1496,10 +1864,10 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     public void reportEmergencyCallAction(boolean z) {
         if (!z) {
             this.mHandler.obtainMessage(318).sendToTarget();
-            return;
+        } else {
+            checkIsHandlerThread();
+            handleReportEmergencyCallAction();
         }
-        checkIsHandlerThread();
-        handleReportEmergencyCallAction();
     }
 
     public boolean isDeviceProvisioned() {
@@ -1551,25 +1919,44 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         return IccCardConstants.State.UNKNOWN;
     }
 
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$10 */
+    class AnonymousClass10 extends SysUiTaskStackChangeListener {
+        AnonymousClass10() {
+        }
+
+        @Override // com.android.systemui.shared.system.TaskStackChangeListener
+        public void onTaskStackChangedBackground() {
+            try {
+                ActivityManager.StackInfo stackInfo = ActivityManager.getService().getStackInfo(0, 4);
+                if (stackInfo == null) {
+                    return;
+                }
+                KeyguardUpdateMonitor.this.mHandler.sendMessage(KeyguardUpdateMonitor.this.mHandler.obtainMessage(335, Boolean.valueOf(stackInfo.visible)));
+            } catch (RemoteException e) {
+                Log.e("KeyguardUpdateMonitor", "unable to check task stack", e);
+            }
+        }
+    }
+
     private boolean refreshSimState(int i, int i2) {
-        IccCardConstants.State state;
+        IccCardConstants.State stateIntToState;
         int simState = TelephonyManager.from(this.mContext).getSimState(i2);
         try {
-            state = IccCardConstants.State.intToState(simState);
+            stateIntToState = IccCardConstants.State.intToState(simState);
         } catch (IllegalArgumentException e) {
             Log.w("KeyguardUpdateMonitor", "Unknown sim state: " + simState);
-            state = IccCardConstants.State.UNKNOWN;
+            stateIntToState = IccCardConstants.State.UNKNOWN;
         }
-        IccCardConstants.State state2 = this.mSimStateOfPhoneId.get(Integer.valueOf(i2));
+        IccCardConstants.State state = this.mSimStateOfPhoneId.get(Integer.valueOf(i2));
         boolean z = false;
-        boolean z2 = state2 != state;
-        if (state2 != IccCardConstants.State.READY || state != IccCardConstants.State.PIN_REQUIRED) {
+        boolean z2 = state != stateIntToState;
+        if (state != IccCardConstants.State.READY || stateIntToState != IccCardConstants.State.PIN_REQUIRED) {
             z = z2;
         }
         if (z) {
-            this.mSimStateOfPhoneId.put(Integer.valueOf(i2), state);
+            this.mSimStateOfPhoneId.put(Integer.valueOf(i2), stateIntToState);
         }
-        Log.d("KeyguardUpdateMonitor", "refreshSimState() - sub = " + i + " phoneId = " + i2 + ", ori-state = " + state2 + ", new-state = " + state + ", changed = " + z);
+        Log.d("KeyguardUpdateMonitor", "refreshSimState() - sub = " + i + " phoneId = " + i2 + ", ori-state = " + state + ", new-state = " + stateIntToState + ", changed = " + z);
         return z;
     }
 
@@ -1645,12 +2032,11 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         return this.mLogoutEnabled;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateLogoutEnabled() {
+    private void updateLogoutEnabled() {
         checkIsHandlerThread();
-        boolean isLogoutEnabled = this.mDevicePolicyManager.isLogoutEnabled();
-        if (this.mLogoutEnabled != isLogoutEnabled) {
-            this.mLogoutEnabled = isLogoutEnabled;
+        boolean zIsLogoutEnabled = this.mDevicePolicyManager.isLogoutEnabled();
+        if (this.mLogoutEnabled != zIsLogoutEnabled) {
+            this.mLogoutEnabled = zIsLogoutEnabled;
             for (int i = 0; i < this.mCallbacks.size(); i++) {
                 KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i).get();
                 if (keyguardUpdateMonitorCallback != null) {
@@ -1686,9 +2072,10 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
             }
         }
         printWriter.println("  Service states:");
-        for (Integer num : this.mServiceStates.keySet()) {
-            int intValue = num.intValue();
-            printWriter.println("    " + intValue + "=" + this.mServiceStates.get(Integer.valueOf(intValue)));
+        Iterator<Integer> it2 = this.mServiceStates.keySet().iterator();
+        while (it2.hasNext()) {
+            int iIntValue = it2.next().intValue();
+            printWriter.println("    " + iIntValue + "=" + this.mServiceStates.get(Integer.valueOf(iIntValue)));
         }
         if (this.mFpm != null && this.mFpm.isHardwareDetected()) {
             int currentUser = ActivityManager.getCurrentUser();
@@ -1721,8 +2108,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void proceedToHandleSimStateChanged(SimData simData) {
+    private void proceedToHandleSimStateChanged(SimData simData) {
         if (IccCardConstants.State.NETWORK_LOCKED == simData.simState && KeyguardUtils.isMediatekSimMeLockSupport()) {
             new simMeStatusQueryThread(simData).start();
         } else {
@@ -1738,9 +2124,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         int i2 = 1 << i;
         if (z) {
             this.mPinPukMeDismissFlag = i2 | this.mPinPukMeDismissFlag;
-            return;
+        } else {
+            this.mPinPukMeDismissFlag = (~i2) & this.mPinPukMeDismissFlag;
         }
-        this.mPinPukMeDismissFlag = (~i2) & this.mPinPukMeDismissFlag;
     }
 
     public boolean getPinPukMeDismissFlagOfPhoneId(int i) {
@@ -1756,9 +2142,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         int i2 = 16 << i;
         if (z) {
             this.mSimmeDismissFlag = i2 | this.mSimmeDismissFlag;
-            return;
+        } else {
+            this.mSimmeDismissFlag = (~i2) & this.mSimmeDismissFlag;
         }
-        this.mSimmeDismissFlag = (~i2) & this.mSimmeDismissFlag;
     }
 
     public boolean getSimmeDismissFlagOfPhoneId(int i) {
@@ -1776,9 +2162,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         return i == 1 ? SystemProperties.getInt("vendor.gsm.sim.retry.puk1.2", -1) : SystemProperties.getInt("vendor.gsm.sim.retry.puk1", -1);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class simMeStatusQueryThread extends Thread {
+    private class simMeStatusQueryThread extends Thread {
         SimData simArgs;
 
         simMeStatusQueryThread(SimData simData) {
@@ -1791,11 +2175,11 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
                 KeyguardUpdateMonitor.this.mSimMeCategory.put(Integer.valueOf(this.simArgs.phoneId), Integer.valueOf(this.simArgs.simMECategory));
                 Log.d("KeyguardUpdateMonitor", "queryNetworkLock, phoneId =" + this.simArgs.phoneId + ", simMECategory =" + this.simArgs.simMECategory);
                 if (this.simArgs.simMECategory >= 0 && this.simArgs.simMECategory <= 5) {
-                    Bundle queryNetworkLock = IMtkTelephonyEx.Stub.asInterface(ServiceManager.getService("phoneEx")).queryNetworkLock(KeyguardUtils.getSubIdUsingPhoneId(this.simArgs.phoneId), this.simArgs.simMECategory);
-                    boolean z = queryNetworkLock.getBoolean("com.mediatek.phone.QUERY_SIMME_LOCK_RESULT", false);
+                    Bundle bundleQueryNetworkLock = IMtkTelephonyEx.Stub.asInterface(ServiceManager.getService("phoneEx")).queryNetworkLock(KeyguardUtils.getSubIdUsingPhoneId(this.simArgs.phoneId), this.simArgs.simMECategory);
+                    boolean z = bundleQueryNetworkLock.getBoolean("com.mediatek.phone.QUERY_SIMME_LOCK_RESULT", false);
                     Log.d("KeyguardUpdateMonitor", "queryNetworkLock, query_result =" + z);
                     if (z) {
-                        KeyguardUpdateMonitor.this.mSimMeLeftRetryCount.put(Integer.valueOf(this.simArgs.phoneId), Integer.valueOf(queryNetworkLock.getInt("com.mediatek.phone.SIMME_LOCK_LEFT_COUNT", 5)));
+                        KeyguardUpdateMonitor.this.mSimMeLeftRetryCount.put(Integer.valueOf(this.simArgs.phoneId), Integer.valueOf(bundleQueryNetworkLock.getInt("com.mediatek.phone.SIMME_LOCK_LEFT_COUNT", 5)));
                     } else {
                         Log.e("KeyguardUpdateMonitor", "queryIccNetworkLock result fail");
                     }
@@ -1816,19 +2200,17 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
     }
 
     public void minusSimMeLeftRetryCountOfPhoneId(int i) {
-        int intValue = this.mSimMeLeftRetryCount.get(Integer.valueOf(i)).intValue();
-        if (intValue > 0) {
-            this.mSimMeLeftRetryCount.put(Integer.valueOf(i), Integer.valueOf(intValue - 1));
+        int iIntValue = this.mSimMeLeftRetryCount.get(Integer.valueOf(i)).intValue();
+        if (iIntValue > 0) {
+            this.mSimMeLeftRetryCount.put(Integer.valueOf(i), Integer.valueOf(iIntValue - 1));
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public CharSequence getTelephonyHnbNameFrom(Intent intent) {
+    private CharSequence getTelephonyHnbNameFrom(Intent intent) {
         return intent.getStringExtra("hnbName");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public CharSequence getTelephonyCsgIdFrom(Intent intent) {
+    private CharSequence getTelephonyCsgIdFrom(Intent intent) {
         return intent.getStringExtra("csgId");
     }
 
@@ -1860,8 +2242,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         return -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public CharSequence getTelephonyPlmnFrom(Intent intent) {
+    private CharSequence getTelephonyPlmnFrom(Intent intent) {
         if (intent.getBooleanExtra("showPlmn", false)) {
             String stringExtra = intent.getStringExtra("plmn");
             return stringExtra != null ? stringExtra : getDefaultPlmn();
@@ -1873,8 +2254,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         return this.mContext.getResources().getText(com.android.systemui.R.string.keyguard_carrier_default);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public CharSequence getTelephonySpnFrom(Intent intent) {
+    private CharSequence getTelephonySpnFrom(Intent intent) {
         String stringExtra;
         if (intent.getBooleanExtra("showSpn", false) && (stringExtra = intent.getStringExtra("spn")) != null) {
             return stringExtra;
@@ -1888,48 +2268,47 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleAirPlaneModeUpdate(boolean z) {
-        int i;
+    private void handleAirPlaneModeUpdate(boolean z) {
+        int iIntValue;
         if (!z) {
-            for (int i2 = 0; i2 < KeyguardUtils.getNumOfPhone(); i2++) {
-                setPinPukMeDismissFlagOfPhoneId(i2, false);
-                Log.d("KeyguardUpdateMonitor", "setPinPukMeDismissFlagOfPhoneId false: " + i2);
+            for (int i = 0; i < KeyguardUtils.getNumOfPhone(); i++) {
+                setPinPukMeDismissFlagOfPhoneId(i, false);
+                Log.d("KeyguardUpdateMonitor", "setPinPukMeDismissFlagOfPhoneId false: " + i);
             }
-            for (int i3 = 0; i3 < KeyguardUtils.getNumOfPhone(); i3++) {
+            for (int i2 = 0; i2 < KeyguardUtils.getNumOfPhone(); i2++) {
                 if (DEBUG) {
-                    Log.d("KeyguardUpdateMonitor", "phoneId = " + i3 + " state=" + this.mSimStateOfPhoneId.get(Integer.valueOf(i3)));
+                    Log.d("KeyguardUpdateMonitor", "phoneId = " + i2 + " state=" + this.mSimStateOfPhoneId.get(Integer.valueOf(i2)));
                 }
-                if (this.mSimStateOfPhoneId.get(Integer.valueOf(i3)) != null && !this.mSimStateOfPhoneId.get(Integer.valueOf(i3)).equals("")) {
-                    switch (AnonymousClass11.$SwitchMap$com$android$internal$telephony$IccCardConstants$State[this.mSimStateOfPhoneId.get(Integer.valueOf(i3)).ordinal()]) {
+                if (this.mSimStateOfPhoneId.get(Integer.valueOf(i2)) != null && !this.mSimStateOfPhoneId.get(Integer.valueOf(i2)).equals("")) {
+                    switch (AnonymousClass11.$SwitchMap$com$android$internal$telephony$IccCardConstants$State[this.mSimStateOfPhoneId.get(Integer.valueOf(i2)).ordinal()]) {
                         case 1:
                         case 2:
                         case 3:
-                            IccCardConstants.State state = this.mSimStateOfPhoneId.get(Integer.valueOf(i3));
-                            this.mSimStateOfPhoneId.put(Integer.valueOf(i3), IccCardConstants.State.UNKNOWN);
-                            if (this.mSimMeCategory.get(Integer.valueOf(i3)) != null) {
-                                i = this.mSimMeCategory.get(Integer.valueOf(i3)).intValue();
+                            IccCardConstants.State state = this.mSimStateOfPhoneId.get(Integer.valueOf(i2));
+                            this.mSimStateOfPhoneId.put(Integer.valueOf(i2), IccCardConstants.State.UNKNOWN);
+                            if (this.mSimMeCategory.get(Integer.valueOf(i2)) != null) {
+                                iIntValue = this.mSimMeCategory.get(Integer.valueOf(i2)).intValue();
                             } else {
-                                i = 0;
+                                iIntValue = 0;
                             }
-                            SimData simData = new SimData(state, i3, KeyguardUtils.getSubIdUsingPhoneId(i3), i);
+                            SimData simData = new SimData(state, i2, KeyguardUtils.getSubIdUsingPhoneId(i2), iIntValue);
                             if (DEBUG) {
                                 Log.v("KeyguardUpdateMonitor", "SimData state=" + simData.simState + ", phoneId=" + simData.phoneId + ", subId=" + simData.subId + ", SimData.simMECategory = " + simData.simMECategory);
                             }
                             proceedToHandleSimStateChanged(simData);
-                            continue;
+                            break;
                     }
                 }
             }
         } else if (z && KeyguardUtils.isFlightModePowerOffMd()) {
             Log.d("KeyguardUpdateMonitor", "Air mode is on, supress all SIM PIN/PUK/ME Lock views.");
-            for (int i4 = 0; i4 < KeyguardUtils.getNumOfPhone(); i4++) {
-                setPinPukMeDismissFlagOfPhoneId(i4, true);
-                Log.d("KeyguardUpdateMonitor", "setPinPukMeDismissFlagOfPhoneId true: " + i4);
+            for (int i3 = 0; i3 < KeyguardUtils.getNumOfPhone(); i3++) {
+                setPinPukMeDismissFlagOfPhoneId(i3, true);
+                Log.d("KeyguardUpdateMonitor", "setPinPukMeDismissFlagOfPhoneId true: " + i3);
             }
         }
-        for (int i5 = 0; i5 < this.mCallbacks.size(); i5++) {
-            KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i5).get();
+        for (int i4 = 0; i4 < this.mCallbacks.size(); i4++) {
+            KeyguardUpdateMonitorCallback keyguardUpdateMonitorCallback = this.mCallbacks.get(i4).get();
             if (keyguardUpdateMonitorCallback != null) {
                 keyguardUpdateMonitorCallback.onAirPlaneModeChanged(z);
                 keyguardUpdateMonitorCallback.onRefreshCarrierInfo();
@@ -1937,10 +2316,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$11  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public static /* synthetic */ class AnonymousClass11 {
+    /* renamed from: com.android.keyguard.KeyguardUpdateMonitor$11 */
+    static /* synthetic */ class AnonymousClass11 {
         static final /* synthetic */ int[] $SwitchMap$com$android$internal$telephony$IccCardConstants$State = new int[IccCardConstants.State.values().length];
 
         static {

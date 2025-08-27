@@ -17,6 +17,7 @@ import com.android.launcher3.Utilities;
 import java.io.IOException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class ShadowDrawable extends Drawable {
@@ -83,9 +84,9 @@ public class ShadowDrawable extends Drawable {
 
     @Override // android.graphics.drawable.Drawable
     public void applyTheme(Resources.Theme theme) {
-        TypedArray obtainStyledAttributes = theme.obtainStyledAttributes(new int[]{R.attr.isWorkspaceDarkText});
-        boolean z = obtainStyledAttributes.getBoolean(0, false);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = theme.obtainStyledAttributes(new int[]{R.attr.isWorkspaceDarkText});
+        boolean z = typedArrayObtainStyledAttributes.getBoolean(0, false);
+        typedArrayObtainStyledAttributes.recycle();
         if (this.mState.mIsDark != z) {
             this.mState.mIsDark = z;
             this.mState.mLastDrawnBitmap = null;
@@ -94,58 +95,55 @@ public class ShadowDrawable extends Drawable {
     }
 
     private void regenerateBitmapCache() {
-        Bitmap createBitmap = Bitmap.createBitmap(this.mState.mIntrinsicWidth, this.mState.mIntrinsicHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(createBitmap);
-        Drawable mutate = this.mState.mChildState.newDrawable().mutate();
-        mutate.setBounds(this.mState.mShadowSize, this.mState.mShadowSize, this.mState.mIntrinsicWidth - this.mState.mShadowSize, this.mState.mIntrinsicHeight - this.mState.mShadowSize);
-        mutate.setTint(this.mState.mIsDark ? this.mState.mDarkTintColor : -1);
-        mutate.draw(canvas);
+        Bitmap bitmapCreateBitmap = Bitmap.createBitmap(this.mState.mIntrinsicWidth, this.mState.mIntrinsicHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmapCreateBitmap);
+        Drawable drawableMutate = this.mState.mChildState.newDrawable().mutate();
+        drawableMutate.setBounds(this.mState.mShadowSize, this.mState.mShadowSize, this.mState.mIntrinsicWidth - this.mState.mShadowSize, this.mState.mIntrinsicHeight - this.mState.mShadowSize);
+        drawableMutate.setTint(this.mState.mIsDark ? this.mState.mDarkTintColor : -1);
+        drawableMutate.draw(canvas);
         if (!this.mState.mIsDark) {
             Paint paint = new Paint(3);
             paint.setMaskFilter(new BlurMaskFilter(this.mState.mShadowSize, BlurMaskFilter.Blur.NORMAL));
-            int[] iArr = new int[2];
-            Bitmap extractAlpha = createBitmap.extractAlpha(paint, iArr);
+            Bitmap bitmapExtractAlpha = bitmapCreateBitmap.extractAlpha(paint, new int[2]);
             paint.setMaskFilter(null);
             paint.setColor(this.mState.mShadowColor);
-            createBitmap.eraseColor(0);
-            canvas.drawBitmap(extractAlpha, iArr[0], iArr[1], paint);
-            mutate.draw(canvas);
+            bitmapCreateBitmap.eraseColor(0);
+            canvas.drawBitmap(bitmapExtractAlpha, r5[0], r5[1], paint);
+            drawableMutate.draw(canvas);
         }
         if (Utilities.ATLEAST_OREO) {
-            createBitmap = createBitmap.copy(Bitmap.Config.HARDWARE, false);
+            bitmapCreateBitmap = bitmapCreateBitmap.copy(Bitmap.Config.HARDWARE, false);
         }
-        this.mState.mLastDrawnBitmap = createBitmap;
+        this.mState.mLastDrawnBitmap = bitmapCreateBitmap;
     }
 
     @Override // android.graphics.drawable.Drawable
     public void inflate(Resources resources, XmlPullParser xmlPullParser, AttributeSet attributeSet, Resources.Theme theme) throws XmlPullParserException, IOException {
-        TypedArray obtainStyledAttributes;
+        TypedArray typedArrayObtainStyledAttributes;
         super.inflate(resources, xmlPullParser, attributeSet, theme);
         if (theme != null) {
-            obtainStyledAttributes = theme.obtainStyledAttributes(attributeSet, R.styleable.ShadowDrawable, 0, 0);
+            typedArrayObtainStyledAttributes = theme.obtainStyledAttributes(attributeSet, R.styleable.ShadowDrawable, 0, 0);
         } else {
-            obtainStyledAttributes = resources.obtainAttributes(attributeSet, R.styleable.ShadowDrawable);
+            typedArrayObtainStyledAttributes = resources.obtainAttributes(attributeSet, R.styleable.ShadowDrawable);
         }
         try {
-            Drawable drawable = obtainStyledAttributes.getDrawable(0);
+            Drawable drawable = typedArrayObtainStyledAttributes.getDrawable(0);
             if (drawable == null) {
                 throw new XmlPullParserException("missing src attribute");
             }
-            this.mState.mShadowColor = obtainStyledAttributes.getColor(1, ViewCompat.MEASURED_STATE_MASK);
-            this.mState.mShadowSize = obtainStyledAttributes.getDimensionPixelSize(2, 0);
-            this.mState.mDarkTintColor = obtainStyledAttributes.getColor(3, ViewCompat.MEASURED_STATE_MASK);
+            this.mState.mShadowColor = typedArrayObtainStyledAttributes.getColor(1, ViewCompat.MEASURED_STATE_MASK);
+            this.mState.mShadowSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(2, 0);
+            this.mState.mDarkTintColor = typedArrayObtainStyledAttributes.getColor(3, ViewCompat.MEASURED_STATE_MASK);
             this.mState.mIntrinsicHeight = drawable.getIntrinsicHeight() + (this.mState.mShadowSize * 2);
             this.mState.mIntrinsicWidth = drawable.getIntrinsicWidth() + (2 * this.mState.mShadowSize);
             this.mState.mChangingConfigurations = drawable.getChangingConfigurations();
             this.mState.mChildState = drawable.getConstantState();
         } finally {
-            obtainStyledAttributes.recycle();
+            typedArrayObtainStyledAttributes.recycle();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ShadowDrawableState extends Drawable.ConstantState {
+    private static class ShadowDrawableState extends Drawable.ConstantState {
         int mChangingConfigurations;
         Drawable.ConstantState mChildState;
         int mDarkTintColor;

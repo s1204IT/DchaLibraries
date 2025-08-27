@@ -10,6 +10,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.ObservableFragment;
 import com.android.settingslib.core.lifecycle.ObservablePreferenceFragment;
 import com.android.settingslib.core.lifecycle.events.OnCreateOptionsMenu;
+
 /* loaded from: classes.dex */
 public class HelpMenuController implements LifecycleObserver, OnCreateOptionsMenu {
     private final Fragment mHost;
@@ -28,16 +29,16 @@ public class HelpMenuController implements LifecycleObserver, OnCreateOptionsMen
 
     @Override // com.android.settingslib.core.lifecycle.events.OnCreateOptionsMenu
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        int i;
+        int helpResource;
         Bundle arguments = this.mHost.getArguments();
         if (arguments != null && arguments.containsKey("help_uri_resource")) {
-            i = arguments.getInt("help_uri_resource");
+            helpResource = arguments.getInt("help_uri_resource");
         } else if (this.mHost instanceof HelpResourceProvider) {
-            i = ((HelpResourceProvider) this.mHost).getHelpResource();
+            helpResource = ((HelpResourceProvider) this.mHost).getHelpResource();
         } else {
-            i = 0;
+            helpResource = 0;
         }
-        String string = i != 0 ? this.mHost.getContext().getString(i) : null;
+        String string = helpResource != 0 ? this.mHost.getContext().getString(helpResource) : null;
         Activity activity = this.mHost.getActivity();
         if (string != null && activity != null) {
             HelpUtils.prepareHelpMenuItem(activity, menu, string, this.mHost.getClass().getName());

@@ -2,6 +2,7 @@ package com.android.systemui.plugins;
 
 import android.text.TextUtils;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
+
 /* loaded from: classes.dex */
 public interface PluginManager {
     public static final String NOTIFICATION_CHANNEL_ID = "ALR";
@@ -27,10 +28,10 @@ public interface PluginManager {
         ProvidesInterface providesInterface = (ProvidesInterface) cls.getDeclaredAnnotation(ProvidesInterface.class);
         if (providesInterface == null) {
             throw new RuntimeException(cls + " doesn't provide an interface");
-        } else if (TextUtils.isEmpty(providesInterface.action())) {
-            throw new RuntimeException(cls + " doesn't provide an action");
-        } else {
-            return providesInterface.action();
         }
+        if (TextUtils.isEmpty(providesInterface.action())) {
+            throw new RuntimeException(cls + " doesn't provide an action");
+        }
+        return providesInterface.action();
     }
 }

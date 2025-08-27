@@ -1,5 +1,6 @@
 package com.android.settings.applications;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.widget.LoadingViewController;
+
 /* loaded from: classes.dex */
 public class RunningServices extends SettingsPreferenceFragment {
     private View mLoadingContainer;
@@ -17,7 +19,7 @@ public class RunningServices extends SettingsPreferenceFragment {
     private Menu mOptionsMenu;
     private final Runnable mRunningProcessesAvail = new Runnable() { // from class: com.android.settings.applications.RunningServices.1
         @Override // java.lang.Runnable
-        public void run() {
+        public void run() throws Resources.NotFoundException {
             RunningServices.this.mLoadingViewController.showContent(true);
         }
     };
@@ -31,12 +33,12 @@ public class RunningServices extends SettingsPreferenceFragment {
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate = layoutInflater.inflate(R.layout.manage_applications_running, (ViewGroup) null);
-        this.mRunningProcessesView = (RunningProcessesView) inflate.findViewById(R.id.running_processes);
+        View viewInflate = layoutInflater.inflate(R.layout.manage_applications_running, (ViewGroup) null);
+        this.mRunningProcessesView = (RunningProcessesView) viewInflate.findViewById(R.id.running_processes);
         this.mRunningProcessesView.doCreate();
-        this.mLoadingContainer = inflate.findViewById(R.id.loading_container);
+        this.mLoadingContainer = viewInflate.findViewById(R.id.loading_container);
         this.mLoadingViewController = new LoadingViewController(this.mLoadingContainer, this.mRunningProcessesView);
-        return inflate;
+        return viewInflate;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -48,7 +50,7 @@ public class RunningServices extends SettingsPreferenceFragment {
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         super.onResume();
         this.mLoadingViewController.handleLoadingContainer(this.mRunningProcessesView.doResume(this, this.mRunningProcessesAvail), false);
     }

@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.view.View;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public final class PhoneStatusBarTransitions extends BarTransitions {
     private View mBattery;
@@ -53,9 +54,8 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
         return (i == 1 || i == 2 || i == 4 || i == 6) ? false : true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.phone.BarTransitions
-    public void onTransition(int i, int i2, boolean z) {
+    protected void onTransition(int i, int i2, boolean z) {
         super.onTransition(i, i2, z);
         applyMode(i2, z);
     }

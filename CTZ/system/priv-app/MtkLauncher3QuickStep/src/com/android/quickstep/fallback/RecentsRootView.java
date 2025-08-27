@@ -12,6 +12,7 @@ import com.android.launcher3.util.Themes;
 import com.android.launcher3.util.TouchController;
 import com.android.launcher3.views.BaseDragLayer;
 import com.android.quickstep.RecentsActivity;
+
 /* loaded from: classes.dex */
 public class RecentsRootView extends BaseDragLayer<RecentsActivity> {
     private final RecentsActivity mActivity;

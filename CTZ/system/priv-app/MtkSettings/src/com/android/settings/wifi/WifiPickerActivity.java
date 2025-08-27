@@ -6,6 +6,7 @@ import com.android.settings.ButtonBarHandler;
 import com.android.settings.R;
 import com.android.settings.SettingsActivity;
 import com.android.settings.wifi.p2p.WifiP2pSettings;
+
 /* loaded from: classes.dex */
 public class WifiPickerActivity extends SettingsActivity implements ButtonBarHandler {
     @Override // com.android.settings.SettingsActivity, android.app.Activity
@@ -18,9 +19,8 @@ public class WifiPickerActivity extends SettingsActivity implements ButtonBarHan
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         if (WifiSettings.class.getName().equals(str) || WifiP2pSettings.class.getName().equals(str) || SavedAccessPointsWifiSettings.class.getName().equals(str)) {
             return true;
         }

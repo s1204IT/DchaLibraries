@@ -14,6 +14,7 @@ import com.android.settings.R;
 import com.android.settings.applications.LayoutPreference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.widget.EntityHeaderController;
+
 /* loaded from: classes.dex */
 public class HeaderPreferenceController extends NotificationPreferenceController implements LifecycleObserver, PreferenceControllerMixin {
     private final PreferenceFragment mFragment;
@@ -49,13 +50,13 @@ public class HeaderPreferenceController extends NotificationPreferenceController
     }
 
     CharSequence getLabel() {
-        if (this.mChannel == null || isDefaultChannel()) {
-            if (this.mChannelGroup != null) {
-                return this.mChannelGroup.getName();
-            }
-            return this.mAppRow.label;
+        if (this.mChannel != null && !isDefaultChannel()) {
+            return this.mChannel.getName();
         }
-        return this.mChannel.getName();
+        if (this.mChannelGroup != null) {
+            return this.mChannelGroup.getName();
+        }
+        return this.mAppRow.label;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
@@ -70,11 +71,11 @@ public class HeaderPreferenceController extends NotificationPreferenceController
                 return spannableStringBuilder.toString();
             }
             return this.mAppRow.label.toString();
-        } else if (this.mChannelGroup != null) {
-            return this.mAppRow.label.toString();
-        } else {
-            return "";
         }
+        if (this.mChannelGroup != null) {
+            return this.mAppRow.label.toString();
+        }
+        return "";
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

@@ -30,6 +30,7 @@ import com.android.settingslib.applications.AppUtils;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
 import java.util.HashSet;
+
 /* loaded from: classes.dex */
 public class AppActionButtonPreferenceController extends BasePreferenceController implements AppInfoDashboardFragment.Callback {
     private static final String KEY_ACTION_BUTTONS = "action_buttons";
@@ -106,28 +107,28 @@ public class AppActionButtonPreferenceController extends BasePreferenceControlle
     }
 
     void initUninstallButtons(ApplicationsState.AppEntry appEntry, PackageInfo packageInfo) {
-        boolean initUninstallButtonForUserApp;
+        boolean zInitUninstallButtonForUserApp;
         boolean z;
         boolean z2 = (appEntry.info.flags & 1) != 0;
         if (z2) {
-            initUninstallButtonForUserApp = handleDisableable(appEntry, packageInfo);
+            zInitUninstallButtonForUserApp = handleDisableable(appEntry, packageInfo);
         } else {
-            initUninstallButtonForUserApp = initUninstallButtonForUserApp();
+            zInitUninstallButtonForUserApp = initUninstallButtonForUserApp();
         }
         if (z2 && this.mDpm.packageHasActiveAdmins(packageInfo.packageName)) {
-            initUninstallButtonForUserApp = false;
+            zInitUninstallButtonForUserApp = false;
         }
         if (Utils.isProfileOrDeviceOwner(this.mUserManager, this.mDpm, packageInfo.packageName)) {
-            initUninstallButtonForUserApp = false;
+            zInitUninstallButtonForUserApp = false;
         }
         if (Utils.isDeviceProvisioningPackage(this.mContext.getResources(), appEntry.info.packageName)) {
-            initUninstallButtonForUserApp = false;
+            zInitUninstallButtonForUserApp = false;
         }
         if (this.mDpm.isUninstallInQueue(this.mPackageName)) {
-            initUninstallButtonForUserApp = false;
+            zInitUninstallButtonForUserApp = false;
         }
-        if (!initUninstallButtonForUserApp || !this.mHomePackages.contains(packageInfo.packageName)) {
-            z = initUninstallButtonForUserApp;
+        if (!zInitUninstallButtonForUserApp || !this.mHomePackages.contains(packageInfo.packageName)) {
+            z = zInitUninstallButtonForUserApp;
         } else if (!z2) {
             ComponentName homeActivities = this.mPm.getHomeActivities(new ArrayList());
             if (homeActivities == null) {
@@ -150,7 +151,7 @@ public class AppActionButtonPreferenceController extends BasePreferenceControlle
                 this.mActionButtons.setButton1OnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.appinfo.-$$Lambda$AppActionButtonPreferenceController$Ww2IUjWxdICZ6sY_1SuD__XEpOY
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        AppActionButtonPreferenceController.this.mParent.handleUninstallButtonClick();
+                        this.f$0.mParent.handleUninstallButtonClick();
                     }
                 });
             }
@@ -165,13 +166,13 @@ public class AppActionButtonPreferenceController extends BasePreferenceControlle
         if ((packageInfo.applicationInfo.flags & 8388608) != 0 || this.mUserManager.getUsers().size() < 2) {
             if (AppUtils.isInstant(packageInfo.applicationInfo)) {
                 this.mActionButtons.setButton1Visible(false);
+                z = false;
             } else {
                 z = true;
-                this.mActionButtons.setButton1Text(R.string.uninstall_text).setButton1Positive(false);
-                return z;
             }
+        } else {
+            z = false;
         }
-        z = false;
         this.mActionButtons.setButton1Text(R.string.uninstall_text).setButton1Positive(false);
         return z;
     }
@@ -180,52 +181,56 @@ public class AppActionButtonPreferenceController extends BasePreferenceControlle
         if (this.mHomePackages.contains(appEntry.info.packageName) || Utils.isSystemPackage(this.mContext.getResources(), this.mPm, packageInfo)) {
             this.mActionButtons.setButton1Text(R.string.disable_text).setButton1Positive(false);
             return false;
-        } else if (appEntry.info.enabled && appEntry.info.enabledSetting != 4) {
+        }
+        if (appEntry.info.enabled && appEntry.info.enabledSetting != 4) {
             this.mActionButtons.setButton1Text(R.string.disable_text).setButton1Positive(false);
             return true ^ this.mApplicationFeatureProvider.getKeepEnabledPackages().contains(appEntry.info.packageName);
-        } else {
-            this.mActionButtons.setButton1Text(R.string.enable_text).setButton1Positive(true);
-            return true;
         }
+        this.mActionButtons.setButton1Text(R.string.enable_text).setButton1Positive(true);
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateForceStopButton(boolean z) {
-        boolean hasBaseUserRestriction = RestrictedLockUtils.hasBaseUserRestriction(this.mContext, "no_control_apps", this.mUserId);
+    private void updateForceStopButton(boolean z) {
+        boolean zHasBaseUserRestriction = RestrictedLockUtils.hasBaseUserRestriction(this.mContext, "no_control_apps", this.mUserId);
         ActionButtonPreference actionButtonPreference = this.mActionButtons;
-        if (hasBaseUserRestriction) {
+        if (zHasBaseUserRestriction) {
             z = false;
         }
-        actionButtonPreference.setButton2Enabled(z).setButton2OnClickListener(hasBaseUserRestriction ? null : new View.OnClickListener() { // from class: com.android.settings.applications.appinfo.-$$Lambda$AppActionButtonPreferenceController$oIXjjHquqzr1XuPAGEk55khGTJ0
+        actionButtonPreference.setButton2Enabled(z).setButton2OnClickListener(zHasBaseUserRestriction ? null : new View.OnClickListener() { // from class: com.android.settings.applications.appinfo.-$$Lambda$AppActionButtonPreferenceController$oIXjjHquqzr1XuPAGEk55khGTJ0
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                AppActionButtonPreferenceController.this.mParent.handleForceStopButtonClick();
+                this.f$0.mParent.handleForceStopButtonClick();
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void checkForceStop(ApplicationsState.AppEntry appEntry, PackageInfo packageInfo) {
+    void checkForceStop(ApplicationsState.AppEntry appEntry, PackageInfo packageInfo) {
         if (this.mDpm.packageHasActiveAdmins(packageInfo.packageName)) {
             Log.w(TAG, "User can't force stop device admin");
             updateForceStopButton(false);
-        } else if (this.mPm.isPackageStateProtected(packageInfo.packageName, UserHandle.getUserId(appEntry.info.uid))) {
+            return;
+        }
+        if (this.mPm.isPackageStateProtected(packageInfo.packageName, UserHandle.getUserId(appEntry.info.uid))) {
             Log.w(TAG, "User can't force stop protected packages");
             updateForceStopButton(false);
-        } else if (AppUtils.isInstant(packageInfo.applicationInfo)) {
+            return;
+        }
+        if (AppUtils.isInstant(packageInfo.applicationInfo)) {
             updateForceStopButton(false);
             this.mActionButtons.setButton2Visible(false);
-        } else if ((appEntry.info.flags & 2097152) == 0) {
+            return;
+        }
+        if ((appEntry.info.flags & 2097152) == 0) {
             Log.w(TAG, "App is not explicitly stopped");
             updateForceStopButton(true);
-        } else {
-            Intent intent = new Intent("android.intent.action.QUERY_PACKAGE_RESTART", Uri.fromParts("package", appEntry.info.packageName, null));
-            intent.putExtra("android.intent.extra.PACKAGES", new String[]{appEntry.info.packageName});
-            intent.putExtra("android.intent.extra.UID", appEntry.info.uid);
-            intent.putExtra("android.intent.extra.user_handle", UserHandle.getUserId(appEntry.info.uid));
-            Log.d(TAG, "Sending broadcast to query restart status for " + appEntry.info.packageName);
-            this.mContext.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT, null, this.mCheckKillProcessesReceiver, null, 0, null, null);
+            return;
         }
+        Intent intent = new Intent("android.intent.action.QUERY_PACKAGE_RESTART", Uri.fromParts("package", appEntry.info.packageName, null));
+        intent.putExtra("android.intent.extra.PACKAGES", new String[]{appEntry.info.packageName});
+        intent.putExtra("android.intent.extra.UID", appEntry.info.uid);
+        intent.putExtra("android.intent.extra.user_handle", UserHandle.getUserId(appEntry.info.uid));
+        Log.d(TAG, "Sending broadcast to query restart status for " + appEntry.info.packageName);
+        this.mContext.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT, null, this.mCheckKillProcessesReceiver, null, 0, null, null);
     }
 
     private boolean signaturesMatch(String str, String str2) {

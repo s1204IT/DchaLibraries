@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.os.Handler;
 import android.provider.Settings;
+
 /* loaded from: classes.dex */
 public abstract class SecureSetting extends ContentObserver {
     private final Context mContext;
@@ -39,10 +40,10 @@ public abstract class SecureSetting extends ContentObserver {
         if (z) {
             this.mObservedValue = getValue();
             this.mContext.getContentResolver().registerContentObserver(Settings.Secure.getUriFor(this.mSettingName), false, this, this.mUserId);
-            return;
+        } else {
+            this.mContext.getContentResolver().unregisterContentObserver(this);
+            this.mObservedValue = 0;
         }
-        this.mContext.getContentResolver().unregisterContentObserver(this);
-        this.mObservedValue = 0;
     }
 
     @Override // android.database.ContentObserver

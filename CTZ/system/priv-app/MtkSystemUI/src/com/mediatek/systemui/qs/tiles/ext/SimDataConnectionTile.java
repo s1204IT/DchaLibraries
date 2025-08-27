@@ -14,6 +14,7 @@ import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import com.android.internal.telephony.PhoneConstants;
+import com.android.systemui.plugins.R;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
@@ -21,7 +22,9 @@ import com.mediatek.systemui.ext.IQuickSettingsPlugin;
 import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
 import com.mediatek.systemui.statusbar.extcb.IconIdWrapper;
 import com.mediatek.systemui.statusbar.util.SIMHelper;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
     private boolean mListening;
@@ -29,7 +32,6 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
     private SimDataSwitchStateMachine mSimDataSwitchStateMachine;
     private CharSequence mTileLabel;
 
-    /* loaded from: classes.dex */
     public enum SIMConnState {
         SIM1_E_D,
         SIM1_E_E,
@@ -70,7 +72,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
         this.mSimDataSwitchStateMachine = new SimDataSwitchStateMachine();
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -104,22 +106,20 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 111;
+        return R.styleable.AppCompatTheme_windowActionBar;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
-        int ordinal = this.mSimDataSwitchStateMachine.getCurrentSimConnState().ordinal();
-        IQuickSettingsPlugin makeQuickSettings = OpSystemUICustomizationFactoryBase.getOpFactory(this.mContext).makeQuickSettings(this.mContext);
-        makeQuickSettings.customizeSimDataConnectionTile(ordinal, this.mSimConnectionIconWrapperArray[ordinal]);
-        booleanState.icon = QsIconWrapper.get(this.mSimConnectionIconWrapperArray[ordinal].getIconId(), this.mSimConnectionIconWrapperArray[ordinal]);
-        booleanState.label = makeQuickSettings.getTileLabel("simdataconnection");
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+        int iOrdinal = this.mSimDataSwitchStateMachine.getCurrentSimConnState().ordinal();
+        IQuickSettingsPlugin iQuickSettingsPluginMakeQuickSettings = OpSystemUICustomizationFactoryBase.getOpFactory(this.mContext).makeQuickSettings(this.mContext);
+        iQuickSettingsPluginMakeQuickSettings.customizeSimDataConnectionTile(iOrdinal, this.mSimConnectionIconWrapperArray[iOrdinal]);
+        booleanState.icon = QsIconWrapper.get(this.mSimConnectionIconWrapperArray[iOrdinal].getIconId(), this.mSimConnectionIconWrapperArray[iOrdinal]);
+        booleanState.label = iQuickSettingsPluginMakeQuickSettings.getTileLabel("simdataconnection");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SimDataSwitchStateMachine {
+    private class SimDataSwitchStateMachine {
         private boolean mIsAirlineMode;
         protected boolean mIsUserSwitching;
         boolean mMmsOngoing;
@@ -158,17 +158,20 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
                         SimDataSwitchStateMachine.this.setAirplaneMode(booleanExtra);
                     }
                     SimDataSwitchStateMachine.this.updateSimConnTile();
-                } else if (action.equals("android.intent.action.ANY_DATA_STATE")) {
+                    return;
+                }
+                if (action.equals("android.intent.action.ANY_DATA_STATE")) {
                     PhoneConstants.DataState mobileDataState = SimDataSwitchStateMachine.this.getMobileDataState(intent);
                     String stringExtra = intent.getStringExtra("apnType");
                     if (stringExtra != null) {
-                        String[] split = stringExtra.split(",");
-                        int length = split.length;
+                        String[] strArrSplit = stringExtra.split(",");
+                        int length = strArrSplit.length;
                         int i = 0;
                         while (true) {
                             if (i >= length) {
                                 break;
-                            } else if (!"default".equals(split[i])) {
+                            }
+                            if (!"default".equals(strArrSplit[i])) {
                                 i++;
                             } else {
                                 z = true;
@@ -179,22 +182,33 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
                     if (z) {
                         if ((mobileDataState == PhoneConstants.DataState.CONNECTED || mobileDataState == PhoneConstants.DataState.DISCONNECTED) && !SimDataSwitchStateMachine.this.isMmsOngoing()) {
                             SimDataSwitchStateMachine.this.updateSimConnTile();
+                            return;
                         }
+                        return;
                     }
-                } else if (action.equals("android.intent.action.ACTION_SUBINFO_CONTENT_CHANGE")) {
+                    return;
+                }
+                if (action.equals("android.intent.action.ACTION_SUBINFO_CONTENT_CHANGE")) {
                     SimDataSwitchStateMachine.this.updateSimConnTile();
-                } else if (action.equals("android.intent.action.ACTION_SUBINFO_RECORD_UPDATED")) {
+                    return;
+                }
+                if (action.equals("android.intent.action.ACTION_SUBINFO_RECORD_UPDATED")) {
                     SimDataSwitchStateMachine.this.unRegisterPhoneStateListener();
                     SimDataSwitchStateMachine.this.updateSimConnTile();
                     SimDataSwitchStateMachine.this.registerPhoneStateListener();
-                } else if (action.equals("com.android.mms.transaction.START")) {
-                    if (!SimDataConnectionTile.this.isWifiOnlyDevice() && SimDataSwitchStateMachine.this.mSimConnStateTrackerReady) {
-                        SimDataSwitchStateMachine.this.setIsMmsOnging(true);
+                } else {
+                    if (action.equals("com.android.mms.transaction.START")) {
+                        if (!SimDataConnectionTile.this.isWifiOnlyDevice() && SimDataSwitchStateMachine.this.mSimConnStateTrackerReady) {
+                            SimDataSwitchStateMachine.this.setIsMmsOnging(true);
+                            SimDataSwitchStateMachine.this.updateSimConnTile();
+                            return;
+                        }
+                        return;
+                    }
+                    if (action.equals("com.android.mms.transaction.STOP") && !SimDataConnectionTile.this.isWifiOnlyDevice() && SimDataSwitchStateMachine.this.mSimConnStateTrackerReady) {
+                        SimDataSwitchStateMachine.this.setIsMmsOnging(false);
                         SimDataSwitchStateMachine.this.updateSimConnTile();
                     }
-                } else if (action.equals("com.android.mms.transaction.STOP") && !SimDataConnectionTile.this.isWifiOnlyDevice() && SimDataSwitchStateMachine.this.mSimConnStateTrackerReady) {
-                    SimDataSwitchStateMachine.this.setIsMmsOnging(false);
-                    SimDataSwitchStateMachine.this.updateSimConnTile();
                 }
             }
         };
@@ -210,8 +224,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             this.mPhoneStateListener = new PhoneStateListener[this.mSlotCount];
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void registerReceiver() {
+        private void registerReceiver() {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction("android.intent.action.AIRPLANE_MODE");
             intentFilter.addAction("com.android.mms.transaction.START");
@@ -223,13 +236,11 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             SimDataConnectionTile.this.mContext.registerReceiver(this.mSimStateIntentReceiver, intentFilter);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void unregisterReceiver() {
+        private void unregisterReceiver() {
             SimDataConnectionTile.this.mContext.unregisterReceiver(this.mSimStateIntentReceiver);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void updateSimConnTile() {
+        private void updateSimConnTile() {
             onActualStateChange(SimDataConnectionTile.this.mContext, null);
             SimDataConnectionTile.this.refreshState();
         }
@@ -243,8 +254,8 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             boolean z;
             boolean z2;
             List<SubscriptionInfo> activeSubscriptionInfoList = SubscriptionManager.from(context).getActiveSubscriptionInfoList();
-            boolean isSimEnable = isSimEnable(activeSubscriptionInfoList, 0);
-            boolean isSimEnable2 = isSimEnable(activeSubscriptionInfoList, 1);
+            boolean zIsSimEnable = isSimEnable(activeSubscriptionInfoList, 0);
+            boolean zIsSimEnable2 = isSimEnable(activeSubscriptionInfoList, 1);
             int defaultDataSubscriptionId = SubscriptionManager.getDefaultDataSubscriptionId();
             if (SubscriptionManager.getSlotIndex(defaultDataSubscriptionId) != 0) {
                 if (SubscriptionManager.getSlotIndex(defaultDataSubscriptionId) != 1) {
@@ -258,43 +269,43 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
                 z2 = false;
                 z = true;
             }
-            Log.d("SimDataConnectionTile", "SimConnStateTracker onActualStateChange sim1Enable = " + isSimEnable + ", sim2Enable = " + isSimEnable2);
-            if (isSimEnable || isSimEnable2) {
-                boolean isDataConnected = isDataConnected();
-                Log.d("SimDataConnectionTile", "onActualStateChange, dataConnected = " + isDataConnected + ", sim1Enable = " + isSimEnable + ", sim2Enable = " + isSimEnable2 + ", sim1Conn = " + z + ", sim2Conn = " + z2);
-                if (isDataConnected) {
-                    if (isSimEnable && isSimEnable2) {
+            Log.d("SimDataConnectionTile", "SimConnStateTracker onActualStateChange sim1Enable = " + zIsSimEnable + ", sim2Enable = " + zIsSimEnable2);
+            if (zIsSimEnable || zIsSimEnable2) {
+                boolean zIsDataConnected = isDataConnected();
+                Log.d("SimDataConnectionTile", "onActualStateChange, dataConnected = " + zIsDataConnected + ", sim1Enable = " + zIsSimEnable + ", sim2Enable = " + zIsSimEnable2 + ", sim1Conn = " + z + ", sim2Conn = " + z2);
+                if (zIsDataConnected) {
+                    if (zIsSimEnable && zIsSimEnable2) {
                         if (z) {
                             this.mCurrentSimConnState = SIMConnState.SIM1_E_E;
                         } else {
                             this.mCurrentSimConnState = SIMConnState.SIM2_E_E;
                         }
-                    } else if (!isSimEnable && isSimEnable2) {
+                    } else if (!zIsSimEnable && zIsSimEnable2) {
                         if (isSimInsertedWithUnAvaliable(activeSubscriptionInfoList, 0) && z) {
                             this.mCurrentSimConnState = SIMConnState.SIM1_E_F;
                         } else {
                             this.mCurrentSimConnState = SIMConnState.SIM2_D_E;
                         }
-                    } else if (isSimEnable && !isSimEnable2) {
+                    } else if (zIsSimEnable && !zIsSimEnable2) {
                         if (isSimInsertedWithUnAvaliable(activeSubscriptionInfoList, 1) && z2) {
                             this.mCurrentSimConnState = SIMConnState.SIM2_E_F;
                         } else {
                             this.mCurrentSimConnState = SIMConnState.SIM1_D_E;
                         }
                     }
-                } else if (isSimEnable && isSimEnable2) {
+                } else if (zIsSimEnable && zIsSimEnable2) {
                     if (z) {
                         this.mCurrentSimConnState = SIMConnState.SIM1_E_D;
                     } else {
                         this.mCurrentSimConnState = SIMConnState.SIM2_E_D;
                     }
-                } else if (!isSimEnable && isSimEnable2) {
+                } else if (!zIsSimEnable && zIsSimEnable2) {
                     if (isSimInsertedWithUnAvaliable(activeSubscriptionInfoList, 0) && z) {
                         this.mCurrentSimConnState = SIMConnState.SIM1_E_F;
                     } else {
                         this.mCurrentSimConnState = SIMConnState.SIM2_D_D;
                     }
-                } else if (isSimEnable && !isSimEnable2) {
+                } else if (zIsSimEnable && !zIsSimEnable2) {
                     if (isSimInsertedWithUnAvaliable(activeSubscriptionInfoList, 1) && z2) {
                         this.mCurrentSimConnState = SIMConnState.SIM2_E_F;
                     } else {
@@ -345,37 +356,35 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
                 case SIM1_D_F:
                 case SIM2_D_F:
                     Log.d("SimDataConnectionTile", "No Sim or one Sim do nothing!");
-                    return;
+                    break;
                 case SIM1_E_D:
                     Log.d("SimDataConnectionTile", "Try to switch from Sim1 to Sim2! mSimCurrentCurrentState=" + this.mCurrentSimConnState);
                     this.mCurrentSimConnState = SIMConnState.SIM2_E_D;
                     switchDataDefaultSIM(1);
-                    return;
+                    break;
                 case SIM1_E_E:
                     Log.d("SimDataConnectionTile", "Try to switch from Sim1 to Sim2! mSimCurrentCurrentState=" + this.mCurrentSimConnState);
                     this.mCurrentSimConnState = SIMConnState.SIM2_E_E;
                     switchDataDefaultSIM(1);
-                    return;
+                    break;
                 case SIM2_E_D:
                     Log.d("SimDataConnectionTile", "Try to switch from Sim2 to Sim1! mSimCurrentCurrentState=" + this.mCurrentSimConnState);
                     this.mCurrentSimConnState = SIMConnState.SIM1_E_D;
                     switchDataDefaultSIM(0);
-                    return;
+                    break;
                 case SIM2_E_E:
                     Log.d("SimDataConnectionTile", "Try to switch from Sim2 to Sim1! mSimCurrentCurrentState=" + this.mCurrentSimConnState);
                     this.mCurrentSimConnState = SIMConnState.SIM1_E_E;
                     switchDataDefaultSIM(0);
-                    return;
+                    break;
                 case SIM1_E_F:
                     Log.d("SimDataConnectionTile", "Try to switch from Sim1 to Sim2! mSimCurrentCurrentState=" + this.mCurrentSimConnState);
                     switchDataDefaultSIM(1);
-                    return;
+                    break;
                 case SIM2_E_F:
                     Log.d("SimDataConnectionTile", "Try to switch from Sim2 to Sim1! mSimCurrentCurrentState=" + this.mCurrentSimConnState);
                     switchDataDefaultSIM(0);
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
 
@@ -422,18 +431,15 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             return TelephonyManager.getDefault().getDataState() == 2;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setIsMmsOnging(boolean z) {
+        private void setIsMmsOnging(boolean z) {
             this.mMmsOngoing = z;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public boolean isMmsOngoing() {
+        private boolean isMmsOngoing() {
             return this.mMmsOngoing;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setAirplaneMode(boolean z) {
+        private void setAirplaneMode(boolean z) {
             this.mIsAirlineMode = z;
         }
 
@@ -449,8 +455,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             return this.mIsUserSwitching;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public PhoneConstants.DataState getMobileDataState(Intent intent) {
+        private PhoneConstants.DataState getMobileDataState(Intent intent) {
             String stringExtra = intent.getStringExtra("state");
             if (stringExtra != null) {
                 return Enum.valueOf(PhoneConstants.DataState.class, stringExtra);
@@ -458,8 +463,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             return PhoneConstants.DataState.DISCONNECTED;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void registerPhoneStateListener() {
+        private void registerPhoneStateListener() {
             for (int i = 0; i < this.mSlotCount; i++) {
                 int firstSubInSlot = SIMHelper.getFirstSubInSlot(i);
                 if (firstSubInSlot >= 0) {
@@ -481,8 +485,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             };
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void unRegisterPhoneStateListener() {
+        private void unRegisterPhoneStateListener() {
             for (int i = 0; i < this.mSlotCount; i++) {
                 if (this.mPhoneStateListener[i] != null) {
                     this.mTelephonyManager.listen(this.mPhoneStateListener[i], 0);
@@ -491,21 +494,20 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isWifiOnlyDevice() {
+    private boolean isWifiOnlyDevice() {
         Context context = this.mContext;
         Context context2 = this.mContext;
         return !((ConnectivityManager) context.getSystemService("connectivity")).isNetworkSupported(0);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isSimInsertedBySlot(List<SubscriptionInfo> list, int i) {
+    private boolean isSimInsertedBySlot(List<SubscriptionInfo> list, int i) {
         if (i >= SIMHelper.getSlotCount()) {
             return false;
         }
         if (list != null && list.size() > 0) {
-            for (SubscriptionInfo subscriptionInfo : list) {
-                if (subscriptionInfo.getSimSlotIndex() == i) {
+            Iterator<SubscriptionInfo> it = list.iterator();
+            while (it.hasNext()) {
+                if (it.next().getSimSlotIndex() == i) {
                     return true;
                 }
             }

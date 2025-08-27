@@ -19,6 +19,7 @@ import android.widget.TextView;
 import java.io.File;
 import jp.co.benesse.dcha.dchaservice.IDchaService;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class TabletIntroductionSettingActivity extends ParentSettingActivity implements View.OnClickListener {
     private static final String ACTION_DATABOX_COMMAND = "jp.co.benesse.dcha.databox.intent.action.COMMAND";
@@ -37,6 +38,9 @@ public class TabletIntroductionSettingActivity extends ParentSettingActivity imp
     private static final Uri URI_TEST_ENVIRONMENT_INFO = Uri.parse("content://jp.co.benesse.dcha.databox.db.KvsProvider/kvs/test.environment.info");
     protected Handler mHandler = new Handler();
     public BroadcastReceiver mImportedEnvironmentReceiver = new BroadcastReceiver() { // from class: jp.co.benesse.dcha.setupwizard.TabletIntroductionSettingActivity.1
+        AnonymousClass1() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             Logger.d(TabletIntroductionSettingActivity.TAG, "onReceive 0001");
@@ -55,17 +59,20 @@ public class TabletIntroductionSettingActivity extends ParentSettingActivity imp
     };
     protected IDchaService mDchaService = null;
     protected ServiceConnection mDchaServiceConnection = new ServiceConnection() { // from class: jp.co.benesse.dcha.setupwizard.TabletIntroductionSettingActivity.2
+        AnonymousClass2() {
+        }
+
         @Override // android.content.ServiceConnection
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             Logger.d(TabletIntroductionSettingActivity.TAG, "onServiceConnected 0001");
             TabletIntroductionSettingActivity.this.mDchaService = IDchaService.Stub.asInterface(iBinder);
-            String str = System.getenv("SECONDARY_STORAGE");
+            String absolutePath = System.getenv("SECONDARY_STORAGE");
             try {
-                File file = new File(str, TabletIntroductionSettingActivity.IMPORT_ENVIRONMENT_FILENAME);
+                File file = new File(absolutePath, TabletIntroductionSettingActivity.IMPORT_ENVIRONMENT_FILENAME);
                 File file2 = new File(TabletIntroductionSettingActivity.this.getFilesDir(), TabletIntroductionSettingActivity.TEMP_DIR);
                 if (TabletIntroductionSettingActivity.this.mDchaService.copyFile(file.getAbsolutePath(), file2.getAbsolutePath())) {
                     Logger.d(TabletIntroductionSettingActivity.TAG, "onServiceConnected 0002");
-                    str = file2.getAbsolutePath();
+                    absolutePath = file2.getAbsolutePath();
                 }
             } catch (RemoteException e) {
                 Logger.e(TabletIntroductionSettingActivity.TAG, "onServiceConnected 0003", e);
@@ -73,7 +80,7 @@ public class TabletIntroductionSettingActivity extends ParentSettingActivity imp
             Intent intent = new Intent();
             intent.setAction(TabletIntroductionSettingActivity.ACTION_DATABOX_COMMAND);
             intent.addCategory(TabletIntroductionSettingActivity.CATEGORIES_DATABOX_IMPORT_ENVIRONMENT);
-            intent.putExtra(TabletIntroductionSettingActivity.EXTRA_KEY_EXTERNAL_STORAGE, str);
+            intent.putExtra(TabletIntroductionSettingActivity.EXTRA_KEY_EXTERNAL_STORAGE, absolutePath);
             TabletIntroductionSettingActivity.this.sendBroadcast(intent);
             Logger.d(TabletIntroductionSettingActivity.TAG, "onServiceConnected 0004");
         }
@@ -86,9 +93,66 @@ public class TabletIntroductionSettingActivity extends ParentSettingActivity imp
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* renamed from: jp.co.benesse.dcha.setupwizard.TabletIntroductionSettingActivity$1 */
+    class AnonymousClass1 extends BroadcastReceiver {
+        AnonymousClass1() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            Logger.d(TabletIntroductionSettingActivity.TAG, "onReceive 0001");
+            if (TabletIntroductionSettingActivity.this.mTestEnvironmentText != null) {
+                Logger.d(TabletIntroductionSettingActivity.TAG, "onReceive 0002");
+                TabletIntroductionSettingActivity.this.mTestEnvironmentText.setText(BuildConfig.FLAVOR);
+                String kvsValue = TabletIntroductionSettingActivity.this.getKvsValue(context, TabletIntroductionSettingActivity.URI_TEST_ENVIRONMENT_INFO, TabletIntroductionSettingActivity.KEY_ENVIRONMENT, null);
+                String kvsValue2 = TabletIntroductionSettingActivity.this.getKvsValue(context, TabletIntroductionSettingActivity.URI_TEST_ENVIRONMENT_INFO, TabletIntroductionSettingActivity.KEY_VERSION, null);
+                if (!TextUtils.isEmpty(kvsValue) && !TextUtils.isEmpty(kvsValue2)) {
+                    Logger.d(TabletIntroductionSettingActivity.TAG, "onReceive 0003");
+                    TabletIntroductionSettingActivity.this.mTestEnvironmentText.setText(TabletIntroductionSettingActivity.this.getString(R.string.test_environment_format, new Object[]{kvsValue, kvsValue2}));
+                }
+            }
+            Logger.d(TabletIntroductionSettingActivity.TAG, "onReceive 0004");
+        }
+    }
+
+    /* renamed from: jp.co.benesse.dcha.setupwizard.TabletIntroductionSettingActivity$2 */
+    class AnonymousClass2 implements ServiceConnection {
+        AnonymousClass2() {
+        }
+
+        @Override // android.content.ServiceConnection
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Logger.d(TabletIntroductionSettingActivity.TAG, "onServiceConnected 0001");
+            TabletIntroductionSettingActivity.this.mDchaService = IDchaService.Stub.asInterface(iBinder);
+            String absolutePath = System.getenv("SECONDARY_STORAGE");
+            try {
+                File file = new File(absolutePath, TabletIntroductionSettingActivity.IMPORT_ENVIRONMENT_FILENAME);
+                File file2 = new File(TabletIntroductionSettingActivity.this.getFilesDir(), TabletIntroductionSettingActivity.TEMP_DIR);
+                if (TabletIntroductionSettingActivity.this.mDchaService.copyFile(file.getAbsolutePath(), file2.getAbsolutePath())) {
+                    Logger.d(TabletIntroductionSettingActivity.TAG, "onServiceConnected 0002");
+                    absolutePath = file2.getAbsolutePath();
+                }
+            } catch (RemoteException e) {
+                Logger.e(TabletIntroductionSettingActivity.TAG, "onServiceConnected 0003", e);
+            }
+            Intent intent = new Intent();
+            intent.setAction(TabletIntroductionSettingActivity.ACTION_DATABOX_COMMAND);
+            intent.addCategory(TabletIntroductionSettingActivity.CATEGORIES_DATABOX_IMPORT_ENVIRONMENT);
+            intent.putExtra(TabletIntroductionSettingActivity.EXTRA_KEY_EXTERNAL_STORAGE, absolutePath);
+            TabletIntroductionSettingActivity.this.sendBroadcast(intent);
+            Logger.d(TabletIntroductionSettingActivity.TAG, "onServiceConnected 0004");
+        }
+
+        @Override // android.content.ServiceConnection
+        public void onServiceDisconnected(ComponentName componentName) {
+            Logger.d(TabletIntroductionSettingActivity.TAG, "onServiceDisconnected 0001");
+            TabletIntroductionSettingActivity.this.mDchaService = null;
+            Logger.d(TabletIntroductionSettingActivity.TAG, "onServiceDisconnected 0002");
+        }
+    }
+
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d(TAG, "onCreate 0001");
         super.onCreate(bundle);
         setContentView(R.layout.act_tablet_introduction);
@@ -96,6 +160,9 @@ public class TabletIntroductionSettingActivity extends ParentSettingActivity imp
         this.mTestEnvironmentText = (TextView) findViewById(R.id.test_environment_text);
         setFont(this.mTestEnvironmentText);
         this.mHandler.postDelayed(new Runnable() { // from class: jp.co.benesse.dcha.setupwizard.TabletIntroductionSettingActivity.3
+            AnonymousClass3() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 if (TabletIntroductionSettingActivity.this.mStartBtn != null) {
@@ -106,9 +173,21 @@ public class TabletIntroductionSettingActivity extends ParentSettingActivity imp
         Logger.d(TAG, "onCreate 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* renamed from: jp.co.benesse.dcha.setupwizard.TabletIntroductionSettingActivity$3 */
+    class AnonymousClass3 implements Runnable {
+        AnonymousClass3() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (TabletIntroductionSettingActivity.this.mStartBtn != null) {
+                TabletIntroductionSettingActivity.this.mStartBtn.setOnClickListener(TabletIntroductionSettingActivity.this);
+            }
+        }
+    }
+
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         Logger.d(TAG, "onStart 0001");
         super.onStart();
         File file = new File(getFilesDir(), TEMP_DIR);
@@ -132,9 +211,8 @@ public class TabletIntroductionSettingActivity extends ParentSettingActivity imp
         Logger.d(TAG, "onStart 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         Logger.d(TAG, "onStop 0001");
         super.onStop();
         if (this.mDchaServiceConnection != null && this.mDchaService != null) {
@@ -163,9 +241,8 @@ public class TabletIntroductionSettingActivity extends ParentSettingActivity imp
         Logger.d(TAG, "onStop 0008");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d(TAG, "onDestroy 0001");
         super.onDestroy();
         this.mStartBtn.setOnClickListener(null);
@@ -188,33 +265,26 @@ public class TabletIntroductionSettingActivity extends ParentSettingActivity imp
         Logger.d(TAG, "onClick 0002");
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:10:0x002c, code lost:
-        if (r10 != null) goto L12;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:11:0x002e, code lost:
-        r10.close();
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:17:0x003a, code lost:
-        if (r10 == null) goto L20;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     protected String getKvsValue(Context context, Uri uri, String str, String str2) {
         if (context != null) {
             String[] strArr = {str};
-            Cursor cursor = null;
+            Cursor cursorQuery = null;
             try {
-                cursor = context.getContentResolver().query(uri, new String[]{COLUMN_KVS_VALUE}, COLUMN_KVS_SELECTION, strArr, null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    str2 = cursor.getString(cursor.getColumnIndex(COLUMN_KVS_VALUE));
+                cursorQuery = context.getContentResolver().query(uri, new String[]{COLUMN_KVS_VALUE}, COLUMN_KVS_SELECTION, strArr, null);
+                if (cursorQuery != null && cursorQuery.moveToFirst()) {
+                    str2 = cursorQuery.getString(cursorQuery.getColumnIndex(COLUMN_KVS_VALUE));
                 }
             } catch (Exception unused) {
+                if (cursorQuery != null) {
+                }
             } catch (Throwable th) {
-                if (cursor != null) {
-                    cursor.close();
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
                 throw th;
+            }
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
         }
         return str2;

@@ -5,6 +5,7 @@ import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.model.ModelWriter;
 import com.android.launcher3.util.ContentWriter;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class FolderInfo extends ItemInfo {
     public static final int FLAG_ITEMS_SORTED = 1;
@@ -15,7 +16,6 @@ public class FolderInfo extends ItemInfo {
     ArrayList<FolderListener> listeners = new ArrayList<>();
     public int options;
 
-    /* loaded from: classes.dex */
     public interface FolderListener {
         void onAdd(ShortcutInfo shortcutInfo, int i);
 
@@ -38,10 +38,10 @@ public class FolderInfo extends ItemInfo {
     }
 
     public void add(ShortcutInfo shortcutInfo, int i, boolean z) {
-        int boundToRange = Utilities.boundToRange(i, 0, this.contents.size());
-        this.contents.add(boundToRange, shortcutInfo);
+        int iBoundToRange = Utilities.boundToRange(i, 0, this.contents.size());
+        this.contents.add(iBoundToRange, shortcutInfo);
         for (int i2 = 0; i2 < this.listeners.size(); i2++) {
-            this.listeners.get(i2).onAdd(shortcutInfo, boundToRange);
+            this.listeners.get(i2).onAdd(shortcutInfo, iBoundToRange);
         }
         itemsChanged(z);
     }

@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import com.android.launcher3.BaseRecyclerView;
 import com.android.launcher3.R;
+
 /* loaded from: classes.dex */
 public class WidgetsRecyclerView extends BaseRecyclerView implements RecyclerView.OnItemTouchListener {
     private WidgetsListAdapter mAdapter;

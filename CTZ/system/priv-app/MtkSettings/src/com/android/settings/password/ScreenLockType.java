@@ -1,4 +1,5 @@
 package com.android.settings.password;
+
 /* loaded from: classes.dex */
 public enum ScreenLockType {
     NONE(0, "unlock_set_off"),
@@ -7,7 +8,7 @@ public enum ScreenLockType {
     PIN(131072, 196608, "unlock_set_pin"),
     PASSWORD(262144, 393216, "unlock_set_password"),
     MANAGED(524288, "unlock_set_managed");
-    
+
     public final int defaultQuality;
     public final int maxQuality;
     public final String preferenceKey;
@@ -25,26 +26,25 @@ public enum ScreenLockType {
     }
 
     public static ScreenLockType fromQuality(int i) {
-        if (i != 0) {
-            if (i != 65536) {
-                if (i == 131072 || i == 196608) {
-                    return PIN;
-                }
-                if (i == 262144 || i == 327680 || i == 393216) {
-                    return PASSWORD;
-                }
-                if (i == 524288) {
-                    return MANAGED;
-                }
-                return null;
-            }
+        if (i == 0) {
+            return SWIPE;
+        }
+        if (i == 65536) {
             return PATTERN;
         }
-        return SWIPE;
+        if (i == 131072 || i == 196608) {
+            return PIN;
+        }
+        if (i == 262144 || i == 327680 || i == 393216) {
+            return PASSWORD;
+        }
+        if (i == 524288) {
+            return MANAGED;
+        }
+        return null;
     }
 
     public static ScreenLockType fromKey(String str) {
-        ScreenLockType[] values;
         for (ScreenLockType screenLockType : values()) {
             if (screenLockType.preferenceKey.equals(str)) {
                 return screenLockType;

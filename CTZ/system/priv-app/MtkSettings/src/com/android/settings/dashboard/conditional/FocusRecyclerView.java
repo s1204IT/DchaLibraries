@@ -3,17 +3,16 @@ package com.android.settings.dashboard.conditional;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+
 /* loaded from: classes.dex */
 public class FocusRecyclerView extends RecyclerView {
     private DetachListener mDetachListener;
     private FocusListener mListener;
 
-    /* loaded from: classes.dex */
     public interface DetachListener {
         void onDetachedFromWindow();
     }
 
-    /* loaded from: classes.dex */
     public interface FocusListener {
         void onWindowFocusChanged(boolean z);
     }

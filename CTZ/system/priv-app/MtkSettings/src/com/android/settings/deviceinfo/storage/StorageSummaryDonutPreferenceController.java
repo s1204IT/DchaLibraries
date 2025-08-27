@@ -8,6 +8,7 @@ import android.text.format.Formatter;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class StorageSummaryDonutPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private StorageSummaryDonutPreference mSummary;
@@ -28,8 +29,8 @@ public class StorageSummaryDonutPreferenceController extends AbstractPreferenceC
     public void updateState(Preference preference) {
         super.updateState(preference);
         StorageSummaryDonutPreference storageSummaryDonutPreference = (StorageSummaryDonutPreference) preference;
-        Formatter.BytesResult formatBytes = Formatter.formatBytes(this.mContext.getResources(), this.mUsedBytes, 0);
-        storageSummaryDonutPreference.setTitle(TextUtils.expandTemplate(this.mContext.getText(R.string.storage_size_large_alternate), formatBytes.value, formatBytes.units));
+        Formatter.BytesResult bytes = Formatter.formatBytes(this.mContext.getResources(), this.mUsedBytes, 0);
+        storageSummaryDonutPreference.setTitle(TextUtils.expandTemplate(this.mContext.getText(R.string.storage_size_large_alternate), bytes.value, bytes.units));
         storageSummaryDonutPreference.setSummary(this.mContext.getString(R.string.storage_volume_total, Formatter.formatShortFileSize(this.mContext, this.mTotalBytes)));
         storageSummaryDonutPreference.setPercent(this.mUsedBytes, this.mTotalBytes);
         storageSummaryDonutPreference.setEnabled(true);

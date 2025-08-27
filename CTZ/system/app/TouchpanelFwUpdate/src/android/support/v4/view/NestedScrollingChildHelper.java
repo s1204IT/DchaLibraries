@@ -2,6 +2,7 @@ package android.support.v4.view;
 
 import android.view.View;
 import android.view.ViewParent;
+
 /* loaded from: classes.dex */
 public class NestedScrollingChildHelper {
     private boolean mIsNestedScrollingEnabled;
@@ -156,12 +157,10 @@ public class NestedScrollingChildHelper {
         switch (type) {
             case 0:
                 this.mNestedScrollingParentTouch = p;
-                return;
+                break;
             case 1:
                 this.mNestedScrollingParentNonTouch = p;
-                return;
-            default:
-                return;
+                break;
         }
     }
 }

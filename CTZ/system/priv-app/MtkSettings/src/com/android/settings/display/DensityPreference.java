@@ -12,6 +12,7 @@ import com.android.settings.Utils;
 import com.android.settingslib.CustomEditTextPreference;
 import com.android.settingslib.display.DisplayDensityUtils;
 import java.text.NumberFormat;
+
 /* loaded from: classes.dex */
 public class DensityPreference extends CustomEditTextPreference {
     public DensityPreference(Context context, AttributeSet attributeSet) {
@@ -25,15 +26,13 @@ public class DensityPreference extends CustomEditTextPreference {
     }
 
     private int getCurrentSwDp() {
-        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        return (int) (Math.min(displayMetrics.widthPixels, displayMetrics.heightPixels) / displayMetrics.density);
+        return (int) (Math.min(r0.widthPixels, r0.heightPixels) / getContext().getResources().getDisplayMetrics().density);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomEditTextPreference
-    public void onBindDialogView(View view) {
+    protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        EditText editText = (EditText) view.findViewById(16908291);
+        EditText editText = (EditText) view.findViewById(android.R.id.edit);
         if (editText != null) {
             editText.setInputType(2);
             editText.setText(getCurrentSwDp() + "");
@@ -41,13 +40,12 @@ public class DensityPreference extends CustomEditTextPreference {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomEditTextPreference
-    public void onDialogClosed(boolean z) {
+    protected void onDialogClosed(boolean z) {
         if (z) {
             try {
                 DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-                DisplayDensityUtils.setForcedDisplayDensity(0, Math.max((160 * Math.min(displayMetrics.widthPixels, displayMetrics.heightPixels)) / Math.max(Integer.parseInt(getText()), 320), (int) android.support.v7.appcompat.R.styleable.AppCompatTheme_windowNoTitle));
+                DisplayDensityUtils.setForcedDisplayDensity(0, Math.max((160 * Math.min(displayMetrics.widthPixels, displayMetrics.heightPixels)) / Math.max(Integer.parseInt(getText()), 320), 120));
             } catch (Exception e) {
                 Slog.e("DensityPreference", "Couldn't save density", e);
             }

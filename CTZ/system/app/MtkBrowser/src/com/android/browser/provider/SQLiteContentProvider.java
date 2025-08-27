@@ -14,6 +14,7 @@ import android.net.Uri;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public abstract class SQLiteContentProvider extends ContentProvider {
     private final ThreadLocal<Boolean> mApplyingBatch = new ThreadLocal<>();
@@ -36,8 +37,7 @@ public abstract class SQLiteContentProvider extends ContentProvider {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void postNotifyUri(Uri uri) {
+    protected void postNotifyUri(Uri uri) {
         synchronized (this.mChangedUris) {
             this.mChangedUris.add(uri);
         }
@@ -53,33 +53,33 @@ public abstract class SQLiteContentProvider extends ContentProvider {
 
     @Override // android.content.ContentProvider
     public Uri insert(Uri uri, ContentValues contentValues) {
-        boolean isCallerSyncAdapter = isCallerSyncAdapter(uri);
+        boolean zIsCallerSyncAdapter = isCallerSyncAdapter(uri);
         if (!applyingBatch()) {
             this.mDb = this.mOpenHelper.getWritableDatabase();
             this.mDb.beginTransaction();
             try {
-                Uri insertInTransaction = insertInTransaction(uri, contentValues, isCallerSyncAdapter);
+                Uri uriInsertInTransaction = insertInTransaction(uri, contentValues, zIsCallerSyncAdapter);
                 this.mDb.setTransactionSuccessful();
                 this.mDb.endTransaction();
-                onEndTransaction(isCallerSyncAdapter);
-                return insertInTransaction;
+                onEndTransaction(zIsCallerSyncAdapter);
+                return uriInsertInTransaction;
             } catch (Throwable th) {
                 this.mDb.endTransaction();
                 throw th;
             }
         }
-        return insertInTransaction(uri, contentValues, isCallerSyncAdapter);
+        return insertInTransaction(uri, contentValues, zIsCallerSyncAdapter);
     }
 
     @Override // android.content.ContentProvider
     public int bulkInsert(Uri uri, ContentValues[] contentValuesArr) {
         int length = contentValuesArr.length;
-        boolean isCallerSyncAdapter = isCallerSyncAdapter(uri);
+        boolean zIsCallerSyncAdapter = isCallerSyncAdapter(uri);
         this.mDb = this.mOpenHelper.getWritableDatabase();
         this.mDb.beginTransaction();
         for (ContentValues contentValues : contentValuesArr) {
             try {
-                insertInTransaction(uri, contentValues, isCallerSyncAdapter);
+                insertInTransaction(uri, contentValues, zIsCallerSyncAdapter);
                 this.mDb.yieldIfContendedSafely();
             } catch (Throwable th) {
                 this.mDb.endTransaction();
@@ -88,52 +88,52 @@ public abstract class SQLiteContentProvider extends ContentProvider {
         }
         this.mDb.setTransactionSuccessful();
         this.mDb.endTransaction();
-        onEndTransaction(isCallerSyncAdapter);
+        onEndTransaction(zIsCallerSyncAdapter);
         return length;
     }
 
     @Override // android.content.ContentProvider
     public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
-        boolean isCallerSyncAdapter = isCallerSyncAdapter(uri);
+        boolean zIsCallerSyncAdapter = isCallerSyncAdapter(uri);
         if (!applyingBatch()) {
             this.mDb = this.mOpenHelper.getWritableDatabase();
             this.mDb.beginTransaction();
             try {
-                int updateInTransaction = updateInTransaction(uri, contentValues, str, strArr, isCallerSyncAdapter);
+                int iUpdateInTransaction = updateInTransaction(uri, contentValues, str, strArr, zIsCallerSyncAdapter);
                 this.mDb.setTransactionSuccessful();
                 this.mDb.endTransaction();
-                onEndTransaction(isCallerSyncAdapter);
-                return updateInTransaction;
+                onEndTransaction(zIsCallerSyncAdapter);
+                return iUpdateInTransaction;
             } catch (Throwable th) {
                 this.mDb.endTransaction();
                 throw th;
             }
         }
-        return updateInTransaction(uri, contentValues, str, strArr, isCallerSyncAdapter);
+        return updateInTransaction(uri, contentValues, str, strArr, zIsCallerSyncAdapter);
     }
 
     @Override // android.content.ContentProvider
     public int delete(Uri uri, String str, String[] strArr) {
-        boolean isCallerSyncAdapter = isCallerSyncAdapter(uri);
+        boolean zIsCallerSyncAdapter = isCallerSyncAdapter(uri);
         if (!applyingBatch()) {
             this.mDb = this.mOpenHelper.getWritableDatabase();
             this.mDb.beginTransaction();
             try {
-                int deleteInTransaction = deleteInTransaction(uri, str, strArr, isCallerSyncAdapter);
+                int iDeleteInTransaction = deleteInTransaction(uri, str, strArr, zIsCallerSyncAdapter);
                 this.mDb.setTransactionSuccessful();
                 this.mDb.endTransaction();
-                onEndTransaction(isCallerSyncAdapter);
-                return deleteInTransaction;
+                onEndTransaction(zIsCallerSyncAdapter);
+                return iDeleteInTransaction;
             } catch (Throwable th) {
                 this.mDb.endTransaction();
                 throw th;
             }
         }
-        return deleteInTransaction(uri, str, strArr, isCallerSyncAdapter);
+        return deleteInTransaction(uri, str, strArr, zIsCallerSyncAdapter);
     }
 
     @Override // android.content.ContentProvider
-    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> arrayList) throws OperationApplicationException {
+    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> arrayList) throws Throwable {
         boolean z;
         this.mDb = this.mOpenHelper.getWritableDatabase();
         this.mDb.beginTransaction();
@@ -180,8 +180,7 @@ public abstract class SQLiteContentProvider extends ContentProvider {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onEndTransaction(boolean z) {
+    protected void onEndTransaction(boolean z) {
         HashSet<Uri> hashSet;
         synchronized (this.mChangedUris) {
             hashSet = new HashSet(this.mChangedUris);

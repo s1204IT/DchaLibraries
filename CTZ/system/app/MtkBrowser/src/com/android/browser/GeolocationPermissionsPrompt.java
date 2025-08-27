@@ -1,6 +1,7 @@
 package com.android.browser;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 /* loaded from: classes.dex */
 public class GeolocationPermissionsPrompt extends RelativeLayout {
     private GeolocationPermissions.Callback mCallback;
@@ -40,13 +42,13 @@ public class GeolocationPermissionsPrompt extends RelativeLayout {
         this.mRemember = (CheckBox) findViewById(R.id.remember);
         this.mShareButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.GeolocationPermissionsPrompt.1
             @Override // android.view.View.OnClickListener
-            public void onClick(View view) {
+            public void onClick(View view) throws Resources.NotFoundException {
                 GeolocationPermissionsPrompt.this.handleButtonClick(true);
             }
         });
         this.mDontShareButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.GeolocationPermissionsPrompt.2
             @Override // android.view.View.OnClickListener
-            public void onClick(View view) {
+            public void onClick(View view) throws Resources.NotFoundException {
                 GeolocationPermissionsPrompt.this.handleButtonClick(false);
             }
         });
@@ -64,16 +66,15 @@ public class GeolocationPermissionsPrompt extends RelativeLayout {
         setVisibility(8);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleButtonClick(boolean z) {
+    private void handleButtonClick(boolean z) throws Resources.NotFoundException {
         hide();
-        boolean isChecked = this.mRemember.isChecked();
-        if (isChecked) {
-            Toast makeText = Toast.makeText(getContext(), z ? R.string.geolocation_permissions_prompt_toast_allowed : R.string.geolocation_permissions_prompt_toast_disallowed, 1);
-            makeText.setGravity(80, 0, 0);
-            makeText.show();
+        boolean zIsChecked = this.mRemember.isChecked();
+        if (zIsChecked) {
+            Toast toastMakeText = Toast.makeText(getContext(), z ? R.string.geolocation_permissions_prompt_toast_allowed : R.string.geolocation_permissions_prompt_toast_disallowed, 1);
+            toastMakeText.setGravity(80, 0, 0);
+            toastMakeText.show();
         }
-        this.mCallback.invoke(this.mOrigin, z, isChecked);
+        this.mCallback.invoke(this.mOrigin, z, zIsChecked);
     }
 
     private void setMessage(CharSequence charSequence) {

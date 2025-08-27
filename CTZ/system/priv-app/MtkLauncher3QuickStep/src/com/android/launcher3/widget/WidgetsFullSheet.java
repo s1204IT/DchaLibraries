@@ -22,6 +22,7 @@ import com.android.launcher3.R;
 import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.launcher3.views.RecyclerViewFastScroller;
 import com.android.launcher3.views.TopRoundedCornerView;
+
 /* loaded from: classes.dex */
 public class WidgetsFullSheet extends BaseWidgetSheet implements Insettable, LauncherAppWidgetHost.ProviderChangedListener {
     private static final long DEFAULT_OPEN_DURATION = 267;
@@ -98,14 +99,14 @@ public class WidgetsFullSheet extends BaseWidgetSheet implements Insettable, Lau
 
     @Override // android.widget.LinearLayout, android.view.View
     protected void onMeasure(int i, int i2) {
-        int max;
+        int iMax;
         if (this.mInsets.bottom > 0) {
-            max = 0;
+            iMax = 0;
         } else {
             Rect rect = this.mLauncher.getDeviceProfile().workspacePadding;
-            max = Math.max(rect.left + rect.right, 2 * (this.mInsets.left + this.mInsets.right));
+            iMax = Math.max(rect.left + rect.right, 2 * (this.mInsets.left + this.mInsets.right));
         }
-        int i3 = max;
+        int i3 = iMax;
         measureChildWithMargins(this.mContent, i, i3, i2, this.mInsets.top + this.mLauncher.getDeviceProfile().edgeMarginPx);
         setMeasuredDimension(View.MeasureSpec.getSize(i), View.MeasureSpec.getSize(i2));
     }
@@ -124,9 +125,8 @@ public class WidgetsFullSheet extends BaseWidgetSheet implements Insettable, Lau
         this.mLauncher.refreshAndBindWidgetsForPackageUser(null);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.AbstractFloatingView
-    public void onWidgetsBound() {
+    protected void onWidgetsBound() {
         this.mAdapter.setWidgets(this.mLauncher.getPopupDataProvider().getAllWidgets());
     }
 
@@ -137,7 +137,7 @@ public class WidgetsFullSheet extends BaseWidgetSheet implements Insettable, Lau
                 setTranslationShift(VERTICAL_START_POSITION);
             }
             this.mOpenCloseAnimator.setValues(PropertyValuesHolder.ofFloat(TRANSLATION_SHIFT, 0.0f));
-            this.mOpenCloseAnimator.setDuration(DEFAULT_OPEN_DURATION).setInterpolator(AnimationUtils.loadInterpolator(getContext(), 17563662));
+            this.mOpenCloseAnimator.setDuration(DEFAULT_OPEN_DURATION).setInterpolator(AnimationUtils.loadInterpolator(getContext(), android.R.interpolator.linear_out_slow_in));
             this.mOpenCloseAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.widget.WidgetsFullSheet.1
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
@@ -149,7 +149,7 @@ public class WidgetsFullSheet extends BaseWidgetSheet implements Insettable, Lau
             post(new Runnable() { // from class: com.android.launcher3.widget.-$$Lambda$WidgetsFullSheet$DCKrq8gm3s0feqrjqMAAoPXsKvk
                 @Override // java.lang.Runnable
                 public final void run() {
-                    WidgetsFullSheet.lambda$open$0(WidgetsFullSheet.this);
+                    WidgetsFullSheet.lambda$open$0(this.f$0);
                 }
             });
             return;
@@ -159,7 +159,7 @@ public class WidgetsFullSheet extends BaseWidgetSheet implements Insettable, Lau
         post(new Runnable() { // from class: com.android.launcher3.widget.-$$Lambda$WidgetsFullSheet$Z-8XzIssRwaXuYbnBlJkmydDq-8
             @Override // java.lang.Runnable
             public final void run() {
-                WidgetsFullSheet.this.announceAccessibilityChanges();
+                this.f$0.announceAccessibilityChanges();
             }
         });
     }

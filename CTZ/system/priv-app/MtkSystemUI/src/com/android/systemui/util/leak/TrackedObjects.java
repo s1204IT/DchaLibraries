@@ -2,6 +2,7 @@ package com.android.systemui.util.leak;
 
 import java.util.Collection;
 import java.util.WeakHashMap;
+
 /* loaded from: classes.dex */
 public class TrackedObjects {
     private final WeakHashMap<Class<?>, TrackedClass<?>> mTrackedClasses = new WeakHashMap<>();
@@ -26,7 +27,6 @@ public class TrackedObjects {
         return collection instanceof TrackedClass;
     }
 
-    /* loaded from: classes.dex */
     private static class TrackedClass<T> extends AbstractCollection<T> {
         final WeakIdentityHashMap<T, Void> instances;
 

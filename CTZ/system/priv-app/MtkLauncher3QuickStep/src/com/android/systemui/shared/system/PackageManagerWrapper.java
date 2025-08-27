@@ -7,6 +7,7 @@ import android.content.pm.IPackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.RemoteException;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PackageManagerWrapper {
     public static final String ACTION_PREFERRED_ACTIVITY_CHANGED = "android.intent.action.ACTION_PREFERRED_ACTIVITY_CHANGED";

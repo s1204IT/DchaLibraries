@@ -8,6 +8,7 @@ import android.provider.UserDictionary;
 import android.util.ArraySet;
 import java.util.Locale;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class UserDictionaryCursorLoader extends CursorLoader {
     static final String[] QUERY_PROJECTION = {"_id", "word", "shortcut"};
@@ -18,28 +19,29 @@ public class UserDictionaryCursorLoader extends CursorLoader {
         this.mLocale = str;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // android.content.CursorLoader, android.content.AsyncTaskLoader
     public Cursor loadInBackground() {
-        Cursor query;
+        Cursor cursorQuery;
         MatrixCursor matrixCursor = new MatrixCursor(QUERY_PROJECTION);
         if ("".equals(this.mLocale)) {
-            query = getContext().getContentResolver().query(UserDictionary.Words.CONTENT_URI, QUERY_PROJECTION, "locale is null", null, "UPPER(word)");
+            cursorQuery = getContext().getContentResolver().query(UserDictionary.Words.CONTENT_URI, QUERY_PROJECTION, "locale is null", null, "UPPER(word)");
         } else {
-            query = getContext().getContentResolver().query(UserDictionary.Words.CONTENT_URI, QUERY_PROJECTION, "locale=?", new String[]{this.mLocale != null ? this.mLocale : Locale.getDefault().toString()}, "UPPER(word)");
+            cursorQuery = getContext().getContentResolver().query(UserDictionary.Words.CONTENT_URI, QUERY_PROJECTION, "locale=?", new String[]{this.mLocale != null ? this.mLocale : Locale.getDefault().toString()}, "UPPER(word)");
         }
         ArraySet arraySet = new ArraySet();
-        query.moveToFirst();
-        while (!query.isAfterLast()) {
-            int i = query.getInt(0);
-            String string = query.getString(1);
-            String string2 = query.getString(2);
-            int hash = Objects.hash(string, string2);
-            if (!arraySet.contains(Integer.valueOf(hash))) {
-                arraySet.add(Integer.valueOf(hash));
+        cursorQuery.moveToFirst();
+        while (!cursorQuery.isAfterLast()) {
+            int i = cursorQuery.getInt(0);
+            String string = cursorQuery.getString(1);
+            String string2 = cursorQuery.getString(2);
+            int iHash = Objects.hash(string, string2);
+            if (!arraySet.contains(Integer.valueOf(iHash))) {
+                arraySet.add(Integer.valueOf(iHash));
                 matrixCursor.addRow(new Object[]{Integer.valueOf(i), string, string2});
             }
-            query.moveToNext();
+            cursorQuery.moveToNext();
         }
         return matrixCursor;
     }

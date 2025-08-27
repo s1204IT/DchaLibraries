@@ -8,21 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public abstract class FragmentHostCallback<E> extends FragmentContainer {
     private final Activity mActivity;
     private final Context mContext;
-    final FragmentManagerImpl mFragmentManager;
+    final FragmentManager2 mFragmentManager;
     private final Handler mHandler;
     private final int mWindowAnimations;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public FragmentHostCallback(FragmentActivity activity) {
+    FragmentHostCallback(FragmentActivity activity) {
         this(activity, activity, activity.mHandler, 0);
     }
 
     FragmentHostCallback(Activity activity, Context context, Handler handler, int windowAnimations) {
-        this.mFragmentManager = new FragmentManagerImpl();
+        this.mFragmentManager = new FragmentManager2();
         this.mActivity = activity;
         this.mContext = (Context) Preconditions.checkNotNull(context, "context == null");
         this.mHandler = (Handler) Preconditions.checkNotNull(handler, "handler == null");
@@ -61,27 +61,22 @@ public abstract class FragmentHostCallback<E> extends FragmentContainer {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Activity getActivity() {
+    Activity getActivity() {
         return this.mActivity;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Context getContext() {
+    Context getContext() {
         return this.mContext;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Handler getHandler() {
+    Handler getHandler() {
         return this.mHandler;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public FragmentManagerImpl getFragmentManagerImpl() {
+    FragmentManager2 getFragmentManagerImpl() {
         return this.mFragmentManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onAttachFragment(Fragment fragment) {
+    void onAttachFragment(Fragment fragment) {
     }
 }

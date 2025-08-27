@@ -24,6 +24,7 @@ import com.android.quicksearchbox.Suggestions;
 import com.android.quicksearchbox.VoiceSearch;
 import com.android.quicksearchbox.ui.QueryTextView;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public abstract class SearchActivityView extends RelativeLayout {
     protected ButtonsKeyListener mButtonsKeyListener;
@@ -39,12 +40,10 @@ public abstract class SearchActivityView extends RelativeLayout {
     private boolean mUpdateSuggestions;
     protected ImageButton mVoiceSearchButton;
 
-    /* loaded from: classes.dex */
     public interface QueryListener {
         void onQueryChanged();
     }
 
-    /* loaded from: classes.dex */
     public interface SearchClickListener {
         boolean onSearchClicked(int i);
     }
@@ -206,9 +205,9 @@ public abstract class SearchActivityView extends RelativeLayout {
         if (z) {
             this.mQueryTextView.setBackgroundDrawable(this.mQueryTextEmptyBg);
             this.mQueryTextView.setHint((CharSequence) null);
-            return;
+        } else {
+            this.mQueryTextView.setBackgroundResource(R.drawable.textfield_search);
         }
-        this.mQueryTextView.setBackgroundResource(R.drawable.textfield_search);
     }
 
     private void updateSearchGoButton(boolean z) {
@@ -223,10 +222,10 @@ public abstract class SearchActivityView extends RelativeLayout {
         if (shouldShowVoiceSearch(z) && getVoiceSearch().shouldShowVoiceSearch()) {
             this.mVoiceSearchButton.setVisibility(0);
             this.mQueryTextView.setPrivateImeOptions("nm");
-            return;
+        } else {
+            this.mVoiceSearchButton.setVisibility(8);
+            this.mQueryTextView.setPrivateImeOptions(null);
         }
-        this.mVoiceSearchButton.setVisibility(8);
-        this.mQueryTextView.setPrivateImeOptions(null);
     }
 
     protected boolean shouldShowVoiceSearch(boolean z) {
@@ -252,7 +251,8 @@ public abstract class SearchActivityView extends RelativeLayout {
             if (keyEvent.getAction() == 0 && keyEvent.getRepeatCount() == 0) {
                 keyDispatcherState.startTracking(keyEvent, this);
                 return true;
-            } else if (keyEvent.getAction() == 1 && !keyEvent.isCanceled() && keyDispatcherState.isTracking(keyEvent)) {
+            }
+            if (keyEvent.getAction() == 1 && !keyEvent.isCanceled() && keyDispatcherState.isTracking(keyEvent)) {
                 hideInputMethod();
                 activity.onBackPressed();
                 return true;
@@ -303,7 +303,6 @@ public abstract class SearchActivityView extends RelativeLayout {
         return false;
     }
 
-    /* loaded from: classes.dex */
     private class SearchTextWatcher implements TextWatcher {
         private SearchTextWatcher() {
         }
@@ -329,11 +328,12 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     protected class SuggestionsViewKeyListener implements View.OnKeyListener {
         protected SuggestionsViewKeyListener() {
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r7v0, resolved type: android.view.View */
+        /* JADX WARN: Multi-variable type inference failed */
         @Override // android.view.View.OnKeyListener
         public boolean onKey(View view, int i, KeyEvent keyEvent) {
             if (keyEvent.getAction() == 0 && (view instanceof SuggestionsListView)) {
@@ -346,7 +346,6 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     private class InputMethodCloser implements AbsListView.OnScrollListener {
         private InputMethodCloser() {
         }
@@ -361,7 +360,6 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     private class SearchGoButtonClickListener implements View.OnClickListener {
         private SearchGoButtonClickListener() {
         }
@@ -372,7 +370,6 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     private class QueryTextEditorActionListener implements TextView.OnEditorActionListener {
         private QueryTextEditorActionListener() {
         }
@@ -391,7 +388,6 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     private class ButtonsKeyListener implements View.OnKeyListener {
         private ButtonsKeyListener() {
         }
@@ -402,8 +398,7 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean forwardKeyToQueryTextView(int i, KeyEvent keyEvent) {
+    private boolean forwardKeyToQueryTextView(int i, KeyEvent keyEvent) {
         if (!keyEvent.isSystem() && shouldForwardToQueryTextView(i) && this.mQueryTextView.requestFocus()) {
             return this.mQueryTextView.dispatchKeyEvent(keyEvent);
         }
@@ -426,7 +421,6 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     private class SuggestListFocusListener implements View.OnFocusChangeListener {
         private SuggestListFocusListener() {
         }
@@ -439,7 +433,6 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    /* loaded from: classes.dex */
     private class QueryTextViewFocusListener implements View.OnFocusChangeListener {
         private QueryTextViewFocusListener() {
         }
@@ -452,9 +445,7 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class SuggestionsObserver extends DataSetObserver {
+    protected class SuggestionsObserver extends DataSetObserver {
         protected SuggestionsObserver() {
         }
 

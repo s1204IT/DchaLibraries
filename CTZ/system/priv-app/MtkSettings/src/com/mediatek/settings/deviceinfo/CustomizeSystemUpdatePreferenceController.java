@@ -14,6 +14,7 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.mediatek.settings.FeatureOption;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class CustomizeSystemUpdatePreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final UserManager mUm;
@@ -48,9 +49,8 @@ public class CustomizeSystemUpdatePreferenceController extends AbstractPreferenc
 
     private void updatePreferenceToSpecificActivityOrRemove(Context context, PreferenceScreen preferenceScreen, String str) {
         Intent intent;
-        CharSequence loadLabel;
-        Preference findPreference = preferenceScreen.findPreference(str);
-        if (findPreference == null) {
+        Preference preferenceFindPreference = preferenceScreen.findPreference(str);
+        if (preferenceFindPreference == null) {
             return;
         }
         if (FeatureOption.MTK_SYSTEM_UPDATE_SUPPORT) {
@@ -61,19 +61,20 @@ public class CustomizeSystemUpdatePreferenceController extends AbstractPreferenc
         }
         if (intent != null) {
             PackageManager packageManager = context.getPackageManager();
-            List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent, 0);
-            int size = queryIntentActivities.size();
+            List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent, 0);
+            int size = listQueryIntentActivities.size();
             for (int i = 0; i < size; i++) {
-                ResolveInfo resolveInfo = queryIntentActivities.get(i);
+                ResolveInfo resolveInfo = listQueryIntentActivities.get(i);
                 if ((resolveInfo.activityInfo.applicationInfo.flags & 1) != 0) {
-                    findPreference.setIntent(new Intent().setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name));
-                    findPreference.setTitle(resolveInfo.loadLabel(packageManager));
-                    Log.d("CustSysUpdatePrefContr", "KEY_MTK_SYSTEM_UPDATE : " + ((Object) loadLabel));
+                    preferenceFindPreference.setIntent(new Intent().setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name));
+                    CharSequence charSequenceLoadLabel = resolveInfo.loadLabel(packageManager);
+                    preferenceFindPreference.setTitle(charSequenceLoadLabel);
+                    Log.d("CustSysUpdatePrefContr", "KEY_MTK_SYSTEM_UPDATE : " + ((Object) charSequenceLoadLabel));
                     return;
                 }
             }
         }
-        preferenceScreen.removePreference(findPreference);
+        preferenceScreen.removePreference(preferenceFindPreference);
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController

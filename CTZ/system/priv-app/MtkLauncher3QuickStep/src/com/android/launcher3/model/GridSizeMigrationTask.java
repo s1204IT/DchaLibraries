@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class GridSizeMigrationTask {
     private static final boolean DEBUG = true;
@@ -57,8 +58,7 @@ public class GridSizeMigrationTask {
     private final ArrayList<ContentProviderOperation> mUpdateOperations;
     private final HashSet<String> mValidPackages;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public GridSizeMigrationTask(Context context, InvariantDeviceProfile invariantDeviceProfile, HashSet<String> hashSet, Point point, Point point2) {
+    protected GridSizeMigrationTask(Context context, InvariantDeviceProfile invariantDeviceProfile, HashSet<String> hashSet, Point point, Point point2) {
         this.mTempValues = new ContentValues();
         this.mEntryToRemove = new ArrayList<>();
         this.mUpdateOperations = new ArrayList<>();
@@ -106,11 +106,11 @@ public class GridSizeMigrationTask {
     }
 
     protected boolean migrateHotseat() throws Exception {
-        ArrayList<DbEntry> loadHotseatEntries = loadHotseatEntries();
+        ArrayList<DbEntry> arrayListLoadHotseatEntries = loadHotseatEntries();
         int i = this.mDestHotseatSize;
-        while (loadHotseatEntries.size() > i) {
-            DbEntry dbEntry = loadHotseatEntries.get(loadHotseatEntries.size() / 2);
-            Iterator<DbEntry> it = loadHotseatEntries.iterator();
+        while (arrayListLoadHotseatEntries.size() > i) {
+            DbEntry dbEntry = arrayListLoadHotseatEntries.get(arrayListLoadHotseatEntries.size() / 2);
+            Iterator<DbEntry> it = arrayListLoadHotseatEntries.iterator();
             while (it.hasNext()) {
                 DbEntry next = it.next();
                 if (next.weight < dbEntry.weight) {
@@ -118,9 +118,9 @@ public class GridSizeMigrationTask {
                 }
             }
             this.mEntryToRemove.add(Long.valueOf(dbEntry.id));
-            loadHotseatEntries.remove(dbEntry);
+            arrayListLoadHotseatEntries.remove(dbEntry);
         }
-        Iterator<DbEntry> it2 = loadHotseatEntries.iterator();
+        Iterator<DbEntry> it2 = arrayListLoadHotseatEntries.iterator();
         int i2 = 0;
         while (it2.hasNext()) {
             DbEntry next2 = it2.next();
@@ -137,15 +137,15 @@ public class GridSizeMigrationTask {
     }
 
     protected boolean migrateWorkspace() throws Exception {
-        ArrayList<Long> loadWorkspaceScreensDb = LauncherModel.loadWorkspaceScreensDb(this.mContext);
-        if (loadWorkspaceScreensDb.isEmpty()) {
+        ArrayList<Long> arrayListLoadWorkspaceScreensDb = LauncherModel.loadWorkspaceScreensDb(this.mContext);
+        if (arrayListLoadWorkspaceScreensDb.isEmpty()) {
             throw new Exception("Unable to get workspace screens");
         }
-        Iterator<Long> it = loadWorkspaceScreensDb.iterator();
+        Iterator<Long> it = arrayListLoadWorkspaceScreensDb.iterator();
         while (it.hasNext()) {
-            long longValue = it.next().longValue();
-            Log.d(TAG, "Migrating " + longValue);
-            migrateScreen(longValue);
+            long jLongValue = it.next().longValue();
+            Log.d(TAG, "Migrating " + jLongValue);
+            migrateScreen(jLongValue);
         }
         if (!this.mCarryOver.isEmpty()) {
             LongArrayMap longArrayMap = new LongArrayMap();
@@ -159,7 +159,7 @@ public class GridSizeMigrationTask {
                 optimalPlacementSolution.find();
                 if (optimalPlacementSolution.finalPlacedItems.size() > 0) {
                     long j = LauncherSettings.Settings.call(this.mContext.getContentResolver(), LauncherSettings.Settings.METHOD_NEW_SCREEN_ID).getLong(LauncherSettings.Settings.EXTRA_VALUE);
-                    loadWorkspaceScreensDb.add(Long.valueOf(j));
+                    arrayListLoadWorkspaceScreensDb.add(Long.valueOf(j));
                     Iterator<DbEntry> it3 = optimalPlacementSolution.finalPlacedItems.iterator();
                     while (it3.hasNext()) {
                         DbEntry next2 = it3.next();
@@ -175,10 +175,10 @@ public class GridSizeMigrationTask {
             } while (!this.mCarryOver.isEmpty());
             Uri uri = LauncherSettings.WorkspaceScreens.CONTENT_URI;
             this.mUpdateOperations.add(ContentProviderOperation.newDelete(uri).build());
-            int size = loadWorkspaceScreensDb.size();
+            int size = arrayListLoadWorkspaceScreensDb.size();
             for (int i = 0; i < size; i++) {
                 ContentValues contentValues = new ContentValues();
-                contentValues.put("_id", Long.valueOf(loadWorkspaceScreensDb.get(i).longValue()));
+                contentValues.put("_id", Long.valueOf(arrayListLoadWorkspaceScreensDb.get(i).longValue()));
                 contentValues.put(LauncherSettings.WorkspaceScreens.SCREEN_RANK, Integer.valueOf(i));
                 this.mUpdateOperations.add(ContentProviderOperation.newInsert(uri).withValues(contentValues).build());
             }
@@ -186,9 +186,10 @@ public class GridSizeMigrationTask {
         return applyOperations();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void migrateScreen(long j) {
-        ArrayList<DbEntry> loadWorkspaceEntries = loadWorkspaceEntries(j);
+    /* JADX DEBUG: Multi-variable search result rejected for r5v3, resolved type: E */
+    /* JADX WARN: Multi-variable type inference failed */
+    protected void migrateScreen(long j) {
+        ArrayList<DbEntry> arrayListLoadWorkspaceEntries = loadWorkspaceEntries(j);
         float[] fArr = new float[2];
         int i = Integer.MAX_VALUE;
         ArrayList<DbEntry> arrayList = null;
@@ -202,7 +203,7 @@ public class GridSizeMigrationTask {
             float f3 = f;
             float f4 = f2;
             for (int i6 = this.mSrcY - 1; i6 >= 0; i6--) {
-                ArrayList<DbEntry> tryRemove = tryRemove(i3, i6, 0, deepCopy(loadWorkspaceEntries), fArr);
+                ArrayList<DbEntry> arrayListTryRemove = tryRemove(i3, i6, 0, deepCopy(arrayListLoadWorkspaceEntries), fArr);
                 if (fArr[0] < f3 || (fArr[0] == f3 && fArr[1] < f4)) {
                     float f5 = fArr[0];
                     float f6 = fArr[1];
@@ -212,7 +213,7 @@ public class GridSizeMigrationTask {
                     if (this.mShouldRemoveY) {
                         i4 = i6;
                     }
-                    arrayList2 = tryRemove;
+                    arrayList2 = arrayListTryRemove;
                     f3 = f5;
                     f4 = f6;
                 }
@@ -231,7 +232,7 @@ public class GridSizeMigrationTask {
         }
         Log.d(TAG, String.format("Removing row %d, column %d on screen %d", Integer.valueOf(i2), Integer.valueOf(i), Long.valueOf(j)));
         LongArrayMap longArrayMap = new LongArrayMap();
-        Iterator<DbEntry> it = deepCopy(loadWorkspaceEntries).iterator();
+        Iterator<DbEntry> it = deepCopy(arrayListLoadWorkspaceEntries).iterator();
         while (it.hasNext()) {
             DbEntry next = it.next();
             longArrayMap.put(next.id, next);
@@ -239,8 +240,9 @@ public class GridSizeMigrationTask {
         Iterator<DbEntry> it2 = arrayList.iterator();
         while (it2.hasNext()) {
             DbEntry next2 = it2.next();
+            DbEntry dbEntry = (DbEntry) longArrayMap.get(next2.id);
             longArrayMap.remove(next2.id);
-            if (!next2.columnsSame((DbEntry) longArrayMap.get(next2.id))) {
+            if (!next2.columnsSame(dbEntry)) {
                 update(next2);
             }
         }
@@ -316,9 +318,7 @@ public class GridSizeMigrationTask {
         return arrayList2;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class OptimalPlacementSolution {
+    private class OptimalPlacementSolution {
         ArrayList<DbEntry> finalPlacedItems;
         private final boolean ignoreMove;
         private final ArrayList<DbEntry> itemsToPlace;
@@ -420,11 +420,11 @@ public class GridSizeMigrationTask {
                                     this.occupied.markCells((ItemInfo) dbEntry, false);
                                     dbEntry.spanX++;
                                     dbEntry.spanY++;
-                                    dbEntry.cellX = i5;
-                                    dbEntry.cellY = i6;
-                                    i10++;
-                                    i7 = i2;
                                 }
+                                dbEntry.cellX = i5;
+                                dbEntry.cellY = i6;
+                                i10++;
+                                i7 = i2;
                             } else {
                                 i2 = i7;
                             }
@@ -497,18 +497,22 @@ public class GridSizeMigrationTask {
         }
     }
 
-    private ArrayList<DbEntry> loadHotseatEntries() {
-        Cursor query = this.mContext.getContentResolver().query(LauncherSettings.Favorites.CONTENT_URI, new String[]{"_id", LauncherSettings.BaseLauncherColumns.ITEM_TYPE, LauncherSettings.BaseLauncherColumns.INTENT, LauncherSettings.Favorites.SCREEN}, "container = -101", null, null, null);
-        int columnIndexOrThrow = query.getColumnIndexOrThrow("_id");
-        int columnIndexOrThrow2 = query.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.ITEM_TYPE);
-        int columnIndexOrThrow3 = query.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.INTENT);
-        int columnIndexOrThrow4 = query.getColumnIndexOrThrow(LauncherSettings.Favorites.SCREEN);
+    /* JADX WARN: Removed duplicated region for block: B:18:0x0093 A[Catch: Exception -> 0x00ac, TryCatch #0 {Exception -> 0x00ac, blocks: (B:8:0x006c, B:10:0x0071, B:11:0x0074, B:12:0x007b, B:13:0x007c, B:15:0x0084, B:16:0x008b, B:17:0x0092, B:18:0x0093, B:22:0x00a4), top: B:28:0x006c }] */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    private ArrayList<DbEntry> loadHotseatEntries() throws Exception {
+        Cursor cursorQuery = this.mContext.getContentResolver().query(LauncherSettings.Favorites.CONTENT_URI, new String[]{"_id", LauncherSettings.BaseLauncherColumns.ITEM_TYPE, LauncherSettings.BaseLauncherColumns.INTENT, LauncherSettings.Favorites.SCREEN}, "container = -101", null, null, null);
+        int columnIndexOrThrow = cursorQuery.getColumnIndexOrThrow("_id");
+        int columnIndexOrThrow2 = cursorQuery.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.ITEM_TYPE);
+        int columnIndexOrThrow3 = cursorQuery.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.INTENT);
+        int columnIndexOrThrow4 = cursorQuery.getColumnIndexOrThrow(LauncherSettings.Favorites.SCREEN);
         ArrayList<DbEntry> arrayList = new ArrayList<>();
-        while (query.moveToNext()) {
+        while (cursorQuery.moveToNext()) {
             DbEntry dbEntry = new DbEntry();
-            dbEntry.id = query.getLong(columnIndexOrThrow);
-            dbEntry.itemType = query.getInt(columnIndexOrThrow2);
-            dbEntry.screenId = query.getLong(columnIndexOrThrow4);
+            dbEntry.id = cursorQuery.getLong(columnIndexOrThrow);
+            dbEntry.itemType = cursorQuery.getInt(columnIndexOrThrow2);
+            dbEntry.screenId = cursorQuery.getLong(columnIndexOrThrow4);
             if (dbEntry.screenId >= this.mSrcHotseatSize) {
                 this.mEntryToRemove.add(Long.valueOf(dbEntry.id));
             } else {
@@ -518,6 +522,8 @@ public class GridSizeMigrationTask {
                         switch (i) {
                             case 0:
                             case 1:
+                                verifyIntent(cursorQuery.getString(columnIndexOrThrow3));
+                                dbEntry.weight = dbEntry.itemType == 0 ? WT_APPLICATION : 1.0f;
                                 break;
                             case 2:
                                 int folderItemsCount = getFolderItemsCount(dbEntry.id);
@@ -531,132 +537,128 @@ public class GridSizeMigrationTask {
                         }
                         arrayList.add(dbEntry);
                     }
-                    verifyIntent(query.getString(columnIndexOrThrow3));
-                    dbEntry.weight = dbEntry.itemType == 0 ? WT_APPLICATION : 1.0f;
-                    arrayList.add(dbEntry);
                 } catch (Exception e) {
                     Log.d(TAG, "Removing item " + dbEntry.id, e);
                     this.mEntryToRemove.add(Long.valueOf(dbEntry.id));
                 }
             }
         }
-        query.close();
+        cursorQuery.close();
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public ArrayList<DbEntry> loadWorkspaceEntries(long j) {
+    /* JADX WARN: Removed duplicated region for block: B:19:0x00cd A[Catch: Exception -> 0x015a, TryCatch #0 {Exception -> 0x015a, blocks: (B:6:0x009f, B:10:0x00a7, B:11:0x00aa, B:12:0x00b1, B:13:0x00b2, B:15:0x00ba, B:17:0x00c5, B:18:0x00cc, B:19:0x00cd, B:23:0x00de, B:24:0x00e1), top: B:59:0x009f }] */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    protected ArrayList<DbEntry> loadWorkspaceEntries(long j) {
+        int i;
         long j2 = j;
-        String[] strArr = {"_id", LauncherSettings.BaseLauncherColumns.ITEM_TYPE, LauncherSettings.Favorites.CELLX, LauncherSettings.Favorites.CELLY, LauncherSettings.Favorites.SPANX, LauncherSettings.Favorites.SPANY, LauncherSettings.BaseLauncherColumns.INTENT, LauncherSettings.Favorites.APPWIDGET_PROVIDER, LauncherSettings.Favorites.APPWIDGET_ID};
-        Cursor queryWorkspace = queryWorkspace(strArr, "container = -100 AND screen = " + j2);
-        int columnIndexOrThrow = queryWorkspace.getColumnIndexOrThrow("_id");
-        int columnIndexOrThrow2 = queryWorkspace.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.ITEM_TYPE);
-        int columnIndexOrThrow3 = queryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLX);
-        int columnIndexOrThrow4 = queryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLY);
-        int columnIndexOrThrow5 = queryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.SPANX);
-        int columnIndexOrThrow6 = queryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.SPANY);
-        int columnIndexOrThrow7 = queryWorkspace.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.INTENT);
-        int columnIndexOrThrow8 = queryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.APPWIDGET_PROVIDER);
-        int columnIndexOrThrow9 = queryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.APPWIDGET_ID);
+        Cursor cursorQueryWorkspace = queryWorkspace(new String[]{"_id", LauncherSettings.BaseLauncherColumns.ITEM_TYPE, LauncherSettings.Favorites.CELLX, LauncherSettings.Favorites.CELLY, LauncherSettings.Favorites.SPANX, LauncherSettings.Favorites.SPANY, LauncherSettings.BaseLauncherColumns.INTENT, LauncherSettings.Favorites.APPWIDGET_PROVIDER, LauncherSettings.Favorites.APPWIDGET_ID}, "container = -100 AND screen = " + j2);
+        int columnIndexOrThrow = cursorQueryWorkspace.getColumnIndexOrThrow("_id");
+        int columnIndexOrThrow2 = cursorQueryWorkspace.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.ITEM_TYPE);
+        int columnIndexOrThrow3 = cursorQueryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLX);
+        int columnIndexOrThrow4 = cursorQueryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLY);
+        int columnIndexOrThrow5 = cursorQueryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.SPANX);
+        int columnIndexOrThrow6 = cursorQueryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.SPANY);
+        int columnIndexOrThrow7 = cursorQueryWorkspace.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.INTENT);
+        int columnIndexOrThrow8 = cursorQueryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.APPWIDGET_PROVIDER);
+        int columnIndexOrThrow9 = cursorQueryWorkspace.getColumnIndexOrThrow(LauncherSettings.Favorites.APPWIDGET_ID);
         ArrayList<DbEntry> arrayList = new ArrayList<>();
-        while (queryWorkspace.moveToNext()) {
+        while (cursorQueryWorkspace.moveToNext()) {
             DbEntry dbEntry = new DbEntry();
-            int i = columnIndexOrThrow9;
+            int i2 = columnIndexOrThrow9;
             ArrayList<DbEntry> arrayList2 = arrayList;
-            dbEntry.id = queryWorkspace.getLong(columnIndexOrThrow);
-            dbEntry.itemType = queryWorkspace.getInt(columnIndexOrThrow2);
-            dbEntry.cellX = queryWorkspace.getInt(columnIndexOrThrow3);
-            dbEntry.cellY = queryWorkspace.getInt(columnIndexOrThrow4);
-            dbEntry.spanX = queryWorkspace.getInt(columnIndexOrThrow5);
-            dbEntry.spanY = queryWorkspace.getInt(columnIndexOrThrow6);
+            dbEntry.id = cursorQueryWorkspace.getLong(columnIndexOrThrow);
+            dbEntry.itemType = cursorQueryWorkspace.getInt(columnIndexOrThrow2);
+            dbEntry.cellX = cursorQueryWorkspace.getInt(columnIndexOrThrow3);
+            dbEntry.cellY = cursorQueryWorkspace.getInt(columnIndexOrThrow4);
+            dbEntry.spanX = cursorQueryWorkspace.getInt(columnIndexOrThrow5);
+            dbEntry.spanY = cursorQueryWorkspace.getInt(columnIndexOrThrow6);
             dbEntry.screenId = j2;
             try {
-                int i2 = dbEntry.itemType;
-                if (i2 != 4) {
-                    if (i2 != 6) {
-                        switch (i2) {
-                            case 0:
-                            case 1:
-                                break;
-                            case 2:
-                                int folderItemsCount = getFolderItemsCount(dbEntry.id);
-                                if (folderItemsCount == 0) {
-                                    throw new Exception("Folder is empty");
-                                }
-                                dbEntry.weight = 0.5f * folderItemsCount;
-                                break;
-                            default:
-                                throw new Exception("Invalid item type");
-                        }
-                        columnIndexOrThrow9 = i;
-                    }
-                    verifyIntent(queryWorkspace.getString(columnIndexOrThrow7));
-                    dbEntry.weight = dbEntry.itemType == 0 ? WT_APPLICATION : 1.0f;
-                    columnIndexOrThrow9 = i;
-                } else {
-                    verifyPackage(ComponentName.unflattenFromString(queryWorkspace.getString(columnIndexOrThrow8)).getPackageName());
-                    dbEntry.weight = Math.max((float) WT_WIDGET_MIN, WT_WIDGET_FACTOR * dbEntry.spanX * dbEntry.spanY);
-                    columnIndexOrThrow9 = i;
-                    try {
-                        LauncherAppWidgetProviderInfo launcherAppWidgetInfo = AppWidgetManagerCompat.getInstance(this.mContext).getLauncherAppWidgetInfo(queryWorkspace.getInt(columnIndexOrThrow9));
-                        Point point = null;
-                        if (launcherAppWidgetInfo != null) {
-                            point = launcherAppWidgetInfo.getMinSpans();
-                        }
-                        if (point != null) {
-                            dbEntry.minSpanX = point.x > 0 ? point.x : dbEntry.spanX;
-                            dbEntry.minSpanY = point.y > 0 ? point.y : dbEntry.spanY;
-                        } else {
-                            dbEntry.minSpanY = 2;
-                            dbEntry.minSpanX = 2;
-                        }
-                        if (dbEntry.minSpanX > this.mTrgX || dbEntry.minSpanY > this.mTrgY) {
-                            arrayList = arrayList2;
-                            try {
-                                throw new Exception("Widget can't be resized down to fit the grid");
-                            } catch (Exception e) {
-                                e = e;
-                                Log.d(TAG, "Removing item " + dbEntry.id, e);
-                                this.mEntryToRemove.add(Long.valueOf(dbEntry.id));
-                                columnIndexOrThrow = columnIndexOrThrow;
-                                columnIndexOrThrow2 = columnIndexOrThrow2;
-                                j2 = j;
-                            }
-                        }
-                    } catch (Exception e2) {
-                        e = e2;
-                        arrayList = arrayList2;
-                        Log.d(TAG, "Removing item " + dbEntry.id, e);
-                        this.mEntryToRemove.add(Long.valueOf(dbEntry.id));
-                        columnIndexOrThrow = columnIndexOrThrow;
-                        columnIndexOrThrow2 = columnIndexOrThrow2;
-                        j2 = j;
-                    }
-                }
-                arrayList = arrayList2;
-                arrayList.add(dbEntry);
-            } catch (Exception e3) {
-                e = e3;
-                columnIndexOrThrow9 = i;
+                i = dbEntry.itemType;
+            } catch (Exception e) {
+                e = e;
+                columnIndexOrThrow9 = i2;
             }
+            if (i == 4) {
+                verifyPackage(ComponentName.unflattenFromString(cursorQueryWorkspace.getString(columnIndexOrThrow8)).getPackageName());
+                dbEntry.weight = Math.max(WT_WIDGET_MIN, WT_WIDGET_FACTOR * dbEntry.spanX * dbEntry.spanY);
+                columnIndexOrThrow9 = i2;
+                try {
+                    LauncherAppWidgetProviderInfo launcherAppWidgetInfo = AppWidgetManagerCompat.getInstance(this.mContext).getLauncherAppWidgetInfo(cursorQueryWorkspace.getInt(columnIndexOrThrow9));
+                    Point minSpans = null;
+                    if (launcherAppWidgetInfo != null) {
+                        minSpans = launcherAppWidgetInfo.getMinSpans();
+                    }
+                    if (minSpans != null) {
+                        dbEntry.minSpanX = minSpans.x > 0 ? minSpans.x : dbEntry.spanX;
+                        dbEntry.minSpanY = minSpans.y > 0 ? minSpans.y : dbEntry.spanY;
+                    } else {
+                        dbEntry.minSpanY = 2;
+                        dbEntry.minSpanX = 2;
+                    }
+                    if (dbEntry.minSpanX > this.mTrgX || dbEntry.minSpanY > this.mTrgY) {
+                        arrayList = arrayList2;
+                        try {
+                            throw new Exception("Widget can't be resized down to fit the grid");
+                        } catch (Exception e2) {
+                            e = e2;
+                            Log.d(TAG, "Removing item " + dbEntry.id, e);
+                            this.mEntryToRemove.add(Long.valueOf(dbEntry.id));
+                            columnIndexOrThrow = columnIndexOrThrow;
+                            columnIndexOrThrow2 = columnIndexOrThrow2;
+                            j2 = j;
+                        }
+                    }
+                } catch (Exception e3) {
+                    e = e3;
+                    arrayList = arrayList2;
+                    Log.d(TAG, "Removing item " + dbEntry.id, e);
+                    this.mEntryToRemove.add(Long.valueOf(dbEntry.id));
+                    columnIndexOrThrow = columnIndexOrThrow;
+                    columnIndexOrThrow2 = columnIndexOrThrow2;
+                    j2 = j;
+                }
+            } else if (i != 6) {
+                switch (i) {
+                    case 0:
+                    case 1:
+                        verifyIntent(cursorQueryWorkspace.getString(columnIndexOrThrow7));
+                        dbEntry.weight = dbEntry.itemType == 0 ? WT_APPLICATION : 1.0f;
+                        break;
+                    case 2:
+                        int folderItemsCount = getFolderItemsCount(dbEntry.id);
+                        if (folderItemsCount == 0) {
+                            throw new Exception("Folder is empty");
+                        }
+                        dbEntry.weight = 0.5f * folderItemsCount;
+                        break;
+                    default:
+                        throw new Exception("Invalid item type");
+                }
+                columnIndexOrThrow9 = i2;
+            }
+            arrayList = arrayList2;
+            arrayList.add(dbEntry);
         }
-        queryWorkspace.close();
+        cursorQueryWorkspace.close();
         return arrayList;
     }
 
     private int getFolderItemsCount(long j) {
-        String[] strArr = {"_id", LauncherSettings.BaseLauncherColumns.INTENT};
-        Cursor queryWorkspace = queryWorkspace(strArr, "container = " + j);
+        Cursor cursorQueryWorkspace = queryWorkspace(new String[]{"_id", LauncherSettings.BaseLauncherColumns.INTENT}, "container = " + j);
         int i = 0;
-        while (queryWorkspace.moveToNext()) {
+        while (cursorQueryWorkspace.moveToNext()) {
             try {
-                verifyIntent(queryWorkspace.getString(1));
+                verifyIntent(cursorQueryWorkspace.getString(1));
                 i++;
             } catch (Exception e) {
-                this.mEntryToRemove.add(Long.valueOf(queryWorkspace.getLong(0)));
+                this.mEntryToRemove.add(Long.valueOf(cursorQueryWorkspace.getLong(0)));
             }
         }
-        queryWorkspace.close();
+        cursorQueryWorkspace.close();
         return i;
     }
 
@@ -665,11 +667,11 @@ public class GridSizeMigrationTask {
     }
 
     private void verifyIntent(String str) throws Exception {
-        Intent parseUri = Intent.parseUri(str, 0);
-        if (parseUri.getComponent() != null) {
-            verifyPackage(parseUri.getComponent().getPackageName());
-        } else if (parseUri.getPackage() != null) {
-            verifyPackage(parseUri.getPackage());
+        Intent uri = Intent.parseUri(str, 0);
+        if (uri.getComponent() != null) {
+            verifyPackage(uri.getComponent().getPackageName());
+        } else if (uri.getPackage() != null) {
+            verifyPackage(uri.getPackage());
         }
     }
 
@@ -679,9 +681,7 @@ public class GridSizeMigrationTask {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public static class DbEntry extends ItemInfo implements Comparable<DbEntry> {
+    protected static class DbEntry extends ItemInfo implements Comparable<DbEntry> {
         public float weight;
 
         public DbEntry copy() {
@@ -693,6 +693,7 @@ public class GridSizeMigrationTask {
             return dbEntry;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // java.lang.Comparable
         public int compareTo(DbEntry dbEntry) {
             if (this.itemType == 4) {
@@ -700,11 +701,11 @@ public class GridSizeMigrationTask {
                     return (dbEntry.spanY * dbEntry.spanX) - (this.spanX * this.spanY);
                 }
                 return -1;
-            } else if (dbEntry.itemType == 4) {
-                return 1;
-            } else {
-                return Float.compare(dbEntry.weight, this.weight);
             }
+            if (dbEntry.itemType == 4) {
+                return 1;
+            }
+            return Float.compare(dbEntry.weight, this.weight);
         }
 
         public boolean columnsSame(DbEntry dbEntry) {
@@ -720,8 +721,7 @@ public class GridSizeMigrationTask {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static ArrayList<DbEntry> deepCopy(ArrayList<DbEntry> arrayList) {
+    private static ArrayList<DbEntry> deepCopy(ArrayList<DbEntry> arrayList) {
         ArrayList<DbEntry> arrayList2 = new ArrayList<>(arrayList.size());
         Iterator<DbEntry> it = arrayList.iterator();
         while (it.hasNext()) {
@@ -731,8 +731,8 @@ public class GridSizeMigrationTask {
     }
 
     private static Point parsePoint(String str) {
-        String[] split = str.split(",");
-        return new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+        String[] strArrSplit = str.split(",");
+        return new Point(Integer.parseInt(strArrSplit[0]), Integer.parseInt(strArrSplit[1]));
     }
 
     private static String getPointString(int i, int i2) {
@@ -743,6 +743,7 @@ public class GridSizeMigrationTask {
         Utilities.getPrefs(context).edit().putString(KEY_MIGRATION_SRC_WORKSPACE_SIZE, getPointString(i, i2)).putInt(KEY_MIGRATION_SRC_HOTSEAT_COUNT, i3).apply();
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [946=7] */
     public static boolean migrateGridIfNeeded(Context context) {
         SharedPreferences prefs = Utilities.getPrefs(context);
         InvariantDeviceProfile idp = LauncherAppState.getIDP(context);
@@ -750,44 +751,44 @@ public class GridSizeMigrationTask {
         if (pointString.equals(prefs.getString(KEY_MIGRATION_SRC_WORKSPACE_SIZE, "")) && idp.numHotseatIcons == prefs.getInt(KEY_MIGRATION_SRC_HOTSEAT_COUNT, idp.numHotseatIcons)) {
             return true;
         }
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         try {
             try {
                 HashSet<String> validPackages = getValidPackages(context);
                 int i = prefs.getInt(KEY_MIGRATION_SRC_HOTSEAT_COUNT, idp.numHotseatIcons);
-                boolean migrateHotseat = i != idp.numHotseatIcons ? new GridSizeMigrationTask(context, LauncherAppState.getIDP(context), validPackages, i, idp.numHotseatIcons).migrateHotseat() : false;
+                boolean zMigrateHotseat = i != idp.numHotseatIcons ? new GridSizeMigrationTask(context, LauncherAppState.getIDP(context), validPackages, i, idp.numHotseatIcons).migrateHotseat() : false;
                 if (new MultiStepMigrationTask(validPackages, context).migrate(parsePoint(prefs.getString(KEY_MIGRATION_SRC_WORKSPACE_SIZE, pointString)), new Point(idp.numColumns, idp.numRows))) {
-                    migrateHotseat = true;
+                    zMigrateHotseat = true;
                 }
-                if (migrateHotseat) {
-                    Cursor query = context.getContentResolver().query(LauncherSettings.Favorites.CONTENT_URI, null, null, null, null);
-                    boolean moveToNext = query.moveToNext();
-                    query.close();
-                    if (!moveToNext) {
+                if (zMigrateHotseat) {
+                    Cursor cursorQuery = context.getContentResolver().query(LauncherSettings.Favorites.CONTENT_URI, null, null, null, null);
+                    boolean zMoveToNext = cursorQuery.moveToNext();
+                    cursorQuery.close();
+                    if (!zMoveToNext) {
                         throw new Exception("Removed every thing during grid resize");
                     }
                 }
-                Log.v(TAG, "Workspace migration completed in " + (System.currentTimeMillis() - currentTimeMillis));
+                Log.v(TAG, "Workspace migration completed in " + (System.currentTimeMillis() - jCurrentTimeMillis));
                 prefs.edit().putString(KEY_MIGRATION_SRC_WORKSPACE_SIZE, pointString).putInt(KEY_MIGRATION_SRC_HOTSEAT_COUNT, idp.numHotseatIcons).apply();
                 return true;
             } catch (Exception e) {
                 Log.e(TAG, "Error during grid migration", e);
-                Log.v(TAG, "Workspace migration completed in " + (System.currentTimeMillis() - currentTimeMillis));
+                Log.v(TAG, "Workspace migration completed in " + (System.currentTimeMillis() - jCurrentTimeMillis));
                 prefs.edit().putString(KEY_MIGRATION_SRC_WORKSPACE_SIZE, pointString).putInt(KEY_MIGRATION_SRC_HOTSEAT_COUNT, idp.numHotseatIcons).apply();
                 return false;
             }
         } catch (Throwable th) {
-            Log.v(TAG, "Workspace migration completed in " + (System.currentTimeMillis() - currentTimeMillis));
+            Log.v(TAG, "Workspace migration completed in " + (System.currentTimeMillis() - jCurrentTimeMillis));
             prefs.edit().putString(KEY_MIGRATION_SRC_WORKSPACE_SIZE, pointString).putInt(KEY_MIGRATION_SRC_HOTSEAT_COUNT, idp.numHotseatIcons).apply();
             throw th;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static HashSet<String> getValidPackages(Context context) {
+    protected static HashSet<String> getValidPackages(Context context) {
         HashSet<String> hashSet = new HashSet<>();
-        for (PackageInfo packageInfo : context.getPackageManager().getInstalledPackages(8192)) {
-            hashSet.add(packageInfo.packageName);
+        Iterator<PackageInfo> it = context.getPackageManager().getInstalledPackages(8192).iterator();
+        while (it.hasNext()) {
+            hashSet.add(it.next().packageName);
         }
         hashSet.addAll(PackageInstallerCompat.getInstance(context).updateAndGetActiveSessionCache().keySet());
         return hashSet;
@@ -795,10 +796,10 @@ public class GridSizeMigrationTask {
 
     public static LongArrayMap<Object> removeBrokenHotseatItems(Context context) throws Exception {
         GridSizeMigrationTask gridSizeMigrationTask = new GridSizeMigrationTask(context, LauncherAppState.getIDP(context), getValidPackages(context), Integer.MAX_VALUE, Integer.MAX_VALUE);
-        ArrayList<DbEntry> loadHotseatEntries = gridSizeMigrationTask.loadHotseatEntries();
+        ArrayList<DbEntry> arrayListLoadHotseatEntries = gridSizeMigrationTask.loadHotseatEntries();
         gridSizeMigrationTask.applyOperations();
         LongArrayMap<Object> longArrayMap = new LongArrayMap<>();
-        Iterator<DbEntry> it = loadHotseatEntries.iterator();
+        Iterator<DbEntry> it = arrayListLoadHotseatEntries.iterator();
         while (it.hasNext()) {
             DbEntry next = it.next();
             longArrayMap.put(next.screenId, next);
@@ -806,7 +807,6 @@ public class GridSizeMigrationTask {
         return longArrayMap;
     }
 
-    /* loaded from: classes.dex */
     protected static class MultiStepMigrationTask {
         private final Context mContext;
         private final HashSet<String> mValidPackages;

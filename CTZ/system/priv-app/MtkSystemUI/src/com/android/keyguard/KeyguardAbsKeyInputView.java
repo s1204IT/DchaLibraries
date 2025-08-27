@@ -12,6 +12,7 @@ import com.android.internal.util.LatencyTracker;
 import com.android.internal.widget.LockPatternChecker;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.EmergencyButton;
+
 /* loaded from: classes.dex */
 public abstract class KeyguardAbsKeyInputView extends LinearLayout implements EmergencyButton.EmergencyButtonCallback, KeyguardSecurityView {
     protected KeyguardSecurityCallback mCallback;
@@ -25,8 +26,7 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout implements Em
 
     protected abstract String getPasswordText();
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public abstract int getPasswordTextViewId();
+    protected abstract int getPasswordTextViewId();
 
     protected abstract int getPromptReasonStringRes(int i);
 
@@ -74,9 +74,8 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout implements Em
         return j != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         this.mLockPatternUtils = new LockPatternUtils(this.mContext);
         this.mSecurityMessageDisplay = KeyguardMessageArea.findSecurityMessageDisplay(this);
         this.mEcaView = findViewById(com.android.systemui.R.id.keyguard_selector_fade_container);
@@ -95,8 +94,7 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout implements Em
         return com.android.systemui.R.string.kg_wrong_password;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void verifyPasswordAndUnlock() {
+    protected void verifyPasswordAndUnlock() {
         if (this.mDismissing) {
             return;
         }
@@ -109,41 +107,40 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout implements Em
         if (passwordText.length() <= 3) {
             setPasswordEntryInputEnabled(true);
             onPasswordChecked(currentUser, false, 0, false);
-            return;
-        }
-        if (LatencyTracker.isEnabled(this.mContext)) {
-            LatencyTracker.getInstance(this.mContext).onActionStart(3);
-            LatencyTracker.getInstance(this.mContext).onActionStart(4);
-        }
-        this.mPendingLockCheck = LockPatternChecker.checkPassword(this.mLockPatternUtils, passwordText, currentUser, new LockPatternChecker.OnCheckCallback() { // from class: com.android.keyguard.KeyguardAbsKeyInputView.1
-            public void onEarlyMatched() {
-                if (LatencyTracker.isEnabled(KeyguardAbsKeyInputView.this.mContext)) {
-                    LatencyTracker.getInstance(KeyguardAbsKeyInputView.this.mContext).onActionEnd(3);
-                }
-                KeyguardAbsKeyInputView.this.onPasswordChecked(currentUser, true, 0, true);
+        } else {
+            if (LatencyTracker.isEnabled(this.mContext)) {
+                LatencyTracker.getInstance(this.mContext).onActionStart(3);
+                LatencyTracker.getInstance(this.mContext).onActionStart(4);
             }
+            this.mPendingLockCheck = LockPatternChecker.checkPassword(this.mLockPatternUtils, passwordText, currentUser, new LockPatternChecker.OnCheckCallback() { // from class: com.android.keyguard.KeyguardAbsKeyInputView.1
+                public void onEarlyMatched() {
+                    if (LatencyTracker.isEnabled(KeyguardAbsKeyInputView.this.mContext)) {
+                        LatencyTracker.getInstance(KeyguardAbsKeyInputView.this.mContext).onActionEnd(3);
+                    }
+                    KeyguardAbsKeyInputView.this.onPasswordChecked(currentUser, true, 0, true);
+                }
 
-            public void onChecked(boolean z, int i) {
-                if (LatencyTracker.isEnabled(KeyguardAbsKeyInputView.this.mContext)) {
-                    LatencyTracker.getInstance(KeyguardAbsKeyInputView.this.mContext).onActionEnd(4);
+                public void onChecked(boolean z, int i) {
+                    if (LatencyTracker.isEnabled(KeyguardAbsKeyInputView.this.mContext)) {
+                        LatencyTracker.getInstance(KeyguardAbsKeyInputView.this.mContext).onActionEnd(4);
+                    }
+                    KeyguardAbsKeyInputView.this.setPasswordEntryInputEnabled(true);
+                    KeyguardAbsKeyInputView.this.mPendingLockCheck = null;
+                    if (!z) {
+                        KeyguardAbsKeyInputView.this.onPasswordChecked(currentUser, false, i, true);
+                    }
                 }
-                KeyguardAbsKeyInputView.this.setPasswordEntryInputEnabled(true);
-                KeyguardAbsKeyInputView.this.mPendingLockCheck = null;
-                if (!z) {
-                    KeyguardAbsKeyInputView.this.onPasswordChecked(currentUser, false, i, true);
-                }
-            }
 
-            public void onCancelled() {
-                if (LatencyTracker.isEnabled(KeyguardAbsKeyInputView.this.mContext)) {
-                    LatencyTracker.getInstance(KeyguardAbsKeyInputView.this.mContext).onActionEnd(4);
+                public void onCancelled() {
+                    if (LatencyTracker.isEnabled(KeyguardAbsKeyInputView.this.mContext)) {
+                        LatencyTracker.getInstance(KeyguardAbsKeyInputView.this.mContext).onActionEnd(4);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onPasswordChecked(int i, boolean z, int i2, boolean z2) {
+    private void onPasswordChecked(int i, boolean z, int i2, boolean z2) {
         boolean z3 = KeyguardUpdateMonitor.getCurrentUser() == i;
         if (z) {
             this.mCallback.reportUnlockAttempt(i, true, 0);
@@ -165,19 +162,18 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout implements Em
         resetPasswordText(true, !z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     /* JADX WARN: Type inference failed for: r0v4, types: [com.android.keyguard.KeyguardAbsKeyInputView$2] */
-    public void handleAttemptLockout(long j) {
+    protected void handleAttemptLockout(long j) {
         setPasswordEntryEnabled(false);
-        long ceil = (long) Math.ceil((j - SystemClock.elapsedRealtime()) / 1000.0d);
+        long jCeil = (long) Math.ceil((j - SystemClock.elapsedRealtime()) / 1000.0d);
         if (this.mCountdownTimer != null) {
             this.mCountdownTimer.cancel();
         }
-        this.mCountdownTimer = new CountDownTimer(ceil * 1000, 1000L) { // from class: com.android.keyguard.KeyguardAbsKeyInputView.2
+        this.mCountdownTimer = new CountDownTimer(jCeil * 1000, 1000L) { // from class: com.android.keyguard.KeyguardAbsKeyInputView.2
             @Override // android.os.CountDownTimer
             public void onTick(long j2) {
-                int round = (int) Math.round(j2 / 1000.0d);
-                KeyguardAbsKeyInputView.this.mSecurityMessageDisplay.setMessage(KeyguardAbsKeyInputView.this.mContext.getResources().getQuantityString(com.android.systemui.R.plurals.kg_too_many_failed_attempts_countdown, round, Integer.valueOf(round)));
+                int iRound = (int) Math.round(j2 / 1000.0d);
+                KeyguardAbsKeyInputView.this.mSecurityMessageDisplay.setMessage(KeyguardAbsKeyInputView.this.mContext.getResources().getQuantityString(com.android.systemui.R.plurals.kg_too_many_failed_attempts_countdown, iRound, Integer.valueOf(iRound)));
             }
 
             @Override // android.os.CountDownTimer
@@ -188,8 +184,7 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout implements Em
         }.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onUserInput() {
+    protected void onUserInput() {
         if (this.mCallback != null) {
             this.mCallback.userActivity();
         }

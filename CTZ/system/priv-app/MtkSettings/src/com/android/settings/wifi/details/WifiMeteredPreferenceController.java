@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 import android.support.v7.preference.DropDownPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class WifiMeteredPreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener {
     private static final String KEY_WIFI_METERED = "metered";

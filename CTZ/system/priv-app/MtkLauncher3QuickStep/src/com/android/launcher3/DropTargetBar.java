@@ -2,6 +2,7 @@ package com.android.launcher3;
 
 import android.animation.TimeInterpolator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,16 +14,19 @@ import com.android.launcher3.anim.AlphaUpdateListener;
 import com.android.launcher3.anim.Interpolators;
 import com.android.launcher3.dragndrop.DragController;
 import com.android.launcher3.dragndrop.DragOptions;
+
 /* loaded from: classes.dex */
 public class DropTargetBar extends FrameLayout implements DragController.DragListener, Insettable {
     protected static final int DEFAULT_DRAG_FADE_DURATION = 175;
     protected static final TimeInterpolator DEFAULT_INTERPOLATOR = Interpolators.ACCEL;
     private ViewPropertyAnimator mCurrentAnimation;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     protected boolean mDeferOnDragEnd;
     private ButtonDropTarget[] mDropTargets;
     private final Runnable mFadeAnimationEndRunnable;
     private boolean mIsVertical;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     protected boolean mVisible;
 
@@ -31,7 +35,7 @@ public class DropTargetBar extends FrameLayout implements DragController.DragLis
         this.mFadeAnimationEndRunnable = new Runnable() { // from class: com.android.launcher3.-$$Lambda$DropTargetBar$u4vE0cw_SSJuVFB14YDC16eZe14
             @Override // java.lang.Runnable
             public final void run() {
-                AlphaUpdateListener.updateVisibility(DropTargetBar.this);
+                AlphaUpdateListener.updateVisibility(this.f$0);
             }
         };
         this.mVisible = false;
@@ -43,7 +47,7 @@ public class DropTargetBar extends FrameLayout implements DragController.DragLis
         this.mFadeAnimationEndRunnable = new Runnable() { // from class: com.android.launcher3.-$$Lambda$DropTargetBar$u4vE0cw_SSJuVFB14YDC16eZe14
             @Override // java.lang.Runnable
             public final void run() {
-                AlphaUpdateListener.updateVisibility(DropTargetBar.this);
+                AlphaUpdateListener.updateVisibility(this.f$0);
             }
         };
         this.mVisible = false;
@@ -106,18 +110,15 @@ public class DropTargetBar extends FrameLayout implements DragController.DragLis
 
     @Override // android.widget.FrameLayout, android.view.View
     protected void onMeasure(int i, int i2) {
-        ButtonDropTarget[] buttonDropTargetArr;
-        ButtonDropTarget[] buttonDropTargetArr2;
-        ButtonDropTarget[] buttonDropTargetArr3;
         int size = View.MeasureSpec.getSize(i);
         int size2 = View.MeasureSpec.getSize(i2);
         if (this.mIsVertical) {
-            int makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(size, 1073741824);
-            int makeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(size2, Integer.MIN_VALUE);
+            int iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(size, 1073741824);
+            int iMakeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(size2, Integer.MIN_VALUE);
             for (ButtonDropTarget buttonDropTarget : this.mDropTargets) {
                 if (buttonDropTarget.getVisibility() != 8) {
                     buttonDropTarget.setTextVisible(false);
-                    buttonDropTarget.measure(makeMeasureSpec, makeMeasureSpec2);
+                    buttonDropTarget.measure(iMakeMeasureSpec, iMakeMeasureSpec2);
                 }
             }
         } else {
@@ -128,12 +129,12 @@ public class DropTargetBar extends FrameLayout implements DragController.DragLis
                     z = z && !buttonDropTarget2.isTextTruncated(visibleButtonsCount);
                 }
             }
-            int makeMeasureSpec3 = View.MeasureSpec.makeMeasureSpec(visibleButtonsCount, Integer.MIN_VALUE);
-            int makeMeasureSpec4 = View.MeasureSpec.makeMeasureSpec(size2, 1073741824);
+            int iMakeMeasureSpec3 = View.MeasureSpec.makeMeasureSpec(visibleButtonsCount, Integer.MIN_VALUE);
+            int iMakeMeasureSpec4 = View.MeasureSpec.makeMeasureSpec(size2, 1073741824);
             for (ButtonDropTarget buttonDropTarget3 : this.mDropTargets) {
                 if (buttonDropTarget3.getVisibility() != 8) {
                     buttonDropTarget3.setTextVisible(z);
-                    buttonDropTarget3.measure(makeMeasureSpec3, makeMeasureSpec4);
+                    buttonDropTarget3.measure(iMakeMeasureSpec3, iMakeMeasureSpec4);
                 }
             }
         }
@@ -141,9 +142,7 @@ public class DropTargetBar extends FrameLayout implements DragController.DragLis
     }
 
     @Override // android.widget.FrameLayout, android.view.ViewGroup, android.view.View
-    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
-        ButtonDropTarget[] buttonDropTargetArr;
-        ButtonDropTarget[] buttonDropTargetArr2;
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) throws Resources.NotFoundException {
         if (this.mIsVertical) {
             int dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.drop_target_vertical_gap);
             int i5 = dimensionPixelSize;
@@ -197,8 +196,7 @@ public class DropTargetBar extends FrameLayout implements DragController.DragLis
         animateToVisibility(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void deferOnDragEnd() {
+    protected void deferOnDragEnd() {
         this.mDeferOnDragEnd = true;
     }
 

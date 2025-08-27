@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import com.android.setupwizardlib.R;
+
 /* loaded from: classes.dex */
 public class IntrinsicSizeFrameLayout extends FrameLayout {
     private int mIntrinsicHeight;
@@ -35,10 +36,10 @@ public class IntrinsicSizeFrameLayout extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attributeSet, int i) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwIntrinsicSizeFrameLayout, i, 0);
-        this.mIntrinsicHeight = obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwIntrinsicSizeFrameLayout_android_height, 0);
-        this.mIntrinsicWidth = obtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwIntrinsicSizeFrameLayout_android_width, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwIntrinsicSizeFrameLayout, i, 0);
+        this.mIntrinsicHeight = typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwIntrinsicSizeFrameLayout_android_height, 0);
+        this.mIntrinsicWidth = typedArrayObtainStyledAttributes.getDimensionPixelSize(R.styleable.SuwIntrinsicSizeFrameLayout_android_width, 0);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     @Override // android.widget.FrameLayout, android.view.View

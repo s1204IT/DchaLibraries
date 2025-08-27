@@ -11,10 +11,10 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface UI {
 
-    /* loaded from: classes.dex */
     public enum ComboViews {
         History,
         Bookmarks,

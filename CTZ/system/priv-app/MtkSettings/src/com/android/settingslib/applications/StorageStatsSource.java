@@ -6,11 +6,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.UserHandle;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class StorageStatsSource {
     private StorageStatsManager mStorageStatsManager;
 
-    /* loaded from: classes.dex */
     public interface AppStorageStats {
         long getCacheBytes();
 
@@ -37,7 +37,6 @@ public class StorageStatsSource {
         return this.mStorageStatsManager.getCacheQuotaBytes(str, i);
     }
 
-    /* loaded from: classes.dex */
     public static class ExternalStorageStats {
         public long appBytes;
         public long audioBytes;
@@ -62,7 +61,6 @@ public class StorageStatsSource {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AppStorageStatsImpl implements AppStorageStats {
         private StorageStats mStats;
 

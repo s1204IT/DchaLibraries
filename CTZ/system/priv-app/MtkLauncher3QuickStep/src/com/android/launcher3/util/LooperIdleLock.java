@@ -3,6 +3,7 @@ package com.android.launcher3.util;
 import android.os.Looper;
 import android.os.MessageQueue;
 import com.android.launcher3.Utilities;
+
 /* loaded from: classes.dex */
 public class LooperIdleLock implements MessageQueue.IdleHandler, Runnable {
     private boolean mIsLocked = true;
@@ -31,7 +32,7 @@ public class LooperIdleLock implements MessageQueue.IdleHandler, Runnable {
         return false;
     }
 
-    public boolean awaitLocked(long j) {
+    public boolean awaitLocked(long j) throws InterruptedException {
         if (this.mIsLocked) {
             try {
                 this.mLock.wait(j);

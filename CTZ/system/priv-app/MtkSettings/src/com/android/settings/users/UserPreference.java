@@ -14,9 +14,11 @@ import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedPreference;
 import com.android.settingslib.wifi.AccessPoint;
 import java.util.Comparator;
+
 /* loaded from: classes.dex */
 public class UserPreference extends RestrictedPreference {
     public static final Comparator<UserPreference> SERIAL_NUMBER_COMPARATOR = new Comparator<UserPreference>() { // from class: com.android.settings.users.UserPreference.1
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(UserPreference userPreference, UserPreference userPreference2) {
             int serialNumber = userPreference.getSerialNumber();
@@ -39,8 +41,7 @@ public class UserPreference extends RestrictedPreference {
         this(context, attributeSet, -10, null, null);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public UserPreference(Context context, AttributeSet attributeSet, int i, View.OnClickListener onClickListener, View.OnClickListener onClickListener2) {
+    UserPreference(Context context, AttributeSet attributeSet, int i, View.OnClickListener onClickListener, View.OnClickListener onClickListener2) {
         super(context, attributeSet);
         this.mSerialNumber = -1;
         this.mUserId = -10;
@@ -72,26 +73,26 @@ public class UserPreference extends RestrictedPreference {
     @Override // com.android.settingslib.RestrictedPreference, com.android.settingslib.TwoTargetPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        boolean isDisabledByAdmin = isDisabledByAdmin();
-        dimIcon(isDisabledByAdmin);
-        View findViewById = preferenceViewHolder.findViewById(R.id.user_delete_widget);
+        boolean zIsDisabledByAdmin = isDisabledByAdmin();
+        dimIcon(zIsDisabledByAdmin);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.user_delete_widget);
         int i = 0;
-        if (findViewById != null) {
-            findViewById.setVisibility(isDisabledByAdmin ? 8 : 0);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(zIsDisabledByAdmin ? 8 : 0);
         }
-        if (!isDisabledByAdmin) {
-            View findViewById2 = preferenceViewHolder.findViewById(R.id.divider_delete);
-            View findViewById3 = preferenceViewHolder.findViewById(R.id.divider_manage);
-            View findViewById4 = preferenceViewHolder.findViewById(R.id.trash_user);
-            if (findViewById4 != null) {
+        if (!zIsDisabledByAdmin) {
+            View viewFindViewById2 = preferenceViewHolder.findViewById(R.id.divider_delete);
+            View viewFindViewById3 = preferenceViewHolder.findViewById(R.id.divider_manage);
+            View viewFindViewById4 = preferenceViewHolder.findViewById(R.id.trash_user);
+            if (viewFindViewById4 != null) {
                 if (canDeleteUser()) {
-                    findViewById4.setVisibility(0);
-                    findViewById2.setVisibility(0);
-                    findViewById4.setOnClickListener(this.mDeleteClickListener);
-                    findViewById4.setTag(this);
+                    viewFindViewById4.setVisibility(0);
+                    viewFindViewById2.setVisibility(0);
+                    viewFindViewById4.setOnClickListener(this.mDeleteClickListener);
+                    viewFindViewById4.setTag(this);
                 } else {
-                    findViewById4.setVisibility(8);
-                    findViewById2.setVisibility(8);
+                    viewFindViewById4.setVisibility(8);
+                    viewFindViewById2.setVisibility(8);
                 }
             }
             ImageView imageView = (ImageView) preferenceViewHolder.findViewById(R.id.manage_user);
@@ -101,13 +102,13 @@ public class UserPreference extends RestrictedPreference {
                     if (this.mDeleteClickListener != null) {
                         i = 8;
                     }
-                    findViewById3.setVisibility(i);
+                    viewFindViewById3.setVisibility(i);
                     imageView.setOnClickListener(this.mSettingsClickListener);
                     imageView.setTag(this);
                     return;
                 }
                 imageView.setVisibility(8);
-                findViewById3.setVisibility(8);
+                viewFindViewById3.setVisibility(8);
             }
         }
     }
@@ -116,8 +117,7 @@ public class UserPreference extends RestrictedPreference {
         return (this.mDeleteClickListener == null || RestrictedLockUtils.hasBaseUserRestriction(getContext(), "no_remove_user", UserHandle.myUserId())) ? false : true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int getSerialNumber() {
+    private int getSerialNumber() {
         if (this.mUserId == UserHandle.myUserId()) {
             return AccessPoint.UNREACHABLE_RSSI;
         }

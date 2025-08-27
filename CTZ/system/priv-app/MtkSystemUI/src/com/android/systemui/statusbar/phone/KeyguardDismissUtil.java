@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.phone;
 
 import android.util.Log;
 import com.android.keyguard.KeyguardHostView;
+
 /* loaded from: classes.dex */
 public class KeyguardDismissUtil implements KeyguardDismissHandler {
     private volatile KeyguardDismissHandler mDismissHandler;
@@ -16,8 +17,8 @@ public class KeyguardDismissUtil implements KeyguardDismissHandler {
         if (keyguardDismissHandler == null) {
             Log.wtf("KeyguardDismissUtil", "KeyguardDismissHandler not set.");
             onDismissAction.onDismiss();
-            return;
+        } else {
+            keyguardDismissHandler.executeWhenUnlocked(onDismissAction);
         }
-        keyguardDismissHandler.executeWhenUnlocked(onDismissAction);
     }
 }

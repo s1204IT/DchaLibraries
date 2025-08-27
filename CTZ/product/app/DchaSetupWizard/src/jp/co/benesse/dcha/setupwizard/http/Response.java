@@ -3,6 +3,7 @@ package jp.co.benesse.dcha.setupwizard.http;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public abstract class Response {
     private static final String TAG = Response.class.getSimpleName();
@@ -12,8 +13,7 @@ public abstract class Response {
     public Request request;
     public int responseCode;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract void onReceiveData(HttpURLConnection httpURLConnection) throws IOException;
+    abstract void onReceiveData(HttpURLConnection httpURLConnection) throws IOException;
 
     public Response() {
         this.request = null;

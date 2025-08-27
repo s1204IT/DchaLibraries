@@ -8,6 +8,7 @@ import android.hardware.usb.UsbPortStatus;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class UsbConnectionBroadcastReceiver extends BroadcastReceiver implements LifecycleObserver, OnPause, OnResume {
     private boolean mConnected;
@@ -19,9 +20,7 @@ public class UsbConnectionBroadcastReceiver extends BroadcastReceiver implements
     private int mDataRole = 0;
     private int mPowerRole = 0;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface UsbConnectionListener {
+    interface UsbConnectionListener {
         void onUsbConnectionChanged(boolean z, long j, int i, int i2);
     }
 
@@ -69,9 +68,9 @@ public class UsbConnectionBroadcastReceiver extends BroadcastReceiver implements
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction("android.hardware.usb.action.USB_STATE");
             intentFilter.addAction("android.hardware.usb.action.USB_PORT_CHANGED");
-            Intent registerReceiver = this.mContext.registerReceiver(this, intentFilter);
-            if (registerReceiver != null) {
-                onReceive(this.mContext, registerReceiver);
+            Intent intentRegisterReceiver = this.mContext.registerReceiver(this, intentFilter);
+            if (intentRegisterReceiver != null) {
+                onReceive(this.mContext, intentRegisterReceiver);
             }
             this.mListeningToUsbEvents = true;
         }

@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LicenseHtmlLoader extends AsyncLoader<File> {
     private static final String[] DEFAULT_LICENSE_XML_PATHS = {"/system/etc/NOTICE.xml.gz", "/vendor/etc/NOTICE.xml.gz", "/odm/etc/NOTICE.xml.gz", "/oem/etc/NOTICE.xml.gz"};
@@ -17,14 +18,15 @@ public class LicenseHtmlLoader extends AsyncLoader<File> {
         this.mContext = context;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
     public File loadInBackground() {
         return generateHtmlFromDefaultXmlFiles();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(File file) {
+    protected void onDiscardResult(File file) {
     }
 
     private File generateHtmlFromDefaultXmlFiles() {

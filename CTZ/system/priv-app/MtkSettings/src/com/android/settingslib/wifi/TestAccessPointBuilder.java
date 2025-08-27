@@ -8,6 +8,7 @@ import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Parcelable;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class TestAccessPointBuilder {
     private static final int MAX_RSSI = -55;

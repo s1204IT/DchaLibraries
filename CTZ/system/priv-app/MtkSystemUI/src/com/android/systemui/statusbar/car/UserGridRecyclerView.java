@@ -24,6 +24,7 @@ import com.android.systemui.statusbar.car.UserGridRecyclerView;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class UserGridRecyclerView extends PagedListView implements UserManagerHelper.OnUsersUpdateListener {
     private UserAdapter mAdapter;
@@ -31,9 +32,7 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
     private UserManagerHelper mUserManagerHelper;
     private UserSelectionListener mUserSelectionListener;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface UserSelectionListener {
+    interface UserSelectionListener {
         void onUserSelected(UserRecord userRecord);
     }
 
@@ -99,7 +98,6 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
         this.mAdapter.notifyDataSetChanged();
     }
 
-    /* loaded from: classes.dex */
     public final class UserAdapter extends RecyclerView.Adapter<UserAdapterViewHolder> implements DialogInterface.OnClickListener {
         private UserRecord mAddUserRecord;
         private View mAddUserView;
@@ -126,25 +124,27 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
             this.mUsers = list;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
         @Override // android.support.v7.widget.RecyclerView.Adapter
         public UserAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            View inflate = LayoutInflater.from(this.mContext).inflate(R.layout.car_fullscreen_user_pod, viewGroup, false);
-            inflate.setAlpha(1.0f);
-            inflate.bringToFront();
-            return new UserAdapterViewHolder(inflate);
+            View viewInflate = LayoutInflater.from(this.mContext).inflate(R.layout.car_fullscreen_user_pod, viewGroup, false);
+            viewInflate.setAlpha(1.0f);
+            viewInflate.bringToFront();
+            return new UserAdapterViewHolder(viewInflate);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
         @Override // android.support.v7.widget.RecyclerView.Adapter
         public void onBindViewHolder(final UserAdapterViewHolder userAdapterViewHolder, int i) {
             final UserRecord userRecord = this.mUsers.get(i);
-            RoundedBitmapDrawable create = RoundedBitmapDrawableFactory.create(this.mRes, getUserRecordIcon(userRecord));
-            create.setCircular(true);
-            userAdapterViewHolder.mUserAvatarImageView.setImageDrawable(create);
+            RoundedBitmapDrawable roundedBitmapDrawableCreate = RoundedBitmapDrawableFactory.create(this.mRes, getUserRecordIcon(userRecord));
+            roundedBitmapDrawableCreate.setCircular(true);
+            userAdapterViewHolder.mUserAvatarImageView.setImageDrawable(roundedBitmapDrawableCreate);
             userAdapterViewHolder.mUserNameTextView.setText(userRecord.mInfo.name);
             userAdapterViewHolder.mView.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.car.-$$Lambda$UserGridRecyclerView$UserAdapter$n2iLfR_SwwIaOydjDtvjvbVeQ9Y
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    UserGridRecyclerView.UserAdapter.lambda$onBindViewHolder$0(UserGridRecyclerView.UserAdapter.this, userRecord, userAdapterViewHolder, view);
+                    UserGridRecyclerView.UserAdapter.lambda$onBindViewHolder$0(this.f$0, userRecord, userAdapterViewHolder, view);
                 }
             });
         }
@@ -156,18 +156,20 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
             if (userRecord.mIsStartGuestSession) {
                 userAdapter.notifyUserSelected(userRecord);
                 UserGridRecyclerView.this.mUserManagerHelper.startNewGuestSession(userAdapter.mGuestName);
-            } else if (userRecord.mIsAddUser) {
+                return;
+            }
+            if (userRecord.mIsAddUser) {
                 userAdapter.mAddUserView = userAdapterViewHolder.mView;
                 userAdapter.mAddUserView.setEnabled(false);
-                String concat = userAdapter.mRes.getString(R.string.user_add_user_message_setup).concat(System.getProperty("line.separator")).concat(System.getProperty("line.separator")).concat(userAdapter.mRes.getString(R.string.user_add_user_message_update));
+                String strConcat = userAdapter.mRes.getString(R.string.user_add_user_message_setup).concat(System.getProperty("line.separator")).concat(System.getProperty("line.separator")).concat(userAdapter.mRes.getString(R.string.user_add_user_message_update));
                 userAdapter.mAddUserRecord = userRecord;
-                userAdapter.mDialog = new AlertDialog.Builder(userAdapter.mContext, com.android.systemui.plugins.R.style.Theme_Car_Dark_Dialog_Alert).setTitle(R.string.user_add_user_title).setMessage(concat).setNegativeButton(17039360, userAdapter).setPositiveButton(17039370, userAdapter).create();
+                userAdapter.mDialog = new AlertDialog.Builder(userAdapter.mContext, 2131886592).setTitle(R.string.user_add_user_title).setMessage(strConcat).setNegativeButton(android.R.string.cancel, userAdapter).setPositiveButton(android.R.string.ok, userAdapter).create();
                 SystemUIDialog.applyFlags(userAdapter.mDialog);
                 userAdapter.mDialog.show();
-            } else {
-                userAdapter.notifyUserSelected(userRecord);
-                UserGridRecyclerView.this.mUserManagerHelper.switchToUser(userRecord.mInfo);
+                return;
             }
+            userAdapter.notifyUserSelected(userRecord);
+            UserGridRecyclerView.this.mUserManagerHelper.switchToUser(userRecord.mInfo);
         }
 
         private void notifyUserSelected(UserRecord userRecord) {
@@ -196,14 +198,13 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
             }
         }
 
-        /* loaded from: classes.dex */
         private class AddNewUserTask extends AsyncTask<String, Void, UserInfo> {
             private AddNewUserTask() {
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public UserInfo doInBackground(String... strArr) {
+            protected UserInfo doInBackground(String... strArr) {
                 return UserGridRecyclerView.this.mUserManagerHelper.createNewUser(strArr[0]);
             }
 
@@ -211,9 +212,9 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
             protected void onPreExecute() {
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(UserInfo userInfo) {
+            protected void onPostExecute(UserInfo userInfo) {
                 if (userInfo != null) {
                     UserGridRecyclerView.this.mUserManagerHelper.switchToUser(userInfo);
                 }
@@ -225,7 +226,6 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
             return this.mUsers.size();
         }
 
-        /* loaded from: classes.dex */
         public class UserAdapterViewHolder extends RecyclerView.ViewHolder {
             public ImageView mUserAvatarImageView;
             public TextView mUserNameTextView;
@@ -240,7 +240,6 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class UserRecord {
         public final UserInfo mInfo;
         public final boolean mIsAddUser;

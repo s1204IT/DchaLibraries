@@ -20,6 +20,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ConfigureNotificationSettings extends DashboardFragment {
     static final String KEY_LOCKSCREEN = "lock_screen_notifications";
@@ -68,9 +69,8 @@ public class ConfigureNotificationSettings extends DashboardFragment {
         return "ConfigNotiSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.configure_notification_settings;
     }
 
@@ -86,8 +86,7 @@ public class ConfigureNotificationSettings extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle(), application, this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, Application application, Fragment fragment) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, Application application, Fragment fragment) {
         ArrayList arrayList = new ArrayList();
         PulseNotificationPreferenceController pulseNotificationPreferenceController = new PulseNotificationPreferenceController(context);
         LockScreenNotificationPreferenceController lockScreenNotificationPreferenceController = new LockScreenNotificationPreferenceController(context, KEY_LOCKSCREEN, KEY_LOCKSCREEN_WORK_PROFILE_HEADER, KEY_LOCKSCREEN_WORK_PROFILE);
@@ -135,7 +134,6 @@ public class ConfigureNotificationSettings extends DashboardFragment {
         }
     }
 
-    /* loaded from: classes.dex */
     static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private NotificationBackend mBackend = new NotificationBackend();
         private final Context mContext;

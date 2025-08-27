@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.android.settings.enterprise.ActionDisabledByAdminDialogHelper;
 import com.android.settingslib.RestrictedLockUtils;
+
 @Deprecated
 /* loaded from: classes.dex */
 public abstract class RestrictedSettingsFragment extends SettingsPreferenceFragment {
@@ -107,14 +108,14 @@ public abstract class RestrictedSettingsFragment extends SettingsPreferenceFragm
     }
 
     private void ensurePin() {
-        Intent createLocalApprovalIntent;
-        if (!this.mChallengeSucceeded && !this.mChallengeRequested && this.mRestrictionsManager.hasRestrictionsProvider() && (createLocalApprovalIntent = this.mRestrictionsManager.createLocalApprovalIntent()) != null) {
+        Intent intentCreateLocalApprovalIntent;
+        if (!this.mChallengeSucceeded && !this.mChallengeRequested && this.mRestrictionsManager.hasRestrictionsProvider() && (intentCreateLocalApprovalIntent = this.mRestrictionsManager.createLocalApprovalIntent()) != null) {
             this.mChallengeRequested = true;
             this.mChallengeSucceeded = false;
             PersistableBundle persistableBundle = new PersistableBundle();
             persistableBundle.putString("android.request.mesg", getResources().getString(R.string.restr_pin_enter_admin_pin));
-            createLocalApprovalIntent.putExtra("android.content.extra.REQUEST_BUNDLE", persistableBundle);
-            startActivityForResult(createLocalApprovalIntent, REQUEST_PIN_CHALLENGE);
+            intentCreateLocalApprovalIntent.putExtra("android.content.extra.REQUEST_BUNDLE", persistableBundle);
+            startActivityForResult(intentCreateLocalApprovalIntent, REQUEST_PIN_CHALLENGE);
         }
     }
 
@@ -134,7 +135,7 @@ public abstract class RestrictedSettingsFragment extends SettingsPreferenceFragm
     }
 
     protected TextView initEmptyTextView() {
-        return (TextView) getActivity().findViewById(16908292);
+        return (TextView) getActivity().findViewById(android.R.id.empty);
     }
 
     public RestrictedLockUtils.EnforcedAdmin getRestrictionEnforcedAdmin() {
@@ -149,15 +150,14 @@ public abstract class RestrictedSettingsFragment extends SettingsPreferenceFragm
         return this.mEmptyTextView;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsPreferenceFragment
-    public void onDataSetChanged() {
+    protected void onDataSetChanged() {
         highlightPreferenceIfNeeded();
         if (isUiRestrictedByOnlyAdmin() && (this.mActionDisabledDialog == null || !this.mActionDisabledDialog.isShowing())) {
             this.mActionDisabledDialog = new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder(this.mRestrictionKey, getRestrictionEnforcedAdmin()).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.-$$Lambda$RestrictedSettingsFragment$LUdTuWQX3d8kcdKiPapl2FlA0-c
                 @Override // android.content.DialogInterface.OnDismissListener
                 public final void onDismiss(DialogInterface dialogInterface) {
-                    RestrictedSettingsFragment.this.getActivity().finish();
+                    this.f$0.getActivity().finish();
                 }
             }).show();
             setEmptyView(new View(getContext()));
@@ -171,13 +171,11 @@ public abstract class RestrictedSettingsFragment extends SettingsPreferenceFragm
         this.mOnlyAvailableForAdmins = z;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isUiRestricted() {
+    protected boolean isUiRestricted() {
         return isRestrictedAndNotProviderProtected() || !hasChallengeSucceeded() || (!this.mIsAdminUser && this.mOnlyAvailableForAdmins);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isUiRestrictedByOnlyAdmin() {
+    protected boolean isUiRestrictedByOnlyAdmin() {
         return isUiRestricted() && !this.mUserManager.hasBaseUserRestriction(this.mRestrictionKey, UserHandle.of(UserHandle.myUserId())) && (this.mIsAdminUser || !this.mOnlyAvailableForAdmins);
     }
 }

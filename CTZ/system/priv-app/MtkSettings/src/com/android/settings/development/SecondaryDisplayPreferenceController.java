@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class SecondaryDisplayPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final String[] mListSummaries;
@@ -35,9 +36,8 @@ public class SecondaryDisplayPreferenceController extends DeveloperOptionsPrefer
         updateSecondaryDisplayDevicesOptions();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         writeSecondaryDisplayDevicesOption(null);
     }
@@ -49,7 +49,8 @@ public class SecondaryDisplayPreferenceController extends DeveloperOptionsPrefer
         while (true) {
             if (i2 >= this.mListValues.length) {
                 break;
-            } else if (!TextUtils.equals(string, this.mListValues[i2])) {
+            }
+            if (!TextUtils.equals(string, this.mListValues[i2])) {
                 i2++;
             } else {
                 i = i2;

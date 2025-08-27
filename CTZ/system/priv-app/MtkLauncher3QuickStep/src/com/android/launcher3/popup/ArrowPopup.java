@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
@@ -14,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
 import android.util.AttributeSet;
+import android.util.Property;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +33,7 @@ import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.BaseDragLayer;
 import java.util.ArrayList;
 import java.util.Collections;
+
 /* loaded from: classes.dex */
 public abstract class ArrowPopup extends AbstractFloatingView {
     private final int mArrayOffset;
@@ -52,7 +53,7 @@ public abstract class ArrowPopup extends AbstractFloatingView {
 
     protected abstract void getTargetObjectLocation(Rect rect);
 
-    public ArrowPopup(Context context, AttributeSet attributeSet, int i) {
+    public ArrowPopup(Context context, AttributeSet attributeSet, int i) throws Resources.NotFoundException {
         super(context, attributeSet, i);
         this.mTempRect = new Rect();
         this.mStartRect = new Rect();
@@ -63,6 +64,9 @@ public abstract class ArrowPopup extends AbstractFloatingView {
         this.mIsRtl = Utilities.isRtl(getResources());
         setClipToOutline(true);
         setOutlineProvider(new ViewOutlineProvider() { // from class: com.android.launcher3.popup.ArrowPopup.1
+            AnonymousClass1() {
+            }
+
             @Override // android.view.ViewOutlineProvider
             public void getOutline(View view, Outline outline) {
                 outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), ArrowPopup.this.mOutlineRadius);
@@ -74,6 +78,17 @@ public abstract class ArrowPopup extends AbstractFloatingView {
         this.mArrow = new View(context);
         this.mArrow.setLayoutParams(new BaseDragLayer.LayoutParams(dimensionPixelSize, dimensionPixelSize2));
         this.mArrayOffset = resources.getDimensionPixelSize(R.dimen.popup_arrow_vertical_offset);
+    }
+
+    /* renamed from: com.android.launcher3.popup.ArrowPopup$1 */
+    class AnonymousClass1 extends ViewOutlineProvider {
+        AnonymousClass1() {
+        }
+
+        @Override // android.view.ViewOutlineProvider
+        public void getOutline(View view, Outline outline) {
+            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), ArrowPopup.this.mOutlineRadius);
+        }
     }
 
     public ArrowPopup(Context context, AttributeSet attributeSet) {
@@ -102,8 +117,7 @@ public abstract class ArrowPopup extends AbstractFloatingView {
     protected void onInflationComplete(boolean z) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void reorderAndShow(int i) {
+    protected void reorderAndShow(int i) throws Resources.NotFoundException {
         int i2;
         setVisibility(4);
         this.mIsOpen = true;
@@ -175,22 +189,22 @@ public abstract class ArrowPopup extends AbstractFloatingView {
         int i3 = this.mTempRect.right - measuredWidth;
         int i4 = (!((i2 + measuredWidth) + insets.left < dragLayer.getRight() - insets.right) || (this.mIsRtl && (i3 > dragLayer.getLeft() + insets.left))) ? i3 : i2;
         this.mIsLeftAligned = i4 == i2;
-        int width = this.mTempRect.width();
+        int iWidth = this.mTempRect.width();
         Resources resources = getResources();
         if (isAlignedWithStart()) {
-            dimensionPixelSize = ((width / 2) - (resources.getDimensionPixelSize(R.dimen.deep_shortcut_icon_size) / 2)) - resources.getDimensionPixelSize(R.dimen.popup_padding_start);
+            dimensionPixelSize = ((iWidth / 2) - (resources.getDimensionPixelSize(R.dimen.deep_shortcut_icon_size) / 2)) - resources.getDimensionPixelSize(R.dimen.popup_padding_start);
         } else {
-            dimensionPixelSize = ((width / 2) - (resources.getDimensionPixelSize(R.dimen.deep_shortcut_drag_handle_size) / 2)) - resources.getDimensionPixelSize(R.dimen.popup_padding_end);
+            dimensionPixelSize = ((iWidth / 2) - (resources.getDimensionPixelSize(R.dimen.deep_shortcut_drag_handle_size) / 2)) - resources.getDimensionPixelSize(R.dimen.popup_padding_end);
         }
         if (!this.mIsLeftAligned) {
             dimensionPixelSize = -dimensionPixelSize;
         }
         int i5 = i4 + dimensionPixelSize;
-        int height = this.mTempRect.height();
+        int iHeight = this.mTempRect.height();
         int i6 = this.mTempRect.top - measuredHeight;
         this.mIsAboveIcon = i6 > dragLayer.getTop() + insets.top;
         if (!this.mIsAboveIcon) {
-            i6 = this.mTempRect.top + height + dimensionPixelSize2;
+            i6 = this.mTempRect.top + iHeight + dimensionPixelSize2;
         }
         if (this.mIsRtl) {
             i = i5 + insets.right;
@@ -201,8 +215,8 @@ public abstract class ArrowPopup extends AbstractFloatingView {
         this.mGravity = 0;
         if (measuredHeight + i7 > dragLayer.getBottom() - insets.bottom) {
             this.mGravity = 16;
-            int i8 = (i2 + width) - insets.left;
-            int i9 = (i3 - width) - insets.left;
+            int i8 = (i2 + iWidth) - insets.left;
+            int i9 = (i3 - iWidth) - insets.left;
             if (!this.mIsRtl) {
                 if (measuredWidth + i8 < dragLayer.getRight()) {
                     this.mIsLeftAligned = true;
@@ -256,35 +270,48 @@ public abstract class ArrowPopup extends AbstractFloatingView {
     }
 
     private void animateOpen() {
-        Resources resources;
         setVisibility(0);
-        AnimatorSet createAnimatorSet = LauncherAnimUtils.createAnimatorSet();
+        AnimatorSet animatorSetCreateAnimatorSet = LauncherAnimUtils.createAnimatorSet();
         long integer = getResources().getInteger(R.integer.config_popupOpenCloseDuration);
         AccelerateDecelerateInterpolator accelerateDecelerateInterpolator = new AccelerateDecelerateInterpolator();
-        ValueAnimator createRevealAnimator = createOpenCloseOutlineProvider().createRevealAnimator(this, false);
-        createRevealAnimator.setDuration(integer);
-        createRevealAnimator.setInterpolator(accelerateDecelerateInterpolator);
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this, ALPHA, 0.0f, 1.0f);
-        ofFloat.setDuration(integer);
-        ofFloat.setInterpolator(accelerateDecelerateInterpolator);
-        createAnimatorSet.play(ofFloat);
+        ValueAnimator valueAnimatorCreateRevealAnimator = createOpenCloseOutlineProvider().createRevealAnimator(this, false);
+        valueAnimatorCreateRevealAnimator.setDuration(integer);
+        valueAnimatorCreateRevealAnimator.setInterpolator(accelerateDecelerateInterpolator);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, (Property<ArrowPopup, Float>) ALPHA, 0.0f, 1.0f);
+        objectAnimatorOfFloat.setDuration(integer);
+        objectAnimatorOfFloat.setInterpolator(accelerateDecelerateInterpolator);
+        animatorSetCreateAnimatorSet.play(objectAnimatorOfFloat);
         this.mArrow.setScaleX(0.0f);
         this.mArrow.setScaleY(0.0f);
-        ObjectAnimator duration = ObjectAnimator.ofFloat(this.mArrow, LauncherAnimUtils.SCALE_PROPERTY, 1.0f).setDuration(resources.getInteger(R.integer.config_popupArrowOpenDuration));
-        createAnimatorSet.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.popup.ArrowPopup.2
+        ObjectAnimator duration = ObjectAnimator.ofFloat(this.mArrow, LauncherAnimUtils.SCALE_PROPERTY, 1.0f).setDuration(r2.getInteger(R.integer.config_popupArrowOpenDuration));
+        animatorSetCreateAnimatorSet.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.popup.ArrowPopup.2
+            AnonymousClass2() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 ArrowPopup.this.announceAccessibilityChanges();
                 ArrowPopup.this.mOpenCloseAnimator = null;
             }
         });
-        this.mOpenCloseAnimator = createAnimatorSet;
-        createAnimatorSet.playSequentially(createRevealAnimator, duration);
-        createAnimatorSet.start();
+        this.mOpenCloseAnimator = animatorSetCreateAnimatorSet;
+        animatorSetCreateAnimatorSet.playSequentially(valueAnimatorCreateRevealAnimator, duration);
+        animatorSetCreateAnimatorSet.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void animateClose() {
+    /* renamed from: com.android.launcher3.popup.ArrowPopup$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        AnonymousClass2() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            ArrowPopup.this.announceAccessibilityChanges();
+            ArrowPopup.this.mOpenCloseAnimator = null;
+        }
+    }
+
+    protected void animateClose() {
         if (!this.mIsOpen) {
             return;
         }
@@ -296,20 +323,23 @@ public abstract class ArrowPopup extends AbstractFloatingView {
             this.mOpenCloseAnimator.cancel();
         }
         this.mIsOpen = false;
-        AnimatorSet createAnimatorSet = LauncherAnimUtils.createAnimatorSet();
-        createAnimatorSet.play(ObjectAnimator.ofFloat(this.mArrow, LauncherAnimUtils.SCALE_PROPERTY, 0.0f));
-        createAnimatorSet.play(ObjectAnimator.ofFloat(this.mArrow, ALPHA, 0.0f));
+        AnimatorSet animatorSetCreateAnimatorSet = LauncherAnimUtils.createAnimatorSet();
+        animatorSetCreateAnimatorSet.play(ObjectAnimator.ofFloat(this.mArrow, LauncherAnimUtils.SCALE_PROPERTY, 0.0f));
+        animatorSetCreateAnimatorSet.play(ObjectAnimator.ofFloat(this.mArrow, (Property<View, Float>) ALPHA, 0.0f));
         Resources resources = getResources();
-        TimeInterpolator accelerateDecelerateInterpolator = new AccelerateDecelerateInterpolator();
-        ValueAnimator createRevealAnimator = createOpenCloseOutlineProvider().createRevealAnimator(this, true);
-        createRevealAnimator.setInterpolator(accelerateDecelerateInterpolator);
-        createAnimatorSet.play(createRevealAnimator);
-        Animator ofFloat = ObjectAnimator.ofFloat(this, ALPHA, 0.0f);
-        ofFloat.setInterpolator(accelerateDecelerateInterpolator);
-        createAnimatorSet.play(ofFloat);
-        onCreateCloseAnimation(createAnimatorSet);
-        createAnimatorSet.setDuration(resources.getInteger(R.integer.config_popupOpenCloseDuration));
-        createAnimatorSet.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.popup.ArrowPopup.3
+        AccelerateDecelerateInterpolator accelerateDecelerateInterpolator = new AccelerateDecelerateInterpolator();
+        ValueAnimator valueAnimatorCreateRevealAnimator = createOpenCloseOutlineProvider().createRevealAnimator(this, true);
+        valueAnimatorCreateRevealAnimator.setInterpolator(accelerateDecelerateInterpolator);
+        animatorSetCreateAnimatorSet.play(valueAnimatorCreateRevealAnimator);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, (Property<ArrowPopup, Float>) ALPHA, 0.0f);
+        objectAnimatorOfFloat.setInterpolator(accelerateDecelerateInterpolator);
+        animatorSetCreateAnimatorSet.play(objectAnimatorOfFloat);
+        onCreateCloseAnimation(animatorSetCreateAnimatorSet);
+        animatorSetCreateAnimatorSet.setDuration(resources.getInteger(R.integer.config_popupOpenCloseDuration));
+        animatorSetCreateAnimatorSet.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.popup.ArrowPopup.3
+            AnonymousClass3() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 ArrowPopup.this.mOpenCloseAnimator = null;
@@ -320,14 +350,30 @@ public abstract class ArrowPopup extends AbstractFloatingView {
                 }
             }
         });
-        this.mOpenCloseAnimator = createAnimatorSet;
-        createAnimatorSet.start();
+        this.mOpenCloseAnimator = animatorSetCreateAnimatorSet;
+        animatorSetCreateAnimatorSet.start();
+    }
+
+    /* renamed from: com.android.launcher3.popup.ArrowPopup$3 */
+    class AnonymousClass3 extends AnimatorListenerAdapter {
+        AnonymousClass3() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            ArrowPopup.this.mOpenCloseAnimator = null;
+            if (ArrowPopup.this.mDeferContainerRemoval) {
+                ArrowPopup.this.setVisibility(4);
+            } else {
+                ArrowPopup.this.closeComplete();
+            }
+        }
     }
 
     protected void onCreateCloseAnimation(AnimatorSet animatorSet) {
     }
 
-    private RoundedRectRevealOutlineProvider createOpenCloseOutlineProvider() {
+    private RoundedRectRevealOutlineProvider createOpenCloseOutlineProvider() throws Resources.NotFoundException {
         int i;
         Resources resources = getResources();
         if (this.mIsLeftAligned ^ this.mIsRtl) {
@@ -347,8 +393,7 @@ public abstract class ArrowPopup extends AbstractFloatingView {
         return new RoundedRectRevealOutlineProvider(this.mOutlineRadius, this.mOutlineRadius, this.mStartRect, this.mEndRect);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void closeComplete() {
+    protected void closeComplete() {
         if (this.mOpenCloseAnimator != null) {
             this.mOpenCloseAnimator.cancel();
             this.mOpenCloseAnimator = null;

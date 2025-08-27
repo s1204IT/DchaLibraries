@@ -8,6 +8,7 @@ import android.net.NetworkTemplate;
 import android.os.Bundle;
 import android.os.RemoteException;
 import com.android.settingslib.AppItem;
+
 /* loaded from: classes.dex */
 public class ChartDataLoader extends AsyncTaskLoader<ChartData> {
     private final Bundle mArgs;
@@ -37,6 +38,7 @@ public class ChartDataLoader extends AsyncTaskLoader<ChartData> {
         forceLoad();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // android.content.AsyncTaskLoader
     public ChartData loadInBackground() {
@@ -53,9 +55,9 @@ public class ChartDataLoader extends AsyncTaskLoader<ChartData> {
         if (appItem != null) {
             int size = appItem.uids.size();
             for (int i2 = 0; i2 < size; i2++) {
-                int keyAt = appItem.uids.keyAt(i2);
-                chartData.detailDefault = collectHistoryForUid(networkTemplate, keyAt, 0, chartData.detailDefault);
-                chartData.detailForeground = collectHistoryForUid(networkTemplate, keyAt, 1, chartData.detailForeground);
+                int iKeyAt = appItem.uids.keyAt(i2);
+                chartData.detailDefault = collectHistoryForUid(networkTemplate, iKeyAt, 0, chartData.detailDefault);
+                chartData.detailForeground = collectHistoryForUid(networkTemplate, iKeyAt, 1, chartData.detailForeground);
             }
             if (size > 0) {
                 chartData.detail = new NetworkStatsHistory(chartData.detailForeground.getBucketDuration());

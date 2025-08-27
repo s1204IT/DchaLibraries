@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import com.android.settings.password.ChooseLockSettingsHelper;
+
 /* loaded from: classes.dex */
 public class VowKeyguardConfirm extends Activity {
     @Override // android.app.Activity
@@ -27,10 +28,10 @@ public class VowKeyguardConfirm extends Activity {
         if (i2 == -1) {
             setResult(-1);
             finish();
-            return;
+        } else {
+            setResult(0);
+            finish();
         }
-        setResult(0);
-        finish();
     }
 
     private boolean runKeyguardConfirmation(int i) {

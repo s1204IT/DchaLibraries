@@ -2,6 +2,7 @@ package com.android.systemui.statusbar;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.SystemProperties;
 import android.util.AttributeSet;
@@ -20,6 +21,7 @@ import com.android.systemui.statusbar.policy.DarkIconDispatcher;
 import com.mediatek.systemui.ext.ISystemUIStatusBarExt;
 import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
 import com.mediatek.systemui.statusbar.util.FeatureOptions;
+
 /* loaded from: classes.dex */
 public class StatusBarMobileView extends FrameLayout implements StatusIconDisplayable, DarkIconDispatcher.DarkReceiver {
     private static final boolean DEBUG;
@@ -45,7 +47,7 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
         DEBUG = Log.isLoggable("StatusBarMobileView", 3) || FeatureOptions.LOG_ENABLE;
     }
 
-    public static StatusBarMobileView fromContext(Context context, String str) {
+    public static StatusBarMobileView fromContext(Context context, String str) throws Resources.NotFoundException {
         StatusBarMobileView statusBarMobileView = (StatusBarMobileView) LayoutInflater.from(context).inflate(R.layout.status_bar_mobile_signal_group, (ViewGroup) null);
         statusBarMobileView.setSlot(str);
         statusBarMobileView.init();
@@ -84,7 +86,7 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
         rect.bottom = (int) (rect.bottom + translationY);
     }
 
-    private void init() {
+    private void init() throws Resources.NotFoundException {
         this.mMobileGroup = (LinearLayout) findViewById(R.id.mobile_group);
         this.mMobile = (ImageView) findViewById(R.id.mobile_signal);
         this.mMobileType = (ImageView) findViewById(R.id.mobile_type);
@@ -101,7 +103,7 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
         this.mStatusBarExt = OpSystemUICustomizationFactoryBase.getOpFactory(this.mContext).makeSystemUIStatusBar(this.mContext);
     }
 
-    private void initDotView() {
+    private void initDotView() throws Resources.NotFoundException {
         this.mDotView = new StatusBarIconView(this.mContext, this.mSlot, null);
         this.mDotView.setVisibleState(1);
         int dimensionPixelSize = this.mContext.getResources().getDimensionPixelSize(R.dimen.status_bar_icon_size);
@@ -112,8 +114,7 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
 
     public void applyMobileState(StatusBarSignalPolicy.MobileIconState mobileIconState) {
         if (DEBUG) {
-            String mobileTag = getMobileTag();
-            Log.d(mobileTag, "[" + hashCode() + "][visibility=" + getVisibility() + "] applyMobileState: state = " + mobileIconState);
+            Log.d(getMobileTag(), "[" + hashCode() + "][visibility=" + getVisibility() + "] applyMobileState: state = " + mobileIconState);
         }
         if (mobileIconState == null) {
             setVisibility(8);
@@ -160,7 +161,6 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
 
     private void updateState(StatusBarSignalPolicy.MobileIconState mobileIconState) {
         setContentDescription(mobileIconState.contentDescription);
-        int i = 8;
         if (this.mState.visible != mobileIconState.visible) {
             this.mMobileGroup.setVisibility(mobileIconState.visible ? 0 : 8);
             requestLayout();
@@ -182,11 +182,7 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
         this.mMobileRoaming.setVisibility(mobileIconState.roaming ? 0 : 8);
         this.mIn.setVisibility(mobileIconState.activityIn ? 0 : 8);
         this.mOut.setVisibility(mobileIconState.activityIn ? 0 : 8);
-        View view = this.mInoutContainer;
-        if (mobileIconState.activityIn || mobileIconState.activityOut) {
-            i = 0;
-        }
-        view.setVisibility(i);
+        this.mInoutContainer.setVisibility((mobileIconState.activityIn || mobileIconState.activityOut) ? 0 : 8);
         if (this.mState.networkIcon != mobileIconState.networkIcon) {
             setNetworkIcon(mobileIconState.networkIcon);
             this.mStatusBarExt.setDisVolteView(this.mState.subId, mobileIconState.volteIcon, this.mVolteType);
@@ -205,18 +201,18 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
             return;
         }
         this.mMobileDrawable.setDarkIntensity(f);
-        ColorStateList valueOf = ColorStateList.valueOf(DarkIconDispatcher.getTint(rect, this, i));
-        this.mIn.setImageTintList(valueOf);
-        this.mOut.setImageTintList(valueOf);
-        this.mMobileType.setImageTintList(valueOf);
-        this.mMobileRoaming.setImageTintList(valueOf);
-        this.mNetworkType.setImageTintList(valueOf);
-        this.mVolteType.setImageTintList(valueOf);
+        ColorStateList colorStateListValueOf = ColorStateList.valueOf(DarkIconDispatcher.getTint(rect, this, i));
+        this.mIn.setImageTintList(colorStateListValueOf);
+        this.mOut.setImageTintList(colorStateListValueOf);
+        this.mMobileType.setImageTintList(colorStateListValueOf);
+        this.mMobileRoaming.setImageTintList(colorStateListValueOf);
+        this.mNetworkType.setImageTintList(colorStateListValueOf);
+        this.mVolteType.setImageTintList(colorStateListValueOf);
         this.mDotView.setDecorColor(i);
         this.mDotView.setIconColor(i, false);
-        this.mMobile.setImageTintList(valueOf);
+        this.mMobile.setImageTintList(colorStateListValueOf);
         this.mStatusBarExt.setCustomizedPlmnTextTint(i);
-        this.mStatusBarExt.setIconTint(valueOf);
+        this.mStatusBarExt.setIconTint(colorStateListValueOf);
     }
 
     @Override // com.android.systemui.statusbar.StatusIconDisplayable
@@ -230,18 +226,18 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
 
     @Override // com.android.systemui.statusbar.StatusIconDisplayable
     public void setStaticDrawableColor(int i) {
-        ColorStateList valueOf = ColorStateList.valueOf(i);
+        ColorStateList colorStateListValueOf = ColorStateList.valueOf(i);
         this.mMobileDrawable.setDarkIntensity(i == -1 ? 0.0f : 1.0f);
-        this.mIn.setImageTintList(valueOf);
-        this.mOut.setImageTintList(valueOf);
-        this.mMobileType.setImageTintList(valueOf);
-        this.mMobileRoaming.setImageTintList(valueOf);
-        this.mNetworkType.setImageTintList(valueOf);
-        this.mVolteType.setImageTintList(valueOf);
+        this.mIn.setImageTintList(colorStateListValueOf);
+        this.mOut.setImageTintList(colorStateListValueOf);
+        this.mMobileType.setImageTintList(colorStateListValueOf);
+        this.mMobileRoaming.setImageTintList(colorStateListValueOf);
+        this.mNetworkType.setImageTintList(colorStateListValueOf);
+        this.mVolteType.setImageTintList(colorStateListValueOf);
         this.mDotView.setDecorColor(i);
-        this.mMobile.setImageTintList(valueOf);
+        this.mMobile.setImageTintList(colorStateListValueOf);
         this.mStatusBarExt.setCustomizedPlmnTextTint(i);
-        this.mStatusBarExt.setIconTint(valueOf);
+        this.mStatusBarExt.setIconTint(colorStateListValueOf);
     }
 
     @Override // com.android.systemui.statusbar.StatusIconDisplayable
@@ -257,22 +253,21 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
     @Override // com.android.systemui.statusbar.StatusIconDisplayable
     public void setVisibleState(int i) {
         if (i == this.mVisibleState) {
-            return;
         }
         this.mVisibleState = i;
         switch (i) {
             case 0:
                 this.mMobileGroup.setVisibility(0);
                 this.mDotView.setVisibility(8);
-                return;
+                break;
             case 1:
                 this.mMobileGroup.setVisibility(4);
                 this.mDotView.setVisibility(0);
-                return;
+                break;
             default:
                 this.mMobileGroup.setVisibility(4);
                 this.mDotView.setVisibility(4);
-                return;
+                break;
         }
     }
 
@@ -347,7 +342,9 @@ public class StatusBarMobileView extends FrameLayout implements StatusIconDispla
             this.mMobileRoaming.setVisibility(8);
             this.mIsWfcCase = true;
             requestLayout();
-        } else if (this.mIsWfcCase) {
+            return;
+        }
+        if (this.mIsWfcCase) {
             if (DEBUG) {
                 Log.d(getMobileTag(), "showWfcIfAirplaneMode: recover to show mobile view");
             }

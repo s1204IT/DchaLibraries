@@ -14,6 +14,7 @@ import com.android.launcher3.popup.PopupContainerWithArrow;
 import com.android.launcher3.touch.SwipeDetector;
 import com.android.launcher3.util.Themes;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NotificationItemView {
     private static final Rect sTempRect = new Rect();
@@ -133,7 +134,7 @@ public class NotificationItemView {
             this.mFooter.animateFirstNotificationTo(sTempRect, new NotificationFooterLayout.IconAnimationEndListener() { // from class: com.android.launcher3.notification.-$$Lambda$NotificationItemView$zyF4hkGDqkeABZLcostu5tMK2UM
                 @Override // com.android.launcher3.notification.NotificationFooterLayout.IconAnimationEndListener
                 public final void onIconAnimationEnd(NotificationInfo notificationInfo) {
-                    NotificationItemView.lambda$trimNotifications$0(NotificationItemView.this, notificationInfo);
+                    NotificationItemView.lambda$trimNotifications$0(this.f$0, notificationInfo);
                 }
             });
             return;

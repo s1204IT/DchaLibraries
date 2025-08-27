@@ -12,11 +12,13 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Property;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import com.android.browser.UI;
 import com.android.browser.UrlInputView;
+
 /* loaded from: classes.dex */
 public class NavigationBarTablet extends NavigationBarBase implements UrlInputView.StateListener {
     private View mAllButton;
@@ -65,9 +67,8 @@ public class NavigationBarTablet extends NavigationBarBase implements UrlInputVi
         this.mHideNavButtons = resources.getBoolean(R.bool.hide_nav_buttons);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.browser.NavigationBarBase, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mAllButton = findViewById(R.id.all_btn);
         this.mNavButtons = findViewById(R.id.navbuttons);
@@ -100,7 +101,9 @@ public class NavigationBarTablet extends NavigationBarBase implements UrlInputVi
                 this.mNavButtons.setVisibility(8);
                 this.mNavButtons.setAlpha(0.0f);
                 this.mNavButtons.setTranslationX(-measuredWidth);
-            } else if (!this.mHideNavButtons && this.mNavButtons.getVisibility() == 8) {
+                return;
+            }
+            if (!this.mHideNavButtons && this.mNavButtons.getVisibility() == 8) {
                 this.mNavButtons.setVisibility(0);
                 this.mNavButtons.setAlpha(1.0f);
                 this.mNavButtons.setTranslationX(0.0f);
@@ -113,8 +116,7 @@ public class NavigationBarTablet extends NavigationBarBase implements UrlInputVi
         super.setTitleBar(titleBar);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updateNavigationState(Tab tab) {
+    void updateNavigationState(Tab tab) {
         int i;
         int i2;
         if (tab != null) {
@@ -151,18 +153,29 @@ public class NavigationBarTablet extends NavigationBarBase implements UrlInputVi
     public void onClick(View view) {
         if (this.mBackButton == view && this.mUiController.getCurrentTab() != null) {
             this.mUiController.getCurrentTab().goBack();
-        } else if (this.mForwardButton == view && this.mUiController.getCurrentTab() != null) {
+            return;
+        }
+        if (this.mForwardButton == view && this.mUiController.getCurrentTab() != null) {
             this.mUiController.getCurrentTab().goForward();
-        } else if (this.mStar == view) {
-            Intent createBookmarkCurrentPageIntent = this.mUiController.createBookmarkCurrentPageIntent(true);
-            if (createBookmarkCurrentPageIntent != null) {
-                getContext().startActivity(createBookmarkCurrentPageIntent);
+            return;
+        }
+        if (this.mStar == view) {
+            Intent intentCreateBookmarkCurrentPageIntent = this.mUiController.createBookmarkCurrentPageIntent(true);
+            if (intentCreateBookmarkCurrentPageIntent != null) {
+                getContext().startActivity(intentCreateBookmarkCurrentPageIntent);
+                return;
             }
-        } else if (this.mAllButton == view) {
+            return;
+        }
+        if (this.mAllButton == view) {
             this.mUiController.bookmarksOrHistoryPicker(UI.ComboViews.Bookmarks);
-        } else if (this.mSearchButton == view) {
+            return;
+        }
+        if (this.mSearchButton == view) {
             this.mBaseUi.editUrl(true, true);
-        } else if (this.mStopButton == view) {
+            return;
+        }
+        if (this.mStopButton == view) {
             stopOrRefresh();
         } else if (this.mClearButton == view) {
             clearOrClose();
@@ -196,9 +209,8 @@ public class NavigationBarTablet extends NavigationBarBase implements UrlInputVi
         this.mUrlIcon.setImageDrawable(this.mFaviconDrawable);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.browser.NavigationBarBase
-    public void setFocusState(boolean z) {
+    protected void setFocusState(boolean z) {
         super.setFocusState(z);
         if (z) {
             if (this.mHideNavButtons) {
@@ -250,11 +262,11 @@ public class NavigationBarTablet extends NavigationBarBase implements UrlInputVi
             this.mNavButtons.setVisibility(8);
             return;
         }
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this.mNavButtons, View.TRANSLATION_X, 0.0f, -this.mNavButtons.getMeasuredWidth());
-        ObjectAnimator ofInt = ObjectAnimator.ofInt(this.mUrlContainer, "left", this.mUrlContainer.getLeft(), this.mUrlContainer.getPaddingLeft());
-        ObjectAnimator ofFloat2 = ObjectAnimator.ofFloat(this.mNavButtons, View.ALPHA, 1.0f, 0.0f);
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this.mNavButtons, (Property<View, Float>) View.TRANSLATION_X, 0.0f, -this.mNavButtons.getMeasuredWidth());
+        ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this.mUrlContainer, "left", this.mUrlContainer.getLeft(), this.mUrlContainer.getPaddingLeft());
+        ObjectAnimator objectAnimatorOfFloat2 = ObjectAnimator.ofFloat(this.mNavButtons, (Property<View, Float>) View.ALPHA, 1.0f, 0.0f);
         this.mAnimation = new AnimatorSet();
-        this.mAnimation.playTogether(ofFloat, ofInt, ofFloat2);
+        this.mAnimation.playTogether(objectAnimatorOfFloat, objectAnimatorOfInt, objectAnimatorOfFloat2);
         this.mAnimation.addListener(new AnimatorListenerAdapter() { // from class: com.android.browser.NavigationBarTablet.1
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
@@ -274,11 +286,11 @@ public class NavigationBarTablet extends NavigationBarBase implements UrlInputVi
         this.mNavButtons.setTranslationX(0.0f);
         if (!this.mBaseUi.blockFocusAnimations()) {
             int measuredWidth = this.mNavButtons.getMeasuredWidth();
-            ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this.mNavButtons, View.TRANSLATION_X, -measuredWidth, 0.0f);
-            ObjectAnimator ofInt = ObjectAnimator.ofInt(this.mUrlContainer, "left", 0, measuredWidth);
-            ObjectAnimator ofFloat2 = ObjectAnimator.ofFloat(this.mNavButtons, View.ALPHA, 0.0f, 1.0f);
+            ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this.mNavButtons, (Property<View, Float>) View.TRANSLATION_X, -measuredWidth, 0.0f);
+            ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this.mUrlContainer, "left", 0, measuredWidth);
+            ObjectAnimator objectAnimatorOfFloat2 = ObjectAnimator.ofFloat(this.mNavButtons, (Property<View, Float>) View.ALPHA, 0.0f, 1.0f);
             AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.playTogether(ofFloat, ofInt, ofFloat2);
+            animatorSet.playTogether(objectAnimatorOfFloat, objectAnimatorOfInt, objectAnimatorOfFloat2);
             animatorSet.setDuration(150L);
             animatorSet.start();
             return;
@@ -301,19 +313,17 @@ public class NavigationBarTablet extends NavigationBarBase implements UrlInputVi
         switch (i) {
             case 0:
                 this.mClearButton.setVisibility(8);
-                return;
+                break;
             case 1:
                 this.mClearButton.setVisibility(8);
                 if (this.mUiController != null) {
                     this.mUiController.supportsVoice();
-                    return;
+                    break;
                 }
-                return;
+                break;
             case 2:
                 this.mClearButton.setVisibility(0);
-                return;
-            default:
-                return;
+                break;
         }
     }
 }

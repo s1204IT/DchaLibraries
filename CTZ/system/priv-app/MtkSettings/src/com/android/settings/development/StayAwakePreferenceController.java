@@ -16,6 +16,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class StayAwakePreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     static final int SETTING_VALUE_OFF = 0;
@@ -43,18 +44,18 @@ public class StayAwakePreferenceController extends DeveloperOptionsPreferenceCon
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        Settings.Global.putInt(this.mContext.getContentResolver(), "stay_on_while_plugged_in", ((Boolean) obj).booleanValue() ? 7 : 0);
+        Settings.Global.putInt(this.mContext.getContentResolver(), "stay_on_while_plugged_in", ((Boolean) obj).booleanValue() ? SETTING_VALUE_ON : 0);
         return true;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void updateState(Preference preference) {
-        RestrictedLockUtils.EnforcedAdmin checkIfMaximumTimeToLockSetByAdmin = checkIfMaximumTimeToLockSetByAdmin();
-        if (checkIfMaximumTimeToLockSetByAdmin != null) {
-            this.mPreference.setDisabledByAdmin(checkIfMaximumTimeToLockSetByAdmin);
-            return;
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfMaximumTimeToLockSetByAdmin = checkIfMaximumTimeToLockSetByAdmin();
+        if (enforcedAdminCheckIfMaximumTimeToLockSetByAdmin != null) {
+            this.mPreference.setDisabledByAdmin(enforcedAdminCheckIfMaximumTimeToLockSetByAdmin);
+        } else {
+            this.mPreference.setChecked(Settings.Global.getInt(this.mContext.getContentResolver(), "stay_on_while_plugged_in", 0) != 0);
         }
-        this.mPreference.setChecked(Settings.Global.getInt(this.mContext.getContentResolver(), "stay_on_while_plugged_in", 0) != 0);
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnResume
@@ -76,9 +77,8 @@ public class StayAwakePreferenceController extends DeveloperOptionsPreferenceCon
         this.mSettingsObserver.register(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         Settings.Global.putInt(this.mContext.getContentResolver(), "stay_on_while_plugged_in", 0);
         this.mPreference.setChecked(false);
@@ -88,7 +88,6 @@ public class StayAwakePreferenceController extends DeveloperOptionsPreferenceCon
         return RestrictedLockUtils.checkIfMaximumTimeToLockIsSet(this.mContext);
     }
 
-    /* loaded from: classes.dex */
     class SettingsObserver extends ContentObserver {
         private final Uri mStayAwakeUri;
 

@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class BluetoothDiscoverableTimeoutReceiver extends BroadcastReceiver {
     public static void setDiscoverableAlarm(Context context, long j) {
@@ -30,8 +31,8 @@ public class BluetoothDiscoverableTimeoutReceiver extends BroadcastReceiver {
         if (localBluetoothAdapter != null && localBluetoothAdapter.getState() == 12) {
             Log.d("BluetoothDiscoverableTimeoutReceiver", "Disable discoverable...");
             localBluetoothAdapter.setScanMode(21);
-            return;
+        } else {
+            Log.e("BluetoothDiscoverableTimeoutReceiver", "localBluetoothAdapter is NULL!!");
         }
-        Log.e("BluetoothDiscoverableTimeoutReceiver", "localBluetoothAdapter is NULL!!");
     }
 }

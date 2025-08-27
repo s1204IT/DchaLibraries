@@ -3,6 +3,7 @@ package com.android.systemui.statusbar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 /* loaded from: classes.dex */
 public class KeyboardShortcutsReceiver extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver

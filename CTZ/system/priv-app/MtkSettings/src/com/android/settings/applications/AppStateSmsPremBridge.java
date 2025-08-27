@@ -7,6 +7,7 @@ import com.android.internal.telephony.ISms;
 import com.android.settings.applications.AppStateBaseBridge;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AppStateSmsPremBridge extends AppStateBaseBridge {
     public static final ApplicationsState.AppFilter FILTER_APP_PREMIUM_SMS = new ApplicationsState.AppFilter() { // from class: com.android.settings.applications.AppStateSmsPremBridge.1
@@ -22,7 +23,6 @@ public class AppStateSmsPremBridge extends AppStateBaseBridge {
     private final Context mContext;
     private final ISms mSmsManager;
 
-    /* loaded from: classes.dex */
     public static class SmsState {
         public int smsState;
     }

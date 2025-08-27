@@ -4,6 +4,7 @@ import android.content.Context;
 import android.metrics.LogMaker;
 import android.util.Pair;
 import com.android.internal.logging.MetricsLogger;
+
 /* loaded from: classes.dex */
 public class EventLogWriter implements LogWriter {
     private final MetricsLogger mMetricsLogger = new MetricsLogger();

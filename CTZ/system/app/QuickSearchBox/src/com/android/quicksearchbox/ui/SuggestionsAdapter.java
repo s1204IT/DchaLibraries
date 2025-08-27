@@ -3,6 +3,7 @@ package com.android.quicksearchbox.ui;
 import android.view.View;
 import com.android.quicksearchbox.SuggestionPosition;
 import com.android.quicksearchbox.Suggestions;
+
 /* loaded from: classes.dex */
 public interface SuggestionsAdapter<A> {
     A getListAdapter();

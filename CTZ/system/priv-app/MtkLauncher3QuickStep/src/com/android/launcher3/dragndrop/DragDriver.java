@@ -5,11 +5,11 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import com.android.launcher3.DropTarget;
 import com.android.launcher3.Utilities;
+
 /* loaded from: classes.dex */
 public abstract class DragDriver {
     protected final EventListener mEventListener;
 
-    /* loaded from: classes.dex */
     public interface EventListener {
         void onDriverDragCancel();
 
@@ -34,16 +34,15 @@ public abstract class DragDriver {
             case 1:
                 this.mEventListener.onDriverDragMove(motionEvent.getX(), motionEvent.getY());
                 this.mEventListener.onDriverDragEnd(motionEvent.getX(), motionEvent.getY());
-                return true;
+                break;
             case 2:
                 this.mEventListener.onDriverDragMove(motionEvent.getX(), motionEvent.getY());
-                return true;
+                break;
             case 3:
                 this.mEventListener.onDriverDragCancel();
-                return true;
-            default:
-                return true;
+                break;
         }
+        return true;
     }
 
     public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
@@ -58,8 +57,8 @@ public abstract class DragDriver {
 
     public static DragDriver create(Context context, DragController dragController, DropTarget.DragObject dragObject, DragOptions dragOptions) {
         if (Utilities.ATLEAST_NOUGAT && dragOptions.systemDndStartPoint != null) {
-            return new SystemDragDriver(dragController, context, dragObject);
+            return new DragDriver3(dragController, context, dragObject);
         }
-        return new InternalDragDriver(dragController);
+        return new DragDriver2(dragController);
     }
 }

@@ -5,15 +5,17 @@ import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.UserHandle;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class MonitoringCertInfoActivity extends Activity implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
     private int mUserId;
 
     @Override // android.app.Activity
-    protected void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) throws Resources.NotFoundException {
         int i;
         super.onCreate(bundle);
         this.mUserId = getIntent().getIntExtra("android.intent.extra.USER_ID", UserHandle.myUserId());
@@ -37,7 +39,7 @@ public class MonitoringCertInfoActivity extends Activity implements DialogInterf
         } else if (devicePolicyManager.getDeviceOwnerComponentOnCallingUser() != null) {
             builder.setMessage(getResources().getQuantityString(R.plurals.ssl_ca_cert_info_message_device_owner, intExtra, devicePolicyManager.getDeviceOwnerNameOnAnyUser()));
         } else {
-            builder.setIcon(17301624);
+            builder.setIcon(android.R.drawable.stat_notify_error);
             builder.setMessage(R.string.ssl_ca_cert_warning_message);
         }
         builder.show();

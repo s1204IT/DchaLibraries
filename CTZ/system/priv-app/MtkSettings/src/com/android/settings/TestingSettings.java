@@ -3,6 +3,7 @@ package com.android.settings;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.support.v7.preference.PreferenceScreen;
+
 /* loaded from: classes.dex */
 public class TestingSettings extends SettingsPreferenceFragment {
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment

@@ -33,6 +33,7 @@ import com.android.systemui.util.wakelock.WakeLock;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class ScrimController implements ViewTreeObserver.OnPreDrawListener, ColorExtractor.OnColorsChangedListener, Dumpable {
     private static final boolean DEBUG = Log.isLoggable("ScrimController", 3);
@@ -96,7 +97,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         this.mTimeTicker = new AlarmTimeout(alarmManager, new AlarmManager.OnAlarmListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ZxOK9HbkOUnaEI0FKoidLb2saOY
             @Override // android.app.AlarmManager.OnAlarmListener
             public final void onAlarm() {
-                ScrimController.this.onHideWallpaperTimeout();
+                this.f$0.onHideWallpaperTimeout();
             }
         }, "hide_aod_wallpaper", new Handler());
         this.mScrimBehindAlpha = this.mScrimBehindAlphaResValue;
@@ -105,10 +106,10 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         this.mLockColors = this.mColorExtractor.getColors(2, 1, true);
         this.mSystemColors = this.mColorExtractor.getColors(1, 1, true);
         this.mNeedsDrawableColorUpdate = true;
-        ScrimState[] values = ScrimState.values();
-        for (int i = 0; i < values.length; i++) {
-            values[i].init(this.mScrimInFront, this.mScrimBehind, this.mDozeParameters);
-            values[i].setScrimBehindAlphaKeyguard(this.mScrimBehindAlphaKeyguard);
+        ScrimState[] scrimStateArrValues = ScrimState.values();
+        for (int i = 0; i < scrimStateArrValues.length; i++) {
+            scrimStateArrValues[i].init(this.mScrimInFront, this.mScrimBehind, this.mDozeParameters);
+            scrimStateArrValues[i].setScrimBehindAlphaKeyguard(this.mScrimBehindAlphaKeyguard);
         }
         this.mState = ScrimState.UNINITIALIZED;
         this.mScrimBehind.setDefaultFocusHighlightEnabled(false);
@@ -178,7 +179,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
             this.mScrimInFront.postOnAnimationDelayed(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$5DY8P9cXHTvbVZZOVB_VSCJUZk0
                 @Override // java.lang.Runnable
                 public final void run() {
-                    ScrimController.this.scheduleUpdate();
+                    this.f$0.scheduleUpdate();
                 }
             }, 16L);
             this.mAnimationDelay = 100L;
@@ -203,9 +204,8 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         this.mTracking = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @VisibleForTesting
-    public void onHideWallpaperTimeout() {
+    protected void onHideWallpaperTimeout() {
         if (this.mState != ScrimState.AOD) {
             return;
         }
@@ -221,9 +221,9 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
             if (this.mWakeLock != null) {
                 this.mWakeLockHeld = true;
                 this.mWakeLock.acquire();
-                return;
+            } else {
+                Log.w("ScrimController", "Cannot hold wake lock, it has not been set yet");
             }
-            Log.w("ScrimController", "Cannot hold wake lock, it has not been set yet");
         }
     }
 
@@ -268,19 +268,19 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
             if (this.mDarkenWhileDragging) {
                 this.mCurrentBehindAlpha = MathUtils.lerp(0.7f, behindAlpha, interpolatedFraction);
                 this.mCurrentInFrontAlpha = 0.0f;
-                return;
+            } else {
+                this.mCurrentBehindAlpha = MathUtils.lerp(0.0f, behindAlpha, interpolatedFraction);
+                this.mCurrentInFrontAlpha = 0.0f;
             }
-            this.mCurrentBehindAlpha = MathUtils.lerp(0.0f, behindAlpha, interpolatedFraction);
-            this.mCurrentInFrontAlpha = 0.0f;
         }
     }
 
     public void setNotificationCount(int i) {
-        float min = Math.min(i / 3.0f, 1.0f);
-        if (this.mNotificationDensity == min) {
+        float fMin = Math.min(i / 3.0f, 1.0f);
+        if (this.mNotificationDensity == fMin) {
             return;
         }
-        this.mNotificationDensity = min;
+        this.mNotificationDensity = fMin;
         if (this.mState == ScrimState.KEYGUARD) {
             applyExpansionToAlpha();
             scheduleUpdate();
@@ -300,8 +300,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         ScrimState.AOD.setAodFrontScrimAlpha(f);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void scheduleUpdate() {
+    protected void scheduleUpdate() {
         if (this.mUpdatePending) {
             return;
         }
@@ -345,8 +344,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         this.mScrimStateListener.accept(this.mState, Float.valueOf(f), this.mScrimInFront.getColors());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dispatchScrimsVisible() {
+    private void dispatchScrimsVisible() {
         int i;
         if (this.mScrimInFront.getViewAlpha() == 1.0f || this.mScrimBehind.getViewAlpha() == 1.0f) {
             i = 2;
@@ -362,11 +360,10 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
     }
 
     private float getInterpolatedFraction() {
-        float f = (this.mExpansionFraction * 1.2f) - 0.2f;
-        if (f <= 0.0f) {
+        if ((this.mExpansionFraction * 1.2f) - 0.2f <= 0.0f) {
             return 0.0f;
         }
-        return (float) (1.0d - (0.5d * (1.0d - Math.cos(3.141590118408203d * Math.pow(1.0f - f, 2.0d)))));
+        return (float) (1.0d - (0.5d * (1.0d - Math.cos(3.141590118408203d * Math.pow(1.0f - r0, 2.0d)))));
     }
 
     private void setScrimBehindAlpha(float f) {
@@ -391,32 +388,38 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
     }
 
     private void updateScrimColor(View view, float f, int i) {
-        float max = Math.max(0.0f, Math.min(1.0f, f));
+        float fMax = Math.max(0.0f, Math.min(1.0f, f));
         if (view instanceof ScrimView) {
             ScrimView scrimView = (ScrimView) view;
-            Trace.traceCounter(4096L, view == this.mScrimInFront ? "front_scrim_alpha" : "back_scrim_alpha", (int) (255.0f * max));
+            Trace.traceCounter(4096L, view == this.mScrimInFront ? "front_scrim_alpha" : "back_scrim_alpha", (int) (255.0f * fMax));
             Trace.traceCounter(4096L, view == this.mScrimInFront ? "front_scrim_tint" : "back_scrim_tint", Color.alpha(i));
             scrimView.setTint(i);
-            scrimView.setViewAlpha(max);
+            scrimView.setViewAlpha(fMax);
         } else {
-            view.setAlpha(max);
+            view.setAlpha(fMax);
         }
         dispatchScrimsVisible();
     }
 
     private void startScrimAnimation(final View view, float f) {
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
         final int tint = view instanceof ScrimView ? ((ScrimView) view).getTint() : 0;
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ScrimController$RfJJyPt1cPl4hraLjBCUJgqPhOM
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ScrimController$RfJJyPt1cPl4hraLjBCUJgqPhOM
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                ScrimController.lambda$startScrimAnimation$0(ScrimController.this, view, tint, valueAnimator);
+                ScrimController.lambda$startScrimAnimation$0(this.f$0, view, tint, valueAnimator);
             }
         });
-        ofFloat.setInterpolator(this.mInterpolator);
-        ofFloat.setStartDelay(this.mAnimationDelay);
-        ofFloat.setDuration(this.mAnimationDuration);
-        ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.ScrimController.1
+        valueAnimatorOfFloat.setInterpolator(this.mInterpolator);
+        valueAnimatorOfFloat.setStartDelay(this.mAnimationDelay);
+        valueAnimatorOfFloat.setDuration(this.mAnimationDuration);
+        valueAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.ScrimController.1
+            final /* synthetic */ View val$scrim;
+
+            AnonymousClass1(final View view2) {
+                view = view2;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 ScrimController.this.onFinished();
@@ -428,17 +431,37 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
                 }
             }
         });
-        view.setTag(R.id.scrim_alpha_start, Float.valueOf(f));
-        view.setTag(R.id.scrim_alpha_end, Float.valueOf(getCurrentScrimAlpha(view)));
-        view.setTag(R.id.scrim, ofFloat);
-        ofFloat.start();
+        view2.setTag(R.id.scrim_alpha_start, Float.valueOf(f));
+        view2.setTag(R.id.scrim_alpha_end, Float.valueOf(getCurrentScrimAlpha(view2)));
+        view2.setTag(R.id.scrim, valueAnimatorOfFloat);
+        valueAnimatorOfFloat.start();
     }
 
     public static /* synthetic */ void lambda$startScrimAnimation$0(ScrimController scrimController, View view, int i, ValueAnimator valueAnimator) {
-        float floatValue = ((Float) view.getTag(R.id.scrim_alpha_start)).floatValue();
-        float floatValue2 = ((Float) valueAnimator.getAnimatedValue()).floatValue();
-        scrimController.updateScrimColor(view, MathUtils.constrain(MathUtils.lerp(floatValue, scrimController.getCurrentScrimAlpha(view), floatValue2), 0.0f, 1.0f), ColorUtils.blendARGB(i, scrimController.getCurrentScrimTint(view), floatValue2));
+        float fFloatValue = ((Float) view.getTag(R.id.scrim_alpha_start)).floatValue();
+        float fFloatValue2 = ((Float) valueAnimator.getAnimatedValue()).floatValue();
+        scrimController.updateScrimColor(view, MathUtils.constrain(MathUtils.lerp(fFloatValue, scrimController.getCurrentScrimAlpha(view), fFloatValue2), 0.0f, 1.0f), ColorUtils.blendARGB(i, scrimController.getCurrentScrimTint(view), fFloatValue2));
         scrimController.dispatchScrimsVisible();
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.ScrimController$1 */
+    class AnonymousClass1 extends AnimatorListenerAdapter {
+        final /* synthetic */ View val$scrim;
+
+        AnonymousClass1(final View view2) {
+            view = view2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            ScrimController.this.onFinished();
+            view.setTag(R.id.scrim, null);
+            ScrimController.this.dispatchScrimsVisible();
+            if (!ScrimController.this.mDeferFinishedListener && ScrimController.this.mOnAnimationFinished != null) {
+                ScrimController.this.mOnAnimationFinished.run();
+                ScrimController.this.mOnAnimationFinished = null;
+            }
+        }
     }
 
     private float getCurrentScrimAlpha(View view) {
@@ -477,8 +500,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onFinished() {
+    private void onFinished() {
         if (this.mWakeLockHeld) {
             this.mWakeLock.release();
             this.mWakeLockHeld = false;
@@ -539,10 +561,11 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
             if (this.mAnimateChange) {
                 startScrimAnimation(scrimView, viewAlpha);
                 return;
+            } else {
+                updateScrimColor(scrimView, f, getCurrentScrimTint(scrimView));
+                onFinished();
+                return;
             }
-            updateScrimColor(scrimView, f, getCurrentScrimTint(scrimView));
-            onFinished();
-            return;
         }
         onFinished();
     }
@@ -559,7 +582,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         this.mPendingFrameCallback = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ScrimController$kDQtFE2BFSUNax7wJ8UgLaBZyEo
             @Override // java.lang.Runnable
             public final void run() {
-                ScrimController.lambda$blankDisplay$2(ScrimController.this);
+                ScrimController.lambda$blankDisplay$2(this.f$0);
             }
         };
         doOnTheNextFrame(this.mPendingFrameCallback);
@@ -573,7 +596,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         scrimController.mBlankingTransitionRunnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$ScrimController$xRo1WgiULtMHpaX-VTe04p0hBHI
             @Override // java.lang.Runnable
             public final void run() {
-                ScrimController.lambda$blankDisplay$1(ScrimController.this);
+                ScrimController.lambda$blankDisplay$1(this.f$0);
             }
         };
         int i = scrimController.mScreenOn ? 32 : 500;
@@ -689,7 +712,6 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         updateScrims();
     }
 
-    /* loaded from: classes.dex */
     public interface Callback {
         default void onStart() {
         }

@@ -7,6 +7,7 @@ import android.content.pm.IPackageManager;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public abstract class AppWithAdminGrantedPermissionsCounter extends AppCounter {
     private final DevicePolicyManager mDevicePolicyManager;
@@ -33,18 +34,18 @@ public abstract class AppWithAdminGrantedPermissionsCounter extends AppCounter {
                 }
             }
             return false;
-        } else if (packageManagerWrapper.getInstallReason(applicationInfo.packageName, new UserHandle(UserHandle.getUserId(applicationInfo.uid))) != 1) {
-            return false;
-        } else {
-            try {
-                for (String str2 : strArr) {
-                    if (iPackageManager.checkUidPermission(str2, applicationInfo.uid) == 0) {
-                        return true;
-                    }
-                }
-            } catch (RemoteException e) {
-            }
+        }
+        if (packageManagerWrapper.getInstallReason(applicationInfo.packageName, new UserHandle(UserHandle.getUserId(applicationInfo.uid))) != 1) {
             return false;
         }
+        try {
+            for (String str2 : strArr) {
+                if (iPackageManager.checkUidPermission(str2, applicationInfo.uid) == 0) {
+                    return true;
+                }
+            }
+        } catch (RemoteException e) {
+        }
+        return false;
     }
 }

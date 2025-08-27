@@ -1,5 +1,6 @@
 package com.android.launcher3.graphics;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.v4.graphics.ColorUtils;
@@ -8,6 +9,7 @@ import android.view.animation.Interpolator;
 import com.android.launcher3.R;
 import com.android.launcher3.anim.Interpolators;
 import com.android.launcher3.uioverrides.WallpaperColorInfo;
+
 /* loaded from: classes.dex */
 public class ColorScrim extends ViewScrim {
     private final int mColor;
@@ -32,7 +34,7 @@ public class ColorScrim extends ViewScrim {
         }
     }
 
-    public static ColorScrim createExtractedColorScrim(View view) {
+    public static ColorScrim createExtractedColorScrim(View view) throws Resources.NotFoundException {
         WallpaperColorInfo wallpaperColorInfo = WallpaperColorInfo.getInstance(view.getContext());
         ColorScrim colorScrim = new ColorScrim(view, ColorUtils.setAlphaComponent(wallpaperColorInfo.getSecondaryColor(), view.getResources().getInteger(R.integer.extracted_color_gradient_alpha)), Interpolators.LINEAR);
         colorScrim.attach();

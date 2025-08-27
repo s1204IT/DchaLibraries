@@ -6,19 +6,18 @@ import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 class AppDialog extends AlertDialog implements DialogInterface.OnClickListener {
     private final String mLabel;
     private final Listener mListener;
     private final PackageInfo mPackageInfo;
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onForget(DialogInterface dialogInterface);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public AppDialog(Context context, Listener listener, PackageInfo packageInfo, String str) {
+    AppDialog(Context context, Listener listener, PackageInfo packageInfo, String str) {
         super(context);
         this.mListener = listener;
         this.mPackageInfo = packageInfo;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.os.Handler;
 import android.provider.Settings;
+
 /* loaded from: classes.dex */
 public abstract class GlobalSetting extends ContentObserver {
     private final Context mContext;

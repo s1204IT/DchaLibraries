@@ -1,4 +1,5 @@
 package com.android.launcher3.touch;
+
 /* loaded from: classes.dex */
 public class OverScroll {
     private static final float OVERSCROLL_DAMP_FACTOR = 0.07f;
@@ -14,10 +15,10 @@ public class OverScroll {
         }
         float f2 = i;
         float f3 = f / f2;
-        float abs = (f3 / Math.abs(f3)) * overScrollInfluenceCurve(Math.abs(f3));
-        if (Math.abs(abs) >= 1.0f) {
-            abs /= Math.abs(abs);
+        float fAbs = (f3 / Math.abs(f3)) * overScrollInfluenceCurve(Math.abs(f3));
+        if (Math.abs(fAbs) >= 1.0f) {
+            fAbs /= Math.abs(fAbs);
         }
-        return Math.round(OVERSCROLL_DAMP_FACTOR * abs * f2);
+        return Math.round(OVERSCROLL_DAMP_FACTOR * fAbs * f2);
     }
 }

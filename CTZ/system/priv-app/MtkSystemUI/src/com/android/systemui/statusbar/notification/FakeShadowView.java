@@ -8,6 +8,7 @@ import android.view.ViewOutlineProvider;
 import android.widget.LinearLayout;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.AlphaOptimizedFrameLayout;
+
 /* loaded from: classes.dex */
 public class FakeShadowView extends AlphaOptimizedFrameLayout {
     private View mFakeShadow;

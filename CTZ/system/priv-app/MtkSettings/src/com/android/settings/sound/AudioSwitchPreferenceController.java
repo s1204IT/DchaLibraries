@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+
 /* loaded from: classes.dex */
 public abstract class AudioSwitchPreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener, BluetoothCallback, LifecycleObserver, OnStart, OnStop {
     private static final int INVALID_INDEX = -1;
@@ -52,7 +53,6 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
     private final WiredHeadsetBroadcastReceiver mReceiver;
     protected int mSelectedIndex;
 
-    /* loaded from: classes.dex */
     public interface AudioSwitchCallback {
         void onPreferenceDataChanged(ListPreference listPreference);
     }
@@ -71,9 +71,7 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         FutureTask futureTask = new FutureTask(new Callable() { // from class: com.android.settings.sound.-$$Lambda$AudioSwitchPreferenceController$GC_sYSWqqCmy3hCGLKM8AEFN_-Y
             @Override // java.util.concurrent.Callable
             public final Object call() {
-                LocalBluetoothManager localBtManager;
-                localBtManager = Utils.getLocalBtManager(AudioSwitchPreferenceController.this.mContext);
-                return localBtManager;
+                return Utils.getLocalBtManager(this.f$0.mContext);
             }
         });
         try {
@@ -97,25 +95,25 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
         String str = (String) obj;
-        if (preference instanceof ListPreference) {
-            ListPreference listPreference = (ListPreference) preference;
-            if (TextUtils.equals(str, this.mContext.getText(R.string.media_output_default_summary))) {
-                this.mSelectedIndex = getDefaultDeviceIndex();
-                setActiveBluetoothDevice(null);
-                listPreference.setSummary(this.mContext.getText(R.string.media_output_default_summary));
-                return true;
-            }
-            int connectedDeviceIndex = getConnectedDeviceIndex(str);
-            if (connectedDeviceIndex == INVALID_INDEX) {
-                return false;
-            }
-            BluetoothDevice bluetoothDevice = this.mConnectedDevices.get(connectedDeviceIndex);
-            this.mSelectedIndex = connectedDeviceIndex;
-            setActiveBluetoothDevice(bluetoothDevice);
-            listPreference.setSummary(bluetoothDevice.getAliasName());
+        if (!(preference instanceof ListPreference)) {
+            return false;
+        }
+        ListPreference listPreference = (ListPreference) preference;
+        if (TextUtils.equals(str, this.mContext.getText(R.string.media_output_default_summary))) {
+            this.mSelectedIndex = getDefaultDeviceIndex();
+            setActiveBluetoothDevice(null);
+            listPreference.setSummary(this.mContext.getText(R.string.media_output_default_summary));
             return true;
         }
-        return false;
+        int connectedDeviceIndex = getConnectedDeviceIndex(str);
+        if (connectedDeviceIndex == INVALID_INDEX) {
+            return false;
+        }
+        BluetoothDevice bluetoothDevice = this.mConnectedDevices.get(connectedDeviceIndex);
+        this.mSelectedIndex = connectedDeviceIndex;
+        setActiveBluetoothDevice(bluetoothDevice);
+        listPreference.setSummary(bluetoothDevice.getAliasName());
+        return true;
     }
 
     @Override // com.android.settings.core.BasePreferenceController, com.android.settingslib.core.AbstractPreferenceController
@@ -129,20 +127,20 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
     public void onStart() {
         if (this.mLocalBluetoothManager == null) {
             Log.e(TAG, "Bluetooth is not supported on this device");
-            return;
+        } else {
+            this.mLocalBluetoothManager.setForegroundActivity(this.mContext);
+            register();
         }
-        this.mLocalBluetoothManager.setForegroundActivity(this.mContext);
-        register();
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnStop
     public void onStop() {
         if (this.mLocalBluetoothManager == null) {
             Log.e(TAG, "Bluetooth is not supported on this device");
-            return;
+        } else {
+            this.mLocalBluetoothManager.setForegroundActivity(null);
+            unregister();
         }
-        this.mLocalBluetoothManager.setForegroundActivity(null);
-        unregister();
     }
 
     @Override // com.android.settingslib.bluetooth.BluetoothCallback
@@ -189,13 +187,11 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         this.mAudioSwitchPreferenceCallback = audioSwitchCallback;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isStreamFromOutputDevice(int i, int i2) {
+    protected boolean isStreamFromOutputDevice(int i, int i2) {
         return (this.mAudioManager.getDevicesForStream(i) & i2) != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public List<BluetoothDevice> getConnectedHfpDevices() {
+    protected List<BluetoothDevice> getConnectedHfpDevices() {
         ArrayList arrayList = new ArrayList();
         HeadsetProfile headsetProfile = this.mProfileManager.getHeadsetProfile();
         if (headsetProfile == null) {
@@ -209,8 +205,7 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public List<BluetoothDevice> getConnectedA2dpDevices() {
+    protected List<BluetoothDevice> getConnectedA2dpDevices() {
         ArrayList arrayList = new ArrayList();
         A2dpProfile a2dpProfile = this.mProfileManager.getA2dpProfile();
         if (a2dpProfile == null) {
@@ -224,8 +219,7 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public List<BluetoothDevice> getConnectedHearingAidDevices() {
+    protected List<BluetoothDevice> getConnectedHearingAidDevices() {
         ArrayList arrayList = new ArrayList();
         HearingAidProfile hearingAidProfile = this.mProfileManager.getHearingAidProfile();
         if (hearingAidProfile == null) {
@@ -242,15 +236,14 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public BluetoothDevice findActiveDevice(int i) {
+    protected BluetoothDevice findActiveDevice(int i) {
         if (i != 3 && i != 0) {
             return null;
         }
         if (isStreamFromOutputDevice(3, 896)) {
             return this.mProfileManager.getA2dpProfile().getActiveDevice();
         }
-        if (isStreamFromOutputDevice(0, android.support.v7.appcompat.R.styleable.AppCompatTheme_windowActionBarOverlay)) {
+        if (isStreamFromOutputDevice(0, 112)) {
             return this.mProfileManager.getHeadsetProfile().getActiveDevice();
         }
         if (isStreamFromOutputDevice(i, 134217728)) {
@@ -263,13 +256,11 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getDefaultDeviceIndex() {
+    int getDefaultDeviceIndex() {
         return this.mConnectedDevices.size();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setupPreferenceEntries(CharSequence[] charSequenceArr, CharSequence[] charSequenceArr2, BluetoothDevice bluetoothDevice) {
+    void setupPreferenceEntries(CharSequence[] charSequenceArr, CharSequence[] charSequenceArr2, BluetoothDevice bluetoothDevice) {
         this.mSelectedIndex = getDefaultDeviceIndex();
         charSequenceArr[this.mSelectedIndex] = this.mContext.getText(R.string.media_output_default_summary);
         charSequenceArr2[this.mSelectedIndex] = this.mContext.getText(R.string.media_output_default_summary);
@@ -284,8 +275,7 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setPreference(CharSequence[] charSequenceArr, CharSequence[] charSequenceArr2, Preference preference) {
+    void setPreference(CharSequence[] charSequenceArr, CharSequence[] charSequenceArr2, Preference preference) {
         ListPreference listPreference = (ListPreference) preference;
         listPreference.setEntries(charSequenceArr);
         listPreference.setEntryValues(charSequenceArr2);
@@ -323,9 +313,7 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         this.mContext.unregisterReceiver(this.mReceiver);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AudioManagerAudioDeviceCallback extends AudioDeviceCallback {
+    private class AudioManagerAudioDeviceCallback extends AudioDeviceCallback {
         private AudioManagerAudioDeviceCallback() {
         }
 
@@ -340,9 +328,7 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class WiredHeadsetBroadcastReceiver extends BroadcastReceiver {
+    private class WiredHeadsetBroadcastReceiver extends BroadcastReceiver {
         private WiredHeadsetBroadcastReceiver() {
         }
 
@@ -355,9 +341,7 @@ public abstract class AudioSwitchPreferenceController extends BasePreferenceCont
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class MediaRouterCallback extends MediaRouter.Callback {
+    private class MediaRouterCallback extends MediaRouter.Callback {
         private MediaRouterCallback() {
         }
 

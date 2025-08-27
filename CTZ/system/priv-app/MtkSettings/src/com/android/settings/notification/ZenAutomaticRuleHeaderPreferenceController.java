@@ -18,6 +18,7 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.notification.ZenRuleNameDialog;
 import com.android.settings.widget.EntityHeaderController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenAutomaticRuleHeaderPreferenceController extends AbstractZenModePreferenceController implements PreferenceControllerMixin {
     private final String KEY;
@@ -51,7 +52,7 @@ public class ZenAutomaticRuleHeaderPreferenceController extends AbstractZenModeP
                 this.mController.setEditZenRuleNameListener(new View.OnClickListener() { // from class: com.android.settings.notification.ZenAutomaticRuleHeaderPreferenceController.1
                     @Override // android.view.View.OnClickListener
                     public void onClick(View view) {
-                        ZenRuleNameDialog.show(ZenAutomaticRuleHeaderPreferenceController.this.mFragment, ZenAutomaticRuleHeaderPreferenceController.this.mRule.getName(), null, new RuleNameChangeListener());
+                        ZenRuleNameDialog.show(ZenAutomaticRuleHeaderPreferenceController.this.mFragment, ZenAutomaticRuleHeaderPreferenceController.this.mRule.getName(), null, ZenAutomaticRuleHeaderPreferenceController.this.new RuleNameChangeListener());
                     }
                 });
             }
@@ -59,7 +60,7 @@ public class ZenAutomaticRuleHeaderPreferenceController extends AbstractZenModeP
         }
     }
 
-    private Drawable getIcon() {
+    private Drawable getIcon() throws PackageManager.NameNotFoundException {
         try {
             PackageManager packageManager = this.mContext.getPackageManager();
             ApplicationInfo applicationInfo = packageManager.getApplicationInfo(this.mRule.getOwner().getPackageName(), 0);
@@ -78,13 +79,11 @@ public class ZenAutomaticRuleHeaderPreferenceController extends AbstractZenModeP
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onResume(AutomaticZenRule automaticZenRule, String str) {
+    protected void onResume(AutomaticZenRule automaticZenRule, String str) {
         this.mRule = automaticZenRule;
         this.mId = str;
     }
 
-    /* loaded from: classes.dex */
     public class RuleNameChangeListener implements ZenRuleNameDialog.PositiveClickListener {
         public RuleNameChangeListener() {
         }

@@ -1,10 +1,12 @@
 package com.android.setupwizardlib.view;
 
+import android.R;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.LinearLayout;
+
 /* loaded from: classes.dex */
 public class CheckableLinearLayout extends LinearLayout implements Checkable {
     private boolean mChecked;
@@ -38,7 +40,7 @@ public class CheckableLinearLayout extends LinearLayout implements Checkable {
     @Override // android.view.ViewGroup, android.view.View
     protected int[] onCreateDrawableState(int i) {
         if (this.mChecked) {
-            return mergeDrawableStates(super.onCreateDrawableState(i + 1), new int[]{16842912});
+            return mergeDrawableStates(super.onCreateDrawableState(i + 1), new int[]{R.attr.state_checked});
         }
         return super.onCreateDrawableState(i);
     }

@@ -2,6 +2,7 @@ package com.android.systemui.shared.recents.utilities;
 
 import android.os.Trace;
 import android.support.v4.media.session.PlaybackStateCompat;
+
 /* loaded from: classes.dex */
 public class AppTrace {
     public static void start(String key, int cookie) {

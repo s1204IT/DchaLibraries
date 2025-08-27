@@ -4,6 +4,7 @@ import android.os.BatteryStats;
 import android.util.ArrayMap;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
+
 /* loaded from: classes.dex */
 public class FakeUid extends BatteryStats.Uid {
     private final int mUid;

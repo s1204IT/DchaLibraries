@@ -178,6 +178,7 @@ import com.android.systemui.statusbar.notification.ActivityLaunchAnimator;
 import com.android.systemui.statusbar.notification.VisualStabilityManager;
 import com.android.systemui.statusbar.phone.LockscreenWallpaper;
 import com.android.systemui.statusbar.phone.ScrimController;
+import com.android.systemui.statusbar.phone.StatusBar;
 import com.android.systemui.statusbar.phone.UnlockMethodCache;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
@@ -215,6 +216,7 @@ import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
 /* loaded from: classes.dex */
 public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChangedListener, DemoMode, ActivityStarter, CommandQueue.Callbacks, DragDownHelper.DragDownCallback, NotificationPresenter, UnlockMethodCache.OnUnlockMethodChangedListener, ConfigurationController.ConfigurationListener, OnHeadsUpChangedListener, ZenModeController.Callback {
     private static final boolean ONLY_CORE_APPS;
@@ -336,6 +338,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     protected boolean mVrMode;
     private boolean mWakeUpComingFromTouch;
     private PointF mWakeUpTouchLocation;
+
     @VisibleForTesting
     WakefulnessLifecycle mWakefulnessLifecycle;
     private boolean mWereIconsJustHidden;
@@ -365,14 +368,18 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     private final DisplayMetrics mDisplayMetrics = new DisplayMetrics();
     private final GestureRecorder mGestureRec = null;
     private final MetricsLogger mMetricsLogger = (MetricsLogger) Dependency.get(MetricsLogger.class);
+
     @VisibleForTesting
     protected boolean mUserSetup = false;
     private final DeviceProvisionedController.DeviceProvisionedListener mUserSetupObserver = new DeviceProvisionedController.DeviceProvisionedListener() { // from class: com.android.systemui.statusbar.phone.StatusBar.1
+        AnonymousClass1() {
+        }
+
         @Override // com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener
         public void onUserSetupChanged() {
-            boolean isUserSetup = StatusBar.this.mDeviceProvisionedController.isUserSetup(StatusBar.this.mDeviceProvisionedController.getCurrentUser());
-            if (isUserSetup != StatusBar.this.mUserSetup) {
-                StatusBar.this.mUserSetup = isUserSetup;
+            boolean zIsUserSetup = StatusBar.this.mDeviceProvisionedController.isUserSetup(StatusBar.this.mDeviceProvisionedController.getCurrentUser());
+            if (zIsUserSetup != StatusBar.this.mUserSetup) {
+                StatusBar.this.mUserSetup = zIsUserSetup;
                 if (!StatusBar.this.mUserSetup && StatusBar.this.mStatusBarView != null) {
                     StatusBar.this.animateCollapseQuickSettings();
                 }
@@ -388,12 +395,15 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     private final Runnable mAutohide = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$Xuhkv64bZHfI7FOWJTQgAefazRk
         @Override // java.lang.Runnable
         public final void run() {
-            StatusBar.lambda$new$0(StatusBar.this);
+            StatusBar.lambda$new$0(this.f$0);
         }
     };
     protected final PorterDuffXfermode mSrcXferMode = new PorterDuffXfermode(PorterDuff.Mode.SRC);
     protected final PorterDuffXfermode mSrcOverXferMode = new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER);
     private BroadcastReceiver mWallpaperChangedReceiver = new BroadcastReceiver() { // from class: com.android.systemui.statusbar.phone.StatusBar.2
+        AnonymousClass2() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             WallpaperManager wallpaperManager = (WallpaperManager) context.getSystemService(WallpaperManager.class);
@@ -409,6 +419,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     };
     private final int[] mTmpInt2 = new int[2];
     private final ScrimController.Callback mUnlockScrimCallback = new ScrimController.Callback() { // from class: com.android.systemui.statusbar.phone.StatusBar.3
+        AnonymousClass3() {
+        }
+
         @Override // com.android.systemui.statusbar.phone.ScrimController.Callback
         public void onFinished() {
             if (StatusBar.this.mStatusBarKeyguardViewManager == null) {
@@ -428,10 +441,13 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     private final View.OnClickListener mGoToLockedShadeListener = new View.OnClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$nk2TlfrOg2jlsjvFTJOkIoJCn4k
         @Override // android.view.View.OnClickListener
         public final void onClick(View view) {
-            StatusBar.lambda$new$1(StatusBar.this, view);
+            StatusBar.lambda$new$1(this.f$0, view);
         }
     };
     private final KeyguardUpdateMonitorCallback mUpdateCallback = new KeyguardUpdateMonitorCallback() { // from class: com.android.systemui.statusbar.phone.StatusBar.4
+        AnonymousClass4() {
+        }
+
         @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
         public void onDreamingStateChanged(boolean z) {
             if (z) {
@@ -446,6 +462,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     };
     protected final Runnable mHideBackdropFront = new Runnable() { // from class: com.android.systemui.statusbar.phone.StatusBar.7
+        AnonymousClass7() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             StatusBar.this.mBackdropFront.setVisibility(4);
@@ -456,16 +475,19 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     private final Runnable mAnimateCollapsePanels = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$hcoUGmHpwgtk12ln4V8HNBe6RFA
         @Override // java.lang.Runnable
         public final void run() {
-            StatusBar.this.animateCollapsePanels();
+            this.f$0.animateCollapsePanels();
         }
     };
     private final Runnable mCheckBarModes = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$KBnY14rlKZ6x8gvk_goBuFrr5eE
         @Override // java.lang.Runnable
         public final void run() {
-            StatusBar.this.checkBarModes();
+            this.f$0.checkBarModes();
         }
     };
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() { // from class: com.android.systemui.statusbar.phone.StatusBar.10
+        AnonymousClass10() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             if (StatusBar.DEBUG) {
@@ -484,8 +506,11 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                         i = 2;
                     }
                     StatusBar.this.animateCollapsePanels(i);
+                    return;
                 }
-            } else if ("android.intent.action.SCREEN_OFF".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.SCREEN_OFF".equals(action)) {
                 StatusBar.this.finishBarAnimations();
                 StatusBar.this.resetUserExpandedStates();
             } else if ("android.app.action.SHOW_DEVICE_MONITORING_DIALOG".equals(action)) {
@@ -494,6 +519,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     };
     private final BroadcastReceiver mDemoReceiver = new BroadcastReceiver() { // from class: com.android.systemui.statusbar.phone.StatusBar.11
+        AnonymousClass11() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             if (StatusBar.DEBUG) {
@@ -521,6 +549,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     };
     final Runnable mStartTracing = new Runnable() { // from class: com.android.systemui.statusbar.phone.StatusBar.12
+        AnonymousClass12() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             StatusBar.this.vibrate();
@@ -533,11 +564,14 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     final Runnable mStopTracing = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$U2-_-jPHs6zuUW-29dyh2rf2vqM
         @Override // java.lang.Runnable
         public final void run() {
-            StatusBar.lambda$new$28(StatusBar.this);
+            StatusBar.lambda$new$28(this.f$0);
         }
     };
     final WakefulnessLifecycle.Observer mWakefulnessObserver = new AnonymousClass14();
     final ScreenLifecycle.Observer mScreenObserver = new ScreenLifecycle.Observer() { // from class: com.android.systemui.statusbar.phone.StatusBar.15
+        AnonymousClass15() {
+        }
+
         @Override // com.android.systemui.keyguard.ScreenLifecycle.Observer
         public void onScreenTurningOn() {
             StatusBar.this.mFalsingManager.onScreenTurningOn();
@@ -565,11 +599,17 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     };
     private DeviceProvisionedController mDeviceProvisionedController = (DeviceProvisionedController) Dependency.get(DeviceProvisionedController.class);
     private final IVrStateCallbacks mVrStateCallbacks = new IVrStateCallbacks.Stub() { // from class: com.android.systemui.statusbar.phone.StatusBar.16
+        AnonymousClass16() {
+        }
+
         public void onVrStateChanged(boolean z) {
             StatusBar.this.mVrMode = z;
         }
     };
     private final BroadcastReceiver mBannerActionBroadcastReceiver = new BroadcastReceiver() { // from class: com.android.systemui.statusbar.phone.StatusBar.17
+        AnonymousClass17() {
+        }
+
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -589,32 +629,92 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     private final Runnable mAutoDim = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$hDeelqePS5c93c_smCoceo_JbeI
         @Override // java.lang.Runnable
         public final void run() {
-            StatusBar.lambda$new$49(StatusBar.this);
+            StatusBar.lambda$new$49(this.f$0);
         }
     };
     private final NotificationInfo.CheckSaveListener mCheckSaveListener = new NotificationInfo.CheckSaveListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$FrwKL82awCvfsO6eEeQB614Yo5M
         @Override // com.android.systemui.statusbar.NotificationInfo.CheckSaveListener
         public final void checkSave(Runnable runnable, StatusBarNotification statusBarNotification) {
-            StatusBar.lambda$new$51(StatusBar.this, runnable, statusBarNotification);
+            StatusBar.lambda$new$51(this.f$0, runnable, statusBarNotification);
         }
     };
     private IStatusBarPlmnPlugin mStatusBarPlmnPlugin = null;
     private View mCustomizeCarrierLabel = null;
 
     static {
-        boolean z;
+        boolean zIsOnlyCoreApps;
         try {
-            z = IPackageManager.Stub.asInterface(ServiceManager.getService("package")).isOnlyCoreApps();
+            zIsOnlyCoreApps = IPackageManager.Stub.asInterface(ServiceManager.getService("package")).isOnlyCoreApps();
         } catch (RemoteException e) {
-            z = false;
+            zIsOnlyCoreApps = false;
         }
-        ONLY_CORE_APPS = z;
+        ONLY_CORE_APPS = zIsOnlyCoreApps;
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$1 */
+    class AnonymousClass1 implements DeviceProvisionedController.DeviceProvisionedListener {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener
+        public void onUserSetupChanged() {
+            boolean zIsUserSetup = StatusBar.this.mDeviceProvisionedController.isUserSetup(StatusBar.this.mDeviceProvisionedController.getCurrentUser());
+            if (zIsUserSetup != StatusBar.this.mUserSetup) {
+                StatusBar.this.mUserSetup = zIsUserSetup;
+                if (!StatusBar.this.mUserSetup && StatusBar.this.mStatusBarView != null) {
+                    StatusBar.this.animateCollapseQuickSettings();
+                }
+                if (StatusBar.this.mNotificationPanel != null) {
+                    StatusBar.this.mNotificationPanel.setUserSetupComplete(StatusBar.this.mUserSetup);
+                }
+                StatusBar.this.updateQsExpansionEnabled();
+            }
+        }
     }
 
     public static /* synthetic */ void lambda$new$0(StatusBar statusBar) {
         int i = statusBar.mSystemUiVisibility & (-201326593);
         if (statusBar.mSystemUiVisibility != i) {
             statusBar.notifyUiVisibilityChanged(i);
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$2 */
+    class AnonymousClass2 extends BroadcastReceiver {
+        AnonymousClass2() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            WallpaperManager wallpaperManager = (WallpaperManager) context.getSystemService(WallpaperManager.class);
+            if (wallpaperManager == null) {
+                Log.w("StatusBar", "WallpaperManager not available");
+                return;
+            }
+            WallpaperInfo wallpaperInfo = wallpaperManager.getWallpaperInfo();
+            boolean z = wallpaperInfo != null && wallpaperInfo.getSupportsAmbientMode();
+            StatusBar.this.mStatusBarWindowManager.setWallpaperSupportsAmbientMode(z);
+            StatusBar.this.mScrimController.setWallpaperSupportsAmbientMode(z);
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$3 */
+    class AnonymousClass3 implements ScrimController.Callback {
+        AnonymousClass3() {
+        }
+
+        @Override // com.android.systemui.statusbar.phone.ScrimController.Callback
+        public void onFinished() {
+            if (StatusBar.this.mStatusBarKeyguardViewManager == null) {
+                Log.w("StatusBar", "Tried to notify keyguard visibility when mStatusBarKeyguardViewManager was null");
+            } else if (StatusBar.this.mKeyguardFadingAway) {
+                StatusBar.this.mStatusBarKeyguardViewManager.onKeyguardFadedAway();
+            }
+        }
+
+        @Override // com.android.systemui.statusbar.phone.ScrimController.Callback
+        public void onCancelled() {
+            onFinished();
         }
     }
 
@@ -625,8 +725,27 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$4 */
+    class AnonymousClass4 extends KeyguardUpdateMonitorCallback {
+        AnonymousClass4() {
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onDreamingStateChanged(boolean z) {
+            if (z) {
+                StatusBar.this.maybeEscalateHeadsUp();
+            }
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onStrongAuthStateChanged(int i) {
+            super.onStrongAuthStateChanged(i);
+            StatusBar.this.mEntryManager.updateNotifications();
+        }
+    }
+
     @Override // com.android.systemui.SystemUI
-    public void start() {
+    public void start() throws Resources.NotFoundException {
         this.mGroupManager = (NotificationGroupManager) Dependency.get(NotificationGroupManager.class);
         this.mVisualStabilityManager = (VisualStabilityManager) Dependency.get(VisualStabilityManager.class);
         this.mNotificationLogger = (NotificationLogger) Dependency.get(NotificationLogger.class);
@@ -728,8 +847,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         ((ConfigurationController) Dependency.get(ConfigurationController.class)).addCallback(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void makeStatusBarView() {
+    protected void makeStatusBarView() throws Resources.NotFoundException {
         Context context = this.mContext;
         updateDisplaySize();
         updateResources();
@@ -744,7 +862,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mGutsManager.setUpWithPresenter(this, this.mEntryManager, this.mStackScroller, this.mCheckSaveListener, new NotificationGutsManager.OnSettingsClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$EGLDayN0ppRMZI1envjIVfb7R_0
             @Override // com.android.systemui.statusbar.NotificationGutsManager.OnSettingsClickListener
             public final void onClick(String str) {
-                StatusBar.this.mBarService.onNotificationSettingsViewed(str);
+                this.f$0.mBarService.onNotificationSettingsViewed(str);
             }
         });
         this.mNotificationLogger.setUpWithEntryManager(this.mEntryManager, this.mStackScroller);
@@ -760,7 +878,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         FragmentHostManager.get(this.mStatusBarWindow).addTagListener("CollapsedStatusBarFragment", new FragmentHostManager.FragmentListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$TPJyILujZ88K3rKFmgzHGHpbtLo
             @Override // com.android.systemui.fragments.FragmentHostManager.FragmentListener
             public final void onFragmentViewCreated(String str, Fragment fragment) {
-                StatusBar.lambda$makeStatusBarView$3(StatusBar.this, str, fragment);
+                StatusBar.lambda$makeStatusBarView$3(this.f$0, str, fragment);
             }
         }).getFragmentManager().beginTransaction().replace(R.id.status_bar_container, new CollapsedStatusBarFragment(), "CollapsedStatusBarFragment").commit();
         this.mIconController = (StatusBarIconController) Dependency.get(StatusBarIconController.class);
@@ -776,11 +894,11 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mEntryManager.setUpWithPresenter(this, this.mStackScroller, this, this.mHeadsUpManager);
         this.mViewHierarchyManager.setUpWithPresenter(this, this.mEntryManager, this.mStackScroller);
         try {
-            boolean hasNavigationBar = this.mWindowManagerService.hasNavigationBar();
+            boolean zHasNavigationBar = this.mWindowManagerService.hasNavigationBar();
             if (DEBUG) {
-                Log.v("StatusBar", "hasNavigationBar=" + hasNavigationBar);
+                Log.v("StatusBar", "hasNavigationBar=" + zHasNavigationBar);
             }
-            if (hasNavigationBar) {
+            if (zHasNavigationBar) {
                 createNavigationBar();
             }
         } catch (RemoteException e) {
@@ -803,6 +921,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mAmbientIndicationContainer = this.mStatusBarWindow.findViewById(R.id.ambient_indication_container);
         setAreThereNotifications();
         this.mBatteryController.addCallback(new BatteryController.BatteryStateChangeCallback() { // from class: com.android.systemui.statusbar.phone.StatusBar.5
+            AnonymousClass5() {
+            }
+
             @Override // com.android.systemui.statusbar.policy.BatteryController.BatteryStateChangeCallback
             public void onPowerSaveChanged(boolean z) {
                 StatusBar.this.mHandler.post(StatusBar.this.mCheckBarModes);
@@ -821,19 +942,19 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
         this.mScrimController = SystemUIFactory.getInstance().createScrimController((ScrimView) this.mStatusBarWindow.findViewById(R.id.scrim_behind), (ScrimView) this.mStatusBarWindow.findViewById(R.id.scrim_in_front), this.mLockscreenWallpaper, new TriConsumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$CPTthYwWNrh8z0d-UzTtbuHfZd4
             public final void accept(Object obj, Object obj2, Object obj3) {
-                StatusBar.this.mLightBarController.setScrimState((ScrimState) obj, ((Float) obj2).floatValue(), (ColorExtractor.GradientColors) obj3);
+                this.f$0.mLightBarController.setScrimState((ScrimState) obj, ((Float) obj2).floatValue(), (ColorExtractor.GradientColors) obj3);
             }
         }, new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$aLenH7zcwVaIHX6ie2fIXARtA4g
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                StatusBar.lambda$makeStatusBarView$5(StatusBar.this, (Integer) obj);
+                StatusBar.lambda$makeStatusBarView$5(this.f$0, (Integer) obj);
             }
         }, DozeParameters.getInstance(this.mContext), (AlarmManager) this.mContext.getSystemService(AlarmManager.class));
         if (this.mScrimSrcModeEnabled) {
             Runnable runnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$EdGxnh5D2TWPQa657dfBiOwfR50
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.lambda$makeStatusBarView$6(StatusBar.this);
+                    StatusBar.lambda$makeStatusBarView$6(this.f$0);
                 }
             };
             this.mBackdrop.setOnVisibilityChangedRunnable(runnable);
@@ -851,10 +972,10 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         if (UserManager.get(this.mContext).isUserSwitcherEnabled()) {
             createUserSwitcher();
         }
-        View findViewById = this.mStatusBarWindow.findViewById(R.id.qs_frame);
-        if (findViewById != null) {
-            FragmentHostManager fragmentHostManager = FragmentHostManager.get(findViewById);
-            ExtensionFragmentListener.attachExtensonToFragment(findViewById, QS.TAG, R.id.qs_frame, ((ExtensionController) Dependency.get(ExtensionController.class)).newExtension(QS.class).withPlugin(QS.class).withFeature("android.hardware.type.automotive", new Supplier() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$8CIXyGMqrW3leEv17MCPM15_8RU
+        View viewFindViewById = this.mStatusBarWindow.findViewById(R.id.qs_frame);
+        if (viewFindViewById != null) {
+            FragmentHostManager fragmentHostManager = FragmentHostManager.get(viewFindViewById);
+            ExtensionFragmentListener.attachExtensonToFragment(viewFindViewById, QS.TAG, R.id.qs_frame, ((ExtensionController) Dependency.get(ExtensionController.class)).newExtension(QS.class).withPlugin(QS.class).withFeature("android.hardware.type.automotive", new Supplier() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$8CIXyGMqrW3leEv17MCPM15_8RU
                 @Override // java.util.function.Supplier
                 public final Object get() {
                     return new CarQSFragment();
@@ -865,17 +986,17 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                     return new QSFragment();
                 }
             }).build());
-            final QSTileHost createQSTileHost = SystemUIFactory.getInstance().createQSTileHost(this.mContext, this, this.mIconController);
+            final QSTileHost qSTileHostCreateQSTileHost = SystemUIFactory.getInstance().createQSTileHost(this.mContext, this, this.mIconController);
             this.mBrightnessMirrorController = new BrightnessMirrorController(this.mStatusBarWindow, new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$0m7F6e2QtJDG3hy0Y3EVPv_U6WQ
                 @Override // java.util.function.Consumer
                 public final void accept(Object obj) {
-                    StatusBar.lambda$makeStatusBarView$7(StatusBar.this, (Boolean) obj);
+                    StatusBar.lambda$makeStatusBarView$7(this.f$0, (Boolean) obj);
                 }
             });
             fragmentHostManager.addTagListener(QS.TAG, new FragmentHostManager.FragmentListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$bkd2NbKjjDMBWKcdJ2fG14LddEs
                 @Override // com.android.systemui.fragments.FragmentHostManager.FragmentListener
                 public final void onFragmentViewCreated(String str, Fragment fragment) {
-                    StatusBar.lambda$makeStatusBarView$8(StatusBar.this, createQSTileHost, str, fragment);
+                    StatusBar.lambda$makeStatusBarView$8(this.f$0, qSTileHostCreateQSTileHost, str, fragment);
                 }
             });
         }
@@ -885,7 +1006,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             this.mReportRejectedTouch.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$ggtzWYldpP6XbhwYmX0SNphBaak
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    StatusBar.lambda$makeStatusBarView$9(StatusBar.this, view);
+                    StatusBar.lambda$makeStatusBarView$9(this.f$0, view);
                 }
             });
         }
@@ -930,6 +1051,24 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         statusBar.attachPlmnPlugin();
     }
 
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$5 */
+    class AnonymousClass5 implements BatteryController.BatteryStateChangeCallback {
+        AnonymousClass5() {
+        }
+
+        @Override // com.android.systemui.statusbar.policy.BatteryController.BatteryStateChangeCallback
+        public void onPowerSaveChanged(boolean z) {
+            StatusBar.this.mHandler.post(StatusBar.this.mCheckBarModes);
+            if (StatusBar.this.mDozeServiceHost != null) {
+                StatusBar.this.mDozeServiceHost.firePowerSaveChanged(z);
+            }
+        }
+
+        @Override // com.android.systemui.statusbar.policy.BatteryController.BatteryStateChangeCallback
+        public void onBatteryLevelChanged(int i, boolean z, boolean z2) {
+        }
+    }
+
     public static /* synthetic */ void lambda$makeStatusBarView$5(StatusBar statusBar, Integer num) {
         if (statusBar.mStatusBarWindowManager != null) {
             statusBar.mStatusBarWindowManager.setScrimsVisibility(num.intValue());
@@ -947,6 +1086,8 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         statusBar.updateScrimController();
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: android.app.Fragment */
+    /* JADX WARN: Multi-variable type inference failed */
     public static /* synthetic */ void lambda$makeStatusBarView$8(StatusBar statusBar, QSTileHost qSTileHost, String str, Fragment fragment) {
         QS qs = (QS) fragment;
         if (qs instanceof QSFragment) {
@@ -959,8 +1100,8 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     }
 
     public static /* synthetic */ void lambda$makeStatusBarView$9(StatusBar statusBar, View view) {
-        Uri reportRejectedTouch = statusBar.mFalsingManager.reportRejectedTouch();
-        if (reportRejectedTouch == null) {
+        Uri uriReportRejectedTouch = statusBar.mFalsingManager.reportRejectedTouch();
+        if (uriReportRejectedTouch == null) {
             return;
         }
         StringWriter stringWriter = new StringWriter();
@@ -972,14 +1113,14 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         PrintWriter printWriter = new PrintWriter(stringWriter);
         FalsingLog.dump(printWriter);
         printWriter.flush();
-        statusBar.startActivityDismissingKeyguard(Intent.createChooser(new Intent("android.intent.action.SEND").setType("*/*").putExtra("android.intent.extra.SUBJECT", "Rejected touch report").putExtra("android.intent.extra.STREAM", reportRejectedTouch).putExtra("android.intent.extra.TEXT", stringWriter.toString()), "Share rejected touch report").addFlags(268435456), true, true);
+        statusBar.startActivityDismissingKeyguard(Intent.createChooser(new Intent("android.intent.action.SEND").setType("*/*").putExtra("android.intent.extra.SUBJECT", "Rejected touch report").putExtra("android.intent.extra.STREAM", uriReportRejectedTouch).putExtra("android.intent.extra.TEXT", stringWriter.toString()), "Share rejected touch report").addFlags(268435456), true, true);
     }
 
     protected void createNavigationBar() {
         this.mNavigationBarView = NavigationBarFragment.create(this.mContext, new FragmentHostManager.FragmentListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$1lxmukd3g368Ipe-wYASjfRCObk
             @Override // com.android.systemui.fragments.FragmentHostManager.FragmentListener
             public final void onFragmentViewCreated(String str, Fragment fragment) {
-                StatusBar.lambda$createNavigationBar$10(StatusBar.this, str, fragment);
+                StatusBar.lambda$createNavigationBar$10(this.f$0, str, fragment);
             }
         });
     }
@@ -996,7 +1137,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         return new View.OnTouchListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$sjd-NB4fQvJpW0ZlghyyFoEGyww
             @Override // android.view.View.OnTouchListener
             public final boolean onTouch(View view, MotionEvent motionEvent) {
-                return StatusBar.lambda$getStatusBarWindowTouchListener$11(StatusBar.this, view, motionEvent);
+                return StatusBar.lambda$getStatusBarWindowTouchListener$11(this.f$0, view, motionEvent);
             }
         };
     }
@@ -1090,13 +1231,13 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mFooterView.setDismissButtonClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$HeNtWn6ER-i55fzNijMTFX8MRhM
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                StatusBar.lambda$inflateFooterView$12(StatusBar.this, view);
+                StatusBar.lambda$inflateFooterView$12(this.f$0, view);
             }
         });
         this.mFooterView.setManageButtonClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$VvTfjQyycJ7XkvNtPALBHaxz3UA
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                StatusBar.this.manageNotifications();
+                this.f$0.manageNotifications();
             }
         });
         this.mStackScroller.setFooterView(this.mFooterView);
@@ -1107,8 +1248,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         statusBar.clearAllNotifications();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void createUserSwitcher() {
+    protected void createUserSwitcher() {
         this.mKeyguardUserSwitcher = new KeyguardUserSwitcher(this.mContext, (ViewStub) this.mStatusBarWindow.findViewById(R.id.keyguard_user_switcher), this.mKeyguardStatusBar, this.mNotificationPanel);
     }
 
@@ -1123,11 +1263,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         startActivity(new Intent("android.settings.ALL_APPS_NOTIFICATION_SETTINGS"), true, true, 536870912);
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:18:0x0056, code lost:
-        if (r11.mTmpRect.height() > 0) goto L13;
-     */
-    /* JADX WARN: Removed duplicated region for block: B:23:0x0060  */
-    /* JADX WARN: Removed duplicated region for block: B:48:0x009d A[SYNTHETIC] */
+    /* JADX WARN: Removed duplicated region for block: B:111:0x009d A[SYNTHETIC] */
+    /* JADX WARN: Removed duplicated region for block: B:83:0x0059  */
+    /* JADX WARN: Removed duplicated region for block: B:86:0x0060  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
@@ -1146,32 +1284,24 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                     arrayList2.add(expandableNotificationRow);
                     if (childAt.getVisibility() == 0 && (!clipBounds || this.mTmpRect.height() > 0)) {
                         arrayList.add(childAt);
-                        notificationChildren = expandableNotificationRow.getNotificationChildren();
-                        if (notificationChildren == null) {
-                            for (ExpandableNotificationRow expandableNotificationRow2 : notificationChildren) {
-                                arrayList2.add(expandableNotificationRow2);
-                                if (z && expandableNotificationRow.areChildrenExpanded() && this.mStackScroller.canChildBeDismissed(expandableNotificationRow2)) {
-                                    boolean clipBounds2 = expandableNotificationRow2.getClipBounds(this.mTmpRect);
-                                    if (expandableNotificationRow2.getVisibility() == 0 && (!clipBounds2 || this.mTmpRect.height() > 0)) {
-                                        arrayList.add(expandableNotificationRow2);
-                                    }
+                    } else {
+                        z = false;
+                    }
+                    notificationChildren = expandableNotificationRow.getNotificationChildren();
+                    if (notificationChildren == null) {
+                        for (ExpandableNotificationRow expandableNotificationRow2 : notificationChildren) {
+                            arrayList2.add(expandableNotificationRow2);
+                            if (z && expandableNotificationRow.areChildrenExpanded() && this.mStackScroller.canChildBeDismissed(expandableNotificationRow2)) {
+                                boolean clipBounds2 = expandableNotificationRow2.getClipBounds(this.mTmpRect);
+                                if (expandableNotificationRow2.getVisibility() == 0 && (!clipBounds2 || this.mTmpRect.height() > 0)) {
+                                    arrayList.add(expandableNotificationRow2);
                                 }
                             }
                         }
                     }
-                    z = false;
-                    notificationChildren = expandableNotificationRow.getNotificationChildren();
-                    if (notificationChildren == null) {
-                    }
                 } else {
-                    if (childAt.getVisibility() == 0) {
-                        if (clipBounds) {
-                        }
-                        notificationChildren = expandableNotificationRow.getNotificationChildren();
-                        if (notificationChildren == null) {
-                        }
+                    if (childAt.getVisibility() != 0 || (clipBounds && this.mTmpRect.height() <= 0)) {
                     }
-                    z = false;
                     notificationChildren = expandableNotificationRow.getNotificationChildren();
                     if (notificationChildren == null) {
                     }
@@ -1180,15 +1310,15 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
         if (arrayList2.isEmpty()) {
             animateCollapsePanels(0);
-            return;
+        } else {
+            addPostCollapseAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$KPpPJ6lHyblaC5nDSDIGtQv6sSs
+                @Override // java.lang.Runnable
+                public final void run() {
+                    StatusBar.lambda$clearAllNotifications$14(this.f$0, arrayList2);
+                }
+            });
+            performDismissAllAnimations(arrayList);
         }
-        addPostCollapseAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$KPpPJ6lHyblaC5nDSDIGtQv6sSs
-            @Override // java.lang.Runnable
-            public final void run() {
-                StatusBar.lambda$clearAllNotifications$14(StatusBar.this, arrayList2);
-            }
-        });
-        performDismissAllAnimations(arrayList);
     }
 
     public static /* synthetic */ void lambda$clearAllNotifications$14(StatusBar statusBar, ArrayList arrayList) {
@@ -1213,7 +1343,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         Runnable runnable2 = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$hz39WvlFDjmu3UFNVirp_TJxYPU
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.this.animateCollapsePanels(0);
+                this.f$0.animateCollapsePanels(0);
             }
         };
         if (arrayList.isEmpty()) {
@@ -1221,8 +1351,8 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             return;
         }
         this.mStackScroller.setDismissAllInProgress(true);
-        int i = 140;
-        int i2 = 180;
+        int iMax = 140;
+        int i = 180;
         for (int size = arrayList.size() - 1; size >= 0; size--) {
             View view = arrayList.get(size);
             if (size != 0) {
@@ -1230,9 +1360,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             } else {
                 runnable = runnable2;
             }
-            this.mStackScroller.dismissViewAnimated(view, runnable, i2, 260L);
-            i = Math.max(50, i - 10);
-            i2 += i;
+            this.mStackScroller.dismissViewAnimated(view, runnable, i, 260L);
+            iMax = Math.max(50, iMax - 10);
+            i += iMax;
         }
     }
 
@@ -1249,14 +1379,13 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         ((KeyguardDismissUtil) Dependency.get(KeyguardDismissUtil.class)).setDismissHandler(new KeyguardDismissHandler() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$9MqmIExNr864CrvDQmmxl0ZneDg
             @Override // com.android.systemui.statusbar.phone.KeyguardDismissHandler
             public final void executeWhenUnlocked(KeyguardHostView.OnDismissAction onDismissAction) {
-                StatusBar.this.executeWhenUnlocked(onDismissAction);
+                this.f$0.executeWhenUnlocked(onDismissAction);
             }
         });
         Trace.endSection();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public View getStatusBarView() {
+    protected View getStatusBarView() {
         return this.mStatusBarView;
     }
 
@@ -1270,13 +1399,12 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
 
     public int getStatusBarHeight() {
         if (this.mNaturalBarHeight < 0) {
-            this.mNaturalBarHeight = this.mContext.getResources().getDimensionPixelSize(17105309);
+            this.mNaturalBarHeight = this.mContext.getResources().getDimensionPixelSize(android.R.dimen.indeterminate_progress_alpha_16);
         }
         return this.mNaturalBarHeight;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean toggleSplitScreenMode(int i, int i2) {
+    protected boolean toggleSplitScreenMode(int i, int i2) {
         if (this.mRecents == null) {
             return false;
         }
@@ -1288,14 +1416,14 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             return this.mRecents.splitPrimaryTask(-1, navBarPosition == 1 ? 1 : 0, null, i);
         }
         Divider divider = (Divider) getComponent(Divider.class);
-        if (divider == null || !divider.isMinimized() || divider.isHomeStackResizable()) {
-            EventBus.getDefault().send(new UndockingTaskEvent());
-            if (i2 != -1) {
-                this.mMetricsLogger.action(i2);
-            }
-            return true;
+        if (divider != null && divider.isMinimized() && !divider.isHomeStackResizable()) {
+            return false;
         }
-        return false;
+        EventBus.getDefault().send(new UndockingTaskEvent());
+        if (i2 != -1) {
+            this.mMetricsLogger.action(i2);
+        }
+        return true;
     }
 
     @Override // com.android.systemui.statusbar.NotificationEntryManager.Callback
@@ -1314,7 +1442,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             addPostCollapseAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$GA5FozNehiplNux-Psv9796exeM
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.this.updateNotificationViews();
+                    this.f$0.updateNotificationViews();
                 }
             });
             return;
@@ -1349,10 +1477,8 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         setAreThereNotifications();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateQsExpansionEnabled() {
-        boolean z = true;
-        this.mNotificationPanel.setQsExpansionEnabled((isDeviceProvisioned() && (this.mUserSetup || this.mUserSwitcherController == null || !this.mUserSwitcherController.isSimpleUserSwitcher()) && (this.mDisabled2 & 4) == 0 && (this.mDisabled2 & 1) == 0 && !this.mDozing && !ONLY_CORE_APPS) ? false : false);
+    private void updateQsExpansionEnabled() {
+        this.mNotificationPanel.setQsExpansionEnabled(isDeviceProvisioned() && (this.mUserSetup || this.mUserSwitcherController == null || !this.mUserSwitcherController.isSimpleUserSwitcher()) && (this.mDisabled2 & 4) == 0 && (this.mDisabled2 & 1) == 0 && !this.mDozing && !ONLY_CORE_APPS);
     }
 
     @Override // com.android.systemui.statusbar.CommandQueue.Callbacks
@@ -1396,8 +1522,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     }
 
     private void updateEmptyShadeView() {
-        boolean z = true;
-        this.mNotificationPanel.showEmptyShadeView((this.mState == 1 || this.mEntryManager.getNotificationData().getActiveNotifications().size() != 0) ? false : false);
+        this.mNotificationPanel.showEmptyShadeView(this.mState != 1 && this.mEntryManager.getNotificationData().getActiveNotifications().size() == 0);
     }
 
     private void updateSpeedBumpIndex() {
@@ -1434,17 +1559,23 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
 
     protected void setAreThereNotifications() {
         if (this.mStatusBarView != null) {
-            final View findViewById = this.mStatusBarView.findViewById(R.id.notification_lights_out);
+            View viewFindViewById = this.mStatusBarView.findViewById(R.id.notification_lights_out);
             boolean z = hasActiveNotifications() && !areLightsOn();
-            if (z != (findViewById.getAlpha() == 1.0f)) {
+            if (z != (viewFindViewById.getAlpha() == 1.0f)) {
                 if (z) {
-                    findViewById.setAlpha(0.0f);
-                    findViewById.setVisibility(0);
+                    viewFindViewById.setAlpha(0.0f);
+                    viewFindViewById.setVisibility(0);
                 }
-                findViewById.animate().alpha(z ? 1.0f : 0.0f).setDuration(z ? 750L : 250L).setInterpolator(new AccelerateInterpolator(2.0f)).setListener(z ? null : new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.StatusBar.6
+                viewFindViewById.animate().alpha(z ? 1.0f : 0.0f).setDuration(z ? 750L : 250L).setInterpolator(new AccelerateInterpolator(2.0f)).setListener(z ? null : new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.phone.StatusBar.6
+                    final /* synthetic */ View val$nlo;
+
+                    AnonymousClass6(View viewFindViewById2) {
+                        view = viewFindViewById2;
+                    }
+
                     @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                     public void onAnimationEnd(Animator animator) {
-                        findViewById.setVisibility(8);
+                        view.setVisibility(8);
                     }
                 }).start();
             }
@@ -1453,18 +1584,46 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         updateCarrierLabelVisibility(false);
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:36:0x0078  */
-    /* JADX WARN: Removed duplicated region for block: B:41:0x0086  */
-    /* JADX WARN: Removed duplicated region for block: B:42:0x0088  */
-    /* JADX WARN: Removed duplicated region for block: B:46:0x0092  */
-    /* JADX WARN: Removed duplicated region for block: B:56:0x00b0  */
-    /* JADX WARN: Removed duplicated region for block: B:62:0x00e2  */
-    /* JADX WARN: Removed duplicated region for block: B:77:0x016c  */
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$6 */
+    class AnonymousClass6 extends AnimatorListenerAdapter {
+        final /* synthetic */ View val$nlo;
+
+        AnonymousClass6(View viewFindViewById2) {
+            view = viewFindViewById2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            view.setVisibility(8);
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$7 */
+    class AnonymousClass7 implements Runnable {
+        AnonymousClass7() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            StatusBar.this.mBackdropFront.setVisibility(4);
+            StatusBar.this.mBackdropFront.animate().cancel();
+            StatusBar.this.mBackdropFront.setImageDrawable(null);
+        }
+    }
+
+    /* JADX WARN: Removed duplicated region for block: B:119:0x004e  */
+    /* JADX WARN: Removed duplicated region for block: B:129:0x0073 A[PHI: r0
+  0x0073: PHI (r0v9 android.graphics.drawable.Drawable) = 
+  (r0v8 android.graphics.drawable.Drawable)
+  (r0v8 android.graphics.drawable.Drawable)
+  (r0v17 android.graphics.drawable.Drawable)
+  (r0v17 android.graphics.drawable.Drawable)
+ binds: [B:120:0x004f, B:122:0x0057, B:124:0x0066, B:126:0x006e] A[DONT_GENERATE, DONT_INLINE]] */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public void updateMediaMetaData(boolean z, boolean z2) {
-        Drawable drawable;
+        Drawable wallpaperDrawable;
         boolean z3;
         Bitmap bitmap;
         Trace.beginSection("StatusBar#updateMediaMetaData");
@@ -1472,9 +1631,8 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             Trace.endSection();
             return;
         }
-        boolean z4 = true;
-        boolean z5 = this.mFingerprintUnlockController != null && this.mFingerprintUnlockController.isWakeAndUnlock();
-        if (this.mLaunchTransitionFadingAway || z5) {
+        boolean z4 = this.mFingerprintUnlockController != null && this.mFingerprintUnlockController.isWakeAndUnlock();
+        if (this.mLaunchTransitionFadingAway || z4) {
             this.mBackdrop.setVisibility(4);
             Trace.endSection();
             return;
@@ -1486,105 +1644,72 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 bitmap2 = mediaMetadata.getBitmap("android.media.metadata.ALBUM_ART");
             }
             if (bitmap2 != null) {
-                drawable = new BitmapDrawable(this.mBackdropBack.getResources(), bitmap2);
-                if (drawable == null && (bitmap = this.mLockscreenWallpaper.getBitmap()) != null) {
-                    drawable = new LockscreenWallpaper.WallpaperDrawable(this.mBackdropBack.getResources(), bitmap);
-                    if (this.mStatusBarKeyguardViewManager != null && this.mStatusBarKeyguardViewManager.isShowing()) {
-                        z3 = true;
-                        boolean z6 = this.mStatusBarKeyguardViewManager == null && this.mStatusBarKeyguardViewManager.isOccluded();
-                        if ((drawable == null) && !this.mDozing && ((this.mState != 0 || z3) && this.mFingerprintUnlockController.getMode() != 2 && !z6)) {
-                            if (this.mBackdrop.getVisibility() != 0) {
-                                this.mBackdrop.setVisibility(0);
-                                if (z2) {
-                                    this.mBackdrop.setAlpha(0.002f);
-                                    this.mBackdrop.animate().alpha(1.0f);
-                                } else {
-                                    this.mBackdrop.animate().cancel();
-                                    this.mBackdrop.setAlpha(1.0f);
-                                }
-                                this.mStatusBarWindowManager.setBackdropShowing(true);
-                                this.mColorExtractor.setMediaBackdropVisible(true);
-                                z = true;
-                            }
-                            if (z) {
-                                if (this.mBackdropBack.getDrawable() != null) {
-                                    this.mBackdropFront.setImageDrawable(this.mBackdropBack.getDrawable().getConstantState().newDrawable(this.mBackdropFront.getResources()).mutate());
-                                    if (this.mScrimSrcModeEnabled) {
-                                        this.mBackdropFront.getDrawable().mutate().setXfermode(this.mSrcOverXferMode);
-                                    }
-                                    this.mBackdropFront.setAlpha(1.0f);
-                                    this.mBackdropFront.setVisibility(0);
-                                } else {
-                                    this.mBackdropFront.setVisibility(4);
-                                }
-                                this.mBackdropBack.setImageDrawable(drawable);
-                                if (this.mScrimSrcModeEnabled) {
-                                    this.mBackdropBack.getDrawable().mutate().setXfermode(this.mSrcXferMode);
-                                }
-                                if (this.mBackdropFront.getVisibility() == 0) {
-                                    this.mBackdropFront.animate().setDuration(250L).alpha(0.0f).withEndAction(this.mHideBackdropFront);
-                                }
-                            }
-                        } else if (this.mBackdrop.getVisibility() != 8) {
-                            this.mColorExtractor.setMediaBackdropVisible(false);
-                            if (!this.mDozing || ScrimState.AOD.getAnimateChange()) {
-                                z4 = false;
-                            }
-                            if (this.mFingerprintUnlockController.getMode() == 2 || z6 || z4) {
-                                this.mBackdrop.setVisibility(8);
-                                this.mBackdropBack.setImageDrawable(null);
-                                this.mStatusBarWindowManager.setBackdropShowing(false);
-                            } else {
-                                this.mStatusBarWindowManager.setBackdropShowing(false);
-                                this.mBackdrop.animate().alpha(0.002f).setInterpolator(Interpolators.ACCELERATE_DECELERATE).setDuration(300L).setStartDelay(0L).withEndAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$wlXP8P-mZcZXCFMAEy6t46bsTzE
-                                    @Override // java.lang.Runnable
-                                    public final void run() {
-                                        StatusBar.lambda$updateMediaMetaData$16(StatusBar.this);
-                                    }
-                                });
-                                if (this.mKeyguardFadingAway) {
-                                    this.mBackdrop.animate().setDuration(this.mKeyguardFadingAwayDuration / 2).setStartDelay(this.mKeyguardFadingAwayDelay).setInterpolator(Interpolators.LINEAR).start();
-                                }
-                            }
-                        }
-                        Trace.endSection();
-                    }
-                }
-                z3 = false;
-                if (this.mStatusBarKeyguardViewManager == null) {
-                }
-                if (drawable == null) {
-                    if (this.mBackdrop.getVisibility() != 0) {
-                    }
-                    if (z) {
-                    }
-                    Trace.endSection();
-                }
-                if (this.mBackdrop.getVisibility() != 8) {
-                }
-                Trace.endSection();
+                wallpaperDrawable = new BitmapDrawable(this.mBackdropBack.getResources(), bitmap2);
             }
+        } else {
+            wallpaperDrawable = null;
         }
-        drawable = null;
-        if (drawable == null) {
-            drawable = new LockscreenWallpaper.WallpaperDrawable(this.mBackdropBack.getResources(), bitmap);
-            if (this.mStatusBarKeyguardViewManager != null) {
+        if (wallpaperDrawable == null && (bitmap = this.mLockscreenWallpaper.getBitmap()) != null) {
+            wallpaperDrawable = new LockscreenWallpaper.WallpaperDrawable(this.mBackdropBack.getResources(), bitmap);
+            if (this.mStatusBarKeyguardViewManager != null && this.mStatusBarKeyguardViewManager.isShowing()) {
                 z3 = true;
-                if (this.mStatusBarKeyguardViewManager == null) {
-                }
-                if (drawable == null) {
-                }
-                if (this.mBackdrop.getVisibility() != 8) {
-                }
-                Trace.endSection();
             }
+        } else {
+            z3 = false;
         }
-        z3 = false;
-        if (this.mStatusBarKeyguardViewManager == null) {
-        }
-        if (drawable == null) {
-        }
-        if (this.mBackdrop.getVisibility() != 8) {
+        boolean z5 = this.mStatusBarKeyguardViewManager != null && this.mStatusBarKeyguardViewManager.isOccluded();
+        if ((wallpaperDrawable != null) && !this.mDozing && ((this.mState != 0 || z3) && this.mFingerprintUnlockController.getMode() != 2 && !z5)) {
+            if (this.mBackdrop.getVisibility() != 0) {
+                this.mBackdrop.setVisibility(0);
+                if (z2) {
+                    this.mBackdrop.setAlpha(0.002f);
+                    this.mBackdrop.animate().alpha(1.0f);
+                } else {
+                    this.mBackdrop.animate().cancel();
+                    this.mBackdrop.setAlpha(1.0f);
+                }
+                this.mStatusBarWindowManager.setBackdropShowing(true);
+                this.mColorExtractor.setMediaBackdropVisible(true);
+                z = true;
+            }
+            if (z) {
+                if (this.mBackdropBack.getDrawable() != null) {
+                    this.mBackdropFront.setImageDrawable(this.mBackdropBack.getDrawable().getConstantState().newDrawable(this.mBackdropFront.getResources()).mutate());
+                    if (this.mScrimSrcModeEnabled) {
+                        this.mBackdropFront.getDrawable().mutate().setXfermode(this.mSrcOverXferMode);
+                    }
+                    this.mBackdropFront.setAlpha(1.0f);
+                    this.mBackdropFront.setVisibility(0);
+                } else {
+                    this.mBackdropFront.setVisibility(4);
+                }
+                this.mBackdropBack.setImageDrawable(wallpaperDrawable);
+                if (this.mScrimSrcModeEnabled) {
+                    this.mBackdropBack.getDrawable().mutate().setXfermode(this.mSrcXferMode);
+                }
+                if (this.mBackdropFront.getVisibility() == 0) {
+                    this.mBackdropFront.animate().setDuration(250L).alpha(0.0f).withEndAction(this.mHideBackdropFront);
+                }
+            }
+        } else if (this.mBackdrop.getVisibility() != 8) {
+            this.mColorExtractor.setMediaBackdropVisible(false);
+            boolean z6 = this.mDozing && !ScrimState.AOD.getAnimateChange();
+            if (this.mFingerprintUnlockController.getMode() == 2 || z5 || z6) {
+                this.mBackdrop.setVisibility(8);
+                this.mBackdropBack.setImageDrawable(null);
+                this.mStatusBarWindowManager.setBackdropShowing(false);
+            } else {
+                this.mStatusBarWindowManager.setBackdropShowing(false);
+                this.mBackdrop.animate().alpha(0.002f).setInterpolator(Interpolators.ACCELERATE_DECELERATE).setDuration(300L).setStartDelay(0L).withEndAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$wlXP8P-mZcZXCFMAEy6t46bsTzE
+                    @Override // java.lang.Runnable
+                    public final void run() {
+                        StatusBar.lambda$updateMediaMetaData$16(this.f$0);
+                    }
+                });
+                if (this.mKeyguardFadingAway) {
+                    this.mBackdrop.animate().setDuration(this.mKeyguardFadingAwayDuration / 2).setStartDelay(this.mKeyguardFadingAwayDelay).setInterpolator(Interpolators.LINEAR).start();
+                }
+            }
         }
         Trace.endSection();
     }
@@ -1605,17 +1730,17 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
 
     @Override // com.android.systemui.statusbar.CommandQueue.Callbacks
     public void disable(int i, int i2, boolean z) {
-        int adjustDisableFlags = this.mRemoteInputQuickSettingsDisabler.adjustDisableFlags(i2);
+        int iAdjustDisableFlags = this.mRemoteInputQuickSettingsDisabler.adjustDisableFlags(i2);
         int i3 = this.mStatusBarWindowState;
         int i4 = this.mDisabled1;
         int i5 = i ^ i4;
         this.mDisabled1 = i;
         int i6 = this.mDisabled2;
-        int i7 = adjustDisableFlags ^ i6;
-        this.mDisabled2 = adjustDisableFlags;
+        int i7 = iAdjustDisableFlags ^ i6;
+        this.mDisabled2 = iAdjustDisableFlags;
         if (DEBUG) {
             Log.d("StatusBar", String.format("disable1: 0x%08x -> 0x%08x (diff1: 0x%08x)", Integer.valueOf(i4), Integer.valueOf(i), Integer.valueOf(i5)));
-            Log.d("StatusBar", String.format("disable2: 0x%08x -> 0x%08x (diff2: 0x%08x)", Integer.valueOf(i6), Integer.valueOf(adjustDisableFlags), Integer.valueOf(i7)));
+            Log.d("StatusBar", String.format("disable2: 0x%08x -> 0x%08x (diff2: 0x%08x)", Integer.valueOf(i6), Integer.valueOf(iAdjustDisableFlags), Integer.valueOf(i7)));
         }
         StringBuilder sb = new StringBuilder();
         sb.append("disable<");
@@ -1644,12 +1769,12 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         sb.append((33554432 & i) != 0 ? 'S' : 's');
         sb.append((i5 & 33554432) != 0 ? '!' : ' ');
         sb.append("> disable2<");
-        sb.append((adjustDisableFlags & 1) != 0 ? 'Q' : 'q');
+        sb.append((iAdjustDisableFlags & 1) != 0 ? 'Q' : 'q');
         int i14 = i7 & 1;
         sb.append(i14 != 0 ? '!' : ' ');
-        sb.append((adjustDisableFlags & 2) != 0 ? 'I' : 'i');
+        sb.append((iAdjustDisableFlags & 2) != 0 ? 'I' : 'i');
         sb.append((i7 & 2) != 0 ? '!' : ' ');
-        sb.append((adjustDisableFlags & 4) != 0 ? 'N' : 'n');
+        sb.append((iAdjustDisableFlags & 4) != 0 ? 'N' : 'n');
         int i15 = i7 & 4;
         sb.append(i15 != 0 ? '!' : ' ');
         sb.append('>');
@@ -1742,8 +1867,8 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     public boolean shouldPeek(NotificationData.Entry entry, StatusBarNotification statusBarNotification) {
         if (this.mIsOccluded && !isDozing()) {
             boolean z = this.mLockscreenUserManager.isLockscreenPublicMode(this.mLockscreenUserManager.getCurrentUserId()) || this.mLockscreenUserManager.isLockscreenPublicMode(statusBarNotification.getUserId());
-            boolean needsRedaction = this.mLockscreenUserManager.needsRedaction(entry);
-            if (z && needsRedaction) {
+            boolean zNeedsRedaction = this.mLockscreenUserManager.needsRedaction(entry);
+            if (z && zNeedsRedaction) {
                 return false;
             }
         }
@@ -1752,20 +1877,20 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 Log.d("StatusBar", "No peeking: disabled panel : " + statusBarNotification.getKey());
             }
             return false;
-        } else if (statusBarNotification.getNotification().fullScreenIntent != null) {
-            if (this.mAccessibilityManager.isTouchExplorationEnabled()) {
-                if (DEBUG) {
-                    Log.d("StatusBar", "No peeking: accessible fullscreen: " + statusBarNotification.getKey());
-                }
-                return false;
-            } else if (isDozing()) {
-                return false;
-            } else {
-                return !this.mStatusBarKeyguardViewManager.isShowing() || this.mStatusBarKeyguardViewManager.isOccluded();
-            }
-        } else {
+        }
+        if (statusBarNotification.getNotification().fullScreenIntent == null) {
             return true;
         }
+        if (this.mAccessibilityManager.isTouchExplorationEnabled()) {
+            if (DEBUG) {
+                Log.d("StatusBar", "No peeking: accessible fullscreen: " + statusBarNotification.getKey());
+            }
+            return false;
+        }
+        if (isDozing()) {
+            return false;
+        }
+        return !this.mStatusBarKeyguardViewManager.isShowing() || this.mStatusBarKeyguardViewManager.isOccluded();
     }
 
     @Override // com.android.systemui.statusbar.NotificationData.Environment
@@ -1797,16 +1922,19 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 this.mNotificationPanel.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$ay-YAvh4VjN9pBbLWxpXGraAy_o
                     @Override // java.lang.Runnable
                     public final void run() {
-                        StatusBar.this.mStatusBarWindowManager.setForceWindowCollapsed(false);
+                        this.f$0.mStatusBarWindowManager.setForceWindowCollapsed(false);
                     }
                 });
+                return;
             }
-        } else if (this.mNotificationPanel.isFullyCollapsed() && !this.mNotificationPanel.isTracking()) {
+            return;
+        }
+        if (this.mNotificationPanel.isFullyCollapsed() && !this.mNotificationPanel.isTracking()) {
             this.mHeadsUpManager.setHeadsUpGoingAway(true);
             this.mStackScroller.runAfterAnimationFinished(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$bAFPzCYA0o8c0tOSJ9q0jO-POoQ
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.lambda$onHeadsUpPinnedModeChanged$18(StatusBar.this);
+                    StatusBar.lambda$onHeadsUpPinnedModeChanged$18(this.f$0);
                 }
             });
         } else {
@@ -1911,12 +2039,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     }
 
     private void updateHideIconsForBouncer(boolean z) {
-        boolean z2 = false;
-        boolean z3 = this.mTopHidesStatusBar && this.mIsOccluded && (this.mStatusBarWindowHidden || this.mBouncerShowing);
-        boolean z4 = (this.mPanelExpanded || this.mIsOccluded || !this.mBouncerShowing) ? false : true;
-        if (z3 || z4) {
-            z2 = true;
-        }
+        boolean z2 = (this.mTopHidesStatusBar && this.mIsOccluded && (this.mStatusBarWindowHidden || this.mBouncerShowing)) || (!this.mPanelExpanded && !this.mIsOccluded && this.mBouncerShowing);
         if (this.mHideIconsForBouncer != z2) {
             this.mHideIconsForBouncer = z2;
             if (!z2 && this.mBouncerWasShowingWhenHidden) {
@@ -1924,7 +2047,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$GPKlymtdaSWvEyRtwTRSFeYuvWc
                     @Override // java.lang.Runnable
                     public final void run() {
-                        StatusBar.lambda$updateHideIconsForBouncer$19(StatusBar.this);
+                        StatusBar.lambda$updateHideIconsForBouncer$19(this.f$0);
                     }
                 }, 500L);
             } else {
@@ -1947,9 +2070,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class H extends Handler {
+    protected class H extends Handler {
         protected H() {
         }
 
@@ -1959,26 +2080,24 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             switch (i) {
                 case 1000:
                     StatusBar.this.animateExpandNotificationsPanel();
-                    return;
+                    break;
                 case 1001:
                     StatusBar.this.animateCollapsePanels();
-                    return;
+                    break;
                 case 1002:
                     StatusBar.this.animateExpandSettingsPanel((String) message.obj);
-                    return;
+                    break;
                 case 1003:
                     StatusBar.this.onLaunchTransitionTimeout();
-                    return;
+                    break;
                 default:
                     switch (i) {
                         case 1026:
                             StatusBar.this.toggleKeyboardShortcuts(message.arg1);
-                            return;
+                            break;
                         case 1027:
                             StatusBar.this.dismissKeyboardShortcuts();
-                            return;
-                        default:
-                            return;
+                            break;
                     }
             }
         }
@@ -1987,15 +2106,14 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     public void maybeEscalateHeadsUp() {
         this.mHeadsUpManager.getAllEntries().forEach(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$M-v6L0bCMELm_outZVi3FdfiHBc
             @Override // java.util.function.Consumer
-            public final void accept(Object obj) {
+            public final void accept(Object obj) throws PendingIntent.CanceledException {
                 StatusBar.lambda$maybeEscalateHeadsUp$20((NotificationData.Entry) obj);
             }
         });
         this.mHeadsUpManager.releaseAllImmediately();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$maybeEscalateHeadsUp$20(NotificationData.Entry entry) {
+    static /* synthetic */ void lambda$maybeEscalateHeadsUp$20(NotificationData.Entry entry) throws PendingIntent.CanceledException {
         StatusBarNotification statusBarNotification = entry.notification;
         Notification notification = statusBarNotification.getNotification();
         if (notification.fullScreenIntent != null) {
@@ -2018,7 +2136,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 if (280 == i) {
                     this.mMetricsLogger.action(493);
                     this.mNotificationPanel.collapse(false, 1.0f);
-                } else if (281 == i) {
+                    return;
+                }
+                if (281 == i) {
                     this.mMetricsLogger.action(494);
                     if (this.mNotificationPanel.isFullyCollapsed()) {
                         if (this.mVibrateOnOpening) {
@@ -2026,7 +2146,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                         }
                         this.mNotificationPanel.expand(true);
                         this.mMetricsLogger.count("panel_open", 1);
-                    } else if (!this.mNotificationPanel.isInSettings() && !this.mNotificationPanel.isExpanding()) {
+                        return;
+                    }
+                    if (!this.mNotificationPanel.isInSettings() && !this.mNotificationPanel.isExpanding()) {
                         this.mNotificationPanel.flingSettings(0.0f, true);
                         this.mMetricsLogger.count("panel_open_qs", 1);
                     }
@@ -2049,13 +2171,11 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mScreenPinningNotify.showEscapeToast(getNavigationBarView() == null || getNavigationBarView().isRecentsButtonVisible());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean panelsEnabled() {
+    boolean panelsEnabled() {
         return (this.mDisabled1 & 65536) == 0 && (this.mDisabled2 & 4) == 0 && !ONLY_CORE_APPS;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void makeExpandedVisible(boolean z) {
+    void makeExpandedVisible(boolean z) {
         if (!z && (this.mExpandedVisible || !panelsEnabled())) {
             return;
         }
@@ -2079,7 +2199,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$ozJF_5mXhWqttO3c_hxUQ5zEj6A
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.this.animateCollapsePanels(0, true);
+                this.f$0.animateCollapsePanels(0, true);
             }
         });
     }
@@ -2127,8 +2247,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void runPostCollapseRunnables() {
+    private void runPostCollapseRunnables() {
         ArrayList arrayList = new ArrayList(this.mPostCollapseRunnables);
         this.mPostCollapseRunnables.clear();
         int size = arrayList.size();
@@ -2161,8 +2280,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void makeExpandedInvisible() {
+    void makeExpandedInvisible() {
         if (!this.mExpandedVisible || this.mStatusBarWindow == null) {
             return;
         }
@@ -2236,10 +2354,10 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 this.mSystemUiVisibility &= -268435457;
                 this.mNoAnimationOnNextBarModeChange = true;
             }
-            int computeStatusBarMode = computeStatusBarMode(i5, i6);
-            r7 = computeStatusBarMode != -1;
-            if (r7 && computeStatusBarMode != this.mStatusBarMode) {
-                this.mStatusBarMode = computeStatusBarMode;
+            int iComputeStatusBarMode = computeStatusBarMode(i5, i6);
+            z = iComputeStatusBarMode != -1;
+            if (z && iComputeStatusBarMode != this.mStatusBarMode) {
+                this.mStatusBarMode = iComputeStatusBarMode;
                 checkBarModes();
                 touchAutoHide();
             }
@@ -2248,13 +2366,16 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             }
             notifyUiVisibilityChanged(this.mSystemUiVisibility);
         }
-        this.mLightBarController.onSystemUiVisibilityChanged(i2, i3, i4, rect, rect2, r7, this.mStatusBarMode);
+        this.mLightBarController.onSystemUiVisibilityChanged(i2, i3, i4, rect, rect2, z, this.mStatusBarMode);
     }
 
     @Override // com.android.systemui.statusbar.CommandQueue.Callbacks
     public void showWirelessChargingAnimation(int i) {
         if (this.mDozing || this.mKeyguardManager.isKeyguardLocked()) {
             WirelessChargingAnimation.makeWirelessChargingAnimation(this.mContext, null, i, new WirelessChargingAnimation.Callback() { // from class: com.android.systemui.statusbar.phone.StatusBar.8
+                AnonymousClass8() {
+                }
+
                 @Override // com.android.systemui.charging.WirelessChargingAnimation.Callback
                 public void onAnimationStarting() {
                     CrossFadeHelper.fadeOut(StatusBar.this.mNotificationPanel, 1.0f);
@@ -2270,8 +2391,23 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void touchAutoHide() {
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$8 */
+    class AnonymousClass8 implements WirelessChargingAnimation.Callback {
+        AnonymousClass8() {
+        }
+
+        @Override // com.android.systemui.charging.WirelessChargingAnimation.Callback
+        public void onAnimationStarting() {
+            CrossFadeHelper.fadeOut(StatusBar.this.mNotificationPanel, 1.0f);
+        }
+
+        @Override // com.android.systemui.charging.WirelessChargingAnimation.Callback
+        public void onAnimationEnded() {
+            CrossFadeHelper.fadeIn(StatusBar.this.mNotificationPanel);
+        }
+    }
+
+    void touchAutoHide() {
         if (this.mStatusBarMode == 1 || (this.mNavigationBar != null && this.mNavigationBar.isSemiTransparent())) {
             scheduleAutohide();
         } else {
@@ -2287,14 +2423,13 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         return this.mStatusBarView.getBarTransitions();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int computeBarMode(int i, int i2, int i3, int i4, int i5) {
-        int barMode = barMode(i, i3, i4, i5);
-        int barMode2 = barMode(i2, i3, i4, i5);
-        if (barMode == barMode2) {
+    protected int computeBarMode(int i, int i2, int i3, int i4, int i5) {
+        int iBarMode = barMode(i, i3, i4, i5);
+        int iBarMode2 = barMode(i2, i3, i4, i5);
+        if (iBarMode == iBarMode2) {
             return -1;
         }
-        return barMode2;
+        return iBarMode2;
     }
 
     private int barMode(int i, int i2, int i3, int i4) {
@@ -2314,8 +2449,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         return (i & 1) != 0 ? 3 : 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void checkBarModes() {
+    void checkBarModes() {
         if (this.mDemoMode) {
             return;
         }
@@ -2346,18 +2480,15 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setQsScrimEnabled(boolean z) {
+    void setQsScrimEnabled(boolean z) {
         this.mNotificationPanel.setQsScrimEnabled(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void checkBarMode(int i, int i2, BarTransitions barTransitions) {
+    void checkBarMode(int i, int i2, BarTransitions barTransitions) {
         barTransitions.transitionTo(i, (this.mNoAnimationOnNextBarModeChange || !this.mDeviceInteractive || i2 == 2) ? false : true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void finishBarAnimations() {
+    private void finishBarAnimations() {
         if (this.mStatusBarView != null) {
             this.mStatusBarView.getBarTransitions().finishAnimations();
         }
@@ -2387,8 +2518,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         checkBarModes();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dismissVolumeDialog() {
+    private void dismissVolumeDialog() {
         if (this.mVolumeComponent != null) {
             this.mVolumeComponent.dismissNow();
         }
@@ -2427,8 +2557,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void checkUserAutohide(MotionEvent motionEvent) {
+    void checkUserAutohide(MotionEvent motionEvent) {
         if ((this.mSystemUiVisibility & 201326592) != 0 && motionEvent.getAction() == 4 && motionEvent.getX() == 0.0f && motionEvent.getY() == 0.0f && !this.mRemoteInputManager.getController().isRemoteInputActive()) {
             userAutohide();
         }
@@ -2520,8 +2649,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         } else {
             printWriter.println("    dark overlay on: " + isUsingDarkTheme());
         }
-        boolean z = this.mContext.getThemeResId() == 2131886646;
-        printWriter.println("    light wallpaper theme: " + z);
+        printWriter.println("    light wallpaper theme: " + (this.mContext.getThemeResId() == 2131886646));
         DozeLog.dump(printWriter);
         if (this.mFingerprintUnlockController != null) {
             this.mFingerprintUnlockController.dump(printWriter);
@@ -2565,22 +2693,24 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void dumpBarTransitions(PrintWriter printWriter, String str, BarTransitions barTransitions) {
+    static void dumpBarTransitions(PrintWriter printWriter, String str, BarTransitions barTransitions) {
         printWriter.print("  ");
         printWriter.print(str);
         printWriter.print(".BarTransitions.mMode=");
         printWriter.println(BarTransitions.modeToString(barTransitions.getMode()));
     }
 
-    public void createAndAddWindows() {
+    public void createAndAddWindows() throws Resources.NotFoundException {
         addStatusBarWindow();
     }
 
-    private void addStatusBarWindow() {
+    private void addStatusBarWindow() throws Resources.NotFoundException {
         makeStatusBarView();
         this.mStatusBarWindowManager = (StatusBarWindowManager) Dependency.get(StatusBarWindowManager.class);
         this.mRemoteInputManager.setUpWithPresenter(this, this.mEntryManager, this, new RemoteInputController.Delegate() { // from class: com.android.systemui.statusbar.phone.StatusBar.9
+            AnonymousClass9() {
+            }
+
             @Override // com.android.systemui.statusbar.RemoteInputController.Delegate
             public void setRemoteInputActive(NotificationData.Entry entry, boolean z) {
                 StatusBar.this.mHeadsUpManager.setRemoteInputActive(entry, z);
@@ -2603,28 +2733,48 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mStatusBarWindowManager.add(this.mStatusBarWindow, getStatusBarHeight());
     }
 
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$9 */
+    class AnonymousClass9 implements RemoteInputController.Delegate {
+        AnonymousClass9() {
+        }
+
+        @Override // com.android.systemui.statusbar.RemoteInputController.Delegate
+        public void setRemoteInputActive(NotificationData.Entry entry, boolean z) {
+            StatusBar.this.mHeadsUpManager.setRemoteInputActive(entry, z);
+            entry.row.notifyHeightChanged(true);
+            StatusBar.this.updateFooter();
+        }
+
+        @Override // com.android.systemui.statusbar.RemoteInputController.Delegate
+        public void lockScrollTo(NotificationData.Entry entry) {
+            StatusBar.this.mStackScroller.lockScrollTo(entry.row);
+        }
+
+        @Override // com.android.systemui.statusbar.RemoteInputController.Delegate
+        public void requestDisallowLongPressAndDismiss() {
+            StatusBar.this.mStackScroller.requestDisallowLongPress();
+            StatusBar.this.mStackScroller.requestDisallowDismiss();
+        }
+    }
+
     void updateDisplaySize() {
         this.mDisplay.getMetrics(this.mDisplayMetrics);
         this.mDisplay.getSize(this.mCurrentDisplaySize);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getDisplayDensity() {
+    float getDisplayDensity() {
         return this.mDisplayMetrics.density;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getDisplayWidth() {
+    float getDisplayWidth() {
         return this.mDisplayMetrics.widthPixels;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getDisplayHeight() {
+    float getDisplayHeight() {
         return this.mDisplayMetrics.heightPixels;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getRotation() {
+    int getRotation() {
         return this.mDisplay.getRotation();
     }
 
@@ -2641,19 +2791,19 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             executeRunnableDismissingKeyguard(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$m7gLn0oHyYCe-AWuyLsfac1q_Y8
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.lambda$startActivityDismissingKeyguard$23(StatusBar.this, intent, i, z3, callback);
+                    StatusBar.lambda$startActivityDismissingKeyguard$23(this.f$0, intent, i, z3, callback);
                 }
             }, new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$1nGExZ91Gpu3EQgUFwihi2varHw
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.lambda$startActivityDismissingKeyguard$24(ActivityStarter.Callback.this);
+                    StatusBar.lambda$startActivityDismissingKeyguard$24(callback);
                 }
             }, z2, PreviewInflater.wouldLaunchResolverActivity(this.mContext, intent, this.mLockscreenUserManager.getCurrentUserId()), true);
         }
     }
 
     public static /* synthetic */ void lambda$startActivityDismissingKeyguard$23(StatusBar statusBar, Intent intent, int i, boolean z, ActivityStarter.Callback callback) {
-        int i2;
+        int iStartActivityAsUser;
         statusBar.mAssistManager.hideAssist();
         intent.setFlags(335544320);
         intent.addFlags(i);
@@ -2663,18 +2813,17 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             activityOptions.setRotationAnimationHint(3);
         }
         try {
-            i2 = ActivityManager.getService().startActivityAsUser((IApplicationThread) null, statusBar.mContext.getBasePackageName(), intent, intent.resolveTypeIfNeeded(statusBar.mContext.getContentResolver()), (IBinder) null, (String) null, 0, 268435456, (ProfilerInfo) null, activityOptions.toBundle(), UserHandle.CURRENT.getIdentifier());
+            iStartActivityAsUser = ActivityManager.getService().startActivityAsUser((IApplicationThread) null, statusBar.mContext.getBasePackageName(), intent, intent.resolveTypeIfNeeded(statusBar.mContext.getContentResolver()), (IBinder) null, (String) null, 0, 268435456, (ProfilerInfo) null, activityOptions.toBundle(), UserHandle.CURRENT.getIdentifier());
         } catch (RemoteException e) {
             Log.w("StatusBar", "Unable to start activity", e);
-            i2 = -96;
+            iStartActivityAsUser = -96;
         }
         if (callback != null) {
-            callback.onActivityStarted(i2);
+            callback.onActivityStarted(iStartActivityAsUser);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$startActivityDismissingKeyguard$24(ActivityStarter.Callback callback) {
+    static /* synthetic */ void lambda$startActivityDismissingKeyguard$24(ActivityStarter.Callback callback) {
         if (callback != null) {
             callback.onActivityStarted(-96);
         }
@@ -2688,7 +2837,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         dismissKeyguardThenExecute(new KeyguardHostView.OnDismissAction() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$2o5DqwU7a8_lWJ0tlZXd7MAULTQ
             @Override // com.android.keyguard.KeyguardHostView.OnDismissAction
             public final boolean onDismiss() {
-                return StatusBar.lambda$executeRunnableDismissingKeyguard$25(StatusBar.this, runnable, z, z3);
+                return StatusBar.lambda$executeRunnableDismissingKeyguard$25(this.f$0, runnable, z, z3);
             }
         }, runnable2, z2);
     }
@@ -2708,7 +2857,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 statusBar.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$h1YVkfulr3o8W-Bsc2YTikmPmYI
                     @Override // java.lang.Runnable
                     public final void run() {
-                        StatusBar.this.runPostCollapseRunnables();
+                        this.f$0.runPostCollapseRunnables();
                     }
                 });
             }
@@ -2719,11 +2868,79 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             h.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$JQMd1r5WuAA5n3kv4yv5u3MFjI8
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBarKeyguardViewManager.this.readyForKeyguardDone();
+                    statusBarKeyguardViewManager.readyForKeyguardDone();
                 }
             });
         }
         return z2;
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$10 */
+    class AnonymousClass10 extends BroadcastReceiver {
+        AnonymousClass10() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            if (StatusBar.DEBUG) {
+                Log.v("StatusBar", "onReceive: " + intent);
+            }
+            String action = intent.getAction();
+            if ("android.intent.action.CLOSE_SYSTEM_DIALOGS".equals(action)) {
+                KeyboardShortcuts.dismiss();
+                if (StatusBar.this.mRemoteInputManager.getController() != null) {
+                    StatusBar.this.mRemoteInputManager.getController().closeRemoteInputs();
+                }
+                if (StatusBar.this.mLockscreenUserManager.isCurrentProfile(getSendingUserId())) {
+                    int i = 0;
+                    String stringExtra = intent.getStringExtra("reason");
+                    if (stringExtra != null && stringExtra.equals("recentapps")) {
+                        i = 2;
+                    }
+                    StatusBar.this.animateCollapsePanels(i);
+                    return;
+                }
+                return;
+            }
+            if ("android.intent.action.SCREEN_OFF".equals(action)) {
+                StatusBar.this.finishBarAnimations();
+                StatusBar.this.resetUserExpandedStates();
+            } else if ("android.app.action.SHOW_DEVICE_MONITORING_DIALOG".equals(action)) {
+                StatusBar.this.mQSPanel.showDeviceMonitoringDialog();
+            }
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$11 */
+    class AnonymousClass11 extends BroadcastReceiver {
+        AnonymousClass11() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            if (StatusBar.DEBUG) {
+                Log.v("StatusBar", "onReceive: " + intent);
+            }
+            String action = intent.getAction();
+            if ("com.android.systemui.demo".equals(action)) {
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    String lowerCase = extras.getString("command", "").trim().toLowerCase();
+                    if (lowerCase.length() > 0) {
+                        try {
+                            StatusBar.this.dispatchDemoCommand(lowerCase, extras);
+                            return;
+                        } catch (Throwable th) {
+                            Log.w("StatusBar", "Error running demo command, intent=" + intent, th);
+                            return;
+                        }
+                    }
+                    return;
+                }
+                return;
+            }
+            "fake_artwork".equals(action);
+        }
     }
 
     public void resetUserExpandedStates() {
@@ -2737,8 +2954,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void executeWhenUnlocked(KeyguardHostView.OnDismissAction onDismissAction) {
+    private void executeWhenUnlocked(KeyguardHostView.OnDismissAction onDismissAction) {
         if (this.mStatusBarKeyguardViewManager.isShowing()) {
             this.mLeaveOpenOnKeyguardHide = true;
         }
@@ -2795,7 +3011,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         expandableNotificationRow.setSecureStateProvider(new BooleanSupplier() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$Er5d2KQJ-uxw_IoSsj98m9LUD4U
             @Override // java.util.function.BooleanSupplier
             public final boolean getAsBoolean() {
-                return StatusBar.this.isKeyguardCurrentlySecure();
+                return this.f$0.isKeyguardCurrentlySecure();
             }
         });
     }
@@ -2825,7 +3041,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     protected void loadDimens() {
         Resources resources = this.mContext.getResources();
         int i = this.mNaturalBarHeight;
-        this.mNaturalBarHeight = resources.getDimensionPixelSize(17105309);
+        this.mNaturalBarHeight = resources.getDimensionPixelSize(android.R.dimen.indeterminate_progress_alpha_16);
         if (this.mStatusBarWindowManager != null && this.mNaturalBarHeight != i) {
             this.mStatusBarWindowManager.setBarHeight(this.mNaturalBarHeight);
         }
@@ -2839,14 +3055,13 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         if (z) {
             handleVisibleToUserChangedImpl(z);
             this.mNotificationLogger.startNotificationLogging();
-            return;
+        } else {
+            this.mNotificationLogger.stopNotificationLogging();
+            handleVisibleToUserChangedImpl(z);
         }
-        this.mNotificationLogger.stopNotificationLogging();
-        handleVisibleToUserChangedImpl(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void handlePeekToExpandTransistion() {
+    void handlePeekToExpandTransistion() {
         try {
             this.mBarService.onPanelRevealed(false, this.mEntryManager.getNotificationData().getActiveNotifications().size());
         } catch (RemoteException e) {
@@ -2856,21 +3071,17 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     private void handleVisibleToUserChangedImpl(boolean z) {
         final boolean z2;
         if (z) {
-            boolean hasPinnedHeadsUp = this.mHeadsUpManager.hasPinnedHeadsUp();
-            final int i = 1;
+            boolean zHasPinnedHeadsUp = this.mHeadsUpManager.hasPinnedHeadsUp();
             if (isPresenterFullyCollapsed() || (this.mState != 0 && this.mState != 2)) {
                 z2 = false;
             } else {
                 z2 = true;
             }
-            int size = this.mEntryManager.getNotificationData().getActiveNotifications().size();
-            if (!hasPinnedHeadsUp || !isPresenterFullyCollapsed()) {
-                i = size;
-            }
+            final int size = (zHasPinnedHeadsUp && isPresenterFullyCollapsed()) ? 1 : this.mEntryManager.getNotificationData().getActiveNotifications().size();
             this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$L7CWWY68vvaxHKvHpan4z_UceUU
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.this.mBarService.onPanelRevealed(z2, i);
+                    this.f$0.mBarService.onPanelRevealed(z2, size);
                 }
             });
             return;
@@ -2878,24 +3089,24 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$J1ouXjVsiGbik-dFy8e1gkHbor8
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.this.mBarService.onPanelHidden();
+                this.f$0.mBarService.onPanelHidden();
             }
         });
     }
 
     private void logStateToEventlog() {
-        boolean isShowing = this.mStatusBarKeyguardViewManager.isShowing();
-        boolean isOccluded = this.mStatusBarKeyguardViewManager.isOccluded();
-        boolean isBouncerShowing = this.mStatusBarKeyguardViewManager.isBouncerShowing();
-        boolean isMethodSecure = this.mUnlockMethodCache.isMethodSecure();
-        boolean canSkipBouncer = this.mUnlockMethodCache.canSkipBouncer();
-        int loggingFingerprint = getLoggingFingerprint(this.mState, isShowing, isOccluded, isBouncerShowing, isMethodSecure, canSkipBouncer);
+        boolean zIsShowing = this.mStatusBarKeyguardViewManager.isShowing();
+        boolean zIsOccluded = this.mStatusBarKeyguardViewManager.isOccluded();
+        boolean zIsBouncerShowing = this.mStatusBarKeyguardViewManager.isBouncerShowing();
+        boolean zIsMethodSecure = this.mUnlockMethodCache.isMethodSecure();
+        boolean zCanSkipBouncer = this.mUnlockMethodCache.canSkipBouncer();
+        int loggingFingerprint = getLoggingFingerprint(this.mState, zIsShowing, zIsOccluded, zIsBouncerShowing, zIsMethodSecure, zCanSkipBouncer);
         if (loggingFingerprint != this.mLastLoggedStateFingerprint) {
             if (this.mStatusBarStateLog == null) {
                 this.mStatusBarStateLog = new LogMaker(0);
             }
-            this.mMetricsLogger.write(this.mStatusBarStateLog.setCategory(isBouncerShowing ? 197 : 196).setType(isShowing ? 1 : 2).setSubtype(isMethodSecure ? 1 : 0));
-            EventLogTags.writeSysuiStatusBarState(this.mState, isShowing ? 1 : 0, isOccluded ? 1 : 0, isBouncerShowing ? 1 : 0, isMethodSecure ? 1 : 0, canSkipBouncer ? 1 : 0);
+            this.mMetricsLogger.write(this.mStatusBarStateLog.setCategory(zIsBouncerShowing ? 197 : 196).setType(zIsShowing ? 1 : 2).setSubtype(zIsMethodSecure ? 1 : 0));
+            EventLogTags.writeSysuiStatusBarState(this.mState, zIsShowing ? 1 : 0, zIsOccluded ? 1 : 0, zIsBouncerShowing ? 1 : 0, zIsMethodSecure ? 1 : 0, zCanSkipBouncer ? 1 : 0);
             this.mLastLoggedStateFingerprint = loggingFingerprint;
         }
     }
@@ -2906,6 +3117,21 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
 
     void vibrate() {
         ((Vibrator) this.mContext.getSystemService("vibrator")).vibrate(250L, VIBRATION_ATTRIBUTES);
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$12 */
+    class AnonymousClass12 implements Runnable {
+        AnonymousClass12() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            StatusBar.this.vibrate();
+            SystemClock.sleep(250L);
+            Log.d("StatusBar", "startTracing");
+            Debug.startMethodTracing("/data/statusbar-traces/trace");
+            StatusBar.this.mHandler.postDelayed(StatusBar.this.mStopTracing, 10000L);
+        }
     }
 
     public static /* synthetic */ void lambda$new$28(StatusBar statusBar) {
@@ -2919,7 +3145,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$VX0QSn8fcyOHYuFyA6Hcoa2Oyxs
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.lambda$postQSRunnableDismissingKeyguard$30(StatusBar.this, runnable);
+                StatusBar.lambda$postQSRunnableDismissingKeyguard$30(this.f$0, runnable);
             }
         });
     }
@@ -2929,7 +3155,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         statusBar.executeRunnableDismissingKeyguard(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$nBgz7pREWZfdv3WheeRgDYm-DKk
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.this.mHandler.post(runnable);
+                this.f$0.mHandler.post(runnable);
             }
         }, null, false, false, false);
     }
@@ -2939,7 +3165,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$12UpvPh4ei1S2fz4WfmdUVU3L0Q
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.this.startPendingIntentDismissingKeyguard(pendingIntent);
+                this.f$0.startPendingIntentDismissingKeyguard(pendingIntent);
             }
         });
     }
@@ -2949,13 +3175,12 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$N82XexCiKemcup5oDmr0rEQGLr8
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.this.handleStartActivityDismissingKeyguard(intent, true);
+                this.f$0.handleStartActivityDismissingKeyguard(intent, true);
             }
         }, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleStartActivityDismissingKeyguard(Intent intent, boolean z) {
+    private void handleStartActivityDismissingKeyguard(Intent intent, boolean z) {
         startActivityDismissingKeyguard(intent, z, true);
     }
 
@@ -2991,9 +3216,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 this.mNetworkController.dispatchDemoCommand(str, bundle);
             }
             if (z || str.equals("notifications")) {
-                View findViewById = this.mStatusBarView == null ? null : this.mStatusBarView.findViewById(R.id.notification_icon_area);
-                if (findViewById != null) {
-                    findViewById.setVisibility((this.mDemoMode && "false".equals(bundle.getString("visible"))) ? 4 : 0);
+                View viewFindViewById = this.mStatusBarView == null ? null : this.mStatusBarView.findViewById(R.id.notification_icon_area);
+                if (viewFindViewById != null) {
+                    viewFindViewById.setVisibility((this.mDemoMode && "false".equals(bundle.getString("visible"))) ? 4 : 0);
                 }
             }
             if (str.equals("bars")) {
@@ -3024,9 +3249,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         if (this.mStatusBarView == null) {
             return;
         }
-        View findViewById = this.mStatusBarView.findViewById(i);
-        if (findViewById instanceof DemoMode) {
-            ((DemoMode) findViewById).dispatchDemoCommand(str, bundle);
+        KeyEvent.Callback callbackFindViewById = this.mStatusBarView.findViewById(i);
+        if (callbackFindViewById instanceof DemoMode) {
+            ((DemoMode) callbackFindViewById).dispatchDemoCommand(str, bundle);
         }
     }
 
@@ -3056,8 +3281,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         return this.mState == 3;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateIsKeyguard() {
+    private boolean updateIsKeyguard() {
         boolean z = this.mFingerprintUnlockController.getMode() == 1;
         boolean z2 = this.mDozingRequested && (!this.mDeviceInteractive || (isGoingToSleep() && (isScreenFullyOff() || this.mIsKeyguard)));
         boolean z3 = (this.mKeyguardRequested || z2) && !z;
@@ -3102,8 +3326,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onLaunchTransitionFadingEnded() {
+    private void onLaunchTransitionFadingEnded() {
         this.mNotificationPanel.setAlpha(1.0f);
         this.mNotificationPanel.onAffordanceLaunchEnded();
         releaseGestureWakeLock();
@@ -3130,7 +3353,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         Runnable runnable3 = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$VGVVEb9vvRl3UTavYqmJZkWnKBw
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.lambda$fadeKeyguardAfterLaunchTransition$33(StatusBar.this, runnable);
+                StatusBar.lambda$fadeKeyguardAfterLaunchTransition$33(this.f$0, runnable);
             }
         };
         if (this.mNotificationPanel.isLaunchTransitionRunning()) {
@@ -3152,7 +3375,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         statusBar.mNotificationPanel.animate().alpha(0.0f).setStartDelay(100L).setDuration(300L).withLayer().withEndAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$GDSEpzokV1v2-uNGuP8V5K9Jrjw
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.this.onLaunchTransitionFadingEnded();
+                this.f$0.onLaunchTransitionFadingEnded();
             }
         });
         statusBar.mCommandQueue.appTransitionStarting(SystemClock.uptimeMillis(), 120L, true);
@@ -3163,7 +3386,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mNotificationPanel.animate().alpha(0.0f).setStartDelay(0L).setDuration(96L).setInterpolator(Interpolators.ALPHA_OUT).withEndAction(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$WXAwBNkDB04G_NTCGmQtREbS760
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.lambda$fadeKeyguardWhilePulsing$34(StatusBar.this);
+                StatusBar.lambda$fadeKeyguardWhilePulsing$34(this.f$0);
             }
         }).start();
     }
@@ -3182,8 +3405,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mHandler.sendEmptyMessageDelayed(1003, 5000L);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onLaunchTransitionTimeout() {
+    private void onLaunchTransitionTimeout() {
         Log.w("StatusBar", "Launch transition: Timeout!");
         this.mNotificationPanel.onAffordanceLaunchEnded();
         releaseGestureWakeLock();
@@ -3209,8 +3431,8 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             if (!this.mKeyguardRequested) {
                 this.mLeaveOpenOnKeyguardHide = false;
             }
-            long calculateGoingToFullShadeDelay = calculateGoingToFullShadeDelay();
-            this.mNotificationPanel.animateToFullShade(calculateGoingToFullShadeDelay);
+            long jCalculateGoingToFullShadeDelay = calculateGoingToFullShadeDelay();
+            this.mNotificationPanel.animateToFullShade(jCalculateGoingToFullShadeDelay);
             if (this.mDraggedDownRow != null) {
                 this.mDraggedDownRow.setUserLocked(false);
                 this.mDraggedDownRow = null;
@@ -3221,7 +3443,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 view = view2;
             }
             if (this.mNavigationBar != null) {
-                this.mNavigationBar.disableAnimationsDuringHide(calculateGoingToFullShadeDelay);
+                this.mNavigationBar.disableAnimationsDuringHide(jCalculateGoingToFullShadeDelay);
             }
         } else if (!this.mNotificationPanel.isCollapsing()) {
             instantCollapseNotificationPanel();
@@ -3242,8 +3464,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         return z;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void releaseGestureWakeLock() {
+    private void releaseGestureWakeLock() {
         if (this.mGestureWakeLock.isHeld()) {
             this.mGestureWakeLock.release();
         }
@@ -3280,7 +3501,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
 
     private void updatePublicMode() {
         boolean z;
-        boolean z2;
+        boolean zIsDeviceLocked;
         if (!this.mStatusBarKeyguardViewManager.isShowing() || !this.mStatusBarKeyguardViewManager.isSecure(this.mLockscreenUserManager.getCurrentUserId())) {
             z = false;
         } else {
@@ -3290,16 +3511,15 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         for (int size = currentProfiles.size() - 1; size >= 0; size--) {
             int i = currentProfiles.valueAt(size).id;
             if (!z && i != this.mLockscreenUserManager.getCurrentUserId() && this.mLockPatternUtils.isSeparateProfileChallengeEnabled(i) && this.mStatusBarKeyguardViewManager.isSecure(i)) {
-                z2 = this.mKeyguardManager.isDeviceLocked(i);
+                zIsDeviceLocked = this.mKeyguardManager.isDeviceLocked(i);
             } else {
-                z2 = z;
+                zIsDeviceLocked = z;
             }
-            this.mLockscreenUserManager.setLockscreenPublicMode(z2, i);
+            this.mLockscreenUserManager.setLockscreenPublicMode(zIsDeviceLocked, i);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateKeyguardState(boolean z, boolean z2) {
+    protected void updateKeyguardState(boolean z, boolean z2) {
         Trace.beginSection("StatusBar#updateKeyguardState");
         if (this.mState == 1) {
             this.mKeyguardIndicationController.setVisible(true);
@@ -3348,11 +3568,11 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$ivKR6xDECCYeSWtxcJR-qPFaXgc
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.lambda$updateTheme$35(StatusBar.this, z);
+                    StatusBar.lambda$updateTheme$35(this.f$0, z);
                 }
             });
         }
-        int i2 = this.mColorExtractor.getColors(2, true).supportsDarkText() ? com.android.systemui.plugins.R.style.Theme_SystemUI_Light : com.android.systemui.plugins.R.style.Theme_SystemUI;
+        int i2 = this.mColorExtractor.getColors(2, true).supportsDarkText() ? 2131886646 : 2131886642;
         if (this.mContext.getThemeResId() != i2) {
             this.mContext.setTheme(i2);
             if (z2) {
@@ -3363,9 +3583,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             if (this.mState != 1 && this.mState != 2) {
                 i = 1;
             }
-            boolean supportsDarkText = this.mColorExtractor.getColors(i, true).supportsDarkText();
-            this.mStackScroller.updateDecorViews(supportsDarkText);
-            this.mStatusBarWindowManager.setKeyguardDark(supportsDarkText);
+            boolean zSupportsDarkText = this.mColorExtractor.getColors(i, true).supportsDarkText();
+            this.mStackScroller.updateDecorViews(zSupportsDarkText);
+            this.mStatusBarWindowManager.setKeyguardDark(zSupportsDarkText);
         }
     }
 
@@ -3394,11 +3614,11 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             return;
         }
         boolean z3 = this.mState == 1;
-        boolean isAnyProfilePublicMode = this.mLockscreenUserManager.isAnyProfilePublicMode();
+        boolean zIsAnyProfilePublicMode = this.mLockscreenUserManager.isAnyProfilePublicMode();
         if (this.mHeadsUpAppearanceController != null) {
-            this.mHeadsUpAppearanceController.setPublicMode(isAnyProfilePublicMode);
+            this.mHeadsUpAppearanceController.setPublicMode(zIsAnyProfilePublicMode);
         }
-        this.mStackScroller.setHideSensitive(isAnyProfilePublicMode, z);
+        this.mStackScroller.setHideSensitive(zIsAnyProfilePublicMode, z);
         this.mStackScroller.setDimmed(z3, z2);
         this.mStackScroller.setExpandingEnabled(!z3);
         ActivatableNotificationView activatedChild = this.mStackScroller.getActivatedChild();
@@ -3442,19 +3662,20 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 this.mNotificationPanel.expandWithoutQs();
             }
             return true;
-        } else if (this.mNotificationPanel.isQsExpanded()) {
+        }
+        if (this.mNotificationPanel.isQsExpanded()) {
             if (this.mNotificationPanel.isQsDetailShowing()) {
                 this.mNotificationPanel.closeQsDetail();
             } else {
                 this.mNotificationPanel.animateCloseQs();
             }
             return true;
-        } else if (this.mState == 1 || this.mState == 2) {
-            return this.mKeyguardUserSwitcher != null && this.mKeyguardUserSwitcher.hideIfNotSimple(true);
-        } else {
-            animateCollapsePanels();
-            return true;
         }
+        if (this.mState == 1 || this.mState == 2) {
+            return this.mKeyguardUserSwitcher != null && this.mKeyguardUserSwitcher.hideIfNotSimple(true);
+        }
+        animateCollapsePanels();
+        return true;
     }
 
     public boolean onSpacePressed() {
@@ -3593,15 +3814,15 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
 
     @Override // com.android.systemui.statusbar.DragDownHelper.DragDownCallback
     public boolean onDraggedDown(View view, int i) {
-        if (this.mState == 1 && hasActiveNotifications() && (!isDozing() || isPulsing())) {
-            this.mLockscreenGestureLogger.write(187, (int) (i / this.mDisplayMetrics.density), 0);
-            goToLockedShade(view);
-            if (view instanceof ExpandableNotificationRow) {
-                ((ExpandableNotificationRow) view).onExpandedByGesture(true);
-            }
-            return true;
+        if (this.mState != 1 || !hasActiveNotifications() || (isDozing() && !isPulsing())) {
+            return false;
         }
-        return false;
+        this.mLockscreenGestureLogger.write(187, (int) (i / this.mDisplayMetrics.density), 0);
+        goToLockedShade(view);
+        if (view instanceof ExpandableNotificationRow) {
+            ((ExpandableNotificationRow) view).onExpandedByGesture(true);
+        }
+        return true;
     }
 
     @Override // com.android.systemui.statusbar.DragDownHelper.DragDownCallback
@@ -3701,7 +3922,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             dismissKeyguardThenExecute(new KeyguardHostView.OnDismissAction() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$fzTDbkcnYrHu8s7M4OkG8bm4evI
                 @Override // com.android.keyguard.KeyguardHostView.OnDismissAction
                 public final boolean onDismiss() {
-                    return StatusBar.lambda$handleRemoteViewClick$36(StatusBar.this, clickHandler);
+                    return StatusBar.lambda$handleRemoteViewClick$36(this.f$0, clickHandler);
                 }
             }, PreviewInflater.wouldLaunchResolverActivity(this.mContext, pendingIntent.getIntent(), this.mLockscreenUserManager.getCurrentUserId()));
             return true;
@@ -3725,17 +3946,17 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
 
     protected boolean startWorkChallengeIfNecessary(int i, IntentSender intentSender, String str) {
         this.mPendingWorkRemoteInputView = null;
-        Intent createConfirmDeviceCredentialIntent = this.mKeyguardManager.createConfirmDeviceCredentialIntent(null, null, i);
-        if (createConfirmDeviceCredentialIntent == null) {
+        Intent intentCreateConfirmDeviceCredentialIntent = this.mKeyguardManager.createConfirmDeviceCredentialIntent(null, null, i);
+        if (intentCreateConfirmDeviceCredentialIntent == null) {
             return false;
         }
         Intent intent = new Intent("com.android.systemui.statusbar.work_challenge_unlocked_notification_action");
         intent.putExtra("android.intent.extra.INTENT", intentSender);
         intent.putExtra("android.intent.extra.INDEX", str);
         intent.setPackage(this.mContext.getPackageName());
-        createConfirmDeviceCredentialIntent.putExtra("android.intent.extra.INTENT", PendingIntent.getBroadcast(this.mContext, 0, intent, 1409286144).getIntentSender());
+        intentCreateConfirmDeviceCredentialIntent.putExtra("android.intent.extra.INTENT", PendingIntent.getBroadcast(this.mContext, 0, intent, 1409286144).getIntentSender());
         try {
-            ActivityManager.getService().startConfirmDeviceCredentialIntent(createConfirmDeviceCredentialIntent, (Bundle) null);
+            ActivityManager.getService().startConfirmDeviceCredentialIntent(intentCreateConfirmDeviceCredentialIntent, (Bundle) null);
             return true;
         } catch (RemoteException e) {
             return true;
@@ -3754,13 +3975,13 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         updatePublicMode();
         this.mEntryManager.updateNotifications();
         if (this.mPendingWorkRemoteInputView != null && !this.mLockscreenUserManager.isAnyProfilePublicMode()) {
-            final Runnable runnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$brC3HWoW52IJ2KvIgjPoiblJKDY
-                @Override // java.lang.Runnable
-                public final void run() {
-                    StatusBar.lambda$onWorkChallengeChanged$39(StatusBar.this);
-                }
-            };
             this.mNotificationPanel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() { // from class: com.android.systemui.statusbar.phone.StatusBar.13
+                final /* synthetic */ Runnable val$clickPendingViewRunnable;
+
+                AnonymousClass13(Runnable runnable) {
+                    runnable = runnable;
+                }
+
                 @Override // android.view.ViewTreeObserver.OnGlobalLayoutListener
                 public void onGlobalLayout() {
                     if (StatusBar.this.mNotificationPanel.mStatusBar.getStatusBarWindow().getHeight() != StatusBar.this.mNotificationPanel.mStatusBar.getStatusBarHeight()) {
@@ -3782,8 +4003,9 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         while (!(parent instanceof ExpandableNotificationRow)) {
             if (parent == null) {
                 return;
+            } else {
+                parent = parent.getParent();
             }
-            parent = parent.getParent();
         }
         final ExpandableNotificationRow expandableNotificationRow = (ExpandableNotificationRow) parent;
         ViewParent parent2 = expandableNotificationRow.getParent();
@@ -3793,7 +4015,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             expandableNotificationRow.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$eoWDQ0ohibR1pIAC4B1Lhj__ei0
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.lambda$onWorkChallengeChanged$38(StatusBar.this, notificationStackScrollLayout, expandableNotificationRow);
+                    StatusBar.lambda$onWorkChallengeChanged$38(this.f$0, notificationStackScrollLayout, expandableNotificationRow);
                 }
             });
         }
@@ -3803,7 +4025,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         Runnable runnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$j96cSNpAdKazwZ2nGsaARsdXzOk
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.lambda$onWorkChallengeChanged$37(StatusBar.this, notificationStackScrollLayout);
+                StatusBar.lambda$onWorkChallengeChanged$37(this.f$0, notificationStackScrollLayout);
             }
         };
         if (notificationStackScrollLayout.scrollTo(expandableNotificationRow)) {
@@ -3817,6 +4039,23 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         statusBar.mPendingWorkRemoteInputView.callOnClick();
         statusBar.mPendingWorkRemoteInputView = null;
         notificationStackScrollLayout.setFinishScrollingCallback(null);
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$13 */
+    class AnonymousClass13 implements ViewTreeObserver.OnGlobalLayoutListener {
+        final /* synthetic */ Runnable val$clickPendingViewRunnable;
+
+        AnonymousClass13(Runnable runnable) {
+            runnable = runnable;
+        }
+
+        @Override // android.view.ViewTreeObserver.OnGlobalLayoutListener
+        public void onGlobalLayout() {
+            if (StatusBar.this.mNotificationPanel.mStatusBar.getStatusBarWindow().getHeight() != StatusBar.this.mNotificationPanel.mStatusBar.getStatusBarHeight()) {
+                StatusBar.this.mNotificationPanel.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                StatusBar.this.mNotificationPanel.post(runnable);
+            }
+        }
     }
 
     @Override // com.android.systemui.statusbar.ExpandableNotificationRow.OnExpandClickListener
@@ -3853,10 +4092,8 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         updateScrimController();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$14  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass14 implements WakefulnessLifecycle.Observer {
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$14 */
+    class AnonymousClass14 implements WakefulnessLifecycle.Observer {
         AnonymousClass14() {
         }
 
@@ -3878,6 +4115,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                 StatusBar.this.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$14$nWBD2D2g4XfqSRRa62h1yqCV30I
                     @Override // java.lang.Runnable
                     public final void run() {
+                        StatusBar.AnonymousClass14 anonymousClass14 = this.f$0;
                         StatusBar.this.onCameraLaunchGestureDetected(StatusBar.this.mLastCameraLaunchSource);
                     }
                 });
@@ -3901,6 +4139,37 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             StatusBar.this.updateVisibleToUser();
             StatusBar.this.updateIsKeyguard();
             StatusBar.this.updateScrimController();
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$15 */
+    class AnonymousClass15 implements ScreenLifecycle.Observer {
+        AnonymousClass15() {
+        }
+
+        @Override // com.android.systemui.keyguard.ScreenLifecycle.Observer
+        public void onScreenTurningOn() {
+            StatusBar.this.mFalsingManager.onScreenTurningOn();
+            StatusBar.this.mNotificationPanel.onScreenTurningOn();
+            if (StatusBar.this.mLaunchCameraOnScreenTurningOn) {
+                StatusBar.this.mNotificationPanel.launchCamera(false, StatusBar.this.mLastCameraLaunchSource);
+                StatusBar.this.mLaunchCameraOnScreenTurningOn = false;
+            }
+            StatusBar.this.updateScrimController();
+        }
+
+        @Override // com.android.systemui.keyguard.ScreenLifecycle.Observer
+        public void onScreenTurnedOn() {
+            StatusBar.this.mScrimController.onScreenTurnedOn();
+        }
+
+        @Override // com.android.systemui.keyguard.ScreenLifecycle.Observer
+        public void onScreenTurnedOff() {
+            StatusBar.this.mFalsingManager.onScreenOff();
+            StatusBar.this.mScrimController.onScreenTurnedOff();
+            if (!StatusBar.this.isPulsing()) {
+                StatusBar.this.updateIsKeyguard();
+            }
         }
     }
 
@@ -3995,16 +4264,16 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             if (!this.mStatusBarKeyguardViewManager.isSecure() && this.mStatusBarKeyguardViewManager.isOccluded()) {
                 Slog.d("StatusBar", "Non-Secure unlock, no need to launch camera");
                 return;
+            } else {
+                this.mNotificationPanel.launchCamera(this.mDeviceInteractive, i);
+                updateScrimController();
+                return;
             }
-            this.mNotificationPanel.launchCamera(this.mDeviceInteractive, i);
-            updateScrimController();
-            return;
         }
         this.mLaunchCameraOnScreenTurningOn = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isCameraAllowedByAdmin() {
+    boolean isCameraAllowedByAdmin() {
         if (this.mDevicePolicyManager.getCameraDisabled(null, this.mLockscreenUserManager.getCurrentUserId())) {
             return false;
         }
@@ -4024,8 +4293,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         updateScrimController();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDozing() {
+    private void updateDozing() {
         Trace.beginSection("StatusBar#updateDozing");
         boolean z = false;
         boolean z2 = (this.mDozingRequested && this.mState == 1) || this.mFingerprintUnlockController.getMode() == 2;
@@ -4055,7 +4323,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     @VisibleForTesting
     void updateScrimController() {
         Trace.beginSection("StatusBar#updateScrimController");
-        boolean isWakeAndUnlock = this.mFingerprintUnlockController.isWakeAndUnlock();
+        boolean zIsWakeAndUnlock = this.mFingerprintUnlockController.isWakeAndUnlock();
         this.mScrimController.setExpansionAffectsAlpha(!this.mFingerprintUnlockController.isFingerprintUnlock());
         if (this.mBouncerShowing) {
             this.mScrimController.transitionTo((this.mIsOccluded || this.mStatusBarKeyguardViewManager.bouncerNeedsScrimming() || this.mStatusBarKeyguardViewManager.willDismissWithAction() || this.mStatusBarKeyguardViewManager.isFullscreenBouncer()) ? ScrimState.BOUNCER_SCRIMMED : ScrimState.BOUNCER);
@@ -4066,7 +4334,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         } else if (!isPulsing()) {
             if (this.mDozing) {
                 this.mScrimController.transitionTo(ScrimState.AOD);
-            } else if (this.mIsKeyguard && !isWakeAndUnlock) {
+            } else if (this.mIsKeyguard && !zIsWakeAndUnlock) {
                 this.mScrimController.transitionTo(ScrimState.KEYGUARD);
             } else {
                 this.mScrimController.transitionTo(ScrimState.UNLOCKED, this.mUnlockScrimCallback);
@@ -4083,9 +4351,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         return this.mStatusBarKeyguardViewManager.isShowing();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class DozeServiceHost implements DozeHost {
+    private final class DozeServiceHost implements DozeHost {
         private boolean mAnimateScreenOff;
         private boolean mAnimateWakeup;
         private final ArrayList<DozeHost.Callback> mCallbacks;
@@ -4093,6 +4359,10 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
 
         private DozeServiceHost() {
             this.mCallbacks = new ArrayList<>();
+        }
+
+        /* synthetic */ DozeServiceHost(StatusBar statusBar, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         public String toString() {
@@ -4134,33 +4404,68 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
 
         @Override // com.android.systemui.doze.DozeHost
-        public void pulseWhileDozing(final DozeHost.PulseCallback pulseCallback, int i) {
+        public void pulseWhileDozing(DozeHost.PulseCallback pulseCallback, int i) {
             if (i == 5) {
                 StatusBar.this.mPowerManager.wakeUp(SystemClock.uptimeMillis(), "com.android.systemui:NODOZE");
                 StatusBar.this.startAssist(new Bundle());
-                return;
-            }
-            StatusBar.this.mDozeScrimController.pulse(new DozeHost.PulseCallback() { // from class: com.android.systemui.statusbar.phone.StatusBar.DozeServiceHost.1
-                @Override // com.android.systemui.doze.DozeHost.PulseCallback
-                public void onPulseStarted() {
-                    pulseCallback.onPulseStarted();
-                    if (StatusBar.this.mHeadsUpManager.hasHeadsUpNotifications()) {
-                        setPulsing(true);
+            } else {
+                StatusBar.this.mDozeScrimController.pulse(new DozeHost.PulseCallback() { // from class: com.android.systemui.statusbar.phone.StatusBar.DozeServiceHost.1
+                    final /* synthetic */ DozeHost.PulseCallback val$callback;
+
+                    AnonymousClass1(DozeHost.PulseCallback pulseCallback2) {
+                        pulseCallback = pulseCallback2;
                     }
-                }
 
-                @Override // com.android.systemui.doze.DozeHost.PulseCallback
-                public void onPulseFinished() {
-                    pulseCallback.onPulseFinished();
-                    setPulsing(false);
-                }
+                    @Override // com.android.systemui.doze.DozeHost.PulseCallback
+                    public void onPulseStarted() {
+                        pulseCallback.onPulseStarted();
+                        if (StatusBar.this.mHeadsUpManager.hasHeadsUpNotifications()) {
+                            setPulsing(true);
+                        }
+                    }
 
-                private void setPulsing(boolean z) {
-                    StatusBar.this.mNotificationPanel.setPulsing(z);
-                    StatusBar.this.mVisualStabilityManager.setPulsing(z);
-                    DozeServiceHost.this.mIgnoreTouchWhilePulsing = false;
+                    @Override // com.android.systemui.doze.DozeHost.PulseCallback
+                    public void onPulseFinished() {
+                        pulseCallback.onPulseFinished();
+                        setPulsing(false);
+                    }
+
+                    private void setPulsing(boolean z) {
+                        StatusBar.this.mNotificationPanel.setPulsing(z);
+                        StatusBar.this.mVisualStabilityManager.setPulsing(z);
+                        DozeServiceHost.this.mIgnoreTouchWhilePulsing = false;
+                    }
+                }, i);
+            }
+        }
+
+        /* renamed from: com.android.systemui.statusbar.phone.StatusBar$DozeServiceHost$1 */
+        class AnonymousClass1 implements DozeHost.PulseCallback {
+            final /* synthetic */ DozeHost.PulseCallback val$callback;
+
+            AnonymousClass1(DozeHost.PulseCallback pulseCallback2) {
+                pulseCallback = pulseCallback2;
+            }
+
+            @Override // com.android.systemui.doze.DozeHost.PulseCallback
+            public void onPulseStarted() {
+                pulseCallback.onPulseStarted();
+                if (StatusBar.this.mHeadsUpManager.hasHeadsUpNotifications()) {
+                    setPulsing(true);
                 }
-            }, i);
+            }
+
+            @Override // com.android.systemui.doze.DozeHost.PulseCallback
+            public void onPulseFinished() {
+                pulseCallback.onPulseFinished();
+                setPulsing(false);
+            }
+
+            private void setPulsing(boolean z) {
+                StatusBar.this.mNotificationPanel.setPulsing(z);
+                StatusBar.this.mVisualStabilityManager.setPulsing(z);
+                DozeServiceHost.this.mIgnoreTouchWhilePulsing = false;
+            }
         }
 
         @Override // com.android.systemui.doze.DozeHost
@@ -4259,19 +4564,18 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
 
         private void dispatchTap(View view, float f, float f2) {
-            long elapsedRealtime = SystemClock.elapsedRealtime();
-            dispatchTouchEvent(view, f, f2, elapsedRealtime, 0);
-            dispatchTouchEvent(view, f, f2, elapsedRealtime, 1);
+            long jElapsedRealtime = SystemClock.elapsedRealtime();
+            dispatchTouchEvent(view, f, f2, jElapsedRealtime, 0);
+            dispatchTouchEvent(view, f, f2, jElapsedRealtime, 1);
         }
 
         private void dispatchTouchEvent(View view, float f, float f2, long j, int i) {
-            MotionEvent obtain = MotionEvent.obtain(j, j, i, f, f2, 0);
-            view.dispatchTouchEvent(obtain);
-            obtain.recycle();
+            MotionEvent motionEventObtain = MotionEvent.obtain(j, j, i, f, f2, 0);
+            view.dispatchTouchEvent(motionEventObtain);
+            motionEventObtain.recycle();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public boolean shouldAnimateWakeup() {
+        private boolean shouldAnimateWakeup() {
             return this.mAnimateWakeup;
         }
 
@@ -4293,9 +4597,41 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         return this.mDeviceProvisionedController.isDeviceProvisioned();
     }
 
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$16 */
+    class AnonymousClass16 extends IVrStateCallbacks.Stub {
+        AnonymousClass16() {
+        }
+
+        public void onVrStateChanged(boolean z) {
+            StatusBar.this.mVrMode = z;
+        }
+    }
+
     @Override // com.android.systemui.statusbar.NotificationPresenter
     public boolean isDeviceInVrMode() {
         return this.mVrMode;
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.StatusBar$17 */
+    class AnonymousClass17 extends BroadcastReceiver {
+        AnonymousClass17() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if ("com.android.systemui.statusbar.banner_action_cancel".equals(action) || "com.android.systemui.statusbar.banner_action_setup".equals(action)) {
+                ((NotificationManager) StatusBar.this.mContext.getSystemService("notification")).cancel(5);
+                Settings.Secure.putInt(StatusBar.this.mContext.getContentResolver(), "show_note_about_notification_hiding", 0);
+                if ("com.android.systemui.statusbar.banner_action_setup".equals(action)) {
+                    StatusBar.this.animateCollapsePanels(2, true);
+                    if (BenesseExtension.getDchaState() != 0) {
+                        return;
+                    }
+                    StatusBar.this.mContext.startActivity(new Intent("android.settings.ACTION_APP_NOTIFICATION_REDACTION").addFlags(268435456));
+                }
+            }
+        }
     }
 
     @Override // com.android.systemui.statusbar.NotificationEntryManager.Callback
@@ -4319,15 +4655,18 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         dismissKeyguardThenExecute(new KeyguardHostView.OnDismissAction() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$cpS9GH1Yu7E8qLhdYAL6i-NlD18
             @Override // com.android.keyguard.KeyguardHostView.OnDismissAction
             public final boolean onDismiss() {
-                return StatusBar.lambda$onNotificationClicked$41(StatusBar.this, key, expandableNotificationRow, statusBarNotification, pendingIntent2, controller, z2);
+                return StatusBar.lambda$onNotificationClicked$41(this.f$0, key, expandableNotificationRow, statusBarNotification, pendingIntent2, controller, z2);
             }
         }, z);
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:47:0x0045  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public static /* synthetic */ boolean lambda$onNotificationClicked$41(final StatusBar statusBar, final String str, ExpandableNotificationRow expandableNotificationRow, final StatusBarNotification statusBarNotification, final PendingIntent pendingIntent, final RemoteInputController remoteInputController, final boolean z) {
         final ExpandableNotificationRow expandableNotificationRow2;
         final StatusBarNotification statusBarNotification2;
-        Runnable runnable;
         if (statusBar.mHeadsUpManager != null && statusBar.mHeadsUpManager.isHeadsUp(str)) {
             if (statusBar.isPresenterFullyCollapsed()) {
                 expandableNotificationRow2 = expandableNotificationRow;
@@ -4343,31 +4682,22 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             StatusBarNotification statusBarNotification3 = statusBar.mGroupManager.getLogicalGroupSummary(statusBarNotification).getStatusBarNotification();
             if (statusBar.shouldAutoCancel(statusBarNotification3)) {
                 statusBarNotification2 = statusBarNotification3;
-                runnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$j_VWyEw2Y2X4khHBBJnisO4DaR8
-                    @Override // java.lang.Runnable
-                    public final void run() {
-                        StatusBar.lambda$onNotificationClicked$40(StatusBar.this, pendingIntent, str, expandableNotificationRow2, remoteInputController, z, statusBarNotification2, statusBarNotification);
-                    }
-                };
-                if (!statusBar.mStatusBarKeyguardViewManager.isShowing() && statusBar.mStatusBarKeyguardViewManager.isOccluded()) {
-                    statusBar.mStatusBarKeyguardViewManager.addAfterKeyguardGoneRunnable(runnable);
-                    statusBar.collapsePanel(true);
-                } else {
-                    new Thread(runnable).start();
-                }
-                return !statusBar.mNotificationPanel.isFullyCollapsed();
             }
+        } else {
+            statusBarNotification2 = null;
         }
-        statusBarNotification2 = null;
-        runnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$j_VWyEw2Y2X4khHBBJnisO4DaR8
+        Runnable runnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$j_VWyEw2Y2X4khHBBJnisO4DaR8
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.lambda$onNotificationClicked$40(StatusBar.this, pendingIntent, str, expandableNotificationRow2, remoteInputController, z, statusBarNotification2, statusBarNotification);
+                StatusBar.lambda$onNotificationClicked$40(this.f$0, pendingIntent, str, expandableNotificationRow2, remoteInputController, z, statusBarNotification2, statusBarNotification);
             }
         };
-        if (!statusBar.mStatusBarKeyguardViewManager.isShowing()) {
+        if (statusBar.mStatusBarKeyguardViewManager.isShowing() && statusBar.mStatusBarKeyguardViewManager.isOccluded()) {
+            statusBar.mStatusBarKeyguardViewManager.addAfterKeyguardGoneRunnable(runnable);
+            statusBar.collapsePanel(true);
+        } else {
+            new Thread(runnable).start();
         }
-        new Thread(runnable).start();
         return !statusBar.mNotificationPanel.isFullyCollapsed();
     }
 
@@ -4391,7 +4721,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             } else {
                 charSequence = null;
             }
-            Intent putExtra = (TextUtils.isEmpty(charSequence) || remoteInputController.isSpinning(entry.key)) ? null : new Intent().putExtra("android.remoteInputDraft", charSequence.toString());
+            Intent intentPutExtra = (TextUtils.isEmpty(charSequence) || remoteInputController.isSpinning(entry.key)) ? null : new Intent().putExtra("android.remoteInputDraft", charSequence.toString());
             RemoteAnimationAdapter launchAnimation = statusBar.mActivityLaunchAnimator.getLaunchAnimation(expandableNotificationRow, z);
             if (launchAnimation != null) {
                 try {
@@ -4400,7 +4730,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
                     Log.w("StatusBar", "Sending contentIntent failed: " + e2);
                 }
             }
-            statusBar.mActivityLaunchAnimator.setLaunchResult(pendingIntent.sendAndReturnResult(statusBar.mContext, 0, putExtra, null, null, null, statusBar.getActivityOptions(launchAnimation)));
+            statusBar.mActivityLaunchAnimator.setLaunchResult(pendingIntent.sendAndReturnResult(statusBar.mContext, 0, intentPutExtra, null, null, null, statusBar.getActivityOptions(launchAnimation)));
             if (pendingIntent.isActivity()) {
                 statusBar.mAssistManager.hideAssist();
             }
@@ -4427,7 +4757,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             this.mStackScroller.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$gz0x-DF8XfLLI3DV9TaqObWTwvs
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.this.collapsePanel();
+                    this.f$0.collapsePanel();
                 }
             });
         }
@@ -4448,8 +4778,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean collapsePanel() {
+    private boolean collapsePanel() {
         if (this.mNotificationPanel.isFullyCollapsed()) {
             return false;
         }
@@ -4462,7 +4791,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$anGzdKBNO9L0XzFdGlBFy1j85B0
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.lambda$removeNotification$43(StatusBar.this, statusBarNotification);
+                StatusBar.lambda$removeNotification$43(this.f$0, statusBarNotification);
             }
         });
     }
@@ -4471,7 +4800,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         Runnable runnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$gJKreMi_qTVFZxM5HzO_UrLMzKo
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.this.mEntryManager.performRemoveNotification(statusBarNotification);
+                this.f$0.mEntryManager.performRemoveNotification(statusBarNotification);
             }
         };
         if (statusBar.isCollapsing()) {
@@ -4498,7 +4827,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         dismissKeyguardThenExecute(new KeyguardHostView.OnDismissAction() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$ylzGEDYi80zloswFYhcbw61Vi1I
             @Override // com.android.keyguard.KeyguardHostView.OnDismissAction
             public final boolean onDismiss() {
-                return StatusBar.lambda$startNotificationGutsIntent$46(StatusBar.this, intent, expandableNotificationRow, i);
+                return StatusBar.lambda$startNotificationGutsIntent$46(this.f$0, intent, expandableNotificationRow, i);
             }
         }, false);
     }
@@ -4507,7 +4836,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         AsyncTask.execute(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$lhINUsDojuWVQD9mItU82YC3FuY
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBar.lambda$startNotificationGutsIntent$45(StatusBar.this, intent, expandableNotificationRow, i);
+                StatusBar.lambda$startNotificationGutsIntent$45(this.f$0, intent, expandableNotificationRow, i);
             }
         });
         return true;
@@ -4519,7 +4848,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             statusBar.mStatusBarWindow.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$_vZAkEgFD58rmNKz3HhQR-4wie0
                 @Override // java.lang.Runnable
                 public final void run() {
-                    StatusBar.this.animateCollapsePanels(2, true);
+                    this.f$0.animateCollapsePanels(2, true);
                 }
             });
         }
@@ -4538,8 +4867,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         toggleSplitScreenMode(-1, -1);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void awakenDreams() {
+    void awakenDreams() {
         SystemServicesProxy.getInstance(this.mContext).awakenDreamsAsync();
     }
 
@@ -4616,7 +4944,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             dismissKeyguardThenExecute(new KeyguardHostView.OnDismissAction() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$QlDPR1nqmBKUuYlZzAqmVP6qD_E
                 @Override // com.android.keyguard.KeyguardHostView.OnDismissAction
                 public final boolean onDismiss() {
-                    return StatusBar.lambda$startPendingIntentDismissingKeyguard$48(StatusBar.this, pendingIntent);
+                    return StatusBar.lambda$startPendingIntentDismissingKeyguard$48(this.f$0, pendingIntent);
                 }
             }, pendingIntent.isActivity() && PreviewInflater.wouldLaunchResolverActivity(this.mContext, pendingIntent.getIntent(), this.mLockscreenUserManager.getCurrentUserId()));
         }
@@ -4625,14 +4953,14 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     public static /* synthetic */ boolean lambda$startPendingIntentDismissingKeyguard$48(final StatusBar statusBar, final PendingIntent pendingIntent) {
         new Thread(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBar$WzR9w2Sq2NZeoIfsG2KA_Koe9lQ
             @Override // java.lang.Runnable
-            public final void run() {
-                StatusBar.lambda$startPendingIntentDismissingKeyguard$47(StatusBar.this, pendingIntent);
+            public final void run() throws PendingIntent.CanceledException {
+                StatusBar.lambda$startPendingIntentDismissingKeyguard$47(this.f$0, pendingIntent);
             }
         }).start();
         return statusBar.collapsePanel();
     }
 
-    public static /* synthetic */ void lambda$startPendingIntentDismissingKeyguard$47(StatusBar statusBar, PendingIntent pendingIntent) {
+    public static /* synthetic */ void lambda$startPendingIntentDismissingKeyguard$47(StatusBar statusBar, PendingIntent pendingIntent) throws PendingIntent.CanceledException {
         try {
             ActivityManager.getService().resumeAppSwitches();
         } catch (RemoteException e) {
@@ -4653,14 +4981,14 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
     }
 
     protected Bundle getActivityOptions(RemoteAnimationAdapter remoteAnimationAdapter) {
-        ActivityOptions makeBasic;
+        ActivityOptions activityOptionsMakeBasic;
         if (remoteAnimationAdapter != null) {
-            makeBasic = ActivityOptions.makeRemoteAnimation(remoteAnimationAdapter);
+            activityOptionsMakeBasic = ActivityOptions.makeRemoteAnimation(remoteAnimationAdapter);
         } else {
-            makeBasic = ActivityOptions.makeBasic();
+            activityOptionsMakeBasic = ActivityOptions.makeBasic();
         }
-        makeBasic.setLaunchWindowingMode(4);
-        return makeBasic.toBundle();
+        activityOptionsMakeBasic.setLaunchWindowingMode(4);
+        return activityOptionsMakeBasic.toBundle();
     }
 
     protected void visibilityChanged(boolean z) {
@@ -4782,8 +5110,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$new$50(Runnable runnable) {
+    static /* synthetic */ boolean lambda$new$50(Runnable runnable) {
         runnable.run();
         return true;
     }
@@ -4796,8 +5123,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         if (DEBUG) {
             Log.d("StatusBar", "updateCustomizeCarrierLabelVisibility(), force = " + z + ", mState = " + this.mState);
         }
-        boolean z2 = true;
-        this.mStatusBarPlmnPlugin.updateCarrierLabelVisibility(z, (this.mStackScroller.getVisibility() != 0 || this.mState == 1) ? false : false);
+        this.mStatusBarPlmnPlugin.updateCarrierLabelVisibility(z, this.mStackScroller.getVisibility() == 0 && this.mState != 1);
     }
 
     protected void updateCarrierLabelVisibility(boolean z) {

@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class JavaNetHttpHelper implements HttpHelper {
     private int mConnectTimeout;
@@ -21,36 +22,36 @@ public class JavaNetHttpHelper implements HttpHelper {
     }
 
     @Override // com.android.quicksearchbox.util.HttpHelper
-    public String get(HttpHelper.GetRequest getRequest) throws IOException, HttpHelper.HttpException {
+    public String get(HttpHelper.GetRequest getRequest) throws IOException {
         return get(getRequest.getUrl(), getRequest.getHeaders());
     }
 
-    public String get(String str, Map<String, String> map) throws IOException, HttpHelper.HttpException {
-        HttpURLConnection httpURLConnection;
+    public String get(String str, Map<String, String> map) throws Throwable {
+        HttpURLConnection httpURLConnectionCreateConnection;
         try {
-            httpURLConnection = createConnection(str, map);
-            try {
-                httpURLConnection.setRequestMethod("GET");
-                httpURLConnection.connect();
-                String responseFrom = getResponseFrom(httpURLConnection);
-                if (httpURLConnection != null) {
-                    httpURLConnection.disconnect();
-                }
-                return responseFrom;
-            } catch (Throwable th) {
-                th = th;
-                if (httpURLConnection != null) {
-                    httpURLConnection.disconnect();
-                }
-                throw th;
+            httpURLConnectionCreateConnection = createConnection(str, map);
+        } catch (Throwable th) {
+            th = th;
+            httpURLConnectionCreateConnection = null;
+        }
+        try {
+            httpURLConnectionCreateConnection.setRequestMethod("GET");
+            httpURLConnectionCreateConnection.connect();
+            String responseFrom = getResponseFrom(httpURLConnectionCreateConnection);
+            if (httpURLConnectionCreateConnection != null) {
+                httpURLConnectionCreateConnection.disconnect();
             }
+            return responseFrom;
         } catch (Throwable th2) {
             th = th2;
-            httpURLConnection = null;
+            if (httpURLConnectionCreateConnection != null) {
+                httpURLConnectionCreateConnection.disconnect();
+            }
+            throw th;
         }
     }
 
-    private HttpURLConnection createConnection(String str, Map<String, String> map) throws IOException, HttpHelper.HttpException {
+    private HttpURLConnection createConnection(String str, Map<String, String> map) throws IOException {
         HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(this.mRewriter.rewrite(str)).openConnection();
         if (map != null) {
             for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -67,7 +68,7 @@ public class JavaNetHttpHelper implements HttpHelper {
         return httpURLConnection;
     }
 
-    private String getResponseFrom(HttpURLConnection httpURLConnection) throws IOException, HttpHelper.HttpException {
+    private String getResponseFrom(HttpURLConnection httpURLConnection) throws IOException {
         if (httpURLConnection.getResponseCode() != 200) {
             throw new HttpHelper.HttpException(httpURLConnection.getResponseCode(), httpURLConnection.getResponseMessage());
         }
@@ -75,16 +76,15 @@ public class JavaNetHttpHelper implements HttpHelper {
         StringBuilder sb = new StringBuilder();
         char[] cArr = new char[4096];
         while (true) {
-            int read = bufferedReader.read(cArr);
-            if (read != -1) {
-                sb.append(cArr, 0, read);
+            int i = bufferedReader.read(cArr);
+            if (i != -1) {
+                sb.append(cArr, 0, i);
             } else {
                 return sb.toString();
             }
         }
     }
 
-    /* loaded from: classes.dex */
     public static class PassThroughRewriter implements HttpHelper.UrlRewriter {
         @Override // com.android.quicksearchbox.util.HttpHelper.UrlRewriter
         public String rewrite(String str) {

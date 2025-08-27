@@ -32,16 +32,18 @@ import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.policy.SecurityController;
-import com.android.systemui.statusbar.policy.SecurityControllerImpl;
+import com.android.systemui.statusbar.policy.SecurityControllerImpl.CACertLoader;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class SecurityControllerImpl extends CurrentUserTracker implements SecurityController {
     private static final boolean DEBUG = Log.isLoggable("SecurityController", 3);
     private static final NetworkRequest REQUEST = new NetworkRequest.Builder().removeCapability(15).removeCapability(13).removeCapability(14).setUids(null).build();
     private final BroadcastReceiver mBroadcastReceiver;
+
     @GuardedBy("mCallbacks")
     private final ArrayList<SecurityController.SecurityControllerCallback> mCallbacks;
     private final ConnectivityManager mConnectivityManager;
@@ -212,6 +214,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         return (workProfileUserId == -10000 || (bool = this.mHasCACerts.get(Integer.valueOf(workProfileUserId))) == null || !bool.booleanValue()) ? false : true;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(SecurityController.SecurityControllerCallback securityControllerCallback) {
         synchronized (this.mCallbacks) {
@@ -229,6 +232,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(SecurityController.SecurityControllerCallback securityControllerCallback) {
         synchronized (this.mCallbacks) {
@@ -259,8 +263,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         fireCallbacks();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshCACerts() {
+    private void refreshCACerts() {
         new CACertLoader().execute(Integer.valueOf(this.mCurrentUserId));
         int workProfileUserId = getWorkProfileUserId(this.mCurrentUserId);
         if (workProfileUserId != -10000) {
@@ -281,8 +284,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireCallbacks() {
+    private void fireCallbacks() {
         synchronized (this.mCallbacks) {
             Iterator<SecurityController.SecurityControllerCallback> it = this.mCallbacks.iterator();
             while (it.hasNext()) {
@@ -291,8 +293,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateState() {
+    private void updateState() {
         LegacyVpnInfo legacyVpnInfo;
         SparseArray<VpnConfig> sparseArray = new SparseArray<>();
         try {
@@ -315,7 +316,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         return vpnConfig.user;
     }
 
-    private boolean isVpnPackageBranded(String str) {
+    private boolean isVpnPackageBranded(String str) throws PackageManager.NameNotFoundException {
         try {
             ApplicationInfo applicationInfo = this.mPackageManager.getApplicationInfo(str, 128);
             if (applicationInfo != null && applicationInfo.metaData != null && applicationInfo.isSystemApp()) {
@@ -327,37 +328,65 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class CACertLoader extends AsyncTask<Integer, Void, Pair<Integer, Boolean>> {
+    protected class CACertLoader extends AsyncTask<Integer, Void, Pair<Integer, Boolean>> {
         protected CACertLoader() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
+        /* JADX WARN: Removed duplicated region for block: B:15:0x0044  */
+        /* JADX WARN: Removed duplicated region for block: B:32:? A[Catch: RemoteException | AssertionError | InterruptedException -> 0x0053, RemoteException | AssertionError | InterruptedException -> 0x0053, RemoteException | AssertionError | InterruptedException -> 0x0053, SYNTHETIC, TRY_LEAVE, TryCatch #1 {RemoteException | AssertionError | InterruptedException -> 0x0053, blocks: (B:3:0x0002, B:6:0x0035, B:6:0x0035, B:6:0x0035, B:16:0x0046, B:16:0x0046, B:16:0x0046, B:20:0x004f, B:20:0x004f, B:20:0x004f, B:19:0x004b, B:19:0x004b, B:19:0x004b, B:21:0x0052, B:21:0x0052, B:21:0x0052), top: B:27:0x0002 }] */
         @Override // android.os.AsyncTask
-        public Pair<Integer, Boolean> doInBackground(final Integer... numArr) {
+        /*
+            Code decompiled incorrectly, please refer to instructions dump.
+        */
+        protected Pair<Integer, Boolean> doInBackground(final Integer... numArr) throws Throwable {
+            Throwable th;
+            Throwable th2;
             try {
-                KeyChain.KeyChainConnection bindAsUser = KeyChain.bindAsUser(SecurityControllerImpl.this.mContext, UserHandle.of(numArr[0].intValue()));
-                Pair<Integer, Boolean> pair = new Pair<>(numArr[0], Boolean.valueOf(!bindAsUser.getService().getUserCaAliases().getList().isEmpty()));
-                if (bindAsUser != null) {
-                    bindAsUser.close();
+                KeyChain.KeyChainConnection keyChainConnectionBindAsUser = KeyChain.bindAsUser(SecurityControllerImpl.this.mContext, UserHandle.of(numArr[0].intValue()));
+                try {
+                    Pair<Integer, Boolean> pair = new Pair<>(numArr[0], Boolean.valueOf(!keyChainConnectionBindAsUser.getService().getUserCaAliases().getList().isEmpty()));
+                    if (keyChainConnectionBindAsUser != null) {
+                        keyChainConnectionBindAsUser.close();
+                    }
+                    return pair;
+                } catch (Throwable th3) {
+                    try {
+                        throw th3;
+                    } catch (Throwable th4) {
+                        th = th3;
+                        th2 = th4;
+                        if (keyChainConnectionBindAsUser != null) {
+                            throw th2;
+                        }
+                        if (th == null) {
+                            keyChainConnectionBindAsUser.close();
+                            throw th2;
+                        }
+                        try {
+                            keyChainConnectionBindAsUser.close();
+                            throw th2;
+                        } catch (Throwable th5) {
+                            th.addSuppressed(th5);
+                            throw th2;
+                        }
+                    }
                 }
-                return pair;
             } catch (RemoteException | AssertionError | InterruptedException e) {
                 Log.i("SecurityController", e.getMessage());
                 new Handler((Looper) Dependency.get(Dependency.BG_LOOPER)).postDelayed(new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$SecurityControllerImpl$CACertLoader$xO5ELH-ynhsu1kwnRVzV4aHRUJ0
                     @Override // java.lang.Runnable
                     public final void run() {
-                        new SecurityControllerImpl.CACertLoader().execute(numArr[0]);
+                        SecurityControllerImpl.this.new CACertLoader().execute(numArr[0]);
                     }
                 }, 30000L);
                 return new Pair<>(numArr[0], null);
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Pair<Integer, Boolean> pair) {
+        protected void onPostExecute(Pair<Integer, Boolean> pair) {
             if (SecurityControllerImpl.DEBUG) {
                 Log.d("SecurityController", "onPostExecute " + pair);
             }

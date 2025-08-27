@@ -16,6 +16,7 @@ import com.android.browser.search.SearchEngine;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class IntentHandler {
     private static final boolean DEBUG = Browser.DEBUG;
@@ -34,8 +35,7 @@ public class IntentHandler {
         this.mSettings = controller.getSettings();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onNewIntent(Intent intent) {
+    void onNewIntent(Intent intent) {
         Tab tabFromAppId;
         Tab tabFromAppId2;
         String cookie;
@@ -55,8 +55,9 @@ public class IntentHandler {
             currentTab = this.mTabControl.getTab(0);
             if (currentTab == null) {
                 return;
+            } else {
+                this.mController.setActiveTab(currentTab);
             }
-            this.mController.setActiveTab(currentTab);
         }
         String action = intent.getAction();
         if (DEBUG) {
@@ -81,143 +82,151 @@ public class IntentHandler {
                     intent.addFlags(268435456);
                 }
                 this.mActivity.startActivity(intent);
-            } else if (handleWebSearchIntent(this.mActivity, this.mController, intent)) {
-            } else {
-                UrlData urlDataFromIntent = getUrlDataFromIntent(intent);
-                if (urlDataFromIntent.isEmpty()) {
-                    urlDataFromIntent = new UrlData(this.mSettings.getHomePage());
-                }
-                if (intent.getBooleanExtra("create_new_tab", false) || urlDataFromIntent.isPreloaded()) {
-                    this.mController.openTab(urlDataFromIntent);
+                return;
+            }
+            if (handleWebSearchIntent(this.mActivity, this.mController, intent)) {
+                return;
+            }
+            UrlData urlDataFromIntent = getUrlDataFromIntent(intent);
+            if (urlDataFromIntent.isEmpty()) {
+                urlDataFromIntent = new UrlData(this.mSettings.getHomePage());
+            }
+            if (intent.getBooleanExtra("create_new_tab", false) || urlDataFromIntent.isPreloaded()) {
+                this.mController.openTab(urlDataFromIntent);
+                return;
+            }
+            String stringExtra = intent.getStringExtra("com.android.browser.application_id");
+            if (DEBUG) {
+                Log.d("browser", "IntentHandler.onNewIntent--->appId: " + stringExtra);
+            }
+            if ("android.intent.action.VIEW".equals(action) && stringExtra != null && stringExtra.startsWith(this.mActivity.getPackageName()) && (tabFromAppId2 = this.mTabControl.getTabFromAppId(stringExtra)) != null && tabFromAppId2 == this.mController.getCurrentTab()) {
+                this.mController.switchToTab(tabFromAppId2);
+                this.mController.loadUrlDataIn(tabFromAppId2, urlDataFromIntent);
+                return;
+            }
+            if ("android.intent.action.VIEW".equals(action) && !this.mActivity.getPackageName().equals(stringExtra)) {
+                if (!BrowserActivity.isTablet(this.mActivity) && !this.mSettings.allowAppTabs() && (tabFromAppId = this.mTabControl.getTabFromAppId(stringExtra)) != null) {
+                    this.mController.reuseTab(tabFromAppId, urlDataFromIntent);
                     return;
                 }
-                String stringExtra = intent.getStringExtra("com.android.browser.application_id");
                 if (DEBUG) {
-                    Log.d("browser", "IntentHandler.onNewIntent--->appId: " + stringExtra);
+                    Log.d("browser", "IntentHandler.onNewIntent--->urlData.mUrl: " + urlDataFromIntent.mUrl);
                 }
-                if ("android.intent.action.VIEW".equals(action) && stringExtra != null && stringExtra.startsWith(this.mActivity.getPackageName()) && (tabFromAppId2 = this.mTabControl.getTabFromAppId(stringExtra)) != null && tabFromAppId2 == this.mController.getCurrentTab()) {
-                    this.mController.switchToTab(tabFromAppId2);
-                    this.mController.loadUrlDataIn(tabFromAppId2, urlDataFromIntent);
-                } else if ("android.intent.action.VIEW".equals(action) && !this.mActivity.getPackageName().equals(stringExtra)) {
-                    if (!BrowserActivity.isTablet(this.mActivity) && !this.mSettings.allowAppTabs() && (tabFromAppId = this.mTabControl.getTabFromAppId(stringExtra)) != null) {
-                        this.mController.reuseTab(tabFromAppId, urlDataFromIntent);
+                Tab tabFindTabWithUrl = this.mTabControl.findTabWithUrl(urlDataFromIntent.mUrl);
+                if (tabFindTabWithUrl != null) {
+                    tabFindTabWithUrl.setAppId(stringExtra);
+                    if (currentTab != tabFindTabWithUrl) {
+                        this.mController.switchToTab(tabFindTabWithUrl);
+                    }
+                    this.mController.loadUrlDataIn(tabFindTabWithUrl, urlDataFromIntent);
+                    return;
+                }
+                Tab tabOpenTab = this.mController.openTab(urlDataFromIntent);
+                if (tabOpenTab != null) {
+                    tabOpenTab.setAppId(stringExtra);
+                    if ((intent.getFlags() & 4194304) != 0) {
+                        tabOpenTab.setCloseOnBack(true);
                         return;
                     }
-                    if (DEBUG) {
-                        Log.d("browser", "IntentHandler.onNewIntent--->urlData.mUrl: " + urlDataFromIntent.mUrl);
-                    }
-                    Tab findTabWithUrl = this.mTabControl.findTabWithUrl(urlDataFromIntent.mUrl);
-                    if (findTabWithUrl != null) {
-                        findTabWithUrl.setAppId(stringExtra);
-                        if (currentTab != findTabWithUrl) {
-                            this.mController.switchToTab(findTabWithUrl);
-                        }
-                        this.mController.loadUrlDataIn(findTabWithUrl, urlDataFromIntent);
-                        return;
-                    }
-                    Tab openTab = this.mController.openTab(urlDataFromIntent);
-                    if (openTab != null) {
-                        openTab.setAppId(stringExtra);
-                        if ((intent.getFlags() & 4194304) != 0) {
-                            openTab.setCloseOnBack(true);
-                        }
-                    }
-                } else if (!urlDataFromIntent.isEmpty() && urlDataFromIntent.mUrl.startsWith("about:debug")) {
-                    if ("about:debug.dumpmem".equals(urlDataFromIntent.mUrl)) {
-                        new OutputMemoryInfo().execute(this.mTabControl, null);
-                    } else if ("about:debug.dumpmem.file".equals(urlDataFromIntent.mUrl)) {
-                        new OutputMemoryInfo().execute(this.mTabControl, this.mTabControl);
-                    } else {
-                        this.mSettings.toggleDebugSettings();
-                    }
+                    return;
+                }
+                return;
+            }
+            if (!urlDataFromIntent.isEmpty() && urlDataFromIntent.mUrl.startsWith("about:debug")) {
+                if ("about:debug.dumpmem".equals(urlDataFromIntent.mUrl)) {
+                    new OutputMemoryInfo().execute(this.mTabControl, null);
+                    return;
+                } else if ("about:debug.dumpmem.file".equals(urlDataFromIntent.mUrl)) {
+                    new OutputMemoryInfo().execute(this.mTabControl, this.mTabControl);
+                    return;
                 } else {
-                    this.mController.dismissSubWindow(currentTab);
-                    currentTab.setAppId(null);
-                    this.mController.loadUrlDataIn(currentTab, urlDataFromIntent);
+                    this.mSettings.toggleDebugSettings();
+                    return;
                 }
             }
+            this.mController.dismissSubWindow(currentTab);
+            currentTab.setAppId(null);
+            this.mController.loadUrlDataIn(currentTab, urlDataFromIntent);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* JADX WARN: Removed duplicated region for block: B:58:0x0111  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    public static UrlData getUrlDataFromIntent(Intent intent) {
+    protected static UrlData getUrlDataFromIntent(Intent intent) {
         String str;
-        HashMap hashMap;
+        HashMap map;
         PreloadedTabControl preloadedTabControl;
         String str2;
-        String str3;
-        HashMap hashMap2;
-        String str4;
+        String strSmartUrlFilter;
+        HashMap map2;
+        String stringExtra;
         Bundle bundleExtra;
-        String str5;
-        String str6 = "";
-        PreloadedTabControl preloadedTabControl2 = null;
-        if (intent != null && (intent.getFlags() & 1048576) == 0) {
+        String string;
+        String stringExtra2 = "";
+        PreloadedTabControl preloadedTab = null;
+        if (intent == null || (intent.getFlags() & 1048576) != 0) {
+            str = stringExtra2;
+            map = null;
+            preloadedTabControl = null;
+            str2 = null;
+        } else {
             String action = intent.getAction();
             if ("android.intent.action.VIEW".equals(action) || "android.nfc.action.NDEF_DISCOVERED".equals(action)) {
                 Uri data = intent.getData();
                 if (data != null) {
-                    str3 = data.toString();
+                    strSmartUrlFilter = data.toString();
                 } else {
-                    str3 = null;
+                    strSmartUrlFilter = null;
                 }
-                if (str3 != null && !str3.startsWith("content://")) {
-                    str3 = UrlUtils.smartUrlFilter(intent.getData());
+                if (strSmartUrlFilter != null && !strSmartUrlFilter.startsWith("content://")) {
+                    strSmartUrlFilter = UrlUtils.smartUrlFilter(intent.getData());
                 }
-                if (str3 != null && str3.startsWith("http") && (bundleExtra = intent.getBundleExtra("com.android.browser.headers")) != null && !bundleExtra.isEmpty()) {
-                    hashMap2 = new HashMap();
-                    for (String str7 : bundleExtra.keySet()) {
-                        hashMap2.put(str7, bundleExtra.getString(str7));
+                if (strSmartUrlFilter != null && strSmartUrlFilter.startsWith("http") && (bundleExtra = intent.getBundleExtra("com.android.browser.headers")) != null && !bundleExtra.isEmpty()) {
+                    map2 = new HashMap();
+                    for (String str3 : bundleExtra.keySet()) {
+                        map2.put(str3, bundleExtra.getString(str3));
                     }
                 } else {
-                    hashMap2 = null;
+                    map2 = null;
                 }
                 if (intent.hasExtra("preload_id")) {
-                    String stringExtra = intent.getStringExtra("preload_id");
-                    str4 = intent.getStringExtra("searchbox_query");
-                    preloadedTabControl2 = Preloader.getInstance().getPreloadedTab(stringExtra);
+                    String stringExtra3 = intent.getStringExtra("preload_id");
+                    stringExtra = intent.getStringExtra("searchbox_query");
+                    preloadedTab = Preloader.getInstance().getPreloadedTab(stringExtra3);
                 } else {
-                    str4 = null;
+                    stringExtra = null;
                 }
-                str = str3;
-                preloadedTabControl = preloadedTabControl2;
-                str2 = str4;
-                hashMap = hashMap2;
-                if (DEBUG) {
-                    Log.d("browser", "IntentHandler.getUrlDataFromIntent----->url : " + str + " headers: " + hashMap);
-                }
-                return new UrlData(str, hashMap, intent, preloadedTabControl, str2);
-            } else if (("android.intent.action.SEARCH".equals(action) || "android.intent.action.MEDIA_SEARCH".equals(action) || "android.intent.action.WEB_SEARCH".equals(action)) && (str6 = intent.getStringExtra("query")) != null) {
-                str6 = UrlUtils.smartUrlFilter(UrlUtils.fixUrl(str6));
-                if (str6.contains("&source=android-browser-suggest&")) {
-                    Bundle bundleExtra2 = intent.getBundleExtra("app_data");
-                    if (bundleExtra2 != null) {
-                        str5 = bundleExtra2.getString("source");
-                    } else {
-                        str5 = null;
+                str = strSmartUrlFilter;
+                preloadedTabControl = preloadedTab;
+                str2 = stringExtra;
+                map = map2;
+            } else {
+                if (("android.intent.action.SEARCH".equals(action) || "android.intent.action.MEDIA_SEARCH".equals(action) || "android.intent.action.WEB_SEARCH".equals(action)) && (stringExtra2 = intent.getStringExtra("query")) != null) {
+                    stringExtra2 = UrlUtils.smartUrlFilter(UrlUtils.fixUrl(stringExtra2));
+                    if (stringExtra2.contains("&source=android-browser-suggest&")) {
+                        Bundle bundleExtra2 = intent.getBundleExtra("app_data");
+                        if (bundleExtra2 != null) {
+                            string = bundleExtra2.getString("source");
+                        } else {
+                            string = null;
+                        }
+                        if (TextUtils.isEmpty(string)) {
+                            string = "unknown";
+                        }
+                        stringExtra2 = stringExtra2.replace("&source=android-browser-suggest&", "&source=android-" + string + "&");
                     }
-                    if (TextUtils.isEmpty(str5)) {
-                        str5 = "unknown";
-                    }
-                    str6 = str6.replace("&source=android-browser-suggest&", "&source=android-" + str5 + "&");
                 }
+                str = stringExtra2;
+                map = null;
+                preloadedTabControl = null;
+                str2 = null;
             }
         }
-        str = str6;
-        hashMap = null;
-        preloadedTabControl = null;
-        str2 = null;
         if (DEBUG) {
+            Log.d("browser", "IntentHandler.getUrlDataFromIntent----->url : " + str + " headers: " + map);
         }
-        return new UrlData(str, hashMap, intent, preloadedTabControl, str2);
+        return new UrlData(str, map, intent, preloadedTabControl, str2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean handleWebSearchIntent(Activity activity, Controller controller, Intent intent) {
+    static boolean handleWebSearchIntent(Activity activity, Controller controller, Intent intent) {
         if (DEBUG) {
             Log.d("browser", "IntentHandler.handleWebSearchIntent()----->" + intent);
         }
@@ -230,8 +239,8 @@ public class IntentHandler {
         }
         if ("android.intent.action.VIEW".equals(action)) {
             Uri data = intent.getData();
-            r1 = data != null ? data.toString() : null;
-            if (r1 != null && r1.startsWith("content://")) {
+            stringExtra = data != null ? data.toString() : null;
+            if (stringExtra != null && stringExtra.startsWith("content://")) {
                 return false;
             }
             if (controller != null && intent.getBooleanExtra("inputUrl", false)) {
@@ -239,15 +248,14 @@ public class IntentHandler {
                 Log.d("browser", "handleWebSearchIntent inputUrl setInputUrlFlag");
             }
         } else if ("android.intent.action.SEARCH".equals(action) || "android.intent.action.MEDIA_SEARCH".equals(action) || "android.intent.action.WEB_SEARCH".equals(action)) {
-            r1 = intent.getStringExtra("query");
+            stringExtra = intent.getStringExtra("query");
         }
         if (DEBUG) {
-            Log.d("browser", "IntentHandler.handleWebSearchIntent()----->url : " + r1);
+            Log.d("browser", "IntentHandler.handleWebSearchIntent()----->url : " + stringExtra);
         }
-        return handleWebSearchRequest(activity, controller, r1, intent.getBundleExtra("app_data"), intent.getStringExtra("intent_extra_data_key"));
+        return handleWebSearchRequest(activity, controller, stringExtra, intent.getBundleExtra("app_data"), intent.getStringExtra("intent_extra_data_key"));
     }
 
-    /* JADX WARN: Type inference failed for: r6v1, types: [com.android.browser.IntentHandler$1] */
     private static boolean handleWebSearchRequest(Activity activity, Controller controller, String str, Bundle bundle, String str2) {
         if (DEBUG) {
             Log.d("browser", "IntentHandler.handleWebSearchRequest()----->" + str);
@@ -258,20 +266,28 @@ public class IntentHandler {
         if (DEBUG) {
             Log.d("browser", "IntentHandler.handleWebSearchRequest()----->inUrl : " + str + " extraData : " + str2);
         }
-        final String trim = UrlUtils.fixUrl(str).trim();
-        if (TextUtils.isEmpty(trim) || Patterns.WEB_URL.matcher(trim).matches() || UrlUtils.ACCEPTED_URI_SCHEMA.matcher(trim).matches()) {
+        String strTrim = UrlUtils.fixUrl(str).trim();
+        if (TextUtils.isEmpty(strTrim) || Patterns.WEB_URL.matcher(strTrim).matches() || UrlUtils.ACCEPTED_URI_SCHEMA.matcher(strTrim).matches()) {
             return false;
         }
-        final ContentResolver contentResolver = activity.getContentResolver();
+        ContentResolver contentResolver = activity.getContentResolver();
         if (DEBUG) {
-            Log.d("browser", "IntentHandler.handleWebSearchRequest()----->newUrl : " + trim);
+            Log.d("browser", "IntentHandler.handleWebSearchRequest()----->newUrl : " + strTrim);
         }
         if (controller == null || controller.getTabControl() == null || controller.getTabControl().getCurrentWebView() == null || !controller.getTabControl().getCurrentWebView().isPrivateBrowsingEnabled()) {
             new AsyncTask<Void, Void, Void>() { // from class: com.android.browser.IntentHandler.1
-                /* JADX INFO: Access modifiers changed from: protected */
+                final /* synthetic */ ContentResolver val$cr;
+                final /* synthetic */ String val$newUrl;
+
+                AnonymousClass1(ContentResolver contentResolver2, String strTrim2) {
+                    contentResolver = contentResolver2;
+                    str = strTrim2;
+                }
+
+                /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // android.os.AsyncTask
-                public Void doInBackground(Void... voidArr) {
-                    com.android.browser.provider.Browser.addSearchUrl(contentResolver, trim);
+                protected Void doInBackground(Void... voidArr) {
+                    com.android.browser.provider.Browser.addSearchUrl(contentResolver, str);
                     return null;
                 }
             }.execute(new Void[0]);
@@ -280,8 +296,26 @@ public class IntentHandler {
         if (searchEngine == null) {
             return false;
         }
-        searchEngine.startSearch(activity, trim, bundle, str2);
+        searchEngine.startSearch(activity, strTrim2, bundle, str2);
         return true;
+    }
+
+    /* renamed from: com.android.browser.IntentHandler$1 */
+    class AnonymousClass1 extends AsyncTask<Void, Void, Void> {
+        final /* synthetic */ ContentResolver val$cr;
+        final /* synthetic */ String val$newUrl;
+
+        AnonymousClass1(ContentResolver contentResolver2, String strTrim2) {
+            contentResolver = contentResolver2;
+            str = strTrim2;
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // android.os.AsyncTask
+        protected Void doInBackground(Void... voidArr) {
+            com.android.browser.provider.Browser.addSearchUrl(contentResolver, str);
+            return null;
+        }
     }
 
     private static boolean isForbiddenUri(Uri uri) {
@@ -303,17 +337,14 @@ public class IntentHandler {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class UrlData {
+    static class UrlData {
         final boolean mDisableUrlOverride;
         final Map<String, String> mHeaders;
         final PreloadedTabControl mPreloadedTab;
         final String mSearchBoxQueryToSubmit;
         final String mUrl;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public UrlData(String str) {
+        UrlData(String str) {
             this.mUrl = str;
             this.mHeaders = null;
             this.mPreloadedTab = null;
@@ -333,23 +364,19 @@ public class IntentHandler {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public boolean isEmpty() {
+        boolean isEmpty() {
             return this.mUrl == null || this.mUrl.length() == 0;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public boolean isPreloaded() {
+        boolean isPreloaded() {
             return this.mPreloadedTab != null;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public PreloadedTabControl getPreloadedTab() {
+        PreloadedTabControl getPreloadedTab() {
             return this.mPreloadedTab;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public String getSearchBoxQueryToSubmit() {
+        String getSearchBoxQueryToSubmit() {
             return this.mSearchBoxQueryToSubmit;
         }
     }

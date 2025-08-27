@@ -4,6 +4,7 @@ import android.content.Context;
 import android.provider.Settings;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class AppLocationPermissionPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     public AppLocationPermissionPreferenceController(Context context) {

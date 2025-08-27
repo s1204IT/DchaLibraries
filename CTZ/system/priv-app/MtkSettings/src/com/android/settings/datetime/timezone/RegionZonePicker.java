@@ -15,8 +15,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
+
 /* loaded from: classes.dex */
 public class RegionZonePicker extends BaseTimeZoneInfoPicker {
     private String mRegionName;
@@ -48,12 +50,11 @@ public class RegionZonePicker extends BaseTimeZoneInfoPicker {
         return this.mRegionName;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.datetime.timezone.BaseTimeZoneInfoPicker
-    public Intent prepareResultData(TimeZoneInfo timeZoneInfo) {
-        Intent prepareResultData = super.prepareResultData(timeZoneInfo);
-        prepareResultData.putExtra("com.android.settings.datetime.timezone.result_region_id", getArguments().getString("com.android.settings.datetime.timezone.region_id"));
-        return prepareResultData;
+    protected Intent prepareResultData(TimeZoneInfo timeZoneInfo) {
+        Intent intentPrepareResultData = super.prepareResultData(timeZoneInfo);
+        intentPrepareResultData.putExtra("com.android.settings.datetime.timezone.result_region_id", getArguments().getString("com.android.settings.datetime.timezone.region_id"));
+        return intentPrepareResultData;
     }
 
     @Override // com.android.settings.datetime.timezone.BaseTimeZoneInfoPicker
@@ -64,20 +65,21 @@ public class RegionZonePicker extends BaseTimeZoneInfoPicker {
             return Collections.emptyList();
         }
         String string = getArguments().getString("com.android.settings.datetime.timezone.region_id");
-        FilteredCountryTimeZones lookupCountryTimeZones = timeZoneData.lookupCountryTimeZones(string);
-        if (lookupCountryTimeZones == null) {
+        FilteredCountryTimeZones filteredCountryTimeZonesLookupCountryTimeZones = timeZoneData.lookupCountryTimeZones(string);
+        if (filteredCountryTimeZonesLookupCountryTimeZones == null) {
             Log.e("RegionZoneSearchPicker", "region id is not valid: " + string);
             getActivity().finish();
             return Collections.emptyList();
         }
-        return getRegionTimeZoneInfo(lookupCountryTimeZones.getTimeZoneIds());
+        return getRegionTimeZoneInfo(filteredCountryTimeZonesLookupCountryTimeZones.getTimeZoneIds());
     }
 
     public List<TimeZoneInfo> getRegionTimeZoneInfo(Collection<String> collection) {
         TimeZoneInfo.Formatter formatter = new TimeZoneInfo.Formatter(getLocale(), new Date());
         TreeSet treeSet = new TreeSet(new TimeZoneInfoComparator(Collator.getInstance(getLocale()), new Date()));
-        for (String str : collection) {
-            TimeZone frozenTimeZone = TimeZone.getFrozenTimeZone(str);
+        Iterator<String> it = collection.iterator();
+        while (it.hasNext()) {
+            TimeZone frozenTimeZone = TimeZone.getFrozenTimeZone(it.next());
             if (!frozenTimeZone.getID().equals("Etc/Unknown")) {
                 treeSet.add(formatter.format(frozenTimeZone));
             }
@@ -85,9 +87,7 @@ public class RegionZonePicker extends BaseTimeZoneInfoPicker {
         return Collections.unmodifiableList(new ArrayList(treeSet));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class TimeZoneInfoComparator implements Comparator<TimeZoneInfo> {
+    static class TimeZoneInfoComparator implements Comparator<TimeZoneInfo> {
         private Collator mCollator;
         private final Date mNow;
 
@@ -96,19 +96,20 @@ public class RegionZonePicker extends BaseTimeZoneInfoPicker {
             this.mNow = date;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(TimeZoneInfo timeZoneInfo, TimeZoneInfo timeZoneInfo2) {
-            int compare = Integer.compare(timeZoneInfo.getTimeZone().getOffset(this.mNow.getTime()), timeZoneInfo2.getTimeZone().getOffset(this.mNow.getTime()));
-            if (compare == 0) {
-                compare = Integer.compare(timeZoneInfo.getTimeZone().getRawOffset(), timeZoneInfo2.getTimeZone().getRawOffset());
+            int iCompare = Integer.compare(timeZoneInfo.getTimeZone().getOffset(this.mNow.getTime()), timeZoneInfo2.getTimeZone().getOffset(this.mNow.getTime()));
+            if (iCompare == 0) {
+                iCompare = Integer.compare(timeZoneInfo.getTimeZone().getRawOffset(), timeZoneInfo2.getTimeZone().getRawOffset());
             }
-            if (compare == 0) {
-                compare = this.mCollator.compare(timeZoneInfo.getExemplarLocation(), timeZoneInfo2.getExemplarLocation());
+            if (iCompare == 0) {
+                iCompare = this.mCollator.compare(timeZoneInfo.getExemplarLocation(), timeZoneInfo2.getExemplarLocation());
             }
-            if (compare == 0 && timeZoneInfo.getGenericName() != null && timeZoneInfo2.getGenericName() != null) {
+            if (iCompare == 0 && timeZoneInfo.getGenericName() != null && timeZoneInfo2.getGenericName() != null) {
                 return this.mCollator.compare(timeZoneInfo.getGenericName(), timeZoneInfo2.getGenericName());
             }
-            return compare;
+            return iCompare;
         }
     }
 }

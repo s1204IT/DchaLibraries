@@ -34,6 +34,7 @@ import com.android.settings.widget.SwitchBar;
 import com.mediatek.internal.telephony.MtkSubscriptionManager;
 import com.mediatek.telephony.MtkTelephonyManagerEx;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SmartCallFwdFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener, SwitchBar.OnSwitchChangeListener {
     private AlertDialog mAlertDialog;
@@ -83,13 +84,13 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
     Messenger mService = null;
     private ServiceConnection mConnection = new ServiceConnection() { // from class: com.mediatek.settings.sim.SmartCallFwdFragment.1
         @Override // android.content.ServiceConnection
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) throws RemoteException {
             SmartCallFwdFragment.this.mService = new Messenger(iBinder);
             SmartCallFwdFragment.this.mBound = true;
-            Message obtain = Message.obtain((Handler) null, 1);
-            obtain.replyTo = SmartCallFwdFragment.this.mMessenger;
+            Message messageObtain = Message.obtain((Handler) null, 1);
+            messageObtain.replyTo = SmartCallFwdFragment.this.mMessenger;
             try {
-                SmartCallFwdFragment.this.mService.send(obtain);
+                SmartCallFwdFragment.this.mService.send(messageObtain);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -120,7 +121,7 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
     }
 
     @Override // android.preference.PreferenceFragment, android.app.Fragment
-    public void onDestroy() {
+    public void onDestroy() throws RemoteException {
         super.onDestroy();
         if (getActivity().isFinishing()) {
             stopService();
@@ -228,13 +229,12 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         if (this.mNewSim2Inserted || this.mSim2Pref.getText() == null || (this.mSim2Pref.getText() != null && this.mSim2Pref.getText().length() == 0)) {
             this.mSim2Pref.setSummary("unknown");
             this.mSim2Pref.setText("");
-            return;
+        } else {
+            this.mSim2Pref.setSummary(this.mSim2Pref.getText());
         }
-        this.mSim2Pref.setSummary(this.mSim2Pref.getText());
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:14:0x00a1  */
-    /* JADX WARN: Removed duplicated region for block: B:15:0x00bc  */
+    /* JADX WARN: Removed duplicated region for block: B:12:0x009e  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
@@ -247,50 +247,45 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
             StringBuilder sb = new StringBuilder();
             sb.append("sim_slot_");
             sb.append(i);
-            String sb2 = sb.toString();
-            String lastSimImsi = getLastSimImsi(sb2);
+            String string = sb.toString();
+            String lastSimImsi = getLastSimImsi(string);
             boolean z = true;
             if (activeSubscriptionInfoForSimSlotIndex != null) {
                 String subscriberId = this.mTelephonyManager.getSubscriberId(activeSubscriptionInfoForSimSlotIndex.getSubscriptionId());
                 Log.d("SmartCallFwdFragment", "lastSimImsi = " + lastSimImsi + " currentSimImsi = " + subscriberId);
-                if (lastSimImsi.length() != 0) {
-                    if (!lastSimImsi.equals(subscriberId)) {
-                        setLastSimImsi(sb2, subscriberId);
-                    }
+                if (lastSimImsi.length() == 0 || !lastSimImsi.equals(subscriberId)) {
+                    setLastSimImsi(string, subscriberId);
                 } else {
-                    setLastSimImsi(sb2, subscriberId);
-                }
-                if (i != 0) {
-                    this.mNewSim1Inserted = z;
-                    Log.d("SmartCallFwdFragment", "detectSimChange : mNewSim1Inserted = " + this.mNewSim1Inserted);
-                } else {
-                    this.mNewSim2Inserted = z;
-                    Log.d("SmartCallFwdFragment", "detectSimChange : mNewSim2Inserted = " + this.mNewSim2Inserted);
+                    z = false;
                 }
             }
-            z = false;
-            if (i != 0) {
+            if (i == 0) {
+                this.mNewSim1Inserted = z;
+                Log.d("SmartCallFwdFragment", "detectSimChange : mNewSim1Inserted = " + this.mNewSim1Inserted);
+            } else {
+                this.mNewSim2Inserted = z;
+                Log.d("SmartCallFwdFragment", "detectSimChange : mNewSim2Inserted = " + this.mNewSim2Inserted);
             }
         }
     }
 
     private String getLastSimImsi(String str) {
-        String str2 = "";
+        String string = "";
         try {
-            str2 = this.mSharedPreferences.getString(str, "");
+            string = this.mSharedPreferences.getString(str, "");
         } catch (ClassCastException e) {
             e.printStackTrace();
             this.mSharedPreferences.edit().remove(str).commit();
         }
-        Log.d("SmartCallFwdFragment", "getLastSubId strSlotId = " + str + ", imsi = " + str2);
-        return str2;
+        Log.d("SmartCallFwdFragment", "getLastSubId strSlotId = " + str + ", imsi = " + string);
+        return string;
     }
 
     private void setLastSimImsi(String str, String str2) {
         Log.d("SmartCallFwdFragment", "setLastSubId: strSlotId = " + str + ", value = " + str2);
-        SharedPreferences.Editor edit = this.mSharedPreferences.edit();
-        edit.putString(str, str2);
-        edit.commit();
+        SharedPreferences.Editor editorEdit = this.mSharedPreferences.edit();
+        editorEdit.putString(str, str2);
+        editorEdit.commit();
     }
 
     @Override // android.preference.PreferenceFragment, android.app.Fragment
@@ -300,7 +295,7 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
     }
 
     @Override // android.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException, RemoteException {
         String str;
         boolean z;
         getActivity();
@@ -326,24 +321,24 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
                 setSimPrefValue("smart_sim2_pref", str);
             }
         } else if (preference == this.mSmartCallFwdModePref) {
-            int parseInt = Integer.parseInt(str2);
-            Log.d("SmartCallFwdFragment", "selected mode:" + parseInt);
+            int i = Integer.parseInt(str2);
+            Log.d("SmartCallFwdFragment", "selected mode:" + i);
             this.mPrevSelectedMode = this.mCurrSelectedMode;
-            this.mCurrSelectedMode = parseInt;
+            this.mCurrSelectedMode = i;
             if (!this.mSwitchBar.isChecked()) {
                 Log.d("SmartCallFwdFragment", "switch is off: don't update");
                 z = false;
-                this.mSmartCallFwdModePref.setValue(Integer.toString(parseInt));
+                this.mSmartCallFwdModePref.setValue(Integer.toString(i));
                 this.mSmartCallFwdModePref.setSummary(this.mSummary[this.mCurrSelectedMode - 1]);
             } else {
                 z = true;
             }
-            setSmartCallFwdMode(parseInt, z);
+            setSmartCallFwdMode(i, z);
         }
         return true;
     }
 
-    private void setSmartCallFwdMode(int i, boolean z) {
+    private void setSmartCallFwdMode(int i, boolean z) throws RemoteException {
         Log.d("SmartCallFwdFragment", "setSmartCallFwdMode:" + i);
         if (this.mPrevSelectedMode == this.mCurrSelectedMode) {
             showToast("Already Set");
@@ -366,7 +361,7 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
     }
 
     @Override // com.android.settings.widget.SwitchBar.OnSwitchChangeListener
-    public void onSwitchChanged(Switch r3, boolean z) {
+    public void onSwitchChanged(Switch r3, boolean z) throws RemoteException {
         Log.d("SmartCallFwdFragment", "OnSwitchChanged: " + z);
         if (!isPhoneNumberSet()) {
             showToast("Set phone numbers for both SIMs first");
@@ -418,16 +413,17 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         return true;
     }
 
-    private void disableSmartCallForward() {
+    private void disableSmartCallForward() throws RemoteException {
         Log.d("SmartCallFwdFragment", "disableSmartCallForward for mCurrSelectedMode: " + this.mCurrSelectedMode);
         int i = 1;
         if (this.mCurrSelectedMode == 1) {
             this.mCfInfoArr[0].action = 0;
-        } else if (this.mCurrSelectedMode == 2) {
-            this.mCfInfoArr[1].action = 0;
-            setCallForwardStatus(i, this.mCfInfoArr[i].action);
-            showProgressDialog(getResources().getString(R.string.progress_dlg_writing));
         } else {
+            if (this.mCurrSelectedMode == 2) {
+                this.mCfInfoArr[1].action = 0;
+                setCallForwardStatus(i, this.mCfInfoArr[i].action);
+                showProgressDialog(getResources().getString(R.string.progress_dlg_writing));
+            }
             this.mCfInfoArr[0].action = 0;
             this.mCfInfoArr[1].action = 0;
         }
@@ -436,7 +432,7 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         showProgressDialog(getResources().getString(R.string.progress_dlg_writing));
     }
 
-    private void enableSmartCallForward() {
+    private void enableSmartCallForward() throws RemoteException {
         Log.d("SmartCallFwdFragment", "enableSmartCallForward for mCurrSelectedMode: " + this.mCurrSelectedMode);
         int i = 0;
         if (this.mCurrSelectedMode == 1) {
@@ -452,28 +448,26 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         showProgressDialog(getResources().getString(R.string.progress_dlg_writing));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void getCallForwardStatus(int i) {
+    private void getCallForwardStatus(int i) throws RemoteException {
         if (this.mService == null) {
             Log.d("SmartCallFwdFragment", "service not started yet");
             return;
         }
         Log.d("SmartCallFwdFragment", "getCallForwardStatus: " + i);
         this.mReadProgress = true;
-        Message obtain = Message.obtain((Handler) null, 2);
+        Message messageObtain = Message.obtain((Handler) null, 2);
         Bundle bundle = new Bundle();
         bundle.putInt("simId", i);
         bundle.putInt("act", 0);
-        obtain.setData(bundle);
+        messageObtain.setData(bundle);
         try {
-            this.mService.send(obtain);
+            this.mService.send(messageObtain);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setCallForwardStatus(int i, int i2) {
+    private void setCallForwardStatus(int i, int i2) throws RemoteException {
         if (this.mService == null) {
             Log.d("SmartCallFwdFragment", "service not started yet");
             return;
@@ -481,51 +475,50 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         String text = (i == 0 ? this.mSim2Pref : this.mSim1Pref).getText();
         Log.d("SmartCallFwdFragment", "setCallForward to " + text);
         this.mWriteProgress = true;
-        Message obtain = Message.obtain((Handler) null, 3);
+        Message messageObtain = Message.obtain((Handler) null, 3);
         Bundle bundle = new Bundle();
         bundle.putInt("simId", i);
         bundle.putInt("act", 1);
         bundle.putString("phnum", text);
         bundle.putInt("action", i2);
-        obtain.setData(bundle);
+        messageObtain.setData(bundle);
         try {
-            this.mService.send(obtain);
+            this.mService.send(messageObtain);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
 
-    /* loaded from: classes.dex */
     class IncomingHandler extends Handler {
         IncomingHandler() {
         }
 
         @Override // android.os.Handler
-        public void handleMessage(Message message) {
+        public void handleMessage(Message message) throws RemoteException {
             new Bundle();
             Bundle data = message.getData();
             switch (message.what) {
                 case 0:
-                    return;
+                    break;
                 case 1:
                     Log.d("SmartCallFwdFragment", "Service has started");
                     SmartCallFwdFragment.this.getCallForwardStatus(0);
-                    return;
+                    break;
                 case 2:
                 case 3:
                 default:
                     super.handleMessage(message);
-                    return;
+                    break;
                 case 4:
                     handleGetCfResp(data);
-                    return;
+                    break;
                 case 5:
                     handleSetCfResp(data);
-                    return;
+                    break;
             }
         }
 
-        private void handleSetCfResp(Bundle bundle) {
+        private void handleSetCfResp(Bundle bundle) throws RemoteException {
             Log.d("SmartCallFwdFragment", "handleSetCfResp: " + bundle.getInt("simId"));
             Log.d("SmartCallFwdFragment", "status: " + bundle.getInt("status"));
             Log.d("SmartCallFwdFragment", "reason: " + bundle.getInt("reason"));
@@ -556,9 +549,9 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
 
         private void updateSetCfStatus() {
             String str;
-            String sb;
+            String string;
             String str2;
-            String sb2;
+            String string2;
             String str3 = "[SIM1]:\n";
             int i = 0;
             if (SmartCallFwdFragment.this.mCfInfoArr[0].error != -1) {
@@ -568,22 +561,22 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
                     } else {
                         str = str3 + "CallForward: enabled.\nIf SIM1 unreachable,incoming calls will be forwarded to " + SmartCallFwdFragment.this.mSim2Pref.getText();
                     }
-                    StringBuilder sb3 = new StringBuilder();
-                    sb3.append(str);
-                    sb3.append("\nCallWaiting: ");
-                    sb3.append(SmartCallFwdFragment.this.mCfInfoArr[0].callwait == 1 ? "enabled" : "disabled");
-                    sb3.append(" on SIM2");
-                    sb = sb3.toString();
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(str);
+                    sb.append("\nCallWaiting: ");
+                    sb.append(SmartCallFwdFragment.this.mCfInfoArr[0].callwait == 1 ? "enabled" : "disabled");
+                    sb.append(" on SIM2");
+                    string = sb.toString();
                     if (SmartCallFwdFragment.this.mCurrSelectedMode != 2) {
                         i = 1;
                     }
                 } else {
-                    sb = str3 + "\nCallForward: " + SmartCallFwdFragment.this.mActionString[SmartCallFwdFragment.this.mCfInfoArr[0].action] + " failed.\n";
+                    string = str3 + "\nCallForward: " + SmartCallFwdFragment.this.mActionString[SmartCallFwdFragment.this.mCfInfoArr[0].action] + " failed.\n";
                 }
             } else {
-                sb = str3 + SmartCallFwdFragment.this.getResources().getString(R.string.network_error);
+                string = str3 + SmartCallFwdFragment.this.getResources().getString(R.string.network_error);
             }
-            String str4 = sb + "\n\n[SIM2]:\n";
+            String str4 = string + "\n\n[SIM2]:\n";
             if (SmartCallFwdFragment.this.mCfInfoArr[1].error != -1) {
                 if (SmartCallFwdFragment.this.mCfInfoArr[1].error <= 0) {
                     if (SmartCallFwdFragment.this.mCfInfoArr[1].action == 0) {
@@ -591,20 +584,20 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
                     } else {
                         str2 = str4 + "CallForward: enabled.\nIf SIM2 unreachable,incoming calls will be forwarded to " + SmartCallFwdFragment.this.mSim1Pref.getText();
                     }
-                    StringBuilder sb4 = new StringBuilder();
-                    sb4.append(str2);
-                    sb4.append("\nCallWaiting: ");
-                    sb4.append(SmartCallFwdFragment.this.mCfInfoArr[1].callwait == 1 ? "enabled" : "disabled");
-                    sb4.append(" on SIM1");
-                    sb2 = sb4.toString();
+                    StringBuilder sb2 = new StringBuilder();
+                    sb2.append(str2);
+                    sb2.append("\nCallWaiting: ");
+                    sb2.append(SmartCallFwdFragment.this.mCfInfoArr[1].callwait == 1 ? "enabled" : "disabled");
+                    sb2.append(" on SIM1");
+                    string2 = sb2.toString();
                     if (SmartCallFwdFragment.this.mCurrSelectedMode != 1) {
                         i |= 2;
                     }
                 } else {
-                    sb2 = str4 + "CallForward: " + SmartCallFwdFragment.this.mActionString[SmartCallFwdFragment.this.mCfInfoArr[1].action] + " failed.\n";
+                    string2 = str4 + "CallForward: " + SmartCallFwdFragment.this.mActionString[SmartCallFwdFragment.this.mCfInfoArr[1].action] + " failed.\n";
                 }
             } else {
-                sb2 = str4 + SmartCallFwdFragment.this.getResources().getString(R.string.network_error);
+                string2 = str4 + SmartCallFwdFragment.this.getResources().getString(R.string.network_error);
             }
             Log.d("SmartCallFwdFragment", "successMode:" + i);
             Log.d("SmartCallFwdFragment", "mPrevSelectedMode:" + SmartCallFwdFragment.this.mPrevSelectedMode);
@@ -631,11 +624,11 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
                 SmartCallFwdFragment.this.mProgressDialog.dismiss();
                 SmartCallFwdFragment.this.mProgressDialog = null;
             }
-            Log.d("SmartCallFwdFragment", "statusMsg: " + sb2);
-            SmartCallFwdFragment.this.showAlertDialog(SmartCallFwdFragment.this.getResources().getString(R.string.progress_dlg_title), sb2);
+            Log.d("SmartCallFwdFragment", "statusMsg: " + string2);
+            SmartCallFwdFragment.this.showAlertDialog(SmartCallFwdFragment.this.getResources().getString(R.string.progress_dlg_title), string2);
         }
 
-        private void handleGetCfResp(Bundle bundle) {
+        private void handleGetCfResp(Bundle bundle) throws RemoteException {
             Log.d("SmartCallFwdFragment", "handleGetCfResp: " + bundle.getInt("simId"));
             Log.d("SmartCallFwdFragment", "status" + bundle.getInt("status"));
             Log.d("SmartCallFwdFragment", "reason" + bundle.getInt("reason"));
@@ -656,9 +649,8 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateGetCfStatus() {
-        String str;
+    private void updateGetCfStatus() {
+        String string;
         int i;
         String text = this.mSim1Pref.getText();
         String text2 = this.mSim2Pref.getText();
@@ -677,8 +669,8 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
                 this.mProgressDialog.dismiss();
                 this.mProgressDialog = null;
             }
-            str = "" + getResources().getString(R.string.network_error);
-            showToast(str);
+            string = "" + getResources().getString(R.string.network_error);
+            showToast(string);
             i = 0;
         } else {
             int i2 = (this.mCfInfoArr[0].status == 1 && this.mCfInfoArr[0].callwait == 1 && PhoneNumberUtils.compareLoosely(text2, this.mCfInfoArr[0].phnum)) ? 1 : 0;
@@ -700,26 +692,26 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
             sb2.append("");
             sb2.append("[SIM1]:\n CallForwarding: ");
             sb2.append((i & 1) == 1 ? "enabled" : "disabled");
-            String sb3 = sb2.toString();
+            String string2 = sb2.toString();
+            StringBuilder sb3 = new StringBuilder();
+            sb3.append(string2);
+            sb3.append("\n CallWaiting: ");
+            sb3.append(this.mCfInfoArr[0].callwait == 1 ? "enabled" : "disabled");
+            String string3 = sb3.toString();
             StringBuilder sb4 = new StringBuilder();
-            sb4.append(sb3);
-            sb4.append("\n CallWaiting: ");
-            sb4.append(this.mCfInfoArr[0].callwait == 1 ? "enabled" : "disabled");
-            String sb5 = sb4.toString();
-            StringBuilder sb6 = new StringBuilder();
-            sb6.append(sb5);
-            sb6.append("\n\n[SIM2]:\n CallForwarding: ");
-            sb6.append((i & 2) == 2 ? "enabled" : "disabled");
-            String sb7 = sb6.toString();
-            StringBuilder sb8 = new StringBuilder();
-            sb8.append(sb7);
-            sb8.append("\n CallWaiting: ");
-            sb8.append(this.mCfInfoArr[1].callwait == 1 ? "enabled" : "disabled");
-            str = sb8.toString();
+            sb4.append(string3);
+            sb4.append("\n\n[SIM2]:\n CallForwarding: ");
+            sb4.append((i & 2) == 2 ? "enabled" : "disabled");
+            String string4 = sb4.toString();
+            StringBuilder sb5 = new StringBuilder();
+            sb5.append(string4);
+            sb5.append("\n CallWaiting: ");
+            sb5.append(this.mCfInfoArr[1].callwait == 1 ? "enabled" : "disabled");
+            string = sb5.toString();
         }
         updatePreference(i);
         Log.d("SmartCallFwdFragment", "cfStatus:" + i);
-        Log.d("SmartCallFwdFragment", "statusMsg: " + str);
+        Log.d("SmartCallFwdFragment", "statusMsg: " + string);
         if (this.mProgressDialog != null) {
             Log.d("SmartCallFwdFragment", "Reading complete:");
             this.mProgressDialog.dismiss();
@@ -728,15 +720,15 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
     }
 
     private void startService() {
-        Intent createExplicitFromImplicitIntent = createExplicitFromImplicitIntent(this.mContext, new Intent("mediatek.settings.SMART_CALL_FWD_SERVICE"));
-        if (createExplicitFromImplicitIntent != null) {
-            this.mContext.bindService(createExplicitFromImplicitIntent, this.mConnection, 1);
+        Intent intentCreateExplicitFromImplicitIntent = createExplicitFromImplicitIntent(this.mContext, new Intent("mediatek.settings.SMART_CALL_FWD_SERVICE"));
+        if (intentCreateExplicitFromImplicitIntent != null) {
+            this.mContext.bindService(intentCreateExplicitFromImplicitIntent, this.mConnection, 1);
         } else {
             Log.d("SmartCallFwdFragment", "null explicit intent");
         }
     }
 
-    private void stopService() {
+    private void stopService() throws RemoteException {
         if (this.mBound) {
             try {
                 this.mService.send(Message.obtain((Handler) null, 6));
@@ -750,20 +742,18 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
 
     public static Intent createExplicitFromImplicitIntent(Context context, Intent intent) {
         Log.d("SmartCallFwdFragment", "createExplicitFromImplicitIntent");
-        List<ResolveInfo> queryIntentServices = context.getPackageManager().queryIntentServices(intent, 0);
-        if (queryIntentServices == null || queryIntentServices.size() != 1) {
+        List<ResolveInfo> listQueryIntentServices = context.getPackageManager().queryIntentServices(intent, 0);
+        if (listQueryIntentServices == null || listQueryIntentServices.size() != 1) {
             return null;
         }
-        ResolveInfo resolveInfo = queryIntentServices.get(0);
+        ResolveInfo resolveInfo = listQueryIntentServices.get(0);
         ComponentName componentName = new ComponentName(resolveInfo.serviceInfo.packageName, resolveInfo.serviceInfo.name);
         Intent intent2 = new Intent(intent);
         intent2.setComponent(componentName);
         return intent2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class CFInfo {
+    class CFInfo {
         public int simId = 0;
         public int status = 0;
         public int reason = 3;
@@ -776,13 +766,12 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showAlertDialog(String str, String str2) {
+    private void showAlertDialog(String str, String str2) {
         Log.d("SmartCallFwdFragment", "showAlertDialog");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(str);
         builder.setMessage(str2);
-        builder.setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.sim.SmartCallFwdFragment.2
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.sim.SmartCallFwdFragment.2
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (SmartCallFwdFragment.this.mProgressDialog != null) {
@@ -801,22 +790,22 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
     }
 
     private String getSimPrefValue(String str) {
-        String str2 = "";
+        String string = "";
         try {
-            str2 = this.mSharedPreferences.getString(str, "");
+            string = this.mSharedPreferences.getString(str, "");
         } catch (ClassCastException e) {
             e.printStackTrace();
             this.mSharedPreferences.edit().remove(str).commit();
         }
-        Log.d("SmartCallFwdFragment", "getSimPrefValue simPref = " + str + ", value = " + str2);
-        return str2;
+        Log.d("SmartCallFwdFragment", "getSimPrefValue simPref = " + str + ", value = " + string);
+        return string;
     }
 
     private void setSimPrefValue(String str, String str2) {
         Log.d("SmartCallFwdFragment", "setSimPrefValue: simPref = " + str + ", value = " + str2);
-        SharedPreferences.Editor edit = this.mSharedPreferences.edit();
-        edit.putString(str, str2);
-        edit.commit();
+        SharedPreferences.Editor editorEdit = this.mSharedPreferences.edit();
+        editorEdit.putString(str, str2);
+        editorEdit.commit();
     }
 
     private void getPreviousPrefValue() {

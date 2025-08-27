@@ -12,6 +12,7 @@ import android.service.settings.suggestions.Suggestion;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.suggestions.SuggestionController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SuggestionControllerMixin implements LoaderManager.LoaderCallbacks<List<Suggestion>>, LifecycleObserver, SuggestionController.ServiceConnectionListener {
     private final Context mContext;
@@ -19,7 +20,6 @@ public class SuggestionControllerMixin implements LoaderManager.LoaderCallbacks<
     private final SuggestionController mSuggestionController;
     private boolean mSuggestionLoaded;
 
-    /* loaded from: classes.dex */
     public interface SuggestionControllerHost {
         LoaderManager getLoaderManager();
 
@@ -70,6 +70,7 @@ public class SuggestionControllerMixin implements LoaderManager.LoaderCallbacks<
         throw new IllegalArgumentException("This loader id is not supported " + i);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<List<Suggestion>> loader, List<Suggestion> list) {
         this.mSuggestionLoaded = true;

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class RecentsModel extends TaskStackChangeListener {
@@ -49,7 +50,6 @@ public class RecentsModel extends TaskStackChangeListener {
     private boolean mClearAssistCacheOnStackChange = true;
     private final MainThreadExecutor mMainThreadExecutor = new MainThreadExecutor();
 
-    /* loaded from: classes.dex */
     public interface AssistDataListener {
         void onAssistDataReceived(int i);
     }
@@ -63,9 +63,7 @@ public class RecentsModel extends TaskStackChangeListener {
                     return (RecentsModel) new MainThreadExecutor().submit(new Callable() { // from class: com.android.quickstep.-$$Lambda$RecentsModel$rpZwGbzmm_8iDmpR9nLZpbXBWE4
                         @Override // java.util.concurrent.Callable
                         public final Object call() {
-                            RecentsModel recentsModel;
-                            recentsModel = RecentsModel.getInstance(context);
-                            return recentsModel;
+                            return RecentsModel.getInstance(context);
                         }
                     }).get();
                 } catch (InterruptedException | ExecutionException e) {
@@ -114,7 +112,7 @@ public class RecentsModel extends TaskStackChangeListener {
         BackgroundExecutor.get().submit(new Runnable() { // from class: com.android.quickstep.-$$Lambda$RecentsModel$TrXIU6ZxHTUnPVNnZksG925eyyw
             @Override // java.lang.Runnable
             public final void run() {
-                RecentsModel.lambda$loadTasks$3(RecentsModel.this, i, i2, consumer);
+                RecentsModel.lambda$loadTasks$3(this.f$0, i, i2, consumer);
             }
         });
         return i2;
@@ -128,7 +126,7 @@ public class RecentsModel extends TaskStackChangeListener {
         recentsModel.mMainThreadExecutor.execute(new Runnable() { // from class: com.android.quickstep.-$$Lambda$RecentsModel$eCIpmjyPaNRHj2iYjydHcwF4Xp8
             @Override // java.lang.Runnable
             public final void run() {
-                RecentsModel.lambda$loadTasks$2(RecentsModel.this, recentsTaskLoadPlan, i2, consumer);
+                RecentsModel.lambda$loadTasks$2(this.f$0, recentsTaskLoadPlan, i2, consumer);
             }
         });
     }
@@ -168,8 +166,8 @@ public class RecentsModel extends TaskStackChangeListener {
 
     @Override // com.android.systemui.shared.system.TaskStackChangeListener
     public void onTaskStackChangedBackground() {
-        int myUserId = UserHandle.myUserId();
-        if (!this.mPreloadTasksInBackground || !TaskUtils.checkCurrentOrManagedUserId(myUserId, this.mContext)) {
+        int iMyUserId = UserHandle.myUserId();
+        if (!this.mPreloadTasksInBackground || !TaskUtils.checkCurrentOrManagedUserId(iMyUserId, this.mContext)) {
             return;
         }
         ActivityManager.RunningTaskInfo runningTask = ActivityManagerWrapper.getInstance().getRunningTask();
@@ -183,7 +181,7 @@ public class RecentsModel extends TaskStackChangeListener {
         options.loadThumbnails = true;
         RecentsTaskLoadPlan.PreloadOptions preloadOptions = new RecentsTaskLoadPlan.PreloadOptions();
         preloadOptions.loadTitles = this.mAccessibilityManager.isEnabled();
-        recentsTaskLoadPlan.preloadPlan(preloadOptions, this.mRecentsTaskLoader, -1, myUserId);
+        recentsTaskLoadPlan.preloadPlan(preloadOptions, this.mRecentsTaskLoader, -1, iMyUserId);
         this.mRecentsTaskLoader.loadTasks(recentsTaskLoadPlan, options);
     }
 
@@ -235,7 +233,7 @@ public class RecentsModel extends TaskStackChangeListener {
         this.mMainThreadExecutor.execute(new Runnable() { // from class: com.android.quickstep.-$$Lambda$RecentsModel$RaFBhHlycM2m2KiZfBOTPCQlHu8
             @Override // java.lang.Runnable
             public final void run() {
-                RecentsModel.lambda$preloadAssistData$4(RecentsModel.this, i, bundle);
+                RecentsModel.lambda$preloadAssistData$4(this.f$0, i, bundle);
             }
         });
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v14.preference.PreferenceFragment;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.PreferenceScreen;
+
 /* loaded from: classes.dex */
 public interface IWfcSettingsExt {
     void addOtherCustomPreference();

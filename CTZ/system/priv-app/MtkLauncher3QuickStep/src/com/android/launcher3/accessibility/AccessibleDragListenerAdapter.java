@@ -6,6 +6,7 @@ import com.android.launcher3.DropTarget;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.dragndrop.DragController;
 import com.android.launcher3.dragndrop.DragOptions;
+
 /* loaded from: classes.dex */
 public class AccessibleDragListenerAdapter implements DragController.DragListener {
     private final int mDragType;
@@ -27,15 +28,13 @@ public class AccessibleDragListenerAdapter implements DragController.DragListene
         Launcher.getLauncher(this.mViewGroup.getContext()).getDragController().removeDragListener(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void enableAccessibleDrag(boolean z) {
+    protected void enableAccessibleDrag(boolean z) {
         for (int i = 0; i < this.mViewGroup.getChildCount(); i++) {
             setEnableForLayout((CellLayout) this.mViewGroup.getChildAt(i), z);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final void setEnableForLayout(CellLayout cellLayout, boolean z) {
+    protected final void setEnableForLayout(CellLayout cellLayout, boolean z) {
         cellLayout.enableAccessibleDrag(z, this.mDragType);
     }
 }

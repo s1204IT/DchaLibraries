@@ -17,6 +17,7 @@ import android.widget.Button;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.settings.core.InstrumentedFragment;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class CryptKeeperConfirm extends InstrumentedFragment {
     private View mContentView;
@@ -33,7 +34,7 @@ public class CryptKeeperConfirm extends InstrumentedFragment {
                 lockPatternUtils.setOwnerInfo(lockPatternUtils.getOwnerInfo(0), 0);
             }
             lockPatternUtils.setVisiblePasswordEnabled(Settings.System.getInt(CryptKeeperConfirm.this.getContext().getContentResolver(), "show_password", 1) != 0, 0);
-            Intent intent = new Intent(CryptKeeperConfirm.this.getActivity(), Blank.class);
+            Intent intent = new Intent(CryptKeeperConfirm.this.getActivity(), (Class<?>) Blank.class);
             intent.putExtras(CryptKeeperConfirm.this.getArguments());
             CryptKeeperConfirm.this.startActivity(intent);
             try {
@@ -49,7 +50,6 @@ public class CryptKeeperConfirm extends InstrumentedFragment {
         return 33;
     }
 
-    /* loaded from: classes.dex */
     public static class Blank extends Activity {
         private Handler mHandler = new Handler();
 
@@ -70,10 +70,10 @@ public class CryptKeeperConfirm extends InstrumentedFragment {
                         Blank.this.finish();
                         return;
                     }
-                    IStorageManager asInterface = IStorageManager.Stub.asInterface(service);
+                    IStorageManager iStorageManagerAsInterface = IStorageManager.Stub.asInterface(service);
                     try {
                         Bundle extras = Blank.this.getIntent().getExtras();
-                        asInterface.encryptStorage(extras.getInt("type", -1), extras.getString("password"));
+                        iStorageManagerAsInterface.encryptStorage(extras.getInt("type", -1), extras.getString("password"));
                     } catch (Exception e) {
                         Log.e("CryptKeeper", "Error while encrypting...", e);
                     }

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import com.android.settings.R;
 import com.android.settings.SetupWizardUtils;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class SetupFingerprintEnrollFindSensor extends FingerprintEnrollFindSensor {
     @Override // com.android.settings.fingerprint.FingerprintEnrollFindSensor
@@ -17,10 +18,9 @@ public class SetupFingerprintEnrollFindSensor extends FingerprintEnrollFindSenso
         return R.layout.fingerprint_enroll_find_sensor;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.fingerprint.FingerprintEnrollBase
-    public Intent getEnrollingIntent() {
-        Intent intent = new Intent(this, SetupFingerprintEnrollEnrolling.class);
+    protected Intent getEnrollingIntent() {
+        Intent intent = new Intent(this, (Class<?>) SetupFingerprintEnrollEnrolling.class);
         intent.putExtra("hw_auth_token", this.mToken);
         if (this.mUserId != -10000) {
             intent.putExtra("android.intent.extra.USER_ID", this.mUserId);
@@ -39,7 +39,6 @@ public class SetupFingerprintEnrollFindSensor extends FingerprintEnrollFindSenso
         return 247;
     }
 
-    /* loaded from: classes.dex */
     public static class SkipFingerprintDialog extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {

@@ -4,10 +4,18 @@
         <layer-list>
             <item>
                 <level-list>
-                    <item android:drawable="@drawable/ic_wifi_signal_1" android:maxLevel="0"/>
-                    <item android:drawable="@drawable/ic_wifi_signal_2" android:maxLevel="1"/>
-                    <item android:drawable="@drawable/ic_wifi_signal_3" android:maxLevel="2"/>
-                    <item android:drawable="@drawable/ic_wifi_signal_4" android:maxLevel="3"/>
+                    <item
+                        android:drawable="@drawable/ic_wifi_signal_1"
+                        android:maxLevel="0"/>
+                    <item
+                        android:drawable="@drawable/ic_wifi_signal_2"
+                        android:maxLevel="1"/>
+                    <item
+                        android:drawable="@drawable/ic_wifi_signal_3"
+                        android:maxLevel="2"/>
+                    <item
+                        android:drawable="@drawable/ic_wifi_signal_4"
+                        android:maxLevel="3"/>
                 </level-list>
             </item>
             <item android:drawable="@drawable/ic_wifi_signal_lock"/>
@@ -15,10 +23,18 @@
     </item>
     <item settings:state_encrypted="false">
         <level-list>
-            <item android:drawable="@drawable/ic_wifi_signal_1" android:maxLevel="0"/>
-            <item android:drawable="@drawable/ic_wifi_signal_2" android:maxLevel="1"/>
-            <item android:drawable="@drawable/ic_wifi_signal_3" android:maxLevel="2"/>
-            <item android:drawable="@drawable/ic_wifi_signal_4" android:maxLevel="3"/>
+            <item
+                android:drawable="@drawable/ic_wifi_signal_1"
+                android:maxLevel="0"/>
+            <item
+                android:drawable="@drawable/ic_wifi_signal_2"
+                android:maxLevel="1"/>
+            <item
+                android:drawable="@drawable/ic_wifi_signal_3"
+                android:maxLevel="2"/>
+            <item
+                android:drawable="@drawable/ic_wifi_signal_4"
+                android:maxLevel="3"/>
         </level-list>
     </item>
 </selector>

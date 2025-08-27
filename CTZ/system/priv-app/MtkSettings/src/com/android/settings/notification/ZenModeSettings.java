@@ -15,9 +15,11 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class ZenModeSettings extends ZenModeSettingsBase {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.notification.ZenModeSettings.1
@@ -47,9 +49,8 @@ public class ZenModeSettings extends ZenModeSettingsBase {
         super.onResume();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.zen_mode_settings;
     }
 
@@ -68,8 +69,7 @@ public class ZenModeSettings extends ZenModeSettingsBase {
         return R.string.help_uri_interruptions;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, FragmentManager fragmentManager) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, FragmentManager fragmentManager) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModeBehaviorMsgEventReminderPreferenceController(context, lifecycle));
         arrayList.add(new ZenModeBehaviorSoundPreferenceController(context, lifecycle));
@@ -82,7 +82,6 @@ public class ZenModeSettings extends ZenModeSettingsBase {
         return arrayList;
     }
 
-    /* loaded from: classes.dex */
     public static class SummaryBuilder {
         private static final int[] ALL_PRIORITY_CATEGORIES = {32, 64, 128, 4, 2, 1, 8, 16};
         private Context mContext;
@@ -91,8 +90,7 @@ public class ZenModeSettings extends ZenModeSettingsBase {
             this.mContext = context;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public String getSoundSettingSummary(NotificationManager.Policy policy) {
+        String getSoundSettingSummary(NotificationManager.Policy policy) {
             List<String> enabledCategories = getEnabledCategories(policy, new Predicate() { // from class: com.android.settings.notification.-$$Lambda$ZenModeSettings$SummaryBuilder$-hUbn9epxyVxqc9qNo66a-LO5Ug
                 @Override // java.util.function.Predicate
                 public final boolean test(Object obj) {
@@ -115,13 +113,12 @@ public class ZenModeSettings extends ZenModeSettingsBase {
             return this.mContext.getString(R.string.zen_sound_none_muted);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ boolean lambda$getSoundSettingSummary$0(Integer num) {
+        /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: ?: TERNARY null = (((32 int) == (wrap:int:0x0000: INVOKE (r2v0 java.lang.Integer) VIRTUAL call: java.lang.Integer.intValue():int A[MD:():int (c), WRAPPED] (LINE:116)) || (64 int) == (wrap:int:0x000a: INVOKE (r2v0 java.lang.Integer) VIRTUAL call: java.lang.Integer.intValue():int A[MD:():int (c), WRAPPED] (LINE:117)) || (128 int) == (wrap:int:0x0012: INVOKE (r2v0 java.lang.Integer) VIRTUAL call: java.lang.Integer.intValue():int A[MD:():int (c), WRAPPED] (LINE:118)))) ? true : false */
+        static /* synthetic */ boolean lambda$getSoundSettingSummary$0(Integer num) {
             return 32 == num.intValue() || 64 == num.intValue() || 128 == num.intValue();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public String getCallsSettingSummary(NotificationManager.Policy policy) {
+        String getCallsSettingSummary(NotificationManager.Policy policy) {
             List<String> enabledCategories = getEnabledCategories(policy, new Predicate() { // from class: com.android.settings.notification.-$$Lambda$ZenModeSettings$SummaryBuilder$_Gea8GbwXN997GXaupRdGPPi1FA
                 @Override // java.util.function.Predicate
                 public final boolean test(Object obj) {
@@ -138,13 +135,12 @@ public class ZenModeSettings extends ZenModeSettingsBase {
             return this.mContext.getString(R.string.zen_mode_calls_summary_two, enabledCategories.get(0).toLowerCase(), enabledCategories.get(1).toLowerCase());
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ boolean lambda$getCallsSettingSummary$1(Integer num) {
+        /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: ?: TERNARY null = (((8 int) == (wrap:int:0x0000: INVOKE (r2v0 java.lang.Integer) VIRTUAL call: java.lang.Integer.intValue():int A[MD:():int (c), WRAPPED] (LINE:141)) || (16 int) == (wrap:int:0x000a: INVOKE (r2v0 java.lang.Integer) VIRTUAL call: java.lang.Integer.intValue():int A[MD:():int (c), WRAPPED] (LINE:142)))) ? true : false */
+        static /* synthetic */ boolean lambda$getCallsSettingSummary$1(Integer num) {
             return 8 == num.intValue() || 16 == num.intValue();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public String getMsgEventReminderSettingSummary(NotificationManager.Policy policy) {
+        String getMsgEventReminderSettingSummary(NotificationManager.Policy policy) {
             List<String> enabledCategories = getEnabledCategories(policy, new Predicate() { // from class: com.android.settings.notification.-$$Lambda$ZenModeSettings$SummaryBuilder$Ydm8DmhkL6wV0O584-hfIH59p1A
                 @Override // java.util.function.Predicate
                 public final boolean test(Object obj) {
@@ -176,13 +172,11 @@ public class ZenModeSettings extends ZenModeSettingsBase {
             return ListFormatter.getInstance().format(arrayList2);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ boolean lambda$getMsgEventReminderSettingSummary$2(Integer num) {
+        static /* synthetic */ boolean lambda$getMsgEventReminderSettingSummary$2(Integer num) {
             return 2 == num.intValue() || 1 == num.intValue() || 4 == num.intValue();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public String getSoundSummary() {
+        String getSoundSummary() {
             if (NotificationManager.from(this.mContext).getZenMode() != 0) {
                 String description = ZenModeConfig.getDescription(this.mContext, true, NotificationManager.from(this.mContext).getZenModeConfig(), false);
                 return description == null ? this.mContext.getString(R.string.zen_mode_sound_summary_on) : this.mContext.getString(R.string.zen_mode_sound_summary_on_with_info, description);
@@ -194,8 +188,7 @@ public class ZenModeSettings extends ZenModeSettingsBase {
             return this.mContext.getString(R.string.zen_mode_sound_summary_off);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public String getBlockedEffectsSummary(NotificationManager.Policy policy) {
+        String getBlockedEffectsSummary(NotificationManager.Policy policy) {
             if (policy.suppressedVisualEffects == 0) {
                 return this.mContext.getResources().getString(R.string.zen_mode_restrict_notifications_summary_muted);
             }
@@ -205,8 +198,7 @@ public class ZenModeSettings extends ZenModeSettingsBase {
             return this.mContext.getResources().getString(R.string.zen_mode_restrict_notifications_summary_custom);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public String getAutomaticRulesSummary() {
+        String getAutomaticRulesSummary() {
             int enabledAutomaticRulesCount = getEnabledAutomaticRulesCount();
             return enabledAutomaticRulesCount == 0 ? this.mContext.getString(R.string.zen_mode_settings_summary_off) : this.mContext.getResources().getQuantityString(R.plurals.zen_mode_settings_summary_on, enabledAutomaticRulesCount, Integer.valueOf(enabledAutomaticRulesCount));
         }
@@ -215,8 +207,9 @@ public class ZenModeSettings extends ZenModeSettingsBase {
             Map<String, AutomaticZenRule> automaticZenRules = NotificationManager.from(this.mContext).getAutomaticZenRules();
             int i = 0;
             if (automaticZenRules != null) {
-                for (Map.Entry<String, AutomaticZenRule> entry : automaticZenRules.entrySet()) {
-                    AutomaticZenRule value = entry.getValue();
+                Iterator<Map.Entry<String, AutomaticZenRule>> it = automaticZenRules.entrySet().iterator();
+                while (it.hasNext()) {
+                    AutomaticZenRule value = it.next().getValue();
                     if (value != null && value.isEnabled()) {
                         i++;
                     }
@@ -226,7 +219,6 @@ public class ZenModeSettings extends ZenModeSettingsBase {
         }
 
         private List<String> getEnabledCategories(NotificationManager.Policy policy, Predicate<Integer> predicate) {
-            int[] iArr;
             ArrayList arrayList = new ArrayList();
             for (int i : ALL_PRIORITY_CATEGORIES) {
                 if (predicate.test(Integer.valueOf(i)) && isCategoryEnabled(policy, i)) {

@@ -7,6 +7,7 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 import com.android.systemui.shared.system.GraphicBufferCompat;
+
 /* loaded from: classes.dex */
 public interface ISystemUiProxy extends IInterface {
     Rect getNonMinimizedSplitScreenSecondaryBounds() throws RemoteException;
@@ -23,7 +24,6 @@ public interface ISystemUiProxy extends IInterface {
 
     void startScreenPinning(int i) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements ISystemUiProxy {
         public Stub() {
             attachInterface(this, "com.android.systemui.shared.recents.ISystemUiProxy");
@@ -33,9 +33,9 @@ public interface ISystemUiProxy extends IInterface {
             if (iBinder == null) {
                 return null;
             }
-            IInterface queryLocalInterface = iBinder.queryLocalInterface("com.android.systemui.shared.recents.ISystemUiProxy");
-            if (queryLocalInterface != null && (queryLocalInterface instanceof ISystemUiProxy)) {
-                return (ISystemUiProxy) queryLocalInterface;
+            IInterface iInterfaceQueryLocalInterface = iBinder.queryLocalInterface("com.android.systemui.shared.recents.ISystemUiProxy");
+            if (iInterfaceQueryLocalInterface != null && (iInterfaceQueryLocalInterface instanceof ISystemUiProxy)) {
+                return (ISystemUiProxy) iInterfaceQueryLocalInterface;
             }
             return new Proxy(iBinder);
         }
@@ -60,11 +60,11 @@ public interface ISystemUiProxy extends IInterface {
                     } else {
                         rect = null;
                     }
-                    GraphicBufferCompat screenshot = screenshot(rect, parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt() != 0, parcel.readInt());
+                    GraphicBufferCompat graphicBufferCompatScreenshot = screenshot(rect, parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt(), parcel.readInt() != 0, parcel.readInt());
                     parcel2.writeNoException();
-                    if (screenshot != null) {
+                    if (graphicBufferCompatScreenshot != null) {
                         parcel2.writeInt(1);
-                        screenshot.writeToParcel(parcel2, 1);
+                        graphicBufferCompatScreenshot.writeToParcel(parcel2, 1);
                     } else {
                         parcel2.writeInt(0);
                     }
@@ -113,7 +113,6 @@ public interface ISystemUiProxy extends IInterface {
             }
         }
 
-        /* loaded from: classes.dex */
         private static class Proxy implements ISystemUiProxy {
             private IBinder mRemote;
 
@@ -128,130 +127,130 @@ public interface ISystemUiProxy extends IInterface {
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
             public GraphicBufferCompat screenshot(Rect rect, int i, int i2, int i3, int i4, boolean z, int i5) throws RemoteException {
-                GraphicBufferCompat graphicBufferCompat;
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                GraphicBufferCompat graphicBufferCompatCreateFromParcel;
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
+                    parcelObtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
                     if (rect != null) {
-                        obtain.writeInt(1);
-                        rect.writeToParcel(obtain, 0);
+                        parcelObtain.writeInt(1);
+                        rect.writeToParcel(parcelObtain, 0);
                     } else {
-                        obtain.writeInt(0);
+                        parcelObtain.writeInt(0);
                     }
-                    obtain.writeInt(i);
-                    obtain.writeInt(i2);
-                    obtain.writeInt(i3);
-                    obtain.writeInt(i4);
-                    obtain.writeInt(z ? 1 : 0);
-                    obtain.writeInt(i5);
-                    this.mRemote.transact(1, obtain, obtain2, 0);
-                    obtain2.readException();
-                    if (obtain2.readInt() != 0) {
-                        graphicBufferCompat = GraphicBufferCompat.CREATOR.createFromParcel(obtain2);
+                    parcelObtain.writeInt(i);
+                    parcelObtain.writeInt(i2);
+                    parcelObtain.writeInt(i3);
+                    parcelObtain.writeInt(i4);
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    parcelObtain.writeInt(i5);
+                    this.mRemote.transact(1, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    if (parcelObtain2.readInt() != 0) {
+                        graphicBufferCompatCreateFromParcel = GraphicBufferCompat.CREATOR.createFromParcel(parcelObtain2);
                     } else {
-                        graphicBufferCompat = null;
+                        graphicBufferCompatCreateFromParcel = null;
                     }
-                    return graphicBufferCompat;
+                    return graphicBufferCompatCreateFromParcel;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
             public void startScreenPinning(int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
-                    obtain.writeInt(i);
-                    this.mRemote.transact(2, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
+                    parcelObtain.writeInt(i);
+                    this.mRemote.transact(2, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
             public void setInteractionState(int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
-                    obtain.writeInt(i);
-                    this.mRemote.transact(5, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
+                    parcelObtain.writeInt(i);
+                    this.mRemote.transact(5, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
             public void onSplitScreenInvoked() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
-                    this.mRemote.transact(6, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
+                    this.mRemote.transact(6, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
             public void onOverviewShown(boolean z) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
-                    obtain.writeInt(z ? 1 : 0);
-                    this.mRemote.transact(7, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(7, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
             public Rect getNonMinimizedSplitScreenSecondaryBounds() throws RemoteException {
                 Rect rect;
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
-                    this.mRemote.transact(8, obtain, obtain2, 0);
-                    obtain2.readException();
-                    if (obtain2.readInt() != 0) {
-                        rect = (Rect) Rect.CREATOR.createFromParcel(obtain2);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
+                    this.mRemote.transact(8, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    if (parcelObtain2.readInt() != 0) {
+                        rect = (Rect) Rect.CREATOR.createFromParcel(parcelObtain2);
                     } else {
                         rect = null;
                     }
                     return rect;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
             public void setBackButtonAlpha(float f, boolean z) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
-                    obtain.writeFloat(f);
-                    obtain.writeInt(z ? 1 : 0);
-                    this.mRemote.transact(9, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("com.android.systemui.shared.recents.ISystemUiProxy");
+                    parcelObtain.writeFloat(f);
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(9, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
         }

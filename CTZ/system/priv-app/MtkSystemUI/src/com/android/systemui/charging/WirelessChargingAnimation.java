@@ -7,12 +7,12 @@ import android.os.Message;
 import android.util.Slog;
 import android.view.View;
 import android.view.WindowManager;
+
 /* loaded from: classes.dex */
 public class WirelessChargingAnimation {
     private static WirelessChargingView mPreviousWirelessChargingView;
     private final WirelessChargingView mCurrentWirelessChargingView;
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onAnimationEnded();
 
@@ -39,7 +39,6 @@ public class WirelessChargingAnimation {
         this.mCurrentWirelessChargingView.hide(1133L);
     }
 
-    /* loaded from: classes.dex */
     private static class WirelessChargingView {
         private Callback mCallback;
         private final Handler mHandler;
@@ -69,13 +68,11 @@ public class WirelessChargingAnimation {
                     switch (message.what) {
                         case 0:
                             WirelessChargingView.this.handleShow();
-                            return;
+                            break;
                         case 1:
                             WirelessChargingView.this.handleHide();
                             WirelessChargingView.this.mNextView = null;
-                            return;
-                        default:
-                            return;
+                            break;
                     }
                 }
             };
@@ -90,8 +87,7 @@ public class WirelessChargingAnimation {
             this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 1), j);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void handleShow() {
+        private void handleShow() {
             if (this.mView != this.mNextView) {
                 handleHide();
                 this.mView = this.mNextView;
@@ -117,8 +113,7 @@ public class WirelessChargingAnimation {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void handleHide() {
+        private void handleHide() {
             if (this.mView != null) {
                 if (this.mView.getParent() != null) {
                     if (this.mCallback != null) {

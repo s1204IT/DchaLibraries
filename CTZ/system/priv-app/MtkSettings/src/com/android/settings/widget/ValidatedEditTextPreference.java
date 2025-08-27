@@ -1,5 +1,6 @@
 package com.android.settings.widget;
 
+import android.R;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.support.v7.preference.PreferenceViewHolder;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.android.settingslib.CustomEditTextPreference;
+
 /* loaded from: classes.dex */
 public class ValidatedEditTextPreference extends CustomEditTextPreference {
     private boolean mIsPassword;
@@ -18,7 +20,6 @@ public class ValidatedEditTextPreference extends CustomEditTextPreference {
     private final EditTextWatcher mTextWatcher;
     private Validator mValidator;
 
-    /* loaded from: classes.dex */
     public interface Validator {
         boolean isTextValid(String str);
     }
@@ -43,11 +44,10 @@ public class ValidatedEditTextPreference extends CustomEditTextPreference {
         this.mTextWatcher = new EditTextWatcher();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomEditTextPreference
-    public void onBindDialogView(View view) {
+    protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        EditText editText = (EditText) view.findViewById(16908291);
+        EditText editText = (EditText) view.findViewById(R.id.edit);
         if (editText != null && !TextUtils.isEmpty(editText.getText())) {
             editText.setSelection(editText.getText().length());
         }
@@ -64,7 +64,7 @@ public class ValidatedEditTextPreference extends CustomEditTextPreference {
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        TextView textView = (TextView) preferenceViewHolder.findViewById(16908304);
+        TextView textView = (TextView) preferenceViewHolder.findViewById(R.id.summary);
         if (textView == null) {
             return;
         }
@@ -91,7 +91,6 @@ public class ValidatedEditTextPreference extends CustomEditTextPreference {
         this.mValidator = validator;
     }
 
-    /* loaded from: classes.dex */
     private class EditTextWatcher implements TextWatcher {
         private EditTextWatcher() {
         }
@@ -108,7 +107,8 @@ public class ValidatedEditTextPreference extends CustomEditTextPreference {
         public void afterTextChanged(Editable editable) {
             EditText editText = ValidatedEditTextPreference.this.getEditText();
             if (ValidatedEditTextPreference.this.mValidator != null && editText != null) {
-                ((AlertDialog) ValidatedEditTextPreference.this.getDialog()).getButton(-1).setEnabled(ValidatedEditTextPreference.this.mValidator.isTextValid(editText.getText().toString()));
+                AlertDialog alertDialog = (AlertDialog) ValidatedEditTextPreference.this.getDialog();
+                alertDialog.getButton(-1).setEnabled(ValidatedEditTextPreference.this.mValidator.isTextValid(editText.getText().toString()));
             }
         }
     }

@@ -13,6 +13,7 @@ import com.android.systemui.plugins.PluginManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class NotificationListenerWithPlugins extends NotificationListenerService implements PluginListener<NotificationListenerController> {
     private boolean mConnected;
@@ -53,7 +54,7 @@ public class NotificationListenerWithPlugins extends NotificationListenerService
         this.mPlugins.forEach(new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NotificationListenerWithPlugins$AOWJwBGrUF4vFOVx-Lxlu4eVQD0
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                ((NotificationListenerController) obj).onListenerConnected(NotificationListenerWithPlugins.this.getProvider());
+                ((NotificationListenerController) obj).onListenerConnected(this.f$0.getProvider());
             }
         });
     }
@@ -87,6 +88,7 @@ public class NotificationListenerWithPlugins extends NotificationListenerService
         return getCurrentRanking();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginConnected(Lcom/android/systemui/plugins/Plugin;Landroid/content/Context;)V */
     @Override // com.android.systemui.plugins.PluginListener
     public void onPluginConnected(NotificationListenerController notificationListenerController, Context context) {
         this.mPlugins.add(notificationListenerController);
@@ -95,6 +97,7 @@ public class NotificationListenerWithPlugins extends NotificationListenerService
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginDisconnected(Lcom/android/systemui/plugins/Plugin;)V */
     @Override // com.android.systemui.plugins.PluginListener
     public void onPluginDisconnected(NotificationListenerController notificationListenerController) {
         this.mPlugins.remove(notificationListenerController);

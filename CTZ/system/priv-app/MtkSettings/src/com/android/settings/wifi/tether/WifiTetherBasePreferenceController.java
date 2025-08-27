@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public abstract class WifiTetherBasePreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     protected final ConnectivityManager mCm;
@@ -15,7 +16,6 @@ public abstract class WifiTetherBasePreferenceController extends AbstractPrefere
     protected final WifiManager mWifiManager;
     protected final String[] mWifiRegexs;
 
-    /* loaded from: classes.dex */
     public interface OnTetherConfigUpdateListener {
         void onNetworkReset();
 

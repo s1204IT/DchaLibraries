@@ -41,6 +41,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+
 /* loaded from: classes.dex */
 public final class Utilities {
     public static final boolean ATLEAST_LOLLIPOP_MR1;
@@ -69,7 +70,6 @@ public final class Utilities {
     private static final Matrix sInverseMatrix = new Matrix();
 
     static {
-        boolean z = false;
         ATLEAST_P = Build.VERSION.SDK_INT >= 28;
         ATLEAST_OREO_MR1 = Build.VERSION.SDK_INT >= 27;
         ATLEAST_OREO = Build.VERSION.SDK_INT >= 26;
@@ -77,10 +77,7 @@ public final class Utilities {
         ATLEAST_NOUGAT = Build.VERSION.SDK_INT >= 24;
         ATLEAST_MARSHMALLOW = Build.VERSION.SDK_INT >= 23;
         ATLEAST_LOLLIPOP_MR1 = Build.VERSION.SDK_INT >= 22;
-        if (Build.TYPE.toLowerCase().contains("debug") || Build.TYPE.toLowerCase().equals("eng")) {
-            z = true;
-        }
-        IS_DEBUG_DEVICE = z;
+        IS_DEBUG_DEVICE = Build.TYPE.toLowerCase().contains("debug") || Build.TYPE.toLowerCase().equals("eng");
         CPU_COUNT = Runtime.getRuntime().availableProcessors();
         CORE_POOL_SIZE = CPU_COUNT + 1;
         MAXIMUM_POOL_SIZE = (CPU_COUNT * 2) + 1;
@@ -94,7 +91,7 @@ public final class Utilities {
     public static float getDescendantCoordRelativeToAncestor(View view, View view2, int[] iArr, boolean z) {
         sPoint[0] = iArr[0];
         sPoint[1] = iArr[1];
-        float f = 1.0f;
+        float scaleX = 1.0f;
         for (View view3 = view; view3 != view2 && view3 != null; view3 = (View) view3.getParent()) {
             if (view3 != view || z) {
                 float[] fArr = sPoint;
@@ -107,11 +104,11 @@ public final class Utilities {
             fArr3[0] = fArr3[0] + view3.getLeft();
             float[] fArr4 = sPoint;
             fArr4[1] = fArr4[1] + view3.getTop();
-            f *= view3.getScaleX();
+            scaleX *= view3.getScaleX();
         }
         iArr[0] = Math.round(sPoint[0]);
         iArr[1] = Math.round(sPoint[1]);
-        return f;
+        return scaleX;
     }
 
     public static void mapCoordInSelfToDescendant(View view, View view2, int[] iArr) {
@@ -139,37 +136,33 @@ public final class Utilities {
     public static int[] getCenterDeltaInScreenSpace(View view, View view2) {
         view.getLocationInWindow(sLoc0);
         view2.getLocationInWindow(sLoc1);
-        int[] iArr = sLoc0;
-        iArr[0] = (int) (iArr[0] + ((view.getMeasuredWidth() * view.getScaleX()) / 2.0f));
-        int[] iArr2 = sLoc0;
-        iArr2[1] = (int) (iArr2[1] + ((view.getMeasuredHeight() * view.getScaleY()) / 2.0f));
-        int[] iArr3 = sLoc1;
-        iArr3[0] = (int) (iArr3[0] + ((view2.getMeasuredWidth() * view2.getScaleX()) / 2.0f));
-        int[] iArr4 = sLoc1;
-        iArr4[1] = (int) (iArr4[1] + ((view2.getMeasuredHeight() * view2.getScaleY()) / 2.0f));
+        sLoc0[0] = (int) (r0[0] + ((view.getMeasuredWidth() * view.getScaleX()) / 2.0f));
+        sLoc0[1] = (int) (r0[1] + ((view.getMeasuredHeight() * view.getScaleY()) / 2.0f));
+        sLoc1[0] = (int) (r6[0] + ((view2.getMeasuredWidth() * view2.getScaleX()) / 2.0f));
+        sLoc1[1] = (int) (r6[1] + ((view2.getMeasuredHeight() * view2.getScaleY()) / 2.0f));
         return new int[]{sLoc1[0] - sLoc0[0], sLoc1[1] - sLoc0[1]};
     }
 
     public static void scaleRectFAboutCenter(RectF rectF, float f) {
         if (f != 1.0f) {
-            float centerX = rectF.centerX();
-            float centerY = rectF.centerY();
-            rectF.offset(-centerX, -centerY);
+            float fCenterX = rectF.centerX();
+            float fCenterY = rectF.centerY();
+            rectF.offset(-fCenterX, -fCenterY);
             rectF.left *= f;
             rectF.top *= f;
             rectF.right *= f;
             rectF.bottom *= f;
-            rectF.offset(centerX, centerY);
+            rectF.offset(fCenterX, fCenterY);
         }
     }
 
     public static void scaleRectAboutCenter(Rect rect, float f) {
         if (f != 1.0f) {
-            int centerX = rect.centerX();
-            int centerY = rect.centerY();
-            rect.offset(-centerX, -centerY);
+            int iCenterX = rect.centerX();
+            int iCenterY = rect.centerY();
+            rect.offset(-iCenterX, -iCenterY);
             scaleRect(rect, f);
-            rect.offset(centerX, centerY);
+            rect.offset(iCenterX, iCenterY);
         }
     }
 
@@ -190,30 +183,30 @@ public final class Utilities {
     }
 
     public static float shrinkRect(Rect rect, float f, float f2) {
-        float min = Math.min(Math.min(f, f2), 1.0f);
-        if (min < 1.0f) {
-            int width = (int) (rect.width() * (f - min) * 0.5f);
-            rect.left += width;
-            rect.right -= width;
-            int height = (int) (rect.height() * (f2 - min) * 0.5f);
-            rect.top += height;
-            rect.bottom -= height;
+        float fMin = Math.min(Math.min(f, f2), 1.0f);
+        if (fMin < 1.0f) {
+            int iWidth = (int) (rect.width() * (f - fMin) * 0.5f);
+            rect.left += iWidth;
+            rect.right -= iWidth;
+            int iHeight = (int) (rect.height() * (f2 - fMin) * 0.5f);
+            rect.top += iHeight;
+            rect.bottom -= iHeight;
         }
-        return min;
+        return fMin;
     }
 
     public static float mapRange(float f, float f2, float f3) {
         return f2 + (f * (f3 - f2));
     }
 
-    public static boolean isSystemApp(Context context, Intent intent) {
+    public static boolean isSystemApp(Context context, Intent intent) throws PackageManager.NameNotFoundException {
         String packageName;
         PackageManager packageManager = context.getPackageManager();
         ComponentName component = intent.getComponent();
         if (component == null) {
-            ResolveInfo resolveActivity = packageManager.resolveActivity(intent, 65536);
-            if (resolveActivity != null && resolveActivity.activityInfo != null) {
-                packageName = resolveActivity.activityInfo.packageName;
+            ResolveInfo resolveInfoResolveActivity = packageManager.resolveActivity(intent, 65536);
+            if (resolveInfoResolveActivity != null && resolveInfoResolveActivity.activityInfo != null) {
+                packageName = resolveInfoResolveActivity.activityInfo.packageName;
             } else {
                 packageName = null;
             }
@@ -236,8 +229,7 @@ public final class Utilities {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static Pair<String, Resources> findSystemApk(String str, PackageManager packageManager) {
+    static Pair<String, Resources> findSystemApk(String str, PackageManager packageManager) {
         for (ResolveInfo resolveInfo : packageManager.queryBroadcastReceivers(new Intent(str), 0)) {
             if (resolveInfo.activityInfo != null && (resolveInfo.activityInfo.applicationInfo.flags & 1) != 0) {
                 String str2 = resolveInfo.activityInfo.packageName;
@@ -251,7 +243,7 @@ public final class Utilities {
         return null;
     }
 
-    public static byte[] flattenBitmap(Bitmap bitmap) {
+    public static byte[] flattenBitmap(Bitmap bitmap) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(bitmap.getWidth() * bitmap.getHeight() * 4);
         try {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
@@ -354,11 +346,10 @@ public final class Utilities {
     }
 
     public static int longCompare(long j, long j2) {
-        int i = (j > j2 ? 1 : (j == j2 ? 0 : -1));
-        if (i < 0) {
+        if (j < j2) {
             return -1;
         }
-        return i == 0 ? 0 : 1;
+        return j == j2 ? 0 : 1;
     }
 
     public static SharedPreferences getPrefs(Context context) {
@@ -388,7 +379,7 @@ public final class Utilities {
         return true;
     }
 
-    public static void closeSilently(Closeable closeable) {
+    public static void closeSilently(Closeable closeable) throws IOException {
         if (closeable != null) {
             try {
                 closeable.close();
@@ -443,8 +434,8 @@ public final class Utilities {
     }
 
     public static void postAsyncCallback(Handler handler, Runnable runnable) {
-        Message obtain = Message.obtain(handler, runnable);
-        obtain.setAsynchronous(true);
-        handler.sendMessage(obtain);
+        Message messageObtain = Message.obtain(handler, runnable);
+        messageObtain.setAsynchronous(true);
+        handler.sendMessage(messageObtain);
     }
 }

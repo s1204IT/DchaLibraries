@@ -11,6 +11,7 @@ import android.util.ArraySet;
 import android.util.Log;
 import com.android.internal.telephony.SmsApplication;
 import com.android.internal.util.ArrayUtils;
+
 /* loaded from: classes.dex */
 public class PowerWhitelistBackend {
     private static PowerWhitelistBackend sInstance;
@@ -41,11 +42,11 @@ public class PowerWhitelistBackend {
         if (this.mWhitelistedApps.contains(str)) {
             return true;
         }
-        if (this.mAppContext.getPackageManager().hasSystemFeature("android.hardware.telephony")) {
-            ComponentName defaultSmsApplication = SmsApplication.getDefaultSmsApplication(this.mAppContext, true);
-            return (defaultSmsApplication != null && TextUtils.equals(str, defaultSmsApplication.getPackageName())) || TextUtils.equals(str, DefaultDialerManager.getDefaultDialerApplication(this.mAppContext));
+        if (!this.mAppContext.getPackageManager().hasSystemFeature("android.hardware.telephony")) {
+            return false;
         }
-        return false;
+        ComponentName defaultSmsApplication = SmsApplication.getDefaultSmsApplication(this.mAppContext, true);
+        return (defaultSmsApplication != null && TextUtils.equals(str, defaultSmsApplication.getPackageName())) || TextUtils.equals(str, DefaultDialerManager.getDefaultDialerApplication(this.mAppContext));
     }
 
     public boolean isWhitelisted(String[] strArr) {

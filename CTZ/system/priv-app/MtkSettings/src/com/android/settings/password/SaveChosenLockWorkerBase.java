@@ -7,9 +7,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.UserManager;
 import com.android.internal.widget.LockPatternUtils;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public abstract class SaveChosenLockWorkerBase extends Fragment {
+abstract class SaveChosenLockWorkerBase extends Fragment {
     private boolean mBlocking;
     protected long mChallenge;
     private boolean mFinished;
@@ -20,13 +20,14 @@ public abstract class SaveChosenLockWorkerBase extends Fragment {
     protected LockPatternUtils mUtils;
     protected boolean mWasSecureBefore;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface Listener {
+    interface Listener {
         void onChosenLockSaveFinished(boolean z, Intent intent);
     }
 
     protected abstract Intent saveAndVerifyInBackground();
+
+    SaveChosenLockWorkerBase() {
+    }
 
     @Override // android.app.Fragment
     public void onCreate(Bundle bundle) {
@@ -44,8 +45,7 @@ public abstract class SaveChosenLockWorkerBase extends Fragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void prepare(LockPatternUtils lockPatternUtils, boolean z, boolean z2, long j, int i) {
+    protected void prepare(LockPatternUtils lockPatternUtils, boolean z, boolean z2, long j, int i) {
         this.mUtils = lockPatternUtils;
         this.mUserId = i;
         this.mHasChallenge = z2;
@@ -59,8 +59,7 @@ public abstract class SaveChosenLockWorkerBase extends Fragment {
         this.mResultData = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void start() {
+    protected void start() {
         if (this.mBlocking) {
             finish(saveAndVerifyInBackground());
         } else {
@@ -68,8 +67,7 @@ public abstract class SaveChosenLockWorkerBase extends Fragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void finish(Intent intent) {
+    protected void finish(Intent intent) {
         this.mFinished = true;
         this.mResultData = intent;
         if (this.mListener != null) {
@@ -81,20 +79,19 @@ public abstract class SaveChosenLockWorkerBase extends Fragment {
         this.mBlocking = z;
     }
 
-    /* loaded from: classes.dex */
     private class Task extends AsyncTask<Void, Void, Intent> {
         private Task() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Intent doInBackground(Void... voidArr) {
+        protected Intent doInBackground(Void... voidArr) {
             return SaveChosenLockWorkerBase.this.saveAndVerifyInBackground();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Intent intent) {
+        protected void onPostExecute(Intent intent) {
             SaveChosenLockWorkerBase.this.finish(intent);
         }
     }

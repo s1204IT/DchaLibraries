@@ -5,6 +5,7 @@ import com.android.systemui.Dependency;
 import com.android.systemui.UiOffloadThread;
 import java.util.ArrayList;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class DismissCallbackRegistry {
     private final ArrayList<DismissCallbackWrapper> mDismissCallbacks = new ArrayList<>();
@@ -22,7 +23,7 @@ public class DismissCallbackRegistry {
             uiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.keyguard.-$$Lambda$zM6bayhThdtgvBghgFXo519LeO0
                 @Override // java.lang.Runnable
                 public final void run() {
-                    DismissCallbackWrapper.this.notifyDismissCancelled();
+                    dismissCallbackWrapper.notifyDismissCancelled();
                 }
             });
         }
@@ -37,7 +38,7 @@ public class DismissCallbackRegistry {
             uiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.keyguard.-$$Lambda$2j_lq_QeR0jp4UUzPHOB_8BlctI
                 @Override // java.lang.Runnable
                 public final void run() {
-                    DismissCallbackWrapper.this.notifyDismissSucceeded();
+                    dismissCallbackWrapper.notifyDismissSucceeded();
                 }
             });
         }

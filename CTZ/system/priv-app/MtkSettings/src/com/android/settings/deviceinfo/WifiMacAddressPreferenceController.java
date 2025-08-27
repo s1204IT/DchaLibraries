@@ -15,6 +15,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.deviceinfo.AbstractWifiMacAddressPreferenceController;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.ISettingsMiscExt;
+
 /* loaded from: classes.dex */
 public class WifiMacAddressPreferenceController extends AbstractWifiMacAddressPreferenceController implements PreferenceControllerMixin {
     private ISettingsMiscExt mExt;

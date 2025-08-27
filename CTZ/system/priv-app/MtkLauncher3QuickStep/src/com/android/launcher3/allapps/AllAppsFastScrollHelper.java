@@ -6,6 +6,7 @@ import com.android.launcher3.allapps.AlphabeticalAppsList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AllAppsFastScrollHelper implements AllAppsGridAdapter.BindViewCallback {
     private static final int INITIAL_TOUCH_SETTLING_DURATION = 100;
@@ -21,6 +22,9 @@ public class AllAppsFastScrollHelper implements AllAppsGridAdapter.BindViewCallb
     private HashSet<RecyclerView.ViewHolder> mTrackedFastScrollViews = new HashSet<>();
     final int[] mFastScrollFrames = new int[10];
     Runnable mSmoothSnapNextFrameRunnable = new Runnable() { // from class: com.android.launcher3.allapps.AllAppsFastScrollHelper.1
+        AnonymousClass1() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             if (AllAppsFastScrollHelper.this.mFastScrollFrameIndex < AllAppsFastScrollHelper.this.mFastScrollFrames.length) {
@@ -31,6 +35,9 @@ public class AllAppsFastScrollHelper implements AllAppsGridAdapter.BindViewCallb
         }
     };
     Runnable mFastScrollToTargetSectionRunnable = new Runnable() { // from class: com.android.launcher3.allapps.AllAppsFastScrollHelper.2
+        AnonymousClass2() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             AllAppsFastScrollHelper.this.mCurrentFastScrollSection = AllAppsFastScrollHelper.this.mTargetFastScrollSection;
@@ -39,6 +46,35 @@ public class AllAppsFastScrollHelper implements AllAppsGridAdapter.BindViewCallb
             AllAppsFastScrollHelper.this.updateTrackedViewsFastScrollFocusState();
         }
     };
+
+    /* renamed from: com.android.launcher3.allapps.AllAppsFastScrollHelper$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (AllAppsFastScrollHelper.this.mFastScrollFrameIndex < AllAppsFastScrollHelper.this.mFastScrollFrames.length) {
+                AllAppsFastScrollHelper.this.mRv.scrollBy(0, AllAppsFastScrollHelper.this.mFastScrollFrames[AllAppsFastScrollHelper.this.mFastScrollFrameIndex]);
+                AllAppsFastScrollHelper.this.mFastScrollFrameIndex++;
+                AllAppsFastScrollHelper.this.mRv.postOnAnimation(AllAppsFastScrollHelper.this.mSmoothSnapNextFrameRunnable);
+            }
+        }
+    }
+
+    /* renamed from: com.android.launcher3.allapps.AllAppsFastScrollHelper$2 */
+    class AnonymousClass2 implements Runnable {
+        AnonymousClass2() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            AllAppsFastScrollHelper.this.mCurrentFastScrollSection = AllAppsFastScrollHelper.this.mTargetFastScrollSection;
+            AllAppsFastScrollHelper.this.mHasFastScrollTouchSettled = true;
+            AllAppsFastScrollHelper.this.mHasFastScrollTouchSettledAtLeastOnce = true;
+            AllAppsFastScrollHelper.this.updateTrackedViewsFastScrollFocusState();
+        }
+    }
 
     public AllAppsFastScrollHelper(AllAppsRecyclerView allAppsRecyclerView, AlphabeticalAppsList alphabeticalAppsList) {
         this.mRv = allAppsRecyclerView;
@@ -60,7 +96,7 @@ public class AllAppsFastScrollHelper implements AllAppsGridAdapter.BindViewCallb
 
     private void smoothSnapToPosition(int i, int i2, AlphabeticalAppsList.FastScrollSectionInfo fastScrollSectionInfo) {
         long j;
-        int min;
+        int iMin;
         this.mRv.removeCallbacks(this.mSmoothSnapNextFrameRunnable);
         this.mRv.removeCallbacks(this.mFastScrollToTargetSectionRunnable);
         trackAllChildViews();
@@ -85,18 +121,18 @@ public class AllAppsFastScrollHelper implements AllAppsGridAdapter.BindViewCallb
         List<AlphabeticalAppsList.FastScrollSectionInfo> fastScrollerSections = this.mApps.getFastScrollerSections();
         int i3 = fastScrollSectionInfo.fastScrollToItem.position;
         if (fastScrollerSections.size() <= 0 || fastScrollerSections.get(0) != fastScrollSectionInfo) {
-            min = Math.min(i2, this.mRv.getCurrentScrollY(i3, 0));
+            iMin = Math.min(i2, this.mRv.getCurrentScrollY(i3, 0));
         } else {
-            min = 0;
+            iMin = 0;
         }
         int length = this.mFastScrollFrames.length;
-        int i4 = min - i;
-        float signum = Math.signum(i4);
-        int ceil = (int) (signum * Math.ceil(Math.abs(i4) / length));
+        int i4 = iMin - i;
+        float fSignum = Math.signum(i4);
+        int iCeil = (int) (fSignum * Math.ceil(Math.abs(i4) / length));
         int i5 = i4;
         for (int i6 = 0; i6 < length; i6++) {
-            this.mFastScrollFrames[i6] = (int) (Math.min(Math.abs(ceil), Math.abs(i5)) * signum);
-            i5 -= ceil;
+            this.mFastScrollFrames[i6] = (int) (Math.min(Math.abs(iCeil), Math.abs(i5)) * fSignum);
+            i5 -= iCeil;
         }
         this.mFastScrollFrameIndex = 0;
         this.mRv.postOnAnimation(this.mSmoothSnapNextFrameRunnable);
@@ -131,8 +167,7 @@ public class AllAppsFastScrollHelper implements AllAppsGridAdapter.BindViewCallb
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateTrackedViewsFastScrollFocusState() {
+    private void updateTrackedViewsFastScrollFocusState() {
         AlphabeticalAppsList.AdapterItem adapterItem;
         Iterator<RecyclerView.ViewHolder> it = this.mTrackedFastScrollViews.iterator();
         while (it.hasNext()) {

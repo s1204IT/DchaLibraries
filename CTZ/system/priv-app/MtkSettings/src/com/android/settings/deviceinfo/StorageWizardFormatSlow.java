@@ -8,13 +8,13 @@ import android.util.Pair;
 import android.view.View;
 import com.android.settings.R;
 import com.android.settings.overlay.FeatureFactory;
+
 /* loaded from: classes.dex */
 public class StorageWizardFormatSlow extends StorageWizardBase {
     private boolean mFormatPrivate;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.deviceinfo.StorageWizardBase, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         if (this.mDisk == null) {
             finish();
@@ -34,7 +34,7 @@ public class StorageWizardFormatSlow extends StorageWizardBase {
     @Override // com.android.settings.deviceinfo.StorageWizardBase
     public void onNavigateBack(View view) {
         FeatureFactory.getFactory(this).getMetricsFeatureProvider().action(this, 1411, new Pair[0]);
-        startActivity(new Intent(this, StorageWizardInit.class));
+        startActivity(new Intent(this, (Class<?>) StorageWizardInit.class));
         finishAffinity();
     }
 
@@ -55,11 +55,11 @@ public class StorageWizardFormatSlow extends StorageWizardBase {
             z = true;
         }
         if (z) {
-            Intent intent = new Intent(this, StorageWizardMigrateConfirm.class);
+            Intent intent = new Intent(this, (Class<?>) StorageWizardMigrateConfirm.class);
             intent.putExtra("android.os.storage.extra.DISK_ID", this.mDisk.getId());
             startActivity(intent);
         } else {
-            Intent intent2 = new Intent(this, StorageWizardReady.class);
+            Intent intent2 = new Intent(this, (Class<?>) StorageWizardReady.class);
             intent2.putExtra("android.os.storage.extra.DISK_ID", this.mDisk.getId());
             startActivity(intent2);
         }

@@ -3,6 +3,7 @@ package com.android.launcher3;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+
 /* loaded from: classes.dex */
 public class StylusEventHelper {
     private boolean mIsButtonPressed;
@@ -10,7 +11,6 @@ public class StylusEventHelper {
     private final float mSlop;
     private View mView;
 
-    /* loaded from: classes.dex */
     public interface StylusButtonListener {
         boolean onPressed(MotionEvent motionEvent);
 
@@ -27,36 +27,39 @@ public class StylusEventHelper {
         }
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     public boolean onMotionEvent(MotionEvent motionEvent) {
-        boolean isStylusButtonPressed = isStylusButtonPressed(motionEvent);
+        boolean zIsStylusButtonPressed = isStylusButtonPressed(motionEvent);
         switch (motionEvent.getAction()) {
             case 0:
-                this.mIsButtonPressed = isStylusButtonPressed;
+                this.mIsButtonPressed = zIsStylusButtonPressed;
                 if (this.mIsButtonPressed) {
                     return this.mListener.onPressed(motionEvent);
                 }
-                break;
+                return false;
             case 1:
             case 3:
                 if (this.mIsButtonPressed) {
                     this.mIsButtonPressed = false;
                     return this.mListener.onReleased(motionEvent);
                 }
-                break;
+                return false;
             case 2:
                 if (!Utilities.pointInView(this.mView, motionEvent.getX(), motionEvent.getY(), this.mSlop)) {
                     return false;
                 }
-                if (!this.mIsButtonPressed && isStylusButtonPressed) {
+                if (!this.mIsButtonPressed && zIsStylusButtonPressed) {
                     this.mIsButtonPressed = true;
                     return this.mListener.onPressed(motionEvent);
-                } else if (this.mIsButtonPressed && !isStylusButtonPressed) {
+                }
+                if (this.mIsButtonPressed && !zIsStylusButtonPressed) {
                     this.mIsButtonPressed = false;
                     return this.mListener.onReleased(motionEvent);
                 }
-                break;
+                return false;
+            default:
+                return false;
         }
-        return false;
     }
 
     public boolean inStylusButtonPressed() {

@@ -13,6 +13,7 @@ import android.os.UserManager;
 import android.util.Log;
 import com.android.settingslib.R;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ProfileSelectDialog extends DialogFragment implements DialogInterface.OnClickListener {
     private static final boolean DEBUG = Log.isLoggable("ProfileSelectDialog", 3);
@@ -42,8 +43,9 @@ public class ProfileSelectDialog extends DialogFragment implements DialogInterfa
 
     @Override // android.content.DialogInterface.OnClickListener
     public void onClick(DialogInterface dialogInterface, int i) {
+        UserHandle userHandle = this.mSelectedTile.userHandle.get(i);
         this.mSelectedTile.intent.addFlags(32768);
-        getActivity().startActivityAsUser(this.mSelectedTile.intent, this.mSelectedTile.userHandle.get(i));
+        getActivity().startActivityAsUser(this.mSelectedTile.intent, userHandle);
     }
 
     public static void updateUserHandlesIfNeeded(Context context, Tile tile) {

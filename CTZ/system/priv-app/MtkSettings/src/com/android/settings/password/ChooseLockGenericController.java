@@ -6,6 +6,7 @@ import android.os.UserHandle;
 import com.android.settings.R;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ChooseLockGenericController {
     private final Context mContext;
@@ -70,11 +71,10 @@ public class ChooseLockGenericController {
     }
 
     public List<ScreenLockType> getVisibleScreenLockTypes(int i, boolean z) {
-        ScreenLockType[] values;
-        int upgradeQuality = upgradeQuality(i);
+        int iUpgradeQuality = upgradeQuality(i);
         ArrayList arrayList = new ArrayList();
         for (ScreenLockType screenLockType : ScreenLockType.values()) {
-            if (isScreenLockVisible(screenLockType) && (z || isScreenLockEnabled(screenLockType, upgradeQuality))) {
+            if (isScreenLockVisible(screenLockType) && (z || isScreenLockEnabled(screenLockType, iUpgradeQuality))) {
                 arrayList.add(screenLockType);
             }
         }

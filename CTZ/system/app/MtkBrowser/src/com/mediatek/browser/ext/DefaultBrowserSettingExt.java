@@ -11,6 +11,7 @@ import android.util.Log;
 import android.webkit.WebSettings;
 import com.mediatek.common.search.SearchEngine;
 import com.mediatek.search.SearchEngineManager;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserSettingExt implements IBrowserSettingExt {
     @Override // com.mediatek.browser.ext.IBrowserSettingExt
@@ -52,11 +53,11 @@ public class DefaultBrowserSettingExt implements IBrowserSettingExt {
     public String getSearchEngine(SharedPreferences sharedPreferences, Context context) {
         Log.i("@M_DefaultBrowserSettingsExt", "Enter: getSearchEngine --default implement");
         SearchEngine searchEngine = ((SearchEngineManager) context.getSystemService("search_engine_service")).getDefault();
-        String str = "google";
+        String name = "google";
         if (searchEngine != null) {
-            str = searchEngine.getName();
+            name = searchEngine.getName();
         }
-        return sharedPreferences.getString("search_engine", str);
+        return sharedPreferences.getString("search_engine", name);
     }
 
     @Override // com.mediatek.browser.ext.IBrowserSettingExt

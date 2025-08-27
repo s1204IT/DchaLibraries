@@ -2,12 +2,14 @@ package android.support.v4.view;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 /* loaded from: classes.dex */
 public abstract class AbsSavedState implements Parcelable {
     private final Parcelable mSuperState;
     public static final AbsSavedState EMPTY_STATE = new AbsSavedState() { // from class: android.support.v4.view.AbsSavedState.1
     };
     public static final Parcelable.Creator<AbsSavedState> CREATOR = new Parcelable.ClassLoaderCreator<AbsSavedState>() { // from class: android.support.v4.view.AbsSavedState.2
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;Ljava/lang/ClassLoader;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.ClassLoaderCreator
         public AbsSavedState createFromParcel(Parcel in, ClassLoader loader) {
@@ -18,11 +20,13 @@ public abstract class AbsSavedState implements Parcelable {
             return AbsSavedState.EMPTY_STATE;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public AbsSavedState createFromParcel(Parcel in) {
             return createFromParcel(in, (ClassLoader) null);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public AbsSavedState[] newArray(int size) {
             return new AbsSavedState[size];
@@ -33,16 +37,14 @@ public abstract class AbsSavedState implements Parcelable {
         this.mSuperState = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public AbsSavedState(Parcelable superState) {
+    protected AbsSavedState(Parcelable superState) {
         if (superState == null) {
             throw new IllegalArgumentException("superState must not be null");
         }
         this.mSuperState = superState != EMPTY_STATE ? superState : null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public AbsSavedState(Parcel source, ClassLoader loader) {
+    protected AbsSavedState(Parcel source, ClassLoader loader) {
         Parcelable superState = source.readParcelable(loader);
         this.mSuperState = superState != null ? superState : EMPTY_STATE;
     }

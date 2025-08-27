@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SpeedAnglesClassifier extends StrokeClassifier {
     public static final boolean VERBOSE = SystemProperties.getBoolean("debug.falsing_log.spd_ang", Build.IS_DEBUGGABLE);
@@ -43,7 +44,6 @@ public class SpeedAnglesClassifier extends StrokeClassifier {
         return SpeedVarianceEvaluator.evaluate(data.getAnglesVariance()) + SpeedAnglesPercentageEvaluator.evaluate(data.getAnglesPercentage());
     }
 
-    /* loaded from: classes.dex */
     private static class Data {
         private final float DURATION_SCALE = 1.0E8f;
         private final float LENGTH_SCALE = 1.0f;
@@ -63,7 +63,7 @@ public class SpeedAnglesClassifier extends StrokeClassifier {
                 this.mDist += this.mPreviousPoint.dist(point);
             }
             this.mPreviousPoint = point;
-            Point point2 = new Point(((float) point.timeOffsetNano) / 1.0E8f, this.mDist / 1.0f);
+            Point point2 = new Point(point.timeOffsetNano / 1.0E8f, this.mDist / 1.0f);
             if (this.mLastThreePoints.isEmpty() || !this.mLastThreePoints.get(this.mLastThreePoints.size() - 1).equals(point2)) {
                 this.mLastThreePoints.add(point2);
                 if (this.mLastThreePoints.size() == 4) {

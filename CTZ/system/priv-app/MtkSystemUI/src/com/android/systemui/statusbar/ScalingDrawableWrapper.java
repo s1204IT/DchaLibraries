@@ -2,6 +2,7 @@ package com.android.systemui.statusbar;
 
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.DrawableWrapper;
+
 /* loaded from: classes.dex */
 public class ScalingDrawableWrapper extends DrawableWrapper {
     private float mScaleFactor;

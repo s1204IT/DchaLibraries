@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import jp.co.benesse.dcha.util.FileUtils;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class HealthCheckLogic {
     public void getMacAddress(Context context, WifiInfo wifiInfo, HealthCheckDto healthCheckDto) {
@@ -38,7 +39,7 @@ public class HealthCheckLogic {
 
     public void checkSsid(Context context, List<WifiConfiguration> list, HealthCheckDto healthCheckDto) {
         Logger.d("HealthCheckLogic", "checkSsid 0001");
-        String str = null;
+        String ssid = null;
         if (list != null) {
             Logger.d("HealthCheckLogic", "checkSsid 0002");
             Iterator<WifiConfiguration> it = list.iterator();
@@ -49,20 +50,20 @@ public class HealthCheckLogic {
                 WifiConfiguration next = it.next();
                 if (next.status == 0) {
                     Logger.d("HealthCheckLogic", "checkSsid 0003");
-                    str = next.SSID;
+                    ssid = next.SSID;
                     break;
                 }
-                str = next.SSID;
+                ssid = next.SSID;
             }
-            str = parseSsid(str);
+            ssid = parseSsid(ssid);
         }
-        if (TextUtils.isEmpty(str) || context.getString(R.string.unknown_ssid).equals(str)) {
+        if (TextUtils.isEmpty(ssid) || context.getString(R.string.unknown_ssid).equals(ssid)) {
             Logger.d("HealthCheckLogic", "checkSsid 0004");
             healthCheckDto.isCheckedSsid = R.string.health_check_ng;
             healthCheckDto.mySsid = context.getString(R.string.health_check_ng);
         } else {
             Logger.d("HealthCheckLogic", "checkSsid 0005");
-            healthCheckDto.mySsid = str;
+            healthCheckDto.mySsid = ssid;
             healthCheckDto.isCheckedSsid = R.string.health_check_ok;
         }
         Logger.d("HealthCheckLogic", "checkSsid 0006");
@@ -99,40 +100,40 @@ public class HealthCheckLogic {
     }
 
     private int getNetmask(Context context, int i) {
-        int i2;
+        int iReverseBytes;
         Logger.d("HealthCheckLogic", "getNetmask 0001");
         try {
-            byte[] array = ByteBuffer.allocate(4).putInt(i).array();
-            int length = array.length - 1;
-            for (int i3 = 0; length > i3; i3++) {
-                byte b = array[length];
-                array[length] = array[i3];
-                array[i3] = b;
+            byte[] bArrArray = ByteBuffer.allocate(4).putInt(i).array();
+            int length = bArrArray.length - 1;
+            for (int i2 = 0; length > i2; i2++) {
+                byte b = bArrArray[length];
+                bArrArray[length] = bArrArray[i2];
+                bArrArray[i2] = b;
                 length--;
             }
-            i2 = 0;
-            for (InterfaceAddress interfaceAddress : NetworkInterface.getByInetAddress(InetAddress.getByAddress(array)).getInterfaceAddresses()) {
+            iReverseBytes = 0;
+            for (InterfaceAddress interfaceAddress : NetworkInterface.getByInetAddress(InetAddress.getByAddress(bArrArray)).getInterfaceAddresses()) {
                 try {
                     Logger.d("HealthCheckLogic", "getNetmask 0002");
                     short networkPrefixLength = interfaceAddress.getNetworkPrefixLength();
                     if (networkPrefixLength >= 0 && networkPrefixLength <= 32) {
                         Logger.d("HealthCheckLogic", "getNetmask 0003");
-                        i2 = Integer.reverseBytes((-1) << (32 - networkPrefixLength));
+                        iReverseBytes = Integer.reverseBytes((-1) << (32 - networkPrefixLength));
                     }
                 } catch (Exception e) {
                     Logger.e("HealthCheckLogic", "getNetmask 0004");
                     Logger.e("HealthCheckLogic", "getNetmask 0005");
-                    return i2;
+                    return iReverseBytes;
                 }
             }
         } catch (Exception e2) {
-            i2 = 0;
+            iReverseBytes = 0;
         }
         Logger.e("HealthCheckLogic", "getNetmask 0005");
-        return i2;
+        return iReverseBytes;
     }
 
-    public void checkNetConnection(HealthChkMngDto healthChkMngDto, HealthCheckDto healthCheckDto) {
+    public void checkNetConnection(HealthChkMngDto healthChkMngDto, HealthCheckDto healthCheckDto) throws InterruptedException {
         Logger.d("HealthCheckLogic", "checkNetConnection 0001");
         if (healthChkMngDto != null) {
             Logger.d("HealthCheckLogic", "checkNetConnection 0002");
@@ -152,171 +153,186 @@ public class HealthCheckLogic {
         Logger.d("HealthCheckLogic", "checkNetConnection 0006");
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [399=5, 403=9] */
     /* JADX WARN: Code restructure failed: missing block: B:27:0x00c6, code lost:
+    
         r23 = r6;
      */
     /* JADX WARN: Code restructure failed: missing block: B:28:0x00cc, code lost:
+    
         r15 = java.lang.System.currentTimeMillis() - r19;
      */
     /* JADX WARN: Code restructure failed: missing block: B:29:0x00cf, code lost:
+    
         jp.co.benesse.dcha.util.FileUtils.close(r12);
      */
     /* JADX WARN: Code restructure failed: missing block: B:30:0x00d3, code lost:
+    
         r4 = r23;
      */
     /* JADX WARN: Code restructure failed: missing block: B:31:0x00d5, code lost:
+    
         jp.co.benesse.dcha.util.FileUtils.close(r4);
      */
     /* JADX WARN: Code restructure failed: missing block: B:32:0x00d9, code lost:
+    
         r14 = r14 + 1;
         r17 = r21;
         r4 = 1024;
      */
     /* JADX WARN: Code restructure failed: missing block: B:33:0x00e2, code lost:
+    
         r0 = th;
      */
     /* JADX WARN: Code restructure failed: missing block: B:35:0x00e4, code lost:
+    
         r0 = e;
      */
     /* JADX WARN: Code restructure failed: missing block: B:36:0x00e5, code lost:
+    
         r17 = r21;
      */
     /* JADX WARN: Code restructure failed: missing block: B:37:0x00e8, code lost:
+    
         r0 = e;
      */
     /* JADX WARN: Code restructure failed: missing block: B:38:0x00e9, code lost:
+    
         r4 = r23;
         r17 = r21;
      */
     /* JADX WARN: Code restructure failed: missing block: B:49:0x00fc, code lost:
+    
         r12 = null;
      */
     /* JADX WARN: Code restructure failed: missing block: B:55:0x010f, code lost:
+    
         r12 = null;
      */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void checkDownloadSpeed(Context context, HealthChkMngDto healthChkMngDto, HealthCheckDto healthCheckDto) {
+    public void checkDownloadSpeed(Context context, HealthChkMngDto healthChkMngDto, HealthCheckDto healthCheckDto) throws Throwable {
         long j;
         long j2;
         BufferedInputStream bufferedInputStream;
         InputStream inputStream;
+        long jCurrentTimeMillis;
         long j3;
-        long j4;
         int length;
         int i;
         BufferedInputStream bufferedInputStream2;
         BufferedInputStream bufferedInputStream3;
-        long j5;
+        long j4;
         BufferedInputStream bufferedInputStream4;
         Logger.d("HealthCheckLogic", "checkDownloadSpeed 0001");
         String[] urlList = getUrlList(healthChkMngDto);
         if (urlList != null) {
             Logger.d("HealthCheckLogic", "checkDownloadSpeed 0002");
-            long currentTimeMillis = System.currentTimeMillis();
-            String substring = healthChkMngDto.url.substring(0, healthChkMngDto.url.lastIndexOf("/") + 1);
+            long jCurrentTimeMillis2 = System.currentTimeMillis();
+            String strSubstring = healthChkMngDto.url.substring(0, healthChkMngDto.url.lastIndexOf("/") + 1);
             int i2 = 1024;
             byte[] bArr = new byte[1024];
-            int parseInt = Integer.parseInt(urlList[0]) * 1000;
+            int i3 = Integer.parseInt(urlList[0]) * 1000;
             try {
                 try {
                     length = urlList.length;
                     i = 1;
+                    jCurrentTimeMillis = 0;
                     j3 = 0;
-                    j4 = 0;
-                } catch (Throwable th) {
-                    th = th;
+                } catch (Exception e) {
+                    e = e;
                     bufferedInputStream = null;
+                    inputStream = null;
+                    jCurrentTimeMillis = 0;
+                    j3 = 0;
                 }
-            } catch (Exception e) {
-                e = e;
-                bufferedInputStream = null;
-                inputStream = null;
-                j3 = 0;
-                j4 = 0;
-            }
-            loop0: while (i < length) {
-                try {
-                    URLConnection openConnection = new URL(substring + urlList[i]).openConnection();
-                    openConnection.setConnectTimeout(parseInt);
-                    openConnection.setReadTimeout(parseInt);
-                    openConnection.connect();
-                    inputStream = openConnection.getInputStream();
+                loop0: while (i < length) {
                     try {
-                        bufferedInputStream3 = new BufferedInputStream(inputStream, i2);
+                        URLConnection uRLConnectionOpenConnection = new URL(strSubstring + urlList[i]).openConnection();
+                        uRLConnectionOpenConnection.setConnectTimeout(i3);
+                        uRLConnectionOpenConnection.setReadTimeout(i3);
+                        uRLConnectionOpenConnection.connect();
+                        inputStream = uRLConnectionOpenConnection.getInputStream();
                         try {
-                            long currentTimeMillis2 = System.currentTimeMillis();
-                            j5 = 0;
-                        } catch (Exception e2) {
-                            e = e2;
-                            bufferedInputStream = bufferedInputStream3;
+                            bufferedInputStream3 = new BufferedInputStream(inputStream, i2);
+                            try {
+                                long jCurrentTimeMillis3 = System.currentTimeMillis();
+                                j4 = 0;
+                            } catch (Exception e2) {
+                                e = e2;
+                                bufferedInputStream = bufferedInputStream3;
+                            } catch (Throwable th) {
+                                th = th;
+                                bufferedInputStream = bufferedInputStream3;
+                            }
+                        } catch (Exception e3) {
+                            e = e3;
+                            bufferedInputStream = null;
                         } catch (Throwable th2) {
                             th = th2;
-                            bufferedInputStream = bufferedInputStream3;
+                            bufferedInputStream = null;
                         }
-                    } catch (Exception e3) {
-                        e = e3;
-                        bufferedInputStream = null;
-                    } catch (Throwable th3) {
-                        th = th3;
+                    } catch (Exception e4) {
+                        e = e4;
                         bufferedInputStream = null;
                     }
-                } catch (Exception e4) {
-                    e = e4;
-                    bufferedInputStream = null;
-                }
-                while (true) {
-                    int read = bufferedInputStream3.read(bArr);
-                    if (read == -1) {
-                        break;
-                    }
-                    bufferedInputStream4 = bufferedInputStream3;
-                    j5 += read;
-                    try {
+                    while (true) {
+                        int i4 = bufferedInputStream3.read(bArr);
+                        if (i4 == -1) {
+                            break;
+                        }
+                        bufferedInputStream4 = bufferedInputStream3;
+                        j4 += i4;
                         try {
-                            if (healthCheckDto.isCancel()) {
-                                Logger.d("HealthCheckLogic", "checkDownloadSpeed 0003");
-                                break loop0;
-                            } else if (parseInt < ((int) (System.currentTimeMillis() - currentTimeMillis))) {
-                                Logger.d("HealthCheckLogic", "checkDownloadSpeed 0004");
-                                break loop0;
-                            } else {
-                                bufferedInputStream3 = bufferedInputStream4;
+                            try {
+                                if (healthCheckDto.isCancel()) {
+                                    Logger.d("HealthCheckLogic", "checkDownloadSpeed 0003");
+                                    break loop0;
+                                } else {
+                                    if (i3 < ((int) (System.currentTimeMillis() - jCurrentTimeMillis2))) {
+                                        Logger.d("HealthCheckLogic", "checkDownloadSpeed 0004");
+                                        break loop0;
+                                    }
+                                    bufferedInputStream3 = bufferedInputStream4;
+                                }
+                            } catch (Exception e5) {
+                                e = e5;
+                                bufferedInputStream = bufferedInputStream4;
                             }
-                        } catch (Throwable th4) {
-                            th = th4;
+                        } catch (Throwable th3) {
+                            th = th3;
                             bufferedInputStream = bufferedInputStream4;
                             FileUtils.close(inputStream);
                             FileUtils.close(bufferedInputStream);
                             throw th;
                         }
-                    } catch (Exception e5) {
-                        e = e5;
-                        bufferedInputStream = bufferedInputStream4;
+                        try {
+                            Logger.d("HealthCheckLogic", "checkDownloadSpeed 0005", e);
+                            FileUtils.close(inputStream);
+                            FileUtils.close(bufferedInputStream);
+                            j = jCurrentTimeMillis;
+                            j2 = j3;
+                        } catch (Throwable th4) {
+                            th = th4;
+                            FileUtils.close(inputStream);
+                            FileUtils.close(bufferedInputStream);
+                            throw th;
+                        }
                     }
-                    try {
-                        Logger.d("HealthCheckLogic", "checkDownloadSpeed 0005", e);
-                        FileUtils.close(inputStream);
-                        FileUtils.close(bufferedInputStream);
-                        j = j3;
-                        j2 = j4;
-                    } catch (Throwable th5) {
-                        th = th5;
-                        FileUtils.close(inputStream);
-                        FileUtils.close(bufferedInputStream);
-                        throw th;
-                    }
+                    bufferedInputStream2 = bufferedInputStream4;
+                    break loop0;
                 }
-                bufferedInputStream2 = bufferedInputStream4;
-                break loop0;
+                bufferedInputStream2 = null;
+                inputStream = null;
+                FileUtils.close(inputStream);
+                FileUtils.close(bufferedInputStream2);
+                j = jCurrentTimeMillis;
+                j2 = j3;
+            } catch (Throwable th5) {
+                th = th5;
+                bufferedInputStream = null;
             }
-            bufferedInputStream2 = null;
-            inputStream = null;
-            FileUtils.close(inputStream);
-            FileUtils.close(bufferedInputStream2);
-            j = j3;
-            j2 = j4;
         } else {
             j = 0;
             j2 = 0;
@@ -332,7 +348,8 @@ public class HealthCheckLogic {
             if (str.startsWith("0x")) {
                 Logger.d("HealthCheckLogic", "parseSsid 0001");
                 return str.replaceFirst("0x", "");
-            } else if (length > 1 && str.charAt(0) == '\"') {
+            }
+            if (length > 1 && str.charAt(0) == '\"') {
                 int i = length - 1;
                 if (str.charAt(i) == '\"') {
                     Logger.d("HealthCheckLogic", "parseSsid 0002");
@@ -355,7 +372,7 @@ public class HealthCheckLogic {
         return str;
     }
 
-    public String[] getUrlList(HealthChkMngDto healthChkMngDto) {
+    public String[] getUrlList(HealthChkMngDto healthChkMngDto) throws InterruptedException, NumberFormatException {
         Logger.d("HealthCheckLogic", "getUrlList 0001");
         String[] strArr = null;
         if (healthChkMngDto != null) {
@@ -366,12 +383,12 @@ public class HealthCheckLogic {
             if (response != null) {
                 Logger.d("HealthCheckLogic", "getUrlList 0003");
                 try {
-                    String[] split = response.getEntity().split("\n");
-                    Integer.parseInt(split[0]);
-                    if (split.length < 2) {
+                    String[] strArrSplit = response.getEntity().split("\n");
+                    Integer.parseInt(strArrSplit[0]);
+                    if (strArrSplit.length < 2) {
                         Logger.d("HealthCheckLogic", "getUrlList 0004");
                     } else {
-                        strArr = split;
+                        strArr = strArrSplit;
                     }
                 } catch (Exception e) {
                     Logger.d("HealthCheckLogic", "getUrlList 0005", e);

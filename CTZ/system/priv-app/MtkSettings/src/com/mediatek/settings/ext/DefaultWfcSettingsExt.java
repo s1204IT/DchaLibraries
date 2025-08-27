@@ -1,11 +1,13 @@
 package com.mediatek.settings.ext;
 
+import android.R;
 import android.content.Context;
 import android.support.v14.preference.PreferenceFragment;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 import com.android.ims.ImsManager;
+
 /* loaded from: classes.dex */
 public class DefaultWfcSettingsExt implements IWfcSettingsExt {
     public static final int CONFIG_CHANGE = 4;
@@ -59,16 +61,16 @@ public class DefaultWfcSettingsExt implements IWfcSettingsExt {
         if (ImsManager.isWfcEnabledByUser(context)) {
             switch (i) {
                 case 0:
-                    return 17041065;
+                    return R.string.org_name;
                 case 1:
-                    return 17041064;
+                    return R.string.orgTypeWork;
                 case 2:
-                    return 17041066;
+                    return R.string.org_unit;
                 default:
                     Log.e(TAG, "Unexpected WFC mode value: " + i);
                     break;
             }
         }
-        return 17041099;
+        return R.string.permdesc_answerPhoneCalls;
     }
 }

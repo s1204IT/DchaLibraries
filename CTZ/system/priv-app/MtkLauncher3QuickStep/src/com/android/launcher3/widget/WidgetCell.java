@@ -16,6 +16,7 @@ import com.android.launcher3.StylusEventHelper;
 import com.android.launcher3.WidgetPreviewLoader;
 import com.android.launcher3.graphics.DrawableFactory;
 import com.android.launcher3.model.WidgetItem;
+
 /* loaded from: classes.dex */
 public class WidgetCell extends LinearLayout implements View.OnLayoutChangeListener {
     private static final boolean DEBUG = false;
@@ -115,14 +116,16 @@ public class WidgetCell extends LinearLayout implements View.OnLayoutChangeListe
     public void applyPreview(Bitmap bitmap) {
         if (this.mApplyBitmapDeferred) {
             this.mDeferredBitmap = bitmap;
-        } else if (bitmap != null) {
+            return;
+        }
+        if (bitmap != null) {
             this.mWidgetImage.setBitmap(bitmap, DrawableFactory.get(getContext()).getBadgeForUser(this.mItem.user, getContext()));
             if (this.mAnimatePreview) {
                 this.mWidgetImage.setAlpha(0.0f);
                 this.mWidgetImage.animate().alpha(1.0f).setDuration(90L);
-                return;
+            } else {
+                this.mWidgetImage.setAlpha(1.0f);
             }
-            this.mWidgetImage.setAlpha(1.0f);
         }
     }
 
@@ -141,11 +144,11 @@ public class WidgetCell extends LinearLayout implements View.OnLayoutChangeListe
 
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
         if (this.mStylusEventHelper.onMotionEvent(motionEvent)) {
             return true;
         }
-        return onTouchEvent;
+        return zOnTouchEvent;
     }
 
     private String getTagToString() {

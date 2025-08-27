@@ -15,6 +15,7 @@ import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.graphics.IconPalette;
 import com.android.launcher3.util.PackageUserKey;
+
 /* loaded from: classes.dex */
 public class NotificationInfo implements View.OnClickListener {
     public final boolean autoCancel;
@@ -61,7 +62,7 @@ public class NotificationInfo implements View.OnClickListener {
     }
 
     @Override // android.view.View.OnClickListener
-    public void onClick(View view) {
+    public void onClick(View view) throws PendingIntent.CanceledException {
         if (this.intent == null) {
             return;
         }
@@ -83,10 +84,10 @@ public class NotificationInfo implements View.OnClickListener {
             return this.mIconDrawable;
         }
         this.mIconColor = IconPalette.resolveContrastColor(context, this.mIconColor, i);
-        Drawable mutate = this.mIconDrawable.mutate();
-        mutate.setTintList(null);
-        mutate.setTint(this.mIconColor);
-        return mutate;
+        Drawable drawableMutate = this.mIconDrawable.mutate();
+        drawableMutate.setTintList(null);
+        drawableMutate.setTint(this.mIconColor);
+        return drawableMutate;
     }
 
     public boolean isIconLarge() {

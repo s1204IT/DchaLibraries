@@ -14,6 +14,7 @@ import com.android.systemui.statusbar.policy.BatteryController;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class CarBatteryController extends BroadcastReceiver implements BatteryController {
     private BatteryViewHandler mBatteryViewHandler;
@@ -38,7 +39,6 @@ public class CarBatteryController extends BroadcastReceiver implements BatteryCo
         }
     };
 
-    /* loaded from: classes.dex */
     public interface BatteryViewHandler {
         void hideBatteryView();
 
@@ -64,6 +64,7 @@ public class CarBatteryController extends BroadcastReceiver implements BatteryCo
     public void setPowerSaveMode(boolean z) {
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(BatteryController.BatteryStateChangeCallback batteryStateChangeCallback) {
         this.mChangeCallbacks.add(batteryStateChangeCallback);
@@ -71,6 +72,7 @@ public class CarBatteryController extends BroadcastReceiver implements BatteryCo
         batteryStateChangeCallback.onPowerSaveChanged(false);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(BatteryController.BatteryStateChangeCallback batteryStateChangeCallback) {
         this.mChangeCallbacks.remove(batteryStateChangeCallback);
@@ -101,12 +103,14 @@ public class CarBatteryController extends BroadcastReceiver implements BatteryCo
             updateBatteryLevel(intExtra);
             if (intExtra != -1 && this.mBatteryViewHandler != null) {
                 this.mBatteryViewHandler.showBatteryView();
+                return;
             }
-        } else if ("android.bluetooth.headsetclient.profile.action.CONNECTION_STATE_CHANGED".equals(action)) {
+            return;
+        }
+        if ("android.bluetooth.headsetclient.profile.action.CONNECTION_STATE_CHANGED".equals(action)) {
             int intExtra2 = intent.getIntExtra("android.bluetooth.profile.extra.STATE", -1);
             if (Log.isLoggable("CarBatteryController", 3)) {
-                int intExtra3 = intent.getIntExtra("android.bluetooth.profile.extra.PREVIOUS_STATE", -1);
-                Log.d("CarBatteryController", "ACTION_CONNECTION_STATE_CHANGED event: " + intExtra3 + " -> " + intExtra2);
+                Log.d("CarBatteryController", "ACTION_CONNECTION_STATE_CHANGED event: " + intent.getIntExtra("android.bluetooth.profile.extra.PREVIOUS_STATE", -1) + " -> " + intExtra2);
             }
             updateBatteryIcon((BluetoothDevice) intent.getExtra("android.bluetooth.device.extra.DEVICE"), intExtra2);
         }
@@ -159,7 +163,9 @@ public class CarBatteryController extends BroadcastReceiver implements BatteryCo
                 return;
             }
             updateBatteryLevel(currentAgEvents.getInt("android.bluetooth.headsetclient.extra.BATTERY_LEVEL", -1));
-        } else if (i == 0) {
+            return;
+        }
+        if (i == 0) {
             if (Log.isLoggable("CarBatteryController", 3)) {
                 Log.d("CarBatteryController", "Device disconnected");
             }

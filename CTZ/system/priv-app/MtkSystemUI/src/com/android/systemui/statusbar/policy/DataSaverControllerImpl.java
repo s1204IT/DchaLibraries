@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.RemoteException;
 import com.android.systemui.statusbar.policy.DataSaverController;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class DataSaverControllerImpl implements DataSaverController {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -28,8 +29,7 @@ public class DataSaverControllerImpl implements DataSaverController {
         this.mPolicyManager = NetworkPolicyManager.from(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleRestrictBackgroundChanged(boolean z) {
+    private void handleRestrictBackgroundChanged(boolean z) {
         synchronized (this.mListeners) {
             for (int i = 0; i < this.mListeners.size(); i++) {
                 this.mListeners.get(i).onDataSaverChanged(z);
@@ -37,6 +37,7 @@ public class DataSaverControllerImpl implements DataSaverController {
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(DataSaverController.Listener listener) {
         synchronized (this.mListeners) {
@@ -48,6 +49,7 @@ public class DataSaverControllerImpl implements DataSaverController {
         listener.onDataSaverChanged(isDataSaverEnabled());
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(DataSaverController.Listener listener) {
         synchronized (this.mListeners) {

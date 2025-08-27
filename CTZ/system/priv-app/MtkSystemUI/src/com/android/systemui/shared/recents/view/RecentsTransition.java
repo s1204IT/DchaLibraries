@@ -13,6 +13,7 @@ import android.view.RenderNode;
 import android.view.ThreadedRenderer;
 import android.view.View;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class RecentsTransition {
     public static ActivityOptions createAspectScaleAnimation(Context context, Handler handler, boolean z, AppTransitionAnimationSpecsFuture appTransitionAnimationSpecsFuture, final Runnable runnable) {
@@ -44,6 +45,7 @@ public class RecentsTransition {
 
     public static Bitmap drawViewIntoHardwareBitmap(int i, int i2, final View view, final float f, final int i3) {
         return createHardwareBitmap(i, i2, new Consumer<Canvas>() { // from class: com.android.systemui.shared.recents.view.RecentsTransition.3
+            /* JADX DEBUG: Method merged with bridge method: accept(Ljava/lang/Object;)V */
             @Override // java.util.function.Consumer
             public void accept(Canvas canvas) {
                 canvas.scale(f, f);
@@ -58,12 +60,12 @@ public class RecentsTransition {
     }
 
     public static Bitmap createHardwareBitmap(int i, int i2, Consumer<Canvas> consumer) {
-        RenderNode create = RenderNode.create("RecentsTransition", (View) null);
-        create.setLeftTopRightBottom(0, 0, i, i2);
-        create.setClipToBounds(false);
-        DisplayListCanvas start = create.start(i, i2);
-        consumer.accept(start);
-        create.end(start);
-        return ThreadedRenderer.createHardwareBitmap(create, i, i2);
+        RenderNode renderNodeCreate = RenderNode.create("RecentsTransition", (View) null);
+        renderNodeCreate.setLeftTopRightBottom(0, 0, i, i2);
+        renderNodeCreate.setClipToBounds(false);
+        DisplayListCanvas displayListCanvasStart = renderNodeCreate.start(i, i2);
+        consumer.accept(displayListCanvasStart);
+        renderNodeCreate.end(displayListCanvasStart);
+        return ThreadedRenderer.createHardwareBitmap(renderNodeCreate, i, i2);
     }
 }

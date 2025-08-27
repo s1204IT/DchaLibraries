@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.os.Handler;
 import android.provider.Settings;
+
 /* loaded from: classes.dex */
 public interface SettingsObserver {
     void onSettingChanged(boolean z);
@@ -12,7 +13,6 @@ public interface SettingsObserver {
 
     void unregister();
 
-    /* loaded from: classes.dex */
     public static abstract class Secure extends ContentObserver implements SettingsObserver {
         private String mKeySetting;
         private ContentResolver mResolver;
@@ -44,7 +44,6 @@ public interface SettingsObserver {
         }
     }
 
-    /* loaded from: classes.dex */
     public static abstract class System extends ContentObserver implements SettingsObserver {
         private String mKeySetting;
         private ContentResolver mResolver;

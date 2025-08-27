@@ -7,6 +7,7 @@ import android.view.accessibility.CaptioningManager;
 import android.widget.TextView;
 import com.android.internal.widget.SubtitleView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class PresetPreference extends ListDialogPreference {
     private final CaptioningManager mCaptioningManager;
@@ -25,10 +26,10 @@ public class PresetPreference extends ListDialogPreference {
 
     @Override // com.android.settings.accessibility.ListDialogPreference
     protected void onBindListItem(View view, int i) {
-        View findViewById = view.findViewById(R.id.preview_viewport);
-        SubtitleView findViewById2 = view.findViewById(R.id.preview);
-        CaptionPropertiesFragment.applyCaptionProperties(this.mCaptioningManager, findViewById2, findViewById, getValueAt(i));
-        findViewById2.setTextSize(32.0f * getContext().getResources().getDisplayMetrics().density);
+        View viewFindViewById = view.findViewById(R.id.preview_viewport);
+        SubtitleView subtitleViewFindViewById = view.findViewById(R.id.preview);
+        CaptionPropertiesFragment.applyCaptionProperties(this.mCaptioningManager, subtitleViewFindViewById, viewFindViewById, getValueAt(i));
+        subtitleViewFindViewById.setTextSize(32.0f * getContext().getResources().getDisplayMetrics().density);
         CharSequence titleAt = getTitleAt(i);
         if (titleAt != null) {
             ((TextView) view.findViewById(R.id.summary)).setText(titleAt);

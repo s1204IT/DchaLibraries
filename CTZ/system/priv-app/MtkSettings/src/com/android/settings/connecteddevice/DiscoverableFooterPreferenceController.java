@@ -21,10 +21,12 @@ import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.widget.FooterPreference;
 import com.android.settingslib.widget.FooterPreferenceMixin;
 import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class DiscoverableFooterPreferenceController extends BasePreferenceController implements LifecycleObserver, OnPause, OnResume {
     private static final String KEY = "discoverable_footer_preference";
     private AlwaysDiscoverable mAlwaysDiscoverable;
+
     @VisibleForTesting
     BroadcastReceiver mBluetoothChangedReceiver;
     private FooterPreferenceMixin mFooterPreferenceMixin;
@@ -109,8 +111,7 @@ public class DiscoverableFooterPreferenceController extends BasePreferenceContro
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateFooterPreferenceTitle(int i) {
+    private void updateFooterPreferenceTitle(int i) {
         if (i == 12) {
             this.mPreference.setTitle(getPreferenceTitle());
         } else {

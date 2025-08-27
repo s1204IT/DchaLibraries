@@ -2,7 +2,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_active="true">
         <shape android:shape="rectangle">
-            <stroke android:width="@dimen/spring_loaded_panel_border" android:color="@color/spring_loaded_highlighted_panel_border_color"/>
+            <stroke
+                android:width="@dimen/spring_loaded_panel_border"
+                android:color="@color/spring_loaded_highlighted_panel_border_color"/>
             <solid android:color="@color/spring_loaded_panel_color"/>
         </shape>
     </item>

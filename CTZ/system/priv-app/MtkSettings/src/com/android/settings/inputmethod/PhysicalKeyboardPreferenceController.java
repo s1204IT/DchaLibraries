@@ -12,6 +12,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PhysicalKeyboardPreferenceController extends AbstractPreferenceController implements InputManager.InputDeviceListener, PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private final InputManager mIm;
@@ -75,14 +76,14 @@ public class PhysicalKeyboardPreferenceController extends AbstractPreferenceCont
             this.mPreference.setSummary(R.string.disconnected);
             return;
         }
-        String str = null;
+        String string = null;
         for (PhysicalKeyboardFragment.HardKeyboardDeviceInfo hardKeyboardDeviceInfo : hardKeyboards) {
-            if (str == null) {
-                str = hardKeyboardDeviceInfo.mDeviceName;
+            if (string == null) {
+                string = hardKeyboardDeviceInfo.mDeviceName;
             } else {
-                str = this.mContext.getString(R.string.join_many_items_middle, str, hardKeyboardDeviceInfo.mDeviceName);
+                string = this.mContext.getString(R.string.join_many_items_middle, string, hardKeyboardDeviceInfo.mDeviceName);
             }
         }
-        this.mPreference.setSummary(str);
+        this.mPreference.setSummary(string);
     }
 }

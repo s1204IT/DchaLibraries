@@ -9,7 +9,9 @@ import android.util.ArraySet;
 import android.util.Log;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+import java.util.Iterator;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class AppPermissionsPreferenceController extends BasePreferenceController {
     private static final String KEY_APP_PERMISSION_GROUPS = "manage_perms";
@@ -30,13 +32,12 @@ public class AppPermissionsPreferenceController extends BasePreferenceController
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public CharSequence getSummary() {
-        String[] strArr;
         Set<String> grantedPermissionGroups = getGrantedPermissionGroups(getAllPermissionsInGroups());
-        CharSequence charSequence = null;
+        CharSequence charSequenceConcatSummaryText = null;
         int i = 0;
         for (String str : PERMISSION_GROUPS) {
             if (grantedPermissionGroups.contains(str)) {
-                charSequence = concatSummaryText(charSequence, str);
+                charSequenceConcatSummaryText = concatSummaryText(charSequenceConcatSummaryText, str);
                 i++;
                 if (i >= 3) {
                     break;
@@ -44,13 +45,12 @@ public class AppPermissionsPreferenceController extends BasePreferenceController
             }
         }
         if (i > 0) {
-            return this.mContext.getString(R.string.app_permissions_summary, charSequence);
+            return this.mContext.getString(R.string.app_permissions_summary, charSequenceConcatSummaryText);
         }
         return null;
     }
 
     private Set<String> getGrantedPermissionGroups(Set<String> set) {
-        PermissionInfo[] permissionInfoArr;
         ArraySet arraySet = new ArraySet();
         for (PackageInfo packageInfo : this.mPackageManager.getInstalledPackages(4096)) {
             if (packageInfo.permissions != null) {
@@ -79,12 +79,12 @@ public class AppPermissionsPreferenceController extends BasePreferenceController
     }
 
     private Set<String> getAllPermissionsInGroups() {
-        String[] strArr;
         ArraySet arraySet = new ArraySet();
         for (String str : PERMISSION_GROUPS) {
             try {
-                for (PermissionInfo permissionInfo : this.mPackageManager.queryPermissionsByGroup(str, 0)) {
-                    arraySet.add(permissionInfo.name);
+                Iterator<PermissionInfo> it = this.mPackageManager.queryPermissionsByGroup(str, 0).iterator();
+                while (it.hasNext()) {
+                    arraySet.add(it.next().name);
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 Log.e(TAG, "Error getting permissions in group " + str, e);

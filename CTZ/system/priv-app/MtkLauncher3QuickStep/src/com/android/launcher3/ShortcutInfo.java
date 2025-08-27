@@ -9,6 +9,7 @@ import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.compat.UserManagerCompat;
 import com.android.launcher3.shortcuts.ShortcutInfoCompat;
 import com.android.launcher3.util.ContentWriter;
+
 /* loaded from: classes.dex */
 public class ShortcutInfo extends ItemInfoWithIcon {
     public static final int DEFAULT = 0;

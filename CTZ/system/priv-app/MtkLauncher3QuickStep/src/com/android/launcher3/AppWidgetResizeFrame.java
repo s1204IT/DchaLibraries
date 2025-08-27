@@ -19,6 +19,7 @@ import com.android.launcher3.dragndrop.DragLayer;
 import com.android.launcher3.util.FocusLogic;
 import com.android.launcher3.views.BaseDragLayer;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
+
 /* loaded from: classes.dex */
 public class AppWidgetResizeFrame extends AbstractFloatingView implements View.OnKeyListener {
     private static final float DIMMED_HANDLE_ALPHA = 0.0f;
@@ -204,8 +205,10 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
     }
 
     private void resizeWidgetIfNeeded(boolean z) {
-        int spanIncrement = getSpanIncrement(((this.mDeltaX + this.mDeltaXAddOn) / this.mCellLayout.getCellWidth()) - this.mRunningHInc);
-        int spanIncrement2 = getSpanIncrement(((this.mDeltaY + this.mDeltaYAddOn) / this.mCellLayout.getCellHeight()) - this.mRunningVInc);
+        float cellWidth = this.mCellLayout.getCellWidth();
+        float cellHeight = this.mCellLayout.getCellHeight();
+        int spanIncrement = getSpanIncrement(((this.mDeltaX + this.mDeltaXAddOn) / cellWidth) - this.mRunningHInc);
+        int spanIncrement2 = getSpanIncrement(((this.mDeltaY + this.mDeltaYAddOn) / cellHeight) - this.mRunningVInc);
         if (!z && spanIncrement == 0 && spanIncrement2 == 0) {
             return;
         }
@@ -217,20 +220,20 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         int i3 = layoutParams.useTmpCoords ? layoutParams.tmpCellX : layoutParams.cellX;
         int i4 = layoutParams.useTmpCoords ? layoutParams.tmpCellY : layoutParams.cellY;
         this.mTempRange1.set(i3, i + i3);
-        int applyDeltaAndBound = this.mTempRange1.applyDeltaAndBound(this.mLeftBorderActive, this.mRightBorderActive, spanIncrement, this.mMinHSpan, this.mCellLayout.getCountX(), this.mTempRange2);
+        int iApplyDeltaAndBound = this.mTempRange1.applyDeltaAndBound(this.mLeftBorderActive, this.mRightBorderActive, spanIncrement, this.mMinHSpan, this.mCellLayout.getCountX(), this.mTempRange2);
         int i5 = this.mTempRange2.start;
         int size = this.mTempRange2.size();
-        if (applyDeltaAndBound != 0) {
+        if (iApplyDeltaAndBound != 0) {
             this.mDirectionVector[0] = this.mLeftBorderActive ? -1 : 1;
         }
         this.mTempRange1.set(i4, i2 + i4);
-        int applyDeltaAndBound2 = this.mTempRange1.applyDeltaAndBound(this.mTopBorderActive, this.mBottomBorderActive, spanIncrement2, this.mMinVSpan, this.mCellLayout.getCountY(), this.mTempRange2);
+        int iApplyDeltaAndBound2 = this.mTempRange1.applyDeltaAndBound(this.mTopBorderActive, this.mBottomBorderActive, spanIncrement2, this.mMinVSpan, this.mCellLayout.getCountY(), this.mTempRange2);
         int i6 = this.mTempRange2.start;
         int size2 = this.mTempRange2.size();
-        if (applyDeltaAndBound2 != 0) {
+        if (iApplyDeltaAndBound2 != 0) {
             this.mDirectionVector[1] = this.mTopBorderActive ? -1 : 1;
         }
-        if (!z && applyDeltaAndBound2 == 0 && applyDeltaAndBound == 0) {
+        if (!z && iApplyDeltaAndBound2 == 0 && iApplyDeltaAndBound == 0) {
             return;
         }
         if (z) {
@@ -248,8 +251,8 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             layoutParams.tmpCellY = i6;
             layoutParams.cellHSpan = size;
             layoutParams.cellVSpan = size2;
-            this.mRunningVInc += applyDeltaAndBound2;
-            this.mRunningHInc += applyDeltaAndBound;
+            this.mRunningVInc += iApplyDeltaAndBound2;
+            this.mRunningHInc += iApplyDeltaAndBound;
             if (!z) {
                 updateWidgetSizeRanges(this.mWidgetView, this.mLauncher, size, size2);
             }
@@ -257,8 +260,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         this.mWidgetView.requestLayout();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void updateWidgetSizeRanges(AppWidgetHostView appWidgetHostView, Launcher launcher, int i, int i2) {
+    static void updateWidgetSizeRanges(AppWidgetHostView appWidgetHostView, Launcher launcher, int i, int i2) {
         getWidgetSizeRanges(launcher, i, i2, sTmpRect);
         appWidgetHostView.updateAppWidgetSize(null, sTmpRect.left, sTmpRect.top, sTmpRect.right, sTmpRect.bottom);
     }
@@ -274,8 +276,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             rect = new Rect();
         }
         float f = context.getResources().getDisplayMetrics().density;
-        int i3 = (int) ((sCellSize[0].y * i2) / f);
-        rect.set((int) ((i * sCellSize[1].x) / f), i3, (int) ((sCellSize[0].x * i) / f), (int) ((i2 * sCellSize[1].y) / f));
+        rect.set((int) ((i * sCellSize[1].x) / f), (int) ((sCellSize[0].y * i2) / f), (int) ((sCellSize[0].x * i) / f), (int) ((i2 * sCellSize[1].y) / f));
         return rect;
     }
 
@@ -303,19 +304,19 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
     private void getSnappedRectRelativeToDragLayer(Rect rect) {
         float scaleToFit = this.mWidgetView.getScaleToFit();
         this.mDragLayer.getViewRectRelativeToSelf(this.mWidgetView, rect);
-        int width = (this.mBackgroundPadding * 2) + ((int) (((rect.width() - this.mWidgetPadding.left) - this.mWidgetPadding.right) * scaleToFit));
-        int height = (2 * this.mBackgroundPadding) + ((int) (((rect.height() - this.mWidgetPadding.top) - this.mWidgetPadding.bottom) * scaleToFit));
-        rect.left = (int) ((rect.left - this.mBackgroundPadding) + (this.mWidgetPadding.left * scaleToFit));
+        int iWidth = (this.mBackgroundPadding * 2) + ((int) (((rect.width() - this.mWidgetPadding.left) - this.mWidgetPadding.right) * scaleToFit));
+        int iHeight = (2 * this.mBackgroundPadding) + ((int) (((rect.height() - this.mWidgetPadding.top) - this.mWidgetPadding.bottom) * scaleToFit));
+        int i = (int) ((rect.left - this.mBackgroundPadding) + (this.mWidgetPadding.left * scaleToFit));
+        rect.left = i;
         rect.top = (int) ((rect.top - this.mBackgroundPadding) + (scaleToFit * this.mWidgetPadding.top));
-        rect.right = rect.left + width;
-        rect.bottom = rect.top + height;
+        rect.right = rect.left + iWidth;
+        rect.bottom = rect.top + iHeight;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void snapToWidget(boolean z) {
+    private void snapToWidget(boolean z) {
         getSnappedRectRelativeToDragLayer(sTmpRect);
-        int width = sTmpRect.width();
-        int height = sTmpRect.height();
+        int iWidth = sTmpRect.width();
+        int iHeight = sTmpRect.height();
         int i = sTmpRect.left;
         int i2 = sTmpRect.top;
         if (i2 < 0) {
@@ -323,7 +324,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         } else {
             this.mTopTouchRegionAdjustment = 0;
         }
-        int i3 = i2 + height;
+        int i3 = i2 + iHeight;
         if (i3 > this.mDragLayer.getHeight()) {
             this.mBottomTouchRegionAdjustment = -(i3 - this.mDragLayer.getHeight());
         } else {
@@ -331,8 +332,8 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         }
         BaseDragLayer.LayoutParams layoutParams = (BaseDragLayer.LayoutParams) getLayoutParams();
         if (!z) {
-            layoutParams.width = width;
-            layoutParams.height = height;
+            layoutParams.width = iWidth;
+            layoutParams.height = iHeight;
             layoutParams.x = i;
             layoutParams.y = i2;
             for (int i4 = 0; i4 < 4; i4++) {
@@ -340,20 +341,20 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             }
             requestLayout();
         } else {
-            ObjectAnimator ofPropertyValuesHolder = LauncherAnimUtils.ofPropertyValuesHolder(layoutParams, this, PropertyValuesHolder.ofInt("width", layoutParams.width, width), PropertyValuesHolder.ofInt("height", layoutParams.height, height), PropertyValuesHolder.ofInt("x", layoutParams.x, i), PropertyValuesHolder.ofInt("y", layoutParams.y, i2));
-            ofPropertyValuesHolder.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.AppWidgetResizeFrame.2
+            ObjectAnimator objectAnimatorOfPropertyValuesHolder = LauncherAnimUtils.ofPropertyValuesHolder(layoutParams, this, PropertyValuesHolder.ofInt("width", layoutParams.width, iWidth), PropertyValuesHolder.ofInt("height", layoutParams.height, iHeight), PropertyValuesHolder.ofInt("x", layoutParams.x, i), PropertyValuesHolder.ofInt("y", layoutParams.y, i2));
+            objectAnimatorOfPropertyValuesHolder.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.AppWidgetResizeFrame.2
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
                     AppWidgetResizeFrame.this.requestLayout();
                 }
             });
-            AnimatorSet createAnimatorSet = LauncherAnimUtils.createAnimatorSet();
-            createAnimatorSet.play(ofPropertyValuesHolder);
+            AnimatorSet animatorSetCreateAnimatorSet = LauncherAnimUtils.createAnimatorSet();
+            animatorSetCreateAnimatorSet.play(objectAnimatorOfPropertyValuesHolder);
             for (int i5 = 0; i5 < 4; i5++) {
-                createAnimatorSet.play(LauncherAnimUtils.ofFloat(this.mDragHandles[i5], ALPHA, 1.0f));
+                animatorSetCreateAnimatorSet.play(LauncherAnimUtils.ofFloat(this.mDragHandles[i5], ALPHA, 1.0f));
             }
-            createAnimatorSet.setDuration(150L);
-            createAnimatorSet.start();
+            animatorSetCreateAnimatorSet.setDuration(150L);
+            animatorSetCreateAnimatorSet.start();
         }
         setFocusableInTouchMode(true);
         requestFocus();
@@ -361,12 +362,12 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
 
     @Override // android.view.View.OnKeyListener
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
-        if (FocusLogic.shouldConsume(i)) {
-            close(false);
-            this.mWidgetView.requestFocus();
-            return true;
+        if (!FocusLogic.shouldConsume(i)) {
+            return false;
         }
-        return false;
+        close(false);
+        this.mWidgetView.requestFocus();
+        return true;
     }
 
     private boolean handleTouchDown(MotionEvent motionEvent) {
@@ -428,9 +429,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         return (i & 8) != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class IntRange {
+    private static class IntRange {
         public int end;
         public int start;
 

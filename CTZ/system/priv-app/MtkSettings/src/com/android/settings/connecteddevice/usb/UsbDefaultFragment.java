@@ -11,9 +11,12 @@ import com.android.settingslib.widget.CandidateInfo;
 import com.android.settingslib.widget.FooterPreferenceMixin;
 import com.google.android.collect.Lists;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class UsbDefaultFragment extends RadioButtonPickerFragment {
+
     @VisibleForTesting
     UsbBackend mUsbBackend;
 
@@ -34,21 +37,21 @@ public class UsbDefaultFragment extends RadioButtonPickerFragment {
         return 1312;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.usb_default_fragment;
     }
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected List<? extends CandidateInfo> getCandidates() {
-        ArrayList newArrayList = Lists.newArrayList();
-        for (Long l : UsbDetailsFunctionsController.FUNCTIONS_MAP.keySet()) {
-            long longValue = l.longValue();
-            final String string = getContext().getString(UsbDetailsFunctionsController.FUNCTIONS_MAP.get(Long.valueOf(longValue)).intValue());
-            final String usbFunctionsToString = UsbBackend.usbFunctionsToString(longValue);
-            if (this.mUsbBackend.areFunctionsSupported(longValue)) {
-                newArrayList.add(new CandidateInfo(true) { // from class: com.android.settings.connecteddevice.usb.UsbDefaultFragment.1
+        ArrayList arrayListNewArrayList = Lists.newArrayList();
+        Iterator<Long> it = UsbDetailsFunctionsController.FUNCTIONS_MAP.keySet().iterator();
+        while (it.hasNext()) {
+            long jLongValue = it.next().longValue();
+            final String string = getContext().getString(UsbDetailsFunctionsController.FUNCTIONS_MAP.get(Long.valueOf(jLongValue)).intValue());
+            final String strUsbFunctionsToString = UsbBackend.usbFunctionsToString(jLongValue);
+            if (this.mUsbBackend.areFunctionsSupported(jLongValue)) {
+                arrayListNewArrayList.add(new CandidateInfo(true) { // from class: com.android.settings.connecteddevice.usb.UsbDefaultFragment.1
                     @Override // com.android.settingslib.widget.CandidateInfo
                     public CharSequence loadLabel() {
                         return string;
@@ -61,12 +64,12 @@ public class UsbDefaultFragment extends RadioButtonPickerFragment {
 
                     @Override // com.android.settingslib.widget.CandidateInfo
                     public String getKey() {
-                        return usbFunctionsToString;
+                        return strUsbFunctionsToString;
                     }
                 });
             }
         }
-        return newArrayList;
+        return arrayListNewArrayList;
     }
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
@@ -76,9 +79,9 @@ public class UsbDefaultFragment extends RadioButtonPickerFragment {
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected boolean setDefaultKey(String str) {
-        long usbFunctionsFromString = UsbBackend.usbFunctionsFromString(str);
+        long jUsbFunctionsFromString = UsbBackend.usbFunctionsFromString(str);
         if (!Utils.isMonkeyRunning()) {
-            this.mUsbBackend.setDefaultUsbFunctions(usbFunctionsFromString);
+            this.mUsbBackend.setDefaultUsbFunctions(jUsbFunctionsFromString);
             return true;
         }
         return true;

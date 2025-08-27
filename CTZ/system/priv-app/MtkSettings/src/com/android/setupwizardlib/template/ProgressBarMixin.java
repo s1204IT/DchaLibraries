@@ -7,6 +7,7 @@ import android.view.ViewStub;
 import android.widget.ProgressBar;
 import com.android.setupwizardlib.R;
 import com.android.setupwizardlib.TemplateLayout;
+
 /* loaded from: classes.dex */
 public class ProgressBarMixin implements Mixin {
     private ColorStateList mColor;
@@ -17,8 +18,8 @@ public class ProgressBarMixin implements Mixin {
     }
 
     public boolean isShown() {
-        View findManagedViewById = this.mTemplateLayout.findManagedViewById(R.id.suw_layout_progress);
-        return findManagedViewById != null && findManagedViewById.getVisibility() == 0;
+        View viewFindManagedViewById = this.mTemplateLayout.findManagedViewById(R.id.suw_layout_progress);
+        return viewFindManagedViewById != null && viewFindManagedViewById.getVisibility() == 0;
     }
 
     public void setShown(boolean z) {
@@ -30,9 +31,9 @@ public class ProgressBarMixin implements Mixin {
             }
             return;
         }
-        ProgressBar peekProgressBar = peekProgressBar();
-        if (peekProgressBar != null) {
-            peekProgressBar.setVisibility(8);
+        ProgressBar progressBarPeekProgressBar = peekProgressBar();
+        if (progressBarPeekProgressBar != null) {
+            progressBarPeekProgressBar.setVisibility(8);
         }
     }
 
@@ -52,12 +53,12 @@ public class ProgressBarMixin implements Mixin {
     }
 
     public void setColor(ColorStateList colorStateList) {
-        ProgressBar peekProgressBar;
+        ProgressBar progressBarPeekProgressBar;
         this.mColor = colorStateList;
-        if (Build.VERSION.SDK_INT >= 21 && (peekProgressBar = peekProgressBar()) != null) {
-            peekProgressBar.setIndeterminateTintList(colorStateList);
+        if (Build.VERSION.SDK_INT >= 21 && (progressBarPeekProgressBar = peekProgressBar()) != null) {
+            progressBarPeekProgressBar.setIndeterminateTintList(colorStateList);
             if (Build.VERSION.SDK_INT >= 23 || colorStateList != null) {
-                peekProgressBar.setProgressBackgroundTintList(colorStateList);
+                progressBarPeekProgressBar.setProgressBackgroundTintList(colorStateList);
             }
         }
     }

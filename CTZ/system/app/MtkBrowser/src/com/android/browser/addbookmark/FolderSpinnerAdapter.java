@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.android.browser.R;
+
 /* loaded from: classes.dex */
 public class FolderSpinnerAdapter extends BaseAdapter {
     private Context mContext;
@@ -73,7 +74,7 @@ public class FolderSpinnerAdapter extends BaseAdapter {
     @Override // android.widget.BaseAdapter, android.widget.SpinnerAdapter
     public View getDropDownView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = this.mInflater.inflate(17367049, viewGroup, false);
+            view = this.mInflater.inflate(android.R.layout.simple_spinner_dropdown_item, viewGroup, false);
         }
         bindView(i, view, true);
         return view;
@@ -82,7 +83,7 @@ public class FolderSpinnerAdapter extends BaseAdapter {
     @Override // android.widget.Adapter
     public View getView(int i, View view, ViewGroup viewGroup) {
         if (view == null) {
-            view = this.mInflater.inflate(17367048, viewGroup, false);
+            view = this.mInflater.inflate(android.R.layout.simple_spinner_item, viewGroup, false);
         }
         bindView(i, view, false);
         return view;

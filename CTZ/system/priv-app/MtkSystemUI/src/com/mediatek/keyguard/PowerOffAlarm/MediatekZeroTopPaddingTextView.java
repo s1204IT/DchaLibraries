@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class MediatekZeroTopPaddingTextView extends TextView {
     private static final Typeface SAN_SERIF_BOLD = Typeface.create("san-serif", 1);

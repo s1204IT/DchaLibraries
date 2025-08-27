@@ -3,6 +3,7 @@ package com.android.settings.language;
 import android.content.Context;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class PointerSpeedController extends BasePreferenceController {
     static final String KEY_POINTER_SPEED = "pointer_speed";

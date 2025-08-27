@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.support.v4.util.ArrayMap;
+
 /* loaded from: classes.dex */
 public class IconCache {
     private final Context mContext;
@@ -19,9 +20,9 @@ public class IconCache {
         }
         Drawable drawable = this.mMap.get(icon);
         if (drawable == null) {
-            Drawable loadDrawable = icon.loadDrawable(this.mContext);
-            updateIcon(icon, loadDrawable);
-            return loadDrawable;
+            Drawable drawableLoadDrawable = icon.loadDrawable(this.mContext);
+            updateIcon(icon, drawableLoadDrawable);
+            return drawableLoadDrawable;
         }
         return drawable;
     }

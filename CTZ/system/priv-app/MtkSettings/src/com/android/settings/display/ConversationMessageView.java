@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class ConversationMessageView extends FrameLayout {
     private TextView mContactIconView;
@@ -42,14 +43,14 @@ public class ConversationMessageView extends FrameLayout {
 
     public ConversationMessageView(Context context, AttributeSet attributeSet, int i, int i2) {
         super(context, attributeSet, i, i2);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ConversationMessageView);
-        this.mIncoming = obtainStyledAttributes.getBoolean(3, true);
-        this.mMessageText = obtainStyledAttributes.getString(4);
-        this.mTimestampText = obtainStyledAttributes.getString(5);
-        this.mIconText = obtainStyledAttributes.getString(1);
-        this.mIconTextColor = obtainStyledAttributes.getColor(2, 0);
-        this.mIconBackgroundColor = obtainStyledAttributes.getColor(0, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ConversationMessageView);
+        this.mIncoming = typedArrayObtainStyledAttributes.getBoolean(3, true);
+        this.mMessageText = typedArrayObtainStyledAttributes.getString(4);
+        this.mTimestampText = typedArrayObtainStyledAttributes.getString(5);
+        this.mIconText = typedArrayObtainStyledAttributes.getString(1);
+        this.mIconTextColor = typedArrayObtainStyledAttributes.getColor(2, 0);
+        this.mIconBackgroundColor = typedArrayObtainStyledAttributes.getColor(0, 0);
+        typedArrayObtainStyledAttributes.recycle();
         LayoutInflater.from(context).inflate(R.layout.conversation_message_icon, this);
         LayoutInflater.from(context).inflate(R.layout.conversation_message_content, this);
     }
@@ -65,15 +66,15 @@ public class ConversationMessageView extends FrameLayout {
     }
 
     @Override // android.widget.FrameLayout, android.view.View
-    protected void onMeasure(int i, int i2) {
+    protected void onMeasure(int i, int i2) throws Resources.NotFoundException {
         updateViewAppearance();
         int size = View.MeasureSpec.getSize(i);
-        int makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, 0);
-        int makeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(0, 0);
-        this.mContactIconView.measure(makeMeasureSpec2, makeMeasureSpec2);
-        int makeMeasureSpec3 = View.MeasureSpec.makeMeasureSpec(Math.max(this.mContactIconView.getMeasuredWidth(), this.mContactIconView.getMeasuredHeight()), 1073741824);
-        this.mContactIconView.measure(makeMeasureSpec3, makeMeasureSpec3);
-        this.mMessageBubble.measure(View.MeasureSpec.makeMeasureSpec((((size - (this.mContactIconView.getMeasuredWidth() * 2)) - getResources().getDimensionPixelSize(R.dimen.message_bubble_arrow_width)) - getPaddingLeft()) - getPaddingRight(), AccessPoint.UNREACHABLE_RSSI), makeMeasureSpec);
+        int iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, 0);
+        int iMakeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(0, 0);
+        this.mContactIconView.measure(iMakeMeasureSpec2, iMakeMeasureSpec2);
+        int iMakeMeasureSpec3 = View.MeasureSpec.makeMeasureSpec(Math.max(this.mContactIconView.getMeasuredWidth(), this.mContactIconView.getMeasuredHeight()), 1073741824);
+        this.mContactIconView.measure(iMakeMeasureSpec3, iMakeMeasureSpec3);
+        this.mMessageBubble.measure(View.MeasureSpec.makeMeasureSpec((((size - (this.mContactIconView.getMeasuredWidth() * 2)) - getResources().getDimensionPixelSize(R.dimen.message_bubble_arrow_width)) - getPaddingLeft()) - getPaddingRight(), AccessPoint.UNREACHABLE_RSSI), iMakeMeasureSpec);
         setMeasuredDimension(size, Math.max(this.mContactIconView.getMeasuredHeight(), this.mMessageBubble.getMeasuredHeight()) + getPaddingBottom() + getPaddingTop());
     }
 
@@ -81,7 +82,7 @@ public class ConversationMessageView extends FrameLayout {
     protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         int paddingRight;
         int i5;
-        boolean isLayoutRtl = isLayoutRtl(this);
+        boolean zIsLayoutRtl = isLayoutRtl(this);
         int measuredWidth = this.mContactIconView.getMeasuredWidth();
         int measuredHeight = this.mContactIconView.getMeasuredHeight();
         int paddingTop = getPaddingTop();
@@ -89,14 +90,14 @@ public class ConversationMessageView extends FrameLayout {
         int paddingLeft = ((i6 - measuredWidth) - getPaddingLeft()) - getPaddingRight();
         int measuredHeight2 = this.mMessageBubble.getMeasuredHeight();
         if (this.mIncoming) {
-            if (isLayoutRtl) {
+            if (zIsLayoutRtl) {
                 paddingRight = (i6 - getPaddingRight()) - measuredWidth;
                 i5 = paddingRight - paddingLeft;
             } else {
                 paddingRight = getPaddingLeft();
                 i5 = paddingRight + measuredWidth;
             }
-        } else if (isLayoutRtl) {
+        } else if (zIsLayoutRtl) {
             paddingRight = getPaddingLeft();
             i5 = paddingRight + measuredWidth;
         } else {
@@ -119,7 +120,7 @@ public class ConversationMessageView extends FrameLayout {
         this.mContactIconView.setBackground(getTintedDrawable(getContext(), getContext().getDrawable(R.drawable.conversation_message_icon), this.mIconBackgroundColor));
     }
 
-    private void updateViewAppearance() {
+    private void updateViewAppearance() throws Resources.NotFoundException {
         int i;
         Resources resources = getResources();
         int dimensionPixelOffset = resources.getDimensionPixelOffset(R.dimen.message_bubble_arrow_width);

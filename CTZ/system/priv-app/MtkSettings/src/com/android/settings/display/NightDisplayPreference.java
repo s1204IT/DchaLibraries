@@ -5,6 +5,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.util.AttributeSet;
 import com.android.internal.app.ColorDisplayController;
 import java.time.LocalTime;
+
 /* loaded from: classes.dex */
 public class NightDisplayPreference extends SwitchPreference implements ColorDisplayController.Callback {
     private ColorDisplayController mController;

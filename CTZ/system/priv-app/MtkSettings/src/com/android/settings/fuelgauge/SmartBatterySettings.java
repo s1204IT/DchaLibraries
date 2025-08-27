@@ -13,6 +13,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SmartBatterySettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.fuelgauge.SmartBatterySettings.1
@@ -45,9 +46,8 @@ public class SmartBatterySettings extends DashboardFragment {
         return "SmartBatterySettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.smart_battery_detail;
     }
 
@@ -61,8 +61,7 @@ public class SmartBatterySettings extends DashboardFragment {
         return buildPreferenceControllers(context, (SettingsActivity) getActivity(), this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, SettingsActivity settingsActivity, InstrumentedPreferenceFragment instrumentedPreferenceFragment) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, SettingsActivity settingsActivity, InstrumentedPreferenceFragment instrumentedPreferenceFragment) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new SmartBatteryPreferenceController(context));
         if (settingsActivity != null && instrumentedPreferenceFragment != null) {

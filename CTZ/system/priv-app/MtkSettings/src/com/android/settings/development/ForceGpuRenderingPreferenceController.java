@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.development.SystemPropPoker;
+
 /* loaded from: classes.dex */
 public class ForceGpuRenderingPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final String HARDWARE_UI_PROPERTY = "persist.sys.ui.hw";
@@ -32,9 +33,8 @@ public class ForceGpuRenderingPreferenceController extends DeveloperOptionsPrefe
         ((SwitchPreference) this.mPreference).setChecked(SystemProperties.getBoolean(HARDWARE_UI_PROPERTY, false));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         SystemProperties.set(HARDWARE_UI_PROPERTY, Boolean.toString(false));
         ((SwitchPreference) this.mPreference).setChecked(false);

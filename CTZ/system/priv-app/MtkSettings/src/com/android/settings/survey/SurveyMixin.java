@@ -8,6 +8,7 @@ import com.android.settings.overlay.SurveyFeatureProvider;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class SurveyMixin implements LifecycleObserver, OnPause, OnResume {
     private Fragment mFragment;
@@ -28,9 +29,9 @@ public class SurveyMixin implements LifecycleObserver, OnPause, OnResume {
             if (surveyFeatureProvider.getSurveyExpirationDate(activity, surveyId) <= -1) {
                 this.mReceiver = surveyFeatureProvider.createAndRegisterReceiver(activity);
                 surveyFeatureProvider.downloadSurvey(activity, surveyId, null);
-                return;
+            } else {
+                surveyFeatureProvider.showSurveyIfAvailable(activity, surveyId);
             }
-            surveyFeatureProvider.showSurveyIfAvailable(activity, surveyId);
         }
     }
 

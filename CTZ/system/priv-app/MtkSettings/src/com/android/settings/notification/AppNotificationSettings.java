@@ -23,10 +23,13 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppNotificationSettings extends NotificationSettingsBase {
     private Comparator<NotificationChannelGroup> mChannelGroupComparator = new Comparator<NotificationChannelGroup>() { // from class: com.android.settings.notification.AppNotificationSettings.2
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(NotificationChannelGroup notificationChannelGroup, NotificationChannelGroup notificationChannelGroup2) {
             if (notificationChannelGroup.getId() == null && notificationChannelGroup2.getId() != null) {
@@ -55,14 +58,14 @@ public class AppNotificationSettings extends NotificationSettingsBase {
         super.onCreate(bundle);
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         if (this.mShowLegacyChannelConfig && preferenceScreen != null) {
-            Preference findPreference = findPreference(KEY_BADGE);
-            Preference findPreference2 = findPreference(KEY_APP_LINK);
+            Preference preferenceFindPreference = findPreference(KEY_BADGE);
+            Preference preferenceFindPreference2 = findPreference(KEY_APP_LINK);
             removePreference(KEY_ADVANCED_CATEGORY);
-            if (findPreference != null) {
-                preferenceScreen.addPreference(findPreference);
+            if (preferenceFindPreference != null) {
+                preferenceScreen.addPreference(preferenceFindPreference);
             }
-            if (findPreference2 != null) {
-                preferenceScreen.addPreference(findPreference2);
+            if (preferenceFindPreference2 != null) {
+                preferenceScreen.addPreference(preferenceFindPreference2);
             }
         }
     }
@@ -80,17 +83,17 @@ public class AppNotificationSettings extends NotificationSettingsBase {
         }
         if (!this.mShowLegacyChannelConfig) {
             new AsyncTask<Void, Void, Void>() { // from class: com.android.settings.notification.AppNotificationSettings.1
-                /* JADX INFO: Access modifiers changed from: protected */
+                /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // android.os.AsyncTask
-                public Void doInBackground(Void... voidArr) {
+                protected Void doInBackground(Void... voidArr) {
                     AppNotificationSettings.this.mChannelGroupList = AppNotificationSettings.this.mBackend.getGroups(AppNotificationSettings.this.mPkg, AppNotificationSettings.this.mUid).getList();
                     Collections.sort(AppNotificationSettings.this.mChannelGroupList, AppNotificationSettings.this.mChannelGroupComparator);
                     return null;
                 }
 
-                /* JADX INFO: Access modifiers changed from: protected */
+                /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
                 @Override // android.os.AsyncTask
-                public void onPostExecute(Void r1) {
+                protected void onPostExecute(Void r1) {
                     if (AppNotificationSettings.this.getHost() != null) {
                         AppNotificationSettings.this.populateList();
                     }
@@ -118,9 +121,8 @@ public class AppNotificationSettings extends NotificationSettingsBase {
         return "AppNotificationSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.app_notification_settings;
     }
 
@@ -144,11 +146,11 @@ public class AppNotificationSettings extends NotificationSettingsBase {
         return new ArrayList(this.mControllers);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void populateList() {
+    private void populateList() {
         if (!this.mDynamicPreferences.isEmpty()) {
-            for (Preference preference : this.mDynamicPreferences) {
-                getPreferenceScreen().removePreference(preference);
+            Iterator<Preference> it = this.mDynamicPreferences.iterator();
+            while (it.hasNext()) {
+                getPreferenceScreen().removePreference(it.next());
             }
             this.mDynamicPreferences.clear();
         }
@@ -158,10 +160,10 @@ public class AppNotificationSettings extends NotificationSettingsBase {
             preferenceCategory.setKey(KEY_GENERAL_CATEGORY);
             getPreferenceScreen().addPreference(preferenceCategory);
             this.mDynamicPreferences.add(preferenceCategory);
-            Preference preference2 = new Preference(getPrefContext());
-            preference2.setTitle(R.string.no_channels);
-            preference2.setEnabled(false);
-            preferenceCategory.addPreference(preference2);
+            Preference preference = new Preference(getPrefContext());
+            preference.setTitle(R.string.no_channels);
+            preference.setEnabled(false);
+            preferenceCategory.addPreference(preference);
             return;
         }
         populateGroupList();
@@ -209,7 +211,7 @@ public class AppNotificationSettings extends NotificationSettingsBase {
         restrictedSwitchPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.notification.-$$Lambda$AppNotificationSettings$KKPiatF9s2jsC7BTjM3YfK_E8S4
             @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
             public final boolean onPreferenceClick(Preference preference) {
-                return AppNotificationSettings.lambda$populateGroupToggle$0(AppNotificationSettings.this, notificationChannelGroup, preference);
+                return AppNotificationSettings.lambda$populateGroupToggle$0(this.f$0, notificationChannelGroup, preference);
             }
         });
         preferenceGroup.addPreference(restrictedSwitchPreference);
@@ -227,7 +229,7 @@ public class AppNotificationSettings extends NotificationSettingsBase {
         if (notificationChannelGroup != null && (preferenceGroup = (PreferenceGroup) getPreferenceScreen().findPreference(notificationChannelGroup.getId())) != null) {
             int i = 0;
             if (notificationChannelGroup.isBlocked()) {
-                ArrayList<Preference> arrayList = new ArrayList();
+                ArrayList arrayList = new ArrayList();
                 int preferenceCount = preferenceGroup.getPreferenceCount();
                 while (i < preferenceCount) {
                     Preference preference = preferenceGroup.getPreference(i);
@@ -236,8 +238,9 @@ public class AppNotificationSettings extends NotificationSettingsBase {
                     }
                     i++;
                 }
-                for (Preference preference2 : arrayList) {
-                    preferenceGroup.removePreference(preference2);
+                Iterator it = arrayList.iterator();
+                while (it.hasNext()) {
+                    preferenceGroup.removePreference((Preference) it.next());
                 }
                 return;
             }

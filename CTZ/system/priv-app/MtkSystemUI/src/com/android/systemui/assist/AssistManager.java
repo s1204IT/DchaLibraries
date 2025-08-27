@@ -33,6 +33,7 @@ import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
+
 /* loaded from: classes.dex */
 public class AssistManager implements ConfigurationChangedReceiver {
     private final AssistDisclosure mAssistDisclosure;
@@ -86,21 +87,21 @@ public class AssistManager implements ConfigurationChangedReceiver {
 
     @Override // com.android.systemui.ConfigurationChangedReceiver
     public void onConfigurationChanged(Configuration configuration) {
-        boolean z;
+        boolean zIsShowing;
         if (!this.mInterestingConfigChanges.applyNewConfig(this.mContext.getResources())) {
             return;
         }
         if (this.mView != null) {
-            z = this.mView.isShowing();
+            zIsShowing = this.mView.isShowing();
             this.mWindowManager.removeView(this.mView);
         } else {
-            z = false;
+            zIsShowing = false;
         }
         this.mView = (AssistOrbContainer) LayoutInflater.from(this.mContext).inflate(R.layout.assist_orb, (ViewGroup) null);
         this.mView.setVisibility(8);
         this.mView.setSystemUiVisibility(1792);
         this.mWindowManager.addView(this.mView, getLayoutParams());
-        if (z) {
+        if (zIsShowing) {
             this.mView.show(true, false);
         }
     }
@@ -115,19 +116,19 @@ public class AssistManager implements ConfigurationChangedReceiver {
         if (assistInfo == null) {
             return;
         }
-        boolean equals = assistInfo.equals(getVoiceInteractorComponentName());
-        if (!equals || (!isVoiceSessionRunning() && shouldShowOrb())) {
-            showOrb(assistInfo, equals);
+        boolean zEquals = assistInfo.equals(getVoiceInteractorComponentName());
+        if (!zEquals || (!isVoiceSessionRunning() && shouldShowOrb())) {
+            showOrb(assistInfo, zEquals);
             AssistOrbContainer assistOrbContainer = this.mView;
             Runnable runnable = this.mHideRunnable;
-            if (equals) {
+            if (zEquals) {
                 j = 2500;
             } else {
                 j = 1000;
             }
             assistOrbContainer.postDelayed(runnable, j);
         }
-        startAssistInternal(bundle, assistInfo, equals);
+        startAssistInternal(bundle, assistInfo, zEquals);
     }
 
     public void hideAssist() {
@@ -175,12 +176,12 @@ public class AssistManager implements ConfigurationChangedReceiver {
             showDisclosure();
         }
         try {
-            final ActivityOptions makeCustomAnimation = ActivityOptions.makeCustomAnimation(this.mContext, R.anim.search_launch_enter, R.anim.search_launch_exit);
+            final ActivityOptions activityOptionsMakeCustomAnimation = ActivityOptions.makeCustomAnimation(this.mContext, R.anim.search_launch_enter, R.anim.search_launch_exit);
             assistIntent.addFlags(268435456);
             AsyncTask.execute(new Runnable() { // from class: com.android.systemui.assist.AssistManager.4
                 @Override // java.lang.Runnable
                 public void run() {
-                    AssistManager.this.mContext.startActivityAsUser(assistIntent, makeCustomAnimation.toBundle(), new UserHandle(-2));
+                    AssistManager.this.mContext.startActivityAsUser(assistIntent, activityOptionsMakeCustomAnimation.toBundle(), new UserHandle(-2));
                 }
             });
         } catch (ActivityNotFoundException e) {

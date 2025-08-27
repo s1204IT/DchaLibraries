@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import vendor.mediatek.hardware.lbs.V1_0.ILbs;
 import vendor.mediatek.hardware.lbs.V1_0.ILbsCallback;
+
 /* loaded from: classes.dex */
 public class AgpsInterface {
     ILbs mLbsHidlClient;
@@ -38,9 +39,7 @@ public class AgpsInterface {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class LbsHidlCallback extends ILbsCallback.Stub {
+    class LbsHidlCallback extends ILbsCallback.Stub {
         LbsHidlCallback() {
         }
 
@@ -51,9 +50,7 @@ public class AgpsInterface {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class LbsHidlDeathRecipient implements IHwBinder.DeathRecipient {
+    class LbsHidlDeathRecipient implements IHwBinder.DeathRecipient {
         LbsHidlDeathRecipient() {
         }
 
@@ -101,11 +98,11 @@ public class AgpsInterface {
                 short s2 = DataCoder2.getShort(this.in);
                 if (s != 1) {
                     throw new IOException("app maj ver=1 is not equal to AGPSD's maj ver=" + ((int) s));
-                } else if (s2 < 1) {
-                    throw new IOException("app min ver=1 is greater than AGPSD's min ver=" + ((int) s2));
-                } else {
-                    DataCoder2.getByte(this.in);
                 }
+                if (s2 < 1) {
+                    throw new IOException("app min ver=1 is greater than AGPSD's min ver=" + ((int) s2));
+                }
+                DataCoder2.getByte(this.in);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

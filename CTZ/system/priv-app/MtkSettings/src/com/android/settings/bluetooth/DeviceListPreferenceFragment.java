@@ -15,7 +15,9 @@ import com.android.settingslib.bluetooth.BluetoothDeviceFilter;
 import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.bluetooth.LocalBluetoothAdapter;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
+import java.util.Iterator;
 import java.util.WeakHashMap;
+
 /* loaded from: classes.dex */
 public abstract class DeviceListPreferenceFragment extends RestrictedDashboardFragment implements BluetoothCallback {
     PreferenceGroup mDeviceListGroup;
@@ -31,8 +33,7 @@ public abstract class DeviceListPreferenceFragment extends RestrictedDashboardFr
 
     abstract void initPreferencesFromPreferenceScreen();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public DeviceListPreferenceFragment(String str) {
+    DeviceListPreferenceFragment(String str) {
         super(str);
         this.mDevicePreferenceMap = new WeakHashMap<>();
         this.mFilter = BluetoothDeviceFilter.ALL_FILTER;
@@ -42,8 +43,7 @@ public abstract class DeviceListPreferenceFragment extends RestrictedDashboardFr
         this.mFilter = filter;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public final void setFilter(int i) {
+    final void setFilter(int i) {
         this.mFilter = BluetoothDeviceFilter.getFilter(i);
     }
 
@@ -82,16 +82,15 @@ public abstract class DeviceListPreferenceFragment extends RestrictedDashboardFr
         this.mLocalManager.getEventManager().unregisterCallback(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void removeAllDevices() {
+    void removeAllDevices() {
         this.mDevicePreferenceMap.clear();
         this.mDeviceListGroup.removeAll();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void addCachedDevices() {
-        for (CachedBluetoothDevice cachedBluetoothDevice : this.mLocalManager.getCachedDeviceManager().getCachedDevicesCopy()) {
-            onDeviceAdded(cachedBluetoothDevice);
+    void addCachedDevices() {
+        Iterator<CachedBluetoothDevice> it = this.mLocalManager.getCachedDeviceManager().getCachedDevicesCopy().iterator();
+        while (it.hasNext()) {
+            onDeviceAdded(it.next());
         }
     }
 
@@ -100,18 +99,17 @@ public abstract class DeviceListPreferenceFragment extends RestrictedDashboardFr
         if ("bt_scan".equals(preference.getKey())) {
             this.mLocalAdapter.startScanning(true);
             return true;
-        } else if (preference instanceof BluetoothDevicePreference) {
+        }
+        if (preference instanceof BluetoothDevicePreference) {
             BluetoothDevicePreference bluetoothDevicePreference = (BluetoothDevicePreference) preference;
             this.mSelectedDevice = bluetoothDevicePreference.getCachedDevice().getDevice();
             onDevicePreferenceClick(bluetoothDevicePreference);
             return true;
-        } else {
-            return super.onPreferenceTreeClick(preference);
         }
+        return super.onPreferenceTreeClick(preference);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onDevicePreferenceClick(BluetoothDevicePreference bluetoothDevicePreference) {
+    void onDevicePreferenceClick(BluetoothDevicePreference bluetoothDevicePreference) {
         bluetoothDevicePreference.onClicked();
     }
 
@@ -120,7 +118,9 @@ public abstract class DeviceListPreferenceFragment extends RestrictedDashboardFr
         Log.d("DeviceListPreferenceFragment", "onDeviceAdded, Device name is " + cachedBluetoothDevice.getName());
         if (this.mDevicePreferenceMap.get(cachedBluetoothDevice) != null) {
             Log.d("DeviceListPreferenceFragment", "Device name " + cachedBluetoothDevice.getName() + " already have preference");
-        } else if (this.mLocalAdapter.getBluetoothState() == 12 && this.mFilter.matches(cachedBluetoothDevice.getDevice())) {
+            return;
+        }
+        if (this.mLocalAdapter.getBluetoothState() == 12 && this.mFilter.matches(cachedBluetoothDevice.getDevice())) {
             Log.d("DeviceListPreferenceFragment", "Device name " + cachedBluetoothDevice.getName() + " create new preference");
             createDevicePreference(cachedBluetoothDevice);
         }
@@ -147,27 +147,24 @@ public abstract class DeviceListPreferenceFragment extends RestrictedDashboardFr
     void initDevicePreference(BluetoothDevicePreference bluetoothDevicePreference) {
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updateFooterPreference(Preference preference) {
+    void updateFooterPreference(Preference preference) {
         preference.setTitle(getString(R.string.bluetooth_footer_mac_message, new Object[]{BidiFormatter.getInstance().unicodeWrap(this.mLocalAdapter.getAddress())}));
     }
 
     @Override // com.android.settingslib.bluetooth.BluetoothCallback
     public void onDeviceDeleted(CachedBluetoothDevice cachedBluetoothDevice) {
-        BluetoothDevicePreference remove = this.mDevicePreferenceMap.remove(cachedBluetoothDevice);
-        if (remove != null) {
-            this.mDeviceListGroup.removePreference(remove);
+        BluetoothDevicePreference bluetoothDevicePreferenceRemove = this.mDevicePreferenceMap.remove(cachedBluetoothDevice);
+        if (bluetoothDevicePreferenceRemove != null) {
+            this.mDeviceListGroup.removePreference(bluetoothDevicePreferenceRemove);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void enableScanning() {
+    void enableScanning() {
         this.mLocalAdapter.startScanning(true);
         this.mScanEnabled = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void disableScanning() {
+    void disableScanning() {
         this.mLocalAdapter.stopScanning();
         this.mScanEnabled = false;
     }

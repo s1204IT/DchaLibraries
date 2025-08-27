@@ -14,6 +14,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.SystemClock;
@@ -38,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+
 /* loaded from: classes.dex */
 public class RunningServiceDetails extends InstrumentedFragment implements RunningState.OnRefreshUiListener {
     ViewGroup mAllDetails;
@@ -61,9 +63,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
     final ArrayList<ActiveDetail> mActiveDetails = new ArrayList<>();
     StringBuilder mBuilder = new StringBuilder(128);
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class ActiveDetail implements View.OnClickListener {
+    class ActiveDetail implements View.OnClickListener {
         RunningProcessesView.ActiveItem mActiveItem;
         ComponentName mInstaller;
         PendingIntent mManageIntent;
@@ -94,16 +94,14 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
             }
         }
 
-        /* JADX WARN: Code restructure failed: missing block: B:26:0x00be, code lost:
-            if (r6 == null) goto L18;
-         */
-        /* JADX WARN: Multi-variable type inference failed */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [145=4, 156=4] */
+        /* JADX WARN: Can't wrap try/catch for region: R(6:77|13|(2:86|14)|88|15|(8:79|29|92|30|31|89|45|46)) */
         /* JADX WARN: Removed duplicated region for block: B:81:0x0146 A[EXC_TOP_SPLITTER, SYNTHETIC] */
         @Override // android.view.View.OnClickListener
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        public void onClick(View view) {
+        public void onClick(View view) throws Throwable {
             FileOutputStream fileOutputStream;
             FileInputStream fileInputStream;
             if (view != this.mReportButton) {
@@ -154,90 +152,100 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
             try {
                 try {
                     fileOutputStream = new FileOutputStream(fileStreamPath);
-                    try {
-                        Debug.dumpService("activity", fileOutputStream.getFD(), new String[]{"-a", "service", componentName.flattenToString()});
-                    } catch (IOException e4) {
-                        e = e4;
-                        Log.w("RunningServicesDetails", "Can't dump service: " + componentName, e);
-                    }
+                } catch (IOException e4) {
+                    e = e4;
+                    fileOutputStream = null;
                 } catch (Throwable th) {
                     th = th;
+                    fileOutputStream = null;
                     if (fileOutputStream != null) {
-                        try {
-                            fileOutputStream.close();
-                        } catch (IOException e5) {
-                        }
                     }
                     throw th;
                 }
-            } catch (IOException e6) {
-                e = e6;
-                fileOutputStream = null;
-            } catch (Throwable th2) {
-                th = th2;
-                fileOutputStream = null;
-                if (fileOutputStream != null) {
-                }
-                throw th;
-            }
-            try {
-                fileOutputStream.close();
-            } catch (IOException e7) {
-            }
-            try {
                 try {
-                    try {
-                        fileInputStream = new FileInputStream(fileStreamPath);
-                    } catch (Throwable th3) {
-                        th = th3;
+                    Debug.dumpService("activity", fileOutputStream.getFD(), new String[]{"-a", "service", componentName.flattenToString()});
+                } catch (IOException e5) {
+                    e = e5;
+                    Log.w("RunningServicesDetails", "Can't dump service: " + componentName, e);
+                    if (fileOutputStream != null) {
+                        fileOutputStream.close();
                     }
-                } catch (IOException e8) {
-                    e = e8;
+                    try {
+                        try {
+                            fileInputStream = new FileInputStream(fileStreamPath);
+                            try {
+                                byte[] bArr = new byte[(int) fileStreamPath.length()];
+                                fileInputStream.read(bArr);
+                                runningServiceInfo.serviceDetails = new String(bArr);
+                                fileInputStream.close();
+                            } catch (IOException e6) {
+                                e = e6;
+                                fileInputStream2 = fileInputStream;
+                                Log.w("RunningServicesDetails", "Can't read service dump: " + componentName, e);
+                                if (fileInputStream2 != null) {
+                                    fileInputStream2.close();
+                                }
+                                fileStreamPath.delete();
+                                Log.i("RunningServicesDetails", "Details: " + runningServiceInfo.serviceDetails);
+                                applicationErrorReport.runningServiceInfo = runningServiceInfo;
+                                Intent intent = new Intent("android.intent.action.APP_ERROR");
+                                intent.setComponent(this.mInstaller);
+                                intent.putExtra("android.intent.extra.BUG_REPORT", applicationErrorReport);
+                                intent.addFlags(268435456);
+                                RunningServiceDetails.this.startActivity(intent);
+                            } catch (Throwable th2) {
+                                th = th2;
+                                fileInputStream2 = fileInputStream;
+                                if (fileInputStream2 != null) {
+                                    try {
+                                        fileInputStream2.close();
+                                    } catch (IOException e7) {
+                                    }
+                                }
+                                throw th;
+                            }
+                        } catch (IOException e8) {
+                        }
+                    } catch (IOException e9) {
+                        e = e9;
+                    }
+                    fileStreamPath.delete();
+                    Log.i("RunningServicesDetails", "Details: " + runningServiceInfo.serviceDetails);
+                    applicationErrorReport.runningServiceInfo = runningServiceInfo;
+                    Intent intent2 = new Intent("android.intent.action.APP_ERROR");
+                    intent2.setComponent(this.mInstaller);
+                    intent2.putExtra("android.intent.extra.BUG_REPORT", applicationErrorReport);
+                    intent2.addFlags(268435456);
+                    RunningServiceDetails.this.startActivity(intent2);
                 }
-            } catch (IOException e9) {
-            }
-            try {
-                byte[] bArr = new byte[(int) fileStreamPath.length()];
-                fileInputStream.read(bArr);
-                String str = new String(bArr);
-                runningServiceInfo.serviceDetails = str;
-                fileInputStream.close();
-                fileInputStream2 = str;
-            } catch (IOException e10) {
-                e = e10;
-                fileInputStream2 = fileInputStream;
-                Log.w("RunningServicesDetails", "Can't read service dump: " + componentName, e);
-                if (fileInputStream2 != null) {
-                    fileInputStream2.close();
-                    fileInputStream2 = fileInputStream2;
+                fileOutputStream.close();
+                try {
+                    fileInputStream = new FileInputStream(fileStreamPath);
+                    byte[] bArr2 = new byte[(int) fileStreamPath.length()];
+                    fileInputStream.read(bArr2);
+                    runningServiceInfo.serviceDetails = new String(bArr2);
+                    fileInputStream.close();
+                    fileStreamPath.delete();
+                    Log.i("RunningServicesDetails", "Details: " + runningServiceInfo.serviceDetails);
+                    applicationErrorReport.runningServiceInfo = runningServiceInfo;
+                    Intent intent22 = new Intent("android.intent.action.APP_ERROR");
+                    intent22.setComponent(this.mInstaller);
+                    intent22.putExtra("android.intent.extra.BUG_REPORT", applicationErrorReport);
+                    intent22.addFlags(268435456);
+                    RunningServiceDetails.this.startActivity(intent22);
+                } catch (Throwable th3) {
+                    th = th3;
                 }
-                fileStreamPath.delete();
-                Log.i("RunningServicesDetails", "Details: " + runningServiceInfo.serviceDetails);
-                applicationErrorReport.runningServiceInfo = runningServiceInfo;
-                Intent intent = new Intent("android.intent.action.APP_ERROR");
-                intent.setComponent(this.mInstaller);
-                intent.putExtra("android.intent.extra.BUG_REPORT", applicationErrorReport);
-                intent.addFlags(268435456);
-                RunningServiceDetails.this.startActivity(intent);
             } catch (Throwable th4) {
                 th = th4;
-                fileInputStream2 = fileInputStream;
-                if (fileInputStream2 != null) {
+                if (fileOutputStream != null) {
                     try {
-                        fileInputStream2.close();
-                    } catch (IOException e11) {
+                        fileOutputStream.close();
+                    } catch (IOException e10) {
                     }
                 }
                 throw th;
             }
-            fileStreamPath.delete();
-            Log.i("RunningServicesDetails", "Details: " + runningServiceInfo.serviceDetails);
-            applicationErrorReport.runningServiceInfo = runningServiceInfo;
-            Intent intent2 = new Intent("android.intent.action.APP_ERROR");
-            intent2.setComponent(this.mInstaller);
-            intent2.putExtra("android.intent.extra.BUG_REPORT", applicationErrorReport);
-            intent2.addFlags(268435456);
-            RunningServiceDetails.this.startActivity(intent2);
         }
     }
 
@@ -251,8 +259,10 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
                     break;
                 }
             }
+            mergedItem = null;
+        } else {
+            mergedItem = null;
         }
-        mergedItem = null;
         if (this.mMergedItem == mergedItem) {
             return false;
         }
@@ -278,6 +288,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         this.mNumProcesses++;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r9v0, resolved type: com.android.settings.applications.RunningState$MergedItem */
     /* JADX WARN: Multi-variable type inference failed */
     void addServiceDetailsView(RunningState.ServiceItem serviceItem, RunningState.MergedItem mergedItem, boolean z, boolean z2) {
         int i;
@@ -288,24 +299,24 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         }
         RunningState.ServiceItem serviceItem2 = serviceItem != null ? serviceItem : mergedItem;
         ActiveDetail activeDetail = new ActiveDetail();
-        View inflate = this.mInflater.inflate(R.layout.running_service_details_service, this.mAllDetails, false);
-        this.mAllDetails.addView(inflate);
-        activeDetail.mRootView = inflate;
+        View viewInflate = this.mInflater.inflate(R.layout.running_service_details_service, this.mAllDetails, false);
+        this.mAllDetails.addView(viewInflate);
+        activeDetail.mRootView = viewInflate;
         activeDetail.mServiceItem = serviceItem;
-        activeDetail.mViewHolder = new RunningProcessesView.ViewHolder(inflate);
+        activeDetail.mViewHolder = new RunningProcessesView.ViewHolder(viewInflate);
         activeDetail.mActiveItem = activeDetail.mViewHolder.bind(this.mState, serviceItem2, this.mBuilder);
         if (!z2) {
-            inflate.findViewById(R.id.service).setVisibility(8);
+            viewInflate.findViewById(R.id.service).setVisibility(8);
         }
         if (serviceItem != null && serviceItem.mRunningService.clientLabel != 0) {
             activeDetail.mManageIntent = this.mAm.getRunningServiceControlPanel(serviceItem.mRunningService.service);
         }
-        TextView textView = (TextView) inflate.findViewById(R.id.comp_description);
-        activeDetail.mStopButton = (Button) inflate.findViewById(R.id.left_button);
-        activeDetail.mReportButton = (Button) inflate.findViewById(R.id.right_button);
+        TextView textView = (TextView) viewInflate.findViewById(R.id.comp_description);
+        activeDetail.mStopButton = (Button) viewInflate.findViewById(R.id.left_button);
+        activeDetail.mReportButton = (Button) viewInflate.findViewById(R.id.right_button);
         if (z && mergedItem.mUserId != UserHandle.myUserId()) {
             textView.setVisibility(8);
-            inflate.findViewById(R.id.control_buttons_panel).setVisibility(8);
+            viewInflate.findViewById(R.id.control_buttons_panel).setVisibility(8);
         } else {
             if (serviceItem != null && serviceItem.mServiceInfo.descriptionRes != 0) {
                 textView.setText(getActivity().getPackageManager().getText(serviceItem.mServiceInfo.packageName, serviceItem.mServiceInfo.descriptionRes, serviceItem.mServiceInfo.applicationInfo));
@@ -328,7 +339,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
             activeDetail.mStopButton.setOnClickListener(activeDetail);
             activeDetail.mStopButton.setText(getActivity().getText(activeDetail.mManageIntent != null ? R.string.service_manage : R.string.service_stop));
             activeDetail.mReportButton.setOnClickListener(activeDetail);
-            activeDetail.mReportButton.setText(17040768);
+            activeDetail.mReportButton.setText(android.R.string.lockscreen_transport_rew_description);
             if (Settings.Global.getInt(getActivity().getContentResolver(), "send_action_app_error", 0) != 0 && serviceItem != null) {
                 activeDetail.mInstaller = ApplicationErrorReport.getErrorReportReceiver(getActivity(), serviceItem.mServiceInfo.packageName, serviceItem.mServiceInfo.applicationInfo.flags);
                 activeDetail.mReportButton.setEnabled(activeDetail.mInstaller != null);
@@ -339,17 +350,17 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         this.mActiveDetails.add(activeDetail);
     }
 
-    void addProcessDetailsView(RunningState.ProcessItem processItem, boolean z) {
+    void addProcessDetailsView(RunningState.ProcessItem processItem, boolean z) throws PackageManager.NameNotFoundException {
         int i;
-        CharSequence makeLabel;
+        CharSequence charSequenceMakeLabel;
         addProcessesHeader();
         ActiveDetail activeDetail = new ActiveDetail();
-        View inflate = this.mInflater.inflate(R.layout.running_service_details_process, this.mAllDetails, false);
-        this.mAllDetails.addView(inflate);
-        activeDetail.mRootView = inflate;
-        activeDetail.mViewHolder = new RunningProcessesView.ViewHolder(inflate);
+        View viewInflate = this.mInflater.inflate(R.layout.running_service_details_process, this.mAllDetails, false);
+        this.mAllDetails.addView(viewInflate);
+        activeDetail.mRootView = viewInflate;
+        activeDetail.mViewHolder = new RunningProcessesView.ViewHolder(viewInflate);
         activeDetail.mActiveItem = activeDetail.mViewHolder.bind(this.mState, processItem, this.mBuilder);
-        TextView textView = (TextView) inflate.findViewById(R.id.comp_description);
+        TextView textView = (TextView) viewInflate.findViewById(R.id.comp_description);
         if (processItem.mUserId != UserHandle.myUserId()) {
             textView.setVisibility(8);
         } else if (z) {
@@ -364,8 +375,8 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
                     if (runningAppProcessInfo.importanceReasonComponent != null) {
                         try {
                             ProviderInfo providerInfo = getActivity().getPackageManager().getProviderInfo(runningAppProcessInfo.importanceReasonComponent, 0);
-                            makeLabel = RunningState.makeLabel(getActivity().getPackageManager(), providerInfo.name, providerInfo);
-                            charSequence = makeLabel;
+                            charSequenceMakeLabel = RunningState.makeLabel(getActivity().getPackageManager(), providerInfo.name, providerInfo);
+                            charSequence = charSequenceMakeLabel;
                             break;
                         } catch (PackageManager.NameNotFoundException e) {
                             break;
@@ -377,8 +388,8 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
                     if (runningAppProcessInfo.importanceReasonComponent != null) {
                         try {
                             ServiceInfo serviceInfo = getActivity().getPackageManager().getServiceInfo(runningAppProcessInfo.importanceReasonComponent, 0);
-                            makeLabel = RunningState.makeLabel(getActivity().getPackageManager(), serviceInfo.name, serviceInfo);
-                            charSequence = makeLabel;
+                            charSequenceMakeLabel = RunningState.makeLabel(getActivity().getPackageManager(), serviceInfo.name, serviceInfo);
+                            charSequence = charSequenceMakeLabel;
                             break;
                         } catch (PackageManager.NameNotFoundException e2) {
                             break;
@@ -396,7 +407,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         this.mActiveDetails.add(activeDetail);
     }
 
-    void addDetailsViews(RunningState.MergedItem mergedItem, boolean z, boolean z2) {
+    void addDetailsViews(RunningState.MergedItem mergedItem, boolean z, boolean z2) throws PackageManager.NameNotFoundException {
         if (mergedItem != null) {
             if (z) {
                 for (int i = 0; i < mergedItem.mServices.size(); i++) {
@@ -420,7 +431,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         }
     }
 
-    void addDetailViews() {
+    void addDetailViews() throws PackageManager.NameNotFoundException {
         ArrayList<RunningState.MergedItem> arrayList;
         for (int size = this.mActiveDetails.size() - 1; size >= 0; size--) {
             this.mAllDetails.removeView(this.mActiveDetails.get(size).mRootView);
@@ -456,7 +467,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         }
     }
 
-    void refreshUi(boolean z) {
+    void refreshUi(boolean z) throws PackageManager.NameNotFoundException {
         if (findMergedItem()) {
             z = true;
         }
@@ -475,12 +486,11 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void finish() {
+    private void finish() {
         ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.applications.-$$Lambda$RunningServiceDetails$YTkFZYBIB00Mbz3Oy26GxrtuRF0
             @Override // java.lang.Runnable
             public final void run() {
-                RunningServiceDetails.lambda$finish$0(RunningServiceDetails.this);
+                RunningServiceDetails.lambda$finish$0(this.f$0);
             }
         });
     }
@@ -506,15 +516,15 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
     }
 
     @Override // android.app.Fragment
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate = layoutInflater.inflate(R.layout.running_service_details, viewGroup, false);
-        Utils.prepareCustomPreferencesList(viewGroup, inflate, inflate, false);
-        this.mRootView = inflate;
-        this.mAllDetails = (ViewGroup) inflate.findViewById(R.id.all_details);
-        this.mSnippet = (ViewGroup) inflate.findViewById(R.id.snippet);
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) throws Resources.NotFoundException, PackageManager.NameNotFoundException {
+        View viewInflate = layoutInflater.inflate(R.layout.running_service_details, viewGroup, false);
+        Utils.prepareCustomPreferencesList(viewGroup, viewInflate, viewInflate, false);
+        this.mRootView = viewInflate;
+        this.mAllDetails = (ViewGroup) viewInflate.findViewById(R.id.all_details);
+        this.mSnippet = (ViewGroup) viewInflate.findViewById(R.id.snippet);
         this.mSnippetViewHolder = new RunningProcessesView.ViewHolder(this.mSnippet);
         ensureData();
-        return inflate;
+        return viewInflate;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservableFragment, android.app.Fragment
@@ -530,7 +540,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
     }
 
     @Override // com.android.settings.core.InstrumentedFragment, com.android.settingslib.core.lifecycle.ObservableFragment, android.app.Fragment
-    public void onResume() {
+    public void onResume() throws PackageManager.NameNotFoundException {
         super.onResume();
         ensureData();
     }
@@ -545,14 +555,12 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showConfirmStopDialog(ComponentName componentName) {
-        MyAlertDialogFragment newConfirmStop = MyAlertDialogFragment.newConfirmStop(1, componentName);
-        newConfirmStop.setTargetFragment(this, 0);
-        newConfirmStop.show(getFragmentManager(), "confirmstop");
+    private void showConfirmStopDialog(ComponentName componentName) {
+        MyAlertDialogFragment myAlertDialogFragmentNewConfirmStop = MyAlertDialogFragment.newConfirmStop(1, componentName);
+        myAlertDialogFragmentNewConfirmStop.setTargetFragment(this, 0);
+        myAlertDialogFragmentNewConfirmStop.show(getFragmentManager(), "confirmstop");
     }
 
-    /* loaded from: classes.dex */
     public static class MyAlertDialogFragment extends InstrumentedDialogFragment {
         public static MyAlertDialogFragment newConfirmStop(int i, ComponentName componentName) {
             MyAlertDialogFragment myAlertDialogFragment = new MyAlertDialogFragment();
@@ -578,9 +586,9 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
                 return new AlertDialog.Builder(getActivity()).setTitle(getActivity().getString(R.string.runningservicedetails_stop_dlg_title)).setMessage(getActivity().getString(R.string.runningservicedetails_stop_dlg_text)).setPositiveButton(R.string.dlg_ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.applications.RunningServiceDetails.MyAlertDialogFragment.1
                     @Override // android.content.DialogInterface.OnClickListener
                     public void onClick(DialogInterface dialogInterface, int i2) {
-                        ActiveDetail activeDetailForService = MyAlertDialogFragment.this.getOwner().activeDetailForService(componentName);
-                        if (activeDetailForService != null) {
-                            activeDetailForService.stopActiveService(true);
+                        ActiveDetail activeDetailActiveDetailForService = MyAlertDialogFragment.this.getOwner().activeDetailForService(componentName);
+                        if (activeDetailActiveDetailForService != null) {
+                            activeDetailActiveDetailForService.stopActiveService(true);
                         }
                     }
                 }).setNegativeButton(R.string.dlg_cancel, (DialogInterface.OnClickListener) null).create();
@@ -594,7 +602,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         }
     }
 
-    void ensureData() {
+    void ensureData() throws PackageManager.NameNotFoundException {
         if (!this.mHaveData) {
             this.mHaveData = true;
             this.mState.resume(this);
@@ -613,24 +621,21 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
     }
 
     @Override // com.android.settings.applications.RunningState.OnRefreshUiListener
-    public void onRefreshUi(int i) {
+    public void onRefreshUi(int i) throws PackageManager.NameNotFoundException {
         if (getActivity() == null) {
-            return;
         }
         switch (i) {
             case 0:
                 updateTimes();
-                return;
+                break;
             case 1:
                 refreshUi(false);
                 updateTimes();
-                return;
+                break;
             case 2:
                 refreshUi(true);
                 updateTimes();
-                return;
-            default:
-                return;
+                break;
         }
     }
 }

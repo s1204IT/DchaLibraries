@@ -12,18 +12,24 @@ import android.util.Log;
 import com.android.internal.annotations.GuardedBy;
 import java.lang.Thread;
 import java.util.LinkedList;
+
 /* loaded from: classes.dex */
 public class NotificationPlayer implements MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
+
     @GuardedBy("mQueueAudioFocusLock")
     private AudioManager mAudioManagerWithAudioFocus;
+
     @GuardedBy("mCompletionHandlingLock")
     private CreationAndCompletionThread mCompletionThread;
+
     @GuardedBy("mCompletionHandlingLock")
     private Looper mLooper;
     private MediaPlayer mPlayer;
     private String mTag;
+
     @GuardedBy("mCmdQueue")
     private CmdThread mThread;
+
     @GuardedBy("mCmdQueue")
     private PowerManager.WakeLock mWakeLock;
     private final LinkedList<Command> mCmdQueue = new LinkedList<>();
@@ -32,9 +38,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
     private int mNotificationRampTimeMs = 0;
     private int mState = 2;
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class Command {
+    private static final class Command {
         AudioAttributes attributes;
         int code;
         Context context;
@@ -50,9 +54,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class CreationAndCompletionThread extends Thread {
+    private final class CreationAndCompletionThread extends Thread {
         public Command mCmd;
 
         public CreationAndCompletionThread(Command command) {
@@ -115,8 +117,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void abandonAudioFocusAfterError() {
+    private void abandonAudioFocusAfterError() {
         synchronized (this.mQueueAudioFocusLock) {
             if (this.mAudioManagerWithAudioFocus != null) {
                 this.mAudioManagerWithAudioFocus.abandonAudioFocus(null);
@@ -125,8 +126,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startSound(Command command) {
+    private void startSound(Command command) {
         try {
             synchronized (this.mCompletionHandlingLock) {
                 if (this.mLooper != null && this.mLooper.getThread().getState() != Thread.State.TERMINATED) {
@@ -138,26 +138,22 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
                     this.mCompletionThread.wait();
                 }
             }
-            long uptimeMillis = SystemClock.uptimeMillis() - command.requestTime;
-            if (uptimeMillis > 1000) {
-                String str = this.mTag;
-                Log.w(str, "Notification sound delayed by " + uptimeMillis + "msecs");
+            long jUptimeMillis = SystemClock.uptimeMillis() - command.requestTime;
+            if (jUptimeMillis > 1000) {
+                Log.w(this.mTag, "Notification sound delayed by " + jUptimeMillis + "msecs");
             }
         } catch (Exception e) {
-            String str2 = this.mTag;
-            Log.w(str2, "error loading sound for " + command.uri, e);
+            Log.w(this.mTag, "error loading sound for " + command.uri, e);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class CmdThread extends Thread {
+    private final class CmdThread extends Thread {
         CmdThread() {
             super("NotificationPlayer-" + NotificationPlayer.this.mTag);
         }
 
         @Override // java.lang.Thread, java.lang.Runnable
-        public void run() {
+        public void run() throws IllegalStateException {
             Command command;
             while (true) {
                 synchronized (NotificationPlayer.this.mCmdQueue) {
@@ -172,10 +168,9 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
                             Log.w(NotificationPlayer.this.mTag, "STOP command without a player");
                             break;
                         } else {
-                            long uptimeMillis = SystemClock.uptimeMillis() - command.requestTime;
-                            if (uptimeMillis > 1000) {
-                                String str = NotificationPlayer.this.mTag;
-                                Log.w(str, "Notification stop delayed by " + uptimeMillis + "msecs");
+                            long jUptimeMillis = SystemClock.uptimeMillis() - command.requestTime;
+                            if (jUptimeMillis > 1000) {
+                                Log.w(NotificationPlayer.this.mTag, "Notification stop delayed by " + jUptimeMillis + "msecs");
                             }
                             NotificationPlayer.this.mPlayer.stop();
                             NotificationPlayer.this.mPlayer.release();
@@ -228,8 +223,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
 
     @Override // android.media.MediaPlayer.OnErrorListener
     public boolean onError(MediaPlayer mediaPlayer, int i, int i2) {
-        String str = this.mTag;
-        Log.e(str, "error " + i + " (extra=" + i2 + ") playing notification");
+        Log.e(this.mTag, "error " + i + " (extra=" + i2 + ") playing notification");
         onCompletion(mediaPlayer);
         return true;
     }
@@ -294,9 +288,8 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     @GuardedBy("mCmdQueue")
-    public void releaseWakeLock() {
+    private void releaseWakeLock() {
         if (this.mWakeLock != null) {
             this.mWakeLock.release();
         }

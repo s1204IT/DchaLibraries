@@ -1,4 +1,5 @@
 package com.google.common.collect;
+
 /* loaded from: classes.dex */
 public abstract class ComparisonChain {
     private static final ComparisonChain ACTIVE = new ComparisonChain() { // from class: com.google.common.collect.ComparisonChain.1
@@ -33,7 +34,6 @@ public abstract class ComparisonChain {
         return ACTIVE;
     }
 
-    /* loaded from: classes.dex */
     private static final class InactiveComparisonChain extends ComparisonChain {
         final int result;
 

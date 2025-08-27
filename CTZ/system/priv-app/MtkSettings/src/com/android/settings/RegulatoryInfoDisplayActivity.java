@@ -15,30 +15,31 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class RegulatoryInfoDisplayActivity extends Activity implements DialogInterface.OnDismissListener {
     private final String REGULATORY_INFO_RESOURCE = "regulatory_info";
 
     @Override // android.app.Activity
-    protected void onCreate(Bundle bundle) {
-        int i;
+    protected void onCreate(Bundle bundle) throws Resources.NotFoundException {
+        int resourceId;
         super.onCreate(bundle);
         Resources resources = getResources();
         if (!resources.getBoolean(R.bool.config_show_regulatory_info)) {
             finish();
         }
         AlertDialog.Builder onDismissListener = new AlertDialog.Builder(this).setTitle(R.string.regulatory_labels).setOnDismissListener(this);
-        Bitmap decodeFile = BitmapFactory.decodeFile(getRegulatoryInfoImageFileName());
+        Bitmap bitmapDecodeFile = BitmapFactory.decodeFile(getRegulatoryInfoImageFileName());
         boolean z = false;
-        boolean z2 = decodeFile != null;
+        boolean z2 = bitmapDecodeFile != null;
         if (!z2) {
-            i = getResourceId();
+            resourceId = getResourceId();
         } else {
-            i = 0;
+            resourceId = 0;
         }
-        if (i != 0) {
+        if (resourceId != 0) {
             try {
-                Drawable drawable = getDrawable(i);
+                Drawable drawable = getDrawable(resourceId);
                 if (drawable.getIntrinsicWidth() > 2) {
                     if (drawable.getIntrinsicHeight() > 2) {
                         z = true;
@@ -53,20 +54,21 @@ public class RegulatoryInfoDisplayActivity extends Activity implements DialogInt
         if (!z) {
             if (text.length() > 0) {
                 onDismissListener.setMessage(text);
-                ((TextView) onDismissListener.show().findViewById(16908299)).setGravity(17);
+                ((TextView) onDismissListener.show().findViewById(android.R.id.message)).setGravity(17);
+                return;
+            } else {
+                finish();
                 return;
             }
-            finish();
-            return;
         }
-        View inflate = getLayoutInflater().inflate(R.layout.regulatory_info, (ViewGroup) null);
-        ImageView imageView = (ImageView) inflate.findViewById(R.id.regulatoryInfo);
-        if (decodeFile != null) {
-            imageView.setImageBitmap(decodeFile);
+        View viewInflate = getLayoutInflater().inflate(R.layout.regulatory_info, (ViewGroup) null);
+        ImageView imageView = (ImageView) viewInflate.findViewById(R.id.regulatoryInfo);
+        if (bitmapDecodeFile != null) {
+            imageView.setImageBitmap(bitmapDecodeFile);
         } else {
-            imageView.setImageResource(i);
+            imageView.setImageResource(resourceId);
         }
-        onDismissListener.setView(inflate);
+        onDismissListener.setView(viewInflate);
         onDismissListener.show();
     }
 

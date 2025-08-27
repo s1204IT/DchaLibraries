@@ -6,16 +6,18 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class FragmentState implements Parcelable {
+final class FragmentState implements Parcelable {
     public static final Parcelable.Creator<FragmentState> CREATOR = new Parcelable.Creator<FragmentState>() { // from class: android.support.v4.app.FragmentState.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public FragmentState createFromParcel(Parcel in) {
             return new FragmentState(in);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public FragmentState[] newArray(int size) {
@@ -35,8 +37,7 @@ public final class FragmentState implements Parcelable {
     Bundle mSavedFragmentState;
     final String mTag;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public FragmentState(Fragment frag) {
+    FragmentState(Fragment frag) {
         this.mClassName = frag.getClass().getName();
         this.mIndex = frag.mIndex;
         this.mFromLayout = frag.mFromLayout;
@@ -88,7 +89,7 @@ public final class FragmentState implements Parcelable {
             this.mInstance.mDetached = this.mDetached;
             this.mInstance.mHidden = this.mHidden;
             this.mInstance.mFragmentManager = host.mFragmentManager;
-            if (FragmentManagerImpl.DEBUG) {
+            if (FragmentManager2.DEBUG) {
                 Log.v("FragmentManager", "Instantiated fragment " + this.mInstance);
             }
         }
@@ -103,17 +104,17 @@ public final class FragmentState implements Parcelable {
     }
 
     @Override // android.os.Parcelable
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.mClassName);
-        dest.writeInt(this.mIndex);
-        dest.writeInt(this.mFromLayout ? 1 : 0);
-        dest.writeInt(this.mFragmentId);
-        dest.writeInt(this.mContainerId);
-        dest.writeString(this.mTag);
-        dest.writeInt(this.mRetainInstance ? 1 : 0);
-        dest.writeInt(this.mDetached ? 1 : 0);
-        dest.writeBundle(this.mArguments);
-        dest.writeInt(this.mHidden ? 1 : 0);
-        dest.writeBundle(this.mSavedFragmentState);
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(this.mClassName);
+        parcel.writeInt(this.mIndex);
+        parcel.writeInt(this.mFromLayout ? 1 : 0);
+        parcel.writeInt(this.mFragmentId);
+        parcel.writeInt(this.mContainerId);
+        parcel.writeString(this.mTag);
+        parcel.writeInt(this.mRetainInstance ? 1 : 0);
+        parcel.writeInt(this.mDetached ? 1 : 0);
+        parcel.writeBundle(this.mArguments);
+        parcel.writeInt(this.mHidden ? 1 : 0);
+        parcel.writeBundle(this.mSavedFragmentState);
     }
 }

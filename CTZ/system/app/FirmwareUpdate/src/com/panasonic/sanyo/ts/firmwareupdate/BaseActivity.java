@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class BaseActivity extends Activity implements Runnable {
     static Thread thread = null;
@@ -85,9 +86,8 @@ public class BaseActivity extends Activity implements Runnable {
         this.dlg = new AlertDialog.Builder(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
         this.BatteryBroadcastReceiver = new BroadcastReceiver() { // from class: com.panasonic.sanyo.ts.firmwareupdate.BaseActivity.1
             @Override // android.content.BroadcastReceiver
@@ -120,9 +120,8 @@ public class BaseActivity extends Activity implements Runnable {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onPause() {
+    protected void onPause() {
         Log.v("onPause", "onPause");
         super.onPause();
         if (this.Updatewait) {
@@ -144,46 +143,50 @@ public class BaseActivity extends Activity implements Runnable {
         Log.v("UpdateStart", "バッテリーチェック\n");
         if (this.UpdateCancel) {
             CancelAction(true);
-        } else if (this.status != 5 && this.status != 2) {
+            return;
+        }
+        if (this.status != 5 && this.status != 2) {
             this.handler.sendEmptyMessage(5);
-        } else {
-            Log.v("UpdateStart", "容量比較\n");
-            if (this.UpdateCancel) {
-                CancelAction(true);
+            return;
+        }
+        Log.v("UpdateStart", "容量比較\n");
+        if (this.UpdateCancel) {
+            CancelAction(true);
+            return;
+        }
+        Log.v("SDPath", "SDPath:" + this.SDPath);
+        for (StorageVolume storageVolume : ((StorageManager) getSystemService("storage")).getStorageVolumes()) {
+            if (storageVolume.isRemovable()) {
+                this.mount_vol = storageVolume;
+                startActivityForResult(this.mount_vol.createAccessIntent(null), 2317);
                 return;
             }
-            Log.v("SDPath", "SDPath:" + this.SDPath);
-            for (StorageVolume storageVolume : ((StorageManager) getSystemService("storage")).getStorageVolumes()) {
-                if (storageVolume.isRemovable()) {
-                    this.mount_vol = storageVolume;
-                    startActivityForResult(this.mount_vol.createAccessIntent(null), 2317);
-                    return;
-                }
-            }
-            this.handler.sendEmptyMessage(1);
         }
+        this.handler.sendEmptyMessage(1);
     }
 
     @Override // android.app.Activity
-    public void onActivityResult(int i, int i2, Intent intent) {
+    public void onActivityResult(int i, int i2, Intent intent) throws IOException {
         super.onActivityResult(i, i2, intent);
         Log.i("onActivityResult", "nActivityResultCall.");
         if (i != 2317 || i2 != -1) {
             this.handler.sendEmptyMessage(1);
-        } else if (intent != null) {
+            return;
+        }
+        if (intent != null) {
             Uri data = intent.getData();
             Log.i("onActivityResult", "URI = " + data.getEncodedPath());
             Log.i("onActivityResult", "URI = " + data.getPath());
             getContentResolver().takePersistableUriPermission(data, 3);
-            DocumentFile fromTreeUri = DocumentFile.fromTreeUri(this, data);
-            Log.i("onActivityResult", "outUri1 = " + fromTreeUri.getUri().getPath());
-            DocumentFile findFile = fromTreeUri.findFile(this.UPDATE_FILE);
-            if (findFile == null) {
+            DocumentFile documentFileFromTreeUri = DocumentFile.fromTreeUri(this, data);
+            Log.i("onActivityResult", "outUri1 = " + documentFileFromTreeUri.getUri().getPath());
+            DocumentFile documentFileFindFile = documentFileFromTreeUri.findFile(this.UPDATE_FILE);
+            if (documentFileFindFile == null) {
                 this.handler.sendEmptyMessage(1);
                 return;
             }
             Log.v("UpDatefile", "file exists\n");
-            long length = findFile.length();
+            long length = documentFileFindFile.length();
             Log.v("CacheCheck", "UpdateSize : " + length);
             StatFs statFs = new StatFs("/cache");
             int availableBlocks = statFs.getAvailableBlocks() * statFs.getBlockSize();
@@ -198,113 +201,119 @@ public class BaseActivity extends Activity implements Runnable {
             }
             CancelAction(false);
             try {
-                InputStream openInputStream = getContentResolver().openInputStream(findFile.getUri());
-                FileOutputStream fileOutputStream = new FileOutputStream(this.CachePath);
                 try {
-                    byte[] bArr = new byte[4096];
-                    int i3 = 0;
-                    while (true) {
-                        int read = openInputStream.read(bArr);
-                        if (-1 == read) {
-                            break;
+                    InputStream inputStreamOpenInputStream = getContentResolver().openInputStream(documentFileFindFile.getUri());
+                    FileOutputStream fileOutputStream = new FileOutputStream(this.CachePath);
+                    try {
+                        byte[] bArr = new byte[4096];
+                        int i3 = 0;
+                        while (true) {
+                            int i4 = inputStreamOpenInputStream.read(bArr);
+                            if (-1 == i4) {
+                                break;
+                            }
+                            fileOutputStream.write(bArr, 0, i4);
+                            i3 += i4;
                         }
-                        fileOutputStream.write(bArr, 0, read);
-                        i3 += read;
-                    }
-                    Log.v("UpdateStart", "read-write OK:" + i3);
-                    openInputStream.close();
-                    fileOutputStream.flush();
-                    fileOutputStream.close();
-                    Log.v("UpdateStart", "/recoveryディレクトリチェック\n");
-                    if (this.UpdateCancel) {
-                        CancelAction(true);
-                        return;
-                    }
-                    File file = new File("/cache/recovery");
-                    if (!file.exists() && !file.mkdir()) {
-                        this.handler.sendEmptyMessage(3);
-                        return;
-                    }
-                    Log.v("UpdateStart", "commandファイルチェック\n");
-                    if (this.UpdateCancel) {
-                        CancelAction(true);
-                        return;
-                    }
-                    File file2 = new File("/cache/recovery/command");
-                    if (!file2.exists()) {
-                        try {
-                            if (!file2.createNewFile()) {
-                                this.handler.sendEmptyMessage(4);
+                        Log.v("UpdateStart", "read-write OK:" + i3);
+                        inputStreamOpenInputStream.close();
+                        fileOutputStream.flush();
+                        fileOutputStream.close();
+                        Log.v("UpdateStart", "/recoveryディレクトリチェック\n");
+                        if (this.UpdateCancel) {
+                            CancelAction(true);
+                            return;
+                        }
+                        File file = new File("/cache/recovery");
+                        if (!file.exists() && !file.mkdir()) {
+                            this.handler.sendEmptyMessage(3);
+                            return;
+                        }
+                        Log.v("UpdateStart", "commandファイルチェック\n");
+                        if (this.UpdateCancel) {
+                            CancelAction(true);
+                            return;
+                        }
+                        File file2 = new File("/cache/recovery/command");
+                        if (!file2.exists()) {
+                            try {
+                                if (!file2.createNewFile()) {
+                                    this.handler.sendEmptyMessage(4);
+                                    return;
+                                }
+                                FileWriter fileWriter = new FileWriter(file2);
+                                fileWriter.write("boot-recovery\n");
+                                fileWriter.write("--update_package=/cache/update.zip\n");
+                                fileWriter.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                this.handler.sendEmptyMessage(2);
                                 return;
                             }
-                            FileWriter fileWriter = new FileWriter(file2);
-                            fileWriter.write("boot-recovery\n");
-                            fileWriter.write("--update_package=/cache/update.zip\n");
-                            fileWriter.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        }
+                        Log.v("UpdateStart", "リブートチェック\n");
+                        if (this.UpdateCancel) {
+                            CancelAction(true);
+                            return;
+                        }
+                        if (this.UpdateMediaEject) {
+                            this.UpdateMediaEject = false;
                             this.handler.sendEmptyMessage(2);
                             return;
                         }
-                    }
-                    Log.v("UpdateStart", "リブートチェック\n");
-                    if (this.UpdateCancel) {
-                        CancelAction(true);
-                    } else if (this.UpdateMediaEject) {
-                        this.UpdateMediaEject = false;
-                        this.handler.sendEmptyMessage(2);
-                    } else {
                         this.Updatewait = true;
                         ((PowerManager) getSystemService("power")).reboot("recovery-update");
                         if (this.ProgressDialogActive) {
                             Log.v("UpdateStart", "progressDialog.dismiss");
                             this.ProgressDialogActive = false;
                             this.progressDialog.dismiss();
+                            return;
                         }
+                        return;
+                    } catch (IOException e2) {
+                        inputStreamOpenInputStream.close();
+                        fileOutputStream.close();
+                        Log.v("UpdateStart", "IOException-transfer\n");
+                        e2.printStackTrace();
+                        this.handler.sendEmptyMessage(2);
+                        return;
                     }
-                } catch (IOException e2) {
-                    openInputStream.close();
-                    fileOutputStream.close();
-                    Log.v("UpdateStart", "IOException-transfer\n");
-                    e2.printStackTrace();
+                } catch (IOException e3) {
+                    Log.v("UpdateStart", "IOException\n");
+                    e3.printStackTrace();
                     this.handler.sendEmptyMessage(2);
+                    return;
                 }
-            } catch (FileNotFoundException e3) {
+            } catch (FileNotFoundException e4) {
                 Log.v("UpdateStart", "FileNotFoundException\n");
-                e3.printStackTrace();
-                this.handler.sendEmptyMessage(1);
-            } catch (IOException e4) {
-                Log.v("UpdateStart", "IOException\n");
                 e4.printStackTrace();
-                this.handler.sendEmptyMessage(2);
+                this.handler.sendEmptyMessage(1);
+                return;
             }
-        } else {
-            Log.i("onActivityResult", "resultData is null");
-            this.handler.sendEmptyMessage(1);
         }
+        Log.i("onActivityResult", "resultData is null");
+        this.handler.sendEmptyMessage(1);
     }
 
     private void CacheDirFileCheck() {
-        File[] listFiles = Environment.getDownloadCacheDirectory().listFiles();
-        if (listFiles == null) {
+        File[] fileArrListFiles = Environment.getDownloadCacheDirectory().listFiles();
+        if (fileArrListFiles == null) {
             return;
         }
         HashSet hashSet = new HashSet();
-        for (int i = 0; i < listFiles.length; i++) {
-            if (!listFiles[i].getName().equals("lost+found") && !listFiles[i].getName().equalsIgnoreCase("recovery")) {
-                hashSet.add(listFiles[i].getPath());
+        for (int i = 0; i < fileArrListFiles.length; i++) {
+            if (!fileArrListFiles[i].getName().equals("lost+found") && !fileArrListFiles[i].getName().equalsIgnoreCase("recovery")) {
+                hashSet.add(fileArrListFiles[i].getPath());
             }
         }
-        Cursor query = getContentResolver().query(Downloads.Impl.ALL_DOWNLOADS_CONTENT_URI, new String[]{"_data"}, null, null, null);
-        if (query != null) {
-            if (query.moveToFirst()) {
+        Cursor cursorQuery = getContentResolver().query(Downloads.Impl.ALL_DOWNLOADS_CONTENT_URI, new String[]{"_data"}, null, null, null);
+        if (cursorQuery != null) {
+            if (cursorQuery.moveToFirst()) {
                 do {
-                    hashSet.remove(query.getString(0));
-                } while (query.moveToNext());
-                query.close();
-            } else {
-                query.close();
+                    hashSet.remove(cursorQuery.getString(0));
+                } while (cursorQuery.moveToNext());
             }
+            cursorQuery.close();
         }
         Iterator it = hashSet.iterator();
         while (it.hasNext()) {
@@ -313,21 +322,20 @@ public class BaseActivity extends Activity implements Runnable {
     }
 
     private static void delete(File file) {
-        File[] listFiles;
+        File[] fileArrListFiles;
         if (file.isFile()) {
             file.delete();
         }
-        if (!file.isDirectory() || (listFiles = file.listFiles()) == null) {
+        if (!file.isDirectory() || (fileArrListFiles = file.listFiles()) == null) {
             return;
         }
-        for (File file2 : listFiles) {
+        for (File file2 : fileArrListFiles) {
             delete(file2);
         }
         file.delete();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void CancelAction(boolean z) {
+    private void CancelAction(boolean z) {
         Log.v("CancelAction", "start");
         File file = new File("/cache/update.zip");
         if (file.exists()) {
@@ -344,8 +352,7 @@ public class BaseActivity extends Activity implements Runnable {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void startprogress() {
+    protected void startprogress() {
         this.ProgressDialogActive = true;
         this.progressDialog = new ProgressDialog(this);
         this.progressDialog.setProgressStyle(0);
@@ -359,7 +366,7 @@ public class BaseActivity extends Activity implements Runnable {
     }
 
     @Override // java.lang.Runnable
-    public void run() {
+    public void run() throws InterruptedException {
         Log.d("runProcess", "run");
         try {
             Thread.sleep(500L);

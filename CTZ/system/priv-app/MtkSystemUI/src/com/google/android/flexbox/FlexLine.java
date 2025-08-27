@@ -3,6 +3,7 @@ package com.google.android.flexbox;
 import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class FlexLine {
     int mCrossSize;
@@ -22,6 +23,9 @@ public class FlexLine {
     int mBottom = Integer.MIN_VALUE;
     List<Integer> mIndicesAlignSelfStretch = new ArrayList();
 
+    FlexLine() {
+    }
+
     public int getCrossSize() {
         return this.mCrossSize;
     }
@@ -34,8 +38,7 @@ public class FlexLine {
         return this.mItemCount - this.mGoneItemCount;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updatePositionFromView(View view, int leftDecoration, int topDecoration, int rightDecoration, int bottomDecoration) {
+    void updatePositionFromView(View view, int leftDecoration, int topDecoration, int rightDecoration, int bottomDecoration) {
         FlexItem flexItem = (FlexItem) view.getLayoutParams();
         this.mLeft = Math.min(this.mLeft, (view.getLeft() - flexItem.getMarginLeft()) - leftDecoration);
         this.mTop = Math.min(this.mTop, (view.getTop() - flexItem.getMarginTop()) - topDecoration);

@@ -6,10 +6,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import com.android.internal.annotations.Immutable;
 import java.util.Objects;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 @Immutable
 /* loaded from: classes.dex */
-public class InjectedSetting {
+class InjectedSetting {
     public final String className;
     public final int iconId;
     public final UserHandle mUserHandle;
@@ -42,18 +42,17 @@ public class InjectedSetting {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof InjectedSetting) {
-            InjectedSetting injectedSetting = (InjectedSetting) obj;
-            return Objects.equals(this.packageName, injectedSetting.packageName) && Objects.equals(this.className, injectedSetting.className) && Objects.equals(this.title, injectedSetting.title) && Objects.equals(Integer.valueOf(this.iconId), Integer.valueOf(injectedSetting.iconId)) && Objects.equals(this.mUserHandle, injectedSetting.mUserHandle) && Objects.equals(this.settingsActivity, injectedSetting.settingsActivity) && Objects.equals(this.userRestriction, injectedSetting.userRestriction);
+        if (!(obj instanceof InjectedSetting)) {
+            return false;
         }
-        return false;
+        InjectedSetting injectedSetting = (InjectedSetting) obj;
+        return Objects.equals(this.packageName, injectedSetting.packageName) && Objects.equals(this.className, injectedSetting.className) && Objects.equals(this.title, injectedSetting.title) && Objects.equals(Integer.valueOf(this.iconId), Integer.valueOf(injectedSetting.iconId)) && Objects.equals(this.mUserHandle, injectedSetting.mUserHandle) && Objects.equals(this.settingsActivity, injectedSetting.settingsActivity) && Objects.equals(this.userRestriction, injectedSetting.userRestriction);
     }
 
     public int hashCode() {
         return (31 * ((((((((((this.packageName.hashCode() * 31) + this.className.hashCode()) * 31) + this.title.hashCode()) * 31) + this.iconId) * 31) + (this.mUserHandle == null ? 0 : this.mUserHandle.hashCode())) * 31) + this.settingsActivity.hashCode())) + (this.userRestriction != null ? this.userRestriction.hashCode() : 0);
     }
 
-    /* loaded from: classes.dex */
     public static class Builder {
         private String mClassName;
         private int mIconId;

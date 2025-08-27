@@ -9,6 +9,7 @@ import com.android.systemui.R;
 import com.android.systemui.qs.QSPanel;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class TileLayout extends ViewGroup implements QSPanel.QSTileLayout {
     protected int mCellHeight;
@@ -75,14 +76,14 @@ public class TileLayout extends ViewGroup implements QSPanel.QSTileLayout {
 
     public boolean updateResources() {
         Resources resources = this.mContext.getResources();
-        int max = Math.max(1, resources.getInteger(R.integer.quick_settings_num_columns));
+        int iMax = Math.max(1, resources.getInteger(R.integer.quick_settings_num_columns));
         this.mCellHeight = this.mContext.getResources().getDimensionPixelSize(R.dimen.qs_tile_height);
         this.mCellMarginHorizontal = resources.getDimensionPixelSize(R.dimen.qs_tile_margin_horizontal);
         this.mCellMarginVertical = resources.getDimensionPixelSize(R.dimen.qs_tile_margin_vertical);
         this.mCellMarginTop = resources.getDimensionPixelSize(R.dimen.qs_tile_margin_top);
         this.mSidePadding = resources.getDimensionPixelOffset(R.dimen.qs_tile_layout_margin_side);
-        if (this.mColumns != max) {
-            this.mColumns = max;
+        if (this.mColumns != iMax) {
+            this.mColumns = iMax;
             requestLayout();
             return true;
         }
@@ -96,12 +97,12 @@ public class TileLayout extends ViewGroup implements QSPanel.QSTileLayout {
         int i3 = ((size + this.mColumns) - 1) / this.mColumns;
         this.mCellWidth = ((size2 - (this.mSidePadding * 2)) - (this.mCellMarginHorizontal * this.mColumns)) / this.mColumns;
         Iterator<QSPanel.TileRecord> it = this.mRecords.iterator();
-        View view = this;
+        View viewUpdateAccessibilityOrder = this;
         while (it.hasNext()) {
             QSPanel.TileRecord next = it.next();
             if (next.tileView.getVisibility() != 8) {
                 next.tileView.measure(exactly(this.mCellWidth), exactly(this.mCellHeight));
-                view = next.tileView.updateAccessibilityOrder(view);
+                viewUpdateAccessibilityOrder = next.tileView.updateAccessibilityOrder(viewUpdateAccessibilityOrder);
             }
         }
         int i4 = (i3 != 0 ? this.mCellMarginTop - this.mCellMarginVertical : 0) + ((this.mCellHeight + this.mCellMarginVertical) * i3);

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Button;
+
 /* loaded from: classes.dex */
 public class ClearAllButton extends Button {
     RecentsView mRecentsView;

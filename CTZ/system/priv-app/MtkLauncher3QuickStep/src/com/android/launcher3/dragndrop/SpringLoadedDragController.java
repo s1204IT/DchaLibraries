@@ -5,6 +5,7 @@ import com.android.launcher3.CellLayout;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.OnAlarmListener;
 import com.android.launcher3.Workspace;
+
 /* loaded from: classes.dex */
 public class SpringLoadedDragController implements OnAlarmListener {
     private Launcher mLauncher;
@@ -32,9 +33,9 @@ public class SpringLoadedDragController implements OnAlarmListener {
     public void onAlarm(Alarm alarm) {
         if (this.mScreen != null) {
             Workspace workspace = this.mLauncher.getWorkspace();
-            int indexOfChild = workspace.indexOfChild(this.mScreen);
-            if (indexOfChild != workspace.getCurrentPage()) {
-                workspace.snapToPage(indexOfChild);
+            int iIndexOfChild = workspace.indexOfChild(this.mScreen);
+            if (iIndexOfChild != workspace.getCurrentPage()) {
+                workspace.snapToPage(iIndexOfChild);
                 return;
             }
             return;

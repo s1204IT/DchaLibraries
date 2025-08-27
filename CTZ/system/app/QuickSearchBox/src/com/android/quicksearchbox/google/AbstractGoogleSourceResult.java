@@ -6,6 +6,7 @@ import com.android.quicksearchbox.Source;
 import com.android.quicksearchbox.SourceResult;
 import com.android.quicksearchbox.SuggestionExtras;
 import java.util.Collection;
+
 /* loaded from: classes.dex */
 public abstract class AbstractGoogleSourceResult implements SourceResult {
     private int mPos = 0;
@@ -65,7 +66,7 @@ public abstract class AbstractGoogleSourceResult implements SourceResult {
 
     @Override // com.android.quicksearchbox.Suggestion
     public String getSuggestionIcon1() {
-        return String.valueOf((int) R.drawable.magnifying_glass);
+        return String.valueOf(R.drawable.magnifying_glass);
     }
 
     @Override // com.android.quicksearchbox.Suggestion

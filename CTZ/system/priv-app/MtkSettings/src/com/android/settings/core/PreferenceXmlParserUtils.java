@@ -1,6 +1,7 @@
 package com.android.settings.core;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class PreferenceXmlParserUtils {
     static final String PREF_SCREEN_TAG = "PreferenceScreen";
@@ -29,7 +31,7 @@ public class PreferenceXmlParserUtils {
         return getStringData(context, attributeSet, R.styleable.Preference, 4);
     }
 
-    public static List<Bundle> extractMetadata(Context context, int i, int i2) throws IOException, XmlPullParserException {
+    public static List<Bundle> extractMetadata(Context context, int i, int i2) throws XmlPullParserException, Resources.NotFoundException, IOException {
         int next;
         ArrayList arrayList = new ArrayList();
         if (i <= 0) {
@@ -49,33 +51,33 @@ public class PreferenceXmlParserUtils {
                 String name = xml.getName();
                 if ((hasFlag(i2, 1) || !TextUtils.equals(PREF_SCREEN_TAG, name)) && (SUPPORTED_PREF_TYPES.contains(name) || name.endsWith("Preference"))) {
                     Bundle bundle = new Bundle();
-                    TypedArray obtainStyledAttributes = context.obtainStyledAttributes(Xml.asAttributeSet(xml), com.android.settings.R.styleable.Preference);
+                    TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(Xml.asAttributeSet(xml), com.android.settings.R.styleable.Preference);
                     if (hasFlag(i2, 4)) {
                         bundle.putString("type", name);
                     }
                     if (hasFlag(i2, 2)) {
-                        bundle.putString("key", getKey(obtainStyledAttributes));
+                        bundle.putString("key", getKey(typedArrayObtainStyledAttributes));
                     }
                     if (hasFlag(i2, 8)) {
-                        bundle.putString("controller", getController(obtainStyledAttributes));
+                        bundle.putString("controller", getController(typedArrayObtainStyledAttributes));
                     }
                     if (hasFlag(i2, 16)) {
-                        bundle.putString("title", getTitle(obtainStyledAttributes));
+                        bundle.putString("title", getTitle(typedArrayObtainStyledAttributes));
                     }
                     if (hasFlag(i2, 32)) {
-                        bundle.putString("summary", getSummary(obtainStyledAttributes));
+                        bundle.putString("summary", getSummary(typedArrayObtainStyledAttributes));
                     }
                     if (hasFlag(i2, 64)) {
-                        bundle.putInt("icon", getIcon(obtainStyledAttributes));
+                        bundle.putInt("icon", getIcon(typedArrayObtainStyledAttributes));
                     }
                     if (hasFlag(i2, 128)) {
-                        bundle.putBoolean("platform_slice", getPlatformSlice(obtainStyledAttributes));
+                        bundle.putBoolean("platform_slice", getPlatformSlice(typedArrayObtainStyledAttributes));
                     }
                     if (hasFlag(i2, 256)) {
-                        bundle.putString("keywords", getKeywords(obtainStyledAttributes));
+                        bundle.putString("keywords", getKeywords(typedArrayObtainStyledAttributes));
                     }
                     arrayList.add(bundle);
-                    obtainStyledAttributes.recycle();
+                    typedArrayObtainStyledAttributes.recycle();
                 }
             }
             next = xml.next();
@@ -89,9 +91,9 @@ public class PreferenceXmlParserUtils {
 
     @Deprecated
     private static String getStringData(Context context, AttributeSet attributeSet, int[] iArr, int i) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, iArr);
-        String string = obtainStyledAttributes.getString(i);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, iArr);
+        String string = typedArrayObtainStyledAttributes.getString(i);
+        typedArrayObtainStyledAttributes.recycle();
         return string;
     }
 

@@ -1,14 +1,14 @@
 package com.google.common.collect;
 
 import java.io.Serializable;
+
 /* loaded from: classes.dex */
 class ImmutableEntry<K, V> extends AbstractMapEntry<K, V> implements Serializable {
     private static final long serialVersionUID = 0;
     final K key;
     final V value;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ImmutableEntry(K k, V v) {
+    ImmutableEntry(K k, V v) {
         this.key = k;
         this.value = v;
     }

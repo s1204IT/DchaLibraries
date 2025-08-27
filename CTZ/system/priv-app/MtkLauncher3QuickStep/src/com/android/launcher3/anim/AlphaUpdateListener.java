@@ -3,6 +3,7 @@ package com.android.launcher3.anim;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class AlphaUpdateListener extends AnimationSuccessListener implements ValueAnimator.AnimatorUpdateListener {
     private static final float ALPHA_CUTOFF_THRESHOLD = 0.01f;

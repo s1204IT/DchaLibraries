@@ -9,15 +9,18 @@ import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherAppWidgetInfo;
 import com.android.launcher3.LauncherAppWidgetProviderInfo;
 import com.android.launcher3.util.PendingRequestArgs;
+
 /* loaded from: classes.dex */
 public class WidgetAddFlowHandler implements Parcelable {
     public static final Parcelable.Creator<WidgetAddFlowHandler> CREATOR = new Parcelable.Creator<WidgetAddFlowHandler>() { // from class: com.android.launcher3.widget.WidgetAddFlowHandler.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public WidgetAddFlowHandler createFromParcel(Parcel parcel) {
             return new WidgetAddFlowHandler(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public WidgetAddFlowHandler[] newArray(int i) {
@@ -30,8 +33,7 @@ public class WidgetAddFlowHandler implements Parcelable {
         this.mProviderInfo = appWidgetProviderInfo;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public WidgetAddFlowHandler(Parcel parcel) {
+    protected WidgetAddFlowHandler(Parcel parcel) {
         this.mProviderInfo = (AppWidgetProviderInfo) AppWidgetProviderInfo.CREATOR.createFromParcel(parcel);
     }
 

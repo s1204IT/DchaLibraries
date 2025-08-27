@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class StatusBarIconList {
     private ArrayList<Slot> mSlots = new ArrayList<>();
@@ -38,13 +39,11 @@ public class StatusBarIconList {
         return 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public ArrayList<Slot> getSlots() {
+    protected ArrayList<Slot> getSlots() {
         return new ArrayList<>(this.mSlots);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Slot getSlot(String str) {
+    protected Slot getSlot(String str) {
         return this.mSlots.get(getSlotIndex(str));
     }
 
@@ -65,14 +64,14 @@ public class StatusBarIconList {
     }
 
     public int getViewIndex(int i, int i2) {
-        int i3 = 0;
-        for (int i4 = 0; i4 < i; i4++) {
-            Slot slot = this.mSlots.get(i4);
+        int iNumberOfIcons = 0;
+        for (int i3 = 0; i3 < i; i3++) {
+            Slot slot = this.mSlots.get(i3);
             if (slot.hasIconsInSlot()) {
-                i3 += slot.numberOfIcons();
+                iNumberOfIcons += slot.numberOfIcons();
             }
         }
-        return i3 + this.mSlots.get(i).viewIndexOffsetForTag(i2);
+        return iNumberOfIcons + this.mSlots.get(i).viewIndexOffsetForTag(i2);
     }
 
     public void dump(PrintWriter printWriter) {
@@ -84,9 +83,9 @@ public class StatusBarIconList {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Slot {
         Comparator c = new Comparator<StatusBarIconHolder>() { // from class: com.android.systemui.statusbar.phone.StatusBarIconList.Slot.1
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(StatusBarIconHolder statusBarIconHolder, StatusBarIconHolder statusBarIconHolder2) {
                 if (statusBarIconHolder.getType() != 2 || statusBarIconHolder2.getType() != 2) {
@@ -160,8 +159,10 @@ public class StatusBarIconList {
             if (this.mSubSlots == null) {
                 this.mSubSlots = new ArrayList<>();
                 this.mSubSlots.add(statusBarIconHolder);
-            } else if (getIndexForTag(i) != -1) {
             } else {
+                if (getIndexForTag(i) != -1) {
+                    return;
+                }
                 this.mSubSlots.add(statusBarIconHolder);
                 Collections.sort(this.mSubSlots, this.c);
             }

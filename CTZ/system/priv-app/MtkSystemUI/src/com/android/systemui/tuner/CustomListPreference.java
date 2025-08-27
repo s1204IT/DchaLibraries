@@ -1,5 +1,6 @@
 package com.android.systemui.tuner;
 
+import android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.v14.preference.ListPreferenceDialogFragment;
 import android.support.v7.preference.ListPreference;
 import android.util.AttributeSet;
+
 /* loaded from: classes.dex */
 public class CustomListPreference extends ListPreference {
     public CustomListPreference(Context context, AttributeSet attributeSet) {
@@ -22,8 +24,7 @@ public class CustomListPreference extends ListPreference {
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDialogClosed(boolean z) {
+    protected void onDialogClosed(boolean z) {
     }
 
     protected Dialog onDialogCreated(DialogFragment dialogFragment, Dialog dialog) {
@@ -34,11 +35,9 @@ public class CustomListPreference extends ListPreference {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDialogStateRestored(DialogFragment dialogFragment, Dialog dialog, Bundle bundle) {
+    protected void onDialogStateRestored(DialogFragment dialogFragment, Dialog dialog, Bundle bundle) {
     }
 
-    /* loaded from: classes.dex */
     public static class CustomListPreferenceDialogFragment extends ListPreferenceDialogFragment {
         private int mClickedDialogEntryIndex;
 
@@ -54,14 +53,13 @@ public class CustomListPreference extends ListPreference {
             return (CustomListPreference) getPreference();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // android.support.v14.preference.ListPreferenceDialogFragment, android.support.v14.preference.PreferenceDialogFragment
-        public void onPrepareDialogBuilder(AlertDialog.Builder builder) {
+        protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
             super.onPrepareDialogBuilder(builder);
             this.mClickedDialogEntryIndex = getCustomizablePreference().findIndexOfValue(getCustomizablePreference().getValue());
             getCustomizablePreference().onPrepareDialogBuilder(builder, getOnItemClickListener());
             if (!getCustomizablePreference().isAutoClosePreference()) {
-                builder.setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.systemui.tuner.CustomListPreference.CustomListPreferenceDialogFragment.1
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.systemui.tuner.CustomListPreference.CustomListPreferenceDialogFragment.1
                     @Override // android.content.DialogInterface.OnClickListener
                     public void onClick(DialogInterface dialogInterface, int i) {
                         CustomListPreferenceDialogFragment.this.onItemConfirmed();
@@ -72,11 +70,11 @@ public class CustomListPreference extends ListPreference {
 
         @Override // android.support.v14.preference.PreferenceDialogFragment, android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            Dialog onCreateDialog = super.onCreateDialog(bundle);
+            Dialog dialogOnCreateDialog = super.onCreateDialog(bundle);
             if (bundle != null) {
                 this.mClickedDialogEntryIndex = bundle.getInt("settings.CustomListPrefDialog.KEY_CLICKED_ENTRY_INDEX", this.mClickedDialogEntryIndex);
             }
-            return getCustomizablePreference().onDialogCreated(this, onCreateDialog);
+            return getCustomizablePreference().onDialogCreated(this, dialogOnCreateDialog);
         }
 
         @Override // android.support.v14.preference.ListPreferenceDialogFragment, android.support.v14.preference.PreferenceDialogFragment, android.app.DialogFragment, android.app.Fragment

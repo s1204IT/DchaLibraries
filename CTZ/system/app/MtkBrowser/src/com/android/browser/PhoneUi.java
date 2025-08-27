@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -27,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 /* loaded from: classes.dex */
 public class PhoneUi extends BaseUi {
     private static final boolean DEBUG = Browser.DEBUG;
@@ -46,7 +48,7 @@ public class PhoneUi extends BaseUi {
         this.mNavigationBar = (NavigationBarPhone) this.mTitleBar.getNavigationBar();
         if (Build.VERSION.SDK_INT < 23) {
             TypedValue typedValue = new TypedValue();
-            activity.getTheme().resolveAttribute(16843499, typedValue, true);
+            activity.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
             this.mActionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data, activity.getResources().getDisplayMetrics());
         }
     }
@@ -65,7 +67,7 @@ public class PhoneUi extends BaseUi {
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public boolean onBackKey() {
+    public boolean onBackKey() throws Resources.NotFoundException {
         if (showingNavScreen() && this.mUiController.getTabControl().getTabCount() == 0) {
             return false;
         }
@@ -86,7 +88,7 @@ public class PhoneUi extends BaseUi {
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public void onProgressChanged(Tab tab) {
+    public void onProgressChanged(Tab tab) throws Resources.NotFoundException {
         super.onProgressChanged(tab);
         if (this.mNavScreen == null && getTitleBar().getHeight() > 0) {
             this.mHandler.sendEmptyMessage(100);
@@ -99,7 +101,7 @@ public class PhoneUi extends BaseUi {
         Log.d("PhoneUi", "PhoneUi.onConfigurationChanged(), new orientation = " + configuration.orientation);
         if (Build.VERSION.SDK_INT < 23) {
             TypedValue typedValue = new TypedValue();
-            this.mActivity.getTheme().resolveAttribute(16843499, typedValue, true);
+            this.mActivity.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
             this.mActionBarHeight = TypedValue.complexToDimensionPixelSize(typedValue.data, this.mActivity.getResources().getDisplayMetrics());
         }
         if (isEditingUrl() && this.mUiController != null && this.mUiController.isInCustomActionMode()) {
@@ -111,9 +113,8 @@ public class PhoneUi extends BaseUi {
         this.mLatestOrientation = configuration.orientation;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.browser.BaseUi
-    public void handleMessage(Message message) {
+    protected void handleMessage(Message message) {
         super.handleMessage(message);
         if (message.what == 100) {
             if (this.mNavScreen == null) {
@@ -137,7 +138,7 @@ public class PhoneUi extends BaseUi {
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public void setActiveTab(Tab tab) {
+    public void setActiveTab(Tab tab) throws Resources.NotFoundException {
         this.mTitleBar.cancelTitleBarAnimation(true);
         this.mTitleBar.setSkipTitleBarAnimations(true);
         super.setActiveTab(tab);
@@ -177,61 +178,61 @@ public class PhoneUi extends BaseUi {
         boolean z;
         boolean z2;
         boolean z3;
-        MenuItem findItem = menu.findItem(R.id.bookmarks_menu_id);
-        if (findItem != null) {
-            findItem.setVisible(!showingNavScreen());
+        MenuItem menuItemFindItem = menu.findItem(R.id.bookmarks_menu_id);
+        if (menuItemFindItem != null) {
+            menuItemFindItem.setVisible(!showingNavScreen());
         }
-        MenuItem findItem2 = menu.findItem(R.id.add_bookmark_menu_id);
-        if (findItem2 != null) {
+        MenuItem menuItemFindItem2 = menu.findItem(R.id.add_bookmark_menu_id);
+        if (menuItemFindItem2 != null) {
             if (tab != null && !tab.isSnapshot() && !showingNavScreen()) {
                 z3 = true;
             } else {
                 z3 = false;
             }
-            findItem2.setVisible(z3);
+            menuItemFindItem2.setVisible(z3);
         }
-        MenuItem findItem3 = menu.findItem(R.id.page_info_menu_id);
-        if (findItem3 != null) {
-            findItem3.setVisible(false);
+        MenuItem menuItemFindItem3 = menu.findItem(R.id.page_info_menu_id);
+        if (menuItemFindItem3 != null) {
+            menuItemFindItem3.setVisible(false);
         }
-        MenuItem findItem4 = menu.findItem(R.id.new_tab_menu_id);
-        if (findItem4 != null && !this.mUseQuickControls) {
-            findItem4.setVisible(false);
+        MenuItem menuItemFindItem4 = menu.findItem(R.id.new_tab_menu_id);
+        if (menuItemFindItem4 != null && !this.mUseQuickControls) {
+            menuItemFindItem4.setVisible(false);
         }
-        MenuItem findItem5 = menu.findItem(R.id.home_menu_id);
-        if (findItem5 != null) {
+        MenuItem menuItemFindItem5 = menu.findItem(R.id.home_menu_id);
+        if (menuItemFindItem5 != null) {
             if (tab != null && !tab.isSnapshot() && !showingNavScreen()) {
                 z2 = true;
             } else {
                 z2 = false;
             }
-            findItem5.setVisible(z2);
+            menuItemFindItem5.setVisible(z2);
         }
-        MenuItem findItem6 = menu.findItem(R.id.close_browser_menu_id);
-        if (findItem6 != null) {
-            findItem6.setVisible(!showingNavScreen());
-            findItem6.setEnabled(!inLockScreenMode());
+        MenuItem menuItemFindItem6 = menu.findItem(R.id.close_browser_menu_id);
+        if (menuItemFindItem6 != null) {
+            menuItemFindItem6.setVisible(!showingNavScreen());
+            menuItemFindItem6.setEnabled(!inLockScreenMode());
         }
-        MenuItem findItem7 = menu.findItem(R.id.preferences_menu_id);
-        if (findItem7 != null) {
-            findItem7.setEnabled(!noTabInNavScreen());
+        MenuItem menuItemFindItem7 = menu.findItem(R.id.preferences_menu_id);
+        if (menuItemFindItem7 != null) {
+            menuItemFindItem7.setEnabled(!noTabInNavScreen());
         }
-        MenuItem findItem8 = menu.findItem(R.id.history_menu_id);
-        if (findItem8 != null) {
-            findItem8.setEnabled(!noTabInNavScreen());
+        MenuItem menuItemFindItem8 = menu.findItem(R.id.history_menu_id);
+        if (menuItemFindItem8 != null) {
+            menuItemFindItem8.setEnabled(!noTabInNavScreen());
         }
-        MenuItem findItem9 = menu.findItem(R.id.snapshots_menu_id);
-        if (findItem9 != null) {
-            findItem9.setEnabled(!noTabInNavScreen());
+        MenuItem menuItemFindItem9 = menu.findItem(R.id.snapshots_menu_id);
+        if (menuItemFindItem9 != null) {
+            menuItemFindItem9.setEnabled(!noTabInNavScreen());
         }
-        MenuItem findItem10 = menu.findItem(R.id.close_other_tabs_id);
-        if (findItem10 != null) {
+        MenuItem menuItemFindItem10 = menu.findItem(R.id.close_other_tabs_id);
+        if (menuItemFindItem10 != null) {
             if (tab == null || this.mTabControl.getTabCount() <= 1) {
                 z = true;
             } else {
                 z = false;
             }
-            findItem10.setEnabled(!z);
+            menuItemFindItem10.setEnabled(!z);
         }
         if (showingNavScreen()) {
             menu.setGroupVisible(R.id.LIVE_MENU, false);
@@ -242,7 +243,7 @@ public class PhoneUi extends BaseUi {
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
+    public boolean onOptionsItemSelected(MenuItem menuItem) throws Resources.NotFoundException {
         if (showingNavScreen() && menuItem.getItemId() != R.id.history_menu_id && menuItem.getItemId() != R.id.snapshots_menu_id) {
             hideNavScreen(this.mUiController.getTabControl().getCurrentPosition(), false);
         }
@@ -320,21 +321,20 @@ public class PhoneUi extends BaseUi {
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public void showWeb(boolean z) {
+    public void showWeb(boolean z) throws Resources.NotFoundException {
         super.showWeb(z);
         hideNavScreen(this.mUiController.getTabControl().getCurrentPosition(), z);
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         super.onResume();
         if (this.mNavScreen != null) {
             this.mNavScreen.reload();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void showNavScreen() {
+    void showNavScreen() throws Resources.NotFoundException {
         if (DEBUG) {
             Log.d("browser", "PhoneUi.showNavScreen()--->");
         }
@@ -373,21 +373,20 @@ public class PhoneUi extends BaseUi {
             int width2 = (this.mContentView.getWidth() - dimensionPixelSize) / 2;
             int i = ((height2 - (dimensionPixelSize3 + dimensionPixelSize2)) / 2) + dimensionPixelSize3;
             int i2 = width2 + dimensionPixelSize;
-            float width3 = dimensionPixelSize / this.mContentView.getWidth();
             this.mContentView.setVisibility(8);
             this.mFixedTitlebarContainer.setVisibility(8);
             this.mTitleBar.getNavigationBar().getUrlInputView().setVisibility(8);
             AnimatorSet animatorSet = new AnimatorSet();
             AnimatorSet animatorSet2 = new AnimatorSet();
-            ObjectAnimator ofInt = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "left", 0, width2);
-            ObjectAnimator ofInt2 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "top", height, i);
-            ObjectAnimator ofInt3 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "right", width, i2);
-            ObjectAnimator ofInt4 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "bottom", height2, dimensionPixelSize2 + i);
-            ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this.mAnimScreen.mTitle, "alpha", 1.0f, 0.0f);
-            ObjectAnimator ofFloat2 = ObjectAnimator.ofFloat(this.mAnimScreen, "scaleFactor", 1.0f, width3);
-            ObjectAnimator ofFloat3 = ObjectAnimator.ofFloat(this.mAnimScreen.mMain, "alpha", 1.0f, 0.0f);
-            ofFloat3.setDuration(100L);
-            animatorSet2.playTogether(ofInt, ofInt2, ofInt3, ofInt4, ofFloat2, ofFloat);
+            ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "left", 0, width2);
+            ObjectAnimator objectAnimatorOfInt2 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "top", height, i);
+            ObjectAnimator objectAnimatorOfInt3 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "right", width, i2);
+            ObjectAnimator objectAnimatorOfInt4 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "bottom", height2, dimensionPixelSize2 + i);
+            ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this.mAnimScreen.mTitle, "alpha", 1.0f, 0.0f);
+            ObjectAnimator objectAnimatorOfFloat2 = ObjectAnimator.ofFloat(this.mAnimScreen, "scaleFactor", 1.0f, dimensionPixelSize / this.mContentView.getWidth());
+            ObjectAnimator objectAnimatorOfFloat3 = ObjectAnimator.ofFloat(this.mAnimScreen.mMain, "alpha", 1.0f, 0.0f);
+            objectAnimatorOfFloat3.setDuration(100L);
+            animatorSet2.playTogether(objectAnimatorOfInt, objectAnimatorOfInt2, objectAnimatorOfInt3, objectAnimatorOfInt4, objectAnimatorOfFloat2, objectAnimatorOfFloat);
             animatorSet2.setDuration(200L);
             animatorSet.addListener(new AnimatorListenerAdapter() { // from class: com.android.browser.PhoneUi.4
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
@@ -398,21 +397,19 @@ public class PhoneUi extends BaseUi {
                     PhoneUi.this.mUiController.setBlockEvents(false);
                 }
             });
-            animatorSet.playSequentially(animatorSet2, ofFloat3);
+            animatorSet.playSequentially(animatorSet2, objectAnimatorOfFloat3);
             animatorSet.start();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void finishAnimationIn() {
+    private void finishAnimationIn() {
         if (showingNavScreen()) {
             this.mNavScreen.sendAccessibilityEvent(32);
             this.mTabControl.setOnThumbnailUpdatedListener(this.mNavScreen);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void hideNavScreen(int i, boolean z) {
+    void hideNavScreen(int i, boolean z) throws Resources.NotFoundException {
         if (DEBUG) {
             Log.d("browser", "PhoneUi.hideNavScreen()--->position = " + i + ", animate = " + z);
         }
@@ -471,17 +468,17 @@ public class PhoneUi extends BaseUi {
             animatorSet.playTogether(ObjectAnimator.ofFloat(this.mNavScreen, "alpha", 1.0f, 0.0f), ObjectAnimator.ofFloat(this.mAnimScreen.mMain, "alpha", 0.0f, 1.0f));
             animatorSet.setDuration(100L);
             AnimatorSet animatorSet2 = new AnimatorSet();
-            ObjectAnimator ofInt = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "left", left, 0);
-            ObjectAnimator ofInt2 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "top", top, height);
-            ObjectAnimator ofInt3 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "right", i2, width);
-            ObjectAnimator ofInt4 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "bottom", i3, i4);
-            ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this.mAnimScreen, "scaleFactor", 1.0f, width2);
-            ObjectAnimator ofFloat2 = ObjectAnimator.ofFloat(this.mCustomViewContainer, "alpha", 1.0f, 0.0f);
-            ofFloat2.setDuration(100L);
-            animatorSet2.playTogether(ofInt, ofInt2, ofInt3, ofInt4, ofFloat);
+            ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "left", left, 0);
+            ObjectAnimator objectAnimatorOfInt2 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "top", top, height);
+            ObjectAnimator objectAnimatorOfInt3 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "right", i2, width);
+            ObjectAnimator objectAnimatorOfInt4 = ObjectAnimator.ofInt(this.mAnimScreen.mContent, "bottom", i3, i4);
+            ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this.mAnimScreen, "scaleFactor", 1.0f, width2);
+            ObjectAnimator objectAnimatorOfFloat2 = ObjectAnimator.ofFloat(this.mCustomViewContainer, "alpha", 1.0f, 0.0f);
+            objectAnimatorOfFloat2.setDuration(100L);
+            animatorSet2.playTogether(objectAnimatorOfInt, objectAnimatorOfInt2, objectAnimatorOfInt3, objectAnimatorOfInt4, objectAnimatorOfFloat);
             animatorSet2.setDuration(200L);
             AnimatorSet animatorSet3 = new AnimatorSet();
-            animatorSet3.playSequentially(animatorSet, animatorSet2, ofFloat2);
+            animatorSet3.playSequentially(animatorSet, animatorSet2, objectAnimatorOfFloat2);
             animatorSet3.addListener(new AnimatorListenerAdapter() { // from class: com.android.browser.PhoneUi.5
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
@@ -494,8 +491,7 @@ public class PhoneUi extends BaseUi {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void finishAnimateOut() {
+    private void finishAnimateOut() {
         this.mTabControl.setOnThumbnailUpdatedListener(null);
         this.mNavScreen.setVisibility(8);
         this.mCustomViewContainer.setAlpha(1.0f);
@@ -520,9 +516,7 @@ public class PhoneUi extends BaseUi {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class AnimScreen {
+    static class AnimScreen {
         private ImageView mContent;
         private Bitmap mContentBitmap;
         private Context mContext;
@@ -565,17 +559,17 @@ public class PhoneUi extends BaseUi {
             if (dimensionPixelSize > 1.0f) {
                 dimensionPixelSize = 1.0f;
             }
-            int floor = (int) Math.floor(webView.getWidth() * dimensionPixelSize);
+            int iFloor = (int) Math.floor(webView.getWidth() * dimensionPixelSize);
             Math.floor(height * dimensionPixelSize);
             if (view.getHeight() >= view.getWidth()) {
-                if (this.mContentBitmap == null || this.mContentBitmap.getWidth() != floor || this.mContentBitmap.getHeight() != floor) {
-                    this.mContentBitmap = safeCreateBitmap(floor, floor);
+                if (this.mContentBitmap == null || this.mContentBitmap.getWidth() != iFloor || this.mContentBitmap.getHeight() != iFloor) {
+                    this.mContentBitmap = safeCreateBitmap(iFloor, iFloor);
                 }
             } else {
-                int floor2 = (int) Math.floor(view.getWidth() * dimensionPixelSize);
-                int floor3 = (int) Math.floor(view.getHeight() * dimensionPixelSize);
-                if (this.mContentBitmap == null || this.mContentBitmap.getWidth() != floor2 || this.mContentBitmap.getHeight() != floor3) {
-                    this.mContentBitmap = safeCreateBitmap(floor2, floor3);
+                int iFloor2 = (int) Math.floor(view.getWidth() * dimensionPixelSize);
+                int iFloor3 = (int) Math.floor(view.getHeight() * dimensionPixelSize);
+                if (this.mContentBitmap == null || this.mContentBitmap.getWidth() != iFloor2 || this.mContentBitmap.getHeight() != iFloor3) {
+                    this.mContentBitmap = safeCreateBitmap(iFloor2, iFloor3);
                 }
             }
             if (this.mContentBitmap != null) {
@@ -604,8 +598,7 @@ public class PhoneUi extends BaseUi {
             this.mContent.setImageBitmap(bitmap);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setScaleFactor(float f) {
+        private void setScaleFactor(float f) {
             this.mScale = f;
             Matrix matrix = new Matrix();
             matrix.postScale(f, f);

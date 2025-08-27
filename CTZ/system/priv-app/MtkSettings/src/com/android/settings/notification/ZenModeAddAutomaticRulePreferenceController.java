@@ -8,6 +8,7 @@ import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.notification.ZenRuleSelectionDialog;
 import com.android.settings.utils.ZenServiceListing;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeAddAutomaticRulePreferenceController extends AbstractZenModeAutomaticRulePreferenceController implements Preference.OnPreferenceClickListener {
     private final ZenServiceListing mZenServiceListing;
@@ -30,9 +31,9 @@ public class ZenModeAddAutomaticRulePreferenceController extends AbstractZenMode
     @Override // com.android.settings.notification.AbstractZenModePreferenceController, com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference("zen_mode_add_automatic_rule");
-        findPreference.setPersistent(false);
-        findPreference.setOnPreferenceClickListener(this);
+        Preference preferenceFindPreference = preferenceScreen.findPreference("zen_mode_add_automatic_rule");
+        preferenceFindPreference.setPersistent(false);
+        preferenceFindPreference.setOnPreferenceClickListener(this);
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
@@ -41,7 +42,6 @@ public class ZenModeAddAutomaticRulePreferenceController extends AbstractZenMode
         return true;
     }
 
-    /* loaded from: classes.dex */
     public class RuleSelectionListener implements ZenRuleSelectionDialog.PositiveClickListener {
         public RuleSelectionListener() {
         }

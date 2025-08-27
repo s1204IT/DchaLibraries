@@ -14,6 +14,7 @@ import com.android.launcher3.ShortcutInfo;
 import com.android.launcher3.Utilities;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PreviewItemManager {
     private static final int FINAL_ITEM_ANIMATION_DURATION = 200;
@@ -42,8 +43,7 @@ public class PreviewItemManager {
         return new FolderPreviewItemAnim(this, this.mFirstPageParams.get(0), -1, -1, 0, 2, INITIAL_ITEM_ANIMATION_DURATION, runnable);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Drawable prepareCreateAnimation(View view) {
+    Drawable prepareCreateAnimation(View view) {
         Drawable drawable = ((TextView) view).getCompoundDrawables()[1];
         computePreviewDrawingParams(drawable.getIntrinsicWidth(), view.getMeasuredWidth());
         this.mReferenceDrawable = drawable;
@@ -68,8 +68,7 @@ public class PreviewItemManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public PreviewItemDrawingParams computePreviewItemDrawingParams(int i, int i2, PreviewItemDrawingParams previewItemDrawingParams) {
+    PreviewItemDrawingParams computePreviewItemDrawingParams(int i, int i2, PreviewItemDrawingParams previewItemDrawingParams) {
         if (i == -1) {
             return getFinalIconParams(previewItemDrawingParams);
         }
@@ -129,8 +128,8 @@ public class PreviewItemManager {
     }
 
     public void hidePreviewItem(int i, boolean z) {
-        int max = i + Math.max(this.mFirstPageParams.size() - 4, 0);
-        PreviewItemDrawingParams previewItemDrawingParams = max < this.mFirstPageParams.size() ? this.mFirstPageParams.get(max) : null;
+        int iMax = i + Math.max(this.mFirstPageParams.size() - 4, 0);
+        PreviewItemDrawingParams previewItemDrawingParams = iMax < this.mFirstPageParams.size() ? this.mFirstPageParams.get(iMax) : null;
         if (previewItemDrawingParams != null) {
             previewItemDrawingParams.hidden = z;
         }
@@ -145,8 +144,9 @@ public class PreviewItemManager {
             c = 1;
             if (previewItemsOnPage.size() >= arrayList.size()) {
                 break;
+            } else {
+                arrayList.remove(arrayList.size() - 1);
             }
-            arrayList.remove(arrayList.size() - 1);
         }
         while (previewItemsOnPage.size() > arrayList.size()) {
             arrayList.add(new PreviewItemDrawingParams(0.0f, 0.0f, 0.0f, 0.0f));
@@ -169,10 +169,13 @@ public class PreviewItemManager {
                 if (previewItemDrawingParams.anim != null) {
                     if (!previewItemDrawingParams.anim.hasEqualFinalState(folderPreviewItemAnim)) {
                         previewItemDrawingParams.anim.cancel();
+                        previewItemDrawingParams.anim = folderPreviewItemAnim;
+                        previewItemDrawingParams.anim.start();
                     }
+                } else {
+                    previewItemDrawingParams.anim = folderPreviewItemAnim;
+                    previewItemDrawingParams.anim.start();
                 }
-                previewItemDrawingParams.anim = folderPreviewItemAnim;
-                previewItemDrawingParams.anim.start();
             }
             i2++;
             previewItemManager = this;
@@ -180,40 +183,37 @@ public class PreviewItemManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onFolderClose(int i) {
+    void onFolderClose(int i) {
         this.mShouldSlideInFirstPage = i != 0;
         if (this.mShouldSlideInFirstPage) {
             this.mCurrentPageItemsTransX = 0.0f;
             buildParamsForPage(i, this.mCurrentPageParams, false);
             onParamsChanged();
-            ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 200.0f);
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.folder.PreviewItemManager.1
+            ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 200.0f);
+            valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.folder.PreviewItemManager.1
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
                     PreviewItemManager.this.mCurrentPageItemsTransX = ((Float) valueAnimator.getAnimatedValue()).floatValue();
                     PreviewItemManager.this.onParamsChanged();
                 }
             });
-            ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.folder.PreviewItemManager.2
+            valueAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.folder.PreviewItemManager.2
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
                     PreviewItemManager.this.mCurrentPageParams.clear();
                 }
             });
-            ofFloat.setStartDelay(100L);
-            ofFloat.setDuration(300L);
-            ofFloat.start();
+            valueAnimatorOfFloat.setStartDelay(100L);
+            valueAnimatorOfFloat.setDuration(300L);
+            valueAnimatorOfFloat.start();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updatePreviewItems(boolean z) {
+    void updatePreviewItems(boolean z) {
         buildParamsForPage(0, this.mFirstPageParams, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean verifyDrawable(@NonNull Drawable drawable) {
+    boolean verifyDrawable(@NonNull Drawable drawable) {
         for (int i = 0; i < this.mFirstPageParams.size(); i++) {
             if (this.mFirstPageParams.get(i).drawable == drawable) {
                 return true;
@@ -222,8 +222,7 @@ public class PreviewItemManager {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public float getIntrinsicIconSize() {
+    float getIntrinsicIconSize() {
         return this.mIntrinsicIconSize;
     }
 
@@ -238,25 +237,25 @@ public class PreviewItemManager {
             }
         }
         for (int i = 0; i < arrayList2.size(); i++) {
-            int indexOf = list2.indexOf(arrayList2.get(i));
-            PreviewItemDrawingParams previewItemDrawingParams = arrayList.get(indexOf);
-            computePreviewItemDrawingParams(indexOf, size, previewItemDrawingParams);
+            int iIndexOf = list2.indexOf(arrayList2.get(i));
+            PreviewItemDrawingParams previewItemDrawingParams = arrayList.get(iIndexOf);
+            computePreviewItemDrawingParams(iIndexOf, size, previewItemDrawingParams);
             updateTransitionParam(previewItemDrawingParams, (BubbleTextView) arrayList2.get(i), -3, list2.indexOf(arrayList2.get(i)), size);
         }
         for (int i2 = 0; i2 < list2.size(); i2++) {
-            int indexOf2 = list.indexOf(list2.get(i2));
-            if (indexOf2 >= 0 && i2 != indexOf2) {
-                updateTransitionParam(arrayList.get(i2), list2.get(i2), indexOf2, i2, size);
+            int iIndexOf2 = list.indexOf(list2.get(i2));
+            if (iIndexOf2 >= 0 && i2 != iIndexOf2) {
+                updateTransitionParam(arrayList.get(i2), list2.get(i2), iIndexOf2, i2, size);
             }
         }
         ArrayList arrayList3 = new ArrayList(list);
         arrayList3.removeAll(list2);
         for (int i3 = 0; i3 < arrayList3.size(); i3++) {
             BubbleTextView bubbleTextView2 = (BubbleTextView) arrayList3.get(i3);
-            int indexOf3 = list.indexOf(bubbleTextView2);
-            PreviewItemDrawingParams computePreviewItemDrawingParams = computePreviewItemDrawingParams(indexOf3, size, null);
-            updateTransitionParam(computePreviewItemDrawingParams, bubbleTextView2, indexOf3, -2, size);
-            arrayList.add(0, computePreviewItemDrawingParams);
+            int iIndexOf3 = list.indexOf(bubbleTextView2);
+            PreviewItemDrawingParams previewItemDrawingParamsComputePreviewItemDrawingParams = computePreviewItemDrawingParams(iIndexOf3, size, null);
+            updateTransitionParam(previewItemDrawingParamsComputePreviewItemDrawingParams, bubbleTextView2, iIndexOf3, -2, size);
+            arrayList.add(0, previewItemDrawingParamsComputePreviewItemDrawingParams);
         }
         for (int i4 = 0; i4 < arrayList.size(); i4++) {
             if (arrayList.get(i4).anim != null) {

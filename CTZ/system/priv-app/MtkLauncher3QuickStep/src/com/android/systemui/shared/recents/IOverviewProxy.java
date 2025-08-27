@@ -7,6 +7,7 @@ import android.os.Parcel;
 import android.os.RemoteException;
 import android.view.MotionEvent;
 import com.android.systemui.shared.recents.ISystemUiProxy;
+
 /* loaded from: classes.dex */
 public interface IOverviewProxy extends IInterface {
     void onBind(ISystemUiProxy iSystemUiProxy) throws RemoteException;
@@ -31,7 +32,6 @@ public interface IOverviewProxy extends IInterface {
 
     void onTip(int i, int i2) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IOverviewProxy {
         private static final String DESCRIPTOR = "com.android.systemui.shared.recents.IOverviewProxy";
         static final int TRANSACTION_onBind = 1;
@@ -129,7 +129,6 @@ public interface IOverviewProxy extends IInterface {
             }
         }
 
-        /* loaded from: classes.dex */
         private static class Proxy implements IOverviewProxy {
             private IBinder mRemote;
 
@@ -233,27 +232,27 @@ public interface IOverviewProxy extends IInterface {
             }
 
             @Override // com.android.systemui.shared.recents.IOverviewProxy
-            public void onOverviewShown(boolean triggeredFromAltTab) throws RemoteException {
-                Parcel _data = Parcel.obtain();
+            public void onOverviewShown(boolean z) throws RemoteException {
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    _data.writeInt(triggeredFromAltTab ? 1 : 0);
-                    this.mRemote.transact(8, _data, null, 1);
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(8, parcelObtain, null, 1);
                 } finally {
-                    _data.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.shared.recents.IOverviewProxy
-            public void onOverviewHidden(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) throws RemoteException {
-                Parcel _data = Parcel.obtain();
+            public void onOverviewHidden(boolean z, boolean z2) throws RemoteException {
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    _data.writeInt(triggeredFromAltTab ? 1 : 0);
-                    _data.writeInt(triggeredFromHomeKey ? 1 : 0);
-                    this.mRemote.transact(9, _data, null, 1);
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    parcelObtain.writeInt(z2 ? 1 : 0);
+                    this.mRemote.transact(9, parcelObtain, null, 1);
                 } finally {
-                    _data.recycle();
+                    parcelObtain.recycle();
                 }
             }
 

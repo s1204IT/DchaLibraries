@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeMessagesPreferenceController extends AbstractZenModePreferenceController implements Preference.OnPreferenceChangeListener {
     private final ZenModeBackend mBackend;
@@ -57,12 +58,12 @@ public class ZenModeMessagesPreferenceController extends AbstractZenModePreferen
                 this.mPreference.setEnabled(false);
                 this.mPreference.setValue("zen_mode_from_none");
                 this.mPreference.setSummary(this.mBackend.getContactsSummary(-1));
-                return;
+                break;
             default:
                 preference.setEnabled(true);
                 preference.setSummary(this.mBackend.getContactsSummary(4));
                 this.mPreference.setValue(this.mListValues[getIndexOfSendersValue(ZenModeBackend.getKeyFromSetting(this.mBackend.getPriorityMessageSenders()))]);
-                return;
+                break;
         }
     }
 

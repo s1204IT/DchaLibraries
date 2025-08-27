@@ -9,10 +9,11 @@ import android.content.Context;
 import android.os.ParcelUuid;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class A2dpSinkProfile implements LocalBluetoothProfile {
+final class A2dpSinkProfile implements LocalBluetoothProfile {
     private final CachedBluetoothDeviceManager mDeviceManager;
     private boolean mIsProfileReady;
     private final LocalBluetoothAdapter mLocalAdapter;
@@ -21,9 +22,12 @@ public final class A2dpSinkProfile implements LocalBluetoothProfile {
     private static boolean V = true;
     static final ParcelUuid[] SRC_UUIDS = {BluetoothUuid.AudioSource, BluetoothUuid.AdvAudioDist};
 
-    /* loaded from: classes.dex */
     private final class A2dpSinkServiceListener implements BluetoothProfile.ServiceListener {
         private A2dpSinkServiceListener() {
+        }
+
+        /* synthetic */ A2dpSinkServiceListener(A2dpSinkProfile a2dpSinkProfile, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // android.bluetooth.BluetoothProfile.ServiceListener
@@ -35,13 +39,13 @@ public final class A2dpSinkProfile implements LocalBluetoothProfile {
             List connectedDevices = A2dpSinkProfile.this.mService.getConnectedDevices();
             while (!connectedDevices.isEmpty()) {
                 BluetoothDevice bluetoothDevice = (BluetoothDevice) connectedDevices.remove(0);
-                CachedBluetoothDevice findDevice = A2dpSinkProfile.this.mDeviceManager.findDevice(bluetoothDevice);
-                if (findDevice == null) {
+                CachedBluetoothDevice cachedBluetoothDeviceFindDevice = A2dpSinkProfile.this.mDeviceManager.findDevice(bluetoothDevice);
+                if (cachedBluetoothDeviceFindDevice == null) {
                     Log.w("A2dpSinkProfile", "A2dpSinkProfile found new device: " + bluetoothDevice);
-                    findDevice = A2dpSinkProfile.this.mDeviceManager.addDevice(A2dpSinkProfile.this.mLocalAdapter, A2dpSinkProfile.this.mProfileManager, bluetoothDevice);
+                    cachedBluetoothDeviceFindDevice = A2dpSinkProfile.this.mDeviceManager.addDevice(A2dpSinkProfile.this.mLocalAdapter, A2dpSinkProfile.this.mProfileManager, bluetoothDevice);
                 }
-                findDevice.onProfileStateChanged(A2dpSinkProfile.this, 2);
-                findDevice.refresh();
+                cachedBluetoothDeviceFindDevice.onProfileStateChanged(A2dpSinkProfile.this, 2);
+                cachedBluetoothDeviceFindDevice.refresh();
             }
             A2dpSinkProfile.this.mIsProfileReady = true;
         }
@@ -64,8 +68,7 @@ public final class A2dpSinkProfile implements LocalBluetoothProfile {
         return 11;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public A2dpSinkProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
+    A2dpSinkProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;
         this.mProfileManager = localBluetoothProfileManager;
@@ -93,8 +96,9 @@ public final class A2dpSinkProfile implements LocalBluetoothProfile {
         }
         List<BluetoothDevice> connectedDevices = getConnectedDevices();
         if (connectedDevices != null) {
-            for (BluetoothDevice bluetoothDevice2 : connectedDevices) {
-                if (bluetoothDevice2.equals(bluetoothDevice)) {
+            Iterator<BluetoothDevice> it = connectedDevices.iterator();
+            while (it.hasNext()) {
+                if (it.next().equals(bluetoothDevice)) {
                     Log.d("A2dpSinkProfile", "Ignoring Connect");
                     return true;
                 }

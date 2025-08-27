@@ -25,6 +25,7 @@ import com.android.systemui.util.wakelock.WakeLock;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+
 /* loaded from: classes.dex */
 public class DozeTriggers implements DozeMachine.Part {
     private static final boolean DEBUG = DozeService.DEBUG;
@@ -69,19 +70,18 @@ public class DozeTriggers implements DozeMachine.Part {
         this.mDozeSensors = new DozeSensors(context, alarmManager, this.mSensorManager, dozeParameters, ambientDisplayConfiguration, wakeLock, new DozeSensors.Callback() { // from class: com.android.systemui.doze.-$$Lambda$DozeTriggers$XvluYZ5eADBR1VYFZ4qS9j4p2P0
             @Override // com.android.systemui.doze.DozeSensors.Callback
             public final void onSensorPulse(int i, boolean z2, float f, float f2) {
-                DozeTriggers.this.onSensor(i, z2, f, f2);
+                this.f$0.onSensor(i, z2, f, f2);
             }
         }, new Consumer() { // from class: com.android.systemui.doze.-$$Lambda$DozeTriggers$ulqUMEXi8OgK7771oZ9BOr21BBk
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                DozeTriggers.this.onProximityFar(((Boolean) obj).booleanValue());
+                this.f$0.onProximityFar(((Boolean) obj).booleanValue());
             }
         }, dozeParameters.getPolicy());
         this.mUiModeManager = (UiModeManager) this.mContext.getSystemService(UiModeManager.class);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onNotification() {
+    private void onNotification() {
         if (DozeMachine.DEBUG) {
             Log.d("DozeTriggers", "requestNotificationPulse");
         }
@@ -93,13 +93,13 @@ public class DozeTriggers implements DozeMachine.Part {
     }
 
     private void proximityCheckThenCall(final IntConsumer intConsumer, boolean z, final int i) {
-        Boolean isProximityCurrentlyFar = this.mDozeSensors.isProximityCurrentlyFar();
+        Boolean boolIsProximityCurrentlyFar = this.mDozeSensors.isProximityCurrentlyFar();
         if (z) {
             intConsumer.accept(3);
-        } else if (isProximityCurrentlyFar != null) {
-            intConsumer.accept(isProximityCurrentlyFar.booleanValue() ? 2 : 1);
+        } else if (boolIsProximityCurrentlyFar != null) {
+            intConsumer.accept(boolIsProximityCurrentlyFar.booleanValue() ? 2 : 1);
         } else {
-            final long uptimeMillis = SystemClock.uptimeMillis();
+            final long jUptimeMillis = SystemClock.uptimeMillis();
             new ProximityCheck() { // from class: com.android.systemui.doze.DozeTriggers.1
                 /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
                 {
@@ -108,15 +108,14 @@ public class DozeTriggers implements DozeMachine.Part {
 
                 @Override // com.android.systemui.doze.DozeTriggers.ProximityCheck
                 public void onProximityResult(int i2) {
-                    DozeLog.traceProximityResult(DozeTriggers.this.mContext, i2 == 1, SystemClock.uptimeMillis() - uptimeMillis, i);
+                    DozeLog.traceProximityResult(DozeTriggers.this.mContext, i2 == 1, SystemClock.uptimeMillis() - jUptimeMillis, i);
                     intConsumer.accept(i2);
                 }
             }.check();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSensor(int i, boolean z, final float f, final float f2) {
+    private void onSensor(int i, boolean z, final float f, final float f2) {
         boolean z2 = false;
         final boolean z3 = i == 4;
         boolean z4 = i == 3;
@@ -125,7 +124,7 @@ public class DozeTriggers implements DozeMachine.Part {
             proximityCheckThenCall(new IntConsumer() { // from class: com.android.systemui.doze.-$$Lambda$DozeTriggers$Cox3oanmitA51LErVAi1Gs5cbKs
                 @Override // java.util.function.IntConsumer
                 public final void accept(int i2) {
-                    DozeTriggers.lambda$onSensor$0(DozeTriggers.this, z3, f, f2, i2);
+                    DozeTriggers.lambda$onSensor$0(this.f$0, z3, f, f2, i2);
                 }
             }, z, i);
             return;
@@ -146,13 +145,12 @@ public class DozeTriggers implements DozeMachine.Part {
         if (z) {
             dozeTriggers.mDozeHost.onDoubleTap(f, f2);
             dozeTriggers.mMachine.wakeUp();
-            return;
+        } else {
+            dozeTriggers.mDozeHost.extendPulse();
         }
-        dozeTriggers.mDozeHost.extendPulse();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onProximityFar(boolean z) {
+    private void onProximityFar(boolean z) {
         boolean z2 = !z;
         DozeMachine.State state = this.mMachine.getState();
         boolean z3 = state == DozeMachine.State.DOZE_AOD_PAUSED;
@@ -184,7 +182,7 @@ public class DozeTriggers implements DozeMachine.Part {
                 this.mBroadcastReceiver.register(this.mContext);
                 this.mDozeHost.addCallback(this.mHostCallback);
                 checkTriggersAtInit();
-                return;
+                break;
             case DOZE:
             case DOZE_AOD:
                 this.mDozeSensors.setProxListening(state2 != DozeMachine.State.DOZE);
@@ -192,24 +190,22 @@ public class DozeTriggers implements DozeMachine.Part {
                     this.mDozeSensors.reregisterAllSensors();
                 }
                 this.mDozeSensors.setListening(true);
-                return;
+                break;
             case DOZE_AOD_PAUSED:
             case DOZE_AOD_PAUSING:
                 this.mDozeSensors.setProxListening(true);
                 this.mDozeSensors.setListening(false);
-                return;
+                break;
             case DOZE_PULSING:
                 this.mDozeSensors.setTouchscreenSensorsListening(false);
                 this.mDozeSensors.setProxListening(true);
-                return;
+                break;
             case FINISH:
                 this.mBroadcastReceiver.unregister(this.mContext);
                 this.mDozeHost.removeCallback(this.mHostCallback);
                 this.mDozeSensors.setListening(false);
                 this.mDozeSensors.setProxListening(false);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -219,8 +215,7 @@ public class DozeTriggers implements DozeMachine.Part {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void requestPulse(final int i, boolean z) {
+    private void requestPulse(final int i, boolean z) {
         Assert.isMainThread();
         this.mDozeHost.extendPulse();
         if (this.mPulsePending || !this.mAllowPulseTriggers || !canPulse()) {
@@ -235,7 +230,7 @@ public class DozeTriggers implements DozeMachine.Part {
         IntConsumer intConsumer = new IntConsumer() { // from class: com.android.systemui.doze.-$$Lambda$DozeTriggers$hOBqImh7g4o_iKhiP9d1qETIOWo
             @Override // java.util.function.IntConsumer
             public final void accept(int i2) {
-                DozeTriggers.lambda$requestPulse$1(DozeTriggers.this, i, i2);
+                DozeTriggers.lambda$requestPulse$1(this.f$0, i, i2);
             }
         };
         if (this.mDozeParameters.getProxCheckBeforePulse() && !z) {
@@ -275,9 +270,7 @@ public class DozeTriggers implements DozeMachine.Part {
         this.mDozeSensors.dump(printWriter);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public abstract class ProximityCheck implements SensorEventListener, Runnable {
+    private abstract class ProximityCheck implements SensorEventListener, Runnable {
         private boolean mFinished;
         private float mMaxRange;
         private boolean mRegistered;
@@ -351,7 +344,6 @@ public class DozeTriggers implements DozeMachine.Part {
         }
     }
 
-    /* loaded from: classes.dex */
     private class TriggerReceiver extends BroadcastReceiver {
         private boolean mRegistered;
 

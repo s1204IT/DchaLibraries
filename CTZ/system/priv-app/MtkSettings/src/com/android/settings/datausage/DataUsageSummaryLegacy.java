@@ -33,6 +33,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.net.DataUsageController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements DataUsageEditController, Indexable {
     private DataUsageInfoController mDataInfoController;
@@ -92,19 +93,19 @@ public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements Dat
         super.onCreate(bundle);
         Context context = getContext();
         this.mPolicyEditor = new NetworkPolicyEditor(NetworkPolicyManager.from(context));
-        boolean hasMobileData = DataUsageUtils.hasMobileData(context);
+        boolean zHasMobileData = DataUsageUtils.hasMobileData(context);
         this.mDataUsageController = new DataUsageController(context);
         this.mDataInfoController = new DataUsageInfoController();
         int defaultSubscriptionId = DataUsageUtils.getDefaultSubscriptionId(context);
         if (defaultSubscriptionId == -1) {
-            hasMobileData = false;
+            zHasMobileData = false;
         }
         this.mDefaultTemplate = DataUsageUtils.getDefaultTemplate(context, defaultSubscriptionId);
         this.mSummaryPreference = (SummaryPreference) findPreference("status_header");
-        if (!hasMobileData || !isAdmin()) {
+        if (!zHasMobileData || !isAdmin()) {
             removePreference("restrict_background_legacy");
         }
-        if (hasMobileData) {
+        if (zHasMobileData) {
             this.mLimitPreference = findPreference("limit_summary");
             List<SubscriptionInfo> activeSubscriptionInfoList = this.services.mSubscriptionManager.getActiveSubscriptionInfoList();
             if (activeSubscriptionInfoList == null || activeSubscriptionInfoList.size() == 0) {
@@ -123,17 +124,17 @@ public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements Dat
             removePreference("limit_summary");
             this.mSummaryPreference.setSelectable(false);
         }
-        boolean hasWifiRadio = DataUsageUtils.hasWifiRadio(context);
-        if (hasWifiRadio) {
+        boolean zHasWifiRadio = DataUsageUtils.hasWifiRadio(context);
+        if (zHasWifiRadio) {
             addWifiSection();
         }
         if (hasEthernet(context)) {
             addEthernetSection();
         }
-        if (hasMobileData) {
+        if (zHasMobileData) {
             i = R.string.cell_data_template;
         } else {
-            i = hasWifiRadio ? R.string.wifi_data_template : R.string.ethernet_data_template;
+            i = zHasWifiRadio ? R.string.wifi_data_template : R.string.ethernet_data_template;
         }
         this.mDataUsageTemplate = i;
         setHasOptionsMenu(true);
@@ -169,9 +170,8 @@ public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements Dat
         return super.onPreferenceTreeClick(preference);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.data_usage_legacy;
     }
 
@@ -207,9 +207,9 @@ public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements Dat
     }
 
     private Preference inflatePreferences(int i) {
-        PreferenceScreen inflateFromResource = getPreferenceManager().inflateFromResource(getPrefContext(), i, null);
-        Preference preference = inflateFromResource.getPreference(0);
-        inflateFromResource.removeAll();
+        PreferenceScreen preferenceScreenInflateFromResource = getPreferenceManager().inflateFromResource(getPrefContext(), i, null);
+        Preference preference = preferenceScreenInflateFromResource.getPreference(0);
+        preferenceScreenInflateFromResource.removeAll();
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preference.setOrder(preferenceScreen.getPreferenceCount());
         preferenceScreen.addPreference(preference);
@@ -227,13 +227,13 @@ public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements Dat
     }
 
     static CharSequence formatUsage(Context context, String str, long j) {
-        Formatter.BytesResult formatBytes = Formatter.formatBytes(context.getResources(), j, 2);
-        SpannableString spannableString = new SpannableString(formatBytes.value);
+        Formatter.BytesResult bytes = Formatter.formatBytes(context.getResources(), j, 2);
+        SpannableString spannableString = new SpannableString(bytes.value);
         spannableString.setSpan(new RelativeSizeSpan(1.5625f), 0, spannableString.length(), 18);
-        CharSequence expandTemplate = TextUtils.expandTemplate(new SpannableString(context.getString(17039893).replace("%1$s", "^1").replace("%2$s", "^2")), spannableString, formatBytes.units);
+        CharSequence charSequenceExpandTemplate = TextUtils.expandTemplate(new SpannableString(context.getString(android.R.string.config_defaultAssistantAccessComponent).replace("%1$s", "^1").replace("%2$s", "^2")), spannableString, bytes.units);
         SpannableString spannableString2 = new SpannableString(str);
         spannableString2.setSpan(new RelativeSizeSpan(0.64f), 0, spannableString2.length(), 18);
-        return TextUtils.expandTemplate(spannableString2, BidiFormatter.getInstance().unicodeWrap(expandTemplate.toString()));
+        return TextUtils.expandTemplate(spannableString2, BidiFormatter.getInstance().unicodeWrap(charSequenceExpandTemplate.toString()));
     }
 
     private void updateState() {
@@ -249,8 +249,8 @@ public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements Dat
             } else {
                 this.mSummaryPreference.setChartEnabled(true);
                 this.mSummaryPreference.setLabels(Formatter.formatFileSize(context, 0L), Formatter.formatFileSize(context, summaryLimit));
-                float f = (float) summaryLimit;
-                this.mSummaryPreference.setRatios(((float) dataUsageInfo.usageLevel) / f, 0.0f, ((float) (summaryLimit - dataUsageInfo.usageLevel)) / f);
+                float f = summaryLimit;
+                this.mSummaryPreference.setRatios(dataUsageInfo.usageLevel / f, 0.0f, (summaryLimit - dataUsageInfo.usageLevel) / f);
             }
         }
         if (this.mLimitPreference != null && (dataUsageInfo.warningLevel > 0 || dataUsageInfo.limitLevel > 0)) {
@@ -284,9 +284,7 @@ public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements Dat
         updateState();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Activity mActivity;
         private final DataUsageController mDataController;
         private final SummaryLoader mSummaryLoader;
@@ -299,17 +297,17 @@ public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements Dat
 
         @Override // com.android.settings.dashboard.SummaryLoader.SummaryProvider
         public void setListening(boolean z) {
-            String formatPercentage;
+            String percentage;
             if (z) {
                 DataUsageController.DataUsageInfo dataUsageInfo = this.mDataController.getDataUsageInfo();
                 if (dataUsageInfo == null) {
-                    formatPercentage = Formatter.formatFileSize(this.mActivity, 0L);
+                    percentage = Formatter.formatFileSize(this.mActivity, 0L);
                 } else if (dataUsageInfo.limitLevel <= 0) {
-                    formatPercentage = Formatter.formatFileSize(this.mActivity, dataUsageInfo.usageLevel);
+                    percentage = Formatter.formatFileSize(this.mActivity, dataUsageInfo.usageLevel);
                 } else {
-                    formatPercentage = Utils.formatPercentage(dataUsageInfo.usageLevel, dataUsageInfo.limitLevel);
+                    percentage = Utils.formatPercentage(dataUsageInfo.usageLevel, dataUsageInfo.limitLevel);
                 }
-                this.mSummaryLoader.setSummary(this, this.mActivity.getString(R.string.data_usage_summary_format, new Object[]{formatPercentage}));
+                this.mSummaryLoader.setSummary(this, this.mActivity.getString(R.string.data_usage_summary_format, new Object[]{percentage}));
             }
         }
     }

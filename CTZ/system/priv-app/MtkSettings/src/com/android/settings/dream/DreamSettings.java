@@ -11,6 +11,7 @@ import com.android.settingslib.dream.DreamBackend;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DreamSettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.dream.DreamSettings.1
@@ -27,30 +28,25 @@ public class DreamSettings extends DashboardFragment {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int getSettingFromPrefKey(String str) {
+    /* JADX WARN: Removed duplicated region for block: B:23:0x0045  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    static int getSettingFromPrefKey(String str) {
         char c;
-        int hashCode = str.hashCode();
-        if (hashCode == -1592701525) {
-            if (str.equals("while_docked_only")) {
-                c = 1;
-            }
-            c = 65535;
-        } else if (hashCode == -294641318) {
-            if (str.equals("either_charging_or_docked")) {
+        int iHashCode = str.hashCode();
+        if (iHashCode != -1592701525) {
+            if (iHashCode != -294641318) {
+                if (iHashCode != 104712844) {
+                    c = (iHashCode == 1019349036 && str.equals("while_charging_only")) ? (char) 0 : (char) 65535;
+                } else if (str.equals("never")) {
+                    c = 3;
+                }
+            } else if (str.equals("either_charging_or_docked")) {
                 c = 2;
             }
-            c = 65535;
-        } else if (hashCode != 104712844) {
-            if (hashCode == 1019349036 && str.equals("while_charging_only")) {
-                c = 0;
-            }
-            c = 65535;
-        } else {
-            if (str.equals("never")) {
-                c = 3;
-            }
-            c = 65535;
+        } else if (str.equals("while_docked_only")) {
+            c = 1;
         }
         switch (c) {
             case 0:
@@ -64,8 +60,7 @@ public class DreamSettings extends DashboardFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static String getKeyFromSetting(int i) {
+    static String getKeyFromSetting(int i) {
         switch (i) {
             case 0:
                 return "while_charging_only";
@@ -78,8 +73,7 @@ public class DreamSettings extends DashboardFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int getDreamSettingDescriptionResId(int i) {
+    static int getDreamSettingDescriptionResId(int i) {
         switch (i) {
             case 0:
                 return R.string.screensaver_settings_summary_sleep;
@@ -97,9 +91,8 @@ public class DreamSettings extends DashboardFragment {
         return 47;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.dream_fragment_overview;
     }
 
@@ -129,8 +122,7 @@ public class DreamSettings extends DashboardFragment {
         return dreamBackend.getActiveDreamName();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new CurrentDreamPreferenceController(context));
         arrayList.add(new WhenToDreamPreferenceController(context));

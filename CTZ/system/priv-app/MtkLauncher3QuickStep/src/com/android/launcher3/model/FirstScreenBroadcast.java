@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class FirstScreenBroadcast {
     private static final String ACTION_FIRST_SCREEN_ACTIVE_INSTALLS = "com.android.launcher3.action.FIRST_SCREEN_ACTIVE_INSTALLS";
@@ -29,13 +30,13 @@ public class FirstScreenBroadcast {
     private static final String WORKSPACE_ITEM_EXTRA = "workspaceItem";
     private final MultiHashMap<String, String> mPackagesForInstaller;
 
-    public FirstScreenBroadcast(HashMap<String, PackageInstaller.SessionInfo> hashMap) {
-        this.mPackagesForInstaller = getPackagesForInstaller(hashMap);
+    public FirstScreenBroadcast(HashMap<String, PackageInstaller.SessionInfo> map) {
+        this.mPackagesForInstaller = getPackagesForInstaller(map);
     }
 
-    private MultiHashMap<String, String> getPackagesForInstaller(HashMap<String, PackageInstaller.SessionInfo> hashMap) {
+    private MultiHashMap<String, String> getPackagesForInstaller(HashMap<String, PackageInstaller.SessionInfo> map) {
         MultiHashMap<String, String> multiHashMap = new MultiHashMap<>();
-        for (Map.Entry<String, PackageInstaller.SessionInfo> entry : hashMap.entrySet()) {
+        for (Map.Entry<String, PackageInstaller.SessionInfo> entry : map.entrySet()) {
             multiHashMap.addToList(entry.getValue().getInstallerPackageName(), entry.getKey());
         }
         return multiHashMap;

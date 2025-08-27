@@ -16,9 +16,11 @@ import android.util.Log;
 import com.android.internal.os.BatterySipper;
 import com.android.settings.R;
 import com.android.settingslib.Utils;
+import com.android.settingslib.wifi.AccessPoint;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class BatteryEntry {
     private static NameAndIconLoader mRequestThread;
@@ -33,7 +35,6 @@ public class BatteryEntry {
     static final ArrayList<BatteryEntry> mRequestQueue = new ArrayList<>();
     static Locale sCurrentLocale = null;
 
-    /* loaded from: classes.dex */
     private static class NameAndIconLoader extends Thread {
         private boolean mAbort;
 
@@ -48,15 +49,16 @@ public class BatteryEntry {
 
         @Override // java.lang.Thread, java.lang.Runnable
         public void run() {
-            BatteryEntry remove;
+            BatteryEntry batteryEntryRemove;
             while (true) {
                 synchronized (BatteryEntry.mRequestQueue) {
                     if (BatteryEntry.mRequestQueue.isEmpty() || this.mAbort) {
                         break;
+                    } else {
+                        batteryEntryRemove = BatteryEntry.mRequestQueue.remove(0);
                     }
-                    remove = BatteryEntry.mRequestQueue.remove(0);
                 }
-                remove.loadNameAndIcon();
+                batteryEntryRemove.loadNameAndIcon();
             }
             if (BatteryEntry.sHandler != null) {
                 BatteryEntry.sHandler.sendEmptyMessage(2);
@@ -95,9 +97,7 @@ public class BatteryEntry {
         sUidCache.clear();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class UidToDetail {
+    static class UidToDetail {
         Drawable icon;
         String name;
         String packageName;
@@ -156,7 +156,6 @@ public class BatteryEntry {
                         break;
                     }
                 }
-                break;
             case 9:
                 UserInfo userInfo = userManager.getUserInfo(batterySipper.userId);
                 if (userInfo != null) {
@@ -168,7 +167,7 @@ public class BatteryEntry {
                     this.name = context.getResources().getString(R.string.running_process_item_removed_user_label);
                     break;
                 }
-            case 10:
+            case AccessPoint.Speed.MODERATE /* 10 */:
                 this.name = context.getResources().getString(R.string.power_unaccounted);
                 this.iconId = R.drawable.ic_power_system;
                 break;
@@ -193,8 +192,7 @@ public class BatteryEntry {
         }
     }
 
-    /* renamed from: com.android.settings.fuelgauge.BatteryEntry$1  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.settings.fuelgauge.BatteryEntry$1, reason: invalid class name */
     static /* synthetic */ class AnonymousClass1 {
         static final /* synthetic */ int[] $SwitchMap$com$android$internal$os$BatterySipper$DrainType = new int[BatterySipper.DrainType.values().length];
 
@@ -268,9 +266,9 @@ public class BatteryEntry {
             clearUidCache();
             sCurrentLocale = locale;
         }
-        String num = Integer.toString(i);
-        if (sUidCache.containsKey(num)) {
-            UidToDetail uidToDetail = sUidCache.get(num);
+        String string = Integer.toString(i);
+        if (sUidCache.containsKey(string)) {
+            UidToDetail uidToDetail = sUidCache.get(string);
             this.defaultPackageName = uidToDetail.packageName;
             this.name = uidToDetail.name;
             this.icon = uidToDetail.icon;
@@ -306,10 +304,10 @@ public class BatteryEntry {
         if (this.sipper.mPackages == null) {
             this.sipper.mPackages = packageManager.getPackagesForUid(uid);
         }
-        String[] extractPackagesFromSipper = extractPackagesFromSipper(this.sipper);
-        if (extractPackagesFromSipper != null) {
-            String[] strArr = new String[extractPackagesFromSipper.length];
-            System.arraycopy(extractPackagesFromSipper, 0, strArr, 0, extractPackagesFromSipper.length);
+        String[] strArrExtractPackagesFromSipper = extractPackagesFromSipper(this.sipper);
+        if (strArrExtractPackagesFromSipper != null) {
+            String[] strArr = new String[strArrExtractPackagesFromSipper.length];
+            System.arraycopy(strArrExtractPackagesFromSipper, 0, strArr, 0, strArrExtractPackagesFromSipper.length);
             IPackageManager packageManager2 = AppGlobals.getPackageManager();
             int userId = UserHandle.getUserId(uid);
             for (int i = 0; i < strArr.length; i++) {
@@ -318,12 +316,12 @@ public class BatteryEntry {
                     if (applicationInfo == null) {
                         Log.d("BatteryEntry", "Retrieving null app info for package " + strArr[i] + ", user " + userId);
                     } else {
-                        CharSequence loadLabel = applicationInfo.loadLabel(packageManager);
-                        if (loadLabel != null) {
-                            strArr[i] = loadLabel.toString();
+                        CharSequence charSequenceLoadLabel = applicationInfo.loadLabel(packageManager);
+                        if (charSequenceLoadLabel != null) {
+                            strArr[i] = charSequenceLoadLabel.toString();
                         }
                         if (applicationInfo.icon != 0) {
-                            this.defaultPackageName = extractPackagesFromSipper[i];
+                            this.defaultPackageName = strArrExtractPackagesFromSipper[i];
                             this.icon = applicationInfo.loadIcon(packageManager);
                             break;
                         }
@@ -336,7 +334,7 @@ public class BatteryEntry {
             if (strArr.length == 1) {
                 this.name = strArr[0];
             } else {
-                for (String str : extractPackagesFromSipper) {
+                for (String str : strArrExtractPackagesFromSipper) {
                     try {
                         PackageInfo packageInfo = packageManager2.getPackageInfo(str, 0, userId);
                         if (packageInfo == null) {
@@ -356,9 +354,9 @@ public class BatteryEntry {
                 }
             }
         }
-        String num = Integer.toString(uid);
+        String string = Integer.toString(uid);
         if (this.name == null) {
-            this.name = num;
+            this.name = string;
         }
         if (this.icon == null) {
             this.icon = packageManager.getDefaultActivityIcon();
@@ -367,7 +365,7 @@ public class BatteryEntry {
         uidToDetail.name = this.name;
         uidToDetail.icon = this.icon;
         uidToDetail.packageName = this.defaultPackageName;
-        sUidCache.put(num, uidToDetail);
+        sUidCache.put(string, uidToDetail);
         if (sHandler != null) {
             sHandler.sendMessage(sHandler.obtainMessage(1, this));
         }

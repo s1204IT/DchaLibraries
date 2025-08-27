@@ -10,6 +10,7 @@ import com.android.keyguard.KeyguardPinBasedInputView;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.SecurityMessageDisplay;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class KeyguardAntiTheftLockView extends KeyguardPinBasedInputView {
     private static int mReportUnlockAttemptTimeout = 30000;
@@ -27,27 +28,24 @@ public class KeyguardAntiTheftLockView extends KeyguardPinBasedInputView {
         this.mAntiTheftManager = AntiTheftManager.getInstance(null, null, null);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardPinBasedInputView, com.android.keyguard.KeyguardAbsKeyInputView
-    public void resetState() {
+    protected void resetState() {
         super.resetState();
         updateKeypadVisibility();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public int getPasswordTextViewId() {
+    protected int getPasswordTextViewId() {
         return R.id.antiTheftPinEntry;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     /* JADX WARN: Removed duplicated region for block: B:15:0x007a  */
     /* JADX WARN: Removed duplicated region for block: B:17:? A[RETURN, SYNTHETIC] */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void verifyPasswordAndUnlock() {
+    protected void verifyPasswordAndUnlock() {
         boolean z;
         String passwordText = getPasswordText();
         int currentUser = KeyguardUpdateMonitor.getCurrentUser();
@@ -56,16 +54,18 @@ public class KeyguardAntiTheftLockView extends KeyguardPinBasedInputView {
             this.mCallback.reportUnlockAttempt(currentUser, true, mReportUnlockAttemptTimeout);
             this.mCallback.dismiss(true, currentUser);
             AntiTheftManager.getInstance(null, null, null).adjustStatusBarLocked();
-        } else if (passwordText.length() > 3) {
-            Log.d("KeyguardAntiTheftLockView", "verifyPasswordAndUnlock fail");
-            this.mCallback.reportUnlockAttempt(currentUser, false, mReportUnlockAttemptTimeout);
-            if (KeyguardUpdateMonitor.getInstance(this.mContext).getFailedUnlockAttempts(currentUser) % 5 == 0) {
-                handleAttemptLockout(this.mLockPatternUtils.setLockoutAttemptDeadline(KeyguardUpdateMonitor.getCurrentUser(), mReportUnlockAttemptTimeout));
-                z = true;
-            } else {
-                z = false;
+        } else {
+            if (passwordText.length() > 3) {
+                Log.d("KeyguardAntiTheftLockView", "verifyPasswordAndUnlock fail");
+                this.mCallback.reportUnlockAttempt(currentUser, false, mReportUnlockAttemptTimeout);
+                if (KeyguardUpdateMonitor.getInstance(this.mContext).getFailedUnlockAttempts(currentUser) % 5 == 0) {
+                    handleAttemptLockout(this.mLockPatternUtils.setLockoutAttemptDeadline(KeyguardUpdateMonitor.getCurrentUser(), mReportUnlockAttemptTimeout));
+                    z = true;
+                } else {
+                    z = false;
+                }
+                this.mSecurityMessageDisplay.setMessage(getWrongPasswordStringId());
             }
-            this.mSecurityMessageDisplay.setMessage(getWrongPasswordStringId());
             setPasswordEntryEnabled(true);
             resetPasswordText(true, false);
             if (!z) {
@@ -81,9 +81,8 @@ public class KeyguardAntiTheftLockView extends KeyguardPinBasedInputView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardPinBasedInputView, com.android.keyguard.KeyguardAbsKeyInputView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         Log.d("KeyguardAntiTheftLockView", "onFinishInflate() is called");
         this.mBouncerFrameView = (ViewGroup) findViewById(R.id.keyguard_bouncer_frame);

@@ -18,9 +18,9 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class ErrorConsoleView extends LinearLayout {
+class ErrorConsoleView extends LinearLayout {
     private TextView mConsoleHeader;
     private int mCurrentShowState;
     private ErrorConsoleListView mErrorList;
@@ -51,10 +51,9 @@ public class ErrorConsoleView extends LinearLayout {
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 if (ErrorConsoleView.this.mWebView != null) {
-                    HashMap hashMap = new HashMap();
-                    hashMap.put(Browser.HEADER, Browser.UAPROF);
-                    WebView webView = ErrorConsoleView.this.mWebView;
-                    webView.loadUrl("javascript:" + ((Object) ErrorConsoleView.this.mEvalEditText.getText()), hashMap);
+                    HashMap map = new HashMap();
+                    map.put(Browser.HEADER, Browser.UAPROF);
+                    ErrorConsoleView.this.mWebView.loadUrl("javascript:" + ((Object) ErrorConsoleView.this.mEvalEditText.getText()), map);
                 }
                 ErrorConsoleView.this.mEvalEditText.setText("");
             }
@@ -143,9 +142,7 @@ public class ErrorConsoleView extends LinearLayout {
         return 2;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ErrorConsoleListView extends ListView {
+    private static class ErrorConsoleListView extends ListView {
         private ErrorConsoleMessageList mConsoleMessages;
 
         public ErrorConsoleListView(Context context, AttributeSet attributeSet) {
@@ -163,9 +160,7 @@ public class ErrorConsoleView extends LinearLayout {
             this.mConsoleMessages.clear();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public static class ErrorConsoleMessageList extends BaseAdapter implements ListAdapter {
+        private static class ErrorConsoleMessageList extends BaseAdapter implements ListAdapter {
             private LayoutInflater mInflater;
             private Vector<ConsoleMessage> mMessages = new Vector<>();
 
@@ -220,34 +215,32 @@ public class ErrorConsoleView extends LinearLayout {
                     return null;
                 }
                 if (view == null) {
-                    view = this.mInflater.inflate(17367053, viewGroup, false);
+                    view = this.mInflater.inflate(android.R.layout.two_line_list_item, viewGroup, false);
                 }
-                TextView textView = (TextView) view.findViewById(16908308);
-                TextView textView2 = (TextView) view.findViewById(16908309);
+                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
                 textView.setText(consoleMessage.sourceId() + ":" + consoleMessage.lineNumber());
                 textView.setTextColor(-1);
                 textView2.setText(consoleMessage.message());
                 switch (AnonymousClass3.$SwitchMap$android$webkit$ConsoleMessage$MessageLevel[consoleMessage.messageLevel().ordinal()]) {
                     case 1:
                         textView2.setTextColor(-65536);
-                        break;
+                        return view;
                     case 2:
                         textView2.setTextColor(Color.rgb(255, 192, 0));
-                        break;
+                        return view;
                     case 3:
                         textView2.setTextColor(-16776961);
-                        break;
+                        return view;
                     default:
                         textView2.setTextColor(-3355444);
-                        break;
+                        return view;
                 }
-                return view;
             }
         }
     }
 
-    /* renamed from: com.android.browser.ErrorConsoleView$3  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.browser.ErrorConsoleView$3, reason: invalid class name */
     static /* synthetic */ class AnonymousClass3 {
         static final /* synthetic */ int[] $SwitchMap$android$webkit$ConsoleMessage$MessageLevel = new int[ConsoleMessage.MessageLevel.values().length];
 

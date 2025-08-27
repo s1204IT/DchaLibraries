@@ -4,11 +4,11 @@ import android.app.WallpaperColors;
 import android.content.Context;
 import com.android.internal.colorextraction.ColorExtractor;
 import com.android.internal.colorextraction.types.Tonal;
+
 /* loaded from: classes.dex */
 public class TonalCompat {
     private final Tonal mTonal;
 
-    /* loaded from: classes.dex */
     public static class ExtractionInfo {
         public int mainColor;
         public int secondaryColor;

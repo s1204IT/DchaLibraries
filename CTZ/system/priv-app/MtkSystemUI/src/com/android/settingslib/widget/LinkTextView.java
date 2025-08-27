@@ -6,6 +6,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class LinkTextView extends TextView {
     public LinkTextView(Context context) {

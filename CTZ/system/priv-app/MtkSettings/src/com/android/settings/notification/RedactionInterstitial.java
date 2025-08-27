@@ -2,6 +2,7 @@ package com.android.settings.notification;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.UserManager;
@@ -22,6 +23,7 @@ import com.android.settings.SetupRedactionInterstitial;
 import com.android.settings.SetupWizardUtils;
 import com.android.settings.Utils;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class RedactionInterstitial extends SettingsActivity {
     @Override // com.android.settings.SettingsActivity, android.app.Activity
@@ -36,22 +38,20 @@ public class RedactionInterstitial extends SettingsActivity {
         super.onApplyThemeResource(theme, SetupWizardUtils.getTheme(getIntent()), z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return RedactionInterstitialFragment.class.getName().equals(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity, com.android.settingslib.drawer.SettingsDrawerActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
         super.onCreate(bundle);
         ((LinearLayout) findViewById(R.id.content_parent)).setFitsSystemWindows(false);
     }
 
     public static Intent createStartIntent(Context context, int i) {
         int i2;
-        Intent intent = new Intent(context, RedactionInterstitial.class);
+        Intent intent = new Intent(context, (Class<?>) RedactionInterstitial.class);
         if (UserManager.get(context).isManagedProfile(i)) {
             i2 = R.string.lock_screen_notifications_interstitial_title_profile;
         } else {
@@ -60,7 +60,6 @@ public class RedactionInterstitial extends SettingsActivity {
         return intent.putExtra(":settings:show_fragment_title_resid", i2).putExtra("android.intent.extra.USER_ID", i);
     }
 
-    /* loaded from: classes.dex */
     public static class RedactionInterstitialFragment extends SettingsPreferenceFragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
         private RadioGroup mRadioGroup;
         private RestrictedRadioButton mRedactSensitiveButton;

@@ -6,12 +6,12 @@ import android.text.TextUtils;
 import android.view.View;
 import com.android.internal.net.VpnProfile;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class LegacyVpnPreference extends ManageablePreference {
     private VpnProfile mProfile;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public LegacyVpnPreference(Context context) {
+    LegacyVpnPreference(Context context) {
         super(context, null);
         setIcon(R.drawable.ic_vpn_key);
         setIconSize(2);
@@ -31,6 +31,7 @@ public class LegacyVpnPreference extends ManageablePreference {
         this.mProfile = vpnProfile;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // android.support.v7.preference.Preference, java.lang.Comparable
     public int compareTo(Preference preference) {
@@ -38,26 +39,26 @@ public class LegacyVpnPreference extends ManageablePreference {
             LegacyVpnPreference legacyVpnPreference = (LegacyVpnPreference) preference;
             int i = legacyVpnPreference.mState - this.mState;
             if (i == 0) {
-                int compareToIgnoreCase = this.mProfile.name.compareToIgnoreCase(legacyVpnPreference.mProfile.name);
-                if (compareToIgnoreCase == 0) {
-                    int i2 = this.mProfile.type - legacyVpnPreference.mProfile.type;
-                    if (i2 == 0) {
-                        return this.mProfile.key.compareTo(legacyVpnPreference.mProfile.key);
-                    }
-                    return i2;
+                int iCompareToIgnoreCase = this.mProfile.name.compareToIgnoreCase(legacyVpnPreference.mProfile.name);
+                if (iCompareToIgnoreCase != 0) {
+                    return iCompareToIgnoreCase;
                 }
-                return compareToIgnoreCase;
+                int i2 = this.mProfile.type - legacyVpnPreference.mProfile.type;
+                if (i2 == 0) {
+                    return this.mProfile.key.compareTo(legacyVpnPreference.mProfile.key);
+                }
+                return i2;
             }
             return i;
-        } else if (preference instanceof AppPreference) {
+        }
+        if (preference instanceof AppPreference) {
             AppPreference appPreference = (AppPreference) preference;
             if (this.mState != 3 && appPreference.getState() == 3) {
                 return 1;
             }
             return -1;
-        } else {
-            return super.compareTo(preference);
         }
+        return super.compareTo(preference);
     }
 
     @Override // com.android.settings.widget.GearPreference, android.view.View.OnClickListener

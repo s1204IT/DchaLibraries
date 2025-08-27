@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.mediatek.settings.ext.IWifiExt;
+
 /* loaded from: classes.dex */
 public class DefaultWifiExt implements IWifiExt {
     private static final String TAG = "DefaultWifiExt";

@@ -1,6 +1,7 @@
 package com.android.settings.support.actionbar;
 
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public interface HelpResourceProvider {
     default int getHelpResource() {

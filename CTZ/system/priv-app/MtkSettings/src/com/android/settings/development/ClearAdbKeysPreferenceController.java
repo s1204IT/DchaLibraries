@@ -13,6 +13,7 @@ import android.util.Log;
 import com.android.settings.Utils;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class ClearAdbKeysPreferenceController extends DeveloperOptionsPreferenceController implements PreferenceControllerMixin {
     static final String RO_ADB_SECURE_PROPERTY_KEY = "ro.adb.secure";
@@ -45,16 +46,15 @@ public class ClearAdbKeysPreferenceController extends DeveloperOptionsPreference
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        if (!Utils.isMonkeyRunning() && TextUtils.equals(preference.getKey(), getPreferenceKey())) {
-            ClearAdbKeysWarningDialog.show(this.mFragment);
-            return true;
+        if (Utils.isMonkeyRunning() || !TextUtils.equals(preference.getKey(), getPreferenceKey())) {
+            return false;
         }
-        return false;
+        ClearAdbKeysWarningDialog.show(this.mFragment);
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchEnabled() {
+    protected void onDeveloperOptionsSwitchEnabled() {
         if (isAdminUser()) {
             this.mPreference.setEnabled(true);
         }

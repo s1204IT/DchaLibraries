@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.android.settingslib.R;
 import com.android.settingslib.TronUtils;
 import com.android.settingslib.Utils;
+
 /* loaded from: classes.dex */
 public class AccessPointPreference extends Preference {
     private AccessPoint mAccessPoint;
@@ -41,14 +42,14 @@ public class AccessPointPreference extends Preference {
     private static final int[] WIFI_CONNECTION_STRENGTH = {R.string.accessibility_no_wifi, R.string.accessibility_wifi_one_bar, R.string.accessibility_wifi_two_bars, R.string.accessibility_wifi_three_bars, R.string.accessibility_wifi_signal_full};
 
     private static StateListDrawable getFrictionStateListDrawable(Context context) {
-        TypedArray typedArray;
+        TypedArray typedArrayObtainStyledAttributes;
         try {
-            typedArray = context.getTheme().obtainStyledAttributes(FRICTION_ATTRS);
+            typedArrayObtainStyledAttributes = context.getTheme().obtainStyledAttributes(FRICTION_ATTRS);
         } catch (Resources.NotFoundException e) {
-            typedArray = null;
+            typedArrayObtainStyledAttributes = null;
         }
-        if (typedArray != null) {
-            return (StateListDrawable) typedArray.getDrawable(0);
+        if (typedArrayObtainStyledAttributes != null) {
+            return (StateListDrawable) typedArrayObtainStyledAttributes.getDrawable(0);
         }
         return null;
     }
@@ -119,7 +120,7 @@ public class AccessPointPreference extends Preference {
         if (icon != null) {
             icon.setLevel(this.mLevel);
         }
-        this.mTitleView = (TextView) preferenceViewHolder.findViewById(16908310);
+        this.mTitleView = (TextView) preferenceViewHolder.findViewById(android.R.id.title);
         if (this.mTitleView != null) {
             this.mTitleView.setCompoundDrawablesRelativeWithIntrinsicBounds((Drawable) null, (Drawable) null, this.mBadge, (Drawable) null);
             this.mTitleView.setCompoundDrawablePadding(this.mBadgePadding);
@@ -146,11 +147,11 @@ public class AccessPointPreference extends Preference {
         TronUtils.logWifiSettingsSpeed(context, this.mWifiSpeed);
         Drawable icon = this.mIconInjector.getIcon(i);
         if (!this.mForSavedNetworks && icon != null) {
-            icon.setTint(Utils.getColorAttr(context, 16843817));
+            icon.setTint(Utils.getColorAttr(context, android.R.attr.colorControlNormal));
             setIcon(icon);
-            return;
+        } else {
+            safeSetDefaultIcon();
         }
-        safeSetDefaultIcon();
     }
 
     private void bindFrictionImage(ImageView imageView) {
@@ -197,9 +198,8 @@ public class AccessPointPreference extends Preference {
         this.mContentDescription = buildContentDescription(getContext(), this, this.mAccessPoint);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void notifyChanged() {
+    protected void notifyChanged() {
         if (Looper.getMainLooper() != Looper.myLooper()) {
             postNotifyChanged();
         } else {
@@ -248,7 +248,6 @@ public class AccessPointPreference extends Preference {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class UserBadgeCache {
         private final SparseArray<Drawable> mBadges = new SparseArray<>();
         private final PackageManager mPm;
@@ -257,21 +256,18 @@ public class AccessPointPreference extends Preference {
             this.mPm = packageManager;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public Drawable getUserBadge(int i) {
-            int indexOfKey = this.mBadges.indexOfKey(i);
-            if (indexOfKey < 0) {
+        private Drawable getUserBadge(int i) {
+            int iIndexOfKey = this.mBadges.indexOfKey(i);
+            if (iIndexOfKey < 0) {
                 Drawable userBadgeForDensity = this.mPm.getUserBadgeForDensity(new UserHandle(i), 0);
                 this.mBadges.put(i, userBadgeForDensity);
                 return userBadgeForDensity;
             }
-            return this.mBadges.valueAt(indexOfKey);
+            return this.mBadges.valueAt(iIndexOfKey);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class IconInjector {
+    static class IconInjector {
         private final Context mContext;
 
         public IconInjector(Context context) {

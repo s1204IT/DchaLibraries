@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.android.keyguard.KeyguardSliceView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_gravity="center_horizontal" android:orientation="vertical" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:layout_marginStart="16dp" android:layout_marginEnd="16dp">
-    <view android:theme="@style/TextAppearance.Keyguard" android:textColor="?attr/wallpaperTextColor" android:id="@+id/title" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/widget_title_bottom_margin" android:paddingStart="64dp" android:paddingEnd="64dp" class="com.android.keyguard.KeyguardSliceView$TitleView"/>
-    <view android:gravity="center" android:orientation="horizontal" android:id="@+id/row" android:layout_width="match_parent" android:layout_height="wrap_content" class="com.android.keyguard.KeyguardSliceView$Row"/>
+<com.android.keyguard.KeyguardSliceView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical"
+    android:clipToPadding="false"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp">
+    <view
+        android:theme="@style/TextAppearance.Keyguard"
+        android:textColor="?attr/wallpaperTextColor"
+        android:id="@+id/title"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/widget_title_bottom_margin"
+        android:paddingStart="64dp"
+        android:paddingEnd="64dp"
+        class="com.android.keyguard.KeyguardSliceView$TitleView"/>
+    <view
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:id="@+id/row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        class="com.android.keyguard.KeyguardSliceView$Row"/>
 </com.android.keyguard.KeyguardSliceView>

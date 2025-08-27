@@ -22,6 +22,7 @@ import com.mediatek.settings.wifi.tether.WifiTetherUserListSettings;
 import java.util.List;
 import mediatek.net.wifi.HotspotClient;
 import mediatek.net.wifi.WifiHotspotManager;
+
 /* loaded from: classes.dex */
 public class WifiTetherUserListSettings extends RestrictedDashboardFragment {
     private static final IntentFilter WIFI_TETHER_USER_CHANGED_FILTER = new IntentFilter("android.net.wifi.WIFI_HOTSPOT_CLIENTS_IP_READY");
@@ -96,8 +97,7 @@ public class WifiTetherUserListSettings extends RestrictedDashboardFragment {
         return -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateWifiApClients() {
+    private void updateWifiApClients() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         if (preferenceScreen == null) {
             return;
@@ -115,7 +115,7 @@ public class WifiTetherUserListSettings extends RestrictedDashboardFragment {
                     preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.mediatek.settings.wifi.tether.-$$Lambda$WifiTetherUserListSettings$BabsGcA9N5f4LWyL-eu1VjIQXyE
                         @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
                         public final boolean onPreferenceClick(Preference preference2) {
-                            return WifiTetherUserListSettings.lambda$updateWifiApClients$0(WifiTetherUserListSettings.this, hotspotClient, preference2);
+                            return WifiTetherUserListSettings.lambda$updateWifiApClients$0(this.f$0, hotspotClient, preference2);
                         }
                     });
                     preferenceScreen.addPreference(preference);
@@ -129,7 +129,6 @@ public class WifiTetherUserListSettings extends RestrictedDashboardFragment {
         return true;
     }
 
-    /* loaded from: classes.dex */
     public static class WifiTetherClientFragment extends InstrumentedDialogFragment {
         private static HotspotClient sClient;
         private static WifiHotspotManager sHotspotManager;
@@ -149,34 +148,33 @@ public class WifiTetherUserListSettings extends RestrictedDashboardFragment {
 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            AlertDialog create = new AlertDialog.Builder(getActivity()).setPositiveButton(sClient.isBlocked ? R.string.wifi_ap_client_unblock_title : R.string.wifi_ap_client_block_title, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.wifi.tether.-$$Lambda$WifiTetherUserListSettings$WifiTetherClientFragment$ubBKc3QGRtkfE96n_twiKWnTTvk
+            AlertDialog alertDialogCreate = new AlertDialog.Builder(getActivity()).setPositiveButton(sClient.isBlocked ? R.string.wifi_ap_client_unblock_title : R.string.wifi_ap_client_block_title, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.wifi.tether.-$$Lambda$WifiTetherUserListSettings$WifiTetherClientFragment$ubBKc3QGRtkfE96n_twiKWnTTvk
                 @Override // android.content.DialogInterface.OnClickListener
                 public final void onClick(DialogInterface dialogInterface, int i) {
                     WifiTetherUserListSettings.WifiTetherClientFragment.lambda$onCreateDialog$0(dialogInterface, i);
                 }
-            }).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
-            View inflate = getActivity().getLayoutInflater().inflate(R.layout.wifi_ap_client_dialog, (ViewGroup) null);
-            ((TextView) inflate.findViewById(R.id.mac_address)).setText(sClient.deviceAddress);
+            }).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).create();
+            View viewInflate = getActivity().getLayoutInflater().inflate(R.layout.wifi_ap_client_dialog, (ViewGroup) null);
+            ((TextView) viewInflate.findViewById(R.id.mac_address)).setText(sClient.deviceAddress);
             if (sClient.isBlocked) {
-                inflate.findViewById(R.id.ip_filed).setVisibility(8);
+                viewInflate.findViewById(R.id.ip_filed).setVisibility(8);
             } else {
-                inflate.findViewById(R.id.ip_filed).setVisibility(0);
-                ((TextView) inflate.findViewById(R.id.ip_address)).setText(sHotspotManager.getClientIp(sClient.deviceAddress));
+                viewInflate.findViewById(R.id.ip_filed).setVisibility(0);
+                ((TextView) viewInflate.findViewById(R.id.ip_address)).setText(sHotspotManager.getClientIp(sClient.deviceAddress));
             }
-            create.setTitle(sHotspotManager.getClientDeviceName(sClient.deviceAddress));
-            create.setView(inflate);
-            return create;
+            alertDialogCreate.setTitle(sHotspotManager.getClientDeviceName(sClient.deviceAddress));
+            alertDialogCreate.setView(viewInflate);
+            return alertDialogCreate;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$onCreateDialog$0(DialogInterface dialogInterface, int i) {
+        static /* synthetic */ void lambda$onCreateDialog$0(DialogInterface dialogInterface, int i) {
             if (sClient.isBlocked) {
                 Log.d("WifiTetherUserListSettings", "onClick,client is blocked, unblock now");
                 sHotspotManager.unblockClient(sClient);
-                return;
+            } else {
+                Log.d("WifiTetherUserListSettings", "onClick,client isn't blocked, block now");
+                sHotspotManager.blockClient(sClient);
             }
-            Log.d("WifiTetherUserListSettings", "onClick,client isn't blocked, block now");
-            sHotspotManager.blockClient(sClient);
         }
     }
 

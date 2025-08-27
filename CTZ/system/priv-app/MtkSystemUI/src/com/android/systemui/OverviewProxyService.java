@@ -31,6 +31,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class OverviewProxyService implements Dumpable, CallbackController<OverviewProxyListener> {
     private final Context mContext;
@@ -42,7 +43,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
     private final Runnable mConnectionRunnable = new Runnable() { // from class: com.android.systemui.-$$Lambda$OverviewProxyService$iQ_AhE_jQV1-6xCMm0AowIu_bDY
         @Override // java.lang.Runnable
         public final void run() {
-            OverviewProxyService.this.internalConnectToCurrentUser();
+            this.f$0.internalConnectToCurrentUser();
         }
     };
     private final DeviceProvisionedController mDeviceProvisionedController = (DeviceProvisionedController) Dependency.get(DeviceProvisionedController.class);
@@ -51,7 +52,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
     private final Runnable mDeferredConnectionCallback = new Runnable() { // from class: com.android.systemui.-$$Lambda$OverviewProxyService$SlBFfY-D9O-Us5sbpzzPXvtyKy4
         @Override // java.lang.Runnable
         public final void run() {
-            OverviewProxyService.lambda$new$0(OverviewProxyService.this);
+            OverviewProxyService.lambda$new$0(this.f$0);
         }
     };
     private final BroadcastReceiver mLauncherStateChangedReceiver = new BroadcastReceiver() { // from class: com.android.systemui.OverviewProxyService.2
@@ -67,7 +68,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
     };
     private final ServiceConnection mOverviewServiceConnection = new ServiceConnection() { // from class: com.android.systemui.OverviewProxyService.3
         @Override // android.content.ServiceConnection
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) throws RemoteException {
             OverviewProxyService.this.mHandler.removeCallbacks(OverviewProxyService.this.mDeferredConnectionCallback);
             OverviewProxyService.this.mConnectionBackoffAttempts = 0;
             OverviewProxyService.this.mOverviewProxy = IOverviewProxy.Stub.asInterface(iBinder);
@@ -117,41 +118,39 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
     private final IBinder.DeathRecipient mOverviewServiceDeathRcpt = new IBinder.DeathRecipient() { // from class: com.android.systemui.-$$Lambda$McHnOU5IdjMu78SRtgrSsSZOLVw
         @Override // android.os.IBinder.DeathRecipient
         public final void binderDied() {
-            OverviewProxyService.this.startConnectionToCurrentUser();
+            this.f$0.startConnectionToCurrentUser();
         }
     };
     private final Handler mHandler = new Handler();
     private int mConnectionBackoffAttempts = 0;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.OverviewProxyService$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends ISystemUiProxy.Stub {
+    /* renamed from: com.android.systemui.OverviewProxyService$1, reason: invalid class name */
+    class AnonymousClass1 extends ISystemUiProxy.Stub {
         AnonymousClass1() {
         }
 
         @Override // com.android.systemui.shared.recents.ISystemUiProxy
         public GraphicBufferCompat screenshot(Rect rect, int i, int i2, int i3, int i4, boolean z, int i5) {
-            long clearCallingIdentity = Binder.clearCallingIdentity();
+            long jClearCallingIdentity = Binder.clearCallingIdentity();
             try {
                 return new GraphicBufferCompat(SurfaceControl.screenshotToBuffer(rect, i, i2, i3, i4, z, i5));
             } finally {
-                Binder.restoreCallingIdentity(clearCallingIdentity);
+                Binder.restoreCallingIdentity(jClearCallingIdentity);
             }
         }
 
         @Override // com.android.systemui.shared.recents.ISystemUiProxy
         public void startScreenPinning(final int i) {
-            long clearCallingIdentity = Binder.clearCallingIdentity();
+            long jClearCallingIdentity = Binder.clearCallingIdentity();
             try {
                 OverviewProxyService.this.mHandler.post(new Runnable() { // from class: com.android.systemui.-$$Lambda$OverviewProxyService$1$zYh14hGzctRPjhdkAv_VxvbnwC4
                     @Override // java.lang.Runnable
                     public final void run() {
-                        OverviewProxyService.AnonymousClass1.lambda$startScreenPinning$0(OverviewProxyService.AnonymousClass1.this, i);
+                        OverviewProxyService.AnonymousClass1.lambda$startScreenPinning$0(this.f$0, i);
                     }
                 });
             } finally {
-                Binder.restoreCallingIdentity(clearCallingIdentity);
+                Binder.restoreCallingIdentity(jClearCallingIdentity);
             }
         }
 
@@ -164,26 +163,26 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
 
         @Override // com.android.systemui.shared.recents.ISystemUiProxy
         public void onSplitScreenInvoked() {
-            long clearCallingIdentity = Binder.clearCallingIdentity();
+            long jClearCallingIdentity = Binder.clearCallingIdentity();
             try {
                 EventBus.getDefault().post(new DockedFirstAnimationFrameEvent());
             } finally {
-                Binder.restoreCallingIdentity(clearCallingIdentity);
+                Binder.restoreCallingIdentity(jClearCallingIdentity);
             }
         }
 
         @Override // com.android.systemui.shared.recents.ISystemUiProxy
         public void onOverviewShown(final boolean z) {
-            long clearCallingIdentity = Binder.clearCallingIdentity();
+            long jClearCallingIdentity = Binder.clearCallingIdentity();
             try {
                 OverviewProxyService.this.mHandler.post(new Runnable() { // from class: com.android.systemui.-$$Lambda$OverviewProxyService$1$2pq3hQvAlKaOK9NXRBZWEO44FEQ
                     @Override // java.lang.Runnable
                     public final void run() {
-                        OverviewProxyService.AnonymousClass1.lambda$onOverviewShown$1(OverviewProxyService.AnonymousClass1.this, z);
+                        OverviewProxyService.AnonymousClass1.lambda$onOverviewShown$1(this.f$0, z);
                     }
                 });
             } finally {
-                Binder.restoreCallingIdentity(clearCallingIdentity);
+                Binder.restoreCallingIdentity(jClearCallingIdentity);
             }
         }
 
@@ -195,22 +194,22 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
 
         @Override // com.android.systemui.shared.recents.ISystemUiProxy
         public void setInteractionState(final int i) {
-            long clearCallingIdentity = Binder.clearCallingIdentity();
+            long jClearCallingIdentity = Binder.clearCallingIdentity();
             try {
                 if (OverviewProxyService.this.mInteractionFlags != i) {
                     OverviewProxyService.this.mInteractionFlags = i;
                     OverviewProxyService.this.mHandler.post(new Runnable() { // from class: com.android.systemui.-$$Lambda$OverviewProxyService$1$OIMBB4z7B0rilnGoiEee2hjNc3M
                         @Override // java.lang.Runnable
                         public final void run() {
-                            OverviewProxyService.AnonymousClass1.lambda$setInteractionState$2(OverviewProxyService.AnonymousClass1.this, i);
+                            OverviewProxyService.AnonymousClass1.lambda$setInteractionState$2(this.f$0, i);
                         }
                     });
                 }
                 Prefs.putInt(OverviewProxyService.this.mContext, "QuickStepInteractionFlags", OverviewProxyService.this.mInteractionFlags);
-                Binder.restoreCallingIdentity(clearCallingIdentity);
+                Binder.restoreCallingIdentity(jClearCallingIdentity);
             } catch (Throwable th) {
                 Prefs.putInt(OverviewProxyService.this.mContext, "QuickStepInteractionFlags", OverviewProxyService.this.mInteractionFlags);
-                Binder.restoreCallingIdentity(clearCallingIdentity);
+                Binder.restoreCallingIdentity(jClearCallingIdentity);
                 throw th;
             }
         }
@@ -223,7 +222,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
 
         @Override // com.android.systemui.shared.recents.ISystemUiProxy
         public Rect getNonMinimizedSplitScreenSecondaryBounds() {
-            long clearCallingIdentity = Binder.clearCallingIdentity();
+            long jClearCallingIdentity = Binder.clearCallingIdentity();
             try {
                 Divider divider = (Divider) ((SystemUIApplication) OverviewProxyService.this.mContext).getComponent(Divider.class);
                 if (divider != null) {
@@ -231,13 +230,13 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
                 }
                 return null;
             } finally {
-                Binder.restoreCallingIdentity(clearCallingIdentity);
+                Binder.restoreCallingIdentity(jClearCallingIdentity);
             }
         }
 
         @Override // com.android.systemui.shared.recents.ISystemUiProxy
         public void setBackButtonAlpha(final float f, final boolean z) {
-            long clearCallingIdentity = Binder.clearCallingIdentity();
+            long jClearCallingIdentity = Binder.clearCallingIdentity();
             try {
                 OverviewProxyService.this.mHandler.post(new Runnable() { // from class: com.android.systemui.-$$Lambda$OverviewProxyService$1$n8i2zr6lzYUUiPl7iRdxrhsa5Wk
                     @Override // java.lang.Runnable
@@ -246,7 +245,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
                     }
                 });
             } finally {
-                Binder.restoreCallingIdentity(clearCallingIdentity);
+                Binder.restoreCallingIdentity(jClearCallingIdentity);
             }
         }
     }
@@ -258,7 +257,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
 
     public OverviewProxyService(Context context) {
         this.mContext = context;
-        this.mRecentsComponentName = ComponentName.unflattenFromString(context.getString(17039708));
+        this.mRecentsComponentName = ComponentName.unflattenFromString(context.getString(android.R.string.app_streaming_blocked_message_for_settings_dialog));
         this.mQuickStepIntent = new Intent("android.intent.action.QUICKSTEP_SERVICE").setPackage(this.mRecentsComponentName.getPackageName());
         this.mInteractionFlags = Prefs.getInt(this.mContext, "QuickStepInteractionFlags", 0);
         if (SystemServicesProxy.getInstance(context).isSystemUser(this.mDeviceProvisionedController.getCurrentUser())) {
@@ -280,9 +279,8 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void internalConnectToCurrentUser() {
-        boolean z;
+    private void internalConnectToCurrentUser() {
+        boolean zBindServiceAsUser;
         disconnectFromLauncherService();
         if (!this.mDeviceProvisionedController.isCurrentUserSetup() || !isEnabled()) {
             Log.v("OverviewProxyService", "Cannot attempt connection, is setup " + this.mDeviceProvisionedController.isCurrentUserSetup() + ", is enabled " + isEnabled());
@@ -290,21 +288,22 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
         }
         this.mHandler.removeCallbacks(this.mConnectionRunnable);
         try {
-            z = this.mContext.bindServiceAsUser(new Intent("android.intent.action.QUICKSTEP_SERVICE").setPackage(this.mRecentsComponentName.getPackageName()), this.mOverviewServiceConnection, 1, UserHandle.of(this.mDeviceProvisionedController.getCurrentUser()));
+            zBindServiceAsUser = this.mContext.bindServiceAsUser(new Intent("android.intent.action.QUICKSTEP_SERVICE").setPackage(this.mRecentsComponentName.getPackageName()), this.mOverviewServiceConnection, 1, UserHandle.of(this.mDeviceProvisionedController.getCurrentUser()));
         } catch (SecurityException e) {
             Log.e("OverviewProxyService", "Unable to bind because of security error", e);
-            z = false;
+            zBindServiceAsUser = false;
         }
-        if (z) {
+        if (zBindServiceAsUser) {
             this.mHandler.postDelayed(this.mDeferredConnectionCallback, 5000L);
             return;
         }
-        long scalb = Math.scalb(5000.0f, this.mConnectionBackoffAttempts);
-        this.mHandler.postDelayed(this.mConnectionRunnable, scalb);
+        long jScalb = (long) Math.scalb(5000.0f, this.mConnectionBackoffAttempts);
+        this.mHandler.postDelayed(this.mConnectionRunnable, jScalb);
         this.mConnectionBackoffAttempts++;
-        Log.w("OverviewProxyService", "Failed to connect on attempt " + this.mConnectionBackoffAttempts + " will try again in " + scalb + "ms");
+        Log.w("OverviewProxyService", "Failed to connect on attempt " + this.mConnectionBackoffAttempts + " will try again in " + jScalb + "ms");
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(OverviewProxyListener overviewProxyListener) {
         this.mConnectionCallbacks.add(overviewProxyListener);
@@ -312,6 +311,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
         overviewProxyListener.onInteractionFlagsChanged(this.mInteractionFlags);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(OverviewProxyListener overviewProxyListener) {
         this.mConnectionCallbacks.remove(overviewProxyListener);
@@ -343,15 +343,13 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyBackButtonAlphaChanged(float f, boolean z) {
+    private void notifyBackButtonAlphaChanged(float f, boolean z) {
         for (int size = this.mConnectionCallbacks.size() - 1; size >= 0; size--) {
             this.mConnectionCallbacks.get(size).onBackButtonAlphaChanged(f, z);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyConnectionChanged() {
+    private void notifyConnectionChanged() {
         for (int size = this.mConnectionCallbacks.size() - 1; size >= 0; size--) {
             this.mConnectionCallbacks.get(size).onConnectionChanged(this.mOverviewProxy != null);
         }
@@ -369,8 +367,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateEnabledState() {
+    private void updateEnabledState() {
         this.mIsEnabled = this.mContext.getPackageManager().resolveServiceAsUser(this.mQuickStepIntent, 262144, ActivityManagerWrapper.getInstance().getCurrentUserId()) != null;
     }
 
@@ -393,7 +390,6 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
         printWriter.println(this.mQuickStepIntent);
     }
 
-    /* loaded from: classes.dex */
     public interface OverviewProxyListener {
         default void onConnectionChanged(boolean z) {
         }

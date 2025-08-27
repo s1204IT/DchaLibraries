@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.AttributeSet;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.internal.telephony.ITelephony;
 import com.android.internal.telephony.IccCardConstants;
+
 /* loaded from: classes.dex */
 public class KeyguardSimPinView extends KeyguardPinBasedInputView {
     private static final boolean DEBUG = KeyguardConstants.DEBUG_SIM_STATES;
@@ -28,8 +30,7 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
     private int mSubId;
     KeyguardUpdateMonitorCallback mUpdateMonitorCallback;
 
-    /* renamed from: com.android.keyguard.KeyguardSimPinView$3  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.keyguard.KeyguardSimPinView$3, reason: invalid class name */
     static /* synthetic */ class AnonymousClass3 {
         static final /* synthetic */ int[] $SwitchMap$com$android$internal$telephony$IccCardConstants$State = new int[IccCardConstants.State.values().length];
 
@@ -68,18 +69,17 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
                             KeyguardUpdateMonitor.getInstance(KeyguardSimPinView.this.getContext()).reportSimUnlocked(KeyguardSimPinView.this.mPhoneId);
                             if (KeyguardSimPinView.this.mCallback != null) {
                                 KeyguardSimPinView.this.mCallback.dismiss(true, KeyguardUpdateMonitor.getCurrentUser());
-                                return;
+                                break;
                             }
-                            return;
                         }
-                        return;
+                        break;
                     case 2:
                         KeyguardSimPinView.this.mRemainingAttempts = -1;
                         KeyguardSimPinView.this.resetState();
-                        return;
+                        break;
                     default:
                         KeyguardSimPinView.this.resetState();
-                        return;
+                        break;
                 }
             }
         };
@@ -106,8 +106,7 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         return 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getPinPasswordErrorMessage(int i, boolean z) {
+    private String getPinPasswordErrorMessage(int i, boolean z) throws Resources.NotFoundException {
         String string;
         if (i == 0) {
             string = getContext().getString(com.android.systemui.R.string.kg_password_wrong_pin_code_pukked);
@@ -130,25 +129,23 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public int getPasswordTextViewId() {
+    protected int getPasswordTextViewId() {
         return com.android.systemui.R.id.simPinEntry;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardPinBasedInputView, com.android.keyguard.KeyguardAbsKeyInputView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mPhoneId = KeyguardUpdateMonitor.getInstance(getContext()).getSimPinLockPhoneId();
         if (KeyguardUtils.getNumOfPhone() > 1) {
-            View findViewById = findViewById(com.android.systemui.R.id.keyguard_sim);
-            if (findViewById != null) {
-                findViewById.setVisibility(8);
+            View viewFindViewById = findViewById(com.android.systemui.R.id.keyguard_sim);
+            if (viewFindViewById != null) {
+                viewFindViewById.setVisibility(8);
             }
-            View findViewById2 = findViewById(com.android.systemui.R.id.sim_info_message);
-            if (findViewById2 != null) {
-                findViewById2.setVisibility(0);
+            View viewFindViewById2 = findViewById(com.android.systemui.R.id.sim_info_message);
+            if (viewFindViewById2 != null) {
+                viewFindViewById2.setVisibility(0);
             }
             dealwithSIMInfoChanged();
         }
@@ -177,7 +174,6 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         }
     }
 
-    /* loaded from: classes.dex */
     private abstract class CheckSimPin extends Thread {
         private final String mPin;
 
@@ -195,14 +191,14 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
                 }
                 Log.d("KeyguardSimPinView", "call supplyPinReportResultForSubscriber() mPhoneId = " + KeyguardSimPinView.this.mPhoneId);
                 KeyguardUtils.getSubIdUsingPhoneId(KeyguardSimPinView.this.mPhoneId);
-                final int[] supplyPinReportResultForSubscriber = ITelephony.Stub.asInterface(ServiceManager.checkService("phone")).supplyPinReportResultForSubscriber(KeyguardSimPinView.this.mSubId, this.mPin);
+                final int[] iArrSupplyPinReportResultForSubscriber = ITelephony.Stub.asInterface(ServiceManager.checkService("phone")).supplyPinReportResultForSubscriber(KeyguardSimPinView.this.mSubId, this.mPin);
                 if (KeyguardSimPinView.DEBUG) {
-                    Log.v("KeyguardSimPinView", "supplyPinReportResult returned: " + supplyPinReportResultForSubscriber[0] + " " + supplyPinReportResultForSubscriber[1]);
+                    Log.v("KeyguardSimPinView", "supplyPinReportResult returned: " + iArrSupplyPinReportResultForSubscriber[0] + " " + iArrSupplyPinReportResultForSubscriber[1]);
                 }
                 KeyguardSimPinView.this.post(new Runnable() { // from class: com.android.keyguard.KeyguardSimPinView.CheckSimPin.1
                     @Override // java.lang.Runnable
                     public void run() {
-                        CheckSimPin.this.onSimCheckResponse(supplyPinReportResultForSubscriber[0], supplyPinReportResultForSubscriber[1]);
+                        CheckSimPin.this.onSimCheckResponse(iArrSupplyPinReportResultForSubscriber[0], iArrSupplyPinReportResultForSubscriber[1]);
                     }
                 });
             } catch (RemoteException e) {
@@ -228,8 +224,7 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         return this.mSimUnlockProgressDialog;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Dialog getSimRemainingAttemptsDialog(int i) {
+    private Dialog getSimRemainingAttemptsDialog(int i) throws Resources.NotFoundException {
         String pinPasswordErrorMessage = getPinPasswordErrorMessage(i, false);
         if (this.mRemainingAttemptsDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
@@ -244,57 +239,56 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         return this.mRemainingAttemptsDialog;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.keyguard.KeyguardAbsKeyInputView
-    public void verifyPasswordAndUnlock() {
+    protected void verifyPasswordAndUnlock() {
         if (this.mPasswordEntry.getText().length() < 4) {
             this.mSecurityMessageDisplay.setMessage(com.android.systemui.R.string.kg_invalid_sim_pin_hint);
             resetPasswordText(true, true);
             this.mCallback.userActivity();
-            return;
-        }
-        getSimUnlockProgressDialog().show();
-        if (this.mCheckSimPinThread == null) {
-            this.mCheckSimPinThread = new CheckSimPin(this.mPasswordEntry.getText()) { // from class: com.android.keyguard.KeyguardSimPinView.2
-                @Override // com.android.keyguard.KeyguardSimPinView.CheckSimPin
-                void onSimCheckResponse(final int i, final int i2) {
-                    KeyguardSimPinView.this.post(new Runnable() { // from class: com.android.keyguard.KeyguardSimPinView.2.1
-                        @Override // java.lang.Runnable
-                        public void run() {
-                            KeyguardSimPinView.this.mRemainingAttempts = i2;
-                            if (KeyguardSimPinView.this.mSimUnlockProgressDialog != null) {
-                                KeyguardSimPinView.this.mSimUnlockProgressDialog.hide();
-                            }
-                            if (i == 0) {
-                                KeyguardUpdateMonitor.getInstance(KeyguardSimPinView.this.getContext()).reportSimUnlocked(KeyguardSimPinView.this.mPhoneId);
-                                KeyguardSimPinView.this.mRemainingAttempts = -1;
-                                KeyguardSimPinView.this.mShowDefaultMessage = true;
-                                if (KeyguardSimPinView.this.mCallback != null) {
-                                    KeyguardSimPinView.this.mCallback.dismiss(true, KeyguardUpdateMonitor.getCurrentUser());
+        } else {
+            getSimUnlockProgressDialog().show();
+            if (this.mCheckSimPinThread == null) {
+                this.mCheckSimPinThread = new CheckSimPin(this.mPasswordEntry.getText()) { // from class: com.android.keyguard.KeyguardSimPinView.2
+                    @Override // com.android.keyguard.KeyguardSimPinView.CheckSimPin
+                    void onSimCheckResponse(final int i, final int i2) {
+                        KeyguardSimPinView.this.post(new Runnable() { // from class: com.android.keyguard.KeyguardSimPinView.2.1
+                            @Override // java.lang.Runnable
+                            public void run() {
+                                KeyguardSimPinView.this.mRemainingAttempts = i2;
+                                if (KeyguardSimPinView.this.mSimUnlockProgressDialog != null) {
+                                    KeyguardSimPinView.this.mSimUnlockProgressDialog.hide();
                                 }
-                            } else {
-                                KeyguardSimPinView.this.mShowDefaultMessage = false;
-                                if (i == 1) {
-                                    if (i2 <= 2) {
-                                        KeyguardSimPinView.this.getSimRemainingAttemptsDialog(i2).show();
-                                    } else {
-                                        KeyguardSimPinView.this.mSecurityMessageDisplay.setMessage(KeyguardSimPinView.this.getPinPasswordErrorMessage(i2, false));
+                                if (i == 0) {
+                                    KeyguardUpdateMonitor.getInstance(KeyguardSimPinView.this.getContext()).reportSimUnlocked(KeyguardSimPinView.this.mPhoneId);
+                                    KeyguardSimPinView.this.mRemainingAttempts = -1;
+                                    KeyguardSimPinView.this.mShowDefaultMessage = true;
+                                    if (KeyguardSimPinView.this.mCallback != null) {
+                                        KeyguardSimPinView.this.mCallback.dismiss(true, KeyguardUpdateMonitor.getCurrentUser());
                                     }
                                 } else {
-                                    KeyguardSimPinView.this.mSecurityMessageDisplay.setMessage(KeyguardSimPinView.this.getContext().getString(com.android.systemui.R.string.kg_password_pin_failed));
+                                    KeyguardSimPinView.this.mShowDefaultMessage = false;
+                                    if (i == 1) {
+                                        if (i2 <= 2) {
+                                            KeyguardSimPinView.this.getSimRemainingAttemptsDialog(i2).show();
+                                        } else {
+                                            KeyguardSimPinView.this.mSecurityMessageDisplay.setMessage(KeyguardSimPinView.this.getPinPasswordErrorMessage(i2, false));
+                                        }
+                                    } else {
+                                        KeyguardSimPinView.this.mSecurityMessageDisplay.setMessage(KeyguardSimPinView.this.getContext().getString(com.android.systemui.R.string.kg_password_pin_failed));
+                                    }
+                                    if (KeyguardSimPinView.DEBUG) {
+                                        Log.d("KeyguardSimPinView", "verifyPasswordAndUnlock  CheckSimPin.onSimCheckResponse: " + i + " attemptsRemaining=" + i2);
+                                    }
+                                    KeyguardSimPinView.this.resetPasswordText(true, i != 0);
                                 }
-                                if (KeyguardSimPinView.DEBUG) {
-                                    Log.d("KeyguardSimPinView", "verifyPasswordAndUnlock  CheckSimPin.onSimCheckResponse: " + i + " attemptsRemaining=" + i2);
-                                }
-                                KeyguardSimPinView.this.resetPasswordText(true, i != 0);
+                                KeyguardSimPinView.this.mCallback.userActivity();
+                                KeyguardSimPinView.this.mCheckSimPinThread = null;
                             }
-                            KeyguardSimPinView.this.mCallback.userActivity();
-                            KeyguardSimPinView.this.mCheckSimPinThread = null;
-                        }
-                    });
-                }
-            };
-            this.mCheckSimPinThread.start();
+                        });
+                    }
+                };
+                this.mCheckSimPinThread.start();
+            }
         }
     }
 
@@ -309,24 +303,24 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
 
     @Override // com.android.keyguard.KeyguardPinBasedInputView, com.android.keyguard.KeyguardSecurityView
     public CharSequence getTitle() {
-        return getContext().getString(17040061);
+        return getContext().getString(android.R.string.config_systemTelevisionRemoteService);
     }
 
     private void dealwithSIMInfoChanged() {
-        String str;
+        String string;
         try {
-            str = this.mKeyguardUtils.getOptrNameUsingPhoneId(this.mPhoneId, this.mContext);
+            string = this.mKeyguardUtils.getOptrNameUsingPhoneId(this.mPhoneId, this.mContext);
         } catch (IndexOutOfBoundsException e) {
             Log.w("KeyguardSimPinView", "getOptrNameBySlot exception, mPhoneId=" + this.mPhoneId);
-            str = null;
+            string = null;
         }
         if (DEBUG) {
-            Log.i("KeyguardSimPinView", "dealwithSIMInfoChanged, mPhoneId=" + this.mPhoneId + ", operName=" + str);
+            Log.i("KeyguardSimPinView", "dealwithSIMInfoChanged, mPhoneId=" + this.mPhoneId + ", operName=" + string);
         }
         TextView textView = (TextView) findViewById(com.android.systemui.R.id.for_text);
         ImageView imageView = (ImageView) findViewById(com.android.systemui.R.id.sub_icon);
         TextView textView2 = (TextView) findViewById(com.android.systemui.R.id.sim_card_name);
-        if (str == null) {
+        if (string == null) {
             if (DEBUG) {
                 Log.d("KeyguardSimPinView", "mPhoneId " + this.mPhoneId + " is new subInfo record");
             }
@@ -339,10 +333,10 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
             Log.d("KeyguardSimPinView", "dealwithSIMInfoChanged, show operName for mPhoneId=" + this.mPhoneId);
         }
         textView.setText(this.mContext.getString(com.android.systemui.R.string.kg_slot_id, Integer.valueOf(this.mPhoneId + 1)) + " ");
-        if (str == null) {
-            str = this.mContext.getString(com.android.systemui.R.string.kg_detecting_simcard);
+        if (string == null) {
+            string = this.mContext.getString(com.android.systemui.R.string.kg_detecting_simcard);
         }
-        textView2.setText(str);
+        textView2.setText(string);
         imageView.setImageBitmap(this.mKeyguardUtils.getOptrBitmapUsingPhoneId(this.mPhoneId, this.mContext));
         imageView.setVisibility(0);
         textView2.setVisibility(0);

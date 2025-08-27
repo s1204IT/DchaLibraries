@@ -3,7 +3,7 @@ package com.android.settings.password;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.setupwizardlib.util.WizardManagerHelper;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ChooseLockTypeDialogFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
     private ScreenLockAdapter mAdapter;
@@ -31,13 +32,12 @@ public class ChooseLockTypeDialogFragment extends InstrumentedDialogFragment imp
         return chooseLockTypeDialogFragment;
     }
 
-    /* loaded from: classes.dex */
     public interface OnLockTypeSelectedListener {
         void onLockTypeSelected(ScreenLockType screenLockType);
 
         default void startChooseLockActivity(ScreenLockType screenLockType, Activity activity) {
             Intent intent = activity.getIntent();
-            Intent intent2 = new Intent(activity, SetupChooseLockGeneric.class);
+            Intent intent2 = new Intent(activity, (Class<?>) SetupChooseLockGeneric.class);
             intent2.addFlags(33554432);
             ChooseLockTypeDialogFragment.copyBooleanExtra(intent, intent2, "has_challenge", false);
             ChooseLockTypeDialogFragment.copyBooleanExtra(intent, intent2, "show_options_button", false);
@@ -52,8 +52,7 @@ public class ChooseLockTypeDialogFragment extends InstrumentedDialogFragment imp
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void copyBooleanExtra(Intent intent, Intent intent2, String str, boolean z) {
+    private static void copyBooleanExtra(Intent intent, Intent intent2, String str, boolean z) {
         intent2.putExtra(str, intent.getBooleanExtra(str, z));
     }
 
@@ -66,11 +65,11 @@ public class ChooseLockTypeDialogFragment extends InstrumentedDialogFragment imp
     @Override // android.content.DialogInterface.OnClickListener
     public void onClick(DialogInterface dialogInterface, int i) {
         OnLockTypeSelectedListener onLockTypeSelectedListener;
-        Fragment parentFragment = getParentFragment();
+        ComponentCallbacks2 parentFragment = getParentFragment();
         if (parentFragment instanceof OnLockTypeSelectedListener) {
             onLockTypeSelectedListener = (OnLockTypeSelectedListener) parentFragment;
         } else {
-            Context context = getContext();
+            Object context = getContext();
             if (context instanceof OnLockTypeSelectedListener) {
                 onLockTypeSelectedListener = (OnLockTypeSelectedListener) context;
             } else {
@@ -97,12 +96,11 @@ public class ChooseLockTypeDialogFragment extends InstrumentedDialogFragment imp
         return 990;
     }
 
-    /* loaded from: classes.dex */
     private static class ScreenLockAdapter extends ArrayAdapter<ScreenLockType> {
         private final ChooseLockGenericController mController;
 
         ScreenLockAdapter(Context context, List<ScreenLockType> list, ChooseLockGenericController chooseLockGenericController) {
-            super(context, (int) R.layout.choose_lock_dialog_item, list);
+            super(context, R.layout.choose_lock_dialog_item, list);
             this.mController = chooseLockGenericController;
         }
 

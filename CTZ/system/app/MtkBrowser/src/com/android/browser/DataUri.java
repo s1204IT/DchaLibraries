@@ -2,6 +2,7 @@ package com.android.browser;
 
 import java.net.MalformedURLException;
 import java.util.Base64;
+
 /* loaded from: classes.dex */
 public class DataUri {
     private byte[] mData;
@@ -11,20 +12,20 @@ public class DataUri {
         if (!isDataUri(str)) {
             throw new MalformedURLException("Not a data URI");
         }
-        int indexOf = str.indexOf(44, "data:".length());
-        if (indexOf < 0) {
+        int iIndexOf = str.indexOf(44, "data:".length());
+        if (iIndexOf < 0) {
             throw new MalformedURLException("Comma expected in data URI");
         }
-        String substring = str.substring("data:".length(), indexOf);
-        this.mData = str.substring(indexOf + 1).getBytes();
-        if (substring.contains(";base64")) {
+        String strSubstring = str.substring("data:".length(), iIndexOf);
+        this.mData = str.substring(iIndexOf + 1).getBytes();
+        if (strSubstring.contains(";base64")) {
             this.mData = Base64.getDecoder().decode(this.mData);
         }
-        int indexOf2 = substring.indexOf(59);
-        if (indexOf2 > 0) {
-            this.mMimeType = substring.substring(0, indexOf2);
+        int iIndexOf2 = strSubstring.indexOf(59);
+        if (iIndexOf2 > 0) {
+            this.mMimeType = strSubstring.substring(0, iIndexOf2);
         } else {
-            this.mMimeType = substring;
+            this.mMimeType = strSubstring;
         }
     }
 

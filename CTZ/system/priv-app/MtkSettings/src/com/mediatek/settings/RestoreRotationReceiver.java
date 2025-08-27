@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class RestoreRotationReceiver extends BroadcastReceiver {
     public static boolean sRestoreRetore = false;

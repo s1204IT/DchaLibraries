@@ -6,8 +6,9 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class PackageSignatureProvider extends ContentProvider {
     private static final String TAG = PackageSignatureProvider.class.getSimpleName();
@@ -43,7 +44,7 @@ public class PackageSignatureProvider extends ContentProvider {
     }
 
     @Override // android.content.ContentProvider
-    public AssetFileDescriptor openAssetFile(Uri uri, String str) throws FileNotFoundException {
+    public AssetFileDescriptor openAssetFile(Uri uri, String str) throws IOException {
         try {
             AssetManager assets = getContext().getResources().getAssets();
             String[] list = assets.list("certs");

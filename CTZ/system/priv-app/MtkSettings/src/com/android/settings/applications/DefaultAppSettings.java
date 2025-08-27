@@ -23,6 +23,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultAppSettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.applications.DefaultAppSettings.1
@@ -59,9 +60,8 @@ public class DefaultAppSettings extends DashboardFragment {
         return "DefaultAppSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.app_default_settings;
     }
 
@@ -75,8 +75,7 @@ public class DefaultAppSettings extends DashboardFragment {
         return 130;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList();
         ArrayList arrayList2 = new ArrayList();
         arrayList2.add(new DefaultWorkPhonePreferenceController(context));
@@ -93,7 +92,6 @@ public class DefaultAppSettings extends DashboardFragment {
         return arrayList;
     }
 
-    /* loaded from: classes.dex */
     static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final DefaultBrowserPreferenceController mDefaultBrowserPreferenceController;
@@ -114,9 +112,9 @@ public class DefaultAppSettings extends DashboardFragment {
             if (!z) {
                 return;
             }
-            CharSequence concatSummaryText = concatSummaryText(concatSummaryText(this.mDefaultBrowserPreferenceController.getDefaultAppLabel(), this.mDefaultPhonePreferenceController.getDefaultAppLabel()), this.mDefaultSmsPreferenceController.getDefaultAppLabel());
-            if (!TextUtils.isEmpty(concatSummaryText)) {
-                this.mSummaryLoader.setSummary(this, concatSummaryText);
+            CharSequence charSequenceConcatSummaryText = concatSummaryText(concatSummaryText(this.mDefaultBrowserPreferenceController.getDefaultAppLabel(), this.mDefaultPhonePreferenceController.getDefaultAppLabel()), this.mDefaultSmsPreferenceController.getDefaultAppLabel());
+            if (!TextUtils.isEmpty(charSequenceConcatSummaryText)) {
+                this.mSummaryLoader.setSummary(this, charSequenceConcatSummaryText);
             }
         }
 

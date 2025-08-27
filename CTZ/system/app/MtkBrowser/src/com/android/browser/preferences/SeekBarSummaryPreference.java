@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.android.browser.R;
+
 /* loaded from: classes.dex */
 public class SeekBarSummaryPreference extends SeekBarPreference {
     CharSequence mSummary;
@@ -48,10 +49,10 @@ public class SeekBarSummaryPreference extends SeekBarPreference {
         this.mSummaryView = (TextView) view.findViewById(R.id.text);
         if (TextUtils.isEmpty(this.mSummary)) {
             this.mSummaryView.setVisibility(8);
-            return;
+        } else {
+            this.mSummaryView.setVisibility(0);
+            this.mSummaryView.setText(this.mSummary);
         }
-        this.mSummaryView.setVisibility(0);
-        this.mSummaryView.setText(this.mSummary);
     }
 
     public void onStartTrackingTouch(SeekBar seekBar) {

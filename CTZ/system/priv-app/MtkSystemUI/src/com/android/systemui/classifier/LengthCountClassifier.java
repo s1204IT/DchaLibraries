@@ -1,4 +1,5 @@
 package com.android.systemui.classifier;
+
 /* loaded from: classes.dex */
 public class LengthCountClassifier extends StrokeClassifier {
     public LengthCountClassifier(ClassifierData classifierData) {

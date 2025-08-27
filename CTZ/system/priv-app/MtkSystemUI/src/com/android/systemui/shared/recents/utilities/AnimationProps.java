@@ -8,6 +8,7 @@ import android.util.SparseLongArray;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AnimationProps {
     private Animator.AnimatorListener mListener;
@@ -64,14 +65,14 @@ public class AnimationProps {
     }
 
     public long getStartDelay(int i) {
-        if (this.mPropStartDelay != null) {
-            long j = this.mPropStartDelay.get(i, -1L);
-            if (j != -1) {
-                return j;
-            }
-            return this.mPropStartDelay.get(0, 0L);
+        if (this.mPropStartDelay == null) {
+            return 0L;
         }
-        return 0L;
+        long j = this.mPropStartDelay.get(i, -1L);
+        if (j != -1) {
+            return j;
+        }
+        return this.mPropStartDelay.get(0, 0L);
     }
 
     public AnimationProps setDuration(int i, int i2) {
@@ -83,14 +84,14 @@ public class AnimationProps {
     }
 
     public long getDuration(int i) {
-        if (this.mPropDuration != null) {
-            long j = this.mPropDuration.get(i, -1L);
-            if (j != -1) {
-                return j;
-            }
-            return this.mPropDuration.get(0, 0L);
+        if (this.mPropDuration == null) {
+            return 0L;
         }
-        return 0L;
+        long j = this.mPropDuration.get(i, -1L);
+        if (j != -1) {
+            return j;
+        }
+        return this.mPropDuration.get(0, 0L);
     }
 
     public AnimationProps setInterpolator(int i, Interpolator interpolator) {

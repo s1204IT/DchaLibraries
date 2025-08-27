@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.SystemProperties;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class BasebandVersionDialogController {
     static final String BASEBAND_PROPERTY = "gsm.version.baseband";
@@ -20,8 +21,8 @@ public class BasebandVersionDialogController {
         if (Utils.isWifiOnly(context)) {
             this.mDialog.removeSettingFromScreen(R.id.baseband_version_label);
             this.mDialog.removeSettingFromScreen(R.id.baseband_version_value);
-            return;
+        } else {
+            this.mDialog.setText(R.id.baseband_version_value, SystemProperties.get(BASEBAND_PROPERTY, context.getString(R.string.device_info_default)));
         }
-        this.mDialog.setText(R.id.baseband_version_value, SystemProperties.get(BASEBAND_PROPERTY, context.getString(R.string.device_info_default)));
     }
 }

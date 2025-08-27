@@ -17,6 +17,7 @@ import com.android.systemui.Dumpable;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class SysuiColorExtractor extends ColorExtractor implements Dumpable {
     private boolean mMediaBackdropVisible;
@@ -27,6 +28,7 @@ public class SysuiColorExtractor extends ColorExtractor implements Dumpable {
         this(context, new Tonal(context), true);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: com.android.systemui.colorextraction.SysuiColorExtractor */
     /* JADX WARN: Multi-variable type inference failed */
     @VisibleForTesting
     public SysuiColorExtractor(Context context, ExtractionType extractionType, boolean z) {
@@ -47,10 +49,8 @@ public class SysuiColorExtractor extends ColorExtractor implements Dumpable {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.colorextraction.SysuiColorExtractor$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends IWallpaperVisibilityListener.Stub {
+    /* renamed from: com.android.systemui.colorextraction.SysuiColorExtractor$1, reason: invalid class name */
+    class AnonymousClass1 extends IWallpaperVisibilityListener.Stub {
         final /* synthetic */ Handler val$handler;
 
         AnonymousClass1(Handler handler) {
@@ -104,16 +104,15 @@ public class SysuiColorExtractor extends ColorExtractor implements Dumpable {
                 return super.getColors(i, i2);
             }
             return this.mWpHiddenColors;
-        } else if (this.mMediaBackdropVisible) {
-            return this.mWpHiddenColors;
-        } else {
-            return super.getColors(i, i2);
         }
+        if (this.mMediaBackdropVisible) {
+            return this.mWpHiddenColors;
+        }
+        return super.getColors(i, i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    public void setWallpaperVisible(boolean z) {
+    void setWallpaperVisible(boolean z) {
         if (this.mWallpaperVisible != z) {
             this.mWallpaperVisible = z;
             triggerColorsChanged(1);
@@ -133,9 +132,11 @@ public class SysuiColorExtractor extends ColorExtractor implements Dumpable {
         printWriter.println("  Current wallpaper colors:");
         printWriter.println("    system: " + this.mSystemColors);
         printWriter.println("    lock: " + this.mLockColors);
+        ColorExtractor.GradientColors[] gradientColorsArr = (ColorExtractor.GradientColors[]) this.mGradientColors.get(1);
+        ColorExtractor.GradientColors[] gradientColorsArr2 = (ColorExtractor.GradientColors[]) this.mGradientColors.get(2);
         printWriter.println("  Gradients:");
-        printWriter.println("    system: " + Arrays.toString((ColorExtractor.GradientColors[]) this.mGradientColors.get(1)));
-        printWriter.println("    lock: " + Arrays.toString((ColorExtractor.GradientColors[]) this.mGradientColors.get(2)));
+        printWriter.println("    system: " + Arrays.toString(gradientColorsArr));
+        printWriter.println("    lock: " + Arrays.toString(gradientColorsArr2));
         printWriter.println("  Default scrim: " + this.mWpHiddenColors);
     }
 }

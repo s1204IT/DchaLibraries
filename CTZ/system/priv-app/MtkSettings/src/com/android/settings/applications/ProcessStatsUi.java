@@ -11,9 +11,11 @@ import android.view.MenuItem;
 import com.android.settings.R;
 import com.android.settings.SettingsActivity;
 import com.android.settings.applications.ProcStatsData;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ProcessStatsUi extends ProcessStatsBase {
     private PreferenceGroup mAppListGroup;
@@ -25,30 +27,32 @@ public class ProcessStatsUi extends ProcessStatsBase {
     public static final int[] FOREGROUND_PROC_STATES = {1};
     public static final int[] CACHED_PROC_STATES = {11, 12, 13};
     static final Comparator<ProcStatsPackageEntry> sPackageEntryCompare = new Comparator<ProcStatsPackageEntry>() { // from class: com.android.settings.applications.ProcessStatsUi.1
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ProcStatsPackageEntry procStatsPackageEntry, ProcStatsPackageEntry procStatsPackageEntry2) {
-            double max = Math.max(procStatsPackageEntry2.mRunWeight, procStatsPackageEntry2.mBgWeight);
-            double max2 = Math.max(procStatsPackageEntry.mRunWeight, procStatsPackageEntry.mBgWeight);
-            if (max2 == max) {
+            double dMax = Math.max(procStatsPackageEntry2.mRunWeight, procStatsPackageEntry2.mBgWeight);
+            double dMax2 = Math.max(procStatsPackageEntry.mRunWeight, procStatsPackageEntry.mBgWeight);
+            if (dMax2 == dMax) {
                 return 0;
             }
-            return max2 < max ? 1 : -1;
+            return dMax2 < dMax ? 1 : -1;
         }
     };
     static final Comparator<ProcStatsPackageEntry> sMaxPackageEntryCompare = new Comparator<ProcStatsPackageEntry>() { // from class: com.android.settings.applications.ProcessStatsUi.2
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ProcStatsPackageEntry procStatsPackageEntry, ProcStatsPackageEntry procStatsPackageEntry2) {
-            double max = Math.max(procStatsPackageEntry2.mMaxBgMem, procStatsPackageEntry2.mMaxRunMem);
-            double max2 = Math.max(procStatsPackageEntry.mMaxBgMem, procStatsPackageEntry.mMaxRunMem);
-            if (max2 == max) {
+            double dMax = Math.max(procStatsPackageEntry2.mMaxBgMem, procStatsPackageEntry2.mMaxRunMem);
+            double dMax2 = Math.max(procStatsPackageEntry.mMaxBgMem, procStatsPackageEntry.mMaxRunMem);
+            if (dMax2 == dMax) {
                 return 0;
             }
-            return max2 < max ? 1 : -1;
+            return dMax2 < dMax ? 1 : -1;
         }
     };
 
     @Override // com.android.settings.applications.ProcessStatsBase, com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException, IOException {
         super.onCreate(bundle);
         this.mPm = getActivity().getPackageManager();
         addPreferencesFromResource(R.xml.process_stats_ui);

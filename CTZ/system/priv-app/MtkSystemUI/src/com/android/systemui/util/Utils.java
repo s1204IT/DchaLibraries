@@ -5,6 +5,7 @@ import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.statusbar.CommandQueue;
 import java.util.List;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class Utils {
     public static <T> void safeForeach(List<T> list, Consumer<T> consumer) {
@@ -13,7 +14,6 @@ public class Utils {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class DisableStateTracker implements View.OnAttachStateChangeListener, CommandQueue.Callbacks {
         private boolean mDisabled;
         private final int mMask1;

@@ -21,6 +21,7 @@ import com.android.launcher3.model.WidgetItem;
 import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.launcher3.util.PackageUserKey;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WidgetsBottomSheet extends BaseWidgetSheet implements Insettable {
     private static final int DEFAULT_CLOSE_DURATION = 200;
@@ -63,26 +64,25 @@ public class WidgetsBottomSheet extends BaseWidgetSheet implements Insettable {
         animateOpen();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.AbstractFloatingView
-    public void onWidgetsBound() {
+    protected void onWidgetsBound() {
         List<WidgetItem> widgetsForPackageUser = this.mLauncher.getPopupDataProvider().getWidgetsForPackageUser(new PackageUserKey(this.mOriginalItemInfo.getTargetComponent().getPackageName(), this.mOriginalItemInfo.user));
         ViewGroup viewGroup = (ViewGroup) findViewById(R.id.widgets);
         ViewGroup viewGroup2 = (ViewGroup) viewGroup.findViewById(R.id.widgets_cell_list);
         viewGroup2.removeAllViews();
         for (int i = 0; i < widgetsForPackageUser.size(); i++) {
-            WidgetCell addItemCell = addItemCell(viewGroup2);
-            addItemCell.applyFromCellItem(widgetsForPackageUser.get(i), LauncherAppState.getInstance(this.mLauncher).getWidgetCache());
-            addItemCell.ensurePreview();
-            addItemCell.setVisibility(0);
+            WidgetCell widgetCellAddItemCell = addItemCell(viewGroup2);
+            widgetCellAddItemCell.applyFromCellItem(widgetsForPackageUser.get(i), LauncherAppState.getInstance(this.mLauncher).getWidgetCache());
+            widgetCellAddItemCell.ensurePreview();
+            widgetCellAddItemCell.setVisibility(0);
             if (i < widgetsForPackageUser.size() - 1) {
                 addDivider(viewGroup2);
             }
         }
         if (widgetsForPackageUser.size() != 1) {
-            View inflate = LayoutInflater.from(getContext()).inflate(R.layout.widget_list_divider, viewGroup, false);
-            inflate.getLayoutParams().width = Utilities.pxFromDp(16.0f, getResources().getDisplayMetrics());
-            viewGroup2.addView(inflate, 0);
+            View viewInflate = LayoutInflater.from(getContext()).inflate(R.layout.widget_list_divider, viewGroup, false);
+            viewInflate.getLayoutParams().width = Utilities.pxFromDp(16.0f, getResources().getDisplayMetrics());
+            viewGroup2.addView(viewInflate, 0);
             return;
         }
         ((LinearLayout.LayoutParams) viewGroup.getLayoutParams()).gravity = 1;

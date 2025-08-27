@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 class BookmarkItem extends HorizontalScrollView {
     protected boolean mEnableScrolling;
@@ -19,8 +20,7 @@ class BookmarkItem extends HorizontalScrollView {
     protected String mUrl;
     protected TextView mUrlText;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public BookmarkItem(Context context) {
+    BookmarkItem(Context context) {
         super(context);
         this.mEnableScrolling = false;
         setClickable(false);
@@ -32,18 +32,15 @@ class BookmarkItem extends HorizontalScrollView {
         findViewById(R.id.star).setVisibility(8);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getName() {
+    String getName() {
         return this.mTitle;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getUrl() {
+    String getUrl() {
         return this.mUrl;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setFavicon(Bitmap bitmap) {
+    void setFavicon(Bitmap bitmap) {
         if (bitmap != null) {
             this.mImageView.setImageBitmap(bitmap);
         } else {
@@ -51,13 +48,11 @@ class BookmarkItem extends HorizontalScrollView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setFaviconBackground(Drawable drawable) {
+    void setFaviconBackground(Drawable drawable) {
         this.mImageView.setBackgroundDrawable(drawable);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setName(String str) {
+    void setName(String str) {
         if (str == null) {
             return;
         }
@@ -68,21 +63,19 @@ class BookmarkItem extends HorizontalScrollView {
         this.mTextView.setText(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setUrl(String str) {
+    void setUrl(String str) {
         if (str == null) {
             return;
         }
         this.mUrl = str;
-        String stripUrl = UrlUtils.stripUrl(str);
-        if (stripUrl.length() > 80) {
-            stripUrl = stripUrl.substring(0, 80);
+        String strStripUrl = UrlUtils.stripUrl(str);
+        if (strStripUrl.length() > 80) {
+            strStripUrl = strStripUrl.substring(0, 80);
         }
-        this.mUrlText.setText(stripUrl);
+        this.mUrlText.setText(strStripUrl);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setEnableScrolling(boolean z) {
+    void setEnableScrolling(boolean z) {
         this.mEnableScrolling = z;
         setFocusable(this.mEnableScrolling);
         setFocusableInTouchMode(this.mEnableScrolling);
@@ -102,19 +95,19 @@ class BookmarkItem extends HorizontalScrollView {
     protected void measureChild(View view, int i, int i2) {
         if (this.mEnableScrolling) {
             super.measureChild(view, i, i2);
-            return;
+        } else {
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            view.measure(getChildMeasureSpec(i, this.mPaddingLeft + this.mPaddingRight, layoutParams.width), getChildMeasureSpec(i2, this.mPaddingTop + this.mPaddingBottom, layoutParams.height));
         }
-        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-        view.measure(getChildMeasureSpec(i, this.mPaddingLeft + this.mPaddingRight, layoutParams.width), getChildMeasureSpec(i2, this.mPaddingTop + this.mPaddingBottom, layoutParams.height));
     }
 
     @Override // android.widget.HorizontalScrollView, android.view.ViewGroup
     protected void measureChildWithMargins(View view, int i, int i2, int i3, int i4) {
         if (this.mEnableScrolling) {
             super.measureChildWithMargins(view, i, i2, i3, i4);
-            return;
+        } else {
+            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            view.measure(getChildMeasureSpec(i, this.mPaddingLeft + this.mPaddingRight + marginLayoutParams.leftMargin + marginLayoutParams.rightMargin + i2, marginLayoutParams.width), getChildMeasureSpec(i3, this.mPaddingTop + this.mPaddingBottom + marginLayoutParams.topMargin + marginLayoutParams.bottomMargin + i4, marginLayoutParams.height));
         }
-        ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-        view.measure(getChildMeasureSpec(i, this.mPaddingLeft + this.mPaddingRight + marginLayoutParams.leftMargin + marginLayoutParams.rightMargin + i2, marginLayoutParams.width), getChildMeasureSpec(i3, this.mPaddingTop + this.mPaddingBottom + marginLayoutParams.topMargin + marginLayoutParams.bottomMargin + i4, marginLayoutParams.height));
     }
 }

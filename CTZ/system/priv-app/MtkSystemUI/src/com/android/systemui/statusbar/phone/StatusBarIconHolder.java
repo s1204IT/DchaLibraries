@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.phone;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.systemui.statusbar.phone.StatusBarSignalPolicy;
+
 /* loaded from: classes.dex */
 public class StatusBarIconHolder {
     private StatusBarIcon mIcon;
@@ -71,20 +72,17 @@ public class StatusBarIconHolder {
 
     public void setVisible(boolean z) {
         if (isVisible() == z) {
-            return;
         }
         switch (this.mType) {
             case 0:
                 this.mIcon.visible = z;
-                return;
+                break;
             case 1:
                 this.mWifiState.visible = z;
-                return;
+                break;
             case 2:
                 this.mMobileState.visible = z;
-                return;
-            default:
-                return;
+                break;
         }
     }
 

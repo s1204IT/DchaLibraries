@@ -11,6 +11,7 @@ import android.view.accessibility.IAccessibilityInteractionConnection;
 import android.view.accessibility.IAccessibilityInteractionConnectionCallback;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PipAccessibilityInteractionConnection extends IAccessibilityInteractionConnection.Stub {
     private List<AccessibilityNodeInfo> mAccessibilityNodeInfoList;
@@ -19,7 +20,6 @@ public class PipAccessibilityInteractionConnection extends IAccessibilityInterac
     private PipMotionHelper mMotionHelper;
     private Rect mTmpBounds = new Rect();
 
-    /* loaded from: classes.dex */
     public interface AccessibilityCallbacks {
         void onAccessibilityShowMenu();
     }
@@ -37,37 +37,38 @@ public class PipAccessibilityInteractionConnection extends IAccessibilityInterac
         }
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:17:0x005c  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public void performAccessibilityAction(long j, int i, Bundle bundle, int i2, IAccessibilityInteractionConnectionCallback iAccessibilityInteractionConnectionCallback, int i3, int i4, long j2) {
         boolean z = true;
-        try {
-            if (j == AccessibilityNodeInfo.ROOT_NODE_ID) {
-                if (i == 16) {
-                    this.mHandler.post(new Runnable() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipAccessibilityInteractionConnection$yj5JMyeINsNwnRK777qXcVORJV0
-                        @Override // java.lang.Runnable
-                        public final void run() {
-                            PipAccessibilityInteractionConnection.this.mCallbacks.onAccessibilityShowMenu();
-                        }
-                    });
-                } else if (i == 262144) {
-                    this.mMotionHelper.expandPip();
-                } else if (i == 1048576) {
-                    this.mMotionHelper.dismissPip();
-                } else if (i == 16908354) {
-                    int i5 = bundle.getInt("ACTION_ARGUMENT_MOVE_WINDOW_X");
-                    int i6 = bundle.getInt("ACTION_ARGUMENT_MOVE_WINDOW_Y");
-                    new Rect().set(this.mMotionHelper.getBounds());
-                    this.mTmpBounds.offsetTo(i5, i6);
-                    this.mMotionHelper.movePip(this.mTmpBounds);
-                }
-                iAccessibilityInteractionConnectionCallback.setPerformAccessibilityActionResult(z, i2);
-                return;
+        if (j == AccessibilityNodeInfo.ROOT_NODE_ID) {
+            if (i == 16) {
+                this.mHandler.post(new Runnable() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipAccessibilityInteractionConnection$yj5JMyeINsNwnRK777qXcVORJV0
+                    @Override // java.lang.Runnable
+                    public final void run() {
+                        this.f$0.mCallbacks.onAccessibilityShowMenu();
+                    }
+                });
+            } else if (i == 262144) {
+                this.mMotionHelper.expandPip();
+            } else if (i == 1048576) {
+                this.mMotionHelper.dismissPip();
+            } else if (i == 16908354) {
+                int i5 = bundle.getInt("ACTION_ARGUMENT_MOVE_WINDOW_X");
+                int i6 = bundle.getInt("ACTION_ARGUMENT_MOVE_WINDOW_Y");
+                new Rect().set(this.mMotionHelper.getBounds());
+                this.mTmpBounds.offsetTo(i5, i6);
+                this.mMotionHelper.movePip(this.mTmpBounds);
             }
-            iAccessibilityInteractionConnectionCallback.setPerformAccessibilityActionResult(z, i2);
-            return;
-        } catch (RemoteException e) {
-            return;
+        } else {
+            z = false;
         }
-        z = false;
+        try {
+            iAccessibilityInteractionConnectionCallback.setPerformAccessibilityActionResult(z, i2);
+        } catch (RemoteException e) {
+        }
     }
 
     public void findAccessibilityNodeInfosByViewId(long j, String str, Region region, int i, IAccessibilityInteractionConnectionCallback iAccessibilityInteractionConnectionCallback, int i2, int i3, long j2, MagnificationSpec magnificationSpec) {
@@ -99,25 +100,25 @@ public class PipAccessibilityInteractionConnection extends IAccessibilityInterac
     }
 
     public static AccessibilityNodeInfo obtainRootAccessibilityNodeInfo() {
-        AccessibilityNodeInfo obtain = AccessibilityNodeInfo.obtain();
-        obtain.setSourceNodeId(AccessibilityNodeInfo.ROOT_NODE_ID, -3);
-        obtain.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK);
-        obtain.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_DISMISS);
-        obtain.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_MOVE_WINDOW);
-        obtain.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND);
-        obtain.setImportantForAccessibility(true);
-        obtain.setClickable(true);
-        obtain.setVisibleToUser(true);
-        return obtain;
+        AccessibilityNodeInfo accessibilityNodeInfoObtain = AccessibilityNodeInfo.obtain();
+        accessibilityNodeInfoObtain.setSourceNodeId(AccessibilityNodeInfo.ROOT_NODE_ID, -3);
+        accessibilityNodeInfoObtain.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK);
+        accessibilityNodeInfoObtain.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_DISMISS);
+        accessibilityNodeInfoObtain.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_MOVE_WINDOW);
+        accessibilityNodeInfoObtain.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND);
+        accessibilityNodeInfoObtain.setImportantForAccessibility(true);
+        accessibilityNodeInfoObtain.setClickable(true);
+        accessibilityNodeInfoObtain.setVisibleToUser(true);
+        return accessibilityNodeInfoObtain;
     }
 
     private List<AccessibilityNodeInfo> getNodeList() {
         if (this.mAccessibilityNodeInfoList == null) {
             this.mAccessibilityNodeInfoList = new ArrayList(1);
         }
-        AccessibilityNodeInfo obtainRootAccessibilityNodeInfo = obtainRootAccessibilityNodeInfo();
+        AccessibilityNodeInfo accessibilityNodeInfoObtainRootAccessibilityNodeInfo = obtainRootAccessibilityNodeInfo();
         this.mAccessibilityNodeInfoList.clear();
-        this.mAccessibilityNodeInfoList.add(obtainRootAccessibilityNodeInfo);
+        this.mAccessibilityNodeInfoList.add(accessibilityNodeInfoObtainRootAccessibilityNodeInfo);
         return this.mAccessibilityNodeInfoList;
     }
 }

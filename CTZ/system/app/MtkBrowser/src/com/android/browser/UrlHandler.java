@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,7 +14,9 @@ import android.webkit.WebView;
 import android.widget.Toast;
 import com.mediatek.browser.ext.IBrowserUrlExt;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class UrlHandler {
     Activity mActivity;
@@ -30,90 +33,90 @@ public class UrlHandler {
         this.mActivity = this.mController.getActivity();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean shouldOverrideUrlLoading(Tab tab, WebView webView, String str) {
+    boolean shouldOverrideUrlLoading(Tab tab, WebView webView, String str) {
         if (DEBUG) {
             Log.d("browser", "UrlHandler.shouldOverrideUrlLoading--->url = " + str);
         }
         if (webView.isPrivateBrowsingEnabled()) {
             return false;
         }
-        String replaceAll = str.replaceAll(" ", "%20");
+        String strReplaceAll = str.replaceAll(" ", "%20");
         if (DEBUG) {
-            Log.d("browser", "UrlHandler.shouldOverrideUrlLoading--->new url = " + replaceAll);
+            Log.d("browser", "UrlHandler.shouldOverrideUrlLoading--->new url = " + strReplaceAll);
         }
-        if (replaceAll.startsWith("rtsp:")) {
+        if (strReplaceAll.startsWith("rtsp:")) {
             Intent intent = new Intent();
             intent.setAction("android.intent.action.VIEW");
-            intent.setData(Uri.parse(replaceAll));
+            intent.setData(Uri.parse(strReplaceAll));
             intent.addFlags(268435456);
             this.mActivity.startActivity(intent);
             this.mController.closeEmptyTab();
             return true;
         }
-        if (replaceAll.startsWith("wtai://wp/")) {
-            if (replaceAll.startsWith("wtai://wp/mc;")) {
-                this.mActivity.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("tel:" + replaceAll.substring("wtai://wp/mc;".length()))));
+        if (strReplaceAll.startsWith("wtai://wp/")) {
+            if (strReplaceAll.startsWith("wtai://wp/mc;")) {
+                this.mActivity.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("tel:" + strReplaceAll.substring("wtai://wp/mc;".length()))));
                 this.mController.closeEmptyTab();
                 return true;
-            } else if (replaceAll.startsWith("wtai://wp/sd;") || replaceAll.startsWith("wtai://wp/ap;")) {
+            }
+            if (strReplaceAll.startsWith("wtai://wp/sd;") || strReplaceAll.startsWith("wtai://wp/ap;")) {
                 return false;
             }
         }
-        if (replaceAll.startsWith("about:")) {
+        if (strReplaceAll.startsWith("about:")) {
             return false;
         }
         if (rlzProviderPresent()) {
-            Uri parse = Uri.parse(replaceAll);
-            if (needsRlzString(parse)) {
-                new RLZTask(tab, parse, webView).execute(new Void[0]);
+            Uri uri = Uri.parse(strReplaceAll);
+            if (needsRlzString(uri)) {
+                new RLZTask(tab, uri, webView).execute(new Void[0]);
                 return true;
             }
         }
         this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mActivity);
-        return this.mBrowserUrlExt.redirectCustomerUrl(replaceAll) || startActivityForUrl(tab, replaceAll) || replaceAll.startsWith("ctrip://") || handleMenuClick(tab, replaceAll);
+        return this.mBrowserUrlExt.redirectCustomerUrl(strReplaceAll) || startActivityForUrl(tab, strReplaceAll) || strReplaceAll.startsWith("ctrip://") || handleMenuClick(tab, strReplaceAll);
     }
 
-    boolean startActivityForUrl(Tab tab, String str) {
+    boolean startActivityForUrl(Tab tab, String str) throws URISyntaxException {
         if (DEBUG) {
             Log.d("browser", "UrlHandler.startActivityForUrl--->url = " + str);
         }
         try {
-            Intent parseUri = Intent.parseUri(str, 1);
+            Intent uri = Intent.parseUri(str, 1);
             try {
-                if (this.mActivity.getPackageManager().resolveActivity(parseUri, 0) == null) {
+                if (this.mActivity.getPackageManager().resolveActivity(uri, 0) == null) {
                     if (str != null && str.startsWith("mailto:")) {
-                        Toast.makeText(this.mActivity, (int) R.string.need_login_email, 1).show();
+                        Toast.makeText(this.mActivity, R.string.need_login_email, 1).show();
                         return true;
-                    } else if (str.startsWith("uber:")) {
+                    }
+                    if (str.startsWith("uber:")) {
                         Log.d("browser", "UrlHandler.startActivityForUrl--->uber2 ");
                         return true;
-                    } else {
-                        String str2 = parseUri.getPackage();
-                        if (DEBUG) {
-                            Log.d("browser", "UrlHandler.startActivityForUrl--->packagename = " + str2);
-                        }
-                        if (str2 != null) {
-                            Intent intent = new Intent("android.intent.action.VIEW", Uri.parse("market://search?q=pname:" + str2));
-                            intent.addCategory("android.intent.category.BROWSABLE");
-                            try {
-                                this.mActivity.startActivity(intent);
-                                this.mController.closeEmptyTab();
-                                return true;
-                            } catch (ActivityNotFoundException e) {
-                                if (DEBUG) {
-                                    Log.w("Browser", "No activity found to handle " + str);
-                                }
-                                return true;
-                            }
-                        }
-                        Log.d("browser", "UrlHandler.startActivityForUrl--->url3: " + str);
-                        return !urlHasAcceptableScheme(str);
                     }
+                    String str2 = uri.getPackage();
+                    if (DEBUG) {
+                        Log.d("browser", "UrlHandler.startActivityForUrl--->packagename = " + str2);
+                    }
+                    if (str2 != null) {
+                        Intent intent = new Intent("android.intent.action.VIEW", Uri.parse("market://search?q=pname:" + str2));
+                        intent.addCategory("android.intent.category.BROWSABLE");
+                        try {
+                            this.mActivity.startActivity(intent);
+                            this.mController.closeEmptyTab();
+                            return true;
+                        } catch (ActivityNotFoundException e) {
+                            if (DEBUG) {
+                                Log.w("Browser", "No activity found to handle " + str);
+                            }
+                            return true;
+                        }
+                    }
+                    Log.d("browser", "UrlHandler.startActivityForUrl--->url3: " + str);
+                    return !urlHasAcceptableScheme(str);
                 }
-                parseUri.addCategory("android.intent.category.BROWSABLE");
-                parseUri.setComponent(null);
-                Intent selector = parseUri.getSelector();
+                uri.addCategory("android.intent.category.BROWSABLE");
+                uri.setComponent(null);
+                Intent selector = uri.getSelector();
                 if (selector != null) {
                     selector.addCategory("android.intent.category.BROWSABLE");
                     selector.setComponent(null);
@@ -125,9 +128,9 @@ public class UrlHandler {
                         }
                         tab.setAppId(this.mActivity.getPackageName() + "-" + tab.getId());
                     }
-                    parseUri.putExtra("com.android.browser.application_id", tab.getAppId());
+                    uri.putExtra("com.android.browser.application_id", tab.getAppId());
                 }
-                if (UrlUtils.ACCEPTED_URI_SCHEMA_FOR_URLHANDLER.matcher(str).matches() && !isSpecializedHandlerAvailable(parseUri)) {
+                if (UrlUtils.ACCEPTED_URI_SCHEMA_FOR_URLHANDLER.matcher(str).matches() && !isSpecializedHandlerAvailable(uri)) {
                     return false;
                 }
                 if (str != null && str.startsWith("https://www.google.com/calendar/event?")) {
@@ -138,10 +141,10 @@ public class UrlHandler {
                 }
                 try {
                     if (urlHasAcceptableScheme(str)) {
-                        parseUri.setComponent(this.mActivity.getComponentName());
+                        uri.setComponent(this.mActivity.getComponentName());
                     }
-                    parseUri.putExtra("disable_url_override", true);
-                    if (this.mActivity.startActivityIfNeeded(parseUri, -1)) {
+                    uri.putExtra("disable_url_override", true);
+                    if (this.mActivity.startActivityIfNeeded(uri, -1)) {
                         this.mController.closeEmptyTab();
                         return true;
                     }
@@ -179,12 +182,13 @@ public class UrlHandler {
     }
 
     private boolean isSpecializedHandlerAvailable(Intent intent) {
-        List<ResolveInfo> queryIntentActivities = this.mActivity.getPackageManager().queryIntentActivities(intent, 64);
-        if (queryIntentActivities == null || queryIntentActivities.size() == 0) {
+        List<ResolveInfo> listQueryIntentActivities = this.mActivity.getPackageManager().queryIntentActivities(intent, 64);
+        if (listQueryIntentActivities == null || listQueryIntentActivities.size() == 0) {
             return false;
         }
-        for (ResolveInfo resolveInfo : queryIntentActivities) {
-            IntentFilter intentFilter = resolveInfo.filter;
+        Iterator<ResolveInfo> it = listQueryIntentActivities.iterator();
+        while (it.hasNext()) {
+            IntentFilter intentFilter = it.next().filter;
             if (intentFilter != null && (intentFilter.countDataAuthorities() != 0 || intentFilter.countDataPaths() != 0)) {
                 return true;
             }
@@ -197,21 +201,19 @@ public class UrlHandler {
             Log.d("browser", "UrlHandler.handleMenuClick()--->tab = " + tab + ", url = " + str);
         }
         boolean z = false;
-        if (this.mController.isMenuDown()) {
-            Controller controller = this.mController;
-            if (tab != null && tab.isPrivateBrowsingEnabled()) {
-                z = true;
-            }
-            controller.openTab(str, z, !BrowserSettings.getInstance().openInBackground(), true);
-            this.mActivity.closeOptionsMenu();
-            return true;
+        if (!this.mController.isMenuDown()) {
+            return false;
         }
-        return false;
+        Controller controller = this.mController;
+        if (tab != null && tab.isPrivateBrowsingEnabled()) {
+            z = true;
+        }
+        controller.openTab(str, z, !BrowserSettings.getInstance().openInBackground(), true);
+        this.mActivity.closeOptionsMenu();
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class RLZTask extends AsyncTask<Void, Void, String> {
+    private class RLZTask extends AsyncTask<Void, Void, String> {
         private Uri mSiteUri;
         private Tab mTab;
         private WebView mWebView;
@@ -222,39 +224,39 @@ public class UrlHandler {
             this.mWebView = webView;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public String doInBackground(Void... voidArr) {
-            Cursor cursor;
-            String uri = this.mSiteUri.toString();
+        protected String doInBackground(Void... voidArr) throws Throwable {
+            Cursor cursorQuery;
+            String string = this.mSiteUri.toString();
             try {
-                cursor = UrlHandler.this.mActivity.getContentResolver().query(UrlHandler.this.getRlzUri(), null, null, null, null);
-                if (cursor != null) {
+                cursorQuery = UrlHandler.this.mActivity.getContentResolver().query(UrlHandler.this.getRlzUri(), null, null, null, null);
+                if (cursorQuery != null) {
                     try {
-                        if (cursor.moveToFirst() && !cursor.isNull(0)) {
-                            uri = this.mSiteUri.buildUpon().appendQueryParameter("rlz", cursor.getString(0)).build().toString();
+                        if (cursorQuery.moveToFirst() && !cursorQuery.isNull(0)) {
+                            string = this.mSiteUri.buildUpon().appendQueryParameter("rlz", cursorQuery.getString(0)).build().toString();
                         }
                     } catch (Throwable th) {
                         th = th;
-                        if (cursor != null) {
-                            cursor.close();
+                        if (cursorQuery != null) {
+                            cursorQuery.close();
                         }
                         throw th;
                     }
                 }
-                if (cursor != null) {
-                    cursor.close();
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
-                return uri;
+                return string;
             } catch (Throwable th2) {
                 th = th2;
-                cursor = null;
+                cursorQuery = null;
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(String str) {
+        protected void onPostExecute(String str) {
             if (!UrlHandler.this.mController.isActivityPaused() && UrlHandler.this.mController.getTabControl().getTabPosition(this.mTab) != -1 && !UrlHandler.this.startActivityForUrl(this.mTab, str) && !UrlHandler.this.handleMenuClick(this.mTab, str)) {
                 UrlHandler.this.mController.loadUrl(this.mTab, str);
             }
@@ -268,8 +270,7 @@ public class UrlHandler {
         return this.mIsProviderPresent.booleanValue();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Uri getRlzUri() {
+    private Uri getRlzUri() throws Resources.NotFoundException {
         if (this.mRlzUri == null) {
             this.mRlzUri = Uri.withAppendedPath(RLZ_PROVIDER_URI, this.mActivity.getResources().getString(R.string.rlz_access_point));
         }
@@ -282,24 +283,24 @@ public class UrlHandler {
     private static boolean needsRlzString(Uri uri) {
         String host;
         String scheme = uri.getScheme();
-        if (("http".equals(scheme) || "https".equals(scheme)) && uri.isHierarchical() && uri.getQueryParameter("q") != null && uri.getQueryParameter("rlz") == null && (host = uri.getHost()) != null) {
-            String[] split = host.split("\\.");
-            if (split.length < 2) {
+        if ((!"http".equals(scheme) && !"https".equals(scheme)) || !uri.isHierarchical() || uri.getQueryParameter("q") == null || uri.getQueryParameter("rlz") != null || (host = uri.getHost()) == null) {
+            return false;
+        }
+        String[] strArrSplit = host.split("\\.");
+        if (strArrSplit.length < 2) {
+            return false;
+        }
+        int length = strArrSplit.length - 2;
+        String str = strArrSplit[length];
+        if (!"google".equals(str)) {
+            if (strArrSplit.length < 3 || !("co".equals(str) || "com".equals(str))) {
                 return false;
             }
-            int length = split.length - 2;
-            String str = split[length];
-            if (!"google".equals(str)) {
-                if (split.length < 3 || !("co".equals(str) || "com".equals(str))) {
-                    return false;
-                }
-                length = split.length - 3;
-                if (!"google".equals(split[length])) {
-                    return false;
-                }
+            length = strArrSplit.length - 3;
+            if (!"google".equals(strArrSplit[length])) {
+                return false;
             }
-            return length <= 0 || !"corp".equals(split[length - 1]);
         }
-        return false;
+        return length <= 0 || !"corp".equals(strArrSplit[length - 1]);
     }
 }

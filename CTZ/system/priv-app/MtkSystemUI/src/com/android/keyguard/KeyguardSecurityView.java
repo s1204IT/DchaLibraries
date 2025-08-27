@@ -1,6 +1,7 @@
 package com.android.keyguard;
 
 import com.android.internal.widget.LockPatternUtils;
+
 /* loaded from: classes.dex */
 public interface KeyguardSecurityView {
     CharSequence getTitle();

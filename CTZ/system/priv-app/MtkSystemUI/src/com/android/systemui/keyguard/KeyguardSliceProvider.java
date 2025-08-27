@@ -29,8 +29,10 @@ import com.android.systemui.statusbar.policy.ZenModeControllerImpl;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public class KeyguardSliceProvider extends SliceProvider implements NextAlarmController.NextAlarmChangeCallback, ZenModeController.Callback {
+
     @VisibleForTesting
     static final int ALARM_VISIBILITY_HOURS = 12;
     private static KeyguardSliceProvider sInstance;
@@ -43,6 +45,7 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
     protected final Uri mDateUri;
     protected final Uri mDndUri;
     private final Handler mHandler;
+
     @VisibleForTesting
     final BroadcastReceiver mIntentReceiver;
     private String mLastText;
@@ -69,7 +72,7 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
         this.mUpdateNextAlarm = new AlarmManager.OnAlarmListener() { // from class: com.android.systemui.keyguard.-$$Lambda$KeyguardSliceProvider$IhzByd8TsqFuOrSyuGurVskyPLo
             @Override // android.app.AlarmManager.OnAlarmListener
             public final void onAlarm() {
-                KeyguardSliceProvider.this.updateNextAlarm();
+                this.f$0.updateNextAlarm();
             }
         };
         this.mIntentReceiver = new BroadcastReceiver() { // from class: com.android.systemui.keyguard.KeyguardSliceProvider.1
@@ -83,7 +86,7 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
                         handler2.post(new Runnable() { // from class: com.android.systemui.keyguard.-$$Lambda$UyKQdSvY5FC_Xuudb07cmVSuhU4
                             @Override // java.lang.Runnable
                             public final void run() {
-                                KeyguardSliceProvider.this.cleanDateFormat();
+                                keyguardSliceProvider.cleanDateFormat();
                             }
                         });
                     }
@@ -92,7 +95,7 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
                     handler3.post(new Runnable() { // from class: com.android.systemui.keyguard.-$$Lambda$iHhuB2gJvIMUcE0UtET88pejsrA
                         @Override // java.lang.Runnable
                         public final void run() {
-                            KeyguardSliceProvider.this.updateClock();
+                            keyguardSliceProvider2.updateClock();
                         }
                     });
                 }
@@ -113,27 +116,27 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
         addNextAlarm(listBuilder);
         addZenMode(listBuilder);
         addPrimaryAction(listBuilder);
-        Slice build = listBuilder.build();
+        Slice sliceBuild = listBuilder.build();
         Trace.endSection();
-        return build;
+        return sliceBuild;
     }
 
     protected void addPrimaryAction(ListBuilder listBuilder) {
-        listBuilder.addRow(new ListBuilder.RowBuilder(listBuilder, Uri.parse("content://com.android.systemui.keyguard/action")).setPrimaryAction(new SliceAction(this.mPendingIntent, Icon.createWithResource(getContext(), (int) R.drawable.ic_access_alarms_big), this.mLastText)));
+        listBuilder.addRow(new ListBuilder.RowBuilder(listBuilder, Uri.parse("content://com.android.systemui.keyguard/action")).setPrimaryAction(new SliceAction(this.mPendingIntent, Icon.createWithResource(getContext(), R.drawable.ic_access_alarms_big), this.mLastText)));
     }
 
     protected void addNextAlarm(ListBuilder listBuilder) {
         if (TextUtils.isEmpty(this.mNextAlarm)) {
             return;
         }
-        listBuilder.addRow(new ListBuilder.RowBuilder(listBuilder, this.mAlarmUri).setTitle(this.mNextAlarm).addEndItem(Icon.createWithResource(getContext(), (int) R.drawable.ic_access_alarms_big)));
+        listBuilder.addRow(new ListBuilder.RowBuilder(listBuilder, this.mAlarmUri).setTitle(this.mNextAlarm).addEndItem(Icon.createWithResource(getContext(), R.drawable.ic_access_alarms_big)));
     }
 
     protected void addZenMode(ListBuilder listBuilder) {
         if (!isDndSuppressingNotifications()) {
             return;
         }
-        listBuilder.addRow(new ListBuilder.RowBuilder(listBuilder, this.mDndUri).setContentDescription(getContext().getResources().getString(R.string.accessibility_quick_settings_dnd)).addEndItem(Icon.createWithResource(getContext(), (int) R.drawable.stat_sys_dnd)));
+        listBuilder.addRow(new ListBuilder.RowBuilder(listBuilder, this.mDndUri).setContentDescription(getContext().getResources().getString(R.string.accessibility_quick_settings_dnd)).addEndItem(Icon.createWithResource(getContext(), R.drawable.stat_sys_dnd)));
     }
 
     protected boolean isDndSuppressingNotifications() {
@@ -149,7 +152,7 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
         this.mZenModeController = new ZenModeControllerImpl(getContext(), this.mHandler);
         this.mZenModeController.addCallback(this);
         this.mDatePattern = getContext().getString(R.string.system_ui_aod_date_pattern);
-        this.mPendingIntent = PendingIntent.getActivity(getContext(), 0, new Intent(getContext(), KeyguardSliceProvider.class), 0);
+        this.mPendingIntent = PendingIntent.getActivity(getContext(), 0, new Intent(getContext(), (Class<?>) KeyguardSliceProvider.class), 0);
         sInstance = this;
         registerClockUpdate();
         updateClock();
@@ -166,8 +169,7 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
         this.mContentResolver.notifyChange(this.mSliceUri, null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateNextAlarm() {
+    private void updateNextAlarm() {
         if (withinNHours(this.mNextAlarmInfo, 12)) {
             this.mNextAlarm = android.text.format.DateFormat.format(android.text.format.DateFormat.is24HourFormat(getContext(), ActivityManager.getCurrentUser()) ? "H:mm" : "h:mm", this.mNextAlarmInfo.getTriggerTime()).toString();
         } else {
@@ -201,8 +203,7 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
         return this.mRegistered;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateClock() {
+    protected void updateClock() {
         String formattedDate = getFormattedDate();
         if (!formattedDate.equals(this.mLastText)) {
             this.mLastText = formattedDate;
@@ -220,9 +221,8 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
         return this.mDateFormat.format(this.mCurrentTime);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    public void cleanDateFormat() {
+    void cleanDateFormat() {
         this.mDateFormat = null;
     }
 

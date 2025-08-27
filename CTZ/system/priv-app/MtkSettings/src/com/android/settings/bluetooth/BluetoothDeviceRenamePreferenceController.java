@@ -8,6 +8,7 @@ import android.util.Pair;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.bluetooth.LocalBluetoothAdapter;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public class BluetoothDeviceRenamePreferenceController extends BluetoothDeviceNamePreferenceController {
     private Fragment mFragment;

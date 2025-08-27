@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.util.Calendar;
 import java.util.Locale;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class FileDownloadResponse extends Response {
     public static final int BUFFER_SIZE = 4096;
@@ -29,21 +30,20 @@ public class FileDownloadResponse extends Response {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* JADX WARN: Not initialized variable reg: 8, insn: 0x0181: MOVE  (r10 I:??[OBJECT, ARRAY]) = (r8 I:??[OBJECT, ARRAY]), block:B:75:0x0181 */
+    /* JADX WARN: Not initialized variable reg: 8, insn: 0x0181: MOVE (r10 I:??[OBJECT, ARRAY]) = (r8 I:??[OBJECT, ARRAY]), block:B:75:0x0181 */
     /* JADX WARN: Removed duplicated region for block: B:78:0x0185  */
     /* JADX WARN: Removed duplicated region for block: B:80:0x0193  */
     @Override // jp.co.benesse.dcha.setupwizard.http.Response
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void onReceiveData(HttpURLConnection httpURLConnection) throws IOException {
+    void onReceiveData(HttpURLConnection httpURLConnection) throws Throwable {
         InputStream inputStream;
         InputStream inputStream2;
         FileOutputStream fileOutputStream;
         InputStream inputStream3;
         FileOutputStream fileOutputStream2;
-        int read;
+        int i;
         byte[] bArr;
         Logger.d(TAG, "onReceiveData 0001");
         FileDownloadRequest fileDownloadRequest = (FileDownloadRequest) this.request;
@@ -52,18 +52,18 @@ public class FileDownloadResponse extends Response {
             throw new IllegalArgumentException("Request.url or Request.outPath is null");
         }
         File file = fileDownloadRequest.outPath;
-        boolean isDirectory = file.isDirectory();
+        boolean zIsDirectory = file.isDirectory();
         try {
-            if (isDirectory) {
+            if (zIsDirectory) {
                 try {
                     Logger.d(TAG, "onReceiveData 0003");
                     String file2 = fileDownloadRequest.url.getFile();
                     if (file2 != null) {
                         Logger.d(TAG, "onReceiveData 0004");
-                        String[] split = file2.split("/");
-                        if (split.length > 0) {
+                        String[] strArrSplit = file2.split("/");
+                        if (strArrSplit.length > 0) {
                             Logger.d(TAG, "onReceiveData 0005");
-                            file2 = split[split.length - 1];
+                            file2 = strArrSplit[strArrSplit.length - 1];
                         } else {
                             file2 = null;
                         }
@@ -101,12 +101,46 @@ public class FileDownloadResponse extends Response {
                 inputStream2 = httpURLConnection.getInputStream();
                 try {
                     fileOutputStream2 = new FileOutputStream(file);
-                } catch (IOException e2) {
-                    e = e2;
+                    try {
+                        this.receiveLength = 0L;
+                        loop0: while (true) {
+                            int i2 = 0;
+                            while (!fileDownloadRequest.isCancelled() && (i = inputStream2.read(bArr2)) != -1) {
+                                fileOutputStream2.write(bArr2, 0, i);
+                                bArr = bArr2;
+                                this.receiveLength += i;
+                                if (fileDownloadRequest.responseListener == null || (i2 = i2 + 1) <= 10) {
+                                    bArr2 = bArr;
+                                }
+                            }
+                            fileDownloadRequest.responseListener.onHttpProgress(this);
+                            bArr2 = bArr;
+                        }
+                        fileOutputStream2.flush();
+                        if (fileDownloadRequest.responseListener != null) {
+                            Logger.d(TAG, "onReceiveData 0009");
+                            fileDownloadRequest.responseListener.onHttpProgress(this);
+                        }
+                        inputStream3 = inputStream2;
+                    } catch (IOException e2) {
+                        e = e2;
+                        Logger.d(TAG, "onReceiveData 0011", e);
+                        throw e;
+                    } catch (Throwable th2) {
+                        th = th2;
+                        fileOutputStream = fileOutputStream2;
+                        if (fileOutputStream != null) {
+                        }
+                        if (inputStream2 != null) {
+                        }
+                        throw th;
+                    }
+                } catch (IOException e3) {
+                    e = e3;
                     Logger.d(TAG, "onReceiveData 0011", e);
                     throw e;
-                } catch (Throwable th2) {
-                    th = th2;
+                } catch (Throwable th3) {
+                    th = th3;
                     fileOutputStream = null;
                     if (fileOutputStream != null) {
                         Logger.d(TAG, "onReceiveData 0012");
@@ -118,42 +152,8 @@ public class FileDownloadResponse extends Response {
                     }
                     throw th;
                 }
-                try {
-                    this.receiveLength = 0L;
-                    loop0: while (true) {
-                        int i = 0;
-                        while (!fileDownloadRequest.isCancelled() && (read = inputStream2.read(bArr2)) != -1) {
-                            fileOutputStream2.write(bArr2, 0, read);
-                            bArr = bArr2;
-                            this.receiveLength += read;
-                            if (fileDownloadRequest.responseListener == null || (i = i + 1) <= 10) {
-                                bArr2 = bArr;
-                            }
-                        }
-                        fileDownloadRequest.responseListener.onHttpProgress(this);
-                        bArr2 = bArr;
-                    }
-                    fileOutputStream2.flush();
-                    if (fileDownloadRequest.responseListener != null) {
-                        Logger.d(TAG, "onReceiveData 0009");
-                        fileDownloadRequest.responseListener.onHttpProgress(this);
-                    }
-                    inputStream3 = inputStream2;
-                } catch (IOException e3) {
-                    e = e3;
-                    Logger.d(TAG, "onReceiveData 0011", e);
-                    throw e;
-                } catch (Throwable th3) {
-                    th = th3;
-                    fileOutputStream = fileOutputStream2;
-                    if (fileOutputStream != null) {
-                    }
-                    if (inputStream2 != null) {
-                    }
-                    throw th;
-                }
             }
-            if (isDirectory) {
+            if (zIsDirectory) {
                 try {
                     if (fileDownloadRequest.isCancelled()) {
                         Logger.d(TAG, "onReceiveData 0010");

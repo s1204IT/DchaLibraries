@@ -1,4 +1,5 @@
 package com.android.launcher3.folder;
+
 /* loaded from: classes.dex */
 public class ClippedFolderIconLayoutRule {
     public static final int ENTER_INDEX = -3;
@@ -26,7 +27,7 @@ public class ClippedFolderIconLayoutRule {
     }
 
     public PreviewItemDrawingParams computePreviewItemDrawingParams(int i, int i2, PreviewItemDrawingParams previewItemDrawingParams) {
-        float scaleForItem = scaleForItem(i2);
+        float fScaleForItem = scaleForItem(i2);
         if (i == -2) {
             getGridPosition(0, 2, this.mTmpPoint);
         } else if (i == -3) {
@@ -34,7 +35,7 @@ public class ClippedFolderIconLayoutRule {
         } else if (i >= 4) {
             float[] fArr = this.mTmpPoint;
             float[] fArr2 = this.mTmpPoint;
-            float f = (this.mAvailableSpace / 2.0f) - ((this.mIconSize * scaleForItem) / 2.0f);
+            float f = (this.mAvailableSpace / 2.0f) - ((this.mIconSize * fScaleForItem) / 2.0f);
             fArr2[1] = f;
             fArr[0] = f;
         } else {
@@ -43,9 +44,9 @@ public class ClippedFolderIconLayoutRule {
         float f2 = this.mTmpPoint[0];
         float f3 = this.mTmpPoint[1];
         if (previewItemDrawingParams == null) {
-            return new PreviewItemDrawingParams(f2, f3, scaleForItem, 0.0f);
+            return new PreviewItemDrawingParams(f2, f3, fScaleForItem, 0.0f);
         }
-        previewItemDrawingParams.update(f2, f3, scaleForItem);
+        previewItemDrawingParams.update(f2, f3, fScaleForItem);
         previewItemDrawingParams.overlayAlpha = 0.0f;
         return previewItemDrawingParams;
     }
@@ -55,14 +56,16 @@ public class ClippedFolderIconLayoutRule {
         float f = fArr[0];
         float f2 = fArr[1];
         getPosition(3, 4, fArr);
-        fArr[0] = f + (i2 * (fArr[0] - f));
-        fArr[1] = f2 + (i * (fArr[1] - f2));
+        float f3 = fArr[0] - f;
+        float f4 = fArr[1] - f2;
+        fArr[0] = f + (i2 * f3);
+        fArr[1] = f2 + (i * f4);
     }
 
     private void getPosition(int i, int i2, float[] fArr) {
         double d;
         int i3;
-        int max = Math.max(i2, 2);
+        int iMax = Math.max(i2, 2);
         double d2 = 0.0d;
         if (!this.mIsRtl) {
             d = 3.141592653589793d;
@@ -75,25 +78,25 @@ public class ClippedFolderIconLayoutRule {
             i3 = 1;
         }
         int i4 = 3;
-        if (max == 3) {
+        if (iMax == 3) {
             d2 = 0.5235987755982988d;
-        } else if (max == 4) {
+        } else if (iMax == 4) {
             d2 = 0.7853981633974483d;
         }
         double d3 = i3;
         double d4 = d + (d2 * d3);
-        if (max != 4 || i != 3) {
-            if (max != 4 || i != 2) {
+        if (iMax != 4 || i != 3) {
+            if (iMax != 4 || i != 2) {
                 i4 = i;
             }
         } else {
             i4 = 2;
         }
-        float f = this.mRadius * (1.0f + ((MAX_RADIUS_DILATION * (max - 2)) / 2.0f));
-        double d5 = d4 + (i4 * (6.283185307179586d / max) * d3);
-        float scaleForItem = (this.mIconSize * scaleForItem(max)) / 2.0f;
-        fArr[0] = ((this.mAvailableSpace / 2.0f) + ((float) ((f * Math.cos(d5)) / 2.0d))) - scaleForItem;
-        fArr[1] = ((this.mAvailableSpace / 2.0f) + ((float) (((-f) * Math.sin(d5)) / 2.0d))) - scaleForItem;
+        float f = this.mRadius * (1.0f + ((MAX_RADIUS_DILATION * (iMax - 2)) / 2.0f));
+        double d5 = d4 + (i4 * (6.283185307179586d / iMax) * d3);
+        float fScaleForItem = (this.mIconSize * scaleForItem(iMax)) / 2.0f;
+        fArr[0] = ((this.mAvailableSpace / 2.0f) + ((float) ((f * Math.cos(d5)) / 2.0d))) - fScaleForItem;
+        fArr[1] = ((this.mAvailableSpace / 2.0f) + ((float) (((-f) * Math.sin(d5)) / 2.0d))) - fScaleForItem;
     }
 
     public float scaleForItem(int i) {

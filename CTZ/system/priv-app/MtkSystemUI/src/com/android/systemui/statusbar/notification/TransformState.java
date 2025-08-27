@@ -15,6 +15,7 @@ import com.android.systemui.statusbar.CrossFadeHelper;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.TransformableView;
 import com.android.systemui.statusbar.ViewTransformationHelper;
+
 /* loaded from: classes.dex */
 public class TransformState {
     private boolean mSameAsAny;
@@ -22,6 +23,9 @@ public class TransformState {
     protected View mTransformedView;
     private static Pools.SimplePool<TransformState> sInstancePool = new Pools.SimplePool<>(40);
     private static ViewClippingUtil.ClippingParameters CLIPPING_PARAMETERS = new ViewClippingUtil.ClippingParameters() { // from class: com.android.systemui.statusbar.notification.TransformState.1
+        AnonymousClass1() {
+        }
+
         public boolean shouldFinish(View view) {
             if (view instanceof ExpandableNotificationRow) {
                 return !((ExpandableNotificationRow) view).isChildInGroup();
@@ -45,9 +49,32 @@ public class TransformState {
     private float mTransformationEndX = -1.0f;
     protected Interpolator mDefaultInterpolator = Interpolators.FAST_OUT_SLOW_IN;
 
-    /* loaded from: classes.dex */
     public interface TransformInfo {
         boolean isAnimating();
+    }
+
+    /* renamed from: com.android.systemui.statusbar.notification.TransformState$1 */
+    class AnonymousClass1 implements ViewClippingUtil.ClippingParameters {
+        AnonymousClass1() {
+        }
+
+        public boolean shouldFinish(View view) {
+            if (view instanceof ExpandableNotificationRow) {
+                return !((ExpandableNotificationRow) view).isChildInGroup();
+            }
+            return false;
+        }
+
+        public void onClippingStateChanged(View view, boolean z) {
+            if (view instanceof ExpandableNotificationRow) {
+                ExpandableNotificationRow expandableNotificationRow = (ExpandableNotificationRow) view;
+                if (z) {
+                    expandableNotificationRow.setClipToActualHeight(true);
+                } else if (expandableNotificationRow.isChildInGroup()) {
+                    expandableNotificationRow.setClipToActualHeight(false);
+                }
+            }
+        }
     }
 
     public void initFrom(View view, TransformInfo transformInfo) {
@@ -65,8 +92,7 @@ public class TransformState {
         transformViewFullyFrom(transformState, f);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void ensureVisible() {
+    protected void ensureVisible() {
         if (this.mTransformedView.getVisibility() == 4 || this.mTransformedView.getAlpha() != 1.0f) {
             this.mTransformedView.setAlpha(1.0f);
             this.mTransformedView.setVisibility(0);
@@ -89,22 +115,18 @@ public class TransformState {
         transformViewFrom(transformState, 16, null, f);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* JADX WARN: Code restructure failed: missing block: B:50:0x0098, code lost:
-        if (r22.initTransformation(r19, r20) != false) goto L70;
-     */
-    /* JADX WARN: Removed duplicated region for block: B:68:0x00f0  */
-    /* JADX WARN: Removed duplicated region for block: B:70:0x00f5  */
-    /* JADX WARN: Removed duplicated region for block: B:72:0x00fa  */
+    /* JADX WARN: Removed duplicated region for block: B:167:0x00f0  */
+    /* JADX WARN: Removed duplicated region for block: B:169:0x00f5  */
+    /* JADX WARN: Removed duplicated region for block: B:171:0x00fa  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void transformViewFrom(TransformState transformState, int i, ViewTransformationHelper.CustomTransformation customTransformation, float f) {
+    protected void transformViewFrom(TransformState transformState, int i, ViewTransformationHelper.CustomTransformation customTransformation, float f) {
         int[] locationOnScreen;
         float f2;
-        float f3;
+        float interpolation;
         Interpolator customInterpolator;
-        float f4;
+        float interpolation2;
         Interpolator customInterpolator2;
         View view = this.mTransformedView;
         boolean z = (i & 1) != 0;
@@ -116,87 +138,94 @@ public class TransformState {
         int viewWidth2 = transformState.getViewWidth();
         boolean z4 = (viewWidth2 == viewWidth || viewWidth2 == 0 || viewWidth == 0) ? false : true;
         boolean z5 = transformScale(transformState) && (z3 || z4);
-        int i2 = (f > 0.0f ? 1 : (f == 0.0f ? 0 : -1));
-        if (i2 == 0 || ((z && getTransformationStartX() == -1.0f) || ((z2 && getTransformationStartY() == -1.0f) || ((z5 && getTransformationStartScaleX() == -1.0f && z4) || (z5 && getTransformationStartScaleY() == -1.0f && z3))))) {
-            if (i2 != 0) {
+        if (f == 0.0f || ((z && getTransformationStartX() == -1.0f) || ((z2 && getTransformationStartY() == -1.0f) || ((z5 && getTransformationStartScaleX() == -1.0f && z4) || (z5 && getTransformationStartScaleY() == -1.0f && z3))))) {
+            if (f != 0.0f) {
                 locationOnScreen = transformState.getLaidOutLocationOnScreen();
             } else {
                 locationOnScreen = transformState.getLocationOnScreen();
             }
             int[] laidOutLocationOnScreen = getLaidOutLocationOnScreen();
-            if (customTransformation == null) {
-            }
-            if (z) {
-                setTransformationStartX(locationOnScreen[0] - laidOutLocationOnScreen[0]);
-            }
-            if (z2) {
-                setTransformationStartY(locationOnScreen[1] - laidOutLocationOnScreen[1]);
-            }
-            View transformedView = transformState.getTransformedView();
-            if (z5 && z4) {
-                setTransformationStartScaleX((viewWidth2 * transformedView.getScaleX()) / viewWidth);
-                view.setPivotX(0.0f);
+            if (customTransformation == null || !customTransformation.initTransformation(this, transformState)) {
+                if (z) {
+                    setTransformationStartX(locationOnScreen[0] - laidOutLocationOnScreen[0]);
+                }
+                if (z2) {
+                    setTransformationStartY(locationOnScreen[1] - laidOutLocationOnScreen[1]);
+                }
+                View transformedView = transformState.getTransformedView();
+                if (z5 && z4) {
+                    setTransformationStartScaleX((viewWidth2 * transformedView.getScaleX()) / viewWidth);
+                    view.setPivotX(0.0f);
+                } else {
+                    setTransformationStartScaleX(-1.0f);
+                }
+                if (z5 && z3) {
+                    setTransformationStartScaleY((viewHeight2 * transformedView.getScaleY()) / viewHeight);
+                    view.setPivotY(0.0f);
+                    f2 = -1.0f;
+                    if (!z) {
+                    }
+                    if (!z2) {
+                    }
+                    if (!z5) {
+                    }
+                    setClippingDeactivated(view, true);
+                } else {
+                    f2 = -1.0f;
+                    setTransformationStartScaleY(-1.0f);
+                    if (!z) {
+                        setTransformationStartX(f2);
+                    }
+                    if (!z2) {
+                        setTransformationStartY(f2);
+                    }
+                    if (!z5) {
+                        setTransformationStartScaleX(f2);
+                        setTransformationStartScaleY(f2);
+                    }
+                    setClippingDeactivated(view, true);
+                }
             } else {
-                setTransformationStartScaleX(-1.0f);
-            }
-            if (z5 && z3) {
-                setTransformationStartScaleY((viewHeight2 * transformedView.getScaleY()) / viewHeight);
-                view.setPivotY(0.0f);
                 f2 = -1.0f;
                 if (!z) {
                 }
                 if (!z2) {
                 }
                 if (!z5) {
-                }
-                setClippingDeactivated(view, true);
-            } else {
-                f2 = -1.0f;
-                setTransformationStartScaleY(-1.0f);
-                if (!z) {
-                    setTransformationStartX(f2);
-                }
-                if (!z2) {
-                    setTransformationStartY(f2);
-                }
-                if (!z5) {
-                    setTransformationStartScaleX(f2);
-                    setTransformationStartScaleY(f2);
                 }
                 setClippingDeactivated(view, true);
             }
         }
-        float interpolation = this.mDefaultInterpolator.getInterpolation(f);
+        float interpolation3 = this.mDefaultInterpolator.getInterpolation(f);
         if (z) {
             if (customTransformation != null && (customInterpolator2 = customTransformation.getCustomInterpolator(1, true)) != null) {
-                f4 = customInterpolator2.getInterpolation(f);
+                interpolation2 = customInterpolator2.getInterpolation(f);
             } else {
-                f4 = interpolation;
+                interpolation2 = interpolation3;
             }
-            view.setTranslationX(NotificationUtils.interpolate(getTransformationStartX(), 0.0f, f4));
+            view.setTranslationX(NotificationUtils.interpolate(getTransformationStartX(), 0.0f, interpolation2));
         }
         if (z2) {
             if (customTransformation != null && (customInterpolator = customTransformation.getCustomInterpolator(16, true)) != null) {
-                f3 = customInterpolator.getInterpolation(f);
+                interpolation = customInterpolator.getInterpolation(f);
             } else {
-                f3 = interpolation;
+                interpolation = interpolation3;
             }
-            view.setTranslationY(NotificationUtils.interpolate(getTransformationStartY(), 0.0f, f3));
+            view.setTranslationY(NotificationUtils.interpolate(getTransformationStartY(), 0.0f, interpolation));
         }
         if (z5) {
             float transformationStartScaleX = getTransformationStartScaleX();
             if (transformationStartScaleX != -1.0f) {
-                view.setScaleX(NotificationUtils.interpolate(transformationStartScaleX, 1.0f, interpolation));
+                view.setScaleX(NotificationUtils.interpolate(transformationStartScaleX, 1.0f, interpolation3));
             }
             float transformationStartScaleY = getTransformationStartScaleY();
             if (transformationStartScaleY != -1.0f) {
-                view.setScaleY(NotificationUtils.interpolate(transformationStartScaleY, 1.0f, interpolation));
+                view.setScaleY(NotificationUtils.interpolate(transformationStartScaleY, 1.0f, interpolation3));
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getViewWidth() {
+    protected int getViewWidth() {
         return this.mTransformedView.getWidth();
     }
 
@@ -239,13 +268,20 @@ public class TransformState {
         transformViewTo(transformState, 16, null, f);
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:115:0x00b4 A[PHI: r6
+  0x00b4: PHI (r6v8 float) = (r6v7 float), (r6v11 float) binds: [B:108:0x009e, B:113:0x00ad] A[DONT_GENERATE, DONT_INLINE]] */
+    /* JADX WARN: Removed duplicated region for block: B:126:0x00df A[PHI: r2
+  0x00df: PHI (r2v9 float) = (r2v8 float), (r2v12 float) binds: [B:119:0x00c9, B:124:0x00d8] A[DONT_GENERATE, DONT_INLINE]] */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private void transformViewTo(TransformState transformState, int i, ViewTransformationHelper.CustomTransformation customTransformation, float f) {
-        float f2;
-        float f3;
+        float interpolation;
+        float interpolation2;
         View view = this.mTransformedView;
         boolean z = (i & 1) != 0;
         boolean z2 = (i & 16) != 0;
-        boolean transformScale = transformScale(transformState);
+        boolean zTransformScale = transformScale(transformState);
         if (f == 0.0f) {
             if (z) {
                 float transformationStartX = getTransformationStartX();
@@ -262,13 +298,13 @@ public class TransformState {
                 setTransformationStartY(transformationStartY);
             }
             transformState.getTransformedView();
-            if (transformScale && transformState.getViewWidth() != getViewWidth()) {
+            if (zTransformScale && transformState.getViewWidth() != getViewWidth()) {
                 setTransformationStartScaleX(view.getScaleX());
                 view.setPivotX(0.0f);
             } else {
                 setTransformationStartScaleX(-1.0f);
             }
-            if (transformScale && transformState.getViewHeight() != getViewHeight()) {
+            if (zTransformScale && transformState.getViewHeight() != getViewHeight()) {
                 setTransformationStartScaleY(view.getScaleY());
                 view.setPivotY(0.0f);
             } else {
@@ -276,54 +312,55 @@ public class TransformState {
             }
             setClippingDeactivated(view, true);
         }
-        float interpolation = this.mDefaultInterpolator.getInterpolation(f);
+        float interpolation3 = this.mDefaultInterpolator.getInterpolation(f);
         int[] laidOutLocationOnScreen = transformState.getLaidOutLocationOnScreen();
         int[] laidOutLocationOnScreen2 = getLaidOutLocationOnScreen();
         if (z) {
-            float f4 = laidOutLocationOnScreen[0] - laidOutLocationOnScreen2[0];
+            float f2 = laidOutLocationOnScreen[0] - laidOutLocationOnScreen2[0];
             if (customTransformation != null) {
                 if (customTransformation.customTransformTarget(this, transformState)) {
-                    f4 = this.mTransformationEndX;
+                    f2 = this.mTransformationEndX;
                 }
                 Interpolator customInterpolator = customTransformation.getCustomInterpolator(1, false);
                 if (customInterpolator != null) {
-                    f3 = customInterpolator.getInterpolation(f);
-                    view.setTranslationX(NotificationUtils.interpolate(getTransformationStartX(), f4, f3));
+                    interpolation2 = customInterpolator.getInterpolation(f);
                 }
+                view.setTranslationX(NotificationUtils.interpolate(getTransformationStartX(), f2, interpolation2));
+            } else {
+                interpolation2 = interpolation3;
+                view.setTranslationX(NotificationUtils.interpolate(getTransformationStartX(), f2, interpolation2));
             }
-            f3 = interpolation;
-            view.setTranslationX(NotificationUtils.interpolate(getTransformationStartX(), f4, f3));
         }
         if (z2) {
-            float f5 = laidOutLocationOnScreen[1] - laidOutLocationOnScreen2[1];
+            float f3 = laidOutLocationOnScreen[1] - laidOutLocationOnScreen2[1];
             if (customTransformation != null) {
                 if (customTransformation.customTransformTarget(this, transformState)) {
-                    f5 = this.mTransformationEndY;
+                    f3 = this.mTransformationEndY;
                 }
                 Interpolator customInterpolator2 = customTransformation.getCustomInterpolator(16, false);
                 if (customInterpolator2 != null) {
-                    f2 = customInterpolator2.getInterpolation(f);
-                    view.setTranslationY(NotificationUtils.interpolate(getTransformationStartY(), f5, f2));
+                    interpolation = customInterpolator2.getInterpolation(f);
                 }
+                view.setTranslationY(NotificationUtils.interpolate(getTransformationStartY(), f3, interpolation));
+            } else {
+                interpolation = interpolation3;
+                view.setTranslationY(NotificationUtils.interpolate(getTransformationStartY(), f3, interpolation));
             }
-            f2 = interpolation;
-            view.setTranslationY(NotificationUtils.interpolate(getTransformationStartY(), f5, f2));
         }
-        if (transformScale) {
+        if (zTransformScale) {
             transformState.getTransformedView();
             float transformationStartScaleX = getTransformationStartScaleX();
             if (transformationStartScaleX != -1.0f) {
-                view.setScaleX(NotificationUtils.interpolate(transformationStartScaleX, transformState.getViewWidth() / getViewWidth(), interpolation));
+                view.setScaleX(NotificationUtils.interpolate(transformationStartScaleX, transformState.getViewWidth() / getViewWidth(), interpolation3));
             }
             float transformationStartScaleY = getTransformationStartScaleY();
             if (transformationStartScaleY != -1.0f) {
-                view.setScaleY(NotificationUtils.interpolate(transformationStartScaleY, transformState.getViewHeight() / getViewHeight(), interpolation));
+                view.setScaleY(NotificationUtils.interpolate(transformationStartScaleY, transformState.getViewHeight() / getViewHeight(), interpolation3));
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setClippingDeactivated(View view, boolean z) {
+    protected void setClippingDeactivated(View view, boolean z) {
         ViewClippingUtil.setClippingDeactivated(view, z, CLIPPING_PARAMETERS);
     }
 
@@ -336,17 +373,14 @@ public class TransformState {
 
     public int[] getLocationOnScreen() {
         this.mTransformedView.getLocationOnScreen(this.mOwnPosition);
+        this.mOwnPosition[0] = (int) (r0[0] - ((1.0f - this.mTransformedView.getScaleX()) * this.mTransformedView.getPivotX()));
+        this.mOwnPosition[1] = (int) (r0[1] - ((1.0f - this.mTransformedView.getScaleY()) * this.mTransformedView.getPivotY()));
         int[] iArr = this.mOwnPosition;
-        iArr[0] = (int) (iArr[0] - ((1.0f - this.mTransformedView.getScaleX()) * this.mTransformedView.getPivotX()));
-        int[] iArr2 = this.mOwnPosition;
-        iArr2[1] = (int) (iArr2[1] - ((1.0f - this.mTransformedView.getScaleY()) * this.mTransformedView.getPivotY()));
-        int[] iArr3 = this.mOwnPosition;
-        iArr3[1] = iArr3[1] - (MessagingPropertyAnimator.getTop(this.mTransformedView) - MessagingPropertyAnimator.getLayoutTop(this.mTransformedView));
+        iArr[1] = iArr[1] - (MessagingPropertyAnimator.getTop(this.mTransformedView) - MessagingPropertyAnimator.getLayoutTop(this.mTransformedView));
         return this.mOwnPosition;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean sameAs(TransformState transformState) {
+    protected boolean sameAs(TransformState transformState) {
         return this.mSameAsAny;
     }
 
@@ -363,37 +397,41 @@ public class TransformState {
 
     public static TransformState createFrom(View view, TransformInfo transformInfo) {
         if (view instanceof TextView) {
-            TextViewTransformState obtain = TextViewTransformState.obtain();
-            obtain.initFrom(view, transformInfo);
-            return obtain;
-        } else if (view.getId() == 16908685) {
-            ActionListTransformState obtain2 = ActionListTransformState.obtain();
-            obtain2.initFrom(view, transformInfo);
-            return obtain2;
-        } else if (view.getId() == 16909125) {
-            MessagingLayoutTransformState obtain3 = MessagingLayoutTransformState.obtain();
-            obtain3.initFrom(view, transformInfo);
-            return obtain3;
-        } else if (view instanceof MessagingImageMessage) {
-            MessagingImageTransformState obtain4 = MessagingImageTransformState.obtain();
-            obtain4.initFrom(view, transformInfo);
-            return obtain4;
-        } else if (view instanceof ImageView) {
-            ImageTransformState obtain5 = ImageTransformState.obtain();
-            obtain5.initFrom(view, transformInfo);
-            if (view.getId() == 16909229) {
-                obtain5.setIsSameAsAnyView(true);
-            }
-            return obtain5;
-        } else if (view instanceof ProgressBar) {
-            ProgressTransformState obtain6 = ProgressTransformState.obtain();
-            obtain6.initFrom(view, transformInfo);
-            return obtain6;
-        } else {
-            TransformState obtain7 = obtain();
-            obtain7.initFrom(view, transformInfo);
-            return obtain7;
+            TextViewTransformState textViewTransformStateObtain = TextViewTransformState.obtain();
+            textViewTransformStateObtain.initFrom(view, transformInfo);
+            return textViewTransformStateObtain;
         }
+        if (view.getId() == 16908685) {
+            ActionListTransformState actionListTransformStateObtain = ActionListTransformState.obtain();
+            actionListTransformStateObtain.initFrom(view, transformInfo);
+            return actionListTransformStateObtain;
+        }
+        if (view.getId() == 16909125) {
+            MessagingLayoutTransformState messagingLayoutTransformStateObtain = MessagingLayoutTransformState.obtain();
+            messagingLayoutTransformStateObtain.initFrom(view, transformInfo);
+            return messagingLayoutTransformStateObtain;
+        }
+        if (view instanceof MessagingImageMessage) {
+            MessagingImageTransformState messagingImageTransformStateObtain = MessagingImageTransformState.obtain();
+            messagingImageTransformStateObtain.initFrom(view, transformInfo);
+            return messagingImageTransformStateObtain;
+        }
+        if (view instanceof ImageView) {
+            ImageTransformState imageTransformStateObtain = ImageTransformState.obtain();
+            imageTransformStateObtain.initFrom(view, transformInfo);
+            if (view.getId() == 16909229) {
+                imageTransformStateObtain.setIsSameAsAnyView(true);
+            }
+            return imageTransformStateObtain;
+        }
+        if (view instanceof ProgressBar) {
+            ProgressTransformState progressTransformStateObtain = ProgressTransformState.obtain();
+            progressTransformStateObtain.initFrom(view, transformInfo);
+            return progressTransformStateObtain;
+        }
+        TransformState transformStateObtain = obtain();
+        transformStateObtain.initFrom(view, transformInfo);
+        return transformStateObtain;
     }
 
     public void setIsSameAsAnyView(boolean z) {
@@ -459,8 +497,7 @@ public class TransformState {
         this.mTransformedView.setTag(R.id.transformation_start_scale_y_tag, Float.valueOf(f));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void reset() {
+    protected void reset() {
         this.mTransformedView = null;
         this.mTransformInfo = null;
         this.mSameAsAny = false;
@@ -484,8 +521,7 @@ public class TransformState {
         resetTransformedView();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void resetTransformedView() {
+    protected void resetTransformedView() {
         this.mTransformedView.setTranslationX(0.0f);
         this.mTransformedView.setTranslationY(0.0f);
         this.mTransformedView.setScaleX(1.0f);

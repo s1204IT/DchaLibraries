@@ -8,6 +8,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class LeakDetector implements Dumpable {
     public static final boolean ENABLED = Build.IS_DEBUGGABLE;
@@ -40,8 +41,7 @@ public class LeakDetector implements Dumpable {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public TrackedGarbage getTrackedGarbage() {
+    TrackedGarbage getTrackedGarbage() {
         return this.mTrackedGarbage;
     }
 
@@ -82,8 +82,10 @@ public class LeakDetector implements Dumpable {
         indentingPrintWriter.println();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$dump$0(Collection collection) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: NOT 
+  (wrap:boolean:0x0000: INVOKE (r0v0 java.util.Collection) STATIC call: com.android.systemui.util.leak.TrackedObjects.isTrackedObject(java.util.Collection):boolean A[DONT_GENERATE, MD:(java.util.Collection<?>):boolean (m), REMOVE, WRAPPED] (LINE:113))
+ */
+    static /* synthetic */ boolean lambda$dump$0(Collection collection) {
         return !TrackedObjects.isTrackedObject(collection);
     }
 

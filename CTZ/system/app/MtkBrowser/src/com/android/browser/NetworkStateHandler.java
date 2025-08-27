@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.webkit.WebView;
+
 /* loaded from: classes.dex */
 public class NetworkStateHandler {
     Activity mActivity;
@@ -28,6 +29,9 @@ public class NetworkStateHandler {
         this.mNetworkStateChangedFilter = new IntentFilter();
         this.mNetworkStateChangedFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         this.mNetworkStateIntentReceiver = new BroadcastReceiver() { // from class: com.android.browser.NetworkStateHandler.1
+            AnonymousClass1() {
+            }
+
             @Override // android.content.BroadcastReceiver
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE")) {
@@ -42,13 +46,29 @@ public class NetworkStateHandler {
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onPause() {
+    /* renamed from: com.android.browser.NetworkStateHandler$1 */
+    class AnonymousClass1 extends BroadcastReceiver {
+        AnonymousClass1() {
+        }
+
+        @Override // android.content.BroadcastReceiver
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE")) {
+                NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra("networkInfo");
+                String typeName = networkInfo.getTypeName();
+                String subtypeName = networkInfo.getSubtypeName();
+                NetworkStateHandler.this.sendNetworkType(typeName.toLowerCase(), subtypeName != null ? subtypeName.toLowerCase() : "");
+                BrowserSettings.getInstance().updateConnectionType();
+                NetworkStateHandler.this.onNetworkToggle(!intent.getBooleanExtra("noConnectivity", false));
+            }
+        }
+    }
+
+    void onPause() {
         this.mActivity.unregisterReceiver(this.mNetworkStateIntentReceiver);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onResume() {
+    void onResume() {
         this.mActivity.registerReceiver(this.mNetworkStateIntentReceiver, this.mNetworkStateChangedFilter);
         BrowserSettings.getInstance().updateConnectionType();
     }
@@ -64,13 +84,11 @@ public class NetworkStateHandler {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isNetworkUp() {
+    boolean isNetworkUp() {
         return this.mIsNetworkUp;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void sendNetworkType(String str, String str2) {
+    private void sendNetworkType(String str, String str2) {
         this.mController.getCurrentWebView();
     }
 }

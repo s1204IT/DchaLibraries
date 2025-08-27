@@ -5,9 +5,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public final class MessageNanoPrinter {
-    public static <T extends MessageNano> String print(T t) {
+    public static <T extends MessageNano> String print(T t) throws SecurityException, IllegalArgumentException {
         if (t == null) {
             return "";
         }
@@ -22,16 +23,15 @@ public final class MessageNanoPrinter {
         }
     }
 
-    private static void print(String str, Object obj, StringBuffer stringBuffer, StringBuffer stringBuffer2) throws IllegalAccessException, InvocationTargetException {
-        Field[] fields;
+    private static void print(String str, Object obj, StringBuffer stringBuffer, StringBuffer stringBuffer2) throws IllegalAccessException, SecurityException, IllegalArgumentException, InvocationTargetException {
         int length;
         if (obj != null) {
             if (!(obj instanceof MessageNano)) {
                 if (obj instanceof Map) {
-                    String deCamelCaseify = deCamelCaseify(str);
+                    String strDeCamelCaseify = deCamelCaseify(str);
                     for (Map.Entry entry : ((Map) obj).entrySet()) {
                         stringBuffer2.append(stringBuffer);
-                        stringBuffer2.append(deCamelCaseify);
+                        stringBuffer2.append(strDeCamelCaseify);
                         stringBuffer2.append(" <\n");
                         int length2 = stringBuffer.length();
                         stringBuffer.append("  ");
@@ -43,14 +43,14 @@ public final class MessageNanoPrinter {
                     }
                     return;
                 }
-                String deCamelCaseify2 = deCamelCaseify(str);
+                String strDeCamelCaseify2 = deCamelCaseify(str);
                 stringBuffer2.append(stringBuffer);
-                stringBuffer2.append(deCamelCaseify2);
+                stringBuffer2.append(strDeCamelCaseify2);
                 stringBuffer2.append(": ");
                 if (obj instanceof String) {
-                    String sanitizeString = sanitizeString((String) obj);
+                    String strSanitizeString = sanitizeString((String) obj);
                     stringBuffer2.append("\"");
-                    stringBuffer2.append(sanitizeString);
+                    stringBuffer2.append(strSanitizeString);
                     stringBuffer2.append("\"");
                 } else if (obj instanceof byte[]) {
                     appendQuotedBytes((byte[]) obj, stringBuffer2);
@@ -95,11 +95,11 @@ public final class MessageNanoPrinter {
             for (Method method : cls.getMethods()) {
                 String name2 = method.getName();
                 if (name2.startsWith("set")) {
-                    String substring = name2.substring(3);
+                    String strSubstring = name2.substring(3);
                     try {
-                        if (((Boolean) cls.getMethod("has" + substring, new Class[0]).invoke(obj, new Object[0])).booleanValue()) {
+                        if (((Boolean) cls.getMethod("has" + strSubstring, new Class[0]).invoke(obj, new Object[0])).booleanValue()) {
                             try {
-                                print(substring, cls.getMethod("get" + substring, new Class[0]).invoke(obj, new Object[0]), stringBuffer, stringBuffer2);
+                                print(strSubstring, cls.getMethod("get" + strSubstring, new Class[0]).invoke(obj, new Object[0]), stringBuffer, stringBuffer2);
                             } catch (NoSuchMethodException e) {
                             }
                         }
@@ -118,14 +118,14 @@ public final class MessageNanoPrinter {
     private static String deCamelCaseify(String str) {
         StringBuffer stringBuffer = new StringBuffer();
         for (int i = 0; i < str.length(); i++) {
-            char charAt = str.charAt(i);
+            char cCharAt = str.charAt(i);
             if (i == 0) {
-                stringBuffer.append(Character.toLowerCase(charAt));
-            } else if (Character.isUpperCase(charAt)) {
+                stringBuffer.append(Character.toLowerCase(cCharAt));
+            } else if (Character.isUpperCase(cCharAt)) {
                 stringBuffer.append('_');
-                stringBuffer.append(Character.toLowerCase(charAt));
+                stringBuffer.append(Character.toLowerCase(cCharAt));
             } else {
-                stringBuffer.append(charAt);
+                stringBuffer.append(cCharAt);
             }
         }
         return stringBuffer.toString();
@@ -142,11 +142,11 @@ public final class MessageNanoPrinter {
         int length = str.length();
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            char charAt = str.charAt(i);
-            if (charAt >= ' ' && charAt <= '~' && charAt != '\"' && charAt != '\'') {
-                sb.append(charAt);
+            char cCharAt = str.charAt(i);
+            if (cCharAt >= ' ' && cCharAt <= '~' && cCharAt != '\"' && cCharAt != '\'') {
+                sb.append(cCharAt);
             } else {
-                sb.append(String.format("\\u%04x", Integer.valueOf(charAt)));
+                sb.append(String.format("\\u%04x", Integer.valueOf(cCharAt)));
             }
         }
         return sb.toString();

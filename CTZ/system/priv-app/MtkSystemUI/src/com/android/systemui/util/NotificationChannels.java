@@ -11,6 +11,7 @@ import com.android.systemui.R;
 import com.android.systemui.SystemUI;
 import com.android.systemui.plugins.PluginManager;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class NotificationChannels extends SystemUI {
     public static String ALERTS = PluginManager.NOTIFICATION_CHANNEL_ID;
@@ -25,8 +26,7 @@ public class NotificationChannels extends SystemUI {
     public static void createAll(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NotificationManager.class);
         NotificationChannel notificationChannel = new NotificationChannel(BATTERY, context.getString(R.string.notification_channel_battery), 5);
-        String string = Settings.Global.getString(context.getContentResolver(), "low_battery_sound");
-        notificationChannel.setSound(Uri.parse("file://" + string), new AudioAttributes.Builder().setContentType(4).setUsage(10).build());
+        notificationChannel.setSound(Uri.parse("file://" + Settings.Global.getString(context.getContentResolver(), "low_battery_sound")), new AudioAttributes.Builder().setContentType(4).setUsage(10).build());
         notificationChannel.setBlockableSystem(true);
         notificationManager.createNotificationChannels(Arrays.asList(new NotificationChannel(ALERTS, context.getString(R.string.notification_channel_alerts), 4), new NotificationChannel(GENERAL, context.getString(R.string.notification_channel_general), 1), new NotificationChannel(STORAGE, context.getString(R.string.notification_channel_storage), isTv(context) ? 3 : 2), createScreenshotChannel(context.getString(R.string.notification_channel_screenshot), notificationManager.getNotificationChannel(SCREENSHOTS_LEGACY)), notificationChannel, new NotificationChannel(HINTS, context.getString(R.string.notification_channel_hints), 3)));
         notificationManager.deleteNotificationChannel(SCREENSHOTS_LEGACY);

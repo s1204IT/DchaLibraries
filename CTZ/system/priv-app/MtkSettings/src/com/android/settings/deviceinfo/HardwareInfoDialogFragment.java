@@ -15,6 +15,7 @@ import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IDeviceInfoSettingsExt;
+
 /* loaded from: classes.dex */
 public class HardwareInfoDialogFragment extends InstrumentedDialogFragment {
     private IDeviceInfoSettingsExt mExt;
@@ -31,28 +32,28 @@ public class HardwareInfoDialogFragment extends InstrumentedDialogFragment {
     @Override // android.app.DialogFragment
     public Dialog onCreateDialog(Bundle bundle) {
         this.mExt = UtilsExt.getDeviceInfoSettingsExt(getActivity());
-        AlertDialog.Builder positiveButton = new AlertDialog.Builder(getActivity()).setTitle(R.string.hardware_info).setPositiveButton(17039370, (DialogInterface.OnClickListener) null);
-        View inflate = LayoutInflater.from(positiveButton.getContext()).inflate(R.layout.dialog_hardware_info, (ViewGroup) null);
-        setText(inflate, R.id.model_label, R.id.model_value, this.mExt.customeModelInfo(DeviceModelPreferenceController.getDeviceModel()));
-        setText(inflate, R.id.serial_number_label, R.id.serial_number_value, getSerialNumber());
-        setText(inflate, R.id.hardware_rev_label, R.id.hardware_rev_value, SystemProperties.get("ro.boot.hardware.revision"));
-        return positiveButton.setView(inflate).create();
+        AlertDialog.Builder positiveButton = new AlertDialog.Builder(getActivity()).setTitle(R.string.hardware_info).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null);
+        View viewInflate = LayoutInflater.from(positiveButton.getContext()).inflate(R.layout.dialog_hardware_info, (ViewGroup) null);
+        setText(viewInflate, R.id.model_label, R.id.model_value, this.mExt.customeModelInfo(DeviceModelPreferenceController.getDeviceModel()));
+        setText(viewInflate, R.id.serial_number_label, R.id.serial_number_value, getSerialNumber());
+        setText(viewInflate, R.id.hardware_rev_label, R.id.hardware_rev_value, SystemProperties.get("ro.boot.hardware.revision"));
+        return positiveButton.setView(viewInflate).create();
     }
 
     void setText(View view, int i, int i2, String str) {
         if (view == null) {
             return;
         }
-        View findViewById = view.findViewById(i);
+        View viewFindViewById = view.findViewById(i);
         TextView textView = (TextView) view.findViewById(i2);
         if (!TextUtils.isEmpty(str)) {
-            findViewById.setVisibility(0);
+            viewFindViewById.setVisibility(0);
             textView.setVisibility(0);
             textView.setText(str);
-            return;
+        } else {
+            viewFindViewById.setVisibility(8);
+            textView.setVisibility(8);
         }
-        findViewById.setVisibility(8);
-        textView.setVisibility(8);
     }
 
     String getSerialNumber() {

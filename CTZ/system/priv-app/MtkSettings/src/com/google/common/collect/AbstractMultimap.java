@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
+abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
     private transient Map<K, Collection<V>> asMap;
     private transient Collection<Map.Entry<K, V>> entries;
     private transient Set<K> keySet;
@@ -31,12 +31,12 @@ public abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
 
     public Collection<Map.Entry<K, V>> entries() {
         Collection<Map.Entry<K, V>> collection = this.entries;
-        if (collection == null) {
-            Collection<Map.Entry<K, V>> createEntries = createEntries();
-            this.entries = createEntries;
-            return createEntries;
+        if (collection != null) {
+            return collection;
         }
-        return collection;
+        Collection<Map.Entry<K, V>> collectionCreateEntries = createEntries();
+        this.entries = collectionCreateEntries;
+        return collectionCreateEntries;
     }
 
     Collection<Map.Entry<K, V>> createEntries() {
@@ -46,9 +46,7 @@ public abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
         return new Entries();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class Entries extends Multimaps.Entries<K, V> {
+    private class Entries extends Multimaps.Entries<K, V> {
         private Entries() {
         }
 
@@ -63,9 +61,7 @@ public abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class EntrySet extends AbstractMultimap<K, V>.Entries implements Set<Map.Entry<K, V>> {
+    private class EntrySet extends AbstractMultimap<K, V>.Entries implements Set<Map.Entry<K, V>> {
         private EntrySet() {
             super();
         }
@@ -83,12 +79,12 @@ public abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
 
     public Set<K> keySet() {
         Set<K> set = this.keySet;
-        if (set == null) {
-            Set<K> createKeySet = createKeySet();
-            this.keySet = createKeySet;
-            return createKeySet;
+        if (set != null) {
+            return set;
         }
-        return set;
+        Set<K> setCreateKeySet = createKeySet();
+        this.keySet = setCreateKeySet;
+        return setCreateKeySet;
     }
 
     Set<K> createKeySet() {
@@ -98,12 +94,12 @@ public abstract class AbstractMultimap<K, V> implements Multimap<K, V> {
     @Override // com.google.common.collect.Multimap
     public Map<K, Collection<V>> asMap() {
         Map<K, Collection<V>> map = this.asMap;
-        if (map == null) {
-            Map<K, Collection<V>> createAsMap = createAsMap();
-            this.asMap = createAsMap;
-            return createAsMap;
+        if (map != null) {
+            return map;
         }
-        return map;
+        Map<K, Collection<V>> mapCreateAsMap = createAsMap();
+        this.asMap = mapCreateAsMap;
+        return mapCreateAsMap;
     }
 
     public boolean equals(Object obj) {

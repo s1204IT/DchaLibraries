@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:background="#80000000" android:layout_width="match_parent" android:layout_height="match_parent" android:forceHasOverlappingRendering="false">
-    <LinearLayout android:layout_gravity="center" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:layout_marginEnd="16dp">
-        <TextView android:textSize="20sp" android:textColor="?android:attr/textColorPrimary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@android:string/PERSOSUBSTATE_SIM_CORPORATE_IN_PROGRESS"/>
-        <ProgressBar android:theme="@style/FallbackHomeProgressBar" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12.75dp" android:indeterminate="true" style="@android:style/Widget.Material.ProgressBar.Horizontal"/>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#80000000"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:forceHasOverlappingRendering="false">
+    <LinearLayout
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+        <TextView
+            android:textSize="20sp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@android:string/PERSOSUBSTATE_RUIM_NETWORK1_ENTRY"/>
+        <ProgressBar
+            android:theme="@style/FallbackHomeProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12.75dp"
+            android:indeterminate="true"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"/>
     </LinearLayout>
 </FrameLayout>

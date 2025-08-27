@@ -1,5 +1,6 @@
 package android.support.v4.view;
 
+import android.R;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ViewPager extends ViewGroup {
     private int mActivePointerId;
@@ -87,8 +89,9 @@ public class ViewPager extends ViewGroup {
     private int mTopPageBounds;
     private int mTouchSlop;
     private VelocityTracker mVelocityTracker;
-    static final int[] LAYOUT_ATTRS = {16842931};
+    static final int[] LAYOUT_ATTRS = {R.attr.layout_gravity};
     private static final Comparator<ItemInfo> COMPARATOR = new Comparator<ItemInfo>() { // from class: android.support.v4.view.ViewPager.1
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ItemInfo lhs, ItemInfo rhs) {
             return lhs.position - rhs.position;
@@ -106,11 +109,9 @@ public class ViewPager extends ViewGroup {
     @Target({ElementType.TYPE})
     @Inherited
     @Retention(RetentionPolicy.RUNTIME)
-    /* loaded from: classes.dex */
     public @interface DecorView {
     }
 
-    /* loaded from: classes.dex */
     public interface OnPageChangeListener {
         void onPageScrollStateChanged(int i);
 
@@ -119,14 +120,11 @@ public class ViewPager extends ViewGroup {
         void onPageSelected(int i);
     }
 
-    /* loaded from: classes.dex */
     public interface PageTransformer {
         void transformPage(View view, float f);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ItemInfo {
+    static class ItemInfo {
         Object object;
         float offset;
         int position;
@@ -161,7 +159,7 @@ public class ViewPager extends ViewGroup {
         return (getMeasuredWidth() - getPaddingLeft()) - getPaddingRight();
     }
 
-    public void setCurrentItem(int item, boolean smoothScroll) {
+    public void setCurrentItem(int item, boolean smoothScroll) throws Resources.NotFoundException {
         this.mPopulatePending = false;
         setCurrentItemInternal(item, smoothScroll, false);
     }
@@ -170,43 +168,45 @@ public class ViewPager extends ViewGroup {
         return this.mCurItem;
     }
 
-    void setCurrentItemInternal(int item, boolean smoothScroll, boolean always) {
+    void setCurrentItemInternal(int item, boolean smoothScroll, boolean always) throws Resources.NotFoundException {
         setCurrentItemInternal(item, smoothScroll, always, 0);
     }
 
-    void setCurrentItemInternal(int item, boolean smoothScroll, boolean always, int velocity) {
+    void setCurrentItemInternal(int item, boolean smoothScroll, boolean always, int velocity) throws Resources.NotFoundException {
         if (this.mAdapter == null || this.mAdapter.getCount() <= 0) {
             setScrollingCacheEnabled(false);
-        } else if (!always && this.mCurItem == item && this.mItems.size() != 0) {
-            setScrollingCacheEnabled(false);
-        } else {
-            if (item < 0) {
-                item = 0;
-            } else if (item >= this.mAdapter.getCount()) {
-                item = this.mAdapter.getCount() - 1;
-            }
-            int pageLimit = this.mOffscreenPageLimit;
-            if (item > this.mCurItem + pageLimit || item < this.mCurItem - pageLimit) {
-                for (int i = 0; i < this.mItems.size(); i++) {
-                    this.mItems.get(i).scrolling = true;
-                }
-            }
-            int i2 = this.mCurItem;
-            boolean dispatchSelected = i2 != item;
-            if (this.mFirstLayout) {
-                this.mCurItem = item;
-                if (dispatchSelected) {
-                    dispatchOnPageSelected(item);
-                }
-                requestLayout();
-                return;
-            }
-            populate(item);
-            scrollToItem(item, smoothScroll, velocity, dispatchSelected);
+            return;
         }
+        if (!always && this.mCurItem == item && this.mItems.size() != 0) {
+            setScrollingCacheEnabled(false);
+            return;
+        }
+        if (item < 0) {
+            item = 0;
+        } else if (item >= this.mAdapter.getCount()) {
+            item = this.mAdapter.getCount() - 1;
+        }
+        int pageLimit = this.mOffscreenPageLimit;
+        if (item > this.mCurItem + pageLimit || item < this.mCurItem - pageLimit) {
+            for (int i = 0; i < this.mItems.size(); i++) {
+                this.mItems.get(i).scrolling = true;
+            }
+        }
+        int i2 = this.mCurItem;
+        boolean dispatchSelected = i2 != item;
+        if (this.mFirstLayout) {
+            this.mCurItem = item;
+            if (dispatchSelected) {
+                dispatchOnPageSelected(item);
+            }
+            requestLayout();
+            return;
+        }
+        populate(item);
+        scrollToItem(item, smoothScroll, velocity, dispatchSelected);
     }
 
-    private void scrollToItem(int item, boolean smoothScroll, int velocity, boolean dispatchSelected) {
+    private void scrollToItem(int item, boolean smoothScroll, int velocity, boolean dispatchSelected) throws Resources.NotFoundException {
         ItemInfo curInfo = infoForPosition(item);
         int destX = 0;
         if (curInfo != null) {
@@ -254,7 +254,7 @@ public class ViewPager extends ViewGroup {
         return (float) Math.sin((f - 0.5f) * 0.47123894f);
     }
 
-    void smoothScrollTo(int x, int y, int velocity) {
+    void smoothScrollTo(int x, int y, int velocity) throws Resources.NotFoundException {
         int sx;
         int duration;
         if (getChildCount() == 0) {
@@ -311,11 +311,11 @@ public class ViewPager extends ViewGroup {
         return ii;
     }
 
-    void populate() {
+    void populate() throws Resources.NotFoundException {
         populate(this.mCurItem);
     }
 
-    void populate(int newCurrentItem) {
+    void populate(int newCurrentItem) throws Resources.NotFoundException {
         String resName;
         ItemInfo ii;
         float rightWidthNeeded;
@@ -330,143 +330,148 @@ public class ViewPager extends ViewGroup {
         ItemInfo oldCurInfo2 = oldCurInfo;
         if (this.mAdapter == null) {
             sortChildDrawingOrder();
-        } else if (this.mPopulatePending) {
+            return;
+        }
+        if (this.mPopulatePending) {
             sortChildDrawingOrder();
-        } else if (getWindowToken() != null) {
-            this.mAdapter.startUpdate((ViewGroup) this);
-            int pageLimit2 = this.mOffscreenPageLimit;
-            int startPos = Math.max(0, this.mCurItem - pageLimit2);
-            int N = this.mAdapter.getCount();
-            int endPos = Math.min(N - 1, this.mCurItem + pageLimit2);
-            if (N != this.mExpectedAdapterCount) {
-                try {
-                    resName = getResources().getResourceName(getId());
-                } catch (Resources.NotFoundException e) {
-                    resName = Integer.toHexString(getId());
-                }
-                throw new IllegalStateException("The application's PagerAdapter changed the adapter's contents without calling PagerAdapter#notifyDataSetChanged! Expected adapter item count: " + this.mExpectedAdapterCount + ", found: " + N + " Pager id: " + resName + " Pager class: " + getClass() + " Problematic adapter: " + this.mAdapter.getClass());
+            return;
+        }
+        if (getWindowToken() == null) {
+            return;
+        }
+        this.mAdapter.startUpdate((ViewGroup) this);
+        int pageLimit2 = this.mOffscreenPageLimit;
+        int startPos = Math.max(0, this.mCurItem - pageLimit2);
+        int N = this.mAdapter.getCount();
+        int endPos = Math.min(N - 1, this.mCurItem + pageLimit2);
+        if (N != this.mExpectedAdapterCount) {
+            try {
+                resName = getResources().getResourceName(getId());
+            } catch (Resources.NotFoundException e) {
+                resName = Integer.toHexString(getId());
             }
-            ItemInfo curItem = null;
-            int curIndex = 0;
-            while (true) {
-                if (curIndex >= this.mItems.size()) {
-                    break;
-                }
-                ItemInfo ii3 = this.mItems.get(curIndex);
-                if (ii3.position < this.mCurItem) {
+            throw new IllegalStateException("The application's PagerAdapter changed the adapter's contents without calling PagerAdapter#notifyDataSetChanged! Expected adapter item count: " + this.mExpectedAdapterCount + ", found: " + N + " Pager id: " + resName + " Pager class: " + getClass() + " Problematic adapter: " + this.mAdapter.getClass());
+        }
+        ItemInfo curItem = null;
+        int curIndex = 0;
+        while (true) {
+            if (curIndex >= this.mItems.size()) {
+                break;
+            }
+            ItemInfo ii3 = this.mItems.get(curIndex);
+            if (ii3.position < this.mCurItem) {
+                curIndex++;
+            } else if (ii3.position == this.mCurItem) {
+                curItem = ii3;
+            }
+        }
+        if (curItem == null && N > 0) {
+            curItem = addNewItem(this.mCurItem, curIndex);
+        }
+        if (curItem != null) {
+            float extraWidthLeft = 0.0f;
+            int itemIndex = curIndex - 1;
+            ItemInfo ii4 = itemIndex >= 0 ? this.mItems.get(itemIndex) : null;
+            int clientWidth = getClientWidth();
+            float leftWidthNeeded2 = clientWidth <= 0 ? 0.0f : (2.0f - curItem.widthFactor) + (getPaddingLeft() / clientWidth);
+            for (int pos = this.mCurItem - 1; pos >= 0; pos--) {
+                if (extraWidthLeft >= leftWidthNeeded2 && pos < startPos) {
+                    if (ii4 == null) {
+                        break;
+                    }
+                    if (pos == ii4.position && !ii4.scrolling) {
+                        this.mItems.remove(itemIndex);
+                        this.mAdapter.destroyItem((ViewGroup) this, pos, ii4.object);
+                        itemIndex--;
+                        curIndex--;
+                        ii2 = itemIndex >= 0 ? this.mItems.get(itemIndex) : null;
+                    }
+                } else if (ii4 != null && pos == ii4.position) {
+                    extraWidthLeft += ii4.widthFactor;
+                    itemIndex--;
+                    ii2 = itemIndex >= 0 ? this.mItems.get(itemIndex) : null;
+                } else {
+                    extraWidthLeft += addNewItem(pos, itemIndex + 1).widthFactor;
                     curIndex++;
-                } else if (ii3.position == this.mCurItem) {
-                    curItem = ii3;
+                    ii2 = itemIndex >= 0 ? this.mItems.get(itemIndex) : null;
                 }
+                ii4 = ii2;
             }
-            if (curItem == null && N > 0) {
-                curItem = addNewItem(this.mCurItem, curIndex);
-            }
-            if (curItem != null) {
-                float extraWidthLeft = 0.0f;
-                int itemIndex = curIndex - 1;
-                ItemInfo ii4 = itemIndex >= 0 ? this.mItems.get(itemIndex) : null;
-                int clientWidth = getClientWidth();
-                float leftWidthNeeded2 = clientWidth <= 0 ? 0.0f : (2.0f - curItem.widthFactor) + (getPaddingLeft() / clientWidth);
-                for (int pos = this.mCurItem - 1; pos >= 0; pos--) {
-                    if (extraWidthLeft >= leftWidthNeeded2 && pos < startPos) {
-                        if (ii4 == null) {
+            float extraWidthRight = curItem.widthFactor;
+            int itemIndex2 = curIndex + 1;
+            if (extraWidthRight < 2.0f) {
+                ItemInfo ii5 = itemIndex2 < this.mItems.size() ? this.mItems.get(itemIndex2) : null;
+                if (clientWidth > 0) {
+                    rightWidthNeeded = (getPaddingRight() / clientWidth) + 2.0f;
+                } else {
+                    rightWidthNeeded = 0.0f;
+                }
+                int pos2 = this.mCurItem + 1;
+                while (pos2 < N) {
+                    if (extraWidthRight >= rightWidthNeeded && pos2 > endPos) {
+                        if (ii5 == null) {
                             break;
                         }
-                        if (pos == ii4.position && !ii4.scrolling) {
-                            this.mItems.remove(itemIndex);
-                            this.mAdapter.destroyItem((ViewGroup) this, pos, ii4.object);
-                            itemIndex--;
-                            curIndex--;
-                            ii2 = itemIndex >= 0 ? this.mItems.get(itemIndex) : null;
-                        }
-                    } else if (ii4 != null && pos == ii4.position) {
-                        extraWidthLeft += ii4.widthFactor;
-                        itemIndex--;
-                        ii2 = itemIndex >= 0 ? this.mItems.get(itemIndex) : null;
-                    } else {
-                        extraWidthLeft += addNewItem(pos, itemIndex + 1).widthFactor;
-                        curIndex++;
-                        ii2 = itemIndex >= 0 ? this.mItems.get(itemIndex) : null;
-                    }
-                    ii4 = ii2;
-                }
-                float extraWidthRight = curItem.widthFactor;
-                int itemIndex2 = curIndex + 1;
-                if (extraWidthRight < 2.0f) {
-                    ItemInfo ii5 = itemIndex2 < this.mItems.size() ? this.mItems.get(itemIndex2) : null;
-                    if (clientWidth > 0) {
-                        rightWidthNeeded = (getPaddingRight() / clientWidth) + 2.0f;
-                    } else {
-                        rightWidthNeeded = 0.0f;
-                    }
-                    int pos2 = this.mCurItem + 1;
-                    while (pos2 < N) {
-                        if (extraWidthRight >= rightWidthNeeded && pos2 > endPos) {
-                            if (ii5 == null) {
-                                break;
-                            }
-                            pageLimit = pageLimit2;
-                            if (pos2 != ii5.position || ii5.scrolling) {
-                                leftWidthNeeded = leftWidthNeeded2;
-                            } else {
-                                this.mItems.remove(itemIndex2);
-                                leftWidthNeeded = leftWidthNeeded2;
-                                this.mAdapter.destroyItem((ViewGroup) this, pos2, ii5.object);
-                                ii5 = itemIndex2 < this.mItems.size() ? this.mItems.get(itemIndex2) : null;
-                            }
-                        } else {
-                            pageLimit = pageLimit2;
+                        pageLimit = pageLimit2;
+                        if (pos2 != ii5.position || ii5.scrolling) {
                             leftWidthNeeded = leftWidthNeeded2;
-                            if (ii5 != null && pos2 == ii5.position) {
-                                extraWidthRight += ii5.widthFactor;
-                                itemIndex2++;
-                                ii5 = itemIndex2 < this.mItems.size() ? this.mItems.get(itemIndex2) : null;
-                            } else {
-                                ItemInfo ii6 = addNewItem(pos2, itemIndex2);
-                                itemIndex2++;
-                                extraWidthRight += ii6.widthFactor;
-                                ii5 = itemIndex2 < this.mItems.size() ? this.mItems.get(itemIndex2) : null;
-                            }
+                        } else {
+                            this.mItems.remove(itemIndex2);
+                            leftWidthNeeded = leftWidthNeeded2;
+                            this.mAdapter.destroyItem((ViewGroup) this, pos2, ii5.object);
+                            ii5 = itemIndex2 < this.mItems.size() ? this.mItems.get(itemIndex2) : null;
                         }
-                        pos2++;
-                        pageLimit2 = pageLimit;
-                        leftWidthNeeded2 = leftWidthNeeded;
+                    } else {
+                        pageLimit = pageLimit2;
+                        leftWidthNeeded = leftWidthNeeded2;
+                        if (ii5 != null && pos2 == ii5.position) {
+                            extraWidthRight += ii5.widthFactor;
+                            itemIndex2++;
+                            ii5 = itemIndex2 < this.mItems.size() ? this.mItems.get(itemIndex2) : null;
+                        } else {
+                            ItemInfo ii6 = addNewItem(pos2, itemIndex2);
+                            itemIndex2++;
+                            extraWidthRight += ii6.widthFactor;
+                            ii5 = itemIndex2 < this.mItems.size() ? this.mItems.get(itemIndex2) : null;
+                        }
                     }
-                }
-                calculatePageOffsets(curItem, curIndex, oldCurInfo2);
-                this.mAdapter.setPrimaryItem((ViewGroup) this, this.mCurItem, curItem.object);
-            }
-            this.mAdapter.finishUpdate((ViewGroup) this);
-            int childCount = getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                View child = getChildAt(i);
-                LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                lp.childIndex = i;
-                if (!lp.isDecor && lp.widthFactor == 0.0f && (ii = infoForChild(child)) != null) {
-                    lp.widthFactor = ii.widthFactor;
-                    lp.position = ii.position;
+                    pos2++;
+                    pageLimit2 = pageLimit;
+                    leftWidthNeeded2 = leftWidthNeeded;
                 }
             }
-            sortChildDrawingOrder();
-            if (hasFocus()) {
-                View currentFocused = findFocus();
-                ItemInfo ii7 = currentFocused != null ? infoForAnyChild(currentFocused) : null;
-                if (ii7 == null || ii7.position != this.mCurItem) {
-                    int i2 = 0;
-                    while (true) {
-                        int i3 = i2;
-                        if (i3 < getChildCount()) {
-                            View child2 = getChildAt(i3);
-                            ItemInfo ii8 = infoForChild(child2);
-                            if (ii8 == null || ii8.position != this.mCurItem || !child2.requestFocus(2)) {
-                                i2 = i3 + 1;
-                            } else {
-                                return;
-                            }
+            calculatePageOffsets(curItem, curIndex, oldCurInfo2);
+            this.mAdapter.setPrimaryItem((ViewGroup) this, this.mCurItem, curItem.object);
+        }
+        this.mAdapter.finishUpdate((ViewGroup) this);
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            lp.childIndex = i;
+            if (!lp.isDecor && lp.widthFactor == 0.0f && (ii = infoForChild(child)) != null) {
+                lp.widthFactor = ii.widthFactor;
+                lp.position = ii.position;
+            }
+        }
+        sortChildDrawingOrder();
+        if (hasFocus()) {
+            View currentFocused = findFocus();
+            ItemInfo ii7 = currentFocused != null ? infoForAnyChild(currentFocused) : null;
+            if (ii7 == null || ii7.position != this.mCurItem) {
+                int i2 = 0;
+                while (true) {
+                    int i3 = i2;
+                    if (i3 < getChildCount()) {
+                        View child2 = getChildAt(i3);
+                        ItemInfo ii8 = infoForChild(child2);
+                        if (ii8 == null || ii8.position != this.mCurItem || !child2.requestFocus(2)) {
+                            i2 = i3 + 1;
                         } else {
                             return;
                         }
+                    } else {
+                        return;
                     }
                 }
             }
@@ -489,6 +494,8 @@ public class ViewPager extends ViewGroup {
         }
     }
 
+    /* JADX DEBUG: Move duplicate insns, count: 2 to block B:15:0x003a */
+    /* JADX DEBUG: Move duplicate insns, count: 2 to block B:32:0x008d */
     private void calculatePageOffsets(ItemInfo curItem, int curIndex, ItemInfo oldCurInfo) {
         ItemInfo ii;
         ItemInfo ii2;
@@ -583,20 +590,22 @@ public class ViewPager extends ViewGroup {
         this.mNeedCalculatePageOffsets = false;
     }
 
-    /* loaded from: classes.dex */
     public static class SavedState extends AbsSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.ClassLoaderCreator<SavedState>() { // from class: android.support.v4.view.ViewPager.SavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;Ljava/lang/ClassLoader;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.ClassLoaderCreator
             public SavedState createFromParcel(Parcel in, ClassLoader loader) {
                 return new SavedState(in, loader);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             @Override // android.os.Parcelable.Creator
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in, null);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             @Override // android.os.Parcelable.Creator
             public SavedState[] newArray(int size) {
                 return new SavedState[size];
@@ -642,7 +651,7 @@ public class ViewPager extends ViewGroup {
     }
 
     @Override // android.view.View
-    public void onRestoreInstanceState(Parcelable state) {
+    public void onRestoreInstanceState(Parcelable state) throws Resources.NotFoundException {
         if (!(state instanceof SavedState)) {
             super.onRestoreInstanceState(state);
             return;
@@ -652,11 +661,11 @@ public class ViewPager extends ViewGroup {
         if (this.mAdapter != null) {
             this.mAdapter.restoreState(ss.adapterState, ss.loader);
             setCurrentItemInternal(ss.position, false, true);
-            return;
+        } else {
+            this.mRestoredCurItem = ss.position;
+            this.mRestoredAdapterState = ss.adapterState;
+            this.mRestoredClassLoader = ss.loader;
         }
-        this.mRestoredCurItem = ss.position;
-        this.mRestoredAdapterState = ss.adapterState;
-        this.mRestoredClassLoader = ss.loader;
     }
 
     @Override // android.view.ViewGroup
@@ -703,7 +712,7 @@ public class ViewPager extends ViewGroup {
 
     ItemInfo infoForAnyChild(View child) {
         while (true) {
-            ViewParent parent = child.getParent();
+            Object parent = child.getParent();
             if (parent != this) {
                 if (parent == null || !(parent instanceof View)) {
                     return null;
@@ -731,14 +740,15 @@ public class ViewPager extends ViewGroup {
         this.mFirstLayout = true;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:38:0x00a5  */
-    /* JADX WARN: Removed duplicated region for block: B:44:0x00c6  */
-    /* JADX WARN: Removed duplicated region for block: B:45:0x00cd  */
+    /* JADX WARN: Removed duplicated region for block: B:35:0x009e A[PHI: r15
+  0x009e: PHI (r15v2 'widthMode' int) = (r15v1 'widthMode' int), (r15v4 'widthMode' int) binds: [B:31:0x0092, B:33:0x0099] A[DONT_GENERATE, DONT_INLINE]] */
+    /* JADX WARN: Removed duplicated region for block: B:41:0x00b1 A[PHI: r16
+  0x00b1: PHI (r16v3 'heightMode' int) = (r16v2 'heightMode' int), (r16v6 'heightMode' int) binds: [B:37:0x00a3, B:39:0x00aa] A[DONT_GENERATE, DONT_INLINE]] */
     @Override // android.view.View
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) throws Resources.NotFoundException {
         LayoutParams lp;
         int measuredWidth;
         int maxGutterSize;
@@ -780,42 +790,28 @@ public class ViewPager extends ViewGroup {
                     widthMode = 1073741824;
                     if (lp2.width != -1) {
                         widthSize = lp2.width;
-                        if (lp2.height != -2) {
-                            heightMode2 = 1073741824;
-                            if (lp2.height != -1) {
-                                heightSize = lp2.height;
-                                heightMode = 1073741824;
-                                maxGutterSize = maxGutterSize2;
-                                int maxGutterSize3 = View.MeasureSpec.makeMeasureSpec(widthSize, widthMode);
-                                int widthSize3 = View.MeasureSpec.makeMeasureSpec(heightSize, heightMode);
-                                child.measure(maxGutterSize3, widthSize3);
-                                if (consumeVertical) {
-                                    childHeightSize2 -= child.getMeasuredHeight();
-                                } else if (consumeHorizontal) {
-                                    childWidthSize2 -= child.getMeasuredWidth();
-                                }
-                            }
+                    } else {
+                        widthSize = widthSize2;
+                    }
+                    if (lp2.height != -2) {
+                        heightMode2 = 1073741824;
+                        if (lp2.height != -1) {
+                            heightSize = lp2.height;
+                            heightMode = 1073741824;
+                        } else {
+                            heightMode = heightMode2;
+                            heightSize = heightSize2;
                         }
-                        heightMode = heightMode2;
-                        heightSize = heightSize2;
                         maxGutterSize = maxGutterSize2;
-                        int maxGutterSize32 = View.MeasureSpec.makeMeasureSpec(widthSize, widthMode);
-                        int widthSize32 = View.MeasureSpec.makeMeasureSpec(heightSize, heightMode);
-                        child.measure(maxGutterSize32, widthSize32);
+                        int maxGutterSize3 = View.MeasureSpec.makeMeasureSpec(widthSize, widthMode);
+                        int widthSize3 = View.MeasureSpec.makeMeasureSpec(heightSize, heightMode);
+                        child.measure(maxGutterSize3, widthSize3);
                         if (consumeVertical) {
+                            childHeightSize2 -= child.getMeasuredHeight();
+                        } else if (consumeHorizontal) {
+                            childWidthSize2 -= child.getMeasuredWidth();
                         }
                     }
-                }
-                widthSize = widthSize2;
-                if (lp2.height != -2) {
-                }
-                heightMode = heightMode2;
-                heightSize = heightSize2;
-                maxGutterSize = maxGutterSize2;
-                int maxGutterSize322 = View.MeasureSpec.makeMeasureSpec(widthSize, widthMode);
-                int widthSize322 = View.MeasureSpec.makeMeasureSpec(heightSize, heightMode);
-                child.measure(maxGutterSize322, widthSize322);
-                if (consumeVertical) {
                 }
             }
             childWidthSize3++;
@@ -868,8 +864,12 @@ public class ViewPager extends ViewGroup {
         }
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:43:0x0130  */
     @Override // android.view.ViewGroup, android.view.View
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    protected void onLayout(boolean changed, int l, int t, int r, int b) throws Resources.NotFoundException {
         boolean z;
         int count;
         int childWidth;
@@ -930,7 +930,11 @@ public class ViewPager extends ViewGroup {
             View child2 = getChildAt(i);
             if (child2.getVisibility() != 8) {
                 LayoutParams lp2 = (LayoutParams) child2.getLayoutParams();
-                if (!lp2.isDecor && (ii = infoForChild(child2)) != null) {
+                if (lp2.isDecor || (ii = infoForChild(child2)) == null) {
+                    count = count2;
+                    childWidth = childWidth2;
+                    width = width2;
+                } else {
                     count = count2;
                     int loff = (int) (childWidth2 * ii.offset);
                     int childLeft3 = paddingLeft2 + loff;
@@ -947,15 +951,8 @@ public class ViewPager extends ViewGroup {
                         width = width2;
                     }
                     child2.layout(childLeft3, childTop2, child2.getMeasuredWidth() + childLeft3, child2.getMeasuredHeight() + childTop2);
-                    i++;
-                    count2 = count;
-                    childWidth2 = childWidth;
-                    width2 = width;
                 }
             }
-            count = count2;
-            childWidth = childWidth2;
-            width = width2;
             i++;
             count2 = count;
             childWidth2 = childWidth;
@@ -1173,7 +1170,7 @@ public class ViewPager extends ViewGroup {
     }
 
     @Override // android.view.ViewGroup
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    public boolean onInterceptTouchEvent(MotionEvent ev) throws Resources.NotFoundException {
         float y;
         int action = ev.getAction() & 255;
         if (action == 3 || action == 1) {
@@ -1257,8 +1254,13 @@ public class ViewPager extends ViewGroup {
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:20:0x003f  */
+    /* JADX WARN: Removed duplicated region for block: B:45:0x00dc  */
     @Override // android.view.View
-    public boolean onTouchEvent(MotionEvent ev) {
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    public boolean onTouchEvent(MotionEvent ev) throws Resources.NotFoundException {
         if (this.mFakeDragging) {
             return true;
         }
@@ -1285,7 +1287,9 @@ public class ViewPager extends ViewGroup {
                 this.mActivePointerId = ev.getPointerId(0);
                 break;
             case 1:
-                if (this.mIsBeingDragged) {
+                if (!this.mIsBeingDragged) {
+                    break;
+                } else {
                     VelocityTracker velocityTracker = this.mVelocityTracker;
                     velocityTracker.computeCurrentVelocity(1000, this.mMaximumVelocity);
                     int initialVelocity = (int) velocityTracker.getXVelocity(this.mActivePointerId);
@@ -1304,13 +1308,11 @@ public class ViewPager extends ViewGroup {
                     needsInvalidate = resetTouch();
                     break;
                 }
-                break;
             case 2:
                 if (!this.mIsBeingDragged) {
                     int pointerIndex = ev.findPointerIndex(this.mActivePointerId);
                     if (pointerIndex == -1) {
                         needsInvalidate = resetTouch();
-                        break;
                     } else {
                         float x3 = ev.getX(pointerIndex);
                         float xDiff = Math.abs(x3 - this.mLastMotionX);
@@ -1328,12 +1330,16 @@ public class ViewPager extends ViewGroup {
                                 parent.requestDisallowInterceptTouchEvent(true);
                             }
                         }
+                        if (this.mIsBeingDragged) {
+                        }
                     }
-                }
-                if (this.mIsBeingDragged) {
-                    int activePointerIndex2 = ev.findPointerIndex(this.mActivePointerId);
-                    float x4 = ev.getX(activePointerIndex2);
-                    needsInvalidate = false | performDrag(x4);
+                } else {
+                    if (this.mIsBeingDragged) {
+                        int activePointerIndex2 = ev.findPointerIndex(this.mActivePointerId);
+                        float x4 = ev.getX(activePointerIndex2);
+                        needsInvalidate = false | performDrag(x4);
+                    }
+                    break;
                 }
                 break;
             case 3:
@@ -1437,19 +1443,18 @@ public class ViewPager extends ViewGroup {
             }
             float offset = ii.offset;
             float rightBound = ii.widthFactor + offset + marginOffset;
-            if (first || scrollOffset >= offset) {
-                if (scrollOffset < rightBound || i == this.mItems.size() - 1) {
-                    return ii;
-                }
-                first = false;
-                lastPos = ii.position;
-                lastOffset = offset;
-                lastWidth = ii.widthFactor;
-                lastItem = ii;
-                i++;
-            } else {
+            if (!first && scrollOffset < offset) {
                 return lastItem;
             }
+            if (scrollOffset < rightBound || i == this.mItems.size() - 1) {
+                return ii;
+            }
+            first = false;
+            lastPos = ii.position;
+            lastOffset = offset;
+            lastWidth = ii.widthFactor;
+            lastItem = ii;
+            i++;
         }
         return lastItem;
     }
@@ -1613,7 +1618,7 @@ public class ViewPager extends ViewGroup {
         return super.dispatchKeyEvent(event) || executeKeyEvent(event);
     }
 
-    public boolean executeKeyEvent(KeyEvent event) {
+    public boolean executeKeyEvent(KeyEvent event) throws Resources.NotFoundException {
         if (event.getAction() != 0) {
             return false;
         }
@@ -1637,18 +1642,19 @@ public class ViewPager extends ViewGroup {
                 default:
                     return false;
             }
-        } else if (event.hasNoModifiers()) {
+        }
+        if (event.hasNoModifiers()) {
             boolean handled5 = arrowScroll(2);
             return handled5;
-        } else if (!event.hasModifiers(1)) {
-            return false;
-        } else {
-            boolean handled6 = arrowScroll(1);
-            return handled6;
         }
+        if (!event.hasModifiers(1)) {
+            return false;
+        }
+        boolean handled6 = arrowScroll(1);
+        return handled6;
     }
 
-    public boolean arrowScroll(int direction) {
+    public boolean arrowScroll(int direction) throws Resources.NotFoundException {
         View currentFocused = findFocus();
         if (currentFocused == this) {
             currentFocused = null;
@@ -1656,14 +1662,13 @@ public class ViewPager extends ViewGroup {
             boolean isChild = false;
             ViewParent parent = currentFocused.getParent();
             while (true) {
-                if (parent instanceof ViewGroup) {
-                    if (parent != this) {
-                        parent = parent.getParent();
-                    } else {
-                        isChild = true;
-                        break;
-                    }
+                if (!(parent instanceof ViewGroup)) {
+                    break;
+                }
+                if (parent != this) {
+                    parent = parent.getParent();
                 } else {
+                    isChild = true;
                     break;
                 }
             }
@@ -1727,7 +1732,7 @@ public class ViewPager extends ViewGroup {
         return outRect;
     }
 
-    boolean pageLeft() {
+    boolean pageLeft() throws Resources.NotFoundException {
         if (this.mCurItem > 0) {
             setCurrentItem(this.mCurItem - 1, true);
             return true;
@@ -1735,7 +1740,7 @@ public class ViewPager extends ViewGroup {
         return false;
     }
 
-    boolean pageRight() {
+    boolean pageRight() throws Resources.NotFoundException {
         if (this.mAdapter != null && this.mCurItem < this.mAdapter.getCount() - 1) {
             setCurrentItem(this.mCurItem + 1, true);
             return true;
@@ -1836,7 +1841,6 @@ public class ViewPager extends ViewGroup {
         return new LayoutParams(getContext(), attrs);
     }
 
-    /* loaded from: classes.dex */
     public static class LayoutParams extends ViewGroup.LayoutParams {
         int childIndex;
         public int gravity;
@@ -1859,12 +1863,11 @@ public class ViewPager extends ViewGroup {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class ViewPositionComparator implements Comparator<View> {
+    static class ViewPositionComparator implements Comparator<View> {
         ViewPositionComparator() {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(View lhs, View rhs) {
             LayoutParams llp = (LayoutParams) lhs.getLayoutParams();

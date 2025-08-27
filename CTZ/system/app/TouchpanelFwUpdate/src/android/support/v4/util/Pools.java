@@ -1,15 +1,14 @@
 package android.support.v4.util;
+
 /* loaded from: classes.dex */
 public final class Pools {
 
-    /* loaded from: classes.dex */
     public interface Pool<T> {
         T acquire();
 
         boolean release(T t);
     }
 
-    /* loaded from: classes.dex */
     public static class SimplePool<T> implements Pool<T> {
         private final Object[] mPool;
         private int mPoolSize;
@@ -23,14 +22,14 @@ public final class Pools {
 
         @Override // android.support.v4.util.Pools.Pool
         public T acquire() {
-            if (this.mPoolSize > 0) {
-                int lastPooledIndex = this.mPoolSize - 1;
-                T instance = (T) this.mPool[lastPooledIndex];
-                this.mPool[lastPooledIndex] = null;
-                this.mPoolSize--;
-                return instance;
+            if (this.mPoolSize <= 0) {
+                return null;
             }
-            return null;
+            int i = this.mPoolSize - 1;
+            T t = (T) this.mPool[i];
+            this.mPool[i] = null;
+            this.mPoolSize--;
+            return t;
         }
 
         @Override // android.support.v4.util.Pools.Pool
@@ -56,7 +55,6 @@ public final class Pools {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class SynchronizedPool<T> extends SimplePool<T> {
         private final Object mLock;
 
@@ -76,11 +74,11 @@ public final class Pools {
 
         @Override // android.support.v4.util.Pools.SimplePool, android.support.v4.util.Pools.Pool
         public boolean release(T element) {
-            boolean release;
+            boolean zRelease;
             synchronized (this.mLock) {
-                release = super.release(element);
+                zRelease = super.release(element);
             }
-            return release;
+            return zRelease;
         }
     }
 }

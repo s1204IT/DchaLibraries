@@ -16,19 +16,16 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
+
 /* loaded from: classes.dex */
 public class ExtensionControllerImpl implements ExtensionController {
     private final Context mDefaultContext;
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public interface Item<T> extends Producer<T> {
+    private interface Item<T> extends Producer<T> {
         int sortOrder();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public interface Producer<T> {
+    private interface Producer<T> {
         void destroy();
 
         T get();
@@ -38,14 +35,13 @@ public class ExtensionControllerImpl implements ExtensionController {
         this.mDefaultContext = context;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: newExtension(Ljava/lang/Class;)Lcom/android/systemui/statusbar/policy/ExtensionController$ExtensionBuilder; */
     @Override // com.android.systemui.statusbar.policy.ExtensionController
     public <T> ExtensionBuilder<T> newExtension(Class<T> cls) {
         return new ExtensionBuilder<>();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ExtensionBuilder<T> implements ExtensionController.ExtensionBuilder<T> {
+    private class ExtensionBuilder<T> implements ExtensionController.ExtensionBuilder<T> {
         private ExtensionImpl<T> mExtension;
 
         private ExtensionBuilder() {
@@ -104,9 +100,7 @@ public class ExtensionControllerImpl implements ExtensionController {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ExtensionImpl<T> implements ExtensionController.Extension<T> {
+    private class ExtensionImpl<T> implements ExtensionController.Extension<T> {
         private final ArrayList<Consumer<T>> mCallbacks;
         private T mItem;
         private Context mPluginContext;
@@ -147,8 +141,7 @@ public class ExtensionControllerImpl implements ExtensionController {
             this.mItem = null;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void notifyChanged() {
+        private void notifyChanged() {
             if (this.mItem != null) {
                 ((LeakDetector) Dependency.get(LeakDetector.class)).trackGarbage(this.mItem);
             }
@@ -187,9 +180,7 @@ public class ExtensionControllerImpl implements ExtensionController {
             this.mProducers.add(new FeatureItem(str, supplier));
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class PluginItem<P extends Plugin> implements PluginListener<P>, Item<T> {
+        private class PluginItem<P extends Plugin> implements PluginListener<P>, Item<T> {
             private final ExtensionController.PluginConverter<T, P> mConverter;
             private T mItem;
 
@@ -198,6 +189,7 @@ public class ExtensionControllerImpl implements ExtensionController {
                 ((PluginManager) Dependency.get(PluginManager.class)).addPluginListener(str, (PluginListener) this, (Class<?>) cls);
             }
 
+            /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: P extends com.android.systemui.plugins.Plugin */
             /* JADX WARN: Multi-variable type inference failed */
             @Override // com.android.systemui.plugins.PluginListener
             public void onPluginConnected(P p, Context context) {
@@ -233,9 +225,7 @@ public class ExtensionControllerImpl implements ExtensionController {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class TunerItem<T> implements Item<T>, TunerService.Tunable {
+        private class TunerItem<T> implements Item<T>, TunerService.Tunable {
             private final ExtensionController.TunerFactory<T> mFactory;
             private T mItem;
             private final ArrayMap<String, String> mSettings = new ArrayMap<>();
@@ -268,9 +258,7 @@ public class ExtensionControllerImpl implements ExtensionController {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class FeatureItem<T> implements Item<T> {
+        private class FeatureItem<T> implements Item<T> {
             private final String mFeature;
             private final Supplier<T> mSupplier;
 
@@ -297,9 +285,7 @@ public class ExtensionControllerImpl implements ExtensionController {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class Default<T> implements Item<T> {
+        private class Default<T> implements Item<T> {
             private final Supplier<T> mSupplier;
 
             public Default(Supplier<T> supplier) {

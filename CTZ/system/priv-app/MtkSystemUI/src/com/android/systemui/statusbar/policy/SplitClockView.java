@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextClock;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class SplitClockView extends LinearLayout {
     private TextClock mAmPmView;
@@ -58,43 +59,41 @@ public class SplitClockView extends LinearLayout {
         getContext().unregisterReceiver(this.mIntentReceiver);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePatterns() {
-        String substring;
-        String substring2;
+    private void updatePatterns() {
+        String strSubstring;
+        String strSubstring2;
         String timeFormatString = DateFormat.getTimeFormatString(getContext(), ActivityManager.getCurrentUser());
         int amPmPartEndIndex = getAmPmPartEndIndex(timeFormatString);
         if (amPmPartEndIndex == -1) {
-            substring2 = "";
-            substring = timeFormatString;
+            strSubstring2 = "";
+            strSubstring = timeFormatString;
         } else {
-            substring = timeFormatString.substring(0, amPmPartEndIndex);
-            substring2 = timeFormatString.substring(amPmPartEndIndex);
+            strSubstring = timeFormatString.substring(0, amPmPartEndIndex);
+            strSubstring2 = timeFormatString.substring(amPmPartEndIndex);
         }
-        this.mTimeView.setFormat12Hour(substring);
-        this.mTimeView.setFormat24Hour(substring);
+        this.mTimeView.setFormat12Hour(strSubstring);
+        this.mTimeView.setFormat24Hour(strSubstring);
         this.mTimeView.setContentDescriptionFormat12Hour(timeFormatString);
         this.mTimeView.setContentDescriptionFormat24Hour(timeFormatString);
-        this.mAmPmView.setFormat12Hour(substring2);
-        this.mAmPmView.setFormat24Hour(substring2);
+        this.mAmPmView.setFormat12Hour(strSubstring2);
+        this.mAmPmView.setFormat24Hour(strSubstring2);
     }
 
     private static int getAmPmPartEndIndex(String str) {
         int length = str.length() - 1;
         boolean z = false;
         for (int i = length; i >= 0; i--) {
-            char charAt = str.charAt(i);
-            boolean z2 = charAt == 'a';
-            boolean isWhitespace = Character.isWhitespace(charAt);
+            char cCharAt = str.charAt(i);
+            boolean z2 = cCharAt == 'a';
+            boolean zIsWhitespace = Character.isWhitespace(cCharAt);
             if (z2) {
                 z = true;
             }
-            if (!z2 && !isWhitespace) {
+            if (!z2 && !zIsWhitespace) {
                 if (i != length && z) {
                     return i + 1;
-                } else {
-                    return -1;
                 }
+                return -1;
             }
         }
         return z ? 0 : -1;

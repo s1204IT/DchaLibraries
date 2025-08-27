@@ -42,6 +42,7 @@ import com.mediatek.settings.deviceinfo.CustomizeSystemUpdatePreferenceControlle
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class MyDeviceInfoFragment extends DashboardFragment implements DeviceNamePreferenceController.DeviceNamePreferenceHost {
     public static final SummaryLoader.SummaryProviderFactory SUMMARY_PROVIDER_FACTORY = new SummaryLoader.SummaryProviderFactory() { // from class: com.android.settings.deviceinfo.aboutphone.-$$Lambda$MyDeviceInfoFragment$pzCelMuIMGm16asu34w_Ge8IYsk
@@ -92,9 +93,8 @@ public class MyDeviceInfoFragment extends DashboardFragment implements DeviceNam
         return "MyDeviceInfoFragment";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.my_device_info;
     }
 
@@ -103,8 +103,7 @@ public class MyDeviceInfoFragment extends DashboardFragment implements DeviceNam
         return buildPreferenceControllers(context, getActivity(), this, getLifecycle());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, MyDeviceInfoFragment myDeviceInfoFragment, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, MyDeviceInfoFragment myDeviceInfoFragment, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new EmergencyInfoPreferenceController(context));
         arrayList.add(new PhoneNumberPreferenceController(context, lifecycle));
@@ -144,10 +143,10 @@ public class MyDeviceInfoFragment extends DashboardFragment implements DeviceNam
     }
 
     private void initHeader() {
-        View findViewById = ((LayoutPreference) getPreferenceScreen().findPreference("my_device_info_header")).findViewById(R.id.entity_header);
+        View viewFindViewById = ((LayoutPreference) getPreferenceScreen().findPreference("my_device_info_header")).findViewById(R.id.entity_header);
         Activity activity = getActivity();
         Bundle arguments = getArguments();
-        EntityHeaderController buttonActions = EntityHeaderController.newInstance(activity, this, findViewById).setRecyclerView(getListView(), getLifecycle()).setButtonActions(0, 0);
+        EntityHeaderController buttonActions = EntityHeaderController.newInstance(activity, this, viewFindViewById).setRecyclerView(getListView(), getLifecycle()).setButtonActions(0, 0);
         if (arguments.getInt("icon_id", 0) == 0) {
             UserManager userManager = (UserManager) getActivity().getSystemService("user");
             UserInfo existingUser = com.android.settings.Utils.getExistingUser(userManager, Process.myUserHandle());
@@ -166,9 +165,7 @@ public class MyDeviceInfoFragment extends DashboardFragment implements DeviceNam
         ((DeviceNamePreferenceController) use(DeviceNamePreferenceController.class)).confirmDeviceName();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final SummaryLoader mSummaryLoader;
 
         public SummaryProvider(SummaryLoader summaryLoader) {
@@ -183,8 +180,8 @@ public class MyDeviceInfoFragment extends DashboardFragment implements DeviceNam
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$0(Activity activity, SummaryLoader summaryLoader) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0002: CONSTRUCTOR (r1v0 com.android.settings.dashboard.SummaryLoader) A[MD:(com.android.settings.dashboard.SummaryLoader):void (m)] (LINE:211) call: com.android.settings.deviceinfo.aboutphone.MyDeviceInfoFragment.SummaryProvider.<init>(com.android.settings.dashboard.SummaryLoader):void type: CONSTRUCTOR */
+    static /* synthetic */ SummaryLoader.SummaryProvider lambda$static$0(Activity activity, SummaryLoader summaryLoader) {
         return new SummaryProvider(summaryLoader);
     }
 }

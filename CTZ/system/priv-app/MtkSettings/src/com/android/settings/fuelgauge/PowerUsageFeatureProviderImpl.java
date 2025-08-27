@@ -1,10 +1,12 @@
 package com.android.settings.fuelgauge;
 
+import android.R;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.SparseIntArray;
 import com.android.internal.os.BatterySipper;
 import com.android.internal.util.ArrayUtils;
+
 /* loaded from: classes.dex */
 public class PowerUsageFeatureProviderImpl implements PowerUsageFeatureProvider {
     private static final String[] PACKAGES_SYSTEM = {"com.android.providers.media", "com.android.providers.calendar", "com.android.systemui"};
@@ -80,6 +82,6 @@ public class PowerUsageFeatureProviderImpl implements PowerUsageFeatureProvider 
 
     @Override // com.android.settings.fuelgauge.PowerUsageFeatureProvider
     public boolean isSmartBatterySupported() {
-        return this.mContext.getResources().getBoolean(17957024);
+        return this.mContext.getResources().getBoolean(R.^attr-private.magnifierStyle);
     }
 }

@@ -2,6 +2,7 @@ package com.google.android.flexbox;
 
 import android.view.View;
 import java.util.List;
+
 /* loaded from: classes.dex */
 interface FlexContainer {
     int getAlignContent();

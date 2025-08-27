@@ -1,4 +1,5 @@
 package com.google.common.collect;
+
 /* loaded from: classes.dex */
 final class RegularImmutableSet<E> extends ImmutableSet<E> {
     private final Object[] elements;
@@ -6,8 +7,7 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
     private final transient int mask;
     final transient Object[] table;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RegularImmutableSet(Object[] objArr, int i, Object[] objArr2, int i2) {
+    RegularImmutableSet(Object[] objArr, int i, Object[] objArr2, int i2) {
         this.elements = objArr;
         this.table = objArr2;
         this.mask = i2;
@@ -19,14 +19,14 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
         if (obj == null) {
             return false;
         }
-        int smear = Hashing.smear(obj.hashCode());
+        int iSmear = Hashing.smear(obj.hashCode());
         while (true) {
-            Object obj2 = this.table[this.mask & smear];
+            Object obj2 = this.table[this.mask & iSmear];
             if (obj2 == null) {
                 return false;
             }
             if (!obj2.equals(obj)) {
-                smear++;
+                iSmear++;
             } else {
                 return true;
             }
@@ -38,6 +38,7 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
         return this.elements.length;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<E> iterator() {
         return Iterators.forArray(this.elements);
@@ -54,9 +55,8 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
         return new RegularImmutableAsList(this, this.elements);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return false;
     }
 

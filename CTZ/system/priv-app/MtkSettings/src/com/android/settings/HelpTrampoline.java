@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import com.android.settingslib.HelpUtils;
+
 /* loaded from: classes.dex */
 public class HelpTrampoline extends Activity {
     @Override // android.app.Activity

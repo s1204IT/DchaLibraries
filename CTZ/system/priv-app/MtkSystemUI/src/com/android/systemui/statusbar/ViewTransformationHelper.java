@@ -11,7 +11,9 @@ import android.view.animation.Interpolator;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.notification.TransformState;
+import java.util.Iterator;
 import java.util.Stack;
+
 /* loaded from: classes.dex */
 public class ViewTransformationHelper implements TransformableView, TransformState.TransformInfo {
     private ValueAnimator mViewTransformationAnimation;
@@ -40,12 +42,18 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
     }
 
     @Override // com.android.systemui.statusbar.TransformableView
-    public void transformTo(final TransformableView transformableView, final Runnable runnable) {
+    public void transformTo(TransformableView transformableView, Runnable runnable) {
         if (this.mViewTransformationAnimation != null) {
             this.mViewTransformationAnimation.cancel();
         }
         this.mViewTransformationAnimation = ValueAnimator.ofFloat(0.0f, 1.0f);
         this.mViewTransformationAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.ViewTransformationHelper.1
+            final /* synthetic */ TransformableView val$notification;
+
+            AnonymousClass1(TransformableView transformableView2) {
+                transformableView = transformableView2;
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 ViewTransformationHelper.this.transformTo(transformableView, valueAnimator.getAnimatedFraction());
@@ -55,6 +63,11 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
         this.mViewTransformationAnimation.setDuration(360L);
         this.mViewTransformationAnimation.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.ViewTransformationHelper.2
             public boolean mCancelled;
+            final /* synthetic */ Runnable val$endRunnable;
+
+            AnonymousClass2(Runnable runnable2) {
+                runnable = runnable2;
+            }
 
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
@@ -75,6 +88,48 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
             }
         });
         this.mViewTransformationAnimation.start();
+    }
+
+    /* renamed from: com.android.systemui.statusbar.ViewTransformationHelper$1 */
+    class AnonymousClass1 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ TransformableView val$notification;
+
+        AnonymousClass1(TransformableView transformableView2) {
+            transformableView = transformableView2;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            ViewTransformationHelper.this.transformTo(transformableView, valueAnimator.getAnimatedFraction());
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.ViewTransformationHelper$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        public boolean mCancelled;
+        final /* synthetic */ Runnable val$endRunnable;
+
+        AnonymousClass2(Runnable runnable2) {
+            runnable = runnable2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (this.mCancelled) {
+                ViewTransformationHelper.this.abortTransformations();
+                return;
+            }
+            if (runnable != null) {
+                runnable.run();
+            }
+            ViewTransformationHelper.this.setVisible(false);
+            ViewTransformationHelper.this.mViewTransformationAnimation = null;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            this.mCancelled = true;
+        }
     }
 
     @Override // com.android.systemui.statusbar.TransformableView
@@ -100,12 +155,18 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
     }
 
     @Override // com.android.systemui.statusbar.TransformableView
-    public void transformFrom(final TransformableView transformableView) {
+    public void transformFrom(TransformableView transformableView) {
         if (this.mViewTransformationAnimation != null) {
             this.mViewTransformationAnimation.cancel();
         }
         this.mViewTransformationAnimation = ValueAnimator.ofFloat(0.0f, 1.0f);
         this.mViewTransformationAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.ViewTransformationHelper.3
+            final /* synthetic */ TransformableView val$notification;
+
+            AnonymousClass3(TransformableView transformableView2) {
+                transformableView = transformableView2;
+            }
+
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 ViewTransformationHelper.this.transformFrom(transformableView, valueAnimator.getAnimatedFraction());
@@ -113,6 +174,9 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
         });
         this.mViewTransformationAnimation.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.ViewTransformationHelper.4
             public boolean mCancelled;
+
+            AnonymousClass4() {
+            }
 
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
@@ -131,6 +195,42 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
         this.mViewTransformationAnimation.setInterpolator(Interpolators.LINEAR);
         this.mViewTransformationAnimation.setDuration(360L);
         this.mViewTransformationAnimation.start();
+    }
+
+    /* renamed from: com.android.systemui.statusbar.ViewTransformationHelper$3 */
+    class AnonymousClass3 implements ValueAnimator.AnimatorUpdateListener {
+        final /* synthetic */ TransformableView val$notification;
+
+        AnonymousClass3(TransformableView transformableView2) {
+            transformableView = transformableView2;
+        }
+
+        @Override // android.animation.ValueAnimator.AnimatorUpdateListener
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+            ViewTransformationHelper.this.transformFrom(transformableView, valueAnimator.getAnimatedFraction());
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.ViewTransformationHelper$4 */
+    class AnonymousClass4 extends AnimatorListenerAdapter {
+        public boolean mCancelled;
+
+        AnonymousClass4() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            if (this.mCancelled) {
+                ViewTransformationHelper.this.abortTransformations();
+            } else {
+                ViewTransformationHelper.this.setVisible(true);
+            }
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationCancel(Animator animator) {
+            this.mCancelled = true;
+        }
     }
 
     @Override // com.android.systemui.statusbar.TransformableView
@@ -160,8 +260,9 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
         if (this.mViewTransformationAnimation != null) {
             this.mViewTransformationAnimation.cancel();
         }
-        for (Integer num : this.mTransformedViews.keySet()) {
-            TransformState currentState = getCurrentState(num.intValue());
+        Iterator<Integer> it = this.mTransformedViews.keySet().iterator();
+        while (it.hasNext()) {
+            TransformState currentState = getCurrentState(it.next().intValue());
             if (currentState != null) {
                 currentState.setVisible(z, false);
                 currentState.recycle();
@@ -169,10 +270,10 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void abortTransformations() {
-        for (Integer num : this.mTransformedViews.keySet()) {
-            TransformState currentState = getCurrentState(num.intValue());
+    private void abortTransformations() {
+        Iterator<Integer> it = this.mTransformedViews.keySet().iterator();
+        while (it.hasNext()) {
+            TransformState currentState = getCurrentState(it.next().intValue());
             if (currentState != null) {
                 currentState.abortTransformation();
                 currentState.recycle();
@@ -180,16 +281,17 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
         }
     }
 
+    /* JADX DEBUG: Move duplicate insns, count: 1 to block B:47:0x0015 */
     public void addRemainingTransformTypes(View view) {
         int id;
         int size = this.mTransformedViews.size();
         for (int i = 0; i < size; i++) {
-            Object valueAt = this.mTransformedViews.valueAt(i);
+            Object objValueAt = this.mTransformedViews.valueAt(i);
             while (true) {
-                View view2 = (View) valueAt;
+                View view2 = (View) objValueAt;
                 if (view2 != view.getParent()) {
                     view2.setTag(R.id.contains_transformed_view, true);
-                    valueAt = view2.getParent();
+                    objValueAt = view2.getParent();
                 }
             }
         }
@@ -212,9 +314,9 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
     }
 
     public void resetTransformedView(View view) {
-        TransformState createFrom = TransformState.createFrom(view, this);
-        createFrom.setVisible(true, true);
-        createFrom.recycle();
+        TransformState transformStateCreateFrom = TransformState.createFrom(view, this);
+        transformStateCreateFrom.setVisible(true, true);
+        transformStateCreateFrom.recycle();
     }
 
     public ArraySet<View> getAllTransformingViews() {
@@ -226,7 +328,6 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
         return this.mViewTransformationAnimation != null && this.mViewTransformationAnimation.isRunning();
     }
 
-    /* loaded from: classes.dex */
     public static abstract class CustomTransformation {
         public abstract boolean transformFrom(TransformState transformState, TransformableView transformableView, float f);
 

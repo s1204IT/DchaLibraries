@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:paddingLeft="3dp" android:paddingTop="9dp" android:paddingRight="1dp" android:paddingBottom="3dp" android:layout_width="wrap_content" android:layout_height="wrap_content">
-    <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:padding="5dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/autofill_setup_dialog_message"/>
-    <CheckBox android:textAppearance="?android:attr/textAppearanceSmall" android:layout_gravity="left" android:id="@+id/setup_autofill_dialog_disable_autofill" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/disable_autofill"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:paddingLeft="3dp"
+    android:paddingTop="9dp"
+    android:paddingRight="1dp"
+    android:paddingBottom="3dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/autofill_setup_dialog_message"/>
+    <CheckBox
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_gravity="left"
+        android:id="@+id/setup_autofill_dialog_disable_autofill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/disable_autofill"/>
 </LinearLayout>

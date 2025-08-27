@@ -4,6 +4,7 @@ import android.content.Context;
 import com.android.settings.applications.AppStateAppOpsBridge;
 import com.android.settings.applications.AppStateBaseBridge;
 import com.android.settingslib.applications.ApplicationsState;
+
 /* loaded from: classes.dex */
 public class AppStateUsageBridge extends AppStateAppOpsBridge {
     private static final String[] PM_PERMISSION = {"android.permission.PACKAGE_USAGE_STATS"};
@@ -31,7 +32,6 @@ public class AppStateUsageBridge extends AppStateAppOpsBridge {
         return new UsageState(super.getPermissionInfo(str, i));
     }
 
-    /* loaded from: classes.dex */
     public static class UsageState extends AppStateAppOpsBridge.PermissionState {
         public UsageState(AppStateAppOpsBridge.PermissionState permissionState) {
             super(permissionState.packageName, permissionState.userHandle);

@@ -42,8 +42,10 @@ import com.android.systemui.volume.MediaSessions;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogController {
     private AudioManager mAudio;
@@ -60,6 +62,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
     private boolean mShowSafetyWarning;
     private boolean mShowVolumeDialog;
     protected StatusBar mStatusBar;
+
     @GuardedBy("this")
     private UserActivityListener mUserActivityListener;
     private final Vibrator mVibrator;
@@ -76,23 +79,22 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
     private boolean mShowDndTile = true;
     protected final VC mVolumeController = new VC();
 
-    /* loaded from: classes.dex */
     public interface UserActivityListener {
         void onUserActivity();
     }
 
     static {
-        STREAMS.put(4, Integer.valueOf((int) R.string.stream_alarm));
-        STREAMS.put(6, Integer.valueOf((int) R.string.stream_bluetooth_sco));
-        STREAMS.put(8, Integer.valueOf((int) R.string.stream_dtmf));
-        STREAMS.put(3, Integer.valueOf((int) R.string.stream_music));
-        STREAMS.put(10, Integer.valueOf((int) R.string.stream_accessibility));
-        STREAMS.put(5, Integer.valueOf((int) R.string.stream_notification));
-        STREAMS.put(2, Integer.valueOf((int) R.string.stream_ring));
-        STREAMS.put(1, Integer.valueOf((int) R.string.stream_system));
-        STREAMS.put(7, Integer.valueOf((int) R.string.stream_system_enforced));
-        STREAMS.put(9, Integer.valueOf((int) R.string.stream_tts));
-        STREAMS.put(0, Integer.valueOf((int) R.string.stream_voice_call));
+        STREAMS.put(4, Integer.valueOf(R.string.stream_alarm));
+        STREAMS.put(6, Integer.valueOf(R.string.stream_bluetooth_sco));
+        STREAMS.put(8, Integer.valueOf(R.string.stream_dtmf));
+        STREAMS.put(3, Integer.valueOf(R.string.stream_music));
+        STREAMS.put(10, Integer.valueOf(R.string.stream_accessibility));
+        STREAMS.put(5, Integer.valueOf(R.string.stream_notification));
+        STREAMS.put(2, Integer.valueOf(R.string.stream_ring));
+        STREAMS.put(1, Integer.valueOf(R.string.stream_system));
+        STREAMS.put(7, Integer.valueOf(R.string.stream_system_enforced));
+        STREAMS.put(9, Integer.valueOf(R.string.stream_tts));
+        STREAMS.put(0, Integer.valueOf(R.string.stream_voice_call));
     }
 
     public VolumeDialogControllerImpl(Context context) {
@@ -296,8 +298,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return this.mHasVibrator;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onNotifyVisibleW(boolean z) {
+    private void onNotifyVisibleW(boolean z) {
         if (this.mDestroyed) {
             return;
         }
@@ -307,8 +308,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onUserActivityW() {
+    private void onUserActivityW() {
         synchronized (this) {
             if (this.mUserActivityListener != null) {
                 this.mUserActivityListener.onUserActivity();
@@ -316,20 +316,17 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onShowSafetyWarningW(int i) {
+    private void onShowSafetyWarningW(int i) {
         if (this.mShowSafetyWarning) {
             this.mCallbacks.onShowSafetyWarning(i);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onAccessibilityModeChanged(Boolean bool) {
+    private void onAccessibilityModeChanged(Boolean bool) {
         this.mCallbacks.onAccessibilityModeChanged(bool);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean checkRoutedToBluetoothW(int i) {
+    private boolean checkRoutedToBluetoothW(int i) {
         if (i == 3) {
             return false | updateStreamRoutedToBluetoothW(i, (this.mAudio.getDevicesForStream(3) & 896) != 0);
         }
@@ -342,8 +339,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean shouldShowUI(int i) {
+    private boolean shouldShowUI(int i) {
         updateStatusBar();
         if (this.mStatusBar != null) {
             if (this.mStatusBar.getWakefulnessState() == 0 || this.mStatusBar.getWakefulnessState() == 3 || !this.mStatusBar.isDeviceInteractive() || (i & 1) == 0 || !this.mShowVolumeDialog) {
@@ -356,60 +352,56 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
     }
 
     boolean onVolumeChangedW(int i, int i2) {
-        boolean z;
-        boolean shouldShowUI = shouldShowUI(i2);
-        boolean z2 = (i2 & 4096) != 0;
-        boolean z3 = (i2 & 2048) != 0;
-        boolean z4 = (i2 & 128) != 0;
-        if (shouldShowUI) {
-            z = updateActiveStreamW(i) | false;
+        boolean zUpdateActiveStreamW;
+        boolean zShouldShowUI = shouldShowUI(i2);
+        boolean z = (i2 & 4096) != 0;
+        boolean z2 = (i2 & 2048) != 0;
+        boolean z3 = (i2 & 128) != 0;
+        if (zShouldShowUI) {
+            zUpdateActiveStreamW = updateActiveStreamW(i) | false;
         } else {
-            z = false;
+            zUpdateActiveStreamW = false;
         }
         int audioManagerStreamVolume = getAudioManagerStreamVolume(i);
-        boolean updateStreamLevelW = z | updateStreamLevelW(i, audioManagerStreamVolume) | checkRoutedToBluetoothW(shouldShowUI ? 3 : i);
-        if (updateStreamLevelW) {
+        boolean zUpdateStreamLevelW = zUpdateActiveStreamW | updateStreamLevelW(i, audioManagerStreamVolume) | checkRoutedToBluetoothW(zShouldShowUI ? 3 : i);
+        if (zUpdateStreamLevelW) {
             this.mCallbacks.onStateChanged(this.mState);
         }
-        if (shouldShowUI) {
+        if (zShouldShowUI) {
             this.mCallbacks.onShowRequested(1);
         }
-        if (z3) {
+        if (z2) {
             this.mCallbacks.onShowVibrateHint();
         }
-        if (z4) {
+        if (z3) {
             this.mCallbacks.onShowSilentHint();
         }
-        if (updateStreamLevelW && z2) {
+        if (zUpdateStreamLevelW && z) {
             Events.writeEvent(this.mContext, 4, Integer.valueOf(i), Integer.valueOf(audioManagerStreamVolume));
         }
-        return updateStreamLevelW;
+        return zUpdateStreamLevelW;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateActiveStreamW(int i) {
+    private boolean updateActiveStreamW(int i) {
         if (i == this.mState.activeStream) {
             return false;
         }
         this.mState.activeStream = i;
         Events.writeEvent(this.mContext, 2, Integer.valueOf(i));
         if (D.BUG) {
-            String str = TAG;
-            Log.d(str, "updateActiveStreamW " + i);
+            Log.d(TAG, "updateActiveStreamW " + i);
         }
         if (i >= 100) {
             i = -1;
         }
         if (D.BUG) {
-            String str2 = TAG;
-            Log.d(str2, "forceVolumeControlStream " + i);
+            Log.d(TAG, "forceVolumeControlStream " + i);
         }
         this.mAudio.forceVolumeControlStream(i);
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public VolumeDialogController.StreamState streamStateW(int i) {
+    private VolumeDialogController.StreamState streamStateW(int i) {
         VolumeDialogController.StreamState streamState = this.mState.states.get(i);
         if (streamState == null) {
             VolumeDialogController.StreamState streamState2 = new VolumeDialogController.StreamState();
@@ -419,18 +411,18 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return streamState;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onGetStateW() {
-        for (Integer num : STREAMS.keySet()) {
-            int intValue = num.intValue();
-            updateStreamLevelW(intValue, getAudioManagerStreamVolume(intValue));
-            streamStateW(intValue).levelMin = getAudioManagerStreamMinVolume(intValue);
-            streamStateW(intValue).levelMax = Math.max(1, getAudioManagerStreamMaxVolume(intValue));
-            updateStreamMuteW(intValue, this.mAudio.isStreamMute(intValue));
-            VolumeDialogController.StreamState streamStateW = streamStateW(intValue);
-            streamStateW.muteSupported = this.mAudio.isStreamAffectedByMute(intValue);
-            streamStateW.name = STREAMS.get(Integer.valueOf(intValue)).intValue();
-            checkRoutedToBluetoothW(intValue);
+    private void onGetStateW() {
+        Iterator<Integer> it = STREAMS.keySet().iterator();
+        while (it.hasNext()) {
+            int iIntValue = it.next().intValue();
+            updateStreamLevelW(iIntValue, getAudioManagerStreamVolume(iIntValue));
+            streamStateW(iIntValue).levelMin = getAudioManagerStreamMinVolume(iIntValue);
+            streamStateW(iIntValue).levelMax = Math.max(1, getAudioManagerStreamMaxVolume(iIntValue));
+            updateStreamMuteW(iIntValue, this.mAudio.isStreamMute(iIntValue));
+            VolumeDialogController.StreamState streamStateStreamStateW = streamStateW(iIntValue);
+            streamStateStreamStateW.muteSupported = this.mAudio.isStreamAffectedByMute(iIntValue);
+            streamStateStreamStateW.name = STREAMS.get(Integer.valueOf(iIntValue)).intValue();
+            checkRoutedToBluetoothW(iIntValue);
         }
         updateRingerModeExternalW(this.mAudio.getRingerMode());
         updateZenModeW();
@@ -440,26 +432,24 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
     }
 
     private boolean updateStreamRoutedToBluetoothW(int i, boolean z) {
-        VolumeDialogController.StreamState streamStateW = streamStateW(i);
-        if (streamStateW.routedToBluetooth == z) {
+        VolumeDialogController.StreamState streamStateStreamStateW = streamStateW(i);
+        if (streamStateStreamStateW.routedToBluetooth == z) {
             return false;
         }
-        streamStateW.routedToBluetooth = z;
+        streamStateStreamStateW.routedToBluetooth = z;
         if (D.BUG) {
-            String str = TAG;
-            Log.d(str, "updateStreamRoutedToBluetoothW stream=" + i + " routedToBluetooth=" + z);
+            Log.d(TAG, "updateStreamRoutedToBluetoothW stream=" + i + " routedToBluetooth=" + z);
             return true;
         }
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateStreamLevelW(int i, int i2) {
-        VolumeDialogController.StreamState streamStateW = streamStateW(i);
-        if (streamStateW.level == i2) {
+    private boolean updateStreamLevelW(int i, int i2) {
+        VolumeDialogController.StreamState streamStateStreamStateW = streamStateW(i);
+        if (streamStateStreamStateW.level == i2) {
             return false;
         }
-        streamStateW.level = i2;
+        streamStateStreamStateW.level = i2;
         if (isLogWorthy(i)) {
             Events.writeEvent(this.mContext, 10, Integer.valueOf(i), Integer.valueOf(i2));
         }
@@ -482,13 +472,12 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateStreamMuteW(int i, boolean z) {
-        VolumeDialogController.StreamState streamStateW = streamStateW(i);
-        if (streamStateW.muted == z) {
+    private boolean updateStreamMuteW(int i, boolean z) {
+        VolumeDialogController.StreamState streamStateStreamStateW = streamStateW(i);
+        if (streamStateStreamStateW.muted == z) {
             return false;
         }
-        streamStateW.muted = z;
+        streamStateStreamStateW.muted = z;
         if (isLogWorthy(i)) {
             Events.writeEvent(this.mContext, 15, Integer.valueOf(i), Boolean.valueOf(z));
         }
@@ -502,8 +491,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return i == 2 || i == 5;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateEffectsSuppressorW(ComponentName componentName) {
+    private boolean updateEffectsSuppressorW(ComponentName componentName) {
         if (Objects.equals(this.mState.effectsSuppressor, componentName)) {
             return false;
         }
@@ -514,24 +502,23 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
     }
 
     private static String getApplicationName(Context context, ComponentName componentName) {
-        String trim;
+        String strTrim;
         if (componentName == null) {
             return null;
         }
         PackageManager packageManager = context.getPackageManager();
         String packageName = componentName.getPackageName();
         try {
-            trim = Objects.toString(packageManager.getApplicationInfo(packageName, 0).loadLabel(packageManager), "").trim();
+            strTrim = Objects.toString(packageManager.getApplicationInfo(packageName, 0).loadLabel(packageManager), "").trim();
         } catch (PackageManager.NameNotFoundException e) {
         }
-        if (trim.length() > 0) {
-            return trim;
+        if (strTrim.length() > 0) {
+            return strTrim;
         }
         return packageName;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateZenModeW() {
+    private boolean updateZenModeW() {
         int i = Settings.Global.getInt(this.mContext.getContentResolver(), "zen_mode", 0);
         if (this.mState.zenMode == i) {
             return false;
@@ -541,27 +528,24 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateZenConfig() {
+    private boolean updateZenConfig() {
         NotificationManager.Policy notificationPolicy = this.mNotificationManager.getNotificationPolicy();
         boolean z = (notificationPolicy.priorityCategories & 32) == 0;
         boolean z2 = (notificationPolicy.priorityCategories & 64) == 0;
         boolean z3 = (notificationPolicy.priorityCategories & 128) == 0;
-        boolean areAllPriorityOnlyNotificationZenSoundsMuted = ZenModeConfig.areAllPriorityOnlyNotificationZenSoundsMuted(notificationPolicy);
-        if (this.mState.disallowAlarms == z && this.mState.disallowMedia == z2 && this.mState.disallowRinger == areAllPriorityOnlyNotificationZenSoundsMuted && this.mState.disallowSystem == z3) {
+        boolean zAreAllPriorityOnlyNotificationZenSoundsMuted = ZenModeConfig.areAllPriorityOnlyNotificationZenSoundsMuted(notificationPolicy);
+        if (this.mState.disallowAlarms == z && this.mState.disallowMedia == z2 && this.mState.disallowRinger == zAreAllPriorityOnlyNotificationZenSoundsMuted && this.mState.disallowSystem == z3) {
             return false;
         }
         this.mState.disallowAlarms = z;
         this.mState.disallowMedia = z2;
         this.mState.disallowSystem = z3;
-        this.mState.disallowRinger = areAllPriorityOnlyNotificationZenSoundsMuted;
-        Context context = this.mContext;
-        Events.writeEvent(context, 17, "disallowAlarms=" + z + " disallowMedia=" + z2 + " disallowSystem=" + z3 + " disallowRinger=" + areAllPriorityOnlyNotificationZenSoundsMuted);
+        this.mState.disallowRinger = zAreAllPriorityOnlyNotificationZenSoundsMuted;
+        Events.writeEvent(this.mContext, 17, "disallowAlarms=" + z + " disallowMedia=" + z2 + " disallowSystem=" + z3 + " disallowRinger=" + zAreAllPriorityOnlyNotificationZenSoundsMuted);
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateRingerModeExternalW(int i) {
+    private boolean updateRingerModeExternalW(int i) {
         if (i == this.mState.ringerModeExternal) {
             return false;
         }
@@ -570,8 +554,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean updateRingerModeInternalW(int i) {
+    private boolean updateRingerModeInternalW(int i) {
         if (i == this.mState.ringerModeInternal) {
             return false;
         }
@@ -583,8 +566,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSetRingerModeW(int i, boolean z) {
+    private void onSetRingerModeW(int i, boolean z) {
         if (z) {
             this.mAudio.setRingerMode(i);
         } else {
@@ -592,16 +574,13 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSetStreamMuteW(int i, boolean z) {
+    private void onSetStreamMuteW(int i, boolean z) {
         this.mAudio.adjustStreamVolume(i, z ? -100 : 100, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSetStreamVolumeW(int i, int i2) {
+    private void onSetStreamVolumeW(int i, int i2) {
         if (D.BUG) {
-            String str = TAG;
-            Log.d(str, "onSetStreamVolume " + i + " level=" + i2);
+            Log.d(TAG, "onSetStreamVolume " + i + " level=" + i2);
         }
         if (i >= 100) {
             this.mMediaSessionsCallbacksW.setStreamVolume(i, i2);
@@ -610,29 +589,24 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSetActiveStreamW(int i) {
+    private void onSetActiveStreamW(int i) {
         if (updateActiveStreamW(i)) {
             this.mCallbacks.onStateChanged(this.mState);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSetExitConditionW(Condition condition) {
+    private void onSetExitConditionW(Condition condition) {
         this.mNoMan.setZenMode(this.mState.zenMode, condition != null ? condition.id : null, TAG);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSetZenModeW(int i) {
+    private void onSetZenModeW(int i) {
         if (D.BUG) {
-            String str = TAG;
-            Log.d(str, "onSetZenModeW " + i);
+            Log.d(TAG, "onSetZenModeW " + i);
         }
         this.mNoMan.setZenMode(i, null, TAG);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onDismissRequestedW(int i) {
+    private void onDismissRequestedW(int i) {
         this.mCallbacks.onDismissRequested(i);
     }
 
@@ -643,19 +617,20 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         DndTile.setVisible(this.mContext, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class VC extends IVolumeController.Stub {
+    private final class VC extends IVolumeController.Stub {
         private final String TAG;
 
         private VC() {
             this.TAG = VolumeDialogControllerImpl.TAG + ".VC";
         }
 
+        /* synthetic */ VC(VolumeDialogControllerImpl volumeDialogControllerImpl, AnonymousClass1 anonymousClass1) {
+            this();
+        }
+
         public void displaySafeVolumeWarning(int i) throws RemoteException {
             if (D.BUG) {
-                String str = this.TAG;
-                Log.d(str, "displaySafeVolumeWarning " + Util.audioManagerFlagsToString(i));
+                Log.d(this.TAG, "displaySafeVolumeWarning " + Util.audioManagerFlagsToString(i));
             }
             if (VolumeDialogControllerImpl.this.mDestroyed) {
                 return;
@@ -665,8 +640,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
 
         public void volumeChanged(int i, int i2) throws RemoteException {
             if (D.BUG) {
-                String str = this.TAG;
-                Log.d(str, "volumeChanged " + AudioSystem.streamToString(i) + " " + Util.audioManagerFlagsToString(i2));
+                Log.d(this.TAG, "volumeChanged " + AudioSystem.streamToString(i) + " " + Util.audioManagerFlagsToString(i2));
             }
             if (VolumeDialogControllerImpl.this.mDestroyed) {
                 return;
@@ -703,8 +677,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
 
         public void setA11yMode(int i) {
             if (D.BUG) {
-                String str = this.TAG;
-                Log.d(str, "setA11yMode to " + i);
+                Log.d(this.TAG, "setA11yMode to " + i);
             }
             if (VolumeDialogControllerImpl.this.mDestroyed) {
                 return;
@@ -717,17 +690,14 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
                     VolumeDialogControllerImpl.this.mShowA11yStream = true;
                     break;
                 default:
-                    String str2 = this.TAG;
-                    Log.e(str2, "Invalid accessibility mode " + i);
+                    Log.e(this.TAG, "Invalid accessibility mode " + i);
                     break;
             }
             VolumeDialogControllerImpl.this.mWorker.obtainMessage(15, Boolean.valueOf(VolumeDialogControllerImpl.this.mShowA11yStream)).sendToTarget();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class W extends Handler {
+    private final class W extends Handler {
         W(Looper looper) {
             super(looper);
         }
@@ -737,58 +707,54 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
             switch (message.what) {
                 case 1:
                     VolumeDialogControllerImpl.this.onVolumeChangedW(message.arg1, message.arg2);
-                    return;
+                    break;
                 case 2:
                     VolumeDialogControllerImpl.this.onDismissRequestedW(message.arg1);
-                    return;
+                    break;
                 case 3:
                     VolumeDialogControllerImpl.this.onGetStateW();
-                    return;
+                    break;
                 case 4:
                     VolumeDialogControllerImpl.this.onSetRingerModeW(message.arg1, message.arg2 != 0);
-                    return;
+                    break;
                 case 5:
                     VolumeDialogControllerImpl.this.onSetZenModeW(message.arg1);
-                    return;
+                    break;
                 case 6:
                     VolumeDialogControllerImpl.this.onSetExitConditionW((Condition) message.obj);
-                    return;
+                    break;
                 case 7:
                     VolumeDialogControllerImpl.this.onSetStreamMuteW(message.arg1, message.arg2 != 0);
-                    return;
+                    break;
                 case 8:
                     VolumeDialogControllerImpl.this.mCallbacks.onLayoutDirectionChanged(message.arg1);
-                    return;
+                    break;
                 case 9:
                     VolumeDialogControllerImpl.this.mCallbacks.onConfigurationChanged();
-                    return;
+                    break;
                 case 10:
                     VolumeDialogControllerImpl.this.onSetStreamVolumeW(message.arg1, message.arg2);
-                    return;
+                    break;
                 case 11:
                     VolumeDialogControllerImpl.this.onSetActiveStreamW(message.arg1);
-                    return;
+                    break;
                 case 12:
                     VolumeDialogControllerImpl.this.onNotifyVisibleW(message.arg1 != 0);
-                    return;
+                    break;
                 case 13:
                     VolumeDialogControllerImpl.this.onUserActivityW();
-                    return;
+                    break;
                 case 14:
                     VolumeDialogControllerImpl.this.onShowSafetyWarningW(message.arg1);
-                    return;
+                    break;
                 case 15:
                     VolumeDialogControllerImpl.this.onAccessibilityModeChanged((Boolean) message.obj);
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class C implements VolumeDialogController.Callbacks {
+    class C implements VolumeDialogController.Callbacks {
         private final HashMap<VolumeDialogController.Callbacks, Handler> mCallbackMap = new HashMap<>();
 
         C() {
@@ -805,10 +771,34 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
             this.mCallbackMap.remove(callbacks);
         }
 
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$1 */
+        class AnonymousClass1 implements Runnable {
+            final /* synthetic */ Map.Entry val$entry;
+            final /* synthetic */ int val$reason;
+
+            AnonymousClass1(Map.Entry entry, int i) {
+                entry = entry;
+                i = i;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onShowRequested(i);
+            }
+        }
+
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
-        public void onShowRequested(final int i) {
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+        public void onShowRequested(int i) {
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.1
+                    final /* synthetic */ Map.Entry val$entry;
+                    final /* synthetic */ int val$reason;
+
+                    AnonymousClass1(Map.Entry entry2, int i2) {
+                        entry = entry2;
+                        i = i2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         ((VolumeDialogController.Callbacks) entry.getKey()).onShowRequested(i);
@@ -817,10 +807,34 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
             }
         }
 
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$2 */
+        class AnonymousClass2 implements Runnable {
+            final /* synthetic */ Map.Entry val$entry;
+            final /* synthetic */ int val$reason;
+
+            AnonymousClass2(Map.Entry entry, int i) {
+                entry = entry;
+                i = i;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onDismissRequested(i);
+            }
+        }
+
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
-        public void onDismissRequested(final int i) {
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+        public void onDismissRequested(int i) {
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.2
+                    final /* synthetic */ Map.Entry val$entry;
+                    final /* synthetic */ int val$reason;
+
+                    AnonymousClass2(Map.Entry entry2, int i2) {
+                        entry = entry2;
+                        i = i2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         ((VolumeDialogController.Callbacks) entry.getKey()).onDismissRequested(i);
@@ -831,23 +845,71 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
 
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
         public void onStateChanged(VolumeDialogController.State state) {
-            long currentTimeMillis = System.currentTimeMillis();
-            final VolumeDialogController.State copy = state.copy();
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+            long jCurrentTimeMillis = System.currentTimeMillis();
+            VolumeDialogController.State stateCopy = state.copy();
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.3
+                    final /* synthetic */ VolumeDialogController.State val$copy;
+                    final /* synthetic */ Map.Entry val$entry;
+
+                    AnonymousClass3(Map.Entry entry2, VolumeDialogController.State stateCopy2) {
+                        entry = entry2;
+                        state = stateCopy2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
-                        ((VolumeDialogController.Callbacks) entry.getKey()).onStateChanged(copy);
+                        ((VolumeDialogController.Callbacks) entry.getKey()).onStateChanged(state);
                     }
                 });
             }
-            Events.writeState(currentTimeMillis, copy);
+            Events.writeState(jCurrentTimeMillis, stateCopy2);
+        }
+
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$3 */
+        class AnonymousClass3 implements Runnable {
+            final /* synthetic */ VolumeDialogController.State val$copy;
+            final /* synthetic */ Map.Entry val$entry;
+
+            AnonymousClass3(Map.Entry entry2, VolumeDialogController.State stateCopy2) {
+                entry = entry2;
+                state = stateCopy2;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onStateChanged(state);
+            }
+        }
+
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$4 */
+        class AnonymousClass4 implements Runnable {
+            final /* synthetic */ Map.Entry val$entry;
+            final /* synthetic */ int val$layoutDirection;
+
+            AnonymousClass4(Map.Entry entry, int i) {
+                entry = entry;
+                i = i;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onLayoutDirectionChanged(i);
+            }
         }
 
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
-        public void onLayoutDirectionChanged(final int i) {
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+        public void onLayoutDirectionChanged(int i) {
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.4
+                    final /* synthetic */ Map.Entry val$entry;
+                    final /* synthetic */ int val$layoutDirection;
+
+                    AnonymousClass4(Map.Entry entry2, int i2) {
+                        entry = entry2;
+                        i = i2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         ((VolumeDialogController.Callbacks) entry.getKey()).onLayoutDirectionChanged(i);
@@ -856,10 +918,30 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
             }
         }
 
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$5 */
+        class AnonymousClass5 implements Runnable {
+            final /* synthetic */ Map.Entry val$entry;
+
+            AnonymousClass5(Map.Entry entry) {
+                entry = entry;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onConfigurationChanged();
+            }
+        }
+
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
         public void onConfigurationChanged() {
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.5
+                    final /* synthetic */ Map.Entry val$entry;
+
+                    AnonymousClass5(Map.Entry entry2) {
+                        entry = entry2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         ((VolumeDialogController.Callbacks) entry.getKey()).onConfigurationChanged();
@@ -868,10 +950,30 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
             }
         }
 
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$6 */
+        class AnonymousClass6 implements Runnable {
+            final /* synthetic */ Map.Entry val$entry;
+
+            AnonymousClass6(Map.Entry entry) {
+                entry = entry;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onShowVibrateHint();
+            }
+        }
+
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
         public void onShowVibrateHint() {
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.6
+                    final /* synthetic */ Map.Entry val$entry;
+
+                    AnonymousClass6(Map.Entry entry2) {
+                        entry = entry2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         ((VolumeDialogController.Callbacks) entry.getKey()).onShowVibrateHint();
@@ -880,10 +982,30 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
             }
         }
 
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$7 */
+        class AnonymousClass7 implements Runnable {
+            final /* synthetic */ Map.Entry val$entry;
+
+            AnonymousClass7(Map.Entry entry) {
+                entry = entry;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onShowSilentHint();
+            }
+        }
+
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
         public void onShowSilentHint() {
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.7
+                    final /* synthetic */ Map.Entry val$entry;
+
+                    AnonymousClass7(Map.Entry entry2) {
+                        entry = entry2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         ((VolumeDialogController.Callbacks) entry.getKey()).onShowSilentHint();
@@ -892,10 +1014,30 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
             }
         }
 
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$8 */
+        class AnonymousClass8 implements Runnable {
+            final /* synthetic */ Map.Entry val$entry;
+
+            AnonymousClass8(Map.Entry entry) {
+                entry = entry;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onScreenOff();
+            }
+        }
+
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
         public void onScreenOff() {
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.8
+                    final /* synthetic */ Map.Entry val$entry;
+
+                    AnonymousClass8(Map.Entry entry2) {
+                        entry = entry2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         ((VolumeDialogController.Callbacks) entry.getKey()).onScreenOff();
@@ -904,10 +1046,34 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
             }
         }
 
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$9 */
+        class AnonymousClass9 implements Runnable {
+            final /* synthetic */ Map.Entry val$entry;
+            final /* synthetic */ int val$flags;
+
+            AnonymousClass9(Map.Entry entry, int i) {
+                entry = entry;
+                i = i;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onShowSafetyWarning(i);
+            }
+        }
+
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
-        public void onShowSafetyWarning(final int i) {
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+        public void onShowSafetyWarning(int i) {
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.9
+                    final /* synthetic */ Map.Entry val$entry;
+                    final /* synthetic */ int val$flags;
+
+                    AnonymousClass9(Map.Entry entry2, int i2) {
+                        entry = entry2;
+                        i = i2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         ((VolumeDialogController.Callbacks) entry.getKey()).onShowSafetyWarning(i);
@@ -918,19 +1084,42 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
 
         @Override // com.android.systemui.plugins.VolumeDialogController.Callbacks
         public void onAccessibilityModeChanged(Boolean bool) {
-            final boolean booleanValue = bool == null ? false : bool.booleanValue();
-            for (final Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
+            boolean zBooleanValue = bool == null ? false : bool.booleanValue();
+            for (Map.Entry<VolumeDialogController.Callbacks, Handler> entry : this.mCallbackMap.entrySet()) {
                 entry.getValue().post(new Runnable() { // from class: com.android.systemui.volume.VolumeDialogControllerImpl.C.10
+                    final /* synthetic */ Map.Entry val$entry;
+                    final /* synthetic */ boolean val$show;
+
+                    AnonymousClass10(Map.Entry entry2, boolean zBooleanValue2) {
+                        entry = entry2;
+                        z = zBooleanValue2;
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
-                        ((VolumeDialogController.Callbacks) entry.getKey()).onAccessibilityModeChanged(Boolean.valueOf(booleanValue));
+                        ((VolumeDialogController.Callbacks) entry.getKey()).onAccessibilityModeChanged(Boolean.valueOf(z));
                     }
                 });
             }
         }
+
+        /* renamed from: com.android.systemui.volume.VolumeDialogControllerImpl$C$10 */
+        class AnonymousClass10 implements Runnable {
+            final /* synthetic */ Map.Entry val$entry;
+            final /* synthetic */ boolean val$show;
+
+            AnonymousClass10(Map.Entry entry2, boolean zBooleanValue2) {
+                entry = entry2;
+                z = zBooleanValue2;
+            }
+
+            @Override // java.lang.Runnable
+            public void run() {
+                ((VolumeDialogController.Callbacks) entry.getKey()).onAccessibilityModeChanged(Boolean.valueOf(z));
+            }
+        }
     }
 
-    /* loaded from: classes.dex */
     private final class SettingObserver extends ContentObserver {
         private final Uri ZEN_MODE_CONFIG_URI;
         private final Uri ZEN_MODE_URI;
@@ -948,24 +1137,27 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
 
         @Override // android.database.ContentObserver
         public void onChange(boolean z, Uri uri) {
-            boolean z2;
+            boolean zUpdateZenConfig;
             if (this.ZEN_MODE_URI.equals(uri)) {
-                z2 = VolumeDialogControllerImpl.this.updateZenModeW();
+                zUpdateZenConfig = VolumeDialogControllerImpl.this.updateZenModeW();
             } else {
-                z2 = false;
+                zUpdateZenConfig = false;
             }
             if (this.ZEN_MODE_CONFIG_URI.equals(uri)) {
-                z2 |= VolumeDialogControllerImpl.this.updateZenConfig();
+                zUpdateZenConfig |= VolumeDialogControllerImpl.this.updateZenConfig();
             }
-            if (z2) {
+            if (zUpdateZenConfig) {
                 VolumeDialogControllerImpl.this.mCallbacks.onStateChanged(VolumeDialogControllerImpl.this.mState);
             }
         }
     }
 
-    /* loaded from: classes.dex */
     private final class Receiver extends BroadcastReceiver {
         private Receiver() {
+        }
+
+        /* synthetic */ Receiver(VolumeDialogControllerImpl volumeDialogControllerImpl, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         public void init() {
@@ -985,52 +1177,47 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            boolean z = false;
+            boolean zUpdateEffectsSuppressorW = false;
             if (action.equals("android.media.VOLUME_CHANGED_ACTION")) {
                 int intExtra = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_TYPE", -1);
                 int intExtra2 = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_VALUE", -1);
                 int intExtra3 = intent.getIntExtra("android.media.EXTRA_PREV_VOLUME_STREAM_VALUE", -1);
                 if (D.BUG) {
-                    String str = VolumeDialogControllerImpl.TAG;
-                    Log.d(str, "onReceive VOLUME_CHANGED_ACTION stream=" + intExtra + " level=" + intExtra2 + " oldLevel=" + intExtra3);
+                    Log.d(VolumeDialogControllerImpl.TAG, "onReceive VOLUME_CHANGED_ACTION stream=" + intExtra + " level=" + intExtra2 + " oldLevel=" + intExtra3);
                 }
-                z = VolumeDialogControllerImpl.this.updateStreamLevelW(intExtra, intExtra2);
+                zUpdateEffectsSuppressorW = VolumeDialogControllerImpl.this.updateStreamLevelW(intExtra, intExtra2);
             } else if (action.equals("android.media.STREAM_DEVICES_CHANGED_ACTION")) {
                 int intExtra4 = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_TYPE", -1);
                 int intExtra5 = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_DEVICES", -1);
                 int intExtra6 = intent.getIntExtra("android.media.EXTRA_PREV_VOLUME_STREAM_DEVICES", -1);
                 if (D.BUG) {
-                    String str2 = VolumeDialogControllerImpl.TAG;
-                    Log.d(str2, "onReceive STREAM_DEVICES_CHANGED_ACTION stream=" + intExtra4 + " devices=" + intExtra5 + " oldDevices=" + intExtra6);
+                    Log.d(VolumeDialogControllerImpl.TAG, "onReceive STREAM_DEVICES_CHANGED_ACTION stream=" + intExtra4 + " devices=" + intExtra5 + " oldDevices=" + intExtra6);
                 }
-                z = VolumeDialogControllerImpl.this.checkRoutedToBluetoothW(intExtra4) | VolumeDialogControllerImpl.this.onVolumeChangedW(intExtra4, 0);
+                zUpdateEffectsSuppressorW = VolumeDialogControllerImpl.this.checkRoutedToBluetoothW(intExtra4) | VolumeDialogControllerImpl.this.onVolumeChangedW(intExtra4, 0);
             } else if (action.equals("android.media.RINGER_MODE_CHANGED")) {
                 int intExtra7 = intent.getIntExtra("android.media.EXTRA_RINGER_MODE", -1);
                 if (D.BUG) {
-                    String str3 = VolumeDialogControllerImpl.TAG;
-                    Log.d(str3, "onReceive RINGER_MODE_CHANGED_ACTION rm=" + Util.ringerModeToString(intExtra7));
+                    Log.d(VolumeDialogControllerImpl.TAG, "onReceive RINGER_MODE_CHANGED_ACTION rm=" + Util.ringerModeToString(intExtra7));
                 }
-                z = VolumeDialogControllerImpl.this.updateRingerModeExternalW(intExtra7);
+                zUpdateEffectsSuppressorW = VolumeDialogControllerImpl.this.updateRingerModeExternalW(intExtra7);
             } else if (action.equals("android.media.INTERNAL_RINGER_MODE_CHANGED_ACTION")) {
                 int intExtra8 = intent.getIntExtra("android.media.EXTRA_RINGER_MODE", -1);
                 if (D.BUG) {
-                    String str4 = VolumeDialogControllerImpl.TAG;
-                    Log.d(str4, "onReceive INTERNAL_RINGER_MODE_CHANGED_ACTION rm=" + Util.ringerModeToString(intExtra8));
+                    Log.d(VolumeDialogControllerImpl.TAG, "onReceive INTERNAL_RINGER_MODE_CHANGED_ACTION rm=" + Util.ringerModeToString(intExtra8));
                 }
-                z = VolumeDialogControllerImpl.this.updateRingerModeInternalW(intExtra8);
+                zUpdateEffectsSuppressorW = VolumeDialogControllerImpl.this.updateRingerModeInternalW(intExtra8);
             } else if (action.equals("android.media.STREAM_MUTE_CHANGED_ACTION")) {
                 int intExtra9 = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_TYPE", -1);
                 boolean booleanExtra = intent.getBooleanExtra("android.media.EXTRA_STREAM_VOLUME_MUTED", false);
                 if (D.BUG) {
-                    String str5 = VolumeDialogControllerImpl.TAG;
-                    Log.d(str5, "onReceive STREAM_MUTE_CHANGED_ACTION stream=" + intExtra9 + " muted=" + booleanExtra);
+                    Log.d(VolumeDialogControllerImpl.TAG, "onReceive STREAM_MUTE_CHANGED_ACTION stream=" + intExtra9 + " muted=" + booleanExtra);
                 }
-                z = VolumeDialogControllerImpl.this.updateStreamMuteW(intExtra9, booleanExtra);
+                zUpdateEffectsSuppressorW = VolumeDialogControllerImpl.this.updateStreamMuteW(intExtra9, booleanExtra);
             } else if (action.equals("android.os.action.ACTION_EFFECTS_SUPPRESSOR_CHANGED")) {
                 if (D.BUG) {
                     Log.d(VolumeDialogControllerImpl.TAG, "onReceive ACTION_EFFECTS_SUPPRESSOR_CHANGED");
                 }
-                z = VolumeDialogControllerImpl.this.updateEffectsSuppressorW(VolumeDialogControllerImpl.this.mNoMan.getEffectsSuppressor());
+                zUpdateEffectsSuppressorW = VolumeDialogControllerImpl.this.updateEffectsSuppressorW(VolumeDialogControllerImpl.this.mNoMan.getEffectsSuppressor());
             } else if (action.equals("android.intent.action.CONFIGURATION_CHANGED")) {
                 if (D.BUG) {
                     Log.d(VolumeDialogControllerImpl.TAG, "onReceive ACTION_CONFIGURATION_CHANGED");
@@ -1047,15 +1234,13 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
                 }
                 VolumeDialogControllerImpl.this.dismiss();
             }
-            if (z) {
+            if (zUpdateEffectsSuppressorW) {
                 VolumeDialogControllerImpl.this.mCallbacks.onStateChanged(VolumeDialogControllerImpl.this.mState);
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public final class MediaSessionsCallbacks implements MediaSessions.Callbacks {
+    protected final class MediaSessionsCallbacks implements MediaSessions.Callbacks {
         private final HashMap<MediaSession.Token, Integer> mRemoteStreams = new HashMap<>();
         private int mNextStream = 100;
 
@@ -1065,24 +1250,24 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         @Override // com.android.systemui.volume.MediaSessions.Callbacks
         public void onRemoteUpdate(MediaSession.Token token, String str, MediaController.PlaybackInfo playbackInfo) {
             addStream(token, "onRemoteUpdate");
-            int intValue = this.mRemoteStreams.get(token).intValue();
-            boolean z = VolumeDialogControllerImpl.this.mState.states.indexOfKey(intValue) < 0;
-            VolumeDialogController.StreamState streamStateW = VolumeDialogControllerImpl.this.streamStateW(intValue);
-            streamStateW.dynamic = true;
-            streamStateW.levelMin = 0;
-            streamStateW.levelMax = playbackInfo.getMaxVolume();
-            if (streamStateW.level != playbackInfo.getCurrentVolume()) {
-                streamStateW.level = playbackInfo.getCurrentVolume();
+            int iIntValue = this.mRemoteStreams.get(token).intValue();
+            boolean z = VolumeDialogControllerImpl.this.mState.states.indexOfKey(iIntValue) < 0;
+            VolumeDialogController.StreamState streamStateStreamStateW = VolumeDialogControllerImpl.this.streamStateW(iIntValue);
+            streamStateStreamStateW.dynamic = true;
+            streamStateStreamStateW.levelMin = 0;
+            streamStateStreamStateW.levelMax = playbackInfo.getMaxVolume();
+            if (streamStateStreamStateW.level != playbackInfo.getCurrentVolume()) {
+                streamStateStreamStateW.level = playbackInfo.getCurrentVolume();
                 z = true;
             }
-            if (!Objects.equals(streamStateW.remoteLabel, str)) {
-                streamStateW.name = -1;
-                streamStateW.remoteLabel = str;
+            if (!Objects.equals(streamStateStreamStateW.remoteLabel, str)) {
+                streamStateStreamStateW.name = -1;
+                streamStateStreamStateW.remoteLabel = str;
                 z = true;
             }
             if (z) {
                 if (D.BUG) {
-                    Log.d(VolumeDialogControllerImpl.TAG, "onRemoteUpdate: " + str + ": " + streamStateW.level + " of " + streamStateW.levelMax);
+                    Log.d(VolumeDialogControllerImpl.TAG, "onRemoteUpdate: " + str + ": " + streamStateStreamStateW.level + " of " + streamStateStreamStateW.levelMax);
                 }
                 VolumeDialogControllerImpl.this.mCallbacks.onStateChanged(VolumeDialogControllerImpl.this.mState);
             }
@@ -1091,16 +1276,16 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         @Override // com.android.systemui.volume.MediaSessions.Callbacks
         public void onRemoteVolumeChanged(MediaSession.Token token, int i) {
             addStream(token, "onRemoteVolumeChanged");
-            int intValue = this.mRemoteStreams.get(token).intValue();
-            boolean shouldShowUI = VolumeDialogControllerImpl.this.shouldShowUI(i);
-            boolean updateActiveStreamW = VolumeDialogControllerImpl.this.updateActiveStreamW(intValue);
-            if (shouldShowUI) {
-                updateActiveStreamW |= VolumeDialogControllerImpl.this.checkRoutedToBluetoothW(3);
+            int iIntValue = this.mRemoteStreams.get(token).intValue();
+            boolean zShouldShowUI = VolumeDialogControllerImpl.this.shouldShowUI(i);
+            boolean zUpdateActiveStreamW = VolumeDialogControllerImpl.this.updateActiveStreamW(iIntValue);
+            if (zShouldShowUI) {
+                zUpdateActiveStreamW |= VolumeDialogControllerImpl.this.checkRoutedToBluetoothW(3);
             }
-            if (updateActiveStreamW) {
+            if (zUpdateActiveStreamW) {
                 VolumeDialogControllerImpl.this.mCallbacks.onStateChanged(VolumeDialogControllerImpl.this.mState);
             }
-            if (shouldShowUI) {
+            if (zShouldShowUI) {
                 VolumeDialogControllerImpl.this.mCallbacks.onShowRequested(2);
             }
         }
@@ -1109,28 +1294,26 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         public void onRemoteRemoved(MediaSession.Token token) {
             if (!this.mRemoteStreams.containsKey(token)) {
                 if (D.BUG) {
-                    String str = VolumeDialogControllerImpl.TAG;
-                    Log.d(str, "onRemoteRemoved: stream doesn't exist, aborting remote removed for token:" + token.toString());
+                    Log.d(VolumeDialogControllerImpl.TAG, "onRemoteRemoved: stream doesn't exist, aborting remote removed for token:" + token.toString());
                     return;
                 }
                 return;
             }
-            int intValue = this.mRemoteStreams.get(token).intValue();
-            VolumeDialogControllerImpl.this.mState.states.remove(intValue);
-            if (VolumeDialogControllerImpl.this.mState.activeStream == intValue) {
+            int iIntValue = this.mRemoteStreams.get(token).intValue();
+            VolumeDialogControllerImpl.this.mState.states.remove(iIntValue);
+            if (VolumeDialogControllerImpl.this.mState.activeStream == iIntValue) {
                 VolumeDialogControllerImpl.this.updateActiveStreamW(-1);
             }
             VolumeDialogControllerImpl.this.mCallbacks.onStateChanged(VolumeDialogControllerImpl.this.mState);
         }
 
         public void setStreamVolume(int i, int i2) {
-            MediaSession.Token findToken = findToken(i);
-            if (findToken == null) {
-                String str = VolumeDialogControllerImpl.TAG;
-                Log.w(str, "setStreamVolume: No token found for stream: " + i);
+            MediaSession.Token tokenFindToken = findToken(i);
+            if (tokenFindToken == null) {
+                Log.w(VolumeDialogControllerImpl.TAG, "setStreamVolume: No token found for stream: " + i);
                 return;
             }
-            VolumeDialogControllerImpl.this.mMediaSessions.setVolume(findToken, i2);
+            VolumeDialogControllerImpl.this.mMediaSessions.setVolume(tokenFindToken, i2);
         }
 
         private MediaSession.Token findToken(int i) {

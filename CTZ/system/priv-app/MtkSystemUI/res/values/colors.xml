@@ -132,12 +132,12 @@
     <color name="cardview_light_background">#ffffffff</color>
     <color name="cardview_shadow_end_color">#03000000</color>
     <color name="cardview_shadow_start_color">#37000000</color>
-    <color name="clock_gray">@android:color/decor_button_dark_color</color>
+    <color name="clock_gray">@android:color/car_body1</color>
     <color name="clock_white">#ffffffff</color>
     <color name="dark_mode_icon_color_dual_tone_background">#3d000000</color>
     <color name="dark_mode_icon_color_dual_tone_fill">#7a000000</color>
     <color name="dark_mode_icon_color_single_tone">#99000000</color>
-    <color name="default_remote_input_background">@android:color/car_red_500</color>
+    <color name="default_remote_input_background">@android:color/accessibility_focus_highlight_color</color>
     <color name="design_bottom_navigation_shadow_color">#14000000</color>
     <color name="design_default_color_primary">#3f51b5</color>
     <color name="design_default_color_primary_dark">#303f9f</color>
@@ -265,7 +265,7 @@
     <color name="notification_icon_bg_color">#ff9e9e9e</color>
     <color name="notification_legacy_background_color">#ff1a1a1a</color>
     <color name="notification_list_shadow_top">#80000000</color>
-    <color name="notification_material_background_color">@android:color/car_red_700</color>
+    <color name="notification_material_background_color">@android:color/accessibility_magnification_thumbnail_container_background_color</color>
     <color name="notification_material_background_dark_color">#ff333333</color>
     <color name="notification_material_background_dimmed_color">#ccffffff</color>
     <color name="notification_material_background_media_default_color">#ff424242</color>
@@ -283,7 +283,7 @@
     <color name="primary_text_disabled_material_dark">#4dffffff</color>
     <color name="primary_text_disabled_material_light">#39000000</color>
     <color name="qs_batterymeter_frame_color">#ff404040</color>
-    <color name="qs_detail_button">@android:color/config_progress_background_tint</color>
+    <color name="qs_detail_button">@android:color/call_notification_answer_color</color>
     <color name="qs_detail_button_white">#b3ffffff</color>
     <color name="qs_detail_transition">#66ffffff</color>
     <color name="qs_subhead">#99ffffff</color>
@@ -313,7 +313,7 @@
     <color name="remote_input_text_enabled">#ffffffff</color>
     <color name="ripple_material_dark">#33ffffff</color>
     <color name="ripple_material_light">#1f000000</color>
-    <color name="screen_pinning_primary_text">@android:color/car_title2</color>
+    <color name="screen_pinning_primary_text">@android:color/bright_foreground_disabled_holo_light</color>
     <color name="screen_pinning_request_window_bg">#80000000</color>
     <color name="secondary_text_default_material_dark">#b3ffffff</color>
     <color name="secondary_text_default_material_light">#8a000000</color>
@@ -323,7 +323,7 @@
     <color name="smart_reply_button_background">#ffffffff</color>
     <color name="smart_reply_button_stroke">#ffdadce0</color>
     <color name="smart_reply_button_text">#5f6368</color>
-    <color name="smart_reply_button_text_dark_bg">@android:color/car_red_800</color>
+    <color name="smart_reply_button_text_dark_bg">@android:color/accessibility_magnification_thumbnail_container_stroke_color</color>
     <color name="speed_bump_background">#ffd0d0d0</color>
     <color name="status_bar_clock_color">#ffffffff</color>
     <color name="switch_thumb_disabled_material_dark">#ff616161</color>
@@ -335,6 +335,6 @@
     <color name="tooltip_background_dark">#e6616161</color>
     <color name="tooltip_background_light">#e6ffffff</color>
     <color name="transparent">@android:color/transparent</color>
-    <color name="usage_graph_dots">@android:color/foreground_material_light</color>
+    <color name="usage_graph_dots">@android:color/car_cyan_800</color>
     <color name="zen_introduction">#ffffffff</color>
 </resources>

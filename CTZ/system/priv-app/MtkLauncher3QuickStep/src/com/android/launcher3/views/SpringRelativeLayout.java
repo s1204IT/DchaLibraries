@@ -14,14 +14,17 @@ import android.view.View;
 import android.widget.EdgeEffect;
 import android.widget.RelativeLayout;
 import com.android.launcher3.LauncherSettings;
+
 /* loaded from: classes.dex */
 public class SpringRelativeLayout extends RelativeLayout {
     private static final FloatPropertyCompat<SpringRelativeLayout> DAMPED_SCROLL = new FloatPropertyCompat<SpringRelativeLayout>(LauncherSettings.Settings.EXTRA_VALUE) { // from class: com.android.launcher3.views.SpringRelativeLayout.1
+        /* JADX DEBUG: Method merged with bridge method: getValue(Ljava/lang/Object;)F */
         @Override // android.support.animation.FloatPropertyCompat
         public float getValue(SpringRelativeLayout springRelativeLayout) {
             return springRelativeLayout.mDampedScrollShift;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.support.animation.FloatPropertyCompat
         public void setValue(SpringRelativeLayout springRelativeLayout, float f) {
             springRelativeLayout.setDampedScrollShift(f);
@@ -64,38 +67,34 @@ public class SpringRelativeLayout extends RelativeLayout {
     protected boolean drawChild(Canvas canvas, View view, long j) {
         if (this.mDampedScrollShift != 0.0f && this.mSpringViews.get(view.getId())) {
             canvas.translate(0.0f, this.mDampedScrollShift);
-            boolean drawChild = super.drawChild(canvas, view, j);
+            boolean zDrawChild = super.drawChild(canvas, view, j);
             canvas.translate(0.0f, -this.mDampedScrollShift);
-            return drawChild;
+            return zDrawChild;
         }
         return super.drawChild(canvas, view, j);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setActiveEdge(SpringEdgeEffect springEdgeEffect) {
+    private void setActiveEdge(SpringEdgeEffect springEdgeEffect) {
         if (this.mActiveEdge != springEdgeEffect && this.mActiveEdge != null) {
             this.mActiveEdge.mDistance = 0.0f;
         }
         this.mActiveEdge = springEdgeEffect;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setDampedScrollShift(float f) {
+    protected void setDampedScrollShift(float f) {
         if (f != this.mDampedScrollShift) {
             this.mDampedScrollShift = f;
             invalidate();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void finishScrollWithVelocity(float f) {
+    private void finishScrollWithVelocity(float f) {
         this.mSpring.setStartVelocity(f);
         this.mSpring.setStartValue(this.mDampedScrollShift);
         this.mSpring.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void finishWithShiftAndVelocity(float f, float f2, DynamicAnimation.OnAnimationEndListener onAnimationEndListener) {
+    protected void finishWithShiftAndVelocity(float f, float f2, DynamicAnimation.OnAnimationEndListener onAnimationEndListener) {
         setDampedScrollShift(f);
         this.mSpring.addEndListener(onAnimationEndListener);
         finishScrollWithVelocity(f2);
@@ -105,28 +104,24 @@ public class SpringRelativeLayout extends RelativeLayout {
         return new SpringEdgeEffectFactory();
     }
 
-    /* loaded from: classes.dex */
     private class SpringEdgeEffectFactory extends RecyclerView.EdgeEffectFactory {
         private SpringEdgeEffectFactory() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // android.support.v7.widget.RecyclerView.EdgeEffectFactory
         @NonNull
-        public EdgeEffect createEdgeEffect(RecyclerView recyclerView, int i) {
-            if (i != 1) {
-                if (i == 3) {
-                    return new SpringEdgeEffect(SpringRelativeLayout.this.getContext(), -0.3f);
-                }
-                return super.createEdgeEffect(recyclerView, i);
+        protected EdgeEffect createEdgeEffect(RecyclerView recyclerView, int i) {
+            if (i == 1) {
+                return SpringRelativeLayout.this.new SpringEdgeEffect(SpringRelativeLayout.this.getContext(), SpringRelativeLayout.VELOCITY_MULTIPLIER);
             }
-            return new SpringEdgeEffect(SpringRelativeLayout.this.getContext(), SpringRelativeLayout.VELOCITY_MULTIPLIER);
+            if (i == 3) {
+                return SpringRelativeLayout.this.new SpringEdgeEffect(SpringRelativeLayout.this.getContext(), -0.3f);
+            }
+            return super.createEdgeEffect(recyclerView, i);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SpringEdgeEffect extends EdgeEffect {
+    private class SpringEdgeEffect extends EdgeEffect {
         private float mDistance;
         private final float mVelocityMultiplier;
 

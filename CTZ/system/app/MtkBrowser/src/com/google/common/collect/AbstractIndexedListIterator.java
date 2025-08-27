@@ -2,6 +2,7 @@ package com.google.common.collect;
 
 import com.google.common.base.Preconditions;
 import java.util.NoSuchElementException;
+
 /* loaded from: classes.dex */
 abstract class AbstractIndexedListIterator<E> extends UnmodifiableListIterator<E> {
     private int position;
@@ -9,8 +10,7 @@ abstract class AbstractIndexedListIterator<E> extends UnmodifiableListIterator<E
 
     protected abstract E get(int i);
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public AbstractIndexedListIterator(int i, int i2) {
+    protected AbstractIndexedListIterator(int i, int i2) {
         Preconditions.checkPositionIndex(i2, i);
         this.size = i;
         this.position = i2;

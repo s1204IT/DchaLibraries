@@ -1,12 +1,12 @@
 package com.android.settings.gestures;
 
+import android.R;
 import android.content.Context;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
-import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.widget.VideoPreference;
@@ -15,6 +15,7 @@ import com.android.settingslib.core.lifecycle.events.OnCreate;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.core.lifecycle.events.OnSaveInstanceState;
+
 /* loaded from: classes.dex */
 public class PreventRingingPreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, LifecycleObserver, OnCreate, OnPause, OnResume, OnSaveInstanceState {
     static final String KEY_VIDEO_PAUSED = "key_video_paused";
@@ -30,7 +31,7 @@ public class PreventRingingPreferenceController extends BasePreferenceController
 
     @Override // com.android.settings.core.BasePreferenceController
     public int getAvailabilityStatus() {
-        return this.mContext.getResources().getBoolean(17957068) ? 0 : 2;
+        return this.mContext.getResources().getBoolean(R.^attr-private.materialColorSurfaceDim) ? 0 : 2;
     }
 
     @Override // com.android.settings.core.BasePreferenceController, com.android.settingslib.core.AbstractPreferenceController
@@ -50,13 +51,13 @@ public class PreventRingingPreferenceController extends BasePreferenceController
             switch (i) {
                 case 1:
                     listPreference.setValue(String.valueOf(i));
-                    return;
+                    break;
                 case 2:
                     listPreference.setValue(String.valueOf(i));
-                    return;
+                    break;
                 default:
                     listPreference.setValue(String.valueOf(0));
-                    return;
+                    break;
             }
         }
     }
@@ -66,13 +67,13 @@ public class PreventRingingPreferenceController extends BasePreferenceController
         int i;
         switch (Settings.Secure.getInt(this.mContext.getContentResolver(), "volume_hush_gesture", 1)) {
             case 1:
-                i = R.string.prevent_ringing_option_vibrate_summary;
+                i = com.android.settings.R.string.prevent_ringing_option_vibrate_summary;
                 break;
             case 2:
-                i = R.string.prevent_ringing_option_mute_summary;
+                i = com.android.settings.R.string.prevent_ringing_option_mute_summary;
                 break;
             default:
-                i = R.string.prevent_ringing_option_none_summary;
+                i = com.android.settings.R.string.prevent_ringing_option_none_summary;
                 break;
         }
         return this.mContext.getString(i);
@@ -91,7 +92,7 @@ public class PreventRingingPreferenceController extends BasePreferenceController
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnPause
-    public void onPause() {
+    public void onPause() throws IllegalStateException {
         if (this.mVideoPreference != null) {
             this.mVideoPaused = this.mVideoPreference.isVideoPaused();
             this.mVideoPreference.onViewInvisible();
@@ -99,7 +100,7 @@ public class PreventRingingPreferenceController extends BasePreferenceController
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnResume
-    public void onResume() {
+    public void onResume() throws IllegalStateException {
         if (this.mVideoPreference != null) {
             this.mVideoPreference.onViewVisible(this.mVideoPaused);
         }
@@ -110,7 +111,7 @@ public class PreventRingingPreferenceController extends BasePreferenceController
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         Settings.Secure.putInt(this.mContext.getContentResolver(), "volume_hush_gesture", Integer.parseInt((String) obj));
         preference.setSummary(getSummary());
         return true;

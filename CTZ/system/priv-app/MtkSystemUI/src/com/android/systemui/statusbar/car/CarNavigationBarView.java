@@ -8,9 +8,9 @@ import com.android.keyguard.AlphaOptimizedImageButton;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class CarNavigationBarView extends LinearLayout {
+class CarNavigationBarView extends LinearLayout {
     private CarStatusBar mCarStatusBar;
     private Context mContext;
     private View mLockScreenButtons;
@@ -31,25 +31,23 @@ public class CarNavigationBarView extends LinearLayout {
             this.mNotificationsButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.car.-$$Lambda$Y4nI6w7N50JXOiy6kyuMQKNxBt8
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    CarNavigationBarView.this.onNotificationsClick(view);
+                    this.f$0.onNotificationsClick(view);
                 }
             });
         }
-        View findViewById = findViewById(R.id.statusIcons);
-        if (findViewById != null) {
-            StatusBarIconController.DarkIconManager darkIconManager = new StatusBarIconController.DarkIconManager((LinearLayout) findViewById.findViewById(R.id.statusIcons));
+        View viewFindViewById = findViewById(R.id.statusIcons);
+        if (viewFindViewById != null) {
+            StatusBarIconController.DarkIconManager darkIconManager = new StatusBarIconController.DarkIconManager((LinearLayout) viewFindViewById.findViewById(R.id.statusIcons));
             darkIconManager.setShouldLog(true);
             ((StatusBarIconController) Dependency.get(StatusBarIconController.class)).addIconGroup(darkIconManager);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setStatusBar(CarStatusBar carStatusBar) {
+    void setStatusBar(CarStatusBar carStatusBar) {
         this.mCarStatusBar = carStatusBar;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onNotificationsClick(View view) {
+    protected void onNotificationsClick(View view) {
         this.mCarStatusBar.togglePanel();
     }
 

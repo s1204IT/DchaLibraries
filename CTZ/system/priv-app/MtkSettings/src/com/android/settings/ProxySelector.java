@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.core.InstrumentedFragment;
+
 /* loaded from: classes.dex */
 public class ProxySelector extends InstrumentedFragment implements DialogCreatable {
     Button mClearButton;
@@ -121,25 +122,25 @@ public class ProxySelector extends InstrumentedFragment implements DialogCreatab
     }
 
     void populateFields() {
-        String str;
-        int i;
+        String exclusionListAsString;
+        int port;
         Activity activity = getActivity();
-        String str2 = "";
+        String host = "";
         ProxyInfo globalProxy = ((ConnectivityManager) getActivity().getSystemService("connectivity")).getGlobalProxy();
         if (globalProxy == null) {
-            str = "";
-            i = -1;
+            exclusionListAsString = "";
+            port = -1;
         } else {
-            str2 = globalProxy.getHost();
-            i = globalProxy.getPort();
-            str = globalProxy.getExclusionListAsString();
+            host = globalProxy.getHost();
+            port = globalProxy.getPort();
+            exclusionListAsString = globalProxy.getExclusionListAsString();
         }
-        if (str2 == null) {
-            str2 = "";
+        if (host == null) {
+            host = "";
         }
-        this.mHostnameField.setText(str2);
-        this.mPortField.setText(i == -1 ? "" : Integer.toString(i));
-        this.mExclusionListField.setText(str);
+        this.mHostnameField.setText(host);
+        this.mPortField.setText(port == -1 ? "" : Integer.toString(port));
+        this.mExclusionListField.setText(exclusionListAsString);
         Intent intent = activity.getIntent();
         String stringExtra = intent.getStringExtra("button-label");
         if (!TextUtils.isEmpty(stringExtra)) {
@@ -173,25 +174,25 @@ public class ProxySelector extends InstrumentedFragment implements DialogCreatab
         }
     }
 
-    boolean saveToDb() {
-        int parseInt;
-        String trim = this.mHostnameField.getText().toString().trim();
-        String trim2 = this.mPortField.getText().toString().trim();
-        String trim3 = this.mExclusionListField.getText().toString().trim();
-        if (validate(trim, trim2, trim3) != 0) {
+    boolean saveToDb() throws NumberFormatException {
+        int i;
+        String strTrim = this.mHostnameField.getText().toString().trim();
+        String strTrim2 = this.mPortField.getText().toString().trim();
+        String strTrim3 = this.mExclusionListField.getText().toString().trim();
+        if (validate(strTrim, strTrim2, strTrim3) != 0) {
             showDialog(0);
             return false;
         }
-        if (trim2.length() > 0) {
+        if (strTrim2.length() > 0) {
             try {
-                parseInt = Integer.parseInt(trim2);
+                i = Integer.parseInt(strTrim2);
             } catch (NumberFormatException e) {
                 return false;
             }
         } else {
-            parseInt = 0;
+            i = 0;
         }
-        ((ConnectivityManager) getActivity().getSystemService("connectivity")).setGlobalProxy(new ProxyInfo(trim, parseInt, trim3));
+        ((ConnectivityManager) getActivity().getSystemService("connectivity")).setGlobalProxy(new ProxyInfo(strTrim, i, strTrim3));
         return true;
     }
 

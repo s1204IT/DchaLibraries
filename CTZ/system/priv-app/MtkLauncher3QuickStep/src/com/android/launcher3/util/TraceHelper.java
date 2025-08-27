@@ -2,6 +2,7 @@ package com.android.launcher3.util;
 
 import android.util.ArrayMap;
 import android.util.MutableLong;
+
 /* loaded from: classes.dex */
 public class TraceHelper {
     private static final boolean ENABLED = false;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class UserDictionarySettingsUtils {
     public static String getLocaleDisplayName(Context context, String str) {

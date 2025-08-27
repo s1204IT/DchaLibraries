@@ -1,27 +1,25 @@
 package com.android.quicksearchbox;
 
 import android.text.Spannable;
+
 /* loaded from: classes.dex */
 public abstract class SuggestionFormatter {
     private final TextAppearanceFactory mSpanFactory;
 
     public abstract CharSequence formatSuggestion(String str, String str2);
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public SuggestionFormatter(TextAppearanceFactory textAppearanceFactory) {
+    protected SuggestionFormatter(TextAppearanceFactory textAppearanceFactory) {
         this.mSpanFactory = textAppearanceFactory;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void applyQueryTextStyle(Spannable spannable, int i, int i2) {
+    protected void applyQueryTextStyle(Spannable spannable, int i, int i2) {
         if (i == i2) {
             return;
         }
         setSpans(spannable, i, i2, this.mSpanFactory.createSuggestionQueryTextAppearance());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void applySuggestedTextStyle(Spannable spannable, int i, int i2) {
+    protected void applySuggestedTextStyle(Spannable spannable, int i, int i2) {
         if (i == i2) {
             return;
         }

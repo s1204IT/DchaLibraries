@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
+
 /* loaded from: classes.dex */
 public class VibratorHelper {
     private static final AudioAttributes STATUS_BAR_VIBRATION_ATTRIBUTES = new AudioAttributes.Builder().setContentType(4).setUsage(13).build();
@@ -33,14 +34,13 @@ public class VibratorHelper {
             AsyncTask.execute(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$VibratorHelper$-aLryVlYLKeF6vrqCqBn9qjn6bQ
                 @Override // java.lang.Runnable
                 public final void run() {
-                    VibratorHelper.this.mVibrator.vibrate(VibrationEffect.get(i, false), VibratorHelper.STATUS_BAR_VIBRATION_ATTRIBUTES);
+                    this.f$0.mVibrator.vibrate(VibrationEffect.get(i, false), VibratorHelper.STATUS_BAR_VIBRATION_ATTRIBUTES);
                 }
             });
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateHapticFeedBackEnabled() {
+    private void updateHapticFeedBackEnabled() {
         this.mHapticFeedbackEnabled = Settings.System.getIntForUser(this.mContext.getContentResolver(), "haptic_feedback_enabled", 0, -2) != 0;
     }
 }

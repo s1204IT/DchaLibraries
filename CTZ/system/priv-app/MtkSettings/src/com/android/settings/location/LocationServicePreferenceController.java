@@ -15,6 +15,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LocationServicePreferenceController extends LocationBasePreferenceController implements LifecycleObserver, OnPause, OnResume {
     static final IntentFilter INTENT_FILTER_INJECTED_SETTING_CHANGED = new IntentFilter("android.location.InjectedSettingChanged");

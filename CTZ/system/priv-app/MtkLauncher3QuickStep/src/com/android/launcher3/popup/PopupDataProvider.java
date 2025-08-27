@@ -1,6 +1,7 @@
 package com.android.launcher3.popup;
 
 import android.content.ComponentName;
+import android.content.res.Resources;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
 import com.android.launcher3.ItemInfo;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class PopupDataProvider implements NotificationListener.NotificationsChangedListener {
     private static final boolean LOGD = false;
@@ -38,34 +40,34 @@ public class PopupDataProvider implements NotificationListener.NotificationsChan
 
     @Override // com.android.launcher3.notification.NotificationListener.NotificationsChangedListener
     public void onNotificationPosted(PackageUserKey packageUserKey, NotificationKeyData notificationKeyData, boolean z) {
-        boolean addOrUpdateNotificationKey;
+        boolean zAddOrUpdateNotificationKey;
         BadgeInfo badgeInfo = this.mPackageUserToBadgeInfos.get(packageUserKey);
         if (badgeInfo == null) {
             if (!z) {
                 BadgeInfo badgeInfo2 = new BadgeInfo(packageUserKey);
                 badgeInfo2.addOrUpdateNotificationKey(notificationKeyData);
                 this.mPackageUserToBadgeInfos.put(packageUserKey, badgeInfo2);
-                addOrUpdateNotificationKey = true;
+                zAddOrUpdateNotificationKey = true;
             } else {
-                addOrUpdateNotificationKey = false;
+                zAddOrUpdateNotificationKey = false;
             }
         } else {
             if (z) {
-                addOrUpdateNotificationKey = badgeInfo.removeNotificationKey(notificationKeyData);
+                zAddOrUpdateNotificationKey = badgeInfo.removeNotificationKey(notificationKeyData);
             } else {
-                addOrUpdateNotificationKey = badgeInfo.addOrUpdateNotificationKey(notificationKeyData);
+                zAddOrUpdateNotificationKey = badgeInfo.addOrUpdateNotificationKey(notificationKeyData);
             }
             if (badgeInfo.getNotificationKeys().size() == 0) {
                 this.mPackageUserToBadgeInfos.remove(packageUserKey);
             }
         }
-        if (addOrUpdateNotificationKey) {
+        if (zAddOrUpdateNotificationKey) {
             this.mLauncher.updateIconBadges(Utilities.singletonHashSet(packageUserKey));
         }
     }
 
     @Override // com.android.launcher3.notification.NotificationListener.NotificationsChangedListener
-    public void onNotificationRemoved(PackageUserKey packageUserKey, NotificationKeyData notificationKeyData) {
+    public void onNotificationRemoved(PackageUserKey packageUserKey, NotificationKeyData notificationKeyData) throws Resources.NotFoundException {
         BadgeInfo badgeInfo = this.mPackageUserToBadgeInfos.get(packageUserKey);
         if (badgeInfo != null && badgeInfo.removeNotificationKey(notificationKeyData)) {
             if (badgeInfo.getNotificationKeys().size() == 0) {
@@ -77,37 +79,37 @@ public class PopupDataProvider implements NotificationListener.NotificationsChan
     }
 
     @Override // com.android.launcher3.notification.NotificationListener.NotificationsChangedListener
-    public void onNotificationFullRefresh(List<StatusBarNotification> list) {
+    public void onNotificationFullRefresh(List<StatusBarNotification> list) throws Resources.NotFoundException {
         if (list == null) {
             return;
         }
-        HashMap hashMap = new HashMap(this.mPackageUserToBadgeInfos);
+        HashMap map = new HashMap(this.mPackageUserToBadgeInfos);
         this.mPackageUserToBadgeInfos.clear();
         for (StatusBarNotification statusBarNotification : list) {
-            PackageUserKey fromNotification = PackageUserKey.fromNotification(statusBarNotification);
-            BadgeInfo badgeInfo = this.mPackageUserToBadgeInfos.get(fromNotification);
+            PackageUserKey packageUserKeyFromNotification = PackageUserKey.fromNotification(statusBarNotification);
+            BadgeInfo badgeInfo = this.mPackageUserToBadgeInfos.get(packageUserKeyFromNotification);
             if (badgeInfo == null) {
-                badgeInfo = new BadgeInfo(fromNotification);
-                this.mPackageUserToBadgeInfos.put(fromNotification, badgeInfo);
+                badgeInfo = new BadgeInfo(packageUserKeyFromNotification);
+                this.mPackageUserToBadgeInfos.put(packageUserKeyFromNotification, badgeInfo);
             }
             badgeInfo.addOrUpdateNotificationKey(NotificationKeyData.fromNotification(statusBarNotification));
         }
         for (PackageUserKey packageUserKey : this.mPackageUserToBadgeInfos.keySet()) {
-            BadgeInfo badgeInfo2 = (BadgeInfo) hashMap.get(packageUserKey);
+            BadgeInfo badgeInfo2 = (BadgeInfo) map.get(packageUserKey);
             BadgeInfo badgeInfo3 = this.mPackageUserToBadgeInfos.get(packageUserKey);
             if (badgeInfo2 == null) {
-                hashMap.put(packageUserKey, badgeInfo3);
+                map.put(packageUserKey, badgeInfo3);
             } else if (!badgeInfo2.shouldBeInvalidated(badgeInfo3)) {
-                hashMap.remove(packageUserKey);
+                map.remove(packageUserKey);
             }
         }
-        if (!hashMap.isEmpty()) {
-            this.mLauncher.updateIconBadges(hashMap.keySet());
+        if (!map.isEmpty()) {
+            this.mLauncher.updateIconBadges(map.keySet());
         }
-        trimNotifications(hashMap);
+        trimNotifications(map);
     }
 
-    private void trimNotifications(Map<PackageUserKey, BadgeInfo> map) {
+    private void trimNotifications(Map<PackageUserKey, BadgeInfo> map) throws Resources.NotFoundException {
         PopupContainerWithArrow open = PopupContainerWithArrow.getOpen(this.mLauncher);
         if (open != null) {
             open.trimNotifications(map);
@@ -151,7 +153,6 @@ public class PopupDataProvider implements NotificationListener.NotificationsChan
 
     @NonNull
     public List<SystemShortcut> getEnabledSystemShortcutsForItem(ItemInfo itemInfo) {
-        SystemShortcut[] systemShortcutArr;
         ArrayList arrayList = new ArrayList();
         for (SystemShortcut systemShortcut : SYSTEM_SHORTCUTS) {
             if (systemShortcut.getOnClickListener(this.mLauncher, itemInfo) != null) {

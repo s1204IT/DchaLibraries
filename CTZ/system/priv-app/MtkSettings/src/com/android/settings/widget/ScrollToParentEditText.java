@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewParent;
+
 /* loaded from: classes.dex */
 public class ScrollToParentEditText extends ImeAwareEditText {
     private Rect mRect;
@@ -16,7 +16,7 @@ public class ScrollToParentEditText extends ImeAwareEditText {
 
     @Override // android.view.View
     public boolean requestRectangleOnScreen(Rect rect, boolean z) {
-        ViewParent parent = getParent();
+        Object parent = getParent();
         if (parent instanceof View) {
             View view = (View) parent;
             view.getDrawingRect(this.mRect);

@@ -10,6 +10,7 @@ import com.android.settingslib.users.UserManagerHelper;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.car.UserGridRecyclerView;
 import com.android.systemui.statusbar.phone.StatusBar;
+
 /* loaded from: classes.dex */
 public class FullscreenUserSwitcher {
     private final View mContainer;
@@ -31,12 +32,12 @@ public class FullscreenUserSwitcher {
         this.mUserGridView.setUserSelectionListener(new UserGridRecyclerView.UserSelectionListener() { // from class: com.android.systemui.statusbar.car.-$$Lambda$FullscreenUserSwitcher$aJmHs-UVhjESZPP4fORPpYI740g
             @Override // com.android.systemui.statusbar.car.UserGridRecyclerView.UserSelectionListener
             public final void onUserSelected(UserGridRecyclerView.UserRecord userRecord) {
-                FullscreenUserSwitcher.this.onUserSelected(userRecord);
+                this.f$0.onUserSelected(userRecord);
             }
         });
         this.mUserManagerHelper = new UserManagerHelper(context);
         updateCurrentForegroundUser();
-        this.mShortAnimDuration = this.mContainer.getResources().getInteger(17694720);
+        this.mShortAnimDuration = this.mContainer.getResources().getInteger(android.R.integer.config_shortAnimTime);
     }
 
     public void show() {
@@ -59,7 +60,7 @@ public class FullscreenUserSwitcher {
             this.mParent.post(new Runnable() { // from class: com.android.systemui.statusbar.car.-$$Lambda$FullscreenUserSwitcher$IK7lNRNVhlYLd9PajOKix9WDNFg
                 @Override // java.lang.Runnable
                 public final void run() {
-                    FullscreenUserSwitcher.this.dismissKeyguard();
+                    this.f$0.dismissKeyguard();
                 }
             });
         }
@@ -73,8 +74,7 @@ public class FullscreenUserSwitcher {
         this.mCurrentForegroundUserId = this.mUserManagerHelper.getForegroundUserId();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onUserSelected(UserGridRecyclerView.UserRecord userRecord) {
+    private void onUserSelected(UserGridRecyclerView.UserRecord userRecord) {
         if (userRecord.mIsForeground) {
             dismissKeyguard();
         } else {
@@ -82,8 +82,7 @@ public class FullscreenUserSwitcher {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dismissKeyguard() {
+    private void dismissKeyguard() {
         this.mStatusBar.executeRunnableDismissingKeyguard(null, null, true, true, true);
     }
 

@@ -5,12 +5,12 @@ import com.android.internal.app.ColorDisplayController;
 import com.android.settings.R;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.display.NightDisplaySettings;
+
 /* loaded from: classes.dex */
 public final class NightDisplayCondition extends Condition implements ColorDisplayController.Callback {
     private ColorDisplayController mController;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public NightDisplayCondition(ConditionManager conditionManager) {
+    NightDisplayCondition(ConditionManager conditionManager) {
         super(conditionManager);
         this.mController = new ColorDisplayController(conditionManager.getContext());
         this.mController.setListener(this);

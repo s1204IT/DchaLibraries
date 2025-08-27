@@ -3,12 +3,12 @@ package com.android.systemui.shared.recents.model;
 import android.util.LruCache;
 import com.android.systemui.shared.recents.model.Task;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class TaskKeyLruCache<V> extends TaskKeyCache<V> {
     private final LruCache<Integer, V> mCache;
     private final EvictionCallback mEvictionCallback;
 
-    /* loaded from: classes.dex */
     public interface EvictionCallback {
         void onEntryEvicted(Task.TaskKey taskKey);
     }
@@ -16,9 +16,9 @@ public class TaskKeyLruCache<V> extends TaskKeyCache<V> {
     public TaskKeyLruCache(int i, EvictionCallback evictionCallback) {
         this.mEvictionCallback = evictionCallback;
         this.mCache = new LruCache<Integer, V>(i) { // from class: com.android.systemui.shared.recents.model.TaskKeyLruCache.1
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: entryRemoved(ZLjava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V */
             @Override // android.util.LruCache
-            public void entryRemoved(boolean z, Integer num, V v, V v2) {
+            protected void entryRemoved(boolean z, Integer num, V v, V v2) {
                 if (TaskKeyLruCache.this.mEvictionCallback != null) {
                     TaskKeyLruCache.this.mEvictionCallback.onEntryEvicted(TaskKeyLruCache.this.mKeys.get(num.intValue()));
                 }
@@ -27,8 +27,7 @@ public class TaskKeyLruCache<V> extends TaskKeyCache<V> {
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public final void trimToSize(int i) {
+    final void trimToSize(int i) {
         this.mCache.trimToSize(i);
     }
 

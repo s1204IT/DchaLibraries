@@ -4,6 +4,7 @@ import com.android.launcher3.notification.NotificationKeyData;
 import com.android.launcher3.util.PackageUserKey;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BadgeInfo {
     public static final int MAX_COUNT = 999;
@@ -16,8 +17,8 @@ public class BadgeInfo {
     }
 
     public boolean addOrUpdateNotificationKey(NotificationKeyData notificationKeyData) {
-        int indexOf = this.mNotificationKeys.indexOf(notificationKeyData);
-        NotificationKeyData notificationKeyData2 = indexOf == -1 ? null : this.mNotificationKeys.get(indexOf);
+        int iIndexOf = this.mNotificationKeys.indexOf(notificationKeyData);
+        NotificationKeyData notificationKeyData2 = iIndexOf == -1 ? null : this.mNotificationKeys.get(iIndexOf);
         if (notificationKeyData2 != null) {
             if (notificationKeyData2.count == notificationKeyData.count) {
                 return false;
@@ -27,19 +28,19 @@ public class BadgeInfo {
             notificationKeyData2.count = notificationKeyData.count;
             return true;
         }
-        boolean add = this.mNotificationKeys.add(notificationKeyData);
-        if (add) {
+        boolean zAdd = this.mNotificationKeys.add(notificationKeyData);
+        if (zAdd) {
             this.mTotalCount += notificationKeyData.count;
         }
-        return add;
+        return zAdd;
     }
 
     public boolean removeNotificationKey(NotificationKeyData notificationKeyData) {
-        boolean remove = this.mNotificationKeys.remove(notificationKeyData);
-        if (remove) {
+        boolean zRemove = this.mNotificationKeys.remove(notificationKeyData);
+        if (zRemove) {
             this.mTotalCount -= notificationKeyData.count;
         }
-        return remove;
+        return zRemove;
     }
 
     public List<NotificationKeyData> getNotificationKeys() {
@@ -47,7 +48,7 @@ public class BadgeInfo {
     }
 
     public int getNotificationCount() {
-        return Math.min(this.mTotalCount, (int) MAX_COUNT);
+        return Math.min(this.mTotalCount, MAX_COUNT);
     }
 
     public boolean shouldBeInvalidated(BadgeInfo badgeInfo) {

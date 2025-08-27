@@ -31,8 +31,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class RecentAppsPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, Comparator<UsageStats> {
     static final String KEY_DIVIDER = "all_app_info_divider";
@@ -112,6 +114,7 @@ public class RecentAppsPreferenceController extends AbstractPreferenceController
         }.execute(new Void[0]);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
     @Override // java.util.Comparator
     public final int compare(UsageStats usageStats, UsageStats usageStats2) {
         return Long.compare(usageStats2.getLastTimeUsed(), usageStats.getLastTimeUsed());
@@ -123,10 +126,10 @@ public class RecentAppsPreferenceController extends AbstractPreferenceController
         if (displayableRecentAppList != null && !displayableRecentAppList.isEmpty()) {
             this.mHasRecentApps = true;
             displayRecentApps(context, displayableRecentAppList);
-            return;
+        } else {
+            this.mHasRecentApps = false;
+            displayOnlyAppInfo();
         }
-        this.mHasRecentApps = false;
-        displayOnlyAppInfo();
     }
 
     void reloadData() {
@@ -149,7 +152,6 @@ public class RecentAppsPreferenceController extends AbstractPreferenceController
     }
 
     private void displayRecentApps(Context context, List<UsageStats> list) {
-        UsageStats usageStats;
         boolean z;
         this.mCategory.setTitle(R.string.recent_app_category_title);
         this.mDivider.setVisible(true);
@@ -169,31 +171,32 @@ public class RecentAppsPreferenceController extends AbstractPreferenceController
             final String packageName = list.get(i2).getPackageName();
             final ApplicationsState.AppEntry entry = this.mApplicationsState.getEntry(packageName, this.mUserId);
             if (entry != null) {
-                Preference preference2 = (Preference) arrayMap.remove(packageName);
-                if (preference2 == null) {
-                    preference2 = new AppPreference(context);
+                Preference appPreference = (Preference) arrayMap.remove(packageName);
+                if (appPreference == null) {
+                    appPreference = new AppPreference(context);
                     z = false;
                 } else {
                     z = true;
                 }
-                preference2.setKey(packageName);
-                preference2.setTitle(entry.label);
-                preference2.setIcon(this.mIconDrawableFactory.getBadgedIcon(entry.info));
-                preference2.setSummary(StringUtil.formatRelativeTime(this.mContext, System.currentTimeMillis() - usageStats.getLastTimeUsed(), false));
-                preference2.setOrder(i2);
-                preference2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.applications.-$$Lambda$RecentAppsPreferenceController$benLpqwf0HURWhX82bB7mmwJ8Oo
+                appPreference.setKey(packageName);
+                appPreference.setTitle(entry.label);
+                appPreference.setIcon(this.mIconDrawableFactory.getBadgedIcon(entry.info));
+                appPreference.setSummary(StringUtil.formatRelativeTime(this.mContext, System.currentTimeMillis() - r7.getLastTimeUsed(), false));
+                appPreference.setOrder(i2);
+                appPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.applications.-$$Lambda$RecentAppsPreferenceController$benLpqwf0HURWhX82bB7mmwJ8Oo
                     @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
-                    public final boolean onPreferenceClick(Preference preference3) {
-                        return RecentAppsPreferenceController.lambda$displayRecentApps$0(RecentAppsPreferenceController.this, packageName, entry, preference3);
+                    public final boolean onPreferenceClick(Preference preference2) {
+                        return RecentAppsPreferenceController.lambda$displayRecentApps$0(this.f$0, packageName, entry, preference2);
                     }
                 });
                 if (!z) {
-                    this.mCategory.addPreference(preference2);
+                    this.mCategory.addPreference(appPreference);
                 }
             }
         }
-        for (Preference preference3 : arrayMap.values()) {
-            this.mCategory.removePreference(preference3);
+        Iterator it = arrayMap.values().iterator();
+        while (it.hasNext()) {
+            this.mCategory.removePreference((Preference) it.next());
         }
     }
 
@@ -239,19 +242,19 @@ public class RecentAppsPreferenceController extends AbstractPreferenceController
         if (usageStats.getLastTimeUsed() < this.mCal.getTimeInMillis()) {
             Log.d("RecentAppsCtrl", "Invalid timestamp, skipping " + packageName);
             return false;
-        } else if (SKIP_SYSTEM_PACKAGES.contains(packageName)) {
+        }
+        if (SKIP_SYSTEM_PACKAGES.contains(packageName)) {
             Log.d("RecentAppsCtrl", "System package, skipping " + packageName);
             return false;
-        } else {
-            if (this.mPm.resolveActivity(new Intent().addCategory("android.intent.category.LAUNCHER").setPackage(packageName), 0) == null) {
-                ApplicationsState.AppEntry entry = this.mApplicationsState.getEntry(packageName, this.mUserId);
-                if (entry == null || entry.info == null || !AppUtils.isInstant(entry.info)) {
-                    Log.d("RecentAppsCtrl", "Not a user visible or instant app, skipping " + packageName);
-                    return false;
-                }
-                return true;
+        }
+        if (this.mPm.resolveActivity(new Intent().addCategory("android.intent.category.LAUNCHER").setPackage(packageName), 0) == null) {
+            ApplicationsState.AppEntry entry = this.mApplicationsState.getEntry(packageName, this.mUserId);
+            if (entry == null || entry.info == null || !AppUtils.isInstant(entry.info)) {
+                Log.d("RecentAppsCtrl", "Not a user visible or instant app, skipping " + packageName);
+                return false;
             }
             return true;
         }
+        return true;
     }
 }

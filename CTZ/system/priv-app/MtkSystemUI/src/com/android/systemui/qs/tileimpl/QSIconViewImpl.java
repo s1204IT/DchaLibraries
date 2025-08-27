@@ -16,6 +16,7 @@ import com.android.systemui.plugins.qs.QSIconView;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.AlphaControlledSignalTileView;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class QSIconViewImpl extends QSIconView {
     private boolean mAnimationEnabled;
@@ -46,17 +47,15 @@ public class QSIconViewImpl extends QSIconView {
         return this.mIcon;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.View
-    public void onMeasure(int i, int i2) {
+    protected void onMeasure(int i, int i2) {
         int size = View.MeasureSpec.getSize(i);
         this.mIcon.measure(View.MeasureSpec.makeMeasureSpec(size, getIconMeasureMode()), exactly(this.mIconSizePx));
         setMeasuredDimension(size, this.mIcon.getMeasuredHeight() + this.mTilePaddingBelowIconPx);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         layout(this.mIcon, (getMeasuredWidth() - this.mIcon.getMeasuredWidth()) / 2, 0);
     }
 
@@ -65,8 +64,12 @@ public class QSIconViewImpl extends QSIconView {
         setIcon((ImageView) this.mIcon, state);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateIcon(ImageView imageView, QSTile.State state) {
+    /* JADX DEBUG: Multi-variable search result rejected for r6v0, resolved type: android.graphics.drawable.Drawable */
+    /* JADX DEBUG: Multi-variable search result rejected for r6v1, resolved type: android.graphics.drawable.Drawable */
+    /* JADX DEBUG: Multi-variable search result rejected for r6v7, resolved type: android.graphics.drawable.Drawable */
+    /* JADX DEBUG: Multi-variable search result rejected for r6v8, resolved type: android.graphics.drawable.Drawable */
+    /* JADX WARN: Multi-variable type inference failed */
+    protected void updateIcon(ImageView imageView, QSTile.State state) {
         Drawable drawable;
         QSTile.Icon icon = state.iconSupplier != null ? state.iconSupplier.get() : state.icon;
         if (!Objects.equals(icon, imageView.getTag(R.id.qs_icon_tag)) || !Objects.equals(state.slash, imageView.getTag(R.id.qs_slash_tag))) {
@@ -74,10 +77,10 @@ public class QSIconViewImpl extends QSIconView {
             if (icon != null) {
                 drawable = z ? icon.getDrawable(this.mContext) : icon.getInvisibleDrawable(this.mContext);
             } else {
-                drawable = null;
+                drawable = 0;
             }
             int padding = icon != null ? icon.getPadding() : 0;
-            if (drawable != null) {
+            if (drawable != 0) {
                 drawable.setAutoMirrored(false);
                 drawable.setLayoutDirection(getLayoutDirection());
             }
@@ -92,10 +95,16 @@ public class QSIconViewImpl extends QSIconView {
             imageView.setTag(R.id.qs_slash_tag, state.slash);
             imageView.setPadding(0, padding, 0, padding);
             if (drawable instanceof Animatable2) {
-                final Animatable2 animatable2 = (Animatable2) drawable;
+                Animatable2 animatable2 = (Animatable2) drawable;
                 animatable2.start();
                 if (state.isTransient) {
                     animatable2.registerAnimationCallback(new Animatable2.AnimationCallback() { // from class: com.android.systemui.qs.tileimpl.QSIconViewImpl.1
+                        final /* synthetic */ Animatable2 val$a;
+
+                        AnonymousClass1(Animatable2 animatable22) {
+                            animatable2 = animatable22;
+                        }
+
                         @Override // android.graphics.drawable.Animatable2.AnimationCallback
                         public void onAnimationEnd(Drawable drawable2) {
                             animatable2.start();
@@ -106,8 +115,21 @@ public class QSIconViewImpl extends QSIconView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setIcon(final ImageView imageView, final QSTile.State state) {
+    /* renamed from: com.android.systemui.qs.tileimpl.QSIconViewImpl$1 */
+    class AnonymousClass1 extends Animatable2.AnimationCallback {
+        final /* synthetic */ Animatable2 val$a;
+
+        AnonymousClass1(Animatable2 animatable22) {
+            animatable2 = animatable22;
+        }
+
+        @Override // android.graphics.drawable.Animatable2.AnimationCallback
+        public void onAnimationEnd(Drawable drawable2) {
+            animatable2.start();
+        }
+    }
+
+    protected void setIcon(final ImageView imageView, final QSTile.State state) {
         if (state.disabledByPolicy) {
             imageView.setColorFilter(getContext().getColor(R.color.qs_tile_disabled_color));
         } else {
@@ -120,7 +142,7 @@ public class QSIconViewImpl extends QSIconView {
                 animateGrayScale(this.mTint, color, imageView, new Runnable() { // from class: com.android.systemui.qs.tileimpl.-$$Lambda$QSIconViewImpl$J1UpdvvSiFAmzZuy0PTr_V3YTn0
                     @Override // java.lang.Runnable
                     public final void run() {
-                        QSIconViewImpl.this.updateIcon(imageView, state);
+                        this.f$0.updateIcon(imageView, state);
                     }
                 });
                 this.mTint = color;
@@ -142,41 +164,61 @@ public class QSIconViewImpl extends QSIconView {
         return QSTileImpl.getColorForState(getContext(), i);
     }
 
-    private void animateGrayScale(int i, int i2, final ImageView imageView, final Runnable runnable) {
+    private void animateGrayScale(int i, int i2, final ImageView imageView, Runnable runnable) {
         if (imageView instanceof AlphaControlledSignalTileView.AlphaControlledSlashImageView) {
             ((AlphaControlledSignalTileView.AlphaControlledSlashImageView) imageView).setFinalImageTintList(ColorStateList.valueOf(i2));
         }
         if (this.mAnimationEnabled && ValueAnimator.areAnimatorsEnabled()) {
-            final float alpha = Color.alpha(i);
-            final float alpha2 = Color.alpha(i2);
-            final float red = Color.red(i);
-            final float red2 = Color.red(i2);
-            ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-            ofFloat.setDuration(350L);
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.qs.tileimpl.-$$Lambda$QSIconViewImpl$CeqSBPdIhNYTow_6QM6a9ZwQyb8
+            final float fAlpha = Color.alpha(i);
+            final float fAlpha2 = Color.alpha(i2);
+            final float fRed = Color.red(i);
+            final float fRed2 = Color.red(i2);
+            ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+            valueAnimatorOfFloat.setDuration(350L);
+            valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.qs.tileimpl.-$$Lambda$QSIconViewImpl$CeqSBPdIhNYTow_6QM6a9ZwQyb8
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    QSIconViewImpl.lambda$animateGrayScale$1(alpha, alpha2, red, red2, imageView, valueAnimator);
+                    QSIconViewImpl.lambda$animateGrayScale$1(fAlpha, fAlpha2, fRed, fRed2, imageView, valueAnimator);
                 }
             });
-            ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.tileimpl.QSIconViewImpl.2
+            valueAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.tileimpl.QSIconViewImpl.2
+                final /* synthetic */ Runnable val$endRunnable;
+
+                AnonymousClass2(Runnable runnable2) {
+                    runnable = runnable2;
+                }
+
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
                     runnable.run();
                 }
             });
-            ofFloat.start();
+            valueAnimatorOfFloat.start();
             return;
         }
         setTint(imageView, i2);
-        runnable.run();
+        runnable2.run();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$animateGrayScale$1(float f, float f2, float f3, float f4, ImageView imageView, ValueAnimator valueAnimator) {
+    static /* synthetic */ void lambda$animateGrayScale$1(float f, float f2, float f3, float f4, ImageView imageView, ValueAnimator valueAnimator) {
         float animatedFraction = valueAnimator.getAnimatedFraction();
-        int i = (int) (f3 + ((f4 - f3) * animatedFraction));
-        setTint(imageView, Color.argb((int) (f + ((f2 - f) * animatedFraction)), i, i, i));
+        int i = (int) (f + ((f2 - f) * animatedFraction));
+        int i2 = (int) (f3 + ((f4 - f3) * animatedFraction));
+        setTint(imageView, Color.argb(i, i2, i2, i2));
+    }
+
+    /* renamed from: com.android.systemui.qs.tileimpl.QSIconViewImpl$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        final /* synthetic */ Runnable val$endRunnable;
+
+        AnonymousClass2(Runnable runnable2) {
+            runnable = runnable2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            runnable.run();
+        }
     }
 
     public static void setTint(ImageView imageView, int i) {
@@ -189,7 +231,7 @@ public class QSIconViewImpl extends QSIconView {
 
     protected View createIcon() {
         SlashImageView slashImageView = new SlashImageView(this.mContext);
-        slashImageView.setId(16908294);
+        slashImageView.setId(android.R.id.icon);
         slashImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         return slashImageView;
     }

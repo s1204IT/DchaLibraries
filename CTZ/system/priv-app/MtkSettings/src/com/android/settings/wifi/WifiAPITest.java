@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.widget.EditText;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class WifiAPITest extends SettingsPreferenceFragment implements Preference.OnPreferenceClickListener {
     private Preference mWifiDisableNetwork;
@@ -52,7 +53,8 @@ public class WifiAPITest extends SettingsPreferenceFragment implements Preferenc
         if (preference == this.mWifiDisconnect) {
             this.mWifiManager.disconnect();
             return true;
-        } else if (preference == this.mWifiDisableNetwork) {
+        }
+        if (preference == this.mWifiDisableNetwork) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Input");
             builder.setMessage("Enter Network ID");
@@ -77,7 +79,8 @@ public class WifiAPITest extends SettingsPreferenceFragment implements Preferenc
             });
             builder.show();
             return true;
-        } else if (preference == this.mWifiEnableNetwork) {
+        }
+        if (preference == this.mWifiEnableNetwork) {
             AlertDialog.Builder builder2 = new AlertDialog.Builder(getContext());
             builder2.setTitle("Input");
             builder2.setMessage("Enter Network ID");
@@ -98,8 +101,7 @@ public class WifiAPITest extends SettingsPreferenceFragment implements Preferenc
             });
             builder2.show();
             return true;
-        } else {
-            return true;
         }
+        return true;
     }
 }

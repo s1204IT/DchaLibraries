@@ -2,6 +2,7 @@ package android.support.v4.media;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+
 /* loaded from: classes.dex */
 public final class SessionCommand2 {
     private final int mCommandCode;
@@ -42,11 +43,11 @@ public final class SessionCommand2 {
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof SessionCommand2) {
-            SessionCommand2 other = (SessionCommand2) obj;
-            return this.mCommandCode == other.mCommandCode && TextUtils.equals(this.mCustomCommand, other.mCustomCommand);
+        if (!(obj instanceof SessionCommand2)) {
+            return false;
         }
-        return false;
+        SessionCommand2 other = (SessionCommand2) obj;
+        return this.mCommandCode == other.mCommandCode && TextUtils.equals(this.mCustomCommand, other.mCustomCommand);
     }
 
     public int hashCode() {

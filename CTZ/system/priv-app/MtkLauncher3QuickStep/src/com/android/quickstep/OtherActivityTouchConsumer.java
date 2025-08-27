@@ -30,6 +30,7 @@ import com.android.systemui.shared.system.WindowManagerWrapper;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public class OtherActivityTouchConsumer extends ContextWrapper implements TouchConsumer {
@@ -75,12 +76,13 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
     }
 
     @Override // com.android.quickstep.TouchConsumer
-    public void onShowOverviewFromAltTab() {
+    public void onShowOverviewFromAltTab() throws InterruptedException {
         startTouchTrackingForWindowAnimation(SystemClock.uptimeMillis());
     }
 
+    /* JADX DEBUG: Method merged with bridge method: accept(Ljava/lang/Object;)V */
     @Override // java.util.function.Consumer
-    public void accept(MotionEvent motionEvent) {
+    public void accept(MotionEvent motionEvent) throws InterruptedException {
         if (this.mVelocityTracker == null) {
             return;
         }
@@ -99,16 +101,16 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
                     }
                     this.mDisplayRotation = ((WindowManager) getSystemService(WindowManager.class)).getDefaultDisplay().getRotation();
                     WindowManagerWrapper.getInstance().getStableInsets(this.mStableInsets);
-                    return;
+                    break;
                 case 1:
                 case 3:
                     TraceHelper.endSection("TouchInt");
                     finishTouchTracking(motionEvent);
-                    return;
+                    break;
                 case 2:
-                    int findPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
-                    if (findPointerIndex != -1) {
-                        this.mLastPos.set(motionEvent.getX(findPointerIndex), motionEvent.getY(findPointerIndex));
+                    int iFindPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
+                    if (iFindPointerIndex != -1) {
+                        this.mLastPos.set(motionEvent.getX(iFindPointerIndex), motionEvent.getY(iFindPointerIndex));
                         float displacement = getDisplacement(motionEvent);
                         if (!this.mPassedInitialSlop && !this.mIsDeferredDownTarget && Math.abs(displacement) > this.mQuickStepDragSlop) {
                             this.mPassedInitialSlop = true;
@@ -116,14 +118,12 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
                         }
                         if (this.mPassedInitialSlop && this.mInteractionHandler != null) {
                             this.mInteractionHandler.updateDisplacement(displacement - this.mStartDisplacement);
-                            return;
+                            break;
                         }
-                        return;
                     }
-                    return;
-                default:
-                    return;
+                    break;
             }
+            return;
         }
         int actionIndex = motionEvent.getActionIndex();
         if (motionEvent.getPointerId(actionIndex) == this.mActivePointerId) {
@@ -151,7 +151,7 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
         return this.mDisplayRotation == 3 && this.mStableInsets.left > 0;
     }
 
-    private void startTouchTrackingForWindowAnimation(long j) {
+    private void startTouchTrackingForWindowAnimation(long j) throws InterruptedException {
         final RecentsAnimationState recentsAnimationState = new RecentsAnimationState();
         final WindowTransformSwipeHandler windowTransformSwipeHandler = new WindowTransformSwipeHandler(recentsAnimationState.id, this.mRunningTask, this, j, this.mActivityControlHelper);
         this.mRecentsModel.loadTasks(this.mRunningTask.id, null);
@@ -161,14 +161,14 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
         windowTransformSwipeHandler.setGestureEndCallback(new Runnable() { // from class: com.android.quickstep.-$$Lambda$acy6R1xKzaFdF7tRPnHofYaRRNY
             @Override // java.lang.Runnable
             public final void run() {
-                MotionEventQueue.this.reset();
+                motionEventQueue.reset();
             }
         });
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         windowTransformSwipeHandler.setLauncherOnDrawCallback(new Runnable() { // from class: com.android.quickstep.-$$Lambda$OtherActivityTouchConsumer$8_w8V8eDDkACVaOsP_z8ZYoSs94
             @Override // java.lang.Runnable
             public final void run() {
-                OtherActivityTouchConsumer.lambda$startTouchTrackingForWindowAnimation$0(OtherActivityTouchConsumer.this, countDownLatch, windowTransformSwipeHandler);
+                OtherActivityTouchConsumer.lambda$startTouchTrackingForWindowAnimation$0(this.f$0, countDownLatch, windowTransformSwipeHandler);
             }
         });
         windowTransformSwipeHandler.initWhenReady();
@@ -176,7 +176,8 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
         Runnable runnable = new Runnable() { // from class: com.android.quickstep.-$$Lambda$OtherActivityTouchConsumer$_dUNPyE5JlPRA8-dJMCuLuoAgvU
             @Override // java.lang.Runnable
             public final void run() {
-                ActivityManagerWrapper.getInstance().startRecentsActivity(r0.mHomeIntent, new AssistDataReceiver() { // from class: com.android.quickstep.OtherActivityTouchConsumer.1
+                OtherActivityTouchConsumer otherActivityTouchConsumer = this.f$0;
+                ActivityManagerWrapper.getInstance().startRecentsActivity(otherActivityTouchConsumer.mHomeIntent, new AssistDataReceiver() { // from class: com.android.quickstep.OtherActivityTouchConsumer.1
                     @Override // com.android.systemui.shared.system.AssistDataReceiver
                     public void onHandleAssistData(Bundle bundle) {
                         OtherActivityTouchConsumer.this.mRecentsModel.preloadAssistData(OtherActivityTouchConsumer.this.mRunningTask.id, bundle);
@@ -241,14 +242,14 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
             mainThreadExecutor.execute(new Runnable() { // from class: com.android.quickstep.-$$Lambda$wvt2sKsglkn8HS_eF7-cDtuBhS8
                 @Override // java.lang.Runnable
                 public final void run() {
-                    WindowTransformSwipeHandler.this.reset();
+                    windowTransformSwipeHandler.reset();
                 }
             });
         }
     }
 
     @Override // com.android.quickstep.TouchConsumer
-    public void updateTouchTracking(int i) {
+    public void updateTouchTracking(int i) throws InterruptedException {
         if (!this.mPassedInitialSlop && this.mIsDeferredDownTarget && this.mInteractionHandler == null) {
             startTouchTrackingForWindowAnimation(SystemClock.uptimeMillis());
             this.mPassedInitialSlop = true;
@@ -280,7 +281,7 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
     }
 
     @Override // com.android.quickstep.TouchConsumer
-    public void onQuickStep(MotionEvent motionEvent) {
+    public void onQuickStep(MotionEvent motionEvent) throws InterruptedException {
         if (this.mIsDeferredDownTarget) {
             startTouchTrackingForWindowAnimation(motionEvent.getEventTime());
             this.mPassedInitialSlop = true;
@@ -325,9 +326,7 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
         return this.mInteractionHandler != null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class RecentsAnimationState implements RecentsAnimationListener {
+    private class RecentsAnimationState implements RecentsAnimationListener {
         private final int id;
         private boolean mCancelled;
         private RecentsAnimationControllerCompat mController;
@@ -360,14 +359,17 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
                 if (!this.mCancelled && this.mController != null) {
                     TraceHelper.endSection("RecentsController", "Finishing no handler");
                     this.mController.finish(false);
+                    return;
                 }
-            } else if (this.mCancelled) {
+                return;
+            }
+            if (this.mCancelled) {
                 TraceHelper.endSection("RecentsController", "Cancelled: " + OtherActivityTouchConsumer.this.mInteractionHandler);
                 OtherActivityTouchConsumer.this.mInteractionHandler.onRecentsAnimationCanceled();
-            } else {
-                TraceHelper.partitionSection("RecentsController", "Received");
-                OtherActivityTouchConsumer.this.mInteractionHandler.onRecentsAnimationStart(this.mController, this.mTargets, this.mHomeContentInsets, this.mMinimizedHomeBounds);
+                return;
             }
+            TraceHelper.partitionSection("RecentsController", "Received");
+            OtherActivityTouchConsumer.this.mInteractionHandler.onRecentsAnimationStart(this.mController, this.mTargets, this.mHomeContentInsets, this.mMinimizedHomeBounds);
         }
     }
 }

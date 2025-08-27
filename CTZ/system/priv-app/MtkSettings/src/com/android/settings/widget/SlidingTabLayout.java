@@ -1,6 +1,7 @@
 package com.android.settings.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -11,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public final class SlidingTabLayout extends FrameLayout implements View.OnClickListener {
     private final View mIndicatorView;
@@ -65,7 +67,7 @@ public final class SlidingTabLayout extends FrameLayout implements View.OnClickL
     }
 
     @Override // android.view.View.OnClickListener
-    public void onClick(View view) {
+    public void onClick(View view) throws Resources.NotFoundException {
         int childCount = this.mTitleView.getChildCount();
         for (int i = 0; i < childCount; i++) {
             if (view == this.mTitleView.getChildAt(i)) {
@@ -75,8 +77,7 @@ public final class SlidingTabLayout extends FrameLayout implements View.OnClickL
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onViewPagerPageChanged(int i, float f) {
+    private void onViewPagerPageChanged(int i, float f) {
         this.mSelectedPosition = i;
         this.mSelectionOffset = f;
         this.mIndicatorView.setTranslationX(isRtlMode() ? -getIndicatorLeft() : getIndicatorLeft());
@@ -107,7 +108,6 @@ public final class SlidingTabLayout extends FrameLayout implements View.OnClickL
         return getLayoutDirection() == 1;
     }
 
-    /* loaded from: classes.dex */
     private final class InternalViewPagerListener implements ViewPager.OnPageChangeListener {
         private int mScrollState;
 

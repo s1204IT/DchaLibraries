@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 /* loaded from: classes.dex */
 public class AnomalyDetectionPolicy {
     static final String KEY_ANOMALY_DETECTION_ENABLED = "anomaly_detection_enabled";
@@ -64,16 +65,12 @@ public class AnomalyDetectionPolicy {
             return (Set) Arrays.stream(string.split(":")).map(new Function() { // from class: com.android.settings.fuelgauge.anomaly.-$$Lambda$AnomalyDetectionPolicy$MGZTkxm_LWhWFo0-u65o5bz97bA
                 @Override // java.util.function.Function
                 public final Object apply(Object obj) {
-                    String trim;
-                    trim = ((String) obj).trim();
-                    return trim;
+                    return ((String) obj).trim();
                 }
             }).map(new Function() { // from class: com.android.settings.fuelgauge.anomaly.-$$Lambda$AnomalyDetectionPolicy$xFZhNZfuK_aveGITeM1VIXBhSVQ
                 @Override // java.util.function.Function
                 public final Object apply(Object obj) {
-                    String decode;
-                    decode = Uri.decode((String) obj);
-                    return decode;
+                    return Uri.decode((String) obj);
                 }
             }).collect(Collectors.toSet());
         }

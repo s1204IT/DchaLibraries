@@ -8,6 +8,7 @@ import com.android.systemui.plugins.annotations.ProvidesInterface;
 import com.android.systemui.plugins.annotations.Requirements;
 import com.android.systemui.plugins.annotations.Requires;
 import java.util.function.BiConsumer;
+
 /* loaded from: classes.dex */
 public class VersionInfo {
     private Class<?> mDefault;
@@ -30,7 +31,6 @@ public class VersionInfo {
     }
 
     private void addClass(Class<?> cls, boolean z) {
-        Requires[] value;
         if (this.mVersions.containsKey(cls)) {
             return;
         }
@@ -65,7 +65,7 @@ public class VersionInfo {
         versionInfo.mVersions.forEach(new BiConsumer() { // from class: com.android.systemui.plugins.-$$Lambda$VersionInfo$36RaSV8LaXl8e0tazdPbdpQ95k8
             @Override // java.util.function.BiConsumer
             public final void accept(Object obj, Object obj2) {
-                VersionInfo.lambda$checkVersion$0(VersionInfo.this, arrayMap, (Class) obj, (VersionInfo.Version) obj2);
+                VersionInfo.lambda$checkVersion$0(this.f$0, arrayMap, (Class) obj, (VersionInfo.Version) obj2);
             }
         });
         arrayMap.forEach(new BiConsumer() { // from class: com.android.systemui.plugins.-$$Lambda$VersionInfo$OmM59IDVY01yoqUNn9tP6VG6ndM
@@ -77,19 +77,19 @@ public class VersionInfo {
     }
 
     public static /* synthetic */ void lambda$checkVersion$0(VersionInfo versionInfo, ArrayMap arrayMap, Class cls, Version version) {
-        Version version2 = (Version) arrayMap.remove(cls);
-        if (version2 == null) {
-            version2 = versionInfo.createVersion(cls);
+        Version versionCreateVersion = (Version) arrayMap.remove(cls);
+        if (versionCreateVersion == null) {
+            versionCreateVersion = versionInfo.createVersion(cls);
         }
-        if (version2 == null) {
+        if (versionCreateVersion == null) {
             throw new InvalidVersionException(cls.getSimpleName() + " does not provide an interface", false);
-        } else if (version2.mVersion != version.mVersion) {
-            throw new InvalidVersionException(cls, version2.mVersion < version.mVersion, version2.mVersion, version.mVersion);
+        }
+        if (versionCreateVersion.mVersion != version.mVersion) {
+            throw new InvalidVersionException(cls, versionCreateVersion.mVersion < version.mVersion, versionCreateVersion.mVersion, version.mVersion);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$checkVersion$1(Class cls, Version version) {
+    static /* synthetic */ void lambda$checkVersion$1(Class cls, Version version) {
         if (version.mRequired) {
             throw new InvalidVersionException("Missing required dependency " + cls.getSimpleName(), false);
         }
@@ -107,7 +107,6 @@ public class VersionInfo {
         return this.mVersions.containsKey(cls);
     }
 
-    /* loaded from: classes.dex */
     public static class InvalidVersionException extends RuntimeException {
         private final boolean mTooNew;
 
@@ -126,9 +125,7 @@ public class VersionInfo {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class Version {
+    private static class Version {
         private final boolean mRequired;
         private final int mVersion;
 

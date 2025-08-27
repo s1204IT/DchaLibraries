@@ -1,13 +1,12 @@
 package android.arch.lifecycle;
 
 import android.arch.lifecycle.Lifecycle;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class FullLifecycleObserverAdapter implements GenericLifecycleObserver {
+class FullLifecycleObserverAdapter implements GenericLifecycleObserver {
     private final FullLifecycleObserver mObserver;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public FullLifecycleObserverAdapter(FullLifecycleObserver observer) {
+    FullLifecycleObserverAdapter(FullLifecycleObserver observer) {
         this.mObserver = observer;
     }
 

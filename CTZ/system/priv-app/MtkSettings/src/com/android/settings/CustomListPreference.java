@@ -11,6 +11,7 @@ import android.support.v14.preference.ListPreferenceDialogFragment;
 import android.support.v7.preference.ListPreference;
 import android.util.AttributeSet;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class CustomListPreference extends ListPreference {
     public CustomListPreference(Context context, AttributeSet attributeSet) {
@@ -24,16 +25,13 @@ public class CustomListPreference extends ListPreference {
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDialogClosed(boolean z) {
+    protected void onDialogClosed(boolean z) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDialogCreated(Dialog dialog) {
+    protected void onDialogCreated(Dialog dialog) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isAutoClosePreference() {
+    protected boolean isAutoClosePreference() {
         return true;
     }
 
@@ -41,11 +39,9 @@ public class CustomListPreference extends ListPreference {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onDialogStateRestored(Dialog dialog, Bundle bundle) {
+    protected void onDialogStateRestored(Dialog dialog, Bundle bundle) {
     }
 
-    /* loaded from: classes.dex */
     public static class CustomListPreferenceDialogFragment extends ListPreferenceDialogFragment {
         private int mClickedDialogEntryIndex;
 
@@ -57,14 +53,12 @@ public class CustomListPreference extends ListPreference {
             return customListPreferenceDialogFragment;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public CustomListPreference getCustomizablePreference() {
+        private CustomListPreference getCustomizablePreference() {
             return (CustomListPreference) getPreference();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // android.support.v14.preference.ListPreferenceDialogFragment, android.support.v14.preference.PreferenceDialogFragment
-        public void onPrepareDialogBuilder(AlertDialog.Builder builder) {
+        protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
             super.onPrepareDialogBuilder(builder);
             this.mClickedDialogEntryIndex = getCustomizablePreference().findIndexOfValue(getCustomizablePreference().getValue());
             getCustomizablePreference().onPrepareDialogBuilder(builder, getOnItemClickListener());
@@ -80,12 +74,12 @@ public class CustomListPreference extends ListPreference {
 
         @Override // android.support.v14.preference.PreferenceDialogFragment, android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            Dialog onCreateDialog = super.onCreateDialog(bundle);
+            Dialog dialogOnCreateDialog = super.onCreateDialog(bundle);
             if (bundle != null) {
                 this.mClickedDialogEntryIndex = bundle.getInt("settings.CustomListPrefDialog.KEY_CLICKED_ENTRY_INDEX", this.mClickedDialogEntryIndex);
             }
-            getCustomizablePreference().onDialogCreated(onCreateDialog);
-            return onCreateDialog;
+            getCustomizablePreference().onDialogCreated(dialogOnCreateDialog);
+            return dialogOnCreateDialog;
         }
 
         @Override // android.support.v14.preference.ListPreferenceDialogFragment, android.support.v14.preference.PreferenceDialogFragment, android.app.DialogFragment, android.app.Fragment
@@ -112,8 +106,7 @@ public class CustomListPreference extends ListPreference {
             };
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        public void setClickedDialogEntryIndex(int i) {
+        protected void setClickedDialogEntryIndex(int i) {
             this.mClickedDialogEntryIndex = i;
         }
 
@@ -133,9 +126,9 @@ public class CustomListPreference extends ListPreference {
                 bundle.putCharSequence("android.intent.extra.TEXT", confirmationMessage);
                 confirmDialogFragment.setArguments(bundle);
                 confirmDialogFragment.setTargetFragment(this, 0);
-                FragmentTransaction beginTransaction = getFragmentManager().beginTransaction();
-                beginTransaction.add(confirmDialogFragment, getTag() + "-Confirm");
-                beginTransaction.commitAllowingStateLoss();
+                FragmentTransaction fragmentTransactionBeginTransaction = getFragmentManager().beginTransaction();
+                fragmentTransactionBeginTransaction.add(confirmDialogFragment, getTag() + "-Confirm");
+                fragmentTransactionBeginTransaction.commitAllowingStateLoss();
                 return;
             }
             onItemConfirmed();
@@ -157,11 +150,10 @@ public class CustomListPreference extends ListPreference {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ConfirmDialogFragment extends InstrumentedDialogFragment {
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            return new AlertDialog.Builder(getActivity()).setMessage(getArguments().getCharSequence("android.intent.extra.TEXT")).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settings.CustomListPreference.ConfirmDialogFragment.1
+            return new AlertDialog.Builder(getActivity()).setMessage(getArguments().getCharSequence("android.intent.extra.TEXT")).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.CustomListPreference.ConfirmDialogFragment.1
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Fragment targetFragment = ConfirmDialogFragment.this.getTargetFragment();
@@ -169,7 +161,7 @@ public class CustomListPreference extends ListPreference {
                         ((CustomListPreferenceDialogFragment) targetFragment).onItemConfirmed();
                     }
                 }
-            }).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
+            }).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).create();
         }
 
         @Override // com.android.settingslib.core.instrumentation.Instrumentable

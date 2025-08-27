@@ -26,6 +26,7 @@ import com.android.systemui.plugins.VersionInfo;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PluginInstanceManager<T extends Plugin> {
     public static final String PLUGIN_PERMISSION = "com.android.systemui.permission.PLUGIN";
@@ -34,16 +35,17 @@ public class PluginInstanceManager<T extends Plugin> {
     private final boolean mAllowMultiple;
     private final Context mContext;
     private final PluginListener<T> mListener;
+
     @VisibleForTesting
     final PluginInstanceManager<T>.MainHandler mMainHandler;
     private final PluginManagerImpl mManager;
+
     @VisibleForTesting
     final PluginInstanceManager<T>.PluginHandler mPluginHandler;
     private final PackageManager mPm;
     private final VersionInfo mVersion;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public PluginInstanceManager(Context context, String str, PluginListener<T> pluginListener, boolean z, Looper looper, VersionInfo versionInfo, PluginManagerImpl pluginManagerImpl) {
+    PluginInstanceManager(Context context, String str, PluginListener<T> pluginListener, boolean z, Looper looper, VersionInfo versionInfo, PluginManagerImpl pluginManagerImpl) {
         this(context, context.getPackageManager(), str, pluginListener, z, looper, versionInfo, pluginManagerImpl, Build.IS_DEBUGGABLE);
     }
 
@@ -66,14 +68,14 @@ public class PluginInstanceManager<T extends Plugin> {
             throw new RuntimeException("Must be called from UI thread");
         }
         this.mPluginHandler.handleQueryPlugins(null);
-        if (((PluginHandler) this.mPluginHandler).mPlugins.size() > 0) {
-            this.mMainHandler.removeMessages(1);
-            PluginInfo<T> pluginInfo = (PluginInfo) ((PluginHandler) this.mPluginHandler).mPlugins.get(0);
-            PluginPrefs.setHasPlugins(this.mContext);
-            pluginInfo.mPlugin.onCreate(this.mContext, ((PluginInfo) pluginInfo).mPluginContext);
-            return pluginInfo;
+        if (((PluginHandler) this.mPluginHandler).mPlugins.size() <= 0) {
+            return null;
         }
-        return null;
+        this.mMainHandler.removeMessages(1);
+        PluginInfo<T> pluginInfo = (PluginInfo) ((PluginHandler) this.mPluginHandler).mPlugins.get(0);
+        PluginPrefs.setHasPlugins(this.mContext);
+        pluginInfo.mPlugin.onCreate(this.mContext, ((PluginInfo) pluginInfo).mPluginContext);
+        return pluginInfo;
     }
 
     public void loadAll() {
@@ -137,12 +139,13 @@ public class PluginInstanceManager<T extends Plugin> {
         return String.format("%s@%s (action=%s)", getClass().getSimpleName(), Integer.valueOf(hashCode()), this.mAction);
     }
 
-    /* loaded from: classes.dex */
     private class MainHandler extends Handler {
         public MainHandler(Looper looper) {
             super(looper);
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r0v7, resolved type: com.android.systemui.plugins.PluginListener */
+        /* JADX DEBUG: Multi-variable search result rejected for r4v4, resolved type: com.android.systemui.plugins.PluginListener */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // android.os.Handler
         public void handleMessage(Message message) {
@@ -155,22 +158,21 @@ public class PluginInstanceManager<T extends Plugin> {
                         ((Plugin) pluginInfo.mPlugin).onCreate(PluginInstanceManager.this.mContext, pluginInfo.mPluginContext);
                     }
                     PluginInstanceManager.this.mListener.onPluginConnected((Plugin) pluginInfo.mPlugin, pluginInfo.mPluginContext);
-                    return;
+                    break;
                 case 2:
                     PluginInstanceManager.this.mListener.onPluginDisconnected((Plugin) message.obj);
                     if (!(message.obj instanceof PluginFragment)) {
                         ((Plugin) message.obj).onDestroy();
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 default:
                     super.handleMessage(message);
-                    return;
+                    break;
             }
         }
     }
 
-    /* loaded from: classes.dex */
     private class PluginHandler extends Handler {
         private final ArrayList<PluginInfo<T>> mPlugins;
 
@@ -192,14 +194,14 @@ public class PluginInstanceManager<T extends Plugin> {
                     }
                     this.mPlugins.clear();
                     handleQueryPlugins(null);
-                    return;
+                    break;
                 case 2:
                     String str = (String) message.obj;
                     if (PluginInstanceManager.this.mAllowMultiple || this.mPlugins.size() == 0) {
                         handleQueryPlugins(str);
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 case 3:
                     String str2 = (String) message.obj;
                     for (int size2 = this.mPlugins.size() - 1; size2 >= 0; size2--) {
@@ -209,36 +211,36 @@ public class PluginInstanceManager<T extends Plugin> {
                             this.mPlugins.remove(size2);
                         }
                     }
-                    return;
+                    break;
                 default:
                     super.handleMessage(message);
-                    return;
+                    break;
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void handleQueryPlugins(String str) {
+        private void handleQueryPlugins(String str) {
             Intent intent = new Intent(PluginInstanceManager.this.mAction);
             if (str != null) {
                 intent.setPackage(str);
             }
-            List<ResolveInfo> queryIntentServices = PluginInstanceManager.this.mPm.queryIntentServices(intent, 0);
-            if (queryIntentServices.size() > 1 && !PluginInstanceManager.this.mAllowMultiple) {
+            List<ResolveInfo> listQueryIntentServices = PluginInstanceManager.this.mPm.queryIntentServices(intent, 0);
+            if (listQueryIntentServices.size() > 1 && !PluginInstanceManager.this.mAllowMultiple) {
                 Log.w("PluginInstanceManager", "Multiple plugins found for " + PluginInstanceManager.this.mAction);
                 return;
             }
-            for (ResolveInfo resolveInfo : queryIntentServices) {
-                PluginInfo<T> handleLoadPlugin = handleLoadPlugin(new ComponentName(resolveInfo.serviceInfo.packageName, resolveInfo.serviceInfo.name));
-                if (handleLoadPlugin != null) {
-                    PluginInstanceManager.this.mMainHandler.obtainMessage(1, handleLoadPlugin).sendToTarget();
-                    this.mPlugins.add(handleLoadPlugin);
+            for (ResolveInfo resolveInfo : listQueryIntentServices) {
+                PluginInfo<T> pluginInfoHandleLoadPlugin = handleLoadPlugin(new ComponentName(resolveInfo.serviceInfo.packageName, resolveInfo.serviceInfo.name));
+                if (pluginInfoHandleLoadPlugin != null) {
+                    PluginInstanceManager.this.mMainHandler.obtainMessage(1, pluginInfoHandleLoadPlugin).sendToTarget();
+                    this.mPlugins.add(pluginInfoHandleLoadPlugin);
                 }
             }
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r13v0, resolved type: com.android.systemui.plugins.PluginInstanceManager$PluginHandler */
         /* JADX WARN: Multi-variable type inference failed */
         protected PluginInfo<T> handleLoadPlugin(ComponentName componentName) {
-            String str;
+            String string;
             if (!PluginInstanceManager.this.isDebuggable) {
                 Log.d("PluginInstanceManager", "Somehow hit second debuggable check");
                 return null;
@@ -257,25 +259,24 @@ public class PluginInstanceManager<T extends Plugin> {
                     } catch (VersionInfo.InvalidVersionException e) {
                         Notification.Builder color = new Notification.Builder(PluginInstanceManager.this.mContext, PluginManager.NOTIFICATION_CHANNEL_ID).setStyle(new Notification.BigTextStyle()).setSmallIcon(PluginInstanceManager.this.mContext.getResources().getIdentifier("tuner", "drawable", PluginInstanceManager.this.mContext.getPackageName())).setWhen(0L).setShowWhen(false).setVisibility(1).setColor(PluginInstanceManager.this.mContext.getColor(Resources.getSystem().getIdentifier("system_notification_accent_color", "color", "android")));
                         try {
-                            str = PluginInstanceManager.this.mPm.getServiceInfo(componentName, 0).loadLabel(PluginInstanceManager.this.mPm).toString();
+                            string = PluginInstanceManager.this.mPm.getServiceInfo(componentName, 0).loadLabel(PluginInstanceManager.this.mPm).toString();
                         } catch (PackageManager.NameNotFoundException e2) {
-                            str = className;
+                            string = className;
                         }
                         if (!e.isTooNew()) {
-                            Notification.Builder contentTitle = color.setContentTitle("Plugin \"" + str + "\" is too old");
+                            Notification.Builder contentTitle = color.setContentTitle("Plugin \"" + string + "\" is too old");
                             StringBuilder sb = new StringBuilder();
                             sb.append("Contact plugin developer to get an updated version.\n");
                             sb.append(e.getMessage());
                             contentTitle.setContentText(sb.toString());
                         } else {
-                            Notification.Builder contentTitle2 = color.setContentTitle("Plugin \"" + str + "\" is too new");
+                            Notification.Builder contentTitle2 = color.setContentTitle("Plugin \"" + string + "\" is too new");
                             StringBuilder sb2 = new StringBuilder();
                             sb2.append("Check to see if an OTA is available.\n");
                             sb2.append(e.getMessage());
                             contentTitle2.setContentText(sb2.toString());
                         }
-                        Intent intent = new Intent("com.android.systemui.action.DISABLE_PLUGIN");
-                        color.addAction(new Notification.Action.Builder((Icon) null, "Disable plugin", PendingIntent.getBroadcast(PluginInstanceManager.this.mContext, 0, intent.setData(Uri.parse("package://" + componentName.flattenToString())), 0)).build());
+                        color.addAction(new Notification.Action.Builder((Icon) null, "Disable plugin", PendingIntent.getBroadcast(PluginInstanceManager.this.mContext, 0, new Intent("com.android.systemui.action.DISABLE_PLUGIN").setData(Uri.parse("package://" + componentName.flattenToString())), 0)).build());
                         ((NotificationManager) PluginInstanceManager.this.mContext.getSystemService(NotificationManager.class)).notifyAsUser(className, 6, color.build(), UserHandle.ALL);
                         Log.w("PluginInstanceManager", "Plugin has invalid interface version " + plugin.getVersion() + ", expected " + PluginInstanceManager.this.mVersion);
                         return null;
@@ -290,19 +291,18 @@ public class PluginInstanceManager<T extends Plugin> {
         }
 
         private VersionInfo checkVersion(Class<?> cls, T t, VersionInfo versionInfo) throws VersionInfo.InvalidVersionException {
-            VersionInfo addClass = new VersionInfo().addClass(cls);
-            if (addClass.hasVersionInfo()) {
-                versionInfo.checkVersion(addClass);
-                return addClass;
-            } else if (t.getVersion() != versionInfo.getDefaultVersion()) {
-                throw new VersionInfo.InvalidVersionException("Invalid legacy version", false);
-            } else {
-                return null;
+            VersionInfo versionInfoAddClass = new VersionInfo().addClass(cls);
+            if (versionInfoAddClass.hasVersionInfo()) {
+                versionInfo.checkVersion(versionInfoAddClass);
+                return versionInfoAddClass;
             }
+            if (t.getVersion() != versionInfo.getDefaultVersion()) {
+                throw new VersionInfo.InvalidVersionException("Invalid legacy version", false);
+            }
+            return null;
         }
     }
 
-    /* loaded from: classes.dex */
     public static class PluginContextWrapper extends ContextWrapper {
         private final ClassLoader mClassLoader;
         private LayoutInflater mInflater;
@@ -329,9 +329,7 @@ public class PluginInstanceManager<T extends Plugin> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class PluginInfo<T> {
+    static class PluginInfo<T> {
         private String mClass;
         String mPackage;
         T mPlugin;

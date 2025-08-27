@@ -13,7 +13,9 @@ import com.android.settings.dashboard.DashboardFragment;
 import com.android.settings.widget.AppPreference;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.location.RecentLocationApps;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RecentLocationRequestPreferenceController extends LocationBasePreferenceController {
     static final String KEY_SEE_ALL_BUTTON = "recent_location_requests_see_all_button";
@@ -22,9 +24,7 @@ public class RecentLocationRequestPreferenceController extends LocationBasePrefe
     private final RecentLocationApps mRecentLocationApps;
     private Preference mSeeAllButton;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class PackageEntryClickedListener implements Preference.OnPreferenceClickListener {
+    static class PackageEntryClickedListener implements Preference.OnPreferenceClickListener {
         private final DashboardFragment mFragment;
         private final String mPackage;
         private final UserHandle mUserHandle;
@@ -77,16 +77,19 @@ public class RecentLocationRequestPreferenceController extends LocationBasePrefe
                 this.mCategoryRecentLocationRequests.addPreference(createAppPreference(context, appListSorted.get(i)));
             }
             this.mSeeAllButton.setVisible(true);
-        } else if (appListSorted.size() > 0) {
-            for (RecentLocationApps.Request request : appListSorted) {
-                this.mCategoryRecentLocationRequests.addPreference(createAppPreference(context, request));
-            }
-        } else {
-            AppPreference createAppPreference = createAppPreference(context);
-            createAppPreference.setTitle(R.string.location_no_recent_apps);
-            createAppPreference.setSelectable(false);
-            this.mCategoryRecentLocationRequests.addPreference(createAppPreference);
+            return;
         }
+        if (appListSorted.size() > 0) {
+            Iterator<RecentLocationApps.Request> it = appListSorted.iterator();
+            while (it.hasNext()) {
+                this.mCategoryRecentLocationRequests.addPreference(createAppPreference(context, it.next()));
+            }
+            return;
+        }
+        AppPreference appPreferenceCreateAppPreference = createAppPreference(context);
+        appPreferenceCreateAppPreference.setTitle(R.string.location_no_recent_apps);
+        appPreferenceCreateAppPreference.setSelectable(false);
+        this.mCategoryRecentLocationRequests.addPreference(appPreferenceCreateAppPreference);
     }
 
     @Override // com.android.settings.location.LocationEnabler.LocationModeChangeListener
@@ -99,11 +102,11 @@ public class RecentLocationRequestPreferenceController extends LocationBasePrefe
     }
 
     AppPreference createAppPreference(Context context, RecentLocationApps.Request request) {
-        AppPreference createAppPreference = createAppPreference(context);
-        createAppPreference.setSummary(request.contentDescription);
-        createAppPreference.setIcon(request.icon);
-        createAppPreference.setTitle(request.label);
-        createAppPreference.setOnPreferenceClickListener(new PackageEntryClickedListener(this.mFragment, request.packageName, request.userHandle));
-        return createAppPreference;
+        AppPreference appPreferenceCreateAppPreference = createAppPreference(context);
+        appPreferenceCreateAppPreference.setSummary(request.contentDescription);
+        appPreferenceCreateAppPreference.setIcon(request.icon);
+        appPreferenceCreateAppPreference.setTitle(request.label);
+        appPreferenceCreateAppPreference.setOnPreferenceClickListener(new PackageEntryClickedListener(this.mFragment, request.packageName, request.userHandle));
+        return appPreferenceCreateAppPreference;
     }
 }

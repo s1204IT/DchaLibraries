@@ -21,6 +21,7 @@ import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.ISettingsMiscExt;
+
 /* loaded from: classes.dex */
 public class WifiInfoPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private ISettingsMiscExt mExt;
@@ -80,7 +81,7 @@ public class WifiInfoPreferenceController extends AbstractPreferenceController i
     }
 
     public void updateWifiInfo() {
-        String unicodeWrap;
+        String strUnicodeWrap;
         if (this.mWifiMacAddressPref != null) {
             android.net.wifi.WifiInfo connectionInfo = this.mWifiManager.getConnectionInfo();
             int i = Settings.Global.getInt(this.mContext.getContentResolver(), "wifi_connected_mac_randomization_enabled", 0);
@@ -98,11 +99,11 @@ public class WifiInfoPreferenceController extends AbstractPreferenceController i
             String wifiIpAddresses = Utils.getWifiIpAddresses(this.mContext);
             Preference preference = this.mWifiIpAddressPref;
             if (wifiIpAddresses == null) {
-                unicodeWrap = this.mContext.getString(R.string.status_unavailable);
+                strUnicodeWrap = this.mContext.getString(R.string.status_unavailable);
             } else {
-                unicodeWrap = BidiFormatter.getInstance().unicodeWrap(wifiIpAddresses);
+                strUnicodeWrap = BidiFormatter.getInstance().unicodeWrap(wifiIpAddresses);
             }
-            preference.setSummary(unicodeWrap);
+            preference.setSummary(strUnicodeWrap);
         }
     }
 }

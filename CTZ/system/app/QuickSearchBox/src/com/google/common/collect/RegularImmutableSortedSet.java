@@ -8,23 +8,24 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
+final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     private final transient ImmutableList<E> elements;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RegularImmutableSortedSet(ImmutableList<E> immutableList, Comparator<? super E> comparator) {
+    RegularImmutableSortedSet(ImmutableList<E> immutableList, Comparator<? super E> comparator) {
         super(comparator);
         this.elements = immutableList;
         Preconditions.checkArgument(!immutableList.isEmpty());
     }
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSortedSet, com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<E> iterator() {
         return this.elements.iterator();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: descendingIterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSortedSet, java.util.NavigableSet
     public UnmodifiableIterator<E> descendingIterator() {
         return this.elements.reverse().iterator();
@@ -65,15 +66,15 @@ public final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         Object next = it.next();
         while (peekingIterator.hasNext()) {
             try {
-                int unsafeCompare = unsafeCompare(peekingIterator.peek(), next);
-                if (unsafeCompare < 0) {
+                int iUnsafeCompare = unsafeCompare(peekingIterator.peek(), next);
+                if (iUnsafeCompare < 0) {
                     peekingIterator.next();
-                } else if (unsafeCompare == 0) {
+                } else if (iUnsafeCompare == 0) {
                     if (!it.hasNext()) {
                         return true;
                     }
                     next = it.next();
-                } else if (unsafeCompare > 0) {
+                } else if (iUnsafeCompare > 0) {
                     return false;
                 }
             } catch (ClassCastException e) {
@@ -89,9 +90,8 @@ public final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return Collections.binarySearch(this.elements, obj, unsafeComparator());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return this.elements.isPartialView();
     }
 
@@ -100,43 +100,37 @@ public final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return this.elements.copyIntoArray(objArr, i);
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:17:0x002d A[Catch: NoSuchElementException -> 0x0041, ClassCastException -> 0x0043, TryCatch #2 {ClassCastException -> 0x0043, NoSuchElementException -> 0x0041, blocks: (B:14:0x0023, B:15:0x0027, B:17:0x002d, B:19:0x0037), top: B:31:0x0023 }] */
     @Override // com.google.common.collect.ImmutableSet, java.util.Collection, java.util.Set
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof Set) {
-            Set set = (Set) obj;
-            if (size() != set.size()) {
+        if (!(obj instanceof Set)) {
+            return false;
+        }
+        Set set = (Set) obj;
+        if (size() != set.size()) {
+            return false;
+        }
+        if (SortedIterables.hasSameComparator(this.comparator, set)) {
+            Iterator<E> it = set.iterator();
+            try {
+                UnmodifiableIterator<E> it2 = iterator();
+                while (it2.hasNext()) {
+                    E next = it2.next();
+                    E next2 = it.next();
+                    if (next2 == null || unsafeCompare(next, next2) != 0) {
+                        return false;
+                    }
+                }
+                return true;
+            } catch (ClassCastException e) {
+                return false;
+            } catch (NoSuchElementException e2) {
                 return false;
             }
-            if (SortedIterables.hasSameComparator(this.comparator, set)) {
-                Iterator<E> it = set.iterator();
-                try {
-                    UnmodifiableIterator<E> it2 = iterator();
-                    while (it2.hasNext()) {
-                        E next = it2.next();
-                        E next2 = it.next();
-                        if (next2 == null || unsafeCompare(next, next2) != 0) {
-                            return false;
-                        }
-                        while (it2.hasNext()) {
-                        }
-                    }
-                    return true;
-                } catch (ClassCastException e) {
-                    return false;
-                } catch (NoSuchElementException e2) {
-                    return false;
-                }
-            }
-            return containsAll(set);
         }
-        return false;
+        return containsAll(set);
     }
 
     @Override // com.google.common.collect.ImmutableSortedSet, java.util.SortedSet
@@ -151,38 +145,38 @@ public final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
 
     @Override // com.google.common.collect.ImmutableSortedSet, java.util.NavigableSet
     public E lower(E e) {
-        int headIndex = headIndex(e, false) - 1;
-        if (headIndex == -1) {
+        int iHeadIndex = headIndex(e, false) - 1;
+        if (iHeadIndex == -1) {
             return null;
         }
-        return this.elements.get(headIndex);
+        return this.elements.get(iHeadIndex);
     }
 
     @Override // com.google.common.collect.ImmutableSortedSet, java.util.NavigableSet
     public E floor(E e) {
-        int headIndex = headIndex(e, true) - 1;
-        if (headIndex == -1) {
+        int iHeadIndex = headIndex(e, true) - 1;
+        if (iHeadIndex == -1) {
             return null;
         }
-        return this.elements.get(headIndex);
+        return this.elements.get(iHeadIndex);
     }
 
     @Override // com.google.common.collect.ImmutableSortedSet, java.util.NavigableSet
     public E ceiling(E e) {
-        int tailIndex = tailIndex(e, true);
-        if (tailIndex == size()) {
+        int iTailIndex = tailIndex(e, true);
+        if (iTailIndex == size()) {
             return null;
         }
-        return this.elements.get(tailIndex);
+        return this.elements.get(iTailIndex);
     }
 
     @Override // com.google.common.collect.ImmutableSortedSet, java.util.NavigableSet
     public E higher(E e) {
-        int tailIndex = tailIndex(e, false);
-        if (tailIndex == size()) {
+        int iTailIndex = tailIndex(e, false);
+        if (iTailIndex == size()) {
             return null;
         }
-        return this.elements.get(tailIndex);
+        return this.elements.get(iTailIndex);
     }
 
     @Override // com.google.common.collect.ImmutableSortedSet
@@ -190,8 +184,7 @@ public final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return getSubSet(0, headIndex(e, z));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int headIndex(E e, boolean z) {
+    int headIndex(E e, boolean z) {
         return SortedLists.binarySearch(this.elements, Preconditions.checkNotNull(e), comparator(), z ? SortedLists.KeyPresentBehavior.FIRST_AFTER : SortedLists.KeyPresentBehavior.FIRST_PRESENT, SortedLists.KeyAbsentBehavior.NEXT_HIGHER);
     }
 
@@ -205,8 +198,7 @@ public final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return getSubSet(tailIndex(e, z), size());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int tailIndex(E e, boolean z) {
+    int tailIndex(E e, boolean z) {
         return SortedLists.binarySearch(this.elements, Preconditions.checkNotNull(e), comparator(), z ? SortedLists.KeyPresentBehavior.FIRST_PRESENT : SortedLists.KeyPresentBehavior.FIRST_AFTER, SortedLists.KeyAbsentBehavior.NEXT_HIGHER);
     }
 
@@ -214,8 +206,7 @@ public final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return this.comparator;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ImmutableSortedSet<E> getSubSet(int i, int i2) {
+    ImmutableSortedSet<E> getSubSet(int i, int i2) {
         if (i == 0 && i2 == size()) {
             return this;
         }
@@ -225,16 +216,15 @@ public final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return emptySet(this.comparator);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableSortedSet
-    public int indexOf(Object obj) {
+    int indexOf(Object obj) {
         if (obj == null) {
             return -1;
         }
         try {
-            int binarySearch = SortedLists.binarySearch(this.elements, obj, unsafeComparator(), SortedLists.KeyPresentBehavior.ANY_PRESENT, SortedLists.KeyAbsentBehavior.INVERTED_INSERTION_INDEX);
-            if (binarySearch >= 0) {
-                return binarySearch;
+            int iBinarySearch = SortedLists.binarySearch(this.elements, obj, unsafeComparator(), SortedLists.KeyPresentBehavior.ANY_PRESENT, SortedLists.KeyAbsentBehavior.INVERTED_INSERTION_INDEX);
+            if (iBinarySearch >= 0) {
+                return iBinarySearch;
             }
             return -1;
         } catch (ClassCastException e) {

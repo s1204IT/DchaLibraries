@@ -11,6 +11,7 @@ import android.view.accessibility.AccessibilityEvent;
 import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class NotificationAccessConfirmationActivity extends Activity implements DialogInterface {
     private ComponentName mComponentName;
@@ -32,14 +33,14 @@ public class NotificationAccessConfirmationActivity extends Activity implements 
         alertParams.mPositiveButtonListener = new DialogInterface.OnClickListener() { // from class: com.android.settings.notification.-$$Lambda$NotificationAccessConfirmationActivity$UvveyFMEwlZ6m4ViLmcVExulBE8
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                NotificationAccessConfirmationActivity.this.onAllow();
+                this.f$0.onAllow();
             }
         };
         alertParams.mNegativeButtonText = getString(R.string.deny);
         alertParams.mNegativeButtonListener = new DialogInterface.OnClickListener() { // from class: com.android.settings.notification.-$$Lambda$NotificationAccessConfirmationActivity$hd7i7CSD_dVpjvK__hXE8eDM2I0
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                NotificationAccessConfirmationActivity.this.cancel();
+                this.f$0.cancel();
             }
         };
         AlertController.create(this, this, getWindow()).installContent(alertParams);
@@ -58,8 +59,7 @@ public class NotificationAccessConfirmationActivity extends Activity implements 
         super.onPause();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onAllow() {
+    private void onAllow() {
         try {
             if (!"android.permission.BIND_NOTIFICATION_LISTENER_SERVICE".equals(getPackageManager().getServiceInfo(this.mComponentName, 0).permission)) {
                 Slog.e("NotificationAccessConfirmationActivity", "Service " + this.mComponentName + " lacks permission android.permission.BIND_NOTIFICATION_LISTENER_SERVICE");

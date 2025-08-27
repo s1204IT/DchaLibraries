@@ -2,6 +2,7 @@ package com.android.systemui.keyguard;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class Lifecycle<T> {
     private ArrayList<T> mObservers = new ArrayList<>();

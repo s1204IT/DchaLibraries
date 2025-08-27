@@ -9,6 +9,7 @@ import android.support.annotation.BinderThread;
 import android.support.annotation.UiThread;
 import com.android.systemui.shared.system.RemoteAnimationRunnerCompat;
 import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public abstract class LauncherAnimationRunner implements RemoteAnimationRunnerCompat {
@@ -30,7 +31,7 @@ public abstract class LauncherAnimationRunner implements RemoteAnimationRunnerCo
         Runnable runnable2 = new Runnable() { // from class: com.android.launcher3.-$$Lambda$LauncherAnimationRunner$0IBM3bZEOrCXQUatxthdQPQcNQA
             @Override // java.lang.Runnable
             public final void run() {
-                LauncherAnimationRunner.lambda$onAnimationStart$0(LauncherAnimationRunner.this, runnable, remoteAnimationTargetCompatArr);
+                LauncherAnimationRunner.lambda$onAnimationStart$0(this.f$0, runnable, remoteAnimationTargetCompatArr);
             }
         };
         if (this.mStartAtFrontOfQueue) {
@@ -46,9 +47,8 @@ public abstract class LauncherAnimationRunner implements RemoteAnimationRunnerCo
         launcherAnimationRunner.onCreateAnimation(remoteAnimationTargetCompatArr, launcherAnimationRunner.mAnimationResult);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     @UiThread
-    public void finishExistingAnimation() {
+    private void finishExistingAnimation() {
         if (this.mAnimationResult == null) {
             return;
         }
@@ -62,12 +62,11 @@ public abstract class LauncherAnimationRunner implements RemoteAnimationRunnerCo
         Utilities.postAsyncCallback(this.mHandler, new Runnable() { // from class: com.android.launcher3.-$$Lambda$LauncherAnimationRunner$5fiTR415yJqj_KRb2cPPorVa3-I
             @Override // java.lang.Runnable
             public final void run() {
-                LauncherAnimationRunner.this.finishExistingAnimation();
+                this.f$0.finishExistingAnimation();
             }
         });
     }
 
-    /* loaded from: classes.dex */
     public static final class AnimationResult {
         private AnimatorSet mAnimator;
         private final Runnable mFinishRunnable;
@@ -80,9 +79,8 @@ public abstract class LauncherAnimationRunner implements RemoteAnimationRunnerCo
             this.mFinishRunnable = runnable;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
         @UiThread
-        public void finish() {
+        private void finish() {
             if (!this.mFinished) {
                 this.mFinishRunnable.run();
                 this.mFinished = true;
@@ -98,7 +96,9 @@ public abstract class LauncherAnimationRunner implements RemoteAnimationRunnerCo
             this.mAnimator = animatorSet;
             if (this.mAnimator == null) {
                 finish();
-            } else if (this.mFinished) {
+                return;
+            }
+            if (this.mFinished) {
                 this.mAnimator.start();
                 this.mAnimator.end();
             } else {

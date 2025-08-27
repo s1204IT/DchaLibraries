@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.animation.Interpolator;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class DividerHandleView extends View {
     private AnimatorSet mAnimator;
@@ -24,11 +25,13 @@ public class DividerHandleView extends View {
     private boolean mTouching;
     private final int mWidth;
     private static final Property<DividerHandleView, Integer> WIDTH_PROPERTY = new Property<DividerHandleView, Integer>(Integer.class, "width") { // from class: com.android.systemui.stackdivider.DividerHandleView.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(DividerHandleView dividerHandleView) {
             return Integer.valueOf(dividerHandleView.mCurrentWidth);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(DividerHandleView dividerHandleView, Integer num) {
             dividerHandleView.mCurrentWidth = num.intValue();
@@ -36,11 +39,13 @@ public class DividerHandleView extends View {
         }
     };
     private static final Property<DividerHandleView, Integer> HEIGHT_PROPERTY = new Property<DividerHandleView, Integer>(Integer.class, "height") { // from class: com.android.systemui.stackdivider.DividerHandleView.2
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(DividerHandleView dividerHandleView) {
             return Integer.valueOf(dividerHandleView.mCurrentHeight);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(DividerHandleView dividerHandleView, Integer num) {
             dividerHandleView.mCurrentHeight = num.intValue();
@@ -86,10 +91,10 @@ public class DividerHandleView extends View {
     private void animateToTarget(int i, int i2, boolean z) {
         long j;
         Interpolator interpolator;
-        ObjectAnimator ofInt = ObjectAnimator.ofInt(this, WIDTH_PROPERTY, this.mCurrentWidth, i);
-        ObjectAnimator ofInt2 = ObjectAnimator.ofInt(this, HEIGHT_PROPERTY, this.mCurrentHeight, i2);
+        ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this, WIDTH_PROPERTY, this.mCurrentWidth, i);
+        ObjectAnimator objectAnimatorOfInt2 = ObjectAnimator.ofInt(this, HEIGHT_PROPERTY, this.mCurrentHeight, i2);
         this.mAnimator = new AnimatorSet();
-        this.mAnimator.playTogether(ofInt, ofInt2);
+        this.mAnimator.playTogether(objectAnimatorOfInt, objectAnimatorOfInt2);
         AnimatorSet animatorSet = this.mAnimator;
         if (z) {
             j = 150;
@@ -117,8 +122,8 @@ public class DividerHandleView extends View {
     protected void onDraw(Canvas canvas) {
         int width = (getWidth() / 2) - (this.mCurrentWidth / 2);
         int height = (getHeight() / 2) - (this.mCurrentHeight / 2);
-        float min = Math.min(this.mCurrentWidth, this.mCurrentHeight) / 2;
-        canvas.drawRoundRect(width, height, width + this.mCurrentWidth, height + this.mCurrentHeight, min, min, this.mPaint);
+        float fMin = Math.min(this.mCurrentWidth, this.mCurrentHeight) / 2;
+        canvas.drawRoundRect(width, height, width + this.mCurrentWidth, height + this.mCurrentHeight, fMin, fMin, this.mPaint);
     }
 
     @Override // android.view.View

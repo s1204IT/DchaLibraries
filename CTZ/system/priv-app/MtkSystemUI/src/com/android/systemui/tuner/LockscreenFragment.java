@@ -32,6 +32,7 @@ import com.android.systemui.tuner.TunerService;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class LockscreenFragment extends PreferenceFragment {
     private Handler mHandler;
@@ -53,18 +54,18 @@ public class LockscreenFragment extends PreferenceFragment {
         this.mTunables.forEach(new Consumer() { // from class: com.android.systemui.tuner.-$$Lambda$LockscreenFragment$Lo7jOQgOiEZ4M1LxVUxyoD69g0s
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                LockscreenFragment.this.mTunerService.removeTunable((TunerService.Tunable) obj);
+                this.f$0.mTunerService.removeTunable((TunerService.Tunable) obj);
             }
         });
     }
 
     private void setupGroup(String str, String str2) {
-        final Preference findPreference = findPreference(str);
+        final Preference preferenceFindPreference = findPreference(str);
         final SwitchPreference switchPreference = (SwitchPreference) findPreference(str2);
         addTunable(new TunerService.Tunable() { // from class: com.android.systemui.tuner.-$$Lambda$LockscreenFragment$0AVJL9CTzprG2BMD2je5SHaUt-w
             @Override // com.android.systemui.tuner.TunerService.Tunable
             public final void onTuningChanged(String str3, String str4) {
-                LockscreenFragment.lambda$setupGroup$1(LockscreenFragment.this, switchPreference, findPreference, str3, str4);
+                LockscreenFragment.lambda$setupGroup$1(this.f$0, switchPreference, preferenceFindPreference, str3, str4);
             }
         }, str);
     }
@@ -107,7 +108,6 @@ public class LockscreenFragment extends PreferenceFragment {
         return ShortcutParser.Shortcut.create(context, str);
     }
 
-    /* loaded from: classes.dex */
     public static class Holder extends RecyclerView.ViewHolder {
         public final ExpandableIndicator expand;
         public final ImageView icon;
@@ -115,13 +115,12 @@ public class LockscreenFragment extends PreferenceFragment {
 
         public Holder(View view) {
             super(view);
-            this.icon = (ImageView) view.findViewById(16908294);
-            this.title = (TextView) view.findViewById(16908310);
+            this.icon = (ImageView) view.findViewById(android.R.id.icon);
+            this.title = (TextView) view.findViewById(android.R.id.title);
             this.expand = (ExpandableIndicator) view.findViewById(R.id.expand);
         }
     }
 
-    /* loaded from: classes.dex */
     private static class StaticShortcut extends Item {
         private final Context mContext;
         private final ShortcutParser.Shortcut mShortcut;
@@ -142,9 +141,7 @@ public class LockscreenFragment extends PreferenceFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class App extends Item {
+    private static class App extends Item {
         private final ArrayList<Item> mChildren;
         private final Context mContext;
         private boolean mExpanded;
@@ -175,23 +172,21 @@ public class LockscreenFragment extends PreferenceFragment {
                 this.mChildren.forEach(new Consumer() { // from class: com.android.systemui.tuner.-$$Lambda$LockscreenFragment$App$ETExpSuIeTllbJ9AB_3DTGOAJgk
                     @Override // java.util.function.Consumer
                     public final void accept(Object obj) {
-                        adapter.addItem(LockscreenFragment.App.this, (LockscreenFragment.Item) obj);
+                        adapter.addItem(this.f$0, (LockscreenFragment.Item) obj);
                     }
                 });
             } else {
                 this.mChildren.forEach(new Consumer() { // from class: com.android.systemui.tuner.-$$Lambda$LockscreenFragment$App$KymmDZF-Q8mj0Qr5uc4akrkgskU
                     @Override // java.util.function.Consumer
                     public final void accept(Object obj) {
-                        LockscreenFragment.Adapter.this.remItem((LockscreenFragment.Item) obj);
+                        adapter.remItem((LockscreenFragment.Item) obj);
                     }
                 });
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static abstract class Item {
+    private static abstract class Item {
         public abstract Drawable getDrawable();
 
         public abstract Boolean getExpando();
@@ -205,16 +200,17 @@ public class LockscreenFragment extends PreferenceFragment {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Adapter extends RecyclerView.Adapter<Holder> {
         private final Consumer<Item> mCallback;
         private ArrayList<Item> mItems;
 
+        /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
         @Override // android.support.v7.widget.RecyclerView.Adapter
         public Holder onCreateViewHolder(ViewGroup viewGroup, int i) {
             return new Holder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.tuner_shortcut_item, viewGroup, false));
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
         @Override // android.support.v7.widget.RecyclerView.Adapter
         public void onBindViewHolder(final Holder holder, int i) {
             Item item = this.mItems.get(i);
@@ -223,7 +219,8 @@ public class LockscreenFragment extends PreferenceFragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.tuner.-$$Lambda$LockscreenFragment$Adapter$VuIE2eL9-LHOyBflZw_Px7xwF04
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    r0.mCallback.accept(LockscreenFragment.Adapter.this.mItems.get(holder.getAdapterPosition()));
+                    LockscreenFragment.Adapter adapter = this.f$0;
+                    adapter.mCallback.accept(adapter.mItems.get(holder.getAdapterPosition()));
                 }
             });
             Boolean expando = item.getExpando();
@@ -233,7 +230,8 @@ public class LockscreenFragment extends PreferenceFragment {
                 holder.expand.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.tuner.-$$Lambda$LockscreenFragment$Adapter$fS6IuUEavDgpMOkDZLNh46UcUNQ
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view) {
-                        r0.mItems.get(holder.getAdapterPosition()).toggleExpando(LockscreenFragment.Adapter.this);
+                        LockscreenFragment.Adapter adapter = this.f$0;
+                        adapter.mItems.get(holder.getAdapterPosition()).toggleExpando(adapter);
                     }
                 });
                 return;
@@ -247,23 +245,23 @@ public class LockscreenFragment extends PreferenceFragment {
         }
 
         public void remItem(Item item) {
-            int indexOf = this.mItems.indexOf(item);
+            int iIndexOf = this.mItems.indexOf(item);
             this.mItems.remove(item);
-            notifyItemRemoved(indexOf);
+            notifyItemRemoved(iIndexOf);
         }
 
         public void addItem(Item item, Item item2) {
-            int indexOf = this.mItems.indexOf(item) + 1;
-            this.mItems.add(indexOf, item2);
-            notifyItemInserted(indexOf);
+            int iIndexOf = this.mItems.indexOf(item) + 1;
+            this.mItems.add(iIndexOf, item2);
+            notifyItemInserted(iIndexOf);
         }
     }
 
-    /* loaded from: classes.dex */
     public static class LockButtonFactory implements ExtensionController.TunerFactory<IntentButtonProvider.IntentButton> {
         private final Context mContext;
         private final String mKey;
 
+        /* JADX DEBUG: Return type fixed from 'java.lang.Object' to match base method */
         @Override // com.android.systemui.statusbar.policy.ExtensionController.TunerFactory
         public /* bridge */ /* synthetic */ IntentButtonProvider.IntentButton create(Map map) {
             return create((Map<String, String>) map);
@@ -291,19 +289,17 @@ public class LockscreenFragment extends PreferenceFragment {
                         return new ShortcutButton(this.mContext, shortcutInfo);
                     }
                     return null;
-                } else if (str.contains("/") && (activityinfo = LockscreenFragment.getActivityinfo(this.mContext, str)) != null) {
-                    return new ActivityButton(this.mContext, activityinfo);
-                } else {
-                    return null;
                 }
+                if (str.contains("/") && (activityinfo = LockscreenFragment.getActivityinfo(this.mContext, str)) != null) {
+                    return new ActivityButton(this.mContext, activityinfo);
+                }
+                return null;
             }
             return null;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ShortcutButton implements IntentButtonProvider.IntentButton {
+    private static class ShortcutButton implements IntentButtonProvider.IntentButton {
         private final IntentButtonProvider.IntentButton.IconState mIconState = new IntentButtonProvider.IntentButton.IconState();
         private final ShortcutParser.Shortcut mShortcut;
 
@@ -327,9 +323,7 @@ public class LockscreenFragment extends PreferenceFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ActivityButton implements IntentButtonProvider.IntentButton {
+    private static class ActivityButton implements IntentButtonProvider.IntentButton {
         private final IntentButtonProvider.IntentButton.IconState mIconState = new IntentButtonProvider.IntentButton.IconState();
         private final Intent mIntent;
 

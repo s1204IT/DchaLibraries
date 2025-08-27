@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallback {
     private Callback mCallback;
@@ -22,7 +23,6 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     };
     private int mUserId;
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onAuthenticated();
 

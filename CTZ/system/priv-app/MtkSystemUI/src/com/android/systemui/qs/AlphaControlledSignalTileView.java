@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import com.android.systemui.qs.tileimpl.SlashImageView;
+
 /* loaded from: classes.dex */
 public class AlphaControlledSignalTileView extends SignalTileView {
     public AlphaControlledSignalTileView(Context context) {
@@ -15,7 +16,6 @@ public class AlphaControlledSignalTileView extends SignalTileView {
         return new AlphaControlledSlashImageView(context);
     }
 
-    /* loaded from: classes.dex */
     public static class AlphaControlledSlashImageView extends SlashImageView {
         public AlphaControlledSlashImageView(Context context) {
             super(context);
@@ -40,15 +40,13 @@ public class AlphaControlledSignalTileView extends SignalTileView {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AlphaControlledSlashDrawable extends SlashDrawable {
         AlphaControlledSlashDrawable(Drawable drawable) {
             super(drawable);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.android.systemui.qs.SlashDrawable
-        public void setDrawableTintList(ColorStateList colorStateList) {
+        protected void setDrawableTintList(ColorStateList colorStateList) {
         }
 
         public void setFinalTintList(ColorStateList colorStateList) {

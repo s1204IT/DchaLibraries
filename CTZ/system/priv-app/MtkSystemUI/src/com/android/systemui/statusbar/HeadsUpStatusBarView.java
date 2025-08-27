@@ -16,6 +16,7 @@ import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.policy.DarkIconDispatcher;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class HeadsUpStatusBarView extends AlphaOptimizedLinearLayout {
     private int mAbsoluteStartPadding;
@@ -47,20 +48,20 @@ public class HeadsUpStatusBarView extends AlphaOptimizedLinearLayout {
         this(context, attributeSet, i, 0);
     }
 
-    public HeadsUpStatusBarView(Context context, AttributeSet attributeSet, int i, int i2) {
+    public HeadsUpStatusBarView(Context context, AttributeSet attributeSet, int i, int i2) throws Resources.NotFoundException {
         super(context, attributeSet, i, i2);
         this.mLayoutedIconRect = new Rect();
         this.mTmpPosition = new int[2];
         this.mFirstLayout = true;
         this.mIconDrawingRect = new Rect();
         Resources resources = getResources();
-        this.mAbsoluteStartPadding = resources.getDimensionPixelSize(R.dimen.notification_side_paddings) + resources.getDimensionPixelSize(17105200);
-        this.mEndMargin = resources.getDimensionPixelSize(17105199);
+        this.mAbsoluteStartPadding = resources.getDimensionPixelSize(R.dimen.notification_side_paddings) + resources.getDimensionPixelSize(android.R.dimen.datepicker_view_animator_height);
+        this.mEndMargin = resources.getDimensionPixelSize(android.R.dimen.datepicker_selected_date_year_size);
         setPaddingRelative(this.mAbsoluteStartPadding, 0, this.mEndMargin, 0);
         updateMaxWidth();
     }
 
-    private void updateMaxWidth() {
+    private void updateMaxWidth() throws Resources.NotFoundException {
         int dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.qs_panel_width);
         if (dimensionPixelSize != this.mMaxWidth) {
             this.mMaxWidth = dimensionPixelSize;
@@ -77,7 +78,7 @@ public class HeadsUpStatusBarView extends AlphaOptimizedLinearLayout {
     }
 
     @Override // android.view.View
-    protected void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) throws Resources.NotFoundException {
         super.onConfigurationChanged(configuration);
         updateMaxWidth();
     }
@@ -111,20 +112,19 @@ public class HeadsUpStatusBarView extends AlphaOptimizedLinearLayout {
 
     @Override // android.widget.LinearLayout, android.view.ViewGroup, android.view.View
     protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
-        int i5;
         super.onLayout(z, i, i2, i3, i4);
         this.mIconPlaceholder.getLocationOnScreen(this.mTmpPosition);
         int translationX = (int) (this.mTmpPosition[0] - getTranslationX());
-        int i6 = this.mTmpPosition[1];
+        int i5 = this.mTmpPosition[1];
         int width = this.mIconPlaceholder.getWidth() + translationX;
-        this.mLayoutedIconRect.set(translationX, i6, width, this.mIconPlaceholder.getHeight() + i6);
+        this.mLayoutedIconRect.set(translationX, i5, width, this.mIconPlaceholder.getHeight() + i5);
         updateDrawingRect();
-        int i7 = this.mAbsoluteStartPadding + this.mSysWinInset + this.mCutOutInset;
-        boolean isLayoutRtl = isLayoutRtl();
-        if (isLayoutRtl) {
+        int i6 = this.mAbsoluteStartPadding + this.mSysWinInset + this.mCutOutInset;
+        boolean zIsLayoutRtl = isLayoutRtl();
+        if (zIsLayoutRtl) {
             translationX = this.mDisplaySize.x - width;
         }
-        if (translationX != i7) {
+        if (translationX != i6) {
             if (this.mCutOutBounds != null) {
                 Iterator<Rect> it = this.mCutOutBounds.iterator();
                 while (true) {
@@ -132,20 +132,13 @@ public class HeadsUpStatusBarView extends AlphaOptimizedLinearLayout {
                         break;
                     }
                     Rect next = it.next();
-                    if (isLayoutRtl) {
-                        i5 = this.mDisplaySize.x - next.right;
-                        continue;
-                    } else {
-                        i5 = next.left;
-                        continue;
-                    }
-                    if (translationX > i5) {
+                    if (translationX > (zIsLayoutRtl ? this.mDisplaySize.x - next.right : next.left)) {
                         translationX -= next.width();
                         break;
                     }
                 }
             }
-            setPaddingRelative((i7 - translationX) + getPaddingStart(), 0, this.mEndMargin, 0);
+            setPaddingRelative((i6 - translationX) + getPaddingStart(), 0, this.mEndMargin, 0);
         }
         if (this.mFirstLayout) {
             setVisibility(8);
@@ -163,25 +156,26 @@ public class HeadsUpStatusBarView extends AlphaOptimizedLinearLayout {
     }
 
     private void updateDrawingRect() {
+        float f = this.mIconDrawingRect.left;
         this.mIconDrawingRect.set(this.mLayoutedIconRect);
         this.mIconDrawingRect.offset((int) getTranslationX(), 0);
-        if (this.mIconDrawingRect.left != this.mIconDrawingRect.left && this.mOnDrawingRectChangedListener != null) {
+        if (f != this.mIconDrawingRect.left && this.mOnDrawingRectChangedListener != null) {
             this.mOnDrawingRectChangedListener.run();
         }
     }
 
     @Override // android.view.View
     protected boolean fitSystemWindows(Rect rect) {
-        int i;
-        boolean isLayoutRtl = isLayoutRtl();
-        this.mSysWinInset = isLayoutRtl ? rect.right : rect.left;
+        int safeInsetRight;
+        boolean zIsLayoutRtl = isLayoutRtl();
+        this.mSysWinInset = zIsLayoutRtl ? rect.right : rect.left;
         DisplayCutout displayCutout = getRootWindowInsets().getDisplayCutout();
         if (displayCutout != null) {
-            i = isLayoutRtl ? displayCutout.getSafeInsetRight() : displayCutout.getSafeInsetLeft();
+            safeInsetRight = zIsLayoutRtl ? displayCutout.getSafeInsetRight() : displayCutout.getSafeInsetLeft();
         } else {
-            i = 0;
+            safeInsetRight = 0;
         }
-        this.mCutOutInset = i;
+        this.mCutOutInset = safeInsetRight;
         getDisplaySize();
         this.mCutOutBounds = null;
         if (displayCutout != null && displayCutout.getSafeInsetRight() == 0 && displayCutout.getSafeInsetLeft() == 0) {

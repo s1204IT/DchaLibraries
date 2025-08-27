@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.accessibility.AccessibilityManager;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class AccessibilitySettingsForSetupWizard extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener {
     private Preference mDisplayMagnificationPreference;
@@ -73,19 +74,19 @@ public class AccessibilitySettingsForSetupWizard extends SettingsPreferenceFragm
             return;
         }
         ServiceInfo serviceInfo = accessibilityServiceInfo.getResolveInfo().serviceInfo;
-        String charSequence = accessibilityServiceInfo.getResolveInfo().loadLabel(getPackageManager()).toString();
-        preference.setTitle(charSequence);
+        String string = accessibilityServiceInfo.getResolveInfo().loadLabel(getPackageManager()).toString();
+        preference.setTitle(string);
         ComponentName componentName = new ComponentName(serviceInfo.packageName, serviceInfo.name);
         preference.setKey(componentName.flattenToString());
         Bundle extras = preference.getExtras();
         extras.putParcelable("component_name", componentName);
         extras.putString("preference_key", preference.getKey());
-        extras.putString("title", charSequence);
-        String loadDescription = accessibilityServiceInfo.loadDescription(getPackageManager());
-        if (TextUtils.isEmpty(loadDescription)) {
-            loadDescription = getString(R.string.accessibility_service_default_description);
+        extras.putString("title", string);
+        String strLoadDescription = accessibilityServiceInfo.loadDescription(getPackageManager());
+        if (TextUtils.isEmpty(strLoadDescription)) {
+            strLoadDescription = getString(R.string.accessibility_service_default_description);
         }
-        extras.putString("summary", loadDescription);
+        extras.putString("summary", strLoadDescription);
     }
 
     private static void configureMagnificationPreferenceIfNeeded(Preference preference) {

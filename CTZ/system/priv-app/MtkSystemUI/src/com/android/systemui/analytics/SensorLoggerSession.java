@@ -5,6 +5,7 @@ import android.os.Build;
 import android.view.MotionEvent;
 import com.android.systemui.statusbar.phone.nano.TouchAnalyticsProto;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class SensorLoggerSession {
     private long mEndTimestampMillis;

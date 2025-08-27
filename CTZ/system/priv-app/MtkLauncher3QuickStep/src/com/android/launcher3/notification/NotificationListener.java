@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class NotificationListener extends NotificationListenerService {
@@ -47,10 +48,10 @@ public class NotificationListener extends NotificationListenerService {
             switch (message.what) {
                 case 1:
                     NotificationListener.this.mUiHandler.obtainMessage(message.what, message.obj).sendToTarget();
-                    return true;
+                    break;
                 case 2:
                     NotificationListener.this.mUiHandler.obtainMessage(message.what, message.obj).sendToTarget();
-                    return true;
+                    break;
                 case 3:
                     if (NotificationListener.sIsConnected) {
                         try {
@@ -63,10 +64,9 @@ public class NotificationListener extends NotificationListenerService {
                         arrayList = new ArrayList();
                     }
                     NotificationListener.this.mUiHandler.obtainMessage(message.what, arrayList).sendToTarget();
-                    return true;
-                default:
-                    return true;
+                    break;
             }
+            return true;
         }
     };
     private final Handler.Callback mUiCallback = new Handler.Callback() { // from class: com.android.launcher3.notification.NotificationListener.2
@@ -77,31 +77,29 @@ public class NotificationListener extends NotificationListenerService {
                     if (NotificationListener.sNotificationsChangedListener != null) {
                         NotificationPostedMsg notificationPostedMsg = (NotificationPostedMsg) message.obj;
                         NotificationListener.sNotificationsChangedListener.onNotificationPosted(notificationPostedMsg.packageUserKey, notificationPostedMsg.notificationKey, notificationPostedMsg.shouldBeFilteredOut);
-                        return true;
+                        break;
                     }
-                    return true;
+                    break;
                 case 2:
                     if (NotificationListener.sNotificationsChangedListener != null) {
                         Pair pair = (Pair) message.obj;
                         NotificationListener.sNotificationsChangedListener.onNotificationRemoved((PackageUserKey) pair.first, (NotificationKeyData) pair.second);
-                        return true;
+                        break;
                     }
-                    return true;
+                    break;
                 case 3:
                     if (NotificationListener.sNotificationsChangedListener != null) {
                         NotificationListener.sNotificationsChangedListener.onNotificationFullRefresh((List) message.obj);
-                        return true;
+                        break;
                     }
-                    return true;
-                default:
-                    return true;
+                    break;
             }
+            return true;
         }
     };
     private final Handler mWorkerHandler = new Handler(LauncherModel.getWorkerLooper(), this.mWorkerCallback);
     private final Handler mUiHandler = new Handler(Looper.getMainLooper(), this.mUiCallback);
 
-    /* loaded from: classes.dex */
     public interface NotificationsChangedListener {
         void onNotificationFullRefresh(List<StatusBarNotification> list);
 
@@ -110,7 +108,6 @@ public class NotificationListener extends NotificationListenerService {
         void onNotificationRemoved(PackageUserKey packageUserKey, NotificationKeyData notificationKeyData);
     }
 
-    /* loaded from: classes.dex */
     public interface StatusBarNotificationsChangedListener {
         void onNotificationPosted(StatusBarNotification statusBarNotification);
 
@@ -202,7 +199,6 @@ public class NotificationListener extends NotificationListenerService {
         }
     }
 
-    /* loaded from: classes.dex */
     private class NotificationPostedMsg {
         final NotificationKeyData notificationKey;
         final PackageUserKey packageUserKey;
@@ -287,8 +283,7 @@ public class NotificationListener extends NotificationListenerService {
         return activeNotifications == null ? Collections.emptyList() : Arrays.asList(activeNotifications);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public List<StatusBarNotification> filterNotifications(StatusBarNotification[] statusBarNotificationArr) {
+    private List<StatusBarNotification> filterNotifications(StatusBarNotification[] statusBarNotificationArr) {
         if (statusBarNotificationArr == null) {
             return null;
         }
@@ -307,17 +302,16 @@ public class NotificationListener extends NotificationListenerService {
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean shouldBeFilteredOut(StatusBarNotification statusBarNotification) {
+    private boolean shouldBeFilteredOut(StatusBarNotification statusBarNotification) {
         Notification notification = statusBarNotification.getNotification();
         updateGroupKeyIfNecessary(statusBarNotification);
         getCurrentRanking().getRanking(statusBarNotification.getKey(), this.mTempRanking);
-        if (this.mTempRanking.canShowBadge()) {
-            if (!this.mTempRanking.getChannel().getId().equals("miscellaneous") || (notification.flags & 2) == 0) {
-                return ((notification.flags & 512) != 0) || (TextUtils.isEmpty(notification.extras.getCharSequence(NotificationCompat.EXTRA_TITLE)) && TextUtils.isEmpty(notification.extras.getCharSequence(NotificationCompat.EXTRA_TEXT)));
-            }
+        if (!this.mTempRanking.canShowBadge()) {
             return true;
         }
-        return true;
+        if (this.mTempRanking.getChannel().getId().equals("miscellaneous") && (notification.flags & 2) != 0) {
+            return true;
+        }
+        return ((notification.flags & 512) != 0) || (TextUtils.isEmpty(notification.extras.getCharSequence(NotificationCompat.EXTRA_TITLE)) && TextUtils.isEmpty(notification.extras.getCharSequence(NotificationCompat.EXTRA_TEXT)));
     }
 }

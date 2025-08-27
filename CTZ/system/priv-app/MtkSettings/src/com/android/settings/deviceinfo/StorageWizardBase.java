@@ -24,6 +24,7 @@ import com.android.settingslib.Utils;
 import com.android.setupwizardlib.GlifLayout;
 import java.text.NumberFormat;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public abstract class StorageWizardBase extends Activity {
     private Button mBack;
@@ -39,9 +40,8 @@ public abstract class StorageWizardBase extends Activity {
     };
     protected VolumeInfo mVolume;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         if (!isFinishing() && ActivityManager.isUserAMonkey()) {
             Log.d("StorageSettings", "finish due to monkey user");
@@ -69,12 +69,11 @@ public abstract class StorageWizardBase extends Activity {
         super.setContentView(i);
         this.mBack = (Button) requireViewById(R.id.storage_back_button);
         this.mNext = (Button) requireViewById(R.id.storage_next_button);
-        setIcon(17302732);
+        setIcon(android.R.drawable.ic_media_route_connecting_light_00_mtrl);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         this.mStorage.unregisterListener(this.mStorageListener);
         super.onDestroy();
     }
@@ -87,56 +86,48 @@ public abstract class StorageWizardBase extends Activity {
         return (ProgressBar) requireViewById(R.id.storage_wizard_progress);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setCurrentProgress(int i) {
+    protected void setCurrentProgress(int i) {
         getProgressBar().setProgress(i);
         ((TextView) requireViewById(R.id.storage_wizard_progress_summary)).setText(NumberFormat.getPercentInstance().format(i / 100.0d));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setHeaderText(int i, CharSequence... charSequenceArr) {
-        CharSequence expandTemplate = TextUtils.expandTemplate(getText(i), charSequenceArr);
-        getGlifLayout().setHeaderText(expandTemplate);
-        setTitle(expandTemplate);
+    protected void setHeaderText(int i, CharSequence... charSequenceArr) {
+        CharSequence charSequenceExpandTemplate = TextUtils.expandTemplate(getText(i), charSequenceArr);
+        getGlifLayout().setHeaderText(charSequenceExpandTemplate);
+        setTitle(charSequenceExpandTemplate);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setBodyText(int i, CharSequence... charSequenceArr) {
+    protected void setBodyText(int i, CharSequence... charSequenceArr) {
         TextView textView = (TextView) requireViewById(R.id.storage_wizard_body);
         textView.setText(TextUtils.expandTemplate(getText(i), charSequenceArr));
         textView.setVisibility(0);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setAuxChecklist() {
+    protected void setAuxChecklist() {
         FrameLayout frameLayout = (FrameLayout) requireViewById(R.id.storage_wizard_aux);
         frameLayout.addView(LayoutInflater.from(frameLayout.getContext()).inflate(R.layout.storage_wizard_checklist, (ViewGroup) frameLayout, false));
         frameLayout.setVisibility(0);
         ((TextView) frameLayout.requireViewById(R.id.storage_wizard_migrate_v2_checklist_media)).setText(TextUtils.expandTemplate(getText(R.string.storage_wizard_migrate_v2_checklist_media), getDiskShortDescription()));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setBackButtonText(int i, CharSequence... charSequenceArr) {
+    protected void setBackButtonText(int i, CharSequence... charSequenceArr) {
         this.mBack.setText(TextUtils.expandTemplate(getText(i), charSequenceArr));
         this.mBack.setVisibility(0);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setNextButtonText(int i, CharSequence... charSequenceArr) {
+    protected void setNextButtonText(int i, CharSequence... charSequenceArr) {
         this.mNext.setText(TextUtils.expandTemplate(getText(i), charSequenceArr));
         this.mNext.setVisibility(0);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setIcon(int i) {
+    protected void setIcon(int i) {
         GlifLayout glifLayout = getGlifLayout();
-        Drawable mutate = getDrawable(i).mutate();
-        mutate.setTint(Utils.getColorAccent(glifLayout.getContext()));
-        glifLayout.setIcon(mutate);
+        Drawable drawableMutate = getDrawable(i).mutate();
+        drawableMutate.setTint(Utils.getColorAccent(glifLayout.getContext()));
+        glifLayout.setIcon(drawableMutate);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setKeepScreenOn(boolean z) {
+    protected void setKeepScreenOn(boolean z) {
         getGlifLayout().setKeepScreenOn(z);
     }
 
@@ -172,13 +163,11 @@ public abstract class StorageWizardBase extends Activity {
         super.startActivity(intent);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public VolumeInfo findFirstVolume(int i) {
+    protected VolumeInfo findFirstVolume(int i) {
         return findFirstVolume(i, 1);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public VolumeInfo findFirstVolume(int i, int i2) {
+    protected VolumeInfo findFirstVolume(int i, int i2) {
         while (true) {
             for (VolumeInfo volumeInfo : this.mStorage.getVolumes()) {
                 if (Objects.equals(this.mDisk.getId(), volumeInfo.getDiskId()) && volumeInfo.getType() == i && volumeInfo.getState() == 2) {
@@ -195,8 +184,7 @@ public abstract class StorageWizardBase extends Activity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public CharSequence getDiskDescription() {
+    protected CharSequence getDiskDescription() {
         if (this.mDisk != null) {
             return this.mDisk.getDescription();
         }
@@ -206,8 +194,7 @@ public abstract class StorageWizardBase extends Activity {
         return getText(R.string.unknown);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public CharSequence getDiskShortDescription() {
+    protected CharSequence getDiskShortDescription() {
         if (this.mDisk != null) {
             return this.mDisk.getShortDescription();
         }

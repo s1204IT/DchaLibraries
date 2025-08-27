@@ -6,6 +6,7 @@ import android.net.NetworkScorerAppData;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class NetworkScorerPickerPreferenceController extends BasePreferenceController {
     private final NetworkScoreManager mNetworkScoreManager;

@@ -6,14 +6,14 @@ import com.android.internal.widget.MessagingLayout;
 import com.android.internal.widget.MessagingLinearLayout;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
+
 /* loaded from: classes.dex */
 public class NotificationMessagingTemplateViewWrapper extends NotificationTemplateViewWrapper {
     private MessagingLayout mMessagingLayout;
     private MessagingLinearLayout mMessagingLinearLayout;
     private final int mMinHeightWithActions;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public NotificationMessagingTemplateViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
+    protected NotificationMessagingTemplateViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
         super(context, view, expandableNotificationRow);
         this.mMessagingLayout = (MessagingLayout) view;
         this.mMinHeightWithActions = NotificationUtils.getFontScaledHeight(context, R.dimen.notification_messaging_actions_min_height);

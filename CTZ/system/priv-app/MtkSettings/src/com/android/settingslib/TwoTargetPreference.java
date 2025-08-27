@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 /* loaded from: classes.dex */
 public class TwoTargetPreference extends Preference {
     private int mIconSize;
@@ -50,7 +51,7 @@ public class TwoTargetPreference extends Preference {
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        ImageView imageView = (ImageView) preferenceViewHolder.itemView.findViewById(16908294);
+        ImageView imageView = (ImageView) preferenceViewHolder.itemView.findViewById(android.R.id.icon);
         switch (this.mIconSize) {
             case 1:
                 imageView.setLayoutParams(new LinearLayout.LayoutParams(this.mMediumIconSize, this.mMediumIconSize));
@@ -59,14 +60,14 @@ public class TwoTargetPreference extends Preference {
                 imageView.setLayoutParams(new LinearLayout.LayoutParams(this.mSmallIconSize, this.mSmallIconSize));
                 break;
         }
-        View findViewById = preferenceViewHolder.findViewById(R.id.two_target_divider);
-        View findViewById2 = preferenceViewHolder.findViewById(16908312);
-        boolean shouldHideSecondTarget = shouldHideSecondTarget();
-        if (findViewById != null) {
-            findViewById.setVisibility(shouldHideSecondTarget ? 8 : 0);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.two_target_divider);
+        View viewFindViewById2 = preferenceViewHolder.findViewById(android.R.id.widget_frame);
+        boolean zShouldHideSecondTarget = shouldHideSecondTarget();
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(zShouldHideSecondTarget ? 8 : 0);
         }
-        if (findViewById2 != null) {
-            findViewById2.setVisibility(shouldHideSecondTarget ? 8 : 0);
+        if (viewFindViewById2 != null) {
+            viewFindViewById2.setVisibility(zShouldHideSecondTarget ? 8 : 0);
         }
     }
 

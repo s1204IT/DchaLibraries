@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.ArraySet;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class PluginPrefs {
     private final Set<String> mPluginActions;

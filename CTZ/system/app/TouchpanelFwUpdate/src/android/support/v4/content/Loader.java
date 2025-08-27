@@ -3,6 +3,7 @@ package android.support.v4.content;
 import android.support.v4.util.DebugUtils;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class Loader<D> {
     boolean mAbandoned;
@@ -13,7 +14,6 @@ public class Loader<D> {
     boolean mReset;
     boolean mStarted;
 
-    /* loaded from: classes.dex */
     public interface OnLoadCompleteListener<D> {
     }
 

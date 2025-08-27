@@ -2,6 +2,7 @@ package com.android.systemui.classifier;
 
 import android.hardware.SensorEvent;
 import android.view.MotionEvent;
+
 /* loaded from: classes.dex */
 public class ProximityClassifier extends GestureClassifier {
     private float mAverageNear;
@@ -39,7 +40,7 @@ public class ProximityClassifier extends GestureClassifier {
             if (eventTimeNano == 0) {
                 this.mAverageNear = this.mNear ? 1.0f : 0.0f;
             } else {
-                this.mAverageNear = ((float) this.mNearDuration) / ((float) eventTimeNano);
+                this.mAverageNear = this.mNearDuration / eventTimeNano;
             }
         }
     }

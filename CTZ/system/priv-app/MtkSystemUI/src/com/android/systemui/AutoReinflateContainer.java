@@ -9,12 +9,12 @@ import android.widget.FrameLayout;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AutoReinflateContainer extends FrameLayout implements ConfigurationController.ConfigurationListener {
     private final List<InflateListener> mInflateListeners;
     private final int mLayout;
 
-    /* loaded from: classes.dex */
     public interface InflateListener {
         void onInflated(View view);
     }
@@ -22,31 +22,28 @@ public class AutoReinflateContainer extends FrameLayout implements Configuration
     public AutoReinflateContainer(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mInflateListeners = new ArrayList();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.AutoReinflateContainer);
-        if (!obtainStyledAttributes.hasValue(0)) {
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.AutoReinflateContainer);
+        if (!typedArrayObtainStyledAttributes.hasValue(0)) {
             throw new IllegalArgumentException("AutoReinflateContainer must contain a layout");
         }
-        this.mLayout = obtainStyledAttributes.getResourceId(0, 0);
-        obtainStyledAttributes.recycle();
+        this.mLayout = typedArrayObtainStyledAttributes.getResourceId(0, 0);
+        typedArrayObtainStyledAttributes.recycle();
         inflateLayout();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.ViewGroup, android.view.View
-    public void onAttachedToWindow() {
+    protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         ((ConfigurationController) Dependency.get(ConfigurationController.class)).addCallback(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.ViewGroup, android.view.View
-    public void onDetachedFromWindow() {
+    protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         ((ConfigurationController) Dependency.get(ConfigurationController.class)).removeCallback(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void inflateLayoutImpl() {
+    protected void inflateLayoutImpl() {
         LayoutInflater.from(getContext()).inflate(this.mLayout, this);
     }
 

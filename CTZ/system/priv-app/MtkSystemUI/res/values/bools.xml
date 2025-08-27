@@ -13,8 +13,8 @@
     <bool name="config_enableFullscreenUserSwitcher">false</bool>
     <bool name="config_enableKeyguardService">true</bool>
     <bool name="config_enableLeftNavigationBar">false</bool>
-    <bool name="config_enableLockScreenRotation">@android:^attr-private/interpolatorY</bool>
-    <bool name="config_enableLockScreenTranslucentDecor">@android:^attr-private/interpolatorZ</bool>
+    <bool name="config_enableLockScreenRotation">@android:^attr-private/errorColor</bool>
+    <bool name="config_enableLockScreenTranslucentDecor">@android:^attr-private/errorMessageAboveBackground</bool>
     <bool name="config_enableNonGroupedNotificationExpand">true</bool>
     <bool name="config_enableNotificationShadeDrag">true</bool>
     <bool name="config_enableNotificationsClearAll">true</bool>

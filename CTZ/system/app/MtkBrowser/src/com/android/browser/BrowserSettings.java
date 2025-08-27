@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.WeakHashMap;
+
 /* loaded from: classes.dex */
 public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static String sFactoryResetUrl;
@@ -52,6 +53,9 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
     private boolean mLinkPrefetchAllowed = true;
     private int mPageCacheCapacity = 1;
     private Runnable mSetup = new Runnable() { // from class: com.android.browser.BrowserSettings.1
+        AnonymousClass1() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             DisplayMetrics displayMetrics = BrowserSettings.this.mContext.getResources().getDisplayMetrics();
@@ -148,8 +152,59 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
         }
     }
 
-    /* renamed from: com.android.browser.BrowserSettings$2  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.browser.BrowserSettings$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            DisplayMetrics displayMetrics = BrowserSettings.this.mContext.getResources().getDisplayMetrics();
+            BrowserSettings.this.mFontSizeMult = displayMetrics.scaledDensity / displayMetrics.density;
+            if (ActivityManager.staticGetMemoryClass() > 16) {
+                BrowserSettings.this.mPageCacheCapacity = 5;
+            }
+            BrowserSettings.this.mWebStorageSizeManager = new WebStorageSizeManager(BrowserSettings.this.mContext, new WebStorageSizeManager.StatFsDiskInfo(BrowserSettings.this.getAppCachePath()), new WebStorageSizeManager.WebKitAppCacheInfo(BrowserSettings.this.getAppCachePath()));
+            BrowserSettings.this.mPrefs.registerOnSharedPreferenceChangeListener(BrowserSettings.this);
+            if (Build.VERSION.CODENAME.equals("REL")) {
+                BrowserSettings.this.setDebugEnabled(false);
+            }
+            if (BrowserSettings.this.mPrefs.contains("text_size")) {
+                switch (AnonymousClass2.$SwitchMap$android$webkit$WebSettings$TextSize[BrowserSettings.this.getTextSize().ordinal()]) {
+                    case 1:
+                        BrowserSettings.this.setTextZoom(50);
+                        break;
+                    case 2:
+                        BrowserSettings.this.setTextZoom(75);
+                        break;
+                    case 3:
+                        BrowserSettings.this.setTextZoom(150);
+                        break;
+                    case 4:
+                        BrowserSettings.this.setTextZoom(200);
+                        break;
+                }
+                BrowserSettings.this.mPrefs.edit().remove("text_size").apply();
+            }
+            IBrowserSettingExt unused = BrowserSettings.sBrowserSettingExt = Extensions.getSettingPlugin(BrowserSettings.this.mContext);
+            String unused2 = BrowserSettings.sFactoryResetUrl = BrowserSettings.sBrowserSettingExt.getCustomerHomepage();
+            if (BrowserSettings.sFactoryResetUrl == null) {
+                String unused3 = BrowserSettings.sFactoryResetUrl = BrowserSettings.this.mContext.getResources().getString(R.string.homepage_base);
+                if (BrowserSettings.sFactoryResetUrl.indexOf("{CID}") != -1) {
+                    String unused4 = BrowserSettings.sFactoryResetUrl = BrowserSettings.sFactoryResetUrl.replace("{CID}", BrowserProvider.getClientId(BrowserSettings.this.mContext.getContentResolver()));
+                }
+            }
+            if (BrowserSettings.DEBUG) {
+                Log.d("browser", "BrowserSettings.mSetup()--->run()--->sFactoryResetUrl : " + BrowserSettings.sFactoryResetUrl);
+            }
+            synchronized (BrowserSettings.class) {
+                boolean unused5 = BrowserSettings.sInitialized = true;
+                BrowserSettings.class.notifyAll();
+            }
+        }
+    }
+
+    /* renamed from: com.android.browser.BrowserSettings$2 */
     static /* synthetic */ class AnonymousClass2 {
         static final /* synthetic */ int[] $SwitchMap$android$webkit$WebSettings$TextSize = new int[WebSettings.TextSize.values().length];
 
@@ -199,7 +254,7 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
         }
     }
 
-    private void syncSetting(WebSettings webSettings) {
+    private void syncSetting(WebSettings webSettings) throws IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
         String operatorUA;
         if (DEBUG) {
             Log.d("browser", "BrowserSettings.syncSetting()--->");
@@ -267,8 +322,9 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
         this.mNeedsSharedSync = false;
         CookieManager.getInstance().setAcceptCookie(acceptCookies());
         if (this.mController != null) {
-            for (Tab tab : this.mController.getTabs()) {
-                tab.setAcceptThirdPartyCookies(acceptCookies());
+            Iterator<Tab> it = this.mController.getTabs().iterator();
+            while (it.hasNext()) {
+                it.next().setAcceptThirdPartyCookies(acceptCookies());
             }
             this.mController.setShouldShowErrorConsole(enableJavascriptConsole());
         }
@@ -312,12 +368,18 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
         if ("fullscreen".equals(str)) {
             if (this.mController != null && this.mController.getUi() != null) {
                 this.mController.getUi().setFullscreen(useFullscreen());
+                return;
             }
-        } else if ("enable_quick_controls".equals(str)) {
+            return;
+        }
+        if ("enable_quick_controls".equals(str)) {
             if (this.mController != null && this.mController.getUi() != null) {
                 this.mController.getUi().setUseQuickControls(sharedPreferences.getBoolean(str, false));
+                return;
             }
-        } else if ("link_prefetch_when".equals(str)) {
+            return;
+        }
+        if ("link_prefetch_when".equals(str)) {
             updateConnectionType();
         } else if ("landscape_only".equals(str)) {
             sBrowserSettingExt = Extensions.getSettingPlugin(this.mContext);
@@ -347,8 +409,7 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
         return this.mWebStorageSizeManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String getAppCachePath() {
+    private String getAppCachePath() {
         if (this.mAppCachePath == null) {
             this.mAppCachePath = this.mContext.getDir("appcache", 0).getPath();
         }
@@ -381,12 +442,12 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
     }
 
     public void setDebugEnabled(boolean z) {
-        SharedPreferences.Editor edit = this.mPrefs.edit();
-        edit.putBoolean("debug_menu", z);
+        SharedPreferences.Editor editorEdit = this.mPrefs.edit();
+        editorEdit.putBoolean("debug_menu", z);
         if (!z) {
-            edit.putBoolean("enable_hardware_accel_skia", false);
+            editorEdit.putBoolean("enable_hardware_accel_skia", false);
         }
-        edit.apply();
+        editorEdit.apply();
     }
 
     public void clearCache() {
@@ -515,10 +576,10 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
         if (this.mCustomUserAgents.get(settings) != null) {
             this.mCustomUserAgents.remove(settings);
             settings.setUserAgentString(USER_AGENTS[getUserAgent()]);
-            return;
+        } else {
+            this.mCustomUserAgents.put(settings, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.158 Safari/537.36");
+            settings.setUserAgentString("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.158 Safari/537.36");
         }
-        this.mCustomUserAgents.put(settings, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.158 Safari/537.36");
-        settings.setUserAgentString("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.158 Safari/537.36");
     }
 
     public static int getAdjustedMinimumFontSize(int i) {
@@ -547,21 +608,21 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
 
     public void updateConnectionType() {
         int type;
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.mContext.getSystemService("connectivity");
         String linkPrefetchEnabled = getLinkPrefetchEnabled();
-        boolean equals = linkPrefetchEnabled.equals(getLinkPrefetchAlwaysPreferenceString(this.mContext));
-        NetworkInfo activeNetworkInfo = ((ConnectivityManager) this.mContext.getSystemService("connectivity")).getActiveNetworkInfo();
+        boolean zEquals = linkPrefetchEnabled.equals(getLinkPrefetchAlwaysPreferenceString(this.mContext));
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         if (activeNetworkInfo != null && ((type = activeNetworkInfo.getType()) == 1 || type == 7 || type == 9)) {
-            equals |= linkPrefetchEnabled.equals(getLinkPrefetchOnWifiOnlyPreferenceString(this.mContext));
+            zEquals |= linkPrefetchEnabled.equals(getLinkPrefetchOnWifiOnlyPreferenceString(this.mContext));
         }
-        if (this.mLinkPrefetchAllowed != equals) {
-            this.mLinkPrefetchAllowed = equals;
+        if (this.mLinkPrefetchAllowed != zEquals) {
+            this.mLinkPrefetchAllowed = zEquals;
             syncManagedSettings();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     @Deprecated
-    public WebSettings.TextSize getTextSize() {
+    private WebSettings.TextSize getTextSize() {
         return WebSettings.TextSize.valueOf(this.mPrefs.getString("text_size", "NORMAL"));
     }
 
@@ -591,10 +652,10 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
         if (availables == null || availables.size() <= 0) {
             return null;
         }
-        String str = "google";
+        String name = "google";
         com.mediatek.common.search.SearchEngine searchEngine = searchEngineManager.getDefault();
         if (searchEngine != null) {
-            str = searchEngine.getName();
+            name = searchEngine.getName();
         }
         sBrowserSettingExt = Extensions.getSettingPlugin(this.mContext);
         String searchEngine2 = sBrowserSettingExt.getSearchEngine(this.mPrefs, this.mContext);
@@ -625,7 +686,7 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
         if (i == -1) {
             i = 0;
             for (int i3 = 0; i3 < size; i3++) {
-                if (strArr[i3].equals(str)) {
+                if (strArr[i3].equals(name)) {
                     i = i3;
                 }
             }
@@ -635,10 +696,10 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
             Log.d("browser", "BrowserSettings.getSearchEngineName-->selectedItem = " + i + "entryValues[" + i + "]=" + strArr);
         }
         if (z && i != -1) {
-            SharedPreferences.Editor edit = this.mPrefs.edit();
-            edit.putString("search_engine", strArr[i]);
-            edit.putString("search_engine_favicon", strArr2[i]);
-            edit.commit();
+            SharedPreferences.Editor editorEdit = this.mPrefs.edit();
+            editorEdit.putString("search_engine", strArr[i]);
+            editorEdit.putString("search_engine_favicon", strArr2[i]);
+            editorEdit.commit();
         }
         return strArr[i];
     }
@@ -872,19 +933,19 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
             return;
         }
         String faviconUri = byName.getFaviconUri();
-        SharedPreferences.Editor edit = this.mPrefs.edit();
-        edit.putString("search_engine", searchEngine);
-        edit.putString("search_engine_favicon", faviconUri);
-        edit.commit();
+        SharedPreferences.Editor editorEdit = this.mPrefs.edit();
+        editorEdit.putString("search_engine", searchEngine);
+        editorEdit.putString("search_engine_favicon", faviconUri);
+        editorEdit.commit();
         Log.i("Browser/Settings", "updateSearchEngineSetting --" + searchEngine + "--" + faviconUri);
     }
 
-    public void setDoubleTapZoom(WebSettings webSettings, int i) {
+    public void setDoubleTapZoom(WebSettings webSettings, int i) throws IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
         try {
             Method declaredMethod = webSettings.getClass().getDeclaredMethod("getAwSettings", new Class[0]);
             declaredMethod.setAccessible(true);
-            Object invoke = declaredMethod.invoke(webSettings, new Object[0]);
-            invoke.getClass().getMethod("setDoubleTapZoom", Integer.TYPE).invoke(invoke, Integer.valueOf(i));
+            Object objInvoke = declaredMethod.invoke(webSettings, new Object[0]);
+            objInvoke.getClass().getMethod("setDoubleTapZoom", Integer.TYPE).invoke(objInvoke, Integer.valueOf(i));
         } catch (IllegalAccessException e) {
             Log.e("WebSettings", "Illegal access for setDoubleTapZoom:" + e);
         } catch (NoSuchMethodException e2) {

@@ -12,6 +12,7 @@ import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
+
 /* loaded from: classes.dex */
 public class PointerSpeedPreference extends SeekBarDialogPreference implements SeekBar.OnSeekBarChangeListener {
     private final InputManager mIm;
@@ -32,17 +33,15 @@ public class PointerSpeedPreference extends SeekBarDialogPreference implements S
         this.mIm = (InputManager) getContext().getSystemService("input");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.DialogPreference, android.support.v7.preference.Preference
-    public void onClick() {
+    protected void onClick() {
         super.onClick();
         getContext().getContentResolver().registerContentObserver(Settings.System.getUriFor("pointer_speed"), true, this.mSpeedObserver);
         this.mRestoredOldState = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SeekBarDialogPreference, com.android.settingslib.CustomDialogPreference
-    public void onBindDialogView(View view) {
+    protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
         this.mSeekBar = getSeekBar(view);
         this.mSeekBar.setMax(14);
@@ -69,14 +68,12 @@ public class PointerSpeedPreference extends SeekBarDialogPreference implements S
         this.mIm.tryPointerSpeed(seekBar.getProgress() - 7);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSpeedChanged() {
+    private void onSpeedChanged() {
         this.mSeekBar.setProgress(this.mIm.getPointerSpeed(getContext()) + 7);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomDialogPreference
-    public void onDialogClosed(boolean z) {
+    protected void onDialogClosed(boolean z) {
         super.onDialogClosed(z);
         ContentResolver contentResolver = getContext().getContentResolver();
         if (z) {
@@ -95,23 +92,21 @@ public class PointerSpeedPreference extends SeekBarDialogPreference implements S
         this.mRestoredOldState = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public Parcelable onSaveInstanceState() {
-        Parcelable onSaveInstanceState = super.onSaveInstanceState();
+    protected Parcelable onSaveInstanceState() {
+        Parcelable parcelableOnSaveInstanceState = super.onSaveInstanceState();
         if (getDialog() == null || !getDialog().isShowing()) {
-            return onSaveInstanceState;
+            return parcelableOnSaveInstanceState;
         }
-        SavedState savedState = new SavedState(onSaveInstanceState);
+        SavedState savedState = new SavedState(parcelableOnSaveInstanceState);
         savedState.progress = this.mSeekBar.getProgress();
         savedState.oldSpeed = this.mOldSpeed;
         restoreOldState();
         return savedState;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void onRestoreInstanceState(Parcelable parcelable) {
+    protected void onRestoreInstanceState(Parcelable parcelable) {
         if (parcelable == null || !parcelable.getClass().equals(SavedState.class)) {
             super.onRestoreInstanceState(parcelable);
             return;
@@ -122,16 +117,16 @@ public class PointerSpeedPreference extends SeekBarDialogPreference implements S
         this.mIm.tryPointerSpeed(savedState.progress - 7);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SavedState extends Preference.BaseSavedState {
+    private static class SavedState extends Preference.BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() { // from class: com.android.settings.PointerSpeedPreference.SavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState createFromParcel(Parcel parcel) {
                 return new SavedState(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState[] newArray(int i) {

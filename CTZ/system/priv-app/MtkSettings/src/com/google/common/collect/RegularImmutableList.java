@@ -1,9 +1,9 @@
 package com.google.common.collect;
 
 import com.google.common.base.Preconditions;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class RegularImmutableList<E> extends ImmutableList<E> {
+class RegularImmutableList<E> extends ImmutableList<E> {
     private final transient Object[] array;
     private final transient int offset;
     private final transient int size;
@@ -14,8 +14,7 @@ public class RegularImmutableList<E> extends ImmutableList<E> {
         this.array = objArr;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RegularImmutableList(Object[] objArr) {
+    RegularImmutableList(Object[] objArr) {
         this(objArr, 0, objArr.length);
     }
 
@@ -24,15 +23,13 @@ public class RegularImmutableList<E> extends ImmutableList<E> {
         return this.size;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return this.size != this.array.length;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableList, com.google.common.collect.ImmutableCollection
-    public int copyIntoArray(Object[] objArr, int i) {
+    int copyIntoArray(Object[] objArr, int i) {
         System.arraycopy(this.array, this.offset, objArr, i, this.size);
         return i + this.size;
     }
@@ -69,12 +66,12 @@ public class RegularImmutableList<E> extends ImmutableList<E> {
         return -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableList
-    public ImmutableList<E> subListUnchecked(int i, int i2) {
+    ImmutableList<E> subListUnchecked(int i, int i2) {
         return new RegularImmutableList(this.array, this.offset + i, i2 - i);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: listIterator(I)Ljava/util/ListIterator; */
     @Override // com.google.common.collect.ImmutableList, java.util.List
     public UnmodifiableListIterator<E> listIterator(int i) {
         return Iterators.forArray(this.array, this.offset, this.size, i);

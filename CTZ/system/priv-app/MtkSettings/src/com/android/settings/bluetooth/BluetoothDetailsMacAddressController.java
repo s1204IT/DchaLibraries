@@ -8,6 +8,7 @@ import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.widget.FooterPreference;
 import com.android.settingslib.widget.FooterPreferenceMixin;
+
 /* loaded from: classes.dex */
 public class BluetoothDetailsMacAddressController extends BluetoothDetailsController {
     FooterPreference mFooterPreference;

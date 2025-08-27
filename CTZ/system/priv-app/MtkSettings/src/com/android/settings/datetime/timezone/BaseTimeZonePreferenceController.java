@@ -4,12 +4,12 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.BasePreferenceController;
 import com.google.common.base.Objects;
+
 /* loaded from: classes.dex */
 public abstract class BaseTimeZonePreferenceController extends BasePreferenceController {
     private OnPreferenceClickListener mOnClickListener;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public BaseTimeZonePreferenceController(Context context, String str) {
+    protected BaseTimeZonePreferenceController(Context context, String str) {
         super(context, str);
     }
 

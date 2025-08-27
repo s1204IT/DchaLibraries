@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.android.setupwizardlib.template.ListMixin;
 import com.android.setupwizardlib.template.ListViewScrollHandlingDelegate;
 import com.android.setupwizardlib.template.RequireScrollMixin;
+
 /* loaded from: classes.dex */
 public class GlifListLayout extends GlifLayout {
     private ListMixin mListMixin;
@@ -49,20 +50,18 @@ public class GlifListLayout extends GlifLayout {
         this.mListMixin.onLayout();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.GlifLayout, com.android.setupwizardlib.TemplateLayout
-    public View onInflateTemplate(LayoutInflater layoutInflater, int i) {
+    protected View onInflateTemplate(LayoutInflater layoutInflater, int i) {
         if (i == 0) {
             i = R.layout.suw_glif_list_template;
         }
         return super.onInflateTemplate(layoutInflater, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.GlifLayout, com.android.setupwizardlib.TemplateLayout
-    public ViewGroup findContainer(int i) {
+    protected ViewGroup findContainer(int i) {
         if (i == 0) {
-            i = 16908298;
+            i = android.R.id.list;
         }
         return super.findContainer(i);
     }

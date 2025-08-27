@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Trace;
@@ -37,8 +38,10 @@ import com.android.systemui.statusbar.AlphaOptimizedTextView;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.wakelock.KeepAwakeAnimationListener;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, View.OnClickListener, ConfigurationController.ConfigurationListener, TunerService.Tunable {
     private final HashMap<View, PendingIntent> mClickActions;
@@ -52,6 +55,7 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
     private Row mRow;
     private Slice mSlice;
     private int mTextColor;
+
     @VisibleForTesting
     TextView mTitle;
 
@@ -103,10 +107,11 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         ((ConfigurationController) Dependency.get(ConfigurationController.class)).removeCallback(this);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r7v2, resolved type: boolean */
     /* JADX WARN: Multi-variable type inference failed */
-    private void showSlice() {
-        PendingIntent pendingIntent;
-        Drawable drawable;
+    private void showSlice() throws PackageManager.NameNotFoundException, FileNotFoundException {
+        PendingIntent action;
+        Drawable drawableLoadDrawable;
         Trace.beginSection("KeyguardSliceView#showSlice");
         if (this.mPulsing || this.mSlice == null) {
             this.mTitle.setVisibility(8);
@@ -151,24 +156,24 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
                 this.mRow.addView(keyguardSliceButton, i3 - (this.mHasHeader ? 1 : 0));
             }
             if (rowContent.getPrimaryAction() != null) {
-                pendingIntent = rowContent.getPrimaryAction().getAction();
+                action = rowContent.getPrimaryAction().getAction();
             } else {
-                pendingIntent = null;
+                action = null;
             }
-            this.mClickActions.put(keyguardSliceButton, pendingIntent);
+            this.mClickActions.put(keyguardSliceButton, action);
             SliceItem titleItem2 = rowContent.getTitleItem();
             keyguardSliceButton.setText(titleItem2 == null ? null : titleItem2.getText());
             keyguardSliceButton.setContentDescription(rowContent.getContentDescription());
-            SliceItem find = SliceQuery.find(sliceItem2.getSlice(), "image");
-            if (find != null) {
-                drawable = find.getIcon().loadDrawable(this.mContext);
-                drawable.setBounds(0, 0, Math.max((int) ((drawable.getIntrinsicWidth() / drawable.getIntrinsicHeight()) * this.mIconSize), 1), this.mIconSize);
+            SliceItem sliceItemFind = SliceQuery.find(sliceItem2.getSlice(), "image");
+            if (sliceItemFind != null) {
+                drawableLoadDrawable = sliceItemFind.getIcon().loadDrawable(this.mContext);
+                drawableLoadDrawable.setBounds(0, 0, Math.max((int) ((drawableLoadDrawable.getIntrinsicWidth() / drawableLoadDrawable.getIntrinsicHeight()) * this.mIconSize), 1), this.mIconSize);
             } else {
-                drawable = null;
+                drawableLoadDrawable = null;
             }
-            keyguardSliceButton.setCompoundDrawables(drawable, null, null, null);
+            keyguardSliceButton.setCompoundDrawables(drawableLoadDrawable, null, null, null);
             keyguardSliceButton.setOnClickListener(this);
-            keyguardSliceButton.setClickable(pendingIntent != null);
+            keyguardSliceButton.setClickable(action != null);
         }
         while (i < this.mRow.getChildCount()) {
             View childAt = this.mRow.getChildAt(i);
@@ -184,7 +189,7 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         Trace.endSection();
     }
 
-    public void setPulsing(boolean z, boolean z2) {
+    public void setPulsing(boolean z, boolean z2) throws PackageManager.NameNotFoundException, FileNotFoundException {
         this.mPulsing = z;
         LayoutTransition layoutTransition = getLayoutTransition();
         if (!z2) {
@@ -196,29 +201,28 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static CharSequence findBestLineBreak(CharSequence charSequence) {
+    private static CharSequence findBestLineBreak(CharSequence charSequence) {
         if (TextUtils.isEmpty(charSequence)) {
             return charSequence;
         }
-        String charSequence2 = charSequence.toString();
-        if (charSequence2.contains("\n") || !charSequence2.contains(" ")) {
-            return charSequence2;
+        String string = charSequence.toString();
+        if (string.contains("\n") || !string.contains(" ")) {
+            return string;
         }
-        String[] split = charSequence2.split(" ");
-        StringBuilder sb = new StringBuilder(charSequence2.length());
+        String[] strArrSplit = string.split(" ");
+        StringBuilder sb = new StringBuilder(string.length());
         int i = 0;
-        while (sb.length() < charSequence2.length() - sb.length()) {
-            sb.append(split[i]);
-            if (i < split.length - 1) {
+        while (sb.length() < string.length() - sb.length()) {
+            sb.append(strArrSplit[i]);
+            if (i < strArrSplit.length - 1) {
                 sb.append(" ");
             }
             i++;
         }
         sb.append("\n");
-        for (int i2 = i; i2 < split.length; i2++) {
-            sb.append(split[i2]);
-            if (i < split.length - 1) {
+        for (int i2 = i; i2 < strArrSplit.length; i2++) {
+            sb.append(strArrSplit[i2]);
+            if (i < strArrSplit.length - 1) {
                 sb.append(" ");
             }
         }
@@ -244,7 +248,7 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
     }
 
     @Override // android.view.View.OnClickListener
-    public void onClick(View view) {
+    public void onClick(View view) throws PendingIntent.CanceledException {
         PendingIntent pendingIntent = this.mClickActions.get(view);
         if (pendingIntent != null) {
             try {
@@ -263,8 +267,9 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         return this.mHasHeader;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onChanged(Ljava/lang/Object;)V */
     @Override // android.arch.lifecycle.Observer
-    public void onChanged(Slice slice) {
+    public void onChanged(Slice slice) throws PackageManager.NameNotFoundException, FileNotFoundException {
         this.mSlice = slice;
         showSlice();
     }
@@ -306,25 +311,24 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         this.mIconSize = this.mContext.getResources().getDimensionPixelSize(com.android.systemui.R.dimen.widget_icon_size);
     }
 
-    public void refresh() {
-        Slice bindSlice;
+    public void refresh() throws PackageManager.NameNotFoundException, FileNotFoundException {
+        Slice sliceBindSlice;
         Trace.beginSection("KeyguardSliceView#refresh");
         if ("content://com.android.systemui.keyguard/main".equals(this.mKeyguardSliceUri.toString())) {
             KeyguardSliceProvider attachedInstance = KeyguardSliceProvider.getAttachedInstance();
             if (attachedInstance != null) {
-                bindSlice = attachedInstance.onBindSlice(this.mKeyguardSliceUri);
+                sliceBindSlice = attachedInstance.onBindSlice(this.mKeyguardSliceUri);
             } else {
                 Log.w("KeyguardSliceView", "Keyguard slice not bound yet?");
-                bindSlice = null;
+                sliceBindSlice = null;
             }
         } else {
-            bindSlice = SliceViewManager.getInstance(getContext()).bindSlice(this.mKeyguardSliceUri);
+            sliceBindSlice = SliceViewManager.getInstance(getContext()).bindSlice(this.mKeyguardSliceUri);
         }
-        onChanged(bindSlice);
+        onChanged(sliceBindSlice);
         Trace.endSection();
     }
 
-    /* loaded from: classes.dex */
     public static class Row extends LinearLayout {
         private float mDarkAmount;
         private final Animation.AnimationListener mKeepAwakeListener;
@@ -350,19 +354,19 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         protected void onFinishInflate() {
             LayoutTransition layoutTransition = new LayoutTransition();
             layoutTransition.setDuration(550L);
-            ObjectAnimator ofPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(null, PropertyValuesHolder.ofInt("left", 0, 1), PropertyValuesHolder.ofInt("right", 0, 1));
-            layoutTransition.setAnimator(0, ofPropertyValuesHolder);
-            layoutTransition.setAnimator(1, ofPropertyValuesHolder);
+            ObjectAnimator objectAnimatorOfPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(null, PropertyValuesHolder.ofInt("left", 0, 1), PropertyValuesHolder.ofInt("right", 0, 1));
+            layoutTransition.setAnimator(0, objectAnimatorOfPropertyValuesHolder);
+            layoutTransition.setAnimator(1, objectAnimatorOfPropertyValuesHolder);
             layoutTransition.setInterpolator(0, Interpolators.ACCELERATE_DECELERATE);
             layoutTransition.setInterpolator(1, Interpolators.ACCELERATE_DECELERATE);
             layoutTransition.setStartDelay(0, 550L);
             layoutTransition.setStartDelay(1, 550L);
             layoutTransition.setAnimator(2, ObjectAnimator.ofFloat((Object) null, "alpha", 0.0f, 1.0f));
             layoutTransition.setInterpolator(2, Interpolators.ALPHA_IN);
-            ObjectAnimator ofFloat = ObjectAnimator.ofFloat((Object) null, "alpha", 1.0f, 0.0f);
+            ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat((Object) null, "alpha", 1.0f, 0.0f);
             layoutTransition.setInterpolator(3, Interpolators.ALPHA_OUT);
             layoutTransition.setDuration(3, 137L);
-            layoutTransition.setAnimator(3, ofFloat);
+            layoutTransition.setAnimator(3, objectAnimatorOfFloat);
             layoutTransition.setAnimateParentHierarchy(false);
             setLayoutTransition(layoutTransition);
         }
@@ -395,12 +399,10 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    /* loaded from: classes.dex */
-    public static class KeyguardSliceButton extends Button implements ConfigurationController.ConfigurationListener {
+    static class KeyguardSliceButton extends Button implements ConfigurationController.ConfigurationListener {
         public KeyguardSliceButton(Context context) {
-            super(context, null, 0, com.android.systemui.plugins.R.style.TextAppearance_Keyguard_Secondary);
+            super(context, null, 0, 2131886477);
             onDensityOrFontScaleChanged();
             setEllipsize(TextUtils.TruncateAt.END);
         }
@@ -449,7 +451,6 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         }
 
         private void updateDrawableColors() {
-            Drawable[] compoundDrawables;
             int currentTextColor = getCurrentTextColor();
             for (Drawable drawable : getCompoundDrawables()) {
                 if (drawable != null) {
@@ -459,7 +460,6 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         }
     }
 
-    /* loaded from: classes.dex */
     static class TitleView extends AlphaOptimizedTextView {
         public TitleView(Context context) {
             super(context);
@@ -490,16 +490,15 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
             }
             if (lineCount > 0 && !z) {
                 CharSequence text = getText();
-                CharSequence findBestLineBreak = KeyguardSliceView.findBestLineBreak(text);
-                if (!TextUtils.equals(text, findBestLineBreak)) {
-                    setText(findBestLineBreak);
+                CharSequence charSequenceFindBestLineBreak = KeyguardSliceView.findBestLineBreak(text);
+                if (!TextUtils.equals(text, charSequenceFindBestLineBreak)) {
+                    setText(charSequenceFindBestLineBreak);
                     super.onMeasure(i, i2);
                 }
             }
         }
     }
 
-    /* loaded from: classes.dex */
     private class SliceViewTransitionListener implements LayoutTransition.TransitionListener {
         private SliceViewTransitionListener() {
         }
@@ -510,16 +509,14 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
                 case 2:
                     view.setTranslationY(KeyguardSliceView.this.getResources().getDimensionPixelSize(com.android.systemui.R.dimen.pulsing_notification_appear_translation));
                     view.animate().translationY(0.0f).setDuration(550L).setInterpolator(Interpolators.ALPHA_IN).start();
-                    return;
+                    break;
                 case 3:
                     if (view == KeyguardSliceView.this.mTitle) {
                         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) KeyguardSliceView.this.mTitle.getLayoutParams();
                         KeyguardSliceView.this.mTitle.setTranslationY((-KeyguardSliceView.this.mTitle.getHeight()) - (layoutParams.topMargin + layoutParams.bottomMargin));
-                        return;
+                        break;
                     }
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
 

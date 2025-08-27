@@ -11,6 +11,7 @@ import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.dashboard.DashboardFragment;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.fuelgauge.PowerWhitelistBackend;
+
 /* loaded from: classes.dex */
 public class BatteryOptimizationPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private PowerWhitelistBackend mBackend;

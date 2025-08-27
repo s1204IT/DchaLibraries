@@ -14,6 +14,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class LocationEnabler implements LifecycleObserver, OnPause, OnResume {
     static final IntentFilter INTENT_FILTER_LOCATION_MODE_CHANGED = new IntentFilter("android.location.MODE_CHANGED");
@@ -22,7 +23,6 @@ public class LocationEnabler implements LifecycleObserver, OnPause, OnResume {
     BroadcastReceiver mReceiver;
     private final UserManager mUserManager;
 
-    /* loaded from: classes.dex */
     public interface LocationModeChangeListener {
         void onLocationModeChanged(int i, boolean z);
     }
@@ -71,8 +71,7 @@ public class LocationEnabler implements LifecycleObserver, OnPause, OnResume {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setLocationEnabled(boolean z) {
+    void setLocationEnabled(boolean z) {
         int i = Settings.Secure.getInt(this.mContext.getContentResolver(), "location_mode", 0);
         if (isRestricted()) {
             if (Log.isLoggable("LocationEnabler", 4)) {
@@ -88,28 +87,24 @@ public class LocationEnabler implements LifecycleObserver, OnPause, OnResume {
         refreshLocationMode();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isEnabled(int i) {
+    boolean isEnabled(int i) {
         return (i == 0 || isRestricted()) ? false : true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isManagedProfileRestrictedByBase() {
+    boolean isManagedProfileRestrictedByBase() {
         UserHandle managedProfile = com.android.settings.Utils.getManagedProfile(this.mUserManager);
         return managedProfile != null && hasShareLocationRestriction(managedProfile.getIdentifier());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RestrictedLockUtils.EnforcedAdmin getShareLocationEnforcedAdmin(int i) {
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_share_location", i);
-        if (checkIfRestrictionEnforced == null) {
+    RestrictedLockUtils.EnforcedAdmin getShareLocationEnforcedAdmin(int i) {
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_share_location", i);
+        if (enforcedAdminCheckIfRestrictionEnforced == null) {
             return RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_config_location", i);
         }
-        return checkIfRestrictionEnforced;
+        return enforcedAdminCheckIfRestrictionEnforced;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean hasShareLocationRestriction(int i) {
+    boolean hasShareLocationRestriction(int i) {
         return RestrictedLockUtils.hasBaseUserRestriction(this.mContext, "no_share_location", i);
     }
 

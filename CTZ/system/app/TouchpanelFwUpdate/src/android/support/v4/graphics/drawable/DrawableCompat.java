@@ -3,7 +3,9 @@ package android.support.v4.graphics.drawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 /* loaded from: classes.dex */
 public final class DrawableCompat {
     private static Method sSetLayoutDirectionMethod;
@@ -16,30 +18,30 @@ public final class DrawableCompat {
         return false;
     }
 
-    public static boolean setLayoutDirection(Drawable drawable, int layoutDirection) {
+    public static boolean setLayoutDirection(Drawable drawable, int layoutDirection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (Build.VERSION.SDK_INT >= 23) {
             return drawable.setLayoutDirection(layoutDirection);
         }
-        if (Build.VERSION.SDK_INT >= 17) {
-            if (!sSetLayoutDirectionMethodFetched) {
-                try {
-                    sSetLayoutDirectionMethod = Drawable.class.getDeclaredMethod("setLayoutDirection", Integer.TYPE);
-                    sSetLayoutDirectionMethod.setAccessible(true);
-                } catch (NoSuchMethodException e) {
-                    Log.i("DrawableCompat", "Failed to retrieve setLayoutDirection(int) method", e);
-                }
-                sSetLayoutDirectionMethodFetched = true;
-            }
-            if (sSetLayoutDirectionMethod != null) {
-                try {
-                    sSetLayoutDirectionMethod.invoke(drawable, Integer.valueOf(layoutDirection));
-                    return true;
-                } catch (Exception e2) {
-                    Log.i("DrawableCompat", "Failed to invoke setLayoutDirection(int) via reflection", e2);
-                    sSetLayoutDirectionMethod = null;
-                }
-            }
+        if (Build.VERSION.SDK_INT < 17) {
             return false;
+        }
+        if (!sSetLayoutDirectionMethodFetched) {
+            try {
+                sSetLayoutDirectionMethod = Drawable.class.getDeclaredMethod("setLayoutDirection", Integer.TYPE);
+                sSetLayoutDirectionMethod.setAccessible(true);
+            } catch (NoSuchMethodException e) {
+                Log.i("DrawableCompat", "Failed to retrieve setLayoutDirection(int) method", e);
+            }
+            sSetLayoutDirectionMethodFetched = true;
+        }
+        if (sSetLayoutDirectionMethod != null) {
+            try {
+                sSetLayoutDirectionMethod.invoke(drawable, Integer.valueOf(layoutDirection));
+                return true;
+            } catch (Exception e2) {
+                Log.i("DrawableCompat", "Failed to invoke setLayoutDirection(int) via reflection", e2);
+                sSetLayoutDirectionMethod = null;
+            }
         }
         return false;
     }

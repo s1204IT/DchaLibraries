@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.v7.preference.Preference;
 import android.util.SparseIntArray;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public abstract class BatteryTip implements Parcelable, Comparable<BatteryTip> {
     static final SparseIntArray TIP_ORDER = new SparseIntArray();
@@ -35,16 +36,14 @@ public abstract class BatteryTip implements Parcelable, Comparable<BatteryTip> {
         TIP_ORDER.append(7, 7);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public BatteryTip(Parcel parcel) {
+    BatteryTip(Parcel parcel) {
         this.mType = parcel.readInt();
         this.mState = parcel.readInt();
         this.mShowDialog = parcel.readBoolean();
         this.mNeedUpdate = parcel.readBoolean();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public BatteryTip(int i, int i2, boolean z) {
+    BatteryTip(int i, int i2, boolean z) {
         this.mType = i;
         this.mState = i2;
         this.mShowDialog = z;
@@ -93,6 +92,7 @@ public abstract class BatteryTip implements Parcelable, Comparable<BatteryTip> {
         return this.mState;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     @Override // java.lang.Comparable
     public int compareTo(BatteryTip batteryTip) {
         return TIP_ORDER.get(this.mType) - TIP_ORDER.get(batteryTip.mType);

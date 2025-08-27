@@ -13,6 +13,7 @@ import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
 import com.android.launcher3.anim.Interpolators;
 import com.android.launcher3.compat.AccessibilityManagerCompat;
+
 /* loaded from: classes.dex */
 public class BottomUserEducationView extends AbstractSlideInView implements Insettable {
     private static final int DEFAULT_CLOSE_DURATION = 200;
@@ -37,7 +38,7 @@ public class BottomUserEducationView extends AbstractSlideInView implements Inse
         this.mCloseButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.launcher3.views.-$$Lambda$BottomUserEducationView$kONmsarlQNBji-dbZJSp0try0p8
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                BottomUserEducationView.this.handleClose(true);
+                this.f$0.handleClose(true);
             }
         });
     }
@@ -67,9 +68,8 @@ public class BottomUserEducationView extends AbstractSlideInView implements Inse
         setPadding(getPaddingLeft() + i, getPaddingTop(), getPaddingRight() + i2, getPaddingBottom() + i3);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.AbstractFloatingView
-    public void handleClose(boolean z) {
+    protected void handleClose(boolean z) {
         handleClose(z, 200L);
         if (z) {
             this.mLauncher.getSharedPrefs().edit().putBoolean(KEY_SHOWED_BOTTOM_USER_EDUCATION, true).apply();

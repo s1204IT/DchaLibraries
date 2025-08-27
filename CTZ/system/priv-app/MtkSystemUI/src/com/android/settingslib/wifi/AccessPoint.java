@@ -1,6 +1,7 @@
 package com.android.settingslib.wifi;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class AccessPoint implements Comparable<AccessPoint> {
     static final AtomicInteger sLastId = new AtomicInteger(0);
@@ -61,7 +63,6 @@ public class AccessPoint implements Comparable<AccessPoint> {
     private int security;
     private String ssid;
 
-    /* loaded from: classes.dex */
     public interface AccessPointListener {
         void onAccessPointChanged(AccessPoint accessPoint);
 
@@ -85,8 +86,7 @@ public class AccessPoint implements Comparable<AccessPoint> {
         this.mId = sLastId.incrementAndGet();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public AccessPoint(Context context, Collection<ScanResult> collection) {
+    AccessPoint(Context context, Collection<ScanResult> collection) {
         this.mScanResults = new ArraySet<>();
         this.mScoredNetworkCache = new HashMap();
         this.networkId = -1;
@@ -140,42 +140,43 @@ public class AccessPoint implements Comparable<AccessPoint> {
         this.mKey = sb.toString();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     @Override // java.lang.Comparable
     public int compareTo(AccessPoint accessPoint) {
-        if (!isActive() || accessPoint.isActive()) {
-            if (isActive() || !accessPoint.isActive()) {
-                if (!isReachable() || accessPoint.isReachable()) {
-                    if (isReachable() || !accessPoint.isReachable()) {
-                        if (!isSaved() || accessPoint.isSaved()) {
-                            if (isSaved() || !accessPoint.isSaved()) {
-                                if (getSpeed() != accessPoint.getSpeed()) {
-                                    return accessPoint.getSpeed() - getSpeed();
-                                }
-                                int calculateSignalLevel = WifiManager.calculateSignalLevel(accessPoint.mRssi, 5) - WifiManager.calculateSignalLevel(this.mRssi, 5);
-                                if (calculateSignalLevel != 0) {
-                                    return calculateSignalLevel;
-                                }
-                                int i = accessPoint.security - this.security;
-                                if (i != 0) {
-                                    return i;
-                                }
-                                int compareToIgnoreCase = getSsidStr().compareToIgnoreCase(accessPoint.getSsidStr());
-                                if (compareToIgnoreCase != 0) {
-                                    return compareToIgnoreCase;
-                                }
-                                return getSsidStr().compareTo(accessPoint.getSsidStr());
-                            }
-                            return 1;
-                        }
-                        return -1;
-                    }
-                    return 1;
-                }
-                return -1;
-            }
+        if (isActive() && !accessPoint.isActive()) {
+            return -1;
+        }
+        if (!isActive() && accessPoint.isActive()) {
             return 1;
         }
-        return -1;
+        if (isReachable() && !accessPoint.isReachable()) {
+            return -1;
+        }
+        if (!isReachable() && accessPoint.isReachable()) {
+            return 1;
+        }
+        if (isSaved() && !accessPoint.isSaved()) {
+            return -1;
+        }
+        if (!isSaved() && accessPoint.isSaved()) {
+            return 1;
+        }
+        if (getSpeed() != accessPoint.getSpeed()) {
+            return accessPoint.getSpeed() - getSpeed();
+        }
+        int iCalculateSignalLevel = WifiManager.calculateSignalLevel(accessPoint.mRssi, 5) - WifiManager.calculateSignalLevel(this.mRssi, 5);
+        if (iCalculateSignalLevel != 0) {
+            return iCalculateSignalLevel;
+        }
+        int i = accessPoint.security - this.security;
+        if (i != 0) {
+            return i;
+        }
+        int iCompareToIgnoreCase = getSsidStr().compareToIgnoreCase(accessPoint.getSsidStr());
+        if (iCompareToIgnoreCase != 0) {
+            return iCompareToIgnoreCase;
+        }
+        return getSsidStr().compareTo(accessPoint.getSsidStr());
     }
 
     public boolean equals(Object obj) {
@@ -232,19 +233,18 @@ public class AccessPoint implements Comparable<AccessPoint> {
         return sb.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean update(WifiNetworkScoreCache wifiNetworkScoreCache, boolean z, long j) {
-        boolean z2;
+    boolean update(WifiNetworkScoreCache wifiNetworkScoreCache, boolean z, long j) {
+        boolean zUpdateScores;
         if (z) {
-            z2 = updateScores(wifiNetworkScoreCache, j);
+            zUpdateScores = updateScores(wifiNetworkScoreCache, j);
         } else {
-            z2 = false;
+            zUpdateScores = false;
         }
-        return updateMetered(wifiNetworkScoreCache) || z2;
+        return updateMetered(wifiNetworkScoreCache) || zUpdateScores;
     }
 
     private boolean updateScores(WifiNetworkScoreCache wifiNetworkScoreCache, long j) {
-        long elapsedRealtime = SystemClock.elapsedRealtime();
+        long jElapsedRealtime = SystemClock.elapsedRealtime();
         Iterator<ScanResult> it = this.mScanResults.iterator();
         while (it.hasNext()) {
             ScanResult next = it.next();
@@ -252,13 +252,13 @@ public class AccessPoint implements Comparable<AccessPoint> {
             if (scoredNetwork != null) {
                 TimestampedScoredNetwork timestampedScoredNetwork = this.mScoredNetworkCache.get(next.BSSID);
                 if (timestampedScoredNetwork == null) {
-                    this.mScoredNetworkCache.put(next.BSSID, new TimestampedScoredNetwork(scoredNetwork, elapsedRealtime));
+                    this.mScoredNetworkCache.put(next.BSSID, new TimestampedScoredNetwork(scoredNetwork, jElapsedRealtime));
                 } else {
-                    timestampedScoredNetwork.update(scoredNetwork, elapsedRealtime);
+                    timestampedScoredNetwork.update(scoredNetwork, jElapsedRealtime);
                 }
             }
         }
-        final long j2 = elapsedRealtime - j;
+        final long j2 = jElapsedRealtime - j;
         final Iterator<TimestampedScoredNetwork> it2 = this.mScoredNetworkCache.values().iterator();
         it2.forEachRemaining(new Consumer() { // from class: com.android.settingslib.wifi.-$$Lambda$AccessPoint$OIXfUc7y1PqI_zmQ3STe_086YzY
             @Override // java.util.function.Consumer
@@ -269,8 +269,7 @@ public class AccessPoint implements Comparable<AccessPoint> {
         return updateSpeed();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$updateScores$0(long j, Iterator it, TimestampedScoredNetwork timestampedScoredNetwork) {
+    static /* synthetic */ void lambda$updateScores$0(long j, Iterator it, TimestampedScoredNetwork timestampedScoredNetwork) {
         if (timestampedScoredNetwork.getUpdatedTimestampMillis() < j) {
             it.remove();
         }
@@ -294,13 +293,14 @@ public class AccessPoint implements Comparable<AccessPoint> {
         if (Log.isLoggable("SettingsLib.AccessPoint", 3)) {
             Log.d("SettingsLib.AccessPoint", String.format("Generating fallbackspeed for %s using cache: %s", getSsidStr(), this.mScoredNetworkCache));
         }
+        Iterator<TimestampedScoredNetwork> it = this.mScoredNetworkCache.values().iterator();
         int i2 = 0;
         int i3 = 0;
-        for (TimestampedScoredNetwork timestampedScoredNetwork : this.mScoredNetworkCache.values()) {
-            int calculateBadge = timestampedScoredNetwork.getScore().calculateBadge(this.mRssi);
-            if (calculateBadge != 0) {
+        while (it.hasNext()) {
+            int iCalculateBadge = it.next().getScore().calculateBadge(this.mRssi);
+            if (iCalculateBadge != 0) {
                 i2++;
-                i3 += calculateBadge;
+                i3 += iCalculateBadge;
             }
         }
         if (i2 != 0) {
@@ -365,11 +365,11 @@ public class AccessPoint implements Comparable<AccessPoint> {
     public boolean matches(WifiConfiguration wifiConfiguration) {
         if (wifiConfiguration.isPasspoint() && this.mConfig != null && this.mConfig.isPasspoint()) {
             return this.ssid.equals(removeDoubleQuotes(wifiConfiguration.SSID)) && wifiConfiguration.FQDN.equals(this.mConfig.FQDN);
-        } else if (this.ssid.equals(removeDoubleQuotes(wifiConfiguration.SSID)) && this.security == getSecurity(wifiConfiguration)) {
-            return this.mConfig == null || this.mConfig.shared == wifiConfiguration.shared;
-        } else {
-            return false;
         }
+        if (this.ssid.equals(removeDoubleQuotes(wifiConfiguration.SSID)) && this.security == getSecurity(wifiConfiguration)) {
+            return this.mConfig == null || this.mConfig.shared == wifiConfiguration.shared;
+        }
+        return false;
     }
 
     public WifiConfiguration getConfig() {
@@ -538,11 +538,11 @@ public class AccessPoint implements Comparable<AccessPoint> {
     private boolean isInfoForThisAccessPoint(WifiConfiguration wifiConfiguration, WifiInfo wifiInfo) {
         if (!isPasspoint() && this.networkId != -1) {
             return this.networkId == wifiInfo.getNetworkId();
-        } else if (wifiConfiguration != null) {
-            return matches(wifiConfiguration);
-        } else {
-            return this.ssid.equals(removeDoubleQuotes(wifiInfo.getSSID()));
         }
+        if (wifiConfiguration != null) {
+            return matches(wifiConfiguration);
+        }
+        return this.ssid.equals(removeDoubleQuotes(wifiInfo.getSSID()));
     }
 
     public boolean isSaved() {
@@ -565,8 +565,7 @@ public class AccessPoint implements Comparable<AccessPoint> {
         this.mConfig.allowedKeyManagement.set(0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setScanResults(Collection<ScanResult> collection) {
+    void setScanResults(Collection<ScanResult> collection) {
         String key = getKey();
         for (ScanResult scanResult : collection) {
             String key2 = getKey(scanResult);
@@ -584,14 +583,14 @@ public class AccessPoint implements Comparable<AccessPoint> {
             ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settingslib.wifi.-$$Lambda$AccessPoint$MkkIS1nUbezHicDMmYnviyiBJyo
                 @Override // java.lang.Runnable
                 public final void run() {
-                    AccessPoint.lambda$setScanResults$1(AccessPoint.this);
+                    AccessPoint.lambda$setScanResults$1(this.f$0);
                 }
             });
         }
         ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settingslib.wifi.-$$Lambda$AccessPoint$0Yq14aFJZLjPMzFGAvglLaxsblI
             @Override // java.lang.Runnable
             public final void run() {
-                AccessPoint.lambda$setScanResults$2(AccessPoint.this);
+                AccessPoint.lambda$setScanResults$2(this.f$0);
             }
         });
         if (!collection.isEmpty()) {
@@ -617,12 +616,6 @@ public class AccessPoint implements Comparable<AccessPoint> {
         }
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:23:0x0046, code lost:
-        if (r4.mNetworkInfo.getDetailedState() != r7.getDetailedState()) goto L16;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public boolean update(WifiConfiguration wifiConfiguration, WifiInfo wifiInfo, NetworkInfo networkInfo) {
         int level = getLevel();
         boolean z = false;
@@ -636,9 +629,7 @@ public class AccessPoint implements Comparable<AccessPoint> {
             if (this.mRssi != wifiInfo.getRssi() && wifiInfo.getRssi() != -127) {
                 this.mRssi = wifiInfo.getRssi();
             } else {
-                if (this.mNetworkInfo != null) {
-                    if (networkInfo != null) {
-                    }
+                if (this.mNetworkInfo != null && networkInfo != null && this.mNetworkInfo.getDetailedState() != networkInfo.getDetailedState()) {
                 }
                 this.mInfo = wifiInfo;
                 this.mNetworkInfo = networkInfo;
@@ -655,14 +646,14 @@ public class AccessPoint implements Comparable<AccessPoint> {
             ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settingslib.wifi.-$$Lambda$AccessPoint$S7H59e_8IxpVPy0V68Oc2-zX-rg
                 @Override // java.lang.Runnable
                 public final void run() {
-                    AccessPoint.lambda$update$3(AccessPoint.this);
+                    AccessPoint.lambda$update$3(this.f$0);
                 }
             });
             if (level != getLevel()) {
                 ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settingslib.wifi.-$$Lambda$AccessPoint$QW-1Uw0oxoaKqUtEtPO0oPvH5ng
                     @Override // java.lang.Runnable
                     public final void run() {
-                        AccessPoint.lambda$update$4(AccessPoint.this);
+                        AccessPoint.lambda$update$4(this.f$0);
                     }
                 });
             }
@@ -682,14 +673,13 @@ public class AccessPoint implements Comparable<AccessPoint> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void update(WifiConfiguration wifiConfiguration) {
+    void update(WifiConfiguration wifiConfiguration) {
         this.mConfig = wifiConfiguration;
         this.networkId = wifiConfiguration != null ? wifiConfiguration.networkId : -1;
         ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settingslib.wifi.-$$Lambda$AccessPoint$QyP0aXhFuWtm7lmBu1IY3qbfmBA
             @Override // java.lang.Runnable
             public final void run() {
-                AccessPoint.lambda$update$5(AccessPoint.this);
+                AccessPoint.lambda$update$5(this.f$0);
             }
         });
     }
@@ -705,13 +695,11 @@ public class AccessPoint implements Comparable<AccessPoint> {
         this.mRssi = i;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getSpeed() {
+    int getSpeed() {
         return this.mSpeed;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getSpeedLabel() {
+    String getSpeedLabel() {
         return getSpeedLabel(this.mSpeed);
     }
 
@@ -731,25 +719,24 @@ public class AccessPoint implements Comparable<AccessPoint> {
         return 30;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public String getSpeedLabel(int i) {
+    String getSpeedLabel(int i) {
         return getSpeedLabel(this.mContext, i);
     }
 
     private static String getSpeedLabel(Context context, int i) {
-        if (i != 5) {
-            if (i != 10) {
-                if (i != 20) {
-                    if (i == 30) {
-                        return context.getString(R.string.speed_label_very_fast);
-                    }
-                    return null;
-                }
-                return context.getString(R.string.speed_label_fast);
-            }
+        if (i == 5) {
+            return context.getString(R.string.speed_label_slow);
+        }
+        if (i == 10) {
             return context.getString(R.string.speed_label_okay);
         }
-        return context.getString(R.string.speed_label_slow);
+        if (i == 20) {
+            return context.getString(R.string.speed_label_fast);
+        }
+        if (i == 30) {
+            return context.getString(R.string.speed_label_very_fast);
+        }
+        return null;
     }
 
     public static String getSpeedLabel(Context context, ScoredNetwork scoredNetwork, int i) {
@@ -760,7 +747,7 @@ public class AccessPoint implements Comparable<AccessPoint> {
         return this.mRssi != Integer.MIN_VALUE;
     }
 
-    public static String getSummary(Context context, String str, NetworkInfo.DetailedState detailedState, boolean z, String str2) {
+    public static String getSummary(Context context, String str, NetworkInfo.DetailedState detailedState, boolean z, String str2) throws Resources.NotFoundException {
         NetworkCapabilities networkCapabilities;
         if (detailedState == NetworkInfo.DetailedState.CONNECTED && str == null) {
             if (!TextUtils.isEmpty(str2)) {
@@ -792,8 +779,8 @@ public class AccessPoint implements Comparable<AccessPoint> {
             return "";
         }
         String[] stringArray = context.getResources().getStringArray(str == null ? R.array.wifi_status : R.array.wifi_status_with_ssid);
-        int ordinal = detailedState.ordinal();
-        return (ordinal >= stringArray.length || stringArray[ordinal].length() == 0) ? "" : String.format(stringArray[ordinal], str);
+        int iOrdinal = detailedState.ordinal();
+        return (iOrdinal >= stringArray.length || stringArray[iOrdinal].length() == 0) ? "" : String.format(stringArray[iOrdinal], str);
     }
 
     public static String getSummary(Context context, NetworkInfo.DetailedState detailedState, boolean z) {
@@ -809,15 +796,15 @@ public class AccessPoint implements Comparable<AccessPoint> {
     }
 
     private static int getPskType(ScanResult scanResult) {
-        boolean contains = scanResult.capabilities.contains("WPA-PSK");
-        boolean contains2 = scanResult.capabilities.contains("WPA2-PSK");
-        if (contains2 && contains) {
+        boolean zContains = scanResult.capabilities.contains("WPA-PSK");
+        boolean zContains2 = scanResult.capabilities.contains("WPA2-PSK");
+        if (zContains2 && zContains) {
             return 3;
         }
-        if (contains2) {
+        if (zContains2) {
             return 2;
         }
-        if (contains) {
+        if (zContains) {
             return 1;
         }
         Log.w("SettingsLib.AccessPoint", "Received abnormal flag string: " + scanResult.capabilities);
@@ -870,11 +857,11 @@ public class AccessPoint implements Comparable<AccessPoint> {
                 return "WPA_WPA2";
             }
             return "PSK";
-        } else if (i == 3) {
-            return "EAP";
-        } else {
-            return "NONE";
         }
+        if (i == 3) {
+            return "EAP";
+        }
+        return "NONE";
     }
 
     static String removeDoubleQuotes(String str) {

@@ -7,6 +7,7 @@ import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
 import com.android.quickstep.views.RecentsView;
+
 /* loaded from: classes.dex */
 public class FastOverviewState extends OverviewState {
     private static final float MAX_PREVIEW_SCALE_UP = 1.3f;
@@ -39,7 +40,7 @@ public class FastOverviewState extends OverviewState {
             return 1.0f;
         }
         Resources resources = context.getResources();
-        return Math.min(Math.min(deviceProfile.availableHeightPx / (rect.height() + resources.getDimension(R.dimen.task_thumbnail_top_margin)), deviceProfile.availableWidthPx / (rect.width() + (2.0f * (resources.getDimension(R.dimen.recents_page_spacing) + resources.getDimension(R.dimen.quickscrub_adjacent_visible_width))))), (float) MAX_PREVIEW_SCALE_UP);
+        return Math.min(Math.min(deviceProfile.availableHeightPx / (rect.height() + resources.getDimension(R.dimen.task_thumbnail_top_margin)), deviceProfile.availableWidthPx / (rect.width() + (2.0f * (resources.getDimension(R.dimen.recents_page_spacing) + resources.getDimension(R.dimen.quickscrub_adjacent_visible_width))))), MAX_PREVIEW_SCALE_UP);
     }
 
     @Override // com.android.launcher3.uioverrides.OverviewState, com.android.launcher3.LauncherState

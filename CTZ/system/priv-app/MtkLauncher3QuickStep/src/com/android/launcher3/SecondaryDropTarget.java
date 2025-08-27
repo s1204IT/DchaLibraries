@@ -23,6 +23,7 @@ import com.android.launcher3.logging.LoggerUtils;
 import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.launcher3.util.Themes;
 import java.net.URISyntaxException;
+
 /* loaded from: classes.dex */
 public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmListener {
     private static final long CACHE_EXPIRE_TIMEOUT = 5000;
@@ -43,9 +44,8 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
         this.mCacheExpireAlarm.setOnAlarmListener(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.ButtonDropTarget, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         setupUi(R.id.action_uninstall);
     }
@@ -59,11 +59,11 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
             this.mHoverColor = getResources().getColor(R.color.uninstall_target_hover_tint);
             setDrawable(R.drawable.ic_uninstall_shadow);
             updateText(R.string.uninstall_drop_target_label);
-            return;
+        } else {
+            this.mHoverColor = Themes.getColorAccent(getContext());
+            setDrawable(R.drawable.ic_setup_shadow);
+            updateText(R.string.gadget_setup_text);
         }
-        this.mHoverColor = Themes.getColorAccent(getContext());
-        setDrawable(R.drawable.ic_setup_shadow);
-        updateText(R.string.gadget_setup_text);
     }
 
     @Override // com.android.launcher3.OnAlarmListener
@@ -78,9 +78,9 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
 
     @Override // com.android.launcher3.ButtonDropTarget
     public LauncherLogProto.Target getDropTargetForLogging() {
-        LauncherLogProto.Target newTarget = LoggerUtils.newTarget(2);
-        newTarget.controlType = this.mCurrentAccessibilityAction == R.id.action_uninstall ? 6 : 4;
-        return newTarget;
+        LauncherLogProto.Target targetNewTarget = LoggerUtils.newTarget(2);
+        targetNewTarget.controlType = this.mCurrentAccessibilityAction == R.id.action_uninstall ? 6 : 4;
+        return targetNewTarget;
     }
 
     @Override // com.android.launcher3.ButtonDropTarget
@@ -91,21 +91,21 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
     @Override // com.android.launcher3.ButtonDropTarget
     public boolean supportsAccessibilityDrop(ItemInfo itemInfo, View view) {
         if (view instanceof AppWidgetHostView) {
-            if (getReconfigurableWidgetId(view) != 0) {
-                setupUi(R.id.action_reconfigure);
-                return true;
+            if (getReconfigurableWidgetId(view) == 0) {
+                return false;
             }
-            return false;
+            setupUi(R.id.action_reconfigure);
+            return true;
         }
         setupUi(R.id.action_uninstall);
-        Boolean bool = this.mUninstallDisabledCache.get(itemInfo.user);
-        if (bool == null) {
+        Boolean boolValueOf = this.mUninstallDisabledCache.get(itemInfo.user);
+        if (boolValueOf == null) {
             Bundle userRestrictions = ((UserManager) getContext().getSystemService("user")).getUserRestrictions(itemInfo.user);
-            bool = Boolean.valueOf(userRestrictions.getBoolean("no_control_apps", false) || userRestrictions.getBoolean("no_uninstall_apps", false));
-            this.mUninstallDisabledCache.put(itemInfo.user, bool);
+            boolValueOf = Boolean.valueOf(userRestrictions.getBoolean("no_control_apps", false) || userRestrictions.getBoolean("no_uninstall_apps", false));
+            this.mUninstallDisabledCache.put(itemInfo.user, boolValueOf);
         }
         this.mCacheExpireAlarm.setAlarm(CACHE_EXPIRE_TIMEOUT);
-        if (bool.booleanValue()) {
+        if (boolValueOf.booleanValue()) {
             return false;
         }
         if (itemInfo instanceof ItemInfoWithIcon) {
@@ -120,7 +120,7 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
     private ComponentName getUninstallTarget(ItemInfo itemInfo) {
         UserHandle userHandle;
         Intent intent;
-        LauncherActivityInfo resolveActivity;
+        LauncherActivityInfo launcherActivityInfoResolveActivity;
         if (itemInfo != null && itemInfo.itemType == 0) {
             intent = itemInfo.getIntent();
             userHandle = itemInfo.user;
@@ -128,10 +128,10 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
             userHandle = null;
             intent = null;
         }
-        if (intent == null || (resolveActivity = LauncherAppsCompat.getInstance(this.mLauncher).resolveActivity(intent, userHandle)) == null || (resolveActivity.getApplicationInfo().flags & 1) != 0) {
+        if (intent == null || (launcherActivityInfoResolveActivity = LauncherAppsCompat.getInstance(this.mLauncher).resolveActivity(intent, userHandle)) == null || (launcherActivityInfoResolveActivity.getApplicationInfo().flags & 1) != 0) {
             return null;
         }
-        return resolveActivity.getComponentName();
+        return launcherActivityInfoResolveActivity.getComponentName();
     }
 
     @Override // com.android.launcher3.ButtonDropTarget, com.android.launcher3.DropTarget
@@ -142,15 +142,15 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
 
     @Override // com.android.launcher3.ButtonDropTarget
     public void completeDrop(DropTarget.DragObject dragObject) {
-        ComponentName performDropAction = performDropAction(getViewUnderDrag(dragObject.dragInfo), dragObject.dragInfo);
+        ComponentName componentNamePerformDropAction = performDropAction(getViewUnderDrag(dragObject.dragInfo), dragObject.dragInfo);
         if (dragObject.dragSource instanceof DeferredOnComplete) {
             DeferredOnComplete deferredOnComplete = (DeferredOnComplete) dragObject.dragSource;
-            if (performDropAction == null) {
+            if (componentNamePerformDropAction == null) {
                 deferredOnComplete.sendFailure();
-                return;
+            } else {
+                deferredOnComplete.mPackageName = componentNamePerformDropAction.getPackageName();
+                this.mLauncher.setOnResumeCallback(deferredOnComplete);
             }
-            deferredOnComplete.mPackageName = performDropAction.getPackageName();
-            this.mLauncher.setOnResumeCallback(deferredOnComplete);
         }
     }
 
@@ -180,7 +180,7 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
         }
         ComponentName uninstallTarget = getUninstallTarget(itemInfo);
         if (uninstallTarget == null) {
-            Toast.makeText(this.mLauncher, (int) R.string.uninstall_system_app_text, 0).show();
+            Toast.makeText(this.mLauncher, R.string.uninstall_system_app_text, 0).show();
             return null;
         }
         try {
@@ -197,7 +197,6 @@ public class SecondaryDropTarget extends ButtonDropTarget implements OnAlarmList
         performDropAction(view, itemInfo);
     }
 
-    /* loaded from: classes.dex */
     private class DeferredOnComplete implements DragSource, Launcher.OnResumeCallback {
         private final Context mContext;
         private DropTarget.DragObject mDragObject;

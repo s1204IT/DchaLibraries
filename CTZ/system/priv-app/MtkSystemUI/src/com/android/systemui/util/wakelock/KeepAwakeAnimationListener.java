@@ -6,8 +6,10 @@ import android.content.Context;
 import android.view.animation.Animation;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.util.Assert;
+
 /* loaded from: classes.dex */
 public class KeepAwakeAnimationListener extends AnimatorListenerAdapter implements Animation.AnimationListener {
+
     @VisibleForTesting
     static WakeLock sWakeLock;
 

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.TreeSet;
+
 /* loaded from: classes.dex */
 public class UserDictionaryAddWordContents {
     private static final String[] HAS_WORD_PROJECTION = {"word"};
@@ -27,8 +28,7 @@ public class UserDictionaryAddWordContents {
     private final EditText mShortcutEditText;
     private final EditText mWordEditText;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public UserDictionaryAddWordContents(View view, Bundle bundle) {
+    UserDictionaryAddWordContents(View view, Bundle bundle) {
         this.mWordEditText = (EditText) view.findViewById(R.id.user_dictionary_add_word_text);
         this.mShortcutEditText = (EditText) view.findViewById(R.id.user_dictionary_add_shortcut);
         String string = bundle.getString("word");
@@ -46,8 +46,7 @@ public class UserDictionaryAddWordContents {
         updateLocale(bundle.getString("locale"));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public UserDictionaryAddWordContents(View view, UserDictionaryAddWordContents userDictionaryAddWordContents) {
+    UserDictionaryAddWordContents(View view, UserDictionaryAddWordContents userDictionaryAddWordContents) {
         this.mWordEditText = (EditText) view.findViewById(R.id.user_dictionary_add_word_text);
         this.mShortcutEditText = (EditText) view.findViewById(R.id.user_dictionary_add_shortcut);
         this.mMode = 0;
@@ -63,8 +62,7 @@ public class UserDictionaryAddWordContents {
         this.mLocale = str;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void saveStateIntoBundle(Bundle bundle) {
+    void saveStateIntoBundle(Bundle bundle) {
         bundle.putString("word", this.mWordEditText.getText().toString());
         bundle.putString("originalWord", this.mOldWord);
         if (this.mShortcutEditText != null) {
@@ -76,22 +74,18 @@ public class UserDictionaryAddWordContents {
         bundle.putString("locale", this.mLocale);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void delete(Context context) {
+    void delete(Context context) {
         if (this.mMode == 0 && !TextUtils.isEmpty(this.mOldWord)) {
             UserDictionarySettings.deleteWord(this.mOldWord, this.mOldShortcut, context.getContentResolver());
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* JADX WARN: Code restructure failed: missing block: B:13:0x003c, code lost:
-        if (android.text.TextUtils.isEmpty(r1) != false) goto L10;
-     */
+    /* JADX WARN: Removed duplicated region for block: B:11:0x002c  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public int apply(Context context, Bundle bundle) {
-        String obj;
+    int apply(Context context, Bundle bundle) {
+        String string;
         if (bundle != null) {
             saveStateIntoBundle(bundle);
         }
@@ -99,51 +93,54 @@ public class UserDictionaryAddWordContents {
         if (this.mMode == 0 && !TextUtils.isEmpty(this.mOldWord)) {
             UserDictionarySettings.deleteWord(this.mOldWord, this.mOldShortcut, contentResolver);
         }
-        String obj2 = this.mWordEditText.getText().toString();
+        String string2 = this.mWordEditText.getText().toString();
         if (this.mShortcutEditText != null) {
-            obj = this.mShortcutEditText.getText().toString();
+            string = this.mShortcutEditText.getText().toString();
+            if (TextUtils.isEmpty(string)) {
+            }
+        } else {
+            string = null;
         }
-        obj = null;
-        if (TextUtils.isEmpty(obj2)) {
+        if (TextUtils.isEmpty(string2)) {
             return 1;
         }
-        this.mSavedWord = obj2;
-        this.mSavedShortcut = obj;
-        if (TextUtils.isEmpty(obj) && hasWord(obj2, context)) {
+        this.mSavedWord = string2;
+        this.mSavedShortcut = string;
+        if (TextUtils.isEmpty(string) && hasWord(string2, context)) {
             return 2;
         }
-        UserDictionarySettings.deleteWord(obj2, null, contentResolver);
-        if (!TextUtils.isEmpty(obj)) {
-            UserDictionarySettings.deleteWord(obj2, obj, contentResolver);
+        UserDictionarySettings.deleteWord(string2, null, contentResolver);
+        if (!TextUtils.isEmpty(string)) {
+            UserDictionarySettings.deleteWord(string2, string, contentResolver);
         }
-        UserDictionary.Words.addWord(context, obj2.toString(), 250, obj, TextUtils.isEmpty(this.mLocale) ? null : Utils.createLocaleFromString(this.mLocale));
+        UserDictionary.Words.addWord(context, string2.toString(), 250, string, TextUtils.isEmpty(this.mLocale) ? null : Utils.createLocaleFromString(this.mLocale));
         return 0;
     }
 
+    /* JADX DEBUG: Another duplicated slice has different insns count: {[IF]}, finally: {[IF, INVOKE] complete} */
     private boolean hasWord(String str, Context context) {
-        Cursor query;
+        Cursor cursorQuery;
         if ("".equals(this.mLocale)) {
-            query = context.getContentResolver().query(UserDictionary.Words.CONTENT_URI, HAS_WORD_PROJECTION, "word=? AND locale is null", new String[]{str}, null);
+            cursorQuery = context.getContentResolver().query(UserDictionary.Words.CONTENT_URI, HAS_WORD_PROJECTION, "word=? AND locale is null", new String[]{str}, null);
         } else {
-            query = context.getContentResolver().query(UserDictionary.Words.CONTENT_URI, HAS_WORD_PROJECTION, "word=? AND locale=?", new String[]{str, this.mLocale}, null);
+            cursorQuery = context.getContentResolver().query(UserDictionary.Words.CONTENT_URI, HAS_WORD_PROJECTION, "word=? AND locale=?", new String[]{str, this.mLocale}, null);
         }
-        if (query == null) {
+        if (cursorQuery == null) {
             return false;
         }
         try {
-            boolean z = query.getCount() > 0;
-            if (query != null) {
-                query.close();
+            boolean z = cursorQuery.getCount() > 0;
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
             return z;
         } finally {
-            if (query != null) {
-                query.close();
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
         }
     }
 
-    /* loaded from: classes.dex */
     public static class LocaleRenderer {
         private final String mDescription;
         private final String mLocaleString;
@@ -173,13 +170,13 @@ public class UserDictionaryAddWordContents {
     public ArrayList<LocaleRenderer> getLocalesList(Activity activity) {
         TreeSet<String> userDictionaryLocalesSet = UserDictionaryList.getUserDictionaryLocalesSet(activity);
         userDictionaryLocalesSet.remove(this.mLocale);
-        String locale = Locale.getDefault().toString();
-        userDictionaryLocalesSet.remove(locale);
+        String string = Locale.getDefault().toString();
+        userDictionaryLocalesSet.remove(string);
         userDictionaryLocalesSet.remove("");
         ArrayList<LocaleRenderer> arrayList = new ArrayList<>();
         addLocaleDisplayNameToList(activity, arrayList, this.mLocale);
-        if (!locale.equals(this.mLocale)) {
-            addLocaleDisplayNameToList(activity, arrayList, locale);
+        if (!string.equals(this.mLocale)) {
+            addLocaleDisplayNameToList(activity, arrayList, string);
         }
         Iterator<String> it = userDictionaryLocalesSet.iterator();
         while (it.hasNext()) {

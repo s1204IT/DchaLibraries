@@ -6,6 +6,7 @@ import android.graphics.drawable.TransitionDrawable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+
 /* loaded from: classes.dex */
 public class QSDetailClipper {
     private Animator mAnimator;
@@ -54,19 +55,19 @@ public class QSDetailClipper {
         }
         int width = this.mDetail.getWidth() - i;
         int height = this.mDetail.getHeight() - i2;
-        int i3 = 0;
+        int iMin = 0;
         if (i < 0 || width < 0 || i2 < 0 || height < 0) {
-            i3 = Math.min(Math.min(Math.min(Math.abs(i), Math.abs(i2)), Math.abs(width)), Math.abs(height));
+            iMin = Math.min(Math.min(Math.min(Math.abs(i), Math.abs(i2)), Math.abs(width)), Math.abs(height));
         }
-        int i4 = i * i;
-        int i5 = i2 * i2;
-        int i6 = width * width;
-        int i7 = height * height;
-        int max = (int) Math.max((int) Math.max((int) Math.max((int) Math.ceil(Math.sqrt(i4 + i5)), Math.ceil(Math.sqrt(i5 + i6))), Math.ceil(Math.sqrt(i6 + i7))), Math.ceil(Math.sqrt(i4 + i7)));
+        int i3 = i * i;
+        int i4 = i2 * i2;
+        int i5 = width * width;
+        int i6 = height * height;
+        int iMax = (int) Math.max((int) Math.max((int) Math.max((int) Math.ceil(Math.sqrt(i3 + i4)), Math.ceil(Math.sqrt(i4 + i5))), Math.ceil(Math.sqrt(i5 + i6))), Math.ceil(Math.sqrt(i3 + i6)));
         if (z) {
-            this.mAnimator = ViewAnimationUtils.createCircularReveal(this.mDetail, i, i2, i3, max);
+            this.mAnimator = ViewAnimationUtils.createCircularReveal(this.mDetail, i, i2, iMin, iMax);
         } else {
-            this.mAnimator = ViewAnimationUtils.createCircularReveal(this.mDetail, i, i2, max, i3);
+            this.mAnimator = ViewAnimationUtils.createCircularReveal(this.mDetail, i, i2, iMax, iMin);
         }
         this.mAnimator.setDuration((long) (this.mAnimator.getDuration() * 1.5d));
         if (animatorListener != null) {

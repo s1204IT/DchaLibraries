@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public final class Prefs {
     public static boolean getBoolean(Context context, String str, boolean z) {

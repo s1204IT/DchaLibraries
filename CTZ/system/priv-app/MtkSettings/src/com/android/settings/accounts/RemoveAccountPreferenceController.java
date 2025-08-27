@@ -24,6 +24,7 @@ import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class RemoveAccountPreferenceController extends AbstractPreferenceController implements View.OnClickListener, PreferenceControllerMixin {
     private Account mAccount;
@@ -53,9 +54,9 @@ public class RemoveAccountPreferenceController extends AbstractPreferenceControl
 
     @Override // android.view.View.OnClickListener
     public void onClick(View view) {
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced;
-        if (this.mUserHandle != null && (checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_modify_accounts", this.mUserHandle.getIdentifier())) != null) {
-            RestrictedLockUtils.sendShowAdminSupportDetailsIntent(this.mContext, checkIfRestrictionEnforced);
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced;
+        if (this.mUserHandle != null && (enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_modify_accounts", this.mUserHandle.getIdentifier())) != null) {
+            RestrictedLockUtils.sendShowAdminSupportDetailsIntent(this.mContext, enforcedAdminCheckIfRestrictionEnforced);
         } else {
             ConfirmRemoveAccountDialog.show(this.mParentFragment, this.mAccount, this.mUserHandle);
         }
@@ -66,7 +67,6 @@ public class RemoveAccountPreferenceController extends AbstractPreferenceControl
         this.mUserHandle = userHandle;
     }
 
-    /* loaded from: classes.dex */
     public static class ConfirmRemoveAccountDialog extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
         private Account mAccount;
         private UserHandle mUserHandle;
@@ -95,7 +95,7 @@ public class RemoveAccountPreferenceController extends AbstractPreferenceControl
 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            return new AlertDialog.Builder(getActivity()).setTitle(R.string.really_remove_account_title).setMessage(R.string.really_remove_account_message).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).setPositiveButton(R.string.remove_account_label, this).create();
+            return new AlertDialog.Builder(getActivity()).setTitle(R.string.really_remove_account_title).setMessage(R.string.really_remove_account_message).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).setPositiveButton(R.string.remove_account_label, this).create();
         }
 
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -132,7 +132,6 @@ public class RemoveAccountPreferenceController extends AbstractPreferenceControl
         }
     }
 
-    /* loaded from: classes.dex */
     public static class RemoveAccountFailureDialog extends InstrumentedDialogFragment {
         public static void show(Fragment fragment) {
             if (!fragment.isAdded()) {
@@ -145,7 +144,7 @@ public class RemoveAccountPreferenceController extends AbstractPreferenceControl
 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            return new AlertDialog.Builder(getActivity()).setTitle(R.string.really_remove_account_title).setMessage(R.string.remove_account_failed).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).create();
+            return new AlertDialog.Builder(getActivity()).setTitle(R.string.really_remove_account_title).setMessage(R.string.remove_account_failed).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null).create();
         }
 
         @Override // com.android.settingslib.core.instrumentation.Instrumentable

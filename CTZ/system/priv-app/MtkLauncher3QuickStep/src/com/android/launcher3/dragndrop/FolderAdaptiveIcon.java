@@ -1,6 +1,7 @@
 package com.android.launcher3.dragndrop;
 
 import android.annotation.TargetApi;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -20,6 +21,7 @@ import com.android.launcher3.folder.PreviewBackground;
 import com.android.launcher3.graphics.BitmapRenderer;
 import com.android.launcher3.util.Preconditions;
 import java.util.concurrent.Callable;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class FolderAdaptiveIcon extends AdaptiveIconDrawable {
@@ -42,15 +44,15 @@ public class FolderAdaptiveIcon extends AdaptiveIconDrawable {
         return this.mBadge;
     }
 
-    public static FolderAdaptiveIcon createFolderAdaptiveIcon(final Launcher launcher, final long j, final Point point) {
+    public static FolderAdaptiveIcon createFolderAdaptiveIcon(final Launcher launcher, final long j, final Point point) throws Resources.NotFoundException {
         Preconditions.assertNonUiThread();
         int dimensionPixelSize = launcher.getResources().getDimensionPixelSize(R.dimen.blur_size_medium_outline);
-        final Bitmap createBitmap = Bitmap.createBitmap(point.x - dimensionPixelSize, point.y - dimensionPixelSize, Bitmap.Config.ARGB_8888);
+        final Bitmap bitmapCreateBitmap = Bitmap.createBitmap(point.x - dimensionPixelSize, point.y - dimensionPixelSize, Bitmap.Config.ARGB_8888);
         try {
             return (FolderAdaptiveIcon) new MainThreadExecutor().submit(new Callable() { // from class: com.android.launcher3.dragndrop.-$$Lambda$FolderAdaptiveIcon$EvXjCRurKSBgeFM43Q21w_aCV1I
                 @Override // java.util.concurrent.Callable
                 public final Object call() {
-                    return FolderAdaptiveIcon.lambda$createFolderAdaptiveIcon$0(Launcher.this, j, createBitmap, point);
+                    return FolderAdaptiveIcon.lambda$createFolderAdaptiveIcon$0(launcher, j, bitmapCreateBitmap, point);
                 }
             }).get();
         } catch (Exception e) {
@@ -59,13 +61,12 @@ public class FolderAdaptiveIcon extends AdaptiveIconDrawable {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ FolderAdaptiveIcon lambda$createFolderAdaptiveIcon$0(Launcher launcher, long j, Bitmap bitmap, Point point) throws Exception {
-        FolderIcon findFolderIcon = launcher.findFolderIcon(j);
-        if (findFolderIcon == null) {
+    static /* synthetic */ FolderAdaptiveIcon lambda$createFolderAdaptiveIcon$0(Launcher launcher, long j, Bitmap bitmap, Point point) throws Exception {
+        FolderIcon folderIconFindFolderIcon = launcher.findFolderIcon(j);
+        if (folderIconFindFolderIcon == null) {
             return null;
         }
-        return createDrawableOnUiThread(findFolderIcon, bitmap, point);
+        return createDrawableOnUiThread(folderIconFindFolderIcon, bitmap, point);
     }
 
     private static FolderAdaptiveIcon createDrawableOnUiThread(final FolderIcon folderIcon, Bitmap bitmap, Point point) {
@@ -83,7 +84,7 @@ public class FolderAdaptiveIcon extends AdaptiveIconDrawable {
         float extraInsetFraction2 = AdaptiveIconDrawable.getExtraInsetFraction() / extraInsetFraction;
         final float f = i * extraInsetFraction2;
         final float f2 = extraInsetFraction2 * i2;
-        Bitmap createHardwareBitmap = BitmapRenderer.createHardwareBitmap(i, i2, new BitmapRenderer.Renderer() { // from class: com.android.launcher3.dragndrop.-$$Lambda$FolderAdaptiveIcon$L3UlyJ_DqQjUWQP5IsbeK9Sxbe8
+        Bitmap bitmapCreateHardwareBitmap = BitmapRenderer.createHardwareBitmap(i, i2, new BitmapRenderer.Renderer() { // from class: com.android.launcher3.dragndrop.-$$Lambda$FolderAdaptiveIcon$L3UlyJ_DqQjUWQP5IsbeK9Sxbe8
             @Override // com.android.launcher3.graphics.BitmapRenderer.Renderer
             public final void draw(Canvas canvas2) {
                 FolderAdaptiveIcon.lambda$createDrawableOnUiThread$1(f, f2, folderIcon, canvas2);
@@ -93,21 +94,17 @@ public class FolderAdaptiveIcon extends AdaptiveIconDrawable {
         Matrix matrix = new Matrix();
         matrix.setTranslate(dimension, dimension);
         folderBackground.getClipPath().transform(matrix, path);
-        ShiftedBitmapDrawable shiftedBitmapDrawable = new ShiftedBitmapDrawable(bitmap, dimension, dimension);
-        return new FolderAdaptiveIcon(new ColorDrawable(folderBackground.getBgColor()), new ShiftedBitmapDrawable(createHardwareBitmap, dimension - f, dimension - f2), shiftedBitmapDrawable, path);
+        return new FolderAdaptiveIcon(new ColorDrawable(folderBackground.getBgColor()), new ShiftedBitmapDrawable(bitmapCreateHardwareBitmap, dimension - f, dimension - f2), new ShiftedBitmapDrawable(bitmap, dimension, dimension), path);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$createDrawableOnUiThread$1(float f, float f2, FolderIcon folderIcon, Canvas canvas) {
-        int save = canvas.save();
+    static /* synthetic */ void lambda$createDrawableOnUiThread$1(float f, float f2, FolderIcon folderIcon, Canvas canvas) {
+        int iSave = canvas.save();
         canvas.translate(f, f2);
         folderIcon.getPreviewItemManager().draw(canvas);
-        canvas.restoreToCount(save);
+        canvas.restoreToCount(iSave);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ShiftedBitmapDrawable extends Drawable {
+    private static class ShiftedBitmapDrawable extends Drawable {
         private final Bitmap mBitmap;
         private final Paint mPaint = new Paint(2);
         private final float mShiftX;

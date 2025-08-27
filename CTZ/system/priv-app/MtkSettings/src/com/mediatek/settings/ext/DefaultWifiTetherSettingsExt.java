@@ -3,6 +3,7 @@ package com.mediatek.settings.ext;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class DefaultWifiTetherSettingsExt implements IWifiTetherSettingsExt {
     private static final String TAG = "DefaultWifiTetherSettingsExt";

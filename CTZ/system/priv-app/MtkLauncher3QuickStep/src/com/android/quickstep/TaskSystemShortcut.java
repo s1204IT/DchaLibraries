@@ -33,6 +33,7 @@ import com.android.systemui.shared.system.WindowManagerWrapper;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class TaskSystemShortcut<T extends SystemShortcut> extends SystemShortcut {
     private static final String TAG = "TaskSystemShortcut";
@@ -66,14 +67,12 @@ public class TaskSystemShortcut<T extends SystemShortcut> extends SystemShortcut
         return this.mSystemShortcut.getOnClickListener(baseDraggingActivity, itemInfo);
     }
 
-    /* loaded from: classes.dex */
     public static class AppInfo extends TaskSystemShortcut<SystemShortcut.AppInfo> {
         public AppInfo() {
             super(new SystemShortcut.AppInfo());
         }
     }
 
-    /* loaded from: classes.dex */
     public static class SplitScreen extends TaskSystemShortcut {
         private Handler mHandler;
 
@@ -89,17 +88,17 @@ public class TaskSystemShortcut<T extends SystemShortcut> extends SystemShortcut
             }
             Task task = taskView.getTask();
             final int i = task.key.id;
-            if (task.isDockable) {
-                final RecentsView recentsView = (RecentsView) baseDraggingActivity.getOverviewPanel();
-                final TaskThumbnailView thumbnail = taskView.getThumbnail();
-                return new View.OnClickListener() { // from class: com.android.quickstep.-$$Lambda$TaskSystemShortcut$SplitScreen$iqjICZKgHOyLfMMRAFiQa4a1xFY
-                    @Override // android.view.View.OnClickListener
-                    public final void onClick(View view) {
-                        TaskSystemShortcut.SplitScreen.lambda$getOnClickListener$1(TaskSystemShortcut.SplitScreen.this, taskView, recentsView, baseDraggingActivity, i, thumbnail, view);
-                    }
-                };
+            if (!task.isDockable) {
+                return null;
             }
-            return null;
+            final RecentsView recentsView = (RecentsView) baseDraggingActivity.getOverviewPanel();
+            final TaskThumbnailView thumbnail = taskView.getThumbnail();
+            return new View.OnClickListener() { // from class: com.android.quickstep.-$$Lambda$TaskSystemShortcut$SplitScreen$iqjICZKgHOyLfMMRAFiQa4a1xFY
+                @Override // android.view.View.OnClickListener
+                public final void onClick(View view) {
+                    TaskSystemShortcut.SplitScreen.lambda$getOnClickListener$1(this.f$0, taskView, recentsView, baseDraggingActivity, i, thumbnail, view);
+                }
+            };
         }
 
         public static /* synthetic */ void lambda$getOnClickListener$1(SplitScreen splitScreen, final TaskView taskView, final RecentsView recentsView, final BaseDraggingActivity baseDraggingActivity, final int i, TaskThumbnailView taskThumbnailView, View view) {
@@ -133,17 +132,17 @@ public class TaskSystemShortcut<T extends SystemShortcut> extends SystemShortcut
                     Runnable runnable = new Runnable() { // from class: com.android.quickstep.-$$Lambda$TaskSystemShortcut$SplitScreen$bIIgvqKYPaQItPy-_-PUOmKY14k
                         @Override // java.lang.Runnable
                         public final void run() {
-                            TaskSystemShortcut.SplitScreen.lambda$getOnClickListener$0(RecentsView.this, taskView);
+                            TaskSystemShortcut.SplitScreen.lambda$getOnClickListener$0(recentsView, taskView);
                         }
                     };
                     int[] iArr = new int[2];
                     taskThumbnailView.getLocationOnScreen(iArr);
                     final Rect rect = new Rect(iArr[0], iArr[1], iArr[0] + ((int) (taskThumbnailView.getWidth() * taskView.getScaleX())), iArr[1] + ((int) (taskThumbnailView.getHeight() * taskView.getScaleY())));
-                    final Bitmap drawViewIntoHardwareBitmap = RecentsTransition.drawViewIntoHardwareBitmap(rect.width(), rect.height(), taskThumbnailView, 1.0f, ViewCompat.MEASURED_STATE_MASK);
+                    final Bitmap bitmapDrawViewIntoHardwareBitmap = RecentsTransition.drawViewIntoHardwareBitmap(rect.width(), rect.height(), taskThumbnailView, 1.0f, ViewCompat.MEASURED_STATE_MASK);
                     WindowManagerWrapper.getInstance().overridePendingAppTransitionMultiThumbFuture(new AppTransitionAnimationSpecsFuture(splitScreen.mHandler) { // from class: com.android.quickstep.TaskSystemShortcut.SplitScreen.3
                         @Override // com.android.systemui.shared.recents.view.AppTransitionAnimationSpecsFuture
                         public List<AppTransitionAnimationSpecCompat> composeSpecs() {
-                            return Collections.singletonList(new AppTransitionAnimationSpecCompat(i, drawViewIntoHardwareBitmap, rect));
+                            return Collections.singletonList(new AppTransitionAnimationSpecCompat(i, bitmapDrawViewIntoHardwareBitmap, rect));
                         }
                     }, runnable, splitScreen.mHandler, true);
                 } catch (RemoteException e) {
@@ -152,14 +151,12 @@ public class TaskSystemShortcut<T extends SystemShortcut> extends SystemShortcut
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$getOnClickListener$0(RecentsView recentsView, TaskView taskView) {
+        static /* synthetic */ void lambda$getOnClickListener$0(RecentsView recentsView, TaskView taskView) {
             recentsView.addIgnoreResetTask(taskView);
             taskView.setAlpha(0.0f);
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Pin extends TaskSystemShortcut {
         private static final String TAG = Pin.class.getSimpleName();
         private Handler mHandler;
@@ -178,18 +175,20 @@ public class TaskSystemShortcut<T extends SystemShortcut> extends SystemShortcut
             return new View.OnClickListener() { // from class: com.android.quickstep.-$$Lambda$TaskSystemShortcut$Pin$CEaWVCwYeYN8KHoUzK4-cdTYR94
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    r2.launchTask(true, new Consumer() { // from class: com.android.quickstep.-$$Lambda$TaskSystemShortcut$Pin$hWIdn00sCsRznD3WJhILU0CGvPQ
+                    TaskSystemShortcut.Pin pin = this.f$0;
+                    ISystemUiProxy iSystemUiProxy = systemUiProxy;
+                    TaskView taskView2 = taskView;
+                    taskView2.launchTask(true, new Consumer() { // from class: com.android.quickstep.-$$Lambda$TaskSystemShortcut$Pin$hWIdn00sCsRznD3WJhILU0CGvPQ
                         @Override // java.util.function.Consumer
                         public final void accept(Object obj) {
-                            TaskSystemShortcut.Pin.lambda$getOnClickListener$0(ISystemUiProxy.this, r2, (Boolean) obj);
+                            TaskSystemShortcut.Pin.lambda$getOnClickListener$0(iSystemUiProxy, taskView2, (Boolean) obj);
                         }
-                    }, TaskSystemShortcut.Pin.this.mHandler);
+                    }, pin.mHandler);
                 }
             };
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$getOnClickListener$0(ISystemUiProxy iSystemUiProxy, TaskView taskView, Boolean bool) {
+        static /* synthetic */ void lambda$getOnClickListener$0(ISystemUiProxy iSystemUiProxy, TaskView taskView, Boolean bool) {
             if (bool.booleanValue()) {
                 try {
                     iSystemUiProxy.startScreenPinning(taskView.getTask().key.id);
@@ -203,7 +202,6 @@ public class TaskSystemShortcut<T extends SystemShortcut> extends SystemShortcut
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Install extends TaskSystemShortcut<SystemShortcut.Install> {
         public Install() {
             super(new SystemShortcut.Install());

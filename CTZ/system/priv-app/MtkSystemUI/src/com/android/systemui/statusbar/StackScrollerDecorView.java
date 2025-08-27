@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.Interpolators;
+
 /* loaded from: classes.dex */
 public abstract class StackScrollerDecorView extends ExpandableView {
     protected View mContent;
@@ -39,14 +40,13 @@ public abstract class StackScrollerDecorView extends ExpandableView {
         this.mContentVisibilityEndRunnable = new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$StackScrollerDecorView$Z-vSQgmaL3Ks4ALN1cxIjM1burs
             @Override // java.lang.Runnable
             public final void run() {
-                StackScrollerDecorView.lambda$new$0(StackScrollerDecorView.this);
+                StackScrollerDecorView.lambda$new$0(this.f$0);
             }
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mContent = findContentView();
         this.mSecondaryView = findSecondaryView();
@@ -54,9 +54,8 @@ public abstract class StackScrollerDecorView extends ExpandableView {
         setSecondaryVisible(false, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.ExpandableView, android.widget.FrameLayout, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         setOutlineProvider(null);
     }

@@ -474,8 +474,8 @@
         <item>Never time out</item>
     </array>
     <array name="bytes_picker_sizes">
-        <item>@android:string/httpErrorRedirectLoop</item>
-        <item>@android:string/config_rawContactsLocalAccountType</item>
+        <item>@android:string/ext_media_unmountable_notification_title</item>
+        <item>@android:string/config_defaultWallpaperEffectsGenerationService</item>
     </array>
     <array name="captioning_color_selector_titles">
         <item>@string/color_unspecified</item>
@@ -1409,7 +1409,7 @@
         <item>PWD</item>
         <item>SIM</item>
         <item>AKA</item>
-        <item>AKA&apos;</item>
+        <item>AKA\'</item>
     </array>
     <array name="wifi_hidden_entries">
         <item>No</item>
@@ -1461,7 +1461,7 @@
         <item>GTC</item>
         <item>SIM</item>
         <item>AKA</item>
-        <item>AKA&apos;</item>
+        <item>AKA\'</item>
     </array>
     <array name="wifi_phase2_entries">
         <item>None</item>

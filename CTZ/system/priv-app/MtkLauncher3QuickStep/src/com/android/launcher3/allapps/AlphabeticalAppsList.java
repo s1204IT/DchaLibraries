@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+
 /* loaded from: classes.dex */
 public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
     private static final int FAST_SCROLL_FRACTION_DISTRIBUTE_BY_NUM_SECTIONS = 1;
@@ -41,7 +42,6 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
     private final List<FastScrollSectionInfo> mFastScrollerSections = new ArrayList();
     private HashMap<CharSequence, String> mCachedSectionNames = new HashMap<>();
 
-    /* loaded from: classes.dex */
     public static class FastScrollSectionInfo {
         public AdapterItem fastScrollToItem;
         public String sectionName;
@@ -52,7 +52,6 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AdapterItem {
         public int position;
         public int rowAppIndex;
@@ -150,15 +149,15 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
 
     public boolean setOrderedFilter(ArrayList<ComponentKey> arrayList) {
         boolean z = false;
-        if (this.mSearchResults != arrayList) {
-            if (this.mSearchResults != null && this.mSearchResults.equals(arrayList)) {
-                z = true;
-            }
-            this.mSearchResults = arrayList;
-            onAppsUpdated();
-            return !z;
+        if (this.mSearchResults == arrayList) {
+            return false;
         }
-        return false;
+        if (this.mSearchResults != null && this.mSearchResults.equals(arrayList)) {
+            z = true;
+        }
+        this.mSearchResults = arrayList;
+        onAppsUpdated();
+        return !z;
     }
 
     @Override // com.android.launcher3.allapps.AllAppsStore.OnUpdateListener
@@ -182,12 +181,14 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
                 arrayList.add(appInfo2);
             }
             this.mApps.clear();
-            for (Map.Entry entry : treeMap.entrySet()) {
-                this.mApps.addAll((Collection) entry.getValue());
+            Iterator it = treeMap.entrySet().iterator();
+            while (it.hasNext()) {
+                this.mApps.addAll((Collection) ((Map.Entry) it.next()).getValue());
             }
         } else {
-            for (AppInfo appInfo3 : this.mApps) {
-                getAndUpdateCachedSectionName(appInfo3.title);
+            Iterator<AppInfo> it2 = this.mApps.iterator();
+            while (it2.hasNext()) {
+                getAndUpdateCachedSectionName(it2.next().title);
             }
         }
         updateAdapterItems();
@@ -205,7 +206,6 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
     }
 
     private void refillAdapterItems() {
-        AdapterItem adapterItem;
         int i;
         this.mFilteredApps.clear();
         this.mFastScrollerSections.clear();
@@ -224,11 +224,11 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
             }
             int i4 = i2 + 1;
             int i5 = i3 + 1;
-            AdapterItem asApp = AdapterItem.asApp(i2, andUpdateCachedSectionName, appInfo, i3);
+            AdapterItem adapterItemAsApp = AdapterItem.asApp(i2, andUpdateCachedSectionName, appInfo, i3);
             if (fastScrollSectionInfo.fastScrollToItem == null) {
-                fastScrollSectionInfo.fastScrollToItem = asApp;
+                fastScrollSectionInfo.fastScrollToItem = adapterItemAsApp;
             }
-            this.mAdapterItems.add(asApp);
+            this.mAdapterItems.add(adapterItemAsApp);
             this.mFilteredApps.add(appInfo);
             i2 = i4;
             i3 = i5;
@@ -275,7 +275,7 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
                         if (!AllAppsGridAdapter.isIconViewType(fastScrollSectionInfo3.fastScrollToItem.viewType)) {
                             fastScrollSectionInfo3.touchFraction = 0.0f;
                         } else {
-                            fastScrollSectionInfo3.touchFraction = (adapterItem.rowIndex * f) + (adapterItem.rowAppIndex * (f / this.mNumAppsPerRow));
+                            fastScrollSectionInfo3.touchFraction = (r5.rowIndex * f) + (r5.rowAppIndex * (f / this.mNumAppsPerRow));
                         }
                     }
                     break;
@@ -320,9 +320,9 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
     private String getAndUpdateCachedSectionName(CharSequence charSequence) {
         String str = this.mCachedSectionNames.get(charSequence);
         if (str == null) {
-            String computeSectionName = this.mIndexer.computeSectionName(charSequence);
-            this.mCachedSectionNames.put(charSequence, computeSectionName);
-            return computeSectionName;
+            String strComputeSectionName = this.mIndexer.computeSectionName(charSequence);
+            this.mCachedSectionNames.put(charSequence, strComputeSectionName);
+            return strComputeSectionName;
         }
         return str;
     }

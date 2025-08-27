@@ -1,6 +1,7 @@
 package jp.co.benesse.dcha.util;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public final class Logger {
     private static final StringBuffer MSG_BUFFER = new StringBuffer();

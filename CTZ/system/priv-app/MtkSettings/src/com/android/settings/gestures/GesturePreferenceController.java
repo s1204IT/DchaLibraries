@@ -12,6 +12,7 @@ import com.android.settingslib.core.lifecycle.events.OnCreate;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.core.lifecycle.events.OnSaveInstanceState;
+
 /* loaded from: classes.dex */
 public abstract class GesturePreferenceController extends TogglePreferenceController implements Preference.OnPreferenceChangeListener, LifecycleObserver, OnCreate, OnPause, OnResume, OnSaveInstanceState {
     static final String KEY_VIDEO_PAUSED = "key_video_paused";
@@ -58,14 +59,14 @@ public abstract class GesturePreferenceController extends TogglePreferenceContro
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnPause
-    public void onPause() {
+    public void onPause() throws IllegalStateException {
         if (this.mVideoPreference != null) {
             this.mVideoPaused = this.mVideoPreference.isVideoPaused();
             this.mVideoPreference.onViewInvisible();
         }
     }
 
-    public void onResume() {
+    public void onResume() throws IllegalStateException {
         if (this.mVideoPreference != null) {
             this.mVideoPreference.onViewVisible(this.mVideoPaused);
         }

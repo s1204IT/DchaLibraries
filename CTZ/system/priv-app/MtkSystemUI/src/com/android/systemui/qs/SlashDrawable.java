@@ -13,6 +13,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.FloatProperty;
+
 /* loaded from: classes.dex */
 public class SlashDrawable extends Drawable {
     private float mCurrentSlashLength;
@@ -26,11 +27,13 @@ public class SlashDrawable extends Drawable {
     private final RectF mSlashRect = new RectF(0.0f, 0.0f, 0.0f, 0.0f);
     private boolean mAnimationEnabled = true;
     private final FloatProperty mSlashLengthProp = new FloatProperty<SlashDrawable>("slashLength") { // from class: com.android.systemui.qs.SlashDrawable.1
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(SlashDrawable slashDrawable, float f) {
             slashDrawable.mCurrentSlashLength = f;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(SlashDrawable slashDrawable) {
             return Float.valueOf(slashDrawable.mCurrentSlashLength);
@@ -96,15 +99,15 @@ public class SlashDrawable extends Drawable {
         float f = this.mSlashed ? 1.1666666f : 0.0f;
         float f2 = this.mSlashed ? 0.0f : 1.1666666f;
         if (this.mAnimationEnabled) {
-            ObjectAnimator ofFloat = ObjectAnimator.ofFloat(this, this.mSlashLengthProp, f2, f);
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.qs.-$$Lambda$SlashDrawable$d6ImpYshN38WeANK1PRMKepeaRo
+            ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(this, this.mSlashLengthProp, f2, f);
+            objectAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.qs.-$$Lambda$SlashDrawable$d6ImpYshN38WeANK1PRMKepeaRo
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    SlashDrawable.this.invalidateSelf();
+                    this.f$0.invalidateSelf();
                 }
             });
-            ofFloat.setDuration(350L);
-            ofFloat.start();
+            objectAnimatorOfFloat.setDuration(350L);
+            objectAnimatorOfFloat.start();
             return;
         }
         this.mCurrentSlashLength = f;
@@ -115,15 +118,15 @@ public class SlashDrawable extends Drawable {
     public void draw(Canvas canvas) {
         canvas.save();
         Matrix matrix = new Matrix();
-        int width = getBounds().width();
-        int height = getBounds().height();
-        float scale = scale(1.0f, width);
-        float scale2 = scale(1.0f, height);
-        updateRect(scale(0.40544835f, width), scale(-0.088781714f, height), scale(0.4820516f, width), scale((-0.088781714f) + this.mCurrentSlashLength, height));
+        int iWidth = getBounds().width();
+        int iHeight = getBounds().height();
+        float fScale = scale(1.0f, iWidth);
+        float fScale2 = scale(1.0f, iHeight);
+        updateRect(scale(0.40544835f, iWidth), scale(-0.088781714f, iHeight), scale(0.4820516f, iWidth), scale((-0.088781714f) + this.mCurrentSlashLength, iHeight));
         this.mPath.reset();
-        this.mPath.addRoundRect(this.mSlashRect, scale, scale2, Path.Direction.CW);
-        float f = width / 2;
-        float f2 = height / 2;
+        this.mPath.addRoundRect(this.mSlashRect, fScale, fScale2, Path.Direction.CW);
+        float f = iWidth / 2;
+        float f2 = iHeight / 2;
         matrix.setRotate(this.mRotation - 45.0f, f, f2);
         this.mPath.transform(matrix);
         canvas.drawPath(this.mPath, this.mPaint);
@@ -131,7 +134,7 @@ public class SlashDrawable extends Drawable {
         this.mPath.transform(matrix);
         matrix.setTranslate(this.mSlashRect.width(), 0.0f);
         this.mPath.transform(matrix);
-        this.mPath.addRoundRect(this.mSlashRect, width * 1.0f, 1.0f * height, Path.Direction.CW);
+        this.mPath.addRoundRect(this.mSlashRect, iWidth * 1.0f, 1.0f * iHeight, Path.Direction.CW);
         matrix.setRotate(this.mRotation - 45.0f, f, f2);
         this.mPath.transform(matrix);
         canvas.clipOutPath(this.mPath);
@@ -166,8 +169,7 @@ public class SlashDrawable extends Drawable {
         invalidateSelf();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setDrawableTintList(ColorStateList colorStateList) {
+    protected void setDrawableTintList(ColorStateList colorStateList) {
         this.mDrawable.setTintList(colorStateList);
     }
 

@@ -6,18 +6,19 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 import com.android.setupwizardlib.R;
 import com.android.setupwizardlib.TemplateLayout;
+
 /* loaded from: classes.dex */
 public class IconMixin implements Mixin {
     private TemplateLayout mTemplateLayout;
 
     public IconMixin(TemplateLayout templateLayout, AttributeSet attributeSet, int i) {
         this.mTemplateLayout = templateLayout;
-        TypedArray obtainStyledAttributes = templateLayout.getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwIconMixin, i, 0);
-        int resourceId = obtainStyledAttributes.getResourceId(R.styleable.SuwIconMixin_android_icon, 0);
+        TypedArray typedArrayObtainStyledAttributes = templateLayout.getContext().obtainStyledAttributes(attributeSet, R.styleable.SuwIconMixin, i, 0);
+        int resourceId = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwIconMixin_android_icon, 0);
         if (resourceId != 0) {
             setIcon(resourceId);
         }
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public void setIcon(Drawable drawable) {

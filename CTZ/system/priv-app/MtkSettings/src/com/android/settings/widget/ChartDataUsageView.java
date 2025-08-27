@@ -16,6 +16,7 @@ import com.android.settings.widget.ChartSweepView;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class ChartDataUsageView extends ChartView {
     private ChartNetworkSeriesView mDetailSeries;
@@ -30,7 +31,6 @@ public class ChartDataUsageView extends ChartView {
     private ChartSweepView.OnSweepListener mVertListener;
     private long mVertMax;
 
-    /* loaded from: classes.dex */
     public interface DataUsageChartListener {
         void onLimitChanged();
 
@@ -123,25 +123,24 @@ public class ChartDataUsageView extends ChartView {
         this.mListener = dataUsageChartListener;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateVertAxisBounds(ChartSweepView chartSweepView) {
+    private void updateVertAxisBounds(ChartSweepView chartSweepView) {
         long j = this.mVertMax;
         if (chartSweepView != null) {
-            int shouldAdjustAxis = chartSweepView.shouldAdjustAxis();
-            if (shouldAdjustAxis > 0) {
+            int iShouldAdjustAxis = chartSweepView.shouldAdjustAxis();
+            if (iShouldAdjustAxis > 0) {
                 j = (j * 11) / 10;
-            } else if (shouldAdjustAxis < 0) {
+            } else if (iShouldAdjustAxis < 0) {
                 j = (j * 9) / 10;
             }
         } else {
             j = 0;
         }
-        long max = Math.max(Math.max((Math.max(Math.max(this.mSeries.getMaxVisible(), this.mDetailSeries.getMaxVisible()), Math.max(this.mSweepWarning.getValue(), this.mSweepLimit.getValue())) * 12) / 10, 52428800L), j);
-        if (max != this.mVertMax) {
-            this.mVertMax = max;
-            boolean bounds = this.mVert.setBounds(0L, max);
-            this.mSweepWarning.setValidRange(0L, max);
-            this.mSweepLimit.setValidRange(0L, max);
+        long jMax = Math.max(Math.max((Math.max(Math.max(this.mSeries.getMaxVisible(), this.mDetailSeries.getMaxVisible()), Math.max(this.mSweepWarning.getValue(), this.mSweepLimit.getValue())) * 12) / 10, 52428800L), j);
+        if (jMax != this.mVertMax) {
+            this.mVertMax = jMax;
+            boolean bounds = this.mVert.setBounds(0L, jMax);
+            this.mSweepWarning.setValidRange(0L, jMax);
+            this.mSweepLimit.setValidRange(0L, jMax);
             if (bounds) {
                 this.mSeries.invalidatePath();
                 this.mDetailSeries.invalidatePath();
@@ -159,29 +158,26 @@ public class ChartDataUsageView extends ChartView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateEstimateVisible() {
-        long j;
+    private void updateEstimateVisible() {
+        long value;
         long maxEstimate = this.mSeries.getMaxEstimate();
         if (this.mSweepWarning.isEnabled()) {
-            j = this.mSweepWarning.getValue();
+            value = this.mSweepWarning.getValue();
         } else if (this.mSweepLimit.isEnabled()) {
-            j = this.mSweepLimit.getValue();
+            value = this.mSweepLimit.getValue();
         } else {
-            j = Long.MAX_VALUE;
+            value = Long.MAX_VALUE;
         }
-        this.mSeries.setEstimateVisible(maxEstimate >= ((j >= 0 ? j : Long.MAX_VALUE) * 7) / 10);
+        this.mSeries.setEstimateVisible(maxEstimate >= ((value >= 0 ? value : Long.MAX_VALUE) * 7) / 10);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void sendUpdateAxisDelayed(ChartSweepView chartSweepView, boolean z) {
+    private void sendUpdateAxisDelayed(ChartSweepView chartSweepView, boolean z) {
         if (z || !this.mHandler.hasMessages(100, chartSweepView)) {
             this.mHandler.sendMessageDelayed(this.mHandler.obtainMessage(100, chartSweepView), 250L);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void clearUpdateAxisDelayed(ChartSweepView chartSweepView) {
+    private void clearUpdateAxisDelayed(ChartSweepView chartSweepView) {
         this.mHandler.removeMessages(100, chartSweepView);
     }
 
@@ -191,14 +187,11 @@ public class ChartDataUsageView extends ChartView {
             return false;
         }
         switch (motionEvent.getAction()) {
-            case 0:
-                return true;
             case 1:
                 setActivated(true);
-                return true;
-            default:
-                return false;
+                break;
         }
+        return false;
     }
 
     public long getInspectStart() {
@@ -217,7 +210,6 @@ public class ChartDataUsageView extends ChartView {
         return this.mSweepLimit.getLabelValue();
     }
 
-    /* loaded from: classes.dex */
     public static class TimeAxis implements ChartAxis {
         private static final int FIRST_DAY_OF_WEEK = Calendar.getInstance().getFirstDayOfWeek() - 1;
         private long mMax;
@@ -225,8 +217,8 @@ public class ChartDataUsageView extends ChartView {
         private float mSize;
 
         public TimeAxis() {
-            long currentTimeMillis = System.currentTimeMillis();
-            setBounds(currentTimeMillis - 2592000000L, currentTimeMillis);
+            long jCurrentTimeMillis = System.currentTimeMillis();
+            setBounds(jCurrentTimeMillis - 2592000000L, jCurrentTimeMillis);
         }
 
         public int hashCode() {
@@ -254,12 +246,12 @@ public class ChartDataUsageView extends ChartView {
 
         @Override // com.android.settings.widget.ChartAxis
         public float convertToPoint(long j) {
-            return (this.mSize * ((float) (j - this.mMin))) / ((float) (this.mMax - this.mMin));
+            return (this.mSize * (j - this.mMin)) / (this.mMax - this.mMin);
         }
 
         @Override // com.android.settings.widget.ChartAxis
         public long convertToValue(float f) {
-            return ((float) this.mMin) + ((f * ((float) (this.mMax - this.mMin))) / this.mSize);
+            return (long) (this.mMin + ((f * (this.mMax - this.mMin)) / this.mSize));
         }
 
         @Override // com.android.settings.widget.ChartAxis
@@ -296,7 +288,6 @@ public class ChartDataUsageView extends ChartView {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class DataAxis implements ChartAxis {
         private static final Object sSpanSize = new Object();
         private static final Object sSpanUnit = new Object();
@@ -329,50 +320,49 @@ public class ChartDataUsageView extends ChartView {
 
         @Override // com.android.settings.widget.ChartAxis
         public float convertToPoint(long j) {
-            return (this.mSize * ((float) (j - this.mMin))) / ((float) (this.mMax - this.mMin));
+            return (this.mSize * (j - this.mMin)) / (this.mMax - this.mMin);
         }
 
         @Override // com.android.settings.widget.ChartAxis
         public long convertToValue(float f) {
-            return ((float) this.mMin) + ((f * ((float) (this.mMax - this.mMin))) / this.mSize);
+            return (long) (this.mMin + ((f * (this.mMax - this.mMin)) / this.mSize));
         }
 
         @Override // com.android.settings.widget.ChartAxis
         public long buildLabel(Resources resources, SpannableStringBuilder spannableStringBuilder, long j) {
-            Formatter.BytesResult formatBytes = Formatter.formatBytes(resources, MathUtils.constrain(j, 0L, 1099511627776L), 3);
-            ChartDataUsageView.setText(spannableStringBuilder, sSpanSize, formatBytes.value, "^1");
-            ChartDataUsageView.setText(spannableStringBuilder, sSpanUnit, formatBytes.units, "^2");
-            return formatBytes.roundedBytes;
+            Formatter.BytesResult bytes = Formatter.formatBytes(resources, MathUtils.constrain(j, 0L, 1099511627776L), 3);
+            ChartDataUsageView.setText(spannableStringBuilder, sSpanSize, bytes.value, "^1");
+            ChartDataUsageView.setText(spannableStringBuilder, sSpanUnit, bytes.units, "^2");
+            return bytes.roundedBytes;
         }
 
         @Override // com.android.settings.widget.ChartAxis
         public float[] getTickPoints() {
             long j = this.mMax - this.mMin;
-            long roundUpToPowerOfTwo = ChartDataUsageView.roundUpToPowerOfTwo(j / 16);
-            float[] fArr = new float[(int) (j / roundUpToPowerOfTwo)];
+            long jRoundUpToPowerOfTwo = ChartDataUsageView.roundUpToPowerOfTwo(j / 16);
+            float[] fArr = new float[(int) (j / jRoundUpToPowerOfTwo)];
             long j2 = this.mMin;
             for (int i = 0; i < fArr.length; i++) {
                 fArr[i] = convertToPoint(j2);
-                j2 += roundUpToPowerOfTwo;
+                j2 += jRoundUpToPowerOfTwo;
             }
             return fArr;
         }
 
         @Override // com.android.settings.widget.ChartAxis
         public int shouldAdjustAxis(long j) {
-            double convertToPoint = convertToPoint(j);
-            if (convertToPoint < this.mSize * 0.1d) {
+            double dConvertToPoint = convertToPoint(j);
+            if (dConvertToPoint < this.mSize * 0.1d) {
                 return -1;
             }
-            if (convertToPoint > this.mSize * 0.85d) {
+            if (dConvertToPoint > this.mSize * 0.85d) {
                 return 1;
             }
             return 0;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void setText(SpannableStringBuilder spannableStringBuilder, Object obj, CharSequence charSequence, String str) {
+    private static void setText(SpannableStringBuilder spannableStringBuilder, Object obj, CharSequence charSequence, String str) {
         int spanStart = spannableStringBuilder.getSpanStart(obj);
         int spanEnd = spannableStringBuilder.getSpanEnd(obj);
         if (spanStart == -1) {
@@ -383,8 +373,7 @@ public class ChartDataUsageView extends ChartView {
         spannableStringBuilder.replace(spanStart, spanEnd, charSequence);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static long roundUpToPowerOfTwo(long j) {
+    private static long roundUpToPowerOfTwo(long j) {
         long j2 = j - 1;
         long j3 = j2 | (j2 >>> 1);
         long j4 = j3 | (j3 >>> 2);

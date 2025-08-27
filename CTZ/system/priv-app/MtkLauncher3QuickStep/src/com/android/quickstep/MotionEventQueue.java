@@ -6,6 +6,7 @@ import android.view.Choreographer;
 import android.view.MotionEvent;
 import com.android.systemui.shared.system.ChoreographerCompat;
 import java.util.ArrayList;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class MotionEventQueue {
@@ -30,13 +31,13 @@ public class MotionEventQueue {
     private final Runnable mMainFrameCallback = new Runnable() { // from class: com.android.quickstep.-$$Lambda$MotionEventQueue$9q1CSWXYzlK1SrSfsd3E79Dop7U
         @Override // java.lang.Runnable
         public final void run() {
-            MotionEventQueue.this.frameCallbackForMainChoreographer();
+            this.f$0.frameCallbackForMainChoreographer();
         }
     };
     private final Runnable mInterimFrameCallback = new Runnable() { // from class: com.android.quickstep.-$$Lambda$MotionEventQueue$ChiGH2z0n5tlTb-fvoTp_Scqn50
         @Override // java.lang.Runnable
         public final void run() {
-            MotionEventQueue.this.frameCallbackForInterimChoreographer();
+            this.f$0.frameCallbackForInterimChoreographer();
         }
     };
     private Runnable mCurrentRunnable = this.mMainFrameCallback;
@@ -62,10 +63,10 @@ public class MotionEventQueue {
         if (choreographer == null) {
             this.mCurrentChoreographer = this.mMainChoreographer;
             this.mCurrentRunnable = this.mMainFrameCallback;
-            return;
+        } else {
+            this.mCurrentChoreographer = this.mInterimChoreographer;
+            this.mCurrentRunnable = this.mInterimFrameCallback;
         }
-        this.mCurrentChoreographer = this.mInterimChoreographer;
-        this.mCurrentRunnable = this.mInterimFrameCallback;
     }
 
     public void queue(MotionEvent motionEvent) {
@@ -89,22 +90,20 @@ public class MotionEventQueue {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void frameCallbackForMainChoreographer() {
+    private void frameCallbackForMainChoreographer() {
         runFor(this.mMainChoreographer);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void frameCallbackForInterimChoreographer() {
+    private void frameCallbackForInterimChoreographer() {
         runFor(this.mInterimChoreographer);
     }
 
     private void runFor(Choreographer choreographer) {
         synchronized (this.mExecutionLock) {
-            EventArray swapAndGetCurrentArray = swapAndGetCurrentArray(choreographer);
-            int size = swapAndGetCurrentArray.size();
+            EventArray eventArraySwapAndGetCurrentArray = swapAndGetCurrentArray(choreographer);
+            int size = eventArraySwapAndGetCurrentArray.size();
             for (int i = 0; i < size; i++) {
-                MotionEvent motionEvent = swapAndGetCurrentArray.get(i);
+                MotionEvent motionEvent = eventArraySwapAndGetCurrentArray.get(i);
                 if (motionEvent.getActionMasked() == ACTION_VIRTUAL) {
                     int action = motionEvent.getAction();
                     if (action == ACTION_QUICK_SCRUB_START) {
@@ -132,8 +131,8 @@ public class MotionEventQueue {
                 }
                 motionEvent.recycle();
             }
-            swapAndGetCurrentArray.clear();
-            swapAndGetCurrentArray.lastEventAction = 3;
+            eventArraySwapAndGetCurrentArray.clear();
+            eventArraySwapAndGetCurrentArray.lastEventAction = 3;
         }
     }
 
@@ -182,18 +181,16 @@ public class MotionEventQueue {
     }
 
     public void onCommand(int i) {
-        MotionEvent obtain = MotionEvent.obtain(0L, 0L, ACTION_COMMAND, 0.0f, 0.0f, 0);
-        obtain.setSource(i);
-        queueNoPreProcess(obtain);
+        MotionEvent motionEventObtain = MotionEvent.obtain(0L, 0L, ACTION_COMMAND, 0.0f, 0.0f, 0);
+        motionEventObtain.setSource(i);
+        queueNoPreProcess(motionEventObtain);
     }
 
     public TouchConsumer getConsumer() {
         return this.mConsumer;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class EventArray extends ArrayList<MotionEvent> {
+    private static class EventArray extends ArrayList<MotionEvent> {
         public int lastEventAction;
 
         public EventArray() {

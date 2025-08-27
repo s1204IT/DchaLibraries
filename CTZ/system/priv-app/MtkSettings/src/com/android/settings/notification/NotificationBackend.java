@@ -1,5 +1,6 @@
 package com.android.settings.notification;
 
+import android.R;
 import android.app.INotificationManager;
 import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
@@ -19,11 +20,11 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.settingslib.Utils;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NotificationBackend {
     static INotificationManager sINM = INotificationManager.Stub.asInterface(ServiceManager.getService("notification"));
 
-    /* loaded from: classes.dex */
     public static class AppRow extends Row {
         public boolean banned;
         public int blockedChannelCount;
@@ -60,14 +61,14 @@ public class NotificationBackend {
     }
 
     public AppRow loadAppRow(Context context, PackageManager packageManager, PackageInfo packageInfo) {
-        AppRow loadAppRow = loadAppRow(context, packageManager, packageInfo.applicationInfo);
-        recordCanBeBlocked(context, packageManager, packageInfo, loadAppRow);
-        return loadAppRow;
+        AppRow appRowLoadAppRow = loadAppRow(context, packageManager, packageInfo.applicationInfo);
+        recordCanBeBlocked(context, packageManager, packageInfo, appRowLoadAppRow);
+        return appRowLoadAppRow;
     }
 
     void recordCanBeBlocked(Context context, PackageManager packageManager, PackageInfo packageInfo, AppRow appRow) {
         appRow.systemApp = Utils.isSystemPackage(context.getResources(), packageManager, packageInfo);
-        markAppRowWithBlockables(context.getResources().getStringArray(17236024), appRow, packageInfo.packageName);
+        markAppRowWithBlockables(context.getResources().getStringArray(R.array.config_defaultCloudSearchServices), appRow, packageInfo.packageName);
     }
 
     @VisibleForTesting
@@ -90,7 +91,7 @@ public class NotificationBackend {
         }
     }
 
-    public boolean isSystemApp(Context context, ApplicationInfo applicationInfo) {
+    public boolean isSystemApp(Context context, ApplicationInfo applicationInfo) throws PackageManager.NameNotFoundException {
         try {
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(applicationInfo.packageName, 64);
             AppRow appRow = new AppRow();
@@ -248,7 +249,6 @@ public class NotificationBackend {
         }
     }
 
-    /* loaded from: classes.dex */
     static class Row {
         Row() {
         }

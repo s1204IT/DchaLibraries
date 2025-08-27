@@ -3,26 +3,27 @@ package com.google.common.collect;
 import com.google.common.base.Preconditions;
 import java.util.Map;
 import java.util.NavigableMap;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
+final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
     private final transient RegularImmutableSortedSet<K> keySet;
     private final transient ImmutableList<V> valueList;
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // com.google.common.collect.ImmutableSortedMap, java.util.NavigableMap
     public /* bridge */ /* synthetic */ NavigableMap headMap(Object obj, boolean z) {
         return headMap((RegularImmutableSortedMap<K, V>) obj, z);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: java.lang.Object */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // com.google.common.collect.ImmutableSortedMap, java.util.NavigableMap
     public /* bridge */ /* synthetic */ NavigableMap tailMap(Object obj, boolean z) {
         return tailMap((RegularImmutableSortedMap<K, V>) obj, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RegularImmutableSortedMap(RegularImmutableSortedSet<K> regularImmutableSortedSet, ImmutableList<V> immutableList) {
+    RegularImmutableSortedMap(RegularImmutableSortedSet<K> regularImmutableSortedSet, ImmutableList<V> immutableList) {
         this.keySet = regularImmutableSortedSet;
         this.valueList = immutableList;
     }
@@ -38,12 +39,11 @@ public final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K,
         return new EntrySet();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class EntrySet extends ImmutableMapEntrySet<K, V> {
+    private class EntrySet extends ImmutableMapEntrySet<K, V> {
         private EntrySet() {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
         @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
         public UnmodifiableIterator<Map.Entry<K, V>> iterator() {
             return asList().iterator();
@@ -58,6 +58,7 @@ public final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K,
                     this.keyList = RegularImmutableSortedMap.this.keySet().asList();
                 }
 
+                /* JADX DEBUG: Method merged with bridge method: get(I)Ljava/lang/Object; */
                 @Override // java.util.List
                 public Map.Entry<K, V> get(int i) {
                     return Maps.immutableEntry(this.keyList.get(i), RegularImmutableSortedMap.this.valueList.get(i));
@@ -76,11 +77,14 @@ public final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K,
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: keySet()Lcom/google/common/collect/ImmutableSet; */
+    /* JADX DEBUG: Method merged with bridge method: keySet()Ljava/util/Set; */
     @Override // com.google.common.collect.ImmutableSortedMap, com.google.common.collect.ImmutableMap, java.util.Map
     public ImmutableSortedSet<K> keySet() {
         return this.keySet;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: values()Ljava/util/Collection; */
     @Override // com.google.common.collect.ImmutableSortedMap, com.google.common.collect.ImmutableMap, java.util.Map, java.util.SortedMap
     public ImmutableCollection<V> values() {
         return this.valueList;
@@ -88,11 +92,11 @@ public final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K,
 
     @Override // com.google.common.collect.ImmutableMap, java.util.Map
     public V get(Object obj) {
-        int indexOf = this.keySet.indexOf(obj);
-        if (indexOf == -1) {
+        int iIndexOf = this.keySet.indexOf(obj);
+        if (iIndexOf == -1) {
             return null;
         }
-        return this.valueList.get(indexOf);
+        return this.valueList.get(iIndexOf);
     }
 
     private ImmutableSortedMap<K, V> getSubMap(int i, int i2) {
@@ -105,13 +109,11 @@ public final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K,
         return from(this.keySet.getSubSet(i, i2), this.valueList.subList(i, i2));
     }
 
-    /* JADX WARN: Multi-variable type inference failed */
     @Override // com.google.common.collect.ImmutableSortedMap, java.util.NavigableMap
     public ImmutableSortedMap<K, V> headMap(K k, boolean z) {
         return getSubMap(0, this.keySet.headIndex(Preconditions.checkNotNull(k), z));
     }
 
-    /* JADX WARN: Multi-variable type inference failed */
     @Override // com.google.common.collect.ImmutableSortedMap, java.util.NavigableMap
     public ImmutableSortedMap<K, V> tailMap(K k, boolean z) {
         return getSubMap(this.keySet.tailIndex(Preconditions.checkNotNull(k), z), size());

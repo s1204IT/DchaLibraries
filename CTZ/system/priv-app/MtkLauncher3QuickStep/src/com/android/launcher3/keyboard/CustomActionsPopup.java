@@ -12,6 +12,7 @@ import com.android.launcher3.popup.PopupContainerWithArrow;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class CustomActionsPopup implements PopupMenu.OnMenuItemClickListener {
     private final LauncherAccessibilityDelegate mDelegate;
@@ -33,10 +34,10 @@ public class CustomActionsPopup implements PopupMenu.OnMenuItemClickListener {
         if (this.mIcon == null || !(this.mIcon.getTag() instanceof ItemInfo)) {
             return Collections.EMPTY_LIST;
         }
-        AccessibilityNodeInfo obtain = AccessibilityNodeInfo.obtain();
-        this.mDelegate.addSupportedActions(this.mIcon, obtain, true);
-        ArrayList arrayList = new ArrayList(obtain.getActionList());
-        obtain.recycle();
+        AccessibilityNodeInfo accessibilityNodeInfoObtain = AccessibilityNodeInfo.obtain();
+        this.mDelegate.addSupportedActions(this.mIcon, accessibilityNodeInfoObtain, true);
+        ArrayList arrayList = new ArrayList(accessibilityNodeInfoObtain.getActionList());
+        accessibilityNodeInfoObtain.recycle();
         return arrayList;
     }
 

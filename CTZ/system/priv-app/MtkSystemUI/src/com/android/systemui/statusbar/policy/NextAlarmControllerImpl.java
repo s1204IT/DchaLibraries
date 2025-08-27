@@ -10,6 +10,7 @@ import com.android.systemui.statusbar.policy.NextAlarmController;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class NextAlarmControllerImpl extends BroadcastReceiver implements NextAlarmController {
     private AlarmManager mAlarmManager;
@@ -32,12 +33,14 @@ public class NextAlarmControllerImpl extends BroadcastReceiver implements NextAl
         printWriter.println(this.mNextAlarm);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(NextAlarmController.NextAlarmChangeCallback nextAlarmChangeCallback) {
         this.mChangeCallbacks.add(nextAlarmChangeCallback);
         nextAlarmChangeCallback.onNextAlarmChanged(this.mNextAlarm);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(NextAlarmController.NextAlarmChangeCallback nextAlarmChangeCallback) {
         this.mChangeCallbacks.remove(nextAlarmChangeCallback);

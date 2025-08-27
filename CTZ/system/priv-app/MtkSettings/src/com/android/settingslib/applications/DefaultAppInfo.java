@@ -14,6 +14,7 @@ import android.os.UserHandle;
 import android.util.IconDrawableFactory;
 import com.android.settingslib.widget.CandidateInfo;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class DefaultAppInfo extends CandidateInfo {
     public final ComponentName componentName;
@@ -63,34 +64,34 @@ public class DefaultAppInfo extends CandidateInfo {
             } catch (PackageManager.NameNotFoundException e) {
                 return null;
             }
-        } else if (this.packageItemInfo != null) {
-            return this.packageItemInfo.loadLabel(this.mPm.getPackageManager());
-        } else {
-            return null;
         }
+        if (this.packageItemInfo != null) {
+            return this.packageItemInfo.loadLabel(this.mPm.getPackageManager());
+        }
+        return null;
     }
 
     @Override // com.android.settingslib.widget.CandidateInfo
     public Drawable loadIcon() {
-        IconDrawableFactory newInstance = IconDrawableFactory.newInstance(this.mContext);
+        IconDrawableFactory iconDrawableFactoryNewInstance = IconDrawableFactory.newInstance(this.mContext);
         if (this.componentName != null) {
             try {
                 ComponentInfo componentInfo = getComponentInfo();
                 ApplicationInfo applicationInfoAsUser = this.mPm.getApplicationInfoAsUser(this.componentName.getPackageName(), 0, this.userId);
                 if (componentInfo != null) {
-                    return newInstance.getBadgedIcon(componentInfo, applicationInfoAsUser, this.userId);
+                    return iconDrawableFactoryNewInstance.getBadgedIcon(componentInfo, applicationInfoAsUser, this.userId);
                 }
-                return newInstance.getBadgedIcon(applicationInfoAsUser);
+                return iconDrawableFactoryNewInstance.getBadgedIcon(applicationInfoAsUser);
             } catch (PackageManager.NameNotFoundException e) {
                 return null;
             }
-        } else if (this.packageItemInfo != null) {
-            try {
-                return newInstance.getBadgedIcon(this.packageItemInfo, this.mPm.getApplicationInfoAsUser(this.packageItemInfo.packageName, 0, this.userId), this.userId);
-            } catch (PackageManager.NameNotFoundException e2) {
-                return null;
-            }
-        } else {
+        }
+        if (this.packageItemInfo == null) {
+            return null;
+        }
+        try {
+            return iconDrawableFactoryNewInstance.getBadgedIcon(this.packageItemInfo, this.mPm.getApplicationInfoAsUser(this.packageItemInfo.packageName, 0, this.userId), this.userId);
+        } catch (PackageManager.NameNotFoundException e2) {
             return null;
         }
     }

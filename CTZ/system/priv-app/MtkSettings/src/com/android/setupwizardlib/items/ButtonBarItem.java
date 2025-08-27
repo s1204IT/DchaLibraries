@@ -8,6 +8,7 @@ import com.android.setupwizardlib.R;
 import com.android.setupwizardlib.items.ItemInflater;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class ButtonBarItem extends AbstractItem implements ItemInflater.ItemParent {
     private final ArrayList<ButtonItem> mButtons;

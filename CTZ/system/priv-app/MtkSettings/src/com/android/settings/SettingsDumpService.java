@@ -2,6 +2,7 @@ package com.android.settings;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkTemplate;
@@ -17,24 +18,33 @@ import com.android.settings.applications.ProcStatsData;
 import com.android.settingslib.net.DataUsageController;
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.PrintWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 /* loaded from: classes.dex */
 public class SettingsDumpService extends Service {
+
     @VisibleForTesting
     static final Intent BROWSER_INTENT = new Intent("android.intent.action.VIEW", Uri.parse("http://"));
+
     @VisibleForTesting
     static final String KEY_ANOMALY_DETECTION = "anomaly_detection";
+
     @VisibleForTesting
     static final String KEY_DATAUSAGE = "datausage";
+
     @VisibleForTesting
     static final String KEY_DEFAULT_BROWSER_APP = "default_browser_app";
+
     @VisibleForTesting
     static final String KEY_MEMORY = "memory";
+
     @VisibleForTesting
     static final String KEY_SERVICE = "service";
+
     @VisibleForTesting
     static final String KEY_STORAGE = "storage";
 
@@ -44,7 +54,7 @@ public class SettingsDumpService extends Service {
     }
 
     @Override // android.app.Service
-    protected void dump(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
+    protected void dump(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) throws JSONException {
         JSONObject jSONObject = new JSONObject();
         try {
             jSONObject.put(KEY_SERVICE, "Settings State");
@@ -59,7 +69,7 @@ public class SettingsDumpService extends Service {
         printWriter.println(jSONObject);
     }
 
-    private JSONObject dumpMemory() throws JSONException {
+    private JSONObject dumpMemory() throws JSONException, PackageManager.NameNotFoundException, IOException {
         JSONObject jSONObject = new JSONObject();
         ProcStatsData procStatsData = new ProcStatsData(this, false);
         procStatsData.refreshStats(true);
@@ -75,14 +85,14 @@ public class SettingsDumpService extends Service {
         JSONObject jSONObject = new JSONObject();
         DataUsageController dataUsageController = new DataUsageController(this);
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(ConnectivityManager.class);
-        SubscriptionManager from = SubscriptionManager.from(this);
-        TelephonyManager from2 = TelephonyManager.from(this);
+        SubscriptionManager subscriptionManagerFrom = SubscriptionManager.from(this);
+        TelephonyManager telephonyManagerFrom = TelephonyManager.from(this);
         if (connectivityManager.isNetworkSupported(0)) {
             JSONArray jSONArray = new JSONArray();
-            for (SubscriptionInfo subscriptionInfo : from.getAllSubscriptionInfoList()) {
-                JSONObject dumpDataUsage = dumpDataUsage(NetworkTemplate.buildTemplateMobileAll(from2.getSubscriberId(subscriptionInfo.getSubscriptionId())), dataUsageController);
-                dumpDataUsage.put("subId", subscriptionInfo.getSubscriptionId());
-                jSONArray.put(dumpDataUsage);
+            for (SubscriptionInfo subscriptionInfo : subscriptionManagerFrom.getAllSubscriptionInfoList()) {
+                JSONObject jSONObjectDumpDataUsage = dumpDataUsage(NetworkTemplate.buildTemplateMobileAll(telephonyManagerFrom.getSubscriberId(subscriptionInfo.getSubscriptionId())), dataUsageController);
+                jSONObjectDumpDataUsage.put("subId", subscriptionInfo.getSubscriptionId());
+                jSONArray.put(jSONObjectDumpDataUsage);
             }
             jSONObject.put("cell", jSONArray);
         }
@@ -126,11 +136,11 @@ public class SettingsDumpService extends Service {
 
     @VisibleForTesting
     String dumpDefaultBrowser() {
-        ResolveInfo resolveActivity = getPackageManager().resolveActivity(BROWSER_INTENT, 65536);
-        if (resolveActivity == null || resolveActivity.activityInfo.packageName.equals("android")) {
+        ResolveInfo resolveInfoResolveActivity = getPackageManager().resolveActivity(BROWSER_INTENT, 65536);
+        if (resolveInfoResolveActivity == null || resolveInfoResolveActivity.activityInfo.packageName.equals("android")) {
             return null;
         }
-        return resolveActivity.activityInfo.packageName;
+        return resolveInfoResolveActivity.activityInfo.packageName;
     }
 
     @VisibleForTesting

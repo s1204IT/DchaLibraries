@@ -14,6 +14,7 @@ import com.android.systemui.recents.misc.SysUiTaskStackChangeListener;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import com.android.systemui.stackdivider.events.StartedDragingEvent;
 import com.android.systemui.stackdivider.events.StoppedDragingEvent;
+
 /* loaded from: classes.dex */
 public class ForcedResizableInfoActivityController {
     private final Context mContext;
@@ -28,9 +29,7 @@ public class ForcedResizableInfoActivityController {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PendingTaskRecord {
+    private class PendingTaskRecord {
         int reason;
         int taskId;
 
@@ -40,7 +39,7 @@ public class ForcedResizableInfoActivityController {
         }
     }
 
-    public ForcedResizableInfoActivityController(Context context) {
+    public ForcedResizableInfoActivityController(Context context) throws NoSuchMethodException, SecurityException {
         this.mContext = context;
         EventBus.getDefault().register(this);
         ActivityManagerWrapper.getInstance().registerTaskStackListener(new SysUiTaskStackChangeListener() { // from class: com.android.systemui.stackdivider.ForcedResizableInfoActivityController.2
@@ -83,8 +82,7 @@ public class ForcedResizableInfoActivityController {
         showPending();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void activityForcedResizable(String str, int i, int i2) {
+    private void activityForcedResizable(String str, int i, int i2) {
         if (debounce(str)) {
             return;
         }
@@ -92,27 +90,24 @@ public class ForcedResizableInfoActivityController {
         postTimeout();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void activityDismissingDockedStack() {
+    private void activityDismissingDockedStack() {
         EventBus.getDefault().send(new ShowUserToastEvent(R.string.dock_non_resizeble_failed_to_dock_text, 0));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void activityLaunchOnSecondaryDisplayFailed() {
+    private void activityLaunchOnSecondaryDisplayFailed() {
         EventBus.getDefault().send(new ShowUserToastEvent(R.string.activity_launch_on_secondary_display_failed_text, 0));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showPending() {
+    private void showPending() {
         this.mHandler.removeCallbacks(this.mTimeoutRunnable);
         for (int size = this.mPendingTasks.size() - 1; size >= 0; size--) {
-            PendingTaskRecord valueAt = this.mPendingTasks.valueAt(size);
-            Intent intent = new Intent(this.mContext, ForcedResizableInfoActivity.class);
-            ActivityOptions makeBasic = ActivityOptions.makeBasic();
-            makeBasic.setLaunchTaskId(valueAt.taskId);
-            makeBasic.setTaskOverlay(true, true);
-            intent.putExtra("extra_forced_resizeable_reason", valueAt.reason);
-            this.mContext.startActivityAsUser(intent, makeBasic.toBundle(), UserHandle.CURRENT);
+            PendingTaskRecord pendingTaskRecordValueAt = this.mPendingTasks.valueAt(size);
+            Intent intent = new Intent(this.mContext, (Class<?>) ForcedResizableInfoActivity.class);
+            ActivityOptions activityOptionsMakeBasic = ActivityOptions.makeBasic();
+            activityOptionsMakeBasic.setLaunchTaskId(pendingTaskRecordValueAt.taskId);
+            activityOptionsMakeBasic.setTaskOverlay(true, true);
+            intent.putExtra("extra_forced_resizeable_reason", pendingTaskRecordValueAt.reason);
+            this.mContext.startActivityAsUser(intent, activityOptionsMakeBasic.toBundle(), UserHandle.CURRENT);
         }
         this.mPendingTasks.clear();
     }
@@ -129,8 +124,8 @@ public class ForcedResizableInfoActivityController {
         if ("com.android.systemui".equals(str)) {
             return true;
         }
-        boolean contains = this.mPackagesShownInSession.contains(str);
+        boolean zContains = this.mPackagesShownInSession.contains(str);
         this.mPackagesShownInSession.add(str);
-        return contains;
+        return zContains;
     }
 }

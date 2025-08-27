@@ -28,6 +28,7 @@ import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.android.settingslib.development.DevelopmentSettingsEnabler;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IDeviceInfoSettingsExt;
+
 /* loaded from: classes.dex */
 public class BuildNumberPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnResume {
     private final Activity mActivity;
@@ -56,14 +57,14 @@ public class BuildNumberPreferenceController extends AbstractPreferenceControlle
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference("build_number");
-        if (findPreference != null) {
+        Preference preferenceFindPreference = preferenceScreen.findPreference("build_number");
+        if (preferenceFindPreference != null) {
             try {
-                findPreference.setSummary(BidiFormatter.getInstance().unicodeWrap(Build.DISPLAY));
-                findPreference.setEnabled(true);
-                this.mExt.updateSummary(findPreference, Build.DISPLAY, this.mContext.getString(R.string.device_info_default));
+                preferenceFindPreference.setSummary(BidiFormatter.getInstance().unicodeWrap(Build.DISPLAY));
+                preferenceFindPreference.setEnabled(true);
+                this.mExt.updateSummary(preferenceFindPreference, Build.DISPLAY, this.mContext.getString(R.string.device_info_default));
             } catch (Exception e) {
-                findPreference.setSummary(R.string.device_info_default);
+                preferenceFindPreference.setSummary(R.string.device_info_default);
             }
         }
     }
@@ -89,56 +90,57 @@ public class BuildNumberPreferenceController extends AbstractPreferenceControlle
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
         ComponentName deviceOwnerComponent;
-        if (TextUtils.equals(preference.getKey(), "build_number") && !Utils.isMonkeyRunning()) {
-            if (!this.mUm.isAdminUser() && !this.mUm.isDemoUser()) {
-                this.mMetricsFeatureProvider.action(this.mContext, 847, new Pair[0]);
-                return false;
-            } else if (!Utils.isDeviceProvisioned(this.mContext)) {
-                this.mMetricsFeatureProvider.action(this.mContext, 847, new Pair[0]);
-                return false;
-            } else if (this.mUm.hasUserRestriction("no_debugging_features")) {
-                if (this.mUm.isDemoUser() && (deviceOwnerComponent = Utils.getDeviceOwnerComponent(this.mContext)) != null) {
-                    Intent action = new Intent().setPackage(deviceOwnerComponent.getPackageName()).setAction("com.android.settings.action.REQUEST_DEBUG_FEATURES");
-                    if (this.mContext.getPackageManager().resolveActivity(action, 0) != null) {
-                        this.mContext.startActivity(action);
-                        return false;
-                    }
-                }
-                if (this.mDebuggingFeaturesDisallowedAdmin != null && !this.mDebuggingFeaturesDisallowedBySystem) {
-                    RestrictedLockUtils.sendShowAdminSupportDetailsIntent(this.mContext, this.mDebuggingFeaturesDisallowedAdmin);
-                }
-                this.mMetricsFeatureProvider.action(this.mContext, 847, new Pair[0]);
-                return false;
-            } else {
-                if (this.mDevHitCountdown > 0) {
-                    this.mDevHitCountdown--;
-                    if (this.mDevHitCountdown == 0 && !this.mProcessingLastDevHit) {
-                        this.mDevHitCountdown++;
-                        this.mProcessingLastDevHit = new ChooseLockSettingsHelper(this.mActivity, this.mFragment).launchConfirmationActivity(100, this.mContext.getString(R.string.unlock_set_unlock_launch_picker_title));
-                        if (!this.mProcessingLastDevHit) {
-                            enableDevelopmentSettings();
-                        }
-                        this.mMetricsFeatureProvider.action(this.mContext, 847, Pair.create(848, Integer.valueOf(!this.mProcessingLastDevHit ? 1 : 0)));
-                    } else if (this.mDevHitCountdown > 0 && this.mDevHitCountdown < 5) {
-                        if (this.mDevHitToast != null) {
-                            this.mDevHitToast.cancel();
-                        }
-                        this.mDevHitToast = Toast.makeText(this.mContext, this.mContext.getResources().getQuantityString(R.plurals.show_dev_countdown, this.mDevHitCountdown, Integer.valueOf(this.mDevHitCountdown)), 0);
-                        this.mDevHitToast.show();
-                    }
-                    this.mMetricsFeatureProvider.action(this.mContext, 847, Pair.create(848, 0));
-                } else if (this.mDevHitCountdown < 0) {
-                    if (this.mDevHitToast != null) {
-                        this.mDevHitToast.cancel();
-                    }
-                    this.mDevHitToast = Toast.makeText(this.mContext, (int) R.string.show_dev_already, 1);
-                    this.mDevHitToast.show();
-                    this.mMetricsFeatureProvider.action(this.mContext, 847, Pair.create(848, 1));
-                }
-                return true;
-            }
+        if (!TextUtils.equals(preference.getKey(), "build_number") || Utils.isMonkeyRunning()) {
+            return false;
         }
-        return false;
+        if (!this.mUm.isAdminUser() && !this.mUm.isDemoUser()) {
+            this.mMetricsFeatureProvider.action(this.mContext, 847, new Pair[0]);
+            return false;
+        }
+        if (!Utils.isDeviceProvisioned(this.mContext)) {
+            this.mMetricsFeatureProvider.action(this.mContext, 847, new Pair[0]);
+            return false;
+        }
+        if (this.mUm.hasUserRestriction("no_debugging_features")) {
+            if (this.mUm.isDemoUser() && (deviceOwnerComponent = Utils.getDeviceOwnerComponent(this.mContext)) != null) {
+                Intent action = new Intent().setPackage(deviceOwnerComponent.getPackageName()).setAction("com.android.settings.action.REQUEST_DEBUG_FEATURES");
+                if (this.mContext.getPackageManager().resolveActivity(action, 0) != null) {
+                    this.mContext.startActivity(action);
+                    return false;
+                }
+            }
+            if (this.mDebuggingFeaturesDisallowedAdmin != null && !this.mDebuggingFeaturesDisallowedBySystem) {
+                RestrictedLockUtils.sendShowAdminSupportDetailsIntent(this.mContext, this.mDebuggingFeaturesDisallowedAdmin);
+            }
+            this.mMetricsFeatureProvider.action(this.mContext, 847, new Pair[0]);
+            return false;
+        }
+        if (this.mDevHitCountdown > 0) {
+            this.mDevHitCountdown--;
+            if (this.mDevHitCountdown == 0 && !this.mProcessingLastDevHit) {
+                this.mDevHitCountdown++;
+                this.mProcessingLastDevHit = new ChooseLockSettingsHelper(this.mActivity, this.mFragment).launchConfirmationActivity(100, this.mContext.getString(R.string.unlock_set_unlock_launch_picker_title));
+                if (!this.mProcessingLastDevHit) {
+                    enableDevelopmentSettings();
+                }
+                this.mMetricsFeatureProvider.action(this.mContext, 847, Pair.create(848, Integer.valueOf(!this.mProcessingLastDevHit ? 1 : 0)));
+            } else if (this.mDevHitCountdown > 0 && this.mDevHitCountdown < 5) {
+                if (this.mDevHitToast != null) {
+                    this.mDevHitToast.cancel();
+                }
+                this.mDevHitToast = Toast.makeText(this.mContext, this.mContext.getResources().getQuantityString(R.plurals.show_dev_countdown, this.mDevHitCountdown, Integer.valueOf(this.mDevHitCountdown)), 0);
+                this.mDevHitToast.show();
+            }
+            this.mMetricsFeatureProvider.action(this.mContext, 847, Pair.create(848, 0));
+        } else if (this.mDevHitCountdown < 0) {
+            if (this.mDevHitToast != null) {
+                this.mDevHitToast.cancel();
+            }
+            this.mDevHitToast = Toast.makeText(this.mContext, R.string.show_dev_already, 1);
+            this.mDevHitToast.show();
+            this.mMetricsFeatureProvider.action(this.mContext, 847, Pair.create(848, 1));
+        }
+        return true;
     }
 
     public boolean onActivityResult(int i, int i2, Intent intent) {
@@ -159,7 +161,7 @@ public class BuildNumberPreferenceController extends AbstractPreferenceControlle
         if (this.mDevHitToast != null) {
             this.mDevHitToast.cancel();
         }
-        this.mDevHitToast = Toast.makeText(this.mContext, (int) R.string.show_dev_on, 1);
+        this.mDevHitToast = Toast.makeText(this.mContext, R.string.show_dev_on, 1);
         this.mDevHitToast.show();
     }
 }

@@ -16,6 +16,7 @@ import com.android.launcher3.widget.DeferredAppWidgetHostView;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class LauncherAppWidgetHost extends AppWidgetHost {
     public static final int APPWIDGET_HOST_ID = 1024;
@@ -27,7 +28,6 @@ public class LauncherAppWidgetHost extends AppWidgetHost {
     private final ArrayList<ProviderChangedListener> mProviderChangeListeners;
     private final SparseArray<LauncherAppWidgetHostView> mViews;
 
-    /* loaded from: classes.dex */
     public interface ProviderChangedListener {
         void notifyWidgetProvidersChanged();
     }
@@ -40,9 +40,9 @@ public class LauncherAppWidgetHost extends AppWidgetHost {
         this.mContext = context;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onCreateView(Landroid/content/Context;ILandroid/appwidget/AppWidgetProviderInfo;)Landroid/appwidget/AppWidgetHostView; */
     @Override // android.appwidget.AppWidgetHost
-    public LauncherAppWidgetHostView onCreateView(Context context, int i, AppWidgetProviderInfo appWidgetProviderInfo) {
+    protected LauncherAppWidgetHostView onCreateView(Context context, int i, AppWidgetProviderInfo appWidgetProviderInfo) {
         LauncherAppWidgetHostView launcherAppWidgetHostView = new LauncherAppWidgetHostView(context);
         this.mViews.put(i, launcherAppWidgetHostView);
         return launcherAppWidgetHostView;
@@ -59,9 +59,9 @@ public class LauncherAppWidgetHost extends AppWidgetHost {
             }
         }
         for (int size = this.mViews.size() - 1; size >= 0; size--) {
-            LauncherAppWidgetHostView valueAt = this.mViews.valueAt(size);
-            if (valueAt instanceof DeferredAppWidgetHostView) {
-                valueAt.reInflate();
+            LauncherAppWidgetHostView launcherAppWidgetHostViewValueAt = this.mViews.valueAt(size);
+            if (launcherAppWidgetHostViewValueAt instanceof DeferredAppWidgetHostView) {
+                launcherAppWidgetHostViewValueAt.reInflate();
             }
         }
     }
@@ -135,34 +135,34 @@ public class LauncherAppWidgetHost extends AppWidgetHost {
             ((LayoutInflater) context.getSystemService("layout_inflater")).inflate(launcherAppWidgetProviderInfo.initialLayout, launcherAppWidgetHostView);
             launcherAppWidgetHostView.setAppWidget(0, launcherAppWidgetProviderInfo);
             return launcherAppWidgetHostView;
-        } else if ((this.mFlags & 1) == 0) {
+        }
+        if ((this.mFlags & 1) == 0) {
             DeferredAppWidgetHostView deferredAppWidgetHostView = new DeferredAppWidgetHostView(context);
             deferredAppWidgetHostView.setAppWidget(i, launcherAppWidgetProviderInfo);
             this.mViews.put(i, deferredAppWidgetHostView);
             return deferredAppWidgetHostView;
-        } else {
-            try {
-                return super.createView(context, i, (AppWidgetProviderInfo) launcherAppWidgetProviderInfo);
-            } catch (Exception e) {
-                if (!Utilities.isBinderSizeError(e)) {
-                    throw new RuntimeException(e);
-                }
-                LauncherAppWidgetHostView launcherAppWidgetHostView2 = this.mViews.get(i);
-                if (launcherAppWidgetHostView2 == null) {
-                    launcherAppWidgetHostView2 = onCreateView(this.mContext, i, (AppWidgetProviderInfo) launcherAppWidgetProviderInfo);
-                }
-                launcherAppWidgetHostView2.setAppWidget(i, launcherAppWidgetProviderInfo);
-                launcherAppWidgetHostView2.switchToErrorView();
-                return launcherAppWidgetHostView2;
+        }
+        try {
+            return super.createView(context, i, (AppWidgetProviderInfo) launcherAppWidgetProviderInfo);
+        } catch (Exception e) {
+            if (!Utilities.isBinderSizeError(e)) {
+                throw new RuntimeException(e);
             }
+            LauncherAppWidgetHostView launcherAppWidgetHostViewOnCreateView = this.mViews.get(i);
+            if (launcherAppWidgetHostViewOnCreateView == null) {
+                launcherAppWidgetHostViewOnCreateView = onCreateView(this.mContext, i, (AppWidgetProviderInfo) launcherAppWidgetProviderInfo);
+            }
+            launcherAppWidgetHostViewOnCreateView.setAppWidget(i, launcherAppWidgetProviderInfo);
+            launcherAppWidgetHostViewOnCreateView.switchToErrorView();
+            return launcherAppWidgetHostViewOnCreateView;
         }
     }
 
     @Override // android.appwidget.AppWidgetHost
     protected void onProviderChanged(int i, AppWidgetProviderInfo appWidgetProviderInfo) {
-        LauncherAppWidgetProviderInfo fromProviderInfo = LauncherAppWidgetProviderInfo.fromProviderInfo(this.mContext, appWidgetProviderInfo);
-        super.onProviderChanged(i, fromProviderInfo);
-        fromProviderInfo.initSpans(this.mContext);
+        LauncherAppWidgetProviderInfo launcherAppWidgetProviderInfoFromProviderInfo = LauncherAppWidgetProviderInfo.fromProviderInfo(this.mContext, appWidgetProviderInfo);
+        super.onProviderChanged(i, launcherAppWidgetProviderInfoFromProviderInfo);
+        launcherAppWidgetProviderInfoFromProviderInfo.initSpans(this.mContext);
     }
 
     @Override // android.appwidget.AppWidgetHost
@@ -188,7 +188,7 @@ public class LauncherAppWidgetHost extends AppWidgetHost {
         try {
             startAppWidgetConfigureActivityForResult(baseActivity, i, 0, i2, null);
         } catch (ActivityNotFoundException | SecurityException e) {
-            Toast.makeText(baseActivity, (int) R.string.activity_not_found, 0).show();
+            Toast.makeText(baseActivity, R.string.activity_not_found, 0).show();
             sendActionCancelled(baseActivity, i2);
         }
     }
@@ -197,7 +197,7 @@ public class LauncherAppWidgetHost extends AppWidgetHost {
         new Handler().post(new Runnable() { // from class: com.android.launcher3.-$$Lambda$LauncherAppWidgetHost$bo_Aea8BPKolyYi4d072d4Fwf-o
             @Override // java.lang.Runnable
             public final void run() {
-                BaseActivity.this.onActivityResult(i, 0, null);
+                baseActivity.onActivityResult(i, 0, null);
             }
         });
     }

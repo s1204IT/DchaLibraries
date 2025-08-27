@@ -5,6 +5,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import com.android.systemui.plugins.Plugin;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
+
 @ProvidesInterface(action = NavGesture.ACTION, version = 1)
 /* loaded from: classes.dex */
 public interface NavGesture extends Plugin {
@@ -13,7 +14,6 @@ public interface NavGesture extends Plugin {
 
     GestureHelper getGestureHelper();
 
-    /* loaded from: classes.dex */
     public interface GestureHelper {
         void onDarkIntensityChange(float f);
 

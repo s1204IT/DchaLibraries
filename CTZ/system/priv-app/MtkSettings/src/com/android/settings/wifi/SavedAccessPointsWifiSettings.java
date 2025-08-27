@@ -23,12 +23,14 @@ import com.android.settingslib.wifi.WifiSavedConfigUtils;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SavedAccessPointsWifiSettings extends SettingsPreferenceFragment implements Indexable, WifiDialog.WifiDialogListener {
     static final int MSG_UPDATE_PREFERENCES = 1;
     private static final Comparator<AccessPoint> SAVED_NETWORK_COMPARATOR = new Comparator<AccessPoint>() { // from class: com.android.settings.wifi.SavedAccessPointsWifiSettings.1
         final Collator mCollator = Collator.getInstance();
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(AccessPoint accessPoint, AccessPoint accessPoint2) {
             return this.mCollator.compare(nullToEmpty(accessPoint.getConfigName()), nullToEmpty(accessPoint2.getConfigName()));
@@ -67,7 +69,7 @@ public class SavedAccessPointsWifiSettings extends SettingsPreferenceFragment im
         public void onFailure(int i) {
             Activity activity = SavedAccessPointsWifiSettings.this.getActivity();
             if (activity != null) {
-                Toast.makeText(activity, (int) R.string.wifi_failed_save_message, 0).show();
+                Toast.makeText(activity, R.string.wifi_failed_save_message, 0).show();
             }
         }
     };
@@ -102,8 +104,7 @@ public class SavedAccessPointsWifiSettings extends SettingsPreferenceFragment im
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void initPreferences() {
+    private void initPreferences() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         Context prefContext = getPrefContext();
         List<AccessPoint> allConfigs = WifiSavedConfigUtils.getAllConfigs(prefContext, this.mWifiManager);
@@ -136,8 +137,7 @@ public class SavedAccessPointsWifiSettings extends SettingsPreferenceFragment im
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void postUpdatePreference() {
+    private void postUpdatePreference() {
         if (!this.mHandler.hasMessages(1)) {
             this.mHandler.sendEmptyMessage(1);
         }
@@ -220,11 +220,11 @@ public class SavedAccessPointsWifiSettings extends SettingsPreferenceFragment im
         if (preference instanceof LongPressAccessPointPreference) {
             showWifiDialog((LongPressAccessPointPreference) preference);
             return true;
-        } else if (preference == this.mAddNetworkPreference) {
+        }
+        if (preference == this.mAddNetworkPreference) {
             showWifiDialog(null);
             return true;
-        } else {
-            return super.onPreferenceTreeClick(preference);
         }
+        return super.onPreferenceTreeClick(preference);
     }
 }

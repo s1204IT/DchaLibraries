@@ -2,8 +2,10 @@ package com.android.systemui.recents.misc;
 
 import android.os.Handler;
 import android.view.ViewDebug;
+
 /* loaded from: classes.dex */
 public class DozeTrigger {
+
     @ViewDebug.ExportedProperty(category = "recents")
     int mDozeDurationMilliseconds;
     Runnable mDozeRunnable = new Runnable() { // from class: com.android.systemui.recents.misc.DozeTrigger.1
@@ -15,8 +17,10 @@ public class DozeTrigger {
         }
     };
     Handler mHandler = new Handler();
+
     @ViewDebug.ExportedProperty(category = "recents")
     boolean mIsAsleep;
+
     @ViewDebug.ExportedProperty(category = "recents")
     boolean mIsDozing;
     Runnable mOnSleepRunnable;

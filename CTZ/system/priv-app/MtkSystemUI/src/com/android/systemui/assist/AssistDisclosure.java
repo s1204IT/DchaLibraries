@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class AssistDisclosure {
     private final Context mContext;
@@ -39,8 +40,7 @@ public class AssistDisclosure {
         this.mHandler.post(this.mShowRunnable);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void show() {
+    private void show() {
         if (this.mView == null) {
             this.mView = new AssistDisclosureView(this.mContext);
         }
@@ -52,17 +52,14 @@ public class AssistDisclosure {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void hide() {
+    private void hide() {
         if (this.mViewAdded) {
             this.mWm.removeView(this.mView);
             this.mViewAdded = false;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AssistDisclosureView extends View implements ValueAnimator.AnimatorUpdateListener {
+    private class AssistDisclosureView extends View implements ValueAnimator.AnimatorUpdateListener {
         private int mAlpha;
         private final ValueAnimator mAlphaInAnimator;
         private final ValueAnimator mAlphaOutAnimator;

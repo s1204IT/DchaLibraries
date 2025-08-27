@@ -15,6 +15,7 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.password.ChooseLockSettingsHelper;
 import com.android.settingslib.RestrictedSwitchPreference;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class OemUnlockPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, OnActivityResultListener {
     private final ChooseLockSettingsHelper mChooseLockSettingsHelper;
@@ -95,9 +96,8 @@ public class OemUnlockPreferenceController extends DeveloperOptionsPreferenceCon
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchEnabled() {
+    protected void onDeveloperOptionsSwitchEnabled() {
         handleDeveloperOptionsToggled();
     }
 

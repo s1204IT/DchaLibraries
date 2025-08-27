@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class BgDataModel {
     private static final String TAG = "BgDataModel";
@@ -84,8 +85,9 @@ public class BgDataModel {
             printWriter.println(str + "shortcuts");
             Iterator<String> it = this.deepShortcutMap.values().iterator();
             while (it.hasNext()) {
+                ArrayList arrayList = (ArrayList) it.next();
                 printWriter.print(str + "  ");
-                Iterator it2 = ((ArrayList) it.next()).iterator();
+                Iterator it2 = arrayList.iterator();
                 while (it2.hasNext()) {
                     printWriter.print(((String) it2.next()) + ", ");
                 }
@@ -94,6 +96,11 @@ public class BgDataModel {
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r5v15, resolved type: E */
+    /* JADX DEBUG: Multi-variable search result rejected for r5v21, resolved type: E */
+    /* JADX DEBUG: Multi-variable search result rejected for r5v26, resolved type: E */
+    /* JADX DEBUG: Multi-variable search result rejected for r5v32, resolved type: E */
+    /* JADX WARN: Multi-variable type inference failed */
     private synchronized void dumpProto(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
         int i = 0;
         DumpTargetWrapper dumpTargetWrapper = new DumpTargetWrapper(2, 0);
@@ -102,20 +109,20 @@ public class BgDataModel {
             longArrayMap.put(this.workspaceScreens.get(i2).longValue(), new DumpTargetWrapper(1, i2));
         }
         for (int i3 = 0; i3 < this.folders.size(); i3++) {
-            FolderInfo valueAt = this.folders.valueAt(i3);
+            FolderInfo folderInfoValueAt = this.folders.valueAt(i3);
             DumpTargetWrapper dumpTargetWrapper2 = new DumpTargetWrapper(3, this.folders.size());
-            dumpTargetWrapper2.writeToDumpTarget(valueAt);
-            Iterator<ShortcutInfo> it = valueAt.contents.iterator();
+            dumpTargetWrapper2.writeToDumpTarget(folderInfoValueAt);
+            Iterator<ShortcutInfo> it = folderInfoValueAt.contents.iterator();
             while (it.hasNext()) {
                 ShortcutInfo next = it.next();
                 DumpTargetWrapper dumpTargetWrapper3 = new DumpTargetWrapper(next);
                 dumpTargetWrapper3.writeToDumpTarget(next);
                 dumpTargetWrapper2.add(dumpTargetWrapper3);
             }
-            if (valueAt.container == -101) {
+            if (folderInfoValueAt.container == -101) {
                 dumpTargetWrapper.add(dumpTargetWrapper2);
-            } else if (valueAt.container == -100) {
-                ((DumpTargetWrapper) longArrayMap.get(valueAt.screenId)).add(dumpTargetWrapper2);
+            } else if (folderInfoValueAt.container == -100) {
+                ((DumpTargetWrapper) longArrayMap.get(folderInfoValueAt.screenId)).add(dumpTargetWrapper2);
             }
         }
         for (int i4 = 0; i4 < this.workspaceItems.size(); i4++) {
@@ -170,9 +177,7 @@ public class BgDataModel {
         removeItem(context, Arrays.asList(itemInfoArr));
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:12:0x002b, code lost:
-        if (r3 == 0) goto L15;
-     */
+    /* JADX WARN: Removed duplicated region for block: B:13:0x002d A[Catch: all -> 0x0062, TryCatch #0 {, blocks: (B:3:0x0001, B:4:0x0005, B:6:0x000b, B:7:0x0013, B:19:0x0058, B:9:0x0017, B:11:0x0025, B:13:0x002d, B:15:0x0037, B:16:0x003f, B:17:0x0045, B:18:0x0052), top: B:26:0x0001 }] */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
@@ -197,17 +202,19 @@ public class BgDataModel {
                     continue;
                     this.itemsIdMap.remove(itemInfo.id);
                 case 6:
-                    ShortcutKey fromItemInfo = ShortcutKey.fromItemInfo(itemInfo);
-                    MutableInt mutableInt = this.pinnedShortcutCounts.get(fromItemInfo);
+                    ShortcutKey shortcutKeyFromItemInfo = ShortcutKey.fromItemInfo(itemInfo);
+                    MutableInt mutableInt = this.pinnedShortcutCounts.get(shortcutKeyFromItemInfo);
                     if (mutableInt != null) {
                         int i = mutableInt.value - 1;
                         mutableInt.value = i;
-                        break;
+                        if (i == 0) {
+                            if (!InstallShortcutReceiver.getPendingShortcuts(context).contains(shortcutKeyFromItemInfo)) {
+                                DeepShortcutManager.getInstance(context).unpinShortcut(shortcutKeyFromItemInfo);
+                                break;
+                            }
+                        }
                     }
-                    if (!InstallShortcutReceiver.getPendingShortcuts(context).contains(fromItemInfo)) {
-                        DeepShortcutManager.getInstance(context).unpinShortcut(fromItemInfo);
-                        break;
-                    }
+                    this.itemsIdMap.remove(itemInfo.id);
                     break;
             }
             this.workspaceItems.remove(itemInfo);
@@ -216,8 +223,7 @@ public class BgDataModel {
     }
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
-    /* JADX WARN: Removed duplicated region for block: B:22:0x0067 A[Catch: all -> 0x00a1, TryCatch #0 {, blocks: (B:3:0x0001, B:4:0x000a, B:6:0x000f, B:8:0x001e, B:11:0x0030, B:13:0x0034, B:9:0x0029, B:14:0x003c, B:15:0x0044, B:16:0x0054, B:18:0x005c, B:22:0x0067, B:24:0x0071, B:25:0x008d, B:26:0x009a), top: B:32:0x0001 }] */
-    /* JADX WARN: Removed duplicated region for block: B:25:0x008d A[Catch: all -> 0x00a1, TryCatch #0 {, blocks: (B:3:0x0001, B:4:0x000a, B:6:0x000f, B:8:0x001e, B:11:0x0030, B:13:0x0034, B:9:0x0029, B:14:0x003c, B:15:0x0044, B:16:0x0054, B:18:0x005c, B:22:0x0067, B:24:0x0071, B:25:0x008d, B:26:0x009a), top: B:32:0x0001 }] */
+    /* JADX WARN: Removed duplicated region for block: B:26:0x009a A[Catch: all -> 0x00a1, TRY_LEAVE, TryCatch #0 {, blocks: (B:3:0x0001, B:4:0x000a, B:6:0x000f, B:8:0x001e, B:11:0x0030, B:13:0x0034, B:9:0x0029, B:14:0x003c, B:15:0x0044, B:16:0x0054, B:18:0x005c, B:22:0x0067, B:24:0x0071, B:25:0x008d, B:26:0x009a), top: B:32:0x0001 }] */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
@@ -226,18 +232,18 @@ public class BgDataModel {
         switch (itemInfo.itemType) {
             case 0:
             case 1:
-                if (itemInfo.container != -100 && itemInfo.container != -101) {
-                    if (!z) {
-                        if (!this.folders.containsKey(itemInfo.container)) {
-                            Log.e(TAG, "adding item: " + itemInfo + " to a folder that  doesn't exist");
-                            break;
-                        }
-                    } else {
-                        findOrMakeFolder(itemInfo.container).add((ShortcutInfo) itemInfo, false);
+                if (itemInfo.container != -100 || itemInfo.container == -101) {
+                    this.workspaceItems.add(itemInfo);
+                    break;
+                } else if (z) {
+                    if (!this.folders.containsKey(itemInfo.container)) {
+                        Log.e(TAG, "adding item: " + itemInfo + " to a folder that  doesn't exist");
                         break;
                     }
+                } else {
+                    findOrMakeFolder(itemInfo.container).add((ShortcutInfo) itemInfo, false);
+                    break;
                 }
-                this.workspaceItems.add(itemInfo);
                 break;
             case 2:
                 this.folders.put(itemInfo.id, (FolderInfo) itemInfo);
@@ -248,23 +254,21 @@ public class BgDataModel {
                 this.appWidgets.add((LauncherAppWidgetInfo) itemInfo);
                 break;
             case 6:
-                ShortcutKey fromItemInfo = ShortcutKey.fromItemInfo(itemInfo);
-                MutableInt mutableInt = this.pinnedShortcutCounts.get(fromItemInfo);
+                ShortcutKey shortcutKeyFromItemInfo = ShortcutKey.fromItemInfo(itemInfo);
+                MutableInt mutableInt = this.pinnedShortcutCounts.get(shortcutKeyFromItemInfo);
                 if (mutableInt != null) {
                     mutableInt.value++;
                 } else {
                     mutableInt = new MutableInt(1);
-                    this.pinnedShortcutCounts.put(fromItemInfo, mutableInt);
+                    this.pinnedShortcutCounts.put(shortcutKeyFromItemInfo, mutableInt);
                 }
                 if (z && mutableInt.value == 1) {
-                    DeepShortcutManager.getInstance(context).pinShortcut(fromItemInfo);
+                    DeepShortcutManager.getInstance(context).pinShortcut(shortcutKeyFromItemInfo);
                 }
                 if (itemInfo.container != -100) {
-                    if (!z) {
-                    }
+                    this.workspaceItems.add(itemInfo);
                     break;
                 }
-                this.workspaceItems.add(itemInfo);
                 break;
         }
     }

@@ -14,6 +14,7 @@ import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class LightBarTransitionsController implements Dumpable, CommandQueue.Callbacks {
     private final DarkIntensityApplier mApplier;
@@ -27,6 +28,9 @@ public class LightBarTransitionsController implements Dumpable, CommandQueue.Cal
     private long mTransitionDeferringStartTime;
     private boolean mTransitionPending;
     private final Runnable mTransitionDeferringDoneRunnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.LightBarTransitionsController.1
+        AnonymousClass1() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             LightBarTransitionsController.this.mTransitionDeferring = false;
@@ -35,9 +39,19 @@ public class LightBarTransitionsController implements Dumpable, CommandQueue.Cal
     private final Handler mHandler = new Handler();
     private final KeyguardMonitor mKeyguardMonitor = (KeyguardMonitor) Dependency.get(KeyguardMonitor.class);
 
-    /* loaded from: classes.dex */
     public interface DarkIntensityApplier {
         void applyDarkIntensity(float f);
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.LightBarTransitionsController$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            LightBarTransitionsController.this.mTransitionDeferring = false;
+        }
     }
 
     public LightBarTransitionsController(Context context, DarkIntensityApplier darkIntensityApplier) {
@@ -129,7 +143,7 @@ public class LightBarTransitionsController implements Dumpable, CommandQueue.Cal
         this.mTintAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$LightBarTransitionsController$PJRveQsGC7aANrqdSv3tRYb3x7c
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                LightBarTransitionsController.this.setIconTintInternal(((Float) valueAnimator.getAnimatedValue()).floatValue());
+                this.f$0.setIconTintInternal(((Float) valueAnimator.getAnimatedValue()).floatValue());
             }
         });
         this.mTintAnimator.setDuration(j2);
@@ -138,8 +152,7 @@ public class LightBarTransitionsController implements Dumpable, CommandQueue.Cal
         this.mTintAnimator.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setIconTintInternal(float f) {
+    private void setIconTintInternal(float f) {
         this.mDarkIntensity = f;
         this.mApplier.applyDarkIntensity(f);
     }

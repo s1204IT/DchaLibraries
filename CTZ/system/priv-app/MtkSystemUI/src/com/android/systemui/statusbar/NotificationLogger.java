@@ -16,6 +16,7 @@ import com.android.systemui.statusbar.NotificationData;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+
 /* loaded from: classes.dex */
 public class NotificationLogger {
     protected NotificationEntryManager mEntryManager;
@@ -28,10 +29,9 @@ public class NotificationLogger {
     protected final OnChildLocationsChangedListener mNotificationLocationsChangedListener = new OnChildLocationsChangedListener() { // from class: com.android.systemui.statusbar.NotificationLogger.1
         @Override // com.android.systemui.statusbar.NotificationLogger.OnChildLocationsChangedListener
         public void onChildLocationsChanged() {
-            if (NotificationLogger.this.mHandler.hasCallbacks(NotificationLogger.this.mVisibilityReporter)) {
-                return;
+            if (!NotificationLogger.this.mHandler.hasCallbacks(NotificationLogger.this.mVisibilityReporter)) {
+                NotificationLogger.this.mHandler.postAtTime(NotificationLogger.this.mVisibilityReporter, NotificationLogger.this.mLastVisibilityReportUptimeMs + 500);
             }
-            NotificationLogger.this.mHandler.postAtTime(NotificationLogger.this.mVisibilityReporter, NotificationLogger.this.mLastVisibilityReportUptimeMs + 500);
         }
     };
     protected final Runnable mVisibilityReporter = new Runnable() { // from class: com.android.systemui.statusbar.NotificationLogger.2
@@ -47,22 +47,22 @@ public class NotificationLogger {
             for (int i = 0; i < size; i++) {
                 NotificationData.Entry entry = activeNotifications.get(i);
                 String key = entry.notification.getKey();
-                boolean isInVisibleLocation = NotificationLogger.this.mListContainer.isInVisibleLocation(entry.row);
-                NotificationVisibility obtain = NotificationVisibility.obtain(key, i, size, isInVisibleLocation);
-                boolean contains = NotificationLogger.this.mCurrentlyVisibleNotifications.contains(obtain);
-                if (isInVisibleLocation) {
-                    this.mTmpCurrentlyVisibleNotifications.add(obtain);
-                    if (!contains) {
-                        this.mTmpNewlyVisibleNotifications.add(obtain);
+                boolean zIsInVisibleLocation = NotificationLogger.this.mListContainer.isInVisibleLocation(entry.row);
+                NotificationVisibility notificationVisibilityObtain = NotificationVisibility.obtain(key, i, size, zIsInVisibleLocation);
+                boolean zContains = NotificationLogger.this.mCurrentlyVisibleNotifications.contains(notificationVisibilityObtain);
+                if (zIsInVisibleLocation) {
+                    this.mTmpCurrentlyVisibleNotifications.add(notificationVisibilityObtain);
+                    if (!zContains) {
+                        this.mTmpNewlyVisibleNotifications.add(notificationVisibilityObtain);
                     }
                 } else {
-                    obtain.recycle();
+                    notificationVisibilityObtain.recycle();
                 }
             }
             this.mTmpNoLongerVisibleNotifications.addAll(NotificationLogger.this.mCurrentlyVisibleNotifications);
             this.mTmpNoLongerVisibleNotifications.removeAll((ArraySet<? extends NotificationVisibility>) this.mTmpCurrentlyVisibleNotifications);
             NotificationLogger.this.logNotificationVisibilityChanges(this.mTmpNewlyVisibleNotifications, this.mTmpNoLongerVisibleNotifications);
-            NotificationLogger.this.recycleAllVisibilityObjects(NotificationLogger.this.mCurrentlyVisibleNotifications);
+            NotificationLogger.this.recycleAllVisibilityObjects((ArraySet<NotificationVisibility>) NotificationLogger.this.mCurrentlyVisibleNotifications);
             NotificationLogger.this.mCurrentlyVisibleNotifications.addAll((ArraySet) this.mTmpCurrentlyVisibleNotifications);
             NotificationLogger.this.recycleAllVisibilityObjects(this.mTmpNoLongerVisibleNotifications);
             this.mTmpCurrentlyVisibleNotifications.clear();
@@ -72,7 +72,6 @@ public class NotificationLogger {
     };
     protected IStatusBarService mBarService = IStatusBarService.Stub.asInterface(ServiceManager.getService("statusbar"));
 
-    /* loaded from: classes.dex */
     public interface OnChildLocationsChangedListener {
         void onChildLocationsChanged();
     }
@@ -96,17 +95,16 @@ public class NotificationLogger {
         this.mNotificationLocationsChangedListener.onChildLocationsChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void logNotificationVisibilityChanges(final Collection<NotificationVisibility> collection, Collection<NotificationVisibility> collection2) {
+    private void logNotificationVisibilityChanges(final Collection<NotificationVisibility> collection, Collection<NotificationVisibility> collection2) {
         if (collection.isEmpty() && collection2.isEmpty()) {
             return;
         }
-        final NotificationVisibility[] cloneVisibilitiesAsArr = cloneVisibilitiesAsArr(collection);
-        final NotificationVisibility[] cloneVisibilitiesAsArr2 = cloneVisibilitiesAsArr(collection2);
+        final NotificationVisibility[] notificationVisibilityArrCloneVisibilitiesAsArr = cloneVisibilitiesAsArr(collection);
+        final NotificationVisibility[] notificationVisibilityArrCloneVisibilitiesAsArr2 = cloneVisibilitiesAsArr(collection2);
         this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.statusbar.-$$Lambda$NotificationLogger$dDuzCaPCc3FmeArDx2PTcXDC9B8
             @Override // java.lang.Runnable
             public final void run() {
-                NotificationLogger.lambda$logNotificationVisibilityChanges$0(NotificationLogger.this, cloneVisibilitiesAsArr, cloneVisibilitiesAsArr2, collection);
+                NotificationLogger.lambda$logNotificationVisibilityChanges$0(this.f$0, notificationVisibilityArrCloneVisibilitiesAsArr, notificationVisibilityArrCloneVisibilitiesAsArr2, collection);
             }
         });
     }
@@ -132,8 +130,7 @@ public class NotificationLogger {
         notificationLogger.recycleAllVisibilityObjects(notificationVisibilityArr2);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void recycleAllVisibilityObjects(ArraySet<NotificationVisibility> arraySet) {
+    private void recycleAllVisibilityObjects(ArraySet<NotificationVisibility> arraySet) {
         int size = arraySet.size();
         for (int i = 0; i < size; i++) {
             arraySet.valueAt(i).recycle();

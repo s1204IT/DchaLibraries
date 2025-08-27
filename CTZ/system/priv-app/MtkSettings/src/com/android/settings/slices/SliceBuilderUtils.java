@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 /* loaded from: classes.dex */
 public class SliceBuilderUtils {
     public static Slice buildSlice(Context context, SliceData sliceData) {
@@ -56,11 +57,11 @@ public class SliceBuilderUtils {
     }
 
     public static Pair<Boolean, String> getPathData(Uri uri) {
-        String[] split = uri.getPath().split("/", 3);
-        if (split.length != 3) {
+        String[] strArrSplit = uri.getPath().split("/", 3);
+        if (strArrSplit.length != 3) {
             return null;
         }
-        return new Pair<>(Boolean.valueOf(TextUtils.equals("intent", split[1])), split[2]);
+        return new Pair<>(Boolean.valueOf(TextUtils.equals("intent", strArrSplit[1])), strArrSplit[2]);
     }
 
     public static BasePreferenceController getPreferenceController(Context context, SliceData sliceData) {
@@ -107,41 +108,40 @@ public class SliceBuilderUtils {
         return new Uri.Builder().scheme("content").authority(str2).appendPath(str).build();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    public static Intent getContentIntent(Context context, SliceData sliceData) {
-        Uri build = new Uri.Builder().appendPath(sliceData.getKey()).build();
-        Intent buildSearchResultPageIntent = DatabaseIndexingUtils.buildSearchResultPageIntent(context, sliceData.getFragmentClassName(), sliceData.getKey(), sliceData.getScreenTitle().toString(), 0);
-        buildSearchResultPageIntent.setClassName(context.getPackageName(), SubSettings.class.getName());
-        buildSearchResultPageIntent.setData(build);
-        return buildSearchResultPageIntent;
+    static Intent getContentIntent(Context context, SliceData sliceData) {
+        Uri uriBuild = new Uri.Builder().appendPath(sliceData.getKey()).build();
+        Intent intentBuildSearchResultPageIntent = DatabaseIndexingUtils.buildSearchResultPageIntent(context, sliceData.getFragmentClassName(), sliceData.getKey(), sliceData.getScreenTitle().toString(), 0);
+        intentBuildSearchResultPageIntent.setClassName(context.getPackageName(), SubSettings.class.getName());
+        intentBuildSearchResultPageIntent.setData(uriBuild);
+        return intentBuildSearchResultPageIntent;
     }
 
     private static Slice buildToggleSlice(Context context, final SliceData sliceData, BasePreferenceController basePreferenceController) {
         final PendingIntent contentPendingIntent = getContentPendingIntent(context, sliceData);
-        final IconCompat createWithResource = IconCompat.createWithResource(context, sliceData.getIconResource());
+        final IconCompat iconCompatCreateWithResource = IconCompat.createWithResource(context, sliceData.getIconResource());
         final CharSequence subtitleText = getSubtitleText(context, basePreferenceController, sliceData);
         int colorAccent = Utils.getColorAccent(context);
         final SliceAction toggleAction = getToggleAction(context, sliceData, ((TogglePreferenceController) basePreferenceController).isChecked());
         return new ListBuilder(context, sliceData.getUri(), -1L).setAccentColor(colorAccent).addRow(new Consumer() { // from class: com.android.settings.slices.-$$Lambda$SliceBuilderUtils$-H4Orhnw7bHLhjHmJgSvCr6cWP8
             @Override // android.support.v4.util.Consumer
             public final void accept(Object obj) {
-                SliceData sliceData2 = SliceData.this;
-                ((ListBuilder.RowBuilder) obj).setTitle(sliceData2.getTitle()).setSubtitle(subtitleText).setPrimaryAction(new SliceAction(contentPendingIntent, createWithResource, sliceData2.getTitle())).addEndItem(toggleAction);
+                SliceData sliceData2 = sliceData;
+                ((ListBuilder.RowBuilder) obj).setTitle(sliceData2.getTitle()).setSubtitle(subtitleText).setPrimaryAction(new SliceAction(contentPendingIntent, iconCompatCreateWithResource, sliceData2.getTitle())).addEndItem(toggleAction);
             }
         }).setKeywords(buildSliceKeywords(sliceData)).build();
     }
 
     private static Slice buildIntentSlice(Context context, final SliceData sliceData, BasePreferenceController basePreferenceController) {
         final PendingIntent contentPendingIntent = getContentPendingIntent(context, sliceData);
-        final IconCompat createWithResource = IconCompat.createWithResource(context, sliceData.getIconResource());
+        final IconCompat iconCompatCreateWithResource = IconCompat.createWithResource(context, sliceData.getIconResource());
         final CharSequence subtitleText = getSubtitleText(context, basePreferenceController, sliceData);
         int colorAccent = Utils.getColorAccent(context);
         return new ListBuilder(context, sliceData.getUri(), -1L).setAccentColor(colorAccent).addRow(new Consumer() { // from class: com.android.settings.slices.-$$Lambda$SliceBuilderUtils$NVqOOBEdIdirrSxUZFgCZXRQ1vA
             @Override // android.support.v4.util.Consumer
             public final void accept(Object obj) {
-                ListBuilder.RowBuilder rowBuilder = (ListBuilder.RowBuilder) obj;
-                rowBuilder.setTitle(r0.getTitle()).setSubtitle(subtitleText).setPrimaryAction(new SliceAction(contentPendingIntent, createWithResource, SliceData.this.getTitle()));
+                SliceData sliceData2 = sliceData;
+                ((ListBuilder.RowBuilder) obj).setTitle(sliceData2.getTitle()).setSubtitle(subtitleText).setPrimaryAction(new SliceAction(contentPendingIntent, iconCompatCreateWithResource, sliceData2.getTitle()));
             }
         }).setKeywords(buildSliceKeywords(sliceData)).build();
     }
@@ -150,16 +150,18 @@ public class SliceBuilderUtils {
         final SliderPreferenceController sliderPreferenceController = (SliderPreferenceController) basePreferenceController;
         final PendingIntent sliderAction = getSliderAction(context, sliceData);
         PendingIntent contentPendingIntent = getContentPendingIntent(context, sliceData);
-        IconCompat createWithResource = IconCompat.createWithResource(context, sliceData.getIconResource());
+        IconCompat iconCompatCreateWithResource = IconCompat.createWithResource(context, sliceData.getIconResource());
         final CharSequence subtitleText = getSubtitleText(context, basePreferenceController, sliceData);
         int colorAccent = Utils.getColorAccent(context);
-        final SliceAction sliceAction = new SliceAction(contentPendingIntent, createWithResource, sliceData.getTitle());
+        final SliceAction sliceAction = new SliceAction(contentPendingIntent, iconCompatCreateWithResource, sliceData.getTitle());
         return new ListBuilder(context, sliceData.getUri(), -1L).setAccentColor(colorAccent).addInputRange(new Consumer() { // from class: com.android.settings.slices.-$$Lambda$SliceBuilderUtils$qRPBF1K1kbSIREThP22FAM_L1N0
             @Override // android.support.v4.util.Consumer
             public final void accept(Object obj) {
-                SliceData sliceData2 = SliceData.this;
+                SliceData sliceData2 = sliceData;
                 CharSequence charSequence = subtitleText;
-                ((ListBuilder.InputRangeBuilder) obj).setTitle(sliceData2.getTitle()).setSubtitle(charSequence).setPrimaryAction(sliceAction).setMax(r3.getMaxSteps()).setValue(sliderPreferenceController.getSliderPosition()).setInputAction(sliderAction);
+                SliceAction sliceAction2 = sliceAction;
+                SliderPreferenceController sliderPreferenceController2 = sliderPreferenceController;
+                ((ListBuilder.InputRangeBuilder) obj).setTitle(sliceData2.getTitle()).setSubtitle(charSequence).setPrimaryAction(sliceAction2).setMax(sliderPreferenceController2.getMaxSteps()).setValue(sliderPreferenceController2.getSliderPosition()).setInputAction(sliderAction);
             }
         }).setKeywords(buildSliceKeywords(sliceData)).build();
     }
@@ -198,9 +200,7 @@ public class SliceBuilderUtils {
             arrayList.addAll((List) Arrays.stream(keywords.split(",")).map(new Function() { // from class: com.android.settings.slices.-$$Lambda$SliceBuilderUtils$H4nQFDLpU9w8T-x-9Cq8nlH2grw
                 @Override // java.util.function.Function
                 public final Object apply(Object obj) {
-                    String trim;
-                    trim = ((String) obj).trim();
-                    return trim;
+                    return ((String) obj).trim();
                 }
             }).collect(Collectors.toList()));
         }
@@ -209,18 +209,18 @@ public class SliceBuilderUtils {
 
     private static Slice buildUnavailableSlice(Context context, SliceData sliceData) {
         final String title = sliceData.getTitle();
-        List<String> buildSliceKeywords = buildSliceKeywords(sliceData);
+        List<String> listBuildSliceKeywords = buildSliceKeywords(sliceData);
         int colorAccent = Utils.getColorAccent(context);
         final CharSequence text = context.getText(R.string.disabled_dependent_setting_summary);
-        final IconCompat createWithResource = IconCompat.createWithResource(context, sliceData.getIconResource());
-        final SliceAction sliceAction = new SliceAction(getContentPendingIntent(context, sliceData), createWithResource, title);
+        final IconCompat iconCompatCreateWithResource = IconCompat.createWithResource(context, sliceData.getIconResource());
+        final SliceAction sliceAction = new SliceAction(getContentPendingIntent(context, sliceData), iconCompatCreateWithResource, title);
         return new ListBuilder(context, sliceData.getUri(), -1L).setAccentColor(colorAccent).addRow(new Consumer() { // from class: com.android.settings.slices.-$$Lambda$SliceBuilderUtils$JGXESizo03yh-FrnCdjYorH4I8Y
             @Override // android.support.v4.util.Consumer
             public final void accept(Object obj) {
                 String str = title;
-                IconCompat iconCompat = createWithResource;
+                IconCompat iconCompat = iconCompatCreateWithResource;
                 ((ListBuilder.RowBuilder) obj).setTitle(str).setTitleItem(iconCompat).setSubtitle(text).setPrimaryAction(sliceAction);
             }
-        }).setKeywords(buildSliceKeywords).build();
+        }).setKeywords(listBuildSliceKeywords).build();
     }
 }

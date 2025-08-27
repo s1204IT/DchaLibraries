@@ -2,6 +2,7 @@ package com.android.settingslib.core.instrumentation;
 
 import android.content.Context;
 import android.util.Pair;
+
 /* loaded from: classes.dex */
 public interface LogWriter {
     void action(int i, boolean z, Pair<Integer, Object>... pairArr);

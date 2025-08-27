@@ -8,6 +8,7 @@ import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.security.SecurityFeatureProvider;
+
 /* loaded from: classes.dex */
 public class ManageTrustAgentsPreferenceController extends BasePreferenceController {
     static final String KEY_MANAGE_TRUST_AGENTS = "manage_trust_agents";

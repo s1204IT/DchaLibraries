@@ -1,7 +1,6 @@
 package com.android.settings.accessibility;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -40,9 +39,11 @@ import com.android.settingslib.accessibility.AccessibilityUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class AccessibilitySettings extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, Indexable {
     private Preference mAccessibilityShortcutPreferenceScreen;
@@ -88,7 +89,7 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
     private final Handler mHandler = new Handler();
     private final Runnable mUpdateRunnable = new Runnable() { // from class: com.android.settings.accessibility.AccessibilitySettings.1
         @Override // java.lang.Runnable
-        public void run() {
+        public void run() throws Resources.NotFoundException {
             if (AccessibilitySettings.this.getActivity() != null) {
                 AccessibilitySettings.this.updateServicePreferences();
             }
@@ -125,18 +126,19 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
     private final Map<ComponentName, PreferenceCategory> mPreBundledServiceComponentToCategoryMap = new ArrayMap();
 
     public static boolean isColorTransformAccelerated(Context context) {
-        return context.getResources().getBoolean(17957014);
+        return context.getResources().getBoolean(android.R.^attr-private.lightRadius);
     }
 
     public AccessibilitySettings() {
-        Collection<AccessibilityShortcutController.ToggleableFrameworkFeatureInfo> values = AccessibilityShortcutController.getFrameworkShortcutFeaturesMap().values();
-        ArrayList arrayList = new ArrayList(values.size());
-        for (AccessibilityShortcutController.ToggleableFrameworkFeatureInfo toggleableFrameworkFeatureInfo : values) {
-            arrayList.add(toggleableFrameworkFeatureInfo.getSettingKey());
+        Collection collectionValues = AccessibilityShortcutController.getFrameworkShortcutFeaturesMap().values();
+        ArrayList arrayList = new ArrayList(collectionValues.size());
+        Iterator it = collectionValues.iterator();
+        while (it.hasNext()) {
+            arrayList.add(((AccessibilityShortcutController.ToggleableFrameworkFeatureInfo) it.next()).getSettingKey());
         }
         this.mSettingsContentObserver = new SettingsContentObserver(this.mHandler, arrayList) { // from class: com.android.settings.accessibility.AccessibilitySettings.4
             @Override // android.database.ContentObserver
-            public void onChange(boolean z, Uri uri) {
+            public void onChange(boolean z, Uri uri) throws Resources.NotFoundException {
                 AccessibilitySettings.this.updateAllPreferences();
             }
         };
@@ -153,7 +155,7 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws Resources.NotFoundException {
         super.onCreate(bundle);
         addPreferencesFromResource(R.xml.accessibility_settings);
         initializeAllPreferences();
@@ -161,7 +163,7 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         super.onResume();
         updateAllPreferences();
         this.mSettingsPackageMonitor.register(getActivity(), getActivity().getMainLooper(), false);
@@ -186,12 +188,12 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         if (this.mSelectLongPressTimeoutPreference == preference) {
             handleLongPressTimeoutPreferenceChange((String) obj);
             return true;
-        } else if (this.mToggleInversionPreference == preference) {
+        }
+        if (this.mToggleInversionPreference == preference) {
             handleToggleInversionPreferenceChange(((Boolean) obj).booleanValue());
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     private void handleLongPressTimeoutPreferenceChange(String str) {
@@ -208,24 +210,28 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         if (this.mToggleHighTextContrastPreference == preference) {
             handleToggleTextContrastPreferenceClick();
             return true;
-        } else if (this.mTogglePowerButtonEndsCallPreference == preference) {
+        }
+        if (this.mTogglePowerButtonEndsCallPreference == preference) {
             handleTogglePowerButtonEndsCallPreferenceClick();
             return true;
-        } else if (this.mToggleLockScreenRotationPreference == preference) {
+        }
+        if (this.mToggleLockScreenRotationPreference == preference) {
             handleLockScreenRotationPreferenceClick();
             return true;
-        } else if (this.mToggleLargePointerIconPreference == preference) {
+        }
+        if (this.mToggleLargePointerIconPreference == preference) {
             handleToggleLargePointerIconPreferenceClick();
             return true;
-        } else if (this.mToggleDisableAnimationsPreference == preference) {
+        }
+        if (this.mToggleDisableAnimationsPreference == preference) {
             handleToggleDisableAnimations();
             return true;
-        } else if (this.mToggleMasterMonoPreference == preference) {
+        }
+        if (this.mToggleMasterMonoPreference == preference) {
             handleToggleMasterMonoPreferenceClick();
             return true;
-        } else {
-            return super.onPreferenceTreeClick(preference);
         }
+        return super.onPreferenceTreeClick(preference);
     }
 
     public static CharSequence getServiceSummary(Context context, AccessibilityServiceInfo accessibilityServiceInfo, boolean z) {
@@ -235,8 +241,8 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         } else {
             string = context.getString(R.string.accessibility_summary_state_disabled);
         }
-        CharSequence loadSummary = accessibilityServiceInfo.loadSummary(context.getPackageManager());
-        return TextUtils.isEmpty(loadSummary) ? string : context.getString(R.string.preference_summary_default_combination, string, loadSummary);
+        CharSequence charSequenceLoadSummary = accessibilityServiceInfo.loadSummary(context.getPackageManager());
+        return TextUtils.isEmpty(charSequenceLoadSummary) ? string : context.getString(R.string.preference_summary_default_combination, string, charSequenceLoadSummary);
     }
 
     private void handleToggleTextContrastPreferenceClick() {
@@ -273,7 +279,7 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         Settings.System.putIntForUser(getContentResolver(), "master_mono", this.mToggleMasterMonoPreference.isChecked() ? 1 : 0, -2);
     }
 
-    private void initializeAllPreferences() {
+    private void initializeAllPreferences() throws Resources.NotFoundException {
         for (int i = 0; i < CATEGORIES.length; i++) {
             this.mCategoryToPrefCategoryMap.put(CATEGORIES[i], (PreferenceCategory) findPreference(CATEGORIES[i]));
         }
@@ -312,14 +318,13 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         this.mVibrationPreferenceScreen = findPreference("vibration_preference_screen");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateAllPreferences() {
+    private void updateAllPreferences() throws Resources.NotFoundException {
         updateSystemPreferences();
         updateServicePreferences();
     }
 
-    protected void updateServicePreferences() {
-        Drawable loadIcon;
+    protected void updateServicePreferences() throws Resources.NotFoundException {
+        Drawable drawableLoadIcon;
         List<AccessibilityServiceInfo> list;
         boolean z;
         PreferenceCategory preferenceCategory;
@@ -347,35 +352,35 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
             AccessibilityServiceInfo accessibilityServiceInfo = installedAccessibilityServiceList.get(i2);
             ResolveInfo resolveInfo = accessibilityServiceInfo.getResolveInfo();
             RestrictedPreference restrictedPreference = new RestrictedPreference(preferenceCategory2.getContext());
-            String charSequence = resolveInfo.loadLabel(getPackageManager()).toString();
+            String string = resolveInfo.loadLabel(getPackageManager()).toString();
             if (resolveInfo.getIconResource() == 0) {
-                loadIcon = ContextCompat.getDrawable(getContext(), R.mipmap.ic_accessibility_generic);
+                drawableLoadIcon = ContextCompat.getDrawable(getContext(), R.mipmap.ic_accessibility_generic);
             } else {
-                loadIcon = resolveInfo.loadIcon(getPackageManager());
+                drawableLoadIcon = resolveInfo.loadIcon(getPackageManager());
             }
             ServiceInfo serviceInfo = resolveInfo.serviceInfo;
             String str = serviceInfo.packageName;
             List<AccessibilityServiceInfo> list2 = installedAccessibilityServiceList;
             ComponentName componentName = new ComponentName(str, serviceInfo.name);
             restrictedPreference.setKey(componentName.flattenToString());
-            restrictedPreference.setTitle(charSequence);
-            Utils.setSafeIcon(restrictedPreference, loadIcon);
-            boolean contains = enabledServicesFromSettings.contains(componentName);
-            String loadDescription = accessibilityServiceInfo.loadDescription(getPackageManager());
-            if (TextUtils.isEmpty(loadDescription)) {
-                loadDescription = getString(R.string.accessibility_service_default_description);
+            restrictedPreference.setTitle(string);
+            Utils.setSafeIcon(restrictedPreference, drawableLoadIcon);
+            boolean zContains = enabledServicesFromSettings.contains(componentName);
+            String strLoadDescription = accessibilityServiceInfo.loadDescription(getPackageManager());
+            if (TextUtils.isEmpty(strLoadDescription)) {
+                strLoadDescription = getString(R.string.accessibility_service_default_description);
             }
-            if (contains && AccessibilityUtils.hasServiceCrashed(str, serviceInfo.name, enabledAccessibilityServiceList)) {
+            if (zContains && AccessibilityUtils.hasServiceCrashed(str, serviceInfo.name, enabledAccessibilityServiceList)) {
                 restrictedPreference.setSummary(R.string.accessibility_summary_state_stopped);
-                loadDescription = getString(R.string.accessibility_description_state_stopped);
+                strLoadDescription = getString(R.string.accessibility_description_state_stopped);
             } else {
-                restrictedPreference.setSummary(getServiceSummary(getContext(), accessibilityServiceInfo, contains));
+                restrictedPreference.setSummary(getServiceSummary(getContext(), accessibilityServiceInfo, zContains));
             }
-            if (!(permittedAccessibilityServices == null || permittedAccessibilityServices.contains(str)) && !contains) {
+            if (!(permittedAccessibilityServices == null || permittedAccessibilityServices.contains(str)) && !zContains) {
                 list = enabledAccessibilityServiceList;
-                RestrictedLockUtils.EnforcedAdmin checkIfAccessibilityServiceDisallowed = RestrictedLockUtils.checkIfAccessibilityServiceDisallowed(getActivity(), str, UserHandle.myUserId());
-                if (checkIfAccessibilityServiceDisallowed != null) {
-                    restrictedPreference.setDisabledByAdmin(checkIfAccessibilityServiceDisallowed);
+                RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfAccessibilityServiceDisallowed = RestrictedLockUtils.checkIfAccessibilityServiceDisallowed(getActivity(), str, UserHandle.myUserId());
+                if (enforcedAdminCheckIfAccessibilityServiceDisallowed != null) {
+                    restrictedPreference.setDisabledByAdmin(enforcedAdminCheckIfAccessibilityServiceDisallowed);
                 } else {
                     restrictedPreference.setEnabled(false);
                 }
@@ -390,10 +395,10 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
             Bundle extras = restrictedPreference.getExtras();
             Set<ComponentName> set = enabledServicesFromSettings;
             extras.putString("preference_key", restrictedPreference.getKey());
-            extras.putBoolean("checked", contains);
-            extras.putString("title", charSequence);
+            extras.putBoolean("checked", zContains);
+            extras.putString("title", string);
             extras.putParcelable("resolve_info", resolveInfo);
-            extras.putString("summary", loadDescription);
+            extras.putString("summary", strLoadDescription);
             String settingsActivityName = accessibilityServiceInfo.getSettingsActivityName();
             if (!TextUtils.isEmpty(settingsActivityName)) {
                 extras.putString("settings_title", getString(R.string.accessibility_menu_item_settings));
@@ -418,7 +423,7 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         }
     }
 
-    private void initializePreBundledServicesMapFromArray(String str, int i) {
+    private void initializePreBundledServicesMapFromArray(String str, int i) throws Resources.NotFoundException {
         String[] stringArray = getResources().getStringArray(i);
         PreferenceCategory preferenceCategory = this.mCategoryToPrefCategoryMap.get(str);
         for (String str2 : stringArray) {
@@ -447,9 +452,9 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         this.mToggleLargePointerIconPreference.setChecked(Settings.Secure.getInt(getContentResolver(), "accessibility_large_pointer_icon", 0) != 0);
         updateDisableAnimationsToggle();
         updateMasterMono();
-        String valueOf = String.valueOf(Settings.Secure.getInt(getContentResolver(), "long_press_timeout", this.mLongPressTimeoutDefault));
-        this.mSelectLongPressTimeoutPreference.setValue(valueOf);
-        this.mSelectLongPressTimeoutPreference.setSummary(this.mLongPressTimeoutValueToTitleMap.get(valueOf));
+        String strValueOf = String.valueOf(Settings.Secure.getInt(getContentResolver(), "long_press_timeout", this.mLongPressTimeoutDefault));
+        this.mSelectLongPressTimeoutPreference.setValue(strValueOf);
+        this.mSelectLongPressTimeoutPreference.setSummary(this.mLongPressTimeoutValueToTitleMap.get(strValueOf));
         updateVibrationSummary(this.mVibrationPreferenceScreen);
         updateFeatureSummary("accessibility_captioning_enabled", this.mCaptioningPreferenceScreen);
         updateFeatureSummary("accessibility_display_daltonizer_enabled", this.mDisplayDaltonizerPreferenceScreen);
@@ -510,11 +515,9 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateLockScreenRotationCheckbox() {
-        Activity activity = getActivity();
-        if (activity != null) {
-            this.mToggleLockScreenRotationPreference.setChecked(!RotationPolicy.isRotationLocked(activity));
+    private void updateLockScreenRotationCheckbox() {
+        if (getActivity() != null) {
+            this.mToggleLockScreenRotationPreference.setChecked(!RotationPolicy.isRotationLocked(r0));
         }
     }
 
@@ -527,8 +530,9 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
             if (i < length) {
                 if (!TextUtils.equals(Settings.Global.getString(getContentResolver(), strArr[i]), "0")) {
                     break;
+                } else {
+                    i++;
                 }
-                i++;
             } else {
                 z = true;
                 break;

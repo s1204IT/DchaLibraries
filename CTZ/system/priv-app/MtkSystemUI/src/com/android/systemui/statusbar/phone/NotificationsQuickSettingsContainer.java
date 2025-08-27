@@ -14,6 +14,7 @@ import com.android.systemui.fragments.FragmentHostManager;
 import com.android.systemui.plugins.qs.QS;
 import com.android.systemui.statusbar.notification.AboveShelfObserver;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
+
 /* loaded from: classes.dex */
 public class NotificationsQuickSettingsContainer extends FrameLayout implements ViewStub.OnInflateListener, FragmentHostManager.FragmentListener, AboveShelfObserver.HasViewAboveShelfChangedListener {
     private int mBottomPadding;
@@ -91,23 +92,25 @@ public class NotificationsQuickSettingsContainer extends FrameLayout implements 
                 view3 = this.mUserSwitcher;
             }
             return super.drawChild(canvas, view3, j);
-        } else if (view == this.mStackScroller) {
+        }
+        if (view == this.mStackScroller) {
             if (z && z2) {
                 view2 = this.mKeyguardStatusBar;
             } else if (z2 || z) {
                 view2 = view3;
             }
             return super.drawChild(canvas, view2, j);
-        } else if (view == this.mUserSwitcher) {
+        }
+        if (view == this.mUserSwitcher) {
             if (!z || !z2) {
                 view3 = view2;
             }
             return super.drawChild(canvas, view3, j);
-        } else if (view == this.mKeyguardStatusBar) {
-            return super.drawChild(canvas, view2, j);
-        } else {
-            return super.drawChild(canvas, view, j);
         }
+        if (view == this.mKeyguardStatusBar) {
+            return super.drawChild(canvas, view2, j);
+        }
+        return super.drawChild(canvas, view, j);
     }
 
     @Override // android.view.ViewStub.OnInflateListener
@@ -118,6 +121,8 @@ public class NotificationsQuickSettingsContainer extends FrameLayout implements 
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: android.app.Fragment */
+    /* JADX WARN: Multi-variable type inference failed */
     @Override // com.android.systemui.fragments.FragmentHostManager.FragmentListener
     public void onFragmentViewCreated(String str, Fragment fragment) {
         ((QS) fragment).setContainer(this);

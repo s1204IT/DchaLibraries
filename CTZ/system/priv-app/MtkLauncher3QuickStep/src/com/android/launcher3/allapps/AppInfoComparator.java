@@ -7,6 +7,7 @@ import com.android.launcher3.AppInfo;
 import com.android.launcher3.compat.UserManagerCompat;
 import com.android.launcher3.util.LabelComparator;
 import java.util.Comparator;
+
 /* loaded from: classes.dex */
 public class AppInfoComparator implements Comparator<AppInfo> {
     private final UserManagerCompat mUserManager;
@@ -17,15 +18,16 @@ public class AppInfoComparator implements Comparator<AppInfo> {
         this.mUserManager = UserManagerCompat.getInstance(context);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
     @Override // java.util.Comparator
     public int compare(AppInfo appInfo, AppInfo appInfo2) {
-        int compare = this.mLabelComparator.compare(appInfo.title.toString(), appInfo2.title.toString());
-        if (compare != 0) {
-            return compare;
+        int iCompare = this.mLabelComparator.compare(appInfo.title.toString(), appInfo2.title.toString());
+        if (iCompare != 0) {
+            return iCompare;
         }
-        int compareTo = appInfo.componentName.compareTo(appInfo2.componentName);
-        if (compareTo != 0) {
-            return compareTo;
+        int iCompareTo = appInfo.componentName.compareTo(appInfo2.componentName);
+        if (iCompareTo != 0) {
+            return iCompareTo;
         }
         if (this.mMyUser.equals(appInfo.user)) {
             return -1;

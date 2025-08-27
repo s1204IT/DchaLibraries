@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import com.android.settings.dashboard.RestrictedDashboardFragment;
+
 /* loaded from: classes.dex */
 public abstract class ZenModeSettingsBase extends RestrictedDashboardFragment {
     protected static final boolean DEBUG = Log.isLoggable("ZenModeSettings", 3);
@@ -17,8 +18,7 @@ public abstract class ZenModeSettingsBase extends RestrictedDashboardFragment {
     private final SettingsObserver mSettingsObserver;
     protected int mZenMode;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onZenModeConfigChanged() {
+    protected void onZenModeConfigChanged() {
     }
 
     public ZenModeSettingsBase() {
@@ -60,8 +60,7 @@ public abstract class ZenModeSettingsBase extends RestrictedDashboardFragment {
         this.mSettingsObserver.unregister();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateZenMode(boolean z) {
+    private void updateZenMode(boolean z) {
         int i = Settings.Global.getInt(getContentResolver(), "zen_mode", this.mZenMode);
         if (i == this.mZenMode) {
             return;
@@ -72,7 +71,6 @@ public abstract class ZenModeSettingsBase extends RestrictedDashboardFragment {
         }
     }
 
-    /* loaded from: classes.dex */
     private final class SettingsObserver extends ContentObserver {
         private final Uri ZEN_MODE_CONFIG_ETAG_URI;
         private final Uri ZEN_MODE_URI;

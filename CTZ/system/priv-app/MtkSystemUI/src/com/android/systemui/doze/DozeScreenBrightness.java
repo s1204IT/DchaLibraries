@@ -1,5 +1,6 @@
 package com.android.systemui.doze;
 
+import android.R;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,6 +10,7 @@ import android.os.Handler;
 import android.os.Trace;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.doze.DozeMachine;
+
 /* loaded from: classes.dex */
 public class DozeScreenBrightness implements SensorEventListener, DozeMachine.Part {
     private final Context mContext;
@@ -40,7 +42,7 @@ public class DozeScreenBrightness implements SensorEventListener, DozeMachine.Pa
 
     @VisibleForTesting
     public DozeScreenBrightness(Context context, DozeMachine.Service service, SensorManager sensorManager, Sensor sensor, DozeHost dozeHost, Handler handler, AlwaysOnDisplayPolicy alwaysOnDisplayPolicy) {
-        this(context, service, sensorManager, sensor, dozeHost, handler, context.getResources().getInteger(17694856), alwaysOnDisplayPolicy.screenBrightnessArray, alwaysOnDisplayPolicy.dimmingScrimArray);
+        this(context, service, sensorManager, sensor, dozeHost, handler, context.getResources().getInteger(R.integer.config_dynamicPowerSavingsDefaultDisableThreshold), alwaysOnDisplayPolicy.screenBrightnessArray, alwaysOnDisplayPolicy.dimmingScrimArray);
     }
 
     @Override // com.android.systemui.doze.DozeMachine.Part
@@ -81,19 +83,19 @@ public class DozeScreenBrightness implements SensorEventListener, DozeMachine.Pa
 
     private void updateBrightnessAndReady() {
         if (this.mRegistered) {
-            int computeBrightness = computeBrightness(this.mLastSensorValue);
-            boolean z = computeBrightness > 0;
+            int iComputeBrightness = computeBrightness(this.mLastSensorValue);
+            boolean z = iComputeBrightness > 0;
             if (z) {
-                this.mDozeService.setDozeScreenBrightness(computeBrightness);
+                this.mDozeService.setDozeScreenBrightness(iComputeBrightness);
             }
-            int i = -1;
+            int iComputeScrimOpacity = -1;
             if (this.mPaused) {
-                i = 255;
+                iComputeScrimOpacity = 255;
             } else if (z) {
-                i = computeScrimOpacity(this.mLastSensorValue);
+                iComputeScrimOpacity = computeScrimOpacity(this.mLastSensorValue);
             }
-            if (i >= 0) {
-                this.mDozeHost.setAodDimmingScrim(i / 255.0f);
+            if (iComputeScrimOpacity >= 0) {
+                this.mDozeHost.setAodDimmingScrim(iComputeScrimOpacity / 255.0f);
             }
         }
     }

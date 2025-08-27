@@ -1,6 +1,7 @@
 package com.android.settings.enterprise;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class CaCertsManagedProfilePreferenceController extends CaCertsPreferenceControllerBase {
     static final String CA_CERTS_MANAGED_PROFILE = "ca_certs_managed_profile";

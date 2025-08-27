@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
+
 /* loaded from: classes.dex */
 public class UrlUtil {
     private static final String AKAMAI_URL1 = "https://townak.benesse.ne.jp/test2/A/sp_84/";
@@ -39,6 +40,13 @@ public class UrlUtil {
     private static final String VER_SPLIT = "\\.";
     private static final int VER_SPLIT_NUM = 3;
 
+    /* JADX WARN: Removed duplicated region for block: B:11:0x0053  */
+    /* JADX WARN: Removed duplicated region for block: B:14:0x005e  */
+    /* JADX WARN: Removed duplicated region for block: B:23:0x007b  */
+    /* JADX WARN: Removed duplicated region for block: B:26:0x0085  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public String getUrlAkamai(Context context) {
         String kvsValue = getKvsValue(context, URI_TEST_ENVIRONMENT_INFO, CONNECT_ID_AKAMAI, null);
         if (!TextUtils.isEmpty(kvsValue)) {
@@ -52,35 +60,23 @@ public class UrlUtil {
         String str = "https://townak.benesse.ne.jp/rel/B/sp_84/";
         if (!urlType.equals(OS_TYPE_001)) {
             if (!urlType.equals(OS_TYPE_002)) {
-                if (!urlType.equals(OS_TYPE_003)) {
-                    if (!urlType.equals(OS_TYPE_004)) {
-                        if (!urlType.equals(OS_TYPE_005)) {
-                            if (!urlType.equals(OS_TYPE_006)) {
-                                if (!urlType.equals(OS_TYPE_007)) {
-                                    if (!urlType.equals(OS_TYPE_008)) {
-                                        if (!urlType.equals(OS_TYPE_009) && (urlType.equals(OS_TYPE_010) || (!urlType.equals(OS_TYPE_011) && !urlType.equals(OS_TYPE_012)))) {
-                                            str = AKAMAI_URL10;
-                                        }
-                                        Logger.d(TAG, "result:", str);
-                                        return str;
-                                    }
-                                }
-                            }
+                if (urlType.equals(OS_TYPE_003)) {
+                    str = "https://townak.benesse.ne.jp/test2/A/sp_84/";
+                } else if (urlType.equals(OS_TYPE_004)) {
+                    str = "https://townak.benesse.ne.jp/test2/B/sp_84/";
+                } else if (!urlType.equals(OS_TYPE_005)) {
+                    if (!urlType.equals(OS_TYPE_006)) {
+                        if (urlType.equals(OS_TYPE_007)) {
+                            str = "https://townak.benesse.ne.jp/test/A/sp_84/";
+                        } else if (urlType.equals(OS_TYPE_008)) {
                             str = "https://townak.benesse.ne.jp/test/B/sp_84/";
-                            Logger.d(TAG, "result:", str);
-                            return str;
+                        } else if (!urlType.equals(OS_TYPE_009) && (urlType.equals(OS_TYPE_010) || (!urlType.equals(OS_TYPE_011) && !urlType.equals(OS_TYPE_012)))) {
+                            str = AKAMAI_URL10;
                         }
-                        str = "https://townak.benesse.ne.jp/test/A/sp_84/";
-                        Logger.d(TAG, "result:", str);
-                        return str;
                     }
                 }
             }
-            str = "https://townak.benesse.ne.jp/test2/B/sp_84/";
-            Logger.d(TAG, "result:", str);
-            return str;
         }
-        str = "https://townak.benesse.ne.jp/test2/A/sp_84/";
         Logger.d(TAG, "result:", str);
         return str;
     }
@@ -91,41 +87,34 @@ public class UrlUtil {
 
     protected String getUrlType(String str) {
         if (!TextUtils.isEmpty(str)) {
-            String[] split = str.split(VER_SPLIT);
-            if (split.length == 3) {
-                return split[2].replace('T', '0');
+            String[] strArrSplit = str.split(VER_SPLIT);
+            if (strArrSplit.length == 3) {
+                return strArrSplit[2].replace('T', '0');
             }
         }
         return OS_TYPE_010;
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:10:0x002c, code lost:
-        if (r10 != null) goto L12;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:11:0x002e, code lost:
-        r10.close();
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:17:0x003a, code lost:
-        if (r10 == null) goto L20;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     protected String getKvsValue(Context context, Uri uri, String str, String str2) {
         if (context != null) {
             String[] strArr = {str};
-            Cursor cursor = null;
+            Cursor cursorQuery = null;
             try {
-                cursor = context.getContentResolver().query(uri, new String[]{COLUMN_KVS_VALUE}, COLUMN_KVS_SELECTION, strArr, null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    str2 = cursor.getString(cursor.getColumnIndex(COLUMN_KVS_VALUE));
+                cursorQuery = context.getContentResolver().query(uri, new String[]{COLUMN_KVS_VALUE}, COLUMN_KVS_SELECTION, strArr, null);
+                if (cursorQuery != null && cursorQuery.moveToFirst()) {
+                    str2 = cursorQuery.getString(cursorQuery.getColumnIndex(COLUMN_KVS_VALUE));
                 }
             } catch (Exception unused) {
+                if (cursorQuery != null) {
+                }
             } catch (Throwable th) {
-                if (cursor != null) {
-                    cursor.close();
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
                 throw th;
+            }
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
         }
         return str2;

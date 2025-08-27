@@ -27,6 +27,7 @@ import com.android.settings.utils.ManagedServiceSettings;
 import com.android.settings.widget.AppSwitchPreference;
 import com.android.settingslib.applications.ServiceListing;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class ManagedServiceSettings extends EmptyTextSettings {
     private final Config mConfig = getConfig();
@@ -49,7 +50,7 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
         this.mServiceListing.addCallback(new ServiceListing.Callback() { // from class: com.android.settings.utils.-$$Lambda$ManagedServiceSettings$6gJSYmD-m4iGVFUdlUroaoAptMw
             @Override // com.android.settingslib.applications.ServiceListing.Callback
             public final void onServicesReloaded(List list) {
-                ManagedServiceSettings.this.updateList(list);
+                this.f$0.updateList(list);
             }
         });
         setPreferenceScreen(getPreferenceManager().createPreferenceScreen(this.mContext));
@@ -67,9 +68,9 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
         if (!ActivityManager.isLowRamDeviceStatic()) {
             this.mServiceListing.reload();
             this.mServiceListing.setListening(true);
-            return;
+        } else {
+            setEmptyText(R.string.disabled_low_ram_device);
         }
-        setEmptyText(R.string.disabled_low_ram_device);
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -78,29 +79,28 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
         this.mServiceListing.setListening(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateList(List<ServiceInfo> list) {
+    private void updateList(List<ServiceInfo> list) {
         int managedProfileId = Utils.getManagedProfileId((UserManager) this.mContext.getSystemService("user"), UserHandle.myUserId());
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.removeAll();
         list.sort(new PackageItemInfo.DisplayNameComparator(this.mPm));
         for (ServiceInfo serviceInfo : list) {
             final ComponentName componentName = new ComponentName(serviceInfo.packageName, serviceInfo.name);
-            CharSequence charSequence = null;
+            CharSequence charSequenceLoadLabel = null;
             try {
-                charSequence = this.mPm.getApplicationInfoAsUser(serviceInfo.packageName, 0, getCurrentUser(managedProfileId)).loadLabel(this.mPm);
+                charSequenceLoadLabel = this.mPm.getApplicationInfoAsUser(serviceInfo.packageName, 0, getCurrentUser(managedProfileId)).loadLabel(this.mPm);
             } catch (PackageManager.NameNotFoundException e) {
                 Log.e("ManagedServiceSettings", "can't find package name", e);
             }
-            final String charSequence2 = serviceInfo.loadLabel(this.mPm).toString();
+            final String string = serviceInfo.loadLabel(this.mPm).toString();
             AppSwitchPreference appSwitchPreference = new AppSwitchPreference(getPrefContext());
             appSwitchPreference.setPersistent(false);
             appSwitchPreference.setIcon(this.mIconDrawableFactory.getBadgedIcon(serviceInfo, serviceInfo.applicationInfo, UserHandle.getUserId(serviceInfo.applicationInfo.uid)));
-            if (charSequence != null && !charSequence.equals(charSequence2)) {
-                appSwitchPreference.setTitle(charSequence);
-                appSwitchPreference.setSummary(charSequence2);
+            if (charSequenceLoadLabel != null && !charSequenceLoadLabel.equals(string)) {
+                appSwitchPreference.setTitle(charSequenceLoadLabel);
+                appSwitchPreference.setSummary(string);
             } else {
-                appSwitchPreference.setTitle(charSequence2);
+                appSwitchPreference.setTitle(string);
             }
             appSwitchPreference.setKey(componentName.flattenToString());
             appSwitchPreference.setChecked(isServiceEnabled(componentName));
@@ -110,9 +110,7 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
             appSwitchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.utils.-$$Lambda$ManagedServiceSettings$qzumG4qfCDX22E2-mvpKDzSZyck
                 @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
                 public final boolean onPreferenceChange(Preference preference, Object obj) {
-                    boolean enabled;
-                    enabled = ManagedServiceSettings.this.setEnabled(componentName, charSequence2, ((Boolean) obj).booleanValue());
-                    return enabled;
+                    return this.f$0.setEnabled(componentName, string, ((Boolean) obj).booleanValue());
                 }
             });
             appSwitchPreference.setKey(componentName.flattenToString());
@@ -132,25 +130,22 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
         return this.mServiceListing.isEnabled(componentName);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean setEnabled(ComponentName componentName, String str, boolean z) {
+    protected boolean setEnabled(ComponentName componentName, String str, boolean z) {
         if (!z) {
             this.mServiceListing.setEnabled(componentName, false);
             return true;
-        } else if (this.mServiceListing.isEnabled(componentName)) {
-            return true;
-        } else {
-            new ScaryWarningDialogFragment().setServiceInfo(componentName, str, this).show(getFragmentManager(), "dialog");
-            return false;
         }
+        if (this.mServiceListing.isEnabled(componentName)) {
+            return true;
+        }
+        new ScaryWarningDialogFragment().setServiceInfo(componentName, str, this).show(getFragmentManager(), "dialog");
+        return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void enable(ComponentName componentName) {
+    protected void enable(ComponentName componentName) {
         this.mServiceListing.setEnabled(componentName, true);
     }
 
-    /* loaded from: classes.dex */
     public static class ScaryWarningDialogFragment extends InstrumentedDialogFragment {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {
@@ -170,12 +165,12 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
         public Dialog onCreateDialog(Bundle bundle) {
             Bundle arguments = getArguments();
             String string = arguments.getString("l");
-            final ComponentName unflattenFromString = ComponentName.unflattenFromString(arguments.getString("c"));
+            final ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(arguments.getString("c"));
             final ManagedServiceSettings managedServiceSettings = (ManagedServiceSettings) getTargetFragment();
             return new AlertDialog.Builder(getContext()).setMessage(getResources().getString(managedServiceSettings.mConfig.warningDialogSummary, string)).setTitle(getResources().getString(managedServiceSettings.mConfig.warningDialogTitle, string)).setCancelable(true).setPositiveButton(R.string.allow, new DialogInterface.OnClickListener() { // from class: com.android.settings.utils.-$$Lambda$ManagedServiceSettings$ScaryWarningDialogFragment$GfuRaJIB12V_MS8RLGOsdgpO8G0
                 @Override // android.content.DialogInterface.OnClickListener
                 public final void onClick(DialogInterface dialogInterface, int i) {
-                    ManagedServiceSettings.this.enable(unflattenFromString);
+                    managedServiceSettings.enable(componentNameUnflattenFromString);
                 }
             }).setNegativeButton(R.string.deny, new DialogInterface.OnClickListener() { // from class: com.android.settings.utils.-$$Lambda$ManagedServiceSettings$ScaryWarningDialogFragment$zGrX-jMl8gPwJu7rfyhg512VL6Y
                 @Override // android.content.DialogInterface.OnClickListener
@@ -185,12 +180,10 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
             }).create();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$onCreateDialog$1(DialogInterface dialogInterface, int i) {
+        static /* synthetic */ void lambda$onCreateDialog$1(DialogInterface dialogInterface, int i) {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Config {
         public final int emptyText;
         public final String intentAction;
@@ -212,7 +205,6 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
             this.emptyText = i3;
         }
 
-        /* loaded from: classes.dex */
         public static class Builder {
             private int mEmptyText;
             private String mIntentAction;

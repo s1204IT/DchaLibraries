@@ -17,6 +17,7 @@ import com.android.launcher3.FastBitmapDrawable;
 import com.android.launcher3.ItemInfoWithIcon;
 import com.android.launcher3.anim.Interpolators;
 import java.lang.ref.WeakReference;
+
 /* loaded from: classes.dex */
 public class PreloadIconDrawable extends FastBitmapDrawable {
     private static final int COLOR_SHADOW = 1426063360;
@@ -44,11 +45,13 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
     private int mTrackAlpha;
     private float mTrackLength;
     private static final Property<PreloadIconDrawable, Float> INTERNAL_STATE = new Property<PreloadIconDrawable, Float>(Float.TYPE, "internalStateProgress") { // from class: com.android.launcher3.graphics.PreloadIconDrawable.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(PreloadIconDrawable preloadIconDrawable) {
             return Float.valueOf(preloadIconDrawable.mInternalStateProgress);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(PreloadIconDrawable preloadIconDrawable, Float f) {
             preloadIconDrawable.setInternalProgress(f.floatValue());
@@ -77,9 +80,9 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
         this.mTmpMatrix.setScale(((rect.width() - 14.0f) - 4.0f) / 100.0f, ((rect.height() - 14.0f) - 4.0f) / 100.0f);
         this.mTmpMatrix.postTranslate(rect.left + PROGRESS_WIDTH + PROGRESS_GAP, rect.top + PROGRESS_WIDTH + PROGRESS_GAP);
         this.mProgressPath.transform(this.mTmpMatrix, this.mScaledTrackPath);
-        float width = rect.width() / 100;
-        this.mProgressPaint.setStrokeWidth(PROGRESS_WIDTH * width);
-        this.mShadowBitmap = getShadowBitmap(rect.width(), rect.height(), PROGRESS_GAP * width);
+        float fWidth = rect.width() / 100;
+        this.mProgressPaint.setStrokeWidth(PROGRESS_WIDTH * fWidth);
+        this.mShadowBitmap = getShadowBitmap(rect.width(), rect.height(), PROGRESS_GAP * fWidth);
         this.mPathMeasure.setPath(this.mScaledTrackPath, true);
         this.mTrackLength = this.mPathMeasure.getLength();
         setInternalProgress(this.mInternalStateProgress);
@@ -92,16 +95,16 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
         if (bitmap != null) {
             return bitmap;
         }
-        Bitmap createBitmap = Bitmap.createBitmap(i, i2, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(createBitmap);
+        Bitmap bitmapCreateBitmap = Bitmap.createBitmap(i, i2, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmapCreateBitmap);
         this.mProgressPaint.setShadowLayer(f, 0.0f, 0.0f, COLOR_SHADOW);
         this.mProgressPaint.setColor(COLOR_TRACK);
         this.mProgressPaint.setAlpha(255);
         canvas.drawPath(this.mScaledTrackPath, this.mProgressPaint);
         this.mProgressPaint.clearShadowLayer();
         canvas.setBitmap(null);
-        sShadowCache.put(i3, new WeakReference<>(createBitmap));
-        return createBitmap;
+        sShadowCache.put(i3, new WeakReference<>(bitmapCreateBitmap));
+        return bitmapCreateBitmap;
     }
 
     @Override // com.android.launcher3.FastBitmapDrawable
@@ -116,10 +119,10 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
             canvas.drawBitmap(this.mShadowBitmap, rect.left, rect.top, this.mProgressPaint);
         }
         canvas.drawPath(this.mScaledProgressPath, this.mProgressPaint);
-        int save = canvas.save();
+        int iSave = canvas.save();
         canvas.scale(this.mIconScale, this.mIconScale, rect.exactCenterX(), rect.exactCenterY());
         super.drawInternal(canvas, rect);
-        canvas.restoreToCount(save);
+        canvas.restoreToCount(iSave);
     }
 
     @Override // android.graphics.drawable.Drawable
@@ -155,7 +158,7 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
             return;
         }
         this.mCurrentAnim = ObjectAnimator.ofFloat(this, INTERNAL_STATE, f);
-        this.mCurrentAnim.setDuration((f - this.mInternalStateProgress) * 500.0f);
+        this.mCurrentAnim.setDuration((long) ((f - this.mInternalStateProgress) * 500.0f));
         this.mCurrentAnim.setInterpolator(Interpolators.LINEAR);
         if (z2) {
             this.mCurrentAnim.addListener(new AnimatorListenerAdapter() { // from class: com.android.launcher3.graphics.PreloadIconDrawable.2
@@ -168,8 +171,7 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
         this.mCurrentAnim.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setInternalProgress(float f) {
+    private void setInternalProgress(float f) {
         this.mInternalStateProgress = f;
         if (f <= 0.0f) {
             this.mIconScale = SMALL_SCALE;

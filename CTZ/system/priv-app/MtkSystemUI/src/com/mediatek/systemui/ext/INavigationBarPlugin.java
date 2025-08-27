@@ -1,6 +1,7 @@
 package com.mediatek.systemui.ext;
 
 import android.graphics.drawable.Drawable;
+
 /* loaded from: classes.dex */
 public interface INavigationBarPlugin {
     Drawable getBackImage(Drawable drawable);

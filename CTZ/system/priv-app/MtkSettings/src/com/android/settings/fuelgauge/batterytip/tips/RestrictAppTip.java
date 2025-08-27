@@ -14,14 +14,17 @@ import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RestrictAppTip extends BatteryTip {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() { // from class: com.android.settings.fuelgauge.batterytip.tips.RestrictAppTip.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public BatteryTip createFromParcel(Parcel parcel) {
             return new RestrictAppTip(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public BatteryTip[] newArray(int i) {
             return new RestrictAppTip[i];
@@ -50,36 +53,36 @@ public class RestrictAppTip extends BatteryTip {
 
     @Override // com.android.settings.fuelgauge.batterytip.tips.BatteryTip
     public CharSequence getTitle(Context context) {
-        Object obj;
+        Object applicationLabel;
         int size = this.mRestrictAppList.size();
         if (size > 0) {
-            obj = Utils.getApplicationLabel(context, this.mRestrictAppList.get(0).packageName);
+            applicationLabel = Utils.getApplicationLabel(context, this.mRestrictAppList.get(0).packageName);
         } else {
-            obj = "";
+            applicationLabel = "";
         }
         Resources resources = context.getResources();
         if (this.mState == 1) {
-            return resources.getQuantityString(R.plurals.battery_tip_restrict_handled_title, size, obj, Integer.valueOf(size));
+            return resources.getQuantityString(R.plurals.battery_tip_restrict_handled_title, size, applicationLabel, Integer.valueOf(size));
         }
         return resources.getQuantityString(R.plurals.battery_tip_restrict_title, size, Integer.valueOf(size));
     }
 
     @Override // com.android.settings.fuelgauge.batterytip.tips.BatteryTip
     public CharSequence getSummary(Context context) {
-        Object obj;
+        Object applicationLabel;
         int i;
         int size = this.mRestrictAppList.size();
         if (size > 0) {
-            obj = Utils.getApplicationLabel(context, this.mRestrictAppList.get(0).packageName);
+            applicationLabel = Utils.getApplicationLabel(context, this.mRestrictAppList.get(0).packageName);
         } else {
-            obj = "";
+            applicationLabel = "";
         }
         if (this.mState == 1) {
             i = R.plurals.battery_tip_restrict_handled_summary;
         } else {
             i = R.plurals.battery_tip_restrict_summary;
         }
-        return context.getResources().getQuantityString(i, size, obj, Integer.valueOf(size));
+        return context.getResources().getQuantityString(i, size, applicationLabel, Integer.valueOf(size));
     }
 
     @Override // com.android.settings.fuelgauge.batterytip.tips.BatteryTip

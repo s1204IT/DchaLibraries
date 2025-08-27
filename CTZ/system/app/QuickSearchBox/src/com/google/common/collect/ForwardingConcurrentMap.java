@@ -1,11 +1,16 @@
 package com.google.common.collect;
 
 import java.util.concurrent.ConcurrentMap;
+
 /* loaded from: classes.dex */
 public abstract class ForwardingConcurrentMap<K, V> extends ForwardingMap<K, V> implements ConcurrentMap<K, V> {
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
+    /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Map; */
     @Override // com.google.common.collect.ForwardingMap, com.google.common.collect.ForwardingObject
-    public abstract ConcurrentMap<K, V> delegate();
+    protected abstract ConcurrentMap<K, V> delegate();
+
+    protected ForwardingConcurrentMap() {
+    }
 
     @Override // java.util.Map, java.util.concurrent.ConcurrentMap
     public V putIfAbsent(K k, V v) {

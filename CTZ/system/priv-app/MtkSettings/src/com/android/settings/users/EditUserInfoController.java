@@ -23,6 +23,7 @@ import com.android.settings.R;
 import com.android.settingslib.Utils;
 import com.android.settingslib.drawable.CircleFramedDrawable;
 import java.io.File;
+
 /* loaded from: classes.dex */
 public class EditUserInfoController {
     private Dialog mEditUserInfoDialog;
@@ -32,7 +33,6 @@ public class EditUserInfoController {
     private UserManager mUserManager;
     private boolean mWaitingForActivityResult = false;
 
-    /* loaded from: classes.dex */
     public interface OnContentChangedCallback {
         void onLabelChanged(CharSequence charSequence);
 
@@ -54,9 +54,9 @@ public class EditUserInfoController {
     }
 
     public void onSaveInstanceState(Bundle bundle) {
-        File saveNewUserPhotoBitmap;
-        if (this.mEditUserInfoDialog != null && this.mEditUserInfoDialog.isShowing() && this.mEditUserPhotoController != null && (saveNewUserPhotoBitmap = this.mEditUserPhotoController.saveNewUserPhotoBitmap()) != null) {
-            bundle.putString("pending_photo", saveNewUserPhotoBitmap.getPath());
+        File fileSaveNewUserPhotoBitmap;
+        if (this.mEditUserInfoDialog != null && this.mEditUserInfoDialog.isShowing() && this.mEditUserPhotoController != null && (fileSaveNewUserPhotoBitmap = this.mEditUserPhotoController.saveNewUserPhotoBitmap()) != null) {
+            bundle.putString("pending_photo", fileSaveNewUserPhotoBitmap.getPath());
         }
         if (this.mWaitingForActivityResult) {
             bundle.putBoolean("awaiting_result", this.mWaitingForActivityResult);
@@ -81,11 +81,11 @@ public class EditUserInfoController {
         if (this.mUserManager == null) {
             this.mUserManager = UserManager.get(activity);
         }
-        View inflate = activity.getLayoutInflater().inflate(R.layout.edit_user_info_dialog_content, (ViewGroup) null);
+        View viewInflate = activity.getLayoutInflater().inflate(R.layout.edit_user_info_dialog_content, (ViewGroup) null);
         UserInfo userInfo = this.mUserManager.getUserInfo(this.mUser.getIdentifier());
-        final EditText editText = (EditText) inflate.findViewById(R.id.user_name);
+        final EditText editText = (EditText) viewInflate.findViewById(R.id.user_name);
         editText.setText(userInfo.name);
-        ImageView imageView = (ImageView) inflate.findViewById(R.id.user_photo);
+        ImageView imageView = (ImageView) viewInflate.findViewById(R.id.user_photo);
         if (this.mSavedPhoto != null) {
             userIcon = CircleFramedDrawable.getInstance(activity, this.mSavedPhoto);
         } else if (drawable == null) {
@@ -94,7 +94,7 @@ public class EditUserInfoController {
             drawable2 = drawable;
             imageView.setImageDrawable(drawable2);
             this.mEditUserPhotoController = new EditUserPhotoController(fragment, imageView, this.mSavedPhoto, drawable2, this.mWaitingForActivityResult);
-            this.mEditUserInfoDialog = new AlertDialog.Builder(activity).setTitle(R.string.profile_info_settings_title).setView(inflate).setCancelable(true).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.EditUserInfoController.2
+            this.mEditUserInfoDialog = new AlertDialog.Builder(activity).setTitle(R.string.profile_info_settings_title).setView(viewInflate).setCancelable(true).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.EditUserInfoController.2
                 /* JADX WARN: Type inference failed for: r2v10, types: [com.android.settings.users.EditUserInfoController$2$1] */
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i2) {
@@ -113,19 +113,19 @@ public class EditUserInfoController {
                                 onContentChangedCallback.onPhotoChanged(newUserPhotoDrawable);
                             }
                             new AsyncTask<Void, Void, Void>() { // from class: com.android.settings.users.EditUserInfoController.2.1
-                                /* JADX INFO: Access modifiers changed from: protected */
+                                /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                                 @Override // android.os.AsyncTask
-                                public Void doInBackground(Void... voidArr) {
+                                protected Void doInBackground(Void... voidArr) {
                                     EditUserInfoController.this.mUserManager.setUserIcon(EditUserInfoController.this.mUser.getIdentifier(), EditUserInfoController.this.mEditUserPhotoController.getNewUserPhotoBitmap());
                                     return null;
                                 }
-                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
                         }
                         fragment.getActivity().removeDialog(1);
                     }
                     EditUserInfoController.this.clear();
                 }
-            }).setNegativeButton(17039360, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.EditUserInfoController.1
+            }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.EditUserInfoController.1
                 @Override // android.content.DialogInterface.OnClickListener
                 public void onClick(DialogInterface dialogInterface, int i2) {
                     EditUserInfoController.this.clear();
@@ -137,7 +137,7 @@ public class EditUserInfoController {
         drawable2 = userIcon;
         imageView.setImageDrawable(drawable2);
         this.mEditUserPhotoController = new EditUserPhotoController(fragment, imageView, this.mSavedPhoto, drawable2, this.mWaitingForActivityResult);
-        this.mEditUserInfoDialog = new AlertDialog.Builder(activity).setTitle(R.string.profile_info_settings_title).setView(inflate).setCancelable(true).setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.EditUserInfoController.2
+        this.mEditUserInfoDialog = new AlertDialog.Builder(activity).setTitle(R.string.profile_info_settings_title).setView(viewInflate).setCancelable(true).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.EditUserInfoController.2
             /* JADX WARN: Type inference failed for: r2v10, types: [com.android.settings.users.EditUserInfoController$2$1] */
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i2) {
@@ -156,19 +156,19 @@ public class EditUserInfoController {
                             onContentChangedCallback.onPhotoChanged(newUserPhotoDrawable);
                         }
                         new AsyncTask<Void, Void, Void>() { // from class: com.android.settings.users.EditUserInfoController.2.1
-                            /* JADX INFO: Access modifiers changed from: protected */
+                            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                             @Override // android.os.AsyncTask
-                            public Void doInBackground(Void... voidArr) {
+                            protected Void doInBackground(Void... voidArr) {
                                 EditUserInfoController.this.mUserManager.setUserIcon(EditUserInfoController.this.mUser.getIdentifier(), EditUserInfoController.this.mEditUserPhotoController.getNewUserPhotoBitmap());
                                 return null;
                             }
-                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
                     }
                     fragment.getActivity().removeDialog(1);
                 }
                 EditUserInfoController.this.clear();
             }
-        }).setNegativeButton(17039360, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.EditUserInfoController.1
+        }).setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // from class: com.android.settings.users.EditUserInfoController.1
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i2) {
                 EditUserInfoController.this.clear();

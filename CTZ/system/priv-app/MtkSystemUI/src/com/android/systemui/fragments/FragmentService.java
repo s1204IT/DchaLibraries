@@ -7,9 +7,10 @@ import android.util.ArrayMap;
 import android.view.View;
 import com.android.systemui.ConfigurationChangedReceiver;
 import com.android.systemui.Dumpable;
-import com.android.systemui.fragments.FragmentService;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class FragmentService implements ConfigurationChangedReceiver, Dumpable {
     private final Context mContext;
@@ -31,29 +32,30 @@ public class FragmentService implements ConfigurationChangedReceiver, Dumpable {
     }
 
     public void destroyAll() {
-        for (FragmentHostState fragmentHostState : this.mHosts.values()) {
-            fragmentHostState.mFragmentHostManager.destroy();
+        Iterator<FragmentHostState> it = this.mHosts.values().iterator();
+        while (it.hasNext()) {
+            it.next().mFragmentHostManager.destroy();
         }
     }
 
     @Override // com.android.systemui.ConfigurationChangedReceiver
     public void onConfigurationChanged(Configuration configuration) {
-        for (FragmentHostState fragmentHostState : this.mHosts.values()) {
-            fragmentHostState.sendConfigurationChange(configuration);
+        Iterator<FragmentHostState> it = this.mHosts.values().iterator();
+        while (it.hasNext()) {
+            it.next().sendConfigurationChange(configuration);
         }
     }
 
     @Override // com.android.systemui.Dumpable
     public void dump(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
         printWriter.println("Dumping fragments:");
-        for (FragmentHostState fragmentHostState : this.mHosts.values()) {
-            fragmentHostState.mFragmentHostManager.getFragmentManager().dump("  ", fileDescriptor, printWriter, strArr);
+        Iterator<FragmentHostState> it = this.mHosts.values().iterator();
+        while (it.hasNext()) {
+            it.next().mFragmentHostManager.getFragmentManager().dump("  ", fileDescriptor, printWriter, strArr);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class FragmentHostState {
+    private class FragmentHostState {
         private FragmentHostManager mFragmentHostManager;
         private final View mView;
 
@@ -66,7 +68,7 @@ public class FragmentService implements ConfigurationChangedReceiver, Dumpable {
             FragmentService.this.mHandler.post(new Runnable() { // from class: com.android.systemui.fragments.-$$Lambda$FragmentService$FragmentHostState$kEJEvu5Mq9Z5e9srOLcsFn7Glto
                 @Override // java.lang.Runnable
                 public final void run() {
-                    FragmentService.FragmentHostState.this.handleSendConfigurationChange(configuration);
+                    this.f$0.handleSendConfigurationChange(configuration);
                 }
             });
         }
@@ -75,8 +77,7 @@ public class FragmentService implements ConfigurationChangedReceiver, Dumpable {
             return this.mFragmentHostManager;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void handleSendConfigurationChange(Configuration configuration) {
+        private void handleSendConfigurationChange(Configuration configuration) {
             this.mFragmentHostManager.onConfigurationChanged(configuration);
         }
     }

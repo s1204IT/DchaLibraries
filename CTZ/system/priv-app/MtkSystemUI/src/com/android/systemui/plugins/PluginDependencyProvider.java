@@ -3,6 +3,7 @@ package com.android.systemui.plugins;
 import android.util.ArrayMap;
 import com.android.systemui.Dependency;
 import com.android.systemui.plugins.PluginDependency;
+
 /* loaded from: classes.dex */
 public class PluginDependencyProvider extends PluginDependency.DependencyProvider {
     private final ArrayMap<Class<?>, Object> mDependencies = new ArrayMap<>();
@@ -13,6 +14,7 @@ public class PluginDependencyProvider extends PluginDependency.DependencyProvide
         PluginDependency.sProvider = this;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r1v0, resolved type: com.android.systemui.plugins.PluginDependencyProvider */
     /* JADX WARN: Multi-variable type inference failed */
     public <T> void allowPluginDependency(Class<T> cls) {
         allowPluginDependency(cls, Dependency.get(cls));

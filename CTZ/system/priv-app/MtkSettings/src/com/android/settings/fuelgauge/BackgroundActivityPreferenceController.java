@@ -16,6 +16,7 @@ import com.android.settings.fuelgauge.batterytip.tips.RestrictAppTip;
 import com.android.settings.fuelgauge.batterytip.tips.UnrestrictAppTip;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.fuelgauge.PowerWhitelistBackend;
+
 /* loaded from: classes.dex */
 public class BackgroundActivityPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     static final String KEY_BACKGROUND_ACTIVITY = "background_activity";
@@ -46,8 +47,8 @@ public class BackgroundActivityPreferenceController extends AbstractPreferenceCo
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void updateState(Preference preference) {
-        int checkOpNoThrow = this.mAppOpsManager.checkOpNoThrow(70, this.mUid, this.mTargetPackage);
-        if (this.mPowerWhitelistBackend.isWhitelisted(this.mTargetPackage) || checkOpNoThrow == 2 || Utils.isProfileOrDeviceOwner(this.mUserManager, this.mDpm, this.mTargetPackage)) {
+        int iCheckOpNoThrow = this.mAppOpsManager.checkOpNoThrow(70, this.mUid, this.mTargetPackage);
+        if (this.mPowerWhitelistBackend.isWhitelisted(this.mTargetPackage) || iCheckOpNoThrow == 2 || Utils.isProfileOrDeviceOwner(this.mUserManager, this.mDpm, this.mTargetPackage)) {
             preference.setEnabled(false);
         } else {
             preference.setEnabled(true);
@@ -82,24 +83,24 @@ public class BackgroundActivityPreferenceController extends AbstractPreferenceCo
             preference.setSummary(R.string.background_activity_summary_whitelisted);
             return;
         }
-        int checkOpNoThrow = this.mAppOpsManager.checkOpNoThrow(70, this.mUid, this.mTargetPackage);
-        if (checkOpNoThrow == 2) {
+        int iCheckOpNoThrow = this.mAppOpsManager.checkOpNoThrow(70, this.mUid, this.mTargetPackage);
+        if (iCheckOpNoThrow == 2) {
             preference.setSummary(R.string.background_activity_summary_disabled);
         } else {
-            preference.setSummary(checkOpNoThrow == 1 ? R.string.restricted_true_label : R.string.restricted_false_label);
+            preference.setSummary(iCheckOpNoThrow == 1 ? R.string.restricted_true_label : R.string.restricted_false_label);
         }
     }
 
     void showDialog(boolean z) {
         BatteryTip restrictAppTip;
-        AppInfo build = new AppInfo.Builder().setUid(this.mUid).setPackageName(this.mTargetPackage).build();
+        AppInfo appInfoBuild = new AppInfo.Builder().setUid(this.mUid).setPackageName(this.mTargetPackage).build();
         if (z) {
-            restrictAppTip = new UnrestrictAppTip(0, build);
+            restrictAppTip = new UnrestrictAppTip(0, appInfoBuild);
         } else {
-            restrictAppTip = new RestrictAppTip(0, build);
+            restrictAppTip = new RestrictAppTip(0, appInfoBuild);
         }
-        BatteryTipDialogFragment newInstance = BatteryTipDialogFragment.newInstance(restrictAppTip, this.mFragment.getMetricsCategory());
-        newInstance.setTargetFragment(this.mFragment, 0);
-        newInstance.show(this.mFragment.getFragmentManager(), "BgActivityPrefContr");
+        BatteryTipDialogFragment batteryTipDialogFragmentNewInstance = BatteryTipDialogFragment.newInstance(restrictAppTip, this.mFragment.getMetricsCategory());
+        batteryTipDialogFragmentNewInstance.setTargetFragment(this.mFragment, 0);
+        batteryTipDialogFragmentNewInstance.show(this.mFragment.getFragmentManager(), "BgActivityPrefContr");
     }
 }

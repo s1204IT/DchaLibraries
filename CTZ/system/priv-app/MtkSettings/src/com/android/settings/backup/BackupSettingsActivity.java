@@ -13,6 +13,7 @@ import com.android.settings.search.Indexable;
 import com.android.settings.search.SearchIndexableRaw;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BackupSettingsActivity extends Activity implements Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.backup.BackupSettingsActivity.1
@@ -69,7 +70,7 @@ public class BackupSettingsActivity extends Activity implements Indexable {
         if (this.mFragmentManager == null) {
             this.mFragmentManager = getFragmentManager();
         }
-        this.mFragmentManager.beginTransaction().replace(16908290, new BackupSettingsFragment()).commit();
+        this.mFragmentManager.beginTransaction().replace(android.R.id.content, new BackupSettingsFragment()).commit();
     }
 
     void setFragmentManager(FragmentManager fragmentManager) {

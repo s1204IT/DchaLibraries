@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class StorageDashboardFragment extends DashboardFragment implements LoaderManager.LoaderCallbacks<SparseArray<StorageAsyncLoader.AppsStorageResult>> {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.deviceinfo.StorageDashboardFragment.1
@@ -51,10 +52,12 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
 
         @Override // com.android.settings.search.BaseSearchIndexProvider
         public List<AbstractPreferenceController> createPreferenceControllers(Context context) {
+            StorageManager storageManager = (StorageManager) context.getSystemService(StorageManager.class);
+            UserManager userManager = (UserManager) context.getSystemService(UserManager.class);
             ArrayList arrayList = new ArrayList();
             arrayList.add(new StorageSummaryDonutPreferenceController(context));
-            arrayList.add(new StorageItemPreferenceController(context, null, null, new StorageManagerVolumeProvider((StorageManager) context.getSystemService(StorageManager.class))));
-            arrayList.addAll(SecondaryUserController.getSecondaryUserControllers(context, (UserManager) context.getSystemService(UserManager.class)));
+            arrayList.add(new StorageItemPreferenceController(context, null, null, new StorageManagerVolumeProvider(storageManager)));
+            arrayList.addAll(SecondaryUserController.getSecondaryUserControllers(context, userManager));
             return arrayList;
         }
     };
@@ -108,8 +111,7 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
         return R.string.help_url_storage_dashboard;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onReceivedSizes() {
+    private void onReceivedSizes() {
         if (this.mStorageInfo != null) {
             long j = this.mStorageInfo.totalBytes - this.mStorageInfo.freeBytes;
             this.mSummaryController.updateBytes(j, this.mStorageInfo.totalBytes);
@@ -144,9 +146,8 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
         return "StorageDashboardFrag";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.storage_dashboard_fragment;
     }
 
@@ -172,9 +173,9 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
     private void updateSecondaryUserControllers(List<AbstractPreferenceController> list, SparseArray<StorageAsyncLoader.AppsStorageResult> sparseArray) {
         int size = list.size();
         for (int i = 0; i < size; i++) {
-            AbstractPreferenceController abstractPreferenceController = list.get(i);
-            if (abstractPreferenceController instanceof StorageAsyncLoader.ResultHandler) {
-                ((StorageAsyncLoader.ResultHandler) abstractPreferenceController).handleResult(sparseArray);
+            Object obj = (AbstractPreferenceController) list.get(i);
+            if (obj instanceof StorageAsyncLoader.ResultHandler) {
+                ((StorageAsyncLoader.ResultHandler) obj).handleResult(sparseArray);
             }
         }
     }
@@ -185,6 +186,7 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
         return new StorageAsyncLoader(context, (UserManager) context.getSystemService(UserManager.class), this.mVolume.fsUuid, new StorageStatsSource(context), new PackageManagerWrapper(context.getPackageManager()));
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<SparseArray<StorageAsyncLoader.AppsStorageResult>> loader, SparseArray<StorageAsyncLoader.AppsStorageResult> sparseArray) {
         this.mAppsResult = sparseArray;
@@ -238,8 +240,7 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
         onReceivedSizes();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void maybeCacheFreshValues() {
+    private void maybeCacheFreshValues() {
         if (this.mStorageInfo != null && this.mAppsResult != null) {
             this.mCachedStorageValuesHelper.cacheResult(this.mStorageInfo, this.mAppsResult.get(UserHandle.myUserId()));
         }
@@ -249,7 +250,6 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
         return ((StorageStatsManager) getActivity().getSystemService(StorageStatsManager.class)).isQuotaSupported(this.mVolume.fsUuid);
     }
 
-    /* loaded from: classes.dex */
     public final class IconLoaderCallbacks implements LoaderManager.LoaderCallbacks<SparseArray<Drawable>> {
         public IconLoaderCallbacks() {
         }
@@ -259,13 +259,12 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
             return new UserIconLoader(StorageDashboardFragment.this.getContext(), new UserIconLoader.FetchUserIconTask() { // from class: com.android.settings.deviceinfo.-$$Lambda$StorageDashboardFragment$IconLoaderCallbacks$yGwysNy4Bq4_2nwwvU2QePhZgvU
                 @Override // com.android.settings.deviceinfo.storage.UserIconLoader.FetchUserIconTask
                 public final SparseArray getUserIcons() {
-                    SparseArray loadUserIconsWithContext;
-                    loadUserIconsWithContext = UserIconLoader.loadUserIconsWithContext(StorageDashboardFragment.this.getContext());
-                    return loadUserIconsWithContext;
+                    return UserIconLoader.loadUserIconsWithContext(StorageDashboardFragment.this.getContext());
                 }
             });
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<SparseArray<Drawable>> loader, final SparseArray<Drawable> sparseArray) {
             StorageDashboardFragment.this.mSecondaryUsers.stream().filter(new Predicate() { // from class: com.android.settings.deviceinfo.-$$Lambda$StorageDashboardFragment$IconLoaderCallbacks$7UIHa462aQ5cO1d2zsPI99b5Y1Y
@@ -281,8 +280,8 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
             });
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ boolean lambda$onLoadFinished$1(AbstractPreferenceController abstractPreferenceController) {
+        /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0000: INSTANCE_OF (r0v0 com.android.settingslib.core.AbstractPreferenceController) (LINE:353) com.android.settings.deviceinfo.storage.UserIconLoader$UserIconHandler */
+        static /* synthetic */ boolean lambda$onLoadFinished$1(AbstractPreferenceController abstractPreferenceController) {
             return abstractPreferenceController instanceof UserIconLoader.UserIconHandler;
         }
 
@@ -291,7 +290,6 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
         }
     }
 
-    /* loaded from: classes.dex */
     public final class VolumeSizeCallbacks implements LoaderManager.LoaderCallbacks<PrivateStorageInfo> {
         public VolumeSizeCallbacks() {
         }
@@ -306,6 +304,7 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
         public void onLoaderReset(Loader<PrivateStorageInfo> loader) {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<PrivateStorageInfo> loader, PrivateStorageInfo privateStorageInfo) {
             if (privateStorageInfo != null) {

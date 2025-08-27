@@ -9,6 +9,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.slices.SliceData;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SlicesDatabaseAccessor {
     public static final String[] SELECT_COLUMNS_ALL = {"key", "title", "summary", "screentitle", "keywords", "icon", "fragment", "controller", "platform_slice", "slice_type"};
@@ -30,57 +31,58 @@ public class SlicesDatabaseAccessor {
         return buildSliceData(getIndexedSliceData(str), null, false);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [114=4] */
     public List<String> getSliceKeys(boolean z) {
         verifyIndexing();
         String str = z ? "platform_slice = 1" : "platform_slice = 0";
         ArrayList arrayList = new ArrayList();
-        Cursor query = this.mHelper.getReadableDatabase().query("slices_index", new String[]{"key"}, str, null, null, null, null);
+        Cursor cursorQuery = this.mHelper.getReadableDatabase().query("slices_index", new String[]{"key"}, str, null, null, null, null);
+        Throwable th = null;
         try {
-            if (!query.moveToFirst()) {
-                if (query != null) {
-                    query.close();
+            try {
+                if (!cursorQuery.moveToFirst()) {
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
+                    }
+                    return arrayList;
+                }
+                do {
+                    arrayList.add(cursorQuery.getString(0));
+                } while (cursorQuery.moveToNext());
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
                 return arrayList;
+            } finally {
             }
-            do {
-                arrayList.add(query.getString(0));
-            } while (query.moveToNext());
-            if (query != null) {
-                query.close();
-            }
-            return arrayList;
-        } catch (Throwable th) {
-            try {
-                throw th;
-            } catch (Throwable th2) {
-                if (query != null) {
-                    if (th != null) {
-                        try {
-                            query.close();
-                        } catch (Throwable th3) {
-                            th.addSuppressed(th3);
-                        }
-                    } else {
-                        query.close();
+        } catch (Throwable th2) {
+            if (cursorQuery != null) {
+                if (th != null) {
+                    try {
+                        cursorQuery.close();
+                    } catch (Throwable th3) {
+                        th.addSuppressed(th3);
                     }
+                } else {
+                    cursorQuery.close();
                 }
-                throw th2;
             }
+            throw th2;
         }
     }
 
     private Cursor getIndexedSliceData(String str) {
         verifyIndexing();
-        Cursor query = this.mHelper.getReadableDatabase().query("slices_index", SELECT_COLUMNS_ALL, buildKeyMatchWhereClause(), new String[]{str}, null, null, null);
-        int count = query.getCount();
+        Cursor cursorQuery = this.mHelper.getReadableDatabase().query("slices_index", SELECT_COLUMNS_ALL, buildKeyMatchWhereClause(), new String[]{str}, null, null, null);
+        int count = cursorQuery.getCount();
         if (count == 0) {
             throw new IllegalStateException("Invalid Slices key from path: " + str);
-        } else if (count > 1) {
-            throw new IllegalStateException("Should not match more than 1 slice with path: " + str);
-        } else {
-            query.moveToFirst();
-            return query;
         }
+        if (count > 1) {
+            throw new IllegalStateException("Should not match more than 1 slice with path: " + str);
+        }
+        cursorQuery.moveToFirst();
+        return cursorQuery;
     }
 
     private String buildKeyMatchWhereClause() {
@@ -105,11 +107,11 @@ public class SlicesDatabaseAccessor {
     }
 
     private void verifyIndexing() {
-        long clearCallingIdentity = Binder.clearCallingIdentity();
+        long jClearCallingIdentity = Binder.clearCallingIdentity();
         try {
             FeatureFactory.getFactory(this.mContext).getSlicesFeatureProvider().indexSliceData(this.mContext);
         } finally {
-            Binder.restoreCallingIdentity(clearCallingIdentity);
+            Binder.restoreCallingIdentity(jClearCallingIdentity);
         }
     }
 }

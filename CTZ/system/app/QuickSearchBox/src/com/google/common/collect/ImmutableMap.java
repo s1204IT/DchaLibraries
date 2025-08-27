@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMapEntry;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
     private static final Map.Entry<?, ?>[] EMPTY_ENTRY_ARRAY = new Map.Entry[0];
@@ -16,8 +17,7 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
 
     public abstract V get(Object obj);
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public abstract boolean isPartialView();
+    abstract boolean isPartialView();
 
     public static <K, V> ImmutableMap<K, V> of() {
         return ImmutableBiMap.of();
@@ -27,20 +27,17 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
         return ImmutableBiMap.of((Object) k, (Object) v);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <K, V> ImmutableMapEntry.TerminalEntry<K, V> entryOf(K k, V v) {
+    static <K, V> ImmutableMapEntry.TerminalEntry<K, V> entryOf(K k, V v) {
         CollectPreconditions.checkEntryNotNull(k, v);
         return new ImmutableMapEntry.TerminalEntry<>(k, v);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void checkNoConflict(boolean z, String str, Map.Entry<?, ?> entry, Map.Entry<?, ?> entry2) {
+    static void checkNoConflict(boolean z, String str, Map.Entry<?, ?> entry, Map.Entry<?, ?> entry2) {
         if (!z) {
             throw new IllegalArgumentException("Multiple entries with same " + str + ": " + entry + " and " + entry2);
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Builder<K, V> {
         ImmutableMapEntry.TerminalEntry<K, V>[] entries;
         int size;
@@ -62,11 +59,11 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
 
         public Builder<K, V> put(K k, V v) {
             ensureCapacity(this.size + 1);
-            ImmutableMapEntry.TerminalEntry<K, V> entryOf = ImmutableMap.entryOf(k, v);
+            ImmutableMapEntry.TerminalEntry<K, V> terminalEntryEntryOf = ImmutableMap.entryOf(k, v);
             ImmutableMapEntry.TerminalEntry<K, V>[] terminalEntryArr = this.entries;
             int i = this.size;
             this.size = i + 1;
-            terminalEntryArr[i] = entryOf;
+            terminalEntryArr[i] = terminalEntryEntryOf;
             return this;
         }
 
@@ -115,6 +112,9 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
         return ImmutableEnumMap.asImmutable(enumMap);
     }
 
+    ImmutableMap() {
+    }
+
     @Override // java.util.Map
     @Deprecated
     public final V put(K k, V v) {
@@ -152,41 +152,44 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
         return values().contains(obj);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: entrySet()Ljava/util/Set; */
     @Override // java.util.Map
     public ImmutableSet<Map.Entry<K, V>> entrySet() {
         ImmutableSet<Map.Entry<K, V>> immutableSet = this.entrySet;
-        if (immutableSet == null) {
-            ImmutableSet<Map.Entry<K, V>> createEntrySet = createEntrySet();
-            this.entrySet = createEntrySet;
-            return createEntrySet;
+        if (immutableSet != null) {
+            return immutableSet;
         }
-        return immutableSet;
+        ImmutableSet<Map.Entry<K, V>> immutableSetCreateEntrySet = createEntrySet();
+        this.entrySet = immutableSetCreateEntrySet;
+        return immutableSetCreateEntrySet;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: keySet()Ljava/util/Set; */
     @Override // java.util.Map
     public ImmutableSet<K> keySet() {
         ImmutableSet<K> immutableSet = this.keySet;
-        if (immutableSet == null) {
-            ImmutableSet<K> createKeySet = createKeySet();
-            this.keySet = createKeySet;
-            return createKeySet;
+        if (immutableSet != null) {
+            return immutableSet;
         }
-        return immutableSet;
+        ImmutableSet<K> immutableSetCreateKeySet = createKeySet();
+        this.keySet = immutableSetCreateKeySet;
+        return immutableSetCreateKeySet;
     }
 
     ImmutableSet<K> createKeySet() {
         return new ImmutableMapKeySet(this);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: values()Ljava/util/Collection; */
     @Override // java.util.Map, java.util.SortedMap
     public ImmutableCollection<V> values() {
         ImmutableCollection<V> immutableCollection = this.values;
-        if (immutableCollection == null) {
-            ImmutableMapValues immutableMapValues = new ImmutableMapValues(this);
-            this.values = immutableMapValues;
-            return immutableMapValues;
+        if (immutableCollection != null) {
+            return immutableCollection;
         }
-        return immutableCollection;
+        ImmutableMapValues immutableMapValues = new ImmutableMapValues(this);
+        this.values = immutableMapValues;
+        return immutableMapValues;
     }
 
     @Override // java.util.Map
@@ -203,15 +206,12 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
         return Maps.toStringImpl(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SerializedForm implements Serializable {
+    static class SerializedForm implements Serializable {
         private static final long serialVersionUID = 0;
         private final Object[] keys;
         private final Object[] values;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public SerializedForm(ImmutableMap<?, ?> immutableMap) {
+        SerializedForm(ImmutableMap<?, ?> immutableMap) {
             this.keys = new Object[immutableMap.size()];
             this.values = new Object[immutableMap.size()];
             UnmodifiableIterator<Map.Entry<?, ?>> it = immutableMap.entrySet().iterator();
@@ -228,8 +228,7 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
             return createMap(new Builder<>());
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public Object createMap(Builder<Object, Object> builder) {
+        Object createMap(Builder<Object, Object> builder) {
             for (int i = 0; i < this.keys.length; i++) {
                 builder.put(this.keys[i], this.values[i]);
             }

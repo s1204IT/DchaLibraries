@@ -16,7 +16,9 @@ import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class AppStateAppOpsBridge extends AppStateBaseBridge {
     private final AppOpsManager mAppOpsManager;
@@ -130,8 +132,8 @@ public abstract class AppStateAppOpsBridge extends AppStateBaseBridge {
                 int identifier = userHandle.getIdentifier();
                 sparseArray.put(identifier, arrayMap);
                 for (String str2 : hashSet) {
-                    boolean isPackageAvailable = this.mIPackageManager.isPackageAvailable(str2, identifier);
-                    if (!shouldIgnorePackage(str2) && isPackageAvailable) {
+                    boolean zIsPackageAvailable = this.mIPackageManager.isPackageAvailable(str2, identifier);
+                    if (!shouldIgnorePackage(str2) && zIsPackageAvailable) {
                         arrayMap.put(str2, new PermissionState(str2, userHandle));
                     }
                 }
@@ -148,8 +150,9 @@ public abstract class AppStateAppOpsBridge extends AppStateBaseBridge {
             return;
         }
         try {
-            for (UserHandle userHandle : this.mProfiles) {
-                int identifier = userHandle.getIdentifier();
+            Iterator<UserHandle> it = this.mProfiles.iterator();
+            while (it.hasNext()) {
+                int identifier = it.next().getIdentifier();
                 ArrayMap<String, PermissionState> arrayMap = sparseArray.get(identifier);
                 if (arrayMap != null) {
                     List list = this.mIPackageManager.getPackagesHoldingPermissions(this.mPermissions, 0, identifier).getList();
@@ -193,7 +196,6 @@ public abstract class AppStateAppOpsBridge extends AppStateBaseBridge {
         return str.equals("android") || str.equals(this.mContext.getPackageName());
     }
 
-    /* loaded from: classes.dex */
     public static class PermissionState {
         public int appOpMode = 3;
         public PackageInfo packageInfo;

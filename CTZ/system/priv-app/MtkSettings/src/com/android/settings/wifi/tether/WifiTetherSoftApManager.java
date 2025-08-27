@@ -2,6 +2,7 @@ package com.android.settings.wifi.tether;
 
 import android.net.wifi.WifiManager;
 import android.os.Handler;
+
 /* loaded from: classes.dex */
 public class WifiTetherSoftApManager {
     private WifiManager mWifiManager;
@@ -17,15 +18,13 @@ public class WifiTetherSoftApManager {
     };
     private Handler mHandler = new Handler();
 
-    /* loaded from: classes.dex */
     public interface WifiTetherSoftApCallback {
         void onNumClientsChanged(int i);
 
         void onStateChanged(int i, int i2);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WifiTetherSoftApManager(WifiManager wifiManager, WifiTetherSoftApCallback wifiTetherSoftApCallback) {
+    WifiTetherSoftApManager(WifiManager wifiManager, WifiTetherSoftApCallback wifiTetherSoftApCallback) {
         this.mWifiManager = wifiManager;
         this.mWifiTetherSoftApCallback = wifiTetherSoftApCallback;
     }

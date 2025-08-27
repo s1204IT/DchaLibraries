@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class ClipboardView extends ImageView implements ClipboardManager.OnPrimaryClipChangedListener {
     private final ClipboardManager mClipboardManager;
@@ -39,20 +40,24 @@ public class ClipboardView extends ImageView implements ClipboardManager.OnPrima
         return super.onTouchEvent(motionEvent);
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // android.view.View
     public boolean onDragEvent(DragEvent dragEvent) {
         switch (dragEvent.getAction()) {
             case 3:
                 this.mClipboardManager.setPrimaryClip(dragEvent.getClipData());
+                setBackgroundDragTarget(false);
+                return true;
             case 4:
             case 6:
                 setBackgroundDragTarget(false);
-                break;
+                return true;
             case 5:
                 setBackgroundDragTarget(true);
-                break;
+                return true;
+            default:
+                return true;
         }
-        return true;
     }
 
     private void setBackgroundDragTarget(boolean z) {

@@ -24,6 +24,7 @@ import com.android.settings.widget.SwitchBar;
 import com.android.settings.widget.ToggleSwitch;
 import com.android.settingslib.accessibility.AccessibilityUtils;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class CaptionPropertiesFragment extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, ListDialogPreference.OnValueChangedListener {
     private ColorPreference mBackgroundColor;
@@ -53,7 +54,7 @@ public class CaptionPropertiesFragment extends SettingsPreferenceFragment implem
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws Resources.NotFoundException {
         super.onCreate(bundle);
         this.mCaptioningManager = (CaptioningManager) getSystemService("captioning");
         addPreferencesFromResource(R.xml.captioning_settings);
@@ -65,20 +66,20 @@ public class CaptionPropertiesFragment extends SettingsPreferenceFragment implem
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate = layoutInflater.inflate(R.layout.captioning_preview, viewGroup, false);
+        View viewInflate = layoutInflater.inflate(R.layout.captioning_preview, viewGroup, false);
         if (viewGroup instanceof PreferenceFrameLayout) {
-            inflate.getLayoutParams().removeBorders = true;
+            viewInflate.getLayoutParams().removeBorders = true;
         }
-        ((ViewGroup) inflate.findViewById(R.id.properties_fragment)).addView(super.onCreateView(layoutInflater, viewGroup, bundle), -1, -1);
-        return inflate;
+        ((ViewGroup) viewInflate.findViewById(R.id.properties_fragment)).addView(super.onCreateView(layoutInflater, viewGroup, bundle), -1, -1);
+        return viewInflate;
     }
 
     @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
-        boolean isEnabled = this.mCaptioningManager.isEnabled();
+        boolean zIsEnabled = this.mCaptioningManager.isEnabled();
         this.mPreviewText = view.findViewById(R.id.preview_text);
-        this.mPreviewText.setVisibility(isEnabled ? 0 : 4);
+        this.mPreviewText.setVisibility(zIsEnabled ? 0 : 4);
         this.mPreviewWindow = view.findViewById(R.id.preview_window);
         this.mPreviewViewport = view.findViewById(R.id.preview_viewport);
         this.mPreviewViewport.addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // from class: com.android.settings.accessibility.CaptionPropertiesFragment.1
@@ -92,12 +93,12 @@ public class CaptionPropertiesFragment extends SettingsPreferenceFragment implem
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-        boolean isEnabled = this.mCaptioningManager.isEnabled();
+        boolean zIsEnabled = this.mCaptioningManager.isEnabled();
         this.mSwitchBar = ((SettingsActivity) getActivity()).getSwitchBar();
         this.mSwitchBar.setSwitchBarText(R.string.accessibility_caption_master_switch_title, R.string.accessibility_caption_master_switch_title);
-        this.mSwitchBar.setCheckedInternal(isEnabled);
+        this.mSwitchBar.setCheckedInternal(zIsEnabled);
         this.mToggleSwitch = this.mSwitchBar.getSwitch();
-        getPreferenceScreen().setEnabled(isEnabled);
+        getPreferenceScreen().setEnabled(zIsEnabled);
         refreshPreviewText();
         installSwitchBarToggleSwitch();
     }
@@ -108,8 +109,7 @@ public class CaptionPropertiesFragment extends SettingsPreferenceFragment implem
         removeSwitchBarToggleSwitch();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshPreviewText() {
+    private void refreshPreviewText() {
         SubtitleView subtitleView;
         Activity activity = getActivity();
         if (activity != null && (subtitleView = this.mPreviewText) != null) {
@@ -118,7 +118,7 @@ public class CaptionPropertiesFragment extends SettingsPreferenceFragment implem
             if (locale != null) {
                 subtitleView.setText(AccessibilityUtils.getTextForLocale(activity, locale, R.string.captioning_preview_text));
             } else {
-                subtitleView.setText((int) R.string.captioning_preview_text);
+                subtitleView.setText(R.string.captioning_preview_text);
             }
             CaptioningManager.CaptionStyle userStyle = this.mCaptioningManager.getUserStyle();
             if (userStyle.hasWindowColor()) {
@@ -143,7 +143,7 @@ public class CaptionPropertiesFragment extends SettingsPreferenceFragment implem
         if (locale != null) {
             subtitleView.setText(AccessibilityUtils.getTextForLocale(context, locale, R.string.captioning_preview_characters));
         } else {
-            subtitleView.setText((int) R.string.captioning_preview_characters);
+            subtitleView.setText(R.string.captioning_preview_characters);
         }
     }
 
@@ -172,7 +172,7 @@ public class CaptionPropertiesFragment extends SettingsPreferenceFragment implem
         this.mToggleSwitch.setOnBeforeCheckedChangeListener(null);
     }
 
-    private void initializeAllPreferences() {
+    private void initializeAllPreferences() throws Resources.NotFoundException {
         this.mLocale = (LocalePreference) findPreference("captioning_locale");
         this.mFontSize = (ListPreference) findPreference("captioning_font_size");
         Resources resources = getResources();

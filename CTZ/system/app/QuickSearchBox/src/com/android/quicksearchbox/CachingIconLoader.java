@@ -9,6 +9,7 @@ import com.android.quicksearchbox.util.Now;
 import com.android.quicksearchbox.util.NowOrLater;
 import com.android.quicksearchbox.util.NowOrLaterWrapper;
 import java.util.WeakHashMap;
+
 /* loaded from: classes.dex */
 public class CachingIconLoader implements IconLoader {
     private final WeakHashMap<String, Entry> mIconCache = new WeakHashMap<>();
@@ -20,20 +21,25 @@ public class CachingIconLoader implements IconLoader {
 
     @Override // com.android.quicksearchbox.IconLoader
     public NowOrLater<Drawable> getIcon(String str) {
-        NowOrLater<Drawable.ConstantState> queryCache;
+        NowOrLater<Drawable.ConstantState> nowOrLaterQueryCache;
         Entry entry = null;
         if (TextUtils.isEmpty(str) || "0".equals(str)) {
             return new Now(null);
         }
         synchronized (this) {
-            queryCache = queryCache(str);
-            if (queryCache == null) {
+            nowOrLaterQueryCache = queryCache(str);
+            if (nowOrLaterQueryCache == null) {
                 entry = new Entry();
                 storeInIconCache(str, entry);
             }
         }
-        if (queryCache != null) {
-            return new NowOrLaterWrapper<Drawable.ConstantState, Drawable>(queryCache) { // from class: com.android.quicksearchbox.CachingIconLoader.1
+        if (nowOrLaterQueryCache != null) {
+            return new NowOrLaterWrapper<Drawable.ConstantState, Drawable>(nowOrLaterQueryCache) { // from class: com.android.quicksearchbox.CachingIconLoader.1
+                AnonymousClass1(NowOrLater nowOrLaterQueryCache2) {
+                    super(nowOrLaterQueryCache2);
+                }
+
+                /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // com.android.quicksearchbox.util.NowOrLaterWrapper
                 public Drawable get(Drawable.ConstantState constantState) {
                     if (constantState == null) {
@@ -47,6 +53,22 @@ public class CachingIconLoader implements IconLoader {
         entry.set(icon);
         storeInIconCache(str, entry);
         return icon;
+    }
+
+    /* renamed from: com.android.quicksearchbox.CachingIconLoader$1 */
+    class AnonymousClass1 extends NowOrLaterWrapper<Drawable.ConstantState, Drawable> {
+        AnonymousClass1(NowOrLater nowOrLaterQueryCache2) {
+            super(nowOrLaterQueryCache2);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
+        @Override // com.android.quicksearchbox.util.NowOrLaterWrapper
+        public Drawable get(Drawable.ConstantState constantState) {
+            if (constantState == null) {
+                return null;
+            }
+            return constantState.newDrawable();
+        }
     }
 
     @Override // com.android.quicksearchbox.IconLoader
@@ -64,9 +86,7 @@ public class CachingIconLoader implements IconLoader {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class Entry extends CachedLater<Drawable.ConstantState> implements Consumer<Drawable> {
+    private static class Entry extends CachedLater<Drawable.ConstantState> implements Consumer<Drawable> {
         private boolean mCreateRequested;
         private NowOrLater<Drawable> mDrawable;
         private boolean mGotDrawable;
@@ -98,6 +118,7 @@ public class CachingIconLoader implements IconLoader {
             nowOrLater.getLater(this);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: consume(Ljava/lang/Object;)Z */
         @Override // com.android.quicksearchbox.util.Consumer
         public boolean consume(Drawable drawable) {
             store(drawable == null ? null : drawable.getConstantState());

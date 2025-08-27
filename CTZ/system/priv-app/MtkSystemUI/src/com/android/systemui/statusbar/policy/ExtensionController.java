@@ -4,10 +4,10 @@ import android.content.Context;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
 /* loaded from: classes.dex */
 public interface ExtensionController {
 
-    /* loaded from: classes.dex */
     public interface Extension<T> {
         void addCallback(Consumer<T> consumer);
 
@@ -20,7 +20,6 @@ public interface ExtensionController {
         Context getContext();
     }
 
-    /* loaded from: classes.dex */
     public interface ExtensionBuilder<T> {
         Extension build();
 
@@ -37,12 +36,10 @@ public interface ExtensionController {
         ExtensionBuilder<T> withTunerFactory(TunerFactory<T> tunerFactory);
     }
 
-    /* loaded from: classes.dex */
     public interface PluginConverter<T, P> {
         T getInterfaceFromPlugin(P p);
     }
 
-    /* loaded from: classes.dex */
     public interface TunerFactory<T> {
         T create(Map<String, String> map);
 

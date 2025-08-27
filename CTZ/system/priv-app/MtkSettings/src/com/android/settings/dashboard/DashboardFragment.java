@@ -1,5 +1,6 @@
 package com.android.settings.dashboard;
 
+import android.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -25,12 +26,14 @@ import com.android.settingslib.drawer.SettingsDrawerActivity;
 import com.android.settingslib.drawer.Tile;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public abstract class DashboardFragment extends SettingsPreferenceFragment implements SummaryLoader.SummaryConsumer, Indexable, SettingsDrawerActivity.CategoryListener {
     private DashboardFeatureProvider mDashboardFeatureProvider;
@@ -42,23 +45,22 @@ public abstract class DashboardFragment extends SettingsPreferenceFragment imple
 
     protected abstract String getLogTag();
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public abstract int getPreferenceScreenResId();
+    protected abstract int getPreferenceScreenResId();
 
     @Override // com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onAttach(Context context) {
         super.onAttach(context);
         this.mDashboardFeatureProvider = FeatureFactory.getFactory(context).getDashboardFeatureProvider(context);
-        ArrayList<AbstractPreferenceController> arrayList = new ArrayList();
-        List<AbstractPreferenceController> createPreferenceControllers = createPreferenceControllers(context);
-        List<BasePreferenceController> filterControllers = PreferenceControllerListHelper.filterControllers(PreferenceControllerListHelper.getPreferenceControllersFromXml(context, getPreferenceScreenResId()), createPreferenceControllers);
-        if (createPreferenceControllers != null) {
-            arrayList.addAll(createPreferenceControllers);
+        ArrayList arrayList = new ArrayList();
+        List<AbstractPreferenceController> listCreatePreferenceControllers = createPreferenceControllers(context);
+        List<BasePreferenceController> listFilterControllers = PreferenceControllerListHelper.filterControllers(PreferenceControllerListHelper.getPreferenceControllersFromXml(context, getPreferenceScreenResId()), listCreatePreferenceControllers);
+        if (listCreatePreferenceControllers != null) {
+            arrayList.addAll(listCreatePreferenceControllers);
         }
-        arrayList.addAll(filterControllers);
+        arrayList.addAll(listFilterControllers);
         final Lifecycle lifecycle = getLifecycle();
-        filterControllers.stream().filter(new Predicate() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardFragment$S-iRpeKDC_3jmfXOTbVaWpa8f5Y
+        listFilterControllers.stream().filter(new Predicate() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardFragment$S-iRpeKDC_3jmfXOTbVaWpa8f5Y
             @Override // java.util.function.Predicate
             public final boolean test(Object obj) {
                 return DashboardFragment.lambda$onAttach$0((BasePreferenceController) obj);
@@ -66,18 +68,19 @@ public abstract class DashboardFragment extends SettingsPreferenceFragment imple
         }).forEach(new Consumer() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardFragment$iYpWkssUBFPuOKWOC_GeIjRUfdk
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                Lifecycle.this.addObserver((LifecycleObserver) ((BasePreferenceController) obj));
+                lifecycle.addObserver((LifecycleObserver) ((BasePreferenceController) obj));
             }
         });
         this.mPlaceholderPreferenceController = new DashboardTilePlaceholderPreferenceController(context);
         arrayList.add(this.mPlaceholderPreferenceController);
-        for (AbstractPreferenceController abstractPreferenceController : arrayList) {
-            addPreferenceController(abstractPreferenceController);
+        Iterator it = arrayList.iterator();
+        while (it.hasNext()) {
+            addPreferenceController((AbstractPreferenceController) it.next());
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$onAttach$0(BasePreferenceController basePreferenceController) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0000: INSTANCE_OF (r0v0 com.android.settings.core.BasePreferenceController) (LINE:94) com.android.settingslib.core.lifecycle.LifecycleObserver */
+    static /* synthetic */ boolean lambda$onAttach$0(BasePreferenceController basePreferenceController) {
         return basePreferenceController instanceof LifecycleObserver;
     }
 
@@ -122,11 +125,11 @@ public abstract class DashboardFragment extends SettingsPreferenceFragment imple
     @Override // com.android.settings.dashboard.SummaryLoader.SummaryConsumer
     public void notifySummaryChanged(Tile tile) {
         String dashboardKeyForTile = this.mDashboardFeatureProvider.getDashboardKeyForTile(tile);
-        Preference findPreference = getPreferenceScreen().findPreference(dashboardKeyForTile);
-        if (findPreference == null) {
+        Preference preferenceFindPreference = getPreferenceScreen().findPreference(dashboardKeyForTile);
+        if (preferenceFindPreference == null) {
             Log.d(getLogTag(), String.format("Can't find pref by key %s, skipping update summary %s/%s", dashboardKeyForTile, tile.title, tile.summary));
         } else {
-            findPreference.setSummary(tile.summary);
+            preferenceFindPreference.setSummary(tile.summary);
         }
     }
 
@@ -138,11 +141,13 @@ public abstract class DashboardFragment extends SettingsPreferenceFragment imple
 
     @Override // android.support.v14.preference.PreferenceFragment, android.support.v7.preference.PreferenceManager.OnPreferenceTreeClickListener
     public boolean onPreferenceTreeClick(Preference preference) {
-        Collection<List<AbstractPreferenceController>> values = this.mPreferenceControllers.values();
+        Collection<List<AbstractPreferenceController>> collectionValues = this.mPreferenceControllers.values();
         this.mMetricsFeatureProvider.logDashboardStartIntent(getContext(), preference.getIntent(), getMetricsCategory());
-        for (List<AbstractPreferenceController> list : values) {
-            for (AbstractPreferenceController abstractPreferenceController : list) {
-                if (abstractPreferenceController.handlePreferenceTreeClick(preference)) {
+        Iterator<List<AbstractPreferenceController>> it = collectionValues.iterator();
+        while (it.hasNext()) {
+            Iterator<AbstractPreferenceController> it2 = it.next().iterator();
+            while (it2.hasNext()) {
+                if (it2.next().handlePreferenceTreeClick(preference)) {
                     return true;
                 }
             }
@@ -173,8 +178,7 @@ public abstract class DashboardFragment extends SettingsPreferenceFragment imple
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public <T extends AbstractPreferenceController> T use(Class<T> cls) {
+    protected <T extends AbstractPreferenceController> T use(Class<T> cls) {
         List<AbstractPreferenceController> list = this.mPreferenceControllers.get(cls);
         if (list != null) {
             if (list.size() > 1) {
@@ -231,23 +235,23 @@ public abstract class DashboardFragment extends SettingsPreferenceFragment imple
         }).forEach(new Consumer() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardFragment$wmCpqAavTrPCWLW0gqd6-3n9DOU
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                ((AbstractPreferenceController) obj).displayPreference(PreferenceScreen.this);
+                ((AbstractPreferenceController) obj).displayPreference(preferenceScreen);
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updatePreferenceStates() {
+    protected void updatePreferenceStates() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
-        for (List<AbstractPreferenceController> list : this.mPreferenceControllers.values()) {
-            for (AbstractPreferenceController abstractPreferenceController : list) {
+        Iterator<List<AbstractPreferenceController>> it = this.mPreferenceControllers.values().iterator();
+        while (it.hasNext()) {
+            for (AbstractPreferenceController abstractPreferenceController : it.next()) {
                 if (abstractPreferenceController.isAvailable()) {
                     String preferenceKey = abstractPreferenceController.getPreferenceKey();
-                    Preference findPreference = preferenceScreen.findPreference(preferenceKey);
-                    if (findPreference == null) {
+                    Preference preferenceFindPreference = preferenceScreen.findPreference(preferenceKey);
+                    if (preferenceFindPreference == null) {
                         Log.d("DashboardFragment", String.format("Cannot find preference with key %s in Controller %s", preferenceKey, abstractPreferenceController.getClass().getSimpleName()));
                     } else {
-                        abstractPreferenceController.updateState(findPreference);
+                        abstractPreferenceController.updateState(preferenceFindPreference);
                     }
                 }
             }
@@ -281,9 +285,9 @@ public abstract class DashboardFragment extends SettingsPreferenceFragment imple
         Context context = getContext();
         this.mSummaryLoader = new SummaryLoader(getActivity(), getCategoryKey());
         this.mSummaryLoader.setSummaryConsumer(this);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{16843817});
-        int color = obtainStyledAttributes.getColor(0, context.getColor(17170443));
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(new int[]{R.attr.colorControlNormal});
+        int color = typedArrayObtainStyledAttributes.getColor(0, context.getColor(R.color.white));
+        typedArrayObtainStyledAttributes.recycle();
         for (Tile tile : tiles) {
             String dashboardKeyForTile = this.mDashboardFeatureProvider.getDashboardKeyForTile(tile);
             if (TextUtils.isEmpty(dashboardKeyForTile)) {
@@ -305,9 +309,9 @@ public abstract class DashboardFragment extends SettingsPreferenceFragment imple
         }
         for (String str2 : arrayList) {
             this.mDashboardTilePrefKeys.remove(str2);
-            Preference findPreference = preferenceScreen.findPreference(str2);
-            if (findPreference != null) {
-                preferenceScreen.removePreference(findPreference);
+            Preference preferenceFindPreference = preferenceScreen.findPreference(str2);
+            if (preferenceFindPreference != null) {
+                preferenceScreen.removePreference(preferenceFindPreference);
             }
         }
         this.mSummaryLoader.setListening(true);

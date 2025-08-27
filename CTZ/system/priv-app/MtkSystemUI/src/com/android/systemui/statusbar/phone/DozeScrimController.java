@@ -6,6 +6,7 @@ import android.util.Log;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
 import com.android.systemui.statusbar.phone.ScrimController;
+
 /* loaded from: classes.dex */
 public class DozeScrimController {
     private static final boolean DEBUG = Log.isLoggable("DozeScrimController", 3);
@@ -133,16 +134,14 @@ public class DozeScrimController {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void pulseStarted() {
+    private void pulseStarted() {
         DozeLog.tracePulseStart(this.mPulseReason);
         if (this.mPulseCallback != null) {
             this.mPulseCallback.onPulseStarted();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void pulseFinished() {
+    private void pulseFinished() {
         DozeLog.tracePulseFinish();
         if (this.mPulseCallback != null) {
             this.mPulseCallback.onPulseFinished();

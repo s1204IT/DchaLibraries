@@ -15,6 +15,7 @@ import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSIconView;
 import com.android.systemui.plugins.qs.QSTile;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class QSTileView extends QSTileBaseView {
     private View mDivider;
@@ -75,9 +76,8 @@ public class QSTileView extends QSTileBaseView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileBaseView
-    public void handleStateChanged(QSTile.State state) {
+    protected void handleStateChanged(QSTile.State state) {
         super.handleStateChanged(state);
         if (!Objects.equals(this.mLabel.getText(), state.label) || this.mState != state.state) {
             if (state.state == 0) {

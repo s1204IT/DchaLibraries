@@ -17,6 +17,7 @@ import com.android.settings.enterprise.ActionDisabledByAdminDialogHelper;
 import com.android.settings.widget.SwitchBar;
 import com.android.settingslib.HelpUtils;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class AndroidBeam extends InstrumentedFragment implements SwitchBar.OnSwitchChangeListener {
     private boolean mBeamDisallowedByBase;
@@ -36,16 +37,16 @@ public class AndroidBeam extends InstrumentedFragment implements SwitchBar.OnSwi
     @Override // com.android.settingslib.core.lifecycle.ObservableFragment, android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
-        HelpUtils.prepareHelpMenuItem(getActivity(), menu, (int) R.string.help_uri_beam, getClass().getName());
+        HelpUtils.prepareHelpMenuItem(getActivity(), menu, R.string.help_uri_beam, getClass().getName());
     }
 
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getActivity(), "no_outgoing_beam", UserHandle.myUserId());
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getActivity(), "no_outgoing_beam", UserHandle.myUserId());
         UserManager.get(getActivity());
         this.mBeamDisallowedByBase = RestrictedLockUtils.hasBaseUserRestriction(getActivity(), "no_outgoing_beam", UserHandle.myUserId());
-        if (!this.mBeamDisallowedByBase && checkIfRestrictionEnforced != null) {
-            new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_outgoing_beam", checkIfRestrictionEnforced).show();
+        if (!this.mBeamDisallowedByBase && enforcedAdminCheckIfRestrictionEnforced != null) {
+            new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_outgoing_beam", enforcedAdminCheckIfRestrictionEnforced).show();
             this.mBeamDisallowedByOnlyAdmin = true;
             return new View(getContext());
         }
@@ -84,14 +85,14 @@ public class AndroidBeam extends InstrumentedFragment implements SwitchBar.OnSwi
 
     @Override // com.android.settings.widget.SwitchBar.OnSwitchChangeListener
     public void onSwitchChanged(Switch r2, boolean z) {
-        boolean disableNdefPush;
+        boolean zDisableNdefPush;
         this.mSwitchBar.setEnabled(false);
         if (z) {
-            disableNdefPush = this.mNfcAdapter.enableNdefPush();
+            zDisableNdefPush = this.mNfcAdapter.enableNdefPush();
         } else {
-            disableNdefPush = this.mNfcAdapter.disableNdefPush();
+            zDisableNdefPush = this.mNfcAdapter.disableNdefPush();
         }
-        if (disableNdefPush) {
+        if (zDisableNdefPush) {
             this.mSwitchBar.setChecked(z);
         }
         this.mSwitchBar.setEnabled(true);

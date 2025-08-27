@@ -26,6 +26,7 @@ import com.android.systemui.tuner.PluginFragment;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class PluginFragment extends PreferenceFragment {
     private PluginPrefs mPluginPrefs;
@@ -58,10 +59,9 @@ public class PluginFragment extends PreferenceFragment {
         loadPrefs();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void loadPrefs() {
-        final PreferenceScreen createPreferenceScreen = getPreferenceManager().createPreferenceScreen(getContext());
-        createPreferenceScreen.setOrderingAsAdded(false);
+    private void loadPrefs() {
+        final PreferenceScreen preferenceScreenCreatePreferenceScreen = getPreferenceManager().createPreferenceScreen(getContext());
+        preferenceScreenCreatePreferenceScreen.setOrderingAsAdded(false);
         final Context context = getPreferenceManager().getContext();
         this.mPluginPrefs = new PluginPrefs(getContext());
         PackageManager packageManager = getContext().getPackageManager();
@@ -69,8 +69,9 @@ public class PluginFragment extends PreferenceFragment {
         final ArrayMap arrayMap = new ArrayMap();
         for (String str : pluginList) {
             String name = toName(str);
-            for (ResolveInfo resolveInfo : packageManager.queryIntentServices(new Intent(str), 512)) {
-                String str2 = resolveInfo.serviceInfo.packageName;
+            Iterator<ResolveInfo> it = packageManager.queryIntentServices(new Intent(str), 512).iterator();
+            while (it.hasNext()) {
+                String str2 = it.next().serviceInfo.packageName;
                 if (!arrayMap.containsKey(str2)) {
                     arrayMap.put(str2, new ArraySet());
                 }
@@ -80,10 +81,10 @@ public class PluginFragment extends PreferenceFragment {
         packageManager.getPackagesHoldingPermissions(new String[]{PluginInstanceManager.PLUGIN_PERMISSION}, 516).forEach(new Consumer() { // from class: com.android.systemui.tuner.-$$Lambda$PluginFragment$-gWfSjbBwCV0_TE_pdcQVko9wUY
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                PluginFragment.lambda$loadPrefs$0(PluginFragment.this, arrayMap, context, createPreferenceScreen, (PackageInfo) obj);
+                PluginFragment.lambda$loadPrefs$0(this.f$0, arrayMap, context, preferenceScreenCreatePreferenceScreen, (PackageInfo) obj);
             }
         });
-        setPreferenceScreen(createPreferenceScreen);
+        setPreferenceScreen(preferenceScreenCreatePreferenceScreen);
     }
 
     public static /* synthetic */ void lambda$loadPrefs$0(PluginFragment pluginFragment, ArrayMap arrayMap, Context context, PreferenceScreen preferenceScreen, PackageInfo packageInfo) {
@@ -108,10 +109,9 @@ public class PluginFragment extends PreferenceFragment {
     }
 
     private String toName(String str) {
-        String[] split;
-        String replace = str.replace("com.android.systemui.action.PLUGIN_", "");
+        String strReplace = str.replace("com.android.systemui.action.PLUGIN_", "");
         StringBuilder sb = new StringBuilder();
-        for (String str2 : replace.split("_")) {
+        for (String str2 : strReplace.split("_")) {
             if (sb.length() != 0) {
                 sb.append(' ');
             }
@@ -121,9 +121,7 @@ public class PluginFragment extends PreferenceFragment {
         return sb.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class PluginPreference extends SwitchPreference {
+    private static class PluginPreference extends SwitchPreference {
         private final boolean mHasSettings;
         private final PackageInfo mInfo;
         private final PackageManager mPm;
@@ -147,9 +145,8 @@ public class PluginFragment extends PreferenceFragment {
             return true;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // android.support.v7.preference.Preference
-        public boolean persistBoolean(boolean z) {
+        protected boolean persistBoolean(boolean z) {
             int i;
             if (!z) {
                 i = 2;
@@ -179,21 +176,21 @@ public class PluginFragment extends PreferenceFragment {
             preferenceViewHolder.findViewById(R.id.settings).setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.tuner.-$$Lambda$PluginFragment$PluginPreference$Xt_y65tw1Tc7XykRWrNNbIDklTs
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    PluginFragment.PluginPreference.lambda$onBindViewHolder$0(PluginFragment.PluginPreference.this, view);
+                    PluginFragment.PluginPreference.lambda$onBindViewHolder$0(this.f$0, view);
                 }
             });
             preferenceViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.systemui.tuner.-$$Lambda$PluginFragment$PluginPreference$hyhKFHxbkbEXGxqXV7_N3Il_7XE
                 @Override // android.view.View.OnLongClickListener
                 public final boolean onLongClick(View view) {
-                    return PluginFragment.PluginPreference.lambda$onBindViewHolder$1(PluginFragment.PluginPreference.this, view);
+                    return PluginFragment.PluginPreference.lambda$onBindViewHolder$1(this.f$0, view);
                 }
             });
         }
 
         public static /* synthetic */ void lambda$onBindViewHolder$0(PluginPreference pluginPreference, View view) {
-            ResolveInfo resolveActivity = view.getContext().getPackageManager().resolveActivity(new Intent("com.android.systemui.action.PLUGIN_SETTINGS").setPackage(pluginPreference.mInfo.packageName), 0);
-            if (resolveActivity != null) {
-                view.getContext().startActivity(new Intent().setComponent(new ComponentName(resolveActivity.activityInfo.packageName, resolveActivity.activityInfo.name)));
+            ResolveInfo resolveInfoResolveActivity = view.getContext().getPackageManager().resolveActivity(new Intent("com.android.systemui.action.PLUGIN_SETTINGS").setPackage(pluginPreference.mInfo.packageName), 0);
+            if (resolveInfoResolveActivity != null) {
+                view.getContext().startActivity(new Intent().setComponent(new ComponentName(resolveInfoResolveActivity.activityInfo.packageName, resolveInfoResolveActivity.activityInfo.name)));
             }
         }
 

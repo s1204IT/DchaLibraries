@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.applications.appops.AppOpsState;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppOpsCategory extends ListFragment implements LoaderManager.LoaderCallbacks<List<AppOpsState.AppOpEntry>> {
     AppListAdapter mAdapter;
@@ -37,22 +38,20 @@ public class AppOpsCategory extends ListFragment implements LoaderManager.Loader
         setArguments(bundle);
     }
 
-    /* loaded from: classes.dex */
     public static class InterestingConfigChanges {
         final Configuration mLastConfiguration = new Configuration();
         int mLastDensity;
 
         boolean applyNewConfig(Resources resources) {
-            int updateFrom = this.mLastConfiguration.updateFrom(resources.getConfiguration());
-            if ((this.mLastDensity != resources.getDisplayMetrics().densityDpi) || (updateFrom & 772) != 0) {
-                this.mLastDensity = resources.getDisplayMetrics().densityDpi;
-                return true;
+            int iUpdateFrom = this.mLastConfiguration.updateFrom(resources.getConfiguration());
+            if (!(this.mLastDensity != resources.getDisplayMetrics().densityDpi) && (iUpdateFrom & 772) == 0) {
+                return false;
             }
-            return false;
+            this.mLastDensity = resources.getDisplayMetrics().densityDpi;
+            return true;
         }
     }
 
-    /* loaded from: classes.dex */
     public static class PackageIntentReceiver extends BroadcastReceiver {
         final AppListLoader mLoader;
 
@@ -75,7 +74,6 @@ public class AppOpsCategory extends ListFragment implements LoaderManager.Loader
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AppListLoader extends AsyncTaskLoader<List<AppOpsState.AppOpEntry>> {
         List<AppOpsState.AppOpEntry> mApps;
         final InterestingConfigChanges mLastConfig;
@@ -90,11 +88,13 @@ public class AppOpsCategory extends ListFragment implements LoaderManager.Loader
             this.mTemplate = opsTemplate;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
         @Override // android.content.AsyncTaskLoader
         public List<AppOpsState.AppOpEntry> loadInBackground() {
             return this.mState.buildState(this.mTemplate, 0, null, AppOpsState.LABEL_COMPARATOR);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: deliverResult(Ljava/lang/Object;)V */
         @Override // android.content.Loader
         public void deliverResult(List<AppOpsState.AppOpEntry> list) {
             if (isReset() && list != null) {
@@ -118,8 +118,8 @@ public class AppOpsCategory extends ListFragment implements LoaderManager.Loader
             if (this.mPackageObserver == null) {
                 this.mPackageObserver = new PackageIntentReceiver(this);
             }
-            boolean applyNewConfig = this.mLastConfig.applyNewConfig(getContext().getResources());
-            if (takeContentChanged() || this.mApps == null || applyNewConfig) {
+            boolean zApplyNewConfig = this.mLastConfig.applyNewConfig(getContext().getResources());
+            if (takeContentChanged() || this.mApps == null || zApplyNewConfig) {
                 forceLoad();
             }
         }
@@ -129,6 +129,7 @@ public class AppOpsCategory extends ListFragment implements LoaderManager.Loader
             cancelLoad();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onCanceled(Ljava/lang/Object;)V */
         @Override // android.content.AsyncTaskLoader
         public void onCanceled(List<AppOpsState.AppOpEntry> list) {
             super.onCanceled((AppListLoader) list);
@@ -153,7 +154,6 @@ public class AppOpsCategory extends ListFragment implements LoaderManager.Loader
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AppListAdapter extends BaseAdapter {
         private final LayoutInflater mInflater;
         List<AppOpsState.AppOpEntry> mList;
@@ -179,6 +179,7 @@ public class AppOpsCategory extends ListFragment implements LoaderManager.Loader
             return 0;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
         @Override // android.widget.Adapter
         public AppOpsState.AppOpEntry getItem(int i) {
             return this.mList.get(i);
@@ -250,6 +251,7 @@ public class AppOpsCategory extends ListFragment implements LoaderManager.Loader
         return new AppListLoader(getActivity(), this.mState, opsTemplate);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<List<AppOpsState.AppOpEntry>> loader, List<AppOpsState.AppOpEntry> list) {
         this.mAdapter.setData(list);

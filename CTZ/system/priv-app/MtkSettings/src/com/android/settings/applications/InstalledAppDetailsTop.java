@@ -3,6 +3,7 @@ package com.android.settings.applications;
 import android.content.Intent;
 import com.android.settings.SettingsActivity;
 import com.android.settings.applications.appinfo.AppInfoDashboardFragment;
+
 /* loaded from: classes.dex */
 public class InstalledAppDetailsTop extends SettingsActivity {
     @Override // com.android.settings.SettingsActivity, android.app.Activity
@@ -12,9 +13,8 @@ public class InstalledAppDetailsTop extends SettingsActivity {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return AppInfoDashboardFragment.class.getName().equals(str);
     }
 }

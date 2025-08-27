@@ -11,6 +11,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class LockScreenPreferenceController extends BasePreferenceController implements LifecycleObserver, OnResume {
     static final String KEY_LOCKSCREEN_PREFERENCES = "lockscreen_preferences";

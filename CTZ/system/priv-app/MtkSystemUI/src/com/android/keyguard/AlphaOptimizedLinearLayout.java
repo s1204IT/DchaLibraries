@@ -3,6 +3,7 @@ package com.android.keyguard;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
+
 /* loaded from: classes.dex */
 public class AlphaOptimizedLinearLayout extends LinearLayout {
     public AlphaOptimizedLinearLayout(Context context) {

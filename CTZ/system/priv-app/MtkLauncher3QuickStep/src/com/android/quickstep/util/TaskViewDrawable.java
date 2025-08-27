@@ -13,15 +13,18 @@ import com.android.launcher3.Utilities;
 import com.android.quickstep.views.RecentsView;
 import com.android.quickstep.views.TaskThumbnailView;
 import com.android.quickstep.views.TaskView;
+
 /* loaded from: classes.dex */
 public class TaskViewDrawable extends Drawable {
     private static final float ICON_SCALE_THRESHOLD = 0.95f;
     public static final FloatProperty<TaskViewDrawable> PROGRESS = new FloatProperty<TaskViewDrawable>(NotificationCompat.CATEGORY_PROGRESS) { // from class: com.android.quickstep.util.TaskViewDrawable.1
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(TaskViewDrawable taskViewDrawable, float f) {
             taskViewDrawable.setProgress(f);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(TaskViewDrawable taskViewDrawable) {
             return Float.valueOf(taskViewDrawable.mProgress);
@@ -65,7 +68,7 @@ public class TaskViewDrawable extends Drawable {
         this.mIconScaleAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.quickstep.util.-$$Lambda$TaskViewDrawable$sMQSQvdEGrI6FAAV7-MsSaduq1w
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                TaskViewDrawable.lambda$animateIconScale$0(TaskViewDrawable.this, valueAnimator);
+                TaskViewDrawable.lambda$animateIconScale$0(this.f$0, valueAnimator);
             }
         });
         this.mIconScaleAnimator.addListener(new AnimatorListenerAdapter() { // from class: com.android.quickstep.util.TaskViewDrawable.2

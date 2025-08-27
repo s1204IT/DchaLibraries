@@ -1,6 +1,7 @@
 package com.android.launcher3;
 
 import android.animation.TimeInterpolator;
+
 /* loaded from: classes.dex */
 public class LogAccelerateInterpolator implements TimeInterpolator {
     int mBase;

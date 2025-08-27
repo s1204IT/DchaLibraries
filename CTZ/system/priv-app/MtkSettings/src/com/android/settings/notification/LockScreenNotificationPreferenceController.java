@@ -25,6 +25,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class LockScreenNotificationPreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private RestrictedListPreference mLockscreen;
@@ -79,16 +80,16 @@ public class LockScreenNotificationPreferenceController extends AbstractPreferen
         ArrayList arrayList = new ArrayList();
         ArrayList arrayList2 = new ArrayList();
         String string = this.mContext.getString(R.string.lock_screen_notifications_summary_show);
-        String num = Integer.toString(R.string.lock_screen_notifications_summary_show);
+        String string2 = Integer.toString(R.string.lock_screen_notifications_summary_show);
         arrayList.add(string);
-        arrayList2.add(num);
-        setRestrictedIfNotificationFeaturesDisabled(string, num, 12);
+        arrayList2.add(string2);
+        setRestrictedIfNotificationFeaturesDisabled(string, string2, 12);
         if (this.mSecure) {
-            String string2 = this.mContext.getString(R.string.lock_screen_notifications_summary_hide);
-            String num2 = Integer.toString(R.string.lock_screen_notifications_summary_hide);
-            arrayList.add(string2);
-            arrayList2.add(num2);
-            setRestrictedIfNotificationFeaturesDisabled(string2, num2, 4);
+            String string3 = this.mContext.getString(R.string.lock_screen_notifications_summary_hide);
+            String string4 = Integer.toString(R.string.lock_screen_notifications_summary_hide);
+            arrayList.add(string3);
+            arrayList2.add(string4);
+            setRestrictedIfNotificationFeaturesDisabled(string3, string4, 4);
         }
         arrayList.add(this.mContext.getString(R.string.lock_screen_notifications_summary_disable));
         arrayList2.add(Integer.toString(R.string.lock_screen_notifications_summary_disable));
@@ -110,16 +111,16 @@ public class LockScreenNotificationPreferenceController extends AbstractPreferen
         ArrayList arrayList = new ArrayList();
         ArrayList arrayList2 = new ArrayList();
         String string = this.mContext.getString(R.string.lock_screen_notifications_summary_show_profile);
-        String num = Integer.toString(R.string.lock_screen_notifications_summary_show_profile);
+        String string2 = Integer.toString(R.string.lock_screen_notifications_summary_show_profile);
         arrayList.add(string);
-        arrayList2.add(num);
-        setRestrictedIfNotificationFeaturesDisabled(string, num, 12);
+        arrayList2.add(string2);
+        setRestrictedIfNotificationFeaturesDisabled(string, string2, 12);
         if (this.mSecureProfile) {
-            String string2 = this.mContext.getString(R.string.lock_screen_notifications_summary_hide_profile);
-            String num2 = Integer.toString(R.string.lock_screen_notifications_summary_hide_profile);
-            arrayList.add(string2);
-            arrayList2.add(num2);
-            setRestrictedIfNotificationFeaturesDisabled(string2, num2, 4);
+            String string3 = this.mContext.getString(R.string.lock_screen_notifications_summary_hide_profile);
+            String string4 = Integer.toString(R.string.lock_screen_notifications_summary_hide_profile);
+            arrayList.add(string3);
+            arrayList2.add(string4);
+            setRestrictedIfNotificationFeaturesDisabled(string3, string4, 4);
         }
         this.mLockscreenProfile.setEntries((CharSequence[]) arrayList.toArray(new CharSequence[arrayList.size()]));
         this.mLockscreenProfile.setEntryValues((CharSequence[]) arrayList2.toArray(new CharSequence[arrayList2.size()]));
@@ -156,36 +157,36 @@ public class LockScreenNotificationPreferenceController extends AbstractPreferen
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
-        int parseInt;
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
+        int i;
         String key = preference.getKey();
         if (TextUtils.equals(this.mWorkSettingKey, key)) {
-            int parseInt2 = Integer.parseInt((String) obj);
-            if (parseInt2 == this.mLockscreenSelectedValueProfile) {
+            int i2 = Integer.parseInt((String) obj);
+            if (i2 == this.mLockscreenSelectedValueProfile) {
                 return false;
             }
-            Settings.Secure.putIntForUser(this.mContext.getContentResolver(), "lock_screen_allow_private_notifications", parseInt2 == R.string.lock_screen_notifications_summary_show_profile ? 1 : 0, this.mProfileUserId);
-            this.mLockscreenSelectedValueProfile = parseInt2;
-            return true;
-        } else if (!TextUtils.equals(this.mSettingKey, key) || (parseInt = Integer.parseInt((String) obj)) == this.mLockscreenSelectedValue) {
-            return false;
-        } else {
-            int i = parseInt != R.string.lock_screen_notifications_summary_disable ? 1 : 0;
-            Settings.Secure.putInt(this.mContext.getContentResolver(), "lock_screen_allow_private_notifications", parseInt == R.string.lock_screen_notifications_summary_show ? 1 : 0);
-            Settings.Secure.putInt(this.mContext.getContentResolver(), "lock_screen_show_notifications", i);
-            this.mLockscreenSelectedValue = parseInt;
+            Settings.Secure.putIntForUser(this.mContext.getContentResolver(), "lock_screen_allow_private_notifications", i2 == R.string.lock_screen_notifications_summary_show_profile ? 1 : 0, this.mProfileUserId);
+            this.mLockscreenSelectedValueProfile = i2;
             return true;
         }
+        if (!TextUtils.equals(this.mSettingKey, key) || (i = Integer.parseInt((String) obj)) == this.mLockscreenSelectedValue) {
+            return false;
+        }
+        int i3 = i != R.string.lock_screen_notifications_summary_disable ? 1 : 0;
+        Settings.Secure.putInt(this.mContext.getContentResolver(), "lock_screen_allow_private_notifications", i == R.string.lock_screen_notifications_summary_show ? 1 : 0);
+        Settings.Secure.putInt(this.mContext.getContentResolver(), "lock_screen_show_notifications", i3);
+        this.mLockscreenSelectedValue = i;
+        return true;
     }
 
     private void setRestrictedIfNotificationFeaturesDisabled(CharSequence charSequence, CharSequence charSequence2, int i) {
-        RestrictedLockUtils.EnforcedAdmin checkIfKeyguardFeaturesDisabled;
-        RestrictedLockUtils.EnforcedAdmin checkIfKeyguardFeaturesDisabled2 = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(this.mContext, i, UserHandle.myUserId());
-        if (checkIfKeyguardFeaturesDisabled2 != null && this.mLockscreen != null) {
-            this.mLockscreen.addRestrictedItem(new RestrictedListPreference.RestrictedItem(charSequence, charSequence2, checkIfKeyguardFeaturesDisabled2));
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfKeyguardFeaturesDisabled;
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfKeyguardFeaturesDisabled2 = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(this.mContext, i, UserHandle.myUserId());
+        if (enforcedAdminCheckIfKeyguardFeaturesDisabled2 != null && this.mLockscreen != null) {
+            this.mLockscreen.addRestrictedItem(new RestrictedListPreference.RestrictedItem(charSequence, charSequence2, enforcedAdminCheckIfKeyguardFeaturesDisabled2));
         }
-        if (this.mProfileUserId != -10000 && (checkIfKeyguardFeaturesDisabled = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(this.mContext, i, this.mProfileUserId)) != null && this.mLockscreenProfile != null) {
-            this.mLockscreenProfile.addRestrictedItem(new RestrictedListPreference.RestrictedItem(charSequence, charSequence2, checkIfKeyguardFeaturesDisabled));
+        if (this.mProfileUserId != -10000 && (enforcedAdminCheckIfKeyguardFeaturesDisabled = RestrictedLockUtils.checkIfKeyguardFeaturesDisabled(this.mContext, i, this.mProfileUserId)) != null && this.mLockscreenProfile != null) {
+            this.mLockscreenProfile.addRestrictedItem(new RestrictedListPreference.RestrictedItem(charSequence, charSequence2, enforcedAdminCheckIfKeyguardFeaturesDisabled));
         }
     }
 
@@ -193,8 +194,7 @@ public class LockScreenNotificationPreferenceController extends AbstractPreferen
         return !getLockscreenNotificationsEnabled(context) ? R.string.lock_screen_notifications_summary_disable : !FeatureFactory.getFactory(context).getSecurityFeatureProvider().getLockPatternUtils(context).isSecure(UserHandle.myUserId()) || getAllowPrivateNotifications(context, UserHandle.myUserId()) ? R.string.lock_screen_notifications_summary_show : R.string.lock_screen_notifications_summary_hide;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateLockscreenNotifications() {
+    private void updateLockscreenNotifications() {
         if (this.mLockscreen == null) {
             return;
         }
@@ -207,8 +207,7 @@ public class LockScreenNotificationPreferenceController extends AbstractPreferen
         return (((DevicePolicyManager) this.mContext.getSystemService(DevicePolicyManager.class)).getKeyguardDisabledFeatures(null, i) & 8) == 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateLockscreenNotificationsForProfile() {
+    private void updateLockscreenNotificationsForProfile() {
         int i;
         if (this.mProfileUserId == -10000 || this.mLockscreenProfile == null) {
             return;
@@ -232,7 +231,6 @@ public class LockScreenNotificationPreferenceController extends AbstractPreferen
         return Settings.Secure.getIntForUser(context.getContentResolver(), "lock_screen_allow_private_notifications", 0, i) != 0;
     }
 
-    /* loaded from: classes.dex */
     class SettingObserver extends ContentObserver {
         private final Uri LOCK_SCREEN_PRIVATE_URI;
         private final Uri LOCK_SCREEN_SHOW_URI;
@@ -247,9 +245,9 @@ public class LockScreenNotificationPreferenceController extends AbstractPreferen
             if (z) {
                 contentResolver.registerContentObserver(this.LOCK_SCREEN_PRIVATE_URI, false, this);
                 contentResolver.registerContentObserver(this.LOCK_SCREEN_SHOW_URI, false, this);
-                return;
+            } else {
+                contentResolver.unregisterContentObserver(this);
             }
-            contentResolver.unregisterContentObserver(this);
         }
 
         @Override // android.database.ContentObserver

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class ShortcutManagerThrottlingPreferenceController extends DeveloperOptionsPreferenceController implements PreferenceControllerMixin {
     private final IShortcutService mShortcutService;
@@ -40,7 +41,7 @@ public class ShortcutManagerThrottlingPreferenceController extends DeveloperOpti
         }
         try {
             this.mShortcutService.resetThrottling();
-            Toast.makeText(this.mContext, (int) R.string.reset_shortcut_manager_throttling_complete, 0).show();
+            Toast.makeText(this.mContext, R.string.reset_shortcut_manager_throttling_complete, 0).show();
         } catch (RemoteException e) {
             Log.e("ShortcutMgrPrefCtrl", "Failed to reset rate limiting", e);
         }

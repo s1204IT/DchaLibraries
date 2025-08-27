@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.android.systemui.statusbar.phone.NavigationBarView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:systemui="http://schemas.android.com/apk/res-auto" android:background="@drawable/system_bar_background" android:layout_width="match_parent" android:layout_height="match_parent">
-    <com.android.systemui.statusbar.phone.NavigationBarInflaterView android:id="@+id/navigation_inflater" android:layout_width="match_parent" android:layout_height="match_parent"/>
+<com.android.systemui.statusbar.phone.NavigationBarView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:systemui="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/system_bar_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.android.systemui.statusbar.phone.NavigationBarInflaterView
+        android:id="@+id/navigation_inflater"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </com.android.systemui.statusbar.phone.NavigationBarView>

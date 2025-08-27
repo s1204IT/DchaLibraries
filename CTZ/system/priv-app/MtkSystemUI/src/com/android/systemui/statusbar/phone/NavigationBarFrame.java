@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import com.android.systemui.statusbar.policy.DeadZone;
+
 /* loaded from: classes.dex */
 public class NavigationBarFrame extends FrameLayout {
     private DeadZone mDeadZone;

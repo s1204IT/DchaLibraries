@@ -11,6 +11,7 @@ import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedSwitchPreference;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class VerifyAppsOverUsbPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, AdbOnChangeListener {
     static final int SETTING_VALUE_OFF = 0;
@@ -18,9 +19,7 @@ public class VerifyAppsOverUsbPreferenceController extends DeveloperOptionsPrefe
     private final PackageManagerWrapper mPackageManager;
     private final RestrictedLockUtilsDelegate mRestrictedLockUtils;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class RestrictedLockUtilsDelegate {
+    class RestrictedLockUtilsDelegate {
         RestrictedLockUtilsDelegate() {
         }
 
@@ -60,14 +59,14 @@ public class VerifyAppsOverUsbPreferenceController extends DeveloperOptionsPrefe
             restrictedSwitchPreference.setEnabled(false);
             return;
         }
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = this.mRestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "ensure_verify_apps", UserHandle.myUserId());
-        if (checkIfRestrictionEnforced != null) {
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = this.mRestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "ensure_verify_apps", UserHandle.myUserId());
+        if (enforcedAdminCheckIfRestrictionEnforced != null) {
             restrictedSwitchPreference.setChecked(true);
-            restrictedSwitchPreference.setDisabledByAdmin(checkIfRestrictionEnforced);
-            return;
+            restrictedSwitchPreference.setDisabledByAdmin(enforcedAdminCheckIfRestrictionEnforced);
+        } else {
+            restrictedSwitchPreference.setEnabled(true);
+            restrictedSwitchPreference.setChecked(Settings.Global.getInt(this.mContext.getContentResolver(), "verifier_verify_adb_installs", 1) != 0);
         }
-        restrictedSwitchPreference.setEnabled(true);
-        restrictedSwitchPreference.setChecked(Settings.Global.getInt(this.mContext.getContentResolver(), "verifier_verify_adb_installs", 1) != 0);
     }
 
     @Override // com.android.settings.development.AdbOnChangeListener
@@ -77,9 +76,8 @@ public class VerifyAppsOverUsbPreferenceController extends DeveloperOptionsPrefe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchEnabled() {
+    protected void onDeveloperOptionsSwitchEnabled() {
         super.onDeveloperOptionsSwitchEnabled();
         updateState(this.mPreference);
     }

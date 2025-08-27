@@ -1,5 +1,6 @@
 package com.android.systemui.volume;
 
+import android.R;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.media.AudioManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
+
 /* loaded from: classes.dex */
 public abstract class SafetyWarningDialog extends SystemUIDialog implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
     private static final String TAG = Util.logTag(SafetyWarningDialog.class);
@@ -38,9 +40,9 @@ public abstract class SafetyWarningDialog extends SystemUIDialog implements Dial
         this.mAudioManager = audioManager;
         getWindow().setType(2010);
         setShowForAllUsers(true);
-        setMessage(this.mContext.getString(17040803));
-        setButton(-1, this.mContext.getString(17039379), this);
-        setButton(-2, this.mContext.getString(17039369), (DialogInterface.OnClickListener) null);
+        setMessage(this.mContext.getString(R.string.mediasize_chinese_prc_5));
+        setButton(-1, this.mContext.getString(R.string.yes), this);
+        setButton(-2, this.mContext.getString(R.string.no), (DialogInterface.OnClickListener) null);
         setOnDismissListener(this);
         context.registerReceiver(this.mReceiver, new IntentFilter("android.intent.action.CLOSE_SYSTEM_DIALOGS"));
     }

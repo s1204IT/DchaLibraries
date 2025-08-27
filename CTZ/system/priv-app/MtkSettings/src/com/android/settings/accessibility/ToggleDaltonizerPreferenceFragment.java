@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import android.widget.Switch;
 import com.android.settings.R;
 import com.android.settings.widget.SwitchBar;
+
 /* loaded from: classes.dex */
 public class ToggleDaltonizerPreferenceFragment extends ToggleFeaturePreferenceFragment implements Preference.OnPreferenceChangeListener, SwitchBar.OnSwitchChangeListener {
     private ListPreference mType;
@@ -31,9 +32,8 @@ public class ToggleDaltonizerPreferenceFragment extends ToggleFeaturePreferenceF
         initPreferences();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.accessibility_daltonizer_settings;
     }
 
@@ -52,17 +52,15 @@ public class ToggleDaltonizerPreferenceFragment extends ToggleFeaturePreferenceF
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.accessibility.ToggleFeaturePreferenceFragment
-    public void onInstallSwitchBarToggleSwitch() {
+    protected void onInstallSwitchBarToggleSwitch() {
         super.onInstallSwitchBarToggleSwitch();
         this.mSwitchBar.setCheckedInternal(Settings.Secure.getInt(getContentResolver(), "accessibility_display_daltonizer_enabled", 0) == 1);
         this.mSwitchBar.addOnSwitchChangeListener(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.accessibility.ToggleFeaturePreferenceFragment
-    public void onRemoveSwitchBarToggleSwitch() {
+    protected void onRemoveSwitchBarToggleSwitch() {
         super.onRemoveSwitchBarToggleSwitch();
         this.mSwitchBar.removeOnSwitchChangeListener(this);
     }
@@ -73,10 +71,10 @@ public class ToggleDaltonizerPreferenceFragment extends ToggleFeaturePreferenceF
     }
 
     private void initPreferences() {
-        String num = Integer.toString(Settings.Secure.getInt(getContentResolver(), "accessibility_display_daltonizer", 12));
-        this.mType.setValue(num);
+        String string = Integer.toString(Settings.Secure.getInt(getContentResolver(), "accessibility_display_daltonizer", 12));
+        this.mType.setValue(string);
         this.mType.setOnPreferenceChangeListener(this);
-        if (this.mType.findIndexOfValue(num) < 0) {
+        if (this.mType.findIndexOfValue(string) < 0) {
             this.mType.setSummary(getString(R.string.daltonizer_type_overridden, new Object[]{getString(R.string.simulate_color_space)}));
         }
     }

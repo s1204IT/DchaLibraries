@@ -3,6 +3,7 @@ package com.android.launcher3.util;
 import android.view.Window;
 import com.android.launcher3.Utilities;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class SystemUiController {
     public static final int FLAG_DARK_NAV = 2;
@@ -26,7 +27,6 @@ public class SystemUiController {
     }
 
     public void updateUiState(int i, int i2) {
-        int[] iArr;
         if (this.mStates[i] == i2) {
             return;
         }

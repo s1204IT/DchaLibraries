@@ -19,6 +19,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AccountDashboardFragment extends DashboardFragment {
     public static final SummaryLoader.SummaryProviderFactory SUMMARY_PROVIDER_FACTORY = new SummaryLoader.SummaryProviderFactory() { // from class: com.android.settings.accounts.AccountDashboardFragment.1
@@ -46,9 +47,8 @@ public class AccountDashboardFragment extends DashboardFragment {
         return "AccountDashboardFrag";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.accounts_dashboard_settings;
     }
 
@@ -69,7 +69,6 @@ public class AccountDashboardFragment extends DashboardFragment {
         return arrayList;
     }
 
-    /* loaded from: classes.dex */
     private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;
@@ -81,7 +80,7 @@ public class AccountDashboardFragment extends DashboardFragment {
 
         @Override // com.android.settings.dashboard.SummaryLoader.SummaryProvider
         public void setListening(boolean z) {
-            String string;
+            CharSequence string;
             if (z) {
                 AuthenticatorHelper authenticatorHelper = new AuthenticatorHelper(this.mContext, UserHandle.of(UserHandle.myUserId()), null);
                 String[] enabledAccountTypes = authenticatorHelper.getEnabledAccountTypes();
@@ -89,9 +88,9 @@ public class AccountDashboardFragment extends DashboardFragment {
                 if (enabledAccountTypes == null || enabledAccountTypes.length == 0) {
                     string = this.mContext.getString(R.string.account_dashboard_default_summary);
                 } else {
-                    int min = Math.min(3, enabledAccountTypes.length);
+                    int iMin = Math.min(3, enabledAccountTypes.length);
                     string = null;
-                    for (int i = 0; i < enabledAccountTypes.length && min > 0; i++) {
+                    for (int i = 0; i < enabledAccountTypes.length && iMin > 0; i++) {
                         CharSequence labelForType = authenticatorHelper.getLabelForType(this.mContext, enabledAccountTypes[i]);
                         if (!TextUtils.isEmpty(labelForType)) {
                             if (string == null) {
@@ -99,7 +98,7 @@ public class AccountDashboardFragment extends DashboardFragment {
                             } else {
                                 string = this.mContext.getString(R.string.join_many_items_middle, string, bidiFormatter.unicodeWrap(labelForType));
                             }
-                            min--;
+                            iMin--;
                         }
                     }
                 }

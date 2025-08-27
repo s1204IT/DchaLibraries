@@ -4,6 +4,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class DoubleTapHelper {
     private boolean mActivated;
@@ -19,7 +20,7 @@ public class DoubleTapHelper {
     private Runnable mTapTimeoutRunnable = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$DoubleTapHelper$GFsC9BR8swazZioXO_-_Yt7_6kU
         @Override // java.lang.Runnable
         public final void run() {
-            DoubleTapHelper.this.makeInactive();
+            this.f$0.makeInactive();
         }
     };
     private float mTouchSlop;
@@ -27,25 +28,21 @@ public class DoubleTapHelper {
     private final View mView;
 
     @FunctionalInterface
-    /* loaded from: classes.dex */
     public interface ActivationListener {
         void onActiveChanged(boolean z);
     }
 
     @FunctionalInterface
-    /* loaded from: classes.dex */
     public interface DoubleTapListener {
         boolean onDoubleTap();
     }
 
     @FunctionalInterface
-    /* loaded from: classes.dex */
     public interface DoubleTapLogListener {
         void onDoubleTapLog(boolean z, float f, float f2);
     }
 
     @FunctionalInterface
-    /* loaded from: classes.dex */
     public interface SlideBackListener {
         boolean onSlideBack();
     }
@@ -87,11 +84,11 @@ public class DoubleTapHelper {
                         this.mActivationY = motionEvent.getY();
                         break;
                     } else {
-                        boolean isWithinDoubleTapSlop = isWithinDoubleTapSlop(motionEvent);
+                        boolean zIsWithinDoubleTapSlop = isWithinDoubleTapSlop(motionEvent);
                         if (this.mDoubleTapLogListener != null) {
-                            this.mDoubleTapLogListener.onDoubleTapLog(isWithinDoubleTapSlop, motionEvent.getX() - this.mActivationX, motionEvent.getY() - this.mActivationY);
+                            this.mDoubleTapLogListener.onDoubleTapLog(zIsWithinDoubleTapSlop, motionEvent.getX() - this.mActivationX, motionEvent.getY() - this.mActivationY);
                         }
-                        if (isWithinDoubleTapSlop) {
+                        if (zIsWithinDoubleTapSlop) {
                             if (!this.mDoubleTapListener.onDoubleTap()) {
                                 return false;
                             }
@@ -129,8 +126,7 @@ public class DoubleTapHelper {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void makeInactive() {
+    private void makeInactive() {
         if (this.mActivated) {
             this.mActivated = false;
             this.mActivationListener.onActiveChanged(false);

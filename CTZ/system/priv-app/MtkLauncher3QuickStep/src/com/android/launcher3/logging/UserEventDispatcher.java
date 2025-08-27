@@ -20,6 +20,7 @@ import com.android.launcher3.util.ComponentKey;
 import com.android.launcher3.util.InstantAppResolver;
 import java.util.Locale;
 import java.util.UUID;
+
 /* loaded from: classes.dex */
 public class UserEventDispatcher {
     private static final boolean IS_VERBOSE = false;
@@ -37,12 +38,10 @@ public class UserEventDispatcher {
     private boolean mSessionStarted;
     private String mUuidStr;
 
-    /* loaded from: classes.dex */
     public interface LogContainerProvider {
         void fillInLogContainerData(View view, ItemInfo itemInfo, LauncherLogProto.Target target, LauncherLogProto.Target target2);
     }
 
-    /* loaded from: classes.dex */
     public interface UserEventDelegate {
         void modifyUserEvent(LauncherLogProto.LauncherEvent launcherEvent);
     }
@@ -77,12 +76,12 @@ public class UserEventDispatcher {
             int i2 = i - 1;
             if (i <= 0) {
                 break;
-            } else if (parent instanceof LogContainerProvider) {
-                return (LogContainerProvider) parent;
-            } else {
-                parent = parent.getParent();
-                i = i2;
             }
+            if (parent instanceof LogContainerProvider) {
+                return (LogContainerProvider) parent;
+            }
+            parent = parent.getParent();
+            i = i2;
         }
         return null;
     }
@@ -97,14 +96,14 @@ public class UserEventDispatcher {
     }
 
     public void logAppLaunch(View view, Intent intent) {
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(0), LoggerUtils.newItemTarget(view, this.mInstantAppResolver), LoggerUtils.newTarget(3));
-        if (fillInLogContainerData(newLauncherEvent, view)) {
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(0), LoggerUtils.newItemTarget(view, this.mInstantAppResolver), LoggerUtils.newTarget(3));
+        if (fillInLogContainerData(launcherEventNewLauncherEvent, view)) {
             if (this.mDelegate != null) {
-                this.mDelegate.modifyUserEvent(newLauncherEvent);
+                this.mDelegate.modifyUserEvent(launcherEventNewLauncherEvent);
             }
-            fillIntentInfo(newLauncherEvent.srcTarget[0], intent);
+            fillIntentInfo(launcherEventNewLauncherEvent.srcTarget[0], intent);
         }
-        dispatchUserEvent(newLauncherEvent, intent);
+        dispatchUserEvent(launcherEventNewLauncherEvent, intent);
         this.mAppOrTaskLaunch = true;
     }
 
@@ -112,14 +111,14 @@ public class UserEventDispatcher {
     }
 
     public void logTaskLaunchOrDismiss(int i, int i2, int i3, ComponentKey componentKey) {
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newTarget(1));
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newTarget(1));
         if (i == 3 || i == 4) {
-            newLauncherEvent.action.dir = i2;
+            launcherEventNewLauncherEvent.action.dir = i2;
         }
-        newLauncherEvent.srcTarget[0].itemType = 9;
-        newLauncherEvent.srcTarget[0].pageIndex = i3;
-        fillComponentInfo(newLauncherEvent.srcTarget[0], componentKey.componentName);
-        dispatchUserEvent(newLauncherEvent, null);
+        launcherEventNewLauncherEvent.srcTarget[0].itemType = 9;
+        launcherEventNewLauncherEvent.srcTarget[0].pageIndex = i3;
+        fillComponentInfo(launcherEventNewLauncherEvent.srcTarget[0], componentKey.componentName);
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
         this.mAppOrTaskLaunch = true;
     }
 
@@ -136,12 +135,11 @@ public class UserEventDispatcher {
     }
 
     public void logNotificationLaunch(View view, PendingIntent pendingIntent) {
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(0), LoggerUtils.newItemTarget(view, this.mInstantAppResolver), LoggerUtils.newTarget(3));
-        if (fillInLogContainerData(newLauncherEvent, view)) {
-            LauncherLogProto.Target target = newLauncherEvent.srcTarget[0];
-            target.packageNameHash = (this.mUuidStr + pendingIntent.getCreatorPackage()).hashCode();
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(0), LoggerUtils.newItemTarget(view, this.mInstantAppResolver), LoggerUtils.newTarget(3));
+        if (fillInLogContainerData(launcherEventNewLauncherEvent, view)) {
+            launcherEventNewLauncherEvent.srcTarget[0].packageNameHash = (this.mUuidStr + pendingIntent.getCreatorPackage()).hashCode();
         }
-        dispatchUserEvent(newLauncherEvent, null);
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
     }
 
     public void logActionCommand(int i, LauncherLogProto.Target target) {
@@ -153,26 +151,26 @@ public class UserEventDispatcher {
     }
 
     public void logActionCommand(int i, LauncherLogProto.Target target, LauncherLogProto.Target target2) {
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newCommandAction(i), target);
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newCommandAction(i), target);
         if (i == 5 && (this.mAppOrTaskLaunch || !this.mSessionStarted)) {
             this.mSessionStarted = false;
             return;
         }
         if (target2 != null) {
-            newLauncherEvent.destTarget = new LauncherLogProto.Target[1];
-            newLauncherEvent.destTarget[0] = target2;
-            newLauncherEvent.action.isStateChange = true;
+            launcherEventNewLauncherEvent.destTarget = new LauncherLogProto.Target[1];
+            launcherEventNewLauncherEvent.destTarget[0] = target2;
+            launcherEventNewLauncherEvent.action.isStateChange = true;
         }
-        dispatchUserEvent(newLauncherEvent, null);
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
     }
 
     public void logActionCommand(int i, View view, int i2) {
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newCommandAction(i), LoggerUtils.newItemTarget(view, this.mInstantAppResolver), LoggerUtils.newTarget(3));
-        if (fillInLogContainerData(newLauncherEvent, view)) {
-            newLauncherEvent.srcTarget[0].type = 3;
-            newLauncherEvent.srcTarget[0].containerType = i2;
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newCommandAction(i), LoggerUtils.newItemTarget(view, this.mInstantAppResolver), LoggerUtils.newTarget(3));
+        if (fillInLogContainerData(launcherEventNewLauncherEvent, view)) {
+            launcherEventNewLauncherEvent.srcTarget[0].type = 3;
+            launcherEventNewLauncherEvent.srcTarget[0].containerType = i2;
         }
-        dispatchUserEvent(newLauncherEvent, null);
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
     }
 
     public void logActionOnControl(int i, int i2) {
@@ -192,35 +190,35 @@ public class UserEventDispatcher {
     }
 
     public void logActionOnControl(int i, int i2, @Nullable View view, int i3) {
-        LauncherLogProto.LauncherEvent newLauncherEvent;
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent;
         if (view == null && i3 < 0) {
-            newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newTarget(2));
+            launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newTarget(2));
         } else {
-            newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newTarget(2), LoggerUtils.newTarget(3));
+            launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newTarget(2), LoggerUtils.newTarget(3));
         }
-        newLauncherEvent.srcTarget[0].controlType = i2;
+        launcherEventNewLauncherEvent.srcTarget[0].controlType = i2;
         if (view != null) {
-            fillInLogContainerData(newLauncherEvent, view);
+            fillInLogContainerData(launcherEventNewLauncherEvent, view);
         }
         if (i3 >= 0) {
-            newLauncherEvent.srcTarget[1].containerType = i3;
+            launcherEventNewLauncherEvent.srcTarget[1].containerType = i3;
         }
         if (i == 2) {
-            newLauncherEvent.actionDurationMillis = SystemClock.uptimeMillis() - this.mActionDurationMillis;
+            launcherEventNewLauncherEvent.actionDurationMillis = SystemClock.uptimeMillis() - this.mActionDurationMillis;
         }
-        dispatchUserEvent(newLauncherEvent, null);
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
     }
 
     public void logActionTapOutside(LauncherLogProto.Target target) {
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(0), target);
-        newLauncherEvent.action.isOutside = true;
-        dispatchUserEvent(newLauncherEvent, null);
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(0), target);
+        launcherEventNewLauncherEvent.action.isOutside = true;
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
     }
 
     public void logActionBounceTip(int i) {
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newAction(3), LoggerUtils.newContainerTarget(i));
-        newLauncherEvent.srcTarget[0].tipType = 1;
-        dispatchUserEvent(newLauncherEvent, null);
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newAction(3), LoggerUtils.newContainerTarget(i));
+        launcherEventNewLauncherEvent.srcTarget[0].tipType = 1;
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
     }
 
     public void logActionOnContainer(int i, int i2, int i3) {
@@ -228,34 +226,34 @@ public class UserEventDispatcher {
     }
 
     public void logActionOnContainer(int i, int i2, int i3, int i4) {
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newContainerTarget(i3));
-        newLauncherEvent.action.dir = i2;
-        newLauncherEvent.srcTarget[0].pageIndex = i4;
-        dispatchUserEvent(newLauncherEvent, null);
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newContainerTarget(i3));
+        launcherEventNewLauncherEvent.action.dir = i2;
+        launcherEventNewLauncherEvent.srcTarget[0].pageIndex = i4;
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
     }
 
     public void logStateChangeAction(int i, int i2, int i3, int i4, int i5, int i6) {
-        LauncherLogProto.LauncherEvent newLauncherEvent;
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent;
         if (i3 == 9) {
-            newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newItemTarget(i3), LoggerUtils.newContainerTarget(i4));
+            launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newItemTarget(i3), LoggerUtils.newContainerTarget(i4));
         } else {
-            newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newContainerTarget(i3), LoggerUtils.newContainerTarget(i4));
+            launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), LoggerUtils.newContainerTarget(i3), LoggerUtils.newContainerTarget(i4));
         }
-        newLauncherEvent.destTarget = new LauncherLogProto.Target[1];
-        newLauncherEvent.destTarget[0] = LoggerUtils.newContainerTarget(i5);
-        newLauncherEvent.action.dir = i2;
-        newLauncherEvent.action.isStateChange = true;
-        newLauncherEvent.srcTarget[0].pageIndex = i6;
-        dispatchUserEvent(newLauncherEvent, null);
+        launcherEventNewLauncherEvent.destTarget = new LauncherLogProto.Target[1];
+        launcherEventNewLauncherEvent.destTarget[0] = LoggerUtils.newContainerTarget(i5);
+        launcherEventNewLauncherEvent.action.dir = i2;
+        launcherEventNewLauncherEvent.action.isStateChange = true;
+        launcherEventNewLauncherEvent.srcTarget[0].pageIndex = i6;
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
         resetElapsedContainerMillis("state changed");
     }
 
     public void logActionOnItem(int i, int i2, int i3) {
-        LauncherLogProto.Target newTarget = LoggerUtils.newTarget(1);
-        newTarget.itemType = i3;
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), newTarget);
-        newLauncherEvent.action.dir = i2;
-        dispatchUserEvent(newLauncherEvent, null);
+        LauncherLogProto.Target targetNewTarget = LoggerUtils.newTarget(1);
+        targetNewTarget.itemType = i3;
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(i), targetNewTarget);
+        launcherEventNewLauncherEvent.action.dir = i2;
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
     }
 
     public void logDeepShortcutsOpen(View view) {
@@ -264,9 +262,9 @@ public class UserEventDispatcher {
             return;
         }
         ItemInfo itemInfo = (ItemInfo) view.getTag();
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(1), LoggerUtils.newItemTarget(itemInfo, this.mInstantAppResolver), LoggerUtils.newTarget(3));
-        launchProviderRecursive.fillInLogContainerData(view, itemInfo, newLauncherEvent.srcTarget[0], newLauncherEvent.srcTarget[1]);
-        dispatchUserEvent(newLauncherEvent, null);
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(1), LoggerUtils.newItemTarget(itemInfo, this.mInstantAppResolver), LoggerUtils.newTarget(3));
+        launchProviderRecursive.fillInLogContainerData(view, itemInfo, launcherEventNewLauncherEvent.srcTarget[0], launcherEventNewLauncherEvent.srcTarget[1]);
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
         resetElapsedContainerMillis("deep shortcut open");
     }
 
@@ -274,15 +272,17 @@ public class UserEventDispatcher {
         dispatchUserEvent(LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(2), LoggerUtils.newContainerTarget(1), LoggerUtils.newContainerTarget(6)), null);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r10v0, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     public void logDragNDrop(DropTarget.DragObject dragObject, View view) {
-        LauncherLogProto.LauncherEvent newLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(2), LoggerUtils.newItemTarget(dragObject.originalDragInfo, this.mInstantAppResolver), LoggerUtils.newTarget(3));
-        newLauncherEvent.destTarget = new LauncherLogProto.Target[]{LoggerUtils.newItemTarget(dragObject.originalDragInfo, this.mInstantAppResolver), LoggerUtils.newDropTarget(view)};
-        dragObject.dragSource.fillInLogContainerData(null, dragObject.originalDragInfo, newLauncherEvent.srcTarget[0], newLauncherEvent.srcTarget[1]);
+        LauncherLogProto.LauncherEvent launcherEventNewLauncherEvent = LoggerUtils.newLauncherEvent(LoggerUtils.newTouchAction(2), LoggerUtils.newItemTarget(dragObject.originalDragInfo, this.mInstantAppResolver), LoggerUtils.newTarget(3));
+        launcherEventNewLauncherEvent.destTarget = new LauncherLogProto.Target[]{LoggerUtils.newItemTarget(dragObject.originalDragInfo, this.mInstantAppResolver), LoggerUtils.newDropTarget(view)};
+        dragObject.dragSource.fillInLogContainerData(null, dragObject.originalDragInfo, launcherEventNewLauncherEvent.srcTarget[0], launcherEventNewLauncherEvent.srcTarget[1]);
         if (view instanceof LogContainerProvider) {
-            ((LogContainerProvider) view).fillInLogContainerData(null, dragObject.dragInfo, newLauncherEvent.destTarget[0], newLauncherEvent.destTarget[1]);
+            ((LogContainerProvider) view).fillInLogContainerData(null, dragObject.dragInfo, launcherEventNewLauncherEvent.destTarget[0], launcherEventNewLauncherEvent.destTarget[1]);
         }
-        newLauncherEvent.actionDurationMillis = SystemClock.uptimeMillis() - this.mActionDurationMillis;
-        dispatchUserEvent(newLauncherEvent, null);
+        launcherEventNewLauncherEvent.actionDurationMillis = SystemClock.uptimeMillis() - this.mActionDurationMillis;
+        dispatchUserEvent(launcherEventNewLauncherEvent, null);
     }
 
     public final void resetElapsedContainerMillis(String str) {

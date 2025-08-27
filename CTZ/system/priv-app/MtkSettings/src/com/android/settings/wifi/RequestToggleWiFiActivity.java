@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.android.internal.app.AlertActivity;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class RequestToggleWiFiActivity extends AlertActivity implements DialogInterface.OnClickListener {
     private CharSequence mAppLabel;
@@ -22,7 +23,7 @@ public class RequestToggleWiFiActivity extends AlertActivity implements DialogIn
     private final Runnable mTimeoutCommand = new Runnable() { // from class: com.android.settings.wifi.-$$Lambda$RequestToggleWiFiActivity$PwZgoHTFFBr3iYEQbWj0vZPfHpw
         @Override // java.lang.Runnable
         public final void run() {
-            RequestToggleWiFiActivity.lambda$new$0(RequestToggleWiFiActivity.this);
+            RequestToggleWiFiActivity.lambda$new$0(this.f$0);
         }
     };
     private int mState = -1;
@@ -34,9 +35,7 @@ public class RequestToggleWiFiActivity extends AlertActivity implements DialogIn
         }
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:16:0x0061, code lost:
-        if (r0.equals("android.net.wifi.action.REQUEST_ENABLE") != false) goto L15;
-     */
+    /* JADX WARN: Removed duplicated region for block: B:18:0x0064  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
@@ -48,28 +47,25 @@ public class RequestToggleWiFiActivity extends AlertActivity implements DialogIn
         String stringExtra = getIntent().getStringExtra("android.intent.extra.PACKAGE_NAME");
         if (TextUtils.isEmpty(stringExtra)) {
             finish();
-            return;
         }
         try {
             this.mAppLabel = getPackageManager().getApplicationInfo(stringExtra, 0).loadSafeLabel(getPackageManager());
             String action = getIntent().getAction();
-            int hashCode = action.hashCode();
-            if (hashCode != -2035256254) {
-                if (hashCode == 317500393 && action.equals("android.net.wifi.action.REQUEST_DISABLE")) {
-                    z = true;
-                }
-                z = true;
+            int iHashCode = action.hashCode();
+            if (iHashCode != -2035256254) {
+                z = (iHashCode == 317500393 && action.equals("android.net.wifi.action.REQUEST_DISABLE")) ? true : -1;
+            } else if (!action.equals("android.net.wifi.action.REQUEST_ENABLE")) {
             }
             switch (z) {
                 case false:
                     this.mState = 1;
-                    return;
+                    break;
                 case true:
                     this.mState = 3;
-                    return;
+                    break;
                 default:
                     finish();
-                    return;
+                    break;
             }
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("RequestToggleWiFiActivity", "Couldn't find app with package name " + stringExtra);
@@ -82,7 +78,7 @@ public class RequestToggleWiFiActivity extends AlertActivity implements DialogIn
         switch (i) {
             case -2:
                 finish();
-                return;
+                break;
             case -1:
                 int i2 = this.mState;
                 if (i2 == 1) {
@@ -90,18 +86,15 @@ public class RequestToggleWiFiActivity extends AlertActivity implements DialogIn
                     this.mState = 2;
                     scheduleToggleTimeout();
                     updateUi();
-                    return;
+                    break;
                 } else if (i2 == 3) {
                     this.mWiFiManager.setWifiEnabled(false);
                     this.mState = 4;
                     scheduleToggleTimeout();
                     updateUi();
-                    return;
-                } else {
-                    return;
+                    break;
                 }
-            default:
-                return;
+                break;
         }
     }
 
@@ -112,14 +105,14 @@ public class RequestToggleWiFiActivity extends AlertActivity implements DialogIn
         switch (this.mState) {
             case 1:
                 switch (wifiState) {
-                    case 3:
-                        setResult(-1);
-                        finish();
-                        return;
                     case 2:
                         this.mState = 2;
                         scheduleToggleTimeout();
                         break;
+                    case 3:
+                        setResult(-1);
+                        finish();
+                        return;
                 }
             case 2:
                 switch (wifiState) {
@@ -223,7 +216,6 @@ public class RequestToggleWiFiActivity extends AlertActivity implements DialogIn
         getWindow().getDecorView().removeCallbacks(this.mTimeoutCommand);
     }
 
-    /* loaded from: classes.dex */
     private final class StateChangeReceiver extends BroadcastReceiver {
         private final IntentFilter mFilter;
 
@@ -247,14 +239,10 @@ public class RequestToggleWiFiActivity extends AlertActivity implements DialogIn
                 Log.d("RequestToggleWiFiActivity", " currentState=" + wifiState);
                 if (wifiState != 1) {
                     switch (wifiState) {
-                        case 3:
-                            break;
                         case 4:
-                            Toast.makeText((Context) alertActivity, (int) R.string.wifi_error, 0).show();
+                            Toast.makeText((Context) alertActivity, R.string.wifi_error, 0).show();
                             RequestToggleWiFiActivity.this.finish();
-                            return;
-                        default:
-                            return;
+                            break;
                     }
                 }
                 if (RequestToggleWiFiActivity.this.mState == 2 || RequestToggleWiFiActivity.this.mState == 4) {

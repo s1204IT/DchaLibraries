@@ -19,6 +19,7 @@ import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public class AirplaneModePreferenceController extends TogglePreferenceController implements AirplaneModeEnabler.OnAirplaneModeChangedListener, LifecycleObserver, OnPause, OnResume {
     private static final String EXIT_ECM_RESULT = "exit_ecm_result";
@@ -45,16 +46,16 @@ public class AirplaneModePreferenceController extends TogglePreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
         if ("airplane_mode".equals(preference.getKey())) {
             String str = SystemProperties.get("ril.cdma.inecmmode", "false");
-            boolean isAdminUser = UserManager.get(this.mContext).isAdminUser();
+            boolean zIsAdminUser = UserManager.get(this.mContext).isAdminUser();
             StringBuilder sb = new StringBuilder();
             sb.append("Click airplane mode, ECM=");
             sb.append(str);
             sb.append(", isAdmin=");
-            sb.append(isAdminUser);
+            sb.append(zIsAdminUser);
             sb.append(", fragment=");
             sb.append(this.mFragment == null ? "null" : this.mFragment);
             Log.d(TAG, sb.toString());
-            if (str != null && str.contains("true") && isAdminUser) {
+            if (str != null && str.contains("true") && zIsAdminUser) {
                 if (this.mFragment != null) {
                     this.mFragment.startActivityForResult(new Intent("com.android.internal.intent.action.ACTION_SHOW_NOTICE_ECM_BLOCK_OTHERS", (Uri) null), 1);
                 }
@@ -102,25 +103,25 @@ public class AirplaneModePreferenceController extends TogglePreferenceController
     }
 
     public boolean onActivityResult(int i, int i2, Intent intent) {
-        if (i == 1) {
-            Boolean valueOf = Boolean.valueOf(intent != null ? intent.getBooleanExtra(EXIT_ECM_RESULT, false) : false);
-            StringBuilder sb = new StringBuilder();
-            sb.append("Exit ECM, result=");
-            sb.append(valueOf);
-            sb.append(", data=");
-            Object obj = intent;
-            if (intent == null) {
-                obj = "null";
-            }
-            sb.append(obj);
-            Log.d(TAG, sb.toString());
-            if (this.mAirplaneModePreference != null && this.mAirplaneModeEnabler != null) {
-                Log.d(TAG, "Exit ECM, checked=" + this.mAirplaneModePreference.isChecked());
-                this.mAirplaneModeEnabler.setAirplaneModeInECM(valueOf.booleanValue(), this.mAirplaneModePreference.isChecked());
-            }
-            return true;
+        if (i != 1) {
+            return false;
         }
-        return false;
+        Boolean boolValueOf = Boolean.valueOf(intent != null ? intent.getBooleanExtra(EXIT_ECM_RESULT, false) : false);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Exit ECM, result=");
+        sb.append(boolValueOf);
+        sb.append(", data=");
+        Object obj = intent;
+        if (intent == null) {
+            obj = "null";
+        }
+        sb.append(obj);
+        Log.d(TAG, sb.toString());
+        if (this.mAirplaneModePreference != null && this.mAirplaneModeEnabler != null) {
+            Log.d(TAG, "Exit ECM, checked=" + this.mAirplaneModePreference.isChecked());
+            this.mAirplaneModeEnabler.setAirplaneModeInECM(boolValueOf.booleanValue(), this.mAirplaneModePreference.isChecked());
+        }
+        return true;
     }
 
     @Override // com.android.settings.core.TogglePreferenceController

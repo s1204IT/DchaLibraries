@@ -3,6 +3,7 @@ package com.android.settings.inputmethod;
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class VirtualKeyboardFragment extends SettingsPreferenceFragment implements Indexable {
     private static final Drawable NO_ICON = new ColorDrawable(0);
@@ -55,7 +57,7 @@ public final class VirtualKeyboardFragment extends SettingsPreferenceFragment im
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onResume() {
+    public void onResume() throws PackageManager.NameNotFoundException {
         super.onResume();
         updateInputMethodPreferenceViews();
     }
@@ -65,9 +67,9 @@ public final class VirtualKeyboardFragment extends SettingsPreferenceFragment im
         return 345;
     }
 
-    private void updateInputMethodPreferenceViews() {
+    private void updateInputMethodPreferenceViews() throws PackageManager.NameNotFoundException {
         int size;
-        Drawable drawable;
+        Drawable applicationIcon;
         this.mInputMethodPreferenceList.clear();
         List permittedInputMethodsForCurrentUser = this.mDpm.getPermittedInputMethodsForCurrentUser();
         Context prefContext = getPrefContext();
@@ -81,21 +83,19 @@ public final class VirtualKeyboardFragment extends SettingsPreferenceFragment im
             InputMethodInfo inputMethodInfo = enabledInputMethodList.get(i);
             boolean z = permittedInputMethodsForCurrentUser == null || permittedInputMethodsForCurrentUser.contains(inputMethodInfo.getPackageName());
             try {
-                drawable = getActivity().getPackageManager().getApplicationIcon(inputMethodInfo.getPackageName());
+                applicationIcon = getActivity().getPackageManager().getApplicationIcon(inputMethodInfo.getPackageName());
             } catch (Exception e) {
-                drawable = NO_ICON;
+                applicationIcon = NO_ICON;
             }
             InputMethodPreference inputMethodPreference = new InputMethodPreference(prefContext, inputMethodInfo, false, z, (InputMethodPreference.OnSavePreferenceListener) null);
-            inputMethodPreference.setIcon(drawable);
+            inputMethodPreference.setIcon(applicationIcon);
             this.mInputMethodPreferenceList.add(inputMethodPreference);
         }
         final Collator collator = Collator.getInstance();
         this.mInputMethodPreferenceList.sort(new Comparator() { // from class: com.android.settings.inputmethod.-$$Lambda$VirtualKeyboardFragment$3eczHKaadmVH3sZXf9rlrdYqLjw
             @Override // java.util.Comparator
             public final int compare(Object obj, Object obj2) {
-                int compareTo;
-                compareTo = ((InputMethodPreference) obj).compareTo((InputMethodPreference) obj2, collator);
-                return compareTo;
+                return ((InputMethodPreference) obj).compareTo((InputMethodPreference) obj2, collator);
             }
         });
         getPreferenceScreen().removeAll();

@@ -27,6 +27,7 @@ import com.mediatek.settings.display.HdmiPreferenceController;
 import com.mediatek.settings.display.MiraVisionPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DisplaySettings extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.DisplaySettings.1
@@ -65,9 +66,8 @@ public class DisplaySettings extends DashboardFragment {
         return "DisplaySettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.display_settings;
     }
 
@@ -81,8 +81,7 @@ public class DisplaySettings extends DashboardFragment {
         return R.string.help_uri_display;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new CameraGesturePreferenceController(context));
         arrayList.add(new LiftToWakePreferenceController(context));

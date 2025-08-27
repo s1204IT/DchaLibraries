@@ -7,6 +7,7 @@ import android.hardware.usb.UsbPortStatus;
 import android.net.ConnectivityManager;
 import android.os.UserHandle;
 import android.os.UserManager;
+
 /* loaded from: classes.dex */
 public class UsbBackend {
     private final boolean mFileTransferRestricted;

@@ -9,6 +9,7 @@ import com.android.settings.search.Indexable;
 import com.android.settingslib.bluetooth.BluetoothDeviceFilter;
 import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.widget.FooterPreference;
+
 /* loaded from: classes.dex */
 public class BluetoothPairingDetail extends DeviceListPreferenceFragment implements Indexable {
     static final String KEY_AVAIL_DEVICES = "available_devices";
@@ -34,10 +35,10 @@ public class BluetoothPairingDetail extends DeviceListPreferenceFragment impleme
         super.onStart();
         if (this.mLocalManager == null) {
             Log.e("BluetoothPairingDetail", "Bluetooth is not supported on this device");
-            return;
+        } else {
+            updateBluetooth();
+            this.mAvailableDevicesCategory.setProgress(this.mLocalAdapter.isDiscovering());
         }
-        updateBluetooth();
-        this.mAvailableDevicesCategory.setProgress(this.mLocalAdapter.isDiscovering());
     }
 
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -59,10 +60,10 @@ public class BluetoothPairingDetail extends DeviceListPreferenceFragment impleme
         super.onStop();
         if (this.mLocalManager == null) {
             Log.e("BluetoothPairingDetail", "Bluetooth is not supported on this device");
-            return;
+        } else {
+            this.mAlwaysDiscoverable.stop();
+            disableScanning();
         }
-        this.mAlwaysDiscoverable.stop();
-        disableScanning();
     }
 
     @Override // com.android.settings.bluetooth.DeviceListPreferenceFragment
@@ -77,9 +78,8 @@ public class BluetoothPairingDetail extends DeviceListPreferenceFragment impleme
         return 1018;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.android.settings.bluetooth.DeviceListPreferenceFragment
-    public void enableScanning() {
+    void enableScanning() {
         if (!this.mInitialScanStarted) {
             if (this.mAvailableDevicesCategory != null) {
                 removeAllDevices();
@@ -90,9 +90,8 @@ public class BluetoothPairingDetail extends DeviceListPreferenceFragment impleme
         super.enableScanning();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.android.settings.bluetooth.DeviceListPreferenceFragment
-    public void onDevicePreferenceClick(BluetoothDevicePreference bluetoothDevicePreference) {
+    void onDevicePreferenceClick(BluetoothDevicePreference bluetoothDevicePreference) {
         disableScanning();
         super.onDevicePreferenceClick(bluetoothDevicePreference);
     }
@@ -106,7 +105,9 @@ public class BluetoothPairingDetail extends DeviceListPreferenceFragment impleme
     void updateContent(int i) {
         if (i == 10) {
             finish();
-        } else if (i == 12) {
+            return;
+        }
+        if (i == 12) {
             this.mDevicePreferenceMap.clear();
             this.mLocalAdapter.setBluetoothEnabled(true);
             addDeviceCategory(this.mAvailableDevicesCategory, R.string.bluetooth_preference_found_media_devices, BluetoothDeviceFilter.UNBONDED_DEVICE_FILTER, this.mInitialScanStarted);
@@ -127,7 +128,9 @@ public class BluetoothPairingDetail extends DeviceListPreferenceFragment impleme
         BluetoothDevice device;
         if (i == 12) {
             finish();
-        } else if (this.mSelectedDevice != null && cachedBluetoothDevice != null && (device = cachedBluetoothDevice.getDevice()) != null && this.mSelectedDevice.equals(device) && i == 10) {
+            return;
+        }
+        if (this.mSelectedDevice != null && cachedBluetoothDevice != null && (device = cachedBluetoothDevice.getDevice()) != null && this.mSelectedDevice.equals(device) && i == 10) {
             enableScanning();
         }
     }
@@ -142,9 +145,8 @@ public class BluetoothPairingDetail extends DeviceListPreferenceFragment impleme
         return "BluetoothPairingDetail";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.bluetooth_pairing_detail;
     }
 

@@ -13,6 +13,7 @@ import android.widget.Button;
 import com.android.settings.R;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.widget.DonutView;
+
 /* loaded from: classes.dex */
 public class StorageSummaryDonutPreference extends Preference implements View.OnClickListener {
     private double mPercent;
@@ -58,7 +59,6 @@ public class StorageSummaryDonutPreference extends Preference implements View.On
         }
     }
 
-    /* loaded from: classes.dex */
     private static class BoldLinkSpan extends StyleSpan {
         public BoldLinkSpan() {
             super(1);

@@ -1,5 +1,6 @@
 package com.android.settingslib.dream;
 
+import android.R;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,13 +18,13 @@ import android.service.dreams.IDreamManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Xml;
-import com.android.internal.R;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.xmlpull.v1.XmlPullParserException;
+
 /* loaded from: classes.dex */
 public class DreamBackend {
     private static DreamBackend sInstance;
@@ -34,7 +35,6 @@ public class DreamBackend {
     private final IDreamManager mDreamManager = IDreamManager.Stub.asInterface(ServiceManager.getService("dreams"));
     private final DreamInfoComparator mComparator = new DreamInfoComparator(getDefaultDream());
 
-    /* loaded from: classes.dex */
     public static class DreamInfo {
         public CharSequence caption;
         public ComponentName componentName;
@@ -69,18 +69,18 @@ public class DreamBackend {
 
     public DreamBackend(Context context) {
         this.mContext = context;
-        this.mDreamsEnabledByDefault = context.getResources().getBoolean(17956941);
-        this.mDreamsActivatedOnSleepByDefault = context.getResources().getBoolean(17956940);
-        this.mDreamsActivatedOnDockByDefault = context.getResources().getBoolean(17956939);
+        this.mDreamsEnabledByDefault = context.getResources().getBoolean(R.^attr-private.dialogCustomTitleDecorLayout);
+        this.mDreamsActivatedOnSleepByDefault = context.getResources().getBoolean(R.^attr-private.defaultQueryHint);
+        this.mDreamsActivatedOnDockByDefault = context.getResources().getBoolean(R.^attr-private.daySelectorColor);
     }
 
     public List<DreamInfo> getDreamInfos() {
         logd("getDreamInfos()", new Object[0]);
         ComponentName activeDream = getActiveDream();
         PackageManager packageManager = this.mContext.getPackageManager();
-        List<ResolveInfo> queryIntentServices = packageManager.queryIntentServices(new Intent("android.service.dreams.DreamService"), 128);
-        ArrayList arrayList = new ArrayList(queryIntentServices.size());
-        for (ResolveInfo resolveInfo : queryIntentServices) {
+        List<ResolveInfo> listQueryIntentServices = packageManager.queryIntentServices(new Intent("android.service.dreams.DreamService"), 128);
+        ArrayList arrayList = new ArrayList(listQueryIntentServices.size());
+        for (ResolveInfo resolveInfo : listQueryIntentServices) {
             if (resolveInfo.serviceInfo != null) {
                 DreamInfo dreamInfo = new DreamInfo();
                 dreamInfo.caption = resolveInfo.loadLabel(packageManager);
@@ -107,7 +107,7 @@ public class DreamBackend {
         }
     }
 
-    public CharSequence getActiveDreamName() {
+    public CharSequence getActiveDreamName() throws PackageManager.NameNotFoundException {
         ComponentName activeDream = getActiveDream();
         if (activeDream != null) {
             PackageManager packageManager = this.mContext.getPackageManager();
@@ -124,16 +124,16 @@ public class DreamBackend {
     }
 
     public int getWhenToDreamSetting() {
-        if (isEnabled()) {
-            if (isActivatedOnDock() && isActivatedOnSleep()) {
-                return 2;
-            }
-            if (isActivatedOnDock()) {
-                return 1;
-            }
-            return isActivatedOnSleep() ? 0 : 3;
+        if (!isEnabled()) {
+            return 3;
         }
-        return 3;
+        if (isActivatedOnDock() && isActivatedOnSleep()) {
+            return 2;
+        }
+        if (isActivatedOnDock()) {
+            return 1;
+        }
+        return isActivatedOnSleep() ? 0 : 3;
     }
 
     public void setWhenToDream(int i) {
@@ -142,17 +142,15 @@ public class DreamBackend {
             case 0:
                 setActivatedOnDock(false);
                 setActivatedOnSleep(true);
-                return;
+                break;
             case 1:
                 setActivatedOnDock(true);
                 setActivatedOnSleep(false);
-                return;
+                break;
             case 2:
                 setActivatedOnDock(true);
                 setActivatedOnSleep(true);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -251,95 +249,96 @@ public class DreamBackend {
         return new ComponentName(resolveInfo.serviceInfo.packageName, resolveInfo.serviceInfo.name);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [325=6] */
     /* JADX WARN: Removed duplicated region for block: B:50:0x008a  */
     /* JADX WARN: Removed duplicated region for block: B:52:0x00a5  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private static ComponentName getSettingsComponentName(PackageManager packageManager, ResolveInfo resolveInfo) {
-        XmlResourceParser xmlResourceParser;
-        String str;
+    private static ComponentName getSettingsComponentName(PackageManager packageManager, ResolveInfo resolveInfo) throws Throwable {
+        XmlResourceParser xmlResourceParserLoadXmlMetaData;
+        String string;
+        int next;
         if (resolveInfo == null || resolveInfo.serviceInfo == null || resolveInfo.serviceInfo.metaData == null) {
             return null;
         }
         try {
-            xmlResourceParser = resolveInfo.serviceInfo.loadXmlMetaData(packageManager, "android.service.dream");
-            try {
-                try {
-                } catch (Throwable th) {
-                    th = th;
-                    if (xmlResourceParser != null) {
-                        xmlResourceParser.close();
-                    }
-                    throw th;
-                }
-            } catch (PackageManager.NameNotFoundException | IOException | XmlPullParserException e) {
-                e = e;
-                str = null;
-            }
-        } catch (PackageManager.NameNotFoundException | IOException | XmlPullParserException e2) {
-            e = e2;
-            xmlResourceParser = null;
-            str = null;
-        } catch (Throwable th2) {
-            th = th2;
-            xmlResourceParser = null;
+            xmlResourceParserLoadXmlMetaData = resolveInfo.serviceInfo.loadXmlMetaData(packageManager, "android.service.dream");
+        } catch (PackageManager.NameNotFoundException | IOException | XmlPullParserException e) {
+            e = e;
+            xmlResourceParserLoadXmlMetaData = null;
+            string = null;
+        } catch (Throwable th) {
+            th = th;
+            xmlResourceParserLoadXmlMetaData = null;
         }
-        if (xmlResourceParser == null) {
-            Log.w("DreamBackend", "No android.service.dream meta-data");
-            if (xmlResourceParser != null) {
-                xmlResourceParser.close();
-            }
-            return null;
-        }
-        Resources resourcesForApplication = packageManager.getResourcesForApplication(resolveInfo.serviceInfo.applicationInfo);
-        AttributeSet asAttributeSet = Xml.asAttributeSet(xmlResourceParser);
-        while (true) {
-            int next = xmlResourceParser.next();
-            if (next == 1 || next == 2) {
-                break;
-            }
-        }
-        if (!"dream".equals(xmlResourceParser.getName())) {
-            Log.w("DreamBackend", "Meta-data does not start with dream tag");
-            if (xmlResourceParser != null) {
-                xmlResourceParser.close();
-            }
-            return null;
-        }
-        TypedArray obtainAttributes = resourcesForApplication.obtainAttributes(asAttributeSet, R.styleable.Dream);
-        str = obtainAttributes.getString(0);
         try {
-            obtainAttributes.recycle();
-            if (xmlResourceParser != null) {
-                xmlResourceParser.close();
+            try {
+            } catch (PackageManager.NameNotFoundException | IOException | XmlPullParserException e2) {
+                e = e2;
+                string = null;
             }
-            e = null;
-        } catch (PackageManager.NameNotFoundException | IOException | XmlPullParserException e3) {
-            e = e3;
-            if (xmlResourceParser != null) {
-                xmlResourceParser.close();
+            if (xmlResourceParserLoadXmlMetaData == null) {
+                Log.w("DreamBackend", "No android.service.dream meta-data");
+                if (xmlResourceParserLoadXmlMetaData != null) {
+                    xmlResourceParserLoadXmlMetaData.close();
+                }
+                return null;
+            }
+            Resources resourcesForApplication = packageManager.getResourcesForApplication(resolveInfo.serviceInfo.applicationInfo);
+            AttributeSet attributeSetAsAttributeSet = Xml.asAttributeSet(xmlResourceParserLoadXmlMetaData);
+            do {
+                next = xmlResourceParserLoadXmlMetaData.next();
+                if (next == 1) {
+                    break;
+                }
+            } while (next != 2);
+            if (!"dream".equals(xmlResourceParserLoadXmlMetaData.getName())) {
+                Log.w("DreamBackend", "Meta-data does not start with dream tag");
+                if (xmlResourceParserLoadXmlMetaData != null) {
+                    xmlResourceParserLoadXmlMetaData.close();
+                }
+                return null;
+            }
+            TypedArray typedArrayObtainAttributes = resourcesForApplication.obtainAttributes(attributeSetAsAttributeSet, com.android.internal.R.styleable.Dream);
+            string = typedArrayObtainAttributes.getString(0);
+            try {
+                typedArrayObtainAttributes.recycle();
+                if (xmlResourceParserLoadXmlMetaData != null) {
+                    xmlResourceParserLoadXmlMetaData.close();
+                }
+                e = null;
+            } catch (PackageManager.NameNotFoundException | IOException | XmlPullParserException e3) {
+                e = e3;
+                if (xmlResourceParserLoadXmlMetaData != null) {
+                    xmlResourceParserLoadXmlMetaData.close();
+                }
+                if (e == null) {
+                }
             }
             if (e == null) {
+                Log.w("DreamBackend", "Error parsing : " + resolveInfo.serviceInfo.packageName, e);
+                return null;
             }
+            if (string != null && string.indexOf(47) < 0) {
+                string = resolveInfo.serviceInfo.packageName + "/" + string;
+            }
+            if (string == null) {
+                return null;
+            }
+            return ComponentName.unflattenFromString(string);
+        } catch (Throwable th2) {
+            th = th2;
+            if (xmlResourceParserLoadXmlMetaData != null) {
+                xmlResourceParserLoadXmlMetaData.close();
+            }
+            throw th;
         }
-        if (e == null) {
-            Log.w("DreamBackend", "Error parsing : " + resolveInfo.serviceInfo.packageName, e);
-            return null;
-        }
-        if (str != null && str.indexOf(47) < 0) {
-            str = resolveInfo.serviceInfo.packageName + "/" + str;
-        }
-        if (str == null) {
-            return null;
-        }
-        return ComponentName.unflattenFromString(str);
     }
 
     private static void logd(String str, Object... objArr) {
     }
 
-    /* loaded from: classes.dex */
     private static class DreamInfoComparator implements Comparator<DreamInfo> {
         private final ComponentName mDefaultDream;
 
@@ -347,6 +346,7 @@ public class DreamBackend {
             this.mDefaultDream = componentName;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(DreamInfo dreamInfo, DreamInfo dreamInfo2) {
             return sortKey(dreamInfo).compareTo(sortKey(dreamInfo2));

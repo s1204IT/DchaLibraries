@@ -7,6 +7,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class FeatureFlagsDashboard extends DashboardFragment {
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -19,9 +20,8 @@ public class FeatureFlagsDashboard extends DashboardFragment {
         return "FeatureFlagsDashboard";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.feature_flags_settings;
     }
 

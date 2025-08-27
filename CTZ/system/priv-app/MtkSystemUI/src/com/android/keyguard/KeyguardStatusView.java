@@ -6,6 +6,7 @@ import android.app.ActivityManager;
 import android.app.IActivityManager;
 import android.app.IStopUserCallback;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.os.Handler;
@@ -30,8 +31,10 @@ import com.android.systemui.Interpolators;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.util.wakelock.KeepAwakeAnimationListener;
 import com.google.android.collect.Sets;
+import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class KeyguardStatusView extends GridLayout implements View.OnLayoutChangeListener, ConfigurationController.ConfigurationListener {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
@@ -93,7 +96,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
             }
 
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
-            public void onUserSwitchComplete(int i2) {
+            public void onUserSwitchComplete(int i2) throws Resources.NotFoundException {
                 KeyguardStatusView.this.refreshFormat();
                 KeyguardStatusView.this.updateOwnerInfo();
                 KeyguardStatusView.this.updateLogoutView();
@@ -111,8 +114,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         onDensityOrFontScaleChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setEnableMarquee(boolean z) {
+    private void setEnableMarquee(boolean z) {
         if (DEBUG) {
             StringBuilder sb = new StringBuilder();
             sb.append("Schedule setEnableMarquee: ");
@@ -124,7 +126,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
                 this.mPendingMarqueeStart = new Runnable() { // from class: com.android.keyguard.-$$Lambda$KeyguardStatusView$ps9yj97ShIVR2u2hJB8SKuKk-kQ
                     @Override // java.lang.Runnable
                     public final void run() {
-                        KeyguardStatusView.lambda$setEnableMarquee$0(KeyguardStatusView.this);
+                        KeyguardStatusView.lambda$setEnableMarquee$0(this.f$0);
                     }
                 };
                 this.mHandler.postDelayed(this.mPendingMarqueeStart, 2000L);
@@ -157,14 +159,14 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
     }
 
     @Override // android.view.View
-    protected void onFinishInflate() {
+    protected void onFinishInflate() throws Resources.NotFoundException {
         super.onFinishInflate();
         this.mLogoutView = (TextView) findViewById(com.android.systemui.R.id.logout);
         if (this.mLogoutView != null) {
             this.mLogoutView.setOnClickListener(new View.OnClickListener() { // from class: com.android.keyguard.-$$Lambda$KeyguardStatusView$Pryio69yVoRI9F153p5QiMZe-bw
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    KeyguardStatusView.this.onLogoutClicked(view);
+                    this.f$0.onLogoutClicked(view);
                 }
             });
         }
@@ -184,7 +186,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         this.mKeyguardSlice.setContentChangeListener(new Runnable() { // from class: com.android.keyguard.-$$Lambda$KeyguardStatusView$Xo7rGDTjuOiD9nJpe80IUZ1ddFw
             @Override // java.lang.Runnable
             public final void run() {
-                KeyguardStatusView.this.onSliceContentChanged();
+                this.f$0.onSliceContentChanged();
             }
         });
         onSliceContentChanged();
@@ -196,8 +198,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         this.mClockView.setElegantTextHeight(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSliceContentChanged() {
+    private void onSliceContentChanged() {
         boolean z;
         if (this.mKeyguardSlice.hasHeader() || this.mPulsing) {
             z = true;
@@ -224,23 +225,24 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         } else {
             height = 0;
         }
-        boolean hasHeader = this.mKeyguardSlice.hasHeader();
-        boolean z = hasHeader || this.mPulsing;
+        boolean zHasHeader = this.mKeyguardSlice.hasHeader();
+        boolean z = zHasHeader || this.mPulsing;
         long j = z ? 0L : 137L;
         boolean z2 = this.mKeyguardSlice.getLayoutTransition() != null && this.mKeyguardSlice.getLayoutTransition().isRunning();
         if (view != this.mClockView) {
             if (view == this.mClockSeparator) {
-                f = hasHeader && !this.mPulsing ? 1.0f : 0.0f;
+                f = zHasHeader && !this.mPulsing ? 1.0f : 0.0f;
                 this.mClockSeparator.animate().cancel();
                 if (z2) {
                     boolean z3 = this.mDarkAmount != 0.0f;
                     this.mClockSeparator.setY(i6 + height);
                     this.mClockSeparator.animate().setInterpolator(Interpolators.FAST_OUT_SLOW_IN).setDuration(550L).setListener(z3 ? null : new KeepAwakeAnimationListener(getContext())).setStartDelay(j).y(i2).alpha(f).start();
                     return;
+                } else {
+                    this.mClockSeparator.setY(i2);
+                    this.mClockSeparator.setAlpha(f);
+                    return;
                 }
-                this.mClockSeparator.setY(i2);
-                this.mClockSeparator.setAlpha(f);
-                return;
             }
             return;
         }
@@ -252,7 +254,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
             this.mClockView.animate().setInterpolator(Interpolators.FAST_OUT_SLOW_IN).setDuration(550L).setListener(new ClipChildrenAnimationListener()).setStartDelay(j).y(i2).scaleX(f).scaleY(f).withEndAction(new Runnable() { // from class: com.android.keyguard.-$$Lambda$KeyguardStatusView$_ou77KlqH-CgaqfAz1VhLZdzKgc
                 @Override // java.lang.Runnable
                 public final void run() {
-                    KeyguardStatusView.lambda$onLayoutChange$1(KeyguardStatusView.this, style);
+                    KeyguardStatusView.lambda$onLayoutChange$1(this.f$0, style);
                 }
             }).start();
             return;
@@ -290,18 +292,16 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         }
     }
 
-    public void dozeTimeTick() {
+    public void dozeTimeTick() throws PackageManager.NameNotFoundException, FileNotFoundException {
         refreshTime();
         this.mKeyguardSlice.refresh();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshTime() {
+    private void refreshTime() {
         this.mClockView.refresh();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshFormat() {
+    private void refreshFormat() throws Resources.NotFoundException {
         Patterns.update(this.mContext);
         this.mClockView.setFormat12Hour(Patterns.clockView12);
         this.mClockView.setFormat24Hour(Patterns.clockView24);
@@ -318,17 +318,15 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         return this.mClockView.getTextSize();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateLogoutView() {
+    private void updateLogoutView() {
         if (this.mLogoutView == null) {
             return;
         }
         this.mLogoutView.setVisibility(shouldShowLogout() ? 0 : 8);
-        this.mLogoutView.setText(this.mContext.getResources().getString(17039947));
+        this.mLogoutView.setText(this.mContext.getResources().getString(android.R.string.config_deviceSpecificAudioService));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateOwnerInfo() {
+    private void updateOwnerInfo() {
         if (this.mOwnerInfo == null) {
             return;
         }
@@ -357,7 +355,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
     }
 
     @Override // com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener
-    public void onLocaleListChanged() {
+    public void onLocaleListChanged() throws Resources.NotFoundException {
         refreshFormat();
     }
 
@@ -366,14 +364,12 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class Patterns {
+    private static final class Patterns {
         static String cacheKey;
         static String clockView12;
         static String clockView24;
 
-        static void update(Context context) {
+        static void update(Context context) throws Resources.NotFoundException {
             Locale locale = Locale.getDefault();
             Resources resources = context.getResources();
             String string = resources.getString(com.android.systemui.R.string.clock_12hr_format);
@@ -410,11 +406,11 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
             this.mOwnerInfo.setVisibility(TextUtils.isEmpty(this.mOwnerInfo.getText()) ^ true ? 0 : 8);
             layoutOwnerInfo();
         }
-        int blendARGB = ColorUtils.blendARGB(this.mTextColor, -1, this.mDarkAmount);
+        int iBlendARGB = ColorUtils.blendARGB(this.mTextColor, -1, this.mDarkAmount);
         updateDozeVisibleViews();
         this.mKeyguardSlice.setDarkAmount(this.mDarkAmount);
-        this.mClockView.setTextColor(blendARGB);
-        this.mClockSeparator.setBackgroundColor(blendARGB);
+        this.mClockView.setTextColor(iBlendARGB);
+        this.mClockSeparator.setBackgroundColor(iBlendARGB);
     }
 
     private void layoutOwnerInfo() {
@@ -424,7 +420,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         }
     }
 
-    public void setPulsing(boolean z, boolean z2) {
+    public void setPulsing(boolean z, boolean z2) throws PackageManager.NameNotFoundException, FileNotFoundException {
         this.mPulsing = z;
         this.mKeyguardSlice.setPulsing(z, z2);
         updateDozeVisibleViews();
@@ -446,8 +442,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         return KeyguardUpdateMonitor.getInstance(this.mContext).isLogoutEnabled() && KeyguardUpdateMonitor.getCurrentUser() != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onLogoutClicked(View view) {
+    private void onLogoutClicked(View view) {
         int currentUser = KeyguardUpdateMonitor.getCurrentUser();
         try {
             this.mIActivityManager.switchUser(0);
@@ -457,7 +452,6 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         }
     }
 
-    /* loaded from: classes.dex */
     private class ClipChildrenAnimationListener extends AnimatorListenerAdapter implements ViewClippingUtil.ClippingParameters {
         ClipChildrenAnimationListener() {
             ViewClippingUtil.setClippingDeactivated(KeyguardStatusView.this.mClockView, true, this);

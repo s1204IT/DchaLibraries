@@ -5,6 +5,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
 /* loaded from: classes.dex */
 public class SuggestionCursorBackedCursor extends AbstractCursor {
     public static final String[] COLUMNS = {"_id", "suggest_text_1", "suggest_text_2", "suggest_text_2_url", "suggest_icon_1", "suggest_icon_2", "suggest_intent_action", "suggest_intent_data", "suggest_intent_extra_data", "suggest_intent_query", "suggest_format", "suggest_shortcut_id", "suggest_spinner_while_refreshing"};

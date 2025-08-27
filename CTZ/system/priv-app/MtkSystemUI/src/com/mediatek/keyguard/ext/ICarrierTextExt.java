@@ -1,6 +1,7 @@
 package com.mediatek.keyguard.ext;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public interface ICarrierTextExt {
     CharSequence customizeCarrierText(CharSequence charSequence, CharSequence charSequence2, int i);

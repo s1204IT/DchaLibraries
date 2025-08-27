@@ -13,6 +13,7 @@ import com.android.settingslib.RestrictedLockUtils;
 import com.android.systemui.R;
 import com.android.systemui.settings.ToggleSlider;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
+
 /* loaded from: classes.dex */
 public class ToggleSliderView extends RelativeLayout implements ToggleSlider {
     private final CompoundButton.OnCheckedChangeListener mCheckListener;
@@ -36,6 +37,9 @@ public class ToggleSliderView extends RelativeLayout implements ToggleSlider {
     public ToggleSliderView(Context context, AttributeSet attributeSet, int i) {
         super(context, attributeSet, i);
         this.mCheckListener = new CompoundButton.OnCheckedChangeListener() { // from class: com.android.systemui.settings.ToggleSliderView.1
+            AnonymousClass1() {
+            }
+
             @Override // android.widget.CompoundButton.OnCheckedChangeListener
             public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
                 ToggleSliderView.this.mSlider.setEnabled(!z);
@@ -48,6 +52,9 @@ public class ToggleSliderView extends RelativeLayout implements ToggleSlider {
             }
         };
         this.mSeekListener = new SeekBar.OnSeekBarChangeListener() { // from class: com.android.systemui.settings.ToggleSliderView.2
+            AnonymousClass2() {
+            }
+
             @Override // android.widget.SeekBar.OnSeekBarChangeListener
             public void onProgressChanged(SeekBar seekBar, int i2, boolean z) {
                 if (ToggleSliderView.this.mListener != null) {
@@ -81,15 +88,15 @@ public class ToggleSliderView extends RelativeLayout implements ToggleSlider {
         };
         View.inflate(context, R.layout.status_bar_toggle_slider, this);
         context.getResources();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ToggleSliderView, i, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ToggleSliderView, i, 0);
         this.mToggle = (CompoundButton) findViewById(R.id.toggle);
         this.mToggle.setOnCheckedChangeListener(this.mCheckListener);
         this.mSlider = (ToggleSeekBar) findViewById(R.id.slider);
         this.mSlider.setOnSeekBarChangeListener(this.mSeekListener);
         this.mLabel = (TextView) findViewById(R.id.label);
-        this.mLabel.setText(obtainStyledAttributes.getString(0));
+        this.mLabel.setText(typedArrayObtainStyledAttributes.getString(0));
         this.mSlider.setAccessibilityLabel(getContentDescription().toString());
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public void setMirror(ToggleSliderView toggleSliderView) {
@@ -153,10 +160,64 @@ public class ToggleSliderView extends RelativeLayout implements ToggleSlider {
     @Override // android.view.ViewGroup, android.view.View
     public boolean dispatchTouchEvent(MotionEvent motionEvent) {
         if (this.mMirror != null) {
-            MotionEvent copy = motionEvent.copy();
-            this.mMirror.dispatchTouchEvent(copy);
-            copy.recycle();
+            MotionEvent motionEventCopy = motionEvent.copy();
+            this.mMirror.dispatchTouchEvent(motionEventCopy);
+            motionEventCopy.recycle();
         }
         return super.dispatchTouchEvent(motionEvent);
+    }
+
+    /* renamed from: com.android.systemui.settings.ToggleSliderView$1 */
+    class AnonymousClass1 implements CompoundButton.OnCheckedChangeListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.widget.CompoundButton.OnCheckedChangeListener
+        public void onCheckedChanged(CompoundButton compoundButton, boolean z) {
+            ToggleSliderView.this.mSlider.setEnabled(!z);
+            if (ToggleSliderView.this.mListener != null) {
+                ToggleSliderView.this.mListener.onChanged(ToggleSliderView.this, ToggleSliderView.this.mTracking, z, ToggleSliderView.this.mSlider.getProgress(), false);
+            }
+            if (ToggleSliderView.this.mMirror != null) {
+                ToggleSliderView.this.mMirror.mToggle.setChecked(z);
+            }
+        }
+    }
+
+    /* renamed from: com.android.systemui.settings.ToggleSliderView$2 */
+    class AnonymousClass2 implements SeekBar.OnSeekBarChangeListener {
+        AnonymousClass2() {
+        }
+
+        @Override // android.widget.SeekBar.OnSeekBarChangeListener
+        public void onProgressChanged(SeekBar seekBar, int i2, boolean z) {
+            if (ToggleSliderView.this.mListener != null) {
+                ToggleSliderView.this.mListener.onChanged(ToggleSliderView.this, ToggleSliderView.this.mTracking, ToggleSliderView.this.mToggle.isChecked(), i2, false);
+            }
+        }
+
+        @Override // android.widget.SeekBar.OnSeekBarChangeListener
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            ToggleSliderView.this.mTracking = true;
+            if (ToggleSliderView.this.mListener != null) {
+                ToggleSliderView.this.mListener.onChanged(ToggleSliderView.this, ToggleSliderView.this.mTracking, ToggleSliderView.this.mToggle.isChecked(), ToggleSliderView.this.mSlider.getProgress(), false);
+            }
+            ToggleSliderView.this.mToggle.setChecked(false);
+            if (ToggleSliderView.this.mMirrorController != null) {
+                ToggleSliderView.this.mMirrorController.showMirror();
+                ToggleSliderView.this.mMirrorController.setLocation((View) ToggleSliderView.this.getParent());
+            }
+        }
+
+        @Override // android.widget.SeekBar.OnSeekBarChangeListener
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            ToggleSliderView.this.mTracking = false;
+            if (ToggleSliderView.this.mListener != null) {
+                ToggleSliderView.this.mListener.onChanged(ToggleSliderView.this, ToggleSliderView.this.mTracking, ToggleSliderView.this.mToggle.isChecked(), ToggleSliderView.this.mSlider.getProgress(), true);
+            }
+            if (ToggleSliderView.this.mMirrorController != null) {
+                ToggleSliderView.this.mMirrorController.hideMirror();
+            }
+        }
     }
 }

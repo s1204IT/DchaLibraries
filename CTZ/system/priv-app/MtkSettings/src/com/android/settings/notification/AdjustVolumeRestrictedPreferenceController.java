@@ -9,6 +9,7 @@ import com.android.settings.accounts.AccountRestrictionHelper;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.core.SliderPreferenceController;
 import com.android.settingslib.RestrictedPreference;
+
 /* loaded from: classes.dex */
 public abstract class AdjustVolumeRestrictedPreferenceController extends SliderPreferenceController implements PreferenceControllerMixin {
     private AccountRestrictionHelper mHelper;

@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import com.android.systemui.statusbar.AlphaOptimizedImageView;
+
 /* loaded from: classes.dex */
 public class FixedSizeImageView extends AlphaOptimizedImageView {
     private boolean mAllowInvalidate;

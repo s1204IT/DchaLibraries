@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 /* loaded from: classes.dex */
 public class DumpTruck {
     final StringBuilder body = new StringBuilder();
@@ -30,8 +31,7 @@ public class DumpTruck {
         this.context = context;
     }
 
-    public DumpTruck captureHeaps(int[] iArr) {
-        int[] copyOf;
+    public DumpTruck captureHeaps(int[] iArr) throws IOException {
         GarbageMonitor.ProcessMemInfo memInfo;
         GarbageMonitor garbageMonitor = (GarbageMonitor) Dependency.get(GarbageMonitor.class);
         File file = new File(this.context.getCacheDir(), "leak");
@@ -43,7 +43,7 @@ public class DumpTruck {
         sb.append(Build.DISPLAY);
         sb.append("\n\nProcesses:\n");
         ArrayList arrayList = new ArrayList();
-        int myPid = Process.myPid();
+        int iMyPid = Process.myPid();
         for (int i : Arrays.copyOf(iArr, iArr.length)) {
             StringBuilder sb2 = this.body;
             sb2.append("  pid ");
@@ -58,7 +58,7 @@ public class DumpTruck {
                 sb3.append(" uss=");
                 sb3.append(memInfo.currentUss);
             }
-            if (i == myPid) {
+            if (i == iMyPid) {
                 String path = new File(file, String.format("heap-%d.ahprof", Integer.valueOf(i))).getPath();
                 Log.v("DumpTruck", "Dumping memory info for process " + i + " to " + path);
                 try {
@@ -103,34 +103,45 @@ public class DumpTruck {
         return intent;
     }
 
-    private static boolean zipUp(String str, ArrayList<String> arrayList) {
+    private static boolean zipUp(String str, ArrayList<String> arrayList) throws Exception {
+        Throwable th;
         try {
             ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(str));
-            byte[] bArr = new byte[524288];
-            Iterator<String> it = arrayList.iterator();
-            while (it.hasNext()) {
-                String next = it.next();
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(next));
-                zipOutputStream.putNextEntry(new ZipEntry(next));
-                while (true) {
-                    int read = bufferedInputStream.read(bArr, 0, 524288);
-                    if (read <= 0) {
-                        break;
+            try {
+                byte[] bArr = new byte[524288];
+                Iterator<String> it = arrayList.iterator();
+                while (it.hasNext()) {
+                    String next = it.next();
+                    BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(next));
+                    try {
+                        zipOutputStream.putNextEntry(new ZipEntry(next));
+                        while (true) {
+                            int i = bufferedInputStream.read(bArr, 0, 524288);
+                            if (i <= 0) {
+                                break;
+                            }
+                            zipOutputStream.write(bArr, 0, i);
+                        }
+                        zipOutputStream.closeEntry();
+                        $closeResource(null, bufferedInputStream);
+                    } catch (Throwable th2) {
+                        th = th2;
+                        th = null;
+                        $closeResource(th, bufferedInputStream);
+                        throw th;
                     }
-                    zipOutputStream.write(bArr, 0, read);
                 }
-                zipOutputStream.closeEntry();
-                $closeResource(null, bufferedInputStream);
+                return true;
+            } finally {
+                $closeResource(null, zipOutputStream);
             }
-            $closeResource(null, zipOutputStream);
-            return true;
         } catch (IOException e) {
             Log.e("DumpTruck", "error zipping up profile data", e);
             return false;
         }
     }
 
-    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) {
+    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) throws Exception {
         if (th == null) {
             autoCloseable.close();
             return;

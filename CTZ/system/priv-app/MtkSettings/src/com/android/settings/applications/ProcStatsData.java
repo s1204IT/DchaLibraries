@@ -24,9 +24,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ProcStatsData {
     static final Comparator<ProcStatsEntry> sEntryCompare = new Comparator<ProcStatsEntry>() { // from class: com.android.settings.applications.ProcStatsData.1
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ProcStatsEntry procStatsEntry, ProcStatsEntry procStatsEntry2) {
             if (procStatsEntry.mRunWeight < procStatsEntry2.mRunWeight) {
@@ -81,7 +83,7 @@ public class ProcStatsData {
         return this.mMemInfo;
     }
 
-    public void setDuration(long j) {
+    public void setDuration(long j) throws PackageManager.NameNotFoundException, IOException {
         if (j != this.mDuration) {
             this.mDuration = j;
             refreshStats(true);
@@ -96,15 +98,15 @@ public class ProcStatsData {
         return this.pkgEntries;
     }
 
-    public void refreshStats(boolean z) {
+    public void refreshStats(boolean z) throws PackageManager.NameNotFoundException, IOException {
         if (this.mStats == null || z) {
             load();
         }
         this.pkgEntries = new ArrayList<>();
-        long uptimeMillis = SystemClock.uptimeMillis();
-        this.memTotalTime = DumpUtils.dumpSingleTime((PrintWriter) null, (String) null, this.mStats.mMemFactorDurations, this.mStats.mMemFactor, this.mStats.mStartTime, uptimeMillis);
+        long jUptimeMillis = SystemClock.uptimeMillis();
+        this.memTotalTime = DumpUtils.dumpSingleTime((PrintWriter) null, (String) null, this.mStats.mMemFactorDurations, this.mStats.mMemFactor, this.mStats.mStartTime, jUptimeMillis);
         ProcessStats.TotalMemoryUseCollection totalMemoryUseCollection = new ProcessStats.TotalMemoryUseCollection(ProcessStats.ALL_SCREEN_ADJ, this.mMemStates);
-        this.mStats.computeTotalMemoryUse(totalMemoryUseCollection, uptimeMillis);
+        this.mStats.computeTotalMemoryUse(totalMemoryUseCollection, jUptimeMillis);
         this.mMemInfo = new MemInfo(this.mContext, totalMemoryUseCollection, this.memTotalTime);
         ProcessStats.ProcessDataCollection processDataCollection = new ProcessStats.ProcessDataCollection(ProcessStats.ALL_SCREEN_ADJ, this.mMemStates, this.mStates);
         ProcessStats.ProcessDataCollection processDataCollection2 = new ProcessStats.ProcessDataCollection(ProcessStats.ALL_SCREEN_ADJ, this.mMemStates, ProcessStats.NON_CACHED_PROC_STATES);
@@ -115,7 +117,7 @@ public class ProcStatsData {
         this.pkgEntries.add(createOsEntry(processDataCollection, processDataCollection2, totalMemoryUseCollection, this.mMemInfo.baseCacheRam));
     }
 
-    private void createPkgMap(ArrayList<ProcStatsEntry> arrayList, ProcessStats.ProcessDataCollection processDataCollection, ProcessStats.ProcessDataCollection processDataCollection2) {
+    private void createPkgMap(ArrayList<ProcStatsEntry> arrayList, ProcessStats.ProcessDataCollection processDataCollection, ProcessStats.ProcessDataCollection processDataCollection2) throws PackageManager.NameNotFoundException {
         ArrayMap arrayMap = new ArrayMap();
         for (int size = arrayList.size() - 1; size >= 0; size--) {
             ProcStatsEntry procStatsEntry = arrayList.get(size);
@@ -130,7 +132,7 @@ public class ProcStatsData {
         }
     }
 
-    private void distributeZRam(double d) {
+    private void distributeZRam(double d) throws PackageManager.NameNotFoundException {
         long j = (long) (d / this.memTotalTime);
         long j2 = 0;
         for (int size = this.pkgEntries.size() - 1; size >= 0; size--) {
@@ -163,7 +165,7 @@ public class ProcStatsData {
         }
     }
 
-    private ProcStatsPackageEntry createOsEntry(ProcessStats.ProcessDataCollection processDataCollection, ProcessStats.ProcessDataCollection processDataCollection2, ProcessStats.TotalMemoryUseCollection totalMemoryUseCollection, long j) {
+    private ProcStatsPackageEntry createOsEntry(ProcessStats.ProcessDataCollection processDataCollection, ProcessStats.ProcessDataCollection processDataCollection2, ProcessStats.TotalMemoryUseCollection totalMemoryUseCollection, long j) throws PackageManager.NameNotFoundException {
         ProcStatsPackageEntry procStatsPackageEntry = new ProcStatsPackageEntry("os", this.memTotalTime);
         if (totalMemoryUseCollection.sysMemNativeWeight > 0.0d) {
             ProcStatsEntry procStatsEntry = new ProcStatsEntry("os", 0, this.mContext.getString(R.string.process_stats_os_native), this.memTotalTime, (long) (totalMemoryUseCollection.sysMemNativeWeight / this.memTotalTime), this.memTotalTime);
@@ -239,7 +241,7 @@ public class ProcStatsData {
         return arrayList;
     }
 
-    private void load() {
+    private void load() throws IOException {
         try {
             ParcelFileDescriptor statsOverTime = this.mProcessStats.getStatsOverTime(this.mDuration);
             this.mStats = new ProcessStats(false);
@@ -257,7 +259,6 @@ public class ProcStatsData {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class MemInfo {
         long baseCacheRam;
         double freeWeight;
@@ -293,17 +294,16 @@ public class ProcStatsData {
                 this.realUsedRam += this.realFreeRam;
                 this.realFreeRam = 0.0d;
                 this.baseCacheRam = (long) this.realFreeRam;
-                return;
+            } else {
+                this.realUsedRam += memoryInfo.hiddenAppThreshold;
+                this.realFreeRam -= memoryInfo.hiddenAppThreshold;
+                this.baseCacheRam = memoryInfo.hiddenAppThreshold;
             }
-            this.realUsedRam += memoryInfo.hiddenAppThreshold;
-            this.realFreeRam -= memoryInfo.hiddenAppThreshold;
-            this.baseCacheRam = memoryInfo.hiddenAppThreshold;
         }
 
         private void calculateWeightInfo(Context context, ProcessStats.TotalMemoryUseCollection totalMemoryUseCollection, long j) {
-            MemInfoReader memInfoReader;
             new MemInfoReader().readMemInfo();
-            this.realTotalRam = memInfoReader.getTotalSize();
+            this.realTotalRam = r3.getTotalSize();
             this.freeWeight = totalMemoryUseCollection.sysMemFreeWeight + totalMemoryUseCollection.sysMemCachedWeight;
             this.usedWeight = totalMemoryUseCollection.sysMemKernelWeight + totalMemoryUseCollection.sysMemNativeWeight;
             if (!totalMemoryUseCollection.hasSwappedOutPss) {

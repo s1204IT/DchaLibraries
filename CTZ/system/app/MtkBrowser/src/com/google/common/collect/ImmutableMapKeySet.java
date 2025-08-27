@@ -2,12 +2,12 @@ package com.google.common.collect;
 
 import java.io.Serializable;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 final class ImmutableMapKeySet<K, V> extends ImmutableSet<K> {
     private final ImmutableMap<K, V> map;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ImmutableMapKeySet(ImmutableMap<K, V> immutableMap) {
+    ImmutableMapKeySet(ImmutableMap<K, V> immutableMap) {
         this.map = immutableMap;
     }
 
@@ -16,6 +16,7 @@ final class ImmutableMapKeySet<K, V> extends ImmutableSet<K> {
         return this.map.size();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<K> iterator() {
         return asList().iterator();
@@ -26,13 +27,37 @@ final class ImmutableMapKeySet<K, V> extends ImmutableSet<K> {
         return this.map.containsKey(obj);
     }
 
+    /* renamed from: com.google.common.collect.ImmutableMapKeySet$1 */
+    class AnonymousClass1 extends ImmutableAsList<K> {
+        final /* synthetic */ ImmutableList val$entryList;
+
+        AnonymousClass1(ImmutableList immutableList) {
+            immutableList = immutableList;
+        }
+
+        @Override // java.util.List
+        public K get(int i) {
+            return (K) ((Map.Entry) immutableList.get(i)).getKey();
+        }
+
+        @Override // com.google.common.collect.ImmutableAsList
+        ImmutableCollection<K> delegateCollection() {
+            return ImmutableMapKeySet.this;
+        }
+    }
+
     @Override // com.google.common.collect.ImmutableCollection
     ImmutableList<K> createAsList() {
-        final ImmutableList<Map.Entry<K, V>> asList = this.map.entrySet().asList();
         return new ImmutableAsList<K>() { // from class: com.google.common.collect.ImmutableMapKeySet.1
+            final /* synthetic */ ImmutableList val$entryList;
+
+            AnonymousClass1(ImmutableList immutableList) {
+                immutableList = immutableList;
+            }
+
             @Override // java.util.List
             public K get(int i) {
-                return (K) ((Map.Entry) asList.get(i)).getKey();
+                return (K) ((Map.Entry) immutableList.get(i)).getKey();
             }
 
             @Override // com.google.common.collect.ImmutableAsList
@@ -42,9 +67,8 @@ final class ImmutableMapKeySet<K, V> extends ImmutableSet<K> {
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return true;
     }
 
@@ -53,7 +77,6 @@ final class ImmutableMapKeySet<K, V> extends ImmutableSet<K> {
         return new KeySetSerializedForm(this.map);
     }
 
-    /* loaded from: classes.dex */
     private static class KeySetSerializedForm<K> implements Serializable {
         private static final long serialVersionUID = 0;
         final ImmutableMap<K, ?> map;

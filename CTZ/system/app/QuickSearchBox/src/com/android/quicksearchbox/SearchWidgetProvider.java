@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
+
 /* loaded from: classes.dex */
 public class SearchWidgetProvider extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver
@@ -59,9 +60,7 @@ public class SearchWidgetProvider extends BroadcastReceiver {
         return QsbApplication.get(context).getVoiceSearch().createVoiceWebSearchIntent(bundle);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SearchWidgetState {
+    private static class SearchWidgetState {
         private final int mAppWidgetId;
         private Intent mQueryTextViewIntent;
         private Intent mVoiceSearchIntent;
@@ -79,7 +78,7 @@ public class SearchWidgetProvider extends BroadcastReceiver {
         }
 
         public void updateWidget(Context context, AppWidgetManager appWidgetManager) {
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), (int) R.layout.search_widget);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.search_widget);
             setOnClickActivityIntent(context, remoteViews, R.id.search_widget_text, this.mQueryTextViewIntent);
             if (this.mVoiceSearchIntent != null) {
                 setOnClickActivityIntent(context, remoteViews, R.id.search_widget_voice_btn, this.mVoiceSearchIntent);

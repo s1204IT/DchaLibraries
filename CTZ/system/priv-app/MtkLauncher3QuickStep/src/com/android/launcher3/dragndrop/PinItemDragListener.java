@@ -17,6 +17,7 @@ import com.android.launcher3.widget.PendingAddShortcutInfo;
 import com.android.launcher3.widget.PendingAddWidgetInfo;
 import com.android.launcher3.widget.PendingItemDragHelper;
 import com.android.launcher3.widget.WidgetAddFlowHandler;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class PinItemDragListener extends BaseItemDragListener {
@@ -29,9 +30,8 @@ public class PinItemDragListener extends BaseItemDragListener {
         this.mCancelSignal = new CancellationSignal();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.dragndrop.BaseItemDragListener
-    public boolean onDragStart(DragEvent dragEvent) {
+    protected boolean onDragStart(DragEvent dragEvent) {
         if (!this.mRequest.isValid()) {
             return false;
         }
@@ -50,13 +50,13 @@ public class PinItemDragListener extends BaseItemDragListener {
 
     @Override // com.android.launcher3.dragndrop.BaseItemDragListener
     protected PendingItemDragHelper createDragHelper() {
-        Object obj;
+        Object pendingAddShortcutInfo;
         if (this.mRequest.getRequestType() == 1) {
-            obj = new PendingAddShortcutInfo(new PinShortcutRequestActivityInfo(this.mRequest, this.mLauncher));
+            pendingAddShortcutInfo = new PendingAddShortcutInfo(new PinShortcutRequestActivityInfo(this.mRequest, this.mLauncher));
         } else {
-            LauncherAppWidgetProviderInfo fromProviderInfo = LauncherAppWidgetProviderInfo.fromProviderInfo(this.mLauncher, this.mRequest.getAppWidgetProviderInfo(this.mLauncher));
-            final PinWidgetFlowHandler pinWidgetFlowHandler = new PinWidgetFlowHandler(fromProviderInfo, this.mRequest);
-            obj = new PendingAddWidgetInfo(fromProviderInfo) { // from class: com.android.launcher3.dragndrop.PinItemDragListener.1
+            LauncherAppWidgetProviderInfo launcherAppWidgetProviderInfoFromProviderInfo = LauncherAppWidgetProviderInfo.fromProviderInfo(this.mLauncher, this.mRequest.getAppWidgetProviderInfo(this.mLauncher));
+            final PinWidgetFlowHandler pinWidgetFlowHandler = new PinWidgetFlowHandler(launcherAppWidgetProviderInfoFromProviderInfo, this.mRequest);
+            pendingAddShortcutInfo = new PendingAddWidgetInfo(launcherAppWidgetProviderInfoFromProviderInfo) { // from class: com.android.launcher3.dragndrop.PinItemDragListener.1
                 @Override // com.android.launcher3.widget.PendingAddWidgetInfo
                 public WidgetAddFlowHandler getHandler() {
                     return pinWidgetFlowHandler;
@@ -64,7 +64,7 @@ public class PinItemDragListener extends BaseItemDragListener {
             };
         }
         View view = new View(this.mLauncher);
-        view.setTag(obj);
+        view.setTag(pendingAddShortcutInfo);
         PendingItemDragHelper pendingItemDragHelper = new PendingItemDragHelper(view);
         if (this.mRequest.getRequestType() == 2) {
             pendingItemDragHelper.setPreview(getPreview(this.mRequest));
@@ -77,9 +77,8 @@ public class PinItemDragListener extends BaseItemDragListener {
         target2.containerType = 10;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.dragndrop.BaseItemDragListener
-    public void postCleanup() {
+    protected void postCleanup() {
         super.postCleanup();
         this.mCancelSignal.cancel();
     }

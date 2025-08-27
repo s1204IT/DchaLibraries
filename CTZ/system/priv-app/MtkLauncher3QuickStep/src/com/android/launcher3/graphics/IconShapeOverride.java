@@ -21,6 +21,7 @@ import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.util.LooperExecutor;
 import java.lang.reflect.Field;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class IconShapeOverride {
@@ -30,17 +31,17 @@ public class IconShapeOverride {
     private static final String TAG = "IconShapeOverride";
 
     public static boolean isSupported(Context context) {
-        if (Utilities.ATLEAST_OREO && Settings.Global.getInt(context.getContentResolver(), "development_settings_enabled", 0) == 1) {
-            try {
-                return getSystemResField().get(null) == Resources.getSystem() && getConfigResId() != 0;
-            } catch (Exception e) {
-                return false;
-            }
+        if (!Utilities.ATLEAST_OREO || Settings.Global.getInt(context.getContentResolver(), "development_settings_enabled", 0) != 1) {
+            return false;
         }
-        return false;
+        try {
+            return getSystemResField().get(null) == Resources.getSystem() && getConfigResId() != 0;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    public static void apply(Context context) {
+    public static void apply(Context context) throws IllegalAccessException, IllegalArgumentException {
         if (!Utilities.ATLEAST_OREO) {
             return;
         }
@@ -66,8 +67,7 @@ public class IconShapeOverride {
         return Resources.getSystem().getIdentifier("config_icon_mask", "string", "android");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static String getAppliedValue(Context context) {
+    private static String getAppliedValue(Context context) {
         return Utilities.getDevicePrefs(context).getString(KEY_PREFERENCE, "");
     }
 
@@ -77,7 +77,6 @@ public class IconShapeOverride {
         listPreference.setOnPreferenceChangeListener(new PreferenceChangeHandler(context));
     }
 
-    /* loaded from: classes.dex */
     private static class ResourcesOverride extends Resources {
         private final int mOverrideId;
         private final String mOverrideValue;
@@ -98,9 +97,12 @@ public class IconShapeOverride {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class PreferenceChangeHandler implements Preference.OnPreferenceChangeListener {
         private final Context mContext;
+
+        /* synthetic */ PreferenceChangeHandler(Context context, AnonymousClass1 anonymousClass1) {
+            this(context);
+        }
 
         private PreferenceChangeHandler(Context context) {
             this.mContext = context;
@@ -117,10 +119,13 @@ public class IconShapeOverride {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class OverrideApplyHandler implements Runnable {
         private final Context mContext;
         private final String mValue;
+
+        /* synthetic */ OverrideApplyHandler(Context context, String str, AnonymousClass1 anonymousClass1) {
+            this(context, str);
+        }
 
         private OverrideApplyHandler(Context context, String str) {
             this.mContext = context;
@@ -128,7 +133,7 @@ public class IconShapeOverride {
         }
 
         @Override // java.lang.Runnable
-        public void run() {
+        public void run() throws InterruptedException {
             Utilities.getDevicePrefs(this.mContext).edit().putString(IconShapeOverride.KEY_PREFERENCE, this.mValue).commit();
             LauncherAppState.getInstance(this.mContext).getIconCache().clear();
             try {

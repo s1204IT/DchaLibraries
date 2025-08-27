@@ -12,6 +12,7 @@ import com.android.settings.search.SearchIndexableRaw;
 import com.android.settingslib.display.DisplayDensityUtils;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ScreenZoomSettings extends PreviewSeekBarPreferenceFragment implements Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.display.ScreenZoomSettings.1

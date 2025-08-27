@@ -11,6 +11,7 @@ import com.android.settings.R;
 import com.android.settings.Utils;
 import com.android.settingslib.applications.StorageStatsSource;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class MusicViewHolderController implements FileViewHolderController {
     private Context mContext;

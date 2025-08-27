@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 /* loaded from: classes.dex */
 public class DozeLog {
     private static final boolean DEBUG = Log.isLoggable("DozeLog", 3);
@@ -37,6 +38,9 @@ public class DozeLog {
         FORMAT = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
         sRegisterKeyguardCallback = true;
         sKeyguardCallback = new KeyguardUpdateMonitorCallback() { // from class: com.android.systemui.doze.DozeLog.1
+            AnonymousClass1() {
+            }
+
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
             public void onEmergencyCallAction() {
                 DozeLog.traceEmergencyCall();
@@ -98,7 +102,7 @@ public class DozeLog {
                 sScreenOnPulsingStats = new SummaryStats();
                 sScreenOnNotPulsingStats = new SummaryStats();
                 sEmergencyCallStats = new SummaryStats();
-                sProxStats = (SummaryStats[][]) Array.newInstance(SummaryStats.class, 6, 2);
+                sProxStats = (SummaryStats[][]) Array.newInstance((Class<?>) SummaryStats.class, 6, 2);
                 for (int i = 0; i < 6; i++) {
                     sProxStats[i][0] = new SummaryStats();
                     sProxStats[i][1] = new SummaryStats();
@@ -204,9 +208,9 @@ public class DozeLog {
             sScreenOnNotPulsingStats.dump(printWriter, "Screen on (not pulsing)");
             sEmergencyCallStats.dump(printWriter, "Emergency call");
             for (int i4 = 0; i4 < 6; i4++) {
-                String pulseReasonToString = pulseReasonToString(i4);
-                sProxStats[i4][0].dump(printWriter, "Proximity near (" + pulseReasonToString + ")");
-                sProxStats[i4][1].dump(printWriter, "Proximity far (" + pulseReasonToString + ")");
+                String strPulseReasonToString = pulseReasonToString(i4);
+                sProxStats[i4][0].dump(printWriter, "Proximity near (" + strPulseReasonToString + ")");
+                sProxStats[i4][1].dump(printWriter, "Proximity far (" + strPulseReasonToString + ")");
             }
         }
     }
@@ -241,12 +245,14 @@ public class DozeLog {
         log("sensor type=" + pulseReasonToString(i));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SummaryStats {
+    private static class SummaryStats {
         private int mCount;
 
         private SummaryStats() {
+        }
+
+        /* synthetic */ SummaryStats(AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         public void append() {
@@ -265,6 +271,37 @@ public class DozeLog {
             printWriter.print((this.mCount / (System.currentTimeMillis() - DozeLog.sSince)) * 1000.0d * 60.0d * 60.0d);
             printWriter.print("/hr)");
             printWriter.println();
+        }
+    }
+
+    /* renamed from: com.android.systemui.doze.DozeLog$1 */
+    class AnonymousClass1 extends KeyguardUpdateMonitorCallback {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onEmergencyCallAction() {
+            DozeLog.traceEmergencyCall();
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onKeyguardBouncerChanged(boolean z) {
+            DozeLog.traceKeyguardBouncerChanged(z);
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onStartedWakingUp() {
+            DozeLog.traceScreenOn();
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onFinishedGoingToSleep(int i) {
+            DozeLog.traceScreenOff(i);
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onKeyguardVisibilityChanged(boolean z) {
+            DozeLog.traceKeyguard(z);
         }
     }
 }

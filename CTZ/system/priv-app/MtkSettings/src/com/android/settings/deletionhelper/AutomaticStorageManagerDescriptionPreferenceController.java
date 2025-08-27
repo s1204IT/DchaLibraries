@@ -11,6 +11,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.Utils;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class AutomaticStorageManagerDescriptionPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     public AutomaticStorageManagerDescriptionPreferenceController(Context context) {
@@ -29,15 +30,15 @@ public class AutomaticStorageManagerDescriptionPreferenceController extends Abst
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
-        Preference findPreference = preferenceScreen.findPreference(getPreferenceKey());
-        Context context = findPreference.getContext();
+        Preference preferenceFindPreference = preferenceScreen.findPreference(getPreferenceKey());
+        Context context = preferenceFindPreference.getContext();
         ContentResolver contentResolver = context.getContentResolver();
         long j = Settings.Secure.getLong(contentResolver, "automatic_storage_manager_bytes_cleared", 0L);
         long j2 = Settings.Secure.getLong(contentResolver, "automatic_storage_manager_last_run", 0L);
         if (j == 0 || j2 == 0 || !Utils.isStorageManagerEnabled(context)) {
-            findPreference.setSummary(R.string.automatic_storage_manager_text);
+            preferenceFindPreference.setSummary(R.string.automatic_storage_manager_text);
         } else {
-            findPreference.setSummary(context.getString(R.string.automatic_storage_manager_freed_bytes, Formatter.formatFileSize(context, j), DateUtils.formatDateTime(context, j2, 16)));
+            preferenceFindPreference.setSummary(context.getString(R.string.automatic_storage_manager_freed_bytes, Formatter.formatFileSize(context, j), DateUtils.formatDateTime(context, j2, 16)));
         }
     }
 }

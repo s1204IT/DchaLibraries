@@ -8,6 +8,7 @@ import android.os.UserManager;
 import com.android.settings.R;
 import com.android.settings.Settings;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WorkModeCondition extends Condition {
     private UserManager mUm;
@@ -59,7 +60,7 @@ public class WorkModeCondition extends Condition {
 
     @Override // com.android.settings.dashboard.conditional.Condition
     public void onPrimaryClick() {
-        this.mManager.getContext().startActivity(new Intent(this.mManager.getContext(), Settings.AccountDashboardActivity.class).addFlags(268435456));
+        this.mManager.getContext().startActivity(new Intent(this.mManager.getContext(), (Class<?>) Settings.AccountDashboardActivity.class).addFlags(268435456));
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
@@ -69,9 +70,9 @@ public class WorkModeCondition extends Condition {
                 this.mUm.requestQuietModeEnabled(false, this.mUserHandle);
             }
             setActive(false);
-            return;
+        } else {
+            throw new IllegalArgumentException("Unexpected index " + i);
         }
-        throw new IllegalArgumentException("Unexpected index " + i);
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition

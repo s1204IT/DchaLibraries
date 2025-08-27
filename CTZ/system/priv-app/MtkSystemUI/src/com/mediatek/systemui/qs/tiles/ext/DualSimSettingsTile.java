@@ -9,12 +9,14 @@ import android.telephony.SubscriptionManager;
 import android.util.Log;
 import com.android.systemui.Dependency;
 import com.android.systemui.plugins.ActivityStarter;
+import com.android.systemui.plugins.R;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.mediatek.systemui.ext.IQuickSettingsPlugin;
 import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
 import com.mediatek.systemui.statusbar.extcb.IconIdWrapper;
+
 /* loaded from: classes.dex */
 public class DualSimSettingsTile extends QSTileImpl<QSTile.BooleanState> {
     private static final Intent DUAL_SIM_SETTINGS = new Intent().setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$SimSettingsActivity"));
@@ -46,7 +48,7 @@ public class DualSimSettingsTile extends QSTileImpl<QSTile.BooleanState> {
         registerSimStateReceiver();
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -58,7 +60,7 @@ public class DualSimSettingsTile extends QSTileImpl<QSTile.BooleanState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 111;
+        return R.styleable.AppCompatTheme_windowActionBar;
     }
 
     @Override // com.android.systemui.plugins.qs.QSTile
@@ -79,23 +81,24 @@ public class DualSimSettingsTile extends QSTileImpl<QSTile.BooleanState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     protected void handleClick() {
+        long defaultDataSubscriptionId = SubscriptionManager.getDefaultDataSubscriptionId();
         Log.d("DualSimSettingsTile", "handleClick, " + DUAL_SIM_SETTINGS);
-        DUAL_SIM_SETTINGS.putExtra("subscription", (long) SubscriptionManager.getDefaultDataSubscriptionId());
+        DUAL_SIM_SETTINGS.putExtra("subscription", defaultDataSubscriptionId);
         ((ActivityStarter) Dependency.get(ActivityStarter.class)).postStartActivityDismissingKeyguard(DUAL_SIM_SETTINGS, 0);
         refreshState();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         Boolean bool = (Boolean) obj;
         Log.d("DualSimSettingsTile", "handleUpdateState,  simInserted=" + bool);
-        IQuickSettingsPlugin makeQuickSettings = OpSystemUICustomizationFactoryBase.getOpFactory(this.mContext).makeQuickSettings(this.mContext);
+        IQuickSettingsPlugin iQuickSettingsPluginMakeQuickSettings = OpSystemUICustomizationFactoryBase.getOpFactory(this.mContext).makeQuickSettings(this.mContext);
         if (bool != null && bool.booleanValue()) {
-            booleanState.label = makeQuickSettings.customizeDualSimSettingsTile(false, this.mDisableIconIdWrapper, "");
+            booleanState.label = iQuickSettingsPluginMakeQuickSettings.customizeDualSimSettingsTile(false, this.mDisableIconIdWrapper, "");
             booleanState.icon = QsIconWrapper.get(this.mDisableIconIdWrapper.getIconId(), this.mDisableIconIdWrapper);
         } else {
-            booleanState.label = makeQuickSettings.customizeDualSimSettingsTile(true, this.mEnableIconIdWrapper, "");
+            booleanState.label = iQuickSettingsPluginMakeQuickSettings.customizeDualSimSettingsTile(true, this.mEnableIconIdWrapper, "");
             booleanState.icon = QsIconWrapper.get(this.mEnableIconIdWrapper.getIconId(), this.mEnableIconIdWrapper);
         }
         this.mTileLabel = booleanState.label;

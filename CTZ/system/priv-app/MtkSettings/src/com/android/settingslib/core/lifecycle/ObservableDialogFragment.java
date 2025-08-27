@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 /* loaded from: classes.dex */
 public class ObservableDialogFragment extends DialogFragment implements LifecycleOwner {
     protected final Lifecycle mLifecycle = new Lifecycle(this);
@@ -69,13 +70,14 @@ public class ObservableDialogFragment extends DialogFragment implements Lifecycl
 
     @Override // android.app.Fragment
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        boolean onOptionsItemSelected = this.mLifecycle.onOptionsItemSelected(menuItem);
-        if (!onOptionsItemSelected) {
+        boolean zOnOptionsItemSelected = this.mLifecycle.onOptionsItemSelected(menuItem);
+        if (!zOnOptionsItemSelected) {
             return super.onOptionsItemSelected(menuItem);
         }
-        return onOptionsItemSelected;
+        return zOnOptionsItemSelected;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getLifecycle()Landroid/arch/lifecycle/Lifecycle; */
     @Override // android.arch.lifecycle.LifecycleOwner
     public Lifecycle getLifecycle() {
         return this.mLifecycle;

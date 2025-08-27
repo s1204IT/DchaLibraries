@@ -10,6 +10,7 @@ import com.android.quicksearchbox.SuggestionCursor;
 import com.android.quicksearchbox.SuggestionPosition;
 import com.android.quicksearchbox.Suggestions;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public abstract class SuggestionsAdapterBase<A> implements SuggestionsAdapter<A> {
     private SuggestionCursor mCurrentSuggestions;
@@ -31,8 +32,7 @@ public abstract class SuggestionsAdapterBase<A> implements SuggestionsAdapter<A>
 
     protected abstract void notifyDataSetInvalidated();
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public SuggestionsAdapterBase(SuggestionViewFactory suggestionViewFactory) {
+    protected SuggestionsAdapterBase(SuggestionViewFactory suggestionViewFactory) {
         this.mViewFactory = suggestionViewFactory;
         for (String str : this.mViewFactory.getSuggestionViewTypes()) {
             if (!this.mViewTypeMap.containsKey(str)) {
@@ -86,8 +86,7 @@ public abstract class SuggestionsAdapterBase<A> implements SuggestionsAdapter<A>
         return this.mSuggestions;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public SuggestionPosition getSuggestion(int i) {
+    protected SuggestionPosition getSuggestion(int i) {
         if (this.mCurrentSuggestions == null) {
             return null;
         }
@@ -102,8 +101,7 @@ public abstract class SuggestionsAdapterBase<A> implements SuggestionsAdapter<A>
         return viewType;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getSuggestionViewType(SuggestionCursor suggestionCursor, int i) {
+    protected int getSuggestionViewType(SuggestionCursor suggestionCursor, int i) {
         if (suggestionCursor == null) {
             return 0;
         }
@@ -111,13 +109,13 @@ public abstract class SuggestionsAdapterBase<A> implements SuggestionsAdapter<A>
         return this.mViewTypeMap.get(suggestionViewType(suggestionCursor)).intValue();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getSuggestionViewTypeCount() {
+    protected int getSuggestionViewTypeCount() {
         return this.mViewTypeMap.size();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public View getView(SuggestionCursor suggestionCursor, int i, long j, View view, ViewGroup viewGroup) {
+    /* JADX DEBUG: Multi-variable search result rejected for r2v1, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
+    protected View getView(SuggestionCursor suggestionCursor, int i, long j, View view, ViewGroup viewGroup) {
         suggestionCursor.moveTo(i);
         View view2 = this.mViewFactory.getView(suggestionCursor, suggestionCursor.getUserQuery(), view, viewGroup);
         if (view2 instanceof SuggestionView) {
@@ -132,13 +130,13 @@ public abstract class SuggestionsAdapterBase<A> implements SuggestionsAdapter<A>
     }
 
     protected void onSuggestionsChanged() {
-        SourceResult sourceResult;
+        SourceResult result;
         if (this.mSuggestions != null) {
-            sourceResult = this.mSuggestions.getResult();
+            result = this.mSuggestions.getResult();
         } else {
-            sourceResult = null;
+            result = null;
         }
-        changeSuggestions(sourceResult);
+        changeSuggestions(result);
     }
 
     public SuggestionCursor getCurrentSuggestions() {
@@ -149,15 +147,14 @@ public abstract class SuggestionsAdapterBase<A> implements SuggestionsAdapter<A>
         if (suggestionCursor == this.mCurrentSuggestions) {
             if (suggestionCursor != null) {
                 notifyDataSetChanged();
-                return;
             }
-            return;
-        }
-        this.mCurrentSuggestions = suggestionCursor;
-        if (this.mCurrentSuggestions != null) {
-            notifyDataSetChanged();
         } else {
-            notifyDataSetInvalidated();
+            this.mCurrentSuggestions = suggestionCursor;
+            if (this.mCurrentSuggestions != null) {
+                notifyDataSetChanged();
+            } else {
+                notifyDataSetInvalidated();
+            }
         }
     }
 
@@ -179,9 +176,7 @@ public abstract class SuggestionsAdapterBase<A> implements SuggestionsAdapter<A>
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class MySuggestionsObserver extends DataSetObserver {
+    private class MySuggestionsObserver extends DataSetObserver {
         private MySuggestionsObserver() {
         }
 
@@ -191,7 +186,6 @@ public abstract class SuggestionsAdapterBase<A> implements SuggestionsAdapter<A>
         }
     }
 
-    /* loaded from: classes.dex */
     private class SuggestionViewClickListener implements View.OnClickListener {
         private final long mSuggestionId;
 

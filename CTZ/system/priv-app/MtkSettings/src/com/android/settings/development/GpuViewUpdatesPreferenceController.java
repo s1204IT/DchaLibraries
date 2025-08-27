@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.development.SystemPropPoker;
+
 /* loaded from: classes.dex */
 public class GpuViewUpdatesPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     public GpuViewUpdatesPreferenceController(Context context) {
@@ -30,9 +31,8 @@ public class GpuViewUpdatesPreferenceController extends DeveloperOptionsPreferen
         ((SwitchPreference) this.mPreference).setChecked(SystemProperties.getBoolean("debug.hwui.show_dirty_regions", false));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         SystemProperties.set("debug.hwui.show_dirty_regions", (String) null);
         ((SwitchPreference) this.mPreference).setChecked(false);

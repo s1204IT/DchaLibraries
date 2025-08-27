@@ -11,6 +11,7 @@ import com.android.launcher3.DropTarget;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
 import com.android.launcher3.util.FlingAnimation;
+
 /* loaded from: classes.dex */
 public class FlingToDeleteHelper {
     private static final float MAX_FLING_DEGREES = 35.0f;
@@ -48,9 +49,9 @@ public class FlingToDeleteHelper {
         } else {
             i = 1;
         }
-        MotionEvent obtain = MotionEvent.obtain(j, SystemClock.uptimeMillis(), i, dragEvent.getX(), dragEvent.getY(), 0);
-        recordMotionEvent(obtain);
-        obtain.recycle();
+        MotionEvent motionEventObtain = MotionEvent.obtain(j, SystemClock.uptimeMillis(), i, dragEvent.getX(), dragEvent.getY(), 0);
+        recordMotionEvent(motionEventObtain);
+        motionEventObtain.recycle();
     }
 
     public void releaseVelocityTracker() {
@@ -65,11 +66,11 @@ public class FlingToDeleteHelper {
     }
 
     public Runnable getFlingAnimation(DropTarget.DragObject dragObject) {
-        PointF isFlingingToDelete = isFlingingToDelete();
-        if (isFlingingToDelete == null) {
+        PointF pointFIsFlingingToDelete = isFlingingToDelete();
+        if (pointFIsFlingingToDelete == null) {
             return null;
         }
-        return new FlingAnimation(dragObject, isFlingingToDelete, this.mDropTarget, this.mLauncher);
+        return new FlingAnimation(dragObject, pointFIsFlingingToDelete, this.mDropTarget, this.mLauncher);
     }
 
     private PointF isFlingingToDelete() {
@@ -81,13 +82,13 @@ public class FlingToDeleteHelper {
         }
         this.mVelocityTracker.computeCurrentVelocity(1000, ViewConfiguration.get(this.mLauncher).getScaledMaximumFlingVelocity());
         PointF pointF = new PointF(this.mVelocityTracker.getXVelocity(), this.mVelocityTracker.getYVelocity());
-        float f = 36.0f;
+        float angleBetweenVectors = 36.0f;
         if (this.mVelocityTracker.getYVelocity() < this.mFlingToDeleteThresholdVelocity) {
-            f = getAngleBetweenVectors(pointF, new PointF(0.0f, -1.0f));
+            angleBetweenVectors = getAngleBetweenVectors(pointF, new PointF(0.0f, -1.0f));
         } else if (this.mLauncher.getDeviceProfile().isVerticalBarLayout() && this.mVelocityTracker.getXVelocity() < this.mFlingToDeleteThresholdVelocity) {
-            f = getAngleBetweenVectors(pointF, new PointF(-1.0f, 0.0f));
+            angleBetweenVectors = getAngleBetweenVectors(pointF, new PointF(-1.0f, 0.0f));
         }
-        if (f <= Math.toRadians(35.0d)) {
+        if (angleBetweenVectors <= Math.toRadians(35.0d)) {
             return pointF;
         }
         return null;

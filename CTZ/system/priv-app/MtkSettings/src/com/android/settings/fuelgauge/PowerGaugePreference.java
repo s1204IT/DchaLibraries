@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.Utils;
 import com.android.settings.widget.AppPreference;
+
 /* loaded from: classes.dex */
 public class PowerGaugePreference extends AppPreference {
     private CharSequence mContentDescription;
@@ -61,8 +62,7 @@ public class PowerGaugePreference extends AppPreference {
         notifyChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public BatteryEntry getInfo() {
+    BatteryEntry getInfo() {
         return this.mInfo;
     }
 
@@ -77,7 +77,7 @@ public class PowerGaugePreference extends AppPreference {
             textView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
         }
         if (this.mContentDescription != null) {
-            ((TextView) preferenceViewHolder.findViewById(16908310)).setContentDescription(this.mContentDescription);
+            ((TextView) preferenceViewHolder.findViewById(android.R.id.title)).setContentDescription(this.mContentDescription);
         }
     }
 }

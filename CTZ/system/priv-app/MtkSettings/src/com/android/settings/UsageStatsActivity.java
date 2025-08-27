@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class UsageStatsActivity extends Activity implements AdapterView.OnItemSelectedListener {
     private UsageStatsAdapter mAdapter;
@@ -30,7 +31,6 @@ public class UsageStatsActivity extends Activity implements AdapterView.OnItemSe
     private PackageManager mPm;
     private UsageStatsManager mUsageStatsManager;
 
-    /* loaded from: classes.dex */
     public static class AppNameComparator implements Comparator<UsageStats> {
         private Map<String, String> mAppLabelList;
 
@@ -38,29 +38,29 @@ public class UsageStatsActivity extends Activity implements AdapterView.OnItemSe
             this.mAppLabelList = map;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public final int compare(UsageStats usageStats, UsageStats usageStats2) {
             return this.mAppLabelList.get(usageStats.getPackageName()).compareTo(this.mAppLabelList.get(usageStats2.getPackageName()));
         }
     }
 
-    /* loaded from: classes.dex */
     public static class LastTimeUsedComparator implements Comparator<UsageStats> {
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public final int compare(UsageStats usageStats, UsageStats usageStats2) {
             return Long.compare(usageStats2.getLastTimeUsed(), usageStats.getLastTimeUsed());
         }
     }
 
-    /* loaded from: classes.dex */
     public static class UsageTimeComparator implements Comparator<UsageStats> {
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public final int compare(UsageStats usageStats, UsageStats usageStats2) {
             return Long.compare(usageStats2.getTotalTimeInForeground(), usageStats.getTotalTimeInForeground());
         }
     }
 
-    /* loaded from: classes.dex */
     static class AppViewHolder {
         TextView lastTimeUsed;
         TextView pkgName;
@@ -70,7 +70,6 @@ public class UsageStatsActivity extends Activity implements AdapterView.OnItemSe
         }
     }
 
-    /* loaded from: classes.dex */
     class UsageStatsAdapter extends BaseAdapter {
         private AppNameComparator mAppLabelComparator;
         private int mDisplayOrder = 0;
@@ -82,14 +81,14 @@ public class UsageStatsActivity extends Activity implements AdapterView.OnItemSe
         UsageStatsAdapter() {
             Calendar calendar = Calendar.getInstance();
             calendar.add(6, -5);
-            List<UsageStats> queryUsageStats = UsageStatsActivity.this.mUsageStatsManager.queryUsageStats(4, calendar.getTimeInMillis(), System.currentTimeMillis());
-            if (queryUsageStats == null) {
+            List<UsageStats> listQueryUsageStats = UsageStatsActivity.this.mUsageStatsManager.queryUsageStats(4, calendar.getTimeInMillis(), System.currentTimeMillis());
+            if (listQueryUsageStats == null) {
                 return;
             }
             ArrayMap arrayMap = new ArrayMap();
-            int size = queryUsageStats.size();
+            int size = listQueryUsageStats.size();
             for (int i = 0; i < size; i++) {
-                UsageStats usageStats = queryUsageStats.get(i);
+                UsageStats usageStats = listQueryUsageStats.get(i);
                 try {
                     this.mAppLabelMap.put(usageStats.getPackageName(), UsageStatsActivity.this.mPm.getApplicationInfo(usageStats.getPackageName(), 0).loadLabel(UsageStatsActivity.this.mPm).toString());
                     UsageStats usageStats2 = (UsageStats) arrayMap.get(usageStats.getPackageName());
@@ -173,8 +172,9 @@ public class UsageStatsActivity extends Activity implements AdapterView.OnItemSe
         this.mInflater = (LayoutInflater) getSystemService("layout_inflater");
         this.mPm = getPackageManager();
         ((Spinner) findViewById(R.id.typeSpinner)).setOnItemSelectedListener(this);
+        ListView listView = (ListView) findViewById(R.id.pkg_list);
         this.mAdapter = new UsageStatsAdapter();
-        ((ListView) findViewById(R.id.pkg_list)).setAdapter((ListAdapter) this.mAdapter);
+        listView.setAdapter((ListAdapter) this.mAdapter);
     }
 
     @Override // android.widget.AdapterView.OnItemSelectedListener

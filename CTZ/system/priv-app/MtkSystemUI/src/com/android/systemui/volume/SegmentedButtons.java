@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.android.systemui.R;
 import com.android.systemui.volume.Interaction;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class SegmentedButtons extends LinearLayout {
     private Callback mCallback;
@@ -23,7 +24,6 @@ public class SegmentedButtons extends LinearLayout {
     private static final Typeface REGULAR = Typeface.create("sans-serif", 0);
     private static final Typeface MEDIUM = Typeface.create("sans-serif-medium", 0);
 
-    /* loaded from: classes.dex */
     public interface Callback extends Interaction.Callback {
         void onSelected(Object obj, boolean z);
     }
@@ -57,9 +57,9 @@ public class SegmentedButtons extends LinearLayout {
         this.mSelectedValue = obj;
         for (int i = 0; i < getChildCount(); i++) {
             TextView textView = (TextView) getChildAt(i);
-            boolean equals = Objects.equals(this.mSelectedValue, textView.getTag());
-            textView.setSelected(equals);
-            setSelectedStyle(textView, equals);
+            boolean zEquals = Objects.equals(this.mSelectedValue, textView.getTag());
+            textView.setSelected(zEquals);
+            setSelectedStyle(textView, zEquals);
         }
         fireOnSelected(z);
     }
@@ -73,26 +73,26 @@ public class SegmentedButtons extends LinearLayout {
     }
 
     public void addButton(int i, int i2, Object obj) {
-        Button inflateButton = inflateButton();
-        inflateButton.setTag(R.id.label, Integer.valueOf(i));
-        inflateButton.setText(i);
-        inflateButton.setContentDescription(getResources().getString(i2));
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) inflateButton.getLayoutParams();
+        Button buttonInflateButton = inflateButton();
+        buttonInflateButton.setTag(R.id.label, Integer.valueOf(i));
+        buttonInflateButton.setText(i);
+        buttonInflateButton.setContentDescription(getResources().getString(i2));
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) buttonInflateButton.getLayoutParams();
         if (getChildCount() == 0) {
             layoutParams.rightMargin = 0;
             layoutParams.leftMargin = 0;
         }
-        inflateButton.setLayoutParams(layoutParams);
-        addView(inflateButton);
-        inflateButton.setTag(obj);
-        inflateButton.setOnClickListener(this.mClick);
-        Interaction.register(inflateButton, new Interaction.Callback() { // from class: com.android.systemui.volume.SegmentedButtons.1
+        buttonInflateButton.setLayoutParams(layoutParams);
+        addView(buttonInflateButton);
+        buttonInflateButton.setTag(obj);
+        buttonInflateButton.setOnClickListener(this.mClick);
+        Interaction.register(buttonInflateButton, new Interaction.Callback() { // from class: com.android.systemui.volume.SegmentedButtons.1
             @Override // com.android.systemui.volume.Interaction.Callback
             public void onInteraction() {
                 SegmentedButtons.this.fireInteraction();
             }
         });
-        this.mConfigurableTexts.add(inflateButton, i);
+        this.mConfigurableTexts.add(buttonInflateButton, i);
     }
 
     public void update() {
@@ -105,8 +105,7 @@ public class SegmentedButtons extends LinearLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireInteraction() {
+    private void fireInteraction() {
         if (this.mCallback != null) {
             this.mCallback.onInteraction();
         }

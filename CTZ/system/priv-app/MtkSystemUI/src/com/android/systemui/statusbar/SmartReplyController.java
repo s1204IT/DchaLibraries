@@ -6,6 +6,7 @@ import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.Dependency;
 import com.android.systemui.statusbar.NotificationData;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class SmartReplyController {
     private Set<String> mSendingKeys = new ArraySet();

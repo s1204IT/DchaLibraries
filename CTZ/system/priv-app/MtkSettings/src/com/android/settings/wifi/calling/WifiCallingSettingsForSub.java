@@ -1,5 +1,6 @@
 package com.android.settings.wifi.calling;
 
+import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.preference.ListPreference;
@@ -29,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.android.ims.ImsException;
 import com.android.ims.ImsManager;
-import com.android.settings.R;
 import com.android.settings.SettingsActivity;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.Utils;
@@ -38,6 +39,7 @@ import com.mediatek.ims.internal.MtkImsManagerEx;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IWfcSettingsExt;
 import com.mediatek.settings.sim.SimHotSwapHandler;
+
 /* loaded from: classes.dex */
 public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, SwitchBar.OnSwitchChangeListener {
     private ListPreference mButtonWfcMode;
@@ -64,10 +66,10 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
             boolean z2;
             PersistableBundle configForSubId;
             SettingsActivity settingsActivity = (SettingsActivity) WifiCallingSettingsForSub.this.getActivity();
-            boolean isNonTtyOrTtyOnVolteEnabled = WifiCallingSettingsForSub.this.mImsManager.isNonTtyOrTtyOnVolteEnabled();
+            boolean zIsNonTtyOrTtyOnVolteEnabled = WifiCallingSettingsForSub.this.mImsManager.isNonTtyOrTtyOnVolteEnabled();
             boolean z3 = false;
-            boolean z4 = WifiCallingSettingsForSub.this.mSwitchBar.isChecked() && isNonTtyOrTtyOnVolteEnabled;
-            WifiCallingSettingsForSub.this.mSwitchBar.setEnabled(i == 0 && isNonTtyOrTtyOnVolteEnabled);
+            boolean z4 = WifiCallingSettingsForSub.this.mSwitchBar.isChecked() && zIsNonTtyOrTtyOnVolteEnabled;
+            WifiCallingSettingsForSub.this.mSwitchBar.setEnabled(i == 0 && zIsNonTtyOrTtyOnVolteEnabled);
             CarrierConfigManager carrierConfigManager = (CarrierConfigManager) settingsActivity.getSystemService("carrier_config");
             if (carrierConfigManager != null && (configForSubId = carrierConfigManager.getConfigForSubId(this.mSubId.intValue())) != null) {
                 z2 = configForSubId.getBoolean("editable_wfc_mode_bool");
@@ -76,16 +78,16 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
                 z = false;
                 z2 = true;
             }
-            Preference findPreference = WifiCallingSettingsForSub.this.getPreferenceScreen().findPreference("wifi_calling_mode");
-            if (findPreference != null) {
-                findPreference.setEnabled(z4 && z2 && i == 0);
+            Preference preferenceFindPreference = WifiCallingSettingsForSub.this.getPreferenceScreen().findPreference("wifi_calling_mode");
+            if (preferenceFindPreference != null) {
+                preferenceFindPreference.setEnabled(z4 && z2 && i == 0);
             }
-            Preference findPreference2 = WifiCallingSettingsForSub.this.getPreferenceScreen().findPreference("wifi_calling_roaming_mode");
-            if (findPreference2 != null) {
+            Preference preferenceFindPreference2 = WifiCallingSettingsForSub.this.getPreferenceScreen().findPreference("wifi_calling_roaming_mode");
+            if (preferenceFindPreference2 != null) {
                 if (z4 && z && i == 0) {
                     z3 = true;
                 }
-                findPreference2.setEnabled(z3);
+                preferenceFindPreference2.setEnabled(z3);
             }
         }
     };
@@ -123,10 +125,10 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
         SettingsActivity settingsActivity = (SettingsActivity) getActivity();
-        this.mEmptyView = (TextView) getView().findViewById(16908292);
+        this.mEmptyView = (TextView) getView().findViewById(R.id.empty);
         setEmptyView(this.mEmptyView);
-        this.mEmptyView.setText(settingsActivity.getString(R.string.wifi_calling_off_explanation) + settingsActivity.getString(R.string.wifi_calling_off_explanation_2));
-        this.mSwitchBar = (SwitchBar) getView().findViewById(R.id.switch_bar);
+        this.mEmptyView.setText(settingsActivity.getString(com.android.settings.R.string.wifi_calling_off_explanation) + settingsActivity.getString(com.android.settings.R.string.wifi_calling_off_explanation_2));
+        this.mSwitchBar = (SwitchBar) getView().findViewById(com.android.settings.R.id.switch_bar);
         this.mSwitchBar.show();
         this.mSwitch = this.mSwitchBar.getSwitch();
     }
@@ -137,13 +139,12 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
         this.mSwitchBar.hide();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showAlert(Intent intent) {
+    private void showAlert(Intent intent) {
         Activity activity = getActivity();
         CharSequence charSequenceExtra = intent.getCharSequenceExtra("alertTitle");
         CharSequence charSequenceExtra2 = intent.getCharSequenceExtra("alertMessage");
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(charSequenceExtra2).setTitle(charSequenceExtra).setIcon(17301543).setPositiveButton(17039370, (DialogInterface.OnClickListener) null);
+        builder.setMessage(charSequenceExtra2).setTitle(charSequenceExtra).setIcon(R.drawable.ic_dialog_alert).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null);
         builder.create().show();
     }
 
@@ -160,7 +161,7 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        addPreferencesFromResource(R.xml.wifi_calling_settings);
+        addPreferencesFromResource(com.android.settings.R.xml.wifi_calling_settings);
         this.mWfcExt = UtilsExt.getWfcSettingsExt(getActivity());
         this.mWfcExt.initPlugin(this);
         if (getArguments() != null && getArguments().containsKey("subId")) {
@@ -198,12 +199,12 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate = layoutInflater.inflate(R.layout.wifi_calling_settings_preferences, viewGroup, false);
-        ViewGroup viewGroup2 = (ViewGroup) inflate.findViewById(R.id.prefs_container);
-        Utils.prepareCustomPreferencesList(viewGroup, inflate, viewGroup2, false);
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) throws Resources.NotFoundException {
+        View viewInflate = layoutInflater.inflate(com.android.settings.R.layout.wifi_calling_settings_preferences, viewGroup, false);
+        ViewGroup viewGroup2 = (ViewGroup) viewInflate.findViewById(com.android.settings.R.id.prefs_container);
+        Utils.prepareCustomPreferencesList(viewGroup, viewInflate, viewGroup2, false);
         viewGroup2.addView(super.onCreateView(layoutInflater, viewGroup2, bundle));
-        return inflate;
+        return viewInflate;
     }
 
     private void updateBody() {
@@ -224,10 +225,10 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
             z2 = true;
         }
         if (!z2) {
-            this.mButtonWfcMode.setEntries(R.array.wifi_calling_mode_choices_without_wifi_only);
-            this.mButtonWfcMode.setEntryValues(R.array.wifi_calling_mode_values_without_wifi_only);
-            this.mButtonWfcRoamingMode.setEntries(R.array.wifi_calling_mode_choices_v2_without_wifi_only);
-            this.mButtonWfcRoamingMode.setEntryValues(R.array.wifi_calling_mode_values_without_wifi_only);
+            this.mButtonWfcMode.setEntries(com.android.settings.R.array.wifi_calling_mode_choices_without_wifi_only);
+            this.mButtonWfcMode.setEntryValues(com.android.settings.R.array.wifi_calling_mode_values_without_wifi_only);
+            this.mButtonWfcRoamingMode.setEntries(com.android.settings.R.array.wifi_calling_mode_choices_v2_without_wifi_only);
+            this.mButtonWfcRoamingMode.setEntryValues(com.android.settings.R.array.wifi_calling_mode_values_without_wifi_only);
         }
         boolean z3 = this.mImsManager.isWfcEnabledByUser() && this.mImsManager.isNonTtyOrTtyOnVolteEnabled();
         this.mSwitch.setChecked(z3);
@@ -237,11 +238,11 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
         this.mButtonWfcRoamingMode.setValue(Integer.toString(wfcMode2));
         updateButtonWfcMode(z3, wfcMode, wfcMode2);
         updateEnabledState();
-        boolean isNonTtyOrTtyOnVolteEnabled = this.mImsManager.isNonTtyOrTtyOnVolteEnabled();
-        Log.d("WifiCallingForSub", "[TTY]isNonTtyOrTtyOnVolteEnabled :" + isNonTtyOrTtyOnVolteEnabled + " wfcEnabled :" + z3);
-        if (!isNonTtyOrTtyOnVolteEnabled && z && !z3) {
+        boolean zIsNonTtyOrTtyOnVolteEnabled = this.mImsManager.isNonTtyOrTtyOnVolteEnabled();
+        Log.d("WifiCallingForSub", "[TTY]isNonTtyOrTtyOnVolteEnabled :" + zIsNonTtyOrTtyOnVolteEnabled + " wfcEnabled :" + z3);
+        if (!zIsNonTtyOrTtyOnVolteEnabled && z && !z3) {
             Activity activity = getActivity();
-            Toast.makeText(activity, activity.getString(R.string.tty_wfc_disable_wfc_setting_message), 1).show();
+            Toast.makeText(activity, activity.getString(com.android.settings.R.string.tty_wfc_disable_wfc_setting_message), 1).show();
         }
         this.mWfcExt.updateWfcModePreference(getPreferenceScreen(), this.mButtonWfcMode, z3, wfcMode);
     }
@@ -291,35 +292,36 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
         Log.d("WifiCallingForSub", "onSwitchChanged(" + z + ")");
         if (isInSwitchProcess()) {
             Log.d("WifiCallingForSub", "onSwitchChanged, switching process is ongoing.");
-            Toast.makeText(getActivity(), (int) R.string.Switch_not_in_use_string, 0).show();
+            Toast.makeText(getActivity(), com.android.settings.R.string.Switch_not_in_use_string, 0).show();
             this.mSwitchBar.setChecked(!z);
-        } else if (!z) {
-            updateWfcMode(false);
         } else {
+            if (!z) {
+                updateWfcMode(false);
+                return;
+            }
             Intent carrierActivityIntent = getCarrierActivityIntent();
             if (carrierActivityIntent != null) {
                 carrierActivityIntent.putExtra("EXTRA_LAUNCH_CARRIER_APP", 0);
                 startActivityForResult(carrierActivityIntent, 1);
-                return;
+            } else {
+                updateWfcMode(true);
             }
-            updateWfcMode(true);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Intent getCarrierActivityIntent() {
+    private Intent getCarrierActivityIntent() {
         PersistableBundle configForSubId;
-        ComponentName unflattenFromString;
+        ComponentName componentNameUnflattenFromString;
         CarrierConfigManager carrierConfigManager = (CarrierConfigManager) getActivity().getSystemService(CarrierConfigManager.class);
         if (carrierConfigManager == null || (configForSubId = carrierConfigManager.getConfigForSubId(this.mSubId)) == null) {
             return null;
         }
         String string = configForSubId.getString("wfc_emergency_address_carrier_app_string");
-        if (TextUtils.isEmpty(string) || (unflattenFromString = ComponentName.unflattenFromString(string)) == null || !isPackageExist(getActivity(), unflattenFromString)) {
+        if (TextUtils.isEmpty(string) || (componentNameUnflattenFromString = ComponentName.unflattenFromString(string)) == null || !isPackageExist(getActivity(), componentNameUnflattenFromString)) {
             return null;
         }
         Intent intent = new Intent();
-        intent.setComponent(unflattenFromString);
+        intent.setComponent(componentNameUnflattenFromString);
         return intent;
     }
 
@@ -388,22 +390,22 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
             Log.d("WifiCallingForSub", "onPreferenceChange mButtonWfcMode " + obj);
             String str = (String) obj;
             this.mButtonWfcMode.setValue(str);
-            int intValue = Integer.valueOf(str).intValue();
-            if (intValue != this.mImsManager.getWfcMode(false)) {
-                this.mImsManager.setWfcMode(intValue, false);
-                this.mButtonWfcMode.setSummary(getWfcModeSummary(intValue));
-                this.mMetricsFeatureProvider.action(getActivity(), getMetricsCategory(), intValue);
+            int iIntValue = Integer.valueOf(str).intValue();
+            if (iIntValue != this.mImsManager.getWfcMode(false)) {
+                this.mImsManager.setWfcMode(iIntValue, false);
+                this.mButtonWfcMode.setSummary(getWfcModeSummary(iIntValue));
+                this.mMetricsFeatureProvider.action(getActivity(), getMetricsCategory(), iIntValue);
             }
-            if (!this.mEditableWfcRoamingMode && intValue != this.mImsManager.getWfcMode(true)) {
-                this.mImsManager.setWfcMode(intValue, true);
+            if (!this.mEditableWfcRoamingMode && iIntValue != this.mImsManager.getWfcMode(true)) {
+                this.mImsManager.setWfcMode(iIntValue, true);
             }
         } else if (preference == this.mButtonWfcRoamingMode) {
             String str2 = (String) obj;
             this.mButtonWfcRoamingMode.setValue(str2);
-            int intValue2 = Integer.valueOf(str2).intValue();
-            if (intValue2 != this.mImsManager.getWfcMode(true)) {
-                this.mImsManager.setWfcMode(intValue2, true);
-                this.mMetricsFeatureProvider.action(getActivity(), getMetricsCategory(), intValue2);
+            int iIntValue2 = Integer.valueOf(str2).intValue();
+            if (iIntValue2 != this.mImsManager.getWfcMode(true)) {
+                this.mImsManager.setWfcMode(iIntValue2, true);
+                this.mMetricsFeatureProvider.action(getActivity(), getMetricsCategory(), iIntValue2);
             }
         }
         return true;
@@ -414,17 +416,17 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
         if (this.mImsManager.isWfcEnabledByUser()) {
             switch (i) {
                 case 0:
-                    return 17041065;
+                    return R.string.org_name;
                 case 1:
-                    return 17041064;
+                    return R.string.orgTypeWork;
                 case 2:
-                    return 17041066;
+                    return R.string.org_unit;
                 default:
                     Log.e("WifiCallingForSub", "Unexpected WFC mode value: " + i);
                     break;
             }
         }
-        return 17041099;
+        return R.string.permdesc_answerPhoneCalls;
     }
 
     private boolean isInSwitchProcess() {
@@ -438,16 +440,16 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
     }
 
     private void updateEnabledState() {
-        boolean isInCall = TelecomManager.from(getActivity()).isInCall();
-        Log.d("WifiCallingForSub", "updateEnabledState, inCall=" + isInCall);
-        if (isInCall) {
+        boolean zIsInCall = TelecomManager.from(getActivity()).isInCall();
+        Log.d("WifiCallingForSub", "updateEnabledState, inCall=" + zIsInCall);
+        if (zIsInCall) {
             this.mSwitchBar.setEnabled(false);
             this.mButtonWfcMode.setEnabled(false);
             this.mButtonWfcRoamingMode.setEnabled(false);
         }
     }
 
-    private static boolean isPackageExist(Context context, ComponentName componentName) {
+    private static boolean isPackageExist(Context context, ComponentName componentName) throws PackageManager.NameNotFoundException {
         try {
             context.getPackageManager().getActivityInfo(componentName, 0);
             Log.d("WifiCallingForSub", "package exists.");

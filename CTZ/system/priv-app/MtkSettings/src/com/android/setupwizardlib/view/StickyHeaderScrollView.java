@@ -6,6 +6,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowInsets;
+
 /* loaded from: classes.dex */
 public class StickyHeaderScrollView extends BottomScrollView {
     private int mStatusBarInset;
@@ -27,9 +28,8 @@ public class StickyHeaderScrollView extends BottomScrollView {
         this.mStatusBarInset = 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.view.BottomScrollView, android.widget.ScrollView, android.widget.FrameLayout, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         if (this.mSticky == null) {
             updateStickyView();
@@ -45,18 +45,16 @@ public class StickyHeaderScrollView extends BottomScrollView {
     private void updateStickyHeaderPosition() {
         if (Build.VERSION.SDK_INT >= 11 && this.mSticky != null) {
             View view = this.mStickyContainer != null ? this.mStickyContainer : this.mSticky;
-            int top = this.mStickyContainer != null ? this.mSticky.getTop() : 0;
-            if ((view.getTop() - getScrollY()) + top < this.mStatusBarInset || !view.isShown()) {
-                view.setTranslationY(getScrollY() - top);
+            if ((view.getTop() - getScrollY()) + (this.mStickyContainer != null ? this.mSticky.getTop() : 0) < this.mStatusBarInset || !view.isShown()) {
+                view.setTranslationY(getScrollY() - r1);
             } else {
                 view.setTranslationY(0.0f);
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.view.BottomScrollView, android.view.View
-    public void onScrollChanged(int i, int i2, int i3, int i4) {
+    protected void onScrollChanged(int i, int i2, int i3, int i4) {
         super.onScrollChanged(i, i2, i3, i4);
         updateStickyHeaderPosition();
     }

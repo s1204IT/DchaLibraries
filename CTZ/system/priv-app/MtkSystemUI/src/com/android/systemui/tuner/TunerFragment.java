@@ -16,6 +16,7 @@ import com.android.internal.hardware.AmbientDisplayConfiguration;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.R;
 import com.android.systemui.plugins.PluginPrefs;
+
 /* loaded from: classes.dex */
 public class TunerFragment extends PreferenceFragment {
     private static final CharSequence KEY_DOZE = "doze";
@@ -44,9 +45,9 @@ public class TunerFragment extends PreferenceFragment {
         }
         if (!Build.IS_DEBUGGABLE) {
             for (int i = 0; i < DEBUG_ONLY.length; i++) {
-                Preference findPreference = findPreference(DEBUG_ONLY[i]);
-                if (findPreference != null) {
-                    getPreferenceScreen().removePreference(findPreference);
+                Preference preferenceFindPreference = findPreference(DEBUG_ONLY[i]);
+                if (preferenceFindPreference != null) {
+                    getPreferenceScreen().removePreference(preferenceFindPreference);
                 }
             }
         }
@@ -90,15 +91,14 @@ public class TunerFragment extends PreferenceFragment {
                 }
             });
             return true;
-        } else if (itemId == 16908332) {
+        }
+        if (itemId == 16908332) {
             getActivity().finish();
             return true;
-        } else {
-            return super.onOptionsItemSelected(menuItem);
         }
+        return super.onOptionsItemSelected(menuItem);
     }
 
-    /* loaded from: classes.dex */
     public static class TunerWarningFragment extends DialogFragment {
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {

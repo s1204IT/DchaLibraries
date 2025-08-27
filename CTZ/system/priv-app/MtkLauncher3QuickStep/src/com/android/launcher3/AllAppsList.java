@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AllAppsList {
     public static final int DEFAULT_APPLICATIONS_NUMBER = 42;
@@ -120,12 +121,12 @@ public class AllAppsList {
                 }
             }
             for (LauncherActivityInfo launcherActivityInfo : activityList) {
-                AppInfo findAppInfo = findAppInfo(launcherActivityInfo.getComponentName(), userHandle);
-                if (findAppInfo == null) {
+                AppInfo appInfoFindAppInfo = findAppInfo(launcherActivityInfo.getComponentName(), userHandle);
+                if (appInfoFindAppInfo == null) {
                     add(new AppInfo(context, launcherActivityInfo, userHandle), launcherActivityInfo);
                 } else {
-                    this.mIconCache.getTitleAndIcon(findAppInfo, launcherActivityInfo, true);
-                    this.modified.add(findAppInfo);
+                    this.mIconCache.getTitleAndIcon(appInfoFindAppInfo, launcherActivityInfo, true);
+                    this.modified.add(appInfoFindAppInfo);
                 }
             }
             return;
@@ -141,8 +142,9 @@ public class AllAppsList {
     }
 
     private static boolean findActivity(List<LauncherActivityInfo> list, ComponentName componentName) {
-        for (LauncherActivityInfo launcherActivityInfo : list) {
-            if (launcherActivityInfo.getComponentName().equals(componentName)) {
+        Iterator<LauncherActivityInfo> it = list.iterator();
+        while (it.hasNext()) {
+            if (it.next().getComponentName().equals(componentName)) {
                 return true;
             }
         }

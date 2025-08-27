@@ -1,5 +1,6 @@
 package com.android.browser.view;
 
+import android.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PointF;
@@ -15,20 +16,20 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewDebug;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.OverScroller;
-import com.android.internal.R;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ScrollerView extends FrameLayout {
     private int mActivePointerId;
     protected View mChildToScrollTo;
     private PointF mDownCoords;
     private View mDownView;
+
     @ViewDebug.ExportedProperty(category = "layout")
     private boolean mFillViewport;
     private StrictMode.Span mFlingStrictSpan;
@@ -55,7 +56,7 @@ public class ScrollerView extends FrameLayout {
     }
 
     public ScrollerView(Context context, AttributeSet attributeSet) {
-        this(context, attributeSet, 16842880);
+        this(context, attributeSet, R.attr.scrollViewStyle);
     }
 
     public ScrollerView(Context context, AttributeSet attributeSet, int i) {
@@ -69,9 +70,9 @@ public class ScrollerView extends FrameLayout {
         this.mScrollStrictSpan = null;
         this.mFlingStrictSpan = null;
         initScrollView();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ScrollView, i, 0);
-        setFillViewport(obtainStyledAttributes.getBoolean(0, false));
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, com.android.internal.R.styleable.ScrollView, i, 0);
+        setFillViewport(typedArrayObtainStyledAttributes.getBoolean(0, false));
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     private void initScrollView() {
@@ -199,9 +200,8 @@ public class ScrollerView extends FrameLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.widget.FrameLayout, android.view.View
-    public void onMeasure(int i, int i2) {
+    protected void onMeasure(int i, int i2) {
         super.onMeasure(i, i2);
         if (this.mFillViewport && View.MeasureSpec.getMode(i2) != 0 && getChildCount() > 0) {
             View childAt = getChildAt(0);
@@ -231,44 +231,45 @@ public class ScrollerView extends FrameLayout {
             if (!isFocused() || keyEvent.getKeyCode() == 4) {
                 return false;
             }
-            View findFocus = findFocus();
-            if (findFocus == this) {
-                findFocus = null;
+            View viewFindFocus = findFocus();
+            if (viewFindFocus == this) {
+                viewFindFocus = null;
             }
-            View findNextFocus = FocusFinder.getInstance().findNextFocus(this, findFocus, 130);
-            return (findNextFocus == null || findNextFocus == this || !findNextFocus.requestFocus(130)) ? false : true;
-        } else if (keyEvent.getAction() == 0) {
-            int keyCode = keyEvent.getKeyCode();
-            if (keyCode != 62) {
-                switch (keyCode) {
-                    case 19:
-                        if (!keyEvent.isAltPressed()) {
-                            return arrowScroll(33);
-                        }
-                        return fullScroll(33);
-                    case 20:
-                        if (!keyEvent.isAltPressed()) {
-                            return arrowScroll(130);
-                        }
-                        return fullScroll(130);
-                    default:
-                        return false;
-                }
-            }
-            pageScroll(keyEvent.isShiftPressed() ? 33 : 130);
-            return false;
-        } else {
+            View viewFindNextFocus = FocusFinder.getInstance().findNextFocus(this, viewFindFocus, 130);
+            return (viewFindNextFocus == null || viewFindNextFocus == this || !viewFindNextFocus.requestFocus(130)) ? false : true;
+        }
+        if (keyEvent.getAction() != 0) {
             return false;
         }
+        int keyCode = keyEvent.getKeyCode();
+        if (keyCode != 62) {
+            switch (keyCode) {
+                case 19:
+                    if (!keyEvent.isAltPressed()) {
+                        break;
+                    } else {
+                        break;
+                    }
+                case 20:
+                    if (!keyEvent.isAltPressed()) {
+                        break;
+                    } else {
+                        break;
+                    }
+            }
+            return false;
+        }
+        pageScroll(keyEvent.isShiftPressed() ? 33 : 130);
+        return false;
     }
 
     private boolean inChild(int i, int i2) {
-        if (getChildCount() > 0) {
-            int i3 = this.mScrollY;
-            View childAt = getChildAt(0);
-            return i2 >= childAt.getTop() - i3 && i2 < childAt.getBottom() - i3 && i >= childAt.getLeft() && i < childAt.getRight();
+        if (getChildCount() <= 0) {
+            return false;
         }
-        return false;
+        int i3 = this.mScrollY;
+        View childAt = getChildAt(0);
+        return i2 >= childAt.getTop() - i3 && i2 < childAt.getBottom() - i3 && i >= childAt.getLeft() && i < childAt.getRight();
     }
 
     private void initOrResetVelocityTracker() {
@@ -334,6 +335,7 @@ public class ScrollerView extends FrameLayout {
                         this.mDownView = findViewAt((int) motionEvent.getX(), (int) motionEvent.getY());
                         break;
                     }
+                    break;
                 case 1:
                 case 3:
                     this.mIsBeingDragged = false;
@@ -353,12 +355,12 @@ public class ScrollerView extends FrameLayout {
                 case 2:
                     int i2 = this.mActivePointerId;
                     if (i2 != -1) {
-                        int findPointerIndex = motionEvent.findPointerIndex(i2);
-                        if (findPointerIndex == -1) {
+                        int iFindPointerIndex = motionEvent.findPointerIndex(i2);
+                        if (iFindPointerIndex == -1) {
                             Log.e("ScrollerView", "Invalid active pointer index = " + i2 + " at onInterceptTouchEvent ACTION_MOVE");
                             break;
                         } else {
-                            float x2 = this.mHorizontal ? motionEvent.getX(findPointerIndex) : motionEvent.getY(findPointerIndex);
+                            float x2 = this.mHorizontal ? motionEvent.getX(iFindPointerIndex) : motionEvent.getY(iFindPointerIndex);
                             if (((int) Math.abs(x2 - this.mLastMotionY)) > this.mTouchSlop) {
                                 this.mIsBeingDragged = true;
                                 this.mLastMotionY = x2;
@@ -369,7 +371,7 @@ public class ScrollerView extends FrameLayout {
                                     break;
                                 }
                             } else {
-                                float y = this.mHorizontal ? motionEvent.getY(findPointerIndex) : motionEvent.getX(findPointerIndex);
+                                float y = this.mHorizontal ? motionEvent.getY(iFindPointerIndex) : motionEvent.getX(iFindPointerIndex);
                                 if (Math.abs(y - this.mLastOrthoCoord) > this.mTouchSlop) {
                                     this.mIsOrthoDragged = true;
                                     this.mLastOrthoCoord = y;
@@ -388,9 +390,8 @@ public class ScrollerView extends FrameLayout {
         return this.mIsBeingDragged || this.mIsOrthoDragged;
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:72:0x01bf, code lost:
-        if (r0 > 0) goto L66;
-     */
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:98:0x0226  */
     @Override // android.view.View
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -407,120 +408,65 @@ public class ScrollerView extends FrameLayout {
         switch (motionEvent.getAction() & 255) {
             case 0:
                 this.mIsBeingDragged = getChildCount() != 0;
-                if (this.mIsBeingDragged) {
-                    if (!this.mScroller.isFinished()) {
-                        this.mScroller.abortAnimation();
-                        if (this.mFlingStrictSpan != null) {
-                            this.mFlingStrictSpan.finish();
-                            this.mFlingStrictSpan = null;
-                        }
-                    }
-                    this.mLastMotionY = this.mHorizontal ? motionEvent.getX() : motionEvent.getY();
-                    this.mActivePointerId = motionEvent.getPointerId(0);
-                    break;
-                } else {
+                if (!this.mIsBeingDragged) {
                     return false;
                 }
+                if (!this.mScroller.isFinished()) {
+                    this.mScroller.abortAnimation();
+                    if (this.mFlingStrictSpan != null) {
+                        this.mFlingStrictSpan.finish();
+                        this.mFlingStrictSpan = null;
+                    }
+                }
+                this.mLastMotionY = this.mHorizontal ? motionEvent.getX() : motionEvent.getY();
+                this.mActivePointerId = motionEvent.getPointerId(0);
+                return true;
             case 1:
                 VelocityTracker velocityTracker = this.mVelocityTracker;
                 velocityTracker.computeCurrentVelocity(1000, this.mMaximumVelocity);
                 if (isOrthoMove(velocityTracker.getXVelocity(this.mActivePointerId), velocityTracker.getYVelocity(this.mActivePointerId))) {
                     if (this.mMinimumVelocity < Math.abs(this.mHorizontal ? velocityTracker.getYVelocity() : velocityTracker.getXVelocity())) {
                         onOrthoFling(this.mDownView, this.mHorizontal ? velocityTracker.getYVelocity() : velocityTracker.getXVelocity());
-                        break;
-                    }
-                }
-                if (this.mIsOrthoDragged) {
-                    onOrthoDragFinished(this.mDownView);
-                    this.mActivePointerId = -1;
-                    endDrag();
-                    break;
-                } else if (this.mIsBeingDragged) {
-                    VelocityTracker velocityTracker2 = this.mVelocityTracker;
-                    velocityTracker2.computeCurrentVelocity(1000, this.mMaximumVelocity);
-                    if (this.mHorizontal) {
-                        yVelocity = (int) velocityTracker2.getXVelocity(this.mActivePointerId);
-                    } else {
-                        yVelocity = (int) velocityTracker2.getYVelocity(this.mActivePointerId);
-                    }
-                    if (getChildCount() > 0) {
-                        if (Math.abs(yVelocity) > this.mMinimumVelocity) {
-                            fling(-yVelocity);
+                    } else if (this.mIsOrthoDragged) {
+                        onOrthoDragFinished(this.mDownView);
+                        this.mActivePointerId = -1;
+                        endDrag();
+                    } else if (this.mIsBeingDragged) {
+                        VelocityTracker velocityTracker2 = this.mVelocityTracker;
+                        velocityTracker2.computeCurrentVelocity(1000, this.mMaximumVelocity);
+                        if (this.mHorizontal) {
+                            yVelocity = (int) velocityTracker2.getXVelocity(this.mActivePointerId);
                         } else {
-                            int scrollRange = getScrollRange();
-                            if (this.mHorizontal) {
-                                if (this.mScroller.springBack(this.mScrollX, this.mScrollY, 0, scrollRange, 0, 0)) {
+                            yVelocity = (int) velocityTracker2.getYVelocity(this.mActivePointerId);
+                        }
+                        if (getChildCount() > 0) {
+                            if (Math.abs(yVelocity) > this.mMinimumVelocity) {
+                                fling(-yVelocity);
+                            } else {
+                                int scrollRange = getScrollRange();
+                                if (this.mHorizontal) {
+                                    if (this.mScroller.springBack(this.mScrollX, this.mScrollY, 0, scrollRange, 0, 0)) {
+                                        invalidate();
+                                    }
+                                } else if (this.mScroller.springBack(this.mScrollX, this.mScrollY, 0, 0, 0, scrollRange)) {
                                     invalidate();
                                 }
-                            } else if (this.mScroller.springBack(this.mScrollX, this.mScrollY, 0, 0, 0, scrollRange)) {
-                                invalidate();
                             }
+                            onPull(0);
                         }
-                        onPull(0);
+                        this.mActivePointerId = -1;
+                        endDrag();
                     }
-                    this.mActivePointerId = -1;
-                    endDrag();
-                    break;
                 }
-                break;
+                return true;
             case 2:
-                if (!this.mIsOrthoDragged) {
-                    if (this.mIsBeingDragged) {
-                        int findPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
-                        if (findPointerIndex == -1) {
-                            Log.e("ScrollerView", "Invalid active pointer index = " + this.mActivePointerId + " at onTouchEvent ACTION_MOVE begin dragged");
-                            break;
-                        } else {
-                            if (this.mHorizontal) {
-                                y = motionEvent.getX(findPointerIndex);
-                            } else {
-                                y = motionEvent.getY(findPointerIndex);
-                            }
-                            int i3 = (int) (this.mLastMotionY - y);
-                            this.mLastMotionY = y;
-                            int i4 = this.mScrollX;
-                            int i5 = this.mScrollY;
-                            int scrollRange2 = getScrollRange();
-                            if (this.mHorizontal) {
-                                i = scrollRange2;
-                                if (overScrollBy(i3, 0, this.mScrollX, 0, scrollRange2, 0, this.mOverscrollDistance, 0, true)) {
-                                    this.mVelocityTracker.clear();
-                                }
-                            } else {
-                                i = scrollRange2;
-                                if (overScrollBy(0, i3, 0, this.mScrollY, 0, i, 0, this.mOverscrollDistance, true)) {
-                                    this.mVelocityTracker.clear();
-                                }
-                            }
-                            onScrollChanged(this.mScrollX, this.mScrollY, i4, i5);
-                            int overScrollMode = getOverScrollMode();
-                            if (overScrollMode == 0) {
-                                i2 = i;
-                            } else if (overScrollMode == 1) {
-                                i2 = i;
-                                break;
-                            }
-                            int i6 = this.mHorizontal ? i4 + i3 : i5 + i3;
-                            if (i6 < 0) {
-                                onPull(i6);
-                                break;
-                            } else if (i6 > i2) {
-                                onPull(i6 - i2);
-                                break;
-                            } else {
-                                onPull(0);
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    int findPointerIndex2 = motionEvent.findPointerIndex(this.mActivePointerId);
-                    if (findPointerIndex2 == -1) {
+                if (this.mIsOrthoDragged) {
+                    int iFindPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
+                    if (iFindPointerIndex == -1) {
                         Log.e("ScrollerView", "Invalid active pointer index = " + this.mActivePointerId + " at onTouchEvent ACTION_MOVE");
-                        break;
                     } else {
-                        float x = motionEvent.getX(findPointerIndex2);
-                        float y3 = motionEvent.getY(findPointerIndex2);
+                        float x = motionEvent.getX(iFindPointerIndex);
+                        float y3 = motionEvent.getY(iFindPointerIndex);
                         if (isOrthoMove(x - this.mDownCoords.x, y3 - this.mDownCoords.y)) {
                             View view = this.mDownView;
                             if (this.mHorizontal) {
@@ -529,17 +475,56 @@ public class ScrollerView extends FrameLayout {
                                 f = x - this.mDownCoords.x;
                             }
                             onOrthoDrag(view, f);
-                            break;
+                        }
+                    }
+                } else if (this.mIsBeingDragged) {
+                    int iFindPointerIndex2 = motionEvent.findPointerIndex(this.mActivePointerId);
+                    if (iFindPointerIndex2 == -1) {
+                        Log.e("ScrollerView", "Invalid active pointer index = " + this.mActivePointerId + " at onTouchEvent ACTION_MOVE begin dragged");
+                    } else {
+                        if (this.mHorizontal) {
+                            y = motionEvent.getX(iFindPointerIndex2);
+                        } else {
+                            y = motionEvent.getY(iFindPointerIndex2);
+                        }
+                        int i3 = (int) (this.mLastMotionY - y);
+                        this.mLastMotionY = y;
+                        int i4 = this.mScrollX;
+                        int i5 = this.mScrollY;
+                        int scrollRange2 = getScrollRange();
+                        if (this.mHorizontal) {
+                            i = scrollRange2;
+                            if (overScrollBy(i3, 0, this.mScrollX, 0, scrollRange2, 0, this.mOverscrollDistance, 0, true)) {
+                                this.mVelocityTracker.clear();
+                            }
+                        } else {
+                            i = scrollRange2;
+                            if (overScrollBy(0, i3, 0, this.mScrollY, 0, i, 0, this.mOverscrollDistance, true)) {
+                                this.mVelocityTracker.clear();
+                            }
+                        }
+                        onScrollChanged(this.mScrollX, this.mScrollY, i4, i5);
+                        int overScrollMode = getOverScrollMode();
+                        if (overScrollMode == 0) {
+                            i2 = i;
+                        } else if (overScrollMode == 1 && (i2 = i) > 0) {
+                        }
+                        int i6 = this.mHorizontal ? i4 + i3 : i5 + i3;
+                        if (i6 < 0) {
+                            onPull(i6);
+                        } else if (i6 > i2) {
+                            onPull(i6 - i2);
+                        } else {
+                            onPull(0);
                         }
                     }
                 }
-                break;
+                return true;
             case 3:
                 if (this.mIsOrthoDragged) {
                     onOrthoDragFinished(this.mDownView);
                     this.mActivePointerId = -1;
                     endDrag();
-                    break;
                 } else if (this.mIsBeingDragged && getChildCount() > 0) {
                     if (this.mHorizontal) {
                         if (this.mScroller.springBack(this.mScrollX, this.mScrollY, 0, getScrollRange(), 0, 0)) {
@@ -550,32 +535,32 @@ public class ScrollerView extends FrameLayout {
                     }
                     this.mActivePointerId = -1;
                     endDrag();
-                    break;
                 }
-                break;
+                return true;
+            case 4:
+            default:
+                return true;
             case 5:
                 int actionIndex = motionEvent.getActionIndex();
                 this.mLastMotionY = this.mHorizontal ? motionEvent.getX(actionIndex) : motionEvent.getY(actionIndex);
                 this.mLastOrthoCoord = this.mHorizontal ? motionEvent.getY(actionIndex) : motionEvent.getX(actionIndex);
                 this.mActivePointerId = motionEvent.getPointerId(actionIndex);
-                break;
+                return true;
             case 6:
                 onSecondaryPointerUp(motionEvent);
-                int findPointerIndex3 = motionEvent.findPointerIndex(this.mActivePointerId);
-                if (findPointerIndex3 == -1) {
+                int iFindPointerIndex3 = motionEvent.findPointerIndex(this.mActivePointerId);
+                if (iFindPointerIndex3 == -1) {
                     Log.e("ScrollerView", "Invalid active pointer index = " + this.mActivePointerId + " at onTouchEvent ACTION_POINTER_UP");
-                    break;
                 } else {
                     if (this.mHorizontal) {
-                        y2 = motionEvent.getX(findPointerIndex3);
+                        y2 = motionEvent.getX(iFindPointerIndex3);
                     } else {
-                        y2 = motionEvent.getY(findPointerIndex3);
+                        y2 = motionEvent.getY(iFindPointerIndex3);
                     }
                     this.mLastMotionY = y2;
-                    break;
                 }
+                return true;
         }
-        return true;
     }
 
     protected View findViewAt(int i, int i2) {
@@ -604,36 +589,38 @@ public class ScrollerView extends FrameLayout {
             if (this.mHorizontal) {
                 float axisValue = motionEvent.getAxisValue(10);
                 if (axisValue != 0.0f) {
+                    int horizontalScrollFactor = (int) (axisValue * getHorizontalScrollFactor());
                     int scrollRange = getScrollRange();
                     int i = this.mScrollX;
-                    int horizontalScrollFactor = i - ((int) (axisValue * getHorizontalScrollFactor()));
-                    if (horizontalScrollFactor >= 0) {
-                        if (horizontalScrollFactor > scrollRange) {
-                            horizontalScrollFactor = scrollRange;
+                    int i2 = i - horizontalScrollFactor;
+                    if (i2 >= 0) {
+                        if (i2 > scrollRange) {
+                            i2 = scrollRange;
                         }
                     } else {
-                        horizontalScrollFactor = 0;
+                        i2 = 0;
                     }
-                    if (horizontalScrollFactor != i) {
-                        super.scrollTo(horizontalScrollFactor, this.mScrollY);
+                    if (i2 != i) {
+                        super.scrollTo(i2, this.mScrollY);
                         return true;
                     }
                 }
             } else {
                 float axisValue2 = motionEvent.getAxisValue(9);
                 if (axisValue2 != 0.0f) {
+                    int verticalScrollFactor = (int) (axisValue2 * getVerticalScrollFactor());
                     int scrollRange2 = getScrollRange();
-                    int i2 = this.mScrollY;
-                    int verticalScrollFactor = i2 - ((int) (axisValue2 * getVerticalScrollFactor()));
-                    if (verticalScrollFactor >= 0) {
-                        if (verticalScrollFactor > scrollRange2) {
-                            verticalScrollFactor = scrollRange2;
+                    int i3 = this.mScrollY;
+                    int i4 = i3 - verticalScrollFactor;
+                    if (i4 >= 0) {
+                        if (i4 > scrollRange2) {
+                            i4 = scrollRange2;
                         }
                     } else {
-                        verticalScrollFactor = 0;
+                        i4 = 0;
                     }
-                    if (verticalScrollFactor != i2) {
-                        super.scrollTo(this.mScrollX, verticalScrollFactor);
+                    if (i4 != i3) {
+                        super.scrollTo(this.mScrollX, i4);
                         return true;
                     }
                 }
@@ -690,16 +677,21 @@ public class ScrollerView extends FrameLayout {
     }
 
     private int getScrollRange() {
-        if (getChildCount() > 0) {
-            View childAt = getChildAt(0);
-            if (this.mHorizontal) {
-                return Math.max(0, childAt.getWidth() - ((getWidth() - this.mPaddingRight) - this.mPaddingLeft));
-            }
-            return Math.max(0, childAt.getHeight() - ((getHeight() - this.mPaddingBottom) - this.mPaddingTop));
+        if (getChildCount() <= 0) {
+            return 0;
         }
-        return 0;
+        View childAt = getChildAt(0);
+        if (this.mHorizontal) {
+            return Math.max(0, childAt.getWidth() - ((getWidth() - this.mPaddingRight) - this.mPaddingLeft));
+        }
+        return Math.max(0, childAt.getHeight() - ((getHeight() - this.mPaddingBottom) - this.mPaddingTop));
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [1037=4] */
+    /* JADX WARN: Removed duplicated region for block: B:42:0x0082  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private View findFocusableViewInBounds(boolean z, int i, int i2) {
         ArrayList focusables = getFocusables(2);
         int size = focusables.size();
@@ -717,18 +709,13 @@ public class ScrollerView extends FrameLayout {
                 } else {
                     boolean z4 = (z && left < (this.mHorizontal ? view.getLeft() : view.getTop())) || (!z && right > (this.mHorizontal ? view.getRight() : view.getBottom()));
                     if (z2) {
-                        if (z3) {
-                            if (!z4) {
-                            }
+                        if (z3 && z4) {
                             view = view2;
                         }
                     } else if (z3) {
                         view = view2;
                         z2 = true;
-                    } else {
-                        if (!z4) {
-                        }
-                        view = view2;
+                    } else if (z4) {
                     }
                 }
             }
@@ -777,33 +764,33 @@ public class ScrollerView extends FrameLayout {
         int i4 = height + scrollY;
         boolean z = false;
         boolean z2 = i == 33;
-        View findFocusableViewInBounds = findFocusableViewInBounds(z2, i2, i3);
-        if (findFocusableViewInBounds == null) {
-            findFocusableViewInBounds = this;
+        View viewFindFocusableViewInBounds = findFocusableViewInBounds(z2, i2, i3);
+        if (viewFindFocusableViewInBounds == null) {
+            viewFindFocusableViewInBounds = this;
         }
         if (i2 < scrollY || i3 > i4) {
             doScrollY(z2 ? i2 - scrollY : i3 - i4);
             z = true;
         }
-        if (findFocusableViewInBounds != findFocus()) {
-            findFocusableViewInBounds.requestFocus(i);
+        if (viewFindFocusableViewInBounds != findFocus()) {
+            viewFindFocusableViewInBounds.requestFocus(i);
         }
         return z;
     }
 
     public boolean arrowScroll(int i) {
         int bottom;
-        View findFocus = findFocus();
-        if (findFocus == this) {
-            findFocus = null;
+        View viewFindFocus = findFocus();
+        if (viewFindFocus == this) {
+            viewFindFocus = null;
         }
-        View findNextFocus = FocusFinder.getInstance().findNextFocus(this, findFocus, i);
+        View viewFindNextFocus = FocusFinder.getInstance().findNextFocus(this, viewFindFocus, i);
         int maxScrollAmount = getMaxScrollAmount();
-        if (findNextFocus != null && isWithinDeltaOfScreen(findNextFocus, maxScrollAmount, getHeight())) {
-            findNextFocus.getDrawingRect(this.mTempRect);
-            offsetDescendantRectToMyCoords(findNextFocus, this.mTempRect);
+        if (viewFindNextFocus != null && isWithinDeltaOfScreen(viewFindNextFocus, maxScrollAmount, getHeight())) {
+            viewFindNextFocus.getDrawingRect(this.mTempRect);
+            offsetDescendantRectToMyCoords(viewFindNextFocus, this.mTempRect);
             doScrollY(computeScrollDeltaToGetChildRectOnScreen(this.mTempRect));
-            findNextFocus.requestFocus(i);
+            viewFindNextFocus.requestFocus(i);
         } else {
             if (i == 33 && getScrollY() < maxScrollAmount) {
                 maxScrollAmount = getScrollY();
@@ -818,7 +805,7 @@ public class ScrollerView extends FrameLayout {
             }
             doScrollY(maxScrollAmount);
         }
-        if (findFocus != null && findFocus.isFocused() && isOffScreen(findFocus)) {
+        if (viewFindFocus != null && viewFindFocus.isFocused() && isOffScreen(viewFindFocus)) {
             int descendantFocusability = getDescendantFocusability();
             setDescendantFocusability(131072);
             requestFocus();
@@ -850,10 +837,13 @@ public class ScrollerView extends FrameLayout {
             if (this.mSmoothScrollingEnabled) {
                 if (this.mHorizontal) {
                     smoothScrollBy(0, i);
+                    return;
                 } else {
                     smoothScrollBy(i, 0);
+                    return;
                 }
-            } else if (this.mHorizontal) {
+            }
+            if (this.mHorizontal) {
                 scrollBy(0, i);
             } else {
                 scrollBy(i, 0);
@@ -867,13 +857,13 @@ public class ScrollerView extends FrameLayout {
         }
         if (AnimationUtils.currentAnimationTimeMillis() - this.mLastScroll > 250) {
             if (this.mHorizontal) {
-                int max = Math.max(0, getChildAt(0).getWidth() - ((getWidth() - this.mPaddingRight) - this.mPaddingLeft));
+                int iMax = Math.max(0, getChildAt(0).getWidth() - ((getWidth() - this.mPaddingRight) - this.mPaddingLeft));
                 int i3 = this.mScrollX;
-                this.mScroller.startScroll(i3, this.mScrollY, Math.max(0, Math.min(i + i3, max)) - i3, 0);
+                this.mScroller.startScroll(i3, this.mScrollY, Math.max(0, Math.min(i + i3, iMax)) - i3, 0);
             } else {
-                int max2 = Math.max(0, getChildAt(0).getHeight() - ((getHeight() - this.mPaddingBottom) - this.mPaddingTop));
+                int iMax2 = Math.max(0, getChildAt(0).getHeight() - ((getHeight() - this.mPaddingBottom) - this.mPaddingTop));
                 int i4 = this.mScrollY;
-                this.mScroller.startScroll(this.mScrollX, i4, 0, Math.max(0, Math.min(i2 + i4, max2)) - i4);
+                this.mScroller.startScroll(this.mScrollX, i4, 0, Math.max(0, Math.min(i2 + i4, iMax2)) - i4);
             }
             invalidate();
         } else {
@@ -905,12 +895,12 @@ public class ScrollerView extends FrameLayout {
         }
         int bottom = getChildAt(0).getBottom();
         int i = this.mScrollY;
-        int max = Math.max(0, bottom - height);
+        int iMax = Math.max(0, bottom - height);
         if (i < 0) {
             return bottom - i;
         }
-        if (i > max) {
-            return bottom + (i - max);
+        if (i > iMax) {
+            return bottom + (i - iMax);
         }
         return bottom;
     }
@@ -927,12 +917,12 @@ public class ScrollerView extends FrameLayout {
         }
         int right = getChildAt(0).getRight();
         int i = this.mScrollX;
-        int max = Math.max(0, right - width);
+        int iMax = Math.max(0, right - width);
         if (i < 0) {
             return right - i;
         }
-        if (i > max) {
-            return right + (i - max);
+        if (i > iMax) {
+            return right + (i - iMax);
         }
         return right;
     }
@@ -950,31 +940,31 @@ public class ScrollerView extends FrameLayout {
     @Override // android.view.ViewGroup
     protected void measureChild(View view, int i, int i2) {
         int childMeasureSpec;
-        int makeMeasureSpec;
+        int iMakeMeasureSpec;
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         if (this.mHorizontal) {
-            makeMeasureSpec = getChildMeasureSpec(i2, this.mPaddingTop + this.mPaddingBottom, layoutParams.height);
+            iMakeMeasureSpec = getChildMeasureSpec(i2, this.mPaddingTop + this.mPaddingBottom, layoutParams.height);
             childMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, 0);
         } else {
             childMeasureSpec = getChildMeasureSpec(i, this.mPaddingLeft + this.mPaddingRight, layoutParams.width);
-            makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, 0);
+            iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, 0);
         }
-        view.measure(childMeasureSpec, makeMeasureSpec);
+        view.measure(childMeasureSpec, iMakeMeasureSpec);
     }
 
     @Override // android.view.ViewGroup
     protected void measureChildWithMargins(View view, int i, int i2, int i3, int i4) {
         int childMeasureSpec;
-        int makeMeasureSpec;
+        int iMakeMeasureSpec;
         ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
         if (this.mHorizontal) {
-            makeMeasureSpec = getChildMeasureSpec(i3, this.mPaddingTop + this.mPaddingBottom + marginLayoutParams.topMargin + marginLayoutParams.bottomMargin + i4, marginLayoutParams.height);
+            iMakeMeasureSpec = getChildMeasureSpec(i3, this.mPaddingTop + this.mPaddingBottom + marginLayoutParams.topMargin + marginLayoutParams.bottomMargin + i4, marginLayoutParams.height);
             childMeasureSpec = View.MeasureSpec.makeMeasureSpec(marginLayoutParams.leftMargin + marginLayoutParams.rightMargin, 0);
         } else {
             childMeasureSpec = getChildMeasureSpec(i, this.mPaddingLeft + this.mPaddingRight + marginLayoutParams.leftMargin + marginLayoutParams.rightMargin + i2, marginLayoutParams.width);
-            makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(marginLayoutParams.topMargin + marginLayoutParams.bottomMargin, 0);
+            iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(marginLayoutParams.topMargin + marginLayoutParams.bottomMargin, 0);
         }
-        view.measure(childMeasureSpec, makeMeasureSpec);
+        view.measure(childMeasureSpec, iMakeMeasureSpec);
     }
 
     @Override // android.view.View
@@ -994,7 +984,9 @@ public class ScrollerView extends FrameLayout {
             }
             awakenScrollBars();
             invalidate();
-        } else if (this.mFlingStrictSpan != null) {
+            return;
+        }
+        if (this.mFlingStrictSpan != null) {
             this.mFlingStrictSpan.finish();
             this.mFlingStrictSpan = null;
         }
@@ -1007,19 +999,19 @@ public class ScrollerView extends FrameLayout {
     }
 
     private boolean scrollToChildRect(Rect rect, boolean z) {
-        int computeScrollDeltaToGetChildRectOnScreen = computeScrollDeltaToGetChildRectOnScreen(rect);
-        boolean z2 = computeScrollDeltaToGetChildRectOnScreen != 0;
+        int iComputeScrollDeltaToGetChildRectOnScreen = computeScrollDeltaToGetChildRectOnScreen(rect);
+        boolean z2 = iComputeScrollDeltaToGetChildRectOnScreen != 0;
         if (z2) {
             if (z) {
                 if (this.mHorizontal) {
-                    scrollBy(computeScrollDeltaToGetChildRectOnScreen, 0);
+                    scrollBy(iComputeScrollDeltaToGetChildRectOnScreen, 0);
                 } else {
-                    scrollBy(0, computeScrollDeltaToGetChildRectOnScreen);
+                    scrollBy(0, iComputeScrollDeltaToGetChildRectOnScreen);
                 }
             } else if (this.mHorizontal) {
-                smoothScrollBy(computeScrollDeltaToGetChildRectOnScreen, 0);
+                smoothScrollBy(iComputeScrollDeltaToGetChildRectOnScreen, 0);
             } else {
-                smoothScrollBy(0, computeScrollDeltaToGetChildRectOnScreen);
+                smoothScrollBy(0, iComputeScrollDeltaToGetChildRectOnScreen);
             }
         }
         return z2;
@@ -1055,16 +1047,16 @@ public class ScrollerView extends FrameLayout {
                 i2 = (rect.bottom - i3) + 0;
             }
             return Math.min(i2, getChildAt(0).getBottom() - i3);
-        } else if (rect.top >= scrollY || rect.bottom >= i3) {
-            return 0;
-        } else {
-            if (rect.height() > height) {
-                i = 0 - (i3 - rect.bottom);
-            } else {
-                i = 0 - (scrollY - rect.top);
-            }
-            return Math.max(i, -getScrollY());
         }
+        if (rect.top >= scrollY || rect.bottom >= i3) {
+            return 0;
+        }
+        if (rect.height() > height) {
+            i = 0 - (i3 - rect.bottom);
+        } else {
+            i = 0 - (scrollY - rect.top);
+        }
+        return Math.max(i, -getScrollY());
     }
 
     private int computeScrollDeltaToGetChildRectOnScreenHorizontal(Rect rect) {
@@ -1090,16 +1082,16 @@ public class ScrollerView extends FrameLayout {
                 i2 = (rect.right - i3) + 0;
             }
             return Math.min(i2, getChildAt(0).getRight() - i3);
-        } else if (rect.left >= scrollX || rect.right >= i3) {
-            return 0;
-        } else {
-            if (rect.width() > width) {
-                i = 0 - (i3 - rect.right);
-            } else {
-                i = 0 - (scrollX - rect.left);
-            }
-            return Math.max(i, -getScrollX());
         }
+        if (rect.left >= scrollX || rect.right >= i3) {
+            return 0;
+        }
+        if (rect.width() > width) {
+            i = 0 - (i3 - rect.right);
+        } else {
+            i = 0 - (scrollX - rect.left);
+        }
+        return Math.max(i, -getScrollX());
     }
 
     @Override // android.view.ViewGroup, android.view.ViewParent
@@ -1114,7 +1106,7 @@ public class ScrollerView extends FrameLayout {
 
     @Override // android.view.ViewGroup
     protected boolean onRequestFocusInDescendants(int i, Rect rect) {
-        View findNextFocusFromRect;
+        View viewFindNextFocusFromRect;
         if (this.mHorizontal) {
             if (i == 2) {
                 i = 66;
@@ -1127,14 +1119,14 @@ public class ScrollerView extends FrameLayout {
             i = 33;
         }
         if (rect == null) {
-            findNextFocusFromRect = FocusFinder.getInstance().findNextFocus(this, null, i);
+            viewFindNextFocusFromRect = FocusFinder.getInstance().findNextFocus(this, null, i);
         } else {
-            findNextFocusFromRect = FocusFinder.getInstance().findNextFocusFromRect(this, rect, i);
+            viewFindNextFocusFromRect = FocusFinder.getInstance().findNextFocusFromRect(this, rect, i);
         }
-        if (findNextFocusFromRect == null || isOffScreen(findNextFocusFromRect)) {
+        if (viewFindNextFocusFromRect == null || isOffScreen(viewFindNextFocusFromRect)) {
             return false;
         }
-        return findNextFocusFromRect.requestFocus(i, rect);
+        return viewFindNextFocusFromRect.requestFocus(i, rect);
     }
 
     @Override // android.view.ViewGroup, android.view.ViewParent
@@ -1162,9 +1154,8 @@ public class ScrollerView extends FrameLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.widget.FrameLayout, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         this.mIsLayoutDirty = false;
         if (this.mChildToScrollTo != null && isViewDescendantOf(this.mChildToScrollTo, this)) {
@@ -1177,10 +1168,10 @@ public class ScrollerView extends FrameLayout {
     @Override // android.view.View
     protected void onSizeChanged(int i, int i2, int i3, int i4) {
         super.onSizeChanged(i, i2, i3, i4);
-        View findFocus = findFocus();
-        if (findFocus != null && this != findFocus && isWithinDeltaOfScreen(findFocus, 0, i4)) {
-            findFocus.getDrawingRect(this.mTempRect);
-            offsetDescendantRectToMyCoords(findFocus, this.mTempRect);
+        View viewFindFocus = findFocus();
+        if (viewFindFocus != null && this != viewFindFocus && isWithinDeltaOfScreen(viewFindFocus, 0, i4)) {
+            viewFindFocus.getDrawingRect(this.mTempRect);
+            offsetDescendantRectToMyCoords(viewFindFocus, this.mTempRect);
             doScrollY(computeScrollDeltaToGetChildRectOnScreen(this.mTempRect));
         }
     }
@@ -1189,7 +1180,7 @@ public class ScrollerView extends FrameLayout {
         if (view == view2) {
             return true;
         }
-        ViewParent parent = view.getParent();
+        Object parent = view.getParent();
         return (parent instanceof ViewGroup) && isViewDescendantOf((View) parent, view2);
     }
 
@@ -1224,10 +1215,10 @@ public class ScrollerView extends FrameLayout {
     public void scrollTo(int i, int i2) {
         if (getChildCount() > 0) {
             View childAt = getChildAt(0);
-            int clamp = clamp(i, (getWidth() - this.mPaddingRight) - this.mPaddingLeft, childAt.getWidth());
-            int clamp2 = clamp(i2, (getHeight() - this.mPaddingBottom) - this.mPaddingTop, childAt.getHeight());
-            if (clamp != this.mScrollX || clamp2 != this.mScrollY) {
-                super.scrollTo(clamp, clamp2);
+            int iClamp = clamp(i, (getWidth() - this.mPaddingRight) - this.mPaddingLeft, childAt.getWidth());
+            int iClamp2 = clamp(i2, (getHeight() - this.mPaddingBottom) - this.mPaddingTop, childAt.getHeight());
+            if (iClamp != this.mScrollX || iClamp2 != this.mScrollY) {
+                super.scrollTo(iClamp, iClamp2);
             }
         }
     }

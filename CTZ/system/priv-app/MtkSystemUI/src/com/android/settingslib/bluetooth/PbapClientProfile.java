@@ -9,7 +9,9 @@ import android.content.Context;
 import android.os.ParcelUuid;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class PbapClientProfile implements LocalBluetoothProfile {
     private final CachedBluetoothDeviceManager mDeviceManager;
@@ -20,7 +22,6 @@ public final class PbapClientProfile implements LocalBluetoothProfile {
     private static boolean V = false;
     static final ParcelUuid[] SRC_UUIDS = {BluetoothUuid.PBAP_PSE};
 
-    /* loaded from: classes.dex */
     private final class PbapClientServiceListener implements BluetoothProfile.ServiceListener {
         private PbapClientServiceListener() {
         }
@@ -34,13 +35,13 @@ public final class PbapClientProfile implements LocalBluetoothProfile {
             List connectedDevices = PbapClientProfile.this.mService.getConnectedDevices();
             while (!connectedDevices.isEmpty()) {
                 BluetoothDevice bluetoothDevice = (BluetoothDevice) connectedDevices.remove(0);
-                CachedBluetoothDevice findDevice = PbapClientProfile.this.mDeviceManager.findDevice(bluetoothDevice);
-                if (findDevice == null) {
+                CachedBluetoothDevice cachedBluetoothDeviceFindDevice = PbapClientProfile.this.mDeviceManager.findDevice(bluetoothDevice);
+                if (cachedBluetoothDeviceFindDevice == null) {
                     Log.w("PbapClientProfile", "PbapClientProfile found new device: " + bluetoothDevice);
-                    findDevice = PbapClientProfile.this.mDeviceManager.addDevice(PbapClientProfile.this.mLocalAdapter, PbapClientProfile.this.mProfileManager, bluetoothDevice);
+                    cachedBluetoothDeviceFindDevice = PbapClientProfile.this.mDeviceManager.addDevice(PbapClientProfile.this.mLocalAdapter, PbapClientProfile.this.mProfileManager, bluetoothDevice);
                 }
-                findDevice.onProfileStateChanged(PbapClientProfile.this, 2);
-                findDevice.refresh();
+                cachedBluetoothDeviceFindDevice.onProfileStateChanged(PbapClientProfile.this, 2);
+                cachedBluetoothDeviceFindDevice.refresh();
             }
             PbapClientProfile.this.mIsProfileReady = true;
         }
@@ -59,8 +60,7 @@ public final class PbapClientProfile implements LocalBluetoothProfile {
         return 17;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public PbapClientProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
+    PbapClientProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;
         this.mProfileManager = localBluetoothProfileManager;
@@ -94,8 +94,9 @@ public final class PbapClientProfile implements LocalBluetoothProfile {
         }
         List<BluetoothDevice> connectedDevices = getConnectedDevices();
         if (connectedDevices != null) {
-            for (BluetoothDevice bluetoothDevice2 : connectedDevices) {
-                if (bluetoothDevice2.equals(bluetoothDevice)) {
+            Iterator<BluetoothDevice> it = connectedDevices.iterator();
+            while (it.hasNext()) {
+                if (it.next().equals(bluetoothDevice)) {
                     Log.d("PbapClientProfile", "Ignoring Connect");
                     return true;
                 }

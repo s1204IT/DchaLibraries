@@ -3,6 +3,7 @@ package android.support.v4.app;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public abstract class FragmentContainer {
     public abstract View onFindViewById(int i);

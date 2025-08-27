@@ -659,7 +659,7 @@
         <item>PWD</item>
         <item>SIM</item>
         <item>AKA</item>
-        <item>AKA&apos;</item>
+        <item>AKA\'</item>
     </array>
     <array name="wifi_hidden_entries">
         <item>いいえ</item>
@@ -702,7 +702,7 @@
         <item>GTC</item>
         <item>SIM</item>
         <item>AKA</item>
-        <item>AKA&apos;</item>
+        <item>AKA\'</item>
     </array>
     <array name="wifi_phase2_entries">
         <item>なし</item>

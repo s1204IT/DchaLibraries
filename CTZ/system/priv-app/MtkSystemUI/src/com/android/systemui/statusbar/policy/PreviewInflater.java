@@ -15,6 +15,7 @@ import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.systemui.statusbar.phone.KeyguardPreviewContainer;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PreviewInflater {
     private Context mContext;
@@ -34,19 +35,19 @@ public class PreviewInflater {
     }
 
     private KeyguardPreviewContainer inflatePreview(WidgetInfo widgetInfo) {
-        View inflateWidgetView;
-        if (widgetInfo == null || (inflateWidgetView = inflateWidgetView(widgetInfo)) == null) {
+        View viewInflateWidgetView;
+        if (widgetInfo == null || (viewInflateWidgetView = inflateWidgetView(widgetInfo)) == null) {
             return null;
         }
         KeyguardPreviewContainer keyguardPreviewContainer = new KeyguardPreviewContainer(this.mContext, null);
-        keyguardPreviewContainer.addView(inflateWidgetView);
+        keyguardPreviewContainer.addView(viewInflateWidgetView);
         return keyguardPreviewContainer;
     }
 
-    private View inflateWidgetView(WidgetInfo widgetInfo) {
+    private View inflateWidgetView(WidgetInfo widgetInfo) throws PackageManager.NameNotFoundException {
         try {
-            Context createPackageContext = this.mContext.createPackageContext(widgetInfo.contextPackage, 4);
-            return ((LayoutInflater) createPackageContext.getSystemService("layout_inflater")).cloneInContext(createPackageContext).inflate(widgetInfo.layoutId, (ViewGroup) null, false);
+            Context contextCreatePackageContext = this.mContext.createPackageContext(widgetInfo.contextPackage, 4);
+            return ((LayoutInflater) contextCreatePackageContext.getSystemService("layout_inflater")).cloneInContext(contextCreatePackageContext).inflate(widgetInfo.layoutId, (ViewGroup) null, false);
         } catch (PackageManager.NameNotFoundException | RuntimeException e) {
             Log.w("PreviewInflater", "Error creating widget view", e);
             return null;
@@ -75,15 +76,15 @@ public class PreviewInflater {
 
     private WidgetInfo getWidgetInfo(Intent intent) {
         PackageManager packageManager = this.mContext.getPackageManager();
-        List queryIntentActivitiesAsUser = packageManager.queryIntentActivitiesAsUser(intent, 851968, KeyguardUpdateMonitor.getCurrentUser());
-        if (queryIntentActivitiesAsUser.size() == 0) {
+        List listQueryIntentActivitiesAsUser = packageManager.queryIntentActivitiesAsUser(intent, 851968, KeyguardUpdateMonitor.getCurrentUser());
+        if (listQueryIntentActivitiesAsUser.size() == 0) {
             return null;
         }
-        ResolveInfo resolveActivityAsUser = packageManager.resolveActivityAsUser(intent, 852096, KeyguardUpdateMonitor.getCurrentUser());
-        if (wouldLaunchResolverActivity(resolveActivityAsUser, queryIntentActivitiesAsUser) || resolveActivityAsUser == null || resolveActivityAsUser.activityInfo == null) {
+        ResolveInfo resolveInfoResolveActivityAsUser = packageManager.resolveActivityAsUser(intent, 852096, KeyguardUpdateMonitor.getCurrentUser());
+        if (wouldLaunchResolverActivity(resolveInfoResolveActivityAsUser, listQueryIntentActivitiesAsUser) || resolveInfoResolveActivityAsUser == null || resolveInfoResolveActivityAsUser.activityInfo == null) {
             return null;
         }
-        return getWidgetInfoFromMetaData(resolveActivityAsUser.activityInfo.packageName, resolveActivityAsUser.activityInfo.metaData);
+        return getWidgetInfoFromMetaData(resolveInfoResolveActivityAsUser.activityInfo.packageName, resolveInfoResolveActivityAsUser.activityInfo.metaData);
     }
 
     public static boolean wouldLaunchResolverActivity(Context context, Intent intent, int i) {
@@ -92,18 +93,18 @@ public class PreviewInflater {
 
     public static ActivityInfo getTargetActivityInfo(Context context, Intent intent, int i, boolean z) {
         int i2;
-        ResolveInfo resolveActivityAsUser;
+        ResolveInfo resolveInfoResolveActivityAsUser;
         PackageManager packageManager = context.getPackageManager();
         if (!z) {
             i2 = 851968;
         } else {
             i2 = 65536;
         }
-        List queryIntentActivitiesAsUser = packageManager.queryIntentActivitiesAsUser(intent, i2, i);
-        if (queryIntentActivitiesAsUser.size() == 0 || (resolveActivityAsUser = packageManager.resolveActivityAsUser(intent, i2 | 128, i)) == null || wouldLaunchResolverActivity(resolveActivityAsUser, queryIntentActivitiesAsUser)) {
+        List listQueryIntentActivitiesAsUser = packageManager.queryIntentActivitiesAsUser(intent, i2, i);
+        if (listQueryIntentActivitiesAsUser.size() == 0 || (resolveInfoResolveActivityAsUser = packageManager.resolveActivityAsUser(intent, i2 | 128, i)) == null || wouldLaunchResolverActivity(resolveInfoResolveActivityAsUser, listQueryIntentActivitiesAsUser)) {
             return null;
         }
-        return resolveActivityAsUser.activityInfo;
+        return resolveInfoResolveActivityAsUser.activityInfo;
     }
 
     private static boolean wouldLaunchResolverActivity(ResolveInfo resolveInfo, List<ResolveInfo> list) {
@@ -116,9 +117,7 @@ public class PreviewInflater {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class WidgetInfo {
+    private static class WidgetInfo {
         String contextPackage;
         int layoutId;
 

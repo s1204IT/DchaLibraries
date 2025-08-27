@@ -7,6 +7,7 @@ import android.os.SystemProperties;
 import com.android.systemui.R;
 import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.recents.views.DockState;
+
 /* loaded from: classes.dex */
 public class RecentsConfiguration {
     public boolean dragToSplitEnabled;
@@ -41,6 +42,6 @@ public class RecentsConfiguration {
 
     public DockState[] getDockStatesForCurrentOrientation() {
         boolean z = this.mAppContext.getResources().getConfiguration().orientation == 2;
-        return Recents.getConfiguration().isLargeScreen ? z ? DockRegion.TABLET_LANDSCAPE : DockRegion.TABLET_PORTRAIT : z ? DockRegion.PHONE_LANDSCAPE : DockRegion.PHONE_PORTRAIT;
+        return Recents.getConfiguration().isLargeScreen ? z ? RecentsConfiguration2.TABLET_LANDSCAPE : RecentsConfiguration2.TABLET_PORTRAIT : z ? RecentsConfiguration2.PHONE_LANDSCAPE : RecentsConfiguration2.PHONE_PORTRAIT;
     }
 }

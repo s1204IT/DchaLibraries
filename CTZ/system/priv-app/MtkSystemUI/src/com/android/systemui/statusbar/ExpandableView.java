@@ -12,6 +12,7 @@ import com.android.systemui.statusbar.stack.ExpandableViewState;
 import com.android.systemui.statusbar.stack.StackScrollState;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public abstract class ExpandableView extends FrameLayout {
     private static Rect mClipRect = new Rect();
@@ -29,7 +30,6 @@ public abstract class ExpandableView extends FrameLayout {
     private ViewGroup mTransientContainer;
     private boolean mWillBeGone;
 
-    /* loaded from: classes.dex */
     public interface OnHeightChangedListener {
         void onHeightChanged(ExpandableView expandableView, boolean z);
 
@@ -50,54 +50,53 @@ public abstract class ExpandableView extends FrameLayout {
 
     @Override // android.widget.FrameLayout, android.view.View
     protected void onMeasure(int i, int i2) {
-        int i3;
+        int iMakeMeasureSpec;
         int size = View.MeasureSpec.getSize(i2);
         int paddingStart = getPaddingStart() + getPaddingEnd();
         int mode = View.MeasureSpec.getMode(i2);
-        int i4 = Integer.MAX_VALUE;
+        int iMin = Integer.MAX_VALUE;
         if (mode != 0 && size != 0) {
-            i4 = Math.min(size, Integer.MAX_VALUE);
+            iMin = Math.min(size, Integer.MAX_VALUE);
         }
-        int makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(i4, Integer.MIN_VALUE);
+        int iMakeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(iMin, Integer.MIN_VALUE);
         int childCount = getChildCount();
-        int i5 = 0;
-        for (int i6 = 0; i6 < childCount; i6++) {
-            View childAt = getChildAt(i6);
+        int iMax = 0;
+        for (int i3 = 0; i3 < childCount; i3++) {
+            View childAt = getChildAt(i3);
             if (childAt.getVisibility() != 8) {
                 ViewGroup.LayoutParams layoutParams = childAt.getLayoutParams();
                 if (layoutParams.height != -1) {
                     if (layoutParams.height >= 0) {
-                        if (layoutParams.height > i4) {
-                            i3 = View.MeasureSpec.makeMeasureSpec(i4, 1073741824);
+                        if (layoutParams.height > iMin) {
+                            iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(iMin, 1073741824);
                         } else {
-                            i3 = View.MeasureSpec.makeMeasureSpec(layoutParams.height, 1073741824);
+                            iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(layoutParams.height, 1073741824);
                         }
                     } else {
-                        i3 = makeMeasureSpec;
+                        iMakeMeasureSpec = iMakeMeasureSpec2;
                     }
-                    childAt.measure(getChildMeasureSpec(i, paddingStart, layoutParams.width), i3);
-                    i5 = Math.max(i5, childAt.getMeasuredHeight());
+                    childAt.measure(getChildMeasureSpec(i, paddingStart, layoutParams.width), iMakeMeasureSpec);
+                    iMax = Math.max(iMax, childAt.getMeasuredHeight());
                 } else {
                     this.mMatchParentViews.add(childAt);
                 }
             }
         }
         if (mode != 1073741824) {
-            size = Math.min(i4, i5);
+            size = Math.min(iMin, iMax);
         }
-        int makeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(size, 1073741824);
+        int iMakeMeasureSpec3 = View.MeasureSpec.makeMeasureSpec(size, 1073741824);
         Iterator<View> it = this.mMatchParentViews.iterator();
         while (it.hasNext()) {
             View next = it.next();
-            next.measure(getChildMeasureSpec(i, paddingStart, next.getLayoutParams().width), makeMeasureSpec2);
+            next.measure(getChildMeasureSpec(i, paddingStart, next.getLayoutParams().width), iMakeMeasureSpec3);
         }
         this.mMatchParentViews.clear();
         setMeasuredDimension(View.MeasureSpec.getSize(i), size);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.widget.FrameLayout, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         updateClipping();
     }
@@ -253,8 +252,7 @@ public abstract class ExpandableView extends FrameLayout {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateClipping() {
+    protected void updateClipping() {
         if (this.mClipToActualHeight && shouldClipToActualHeight()) {
             int clipTopAmount = getClipTopAmount();
             mClipRect.set(0, clipTopAmount, getWidth(), Math.max((getActualHeight() + getExtraBottomPadding()) - this.mClipBottomAmount, clipTopAmount));
@@ -268,8 +266,7 @@ public abstract class ExpandableView extends FrameLayout {
         return 1.0f;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean shouldClipToActualHeight() {
+    protected boolean shouldClipToActualHeight() {
         return true;
     }
 

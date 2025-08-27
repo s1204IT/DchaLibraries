@@ -11,6 +11,7 @@ import com.android.settings.search.SearchIndexableRaw;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class BasePreferenceController extends AbstractPreferenceController {
     public static final int AVAILABLE = 0;
@@ -64,10 +65,10 @@ public abstract class BasePreferenceController extends AbstractPreferenceControl
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
-        Preference findPreference;
+        Preference preferenceFindPreference;
         super.displayPreference(preferenceScreen);
-        if (getAvailabilityStatus() == 4 && (findPreference = preferenceScreen.findPreference(getPreferenceKey())) != null) {
-            findPreference.setEnabled(false);
+        if (getAvailabilityStatus() == 4 && (preferenceFindPreference = preferenceScreen.findPreference(getPreferenceKey())) != null) {
+            preferenceFindPreference.setEnabled(false);
         }
     }
 

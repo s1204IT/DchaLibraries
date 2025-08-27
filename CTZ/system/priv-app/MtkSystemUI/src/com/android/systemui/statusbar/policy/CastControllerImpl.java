@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
 /* loaded from: classes.dex */
 public class CastControllerImpl implements CastController {
     private static final boolean DEBUG = Log.isLoggable("CastController", 3);
@@ -107,13 +108,15 @@ public class CastControllerImpl implements CastController {
         printWriter.print("  mRoutes.size=");
         printWriter.println(this.mRoutes.size());
         for (int i = 0; i < this.mRoutes.size(); i++) {
+            MediaRouter.RouteInfo routeInfoValueAt = this.mRoutes.valueAt(i);
             printWriter.print("    ");
-            printWriter.println(routeToString(this.mRoutes.valueAt(i)));
+            printWriter.println(routeToString(routeInfoValueAt));
         }
         printWriter.print("  mProjection=");
         printWriter.println(this.mProjection);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(CastController.Callback callback) {
         this.mCallbacks.add(callback);
@@ -123,6 +126,7 @@ public class CastControllerImpl implements CastController {
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(CastController.Callback callback) {
         this.mCallbacks.remove(callback);
@@ -231,16 +235,15 @@ public class CastControllerImpl implements CastController {
         this.mMediaRouter.getFallbackRoute().select();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setProjection(MediaProjectionInfo mediaProjectionInfo, boolean z) {
+    private void setProjection(MediaProjectionInfo mediaProjectionInfo, boolean z) {
         boolean z2;
         MediaProjectionInfo mediaProjectionInfo2 = this.mProjection;
         synchronized (this.mProjectionLock) {
-            boolean equals = Objects.equals(mediaProjectionInfo, this.mProjection);
+            boolean zEquals = Objects.equals(mediaProjectionInfo, this.mProjection);
             z2 = true;
-            if (z && !equals) {
+            if (z && !zEquals) {
                 this.mProjection = mediaProjectionInfo;
-            } else if (!z && equals) {
+            } else if (!z && zEquals) {
                 this.mProjection = null;
             } else {
                 z2 = false;
@@ -254,14 +257,14 @@ public class CastControllerImpl implements CastController {
         }
     }
 
-    private String getAppName(String str) {
+    private String getAppName(String str) throws PackageManager.NameNotFoundException {
         PackageManager packageManager = this.mContext.getPackageManager();
         try {
             ApplicationInfo applicationInfo = packageManager.getApplicationInfo(str, 0);
             if (applicationInfo != null) {
-                CharSequence loadLabel = applicationInfo.loadLabel(packageManager);
-                if (!TextUtils.isEmpty(loadLabel)) {
-                    return loadLabel.toString();
+                CharSequence charSequenceLoadLabel = applicationInfo.loadLabel(packageManager);
+                if (!TextUtils.isEmpty(charSequenceLoadLabel)) {
+                    return charSequenceLoadLabel.toString();
                 }
             }
             Log.w("CastController", "No label found for package: " + str);
@@ -271,8 +274,7 @@ public class CastControllerImpl implements CastController {
         return str;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateRemoteDisplays() {
+    private void updateRemoteDisplays() {
         synchronized (this.mRoutes) {
             this.mRoutes.clear();
             int routeCount = this.mMediaRouter.getRouteCount();
@@ -309,8 +311,7 @@ public class CastControllerImpl implements CastController {
         callback.onCastDevicesChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static String routeToString(MediaRouter.RouteInfo routeInfo) {
+    private static String routeToString(MediaRouter.RouteInfo routeInfo) {
         if (routeInfo == null) {
             return null;
         }

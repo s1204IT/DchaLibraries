@@ -3,6 +3,7 @@ package com.android.launcher3;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class LauncherFiles {
     public static final String DEVICE_PREFERENCES_KEY = "com.android.launcher3.device.prefs";

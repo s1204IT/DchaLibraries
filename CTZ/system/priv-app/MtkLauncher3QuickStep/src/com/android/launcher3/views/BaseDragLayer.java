@@ -16,6 +16,7 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.util.MultiValueAlpha;
 import com.android.launcher3.util.TouchController;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends InsettableFrameLayout {
     protected TouchController mActiveController;
@@ -26,7 +27,6 @@ public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends Inse
     protected final int[] mTmpXY;
     private TouchCompleteListener mTouchCompleteListener;
 
-    /* loaded from: classes.dex */
     public interface TouchCompleteListener {
         void onTouchComplete();
     }
@@ -58,9 +58,7 @@ public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends Inse
         return findActiveController(motionEvent);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean findActiveController(MotionEvent motionEvent) {
-        TouchController[] touchControllerArr;
+    protected boolean findActiveController(MotionEvent motionEvent) {
         this.mActiveController = null;
         AbstractFloatingView topOpenView = AbstractFloatingView.getTopOpenView(this.mActivity);
         if (topOpenView != null && topOpenView.onControllerInterceptTouchEvent(motionEvent)) {
@@ -98,8 +96,7 @@ public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends Inse
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void addAccessibleChildToList(View view, ArrayList<View> arrayList) {
+    protected void addAccessibleChildToList(View view, ArrayList<View> arrayList) {
         if (view.isImportantForAccessibility()) {
             arrayList.add(view);
         } else {
@@ -120,8 +117,7 @@ public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends Inse
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$onViewRemoved$0(View view) {
+    static /* synthetic */ void lambda$onViewRemoved$0(View view) {
         AbstractFloatingView abstractFloatingView = (AbstractFloatingView) view;
         if (abstractFloatingView.isOpen()) {
             abstractFloatingView.close(false);
@@ -208,14 +204,19 @@ public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends Inse
         this.mTouchCompleteListener = touchCompleteListener;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/util/AttributeSet;)Landroid/view/ViewGroup$LayoutParams; */
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/util/AttributeSet;)Landroid/widget/FrameLayout$LayoutParams; */
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/util/AttributeSet;)Lcom/android/launcher3/InsettableFrameLayout$LayoutParams; */
     @Override // com.android.launcher3.InsettableFrameLayout, android.widget.FrameLayout, android.view.ViewGroup
     public LayoutParams generateLayoutParams(AttributeSet attributeSet) {
         return new LayoutParams(getContext(), attributeSet);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: generateDefaultLayoutParams()Landroid/view/ViewGroup$LayoutParams; */
+    /* JADX DEBUG: Method merged with bridge method: generateDefaultLayoutParams()Landroid/widget/FrameLayout$LayoutParams; */
+    /* JADX DEBUG: Method merged with bridge method: generateDefaultLayoutParams()Lcom/android/launcher3/InsettableFrameLayout$LayoutParams; */
     @Override // com.android.launcher3.InsettableFrameLayout, android.widget.FrameLayout, android.view.ViewGroup
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-2, -2);
     }
 
@@ -224,9 +225,10 @@ public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends Inse
         return layoutParams instanceof LayoutParams;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/view/ViewGroup$LayoutParams;)Landroid/view/ViewGroup$LayoutParams; */
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/view/ViewGroup$LayoutParams;)Lcom/android/launcher3/InsettableFrameLayout$LayoutParams; */
     @Override // com.android.launcher3.InsettableFrameLayout, android.widget.FrameLayout, android.view.ViewGroup
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
         return new LayoutParams(layoutParams);
     }
 
@@ -234,7 +236,6 @@ public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends Inse
         return this.mMultiValueAlpha.getProperty(i);
     }
 
-    /* loaded from: classes.dex */
     public static class LayoutParams extends InsettableFrameLayout.LayoutParams {
         public boolean customPosition;
         public int x;

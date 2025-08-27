@@ -13,6 +13,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
 import java.lang.ref.WeakReference;
+
 /* loaded from: classes.dex */
 public abstract class AbstractConnectivityPreferenceController extends AbstractPreferenceController implements LifecycleObserver, OnStart, OnStop {
     private final BroadcastReceiver mConnectivityReceiver;
@@ -51,17 +52,14 @@ public abstract class AbstractConnectivityPreferenceController extends AbstractP
         this.mContext.registerReceiver(this.mConnectivityReceiver, intentFilter, "android.permission.CHANGE_NETWORK_STATE", null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Handler getHandler() {
+    private Handler getHandler() {
         if (this.mHandler == null) {
             this.mHandler = new ConnectivityEventHandler(this);
         }
         return this.mHandler;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ConnectivityEventHandler extends Handler {
+    private static class ConnectivityEventHandler extends Handler {
         private WeakReference<AbstractConnectivityPreferenceController> mPreferenceController;
 
         public ConnectivityEventHandler(AbstractConnectivityPreferenceController abstractConnectivityPreferenceController) {

@@ -7,6 +7,7 @@ import android.os.Process;
 import android.os.UserHandle;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.util.ContentWriter;
+
 /* loaded from: classes.dex */
 public class ItemInfo {
     public static final int NO_ID = -1;
@@ -39,8 +40,7 @@ public class ItemInfo {
         this.user = Process.myUserHandle();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ItemInfo(ItemInfo itemInfo) {
+    ItemInfo(ItemInfo itemInfo) {
         this.id = -1L;
         this.container = -1L;
         this.screenId = -1L;
@@ -108,8 +108,7 @@ public class ItemInfo {
         return getClass().getSimpleName() + "(" + dumpProperties() + ")";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public String dumpProperties() {
+    protected String dumpProperties() {
         return "id=" + this.id + " type=" + LauncherSettings.Favorites.itemTypeToString(this.itemType) + " container=" + LauncherSettings.Favorites.containerToString((int) this.container) + " screen=" + this.screenId + " cell(" + this.cellX + "," + this.cellY + ") span(" + this.spanX + "," + this.spanY + ") minSpan(" + this.minSpanX + "," + this.minSpanY + ") rank=" + this.rank + " user=" + this.user + " title=" + ((Object) this.title);
     }
 

@@ -18,7 +18,9 @@ import com.android.settings.R;
 import com.android.settings.vpn2.VpnUtils;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class EnterprisePrivacyFeatureProviderImpl implements EnterprisePrivacyFeatureProvider {
     private static final int MY_USER_ID = UserHandle.myUserId();
@@ -161,14 +163,14 @@ public class EnterprisePrivacyFeatureProviderImpl implements EnterprisePrivacyFe
     @Override // com.android.settings.enterprise.EnterprisePrivacyFeatureProvider
     public String getImeLabelIfOwnerSet() {
         String stringForUser;
-        if (this.mDpm.isCurrentInputMethodSetByOwner() && (stringForUser = Settings.Secure.getStringForUser(this.mContext.getContentResolver(), "default_input_method", MY_USER_ID)) != null) {
-            try {
-                return this.mPm.getApplicationInfoAsUser(stringForUser, 0, MY_USER_ID).loadLabel(this.mPm.getPackageManager()).toString();
-            } catch (PackageManager.NameNotFoundException e) {
-                return null;
-            }
+        if (!this.mDpm.isCurrentInputMethodSetByOwner() || (stringForUser = Settings.Secure.getStringForUser(this.mContext.getContentResolver(), "default_input_method", MY_USER_ID)) == null) {
+            return null;
         }
-        return null;
+        try {
+            return this.mPm.getApplicationInfoAsUser(stringForUser, 0, MY_USER_ID).loadLabel(this.mPm.getPackageManager()).toString();
+        } catch (PackageManager.NameNotFoundException e) {
+            return null;
+        }
     }
 
     @Override // com.android.settings.enterprise.EnterprisePrivacyFeatureProvider
@@ -192,14 +194,15 @@ public class EnterprisePrivacyFeatureProviderImpl implements EnterprisePrivacyFe
 
     @Override // com.android.settings.enterprise.EnterprisePrivacyFeatureProvider
     public int getNumberOfActiveDeviceAdminsForCurrentUserAndManagedProfile() {
-        int i = 0;
-        for (UserInfo userInfo : this.mUm.getProfiles(MY_USER_ID)) {
-            List activeAdminsAsUser = this.mDpm.getActiveAdminsAsUser(userInfo.id);
+        Iterator it = this.mUm.getProfiles(MY_USER_ID).iterator();
+        int size = 0;
+        while (it.hasNext()) {
+            List activeAdminsAsUser = this.mDpm.getActiveAdminsAsUser(((UserInfo) it.next()).id);
             if (activeAdminsAsUser != null) {
-                i += activeAdminsAsUser.size();
+                size += activeAdminsAsUser.size();
             }
         }
-        return i;
+        return size;
     }
 
     @Override // com.android.settings.enterprise.EnterprisePrivacyFeatureProvider
@@ -207,7 +210,6 @@ public class EnterprisePrivacyFeatureProviderImpl implements EnterprisePrivacyFe
         return this.mDpm.getMandatoryBackupTransport() != null;
     }
 
-    /* loaded from: classes.dex */
     protected static class EnterprisePrivacySpan extends ClickableSpan {
         private final Context mContext;
 

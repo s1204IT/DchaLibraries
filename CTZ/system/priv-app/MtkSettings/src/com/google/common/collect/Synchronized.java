@@ -13,13 +13,11 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
-/* JADX INFO: Access modifiers changed from: package-private */
-/* loaded from: classes.dex */
-public final class Synchronized {
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SynchronizedObject implements Serializable {
+/* loaded from: classes.dex */
+final class Synchronized {
+
+    static class SynchronizedObject implements Serializable {
         private static final long serialVersionUID = 0;
         final Object delegate;
         final Object mutex;
@@ -34,11 +32,11 @@ public final class Synchronized {
         }
 
         public String toString() {
-            String obj;
+            String string;
             synchronized (this.mutex) {
-                obj = this.delegate.toString();
+                string = this.delegate.toString();
             }
-            return obj;
+            return string;
         }
 
         private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
@@ -48,42 +46,39 @@ public final class Synchronized {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static <E> Collection<E> collection(Collection<E> collection, Object obj) {
+    private static <E> Collection<E> collection(Collection<E> collection, Object obj) {
         return new SynchronizedCollection(collection, obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SynchronizedCollection<E> extends SynchronizedObject implements Collection<E> {
+    static class SynchronizedCollection<E> extends SynchronizedObject implements Collection<E> {
         private static final long serialVersionUID = 0;
 
         private SynchronizedCollection(Collection<E> collection, Object obj) {
             super(collection, obj);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
         @Override // com.google.common.collect.Synchronized.SynchronizedObject
-        public Collection<E> delegate() {
+        Collection<E> delegate() {
             return (Collection) super.delegate();
         }
 
         @Override // java.util.Collection
         public boolean add(E e) {
-            boolean add;
+            boolean zAdd;
             synchronized (this.mutex) {
-                add = delegate().add(e);
+                zAdd = delegate().add(e);
             }
-            return add;
+            return zAdd;
         }
 
         @Override // java.util.Collection
         public boolean addAll(Collection<? extends E> collection) {
-            boolean addAll;
+            boolean zAddAll;
             synchronized (this.mutex) {
-                addAll = delegate().addAll(collection);
+                zAddAll = delegate().addAll(collection);
             }
-            return addAll;
+            return zAddAll;
         }
 
         @Override // java.util.Collection
@@ -95,29 +90,29 @@ public final class Synchronized {
 
         @Override // java.util.Collection
         public boolean contains(Object obj) {
-            boolean contains;
+            boolean zContains;
             synchronized (this.mutex) {
-                contains = delegate().contains(obj);
+                zContains = delegate().contains(obj);
             }
-            return contains;
+            return zContains;
         }
 
         @Override // java.util.Collection
         public boolean containsAll(Collection<?> collection) {
-            boolean containsAll;
+            boolean zContainsAll;
             synchronized (this.mutex) {
-                containsAll = delegate().containsAll(collection);
+                zContainsAll = delegate().containsAll(collection);
             }
-            return containsAll;
+            return zContainsAll;
         }
 
         @Override // java.util.Collection
         public boolean isEmpty() {
-            boolean isEmpty;
+            boolean zIsEmpty;
             synchronized (this.mutex) {
-                isEmpty = delegate().isEmpty();
+                zIsEmpty = delegate().isEmpty();
             }
-            return isEmpty;
+            return zIsEmpty;
         }
 
         @Override // java.util.Collection, java.lang.Iterable
@@ -127,29 +122,29 @@ public final class Synchronized {
 
         @Override // java.util.Collection
         public boolean remove(Object obj) {
-            boolean remove;
+            boolean zRemove;
             synchronized (this.mutex) {
-                remove = delegate().remove(obj);
+                zRemove = delegate().remove(obj);
             }
-            return remove;
+            return zRemove;
         }
 
         @Override // java.util.Collection
         public boolean removeAll(Collection<?> collection) {
-            boolean removeAll;
+            boolean zRemoveAll;
             synchronized (this.mutex) {
-                removeAll = delegate().removeAll(collection);
+                zRemoveAll = delegate().removeAll(collection);
             }
-            return removeAll;
+            return zRemoveAll;
         }
 
         @Override // java.util.Collection
         public boolean retainAll(Collection<?> collection) {
-            boolean retainAll;
+            boolean zRetainAll;
             synchronized (this.mutex) {
-                retainAll = delegate().retainAll(collection);
+                zRetainAll = delegate().retainAll(collection);
             }
-            return retainAll;
+            return zRetainAll;
         }
 
         @Override // java.util.Collection
@@ -184,60 +179,58 @@ public final class Synchronized {
         return new SynchronizedSet(set, obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SynchronizedSet<E> extends SynchronizedCollection<E> implements Set<E> {
+    static class SynchronizedSet<E> extends SynchronizedCollection<E> implements Set<E> {
         private static final long serialVersionUID = 0;
 
         SynchronizedSet(Set<E> set, Object obj) {
             super(set, obj);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Collection; */
         @Override // com.google.common.collect.Synchronized.SynchronizedCollection, com.google.common.collect.Synchronized.SynchronizedObject
-        public Set<E> delegate() {
+        Set<E> delegate() {
             return (Set) super.delegate();
         }
 
         @Override // java.util.Collection, java.util.Set
         public boolean equals(Object obj) {
-            boolean equals;
+            boolean zEquals;
             if (obj == this) {
                 return true;
             }
             synchronized (this.mutex) {
-                equals = delegate().equals(obj);
+                zEquals = delegate().equals(obj);
             }
-            return equals;
+            return zEquals;
         }
 
         @Override // java.util.Collection, java.util.Set
         public int hashCode() {
-            int hashCode;
+            int iHashCode;
             synchronized (this.mutex) {
-                hashCode = delegate().hashCode();
+                iHashCode = delegate().hashCode();
             }
-            return hashCode;
+            return iHashCode;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static <E> SortedSet<E> sortedSet(SortedSet<E> sortedSet, Object obj) {
+    private static <E> SortedSet<E> sortedSet(SortedSet<E> sortedSet, Object obj) {
         return new SynchronizedSortedSet(sortedSet, obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SynchronizedSortedSet<E> extends SynchronizedSet<E> implements SortedSet<E> {
+    static class SynchronizedSortedSet<E> extends SynchronizedSet<E> implements SortedSet<E> {
         private static final long serialVersionUID = 0;
 
         SynchronizedSortedSet(SortedSet<E> sortedSet, Object obj) {
             super(sortedSet, obj);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Collection; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Set; */
         @Override // com.google.common.collect.Synchronized.SynchronizedSet, com.google.common.collect.Synchronized.SynchronizedCollection, com.google.common.collect.Synchronized.SynchronizedObject
-        public SortedSet<E> delegate() {
+        SortedSet<E> delegate() {
             return (SortedSet) super.delegate();
         }
 
@@ -276,20 +269,20 @@ public final class Synchronized {
 
         @Override // java.util.SortedSet
         public E first() {
-            E first;
+            E eFirst;
             synchronized (this.mutex) {
-                first = delegate().first();
+                eFirst = delegate().first();
             }
-            return first;
+            return eFirst;
         }
 
         @Override // java.util.SortedSet
         public E last() {
-            E last;
+            E eLast;
             synchronized (this.mutex) {
-                last = delegate().last();
+                eLast = delegate().last();
             }
-            return last;
+            return eLast;
         }
     }
 
@@ -297,9 +290,7 @@ public final class Synchronized {
         return new SynchronizedMap(map, obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SynchronizedMap<K, V> extends SynchronizedObject implements Map<K, V> {
+    private static class SynchronizedMap<K, V> extends SynchronizedObject implements Map<K, V> {
         private static final long serialVersionUID = 0;
         transient Set<Map.Entry<K, V>> entrySet;
         transient Set<K> keySet;
@@ -309,9 +300,9 @@ public final class Synchronized {
             super(map, obj);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
         @Override // com.google.common.collect.Synchronized.SynchronizedObject
-        public Map<K, V> delegate() {
+        Map<K, V> delegate() {
             return (Map) super.delegate();
         }
 
@@ -324,20 +315,20 @@ public final class Synchronized {
 
         @Override // java.util.Map
         public boolean containsKey(Object obj) {
-            boolean containsKey;
+            boolean zContainsKey;
             synchronized (this.mutex) {
-                containsKey = delegate().containsKey(obj);
+                zContainsKey = delegate().containsKey(obj);
             }
-            return containsKey;
+            return zContainsKey;
         }
 
         @Override // java.util.Map
         public boolean containsValue(Object obj) {
-            boolean containsValue;
+            boolean zContainsValue;
             synchronized (this.mutex) {
-                containsValue = delegate().containsValue(obj);
+                zContainsValue = delegate().containsValue(obj);
             }
-            return containsValue;
+            return zContainsValue;
         }
 
         @Override // java.util.Map
@@ -363,11 +354,11 @@ public final class Synchronized {
 
         @Override // java.util.Map
         public boolean isEmpty() {
-            boolean isEmpty;
+            boolean zIsEmpty;
             synchronized (this.mutex) {
-                isEmpty = delegate().isEmpty();
+                zIsEmpty = delegate().isEmpty();
             }
-            return isEmpty;
+            return zIsEmpty;
         }
 
         @Override // java.util.Map
@@ -384,11 +375,11 @@ public final class Synchronized {
 
         @Override // java.util.Map
         public V put(K k, V v) {
-            V put;
+            V vPut;
             synchronized (this.mutex) {
-                put = delegate().put(k, v);
+                vPut = delegate().put(k, v);
             }
-            return put;
+            return vPut;
         }
 
         @Override // java.util.Map
@@ -400,11 +391,11 @@ public final class Synchronized {
 
         @Override // java.util.Map
         public V remove(Object obj) {
-            V remove;
+            V vRemove;
             synchronized (this.mutex) {
-                remove = delegate().remove(obj);
+                vRemove = delegate().remove(obj);
             }
-            return remove;
+            return vRemove;
         }
 
         @Override // java.util.Map
@@ -429,23 +420,23 @@ public final class Synchronized {
 
         @Override // java.util.Map
         public boolean equals(Object obj) {
-            boolean equals;
+            boolean zEquals;
             if (obj == this) {
                 return true;
             }
             synchronized (this.mutex) {
-                equals = delegate().equals(obj);
+                zEquals = delegate().equals(obj);
             }
-            return equals;
+            return zEquals;
         }
 
         @Override // java.util.Map
         public int hashCode() {
-            int hashCode;
+            int iHashCode;
             synchronized (this.mutex) {
-                hashCode = delegate().hashCode();
+                iHashCode = delegate().hashCode();
             }
-            return hashCode;
+            return iHashCode;
         }
     }
 
@@ -453,18 +444,17 @@ public final class Synchronized {
         return new SynchronizedSortedMap(sortedMap, obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SynchronizedSortedMap<K, V> extends SynchronizedMap<K, V> implements SortedMap<K, V> {
+    static class SynchronizedSortedMap<K, V> extends SynchronizedMap<K, V> implements SortedMap<K, V> {
         private static final long serialVersionUID = 0;
 
         SynchronizedSortedMap(SortedMap<K, V> sortedMap, Object obj) {
             super(sortedMap, obj);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Map; */
         @Override // com.google.common.collect.Synchronized.SynchronizedMap, com.google.common.collect.Synchronized.SynchronizedObject
-        public SortedMap<K, V> delegate() {
+        SortedMap<K, V> delegate() {
             return (SortedMap) super.delegate();
         }
 
@@ -479,11 +469,11 @@ public final class Synchronized {
 
         @Override // java.util.SortedMap
         public K firstKey() {
-            K firstKey;
+            K kFirstKey;
             synchronized (this.mutex) {
-                firstKey = delegate().firstKey();
+                kFirstKey = delegate().firstKey();
             }
-            return firstKey;
+            return kFirstKey;
         }
 
         public SortedMap<K, V> headMap(K k) {
@@ -496,11 +486,11 @@ public final class Synchronized {
 
         @Override // java.util.SortedMap
         public K lastKey() {
-            K lastKey;
+            K kLastKey;
             synchronized (this.mutex) {
-                lastKey = delegate().lastKey();
+                kLastKey = delegate().lastKey();
             }
-            return lastKey;
+            return kLastKey;
         }
 
         public SortedMap<K, V> subMap(K k, K k2) {
@@ -520,17 +510,18 @@ public final class Synchronized {
         }
     }
 
-    /* loaded from: classes.dex */
     static class SynchronizedBiMap<K, V> extends SynchronizedMap<K, V> implements BiMap<K, V>, Serializable {
         private static final long serialVersionUID = 0;
         private transient Set<V> valueSet;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Map; */
         @Override // com.google.common.collect.Synchronized.SynchronizedMap, com.google.common.collect.Synchronized.SynchronizedObject
-        public BiMap<K, V> delegate() {
+        BiMap<K, V> delegate() {
             return (BiMap) super.delegate();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: values()Ljava/util/Collection; */
         @Override // com.google.common.collect.Synchronized.SynchronizedMap, java.util.Map
         public Set<V> values() {
             Set<V> set;
@@ -544,9 +535,7 @@ public final class Synchronized {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SynchronizedNavigableSet<E> extends SynchronizedSortedSet<E> implements NavigableSet<E> {
+    static class SynchronizedNavigableSet<E> extends SynchronizedSortedSet<E> implements NavigableSet<E> {
         private static final long serialVersionUID = 0;
         transient NavigableSet<E> descendingSet;
 
@@ -554,19 +543,22 @@ public final class Synchronized {
             super(navigableSet, obj);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Collection; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Set; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/SortedSet; */
         @Override // com.google.common.collect.Synchronized.SynchronizedSortedSet, com.google.common.collect.Synchronized.SynchronizedSet, com.google.common.collect.Synchronized.SynchronizedCollection, com.google.common.collect.Synchronized.SynchronizedObject
-        public NavigableSet<E> delegate() {
+        NavigableSet<E> delegate() {
             return (NavigableSet) super.delegate();
         }
 
         @Override // java.util.NavigableSet
         public E ceiling(E e) {
-            E ceiling;
+            E eCeiling;
             synchronized (this.mutex) {
-                ceiling = delegate().ceiling(e);
+                eCeiling = delegate().ceiling(e);
             }
-            return ceiling;
+            return eCeiling;
         }
 
         @Override // java.util.NavigableSet
@@ -588,11 +580,11 @@ public final class Synchronized {
 
         @Override // java.util.NavigableSet
         public E floor(E e) {
-            E floor;
+            E eFloor;
             synchronized (this.mutex) {
-                floor = delegate().floor(e);
+                eFloor = delegate().floor(e);
             }
-            return floor;
+            return eFloor;
         }
 
         @Override // java.util.NavigableSet
@@ -606,38 +598,38 @@ public final class Synchronized {
 
         @Override // java.util.NavigableSet
         public E higher(E e) {
-            E higher;
+            E eHigher;
             synchronized (this.mutex) {
-                higher = delegate().higher(e);
+                eHigher = delegate().higher(e);
             }
-            return higher;
+            return eHigher;
         }
 
         @Override // java.util.NavigableSet
         public E lower(E e) {
-            E lower;
+            E eLower;
             synchronized (this.mutex) {
-                lower = delegate().lower(e);
+                eLower = delegate().lower(e);
             }
-            return lower;
+            return eLower;
         }
 
         @Override // java.util.NavigableSet
         public E pollFirst() {
-            E pollFirst;
+            E ePollFirst;
             synchronized (this.mutex) {
-                pollFirst = delegate().pollFirst();
+                ePollFirst = delegate().pollFirst();
             }
-            return pollFirst;
+            return ePollFirst;
         }
 
         @Override // java.util.NavigableSet
         public E pollLast() {
-            E pollLast;
+            E ePollLast;
             synchronized (this.mutex) {
-                pollLast = delegate().pollLast();
+                ePollLast = delegate().pollLast();
             }
-            return pollLast;
+            return ePollLast;
         }
 
         @Override // java.util.NavigableSet
@@ -682,9 +674,7 @@ public final class Synchronized {
         return new SynchronizedNavigableMap(navigableMap, obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class SynchronizedNavigableMap<K, V> extends SynchronizedSortedMap<K, V> implements NavigableMap<K, V> {
+    static class SynchronizedNavigableMap<K, V> extends SynchronizedSortedMap<K, V> implements NavigableMap<K, V> {
         private static final long serialVersionUID = 0;
         transient NavigableSet<K> descendingKeySet;
         transient NavigableMap<K, V> descendingMap;
@@ -694,28 +684,30 @@ public final class Synchronized {
             super(navigableMap, obj);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Map; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/SortedMap; */
         @Override // com.google.common.collect.Synchronized.SynchronizedSortedMap, com.google.common.collect.Synchronized.SynchronizedMap, com.google.common.collect.Synchronized.SynchronizedObject
-        public NavigableMap<K, V> delegate() {
+        NavigableMap<K, V> delegate() {
             return (NavigableMap) super.delegate();
         }
 
         @Override // java.util.NavigableMap
         public Map.Entry<K, V> ceilingEntry(K k) {
-            Map.Entry<K, V> nullableSynchronizedEntry;
+            Map.Entry<K, V> entryNullableSynchronizedEntry;
             synchronized (this.mutex) {
-                nullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().ceilingEntry(k), this.mutex);
+                entryNullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().ceilingEntry(k), this.mutex);
             }
-            return nullableSynchronizedEntry;
+            return entryNullableSynchronizedEntry;
         }
 
         @Override // java.util.NavigableMap
         public K ceilingKey(K k) {
-            K ceilingKey;
+            K kCeilingKey;
             synchronized (this.mutex) {
-                ceilingKey = delegate().ceilingKey(k);
+                kCeilingKey = delegate().ceilingKey(k);
             }
-            return ceilingKey;
+            return kCeilingKey;
         }
 
         @Override // java.util.NavigableMap
@@ -744,29 +736,29 @@ public final class Synchronized {
 
         @Override // java.util.NavigableMap
         public Map.Entry<K, V> firstEntry() {
-            Map.Entry<K, V> nullableSynchronizedEntry;
+            Map.Entry<K, V> entryNullableSynchronizedEntry;
             synchronized (this.mutex) {
-                nullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().firstEntry(), this.mutex);
+                entryNullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().firstEntry(), this.mutex);
             }
-            return nullableSynchronizedEntry;
+            return entryNullableSynchronizedEntry;
         }
 
         @Override // java.util.NavigableMap
         public Map.Entry<K, V> floorEntry(K k) {
-            Map.Entry<K, V> nullableSynchronizedEntry;
+            Map.Entry<K, V> entryNullableSynchronizedEntry;
             synchronized (this.mutex) {
-                nullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().floorEntry(k), this.mutex);
+                entryNullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().floorEntry(k), this.mutex);
             }
-            return nullableSynchronizedEntry;
+            return entryNullableSynchronizedEntry;
         }
 
         @Override // java.util.NavigableMap
         public K floorKey(K k) {
-            K floorKey;
+            K kFloorKey;
             synchronized (this.mutex) {
-                floorKey = delegate().floorKey(k);
+                kFloorKey = delegate().floorKey(k);
             }
-            return floorKey;
+            return kFloorKey;
         }
 
         @Override // java.util.NavigableMap
@@ -780,47 +772,47 @@ public final class Synchronized {
 
         @Override // java.util.NavigableMap
         public Map.Entry<K, V> higherEntry(K k) {
-            Map.Entry<K, V> nullableSynchronizedEntry;
+            Map.Entry<K, V> entryNullableSynchronizedEntry;
             synchronized (this.mutex) {
-                nullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().higherEntry(k), this.mutex);
+                entryNullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().higherEntry(k), this.mutex);
             }
-            return nullableSynchronizedEntry;
+            return entryNullableSynchronizedEntry;
         }
 
         @Override // java.util.NavigableMap
         public K higherKey(K k) {
-            K higherKey;
+            K kHigherKey;
             synchronized (this.mutex) {
-                higherKey = delegate().higherKey(k);
+                kHigherKey = delegate().higherKey(k);
             }
-            return higherKey;
+            return kHigherKey;
         }
 
         @Override // java.util.NavigableMap
         public Map.Entry<K, V> lastEntry() {
-            Map.Entry<K, V> nullableSynchronizedEntry;
+            Map.Entry<K, V> entryNullableSynchronizedEntry;
             synchronized (this.mutex) {
-                nullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().lastEntry(), this.mutex);
+                entryNullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().lastEntry(), this.mutex);
             }
-            return nullableSynchronizedEntry;
+            return entryNullableSynchronizedEntry;
         }
 
         @Override // java.util.NavigableMap
         public Map.Entry<K, V> lowerEntry(K k) {
-            Map.Entry<K, V> nullableSynchronizedEntry;
+            Map.Entry<K, V> entryNullableSynchronizedEntry;
             synchronized (this.mutex) {
-                nullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().lowerEntry(k), this.mutex);
+                entryNullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().lowerEntry(k), this.mutex);
             }
-            return nullableSynchronizedEntry;
+            return entryNullableSynchronizedEntry;
         }
 
         @Override // java.util.NavigableMap
         public K lowerKey(K k) {
-            K lowerKey;
+            K kLowerKey;
             synchronized (this.mutex) {
-                lowerKey = delegate().lowerKey(k);
+                kLowerKey = delegate().lowerKey(k);
             }
-            return lowerKey;
+            return kLowerKey;
         }
 
         @Override // com.google.common.collect.Synchronized.SynchronizedMap, java.util.Map
@@ -842,20 +834,20 @@ public final class Synchronized {
 
         @Override // java.util.NavigableMap
         public Map.Entry<K, V> pollFirstEntry() {
-            Map.Entry<K, V> nullableSynchronizedEntry;
+            Map.Entry<K, V> entryNullableSynchronizedEntry;
             synchronized (this.mutex) {
-                nullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().pollFirstEntry(), this.mutex);
+                entryNullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().pollFirstEntry(), this.mutex);
             }
-            return nullableSynchronizedEntry;
+            return entryNullableSynchronizedEntry;
         }
 
         @Override // java.util.NavigableMap
         public Map.Entry<K, V> pollLastEntry() {
-            Map.Entry<K, V> nullableSynchronizedEntry;
+            Map.Entry<K, V> entryNullableSynchronizedEntry;
             synchronized (this.mutex) {
-                nullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().pollLastEntry(), this.mutex);
+                entryNullableSynchronizedEntry = Synchronized.nullableSynchronizedEntry(delegate().pollLastEntry(), this.mutex);
             }
-            return nullableSynchronizedEntry;
+            return entryNullableSynchronizedEntry;
         }
 
         @Override // java.util.NavigableMap
@@ -892,45 +884,42 @@ public final class Synchronized {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static <K, V> Map.Entry<K, V> nullableSynchronizedEntry(Map.Entry<K, V> entry, Object obj) {
+    private static <K, V> Map.Entry<K, V> nullableSynchronizedEntry(Map.Entry<K, V> entry, Object obj) {
         if (entry == null) {
             return null;
         }
         return new SynchronizedEntry(entry, obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SynchronizedEntry<K, V> extends SynchronizedObject implements Map.Entry<K, V> {
+    private static class SynchronizedEntry<K, V> extends SynchronizedObject implements Map.Entry<K, V> {
         private static final long serialVersionUID = 0;
 
         SynchronizedEntry(Map.Entry<K, V> entry, Object obj) {
             super(entry, obj);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
         @Override // com.google.common.collect.Synchronized.SynchronizedObject
-        public Map.Entry<K, V> delegate() {
+        Map.Entry<K, V> delegate() {
             return (Map.Entry) super.delegate();
         }
 
         @Override // java.util.Map.Entry
         public boolean equals(Object obj) {
-            boolean equals;
+            boolean zEquals;
             synchronized (this.mutex) {
-                equals = delegate().equals(obj);
+                zEquals = delegate().equals(obj);
             }
-            return equals;
+            return zEquals;
         }
 
         @Override // java.util.Map.Entry
         public int hashCode() {
-            int hashCode;
+            int iHashCode;
             synchronized (this.mutex) {
-                hashCode = delegate().hashCode();
+                iHashCode = delegate().hashCode();
             }
-            return hashCode;
+            return iHashCode;
         }
 
         @Override // java.util.Map.Entry

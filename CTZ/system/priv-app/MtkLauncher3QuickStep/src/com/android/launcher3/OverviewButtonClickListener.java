@@ -1,6 +1,7 @@
 package com.android.launcher3;
 
 import android.view.View;
+
 /* loaded from: classes.dex */
 public abstract class OverviewButtonClickListener implements View.OnClickListener, View.OnLongClickListener {
     private int mControlType;

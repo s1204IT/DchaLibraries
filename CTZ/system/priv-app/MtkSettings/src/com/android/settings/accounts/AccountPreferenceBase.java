@@ -14,9 +14,9 @@ import com.android.settingslib.accounts.AuthenticatorHelper;
 import com.android.settingslib.utils.ThreadUtils;
 import java.text.DateFormat;
 import java.util.Date;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public abstract class AccountPreferenceBase extends SettingsPreferenceFragment implements AuthenticatorHelper.OnAccountsUpdateListener {
+abstract class AccountPreferenceBase extends SettingsPreferenceFragment implements AuthenticatorHelper.OnAccountsUpdateListener {
     protected static final boolean VERBOSE = Log.isLoggable("AccountPreferenceBase", 2);
     protected AccountTypePreferenceLoader mAccountTypePreferenceLoader;
     protected AuthenticatorHelper mAuthenticatorHelper;
@@ -28,7 +28,7 @@ public abstract class AccountPreferenceBase extends SettingsPreferenceFragment i
             ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.accounts.-$$Lambda$AccountPreferenceBase$7XBpqCguERDVZFsa_jC8V8rk8o8
                 @Override // java.lang.Runnable
                 public final void run() {
-                    AccountPreferenceBase.this.onSyncStateUpdated();
+                    this.f$0.onSyncStateUpdated();
                 }
             });
         }
@@ -36,6 +36,9 @@ public abstract class AccountPreferenceBase extends SettingsPreferenceFragment i
     private DateFormat mTimeFormat;
     private UserManager mUm;
     protected UserHandle mUserHandle;
+
+    AccountPreferenceBase() {
+    }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public void onCreate(Bundle bundle) {
@@ -51,12 +54,10 @@ public abstract class AccountPreferenceBase extends SettingsPreferenceFragment i
     public void onAccountsUpdate(UserHandle userHandle) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onAuthDescriptionsUpdated() {
+    protected void onAuthDescriptionsUpdated() {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onSyncStateUpdated() {
+    protected void onSyncStateUpdated() {
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
@@ -85,18 +86,15 @@ public abstract class AccountPreferenceBase extends SettingsPreferenceFragment i
         onAuthDescriptionsUpdated();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Drawable getDrawableForType(String str) {
+    protected Drawable getDrawableForType(String str) {
         return this.mAuthenticatorHelper.getDrawableForType(getActivity(), str);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public CharSequence getLabelForType(String str) {
+    protected CharSequence getLabelForType(String str) {
         return this.mAuthenticatorHelper.getLabelForType(getActivity(), str);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public String formatSyncDate(Date date) {
+    protected String formatSyncDate(Date date) {
         return this.mDateFormat.format(date) + " " + this.mTimeFormat.format(date);
     }
 }

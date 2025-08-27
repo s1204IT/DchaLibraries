@@ -3,6 +3,7 @@ package com.android.settings.fuelgauge;
 import android.content.Context;
 import android.util.SparseIntArray;
 import com.android.internal.os.BatterySipper;
+
 /* loaded from: classes.dex */
 public interface PowerUsageFeatureProvider {
     String getAdvancedUsageScreenInfoString();

@@ -16,6 +16,7 @@ import com.android.settings.widget.RadioButtonPreference;
 import com.android.settingslib.applications.DefaultAppInfo;
 import com.android.settingslib.widget.CandidateInfo;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public abstract class DefaultAppPickerFragment extends RadioButtonPickerFragment {
     protected PackageManagerWrapper mPm;
@@ -38,9 +39,8 @@ public abstract class DefaultAppPickerFragment extends RadioButtonPickerFragment
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment
-    public void onRadioButtonConfirmed(String str) {
+    protected void onRadioButtonConfirmed(String str) {
         this.mMetricsFeatureProvider.action(getContext(), 1000, str, Pair.create(833, Integer.valueOf(getMetricsCategory())));
         super.onRadioButtonConfirmed(str);
     }
@@ -70,7 +70,6 @@ public abstract class DefaultAppPickerFragment extends RadioButtonPickerFragment
         return null;
     }
 
-    /* loaded from: classes.dex */
     public static class ConfirmationDialogFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
         private DialogInterface.OnClickListener mCancelListener;
 
@@ -93,7 +92,7 @@ public abstract class DefaultAppPickerFragment extends RadioButtonPickerFragment
 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            return new AlertDialog.Builder(getActivity()).setMessage(getArguments().getCharSequence("extra_message")).setPositiveButton(17039370, this).setNegativeButton(17039360, this.mCancelListener).create();
+            return new AlertDialog.Builder(getActivity()).setMessage(getArguments().getCharSequence("extra_message")).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this.mCancelListener).create();
         }
 
         @Override // android.content.DialogInterface.OnClickListener

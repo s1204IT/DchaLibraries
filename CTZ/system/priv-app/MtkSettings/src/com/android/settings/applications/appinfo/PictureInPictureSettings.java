@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PictureInPictureSettings extends EmptyTextSettings {
     private Context mContext;
@@ -33,6 +34,7 @@ public class PictureInPictureSettings extends EmptyTextSettings {
     private PackageManagerWrapper mPackageManager;
     private UserManager mUserManager;
     private static final String TAG = PictureInPictureSettings.class.getSimpleName();
+
     @VisibleForTesting
     static final List<String> IGNORE_PACKAGE_LIST = new ArrayList();
 
@@ -40,7 +42,6 @@ public class PictureInPictureSettings extends EmptyTextSettings {
         IGNORE_PACKAGE_LIST.add("com.android.systemui");
     }
 
-    /* loaded from: classes.dex */
     static class AppComparator implements Comparator<Pair<ApplicationInfo, Integer>> {
         private final Collator mCollator = Collator.getInstance();
         private final PackageManager mPm;
@@ -49,19 +50,20 @@ public class PictureInPictureSettings extends EmptyTextSettings {
             this.mPm = packageManager;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public final int compare(Pair<ApplicationInfo, Integer> pair, Pair<ApplicationInfo, Integer> pair2) {
-            CharSequence loadLabel = ((ApplicationInfo) pair.first).loadLabel(this.mPm);
-            if (loadLabel == null) {
-                loadLabel = ((ApplicationInfo) pair.first).name;
+            CharSequence charSequenceLoadLabel = ((ApplicationInfo) pair.first).loadLabel(this.mPm);
+            if (charSequenceLoadLabel == null) {
+                charSequenceLoadLabel = ((ApplicationInfo) pair.first).name;
             }
-            CharSequence loadLabel2 = ((ApplicationInfo) pair2.first).loadLabel(this.mPm);
-            if (loadLabel2 == null) {
-                loadLabel2 = ((ApplicationInfo) pair2.first).name;
+            CharSequence charSequenceLoadLabel2 = ((ApplicationInfo) pair2.first).loadLabel(this.mPm);
+            if (charSequenceLoadLabel2 == null) {
+                charSequenceLoadLabel2 = ((ApplicationInfo) pair2.first).name;
             }
-            int compare = this.mCollator.compare(loadLabel.toString(), loadLabel2.toString());
-            if (compare != 0) {
-                return compare;
+            int iCompare = this.mCollator.compare(charSequenceLoadLabel.toString(), charSequenceLoadLabel2.toString());
+            if (iCompare != 0) {
+                return iCompare;
             }
             return ((Integer) pair.second).intValue() - ((Integer) pair2.second).intValue();
         }
@@ -93,20 +95,20 @@ public class PictureInPictureSettings extends EmptyTextSettings {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.removeAll();
         PackageManager packageManager = this.mPackageManager.getPackageManager();
-        ArrayList<Pair<ApplicationInfo, Integer>> collectPipApps = collectPipApps(UserHandle.myUserId());
-        Collections.sort(collectPipApps, new AppComparator(packageManager));
+        ArrayList<Pair<ApplicationInfo, Integer>> arrayListCollectPipApps = collectPipApps(UserHandle.myUserId());
+        Collections.sort(arrayListCollectPipApps, new AppComparator(packageManager));
         Context prefContext = getPrefContext();
-        Iterator<Pair<ApplicationInfo, Integer>> it = collectPipApps.iterator();
+        Iterator<Pair<ApplicationInfo, Integer>> it = arrayListCollectPipApps.iterator();
         while (it.hasNext()) {
             Pair<ApplicationInfo, Integer> next = it.next();
             final ApplicationInfo applicationInfo = (ApplicationInfo) next.first;
-            int intValue = ((Integer) next.second).intValue();
-            UserHandle of = UserHandle.of(intValue);
+            int iIntValue = ((Integer) next.second).intValue();
+            UserHandle userHandleOf = UserHandle.of(iIntValue);
             final String str = applicationInfo.packageName;
-            CharSequence loadLabel = applicationInfo.loadLabel(packageManager);
+            CharSequence charSequenceLoadLabel = applicationInfo.loadLabel(packageManager);
             AppPreference appPreference = new AppPreference(prefContext);
-            appPreference.setIcon(this.mIconDrawableFactory.getBadgedIcon(applicationInfo, intValue));
-            appPreference.setTitle(packageManager.getUserBadgedLabel(loadLabel, of));
+            appPreference.setIcon(this.mIconDrawableFactory.getBadgedIcon(applicationInfo, iIntValue));
+            appPreference.setTitle(packageManager.getUserBadgedLabel(charSequenceLoadLabel, userHandleOf));
             appPreference.setSummary(PictureInPictureDetails.getPreferenceSummary(prefContext, applicationInfo.uid, str));
             appPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.applications.appinfo.PictureInPictureSettings.1
                 @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
@@ -125,9 +127,8 @@ public class PictureInPictureSettings extends EmptyTextSettings {
         setEmptyText(R.string.picture_in_picture_empty_text);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.picture_in_picture_settings;
     }
 
@@ -139,15 +140,16 @@ public class PictureInPictureSettings extends EmptyTextSettings {
     ArrayList<Pair<ApplicationInfo, Integer>> collectPipApps(int i) {
         ArrayList<Pair<ApplicationInfo, Integer>> arrayList = new ArrayList<>();
         ArrayList arrayList2 = new ArrayList();
-        for (UserInfo userInfo : this.mUserManager.getProfiles(i)) {
-            arrayList2.add(Integer.valueOf(userInfo.id));
-        }
-        Iterator it = arrayList2.iterator();
+        Iterator it = this.mUserManager.getProfiles(i).iterator();
         while (it.hasNext()) {
-            int intValue = ((Integer) it.next()).intValue();
-            for (PackageInfo packageInfo : this.mPackageManager.getInstalledPackagesAsUser(1, intValue)) {
+            arrayList2.add(Integer.valueOf(((UserInfo) it.next()).id));
+        }
+        Iterator it2 = arrayList2.iterator();
+        while (it2.hasNext()) {
+            int iIntValue = ((Integer) it2.next()).intValue();
+            for (PackageInfo packageInfo : this.mPackageManager.getInstalledPackagesAsUser(1, iIntValue)) {
                 if (checkPackageHasPictureInPictureActivities(packageInfo.packageName, packageInfo.activities)) {
-                    arrayList.add(new Pair<>(packageInfo.applicationInfo, Integer.valueOf(intValue)));
+                    arrayList.add(new Pair<>(packageInfo.applicationInfo, Integer.valueOf(iIntValue)));
                 }
             }
         }

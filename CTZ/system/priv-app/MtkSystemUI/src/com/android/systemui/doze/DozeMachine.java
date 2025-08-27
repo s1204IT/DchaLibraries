@@ -9,6 +9,7 @@ import com.android.systemui.util.Assert;
 import com.android.systemui.util.wakelock.WakeLock;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class DozeMachine {
     static final boolean DEBUG = DozeService.DEBUG;
@@ -21,7 +22,6 @@ public class DozeMachine {
     private State mState = State.UNINITIALIZED;
     private boolean mWakeLockHeldForCurrentState = false;
 
-    /* loaded from: classes.dex */
     public enum State {
         UNINITIALIZED,
         INITIALIZED,
@@ -56,8 +56,7 @@ public class DozeMachine {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public int screenState(DozeParameters dozeParameters) {
+        int screenState(DozeParameters dozeParameters) {
             switch (this) {
                 case DOZE:
                 case DOZE_AOD_PAUSED:
@@ -123,8 +122,7 @@ public class DozeMachine {
 
     public int getPulseReason() {
         Assert.isMainThread();
-        boolean z = this.mState == State.DOZE_REQUEST_PULSE || this.mState == State.DOZE_PULSING || this.mState == State.DOZE_PULSE_DONE;
-        Preconditions.checkState(z, "must be in pulsing state, but is " + this.mState);
+        Preconditions.checkState(this.mState == State.DOZE_REQUEST_PULSE || this.mState == State.DOZE_PULSING || this.mState == State.DOZE_PULSE_DONE, "must be in pulsing state, but is " + this.mState);
         return this.mPulseReason;
     }
 
@@ -137,22 +135,22 @@ public class DozeMachine {
     }
 
     private void transitionTo(State state, int i) {
-        State transitionPolicy = transitionPolicy(state);
+        State stateTransitionPolicy = transitionPolicy(state);
         if (DEBUG) {
-            Log.i("DozeMachine", "transition: old=" + this.mState + " req=" + state + " new=" + transitionPolicy);
+            Log.i("DozeMachine", "transition: old=" + this.mState + " req=" + state + " new=" + stateTransitionPolicy);
         }
-        if (transitionPolicy == this.mState) {
+        if (stateTransitionPolicy == this.mState) {
             return;
         }
-        validateTransition(transitionPolicy);
+        validateTransition(stateTransitionPolicy);
         State state2 = this.mState;
-        this.mState = transitionPolicy;
-        DozeLog.traceState(transitionPolicy);
-        Trace.traceCounter(4096L, "doze_machine_state", transitionPolicy.ordinal());
-        updatePulseReason(transitionPolicy, state2, i);
-        performTransitionOnComponents(state2, transitionPolicy);
-        updateWakeLockState(transitionPolicy);
-        resolveIntermediateState(transitionPolicy);
+        this.mState = stateTransitionPolicy;
+        DozeLog.traceState(stateTransitionPolicy);
+        Trace.traceCounter(4096L, "doze_machine_state", stateTransitionPolicy.ordinal());
+        updatePulseReason(stateTransitionPolicy, state2, i);
+        performTransitionOnComponents(state2, stateTransitionPolicy);
+        updateWakeLockState(stateTransitionPolicy);
+        resolveIntermediateState(stateTransitionPolicy);
     }
 
     private void updatePulseReason(State state, State state2, int i) {
@@ -193,12 +191,10 @@ public class DozeMachine {
                 default:
                     return;
                 case DOZE_PULSE_DONE:
-                    if (this.mState != State.DOZE_REQUEST_PULSE && this.mState != State.DOZE_PULSING) {
-                        Preconditions.checkState(r2);
-                        return;
+                    if (this.mState == State.DOZE_REQUEST_PULSE || this.mState == State.DOZE_PULSING) {
+                        z = true;
                     }
-                    r2 = true;
-                    Preconditions.checkState(r2);
+                    Preconditions.checkState(z);
                     return;
             }
         } catch (RuntimeException e) {
@@ -213,20 +209,20 @@ public class DozeMachine {
         if ((this.mState == State.DOZE_AOD_PAUSED || this.mState == State.DOZE_AOD_PAUSING || this.mState == State.DOZE_AOD || this.mState == State.DOZE) && state == State.DOZE_PULSE_DONE) {
             Log.i("DozeMachine", "Dropping pulse done because current state is already done: " + this.mState);
             return this.mState;
-        } else if (state == State.DOZE_REQUEST_PULSE && !this.mState.canPulse()) {
+        }
+        if (state == State.DOZE_REQUEST_PULSE && !this.mState.canPulse()) {
             Log.i("DozeMachine", "Dropping pulse request because current state can't pulse: " + this.mState);
             return this.mState;
-        } else {
-            return state;
         }
+        return state;
     }
 
     private void updateWakeLockState(State state) {
-        boolean staysAwake = state.staysAwake();
-        if (this.mWakeLockHeldForCurrentState && !staysAwake) {
+        boolean zStaysAwake = state.staysAwake();
+        if (this.mWakeLockHeldForCurrentState && !zStaysAwake) {
             this.mWakeLock.release();
             this.mWakeLockHeldForCurrentState = false;
-        } else if (!this.mWakeLockHeldForCurrentState && staysAwake) {
+        } else if (!this.mWakeLockHeldForCurrentState && zStaysAwake) {
             this.mWakeLock.acquire();
             this.mWakeLockHeldForCurrentState = true;
         }
@@ -250,7 +246,6 @@ public class DozeMachine {
         }
     }
 
-    /* loaded from: classes.dex */
     public interface Part {
         void transitionTo(State state, State state2);
 
@@ -258,7 +253,6 @@ public class DozeMachine {
         }
     }
 
-    /* loaded from: classes.dex */
     public interface Service {
         void finish();
 
@@ -268,7 +262,6 @@ public class DozeMachine {
 
         void setDozeScreenState(int i);
 
-        /* loaded from: classes.dex */
         public static class Delegate implements Service {
             private final Service mDelegate;
 

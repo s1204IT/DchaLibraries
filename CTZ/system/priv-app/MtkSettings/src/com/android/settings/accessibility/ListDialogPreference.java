@@ -1,5 +1,6 @@
 package com.android.settings.accessibility;
 
+import android.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import com.android.settingslib.CustomDialogPreference;
+
 /* loaded from: classes.dex */
 public abstract class ListDialogPreference extends CustomDialogPreference {
     private CharSequence[] mEntryTitles;
@@ -27,7 +29,6 @@ public abstract class ListDialogPreference extends CustomDialogPreference {
     private int mValueIndex;
     private boolean mValueSet;
 
-    /* loaded from: classes.dex */
     public interface OnValueChangedListener {
         void onValueChanged(ListDialogPreference listDialogPreference, int i);
     }
@@ -57,16 +58,14 @@ public abstract class ListDialogPreference extends CustomDialogPreference {
         this.mEntryTitles = charSequenceArr;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public CharSequence getTitleAt(int i) {
+    protected CharSequence getTitleAt(int i) {
         if (this.mEntryTitles == null || this.mEntryTitles.length <= i) {
             return null;
         }
         return this.mEntryTitles[i];
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getValueAt(int i) {
+    protected int getValueAt(int i) {
         return this.mEntryValues[i];
     }
 
@@ -78,14 +77,13 @@ public abstract class ListDialogPreference extends CustomDialogPreference {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomDialogPreference
-    public void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
         super.onPrepareDialogBuilder(builder, onClickListener);
         Context context = getContext();
-        View inflate = LayoutInflater.from(context).inflate(getDialogLayoutResource(), (ViewGroup) null);
+        View viewInflate = LayoutInflater.from(context).inflate(getDialogLayoutResource(), (ViewGroup) null);
         ListPreferenceAdapter listPreferenceAdapter = new ListPreferenceAdapter();
-        AbsListView absListView = (AbsListView) inflate.findViewById(16908298);
+        AbsListView absListView = (AbsListView) viewInflate.findViewById(R.id.list);
         absListView.setAdapter((ListAdapter) listPreferenceAdapter);
         absListView.setOnItemClickListener(new AdapterView.OnItemClickListener() { // from class: com.android.settings.accessibility.ListDialogPreference.1
             @Override // android.widget.AdapterView.OnItemClickListener
@@ -104,7 +102,7 @@ public abstract class ListDialogPreference extends CustomDialogPreference {
         if (indexForValue != -1) {
             absListView.setSelection(indexForValue);
         }
-        builder.setView(inflate);
+        builder.setView(viewInflate);
         builder.setPositiveButton((CharSequence) null, (DialogInterface.OnClickListener) null);
     }
 
@@ -158,21 +156,19 @@ public abstract class ListDialogPreference extends CustomDialogPreference {
         setValue(z ? getPersistedInt(this.mValue) : ((Integer) obj).intValue());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public Parcelable onSaveInstanceState() {
-        Parcelable onSaveInstanceState = super.onSaveInstanceState();
+    protected Parcelable onSaveInstanceState() {
+        Parcelable parcelableOnSaveInstanceState = super.onSaveInstanceState();
         if (isPersistent()) {
-            return onSaveInstanceState;
+            return parcelableOnSaveInstanceState;
         }
-        SavedState savedState = new SavedState(onSaveInstanceState);
+        SavedState savedState = new SavedState(parcelableOnSaveInstanceState);
         savedState.value = getValue();
         return savedState;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void onRestoreInstanceState(Parcelable parcelable) {
+    protected void onRestoreInstanceState(Parcelable parcelable) {
         if (parcelable == null || !parcelable.getClass().equals(SavedState.class)) {
             super.onRestoreInstanceState(parcelable);
             return;
@@ -182,7 +178,6 @@ public abstract class ListDialogPreference extends CustomDialogPreference {
         setValue(savedState.value);
     }
 
-    /* loaded from: classes.dex */
     private class ListPreferenceAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
 
@@ -194,6 +189,7 @@ public abstract class ListDialogPreference extends CustomDialogPreference {
             return ListDialogPreference.this.mEntryValues.length;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
         @Override // android.widget.Adapter
         public Integer getItem(int i) {
             return Integer.valueOf(ListDialogPreference.this.mEntryValues[i]);
@@ -222,16 +218,16 @@ public abstract class ListDialogPreference extends CustomDialogPreference {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SavedState extends Preference.BaseSavedState {
+    private static class SavedState extends Preference.BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() { // from class: com.android.settings.accessibility.ListDialogPreference.SavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState createFromParcel(Parcel parcel) {
                 return new SavedState(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState[] newArray(int i) {

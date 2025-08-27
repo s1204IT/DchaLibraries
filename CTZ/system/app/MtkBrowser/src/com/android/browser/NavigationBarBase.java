@@ -2,6 +2,7 @@ package com.android.browser;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.android.browser.UrlInputView;
 import com.mediatek.browser.ext.IBrowserUrlExt;
+
 /* loaded from: classes.dex */
 public class NavigationBarBase extends LinearLayout implements TextWatcher, View.OnClickListener, View.OnFocusChangeListener, UrlInputView.UrlInputListener {
     protected BaseUi mBaseUi;
@@ -50,9 +52,8 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         return this.mUrlInput;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mLockIcon = (ImageView) findViewById(R.id.lock);
         this.mFavicon = (ImageView) findViewById(R.id.favicon);
@@ -62,9 +63,9 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         this.mUrlInput.setSelectAllOnFocus(true);
         this.mUrlInput.addTextChangedListener(this);
         this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mContext);
-        InputFilter[] checkUrlLengthLimit = this.mBrowserUrlExt.checkUrlLengthLimit(this.mContext);
-        if (checkUrlLengthLimit != null) {
-            this.mUrlInput.setFilters(checkUrlLengthLimit);
+        InputFilter[] inputFilterArrCheckUrlLengthLimit = this.mBrowserUrlExt.checkUrlLengthLimit(this.mContext);
+        if (inputFilterArrCheckUrlLengthLimit != null) {
+            this.mUrlInput.setFilters(inputFilterArrCheckUrlLengthLimit);
         }
     }
 
@@ -81,10 +82,10 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         }
         if (drawable == null) {
             this.mLockIcon.setVisibility(8);
-            return;
+        } else {
+            this.mLockIcon.setImageDrawable(drawable);
+            this.mLockIcon.setVisibility(0);
         }
-        this.mLockIcon.setImageDrawable(drawable);
-        this.mLockIcon.setVisibility(0);
     }
 
     public void setFavicon(Bitmap bitmap) {
@@ -99,7 +100,7 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
     }
 
     @Override // android.view.View.OnFocusChangeListener
-    public void onFocusChange(View view, boolean z) {
+    public void onFocusChange(View view, boolean z) throws Resources.NotFoundException {
         Tab currentTab;
         if (z || view.isInTouchMode() || this.mUrlInput.needsUpdate()) {
             setFocusState(z);
@@ -117,24 +118,21 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         this.mUrlInput.clearNeedsUpdate();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setFocusState(boolean z) {
+    protected void setFocusState(boolean z) {
     }
 
     public boolean isEditingUrl() {
         return this.mUrlInput.hasFocus();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void stopEditingUrl() {
+    void stopEditingUrl() {
         WebView currentTopWebView = this.mUiController.getCurrentTopWebView();
         if (currentTopWebView != null) {
             currentTopWebView.requestFocus();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setDisplayTitle(String str) {
+    void setDisplayTitle(String str) {
         if (!isEditingUrl()) {
             if (str.startsWith("about:blank")) {
                 this.mUrlInput.setText((CharSequence) "about:blank", false);
@@ -144,13 +142,11 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setIncognitoMode(boolean z) {
+    void setIncognitoMode(boolean z) {
         this.mUrlInput.setIncognitoMode(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void clearCompletions() {
+    void clearCompletions() {
         this.mUrlInput.dismissDropDown();
     }
 
@@ -158,10 +154,10 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
     public void onAction(String str, String str2, String str3) {
         stopEditingUrl();
         if ("browser-type".equals(str3)) {
-            String smartUrlFilter = UrlUtils.smartUrlFilter(str, false);
+            String strSmartUrlFilter = UrlUtils.smartUrlFilter(str, false);
             Tab activeTab = this.mBaseUi.getActiveTab();
-            if (smartUrlFilter != null && activeTab != null && smartUrlFilter.startsWith("javascript:")) {
-                this.mUiController.loadUrl(activeTab, smartUrlFilter);
+            if (strSmartUrlFilter != null && activeTab != null && strSmartUrlFilter.startsWith("javascript:")) {
+                this.mUiController.loadUrl(activeTab, strSmartUrlFilter);
                 setDisplayTitle(str);
                 return;
             }
@@ -177,9 +173,10 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         } else if (str != null && str.startsWith("wtai://wp/mc;")) {
             intent.setAction("android.intent.action.VIEW");
             intent.setData(Uri.parse("tel:" + str.substring("wtai://wp/mc;".length())));
-        } else if (str != null && str.startsWith("file://")) {
-            return;
         } else {
+            if (str != null && str.startsWith("file://")) {
+                return;
+            }
             intent.setAction("android.intent.action.SEARCH");
             intent.putExtra("query", str);
             if (str2 != null) {
@@ -196,7 +193,7 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
     }
 
     @Override // com.android.browser.UrlInputView.UrlInputListener
-    public void onDismiss() {
+    public void onDismiss() throws Resources.NotFoundException {
         final Tab activeTab = this.mBaseUi.getActiveTab();
         this.mBaseUi.hideTitleBar();
         post(new Runnable() { // from class: com.android.browser.NavigationBarBase.1
@@ -230,8 +227,7 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         return super.dispatchKeyEventPreIme(keyEvent);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void startEditingUrl(boolean z, boolean z2) {
+    void startEditingUrl(boolean z, boolean z2) {
         setVisibility(0);
         if (this.mTitleBar.useQuickControls()) {
             this.mTitleBar.getProgressView().setVisibility(8);

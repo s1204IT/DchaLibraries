@@ -2,14 +2,13 @@ package com.google.common.collect;
 
 import com.google.common.base.Preconditions;
 import java.io.Serializable;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class ReverseOrdering<T> extends Ordering<T> implements Serializable {
+final class ReverseOrdering<T> extends Ordering<T> implements Serializable {
     private static final long serialVersionUID = 0;
     final Ordering<? super T> forwardOrder;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ReverseOrdering(Ordering<? super T> ordering) {
+    ReverseOrdering(Ordering<? super T> ordering) {
         this.forwardOrder = (Ordering) Preconditions.checkNotNull(ordering);
     }
 
@@ -20,7 +19,7 @@ public final class ReverseOrdering<T> extends Ordering<T> implements Serializabl
 
     @Override // com.google.common.collect.Ordering
     public <S extends T> Ordering<S> reverse() {
-        return (Ordering<? super T>) this.forwardOrder;
+        return this.forwardOrder;
     }
 
     public int hashCode() {

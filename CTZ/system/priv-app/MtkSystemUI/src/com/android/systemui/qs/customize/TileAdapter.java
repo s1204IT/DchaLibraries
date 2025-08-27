@@ -26,6 +26,7 @@ import com.android.systemui.qs.tileimpl.QSIconViewImpl;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQueryHelper.TileStateListener {
     private int mAccessibilityFromIndex;
@@ -208,19 +209,20 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         return this.mTiles.get(i) == null ? 1 : 0;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public Holder onCreateViewHolder(ViewGroup viewGroup, int i) {
         Context context = viewGroup.getContext();
-        LayoutInflater from = LayoutInflater.from(context);
+        LayoutInflater layoutInflaterFrom = LayoutInflater.from(context);
         if (i == 4) {
-            return new Holder(from.inflate(R.layout.qs_customize_tile_divider, viewGroup, false));
+            return new Holder(layoutInflaterFrom.inflate(R.layout.qs_customize_tile_divider, viewGroup, false));
         }
         if (i != 1) {
-            FrameLayout frameLayout = (FrameLayout) from.inflate(R.layout.qs_customize_tile_frame, viewGroup, false);
+            FrameLayout frameLayout = (FrameLayout) layoutInflaterFrom.inflate(R.layout.qs_customize_tile_frame, viewGroup, false);
             frameLayout.addView(new CustomizeTileView(context, new QSIconViewImpl(context)));
             return new Holder(frameLayout);
         }
-        return new Holder(from.inflate(R.layout.qs_customize_divider, viewGroup, false));
+        return new Holder(layoutInflaterFrom.inflate(R.layout.qs_customize_divider, viewGroup, false));
     }
 
     @Override // android.support.v7.widget.RecyclerView.Adapter
@@ -228,19 +230,22 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         return this.mTiles.size();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onFailedToRecycleView(Landroid/support/v7/widget/RecyclerView$ViewHolder;)Z */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public boolean onFailedToRecycleView(Holder holder) {
         holder.clearDrag();
         return true;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(final Holder holder, int i) {
         int i2;
-        boolean z = false;
         if (holder.getItemViewType() == 4) {
             holder.itemView.setVisibility(this.mTileDividerIndex < this.mTiles.size() - 1 ? 0 : 4);
-        } else if (holder.getItemViewType() == 1) {
+            return;
+        }
+        if (holder.getItemViewType() == 1) {
             if (this.mCurrentDrag == null) {
                 i2 = R.string.drag_to_add_tiles;
             } else if (!canRemoveTiles() && this.mCurrentDrag.getAdapterPosition() < this.mEditIndex) {
@@ -248,8 +253,10 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
             } else {
                 i2 = R.string.drag_to_remove_tiles;
             }
-            ((TextView) holder.itemView.findViewById(16908310)).setText(i2);
-        } else if (holder.getItemViewType() != 2) {
+            ((TextView) holder.itemView.findViewById(android.R.id.title)).setText(i2);
+            return;
+        }
+        if (holder.getItemViewType() != 2) {
             TileQueryHelper.TileInfo tileInfo = this.mTiles.get(i);
             if (i > this.mEditIndex) {
                 tileInfo.state.contentDescription = this.mContext.getString(R.string.accessibility_qs_edit_add_tile_label, tileInfo.state.label);
@@ -261,9 +268,7 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
             holder.mTileView.handleStateChanged(tileInfo.state);
             holder.mTileView.setShowAppLabel(i > this.mEditIndex && !tileInfo.isSystem);
             if (this.mAccessibilityManager.isTouchExplorationEnabled()) {
-                if (this.mAccessibilityAction == 0 || i < this.mEditIndex) {
-                    z = true;
-                }
+                boolean z = this.mAccessibilityAction == 0 || i < this.mEditIndex;
                 holder.mTileView.setClickable(z);
                 holder.mTileView.setFocusable(z);
                 holder.mTileView.setImportantForAccessibility(z ? 1 : 4);
@@ -283,42 +288,41 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
                         }
                     }
                 });
-            }
-        } else {
-            holder.mTileView.setClickable(true);
-            holder.mTileView.setFocusable(true);
-            holder.mTileView.setFocusableInTouchMode(true);
-            holder.mTileView.setVisibility(0);
-            holder.mTileView.setImportantForAccessibility(1);
-            holder.mTileView.setContentDescription(this.mContext.getString(R.string.accessibility_qs_edit_position_label, Integer.valueOf(i + 1)));
-            holder.mTileView.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.qs.customize.TileAdapter.1
-                @Override // android.view.View.OnClickListener
-                public void onClick(View view) {
-                    TileAdapter.this.selectPosition(holder.getAdapterPosition(), view);
-                }
-            });
-            if (!this.mNeedsFocus) {
                 return;
             }
-            holder.mTileView.requestLayout();
-            holder.mTileView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // from class: com.android.systemui.qs.customize.TileAdapter.2
-                @Override // android.view.View.OnLayoutChangeListener
-                public void onLayoutChange(View view, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10) {
-                    holder.mTileView.removeOnLayoutChangeListener(this);
-                    holder.mTileView.requestFocus();
-                }
-            });
-            this.mNeedsFocus = false;
+            return;
         }
+        holder.mTileView.setClickable(true);
+        holder.mTileView.setFocusable(true);
+        holder.mTileView.setFocusableInTouchMode(true);
+        holder.mTileView.setVisibility(0);
+        holder.mTileView.setImportantForAccessibility(1);
+        holder.mTileView.setContentDescription(this.mContext.getString(R.string.accessibility_qs_edit_position_label, Integer.valueOf(i + 1)));
+        holder.mTileView.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.qs.customize.TileAdapter.1
+            @Override // android.view.View.OnClickListener
+            public void onClick(View view) {
+                TileAdapter.this.selectPosition(holder.getAdapterPosition(), view);
+            }
+        });
+        if (!this.mNeedsFocus) {
+            return;
+        }
+        holder.mTileView.requestLayout();
+        holder.mTileView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // from class: com.android.systemui.qs.customize.TileAdapter.2
+            @Override // android.view.View.OnLayoutChangeListener
+            public void onLayoutChange(View view, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10) {
+                holder.mTileView.removeOnLayoutChangeListener(this);
+                holder.mTileView.requestFocus();
+            }
+        });
+        this.mNeedsFocus = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean canRemoveTiles() {
+    private boolean canRemoveTiles() {
         return this.mCurrentSpecs.size() > 6;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void selectPosition(int i, View view) {
+    private void selectPosition(int i, View view) {
         if (this.mAccessibilityAction == 1) {
             List<TileQueryHelper.TileInfo> list = this.mTiles;
             int i2 = this.mEditIndex;
@@ -334,10 +338,9 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         notifyDataSetChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showAccessibilityDialog(final int i, final View view) {
+    private void showAccessibilityDialog(final int i, final View view) {
         final TileQueryHelper.TileInfo tileInfo = this.mTiles.get(i);
-        AlertDialog create = new AlertDialog.Builder(this.mContext).setItems(new CharSequence[]{this.mContext.getString(R.string.accessibility_qs_edit_move_tile, tileInfo.state.label), this.mContext.getString(R.string.accessibility_qs_edit_remove_tile, tileInfo.state.label)}, new DialogInterface.OnClickListener() { // from class: com.android.systemui.qs.customize.TileAdapter.4
+        AlertDialog alertDialogCreate = new AlertDialog.Builder(this.mContext).setItems(new CharSequence[]{this.mContext.getString(R.string.accessibility_qs_edit_move_tile, tileInfo.state.label), this.mContext.getString(R.string.accessibility_qs_edit_remove_tile, tileInfo.state.label)}, new DialogInterface.OnClickListener() { // from class: com.android.systemui.qs.customize.TileAdapter.4
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i2) {
                 if (i2 == 0) {
@@ -348,14 +351,13 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
                 TileAdapter.this.notifyItemChanged(TileAdapter.this.mTileDividerIndex);
                 TileAdapter.this.notifyDataSetChanged();
             }
-        }).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
-        SystemUIDialog.setShowForAllUsers(create, true);
-        SystemUIDialog.applyFlags(create);
-        create.show();
+        }).setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null).create();
+        SystemUIDialog.setShowForAllUsers(alertDialogCreate, true);
+        SystemUIDialog.applyFlags(alertDialogCreate);
+        alertDialogCreate.show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startAccessibleAdd(int i) {
+    private void startAccessibleAdd(int i) {
         this.mAccessibilityFromIndex = i;
         this.mAccessibilityAction = 1;
         List<TileQueryHelper.TileInfo> list = this.mTiles;
@@ -366,8 +368,7 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         notifyDataSetChanged();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startAccessibleMove(int i) {
+    private void startAccessibleMove(int i) {
         this.mAccessibilityFromIndex = i;
         this.mAccessibilityAction = 2;
         notifyDataSetChanged();
@@ -377,8 +378,7 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         return this.mSizeLookup;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean move(int i, int i2, View view) {
+    private boolean move(int i, int i2, View view) {
         if (i2 == i) {
             return true;
         }
@@ -431,7 +431,6 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         notifyItemMoved(i, i2);
     }
 
-    /* loaded from: classes.dex */
     public class Holder extends RecyclerView.ViewHolder {
         private CustomizeTileView mTileView;
 
@@ -465,14 +464,13 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         }
     }
 
-    /* loaded from: classes.dex */
     private class TileItemDecoration extends RecyclerView.ItemDecoration {
         private final ColorDrawable mDrawable;
 
         private TileItemDecoration(Context context) {
-            TypedArray obtainStyledAttributes = context.obtainStyledAttributes(new int[]{16844080});
-            this.mDrawable = new ColorDrawable(obtainStyledAttributes.getColor(0, 0));
-            obtainStyledAttributes.recycle();
+            TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(new int[]{android.R.attr.colorSecondary});
+            this.mDrawable = new ColorDrawable(typedArrayObtainStyledAttributes.getColor(0, 0));
+            typedArrayObtainStyledAttributes.recycle();
         }
 
         @Override // android.support.v7.widget.RecyclerView.ItemDecoration

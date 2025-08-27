@@ -6,11 +6,12 @@ import android.graphics.drawable.Drawable;
 import android.util.Pair;
 import com.android.settingslib.R;
 import com.android.settingslib.graph.BluetoothDeviceLayerDrawable;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class Utils {
     private static ErrorListener sErrorListener;
 
-    /* loaded from: classes.dex */
     public interface ErrorListener {
         void onShowError(Context context, String str, int i);
     }
@@ -30,8 +31,7 @@ public class Utils {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void showError(Context context, String str, int i) {
+    static void showError(Context context, String str, int i) {
         if (sErrorListener != null) {
             sErrorListener.onShowError(context, str, i);
         }
@@ -63,8 +63,9 @@ public class Utils {
                 return new Pair<>(getBluetoothDrawable(context, R.drawable.ic_settings_print, batteryLevel, f), context.getString(R.string.bluetooth_talkback_imaging));
             }
         }
-        for (LocalBluetoothProfile localBluetoothProfile : cachedBluetoothDevice.getProfiles()) {
-            int drawableResource = localBluetoothProfile.getDrawableResource(btClass);
+        Iterator<LocalBluetoothProfile> it = cachedBluetoothDevice.getProfiles().iterator();
+        while (it.hasNext()) {
+            int drawableResource = it.next().getDrawableResource(btClass);
             if (drawableResource != 0) {
                 return new Pair<>(getBluetoothDrawable(context, drawableResource, batteryLevel, f), null);
             }

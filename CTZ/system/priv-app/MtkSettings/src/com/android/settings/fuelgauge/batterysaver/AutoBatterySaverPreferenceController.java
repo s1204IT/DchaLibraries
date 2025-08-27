@@ -1,10 +1,12 @@
 package com.android.settings.fuelgauge.batterysaver;
 
+import android.R;
 import android.content.Context;
 import android.provider.Settings;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.TogglePreferenceController;
 import com.android.settingslib.fuelgauge.BatterySaverUtils;
+
 /* loaded from: classes.dex */
 public class AutoBatterySaverPreferenceController extends TogglePreferenceController implements Preference.OnPreferenceChangeListener {
     static final int DEFAULT_TRIGGER_LEVEL = 0;
@@ -13,7 +15,7 @@ public class AutoBatterySaverPreferenceController extends TogglePreferenceContro
 
     public AutoBatterySaverPreferenceController(Context context) {
         super(context, KEY_AUTO_BATTERY_SAVER);
-        this.mDefaultTriggerLevelForOn = this.mContext.getResources().getInteger(17694805);
+        this.mDefaultTriggerLevelForOn = this.mContext.getResources().getInteger(R.integer.config_defaultNotificationLedOff);
     }
 
     @Override // com.android.settings.core.BasePreferenceController

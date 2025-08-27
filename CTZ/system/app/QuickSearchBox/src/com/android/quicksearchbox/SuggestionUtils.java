@@ -3,6 +3,7 @@ package com.android.quicksearchbox;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
 /* loaded from: classes.dex */
 public class SuggestionUtils {
     public static Intent getSuggestionIntent(SuggestionCursor suggestionCursor, Bundle bundle) {
@@ -34,12 +35,12 @@ public class SuggestionUtils {
     static String normalizeUrl(String str) {
         int length;
         if (str != null) {
-            int indexOf = str.indexOf("://");
-            if (indexOf == -1) {
+            int iIndexOf = str.indexOf("://");
+            if (iIndexOf == -1) {
                 str = "http://" + str;
                 length = "http".length() + "://".length();
             } else {
-                length = indexOf + "://".length();
+                length = iIndexOf + "://".length();
             }
             int length2 = str.length();
             if (str.indexOf(47, length) == length2 - 1) {

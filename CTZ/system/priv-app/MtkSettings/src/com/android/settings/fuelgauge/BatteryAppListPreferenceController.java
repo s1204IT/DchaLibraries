@@ -30,7 +30,9 @@ import com.android.settingslib.core.lifecycle.events.OnDestroy;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.utils.StringUtil;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BatteryAppListPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnDestroy, OnPause {
     static final boolean USE_FAKE_DATA = false;
@@ -127,7 +129,7 @@ public class BatteryAppListPreferenceController extends AbstractPreferenceContro
     }
 
     public void refreshAppListGroup(BatteryStatsHelper batteryStatsHelper, boolean z) {
-        int i;
+        int dischargeAmount;
         boolean z2;
         boolean z3;
         if (!isAvailable()) {
@@ -139,44 +141,44 @@ public class BatteryAppListPreferenceController extends AbstractPreferenceContro
         BatteryStats stats = batteryStatsHelper.getStats();
         double averagePower = powerProfile.getAveragePower("screen.full");
         if (stats != null) {
-            i = stats.getDischargeAmount(0);
+            dischargeAmount = stats.getDischargeAmount(0);
         } else {
-            i = 0;
+            dischargeAmount = 0;
         }
         cacheRemoveAllPrefs(this.mAppListGroup);
         this.mAppListGroup.setOrderingAsAdded(USE_FAKE_DATA);
         if (averagePower >= 10.0d) {
             List<BatterySipper> coalescedUsageList = getCoalescedUsageList(batteryStatsHelper.getUsageList());
-            double removeHiddenBatterySippers = z ? 0.0d : this.mBatteryUtils.removeHiddenBatterySippers(coalescedUsageList);
+            double dRemoveHiddenBatterySippers = z ? 0.0d : this.mBatteryUtils.removeHiddenBatterySippers(coalescedUsageList);
             this.mBatteryUtils.sortUsageList(coalescedUsageList);
             int size = coalescedUsageList.size();
-            int i2 = 0;
+            int i = 0;
             z2 = false;
             while (true) {
-                if (i2 >= size) {
+                if (i >= size) {
                     break;
                 }
-                BatterySipper batterySipper = coalescedUsageList.get(i2);
-                int i3 = i2;
-                int i4 = size;
-                double calculateBatteryPercent = this.mBatteryUtils.calculateBatteryPercent(batterySipper.totalPowerMah, batteryStatsHelper.getTotalPower(), removeHiddenBatterySippers, i);
-                if (((int) (0.5d + calculateBatteryPercent)) < 1 || shouldHideSipper(batterySipper)) {
+                BatterySipper batterySipper = coalescedUsageList.get(i);
+                int i2 = i;
+                int i3 = size;
+                double dCalculateBatteryPercent = this.mBatteryUtils.calculateBatteryPercent(batterySipper.totalPowerMah, batteryStatsHelper.getTotalPower(), dRemoveHiddenBatterySippers, dischargeAmount);
+                if (((int) (0.5d + dCalculateBatteryPercent)) < 1 || shouldHideSipper(batterySipper)) {
                     z3 = USE_FAKE_DATA;
                 } else {
                     UserHandle userHandle = new UserHandle(UserHandle.getUserId(batterySipper.getUid()));
                     BatteryEntry batteryEntry = new BatteryEntry(this.mActivity, this.mHandler, this.mUserManager, batterySipper);
                     Drawable badgedIconForUser = this.mUserManager.getBadgedIconForUser(batteryEntry.getIcon(), userHandle);
                     CharSequence badgedLabelForUser = this.mUserManager.getBadgedLabelForUser(batteryEntry.getLabel(), userHandle);
-                    String extractKeyFromSipper = extractKeyFromSipper(batterySipper);
-                    PowerGaugePreference powerGaugePreference = (PowerGaugePreference) getCachedPreference(extractKeyFromSipper);
+                    String strExtractKeyFromSipper = extractKeyFromSipper(batterySipper);
+                    PowerGaugePreference powerGaugePreference = (PowerGaugePreference) getCachedPreference(strExtractKeyFromSipper);
                     if (powerGaugePreference == null) {
                         powerGaugePreference = new PowerGaugePreference(this.mPrefContext, badgedIconForUser, badgedLabelForUser, batteryEntry);
-                        powerGaugePreference.setKey(extractKeyFromSipper);
+                        powerGaugePreference.setKey(strExtractKeyFromSipper);
                     }
-                    batterySipper.percent = calculateBatteryPercent;
+                    batterySipper.percent = dCalculateBatteryPercent;
                     powerGaugePreference.setTitle(batteryEntry.getLabel());
-                    powerGaugePreference.setOrder(i3 + 1);
-                    powerGaugePreference.setPercent(calculateBatteryPercent);
+                    powerGaugePreference.setOrder(i2 + 1);
+                    powerGaugePreference.setPercent(dCalculateBatteryPercent);
                     powerGaugePreference.shouldShowAnomalyIcon(USE_FAKE_DATA);
                     if (batterySipper.usageTimeMs == 0 && batterySipper.drainType == BatterySipper.DrainType.APP) {
                         BatteryUtils batteryUtils = this.mBatteryUtils;
@@ -195,8 +197,8 @@ public class BatteryAppListPreferenceController extends AbstractPreferenceContro
                         break;
                     }
                 }
-                i2 = i3 + 1;
-                size = i4;
+                i = i2 + 1;
+                size = i3;
             }
         } else {
             z2 = false;
@@ -209,13 +211,13 @@ public class BatteryAppListPreferenceController extends AbstractPreferenceContro
     }
 
     private List<BatterySipper> getCoalescedUsageList(List<BatterySipper> list) {
-        int i;
-        int i2;
+        int length;
+        int length2;
         SparseArray sparseArray = new SparseArray();
         ArrayList arrayList = new ArrayList();
         int size = list.size();
-        for (int i3 = 0; i3 < size; i3++) {
-            BatterySipper batterySipper = list.get(i3);
+        for (int i = 0; i < size; i++) {
+            BatterySipper batterySipper = list.get(i);
             if (batterySipper.getUid() > 0) {
                 int uid = batterySipper.getUid();
                 if (isSharedGid(batterySipper.getUid())) {
@@ -231,31 +233,31 @@ public class BatteryAppListPreferenceController extends AbstractPreferenceContro
                     batterySipper2.mPackages = batterySipper.mPackages;
                     batterySipper = batterySipper2;
                 }
-                int indexOfKey = sparseArray.indexOfKey(uid);
-                if (indexOfKey < 0) {
+                int iIndexOfKey = sparseArray.indexOfKey(uid);
+                if (iIndexOfKey < 0) {
                     sparseArray.put(uid, batterySipper);
                 } else {
-                    BatterySipper batterySipper3 = (BatterySipper) sparseArray.valueAt(indexOfKey);
+                    BatterySipper batterySipper3 = (BatterySipper) sparseArray.valueAt(iIndexOfKey);
                     batterySipper3.add(batterySipper);
                     if (batterySipper3.packageWithHighestDrain == null && batterySipper.packageWithHighestDrain != null) {
                         batterySipper3.packageWithHighestDrain = batterySipper.packageWithHighestDrain;
                     }
                     if (batterySipper3.mPackages != null) {
-                        i = batterySipper3.mPackages.length;
+                        length = batterySipper3.mPackages.length;
                     } else {
-                        i = 0;
+                        length = 0;
                     }
                     if (batterySipper.mPackages != null) {
-                        i2 = batterySipper.mPackages.length;
+                        length2 = batterySipper.mPackages.length;
                     } else {
-                        i2 = 0;
+                        length2 = 0;
                     }
-                    if (i2 > 0) {
-                        String[] strArr = new String[i + i2];
-                        if (i > 0) {
-                            System.arraycopy(batterySipper3.mPackages, 0, strArr, 0, i);
+                    if (length2 > 0) {
+                        String[] strArr = new String[length + length2];
+                        if (length > 0) {
+                            System.arraycopy(batterySipper3.mPackages, 0, strArr, 0, length);
                         }
-                        System.arraycopy(batterySipper.mPackages, 0, strArr, i, i2);
+                        System.arraycopy(batterySipper.mPackages, 0, strArr, length, length2);
                         batterySipper3.mPackages = strArr;
                     }
                 }
@@ -264,8 +266,8 @@ public class BatteryAppListPreferenceController extends AbstractPreferenceContro
             }
         }
         int size2 = sparseArray.size();
-        for (int i4 = 0; i4 < size2; i4++) {
-            arrayList.add((BatterySipper) sparseArray.valueAt(i4));
+        for (int i2 = 0; i2 < size2; i2++) {
+            arrayList.add((BatterySipper) sparseArray.valueAt(i2));
         }
         this.mBatteryUtils.sortUsageList(arrayList);
         return arrayList;
@@ -274,11 +276,11 @@ public class BatteryAppListPreferenceController extends AbstractPreferenceContro
     void setUsageSummary(Preference preference, BatterySipper batterySipper) {
         long j = batterySipper.usageTimeMs;
         if (j >= 60000) {
-            CharSequence formatElapsedTime = StringUtil.formatElapsedTime(this.mContext, j, USE_FAKE_DATA);
+            CharSequence elapsedTime = StringUtil.formatElapsedTime(this.mContext, j, USE_FAKE_DATA);
             if (batterySipper.drainType == BatterySipper.DrainType.APP && !this.mBatteryUtils.shouldHideSipper(batterySipper)) {
-                formatElapsedTime = TextUtils.expandTemplate(this.mContext.getText(R.string.battery_used_for), formatElapsedTime);
+                elapsedTime = TextUtils.expandTemplate(this.mContext.getText(R.string.battery_used_for), elapsedTime);
             }
-            preference.setSummary(formatElapsedTime);
+            preference.setSummary(elapsedTime);
         }
     }
 
@@ -295,15 +297,15 @@ public class BatteryAppListPreferenceController extends AbstractPreferenceContro
         }
         if (batterySipper.drainType == BatterySipper.DrainType.USER) {
             return batterySipper.drainType.toString() + batterySipper.userId;
-        } else if (batterySipper.drainType != BatterySipper.DrainType.APP) {
-            return batterySipper.drainType.toString();
-        } else {
-            if (batterySipper.getPackages() != null) {
-                return TextUtils.concat(batterySipper.getPackages()).toString();
-            }
-            Log.w("PrefControllerMixin", "Inappropriate BatterySipper without uid and package names: " + batterySipper);
-            return "-1";
         }
+        if (batterySipper.drainType != BatterySipper.DrainType.APP) {
+            return batterySipper.drainType.toString();
+        }
+        if (batterySipper.getPackages() != null) {
+            return TextUtils.concat(batterySipper.getPackages()).toString();
+        }
+        Log.w("PrefControllerMixin", "Inappropriate BatterySipper without uid and package names: " + batterySipper);
+        return "-1";
     }
 
     String extractKeyFromUid(int i) {
@@ -344,8 +346,9 @@ public class BatteryAppListPreferenceController extends AbstractPreferenceContro
     }
 
     private void removeCachedPrefs(PreferenceGroup preferenceGroup) {
-        for (Preference preference : this.mPreferenceCache.values()) {
-            preferenceGroup.removePreference(preference);
+        Iterator<Preference> it = this.mPreferenceCache.values().iterator();
+        while (it.hasNext()) {
+            preferenceGroup.removePreference(it.next());
         }
         this.mPreferenceCache = null;
     }

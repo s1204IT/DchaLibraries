@@ -8,6 +8,7 @@ import com.android.settings.core.BasePreferenceController;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public class BluetoothFilesPreferenceController extends BasePreferenceController implements PreferenceControllerMixin {
     static final String ACTION_OPEN_FILES = "com.android.bluetooth.action.TransferHistory";
@@ -37,15 +38,15 @@ public class BluetoothFilesPreferenceController extends BasePreferenceController
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        if (KEY_RECEIVED_FILES.equals(preference.getKey())) {
-            this.mMetricsFeatureProvider.action(this.mContext, 162, new Pair[0]);
-            Intent intent = new Intent(ACTION_OPEN_FILES);
-            intent.setFlags(335544320);
-            intent.putExtra(EXTRA_DIRECTION, 1);
-            intent.putExtra(EXTRA_SHOW_ALL_FILES, true);
-            this.mContext.startActivity(intent);
-            return true;
+        if (!KEY_RECEIVED_FILES.equals(preference.getKey())) {
+            return false;
         }
-        return false;
+        this.mMetricsFeatureProvider.action(this.mContext, 162, new Pair[0]);
+        Intent intent = new Intent(ACTION_OPEN_FILES);
+        intent.setFlags(335544320);
+        intent.putExtra(EXTRA_DIRECTION, 1);
+        intent.putExtra(EXTRA_SHOW_ALL_FILES, true);
+        this.mContext.startActivity(intent);
+        return true;
     }
 }

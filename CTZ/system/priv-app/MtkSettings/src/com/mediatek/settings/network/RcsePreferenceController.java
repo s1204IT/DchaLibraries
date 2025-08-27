@@ -11,6 +11,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IWWOPJoynSettingsExt;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RcsePreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver {
     IWWOPJoynSettingsExt mJoynExt;

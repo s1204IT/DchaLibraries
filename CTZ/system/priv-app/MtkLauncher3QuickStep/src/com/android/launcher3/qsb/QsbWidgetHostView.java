@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.RemoteViews;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
+
 /* loaded from: classes.dex */
 public class QsbWidgetHostView extends AppWidgetHostView {
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private int mPreviousOrientation;
 
@@ -67,13 +69,13 @@ public class QsbWidgetHostView extends AppWidgetHostView {
     }
 
     public static View getDefaultView(ViewGroup viewGroup) {
-        View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.qsb_default_view, viewGroup, false);
-        inflate.findViewById(R.id.btn_qsb_search).setOnClickListener(new View.OnClickListener() { // from class: com.android.launcher3.qsb.QsbWidgetHostView.3
+        View viewInflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.qsb_default_view, viewGroup, false);
+        viewInflate.findViewById(R.id.btn_qsb_search).setOnClickListener(new View.OnClickListener() { // from class: com.android.launcher3.qsb.QsbWidgetHostView.3
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 Launcher.getLauncher(view.getContext()).startSearch("", false, null, true);
             }
         });
-        return inflate;
+        return viewInflate;
     }
 }

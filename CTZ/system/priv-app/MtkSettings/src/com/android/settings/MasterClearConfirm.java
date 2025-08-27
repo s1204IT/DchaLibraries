@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.android.settings.core.InstrumentedFragment;
 import com.android.settings.enterprise.ActionDisabledByAdminDialogHelper;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class MasterClearConfirm extends InstrumentedFragment {
     private View mContentView;
@@ -43,16 +44,16 @@ public class MasterClearConfirm extends InstrumentedFragment {
                     int mOldOrientation;
                     ProgressDialog mProgressDialog;
 
-                    /* JADX INFO: Access modifiers changed from: protected */
+                    /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                     @Override // android.os.AsyncTask
-                    public Void doInBackground(Void... voidArr) {
+                    protected Void doInBackground(Void... voidArr) {
                         persistentDataBlockManager.wipe();
                         return null;
                     }
 
-                    /* JADX INFO: Access modifiers changed from: protected */
+                    /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
                     @Override // android.os.AsyncTask
-                    public void onPostExecute(Void r2) {
+                    protected void onPostExecute(Void r2) {
                         this.mProgressDialog.hide();
                         if (MasterClearConfirm.this.getActivity() != null) {
                             MasterClearConfirm.this.getActivity().setRequestedOrientation(this.mOldOrientation);
@@ -71,8 +72,7 @@ public class MasterClearConfirm extends InstrumentedFragment {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public ProgressDialog getProgressDialog() {
+        private ProgressDialog getProgressDialog() {
             ProgressDialog progressDialog = new ProgressDialog(MasterClearConfirm.this.getActivity());
             progressDialog.setIndeterminate(true);
             progressDialog.setCancelable(false);
@@ -88,8 +88,7 @@ public class MasterClearConfirm extends InstrumentedFragment {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void doMasterClear() {
+    private void doMasterClear() {
         Intent intent = new Intent("android.intent.action.FACTORY_RESET");
         intent.setPackage("android");
         intent.addFlags(268435456);
@@ -105,15 +104,15 @@ public class MasterClearConfirm extends InstrumentedFragment {
 
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        RestrictedLockUtils.EnforcedAdmin checkIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getActivity(), "no_factory_reset", UserHandle.myUserId());
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(getActivity(), "no_factory_reset", UserHandle.myUserId());
         if (RestrictedLockUtils.hasBaseUserRestriction(getActivity(), "no_factory_reset", UserHandle.myUserId())) {
             return layoutInflater.inflate(R.layout.master_clear_disallowed_screen, (ViewGroup) null);
         }
-        if (checkIfRestrictionEnforced != null) {
-            new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_factory_reset", checkIfRestrictionEnforced).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.-$$Lambda$MasterClearConfirm$weRgiuD2TQnm7jx9NX_-qHWwsHU
+        if (enforcedAdminCheckIfRestrictionEnforced != null) {
+            new ActionDisabledByAdminDialogHelper(getActivity()).prepareDialogBuilder("no_factory_reset", enforcedAdminCheckIfRestrictionEnforced).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.-$$Lambda$MasterClearConfirm$weRgiuD2TQnm7jx9NX_-qHWwsHU
                 @Override // android.content.DialogInterface.OnDismissListener
                 public final void onDismiss(DialogInterface dialogInterface) {
-                    MasterClearConfirm.this.getActivity().finish();
+                    this.f$0.getActivity().finish();
                 }
             }).show();
             return new View(getActivity());
@@ -132,8 +131,7 @@ public class MasterClearConfirm extends InstrumentedFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showNeedToConnectAcDialog() {
+    private void showNeedToConnectAcDialog() {
         Resources resources = getActivity().getResources();
         new AlertDialog.Builder(getActivity()).setTitle(resources.getText(R.string.master_clear_title)).setMessage(resources.getText(R.string.master_clear_need_ac_message)).setPositiveButton(resources.getText(R.string.master_clear_need_ac_label), this.mNeedToConnectAcListener).show();
     }

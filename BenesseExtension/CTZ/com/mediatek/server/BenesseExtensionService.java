@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class BenesseExtensionService extends IBenesseExtensionService.Stub {
     static final String ACTION_DT_FW_UPDATED = "com.panasonic.sanyo.ts.intent.action.DIGITIZER_FIRMWARE_UPDATED";
@@ -136,8 +137,7 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
     };
     private Object mLock = new Object();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public BenesseExtensionService(Context context) {
+    BenesseExtensionService(Context context) {
         this.tp_type = -1;
         this.mContext = context;
         synchronized (this.mLock) {
@@ -157,96 +157,51 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
             if (!FTS_TP_VERSION.exists()) {
                 Log.e(TAG, "----- TP:Unkown -----");
                 return;
+            } else {
+                Log.i(TAG, "----- TP:FTS -----");
+                this.tp_type = 1;
+                return;
             }
-            Log.i(TAG, "----- TP:FTS -----");
-            this.tp_type = 1;
-            return;
         }
         Log.i(TAG, "----- TP:NVT -----");
         this.tp_type = 0;
     }
 
     public int getDchaState() {
-        long clearCallingIdentity = Binder.clearCallingIdentity();
+        long jClearCallingIdentity = Binder.clearCallingIdentity();
         try {
             return getDchaStateInternal();
         } finally {
-            Binder.restoreCallingIdentity(clearCallingIdentity);
+            Binder.restoreCallingIdentity(jClearCallingIdentity);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int getDchaStateInternal() {
+    private int getDchaStateInternal() {
         return Settings.System.getInt(this.mContext.getContentResolver(), DCHA_STATE, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean getDchaCompletedPast() {
+    private boolean getDchaCompletedPast() {
         return !BenesseExtension.IGNORE_DCHA_COMPLETED_FILE.exists() && BenesseExtension.COUNT_DCHA_COMPLETED_FILE.exists();
     }
 
     public void setDchaState(int i) {
-        long clearCallingIdentity = Binder.clearCallingIdentity();
+        long jClearCallingIdentity = Binder.clearCallingIdentity();
         try {
             Settings.System.putInt(this.mContext.getContentResolver(), DCHA_STATE, i);
         } finally {
-            Binder.restoreCallingIdentity(clearCallingIdentity);
+            Binder.restoreCallingIdentity(jClearCallingIdentity);
         }
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [216=12] */
     public String getString(String str) {
         if (str == null) {
             return null;
         }
-        long clearCallingIdentity = Binder.clearCallingIdentity();
-        char c = 65535;
+        long jClearCallingIdentity = Binder.clearCallingIdentity();
         try {
-            switch (str.hashCode()) {
-                case -1149331608:
-                    if (str.equals(BC_TP_LCD_TYPE)) {
-                        c = 6;
-                        break;
-                    }
-                    break;
-                case -1125691405:
-                    if (str.equals(BC_SERIAL_NO)) {
-                        c = 1;
-                        break;
-                    }
-                    break;
-                case 94655307:
-                    if (str.equals(BC_MAC_ADDRESS)) {
-                        c = 0;
-                        break;
-                    }
-                    break;
-                case 600943506:
-                    if (str.equals(BC_DT_FW_VERSION)) {
-                        c = 3;
-                        break;
-                    }
-                    break;
-                case 681159668:
-                    if (str.equals(BC_NVT_TP_FW_VERSION)) {
-                        c = 4;
-                        break;
-                    }
-                    break;
-                case 888384667:
-                    if (str.equals(BC_FTS_TP_FW_VERSION)) {
-                        c = 5;
-                        break;
-                    }
-                    break;
-                case 1361443174:
-                    if (str.equals(BC_TP_FW_VERSION)) {
-                        c = 2;
-                        break;
-                    }
-                    break;
-            }
-            switch (c) {
-                case 0:
+            switch (str) {
+                case "bc:mac_address":
                     WifiManager wifiManager = (WifiManager) this.mContext.getSystemService("wifi");
                     if (wifiManager == null) {
                         return null;
@@ -256,27 +211,27 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
                         return null;
                     }
                     return connectionInfo.getMacAddress();
-                case DataShapingServiceImpl.DATA_SHAPING_STATE_OPEN_LOCKED /* 1 */:
+                case "bc:serial_no":
                     return Build.getSerial();
-                case DataShapingServiceImpl.DATA_SHAPING_STATE_OPEN /* 2 */:
+                case "bc:touchpanel:fw_version":
                     return !"TAB-A05-BD".equals(Build.PRODUCT) ? getTouchpanelVersion() : getFirmwareVersion(SYSFILE_TP_VERSION);
-                case DataShapingServiceImpl.DATA_SHAPING_STATE_CLOSE /* 3 */:
+                case "bc:digitizer:fw_version":
                     if (!"TAB-A05-BD".equals(Build.PRODUCT)) {
                         break;
                     } else {
                         return getFirmwareVersion(SYSFILE_DT_VERSION);
                     }
-                case 4:
+                case "bc:touchpanel:nvt:fw_version":
                     if (!"TAB-A05-BD".equals(Build.PRODUCT)) {
                         return getTouchpanelVersion();
                     }
                     break;
-                case 5:
+                case "bc:touchpanel:fts:fw_version":
                     if (!"TAB-A05-BD".equals(Build.PRODUCT)) {
                         return getTouchpanelVersion();
                     }
                     break;
-                case 6:
+                case "bc:touchpanel:lcd_type":
                     if (!"TAB-A05-BD".equals(Build.PRODUCT)) {
                         return getLcdType();
                     }
@@ -284,21 +239,22 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
             }
             return null;
         } finally {
-            Binder.restoreCallingIdentity(clearCallingIdentity);
+            Binder.restoreCallingIdentity(jClearCallingIdentity);
         }
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [257=5] */
     public boolean putString(String str, String str2) {
         if (str == null || str2 == null) {
             return false;
         }
-        long clearCallingIdentity = Binder.clearCallingIdentity();
+        long jClearCallingIdentity = Binder.clearCallingIdentity();
         char c = 65535;
         try {
-            int hashCode = str.hashCode();
-            if (hashCode != 1111447085) {
-                if (hashCode != 1247406799) {
-                    if (hashCode == 1964675707 && str.equals(BC_TP_FW_UPDATE)) {
+            int iHashCode = str.hashCode();
+            if (iHashCode != 1111447085) {
+                if (iHashCode != 1247406799) {
+                    if (iHashCode == 1964675707 && str.equals(BC_TP_FW_UPDATE)) {
                         c = 0;
                     }
                 } else if (str.equals(BC_DT_FW_UPDATE)) {
@@ -311,14 +267,14 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
                 case 0:
                 case DataShapingServiceImpl.DATA_SHAPING_STATE_OPEN_LOCKED /* 1 */:
                     if ("TAB-A05-BD".equals(Build.PRODUCT)) {
-                        String replaceFirst = str2.replaceFirst("^/sdcard/", "/data/media/0/").replaceFirst("^/storage/emulated/0/", "/data/media/0/");
-                        if (!new File(replaceFirst).isFile()) {
+                        String strReplaceFirst = str2.replaceFirst("^/sdcard/", "/data/media/0/").replaceFirst("^/storage/emulated/0/", "/data/media/0/");
+                        if (!new File(strReplaceFirst).isFile()) {
                             Log.e(TAG, "----- putString() : invalid file. name[" + str + "] value[" + str2 + "] -----");
                             break;
-                        } else if (!checkHexFile(replaceFirst)) {
+                        } else if (!checkHexFile(strReplaceFirst)) {
                             break;
                         } else {
-                            return executeFwUpdate(getUpdateParams(str, replaceFirst));
+                            return executeFwUpdate(getUpdateParams(str, strReplaceFirst));
                         }
                     } else if (BC_TP_FW_UPDATE.equals(str)) {
                         return updateTouchpanelFw(str2);
@@ -332,73 +288,72 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
             }
             return false;
         } finally {
-            Binder.restoreCallingIdentity(clearCallingIdentity);
+            Binder.restoreCallingIdentity(jClearCallingIdentity);
         }
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [294=10] */
+    /* JADX WARN: Removed duplicated region for block: B:33:0x0061  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public int getInt(String str) {
         char c;
         if (str == null) {
             return -1;
         }
-        long clearCallingIdentity = Binder.clearCallingIdentity();
+        long jClearCallingIdentity = Binder.clearCallingIdentity();
         try {
             switch (str.hashCode()) {
                 case -286987330:
-                    if (str.equals(BC_NIGHTMODE_ACTIVE)) {
+                    if (!str.equals(BC_NIGHTMODE_ACTIVE)) {
+                        c = 65535;
+                        break;
+                    } else {
                         c = 1;
                         break;
                     }
-                    c = 65535;
-                    break;
                 case 141985806:
                     if (str.equals("bc:touchpanel:palmreject:size")) {
                         c = 7;
                         break;
                     }
-                    c = 65535;
                     break;
                 case 367025166:
                     if (str.equals(BC_NIGHTCOLOR_MAX)) {
                         c = 2;
                         break;
                     }
-                    c = 65535;
                     break;
                 case 367025404:
                     if (str.equals(BC_NIGHTCOLOR_MIN)) {
                         c = 3;
                         break;
                     }
-                    c = 65535;
                     break;
                 case 562531059:
                     if (str.equals("bc:pen:battery")) {
                         c = 6;
                         break;
                     }
-                    c = 65535;
                     break;
                 case 1209732899:
                     if (str.equals(BC_NIGHTCOLOR_CURRENT)) {
                         c = 4;
                         break;
                     }
-                    c = 65535;
                     break;
                 case 1359997191:
                     if (str.equals(BC_COMPATSCREEN)) {
                         c = 0;
                         break;
                     }
-                    c = 65535;
                     break;
                 case 1664403245:
                     if (str.equals(BC_PASSWORD_HIT_FLAG)) {
                         c = 5;
                         break;
                     }
-                    c = 65535;
                     break;
                 default:
                     c = 65535;
@@ -430,52 +385,54 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
             }
             return -1;
         } finally {
-            Binder.restoreCallingIdentity(clearCallingIdentity);
+            Binder.restoreCallingIdentity(jClearCallingIdentity);
         }
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [324=8] */
+    /* JADX WARN: Removed duplicated region for block: B:24:0x0044  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public boolean putInt(String str, int i) {
         char c;
         if (str == null) {
             return false;
         }
-        long clearCallingIdentity = Binder.clearCallingIdentity();
+        long jClearCallingIdentity = Binder.clearCallingIdentity();
         try {
             switch (str.hashCode()) {
                 case -286987330:
-                    if (str.equals(BC_NIGHTMODE_ACTIVE)) {
+                    if (!str.equals(BC_NIGHTMODE_ACTIVE)) {
+                        c = 65535;
+                        break;
+                    } else {
                         c = 1;
                         break;
                     }
-                    c = 65535;
-                    break;
                 case 141985806:
                     if (str.equals("bc:touchpanel:palmreject:size")) {
                         c = 4;
                         break;
                     }
-                    c = 65535;
                     break;
                 case 1209732899:
                     if (str.equals(BC_NIGHTCOLOR_CURRENT)) {
                         c = 2;
                         break;
                     }
-                    c = 65535;
                     break;
                 case 1359997191:
                     if (str.equals(BC_COMPATSCREEN)) {
                         c = 0;
                         break;
                     }
-                    c = 65535;
                     break;
                 case 1664403245:
                     if (str.equals(BC_PASSWORD_HIT_FLAG)) {
                         c = 3;
                         break;
                     }
-                    c = 65535;
                     break;
                 default:
                     c = 65535;
@@ -502,12 +459,13 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
             }
             return false;
         } finally {
-            Binder.restoreCallingIdentity(clearCallingIdentity);
+            Binder.restoreCallingIdentity(jClearCallingIdentity);
         }
     }
 
-    public boolean checkPassword(String str) {
+    public boolean checkPassword(String str) throws Exception {
         MessageDigest messageDigest;
+        Throwable th;
         if (str == null) {
             return false;
         }
@@ -515,10 +473,17 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         byte[] bArr2 = null;
         try {
             FileInputStream fileInputStream = new FileInputStream(DCHA_HASH_FILEPATH);
-            if (fileInputStream.read(bArr) != 64) {
-                bArr = (byte[]) DEFAULT_HASH.clone();
+            try {
+                if (fileInputStream.read(bArr) != 64) {
+                    bArr = (byte[]) DEFAULT_HASH.clone();
+                }
+                $closeResource(null, fileInputStream);
+            } catch (Throwable th2) {
+                th = th2;
+                th = null;
+                $closeResource(th, fileInputStream);
+                throw th;
             }
-            $closeResource(null, fileInputStream);
         } catch (IOException e) {
             bArr = (byte[]) DEFAULT_HASH.clone();
         }
@@ -529,23 +494,23 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         }
         if (messageDigest != null) {
             messageDigest.reset();
-            byte[] digest = messageDigest.digest(str.getBytes());
+            byte[] bArrDigest = messageDigest.digest(str.getBytes());
             bArr2 = new byte[64];
-            for (int i = 0; i < digest.length && i < bArr2.length / 2; i++) {
+            for (int i = 0; i < bArrDigest.length && i < bArr2.length / 2; i++) {
                 int i2 = i * 2;
-                bArr2[i2] = this.HEX_TABLE[(digest[i] >> 4) & 15];
-                bArr2[i2 + 1] = this.HEX_TABLE[digest[i] & 15];
+                bArr2[i2] = this.HEX_TABLE[(bArrDigest[i] >> 4) & 15];
+                bArr2[i2 + 1] = this.HEX_TABLE[bArrDigest[i] & 15];
             }
         }
-        boolean equals = Arrays.equals(bArr, bArr2);
-        Log.i(TAG, "password comparison = " + equals);
-        if (equals) {
+        boolean zEquals = Arrays.equals(bArr, bArr2);
+        Log.i(TAG, "password comparison = " + zEquals);
+        if (zEquals) {
             putInt(BC_PASSWORD_HIT_FLAG, 1);
         }
-        return equals;
+        return zEquals;
     }
 
-    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) {
+    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) throws Exception {
         if (th == null) {
             autoCloseable.close();
             return;
@@ -557,8 +522,7 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int getAdbEnabled() {
+    private int getAdbEnabled() {
         return Settings.Global.getInt(this.mContext.getContentResolver(), "adb_enabled", 0);
     }
 
@@ -567,8 +531,7 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         return (str == null || str.equals("")) ? JAPAN_LOCALE : str;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean changeAdbEnable() {
+    private boolean changeAdbEnable() {
         if (getAdbEnabled() == 0 || BenesseExtension.getDchaState() == 3 || !getDchaCompletedPast() || getInt(BC_PASSWORD_HIT_FLAG) != 0) {
             return false;
         }
@@ -576,24 +539,21 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void changeSafemodeRestriction(int i) {
+    private void changeSafemodeRestriction(int i) {
         UserManager userManager = (UserManager) this.mContext.getSystemService("user");
         if (userManager != null) {
             userManager.setUserRestriction("no_safe_boot", i > 0, UserHandle.SYSTEM);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void changeDisallowInstallUnknownSource(boolean z) {
+    private void changeDisallowInstallUnknownSource(boolean z) {
         UserManager userManager = (UserManager) this.mContext.getSystemService("user");
         if (userManager != null) {
             userManager.setUserRestriction("no_install_unknown_sources", z, UserHandle.SYSTEM);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateBrowserEnabled() {
+    private void updateBrowserEnabled() {
         int i = 2;
         if (!getDchaCompletedPast() && (getDchaStateInternal() == 0 || getAdbEnabled() != 0 || !JAPAN_LOCALE.equals(getLanguage()))) {
             i = 0;
@@ -609,8 +569,7 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void changeDefaultUsbFunction(int i) {
+    private void changeDefaultUsbFunction(int i) {
         if (i > 0) {
             ((UsbManager) this.mContext.getSystemService(UsbManager.class)).setScreenUnlockedFunctions(0L);
         }
@@ -647,8 +606,7 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateTraceurEnabled() {
+    private void updateTraceurEnabled() {
         if (getDchaStateInternal() != 0) {
             return;
         }
@@ -658,7 +616,9 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         }
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [524=4] */
     private String getFirmwareVersion(File file) {
+        Throwable th;
         if (this.mIsUpdating) {
             return null;
         }
@@ -667,22 +627,27 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         }
         try {
             FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
             try {
-                String readLine = bufferedReader.readLine();
-                $closeResource(null, bufferedReader);
-                $closeResource(null, fileReader);
-                return readLine;
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                try {
+                    String line = bufferedReader.readLine();
+                    $closeResource(null, bufferedReader);
+                    return line;
+                } catch (Throwable th2) {
+                    th = th2;
+                    th = null;
+                    $closeResource(th, bufferedReader);
+                    throw th;
+                }
             } finally {
+                $closeResource(null, fileReader);
             }
-        } catch (Throwable th) {
+        } catch (Throwable th3) {
             return "";
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class UpdateParams {
+    private class UpdateParams {
         public String broadcast;
         public String[] cmd;
 
@@ -690,20 +655,18 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         }
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:13:0x002b  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private UpdateParams getUpdateParams(String str, String str2) {
         char c;
         UpdateParams updateParams = new UpdateParams();
-        int hashCode = str.hashCode();
-        if (hashCode != 1247406799) {
-            if (hashCode == 1964675707 && str.equals(BC_TP_FW_UPDATE)) {
-                c = 0;
-            }
-            c = 65535;
-        } else {
-            if (str.equals(BC_DT_FW_UPDATE)) {
-                c = 1;
-            }
-            c = 65535;
+        int iHashCode = str.hashCode();
+        if (iHashCode != 1247406799) {
+            c = (iHashCode == 1964675707 && str.equals(BC_TP_FW_UPDATE)) ? (char) 0 : (char) 65535;
+        } else if (str.equals(BC_DT_FW_UPDATE)) {
+            c = 1;
         }
         switch (c) {
             case 0:
@@ -728,24 +691,24 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         new Thread(new Runnable() { // from class: com.mediatek.server.-$$Lambda$BenesseExtensionService$DuLYMgReFex30dZ2dylIKOPJ6RA
             @Override // java.lang.Runnable
             public final void run() {
-                BenesseExtensionService.lambda$executeFwUpdate$1(BenesseExtensionService.this, updateParams);
+                BenesseExtensionService.lambda$executeFwUpdate$1(this.f$0, updateParams);
             }
         }).start();
         return true;
     }
 
     public static /* synthetic */ void lambda$executeFwUpdate$1(final BenesseExtensionService benesseExtensionService, final UpdateParams updateParams) {
-        final int i;
+        final int iWaitFor;
         try {
-            i = Runtime.getRuntime().exec(updateParams.cmd).waitFor();
+            iWaitFor = Runtime.getRuntime().exec(updateParams.cmd).waitFor();
         } catch (Throwable th) {
             Log.e(TAG, "----- Exception occurred! -----", th);
-            i = -1;
+            iWaitFor = -1;
         }
         benesseExtensionService.mHandler.post(new Runnable() { // from class: com.mediatek.server.-$$Lambda$BenesseExtensionService$erbcCrbZOhYH-JEcBSKtqZ9g-84
             @Override // java.lang.Runnable
             public final void run() {
-                BenesseExtensionService.lambda$executeFwUpdate$0(BenesseExtensionService.this, updateParams, i);
+                BenesseExtensionService.lambda$executeFwUpdate$0(this.f$0, updateParams, iWaitFor);
             }
         });
     }
@@ -755,65 +718,73 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         benesseExtensionService.mContext.sendBroadcastAsUser(new Intent(updateParams.broadcast).putExtra(EXTRA_RESULT, i), UserHandle.ALL);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [606=6] */
     /* JADX WARN: Code restructure failed: missing block: B:28:0x0072, code lost:
+    
         android.util.Log.e(com.mediatek.server.BenesseExtensionService.TAG, "----- invalid data! -----");
      */
     /* JADX WARN: Code restructure failed: missing block: B:29:0x007a, code lost:
+    
         $closeResource(null, r2);
      */
-    /* JADX WARN: Code restructure failed: missing block: B:30:0x007d, code lost:
-        $closeResource(null, r1);
-     */
     /* JADX WARN: Code restructure failed: missing block: B:31:0x0080, code lost:
+    
         return false;
      */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
     private boolean checkHexFile(String str) {
+        Throwable th;
         try {
             FileReader fileReader = new FileReader(str);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String str2 = null;
-            while (true) {
-                try {
-                    String readLine = bufferedReader.readLine();
-                    if (readLine == null) {
-                        $closeResource(null, bufferedReader);
-                        $closeResource(null, fileReader);
-                        if (str2.charAt(7) == '0' && str2.charAt(8) == '1') {
-                            return true;
-                        }
-                        Log.e(TAG, "----- last line is not end of file! -----");
-                        return false;
-                    } else if (readLine.charAt(0) != ';') {
-                        if (!readLine.matches(":[a-fA-F0-9]+") || readLine.length() % 2 == 0) {
-                            break;
-                        }
-                        int i = 0;
-                        for (int i2 = 1; i2 < readLine.length() - 1; i2 += 2) {
-                            i += (Character.digit(readLine.charAt(i2), 16) << 4) + Character.digit(readLine.charAt(i2 + 1), 16);
-                        }
-                        if ((i & 255) != 0) {
-                            Log.e(TAG, "----- wrong checksum! -----");
+            try {
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                String str2 = null;
+                while (true) {
+                    try {
+                        String line = bufferedReader.readLine();
+                        if (line == null) {
                             $closeResource(null, bufferedReader);
-                            $closeResource(null, fileReader);
+                            if (str2.charAt(7) == '0' && str2.charAt(8) == '1') {
+                                return true;
+                            }
+                            Log.e(TAG, "----- last line is not end of file! -----");
                             return false;
                         }
-                        str2 = readLine;
-                    } else {
-                        Log.w(TAG, "----- found comment line. -----");
+                        if (line.charAt(0) != ';') {
+                            if (!line.matches(":[a-fA-F0-9]+") || line.length() % 2 == 0) {
+                                break;
+                            }
+                            int iDigit = 0;
+                            for (int i = 1; i < line.length() - 1; i += 2) {
+                                iDigit += (Character.digit(line.charAt(i), 16) << 4) + Character.digit(line.charAt(i + 1), 16);
+                            }
+                            if ((iDigit & 255) != 0) {
+                                Log.e(TAG, "----- wrong checksum! -----");
+                                $closeResource(null, bufferedReader);
+                                return false;
+                            }
+                            str2 = line;
+                        } else {
+                            Log.w(TAG, "----- found comment line. -----");
+                        }
+                    } catch (Throwable th2) {
+                        th = th2;
+                        th = null;
+                        $closeResource(th, bufferedReader);
+                        throw th;
                     }
-                } finally {
                 }
+            } finally {
+                $closeResource(null, fileReader);
             }
-        } catch (Throwable th) {
-            Log.e(TAG, "----- Exception occurred!!! -----", th);
+        } catch (Throwable th3) {
+            Log.e(TAG, "----- Exception occurred!!! -----", th3);
             return false;
         }
     }
 
-    /* loaded from: classes.dex */
     private final class BootCompletedReceiver extends BroadcastReceiver {
         private BootCompletedReceiver() {
         }
@@ -869,143 +840,108 @@ public class BenesseExtensionService extends IBenesseExtensionService.Stub {
         return 0;
     }
 
-    /*  JADX ERROR: JadxRuntimeException in pass: BlockProcessor
-        jadx.core.utils.exceptions.JadxRuntimeException: Found unreachable blocks
-        	at jadx.core.dex.visitors.blocks.DominatorTree.sortBlocks(DominatorTree.java:35)
-        	at jadx.core.dex.visitors.blocks.DominatorTree.compute(DominatorTree.java:25)
-        	at jadx.core.dex.visitors.blocks.BlockProcessor.computeDominators(BlockProcessor.java:202)
-        	at jadx.core.dex.visitors.blocks.BlockProcessor.processBlocksTree(BlockProcessor.java:45)
-        	at jadx.core.dex.visitors.blocks.BlockProcessor.visit(BlockProcessor.java:39)
-        */
-    private int getPalmrejectSize() {
-        /*
-            r7 = this;
-            java.lang.String r0 = "3"
-            int r1 = r7.tp_type
-            r2 = 0
-            if (r1 != 0) goto L48
-            java.io.FileReader r1 = new java.io.FileReader     // Catch: java.lang.Throwable -> L3e
-            java.io.File r3 = com.mediatek.server.BenesseExtensionService.SYSFILE_NVT_PARM_REJECT     // Catch: java.lang.Throwable -> L3e
-            r1.<init>(r3)     // Catch: java.lang.Throwable -> L3e
-            java.io.BufferedReader r3 = new java.io.BufferedReader     // Catch: java.lang.Throwable -> L38
-            r3.<init>(r1)     // Catch: java.lang.Throwable -> L38
-            java.lang.String r4 = r3.readLine()     // Catch: java.lang.Throwable -> L2c
-            $closeResource(r2, r3)     // Catch: java.lang.Throwable -> L25
-            $closeResource(r2, r1)     // Catch: java.lang.Throwable -> L1e
-            goto L47
-        L1e:
-            r0 = move-exception
-            r1 = r0
-            goto L40
-        L21:
-            r0 = move-exception
-            r3 = r0
-            r0 = r4
-            goto L3a
-        L25:
-            r0 = move-exception
-            r2 = r0
-            r0 = r4
-            goto L39
-        L29:
-            r4 = move-exception
-            r5 = r2
-            goto L32
-        L2c:
-            r4 = move-exception
-            throw r4     // Catch: java.lang.Throwable -> L2e
-        L2e:
-            r5 = move-exception
-            r6 = r5
-            r5 = r4
-            r4 = r6
-        L32:
-            $closeResource(r5, r3)     // Catch: java.lang.Throwable -> L38
-            throw r4     // Catch: java.lang.Throwable -> L38
-        L36:
-            r3 = move-exception
-            goto L3a
-        L38:
-            r2 = move-exception
-        L39:
-            throw r2     // Catch: java.lang.Throwable -> L36
-        L3a:
-            $closeResource(r2, r1)     // Catch: java.lang.Throwable -> L3e
-            throw r3     // Catch: java.lang.Throwable -> L3e
-        L3e:
-            r1 = move-exception
-            r4 = r0
-        L40:
-            java.lang.String r0 = "BenesseExtensionService"
-            java.lang.String r2 = "----- Exception occurred! -----"
-            android.util.Log.e(r0, r2, r1)
-        L47:
-            goto L88
-        L48:
-            java.io.FileReader r1 = new java.io.FileReader     // Catch: java.lang.Throwable -> L7f
-            java.io.File r3 = com.mediatek.server.BenesseExtensionService.SYSFILE_FTS_PARM_REJECT     // Catch: java.lang.Throwable -> L7f
-            r1.<init>(r3)     // Catch: java.lang.Throwable -> L7f
-            java.io.BufferedReader r3 = new java.io.BufferedReader     // Catch: java.lang.Throwable -> L79
-            r3.<init>(r1)     // Catch: java.lang.Throwable -> L79
-            java.lang.String r4 = r3.readLine()     // Catch: java.lang.Throwable -> L6d
-            $closeResource(r2, r3)     // Catch: java.lang.Throwable -> L66
-            $closeResource(r2, r1)     // Catch: java.lang.Throwable -> L5f
-            goto L88
-        L5f:
-            r0 = move-exception
-            r1 = r0
-            goto L81
-        L62:
-            r0 = move-exception
-            r3 = r0
-            r0 = r4
-            goto L7b
-        L66:
-            r0 = move-exception
-            r2 = r0
-            r0 = r4
-            goto L7a
-        L6a:
-            r4 = move-exception
-            r5 = r2
-            goto L73
-        L6d:
-            r4 = move-exception
-            throw r4     // Catch: java.lang.Throwable -> L6f
-        L6f:
-            r5 = move-exception
-            r6 = r5
-            r5 = r4
-            r4 = r6
-        L73:
-            $closeResource(r5, r3)     // Catch: java.lang.Throwable -> L79
-            throw r4     // Catch: java.lang.Throwable -> L79
-        L77:
-            r3 = move-exception
-            goto L7b
-        L79:
-            r2 = move-exception
-        L7a:
-            throw r2     // Catch: java.lang.Throwable -> L77
-        L7b:
-            $closeResource(r2, r1)     // Catch: java.lang.Throwable -> L7f
-            throw r3     // Catch: java.lang.Throwable -> L7f
-        L7f:
-            r1 = move-exception
-            r4 = r0
-        L81:
-            java.lang.String r0 = "BenesseExtensionService"
-            java.lang.String r2 = "----- Exception occurred! -----"
-            android.util.Log.e(r0, r2, r1)
-        L88:
-            int r0 = java.lang.Integer.parseInt(r4)
-            r1 = 4
-            if (r0 != r1) goto L90
-            r0 = 0
-        L90:
-            return r0
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.mediatek.server.BenesseExtensionService.getPalmrejectSize():int");
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [690=4, 692=4, 697=4, 699=5] */
+    /* JADX WARN: Removed duplicated region for block: B:65:0x008f A[ORIG_RETURN, RETURN] */
+    /* JADX WARN: Removed duplicated region for block: B:93:? A[RETURN, SYNTHETIC] */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    private int getPalmrejectSize() throws NumberFormatException {
+        String line;
+        FileReader fileReader;
+        Throwable th;
+        int i;
+        FileReader fileReader2;
+        Throwable th2;
+        String str = "3";
+        if (this.tp_type == 0) {
+            try {
+                fileReader = new FileReader(SYSFILE_NVT_PARM_REJECT);
+                try {
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(fileReader);
+                        try {
+                            line = bufferedReader.readLine();
+                            try {
+                                $closeResource(null, bufferedReader);
+                            } catch (Throwable th3) {
+                                th = th3;
+                                str = line;
+                                $closeResource(null, fileReader);
+                                throw th;
+                            }
+                        } catch (Throwable th4) {
+                            th = th4;
+                            th = null;
+                            $closeResource(th, bufferedReader);
+                            throw th;
+                        }
+                    } catch (Throwable th5) {
+                        throw th5;
+                    }
+                } catch (Throwable th6) {
+                    th = th6;
+                }
+            } catch (Throwable th7) {
+                th = th7;
+                line = str;
+            }
+            try {
+                $closeResource(null, fileReader);
+            } catch (Throwable th8) {
+                th = th8;
+                Log.e(TAG, "----- Exception occurred! -----", th);
+                i = Integer.parseInt(line);
+                if (i == 4) {
+                }
+            }
+        } else {
+            try {
+                fileReader2 = new FileReader(SYSFILE_FTS_PARM_REJECT);
+                try {
+                    try {
+                        BufferedReader bufferedReader2 = new BufferedReader(fileReader2);
+                        try {
+                            line = bufferedReader2.readLine();
+                            try {
+                                $closeResource(null, bufferedReader2);
+                            } catch (Throwable th9) {
+                                th = th9;
+                                str = line;
+                                $closeResource(null, fileReader2);
+                                throw th;
+                            }
+                        } catch (Throwable th10) {
+                            th = th10;
+                            th2 = null;
+                            $closeResource(th2, bufferedReader2);
+                            throw th;
+                        }
+                    } catch (Throwable th11) {
+                        throw th11;
+                    }
+                } catch (Throwable th12) {
+                    th = th12;
+                }
+            } catch (Throwable th13) {
+                th = th13;
+                line = str;
+            }
+            try {
+                $closeResource(null, fileReader2);
+            } catch (Throwable th14) {
+                th = th14;
+                Log.e(TAG, "----- Exception occurred! -----", th);
+                i = Integer.parseInt(line);
+                if (i == 4) {
+                }
+            }
+        }
+        i = Integer.parseInt(line);
+        if (i == 4) {
+            return 0;
+        }
+        return i;
     }
 
     private boolean setPalmrejectSize(int i) {

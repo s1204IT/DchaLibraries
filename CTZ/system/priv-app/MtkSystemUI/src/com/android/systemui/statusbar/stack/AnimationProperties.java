@@ -5,6 +5,7 @@ import android.util.ArrayMap;
 import android.util.Property;
 import android.view.View;
 import android.view.animation.Interpolator;
+
 /* loaded from: classes.dex */
 public class AnimationProperties {
     public long delay;

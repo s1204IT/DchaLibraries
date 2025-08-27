@@ -7,14 +7,17 @@ import android.view.View;
 import android.view.animation.Interpolator;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TouchAnimator {
     private static final FloatProperty<TouchAnimator> POSITION = new FloatProperty<TouchAnimator>("position") { // from class: com.android.systemui.qs.TouchAnimator.1
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(TouchAnimator touchAnimator, float f) {
             touchAnimator.setPosition(f);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(TouchAnimator touchAnimator) {
             return Float.valueOf(touchAnimator.mLastT);
@@ -29,7 +32,6 @@ public class TouchAnimator {
     private final float mStartDelay;
     private final Object[] mTargets;
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onAnimationAtEnd();
 
@@ -50,29 +52,28 @@ public class TouchAnimator {
     }
 
     public void setPosition(float f) {
-        float constrain = MathUtils.constrain((f - this.mStartDelay) / this.mSpan, 0.0f, 1.0f);
+        float fConstrain = MathUtils.constrain((f - this.mStartDelay) / this.mSpan, 0.0f, 1.0f);
         if (this.mInterpolator != null) {
-            constrain = this.mInterpolator.getInterpolation(constrain);
+            fConstrain = this.mInterpolator.getInterpolation(fConstrain);
         }
-        if (constrain == this.mLastT) {
+        if (fConstrain == this.mLastT) {
             return;
         }
         if (this.mListener != null) {
-            if (constrain == 1.0f) {
+            if (fConstrain == 1.0f) {
                 this.mListener.onAnimationAtEnd();
-            } else if (constrain == 0.0f) {
+            } else if (fConstrain == 0.0f) {
                 this.mListener.onAnimationAtStart();
             } else if (this.mLastT <= 0.0f || this.mLastT == 1.0f) {
                 this.mListener.onAnimationStarted();
             }
-            this.mLastT = constrain;
+            this.mLastT = fConstrain;
         }
         for (int i = 0; i < this.mTargets.length; i++) {
-            this.mKeyframeSets[i].setValue(constrain, this.mTargets[i]);
+            this.mKeyframeSets[i].setValue(fConstrain, this.mTargets[i]);
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ListenerAdapter implements Listener {
         @Override // com.android.systemui.qs.TouchAnimator.Listener
         public void onAnimationAtStart() {
@@ -87,7 +88,6 @@ public class TouchAnimator {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Builder {
         private float mEndDelay;
         private Interpolator mInterpolator;
@@ -108,81 +108,24 @@ public class TouchAnimator {
 
         private static Property getProperty(Object obj, String str, Class<?> cls) {
             if (obj instanceof View) {
-                char c = 65535;
-                switch (str.hashCode()) {
-                    case -1225497657:
-                        if (str.equals("translationX")) {
-                            c = 0;
-                            break;
-                        }
-                        break;
-                    case -1225497656:
-                        if (str.equals("translationY")) {
-                            c = 1;
-                            break;
-                        }
-                        break;
-                    case -1225497655:
-                        if (str.equals("translationZ")) {
-                            c = 2;
-                            break;
-                        }
-                        break;
-                    case -908189618:
-                        if (str.equals("scaleX")) {
-                            c = 7;
-                            break;
-                        }
-                        break;
-                    case -908189617:
-                        if (str.equals("scaleY")) {
-                            c = '\b';
-                            break;
-                        }
-                        break;
-                    case -40300674:
-                        if (str.equals("rotation")) {
-                            c = 4;
-                            break;
-                        }
-                        break;
-                    case 120:
-                        if (str.equals("x")) {
-                            c = 5;
-                            break;
-                        }
-                        break;
-                    case 121:
-                        if (str.equals("y")) {
-                            c = 6;
-                            break;
-                        }
-                        break;
-                    case 92909918:
-                        if (str.equals("alpha")) {
-                            c = 3;
-                            break;
-                        }
-                        break;
-                }
-                switch (c) {
-                    case 0:
+                switch (str) {
+                    case "translationX":
                         return View.TRANSLATION_X;
-                    case 1:
+                    case "translationY":
                         return View.TRANSLATION_Y;
-                    case 2:
+                    case "translationZ":
                         return View.TRANSLATION_Z;
-                    case 3:
+                    case "alpha":
                         return View.ALPHA;
-                    case 4:
+                    case "rotation":
                         return View.ROTATION;
-                    case 5:
+                    case "x":
                         return View.X;
-                    case 6:
+                    case "y":
                         return View.Y;
-                    case 7:
+                    case "scaleX":
                         return View.SCALE_X;
-                    case '\b':
+                    case "scaleY":
                         return View.SCALE_Y;
                 }
             }
@@ -217,9 +160,7 @@ public class TouchAnimator {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static abstract class KeyframeSet {
+    private static abstract class KeyframeSet {
         private final float mFrameWidth;
         private final int mSize;
 
@@ -231,8 +172,7 @@ public class TouchAnimator {
         }
 
         void setValue(float f, Object obj) {
-            int constrain = MathUtils.constrain((int) Math.ceil(f / this.mFrameWidth), 1, this.mSize - 1);
-            interpolate(constrain, (f - (this.mFrameWidth * (constrain - 1))) / this.mFrameWidth, obj);
+            interpolate(MathUtils.constrain((int) Math.ceil(f / this.mFrameWidth), 1, this.mSize - 1), (f - (this.mFrameWidth * (r0 - 1))) / this.mFrameWidth, obj);
         }
 
         public static KeyframeSet ofFloat(Property property, float... fArr) {
@@ -240,9 +180,7 @@ public class TouchAnimator {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class FloatKeyframeSet<T> extends KeyframeSet {
+    private static class FloatKeyframeSet<T> extends KeyframeSet {
         private final Property<T, Float> mProperty;
         private final float[] mValues;
 

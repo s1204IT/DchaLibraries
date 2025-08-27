@@ -19,6 +19,7 @@ import com.android.systemui.shared.recents.ISystemUiProxy;
 import com.android.systemui.shared.system.SettingsCompat;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+
 /* loaded from: classes.dex */
 public class OverviewInteractionState {
     private static final String HAS_ENABLED_QUICKSTEP_ONCE = "launcher.has_enabled_quickstep_once";
@@ -38,17 +39,13 @@ public class OverviewInteractionState {
     private final Handler mUiHandler = new Handler(new Handler.Callback() { // from class: com.android.quickstep.-$$Lambda$OverviewInteractionState$j9cvcxLwTdHZmfJdn7vbeqVDrmE
         @Override // android.os.Handler.Callback
         public final boolean handleMessage(Message message) {
-            boolean handleUiMessage;
-            handleUiMessage = OverviewInteractionState.this.handleUiMessage(message);
-            return handleUiMessage;
+            return this.f$0.handleUiMessage(message);
         }
     });
     private final Handler mBgHandler = new Handler(UiThreadHelper.getBackgroundLooper(), new Handler.Callback() { // from class: com.android.quickstep.-$$Lambda$OverviewInteractionState$lUCjlXPvcc5dI6thv7Aq9QPgFjM
         @Override // android.os.Handler.Callback
         public final boolean handleMessage(Message message) {
-            boolean handleBgMessage;
-            handleBgMessage = OverviewInteractionState.this.handleBgMessage(message);
-            return handleBgMessage;
+            return this.f$0.handleBgMessage(message);
         }
     });
 
@@ -61,9 +58,7 @@ public class OverviewInteractionState {
                     return (OverviewInteractionState) new MainThreadExecutor().submit(new Callable() { // from class: com.android.quickstep.-$$Lambda$OverviewInteractionState$QjvJRsHSD02woBsyrz783sSx2jY
                         @Override // java.util.concurrent.Callable
                         public final Object call() {
-                            OverviewInteractionState overviewInteractionState;
-                            overviewInteractionState = OverviewInteractionState.getInstance(context);
-                            return overviewInteractionState;
+                            return OverviewInteractionState.getInstance(context);
                         }
                     }).get();
                 } catch (InterruptedException | ExecutionException e) {
@@ -80,10 +75,10 @@ public class OverviewInteractionState {
         if (getSystemBooleanRes(SWIPE_UP_SETTING_AVAILABLE_RES_NAME)) {
             this.mSwipeUpSettingObserver = new SwipeUpGestureEnabledSettingObserver(this.mUiHandler, context.getContentResolver());
             this.mSwipeUpSettingObserver.register();
-            return;
+        } else {
+            this.mSwipeUpSettingObserver = null;
+            this.mSwipeUpEnabled = getSystemBooleanRes(SWIPE_UP_ENABLED_DEFAULT_RES_NAME);
         }
-        this.mSwipeUpSettingObserver = null;
-        this.mSwipeUpEnabled = getSystemBooleanRes(SWIPE_UP_ENABLED_DEFAULT_RES_NAME);
     }
 
     public boolean isSwipeUpGestureEnabled() {
@@ -106,8 +101,7 @@ public class OverviewInteractionState {
         this.mBgHandler.obtainMessage(200, iSystemUiProxy).sendToTarget();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean handleUiMessage(Message message) {
+    private boolean handleUiMessage(Message message) {
         if (message.what == MSG_SET_BACK_BUTTON_ALPHA) {
             this.mBackButtonAlpha = ((Float) message.obj).floatValue();
         }
@@ -115,8 +109,7 @@ public class OverviewInteractionState {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean handleBgMessage(Message message) {
+    private boolean handleBgMessage(Message message) {
         switch (message.what) {
             case 200:
                 this.mISystemUiProxy = (ISystemUiProxy) message.obj;
@@ -169,7 +162,6 @@ public class OverviewInteractionState {
         }
     }
 
-    /* loaded from: classes.dex */
     private class SwipeUpGestureEnabledSettingObserver extends ContentObserver {
         private final int defaultValue;
         private Handler mHandler;
@@ -200,8 +192,7 @@ public class OverviewInteractionState {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean getSystemBooleanRes(String str) {
+    private boolean getSystemBooleanRes(String str) {
         Resources system = Resources.getSystem();
         int identifier = system.getIdentifier(str, "bool", "android");
         if (identifier != 0) {
@@ -211,8 +202,7 @@ public class OverviewInteractionState {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resetHomeBounceSeenOnQuickstepEnabledFirstTime() {
+    private void resetHomeBounceSeenOnQuickstepEnabledFirstTime() {
         if (this.mSwipeUpEnabled && !Utilities.getPrefs(this.mContext).getBoolean(HAS_ENABLED_QUICKSTEP_ONCE, true)) {
             Utilities.getPrefs(this.mContext).edit().putBoolean(HAS_ENABLED_QUICKSTEP_ONCE, true).putBoolean(DiscoveryBounce.HOME_BOUNCE_SEEN, false).apply();
         }

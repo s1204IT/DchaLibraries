@@ -4,6 +4,7 @@ import android.arch.core.executor.ArchTaskExecutor;
 import android.arch.core.internal.SafeIterableMap;
 import android.arch.lifecycle.Lifecycle;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public abstract class LiveData<T> {
     private static final Object NOT_SET = new Object();
@@ -16,6 +17,7 @@ public abstract class LiveData<T> {
     private volatile Object mPendingData = NOT_SET;
     private int mVersion = -1;
     private final Runnable mPostValueRunnable = new Runnable() { // from class: android.arch.lifecycle.LiveData.1
+        /* JADX DEBUG: Multi-variable search result rejected for r0v2, resolved type: android.arch.lifecycle.LiveData */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // java.lang.Runnable
         public void run() {
@@ -35,16 +37,17 @@ public abstract class LiveData<T> {
         }
         if (!observerWrapper.shouldBeActive()) {
             observerWrapper.activeStateChanged(false);
-        } else if (observerWrapper.mLastVersion >= this.mVersion) {
         } else {
+            if (observerWrapper.mLastVersion >= this.mVersion) {
+                return;
+            }
             observerWrapper.mLastVersion = this.mVersion;
             observerWrapper.mObserver.onChanged((Object) this.mData);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     /* JADX WARN: Incorrect inner types in method signature: (Landroid/arch/lifecycle/LiveData<TT;>.android/arch/lifecycle/LiveData$android/arch/lifecycle/LiveData$ObserverWrapper;)V */
-    public void dispatchingValue(ObserverWrapper observerWrapper) {
+    private void dispatchingValue(ObserverWrapper observerWrapper) {
         if (this.mDispatchingValue) {
             this.mDispatchInvalidated = true;
             return;
@@ -94,8 +97,7 @@ public abstract class LiveData<T> {
         removed.activeStateChanged(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setValue(T value) {
+    protected void setValue(T value) {
         assertMainThread("setValue");
         this.mVersion++;
         this.mData = value;
@@ -120,7 +122,6 @@ public abstract class LiveData<T> {
         return this.mActiveCount > 0;
     }
 
-    /* loaded from: classes.dex */
     class LifecycleBoundObserver extends LiveData<T>.ObserverWrapper implements GenericLifecycleObserver {
         final LifecycleOwner mOwner;
 
@@ -151,9 +152,7 @@ public abstract class LiveData<T> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public abstract class ObserverWrapper {
+    private abstract class ObserverWrapper {
         boolean mActive;
         int mLastVersion = -1;
         final Observer<? super T> mObserver;

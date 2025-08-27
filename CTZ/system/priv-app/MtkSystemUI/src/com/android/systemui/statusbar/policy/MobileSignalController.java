@@ -1,6 +1,5 @@
 package com.android.systemui.statusbar.policy;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -40,6 +39,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class MobileSignalController extends SignalController<MobileState, MobileIconGroup> {
     private CarrierConfigManager mCarrierConfigManager;
@@ -49,6 +49,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private MobileIconGroup mDefaultIcons;
     private final NetworkControllerImpl.SubscriptionDefaults mDefaults;
     private ImsFeature.Capabilities mImsCapConfig;
+
     @VisibleForTesting
     MtkImsConnectionStateListener mImsConnectionStateListener;
     private ImsManager mImsManager;
@@ -59,6 +60,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     final SparseArray<MobileIconGroup> mNetworkToIconLookup;
     private final ContentObserver mObserver;
     private final TelephonyManager mPhone;
+
     @VisibleForTesting
     final PhoneStateListener mPhoneStateListener;
     private Handler mReceiverHandler;
@@ -77,8 +79,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                     @Override // java.lang.Runnable
                     public void run() {
                         if (SignalController.DEBUG) {
-                            String str = MobileSignalController.this.mTag;
-                            Log.d(str, "onImsConnected STATE_IN_SERVICE, imsRadioTech = " + i);
+                            Log.d(MobileSignalController.this.mTag, "onImsConnected STATE_IN_SERVICE, imsRadioTech = " + i);
                         }
                         MobileSignalController.this.mImsRadioTech = i;
                         ((MobileState) MobileSignalController.this.mCurrentState).imsRegState = 0;
@@ -106,8 +107,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                     @Override // java.lang.Runnable
                     public void run() {
                         if (SignalController.DEBUG) {
-                            String str = MobileSignalController.this.mTag;
-                            Log.d(str, "onCapabilitiesStatusChanged:" + capabilities);
+                            Log.d(MobileSignalController.this.mTag, "onCapabilitiesStatusChanged:" + capabilities);
                         }
                         MobileSignalController.this.mImsCapConfig = capabilities;
                         MobileSignalController.this.updateIms();
@@ -120,8 +120,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                     @Override // java.lang.Runnable
                     public void run() {
                         if (SignalController.DEBUG) {
-                            String str = MobileSignalController.this.mTag;
-                            Log.d(str, "onWifiPdnOOSStateChanged oosState:" + i);
+                            Log.d(MobileSignalController.this.mTag, "onWifiPdnOOSStateChanged oosState:" + i);
                         }
                         if (i == 0 || i == 1) {
                             ((MobileState) MobileSignalController.this.mCurrentState).imsRegState = 1;
@@ -143,18 +142,23 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         this.mPhoneStateListener = new MobilePhoneStateListener(subscriptionInfo.getSubscriptionId(), looper);
         this.mReceiverHandler = new Handler(looper);
         this.mNetworkNameSeparator = getStringIfExists(R.string.status_bar_network_name_separator);
-        this.mNetworkNameDefault = getStringIfExists(17040140);
+        this.mNetworkNameDefault = getStringIfExists(android.R.string.date_picker_decrement_month_button);
         mapIconSets();
-        String charSequence = subscriptionInfo.getCarrierName() != null ? subscriptionInfo.getCarrierName().toString() : this.mNetworkNameDefault;
-        ((MobileState) this.mCurrentState).networkName = charSequence;
-        ((MobileState) this.mLastState).networkName = charSequence;
-        ((MobileState) this.mCurrentState).networkNameData = charSequence;
-        ((MobileState) this.mLastState).networkNameData = charSequence;
+        String string = subscriptionInfo.getCarrierName() != null ? subscriptionInfo.getCarrierName().toString() : this.mNetworkNameDefault;
+        MobileState mobileState = (MobileState) this.mLastState;
+        ((MobileState) this.mCurrentState).networkName = string;
+        mobileState.networkName = string;
+        MobileState mobileState2 = (MobileState) this.mLastState;
+        ((MobileState) this.mCurrentState).networkNameData = string;
+        mobileState2.networkNameData = string;
+        MobileState mobileState3 = (MobileState) this.mLastState;
         ((MobileState) this.mCurrentState).enabled = z;
-        ((MobileState) this.mLastState).enabled = z;
+        mobileState3.enabled = z;
+        MobileState mobileState4 = (MobileState) this.mLastState;
+        MobileState mobileState5 = (MobileState) this.mCurrentState;
         MobileIconGroup mobileIconGroup = this.mDefaultIcons;
-        ((MobileState) this.mCurrentState).iconGroup = mobileIconGroup;
-        ((MobileState) this.mLastState).iconGroup = mobileIconGroup;
+        mobileState5.iconGroup = mobileIconGroup;
+        mobileState4.iconGroup = mobileIconGroup;
         this.mCarrierConfigManager = (CarrierConfigManager) context.getSystemService("carrier_config");
         updateDataSim();
         this.mObserver = new ContentObserver(new Handler(looper)) { // from class: com.android.systemui.statusbar.policy.MobileSignalController.1
@@ -165,8 +169,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateIms() {
+    private void updateIms() {
         onFeatureCapabilityChangedAdapter(this.mImsRadioTech, this.mImsCapConfig);
         updateTelephony();
     }
@@ -277,13 +280,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     @Override // com.android.systemui.statusbar.policy.SignalController
     public void updateConnectivity(BitSet bitSet, BitSet bitSet2) {
         boolean z = bitSet2.get(this.mTransportType);
-        int i = 0;
         ((MobileState) this.mCurrentState).isDefault = bitSet.get(this.mTransportType) && this.mNetworkController.isCellularConnected(this.mSubscriptionInfo.getSubscriptionId());
-        MobileState mobileState = (MobileState) this.mCurrentState;
-        if (z || !((MobileState) this.mCurrentState).isDefault) {
-            i = 1;
-        }
-        mobileState.inetCondition = i;
+        ((MobileState) this.mCurrentState).inetCondition = (z || !((MobileState) this.mCurrentState).isDefault) ? 1 : 0;
         notifyListenersIfNecessary();
     }
 
@@ -297,8 +295,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         registerImsListener();
         this.mPhone.listen(this.mPhoneStateListener, 70113);
         this.mContext.getContentResolver().registerContentObserver(Settings.Global.getUriFor("mobile_data"), true, this.mObserver);
-        ContentResolver contentResolver = this.mContext.getContentResolver();
-        contentResolver.registerContentObserver(Settings.Global.getUriFor("mobile_data" + this.mSubscriptionInfo.getSubscriptionId()), true, this.mObserver);
+        this.mContext.getContentResolver().registerContentObserver(Settings.Global.getUriFor("mobile_data" + this.mSubscriptionInfo.getSubscriptionId()), true, this.mObserver);
         this.mStatusBarExt.registerOpStateListener();
     }
 
@@ -370,23 +367,17 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         if (((MobileState) this.mCurrentState).iconGroup == TelephonyIcons.CARRIER_NETWORK_CHANGE) {
             return SignalDrawable.getCarrierChangeState(getNumLevels());
         }
-        boolean z = false;
         if (((MobileState) this.mCurrentState).connected) {
             int i = ((MobileState) this.mCurrentState).level;
             if (this.mConfig.inflateSignalStrengths) {
                 i++;
             }
-            boolean z2 = ((MobileState) this.mCurrentState).userSetup && ((MobileState) this.mCurrentState).iconGroup == TelephonyIcons.DATA_DISABLED;
-            boolean z3 = ((MobileState) this.mCurrentState).inetCondition == 0;
-            if (z2 || z3) {
-                z = true;
-            }
-            return SignalDrawable.getState(i, getNumLevels(), z);
-        } else if (((MobileState) this.mCurrentState).enabled) {
-            return SignalDrawable.getEmptyState(getNumLevels());
-        } else {
-            return 0;
+            return SignalDrawable.getState(i, getNumLevels(), (((MobileState) this.mCurrentState).userSetup && ((MobileState) this.mCurrentState).iconGroup == TelephonyIcons.DATA_DISABLED) || (((MobileState) this.mCurrentState).inetCondition == 0));
         }
+        if (((MobileState) this.mCurrentState).enabled) {
+            return SignalDrawable.getEmptyState(getNumLevels());
+        }
+        return 0;
     }
 
     @Override // com.android.systemui.statusbar.policy.SignalController
@@ -397,6 +388,31 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         return getCurrentIconId();
     }
 
+    /* JADX DEBUG: Type inference failed for r11v4. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r11v9. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r1v3. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v14. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v19. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v2. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v22. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v25. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v28. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v31. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v34. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v5. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r2v8. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r3v11. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r3v14. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r3v3. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r4v0. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r4v12. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r4v15. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r4v19. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r4v6. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r7v1. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r7v6. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r9v1. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
+    /* JADX DEBUG: Type inference failed for r9v12. Raw type applied. Possible types: T extends com.android.systemui.statusbar.policy.SignalController$State */
     /* JADX WARN: Multi-variable type inference failed */
     /* JADX WARN: Type inference failed for: r10v3, types: [com.android.systemui.statusbar.policy.NetworkController$IconState] */
     @Override // com.android.systemui.statusbar.policy.SignalController
@@ -425,7 +441,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             }
             ?? iconState2 = new NetworkController.IconState(((MobileState) this.mCurrentState).enabled && !((MobileState) this.mCurrentState).isEmergency, getQsCurrentIconId(), stringIfExists);
             str = ((MobileState) this.mCurrentState).isEmergency ? null : ((MobileState) this.mCurrentState).networkName;
-            r9 = iconState2;
+            str = iconState2;
             i = i4;
         } else {
             i = 0;
@@ -450,30 +466,29 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             i3 = 0;
         }
         this.mStatusBarExt.isDataDisabled(this.mSubscriptionInfo.getSubscriptionId(), z);
-        signalCallback.setMobileDataIndicators(iconState, r9, this.mStatusBarExt.getDataTypeIcon(this.mSubscriptionInfo.getSubscriptionId(), i5, this.mDataNetType, ((MobileState) this.mCurrentState).dataConnected ? 2 : 0, this.mServiceState), this.mStatusBarExt.getNetworkTypeIcon(this.mSubscriptionInfo.getSubscriptionId(), i6, this.mDataNetType, this.mServiceState), i3, i, z3, z4, str2, str, icons.mIsWide, this.mSubscriptionInfo.getSubscriptionId(), ((MobileState) this.mCurrentState).roaming, ((MobileState) this.mCurrentState).isDefaultData);
+        signalCallback.setMobileDataIndicators(iconState, str, this.mStatusBarExt.getDataTypeIcon(this.mSubscriptionInfo.getSubscriptionId(), i5, this.mDataNetType, ((MobileState) this.mCurrentState).dataConnected ? 2 : 0, this.mServiceState), this.mStatusBarExt.getNetworkTypeIcon(this.mSubscriptionInfo.getSubscriptionId(), i6, this.mDataNetType, this.mServiceState), i3, i, z3, z4, str2, str, icons.mIsWide, this.mSubscriptionInfo.getSubscriptionId(), ((MobileState) this.mCurrentState).roaming, ((MobileState) this.mCurrentState).isDefaultData);
         this.mNetworkController.refreshPlmnCarrierLabel();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: cleanState()Lcom/android/systemui/statusbar/policy/SignalController$State; */
     @Override // com.android.systemui.statusbar.policy.SignalController
-    public MobileState cleanState() {
+    protected MobileState cleanState() {
         return new MobileState();
     }
 
     private boolean hasService() {
-        if (this.mServiceState != null) {
-            switch (this.mServiceState.getVoiceRegState()) {
-                case 1:
-                case 2:
-                    return this.mServiceState.getDataRegState() == 0;
-                case 3:
-                    return false;
-                default:
-                    return true;
-            }
+        if (this.mServiceState == null) {
+            return false;
         }
-        return false;
+        switch (this.mServiceState.getVoiceRegState()) {
+            case 1:
+            case 2:
+                return this.mServiceState.getDataRegState() == 0;
+            case 3:
+                return false;
+            default:
+                return true;
+        }
     }
 
     private boolean isCdma() {
@@ -576,13 +591,12 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         }
         if (sb2.length() != 0) {
             ((MobileState) this.mCurrentState).networkNameData = sb2.toString();
-            return;
+        } else {
+            ((MobileState) this.mCurrentState).networkNameData = this.mNetworkNameDefault;
         }
-        ((MobileState) this.mCurrentState).networkNameData = this.mNetworkNameDefault;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateTelephony() {
+    private final void updateTelephony() {
         if (DEBUG && FeatureOptions.LOG_ENABLE) {
             Log.d(this.mTag, "updateTelephonySignalStrength: hasService=" + hasService() + ", ss=" + this.mSignalStrength + ", mConfig.alwaysShowDataRatIcon = " + this.mConfig.alwaysShowDataRatIcon + ", mDataState = " + this.mDataState);
         }
@@ -644,16 +658,10 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    public void setActivity(int i) {
-        boolean z = false;
+    void setActivity(int i) {
         ((MobileState) this.mCurrentState).activityIn = i == 3 || i == 1;
-        MobileState mobileState = (MobileState) this.mCurrentState;
-        if (i == 3 || i == 2) {
-            z = true;
-        }
-        mobileState.activityOut = z;
+        ((MobileState) this.mCurrentState).activityOut = i == 3 || i == 2;
         notifyListenersIfNecessary();
     }
 
@@ -667,7 +675,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         printWriter.println("  mDataNetType=" + this.mDataNetType + ",");
     }
 
-    /* loaded from: classes.dex */
     class MobilePhoneStateListener extends PhoneStateListener {
         public MobilePhoneStateListener(int i, Looper looper) {
             super(Integer.valueOf(i), looper);
@@ -696,8 +703,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         @Override // android.telephony.PhoneStateListener
         public void onServiceStateChanged(ServiceState serviceState) {
             if (SignalController.DEBUG) {
-                String str = MobileSignalController.this.mTag;
-                Log.d(str, "onServiceStateChanged: " + MobileSignalController.this.dumpServiceState(serviceState));
+                Log.d(MobileSignalController.this.mTag, "onServiceStateChanged: " + MobileSignalController.this.dumpServiceState(serviceState));
             }
             MobileSignalController.this.mServiceState = serviceState;
             if (serviceState != null) {
@@ -712,8 +718,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         @Override // android.telephony.PhoneStateListener
         public void onDataConnectionStateChanged(int i, int i2) {
             if (SignalController.DEBUG) {
-                String str = MobileSignalController.this.mTag;
-                Log.d(str, "onDataConnectionStateChanged: state=" + i + " type=" + i2);
+                Log.d(MobileSignalController.this.mTag, "onDataConnectionStateChanged: state=" + i + " type=" + i2);
             }
             MobileSignalController.this.mDataState = i;
             MobileSignalController.this.mDataNetType = i2;
@@ -732,8 +737,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             String dataConnectionAPNType = preciseDataConnectionState.getDataConnectionAPNType();
             if (dataConnectionAPNType != null && dataConnectionAPNType.equals("preempt") && preciseDataConnectionState.getDataConnectionState() != -1) {
                 if (SignalController.DEBUG) {
-                    String str = MobileSignalController.this.mTag;
-                    Log.d(str, "onPreciseDataConnectionStateChanged: dataConnectionState=" + preciseDataConnectionState);
+                    Log.d(MobileSignalController.this.mTag, "onPreciseDataConnectionStateChanged: dataConnectionState=" + preciseDataConnectionState);
                 }
                 MobileSignalController.this.mDataState = preciseDataConnectionState.getDataConnectionState();
                 MobileSignalController.this.mDataNetType = preciseDataConnectionState.getDataConnectionNetworkType();
@@ -741,10 +745,11 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                     MobileSignalController.this.mDataNetType = 19;
                 }
                 MobileSignalController.this.updateTelephony();
-            } else if (dataConnectionAPNType != null && dataConnectionAPNType.equals("default") && MobileSignalController.this.mDataState != preciseDataConnectionState.getDataConnectionState()) {
+                return;
+            }
+            if (dataConnectionAPNType != null && dataConnectionAPNType.equals("default") && MobileSignalController.this.mDataState != preciseDataConnectionState.getDataConnectionState()) {
                 if (SignalController.DEBUG) {
-                    String str2 = MobileSignalController.this.mTag;
-                    Log.d(str2, "onPreciseDataConnectionStateChanged: APN_TYPE_DEFAULT, dataConnectionState=" + preciseDataConnectionState);
+                    Log.d(MobileSignalController.this.mTag, "onPreciseDataConnectionStateChanged: APN_TYPE_DEFAULT, dataConnectionState=" + preciseDataConnectionState);
                 }
                 MobileSignalController.this.mDataState = preciseDataConnectionState.getDataConnectionState();
                 MobileSignalController.this.updateTelephony();
@@ -754,16 +759,14 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         @Override // android.telephony.PhoneStateListener
         public void onDataActivity(int i) {
             if (SignalController.DEBUG && FeatureOptions.LOG_ENABLE) {
-                String str = MobileSignalController.this.mTag;
-                Log.d(str, "onDataActivity: direction=" + i);
+                Log.d(MobileSignalController.this.mTag, "onDataActivity: direction=" + i);
             }
             MobileSignalController.this.setActivity(i);
         }
 
         public void onCarrierNetworkChange(boolean z) {
             if (SignalController.DEBUG && FeatureOptions.LOG_ENABLE) {
-                String str = MobileSignalController.this.mTag;
-                Log.d(str, "onCarrierNetworkChange: active=" + z);
+                Log.d(MobileSignalController.this.mTag, "onCarrierNetworkChange: active=" + z);
             }
             ((MobileState) MobileSignalController.this.mCurrentState).carrierNetworkChangeMode = z;
             MobileSignalController.this.updateTelephony();
@@ -777,9 +780,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class MobileIconGroup extends SignalController.IconGroup {
+    static class MobileIconGroup extends SignalController.IconGroup {
         final int mDataContentDescription;
         final int mDataType;
         final boolean mIsWide;
@@ -794,9 +795,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class MobileState extends SignalController.State {
+    static class MobileState extends SignalController.State {
         boolean airplaneMode;
         boolean carrierNetworkChangeMode;
         int customizedSignalStrengthIcon;
@@ -847,9 +846,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             this.lwaRegState = mobileState.lwaRegState;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.android.systemui.statusbar.policy.SignalController.State
-        public void toString(StringBuilder sb) {
+        protected void toString(StringBuilder sb) {
             super.toString(sb);
             sb.append(',');
             sb.append("dataSim=");
@@ -942,8 +940,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         unregisterImsListener();
         try {
             this.mImsManager.addImsConnectionStateListener(this.mImsConnectionStateListener);
-            String str = this.mTag;
-            Log.i(str, "register ims succeed, " + this.mImsConnectionStateListener);
+            Log.i(this.mTag, "register ims succeed, " + this.mImsConnectionStateListener);
         } catch (ImsException e) {
             Log.w(this.mTag, "register ims fail!");
         }
@@ -953,8 +950,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         if (this.mImsManager != null) {
             try {
                 this.mImsManager.removeImsConnectionStateListener(this.mImsConnectionStateListener);
-                String str = this.mTag;
-                Log.i(str, "unregister ims succeed, " + this.mImsConnectionStateListener);
+                Log.i(this.mTag, "unregister ims succeed, " + this.mImsConnectionStateListener);
             } catch (ImsException e) {
                 Log.w(this.mTag, "unregister ims fail!");
             }

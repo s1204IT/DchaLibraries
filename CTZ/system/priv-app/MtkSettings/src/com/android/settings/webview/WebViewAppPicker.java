@@ -15,6 +15,7 @@ import com.android.settingslib.applications.DefaultAppInfo;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WebViewAppPicker extends DefaultAppPickerFragment {
     private WebViewUpdateServiceWrapper mWebViewUpdateServiceWrapper;
@@ -34,9 +35,8 @@ public class WebViewAppPicker extends DefaultAppPickerFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.webview_app_settings;
     }
 
@@ -65,9 +65,8 @@ public class WebViewAppPicker extends DefaultAppPickerFragment {
         return getWebViewUpdateServiceWrapper().setWebViewProvider(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment
-    public void onSelectionPerformed(boolean z) {
+    protected void onSelectionPerformed(boolean z) {
         if (z) {
             Activity activity = getActivity();
             Intent intent = activity == null ? null : activity.getIntent();
@@ -94,9 +93,7 @@ public class WebViewAppPicker extends DefaultAppPickerFragment {
         return 405;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class WebViewAppInfo extends DefaultAppInfo {
+    private static class WebViewAppInfo extends DefaultAppInfo {
         public WebViewAppInfo(Context context, PackageManagerWrapper packageManagerWrapper, PackageItemInfo packageItemInfo, String str, boolean z) {
             super(context, packageManagerWrapper, packageItemInfo, str, z);
         }

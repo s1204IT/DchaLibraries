@@ -22,6 +22,7 @@ import com.android.keyguard.KeyguardSecurityCallback;
 import com.android.keyguard.KeyguardSecurityView;
 import com.android.systemui.R;
 import com.mediatek.keyguard.PowerOffAlarm.multiwaveview.GlowPadView;
+
 /* loaded from: classes.dex */
 public class PowerOffAlarmView extends RelativeLayout implements KeyguardSecurityView, GlowPadView.OnTriggerListener {
     private final int DELAY_TIME_SECONDS;
@@ -74,16 +75,15 @@ public class PowerOffAlarmView extends RelativeLayout implements KeyguardSecurit
                 if (!"update.power.off.alarm.label".equals(action)) {
                     if (PowerOffAlarmManager.isAlarmBoot()) {
                         PowerOffAlarmView.this.snooze();
-                        return;
                     }
-                    return;
+                } else {
+                    Message message = new Message();
+                    message.what = 99;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("label", intent.getStringExtra("label"));
+                    message.setData(bundle);
+                    PowerOffAlarmView.this.mHandler.sendMessage(message);
                 }
-                Message message = new Message();
-                message.what = 99;
-                Bundle bundle = new Bundle();
-                bundle.putString("label", intent.getStringExtra("label"));
-                message.setData(bundle);
-                PowerOffAlarmView.this.mHandler.sendMessage(message);
             }
         };
         this.mContext = context;
@@ -109,9 +109,9 @@ public class PowerOffAlarmView extends RelativeLayout implements KeyguardSecurit
         this.mGlowPadView.setOnTriggerListener(this);
         setFocusableInTouchMode(true);
         triggerPing();
-        Intent registerReceiver = this.mContext.registerReceiver(null, new IntentFilter("android.intent.action.DOCK_EVENT"));
-        if (registerReceiver != null) {
-            this.mIsDocked = registerReceiver.getIntExtra("android.intent.extra.DOCK_STATE", -1) != 0;
+        Intent intentRegisterReceiver = this.mContext.registerReceiver(null, new IntentFilter("android.intent.action.DOCK_EVENT"));
+        if (intentRegisterReceiver != null) {
+            this.mIsDocked = intentRegisterReceiver.getIntExtra("android.intent.extra.DOCK_STATE", -1) != 0;
         }
         IntentFilter intentFilter = new IntentFilter("alarm_killed");
         intentFilter.addAction("com.android.deskclock.ALARM_SNOOZE");
@@ -131,7 +131,9 @@ public class PowerOffAlarmView extends RelativeLayout implements KeyguardSecurit
         int resourceIdForTarget = this.mGlowPadView.getResourceIdForTarget(i);
         if (resourceIdForTarget == R.drawable.mtk_ic_alarm_alert_snooze) {
             snooze();
-        } else if (resourceIdForTarget == R.drawable.mtk_ic_alarm_alert_dismiss_pwroff) {
+            return;
+        }
+        if (resourceIdForTarget == R.drawable.mtk_ic_alarm_alert_dismiss_pwroff) {
             powerOff();
         } else if (resourceIdForTarget == R.drawable.mtk_ic_alarm_alert_dismiss_pwron) {
             powerOn();
@@ -140,16 +142,14 @@ public class PowerOffAlarmView extends RelativeLayout implements KeyguardSecurit
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void triggerPing() {
+    private void triggerPing() {
         if (this.mPingEnabled) {
             this.mGlowPadView.ping();
             this.mHandler.sendEmptyMessageDelayed(com.android.systemui.plugins.R.styleable.AppCompatTheme_textAppearanceSearchResultSubtitle, 1200L);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void snooze() {
+    private void snooze() {
         Log.d("PowerOffAlarmView", "snooze selected");
         sendBR("com.android.deskclock.SNOOZE_ALARM");
     }
@@ -202,9 +202,9 @@ public class PowerOffAlarmView extends RelativeLayout implements KeyguardSecurit
 
     private void enableEventDispatching(boolean z) {
         try {
-            IWindowManager asInterface = IWindowManager.Stub.asInterface(ServiceManager.getService("window"));
-            if (asInterface != null) {
-                asInterface.setEventDispatching(z);
+            IWindowManager iWindowManagerAsInterface = IWindowManager.Stub.asInterface(ServiceManager.getService("window"));
+            if (iWindowManagerAsInterface != null) {
+                iWindowManagerAsInterface.setEventDispatching(z);
             }
         } catch (RemoteException e) {
             Log.w("PowerOffAlarmView", e.toString());
@@ -257,11 +257,12 @@ public class PowerOffAlarmView extends RelativeLayout implements KeyguardSecurit
             switch (i) {
                 case 24:
                     Log.d("PowerOffAlarmView", "onKeyDown() - KeyEvent.KEYCODE_VOLUME_UP, do nothing.");
-                    return true;
+                    break;
                 case 25:
                     Log.d("PowerOffAlarmView", "onKeyDown() - KeyEvent.KEYCODE_VOLUME_DOWN, do nothing.");
-                    return true;
+                    break;
             }
+            return true;
         }
         return super.onKeyDown(i, keyEvent);
     }
@@ -272,11 +273,12 @@ public class PowerOffAlarmView extends RelativeLayout implements KeyguardSecurit
             switch (i) {
                 case 24:
                     Log.d("PowerOffAlarmView", "onKeyUp() - KeyEvent.KEYCODE_VOLUME_UP, do nothing.");
-                    return true;
+                    break;
                 case 25:
                     Log.d("PowerOffAlarmView", "onKeyUp() - KeyEvent.KEYCODE_VOLUME_DOWN, do nothing.");
-                    return true;
+                    break;
             }
+            return true;
         }
         return super.onKeyDown(i, keyEvent);
     }

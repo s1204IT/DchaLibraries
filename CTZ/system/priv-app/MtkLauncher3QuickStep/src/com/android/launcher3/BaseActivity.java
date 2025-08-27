@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public abstract class BaseActivity extends Activity implements UserEventDispatcher.UserEventDelegate {
     private static final int ACTIVITY_STATE_RESUMED = 2;
@@ -33,16 +34,13 @@ public abstract class BaseActivity extends Activity implements UserEventDispatch
     private final ArrayList<MultiWindowModeChangedListener> mMultiWindowModeChangedListeners = new ArrayList<>();
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     public @interface ActivityFlags {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     public @interface InvisibilityFlags {
     }
 
-    /* loaded from: classes.dex */
     public interface MultiWindowModeChangedListener {
         void onMultiWindowModeChanged(boolean z);
     }
@@ -89,23 +87,20 @@ public abstract class BaseActivity extends Activity implements UserEventDispatch
         super.onActivityResult(i, i2, intent);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         this.mActivityFlags |= 1;
         super.onStart();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onResume() {
+    protected void onResume() {
         this.mActivityFlags |= 6;
         super.onResume();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onUserLeaveHint() {
+    protected void onUserLeaveHint() {
         this.mActivityFlags &= -5;
         super.onUserLeaveHint();
     }
@@ -118,17 +113,15 @@ public abstract class BaseActivity extends Activity implements UserEventDispatch
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         this.mActivityFlags &= -6;
         this.mForceInvisible = 0;
         super.onStop();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onPause() {
+    protected void onPause() {
         this.mActivityFlags &= -3;
         super.onPause();
         getSystemUiController().updateUiState(4, 0);
@@ -154,8 +147,7 @@ public abstract class BaseActivity extends Activity implements UserEventDispatch
         this.mDPChangeListeners.remove(onDeviceProfileChangeListener);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void dispatchDeviceProfileChanged() {
+    protected void dispatchDeviceProfileChanged() {
         for (int size = this.mDPChangeListeners.size() - 1; size >= 0; size--) {
             this.mDPChangeListeners.get(size).onDeviceProfileChanged(this.mDeviceProfile);
         }
@@ -188,8 +180,7 @@ public abstract class BaseActivity extends Activity implements UserEventDispatch
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void dumpMisc(PrintWriter printWriter) {
+    protected void dumpMisc(PrintWriter printWriter) {
         printWriter.println(" deviceProfile isTransposed=" + getDeviceProfile().isVerticalBarLayout());
         printWriter.println(" orientation=" + getResources().getConfiguration().orientation);
         printWriter.println(" mSystemUiController: " + this.mSystemUiController);

@@ -4,6 +4,7 @@ import android.content.Context;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.deviceinfo.AbstractBluetoothAddressPreferenceController;
+
 /* loaded from: classes.dex */
 public class BluetoothAddressPreferenceController extends AbstractBluetoothAddressPreferenceController implements PreferenceControllerMixin {
     public BluetoothAddressPreferenceController(Context context, Lifecycle lifecycle) {

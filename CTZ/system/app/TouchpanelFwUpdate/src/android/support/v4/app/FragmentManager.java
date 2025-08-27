@@ -6,10 +6,10 @@ import android.view.View;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class FragmentManager {
 
-    /* loaded from: classes.dex */
     public interface OnBackStackChangedListener {
         void onBackStackChanged();
     }
@@ -28,7 +28,6 @@ public abstract class FragmentManager {
 
     public abstract boolean popBackStackImmediate();
 
-    /* loaded from: classes.dex */
     public static abstract class FragmentLifecycleCallbacks {
         public void onFragmentPreAttached(FragmentManager fm, Fragment f, Context context) {
         }

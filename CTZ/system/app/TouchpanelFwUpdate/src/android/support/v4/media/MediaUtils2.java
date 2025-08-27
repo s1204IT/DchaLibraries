@@ -6,12 +6,12 @@ import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.MediaSession2;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 class MediaUtils2 {
     static final MediaBrowserServiceCompat.BrowserRoot sDefaultBrowserRoot = new MediaBrowserServiceCompat.BrowserRoot("android.media.MediaLibraryService2", null);
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static List<MediaItem2> convertToMediaItem2List(Parcelable[] itemParcelableList) {
+    static List<MediaItem2> convertToMediaItem2List(Parcelable[] itemParcelableList) {
         MediaItem2 item;
         List<MediaItem2> playlist = new ArrayList<>();
         if (itemParcelableList != null) {
@@ -24,8 +24,7 @@ class MediaUtils2 {
         return playlist;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static List<Bundle> convertToBundleList(Parcelable[] array) {
+    static List<Bundle> convertToBundleList(Parcelable[] array) {
         if (array == null) {
             return null;
         }
@@ -36,8 +35,7 @@ class MediaUtils2 {
         return bundleList;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static List<MediaSession2.CommandButton> convertToCommandButtonList(Parcelable[] list) {
+    static List<MediaSession2.CommandButton> convertToCommandButtonList(Parcelable[] list) {
         MediaSession2.CommandButton button;
         List<MediaSession2.CommandButton> layout = new ArrayList<>();
         for (int i = 0; i < list.length; i++) {

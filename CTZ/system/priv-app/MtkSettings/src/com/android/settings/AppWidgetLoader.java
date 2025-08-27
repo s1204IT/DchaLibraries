@@ -13,20 +13,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppWidgetLoader<Item extends LabelledItem> {
     private AppWidgetManager mAppWidgetManager;
     private Context mContext;
     ItemConstructor<Item> mItemConstructor;
 
-    /* loaded from: classes.dex */
     public interface ItemConstructor<Item> {
         Item createItem(Context context, AppWidgetProviderInfo appWidgetProviderInfo, Bundle bundle);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface LabelledItem {
+    interface LabelledItem {
         CharSequence getLabel();
     }
 
@@ -36,6 +34,7 @@ public class AppWidgetLoader<Item extends LabelledItem> {
         this.mItemConstructor = itemConstructor;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [106=4] */
     void putCustomAppWidgets(List<Item> list, Intent intent) {
         ArrayList arrayList;
         ArrayList arrayList2;
@@ -92,8 +91,7 @@ public class AppWidgetLoader<Item extends LabelledItem> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public List<Item> getItems(Intent intent) {
+    protected List<Item> getItems(Intent intent) {
         boolean booleanExtra = intent.getBooleanExtra("customSort", true);
         ArrayList arrayList = new ArrayList();
         putInstalledAppWidgets(arrayList, intent.getIntExtra("categoryFilter", 1));
@@ -103,6 +101,7 @@ public class AppWidgetLoader<Item extends LabelledItem> {
         Collections.sort(arrayList, new Comparator<Item>() { // from class: com.android.settings.AppWidgetLoader.1
             Collator mCollator = Collator.getInstance();
 
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(Item item, Item item2) {
                 return this.mCollator.compare(item.getLabel(), item2.getLabel());

@@ -8,6 +8,7 @@ import com.android.settings.R;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.notification.ZenCustomRadioButtonPreference;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public class ZenModeVisEffectsCustomPreferenceController extends AbstractZenModePreferenceController {
     private final String KEY;
@@ -30,13 +31,13 @@ public class ZenModeVisEffectsCustomPreferenceController extends AbstractZenMode
         this.mPreference.setOnGearClickListener(new ZenCustomRadioButtonPreference.OnGearClickListener() { // from class: com.android.settings.notification.-$$Lambda$ZenModeVisEffectsCustomPreferenceController$hYHNs4-TKsGpjPSCluD3oYAyplI
             @Override // com.android.settings.notification.ZenCustomRadioButtonPreference.OnGearClickListener
             public final void onGearClick(ZenCustomRadioButtonPreference zenCustomRadioButtonPreference) {
-                ZenModeVisEffectsCustomPreferenceController.this.launchCustomSettings();
+                this.f$0.launchCustomSettings();
             }
         });
         this.mPreference.setOnRadioButtonClickListener(new ZenCustomRadioButtonPreference.OnRadioButtonClickListener() { // from class: com.android.settings.notification.-$$Lambda$ZenModeVisEffectsCustomPreferenceController$anmhCczZGnQRUAoXVehKNMc66b4
             @Override // com.android.settings.notification.ZenCustomRadioButtonPreference.OnRadioButtonClickListener
             public final void onRadioButtonClick(ZenCustomRadioButtonPreference zenCustomRadioButtonPreference) {
-                ZenModeVisEffectsCustomPreferenceController.this.launchCustomSettings();
+                this.f$0.launchCustomSettings();
             }
         });
     }
@@ -55,8 +56,7 @@ public class ZenModeVisEffectsCustomPreferenceController extends AbstractZenMode
         this.mMetricsFeatureProvider.action(this.mContext, 1399, true);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void launchCustomSettings() {
+    private void launchCustomSettings() {
         select();
         new SubSettingLauncher(this.mContext).setDestination(ZenModeBlockedEffectsSettings.class.getName()).setTitle(R.string.zen_mode_what_to_block_title).setSourceMetricsCategory(1400).launch();
     }

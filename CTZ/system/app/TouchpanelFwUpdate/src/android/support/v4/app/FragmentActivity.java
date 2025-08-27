@@ -24,8 +24,9 @@ import android.view.Window;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Collection;
+
 /* loaded from: classes.dex */
-public class FragmentActivity extends SupportActivity implements ViewModelStoreOwner {
+public class FragmentActivity extends ComponentActivity implements ViewModelStoreOwner {
     boolean mCreated;
     int mNextCandidateRequestIndex;
     SparseArrayCompat<String> mPendingFragmentActivityResults;
@@ -35,22 +36,25 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
     boolean mStartedIntentSenderFromFragment;
     private ViewModelStore mViewModelStore;
     final Handler mHandler = new Handler() { // from class: android.support.v4.app.FragmentActivity.1
+        AnonymousClass1() {
+        }
+
         @Override // android.os.Handler
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
                     if (FragmentActivity.this.mStopped) {
                         FragmentActivity.this.doReallyStop(false);
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 case 2:
                     FragmentActivity.this.onResumeFragments();
                     FragmentActivity.this.mFragments.execPendingActions();
-                    return;
+                    break;
                 default:
                     super.handleMessage(msg);
-                    return;
+                    break;
             }
         }
     };
@@ -58,7 +62,31 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
     boolean mStopped = true;
     boolean mReallyStopped = true;
 
-    /* loaded from: classes.dex */
+    /* renamed from: android.support.v4.app.FragmentActivity$1 */
+    class AnonymousClass1 extends Handler {
+        AnonymousClass1() {
+        }
+
+        @Override // android.os.Handler
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    if (FragmentActivity.this.mStopped) {
+                        FragmentActivity.this.doReallyStop(false);
+                        break;
+                    }
+                    break;
+                case 2:
+                    FragmentActivity.this.onResumeFragments();
+                    FragmentActivity.this.mFragments.execPendingActions();
+                    break;
+                default:
+                    super.handleMessage(msg);
+                    break;
+            }
+        }
+    }
+
     static final class NonConfigurationInstances {
         Object custom;
         FragmentManagerNonConfig fragments;
@@ -135,12 +163,12 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
         return this.mViewModelStore;
     }
 
-    @Override // android.support.v4.app.SupportActivity, android.arch.lifecycle.LifecycleOwner
+    @Override // android.support.v4.app.ComponentActivity, android.arch.lifecycle.LifecycleOwner
     public Lifecycle getLifecycle() {
         return super.getLifecycle();
     }
 
-    @Override // android.support.v4.app.SupportActivity, android.app.Activity
+    @Override // android.support.v4.app.ComponentActivity, android.app.Activity
     protected void onCreate(Bundle savedInstanceState) {
         this.mFragments.attachHost(null);
         super.onCreate(savedInstanceState);
@@ -225,13 +253,13 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
         if (super.onMenuItemSelected(featureId, item)) {
             return true;
         }
-        if (featureId != 0) {
-            if (featureId == 6) {
-                return this.mFragments.dispatchContextItemSelected(item);
-            }
-            return false;
+        if (featureId == 0) {
+            return this.mFragments.dispatchOptionsItemSelected(item);
         }
-        return this.mFragments.dispatchOptionsItemSelected(item);
+        if (featureId == 6) {
+            return this.mFragments.dispatchContextItemSelected(item);
+        }
+        return false;
     }
 
     @Override // android.app.Activity, android.view.Window.Callback
@@ -315,7 +343,7 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
         return nci;
     }
 
-    @Override // android.support.v4.app.SupportActivity, android.app.Activity
+    @Override // android.support.v4.app.ComponentActivity, android.app.Activity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         markFragmentsCreated();
@@ -469,7 +497,6 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
         }
     }
 
-    /* loaded from: classes.dex */
     class HostCallbacks extends FragmentHostCallback<FragmentActivity> {
         public HostCallbacks() {
             super(FragmentActivity.this);

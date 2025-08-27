@@ -13,6 +13,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class VirtualKeyboardPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final DevicePolicyManager mDpm;
@@ -64,14 +65,14 @@ public class VirtualKeyboardPreferenceController extends AbstractPreferenceContr
             return;
         }
         BidiFormatter bidiFormatter = BidiFormatter.getInstance();
-        String str = null;
-        for (String str2 : arrayList) {
-            if (str == null) {
-                str = bidiFormatter.unicodeWrap(str2);
+        String strUnicodeWrap = null;
+        for (String str : arrayList) {
+            if (strUnicodeWrap == null) {
+                strUnicodeWrap = bidiFormatter.unicodeWrap(str);
             } else {
-                str = this.mContext.getString(R.string.join_many_items_middle, str, bidiFormatter.unicodeWrap(str2));
+                strUnicodeWrap = this.mContext.getString(R.string.join_many_items_middle, strUnicodeWrap, bidiFormatter.unicodeWrap(str));
             }
         }
-        preference.setSummary(str);
+        preference.setSummary(strUnicodeWrap);
     }
 }

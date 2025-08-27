@@ -2,6 +2,7 @@ package com.android.settings.applications.appinfo;
 
 import android.content.Context;
 import com.android.settings.applications.defaultapps.DefaultPhonePreferenceController;
+
 /* loaded from: classes.dex */
 public class DefaultPhoneShortcutPreferenceController extends DefaultAppShortcutPreferenceControllerBase {
     private static final String KEY = "default_phone_app";

@@ -34,6 +34,7 @@ import com.android.settings.users.UserFeatureProvider;
 import com.android.settings.users.UserFeatureProviderImpl;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class FeatureFactoryImpl extends FeatureFactory {
     private AccountFeatureProvider mAccountFeatureProvider;

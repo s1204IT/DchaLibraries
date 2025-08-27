@@ -8,8 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 class FragmentTransitionCompat21 extends FragmentTransitionImpl {
+    FragmentTransitionCompat21() {
+    }
+
     @Override // android.support.v4.app.FragmentTransitionImpl
     public boolean canHandle(Object transition) {
         return transition instanceof Transition;
@@ -79,7 +83,9 @@ class FragmentTransitionCompat21 extends FragmentTransitionImpl {
                 addTargets(child, views);
                 i++;
             }
-        } else if (!hasSimpleTarget(transition)) {
+            return;
+        }
+        if (!hasSimpleTarget(transition)) {
             List<View> targets = transition.getTargets();
             if (isNullOrEmpty(targets)) {
                 int numViews = views.size();
@@ -229,7 +235,9 @@ class FragmentTransitionCompat21 extends FragmentTransitionImpl {
                 replaceTargets(child, oldTargets, newTargets);
                 i++;
             }
-        } else if (!hasSimpleTarget(transition) && (targets = transition.getTargets()) != null && targets.size() == oldTargets.size() && targets.containsAll(oldTargets)) {
+            return;
+        }
+        if (!hasSimpleTarget(transition) && (targets = transition.getTargets()) != null && targets.size() == oldTargets.size() && targets.containsAll(oldTargets)) {
             int targetCount = newTargets == null ? 0 : newTargets.size();
             while (i < targetCount) {
                 transition.addTarget(newTargets.get(i));

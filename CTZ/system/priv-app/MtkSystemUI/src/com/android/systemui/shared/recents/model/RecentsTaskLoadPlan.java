@@ -12,6 +12,7 @@ import com.android.systemui.shared.system.ActivityManagerWrapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RecentsTaskLoadPlan {
     private final Context mContext;
@@ -20,7 +21,6 @@ public class RecentsTaskLoadPlan {
     private TaskStack mStack;
     private final SparseBooleanArray mTmpLockedUsers = new SparseBooleanArray();
 
-    /* loaded from: classes.dex */
     public static class Options {
         public int runningTaskId = -1;
         public boolean loadIcons = true;
@@ -31,7 +31,6 @@ public class RecentsTaskLoadPlan {
         public int numVisibleTaskThumbnails = 0;
     }
 
-    /* loaded from: classes.dex */
     public static class PreloadOptions {
         public boolean loadTitles = true;
     }
@@ -43,10 +42,10 @@ public class RecentsTaskLoadPlan {
 
     public void preloadPlan(PreloadOptions preloadOptions, RecentsTaskLoader recentsTaskLoader, int i, int i2) {
         ComponentName componentName;
-        String str;
-        String str2;
+        String andUpdateActivityTitle;
+        String andUpdateContentDescription;
         boolean z;
-        Drawable drawable;
+        Drawable andUpdateActivityIcon;
         this.mContext.getResources();
         ArrayList arrayList = new ArrayList();
         if (this.mRawTasks == null) {
@@ -72,25 +71,25 @@ public class RecentsTaskLoadPlan {
             ActivityInfo andUpdateActivityInfo = recentsTaskLoader.getAndUpdateActivityInfo(taskKey);
             if (andUpdateActivityInfo != null) {
                 if (preloadOptions.loadTitles) {
-                    str = recentsTaskLoader.getAndUpdateActivityTitle(taskKey, recentTaskInfo.taskDescription);
+                    andUpdateActivityTitle = recentsTaskLoader.getAndUpdateActivityTitle(taskKey, recentTaskInfo.taskDescription);
                 } else {
-                    str = "";
+                    andUpdateActivityTitle = "";
                 }
-                String str3 = str;
+                String str = andUpdateActivityTitle;
                 if (preloadOptions.loadTitles) {
-                    str2 = recentsTaskLoader.getAndUpdateContentDescription(taskKey, recentTaskInfo.taskDescription);
+                    andUpdateContentDescription = recentsTaskLoader.getAndUpdateContentDescription(taskKey, recentTaskInfo.taskDescription);
                 } else {
-                    str2 = "";
+                    andUpdateContentDescription = "";
                 }
-                String str4 = str2;
+                String str2 = andUpdateContentDescription;
                 if (z2) {
                     z = false;
-                    drawable = recentsTaskLoader.getAndUpdateActivityIcon(taskKey, recentTaskInfo.taskDescription, false);
+                    andUpdateActivityIcon = recentsTaskLoader.getAndUpdateActivityIcon(taskKey, recentTaskInfo.taskDescription, false);
                 } else {
                     z = false;
-                    drawable = null;
+                    andUpdateActivityIcon = null;
                 }
-                Drawable drawable2 = drawable;
+                Drawable drawable = andUpdateActivityIcon;
                 ThumbnailData andUpdateThumbnail = recentsTaskLoader.getAndUpdateThumbnail(taskKey, z, z);
                 int activityPrimaryColor = recentsTaskLoader.getActivityPrimaryColor(recentTaskInfo.taskDescription);
                 int activityBackgroundColor = recentsTaskLoader.getActivityBackgroundColor(recentTaskInfo.taskDescription);
@@ -98,7 +97,7 @@ public class RecentsTaskLoadPlan {
                 if (this.mTmpLockedUsers.indexOfKey(recentTaskInfo.userId) < 0) {
                     this.mTmpLockedUsers.put(recentTaskInfo.userId, this.mKeyguardManager.isDeviceLocked(recentTaskInfo.userId));
                 }
-                arrayList.add(new Task(taskKey, drawable2, andUpdateThumbnail, str3, str4, activityPrimaryColor, activityBackgroundColor, z3, z2, z4, recentTaskInfo.supportsSplitScreenMultiWindow, recentTaskInfo.taskDescription, recentTaskInfo.resizeMode, recentTaskInfo.topActivity, this.mTmpLockedUsers.get(recentTaskInfo.userId)));
+                arrayList.add(new Task(taskKey, drawable, andUpdateThumbnail, str, str2, activityPrimaryColor, activityBackgroundColor, z3, z2, z4, recentTaskInfo.supportsSplitScreenMultiWindow, recentTaskInfo.taskDescription, recentTaskInfo.resizeMode, recentTaskInfo.topActivity, this.mTmpLockedUsers.get(recentTaskInfo.userId)));
             }
             i3 = i4 + 1;
             size = i5;

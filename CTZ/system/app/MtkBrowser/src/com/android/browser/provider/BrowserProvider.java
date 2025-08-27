@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /* loaded from: classes.dex */
 public class BrowserProvider extends ContentProvider {
     private static final Pattern STRIP_URL_PATTERN;
@@ -50,97 +51,100 @@ public class BrowserProvider extends ContentProvider {
         STRIP_URL_PATTERN = Pattern.compile("^(http://)(.*?)(/$)?");
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:25:0x006e, code lost:
-        if (r2 == null) goto L12;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:26:0x0070, code lost:
-        r2.close();
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:38:0x0088, code lost:
-        if (r2 == null) goto L12;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:40:0x008b, code lost:
-        return r0;
-     */
-    /* JADX WARN: Removed duplicated region for block: B:24:0x006b  */
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [217=5] */
+    /* JADX DEBUG: Failed to insert an additional move for type inference into block B:45:0x001d */
+    /* JADX WARN: Removed duplicated region for block: B:13:0x002e A[Catch: all -> 0x002a, RuntimeException -> 0x002c, TRY_LEAVE, TryCatch #4 {RuntimeException -> 0x002c, all -> 0x002a, blocks: (B:6:0x001d, B:8:0x0023, B:13:0x002e), top: B:45:0x001d }] */
+    /* JADX WARN: Removed duplicated region for block: B:26:0x0070 A[PHI: r0 r2
+  0x0070: PHI (r0v3 java.lang.String) = (r0v1 java.lang.String), (r0v6 java.lang.String) binds: [B:38:0x0088, B:25:0x006e] A[DONT_GENERATE, DONT_INLINE]
+  0x0070: PHI (r2v4 android.database.Cursor) = (r2v3 android.database.Cursor), (r2v7 android.database.Cursor) binds: [B:38:0x0088, B:25:0x006e] A[DONT_GENERATE, DONT_INLINE]] */
     /* JADX WARN: Removed duplicated region for block: B:30:0x0078  */
     /* JADX WARN: Removed duplicated region for block: B:32:0x007d  */
     /* JADX WARN: Removed duplicated region for block: B:37:0x0085  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public static String getClientId(ContentResolver contentResolver) {
-        Cursor cursor;
-        Cursor cursor2;
-        String str = "android-google";
-        Cursor cursor3 = null;
-        cursor3 = null;
-        cursor3 = null;
-        cursor3 = null;
-        cursor3 = null;
-        cursor3 = null;
+    public static String getClientId(ContentResolver contentResolver) throws Throwable {
+        Cursor cursorQuery;
+        Cursor cursorQuery2;
+        String string = "android-google";
+        Cursor cursor = null;
+        str = null;
+        str = null;
+        str = null;
+        String str = null;
+        Cursor cursor2 = null;
         try {
-            cursor = contentResolver.query(Uri.parse("content://com.google.settings/partner"), new String[]{"value"}, "name='search_client_id'", null, null);
-            if (cursor != null) {
-                try {
-                    if (cursor.moveToNext()) {
-                        str = cursor.getString(0);
-                        cursor2 = null;
-                        if (cursor2 != null) {
-                            cursor2.close();
+            cursorQuery = contentResolver.query(Uri.parse("content://com.google.settings/partner"), new String[]{"value"}, "name='search_client_id'", null, null);
+        } catch (RuntimeException e) {
+            cursorQuery = null;
+        } catch (Throwable th) {
+            th = th;
+            cursorQuery = null;
+        }
+        if (cursorQuery != null) {
+            try {
+                if (cursorQuery.moveToNext()) {
+                    string = cursorQuery.getString(0);
+                    cursorQuery2 = null;
+                } else {
+                    cursorQuery2 = contentResolver.query(Uri.parse("content://com.google.settings/partner"), new String[]{"value"}, "name='client_id'", null, null);
+                    if (cursorQuery2 != null) {
+                        try {
+                            boolean zMoveToNext = cursorQuery2.moveToNext();
+                            str = zMoveToNext;
+                            if (zMoveToNext) {
+                                String str2 = "ms-" + cursorQuery2.getString(0);
+                                string = str2;
+                                str = str2;
+                            }
+                        } catch (RuntimeException e2) {
+                            cursor2 = cursorQuery2;
+                            if (cursor2 != null) {
+                                cursor2.close();
+                            }
+                            if (cursorQuery != null) {
+                            }
+                            return string;
+                        } catch (Throwable th2) {
+                            cursor = cursorQuery2;
+                            th = th2;
+                            if (cursor != null) {
+                                cursor.close();
+                            }
+                            if (cursorQuery != null) {
+                                cursorQuery.close();
+                            }
+                            throw th;
                         }
                     }
-                } catch (RuntimeException e) {
-                    if (cursor3 != null) {
-                    }
-                } catch (Throwable th) {
-                    th = th;
-                    if (cursor3 != null) {
-                    }
-                    if (cursor != null) {
-                    }
-                    throw th;
                 }
-            }
-            cursor2 = contentResolver.query(Uri.parse("content://com.google.settings/partner"), new String[]{"value"}, "name='client_id'", null, null);
-            if (cursor2 != null) {
-                try {
-                    boolean moveToNext = cursor2.moveToNext();
-                    cursor3 = moveToNext;
-                    if (moveToNext) {
-                        String str2 = "ms-" + cursor2.getString(0);
-                        str = str2;
-                        cursor3 = str2;
-                    }
-                } catch (RuntimeException e2) {
-                    cursor3 = cursor2;
-                    if (cursor3 != null) {
-                        cursor3.close();
-                    }
-                } catch (Throwable th2) {
-                    cursor3 = cursor2;
-                    th = th2;
-                    if (cursor3 != null) {
-                        cursor3.close();
-                    }
-                    if (cursor != null) {
-                        cursor.close();
-                    }
-                    throw th;
+                if (cursorQuery2 != null) {
+                    cursorQuery2.close();
                 }
+            } catch (RuntimeException e3) {
+                cursor2 = str;
+                if (cursor2 != null) {
+                }
+                if (cursorQuery != null) {
+                }
+                return string;
+            } catch (Throwable th3) {
+                th = th3;
+                cursor = str;
+                if (cursor != null) {
+                }
+                if (cursorQuery != null) {
+                }
+                throw th;
             }
-            if (cursor2 != null) {
+            if (cursorQuery != null) {
+                cursorQuery.close();
             }
-        } catch (RuntimeException e3) {
-            cursor = null;
-        } catch (Throwable th3) {
-            th = th3;
-            cursor = null;
         }
+        return string;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static CharSequence replaceSystemPropertyInString(Context context, CharSequence charSequence) {
+    private static CharSequence replaceSystemPropertyInString(Context context, CharSequence charSequence) throws Throwable {
         StringBuffer stringBuffer = new StringBuffer();
         String clientId = getClientId(context.getContentResolver());
         int i = 0;
@@ -153,7 +157,8 @@ public class BrowserProvider extends ContentProvider {
                     if (i3 >= charSequence.length()) {
                         i2 = i;
                         break;
-                    } else if (charSequence.charAt(i3) != '}') {
+                    }
+                    if (charSequence.charAt(i3) != '}') {
                         i3++;
                     } else {
                         if (charSequence.subSequence(i + 1, i3).toString().equals("CLIENT_ID")) {
@@ -175,7 +180,6 @@ public class BrowserProvider extends ContentProvider {
         return stringBuffer;
     }
 
-    /* loaded from: classes.dex */
     static class DatabaseHelper extends SQLiteOpenHelper {
         private Context mContext;
 
@@ -185,14 +189,13 @@ public class BrowserProvider extends ContentProvider {
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onCreate(SQLiteDatabase sQLiteDatabase) {
+        public void onCreate(SQLiteDatabase sQLiteDatabase) throws Throwable {
             sQLiteDatabase.execSQL("CREATE TABLE bookmarks (_id INTEGER PRIMARY KEY,title TEXT,url TEXT NOT NULL,visits INTEGER,date LONG,created LONG,description TEXT,bookmark INTEGER,favicon BLOB DEFAULT NULL,thumbnail BLOB DEFAULT NULL,touch_icon BLOB DEFAULT NULL,user_entered INTEGER);");
             CharSequence[] textArray = this.mContext.getResources().getTextArray(R.array.bookmarks);
             int length = textArray.length;
             for (int i = 0; i < length; i += 2) {
                 try {
-                    CharSequence replaceSystemPropertyInString = BrowserProvider.replaceSystemPropertyInString(this.mContext, textArray[i + 1]);
-                    sQLiteDatabase.execSQL("INSERT INTO bookmarks (title, url, visits, date, created, bookmark) VALUES('" + ((Object) textArray[i]) + "', '" + ((Object) replaceSystemPropertyInString) + "', 0, 0, 0, 1);");
+                    sQLiteDatabase.execSQL("INSERT INTO bookmarks (title, url, visits, date, created, bookmark) VALUES('" + ((Object) textArray[i]) + "', '" + ((Object) BrowserProvider.replaceSystemPropertyInString(this.mContext, textArray[i + 1])) + "', 0, 0, 0, 1);");
                 } catch (ArrayIndexOutOfBoundsException e) {
                 }
             }
@@ -200,7 +203,7 @@ public class BrowserProvider extends ContentProvider {
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) throws Throwable {
             Log.w("BrowserProvider", "Upgrading database from version " + i + " to " + i2);
             if (i == 18) {
                 sQLiteDatabase.execSQL("DROP TABLE IF EXISTS labels");
@@ -236,24 +239,24 @@ public class BrowserProvider extends ContentProvider {
         private void removeGears() {
             new Thread() { // from class: com.android.browser.provider.BrowserProvider.DatabaseHelper.1
                 @Override // java.lang.Thread, java.lang.Runnable
-                public void run() {
+                public void run() throws SecurityException, IllegalArgumentException {
                     Process.setThreadPriority(10);
                     String str = DatabaseHelper.this.mContext.getApplicationInfo().dataDir;
                     File file = new File(str + File.separator + "app_plugins");
                     if (!file.exists()) {
                         return;
                     }
-                    File[] listFiles = file.listFiles(new FilenameFilter() { // from class: com.android.browser.provider.BrowserProvider.DatabaseHelper.1.1
+                    File[] fileArrListFiles = file.listFiles(new FilenameFilter() { // from class: com.android.browser.provider.BrowserProvider.DatabaseHelper.1.1
                         @Override // java.io.FilenameFilter
                         public boolean accept(File file2, String str2) {
                             return str2.startsWith("gears");
                         }
                     });
-                    for (int i = 0; i < listFiles.length; i++) {
-                        if (listFiles[i].isDirectory()) {
-                            deleteDirectory(listFiles[i]);
+                    for (int i = 0; i < fileArrListFiles.length; i++) {
+                        if (fileArrListFiles[i].isDirectory()) {
+                            deleteDirectory(fileArrListFiles[i]);
                         } else {
-                            listFiles[i].delete();
+                            fileArrListFiles[i].delete();
                         }
                     }
                     File file2 = new File(str + File.separator + "gears");
@@ -264,12 +267,12 @@ public class BrowserProvider extends ContentProvider {
                 }
 
                 private void deleteDirectory(File file) {
-                    File[] listFiles = file.listFiles();
-                    for (int i = 0; i < listFiles.length; i++) {
-                        if (listFiles[i].isDirectory()) {
-                            deleteDirectory(listFiles[i]);
+                    File[] fileArrListFiles = file.listFiles();
+                    for (int i = 0; i < fileArrListFiles.length; i++) {
+                        if (fileArrListFiles[i].isDirectory()) {
+                            deleteDirectory(fileArrListFiles[i]);
                         }
-                        listFiles[i].delete();
+                        fileArrListFiles[i].delete();
                     }
                     file.delete();
                 }
@@ -295,9 +298,7 @@ public class BrowserProvider extends ContentProvider {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class MySuggestionCursor extends AbstractCursor {
+    private class MySuggestionCursor extends AbstractCursor {
         private int mHistoryCount;
         private Cursor mHistoryCursor;
         private boolean mIncludeWebSearch;
@@ -348,7 +349,8 @@ public class BrowserProvider extends ContentProvider {
                     if (i2 == 0) {
                         this.mHistoryCursor.moveToPosition(0);
                         return true;
-                    } else if (i2 == 1) {
+                    }
+                    if (i2 == 1) {
                         return true;
                     }
                 }
@@ -375,109 +377,106 @@ public class BrowserProvider extends ContentProvider {
             return BrowserProvider.COLUMNS;
         }
 
-        /* JADX WARN: Code restructure failed: missing block: B:19:0x0028, code lost:
-            if (r6.mPos == 1) goto L11;
-         */
-        /* JADX WARN: Code restructure failed: missing block: B:24:0x0033, code lost:
-            if ((r6.mPos - 1) < r6.mHistoryCount) goto L14;
-         */
-        /* JADX WARN: Code restructure failed: missing block: B:25:0x0035, code lost:
-            r5 = true;
-         */
-        /* JADX WARN: Code restructure failed: missing block: B:27:0x0038, code lost:
-            r5 = true;
-         */
-        /* JADX WARN: Code restructure failed: missing block: B:29:0x003e, code lost:
-            if (r6.mPos < r6.mHistoryCount) goto L14;
-         */
+        /* JADX WARN: Removed duplicated region for block: B:21:0x002b  */
+        /* JADX WARN: Removed duplicated region for block: B:25:0x0035  */
+        /* JADX WARN: Removed duplicated region for block: B:27:0x0038  */
         @Override // android.database.AbstractCursor, android.database.Cursor
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
         public String getString(int i) {
-            boolean z;
+            char c;
             if (this.mPos != -1 && this.mHistoryCursor != null) {
                 if (this.mIncludeWebSearch) {
-                    z = false;
+                    c = 0;
                     if (this.mHistoryCount != 0 || this.mPos != 0) {
                         if (this.mHistoryCount > 0) {
-                            if (this.mPos == 0) {
-                                z = true;
+                            if (this.mPos != 0) {
+                                if (this.mPos != 1) {
+                                }
+                            } else {
+                                c = 1;
                             }
+                        } else {
+                            c = 65535;
                         }
-                        z = true;
                     }
-                    if (z) {
+                    if (c == 65535) {
+                        c = this.mPos - 1 < this.mHistoryCount ? (char) 1 : (char) 2;
                     }
+                } else if (this.mPos < this.mHistoryCount) {
                 }
                 switch (i) {
                     case 1:
-                        if (z) {
-                            return "android.intent.action.VIEW";
+                        if (c == 1) {
                         }
-                        return "android.intent.action.SEARCH";
+                        break;
                     case 2:
-                        if (z) {
-                            return this.mHistoryCursor.getString(1);
+                        if (c == 1) {
+                            break;
                         }
-                        return null;
+                        break;
                     case 3:
-                        if (!z) {
-                            return this.mString;
+                        if (c != 0) {
+                            if (c != 1) {
+                                if (this.mSuggestText1Id != -1) {
+                                    break;
+                                }
+                            } else {
+                                break;
+                            }
+                        } else {
+                            break;
                         }
-                        if (z) {
-                            return getHistoryTitle();
-                        }
-                        if (this.mSuggestText1Id == -1) {
-                            return null;
-                        }
-                        return this.mSuggestCursor.getString(this.mSuggestText1Id);
+                        break;
                     case 4:
-                        if (!z) {
-                            return BrowserProvider.this.getContext().getString(R.string.search_the_web);
+                        if (c != 0) {
+                            if (c != 1 && this.mSuggestText2Id != -1) {
+                                break;
+                            }
+                        } else {
+                            break;
                         }
-                        if (z || this.mSuggestText2Id == -1) {
-                            return null;
-                        }
-                        return this.mSuggestCursor.getString(this.mSuggestText2Id);
+                        break;
                     case 5:
-                        if (z) {
-                            if (z) {
-                                return getHistoryUrl();
+                        if (c != 0) {
+                            if (c != 1) {
+                                if (this.mSuggestText2UrlId != -1) {
+                                    break;
+                                }
+                            } else {
+                                break;
                             }
-                            if (this.mSuggestText2UrlId == -1) {
-                                return null;
-                            }
-                            return this.mSuggestCursor.getString(this.mSuggestText2UrlId);
                         }
-                        return null;
+                        break;
                     case 6:
-                        if (z) {
-                            if (this.mHistoryCursor.getInt(3) == 1) {
-                                return Integer.valueOf((int) R.drawable.ic_search_category_bookmark).toString();
-                            }
-                            return Integer.valueOf((int) R.drawable.ic_search_category_history).toString();
+                        if (c != 1) {
+                            break;
+                        } else if (this.mHistoryCursor.getInt(3) != 1) {
+                            break;
+                        } else {
+                            break;
                         }
-                        return Integer.valueOf((int) R.drawable.ic_search_category_suggest).toString();
-                    case 7:
-                        return "0";
                     case 8:
-                        if (!z) {
-                            return this.mString;
+                        if (c != 0) {
+                            if (c != 1) {
+                                if (this.mSuggestQueryId != -1) {
+                                    break;
+                                }
+                            } else {
+                                break;
+                            }
+                        } else {
+                            break;
                         }
-                        if (z) {
-                            return this.mHistoryCursor.getString(1);
-                        }
-                        if (this.mSuggestQueryId == -1) {
-                            return null;
-                        }
-                        return this.mSuggestCursor.getString(this.mSuggestQueryId);
+                        break;
                     case 9:
-                        if (!z || z || this.mSuggestIntentExtraDataId == -1) {
-                            return null;
+                        if (c != 0 && c != 1 && this.mSuggestIntentExtraDataId != -1) {
+                            break;
                         }
-                        return this.mSuggestCursor.getString(this.mSuggestIntentExtraDataId);
+                        break;
                 }
+                return null;
             }
             return null;
         }
@@ -564,12 +563,12 @@ public class BrowserProvider extends ContentProvider {
     @Override // android.content.ContentProvider
     public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) throws IllegalStateException {
         String[] strArr3;
-        int match = URI_MATCHER.match(uri);
-        if (match == -1) {
+        int iMatch = URI_MATCHER.match(uri);
+        if (iMatch == -1) {
             throw new IllegalArgumentException("Unknown URL");
         }
-        if (match == 20 || match == 21) {
-            return doSuggestQuery(str, strArr2, match == 21);
+        if (iMatch == 20 || iMatch == 21) {
+            return doSuggestQuery(str, strArr2, iMatch == 21);
         }
         String str3 = null;
         if (strArr == null || strArr.length <= 0) {
@@ -580,12 +579,12 @@ public class BrowserProvider extends ContentProvider {
             strArr4[strArr.length] = "_id AS _id";
             strArr3 = strArr4;
         }
-        if (match == 10 || match == 11) {
+        if (iMatch == 10 || iMatch == 11) {
             str3 = "_id = " + uri.getPathSegments().get(1);
         }
-        Cursor query = this.mOpenHelper.getReadableDatabase().query(TABLE_NAMES[match % 10], strArr3, DatabaseUtils.concatenateWhere(str3, str), strArr2, null, null, str2, null);
-        query.setNotificationUri(getContext().getContentResolver(), uri);
-        return query;
+        Cursor cursorQuery = this.mOpenHelper.getReadableDatabase().query(TABLE_NAMES[iMatch % 10], strArr3, DatabaseUtils.concatenateWhere(str3, str), strArr2, null, null, str2, null);
+        cursorQuery.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursorQuery;
     }
 
     private Cursor doSuggestQuery(String str, String[] strArr, boolean z) {
@@ -608,14 +607,14 @@ public class BrowserProvider extends ContentProvider {
             str2 = str;
             strArr2 = new String[]{str3};
         }
-        Cursor query = this.mOpenHelper.getReadableDatabase().query(TABLE_NAMES[0], SUGGEST_PROJECTION, str2, strArr2, null, null, "visits DESC, date DESC", Integer.toString(this.mMaxSuggestionLongSize));
+        Cursor cursorQuery = this.mOpenHelper.getReadableDatabase().query(TABLE_NAMES[0], SUGGEST_PROJECTION, str2, strArr2, null, null, "visits DESC, date DESC", Integer.toString(this.mMaxSuggestionLongSize));
         if (z || Patterns.WEB_URL.matcher(strArr[0]).matches()) {
-            return new MySuggestionCursor(query, null, "");
+            return new MySuggestionCursor(cursorQuery, null, "");
         }
-        if (strArr2 != null && strArr2.length > 1 && query.getCount() < 2 && (searchEngine = this.mSettings.getSearchEngine()) != null && searchEngine.supportsSuggestions()) {
-            return new MySuggestionCursor(query, searchEngine.getSuggestions(getContext(), strArr[0]), strArr[0]);
+        if (strArr2 != null && strArr2.length > 1 && cursorQuery.getCount() < 2 && (searchEngine = this.mSettings.getSearchEngine()) != null && searchEngine.supportsSuggestions()) {
+            return new MySuggestionCursor(cursorQuery, searchEngine.getSuggestions(getContext(), strArr[0]), strArr[0]);
         }
-        return new MySuggestionCursor(query, null, strArr[0]);
+        return new MySuggestionCursor(cursorQuery, null, strArr[0]);
     }
 
     @Override // android.content.ContentProvider
@@ -638,110 +637,111 @@ public class BrowserProvider extends ContentProvider {
 
     @Override // android.content.ContentProvider
     public Uri insert(Uri uri, ContentValues contentValues) {
-        Uri uri2;
+        Uri uriWithAppendedId;
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
         boolean z = false;
         switch (URI_MATCHER.match(uri)) {
             case 0:
-                long insert = writableDatabase.insert(TABLE_NAMES[0], "url", contentValues);
-                if (insert > 0) {
-                    uri2 = ContentUris.withAppendedId(Browser.BOOKMARKS_URI, insert);
+                long jInsert = writableDatabase.insert(TABLE_NAMES[0], "url", contentValues);
+                if (jInsert > 0) {
+                    uriWithAppendedId = ContentUris.withAppendedId(Browser.BOOKMARKS_URI, jInsert);
                 } else {
-                    uri2 = null;
+                    uriWithAppendedId = null;
                 }
                 z = true;
                 break;
             case 1:
-                long insert2 = writableDatabase.insert(TABLE_NAMES[1], "url", contentValues);
-                if (insert2 > 0) {
-                    uri2 = ContentUris.withAppendedId(Browser.SEARCHES_URI, insert2);
+                long jInsert2 = writableDatabase.insert(TABLE_NAMES[1], "url", contentValues);
+                if (jInsert2 > 0) {
+                    uriWithAppendedId = ContentUris.withAppendedId(Browser.SEARCHES_URI, jInsert2);
                     break;
                 } else {
-                    uri2 = null;
+                    uriWithAppendedId = null;
                     break;
                 }
             default:
                 throw new IllegalArgumentException("Unknown URL");
         }
-        if (uri2 == null) {
+        if (uriWithAppendedId == null) {
             throw new IllegalArgumentException("Unknown URL");
         }
-        getContext().getContentResolver().notifyChange(uri2, null);
+        getContext().getContentResolver().notifyChange(uriWithAppendedId, null);
         if (z && contentValues.containsKey("bookmark") && contentValues.getAsInteger("bookmark").intValue() != 0) {
             this.mBackupManager.dataChanged();
         }
-        return uri2;
+        return uriWithAppendedId;
     }
 
     @Override // android.content.ContentProvider
     public int delete(Uri uri, String str, String[] strArr) {
         String str2;
-        String sb;
+        String string;
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
-        int match = URI_MATCHER.match(uri);
-        if (match == -1 || match == 20) {
+        int iMatch = URI_MATCHER.match(uri);
+        if (iMatch == -1 || iMatch == 20) {
             throw new IllegalArgumentException("Unknown URL");
         }
-        boolean z = match == 10;
-        if (z || match == 11) {
-            StringBuilder sb2 = new StringBuilder();
+        boolean z = iMatch == 10;
+        if (z || iMatch == 11) {
+            StringBuilder sb = new StringBuilder();
             if (str != null && str.length() > 0) {
-                sb2.append("( ");
-                sb2.append(str);
-                sb2.append(" ) AND ");
+                sb.append("( ");
+                sb.append(str);
+                sb.append(" ) AND ");
             }
             str2 = uri.getPathSegments().get(1);
-            sb2.append("_id = ");
-            sb2.append(str2);
-            sb = sb2.toString();
+            sb.append("_id = ");
+            sb.append(str2);
+            string = sb.toString();
         } else {
-            sb = str;
+            string = str;
             str2 = null;
         }
         ContentResolver contentResolver = getContext().getContentResolver();
         if (z) {
-            Cursor query = contentResolver.query(Browser.BOOKMARKS_URI, new String[]{"bookmark"}, "_id = " + str2, null, null);
-            if (query.moveToNext() && query.getInt(0) != 0) {
+            Cursor cursorQuery = contentResolver.query(Browser.BOOKMARKS_URI, new String[]{"bookmark"}, "_id = " + str2, null, null);
+            if (cursorQuery.moveToNext() && cursorQuery.getInt(0) != 0) {
                 this.mBackupManager.dataChanged();
             }
-            query.close();
+            cursorQuery.close();
         }
-        int delete = writableDatabase.delete(TABLE_NAMES[match % 10], sb, strArr);
+        int iDelete = writableDatabase.delete(TABLE_NAMES[iMatch % 10], string, strArr);
         contentResolver.notifyChange(uri, null);
-        return delete;
+        return iDelete;
     }
 
     @Override // android.content.ContentProvider
     public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
-        String str2 = str;
+        String string = str;
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
-        int match = URI_MATCHER.match(uri);
-        if (match == -1 || match == 20) {
+        int iMatch = URI_MATCHER.match(uri);
+        if (iMatch == -1 || iMatch == 20) {
             throw new IllegalArgumentException("Unknown URL");
         }
         boolean z = true;
-        if (match == 10 || match == 11) {
+        if (iMatch == 10 || iMatch == 11) {
             StringBuilder sb = new StringBuilder();
-            if (str2 != null && str.length() > 0) {
+            if (string != null && str.length() > 0) {
                 sb.append("( ");
-                sb.append(str2);
+                sb.append(string);
                 sb.append(" ) AND ");
             }
+            String str2 = uri.getPathSegments().get(1);
             sb.append("_id = ");
-            sb.append(uri.getPathSegments().get(1));
-            str2 = sb.toString();
+            sb.append(str2);
+            string = sb.toString();
         }
         ContentResolver contentResolver = getContext().getContentResolver();
-        if (match == 10 || match == 0) {
+        if (iMatch == 10 || iMatch == 0) {
             boolean z2 = false;
             if (!contentValues.containsKey("bookmark")) {
                 if ((contentValues.containsKey("title") || contentValues.containsKey("url")) && contentValues.containsKey("_id")) {
-                    Cursor query = contentResolver.query(Browser.BOOKMARKS_URI, new String[]{"bookmark"}, "_id = " + contentValues.getAsString("_id"), null, null);
-                    if (query.moveToNext() && query.getInt(0) != 0) {
+                    Cursor cursorQuery = contentResolver.query(Browser.BOOKMARKS_URI, new String[]{"bookmark"}, "_id = " + contentValues.getAsString("_id"), null, null);
+                    if (cursorQuery.moveToNext() && cursorQuery.getInt(0) != 0) {
                         z2 = true;
                     }
                     z = z2;
-                    query.close();
+                    cursorQuery.close();
                 } else {
                     z = false;
                 }
@@ -750,13 +750,12 @@ public class BrowserProvider extends ContentProvider {
                 this.mBackupManager.dataChanged();
             }
         }
-        int update = writableDatabase.update(TABLE_NAMES[match % 10], contentValues, str2, strArr);
+        int iUpdate = writableDatabase.update(TABLE_NAMES[iMatch % 10], contentValues, string, strArr);
         contentResolver.notifyChange(uri, null);
-        return update;
+        return iUpdate;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static String stripUrl(String str) {
+    private static String stripUrl(String str) {
         if (str == null) {
             return null;
         }

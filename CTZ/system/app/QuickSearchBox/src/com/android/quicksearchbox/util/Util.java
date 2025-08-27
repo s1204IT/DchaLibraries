@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class Util {
     public static Uri getResourceUri(Context context, int i) {

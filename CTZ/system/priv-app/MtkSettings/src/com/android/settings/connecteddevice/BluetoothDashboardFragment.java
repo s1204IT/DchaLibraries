@@ -17,6 +17,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.widget.FooterPreference;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BluetoothDashboardFragment extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.connecteddevice.BluetoothDashboardFragment.1
@@ -69,9 +70,8 @@ public class BluetoothDashboardFragment extends DashboardFragment {
         return R.string.help_uri_bluetooth_screen;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.bluetooth_screen;
     }
 

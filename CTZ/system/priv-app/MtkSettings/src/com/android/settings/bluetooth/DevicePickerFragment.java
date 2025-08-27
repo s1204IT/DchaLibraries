@@ -17,6 +17,7 @@ import com.android.settings.R;
 import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class DevicePickerFragment extends DeviceListPreferenceFragment {
     BluetoothProgressCategory mAvailableDevicesCategory;
@@ -96,17 +97,16 @@ public final class DevicePickerFragment extends DeviceListPreferenceFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.android.settings.bluetooth.DeviceListPreferenceFragment
-    public void onDevicePreferenceClick(BluetoothDevicePreference bluetoothDevicePreference) {
+    void onDevicePreferenceClick(BluetoothDevicePreference bluetoothDevicePreference) {
         disableScanning();
         LocalBluetoothPreferences.persistSelectedDeviceInPicker(getActivity(), this.mSelectedDevice.getAddress());
         if (bluetoothDevicePreference.getCachedDevice().getBondState() == 12 || !this.mNeedAuth) {
             sendDevicePickedIntent(this.mSelectedDevice);
             finish();
-            return;
+        } else {
+            super.onDevicePreferenceClick(bluetoothDevicePreference);
         }
-        super.onDevicePreferenceClick(bluetoothDevicePreference);
     }
 
     @Override // com.android.settings.bluetooth.DeviceListPreferenceFragment, com.android.settingslib.bluetooth.BluetoothCallback
@@ -142,9 +142,8 @@ public final class DevicePickerFragment extends DeviceListPreferenceFragment {
         return "DevicePickerFragment";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.device_picker;
     }
 

@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ActionButtonPreference extends Preference {
     private final ButtonInfo mButton1Info;
@@ -141,7 +142,6 @@ public class ActionButtonPreference extends Preference {
         return this;
     }
 
-    /* loaded from: classes.dex */
     static class ButtonInfo {
         private View.OnClickListener mListener;
         private Button mNegativeButton;

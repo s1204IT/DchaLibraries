@@ -5,9 +5,9 @@ import com.android.systemui.statusbar.ActivatableNotificationView;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.policy.OnHeadsUpChangedListener;
 import java.util.HashSet;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class NotificationRoundnessManager implements OnHeadsUpChangedListener {
+class NotificationRoundnessManager implements OnHeadsUpChangedListener {
     private HashSet<View> mAnimatedChildren;
     private float mAppearFraction;
     private boolean mExpanded;
@@ -15,6 +15,9 @@ public class NotificationRoundnessManager implements OnHeadsUpChangedListener {
     private ActivatableNotificationView mLast;
     private Runnable mRoundingChangedCallback;
     private ExpandableNotificationRow mTrackedHeadsUp;
+
+    NotificationRoundnessManager() {
+    }
 
     @Override // com.android.systemui.statusbar.policy.OnHeadsUpChangedListener
     public void onHeadsUpPinned(ExpandableNotificationRow expandableNotificationRow) {

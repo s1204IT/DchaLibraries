@@ -1,5 +1,6 @@
 package com.android.settings.accessibility;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v14.preference.PreferenceFragment;
 import android.support.v7.preference.Preference;
@@ -7,18 +8,17 @@ import android.view.Menu;
 import com.android.settings.SettingsActivity;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settingslib.core.instrumentation.Instrumentable;
+
 /* loaded from: classes.dex */
 public class AccessibilitySettingsForSetupWizardActivity extends SettingsActivity {
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity, com.android.settingslib.drawer.SettingsDrawerActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
         super.onCreate(bundle);
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity, android.app.Activity
-    public void onSaveInstanceState(Bundle bundle) {
+    protected void onSaveInstanceState(Bundle bundle) {
         bundle.putCharSequence("activity_title", getTitle());
         super.onSaveInstanceState(bundle);
     }
@@ -41,6 +41,8 @@ public class AccessibilitySettingsForSetupWizardActivity extends SettingsActivit
         return true;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: android.support.v14.preference.PreferenceFragment */
+    /* JADX WARN: Multi-variable type inference failed */
     @Override // com.android.settings.SettingsActivity, android.support.v14.preference.PreferenceFragment.OnPreferenceStartFragmentCallback
     public boolean onPreferenceStartFragment(PreferenceFragment preferenceFragment, Preference preference) {
         Bundle extras = preference.getExtras();

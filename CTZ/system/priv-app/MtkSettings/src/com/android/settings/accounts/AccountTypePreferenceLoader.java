@@ -20,6 +20,7 @@ import com.android.settings.location.LocationSettings;
 import com.android.settings.utils.LocalClassLoaderContextThemeWrapper;
 import com.android.settingslib.accounts.AuthenticatorHelper;
 import com.android.settingslib.core.instrumentation.Instrumentable;
+
 /* loaded from: classes.dex */
 public class AccountTypePreferenceLoader {
     private AuthenticatorHelper mAuthenticatorHelper;
@@ -33,36 +34,36 @@ public class AccountTypePreferenceLoader {
     }
 
     public PreferenceScreen addPreferencesForType(String str, PreferenceScreen preferenceScreen) {
-        AuthenticatorDescription authenticatorDescription;
+        AuthenticatorDescription accountTypeDescription;
         if (!this.mAuthenticatorHelper.containsAccountType(str)) {
             return null;
         }
         try {
-            authenticatorDescription = this.mAuthenticatorHelper.getAccountTypeDescription(str);
-            if (authenticatorDescription != null) {
-                try {
-                    if (authenticatorDescription.accountPreferencesId != 0) {
-                        Context createPackageContextAsUser = this.mFragment.getActivity().createPackageContextAsUser(authenticatorDescription.packageName, 0, this.mUserHandle);
-                        Resources.Theme newTheme = this.mFragment.getResources().newTheme();
-                        newTheme.applyStyle(2131952095, true);
-                        LocalClassLoaderContextThemeWrapper localClassLoaderContextThemeWrapper = new LocalClassLoaderContextThemeWrapper(getClass(), createPackageContextAsUser, 0);
-                        localClassLoaderContextThemeWrapper.getTheme().setTo(newTheme);
-                        return this.mFragment.getPreferenceManager().inflateFromResource(localClassLoaderContextThemeWrapper, authenticatorDescription.accountPreferencesId, preferenceScreen);
-                    }
-                    return null;
-                } catch (PackageManager.NameNotFoundException e) {
-                    Log.w("AccountTypePrefLoader", "Couldn't load preferences.xml file from " + authenticatorDescription.packageName);
-                    return null;
-                } catch (Resources.NotFoundException e2) {
-                    Log.w("AccountTypePrefLoader", "Couldn't load preferences.xml file from " + authenticatorDescription.packageName);
+            accountTypeDescription = this.mAuthenticatorHelper.getAccountTypeDescription(str);
+            if (accountTypeDescription == null) {
+                return null;
+            }
+            try {
+                if (accountTypeDescription.accountPreferencesId == 0) {
                     return null;
                 }
+                Context contextCreatePackageContextAsUser = this.mFragment.getActivity().createPackageContextAsUser(accountTypeDescription.packageName, 0, this.mUserHandle);
+                Resources.Theme themeNewTheme = this.mFragment.getResources().newTheme();
+                themeNewTheme.applyStyle(R.style.Theme_SettingsBase, true);
+                LocalClassLoaderContextThemeWrapper localClassLoaderContextThemeWrapper = new LocalClassLoaderContextThemeWrapper(getClass(), contextCreatePackageContextAsUser, 0);
+                localClassLoaderContextThemeWrapper.getTheme().setTo(themeNewTheme);
+                return this.mFragment.getPreferenceManager().inflateFromResource(localClassLoaderContextThemeWrapper, accountTypeDescription.accountPreferencesId, preferenceScreen);
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.w("AccountTypePrefLoader", "Couldn't load preferences.xml file from " + accountTypeDescription.packageName);
+                return null;
+            } catch (Resources.NotFoundException e2) {
+                Log.w("AccountTypePrefLoader", "Couldn't load preferences.xml file from " + accountTypeDescription.packageName);
+                return null;
             }
-            return null;
         } catch (PackageManager.NameNotFoundException e3) {
-            authenticatorDescription = null;
+            accountTypeDescription = null;
         } catch (Resources.NotFoundException e4) {
-            authenticatorDescription = null;
+            accountTypeDescription = null;
         }
     }
 
@@ -101,24 +102,21 @@ public class AccountTypePreferenceLoader {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isSafeIntent(PackageManager packageManager, Intent intent, String str) {
+    private boolean isSafeIntent(PackageManager packageManager, Intent intent, String str) {
         AuthenticatorDescription accountTypeDescription = this.mAuthenticatorHelper.getAccountTypeDescription(str);
-        ResolveInfo resolveActivityAsUser = packageManager.resolveActivityAsUser(intent, 0, this.mUserHandle.getIdentifier());
-        if (resolveActivityAsUser == null) {
+        ResolveInfo resolveInfoResolveActivityAsUser = packageManager.resolveActivityAsUser(intent, 0, this.mUserHandle.getIdentifier());
+        if (resolveInfoResolveActivityAsUser == null) {
             return false;
         }
         try {
-            return resolveActivityAsUser.activityInfo.applicationInfo.uid == packageManager.getApplicationInfo(accountTypeDescription.packageName, 0).uid;
+            return resolveInfoResolveActivityAsUser.activityInfo.applicationInfo.uid == packageManager.getApplicationInfo(accountTypeDescription.packageName, 0).uid;
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("AccountTypePrefLoader", "Intent considered unsafe due to exception.", e);
             return false;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class FragmentStarter implements Preference.OnPreferenceClickListener {
+    private class FragmentStarter implements Preference.OnPreferenceClickListener {
         private final String mClass;
         private final int mTitleRes;
 
@@ -129,13 +127,13 @@ public class AccountTypePreferenceLoader {
 
         @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
         public boolean onPreferenceClick(Preference preference) {
-            int i;
+            int metricsCategory;
             if (AccountTypePreferenceLoader.this.mFragment instanceof Instrumentable) {
-                i = ((Instrumentable) AccountTypePreferenceLoader.this.mFragment).getMetricsCategory();
+                metricsCategory = ((Instrumentable) AccountTypePreferenceLoader.this.mFragment).getMetricsCategory();
             } else {
-                i = 0;
+                metricsCategory = 0;
             }
-            new SubSettingLauncher(preference.getContext()).setTitle(this.mTitleRes).setDestination(this.mClass).setSourceMetricsCategory(i).launch();
+            new SubSettingLauncher(preference.getContext()).setTitle(this.mTitleRes).setDestination(this.mClass).setSourceMetricsCategory(metricsCategory).launch();
             if (this.mClass.equals(LocationSettings.class.getName())) {
                 AccountTypePreferenceLoader.this.mFragment.getActivity().sendBroadcast(new Intent("com.android.settings.accounts.LAUNCHING_LOCATION_SETTINGS"), "android.permission.WRITE_SECURE_SETTINGS");
                 return true;

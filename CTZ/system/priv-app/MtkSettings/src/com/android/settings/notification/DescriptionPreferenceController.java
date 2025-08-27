@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 import com.android.settings.core.PreferenceControllerMixin;
+
 /* loaded from: classes.dex */
 public class DescriptionPreferenceController extends NotificationPreferenceController implements PreferenceControllerMixin {
     public DescriptionPreferenceController(Context context) {
@@ -17,16 +18,16 @@ public class DescriptionPreferenceController extends NotificationPreferenceContr
 
     @Override // com.android.settings.notification.NotificationPreferenceController, com.android.settingslib.core.AbstractPreferenceController
     public boolean isAvailable() {
-        if (super.isAvailable()) {
-            if (this.mChannel != null || hasValidGroup()) {
-                if (this.mChannel == null || TextUtils.isEmpty(this.mChannel.getDescription())) {
-                    return hasValidGroup() && !TextUtils.isEmpty(this.mChannelGroup.getDescription());
-                }
-                return true;
-            }
+        if (!super.isAvailable()) {
             return false;
         }
-        return false;
+        if (this.mChannel == null && !hasValidGroup()) {
+            return false;
+        }
+        if (this.mChannel == null || TextUtils.isEmpty(this.mChannel.getDescription())) {
+            return hasValidGroup() && !TextUtils.isEmpty(this.mChannelGroup.getDescription());
+        }
+        return true;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController

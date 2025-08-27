@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.phone;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
@@ -13,6 +14,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.KeyguardAffordanceView;
 import com.android.systemui.statusbar.policy.AccessibilityController;
 import com.android.systemui.statusbar.policy.UserInfoController;
+
 /* loaded from: classes.dex */
 public class LockIcon extends KeyguardAffordanceView implements UserInfoController.OnUserInfoChangedListener {
     private AccessibilityController mAccessibilityController;
@@ -35,8 +37,8 @@ public class LockIcon extends KeyguardAffordanceView implements UserInfoControll
         this.mLastState = 0;
         this.mDrawOffTimeout = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$LockIcon$0dMARpPtuLHOj252cR_FbaJx3Kc
             @Override // java.lang.Runnable
-            public final void run() {
-                LockIcon.this.update(true);
+            public final void run() throws Resources.NotFoundException {
+                this.f$0.update(true);
             }
         };
         this.mTrustDrawable = new TrustDrawable(context);
@@ -61,28 +63,28 @@ public class LockIcon extends KeyguardAffordanceView implements UserInfoControll
     }
 
     @Override // com.android.systemui.statusbar.policy.UserInfoController.OnUserInfoChangedListener
-    public void onUserInfoChanged(String str, Drawable drawable, String str2) {
+    public void onUserInfoChanged(String str, Drawable drawable, String str2) throws Resources.NotFoundException {
         this.mUserAvatarIcon = drawable;
         update();
     }
 
-    public void setTransientFpError(boolean z) {
+    public void setTransientFpError(boolean z) throws Resources.NotFoundException {
         this.mTransientFpError = z;
         update();
     }
 
-    public void setDeviceInteractive(boolean z) {
+    public void setDeviceInteractive(boolean z) throws Resources.NotFoundException {
         this.mDeviceInteractive = z;
         update();
     }
 
-    public void setScreenOn(boolean z) {
+    public void setScreenOn(boolean z) throws Resources.NotFoundException {
         this.mScreenOn = z;
         update();
     }
 
     @Override // android.view.View
-    protected void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) throws Resources.NotFoundException {
         super.onConfigurationChanged(configuration);
         int i = configuration.densityDpi;
         if (i != this.mDensity) {
@@ -94,49 +96,48 @@ public class LockIcon extends KeyguardAffordanceView implements UserInfoControll
         }
     }
 
-    public void update() {
+    public void update() throws Resources.NotFoundException {
         update(false);
     }
 
-    public void update(boolean z) {
+    public void update(boolean z) throws Resources.NotFoundException {
         boolean z2;
         boolean z3;
         Drawable iconForState;
         AnimatedVectorDrawable animatedVectorDrawable;
-        Drawable drawable;
-        int i;
-        boolean z4 = true;
+        Drawable intrinsicSizeDrawable;
+        int dimensionPixelSize;
         if (isShown() && KeyguardUpdateMonitor.getInstance(this.mContext).isDeviceInteractive()) {
             this.mTrustDrawable.start();
         } else {
             this.mTrustDrawable.stop();
         }
         int state = getState();
-        boolean z5 = state == 3 || state == 4;
+        boolean z4 = state == 3 || state == 4;
         this.mHasFaceUnlockIcon = state == 2;
         if (state != this.mLastState || this.mDeviceInteractive != this.mLastDeviceInteractive || this.mScreenOn != this.mLastScreenOn || z) {
             int animationResForTransition = getAnimationResForTransition(this.mLastState, state, this.mLastDeviceInteractive, this.mDeviceInteractive, this.mLastScreenOn, this.mScreenOn);
-            boolean z6 = animationResForTransition != -1;
+            boolean z5 = animationResForTransition != -1;
             if (animationResForTransition != R.drawable.lockscreen_fingerprint_draw_off_animation) {
                 if (animationResForTransition != R.drawable.trusted_state_to_error_animation) {
                     if (animationResForTransition == R.drawable.error_to_trustedstate_animation) {
-                        z5 = true;
+                        z4 = true;
                         z2 = false;
                     } else {
-                        z2 = z5;
+                        z2 = z4;
                     }
                     z3 = z2;
                 } else {
                     z3 = true;
-                    z5 = true;
+                    z4 = true;
                     z2 = false;
                 }
             } else {
                 z2 = true;
                 z3 = true;
-                z5 = true;
+                z4 = true;
             }
-            if (z6) {
+            if (z5) {
                 iconForState = this.mContext.getDrawable(animationResForTransition);
             } else {
                 iconForState = getIconForState(state, this.mScreenOn, this.mDeviceInteractive);
@@ -146,26 +147,26 @@ public class LockIcon extends KeyguardAffordanceView implements UserInfoControll
             } else {
                 animatedVectorDrawable = null;
             }
-            int dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.keyguard_affordance_icon_height);
-            int dimensionPixelSize2 = getResources().getDimensionPixelSize(R.dimen.keyguard_affordance_icon_width);
-            if (!z5 && (iconForState.getIntrinsicHeight() != dimensionPixelSize || iconForState.getIntrinsicWidth() != dimensionPixelSize2)) {
-                drawable = new IntrinsicSizeDrawable(iconForState, dimensionPixelSize2, dimensionPixelSize);
+            int dimensionPixelSize2 = getResources().getDimensionPixelSize(R.dimen.keyguard_affordance_icon_height);
+            int dimensionPixelSize3 = getResources().getDimensionPixelSize(R.dimen.keyguard_affordance_icon_width);
+            if (!z4 && (iconForState.getIntrinsicHeight() != dimensionPixelSize2 || iconForState.getIntrinsicWidth() != dimensionPixelSize3)) {
+                intrinsicSizeDrawable = new IntrinsicSizeDrawable(iconForState, dimensionPixelSize3, dimensionPixelSize2);
             } else {
-                drawable = iconForState;
+                intrinsicSizeDrawable = iconForState;
             }
             if (!z2) {
-                i = 0;
+                dimensionPixelSize = 0;
             } else {
-                i = getResources().getDimensionPixelSize(R.dimen.fingerprint_icon_additional_padding);
+                dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.fingerprint_icon_additional_padding);
             }
-            setPaddingRelative(0, 0, 0, i);
-            setRestingAlpha(z5 ? 1.0f : 0.5f);
-            setImageDrawable(drawable, false);
+            setPaddingRelative(0, 0, 0, dimensionPixelSize);
+            setRestingAlpha(z4 ? 1.0f : 0.5f);
+            setImageDrawable(intrinsicSizeDrawable, false);
             if (this.mHasFaceUnlockIcon) {
                 announceForAccessibility(getContext().getString(R.string.accessibility_scanning_face));
             }
-            this.mHasFingerPrintIcon = z5;
-            if (animatedVectorDrawable != null && z6) {
+            this.mHasFingerPrintIcon = z4;
+            if (animatedVectorDrawable != null && z5) {
                 animatedVectorDrawable.forceAnimationOnUI();
                 animatedVectorDrawable.start();
             }
@@ -179,12 +180,9 @@ public class LockIcon extends KeyguardAffordanceView implements UserInfoControll
             this.mLastDeviceInteractive = this.mDeviceInteractive;
             this.mLastScreenOn = this.mScreenOn;
         } else {
-            z3 = z5;
+            z3 = z4;
         }
-        if (!this.mUnlockMethodCache.isTrustManaged() || z3) {
-            z4 = false;
-        }
-        this.mTrustDrawable.setTrustManaged(z4);
+        this.mTrustDrawable.setTrustManaged(this.mUnlockMethodCache.isTrustManaged() && !z3);
         updateClickability();
     }
 
@@ -192,15 +190,11 @@ public class LockIcon extends KeyguardAffordanceView implements UserInfoControll
         if (this.mAccessibilityController == null) {
             return;
         }
-        boolean isAccessibilityEnabled = this.mAccessibilityController.isAccessibilityEnabled();
-        boolean z = false;
-        boolean z2 = this.mUnlockMethodCache.isTrustManaged() && !isAccessibilityEnabled;
-        boolean z3 = this.mUnlockMethodCache.isTrustManaged() && !z2;
-        if (z2 || isAccessibilityEnabled) {
-            z = true;
-        }
-        setClickable(z);
-        setLongClickable(z3);
+        boolean zIsAccessibilityEnabled = this.mAccessibilityController.isAccessibilityEnabled();
+        boolean z = this.mUnlockMethodCache.isTrustManaged() && !zIsAccessibilityEnabled;
+        boolean z2 = this.mUnlockMethodCache.isTrustManaged() && !z;
+        setClickable(z || zIsAccessibilityEnabled);
+        setLongClickable(z2);
         setFocusable(this.mAccessibilityController.isAccessibilityEnabled());
     }
 
@@ -231,7 +225,6 @@ public class LockIcon extends KeyguardAffordanceView implements UserInfoControll
                     return this.mUserAvatarIcon;
                 }
                 i2 = R.drawable.ic_lock_open_24dp;
-                break;
                 break;
             case 2:
                 i2 = R.drawable.ic_face_unlock;
@@ -269,22 +262,22 @@ public class LockIcon extends KeyguardAffordanceView implements UserInfoControll
         if (i == 3 && i2 == 1 && !this.mUnlockMethodCache.isTrusted()) {
             return R.drawable.lockscreen_fingerprint_draw_off_animation;
         }
-        if (i2 == 3) {
-            if (!z3 && z4 && z2) {
-                return R.drawable.lockscreen_fingerprint_draw_on_animation;
-            }
-            if (z4 && !z && z2) {
-                return R.drawable.lockscreen_fingerprint_draw_on_animation;
-            }
+        if (i2 != 3) {
             return -1;
+        }
+        if (!z3 && z4 && z2) {
+            return R.drawable.lockscreen_fingerprint_draw_on_animation;
+        }
+        if (z4 && !z && z2) {
+            return R.drawable.lockscreen_fingerprint_draw_on_animation;
         }
         return -1;
     }
 
     private int getState() {
         KeyguardUpdateMonitor keyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(this.mContext);
-        boolean isFingerprintDetectionRunning = keyguardUpdateMonitor.isFingerprintDetectionRunning();
-        boolean isUnlockingWithFingerprintAllowed = keyguardUpdateMonitor.isUnlockingWithFingerprintAllowed();
+        boolean zIsFingerprintDetectionRunning = keyguardUpdateMonitor.isFingerprintDetectionRunning();
+        boolean zIsUnlockingWithFingerprintAllowed = keyguardUpdateMonitor.isUnlockingWithFingerprintAllowed();
         if (this.mTransientFpError) {
             return 4;
         }
@@ -294,15 +287,13 @@ public class LockIcon extends KeyguardAffordanceView implements UserInfoControll
         if (this.mUnlockMethodCache.isFaceUnlockRunning()) {
             return 2;
         }
-        if (isFingerprintDetectionRunning && isUnlockingWithFingerprintAllowed) {
+        if (zIsFingerprintDetectionRunning && zIsUnlockingWithFingerprintAllowed) {
             return 3;
         }
         return 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class IntrinsicSizeDrawable extends InsetDrawable {
+    private static class IntrinsicSizeDrawable extends InsetDrawable {
         private final int mIntrinsicHeight;
         private final int mIntrinsicWidth;
 

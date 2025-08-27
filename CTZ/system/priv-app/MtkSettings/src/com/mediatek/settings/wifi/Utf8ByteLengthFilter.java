@@ -2,6 +2,7 @@ package com.mediatek.settings.wifi;
 
 import android.text.InputFilter;
 import android.text.Spanned;
+
 /* loaded from: classes.dex */
 public class Utf8ByteLengthFilter implements InputFilter {
     private final int mMaxBytes;
@@ -21,9 +22,9 @@ public class Utf8ByteLengthFilter implements InputFilter {
             if (i7 >= i2) {
                 break;
             }
-            char charAt = charSequence.charAt(i7);
-            if (charAt >= 128) {
-                i9 = charAt < 2048 ? 2 : 3;
+            char cCharAt = charSequence.charAt(i7);
+            if (cCharAt >= 128) {
+                i9 = cCharAt < 2048 ? 2 : 3;
             }
             i8 += i9;
             i7++;
@@ -31,15 +32,15 @@ public class Utf8ByteLengthFilter implements InputFilter {
         int length = spanned.length();
         int i10 = 0;
         for (int i11 = 0; i11 < length; i11++) {
-            if (i11 >= i3 && i11 < i4) {
+            if (i11 < i3 || i11 >= i4) {
+                char cCharAt2 = spanned.charAt(i11);
+                if (cCharAt2 < 128) {
+                    i6 = 1;
+                } else {
+                    i6 = cCharAt2 < 2048 ? 2 : 3;
+                }
+                i10 += i6;
             }
-            char charAt2 = spanned.charAt(i11);
-            if (charAt2 < 128) {
-                i6 = 1;
-            } else {
-                i6 = charAt2 < 2048 ? 2 : 3;
-            }
-            i10 += i6;
         }
         int i12 = this.mMaxBytes - i10;
         if (i12 <= 0) {
@@ -50,11 +51,11 @@ public class Utf8ByteLengthFilter implements InputFilter {
         }
         int i13 = i12;
         for (int i14 = i; i14 < i2; i14++) {
-            char charAt3 = charSequence.charAt(i14);
-            if (charAt3 < 128) {
+            char cCharAt3 = charSequence.charAt(i14);
+            if (cCharAt3 < 128) {
                 i5 = 1;
             } else {
-                i5 = charAt3 < 2048 ? 2 : 3;
+                i5 = cCharAt3 < 2048 ? 2 : 3;
             }
             i13 -= i5;
             if (i13 < 0) {

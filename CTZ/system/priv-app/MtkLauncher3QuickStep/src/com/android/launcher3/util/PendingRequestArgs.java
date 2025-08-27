@@ -8,16 +8,20 @@ import android.os.Parcelable;
 import android.os.UserHandle;
 import com.android.launcher3.ItemInfo;
 import com.android.launcher3.widget.WidgetAddFlowHandler;
+
 /* loaded from: classes.dex */
 public class PendingRequestArgs extends ItemInfo implements Parcelable {
     public static final Parcelable.Creator<PendingRequestArgs> CREATOR = new Parcelable.Creator<PendingRequestArgs>() { // from class: com.android.launcher3.util.PendingRequestArgs.1
-        /* JADX WARN: Can't rename method to resolve collision */
+        AnonymousClass1() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public PendingRequestArgs createFromParcel(Parcel parcel) {
             return new PendingRequestArgs(parcel);
         }
 
-        /* JADX WARN: Can't rename method to resolve collision */
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         @Override // android.os.Parcelable.Creator
         public PendingRequestArgs[] newArray(int i) {
             return new PendingRequestArgs[i];
@@ -105,5 +109,23 @@ public class PendingRequestArgs extends ItemInfo implements Parcelable {
         PendingRequestArgs pendingRequestArgs = new PendingRequestArgs(i, 1, intent);
         pendingRequestArgs.copyFrom(itemInfo);
         return pendingRequestArgs;
+    }
+
+    /* renamed from: com.android.launcher3.util.PendingRequestArgs$1 */
+    class AnonymousClass1 implements Parcelable.Creator<PendingRequestArgs> {
+        AnonymousClass1() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
+        @Override // android.os.Parcelable.Creator
+        public PendingRequestArgs createFromParcel(Parcel parcel) {
+            return new PendingRequestArgs(parcel);
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
+        @Override // android.os.Parcelable.Creator
+        public PendingRequestArgs[] newArray(int i) {
+            return new PendingRequestArgs[i];
+        }
     }
 }

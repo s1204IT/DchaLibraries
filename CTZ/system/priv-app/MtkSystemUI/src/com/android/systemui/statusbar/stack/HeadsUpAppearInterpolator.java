@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.stack;
 
 import android.graphics.Path;
 import android.view.animation.PathInterpolator;
+
 /* loaded from: classes.dex */
 public class HeadsUpAppearInterpolator extends PathInterpolator {
     private static float X1 = 250.0f;

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settings.fingerprint.FingerprintEnrollSidecar;
+
 /* loaded from: classes.dex */
 public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements FingerprintEnrollSidecar.Listener {
     private boolean mAnimationCancelled;
@@ -103,9 +104,8 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         return i;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.fingerprint.FingerprintEnrollBase, com.android.settings.core.InstrumentedActivity, com.android.settingslib.core.lifecycle.ObservableActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.fingerprint_enroll_enrolling);
         setHeaderText(R.string.security_settings_fingerprint_enroll_repeat_title);
@@ -119,9 +119,9 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         this.mIconAnimationDrawable = (AnimatedVectorDrawable) layerDrawable.findDrawableByLayerId(R.id.fingerprint_animation);
         this.mIconBackgroundBlinksDrawable = (AnimatedVectorDrawable) layerDrawable.findDrawableByLayerId(R.id.fingerprint_background);
         this.mIconAnimationDrawable.registerAnimationCallback(this.mIconAnimationCallback);
-        this.mFastOutSlowInInterpolator = AnimationUtils.loadInterpolator(this, 17563661);
-        this.mLinearOutSlowInInterpolator = AnimationUtils.loadInterpolator(this, 17563662);
-        this.mFastOutLinearInInterpolator = AnimationUtils.loadInterpolator(this, 17563663);
+        this.mFastOutSlowInInterpolator = AnimationUtils.loadInterpolator(this, android.R.interpolator.fast_out_slow_in);
+        this.mLinearOutSlowInInterpolator = AnimationUtils.loadInterpolator(this, android.R.interpolator.linear_out_slow_in);
+        this.mFastOutLinearInInterpolator = AnimationUtils.loadInterpolator(this, android.R.interpolator.fast_out_linear_in);
         this.mProgressBar.setOnTouchListener(new View.OnTouchListener() { // from class: com.android.settings.fingerprint.FingerprintEnrollEnrolling.1
             @Override // android.view.View.OnTouchListener
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -164,8 +164,7 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         startIconAnimation();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startIconAnimation() {
+    private void startIconAnimation() {
         this.mIconAnimationDrawable.start();
     }
 
@@ -206,29 +205,28 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         if (view.getId() == R.id.skip_button) {
             setResult(2);
             finish();
-            return;
+        } else {
+            super.onClick(view);
         }
-        super.onClick(view);
     }
 
     private void animateProgress(int i) {
         if (this.mProgressAnim != null) {
             this.mProgressAnim.cancel();
         }
-        ObjectAnimator ofInt = ObjectAnimator.ofInt(this.mProgressBar, "progress", this.mProgressBar.getProgress(), i);
-        ofInt.addListener(this.mProgressAnimationListener);
-        ofInt.setInterpolator(this.mFastOutSlowInInterpolator);
-        ofInt.setDuration(250L);
-        ofInt.start();
-        this.mProgressAnim = ofInt;
+        ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this.mProgressBar, "progress", this.mProgressBar.getProgress(), i);
+        objectAnimatorOfInt.addListener(this.mProgressAnimationListener);
+        objectAnimatorOfInt.setInterpolator(this.mFastOutSlowInInterpolator);
+        objectAnimatorOfInt.setDuration(250L);
+        objectAnimatorOfInt.start();
+        this.mProgressAnim = objectAnimatorOfInt;
     }
 
     private void animateFlash() {
         this.mIconBackgroundBlinksDrawable.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void launchFinish(byte[] bArr) {
+    private void launchFinish(byte[] bArr) {
         Intent finishIntent = getFinishIntent();
         finishIntent.addFlags(637534208);
         finishIntent.putExtra("hw_auth_token", bArr);
@@ -241,17 +239,17 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
     }
 
     protected Intent getFinishIntent() {
-        return new Intent(this, FingerprintEnrollFinish.class);
+        return new Intent(this, (Class<?>) FingerprintEnrollFinish.class);
     }
 
     private void updateDescription() {
         if (this.mSidecar.getEnrollmentSteps() == -1) {
             this.mStartMessage.setVisibility(0);
             this.mRepeatMessage.setVisibility(4);
-            return;
+        } else {
+            this.mStartMessage.setVisibility(4);
+            this.mRepeatMessage.setVisibility(0);
         }
-        this.mStartMessage.setVisibility(4);
-        this.mRepeatMessage.setVisibility(0);
     }
 
     @Override // com.android.settings.fingerprint.FingerprintEnrollSidecar.Listener
@@ -309,14 +307,12 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         ErrorDialog.newInstance(charSequence, i).show(getFragmentManager(), ErrorDialog.class.getName());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showIconTouchDialog() {
+    private void showIconTouchDialog() {
         this.mIconTouchCount = 0;
         new IconTouchDialog().show(getFragmentManager(), (String) null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showError(CharSequence charSequence) {
+    private void showError(CharSequence charSequence) {
         this.mErrorText.setText(charSequence);
         if (this.mErrorText.getVisibility() == 4) {
             this.mErrorText.setVisibility(0);
@@ -338,7 +334,7 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
             this.mErrorText.animate().alpha(0.0f).translationY(getResources().getDimensionPixelSize(R.dimen.fingerprint_error_text_disappear_distance)).setDuration(100L).setInterpolator(this.mFastOutLinearInInterpolator).withEndAction(new Runnable() { // from class: com.android.settings.fingerprint.-$$Lambda$FingerprintEnrollEnrolling$aLk12WuaBTV2piitP3fdnB0w-eM
                 @Override // java.lang.Runnable
                 public final void run() {
-                    FingerprintEnrollEnrolling.this.mErrorText.setVisibility(4);
+                    this.f$0.mErrorText.setVisibility(4);
                 }
             }).start();
         }
@@ -349,7 +345,6 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         return 240;
     }
 
-    /* loaded from: classes.dex */
     public static class IconTouchDialog extends InstrumentedDialogFragment {
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
@@ -369,7 +364,6 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ErrorDialog extends InstrumentedDialogFragment {
         static ErrorDialog newInstance(CharSequence charSequence, int i) {
             ErrorDialog errorDialog = new ErrorDialog();
@@ -400,9 +394,9 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
                     activity.finish();
                 }
             });
-            AlertDialog create = builder.create();
-            create.setCanceledOnTouchOutside(false);
-            return create;
+            AlertDialog alertDialogCreate = builder.create();
+            alertDialogCreate.setCanceledOnTouchOutside(false);
+            return alertDialogCreate;
         }
 
         @Override // com.android.settingslib.core.instrumentation.Instrumentable

@@ -4,13 +4,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
+
 /* loaded from: classes.dex */
 public class AboveShelfObserver implements AboveShelfChangedListener {
     private boolean mHasViewsAboveShelf = false;
     private final ViewGroup mHostLayout;
     private HasViewAboveShelfChangedListener mListener;
 
-    /* loaded from: classes.dex */
     public interface HasViewAboveShelfChangedListener {
         void onHasViewsAboveShelfChanged(boolean z);
     }

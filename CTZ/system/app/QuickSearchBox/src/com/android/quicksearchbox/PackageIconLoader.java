@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PackageIconLoader implements IconLoader {
     private final Context mContext;
@@ -47,7 +48,7 @@ public class PackageIconLoader implements IconLoader {
     }
 
     @Override // com.android.quicksearchbox.IconLoader
-    public NowOrLater<Drawable> getIcon(String str) {
+    public NowOrLater<Drawable> getIcon(String str) throws NumberFormatException {
         NowOrLater<Drawable> iconLaterTask;
         if (TextUtils.isEmpty(str) || "0".equals(str)) {
             return new Now(null);
@@ -61,18 +62,18 @@ public class PackageIconLoader implements IconLoader {
             Log.w("QSB.PackageIconLoader", "Icon resource not found: " + str);
             return new Now(null);
         } catch (NumberFormatException e2) {
-            Uri parse = Uri.parse(str);
-            if ("android.resource".equals(parse.getScheme())) {
-                iconLaterTask = new Now<>(getDrawable(parse));
+            Uri uri = Uri.parse(str);
+            if ("android.resource".equals(uri.getScheme())) {
+                iconLaterTask = new Now<>(getDrawable(uri));
             } else {
-                iconLaterTask = new IconLaterTask(parse);
+                iconLaterTask = new IconLaterTask(uri);
             }
             return iconLaterTask;
         }
     }
 
     @Override // com.android.quicksearchbox.IconLoader
-    public Uri getIconUri(String str) {
+    public Uri getIconUri(String str) throws NumberFormatException {
         if (TextUtils.isEmpty(str) || "0".equals(str) || !ensurePackageContext()) {
             return null;
         }
@@ -83,8 +84,8 @@ public class PackageIconLoader implements IconLoader {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Drawable getDrawable(Uri uri) {
+    /* JADX DEBUG: Another duplicated slice has different insns count: {[]}, finally: {[CONST_STR, CONSTRUCTOR, CONST_STR, INVOKE, INVOKE, INVOKE, INVOKE, MOVE_EXCEPTION, INVOKE, MOVE_EXCEPTION] complete} */
+    private Drawable getDrawable(Uri uri) throws PackageManager.NameNotFoundException, NumberFormatException, IOException {
         try {
             if ("android.resource".equals(uri.getScheme())) {
                 OpenResourceIdResult resourceId = getResourceId(uri);
@@ -94,17 +95,19 @@ public class PackageIconLoader implements IconLoader {
                     throw new FileNotFoundException("Resource does not exist: " + uri);
                 }
             }
-            InputStream openInputStream = this.mPackageContext.getContentResolver().openInputStream(uri);
-            if (openInputStream == null) {
+            InputStream inputStreamOpenInputStream = this.mPackageContext.getContentResolver().openInputStream(uri);
+            if (inputStreamOpenInputStream == null) {
                 throw new FileNotFoundException("Failed to open " + uri);
             }
-            Drawable createFromStream = Drawable.createFromStream(openInputStream, null);
             try {
-                openInputStream.close();
-            } catch (IOException e2) {
-                Log.e("QSB.PackageIconLoader", "Error closing icon stream for " + uri, e2);
+                return Drawable.createFromStream(inputStreamOpenInputStream, null);
+            } finally {
+                try {
+                    inputStreamOpenInputStream.close();
+                } catch (IOException e2) {
+                    Log.e("QSB.PackageIconLoader", "Error closing icon stream for " + uri, e2);
+                }
             }
-            return createFromStream;
         } catch (FileNotFoundException e3) {
             Log.w("QSB.PackageIconLoader", "Icon not found: " + uri + ", " + e3.getMessage());
             return null;
@@ -113,9 +116,7 @@ public class PackageIconLoader implements IconLoader {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class OpenResourceIdResult {
+    private class OpenResourceIdResult {
         public int id;
         public Resources r;
 
@@ -123,8 +124,8 @@ public class PackageIconLoader implements IconLoader {
         }
     }
 
-    private OpenResourceIdResult getResourceId(Uri uri) throws FileNotFoundException {
-        int parseInt;
+    private OpenResourceIdResult getResourceId(Uri uri) throws PackageManager.NameNotFoundException, NumberFormatException, FileNotFoundException {
+        int identifier;
         String authority = uri.getAuthority();
         if (TextUtils.isEmpty(authority)) {
             throw new FileNotFoundException("No authority: " + uri);
@@ -138,28 +139,27 @@ public class PackageIconLoader implements IconLoader {
             int size = pathSegments.size();
             if (size == 1) {
                 try {
-                    parseInt = Integer.parseInt(pathSegments.get(0));
+                    identifier = Integer.parseInt(pathSegments.get(0));
                 } catch (NumberFormatException e) {
                     throw new FileNotFoundException("Single path segment is not a resource ID: " + uri);
                 }
             } else if (size == 2) {
-                parseInt = resourcesForApplication.getIdentifier(pathSegments.get(1), pathSegments.get(0), authority);
+                identifier = resourcesForApplication.getIdentifier(pathSegments.get(1), pathSegments.get(0), authority);
             } else {
                 throw new FileNotFoundException("More than two path segments: " + uri);
             }
-            if (parseInt == 0) {
+            if (identifier == 0) {
                 throw new FileNotFoundException("No resource found for: " + uri);
             }
             OpenResourceIdResult openResourceIdResult = new OpenResourceIdResult();
             openResourceIdResult.r = resourcesForApplication;
-            openResourceIdResult.id = parseInt;
+            openResourceIdResult.id = identifier;
             return openResourceIdResult;
         } catch (PackageManager.NameNotFoundException e2) {
             throw new FileNotFoundException("Failed to get resources: " + e2);
         }
     }
 
-    /* loaded from: classes.dex */
     private class IconLaterTask extends CachedLater<Drawable> implements NamedTask {
         private final Uri mUri;
 

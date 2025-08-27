@@ -19,7 +19,9 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import com.android.browser.UI;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class XLargeUi extends BaseUi {
     private ActionBar mActionBar;
@@ -60,14 +62,29 @@ public class XLargeUi extends BaseUi {
             this.mActionBar.show();
         }
         this.mTabBar.setUseQuickControls(this.mUseQuickControls);
-        for (Tab tab : this.mTabControl.getTabs()) {
-            tab.updateShouldCaptureThumbnails();
+        Iterator<Tab> it = this.mTabControl.getTabs().iterator();
+        while (it.hasNext()) {
+            it.next().updateShouldCaptureThumbnails();
+        }
+    }
+
+    /* renamed from: com.android.browser.XLargeUi$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            XLargeUi.this.mActionBar.hide();
         }
     }
 
     private void checkHideActionBar() {
         if (this.mUseQuickControls) {
             this.mHandler.post(new Runnable() { // from class: com.android.browser.XLargeUi.1
+                AnonymousClass1() {
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     XLargeUi.this.mActionBar.hide();
@@ -77,7 +94,7 @@ public class XLargeUi extends BaseUi {
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         super.onResume();
         this.mNavBar.clearCompletions();
         checkHideActionBar();
@@ -88,16 +105,14 @@ public class XLargeUi extends BaseUi {
         hideTitleBar();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void stopWebViewScrolling() {
-        BrowserWebView browserWebView = (BrowserWebView) this.mUiController.getCurrentWebView();
+    void stopWebViewScrolling() {
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem findItem = menu.findItem(R.id.bookmarks_menu_id);
-        if (findItem != null) {
-            findItem.setVisible(false);
+        MenuItem menuItemFindItem = menu.findItem(R.id.bookmarks_menu_id);
+        if (menuItemFindItem != null) {
+            menuItemFindItem.setVisible(false);
             return true;
         }
         return true;
@@ -108,13 +123,12 @@ public class XLargeUi extends BaseUi {
         this.mTabBar.onNewTab(tab);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onAddTabCompleted(Tab tab) {
+    protected void onAddTabCompleted(Tab tab) {
         checkHideActionBar();
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public void setActiveTab(Tab tab) {
+    public void setActiveTab(Tab tab) throws Resources.NotFoundException {
         this.mTitleBar.cancelTitleBarAnimation(true);
         this.mTitleBar.setSkipTitleBarAnimations(true);
         super.setActiveTab(tab);
@@ -134,7 +148,7 @@ public class XLargeUi extends BaseUi {
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public void removeTab(Tab tab) {
+    public void removeTab(Tab tab) throws Resources.NotFoundException {
         this.mTitleBar.cancelTitleBarAnimation(true);
         this.mTitleBar.setSkipTitleBarAnimations(true);
         super.removeTab(tab);
@@ -142,13 +156,11 @@ public class XLargeUi extends BaseUi {
         this.mTitleBar.setSkipTitleBarAnimations(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onRemoveTabCompleted(Tab tab) {
+    protected void onRemoveTabCompleted(Tab tab) {
         checkHideActionBar();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getContentWidth() {
+    int getContentWidth() {
         if (this.mContentView != null) {
             return this.mContentView.getWidth();
         }
@@ -215,7 +227,8 @@ public class XLargeUi extends BaseUi {
                 if ((i == 19 || i == 21 || i == 61) && webView != null && webView.hasFocus() && !this.mTitleBar.hasFocus()) {
                     editUrl(false, false);
                     return true;
-                } else if (!keyEvent.hasModifiers(4096) && isTypingKey(keyEvent) && !this.mTitleBar.isEditingUrl()) {
+                }
+                if (!keyEvent.hasModifiers(4096) && isTypingKey(keyEvent) && !this.mTitleBar.isEditingUrl()) {
                     editUrl(true, false);
                     return this.mContentView.dispatchKeyEvent(keyEvent);
                 }
@@ -262,7 +275,7 @@ public class XLargeUi extends BaseUi {
     }
 
     @Override // com.android.browser.BaseUi, com.android.browser.UI
-    public void onProgressChanged(Tab tab) {
+    public void onProgressChanged(Tab tab) throws Resources.NotFoundException {
         super.onProgressChanged(tab);
         if (tab.inForeground()) {
             tab.updateBookmarkedStatus();

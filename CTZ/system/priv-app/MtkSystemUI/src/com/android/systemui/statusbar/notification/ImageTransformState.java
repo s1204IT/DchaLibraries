@@ -9,6 +9,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.CrossFadeHelper;
 import com.android.systemui.statusbar.TransformableView;
 import com.android.systemui.statusbar.notification.TransformState;
+
 /* loaded from: classes.dex */
 public class ImageTransformState extends TransformState {
     private static Pools.SimplePool<ImageTransformState> sInstancePool = new Pools.SimplePool<>(40);
@@ -22,9 +23,8 @@ public class ImageTransformState extends TransformState {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.TransformState
-    public boolean sameAs(TransformState transformState) {
+    protected boolean sameAs(TransformState transformState) {
         if (super.sameAs(transformState)) {
             return true;
         }
@@ -42,9 +42,9 @@ public class ImageTransformState extends TransformState {
                 this.mTransformedView.setPivotX(this.mTransformedView.getWidth() / 2);
                 prepareFadeIn();
             }
-            float mapToDuration = mapToDuration(f);
-            CrossFadeHelper.fadeIn(this.mTransformedView, mapToDuration, false);
-            float interpolation = Interpolators.LINEAR_OUT_SLOW_IN.getInterpolation(mapToDuration);
+            float fMapToDuration = mapToDuration(f);
+            CrossFadeHelper.fadeIn(this.mTransformedView, fMapToDuration, false);
+            float interpolation = Interpolators.LINEAR_OUT_SLOW_IN.getInterpolation(fMapToDuration);
             this.mTransformedView.setScaleX(interpolation);
             this.mTransformedView.setScaleY(interpolation);
             return;
@@ -59,9 +59,9 @@ public class ImageTransformState extends TransformState {
                 this.mTransformedView.setPivotY(0.0f);
                 this.mTransformedView.setPivotX(this.mTransformedView.getWidth() / 2);
             }
-            float mapToDuration = mapToDuration(1.0f - f);
-            CrossFadeHelper.fadeOut(this.mTransformedView, 1.0f - mapToDuration, false);
-            float interpolation = Interpolators.LINEAR_OUT_SLOW_IN.getInterpolation(mapToDuration);
+            float fMapToDuration = mapToDuration(1.0f - f);
+            CrossFadeHelper.fadeOut(this.mTransformedView, 1.0f - fMapToDuration, false);
+            float interpolation = Interpolators.LINEAR_OUT_SLOW_IN.getInterpolation(fMapToDuration);
             this.mTransformedView.setScaleX(interpolation);
             this.mTransformedView.setScaleY(interpolation);
             return;
@@ -98,9 +98,8 @@ public class ImageTransformState extends TransformState {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.notification.TransformState
-    public void reset() {
+    protected void reset() {
         super.reset();
         this.mIcon = null;
     }

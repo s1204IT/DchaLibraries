@@ -28,7 +28,9 @@ import com.android.settings.widget.MasterCheckBoxPreference;
 import com.android.settingslib.RestrictedLockUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public abstract class NotificationSettingsBase extends DashboardFragment {
     private static final boolean DEBUG = Log.isLoggable("NotifiSettingsBase", 3);
@@ -106,8 +108,9 @@ public abstract class NotificationSettingsBase extends DashboardFragment {
         loadChannelGroup();
         collectConfigActivities();
         getLifecycle().addObserver((LifecycleObserver) use(HeaderPreferenceController.class));
-        for (NotificationPreferenceController notificationPreferenceController : this.mControllers) {
-            notificationPreferenceController.onResume(this.mAppRow, this.mChannel, this.mChannelGroup, this.mSuspendedAppsAdmin);
+        Iterator<NotificationPreferenceController> it = this.mControllers.iterator();
+        while (it.hasNext()) {
+            it.next().onResume(this.mAppRow, this.mChannel, this.mChannelGroup, this.mSuspendedAppsAdmin);
         }
     }
 
@@ -143,11 +146,11 @@ public abstract class NotificationSettingsBase extends DashboardFragment {
         if (this.mAppRow == null) {
             Log.w("NotifiSettingsBase", "Can't load package");
             finish();
-            return;
+        } else {
+            loadChannel();
+            loadChannelGroup();
+            collectConfigActivities();
         }
-        loadChannel();
-        loadChannelGroup();
-        collectConfigActivities();
     }
 
     private void loadChannel() {
@@ -176,23 +179,24 @@ public abstract class NotificationSettingsBase extends DashboardFragment {
     }
 
     protected void toastAndFinish() {
-        Toast.makeText(this.mContext, (int) R.string.app_not_found_dlg_text, 0).show();
+        Toast.makeText(this.mContext, R.string.app_not_found_dlg_text, 0).show();
         getActivity().finish();
     }
 
     protected void collectConfigActivities() {
         Intent intent = new Intent("android.intent.action.MAIN").addCategory("android.intent.category.NOTIFICATION_PREFERENCES").setPackage(this.mAppRow.pkg);
-        List<ResolveInfo> queryIntentActivities = this.mPm.queryIntentActivities(intent, 0);
+        List<ResolveInfo> listQueryIntentActivities = this.mPm.queryIntentActivities(intent, 0);
         if (DEBUG) {
             StringBuilder sb = new StringBuilder();
             sb.append("Found ");
-            sb.append(queryIntentActivities.size());
+            sb.append(listQueryIntentActivities.size());
             sb.append(" preference activities");
-            sb.append(queryIntentActivities.size() == 0 ? " ;_;" : "");
+            sb.append(listQueryIntentActivities.size() == 0 ? " ;_;" : "");
             Log.d("NotifiSettingsBase", sb.toString());
         }
-        for (ResolveInfo resolveInfo : queryIntentActivities) {
-            ActivityInfo activityInfo = resolveInfo.activityInfo;
+        Iterator<ResolveInfo> it = listQueryIntentActivities.iterator();
+        while (it.hasNext()) {
+            ActivityInfo activityInfo = it.next().activityInfo;
             if (this.mAppRow.settingsIntent != null) {
                 if (DEBUG) {
                     Log.d("NotifiSettingsBase", "Ignoring duplicate notification preference activity (" + activityInfo.name + ") for package " + activityInfo.packageName);
@@ -225,8 +229,7 @@ public abstract class NotificationSettingsBase extends DashboardFragment {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Preference populateSingleChannelPrefs(PreferenceGroup preferenceGroup, final NotificationChannel notificationChannel, boolean z) {
+    protected Preference populateSingleChannelPrefs(PreferenceGroup preferenceGroup, final NotificationChannel notificationChannel, boolean z) {
         MasterCheckBoxPreference masterCheckBoxPreference = new MasterCheckBoxPreference(getPrefContext());
         masterCheckBoxPreference.setCheckBoxEnabled(this.mSuspendedAppsAdmin == null && isChannelBlockable(notificationChannel) && isChannelConfigurable(notificationChannel) && !z);
         masterCheckBoxPreference.setKey(notificationChannel.getId());
@@ -268,8 +271,7 @@ public abstract class NotificationSettingsBase extends DashboardFragment {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isChannelGroupBlockable(NotificationChannelGroup notificationChannelGroup) {
+    protected boolean isChannelGroupBlockable(NotificationChannelGroup notificationChannelGroup) {
         if (notificationChannelGroup != null && this.mAppRow != null) {
             if (!this.mAppRow.systemApp) {
                 return true;
@@ -312,8 +314,7 @@ public abstract class NotificationSettingsBase extends DashboardFragment {
         getActivity().finishAndRemoveTask();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ int lambda$new$0(NotificationChannel notificationChannel, NotificationChannel notificationChannel2) {
+    static /* synthetic */ int lambda$new$0(NotificationChannel notificationChannel, NotificationChannel notificationChannel2) {
         if (notificationChannel.isDeleted() != notificationChannel2.isDeleted()) {
             return Boolean.compare(notificationChannel.isDeleted(), notificationChannel2.isDeleted());
         }
@@ -326,41 +327,36 @@ public abstract class NotificationSettingsBase extends DashboardFragment {
         return notificationChannel.getId().compareTo(notificationChannel2.getId());
     }
 
-    /* loaded from: classes.dex */
     protected class ImportanceListener {
         protected ImportanceListener() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        /* JADX WARN: Code restructure failed: missing block: B:14:0x0043, code lost:
-            if (r8.this$0.mChannel.getImportance() == 0) goto L31;
-         */
-        /* JADX WARN: Removed duplicated region for block: B:26:0x0068  */
+        /* JADX WARN: Removed duplicated region for block: B:22:0x0059  */
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        public void onImportanceChanged() {
-            boolean z;
+        protected void onImportanceChanged() {
+            boolean zIsBlocked;
             PreferenceScreen preferenceScreen = NotificationSettingsBase.this.getPreferenceScreen();
-            for (NotificationPreferenceController notificationPreferenceController : NotificationSettingsBase.this.mControllers) {
-                notificationPreferenceController.displayPreference(preferenceScreen);
+            Iterator<NotificationPreferenceController> it = NotificationSettingsBase.this.mControllers.iterator();
+            while (it.hasNext()) {
+                it.next().displayPreference(preferenceScreen);
             }
             NotificationSettingsBase.this.updatePreferenceStates();
             if (NotificationSettingsBase.this.mAppRow != null && !NotificationSettingsBase.this.mAppRow.banned) {
-                if (NotificationSettingsBase.this.mChannel == null) {
-                    if (NotificationSettingsBase.this.mChannelGroup != null) {
-                        z = NotificationSettingsBase.this.mChannelGroup.isBlocked();
-                        for (Preference preference : NotificationSettingsBase.this.mDynamicPreferences) {
-                            NotificationSettingsBase.this.setVisible(NotificationSettingsBase.this.getPreferenceScreen(), preference, !z);
-                        }
+                if (NotificationSettingsBase.this.mChannel != null) {
+                    if (NotificationSettingsBase.this.mChannel.getImportance() == 0) {
                     }
+                } else if (NotificationSettingsBase.this.mChannelGroup != null) {
+                    zIsBlocked = NotificationSettingsBase.this.mChannelGroup.isBlocked();
                 }
-                z = false;
-                while (r3.hasNext()) {
-                }
+                zIsBlocked = false;
+            } else {
+                zIsBlocked = true;
             }
-            z = true;
-            while (r3.hasNext()) {
+            Iterator<Preference> it2 = NotificationSettingsBase.this.mDynamicPreferences.iterator();
+            while (it2.hasNext()) {
+                NotificationSettingsBase.this.setVisible(NotificationSettingsBase.this.getPreferenceScreen(), it2.next(), !zIsBlocked);
             }
         }
     }

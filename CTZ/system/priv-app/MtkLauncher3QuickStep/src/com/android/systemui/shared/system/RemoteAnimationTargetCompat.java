@@ -3,6 +3,7 @@ package com.android.systemui.shared.system;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.RemoteAnimationTarget;
+
 /* loaded from: classes.dex */
 public class RemoteAnimationTargetCompat {
     public static final int ACTIVITY_TYPE_ASSISTANT = 4;

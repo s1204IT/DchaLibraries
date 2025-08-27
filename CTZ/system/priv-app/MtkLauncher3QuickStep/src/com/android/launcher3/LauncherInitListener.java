@@ -12,6 +12,7 @@ import com.android.quickstep.OverviewCallbacks;
 import com.android.quickstep.util.RemoteAnimationProvider;
 import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
 import java.util.function.BiPredicate;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public class LauncherInitListener extends InternalStateHandler implements ActivityControlHelper.ActivityInitListener {
@@ -25,11 +26,12 @@ public class LauncherInitListener extends InternalStateHandler implements Activi
     @Override // com.android.launcher3.states.InternalStateHandler
     protected boolean init(final Launcher launcher, boolean z) {
         if (this.mRemoteAnimationProvider != null) {
+            LauncherAppTransitionManagerImpl launcherAppTransitionManagerImpl = (LauncherAppTransitionManagerImpl) launcher.getAppTransitionManager();
             final CancellationSignal cancellationSignal = new CancellationSignal();
-            ((LauncherAppTransitionManagerImpl) launcher.getAppTransitionManager()).setRemoteAnimationProvider(new RemoteAnimationProvider() { // from class: com.android.launcher3.-$$Lambda$LauncherInitListener$SM9TwkM-UisNPfHi0K-ftV1aj6I
+            launcherAppTransitionManagerImpl.setRemoteAnimationProvider(new RemoteAnimationProvider() { // from class: com.android.launcher3.-$$Lambda$LauncherInitListener$SM9TwkM-UisNPfHi0K-ftV1aj6I
                 @Override // com.android.quickstep.util.RemoteAnimationProvider
                 public final AnimatorSet createWindowAnimation(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
-                    return LauncherInitListener.lambda$init$0(LauncherInitListener.this, cancellationSignal, launcher, remoteAnimationTargetCompatArr);
+                    return LauncherInitListener.lambda$init$0(this.f$0, cancellationSignal, launcher, remoteAnimationTargetCompatArr);
                 }
             }, cancellationSignal);
         }

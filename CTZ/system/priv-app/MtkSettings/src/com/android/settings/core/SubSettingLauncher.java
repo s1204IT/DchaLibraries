@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.UserHandle;
 import android.text.TextUtils;
 import com.android.settings.SubSettings;
+
 /* loaded from: classes.dex */
 public class SubSettingLauncher {
     private final Context mContext;
@@ -82,7 +83,9 @@ public class SubSettingLauncher {
         }
         if (z2 && z) {
             launchForResultAsUser(intent, this.mLaunchRequest.userHandle, this.mLaunchRequest.mResultListener, this.mLaunchRequest.mRequestCode);
-        } else if (z2 && !z) {
+            return;
+        }
+        if (z2 && !z) {
             launchAsUser(intent, this.mLaunchRequest.userHandle);
         } else if (!z2 && z) {
             launchForResult(this.mLaunchRequest.mResultListener, intent, this.mLaunchRequest.mRequestCode);
@@ -129,9 +132,7 @@ public class SubSettingLauncher {
         fragment.startActivityForResult(intent, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class LaunchRequest {
+    static class LaunchRequest {
         Bundle arguments;
         String destinationName;
         int flags;

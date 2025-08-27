@@ -3,6 +3,7 @@ package com.android.common;
 import android.content.SharedPreferences;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 /* loaded from: classes.dex */
 public class SharedPreferencesCompat {
     private static Method sApplyMethod;
@@ -15,7 +16,7 @@ public class SharedPreferencesCompat {
         }
     }
 
-    public static void apply(SharedPreferences.Editor editor) {
+    public static void apply(SharedPreferences.Editor editor) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         if (sApplyMethod != null) {
             try {
                 sApplyMethod.invoke(editor, new Object[0]);

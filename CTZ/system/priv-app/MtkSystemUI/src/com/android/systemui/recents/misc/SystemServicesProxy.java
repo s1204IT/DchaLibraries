@@ -1,5 +1,6 @@
 package com.android.systemui.recents.misc;
 
+import android.R;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
 import android.app.AppGlobals;
@@ -40,6 +41,7 @@ import com.android.systemui.UiOffloadThread;
 import com.android.systemui.recents.Recents;
 import com.android.systemui.statusbar.policy.UserInfoController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SystemServicesProxy {
     static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
@@ -60,6 +62,9 @@ public class SystemServicesProxy {
     UserManager mUm;
     WindowManager mWm;
     private final Runnable mGcRunnable = new Runnable() { // from class: com.android.systemui.recents.misc.SystemServicesProxy.1
+        AnonymousClass1() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             System.gc();
@@ -70,7 +75,7 @@ public class SystemServicesProxy {
     private final UserInfoController.OnUserInfoChangedListener mOnUserInfoChangedListener = new UserInfoController.OnUserInfoChangedListener() { // from class: com.android.systemui.recents.misc.-$$Lambda$SystemServicesProxy$14WNoAPwhU0GwlQXHqE_l3lK1kI
         @Override // com.android.systemui.statusbar.policy.UserInfoController.OnUserInfoChangedListener
         public final void onUserInfoChanged(String str, Drawable drawable, String str2) {
-            SystemServicesProxy.lambda$new$0(SystemServicesProxy.this, str, drawable, str2);
+            SystemServicesProxy.lambda$new$0(this.f$0, str, drawable, str2);
         }
     };
     IActivityManager mIam = ActivityManager.getService();
@@ -81,6 +86,18 @@ public class SystemServicesProxy {
     static {
         sBitmapOptions.inMutable = true;
         sBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+    }
+
+    /* renamed from: com.android.systemui.recents.misc.SystemServicesProxy$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            System.gc();
+            System.runFinalization();
+        }
     }
 
     public static /* synthetic */ void lambda$new$0(SystemServicesProxy systemServicesProxy, String str, Drawable drawable, String str2) {
@@ -102,8 +119,8 @@ public class SystemServicesProxy {
         ActivityManager activityManager = this.mAm;
         this.mCurrentUserId = ActivityManager.getCurrentUser();
         Resources resources = context.getResources();
-        this.mDummyThumbnailWidth = resources.getDimensionPixelSize(17104898);
-        this.mDummyThumbnailHeight = resources.getDimensionPixelSize(17104897);
+        this.mDummyThumbnailWidth = resources.getDimensionPixelSize(R.dimen.thumbnail_width);
+        this.mDummyThumbnailHeight = resources.getDimensionPixelSize(R.dimen.thumbnail_height);
         this.mBgProtectionPaint = new Paint();
         this.mBgProtectionPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
         this.mBgProtectionPaint.setColor(-1);
@@ -112,14 +129,10 @@ public class SystemServicesProxy {
     }
 
     public static synchronized SystemServicesProxy getInstance(Context context) {
-        SystemServicesProxy systemServicesProxy;
-        synchronized (SystemServicesProxy.class) {
-            if (sSystemServicesProxy == null) {
-                sSystemServicesProxy = new SystemServicesProxy(context);
-            }
-            systemServicesProxy = sSystemServicesProxy;
+        if (sSystemServicesProxy == null) {
+            sSystemServicesProxy = new SystemServicesProxy(context);
         }
-        return systemServicesProxy;
+        return sSystemServicesProxy;
     }
 
     public void gc() {
@@ -130,6 +143,7 @@ public class SystemServicesProxy {
         return isRecentsActivityVisible(null);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [210=4] */
     public boolean isRecentsActivityVisible(MutableBoolean mutableBoolean) {
         if (this.mIam == null) {
             return false;
@@ -152,13 +166,13 @@ public class SystemServicesProxy {
                     stackInfo3 = stackInfo4;
                 }
             }
-            boolean isStackNotOccluded = isStackNotOccluded(stackInfo, stackInfo2);
-            boolean isStackNotOccluded2 = isStackNotOccluded(stackInfo3, stackInfo2);
+            boolean zIsStackNotOccluded = isStackNotOccluded(stackInfo, stackInfo2);
+            boolean zIsStackNotOccluded2 = isStackNotOccluded(stackInfo3, stackInfo2);
             if (mutableBoolean != null) {
-                mutableBoolean.value = isStackNotOccluded;
+                mutableBoolean.value = zIsStackNotOccluded;
             }
             ComponentName componentName = stackInfo3 != null ? stackInfo3.topActivity : null;
-            if (isStackNotOccluded2 && componentName != null && componentName.getPackageName().equals("com.android.systemui")) {
+            if (zIsStackNotOccluded2 && componentName != null && componentName.getPackageName().equals("com.android.systemui")) {
                 return Recents.RECENTS_ACTIVITIES.contains(componentName.getClassName());
             }
             return false;
@@ -298,7 +312,10 @@ public class SystemServicesProxy {
         this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.recents.misc.-$$Lambda$SystemServicesProxy$N7nq4D_yvcF7wooCA6t2HP24UJI
             @Override // java.lang.Runnable
             public final void run() {
-                SystemServicesProxy.this.mContext.startActivityAsUser(intent, r4 != null ? activityOptions.toBundle() : null, UserHandle.CURRENT);
+                SystemServicesProxy systemServicesProxy = this.f$0;
+                Intent intent2 = intent;
+                ActivityOptions activityOptions2 = activityOptions;
+                systemServicesProxy.mContext.startActivityAsUser(intent2, activityOptions2 != null ? activityOptions2.toBundle() : null, UserHandle.CURRENT);
             }
         });
     }
@@ -327,7 +344,7 @@ public class SystemServicesProxy {
 
     public int getDockedDividerSize(Context context) {
         Resources resources = context.getResources();
-        return resources.getDimensionPixelSize(17105034) - (2 * resources.getDimensionPixelSize(17105033));
+        return resources.getDimensionPixelSize(R.dimen.car_padding_2) - (2 * resources.getDimensionPixelSize(R.dimen.car_padding_1));
     }
 
     public void requestKeyboardShortcuts(Context context, WindowManager.KeyboardShortcutsReceiver keyboardShortcutsReceiver, int i) {
@@ -349,7 +366,7 @@ public class SystemServicesProxy {
         this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.recents.misc.-$$Lambda$SystemServicesProxy$ve6L74feVQWkpga-S7KU2FyhUuE
             @Override // java.lang.Runnable
             public final void run() {
-                SystemServicesProxy.lambda$setRecentsVisibility$2(SystemServicesProxy.this, z);
+                SystemServicesProxy.lambda$setRecentsVisibility$2(this.f$0, z);
             }
         });
     }
@@ -366,7 +383,7 @@ public class SystemServicesProxy {
         this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.recents.misc.-$$Lambda$SystemServicesProxy$yx6uKMR_Ve4h8p3CZXLJmEmcWpI
             @Override // java.lang.Runnable
             public final void run() {
-                SystemServicesProxy.lambda$setPipVisibility$3(SystemServicesProxy.this, z);
+                SystemServicesProxy.lambda$setPipVisibility$3(this.f$0, z);
             }
         });
     }
@@ -392,7 +409,7 @@ public class SystemServicesProxy {
         this.mUiOffloadThread.submit(new Runnable() { // from class: com.android.systemui.recents.misc.-$$Lambda$SystemServicesProxy$qne41-2ZLAnF5q0szRXUTgxl7BA
             @Override // java.lang.Runnable
             public final void run() {
-                SystemServicesProxy.lambda$awakenDreamsAsync$4(SystemServicesProxy.this);
+                SystemServicesProxy.lambda$awakenDreamsAsync$4(this.f$0);
             }
         });
     }

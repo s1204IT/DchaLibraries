@@ -13,12 +13,12 @@ import com.android.settingslib.net.ChartData;
 import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class CycleAdapter extends ArrayAdapter<CycleItem> {
     private final AdapterView.OnItemSelectedListener mListener;
     private final SpinnerInterface mSpinner;
 
-    /* loaded from: classes.dex */
     public interface SpinnerInterface {
         Object getSelectedItem();
 
@@ -31,7 +31,7 @@ public class CycleAdapter extends ArrayAdapter<CycleItem> {
 
     public CycleAdapter(Context context, SpinnerInterface spinnerInterface, AdapterView.OnItemSelectedListener onItemSelectedListener, boolean z) {
         super(context, z ? R.layout.filter_spinner_item : R.layout.data_usage_cycle_item);
-        setDropDownViewResource(17367049);
+        setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.mSpinner = spinnerInterface;
         this.mListener = onItemSelectedListener;
         this.mSpinner.setAdapter(this);
@@ -51,8 +51,8 @@ public class CycleAdapter extends ArrayAdapter<CycleItem> {
     }
 
     public boolean updateCycleList(NetworkPolicy networkPolicy, ChartData chartData) {
-        long j;
-        long j2;
+        long end;
+        long start;
         NetworkStatsHistory.Entry entry;
         boolean z;
         boolean z2;
@@ -64,32 +64,32 @@ public class CycleAdapter extends ArrayAdapter<CycleItem> {
         clear();
         Context context = getContext();
         if (chartData2 != null) {
-            j2 = chartData2.network.getStart();
-            j = chartData2.network.getEnd();
+            start = chartData2.network.getStart();
+            end = chartData2.network.getEnd();
         } else {
-            j = Long.MIN_VALUE;
-            j2 = Long.MAX_VALUE;
+            end = Long.MIN_VALUE;
+            start = Long.MAX_VALUE;
         }
-        long currentTimeMillis = System.currentTimeMillis();
-        long j3 = j2 == Long.MAX_VALUE ? currentTimeMillis : j2;
-        if (j == Long.MIN_VALUE) {
-            j = currentTimeMillis + 1;
+        long jCurrentTimeMillis = System.currentTimeMillis();
+        long j = start == Long.MAX_VALUE ? jCurrentTimeMillis : start;
+        if (end == Long.MIN_VALUE) {
+            end = jCurrentTimeMillis + 1;
         }
         if (networkPolicy != null) {
-            Iterator cycleIterator = NetworkPolicyManager.cycleIterator(networkPolicy);
+            Iterator itCycleIterator = NetworkPolicyManager.cycleIterator(networkPolicy);
             entry = null;
             z = false;
-            while (cycleIterator.hasNext()) {
-                Pair pair = (Pair) cycleIterator.next();
+            while (itCycleIterator.hasNext()) {
+                Pair pair = (Pair) itCycleIterator.next();
                 long epochMilli = ((ZonedDateTime) pair.first).toInstant().toEpochMilli();
                 long epochMilli2 = ((ZonedDateTime) pair.second).toInstant().toEpochMilli();
                 if (chartData2 != null) {
                     NetworkStatsHistory.Entry values = chartData2.network.getValues(epochMilli, epochMilli2, entry);
-                    it = cycleIterator;
+                    it = itCycleIterator;
                     z3 = values.rxBytes + values.txBytes > 0;
                     entry = values;
                 } else {
-                    it = cycleIterator;
+                    it = itCycleIterator;
                     z3 = true;
                 }
                 if (z3) {
@@ -99,7 +99,7 @@ public class CycleAdapter extends ArrayAdapter<CycleItem> {
                 } else {
                     it2 = it;
                 }
-                cycleIterator = it2;
+                itCycleIterator = it2;
             }
         } else {
             entry = null;
@@ -107,34 +107,33 @@ public class CycleAdapter extends ArrayAdapter<CycleItem> {
         }
         if (!z) {
             NetworkStatsHistory.Entry entry2 = entry;
-            while (j > j3) {
-                long j4 = j - 2419200000L;
+            while (end > j) {
+                long j2 = end - 2419200000L;
                 if (chartData2 != null) {
-                    NetworkStatsHistory.Entry values2 = chartData2.network.getValues(j4, j, entry2);
+                    NetworkStatsHistory.Entry values2 = chartData2.network.getValues(j2, end, entry2);
                     z2 = values2.rxBytes + values2.txBytes > 0;
                     entry2 = values2;
                 } else {
                     z2 = true;
                 }
                 if (z2) {
-                    add(new CycleItem(context, j4, j));
+                    add(new CycleItem(context, j2, end));
                 }
-                j = j4;
+                end = j2;
                 chartData2 = chartData;
             }
         }
         if (getCount() > 0) {
-            int findNearestPosition = findNearestPosition(cycleItem);
-            this.mSpinner.setSelection(findNearestPosition);
-            if (!Objects.equals(getItem(findNearestPosition), cycleItem)) {
-                this.mListener.onItemSelected(null, null, findNearestPosition, 0L);
+            int iFindNearestPosition = findNearestPosition(cycleItem);
+            this.mSpinner.setSelection(iFindNearestPosition);
+            if (!Objects.equals(getItem(iFindNearestPosition), cycleItem)) {
+                this.mListener.onItemSelected(null, null, iFindNearestPosition, 0L);
                 return false;
             }
         }
         return true;
     }
 
-    /* loaded from: classes.dex */
     public static class CycleItem implements Comparable<CycleItem> {
         public long end;
         public CharSequence label;
@@ -151,13 +150,14 @@ public class CycleAdapter extends ArrayAdapter<CycleItem> {
         }
 
         public boolean equals(Object obj) {
-            if (obj instanceof CycleItem) {
-                CycleItem cycleItem = (CycleItem) obj;
-                return this.start == cycleItem.start && this.end == cycleItem.end;
+            if (!(obj instanceof CycleItem)) {
+                return false;
             }
-            return false;
+            CycleItem cycleItem = (CycleItem) obj;
+            return this.start == cycleItem.start && this.end == cycleItem.end;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // java.lang.Comparable
         public int compareTo(CycleItem cycleItem) {
             return Long.compare(this.start, cycleItem.start);

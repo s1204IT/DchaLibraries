@@ -10,6 +10,7 @@ import com.android.quicksearchbox.CursorBackedSourceResult;
 import com.android.quicksearchbox.QsbApplication;
 import com.android.quicksearchbox.SourceResult;
 import com.android.quicksearchbox.SuggestionCursorBackedCursor;
+
 /* loaded from: classes.dex */
 public class GoogleSuggestionProvider extends ContentProvider {
     private GoogleSource mSource;
@@ -33,15 +34,15 @@ public class GoogleSuggestionProvider extends ContentProvider {
 
     @Override // android.content.ContentProvider
     public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) {
-        int match = this.mUriMatcher.match(uri);
-        if (match == 0) {
+        int iMatch = this.mUriMatcher.match(uri);
+        if (iMatch == 0) {
             String query = getQuery(uri);
             return new SuggestionCursorBackedCursor(emptyIfNull(this.mSource.queryExternal(query), this.mSource, query));
-        } else if (match == 1) {
-            return new SuggestionCursorBackedCursor(this.mSource.refreshShortcut(getQuery(uri), uri.getQueryParameter("suggest_intent_extra_data")));
-        } else {
-            throw new IllegalArgumentException("Unknown URI " + uri);
         }
+        if (iMatch == 1) {
+            return new SuggestionCursorBackedCursor(this.mSource.refreshShortcut(getQuery(uri), uri.getQueryParameter("suggest_intent_extra_data")));
+        }
+        throw new IllegalArgumentException("Unknown URI " + uri);
     }
 
     private String getQuery(Uri uri) {

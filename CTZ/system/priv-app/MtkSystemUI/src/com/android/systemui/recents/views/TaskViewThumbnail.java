@@ -23,19 +23,23 @@ import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.recents.model.ThumbnailData;
 import com.android.systemui.shared.recents.utilities.Utilities;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class TaskViewThumbnail extends View {
     protected Paint mBgFillPaint;
     protected BitmapShader mBitmapShader;
     protected int mCornerRadius;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private float mDimAlpha;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private boolean mDisabledInSafeMode;
     private int mDisplayOrientation;
     private Rect mDisplayRect;
     private Paint mDrawPaint;
     private float mFullscreenThumbnailScale;
+
     @ViewDebug.ExportedProperty(category = "recents")
     private boolean mInvisible;
     private LightingColorFilter mLightingColorFilter;
@@ -45,11 +49,14 @@ public class TaskViewThumbnail extends View {
     private boolean mSizeToFit;
     private Task mTask;
     private View mTaskBar;
+
     @ViewDebug.ExportedProperty(category = "recents")
     protected Rect mTaskViewRect;
     private ThumbnailData mThumbnailData;
+
     @ViewDebug.ExportedProperty(category = "recents")
     protected Rect mThumbnailRect;
+
     @ViewDebug.ExportedProperty(category = "recents")
     protected float mThumbnailScale;
     private int mTitleBarHeight;
@@ -105,32 +112,34 @@ public class TaskViewThumbnail extends View {
 
     @Override // android.view.View
     protected void onDraw(Canvas canvas) {
-        int i;
+        int height;
         if (this.mInvisible) {
             return;
         }
-        int width = this.mTaskViewRect.width();
-        int height = this.mTaskViewRect.height();
-        int min = Math.min(width, (int) (this.mThumbnailRect.width() * this.mThumbnailScale));
-        int min2 = Math.min(height, (int) (this.mThumbnailRect.height() * this.mThumbnailScale));
+        int iWidth = this.mTaskViewRect.width();
+        int iHeight = this.mTaskViewRect.height();
+        int iMin = Math.min(iWidth, (int) (this.mThumbnailRect.width() * this.mThumbnailScale));
+        int iMin2 = Math.min(iHeight, (int) (this.mThumbnailRect.height() * this.mThumbnailScale));
         if (this.mUserLocked) {
-            canvas.drawRoundRect(0.0f, 0.0f, width, height, this.mCornerRadius, this.mCornerRadius, this.mLockedPaint);
-        } else if (this.mBitmapShader != null && min > 0 && min2 > 0) {
-            if (this.mTaskBar != null && this.mOverlayHeaderOnThumbnailActionBar) {
-                i = this.mTaskBar.getHeight() - this.mCornerRadius;
-            } else {
-                i = 0;
-            }
-            if (min < width) {
-                canvas.drawRoundRect(Math.max(0, min - this.mCornerRadius), i, width, height, this.mCornerRadius, this.mCornerRadius, this.mBgFillPaint);
-            }
-            if (min2 < height) {
-                canvas.drawRoundRect(0.0f, Math.max(i, min2 - this.mCornerRadius), width, height, this.mCornerRadius, this.mCornerRadius, this.mBgFillPaint);
-            }
-            canvas.drawRoundRect(0.0f, i, min, min2, this.mCornerRadius, this.mCornerRadius, this.mDrawPaint);
-        } else {
-            canvas.drawRoundRect(0.0f, 0.0f, width, height, this.mCornerRadius, this.mCornerRadius, this.mBgFillPaint);
+            canvas.drawRoundRect(0.0f, 0.0f, iWidth, iHeight, this.mCornerRadius, this.mCornerRadius, this.mLockedPaint);
+            return;
         }
+        if (this.mBitmapShader != null && iMin > 0 && iMin2 > 0) {
+            if (this.mTaskBar != null && this.mOverlayHeaderOnThumbnailActionBar) {
+                height = this.mTaskBar.getHeight() - this.mCornerRadius;
+            } else {
+                height = 0;
+            }
+            if (iMin < iWidth) {
+                canvas.drawRoundRect(Math.max(0, iMin - this.mCornerRadius), height, iWidth, iHeight, this.mCornerRadius, this.mCornerRadius, this.mBgFillPaint);
+            }
+            if (iMin2 < iHeight) {
+                canvas.drawRoundRect(0.0f, Math.max(height, iMin2 - this.mCornerRadius), iWidth, iHeight, this.mCornerRadius, this.mCornerRadius, this.mBgFillPaint);
+            }
+            canvas.drawRoundRect(0.0f, height, iMin, iMin2, this.mCornerRadius, this.mCornerRadius, this.mDrawPaint);
+            return;
+        }
+        canvas.drawRoundRect(0.0f, 0.0f, iWidth, iHeight, this.mCornerRadius, this.mCornerRadius, this.mBgFillPaint);
     }
 
     void setThumbnail(ThumbnailData thumbnailData) {
@@ -227,14 +236,12 @@ public class TaskViewThumbnail extends View {
         this.mOverlayHeaderOnThumbnailActionBar = z;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updateClipToTaskBar(View view) {
+    void updateClipToTaskBar(View view) {
         this.mTaskBar = view;
         invalidate();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updateThumbnailVisibility(int i) {
+    void updateThumbnailVisibility(int i) {
         boolean z = this.mTaskBar != null && getHeight() - i <= this.mTaskBar.getHeight();
         if (z != this.mInvisible) {
             this.mInvisible = z;
@@ -249,16 +256,14 @@ public class TaskViewThumbnail extends View {
         updateThumbnailPaintFilter();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Paint getDrawPaint() {
+    protected Paint getDrawPaint() {
         if (this.mUserLocked) {
             return this.mLockedPaint;
         }
         return this.mDrawPaint;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void bindToTask(Task task, boolean z, int i, Rect rect) {
+    void bindToTask(Task task, boolean z, int i, Rect rect) throws NoSuchMethodException, SecurityException {
         this.mTask = task;
         this.mDisabledInSafeMode = z;
         this.mDisplayOrientation = i;
@@ -273,13 +278,11 @@ public class TaskViewThumbnail extends View {
         EventBus.getDefault().register(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onTaskDataLoaded(ThumbnailData thumbnailData) {
+    void onTaskDataLoaded(ThumbnailData thumbnailData) {
         setThumbnail(thumbnailData);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void unbindFromTask() {
+    void unbindFromTask() {
         this.mTask = null;
         setThumbnail(null);
         EventBus.getDefault().unregister(this);

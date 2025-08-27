@@ -1,6 +1,7 @@
 package com.android.settings.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -17,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import com.android.internal.util.Preconditions;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ChartSweepView extends View {
     private ChartAxis mAxis;
@@ -50,7 +52,6 @@ public class ChartSweepView extends View {
     private ChartSweepView mValidBeforeDynamic;
     private long mValue;
 
-    /* loaded from: classes.dex */
     public interface OnSweepListener {
         void onSweep(ChartSweepView chartSweepView, boolean z);
 
@@ -65,7 +66,7 @@ public class ChartSweepView extends View {
         this(context, attributeSet, 0);
     }
 
-    public ChartSweepView(Context context, AttributeSet attributeSet, int i) {
+    public ChartSweepView(Context context, AttributeSet attributeSet, int i) throws Resources.NotFoundException {
         super(context, attributeSet, i);
         this.mSweepPadding = new Rect();
         this.mContentOffset = new Rect();
@@ -81,27 +82,26 @@ public class ChartSweepView extends View {
                 ChartSweepView.this.dispatchRequestEdit();
             }
         };
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ChartSweepView, i, 0);
-        int color = obtainStyledAttributes.getColor(1, -16776961);
-        setSweepDrawable(obtainStyledAttributes.getDrawable(6), color);
-        setFollowAxis(obtainStyledAttributes.getInt(0, -1));
-        setNeighborMargin(obtainStyledAttributes.getDimensionPixelSize(4, 0));
-        setSafeRegion(obtainStyledAttributes.getDimensionPixelSize(5, 0));
-        setLabelMinSize(obtainStyledAttributes.getDimensionPixelSize(2, 0));
-        setLabelTemplate(obtainStyledAttributes.getResourceId(3, 0));
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ChartSweepView, i, 0);
+        int color = typedArrayObtainStyledAttributes.getColor(1, -16776961);
+        setSweepDrawable(typedArrayObtainStyledAttributes.getDrawable(6), color);
+        setFollowAxis(typedArrayObtainStyledAttributes.getInt(0, -1));
+        setNeighborMargin(typedArrayObtainStyledAttributes.getDimensionPixelSize(4, 0));
+        setSafeRegion(typedArrayObtainStyledAttributes.getDimensionPixelSize(5, 0));
+        setLabelMinSize(typedArrayObtainStyledAttributes.getDimensionPixelSize(2, 0));
+        setLabelTemplate(typedArrayObtainStyledAttributes.getResourceId(3, 0));
         setLabelColor(color);
         setBackgroundResource(R.drawable.data_usage_sweep_background);
         this.mOutlinePaint.setColor(-65536);
         this.mOutlinePaint.setStrokeWidth(1.0f);
         this.mOutlinePaint.setStyle(Paint.Style.STROKE);
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
         setClickable(true);
         setOnClickListener(this.mClickListener);
         setWillNotDraw(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void init(ChartAxis chartAxis) {
+    void init(ChartAxis chartAxis) {
         this.mAxis = (ChartAxis) Preconditions.checkNotNull(chartAxis, "missing axis");
     }
 
@@ -138,8 +138,7 @@ public class ChartSweepView extends View {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dispatchRequestEdit() {
+    private void dispatchRequestEdit() {
         if (this.mListener != null) {
             this.mListener.requestEdit(this);
         }
@@ -176,22 +175,22 @@ public class ChartSweepView extends View {
         this.mFollowAxis = i;
     }
 
-    public void setLabelMinSize(int i) {
+    public void setLabelMinSize(int i) throws Resources.NotFoundException {
         this.mLabelMinSize = i;
         invalidateLabelTemplate();
     }
 
-    public void setLabelTemplate(int i) {
+    public void setLabelTemplate(int i) throws Resources.NotFoundException {
         this.mLabelTemplateRes = i;
         invalidateLabelTemplate();
     }
 
-    public void setLabelColor(int i) {
+    public void setLabelColor(int i) throws Resources.NotFoundException {
         this.mLabelColor = i;
         invalidateLabelTemplate();
     }
 
-    private void invalidateLabelTemplate() {
+    private void invalidateLabelTemplate() throws Resources.NotFoundException {
         if (this.mLabelTemplateRes != 0) {
             CharSequence text = getResources().getText(this.mLabelTemplateRes);
             TextPaint textPaint = new TextPaint(1);
@@ -326,15 +325,10 @@ public class ChartSweepView extends View {
         return Math.abs(motionEvent.getY() - (getY() + getTargetInset()));
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:37:0x00f8, code lost:
-        if (r12.getX() < r11.mLabelLayout.getWidth()) goto L37;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:38:0x00fa, code lost:
-        r5 = true;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:49:0x0129, code lost:
-        if (r12.getY() < r11.mLabelLayout.getHeight()) goto L37;
-     */
+    /* JADX WARN: Removed duplicated region for block: B:38:0x00fa A[PHI: r2
+  0x00fa: PHI (r2v13 boolean) = (r2v5 boolean), (r2v17 boolean) binds: [B:49:0x0129, B:37:0x00f8] A[DONT_GENERATE, DONT_INLINE]] */
+    /* JADX WARN: Removed duplicated region for block: B:41:0x00fe A[PHI: r2
+  0x00fe: PHI (r2v7 boolean) = (r2v5 boolean), (r2v5 boolean), (r2v17 boolean), (r2v17 boolean) binds: [B:47:0x011a, B:49:0x0129, B:35:0x00e9, B:37:0x00f8] A[DONT_GENERATE, DONT_INLINE]] */
     @Override // android.view.View
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -342,89 +336,83 @@ public class ChartSweepView extends View {
     public boolean onTouchEvent(MotionEvent motionEvent) {
         boolean z;
         boolean z2;
-        Rect parentContentRect;
-        Rect computeClampRect;
-        long convertToValue;
-        if (isEnabled()) {
-            View view = (View) getParent();
-            switch (motionEvent.getAction()) {
-                case 0:
+        long jConvertToValue;
+        if (!isEnabled()) {
+            return false;
+        }
+        View view = (View) getParent();
+        switch (motionEvent.getAction()) {
+            case 0:
+                if (this.mFollowAxis == 1) {
+                    z = motionEvent.getX() > ((float) (getWidth() - (this.mSweepPadding.right * 8)));
+                    z2 = this.mLabelLayout != null && motionEvent.getX() < ((float) this.mLabelLayout.getWidth());
+                } else {
+                    z = motionEvent.getY() > ((float) (getHeight() - (this.mSweepPadding.bottom * 8)));
+                    if (this.mLabelLayout == null || motionEvent.getY() >= this.mLabelLayout.getHeight()) {
+                    }
+                }
+                MotionEvent motionEventCopy = motionEvent.copy();
+                motionEventCopy.offsetLocation(getLeft(), getTop());
+                for (ChartSweepView chartSweepView : this.mNeighbors) {
+                    if (isTouchCloserTo(motionEventCopy, chartSweepView)) {
+                        break;
+                    }
+                }
+                if (z) {
                     if (this.mFollowAxis == 1) {
-                        z = motionEvent.getX() > ((float) (getWidth() - (this.mSweepPadding.right * 8)));
-                        if (this.mLabelLayout != null) {
-                            break;
-                        }
-                        z2 = false;
+                        this.mTrackingStart = getTop() - this.mMargins.top;
                     } else {
-                        z = motionEvent.getY() > ((float) (getHeight() - (this.mSweepPadding.bottom * 8)));
-                        if (this.mLabelLayout != null) {
-                            break;
-                        }
-                        z2 = false;
+                        this.mTrackingStart = getLeft() - this.mMargins.left;
                     }
-                    MotionEvent copy = motionEvent.copy();
-                    copy.offsetLocation(getLeft(), getTop());
-                    for (ChartSweepView chartSweepView : this.mNeighbors) {
-                        if (isTouchCloserTo(copy, chartSweepView)) {
-                            return false;
-                        }
+                    this.mTracking = motionEvent.copy();
+                    this.mTouchMode = 1;
+                    if (!view.isActivated()) {
+                        view.setActivated(true);
+                        break;
                     }
-                    if (z) {
-                        if (this.mFollowAxis == 1) {
-                            this.mTrackingStart = getTop() - this.mMargins.top;
-                        } else {
-                            this.mTrackingStart = getLeft() - this.mMargins.left;
-                        }
-                        this.mTracking = motionEvent.copy();
-                        this.mTouchMode = 1;
-                        if (!view.isActivated()) {
-                            view.setActivated(true);
-                        }
-                        return true;
-                    } else if (z2) {
-                        this.mTouchMode = 2;
-                        return true;
-                    } else {
-                        this.mTouchMode = 0;
-                        return false;
-                    }
-                case 1:
-                    if (this.mTouchMode == 2) {
-                        performClick();
-                    } else if (this.mTouchMode == 1) {
-                        this.mTrackingStart = 0.0f;
-                        this.mTracking = null;
-                        this.mValue = this.mLabelValue;
-                        dispatchOnSweep(true);
-                        setTranslationX(0.0f);
-                        setTranslationY(0.0f);
-                        requestLayout();
-                    }
+                } else if (z2) {
+                    this.mTouchMode = 2;
+                    break;
+                } else {
                     this.mTouchMode = 0;
-                    return true;
-                case 2:
-                    if (this.mTouchMode == 2) {
-                        return true;
-                    }
+                    break;
+                }
+                break;
+            case 1:
+                if (this.mTouchMode == 2) {
+                    performClick();
+                } else if (this.mTouchMode == 1) {
+                    this.mTrackingStart = 0.0f;
+                    this.mTracking = null;
+                    this.mValue = this.mLabelValue;
+                    dispatchOnSweep(true);
+                    setTranslationX(0.0f);
+                    setTranslationY(0.0f);
+                    requestLayout();
+                }
+                this.mTouchMode = 0;
+                break;
+            case 2:
+                if (this.mTouchMode != 2) {
                     getParent().requestDisallowInterceptTouchEvent(true);
-                    if (computeClampRect(getParentContentRect()).isEmpty()) {
-                        return true;
+                    if (!computeClampRect(getParentContentRect()).isEmpty()) {
+                        if (this.mFollowAxis == 1) {
+                            float top = getTop() - this.mMargins.top;
+                            float fConstrain = MathUtils.constrain(this.mTrackingStart + (motionEvent.getRawY() - this.mTracking.getRawY()), r2.top, r2.bottom);
+                            setTranslationY(fConstrain - top);
+                            jConvertToValue = this.mAxis.convertToValue(fConstrain - r0.top);
+                        } else {
+                            float left = getLeft() - this.mMargins.left;
+                            float fConstrain2 = MathUtils.constrain(this.mTrackingStart + (motionEvent.getRawX() - this.mTracking.getRawX()), r2.left, r2.right);
+                            setTranslationX(fConstrain2 - left);
+                            jConvertToValue = this.mAxis.convertToValue(fConstrain2 - r0.left);
+                        }
+                        setValue(jConvertToValue - (jConvertToValue % this.mDragInterval));
+                        dispatchOnSweep(false);
+                        break;
                     }
-                    if (this.mFollowAxis == 1) {
-                        float constrain = MathUtils.constrain(this.mTrackingStart + (motionEvent.getRawY() - this.mTracking.getRawY()), computeClampRect.top, computeClampRect.bottom);
-                        setTranslationY(constrain - (getTop() - this.mMargins.top));
-                        convertToValue = this.mAxis.convertToValue(constrain - parentContentRect.top);
-                    } else {
-                        float constrain2 = MathUtils.constrain(this.mTrackingStart + (motionEvent.getRawX() - this.mTracking.getRawX()), computeClampRect.left, computeClampRect.right);
-                        setTranslationX(constrain2 - (getLeft() - this.mMargins.left));
-                        convertToValue = this.mAxis.convertToValue(constrain2 - parentContentRect.left);
-                    }
-                    setValue(convertToValue - (convertToValue % this.mDragInterval));
-                    dispatchOnSweep(false);
-                    return true;
-                default:
-                    return false;
-            }
+                }
+                break;
         }
         return false;
     }
@@ -433,9 +421,9 @@ public class ChartSweepView extends View {
         Rect parentContentRect = getParentContentRect();
         if (this.mFollowAxis == 1) {
             setValue(this.mAxis.convertToValue((getY() - this.mMargins.top) - parentContentRect.top));
-            return;
+        } else {
+            setValue(this.mAxis.convertToValue((getX() - this.mMargins.left) - parentContentRect.left));
         }
-        setValue(this.mAxis.convertToValue((getX() - this.mMargins.left) - parentContentRect.left));
     }
 
     public int shouldAdjustAxis() {
@@ -472,11 +460,11 @@ public class ChartSweepView extends View {
     }
 
     private Rect computeClampRect(Rect rect) {
-        Rect buildClampRect = buildClampRect(rect, this.mValidAfter, this.mValidBefore, 0.0f);
-        if (!buildClampRect.intersect(buildClampRect(rect, getValidAfterDynamic(), getValidBeforeDynamic(), this.mNeighborMargin))) {
-            buildClampRect.setEmpty();
+        Rect rectBuildClampRect = buildClampRect(rect, this.mValidAfter, this.mValidBefore, 0.0f);
+        if (!rectBuildClampRect.intersect(buildClampRect(rect, getValidAfterDynamic(), getValidBeforeDynamic(), this.mNeighborMargin))) {
+            rectBuildClampRect.setEmpty();
         }
-        return buildClampRect;
+        return rectBuildClampRect;
     }
 
     private Rect buildClampRect(Rect rect, long j, long j2, float f) {
@@ -489,22 +477,22 @@ public class ChartSweepView extends View {
         if (j2 != Long.MIN_VALUE && j2 != Long.MAX_VALUE) {
             z = true;
         }
-        float convertToPoint = this.mAxis.convertToPoint(j) + f;
-        float convertToPoint2 = this.mAxis.convertToPoint(j2) - f;
+        float fConvertToPoint = this.mAxis.convertToPoint(j) + f;
+        float fConvertToPoint2 = this.mAxis.convertToPoint(j2) - f;
         Rect rect2 = new Rect(rect);
         if (this.mFollowAxis == 1) {
             if (z) {
-                rect2.bottom = rect2.top + ((int) convertToPoint2);
+                rect2.bottom = rect2.top + ((int) fConvertToPoint2);
             }
             if (z2) {
-                rect2.top = (int) (rect2.top + convertToPoint);
+                rect2.top = (int) (rect2.top + fConvertToPoint);
             }
         } else {
             if (z) {
-                rect2.right = rect2.left + ((int) convertToPoint2);
+                rect2.right = rect2.left + ((int) fConvertToPoint2);
             }
             if (z2) {
-                rect2.left = (int) (rect2.left + convertToPoint);
+                rect2.left = (int) (rect2.left + fConvertToPoint);
             }
         }
         return rect2;
@@ -578,10 +566,10 @@ public class ChartSweepView extends View {
         int width = getWidth();
         int height = getHeight();
         if (isEnabled() && this.mLabelLayout != null) {
-            int save = canvas.save();
+            int iSave = canvas.save();
             canvas.translate(this.mContentOffset.left + (this.mLabelSize - 1024.0f), this.mContentOffset.top + this.mLabelOffset);
             this.mLabelLayout.draw(canvas);
-            canvas.restoreToCount(save);
+            canvas.restoreToCount(iSave);
             i = ((int) this.mLabelSize) + this.mSafeRegion;
         } else {
             i = 0;

@@ -7,6 +7,7 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 import com.android.systemui.shared.system.GraphicBufferCompat;
+
 /* loaded from: classes.dex */
 public interface ISystemUiProxy extends IInterface {
     Rect getNonMinimizedSplitScreenSecondaryBounds() throws RemoteException;
@@ -23,7 +24,6 @@ public interface ISystemUiProxy extends IInterface {
 
     void startScreenPinning(int i) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements ISystemUiProxy {
         private static final String DESCRIPTOR = "com.android.systemui.shared.recents.ISystemUiProxy";
         static final int TRANSACTION_getNonMinimizedSplitScreenSecondaryBounds = 8;
@@ -128,7 +128,6 @@ public interface ISystemUiProxy extends IInterface {
             }
         }
 
-        /* loaded from: classes.dex */
         private static class Proxy implements ISystemUiProxy {
             private IBinder mRemote;
 
@@ -146,35 +145,35 @@ public interface ISystemUiProxy extends IInterface {
             }
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
-            public GraphicBufferCompat screenshot(Rect sourceCrop, int width, int height, int minLayer, int maxLayer, boolean useIdentityTransform, int rotation) throws RemoteException {
-                GraphicBufferCompat _result;
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
+            public GraphicBufferCompat screenshot(Rect rect, int i, int i2, int i3, int i4, boolean z, int i5) throws RemoteException {
+                GraphicBufferCompat graphicBufferCompatCreateFromParcel;
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    if (sourceCrop != null) {
-                        _data.writeInt(1);
-                        sourceCrop.writeToParcel(_data, 0);
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    if (rect != null) {
+                        parcelObtain.writeInt(1);
+                        rect.writeToParcel(parcelObtain, 0);
                     } else {
-                        _data.writeInt(0);
+                        parcelObtain.writeInt(0);
                     }
-                    _data.writeInt(width);
-                    _data.writeInt(height);
-                    _data.writeInt(minLayer);
-                    _data.writeInt(maxLayer);
-                    _data.writeInt(useIdentityTransform ? 1 : 0);
-                    _data.writeInt(rotation);
-                    this.mRemote.transact(1, _data, _reply, 0);
-                    _reply.readException();
-                    if (_reply.readInt() != 0) {
-                        _result = GraphicBufferCompat.CREATOR.createFromParcel(_reply);
+                    parcelObtain.writeInt(i);
+                    parcelObtain.writeInt(i2);
+                    parcelObtain.writeInt(i3);
+                    parcelObtain.writeInt(i4);
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    parcelObtain.writeInt(i5);
+                    this.mRemote.transact(1, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    if (parcelObtain2.readInt() != 0) {
+                        graphicBufferCompatCreateFromParcel = GraphicBufferCompat.CREATOR.createFromParcel(parcelObtain2);
                     } else {
-                        _result = null;
+                        graphicBufferCompatCreateFromParcel = null;
                     }
-                    return _result;
+                    return graphicBufferCompatCreateFromParcel;
                 } finally {
-                    _reply.recycle();
-                    _data.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
@@ -223,17 +222,17 @@ public interface ISystemUiProxy extends IInterface {
             }
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
-            public void onOverviewShown(boolean fromHome) throws RemoteException {
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
+            public void onOverviewShown(boolean z) throws RemoteException {
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    _data.writeInt(fromHome ? 1 : 0);
-                    this.mRemote.transact(7, _data, _reply, 0);
-                    _reply.readException();
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(7, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    _reply.recycle();
-                    _data.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
@@ -259,18 +258,18 @@ public interface ISystemUiProxy extends IInterface {
             }
 
             @Override // com.android.systemui.shared.recents.ISystemUiProxy
-            public void setBackButtonAlpha(float alpha, boolean animate) throws RemoteException {
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
+            public void setBackButtonAlpha(float f, boolean z) throws RemoteException {
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    _data.writeInterfaceToken(Stub.DESCRIPTOR);
-                    _data.writeFloat(alpha);
-                    _data.writeInt(animate ? 1 : 0);
-                    this.mRemote.transact(9, _data, _reply, 0);
-                    _reply.readException();
+                    parcelObtain.writeInterfaceToken(Stub.DESCRIPTOR);
+                    parcelObtain.writeFloat(f);
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(9, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    _reply.recycle();
-                    _data.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
         }

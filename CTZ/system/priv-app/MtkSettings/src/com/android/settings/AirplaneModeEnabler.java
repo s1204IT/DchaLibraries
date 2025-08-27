@@ -14,6 +14,7 @@ import android.util.Log;
 import com.android.internal.telephony.PhoneStateIntentReceiver;
 import com.android.settingslib.WirelessUtils;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+
 /* loaded from: classes.dex */
 public class AirplaneModeEnabler {
     private final Context mContext;
@@ -35,7 +36,6 @@ public class AirplaneModeEnabler {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface OnAirplaneModeChangedListener {
         void onAirplaneModeChanged(boolean z);
     }
@@ -68,8 +68,7 @@ public class AirplaneModeEnabler {
         this.mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onAirplaneModeChanged() {
+    private void onAirplaneModeChanged() {
         if (this.mOnAirplaneModeChangedListener != null) {
             this.mOnAirplaneModeChangedListener.onAirplaneModeChanged(isAirplaneModeOn());
         }
@@ -78,8 +77,8 @@ public class AirplaneModeEnabler {
     public void setAirplaneMode(boolean z) {
         Log.d("AirplaneModeEnabler", "setAirplaneMode, isAirplaneModeOn=" + z);
         String str = SystemProperties.get("ril.cdma.inecmmode", "false");
-        boolean isAdminUser = UserManager.get(this.mContext).isAdminUser();
-        if (str != null && str.contains("true") && isAdminUser) {
+        boolean zIsAdminUser = UserManager.get(this.mContext).isAdminUser();
+        if (str != null && str.contains("true") && zIsAdminUser) {
             Log.d("AirplaneModeEnabler", "ignore as ecbMode=" + str);
             return;
         }

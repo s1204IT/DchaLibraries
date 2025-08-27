@@ -2,6 +2,7 @@ package com.android.systemui;
 
 import android.service.dreams.DreamService;
 import com.android.systemui.DessertCaseView;
+
 /* loaded from: classes.dex */
 public class DessertCaseDream extends DreamService {
     private DessertCaseView.RescalingContainer mContainer;

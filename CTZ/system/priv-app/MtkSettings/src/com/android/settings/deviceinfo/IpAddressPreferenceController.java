@@ -5,6 +5,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.deviceinfo.AbstractIpAddressPreferenceController;
+
 /* loaded from: classes.dex */
 public class IpAddressPreferenceController extends AbstractIpAddressPreferenceController implements PreferenceControllerMixin {
     public IpAddressPreferenceController(Context context, Lifecycle lifecycle) {

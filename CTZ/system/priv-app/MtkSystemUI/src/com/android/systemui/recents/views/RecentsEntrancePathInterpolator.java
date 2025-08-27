@@ -1,6 +1,7 @@
 package com.android.systemui.recents.views;
 
 import android.view.animation.PathInterpolator;
+
 /* loaded from: classes.dex */
 public class RecentsEntrancePathInterpolator extends PathInterpolator {
     final float mStartOffsetFraction;

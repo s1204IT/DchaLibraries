@@ -14,6 +14,7 @@ import com.android.systemui.keyguard.KeyguardViewMediator;
 import com.android.systemui.keyguard.ScreenLifecycle;
 import com.android.systemui.keyguard.WakefulnessLifecycle;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class FingerprintUnlockController extends KeyguardUpdateMonitorCallback {
     private final Context mContext;
@@ -73,8 +74,7 @@ public class FingerprintUnlockController extends KeyguardUpdateMonitorCallback {
         this.mStatusBarKeyguardViewManager = statusBarKeyguardViewManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void releaseFingerprintWakeLock() {
+    private void releaseFingerprintWakeLock() {
         if (this.mWakeLock != null) {
             this.mHandler.removeCallbacks(this.mReleaseFingerprintWakeLockRunnable);
             Log.i("FingerprintController", "releasing fp wakelock");
@@ -112,20 +112,20 @@ public class FingerprintUnlockController extends KeyguardUpdateMonitorCallback {
         if (this.mUpdateMonitor.isGoingToSleep()) {
             this.mPendingAuthenticatedUserId = i;
             Trace.endSection();
-            return;
+        } else {
+            startWakeAndUnlock(calculateMode());
         }
-        startWakeAndUnlock(calculateMode());
     }
 
     public void startWakeAndUnlock(int i) {
         Log.v("FingerprintController", "startWakeAndUnlock(" + i + ")");
-        boolean isDeviceInteractive = this.mUpdateMonitor.isDeviceInteractive();
+        boolean zIsDeviceInteractive = this.mUpdateMonitor.isDeviceInteractive();
         this.mMode = i;
         this.mHasScreenTurnedOnSinceAuthenticating = false;
         if (this.mMode == 2 && pulsingOrAod()) {
             this.mStatusBarWindowManager.setForceDozeBrightness(true);
         }
-        if (!isDeviceInteractive) {
+        if (!zIsDeviceInteractive) {
             Log.i("FingerprintController", "fp wakelock: Authenticated, waking up...");
             this.mPowerManager.wakeUp(SystemClock.uptimeMillis(), "android.policy:FINGERPRINT");
         }
@@ -155,7 +155,7 @@ public class FingerprintUnlockController extends KeyguardUpdateMonitorCallback {
             case 3:
             case 5:
                 Trace.beginSection("MODE_UNLOCK or MODE_SHOW_BOUNCER");
-                if (!isDeviceInteractive) {
+                if (!zIsDeviceInteractive) {
                     this.mStatusBarKeyguardViewManager.notifyDeviceWakeUpRequested();
                     this.mPendingShowBouncer = true;
                 } else {
@@ -173,8 +173,7 @@ public class FingerprintUnlockController extends KeyguardUpdateMonitorCallback {
         Trace.endSection();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showBouncer() {
+    private void showBouncer() {
         if (calculateMode() == 3) {
             this.mStatusBarKeyguardViewManager.showBouncer(false);
         }
@@ -212,30 +211,30 @@ public class FingerprintUnlockController extends KeyguardUpdateMonitorCallback {
     }
 
     private int calculateMode() {
-        boolean isUnlockingWithFingerprintAllowed = this.mUpdateMonitor.isUnlockingWithFingerprintAllowed();
-        boolean isDreaming = this.mUpdateMonitor.isDreaming();
+        boolean zIsUnlockingWithFingerprintAllowed = this.mUpdateMonitor.isUnlockingWithFingerprintAllowed();
+        boolean zIsDreaming = this.mUpdateMonitor.isDreaming();
         if (!this.mUpdateMonitor.isDeviceInteractive()) {
             if (!this.mStatusBarKeyguardViewManager.isShowing()) {
                 return 4;
             }
-            if (this.mDozeScrimController.isPulsing() && isUnlockingWithFingerprintAllowed) {
+            if (this.mDozeScrimController.isPulsing() && zIsUnlockingWithFingerprintAllowed) {
                 return 2;
             }
-            return (isUnlockingWithFingerprintAllowed || !this.mUnlockMethodCache.isMethodSecure()) ? 1 : 3;
-        } else if (isUnlockingWithFingerprintAllowed && isDreaming) {
-            return 7;
-        } else {
-            if (this.mStatusBarKeyguardViewManager.isShowing()) {
-                if (this.mStatusBarKeyguardViewManager.isBouncerShowing() && isUnlockingWithFingerprintAllowed) {
-                    return 6;
-                }
-                if (isUnlockingWithFingerprintAllowed) {
-                    return 5;
-                }
-                return !this.mStatusBarKeyguardViewManager.isBouncerShowing() ? 3 : 0;
-            }
-            return 0;
+            return (zIsUnlockingWithFingerprintAllowed || !this.mUnlockMethodCache.isMethodSecure()) ? 1 : 3;
         }
+        if (zIsUnlockingWithFingerprintAllowed && zIsDreaming) {
+            return 7;
+        }
+        if (this.mStatusBarKeyguardViewManager.isShowing()) {
+            if (this.mStatusBarKeyguardViewManager.isBouncerShowing() && zIsUnlockingWithFingerprintAllowed) {
+                return 6;
+            }
+            if (zIsUnlockingWithFingerprintAllowed) {
+                return 5;
+            }
+            return !this.mStatusBarKeyguardViewManager.isBouncerShowing() ? 3 : 0;
+        }
+        return 0;
     }
 
     @Override // com.android.keyguard.KeyguardUpdateMonitorCallback

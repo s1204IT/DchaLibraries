@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class RestrictedPreferenceHelper {
     private String mAttrUserRestriction;
@@ -20,32 +21,32 @@ public class RestrictedPreferenceHelper {
     private boolean mUseAdminDisabledSummary;
 
     public RestrictedPreferenceHelper(Context context, Preference preference, AttributeSet attributeSet) {
-        CharSequence charSequence;
+        CharSequence text;
         this.mAttrUserRestriction = null;
         boolean z = false;
         this.mUseAdminDisabledSummary = false;
         this.mContext = context;
         this.mPreference = preference;
         if (attributeSet != null) {
-            TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.RestrictedPreference);
-            TypedValue peekValue = obtainStyledAttributes.peekValue(R.styleable.RestrictedPreference_userRestriction);
-            if (peekValue != null && peekValue.type == 3) {
-                if (peekValue.resourceId != 0) {
-                    charSequence = context.getText(peekValue.resourceId);
+            TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.RestrictedPreference);
+            TypedValue typedValuePeekValue = typedArrayObtainStyledAttributes.peekValue(R.styleable.RestrictedPreference_userRestriction);
+            if (typedValuePeekValue != null && typedValuePeekValue.type == 3) {
+                if (typedValuePeekValue.resourceId != 0) {
+                    text = context.getText(typedValuePeekValue.resourceId);
                 } else {
-                    charSequence = peekValue.string;
+                    text = typedValuePeekValue.string;
                 }
             } else {
-                charSequence = null;
+                text = null;
             }
-            this.mAttrUserRestriction = charSequence == null ? null : charSequence.toString();
+            this.mAttrUserRestriction = text == null ? null : text.toString();
             if (RestrictedLockUtils.hasBaseUserRestriction(this.mContext, this.mAttrUserRestriction, UserHandle.myUserId())) {
                 this.mAttrUserRestriction = null;
                 return;
             }
-            TypedValue peekValue2 = obtainStyledAttributes.peekValue(R.styleable.RestrictedPreference_useAdminDisabledSummary);
-            if (peekValue2 != null) {
-                if (peekValue2.type == 18 && peekValue2.data != 0) {
+            TypedValue typedValuePeekValue2 = typedArrayObtainStyledAttributes.peekValue(R.styleable.RestrictedPreference_useAdminDisabledSummary);
+            if (typedValuePeekValue2 != null) {
+                if (typedValuePeekValue2.type == 18 && typedValuePeekValue2.data != 0) {
                     z = true;
                 }
                 this.mUseAdminDisabledSummary = z;
@@ -58,7 +59,7 @@ public class RestrictedPreferenceHelper {
         if (this.mDisabledByAdmin) {
             preferenceViewHolder.itemView.setEnabled(true);
         }
-        if (this.mUseAdminDisabledSummary && (textView = (TextView) preferenceViewHolder.findViewById(16908304)) != null) {
+        if (this.mUseAdminDisabledSummary && (textView = (TextView) preferenceViewHolder.findViewById(android.R.id.summary)) != null) {
             CharSequence text = textView.getContext().getText(R.string.disabled_by_admin_summary_text);
             if (this.mDisabledByAdmin) {
                 textView.setText(text);

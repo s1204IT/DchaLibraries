@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 class Tweener {
     ObjectAnimator animator;
@@ -30,8 +31,7 @@ class Tweener {
         this.animator = objectAnimator;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void remove(Animator animator) {
+    private static void remove(Animator animator) {
         Iterator<Map.Entry<Object, Tweener>> it = sTweens.entrySet().iterator();
         while (it.hasNext()) {
             if (it.next().getValue().animator == animator) {
@@ -41,13 +41,14 @@ class Tweener {
         }
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [65=4] */
     public static Tweener to(Object obj, long j, Object... objArr) {
         Tweener tweener;
-        ObjectAnimator objectAnimator;
+        ObjectAnimator objectAnimatorOfPropertyValuesHolder;
         ArrayList arrayList = new ArrayList(objArr.length / 2);
         ValueAnimator.AnimatorUpdateListener animatorUpdateListener = null;
         Animator.AnimatorListener animatorListener = null;
-        long j2 = 0;
+        long jLongValue = 0;
         TimeInterpolator timeInterpolator = null;
         for (int i = 0; i < objArr.length; i += 2) {
             if (!(objArr[i] instanceof String)) {
@@ -63,7 +64,7 @@ class Tweener {
                 } else if ("onComplete".equals(str) || "onCompleteListener".equals(str)) {
                     animatorListener = (Animator.AnimatorListener) obj2;
                 } else if ("delay".equals(str)) {
-                    j2 = ((Number) obj2).longValue();
+                    jLongValue = ((Number) obj2).longValue();
                 } else if ("syncWith".equals(str)) {
                     continue;
                 } else if (obj2 instanceof float[]) {
@@ -72,38 +73,39 @@ class Tweener {
                 } else if (obj2 instanceof int[]) {
                     int[] iArr = (int[]) obj2;
                     arrayList.add(PropertyValuesHolder.ofInt(str, iArr[0], iArr[1]));
-                } else if (!(obj2 instanceof Number)) {
-                    throw new IllegalArgumentException("Bad argument for key \"" + str + "\" with value " + obj2.getClass());
                 } else {
+                    if (!(obj2 instanceof Number)) {
+                        throw new IllegalArgumentException("Bad argument for key \"" + str + "\" with value " + obj2.getClass());
+                    }
                     arrayList.add(PropertyValuesHolder.ofFloat(str, ((Number) obj2).floatValue()));
                 }
             }
         }
         Tweener tweener2 = sTweens.get(obj);
         if (tweener2 == null) {
-            objectAnimator = ObjectAnimator.ofPropertyValuesHolder(obj, (PropertyValuesHolder[]) arrayList.toArray(new PropertyValuesHolder[arrayList.size()]));
-            tweener = new Tweener(objectAnimator);
+            objectAnimatorOfPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(obj, (PropertyValuesHolder[]) arrayList.toArray(new PropertyValuesHolder[arrayList.size()]));
+            tweener = new Tweener(objectAnimatorOfPropertyValuesHolder);
             sTweens.put(obj, tweener);
         } else {
-            ObjectAnimator objectAnimator2 = sTweens.get(obj).animator;
+            ObjectAnimator objectAnimator = sTweens.get(obj).animator;
             replace(arrayList, obj);
             tweener = tweener2;
-            objectAnimator = objectAnimator2;
+            objectAnimatorOfPropertyValuesHolder = objectAnimator;
         }
         if (timeInterpolator != null) {
-            objectAnimator.setInterpolator(timeInterpolator);
+            objectAnimatorOfPropertyValuesHolder.setInterpolator(timeInterpolator);
         }
-        objectAnimator.setStartDelay(j2);
-        objectAnimator.setDuration(j);
+        objectAnimatorOfPropertyValuesHolder.setStartDelay(jLongValue);
+        objectAnimatorOfPropertyValuesHolder.setDuration(j);
         if (animatorUpdateListener != null) {
-            objectAnimator.removeAllUpdateListeners();
-            objectAnimator.addUpdateListener(animatorUpdateListener);
+            objectAnimatorOfPropertyValuesHolder.removeAllUpdateListeners();
+            objectAnimatorOfPropertyValuesHolder.addUpdateListener(animatorUpdateListener);
         }
         if (animatorListener != null) {
-            objectAnimator.removeAllListeners();
-            objectAnimator.addListener(animatorListener);
+            objectAnimatorOfPropertyValuesHolder.removeAllListeners();
+            objectAnimatorOfPropertyValuesHolder.addListener(animatorListener);
         }
-        objectAnimator.addListener(mCleanupListener);
+        objectAnimatorOfPropertyValuesHolder.addListener(mCleanupListener);
         return tweener;
     }
 

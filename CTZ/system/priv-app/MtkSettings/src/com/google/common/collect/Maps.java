@@ -19,20 +19,21 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
+
 /* loaded from: classes.dex */
 public final class Maps {
     static final Joiner.MapJoiner STANDARD_JOINER = Collections2.STANDARD_JOINER.withKeyValueSeparator("=");
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public enum EntryFunction implements Function<Map.Entry<?, ?>, Object> {
+    private enum EntryFunction implements Function<Map.Entry<?, ?>, Object> {
         KEY { // from class: com.google.common.collect.Maps.EntryFunction.1
+            /* JADX DEBUG: Method merged with bridge method: apply(Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // com.google.common.base.Function
             public Object apply(Map.Entry<?, ?> entry) {
                 return entry.getKey();
             }
         },
         VALUE { // from class: com.google.common.collect.Maps.EntryFunction.2
+            /* JADX DEBUG: Method merged with bridge method: apply(Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // com.google.common.base.Function
             public Object apply(Map.Entry<?, ?> entry) {
                 return entry.getValue();
@@ -40,8 +41,7 @@ public final class Maps {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <K> Function<Map.Entry<K, ?>, K> keyFunction() {
+    static <K> Function<Map.Entry<K, ?>, K> keyFunction() {
         return EntryFunction.KEY;
     }
 
@@ -57,31 +57,29 @@ public final class Maps {
         return Iterators.transform(it, valueFunction());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <K, V> UnmodifiableIterator<V> valueIterator(final UnmodifiableIterator<Map.Entry<K, V>> unmodifiableIterator) {
+    static <K, V> UnmodifiableIterator<V> valueIterator(final UnmodifiableIterator<Map.Entry<K, V>> unmodifiableIterator) {
         return new UnmodifiableIterator<V>() { // from class: com.google.common.collect.Maps.1
             @Override // java.util.Iterator
             public boolean hasNext() {
-                return UnmodifiableIterator.this.hasNext();
+                return unmodifiableIterator.hasNext();
             }
 
             @Override // java.util.Iterator
             public V next() {
-                return (V) ((Map.Entry) UnmodifiableIterator.this.next()).getValue();
+                return (V) ((Map.Entry) unmodifiableIterator.next()).getValue();
             }
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int capacity(int i) {
+    static int capacity(int i) {
         if (i < 3) {
             CollectPreconditions.checkNonnegative(i, "expectedSize");
             return i + 1;
-        } else if (i < 1073741824) {
-            return i + (i / 3);
-        } else {
-            return Preference.DEFAULT_ORDER;
         }
+        if (i < 1073741824) {
+            return i + (i / 3);
+        }
+        return Preference.DEFAULT_ORDER;
     }
 
     public static <K, V> LinkedHashMap<K, V> newLinkedHashMap() {
@@ -92,7 +90,6 @@ public final class Maps {
         return new ImmutableEntry(k, v);
     }
 
-    /* loaded from: classes.dex */
     static abstract class ImprovedAbstractMap<K, V> extends AbstractMap<K, V> {
         private transient Set<Map.Entry<K, V>> entrySet;
         private transient Set<K> keySet;
@@ -100,26 +97,29 @@ public final class Maps {
 
         abstract Set<Map.Entry<K, V>> createEntrySet();
 
+        ImprovedAbstractMap() {
+        }
+
         @Override // java.util.AbstractMap, java.util.Map
         public Set<Map.Entry<K, V>> entrySet() {
             Set<Map.Entry<K, V>> set = this.entrySet;
-            if (set == null) {
-                Set<Map.Entry<K, V>> createEntrySet = createEntrySet();
-                this.entrySet = createEntrySet;
-                return createEntrySet;
+            if (set != null) {
+                return set;
             }
-            return set;
+            Set<Map.Entry<K, V>> setCreateEntrySet = createEntrySet();
+            this.entrySet = setCreateEntrySet;
+            return setCreateEntrySet;
         }
 
         @Override // java.util.AbstractMap, java.util.Map
         public Set<K> keySet() {
             Set<K> set = this.keySet;
-            if (set == null) {
-                Set<K> createKeySet = createKeySet();
-                this.keySet = createKeySet;
-                return createKeySet;
+            if (set != null) {
+                return set;
             }
-            return set;
+            Set<K> setCreateKeySet = createKeySet();
+            this.keySet = setCreateKeySet;
+            return setCreateKeySet;
         }
 
         Set<K> createKeySet() {
@@ -129,12 +129,12 @@ public final class Maps {
         @Override // java.util.AbstractMap, java.util.Map
         public Collection<V> values() {
             Collection<V> collection = this.values;
-            if (collection == null) {
-                Collection<V> createValues = createValues();
-                this.values = createValues;
-                return createValues;
+            if (collection != null) {
+                return collection;
             }
-            return collection;
+            Collection<V> collectionCreateValues = createValues();
+            this.values = collectionCreateValues;
+            return collectionCreateValues;
         }
 
         Collection<V> createValues() {
@@ -142,8 +142,7 @@ public final class Maps {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <V> V safeGet(Map<?, V> map, Object obj) {
+    static <V> V safeGet(Map<?, V> map, Object obj) {
         Preconditions.checkNotNull(map);
         try {
             return map.get(obj);
@@ -154,8 +153,7 @@ public final class Maps {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean safeContainsKey(Map<?, ?> map, Object obj) {
+    static boolean safeContainsKey(Map<?, ?> map, Object obj) {
         Preconditions.checkNotNull(map);
         try {
             return map.containsKey(obj);
@@ -166,8 +164,7 @@ public final class Maps {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <V> V safeRemove(Map<?, V> map, Object obj) {
+    static <V> V safeRemove(Map<?, V> map, Object obj) {
         Preconditions.checkNotNull(map);
         try {
             return map.remove(obj);
@@ -178,8 +175,7 @@ public final class Maps {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean equalsImpl(Map<?, ?> map, Object obj) {
+    static boolean equalsImpl(Map<?, ?> map, Object obj) {
         if (map == obj) {
             return true;
         }
@@ -189,27 +185,22 @@ public final class Maps {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static String toStringImpl(Map<?, ?> map) {
-        StringBuilder newStringBuilderForCollection = Collections2.newStringBuilderForCollection(map.size());
-        newStringBuilderForCollection.append('{');
-        STANDARD_JOINER.appendTo(newStringBuilderForCollection, map);
-        newStringBuilderForCollection.append('}');
-        return newStringBuilderForCollection.toString();
+    static String toStringImpl(Map<?, ?> map) {
+        StringBuilder sbNewStringBuilderForCollection = Collections2.newStringBuilderForCollection(map.size());
+        sbNewStringBuilderForCollection.append('{');
+        STANDARD_JOINER.appendTo(sbNewStringBuilderForCollection, map);
+        sbNewStringBuilderForCollection.append('}');
+        return sbNewStringBuilderForCollection.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class KeySet<K, V> extends Sets.ImprovedAbstractSet<K> {
+    static class KeySet<K, V> extends Sets.ImprovedAbstractSet<K> {
         final Map<K, V> map;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public KeySet(Map<K, V> map) {
+        KeySet(Map<K, V> map) {
             this.map = (Map) Preconditions.checkNotNull(map);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public Map<K, V> map() {
+        Map<K, V> map() {
             return this.map;
         }
 
@@ -248,23 +239,21 @@ public final class Maps {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <K> K keyOrNull(Map.Entry<K, ?> entry) {
+    static <K> K keyOrNull(Map.Entry<K, ?> entry) {
         if (entry == null) {
             return null;
         }
         return entry.getKey();
     }
 
-    /* loaded from: classes.dex */
     static class SortedKeySet<K, V> extends KeySet<K, V> implements SortedSet<K> {
         SortedKeySet(SortedMap<K, V> sortedMap) {
             super(sortedMap);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: map()Ljava/util/Map; */
         @Override // com.google.common.collect.Maps.KeySet
-        public SortedMap<K, V> map() {
+        SortedMap<K, V> map() {
             return (SortedMap) super.map();
         }
 
@@ -296,17 +285,15 @@ public final class Maps {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class NavigableKeySet<K, V> extends SortedKeySet<K, V> implements NavigableSet<K> {
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public NavigableKeySet(NavigableMap<K, V> navigableMap) {
+    static class NavigableKeySet<K, V> extends SortedKeySet<K, V> implements NavigableSet<K> {
+        NavigableKeySet(NavigableMap<K, V> navigableMap) {
             super(navigableMap);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Method merged with bridge method: map()Ljava/util/Map; */
+        /* JADX DEBUG: Method merged with bridge method: map()Ljava/util/SortedMap; */
         @Override // com.google.common.collect.Maps.SortedKeySet, com.google.common.collect.Maps.KeySet
-        public NavigableMap<K, V> map() {
+        NavigableMap<K, V> map() {
             return (NavigableMap) this.map;
         }
 
@@ -381,9 +368,7 @@ public final class Maps {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Values<K, V> extends AbstractCollection<V> {
+    static class Values<K, V> extends AbstractCollection<V> {
         final Map<K, V> map;
 
         Values(Map<K, V> map) {
@@ -419,13 +404,13 @@ public final class Maps {
             try {
                 return super.removeAll((Collection) Preconditions.checkNotNull(collection));
             } catch (UnsupportedOperationException e) {
-                HashSet newHashSet = Sets.newHashSet();
+                HashSet hashSetNewHashSet = Sets.newHashSet();
                 for (Map.Entry<K, V> entry : map().entrySet()) {
                     if (collection.contains(entry.getValue())) {
-                        newHashSet.add(entry.getKey());
+                        hashSetNewHashSet.add(entry.getKey());
                     }
                 }
-                return map().keySet().removeAll(newHashSet);
+                return map().keySet().removeAll(hashSetNewHashSet);
             }
         }
 
@@ -434,13 +419,13 @@ public final class Maps {
             try {
                 return super.retainAll((Collection) Preconditions.checkNotNull(collection));
             } catch (UnsupportedOperationException e) {
-                HashSet newHashSet = Sets.newHashSet();
+                HashSet hashSetNewHashSet = Sets.newHashSet();
                 for (Map.Entry<K, V> entry : map().entrySet()) {
                     if (collection.contains(entry.getValue())) {
-                        newHashSet.add(entry.getKey());
+                        hashSetNewHashSet.add(entry.getKey());
                     }
                 }
-                return map().keySet().retainAll(newHashSet);
+                return map().keySet().retainAll(hashSetNewHashSet);
             }
         }
 
@@ -465,9 +450,11 @@ public final class Maps {
         }
     }
 
-    /* loaded from: classes.dex */
     static abstract class EntrySet<K, V> extends Sets.ImprovedAbstractSet<Map.Entry<K, V>> {
         abstract Map<K, V> map();
+
+        EntrySet() {
+        }
 
         @Override // java.util.AbstractCollection, java.util.Collection, java.util.Set
         public int size() {
@@ -481,14 +468,14 @@ public final class Maps {
 
         @Override // java.util.AbstractCollection, java.util.Collection, java.util.Set
         public boolean contains(Object obj) {
-            if (obj instanceof Map.Entry) {
-                Map.Entry entry = (Map.Entry) obj;
-                Object key = entry.getKey();
-                Object safeGet = Maps.safeGet(map(), key);
-                if (Objects.equal(safeGet, entry.getValue())) {
-                    return safeGet != null || map().containsKey(key);
-                }
+            if (!(obj instanceof Map.Entry)) {
                 return false;
+            }
+            Map.Entry entry = (Map.Entry) obj;
+            Object key = entry.getKey();
+            Object objSafeGet = Maps.safeGet(map(), key);
+            if (Objects.equal(objSafeGet, entry.getValue())) {
+                return objSafeGet != null || map().containsKey(key);
             }
             return false;
         }
@@ -520,18 +507,17 @@ public final class Maps {
             try {
                 return super.retainAll((Collection) Preconditions.checkNotNull(collection));
             } catch (UnsupportedOperationException e) {
-                HashSet newHashSetWithExpectedSize = Sets.newHashSetWithExpectedSize(collection.size());
+                HashSet hashSetNewHashSetWithExpectedSize = Sets.newHashSetWithExpectedSize(collection.size());
                 for (Object obj : collection) {
                     if (contains(obj)) {
-                        newHashSetWithExpectedSize.add(((Map.Entry) obj).getKey());
+                        hashSetNewHashSetWithExpectedSize.add(((Map.Entry) obj).getKey());
                     }
                 }
-                return map().keySet().retainAll(newHashSetWithExpectedSize);
+                return map().keySet().retainAll(hashSetNewHashSetWithExpectedSize);
             }
         }
     }
 
-    /* loaded from: classes.dex */
     static abstract class DescendingMap<K, V> extends ForwardingMap<K, V> implements NavigableMap<K, V> {
         private transient Comparator<? super K> comparator;
         private transient Set<Map.Entry<K, V>> entrySet;
@@ -541,9 +527,12 @@ public final class Maps {
 
         abstract NavigableMap<K, V> forward();
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        DescendingMap() {
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
         @Override // com.google.common.collect.ForwardingMap, com.google.common.collect.ForwardingObject
-        public final Map<K, V> delegate() {
+        protected final Map<K, V> delegate() {
             return forward();
         }
 
@@ -555,9 +544,9 @@ public final class Maps {
                 if (comparator2 == null) {
                     comparator2 = Ordering.natural();
                 }
-                Ordering reverse = reverse(comparator2);
-                this.comparator = reverse;
-                return reverse;
+                Ordering orderingReverse = reverse(comparator2);
+                this.comparator = orderingReverse;
+                return orderingReverse;
             }
             return comparator;
         }
@@ -644,12 +633,12 @@ public final class Maps {
         @Override // com.google.common.collect.ForwardingMap, java.util.Map
         public Set<Map.Entry<K, V>> entrySet() {
             Set<Map.Entry<K, V>> set = this.entrySet;
-            if (set == null) {
-                Set<Map.Entry<K, V>> createEntrySet = createEntrySet();
-                this.entrySet = createEntrySet;
-                return createEntrySet;
+            if (set != null) {
+                return set;
             }
-            return set;
+            Set<Map.Entry<K, V>> setCreateEntrySet = createEntrySet();
+            this.entrySet = setCreateEntrySet;
+            return setCreateEntrySet;
         }
 
         Set<Map.Entry<K, V>> createEntrySet() {
@@ -674,12 +663,12 @@ public final class Maps {
         @Override // java.util.NavigableMap
         public NavigableSet<K> navigableKeySet() {
             NavigableSet<K> navigableSet = this.navigableKeySet;
-            if (navigableSet == null) {
-                NavigableKeySet navigableKeySet = new NavigableKeySet(this);
-                this.navigableKeySet = navigableKeySet;
-                return navigableKeySet;
+            if (navigableSet != null) {
+                return navigableSet;
             }
-            return navigableSet;
+            NavigableKeySet navigableKeySet = new NavigableKeySet(this);
+            this.navigableKeySet = navigableKeySet;
+            return navigableKeySet;
         }
 
         @Override // java.util.NavigableMap

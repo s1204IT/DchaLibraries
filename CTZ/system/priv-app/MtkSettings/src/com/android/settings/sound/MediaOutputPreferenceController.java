@@ -7,6 +7,7 @@ import com.android.settings.R;
 import com.android.settingslib.Utils;
 import com.android.settingslib.bluetooth.A2dpProfile;
 import com.android.settingslib.bluetooth.HearingAidProfile;
+
 /* loaded from: classes.dex */
 public class MediaOutputPreferenceController extends AudioSwitchPreferenceController {
     public MediaOutputPreferenceController(Context context, String str) {
@@ -21,37 +22,39 @@ public class MediaOutputPreferenceController extends AudioSwitchPreferenceContro
         if (isStreamFromOutputDevice(3, 32768)) {
             this.mPreference.setVisible(false);
             preference.setSummary(this.mContext.getText(R.string.media_output_summary_unavailable));
-        } else if (Utils.isAudioModeOngoingCall(this.mContext)) {
+            return;
+        }
+        if (Utils.isAudioModeOngoingCall(this.mContext)) {
             this.mPreference.setVisible(false);
             preference.setSummary(this.mContext.getText(R.string.media_out_summary_ongoing_call_state));
-        } else {
-            this.mConnectedDevices.clear();
-            if (this.mAudioManager.getMode() == 0) {
-                this.mConnectedDevices.addAll(getConnectedA2dpDevices());
-                this.mConnectedDevices.addAll(getConnectedHearingAidDevices());
-            }
-            int size = this.mConnectedDevices.size();
-            if (size == 0) {
-                this.mPreference.setVisible(false);
-                CharSequence text = this.mContext.getText(R.string.media_output_default_summary);
-                CharSequence[] charSequenceArr = {text};
-                this.mSelectedIndex = getDefaultDeviceIndex();
-                preference.setSummary(text);
-                setPreference(charSequenceArr, charSequenceArr, preference);
-                return;
-            }
-            if (getAvailabilityStatus() == 0) {
-                this.mPreference.setVisible(true);
-            }
-            int i = size + 1;
-            CharSequence[] charSequenceArr2 = new CharSequence[i];
-            CharSequence[] charSequenceArr3 = new CharSequence[i];
-            setupPreferenceEntries(charSequenceArr2, charSequenceArr3, findActiveDevice(3));
-            if (isStreamFromOutputDevice(3, 67108864)) {
-                this.mSelectedIndex = getDefaultDeviceIndex();
-            }
-            setPreference(charSequenceArr2, charSequenceArr3, preference);
+            return;
         }
+        this.mConnectedDevices.clear();
+        if (this.mAudioManager.getMode() == 0) {
+            this.mConnectedDevices.addAll(getConnectedA2dpDevices());
+            this.mConnectedDevices.addAll(getConnectedHearingAidDevices());
+        }
+        int size = this.mConnectedDevices.size();
+        if (size == 0) {
+            this.mPreference.setVisible(false);
+            CharSequence text = this.mContext.getText(R.string.media_output_default_summary);
+            CharSequence[] charSequenceArr = {text};
+            this.mSelectedIndex = getDefaultDeviceIndex();
+            preference.setSummary(text);
+            setPreference(charSequenceArr, charSequenceArr, preference);
+            return;
+        }
+        if (getAvailabilityStatus() == 0) {
+            this.mPreference.setVisible(true);
+        }
+        int i = size + 1;
+        CharSequence[] charSequenceArr2 = new CharSequence[i];
+        CharSequence[] charSequenceArr3 = new CharSequence[i];
+        setupPreferenceEntries(charSequenceArr2, charSequenceArr3, findActiveDevice(3));
+        if (isStreamFromOutputDevice(3, 67108864)) {
+            this.mSelectedIndex = getDefaultDeviceIndex();
+        }
+        setPreference(charSequenceArr2, charSequenceArr3, preference);
     }
 
     @Override // com.android.settings.sound.AudioSwitchPreferenceController

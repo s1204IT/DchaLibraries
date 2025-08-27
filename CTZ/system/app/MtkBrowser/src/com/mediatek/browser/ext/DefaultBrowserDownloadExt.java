@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 import java.io.File;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserDownloadExt implements IBrowserDownloadExt {
     @Override // com.mediatek.browser.ext.IBrowserDownloadExt

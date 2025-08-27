@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ZenAccessSettings extends EmptyTextSettings {
     private Context mContext;
@@ -62,9 +63,8 @@ public class ZenAccessSettings extends EmptyTextSettings {
         setEmptyText(R.string.zen_access_empty_text);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.zen_access_settings;
     }
 
@@ -88,8 +88,7 @@ public class ZenAccessSettings extends EmptyTextSettings {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void reloadList() {
+    private void reloadList() {
         List<ApplicationInfo> installedApplications;
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.removeAll();
@@ -110,12 +109,12 @@ public class ZenAccessSettings extends EmptyTextSettings {
         while (it.hasNext()) {
             ApplicationInfo applicationInfo2 = (ApplicationInfo) it.next();
             final String str = applicationInfo2.packageName;
-            final CharSequence loadLabel = applicationInfo2.loadLabel(this.mPkgMan);
+            final CharSequence charSequenceLoadLabel = applicationInfo2.loadLabel(this.mPkgMan);
             AppSwitchPreference appSwitchPreference = new AppSwitchPreference(getPrefContext());
             appSwitchPreference.setKey(str);
             appSwitchPreference.setPersistent(false);
             appSwitchPreference.setIcon(applicationInfo2.loadIcon(this.mPkgMan));
-            appSwitchPreference.setTitle(loadLabel);
+            appSwitchPreference.setTitle(charSequenceLoadLabel);
             appSwitchPreference.setChecked(hasAccess(str));
             if (arraySet.contains(str)) {
                 appSwitchPreference.setEnabled(false);
@@ -125,10 +124,10 @@ public class ZenAccessSettings extends EmptyTextSettings {
                 @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
                 public boolean onPreferenceChange(Preference preference, Object obj) {
                     if (((Boolean) obj).booleanValue()) {
-                        new ScaryWarningDialogFragment().setPkgInfo(str, loadLabel).show(ZenAccessSettings.this.getFragmentManager(), "dialog");
+                        new ScaryWarningDialogFragment().setPkgInfo(str, charSequenceLoadLabel).show(ZenAccessSettings.this.getFragmentManager(), "dialog");
                         return false;
                     }
-                    new FriendlyWarningDialogFragment().setPkgInfo(str, loadLabel).show(ZenAccessSettings.this.getFragmentManager(), "dialog");
+                    new FriendlyWarningDialogFragment().setPkgInfo(str, charSequenceLoadLabel).show(ZenAccessSettings.this.getFragmentManager(), "dialog");
                     return false;
                 }
             });
@@ -139,10 +138,11 @@ public class ZenAccessSettings extends EmptyTextSettings {
     private ArraySet<String> getPackagesRequestingNotificationPolicyAccess() {
         ArraySet<String> arraySet = new ArraySet<>();
         try {
-            List<PackageInfo> list = AppGlobals.getPackageManager().getPackagesHoldingPermissions(new String[]{"android.permission.ACCESS_NOTIFICATION_POLICY"}, 0, ActivityManager.getCurrentUser()).getList();
+            List list = AppGlobals.getPackageManager().getPackagesHoldingPermissions(new String[]{"android.permission.ACCESS_NOTIFICATION_POLICY"}, 0, ActivityManager.getCurrentUser()).getList();
             if (list != null) {
-                for (PackageInfo packageInfo : list) {
-                    arraySet.add(packageInfo.packageName);
+                Iterator it = list.iterator();
+                while (it.hasNext()) {
+                    arraySet.add(((PackageInfo) it.next()).packageName);
                 }
             }
         } catch (RemoteException e) {
@@ -155,8 +155,7 @@ public class ZenAccessSettings extends EmptyTextSettings {
         return this.mNoMan.isNotificationPolicyAccessGrantedForPackage(str);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void setAccess(final Context context, final String str, final boolean z) {
+    private static void setAccess(final Context context, final String str, final boolean z) {
         logSpecialPermissionChange(z, str, context);
         AsyncTask.execute(new Runnable() { // from class: com.android.settings.notification.ZenAccessSettings.2
             @Override // java.lang.Runnable
@@ -171,8 +170,7 @@ public class ZenAccessSettings extends EmptyTextSettings {
         FeatureFactory.getFactory(context).getMetricsFeatureProvider().action(context, z ? 768 : 769, str, new Pair[0]);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void deleteRules(final Context context, final String str) {
+    private static void deleteRules(final Context context, final String str) {
         AsyncTask.execute(new Runnable() { // from class: com.android.settings.notification.ZenAccessSettings.3
             @Override // java.lang.Runnable
             public void run() {
@@ -181,7 +179,6 @@ public class ZenAccessSettings extends EmptyTextSettings {
         });
     }
 
-    /* loaded from: classes.dex */
     private final class SettingObserver extends ContentObserver {
         public SettingObserver() {
             super(new Handler(Looper.getMainLooper()));
@@ -193,7 +190,6 @@ public class ZenAccessSettings extends EmptyTextSettings {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ScaryWarningDialogFragment extends InstrumentedDialogFragment {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {
@@ -229,7 +225,6 @@ public class ZenAccessSettings extends EmptyTextSettings {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class FriendlyWarningDialogFragment extends InstrumentedDialogFragment {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {

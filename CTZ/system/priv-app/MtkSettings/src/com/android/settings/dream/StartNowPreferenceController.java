@@ -10,6 +10,7 @@ import com.android.settings.applications.LayoutPreference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.dream.DreamBackend;
+
 /* loaded from: classes.dex */
 public class StartNowPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final DreamBackend mBackend;
@@ -35,7 +36,7 @@ public class StartNowPreferenceController extends AbstractPreferenceController i
         ((Button) ((LayoutPreference) preferenceScreen.findPreference(getPreferenceKey())).findViewById(R.id.dream_start_now_button)).setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.dream.-$$Lambda$StartNowPreferenceController$bNNILqA5JAxzjWV5EYdSnVpdHoI
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                StartNowPreferenceController.this.mBackend.startDreaming();
+                this.f$0.mBackend.startDreaming();
             }
         });
     }

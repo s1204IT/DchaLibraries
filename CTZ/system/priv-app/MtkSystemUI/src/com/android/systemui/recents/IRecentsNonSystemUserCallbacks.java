@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
+
 /* loaded from: classes.dex */
 public interface IRecentsNonSystemUserCallbacks extends IInterface {
     void cancelPreloadingRecents() throws RemoteException;
@@ -28,7 +29,6 @@ public interface IRecentsNonSystemUserCallbacks extends IInterface {
 
     void toggleRecents(int i) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IRecentsNonSystemUserCallbacks {
         public Stub() {
             attachInterface(this, "com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
@@ -38,9 +38,9 @@ public interface IRecentsNonSystemUserCallbacks extends IInterface {
             if (iBinder == null) {
                 return null;
             }
-            IInterface queryLocalInterface = iBinder.queryLocalInterface("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-            if (queryLocalInterface != null && (queryLocalInterface instanceof IRecentsNonSystemUserCallbacks)) {
-                return (IRecentsNonSystemUserCallbacks) queryLocalInterface;
+            IInterface iInterfaceQueryLocalInterface = iBinder.queryLocalInterface("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+            if (iInterfaceQueryLocalInterface != null && (iInterfaceQueryLocalInterface instanceof IRecentsNonSystemUserCallbacks)) {
+                return (IRecentsNonSystemUserCallbacks) iInterfaceQueryLocalInterface;
             }
             return new Proxy(iBinder);
         }
@@ -84,15 +84,15 @@ public interface IRecentsNonSystemUserCallbacks extends IInterface {
                     return true;
                 case 7:
                     parcel.enforceInterface("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    int readInt = parcel.readInt();
-                    int readInt2 = parcel.readInt();
-                    int readInt3 = parcel.readInt();
+                    int i3 = parcel.readInt();
+                    int i4 = parcel.readInt();
+                    int i5 = parcel.readInt();
                     if (parcel.readInt() != 0) {
                         rect = (Rect) Rect.CREATOR.createFromParcel(parcel);
                     } else {
                         rect = null;
                     }
-                    splitPrimaryTask(readInt, readInt2, readInt3, rect);
+                    splitPrimaryTask(i3, i4, i5, rect);
                     return true;
                 case 8:
                     parcel.enforceInterface("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
@@ -111,7 +111,6 @@ public interface IRecentsNonSystemUserCallbacks extends IInterface {
             }
         }
 
-        /* loaded from: classes.dex */
         private static class Proxy implements IRecentsNonSystemUserCallbacks {
             private IBinder mRemote;
 
@@ -126,131 +125,131 @@ public interface IRecentsNonSystemUserCallbacks extends IInterface {
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void preloadRecents() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    this.mRemote.transact(1, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    this.mRemote.transact(1, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void cancelPreloadingRecents() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    this.mRemote.transact(2, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    this.mRemote.transact(2, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void showRecents(boolean z, boolean z2, boolean z3, int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    obtain.writeInt(z ? 1 : 0);
-                    obtain.writeInt(z2 ? 1 : 0);
-                    obtain.writeInt(z3 ? 1 : 0);
-                    obtain.writeInt(i);
-                    this.mRemote.transact(3, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    parcelObtain.writeInt(z2 ? 1 : 0);
+                    parcelObtain.writeInt(z3 ? 1 : 0);
+                    parcelObtain.writeInt(i);
+                    this.mRemote.transact(3, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void hideRecents(boolean z, boolean z2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    obtain.writeInt(z ? 1 : 0);
-                    obtain.writeInt(z2 ? 1 : 0);
-                    this.mRemote.transact(4, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    parcelObtain.writeInt(z2 ? 1 : 0);
+                    this.mRemote.transact(4, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void toggleRecents(int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    obtain.writeInt(i);
-                    this.mRemote.transact(5, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    parcelObtain.writeInt(i);
+                    this.mRemote.transact(5, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void onConfigurationChanged() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    this.mRemote.transact(6, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    this.mRemote.transact(6, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void splitPrimaryTask(int i, int i2, int i3, Rect rect) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    obtain.writeInt(i);
-                    obtain.writeInt(i2);
-                    obtain.writeInt(i3);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    parcelObtain.writeInt(i);
+                    parcelObtain.writeInt(i2);
+                    parcelObtain.writeInt(i3);
                     if (rect != null) {
-                        obtain.writeInt(1);
-                        rect.writeToParcel(obtain, 0);
+                        parcelObtain.writeInt(1);
+                        rect.writeToParcel(parcelObtain, 0);
                     } else {
-                        obtain.writeInt(0);
+                        parcelObtain.writeInt(0);
                     }
-                    this.mRemote.transact(7, obtain, null, 1);
+                    this.mRemote.transact(7, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void onDraggingInRecents(float f) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    obtain.writeFloat(f);
-                    this.mRemote.transact(8, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    parcelObtain.writeFloat(f);
+                    this.mRemote.transact(8, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void onDraggingInRecentsEnded(float f) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    obtain.writeFloat(f);
-                    this.mRemote.transact(9, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    parcelObtain.writeFloat(f);
+                    this.mRemote.transact(9, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // com.android.systemui.recents.IRecentsNonSystemUserCallbacks
             public void showCurrentUserToast(int i, int i2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
-                    obtain.writeInt(i);
-                    obtain.writeInt(i2);
-                    this.mRemote.transact(10, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("com.android.systemui.recents.IRecentsNonSystemUserCallbacks");
+                    parcelObtain.writeInt(i);
+                    parcelObtain.writeInt(i2);
+                    this.mRemote.transact(10, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
         }

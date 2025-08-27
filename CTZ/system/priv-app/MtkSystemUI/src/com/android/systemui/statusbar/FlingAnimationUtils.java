@@ -7,6 +7,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.PathInterpolator;
 import com.android.systemui.Interpolators;
 import com.android.systemui.statusbar.notification.NotificationUtils;
+
 /* loaded from: classes.dex */
 public class FlingAnimationUtils {
     private AnimatorProperties mAnimatorProperties;
@@ -66,22 +67,22 @@ public class FlingAnimationUtils {
 
     private AnimatorProperties getProperties(float f, float f2, float f3, float f4) {
         float f5 = f2 - f;
-        float sqrt = (float) (this.mMaxLengthSeconds * Math.sqrt(Math.abs(f5) / f4));
-        float abs = Math.abs(f5);
-        float abs2 = Math.abs(f3);
-        float min = this.mSpeedUpFactor != 0.0f ? Math.min(abs2 / 3000.0f, 1.0f) : 1.0f;
-        float interpolate = NotificationUtils.interpolate(0.75f, this.mY2 / this.mLinearOutSlowInX2, min);
-        float f6 = (interpolate * abs) / abs2;
-        Interpolator interpolator = getInterpolator(interpolate, min);
-        if (f6 <= sqrt) {
+        float fSqrt = (float) (this.mMaxLengthSeconds * Math.sqrt(Math.abs(f5) / f4));
+        float fAbs = Math.abs(f5);
+        float fAbs2 = Math.abs(f3);
+        float fMin = this.mSpeedUpFactor != 0.0f ? Math.min(fAbs2 / 3000.0f, 1.0f) : 1.0f;
+        float fInterpolate = NotificationUtils.interpolate(0.75f, this.mY2 / this.mLinearOutSlowInX2, fMin);
+        float f6 = (fInterpolate * fAbs) / fAbs2;
+        Interpolator interpolator = getInterpolator(fInterpolate, fMin);
+        if (f6 <= fSqrt) {
             this.mAnimatorProperties.interpolator = interpolator;
-            sqrt = f6;
-        } else if (abs2 >= this.mMinVelocityPxPerSecond) {
-            this.mAnimatorProperties.interpolator = new InterpolatorInterpolator(new VelocityInterpolator(sqrt, abs2, abs), interpolator, Interpolators.LINEAR_OUT_SLOW_IN);
+            fSqrt = f6;
+        } else if (fAbs2 >= this.mMinVelocityPxPerSecond) {
+            this.mAnimatorProperties.interpolator = new InterpolatorInterpolator(new VelocityInterpolator(fSqrt, fAbs2, fAbs), interpolator, Interpolators.LINEAR_OUT_SLOW_IN);
         } else {
             this.mAnimatorProperties.interpolator = Interpolators.FAST_OUT_SLOW_IN;
         }
-        this.mAnimatorProperties.duration = sqrt * 1000.0f;
+        this.mAnimatorProperties.duration = (long) (fSqrt * 1000.0f);
         return this.mAnimatorProperties;
     }
 
@@ -103,36 +104,34 @@ public class FlingAnimationUtils {
 
     private AnimatorProperties getDismissingProperties(float f, float f2, float f3, float f4) {
         float f5 = f2 - f;
-        float pow = (float) (this.mMaxLengthSeconds * Math.pow(Math.abs(f5) / f4, 0.5d));
-        float abs = Math.abs(f5);
-        float abs2 = Math.abs(f3);
-        float calculateLinearOutFasterInY2 = calculateLinearOutFasterInY2(abs2);
-        PathInterpolator pathInterpolator = new PathInterpolator(0.0f, 0.0f, 0.5f, calculateLinearOutFasterInY2);
-        float f6 = ((calculateLinearOutFasterInY2 / 0.5f) * abs) / abs2;
-        if (f6 <= pow) {
+        float fPow = (float) (this.mMaxLengthSeconds * Math.pow(Math.abs(f5) / f4, 0.5d));
+        float fAbs = Math.abs(f5);
+        float fAbs2 = Math.abs(f3);
+        float fCalculateLinearOutFasterInY2 = calculateLinearOutFasterInY2(fAbs2);
+        PathInterpolator pathInterpolator = new PathInterpolator(0.0f, 0.0f, 0.5f, fCalculateLinearOutFasterInY2);
+        float f6 = ((fCalculateLinearOutFasterInY2 / 0.5f) * fAbs) / fAbs2;
+        if (f6 <= fPow) {
             this.mAnimatorProperties.interpolator = pathInterpolator;
-            pow = f6;
-        } else if (abs2 >= this.mMinVelocityPxPerSecond) {
-            this.mAnimatorProperties.interpolator = new InterpolatorInterpolator(new VelocityInterpolator(pow, abs2, abs), pathInterpolator, Interpolators.LINEAR_OUT_SLOW_IN);
+            fPow = f6;
+        } else if (fAbs2 >= this.mMinVelocityPxPerSecond) {
+            this.mAnimatorProperties.interpolator = new InterpolatorInterpolator(new VelocityInterpolator(fPow, fAbs2, fAbs), pathInterpolator, Interpolators.LINEAR_OUT_SLOW_IN);
         } else {
             this.mAnimatorProperties.interpolator = Interpolators.FAST_OUT_LINEAR_IN;
         }
-        this.mAnimatorProperties.duration = pow * 1000.0f;
+        this.mAnimatorProperties.duration = (long) (fPow * 1000.0f);
         return this.mAnimatorProperties;
     }
 
     private float calculateLinearOutFasterInY2(float f) {
-        float max = Math.max(0.0f, Math.min(1.0f, (f - this.mMinVelocityPxPerSecond) / (this.mHighVelocityPxPerSecond - this.mMinVelocityPxPerSecond)));
-        return ((1.0f - max) * 0.4f) + (max * 0.5f);
+        float fMax = Math.max(0.0f, Math.min(1.0f, (f - this.mMinVelocityPxPerSecond) / (this.mHighVelocityPxPerSecond - this.mMinVelocityPxPerSecond)));
+        return ((1.0f - fMax) * 0.4f) + (fMax * 0.5f);
     }
 
     public float getMinVelocityPxPerSecond() {
         return this.mMinVelocityPxPerSecond;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class InterpolatorInterpolator implements Interpolator {
+    private static final class InterpolatorInterpolator implements Interpolator {
         private Interpolator mCrossfader;
         private Interpolator mInterpolator1;
         private Interpolator mInterpolator2;
@@ -150,9 +149,7 @@ public class FlingAnimationUtils {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class VelocityInterpolator implements Interpolator {
+    private static final class VelocityInterpolator implements Interpolator {
         private float mDiff;
         private float mDurationSeconds;
         private float mVelocity;
@@ -169,9 +166,7 @@ public class FlingAnimationUtils {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class AnimatorProperties {
+    private static class AnimatorProperties {
         long duration;
         Interpolator interpolator;
 

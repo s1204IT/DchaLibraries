@@ -2,6 +2,7 @@ package android.support.v4.media;
 
 import android.os.Bundle;
 import android.support.v4.util.ArrayMap;
+
 /* loaded from: classes.dex */
 public final class MediaMetadata2 {
     static final ArrayMap<String, Integer> METADATA_KEYS_TYPE = new ArrayMap<>();

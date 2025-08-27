@@ -16,6 +16,7 @@ import com.android.settings.R;
 import com.android.settingslib.CustomDialogPreference;
 import com.android.settingslib.wifi.AccessPoint;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class HotspotApBandSelectionPreference extends CustomDialogPreference implements DialogInterface.OnShowListener, CompoundButton.OnCheckedChangeListener {
     static final String KEY_CHECKED_BANDS = "checked_bands";
@@ -47,9 +48,8 @@ public class HotspotApBandSelectionPreference extends CustomDialogPreference imp
         this.mExistingConfigValue = AccessPoint.UNREACHABLE_RSSI;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void onRestoreInstanceState(Parcelable parcelable) {
+    protected void onRestoreInstanceState(Parcelable parcelable) {
         SavedState savedState = (SavedState) parcelable;
         super.onRestoreInstanceState(savedState.getSuperState());
         this.mShouldRestore = savedState.shouldRestore;
@@ -67,9 +67,8 @@ public class HotspotApBandSelectionPreference extends CustomDialogPreference imp
         updatePositiveButton();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.CustomDialogPreference
-    public void onBindDialogView(View view) {
+    protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
         Context context = getContext();
         setOnShowListener(this);
@@ -80,9 +79,8 @@ public class HotspotApBandSelectionPreference extends CustomDialogPreference imp
         this.mShouldRestore = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public Parcelable onSaveInstanceState() {
+    protected Parcelable onSaveInstanceState() {
         SavedState savedState = new SavedState(super.onSaveInstanceState());
         boolean z = false;
         savedState.shouldRestore = getDialog() != null;
@@ -141,15 +139,15 @@ public class HotspotApBandSelectionPreference extends CustomDialogPreference imp
     }
 
     int getWifiBand() {
-        boolean isChecked = this.mBox2G.isChecked();
-        boolean isChecked2 = this.mBox5G.isChecked();
-        if (isChecked && isChecked2) {
+        boolean zIsChecked = this.mBox2G.isChecked();
+        boolean zIsChecked2 = this.mBox5G.isChecked();
+        if (zIsChecked && zIsChecked2) {
             return -1;
         }
-        if (isChecked && !isChecked2) {
+        if (zIsChecked && !zIsChecked2) {
             return 0;
         }
-        if (isChecked2 && !isChecked) {
+        if (zIsChecked2 && !zIsChecked) {
             return 1;
         }
         throw new IllegalStateException("Wifi Config only supports selecting one or all bands");
@@ -173,16 +171,16 @@ public class HotspotApBandSelectionPreference extends CustomDialogPreference imp
         updatePositiveButton();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SavedState extends Preference.BaseSavedState {
+    private static class SavedState extends Preference.BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() { // from class: com.android.settings.widget.HotspotApBandSelectionPreference.SavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState createFromParcel(Parcel parcel) {
                 return new SavedState(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState[] newArray(int i) {

@@ -13,6 +13,7 @@ import com.android.settings.fuelgauge.anomaly.AnomalyDetectionPolicy;
 import com.android.settings.fuelgauge.anomaly.AnomalyUtils;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WakeLockAnomalyDetector implements AnomalyDetector {
     private AnomalyUtils mAnomalyUtils;
@@ -38,7 +39,7 @@ public class WakeLockAnomalyDetector implements AnomalyDetector {
         int i;
         List usageList = batteryStatsHelper.getUsageList();
         ArrayList arrayList = new ArrayList();
-        long elapsedRealtime = SystemClock.elapsedRealtime();
+        long jElapsedRealtime = SystemClock.elapsedRealtime();
         int packageUid = this.mBatteryUtils.getPackageUid(str);
         int size = usageList.size();
         for (int i2 = 0; i2 < size; i2 = i + 1) {
@@ -47,14 +48,14 @@ public class WakeLockAnomalyDetector implements AnomalyDetector {
             if (uid == null || this.mBatteryUtils.shouldHideSipper(batterySipper) || (packageUid != -1 && packageUid != uid.getUid())) {
                 i = i2;
             } else {
-                long currentDurationMs = getCurrentDurationMs(uid, elapsedRealtime);
-                long backgroundTotalDurationMs = getBackgroundTotalDurationMs(uid, elapsedRealtime);
+                long currentDurationMs = getCurrentDurationMs(uid, jElapsedRealtime);
+                long backgroundTotalDurationMs = getBackgroundTotalDurationMs(uid, jElapsedRealtime);
                 i = i2;
                 if (backgroundTotalDurationMs > this.mWakeLockThresholdMs && currentDurationMs != 0) {
                     String packageName = this.mBatteryUtils.getPackageName(uid.getUid());
-                    Anomaly build = new Anomaly.Builder().setUid(uid.getUid()).setType(0).setDisplayName(Utils.getApplicationLabel(this.mContext, packageName)).setPackageName(packageName).setWakeLockTimeMs(backgroundTotalDurationMs).build();
-                    if (this.mAnomalyUtils.getAnomalyAction(build).isActionActive(build)) {
-                        arrayList.add(build);
+                    Anomaly anomalyBuild = new Anomaly.Builder().setUid(uid.getUid()).setType(0).setDisplayName(Utils.getApplicationLabel(this.mContext, packageName)).setPackageName(packageName).setWakeLockTimeMs(backgroundTotalDurationMs).build();
+                    if (this.mAnomalyUtils.getAnomalyAction(anomalyBuild).isActionActive(anomalyBuild)) {
+                        arrayList.add(anomalyBuild);
                     }
                 }
             }

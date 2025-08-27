@@ -4,6 +4,7 @@ import android.content.Context;
 import com.mediatek.common.util.OperatorCustomizationFactoryLoader;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class OpBrowserCustomizationFactoryBase {
     private static final List<OperatorCustomizationFactoryLoader.OperatorFactoryInfo> sOperatorFactoryInfoList = new ArrayList();
@@ -16,23 +17,17 @@ public class OpBrowserCustomizationFactoryBase {
     }
 
     public static synchronized OpBrowserCustomizationFactoryBase getOpFactory(Context context) {
-        OpBrowserCustomizationFactoryBase opBrowserCustomizationFactoryBase;
-        synchronized (OpBrowserCustomizationFactoryBase.class) {
+        if (sFactory == null) {
+            sFactory = (OpBrowserCustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOperatorFactoryInfoList);
             if (sFactory == null) {
-                sFactory = (OpBrowserCustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOperatorFactoryInfoList);
-                if (sFactory == null) {
-                    sFactory = new OpBrowserCustomizationFactoryBase();
-                }
+                sFactory = new OpBrowserCustomizationFactoryBase();
             }
-            opBrowserCustomizationFactoryBase = sFactory;
         }
-        return opBrowserCustomizationFactoryBase;
+        return sFactory;
     }
 
     public static synchronized void resetOpFactory() {
-        synchronized (OpBrowserCustomizationFactoryBase.class) {
-            sFactory = null;
-        }
+        sFactory = null;
     }
 
     public IBrowserBookmarkExt makeBrowserBookmarkExt() {

@@ -1,6 +1,7 @@
 package com.android.launcher3.anim;
 
 import android.graphics.Rect;
+
 /* loaded from: classes.dex */
 public class RoundedRectRevealOutlineProvider extends RevealOutlineAnimation {
     private final float mEndRadius;

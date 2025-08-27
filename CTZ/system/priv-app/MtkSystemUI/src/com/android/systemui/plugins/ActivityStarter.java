@@ -3,12 +3,12 @@ package com.android.systemui.plugins;
 import android.app.PendingIntent;
 import android.content.Intent;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
+
 @ProvidesInterface(version = 1)
 /* loaded from: classes.dex */
 public interface ActivityStarter {
     public static final int VERSION = 1;
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onActivityStarted(int i);
     }

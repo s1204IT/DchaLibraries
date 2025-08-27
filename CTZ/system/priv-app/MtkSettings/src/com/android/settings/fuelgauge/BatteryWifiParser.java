@@ -1,6 +1,7 @@
 package com.android.settings.fuelgauge;
 
 import android.os.BatteryStats;
+
 /* loaded from: classes.dex */
 public class BatteryWifiParser extends BatteryFlagParser {
     public BatteryWifiParser(int i) {
@@ -11,11 +12,6 @@ public class BatteryWifiParser extends BatteryFlagParser {
     protected boolean isSet(BatteryStats.HistoryItem historyItem) {
         int i = (historyItem.states2 & 15) >> 0;
         switch (i) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-                break;
             default:
                 switch (i) {
                     case 11:
@@ -24,7 +20,11 @@ public class BatteryWifiParser extends BatteryFlagParser {
                     default:
                         return true;
                 }
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+                return false;
         }
-        return false;
     }
 }

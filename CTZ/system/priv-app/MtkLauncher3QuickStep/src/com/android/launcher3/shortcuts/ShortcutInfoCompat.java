@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.os.UserHandle;
 import com.android.launcher3.R;
+
 @TargetApi(24)
 /* loaded from: classes.dex */
 public class ShortcutInfoCompat {

@@ -1,8 +1,8 @@
 package com.google.common.util.concurrent;
+
 /* loaded from: classes.dex */
 public final class MoreExecutors {
 
-    /* loaded from: classes.dex */
     static class Application {
         Application() {
         }

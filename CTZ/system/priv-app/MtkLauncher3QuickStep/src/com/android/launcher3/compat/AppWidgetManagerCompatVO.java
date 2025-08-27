@@ -5,11 +5,10 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import com.android.launcher3.util.PackageUserKey;
 import java.util.List;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class AppWidgetManagerCompatVO extends AppWidgetManagerCompatVL {
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public AppWidgetManagerCompatVO(Context context) {
+class AppWidgetManagerCompatVO extends AppWidgetManagerCompatVL {
+    AppWidgetManagerCompatVO(Context context) {
         super(context);
     }
 

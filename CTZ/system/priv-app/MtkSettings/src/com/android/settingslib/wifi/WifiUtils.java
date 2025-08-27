@@ -9,6 +9,7 @@ import android.util.ArraySet;
 import com.android.settingslib.R;
 import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class WifiUtils {
     public static String buildLoggingSummary(AccessPoint accessPoint, WifiConfiguration wifiConfiguration) {
@@ -21,9 +22,9 @@ public class WifiUtils {
         if (wifiConfiguration != null && !wifiConfiguration.getNetworkSelectionStatus().isNetworkEnabled()) {
             sb.append(" (" + wifiConfiguration.getNetworkSelectionStatus().getNetworkStatusString());
             if (wifiConfiguration.getNetworkSelectionStatus().getDisableTime() > 0) {
-                long currentTimeMillis = (System.currentTimeMillis() - wifiConfiguration.getNetworkSelectionStatus().getDisableTime()) / 1000;
-                long j = currentTimeMillis % 60;
-                long j2 = (currentTimeMillis / 60) % 60;
+                long jCurrentTimeMillis = (System.currentTimeMillis() - wifiConfiguration.getNetworkSelectionStatus().getDisableTime()) / 1000;
+                long j = jCurrentTimeMillis % 60;
+                long j2 = (jCurrentTimeMillis / 60) % 60;
                 long j3 = (j2 / 60) % 60;
                 sb.append(", ");
                 if (j3 > 0) {
@@ -46,17 +47,17 @@ public class WifiUtils {
     }
 
     static String getVisibilityStatus(AccessPoint accessPoint) {
-        String str;
+        String bssid;
         WifiInfo info = accessPoint.getInfo();
         StringBuilder sb = new StringBuilder();
         StringBuilder sb2 = new StringBuilder();
         StringBuilder sb3 = new StringBuilder();
         int i = 0;
         if (accessPoint.isActive() && info != null) {
-            str = info.getBSSID();
-            if (str != null) {
+            bssid = info.getBSSID();
+            if (bssid != null) {
                 sb.append(" ");
-                sb.append(str);
+                sb.append(bssid);
             }
             sb.append(" rssi=");
             sb.append(info.getRssi());
@@ -72,11 +73,11 @@ public class WifiUtils {
             sb.append(String.format("%.1f ", Double.valueOf(info.txBadRate)));
             sb.append(String.format("rx=%.1f", Double.valueOf(info.rxSuccessRate)));
         } else {
-            str = null;
+            bssid = null;
         }
         int i2 = WifiConfiguration.INVALID_RSSI;
         int i3 = WifiConfiguration.INVALID_RSSI;
-        long elapsedRealtime = SystemClock.elapsedRealtime();
+        long jElapsedRealtime = SystemClock.elapsedRealtime();
         Iterator it = new ArraySet(accessPoint.getScanResults()).iterator();
         int i4 = i2;
         int i5 = 0;
@@ -89,7 +90,7 @@ public class WifiUtils {
                         i4 = scanResult.level;
                     }
                     if (i5 <= 4) {
-                        sb3.append(verboseScanResultSummary(accessPoint, scanResult, str, elapsedRealtime));
+                        sb3.append(verboseScanResultSummary(accessPoint, scanResult, bssid, jElapsedRealtime));
                     }
                 } else if (scanResult.frequency >= 2400 && scanResult.frequency <= 2500) {
                     i++;
@@ -97,7 +98,7 @@ public class WifiUtils {
                         i3 = scanResult.level;
                     }
                     if (i <= 4) {
-                        sb2.append(verboseScanResultSummary(accessPoint, scanResult, str, elapsedRealtime));
+                        sb2.append(verboseScanResultSummary(accessPoint, scanResult, bssid, jElapsedRealtime));
                     }
                 }
             }
@@ -146,8 +147,9 @@ public class WifiUtils {
             sb.append(",");
             sb.append(accessPoint.getSpeedLabel(specificApSpeed));
         }
+        int i = ((int) (j - (scanResult.timestamp / 1000))) / 1000;
         sb.append(",");
-        sb.append(((int) (j - (scanResult.timestamp / 1000))) / 1000);
+        sb.append(i);
         sb.append("s");
         sb.append("}");
         return sb.toString();

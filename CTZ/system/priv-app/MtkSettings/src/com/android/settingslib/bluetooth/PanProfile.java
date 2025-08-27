@@ -9,7 +9,9 @@ import android.content.Context;
 import android.util.Log;
 import com.android.settingslib.R;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PanProfile implements LocalBluetoothProfile {
     private static boolean V = true;
@@ -18,7 +20,6 @@ public class PanProfile implements LocalBluetoothProfile {
     private final LocalBluetoothAdapter mLocalAdapter;
     private BluetoothPan mService;
 
-    /* loaded from: classes.dex */
     private final class PanServiceListener implements BluetoothProfile.ServiceListener {
         private PanServiceListener() {
         }
@@ -51,8 +52,7 @@ public class PanProfile implements LocalBluetoothProfile {
         return 5;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public PanProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter) {
+    PanProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter) {
         this.mLocalAdapter = localBluetoothAdapter;
         this.mLocalAdapter.getProfileProxy(context, new PanServiceListener(), 5);
     }
@@ -72,10 +72,11 @@ public class PanProfile implements LocalBluetoothProfile {
         if (this.mService == null) {
             return false;
         }
-        List<BluetoothDevice> connectedDevices = this.mService.getConnectedDevices();
+        List connectedDevices = this.mService.getConnectedDevices();
         if (connectedDevices != null) {
-            for (BluetoothDevice bluetoothDevice2 : connectedDevices) {
-                this.mService.disconnect(bluetoothDevice2);
+            Iterator it = connectedDevices.iterator();
+            while (it.hasNext()) {
+                this.mService.disconnect((BluetoothDevice) it.next());
             }
         }
         return this.mService.connect(bluetoothDevice);
@@ -123,13 +124,11 @@ public class PanProfile implements LocalBluetoothProfile {
         return R.drawable.ic_bt_network_pan;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setLocalRole(BluetoothDevice bluetoothDevice, int i) {
+    void setLocalRole(BluetoothDevice bluetoothDevice, int i) {
         this.mDeviceRoleMap.put(bluetoothDevice, Integer.valueOf(i));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isLocalRoleNap(BluetoothDevice bluetoothDevice) {
+    boolean isLocalRoleNap(BluetoothDevice bluetoothDevice) {
         return this.mDeviceRoleMap.containsKey(bluetoothDevice) && this.mDeviceRoleMap.get(bluetoothDevice).intValue() == 1;
     }
 

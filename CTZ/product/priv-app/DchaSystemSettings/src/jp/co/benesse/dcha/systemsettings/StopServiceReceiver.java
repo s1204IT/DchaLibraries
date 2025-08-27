@@ -1,12 +1,12 @@
 package jp.co.benesse.dcha.systemsettings;
 
-import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Process;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class StopServiceReceiver extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver
@@ -21,7 +21,6 @@ public class StopServiceReceiver extends BroadcastReceiver {
                     Logger.d("StopServiceReceiver", "onReceive 0003");
                     int[] intArrayExtra = intent.getIntArrayExtra("pids");
                     intent.getExtras().getStringArrayList("packages");
-                    ActivityManager activityManager = (ActivityManager) context.getSystemService("activity");
                     ActivityManagerNative.getDefault().killPids(intArrayExtra, "digicharize", true);
                     for (int i : intArrayExtra) {
                         Process.killProcessQuiet(i);

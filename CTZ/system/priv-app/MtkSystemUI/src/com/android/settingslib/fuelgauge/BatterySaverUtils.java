@@ -7,10 +7,10 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.KeyValueListParser;
 import android.util.Slog;
+
 /* loaded from: classes.dex */
 public class BatterySaverUtils {
 
-    /* loaded from: classes.dex */
     private static class Parameters {
         public final int endNth;
         private final Context mContext;
@@ -31,27 +31,25 @@ public class BatterySaverUtils {
     }
 
     public static synchronized boolean setPowerSaveMode(Context context, boolean z, boolean z2) {
-        synchronized (BatterySaverUtils.class) {
-            ContentResolver contentResolver = context.getContentResolver();
-            if (z && z2 && maybeShowBatterySaverConfirmation(context)) {
-                return false;
-            }
-            if (z && !z2) {
-                setBatterySaverConfirmationAcknowledged(context);
-            }
-            if (!((PowerManager) context.getSystemService(PowerManager.class)).setPowerSaveMode(z)) {
-                return false;
-            }
-            if (z) {
-                int i = Settings.Secure.getInt(contentResolver, "low_power_manual_activation_count", 0) + 1;
-                Settings.Secure.putInt(contentResolver, "low_power_manual_activation_count", i);
-                Parameters parameters = new Parameters(context);
-                if (i >= parameters.startNth && i <= parameters.endNth && Settings.Global.getInt(contentResolver, "low_power_trigger_level", 0) == 0 && Settings.Secure.getInt(contentResolver, "suppress_auto_battery_saver_suggestion", 0) == 0) {
-                    showAutoBatterySaverSuggestion(context);
-                }
-            }
-            return true;
+        ContentResolver contentResolver = context.getContentResolver();
+        if (z && z2 && maybeShowBatterySaverConfirmation(context)) {
+            return false;
         }
+        if (z && !z2) {
+            setBatterySaverConfirmationAcknowledged(context);
+        }
+        if (!((PowerManager) context.getSystemService(PowerManager.class)).setPowerSaveMode(z)) {
+            return false;
+        }
+        if (z) {
+            int i = Settings.Secure.getInt(contentResolver, "low_power_manual_activation_count", 0) + 1;
+            Settings.Secure.putInt(contentResolver, "low_power_manual_activation_count", i);
+            Parameters parameters = new Parameters(context);
+            if (i >= parameters.startNth && i <= parameters.endNth && Settings.Global.getInt(contentResolver, "low_power_trigger_level", 0) == 0 && Settings.Secure.getInt(contentResolver, "suppress_auto_battery_saver_suggestion", 0) == 0) {
+                showAutoBatterySaverSuggestion(context);
+            }
+        }
+        return true;
     }
 
     private static boolean maybeShowBatterySaverConfirmation(Context context) {

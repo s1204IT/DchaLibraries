@@ -7,8 +7,10 @@ import android.content.Context;
 import android.os.ParcelUuid;
 import android.util.Log;
 import com.android.internal.annotations.VisibleForTesting;
+
 /* loaded from: classes.dex */
 public class PbapServerProfile implements LocalBluetoothProfile {
+
     @VisibleForTesting
     public static final String NAME = "PBAP Server";
     private boolean mIsProfileReady;
@@ -16,7 +18,6 @@ public class PbapServerProfile implements LocalBluetoothProfile {
     private static boolean V = true;
     static final ParcelUuid[] PBAB_CLIENT_UUIDS = {BluetoothUuid.HSP, BluetoothUuid.Handsfree, BluetoothUuid.PBAP_PCE};
 
-    /* loaded from: classes.dex */
     private final class PbapServiceListener implements BluetoothPbap.ServiceListener {
         private PbapServiceListener() {
         }
@@ -42,8 +43,7 @@ public class PbapServerProfile implements LocalBluetoothProfile {
         return 6;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public PbapServerProfile(Context context) {
+    PbapServerProfile(Context context) {
         new BluetoothPbap(context, new PbapServiceListener());
     }
 

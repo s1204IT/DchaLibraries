@@ -24,6 +24,7 @@ import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedPreferenceHelper;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class UnrestrictedDataAccess extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, AppStateBaseBridge.Callback, ApplicationsState.Callbacks {
     private ApplicationsState mApplicationsState;
@@ -108,9 +109,9 @@ public class UnrestrictedDataAccess extends SettingsPreferenceFragment implement
     }
 
     private void rebuild() {
-        ArrayList<ApplicationsState.AppEntry> rebuild = this.mSession.rebuild(this.mFilter, ApplicationsState.ALPHA_COMPARATOR);
-        if (rebuild != null) {
-            onRebuildComplete(rebuild);
+        ArrayList<ApplicationsState.AppEntry> arrayListRebuild = this.mSession.rebuild(this.mFilter, ApplicationsState.ALPHA_COMPARATOR);
+        if (arrayListRebuild != null) {
+            onRebuildComplete(arrayListRebuild);
         }
     }
 
@@ -175,25 +176,24 @@ public class UnrestrictedDataAccess extends SettingsPreferenceFragment implement
         return 349;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.unrestricted_data_access_settings;
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
-        if (preference instanceof AccessPreference) {
-            AccessPreference accessPreference = (AccessPreference) preference;
-            boolean z = obj == Boolean.TRUE;
-            logSpecialPermissionChange(z, accessPreference.mEntry.info.packageName);
-            this.mDataSaverBackend.setIsWhitelisted(accessPreference.mEntry.info.uid, accessPreference.mEntry.info.packageName, z);
-            if (accessPreference.mState != null) {
-                accessPreference.mState.isDataSaverWhitelisted = z;
-            }
-            return true;
+        if (!(preference instanceof AccessPreference)) {
+            return false;
         }
-        return false;
+        AccessPreference accessPreference = (AccessPreference) preference;
+        boolean z = obj == Boolean.TRUE;
+        logSpecialPermissionChange(z, accessPreference.mEntry.info.packageName);
+        this.mDataSaverBackend.setIsWhitelisted(accessPreference.mEntry.info.uid, accessPreference.mEntry.info.packageName, z);
+        if (accessPreference.mState != null) {
+            accessPreference.mState.isDataSaverWhitelisted = z;
+        }
+        return true;
     }
 
     @VisibleForTesting
@@ -206,10 +206,8 @@ public class UnrestrictedDataAccess extends SettingsPreferenceFragment implement
         return appEntry != null && UserHandle.isApp(appEntry.info.uid);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    /* loaded from: classes.dex */
-    public class AccessPreference extends AppSwitchPreference implements DataSaverBackend.Listener {
+    class AccessPreference extends AppSwitchPreference implements DataSaverBackend.Listener {
         private final ApplicationsState.AppEntry mEntry;
         private final RestrictedPreferenceHelper mHelper;
         private final AppStateDataUsageBridge.DataUsageState mState;
@@ -240,9 +238,8 @@ public class UnrestrictedDataAccess extends SettingsPreferenceFragment implement
             super.onDetached();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // android.support.v7.preference.TwoStatePreference, android.support.v7.preference.Preference
-        public void onClick() {
+        protected void onClick() {
             if (this.mState != null && this.mState.isDataSaverBlacklisted) {
                 AppInfoDashboardFragment.startAppInfoFragment(AppDataUsage.class, R.string.app_data_usage, null, UnrestrictedDataAccess.this, this.mEntry);
             } else {
@@ -288,27 +285,27 @@ public class UnrestrictedDataAccess extends SettingsPreferenceFragment implement
                     }
                 });
             }
-            boolean isDisabledByAdmin = isDisabledByAdmin();
-            View findViewById = preferenceViewHolder.findViewById(16908312);
+            boolean zIsDisabledByAdmin = isDisabledByAdmin();
+            View viewFindViewById = preferenceViewHolder.findViewById(android.R.id.widget_frame);
             int i2 = 0;
-            if (isDisabledByAdmin) {
-                findViewById.setVisibility(0);
+            if (zIsDisabledByAdmin) {
+                viewFindViewById.setVisibility(0);
             } else {
                 if (this.mState == null || !this.mState.isDataSaverBlacklisted) {
                     i = 0;
                 } else {
                     i = 4;
                 }
-                findViewById.setVisibility(i);
+                viewFindViewById.setVisibility(i);
             }
             super.onBindViewHolder(preferenceViewHolder);
             this.mHelper.onBindViewHolder(preferenceViewHolder);
-            preferenceViewHolder.findViewById(R.id.restricted_icon).setVisibility(isDisabledByAdmin ? 0 : 8);
-            View findViewById2 = preferenceViewHolder.findViewById(16908352);
-            if (isDisabledByAdmin) {
+            preferenceViewHolder.findViewById(R.id.restricted_icon).setVisibility(zIsDisabledByAdmin ? 0 : 8);
+            View viewFindViewById2 = preferenceViewHolder.findViewById(android.R.id.switch_widget);
+            if (zIsDisabledByAdmin) {
                 i2 = 8;
             }
-            findViewById2.setVisibility(i2);
+            viewFindViewById2.setVisibility(i2);
         }
 
         @Override // com.android.settings.datausage.DataSaverBackend.Listener

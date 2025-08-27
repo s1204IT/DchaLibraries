@@ -5,10 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+
 /* loaded from: classes.dex */
 public class LauncherSettings {
 
-    /* loaded from: classes.dex */
     public interface BaseLauncherColumns extends ChangeLogColumns {
         public static final String ICON = "icon";
         public static final String ICON_PACKAGE = "iconPackage";
@@ -20,19 +20,16 @@ public class LauncherSettings {
         public static final String TITLE = "title";
     }
 
-    /* loaded from: classes.dex */
     interface ChangeLogColumns extends BaseColumns {
         public static final String MODIFIED = "modified";
     }
 
-    /* loaded from: classes.dex */
     public static final class WorkspaceScreens implements ChangeLogColumns {
         public static final String SCREEN_RANK = "screenRank";
         public static final String TABLE_NAME = "workspaceScreens";
         public static final Uri CONTENT_URI = Uri.parse("content://" + LauncherProvider.AUTHORITY + "/" + TABLE_NAME);
     }
 
-    /* loaded from: classes.dex */
     public static final class Favorites implements BaseLauncherColumns {
         public static final String APPWIDGET_ID = "appWidgetId";
         public static final String APPWIDGET_PROVIDER = "appWidgetProvider";
@@ -59,8 +56,7 @@ public class LauncherSettings {
             return Uri.parse("content://" + LauncherProvider.AUTHORITY + "/" + TABLE_NAME + "/" + j);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static final String containerToString(int i) {
+        static final String containerToString(int i) {
             switch (i) {
                 case CONTAINER_HOTSEAT /* -101 */:
                     return "hotseat";
@@ -71,8 +67,7 @@ public class LauncherSettings {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static final String itemTypeToString(int i) {
+        static final String itemTypeToString(int i) {
             switch (i) {
                 case 0:
                     return "APP";
@@ -93,12 +88,10 @@ public class LauncherSettings {
         }
 
         public static void addTableToDb(SQLiteDatabase sQLiteDatabase, long j, boolean z) {
-            String str = z ? " IF NOT EXISTS " : "";
-            sQLiteDatabase.execSQL("CREATE TABLE " + str + TABLE_NAME + " (_id INTEGER PRIMARY KEY,title TEXT,intent TEXT,container INTEGER,screen INTEGER,cellX INTEGER,cellY INTEGER,spanX INTEGER,spanY INTEGER,itemType INTEGER,appWidgetId INTEGER NOT NULL DEFAULT -1,iconPackage TEXT,iconResource TEXT,icon BLOB,appWidgetProvider TEXT,modified INTEGER NOT NULL DEFAULT 0,restored INTEGER NOT NULL DEFAULT 0,profileId INTEGER DEFAULT " + j + ",rank INTEGER NOT NULL DEFAULT 0,options INTEGER NOT NULL DEFAULT 0);");
+            sQLiteDatabase.execSQL("CREATE TABLE " + (z ? " IF NOT EXISTS " : "") + TABLE_NAME + " (_id INTEGER PRIMARY KEY,title TEXT,intent TEXT,container INTEGER,screen INTEGER,cellX INTEGER,cellY INTEGER,spanX INTEGER,spanY INTEGER,itemType INTEGER,appWidgetId INTEGER NOT NULL DEFAULT -1,iconPackage TEXT,iconResource TEXT,icon BLOB,appWidgetProvider TEXT,modified INTEGER NOT NULL DEFAULT 0,restored INTEGER NOT NULL DEFAULT 0,profileId INTEGER DEFAULT " + j + ",rank INTEGER NOT NULL DEFAULT 0,options INTEGER NOT NULL DEFAULT 0);");
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class Settings {
         public static final Uri CONTENT_URI = Uri.parse("content://" + LauncherProvider.AUTHORITY + "/settings");
         public static final String EXTRA_VALUE = "value";

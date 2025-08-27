@@ -20,7 +20,9 @@ import com.android.settings.CustomListPreference;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedPreferenceHelper;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RestrictedListPreference extends CustomListPreference {
     private final RestrictedPreferenceHelper mHelper;
@@ -47,9 +49,9 @@ public class RestrictedListPreference extends CustomListPreference {
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
         this.mHelper.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.restricted_icon);
-        if (findViewById != null) {
-            findViewById.setVisibility(isDisabledByAdmin() ? 0 : 8);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.restricted_icon);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(isDisabledByAdmin() ? 0 : 8);
         }
     }
 
@@ -79,9 +81,8 @@ public class RestrictedListPreference extends CustomListPreference {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.preference.Preference
-    public void onAttachedToHierarchy(PreferenceManager preferenceManager) {
+    protected void onAttachedToHierarchy(PreferenceManager preferenceManager) {
         this.mHelper.onAttachedToHierarchy();
         super.onAttachedToHierarchy(preferenceManager);
     }
@@ -108,8 +109,9 @@ public class RestrictedListPreference extends CustomListPreference {
         if (charSequence == null) {
             return false;
         }
-        for (RestrictedItem restrictedItem : this.mRestrictedItems) {
-            if (charSequence.equals(restrictedItem.entry)) {
+        Iterator<RestrictedItem> it = this.mRestrictedItems.iterator();
+        while (it.hasNext()) {
+            if (charSequence.equals(it.next().entry)) {
                 return true;
             }
         }
@@ -124,8 +126,7 @@ public class RestrictedListPreference extends CustomListPreference {
         this.mRestrictedItems.clear();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public RestrictedItem getRestrictedItemForEntryValue(CharSequence charSequence) {
+    private RestrictedItem getRestrictedItemForEntryValue(CharSequence charSequence) {
         if (charSequence == null) {
             return null;
         }
@@ -149,27 +150,26 @@ public class RestrictedListPreference extends CustomListPreference {
         return findIndexOfValue(value);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.CustomListPreference
-    public void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
         builder.setAdapter(createListAdapter(), onClickListener);
     }
 
-    /* loaded from: classes.dex */
     public class RestrictedArrayAdapter extends ArrayAdapter<CharSequence> {
         private final int mSelectedIndex;
 
         public RestrictedArrayAdapter(Context context, CharSequence[] charSequenceArr, int i) {
-            super(context, (int) R.layout.restricted_dialog_singlechoice, (int) R.id.text1, charSequenceArr);
+            super(context, R.layout.restricted_dialog_singlechoice, R.id.text1, charSequenceArr);
             this.mSelectedIndex = i;
         }
 
         @Override // android.widget.ArrayAdapter, android.widget.Adapter
         public View getView(int i, View view, ViewGroup viewGroup) {
             View view2 = super.getView(i, view, viewGroup);
+            CharSequence item = getItem(i);
             CheckedTextView checkedTextView = (CheckedTextView) view2.findViewById(R.id.text1);
             ImageView imageView = (ImageView) view2.findViewById(R.id.restricted_lock_icon);
-            if (RestrictedListPreference.this.isRestrictedForEntry(getItem(i))) {
+            if (RestrictedListPreference.this.isRestrictedForEntry(item)) {
                 checkedTextView.setEnabled(false);
                 checkedTextView.setChecked(false);
                 imageView.setVisibility(0);
@@ -196,7 +196,6 @@ public class RestrictedListPreference extends CustomListPreference {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class RestrictedListPreferenceDialogFragment extends CustomListPreference.CustomListPreferenceDialogFragment {
         private int mLastCheckedPosition = -1;
 
@@ -208,8 +207,7 @@ public class RestrictedListPreference extends CustomListPreference {
             return restrictedListPreferenceDialogFragment;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public RestrictedListPreference getCustomizablePreference() {
+        private RestrictedListPreference getCustomizablePreference() {
             return (RestrictedListPreference) getPreference();
         }
 
@@ -236,23 +234,20 @@ public class RestrictedListPreference extends CustomListPreference {
             };
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public int getLastCheckedPosition() {
+        private int getLastCheckedPosition() {
             if (this.mLastCheckedPosition == -1) {
                 this.mLastCheckedPosition = getCustomizablePreference().getSelectedValuePos();
             }
             return this.mLastCheckedPosition;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.android.settings.CustomListPreference.CustomListPreferenceDialogFragment
-        public void setClickedDialogEntryIndex(int i) {
+        protected void setClickedDialogEntryIndex(int i) {
             super.setClickedDialogEntryIndex(i);
             this.mLastCheckedPosition = i;
         }
     }
 
-    /* loaded from: classes.dex */
     public static class RestrictedItem {
         public final RestrictedLockUtils.EnforcedAdmin enforcedAdmin;
         public final CharSequence entry;

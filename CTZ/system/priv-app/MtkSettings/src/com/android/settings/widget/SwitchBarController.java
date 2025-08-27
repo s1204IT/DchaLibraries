@@ -3,6 +3,7 @@ package com.android.settings.widget;
 import android.widget.Switch;
 import com.android.settings.widget.SwitchBar;
 import com.android.settingslib.RestrictedLockUtils;
+
 /* loaded from: classes.dex */
 public class SwitchBarController extends SwitchWidgetController implements SwitchBar.OnSwitchChangeListener {
     private final SwitchBar mSwitchBar;

@@ -14,85 +14,42 @@ import com.android.settings.core.TogglePreferenceController;
 import com.android.settings.notification.ZenModeSliceBuilder;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settings.wifi.WifiSliceBuilder;
+
 /* loaded from: classes.dex */
 public class SliceBroadcastReceiver extends BroadcastReceiver {
     private static String TAG = "SettSliceBroadcastRec";
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:23:0x0056  */
     @Override // android.content.BroadcastReceiver
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public void onReceive(Context context, Intent intent) {
-        char c;
+        String stringExtra;
+        boolean booleanExtra;
         String action = intent.getAction();
-        String stringExtra = intent.getStringExtra("com.android.settings.slice.extra.key");
-        boolean booleanExtra = intent.getBooleanExtra("com.android.settings.slice.extra.platform", false);
-        switch (action.hashCode()) {
-            case -2075790298:
-                if (action.equals("com.android.settings.slice.action.TOGGLE_CHANGED")) {
-                    c = 0;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -932197342:
-                if (action.equals("com.android.settings.bluetooth.action.BLUETOOTH_MODE_CHANGED")) {
-                    c = 2;
-                    break;
-                }
-                c = 65535;
-                break;
-            case -362341757:
-                if (action.equals("com.android.settings.wifi.calling.action.WIFI_CALLING_CHANGED")) {
-                    c = 4;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 17552563:
-                if (action.equals("com.android.settings.slice.action.SLIDER_CHANGED")) {
-                    c = 1;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 775016264:
-                if (action.equals("com.android.settings.wifi.action.WIFI_CHANGED")) {
-                    c = 3;
-                    break;
-                }
-                c = 65535;
-                break;
-            case 1913359032:
-                if (action.equals("com.android.settings.notification.ZEN_MODE_CHANGED")) {
-                    c = 5;
-                    break;
-                }
-                c = 65535;
-                break;
-            default:
-                c = 65535;
-                break;
-        }
-        switch (c) {
-            case 0:
+        stringExtra = intent.getStringExtra("com.android.settings.slice.extra.key");
+        booleanExtra = intent.getBooleanExtra("com.android.settings.slice.extra.platform", false);
+        switch (action) {
+            case "com.android.settings.slice.action.TOGGLE_CHANGED":
                 handleToggleAction(context, stringExtra, intent.getBooleanExtra("android.app.slice.extra.TOGGLE_STATE", false), booleanExtra);
-                return;
-            case 1:
+                break;
+            case "com.android.settings.slice.action.SLIDER_CHANGED":
                 handleSliderAction(context, stringExtra, intent.getIntExtra("android.app.slice.extra.RANGE_VALUE", -1), booleanExtra);
-                return;
-            case 2:
+                break;
+            case "com.android.settings.bluetooth.action.BLUETOOTH_MODE_CHANGED":
                 BluetoothSliceBuilder.handleUriChange(context, intent);
-                return;
-            case 3:
+                break;
+            case "com.android.settings.wifi.action.WIFI_CHANGED":
                 WifiSliceBuilder.handleUriChange(context, intent);
-                return;
-            case 4:
+                break;
+            case "com.android.settings.wifi.calling.action.WIFI_CALLING_CHANGED":
                 FeatureFactory.getFactory(context).getSlicesFeatureProvider().getNewWifiCallingSliceHelper(context).handleWifiCallingChanged(intent);
-                return;
-            case 5:
+                break;
+            case "com.android.settings.notification.ZEN_MODE_CHANGED":
                 ZenModeSliceBuilder.handleUriChange(context, intent);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -103,18 +60,19 @@ public class SliceBroadcastReceiver extends BroadcastReceiver {
         BasePreferenceController preferenceController = getPreferenceController(context, str);
         if (!(preferenceController instanceof TogglePreferenceController)) {
             throw new IllegalStateException("Toggle action passed for a non-toggle key: " + str);
-        } else if (!preferenceController.isAvailable()) {
-            String str2 = TAG;
-            Log.w(str2, "Can't update " + str + " since the setting is unavailable");
+        }
+        if (!preferenceController.isAvailable()) {
+            Log.w(TAG, "Can't update " + str + " since the setting is unavailable");
             if (!preferenceController.hasAsyncUpdate()) {
                 updateUri(context, str, z2);
+                return;
             }
-        } else {
-            ((TogglePreferenceController) preferenceController).setChecked(z);
-            logSliceValueChange(context, str, z ? 1 : 0);
-            if (!preferenceController.hasAsyncUpdate()) {
-                updateUri(context, str, z2);
-            }
+            return;
+        }
+        ((TogglePreferenceController) preferenceController).setChecked(z);
+        logSliceValueChange(context, str, z ? 1 : 0);
+        if (!preferenceController.hasAsyncUpdate()) {
+            updateUri(context, str, z2);
         }
     }
 
@@ -128,20 +86,20 @@ public class SliceBroadcastReceiver extends BroadcastReceiver {
         BasePreferenceController preferenceController = getPreferenceController(context, str);
         if (!(preferenceController instanceof SliderPreferenceController)) {
             throw new IllegalArgumentException("Slider action passed for a non-slider key: " + str);
-        } else if (!preferenceController.isAvailable()) {
-            String str2 = TAG;
-            Log.w(str2, "Can't update " + str + " since the setting is unavailable");
-            updateUri(context, str, z);
-        } else {
-            SliderPreferenceController sliderPreferenceController = (SliderPreferenceController) preferenceController;
-            int maxSteps = sliderPreferenceController.getMaxSteps();
-            if (i < 0 || i > maxSteps) {
-                throw new IllegalArgumentException("Invalid position passed to Slider controller. Expected between 0 and " + maxSteps + " but found " + i);
-            }
-            sliderPreferenceController.setSliderPosition(i);
-            logSliceValueChange(context, str, i);
-            updateUri(context, str, z);
         }
+        if (!preferenceController.isAvailable()) {
+            Log.w(TAG, "Can't update " + str + " since the setting is unavailable");
+            updateUri(context, str, z);
+            return;
+        }
+        SliderPreferenceController sliderPreferenceController = (SliderPreferenceController) preferenceController;
+        int maxSteps = sliderPreferenceController.getMaxSteps();
+        if (i < 0 || i > maxSteps) {
+            throw new IllegalArgumentException("Invalid position passed to Slider controller. Expected between 0 and " + maxSteps + " but found " + i);
+        }
+        sliderPreferenceController.setSliderPosition(i);
+        logSliceValueChange(context, str, i);
+        updateUri(context, str, z);
     }
 
     private void logSliceValueChange(Context context, String str, int i) {

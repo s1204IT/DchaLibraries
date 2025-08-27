@@ -1,10 +1,10 @@
 package com.android.systemui.volume;
 
 import android.animation.TimeInterpolator;
+
 /* loaded from: classes.dex */
 public class SystemUIInterpolators {
 
-    /* loaded from: classes.dex */
     public static final class LogDecelerateInterpolator implements TimeInterpolator {
         private final float mBase;
         private final float mDrift;
@@ -32,7 +32,6 @@ public class SystemUIInterpolators {
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class LogAccelerateInterpolator implements TimeInterpolator {
         private final int mBase;
         private final int mDrift;

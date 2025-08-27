@@ -13,6 +13,7 @@ import com.android.settings.R;
 import com.android.settings.dashboard.DashboardFragment;
 import com.android.settings.utils.AnnotationSpan;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class WifiWakeupPreferenceController extends AbstractPreferenceController {
     private final Fragment mFragment;
@@ -39,20 +40,20 @@ public class WifiWakeupPreferenceController extends AbstractPreferenceController
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean handlePreferenceTreeClick(Preference preference) {
-        if (TextUtils.equals(preference.getKey(), "enable_wifi_wakeup") && (preference instanceof SwitchPreference)) {
-            if (!this.mLocationManager.isLocationEnabled()) {
-                this.mFragment.startActivity(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"));
-            } else if (getWifiWakeupEnabled()) {
-                setWifiWakeupEnabled(false);
-            } else if (!getWifiScanningEnabled()) {
-                showScanningDialog();
-            } else {
-                setWifiWakeupEnabled(true);
-            }
-            updateState(this.mPreference);
-            return true;
+        if (!TextUtils.equals(preference.getKey(), "enable_wifi_wakeup") || !(preference instanceof SwitchPreference)) {
+            return false;
         }
-        return false;
+        if (!this.mLocationManager.isLocationEnabled()) {
+            this.mFragment.startActivity(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"));
+        } else if (getWifiWakeupEnabled()) {
+            setWifiWakeupEnabled(false);
+        } else if (!getWifiScanningEnabled()) {
+            showScanningDialog();
+        } else {
+            setWifiWakeupEnabled(true);
+        }
+        updateState(this.mPreference);
+        return true;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
@@ -92,9 +93,9 @@ public class WifiWakeupPreferenceController extends AbstractPreferenceController
     }
 
     private void showScanningDialog() {
-        WifiScanningRequiredFragment newInstance = WifiScanningRequiredFragment.newInstance();
-        newInstance.setTargetFragment(this.mFragment, 600);
-        newInstance.show(this.mFragment.getFragmentManager(), "WifiWakeupPrefController");
+        WifiScanningRequiredFragment wifiScanningRequiredFragmentNewInstance = WifiScanningRequiredFragment.newInstance();
+        wifiScanningRequiredFragmentNewInstance.setTargetFragment(this.mFragment, 600);
+        wifiScanningRequiredFragmentNewInstance.show(this.mFragment.getFragmentManager(), "WifiWakeupPrefController");
     }
 
     private boolean getWifiWakeupEnabled() {

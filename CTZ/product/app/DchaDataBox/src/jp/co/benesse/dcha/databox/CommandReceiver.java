@@ -14,6 +14,7 @@ import java.util.Set;
 import jp.co.benesse.dcha.databox.db.ContractKvs;
 import jp.co.benesse.dcha.util.FileUtils;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class CommandReceiver extends BroadcastReceiver {
     private static final String ACTION_COMMAND = "jp.co.benesse.dcha.databox.intent.action.COMMAND";
@@ -35,17 +36,20 @@ public class CommandReceiver extends BroadcastReceiver {
             if (categories.contains(CATEGORIES_WIPE)) {
                 Logger.d(TAG, "categories:jp.co.benesse.dcha.databox.intent.category.WIPE");
                 if (EXTRA_VALUE_WIPE.equals(intent.getStringExtra(EXTRA_KEY_WIPE))) {
-                    File[] listFiles = context.getFilesDir().listFiles();
-                    if (listFiles != null) {
-                        for (File file : listFiles) {
+                    File[] fileArrListFiles = context.getFilesDir().listFiles();
+                    if (fileArrListFiles != null) {
+                        for (File file : fileArrListFiles) {
                             FileUtils.fileDelete(file);
                         }
                     }
                     ContentResolver contentResolver = context.getContentResolver();
                     new SboxProviderAdapter().wipe(contentResolver);
                     contentResolver.delete(Uri.withAppendedPath(ContractKvs.KVS.contentUri, "cmd/wipe"), null, null);
+                    return;
                 }
-            } else if (categories.contains(CATEGORIES_IMPORT_ENVIRONMENT)) {
+                return;
+            }
+            if (categories.contains(CATEGORIES_IMPORT_ENVIRONMENT)) {
                 Logger.d(TAG, "categories:jp.co.benesse.dcha.databox.intent.category.IMPORT_ENVIRONMENT");
                 ImportUrlsXml importUrlsXml = new ImportUrlsXml();
                 importUrlsXml.delete(context);

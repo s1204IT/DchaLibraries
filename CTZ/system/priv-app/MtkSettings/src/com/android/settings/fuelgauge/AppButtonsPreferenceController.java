@@ -2,7 +2,6 @@ package com.android.settings.fuelgauge;
 
 import android.app.ActivityManager;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -45,6 +44,7 @@ import com.android.settingslib.core.lifecycle.events.OnDestroy;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import java.util.ArrayList;
 import java.util.HashSet;
+
 /* loaded from: classes.dex */
 public class AppButtonsPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, ApplicationsState.Callbacks, LifecycleObserver, OnDestroy, OnResume {
     private final SettingsActivity mActivity;
@@ -156,7 +156,6 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
         stopListeningToPackageRemove();
     }
 
-    /* loaded from: classes.dex */
     private class UninstallAndDisableButtonListener implements View.OnClickListener {
         private UninstallAndDisableButtonListener() {
         }
@@ -167,17 +166,19 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
             String str = AppButtonsPreferenceController.this.mAppEntry.info.packageName;
             if (AppButtonsPreferenceController.this.mDpm.packageHasActiveAdmins(AppButtonsPreferenceController.this.mPackageInfo.packageName)) {
                 AppButtonsPreferenceController.this.stopListeningToPackageRemove();
-                Intent intent = new Intent(AppButtonsPreferenceController.this.mActivity, DeviceAdminAdd.class);
+                Intent intent = new Intent(AppButtonsPreferenceController.this.mActivity, (Class<?>) DeviceAdminAdd.class);
                 intent.putExtra("android.app.extra.DEVICE_ADMIN_PACKAGE_NAME", str);
                 AppButtonsPreferenceController.this.mMetricsFeatureProvider.action(AppButtonsPreferenceController.this.mActivity, 873, new Pair[0]);
                 AppButtonsPreferenceController.this.mFragment.startActivityForResult(intent, AppButtonsPreferenceController.this.mRequestRemoveDeviceAdmin);
                 return;
             }
-            RestrictedLockUtils.EnforcedAdmin checkIfUninstallBlocked = RestrictedLockUtils.checkIfUninstallBlocked(AppButtonsPreferenceController.this.mActivity, str, AppButtonsPreferenceController.this.mUserId);
+            RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfUninstallBlocked = RestrictedLockUtils.checkIfUninstallBlocked(AppButtonsPreferenceController.this.mActivity, str, AppButtonsPreferenceController.this.mUserId);
             boolean z = AppButtonsPreferenceController.this.mAppsControlDisallowedBySystem || RestrictedLockUtils.hasBaseUserRestriction(AppButtonsPreferenceController.this.mActivity, str, AppButtonsPreferenceController.this.mUserId);
-            if (checkIfUninstallBlocked != null && !z) {
-                RestrictedLockUtils.sendShowAdminSupportDetailsIntent(AppButtonsPreferenceController.this.mActivity, checkIfUninstallBlocked);
-            } else if ((AppButtonsPreferenceController.this.mAppEntry.info.flags & 1) != 0) {
+            if (enforcedAdminCheckIfUninstallBlocked != null && !z) {
+                RestrictedLockUtils.sendShowAdminSupportDetailsIntent(AppButtonsPreferenceController.this.mActivity, enforcedAdminCheckIfUninstallBlocked);
+                return;
+            }
+            if ((AppButtonsPreferenceController.this.mAppEntry.info.flags & 1) != 0) {
                 if (!AppButtonsPreferenceController.this.mAppEntry.info.enabled || AppButtonsPreferenceController.this.isDisabledUntilUsed()) {
                     MetricsFeatureProvider metricsFeatureProvider = AppButtonsPreferenceController.this.mMetricsFeatureProvider;
                     SettingsActivity settingsActivity = AppButtonsPreferenceController.this.mActivity;
@@ -187,13 +188,18 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
                         i = 875;
                     }
                     metricsFeatureProvider.action(settingsActivity, i, new Pair[0]);
-                    AsyncTask.execute(new DisableChangerRunnable(AppButtonsPreferenceController.this.mPm, AppButtonsPreferenceController.this.mAppEntry.info.packageName, 0));
-                } else if (!AppButtonsPreferenceController.this.mUpdatedSysApp || !AppButtonsPreferenceController.this.isSingleUser()) {
+                    AsyncTask.execute(AppButtonsPreferenceController.this.new DisableChangerRunnable(AppButtonsPreferenceController.this.mPm, AppButtonsPreferenceController.this.mAppEntry.info.packageName, 0));
+                    return;
+                }
+                if (!AppButtonsPreferenceController.this.mUpdatedSysApp || !AppButtonsPreferenceController.this.isSingleUser()) {
                     AppButtonsPreferenceController.this.showDialogInner(0);
+                    return;
                 } else {
                     AppButtonsPreferenceController.this.showDialogInner(1);
+                    return;
                 }
-            } else if ((AppButtonsPreferenceController.this.mAppEntry.info.flags & 8388608) == 0) {
+            }
+            if ((AppButtonsPreferenceController.this.mAppEntry.info.flags & 8388608) == 0) {
                 AppButtonsPreferenceController.this.uninstallPkg(str, true, false);
             } else {
                 AppButtonsPreferenceController.this.uninstallPkg(str, false, false);
@@ -201,7 +207,6 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
         }
     }
 
-    /* loaded from: classes.dex */
     private class ForceStopButtonListener implements View.OnClickListener {
         private ForceStopButtonListener() {
         }
@@ -223,7 +228,9 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
                 AsyncTask.execute(new DisableChangerRunnable(this.mPm, this.mAppEntry.info.packageName, 3));
             }
             refreshAndFinishIfPossible();
-        } else if (i == this.mRequestRemoveDeviceAdmin) {
+            return;
+        }
+        if (i == this.mRequestRemoveDeviceAdmin) {
             refreshAndFinishIfPossible();
         }
     }
@@ -233,16 +240,14 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
             case 0:
                 this.mMetricsFeatureProvider.action(this.mActivity, 874, new Pair[0]);
                 AsyncTask.execute(new DisableChangerRunnable(this.mPm, this.mAppEntry.info.packageName, 3));
-                return;
+                break;
             case 1:
                 this.mMetricsFeatureProvider.action(this.mActivity, 874, new Pair[0]);
                 uninstallPkg(this.mAppEntry.info.packageName, false, true);
-                return;
+                break;
             case 2:
                 forceStopPackage(this.mAppEntry.info.packageName);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -298,45 +303,45 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
     }
 
     void updateUninstallButton() {
+        boolean zHandleDisableable;
         boolean z;
-        boolean z2;
-        boolean z3 = (this.mAppEntry.info.flags & 1) != 0;
-        if (z3) {
-            z = handleDisableable();
+        boolean z2 = (this.mAppEntry.info.flags & 1) != 0;
+        if (z2) {
+            zHandleDisableable = handleDisableable();
         } else {
-            z = (this.mPackageInfo.applicationInfo.flags & 8388608) != 0 || this.mUserManager.getUsers().size() < 2;
+            zHandleDisableable = (this.mPackageInfo.applicationInfo.flags & 8388608) != 0 || this.mUserManager.getUsers().size() < 2;
         }
-        if (z3 && this.mDpm.packageHasActiveAdmins(this.mPackageInfo.packageName)) {
-            z = false;
+        if (z2 && this.mDpm.packageHasActiveAdmins(this.mPackageInfo.packageName)) {
+            zHandleDisableable = false;
         }
         if (Utils.isProfileOrDeviceOwner(this.mUserManager, this.mDpm, this.mPackageInfo.packageName)) {
-            z = false;
+            zHandleDisableable = false;
         }
         if (Utils.isDeviceProvisioningPackage(this.mContext.getResources(), this.mAppEntry.info.packageName)) {
-            z = false;
+            zHandleDisableable = false;
         }
         if (this.mDpm.isUninstallInQueue(this.mPackageName)) {
-            z = false;
+            zHandleDisableable = false;
         }
-        if (!z || !this.mHomePackages.contains(this.mPackageInfo.packageName)) {
-            z2 = z;
-        } else if (!z3) {
+        if (!zHandleDisableable || !this.mHomePackages.contains(this.mPackageInfo.packageName)) {
+            z = zHandleDisableable;
+        } else if (!z2) {
             ComponentName homeActivities = this.mPm.getHomeActivities(new ArrayList());
             if (homeActivities == null) {
-                z2 = this.mHomePackages.size() > 1;
+                z = this.mHomePackages.size() > 1;
             } else {
-                z2 = !this.mPackageInfo.packageName.equals(homeActivities.getPackageName());
+                z = !this.mPackageInfo.packageName.equals(homeActivities.getPackageName());
             }
         } else {
-            z2 = false;
+            z = false;
         }
         if (this.mAppsControlDisallowedBySystem) {
-            z2 = false;
+            z = false;
         }
         if (isFallbackPackage(this.mAppEntry.info.packageName)) {
-            z2 = false;
+            z = false;
         }
-        this.mButtonsPref.setButton1Enabled(z2);
+        this.mButtonsPref.setButton1Enabled(z);
     }
 
     private void setIntentAndFinish(boolean z) {
@@ -369,17 +374,19 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
         if (this.mDpm.packageHasActiveAdmins(this.mPackageInfo.packageName)) {
             Log.w("AppButtonsPrefCtl", "User can't force stop device admin");
             updateForceStopButtonInner(false);
-        } else if ((this.mAppEntry.info.flags & 2097152) == 0) {
+            return;
+        }
+        if ((this.mAppEntry.info.flags & 2097152) == 0) {
             Log.w("AppButtonsPrefCtl", "App is not explicitly stopped");
             updateForceStopButtonInner(true);
-        } else {
-            Intent intent = new Intent("android.intent.action.QUERY_PACKAGE_RESTART", Uri.fromParts("package", this.mAppEntry.info.packageName, null));
-            intent.putExtra("android.intent.extra.PACKAGES", new String[]{this.mAppEntry.info.packageName});
-            intent.putExtra("android.intent.extra.UID", this.mAppEntry.info.uid);
-            intent.putExtra("android.intent.extra.user_handle", UserHandle.getUserId(this.mAppEntry.info.uid));
-            Log.d("AppButtonsPrefCtl", "Sending broadcast to query restart status for " + this.mAppEntry.info.packageName);
-            this.mActivity.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT, null, this.mCheckKillProcessesReceiver, null, 0, null, null);
+            return;
         }
+        Intent intent = new Intent("android.intent.action.QUERY_PACKAGE_RESTART", Uri.fromParts("package", this.mAppEntry.info.packageName, null));
+        intent.putExtra("android.intent.extra.PACKAGES", new String[]{this.mAppEntry.info.packageName});
+        intent.putExtra("android.intent.extra.UID", this.mAppEntry.info.uid);
+        intent.putExtra("android.intent.extra.user_handle", UserHandle.getUserId(this.mAppEntry.info.uid));
+        Log.d("AppButtonsPrefCtl", "Sending broadcast to query restart status for " + this.mAppEntry.info.packageName);
+        this.mActivity.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT, null, this.mCheckKillProcessesReceiver, null, 0, null, null);
     }
 
     void updateForceStopButtonInner(boolean z) {
@@ -401,8 +408,9 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
 
     void forceStopPackage(String str) {
         FeatureFactory.getFactory(this.mContext).getMetricsFeatureProvider().action(this.mContext, 807, str, new Pair[0]);
+        ActivityManager activityManager = (ActivityManager) this.mActivity.getSystemService("activity");
         Log.d("AppButtonsPrefCtl", "Stopping package " + str);
-        ((ActivityManager) this.mActivity.getSystemService("activity")).forceStopPackage(str);
+        activityManager.forceStopPackage(str);
         int userId = UserHandle.getUserId(this.mAppEntry.info.uid);
         this.mState.invalidatePackage(str, userId);
         ApplicationsState.AppEntry entry = this.mState.getEntry(str, userId);
@@ -416,40 +424,36 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
         if (this.mHomePackages.contains(this.mAppEntry.info.packageName) || isSystemPackage(this.mActivity.getResources(), this.mPm, this.mPackageInfo)) {
             this.mButtonsPref.setButton1Text(R.string.disable_text).setButton1Positive(false);
             return false;
-        } else if (this.mAppEntry.info.enabled && !isDisabledUntilUsed()) {
+        }
+        if (this.mAppEntry.info.enabled && !isDisabledUntilUsed()) {
             this.mButtonsPref.setButton1Text(R.string.disable_text).setButton1Positive(false);
             return true ^ this.mApplicationFeatureProvider.getKeepEnabledPackages().contains(this.mAppEntry.info.packageName);
-        } else {
-            this.mButtonsPref.setButton1Text(R.string.enable_text).setButton1Positive(true);
-            return true;
         }
+        this.mButtonsPref.setButton1Text(R.string.enable_text).setButton1Positive(true);
+        return true;
     }
 
     boolean isSystemPackage(Resources resources, PackageManager packageManager, PackageInfo packageInfo) {
         return Utils.isSystemPackage(resources, packageManager, packageInfo);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isDisabledUntilUsed() {
+    private boolean isDisabledUntilUsed() {
         return this.mAppEntry.info.enabledSetting == 4;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showDialogInner(int i) {
-        ButtonActionDialogFragment newInstance = ButtonActionDialogFragment.newInstance(i);
-        newInstance.setTargetFragment(this.mFragment, 0);
-        FragmentManager fragmentManager = this.mActivity.getFragmentManager();
-        newInstance.show(fragmentManager, "dialog " + i);
+    private void showDialogInner(int i) {
+        ButtonActionDialogFragment buttonActionDialogFragmentNewInstance = ButtonActionDialogFragment.newInstance(i);
+        buttonActionDialogFragmentNewInstance.setTargetFragment(this.mFragment, 0);
+        buttonActionDialogFragmentNewInstance.show(this.mActivity.getFragmentManager(), "dialog " + i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isSingleUser() {
+    private boolean isSingleUser() {
         int userCount = this.mUserManager.getUserCount();
-        if (userCount != 1) {
-            UserManager userManager = this.mUserManager;
-            return UserManager.isSplitSystemUser() && userCount == 2;
+        if (userCount == 1) {
+            return true;
         }
-        return true;
+        UserManager userManager = this.mUserManager;
+        return UserManager.isSplitSystemUser() && userCount == 2;
     }
 
     private boolean signaturesMatch(String str, String str2) {
@@ -505,8 +509,7 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
         this.mActivity.registerReceiver(this.mPackageRemovedReceiver, intentFilter);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void stopListeningToPackageRemove() {
+    private void stopListeningToPackageRemove() {
         if (!this.mListeningToPackageRemove) {
             return;
         }
@@ -514,7 +517,6 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
         this.mActivity.unregisterReceiver(this.mPackageRemovedReceiver);
     }
 
-    /* loaded from: classes.dex */
     private class DisableChangerRunnable implements Runnable {
         final String mPackageName;
         final PackageManager mPm;

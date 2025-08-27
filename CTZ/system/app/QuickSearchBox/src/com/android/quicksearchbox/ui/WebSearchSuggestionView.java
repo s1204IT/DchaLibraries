@@ -8,6 +8,7 @@ import com.android.quicksearchbox.QsbApplication;
 import com.android.quicksearchbox.R;
 import com.android.quicksearchbox.Suggestion;
 import com.android.quicksearchbox.SuggestionFormatter;
+
 /* loaded from: classes.dex */
 public class WebSearchSuggestionView extends BaseSuggestionView {
     private final SuggestionFormatter mSuggestionFormatter;
@@ -17,9 +18,8 @@ public class WebSearchSuggestionView extends BaseSuggestionView {
         this.mSuggestionFormatter = QsbApplication.get(context).getSuggestionFormatter();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.quicksearchbox.ui.BaseSuggestionView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         KeyListener keyListener = new KeyListener();
         setOnKeyListener(keyListener);
@@ -44,12 +44,11 @@ public class WebSearchSuggestionView extends BaseSuggestionView {
         if (z) {
             this.mIcon1.setImageResource(R.drawable.ic_history_suggestion);
             this.mIcon1.setVisibility(0);
-            return;
+        } else {
+            this.mIcon1.setVisibility(4);
         }
-        this.mIcon1.setVisibility(4);
     }
 
-    /* loaded from: classes.dex */
     private class KeyListener implements View.OnKeyListener {
         private KeyListener() {
         }
@@ -68,7 +67,6 @@ public class WebSearchSuggestionView extends BaseSuggestionView {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Factory extends SuggestionViewInflater {
         public Factory(Context context) {
             super("web_search", WebSearchSuggestionView.class, R.layout.web_search_suggestion, context);

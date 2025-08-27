@@ -3,6 +3,7 @@ package com.android.systemui.statusbar.phone;
 import android.util.Pools;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+
 /* loaded from: classes.dex */
 public class PlatformVelocityTracker implements VelocityTrackerInterface {
     private static final Pools.SynchronizedPool<PlatformVelocityTracker> sPool = new Pools.SynchronizedPool<>(2);

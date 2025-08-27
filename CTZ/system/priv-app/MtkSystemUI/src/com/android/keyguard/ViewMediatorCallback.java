@@ -1,6 +1,7 @@
 package com.android.keyguard;
 
 import android.os.Bundle;
+
 /* loaded from: classes.dex */
 public interface ViewMediatorCallback {
     void adjustStatusBarLocked();

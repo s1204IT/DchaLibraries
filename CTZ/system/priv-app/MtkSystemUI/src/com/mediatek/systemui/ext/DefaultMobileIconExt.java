@@ -1,4 +1,5 @@
 package com.mediatek.systemui.ext;
+
 /* loaded from: classes.dex */
 public class DefaultMobileIconExt implements IMobileIconExt {
     @Override // com.mediatek.systemui.ext.IMobileIconExt

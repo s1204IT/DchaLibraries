@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class PointCloud {
     private float mCenterX;
@@ -18,7 +19,6 @@ public class PointCloud {
     GlowManager glowManager = new GlowManager();
     private Paint mPaint = new Paint();
 
-    /* loaded from: classes.dex */
     public class WaveManager {
         private float radius = 50.0f;
         private float width = 200.0f;
@@ -36,7 +36,6 @@ public class PointCloud {
         }
     }
 
-    /* loaded from: classes.dex */
     public class GlowManager {
         private float x;
         private float y;
@@ -59,9 +58,7 @@ public class PointCloud {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class Point {
+    class Point {
         float radius;
         float x;
         float y;
@@ -98,11 +95,11 @@ public class PointCloud {
         this.mPointCloud.clear();
         float f3 = f2 - f;
         float f4 = (6.2831855f * f) / 8.0f;
-        int round = Math.round(f3 / f4);
-        float f5 = f3 / round;
+        int iRound = Math.round(f3 / f4);
+        float f5 = f3 / iRound;
         float f6 = f;
         int i = 0;
-        while (i <= round) {
+        while (i <= iRound) {
             int i2 = (int) ((6.2831855f * f6) / f4);
             float f7 = 6.2831855f / i2;
             float f8 = 1.5707964f;
@@ -129,19 +126,19 @@ public class PointCloud {
     }
 
     public int getAlphaForPoint(Point point) {
-        float f;
-        float hypot = hypot(this.glowManager.x - point.x, this.glowManager.y - point.y);
-        float f2 = 0.0f;
-        if (hypot < this.glowManager.radius) {
-            f = max(0.0f, (float) Math.pow(Math.cos((hypot * 0.7853981633974483d) / this.glowManager.radius), 10.0d)) * this.glowManager.alpha;
+        float fMax;
+        float fHypot = hypot(this.glowManager.x - point.x, this.glowManager.y - point.y);
+        float fMax2 = 0.0f;
+        if (fHypot < this.glowManager.radius) {
+            fMax = max(0.0f, (float) Math.pow(Math.cos((fHypot * 0.7853981633974483d) / this.glowManager.radius), 10.0d)) * this.glowManager.alpha;
         } else {
-            f = 0.0f;
+            fMax = 0.0f;
         }
-        float hypot2 = hypot(point.x, point.y) - this.waveManager.radius;
-        if (hypot2 < this.waveManager.width * 0.5f && hypot2 < 0.0f) {
-            f2 = this.waveManager.alpha * max(0.0f, (float) Math.pow(Math.cos((0.7853981633974483d * hypot2) / this.waveManager.width), 20.0d));
+        float fHypot2 = hypot(point.x, point.y) - this.waveManager.radius;
+        if (fHypot2 < this.waveManager.width * 0.5f && fHypot2 < 0.0f) {
+            fMax2 = this.waveManager.alpha * max(0.0f, (float) Math.pow(Math.cos((0.7853981633974483d * fHypot2) / this.waveManager.width), 20.0d));
         }
-        return (int) (max(f, f2) * 255.0f);
+        return (int) (max(fMax, fMax2) * 255.0f);
     }
 
     private float interp(float f, float f2, float f3) {
@@ -154,14 +151,14 @@ public class PointCloud {
         canvas.scale(this.mScale, this.mScale, this.mCenterX, this.mCenterY);
         for (int i = 0; i < arrayList.size(); i++) {
             Point point = arrayList.get(i);
-            float interp = interp(4.0f, 2.0f, point.radius / this.mOuterRadius);
+            float fInterp = interp(4.0f, 2.0f, point.radius / this.mOuterRadius);
             float f = point.x + this.mCenterX;
             float f2 = point.y + this.mCenterY;
             int alphaForPoint = getAlphaForPoint(point);
             if (alphaForPoint != 0) {
                 if (this.mDrawable != null) {
                     canvas.save(1);
-                    float f3 = interp / 4.0f;
+                    float f3 = fInterp / 4.0f;
                     canvas.scale(f3, f3, f, f2);
                     canvas.translate(f - (this.mDrawable.getIntrinsicWidth() * 0.5f), f2 - (this.mDrawable.getIntrinsicHeight() * 0.5f));
                     this.mDrawable.setAlpha(alphaForPoint);
@@ -169,7 +166,7 @@ public class PointCloud {
                     canvas.restore();
                 } else {
                     this.mPaint.setAlpha(alphaForPoint);
-                    canvas.drawCircle(f, f2, interp, this.mPaint);
+                    canvas.drawCircle(f, f2, fInterp, this.mPaint);
                 }
             }
         }

@@ -11,7 +11,6 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -48,6 +47,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+
 /* loaded from: classes.dex */
 public class LauncherProvider extends ContentProvider {
     public static final String AUTHORITY = FeatureFlags.AUTHORITY;
@@ -71,7 +71,7 @@ public class LauncherProvider extends ContentProvider {
     }
 
     @Override // android.content.ContentProvider
-    public boolean onCreate() {
+    public boolean onCreate() throws IllegalAccessException, IllegalArgumentException {
         this.mListenerHandler = new Handler(this.mListenerWrapper);
         MainProcessInitializer.initialize(getContext().getApplicationContext());
         return true;
@@ -109,9 +109,9 @@ public class LauncherProvider extends ContentProvider {
         SqlArguments sqlArguments = new SqlArguments(uri, str, strArr2);
         SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
         sQLiteQueryBuilder.setTables(sqlArguments.table);
-        Cursor query = sQLiteQueryBuilder.query(this.mOpenHelper.getWritableDatabase(), strArr, sqlArguments.where, sqlArguments.args, null, null, str2);
-        query.setNotificationUri(getContext().getContentResolver(), uri);
-        return query;
+        Cursor cursorQuery = sQLiteQueryBuilder.query(this.mOpenHelper.getWritableDatabase(), strArr, sqlArguments.where, sqlArguments.args, null, null, str2);
+        cursorQuery.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursorQuery;
     }
 
     static long dbInsertAndCheck(DatabaseHelper databaseHelper, SQLiteDatabase sQLiteDatabase, String str, String str2, ContentValues contentValues) {
@@ -136,49 +136,50 @@ public class LauncherProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues contentValues) {
         createDbIfNotExists();
         SqlArguments sqlArguments = new SqlArguments(uri);
-        if (Binder.getCallingPid() == Process.myPid() || initializeExternalAdd(contentValues)) {
-            SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
-            addModifiedTime(contentValues);
-            long dbInsertAndCheck = dbInsertAndCheck(this.mOpenHelper, writableDatabase, sqlArguments.table, null, contentValues);
-            if (dbInsertAndCheck < 0) {
-                return null;
-            }
-            Uri withAppendedId = ContentUris.withAppendedId(uri, dbInsertAndCheck);
-            notifyListeners();
-            if (Utilities.ATLEAST_MARSHMALLOW) {
-                reloadLauncherIfExternal();
-            } else {
-                LauncherAppState instanceNoCreate = LauncherAppState.getInstanceNoCreate();
-                if (instanceNoCreate != null && "true".equals(withAppendedId.getQueryParameter("isExternalAdd"))) {
-                    instanceNoCreate.getModel().forceReload();
-                }
-                String queryParameter = withAppendedId.getQueryParameter("notify");
-                if (queryParameter == null || "true".equals(queryParameter)) {
-                    getContext().getContentResolver().notifyChange(withAppendedId, null);
-                }
-            }
-            return withAppendedId;
+        if (Binder.getCallingPid() != Process.myPid() && !initializeExternalAdd(contentValues)) {
+            return null;
         }
-        return null;
+        SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
+        addModifiedTime(contentValues);
+        long jDbInsertAndCheck = dbInsertAndCheck(this.mOpenHelper, writableDatabase, sqlArguments.table, null, contentValues);
+        if (jDbInsertAndCheck < 0) {
+            return null;
+        }
+        Uri uriWithAppendedId = ContentUris.withAppendedId(uri, jDbInsertAndCheck);
+        notifyListeners();
+        if (Utilities.ATLEAST_MARSHMALLOW) {
+            reloadLauncherIfExternal();
+        } else {
+            LauncherAppState instanceNoCreate = LauncherAppState.getInstanceNoCreate();
+            if (instanceNoCreate != null && "true".equals(uriWithAppendedId.getQueryParameter("isExternalAdd"))) {
+                instanceNoCreate.getModel().forceReload();
+            }
+            String queryParameter = uriWithAppendedId.getQueryParameter("notify");
+            if (queryParameter == null || "true".equals(queryParameter)) {
+                getContext().getContentResolver().notifyChange(uriWithAppendedId, null);
+            }
+        }
+        return uriWithAppendedId;
     }
 
-    private boolean initializeExternalAdd(ContentValues contentValues) {
-        SQLiteStatement sQLiteStatement;
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [281=4] */
+    private boolean initializeExternalAdd(ContentValues contentValues) throws Throwable {
+        SQLiteStatement sQLiteStatementCompileStatement;
         Throwable th;
         contentValues.put("_id", Long.valueOf(this.mOpenHelper.generateNewItemId()));
         Integer asInteger = contentValues.getAsInteger(LauncherSettings.BaseLauncherColumns.ITEM_TYPE);
         if (asInteger != null && asInteger.intValue() == 4 && !contentValues.containsKey(LauncherSettings.Favorites.APPWIDGET_ID)) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getContext());
-            ComponentName unflattenFromString = ComponentName.unflattenFromString(contentValues.getAsString(LauncherSettings.Favorites.APPWIDGET_PROVIDER));
-            if (unflattenFromString == null) {
+            ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(contentValues.getAsString(LauncherSettings.Favorites.APPWIDGET_PROVIDER));
+            if (componentNameUnflattenFromString == null) {
                 return false;
             }
             try {
-                AppWidgetHost newLauncherWidgetHost = this.mOpenHelper.newLauncherWidgetHost();
-                int allocateAppWidgetId = newLauncherWidgetHost.allocateAppWidgetId();
-                contentValues.put(LauncherSettings.Favorites.APPWIDGET_ID, Integer.valueOf(allocateAppWidgetId));
-                if (!appWidgetManager.bindAppWidgetIdIfAllowed(allocateAppWidgetId, unflattenFromString)) {
-                    newLauncherWidgetHost.deleteAppWidgetId(allocateAppWidgetId);
+                AppWidgetHost appWidgetHostNewLauncherWidgetHost = this.mOpenHelper.newLauncherWidgetHost();
+                int iAllocateAppWidgetId = appWidgetHostNewLauncherWidgetHost.allocateAppWidgetId();
+                contentValues.put(LauncherSettings.Favorites.APPWIDGET_ID, Integer.valueOf(iAllocateAppWidgetId));
+                if (!appWidgetManager.bindAppWidgetIdIfAllowed(iAllocateAppWidgetId, componentNameUnflattenFromString)) {
+                    appWidgetHostNewLauncherWidgetHost.deleteAppWidgetId(iAllocateAppWidgetId);
                     return false;
                 }
             } catch (RuntimeException e) {
@@ -186,34 +187,35 @@ public class LauncherProvider extends ContentProvider {
                 return false;
             }
         }
-        long longValue = contentValues.getAsLong(LauncherSettings.Favorites.SCREEN).longValue();
+        long jLongValue = contentValues.getAsLong(LauncherSettings.Favorites.SCREEN).longValue();
         try {
-            sQLiteStatement = this.mOpenHelper.getWritableDatabase().compileStatement("INSERT OR IGNORE INTO workspaceScreens (_id, screenRank) select ?, (ifnull(MAX(screenRank), -1)+1) from workspaceScreens");
-        } catch (Exception e2) {
-            sQLiteStatement = null;
-        } catch (Throwable th2) {
-            sQLiteStatement = null;
-            th = th2;
-        }
-        try {
-            sQLiteStatement.bindLong(1, longValue);
-            ContentValues contentValues2 = new ContentValues();
-            contentValues2.put("_id", Long.valueOf(sQLiteStatement.executeInsert()));
-            this.mOpenHelper.checkId(LauncherSettings.WorkspaceScreens.TABLE_NAME, contentValues2);
-            Utilities.closeSilently(sQLiteStatement);
-            return true;
+            sQLiteStatementCompileStatement = this.mOpenHelper.getWritableDatabase().compileStatement("INSERT OR IGNORE INTO workspaceScreens (_id, screenRank) select ?, (ifnull(MAX(screenRank), -1)+1) from workspaceScreens");
+            try {
+                sQLiteStatementCompileStatement.bindLong(1, jLongValue);
+                ContentValues contentValues2 = new ContentValues();
+                contentValues2.put("_id", Long.valueOf(sQLiteStatementCompileStatement.executeInsert()));
+                this.mOpenHelper.checkId(LauncherSettings.WorkspaceScreens.TABLE_NAME, contentValues2);
+                Utilities.closeSilently(sQLiteStatementCompileStatement);
+                return true;
+            } catch (Exception e2) {
+                Utilities.closeSilently(sQLiteStatementCompileStatement);
+                return false;
+            } catch (Throwable th2) {
+                th = th2;
+                Utilities.closeSilently(sQLiteStatementCompileStatement);
+                throw th;
+            }
         } catch (Exception e3) {
-            Utilities.closeSilently(sQLiteStatement);
-            return false;
+            sQLiteStatementCompileStatement = null;
         } catch (Throwable th3) {
+            sQLiteStatementCompileStatement = null;
             th = th3;
-            Utilities.closeSilently(sQLiteStatement);
-            throw th;
         }
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [300=4] */
     @Override // android.content.ContentProvider
-    public int bulkInsert(Uri uri, ContentValues[] contentValuesArr) {
+    public int bulkInsert(Uri uri, ContentValues[] contentValuesArr) throws Exception {
         createDbIfNotExists();
         SqlArguments sqlArguments = new SqlArguments(uri);
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
@@ -223,7 +225,6 @@ public class LauncherProvider extends ContentProvider {
             for (int i = 0; i < length; i++) {
                 addModifiedTime(contentValuesArr[i]);
                 if (dbInsertAndCheck(this.mOpenHelper, writableDatabase, sqlArguments.table, null, contentValuesArr[i]) < 0) {
-                    $closeResource(null, sQLiteTransaction);
                     return 0;
                 }
             }
@@ -233,10 +234,11 @@ public class LauncherProvider extends ContentProvider {
             reloadLauncherIfExternal();
             return contentValuesArr.length;
         } finally {
+            $closeResource(null, sQLiteTransaction);
         }
     }
 
-    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) {
+    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) throws Exception {
         if (th == null) {
             autoCloseable.close();
             return;
@@ -249,33 +251,37 @@ public class LauncherProvider extends ContentProvider {
     }
 
     @Override // android.content.ContentProvider
-    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> arrayList) throws OperationApplicationException {
+    public ContentProviderResult[] applyBatch(ArrayList<ContentProviderOperation> arrayList) throws Exception {
         createDbIfNotExists();
         LauncherDbUtils.SQLiteTransaction sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(this.mOpenHelper.getWritableDatabase());
+        Throwable th = null;
         try {
-            ContentProviderResult[] applyBatch = super.applyBatch(arrayList);
-            sQLiteTransaction.commit();
-            reloadLauncherIfExternal();
-            $closeResource(null, sQLiteTransaction);
-            return applyBatch;
+            try {
+                ContentProviderResult[] contentProviderResultArrApplyBatch = super.applyBatch(arrayList);
+                sQLiteTransaction.commit();
+                reloadLauncherIfExternal();
+                return contentProviderResultArrApplyBatch;
+            } finally {
+            }
         } finally {
+            $closeResource(th, sQLiteTransaction);
         }
     }
 
     @Override // android.content.ContentProvider
-    public int delete(Uri uri, String str, String[] strArr) {
+    public int delete(Uri uri, String str, String[] strArr) throws Exception {
         createDbIfNotExists();
         SqlArguments sqlArguments = new SqlArguments(uri, str, strArr);
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
         if (Binder.getCallingPid() != Process.myPid() && LauncherSettings.Favorites.TABLE_NAME.equalsIgnoreCase(sqlArguments.table)) {
             this.mOpenHelper.removeGhostWidgets(this.mOpenHelper.getWritableDatabase());
         }
-        int delete = writableDatabase.delete(sqlArguments.table, sqlArguments.where, sqlArguments.args);
-        if (delete > 0) {
+        int iDelete = writableDatabase.delete(sqlArguments.table, sqlArguments.where, sqlArguments.args);
+        if (iDelete > 0) {
             notifyListeners();
             reloadLauncherIfExternal();
         }
-        return delete;
+        return iDelete;
     }
 
     @Override // android.content.ContentProvider
@@ -283,129 +289,89 @@ public class LauncherProvider extends ContentProvider {
         createDbIfNotExists();
         SqlArguments sqlArguments = new SqlArguments(uri, str, strArr);
         addModifiedTime(contentValues);
-        int update = this.mOpenHelper.getWritableDatabase().update(sqlArguments.table, contentValues, sqlArguments.where, sqlArguments.args);
-        if (update > 0) {
+        int iUpdate = this.mOpenHelper.getWritableDatabase().update(sqlArguments.table, contentValues, sqlArguments.where, sqlArguments.args);
+        if (iUpdate > 0) {
             notifyListeners();
         }
         reloadLauncherIfExternal();
-        return update;
+        return iUpdate;
     }
 
     @Override // android.content.ContentProvider
-    public Bundle call(String str, String str2, Bundle bundle) {
+    public Bundle call(String str, String str2, Bundle bundle) throws Exception {
         if (Binder.getCallingUid() != Process.myUid()) {
             return null;
         }
         createDbIfNotExists();
-        char c = 65535;
-        switch (str.hashCode()) {
-            case -1999597249:
-                if (str.equals(LauncherSettings.Settings.METHOD_DELETE_EMPTY_FOLDERS)) {
-                    c = 2;
-                    break;
-                }
-                break;
-            case -1565944700:
-                if (str.equals(LauncherSettings.Settings.METHOD_REMOVE_GHOST_WIDGETS)) {
-                    c = 7;
-                    break;
-                }
-                break;
-            case -1107339682:
-                if (str.equals(LauncherSettings.Settings.METHOD_NEW_ITEM_ID)) {
-                    c = 3;
-                    break;
-                }
-                break;
-            case -1029923675:
-                if (str.equals(LauncherSettings.Settings.METHOD_NEW_SCREEN_ID)) {
-                    c = 4;
-                    break;
-                }
-                break;
-            case -1008511191:
-                if (str.equals(LauncherSettings.Settings.METHOD_CLEAR_EMPTY_DB_FLAG)) {
-                    c = 0;
-                    break;
-                }
-                break;
-            case 476749504:
-                if (str.equals(LauncherSettings.Settings.METHOD_LOAD_DEFAULT_FAVORITES)) {
-                    c = 6;
-                    break;
-                }
-                break;
-            case 684076146:
-                if (str.equals(LauncherSettings.Settings.METHOD_WAS_EMPTY_DB_CREATED)) {
-                    c = 1;
-                    break;
-                }
-                break;
-            case 2117515411:
-                if (str.equals(LauncherSettings.Settings.METHOD_CREATE_EMPTY_DB)) {
-                    c = 5;
-                    break;
-                }
-                break;
-        }
-        switch (c) {
-            case 0:
+        switch (str) {
+            case "clear_empty_db_flag":
                 clearFlagEmptyDbCreated();
-                return null;
-            case 1:
+                break;
+            case "get_empty_db_flag":
                 Bundle bundle2 = new Bundle();
                 bundle2.putBoolean(LauncherSettings.Settings.EXTRA_VALUE, Utilities.getPrefs(getContext()).getBoolean(EMPTY_DATABASE_CREATED, false));
-                return bundle2;
-            case 2:
+                break;
+            case "delete_empty_folders":
                 Bundle bundle3 = new Bundle();
                 bundle3.putSerializable(LauncherSettings.Settings.EXTRA_VALUE, deleteEmptyFolders());
-                return bundle3;
-            case 3:
+                break;
+            case "generate_new_item_id":
                 Bundle bundle4 = new Bundle();
                 bundle4.putLong(LauncherSettings.Settings.EXTRA_VALUE, this.mOpenHelper.generateNewItemId());
-                return bundle4;
-            case 4:
+                break;
+            case "generate_new_screen_id":
                 Bundle bundle5 = new Bundle();
                 bundle5.putLong(LauncherSettings.Settings.EXTRA_VALUE, this.mOpenHelper.generateNewScreenId());
-                return bundle5;
-            case 5:
+                break;
+            case "create_empty_db":
                 this.mOpenHelper.createEmptyDB(this.mOpenHelper.getWritableDatabase());
-                return null;
-            case 6:
+                break;
+            case "load_default_favorites":
                 loadDefaultFavoritesIfNecessary();
-                return null;
-            case 7:
+                break;
+            case "remove_ghost_widgets":
                 this.mOpenHelper.removeGhostWidgets(this.mOpenHelper.getWritableDatabase());
-                return null;
-            default:
-                return null;
+                break;
         }
+        return null;
     }
 
-    private ArrayList<Long> deleteEmptyFolders() {
+    /* JADX WARN: Removed duplicated region for block: B:65:0x0050 A[Catch: all -> 0x0054, Throwable -> 0x0056, TRY_ENTER, TryCatch #4 {, blocks: (B:47:0x0011, B:51:0x002a, B:52:0x002d, B:54:0x0033, B:55:0x003e, B:65:0x0050, B:66:0x0053), top: B:77:0x0011, outer: #0 }] */
+    /* JADX WARN: Removed duplicated region for block: B:83:? A[Catch: all -> 0x0054, Throwable -> 0x0056, SYNTHETIC, TRY_LEAVE, TryCatch #4 {, blocks: (B:47:0x0011, B:51:0x002a, B:52:0x002d, B:54:0x0033, B:55:0x003e, B:65:0x0050, B:66:0x0053), top: B:77:0x0011, outer: #0 }] */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    private ArrayList<Long> deleteEmptyFolders() throws Exception {
         LauncherDbUtils.SQLiteTransaction sQLiteTransaction;
-        Cursor query;
+        Throwable th;
         ArrayList<Long> arrayList = new ArrayList<>();
         SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
         try {
             sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(writableDatabase);
-            query = writableDatabase.query(LauncherSettings.Favorites.TABLE_NAME, new String[]{"_id"}, "itemType = 2 AND _id NOT IN (SELECT container FROM favorites)", null, null, null, null);
         } catch (SQLException e) {
             Log.e(TAG, e.getMessage(), e);
             arrayList.clear();
         }
         try {
-            LauncherDbUtils.iterateCursor(query, 0, arrayList);
-            if (query != null) {
-                $closeResource(null, query);
+            Cursor cursorQuery = writableDatabase.query(LauncherSettings.Favorites.TABLE_NAME, new String[]{"_id"}, "itemType = 2 AND _id NOT IN (SELECT container FROM favorites)", null, null, null, null);
+            try {
+                LauncherDbUtils.iterateCursor(cursorQuery, 0, arrayList);
+                if (cursorQuery != null) {
+                    $closeResource(null, cursorQuery);
+                }
+                if (!arrayList.isEmpty()) {
+                    writableDatabase.delete(LauncherSettings.Favorites.TABLE_NAME, Utilities.createDbSelectionQuery("_id", arrayList), null);
+                }
+                sQLiteTransaction.commit();
+                return arrayList;
+            } catch (Throwable th2) {
+                th = th2;
+                th = null;
+                if (cursorQuery != null) {
+                }
             }
-            if (!arrayList.isEmpty()) {
-                writableDatabase.delete(LauncherSettings.Favorites.TABLE_NAME, Utilities.createDbSelectionQuery("_id", arrayList), null);
-            }
-            sQLiteTransaction.commit();
-            $closeResource(null, sQLiteTransaction);
-            return arrayList;
         } finally {
+            $closeResource(null, sQLiteTransaction);
         }
     }
 
@@ -427,22 +393,22 @@ public class LauncherProvider extends ContentProvider {
         int identifier;
         if (Utilities.getPrefs(getContext()).getBoolean(EMPTY_DATABASE_CREATED, false)) {
             Log.d(TAG, "loading default workspace");
-            AppWidgetHost newLauncherWidgetHost = this.mOpenHelper.newLauncherWidgetHost();
-            AutoInstallsLayout createWorkspaceLoaderFromAppRestriction = createWorkspaceLoaderFromAppRestriction(newLauncherWidgetHost);
-            if (createWorkspaceLoaderFromAppRestriction == null) {
-                createWorkspaceLoaderFromAppRestriction = AutoInstallsLayout.get(getContext(), newLauncherWidgetHost, this.mOpenHelper);
+            AppWidgetHost appWidgetHostNewLauncherWidgetHost = this.mOpenHelper.newLauncherWidgetHost();
+            AutoInstallsLayout autoInstallsLayoutCreateWorkspaceLoaderFromAppRestriction = createWorkspaceLoaderFromAppRestriction(appWidgetHostNewLauncherWidgetHost);
+            if (autoInstallsLayoutCreateWorkspaceLoaderFromAppRestriction == null) {
+                autoInstallsLayoutCreateWorkspaceLoaderFromAppRestriction = AutoInstallsLayout.get(getContext(), appWidgetHostNewLauncherWidgetHost, this.mOpenHelper);
             }
-            if (createWorkspaceLoaderFromAppRestriction == null && (partner = Partner.get(getContext().getPackageManager())) != null && partner.hasDefaultLayout() && (identifier = (resources = partner.getResources()).getIdentifier(Partner.RES_DEFAULT_LAYOUT, "xml", partner.getPackageName())) != 0) {
-                createWorkspaceLoaderFromAppRestriction = new DefaultLayoutParser(getContext(), newLauncherWidgetHost, this.mOpenHelper, resources, identifier);
+            if (autoInstallsLayoutCreateWorkspaceLoaderFromAppRestriction == null && (partner = Partner.get(getContext().getPackageManager())) != null && partner.hasDefaultLayout() && (identifier = (resources = partner.getResources()).getIdentifier(Partner.RES_DEFAULT_LAYOUT, "xml", partner.getPackageName())) != 0) {
+                autoInstallsLayoutCreateWorkspaceLoaderFromAppRestriction = new DefaultLayoutParser(getContext(), appWidgetHostNewLauncherWidgetHost, this.mOpenHelper, resources, identifier);
             }
-            boolean z = createWorkspaceLoaderFromAppRestriction != null;
-            if (createWorkspaceLoaderFromAppRestriction == null) {
-                createWorkspaceLoaderFromAppRestriction = getDefaultLayoutParser(newLauncherWidgetHost);
+            boolean z = autoInstallsLayoutCreateWorkspaceLoaderFromAppRestriction != null;
+            if (autoInstallsLayoutCreateWorkspaceLoaderFromAppRestriction == null) {
+                autoInstallsLayoutCreateWorkspaceLoaderFromAppRestriction = getDefaultLayoutParser(appWidgetHostNewLauncherWidgetHost);
             }
             this.mOpenHelper.createEmptyDB(this.mOpenHelper.getWritableDatabase());
-            if (this.mOpenHelper.loadFavorites(this.mOpenHelper.getWritableDatabase(), createWorkspaceLoaderFromAppRestriction) <= 0 && z) {
+            if (this.mOpenHelper.loadFavorites(this.mOpenHelper.getWritableDatabase(), autoInstallsLayoutCreateWorkspaceLoaderFromAppRestriction) <= 0 && z) {
                 this.mOpenHelper.createEmptyDB(this.mOpenHelper.getWritableDatabase());
-                this.mOpenHelper.loadFavorites(this.mOpenHelper.getWritableDatabase(), getDefaultLayoutParser(newLauncherWidgetHost));
+                this.mOpenHelper.loadFavorites(this.mOpenHelper.getWritableDatabase(), getDefaultLayoutParser(appWidgetHostNewLauncherWidgetHost));
             }
             clearFlagEmptyDbCreated();
         }
@@ -472,14 +438,13 @@ public class LauncherProvider extends ContentProvider {
         return new DefaultLayoutParser(getContext(), appWidgetHost, this.mOpenHelper, getContext().getResources(), i);
     }
 
-    /* loaded from: classes.dex */
     public static class DatabaseHelper extends NoLocaleSQLiteHelper implements AutoInstallsLayout.LayoutParserCallback {
         private final Context mContext;
         private long mMaxItemId;
         private long mMaxScreenId;
         private final Handler mWidgetHostResetHandler;
 
-        DatabaseHelper(Context context, Handler handler) {
+        DatabaseHelper(Context context, Handler handler) throws SQLException {
             this(context, handler, LauncherFiles.LAUNCHER_DB);
             if (!tableExists(LauncherSettings.Favorites.TABLE_NAME) || !tableExists(LauncherSettings.WorkspaceScreens.TABLE_NAME)) {
                 Log.e(LauncherProvider.TAG, "Tables are missing after onCreate has been called. Trying to recreate");
@@ -507,16 +472,16 @@ public class LauncherProvider extends ContentProvider {
         }
 
         private boolean tableExists(String str) {
-            Cursor query = getReadableDatabase().query(true, "sqlite_master", new String[]{"tbl_name"}, "tbl_name = ?", new String[]{str}, null, null, null, null, null);
+            Cursor cursorQuery = getReadableDatabase().query(true, "sqlite_master", new String[]{"tbl_name"}, "tbl_name = ?", new String[]{str}, null, null, null, null, null);
             try {
-                return query.getCount() > 0;
+                return cursorQuery.getCount() > 0;
             } finally {
-                query.close();
+                cursorQuery.close();
             }
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onCreate(SQLiteDatabase sQLiteDatabase) {
+        public void onCreate(SQLiteDatabase sQLiteDatabase) throws SQLException {
             this.mMaxItemId = 1L;
             this.mMaxScreenId = 0L;
             addFavoritesTable(sQLiteDatabase, false);
@@ -541,18 +506,17 @@ public class LauncherProvider extends ContentProvider {
             LauncherSettings.Favorites.addTableToDb(sQLiteDatabase, getDefaultUserSerial(), z);
         }
 
-        private void addWorkspacesTable(SQLiteDatabase sQLiteDatabase, boolean z) {
-            String str = z ? " IF NOT EXISTS " : "";
-            sQLiteDatabase.execSQL("CREATE TABLE " + str + LauncherSettings.WorkspaceScreens.TABLE_NAME + " (_id INTEGER PRIMARY KEY," + LauncherSettings.WorkspaceScreens.SCREEN_RANK + " INTEGER," + LauncherSettings.ChangeLogColumns.MODIFIED + " INTEGER NOT NULL DEFAULT 0);");
+        private void addWorkspacesTable(SQLiteDatabase sQLiteDatabase, boolean z) throws SQLException {
+            sQLiteDatabase.execSQL("CREATE TABLE " + (z ? " IF NOT EXISTS " : "") + LauncherSettings.WorkspaceScreens.TABLE_NAME + " (_id INTEGER PRIMARY KEY," + LauncherSettings.WorkspaceScreens.SCREEN_RANK + " INTEGER," + LauncherSettings.ChangeLogColumns.MODIFIED + " INTEGER NOT NULL DEFAULT 0);");
         }
 
-        private void removeOrphanedItems(SQLiteDatabase sQLiteDatabase) {
+        private void removeOrphanedItems(SQLiteDatabase sQLiteDatabase) throws SQLException {
             sQLiteDatabase.execSQL("DELETE FROM favorites WHERE screen NOT IN (SELECT _id FROM workspaceScreens) AND container = -100");
             sQLiteDatabase.execSQL("DELETE FROM favorites WHERE container <> -100 AND container <> -101 AND container NOT IN (SELECT _id FROM favorites WHERE itemType = 2)");
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onOpen(SQLiteDatabase sQLiteDatabase) {
+        public void onOpen(SQLiteDatabase sQLiteDatabase) throws Exception {
             super.onOpen(sQLiteDatabase);
             File fileStreamPath = this.mContext.getFileStreamPath(LauncherProvider.DOWNGRADE_SCHEMA_FILE);
             if (!fileStreamPath.exists()) {
@@ -561,75 +525,65 @@ public class LauncherProvider extends ContentProvider {
             DbDowngradeHelper.updateSchemaFile(fileStreamPath, 27, this.mContext, R.raw.downgrade_schema);
         }
 
-        protected void handleOneTimeDataUpgrade(SQLiteDatabase sQLiteDatabase) {
+        protected void handleOneTimeDataUpgrade(SQLiteDatabase sQLiteDatabase) throws SQLException {
             UserManagerCompat userManagerCompat = UserManagerCompat.getInstance(this.mContext);
-            for (UserHandle userHandle : userManagerCompat.getUserProfiles()) {
-                long serialNumberForUser = userManagerCompat.getSerialNumberForUser(userHandle);
-                sQLiteDatabase.execSQL("update favorites set intent = replace(intent, ';l.profile=" + serialNumberForUser + ";', ';') where itemType = 0;");
+            Iterator<UserHandle> it = userManagerCompat.getUserProfiles().iterator();
+            while (it.hasNext()) {
+                sQLiteDatabase.execSQL("update favorites set intent = replace(intent, ';l.profile=" + userManagerCompat.getSerialNumberForUser(it.next()) + ";', ';') where itemType = 0;");
             }
         }
 
-        /* JADX WARN: Code restructure failed: missing block: B:13:0x003b, code lost:
-            if (addIntegerColumn(r4, com.android.launcher3.LauncherSettings.Favorites.RESTORED, 0) != false) goto L6;
+        /* JADX WARN: Code restructure failed: missing block: B:68:0x003b, code lost:
+        
+            if (addIntegerColumn(r4, com.android.launcher3.LauncherSettings.Favorites.RESTORED, 0) == false) goto L101;
          */
-        /* JADX WARN: Code restructure failed: missing block: B:17:0x0045, code lost:
-            if (addProfileColumn(r4) != false) goto L9;
+        /* JADX WARN: Code restructure failed: missing block: B:81:0x005d, code lost:
+        
+            if (addIntegerColumn(r4, com.android.launcher3.LauncherSettings.Favorites.OPTIONS, 0) == false) goto L101;
          */
-        /* JADX WARN: Code restructure failed: missing block: B:20:0x004d, code lost:
-            if (updateFolderItemsRank(r4, true) == false) goto L18;
-         */
-        /* JADX WARN: Code restructure failed: missing block: B:23:0x0054, code lost:
-            if (recreateWorkspaceTable(r4) == false) goto L18;
-         */
-        /* JADX WARN: Code restructure failed: missing block: B:26:0x005d, code lost:
-            if (addIntegerColumn(r4, com.android.launcher3.LauncherSettings.Favorites.OPTIONS, 0) == false) goto L18;
-         */
+        /* JADX WARN: Removed duplicated region for block: B:74:0x0048  */
+        /* JADX WARN: Removed duplicated region for block: B:77:0x0050  */
+        /* JADX WARN: Removed duplicated region for block: B:80:0x0057  */
         @Override // android.database.sqlite.SQLiteOpenHelper
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) throws Exception {
+            LauncherDbUtils.SQLiteTransaction sQLiteTransaction;
             switch (i) {
                 case 12:
                     this.mMaxScreenId = 0L;
                     addWorkspacesTable(sQLiteDatabase, false);
+                case 13:
                     try {
-                        LauncherDbUtils.SQLiteTransaction sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
-                        sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN appWidgetProvider TEXT;");
-                        sQLiteTransaction.commit();
-                        $closeResource(null, sQLiteTransaction);
+                        sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
                         try {
-                            LauncherDbUtils.SQLiteTransaction sQLiteTransaction2 = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
-                            sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN modified INTEGER NOT NULL DEFAULT 0;");
-                            sQLiteDatabase.execSQL("ALTER TABLE workspaceScreens ADD COLUMN modified INTEGER NOT NULL DEFAULT 0;");
-                            sQLiteTransaction2.commit();
-                            $closeResource(null, sQLiteTransaction2);
-                            break;
-                        } catch (SQLException e) {
-                            Log.e(LauncherProvider.TAG, e.getMessage(), e);
-                            break;
+                            sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN appWidgetProvider TEXT;");
+                            sQLiteTransaction.commit();
+                            try {
+                                sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
+                                try {
+                                    sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN modified INTEGER NOT NULL DEFAULT 0;");
+                                    sQLiteDatabase.execSQL("ALTER TABLE workspaceScreens ADD COLUMN modified INTEGER NOT NULL DEFAULT 0;");
+                                    sQLiteTransaction.commit();
+                                    break;
+                                } finally {
+                                }
+                            } catch (SQLException e) {
+                                Log.e(LauncherProvider.TAG, e.getMessage(), e);
+                                break;
+                            }
+                        } finally {
                         }
                     } catch (SQLException e2) {
                         Log.e(LauncherProvider.TAG, e2.getMessage(), e2);
                         break;
                     }
-                case 13:
-                    LauncherDbUtils.SQLiteTransaction sQLiteTransaction3 = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
-                    sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN appWidgetProvider TEXT;");
-                    sQLiteTransaction3.commit();
-                    $closeResource(null, sQLiteTransaction3);
-                    LauncherDbUtils.SQLiteTransaction sQLiteTransaction22 = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
-                    sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN modified INTEGER NOT NULL DEFAULT 0;");
-                    sQLiteDatabase.execSQL("ALTER TABLE workspaceScreens ADD COLUMN modified INTEGER NOT NULL DEFAULT 0;");
-                    sQLiteTransaction22.commit();
-                    $closeResource(null, sQLiteTransaction22);
-                    break;
                 case 14:
-                    LauncherDbUtils.SQLiteTransaction sQLiteTransaction222 = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
+                    sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
                     sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN modified INTEGER NOT NULL DEFAULT 0;");
                     sQLiteDatabase.execSQL("ALTER TABLE workspaceScreens ADD COLUMN modified INTEGER NOT NULL DEFAULT 0;");
-                    sQLiteTransaction222.commit();
-                    $closeResource(null, sQLiteTransaction222);
+                    sQLiteTransaction.commit();
                     break;
                 case 15:
                     break;
@@ -637,9 +591,17 @@ public class LauncherProvider extends ContentProvider {
                 case 17:
                 case 18:
                     removeOrphanedItems(sQLiteDatabase);
-                    break;
                 case 19:
-                    break;
+                    if (addProfileColumn(sQLiteDatabase)) {
+                        if (updateFolderItemsRank(sQLiteDatabase, true)) {
+                            if (recreateWorkspaceTable(sQLiteDatabase)) {
+                                break;
+                            }
+                        }
+                    }
+                    Log.w(LauncherProvider.TAG, "Destroying all old data.");
+                    createEmptyDB(sQLiteDatabase);
+                    return;
                 case 20:
                     break;
                 case 21:
@@ -661,7 +623,7 @@ public class LauncherProvider extends ContentProvider {
             }
         }
 
-        private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) {
+        private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) throws Exception {
             if (th == null) {
                 autoCloseable.close();
                 return;
@@ -674,7 +636,7 @@ public class LauncherProvider extends ContentProvider {
         }
 
         @Override // android.database.sqlite.SQLiteOpenHelper
-        public void onDowngrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+        public void onDowngrade(SQLiteDatabase sQLiteDatabase, int i, int i2) throws Exception {
             try {
                 DbDowngradeHelper.parse(this.mContext.getFileStreamPath(LauncherProvider.DOWNGRADE_SCHEMA_FILE)).onDowngrade(sQLiteDatabase, i, i2);
             } catch (Exception e) {
@@ -683,41 +645,53 @@ public class LauncherProvider extends ContentProvider {
             }
         }
 
-        public void createEmptyDB(SQLiteDatabase sQLiteDatabase) {
+        public void createEmptyDB(SQLiteDatabase sQLiteDatabase) throws Exception {
             LauncherDbUtils.SQLiteTransaction sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
+            Throwable th = null;
             try {
-                sQLiteDatabase.execSQL("DROP TABLE IF EXISTS favorites");
-                sQLiteDatabase.execSQL("DROP TABLE IF EXISTS workspaceScreens");
-                onCreate(sQLiteDatabase);
-                sQLiteTransaction.commit();
-                $closeResource(null, sQLiteTransaction);
+                try {
+                    sQLiteDatabase.execSQL("DROP TABLE IF EXISTS favorites");
+                    sQLiteDatabase.execSQL("DROP TABLE IF EXISTS workspaceScreens");
+                    onCreate(sQLiteDatabase);
+                    sQLiteTransaction.commit();
+                } finally {
+                }
             } finally {
+                $closeResource(th, sQLiteTransaction);
             }
         }
 
         @TargetApi(26)
-        public void removeGhostWidgets(SQLiteDatabase sQLiteDatabase) {
+        public void removeGhostWidgets(SQLiteDatabase sQLiteDatabase) throws Exception {
             int i;
-            AppWidgetHost newLauncherWidgetHost = newLauncherWidgetHost();
+            AppWidgetHost appWidgetHostNewLauncherWidgetHost = newLauncherWidgetHost();
             try {
-                int[] appWidgetIds = newLauncherWidgetHost.getAppWidgetIds();
+                int[] appWidgetIds = appWidgetHostNewLauncherWidgetHost.getAppWidgetIds();
                 HashSet hashSet = new HashSet();
                 try {
-                    Cursor query = sQLiteDatabase.query(LauncherSettings.Favorites.TABLE_NAME, new String[]{LauncherSettings.Favorites.APPWIDGET_ID}, "itemType=4", null, null, null, null);
+                    Cursor cursorQuery = sQLiteDatabase.query(LauncherSettings.Favorites.TABLE_NAME, new String[]{LauncherSettings.Favorites.APPWIDGET_ID}, "itemType=4", null, null, null, null);
+                    Throwable th = null;
                     while (true) {
-                        if (!query.moveToNext()) {
-                            break;
+                        try {
+                            try {
+                                if (!cursorQuery.moveToNext()) {
+                                    break;
+                                } else {
+                                    hashSet.add(Integer.valueOf(cursorQuery.getInt(0)));
+                                }
+                            } finally {
+                                if (cursorQuery != null) {
+                                    $closeResource(th, cursorQuery);
+                                }
+                            }
+                        } finally {
                         }
-                        hashSet.add(Integer.valueOf(query.getInt(0)));
-                    }
-                    if (query != null) {
-                        $closeResource(null, query);
                     }
                     for (int i2 : appWidgetIds) {
                         if (!hashSet.contains(Integer.valueOf(i2))) {
                             try {
                                 FileLog.d(LauncherProvider.TAG, "Deleting invalid widget " + i2);
-                                newLauncherWidgetHost.deleteAppWidgetId(i2);
+                                appWidgetHostNewLauncherWidgetHost.deleteAppWidgetId(i2);
                             } catch (RuntimeException e) {
                             }
                         }
@@ -730,96 +704,124 @@ public class LauncherProvider extends ContentProvider {
             }
         }
 
-        /* JADX WARN: Removed duplicated region for block: B:32:0x008a A[Catch: Throwable -> 0x0091, TRY_ENTER, TryCatch #4 {Throwable -> 0x0091, blocks: (B:5:0x002f, B:32:0x008a, B:33:0x008d, B:20:0x0073), top: B:55:0x002f }] */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [907=5, 875=6] */
+        /* JADX WARN: Removed duplicated region for block: B:108:0x008a A[Catch: all -> 0x008e, Throwable -> 0x0091, TRY_ENTER, TryCatch #10 {all -> 0x008e, Throwable -> 0x0091, blocks: (B:81:0x002f, B:96:0x0073, B:108:0x008a, B:109:0x008d), top: B:138:0x002f }] */
+        /* JADX WARN: Removed duplicated region for block: B:117:0x0099 A[Catch: all -> 0x009d, Throwable -> 0x009f, TRY_ENTER, TryCatch #6 {all -> 0x009d, blocks: (B:80:0x0006, B:98:0x0078, B:117:0x0099, B:118:0x009c, B:123:0x00a1), top: B:135:0x0006, outer: #1 }] */
+        /* JADX WARN: Removed duplicated region for block: B:149:? A[Catch: all -> 0x008e, Throwable -> 0x0091, SYNTHETIC, TRY_LEAVE, TryCatch #10 {all -> 0x008e, Throwable -> 0x0091, blocks: (B:81:0x002f, B:96:0x0073, B:108:0x008a, B:109:0x008d), top: B:138:0x002f }] */
+        /* JADX WARN: Removed duplicated region for block: B:150:? A[Catch: all -> 0x009d, Throwable -> 0x009f, SYNTHETIC, TRY_LEAVE, TryCatch #6 {all -> 0x009d, blocks: (B:80:0x0006, B:98:0x0078, B:117:0x0099, B:118:0x009c, B:123:0x00a1), top: B:135:0x0006, outer: #1 }] */
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
-        void convertShortcutsToLauncherActivities(SQLiteDatabase sQLiteDatabase) {
+        void convertShortcutsToLauncherActivities(SQLiteDatabase sQLiteDatabase) throws Exception {
             Throwable th;
             Throwable th2;
+            Throwable th3;
+            Throwable th4;
             try {
                 LauncherDbUtils.SQLiteTransaction sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
-                Cursor query = sQLiteDatabase.query(LauncherSettings.Favorites.TABLE_NAME, new String[]{"_id", LauncherSettings.BaseLauncherColumns.INTENT}, "itemType=1 AND profileId=" + getDefaultUserSerial(), null, null, null, null);
                 try {
-                    SQLiteStatement compileStatement = sQLiteDatabase.compileStatement("UPDATE favorites SET itemType=0 WHERE _id=?");
+                    Cursor cursorQuery = sQLiteDatabase.query(LauncherSettings.Favorites.TABLE_NAME, new String[]{"_id", LauncherSettings.BaseLauncherColumns.INTENT}, "itemType=1 AND profileId=" + getDefaultUserSerial(), null, null, null, null);
                     try {
-                        int columnIndexOrThrow = query.getColumnIndexOrThrow("_id");
-                        int columnIndexOrThrow2 = query.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.INTENT);
-                        while (query.moveToNext()) {
+                        SQLiteStatement sQLiteStatementCompileStatement = sQLiteDatabase.compileStatement("UPDATE favorites SET itemType=0 WHERE _id=?");
+                        try {
+                            int columnIndexOrThrow = cursorQuery.getColumnIndexOrThrow("_id");
+                            int columnIndexOrThrow2 = cursorQuery.getColumnIndexOrThrow(LauncherSettings.BaseLauncherColumns.INTENT);
+                            while (cursorQuery.moveToNext()) {
+                                try {
+                                    if (Utilities.isLauncherAppTarget(Intent.parseUri(cursorQuery.getString(columnIndexOrThrow2), 0))) {
+                                        sQLiteStatementCompileStatement.bindLong(1, cursorQuery.getLong(columnIndexOrThrow));
+                                        sQLiteStatementCompileStatement.executeUpdateDelete();
+                                    }
+                                } catch (URISyntaxException e) {
+                                    Log.e(LauncherProvider.TAG, "Unable to parse intent", e);
+                                }
+                            }
+                            sQLiteTransaction.commit();
+                            if (sQLiteStatementCompileStatement != null) {
+                                $closeResource(null, sQLiteStatementCompileStatement);
+                            }
+                            if (cursorQuery != null) {
+                                $closeResource(null, cursorQuery);
+                            }
+                        } catch (Throwable th5) {
                             try {
-                                if (Utilities.isLauncherAppTarget(Intent.parseUri(query.getString(columnIndexOrThrow2), 0))) {
-                                    compileStatement.bindLong(1, query.getLong(columnIndexOrThrow));
-                                    compileStatement.executeUpdateDelete();
+                                throw th5;
+                            } catch (Throwable th6) {
+                                th3 = th5;
+                                th4 = th6;
+                                if (sQLiteStatementCompileStatement != null) {
+                                    throw th4;
                                 }
-                            } catch (URISyntaxException e) {
-                                Log.e(LauncherProvider.TAG, "Unable to parse intent", e);
-                            } catch (Throwable th3) {
-                                th2 = th3;
-                                th = null;
-                                if (compileStatement != null) {
-                                }
+                                $closeResource(th3, sQLiteStatementCompileStatement);
+                                throw th4;
+                            }
+                        }
+                    } catch (Throwable th7) {
+                        try {
+                            throw th7;
+                        } catch (Throwable th8) {
+                            th = th7;
+                            th2 = th8;
+                            if (cursorQuery != null) {
                                 throw th2;
                             }
-                        }
-                        sQLiteTransaction.commit();
-                        if (compileStatement != null) {
-                            $closeResource(null, compileStatement);
-                        }
-                        if (query != null) {
-                            $closeResource(null, query);
-                        }
-                        $closeResource(null, sQLiteTransaction);
-                    } catch (Throwable th4) {
-                        try {
-                            throw th4;
-                        } catch (Throwable th5) {
-                            th = th4;
-                            th2 = th5;
-                            if (compileStatement != null) {
-                                $closeResource(th, compileStatement);
-                            }
+                            $closeResource(th, cursorQuery);
                             throw th2;
                         }
                     }
-                } catch (Throwable th6) {
-                    try {
-                        throw th6;
-                    } catch (Throwable th7) {
-                        if (query != null) {
-                            $closeResource(th6, query);
-                        }
-                        throw th7;
-                    }
+                } finally {
+                    $closeResource(null, sQLiteTransaction);
                 }
             } catch (SQLException e2) {
                 Log.w(LauncherProvider.TAG, "Error deduping shortcuts", e2);
             }
         }
 
-        public boolean recreateWorkspaceTable(SQLiteDatabase sQLiteDatabase) {
+        /* JADX WARN: Removed duplicated region for block: B:75:0x0089 A[Catch: all -> 0x008d, Throwable -> 0x008f, TRY_ENTER, TryCatch #4 {all -> 0x008d, blocks: (B:53:0x0007, B:56:0x002a, B:57:0x002d, B:59:0x003c, B:60:0x0060, B:64:0x0076, B:63:0x006c, B:75:0x0089, B:76:0x008c, B:81:0x0091), top: B:91:0x0007, outer: #1 }] */
+        /* JADX WARN: Removed duplicated region for block: B:95:? A[Catch: all -> 0x008d, Throwable -> 0x008f, SYNTHETIC, TRY_LEAVE, TryCatch #4 {all -> 0x008d, blocks: (B:53:0x0007, B:56:0x002a, B:57:0x002d, B:59:0x003c, B:60:0x0060, B:64:0x0076, B:63:0x006c, B:75:0x0089, B:76:0x008c, B:81:0x0091), top: B:91:0x0007, outer: #1 }] */
+        /*
+            Code decompiled incorrectly, please refer to instructions dump.
+        */
+        public boolean recreateWorkspaceTable(SQLiteDatabase sQLiteDatabase) throws Exception {
+            Throwable th;
+            Throwable th2;
             try {
                 LauncherDbUtils.SQLiteTransaction sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
-                Cursor query = sQLiteDatabase.query(LauncherSettings.WorkspaceScreens.TABLE_NAME, new String[]{"_id"}, null, null, null, null, LauncherSettings.WorkspaceScreens.SCREEN_RANK);
                 try {
-                    ArrayList arrayList = new ArrayList(LauncherDbUtils.iterateCursor(query, 0, new LinkedHashSet()));
-                    if (query != null) {
-                        $closeResource(null, query);
+                    Cursor cursorQuery = sQLiteDatabase.query(LauncherSettings.WorkspaceScreens.TABLE_NAME, new String[]{"_id"}, null, null, null, null, LauncherSettings.WorkspaceScreens.SCREEN_RANK);
+                    try {
+                        ArrayList arrayList = new ArrayList(LauncherDbUtils.iterateCursor(cursorQuery, 0, new LinkedHashSet()));
+                        if (cursorQuery != null) {
+                            $closeResource(null, cursorQuery);
+                        }
+                        sQLiteDatabase.execSQL("DROP TABLE IF EXISTS workspaceScreens");
+                        addWorkspacesTable(sQLiteDatabase, false);
+                        int size = arrayList.size();
+                        for (int i = 0; i < size; i++) {
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put("_id", (Long) arrayList.get(i));
+                            contentValues.put(LauncherSettings.WorkspaceScreens.SCREEN_RANK, Integer.valueOf(i));
+                            LauncherProvider.addModifiedTime(contentValues);
+                            sQLiteDatabase.insertOrThrow(LauncherSettings.WorkspaceScreens.TABLE_NAME, null, contentValues);
+                        }
+                        sQLiteTransaction.commit();
+                        this.mMaxScreenId = arrayList.isEmpty() ? 0L : ((Long) Collections.max(arrayList)).longValue();
+                        return true;
+                    } catch (Throwable th3) {
+                        try {
+                            throw th3;
+                        } catch (Throwable th4) {
+                            th = th3;
+                            th2 = th4;
+                            if (cursorQuery != null) {
+                                throw th2;
+                            }
+                            $closeResource(th, cursorQuery);
+                            throw th2;
+                        }
                     }
-                    sQLiteDatabase.execSQL("DROP TABLE IF EXISTS workspaceScreens");
-                    addWorkspacesTable(sQLiteDatabase, false);
-                    int size = arrayList.size();
-                    for (int i = 0; i < size; i++) {
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put("_id", (Long) arrayList.get(i));
-                        contentValues.put(LauncherSettings.WorkspaceScreens.SCREEN_RANK, Integer.valueOf(i));
-                        LauncherProvider.addModifiedTime(contentValues);
-                        sQLiteDatabase.insertOrThrow(LauncherSettings.WorkspaceScreens.TABLE_NAME, null, contentValues);
-                    }
-                    sQLiteTransaction.commit();
-                    this.mMaxScreenId = arrayList.isEmpty() ? 0L : ((Long) Collections.max(arrayList)).longValue();
-                    $closeResource(null, sQLiteTransaction);
-                    return true;
                 } finally {
+                    $closeResource(null, sQLiteTransaction);
                 }
             } catch (SQLException e) {
                 Log.e(LauncherProvider.TAG, e.getMessage(), e);
@@ -827,17 +829,26 @@ public class LauncherProvider extends ContentProvider {
             }
         }
 
-        boolean updateFolderItemsRank(SQLiteDatabase sQLiteDatabase, boolean z) {
+        boolean updateFolderItemsRank(SQLiteDatabase sQLiteDatabase, boolean z) throws Exception {
             try {
                 LauncherDbUtils.SQLiteTransaction sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
+                Throwable th = null;
                 if (z) {
-                    sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN rank INTEGER NOT NULL DEFAULT 0;");
+                    try {
+                        try {
+                            sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN rank INTEGER NOT NULL DEFAULT 0;");
+                        } catch (Throwable th2) {
+                            $closeResource(th, sQLiteTransaction);
+                            throw th2;
+                        }
+                    } finally {
+                    }
                 }
-                Cursor rawQuery = sQLiteDatabase.rawQuery("SELECT container, MAX(cellX) FROM favorites WHERE container IN (SELECT _id FROM favorites WHERE itemType = ?) GROUP BY container;", new String[]{Integer.toString(2)});
-                while (rawQuery.moveToNext()) {
-                    sQLiteDatabase.execSQL("UPDATE favorites SET rank=cellX+(cellY*?) WHERE container=? AND cellX IS NOT NULL AND cellY IS NOT NULL;", new Object[]{Long.valueOf(rawQuery.getLong(1) + 1), Long.valueOf(rawQuery.getLong(0))});
+                Cursor cursorRawQuery = sQLiteDatabase.rawQuery("SELECT container, MAX(cellX) FROM favorites WHERE container IN (SELECT _id FROM favorites WHERE itemType = ?) GROUP BY container;", new String[]{Integer.toString(2)});
+                while (cursorRawQuery.moveToNext()) {
+                    sQLiteDatabase.execSQL("UPDATE favorites SET rank=cellX+(cellY*?) WHERE container=? AND cellX IS NOT NULL AND cellY IS NOT NULL;", new Object[]{Long.valueOf(cursorRawQuery.getLong(1) + 1), Long.valueOf(cursorRawQuery.getLong(0))});
                 }
-                rawQuery.close();
+                cursorRawQuery.close();
                 sQLiteTransaction.commit();
                 $closeResource(null, sQLiteTransaction);
                 return true;
@@ -851,13 +862,16 @@ public class LauncherProvider extends ContentProvider {
             return addIntegerColumn(sQLiteDatabase, LauncherSettings.Favorites.PROFILE_ID, getDefaultUserSerial());
         }
 
-        private boolean addIntegerColumn(SQLiteDatabase sQLiteDatabase, String str, long j) {
+        private boolean addIntegerColumn(SQLiteDatabase sQLiteDatabase, String str, long j) throws Exception {
             try {
                 LauncherDbUtils.SQLiteTransaction sQLiteTransaction = new LauncherDbUtils.SQLiteTransaction(sQLiteDatabase);
-                sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN " + str + " INTEGER NOT NULL DEFAULT " + j + ";");
-                sQLiteTransaction.commit();
-                $closeResource(null, sQLiteTransaction);
-                return true;
+                try {
+                    sQLiteDatabase.execSQL("ALTER TABLE favorites ADD COLUMN " + str + " INTEGER NOT NULL DEFAULT " + j + ";");
+                    sQLiteTransaction.commit();
+                    return true;
+                } finally {
+                    $closeResource(null, sQLiteTransaction);
+                }
             } catch (SQLException e) {
                 Log.e(LauncherProvider.TAG, e.getMessage(), e);
                 return false;
@@ -883,11 +897,11 @@ public class LauncherProvider extends ContentProvider {
         }
 
         public void checkId(String str, ContentValues contentValues) {
-            long longValue = contentValues.getAsLong("_id").longValue();
+            long jLongValue = contentValues.getAsLong("_id").longValue();
             if (LauncherSettings.WorkspaceScreens.TABLE_NAME.equals(str)) {
-                this.mMaxScreenId = Math.max(longValue, this.mMaxScreenId);
+                this.mMaxScreenId = Math.max(jLongValue, this.mMaxScreenId);
             } else {
-                this.mMaxItemId = Math.max(longValue, this.mMaxItemId);
+                this.mMaxItemId = Math.max(jLongValue, this.mMaxItemId);
             }
         }
 
@@ -909,14 +923,15 @@ public class LauncherProvider extends ContentProvider {
 
         int loadFavorites(SQLiteDatabase sQLiteDatabase, AutoInstallsLayout autoInstallsLayout) {
             ArrayList<Long> arrayList = new ArrayList<>();
-            int loadLayout = autoInstallsLayout.loadLayout(sQLiteDatabase, arrayList);
+            int iLoadLayout = autoInstallsLayout.loadLayout(sQLiteDatabase, arrayList);
             Collections.sort(arrayList);
             ContentValues contentValues = new ContentValues();
             Iterator<Long> it = arrayList.iterator();
             int i = 0;
             while (it.hasNext()) {
+                Long next = it.next();
                 contentValues.clear();
-                contentValues.put("_id", it.next());
+                contentValues.put("_id", next);
                 contentValues.put(LauncherSettings.WorkspaceScreens.SCREEN_RANK, Integer.valueOf(i));
                 if (LauncherProvider.dbInsertAndCheck(this, sQLiteDatabase, LauncherSettings.WorkspaceScreens.TABLE_NAME, null, contentValues) < 0) {
                     throw new RuntimeException("Failed initialize screen tablefrom default layout");
@@ -925,20 +940,20 @@ public class LauncherProvider extends ContentProvider {
             }
             this.mMaxItemId = initializeMaxItemId(sQLiteDatabase);
             this.mMaxScreenId = initializeMaxScreenId(sQLiteDatabase);
-            return loadLayout;
+            return iLoadLayout;
         }
     }
 
     static long getMaxId(SQLiteDatabase sQLiteDatabase, String str) {
         long j;
-        Cursor rawQuery = sQLiteDatabase.rawQuery("SELECT MAX(_id) FROM " + str, null);
-        if (rawQuery != null && rawQuery.moveToNext()) {
-            j = rawQuery.getLong(0);
+        Cursor cursorRawQuery = sQLiteDatabase.rawQuery("SELECT MAX(_id) FROM " + str, null);
+        if (cursorRawQuery != null && cursorRawQuery.moveToNext()) {
+            j = cursorRawQuery.getLong(0);
         } else {
             j = -1;
         }
-        if (rawQuery != null) {
-            rawQuery.close();
+        if (cursorRawQuery != null) {
+            cursorRawQuery.close();
         }
         if (j == -1) {
             throw new RuntimeException("Error: could not query max id in " + str);
@@ -946,27 +961,27 @@ public class LauncherProvider extends ContentProvider {
         return j;
     }
 
-    /* loaded from: classes.dex */
     static class SqlArguments {
         public final String[] args;
         public final String table;
         public final String where;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public SqlArguments(Uri uri, String str, String[] strArr) {
+        SqlArguments(Uri uri, String str, String[] strArr) {
             if (uri.getPathSegments().size() == 1) {
                 this.table = uri.getPathSegments().get(0);
                 this.where = str;
                 this.args = strArr;
-            } else if (uri.getPathSegments().size() != 2) {
-                throw new IllegalArgumentException("Invalid URI: " + uri);
-            } else if (!TextUtils.isEmpty(str)) {
-                throw new UnsupportedOperationException("WHERE clause not supported: " + uri);
-            } else {
-                this.table = uri.getPathSegments().get(0);
-                this.where = "_id=" + ContentUris.parseId(uri);
-                this.args = null;
+                return;
             }
+            if (uri.getPathSegments().size() != 2) {
+                throw new IllegalArgumentException("Invalid URI: " + uri);
+            }
+            if (!TextUtils.isEmpty(str)) {
+                throw new UnsupportedOperationException("WHERE clause not supported: " + uri);
+            }
+            this.table = uri.getPathSegments().get(0);
+            this.where = "_id=" + ContentUris.parseId(uri);
+            this.args = null;
         }
 
         SqlArguments(Uri uri) {
@@ -974,20 +989,22 @@ public class LauncherProvider extends ContentProvider {
                 this.table = uri.getPathSegments().get(0);
                 this.where = null;
                 this.args = null;
-                return;
+            } else {
+                throw new IllegalArgumentException("Invalid URI: " + uri);
             }
-            throw new IllegalArgumentException("Invalid URI: " + uri);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class ChangeListenerWrapper implements Handler.Callback {
+    private static class ChangeListenerWrapper implements Handler.Callback {
         private static final int MSG_APP_WIDGET_HOST_RESET = 2;
         private static final int MSG_LAUNCHER_PROVIDER_CHANGED = 1;
         private LauncherProviderChangeListener mListener;
 
         private ChangeListenerWrapper() {
+        }
+
+        /* synthetic */ ChangeListenerWrapper(AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // android.os.Handler.Callback
@@ -996,13 +1013,12 @@ public class LauncherProvider extends ContentProvider {
                 switch (message.what) {
                     case 1:
                         this.mListener.onLauncherProviderChanged();
-                        return true;
+                        break;
                     case 2:
                         this.mListener.onAppWidgetHostReset();
-                        return true;
-                    default:
-                        return true;
+                        break;
                 }
+                return true;
             }
             return true;
         }

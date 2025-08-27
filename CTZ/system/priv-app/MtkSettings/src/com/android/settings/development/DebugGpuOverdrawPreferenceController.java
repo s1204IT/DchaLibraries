@@ -9,6 +9,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.development.SystemPropPoker;
+
 /* loaded from: classes.dex */
 public class DebugGpuOverdrawPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final String[] mListSummaries;
@@ -49,7 +50,8 @@ public class DebugGpuOverdrawPreferenceController extends DeveloperOptionsPrefer
         while (true) {
             if (i2 >= this.mListValues.length) {
                 break;
-            } else if (!TextUtils.equals(str, this.mListValues[i2])) {
+            }
+            if (!TextUtils.equals(str, this.mListValues[i2])) {
                 i2++;
             } else {
                 i = i2;

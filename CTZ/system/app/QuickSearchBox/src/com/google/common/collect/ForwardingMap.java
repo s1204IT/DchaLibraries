@@ -3,11 +3,15 @@ package com.google.common.collect;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public abstract class ForwardingMap<K, V> extends ForwardingObject implements Map<K, V> {
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
     @Override // com.google.common.collect.ForwardingObject
-    public abstract Map<K, V> delegate();
+    protected abstract Map<K, V> delegate();
+
+    protected ForwardingMap() {
+    }
 
     @Override // java.util.Map
     public int size() {
@@ -79,8 +83,7 @@ public abstract class ForwardingMap<K, V> extends ForwardingObject implements Ma
         return delegate().hashCode();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public String standardToString() {
+    protected String standardToString() {
         return Maps.toStringImpl(this);
     }
 }

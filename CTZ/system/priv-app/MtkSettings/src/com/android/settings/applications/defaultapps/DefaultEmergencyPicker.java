@@ -13,7 +13,9 @@ import com.android.settings.Utils;
 import com.android.settingslib.applications.DefaultAppInfo;
 import com.android.settingslib.widget.CandidateInfo;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultEmergencyPicker extends DefaultAppPickerFragment {
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -21,21 +23,21 @@ public class DefaultEmergencyPicker extends DefaultAppPickerFragment {
         return 786;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.default_emergency_settings;
     }
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
-    protected List<DefaultAppInfo> getCandidates() {
+    protected List<DefaultAppInfo> getCandidates() throws PackageManager.NameNotFoundException {
         ArrayList arrayList = new ArrayList();
-        List<ResolveInfo> queryIntentActivities = this.mPm.getPackageManager().queryIntentActivities(DefaultEmergencyPreferenceController.QUERY_INTENT, 0);
+        List<ResolveInfo> listQueryIntentActivities = this.mPm.getPackageManager().queryIntentActivities(DefaultEmergencyPreferenceController.QUERY_INTENT, 0);
         Context context = getContext();
+        Iterator<ResolveInfo> it = listQueryIntentActivities.iterator();
         PackageInfo packageInfo = null;
-        for (ResolveInfo resolveInfo : queryIntentActivities) {
+        while (it.hasNext()) {
             try {
-                PackageInfo packageInfo2 = this.mPm.getPackageManager().getPackageInfo(resolveInfo.activityInfo.packageName, 0);
+                PackageInfo packageInfo2 = this.mPm.getPackageManager().getPackageInfo(it.next().activityInfo.packageName, 0);
                 ApplicationInfo applicationInfo = packageInfo2.applicationInfo;
                 arrayList.add(new DefaultAppInfo(context, this.mPm, applicationInfo));
                 if (isSystemApp(applicationInfo) && (packageInfo == null || packageInfo.firstInstallTime > packageInfo2.firstInstallTime)) {
@@ -50,9 +52,9 @@ public class DefaultEmergencyPicker extends DefaultAppPickerFragment {
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: getConfirmationMessage(Lcom/android/settingslib/widget/CandidateInfo;)Ljava/lang/CharSequence; */
     @Override // com.android.settings.applications.defaultapps.DefaultAppPickerFragment
-    public String getConfirmationMessage(CandidateInfo candidateInfo) {
+    protected String getConfirmationMessage(CandidateInfo candidateInfo) {
         if (Utils.isPackageDirectBootAware(getContext(), candidateInfo.getKey())) {
             return null;
         }

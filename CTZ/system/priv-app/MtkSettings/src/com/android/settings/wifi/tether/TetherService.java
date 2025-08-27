@@ -1,5 +1,6 @@
 package com.android.settings.wifi.tether;
 
+import android.R;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.os.ResultReceiver;
@@ -22,9 +24,11 @@ import android.util.Log;
 import com.android.internal.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class TetherService extends Service {
     private static final boolean DEBUG = Log.isLoggable("TetherService", 3);
+
     @VisibleForTesting
     public static final String EXTRA_RESULT = "EntitlementResult";
     private ArrayList<Integer> mCurrentTethers;
@@ -38,13 +42,13 @@ public class TetherService extends Service {
             if (TetherService.DEBUG) {
                 Log.d("TetherService", "Got provision result " + intent);
             }
-            if (TetherService.this.getResources().getString(17039700).equals(intent.getAction())) {
+            if (TetherService.this.getResources().getString(R.string.app_category_video).equals(intent.getAction())) {
                 if (TetherService.this.mInProvisionCheck) {
-                    int intValue = ((Integer) TetherService.this.mCurrentTethers.get(TetherService.this.mCurrentTypeIndex)).intValue();
-                    TetherService.this.mInProvisionCheck = TetherService.DEBUG;
+                    int iIntValue = ((Integer) TetherService.this.mCurrentTethers.get(TetherService.this.mCurrentTypeIndex)).intValue();
+                    TetherService.this.mInProvisionCheck = false;
                     int intExtra = intent.getIntExtra(TetherService.EXTRA_RESULT, 0);
                     if (intExtra != -1) {
-                        switch (intValue) {
+                        switch (iIntValue) {
                             case 0:
                                 TetherService.this.disableWifiTethering();
                                 break;
@@ -56,7 +60,7 @@ public class TetherService extends Service {
                                 break;
                         }
                     }
-                    TetherService.this.fireCallbacksForType(intValue, intExtra);
+                    TetherService.this.fireCallbacksForType(iIntValue, intExtra);
                     if (TetherService.access$204(TetherService.this) < TetherService.this.mCurrentTethers.size()) {
                         TetherService.this.startProvisioning(TetherService.this.mCurrentTypeIndex);
                         return;
@@ -83,12 +87,12 @@ public class TetherService extends Service {
     }
 
     @Override // android.app.Service
-    public void onCreate() {
+    public void onCreate() throws Resources.NotFoundException {
         super.onCreate();
         if (DEBUG) {
             Log.d("TetherService", "Creating TetherService");
         }
-        registerReceiver(this.mReceiver, new IntentFilter(getResources().getString(17039700)), "android.permission.CONNECTIVITY_INTERNAL", null);
+        registerReceiver(this.mReceiver, new IntentFilter(getResources().getString(R.string.app_category_video)), "android.permission.CONNECTIVITY_INTERNAL", null);
         this.mCurrentTethers = stringToTethers(getSharedPreferences("tetherPrefs", 0).getString("currentTethers", ""));
         this.mCurrentTypeIndex = 0;
         this.mPendingCallbacks = new ArrayMap<>(3);
@@ -126,33 +130,33 @@ public class TetherService extends Service {
         if (intent.hasExtra("extraRemTetherType")) {
             if (!this.mInProvisionCheck) {
                 int intExtra2 = intent.getIntExtra("extraRemTetherType", -1);
-                int indexOf = this.mCurrentTethers.indexOf(Integer.valueOf(intExtra2));
+                int iIndexOf = this.mCurrentTethers.indexOf(Integer.valueOf(intExtra2));
                 if (DEBUG) {
-                    Log.d("TetherService", "Removing tether " + intExtra2 + ", index " + indexOf);
+                    Log.d("TetherService", "Removing tether " + intExtra2 + ", index " + iIndexOf);
                 }
-                if (indexOf >= 0) {
-                    removeTypeAtIndex(indexOf);
+                if (iIndexOf >= 0) {
+                    removeTypeAtIndex(iIndexOf);
                 }
                 cancelAlarmIfNecessary();
             } else if (DEBUG) {
                 Log.d("TetherService", "Don't cancel alarm during provisioning");
             }
         }
-        if (intent.getBooleanExtra("extraSetAlarm", DEBUG) && this.mCurrentTethers.size() == 1) {
+        if (intent.getBooleanExtra("extraSetAlarm", false) && this.mCurrentTethers.size() == 1) {
             scheduleAlarm();
         }
-        if (intent.getBooleanExtra("extraRunProvision", DEBUG)) {
+        if (intent.getBooleanExtra("extraRunProvision", false)) {
             startProvisioning(this.mCurrentTypeIndex);
             return 3;
-        } else if (!this.mInProvisionCheck) {
+        }
+        if (!this.mInProvisionCheck) {
             if (DEBUG) {
                 Log.d("TetherService", "Stopping self.  startid: " + i2);
             }
             stopSelf();
             return 2;
-        } else {
-            return 3;
         }
+        return 3;
     }
 
     @Override // android.app.Service
@@ -211,18 +215,15 @@ public class TetherService extends Service {
         return stringBuffer.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void disableWifiTethering() {
+    private void disableWifiTethering() {
         ((ConnectivityManager) getSystemService("connectivity")).stopTethering(0);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void disableUsbTethering() {
-        ((ConnectivityManager) getSystemService("connectivity")).setUsbTethering(DEBUG);
+    private void disableUsbTethering() {
+        ((ConnectivityManager) getSystemService("connectivity")).setUsbTethering(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void disableBtTethering() {
+    private void disableBtTethering() {
         final BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         if (defaultAdapter != null) {
             defaultAdapter.getProfileProxy(this, new BluetoothProfile.ServiceListener() { // from class: com.android.settings.wifi.tether.TetherService.1
@@ -232,15 +233,14 @@ public class TetherService extends Service {
 
                 @Override // android.bluetooth.BluetoothProfile.ServiceListener
                 public void onServiceConnected(int i, BluetoothProfile bluetoothProfile) {
-                    ((BluetoothPan) bluetoothProfile).setBluetoothTethering((boolean) TetherService.DEBUG);
+                    ((BluetoothPan) bluetoothProfile).setBluetoothTethering(false);
                     defaultAdapter.closeProfileProxy(5, bluetoothProfile);
                 }
             }, 5);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startProvisioning(int i) {
+    private void startProvisioning(int i) {
         if (i < this.mCurrentTethers.size()) {
             Intent provisionBroadcastIntent = getProvisionBroadcastIntent(i);
             setEntitlementAppActive(i);
@@ -253,42 +253,42 @@ public class TetherService extends Service {
     }
 
     private Intent getProvisionBroadcastIntent(int i) {
-        Intent intent = new Intent(getResources().getString(17039699));
+        Intent intent = new Intent(getResources().getString(R.string.app_category_social));
         intent.putExtra("TETHER_TYPE", this.mCurrentTethers.get(i).intValue());
         intent.setFlags(285212672);
         return intent;
     }
 
     private void setEntitlementAppActive(int i) {
-        List<ResolveInfo> queryBroadcastReceivers = getPackageManager().queryBroadcastReceivers(getProvisionBroadcastIntent(i), 131072);
-        if (queryBroadcastReceivers.isEmpty()) {
+        List<ResolveInfo> listQueryBroadcastReceivers = getPackageManager().queryBroadcastReceivers(getProvisionBroadcastIntent(i), 131072);
+        if (listQueryBroadcastReceivers.isEmpty()) {
             Log.e("TetherService", "No found BroadcastReceivers for provision intent.");
             return;
         }
-        for (ResolveInfo resolveInfo : queryBroadcastReceivers) {
+        for (ResolveInfo resolveInfo : listQueryBroadcastReceivers) {
             if (resolveInfo.activityInfo.applicationInfo.isSystemApp()) {
-                this.mUsageManagerWrapper.setAppInactive(resolveInfo.activityInfo.packageName, DEBUG);
+                this.mUsageManagerWrapper.setAppInactive(resolveInfo.activityInfo.packageName, false);
             }
         }
     }
 
     @VisibleForTesting
     void scheduleAlarm() {
-        Intent intent = new Intent(this, TetherService.class);
+        Intent intent = new Intent(this, (Class<?>) TetherService.class);
         intent.putExtra("extraRunProvision", true);
         PendingIntent service = PendingIntent.getService(this, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService("alarm");
-        long integer = getResources().getInteger(17694820) * 3600000;
-        long elapsedRealtime = SystemClock.elapsedRealtime() + integer;
+        long integer = getResources().getInteger(R.integer.config_default_cellular_usage_setting) * 3600000;
+        long jElapsedRealtime = SystemClock.elapsedRealtime() + integer;
         if (DEBUG) {
             Log.d("TetherService", "Scheduling alarm at interval " + integer);
         }
-        alarmManager.setRepeating(3, elapsedRealtime, integer, service);
+        alarmManager.setRepeating(3, jElapsedRealtime, integer, service);
         this.mHotspotReceiver.register();
     }
 
     public static void cancelRecheckAlarmIfNecessary(Context context, int i) {
-        Intent intent = new Intent(context, TetherService.class);
+        Intent intent = new Intent(context, (Class<?>) TetherService.class);
         intent.putExtra("extraRemTetherType", i);
         context.startService(intent);
     }
@@ -298,19 +298,17 @@ public class TetherService extends Service {
         if (this.mCurrentTethers.size() != 0) {
             if (DEBUG) {
                 Log.d("TetherService", "Tethering still active, not cancelling alarm");
-                return;
             }
-            return;
+        } else {
+            ((AlarmManager) getSystemService("alarm")).cancel(PendingIntent.getService(this, 0, new Intent(this, (Class<?>) TetherService.class), 0));
+            if (DEBUG) {
+                Log.d("TetherService", "Tethering no longer active, canceling recheck");
+            }
+            this.mHotspotReceiver.unregister();
         }
-        ((AlarmManager) getSystemService("alarm")).cancel(PendingIntent.getService(this, 0, new Intent(this, TetherService.class), 0));
-        if (DEBUG) {
-            Log.d("TetherService", "Tethering no longer active, canceling recheck");
-        }
-        this.mHotspotReceiver.unregister();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fireCallbacksForType(int i, int i2) {
+    private void fireCallbacksForType(int i, int i2) {
         List<ResultReceiver> list = this.mPendingCallbacks.get(Integer.valueOf(i));
         if (list == null) {
             return;
@@ -331,7 +329,6 @@ public class TetherService extends Service {
     }
 
     @VisibleForTesting
-    /* loaded from: classes.dex */
     public static class UsageStatsManagerWrapper {
         private final UsageStatsManager mUsageStatsManager;
 

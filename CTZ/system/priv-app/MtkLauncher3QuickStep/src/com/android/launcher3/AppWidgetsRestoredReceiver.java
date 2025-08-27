@@ -13,6 +13,7 @@ import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.model.LoaderTask;
 import com.android.launcher3.provider.RestoreDbTask;
 import com.android.launcher3.util.ContentWriter;
+
 /* loaded from: classes.dex */
 public class AppWidgetsRestoredReceiver extends BroadcastReceiver {
     private static final String TAG = "AWRestoredReceiver";
@@ -28,17 +29,17 @@ public class AppWidgetsRestoredReceiver extends BroadcastReceiver {
             final int[] intArrayExtra = intent.getIntArrayExtra("appWidgetOldIds");
             final int[] intArrayExtra2 = intent.getIntArrayExtra("appWidgetIds");
             if (intArrayExtra.length == intArrayExtra2.length) {
-                final BroadcastReceiver.PendingResult goAsync = goAsync();
+                final BroadcastReceiver.PendingResult pendingResultGoAsync = goAsync();
                 new Handler(LauncherModel.getWorkerLooper()).postAtFrontOfQueue(new Runnable() { // from class: com.android.launcher3.AppWidgetsRestoredReceiver.1
                     @Override // java.lang.Runnable
                     public void run() {
                         AppWidgetsRestoredReceiver.restoreAppWidgetIds(context, intArrayExtra, intArrayExtra2);
-                        goAsync.finish();
+                        pendingResultGoAsync.finish();
                     }
                 });
-                return;
+            } else {
+                Log.e(TAG, "Invalid host restored received");
             }
-            Log.e(TAG, "Invalid host restored received");
         }
     }
 
@@ -65,13 +66,13 @@ public class AppWidgetsRestoredReceiver extends BroadcastReceiver {
             }
             String[] strArr = {Integer.toString(iArr[i3])};
             if (new ContentWriter(context, new ContentWriter.CommitParams("appWidgetId=? and (restored & 1) = 1", strArr)).put(LauncherSettings.Favorites.APPWIDGET_ID, Integer.valueOf(iArr2[i3])).put(LauncherSettings.Favorites.RESTORED, Integer.valueOf(i)).commit() == 0) {
-                Cursor query = contentResolver.query(LauncherSettings.Favorites.CONTENT_URI, new String[]{LauncherSettings.Favorites.APPWIDGET_ID}, "appWidgetId=?", strArr, null);
+                Cursor cursorQuery = contentResolver.query(LauncherSettings.Favorites.CONTENT_URI, new String[]{LauncherSettings.Favorites.APPWIDGET_ID}, "appWidgetId=?", strArr, null);
                 try {
-                    if (!query.moveToFirst()) {
+                    if (!cursorQuery.moveToFirst()) {
                         launcherAppWidgetHost.deleteAppWidgetId(iArr2[i3]);
                     }
                 } finally {
-                    query.close();
+                    cursorQuery.close();
                 }
             }
         }

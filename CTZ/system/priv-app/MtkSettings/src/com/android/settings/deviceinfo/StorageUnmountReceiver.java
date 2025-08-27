@@ -7,14 +7,16 @@ import android.os.storage.StorageManager;
 import android.os.storage.VolumeInfo;
 import android.util.Log;
 import com.android.settings.deviceinfo.StorageSettings;
+
 /* loaded from: classes.dex */
 public class StorageUnmountReceiver extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver
     public void onReceive(Context context, Intent intent) {
+        StorageManager storageManager = (StorageManager) context.getSystemService(StorageManager.class);
         String stringExtra = intent.getStringExtra("android.os.storage.extra.VOLUME_ID");
-        VolumeInfo findVolumeById = ((StorageManager) context.getSystemService(StorageManager.class)).findVolumeById(stringExtra);
-        if (findVolumeById != null) {
-            new StorageSettings.UnmountTask(context, findVolumeById).execute(new Void[0]);
+        VolumeInfo volumeInfoFindVolumeById = storageManager.findVolumeById(stringExtra);
+        if (volumeInfoFindVolumeById != null) {
+            new StorageSettings.UnmountTask(context, volumeInfoFindVolumeById).execute(new Void[0]);
             return;
         }
         Log.w("StorageSettings", "Missing volume " + stringExtra);

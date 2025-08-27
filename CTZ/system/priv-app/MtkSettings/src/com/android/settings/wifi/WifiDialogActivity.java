@@ -12,6 +12,7 @@ import com.android.settings.SetupWizardUtils;
 import com.android.settings.wifi.WifiDialog;
 import com.android.settingslib.wifi.AccessPoint;
 import com.android.setupwizardlib.util.WizardManagerHelper;
+
 /* loaded from: classes.dex */
 public class WifiDialogActivity extends Activity implements DialogInterface.OnDismissListener, WifiDialog.WifiDialogListener {
     static final String KEY_CONNECT_FOR_CALLER = "connect_for_caller";
@@ -28,9 +29,9 @@ public class WifiDialogActivity extends Activity implements DialogInterface.OnDi
         if (bundleExtra != null) {
             accessPoint = new AccessPoint(this, bundleExtra);
         }
-        WifiDialog createModal = WifiDialog.createModal(this, this, accessPoint, 1);
-        createModal.show();
-        createModal.setOnDismissListener(this);
+        WifiDialog wifiDialogCreateModal = WifiDialog.createModal(this, this, accessPoint, 1);
+        wifiDialogCreateModal.show();
+        wifiDialogCreateModal.setOnDismissListener(this);
     }
 
     @Override // android.app.Activity

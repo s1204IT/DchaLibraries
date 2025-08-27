@@ -17,6 +17,7 @@ import jp.co.benesse.dcha.dchaservice.IDchaService;
 import jp.co.benesse.dcha.util.DchaUncaughtExceptionHandler;
 import jp.co.benesse.dcha.util.FileUtils;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class ParentSettingActivity extends Activity {
     private IDchaService mDchaService;
@@ -37,9 +38,8 @@ public class ParentSettingActivity extends Activity {
     };
     protected boolean mIsFirstFlow;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d("ParentSettingActivity", "onCreate 0001");
         super.onCreate(bundle);
         Thread.setDefaultUncaughtExceptionHandler(new DchaUncaughtExceptionHandler(this));
@@ -49,17 +49,15 @@ public class ParentSettingActivity extends Activity {
         Logger.d("ParentSettingActivity", "onCreate 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         Logger.d("ParentSettingActivity", "onStart 0001");
         super.onStart();
         Logger.d("ParentSettingActivity", "onStart 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         Logger.d("ParentSettingActivity", "onStop 0001");
         super.onStop();
         if (!isApplicationForeground() && this.mIsFirstFlow) {
@@ -70,9 +68,8 @@ public class ParentSettingActivity extends Activity {
         Logger.d("ParentSettingActivity", "onStop 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d("ParentSettingActivity", "onDestroy 0001");
         super.onDestroy();
         if (this.mDchaServiceConnection != null) {
@@ -84,8 +81,7 @@ public class ParentSettingActivity extends Activity {
         Logger.d("ParentSettingActivity", "onDestroy 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void moveSettingActivity() {
+    protected void moveSettingActivity() {
         Logger.d("ParentSettingActivity", "moveSettingActivity 0001");
         try {
             Logger.d("ParentSettingActivity", "moveSettingActivity 0002");
@@ -102,15 +98,14 @@ public class ParentSettingActivity extends Activity {
         Logger.d("ParentSettingActivity", "moveSettingActivity 0005");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean getFirstFlg() {
+    protected boolean getFirstFlg() {
         Logger.d("ParentSettingActivity", "getFirstFlg 0001");
         boolean booleanExtra = getIntent().getBooleanExtra("first_flg", false);
         Logger.d("ParentSettingActivity", "getFirstFlg 0002");
         return booleanExtra;
     }
 
-    public boolean isApplicationForeground() {
+    public boolean isApplicationForeground() throws SecurityException {
         boolean z;
         Logger.d("ParentSettingActivity", "isApplicationForeground 0001");
         Logger.i("ParentSettingActivity", "thisPackageName :" + getApplicationInfo().packageName);
@@ -150,8 +145,7 @@ public class ParentSettingActivity extends Activity {
         Logger.d("ParentSettingActivity", "doCancelDigicharize 0005");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void hideNavigationBar(boolean z) {
+    protected void hideNavigationBar(boolean z) {
         Logger.d("ParentSettingActivity", "hideNavigationBar 0001");
         try {
             Logger.d("ParentSettingActivity", "hideNavigationBar 0002");
@@ -166,8 +160,7 @@ public class ParentSettingActivity extends Activity {
         Logger.d("ParentSettingActivity", "hideNavigationBar 0005");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setFont(TextView textView) {
+    protected void setFont(TextView textView) {
         Logger.d("ParentSettingActivity", "setFont 0001");
         if (canReadSystemFont()) {
             Logger.d("ParentSettingActivity", "setFont 0002");

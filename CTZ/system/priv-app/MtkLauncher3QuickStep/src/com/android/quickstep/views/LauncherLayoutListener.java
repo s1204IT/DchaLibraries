@@ -7,6 +7,7 @@ import com.android.launcher3.Insettable;
 import com.android.launcher3.Launcher;
 import com.android.quickstep.ActivityControlHelper;
 import com.android.quickstep.WindowTransformSwipeHandler;
+
 /* loaded from: classes.dex */
 public class LauncherLayoutListener extends AbstractFloatingView implements Insettable, ActivityControlHelper.LayoutListener {
     private WindowTransformSwipeHandler mHandler;

@@ -33,6 +33,7 @@ import com.mediatek.systemui.statusbar.util.FeatureOptions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SignalClusterView extends LinearLayout implements DarkIconDispatcher.DarkReceiver, NetworkController.SignalCallback, SecurityController.SecurityControllerCallback, TunerService.Tunable {
     static final boolean DEBUG;
@@ -100,7 +101,7 @@ public class SignalClusterView extends LinearLayout implements DarkIconDispatche
         this(context, attributeSet, 0);
     }
 
-    public SignalClusterView(Context context, AttributeSet attributeSet, int i) {
+    public SignalClusterView(Context context, AttributeSet attributeSet, int i) throws Resources.NotFoundException {
         super(context, attributeSet, i);
         this.mVpnVisible = false;
         this.mVpnIconId = 0;
@@ -141,15 +142,15 @@ public class SignalClusterView extends LinearLayout implements DarkIconDispatche
             return;
         }
         ArraySet<String> iconBlacklist = StatusBarIconController.getIconBlacklist(str2);
-        boolean contains = iconBlacklist.contains("airplane");
-        boolean contains2 = iconBlacklist.contains("mobile");
-        boolean contains3 = iconBlacklist.contains("wifi");
-        boolean contains4 = iconBlacklist.contains("ethernet");
-        if (contains != this.mBlockAirplane || contains2 != this.mBlockMobile || contains4 != this.mBlockEthernet || contains3 != this.mBlockWifi) {
-            this.mBlockAirplane = contains;
-            this.mBlockMobile = contains2;
-            this.mBlockEthernet = contains4;
-            this.mBlockWifi = contains3 || this.mForceBlockWifi;
+        boolean zContains = iconBlacklist.contains("airplane");
+        boolean zContains2 = iconBlacklist.contains("mobile");
+        boolean zContains3 = iconBlacklist.contains("wifi");
+        boolean zContains4 = iconBlacklist.contains("ethernet");
+        if (zContains != this.mBlockAirplane || zContains2 != this.mBlockMobile || zContains4 != this.mBlockEthernet || zContains3 != this.mBlockWifi) {
+            this.mBlockAirplane = zContains;
+            this.mBlockMobile = zContains2;
+            this.mBlockEthernet = zContains4;
+            this.mBlockWifi = zContains3 || this.mForceBlockWifi;
             this.mNetworkController.removeCallback((NetworkController.SignalCallback) this);
             this.mNetworkController.addCallback((NetworkController.SignalCallback) this);
         }
@@ -407,8 +408,7 @@ public class SignalClusterView extends LinearLayout implements DarkIconDispatche
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void apply() {
+    private void apply() {
         if (this.mWifiGroup == null) {
             return;
         }
@@ -549,19 +549,15 @@ public class SignalClusterView extends LinearLayout implements DarkIconDispatche
         view2.setAlpha(f);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setTint(ImageView imageView, int i) {
+    private void setTint(ImageView imageView, int i) {
         imageView.setImageTintList(ColorStateList.valueOf(i));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int currentVpnIconId(boolean z) {
+    private int currentVpnIconId(boolean z) {
         return z ? R.drawable.stat_sys_branded_vpn : R.drawable.stat_sys_vpn_ic;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PhoneState {
+    private class PhoneState {
         public boolean mActivityIn;
         public boolean mActivityOut;
         private boolean mDataActivityIn;
@@ -634,8 +630,7 @@ public class SignalClusterView extends LinearLayout implements DarkIconDispatche
                     }
                     this.mLastMobileTypeId = this.mMobileTypeId;
                 }
-                ViewGroup viewGroup = this.mMobileGroup;
-                viewGroup.setContentDescription(this.mMobileTypeDescription + " " + this.mMobileDescription);
+                this.mMobileGroup.setContentDescription(this.mMobileTypeDescription + " " + this.mMobileDescription);
                 this.mMobileGroup.setVisibility(0);
                 showViewInWfcCase();
             }

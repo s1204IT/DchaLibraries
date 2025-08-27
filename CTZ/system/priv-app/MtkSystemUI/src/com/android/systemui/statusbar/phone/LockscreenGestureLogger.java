@@ -6,6 +6,7 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.Dependency;
 import com.android.systemui.EventLogConstants;
 import com.android.systemui.EventLogTags;
+
 /* loaded from: classes.dex */
 public class LockscreenGestureLogger {
     private LogMaker mLogMaker = new LogMaker(0).setType(4);

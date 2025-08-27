@@ -11,6 +11,7 @@ import com.android.settingslib.drawer.Tile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class DashboardData {
     static final int STABLE_ID_CONDITION_CONTAINER = 4;
@@ -107,8 +108,7 @@ public class DashboardData {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static int sizeOf(List<?> list) {
+    private static int sizeOf(List<?> list) {
         if (list == null) {
             return 0;
         }
@@ -149,7 +149,6 @@ public class DashboardData {
         return arrayList;
     }
 
-    /* loaded from: classes.dex */
     public static class Builder {
         private DashboardCategory mCategory;
         private boolean mConditionExpanded;
@@ -191,7 +190,6 @@ public class DashboardData {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ItemsDataDiffCallback extends DiffUtil.Callback {
         private final List<Item> mNewItems;
         private final List<Item> mOldItems;
@@ -222,9 +220,7 @@ public class DashboardData {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Item {
+    static class Item {
         public final Object entity;
         public final int id;
         public final int type;
@@ -235,9 +231,7 @@ public class DashboardData {
             this.id = i2;
         }
 
-        /* JADX WARN: Code restructure failed: missing block: B:18:0x0028, code lost:
-            if (r1 != com.android.settings.R.layout.suggestion_container) goto L18;
-         */
+        /* JADX WARN: Removed duplicated region for block: B:27:0x004a  */
         /*
             Code decompiled incorrectly, please refer to instructions dump.
         */
@@ -245,36 +239,38 @@ public class DashboardData {
             if (this == obj) {
                 return true;
             }
-            if (obj instanceof Item) {
-                Item item = (Item) obj;
-                if (this.type == item.type && this.id == item.id) {
-                    int i = this.type;
-                    if (i != R.layout.condition_container) {
-                        if (i == R.layout.dashboard_tile) {
-                            Tile tile = (Tile) this.entity;
-                            Tile tile2 = (Tile) item.entity;
-                            return TextUtils.equals(tile.title, tile2.title) && TextUtils.equals(tile.summary, tile2.summary);
-                        }
-                    }
-                    List list = (List) this.entity;
-                    if (!list.isEmpty()) {
-                        Object obj2 = list.get(0);
-                        if ((obj2 instanceof Tile) && ((Tile) obj2).remoteViews != null) {
-                            return false;
-                        }
-                    }
-                    if (this.entity == null) {
-                        return item.entity == null;
-                    }
-                    return this.entity.equals(item.entity);
-                }
+            if (!(obj instanceof Item)) {
                 return false;
             }
-            return false;
+            Item item = (Item) obj;
+            if (this.type != item.type || this.id != item.id) {
+                return false;
+            }
+            int i = this.type;
+            if (i == R.layout.condition_container) {
+                List list = (List) this.entity;
+                if (!list.isEmpty()) {
+                    Object obj2 = list.get(0);
+                    if ((obj2 instanceof Tile) && ((Tile) obj2).remoteViews != null) {
+                        return false;
+                    }
+                }
+            } else {
+                if (i == R.layout.dashboard_tile) {
+                    Tile tile = (Tile) this.entity;
+                    Tile tile2 = (Tile) item.entity;
+                    return TextUtils.equals(tile.title, tile2.title) && TextUtils.equals(tile.summary, tile2.summary);
+                }
+                if (i == R.layout.suggestion_container) {
+                }
+            }
+            if (this.entity == null) {
+                return item.entity == null;
+            }
+            return this.entity.equals(item.entity);
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ConditionHeaderData {
         public final int conditionCount;
         public final List<Drawable> conditionIcons;

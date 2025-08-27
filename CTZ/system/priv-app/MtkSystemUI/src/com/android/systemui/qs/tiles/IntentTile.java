@@ -18,6 +18,7 @@ import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import java.util.Arrays;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class IntentTile extends QSTileImpl<QSTile.State> {
     private int mCurrentUserId;
@@ -40,9 +41,8 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
         this.mContext.registerReceiver(this.mReceiver, new IntentFilter(str));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleDestroy() {
+    protected void handleDestroy() {
         super.handleDestroy();
         this.mContext.unregisterReceiver(this.mReceiver);
     }
@@ -51,11 +51,11 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
         if (str == null || !str.startsWith("intent(") || !str.endsWith(")")) {
             throw new IllegalArgumentException("Bad intent tile spec: " + str);
         }
-        String substring = str.substring("intent(".length(), str.length() - 1);
-        if (substring.isEmpty()) {
+        String strSubstring = str.substring("intent(".length(), str.length() - 1);
+        if (strSubstring.isEmpty()) {
             throw new IllegalArgumentException("Empty intent tile spec action");
         }
-        return new IntentTile(qSHost, substring);
+        return new IntentTile(qSHost, strSubstring);
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
@@ -67,9 +67,8 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
         return new QSTile.State();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUserSwitch(int i) {
+    protected void handleUserSwitch(int i) {
         super.handleUserSwitch(i);
         this.mCurrentUserId = i;
     }
@@ -101,8 +100,7 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
                 this.mContext.sendBroadcastAsUser(Intent.parseUri(str2, 1), new UserHandle(this.mCurrentUserId));
             }
         } catch (Throwable th) {
-            String str3 = this.TAG;
-            Log.w(str3, "Error sending " + str + " intent", th);
+            Log.w(this.TAG, "Error sending " + str + " intent", th);
         }
     }
 
@@ -117,8 +115,9 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
         if (intent == null) {
             if (this.mLastIntent == null) {
                 return;
+            } else {
+                intent = this.mLastIntent;
             }
-            intent = this.mLastIntent;
         }
         this.mLastIntent = intent;
         state.contentDescription = intent.getStringExtra("contentDescription");
@@ -129,8 +128,7 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
             try {
                 state.icon = new BytesIcon(byteArrayExtra);
             } catch (Throwable th) {
-                String str = this.TAG;
-                Log.w(str, "Error loading icon bitmap, length " + byteArrayExtra.length, th);
+                Log.w(this.TAG, "Error loading icon bitmap, length " + byteArrayExtra.length, th);
             }
         } else {
             int intExtra = intent.getIntExtra("iconId", 0);
@@ -156,7 +154,6 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
         return 121;
     }
 
-    /* loaded from: classes.dex */
     private static class BytesIcon extends QSTile.Icon {
         private final byte[] mBytes;
 
@@ -178,7 +175,6 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
         }
     }
 
-    /* loaded from: classes.dex */
     private class PackageDrawableIcon extends QSTile.Icon {
         private final String mPackage;
         private final int mResId;
@@ -189,11 +185,11 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
         }
 
         public boolean equals(Object obj) {
-            if (obj instanceof PackageDrawableIcon) {
-                PackageDrawableIcon packageDrawableIcon = (PackageDrawableIcon) obj;
-                return Objects.equals(packageDrawableIcon.mPackage, this.mPackage) && packageDrawableIcon.mResId == this.mResId;
+            if (!(obj instanceof PackageDrawableIcon)) {
+                return false;
             }
-            return false;
+            PackageDrawableIcon packageDrawableIcon = (PackageDrawableIcon) obj;
+            return Objects.equals(packageDrawableIcon.mPackage, this.mPackage) && packageDrawableIcon.mResId == this.mResId;
         }
 
         @Override // com.android.systemui.plugins.qs.QSTile.Icon
@@ -201,8 +197,7 @@ public class IntentTile extends QSTileImpl<QSTile.State> {
             try {
                 return context.createPackageContext(this.mPackage, 0).getDrawable(this.mResId);
             } catch (Throwable th) {
-                String str = IntentTile.this.TAG;
-                Log.w(str, "Error loading package drawable pkg=" + this.mPackage + " id=" + this.mResId, th);
+                Log.w(IntentTile.this.TAG, "Error loading package drawable pkg=" + this.mPackage + " id=" + this.mResId, th);
                 return null;
             }
         }

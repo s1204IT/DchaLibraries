@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+
 /* loaded from: classes.dex */
 public class ResizingSpace extends View {
     private final int mHeight;
@@ -17,9 +18,9 @@ public class ResizingSpace extends View {
         if (getVisibility() == 0) {
             setVisibility(4);
         }
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, android.R.styleable.ViewGroup_Layout);
-        this.mWidth = obtainStyledAttributes.getResourceId(0, 0);
-        this.mHeight = obtainStyledAttributes.getResourceId(1, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, android.R.styleable.ViewGroup_Layout);
+        this.mWidth = typedArrayObtainStyledAttributes.getResourceId(0, 0);
+        this.mHeight = typedArrayObtainStyledAttributes.getResourceId(1, 0);
     }
 
     @Override // android.view.View

@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.UserInfo;
+import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -68,9 +69,9 @@ import com.android.systemui.plugins.GlobalActions;
 import com.android.systemui.volume.SystemUIInterpolators;
 import java.util.ArrayList;
 import java.util.List;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
+class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
     private MyAdapter mAdapter;
     private ToggleAction mAirplaneModeOn;
     private final AudioManager mAudioManager;
@@ -101,8 +102,11 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
                 String stringExtra = intent.getStringExtra("reason");
                 if (!"globalactions".equals(stringExtra)) {
                     GlobalActionsDialog.this.mHandler.sendMessage(GlobalActionsDialog.this.mHandler.obtainMessage(0, stringExtra));
+                    return;
                 }
-            } else if ("android.intent.action.EMERGENCY_CALLBACK_MODE_CHANGED".equals(action) && !intent.getBooleanExtra("PHONE_IN_ECM_STATE", false) && GlobalActionsDialog.this.mIsWaitingForEcmExit) {
+                return;
+            }
+            if ("android.intent.action.EMERGENCY_CALLBACK_MODE_CHANGED".equals(action) && !intent.getBooleanExtra("PHONE_IN_ECM_STATE", false) && GlobalActionsDialog.this.mIsWaitingForEcmExit) {
                 GlobalActionsDialog.this.mIsWaitingForEcmExit = false;
                 GlobalActionsDialog.this.changeAirplaneModeSystemSetting(true);
             }
@@ -145,26 +149,22 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
                             GlobalActionsDialog.this.mDialog.dismiss();
                         }
                         GlobalActionsDialog.this.mDialog = null;
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 case 1:
                     GlobalActionsDialog.this.refreshSilentMode();
                     GlobalActionsDialog.this.mAdapter.notifyDataSetChanged();
-                    return;
+                    break;
                 case 2:
                     GlobalActionsDialog.this.handleShow();
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     };
     private final IDreamManager mDreamManager = IDreamManager.Stub.asInterface(ServiceManager.getService("dreams"));
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public interface Action {
+    private interface Action {
         View create(Context context, View view, ViewGroup viewGroup, LayoutInflater layoutInflater);
 
         boolean isEnabled();
@@ -176,15 +176,13 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         boolean showDuringKeyguard();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public interface LongPressAction extends Action {
+    private interface LongPressAction extends Action {
         boolean onLongPress();
     }
 
     public GlobalActionsDialog(Context context, GlobalActions.GlobalActionsManager globalActionsManager) {
         boolean z = false;
-        this.mContext = new ContextThemeWrapper(context, (int) R.style.qs_theme);
+        this.mContext = new ContextThemeWrapper(context, R.style.qs_theme);
         this.mWindowManagerFuncs = globalActionsManager;
         this.mAudioManager = (AudioManager) this.mContext.getSystemService("audio");
         this.mDevicePolicyManager = (DevicePolicyManager) this.mContext.getSystemService("device_policy");
@@ -203,7 +201,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
             z = true;
         }
         this.mHasVibrator = z;
-        this.mShowSilentToggle = !this.mContext.getResources().getBoolean(17957059);
+        this.mShowSilentToggle = !this.mContext.getResources().getBoolean(android.R.^attr-private.materialColorSecondaryFixed);
         this.mEmergencyAffordanceManager = new EmergencyAffordanceManager(context);
         this.mScreenshotHelper = new ScreenshotHelper(context);
     }
@@ -236,8 +234,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleShow() {
+    private void handleShow() {
         awakenIfNecessary();
         this.mDialog = createDialog();
         prepareDialog();
@@ -253,13 +250,13 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         this.mWindowManagerFuncs.onGlobalActionsShown();
     }
 
-    private ActionsDialog createDialog() {
+    private ActionsDialog createDialog() throws Resources.NotFoundException {
         if (!this.mHasVibrator) {
             this.mSilentModeAction = new SilentModeToggleAction();
         } else {
             this.mSilentModeAction = new SilentModeTriStateAction(this.mContext, this.mAudioManager, this.mHandler);
         }
-        this.mAirplaneModeOn = new ToggleAction(17302405, 17302407, 17039960, 17039959, 17039958) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.1
+        this.mAirplaneModeOn = new ToggleAction(android.R.drawable.ic_audio_ring_notif_vibrate, android.R.drawable.ic_audio_vol_mute, android.R.string.config_dozeTapSensorType, android.R.string.config_dozeLongPressSensorType, android.R.string.config_dozeDoubleTapSensorType) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.1
             @Override // com.android.systemui.globalactions.GlobalActionsDialog.ToggleAction
             void onToggle(boolean z) {
                 if (!GlobalActionsDialog.this.mHasTelephony || !Boolean.parseBoolean(SystemProperties.get("ril.cdma.inecmmode"))) {
@@ -292,11 +289,16 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         };
         onAirplaneModeChanged();
         this.mItems = new ArrayList<>();
-        String[] stringArray = this.mContext.getResources().getStringArray(17236010);
+        String[] stringArray = this.mContext.getResources().getStringArray(android.R.array.config_cameraPrivacyLightAlsLuxThresholds);
         ArraySet arraySet = new ArraySet();
         this.mHasLogoutButton = false;
         this.mHasLockdownButton = false;
-        for (String str : stringArray) {
+        int i = 0;
+        while (true) {
+            if (i >= stringArray.length) {
+                break;
+            }
+            String str = stringArray[i];
             if (!arraySet.contains(str)) {
                 if ("power".equals(str)) {
                     this.mItems.add(new PowerAction());
@@ -339,6 +341,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
                 }
                 arraySet.add(str);
             }
+            i++;
         }
         if (this.mEmergencyAffordanceManager.needsEmergencyAffordance()) {
             this.mItems.add(getEmergencyAction());
@@ -346,8 +349,8 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         this.mAdapter = new MyAdapter();
         ActionsDialog actionsDialog = new ActionsDialog(this.mContext, this, this.mAdapter, new AdapterView.OnItemLongClickListener() { // from class: com.android.systemui.globalactions.-$$Lambda$GlobalActionsDialog$KCr2UERgVxA0G1QTICG9cHJxmlk
             @Override // android.widget.AdapterView.OnItemLongClickListener
-            public final boolean onItemLongClick(AdapterView adapterView, View view, int i, long j) {
-                return GlobalActionsDialog.lambda$createDialog$0(GlobalActionsDialog.this, adapterView, view, i, j);
+            public final boolean onItemLongClick(AdapterView adapterView, View view, int i2, long j) {
+                return GlobalActionsDialog.lambda$createDialog$0(this.f$0, adapterView, view, i2, j);
             }
         });
         actionsDialog.setCanceledOnTouchOutside(false);
@@ -367,18 +370,16 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
 
     private boolean shouldDisplayLockdown() {
         int i = getCurrentUser().id;
-        if (this.mKeyguardManager.isDeviceSecure(i)) {
-            int strongAuthForUser = this.mLockPatternUtils.getStrongAuthForUser(i);
-            return strongAuthForUser == 0 || strongAuthForUser == 4;
+        if (!this.mKeyguardManager.isDeviceSecure(i)) {
+            return false;
         }
-        return false;
+        int strongAuthForUser = this.mLockPatternUtils.getStrongAuthForUser(i);
+        return strongAuthForUser == 0 || strongAuthForUser == 4;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class PowerAction extends SinglePressAction implements LongPressAction {
+    private final class PowerAction extends SinglePressAction implements LongPressAction {
         private PowerAction() {
-            super(17301552, 17039948);
+            super(android.R.drawable.ic_lock_power_off, android.R.string.config_deviceSpecificDevicePolicyManagerService);
         }
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.LongPressAction
@@ -406,11 +407,9 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class RestartAction extends SinglePressAction implements LongPressAction {
+    private final class RestartAction extends SinglePressAction implements LongPressAction {
         private RestartAction() {
-            super(17302729, 17039949);
+            super(android.R.drawable.ic_media_route_connecting_dark_material, android.R.string.config_deviceSpecificDeviceStatePolicyProvider);
         }
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.LongPressAction
@@ -438,11 +437,9 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ScreenshotAction extends SinglePressAction {
+    private class ScreenshotAction extends SinglePressAction {
         public ScreenshotAction() {
-            super(17302731, 17039950);
+            super(android.R.drawable.ic_media_route_connecting_holo_light, android.R.string.config_deviceSpecificDisplayAreaPolicyProvider);
         }
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.SinglePressAction, com.android.systemui.globalactions.GlobalActionsDialog.Action
@@ -467,11 +464,9 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class BugReportAction extends SinglePressAction implements LongPressAction {
+    private class BugReportAction extends SinglePressAction implements LongPressAction {
         public BugReportAction() {
-            super(17302409, 17039590);
+            super(android.R.drawable.ic_battery_80_24dp, android.R.string.accessibility_gesture_prompt_text);
         }
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.SinglePressAction, com.android.systemui.globalactions.GlobalActionsDialog.Action
@@ -515,15 +510,13 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.SinglePressAction
         public String getStatus() {
-            return GlobalActionsDialog.this.mContext.getString(17039589, Build.VERSION.RELEASE, Build.ID);
+            return GlobalActionsDialog.this.mContext.getString(android.R.string.accessibility_gesture_instructional_text, Build.VERSION.RELEASE, Build.ID);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class LogoutAction extends SinglePressAction {
+    private final class LogoutAction extends SinglePressAction {
         private LogoutAction() {
-            super(17302457, 17039947);
+            super(android.R.drawable.ic_clear_search_api_holo_dark, android.R.string.config_deviceSpecificAudioService);
         }
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.Action
@@ -541,7 +534,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
             GlobalActionsDialog.this.mHandler.postDelayed(new Runnable() { // from class: com.android.systemui.globalactions.-$$Lambda$GlobalActionsDialog$LogoutAction$3H17sX2I_BqMu2dZ5Dekk1AEv-U
                 @Override // java.lang.Runnable
                 public final void run() {
-                    GlobalActionsDialog.LogoutAction.lambda$onPress$0(GlobalActionsDialog.LogoutAction.this);
+                    GlobalActionsDialog.LogoutAction.lambda$onPress$0(this.f$0);
                 }
             }, 500L);
         }
@@ -558,7 +551,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
     }
 
     private Action getSettingsAction() {
-        return new SinglePressAction(17302737, 17039951) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.2
+        return new SinglePressAction(android.R.drawable.ic_media_route_connecting_light_05_mtrl, android.R.string.config_deviceSpecificInputMethodManagerService) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.2
             @Override // com.android.systemui.globalactions.GlobalActionsDialog.SinglePressAction, com.android.systemui.globalactions.GlobalActionsDialog.Action
             public void onPress() {
                 if (BenesseExtension.getDchaState() != 0) {
@@ -582,7 +575,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
     }
 
     private Action getEmergencyAction() {
-        return new SinglePressAction(17302178, 17039944) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.3
+        return new SinglePressAction(android.R.drawable.car_seekbar_track_dark, android.R.string.config_deviceConfiguratorPackageName) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.3
             @Override // com.android.systemui.globalactions.GlobalActionsDialog.SinglePressAction, com.android.systemui.globalactions.GlobalActionsDialog.Action
             public void onPress() {
                 GlobalActionsDialog.this.mEmergencyAffordanceManager.performEmergencyCall();
@@ -601,7 +594,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
     }
 
     private Action getAssistAction() {
-        return new SinglePressAction(17302259, 17039940) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.4
+        return new SinglePressAction(android.R.drawable.dropdown_focused_holo_dark, android.R.string.config_defaultWearableSensingConsentComponent) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.4
             @Override // com.android.systemui.globalactions.GlobalActionsDialog.SinglePressAction, com.android.systemui.globalactions.GlobalActionsDialog.Action
             public void onPress() {
                 Intent intent = new Intent("android.intent.action.ASSIST");
@@ -622,7 +615,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
     }
 
     private Action getVoiceAssistAction() {
-        return new SinglePressAction(17302769, 17039956) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.5
+        return new SinglePressAction(android.R.drawable.ic_media_route_holo_light, android.R.string.config_doubleTouchGestureEnableFile) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.5
             @Override // com.android.systemui.globalactions.GlobalActionsDialog.SinglePressAction, com.android.systemui.globalactions.GlobalActionsDialog.Action
             public void onPress() {
                 Intent intent = new Intent("android.intent.action.VOICE_ASSIST");
@@ -642,10 +635,8 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.globalactions.GlobalActionsDialog$6  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass6 extends SinglePressAction {
+    /* renamed from: com.android.systemui.globalactions.GlobalActionsDialog$6, reason: invalid class name */
+    class AnonymousClass6 extends SinglePressAction {
         AnonymousClass6(int i, int i2) {
             super(i, i2);
         }
@@ -678,23 +669,21 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
     }
 
     private Action getLockdownAction() {
-        return new AnonymousClass6(17302412, 17039946);
+        return new AnonymousClass6(android.R.drawable.ic_bt_headphones_a2dp, android.R.string.config_deviceProvisioningPackage);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void lockProfiles() {
-        int[] enabledProfileIds;
+    private void lockProfiles() {
+        UserManager userManager = (UserManager) this.mContext.getSystemService("user");
         TrustManager trustManager = (TrustManager) this.mContext.getSystemService("trust");
         int i = getCurrentUser().id;
-        for (int i2 : ((UserManager) this.mContext.getSystemService("user")).getEnabledProfileIds(i)) {
+        for (int i2 : userManager.getEnabledProfileIds(i)) {
             if (i2 != i) {
                 trustManager.setDeviceLockedForUser(i2, true);
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public UserInfo getCurrentUser() {
+    private UserInfo getCurrentUser() {
         try {
             return ActivityManager.getService().getCurrentUser();
         } catch (RemoteException e) {
@@ -718,11 +707,12 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
                     if (currentUser != null ? currentUser.id == userInfo.id : userInfo.id == 0) {
                         z = true;
                     }
-                    Drawable createFromPath = userInfo.iconPath != null ? Drawable.createFromPath(userInfo.iconPath) : null;
+                    Drawable drawableCreateFromPath = userInfo.iconPath != null ? Drawable.createFromPath(userInfo.iconPath) : null;
+                    int i = android.R.drawable.ic_lockscreen_unlock_normal;
                     StringBuilder sb = new StringBuilder();
                     sb.append(userInfo.name != null ? userInfo.name : "Primary");
                     sb.append(z ? " ✔" : "");
-                    arrayList.add(new SinglePressAction(17302624, createFromPath, sb.toString()) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.7
+                    arrayList.add(new SinglePressAction(i, drawableCreateFromPath, sb.toString()) { // from class: com.android.systemui.globalactions.GlobalActionsDialog.7
                         @Override // com.android.systemui.globalactions.GlobalActionsDialog.SinglePressAction, com.android.systemui.globalactions.GlobalActionsDialog.Action
                         public void onPress() {
                             try {
@@ -756,8 +746,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshSilentMode() {
+    private void refreshSilentMode() {
         if (!this.mHasVibrator) {
             ((ToggleAction) this.mSilentModeAction).updateState(this.mAudioManager.getRingerMode() != 2 ? ToggleAction.State.On : ToggleAction.State.Off);
         }
@@ -784,9 +773,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         item.onPress();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class MyAdapter extends BaseAdapter {
+    private class MyAdapter extends BaseAdapter {
         private MyAdapter() {
         }
 
@@ -812,6 +799,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
             return false;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
         @Override // android.widget.Adapter
         public Action getItem(int i) {
             int i2 = 0;
@@ -834,17 +822,15 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
 
         @Override // android.widget.Adapter
         public View getView(int i, View view, ViewGroup viewGroup) {
-            View create = getItem(i).create(GlobalActionsDialog.this.mContext, view, viewGroup, LayoutInflater.from(GlobalActionsDialog.this.mContext));
+            View viewCreate = getItem(i).create(GlobalActionsDialog.this.mContext, view, viewGroup, LayoutInflater.from(GlobalActionsDialog.this.mContext));
             if (i == getCount() - 1) {
-                HardwareUiLayout.get(viewGroup).setDivisionView(create);
+                HardwareUiLayout.get(viewGroup).setDivisionView(viewCreate);
             }
-            return create;
+            return viewCreate;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static abstract class SinglePressAction implements Action {
+    private static abstract class SinglePressAction implements Action {
         private final Drawable mIcon;
         private final int mIconResId;
         private final CharSequence mMessage;
@@ -878,10 +864,10 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.Action
         public View create(Context context, View view, ViewGroup viewGroup, LayoutInflater layoutInflater) {
-            View inflate = layoutInflater.inflate(R.layout.global_actions_item, viewGroup, false);
-            ImageView imageView = (ImageView) inflate.findViewById(16908294);
-            TextView textView = (TextView) inflate.findViewById(16908299);
-            TextView textView2 = (TextView) inflate.findViewById(16909349);
+            View viewInflate = layoutInflater.inflate(R.layout.global_actions_item, viewGroup, false);
+            ImageView imageView = (ImageView) viewInflate.findViewById(android.R.id.icon);
+            TextView textView = (TextView) viewInflate.findViewById(android.R.id.message);
+            TextView textView2 = (TextView) viewInflate.findViewById(android.R.id.orientation);
             String status = getStatus();
             if (!TextUtils.isEmpty(status)) {
                 textView2.setText(status);
@@ -899,13 +885,11 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
             } else {
                 textView.setText(this.mMessageResId);
             }
-            return inflate;
+            return viewInflate;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static abstract class ToggleAction implements Action {
+    private static abstract class ToggleAction implements Action {
         protected int mDisabledIconResid;
         protected int mDisabledStatusMessageResId;
         protected int mEnabledIconResId;
@@ -915,14 +899,12 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
 
         abstract void onToggle(boolean z);
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        /* loaded from: classes.dex */
-        public enum State {
+        enum State {
             Off(false),
             TurningOn(true),
             TurningOff(true),
             On(false);
-            
+
             private final boolean inTransition;
 
             State(boolean z) {
@@ -949,14 +931,14 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         public View create(Context context, View view, ViewGroup viewGroup, LayoutInflater layoutInflater) {
             boolean z;
             willCreate();
-            View inflate = layoutInflater.inflate(17367147, viewGroup, false);
-            ImageView imageView = (ImageView) inflate.findViewById(16908294);
-            TextView textView = (TextView) inflate.findViewById(16908299);
-            TextView textView2 = (TextView) inflate.findViewById(16909349);
-            boolean isEnabled = isEnabled();
+            View viewInflate = layoutInflater.inflate(android.R.layout.date_picker_legacy, viewGroup, false);
+            ImageView imageView = (ImageView) viewInflate.findViewById(android.R.id.icon);
+            TextView textView = (TextView) viewInflate.findViewById(android.R.id.message);
+            TextView textView2 = (TextView) viewInflate.findViewById(android.R.id.orientation);
+            boolean zIsEnabled = isEnabled();
             if (textView != null) {
                 textView.setText(this.mMessageResId);
-                textView.setEnabled(isEnabled);
+                textView.setEnabled(zIsEnabled);
             }
             if (this.mState == State.On || this.mState == State.TurningOn) {
                 z = true;
@@ -965,15 +947,15 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
             }
             if (imageView != null) {
                 imageView.setImageDrawable(context.getDrawable(z ? this.mEnabledIconResId : this.mDisabledIconResid));
-                imageView.setEnabled(isEnabled);
+                imageView.setEnabled(zIsEnabled);
             }
             if (textView2 != null) {
                 textView2.setText(z ? this.mEnabledStatusMessageResId : this.mDisabledStatusMessageResId);
                 textView2.setVisibility(0);
-                textView2.setEnabled(isEnabled);
+                textView2.setEnabled(zIsEnabled);
             }
-            inflate.setEnabled(isEnabled);
-            return inflate;
+            viewInflate.setEnabled(zIsEnabled);
+            return viewInflate;
         }
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.Action
@@ -1001,11 +983,9 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class SilentModeToggleAction extends ToggleAction {
+    private class SilentModeToggleAction extends ToggleAction {
         public SilentModeToggleAction() {
-            super(17302276, 17302275, 17039955, 17039953, 17039952);
+            super(android.R.drawable.edit_query_background, android.R.drawable.edit_query, android.R.string.config_doublePressOnPowerTargetActivity, android.R.string.config_displayWhiteBalanceColorTemperatureSensorName, android.R.string.config_displayLightSensorType);
         }
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.ToggleAction
@@ -1028,10 +1008,8 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SilentModeTriStateAction implements View.OnClickListener, Action {
-        private final int[] ITEM_IDS = {16909142, 16909143, 16909144};
+    private static class SilentModeTriStateAction implements View.OnClickListener, Action {
+        private final int[] ITEM_IDS = {android.R.id.indicator, android.R.id.infinite, android.R.id.inherit};
         private final AudioManager mAudioManager;
         private final Context mContext;
         private final Handler mHandler;
@@ -1052,17 +1030,17 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.Action
         public View create(Context context, View view, ViewGroup viewGroup, LayoutInflater layoutInflater) {
-            View inflate = layoutInflater.inflate(17367148, viewGroup, false);
-            int ringerModeToIndex = ringerModeToIndex(this.mAudioManager.getRingerMode());
+            View viewInflate = layoutInflater.inflate(android.R.layout.date_picker_legacy_holo, viewGroup, false);
+            int iRingerModeToIndex = ringerModeToIndex(this.mAudioManager.getRingerMode());
             int i = 0;
             while (i < 3) {
-                View findViewById = inflate.findViewById(this.ITEM_IDS[i]);
-                findViewById.setSelected(ringerModeToIndex == i);
-                findViewById.setTag(Integer.valueOf(i));
-                findViewById.setOnClickListener(this);
+                View viewFindViewById = viewInflate.findViewById(this.ITEM_IDS[i]);
+                viewFindViewById.setSelected(iRingerModeToIndex == i);
+                viewFindViewById.setTag(Integer.valueOf(i));
+                viewFindViewById.setOnClickListener(this);
                 i++;
             }
-            return inflate;
+            return viewInflate;
         }
 
         @Override // com.android.systemui.globalactions.GlobalActionsDialog.Action
@@ -1093,8 +1071,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onAirplaneModeChanged() {
+    private void onAirplaneModeChanged() {
         if (this.mHasTelephony) {
             return;
         }
@@ -1102,8 +1079,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         this.mAirplaneModeOn.updateState(this.mAirplaneState);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void changeAirplaneModeSystemSetting(boolean z) {
+    private void changeAirplaneModeSystemSetting(boolean z) {
         Settings.Global.putInt(this.mContext.getContentResolver(), "airplane_mode_on", z ? 1 : 0);
         Intent intent = new Intent("android.intent.action.AIRPLANE_MODE");
         intent.addFlags(536870912);
@@ -1114,9 +1090,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class ActionsDialog extends Dialog implements DialogInterface, ColorExtractor.OnColorsChangedListener {
+    private static final class ActionsDialog extends Dialog implements DialogInterface, ColorExtractor.OnColorsChangedListener {
         private final MyAdapter mAdapter;
         private final DialogInterface.OnClickListener mClickListener;
         private final ColorExtractor mColorExtractor;
@@ -1128,7 +1102,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
         private final AdapterView.OnItemLongClickListener mLongClickListener;
 
         public ActionsDialog(Context context, DialogInterface.OnClickListener onClickListener, MyAdapter myAdapter, AdapterView.OnItemLongClickListener onItemLongClickListener) {
-            super(context, com.android.systemui.plugins.R.style.Theme_SystemUI_Dialog_GlobalActions);
+            super(context, 2131886645);
             this.mContext = context;
             this.mAdapter = myAdapter;
             this.mClickListener = onClickListener;
@@ -1145,19 +1119,19 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
             window.setBackgroundDrawable(this.mGradientDrawable);
             window.setType(2020);
             setContentView(R.layout.global_actions_wrapped);
-            this.mListView = (LinearLayout) findViewById(16908298);
+            this.mListView = (LinearLayout) findViewById(android.R.id.list);
             this.mHardwareLayout = HardwareUiLayout.get(this.mListView);
             this.mHardwareLayout.setOutsideTouchListener(new View.OnClickListener() { // from class: com.android.systemui.globalactions.-$$Lambda$GlobalActionsDialog$ActionsDialog$dQpDVx5ZJSWswwNRJ2NNvfp5RD8
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    GlobalActionsDialog.ActionsDialog.this.dismiss();
+                    this.f$0.dismiss();
                 }
             });
-            setTitle(17039957);
+            setTitle(android.R.string.config_dozeComponent);
             this.mListView.setAccessibilityDelegate(new View.AccessibilityDelegate() { // from class: com.android.systemui.globalactions.GlobalActionsDialog.ActionsDialog.1
                 @Override // android.view.View.AccessibilityDelegate
                 public boolean dispatchPopulateAccessibilityEvent(View view, AccessibilityEvent accessibilityEvent) {
-                    accessibilityEvent.getText().add(ActionsDialog.this.mContext.getString(17039957));
+                    accessibilityEvent.getText().add(ActionsDialog.this.mContext.getString(android.R.string.config_dozeComponent));
                     return true;
                 }
             });
@@ -1170,15 +1144,14 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
                 view.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.globalactions.-$$Lambda$GlobalActionsDialog$ActionsDialog$wsWXhl2gpbmXCrLlb4WgO3Hp5Tg
                     @Override // android.view.View.OnClickListener
                     public final void onClick(View view2) {
-                        r0.mClickListener.onClick(GlobalActionsDialog.ActionsDialog.this, i);
+                        GlobalActionsDialog.ActionsDialog actionsDialog = this.f$0;
+                        actionsDialog.mClickListener.onClick(actionsDialog, i);
                     }
                 });
                 view.setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.systemui.globalactions.-$$Lambda$GlobalActionsDialog$ActionsDialog$9T4uyogvs71HPKwgm3VUPqbZAHc
                     @Override // android.view.View.OnLongClickListener
                     public final boolean onLongClick(View view2) {
-                        boolean onItemLongClick;
-                        onItemLongClick = GlobalActionsDialog.ActionsDialog.this.mLongClickListener.onItemLongClick(null, view, i, 0L);
-                        return onItemLongClick;
+                        return this.f$0.mLongClickListener.onItemLongClick(null, view, i, 0L);
                     }
                 });
                 this.mListView.addView(view);
@@ -1227,12 +1200,12 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
             this.mHardwareLayout.animate().alpha(1.0f).translationX(0.0f).setDuration(300L).setInterpolator(Interpolators.FAST_OUT_SLOW_IN).setUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.globalactions.-$$Lambda$GlobalActionsDialog$ActionsDialog$Qe1JHSA7eQR9eTIOptPltFBwKXg
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    GlobalActionsDialog.ActionsDialog.this.mGradientDrawable.setAlpha((int) (((Float) valueAnimator.getAnimatedValue()).floatValue() * 0.45f * 255.0f));
+                    this.f$0.mGradientDrawable.setAlpha((int) (((Float) valueAnimator.getAnimatedValue()).floatValue() * 0.45f * 255.0f));
                 }
             }).withEndAction(new Runnable() { // from class: com.android.systemui.globalactions.-$$Lambda$GlobalActionsDialog$ActionsDialog$X-E8xNR_KVfIqzXznITVrFd13Ek
                 @Override // java.lang.Runnable
                 public final void run() {
-                    GlobalActionsDialog.ActionsDialog.this.getWindow().getDecorView().requestAccessibilityFocus();
+                    this.f$0.getWindow().getDecorView().requestAccessibilityFocus();
                 }
             }).start();
         }
@@ -1249,7 +1222,7 @@ public class GlobalActionsDialog implements DialogInterface.OnClickListener, Dia
             }).setInterpolator(new SystemUIInterpolators.LogAccelerateInterpolator()).setUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.globalactions.-$$Lambda$GlobalActionsDialog$ActionsDialog$_0WJKduv0QvmLhPuj3fXKKiMDpo
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    GlobalActionsDialog.ActionsDialog.this.mGradientDrawable.setAlpha((int) ((1.0f - ((Float) valueAnimator.getAnimatedValue()).floatValue()) * 0.45f * 255.0f));
+                    this.f$0.mGradientDrawable.setAlpha((int) ((1.0f - ((Float) valueAnimator.getAnimatedValue()).floatValue()) * 0.45f * 255.0f));
                 }
             }).start();
         }

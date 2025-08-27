@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mediatek.systemui.statusbar.extcb.IconIdWrapper;
+
 /* loaded from: classes.dex */
 public class DefaultQuickSettingsPlugin extends ContextWrapper implements IQuickSettingsPlugin {
     private static final String TAG = "DefaultQuickSettingsPlugin";

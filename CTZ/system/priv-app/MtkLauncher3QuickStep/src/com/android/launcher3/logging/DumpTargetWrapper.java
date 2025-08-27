@@ -8,6 +8,7 @@ import com.android.launcher3.model.nano.LauncherDumpProto;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DumpTargetWrapper {
     ArrayList<DumpTargetWrapper> children;
@@ -48,6 +49,7 @@ public class DumpTargetWrapper {
         return arrayList;
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     public LauncherDumpProto.DumpTarget newItemTarget(ItemInfo itemInfo) {
         LauncherDumpProto.DumpTarget dumpTarget = new LauncherDumpProto.DumpTarget();
         dumpTarget.type = 1;
@@ -88,11 +90,11 @@ public class DumpTargetWrapper {
                 String fieldName = LoggerUtils.getFieldName(dumpTarget.containerType, LauncherDumpProto.ContainerType.class);
                 if (dumpTarget.containerType == 1) {
                     return fieldName + " id=" + dumpTarget.pageId;
-                } else if (dumpTarget.containerType == 3) {
-                    return fieldName + " grid(" + dumpTarget.gridX + "," + dumpTarget.gridY + ")";
-                } else {
-                    return fieldName;
                 }
+                if (dumpTarget.containerType == 3) {
+                    return fieldName + " grid(" + dumpTarget.gridX + "," + dumpTarget.gridY + ")";
+                }
+                return fieldName;
             default:
                 return "UNKNOWN TARGET TYPE";
         }
@@ -121,7 +123,7 @@ public class DumpTargetWrapper {
         this.node.gridY = itemInfo.cellY;
         this.node.spanX = itemInfo.spanX;
         this.node.spanY = itemInfo.spanY;
-        this.node.userType = !itemInfo.user.equals(Process.myUserHandle());
+        this.node.userType = !itemInfo.user.equals(Process.myUserHandle()) ? 1 : 0;
         return this.node;
     }
 }

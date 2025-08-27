@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.view.inputmethod.InputMethodManager;
+
 /* loaded from: classes.dex */
 public class UiThreadHelper {
     private static final int MSG_HIDE_KEYBOARD = 1;
@@ -32,9 +33,7 @@ public class UiThreadHelper {
         Message.obtain(getHandler(context), 1, iBinder).sendToTarget();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class UiCallbacks implements Handler.Callback {
+    private static class UiCallbacks implements Handler.Callback {
         private final InputMethodManager mIMM;
 
         UiCallbacks(Context context) {

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
+
 /* loaded from: classes.dex */
 public class NotificationViewHierarchyManager {
     private final boolean mAlwaysExpandNonGroupedNotification;
@@ -42,43 +43,42 @@ public class NotificationViewHierarchyManager {
         int size = activeNotifications.size();
         int i = 0;
         while (true) {
-            boolean z = true;
             if (i >= size) {
                 break;
             }
             NotificationData.Entry entry = activeNotifications.get(i);
             if (!entry.row.isDismissed() && !entry.row.isRemoved()) {
                 int userId = entry.notification.getUserId();
-                boolean isLockscreenPublicMode = this.mLockscreenUserManager.isLockscreenPublicMode(this.mLockscreenUserManager.getCurrentUserId());
-                boolean z2 = isLockscreenPublicMode || this.mLockscreenUserManager.isLockscreenPublicMode(userId);
-                boolean needsRedaction = this.mLockscreenUserManager.needsRedaction(entry);
-                entry.row.setSensitive(z2 && needsRedaction, (!isLockscreenPublicMode || this.mLockscreenUserManager.userAllowsPrivateNotificationsInPublic(this.mLockscreenUserManager.getCurrentUserId())) ? false : false);
-                entry.row.setNeedsRedaction(needsRedaction);
+                boolean zIsLockscreenPublicMode = this.mLockscreenUserManager.isLockscreenPublicMode(this.mLockscreenUserManager.getCurrentUserId());
+                boolean z = zIsLockscreenPublicMode || this.mLockscreenUserManager.isLockscreenPublicMode(userId);
+                boolean zNeedsRedaction = this.mLockscreenUserManager.needsRedaction(entry);
+                entry.row.setSensitive(z && zNeedsRedaction, zIsLockscreenPublicMode && !this.mLockscreenUserManager.userAllowsPrivateNotificationsInPublic(this.mLockscreenUserManager.getCurrentUserId()));
+                entry.row.setNeedsRedaction(zNeedsRedaction);
                 if (this.mGroupManager.isChildInGroupWithSummary(entry.row.getStatusBarNotification())) {
                     ExpandableNotificationRow groupSummary = this.mGroupManager.getGroupSummary(entry.row.getStatusBarNotification());
-                    List<ExpandableNotificationRow> list = this.mTmpChildOrderMap.get(groupSummary);
-                    if (list == null) {
-                        list = new ArrayList<>();
-                        this.mTmpChildOrderMap.put(groupSummary, list);
+                    List<ExpandableNotificationRow> arrayList2 = this.mTmpChildOrderMap.get(groupSummary);
+                    if (arrayList2 == null) {
+                        arrayList2 = new ArrayList<>();
+                        this.mTmpChildOrderMap.put(groupSummary, arrayList2);
                     }
-                    list.add(entry.row);
+                    arrayList2.add(entry.row);
                 } else {
                     arrayList.add(entry.row);
                 }
             }
             i++;
         }
-        ArrayList arrayList2 = new ArrayList();
+        ArrayList arrayList3 = new ArrayList();
         for (int i2 = 0; i2 < this.mListContainer.getContainerChildCount(); i2++) {
             View containerChildAt = this.mListContainer.getContainerChildAt(i2);
             if (!arrayList.contains(containerChildAt) && (containerChildAt instanceof ExpandableNotificationRow)) {
                 ExpandableNotificationRow expandableNotificationRow = (ExpandableNotificationRow) containerChildAt;
                 if (!expandableNotificationRow.isBlockingHelperShowing()) {
-                    arrayList2.add(expandableNotificationRow);
+                    arrayList3.add(expandableNotificationRow);
                 }
             }
         }
-        Iterator it = arrayList2.iterator();
+        Iterator it = arrayList3.iterator();
         while (it.hasNext()) {
             ExpandableNotificationRow expandableNotificationRow2 = (ExpandableNotificationRow) it.next();
             if (this.mGroupManager.isChildInGroupWithSummary(expandableNotificationRow2.getStatusBarNotification())) {
@@ -121,7 +121,7 @@ public class NotificationViewHierarchyManager {
     }
 
     private void addNotificationChildrenAndSort() {
-        boolean z = false;
+        boolean zApplyChildOrder = false;
         for (int i = 0; i < this.mListContainer.getContainerChildCount(); i++) {
             View containerChildAt = this.mListContainer.getContainerChildAt(i);
             if (containerChildAt instanceof ExpandableNotificationRow) {
@@ -140,10 +140,10 @@ public class NotificationViewHierarchyManager {
                         this.mListContainer.notifyGroupChildAdded(expandableNotificationRow2);
                     }
                 }
-                z |= expandableNotificationRow.applyChildOrder(list, this.mVisualStabilityManager, this.mEntryManager);
+                zApplyChildOrder |= expandableNotificationRow.applyChildOrder(list, this.mVisualStabilityManager, this.mEntryManager);
             }
         }
-        if (z) {
+        if (zApplyChildOrder) {
             this.mListContainer.generateChildOrderChangedEvent();
         }
     }
@@ -179,48 +179,48 @@ public class NotificationViewHierarchyManager {
     }
 
     public void updateRowStates() {
-        int i;
+        int maxNotificationsWhileLocked;
         Trace.beginSection("NotificationViewHierarchyManager#updateRowStates");
         int containerChildCount = this.mListContainer.getContainerChildCount();
-        boolean isPresenterLocked = this.mPresenter.isPresenterLocked();
-        if (isPresenterLocked) {
-            i = this.mPresenter.getMaxNotificationsWhileLocked(true);
+        boolean zIsPresenterLocked = this.mPresenter.isPresenterLocked();
+        if (zIsPresenterLocked) {
+            maxNotificationsWhileLocked = this.mPresenter.getMaxNotificationsWhileLocked(true);
         } else {
-            i = -1;
+            maxNotificationsWhileLocked = -1;
         }
-        this.mListContainer.setMaxDisplayedNotifications(i);
+        this.mListContainer.setMaxDisplayedNotifications(maxNotificationsWhileLocked);
         Stack stack = new Stack();
-        for (int i2 = containerChildCount - 1; i2 >= 0; i2--) {
-            View containerChildAt = this.mListContainer.getContainerChildAt(i2);
+        for (int i = containerChildCount - 1; i >= 0; i--) {
+            View containerChildAt = this.mListContainer.getContainerChildAt(i);
             if (containerChildAt instanceof ExpandableNotificationRow) {
                 stack.push((ExpandableNotificationRow) containerChildAt);
             }
         }
-        int i3 = 0;
+        int i2 = 0;
         while (!stack.isEmpty()) {
             ExpandableNotificationRow expandableNotificationRow = (ExpandableNotificationRow) stack.pop();
             NotificationData.Entry entry = expandableNotificationRow.getEntry();
-            boolean isChildInGroupWithSummary = this.mGroupManager.isChildInGroupWithSummary(entry.notification);
-            expandableNotificationRow.setOnKeyguard(isPresenterLocked);
-            if (!isPresenterLocked) {
-                expandableNotificationRow.setSystemExpanded(this.mAlwaysExpandNonGroupedNotification || !(i3 != 0 || isChildInGroupWithSummary || expandableNotificationRow.isLowPriority()));
+            boolean zIsChildInGroupWithSummary = this.mGroupManager.isChildInGroupWithSummary(entry.notification);
+            expandableNotificationRow.setOnKeyguard(zIsPresenterLocked);
+            if (!zIsPresenterLocked) {
+                expandableNotificationRow.setSystemExpanded(this.mAlwaysExpandNonGroupedNotification || !(i2 != 0 || zIsChildInGroupWithSummary || expandableNotificationRow.isLowPriority()));
             }
             entry.row.setShowAmbient(this.mPresenter.isDozing());
             int userId = entry.notification.getUserId();
             boolean z = this.mGroupManager.isSummaryOfSuppressedGroup(entry.notification) && !entry.row.isRemoved();
-            boolean shouldShowOnKeyguard = this.mLockscreenUserManager.shouldShowOnKeyguard(entry.notification);
-            if (z || this.mLockscreenUserManager.shouldHideNotifications(userId) || (isPresenterLocked && !shouldShowOnKeyguard)) {
+            boolean zShouldShowOnKeyguard = this.mLockscreenUserManager.shouldShowOnKeyguard(entry.notification);
+            if (z || this.mLockscreenUserManager.shouldHideNotifications(userId) || (zIsPresenterLocked && !zShouldShowOnKeyguard)) {
                 entry.row.setVisibility(8);
             } else {
                 boolean z2 = entry.row.getVisibility() == 8;
                 if (z2) {
                     entry.row.setVisibility(0);
                 }
-                if (!isChildInGroupWithSummary && !entry.row.isRemoved()) {
+                if (!zIsChildInGroupWithSummary && !entry.row.isRemoved()) {
                     if (z2) {
-                        this.mListContainer.generateAddAnimation(entry.row, !shouldShowOnKeyguard);
+                        this.mListContainer.generateAddAnimation(entry.row, !zShouldShowOnKeyguard);
                     }
-                    i3++;
+                    i2++;
                 }
             }
             if (expandableNotificationRow.isSummaryWithChildren()) {

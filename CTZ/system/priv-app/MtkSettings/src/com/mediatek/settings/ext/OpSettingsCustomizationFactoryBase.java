@@ -1,6 +1,7 @@
 package com.mediatek.settings.ext;
 
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public class OpSettingsCustomizationFactoryBase {
     private Context mContext;

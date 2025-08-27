@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class NotificationDozeHelper {
     private final ColorMatrix mGrayscaleColorMatrix = new ColorMatrix();
@@ -19,9 +20,9 @@ public class NotificationDozeHelper {
         if (f > 0.0f) {
             updateGrayscaleMatrix(f);
             imageView.setColorFilter(new ColorMatrixColorFilter(this.mGrayscaleColorMatrix));
-            return;
+        } else {
+            imageView.setColorFilter((ColorFilter) null);
         }
-        imageView.setColorFilter((ColorFilter) null);
     }
 
     public void startIntensityAnimation(ValueAnimator.AnimatorUpdateListener animatorUpdateListener, boolean z, long j, Animator.AnimatorListener animatorListener) {
@@ -30,15 +31,15 @@ public class NotificationDozeHelper {
         if (!z) {
             f = 0.0f;
         }
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(f2, f);
-        ofFloat.addUpdateListener(animatorUpdateListener);
-        ofFloat.setDuration(700L);
-        ofFloat.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
-        ofFloat.setStartDelay(j);
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(f2, f);
+        valueAnimatorOfFloat.addUpdateListener(animatorUpdateListener);
+        valueAnimatorOfFloat.setDuration(700L);
+        valueAnimatorOfFloat.setInterpolator(Interpolators.LINEAR_OUT_SLOW_IN);
+        valueAnimatorOfFloat.setStartDelay(j);
         if (animatorListener != null) {
-            ofFloat.addListener(animatorListener);
+            valueAnimatorOfFloat.addListener(animatorListener);
         }
-        ofFloat.start();
+        valueAnimatorOfFloat.start();
     }
 
     public void setIntensityDark(final Consumer<Float> consumer, boolean z, boolean z2, long j, final View view) {

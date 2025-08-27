@@ -28,8 +28,10 @@ import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class GarbageMonitor {
     private static final boolean HEAP_TRACKING_ENABLED;
@@ -77,8 +79,7 @@ public class GarbageMonitor {
         this.mHandler.sendEmptyMessage(3000);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean gcAndCheckGarbage() {
+    private boolean gcAndCheckGarbage() {
         if (this.mTrackedGarbage.countOldGarbage() > 5) {
             Runtime.getRuntime().gc();
             return true;
@@ -86,11 +87,10 @@ public class GarbageMonitor {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void reinspectGarbageAfterGc() {
-        int countOldGarbage = this.mTrackedGarbage.countOldGarbage();
-        if (countOldGarbage > 5) {
-            this.mLeakReporter.dumpLeak(countOldGarbage);
+    void reinspectGarbageAfterGc() throws IOException {
+        int iCountOldGarbage = this.mTrackedGarbage.countOldGarbage();
+        if (iCountOldGarbage > 5) {
+            this.mLeakReporter.dumpLeak(iCountOldGarbage);
         }
     }
 
@@ -118,16 +118,15 @@ public class GarbageMonitor {
         this.mPidsArray = new int[size];
         StringBuffer stringBuffer = new StringBuffer("Now tracking processes: ");
         for (int i = 0; i < size; i++) {
-            int intValue = this.mPids.get(i).intValue();
-            this.mPidsArray[i] = intValue;
-            stringBuffer.append(intValue);
+            int iIntValue = this.mPids.get(i).intValue();
+            this.mPidsArray[i] = iIntValue;
+            stringBuffer.append(iIntValue);
             stringBuffer.append(" ");
         }
         Log.v("GarbageMonitor", stringBuffer.toString());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void update() {
+    private void update() {
         synchronized (this.mPids) {
             Debug.MemoryInfo[] processMemoryInfo = this.mAm.getProcessMemoryInfo(this.mPidsArray);
             int i = 0;
@@ -140,8 +139,8 @@ public class GarbageMonitor {
                     Log.e("GarbageMonitor", "update: unknown process info received: " + memoryInfo);
                     break;
                 }
-                long intValue = this.mPids.get(i).intValue();
-                ProcessMemInfo processMemInfo = this.mData.get(intValue);
+                long jIntValue = this.mPids.get(i).intValue();
+                ProcessMemInfo processMemInfo = this.mData.get(jIntValue);
                 processMemInfo.head = (processMemInfo.head + 1) % processMemInfo.pss.length;
                 long[] jArr = processMemInfo.pss;
                 int i2 = processMemInfo.head;
@@ -160,8 +159,8 @@ public class GarbageMonitor {
                     processMemInfo.max = processMemInfo.currentUss;
                 }
                 if (processMemInfo.currentPss == 0) {
-                    Log.v("GarbageMonitor", "update: pid " + intValue + " has pss=0, it probably died");
-                    this.mData.remove(intValue);
+                    Log.v("GarbageMonitor", "update: pid " + jIntValue + " has pss=0, it probably died");
+                    this.mData.remove(jIntValue);
                 }
                 i++;
             }
@@ -177,16 +176,14 @@ public class GarbageMonitor {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setTile(MemoryTile memoryTile) {
+    private void setTile(MemoryTile memoryTile) {
         this.mQSTile = memoryTile;
         if (memoryTile != null) {
             memoryTile.update();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static String formatBytes(long j) {
+    private static String formatBytes(long j) {
         String[] strArr = {"B", "K", "M", "G", "T"};
         int i = 0;
         while (i < strArr.length && j >= 1024) {
@@ -196,12 +193,10 @@ public class GarbageMonitor {
         return j + strArr[i];
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dumpHprofAndShare() {
+    private void dumpHprofAndShare() {
         this.mContext.startActivity(this.mDumpTruck.captureHeaps(getTrackedProcesses()).createShareIntent());
     }
 
-    /* loaded from: classes.dex */
     private static class MemoryIconDrawable extends Drawable {
         final Drawable baseIcon;
         final float dp;
@@ -233,10 +228,10 @@ public class GarbageMonitor {
         public void draw(Canvas canvas) {
             this.baseIcon.draw(canvas);
             if (this.limit > 0 && this.pss > 0) {
-                float min = Math.min(1.0f, ((float) this.pss) / ((float) this.limit));
+                float fMin = Math.min(1.0f, this.pss / this.limit);
                 Rect bounds = getBounds();
                 canvas.translate(bounds.left + (this.dp * 8.0f), bounds.top + (5.0f * this.dp));
-                canvas.drawRect(0.0f, this.dp * 14.0f * (1.0f - min), (8.0f * this.dp) + 1.0f, (14.0f * this.dp) + 1.0f, this.paint);
+                canvas.drawRect(0.0f, this.dp * 14.0f * (1.0f - fMin), (8.0f * this.dp) + 1.0f, (14.0f * this.dp) + 1.0f, this.paint);
             }
         }
 
@@ -291,7 +286,6 @@ public class GarbageMonitor {
         }
     }
 
-    /* loaded from: classes.dex */
     private static class MemoryGraphIcon extends QSTile.Icon {
         long limit;
         long pss;
@@ -316,7 +310,6 @@ public class GarbageMonitor {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class MemoryTile extends QSTileImpl<QSTile.State> {
         private final GarbageMonitor gm;
         private ProcessMemInfo pmi;
@@ -345,7 +338,7 @@ public class GarbageMonitor {
             h.post(new Runnable() { // from class: com.android.systemui.util.leak.-$$Lambda$GarbageMonitor$MemoryTile$RY8VPTPHkg6QWMQHYqV3eM4EOMY
                 @Override // java.lang.Runnable
                 public final void run() {
-                    GarbageMonitor.this.dumpHprofAndShare();
+                    garbageMonitor.dumpHprofAndShare();
                 }
             });
         }
@@ -395,7 +388,6 @@ public class GarbageMonitor {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ProcessMemInfo {
         public long currentPss;
         public long currentUss;
@@ -418,7 +410,6 @@ public class GarbageMonitor {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Service extends SystemUI {
         private GarbageMonitor mGarbageMonitor;
 
@@ -435,7 +426,6 @@ public class GarbageMonitor {
         }
     }
 
-    /* loaded from: classes.dex */
     private class BackgroundHeapCheckHandler extends Handler {
         BackgroundHeapCheckHandler(Looper looper) {
             super(looper);
@@ -460,8 +450,8 @@ public class GarbageMonitor {
                 final GarbageMonitor garbageMonitor = GarbageMonitor.this;
                 postDelayed(new Runnable() { // from class: com.android.systemui.util.leak.-$$Lambda$XMHjUeThvUDRPlJmBo9djG71pM8
                     @Override // java.lang.Runnable
-                    public final void run() {
-                        GarbageMonitor.this.reinspectGarbageAfterGc();
+                    public final void run() throws IOException {
+                        garbageMonitor.reinspectGarbageAfterGc();
                     }
                 }, 100L);
             }
@@ -470,8 +460,7 @@ public class GarbageMonitor {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static boolean doesFileExist(String str) {
+    private static boolean doesFileExist(String str) {
         if (str == null || str.length() == 0) {
             return false;
         }

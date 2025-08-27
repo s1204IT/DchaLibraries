@@ -54,6 +54,7 @@ import com.mediatek.settings.sim.SimHotSwapHandler;
 import com.mediatek.settings.sim.TelephonyUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class ApnSettings extends RestrictedSettingsFragment implements Preference.OnPreferenceChangeListener {
     private static final Uri DEFAULTAPN_URI = Uri.parse("content://telephony/carriers/restore");
@@ -100,8 +101,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         };
     }
 
-    /* renamed from: com.android.settings.network.ApnSettings$4  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.settings.network.ApnSettings$4, reason: invalid class name */
     static /* synthetic */ class AnonymousClass4 {
         static final /* synthetic */ int[] $SwitchMap$com$android$internal$telephony$PhoneConstants$DataState = new int[PhoneConstants.DataState.values().length];
 
@@ -113,8 +113,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static PhoneConstants.DataState getMobileDataState(Intent intent) {
+    private static PhoneConstants.DataState getMobileDataState(Intent intent) {
         String stringExtra = intent.getStringExtra("state");
         if (stringExtra != null) {
             return Enum.valueOf(PhoneConstants.DataState.class, stringExtra);
@@ -215,46 +214,46 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
 
     @Override // com.android.settings.RestrictedSettingsFragment
     public RestrictedLockUtils.EnforcedAdmin getRestrictionEnforcedAdmin() {
-        UserHandle of = UserHandle.of(this.mUserManager.getUserHandle());
-        if (this.mUserManager.hasUserRestriction("no_config_mobile_networks", of) && !this.mUserManager.hasBaseUserRestriction("no_config_mobile_networks", of)) {
+        UserHandle userHandleOf = UserHandle.of(this.mUserManager.getUserHandle());
+        if (this.mUserManager.hasUserRestriction("no_config_mobile_networks", userHandleOf) && !this.mUserManager.hasBaseUserRestriction("no_config_mobile_networks", userHandleOf)) {
             return RestrictedLockUtils.EnforcedAdmin.MULTIPLE_ENFORCED_ADMIN;
         }
         return null;
     }
 
     public void fillList() {
-        int i;
+        int subscriptionId;
         ArrayList<ApnPreference> arrayList;
         ArrayList<ApnPreference> arrayList2;
         ArrayList<ApnPreference> arrayList3;
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService("phone");
         if (this.mSubscriptionInfo != null) {
-            i = this.mSubscriptionInfo.getSubscriptionId();
+            subscriptionId = this.mSubscriptionInfo.getSubscriptionId();
         } else {
-            i = -1;
+            subscriptionId = -1;
         }
-        int i2 = i;
-        String simOperator = this.mSubscriptionInfo == null ? "" : telephonyManager.getSimOperator(i2);
+        int i = subscriptionId;
+        String simOperator = this.mSubscriptionInfo == null ? "" : telephonyManager.getSimOperator(i);
         Log.d("ApnSettings", "before plugin, mccmnc = " + simOperator);
         String operatorNumericFromImpi = this.mApnExt.getOperatorNumericFromImpi(simOperator, SubscriptionManager.getPhoneId(this.mSubscriptionInfo.getSubscriptionId()));
         Log.d("ApnSettings", "mccmnc = " + operatorNumericFromImpi);
-        String str = "numeric=\"" + operatorNumericFromImpi + "\"";
-        if (this.mSubscriptionInfo != null && CdmaUtils.isSupportCdma(i2)) {
-            str = CdmaApnSetting.customizeQuerySelectionforCdma(str, operatorNumericFromImpi, i2);
+        String strCustomizeQuerySelectionforCdma = "numeric=\"" + operatorNumericFromImpi + "\"";
+        if (this.mSubscriptionInfo != null && CdmaUtils.isSupportCdma(i)) {
+            strCustomizeQuerySelectionforCdma = CdmaApnSetting.customizeQuerySelectionforCdma(strCustomizeQuerySelectionforCdma, operatorNumericFromImpi, i);
         }
-        String str2 = str + " AND NOT (type='ia' AND (apn=\"\" OR apn IS NULL)) AND user_visible!=0";
+        String str = strCustomizeQuerySelectionforCdma + " AND NOT (type='ia' AND (apn=\"\" OR apn IS NULL)) AND user_visible!=0";
         if (!FeatureOption.MTK_VOLTE_SUPPORT || this.mHideImsApn) {
-            str2 = str2 + " AND NOT (type='ims' OR type='ia,ims')";
+            str = str + " AND NOT (type='ims' OR type='ia,ims')";
         }
-        String fillListQuery = this.mApnExt.getFillListQuery(str2, operatorNumericFromImpi);
+        String fillListQuery = this.mApnExt.getFillListQuery(str, operatorNumericFromImpi);
         Log.d("ApnSettings", "fillList where: " + fillListQuery);
         String apnSortOrder = this.mApnExt.getApnSortOrder("name ASC");
         Log.d("ApnSettings", "fillList sort: " + apnSortOrder);
-        Cursor query = getContentResolver().query(Telephony.Carriers.CONTENT_URI, new String[]{"_id", "name", "apn", "type", "mvno_type", "mvno_match_data", "sourcetype"}, fillListQuery.toString(), null, apnSortOrder);
-        if (query != null) {
-            Log.d("ApnSettings", "fillList, cursor count: " + query.getCount());
-            int i3 = 1;
-            IccRecords iccRecords = (this.mUiccController == null || this.mSubscriptionInfo == null) ? null : this.mUiccController.getIccRecords(SubscriptionManager.getPhoneId(i2), 1);
+        Cursor cursorQuery = getContentResolver().query(Telephony.Carriers.CONTENT_URI, new String[]{"_id", "name", "apn", "type", "mvno_type", "mvno_match_data", "sourcetype"}, fillListQuery.toString(), null, apnSortOrder);
+        if (cursorQuery != null) {
+            Log.d("ApnSettings", "fillList, cursor count: " + cursorQuery.getCount());
+            int i2 = 1;
+            IccRecords iccRecords = (this.mUiccController == null || this.mSubscriptionInfo == null) ? null : this.mUiccController.getIccRecords(SubscriptionManager.getPhoneId(i), 1);
             PreferenceGroup preferenceGroup = (PreferenceGroup) findPreference("apn_list");
             preferenceGroup.removeAll();
             ArrayList<ApnPreference> arrayList4 = new ArrayList<>();
@@ -262,32 +261,32 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
             ArrayList<ApnPreference> arrayList6 = new ArrayList<>();
             ArrayList<ApnPreference> arrayList7 = new ArrayList<>();
             this.mSelectedKey = getSelectedApnKey();
-            query.moveToFirst();
-            while (!query.isAfterLast()) {
-                String string = query.getString(i3);
-                String string2 = query.getString(2);
-                String string3 = query.getString(0);
-                String string4 = query.getString(3);
-                String string5 = query.getString(4);
-                String string6 = query.getString(5);
-                int i4 = query.getInt(6);
+            cursorQuery.moveToFirst();
+            while (!cursorQuery.isAfterLast()) {
+                String string = cursorQuery.getString(i2);
+                String string2 = cursorQuery.getString(2);
+                String string3 = cursorQuery.getString(0);
+                String string4 = cursorQuery.getString(3);
+                String string5 = cursorQuery.getString(4);
+                String string6 = cursorQuery.getString(5);
+                int i3 = cursorQuery.getInt(6);
                 if (shouldSkipApn(string4)) {
-                    query.moveToNext();
+                    cursorQuery.moveToNext();
                 } else {
-                    String updateApnName = this.mApnExt.updateApnName(string, i4);
+                    String strUpdateApnName = this.mApnExt.updateApnName(string, i3);
                     ArrayList<ApnPreference> arrayList8 = arrayList7;
                     ApnPreference apnPreference = new ApnPreference(getPrefContext());
                     apnPreference.setKey(string3);
-                    apnPreference.setTitle(updateApnName);
+                    apnPreference.setTitle(strUpdateApnName);
                     apnPreference.setSummary(string2);
                     apnPreference.setPersistent(false);
                     apnPreference.setOnPreferenceChangeListener(this);
-                    apnPreference.setSubId(i2);
-                    apnPreference.setApnEditable(this.mApnExt.isAllowEditPresetApn(string4, string2, operatorNumericFromImpi, i4));
+                    apnPreference.setSubId(i);
+                    apnPreference.setApnEditable(this.mApnExt.isAllowEditPresetApn(string4, string2, operatorNumericFromImpi, i3));
                     apnPreference.setSubId((this.mSubscriptionInfo == null ? null : Integer.valueOf(this.mSubscriptionInfo.getSubscriptionId())).intValue());
                     boolean z = (string4 == null || !(string4.equals("mms") || string4.equals("ia") || string4.equals("ims") || string4.equals("emergency"))) && this.mApnExt.isSelectable(string4);
                     apnPreference.setSelectable(z);
-                    Log.d("ApnSettings", "mSelectedKey = " + this.mSelectedKey + " key = " + string3 + " name = " + updateApnName + " selectable=" + z);
+                    Log.d("ApnSettings", "mSelectedKey = " + this.mSelectedKey + " key = " + string3 + " name = " + strUpdateApnName + " selectable=" + z);
                     if (z) {
                         arrayList3 = arrayList8;
                         arrayList = arrayList6;
@@ -301,17 +300,17 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
                         addApnToList(apnPreference, arrayList, arrayList3, iccRecords, string5, string6);
                         this.mApnExt.customizeUnselectableApn(string2, string5, string6, arrayList, arrayList3, (this.mSubscriptionInfo == null ? null : Integer.valueOf(this.mSubscriptionInfo.getSubscriptionId())).intValue());
                     }
-                    query.moveToNext();
+                    cursorQuery.moveToNext();
                     arrayList7 = arrayList3;
                     arrayList6 = arrayList;
                     arrayList5 = arrayList2;
                 }
-                i3 = 1;
+                i2 = 1;
             }
             ArrayList<ApnPreference> arrayList9 = arrayList7;
             ArrayList<ApnPreference> arrayList10 = arrayList6;
             ArrayList<ApnPreference> arrayList11 = arrayList5;
-            query.close();
+            cursorQuery.close();
             if (arrayList11.isEmpty()) {
                 arrayList9 = arrayList10;
             } else {
@@ -351,7 +350,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
             if (this.mAllowAddingApns && !this.mRestoreOngoing) {
                 menu.add(0, 1, 0, getResources().getString(R.string.menu_new)).setIcon(R.drawable.ic_menu_add_white).setShowAsAction(1);
             }
-            menu.add(0, 2, 0, getResources().getString(R.string.menu_restore)).setIcon(17301589);
+            menu.add(0, 2, 0, getResources().getString(R.string.menu_restore)).setIcon(android.R.drawable.ic_menu_upload);
         }
         this.mApnExt.updateMenu(menu, 1, 2, TelephonyManager.getDefault().getSimOperator(this.mSubscriptionInfo != null ? this.mSubscriptionInfo.getSubscriptionId() : -1));
         super.onCreateOptionsMenu(menu, menuInflater);
@@ -386,7 +385,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
     }
 
     @Override // android.support.v14.preference.PreferenceFragment, android.support.v7.preference.PreferenceManager.OnPreferenceTreeClickListener
-    public boolean onPreferenceTreeClick(Preference preference) {
+    public boolean onPreferenceTreeClick(Preference preference) throws NumberFormatException {
         Intent intent = new Intent("android.intent.action.EDIT", ContentUris.withAppendedId(Telephony.Carriers.CONTENT_URI, Integer.parseInt(preference.getKey())));
         Log.d("ApnSettings", "put subid = " + this.mSubscriptionInfo.getSubscriptionId());
         intent.putExtra("sub_id", this.mSubscriptionInfo.getSubscriptionId());
@@ -413,17 +412,17 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
     }
 
     private String getSelectedApnKey() {
-        String str;
-        Cursor query = getContentResolver().query(getUriForCurrSubId(PREFERAPN_URI), new String[]{"_id"}, null, null, "name ASC");
-        if (query.getCount() > 0) {
-            query.moveToFirst();
-            str = query.getString(0);
+        String string;
+        Cursor cursorQuery = getContentResolver().query(getUriForCurrSubId(PREFERAPN_URI), new String[]{"_id"}, null, null, "name ASC");
+        if (cursorQuery.getCount() > 0) {
+            cursorQuery.moveToFirst();
+            string = cursorQuery.getString(0);
         } else {
-            str = null;
+            string = null;
         }
-        query.close();
-        Log.d("ApnSettings", "getSelectedApnKey(), key = " + str);
-        return str;
+        cursorQuery.close();
+        Log.d("ApnSettings", "getSelectedApnKey(), key = " + string);
+        return string;
     }
 
     private boolean restoreDefaultApn() {
@@ -442,8 +441,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Uri getUriForCurrSubId(Uri uri) {
+    private Uri getUriForCurrSubId(Uri uri) {
         int subscriptionId = this.mSubscriptionInfo != null ? this.mSubscriptionInfo.getSubscriptionId() : -1;
         if (SubscriptionManager.isValidSubscriptionId(subscriptionId)) {
             return Uri.withAppendedPath(uri, "subId/" + String.valueOf(subscriptionId));
@@ -451,9 +449,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         return uri;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class RestoreApnUiHandler extends Handler {
+    private class RestoreApnUiHandler extends Handler {
         private RestoreApnUiHandler() {
         }
 
@@ -476,9 +472,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class RestoreApnProcessHandler extends Handler {
+    private class RestoreApnProcessHandler extends Handler {
         private Handler mRestoreApnUiHandler;
 
         public RestoreApnProcessHandler(Looper looper, Handler handler) {
@@ -521,8 +515,8 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         return 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateScreenForDataStateChange(Context context, Intent intent) {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [701=4] */
+    private void updateScreenForDataStateChange(Context context, Intent intent) {
         String stringExtra = intent.getStringExtra("apnType");
         Log.d("ApnSettings", "Receiver,send MMS status, get type = " + stringExtra);
         if ("mms".equals(stringExtra)) {
@@ -536,8 +530,8 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateScreenEnableState(Context context) {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [714=4] */
+    private void updateScreenEnableState(Context context) {
         int subscriptionId = this.mSubscriptionInfo.getSubscriptionId();
         boolean z = false;
         boolean z2 = 5 == TelephonyManager.getDefault().getSimState(SubscriptionManager.getSlotIndex(subscriptionId));
@@ -572,10 +566,10 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onPrepareOptionsMenu(Menu menu) {
         int size = menu.size();
-        boolean isAirplaneModeOn = TelephonyUtils.isAirplaneModeOn(getActivity());
-        Log.d("ApnSettings", "onPrepareOptionsMenu isAirplaneModeOn = " + isAirplaneModeOn);
+        boolean zIsAirplaneModeOn = TelephonyUtils.isAirplaneModeOn(getActivity());
+        Log.d("ApnSettings", "onPrepareOptionsMenu isAirplaneModeOn = " + zIsAirplaneModeOn);
         for (int i = 0; i < size; i++) {
-            menu.getItem(i).setEnabled(!isAirplaneModeOn);
+            menu.getItem(i).setEnabled(!zIsAirplaneModeOn);
         }
         super.onPrepareOptionsMenu(menu);
     }
@@ -584,24 +578,24 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         if (arrayList == null || arrayList.isEmpty()) {
             return;
         }
-        String str = null;
+        String key = null;
         if (this.mSelectedKey != null) {
             Iterator<ApnPreference> it = arrayList.iterator();
             while (it.hasNext()) {
                 ApnPreference next = it.next();
                 if (this.mSelectedKey.equals(next.getKey())) {
                     next.setChecked();
-                    str = this.mSelectedKey;
+                    key = this.mSelectedKey;
                 }
             }
         }
-        if (this.mApnExt.shouldSelectFirstApn() && str == null && arrayList.get(0) != null) {
+        if (this.mApnExt.shouldSelectFirstApn() && key == null && arrayList.get(0) != null) {
             arrayList.get(0).setChecked();
-            str = arrayList.get(0).getKey();
+            key = arrayList.get(0).getKey();
         }
-        if (str != null && str != this.mSelectedKey) {
-            setSelectedApnKey(str);
-            this.mSelectedKey = str;
+        if (key != null && key != this.mSelectedKey) {
+            setSelectedApnKey(key);
+            this.mSelectedKey = key;
         }
         Log.d("ApnSettings", "setPreferApnChecked, APN = " + this.mSelectedKey);
     }

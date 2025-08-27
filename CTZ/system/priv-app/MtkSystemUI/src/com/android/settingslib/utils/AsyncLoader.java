@@ -2,6 +2,7 @@ package com.android.settingslib.utils;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+
 /* loaded from: classes.dex */
 public abstract class AsyncLoader<T> extends AsyncTaskLoader<T> {
     private T mResult;

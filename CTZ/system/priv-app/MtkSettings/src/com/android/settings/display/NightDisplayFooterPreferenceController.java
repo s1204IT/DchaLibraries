@@ -5,6 +5,7 @@ import android.support.v7.preference.Preference;
 import com.android.internal.app.ColorDisplayController;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class NightDisplayFooterPreferenceController extends BasePreferenceController {
     public NightDisplayFooterPreferenceController(Context context) {

@@ -9,6 +9,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.development.SystemPropPoker;
+
 /* loaded from: classes.dex */
 public class CoolColorTemperaturePreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final String COLOR_TEMPERATURE_PROPERTY = "persist.sys.debug.color_temp";
@@ -40,15 +41,14 @@ public class CoolColorTemperaturePreferenceController extends DeveloperOptionsPr
         ((SwitchPreference) this.mPreference).setChecked(SystemProperties.getBoolean(COLOR_TEMPERATURE_PROPERTY, false));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         SystemProperties.set(COLOR_TEMPERATURE_PROPERTY, Boolean.toString(false));
         ((SwitchPreference) this.mPreference).setChecked(false);
     }
 
     void displayColorTemperatureToast() {
-        Toast.makeText(this.mContext, (int) R.string.color_temperature_toast, 1).show();
+        Toast.makeText(this.mContext, R.string.color_temperature_toast, 1).show();
     }
 }

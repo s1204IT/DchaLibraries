@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.android.settings.R;
 import com.android.settings.SetupRedactionInterstitial;
 import com.android.settings.password.ChooseLockPassword;
 import com.android.settings.password.ChooseLockTypeDialogFragment;
+
 /* loaded from: classes.dex */
 public class SetupChooseLockPassword extends ChooseLockPassword {
     public static Intent modifyIntentForSetup(Context context, Intent intent) {
@@ -21,9 +23,8 @@ public class SetupChooseLockPassword extends ChooseLockPassword {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.password.ChooseLockPassword, com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return SetupChooseLockPasswordFragment.class.getName().equals(str);
     }
 
@@ -32,14 +33,12 @@ public class SetupChooseLockPassword extends ChooseLockPassword {
         return SetupChooseLockPasswordFragment.class;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.password.ChooseLockPassword, com.android.settings.SettingsActivity, com.android.settingslib.drawer.SettingsDrawerActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
         super.onCreate(bundle);
         ((LinearLayout) findViewById(R.id.content_parent)).setFitsSystemWindows(false);
     }
 
-    /* loaded from: classes.dex */
     public static class SetupChooseLockPasswordFragment extends ChooseLockPassword.ChooseLockPasswordFragment implements ChooseLockTypeDialogFragment.OnLockTypeSelectedListener {
         private Button mOptionsButton;
 
@@ -85,9 +84,8 @@ public class SetupChooseLockPassword extends ChooseLockPassword {
             startChooseLockActivity(screenLockType, getActivity());
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.android.settings.password.ChooseLockPassword.ChooseLockPasswordFragment
-        public void updateUi() {
+        protected void updateUi() {
             super.updateUi();
             this.mSkipButton.setVisibility(this.mForFingerprint ? 8 : 0);
             if (this.mOptionsButton != null) {

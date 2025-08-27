@@ -12,10 +12,10 @@ import android.provider.Settings;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
+
 /* loaded from: classes.dex */
 public abstract class TunerService {
 
-    /* loaded from: classes.dex */
     public interface Tunable {
         void onTuningChanged(String str, String str2);
     }
@@ -45,14 +45,13 @@ public abstract class TunerService {
     }
 
     public static final void setTunerEnabled(Context context, boolean z) {
-        userContext(context).getPackageManager().setComponentEnabledSetting(new ComponentName(context, TunerActivity.class), z ? 1 : 2, 1);
+        userContext(context).getPackageManager().setComponentEnabledSetting(new ComponentName(context, (Class<?>) TunerActivity.class), z ? 1 : 2, 1);
     }
 
     public static final boolean isTunerEnabled(Context context) {
-        return userContext(context).getPackageManager().getComponentEnabledSetting(new ComponentName(context, TunerActivity.class)) == 1;
+        return userContext(context).getPackageManager().getComponentEnabledSetting(new ComponentName(context, (Class<?>) TunerActivity.class)) == 1;
     }
 
-    /* loaded from: classes.dex */
     public static class ClearReceiver extends BroadcastReceiver {
         @Override // android.content.BroadcastReceiver
         public void onReceive(Context context, Intent intent) {
@@ -62,12 +61,20 @@ public abstract class TunerService {
         }
     }
 
-    public static final void showResetRequest(final Context context, final Runnable runnable) {
+    public static final void showResetRequest(Context context, Runnable runnable) {
         SystemUIDialog systemUIDialog = new SystemUIDialog(context);
         systemUIDialog.setShowForAllUsers(true);
         systemUIDialog.setMessage(R.string.remove_from_settings_prompt);
         systemUIDialog.setButton(-2, context.getString(R.string.cancel), (DialogInterface.OnClickListener) null);
         systemUIDialog.setButton(-1, context.getString(R.string.guest_exit_guest_dialog_remove), new DialogInterface.OnClickListener() { // from class: com.android.systemui.tuner.TunerService.1
+            final /* synthetic */ Context val$context;
+            final /* synthetic */ Runnable val$onDisabled;
+
+            AnonymousClass1(Context context2, Runnable runnable2) {
+                context = context2;
+                runnable = runnable2;
+            }
+
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 context.sendBroadcast(new Intent("com.android.systemui.action.CLEAR_TUNER"));
@@ -79,5 +86,26 @@ public abstract class TunerService {
             }
         });
         systemUIDialog.show();
+    }
+
+    /* renamed from: com.android.systemui.tuner.TunerService$1 */
+    class AnonymousClass1 implements DialogInterface.OnClickListener {
+        final /* synthetic */ Context val$context;
+        final /* synthetic */ Runnable val$onDisabled;
+
+        AnonymousClass1(Context context2, Runnable runnable2) {
+            context = context2;
+            runnable = runnable2;
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialogInterface, int i) {
+            context.sendBroadcast(new Intent("com.android.systemui.action.CLEAR_TUNER"));
+            TunerService.setTunerEnabled(context, false);
+            Settings.Secure.putInt(context.getContentResolver(), "seen_tuner_warning", 0);
+            if (runnable != null) {
+                runnable.run();
+            }
+        }
     }
 }

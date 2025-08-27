@@ -13,6 +13,7 @@ import com.android.settingslib.core.lifecycle.events.OnOptionsItemSelected;
 import com.android.settingslib.core.lifecycle.events.OnPrepareOptionsMenu;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class PrivateVolumeOptionMenuController implements LifecycleObserver, OnCreateOptionsMenu, OnOptionsItemSelected, OnPrepareOptionsMenu {
     private Context mContext;
@@ -36,17 +37,16 @@ public class PrivateVolumeOptionMenuController implements LifecycleObserver, OnC
             return;
         }
         VolumeInfo primaryStorageCurrentVolume = this.mPm.getPrimaryStorageCurrentVolume();
-        MenuItem findItem = menu.findItem(100);
-        if (findItem != null) {
-            boolean z = true;
-            findItem.setVisible((primaryStorageCurrentVolume == null || primaryStorageCurrentVolume.getType() != 1 || Objects.equals(this.mVolumeInfo, primaryStorageCurrentVolume)) ? false : false);
+        MenuItem menuItemFindItem = menu.findItem(100);
+        if (menuItemFindItem != null) {
+            menuItemFindItem.setVisible((primaryStorageCurrentVolume == null || primaryStorageCurrentVolume.getType() != 1 || Objects.equals(this.mVolumeInfo, primaryStorageCurrentVolume)) ? false : true);
         }
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnOptionsItemSelected
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == 100) {
-            Intent intent = new Intent(this.mContext, StorageWizardMigrateConfirm.class);
+            Intent intent = new Intent(this.mContext, (Class<?>) StorageWizardMigrateConfirm.class);
             intent.putExtra("android.os.storage.extra.VOLUME_ID", this.mVolumeInfo.getId());
             this.mContext.startActivity(intent);
             return true;

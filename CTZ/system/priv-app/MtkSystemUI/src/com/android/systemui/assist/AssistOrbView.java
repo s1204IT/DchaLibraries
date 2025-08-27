@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class AssistOrbView extends FrameLayout {
     private final Paint mBackgroundPaint;
@@ -142,19 +143,16 @@ public class AssistOrbView extends FrameLayout {
         this.mCircleAnimationEndValue = f;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void applyCircleSize(float f) {
+    private void applyCircleSize(float f) {
         this.mCircleSize = f;
         updateLayout();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateElevation() {
+    private void updateElevation() {
         setElevation((1.0f - Math.max((this.mStaticOffset - this.mOffset) / this.mStaticOffset, 0.0f)) * this.mMaxElevation);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void animateOffset(float f, long j, long j2, Interpolator interpolator) {
+    private void animateOffset(float f, long j, long j2, Interpolator interpolator) {
         if (this.mOffsetAnimator != null) {
             this.mOffsetAnimator.removeAllListeners();
             this.mOffsetAnimator.cancel();
@@ -173,8 +171,7 @@ public class AssistOrbView extends FrameLayout {
         this.mOffsetAnimator.start();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateLayout() {
+    private void updateLayout() {
         updateCircleRect();
         updateLogo();
         invalidateOutline();
@@ -191,13 +188,10 @@ public class AssistOrbView extends FrameLayout {
     }
 
     private void updateLogo() {
-        float width = ((this.mCircleRect.left + this.mCircleRect.right) / 2.0f) - (this.mLogo.getWidth() / 2.0f);
-        float height = (((this.mCircleRect.top + this.mCircleRect.bottom) / 2.0f) - (this.mLogo.getHeight() / 2.0f)) - (this.mCircleMinSize / 7.0f);
         float f = (this.mStaticOffset - this.mOffset) / this.mStaticOffset;
-        float f2 = height + (this.mStaticOffset * f * 0.1f);
         this.mLogo.setImageAlpha((int) (Math.max(((1.0f - f) - 0.5f) * 2.0f, 0.0f) * 255.0f));
-        this.mLogo.setTranslationX(width);
-        this.mLogo.setTranslationY(f2);
+        this.mLogo.setTranslationX(((this.mCircleRect.left + this.mCircleRect.right) / 2.0f) - (this.mLogo.getWidth() / 2.0f));
+        this.mLogo.setTranslationY(((((this.mCircleRect.top + this.mCircleRect.bottom) / 2.0f) - (this.mLogo.getHeight() / 2.0f)) - (this.mCircleMinSize / 7.0f)) + (this.mStaticOffset * f * 0.1f));
     }
 
     private void updateCircleRect() {

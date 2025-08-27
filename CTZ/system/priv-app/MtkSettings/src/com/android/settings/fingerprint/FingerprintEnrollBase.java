@@ -12,14 +12,14 @@ import com.android.settings.R;
 import com.android.settings.SetupWizardUtils;
 import com.android.settings.core.InstrumentedActivity;
 import com.android.setupwizardlib.GlifLayout;
+
 /* loaded from: classes.dex */
 public abstract class FingerprintEnrollBase extends InstrumentedActivity implements View.OnClickListener {
     protected byte[] mToken;
     protected int mUserId;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedActivity, com.android.settingslib.core.lifecycle.ObservableActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         this.mToken = getIntent().getByteArrayExtra("hw_auth_token");
         if (bundle != null && this.mToken == null) {
@@ -33,9 +33,8 @@ public abstract class FingerprintEnrollBase extends InstrumentedActivity impleme
         super.onApplyThemeResource(theme, SetupWizardUtils.getTheme(getIntent()), z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.app.Activity
-    public void onSaveInstanceState(Bundle bundle) {
+    protected void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         bundle.putByteArray("hw_auth_token", this.mToken);
     }
@@ -46,8 +45,7 @@ public abstract class FingerprintEnrollBase extends InstrumentedActivity impleme
         initViews();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void initViews() {
+    protected void initViews() {
         getWindow().setStatusBarColor(0);
         Button nextButton = getNextButton();
         if (nextButton != null) {
@@ -72,8 +70,7 @@ public abstract class FingerprintEnrollBase extends InstrumentedActivity impleme
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setHeaderText(int i) {
+    protected void setHeaderText(int i) {
         setHeaderText(i, false);
     }
 
@@ -91,8 +88,7 @@ public abstract class FingerprintEnrollBase extends InstrumentedActivity impleme
     protected void onNextButtonClick() {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Intent getEnrollingIntent() {
+    protected Intent getEnrollingIntent() {
         Intent intent = new Intent();
         intent.setClassName("com.android.settings", FingerprintEnrollEnrolling.class.getName());
         intent.putExtra("hw_auth_token", this.mToken);

@@ -9,6 +9,7 @@ import com.android.launcher3.util.LongArrayMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class UserManagerCompatVL extends UserManagerCompat {
     private static final String USER_CREATION_TIME_KEY = "user_creation_time_";
@@ -18,8 +19,7 @@ public class UserManagerCompatVL extends UserManagerCompat {
     protected ArrayMap<UserHandle, Long> mUserToSerialMap;
     protected LongArrayMap<UserHandle> mUsers;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public UserManagerCompatVL(Context context) {
+    UserManagerCompatVL(Context context) {
         this.mUserManager = (UserManager) context.getSystemService("user");
         this.mPm = context.getPackageManager();
         this.mContext = context;

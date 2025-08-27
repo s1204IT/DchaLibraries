@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class StorageMeasurement {
     private final Context mContext;
@@ -27,12 +28,10 @@ public class StorageMeasurement {
     private final UserManager mUser;
     private final VolumeInfo mVolume;
 
-    /* loaded from: classes.dex */
     public interface MeasurementReceiver {
         void onDetailsChanged(MeasurementDetails measurementDetails);
     }
 
-    /* loaded from: classes.dex */
     public static class MeasurementDetails {
         public long availSize;
         public long cacheSize;
@@ -73,21 +72,19 @@ public class StorageMeasurement {
         this.mReceiver = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class MeasureTask extends AsyncTask<Void, Void, MeasurementDetails> {
+    private class MeasureTask extends AsyncTask<Void, Void, MeasurementDetails> {
         private MeasureTask() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public MeasurementDetails doInBackground(Void... voidArr) {
+        protected MeasurementDetails doInBackground(Void... voidArr) {
             return StorageMeasurement.this.measureExactStorage();
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(MeasurementDetails measurementDetails) {
+        protected void onPostExecute(MeasurementDetails measurementDetails) {
             MeasurementReceiver measurementReceiver = StorageMeasurement.this.mReceiver != null ? (MeasurementReceiver) StorageMeasurement.this.mReceiver.get() : null;
             if (measurementReceiver != null) {
                 measurementReceiver.onDetailsChanged(measurementDetails);
@@ -95,10 +92,9 @@ public class StorageMeasurement {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public MeasurementDetails measureExactStorage() {
+    private MeasurementDetails measureExactStorage() {
         List<UserInfo> users = this.mUser.getUsers();
-        long elapsedRealtime = SystemClock.elapsedRealtime();
+        long jElapsedRealtime = SystemClock.elapsedRealtime();
         MeasurementDetails measurementDetails = new MeasurementDetails();
         if (this.mVolume == null) {
             return measurementDetails;
@@ -111,43 +107,42 @@ public class StorageMeasurement {
         try {
             measurementDetails.totalSize = this.mStats.getTotalBytes(this.mVolume.fsUuid);
             measurementDetails.availSize = this.mStats.getFreeBytes(this.mVolume.fsUuid);
-            long elapsedRealtime2 = SystemClock.elapsedRealtime();
-            Log.d("StorageMeasurement", "Measured total storage in " + (elapsedRealtime2 - elapsedRealtime) + "ms");
+            long jElapsedRealtime2 = SystemClock.elapsedRealtime();
+            Log.d("StorageMeasurement", "Measured total storage in " + (jElapsedRealtime2 - jElapsedRealtime) + "ms");
             if (this.mSharedVolume != null && this.mSharedVolume.isMountedReadable()) {
                 for (UserInfo userInfo : users) {
-                    HashMap<String, Long> hashMap = new HashMap<>();
-                    measurementDetails.mediaSize.put(userInfo.id, hashMap);
+                    HashMap<String, Long> map = new HashMap<>();
+                    measurementDetails.mediaSize.put(userInfo.id, map);
                     try {
-                        ExternalStorageStats queryExternalStatsForUser = this.mStats.queryExternalStatsForUser(this.mSharedVolume.fsUuid, UserHandle.of(userInfo.id));
-                        addValue(measurementDetails.usersSize, userInfo.id, queryExternalStatsForUser.getTotalBytes());
-                        hashMap.put(Environment.DIRECTORY_MUSIC, Long.valueOf(queryExternalStatsForUser.getAudioBytes()));
-                        hashMap.put(Environment.DIRECTORY_MOVIES, Long.valueOf(queryExternalStatsForUser.getVideoBytes()));
-                        hashMap.put(Environment.DIRECTORY_PICTURES, Long.valueOf(queryExternalStatsForUser.getImageBytes()));
-                        addValue(measurementDetails.miscSize, userInfo.id, ((queryExternalStatsForUser.getTotalBytes() - queryExternalStatsForUser.getAudioBytes()) - queryExternalStatsForUser.getVideoBytes()) - queryExternalStatsForUser.getImageBytes());
+                        ExternalStorageStats externalStorageStatsQueryExternalStatsForUser = this.mStats.queryExternalStatsForUser(this.mSharedVolume.fsUuid, UserHandle.of(userInfo.id));
+                        addValue(measurementDetails.usersSize, userInfo.id, externalStorageStatsQueryExternalStatsForUser.getTotalBytes());
+                        map.put(Environment.DIRECTORY_MUSIC, Long.valueOf(externalStorageStatsQueryExternalStatsForUser.getAudioBytes()));
+                        map.put(Environment.DIRECTORY_MOVIES, Long.valueOf(externalStorageStatsQueryExternalStatsForUser.getVideoBytes()));
+                        map.put(Environment.DIRECTORY_PICTURES, Long.valueOf(externalStorageStatsQueryExternalStatsForUser.getImageBytes()));
+                        addValue(measurementDetails.miscSize, userInfo.id, ((externalStorageStatsQueryExternalStatsForUser.getTotalBytes() - externalStorageStatsQueryExternalStatsForUser.getAudioBytes()) - externalStorageStatsQueryExternalStatsForUser.getVideoBytes()) - externalStorageStatsQueryExternalStatsForUser.getImageBytes());
                     } catch (IOException e) {
                         Log.w("StorageMeasurement", e);
                     }
                 }
             }
-            long elapsedRealtime3 = SystemClock.elapsedRealtime();
-            Log.d("StorageMeasurement", "Measured shared storage in " + (elapsedRealtime3 - elapsedRealtime2) + "ms");
+            long jElapsedRealtime3 = SystemClock.elapsedRealtime();
+            Log.d("StorageMeasurement", "Measured shared storage in " + (jElapsedRealtime3 - jElapsedRealtime2) + "ms");
             if (this.mVolume.getType() == 1 && this.mVolume.isMountedReadable()) {
                 for (UserInfo userInfo2 : users) {
                     try {
-                        StorageStats queryStatsForUser = this.mStats.queryStatsForUser(this.mVolume.fsUuid, UserHandle.of(userInfo2.id));
+                        StorageStats storageStatsQueryStatsForUser = this.mStats.queryStatsForUser(this.mVolume.fsUuid, UserHandle.of(userInfo2.id));
                         if (userInfo2.id == UserHandle.myUserId()) {
-                            addValue(measurementDetails.usersSize, userInfo2.id, queryStatsForUser.getCodeBytes());
+                            addValue(measurementDetails.usersSize, userInfo2.id, storageStatsQueryStatsForUser.getCodeBytes());
                         }
-                        addValue(measurementDetails.usersSize, userInfo2.id, queryStatsForUser.getDataBytes());
-                        addValue(measurementDetails.appsSize, userInfo2.id, queryStatsForUser.getCodeBytes() + queryStatsForUser.getDataBytes());
-                        measurementDetails.cacheSize += queryStatsForUser.getCacheBytes();
+                        addValue(measurementDetails.usersSize, userInfo2.id, storageStatsQueryStatsForUser.getDataBytes());
+                        addValue(measurementDetails.appsSize, userInfo2.id, storageStatsQueryStatsForUser.getCodeBytes() + storageStatsQueryStatsForUser.getDataBytes());
+                        measurementDetails.cacheSize += storageStatsQueryStatsForUser.getCacheBytes();
                     } catch (IOException e2) {
                         Log.w("StorageMeasurement", e2);
                     }
                 }
             }
-            long elapsedRealtime4 = SystemClock.elapsedRealtime();
-            Log.d("StorageMeasurement", "Measured private storage in " + (elapsedRealtime4 - elapsedRealtime3) + "ms");
+            Log.d("StorageMeasurement", "Measured private storage in " + (SystemClock.elapsedRealtime() - jElapsedRealtime3) + "ms");
             return measurementDetails;
         } catch (IOException e3) {
             Log.w("StorageMeasurement", e3);

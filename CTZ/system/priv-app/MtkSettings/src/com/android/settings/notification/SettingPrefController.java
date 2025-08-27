@@ -15,6 +15,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
+
 /* loaded from: classes.dex */
 public abstract class SettingPrefController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnPause, OnResume {
     private SettingsPreferenceFragment mParent;
@@ -68,7 +69,6 @@ public abstract class SettingPrefController extends AbstractPreferenceController
     }
 
     @VisibleForTesting
-    /* loaded from: classes.dex */
     final class SettingsObserver extends ContentObserver {
         public SettingsObserver() {
             super(new Handler());

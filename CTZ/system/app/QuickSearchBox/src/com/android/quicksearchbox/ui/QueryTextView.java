@@ -5,11 +5,11 @@ import android.util.AttributeSet;
 import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
 /* loaded from: classes.dex */
 public class QueryTextView extends EditText {
     private CommitCompletionListener mCommitCompletionListener;
 
-    /* loaded from: classes.dex */
     public interface CommitCompletionListener {
         void onCommitCompletion(int i);
     }

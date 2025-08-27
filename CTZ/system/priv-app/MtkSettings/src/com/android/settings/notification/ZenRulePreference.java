@@ -17,6 +17,7 @@ import com.android.settings.utils.ZenServiceListing;
 import com.android.settingslib.TwoTargetPreference;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class ZenRulePreference extends TwoTargetPreference {
     private static final ManagedServiceSettings.Config CONFIG = ZenModeAutomationSettings.getConditionProviderConfig();
@@ -65,14 +66,13 @@ public class ZenRulePreference extends TwoTargetPreference {
     @Override // com.android.settingslib.TwoTargetPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.delete_zen_rule);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(this.mDeleteListener);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.delete_zen_rule);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(this.mDeleteListener);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showDeleteRuleDialog(Fragment fragment, String str, String str2) {
+    private void showDeleteRuleDialog(Fragment fragment, String str, String str2) {
         ZenDeleteRuleDialog.show(fragment, str2, str, new ZenDeleteRuleDialog.PositiveClickListener() { // from class: com.android.settings.notification.ZenRulePreference.2
             @Override // com.android.settings.notification.ZenDeleteRuleDialog.PositiveClickListener
             public void onOk(String str3) {
@@ -84,19 +84,19 @@ public class ZenRulePreference extends TwoTargetPreference {
 
     protected void setAttributes(AutomaticZenRule automaticZenRule) {
         String str;
-        boolean isValidScheduleConditionId = ZenModeConfig.isValidScheduleConditionId(automaticZenRule.getConditionId());
-        boolean isValidEventConditionId = ZenModeConfig.isValidEventConditionId(automaticZenRule.getConditionId());
+        boolean zIsValidScheduleConditionId = ZenModeConfig.isValidScheduleConditionId(automaticZenRule.getConditionId());
+        boolean zIsValidEventConditionId = ZenModeConfig.isValidEventConditionId(automaticZenRule.getConditionId());
         boolean z = true;
-        boolean z2 = isValidScheduleConditionId || isValidEventConditionId;
+        boolean z2 = zIsValidScheduleConditionId || zIsValidEventConditionId;
         try {
             setSummary(computeRuleSummary(automaticZenRule, z2, this.mPm.getApplicationInfo(automaticZenRule.getOwner().getPackageName(), 0).loadLabel(this.mPm)));
             this.appExists = true;
             setTitle(automaticZenRule.getName());
             setPersistent(false);
-            if (isValidScheduleConditionId) {
+            if (zIsValidScheduleConditionId) {
                 str = "android.settings.ZEN_MODE_SCHEDULE_RULE_SETTINGS";
             } else {
-                str = isValidEventConditionId ? "android.settings.ZEN_MODE_EVENT_RULE_SETTINGS" : "";
+                str = zIsValidEventConditionId ? "android.settings.ZEN_MODE_EVENT_RULE_SETTINGS" : "";
             }
             ComponentName settingsActivity = AbstractZenModeAutomaticRulePreferenceController.getSettingsActivity(this.mServiceListing.findService(automaticZenRule.getOwner()));
             setIntent(AbstractZenModeAutomaticRulePreferenceController.getRuleIntent(str, settingsActivity, this.mId));

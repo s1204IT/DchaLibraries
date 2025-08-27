@@ -8,6 +8,7 @@ import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.notification.AppNotificationSettings;
 import com.android.settings.notification.NotificationBackend;
 import com.android.settingslib.applications.ApplicationsState;
+
 /* loaded from: classes.dex */
 public class AppNotificationPreferenceController extends AppInfoPreferenceControllerBase {
     private final NotificationBackend mBackend;

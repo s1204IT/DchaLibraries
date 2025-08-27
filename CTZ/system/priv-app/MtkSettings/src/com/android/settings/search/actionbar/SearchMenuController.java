@@ -7,6 +7,7 @@ import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.ObservableFragment;
 import com.android.settingslib.core.lifecycle.ObservablePreferenceFragment;
 import com.android.settingslib.core.lifecycle.events.OnCreateOptionsMenu;
+
 /* loaded from: classes.dex */
 public class SearchMenuController implements LifecycleObserver, OnCreateOptionsMenu {
     private final Fragment mHost;

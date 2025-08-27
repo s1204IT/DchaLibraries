@@ -18,6 +18,7 @@ import com.android.settings.datetime.timezone.BaseTimeZoneAdapter;
 import com.android.settings.datetime.timezone.model.TimeZoneData;
 import com.android.settings.datetime.timezone.model.TimeZoneDataLoader;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public abstract class BaseTimeZonePicker extends InstrumentedFragment implements SearchView.OnQueryTextListener {
     private BaseTimeZoneAdapter mAdapter;
@@ -29,15 +30,13 @@ public abstract class BaseTimeZonePicker extends InstrumentedFragment implements
     private TimeZoneData mTimeZoneData;
     private final int mTitleResId;
 
-    /* loaded from: classes.dex */
     public interface OnListItemClickListener<T extends BaseTimeZoneAdapter.AdapterItem> {
         void onListItemClick(T t);
     }
 
     protected abstract BaseTimeZoneAdapter createAdapter(TimeZoneData timeZoneData);
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public BaseTimeZonePicker(int i, int i2, boolean z, boolean z2) {
+    protected BaseTimeZonePicker(int i, int i2, boolean z, boolean z2) {
         this.mTitleResId = i;
         this.mSearchHintResId = i2;
         this.mSearchEnabled = z;
@@ -53,17 +52,17 @@ public abstract class BaseTimeZonePicker extends InstrumentedFragment implements
 
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View inflate = layoutInflater.inflate(R.layout.time_zone_items_list, viewGroup, false);
-        this.mRecyclerView = (RecyclerView) inflate.findViewById(R.id.recycler_view);
+        View viewInflate = layoutInflater.inflate(R.layout.time_zone_items_list, viewGroup, false);
+        this.mRecyclerView = (RecyclerView) viewInflate.findViewById(R.id.recycler_view);
         this.mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), 1, false));
         this.mRecyclerView.setAdapter(this.mAdapter);
         getLoaderManager().initLoader(0, null, new TimeZoneDataLoader.LoaderCreator(getContext(), new TimeZoneDataLoader.OnDataReadyCallback() { // from class: com.android.settings.datetime.timezone.-$$Lambda$MBKbnic3yruONZHLQGUj0vAB5hk
             @Override // com.android.settings.datetime.timezone.model.TimeZoneDataLoader.OnDataReadyCallback
             public final void onTimeZoneDataReady(TimeZoneData timeZoneData) {
-                BaseTimeZonePicker.this.onTimeZoneDataReady(timeZoneData);
+                this.f$0.onTimeZoneDataReady(timeZoneData);
             }
         }));
-        return inflate;
+        return viewInflate;
     }
 
     public void onTimeZoneDataReady(TimeZoneData timeZoneData) {
@@ -76,8 +75,7 @@ public abstract class BaseTimeZonePicker extends InstrumentedFragment implements
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Locale getLocale() {
+    protected Locale getLocale() {
         return getContext().getResources().getConfiguration().getLocales().get(0);
     }
 
@@ -85,23 +83,23 @@ public abstract class BaseTimeZonePicker extends InstrumentedFragment implements
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         if (this.mSearchEnabled) {
             menuInflater.inflate(R.menu.time_zone_base_search_menu, menu);
-            MenuItem findItem = menu.findItem(R.id.time_zone_search_menu);
-            this.mSearchView = (SearchView) findItem.getActionView();
+            MenuItem menuItemFindItem = menu.findItem(R.id.time_zone_search_menu);
+            this.mSearchView = (SearchView) menuItemFindItem.getActionView();
             this.mSearchView.setQueryHint(getText(this.mSearchHintResId));
             this.mSearchView.setOnQueryTextListener(this);
             if (this.mDefaultExpandSearch) {
-                findItem.expandActionView();
+                menuItemFindItem.expandActionView();
                 this.mSearchView.setIconified(false);
                 this.mSearchView.setActivated(true);
                 this.mSearchView.setQuery("", true);
             }
-            TextView textView = (TextView) this.mSearchView.findViewById(16909268);
+            TextView textView = (TextView) this.mSearchView.findViewById(android.R.id.miter);
             textView.setPadding(0, textView.getPaddingTop(), 0, textView.getPaddingBottom());
-            View findViewById = this.mSearchView.findViewById(16909264);
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) findViewById.getLayoutParams();
+            View viewFindViewById = this.mSearchView.findViewById(android.R.id.miniresolver_info_section_text);
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewFindViewById.getLayoutParams();
             layoutParams.setMarginStart(0);
             layoutParams.setMarginEnd(0);
-            findViewById.setLayoutParams(layoutParams);
+            viewFindViewById.setLayoutParams(layoutParams);
         }
     }
 

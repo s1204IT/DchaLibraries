@@ -1,6 +1,7 @@
 package com.android.settings.enterprise;
 
 import java.util.Date;
+
 /* loaded from: classes.dex */
 public interface EnterprisePrivacyFeatureProvider {
     boolean areBackupsMandatory();

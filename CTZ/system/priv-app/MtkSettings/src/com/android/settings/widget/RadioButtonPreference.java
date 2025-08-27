@@ -9,11 +9,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class RadioButtonPreference extends CheckBoxPreference {
     private OnClickListener mListener;
 
-    /* loaded from: classes.dex */
     public interface OnClickListener {
         void onRadioButtonClicked(RadioButtonPreference radioButtonPreference);
     }
@@ -27,7 +27,7 @@ public class RadioButtonPreference extends CheckBoxPreference {
     }
 
     public RadioButtonPreference(Context context, AttributeSet attributeSet) {
-        this(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.preferenceStyle, 16842894));
+        this(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.preferenceStyle, android.R.attr.preferenceStyle));
     }
 
     public RadioButtonPreference(Context context) {
@@ -48,11 +48,11 @@ public class RadioButtonPreference extends CheckBoxPreference {
     @Override // android.support.v7.preference.CheckBoxPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.summary_container);
-        if (findViewById != null) {
-            findViewById.setVisibility(TextUtils.isEmpty(getSummary()) ? 8 : 0);
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.summary_container);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(TextUtils.isEmpty(getSummary()) ? 8 : 0);
         }
-        TextView textView = (TextView) preferenceViewHolder.findViewById(16908310);
+        TextView textView = (TextView) preferenceViewHolder.findViewById(android.R.id.title);
         if (textView != null) {
             textView.setSingleLine(false);
             textView.setMaxLines(3);

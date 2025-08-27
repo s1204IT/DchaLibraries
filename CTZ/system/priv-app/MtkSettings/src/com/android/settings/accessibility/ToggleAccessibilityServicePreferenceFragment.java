@@ -23,6 +23,7 @@ import com.android.settings.password.ConfirmDeviceCredentialActivity;
 import com.android.settings.widget.ToggleSwitch;
 import com.android.settingslib.accessibility.AccessibilityUtils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ToggleAccessibilityServicePreferenceFragment extends ToggleFeaturePreferenceFragment implements DialogInterface.OnClickListener {
     private ComponentName mComponentName;
@@ -97,7 +98,7 @@ public class ToggleAccessibilityServicePreferenceFragment extends ToggleFeatureP
                 if (accessibilityServiceInfo2 == null) {
                     return null;
                 }
-                return new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.disable_service_title, new Object[]{accessibilityServiceInfo2.getResolveInfo().loadLabel(getPackageManager())})).setMessage(getString(R.string.disable_service_message, new Object[]{accessibilityServiceInfo2.getResolveInfo().loadLabel(getPackageManager())})).setCancelable(true).setPositiveButton(17039370, this).setNegativeButton(17039360, this).create();
+                return new AlertDialog.Builder(getActivity()).setTitle(getString(R.string.disable_service_title, new Object[]{accessibilityServiceInfo2.getResolveInfo().loadLabel(getPackageManager())})).setMessage(getString(R.string.disable_service_message, new Object[]{accessibilityServiceInfo2.getResolveInfo().loadLabel(getPackageManager())})).setCancelable(true).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this).create();
             default:
                 throw new IllegalArgumentException();
         }
@@ -111,8 +112,7 @@ public class ToggleAccessibilityServicePreferenceFragment extends ToggleFeatureP
         return 584;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSwitchBarToggleSwitch() {
+    private void updateSwitchBarToggleSwitch() {
         this.mSwitchBar.setCheckedInternal(AccessibilityUtils.getEnabledServicesFromSettings(getActivity()).contains(this.mComponentName));
     }
 
@@ -202,9 +202,8 @@ public class ToggleAccessibilityServicePreferenceFragment extends ToggleFeatureP
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.accessibility.ToggleFeaturePreferenceFragment
-    public void onProcessArguments(Bundle bundle) {
+    protected void onProcessArguments(Bundle bundle) {
         super.onProcessArguments(bundle);
         String string = bundle.getString("settings_title");
         String string2 = bundle.getString("settings_component_name");

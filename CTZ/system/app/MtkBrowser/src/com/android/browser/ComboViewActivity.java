@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -15,23 +16,24 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import com.android.browser.UI;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ComboViewActivity extends Activity implements CombinedBookmarksCallbacks {
     private TabsAdapter mTabsAdapter;
     private ViewPager mViewPager;
 
     @Override // android.app.Activity
-    protected void onCreate(Bundle bundle) {
-        UI.ComboViews comboViews;
+    protected void onCreate(Bundle bundle) throws Resources.NotFoundException {
+        UI.ComboViews comboViewsValueOf;
         super.onCreate(bundle);
         setResult(0);
         Bundle extras = getIntent().getExtras();
         Bundle bundle2 = extras.getBundle("combo_args");
         String string = extras.getString("initial_view", null);
         if (string != null) {
-            comboViews = UI.ComboViews.valueOf(string);
+            comboViewsValueOf = UI.ComboViews.valueOf(string);
         } else {
-            comboViews = UI.ComboViews.Bookmarks;
+            comboViewsValueOf = UI.ComboViews.Bookmarks;
         }
         this.mViewPager = new ViewPager(this);
         this.mViewPager.setId(R.id.tab_view);
@@ -48,19 +50,18 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
         this.mTabsAdapter.addTab(actionBar.newTab().setText(R.string.tab_bookmarks), BrowserBookmarksPage.class, bundle2);
         this.mTabsAdapter.addTab(actionBar.newTab().setText(R.string.tab_history), BrowserHistoryPage.class, bundle2);
         if (bundle == null) {
-            switch (comboViews) {
+            switch (comboViewsValueOf) {
                 case Bookmarks:
                     this.mViewPager.setCurrentItem(0);
-                    return;
+                    break;
                 case History:
                     this.mViewPager.setCurrentItem(1);
-                    return;
+                    break;
                 case Snapshots:
                     this.mViewPager.setCurrentItem(2);
-                    return;
-                default:
-                    return;
+                    break;
             }
+            return;
         }
         actionBar.setSelectedNavigationItem(bundle.getInt("tab", 0));
     }
@@ -74,10 +75,10 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
     @Override // com.android.browser.CombinedBookmarksCallbacks
     public void openUrl(String str) {
         if (str == null) {
-            Toast.makeText(this, (int) R.string.bookmark_url_not_valid, 1).show();
+            Toast.makeText(this, R.string.bookmark_url_not_valid, 1).show();
             return;
         }
-        Intent intent = new Intent(this, BrowserActivity.class);
+        Intent intent = new Intent(this, (Class<?>) BrowserActivity.class);
         intent.setAction("android.intent.action.VIEW");
         intent.setData(Uri.parse(str));
         setResult(-1, intent);
@@ -103,27 +104,24 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
         if (menuItem.getItemId() == 16908332) {
             finish();
             return true;
-        } else if (menuItem.getItemId() == R.id.preferences_menu_id) {
+        }
+        if (menuItem.getItemId() == R.id.preferences_menu_id) {
             String stringExtra = getIntent().getStringExtra("url");
-            Intent intent = new Intent(this, BrowserPreferencesPage.class);
+            Intent intent = new Intent(this, (Class<?>) BrowserPreferencesPage.class);
             intent.putExtra("currentPage", stringExtra);
             startActivityForResult(intent, 3);
             return true;
-        } else {
-            return super.onOptionsItemSelected(menuItem);
         }
+        return super.onOptionsItemSelected(menuItem);
     }
 
-    /* loaded from: classes.dex */
     public static class TabsAdapter extends FragmentPagerAdapter implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
         private final ActionBar mActionBar;
         private final Context mContext;
         private final ArrayList<TabInfo> mTabs;
         private final ViewPager mViewPager;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        /* loaded from: classes.dex */
-        public static final class TabInfo {
+        static final class TabInfo {
             private final Bundle args;
             private final Class<?> clss;
 
@@ -133,7 +131,7 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
             }
         }
 
-        public TabsAdapter(Activity activity, ViewPager viewPager) {
+        public TabsAdapter(Activity activity, ViewPager viewPager) throws Resources.NotFoundException {
             super(activity.getFragmentManager());
             this.mTabs = new ArrayList<>();
             this.mContext = activity;
@@ -177,7 +175,7 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
         }
 
         @Override // android.app.ActionBar.TabListener
-        public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) throws Resources.NotFoundException {
             Object tag = tab.getTag();
             for (int i = 0; i < this.mTabs.size(); i++) {
                 if (this.mTabs.get(i) == tag) {

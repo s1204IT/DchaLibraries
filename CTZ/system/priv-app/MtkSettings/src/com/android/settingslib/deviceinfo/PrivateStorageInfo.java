@@ -5,6 +5,7 @@ import android.app.usage.StorageStatsManager;
 import android.os.storage.VolumeInfo;
 import android.util.Log;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class PrivateStorageInfo {
     public final long freeBytes;
@@ -17,19 +18,19 @@ public class PrivateStorageInfo {
 
     public static PrivateStorageInfo getPrivateStorageInfo(StorageVolumeProvider storageVolumeProvider) {
         StorageStatsManager storageStatsManager = (StorageStatsManager) AppGlobals.getInitialApplication().getSystemService(StorageStatsManager.class);
-        long j = 0;
-        long j2 = 0;
+        long freeBytes = 0;
+        long totalBytes = 0;
         for (VolumeInfo volumeInfo : storageVolumeProvider.getVolumes()) {
             if (volumeInfo.getType() == 1 && volumeInfo.isMountedReadable()) {
                 try {
-                    j2 += storageVolumeProvider.getTotalBytes(storageStatsManager, volumeInfo);
-                    j += storageVolumeProvider.getFreeBytes(storageStatsManager, volumeInfo);
+                    totalBytes += storageVolumeProvider.getTotalBytes(storageStatsManager, volumeInfo);
+                    freeBytes += storageVolumeProvider.getFreeBytes(storageStatsManager, volumeInfo);
                 } catch (IOException e) {
                     Log.w("PrivateStorageInfo", e);
                 }
             }
         }
-        return new PrivateStorageInfo(j, j2);
+        return new PrivateStorageInfo(freeBytes, totalBytes);
     }
 
     public static long getTotalSize(VolumeInfo volumeInfo, long j) {

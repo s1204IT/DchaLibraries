@@ -9,6 +9,7 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.compat.ShortcutConfigActivityInfo;
 import com.android.launcher3.util.ComponentKey;
 import java.text.Collator;
+
 /* loaded from: classes.dex */
 public class WidgetItem extends ComponentKey implements Comparable<WidgetItem> {
     private static Collator sCollator;
@@ -37,6 +38,7 @@ public class WidgetItem extends ComponentKey implements Comparable<WidgetItem> {
         this.spanX = 1;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     @Override // java.lang.Comparable
     public int compareTo(WidgetItem widgetItem) {
         if (sMyUserHandle == null) {
@@ -47,9 +49,9 @@ public class WidgetItem extends ComponentKey implements Comparable<WidgetItem> {
         if ((!sMyUserHandle.equals(widgetItem.user)) ^ z) {
             return z ? 1 : -1;
         }
-        int compare = sCollator.compare(this.label, widgetItem.label);
-        if (compare != 0) {
-            return compare;
+        int iCompare = sCollator.compare(this.label, widgetItem.label);
+        if (iCompare != 0) {
+            return iCompare;
         }
         int i = this.spanX * this.spanY;
         int i2 = widgetItem.spanX * widgetItem.spanY;

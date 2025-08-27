@@ -3,6 +3,7 @@ package com.android.settings.enterprise;
 import android.content.Context;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class CaCertsCurrentUserPreferenceController extends CaCertsPreferenceControllerBase {
     static final String CA_CERTS_CURRENT_USER = "ca_certs_current_user";

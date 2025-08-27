@@ -2,6 +2,7 @@ package com.android.systemui.doze;
 
 import com.android.systemui.doze.DozeMachine;
 import com.android.systemui.statusbar.phone.DozeParameters;
+
 /* loaded from: classes.dex */
 public class DozeScreenStatePreventingAdapter extends DozeMachine.Service.Delegate {
     DozeScreenStatePreventingAdapter(DozeMachine.Service service) {

@@ -17,6 +17,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import com.android.settingslib.R;
 import com.android.settingslib.Utils;
+
 /* loaded from: classes.dex */
 public class UidDetailProvider {
     private final Context mContext;
@@ -44,7 +45,7 @@ public class UidDetailProvider {
         }
     }
 
-    public UidDetail getUidDetail(int i, boolean z) {
+    public UidDetail getUidDetail(int i, boolean z) throws PackageManager.NameNotFoundException {
         UidDetail uidDetail;
         synchronized (this.mUidDetailCache) {
             uidDetail = this.mUidDetailCache.get(i);
@@ -55,14 +56,14 @@ public class UidDetailProvider {
         if (!z) {
             return null;
         }
-        UidDetail buildUidDetail = buildUidDetail(i);
+        UidDetail uidDetailBuildUidDetail = buildUidDetail(i);
         synchronized (this.mUidDetailCache) {
-            this.mUidDetailCache.put(i, buildUidDetail);
+            this.mUidDetailCache.put(i, uidDetailBuildUidDetail);
         }
-        return buildUidDetail;
+        return uidDetailBuildUidDetail;
     }
 
-    private UidDetail buildUidDetail(int i) {
+    private UidDetail buildUidDetail(int i) throws PackageManager.NameNotFoundException {
         int i2;
         UserInfo userInfo;
         Resources resources = this.mContext.getResources();
@@ -79,7 +80,7 @@ public class UidDetailProvider {
             case -5:
                 uidDetail.label = resources.getString(Utils.getTetheringLabel((ConnectivityManager) this.mContext.getSystemService("connectivity")));
                 uidDetail.icon = packageManager.getDefaultActivityIcon();
-                return uidDetail;
+                break;
             case -4:
                 if (UserManager.supportsMultipleUsers()) {
                     i2 = R.string.data_usage_uninstalled_apps_users;
@@ -88,53 +89,56 @@ public class UidDetailProvider {
                 }
                 uidDetail.label = resources.getString(i2);
                 uidDetail.icon = packageManager.getDefaultActivityIcon();
-                return uidDetail;
+                break;
             default:
                 UserManager userManager = (UserManager) this.mContext.getSystemService("user");
                 if (isKeyForUser(i) && (userInfo = userManager.getUserInfo(getUserIdForKey(i))) != null) {
                     uidDetail.label = Utils.getUserLabel(this.mContext, userInfo);
                     uidDetail.icon = Utils.getUserIcon(this.mContext, userManager, userInfo);
-                    return uidDetail;
-                }
-                String[] packagesForUid = packageManager.getPackagesForUid(i);
-                int length = packagesForUid != null ? packagesForUid.length : 0;
-                try {
-                    int userId = UserHandle.getUserId(i);
-                    UserHandle userHandle = new UserHandle(userId);
-                    IPackageManager packageManager2 = AppGlobals.getPackageManager();
-                    if (length == 1) {
-                        ApplicationInfo applicationInfo = packageManager2.getApplicationInfo(packagesForUid[0], 0, userId);
-                        if (applicationInfo != null) {
-                            uidDetail.label = applicationInfo.loadLabel(packageManager).toString();
-                            uidDetail.icon = userManager.getBadgedIconForUser(applicationInfo.loadIcon(packageManager), new UserHandle(userId));
-                        }
-                    } else if (length > 1) {
-                        uidDetail.detailLabels = new CharSequence[length];
-                        uidDetail.detailContentDescriptions = new CharSequence[length];
-                        for (int i3 = 0; i3 < length; i3++) {
-                            String str = packagesForUid[i3];
-                            PackageInfo packageInfo = packageManager.getPackageInfo(str, 0);
-                            ApplicationInfo applicationInfo2 = packageManager2.getApplicationInfo(str, 0, userId);
-                            if (applicationInfo2 != null) {
-                                uidDetail.detailLabels[i3] = applicationInfo2.loadLabel(packageManager).toString();
-                                uidDetail.detailContentDescriptions[i3] = userManager.getBadgedLabelForUser(uidDetail.detailLabels[i3], userHandle);
-                                if (packageInfo.sharedUserLabel != 0) {
-                                    uidDetail.label = packageManager.getText(str, packageInfo.sharedUserLabel, packageInfo.applicationInfo).toString();
-                                    uidDetail.icon = userManager.getBadgedIconForUser(applicationInfo2.loadIcon(packageManager), userHandle);
+                    break;
+                } else {
+                    String[] packagesForUid = packageManager.getPackagesForUid(i);
+                    int length = packagesForUid != null ? packagesForUid.length : 0;
+                    try {
+                        int userId = UserHandle.getUserId(i);
+                        UserHandle userHandle = new UserHandle(userId);
+                        IPackageManager packageManager2 = AppGlobals.getPackageManager();
+                        if (length == 1) {
+                            ApplicationInfo applicationInfo = packageManager2.getApplicationInfo(packagesForUid[0], 0, userId);
+                            if (applicationInfo != null) {
+                                uidDetail.label = applicationInfo.loadLabel(packageManager).toString();
+                                uidDetail.icon = userManager.getBadgedIconForUser(applicationInfo.loadIcon(packageManager), new UserHandle(userId));
+                            }
+                        } else if (length > 1) {
+                            uidDetail.detailLabels = new CharSequence[length];
+                            uidDetail.detailContentDescriptions = new CharSequence[length];
+                            for (int i3 = 0; i3 < length; i3++) {
+                                String str = packagesForUid[i3];
+                                PackageInfo packageInfo = packageManager.getPackageInfo(str, 0);
+                                ApplicationInfo applicationInfo2 = packageManager2.getApplicationInfo(str, 0, userId);
+                                if (applicationInfo2 != null) {
+                                    uidDetail.detailLabels[i3] = applicationInfo2.loadLabel(packageManager).toString();
+                                    uidDetail.detailContentDescriptions[i3] = userManager.getBadgedLabelForUser(uidDetail.detailLabels[i3], userHandle);
+                                    if (packageInfo.sharedUserLabel != 0) {
+                                        uidDetail.label = packageManager.getText(str, packageInfo.sharedUserLabel, packageInfo.applicationInfo).toString();
+                                        uidDetail.icon = userManager.getBadgedIconForUser(applicationInfo2.loadIcon(packageManager), userHandle);
+                                    }
                                 }
                             }
                         }
+                        uidDetail.contentDescription = userManager.getBadgedLabelForUser(uidDetail.label, userHandle);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        Log.w("DataUsage", "Error while building UI detail for uid " + i, e);
+                    } catch (RemoteException e2) {
+                        Log.w("DataUsage", "Error while building UI detail for uid " + i, e2);
                     }
-                    uidDetail.contentDescription = userManager.getBadgedLabelForUser(uidDetail.label, userHandle);
-                } catch (PackageManager.NameNotFoundException e) {
-                    Log.w("DataUsage", "Error while building UI detail for uid " + i, e);
-                } catch (RemoteException e2) {
-                    Log.w("DataUsage", "Error while building UI detail for uid " + i, e2);
+                    if (TextUtils.isEmpty(uidDetail.label)) {
+                        uidDetail.label = Integer.toString(i);
+                        break;
+                    }
                 }
-                if (TextUtils.isEmpty(uidDetail.label)) {
-                    uidDetail.label = Integer.toString(i);
-                }
-                return uidDetail;
+                break;
         }
+        return uidDetail;
     }
 }

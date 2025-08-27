@@ -3,6 +3,7 @@ package com.mediatek.settings.security;
 import android.content.Context;
 import android.content.Intent;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class PermissionControlPreferenceController extends AbstractPreferenceController {
     public PermissionControlPreferenceController(Context context) {

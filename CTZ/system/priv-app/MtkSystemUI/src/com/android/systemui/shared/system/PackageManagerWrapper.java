@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.pm.ActivityInfo;
 import android.content.pm.IPackageManager;
 import android.os.RemoteException;
+
 /* loaded from: classes.dex */
 public class PackageManagerWrapper {
     private static final PackageManagerWrapper sInstance = new PackageManagerWrapper();

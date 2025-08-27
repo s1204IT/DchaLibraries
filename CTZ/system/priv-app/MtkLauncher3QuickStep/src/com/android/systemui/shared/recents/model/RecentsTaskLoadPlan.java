@@ -12,6 +12,7 @@ import com.android.systemui.shared.system.ActivityManagerWrapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RecentsTaskLoadPlan {
     private final Context mContext;
@@ -20,7 +21,6 @@ public class RecentsTaskLoadPlan {
     private TaskStack mStack;
     private final SparseBooleanArray mTmpLockedUsers = new SparseBooleanArray();
 
-    /* loaded from: classes.dex */
     public static class Options {
         public int runningTaskId = -1;
         public boolean loadIcons = true;
@@ -31,7 +31,6 @@ public class RecentsTaskLoadPlan {
         public int numVisibleTaskThumbnails = 0;
     }
 
-    /* loaded from: classes.dex */
     public static class PreloadOptions {
         public boolean loadTitles = true;
     }
@@ -43,7 +42,7 @@ public class RecentsTaskLoadPlan {
 
     public void preloadPlan(PreloadOptions opts, RecentsTaskLoader loader, int runningTaskId, int currentUserId) {
         boolean z;
-        Drawable drawable;
+        Drawable andUpdateActivityIcon;
         Resources res;
         int taskCount;
         PreloadOptions preloadOptions = opts;
@@ -72,12 +71,12 @@ public class RecentsTaskLoadPlan {
                 String titleDescription = preloadOptions.loadTitles ? recentsTaskLoader.getAndUpdateContentDescription(taskKey, t.taskDescription) : "";
                 if (isStackTask) {
                     z = false;
-                    drawable = recentsTaskLoader.getAndUpdateActivityIcon(taskKey, t.taskDescription, false);
+                    andUpdateActivityIcon = recentsTaskLoader.getAndUpdateActivityIcon(taskKey, t.taskDescription, false);
                 } else {
                     z = false;
-                    drawable = null;
+                    andUpdateActivityIcon = null;
                 }
-                Drawable icon = drawable;
+                Drawable icon = andUpdateActivityIcon;
                 ThumbnailData thumbnail = recentsTaskLoader.getAndUpdateThumbnail(taskKey, z, z);
                 int activityColor = recentsTaskLoader.getActivityPrimaryColor(t.taskDescription);
                 int backgroundColor = recentsTaskLoader.getActivityBackgroundColor(t.taskDescription);

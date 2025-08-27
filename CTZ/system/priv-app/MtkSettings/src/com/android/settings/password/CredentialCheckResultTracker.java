@@ -3,6 +3,7 @@ package com.android.settings.password;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+
 /* loaded from: classes.dex */
 public class CredentialCheckResultTracker extends Fragment {
     private boolean mHasResult = false;
@@ -12,7 +13,6 @@ public class CredentialCheckResultTracker extends Fragment {
     private boolean mResultMatched;
     private int mResultTimeoutMs;
 
-    /* loaded from: classes.dex */
     interface Listener {
         void onCredentialChecked(boolean z, Intent intent, int i, int i2, boolean z2);
     }

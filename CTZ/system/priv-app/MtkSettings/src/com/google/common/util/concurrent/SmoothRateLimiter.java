@@ -2,6 +2,7 @@ package com.google.common.util.concurrent;
 
 import com.google.common.util.concurrent.RateLimiter;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 abstract class SmoothRateLimiter extends RateLimiter {
     double maxPermits;
@@ -11,14 +12,12 @@ abstract class SmoothRateLimiter extends RateLimiter {
 
     abstract void doSetRate(double d, double d2);
 
-    /* loaded from: classes.dex */
     static final class SmoothWarmingUp extends SmoothRateLimiter {
         private double halfPermits;
         private double slope;
         private final long warmupPeriodMicros;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public SmoothWarmingUp(RateLimiter.SleepingStopwatch sleepingStopwatch, long j, TimeUnit timeUnit) {
+        SmoothWarmingUp(RateLimiter.SleepingStopwatch sleepingStopwatch, long j, TimeUnit timeUnit) {
             super(sleepingStopwatch);
             this.warmupPeriodMicros = timeUnit.toMicros(j);
         }
@@ -43,12 +42,10 @@ abstract class SmoothRateLimiter extends RateLimiter {
         }
     }
 
-    /* loaded from: classes.dex */
     static final class SmoothBursty extends SmoothRateLimiter {
         final double maxBurstSeconds;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public SmoothBursty(RateLimiter.SleepingStopwatch sleepingStopwatch, double d) {
+        SmoothBursty(RateLimiter.SleepingStopwatch sleepingStopwatch, double d) {
             super(sleepingStopwatch);
             this.maxBurstSeconds = d;
         }

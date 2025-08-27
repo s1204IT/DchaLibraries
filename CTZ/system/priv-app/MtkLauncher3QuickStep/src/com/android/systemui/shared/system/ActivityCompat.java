@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewHierarchyEncoder;
 import java.io.ByteArrayOutputStream;
+
 /* loaded from: classes.dex */
 public class ActivityCompat {
     private final Activity mWrapped;

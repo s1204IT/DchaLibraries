@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar;
 
+import android.R;
 import android.content.Context;
 import android.util.Log;
 import com.android.internal.logging.MetricsLogger;
@@ -8,6 +9,7 @@ import com.android.systemui.plugins.statusbar.NotificationMenuRowPlugin;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class NotificationBlockingHelperManager {
     private ExpandableNotificationRow mBlockingHelperRow;
@@ -17,24 +19,23 @@ public class NotificationBlockingHelperManager {
 
     public NotificationBlockingHelperManager(Context context) {
         this.mContext = context;
-        Collections.addAll(this.mNonBlockablePkgs, this.mContext.getResources().getStringArray(17236024));
+        Collections.addAll(this.mNonBlockablePkgs, this.mContext.getResources().getStringArray(R.array.config_defaultCloudSearchServices));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean perhapsShowBlockingHelper(ExpandableNotificationRow expandableNotificationRow, NotificationMenuRowPlugin notificationMenuRowPlugin) {
-        if (expandableNotificationRow.getEntry().userSentiment == -1 && this.mIsShadeExpanded && !expandableNotificationRow.getIsNonblockable() && (!expandableNotificationRow.isChildInGroup() || expandableNotificationRow.isOnlyChildInGroup())) {
-            dismissCurrentBlockingHelper();
-            this.mBlockingHelperRow = expandableNotificationRow;
-            this.mBlockingHelperRow.setBlockingHelperShowing(true);
-            ((NotificationGutsManager) Dependency.get(NotificationGutsManager.class)).openGuts(this.mBlockingHelperRow, 0, 0, notificationMenuRowPlugin.getLongpressMenuItem(this.mContext));
-            ((MetricsLogger) Dependency.get(MetricsLogger.class)).count("blocking_helper_shown", 1);
-            return true;
+    boolean perhapsShowBlockingHelper(ExpandableNotificationRow expandableNotificationRow, NotificationMenuRowPlugin notificationMenuRowPlugin) {
+        if (expandableNotificationRow.getEntry().userSentiment != -1 || !this.mIsShadeExpanded || expandableNotificationRow.getIsNonblockable() || (expandableNotificationRow.isChildInGroup() && !expandableNotificationRow.isOnlyChildInGroup())) {
+            return false;
         }
-        return false;
+        dismissCurrentBlockingHelper();
+        NotificationGutsManager notificationGutsManager = (NotificationGutsManager) Dependency.get(NotificationGutsManager.class);
+        this.mBlockingHelperRow = expandableNotificationRow;
+        this.mBlockingHelperRow.setBlockingHelperShowing(true);
+        notificationGutsManager.openGuts(this.mBlockingHelperRow, 0, 0, notificationMenuRowPlugin.getLongpressMenuItem(this.mContext));
+        ((MetricsLogger) Dependency.get(MetricsLogger.class)).count("blocking_helper_shown", 1);
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean dismissCurrentBlockingHelper() {
+    boolean dismissCurrentBlockingHelper() {
         if (isBlockingHelperRowNull()) {
             return false;
         }

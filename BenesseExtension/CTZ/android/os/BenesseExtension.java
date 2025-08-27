@@ -2,6 +2,7 @@ package android.os;
 
 import android.os.IBenesseExtensionService;
 import java.io.File;
+
 /* loaded from: classes2.dex */
 public class BenesseExtension {
     static IBenesseExtensionService mBenesseExtensionService;

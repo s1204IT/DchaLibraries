@@ -9,6 +9,7 @@ import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherModel;
 import com.android.launcher3.MainThreadExecutor;
 import java.lang.ref.WeakReference;
+
 /* loaded from: classes.dex */
 public abstract class InternalStateHandler extends Binder {
     public static final String EXTRA_STATE_HANDLER = "launcher.state_handler";
@@ -43,6 +44,10 @@ public abstract class InternalStateHandler extends Binder {
         return handleIntent(launcher, intent, z, true);
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:11:0x002a  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private static boolean handleIntent(Launcher launcher, Intent intent, boolean z, boolean z2) {
         boolean z3;
         if (intent != null && intent.getExtras() != null) {
@@ -52,18 +57,17 @@ public abstract class InternalStateHandler extends Binder {
                     intent.getExtras().remove(EXTRA_STATE_HANDLER);
                 }
                 z3 = true;
-                if (z3 && !z2) {
-                    return sScheduler.initIfPending(launcher, z);
-                }
             }
+        } else {
+            z3 = false;
         }
-        z3 = false;
-        return z3 ? z3 : z3;
+        if (!z3 && !z2) {
+            return sScheduler.initIfPending(launcher, z);
+        }
+        return z3;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class Scheduler implements Runnable {
+    private static class Scheduler implements Runnable {
         private MainThreadExecutor mMainThreadExecutor;
         private WeakReference<InternalStateHandler> mPendingHandler;
 

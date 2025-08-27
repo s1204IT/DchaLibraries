@@ -14,13 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class AppWidgetManagerCompatVL extends AppWidgetManagerCompat {
+class AppWidgetManagerCompatVL extends AppWidgetManagerCompat {
     private final UserManager mUserManager;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public AppWidgetManagerCompatVL(Context context) {
+    AppWidgetManagerCompatVL(Context context) {
         super(context);
         this.mUserManager = (UserManager) context.getSystemService("user");
     }
@@ -29,16 +28,17 @@ public class AppWidgetManagerCompatVL extends AppWidgetManagerCompat {
     public List<AppWidgetProviderInfo> getAllProviders(@Nullable PackageUserKey packageUserKey) {
         if (packageUserKey == null) {
             ArrayList arrayList = new ArrayList();
-            for (UserHandle userHandle : this.mUserManager.getUserProfiles()) {
-                arrayList.addAll(this.mAppWidgetManager.getInstalledProvidersForProfile(userHandle));
+            Iterator<UserHandle> it = this.mUserManager.getUserProfiles().iterator();
+            while (it.hasNext()) {
+                arrayList.addAll(this.mAppWidgetManager.getInstalledProvidersForProfile(it.next()));
             }
             return arrayList;
         }
         ArrayList arrayList2 = new ArrayList(this.mAppWidgetManager.getInstalledProvidersForProfile(packageUserKey.mUser));
-        Iterator it = arrayList2.iterator();
-        while (it.hasNext()) {
-            if (!((AppWidgetProviderInfo) it.next()).provider.getPackageName().equals(packageUserKey.mPackageName)) {
-                it.remove();
+        Iterator it2 = arrayList2.iterator();
+        while (it2.hasNext()) {
+            if (!((AppWidgetProviderInfo) it2.next()).provider.getPackageName().equals(packageUserKey.mPackageName)) {
+                it2.remove();
             }
         }
         return arrayList2;
@@ -61,12 +61,12 @@ public class AppWidgetManagerCompatVL extends AppWidgetManagerCompat {
 
     @Override // com.android.launcher3.compat.AppWidgetManagerCompat
     public HashMap<ComponentKey, AppWidgetProviderInfo> getAllProvidersMap() {
-        HashMap<ComponentKey, AppWidgetProviderInfo> hashMap = new HashMap<>();
+        HashMap<ComponentKey, AppWidgetProviderInfo> map = new HashMap<>();
         for (UserHandle userHandle : this.mUserManager.getUserProfiles()) {
             for (AppWidgetProviderInfo appWidgetProviderInfo : this.mAppWidgetManager.getInstalledProvidersForProfile(userHandle)) {
-                hashMap.put(new ComponentKey(appWidgetProviderInfo.provider, userHandle), appWidgetProviderInfo);
+                map.put(new ComponentKey(appWidgetProviderInfo.provider, userHandle), appWidgetProviderInfo);
             }
         }
-        return hashMap;
+        return map;
     }
 }

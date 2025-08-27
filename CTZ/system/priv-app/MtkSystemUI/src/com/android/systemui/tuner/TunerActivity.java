@@ -13,11 +13,11 @@ import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.fragments.FragmentService;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class TunerActivity extends SettingsDrawerActivity implements PreferenceFragment.OnPreferenceStartFragmentCallback, PreferenceFragment.OnPreferenceStartScreenCallback {
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.drawer.SettingsDrawerActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         Dependency.initDependencies(this);
         if (getFragmentManager().findFragmentByTag("tuner") == null) {
@@ -61,11 +61,11 @@ public class TunerActivity extends SettingsDrawerActivity implements PreferenceF
             Bundle bundle = new Bundle(1);
             bundle.putString("android.support.v7.preference.PreferenceFragmentCompat.PREFERENCE_ROOT", preference.getKey());
             fragment.setArguments(bundle);
-            FragmentTransaction beginTransaction = getFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransactionBeginTransaction = getFragmentManager().beginTransaction();
             setTitle(preference.getTitle());
-            beginTransaction.replace(R.id.content_frame, fragment);
-            beginTransaction.addToBackStack("PreferenceFragment");
-            beginTransaction.commit();
+            fragmentTransactionBeginTransaction.replace(R.id.content_frame, fragment);
+            fragmentTransactionBeginTransaction.addToBackStack("PreferenceFragment");
+            fragmentTransactionBeginTransaction.commit();
             return true;
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             Log.d("TunerActivity", "Problem launching fragment", e);
@@ -75,31 +75,30 @@ public class TunerActivity extends SettingsDrawerActivity implements PreferenceF
 
     @Override // android.support.v14.preference.PreferenceFragment.OnPreferenceStartScreenCallback
     public boolean onPreferenceStartScreen(PreferenceFragment preferenceFragment, PreferenceScreen preferenceScreen) {
-        FragmentTransaction beginTransaction = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransactionBeginTransaction = getFragmentManager().beginTransaction();
         SubSettingsFragment subSettingsFragment = new SubSettingsFragment();
         Bundle bundle = new Bundle(1);
         bundle.putString("android.support.v7.preference.PreferenceFragmentCompat.PREFERENCE_ROOT", preferenceScreen.getKey());
         subSettingsFragment.setArguments(bundle);
         subSettingsFragment.setTargetFragment(preferenceFragment, 0);
-        beginTransaction.replace(R.id.content_frame, subSettingsFragment);
-        beginTransaction.addToBackStack("PreferenceFragment");
-        beginTransaction.commit();
+        fragmentTransactionBeginTransaction.replace(R.id.content_frame, subSettingsFragment);
+        fragmentTransactionBeginTransaction.addToBackStack("PreferenceFragment");
+        fragmentTransactionBeginTransaction.commit();
         return true;
     }
 
-    /* loaded from: classes.dex */
     public static class SubSettingsFragment extends PreferenceFragment {
         private PreferenceScreen mParentScreen;
 
         @Override // android.support.v14.preference.PreferenceFragment
         public void onCreatePreferences(Bundle bundle, String str) {
             this.mParentScreen = (PreferenceScreen) ((PreferenceFragment) getTargetFragment()).getPreferenceScreen().findPreference(str);
-            PreferenceScreen createPreferenceScreen = getPreferenceManager().createPreferenceScreen(getPreferenceManager().getContext());
-            setPreferenceScreen(createPreferenceScreen);
+            PreferenceScreen preferenceScreenCreatePreferenceScreen = getPreferenceManager().createPreferenceScreen(getPreferenceManager().getContext());
+            setPreferenceScreen(preferenceScreenCreatePreferenceScreen);
             while (this.mParentScreen.getPreferenceCount() > 0) {
                 Preference preference = this.mParentScreen.getPreference(0);
                 this.mParentScreen.removePreference(preference);
-                createPreferenceScreen.addPreference(preference);
+                preferenceScreenCreatePreferenceScreen.addPreference(preference);
             }
         }
 

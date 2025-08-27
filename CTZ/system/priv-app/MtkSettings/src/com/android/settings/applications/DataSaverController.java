@@ -3,6 +3,7 @@ package com.android.settings.applications;
 import android.content.Context;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class DataSaverController extends BasePreferenceController {
     static final String KEY_DATA_SAVER = "data_saver";

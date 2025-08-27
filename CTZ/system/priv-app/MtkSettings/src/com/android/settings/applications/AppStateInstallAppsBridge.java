@@ -10,6 +10,7 @@ import com.android.internal.util.ArrayUtils;
 import com.android.settings.applications.AppStateBaseBridge;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AppStateInstallAppsBridge extends AppStateBaseBridge {
     private final AppOpsManager mAppOpsManager;
@@ -69,7 +70,6 @@ public class AppStateInstallAppsBridge extends AppStateBaseBridge {
         return installAppsState;
     }
 
-    /* loaded from: classes.dex */
     public static class InstallAppsState {
         int appOpMode = 3;
         boolean permissionRequested;

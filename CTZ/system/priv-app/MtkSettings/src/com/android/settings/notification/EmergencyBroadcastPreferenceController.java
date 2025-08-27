@@ -1,7 +1,9 @@
 package com.android.settings.notification;
 
+import android.R;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.support.v7.preference.Preference;
@@ -9,6 +11,7 @@ import com.android.settings.accounts.AccountRestrictionHelper;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.RestrictedPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class EmergencyBroadcastPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private AccountRestrictionHelper mHelper;
@@ -51,18 +54,18 @@ public class EmergencyBroadcastPreferenceController extends AbstractPreferenceCo
         return this.mUserManager.isAdminUser() && isCellBroadcastAppLinkEnabled() && !this.mHelper.hasBaseUserRestriction("no_config_cell_broadcasts", UserHandle.myUserId());
     }
 
-    private boolean isCellBroadcastAppLinkEnabled() {
-        boolean z = this.mContext.getResources().getBoolean(17956915);
-        if (z) {
-            try {
-                if (this.mPm.getApplicationEnabledSetting("com.android.cellbroadcastreceiver") == 2) {
-                    return false;
-                }
-                return z;
-            } catch (IllegalArgumentException e) {
+    private boolean isCellBroadcastAppLinkEnabled() throws Resources.NotFoundException {
+        boolean z = this.mContext.getResources().getBoolean(R.^attr-private.colorSwitchThumbNormal);
+        if (!z) {
+            return z;
+        }
+        try {
+            if (this.mPm.getApplicationEnabledSetting("com.android.cellbroadcastreceiver") == 2) {
                 return false;
             }
+            return z;
+        } catch (IllegalArgumentException e) {
+            return false;
         }
-        return z;
     }
 }

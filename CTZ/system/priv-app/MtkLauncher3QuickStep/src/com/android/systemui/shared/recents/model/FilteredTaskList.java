@@ -5,6 +5,7 @@ import android.util.SparseArray;
 import com.android.systemui.shared.recents.model.Task;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 class FilteredTaskList {
     private TaskFilter mFilter;
@@ -12,8 +13,10 @@ class FilteredTaskList {
     private final ArrayList<Task> mFilteredTasks = new ArrayList<>();
     private final ArrayMap<Task.TaskKey, Integer> mFilteredTaskIndices = new ArrayMap<>();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean setFilter(TaskFilter filter) {
+    FilteredTaskList() {
+    }
+
+    boolean setFilter(TaskFilter filter) {
         ArrayList<Task> prevFilteredTasks = new ArrayList<>(this.mFilteredTasks);
         this.mFilter = filter;
         updateFilteredTasks();
@@ -25,15 +28,13 @@ class FilteredTaskList {
         updateFilteredTasks();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void set(List<Task> tasks) {
+    void set(List<Task> tasks) {
         this.mTasks.clear();
         this.mTasks.addAll(tasks);
         updateFilteredTasks();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean remove(Task t) {
+    boolean remove(Task t) {
         if (this.mFilteredTasks.contains(t)) {
             boolean removed = this.mTasks.remove(t);
             updateFilteredTasks();
@@ -42,21 +43,18 @@ class FilteredTaskList {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int indexOf(Task t) {
+    int indexOf(Task t) {
         if (t != null && this.mFilteredTaskIndices.containsKey(t.key)) {
             return this.mFilteredTaskIndices.get(t.key).intValue();
         }
         return -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int size() {
+    int size() {
         return this.mFilteredTasks.size();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean contains(Task t) {
+    boolean contains(Task t) {
         return this.mFilteredTaskIndices.containsKey(t.key);
     }
 
@@ -90,8 +88,7 @@ class FilteredTaskList {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ArrayList<Task> getTasks() {
+    ArrayList<Task> getTasks() {
         return this.mFilteredTasks;
     }
 }

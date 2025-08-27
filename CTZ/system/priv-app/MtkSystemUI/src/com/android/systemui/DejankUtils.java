@@ -5,6 +5,7 @@ import android.view.Choreographer;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.util.Assert;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class DejankUtils {
     private static boolean sImmediate;

@@ -4,6 +4,7 @@ import android.util.Pools;
 import android.view.MotionEvent;
 import java.util.ArrayDeque;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class NoisyVelocityTracker implements VelocityTrackerInterface {
     private static final Pools.SynchronizedPool<NoisyVelocityTracker> sNoisyPool = new Pools.SynchronizedPool<>(2);
@@ -12,7 +13,6 @@ public class NoisyVelocityTracker implements VelocityTrackerInterface {
     private ArrayDeque<MotionEventCopy> mEventBuf = new ArrayDeque<>(8);
     private float mVY = 0.0f;
 
-    /* loaded from: classes.dex */
     private static class MotionEventCopy {
         long t;
         float x;
@@ -52,7 +52,7 @@ public class NoisyVelocityTracker implements VelocityTrackerInterface {
         while (it.hasNext()) {
             MotionEventCopy next = it.next();
             if (motionEventCopy != null) {
-                float f3 = ((float) (next.t - motionEventCopy.t)) / i;
+                float f3 = (next.t - motionEventCopy.t) / i;
                 float f4 = next.x - motionEventCopy.x;
                 float f5 = next.y - motionEventCopy.y;
                 if (next.t != motionEventCopy.t) {
@@ -67,10 +67,10 @@ public class NoisyVelocityTracker implements VelocityTrackerInterface {
         if (f2 > 0.0f) {
             this.mVX /= f2;
             this.mVY /= f2;
-            return;
+        } else {
+            this.mVY = 0.0f;
+            this.mVX = 0.0f;
         }
-        this.mVY = 0.0f;
-        this.mVX = 0.0f;
     }
 
     @Override // com.android.systemui.statusbar.phone.VelocityTrackerInterface

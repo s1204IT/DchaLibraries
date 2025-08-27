@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import com.android.systemui.shared.system.TonalCompat;
 import java.util.ArrayList;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public class WallpaperColorInfo implements WallpaperManager.OnColorsChangedListener {
@@ -19,7 +20,6 @@ public class WallpaperColorInfo implements WallpaperManager.OnColorsChangedListe
     private final TonalCompat mTonalCompat;
     private final WallpaperManager mWallpaperManager;
 
-    /* loaded from: classes.dex */
     public interface OnChangeListener {
         void onExtractedColorsChanged(WallpaperColorInfo wallpaperColorInfo);
     }
@@ -79,7 +79,6 @@ public class WallpaperColorInfo implements WallpaperManager.OnColorsChangedListe
     }
 
     private void notifyChange() {
-        OnChangeListener[] onChangeListenerArr;
         this.mTempListeners = (OnChangeListener[]) this.mListeners.toArray(this.mTempListeners);
         for (OnChangeListener onChangeListener : this.mTempListeners) {
             if (onChangeListener != null) {

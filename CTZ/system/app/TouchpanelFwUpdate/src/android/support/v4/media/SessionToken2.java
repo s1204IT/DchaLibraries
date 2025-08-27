@@ -1,11 +1,11 @@
 package android.support.v4.media;
 
 import android.os.Bundle;
+
 /* loaded from: classes.dex */
 public final class SessionToken2 {
     private final SupportLibraryImpl mImpl;
 
-    /* loaded from: classes.dex */
     interface SupportLibraryImpl {
     }
 

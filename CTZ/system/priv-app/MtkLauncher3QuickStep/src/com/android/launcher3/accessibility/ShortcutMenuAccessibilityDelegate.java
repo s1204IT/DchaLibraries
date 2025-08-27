@@ -11,6 +11,7 @@ import com.android.launcher3.ShortcutInfo;
 import com.android.launcher3.notification.NotificationMainView;
 import com.android.launcher3.shortcuts.DeepShortcutView;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ShortcutMenuAccessibilityDelegate extends LauncherAccessibilityDelegate {
     private static final int DISMISS_NOTIFICATION = 2131361796;
@@ -32,30 +33,30 @@ public class ShortcutMenuAccessibilityDelegate extends LauncherAccessibilityDele
     @Override // com.android.launcher3.accessibility.LauncherAccessibilityDelegate
     public boolean performAction(View view, ItemInfo itemInfo, int i) {
         if (i == R.id.action_add_to_workspace) {
-            if (view.getParent() instanceof DeepShortcutView) {
-                final ShortcutInfo finalInfo = ((DeepShortcutView) view.getParent()).getFinalInfo();
-                final int[] iArr = new int[2];
-                final long findSpaceOnWorkspace = findSpaceOnWorkspace(itemInfo, iArr);
-                this.mLauncher.getStateManager().goToState(LauncherState.NORMAL, true, new Runnable() { // from class: com.android.launcher3.accessibility.ShortcutMenuAccessibilityDelegate.1
-                    @Override // java.lang.Runnable
-                    public void run() {
-                        ShortcutMenuAccessibilityDelegate.this.mLauncher.getModelWriter().addItemToDatabase(finalInfo, -100L, findSpaceOnWorkspace, iArr[0], iArr[1]);
-                        ArrayList arrayList = new ArrayList();
-                        arrayList.add(finalInfo);
-                        ShortcutMenuAccessibilityDelegate.this.mLauncher.bindItems(arrayList, true);
-                        AbstractFloatingView.closeAllOpenViews(ShortcutMenuAccessibilityDelegate.this.mLauncher);
-                        ShortcutMenuAccessibilityDelegate.this.announceConfirmation(R.string.item_added_to_workspace);
-                    }
-                });
-                return true;
+            if (!(view.getParent() instanceof DeepShortcutView)) {
+                return false;
             }
-            return false;
-        } else if (i == R.id.action_dismiss_notification && (view instanceof NotificationMainView)) {
-            ((NotificationMainView) view).onChildDismissed();
-            announceConfirmation(R.string.notification_dismissed);
+            final ShortcutInfo finalInfo = ((DeepShortcutView) view.getParent()).getFinalInfo();
+            final int[] iArr = new int[2];
+            final long jFindSpaceOnWorkspace = findSpaceOnWorkspace(itemInfo, iArr);
+            this.mLauncher.getStateManager().goToState(LauncherState.NORMAL, true, new Runnable() { // from class: com.android.launcher3.accessibility.ShortcutMenuAccessibilityDelegate.1
+                @Override // java.lang.Runnable
+                public void run() {
+                    ShortcutMenuAccessibilityDelegate.this.mLauncher.getModelWriter().addItemToDatabase(finalInfo, -100L, jFindSpaceOnWorkspace, iArr[0], iArr[1]);
+                    ArrayList arrayList = new ArrayList();
+                    arrayList.add(finalInfo);
+                    ShortcutMenuAccessibilityDelegate.this.mLauncher.bindItems(arrayList, true);
+                    AbstractFloatingView.closeAllOpenViews(ShortcutMenuAccessibilityDelegate.this.mLauncher);
+                    ShortcutMenuAccessibilityDelegate.this.announceConfirmation(R.string.item_added_to_workspace);
+                }
+            });
             return true;
-        } else {
+        }
+        if (i != R.id.action_dismiss_notification || !(view instanceof NotificationMainView)) {
             return false;
         }
+        ((NotificationMainView) view).onChildDismissed();
+        announceConfirmation(R.string.notification_dismissed);
+        return true;
     }
 }

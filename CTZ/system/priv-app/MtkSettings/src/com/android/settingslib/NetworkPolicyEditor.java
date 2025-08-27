@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class NetworkPolicyEditor {
     private ArrayList<NetworkPolicy> mPolicies = Lists.newArrayList();
@@ -44,9 +45,9 @@ public class NetworkPolicyEditor {
     public void writeAsync() {
         final NetworkPolicy[] networkPolicyArr = (NetworkPolicy[]) this.mPolicies.toArray(new NetworkPolicy[this.mPolicies.size()]);
         new AsyncTask<Void, Void, Void>() { // from class: com.android.settingslib.NetworkPolicyEditor.1
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public Void doInBackground(Void... voidArr) {
+            protected Void doInBackground(Void... voidArr) {
                 NetworkPolicyEditor.this.write(networkPolicyArr);
                 return null;
             }
@@ -60,9 +61,9 @@ public class NetworkPolicyEditor {
     public NetworkPolicy getOrCreatePolicy(NetworkTemplate networkTemplate) {
         NetworkPolicy policy = getPolicy(networkTemplate);
         if (policy == null) {
-            NetworkPolicy buildDefaultPolicy = buildDefaultPolicy(networkTemplate);
-            this.mPolicies.add(buildDefaultPolicy);
-            return buildDefaultPolicy;
+            NetworkPolicy networkPolicyBuildDefaultPolicy = buildDefaultPolicy(networkTemplate);
+            this.mPolicies.add(networkPolicyBuildDefaultPolicy);
+            return networkPolicyBuildDefaultPolicy;
         }
         return policy;
     }
@@ -80,16 +81,16 @@ public class NetworkPolicyEditor {
 
     @Deprecated
     private static NetworkPolicy buildDefaultPolicy(NetworkTemplate networkTemplate) {
-        RecurrenceRule buildRecurringMonthly;
+        RecurrenceRule recurrenceRuleBuildRecurringMonthly;
         boolean z;
         if (networkTemplate.getMatchRule() == 4) {
-            buildRecurringMonthly = RecurrenceRule.buildNever();
+            recurrenceRuleBuildRecurringMonthly = RecurrenceRule.buildNever();
             z = false;
         } else {
-            buildRecurringMonthly = RecurrenceRule.buildRecurringMonthly(ZonedDateTime.now().getDayOfMonth(), ZoneId.systemDefault());
+            recurrenceRuleBuildRecurringMonthly = RecurrenceRule.buildRecurringMonthly(ZonedDateTime.now().getDayOfMonth(), ZoneId.systemDefault());
             z = true;
         }
-        return new NetworkPolicy(networkTemplate, buildRecurringMonthly, -1L, -1L, -1L, -1L, z, true);
+        return new NetworkPolicy(networkTemplate, recurrenceRuleBuildRecurringMonthly, -1L, -1L, -1L, -1L, z, true);
     }
 
     @Deprecated

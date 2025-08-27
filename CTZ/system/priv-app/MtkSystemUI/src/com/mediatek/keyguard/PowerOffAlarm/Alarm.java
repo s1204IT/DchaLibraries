@@ -5,15 +5,18 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public final class Alarm implements Parcelable {
     public static final Parcelable.Creator<Alarm> CREATOR = new Parcelable.Creator<Alarm>() { // from class: com.mediatek.keyguard.PowerOffAlarm.Alarm.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public Alarm createFromParcel(Parcel parcel) {
             return new Alarm(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public Alarm[] newArray(int i) {
@@ -85,7 +88,6 @@ public final class Alarm implements Parcelable {
         return (obj instanceof Alarm) && this.id == ((Alarm) obj).id;
     }
 
-    /* loaded from: classes.dex */
     static final class DaysOfWeek {
         private static int[] DAY_MAP = {2, 3, 4, 5, 6, 7, 1};
         private static HashMap<Integer, Integer> DAY_TO_BIT_MASK = new HashMap<>();

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 /* loaded from: classes.dex */
 public class SetFullBackupPassword extends Activity {
     IBackupManager mBackupManager;
@@ -25,21 +26,22 @@ public class SetFullBackupPassword extends Activity {
                     return;
                 }
             }
-            String charSequence = SetFullBackupPassword.this.mCurrentPw.getText().toString();
-            String charSequence2 = SetFullBackupPassword.this.mNewPw.getText().toString();
-            if (charSequence2.equals(SetFullBackupPassword.this.mConfirmNewPw.getText().toString())) {
-                if (SetFullBackupPassword.this.setBackupPassword(charSequence, charSequence2)) {
+            String string = SetFullBackupPassword.this.mCurrentPw.getText().toString();
+            String string2 = SetFullBackupPassword.this.mNewPw.getText().toString();
+            if (string2.equals(SetFullBackupPassword.this.mConfirmNewPw.getText().toString())) {
+                if (SetFullBackupPassword.this.setBackupPassword(string, string2)) {
                     Log.i("SetFullBackupPassword", "password set successfully");
-                    Toast.makeText(SetFullBackupPassword.this, (int) R.string.local_backup_password_toast_success, 1).show();
+                    Toast.makeText(SetFullBackupPassword.this, R.string.local_backup_password_toast_success, 1).show();
                     SetFullBackupPassword.this.finish();
                     return;
+                } else {
+                    Log.i("SetFullBackupPassword", "failure; password mismatch?");
+                    Toast.makeText(SetFullBackupPassword.this, R.string.local_backup_password_toast_validation_failure, 1).show();
+                    return;
                 }
-                Log.i("SetFullBackupPassword", "failure; password mismatch?");
-                Toast.makeText(SetFullBackupPassword.this, (int) R.string.local_backup_password_toast_validation_failure, 1).show();
-                return;
             }
             Log.i("SetFullBackupPassword", "password mismatch");
-            Toast.makeText(SetFullBackupPassword.this, (int) R.string.local_backup_password_toast_confirmation_mismatch, 1).show();
+            Toast.makeText(SetFullBackupPassword.this, R.string.local_backup_password_toast_confirmation_mismatch, 1).show();
         }
     };
     Button mCancel;
@@ -62,8 +64,7 @@ public class SetFullBackupPassword extends Activity {
         this.mSet.setOnClickListener(this.mButtonListener);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean setBackupPassword(String str, String str2) {
+    private boolean setBackupPassword(String str, String str2) {
         try {
             return this.mBackupManager.setBackupPassword(str, str2);
         } catch (RemoteException e) {

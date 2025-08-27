@@ -3,6 +3,7 @@ package com.android.setupwizardlib.template;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import com.android.setupwizardlib.template.RequireScrollMixin;
+
 /* loaded from: classes.dex */
 public class ListViewScrollHandlingDelegate implements AbsListView.OnScrollListener, RequireScrollMixin.ScrollHandlingDelegate {
     private final ListView mListView;

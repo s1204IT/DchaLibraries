@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 /* loaded from: classes.dex */
 public interface IBrowserHistoryExt {
     void createHistoryPageOptionsMenu(Menu menu, MenuInflater menuInflater);

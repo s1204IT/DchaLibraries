@@ -7,6 +7,7 @@ import android.telephony.CarrierConfigManager;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import com.android.settingslib.R;
+
 /* loaded from: classes.dex */
 public abstract class AbstractImsStatusPreferenceController extends AbstractConnectivityPreferenceController {
     private static final String[] CONNECTIVITY_INTENTS = {"android.bluetooth.adapter.action.STATE_CHANGED", "android.net.conn.CONNECTIVITY_CHANGE", "android.net.wifi.LINK_CONFIGURATION_CHANGED", "android.net.wifi.STATE_CHANGE"};
@@ -15,15 +16,15 @@ public abstract class AbstractImsStatusPreferenceController extends AbstractConn
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean isAvailable() {
-        PersistableBundle persistableBundle;
+        PersistableBundle configForSubId;
         CarrierConfigManager carrierConfigManager = (CarrierConfigManager) this.mContext.getSystemService(CarrierConfigManager.class);
         int defaultDataSubscriptionId = SubscriptionManager.getDefaultDataSubscriptionId();
         if (carrierConfigManager != null) {
-            persistableBundle = carrierConfigManager.getConfigForSubId(defaultDataSubscriptionId);
+            configForSubId = carrierConfigManager.getConfigForSubId(defaultDataSubscriptionId);
         } else {
-            persistableBundle = null;
+            configForSubId = null;
         }
-        return persistableBundle != null && persistableBundle.getBoolean("show_ims_registration_status_bool");
+        return configForSubId != null && configForSubId.getBoolean("show_ims_registration_status_bool");
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController

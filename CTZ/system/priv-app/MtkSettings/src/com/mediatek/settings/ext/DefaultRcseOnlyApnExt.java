@@ -1,6 +1,7 @@
 package com.mediatek.settings.ext;
 
 import com.mediatek.settings.ext.IRcseOnlyApnExt;
+
 /* loaded from: classes.dex */
 public class DefaultRcseOnlyApnExt implements IRcseOnlyApnExt {
     @Override // com.mediatek.settings.ext.IRcseOnlyApnExt

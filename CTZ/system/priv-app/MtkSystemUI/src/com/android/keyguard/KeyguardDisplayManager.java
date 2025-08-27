@@ -10,6 +10,7 @@ import android.util.Slog;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+
 /* loaded from: classes.dex */
 public class KeyguardDisplayManager {
     private static boolean DEBUG = KeyguardConstants.DEBUG;
@@ -82,8 +83,7 @@ public class KeyguardDisplayManager {
         Presentation presentation = this.mPresentation;
         if (z) {
             MediaRouter.RouteInfo selectedRoute = this.mMediaRouter.getSelectedRoute(4);
-            boolean z2 = true;
-            Display presentationDisplay = (selectedRoute == null || selectedRoute.getPlaybackType() != 1) ? false : false ? selectedRoute.getPresentationDisplay() : null;
+            Display presentationDisplay = selectedRoute != null && selectedRoute.getPlaybackType() == 1 ? selectedRoute.getPresentationDisplay() : null;
             if (this.mPresentation != null && this.mPresentation.getDisplay() != presentationDisplay) {
                 if (DEBUG) {
                     Slog.v("KeyguardDisplayManager", "Display gone: " + this.mPresentation.getDisplay());
@@ -113,9 +113,7 @@ public class KeyguardDisplayManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class KeyguardPresentation extends Presentation {
+    private static final class KeyguardPresentation extends Presentation {
         private View mClock;
         private int mMarginLeft;
         private int mMarginTop;
@@ -128,14 +126,14 @@ public class KeyguardDisplayManager {
             this.mMoveTextRunnable = new Runnable() { // from class: com.android.keyguard.KeyguardDisplayManager.KeyguardPresentation.1
                 @Override // java.lang.Runnable
                 public void run() {
-                    int random = KeyguardPresentation.this.mMarginLeft + ((int) (Math.random() * (KeyguardPresentation.this.mUsableWidth - KeyguardPresentation.this.mClock.getWidth())));
-                    int random2 = KeyguardPresentation.this.mMarginTop + ((int) (Math.random() * (KeyguardPresentation.this.mUsableHeight - KeyguardPresentation.this.mClock.getHeight())));
+                    int iRandom = KeyguardPresentation.this.mMarginLeft + ((int) (Math.random() * (KeyguardPresentation.this.mUsableWidth - KeyguardPresentation.this.mClock.getWidth())));
+                    int iRandom2 = KeyguardPresentation.this.mMarginTop + ((int) (Math.random() * (KeyguardPresentation.this.mUsableHeight - KeyguardPresentation.this.mClock.getHeight())));
                     if (KeyguardDisplayManager.DEBUG) {
-                        Slog.d("KeyguardDisplayManager", "mMarginLeft = " + KeyguardPresentation.this.mMarginLeft + ", mUsableWidth = " + KeyguardPresentation.this.mUsableWidth + " , mClock.getWidth() = " + KeyguardPresentation.this.mClock.getWidth() + " and final X = " + random);
-                        Slog.d("KeyguardDisplayManager", "mMarginTop = " + KeyguardPresentation.this.mMarginTop + ", mUsableHeight = " + KeyguardPresentation.this.mUsableHeight + " , mClock.getHeight() = " + KeyguardPresentation.this.mClock.getHeight() + " and final y = " + random2);
+                        Slog.d("KeyguardDisplayManager", "mMarginLeft = " + KeyguardPresentation.this.mMarginLeft + ", mUsableWidth = " + KeyguardPresentation.this.mUsableWidth + " , mClock.getWidth() = " + KeyguardPresentation.this.mClock.getWidth() + " and final X = " + iRandom);
+                        Slog.d("KeyguardDisplayManager", "mMarginTop = " + KeyguardPresentation.this.mMarginTop + ", mUsableHeight = " + KeyguardPresentation.this.mUsableHeight + " , mClock.getHeight() = " + KeyguardPresentation.this.mClock.getHeight() + " and final y = " + iRandom2);
                     }
-                    KeyguardPresentation.this.mClock.setX(random);
-                    KeyguardPresentation.this.mClock.setY(random2);
+                    KeyguardPresentation.this.mClock.setX(iRandom);
+                    KeyguardPresentation.this.mClock.setY(iRandom2);
                     KeyguardPresentation.this.mClock.postDelayed(KeyguardPresentation.this.mMoveTextRunnable, 10000L);
                 }
             };

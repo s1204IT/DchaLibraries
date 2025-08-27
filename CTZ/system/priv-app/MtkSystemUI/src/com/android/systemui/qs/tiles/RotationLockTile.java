@@ -9,6 +9,7 @@ import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.RotationLockController;
+
 /* loaded from: classes.dex */
 public class RotationLockTile extends QSTileImpl<QSTile.BooleanState> {
     private final RotationLockController.RotationLockControllerCallback mCallback;
@@ -27,7 +28,7 @@ public class RotationLockTile extends QSTileImpl<QSTile.BooleanState> {
         this.mController = (RotationLockController) Dependency.get(RotationLockController.class);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -59,14 +60,14 @@ public class RotationLockTile extends QSTileImpl<QSTile.BooleanState> {
         return getState().label;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
-        boolean isRotationLocked = this.mController.isRotationLocked();
-        booleanState.value = !isRotationLocked;
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+        boolean zIsRotationLocked = this.mController.isRotationLocked();
+        booleanState.value = !zIsRotationLocked;
         booleanState.label = this.mContext.getString(R.string.quick_settings_rotation_unlocked_label);
         booleanState.icon = this.mIcon;
-        booleanState.contentDescription = getAccessibilityString(isRotationLocked);
+        booleanState.contentDescription = getAccessibilityString(zIsRotationLocked);
         booleanState.expandedAccessibilityClassName = Switch.class.getName();
         booleanState.state = booleanState.value ? 2 : 1;
     }

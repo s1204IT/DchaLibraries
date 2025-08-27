@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.FragmentManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -41,7 +40,9 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppInfoDashboardFragment extends DashboardFragment implements ApplicationsState.Callbacks {
     static final int REQUEST_UNINSTALL = 0;
@@ -79,7 +80,6 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         }
     };
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void refreshUi();
     }
@@ -156,9 +156,8 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.app_info_settings;
     }
 
@@ -174,13 +173,14 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
             return null;
         }
         String packageName = getPackageName();
-        ArrayList<AbstractPreferenceController> arrayList = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         Lifecycle lifecycle = getLifecycle();
         arrayList.add(new AppHeaderViewPreferenceController(context, this, packageName, lifecycle));
         this.mAppActionButtonPreferenceController = new AppActionButtonPreferenceController(context, this, packageName);
         arrayList.add(this.mAppActionButtonPreferenceController);
-        for (AbstractPreferenceController abstractPreferenceController : arrayList) {
-            this.mCallbacks.add((Callback) abstractPreferenceController);
+        Iterator it = arrayList.iterator();
+        while (it.hasNext()) {
+            this.mCallbacks.add((Callback) ((AbstractPreferenceController) it.next()));
         }
         this.mInstantAppButtonPreferenceController = new InstantAppButtonsPreferenceController(context, this, packageName, lifecycle);
         arrayList.add(this.mInstantAppButtonPreferenceController);
@@ -194,25 +194,22 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void addToCallbackList(Callback callback) {
+    void addToCallbackList(Callback callback) {
         if (callback != null) {
             this.mCallbacks.add(callback);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ApplicationsState.AppEntry getAppEntry() {
+    ApplicationsState.AppEntry getAppEntry() {
         return this.mAppEntry;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public PackageInfo getPackageInfo() {
+    PackageInfo getPackageInfo() {
         return this.mPackageInfo;
     }
 
     @Override // com.android.settingslib.applications.ApplicationsState.Callbacks
-    public void onPackageSizeChanged(String str) {
+    public void onPackageSizeChanged(String str) throws PackageManager.NameNotFoundException {
         if (!TextUtils.equals(str, this.mPackageName)) {
             Log.d("AppInfoDashboard", "Package change irrelevant, skipping");
         } else {
@@ -221,13 +218,13 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
     }
 
     boolean ensurePackageInfoAvailable(Activity activity) {
-        if (this.mPackageInfo == null) {
-            this.mFinishing = true;
-            Log.w("AppInfoDashboard", "Package info not available. Is this package already uninstalled?");
-            activity.finishAndRemoveTask();
-            return false;
+        if (this.mPackageInfo != null) {
+            return true;
         }
-        return true;
+        this.mFinishing = true;
+        Log.w("AppInfoDashboard", "Package info not available. Is this package already uninstalled?");
+        activity.finishAndRemoveTask();
+        return false;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -243,17 +240,12 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
             return;
         }
         super.onPrepareOptionsMenu(menu);
-        boolean z = true;
         menu.findItem(1).setVisible(shouldShowUninstallForAll(this.mAppEntry));
         this.mUpdatedSysApp = (this.mAppEntry.info.flags & 128) != 0;
-        MenuItem findItem = menu.findItem(2);
-        boolean z2 = getContext().getResources().getBoolean(R.bool.config_disable_uninstall_update);
-        if (!this.mUpdatedSysApp || this.mAppsControlDisallowedBySystem || z2) {
-            z = false;
-        }
-        findItem.setVisible(z);
-        if (findItem.isVisible()) {
-            RestrictedLockUtils.setMenuItemAsDisabledByAdmin(getActivity(), findItem, this.mAppsControlDisallowedAdmin);
+        MenuItem menuItemFindItem = menu.findItem(2);
+        menuItemFindItem.setVisible((!this.mUpdatedSysApp || this.mAppsControlDisallowedBySystem || getContext().getResources().getBoolean(R.bool.config_disable_uninstall_update)) ? false : true);
+        if (menuItemFindItem.isVisible()) {
+            RestrictedLockUtils.setMenuItemAsDisabledByAdmin(getActivity(), menuItemFindItem, this.mAppsControlDisallowedAdmin);
         }
     }
 
@@ -283,21 +275,19 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
                 }
                 if (!refreshUi()) {
                     onPackageRemoved();
-                    return;
+                    break;
                 } else {
                     startListeningToPackageRemove();
-                    return;
+                    break;
                 }
             case 1:
                 if (!refreshUi()) {
                     setIntentAndFinish(true, true);
-                    return;
+                    break;
                 } else {
                     startListeningToPackageRemove();
-                    return;
+                    break;
                 }
-            default:
-                return;
         }
     }
 
@@ -308,14 +298,15 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         return (getNumberOfUserWithPackageInstalled(this.mPackageName) >= 2 || (appEntry.info.flags & 8388608) == 0) && !AppUtils.isInstant(appEntry.info);
     }
 
-    boolean refreshUi() {
+    boolean refreshUi() throws PackageManager.NameNotFoundException {
         retrieveAppEntry();
         if (this.mAppEntry == null || this.mPackageInfo == null) {
             return false;
         }
         this.mState.ensureIcon(this.mAppEntry);
-        for (Callback callback : this.mCallbacks) {
-            callback.refreshUi();
+        Iterator<Callback> it = this.mCallbacks.iterator();
+        while (it.hasNext()) {
+            it.next().refreshUi();
         }
         if (!this.mInitialized) {
             this.mInitialized = true;
@@ -363,8 +354,7 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void uninstallPkg(String str, boolean z, boolean z2) {
+    private void uninstallPkg(String str, boolean z, boolean z2) {
         stopListeningToPackageRemove();
         Intent intent = new Intent("android.intent.action.UNINSTALL_PACKAGE", Uri.parse("package:" + str));
         intent.putExtra("android.intent.extra.UNINSTALL_ALL_USERS", z);
@@ -373,11 +363,11 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         this.mDisableAfterUninstall = z2;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void forceStopPackage(String str) {
+    private void forceStopPackage(String str) {
         this.mMetricsFeatureProvider.action(getContext(), 807, str, new Pair[0]);
+        ActivityManager activityManager = (ActivityManager) getActivity().getSystemService("activity");
         Log.d("AppInfoDashboard", "Stopping package " + str);
-        ((ActivityManager) getActivity().getSystemService("activity")).forceStopPackage(str);
+        activityManager.forceStopPackage(str);
         int userId = UserHandle.getUserId(this.mAppEntry.info.uid);
         this.mState.invalidatePackage(str, userId);
         ApplicationsState.AppEntry entry = this.mState.getEntry(str, userId);
@@ -396,8 +386,7 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         new SubSettingLauncher(settingsPreferenceFragment.getContext()).setDestination(cls.getName()).setArguments(bundle).setTitle(i).setResultListener(settingsPreferenceFragment, 1).setSourceMetricsCategory(settingsPreferenceFragment.getMetricsCategory()).launch();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void handleUninstallButtonClick() {
+    void handleUninstallButtonClick() {
         if (this.mAppEntry == null) {
             setIntentAndFinish(true, true);
             return;
@@ -406,17 +395,19 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         if (this.mDpm.packageHasActiveAdmins(this.mPackageInfo.packageName)) {
             stopListeningToPackageRemove();
             Activity activity = getActivity();
-            Intent intent = new Intent(activity, DeviceAdminAdd.class);
+            Intent intent = new Intent(activity, (Class<?>) DeviceAdminAdd.class);
             intent.putExtra("android.app.extra.DEVICE_ADMIN_PACKAGE_NAME", this.mPackageName);
             this.mMetricsFeatureProvider.action(activity, 873, new Pair[0]);
             activity.startActivityForResult(intent, 1);
             return;
         }
-        RestrictedLockUtils.EnforcedAdmin checkIfUninstallBlocked = RestrictedLockUtils.checkIfUninstallBlocked(getActivity(), str, this.mUserId);
+        RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfUninstallBlocked = RestrictedLockUtils.checkIfUninstallBlocked(getActivity(), str, this.mUserId);
         boolean z = this.mAppsControlDisallowedBySystem || RestrictedLockUtils.hasBaseUserRestriction(getActivity(), str, this.mUserId);
-        if (checkIfUninstallBlocked != null && !z) {
-            RestrictedLockUtils.sendShowAdminSupportDetailsIntent(getActivity(), checkIfUninstallBlocked);
-        } else if ((this.mAppEntry.info.flags & 1) != 0) {
+        if (enforcedAdminCheckIfUninstallBlocked != null && !z) {
+            RestrictedLockUtils.sendShowAdminSupportDetailsIntent(getActivity(), enforcedAdminCheckIfUninstallBlocked);
+            return;
+        }
+        if ((this.mAppEntry.info.flags & 1) != 0) {
             if (this.mAppEntry.info.enabled && !isDisabledUntilUsed()) {
                 if (this.mUpdatedSysApp && isSingleUser()) {
                     showDialogInner(3, 0);
@@ -428,15 +419,16 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
             }
             this.mMetricsFeatureProvider.action(getActivity(), 875, new Pair[0]);
             new DisableChanger(this, this.mAppEntry.info, 1).execute(null);
-        } else if ((this.mAppEntry.info.flags & 8388608) == 0) {
+            return;
+        }
+        if ((this.mAppEntry.info.flags & 8388608) == 0) {
             uninstallPkg(str, true, false);
         } else {
             uninstallPkg(str, false, false);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void handleForceStopButtonClick() {
+    void handleForceStopButtonClick() {
         if (this.mAppEntry == null) {
             setIntentAndFinish(true, true);
         } else if (this.mAppsControlDisallowedAdmin != null && !this.mAppsControlDisallowedBySystem) {
@@ -448,15 +440,14 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
 
     private boolean isSingleUser() {
         int userCount = this.mUserManager.getUserCount();
-        if (userCount != 1) {
-            UserManager userManager = this.mUserManager;
-            return UserManager.isSplitSystemUser() && userCount == 2;
+        if (userCount == 1) {
+            return true;
         }
-        return true;
+        UserManager userManager = this.mUserManager;
+        return UserManager.isSplitSystemUser() && userCount == 2;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onPackageRemoved() {
+    private void onPackageRemoved() {
         getActivity().finishActivity(1);
         getActivity().finishAndRemoveTask();
     }
@@ -475,7 +466,6 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         return i;
     }
 
-    /* loaded from: classes.dex */
     private static class DisableChanger extends AsyncTask<Object, Object, Object> {
         final WeakReference<AppInfoDashboardFragment> mActivity;
         final ApplicationInfo mInfo;
@@ -542,12 +532,10 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         this.mFinishing = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void showDialogInner(int i, int i2) {
-        MyAlertDialogFragment newInstance = MyAlertDialogFragment.newInstance(i, i2);
-        newInstance.setTargetFragment(this, 0);
-        FragmentManager fragmentManager = getFragmentManager();
-        newInstance.show(fragmentManager, "dialog " + i);
+    void showDialogInner(int i, int i2) {
+        MyAlertDialogFragment myAlertDialogFragmentNewInstance = MyAlertDialogFragment.newInstance(i, i2);
+        myAlertDialogFragmentNewInstance.setTargetFragment(this, 0);
+        myAlertDialogFragmentNewInstance.show(getFragmentManager(), "dialog " + i);
     }
 
     @Override // com.android.settingslib.applications.ApplicationsState.Callbacks
@@ -581,7 +569,6 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         }
     }
 
-    /* loaded from: classes.dex */
     public static class MyAlertDialogFragment extends InstrumentedDialogFragment {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {
@@ -591,11 +578,11 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
             int i = getArguments().getInt("id");
-            AlertDialog createDialog = ((AppInfoDashboardFragment) getTargetFragment()).createDialog(i, getArguments().getInt("moveError"));
-            if (createDialog == null) {
+            AlertDialog alertDialogCreateDialog = ((AppInfoDashboardFragment) getTargetFragment()).createDialog(i, getArguments().getInt("moveError"));
+            if (alertDialogCreateDialog == null) {
                 throw new IllegalArgumentException("unknown id " + i);
             }
-            return createDialog;
+            return alertDialogCreateDialog;
         }
 
         public static MyAlertDialogFragment newInstance(int i, int i2) {

@@ -22,6 +22,7 @@ import com.android.systemui.statusbar.stack.ExpandableViewState;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.stack.StackScrollState;
 import com.android.systemui.statusbar.stack.ViewState;
+
 /* loaded from: classes.dex */
 public class NotificationShelf extends ActivatableNotificationView implements View.OnLayoutChangeListener {
     private AmbientState mAmbientState;
@@ -62,9 +63,8 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         this.mClipRect = new Rect();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.ActivatableNotificationView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() throws Resources.NotFoundException {
         super.onFinishInflate();
         this.mShelfIcons = (NotificationIconContainer) findViewById(R.id.content);
         this.mShelfIcons.setClipChildren(false);
@@ -83,7 +83,7 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         this.mHostLayout = notificationStackScrollLayout;
     }
 
-    private void initDimens() {
+    private void initDimens() throws Resources.NotFoundException {
         Resources resources = getResources();
         this.mIconAppearTopPadding = resources.getDimensionPixelSize(R.dimen.notification_icon_appear_padding);
         this.mStatusBarHeight = resources.getDimensionPixelOffset(R.dimen.status_bar_height);
@@ -97,14 +97,14 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         this.mShelfIcons.setPadding(dimensionPixelOffset, 0, dimensionPixelOffset, 0);
         this.mScrollFastThreshold = resources.getDimensionPixelOffset(R.dimen.scroll_fast_threshold);
         this.mShowNotificationShelf = resources.getBoolean(R.bool.config_showNotificationShelf);
-        this.mIconSize = resources.getDimensionPixelSize(17105312);
+        this.mIconSize = resources.getDimensionPixelSize(android.R.dimen.indeterminate_progress_alpha_19);
         if (!this.mShowNotificationShelf) {
             setVisibility(8);
         }
     }
 
     @Override // android.view.View
-    protected void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) throws Resources.NotFoundException {
         super.onConfigurationChanged(configuration);
         initDimens();
     }
@@ -152,14 +152,14 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
             float f = viewStateForView.yTranslation + viewStateForView.height;
             this.mShelfState.copyFrom(viewStateForView);
             this.mShelfState.height = getIntrinsicHeight();
-            float max = Math.max(Math.min(f, innerHeight) - this.mShelfState.height, getFullyClosedTranslation());
+            float fMax = Math.max(Math.min(f, innerHeight) - this.mShelfState.height, getFullyClosedTranslation());
             float darkTopPadding = this.mAmbientState.getDarkTopPadding();
             if (!this.mAmbientState.hasPulsingNotifications()) {
                 darkAmount = this.mAmbientState.getDarkAmount();
             } else {
                 darkAmount = 0.0f;
             }
-            this.mShelfState.yTranslation = MathUtils.lerp(max, darkTopPadding, darkAmount);
+            this.mShelfState.yTranslation = MathUtils.lerp(fMax, darkTopPadding, darkAmount);
             this.mShelfState.zTranslation = ambientState.getBaseZHeight();
             this.mShelfState.openedAmount = Math.min(1.0f, (this.mShelfState.yTranslation - getFullyClosedTranslation()) / (getIntrinsicHeight() * 2));
             this.mShelfState.clipTopAmount = 0;
@@ -188,118 +188,118 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
     public void updateAppearance() {
         int i;
         int i2;
-        float f;
+        float currentTopRoundness;
         int i3;
         int i4;
         ActivatableNotificationView activatableNotificationView;
-        float f2;
+        float f;
         boolean z;
         int i5;
+        int translationY;
+        float fMin;
         int i6;
-        float f3;
-        int i7;
         boolean z2;
-        int i8;
+        int i7;
         if (!this.mShowNotificationShelf) {
             return;
         }
         this.mShelfIcons.resetViewStates();
-        float translationY = getTranslationY();
+        float translationY2 = getTranslationY();
         ActivatableNotificationView lastVisibleBackgroundChild = this.mAmbientState.getLastVisibleBackgroundChild();
         this.mNotGoneIndex = -1;
         float intrinsicHeight = this.mMaxLayoutHeight - (getIntrinsicHeight() * 2);
-        float min = translationY >= intrinsicHeight ? Math.min(1.0f, (translationY - intrinsicHeight) / getIntrinsicHeight()) : 0.0f;
+        float fMin2 = translationY2 >= intrinsicHeight ? Math.min(1.0f, (translationY2 - intrinsicHeight) / getIntrinsicHeight()) : 0.0f;
         boolean z3 = this.mHideBackground && !this.mShelfState.hasItemsInStableShelf;
         float currentScrollVelocity = this.mAmbientState.getCurrentScrollVelocity();
         boolean z4 = currentScrollVelocity > ((float) this.mScrollFastThreshold) || (this.mAmbientState.isExpansionChanging() && Math.abs(this.mAmbientState.getExpandingVelocity()) > ((float) this.mScrollFastThreshold));
         boolean z5 = currentScrollVelocity > 0.0f;
         boolean z6 = this.mAmbientState.isExpansionChanging() && !this.mAmbientState.isPanelTracking();
         int baseZHeight = this.mAmbientState.getBaseZHeight();
+        float f2 = 0.0f;
+        float f3 = 0.0f;
         float f4 = 0.0f;
-        float f5 = 0.0f;
-        float f6 = 0.0f;
+        int i8 = 0;
         int i9 = 0;
         int i10 = 0;
         int i11 = 0;
         int i12 = 0;
         int i13 = 0;
-        int i14 = 0;
-        while (i13 < this.mHostLayout.getChildCount()) {
-            ExpandableView expandableView = (ExpandableView) this.mHostLayout.getChildAt(i13);
+        while (i12 < this.mHostLayout.getChildCount()) {
+            ExpandableView expandableView = (ExpandableView) this.mHostLayout.getChildAt(i12);
             if (!(expandableView instanceof ExpandableNotificationRow) || expandableView.getVisibility() == 8) {
-                i = i9;
-                i2 = i11;
-                f = f4;
-                i3 = i13;
+                i = i8;
+                i2 = i10;
+                currentTopRoundness = f2;
+                i3 = i12;
                 i4 = baseZHeight;
                 activatableNotificationView = lastVisibleBackgroundChild;
-                f2 = min;
+                f = fMin2;
                 z = false;
-                i5 = i10;
-                i6 = i12;
+                i5 = i9;
+                translationY = i11;
             } else {
                 ExpandableNotificationRow expandableNotificationRow = (ExpandableNotificationRow) expandableView;
                 boolean z7 = ViewState.getFinalTranslationZ(expandableNotificationRow) > ((float) baseZHeight) || expandableNotificationRow.isPinned();
                 boolean z8 = expandableView == lastVisibleBackgroundChild;
-                float translationY2 = expandableNotificationRow.getTranslationY();
+                float translationY3 = expandableNotificationRow.getTranslationY();
                 if ((z8 && !expandableView.isInShelf()) || z7 || z3) {
-                    i7 = i9;
-                    f3 = translationY + getIntrinsicHeight();
+                    i6 = i8;
+                    fMin = translationY2 + getIntrinsicHeight();
                 } else {
-                    f3 = translationY - this.mPaddingBetweenElements;
-                    float f7 = f3 - translationY2;
+                    fMin = translationY2 - this.mPaddingBetweenElements;
+                    float f5 = fMin - translationY3;
                     if (expandableNotificationRow.isBelowSpeedBump()) {
-                        i7 = i9;
+                        i6 = i8;
                     } else {
-                        i7 = i9;
-                        if (f7 <= getNotificationMergeSize()) {
-                            f3 = Math.min(translationY, translationY2 + getNotificationMergeSize());
+                        i6 = i8;
+                        if (f5 <= getNotificationMergeSize()) {
+                            fMin = Math.min(translationY2, translationY3 + getNotificationMergeSize());
                         }
                     }
                 }
-                updateNotificationClipHeight(expandableNotificationRow, f3);
-                int i15 = i7;
+                updateNotificationClipHeight(expandableNotificationRow, fMin);
+                int i14 = i6;
                 activatableNotificationView = lastVisibleBackgroundChild;
-                i5 = i10;
+                i5 = i9;
                 boolean z9 = z7;
-                int i16 = i11;
-                float f8 = min;
-                f2 = min;
-                f = f4;
-                i6 = i12;
-                i3 = i13;
+                int i15 = i10;
+                float f6 = fMin2;
+                f = fMin2;
+                currentTopRoundness = f2;
+                translationY = i11;
+                i3 = i12;
                 i4 = baseZHeight;
-                float updateIconAppearance = updateIconAppearance(expandableNotificationRow, f8, z5, z4, z6, z8);
-                f6 += updateIconAppearance;
+                float fUpdateIconAppearance = updateIconAppearance(expandableNotificationRow, f6, z5, z4, z6, z8);
+                f4 += fUpdateIconAppearance;
                 int backgroundColorWithoutTint = expandableNotificationRow.getBackgroundColorWithoutTint();
-                if (translationY2 >= translationY && this.mNotGoneIndex == -1) {
-                    this.mNotGoneIndex = i16;
-                    setTintColor(i15);
-                    setOverrideTintColor(i5, f5);
+                if (translationY3 >= translationY2 && this.mNotGoneIndex == -1) {
+                    this.mNotGoneIndex = i15;
+                    setTintColor(i14);
+                    setOverrideTintColor(i5, f3);
                 } else if (this.mNotGoneIndex == -1) {
-                    f5 = updateIconAppearance;
-                    i5 = i15;
+                    f3 = fUpdateIconAppearance;
+                    i5 = i14;
                 }
                 if (z8) {
-                    int i17 = i14 == 0 ? backgroundColorWithoutTint : i14;
-                    expandableNotificationRow.setOverrideTintColor(i17, updateIconAppearance);
-                    i8 = i17;
+                    int i16 = i13 == 0 ? backgroundColorWithoutTint : i13;
+                    expandableNotificationRow.setOverrideTintColor(i16, fUpdateIconAppearance);
+                    i7 = i16;
                     z2 = false;
                     z = false;
                 } else {
                     z2 = false;
                     z = false;
                     expandableNotificationRow.setOverrideTintColor(0, 0.0f);
-                    i8 = backgroundColorWithoutTint;
+                    i7 = backgroundColorWithoutTint;
                 }
-                if (i16 != 0 || !z9) {
+                if (i15 != 0 || !z9) {
                     expandableNotificationRow.setAboveShelf(z2);
                 }
-                if (i16 == 0) {
+                if (i15 == 0) {
                     NotificationIconContainer.IconState iconState = getIconState(expandableNotificationRow.getEntry().expandedIcon);
                     if (iconState != null && iconState.clampedAppearAmount == 1.0f) {
-                        i6 = (int) (expandableNotificationRow.getTranslationY() - getTranslationY());
-                        f = expandableNotificationRow.getCurrentTopRoundness();
+                        translationY = (int) (expandableNotificationRow.getTranslationY() - getTranslationY());
+                        currentTopRoundness = expandableNotificationRow.getCurrentTopRoundness();
                     } else if (iconState == null) {
                         StringBuilder sb = new StringBuilder();
                         sb.append("iconState is null. ExpandedIcon: ");
@@ -311,38 +311,37 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
                     }
                 }
                 i = backgroundColorWithoutTint;
-                i14 = i8;
-                i2 = i16 + 1;
+                i13 = i7;
+                i2 = i15 + 1;
             }
-            i10 = i5;
-            i12 = i6;
-            f4 = f;
-            i13 = i3 + 1;
-            i11 = i2;
-            i9 = i;
+            i9 = i5;
+            i11 = translationY;
+            f2 = currentTopRoundness;
+            i12 = i3 + 1;
+            i10 = i2;
+            i8 = i;
             baseZHeight = i4;
             lastVisibleBackgroundChild = activatableNotificationView;
-            min = f2;
+            fMin2 = f;
         }
-        int i18 = i11;
-        boolean z10 = false;
+        int i17 = i10;
         clipTransientViews();
-        setBackgroundTop(i12);
-        setFirstElementRoundness(f4);
+        setBackgroundTop(i11);
+        setFirstElementRoundness(f2);
         this.mShelfIcons.setSpeedBumpIndex(this.mAmbientState.getSpeedBumpIndex());
         this.mShelfIcons.calculateIconTranslations();
         this.mShelfIcons.applyIconStates();
-        for (int i19 = 0; i19 < this.mHostLayout.getChildCount(); i19++) {
-            View childAt = this.mHostLayout.getChildAt(i19);
+        for (int i18 = 0; i18 < this.mHostLayout.getChildCount(); i18++) {
+            View childAt = this.mHostLayout.getChildAt(i18);
             if ((childAt instanceof ExpandableNotificationRow) && childAt.getVisibility() != 8) {
                 ExpandableNotificationRow expandableNotificationRow2 = (ExpandableNotificationRow) childAt;
                 updateIconClipAmount(expandableNotificationRow2);
                 updateContinuousClipping(expandableNotificationRow2);
             }
         }
-        setHideBackground((((f6 > 1.0f ? 1 : (f6 == 1.0f ? 0 : -1)) < 0) || z3) ? true : true);
+        setHideBackground(((f4 > 1.0f ? 1 : (f4 == 1.0f ? 0 : -1)) < 0) || z3);
         if (this.mNotGoneIndex == -1) {
-            this.mNotGoneIndex = i18;
+            this.mNotGoneIndex = i17;
         }
     }
 
@@ -364,17 +363,16 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateIconClipAmount(ExpandableNotificationRow expandableNotificationRow) {
+    private void updateIconClipAmount(ExpandableNotificationRow expandableNotificationRow) {
         float translationY = expandableNotificationRow.getTranslationY();
         StatusBarIconView statusBarIconView = expandableNotificationRow.getEntry().expandedIcon;
         float translationY2 = getTranslationY() + statusBarIconView.getTop() + statusBarIconView.getTranslationY();
         if (translationY2 < translationY && !this.mAmbientState.isDark()) {
             int i = (int) (translationY - translationY2);
             statusBarIconView.setClipBounds(new Rect(0, i, statusBarIconView.getWidth(), Math.max(i, statusBarIconView.getHeight())));
-            return;
+        } else {
+            statusBarIconView.setClipBounds(null);
         }
-        statusBarIconView.setClipBounds(null);
     }
 
     private void updateContinuousClipping(final ExpandableNotificationRow expandableNotificationRow) {
@@ -417,11 +415,11 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         float translationY = expandableNotificationRow.getTranslationY() + expandableNotificationRow.getActualHeight();
         boolean z = (expandableNotificationRow.isPinned() || expandableNotificationRow.isHeadsUpAnimatingAway()) && !this.mAmbientState.isDozingAndNotPulsing(expandableNotificationRow);
         if (translationY > f && (this.mAmbientState.isShadeExpanded() || !z)) {
-            int i = (int) (translationY - f);
+            int iMin = (int) (translationY - f);
             if (z) {
-                i = Math.min(expandableNotificationRow.getIntrinsicHeight() - expandableNotificationRow.getCollapsedHeight(), i);
+                iMin = Math.min(expandableNotificationRow.getIntrinsicHeight() - expandableNotificationRow.getCollapsedHeight(), iMin);
             }
-            expandableNotificationRow.setClipBottomAmount(i);
+            expandableNotificationRow.setClipBottomAmount(iMin);
             return;
         }
         expandableNotificationRow.setClipBottomAmount(0);
@@ -437,20 +435,20 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
 
     private float updateIconAppearance(ExpandableNotificationRow expandableNotificationRow, float f, boolean z, boolean z2, boolean z3, boolean z4) {
         ExpandableNotificationRow expandableNotificationRow2;
-        float f2;
+        float fMin;
         NotificationIconContainer.IconState iconState = getIconState(expandableNotificationRow.getEntry().expandedIcon);
         if (iconState == null) {
             return 0.0f;
         }
         float translationY = expandableNotificationRow.getTranslationY();
         int actualHeight = expandableNotificationRow.getActualHeight() + this.mPaddingBetweenElements;
-        float f3 = 1.0f;
-        float min = Math.min(getIntrinsicHeight() * 1.5f * NotificationUtils.interpolate(1.0f, 1.5f, f), actualHeight);
+        float f2 = 1.0f;
+        float fMin2 = Math.min(getIntrinsicHeight() * 1.5f * NotificationUtils.interpolate(1.0f, 1.5f, f), actualHeight);
         if (z4) {
             actualHeight = Math.min(actualHeight, expandableNotificationRow.getMinHeight() - getIntrinsicHeight());
-            min = Math.min(min, expandableNotificationRow.getMinHeight() - getIntrinsicHeight());
+            fMin2 = Math.min(fMin2, expandableNotificationRow.getMinHeight() - getIntrinsicHeight());
         }
-        float f4 = actualHeight + translationY;
+        float f3 = actualHeight + translationY;
         boolean z5 = true;
         if (z3 && this.mAmbientState.getScrollY() == 0 && !this.mAmbientState.isOnKeyguard() && !iconState.isLastExpandIcon) {
             expandableNotificationRow2 = expandableNotificationRow;
@@ -469,30 +467,30 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         float translationY2 = getTranslationY();
         if (iconState.hasCustomTransformHeight()) {
             actualHeight = iconState.customTransformHeight;
-            min = iconState.customTransformHeight;
+            fMin2 = iconState.customTransformHeight;
         }
-        if (f4 >= translationY2 && ((!this.mAmbientState.isUnlockHintRunning() || expandableNotificationRow.isInShelf()) && (this.mAmbientState.isShadeExpanded() || (!expandableNotificationRow.isPinned() && !expandableNotificationRow.isHeadsUpAnimatingAway())))) {
-            if (translationY < translationY2) {
-                float f5 = translationY2 - translationY;
-                float min2 = Math.min(1.0f, f5 / actualHeight);
-                f2 = 1.0f - Math.min(1.0f, f5 / min);
-                z5 = false;
-                f3 = 1.0f - NotificationUtils.interpolate(Interpolators.ACCELERATE_DECELERATE.getInterpolation(min2), min2, f);
-            } else {
-                f2 = 1.0f;
-            }
-        } else {
-            f3 = 0.0f;
+        if (f3 < translationY2 || ((this.mAmbientState.isUnlockHintRunning() && !expandableNotificationRow.isInShelf()) || (!this.mAmbientState.isShadeExpanded() && (expandableNotificationRow.isPinned() || expandableNotificationRow.isHeadsUpAnimatingAway())))) {
             f2 = 0.0f;
+            fMin = 0.0f;
+        } else if (translationY < translationY2) {
+            float f4 = translationY2 - translationY;
+            float fMin3 = Math.min(1.0f, f4 / actualHeight);
+            float fInterpolate = 1.0f - NotificationUtils.interpolate(Interpolators.ACCELERATE_DECELERATE.getInterpolation(fMin3), fMin3, f);
+            fMin = 1.0f - Math.min(1.0f, f4 / fMin2);
+            z5 = false;
+            f2 = fInterpolate;
+        } else {
+            fMin = 1.0f;
         }
         if (z5 && !z3 && iconState.isLastExpandIcon) {
             iconState.isLastExpandIcon = false;
             iconState.customTransformHeight = Integer.MIN_VALUE;
         }
-        updateIconPositioning(expandableNotificationRow2, f2, f3, min, z, z2, z3, z4);
-        return f3;
+        updateIconPositioning(expandableNotificationRow2, fMin, f2, fMin2, z, z2, z3, z4);
+        return f2;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [600=4] */
     private void updateIconPositioning(ExpandableNotificationRow expandableNotificationRow, float f, float f2, float f3, boolean z, boolean z2, boolean z3, boolean z4) {
         float f4;
         StatusBarIconView statusBarIconView = expandableNotificationRow.getEntry().expandedIcon;
@@ -534,9 +532,9 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
     }
 
     private void setIconTransformationAmount(ExpandableNotificationRow expandableNotificationRow, float f, float f2, boolean z, boolean z2) {
-        int i;
+        int relativeTopPadding;
+        float height;
         float f3;
-        float f4;
         StatusBarIconView statusBarIconView = expandableNotificationRow.getEntry().expandedIcon;
         NotificationIconContainer.IconState iconState = getIconState(statusBarIconView);
         View notificationIcon = expandableNotificationRow.getNotificationIcon();
@@ -546,32 +544,32 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
             translationY = getTranslationY() - f2;
         }
         if (notificationIcon != null) {
-            i = expandableNotificationRow.getRelativeTopPadding(notificationIcon);
-            f3 = notificationIcon.getHeight();
+            relativeTopPadding = expandableNotificationRow.getRelativeTopPadding(notificationIcon);
+            height = notificationIcon.getHeight();
         } else {
-            i = this.mIconAppearTopPadding;
-            f3 = 0.0f;
+            relativeTopPadding = this.mIconAppearTopPadding;
+            height = 0.0f;
         }
-        float interpolate = NotificationUtils.interpolate((translationY + i) - ((getTranslationY() + statusBarIconView.getTop()) + ((statusBarIconView.getHeight() - (statusBarIconView.getIconScale() * this.mIconSize)) / 2.0f)), 0.0f, f);
+        float fInterpolate = NotificationUtils.interpolate((translationY + relativeTopPadding) - ((getTranslationY() + statusBarIconView.getTop()) + ((statusBarIconView.getHeight() - (statusBarIconView.getIconScale() * this.mIconSize)) / 2.0f)), 0.0f, f);
         float iconScale = this.mIconSize * statusBarIconView.getIconScale();
         boolean z4 = !expandableNotificationRow.isShowingIcon();
         if (z4) {
-            f3 = iconScale / 2.0f;
-            f4 = f;
+            height = iconScale / 2.0f;
+            f3 = f;
         } else {
-            f4 = 1.0f;
+            f3 = 1.0f;
         }
-        float interpolate2 = NotificationUtils.interpolate(f3, iconScale, f);
+        float fInterpolate2 = NotificationUtils.interpolate(height, iconScale, f);
         if (iconState != null) {
-            iconState.scaleX = interpolate2 / iconScale;
+            iconState.scaleX = fInterpolate2 / iconScale;
             iconState.scaleY = iconState.scaleX;
             iconState.hidden = f == 0.0f && !iconState.isAnimating(statusBarIconView);
             if (expandableNotificationRow.isDrawingAppearAnimation() && !expandableNotificationRow.isInShelf()) {
                 iconState.hidden = true;
                 iconState.iconAppearAmount = 0.0f;
             }
-            iconState.alpha = f4;
-            iconState.yTranslation = interpolate;
+            iconState.alpha = f3;
+            iconState.yTranslation = fInterpolate;
             if (z3) {
                 iconState.iconAppearAmount = 1.0f;
                 iconState.alpha = 1.0f;
@@ -615,21 +613,18 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.ExpandableOutlineView
-    public boolean needsOutline() {
+    protected boolean needsOutline() {
         return !this.mHideBackground && super.needsOutline();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.ActivatableNotificationView
-    public boolean shouldHideBackground() {
+    protected boolean shouldHideBackground() {
         return super.shouldHideBackground() || this.mHideBackground;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.ActivatableNotificationView, com.android.systemui.statusbar.ExpandableView, android.widget.FrameLayout, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         updateRelativeOffset();
         int i5 = getResources().getDisplayMetrics().heightPixels;
@@ -644,28 +639,27 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         this.mRelativeOffset -= this.mTmp[0];
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setOpenedAmount(float f) {
+    private void setOpenedAmount(float f) {
         int partialOverflowExtraPadding;
         this.mNoAnimationsInThisFrame = f == 1.0f && this.mOpenedAmount == 0.0f;
         this.mOpenedAmount = f;
         if (!this.mAmbientState.isPanelFullWidth()) {
             f = 1.0f;
         }
-        int i = this.mRelativeOffset;
+        int width = this.mRelativeOffset;
         if (isLayoutRtl()) {
-            i = (getWidth() - i) - this.mCollapsedIcons.getWidth();
+            width = (getWidth() - width) - this.mCollapsedIcons.getWidth();
         }
-        this.mShelfIcons.setActualLayoutWidth((int) NotificationUtils.interpolate(this.mCollapsedIcons.getFinalTranslationX() + i, this.mShelfIcons.getWidth(), f));
-        boolean hasOverflow = this.mCollapsedIcons.hasOverflow();
+        this.mShelfIcons.setActualLayoutWidth((int) NotificationUtils.interpolate(this.mCollapsedIcons.getFinalTranslationX() + width, this.mShelfIcons.getWidth(), f));
+        boolean zHasOverflow = this.mCollapsedIcons.hasOverflow();
         int paddingEnd = this.mCollapsedIcons.getPaddingEnd();
-        if (!hasOverflow) {
+        if (!zHasOverflow) {
             partialOverflowExtraPadding = paddingEnd - this.mCollapsedIcons.getNoOverflowExtraPadding();
         } else {
             partialOverflowExtraPadding = paddingEnd - this.mCollapsedIcons.getPartialOverflowExtraPadding();
         }
         this.mShelfIcons.setActualPaddingEnd(NotificationUtils.interpolate(partialOverflowExtraPadding, this.mShelfIcons.getPaddingEnd(), f));
-        this.mShelfIcons.setActualPaddingStart(NotificationUtils.interpolate(i, this.mShelfIcons.getPaddingStart(), f));
+        this.mShelfIcons.setActualPaddingStart(NotificationUtils.interpolate(width, this.mShelfIcons.getPaddingStart(), f));
         this.mShelfIcons.setOpenedAmount(f);
     }
 
@@ -677,8 +671,7 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         return this.mNotGoneIndex;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setHasItemsInStableShelf(boolean z) {
+    private void setHasItemsInStableShelf(boolean z) {
         if (this.mHasItemsInStableShelf != z) {
             this.mHasItemsInStableShelf = z;
             updateInteractiveness();
@@ -744,9 +737,7 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         updateRelativeOffset();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ShelfState extends ExpandableViewState {
+    private class ShelfState extends ExpandableViewState {
         private boolean hasItemsInStableShelf;
         private float maxShelfEnd;
         private float openedAmount;

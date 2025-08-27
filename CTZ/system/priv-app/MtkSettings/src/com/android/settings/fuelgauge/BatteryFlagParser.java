@@ -5,6 +5,7 @@ import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
 import com.android.settings.fuelgauge.BatteryActiveView;
 import com.android.settings.fuelgauge.BatteryInfo;
+
 /* loaded from: classes.dex */
 public class BatteryFlagParser implements BatteryActiveView.BatteryActiveProvider, BatteryInfo.BatteryDataParser {
     private final int mAccentColor;
@@ -32,10 +33,10 @@ public class BatteryFlagParser implements BatteryActiveView.BatteryActiveProvide
 
     @Override // com.android.settings.fuelgauge.BatteryInfo.BatteryDataParser
     public void onDataPoint(long j, BatteryStats.HistoryItem historyItem) {
-        boolean isSet = isSet(historyItem);
-        if (isSet != this.mLastSet) {
-            this.mData.put((int) j, isSet);
-            this.mLastSet = isSet;
+        boolean zIsSet = isSet(historyItem);
+        if (zIsSet != this.mLastSet) {
+            this.mData.put((int) j, zIsSet);
+            this.mLastSet = zIsSet;
         }
         this.mLastTime = j;
     }

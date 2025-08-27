@@ -2,13 +2,12 @@ package com.google.common.collect;
 
 import com.google.common.base.Preconditions;
 import java.util.List;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class SingletonImmutableList<E> extends ImmutableList<E> {
+final class SingletonImmutableList<E> extends ImmutableList<E> {
     final transient E element;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public SingletonImmutableList(E e) {
+    SingletonImmutableList(E e) {
         this.element = (E) Preconditions.checkNotNull(e);
     }
 
@@ -23,6 +22,7 @@ public final class SingletonImmutableList<E> extends ImmutableList<E> {
         return this.element.equals(obj) ? 0 : -1;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableList, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<E> iterator() {
         return Iterators.singletonIterator(this.element);
@@ -38,6 +38,7 @@ public final class SingletonImmutableList<E> extends ImmutableList<E> {
         return 1;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: subList(II)Ljava/util/List; */
     @Override // com.google.common.collect.ImmutableList, java.util.List
     public ImmutableList<E> subList(int i, int i2) {
         Preconditions.checkPositionIndexes(i, i2, 1);
@@ -59,11 +60,11 @@ public final class SingletonImmutableList<E> extends ImmutableList<E> {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof List) {
-            List list = (List) obj;
-            return list.size() == 1 && this.element.equals(list.get(0));
+        if (!(obj instanceof List)) {
+            return false;
         }
-        return false;
+        List list = (List) obj;
+        return list.size() == 1 && this.element.equals(list.get(0));
     }
 
     @Override // com.google.common.collect.ImmutableList, java.util.Collection, java.util.List
@@ -73,10 +74,10 @@ public final class SingletonImmutableList<E> extends ImmutableList<E> {
 
     @Override // java.util.AbstractCollection
     public String toString() {
-        String obj = this.element.toString();
-        StringBuilder sb = new StringBuilder(obj.length() + 2);
+        String string = this.element.toString();
+        StringBuilder sb = new StringBuilder(string.length() + 2);
         sb.append('[');
-        sb.append(obj);
+        sb.append(string);
         sb.append(']');
         return sb.toString();
     }
@@ -86,15 +87,13 @@ public final class SingletonImmutableList<E> extends ImmutableList<E> {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableList, com.google.common.collect.ImmutableCollection
-    public int copyIntoArray(Object[] objArr, int i) {
+    int copyIntoArray(Object[] objArr, int i) {
         objArr[i] = this.element;
         return i + 1;
     }

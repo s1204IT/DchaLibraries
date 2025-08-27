@@ -5,7 +5,8 @@ import android.graphics.Point;
 import android.os.IBenesseExtensionService;
 import android.view.IWindowManager;
 import java.io.File;
-/* loaded from: framework.zip:android/os/BenesseExtension.class */
+
+/* loaded from: a04br3-02.05.000-framework.jar:android/os/BenesseExtension.class */
 public class BenesseExtension {
     static IBenesseExtensionService mBenesseExtensionService;
     static IWindowManager mWindowManager;
@@ -39,16 +40,16 @@ public class BenesseExtension {
 
     public static Point getBaseDisplaySize() {
         IWindowManager windowManager = getWindowManager();
-        if (windowManager != null) {
-            try {
-                Point point = new Point();
-                windowManager.getBaseDisplaySize(0, point);
-                return point;
-            } catch (RemoteException e) {
-                return null;
-            }
+        if (windowManager == null) {
+            return null;
         }
-        return null;
+        try {
+            Point point = new Point();
+            windowManager.getBaseDisplaySize(0, point);
+            return point;
+        } catch (RemoteException e) {
+            return null;
+        }
     }
 
     static IBenesseExtensionService getBenesseExtensionService() {
@@ -71,16 +72,16 @@ public class BenesseExtension {
 
     public static Point getInitialDisplaySize() {
         IWindowManager windowManager = getWindowManager();
-        if (windowManager != null) {
-            try {
-                Point point = new Point();
-                windowManager.getInitialDisplaySize(0, point);
-                return point;
-            } catch (RemoteException e) {
-                return null;
-            }
+        if (windowManager == null) {
+            return null;
         }
-        return null;
+        try {
+            Point point = new Point();
+            windowManager.getInitialDisplaySize(0, point);
+            return point;
+        } catch (RemoteException e) {
+            return null;
+        }
     }
 
     public static Point getLcdSize() {
@@ -115,38 +116,39 @@ public class BenesseExtension {
         }
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:7:0x0018, code lost:
-        if (r6 < 0) goto L14;
-     */
+    /* JADX WARN: Removed duplicated region for block: B:50:0x001d A[EXC_TOP_SPLITTER, SYNTHETIC] */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
     public static boolean setForcedDisplaySize(int i, int i2) {
-        boolean z = false;
+        boolean zEquals = false;
         IWindowManager windowManager = getWindowManager();
         int i3 = i;
         int i4 = i2;
         if (windowManager != null) {
             if (i >= 0) {
-                i4 = i2;
-            }
-            try {
-                Point initialDisplaySize = getInitialDisplaySize();
-                if (initialDisplaySize == null) {
-                    return false;
-                }
-                i = initialDisplaySize.x;
-                i4 = initialDisplaySize.y;
-                windowManager.setForcedDisplaySize(0, i, i4);
                 i3 = i;
-            } catch (RemoteException e) {
-                return false;
+                int i5 = i2;
+                if (i2 < 0) {
+                    try {
+                        Point initialDisplaySize = getInitialDisplaySize();
+                        if (initialDisplaySize == null) {
+                            return false;
+                        }
+                        i3 = initialDisplaySize.x;
+                        i5 = initialDisplaySize.y;
+                    } catch (RemoteException e) {
+                        return false;
+                    }
+                }
+                windowManager.setForcedDisplaySize(0, i3, i5);
+                i4 = i5;
             }
         }
         Point baseDisplaySize = getBaseDisplaySize();
         if (baseDisplaySize != null) {
-            z = baseDisplaySize.equals(i3, i4);
+            zEquals = baseDisplaySize.equals(i3, i4);
         }
-        return z;
+        return zEquals;
     }
 }

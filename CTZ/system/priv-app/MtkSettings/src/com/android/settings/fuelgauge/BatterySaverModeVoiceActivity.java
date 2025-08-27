@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.util.Log;
 import com.android.settings.utils.VoiceSettingsActivity;
 import com.android.settingslib.fuelgauge.BatterySaverUtils;
+
 /* loaded from: classes.dex */
 public class BatterySaverModeVoiceActivity extends VoiceSettingsActivity {
     @Override // com.android.settings.utils.VoiceSettingsActivity

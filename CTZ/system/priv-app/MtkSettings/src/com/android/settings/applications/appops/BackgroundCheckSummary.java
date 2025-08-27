@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.android.settings.R;
 import com.android.settings.core.InstrumentedPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class BackgroundCheckSummary extends InstrumentedPreferenceFragment {
     private LayoutInflater mInflater;
@@ -26,13 +27,13 @@ public class BackgroundCheckSummary extends InstrumentedPreferenceFragment {
     @Override // android.support.v14.preference.PreferenceFragment, android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         this.mInflater = layoutInflater;
-        View inflate = this.mInflater.inflate(R.layout.background_check_summary, viewGroup, false);
+        View viewInflate = this.mInflater.inflate(R.layout.background_check_summary, viewGroup, false);
         if (viewGroup instanceof PreferenceFrameLayout) {
-            inflate.getLayoutParams().removeBorders = true;
+            viewInflate.getLayoutParams().removeBorders = true;
         }
-        FragmentTransaction beginTransaction = getChildFragmentManager().beginTransaction();
-        beginTransaction.add(R.id.appops_content, new AppOpsCategory(AppOpsState.RUN_IN_BACKGROUND_TEMPLATE), "appops");
-        beginTransaction.commitAllowingStateLoss();
-        return inflate;
+        FragmentTransaction fragmentTransactionBeginTransaction = getChildFragmentManager().beginTransaction();
+        fragmentTransactionBeginTransaction.add(R.id.appops_content, new AppOpsCategory(AppOpsState.RUN_IN_BACKGROUND_TEMPLATE), "appops");
+        fragmentTransactionBeginTransaction.commitAllowingStateLoss();
+        return viewInflate;
     }
 }

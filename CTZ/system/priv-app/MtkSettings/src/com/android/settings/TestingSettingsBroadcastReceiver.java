@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import com.android.settings.Settings;
+
 /* loaded from: classes.dex */
 public class TestingSettingsBroadcastReceiver extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver

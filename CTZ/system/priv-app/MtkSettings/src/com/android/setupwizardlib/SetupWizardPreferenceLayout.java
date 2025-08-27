@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.android.setupwizardlib.template.RecyclerMixin;
+
 /* loaded from: classes.dex */
 public class SetupWizardPreferenceLayout extends SetupWizardRecyclerLayout {
     public SetupWizardPreferenceLayout(Context context) {
@@ -21,18 +22,16 @@ public class SetupWizardPreferenceLayout extends SetupWizardRecyclerLayout {
         super(context, attributeSet, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.SetupWizardRecyclerLayout, com.android.setupwizardlib.SetupWizardLayout, com.android.setupwizardlib.TemplateLayout
-    public ViewGroup findContainer(int i) {
+    protected ViewGroup findContainer(int i) {
         if (i == 0) {
             i = R.id.suw_layout_content;
         }
         return super.findContainer(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.setupwizardlib.SetupWizardRecyclerLayout, com.android.setupwizardlib.SetupWizardLayout, com.android.setupwizardlib.TemplateLayout
-    public View onInflateTemplate(LayoutInflater layoutInflater, int i) {
+    protected View onInflateTemplate(LayoutInflater layoutInflater, int i) {
         if (i == 0) {
             i = R.layout.suw_preference_template;
         }

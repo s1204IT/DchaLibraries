@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public final class WifiNoInternetDialog extends AlertActivity implements DialogInterface.OnClickListener {
     private String mAction;
@@ -49,7 +50,7 @@ public final class WifiNoInternetDialog extends AlertActivity implements DialogI
             finish();
             return;
         }
-        NetworkRequest build = new NetworkRequest.Builder().clearCapabilities().build();
+        NetworkRequest networkRequestBuild = new NetworkRequest.Builder().clearCapabilities().build();
         this.mNetworkCallback = new ConnectivityManager.NetworkCallback() { // from class: com.android.settings.wifi.WifiNoInternetDialog.1
             @Override // android.net.ConnectivityManager.NetworkCallback
             public void onLost(Network network) {
@@ -68,7 +69,7 @@ public final class WifiNoInternetDialog extends AlertActivity implements DialogI
             }
         };
         this.mCM = (ConnectivityManager) getSystemService("connectivity");
-        this.mCM.registerNetworkCallback(build, this.mNetworkCallback);
+        this.mCM.registerNetworkCallback(networkRequestBuild, this.mNetworkCallback);
         NetworkInfo networkInfo = this.mCM.getNetworkInfo(this.mNetwork);
         NetworkCapabilities networkCapabilities = this.mCM.getNetworkCapabilities(this.mNetwork);
         if (networkInfo == null || !networkInfo.isConnectedOrConnecting() || networkCapabilities == null) {
@@ -84,7 +85,7 @@ public final class WifiNoInternetDialog extends AlertActivity implements DialogI
     }
 
     private void createDialog() {
-        this.mAlert.setIcon((int) R.drawable.ic_settings_wireless);
+        this.mAlert.setIcon(R.drawable.ic_settings_wireless);
         AlertController.AlertParams alertParams = this.mAlertParams;
         if ("android.net.conn.PROMPT_UNVALIDATED".equals(this.mAction)) {
             alertParams.mTitle = this.mNetworkName;
@@ -99,9 +100,9 @@ public final class WifiNoInternetDialog extends AlertActivity implements DialogI
         }
         alertParams.mPositiveButtonListener = this;
         alertParams.mNegativeButtonListener = this;
-        View inflate = LayoutInflater.from(alertParams.mContext).inflate(17367090, (ViewGroup) null);
-        alertParams.mView = inflate;
-        this.mAlwaysAllow = (CheckBox) inflate.findViewById(16908711);
+        View viewInflate = LayoutInflater.from(alertParams.mContext).inflate(android.R.layout.alert_dialog_progress, (ViewGroup) null);
+        alertParams.mView = viewInflate;
+        this.mAlwaysAllow = (CheckBox) viewInflate.findViewById(android.R.id.accessibility_permissionDialog_title);
         if ("android.net.conn.PROMPT_UNVALIDATED".equals(this.mAction)) {
             this.mAlwaysAllow.setText(getString(R.string.no_internet_access_remember));
         } else {
@@ -124,17 +125,17 @@ public final class WifiNoInternetDialog extends AlertActivity implements DialogI
         boolean z;
         String str2;
         if (i == -2 || i == -1) {
-            boolean isChecked = this.mAlwaysAllow.isChecked();
+            boolean zIsChecked = this.mAlwaysAllow.isChecked();
             if ("android.net.conn.PROMPT_UNVALIDATED".equals(this.mAction)) {
                 str = "NO_INTERNET";
                 z = i == -1;
                 str2 = z ? "Connect" : "Ignore";
-                this.mCM.setAcceptUnvalidated(this.mNetwork, z, isChecked);
+                this.mCM.setAcceptUnvalidated(this.mNetwork, z, zIsChecked);
             } else {
                 str = "LOST_INTERNET";
                 z = i == -1;
                 str2 = z ? "Switch away" : "Get stuck";
-                if (isChecked) {
+                if (zIsChecked) {
                     Settings.Global.putString(this.mAlertParams.mContext.getContentResolver(), "network_avoid_bad_wifi", z ? "1" : "0");
                 } else if (z) {
                     this.mCM.setAvoidUnvalidated(this.mNetwork);
@@ -146,7 +147,7 @@ public final class WifiNoInternetDialog extends AlertActivity implements DialogI
             sb.append(str2);
             sb.append(" network=");
             sb.append(this.mNetwork);
-            sb.append(isChecked ? " and remember" : "");
+            sb.append(zIsChecked ? " and remember" : "");
             Log.d("WifiNoInternetDialog", sb.toString());
         }
     }

@@ -21,12 +21,12 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class MediaControllerCompat {
     private final MediaControllerImpl mImpl;
     private final HashSet<Callback> mRegisteredCallbacks;
 
-    /* loaded from: classes.dex */
     interface MediaControllerImpl {
         void sendCommand(String str, Bundle bundle, ResultReceiver resultReceiver);
 
@@ -52,7 +52,6 @@ public final class MediaControllerCompat {
         this.mImpl.sendCommand(command, params, cb);
     }
 
-    /* loaded from: classes.dex */
     public static abstract class Callback implements IBinder.DeathRecipient {
         private final Object mCallbackObj;
         MessageHandler mHandler;
@@ -135,7 +134,6 @@ public final class MediaControllerCompat {
             }
         }
 
-        /* loaded from: classes.dex */
         private static class StubApi21 implements MediaControllerCompatApi21.Callback {
             private final WeakReference<Callback> mCallback;
 
@@ -210,7 +208,6 @@ public final class MediaControllerCompat {
             }
         }
 
-        /* loaded from: classes.dex */
         private static class StubCompat extends IMediaControllerCallback.Stub {
             private final WeakReference<Callback> mCallback;
 
@@ -323,9 +320,7 @@ public final class MediaControllerCompat {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class MessageHandler extends Handler {
+        private class MessageHandler extends Handler {
             boolean mRegistered;
 
             MessageHandler(Looper looper) {
@@ -336,54 +331,49 @@ public final class MediaControllerCompat {
             @Override // android.os.Handler
             public void handleMessage(Message msg) {
                 if (!this.mRegistered) {
-                    return;
                 }
                 switch (msg.what) {
                     case 1:
                         Callback.this.onSessionEvent((String) msg.obj, msg.getData());
-                        return;
+                        break;
                     case 2:
                         Callback.this.onPlaybackStateChanged((PlaybackStateCompat) msg.obj);
-                        return;
+                        break;
                     case 3:
                         Callback.this.onMetadataChanged((MediaMetadataCompat) msg.obj);
-                        return;
+                        break;
                     case 4:
                         Callback.this.onAudioInfoChanged((PlaybackInfo) msg.obj);
-                        return;
+                        break;
                     case 5:
                         Callback.this.onQueueChanged((List) msg.obj);
-                        return;
+                        break;
                     case 6:
                         Callback.this.onQueueTitleChanged((CharSequence) msg.obj);
-                        return;
+                        break;
                     case 7:
                         Callback.this.onExtrasChanged((Bundle) msg.obj);
-                        return;
+                        break;
                     case 8:
                         Callback.this.onSessionDestroyed();
-                        return;
+                        break;
                     case 9:
                         Callback.this.onRepeatModeChanged(((Integer) msg.obj).intValue());
-                        return;
-                    case 10:
-                    default:
-                        return;
+                        break;
                     case 11:
                         Callback.this.onCaptioningEnabledChanged(((Boolean) msg.obj).booleanValue());
-                        return;
+                        break;
                     case 12:
                         Callback.this.onShuffleModeChanged(((Integer) msg.obj).intValue());
-                        return;
+                        break;
                     case 13:
                         Callback.this.onSessionReady();
-                        return;
+                        break;
                 }
             }
         }
     }
 
-    /* loaded from: classes.dex */
     public static final class PlaybackInfo {
         private final int mAudioStream;
         private final int mCurrentVolume;
@@ -400,7 +390,6 @@ public final class MediaControllerCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     static class MediaControllerImplApi21 implements MediaControllerImpl {
         private HashMap<Callback, ExtraCallback> mCallbackMap;
         protected final Object mControllerObj;
@@ -434,8 +423,7 @@ public final class MediaControllerCompat {
             MediaControllerCompatApi21.sendCommand(this.mControllerObj, command, params, cb);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void processPendingCallbacks() {
+        private void processPendingCallbacks() {
             if (this.mSessionToken.getExtraBinder() == null) {
                 return;
             }
@@ -455,7 +443,6 @@ public final class MediaControllerCompat {
             }
         }
 
-        /* loaded from: classes.dex */
         private static class ExtraBinderRequestResultReceiver extends ResultReceiver {
             private WeakReference<MediaControllerImplApi21> mMediaControllerImpl;
 
@@ -471,9 +458,7 @@ public final class MediaControllerCompat {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public static class ExtraCallback extends Callback.StubCompat {
+        private static class ExtraCallback extends Callback.StubCompat {
             ExtraCallback(Callback callback) {
                 super(callback);
             }

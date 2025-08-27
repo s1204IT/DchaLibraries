@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 /* loaded from: classes.dex */
 public class Performance {
     private static boolean mInTrace;
@@ -25,22 +26,21 @@ public class Performance {
     private static final Object mLock = new Object();
     private static final int[] SYSTEM_CPU_FORMAT = {288, 8224, 8224, 8224, 8224, 8224, 8224, 8224};
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void tracePageStart(String str) {
-        String str2;
+    static void tracePageStart(String str) {
+        String host;
         if (BrowserSettings.getInstance().isTracing()) {
             try {
-                str2 = new WebAddress(str).getHost();
+                host = new WebAddress(str).getHost();
             } catch (ParseException e) {
-                str2 = "browser";
+                host = "browser";
             }
+            String str2 = host.replace('.', '_') + ".trace";
             mInTrace = true;
-            Debug.startMethodTracing(str2.replace('.', '_') + ".trace", 20971520);
+            Debug.startMethodTracing(str2, 20971520);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void tracePageFinished() {
+    static void tracePageFinished() {
         if (mInTrace) {
             mInTrace = false;
             Debug.stopMethodTracing();
@@ -101,8 +101,7 @@ public class Performance {
         return sb.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static String printMemoryInfo(boolean z, String str) {
+    static String printMemoryInfo(boolean z, String str) {
         Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
         Debug.getMemoryInfo(memoryInfo);
         String str2 = "Browser other mem statistics: \r\n";
@@ -111,8 +110,7 @@ public class Performance {
         }
         if (z) {
             try {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
-                String str3 = "/storage/emulated/0/memDumpLog" + simpleDateFormat.format(new Date()) + ".txt";
+                String str3 = "/storage/emulated/0/memDumpLog" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".txt";
                 PrintWriter printWriter = new PrintWriter(str3);
                 printWriter.print(encodeToJSON(memoryInfo));
                 printWriter.close();
@@ -127,8 +125,7 @@ public class Performance {
         return "";
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void dumpSystemMemInfo(Context context) {
+    static void dumpSystemMemInfo(Context context) {
         if (context != null && mSysMemThreshold == null) {
             mSysMemThreshold = new ActivityManager.MemoryInfo();
             ((ActivityManager) context.getSystemService("activity")).getMemoryInfo(mSysMemThreshold);
@@ -142,11 +139,12 @@ public class Performance {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean checkShouldReleaseTabs(int i, ArrayList<Integer> arrayList, boolean z, String str, CopyOnWriteArrayList<Integer> copyOnWriteArrayList, boolean z2) {
-        Debug.MemoryInfo memoryInfo;
+    /* JADX WARN: Removed duplicated region for block: B:38:0x016a  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    static boolean checkShouldReleaseTabs(int i, ArrayList<Integer> arrayList, boolean z, String str, CopyOnWriteArrayList<Integer> copyOnWriteArrayList, boolean z2) {
         boolean z3;
-        NumberFormat numberFormat;
         synchronized (mLock) {
             String str2 = "MemoryDumpInfo" + System.currentTimeMillis();
             Log.d("browser", "Browser Current Memory Dump time = " + str2);
@@ -168,38 +166,33 @@ public class Performance {
                 printMemoryInfo(false, str2);
             }
             Debug.getMemoryInfo(new Debug.MemoryInfo());
-            double totalPss = ((memoryInfo.getTotalPss() + memoryInfo.getSummaryTotalSwap()) * 1024.0d) / mTotalMem;
+            double totalPss = ((r2.getTotalPss() + r2.getSummaryTotalSwap()) * 1024.0d) / mTotalMem;
             if (LOGD_ENABLED) {
-                NumberFormat.getInstance().setMaximumFractionDigits(3);
+                NumberFormat numberFormat = NumberFormat.getInstance();
+                numberFormat.setMaximumFractionDigits(3);
                 Log.d("browser", str2 + " current porcess take up the memory percent is " + numberFormat.format(totalPss));
             }
             z3 = true;
             if (Math.max(memInfoReader.getFreeSize(), memInfoReader.getCachedSize()) < mVisibleAppThreshold) {
                 if (LOGD_ENABLED) {
-                    Log.d("browser", "Browser Pss =: " + (memoryInfo.getTotalPss() / 1024.0d) + " PSwap =: " + (memoryInfo.getTotalSwappedOut() / 1024.0f) + " SwappablePss =: " + (memoryInfo.getTotalSwappablePss() / 1024.0f));
+                    Log.d("browser", "Browser Pss =: " + (r2.getTotalPss() / 1024.0d) + " PSwap =: " + (r2.getTotalSwappedOut() / 1024.0f) + " SwappablePss =: " + (r2.getTotalSwappablePss() / 1024.0f));
                 }
                 String str3 = SystemProperties.get("ro.vendor.gmo.ram_optimize");
-                if (str3 != null && str3.equals("1")) {
-                    if (totalPss > 0.30000001192092896d && i > 3 && z) {
+                if (str3 == null || !str3.equals("1")) {
+                    if (totalPss <= 0.4000000059604645d || i <= 5 || !z) {
                     }
-                } else if (totalPss > 0.4000000059604645d && i > 5 && z) {
+                } else if (totalPss <= 0.30000001192092896d || i <= 3 || !z) {
                 }
+            } else {
+                z3 = false;
             }
-            z3 = false;
         }
         return z3;
     }
 
     static void printSysMemInfo(ActivityManager.MemoryInfo memoryInfo, String str) {
         if (memoryInfo != null) {
-            long j = memoryInfo.totalMem;
-            long j2 = memoryInfo.threshold;
-            long j3 = memoryInfo.availMem;
-            long j4 = memoryInfo.hiddenAppThreshold;
-            long j5 = memoryInfo.secondaryServerThreshold;
-            long j6 = memoryInfo.visibleAppThreshold;
-            long j7 = memoryInfo.foregroundAppThreshold;
-            Log.d("browser", "{\r\n" + str + "    \"System Memory Usage (MB)\": {\r\n" + str + String.format("                total=: %.2f,\r\n", Double.valueOf((j / 1024.0d) / 1024.0d)) + str + String.format("                threshold=: %.2f,\r\n", Double.valueOf((j2 / 1024.0d) / 1024.0d)) + str + String.format("                availMem=: %.2f,\r\n", Double.valueOf((j3 / 1024.0d) / 1024.0d)) + str + String.format("                hiddenAppThreshold=: %.2f,\r\n", Double.valueOf((j4 / 1024.0d) / 1024.0d)) + str + String.format("                secondaryServerThreshold=: %.2f,\r\n", Double.valueOf((j5 / 1024.0d) / 1024.0d)) + str + String.format("                visibleAppThreshold=: %.2f,\r\n", Double.valueOf((j6 / 1024.0d) / 1024.0d)) + str + String.format("                foregroundAppThreshold=: %.2f,\r\n", Double.valueOf((j7 / 1024.0d) / 1024.0d)));
+            Log.d("browser", "{\r\n" + str + "    \"System Memory Usage (MB)\": {\r\n" + str + String.format("                total=: %.2f,\r\n", Double.valueOf((memoryInfo.totalMem / 1024.0d) / 1024.0d)) + str + String.format("                threshold=: %.2f,\r\n", Double.valueOf((memoryInfo.threshold / 1024.0d) / 1024.0d)) + str + String.format("                availMem=: %.2f,\r\n", Double.valueOf((memoryInfo.availMem / 1024.0d) / 1024.0d)) + str + String.format("                hiddenAppThreshold=: %.2f,\r\n", Double.valueOf((memoryInfo.hiddenAppThreshold / 1024.0d) / 1024.0d)) + str + String.format("                secondaryServerThreshold=: %.2f,\r\n", Double.valueOf((memoryInfo.secondaryServerThreshold / 1024.0d) / 1024.0d)) + str + String.format("                visibleAppThreshold=: %.2f,\r\n", Double.valueOf((memoryInfo.visibleAppThreshold / 1024.0d) / 1024.0d)) + str + String.format("                foregroundAppThreshold=: %.2f,\r\n", Double.valueOf((memoryInfo.foregroundAppThreshold / 1024.0d) / 1024.0d)));
         }
     }
 

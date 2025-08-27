@@ -2,14 +2,15 @@ package com.android.settingslib;
 
 import android.content.Context;
 import android.provider.Settings;
+
 /* loaded from: classes.dex */
 public class WirelessUtils {
     public static boolean isRadioAllowed(Context context, String str) {
-        if (isAirplaneModeOn(context)) {
-            String string = Settings.Global.getString(context.getContentResolver(), "airplane_mode_toggleable_radios");
-            return string != null && string.contains(str);
+        if (!isAirplaneModeOn(context)) {
+            return true;
         }
-        return true;
+        String string = Settings.Global.getString(context.getContentResolver(), "airplane_mode_toggleable_radios");
+        return string != null && string.contains(str);
     }
 
     public static boolean isAirplaneModeOn(Context context) {

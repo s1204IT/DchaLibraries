@@ -19,6 +19,7 @@ import com.android.systemui.statusbar.phone.StatusBarSignalPolicy;
 import com.android.systemui.statusbar.policy.DarkIconDispatcher;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class DemoStatusIcons extends StatusIconContainer implements DemoMode, DarkIconDispatcher.DarkReceiver {
     private int mColor;
@@ -73,11 +74,15 @@ public class DemoStatusIcons extends StatusIconContainer implements DemoMode, Da
             this.mDemoMode = true;
             this.mStatusIcons.setVisibility(8);
             setVisibility(0);
-        } else if (this.mDemoMode && str.equals("exit")) {
+            return;
+        }
+        if (this.mDemoMode && str.equals("exit")) {
             this.mDemoMode = false;
             this.mStatusIcons.setVisibility(0);
             setVisibility(8);
-        } else if (this.mDemoMode && str.equals("status")) {
+            return;
+        }
+        if (this.mDemoMode && str.equals("status")) {
             String string = bundle.getString("volume");
             if (string != null) {
                 updateSlot("volume", null, string.equals("vibrate") ? R.drawable.stat_sys_ringer_vibrate : 0);
@@ -114,11 +119,11 @@ public class DemoStatusIcons extends StatusIconContainer implements DemoMode, Da
             }
             String string7 = bundle.getString("mute");
             if (string7 != null) {
-                updateSlot("mute", null, string7.equals("show") ? 17301622 : 0);
+                updateSlot("mute", null, string7.equals("show") ? android.R.drawable.stat_notify_call_mute : 0);
             }
             String string8 = bundle.getString("speakerphone");
             if (string8 != null) {
-                updateSlot("speakerphone", null, string8.equals("show") ? 17301639 : 0);
+                updateSlot("speakerphone", null, string8.equals("show") ? android.R.drawable.stat_sys_speakerphone : 0);
             }
             String string9 = bundle.getString("cast");
             if (string9 != null) {
@@ -180,23 +185,24 @@ public class DemoStatusIcons extends StatusIconContainer implements DemoMode, Da
 
     public void addDemoWifiView(StatusBarSignalPolicy.WifiIconState wifiIconState) {
         Log.d("DemoStatusIcons", "addDemoWifiView: ");
-        StatusBarWifiView fromContext = StatusBarWifiView.fromContext(this.mContext, wifiIconState.slot);
+        StatusBarWifiView statusBarWifiViewFromContext = StatusBarWifiView.fromContext(this.mContext, wifiIconState.slot);
         int childCount = getChildCount();
         int i = 0;
         while (true) {
             if (i >= getChildCount()) {
                 break;
-            } else if (!(getChildAt(i) instanceof StatusBarMobileView)) {
+            }
+            if (!(getChildAt(i) instanceof StatusBarMobileView)) {
                 i++;
             } else {
                 childCount = i;
                 break;
             }
         }
-        this.mWifiView = fromContext;
+        this.mWifiView = statusBarWifiViewFromContext;
         this.mWifiView.applyWifiState(wifiIconState);
         this.mWifiView.setStaticDrawableColor(this.mColor);
-        addView(fromContext, childCount);
+        addView(statusBarWifiViewFromContext, childCount);
     }
 
     public void updateWifiState(StatusBarSignalPolicy.WifiIconState wifiIconState) {
@@ -210,11 +216,11 @@ public class DemoStatusIcons extends StatusIconContainer implements DemoMode, Da
 
     public void addMobileView(StatusBarSignalPolicy.MobileIconState mobileIconState) {
         Log.d("DemoStatusIcons", "addMobileView: ");
-        StatusBarMobileView fromContext = StatusBarMobileView.fromContext(this.mContext, mobileIconState.slot);
-        fromContext.applyMobileState(mobileIconState);
-        fromContext.setStaticDrawableColor(this.mColor);
-        this.mMobileViews.add(fromContext);
-        addView(fromContext, getChildCount());
+        StatusBarMobileView statusBarMobileViewFromContext = StatusBarMobileView.fromContext(this.mContext, mobileIconState.slot);
+        statusBarMobileViewFromContext.applyMobileState(mobileIconState);
+        statusBarMobileViewFromContext.setStaticDrawableColor(this.mColor);
+        this.mMobileViews.add(statusBarMobileViewFromContext);
+        addView(statusBarMobileViewFromContext, getChildCount());
     }
 
     public void updateMobileState(StatusBarSignalPolicy.MobileIconState mobileIconState) {
@@ -235,24 +241,24 @@ public class DemoStatusIcons extends StatusIconContainer implements DemoMode, Da
             this.mWifiView = null;
             return;
         }
-        StatusBarMobileView matchingMobileView = matchingMobileView(statusIconDisplayable);
-        if (matchingMobileView != null) {
-            removeView(matchingMobileView);
-            this.mMobileViews.remove(matchingMobileView);
+        StatusBarMobileView statusBarMobileViewMatchingMobileView = matchingMobileView(statusIconDisplayable);
+        if (statusBarMobileViewMatchingMobileView != null) {
+            removeView(statusBarMobileViewMatchingMobileView);
+            this.mMobileViews.remove(statusBarMobileViewMatchingMobileView);
         }
     }
 
     private StatusBarMobileView matchingMobileView(StatusIconDisplayable statusIconDisplayable) {
-        if (statusIconDisplayable instanceof StatusBarMobileView) {
-            StatusBarMobileView statusBarMobileView = (StatusBarMobileView) statusIconDisplayable;
-            Iterator<StatusBarMobileView> it = this.mMobileViews.iterator();
-            while (it.hasNext()) {
-                StatusBarMobileView next = it.next();
-                if (next.getState().subId == statusBarMobileView.getState().subId) {
-                    return next;
-                }
-            }
+        if (!(statusIconDisplayable instanceof StatusBarMobileView)) {
             return null;
+        }
+        StatusBarMobileView statusBarMobileView = (StatusBarMobileView) statusIconDisplayable;
+        Iterator<StatusBarMobileView> it = this.mMobileViews.iterator();
+        while (it.hasNext()) {
+            StatusBarMobileView next = it.next();
+            if (next.getState().subId == statusBarMobileView.getState().subId) {
+                return next;
+            }
         }
         return null;
     }

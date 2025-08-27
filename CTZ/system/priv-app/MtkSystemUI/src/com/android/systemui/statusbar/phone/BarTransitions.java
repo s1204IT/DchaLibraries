@@ -14,6 +14,7 @@ import android.view.View;
 import com.android.settingslib.Utils;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class BarTransitions {
     private boolean mAlwaysOpaque = false;
@@ -55,13 +56,11 @@ public class BarTransitions {
         onTransition(i2, this.mMode, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onTransition(int i, int i2, boolean z) {
+    protected void onTransition(int i, int i2, boolean z) {
         applyModeBackground(i, i2, z);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void applyModeBackground(int i, int i2, boolean z) {
+    protected void applyModeBackground(int i, int i2, boolean z) {
         this.mBarBackground.applyModeBackground(i, i2, z);
     }
 
@@ -94,14 +93,11 @@ public class BarTransitions {
         this.mBarBackground.finishAnimation();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isLightsOut(int i) {
+    protected boolean isLightsOut(int i) {
         return i == 3 || i == 6;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class BarBackgroundDrawable extends Drawable {
+    private static class BarBackgroundDrawable extends Drawable {
         private boolean mAnimating;
         private int mColor;
         private int mColorStart;
@@ -121,9 +117,9 @@ public class BarTransitions {
         public BarBackgroundDrawable(Context context, int i) {
             context.getResources();
             this.mOpaque = context.getColor(R.color.system_bar_background_opaque);
-            this.mSemiTransparent = context.getColor(17170773);
+            this.mSemiTransparent = context.getColor(android.R.color.car_cyan_300);
             this.mTransparent = context.getColor(R.color.system_bar_background_transparent);
-            this.mWarning = Utils.getColorAttr(context, 16844099);
+            this.mWarning = Utils.getColorAttr(context, android.R.attr.colorError);
             this.mGradient = context.getDrawable(i);
         }
 
@@ -168,9 +164,9 @@ public class BarTransitions {
             this.mMode = i2;
             this.mAnimating = z;
             if (z) {
-                long elapsedRealtime = SystemClock.elapsedRealtime();
-                this.mStartTime = elapsedRealtime;
-                this.mEndTime = elapsedRealtime + 200;
+                long jElapsedRealtime = SystemClock.elapsedRealtime();
+                this.mStartTime = jElapsedRealtime;
+                this.mEndTime = jElapsedRealtime + 200;
                 this.mGradientAlphaStart = this.mGradientAlpha;
                 this.mColorStart = this.mColor;
             }
@@ -194,9 +190,7 @@ public class BarTransitions {
             int i;
             if (this.mMode == 5) {
                 i = this.mWarning;
-            } else if (this.mMode == 2) {
-                i = this.mSemiTransparent;
-            } else if (this.mMode == 1) {
+            } else if (this.mMode == 2 || this.mMode == 1) {
                 i = this.mSemiTransparent;
             } else if (this.mMode == 4 || this.mMode == 6) {
                 i = this.mTransparent;
@@ -207,16 +201,15 @@ public class BarTransitions {
                 this.mColor = i;
                 this.mGradientAlpha = 0;
             } else {
-                long elapsedRealtime = SystemClock.elapsedRealtime();
-                if (elapsedRealtime >= this.mEndTime) {
+                if (SystemClock.elapsedRealtime() >= this.mEndTime) {
                     this.mAnimating = false;
                     this.mColor = i;
                     this.mGradientAlpha = 0;
                 } else {
-                    float max = Math.max(0.0f, Math.min(Interpolators.LINEAR.getInterpolation(((float) (elapsedRealtime - this.mStartTime)) / ((float) (this.mEndTime - this.mStartTime))), 1.0f));
-                    float f = 1.0f - max;
-                    this.mGradientAlpha = (int) ((0 * max) + (this.mGradientAlphaStart * f));
-                    this.mColor = Color.argb((int) ((Color.alpha(i) * max) + (Color.alpha(this.mColorStart) * f)), (int) ((Color.red(i) * max) + (Color.red(this.mColorStart) * f)), (int) ((Color.green(i) * max) + (Color.green(this.mColorStart) * f)), (int) ((max * Color.blue(i)) + (Color.blue(this.mColorStart) * f)));
+                    float fMax = Math.max(0.0f, Math.min(Interpolators.LINEAR.getInterpolation((r3 - this.mStartTime) / (this.mEndTime - this.mStartTime)), 1.0f));
+                    float f = 1.0f - fMax;
+                    this.mGradientAlpha = (int) ((0 * fMax) + (this.mGradientAlphaStart * f));
+                    this.mColor = Color.argb((int) ((Color.alpha(i) * fMax) + (Color.alpha(this.mColorStart) * f)), (int) ((Color.red(i) * fMax) + (Color.red(this.mColorStart) * f)), (int) ((Color.green(i) * fMax) + (Color.green(this.mColorStart) * f)), (int) ((fMax * Color.blue(i)) + (Color.blue(this.mColorStart) * f)));
                 }
             }
             if (this.mGradientAlpha > 0) {

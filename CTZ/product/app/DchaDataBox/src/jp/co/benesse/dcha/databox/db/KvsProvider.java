@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class KvsProvider extends ContentProvider {
     private static final int UNSPECIFIED_ID = 0;
@@ -26,24 +27,24 @@ public class KvsProvider extends ContentProvider {
 
     @Override // android.content.ContentProvider
     public int delete(Uri uri, String str, String[] strArr) {
-        String[] addAppidToselectionArgs;
+        String[] strArrAddAppidToselectionArgs;
         String str2;
         try {
-            int match = sUriMatcher.match(uri);
-            if (match != ContractKvs.KVS.codeForMany && match != WIPE_ID) {
+            int iMatch = sUriMatcher.match(uri);
+            if (iMatch != ContractKvs.KVS.codeForMany && iMatch != WIPE_ID) {
                 throw new IllegalArgumentException("Unknown URI " + uri);
             }
-            String str3 = null;
+            String strAddAppidToSelection = null;
             if (uri.getPath().endsWith("cmd/wipe")) {
                 str2 = ContractKvs.KVS.pathName;
-                addAppidToselectionArgs = null;
+                strArrAddAppidToselectionArgs = null;
             } else {
-                String str4 = ContractKvs.KVS.pathName;
-                str3 = addAppidToSelection(str);
-                addAppidToselectionArgs = addAppidToselectionArgs(uri, strArr);
-                str2 = str4;
+                String str3 = ContractKvs.KVS.pathName;
+                strAddAppidToSelection = addAppidToSelection(str);
+                strArrAddAppidToselectionArgs = addAppidToselectionArgs(uri, strArr);
+                str2 = str3;
             }
-            return this.mDbHelper.getWritableDatabase().delete(str2, str3, addAppidToselectionArgs);
+            return this.mDbHelper.getWritableDatabase().delete(str2, strAddAppidToSelection, strArrAddAppidToselectionArgs);
         } catch (Exception e) {
             Logger.e(TAG, e);
             return UNSPECIFIED_ID;
@@ -70,9 +71,9 @@ public class KvsProvider extends ContentProvider {
                 String str = ContractKvs.KVS.pathName;
                 contentValues.remove(KvsColumns.APP_ID);
                 contentValues.put(KvsColumns.APP_ID, uri.getLastPathSegment());
-                long insert = this.mDbHelper.getWritableDatabase().insert(str, null, contentValues);
-                if (insert > 0) {
-                    return ContentUris.withAppendedId(uri, insert);
+                long jInsert = this.mDbHelper.getWritableDatabase().insert(str, null, contentValues);
+                if (jInsert > 0) {
+                    return ContentUris.withAppendedId(uri, jInsert);
                 }
                 throw new IllegalArgumentException("Failed to insert row into " + uri);
             }
@@ -95,11 +96,11 @@ public class KvsProvider extends ContentProvider {
         try {
             if (sUriMatcher.match(uri) == ContractKvs.KVS.codeForMany) {
                 String str3 = ContractKvs.KVS.pathName;
-                String addAppidToSelection = addAppidToSelection(str);
-                String[] addAppidToselectionArgs = addAppidToselectionArgs(uri, strArr2);
+                String strAddAppidToSelection = addAppidToSelection(str);
+                String[] strArrAddAppidToselectionArgs = addAppidToselectionArgs(uri, strArr2);
                 SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
                 sQLiteQueryBuilder.setTables(str3);
-                return sQLiteQueryBuilder.query(this.mDbHelper.getReadableDatabase(), strArr, addAppidToSelection, addAppidToselectionArgs, null, null, str2);
+                return sQLiteQueryBuilder.query(this.mDbHelper.getReadableDatabase(), strArr, strAddAppidToSelection, strArrAddAppidToselectionArgs, null, null, str2);
             }
             throw new IllegalArgumentException("Unknown URI " + uri);
         } catch (Exception e) {

@@ -3,6 +3,7 @@ package com.android.settings.core;
 import android.content.Context;
 import android.support.v7.preference.Preference;
 import com.android.settings.widget.SeekBarPreference;
+
 /* loaded from: classes.dex */
 public abstract class SliderPreferenceController extends BasePreferenceController implements Preference.OnPreferenceChangeListener {
     public abstract int getMaxSteps();

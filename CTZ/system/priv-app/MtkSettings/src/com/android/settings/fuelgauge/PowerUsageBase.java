@@ -8,6 +8,7 @@ import android.os.UserManager;
 import com.android.internal.os.BatteryStatsHelper;
 import com.android.settings.dashboard.DashboardFragment;
 import com.android.settings.fuelgauge.BatteryBroadcastReceiver;
+
 /* loaded from: classes.dex */
 public abstract class PowerUsageBase extends DashboardFragment {
     static final int MENU_STATS_REFRESH = 2;
@@ -33,7 +34,7 @@ public abstract class PowerUsageBase extends DashboardFragment {
         this.mBatteryBroadcastReceiver.setBatteryChangedListener(new BatteryBroadcastReceiver.OnBatteryChangedListener() { // from class: com.android.settings.fuelgauge.-$$Lambda$PowerUsageBase$FbH3lnw7c_hajFOBNpt07exnLiM
             @Override // com.android.settings.fuelgauge.BatteryBroadcastReceiver.OnBatteryChangedListener
             public final void onBatteryChanged(int i) {
-                PowerUsageBase.this.restartBatteryStatsLoader(i);
+                this.f$0.restartBatteryStatsLoader(i);
             }
         });
     }
@@ -56,21 +57,18 @@ public abstract class PowerUsageBase extends DashboardFragment {
         this.mBatteryBroadcastReceiver.unRegister();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void restartBatteryStatsLoader(int i) {
+    protected void restartBatteryStatsLoader(int i) {
         Bundle bundle = new Bundle();
         bundle.putInt("refresh_type", i);
         getLoaderManager().restartLoader(0, bundle, new PowerLoaderCallback());
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updatePreference(BatteryHistoryPreference batteryHistoryPreference) {
-        long currentTimeMillis = System.currentTimeMillis();
+    protected void updatePreference(BatteryHistoryPreference batteryHistoryPreference) {
+        long jCurrentTimeMillis = System.currentTimeMillis();
         batteryHistoryPreference.setStats(this.mStatsHelper);
-        BatteryUtils.logRuntime("PowerUsageBase", "updatePreference", currentTimeMillis);
+        BatteryUtils.logRuntime("PowerUsageBase", "updatePreference", jCurrentTimeMillis);
     }
 
-    /* loaded from: classes.dex */
     public class PowerLoaderCallback implements LoaderManager.LoaderCallbacks<BatteryStatsHelper> {
         private int mRefreshType;
 
@@ -83,6 +81,7 @@ public abstract class PowerUsageBase extends DashboardFragment {
             return new BatteryStatsHelperLoader(PowerUsageBase.this.getContext());
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<BatteryStatsHelper> loader, BatteryStatsHelper batteryStatsHelper) {
             PowerUsageBase.this.mStatsHelper = batteryStatsHelper;

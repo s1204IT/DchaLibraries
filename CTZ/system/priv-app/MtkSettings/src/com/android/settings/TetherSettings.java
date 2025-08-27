@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,6 +24,7 @@ import com.android.settingslib.wifi.AccessPoint;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
+
 /* loaded from: classes.dex */
 public class TetherSettings extends RestrictedSettingsFragment implements DataSaverBackend.Listener {
     private boolean mBluetoothEnableForTether;
@@ -152,7 +154,6 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
     public void onBlacklistStatusChanged(int i, boolean z) {
     }
 
-    /* loaded from: classes.dex */
     private class TetherChangeReceiver extends BroadcastReceiver {
         private TetherChangeReceiver() {
         }
@@ -205,7 +206,7 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         this.mStartTetheringCallback = new OnStartTetheringCallback(this);
         this.mMassStorageActive = "shared".equals(Environment.getExternalStorageState());
         this.mTetherChangeReceiver = new TetherChangeReceiver();
-        Intent registerReceiver = activity.registerReceiver(this.mTetherChangeReceiver, new IntentFilter("android.net.conn.TETHER_STATE_CHANGED"));
+        Intent intentRegisterReceiver = activity.registerReceiver(this.mTetherChangeReceiver, new IntentFilter("android.net.conn.TETHER_STATE_CHANGED"));
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.hardware.usb.action.USB_STATE");
         activity.registerReceiver(this.mTetherChangeReceiver, intentFilter);
@@ -218,8 +219,8 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         intentFilter3.addAction("android.bluetooth.adapter.action.STATE_CHANGED");
         intentFilter3.addAction("android.bluetooth.pan.profile.action.CONNECTION_STATE_CHANGED");
         activity.registerReceiver(this.mTetherChangeReceiver, intentFilter3);
-        if (registerReceiver != null) {
-            this.mTetherChangeReceiver.onReceive(activity, registerReceiver);
+        if (intentRegisterReceiver != null) {
+            this.mTetherChangeReceiver.onReceive(activity, intentRegisterReceiver);
         }
         updateState();
     }
@@ -235,13 +236,11 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         this.mStartTetheringCallback = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateState() {
+    private void updateState() {
         updateState(this.mCm.getTetherableIfaces(), this.mCm.getTetheredIfaces(), this.mCm.getTetheringErroredIfaces());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateState(String[] strArr, String[] strArr2, String[] strArr3) {
+    private void updateState(String[] strArr, String[] strArr2, String[] strArr3) {
         updateUsbState(strArr, strArr2, strArr3);
         updateBluetoothState();
     }
@@ -253,27 +252,27 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         int i2 = 0;
         while (i < length) {
             String str = strArr[i];
-            int i3 = i2;
+            int lastTetherError = i2;
             for (String str2 : this.mUsbRegexs) {
-                if (str.matches(str2) && i3 == 0) {
-                    i3 = this.mCm.getLastTetherError(str);
+                if (str.matches(str2) && lastTetherError == 0) {
+                    lastTetherError = this.mCm.getLastTetherError(str);
                 }
             }
             i++;
-            i2 = i3;
+            i2 = lastTetherError;
         }
         int length2 = strArr2.length;
-        int i4 = 0;
+        int i3 = 0;
         boolean z2 = false;
-        while (i4 < length2) {
-            String str3 = strArr2[i4];
+        while (i3 < length2) {
+            String str3 = strArr2[i3];
             boolean z3 = z2;
             for (String str4 : this.mUsbRegexs) {
                 if (str3.matches(str4)) {
                     z3 = true;
                 }
             }
-            i4++;
+            i3++;
             z2 = z3;
         }
         for (String str5 : strArr3) {
@@ -301,19 +300,21 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         int state = defaultAdapter.getState();
         if (state == 13) {
             this.mBluetoothTether.setEnabled(false);
-        } else if (state == 11) {
+            return;
+        }
+        if (state == 11) {
             this.mBluetoothTether.setEnabled(false);
+            return;
+        }
+        BluetoothPan bluetoothPan = this.mBluetoothPan.get();
+        Log.d("TetheringSettings", "updateBluetoothState bluetoothPan= " + bluetoothPan + " btState= " + state + " mDataSaverEnabled=" + this.mDataSaverEnabled);
+        if (bluetoothPan != null) {
+            Log.d("TetheringSettings", "updateBluetoothState tetheringon= " + bluetoothPan.isTetheringOn());
+        }
+        if (state == 12 && bluetoothPan != null && bluetoothPan.isTetheringOn()) {
+            this.mBluetoothTether.setChecked(true);
+            this.mBluetoothTether.setEnabled(!this.mDataSaverEnabled);
         } else {
-            BluetoothPan bluetoothPan = this.mBluetoothPan.get();
-            Log.d("TetheringSettings", "updateBluetoothState bluetoothPan= " + bluetoothPan + " btState= " + state + " mDataSaverEnabled=" + this.mDataSaverEnabled);
-            if (bluetoothPan != null) {
-                Log.d("TetheringSettings", "updateBluetoothState tetheringon= " + bluetoothPan.isTetheringOn());
-            }
-            if (state == 12 && bluetoothPan != null && bluetoothPan.isTetheringOn()) {
-                this.mBluetoothTether.setChecked(true);
-                this.mBluetoothTether.setEnabled(!this.mDataSaverEnabled);
-                return;
-            }
             this.mBluetoothTether.setEnabled(!this.mDataSaverEnabled);
             this.mBluetoothTether.setChecked(false);
         }
@@ -323,8 +324,8 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         return TetherUtil.isProvisioningNeeded(context) && !isIntentAvailable(context);
     }
 
-    private static boolean isIntentAvailable(Context context) {
-        String[] stringArray = context.getResources().getStringArray(17236019);
+    private static boolean isIntentAvailable(Context context) throws Resources.NotFoundException {
+        String[] stringArray = context.getResources().getStringArray(android.R.array.config_companionPermSyncEnabledCerts);
         if (stringArray.length < 2) {
             return false;
         }
@@ -334,8 +335,7 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         return packageManager.queryIntentActivities(intent, 65536).size() > 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void startTethering(int i) {
+    private void startTethering(int i) {
         if (i == 2) {
             BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
             if (this.mBluetoothPan.get() == null) {
@@ -375,9 +375,7 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         return R.string.help_url_tether;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static final class OnStartTetheringCallback extends ConnectivityManager.OnStartTetheringCallback {
+    private static final class OnStartTetheringCallback extends ConnectivityManager.OnStartTetheringCallback {
         final WeakReference<TetherSettings> mTetherSettings;
 
         OnStartTetheringCallback(TetherSettings tetherSettings) {
@@ -400,8 +398,7 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onReceiveExt(String str, Intent intent) {
+    private void onReceiveExt(String str, Intent intent) {
         if (str.equals("android.bluetooth.pan.profile.action.CONNECTION_STATE_CHANGED")) {
             updateState();
         }

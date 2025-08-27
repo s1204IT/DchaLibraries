@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:sharedUserId="android.uid.system" android:versionCode="100" android:versionName="1.0.0" android:compileSdkVersion="28" android:compileSdkVersionCodename="9" package="com.sts.tottori.stsextension" platformBuildVersionCode="28" platformBuildVersionName="9">
-    <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="28"/>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sharedUserId="android.uid.system"
+    android:versionCode="100"
+    android:versionName="1.0.0"
+    android:compileSdkVersion="28"
+    android:compileSdkVersionCodename="9"
+    package="com.sts.tottori.stsextension"
+    platformBuildVersionCode="28"
+    platformBuildVersionName="9">
+    <uses-sdk
+        android:minSdkVersion="28"
+        android:targetSdkVersion="28"/>
     <application android:label="StsExtensionService">
-        <service android:name="com.sts.tottori.stsextension.StsExtensionService" android:enabled="true" android:exported="true">
+        <service
+            android:name="com.sts.tottori.stsextension.StsExtensionService"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.sts.tottori.stsextension.StsExtensionService"/>
             </intent-filter>

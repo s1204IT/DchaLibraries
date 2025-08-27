@@ -8,6 +8,7 @@ import com.google.common.base.Predicates;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 /* loaded from: classes.dex */
 public final class Iterators {
     static final UnmodifiableListIterator<Object> EMPTY_LIST_ITERATOR = new UnmodifiableListIterator<Object>() { // from class: com.google.common.collect.Iterators.1
@@ -67,8 +68,7 @@ public final class Iterators {
         return (UnmodifiableListIterator<T>) EMPTY_LIST_ITERATOR;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <T> Iterator<T> emptyModifiableIterator() {
+    static <T> Iterator<T> emptyModifiableIterator() {
         return (Iterator<T>) EMPTY_MODIFIABLE_ITERATOR;
     }
 
@@ -119,16 +119,10 @@ public final class Iterators {
         return z;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:4:0x0006  */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
     public static boolean elementsEqual(Iterator<?> it, Iterator<?> it2) {
         while (it.hasNext()) {
             if (!it2.hasNext() || !Objects.equal(it.next(), it2.next())) {
                 return false;
-            }
-            while (it.hasNext()) {
             }
         }
         return !it2.hasNext();
@@ -154,11 +148,11 @@ public final class Iterators {
     public static <T> boolean addAll(Collection<T> collection, Iterator<? extends T> it) {
         Preconditions.checkNotNull(collection);
         Preconditions.checkNotNull(it);
-        boolean z = false;
+        boolean zAdd = false;
         while (it.hasNext()) {
-            z |= collection.add(it.next());
+            zAdd |= collection.add(it.next());
         }
-        return z;
+        return zAdd;
     }
 
     public static <T> boolean any(Iterator<T> it, Predicate<? super T> predicate) {
@@ -192,8 +186,7 @@ public final class Iterators {
         return it.hasNext() ? it.next() : t;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <T> T pollNext(Iterator<T> it) {
+    static <T> T pollNext(Iterator<T> it) {
         if (it.hasNext()) {
             T next = it.next();
             it.remove();
@@ -202,8 +195,7 @@ public final class Iterators {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void clear(Iterator<?> it) {
+    static void clear(Iterator<?> it) {
         Preconditions.checkNotNull(it);
         while (it.hasNext()) {
             it.next();
@@ -215,8 +207,7 @@ public final class Iterators {
         return forArray(tArr, 0, tArr.length, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <T> UnmodifiableListIterator<T> forArray(final T[] tArr, final int i, int i2, int i3) {
+    static <T> UnmodifiableListIterator<T> forArray(final T[] tArr, final int i, int i2, int i3) {
         Preconditions.checkArgument(i2 >= 0);
         Preconditions.checkPositionIndexes(i, i + i2, tArr.length);
         Preconditions.checkPositionIndex(i3, i2);
@@ -251,7 +242,6 @@ public final class Iterators {
         };
     }
 
-    /* loaded from: classes.dex */
     private static class PeekingImpl<E> implements PeekingIterator<E> {
         private boolean hasPeeked;
         private final Iterator<? extends E> iterator;

@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 class LocaleDragCell extends RelativeLayout {
     private CheckBox mCheckbox;

@@ -1,8 +1,8 @@
 package com.android.systemui.settings;
+
 /* loaded from: classes.dex */
 public interface ToggleSlider {
 
-    /* loaded from: classes.dex */
     public interface Listener {
         void onChanged(ToggleSlider toggleSlider, boolean z, boolean z2, int i, boolean z3);
 

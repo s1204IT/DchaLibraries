@@ -1,6 +1,7 @@
 package com.android.settings.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -9,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.android.internal.util.Preconditions;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ChartGridView extends View {
     private Drawable mBorder;
@@ -30,30 +32,27 @@ public class ChartGridView extends View {
         this(context, attributeSet, 0);
     }
 
-    public ChartGridView(Context context, AttributeSet attributeSet, int i) {
+    public ChartGridView(Context context, AttributeSet attributeSet, int i) throws Resources.NotFoundException {
         super(context, attributeSet, i);
         setWillNotDraw(false);
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ChartGridView, i, 0);
-        this.mPrimary = obtainStyledAttributes.getDrawable(3);
-        this.mSecondary = obtainStyledAttributes.getDrawable(4);
-        this.mBorder = obtainStyledAttributes.getDrawable(2);
-        TypedArray obtainStyledAttributes2 = context.obtainStyledAttributes(obtainStyledAttributes.getResourceId(0, -1), com.android.internal.R.styleable.TextAppearance);
-        this.mLabelSize = obtainStyledAttributes2.getDimensionPixelSize(0, 0);
-        obtainStyledAttributes2.recycle();
-        this.mLabelColor = obtainStyledAttributes.getColorStateList(1).getDefaultColor();
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.ChartGridView, i, 0);
+        this.mPrimary = typedArrayObtainStyledAttributes.getDrawable(3);
+        this.mSecondary = typedArrayObtainStyledAttributes.getDrawable(4);
+        this.mBorder = typedArrayObtainStyledAttributes.getDrawable(2);
+        TypedArray typedArrayObtainStyledAttributes2 = context.obtainStyledAttributes(typedArrayObtainStyledAttributes.getResourceId(0, -1), com.android.internal.R.styleable.TextAppearance);
+        this.mLabelSize = typedArrayObtainStyledAttributes2.getDimensionPixelSize(0, 0);
+        typedArrayObtainStyledAttributes2.recycle();
+        this.mLabelColor = typedArrayObtainStyledAttributes.getColorStateList(1).getDefaultColor();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void init(ChartAxis chartAxis, ChartAxis chartAxis2) {
+    void init(ChartAxis chartAxis, ChartAxis chartAxis2) {
         this.mHoriz = (ChartAxis) Preconditions.checkNotNull(chartAxis, "missing horiz");
         this.mVert = (ChartAxis) Preconditions.checkNotNull(chartAxis2, "missing vert");
     }
 
     @Override // android.view.View
     protected void onDraw(Canvas canvas) {
-        float[] tickPoints;
-        float[] tickPoints2;
         int width = getWidth();
         int height = getHeight() - getPaddingBottom();
         Drawable drawable = this.mSecondary;
@@ -78,24 +77,24 @@ public class ChartGridView extends View {
         int height2 = this.mLabelStart != null ? this.mLabelStart.getHeight() / 8 : 0;
         Layout layout = this.mLabelStart;
         if (layout != null) {
-            int save = canvas.save();
+            int iSave = canvas.save();
             canvas.translate(0.0f, height + height2);
             layout.draw(canvas);
-            canvas.restoreToCount(save);
+            canvas.restoreToCount(iSave);
         }
         Layout layout2 = this.mLabelMid;
         if (layout2 != null) {
-            int save2 = canvas.save();
+            int iSave2 = canvas.save();
             canvas.translate((width - layout2.getWidth()) / 2, height + height2);
             layout2.draw(canvas);
-            canvas.restoreToCount(save2);
+            canvas.restoreToCount(iSave2);
         }
         Layout layout3 = this.mLabelEnd;
         if (layout3 != null) {
-            int save3 = canvas.save();
+            int iSave3 = canvas.save();
             canvas.translate(width - layout3.getWidth(), height + height2);
             layout3.draw(canvas);
-            canvas.restoreToCount(save3);
+            canvas.restoreToCount(iSave3);
         }
     }
 }

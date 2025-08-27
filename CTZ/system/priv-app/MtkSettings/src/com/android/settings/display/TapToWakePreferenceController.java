@@ -1,11 +1,13 @@
 package com.android.settings.display;
 
+import android.R;
 import android.content.Context;
 import android.provider.Settings;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class TapToWakePreferenceController extends AbstractPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     public TapToWakePreferenceController(Context context) {
@@ -19,7 +21,7 @@ public class TapToWakePreferenceController extends AbstractPreferenceController 
 
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public boolean isAvailable() {
-        return this.mContext.getResources().getBoolean(17957035);
+        return this.mContext.getResources().getBoolean(R.^attr-private.materialColorOnPrimary);
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController

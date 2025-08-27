@@ -1206,8 +1206,7 @@
     </attr>
     <attr name="layout_column" format="integer">
     </attr>
-    <attr name="layout_columnSpan" format="integer">
-        <item name="?0x1000001" value="1" />
+    <attr name="layout_columnSpan" format="integer" min="1">
     </attr>
     <attr name="layout_columnWeight" format="float">
     </attr>
@@ -1266,8 +1265,7 @@
     </attr>
     <attr name="layout_row" format="integer">
     </attr>
-    <attr name="layout_rowSpan" format="integer">
-        <item name="?0x1000001" value="1" />
+    <attr name="layout_rowSpan" format="integer" min="1">
     </attr>
     <attr name="layout_rowWeight" format="float">
     </attr>

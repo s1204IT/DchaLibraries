@@ -3,6 +3,7 @@ package com.android.settings.applications.appinfo;
 import android.content.Context;
 import android.text.BidiFormatter;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class AppVersionPreferenceController extends AppInfoPreferenceControllerBase {
     public AppVersionPreferenceController(Context context, String str) {

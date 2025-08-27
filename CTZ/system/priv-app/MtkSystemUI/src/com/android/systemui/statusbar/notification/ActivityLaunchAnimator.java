@@ -20,6 +20,7 @@ import com.android.systemui.statusbar.notification.ActivityLaunchAnimator;
 import com.android.systemui.statusbar.phone.NotificationPanelView;
 import com.android.systemui.statusbar.phone.StatusBar;
 import com.android.systemui.statusbar.phone.StatusBarWindowView;
+
 /* loaded from: classes.dex */
 public class ActivityLaunchAnimator {
     private boolean mAnimationPending;
@@ -30,7 +31,7 @@ public class ActivityLaunchAnimator {
     private final Runnable mTimeoutRunnable = new Runnable() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$ActivityLaunchAnimator$l5Gj6YM2XO6z1WFQpGTriWePKVk
         @Override // java.lang.Runnable
         public final void run() {
-            ActivityLaunchAnimator.lambda$new$0(ActivityLaunchAnimator.this);
+            ActivityLaunchAnimator.lambda$new$0(this.f$0);
         }
     };
 
@@ -61,8 +62,7 @@ public class ActivityLaunchAnimator {
         setAnimationPending((i == 2 || i == 0) && this.mStatusBar.getBarState() == 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setAnimationPending(boolean z) {
+    private void setAnimationPending(boolean z) {
         this.mAnimationPending = z;
         this.mStatusBarWindow.setExpandAnimationPending(z);
         if (z) {
@@ -72,9 +72,7 @@ public class ActivityLaunchAnimator {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class AnimationRunner extends IRemoteAnimationRunner.Stub {
+    class AnimationRunner extends IRemoteAnimationRunner.Stub {
         private final ExpandableNotificationRow mSourceNotification;
         private final SyncRtSurfaceTransactionApplier mSyncRtTransactionApplier;
         private final Rect mWindowCrop = new Rect();
@@ -90,7 +88,7 @@ public class ActivityLaunchAnimator {
             this.mSourceNotification.post(new Runnable() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$ActivityLaunchAnimator$AnimationRunner$sNLXzFzCbt6n0LlixbKU_lp1tVA
                 @Override // java.lang.Runnable
                 public final void run() {
-                    ActivityLaunchAnimator.AnimationRunner.lambda$onAnimationStart$0(ActivityLaunchAnimator.AnimationRunner.this, remoteAnimationTargetArr, iRemoteAnimationFinishedCallback);
+                    ActivityLaunchAnimator.AnimationRunner.lambda$onAnimationStart$0(this.f$0, remoteAnimationTargetArr, iRemoteAnimationFinishedCallback);
                 }
             });
         }
@@ -111,7 +109,7 @@ public class ActivityLaunchAnimator {
             if (!animationRunner.mInstantCollapsePanel) {
                 ActivityLaunchAnimator.this.mNotificationPanel.collapseWithDuration(400);
             }
-            ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+            ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
             animationRunner.mParams.startPosition = animationRunner.mSourceNotification.getLocationOnScreen();
             animationRunner.mParams.startTranslationZ = animationRunner.mSourceNotification.getTranslationZ();
             animationRunner.mParams.startClipTopAmount = animationRunner.mSourceNotification.getClipTopAmount();
@@ -125,19 +123,19 @@ public class ActivityLaunchAnimator {
                     }
                 }
             }
-            final int width = primaryRemoteAnimationTarget.sourceContainerBounds.width();
+            final int iWidth = primaryRemoteAnimationTarget.sourceContainerBounds.width();
             final int actualHeight = animationRunner.mSourceNotification.getActualHeight() - animationRunner.mSourceNotification.getClipBottomAmount();
-            final int width2 = animationRunner.mSourceNotification.getWidth();
-            ofFloat.setDuration(400L);
-            ofFloat.setInterpolator(Interpolators.LINEAR);
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.notification.ActivityLaunchAnimator.AnimationRunner.1
+            final int width = animationRunner.mSourceNotification.getWidth();
+            valueAnimatorOfFloat.setDuration(400L);
+            valueAnimatorOfFloat.setInterpolator(Interpolators.LINEAR);
+            valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.notification.ActivityLaunchAnimator.AnimationRunner.1
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
                     AnimationRunner.this.mParams.linearProgress = valueAnimator.getAnimatedFraction();
                     float interpolation = Interpolators.FAST_OUT_SLOW_IN.getInterpolation(AnimationRunner.this.mParams.linearProgress);
-                    int lerp = (int) MathUtils.lerp(width2, width, interpolation);
-                    AnimationRunner.this.mParams.left = (int) ((width - lerp) / 2.0f);
-                    AnimationRunner.this.mParams.right = AnimationRunner.this.mParams.left + lerp;
+                    int iLerp = (int) MathUtils.lerp(width, iWidth, interpolation);
+                    AnimationRunner.this.mParams.left = (int) ((iWidth - iLerp) / 2.0f);
+                    AnimationRunner.this.mParams.right = AnimationRunner.this.mParams.left + iLerp;
                     AnimationRunner.this.mParams.top = (int) MathUtils.lerp(AnimationRunner.this.mParams.startPosition[1], primaryRemoteAnimationTarget.position.y, interpolation);
                     AnimationRunner.this.mParams.bottom = (int) MathUtils.lerp(AnimationRunner.this.mParams.startPosition[1] + actualHeight, primaryRemoteAnimationTarget.position.y + primaryRemoteAnimationTarget.sourceContainerBounds.bottom, interpolation);
                     AnimationRunner.this.applyParamsToWindow(primaryRemoteAnimationTarget);
@@ -145,7 +143,7 @@ public class ActivityLaunchAnimator {
                     AnimationRunner.this.applyParamsToNotificationList(AnimationRunner.this.mParams);
                 }
             });
-            ofFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.notification.ActivityLaunchAnimator.AnimationRunner.2
+            valueAnimatorOfFloat.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.notification.ActivityLaunchAnimator.AnimationRunner.2
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
                     AnimationRunner.this.setExpandAnimationRunning(false);
@@ -155,12 +153,11 @@ public class ActivityLaunchAnimator {
                     AnimationRunner.this.invokeCallback(iRemoteAnimationFinishedCallback);
                 }
             });
-            ofFloat.start();
+            valueAnimatorOfFloat.start();
             ActivityLaunchAnimator.this.setAnimationPending(false);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void invokeCallback(IRemoteAnimationFinishedCallback iRemoteAnimationFinishedCallback) {
+        private void invokeCallback(IRemoteAnimationFinishedCallback iRemoteAnimationFinishedCallback) {
             try {
                 iRemoteAnimationFinishedCallback.onAnimationFinished();
             } catch (RemoteException e) {
@@ -177,8 +174,7 @@ public class ActivityLaunchAnimator {
             return null;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setExpandAnimationRunning(boolean z) {
+        private void setExpandAnimationRunning(boolean z) {
             ActivityLaunchAnimator.this.mNotificationPanel.setLaunchingNotification(z);
             this.mSourceNotification.setExpandAnimationRunning(z);
             ActivityLaunchAnimator.this.mStatusBarWindow.setExpandAnimationRunning(z);
@@ -189,19 +185,16 @@ public class ActivityLaunchAnimator {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void applyParamsToNotificationList(ExpandAnimationParameters expandAnimationParameters) {
+        private void applyParamsToNotificationList(ExpandAnimationParameters expandAnimationParameters) {
             ActivityLaunchAnimator.this.mNotificationContainer.applyExpandAnimationParams(expandAnimationParameters);
             ActivityLaunchAnimator.this.mNotificationPanel.applyExpandAnimationParams(expandAnimationParameters);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void applyParamsToNotification(ExpandAnimationParameters expandAnimationParameters) {
+        private void applyParamsToNotification(ExpandAnimationParameters expandAnimationParameters) {
             this.mSourceNotification.applyExpandAnimationParams(expandAnimationParameters);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void applyParamsToWindow(RemoteAnimationTarget remoteAnimationTarget) {
+        private void applyParamsToWindow(RemoteAnimationTarget remoteAnimationTarget) {
             Matrix matrix = new Matrix();
             matrix.postTranslate(0.0f, this.mParams.top - remoteAnimationTarget.position.y);
             this.mWindowCrop.set(this.mParams.left, 0, this.mParams.right, this.mParams.getHeight());
@@ -212,7 +205,7 @@ public class ActivityLaunchAnimator {
             this.mSourceNotification.post(new Runnable() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$ActivityLaunchAnimator$AnimationRunner$M-3NAwVAMqbtd1nWxQdGu3JgCNY
                 @Override // java.lang.Runnable
                 public final void run() {
-                    ActivityLaunchAnimator.AnimationRunner.lambda$onAnimationCancelled$1(ActivityLaunchAnimator.AnimationRunner.this);
+                    ActivityLaunchAnimator.AnimationRunner.lambda$onAnimationCancelled$1(this.f$0);
                 }
             });
         }
@@ -223,7 +216,6 @@ public class ActivityLaunchAnimator {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ExpandAnimationParameters {
         int bottom;
         int left;
@@ -248,13 +240,13 @@ public class ActivityLaunchAnimator {
         }
 
         public int getTopChange() {
-            int i;
+            int iLerp;
             if (this.startClipTopAmount != 0.0f) {
-                i = (int) MathUtils.lerp(0.0f, this.startClipTopAmount, Interpolators.FAST_OUT_SLOW_IN.getInterpolation(this.linearProgress));
+                iLerp = (int) MathUtils.lerp(0.0f, this.startClipTopAmount, Interpolators.FAST_OUT_SLOW_IN.getInterpolation(this.linearProgress));
             } else {
-                i = 0;
+                iLerp = 0;
             }
-            return Math.min((this.top - this.startPosition[1]) - i, 0);
+            return Math.min((this.top - this.startPosition[1]) - iLerp, 0);
         }
 
         public float getProgress() {
@@ -262,7 +254,7 @@ public class ActivityLaunchAnimator {
         }
 
         public float getProgress(long j, long j2) {
-            return MathUtils.constrain(((this.linearProgress * 400.0f) - ((float) j)) / ((float) j2), 0.0f, 1.0f);
+            return MathUtils.constrain(((this.linearProgress * 400.0f) - j) / j2, 0.0f, 1.0f);
         }
 
         public int getStartClipTopAmount() {

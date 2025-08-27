@@ -1,4 +1,5 @@
 package com.android.quicksearchbox;
+
 /* loaded from: classes.dex */
 public interface Logger {
     void logExit(SuggestionCursor suggestionCursor, int i);

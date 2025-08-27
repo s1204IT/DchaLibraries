@@ -1,11 +1,13 @@
 package com.android.settings.gestures;
 
+import android.R;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.UserManager;
 import android.provider.Settings;
 import android.text.TextUtils;
+
 /* loaded from: classes.dex */
 public class SwipeUpPreferenceController extends GesturePreferenceController {
     private static final String ACTION_QUICKSTEP = "android.intent.action.QUICKSTEP_SERVICE";
@@ -21,10 +23,9 @@ public class SwipeUpPreferenceController extends GesturePreferenceController {
         this.mUserManager = (UserManager) context.getSystemService("user");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static boolean isGestureAvailable(Context context) {
-        if (context.getResources().getBoolean(17957048)) {
-            return context.getPackageManager().resolveService(new Intent(ACTION_QUICKSTEP).setPackage(ComponentName.unflattenFromString(context.getString(17039708)).getPackageName()), 1048576) != null;
+    static boolean isGestureAvailable(Context context) {
+        if (context.getResources().getBoolean(R.^attr-private.materialColorOnTertiaryFixed)) {
+            return context.getPackageManager().resolveService(new Intent(ACTION_QUICKSTEP).setPackage(ComponentName.unflattenFromString(context.getString(R.string.app_streaming_blocked_message_for_settings_dialog)).getPackageName()), 1048576) != null;
         }
         return false;
     }
@@ -56,6 +57,6 @@ public class SwipeUpPreferenceController extends GesturePreferenceController {
 
     @Override // com.android.settings.core.TogglePreferenceController
     public boolean isChecked() {
-        return Settings.Secure.getInt(this.mContext.getContentResolver(), "swipe_up_to_switch_apps_enabled", this.mContext.getResources().getBoolean(17957047) ? 1 : 0) != 0;
+        return Settings.Secure.getInt(this.mContext.getContentResolver(), "swipe_up_to_switch_apps_enabled", this.mContext.getResources().getBoolean(R.^attr-private.materialColorOnTertiaryContainer) ? 1 : 0) != 0;
     }
 }

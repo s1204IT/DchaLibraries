@@ -13,6 +13,7 @@ import com.android.settingslib.wifi.AccessPoint;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+
 /* loaded from: classes.dex */
 public class SharedPreferencesLogger implements SharedPreferences {
     private final Context mContext;
@@ -79,44 +80,42 @@ public class SharedPreferencesLogger implements SharedPreferences {
     public void unregisterOnSharedPreferenceChangeListener(SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void logValue(String str, Object obj) {
+    private void logValue(String str, Object obj) {
         logValue(str, obj, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void logValue(String str, Object obj, boolean z) {
-        int intValue;
-        String buildPrefKey = buildPrefKey(this.mTag, str);
-        if (!z && !this.mPreferenceKeySet.contains(buildPrefKey)) {
-            this.mPreferenceKeySet.add(buildPrefKey);
+    private void logValue(String str, Object obj, boolean z) {
+        int iIntValue;
+        String strBuildPrefKey = buildPrefKey(this.mTag, str);
+        if (!z && !this.mPreferenceKeySet.contains(strBuildPrefKey)) {
+            this.mPreferenceKeySet.add(strBuildPrefKey);
             return;
         }
-        this.mMetricsFeature.count(this.mContext, buildCountName(buildPrefKey, obj), 1);
-        Pair<Integer, Object> pair = null;
+        this.mMetricsFeature.count(this.mContext, buildCountName(strBuildPrefKey, obj), 1);
+        Pair<Integer, Object> pairCreate = null;
         if (obj instanceof Long) {
             Long l = (Long) obj;
             if (l.longValue() > 2147483647L) {
-                intValue = Preference.DEFAULT_ORDER;
+                iIntValue = Preference.DEFAULT_ORDER;
             } else if (l.longValue() < -2147483648L) {
-                intValue = AccessPoint.UNREACHABLE_RSSI;
+                iIntValue = AccessPoint.UNREACHABLE_RSSI;
             } else {
-                intValue = l.intValue();
+                iIntValue = l.intValue();
             }
-            pair = Pair.create(1089, Integer.valueOf(intValue));
+            pairCreate = Pair.create(1089, Integer.valueOf(iIntValue));
         } else if (obj instanceof Integer) {
-            pair = Pair.create(1089, obj);
+            pairCreate = Pair.create(1089, obj);
         } else if (obj instanceof Boolean) {
-            pair = Pair.create(1089, Integer.valueOf(((Boolean) obj).booleanValue() ? 1 : 0));
+            pairCreate = Pair.create(1089, Integer.valueOf(((Boolean) obj).booleanValue() ? 1 : 0));
         } else if (obj instanceof Float) {
-            pair = Pair.create(995, obj);
+            pairCreate = Pair.create(995, obj);
         } else if (obj instanceof String) {
-            Log.d("SharedPreferencesLogger", "Tried to log string preference " + buildPrefKey + " = " + obj);
+            Log.d("SharedPreferencesLogger", "Tried to log string preference " + strBuildPrefKey + " = " + obj);
         } else {
             Log.w("SharedPreferencesLogger", "Tried to log unloggable object" + obj);
         }
-        if (pair != null) {
-            this.mMetricsFeature.action(this.mContext, 853, Pair.create(854, buildPrefKey), pair);
+        if (pairCreate != null) {
+            this.mMetricsFeature.action(this.mContext, 853, Pair.create(854, strBuildPrefKey), pairCreate);
         }
     }
 
@@ -124,8 +123,7 @@ public class SharedPreferencesLogger implements SharedPreferences {
         this.mMetricsFeature.action(this.mContext, 853, str2, Pair.create(854, this.mTag + "/" + str));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void safeLogValue(String str, String str2) {
+    private void safeLogValue(String str, String str2) {
         new AsyncPackageCheck().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, str, str2);
     }
 
@@ -137,37 +135,34 @@ public class SharedPreferencesLogger implements SharedPreferences {
         return str + "/" + str2;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AsyncPackageCheck extends AsyncTask<String, Void, Void> {
+    private class AsyncPackageCheck extends AsyncTask<String, Void, Void> {
         private AsyncPackageCheck() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(String... strArr) {
+        protected Void doInBackground(String... strArr) throws PackageManager.NameNotFoundException {
             String str = strArr[0];
-            String str2 = strArr[1];
+            String packageName = strArr[1];
             PackageManager packageManager = SharedPreferencesLogger.this.mContext.getPackageManager();
             try {
-                ComponentName unflattenFromString = ComponentName.unflattenFromString(str2);
-                if (str2 != null) {
-                    str2 = unflattenFromString.getPackageName();
+                ComponentName componentNameUnflattenFromString = ComponentName.unflattenFromString(packageName);
+                if (packageName != null) {
+                    packageName = componentNameUnflattenFromString.getPackageName();
                 }
             } catch (Exception e) {
             }
             try {
-                packageManager.getPackageInfo(str2, 4194304);
-                SharedPreferencesLogger.this.logPackageName(str, str2);
+                packageManager.getPackageInfo(packageName, 4194304);
+                SharedPreferencesLogger.this.logPackageName(str, packageName);
                 return null;
             } catch (PackageManager.NameNotFoundException e2) {
-                SharedPreferencesLogger.this.logValue(str, str2, true);
+                SharedPreferencesLogger.this.logValue(str, packageName, true);
                 return null;
             }
         }
     }
 
-    /* loaded from: classes.dex */
     public class EditorLogger implements SharedPreferences.Editor {
         public EditorLogger() {
         }

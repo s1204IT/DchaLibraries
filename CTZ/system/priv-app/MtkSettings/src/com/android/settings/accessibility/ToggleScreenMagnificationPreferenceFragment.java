@@ -15,6 +15,7 @@ import android.widget.Switch;
 import android.widget.VideoView;
 import com.android.settings.R;
 import com.android.settings.widget.SwitchBar;
+
 /* loaded from: classes.dex */
 public class ToggleScreenMagnificationPreferenceFragment extends ToggleFeaturePreferenceFragment implements SwitchBar.OnSwitchChangeListener {
     protected Preference mConfigWarningPreference;
@@ -22,7 +23,6 @@ public class ToggleScreenMagnificationPreferenceFragment extends ToggleFeaturePr
     private boolean mLaunchFromSuw = false;
     private boolean mInitialSetting = false;
 
-    /* loaded from: classes.dex */
     protected class VideoPreference extends Preference {
         private ViewTreeObserver.OnGlobalLayoutListener mLayoutListener;
         private ImageView mVideoBackgroundView;
@@ -32,7 +32,7 @@ public class ToggleScreenMagnificationPreferenceFragment extends ToggleFeaturePr
         }
 
         @Override // android.support.v7.preference.Preference
-        public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
+        public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) throws Resources.NotFoundException {
             super.onBindViewHolder(preferenceViewHolder);
             Resources resources = ToggleScreenMagnificationPreferenceFragment.this.getPrefContext().getResources();
             final int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.screen_magnification_video_background_width);
@@ -71,9 +71,8 @@ public class ToggleScreenMagnificationPreferenceFragment extends ToggleFeaturePr
             this.mVideoBackgroundView.getViewTreeObserver().addOnGlobalLayoutListener(this.mLayoutListener);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // android.support.v7.preference.Preference
-        public void onPrepareForRemoval() {
+        protected void onPrepareForRemoval() {
             this.mVideoBackgroundView.getViewTreeObserver().removeOnGlobalLayoutListener(this.mLayoutListener);
         }
     }

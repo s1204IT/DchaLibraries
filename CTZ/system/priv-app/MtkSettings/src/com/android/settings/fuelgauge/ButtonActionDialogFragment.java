@@ -7,11 +7,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class ButtonActionDialogFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
     int mId;
 
-    /* loaded from: classes.dex */
     interface AppButtonsDialogListener {
         void handleDialogClick(int i);
     }
@@ -32,11 +32,11 @@ public class ButtonActionDialogFragment extends InstrumentedDialogFragment imple
     @Override // android.app.DialogFragment
     public Dialog onCreateDialog(Bundle bundle) {
         this.mId = getArguments().getInt("id");
-        AlertDialog createDialog = createDialog(this.mId);
-        if (createDialog == null) {
+        AlertDialog alertDialogCreateDialog = createDialog(this.mId);
+        if (alertDialogCreateDialog == null) {
             throw new IllegalArgumentException("unknown id " + this.mId);
         }
-        return createDialog;
+        return alertDialogCreateDialog;
     }
 
     @Override // android.content.DialogInterface.OnClickListener

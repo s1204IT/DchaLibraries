@@ -3,14 +3,13 @@ package com.google.common.collect;
 import com.google.common.base.Preconditions;
 import java.io.Serializable;
 import java.util.Comparator;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class ComparatorOrdering<T> extends Ordering<T> implements Serializable {
+final class ComparatorOrdering<T> extends Ordering<T> implements Serializable {
     private static final long serialVersionUID = 0;
     final Comparator<T> comparator;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ComparatorOrdering(Comparator<T> comparator) {
+    ComparatorOrdering(Comparator<T> comparator) {
         this.comparator = (Comparator) Preconditions.checkNotNull(comparator);
     }
 

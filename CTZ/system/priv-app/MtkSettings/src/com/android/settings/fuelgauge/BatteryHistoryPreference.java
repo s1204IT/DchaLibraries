@@ -9,6 +9,7 @@ import com.android.internal.os.BatteryStatsHelper;
 import com.android.settings.R;
 import com.android.settings.fuelgauge.BatteryInfo;
 import com.android.settings.graph.UsageView;
+
 /* loaded from: classes.dex */
 public class BatteryHistoryPreference extends Preference {
     boolean hideSummary;
@@ -26,7 +27,7 @@ public class BatteryHistoryPreference extends Preference {
         BatteryInfo.getBatteryInfo(getContext(), new BatteryInfo.Callback() { // from class: com.android.settings.fuelgauge.-$$Lambda$BatteryHistoryPreference$OfN0YWKsw9YRrCqoEdP8dybAPU0
             @Override // com.android.settings.fuelgauge.BatteryInfo.Callback
             public final void onBatteryInfoLoaded(BatteryInfo batteryInfo) {
-                BatteryHistoryPreference.lambda$setStats$0(BatteryHistoryPreference.this, batteryInfo);
+                BatteryHistoryPreference.lambda$setStats$0(this.f$0, batteryInfo);
             }
         }, batteryStatsHelper.getStats(), false);
     }
@@ -55,7 +56,7 @@ public class BatteryHistoryPreference extends Preference {
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         if (this.mBatteryInfo == null) {
             return;
         }
@@ -70,6 +71,6 @@ public class BatteryHistoryPreference extends Preference {
         UsageView usageView = (UsageView) preferenceViewHolder.findViewById(R.id.battery_usage);
         usageView.findViewById(R.id.label_group).setAlpha(0.7f);
         this.mBatteryInfo.bindHistory(usageView, new BatteryInfo.BatteryDataParser[0]);
-        BatteryUtils.logRuntime("BatteryHistoryPreference", "onBindViewHolder", currentTimeMillis);
+        BatteryUtils.logRuntime("BatteryHistoryPreference", "onBindViewHolder", jCurrentTimeMillis);
     }
 }

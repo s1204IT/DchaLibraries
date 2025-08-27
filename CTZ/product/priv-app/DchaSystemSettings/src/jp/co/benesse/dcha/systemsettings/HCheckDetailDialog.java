@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class HCheckDetailDialog extends DialogFragment implements View.OnClickListener {
     private DialogInterface.OnDismissListener dismissListener = null;

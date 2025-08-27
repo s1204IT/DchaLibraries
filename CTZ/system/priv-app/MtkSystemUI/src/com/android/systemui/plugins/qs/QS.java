@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import com.android.systemui.plugins.FragmentBase;
 import com.android.systemui.plugins.annotations.DependsOn;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
+
 @ProvidesInterface(action = QS.ACTION, version = 6)
 @DependsOn(target = HeightListener.class)
 /* loaded from: classes.dex */
@@ -15,7 +16,6 @@ public interface QS extends FragmentBase {
     public static final int VERSION = 6;
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public interface HeightListener {
         public static final int VERSION = 1;
 

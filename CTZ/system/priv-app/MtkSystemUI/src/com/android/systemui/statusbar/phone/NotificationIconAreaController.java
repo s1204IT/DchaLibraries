@@ -22,6 +22,7 @@ import com.android.systemui.statusbar.policy.DarkIconDispatcher;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import java.util.ArrayList;
 import java.util.function.Function;
+
 /* loaded from: classes.dex */
 public class NotificationIconAreaController implements DarkIconDispatcher.DarkReceiver {
     private Context mContext;
@@ -36,7 +37,7 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
     private final Runnable mUpdateStatusBarIcons = new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NWCrb8vzuopzf5kAygkNeXndtBo
         @Override // java.lang.Runnable
         public final void run() {
-            NotificationIconAreaController.this.updateStatusBarIcons();
+            this.f$0.updateStatusBarIcons();
         }
     };
     private int mIconTint = -1;
@@ -68,12 +69,12 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
 
     public void onDensityOrFontScaleChanged(Context context) {
         reloadDimens(context);
-        FrameLayout.LayoutParams generateIconLayoutParams = generateIconLayoutParams();
+        FrameLayout.LayoutParams layoutParamsGenerateIconLayoutParams = generateIconLayoutParams();
         for (int i = 0; i < this.mNotificationIcons.getChildCount(); i++) {
-            this.mNotificationIcons.getChildAt(i).setLayoutParams(generateIconLayoutParams);
+            this.mNotificationIcons.getChildAt(i).setLayoutParams(layoutParamsGenerateIconLayoutParams);
         }
         for (int i2 = 0; i2 < this.mShelfIcons.getChildCount(); i2++) {
-            this.mShelfIcons.getChildAt(i2).setLayoutParams(generateIconLayoutParams);
+            this.mShelfIcons.getChildAt(i2).setLayoutParams(layoutParamsGenerateIconLayoutParams);
         }
     }
 
@@ -83,7 +84,7 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
 
     private void reloadDimens(Context context) {
         Resources resources = context.getResources();
-        this.mIconSize = resources.getDimensionPixelSize(17105312);
+        this.mIconSize = resources.getDimensionPixelSize(android.R.dimen.indeterminate_progress_alpha_19);
         this.mIconHPadding = resources.getDimensionPixelSize(R.dimen.status_bar_icon_padding);
     }
 
@@ -98,11 +99,7 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
         } else {
             this.mTintArea.set(rect);
         }
-        if (this.mNotificationIconArea != null) {
-            if (DarkIconDispatcher.isInArea(rect, this.mNotificationIconArea)) {
-                this.mIconTint = i;
-            }
-        } else {
+        if (this.mNotificationIconArea == null || DarkIconDispatcher.isInArea(rect, this.mNotificationIconArea)) {
             this.mIconTint = i;
         }
         applyNotificationIconsTint();
@@ -113,16 +110,16 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
     }
 
     protected boolean shouldShowNotificationIcon(NotificationData.Entry entry, boolean z, boolean z2, boolean z3) {
-        if ((!this.mEntryManager.getNotificationData().isAmbient(entry.key) || z) && StatusBar.isTopLevelChild(entry) && entry.row.getVisibility() != 8) {
-            if (entry.row.isDismissed() && z2) {
-                return false;
-            }
-            if (z3 && entry.isLastMessageFromReply()) {
-                return false;
-            }
-            return z || !this.mEntryManager.getNotificationData().shouldSuppressStatusBar(entry);
+        if ((this.mEntryManager.getNotificationData().isAmbient(entry.key) && !z) || !StatusBar.isTopLevelChild(entry) || entry.row.getVisibility() == 8) {
+            return false;
         }
-        return false;
+        if (entry.row.isDismissed() && z2) {
+            return false;
+        }
+        if (z3 && entry.isLastMessageFromReply()) {
+            return false;
+        }
+        return z || !this.mEntryManager.getNotificationData().shouldSuppressStatusBar(entry);
     }
 
     public void updateNotificationIcons() {
@@ -130,9 +127,7 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
         updateIconsForLayout(new Function() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NotificationIconAreaController$UqZBoYLzFV9iQ2ZKXh5_vFY0A6w
             @Override // java.util.function.Function
             public final Object apply(Object obj) {
-                StatusBarIconView statusBarIconView;
-                statusBarIconView = ((NotificationData.Entry) obj).expandedIcon;
-                return statusBarIconView;
+                return ((NotificationData.Entry) obj).expandedIcon;
             }
         }, this.mShelfIcons, true, false, false);
         applyNotificationIconsTint();
@@ -142,9 +137,7 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
         updateIconsForLayout(new Function() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NotificationIconAreaController$GwJ5PCGqDowcNUA9PbNBkuNSG7c
             @Override // java.util.function.Function
             public final Object apply(Object obj) {
-                StatusBarIconView statusBarIconView;
-                statusBarIconView = ((NotificationData.Entry) obj).icon;
-                return statusBarIconView;
+                return ((NotificationData.Entry) obj).icon;
             }
         }, this.mNotificationIcons, false, true, true);
     }
@@ -207,7 +200,7 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
         for (int i4 = 0; i4 < size; i4++) {
             notificationIconContainer.removeView((View) arrayList2.get(i4));
         }
-        ViewGroup.LayoutParams generateIconLayoutParams = generateIconLayoutParams();
+        ViewGroup.LayoutParams layoutParamsGenerateIconLayoutParams = generateIconLayoutParams();
         for (int i5 = 0; i5 < arrayList.size(); i5++) {
             StatusBarIconView statusBarIconView3 = (StatusBarIconView) arrayList.get(i5);
             notificationIconContainer.removeTransientView(statusBarIconView3);
@@ -215,7 +208,7 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
                 if (z2) {
                     statusBarIconView3.setOnDismissListener(this.mUpdateStatusBarIcons);
                 }
-                notificationIconContainer.addView(statusBarIconView3, i5, generateIconLayoutParams);
+                notificationIconContainer.addView(statusBarIconView3, i5, layoutParamsGenerateIconLayoutParams);
             }
         }
         notificationIconContainer.setChangingViewPositions(true);
@@ -241,26 +234,25 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
                 statusBarIconView.executeOnLayout(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NotificationIconAreaController$hxZzEn_IxyrKECdSreC0o-qUafc
                     @Override // java.lang.Runnable
                     public final void run() {
-                        NotificationIconAreaController.this.updateTintForIcon(statusBarIconView);
+                        this.f$0.updateTintForIcon(statusBarIconView);
                     }
                 });
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateTintForIcon(StatusBarIconView statusBarIconView) {
+    private void updateTintForIcon(StatusBarIconView statusBarIconView) {
         boolean z;
-        int i = 0;
+        int tint = 0;
         if (!Boolean.TRUE.equals(statusBarIconView.getTag(R.id.icon_is_pre_L)) || NotificationUtils.isGrayscale(statusBarIconView, this.mNotificationColorUtil)) {
             z = true;
         } else {
             z = false;
         }
         if (z) {
-            i = DarkIconDispatcher.getTint(this.mTintArea, statusBarIconView, this.mIconTint);
+            tint = DarkIconDispatcher.getTint(this.mTintArea, statusBarIconView, this.mIconTint);
         }
-        statusBarIconView.setStaticDrawableColor(i);
+        statusBarIconView.setStaticDrawableColor(tint);
         statusBarIconView.setDecorColor(this.mIconTint);
     }
 

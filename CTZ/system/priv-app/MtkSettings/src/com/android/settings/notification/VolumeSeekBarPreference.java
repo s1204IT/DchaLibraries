@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settings.widget.SeekBarPreference;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class VolumeSeekBarPreference extends SeekBarPreference {
     AudioManager mAudioManager;
@@ -29,7 +30,6 @@ public class VolumeSeekBarPreference extends SeekBarPreference {
     private SeekBarVolumizer mVolumizer;
     private boolean mZenMuted;
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onSampleStarting(SeekBarVolumizer seekBarVolumizer);
 
@@ -88,8 +88,8 @@ public class VolumeSeekBarPreference extends SeekBarPreference {
     @Override // com.android.settings.widget.SeekBarPreference, com.android.settingslib.RestrictedPreference, com.android.settingslib.TwoTargetPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        this.mSeekBar = (SeekBar) preferenceViewHolder.findViewById(16909273);
-        this.mIconView = (ImageView) preferenceViewHolder.findViewById(16908294);
+        this.mSeekBar = (SeekBar) preferenceViewHolder.findViewById(android.R.id.mode_in);
+        this.mIconView = (ImageView) preferenceViewHolder.findViewById(android.R.id.icon);
         this.mSuppressionTextView = (TextView) preferenceViewHolder.findViewById(R.id.suppression_text);
         init();
     }
@@ -134,8 +134,7 @@ public class VolumeSeekBarPreference extends SeekBarPreference {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateIconView() {
+    private void updateIconView() {
         if (this.mIconView == null) {
             return;
         }

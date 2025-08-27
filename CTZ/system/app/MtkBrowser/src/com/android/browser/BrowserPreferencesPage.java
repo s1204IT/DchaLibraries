@@ -14,6 +14,7 @@ import com.android.browser.preferences.PrivacySecurityPreferencesFragment;
 import com.android.browser.preferences.SearchEngineSettings;
 import com.android.browser.preferences.WebsiteSettingsFragment;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BrowserPreferencesPage extends PreferenceActivity {
     private List<PreferenceActivity.Header> mHeaders;
@@ -59,9 +60,9 @@ public class BrowserPreferencesPage extends PreferenceActivity {
 
     @Override // android.preference.PreferenceActivity
     public Intent onBuildStartFragmentIntent(String str, Bundle bundle, int i, int i2) {
-        Intent onBuildStartFragmentIntent = super.onBuildStartFragmentIntent(str, bundle, i, i2);
-        onBuildStartFragmentIntent.putExtra("currentPage", getIntent().getStringExtra("currentPage"));
-        return onBuildStartFragmentIntent;
+        Intent intentOnBuildStartFragmentIntent = super.onBuildStartFragmentIntent(str, bundle, i, i2);
+        intentOnBuildStartFragmentIntent.putExtra("currentPage", getIntent().getStringExtra("currentPage"));
+        return intentOnBuildStartFragmentIntent;
     }
 
     @Override // android.preference.PreferenceActivity

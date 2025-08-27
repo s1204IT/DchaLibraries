@@ -28,6 +28,7 @@ import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.instrumentation.Instrumentable;
 import com.android.settingslib.core.instrumentation.VisibilityLoggerMixin;
+
 /* loaded from: classes.dex */
 public class UserDictionarySettings extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, Instrumentable {
     private Cursor mCursor;
@@ -76,13 +77,13 @@ public class UserDictionarySettings extends ListFragment implements LoaderManage
             actionBar.setTitle(R.string.user_dict_settings_title);
             actionBar.setSubtitle(UserDictionarySettingsUtils.getLocaleDisplayName(getActivity(), this.mLocale));
         }
-        return layoutInflater.inflate(17367234, viewGroup, false);
+        return layoutInflater.inflate(android.R.layout.notification_template_material_call, viewGroup, false);
     }
 
     @Override // android.app.ListFragment, android.app.Fragment
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
-        TextView textView = (TextView) getView().findViewById(16908292);
+        TextView textView = (TextView) getView().findViewById(android.R.id.empty);
         textView.setText(R.string.user_dict_settings_empty_text);
         ListView listView = getListView();
         listView.setFastScrollEnabled(true);
@@ -97,7 +98,7 @@ public class UserDictionarySettings extends ListFragment implements LoaderManage
     }
 
     private ListAdapter createAdapter() {
-        return new MyAdapter(getActivity(), R.layout.user_dictionary_item, this.mCursor, new String[]{"word", "shortcut"}, new int[]{16908308, 16908309});
+        return new MyAdapter(getActivity(), R.layout.user_dictionary_item, this.mCursor, new String[]{"word", "shortcut"}, new int[]{android.R.id.text1, android.R.id.text2});
     }
 
     @Override // android.app.ListFragment
@@ -179,6 +180,7 @@ public class UserDictionarySettings extends ListFragment implements LoaderManage
         return new UserDictionaryCursorLoader(getContext(), this.mLocale);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         this.mCursor = cursor;
@@ -189,9 +191,7 @@ public class UserDictionarySettings extends ListFragment implements LoaderManage
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class MyAdapter extends SimpleCursorAdapter implements SectionIndexer {
+    private static class MyAdapter extends SimpleCursorAdapter implements SectionIndexer {
         private AlphabetIndexer mIndexer;
         private final SimpleCursorAdapter.ViewBinder mViewBinder;
 
@@ -215,7 +215,7 @@ public class UserDictionarySettings extends ListFragment implements LoaderManage
                 }
             };
             if (cursor != null) {
-                this.mIndexer = new AlphabetIndexer(cursor, cursor.getColumnIndexOrThrow("word"), context.getString(17039889));
+                this.mIndexer = new AlphabetIndexer(cursor, cursor.getColumnIndexOrThrow("word"), context.getString(android.R.string.config_defaultAccessibilityService));
             }
             setViewBinder(this.mViewBinder);
         }

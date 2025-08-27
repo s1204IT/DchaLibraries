@@ -5,6 +5,7 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
+
 /* loaded from: classes.dex */
 public interface IDchaService extends IInterface {
     void cancelSetup() throws RemoteException;
@@ -55,7 +56,6 @@ public interface IDchaService extends IInterface {
 
     boolean verifyUpdateImage(String str) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IDchaService {
         public Stub() {
             attachInterface(this, "jp.co.benesse.dcha.dchaservice.IDchaService");
@@ -75,15 +75,15 @@ public interface IDchaService extends IInterface {
             switch (i) {
                 case 1:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean verifyUpdateImage = verifyUpdateImage(parcel.readString());
+                    boolean zVerifyUpdateImage = verifyUpdateImage(parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(verifyUpdateImage ? 1 : 0);
+                    parcel2.writeInt(zVerifyUpdateImage ? 1 : 0);
                     return true;
                 case 2:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean copyUpdateImage = copyUpdateImage(parcel.readString(), parcel.readString());
+                    boolean zCopyUpdateImage = copyUpdateImage(parcel.readString(), parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(copyUpdateImage ? 1 : 0);
+                    parcel2.writeInt(zCopyUpdateImage ? 1 : 0);
                     return true;
                 case 3:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
@@ -106,21 +106,21 @@ public interface IDchaService extends IInterface {
                     return true;
                 case 7:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean checkPadRooted = checkPadRooted();
+                    boolean zCheckPadRooted = checkPadRooted();
                     parcel2.writeNoException();
-                    parcel2.writeInt(checkPadRooted ? 1 : 0);
+                    parcel2.writeInt(zCheckPadRooted ? 1 : 0);
                     return true;
                 case 8:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean installApp = installApp(parcel.readString(), parcel.readInt());
+                    boolean zInstallApp = installApp(parcel.readString(), parcel.readInt());
                     parcel2.writeNoException();
-                    parcel2.writeInt(installApp ? 1 : 0);
+                    parcel2.writeInt(zInstallApp ? 1 : 0);
                     return true;
                 case 9:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean uninstallApp = uninstallApp(parcel.readString(), parcel.readInt());
+                    boolean zUninstallApp = uninstallApp(parcel.readString(), parcel.readInt());
                     parcel2.writeNoException();
-                    parcel2.writeInt(uninstallApp ? 1 : 0);
+                    parcel2.writeInt(zUninstallApp ? 1 : 0);
                     return true;
                 case 10:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
@@ -166,15 +166,15 @@ public interface IDchaService extends IInterface {
                     return true;
                 case 18:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean copyFile = copyFile(parcel.readString(), parcel.readString());
+                    boolean zCopyFile = copyFile(parcel.readString(), parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(copyFile ? 1 : 0);
+                    parcel2.writeInt(zCopyFile ? 1 : 0);
                     return true;
                 case 19:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean deleteFile = deleteFile(parcel.readString());
+                    boolean zDeleteFile = deleteFile(parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(deleteFile ? 1 : 0);
+                    parcel2.writeInt(zDeleteFile ? 1 : 0);
                     return true;
                 case 20:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
@@ -184,9 +184,9 @@ public interface IDchaService extends IInterface {
                     return true;
                 case 21:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean isDeviceEncryptionEnabled = isDeviceEncryptionEnabled();
+                    boolean zIsDeviceEncryptionEnabled = isDeviceEncryptionEnabled();
                     parcel2.writeNoException();
-                    parcel2.writeInt(isDeviceEncryptionEnabled ? 1 : 0);
+                    parcel2.writeInt(zIsDeviceEncryptionEnabled ? 1 : 0);
                     return true;
                 case 22:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");

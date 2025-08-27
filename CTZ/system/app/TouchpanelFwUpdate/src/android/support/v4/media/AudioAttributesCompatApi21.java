@@ -4,11 +4,12 @@ import android.media.AudioAttributes;
 import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 /* loaded from: classes.dex */
 class AudioAttributesCompatApi21 {
     private static Method sAudioAttributesToLegacyStreamType;
 
-    public static int toLegacyStreamType(Wrapper aaWrap) {
+    public static int toLegacyStreamType(Wrapper aaWrap) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         AudioAttributes aaObject = aaWrap.unwrap();
         try {
             if (sAudioAttributesToLegacyStreamType == null) {
@@ -22,7 +23,6 @@ class AudioAttributesCompatApi21 {
         }
     }
 
-    /* loaded from: classes.dex */
     static final class Wrapper {
         private AudioAttributes mWrapped;
 

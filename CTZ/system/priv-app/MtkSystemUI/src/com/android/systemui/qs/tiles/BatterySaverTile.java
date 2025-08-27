@@ -2,6 +2,7 @@ package com.android.systemui.qs.tiles;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.widget.Switch;
 import com.android.settingslib.graph.BatteryMeterDrawableBase;
@@ -11,6 +12,7 @@ import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.BatteryController;
+
 /* loaded from: classes.dex */
 public class BatterySaverTile extends QSTileImpl<QSTile.BooleanState> implements BatteryController.BatteryStateChangeCallback {
     private final BatteryController mBatteryController;
@@ -24,7 +26,7 @@ public class BatterySaverTile extends QSTileImpl<QSTile.BooleanState> implements
         this.mBatteryController = (BatteryController) Dependency.get(BatteryController.class);
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -59,9 +61,9 @@ public class BatterySaverTile extends QSTileImpl<QSTile.BooleanState> implements
         return this.mContext.getString(R.string.battery_detail_switch_title);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         int i;
         if (this.mPluggedIn) {
             i = 0;
@@ -92,12 +94,11 @@ public class BatterySaverTile extends QSTileImpl<QSTile.BooleanState> implements
         refreshState(null);
     }
 
-    /* loaded from: classes.dex */
     public static class BatterySaverIcon extends QSTile.Icon {
         private int mState;
 
         @Override // com.android.systemui.plugins.qs.QSTile.Icon
-        public Drawable getDrawable(Context context) {
+        public Drawable getDrawable(Context context) throws Resources.NotFoundException {
             BatterySaverDrawable batterySaverDrawable = new BatterySaverDrawable(context, QSTileImpl.getColorForState(context, this.mState));
             batterySaverDrawable.mState = this.mState;
             int dimensionPixelSize = context.getResources().getDimensionPixelSize(R.dimen.qs_tile_divider_height);
@@ -106,7 +107,6 @@ public class BatterySaverTile extends QSTileImpl<QSTile.BooleanState> implements
         }
     }
 
-    /* loaded from: classes.dex */
     private static class BatterySaverDrawable extends BatteryMeterDrawableBase {
         private int mState;
 

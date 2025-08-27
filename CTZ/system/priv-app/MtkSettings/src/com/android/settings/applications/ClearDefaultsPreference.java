@@ -3,6 +3,7 @@ package com.android.settings.applications;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.hardware.usb.IUsbManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.android.settings.R;
 import com.android.settingslib.applications.AppUtils;
 import com.android.settingslib.applications.ApplicationsState;
+
 /* loaded from: classes.dex */
 public class ClearDefaultsPreference extends Preference {
     protected static final String TAG = ClearDefaultsPreference.class.getSimpleName();
@@ -44,7 +46,7 @@ public class ClearDefaultsPreference extends Preference {
     }
 
     public ClearDefaultsPreference(Context context, AttributeSet attributeSet) {
-        this(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.preferenceStyle, 16842894));
+        this(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.preferenceStyle, android.R.attr.preferenceStyle));
     }
 
     public ClearDefaultsPreference(Context context) {
@@ -60,20 +62,20 @@ public class ClearDefaultsPreference extends Preference {
     }
 
     @Override // android.support.v7.preference.Preference
-    public void onBindViewHolder(final PreferenceViewHolder preferenceViewHolder) {
+    public void onBindViewHolder(final PreferenceViewHolder preferenceViewHolder) throws Resources.NotFoundException {
         super.onBindViewHolder(preferenceViewHolder);
         this.mActivitiesButton = (Button) preferenceViewHolder.findViewById(R.id.clear_activities_button);
         this.mActivitiesButton.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.applications.ClearDefaultsPreference.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 if (ClearDefaultsPreference.this.mUsbManager != null) {
-                    int myUserId = UserHandle.myUserId();
+                    int iMyUserId = UserHandle.myUserId();
                     ClearDefaultsPreference.this.mPm.clearPackagePreferredActivities(ClearDefaultsPreference.this.mPackageName);
                     if (ClearDefaultsPreference.this.isDefaultBrowser(ClearDefaultsPreference.this.mPackageName)) {
-                        ClearDefaultsPreference.this.mPm.setDefaultBrowserPackageNameAsUser(null, myUserId);
+                        ClearDefaultsPreference.this.mPm.setDefaultBrowserPackageNameAsUser(null, iMyUserId);
                     }
                     try {
-                        ClearDefaultsPreference.this.mUsbManager.clearDefaults(ClearDefaultsPreference.this.mPackageName, myUserId);
+                        ClearDefaultsPreference.this.mUsbManager.clearDefaults(ClearDefaultsPreference.this.mPackageName, iMyUserId);
                     } catch (RemoteException e) {
                         Log.e(ClearDefaultsPreference.TAG, "mUsbManager.clearDefaults", e);
                     }
@@ -85,21 +87,21 @@ public class ClearDefaultsPreference extends Preference {
         updateUI(preferenceViewHolder);
     }
 
-    public boolean updateUI(PreferenceViewHolder preferenceViewHolder) {
-        boolean hasBindAppWidgetPermission = this.mAppWidgetManager.hasBindAppWidgetPermission(this.mAppEntry.info.packageName);
+    public boolean updateUI(PreferenceViewHolder preferenceViewHolder) throws Resources.NotFoundException {
+        boolean zHasBindAppWidgetPermission = this.mAppWidgetManager.hasBindAppWidgetPermission(this.mAppEntry.info.packageName);
         TextView textView = (TextView) preferenceViewHolder.findViewById(R.id.auto_launch);
         boolean z = AppUtils.hasPreferredActivities(this.mPm, this.mPackageName) || isDefaultBrowser(this.mPackageName) || AppUtils.hasUsbDefaults(this.mUsbManager, this.mPackageName);
-        if (!z && !hasBindAppWidgetPermission) {
+        if (!z && !zHasBindAppWidgetPermission) {
             resetLaunchDefaultsUi(textView);
         } else {
-            boolean z2 = hasBindAppWidgetPermission && z;
-            if (hasBindAppWidgetPermission) {
+            boolean z2 = zHasBindAppWidgetPermission && z;
+            if (zHasBindAppWidgetPermission) {
                 textView.setText(R.string.auto_launch_label_generic);
             } else {
                 textView.setText(R.string.auto_launch_label);
             }
             Context context = getContext();
-            CharSequence charSequence = null;
+            CharSequence charSequenceConcat = null;
             int dimensionPixelSize = context.getResources().getDimensionPixelSize(R.dimen.installed_app_details_bullet_offset);
             if (z) {
                 CharSequence text = context.getText(R.string.auto_launch_enable_text);
@@ -107,29 +109,27 @@ public class ClearDefaultsPreference extends Preference {
                 if (z2) {
                     spannableString.setSpan(new BulletSpan(dimensionPixelSize), 0, text.length(), 0);
                 }
-                charSequence = TextUtils.concat(spannableString, "\n");
+                charSequenceConcat = TextUtils.concat(spannableString, "\n");
             }
-            if (hasBindAppWidgetPermission) {
+            if (zHasBindAppWidgetPermission) {
                 CharSequence text2 = context.getText(R.string.always_allow_bind_appwidgets_text);
                 SpannableString spannableString2 = new SpannableString(text2);
                 if (z2) {
                     spannableString2.setSpan(new BulletSpan(dimensionPixelSize), 0, text2.length(), 0);
                 }
-                charSequence = TextUtils.concat(charSequence == null ? new CharSequence[]{spannableString2, "\n"} : new CharSequence[]{charSequence, "\n", spannableString2, "\n"});
+                charSequenceConcat = TextUtils.concat(charSequenceConcat == null ? new CharSequence[]{spannableString2, "\n"} : new CharSequence[]{charSequenceConcat, "\n", spannableString2, "\n"});
             }
-            textView.setText(charSequence);
+            textView.setText(charSequenceConcat);
             this.mActivitiesButton.setEnabled(true);
         }
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isDefaultBrowser(String str) {
+    private boolean isDefaultBrowser(String str) {
         return str.equals(this.mPm.getDefaultBrowserPackageNameAsUser(UserHandle.myUserId()));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resetLaunchDefaultsUi(TextView textView) {
+    private void resetLaunchDefaultsUi(TextView textView) {
         textView.setText(R.string.auto_launch_disable_text);
         this.mActivitiesButton.setEnabled(false);
     }

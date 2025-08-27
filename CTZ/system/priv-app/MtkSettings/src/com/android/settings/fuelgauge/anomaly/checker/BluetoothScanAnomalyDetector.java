@@ -12,6 +12,7 @@ import com.android.settings.fuelgauge.anomaly.AnomalyDetectionPolicy;
 import com.android.settings.fuelgauge.anomaly.AnomalyUtils;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BluetoothScanAnomalyDetector implements AnomalyDetector {
     private AnomalyUtils mAnomalyUtils;
@@ -35,18 +36,18 @@ public class BluetoothScanAnomalyDetector implements AnomalyDetector {
         List usageList = batteryStatsHelper.getUsageList();
         ArrayList arrayList = new ArrayList();
         int packageUid = this.mBatteryUtils.getPackageUid(str);
-        long elapsedRealtime = SystemClock.elapsedRealtime();
+        long jElapsedRealtime = SystemClock.elapsedRealtime();
         int size = usageList.size();
         for (int i = 0; i < size; i++) {
             BatterySipper batterySipper = (BatterySipper) usageList.get(i);
             BatteryStats.Uid uid = batterySipper.uidObj;
             if (uid != null && !this.mBatteryUtils.shouldHideSipper(batterySipper) && (packageUid == -1 || packageUid == uid.getUid())) {
-                long bluetoothUnoptimizedBgTimeMs = getBluetoothUnoptimizedBgTimeMs(uid, elapsedRealtime);
+                long bluetoothUnoptimizedBgTimeMs = getBluetoothUnoptimizedBgTimeMs(uid, jElapsedRealtime);
                 if (bluetoothUnoptimizedBgTimeMs > this.mBluetoothScanningThreshold) {
                     String packageName = this.mBatteryUtils.getPackageName(uid.getUid());
-                    Anomaly build = new Anomaly.Builder().setUid(uid.getUid()).setType(2).setDisplayName(Utils.getApplicationLabel(this.mContext, packageName)).setPackageName(packageName).setBluetoothScanningTimeMs(bluetoothUnoptimizedBgTimeMs).build();
-                    if (this.mAnomalyUtils.getAnomalyAction(build).isActionActive(build)) {
-                        arrayList.add(build);
+                    Anomaly anomalyBuild = new Anomaly.Builder().setUid(uid.getUid()).setType(2).setDisplayName(Utils.getApplicationLabel(this.mContext, packageName)).setPackageName(packageName).setBluetoothScanningTimeMs(bluetoothUnoptimizedBgTimeMs).build();
+                    if (this.mAnomalyUtils.getAnomalyAction(anomalyBuild).isActionActive(anomalyBuild)) {
+                        arrayList.add(anomalyBuild);
                     }
                 }
             }

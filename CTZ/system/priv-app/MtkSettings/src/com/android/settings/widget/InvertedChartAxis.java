@@ -2,6 +2,7 @@ package com.android.settings.widget;
 
 import android.content.res.Resources;
 import android.text.SpannableStringBuilder;
+
 /* loaded from: classes.dex */
 public class InvertedChartAxis implements ChartAxis {
     private float mSize;

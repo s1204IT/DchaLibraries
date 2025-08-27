@@ -2,6 +2,7 @@ package com.mediatek.settings.ext;
 
 import android.content.Context;
 import android.support.v7.preference.ListPreference;
+
 /* loaded from: classes.dex */
 public class DefaultSmsPreferenceExt implements ISmsPreferenceExt {
     @Override // com.mediatek.settings.ext.ISmsPreferenceExt

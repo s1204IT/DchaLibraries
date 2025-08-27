@@ -15,6 +15,7 @@ import com.android.internal.widget.LockPatternUtils;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settings.security.OwnerInfoPreferenceController;
+
 /* loaded from: classes.dex */
 public class OwnerInfoSettings extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
     private LockPatternUtils mLockPatternUtils;
@@ -48,9 +49,9 @@ public class OwnerInfoSettings extends InstrumentedDialogFragment implements Dia
     @Override // android.content.DialogInterface.OnClickListener
     public void onClick(DialogInterface dialogInterface, int i) {
         if (i == -1) {
-            String obj = this.mOwnerInfo.getText().toString();
-            this.mLockPatternUtils.setOwnerInfoEnabled(!TextUtils.isEmpty(obj), this.mUserId);
-            this.mLockPatternUtils.setOwnerInfo(obj, this.mUserId);
+            String string = this.mOwnerInfo.getText().toString();
+            this.mLockPatternUtils.setOwnerInfoEnabled(!TextUtils.isEmpty(string), this.mUserId);
+            this.mLockPatternUtils.setOwnerInfo(string, this.mUserId);
             if (getTargetFragment() instanceof OwnerInfoPreferenceController.OwnerInfoCallback) {
                 ((OwnerInfoPreferenceController.OwnerInfoCallback) getTargetFragment()).onOwnerInfoUpdated();
             }

@@ -16,6 +16,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface IMediaSession extends IInterface {
     void addQueueItem(MediaDescriptionCompat mediaDescriptionCompat) throws RemoteException;
@@ -116,7 +117,6 @@ public interface IMediaSession extends IInterface {
 
     void unregisterCallbackListener(IMediaControllerCallback iMediaControllerCallback) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IMediaSession {
         public static IMediaSession asInterface(IBinder obj) {
             if (obj == null) {
@@ -135,373 +135,335 @@ public interface IMediaSession extends IInterface {
         }
 
         @Override // android.os.Binder
-        public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
-            RatingCompat _arg0;
-            Bundle _arg1;
-            Uri _arg02;
-            Uri _arg03;
-            boolean _arg04;
-            if (code == 51) {
-                data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                if (data.readInt() != 0) {
-                    _arg0 = RatingCompat.CREATOR.createFromParcel(data);
+        public boolean onTransact(int i, Parcel parcel, Parcel parcel2, int i2) throws RemoteException {
+            RatingCompat ratingCompatCreateFromParcel;
+            Bundle bundle;
+            Uri uri;
+            Uri uri2;
+            if (i == 51) {
+                parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                if (parcel.readInt() != 0) {
+                    ratingCompatCreateFromParcel = RatingCompat.CREATOR.createFromParcel(parcel);
                 } else {
-                    _arg0 = null;
+                    ratingCompatCreateFromParcel = null;
                 }
-                Bundle _arg12 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                rateWithExtras(_arg0, _arg12);
-                reply.writeNoException();
+                rateWithExtras(ratingCompatCreateFromParcel, parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
+                parcel2.writeNoException();
                 return true;
-            } else if (code == 1598968902) {
-                reply.writeString("android.support.v4.media.session.IMediaSession");
+            }
+            if (i == 1598968902) {
+                parcel2.writeString("android.support.v4.media.session.IMediaSession");
                 return true;
-            } else {
-                switch (code) {
-                    case 1:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        String _arg05 = data.readString();
-                        if (data.readInt() != 0) {
-                            _arg1 = (Bundle) Bundle.CREATOR.createFromParcel(data);
-                        } else {
-                            _arg1 = null;
-                        }
-                        MediaSessionCompat.ResultReceiverWrapper _arg2 = data.readInt() != 0 ? MediaSessionCompat.ResultReceiverWrapper.CREATOR.createFromParcel(data) : null;
-                        sendCommand(_arg05, _arg1, _arg2);
-                        reply.writeNoException();
-                        return true;
-                    case 2:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        KeyEvent _arg06 = data.readInt() != 0 ? (KeyEvent) KeyEvent.CREATOR.createFromParcel(data) : null;
-                        boolean sendMediaButton = sendMediaButton(_arg06);
-                        reply.writeNoException();
-                        reply.writeInt(sendMediaButton ? 1 : 0);
-                        return true;
-                    case 3:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        IMediaControllerCallback _arg07 = IMediaControllerCallback.Stub.asInterface(data.readStrongBinder());
-                        registerCallbackListener(_arg07);
-                        reply.writeNoException();
-                        return true;
-                    case 4:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        IMediaControllerCallback _arg08 = IMediaControllerCallback.Stub.asInterface(data.readStrongBinder());
-                        unregisterCallbackListener(_arg08);
-                        reply.writeNoException();
-                        return true;
-                    case 5:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        boolean isTransportControlEnabled = isTransportControlEnabled();
-                        reply.writeNoException();
-                        reply.writeInt(isTransportControlEnabled ? 1 : 0);
-                        return true;
-                    case 6:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        String _result = getPackageName();
-                        reply.writeNoException();
-                        reply.writeString(_result);
-                        return true;
-                    case 7:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        String _result2 = getTag();
-                        reply.writeNoException();
-                        reply.writeString(_result2);
-                        return true;
-                    case 8:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        PendingIntent _result3 = getLaunchPendingIntent();
-                        reply.writeNoException();
-                        if (_result3 != null) {
-                            reply.writeInt(1);
-                            _result3.writeToParcel(reply, 1);
-                        } else {
-                            reply.writeInt(0);
-                        }
-                        return true;
-                    case 9:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        long _result4 = getFlags();
-                        reply.writeNoException();
-                        reply.writeLong(_result4);
-                        return true;
-                    case 10:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        ParcelableVolumeInfo _result5 = getVolumeAttributes();
-                        reply.writeNoException();
-                        if (_result5 != null) {
-                            reply.writeInt(1);
-                            _result5.writeToParcel(reply, 1);
-                        } else {
-                            reply.writeInt(0);
-                        }
-                        return true;
-                    case 11:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        int _arg09 = data.readInt();
-                        int _arg13 = data.readInt();
-                        String _arg22 = data.readString();
-                        adjustVolume(_arg09, _arg13, _arg22);
-                        reply.writeNoException();
-                        return true;
-                    case 12:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        int _arg010 = data.readInt();
-                        int _arg14 = data.readInt();
-                        String _arg23 = data.readString();
-                        setVolumeTo(_arg010, _arg14, _arg23);
-                        reply.writeNoException();
-                        return true;
-                    case 13:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        play();
-                        reply.writeNoException();
-                        return true;
-                    case 14:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        String _arg011 = data.readString();
-                        Bundle _arg15 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                        playFromMediaId(_arg011, _arg15);
-                        reply.writeNoException();
-                        return true;
-                    case 15:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        String _arg012 = data.readString();
-                        Bundle _arg16 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                        playFromSearch(_arg012, _arg16);
-                        reply.writeNoException();
-                        return true;
-                    case 16:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        if (data.readInt() != 0) {
-                            _arg02 = (Uri) Uri.CREATOR.createFromParcel(data);
-                        } else {
-                            _arg02 = null;
-                        }
-                        Bundle _arg17 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                        playFromUri(_arg02, _arg17);
-                        reply.writeNoException();
-                        return true;
-                    case 17:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        long _arg013 = data.readLong();
-                        skipToQueueItem(_arg013);
-                        reply.writeNoException();
-                        return true;
-                    case 18:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        pause();
-                        reply.writeNoException();
-                        return true;
-                    case 19:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        stop();
-                        reply.writeNoException();
-                        return true;
-                    case 20:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        next();
-                        reply.writeNoException();
-                        return true;
-                    case 21:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        previous();
-                        reply.writeNoException();
-                        return true;
-                    case 22:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        fastForward();
-                        reply.writeNoException();
-                        return true;
-                    case 23:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        rewind();
-                        reply.writeNoException();
-                        return true;
-                    case 24:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        long _arg014 = data.readLong();
-                        seekTo(_arg014);
-                        reply.writeNoException();
-                        return true;
-                    case 25:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        RatingCompat _arg015 = data.readInt() != 0 ? RatingCompat.CREATOR.createFromParcel(data) : null;
-                        rate(_arg015);
-                        reply.writeNoException();
-                        return true;
-                    case 26:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        String _arg016 = data.readString();
-                        Bundle _arg18 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                        sendCustomAction(_arg016, _arg18);
-                        reply.writeNoException();
-                        return true;
-                    case 27:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        MediaMetadataCompat _result6 = getMetadata();
-                        reply.writeNoException();
-                        if (_result6 != null) {
-                            reply.writeInt(1);
-                            _result6.writeToParcel(reply, 1);
-                        } else {
-                            reply.writeInt(0);
-                        }
-                        return true;
-                    case 28:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        PlaybackStateCompat _result7 = getPlaybackState();
-                        reply.writeNoException();
-                        if (_result7 != null) {
-                            reply.writeInt(1);
-                            _result7.writeToParcel(reply, 1);
-                        } else {
-                            reply.writeInt(0);
-                        }
-                        return true;
-                    case 29:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        List<MediaSessionCompat.QueueItem> _result8 = getQueue();
-                        reply.writeNoException();
-                        reply.writeTypedList(_result8);
-                        return true;
-                    case 30:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        CharSequence _result9 = getQueueTitle();
-                        reply.writeNoException();
-                        if (_result9 != null) {
-                            reply.writeInt(1);
-                            TextUtils.writeToParcel(_result9, reply, 1);
-                        } else {
-                            reply.writeInt(0);
-                        }
-                        return true;
-                    case 31:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        Bundle _result10 = getExtras();
-                        reply.writeNoException();
-                        if (_result10 != null) {
-                            reply.writeInt(1);
-                            _result10.writeToParcel(reply, 1);
-                        } else {
-                            reply.writeInt(0);
-                        }
-                        return true;
-                    case 32:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        int _result11 = getRatingType();
-                        reply.writeNoException();
-                        reply.writeInt(_result11);
-                        return true;
-                    case 33:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        prepare();
-                        reply.writeNoException();
-                        return true;
-                    case 34:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        String _arg017 = data.readString();
-                        Bundle _arg19 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                        prepareFromMediaId(_arg017, _arg19);
-                        reply.writeNoException();
-                        return true;
-                    case 35:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        String _arg018 = data.readString();
-                        Bundle _arg110 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                        prepareFromSearch(_arg018, _arg110);
-                        reply.writeNoException();
-                        return true;
-                    case 36:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        if (data.readInt() != 0) {
-                            _arg03 = (Uri) Uri.CREATOR.createFromParcel(data);
-                        } else {
-                            _arg03 = null;
-                        }
-                        Bundle _arg111 = data.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(data) : null;
-                        prepareFromUri(_arg03, _arg111);
-                        reply.writeNoException();
-                        return true;
-                    case 37:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        int _result12 = getRepeatMode();
-                        reply.writeNoException();
-                        reply.writeInt(_result12);
-                        return true;
-                    case 38:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        boolean isShuffleModeEnabledRemoved = isShuffleModeEnabledRemoved();
-                        reply.writeNoException();
-                        reply.writeInt(isShuffleModeEnabledRemoved ? 1 : 0);
-                        return true;
-                    case 39:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        int _arg019 = data.readInt();
-                        setRepeatMode(_arg019);
-                        reply.writeNoException();
-                        return true;
-                    case 40:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        _arg04 = data.readInt() != 0;
-                        setShuffleModeEnabledRemoved(_arg04);
-                        reply.writeNoException();
-                        return true;
-                    case 41:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        MediaDescriptionCompat _arg020 = data.readInt() != 0 ? MediaDescriptionCompat.CREATOR.createFromParcel(data) : null;
-                        addQueueItem(_arg020);
-                        reply.writeNoException();
-                        return true;
-                    case 42:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        MediaDescriptionCompat _arg021 = data.readInt() != 0 ? MediaDescriptionCompat.CREATOR.createFromParcel(data) : null;
-                        MediaDescriptionCompat _arg022 = _arg021;
-                        int _arg112 = data.readInt();
-                        addQueueItemAt(_arg022, _arg112);
-                        reply.writeNoException();
-                        return true;
-                    case 43:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        MediaDescriptionCompat _arg023 = data.readInt() != 0 ? MediaDescriptionCompat.CREATOR.createFromParcel(data) : null;
-                        removeQueueItem(_arg023);
-                        reply.writeNoException();
-                        return true;
-                    case 44:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        int _arg024 = data.readInt();
-                        removeQueueItemAt(_arg024);
-                        reply.writeNoException();
-                        return true;
-                    case 45:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        boolean isCaptioningEnabled = isCaptioningEnabled();
-                        reply.writeNoException();
-                        reply.writeInt(isCaptioningEnabled ? 1 : 0);
-                        return true;
-                    case 46:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        _arg04 = data.readInt() != 0;
-                        setCaptioningEnabled(_arg04);
-                        reply.writeNoException();
-                        return true;
-                    case 47:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        int _result13 = getShuffleMode();
-                        reply.writeNoException();
-                        reply.writeInt(_result13);
-                        return true;
-                    case 48:
-                        data.enforceInterface("android.support.v4.media.session.IMediaSession");
-                        int _arg025 = data.readInt();
-                        setShuffleMode(_arg025);
-                        reply.writeNoException();
-                        return true;
-                    default:
-                        return super.onTransact(code, data, reply, flags);
-                }
+            }
+            switch (i) {
+                case 1:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    String string = parcel.readString();
+                    if (parcel.readInt() != 0) {
+                        bundle = (Bundle) Bundle.CREATOR.createFromParcel(parcel);
+                    } else {
+                        bundle = null;
+                    }
+                    sendCommand(string, bundle, parcel.readInt() != 0 ? MediaSessionCompat.ResultReceiverWrapper.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 2:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    boolean zSendMediaButton = sendMediaButton(parcel.readInt() != 0 ? (KeyEvent) KeyEvent.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    parcel2.writeInt(zSendMediaButton ? 1 : 0);
+                    return true;
+                case 3:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    registerCallbackListener(IMediaControllerCallback.Stub.asInterface(parcel.readStrongBinder()));
+                    parcel2.writeNoException();
+                    return true;
+                case 4:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    unregisterCallbackListener(IMediaControllerCallback.Stub.asInterface(parcel.readStrongBinder()));
+                    parcel2.writeNoException();
+                    return true;
+                case 5:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    boolean zIsTransportControlEnabled = isTransportControlEnabled();
+                    parcel2.writeNoException();
+                    parcel2.writeInt(zIsTransportControlEnabled ? 1 : 0);
+                    return true;
+                case 6:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    String packageName = getPackageName();
+                    parcel2.writeNoException();
+                    parcel2.writeString(packageName);
+                    return true;
+                case 7:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    String tag = getTag();
+                    parcel2.writeNoException();
+                    parcel2.writeString(tag);
+                    return true;
+                case 8:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    PendingIntent launchPendingIntent = getLaunchPendingIntent();
+                    parcel2.writeNoException();
+                    if (launchPendingIntent != null) {
+                        parcel2.writeInt(1);
+                        launchPendingIntent.writeToParcel(parcel2, 1);
+                    } else {
+                        parcel2.writeInt(0);
+                    }
+                    return true;
+                case 9:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    long flags = getFlags();
+                    parcel2.writeNoException();
+                    parcel2.writeLong(flags);
+                    return true;
+                case 10:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    ParcelableVolumeInfo volumeAttributes = getVolumeAttributes();
+                    parcel2.writeNoException();
+                    if (volumeAttributes != null) {
+                        parcel2.writeInt(1);
+                        volumeAttributes.writeToParcel(parcel2, 1);
+                    } else {
+                        parcel2.writeInt(0);
+                    }
+                    return true;
+                case 11:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    adjustVolume(parcel.readInt(), parcel.readInt(), parcel.readString());
+                    parcel2.writeNoException();
+                    return true;
+                case 12:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    setVolumeTo(parcel.readInt(), parcel.readInt(), parcel.readString());
+                    parcel2.writeNoException();
+                    return true;
+                case 13:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    play();
+                    parcel2.writeNoException();
+                    return true;
+                case 14:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    playFromMediaId(parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 15:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    playFromSearch(parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 16:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    if (parcel.readInt() != 0) {
+                        uri = (Uri) Uri.CREATOR.createFromParcel(parcel);
+                    } else {
+                        uri = null;
+                    }
+                    playFromUri(uri, parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 17:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    skipToQueueItem(parcel.readLong());
+                    parcel2.writeNoException();
+                    return true;
+                case 18:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    pause();
+                    parcel2.writeNoException();
+                    return true;
+                case 19:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    stop();
+                    parcel2.writeNoException();
+                    return true;
+                case 20:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    next();
+                    parcel2.writeNoException();
+                    return true;
+                case 21:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    previous();
+                    parcel2.writeNoException();
+                    return true;
+                case 22:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    fastForward();
+                    parcel2.writeNoException();
+                    return true;
+                case 23:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    rewind();
+                    parcel2.writeNoException();
+                    return true;
+                case 24:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    seekTo(parcel.readLong());
+                    parcel2.writeNoException();
+                    return true;
+                case 25:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    rate(parcel.readInt() != 0 ? RatingCompat.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 26:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    sendCustomAction(parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 27:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    MediaMetadataCompat metadata = getMetadata();
+                    parcel2.writeNoException();
+                    if (metadata != null) {
+                        parcel2.writeInt(1);
+                        metadata.writeToParcel(parcel2, 1);
+                    } else {
+                        parcel2.writeInt(0);
+                    }
+                    return true;
+                case 28:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    PlaybackStateCompat playbackState = getPlaybackState();
+                    parcel2.writeNoException();
+                    if (playbackState != null) {
+                        parcel2.writeInt(1);
+                        playbackState.writeToParcel(parcel2, 1);
+                    } else {
+                        parcel2.writeInt(0);
+                    }
+                    return true;
+                case 29:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    List<MediaSessionCompat.QueueItem> queue = getQueue();
+                    parcel2.writeNoException();
+                    parcel2.writeTypedList(queue);
+                    return true;
+                case 30:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    CharSequence queueTitle = getQueueTitle();
+                    parcel2.writeNoException();
+                    if (queueTitle != null) {
+                        parcel2.writeInt(1);
+                        TextUtils.writeToParcel(queueTitle, parcel2, 1);
+                    } else {
+                        parcel2.writeInt(0);
+                    }
+                    return true;
+                case 31:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    Bundle extras = getExtras();
+                    parcel2.writeNoException();
+                    if (extras != null) {
+                        parcel2.writeInt(1);
+                        extras.writeToParcel(parcel2, 1);
+                    } else {
+                        parcel2.writeInt(0);
+                    }
+                    return true;
+                case 32:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    int ratingType = getRatingType();
+                    parcel2.writeNoException();
+                    parcel2.writeInt(ratingType);
+                    return true;
+                case 33:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    prepare();
+                    parcel2.writeNoException();
+                    return true;
+                case 34:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    prepareFromMediaId(parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 35:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    prepareFromSearch(parcel.readString(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 36:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    if (parcel.readInt() != 0) {
+                        uri2 = (Uri) Uri.CREATOR.createFromParcel(parcel);
+                    } else {
+                        uri2 = null;
+                    }
+                    prepareFromUri(uri2, parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 37:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    int repeatMode = getRepeatMode();
+                    parcel2.writeNoException();
+                    parcel2.writeInt(repeatMode);
+                    return true;
+                case 38:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    boolean zIsShuffleModeEnabledRemoved = isShuffleModeEnabledRemoved();
+                    parcel2.writeNoException();
+                    parcel2.writeInt(zIsShuffleModeEnabledRemoved ? 1 : 0);
+                    return true;
+                case 39:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    setRepeatMode(parcel.readInt());
+                    parcel2.writeNoException();
+                    return true;
+                case 40:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    setShuffleModeEnabledRemoved(parcel.readInt() != 0);
+                    parcel2.writeNoException();
+                    return true;
+                case 41:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    addQueueItem(parcel.readInt() != 0 ? MediaDescriptionCompat.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 42:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    addQueueItemAt(parcel.readInt() != 0 ? MediaDescriptionCompat.CREATOR.createFromParcel(parcel) : null, parcel.readInt());
+                    parcel2.writeNoException();
+                    return true;
+                case 43:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    removeQueueItem(parcel.readInt() != 0 ? MediaDescriptionCompat.CREATOR.createFromParcel(parcel) : null);
+                    parcel2.writeNoException();
+                    return true;
+                case 44:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    removeQueueItemAt(parcel.readInt());
+                    parcel2.writeNoException();
+                    return true;
+                case 45:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    boolean zIsCaptioningEnabled = isCaptioningEnabled();
+                    parcel2.writeNoException();
+                    parcel2.writeInt(zIsCaptioningEnabled ? 1 : 0);
+                    return true;
+                case 46:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    setCaptioningEnabled(parcel.readInt() != 0);
+                    parcel2.writeNoException();
+                    return true;
+                case 47:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    int shuffleMode = getShuffleMode();
+                    parcel2.writeNoException();
+                    parcel2.writeInt(shuffleMode);
+                    return true;
+                case 48:
+                    parcel.enforceInterface("android.support.v4.media.session.IMediaSession");
+                    setShuffleMode(parcel.readInt());
+                    parcel2.writeNoException();
+                    return true;
+                default:
+                    return super.onTransact(i, parcel, parcel2, i2);
             }
         }
 
-        /* loaded from: classes.dex */
         private static class Proxy implements IMediaSession {
             private IBinder mRemote;
 
@@ -1314,17 +1276,17 @@ public interface IMediaSession extends IInterface {
             }
 
             @Override // android.support.v4.media.session.IMediaSession
-            public void setCaptioningEnabled(boolean enabled) throws RemoteException {
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
+            public void setCaptioningEnabled(boolean z) throws RemoteException {
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    _data.writeInterfaceToken("android.support.v4.media.session.IMediaSession");
-                    _data.writeInt(enabled ? 1 : 0);
-                    this.mRemote.transact(46, _data, _reply, 0);
-                    _reply.readException();
+                    parcelObtain.writeInterfaceToken("android.support.v4.media.session.IMediaSession");
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(46, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    _reply.recycle();
-                    _data.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
@@ -1344,17 +1306,17 @@ public interface IMediaSession extends IInterface {
             }
 
             @Override // android.support.v4.media.session.IMediaSession
-            public void setShuffleModeEnabledRemoved(boolean shuffleMode) throws RemoteException {
-                Parcel _data = Parcel.obtain();
-                Parcel _reply = Parcel.obtain();
+            public void setShuffleModeEnabledRemoved(boolean z) throws RemoteException {
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    _data.writeInterfaceToken("android.support.v4.media.session.IMediaSession");
-                    _data.writeInt(shuffleMode ? 1 : 0);
-                    this.mRemote.transact(40, _data, _reply, 0);
-                    _reply.readException();
+                    parcelObtain.writeInterfaceToken("android.support.v4.media.session.IMediaSession");
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(40, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    _reply.recycle();
-                    _data.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 

@@ -9,6 +9,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ZenModeMsgEventReminderSettings extends ZenModeSettingsBase implements Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.notification.ZenModeMsgEventReminderSettings.1
@@ -37,8 +38,7 @@ public class ZenModeMsgEventReminderSettings extends ZenModeSettingsBase impleme
         return buildPreferenceControllers(context, getLifecycle());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModeEventsPreferenceController(context, lifecycle));
         arrayList.add(new ZenModeRemindersPreferenceController(context, lifecycle));
@@ -48,9 +48,8 @@ public class ZenModeMsgEventReminderSettings extends ZenModeSettingsBase impleme
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.zen_mode_msg_event_reminder_settings;
     }
 

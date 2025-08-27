@@ -26,25 +26,30 @@ import android.view.ViewRootImpl;
 import android.view.ViewStub;
 import java.util.ArrayList;
 import java.util.Collections;
+
 /* loaded from: classes.dex */
 public class Utilities {
     public static final Property<Drawable, Integer> DRAWABLE_ALPHA = new IntProperty<Drawable>("drawableAlpha") { // from class: com.android.systemui.shared.recents.utilities.Utilities.1
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;I)V */
         @Override // android.util.IntProperty
         public void setValue(Drawable object, int alpha) {
             object.setAlpha(alpha);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Integer get(Drawable object) {
             return Integer.valueOf(object.getAlpha());
         }
     };
     public static final Property<Drawable, Rect> DRAWABLE_RECT = new Property<Drawable, Rect>(Rect.class, "drawableBounds") { // from class: com.android.systemui.shared.recents.utilities.Utilities.2
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(Drawable object, Rect bounds) {
             object.setBounds(bounds);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Rect get(Drawable object) {
             return object.getBounds();

@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
+
 /* loaded from: classes.dex */
 public class StickyHeaderRecyclerView extends HeaderRecyclerView {
     private int mStatusBarInset;
@@ -32,9 +33,8 @@ public class StickyHeaderRecyclerView extends HeaderRecyclerView {
         this.mStickyRect = new RectF();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.widget.RecyclerView, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         View header;
         super.onLayout(z, i, i2, i3, i4);
         if (this.mSticky == null) {
@@ -45,9 +45,8 @@ public class StickyHeaderRecyclerView extends HeaderRecyclerView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.widget.RecyclerView, android.view.View
-    public void onMeasure(int i, int i2) {
+    protected void onMeasure(int i, int i2) {
         super.onMeasure(i, i2);
         if (this.mSticky != null) {
             measureChild(getHeader(), i, i2);
@@ -67,22 +66,21 @@ public class StickyHeaderRecyclerView extends HeaderRecyclerView {
         super.draw(canvas);
         if (this.mSticky != null) {
             View header = getHeader();
-            int save = canvas.save();
+            int iSave = canvas.save();
             if (header == null) {
                 view = this.mSticky;
             } else {
                 view = header;
             }
-            int top = header != null ? this.mSticky.getTop() : 0;
-            if (view.getTop() + top < this.mStatusBarInset || !view.isShown()) {
-                this.mStickyRect.set(0.0f, (-top) + this.mStatusBarInset, view.getWidth(), (view.getHeight() - top) + this.mStatusBarInset);
+            if (view.getTop() + (header != null ? this.mSticky.getTop() : 0) < this.mStatusBarInset || !view.isShown()) {
+                this.mStickyRect.set(0.0f, (-r0) + this.mStatusBarInset, view.getWidth(), (view.getHeight() - r0) + this.mStatusBarInset);
                 canvas.translate(0.0f, this.mStickyRect.top);
                 canvas.clipRect(0, 0, view.getWidth(), view.getHeight());
                 view.draw(canvas);
             } else {
                 this.mStickyRect.setEmpty();
             }
-            canvas.restoreToCount(save);
+            canvas.restoreToCount(iSave);
         }
     }
 

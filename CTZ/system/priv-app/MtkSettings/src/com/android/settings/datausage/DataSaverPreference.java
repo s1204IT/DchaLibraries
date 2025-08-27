@@ -5,6 +5,7 @@ import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 import com.android.settings.R;
 import com.android.settings.datausage.DataSaverBackend;
+
 /* loaded from: classes.dex */
 public class DataSaverPreference extends Preference implements DataSaverBackend.Listener {
     private final DataSaverBackend mDataSaverBackend;

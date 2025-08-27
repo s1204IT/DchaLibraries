@@ -2,6 +2,7 @@ package com.google.common.base;
 
 import android.support.v7.preference.Preference;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public final class Splitter {
     private final int limit;
@@ -9,9 +10,7 @@ public final class Splitter {
     private final Strategy strategy;
     private final CharMatcher trimmer;
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public interface Strategy {
+    private interface Strategy {
         Iterator<String> iterator(Splitter splitter, CharSequence charSequence);
     }
 
@@ -29,10 +28,12 @@ public final class Splitter {
     public static Splitter on(final String str) {
         Preconditions.checkArgument(str.length() != 0, "The separator may not be the empty string.");
         return new Splitter(new Strategy() { // from class: com.google.common.base.Splitter.2
+            /* JADX DEBUG: Method merged with bridge method: iterator(Lcom/google/common/base/Splitter;Ljava/lang/CharSequence;)Ljava/util/Iterator; */
             @Override // com.google.common.base.Splitter.Strategy
             public SplittingIterator iterator(Splitter splitter, CharSequence charSequence) {
                 return new SplittingIterator(splitter, charSequence) { // from class: com.google.common.base.Splitter.2.1
                     /* JADX WARN: Code restructure failed: missing block: B:8:0x0027, code lost:
+                    
                         r6 = r6 + 1;
                      */
                     @Override // com.google.common.base.Splitter.SplittingIterator
@@ -75,22 +76,20 @@ public final class Splitter {
             }
 
             public String toString() {
-                Joiner on = Joiner.on(", ");
+                Joiner joinerOn = Joiner.on(", ");
                 StringBuilder sb = new StringBuilder();
                 sb.append('[');
-                StringBuilder appendTo = on.appendTo(sb, this);
-                appendTo.append(']');
-                return appendTo.toString();
+                StringBuilder sbAppendTo = joinerOn.appendTo(sb, this);
+                sbAppendTo.append(']');
+                return sbAppendTo.toString();
             }
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Iterator<String> splittingIterator(CharSequence charSequence) {
+    private Iterator<String> splittingIterator(CharSequence charSequence) {
         return this.strategy.iterator(this, charSequence);
     }
 
-    /* loaded from: classes.dex */
     private static abstract class SplittingIterator extends AbstractIterator<String> {
         int limit;
         int offset = 0;
@@ -109,17 +108,17 @@ public final class Splitter {
             this.toSplit = charSequence;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: computeNext()Ljava/lang/Object; */
         @Override // com.google.common.base.AbstractIterator
-        public String computeNext() {
+        protected String computeNext() {
             int i = this.offset;
             while (this.offset != -1) {
-                int separatorStart = separatorStart(this.offset);
-                if (separatorStart == -1) {
-                    separatorStart = this.toSplit.length();
+                int iSeparatorStart = separatorStart(this.offset);
+                if (iSeparatorStart == -1) {
+                    iSeparatorStart = this.toSplit.length();
                     this.offset = -1;
                 } else {
-                    this.offset = separatorEnd(separatorStart);
+                    this.offset = separatorEnd(iSeparatorStart);
                 }
                 if (this.offset == i) {
                     this.offset++;
@@ -127,25 +126,25 @@ public final class Splitter {
                         this.offset = -1;
                     }
                 } else {
-                    while (i < separatorStart && this.trimmer.matches(this.toSplit.charAt(i))) {
+                    while (i < iSeparatorStart && this.trimmer.matches(this.toSplit.charAt(i))) {
                         i++;
                     }
-                    while (separatorStart > i && this.trimmer.matches(this.toSplit.charAt(separatorStart - 1))) {
-                        separatorStart--;
+                    while (iSeparatorStart > i && this.trimmer.matches(this.toSplit.charAt(iSeparatorStart - 1))) {
+                        iSeparatorStart--;
                     }
-                    if (this.omitEmptyStrings && i == separatorStart) {
+                    if (this.omitEmptyStrings && i == iSeparatorStart) {
                         i = this.offset;
                     } else {
                         if (this.limit == 1) {
-                            separatorStart = this.toSplit.length();
+                            iSeparatorStart = this.toSplit.length();
                             this.offset = -1;
-                            while (separatorStart > i && this.trimmer.matches(this.toSplit.charAt(separatorStart - 1))) {
-                                separatorStart--;
+                            while (iSeparatorStart > i && this.trimmer.matches(this.toSplit.charAt(iSeparatorStart - 1))) {
+                                iSeparatorStart--;
                             }
                         } else {
                             this.limit--;
                         }
-                        return this.toSplit.subSequence(i, separatorStart).toString();
+                        return this.toSplit.subSequence(i, iSeparatorStart).toString();
                     }
                 }
             }

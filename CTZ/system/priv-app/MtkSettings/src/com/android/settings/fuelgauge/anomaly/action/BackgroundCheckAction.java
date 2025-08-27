@@ -4,6 +4,7 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import com.android.settings.fuelgauge.BatteryUtils;
 import com.android.settings.fuelgauge.anomaly.Anomaly;
+
 /* loaded from: classes.dex */
 public class BackgroundCheckAction extends AnomalyAction {
     private AppOpsManager mAppOpsManager;

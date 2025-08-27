@@ -4,16 +4,15 @@ import android.os.Build;
 import android.support.v4.media.MediaSessionManagerImplApi28;
 import android.support.v4.media.MediaSessionManagerImplBase;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public final class MediaSessionManager {
     static final boolean DEBUG = Log.isLoggable("MediaSessionManager", 3);
     private static final Object sLock = new Object();
 
-    /* loaded from: classes.dex */
     interface RemoteUserInfoImpl {
     }
 
-    /* loaded from: classes.dex */
     public static final class RemoteUserInfo {
         RemoteUserInfoImpl mImpl;
 

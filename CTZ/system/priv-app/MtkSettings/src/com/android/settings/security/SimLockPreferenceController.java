@@ -10,7 +10,9 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import com.android.settings.core.BasePreferenceController;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SimLockPreferenceController extends BasePreferenceController {
     private static final String KEY_SIM_LOCK = "sim_lock_settings";
@@ -39,18 +41,19 @@ public class SimLockPreferenceController extends BasePreferenceController {
     @Override // com.android.settings.core.BasePreferenceController, com.android.settingslib.core.AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
-        Preference findPreference = preferenceScreen.findPreference(getPreferenceKey());
-        if (findPreference == null) {
+        Preference preferenceFindPreference = preferenceScreen.findPreference(getPreferenceKey());
+        if (preferenceFindPreference == null) {
             return;
         }
-        findPreference.setEnabled(isSimReady());
+        preferenceFindPreference.setEnabled(isSimReady());
     }
 
     private boolean isSimReady() {
         List<SubscriptionInfo> activeSubscriptionInfoList = this.mSubscriptionManager.getActiveSubscriptionInfoList();
         if (activeSubscriptionInfoList != null) {
-            for (SubscriptionInfo subscriptionInfo : activeSubscriptionInfoList) {
-                int simState = this.mTelephonyManager.getSimState(subscriptionInfo.getSimSlotIndex());
+            Iterator<SubscriptionInfo> it = activeSubscriptionInfoList.iterator();
+            while (it.hasNext()) {
+                int simState = this.mTelephonyManager.getSimState(it.next().getSimSlotIndex());
                 if (simState != 1 && simState != 0) {
                     return true;
                 }
@@ -63,8 +66,9 @@ public class SimLockPreferenceController extends BasePreferenceController {
     private boolean isSimIccReady() {
         List<SubscriptionInfo> activeSubscriptionInfoList = this.mSubscriptionManager.getActiveSubscriptionInfoList();
         if (activeSubscriptionInfoList != null) {
-            for (SubscriptionInfo subscriptionInfo : activeSubscriptionInfoList) {
-                if (this.mTelephonyManager.hasIccCard(subscriptionInfo.getSimSlotIndex())) {
+            Iterator<SubscriptionInfo> it = activeSubscriptionInfoList.iterator();
+            while (it.hasNext()) {
+                if (this.mTelephonyManager.hasIccCard(it.next().getSimSlotIndex())) {
                     return true;
                 }
             }

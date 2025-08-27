@@ -21,6 +21,7 @@ import android.view.View;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class DonutView extends View {
     private Paint mBackgroundCircle;
@@ -41,21 +42,21 @@ public class DonutView extends View {
     }
 
     public DonutView(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
         boolean z;
+        super(context, attributeSet);
         this.mShowPercentString = true;
         this.mMeterBackgroundColor = context.getColor(R.color.meter_background_color);
         this.mMeterConsumedColor = Utils.getDefaultColor(this.mContext, R.color.meter_consumed_color);
         Resources resources = context.getResources();
         this.mStrokeWidth = resources.getDimension(R.dimen.storage_donut_thickness);
         if (attributeSet != null) {
-            TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.DonutView);
-            this.mMeterBackgroundColor = obtainStyledAttributes.getColor(1, this.mMeterBackgroundColor);
-            this.mMeterConsumedColor = obtainStyledAttributes.getColor(2, this.mMeterConsumedColor);
-            z = obtainStyledAttributes.getBoolean(0, true);
-            this.mShowPercentString = obtainStyledAttributes.getBoolean(3, true);
-            this.mStrokeWidth = obtainStyledAttributes.getDimensionPixelSize(4, (int) this.mStrokeWidth);
-            obtainStyledAttributes.recycle();
+            TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.DonutView);
+            this.mMeterBackgroundColor = typedArrayObtainStyledAttributes.getColor(1, this.mMeterBackgroundColor);
+            this.mMeterConsumedColor = typedArrayObtainStyledAttributes.getColor(2, this.mMeterConsumedColor);
+            z = typedArrayObtainStyledAttributes.getBoolean(0, true);
+            this.mShowPercentString = typedArrayObtainStyledAttributes.getBoolean(3, true);
+            this.mStrokeWidth = typedArrayObtainStyledAttributes.getDimensionPixelSize(4, (int) this.mStrokeWidth);
+            typedArrayObtainStyledAttributes.recycle();
         } else {
             z = true;
         }
@@ -72,7 +73,7 @@ public class DonutView extends View {
         this.mFilledArc.setStrokeWidth(this.mStrokeWidth);
         this.mFilledArc.setColor(this.mMeterConsumedColor);
         if (z) {
-            PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(Utils.getColorAttr(context, 16843829), PorterDuff.Mode.SRC_IN);
+            PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(Utils.getColorAttr(context, android.R.attr.colorAccent), PorterDuff.Mode.SRC_IN);
             this.mBackgroundCircle.setColorFilter(porterDuffColorFilter);
             this.mFilledArc.setColorFilter(porterDuffColorFilter);
         }
@@ -87,7 +88,7 @@ public class DonutView extends View {
         this.mBigNumberPaint.setColor(Utils.getColorAccent(getContext()));
         this.mBigNumberPaint.setAntiAlias(true);
         this.mBigNumberPaint.setTextSize(resources.getDimension(R.dimen.storage_donut_view_percent_text_size));
-        this.mBigNumberPaint.setTypeface(Typeface.create(context.getString(17039680), 0));
+        this.mBigNumberPaint.setTypeface(Typeface.create(context.getString(android.R.string.android_system_label), 0));
         this.mBigNumberPaint.setBidiFlags(i);
     }
 
@@ -106,15 +107,16 @@ public class DonutView extends View {
     }
 
     private void drawInnerText(Canvas canvas) {
+        float width = getWidth() / 2;
+        float height = getHeight() / 2;
         float textHeight = getTextHeight(this.mTextPaint) + getTextHeight(this.mBigNumberPaint);
-        float height = (getHeight() / 2) + (textHeight / 2.0f);
         String percentString = new DecimalFormatSymbols().getPercentString();
         canvas.save();
         StaticLayout staticLayout = new StaticLayout(getPercentageStringSpannable(getResources(), this.mPercentString, percentString), this.mBigNumberPaint, getWidth(), Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
         canvas.translate(0.0f, (getHeight() - textHeight) / 2.0f);
         staticLayout.draw(canvas);
         canvas.restore();
-        canvas.drawText(this.mFullString, getWidth() / 2, height - this.mTextPaint.descent(), this.mTextPaint);
+        canvas.drawText(this.mFullString, width, (height + (textHeight / 2.0f)) - this.mTextPaint.descent(), this.mTextPaint);
     }
 
     public void setPercentage(double d) {
@@ -152,13 +154,13 @@ public class DonutView extends View {
     static Spannable getPercentageStringSpannable(Resources resources, String str, String str2) {
         float dimension = resources.getDimension(R.dimen.storage_donut_view_percent_sign_size) / resources.getDimension(R.dimen.storage_donut_view_percent_text_size);
         SpannableString spannableString = new SpannableString(str);
-        int indexOf = str.indexOf(str2);
-        int length = str2.length() + indexOf;
-        if (indexOf < 0) {
-            indexOf = 0;
+        int iIndexOf = str.indexOf(str2);
+        int length = str2.length() + iIndexOf;
+        if (iIndexOf < 0) {
+            iIndexOf = 0;
             length = str.length();
         }
-        spannableString.setSpan(new RelativeSizeSpan(dimension), indexOf, length, 34);
+        spannableString.setSpan(new RelativeSizeSpan(dimension), iIndexOf, length, 34);
         return spannableString;
     }
 

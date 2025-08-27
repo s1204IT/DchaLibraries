@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import com.android.settings.R;
 import com.android.settings.widget.GearPreference;
+
 /* loaded from: classes.dex */
 public abstract class ManageablePreference extends GearPreference {
     public static int STATE_NONE = -1;
@@ -36,7 +37,7 @@ public abstract class ManageablePreference extends GearPreference {
         return this.mState;
     }
 
-    public void setState(int i) {
+    public void setState(int i) throws Resources.NotFoundException {
         if (this.mState != i) {
             this.mState = i;
             updateSummary();
@@ -44,24 +45,24 @@ public abstract class ManageablePreference extends GearPreference {
         }
     }
 
-    public void setAlwaysOn(boolean z) {
+    public void setAlwaysOn(boolean z) throws Resources.NotFoundException {
         if (this.mIsAlwaysOn != z) {
             this.mIsAlwaysOn = z;
             updateSummary();
         }
     }
 
-    protected void updateSummary() {
+    protected void updateSummary() throws Resources.NotFoundException {
         Resources resources = getContext().getResources();
-        String str = this.mState == STATE_NONE ? "" : resources.getStringArray(R.array.vpn_states)[this.mState];
+        String string = this.mState == STATE_NONE ? "" : resources.getStringArray(R.array.vpn_states)[this.mState];
         if (this.mIsAlwaysOn) {
-            String string = resources.getString(R.string.vpn_always_on_summary_active);
-            if (!TextUtils.isEmpty(str)) {
-                str = resources.getString(R.string.join_two_unrelated_items, str, string);
+            String string2 = resources.getString(R.string.vpn_always_on_summary_active);
+            if (!TextUtils.isEmpty(string)) {
+                string = resources.getString(R.string.join_two_unrelated_items, string, string2);
             } else {
-                str = string;
+                string = string2;
             }
         }
-        setSummary(str);
+        setSummary(string);
     }
 }

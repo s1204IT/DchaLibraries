@@ -11,7 +11,9 @@ import android.widget.Toast;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
 import com.mediatek.nfcsettingsadapter.ServiceEntry;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class NfcServiceStatus extends SettingsPreferenceFragment implements Preference.OnPreferenceClickListener {
     private Context mContext;
@@ -41,9 +43,9 @@ public class NfcServiceStatus extends SettingsPreferenceFragment implements Pref
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        MenuItem add = menu.add(0, 2, 0, (CharSequence) null);
-        add.setShowAsAction(2);
-        add.setIcon(R.drawable.ic_edit);
+        MenuItem menuItemAdd = menu.add(0, 2, 0, (CharSequence) null);
+        menuItemAdd.setShowAsAction(2);
+        menuItemAdd.setIcon(R.drawable.ic_edit);
         menu.add(0, 3, 0, R.string.okay).setShowAsAction(2);
         super.onCreateOptionsMenu(menu, menuInflater);
         this.mMenu = menu;
@@ -54,11 +56,11 @@ public class NfcServiceStatus extends SettingsPreferenceFragment implements Pref
         if (this.mMenu == null) {
             return;
         }
-        MenuItem findItem = this.mMenu.findItem(2);
-        MenuItem findItem2 = this.mMenu.findItem(3);
-        if (findItem != null && findItem2 != null) {
-            findItem.setVisible(!this.mEditMode);
-            findItem2.setVisible(this.mEditMode);
+        MenuItem menuItemFindItem = this.mMenu.findItem(2);
+        MenuItem menuItemFindItem2 = this.mMenu.findItem(3);
+        if (menuItemFindItem != null && menuItemFindItem2 != null) {
+            menuItemFindItem.setVisible(!this.mEditMode);
+            menuItemFindItem2.setVisible(this.mEditMode);
         }
     }
 
@@ -70,14 +72,16 @@ public class NfcServiceStatus extends SettingsPreferenceFragment implements Pref
                 case 2:
                     setEditMode(true);
                     refreshUi(false);
-                    return true;
+                    break;
                 case 3:
                     this.mNfcServiceHelper.saveChange();
                     setEditMode(false);
                     refreshUi(false);
-                    return true;
+                    break;
             }
-        } else if (this.mEditMode) {
+            return true;
+        }
+        if (this.mEditMode) {
             setEditMode(false);
             refreshUi(false);
             return true;
@@ -103,8 +107,9 @@ public class NfcServiceStatus extends SettingsPreferenceFragment implements Pref
     }
 
     private void initPreferences(List<ServiceEntry> list) {
-        for (ServiceEntry serviceEntry : list) {
-            getPreferenceScreen().addPreference(createPreference(serviceEntry));
+        Iterator<ServiceEntry> it = list.iterator();
+        while (it.hasNext()) {
+            getPreferenceScreen().addPreference(createPreference(it.next()));
         }
     }
 
@@ -127,12 +132,12 @@ public class NfcServiceStatus extends SettingsPreferenceFragment implements Pref
     public boolean onPreferenceClick(Preference preference) {
         if (preference instanceof NfcServicePreference) {
             NfcServicePreference nfcServicePreference = (NfcServicePreference) preference;
-            boolean isChecked = nfcServicePreference.isChecked();
-            Log.d("NfcServiceStatus", "onPreferenceClick, isChecked =" + isChecked);
-            if (this.mNfcServiceHelper.setEnabled(nfcServicePreference, !isChecked)) {
-                nfcServicePreference.setChecked(!isChecked);
+            boolean zIsChecked = nfcServicePreference.isChecked();
+            Log.d("NfcServiceStatus", "onPreferenceClick, isChecked =" + zIsChecked);
+            if (this.mNfcServiceHelper.setEnabled(nfcServicePreference, !zIsChecked)) {
+                nfcServicePreference.setChecked(!zIsChecked);
             } else {
-                Toast.makeText(this.mContext, (int) R.string.nfc_service_overflow, 0).show();
+                Toast.makeText(this.mContext, R.string.nfc_service_overflow, 0).show();
             }
         }
         return false;

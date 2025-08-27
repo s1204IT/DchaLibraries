@@ -1,6 +1,7 @@
 package com.android.settings.applications;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.support.v4.content.res.TypedArrayUtils;
 import android.support.v7.preference.Preference;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class LayoutPreference extends Preference {
     private boolean mAllowDividerAbove;
@@ -19,23 +21,23 @@ public class LayoutPreference extends Preference {
     private final View.OnClickListener mClickListener;
     View mRootView;
 
-    public LayoutPreference(Context context, AttributeSet attributeSet) {
+    public LayoutPreference(Context context, AttributeSet attributeSet) throws Resources.NotFoundException {
         super(context, attributeSet);
         this.mClickListener = new View.OnClickListener() { // from class: com.android.settings.applications.-$$Lambda$LayoutPreference$-oL9WiG-H2u60jStTsEh5xi7a7Q
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                LayoutPreference.this.performClick(view);
+                this.f$0.performClick(view);
             }
         };
         init(context, attributeSet, 0);
     }
 
-    public LayoutPreference(Context context, AttributeSet attributeSet, int i) {
+    public LayoutPreference(Context context, AttributeSet attributeSet, int i) throws Resources.NotFoundException {
         super(context, attributeSet, i);
         this.mClickListener = new View.OnClickListener() { // from class: com.android.settings.applications.-$$Lambda$LayoutPreference$-oL9WiG-H2u60jStTsEh5xi7a7Q
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                LayoutPreference.this.performClick(view);
+                this.f$0.performClick(view);
             }
         };
         init(context, attributeSet, i);
@@ -45,32 +47,32 @@ public class LayoutPreference extends Preference {
         this(context, LayoutInflater.from(context).inflate(i, (ViewGroup) null, false));
     }
 
-    public LayoutPreference(Context context, View view) {
+    public LayoutPreference(Context context, View view) throws Resources.NotFoundException {
         super(context);
         this.mClickListener = new View.OnClickListener() { // from class: com.android.settings.applications.-$$Lambda$LayoutPreference$-oL9WiG-H2u60jStTsEh5xi7a7Q
             @Override // android.view.View.OnClickListener
             public final void onClick(View view2) {
-                LayoutPreference.this.performClick(view2);
+                this.f$0.performClick(view2);
             }
         };
         setView(view);
     }
 
-    private void init(Context context, AttributeSet attributeSet, int i) {
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.Preference);
-        this.mAllowDividerAbove = TypedArrayUtils.getBoolean(obtainStyledAttributes, 16, 16, false);
-        this.mAllowDividerBelow = TypedArrayUtils.getBoolean(obtainStyledAttributes, 17, 17, false);
-        obtainStyledAttributes.recycle();
-        TypedArray obtainStyledAttributes2 = context.obtainStyledAttributes(attributeSet, com.android.internal.R.styleable.Preference, i, 0);
-        int resourceId = obtainStyledAttributes2.getResourceId(3, 0);
+    private void init(Context context, AttributeSet attributeSet, int i) throws Resources.NotFoundException {
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.Preference);
+        this.mAllowDividerAbove = TypedArrayUtils.getBoolean(typedArrayObtainStyledAttributes, 16, 16, false);
+        this.mAllowDividerBelow = TypedArrayUtils.getBoolean(typedArrayObtainStyledAttributes, 17, 17, false);
+        typedArrayObtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes2 = context.obtainStyledAttributes(attributeSet, com.android.internal.R.styleable.Preference, i, 0);
+        int resourceId = typedArrayObtainStyledAttributes2.getResourceId(3, 0);
         if (resourceId == 0) {
             throw new IllegalArgumentException("LayoutPreference requires a layout to be defined");
         }
-        obtainStyledAttributes2.recycle();
+        typedArrayObtainStyledAttributes2.recycle();
         setView(LayoutInflater.from(getContext()).inflate(resourceId, (ViewGroup) null, false));
     }
 
-    private void setView(View view) {
+    private void setView(View view) throws Resources.NotFoundException {
         setLayoutResource(R.layout.layout_preference_frame);
         ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.all_details);
         if (viewGroup != null) {
@@ -83,9 +85,9 @@ public class LayoutPreference extends Preference {
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         preferenceViewHolder.itemView.setOnClickListener(this.mClickListener);
-        boolean isSelectable = isSelectable();
-        preferenceViewHolder.itemView.setFocusable(isSelectable);
-        preferenceViewHolder.itemView.setClickable(isSelectable);
+        boolean zIsSelectable = isSelectable();
+        preferenceViewHolder.itemView.setFocusable(zIsSelectable);
+        preferenceViewHolder.itemView.setClickable(zIsSelectable);
         preferenceViewHolder.setDividerAllowedAbove(this.mAllowDividerAbove);
         preferenceViewHolder.setDividerAllowedBelow(this.mAllowDividerBelow);
         FrameLayout frameLayout = (FrameLayout) preferenceViewHolder.itemView;

@@ -14,6 +14,7 @@ import com.android.quickstep.QuickScrubController;
 import com.android.quickstep.views.LauncherRecentsView;
 import com.android.quickstep.views.RecentsViewContainer;
 import java.util.Objects;
+
 @TargetApi(26)
 /* loaded from: classes.dex */
 public class RecentsViewStateController implements LauncherStateManager.StateHandler {
@@ -59,20 +60,20 @@ public class RecentsViewStateController implements LauncherStateManager.StateHan
             animatorSetBuilder.addOnFinishRunnable(new Runnable() { // from class: com.android.launcher3.uioverrides.-$$Lambda$ldsbyJ0ZXSD31Pnc6Zv2bR9tO9U
                 @Override // java.lang.Runnable
                 public final void run() {
-                    LauncherRecentsView.this.resetTaskVisuals();
+                    launcherRecentsView.resetTaskVisuals();
                 }
             });
         }
         if (launcherState.overviewUi) {
-            ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.uioverrides.-$$Lambda$RecentsViewStateController$uCLvY-j3l2lHPvrHnybJyPxD4-g
+            ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+            valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.launcher3.uioverrides.-$$Lambda$RecentsViewStateController$uCLvY-j3l2lHPvrHnybJyPxD4-g
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    RecentsViewStateController.this.mRecentsView.loadVisibleTaskData();
+                    this.f$0.mRecentsView.loadVisibleTaskData();
                 }
             });
-            ofFloat.setDuration(animationConfig.duration);
-            animatorSetBuilder.play(ofFloat);
+            valueAnimatorOfFloat.setDuration(animationConfig.duration);
+            animatorSetBuilder.play(valueAnimatorOfFloat);
             this.mRecentsView.updateEmptyMessage();
         }
     }

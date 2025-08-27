@@ -2,6 +2,7 @@ package com.android.quicksearchbox.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+
 /* loaded from: classes.dex */
 public class SearchActivityViewSinglePane extends SearchActivityView {
     public SearchActivityViewSinglePane(Context context) {

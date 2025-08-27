@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
+
 /* loaded from: classes.dex */
 public abstract class BaseNfcEnabler {
     private final Context mContext;

@@ -5,6 +5,7 @@ import android.provider.Settings;
 import com.android.settings.fuelgauge.batterytip.BatteryTipPolicy;
 import com.android.settings.fuelgauge.batterytip.tips.BatteryTip;
 import com.android.settings.fuelgauge.batterytip.tips.SmartBatteryTip;
+
 /* loaded from: classes.dex */
 public class SmartBatteryDetector {
     private ContentResolver mContentResolver;

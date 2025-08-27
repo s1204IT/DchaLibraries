@@ -9,6 +9,7 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.nfc.PaymentBackend;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class DefaultPaymentSettingsPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final NfcAdapter mNfcAdapter;

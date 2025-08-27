@@ -22,6 +22,7 @@ import com.android.settings.security.LockscreenDashboardFragment;
 import com.android.settings.security.SecuritySettings;
 import com.android.settings.system.SystemDashboardFragment;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class DashboardFragmentRegistry {
     public static final Map<String, String> CATEGORY_KEY_TO_PARENT_MAP;

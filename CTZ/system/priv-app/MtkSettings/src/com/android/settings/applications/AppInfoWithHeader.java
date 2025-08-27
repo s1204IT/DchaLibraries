@@ -6,6 +6,7 @@ import android.util.IconDrawableFactory;
 import android.util.Log;
 import com.android.settings.widget.EntityHeaderController;
 import com.android.settingslib.applications.AppUtils;
+
 /* loaded from: classes.dex */
 public abstract class AppInfoWithHeader extends AppInfoBase {
     private boolean mCreated;

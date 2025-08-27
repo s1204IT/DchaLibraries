@@ -11,6 +11,7 @@ import com.android.systemui.plugins.annotations.DependsOn;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
 import com.android.systemui.plugins.statusbar.NotificationSwipeActionHelper;
 import java.util.ArrayList;
+
 @Dependencies({@DependsOn(target = OnMenuEventListener.class), @DependsOn(target = MenuItem.class), @DependsOn(target = NotificationSwipeActionHelper.class), @DependsOn(target = NotificationSwipeActionHelper.SnoozeOption.class)})
 @ProvidesInterface(action = NotificationMenuRowPlugin.ACTION, version = 4)
 /* loaded from: classes.dex */
@@ -19,7 +20,6 @@ public interface NotificationMenuRowPlugin extends Plugin {
     public static final int VERSION = 4;
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public interface MenuItem {
         public static final int VERSION = 1;
 
@@ -31,7 +31,6 @@ public interface NotificationMenuRowPlugin extends Plugin {
     }
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public interface OnMenuEventListener {
         public static final int VERSION = 1;
 

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import com.android.browser.UrlInputView;
 import com.mediatek.browser.ext.IBrowserUrlExt;
+
 /* loaded from: classes.dex */
 public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObserver.OnGlobalLayoutListener, PopupMenu.OnDismissListener, PopupMenu.OnMenuItemClickListener, UrlInputView.StateListener {
     private IBrowserUrlExt mBrowserUrlExt;
@@ -49,9 +50,8 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
         this.mBrowserUrlExt = null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.browser.NavigationBarBase, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mStopButton = (ImageView) findViewById(R.id.stop);
         this.mStopButton.setOnClickListener(this);
@@ -102,9 +102,8 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
         onStateChanged(this.mUrlInput.getState());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.android.browser.NavigationBarBase
-    public void setDisplayTitle(String str) {
+    void setDisplayTitle(String str) {
         this.mUrlInput.setTag(str);
         if (!isEditingUrl()) {
             if (str == null) {
@@ -129,12 +128,19 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
             if (webView != null) {
                 stopEditingUrl();
                 webView.reload();
+                return;
             }
-        } else if (view == this.mTabSwitcher) {
+            return;
+        }
+        if (view == this.mTabSwitcher) {
             ((PhoneUi) this.mBaseUi).toggleNavScreen();
-        } else if (this.mMore == view) {
+            return;
+        }
+        if (this.mMore == view) {
             showMenu(this.mMore);
-        } else if (this.mClearButton == view) {
+            return;
+        }
+        if (this.mClearButton == view) {
             this.mUrlInput.setText("");
         } else if (this.mComboIcon == view) {
             this.mUiController.showPageInfo();
@@ -190,27 +196,27 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
     }
 
     @Override // com.android.browser.NavigationBarBase, android.view.View.OnFocusChangeListener
-    public void onFocusChange(View view, boolean z) {
-        String str;
+    public void onFocusChange(View view, boolean z) throws Resources.NotFoundException {
+        String title;
         if (view == this.mUrlInput) {
             Tab activeTab = this.mBaseUi.getActiveTab();
             if (activeTab == null) {
                 activeTab = this.mBaseUi.mTabControl.getCurrentTab();
             }
-            String str2 = null;
+            String url = null;
             if (activeTab != null) {
-                str2 = activeTab.getUrl();
-                str = activeTab.getTitle();
+                url = activeTab.getUrl();
+                title = activeTab.getTitle();
             } else {
-                str = null;
+                title = null;
             }
             this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mUiController.getActivity());
-            String overrideFocusContent = this.mBrowserUrlExt.getOverrideFocusContent(z, this.mUrlInput.getText().toString(), (String) this.mUrlInput.getTag(), str2);
+            String overrideFocusContent = this.mBrowserUrlExt.getOverrideFocusContent(z, this.mUrlInput.getText().toString(), (String) this.mUrlInput.getTag(), url);
             if (overrideFocusContent != null) {
                 this.mUrlInput.setText((CharSequence) overrideFocusContent, false);
                 this.mUrlInput.selectAll();
             } else {
-                setDisplayTitle(this.mBrowserUrlExt.getOverrideFocusTitle(str, this.mUrlInput.getText().toString()));
+                setDisplayTitle(this.mBrowserUrlExt.getOverrideFocusTitle(title, this.mUrlInput.getText().toString()));
             }
         }
         super.onFocusChange(view, z);
@@ -227,7 +233,7 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
                 this.mTabSwitcher.setVisibility(8);
                 this.mTitleContainer.setBackgroundDrawable(null);
                 this.mMore.setVisibility(this.mNeedsMenu ? 0 : 8);
-                return;
+                break;
             case 1:
                 this.mComboIcon.setVisibility(8);
                 this.mStopButton.setVisibility(0);
@@ -236,7 +242,7 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
                 this.mTabSwitcher.setVisibility(8);
                 this.mMore.setVisibility(8);
                 this.mTitleContainer.setBackgroundDrawable(this.mTextfieldBgDrawable);
-                return;
+                break;
             case 2:
                 this.mComboIcon.setVisibility(8);
                 this.mStopButton.setVisibility(8);
@@ -245,9 +251,7 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
                 this.mTabSwitcher.setVisibility(8);
                 this.mMore.setVisibility(8);
                 this.mTitleContainer.setBackgroundDrawable(this.mTextfieldBgDrawable);
-                return;
-            default:
-                return;
+                break;
         }
     }
 

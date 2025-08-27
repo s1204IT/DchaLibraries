@@ -1,4 +1,5 @@
 package com.android.systemui.classifier;
+
 /* loaded from: classes.dex */
 public class DirectionEvaluator {
     public static float evaluate(float f, float f2, int i) {
@@ -6,20 +7,27 @@ public class DirectionEvaluator {
         switch (i) {
             case 0:
             case 2:
-                return (!z || ((double) f2) <= 0.0d) ? 5.5f : 0.0f;
+                if (!z || f2 <= 0.0d) {
+                }
+                break;
             case 1:
-                return z ? 5.5f : 0.0f;
-            case 3:
-            case 7:
-            default:
-                return 0.0f;
+                if (z) {
+                }
+                break;
             case 4:
             case 8:
-                return (!z || ((double) f2) >= 0.0d) ? 5.5f : 0.0f;
+                if (!z || f2 >= 0.0d) {
+                }
+                break;
             case 5:
-                return (((double) f) >= 0.0d || ((double) f2) <= 0.0d) ? 0.0f : 5.5f;
+                if (f >= 0.0d || f2 <= 0.0d) {
+                }
+                break;
             case 6:
-                return (((double) f) <= 0.0d || ((double) f2) <= 0.0d) ? 0.0f : 5.5f;
+                if (f <= 0.0d || f2 <= 0.0d) {
+                }
+                break;
         }
+        return 5.5f;
     }
 }

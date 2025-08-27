@@ -24,6 +24,7 @@ import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
+
 /* loaded from: classes.dex */
 public class QsbContainerView extends FrameLayout {
     public QsbContainerView(Context context) {
@@ -47,7 +48,6 @@ public class QsbContainerView extends FrameLayout {
         super.setPadding(i, i2, i3, i4);
     }
 
-    /* loaded from: classes.dex */
     public static class QsbFragment extends Fragment implements View.OnClickListener {
         private static final String QSB_WIDGET_ID = "qsb_widget_id";
         private static final int REQUEST_BIND_QSB = 1;
@@ -82,7 +82,6 @@ public class QsbContainerView extends FrameLayout {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(activity);
             InvariantDeviceProfile idp = LauncherAppState.getIDP(activity);
             Bundle bundle = new Bundle();
-            boolean z = true;
             Rect widgetSizeRanges = AppWidgetResizeFrame.getWidgetSizeRanges(activity, idp.numColumns, 1, null);
             bundle.putInt("appWidgetMinWidth", widgetSizeRanges.left);
             bundle.putInt("appWidgetMinHeight", widgetSizeRanges.top);
@@ -92,25 +91,23 @@ public class QsbContainerView extends FrameLayout {
             bundle.putString("requested-widget-style", "cqsb");
             int i = Utilities.getPrefs(activity).getInt(QSB_WIDGET_ID, -1);
             AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(i);
-            if (appWidgetInfo == null || !appWidgetInfo.provider.equals(this.mWidgetInfo.provider)) {
-                z = false;
-            }
-            if (!z) {
+            boolean zBindAppWidgetIdIfAllowed = appWidgetInfo != null && appWidgetInfo.provider.equals(this.mWidgetInfo.provider);
+            if (!zBindAppWidgetIdIfAllowed) {
                 if (i > -1) {
                     this.mQsbWidgetHost.deleteHost();
                 }
-                int allocateAppWidgetId = this.mQsbWidgetHost.allocateAppWidgetId();
-                z = appWidgetManager.bindAppWidgetIdIfAllowed(allocateAppWidgetId, this.mWidgetInfo.getProfile(), this.mWidgetInfo.provider, bundle);
-                if (!z) {
-                    this.mQsbWidgetHost.deleteAppWidgetId(allocateAppWidgetId);
-                    allocateAppWidgetId = -1;
+                int iAllocateAppWidgetId = this.mQsbWidgetHost.allocateAppWidgetId();
+                zBindAppWidgetIdIfAllowed = appWidgetManager.bindAppWidgetIdIfAllowed(iAllocateAppWidgetId, this.mWidgetInfo.getProfile(), this.mWidgetInfo.provider, bundle);
+                if (!zBindAppWidgetIdIfAllowed) {
+                    this.mQsbWidgetHost.deleteAppWidgetId(iAllocateAppWidgetId);
+                    iAllocateAppWidgetId = -1;
                 }
-                if (i != allocateAppWidgetId) {
-                    saveWidgetId(allocateAppWidgetId);
+                if (i != iAllocateAppWidgetId) {
+                    saveWidgetId(iAllocateAppWidgetId);
                 }
-                i = allocateAppWidgetId;
+                i = iAllocateAppWidgetId;
             }
-            if (z) {
+            if (zBindAppWidgetIdIfAllowed) {
                 this.mQsb = (QsbWidgetHostView) this.mQsbWidgetHost.createView(activity, i, this.mWidgetInfo);
                 this.mQsb.setId(R.id.qsb_widget);
                 if (!Utilities.containsAll(AppWidgetManager.getInstance(activity).getAppWidgetOptions(i), bundle)) {
@@ -121,9 +118,9 @@ public class QsbContainerView extends FrameLayout {
                 return this.mQsb;
             }
             View defaultView = QsbWidgetHostView.getDefaultView(viewGroup);
-            View findViewById = defaultView.findViewById(R.id.btn_qsb_setup);
-            findViewById.setVisibility(0);
-            findViewById.setOnClickListener(this);
+            View viewFindViewById = defaultView.findViewById(R.id.btn_qsb_setup);
+            viewFindViewById.setVisibility(0);
+            viewFindViewById.setOnClickListener(this);
             return defaultView;
         }
 
@@ -148,9 +145,9 @@ public class QsbContainerView extends FrameLayout {
                 if (i2 == -1) {
                     saveWidgetId(intent.getIntExtra(LauncherSettings.Favorites.APPWIDGET_ID, -1));
                     rebindFragment();
-                    return;
+                } else {
+                    this.mQsbWidgetHost.deleteHost();
                 }
-                this.mQsbWidgetHost.deleteHost();
             }
         }
 
@@ -213,9 +210,7 @@ public class QsbContainerView extends FrameLayout {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class QsbWidgetHost extends AppWidgetHost {
+    private static class QsbWidgetHost extends AppWidgetHost {
         private static final int QSB_WIDGET_HOST_ID = 1026;
 
         public QsbWidgetHost(Context context) {

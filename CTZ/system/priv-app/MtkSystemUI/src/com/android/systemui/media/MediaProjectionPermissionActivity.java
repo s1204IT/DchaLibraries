@@ -21,6 +21,7 @@ import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class MediaProjectionPermissionActivity extends Activity implements DialogInterface.OnCancelListener, DialogInterface.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private AlertDialog mDialog;
@@ -30,7 +31,7 @@ public class MediaProjectionPermissionActivity extends Activity implements Dialo
     private int mUid;
 
     @Override // android.app.Activity
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
         super.onCreate(bundle);
         this.mPackageName = getCallingPackage();
         this.mService = IMediaProjectionManager.Stub.asInterface(ServiceManager.getService("media_projection"));
@@ -50,29 +51,29 @@ public class MediaProjectionPermissionActivity extends Activity implements Dialo
                 }
                 TextPaint textPaint = new TextPaint();
                 textPaint.setTextSize(42.0f);
-                String charSequence = applicationInfo.loadLabel(packageManager).toString();
-                int length = charSequence.length();
-                int i = 0;
-                while (i < length) {
-                    int codePointAt = charSequence.codePointAt(i);
-                    int type = Character.getType(codePointAt);
+                String string = applicationInfo.loadLabel(packageManager).toString();
+                int length = string.length();
+                int iCharCount = 0;
+                while (iCharCount < length) {
+                    int iCodePointAt = string.codePointAt(iCharCount);
+                    int type = Character.getType(iCodePointAt);
                     if (type == 13 || type == 15 || type == 14) {
-                        charSequence = charSequence.substring(0, i) + "…";
+                        string = string.substring(0, iCharCount) + "…";
                         break;
                     }
-                    i += Character.charCount(codePointAt);
+                    iCharCount += Character.charCount(iCodePointAt);
                 }
-                if (charSequence.isEmpty()) {
-                    charSequence = this.mPackageName;
+                if (string.isEmpty()) {
+                    string = this.mPackageName;
                 }
-                String unicodeWrap = BidiFormatter.getInstance().unicodeWrap(TextUtils.ellipsize(charSequence, textPaint, 500.0f, TextUtils.TruncateAt.END).toString());
-                String string = getString(R.string.media_projection_dialog_text, new Object[]{unicodeWrap});
-                SpannableString spannableString = new SpannableString(string);
-                int indexOf = string.indexOf(unicodeWrap);
-                if (indexOf >= 0) {
-                    spannableString.setSpan(new StyleSpan(1), indexOf, unicodeWrap.length() + indexOf, 0);
+                String strUnicodeWrap = BidiFormatter.getInstance().unicodeWrap(TextUtils.ellipsize(string, textPaint, 500.0f, TextUtils.TruncateAt.END).toString());
+                String string2 = getString(R.string.media_projection_dialog_text, new Object[]{strUnicodeWrap});
+                SpannableString spannableString = new SpannableString(string2);
+                int iIndexOf = string2.indexOf(strUnicodeWrap);
+                if (iIndexOf >= 0) {
+                    spannableString.setSpan(new StyleSpan(1), iIndexOf, strUnicodeWrap.length() + iIndexOf, 0);
                 }
-                this.mDialog = new AlertDialog.Builder(this).setIcon(applicationInfo.loadIcon(packageManager)).setMessage(spannableString).setPositiveButton(R.string.media_projection_action_text, this).setNegativeButton(17039360, this).setView(R.layout.remember_permission_checkbox).setOnCancelListener(this).create();
+                this.mDialog = new AlertDialog.Builder(this).setIcon(applicationInfo.loadIcon(packageManager)).setMessage(spannableString).setPositiveButton(R.string.media_projection_action_text, this).setNegativeButton(android.R.string.cancel, this).setView(R.layout.remember_permission_checkbox).setOnCancelListener(this).create();
                 this.mDialog.create();
                 this.mDialog.getButton(-1).setFilterTouchesWhenObscured(true);
                 ((CheckBox) this.mDialog.findViewById(R.id.remember)).setOnCheckedChangeListener(this);
@@ -98,12 +99,7 @@ public class MediaProjectionPermissionActivity extends Activity implements Dialo
         }
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:11:0x0021, code lost:
-        if (r2.mDialog == null) goto L7;
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:22:0x003e, code lost:
-        return;
-     */
+    /* JADX WARN: Removed duplicated region for block: B:20:0x0035 A[DONT_GENERATE] */
     @Override // android.content.DialogInterface.OnClickListener
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -116,6 +112,8 @@ public class MediaProjectionPermissionActivity extends Activity implements Dialo
                 } catch (RemoteException e) {
                     Log.e("MediaProjectionPermissionActivity", "Error granting projection permission", e);
                     setResult(0);
+                    if (this.mDialog != null) {
+                    }
                 }
             }
         } finally {
@@ -132,9 +130,9 @@ public class MediaProjectionPermissionActivity extends Activity implements Dialo
     }
 
     private Intent getMediaProjectionIntent(int i, String str, boolean z) throws RemoteException {
-        IMediaProjection createProjection = this.mService.createProjection(i, str, 0, z);
+        IMediaProjection iMediaProjectionCreateProjection = this.mService.createProjection(i, str, 0, z);
         Intent intent = new Intent();
-        intent.putExtra("android.media.projection.extra.EXTRA_MEDIA_PROJECTION", createProjection.asBinder());
+        intent.putExtra("android.media.projection.extra.EXTRA_MEDIA_PROJECTION", iMediaProjectionCreateProjection.asBinder());
         return intent;
     }
 

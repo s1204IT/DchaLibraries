@@ -2,6 +2,7 @@ package android.support.v4.view;
 
 import android.os.Build;
 import android.view.WindowInsets;
+
 /* loaded from: classes.dex */
 public class WindowInsetsCompat {
     private final Object mInsets;
@@ -53,13 +54,13 @@ public class WindowInsetsCompat {
             return false;
         }
         WindowInsetsCompat other = (WindowInsetsCompat) o;
-        if (this.mInsets == null) {
-            if (other.mInsets == null) {
-                return true;
-            }
-            return false;
+        if (this.mInsets != null) {
+            return this.mInsets.equals(other.mInsets);
         }
-        return this.mInsets.equals(other.mInsets);
+        if (other.mInsets == null) {
+            return true;
+        }
+        return false;
     }
 
     public int hashCode() {
@@ -69,16 +70,14 @@ public class WindowInsetsCompat {
         return this.mInsets.hashCode();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static WindowInsetsCompat wrap(Object insets) {
+    static WindowInsetsCompat wrap(Object insets) {
         if (insets == null) {
             return null;
         }
         return new WindowInsetsCompat(insets);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static Object unwrap(WindowInsetsCompat insets) {
+    static Object unwrap(WindowInsetsCompat insets) {
         if (insets == null) {
             return null;
         }

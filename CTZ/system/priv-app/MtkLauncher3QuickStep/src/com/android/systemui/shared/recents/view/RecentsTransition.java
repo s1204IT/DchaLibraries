@@ -13,6 +13,7 @@ import android.view.RenderNode;
 import android.view.ThreadedRenderer;
 import android.view.View;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class RecentsTransition {
     public static ActivityOptions createAspectScaleAnimation(Context context, Handler handler, boolean scaleUp, AppTransitionAnimationSpecsFuture animationSpecsFuture, final Runnable animationStartCallback) {
@@ -46,6 +47,7 @@ public class RecentsTransition {
 
     public static Bitmap drawViewIntoHardwareBitmap(int width, int height, final View view, final float scale, final int eraseColor) {
         return createHardwareBitmap(width, height, new Consumer<Canvas>() { // from class: com.android.systemui.shared.recents.view.RecentsTransition.3
+            /* JADX DEBUG: Method merged with bridge method: accept(Ljava/lang/Object;)V */
             @Override // java.util.function.Consumer
             public void accept(Canvas c) {
                 c.scale(scale, scale);

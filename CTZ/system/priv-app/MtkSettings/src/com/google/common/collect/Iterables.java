@@ -1,4 +1,5 @@
 package com.google.common.collect;
+
 /* loaded from: classes.dex */
 public final class Iterables {
     public static <T> T getOnlyElement(Iterable<T> iterable) {

@@ -20,7 +20,9 @@ import com.android.internal.app.AlertActivity;
 import com.android.internal.app.AlertController;
 import com.android.internal.telephony.SmsApplication;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public final class SmsDefaultDialog extends AlertActivity implements DialogInterface.OnClickListener {
     private SmsApplication.SmsApplicationData mNewSmsApplicationData;
@@ -48,16 +50,17 @@ public final class SmsDefaultDialog extends AlertActivity implements DialogInter
         window.setAttributes(attributes);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: com.android.settings.SmsDefaultDialog */
     /* JADX WARN: Multi-variable type inference failed */
     @Override // android.content.DialogInterface.OnClickListener
     public void onClick(DialogInterface dialogInterface, int i) {
         switch (i) {
             case -2:
-                return;
+                break;
             case -1:
                 SmsApplication.setDefaultApplication(this.mNewSmsApplicationData.mPackageName, this);
                 setResult(-1);
-                return;
+                break;
             default:
                 if (i >= 0) {
                     AppListAdapter appListAdapter = (AppListAdapter) this.mAlertParams.mAdapter;
@@ -66,64 +69,59 @@ public final class SmsDefaultDialog extends AlertActivity implements DialogInter
                         if (!TextUtils.isEmpty(packageName)) {
                             SmsApplication.setDefaultApplication(packageName, this);
                             setResult(-1);
-                            return;
+                            break;
                         }
-                        return;
                     }
-                    return;
                 }
-                return;
+                break;
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r6v0, resolved type: com.android.settings.SmsDefaultDialog */
     /* JADX WARN: Multi-variable type inference failed */
     private boolean buildDialog(String str) {
-        if (((TelephonyManager) getSystemService("phone")).isSmsCapable()) {
-            AlertController.AlertParams alertParams = this.mAlertParams;
-            alertParams.mTitle = getString(R.string.sms_change_default_dialog_title);
-            this.mNewSmsApplicationData = SmsApplication.getSmsApplicationData(str, this);
-            if (this.mNewSmsApplicationData != null) {
-                SmsApplication.SmsApplicationData smsApplicationData = null;
-                ComponentName defaultSmsApplication = SmsApplication.getDefaultSmsApplication(this, true);
-                if (defaultSmsApplication != null) {
-                    smsApplicationData = SmsApplication.getSmsApplicationData(defaultSmsApplication.getPackageName(), this);
-                    if (smsApplicationData.mPackageName.equals(this.mNewSmsApplicationData.mPackageName)) {
-                        return false;
-                    }
-                }
-                if (smsApplicationData != null) {
-                    alertParams.mMessage = getString(R.string.sms_change_default_dialog_text, new Object[]{this.mNewSmsApplicationData.getApplicationName(this), smsApplicationData.getApplicationName(this)});
-                } else {
-                    alertParams.mMessage = getString(R.string.sms_change_default_no_previous_dialog_text, new Object[]{this.mNewSmsApplicationData.getApplicationName(this)});
-                }
-                alertParams.mPositiveButtonText = getString(R.string.yes);
-                alertParams.mNegativeButtonText = getString(R.string.no);
-                alertParams.mPositiveButtonListener = this;
-                alertParams.mNegativeButtonListener = this;
-            } else {
-                alertParams.mAdapter = new AppListAdapter();
-                alertParams.mOnClickListener = this;
-                alertParams.mNegativeButtonText = getString(R.string.cancel);
-                alertParams.mNegativeButtonListener = this;
-                if (alertParams.mAdapter.isEmpty()) {
+        if (!((TelephonyManager) getSystemService("phone")).isSmsCapable()) {
+            return false;
+        }
+        AlertController.AlertParams alertParams = this.mAlertParams;
+        alertParams.mTitle = getString(R.string.sms_change_default_dialog_title);
+        this.mNewSmsApplicationData = SmsApplication.getSmsApplicationData(str, this);
+        if (this.mNewSmsApplicationData != null) {
+            SmsApplication.SmsApplicationData smsApplicationData = null;
+            ComponentName defaultSmsApplication = SmsApplication.getDefaultSmsApplication(this, true);
+            if (defaultSmsApplication != null) {
+                smsApplicationData = SmsApplication.getSmsApplicationData(defaultSmsApplication.getPackageName(), this);
+                if (smsApplicationData.mPackageName.equals(this.mNewSmsApplicationData.mPackageName)) {
                     return false;
                 }
             }
-            setupAlert();
-            return true;
+            if (smsApplicationData != null) {
+                alertParams.mMessage = getString(R.string.sms_change_default_dialog_text, new Object[]{this.mNewSmsApplicationData.getApplicationName(this), smsApplicationData.getApplicationName(this)});
+            } else {
+                alertParams.mMessage = getString(R.string.sms_change_default_no_previous_dialog_text, new Object[]{this.mNewSmsApplicationData.getApplicationName(this)});
+            }
+            alertParams.mPositiveButtonText = getString(R.string.yes);
+            alertParams.mNegativeButtonText = getString(R.string.no);
+            alertParams.mPositiveButtonListener = this;
+            alertParams.mNegativeButtonListener = this;
+        } else {
+            alertParams.mAdapter = new AppListAdapter();
+            alertParams.mOnClickListener = this;
+            alertParams.mNegativeButtonText = getString(R.string.cancel);
+            alertParams.mNegativeButtonListener = this;
+            if (alertParams.mAdapter.isEmpty()) {
+                return false;
+            }
         }
-        return false;
+        setupAlert();
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AppListAdapter extends BaseAdapter {
+    private class AppListAdapter extends BaseAdapter {
         private final List<Item> mItems = getItems();
         private final int mSelectedIndex;
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class Item {
+        private class Item {
             final Drawable icon;
             final String label;
             final String packgeName;
@@ -168,15 +166,15 @@ public final class SmsDefaultDialog extends AlertActivity implements DialogInter
         @Override // android.widget.Adapter
         public View getView(int i, View view, ViewGroup viewGroup) {
             Item item = (Item) getItem(i);
-            View inflate = SmsDefaultDialog.this.getLayoutInflater().inflate(R.layout.app_preference_item, viewGroup, false);
-            ((TextView) inflate.findViewById(16908310)).setText(item.label);
+            View viewInflate = SmsDefaultDialog.this.getLayoutInflater().inflate(R.layout.app_preference_item, viewGroup, false);
+            ((TextView) viewInflate.findViewById(android.R.id.title)).setText(item.label);
             if (i == this.mSelectedIndex) {
-                inflate.findViewById(R.id.default_label).setVisibility(0);
+                viewInflate.findViewById(R.id.default_label).setVisibility(0);
             } else {
-                inflate.findViewById(R.id.default_label).setVisibility(8);
+                viewInflate.findViewById(R.id.default_label).setVisibility(8);
             }
-            ((ImageView) inflate.findViewById(16908294)).setImageDrawable(item.icon);
-            return inflate;
+            ((ImageView) viewInflate.findViewById(android.R.id.icon)).setImageDrawable(item.icon);
+            return viewInflate;
         }
 
         public String getPackageName(int i) {
@@ -191,12 +189,13 @@ public final class SmsDefaultDialog extends AlertActivity implements DialogInter
             return i == this.mSelectedIndex;
         }
 
-        private List<Item> getItems() {
+        private List<Item> getItems() throws PackageManager.NameNotFoundException {
             PackageManager packageManager = SmsDefaultDialog.this.getPackageManager();
             ArrayList arrayList = new ArrayList();
-            for (SmsApplication.SmsApplicationData smsApplicationData : SmsApplication.getApplicationCollection(SmsDefaultDialog.this)) {
+            Iterator it = SmsApplication.getApplicationCollection(SmsDefaultDialog.this).iterator();
+            while (it.hasNext()) {
                 try {
-                    String str = smsApplicationData.mPackageName;
+                    String str = ((SmsApplication.SmsApplicationData) it.next()).mPackageName;
                     ApplicationInfo applicationInfo = packageManager.getApplicationInfo(str, 0);
                     if (applicationInfo != null) {
                         arrayList.add(new Item(applicationInfo.loadLabel(packageManager).toString(), applicationInfo.loadIcon(packageManager), str));

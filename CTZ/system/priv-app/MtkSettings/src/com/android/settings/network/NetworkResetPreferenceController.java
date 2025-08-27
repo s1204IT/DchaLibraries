@@ -3,6 +3,7 @@ package com.android.settings.network;
 import android.content.Context;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class NetworkResetPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final NetworkResetRestrictionChecker mRestrictionChecker;

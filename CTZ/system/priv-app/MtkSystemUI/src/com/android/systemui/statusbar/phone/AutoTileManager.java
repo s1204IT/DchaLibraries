@@ -1,6 +1,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
 import com.android.internal.annotations.VisibleForTesting;
@@ -12,9 +13,11 @@ import com.android.systemui.qs.SecureSetting;
 import com.android.systemui.statusbar.phone.ManagedProfileController;
 import com.android.systemui.statusbar.policy.DataSaverController;
 import com.android.systemui.statusbar.policy.HotspotController;
+
 /* loaded from: classes.dex */
 public class AutoTileManager {
     private final AutoAddTracker mAutoTracker;
+
     @VisibleForTesting
     final ColorDisplayController.Callback mColorDisplayCallback;
     private SecureSetting mColorsSetting;
@@ -57,16 +60,14 @@ public class AutoTileManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$1  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends SecureSetting {
+    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$1, reason: invalid class name */
+    class AnonymousClass1 extends SecureSetting {
         AnonymousClass1(Context context, Handler handler, String str) {
             super(context, handler, str);
         }
 
         @Override // com.android.systemui.qs.SecureSetting
-        protected void handleValueChanged(int i, boolean z) {
+        protected void handleValueChanged(int i, boolean z) throws Resources.NotFoundException {
             if (!AutoTileManager.this.mAutoTracker.isAdded("inversion") && i != 0) {
                 AutoTileManager.this.mHost.addTile("inversion");
                 AutoTileManager.this.mAutoTracker.setTileAdded("inversion");
@@ -80,15 +81,13 @@ public class AutoTileManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$2  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass2 implements ManagedProfileController.Callback {
+    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$2, reason: invalid class name */
+    class AnonymousClass2 implements ManagedProfileController.Callback {
         AnonymousClass2() {
         }
 
         @Override // com.android.systemui.statusbar.phone.ManagedProfileController.Callback
-        public void onManagedProfileChanged() {
+        public void onManagedProfileChanged() throws Resources.NotFoundException {
             if (!AutoTileManager.this.mAutoTracker.isAdded("work") && ((ManagedProfileController) Dependency.get(ManagedProfileController.class)).hasActiveProfile()) {
                 AutoTileManager.this.mHost.addTile("work");
                 AutoTileManager.this.mAutoTracker.setTileAdded("work");
@@ -106,15 +105,13 @@ public class AutoTileManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$3  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass3 implements DataSaverController.Listener {
+    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$3, reason: invalid class name */
+    class AnonymousClass3 implements DataSaverController.Listener {
         AnonymousClass3() {
         }
 
         @Override // com.android.systemui.statusbar.policy.DataSaverController.Listener
-        public void onDataSaverChanged(boolean z) {
+        public void onDataSaverChanged(boolean z) throws Resources.NotFoundException {
             if (!AutoTileManager.this.mAutoTracker.isAdded("saver") && z) {
                 AutoTileManager.this.mHost.addTile("saver");
                 AutoTileManager.this.mAutoTracker.setTileAdded("saver");
@@ -128,15 +125,13 @@ public class AutoTileManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$4  reason: invalid class name */
-    /* loaded from: classes.dex */
-    public class AnonymousClass4 implements HotspotController.Callback {
+    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$4, reason: invalid class name */
+    class AnonymousClass4 implements HotspotController.Callback {
         AnonymousClass4() {
         }
 
         @Override // com.android.systemui.statusbar.policy.HotspotController.Callback
-        public void onHotspotChanged(boolean z, int i) {
+        public void onHotspotChanged(boolean z, int i) throws Resources.NotFoundException {
             if (!AutoTileManager.this.mAutoTracker.isAdded("hotspot") && z) {
                 AutoTileManager.this.mHost.addTile("hotspot");
                 AutoTileManager.this.mAutoTracker.setTileAdded("hotspot");
@@ -150,25 +145,24 @@ public class AutoTileManager {
         }
     }
 
-    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$5  reason: invalid class name */
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.systemui.statusbar.phone.AutoTileManager$5, reason: invalid class name */
     class AnonymousClass5 implements ColorDisplayController.Callback {
         AnonymousClass5() {
         }
 
-        public void onActivated(boolean z) {
+        public void onActivated(boolean z) throws Resources.NotFoundException {
             if (z) {
                 addNightTile();
             }
         }
 
-        public void onAutoModeChanged(int i) {
+        public void onAutoModeChanged(int i) throws Resources.NotFoundException {
             if (i == 1 || i == 2) {
                 addNightTile();
             }
         }
 
-        private void addNightTile() {
+        private void addNightTile() throws Resources.NotFoundException {
             if (AutoTileManager.this.mAutoTracker.isAdded("night")) {
                 return;
             }

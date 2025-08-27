@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class AutoSizingList extends LinearLayout {
     private ListAdapter mAdapter;
@@ -42,10 +43,10 @@ public class AutoSizingList extends LinearLayout {
             }
         };
         this.mHandler = new Handler();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.AutoSizingList);
-        this.mItemSize = obtainStyledAttributes.getDimensionPixelSize(1, 0);
-        this.mEnableAutoSizing = obtainStyledAttributes.getBoolean(0, true);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.AutoSizingList);
+        this.mItemSize = typedArrayObtainStyledAttributes.getDimensionPixelSize(1, 0);
+        this.mEnableAutoSizing = typedArrayObtainStyledAttributes.getBoolean(0, true);
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public void setAdapter(ListAdapter listAdapter) {
@@ -74,21 +75,18 @@ public class AutoSizingList extends LinearLayout {
         return this.mEnableAutoSizing ? Math.min(i / this.mItemSize, desiredCount) : desiredCount;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int getDesiredCount() {
+    private int getDesiredCount() {
         if (this.mAdapter != null) {
             return this.mAdapter.getCount();
         }
         return 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void postRebindChildren() {
+    private void postRebindChildren() {
         this.mHandler.post(this.mBindChildren);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void rebindChildren() {
+    private void rebindChildren() {
         if (this.mAdapter == null) {
             return;
         }

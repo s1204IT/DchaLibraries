@@ -8,18 +8,19 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.android.settings.R;
 import java.util.Collection;
+
 /* loaded from: classes.dex */
 public class PercentageBarChart extends View {
     private final Paint mEmptyPaint;
     private Collection<Entry> mEntries;
     private int mMinTickWidth;
 
-    /* loaded from: classes.dex */
     public static class Entry implements Comparable<Entry> {
         public final int order;
         public final Paint paint;
         public final float percentage;
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // java.lang.Comparable
         public int compareTo(Entry entry) {
             return this.order - entry.order;
@@ -30,10 +31,10 @@ public class PercentageBarChart extends View {
         super(context, attributeSet);
         this.mEmptyPaint = new Paint();
         this.mMinTickWidth = 1;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.PercentageBarChart);
-        this.mMinTickWidth = obtainStyledAttributes.getDimensionPixelSize(1, 1);
-        int color = obtainStyledAttributes.getColor(0, -16777216);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.PercentageBarChart);
+        this.mMinTickWidth = typedArrayObtainStyledAttributes.getDimensionPixelSize(1, 1);
+        int color = typedArrayObtainStyledAttributes.getColor(0, -16777216);
+        typedArrayObtainStyledAttributes.recycle();
         this.mEmptyPaint.setColor(color);
         this.mEmptyPaint.setStyle(Paint.Style.FILL);
     }
@@ -41,9 +42,9 @@ public class PercentageBarChart extends View {
     @Override // android.view.View
     protected void onDraw(Canvas canvas) {
         float f;
-        float max;
+        float fMax;
         float f2;
-        float max2;
+        float fMax2;
         super.onDraw(canvas);
         int paddingLeft = getPaddingLeft();
         int width = getWidth() - getPaddingRight();
@@ -56,11 +57,11 @@ public class PercentageBarChart extends View {
                 float f4 = f3;
                 for (Entry entry : this.mEntries) {
                     if (entry.percentage != 0.0f) {
-                        max2 = Math.max(this.mMinTickWidth, i * entry.percentage);
+                        fMax2 = Math.max(this.mMinTickWidth, i * entry.percentage);
                     } else {
-                        max2 = 0.0f;
+                        fMax2 = 0.0f;
                     }
-                    float f5 = f4 - max2;
+                    float f5 = f4 - fMax2;
                     float f6 = paddingLeft;
                     if (f5 < f6) {
                         canvas.drawRect(f6, paddingTop, f4, height, entry.paint);
@@ -82,11 +83,11 @@ public class PercentageBarChart extends View {
             float f8 = f7;
             for (Entry entry2 : this.mEntries) {
                 if (entry2.percentage != 0.0f) {
-                    max = Math.max(this.mMinTickWidth, i * entry2.percentage);
+                    fMax = Math.max(this.mMinTickWidth, i * entry2.percentage);
                 } else {
-                    max = 0.0f;
+                    fMax = 0.0f;
                 }
-                float f9 = f8 + max;
+                float f9 = f8 + fMax;
                 float f10 = width;
                 if (f9 > f10) {
                     canvas.drawRect(f8, paddingTop, f10, height, entry2.paint);

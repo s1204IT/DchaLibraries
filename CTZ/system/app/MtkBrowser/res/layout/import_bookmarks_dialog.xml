@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:padding="8dp" android:layout_width="match_parent" android:layout_height="match_parent">
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/import_bookmarks_dialog_description"/>
-    <LinearLayout android:orientation="vertical" android:id="@+id/accountList" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-    <Button android:id="@+id/remove" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/import_bookmarks_dialog_remove" android:maxLines="2"/>
-    <Button android:id="@+id/cancel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@android:string/cancel"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/import_bookmarks_dialog_description"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/accountList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/remove"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/import_bookmarks_dialog_remove"
+        android:maxLines="2"/>
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@android:string/cancel"/>
 </LinearLayout>

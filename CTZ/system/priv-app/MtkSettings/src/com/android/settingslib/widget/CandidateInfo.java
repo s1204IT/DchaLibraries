@@ -1,6 +1,7 @@
 package com.android.settingslib.widget;
 
 import android.graphics.drawable.Drawable;
+
 /* loaded from: classes.dex */
 public abstract class CandidateInfo {
     public final boolean enabled;

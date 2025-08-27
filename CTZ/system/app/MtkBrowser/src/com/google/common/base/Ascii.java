@@ -1,4 +1,5 @@
 package com.google.common.base;
+
 /* loaded from: classes.dex */
 public final class Ascii {
     public static String toLowerCase(String str) {

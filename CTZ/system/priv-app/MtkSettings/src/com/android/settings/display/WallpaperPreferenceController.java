@@ -15,6 +15,7 @@ import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WallpaperPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private final String mWallpaperClass;
@@ -36,8 +37,8 @@ public class WallpaperPreferenceController extends AbstractPreferenceController 
         PackageManager packageManager = this.mContext.getPackageManager();
         Intent intent = new Intent();
         intent.setComponent(componentName);
-        List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent, 0);
-        return (queryIntentActivities == null || queryIntentActivities.size() == 0) ? false : true;
+        List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent, 0);
+        return (listQueryIntentActivities == null || listQueryIntentActivities.size() == 0) ? false : true;
     }
 
     @Override // com.android.settingslib.core.AbstractPreferenceController

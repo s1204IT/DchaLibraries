@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import com.android.settingslib.Utils;
+
 /* loaded from: classes.dex */
 public class HardwareBgDrawable extends LayerDrawable {
     private final Drawable[] mLayers;
@@ -40,7 +41,7 @@ public class HardwareBgDrawable extends LayerDrawable {
             drawableArr[0] = context.getDrawable(i).mutate();
             drawableArr[1] = context.getDrawable(z2 ? R.drawable.rounded_full_bg_bottom : R.drawable.rounded_bg_bottom).mutate();
         }
-        drawableArr[1].setTint(Utils.getColorAttr(context, 16843827));
+        drawableArr[1].setTint(Utils.getColorAttr(context, android.R.attr.colorPrimary));
         return drawableArr;
     }
 
@@ -70,10 +71,11 @@ public class HardwareBgDrawable extends LayerDrawable {
                 this.mLayers[1].draw(canvas);
                 this.mLayers[0].draw(canvas);
                 return;
+            } else {
+                this.mLayers[0].draw(canvas);
+                this.mLayers[1].draw(canvas);
+                return;
             }
-            this.mLayers[0].draw(canvas);
-            this.mLayers[1].draw(canvas);
-            return;
         }
         this.mLayers[0].draw(canvas);
     }

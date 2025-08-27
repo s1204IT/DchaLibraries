@@ -20,6 +20,7 @@ import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class PrivateDnsPreferenceController extends BasePreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnStart, OnStop {
     private static final String KEY_PRIVATE_DNS_SETTINGS = "private_dns_settings";
@@ -89,9 +90,7 @@ public class PrivateDnsPreferenceController extends BasePreferenceController imp
         this.mConnectivityManager.unregisterNetworkCallback(this.mNetworkCallback);
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:20:0x004f, code lost:
-        if (r2.equals("opportunistic") != false) goto L13;
-     */
+    /* JADX WARN: Removed duplicated region for block: B:22:0x0052  */
     @Override // com.android.settingslib.core.AbstractPreferenceController
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -103,19 +102,14 @@ public class PrivateDnsPreferenceController extends BasePreferenceController imp
         LinkProperties linkProperties = this.mLatestLinkProperties;
         char c = 1;
         boolean z = !ArrayUtils.isEmpty(linkProperties == null ? null : linkProperties.getValidatedPrivateDnsServers());
-        int hashCode = modeFromSettings.hashCode();
-        if (hashCode != -539229175) {
-            if (hashCode != -299803597) {
-                if (hashCode == 109935 && modeFromSettings.equals("off")) {
-                    c = 0;
-                }
-                c = 65535;
-            } else {
-                if (modeFromSettings.equals("hostname")) {
-                    c = 2;
-                }
-                c = 65535;
+        int iHashCode = modeFromSettings.hashCode();
+        if (iHashCode != -539229175) {
+            if (iHashCode != -299803597) {
+                c = (iHashCode == 109935 && modeFromSettings.equals("off")) ? (char) 0 : (char) 65535;
+            } else if (modeFromSettings.equals("hostname")) {
+                c = 2;
             }
+        } else if (!modeFromSettings.equals("opportunistic")) {
         }
         switch (c) {
             case 0:
@@ -132,7 +126,6 @@ public class PrivateDnsPreferenceController extends BasePreferenceController imp
         }
     }
 
-    /* loaded from: classes.dex */
     private class PrivateDnsSettingsObserver extends ContentObserver {
         public PrivateDnsSettingsObserver(Handler handler) {
             super(handler);

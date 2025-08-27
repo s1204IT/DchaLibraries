@@ -10,6 +10,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+
 /* loaded from: classes.dex */
 public class LocationSwitchBarController implements LocationEnabler.LocationModeChangeListener, SwitchBar.OnSwitchChangeListener, LifecycleObserver, OnStart, OnStop {
     private final LocationEnabler mLocationEnabler;
@@ -44,19 +45,19 @@ public class LocationSwitchBarController implements LocationEnabler.LocationMode
 
     @Override // com.android.settings.location.LocationEnabler.LocationModeChangeListener
     public void onLocationModeChanged(int i, boolean z) {
-        boolean isEnabled = this.mLocationEnabler.isEnabled(i);
-        int myUserId = UserHandle.myUserId();
-        RestrictedLockUtils.EnforcedAdmin shareLocationEnforcedAdmin = this.mLocationEnabler.getShareLocationEnforcedAdmin(myUserId);
-        if (!this.mLocationEnabler.hasShareLocationRestriction(myUserId) && shareLocationEnforcedAdmin != null) {
+        boolean zIsEnabled = this.mLocationEnabler.isEnabled(i);
+        int iMyUserId = UserHandle.myUserId();
+        RestrictedLockUtils.EnforcedAdmin shareLocationEnforcedAdmin = this.mLocationEnabler.getShareLocationEnforcedAdmin(iMyUserId);
+        if (!this.mLocationEnabler.hasShareLocationRestriction(iMyUserId) && shareLocationEnforcedAdmin != null) {
             this.mSwitchBar.setDisabledByAdmin(shareLocationEnforcedAdmin);
         } else {
             this.mSwitchBar.setEnabled(!z);
         }
-        if (isEnabled != this.mSwitch.isChecked()) {
+        if (zIsEnabled != this.mSwitch.isChecked()) {
             if (this.mValidListener) {
                 this.mSwitchBar.removeOnSwitchChangeListener(this);
             }
-            this.mSwitch.setChecked(isEnabled);
+            this.mSwitch.setChecked(zIsEnabled);
             if (this.mValidListener) {
                 this.mSwitchBar.addOnSwitchChangeListener(this);
             }

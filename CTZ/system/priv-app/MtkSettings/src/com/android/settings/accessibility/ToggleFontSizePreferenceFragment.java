@@ -7,12 +7,13 @@ import android.os.Bundle;
 import android.provider.Settings;
 import com.android.settings.PreviewSeekBarPreferenceFragment;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class ToggleFontSizePreferenceFragment extends PreviewSeekBarPreferenceFragment {
     private float[] mValues;
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws Resources.NotFoundException {
         super.onCreate(bundle);
         this.mActivityLayoutResId = R.layout.font_size_activity;
         this.mPreviewSampleResIds = new int[]{R.layout.font_size_preview};
@@ -52,14 +53,14 @@ public class ToggleFontSizePreferenceFragment extends PreviewSeekBarPreferenceFr
         return 340;
     }
 
-    public static int fontSizeValueToIndex(float f, String[] strArr) {
-        float parseFloat = Float.parseFloat(strArr[0]);
+    public static int fontSizeValueToIndex(float f, String[] strArr) throws NumberFormatException {
+        float f2 = Float.parseFloat(strArr[0]);
         int i = 1;
         while (i < strArr.length) {
-            float parseFloat2 = Float.parseFloat(strArr[i]);
-            if (f >= parseFloat + ((parseFloat2 - parseFloat) * 0.5f)) {
+            float f3 = Float.parseFloat(strArr[i]);
+            if (f >= f2 + ((f3 - f2) * 0.5f)) {
                 i++;
-                parseFloat = parseFloat2;
+                f2 = f3;
             } else {
                 return i - 1;
             }

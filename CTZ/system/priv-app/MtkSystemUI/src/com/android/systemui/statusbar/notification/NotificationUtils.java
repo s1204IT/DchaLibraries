@@ -1,11 +1,13 @@
 package com.android.systemui.statusbar.notification;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import com.android.internal.util.NotificationColorUtil;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class NotificationUtils {
     private static final int[] sLocationBase = new int[2];
@@ -16,9 +18,9 @@ public class NotificationUtils {
         if (tag != null) {
             return Boolean.TRUE.equals(tag);
         }
-        boolean isGrayscaleIcon = notificationColorUtil.isGrayscaleIcon(imageView.getDrawable());
-        imageView.setTag(R.id.icon_is_grayscale, Boolean.valueOf(isGrayscaleIcon));
-        return isGrayscaleIcon;
+        boolean zIsGrayscaleIcon = notificationColorUtil.isGrayscaleIcon(imageView.getDrawable());
+        imageView.setTag(R.id.icon_is_grayscale, Boolean.valueOf(zIsGrayscaleIcon));
+        return zIsGrayscaleIcon;
     }
 
     public static float interpolate(float f, float f2, float f3) {
@@ -35,7 +37,7 @@ public class NotificationUtils {
         return sLocationOffset[1] - sLocationBase[1];
     }
 
-    public static int getFontScaledHeight(Context context, int i) {
+    public static int getFontScaledHeight(Context context, int i) throws Resources.NotFoundException {
         return (int) (context.getResources().getDimensionPixelSize(i) * Math.max(1.0f, context.getResources().getDisplayMetrics().scaledDensity / context.getResources().getDisplayMetrics().density));
     }
 }

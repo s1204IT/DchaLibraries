@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.os.UserHandle;
 import android.util.Log;
 import com.android.systemui.shared.recents.model.ThumbnailData;
+
 /* loaded from: classes.dex */
 public abstract class TaskStackChangeListener {
     public void onTaskStackChangedBackground() {
@@ -54,12 +55,11 @@ public abstract class TaskStackChangeListener {
     public void onActivityRequestedOrientationChanged(int i, int i2) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public final boolean checkCurrentUserId(int i, boolean z) {
-        int myUserId = UserHandle.myUserId();
-        if (myUserId != i) {
+    protected final boolean checkCurrentUserId(int i, boolean z) {
+        int iMyUserId = UserHandle.myUserId();
+        if (iMyUserId != i) {
             if (z) {
-                Log.d("TaskStackChangeListener", "UID mismatch. Process is uid=" + myUserId + " and the current user is uid=" + i);
+                Log.d("TaskStackChangeListener", "UID mismatch. Process is uid=" + iMyUserId + " and the current user is uid=" + i);
                 return false;
             }
             return false;

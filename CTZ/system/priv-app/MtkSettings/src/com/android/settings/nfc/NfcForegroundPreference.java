@@ -5,6 +5,7 @@ import android.support.v7.preference.DropDownPreference;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.nfc.PaymentBackend;
+
 /* loaded from: classes.dex */
 public class NfcForegroundPreference extends DropDownPreference implements Preference.OnPreferenceChangeListener, PaymentBackend.Callback {
     private final PaymentBackend mPaymentBackend;

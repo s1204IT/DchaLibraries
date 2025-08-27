@@ -1,6 +1,7 @@
 package com.android.keyguard;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
@@ -22,6 +23,7 @@ import com.android.settingslib.animation.AppearAnimationCreator;
 import com.android.settingslib.animation.AppearAnimationUtils;
 import com.android.settingslib.animation.DisappearAnimationUtils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class KeyguardPatternView extends LinearLayout implements EmergencyButton.EmergencyButtonCallback, KeyguardSecurityView, AppearAnimationCreator<LockPatternView.CellState> {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
@@ -58,9 +60,9 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         };
         this.mTempRect = new Rect();
         this.mKeyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(this.mContext);
-        this.mAppearAnimationUtils = new AppearAnimationUtils(context, 220L, 1.5f, 2.0f, AnimationUtils.loadInterpolator(this.mContext, 17563662));
-        this.mDisappearAnimationUtils = new DisappearAnimationUtils(context, 125L, 1.2f, 0.6f, AnimationUtils.loadInterpolator(this.mContext, 17563663));
-        this.mDisappearAnimationUtilsLocked = new DisappearAnimationUtils(context, 187L, 1.2f, 0.6f, AnimationUtils.loadInterpolator(this.mContext, 17563663));
+        this.mAppearAnimationUtils = new AppearAnimationUtils(context, 220L, 1.5f, 2.0f, AnimationUtils.loadInterpolator(this.mContext, android.R.interpolator.linear_out_slow_in));
+        this.mDisappearAnimationUtils = new DisappearAnimationUtils(context, 125L, 1.2f, 0.6f, AnimationUtils.loadInterpolator(this.mContext, android.R.interpolator.fast_out_linear_in));
+        this.mDisappearAnimationUtilsLocked = new DisappearAnimationUtils(context, 187L, 1.2f, 0.6f, AnimationUtils.loadInterpolator(this.mContext, android.R.interpolator.fast_out_linear_in));
         this.mDisappearYTranslation = getResources().getDimensionPixelSize(com.android.systemui.R.dimen.disappear_y_translation);
     }
 
@@ -89,12 +91,12 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         if (emergencyButton != null) {
             emergencyButton.setCallback(this);
         }
-        View findViewById = findViewById(com.android.systemui.R.id.cancel_button);
-        if (findViewById != null) {
-            findViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.keyguard.-$$Lambda$KeyguardPatternView$N-2kmt4uZ3ZvQBB4SmVDuZJ_Wqw
+        View viewFindViewById = findViewById(com.android.systemui.R.id.cancel_button);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.keyguard.-$$Lambda$KeyguardPatternView$N-2kmt4uZ3ZvQBB4SmVDuZJ_Wqw
                 @Override // android.view.View.OnClickListener
                 public final void onClick(View view) {
-                    KeyguardPatternView.this.mCallback.reset();
+                    this.f$0.mCallback.reset();
                 }
             });
         }
@@ -107,16 +109,15 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
 
     @Override // android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
-        long elapsedRealtime = SystemClock.elapsedRealtime() - this.mLastPokeTime;
-        if (onTouchEvent && elapsedRealtime > 6900) {
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
+        long jElapsedRealtime = SystemClock.elapsedRealtime() - this.mLastPokeTime;
+        if (zOnTouchEvent && jElapsedRealtime > 6900) {
             this.mLastPokeTime = SystemClock.elapsedRealtime();
         }
-        boolean z = false;
         this.mTempRect.set(0, 0, 0, 0);
         offsetRectIntoDescendantCoords(this.mLockPatternView, this.mTempRect);
         motionEvent.offsetLocation(this.mTempRect.left, this.mTempRect.top);
-        z = (this.mLockPatternView.dispatchTouchEvent(motionEvent) || onTouchEvent) ? true : true;
+        boolean z = this.mLockPatternView.dispatchTouchEvent(motionEvent) || zOnTouchEvent;
         motionEvent.offsetLocation(-this.mTempRect.left, -this.mTempRect.top);
         return z;
     }
@@ -135,12 +136,10 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void displayDefaultSecurityMessage() {
+    private void displayDefaultSecurityMessage() {
         this.mSecurityMessageDisplay.setMessage("");
     }
 
-    /* loaded from: classes.dex */
     private class UnlockPatternListener implements LockPatternView.OnPatternListener {
         private UnlockPatternListener() {
         }
@@ -157,7 +156,7 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
             KeyguardPatternView.this.mCallback.userActivity();
         }
 
-        public void onPatternDetected(List<LockPatternView.Cell> list) {
+        public void onPatternDetected(List<LockPatternView.Cell> list) throws Resources.NotFoundException {
             KeyguardPatternView.this.mLockPatternView.disableInput();
             if (KeyguardPatternView.this.mPendingLockCheck != null) {
                 KeyguardPatternView.this.mPendingLockCheck.cancel(false);
@@ -173,14 +172,14 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
                 LatencyTracker.getInstance(KeyguardPatternView.this.mContext).onActionStart(4);
             }
             KeyguardPatternView.this.mPendingLockCheck = LockPatternChecker.checkPattern(KeyguardPatternView.this.mLockPatternUtils, list, currentUser, new LockPatternChecker.OnCheckCallback() { // from class: com.android.keyguard.KeyguardPatternView.UnlockPatternListener.1
-                public void onEarlyMatched() {
+                public void onEarlyMatched() throws Resources.NotFoundException {
                     if (LatencyTracker.isEnabled(KeyguardPatternView.this.mContext)) {
                         LatencyTracker.getInstance(KeyguardPatternView.this.mContext).onActionEnd(3);
                     }
                     UnlockPatternListener.this.onPatternChecked(currentUser, true, 0, true);
                 }
 
-                public void onChecked(boolean z, int i) {
+                public void onChecked(boolean z, int i) throws Resources.NotFoundException {
                     if (LatencyTracker.isEnabled(KeyguardPatternView.this.mContext)) {
                         LatencyTracker.getInstance(KeyguardPatternView.this.mContext).onActionEnd(4);
                     }
@@ -202,8 +201,7 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void onPatternChecked(int i, boolean z, int i2, boolean z2) {
+        private void onPatternChecked(int i, boolean z, int i2, boolean z2) throws Resources.NotFoundException {
             boolean z3 = KeyguardUpdateMonitor.getCurrentUser() == i;
             if (z) {
                 KeyguardPatternView.this.mCallback.reportUnlockAttempt(i, true, 0);
@@ -228,20 +226,19 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     /* JADX WARN: Type inference failed for: r0v5, types: [com.android.keyguard.KeyguardPatternView$2] */
-    public void handleAttemptLockout(long j) {
+    private void handleAttemptLockout(long j) {
         this.mLockPatternView.clearPattern();
         this.mLockPatternView.setEnabled(false);
-        long ceil = (long) Math.ceil((j - SystemClock.elapsedRealtime()) / 1000.0d);
+        long jCeil = (long) Math.ceil((j - SystemClock.elapsedRealtime()) / 1000.0d);
         if (this.mCountdownTimer != null) {
             this.mCountdownTimer.cancel();
         }
-        this.mCountdownTimer = new CountDownTimer(ceil * 1000, 1000L) { // from class: com.android.keyguard.KeyguardPatternView.2
+        this.mCountdownTimer = new CountDownTimer(jCeil * 1000, 1000L) { // from class: com.android.keyguard.KeyguardPatternView.2
             @Override // android.os.CountDownTimer
             public void onTick(long j2) {
-                int round = (int) Math.round(j2 / 1000.0d);
-                KeyguardPatternView.this.mSecurityMessageDisplay.setMessage(KeyguardPatternView.this.mContext.getResources().getQuantityString(com.android.systemui.R.plurals.kg_too_many_failed_attempts_countdown, round, Integer.valueOf(round)));
+                int iRound = (int) Math.round(j2 / 1000.0d);
+                KeyguardPatternView.this.mSecurityMessageDisplay.setMessage(KeyguardPatternView.this.mContext.getResources().getQuantityString(com.android.systemui.R.plurals.kg_too_many_failed_attempts_countdown, iRound, Integer.valueOf(iRound)));
             }
 
             @Override // android.os.CountDownTimer
@@ -275,25 +272,25 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
     }
 
     @Override // com.android.keyguard.KeyguardSecurityView
-    public void showPromptReason(int i) {
+    public void showPromptReason(int i) throws Resources.NotFoundException {
         switch (i) {
             case 0:
-                return;
+                break;
             case 1:
                 this.mSecurityMessageDisplay.setMessage(com.android.systemui.R.string.kg_prompt_reason_restart_pattern);
-                return;
+                break;
             case 2:
                 this.mSecurityMessageDisplay.setMessage(com.android.systemui.R.string.kg_prompt_reason_timeout_pattern);
-                return;
+                break;
             case 3:
                 this.mSecurityMessageDisplay.setMessage(com.android.systemui.R.string.kg_prompt_reason_device_admin);
-                return;
+                break;
             case 4:
                 this.mSecurityMessageDisplay.setMessage(com.android.systemui.R.string.kg_prompt_reason_user_request);
-                return;
+                break;
             default:
                 this.mSecurityMessageDisplay.setMessage(com.android.systemui.R.string.kg_prompt_reason_timeout_pattern);
-                return;
+                break;
         }
     }
 
@@ -332,7 +329,7 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         this.mLockPatternView.clearPattern();
         enableClipping(false);
         setTranslationY(0.0f);
-        AppearAnimationUtils.startTranslationYAnimation(this, 0L, 300.0f * f, -this.mDisappearAnimationUtils.getStartTranslation(), this.mDisappearAnimationUtils.getInterpolator());
+        AppearAnimationUtils.startTranslationYAnimation(this, 0L, (long) (300.0f * f), -this.mDisappearAnimationUtils.getStartTranslation(), this.mDisappearAnimationUtils.getInterpolator());
         if (this.mKeyguardUpdateMonitor.needsSlowUnlockTransition()) {
             disappearAnimationUtils = this.mDisappearAnimationUtilsLocked;
         } else {
@@ -341,11 +338,11 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         disappearAnimationUtils.startAnimation2d(this.mLockPatternView.getCellStates(), new Runnable() { // from class: com.android.keyguard.-$$Lambda$KeyguardPatternView$i51b4f44m8j5rvWUlLMM4eRNauI
             @Override // java.lang.Runnable
             public final void run() {
-                KeyguardPatternView.lambda$startDisappearAnimation$1(KeyguardPatternView.this, runnable);
+                KeyguardPatternView.lambda$startDisappearAnimation$1(this.f$0, runnable);
             }
         }, this);
         if (!TextUtils.isEmpty(this.mSecurityMessageDisplay.getText())) {
-            this.mDisappearAnimationUtils.createAnimation((View) this.mSecurityMessageDisplay, 0L, 200.0f * f, (-this.mDisappearAnimationUtils.getStartTranslation()) * 3.0f, false, this.mDisappearAnimationUtils.getInterpolator(), (Runnable) null);
+            this.mDisappearAnimationUtils.createAnimation((View) this.mSecurityMessageDisplay, 0L, (long) (200.0f * f), (-this.mDisappearAnimationUtils.getStartTranslation()) * 3.0f, false, this.mDisappearAnimationUtils.getInterpolator(), (Runnable) null);
             return true;
         }
         return true;
@@ -358,13 +355,13 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void enableClipping(boolean z) {
+    private void enableClipping(boolean z) {
         setClipChildren(z);
         this.mContainer.setClipToPadding(z);
         this.mContainer.setClipChildren(z);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: createAnimation(Ljava/lang/Object;JJFZLandroid/view/animation/Interpolator;Ljava/lang/Runnable;)V */
     @Override // com.android.settingslib.animation.AppearAnimationCreator
     public void createAnimation(LockPatternView.CellState cellState, long j, long j2, float f, boolean z, Interpolator interpolator, Runnable runnable) {
         this.mLockPatternView.startCellStateAnimation(cellState, 1.0f, z ? 1.0f : 0.0f, z ? f : 0.0f, z ? 0.0f : f, z ? 0.0f : 1.0f, 1.0f, j, j2, interpolator, runnable);
@@ -380,6 +377,6 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
 
     @Override // com.android.keyguard.KeyguardSecurityView
     public CharSequence getTitle() {
-        return getContext().getString(17040059);
+        return getContext().getString(android.R.string.config_systemGameService);
     }
 }

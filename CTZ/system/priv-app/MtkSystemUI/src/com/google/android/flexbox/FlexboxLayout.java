@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.google.android.flexbox.FlexboxHelper;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class FlexboxLayout extends ViewGroup implements FlexContainer {
     private int mAlignContent;
@@ -283,12 +284,12 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
                 isRtl = layoutDirection == 1;
                 layoutHorizontal(isRtl, left, top, right, bottom);
                 isRtl2 = isRtl;
-                break;
+                return;
             case 1:
                 isRtl = layoutDirection != 1;
                 layoutHorizontal(isRtl, left, top, right, bottom);
                 isRtl2 = isRtl;
-                break;
+                return;
             case 2:
                 boolean isRtl3 = layoutDirection == 1;
                 if (this.mFlexWrap == 2) {
@@ -296,7 +297,7 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
                 }
                 isRtl2 = isRtl3;
                 layoutVertical(isRtl2, false, left, top, right, bottom);
-                break;
+                return;
             case 3:
                 boolean isRtl4 = layoutDirection == 1;
                 if (this.mFlexWrap == 2) {
@@ -304,7 +305,7 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
                 }
                 isRtl2 = isRtl4;
                 layoutVertical(isRtl2, true, left, top, right, bottom);
-                break;
+                return;
             default:
                 throw new IllegalStateException("Invalid flex direction is set: " + this.mFlexDirection);
         }
@@ -449,17 +450,23 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
         }
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:28:0x00d5  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private void layoutVertical(boolean isRtl, boolean fromBottomToTop, int left, int top, int right, int bottom) {
         int paddingRight;
         float childTop;
         float childBottom;
         float spaceBetweenItem;
+        int j;
         int paddingBottom;
+        int paddingBottom2;
         int height;
         int size;
         int endDividerLength;
         int paddingTop = getPaddingTop();
-        int paddingBottom2 = getPaddingBottom();
+        int paddingBottom3 = getPaddingBottom();
         int paddingRight2 = getPaddingRight();
         int childLeft = getPaddingLeft();
         int width = right - left;
@@ -480,28 +487,160 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
             switch (this.mJustifyContent) {
                 case 0.0f:
                     childTop = paddingTop;
-                    childBottom = height2 - paddingBottom2;
+                    childBottom = height2 - paddingBottom3;
                     spaceBetweenItem = spaceBetweenItem2;
+                    int paddingTop2 = paddingTop;
+                    float spaceBetweenItem3 = Math.max(spaceBetweenItem, 0.0f);
+                    j = 0;
+                    while (true) {
+                        paddingBottom = paddingBottom3;
+                        paddingBottom2 = flexLine.mItemCount;
+                        if (j < paddingBottom2) {
+                            int index = flexLine.mFirstIndex + j;
+                            int width2 = width;
+                            View child = getReorderedChildAt(index);
+                            if (child == null) {
+                                height = height2;
+                                size = size2;
+                            } else if (child.getVisibility() == 8) {
+                                height = height2;
+                                size = size2;
+                            } else {
+                                LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                                float childTop2 = childTop + lp.topMargin;
+                                float childBottom2 = childBottom - lp.bottomMargin;
+                                int beforeDividerLength = 0;
+                                if (hasDividerBeforeChildAtAlongMainAxis(index, j)) {
+                                    beforeDividerLength = this.mDividerHorizontalHeight;
+                                    childTop2 += beforeDividerLength;
+                                    childBottom2 -= beforeDividerLength;
+                                }
+                                if (j == flexLine.mItemCount - 1 && (this.mShowDividerHorizontal & 4) > 0) {
+                                    endDividerLength = this.mDividerHorizontalHeight;
+                                } else {
+                                    endDividerLength = 0;
+                                }
+                                if (isRtl) {
+                                    if (fromBottomToTop) {
+                                        height = height2;
+                                        this.mFlexboxHelper.layoutSingleChildVertical(child, flexLine, true, childRight - child.getMeasuredWidth(), Math.round(childBottom2) - child.getMeasuredHeight(), childRight, Math.round(childBottom2));
+                                    } else {
+                                        height = height2;
+                                        this.mFlexboxHelper.layoutSingleChildVertical(child, flexLine, true, childRight - child.getMeasuredWidth(), Math.round(childTop2), childRight, Math.round(childTop2) + child.getMeasuredHeight());
+                                    }
+                                } else {
+                                    height = height2;
+                                    if (fromBottomToTop) {
+                                        this.mFlexboxHelper.layoutSingleChildVertical(child, flexLine, false, childLeft, Math.round(childBottom2) - child.getMeasuredHeight(), childLeft + child.getMeasuredWidth(), Math.round(childBottom2));
+                                    } else {
+                                        this.mFlexboxHelper.layoutSingleChildVertical(child, flexLine, false, childLeft, Math.round(childTop2), childLeft + child.getMeasuredWidth(), Math.round(childTop2) + child.getMeasuredHeight());
+                                    }
+                                }
+                                size = size2;
+                                int size3 = lp.bottomMargin;
+                                childTop = childTop2 + child.getMeasuredHeight() + spaceBetweenItem3 + size3;
+                                childBottom = childBottom2 - ((child.getMeasuredHeight() + spaceBetweenItem3) + lp.topMargin);
+                                if (fromBottomToTop) {
+                                    flexLine.updatePositionFromView(child, 0, endDividerLength, 0, beforeDividerLength);
+                                } else {
+                                    flexLine.updatePositionFromView(child, 0, beforeDividerLength, 0, endDividerLength);
+                                }
+                            }
+                            j++;
+                            paddingBottom3 = paddingBottom;
+                            width = width2;
+                            height2 = height;
+                            size2 = size;
+                        }
+                    }
+                    childLeft += flexLine.mCrossSize;
+                    childRight -= flexLine.mCrossSize;
+                    i++;
+                    paddingRight2 = paddingRight;
+                    paddingTop = paddingTop2;
+                    paddingBottom3 = paddingBottom;
                     break;
                 case Float.MIN_VALUE:
-                    childTop = (height2 - flexLine.mMainSize) + paddingBottom2;
+                    childTop = (height2 - flexLine.mMainSize) + paddingBottom3;
                     childBottom = flexLine.mMainSize - paddingTop;
                     spaceBetweenItem = spaceBetweenItem2;
+                    int paddingTop22 = paddingTop;
+                    float spaceBetweenItem32 = Math.max(spaceBetweenItem, 0.0f);
+                    j = 0;
+                    while (true) {
+                        paddingBottom = paddingBottom3;
+                        paddingBottom2 = flexLine.mItemCount;
+                        if (j < paddingBottom2) {
+                            break;
+                        }
+                        j++;
+                        paddingBottom3 = paddingBottom;
+                        width = width2;
+                        height2 = height;
+                        size2 = size;
+                    }
+                    childLeft += flexLine.mCrossSize;
+                    childRight -= flexLine.mCrossSize;
+                    i++;
+                    paddingRight2 = paddingRight;
+                    paddingTop = paddingTop22;
+                    paddingBottom3 = paddingBottom;
                     break;
                 case 2.8E-45f:
-                    float childBottom2 = paddingTop;
-                    childTop = ((height2 - flexLine.mMainSize) / 2.0f) + childBottom2;
-                    childBottom = (height2 - paddingBottom2) - ((height2 - flexLine.mMainSize) / 2.0f);
+                    float childBottom3 = paddingTop;
+                    childTop = ((height2 - flexLine.mMainSize) / 2.0f) + childBottom3;
+                    childBottom = (height2 - paddingBottom3) - ((height2 - flexLine.mMainSize) / 2.0f);
                     spaceBetweenItem = spaceBetweenItem2;
+                    int paddingTop222 = paddingTop;
+                    float spaceBetweenItem322 = Math.max(spaceBetweenItem, 0.0f);
+                    j = 0;
+                    while (true) {
+                        paddingBottom = paddingBottom3;
+                        paddingBottom2 = flexLine.mItemCount;
+                        if (j < paddingBottom2) {
+                        }
+                        j++;
+                        paddingBottom3 = paddingBottom;
+                        width = width2;
+                        height2 = height;
+                        size2 = size;
+                    }
+                    childLeft += flexLine.mCrossSize;
+                    childRight -= flexLine.mCrossSize;
+                    i++;
+                    paddingRight2 = paddingRight;
+                    paddingTop = paddingTop222;
+                    paddingBottom3 = paddingBottom;
                     break;
                 case 4.2E-45f:
                     childTop = paddingTop;
                     int visibleItem = flexLine.getItemCountNotGone();
                     float denominator = visibleItem != 1 ? visibleItem - 1 : 1.0f;
-                    float spaceBetweenItem3 = (height2 - flexLine.mMainSize) / denominator;
-                    float childBottom3 = height2 - paddingBottom2;
-                    childBottom = childBottom3;
-                    spaceBetweenItem = spaceBetweenItem3;
+                    float spaceBetweenItem4 = (height2 - flexLine.mMainSize) / denominator;
+                    float childBottom4 = height2 - paddingBottom3;
+                    childBottom = childBottom4;
+                    spaceBetweenItem = spaceBetweenItem4;
+                    int paddingTop2222 = paddingTop;
+                    float spaceBetweenItem3222 = Math.max(spaceBetweenItem, 0.0f);
+                    j = 0;
+                    while (true) {
+                        paddingBottom = paddingBottom3;
+                        paddingBottom2 = flexLine.mItemCount;
+                        if (j < paddingBottom2) {
+                            break;
+                        }
+                        j++;
+                        paddingBottom3 = paddingBottom;
+                        width = width2;
+                        height2 = height;
+                        size2 = size;
+                    }
+                    childLeft += flexLine.mCrossSize;
+                    childRight -= flexLine.mCrossSize;
+                    i++;
+                    paddingRight2 = paddingRight;
+                    paddingTop = paddingTop2222;
+                    paddingBottom3 = paddingBottom;
                     break;
                 case 5.6E-45f:
                     int visibleCount = flexLine.getItemCountNotGone();
@@ -509,89 +648,38 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
                         spaceBetweenItem2 = (height2 - flexLine.mMainSize) / visibleCount;
                     }
                     childTop = paddingTop + (spaceBetweenItem2 / 2.0f);
-                    childBottom = (height2 - paddingBottom2) - (spaceBetweenItem2 / 2.0f);
+                    childBottom = (height2 - paddingBottom3) - (spaceBetweenItem2 / 2.0f);
                     spaceBetweenItem = spaceBetweenItem2;
+                    int paddingTop22222 = paddingTop;
+                    float spaceBetweenItem32222 = Math.max(spaceBetweenItem, 0.0f);
+                    j = 0;
+                    while (true) {
+                        paddingBottom = paddingBottom3;
+                        paddingBottom2 = flexLine.mItemCount;
+                        if (j < paddingBottom2) {
+                        }
+                        j++;
+                        paddingBottom3 = paddingBottom;
+                        width = width2;
+                        height2 = height;
+                        size2 = size;
+                    }
+                    childLeft += flexLine.mCrossSize;
+                    childRight -= flexLine.mCrossSize;
+                    i++;
+                    paddingRight2 = paddingRight;
+                    paddingTop = paddingTop22222;
+                    paddingBottom3 = paddingBottom;
                     break;
                 default:
                     throw new IllegalStateException("Invalid justifyContent is set: " + this.mJustifyContent);
             }
-            int paddingTop2 = paddingTop;
-            float spaceBetweenItem4 = Math.max(spaceBetweenItem, 0.0f);
-            int j = 0;
-            while (true) {
-                paddingBottom = paddingBottom2;
-                int paddingBottom3 = flexLine.mItemCount;
-                if (j < paddingBottom3) {
-                    int index = flexLine.mFirstIndex + j;
-                    int width2 = width;
-                    View child = getReorderedChildAt(index);
-                    if (child == null) {
-                        height = height2;
-                        size = size2;
-                    } else if (child.getVisibility() == 8) {
-                        height = height2;
-                        size = size2;
-                    } else {
-                        LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                        float childTop2 = childTop + lp.topMargin;
-                        float childBottom4 = childBottom - lp.bottomMargin;
-                        int beforeDividerLength = 0;
-                        if (hasDividerBeforeChildAtAlongMainAxis(index, j)) {
-                            beforeDividerLength = this.mDividerHorizontalHeight;
-                            childTop2 += beforeDividerLength;
-                            childBottom4 -= beforeDividerLength;
-                        }
-                        if (j == flexLine.mItemCount - 1 && (this.mShowDividerHorizontal & 4) > 0) {
-                            endDividerLength = this.mDividerHorizontalHeight;
-                        } else {
-                            endDividerLength = 0;
-                        }
-                        if (isRtl) {
-                            if (fromBottomToTop) {
-                                height = height2;
-                                this.mFlexboxHelper.layoutSingleChildVertical(child, flexLine, true, childRight - child.getMeasuredWidth(), Math.round(childBottom4) - child.getMeasuredHeight(), childRight, Math.round(childBottom4));
-                            } else {
-                                height = height2;
-                                this.mFlexboxHelper.layoutSingleChildVertical(child, flexLine, true, childRight - child.getMeasuredWidth(), Math.round(childTop2), childRight, Math.round(childTop2) + child.getMeasuredHeight());
-                            }
-                        } else {
-                            height = height2;
-                            if (fromBottomToTop) {
-                                this.mFlexboxHelper.layoutSingleChildVertical(child, flexLine, false, childLeft, Math.round(childBottom4) - child.getMeasuredHeight(), childLeft + child.getMeasuredWidth(), Math.round(childBottom4));
-                            } else {
-                                this.mFlexboxHelper.layoutSingleChildVertical(child, flexLine, false, childLeft, Math.round(childTop2), childLeft + child.getMeasuredWidth(), Math.round(childTop2) + child.getMeasuredHeight());
-                            }
-                        }
-                        size = size2;
-                        int size3 = lp.bottomMargin;
-                        childTop = childTop2 + child.getMeasuredHeight() + spaceBetweenItem4 + size3;
-                        childBottom = childBottom4 - ((child.getMeasuredHeight() + spaceBetweenItem4) + lp.topMargin);
-                        if (fromBottomToTop) {
-                            flexLine.updatePositionFromView(child, 0, endDividerLength, 0, beforeDividerLength);
-                        } else {
-                            flexLine.updatePositionFromView(child, 0, beforeDividerLength, 0, endDividerLength);
-                        }
-                    }
-                    j++;
-                    paddingBottom2 = paddingBottom;
-                    width = width2;
-                    height2 = height;
-                    size2 = size;
-                }
-            }
-            childLeft += flexLine.mCrossSize;
-            childRight -= flexLine.mCrossSize;
-            i++;
-            paddingRight2 = paddingRight;
-            paddingTop = paddingTop2;
-            paddingBottom2 = paddingBottom;
         }
     }
 
     @Override // android.view.View
     protected void onDraw(Canvas canvas) {
         if (this.mDividerDrawableVertical == null && this.mDividerDrawableHorizontal == null) {
-            return;
         }
         if (this.mShowDividerHorizontal == 0 && this.mShowDividerVertical == 0) {
             return;
@@ -605,30 +693,28 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
                     fromBottomToTop = true;
                 }
                 drawDividersHorizontal(canvas, isRtl, fromBottomToTop);
-                return;
+                break;
             case 1:
                 boolean isRtl2 = layoutDirection != 1;
                 if (this.mFlexWrap == 2) {
                     fromBottomToTop = true;
                 }
                 drawDividersHorizontal(canvas, isRtl2, fromBottomToTop);
-                return;
+                break;
             case 2:
                 boolean isRtl3 = layoutDirection == 1;
                 if (this.mFlexWrap == 2) {
                     isRtl3 = isRtl3 ? false : true;
                 }
                 drawDividersVertical(canvas, isRtl3, false);
-                return;
+                break;
             case 3:
                 boolean isRtl4 = layoutDirection == 1;
                 if (this.mFlexWrap == 2) {
                     isRtl4 = isRtl4 ? false : true;
                 }
                 drawDividersVertical(canvas, isRtl4, true);
-                return;
-            default:
-                return;
+                break;
         }
     }
 
@@ -801,6 +887,7 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
         return p instanceof LayoutParams;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/util/AttributeSet;)Landroid/view/ViewGroup$LayoutParams; */
     @Override // android.view.ViewGroup
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new LayoutParams(getContext(), attrs);
@@ -872,8 +959,11 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
             if ((this.mShowDividerVertical & 4) > 0) {
                 flexLine.mMainSize += this.mDividerVerticalWidth;
                 flexLine.mDividerLengthInMainSize += this.mDividerVerticalWidth;
+                return;
             }
-        } else if ((this.mShowDividerHorizontal & 4) > 0) {
+            return;
+        }
+        if ((this.mShowDividerHorizontal & 4) > 0) {
             flexLine.mMainSize += this.mDividerHorizontalHeight;
             flexLine.mDividerLengthInMainSize += this.mDividerHorizontalHeight;
         }
@@ -895,10 +985,10 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
             if (isMainAxisDirectionHorizontal()) {
                 flexLine.mMainSize += this.mDividerVerticalWidth;
                 flexLine.mDividerLengthInMainSize += this.mDividerVerticalWidth;
-                return;
+            } else {
+                flexLine.mMainSize += this.mDividerHorizontalHeight;
+                flexLine.mDividerLengthInMainSize += this.mDividerHorizontalHeight;
             }
-            flexLine.mMainSize += this.mDividerHorizontalHeight;
-            flexLine.mDividerLengthInMainSize += this.mDividerHorizontalHeight;
         }
     }
 
@@ -1018,15 +1108,16 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
         return isMainAxisDirectionHorizontal() ? (this.mShowDividerHorizontal & 4) != 0 : (this.mShowDividerVertical & 4) != 0;
     }
 
-    /* loaded from: classes.dex */
     public static class LayoutParams extends ViewGroup.MarginLayoutParams implements FlexItem {
         public static final Parcelable.Creator<LayoutParams> CREATOR = new Parcelable.Creator<LayoutParams>() { // from class: com.google.android.flexbox.FlexboxLayout.LayoutParams.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public LayoutParams createFromParcel(Parcel source) {
                 return new LayoutParams(source);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public LayoutParams[] newArray(int size) {
@@ -1196,23 +1287,23 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
         }
 
         @Override // android.os.Parcelable
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(this.mOrder);
-            dest.writeFloat(this.mFlexGrow);
-            dest.writeFloat(this.mFlexShrink);
-            dest.writeInt(this.mAlignSelf);
-            dest.writeFloat(this.mFlexBasisPercent);
-            dest.writeInt(this.mMinWidth);
-            dest.writeInt(this.mMinHeight);
-            dest.writeInt(this.mMaxWidth);
-            dest.writeInt(this.mMaxHeight);
-            dest.writeByte(this.mWrapBefore ? (byte) 1 : (byte) 0);
-            dest.writeInt(this.bottomMargin);
-            dest.writeInt(this.leftMargin);
-            dest.writeInt(this.rightMargin);
-            dest.writeInt(this.topMargin);
-            dest.writeInt(this.height);
-            dest.writeInt(this.width);
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeInt(this.mOrder);
+            parcel.writeFloat(this.mFlexGrow);
+            parcel.writeFloat(this.mFlexShrink);
+            parcel.writeInt(this.mAlignSelf);
+            parcel.writeFloat(this.mFlexBasisPercent);
+            parcel.writeInt(this.mMinWidth);
+            parcel.writeInt(this.mMinHeight);
+            parcel.writeInt(this.mMaxWidth);
+            parcel.writeInt(this.mMaxHeight);
+            parcel.writeByte(this.mWrapBefore ? (byte) 1 : (byte) 0);
+            parcel.writeInt(this.bottomMargin);
+            parcel.writeInt(this.leftMargin);
+            parcel.writeInt(this.rightMargin);
+            parcel.writeInt(this.topMargin);
+            parcel.writeInt(this.height);
+            parcel.writeInt(this.width);
         }
 
         protected LayoutParams(Parcel in) {

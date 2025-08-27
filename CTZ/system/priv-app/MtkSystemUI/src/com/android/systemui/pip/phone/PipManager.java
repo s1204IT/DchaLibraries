@@ -23,6 +23,7 @@ import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.shared.system.ActivityManagerWrapper;
 import com.android.systemui.shared.system.InputConsumerController;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class PipManager implements BasePipManager {
     private static PipManager sPipController;
@@ -47,7 +48,7 @@ public class PipManager implements BasePipManager {
         }
 
         @Override // com.android.systemui.shared.system.TaskStackChangeListener
-        public void onActivityUnpinned() {
+        public void onActivityUnpinned() throws RemoteException {
             Pair<ComponentName, Integer> topPinnedActivity = PipUtils.getTopPinnedActivity(PipManager.this.mContext, PipManager.this.mActivityManager);
             ComponentName componentName = (ComponentName) topPinnedActivity.first;
             if (componentName != null) {
@@ -65,7 +66,7 @@ public class PipManager implements BasePipManager {
         }
 
         @Override // com.android.systemui.shared.system.TaskStackChangeListener
-        public void onPinnedStackAnimationEnded() {
+        public void onPinnedStackAnimationEnded() throws RemoteException {
             PipManager.this.mTouchHandler.setTouchEnabled(true);
             PipManager.this.mTouchHandler.onPinnedStackAnimationEnded();
             PipManager.this.mMenuController.onPinnedStackAnimationEnded();
@@ -77,9 +78,7 @@ public class PipManager implements BasePipManager {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class PinnedStackListener extends IPinnedStackListener.Stub {
+    private class PinnedStackListener extends IPinnedStackListener.Stub {
         private PinnedStackListener() {
         }
 
@@ -131,7 +130,7 @@ public class PipManager implements BasePipManager {
         public void onActionsChanged(final ParceledListSlice parceledListSlice) {
             PipManager.this.mHandler.post(new Runnable() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipManager$PinnedStackListener$JU_-Gjrp-L4fTB-9HLmwOZwFKXw
                 @Override // java.lang.Runnable
-                public final void run() {
+                public final void run() throws RemoteException {
                     PipManager.this.mMenuController.setAppActions(parceledListSlice);
                 }
             });
@@ -142,7 +141,7 @@ public class PipManager implements BasePipManager {
     }
 
     @Override // com.android.systemui.pip.BasePipManager
-    public void initialize(Context context) {
+    public void initialize(Context context) throws NoSuchMethodException, SecurityException {
         this.mContext = context;
         this.mActivityManager = ActivityManager.getService();
         this.mWindowManager = WindowManagerGlobal.getWindowManagerService();
@@ -171,7 +170,7 @@ public class PipManager implements BasePipManager {
     }
 
     @Override // com.android.systemui.pip.BasePipManager
-    public void showPictureInPictureMenu() {
+    public void showPictureInPictureMenu() throws RemoteException {
         this.mTouchHandler.showPictureInPictureMenu();
     }
 

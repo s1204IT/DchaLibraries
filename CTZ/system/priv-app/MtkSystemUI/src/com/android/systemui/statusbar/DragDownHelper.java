@@ -12,6 +12,7 @@ import com.android.systemui.ExpandHelper;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
 import com.android.systemui.classifier.FalsingManager;
+
 /* loaded from: classes.dex */
 public class DragDownHelper {
     private ExpandHelper.Callback mCallback;
@@ -28,7 +29,6 @@ public class DragDownHelper {
     private final int[] mTemp2 = new int[2];
     private float mTouchSlop;
 
-    /* loaded from: classes.dex */
     public interface DragDownCallback {
         boolean isFalsingCheckNeeded();
 
@@ -79,49 +79,49 @@ public class DragDownHelper {
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        if (this.mDraggingDown) {
-            motionEvent.getX();
-            float y = motionEvent.getY();
-            switch (motionEvent.getActionMasked()) {
-                case 1:
-                    if (!isFalseTouch() && this.mDragDownCallback.onDraggedDown(this.mStartingChild, (int) (y - this.mInitialTouchY))) {
-                        if (this.mStartingChild == null) {
-                            this.mDragDownCallback.setEmptyDragAmount(0.0f);
-                        } else {
-                            this.mCallback.setUserLockedChild(this.mStartingChild, false);
-                            this.mStartingChild = null;
-                        }
-                        this.mDraggingDown = false;
-                        break;
-                    } else {
-                        stopDragging();
-                        return false;
-                    }
-                case 2:
-                    this.mLastHeight = y - this.mInitialTouchY;
-                    captureStartingChild(this.mInitialTouchX, this.mInitialTouchY);
-                    if (this.mStartingChild != null) {
-                        handleExpansion(this.mLastHeight, this.mStartingChild);
-                    } else {
-                        this.mDragDownCallback.setEmptyDragAmount(this.mLastHeight);
-                    }
-                    if (this.mLastHeight > this.mMinDragDistance) {
-                        if (!this.mDraggedFarEnough) {
-                            this.mDraggedFarEnough = true;
-                            this.mDragDownCallback.onCrossedThreshold(true);
-                        }
-                    } else if (this.mDraggedFarEnough) {
-                        this.mDraggedFarEnough = false;
-                        this.mDragDownCallback.onCrossedThreshold(false);
-                    }
-                    return true;
-                case 3:
-                    stopDragging();
-                    return false;
-            }
+        if (!this.mDraggingDown) {
             return false;
         }
-        return false;
+        motionEvent.getX();
+        float y = motionEvent.getY();
+        switch (motionEvent.getActionMasked()) {
+            case 1:
+                if (!isFalseTouch() && this.mDragDownCallback.onDraggedDown(this.mStartingChild, (int) (y - this.mInitialTouchY))) {
+                    if (this.mStartingChild == null) {
+                        this.mDragDownCallback.setEmptyDragAmount(0.0f);
+                    } else {
+                        this.mCallback.setUserLockedChild(this.mStartingChild, false);
+                        this.mStartingChild = null;
+                    }
+                    this.mDraggingDown = false;
+                    return false;
+                }
+                stopDragging();
+                return false;
+            case 2:
+                this.mLastHeight = y - this.mInitialTouchY;
+                captureStartingChild(this.mInitialTouchX, this.mInitialTouchY);
+                if (this.mStartingChild != null) {
+                    handleExpansion(this.mLastHeight, this.mStartingChild);
+                } else {
+                    this.mDragDownCallback.setEmptyDragAmount(this.mLastHeight);
+                }
+                if (this.mLastHeight > this.mMinDragDistance) {
+                    if (!this.mDraggedFarEnough) {
+                        this.mDraggedFarEnough = true;
+                        this.mDragDownCallback.onCrossedThreshold(true);
+                    }
+                } else if (this.mDraggedFarEnough) {
+                    this.mDraggedFarEnough = false;
+                    this.mDragDownCallback.onCrossedThreshold(false);
+                }
+                return true;
+            case 3:
+                stopDragging();
+                return false;
+            default:
+                return false;
+        }
     }
 
     private boolean isFalseTouch() {
@@ -145,17 +145,17 @@ public class DragDownHelper {
         if (f < 0.0f) {
             f = 0.0f;
         }
-        boolean isContentExpandable = expandableView.isContentExpandable();
-        if (isContentExpandable) {
+        boolean zIsContentExpandable = expandableView.isContentExpandable();
+        if (zIsContentExpandable) {
             f2 = 0.5f;
         } else {
             f2 = 0.15f;
         }
-        float f3 = f * f2;
-        if (isContentExpandable && expandableView.getCollapsedHeight() + f3 > expandableView.getMaxContentHeight()) {
-            f3 -= ((expandableView.getCollapsedHeight() + f3) - expandableView.getMaxContentHeight()) * 0.85f;
+        float collapsedHeight = f * f2;
+        if (zIsContentExpandable && expandableView.getCollapsedHeight() + collapsedHeight > expandableView.getMaxContentHeight()) {
+            collapsedHeight -= ((expandableView.getCollapsedHeight() + collapsedHeight) - expandableView.getMaxContentHeight()) * 0.85f;
         }
-        expandableView.setActualHeight((int) (expandableView.getCollapsedHeight() + f3));
+        expandableView.setActualHeight((int) (expandableView.getCollapsedHeight() + collapsedHeight));
     }
 
     private void cancelExpansion(final ExpandableView expandableView) {
@@ -163,29 +163,29 @@ public class DragDownHelper {
             this.mCallback.setUserLockedChild(expandableView, false);
             return;
         }
-        ObjectAnimator ofInt = ObjectAnimator.ofInt(expandableView, "actualHeight", expandableView.getActualHeight(), expandableView.getCollapsedHeight());
-        ofInt.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
-        ofInt.setDuration(375L);
-        ofInt.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.DragDownHelper.1
+        ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(expandableView, "actualHeight", expandableView.getActualHeight(), expandableView.getCollapsedHeight());
+        objectAnimatorOfInt.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
+        objectAnimatorOfInt.setDuration(375L);
+        objectAnimatorOfInt.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.statusbar.DragDownHelper.1
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 DragDownHelper.this.mCallback.setUserLockedChild(expandableView, false);
             }
         });
-        ofInt.start();
+        objectAnimatorOfInt.start();
     }
 
     private void cancelExpansion() {
-        ValueAnimator ofFloat = ValueAnimator.ofFloat(this.mLastHeight, 0.0f);
-        ofFloat.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
-        ofFloat.setDuration(375L);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.DragDownHelper.2
+        ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(this.mLastHeight, 0.0f);
+        valueAnimatorOfFloat.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
+        valueAnimatorOfFloat.setDuration(375L);
+        valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.statusbar.DragDownHelper.2
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 DragDownHelper.this.mDragDownCallback.setEmptyDragAmount(((Float) valueAnimator.getAnimatedValue()).floatValue());
             }
         });
-        ofFloat.start();
+        valueAnimatorOfFloat.start();
     }
 
     private void stopDragging() {

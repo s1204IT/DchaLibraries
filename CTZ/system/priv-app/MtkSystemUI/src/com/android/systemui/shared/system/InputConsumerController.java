@@ -13,6 +13,7 @@ import android.view.InputEvent;
 import android.view.MotionEvent;
 import android.view.WindowManagerGlobal;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class InputConsumerController {
     private static final String TAG = InputConsumerController.class.getSimpleName();
@@ -23,27 +24,24 @@ public class InputConsumerController {
     private final IBinder mToken = new Binder();
     private final IWindowManager mWindowManager;
 
-    /* loaded from: classes.dex */
     public interface RegistrationListener {
         void onRegistrationChanged(boolean z);
     }
 
-    /* loaded from: classes.dex */
     public interface TouchListener {
         boolean onTouchEvent(MotionEvent motionEvent);
     }
 
-    /* loaded from: classes.dex */
     private final class InputEventReceiver extends BatchedInputEventReceiver {
         public InputEventReceiver(InputChannel inputChannel, Looper looper) {
             super(inputChannel, looper, Choreographer.getSfInstance());
         }
 
         public void onInputEvent(InputEvent inputEvent, int i) {
-            boolean z = true;
+            boolean zOnTouchEvent = true;
             try {
                 if (InputConsumerController.this.mListener != null && (inputEvent instanceof MotionEvent)) {
-                    z = InputConsumerController.this.mListener.onTouchEvent((MotionEvent) inputEvent);
+                    zOnTouchEvent = InputConsumerController.this.mListener.onTouchEvent((MotionEvent) inputEvent);
                 }
             } finally {
                 finishInputEvent(inputEvent, true);

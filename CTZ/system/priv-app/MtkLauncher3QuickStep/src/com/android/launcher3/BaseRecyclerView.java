@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.android.launcher3.views.RecyclerViewFastScroller;
+
 /* loaded from: classes.dex */
 public abstract class BaseRecyclerView extends RecyclerView {
     protected RecyclerViewFastScroller mScrollbar;
@@ -32,9 +33,8 @@ public abstract class BaseRecyclerView extends RecyclerView {
         super(context, attributeSet, i);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v7.widget.RecyclerView, android.view.ViewGroup, android.view.View
-    public void onAttachedToWindow() {
+    protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         bindFastScrollbar();
     }
@@ -58,18 +58,16 @@ public abstract class BaseRecyclerView extends RecyclerView {
         return (this.mScrollbar.getHeight() - getScrollBarTop()) - getPaddingBottom();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public int getAvailableScrollBarHeight() {
+    protected int getAvailableScrollBarHeight() {
         return getScrollbarTrackHeight() - this.mScrollbar.getThumbHeight();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void synchronizeScrollBarThumbOffsetToViewScroll(int i, int i2) {
+    protected void synchronizeScrollBarThumbOffsetToViewScroll(int i, int i2) {
         if (i2 <= 0) {
             this.mScrollbar.setThumbOffsetY(-1);
-            return;
+        } else {
+            this.mScrollbar.setThumbOffsetY((int) ((i / i2) * getAvailableScrollBarHeight()));
         }
-        this.mScrollbar.setThumbOffsetY((int) ((i / i2) * getAvailableScrollBarHeight()));
     }
 
     public boolean shouldContainerScroll(MotionEvent motionEvent, View view) {

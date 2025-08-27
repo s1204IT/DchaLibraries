@@ -4,6 +4,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.UserInfo;
 import android.text.TextUtils;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class UserAppInfo {
     public final ApplicationInfo appInfo;

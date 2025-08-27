@@ -3,6 +3,7 @@ package com.mediatek.settingslib.wifi;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+
 /* loaded from: classes.dex */
 public class AccessPointExt {
     public AccessPointExt(Context context) {

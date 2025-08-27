@@ -15,6 +15,7 @@ import com.android.internal.policy.IKeyguardService;
 import com.android.internal.policy.IKeyguardStateCallback;
 import com.android.systemui.Dependency;
 import com.android.systemui.SystemUIApplication;
+
 /* loaded from: classes.dex */
 public class KeyguardService extends Service {
     private final IKeyguardService.Stub mBinder = new IKeyguardService.Stub() { // from class: com.android.systemui.keyguard.KeyguardService.1
@@ -154,7 +155,7 @@ public class KeyguardService extends Service {
     private KeyguardViewMediator mKeyguardViewMediator;
 
     @Override // android.app.Service
-    public void onCreate() {
+    public void onCreate() throws ClassNotFoundException {
         ((SystemUIApplication) getApplication()).startServicesIfNeeded();
         this.mKeyguardViewMediator = (KeyguardViewMediator) ((SystemUIApplication) getApplication()).getComponent(KeyguardViewMediator.class);
         this.mKeyguardLifecyclesDispatcher = new KeyguardLifecyclesDispatcher((ScreenLifecycle) Dependency.get(ScreenLifecycle.class), (WakefulnessLifecycle) Dependency.get(WakefulnessLifecycle.class));

@@ -6,6 +6,7 @@ import android.util.Log;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.plugins.VolumeDialogController;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class Events {
     public static Callback sCallback;
@@ -14,7 +15,6 @@ public class Events {
     public static final String[] DISMISS_REASONS = {"unknown", "touch_outside", "volume_controller", "timeout", "screen_off", "settings_clicked", "done_clicked", "a11y_stream_changed", "output_chooser"};
     public static final String[] SHOW_REASONS = {"unknown", "volume_changed", "remote_volume_changed"};
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void writeEvent(long j, int i, Object[] objArr);
 
@@ -24,7 +24,7 @@ public class Events {
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     public static void writeEvent(Context context, int i, Object... objArr) {
         MetricsLogger metricsLogger = new MetricsLogger();
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         StringBuilder sb = new StringBuilder("writeEvent ");
         sb.append(EVENT_TAGS[i]);
         if (objArr != null && objArr.length > 0) {
@@ -105,7 +105,7 @@ public class Events {
         }
         Log.i(TAG, sb.toString());
         if (sCallback != null) {
-            sCallback.writeEvent(currentTimeMillis, i, objArr);
+            sCallback.writeEvent(jCurrentTimeMillis, i, objArr);
         }
     }
 

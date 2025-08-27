@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import com.android.settings.R;
 import com.android.settings.applications.LayoutPreference;
+
 /* loaded from: classes.dex */
 public class TwoStateButtonPreference extends LayoutPreference implements View.OnClickListener {
     private final Button mButtonOff;
@@ -15,16 +16,16 @@ public class TwoStateButtonPreference extends LayoutPreference implements View.O
     private boolean mIsChecked;
 
     public TwoStateButtonPreference(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.twoStateButtonPreferenceStyle, 16842894));
+        super(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.twoStateButtonPreferenceStyle, android.R.attr.preferenceStyle));
         if (attributeSet == null) {
             this.mButtonOn = null;
             this.mButtonOff = null;
             return;
         }
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.TwoStateButtonPreference);
-        int resourceId = obtainStyledAttributes.getResourceId(1, R.string.summary_placeholder);
-        int resourceId2 = obtainStyledAttributes.getResourceId(0, R.string.summary_placeholder);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.TwoStateButtonPreference);
+        int resourceId = typedArrayObtainStyledAttributes.getResourceId(1, R.string.summary_placeholder);
+        int resourceId2 = typedArrayObtainStyledAttributes.getResourceId(0, R.string.summary_placeholder);
+        typedArrayObtainStyledAttributes.recycle();
         this.mButtonOn = (Button) findViewById(R.id.state_on_button);
         this.mButtonOn.setText(resourceId);
         this.mButtonOn.setOnClickListener(this);
@@ -46,10 +47,10 @@ public class TwoStateButtonPreference extends LayoutPreference implements View.O
         if (!z) {
             this.mButtonOn.setVisibility(0);
             this.mButtonOff.setVisibility(8);
-            return;
+        } else {
+            this.mButtonOn.setVisibility(8);
+            this.mButtonOff.setVisibility(0);
         }
-        this.mButtonOn.setVisibility(8);
-        this.mButtonOff.setVisibility(0);
     }
 
     public boolean isChecked() {

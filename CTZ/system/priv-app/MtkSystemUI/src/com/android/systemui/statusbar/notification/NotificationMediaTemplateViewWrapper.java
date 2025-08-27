@@ -1,19 +1,20 @@
 package com.android.systemui.statusbar.notification;
 
+import android.R;
 import android.content.Context;
 import android.view.View;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
+
 /* loaded from: classes.dex */
 public class NotificationMediaTemplateViewWrapper extends NotificationTemplateViewWrapper {
     View mActions;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public NotificationMediaTemplateViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
+    protected NotificationMediaTemplateViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
         super(context, view, expandableNotificationRow);
     }
 
     private void resolveViews() {
-        this.mActions = this.mView.findViewById(16909052);
+        this.mActions = this.mView.findViewById(R.id.flagNoPersonalizedLearning);
     }
 
     @Override // com.android.systemui.statusbar.notification.NotificationTemplateViewWrapper, com.android.systemui.statusbar.notification.NotificationHeaderViewWrapper, com.android.systemui.statusbar.notification.NotificationViewWrapper

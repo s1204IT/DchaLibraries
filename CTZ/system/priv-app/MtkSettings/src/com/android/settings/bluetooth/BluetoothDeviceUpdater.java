@@ -15,7 +15,9 @@ import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
 import com.android.settingslib.bluetooth.LocalBluetoothProfileManager;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public abstract class BluetoothDeviceUpdater implements BluetoothCallback, LocalBluetoothProfileManager.ServiceListener {
     protected final DevicePreferenceCallback mDevicePreferenceCallback;
@@ -32,12 +34,11 @@ public abstract class BluetoothDeviceUpdater implements BluetoothCallback, Local
         this(dashboardFragment, devicePreferenceCallback, Utils.getLocalBtManager(context));
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public BluetoothDeviceUpdater(DashboardFragment dashboardFragment, DevicePreferenceCallback devicePreferenceCallback, LocalBluetoothManager localBluetoothManager) {
+    BluetoothDeviceUpdater(DashboardFragment dashboardFragment, DevicePreferenceCallback devicePreferenceCallback, LocalBluetoothManager localBluetoothManager) {
         this.mDeviceProfilesListener = new GearPreference.OnGearClickListener() { // from class: com.android.settings.bluetooth.-$$Lambda$BluetoothDeviceUpdater$9cHgqnTeqRHSfH6f9TvykmwcB28
             @Override // com.android.settings.widget.GearPreference.OnGearClickListener
             public final void onGearClick(GearPreference gearPreference) {
-                BluetoothDeviceUpdater.this.launchDeviceDetails(gearPreference);
+                this.f$0.launchDeviceDetails(gearPreference);
             }
         };
         this.mFragment = dashboardFragment;
@@ -61,8 +62,9 @@ public abstract class BluetoothDeviceUpdater implements BluetoothCallback, Local
     }
 
     public void forceUpdate() {
-        for (CachedBluetoothDevice cachedBluetoothDevice : this.mLocalManager.getCachedDeviceManager().getCachedDevicesCopy()) {
-            update(cachedBluetoothDevice);
+        Iterator<CachedBluetoothDevice> it = this.mLocalManager.getCachedDeviceManager().getCachedDevicesCopy().iterator();
+        while (it.hasNext()) {
+            update(it.next());
         }
     }
 
@@ -127,8 +129,9 @@ public abstract class BluetoothDeviceUpdater implements BluetoothCallback, Local
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void addPreference(CachedBluetoothDevice cachedBluetoothDevice) {
+    /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: com.android.settings.bluetooth.BluetoothDeviceUpdater */
+    /* JADX WARN: Multi-variable type inference failed */
+    protected void addPreference(CachedBluetoothDevice cachedBluetoothDevice) {
         BluetoothDevice device = cachedBluetoothDevice.getDevice();
         if (!this.mPreferenceMap.containsKey(device)) {
             BluetoothDevicePreference bluetoothDevicePreference = new BluetoothDevicePreference(this.mPrefContext, cachedBluetoothDevice, this.mShowDeviceWithoutNames);
@@ -141,8 +144,7 @@ public abstract class BluetoothDeviceUpdater implements BluetoothCallback, Local
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void removePreference(CachedBluetoothDevice cachedBluetoothDevice) {
+    protected void removePreference(CachedBluetoothDevice cachedBluetoothDevice) {
         BluetoothDevice device = cachedBluetoothDevice.getDevice();
         if (this.mPreferenceMap.containsKey(device)) {
             this.mDevicePreferenceCallback.onDeviceRemoved(this.mPreferenceMap.get(device));
@@ -150,8 +152,7 @@ public abstract class BluetoothDeviceUpdater implements BluetoothCallback, Local
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void launchDeviceDetails(Preference preference) {
+    protected void launchDeviceDetails(Preference preference) {
         CachedBluetoothDevice bluetoothDevice = ((BluetoothDevicePreference) preference).getBluetoothDevice();
         if (bluetoothDevice == null) {
             return;

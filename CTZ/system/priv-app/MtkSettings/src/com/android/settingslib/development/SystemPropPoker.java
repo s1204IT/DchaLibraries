@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class SystemPropPoker {
     private static final SystemPropPoker sInstance = new SystemPropPoker();
@@ -36,7 +37,6 @@ public class SystemPropPoker {
         return new PokerTask();
     }
 
-    /* loaded from: classes.dex */
     public static class PokerTask extends AsyncTask<Void, Void, Void> {
         String[] listServices() {
             return ServiceManager.listServices();
@@ -46,25 +46,25 @@ public class SystemPropPoker {
             return ServiceManager.checkService(str);
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(Void... voidArr) {
-            String[] listServices = listServices();
-            if (listServices == null) {
+        protected Void doInBackground(Void... voidArr) throws RemoteException {
+            String[] strArrListServices = listServices();
+            if (strArrListServices == null) {
                 Log.e("SystemPropPoker", "There are no services, how odd");
                 return null;
             }
-            for (String str : listServices) {
-                IBinder checkService = checkService(str);
-                if (checkService != null) {
-                    Parcel obtain = Parcel.obtain();
+            for (String str : strArrListServices) {
+                IBinder iBinderCheckService = checkService(str);
+                if (iBinderCheckService != null) {
+                    Parcel parcelObtain = Parcel.obtain();
                     try {
-                        checkService.transact(1599295570, obtain, null, 0);
+                        iBinderCheckService.transact(1599295570, parcelObtain, null, 0);
                     } catch (RemoteException e) {
                     } catch (Exception e2) {
                         Log.i("SystemPropPoker", "Someone wrote a bad service '" + str + "' that doesn't like to be poked", e2);
                     }
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
             return null;

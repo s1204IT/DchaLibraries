@@ -84,6 +84,7 @@ import com.mediatek.nfc.NfcSettings;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class SearchIndexableResourcesImpl implements SearchIndexableResources {
     private final Set<Class> sProviders = new HashSet();

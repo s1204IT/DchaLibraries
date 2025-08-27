@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import com.android.browser.ActivityController;
+
 /* loaded from: classes.dex */
 public class NullController implements ActivityController {
     public static NullController INSTANCE = new NullController();

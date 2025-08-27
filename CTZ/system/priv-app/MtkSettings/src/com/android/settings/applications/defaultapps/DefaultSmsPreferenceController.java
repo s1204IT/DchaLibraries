@@ -5,6 +5,8 @@ import android.content.Context;
 import android.telephony.TelephonyManager;
 import com.android.internal.telephony.SmsApplication;
 import com.android.settingslib.applications.DefaultAppInfo;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class DefaultSmsPreferenceController extends DefaultAppPreferenceController {
     public DefaultSmsPreferenceController(Context context) {
@@ -31,8 +33,9 @@ public class DefaultSmsPreferenceController extends DefaultAppPreferenceControll
     }
 
     public static boolean hasSmsPreference(String str, Context context) {
-        for (SmsApplication.SmsApplicationData smsApplicationData : SmsApplication.getApplicationCollection(context)) {
-            if (smsApplicationData.mPackageName.equals(str)) {
+        Iterator it = SmsApplication.getApplicationCollection(context).iterator();
+        while (it.hasNext()) {
+            if (((SmsApplication.SmsApplicationData) it.next()).mPackageName.equals(str)) {
                 return true;
             }
         }

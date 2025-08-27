@@ -2,6 +2,8 @@ package com.android.settings.applications;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.text.format.Formatter;
@@ -11,6 +13,8 @@ import com.android.settings.Utils;
 import com.android.settings.applications.ProcStatsData;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.dashboard.SummaryLoader;
+import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class ProcessStatsSummary extends ProcessStatsBase implements Preference.OnPreferenceClickListener {
     public static final SummaryLoader.SummaryProviderFactory SUMMARY_PROVIDER_FACTORY = new SummaryLoader.SummaryProviderFactory() { // from class: com.android.settings.applications.ProcessStatsSummary.1
@@ -27,7 +31,7 @@ public class ProcessStatsSummary extends ProcessStatsBase implements Preference.
     private Preference mTotalMemory;
 
     @Override // com.android.settings.applications.ProcessStatsBase, com.android.settings.SettingsPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException, IOException {
         super.onCreate(bundle);
         addPreferencesFromResource(R.xml.process_stats_summary);
         this.mSummaryPref = (SummaryPreference) findPreference("status_header");
@@ -40,7 +44,7 @@ public class ProcessStatsSummary extends ProcessStatsBase implements Preference.
     }
 
     @Override // com.android.settings.applications.ProcessStatsBase
-    public void refreshUi() {
+    public void refreshUi() throws Resources.NotFoundException {
         CharSequence charSequence;
         Context context = getContext();
         ProcStatsData.MemInfo memInfo = this.mStatsManager.getMemInfo();
@@ -48,10 +52,10 @@ public class ProcessStatsSummary extends ProcessStatsBase implements Preference.
         double d2 = memInfo.realTotalRam;
         double d3 = memInfo.realFreeRam;
         long j = (long) d;
-        Formatter.BytesResult formatBytes = Formatter.formatBytes(context.getResources(), j, 1);
+        Formatter.BytesResult bytes = Formatter.formatBytes(context.getResources(), j, 1);
         long j2 = (long) d2;
-        String formatShortFileSize = Formatter.formatShortFileSize(context, j2);
-        String formatShortFileSize2 = Formatter.formatShortFileSize(context, (long) d3);
+        String shortFileSize = Formatter.formatShortFileSize(context, j2);
+        String shortFileSize2 = Formatter.formatShortFileSize(context, (long) d3);
         CharSequence[] textArray = getResources().getTextArray(R.array.ram_states);
         int memState = this.mStatsManager.getMemState();
         if (memState >= 0 && memState < textArray.length - 1) {
@@ -59,14 +63,14 @@ public class ProcessStatsSummary extends ProcessStatsBase implements Preference.
         } else {
             charSequence = textArray[textArray.length - 1];
         }
-        this.mSummaryPref.setAmount(formatBytes.value);
-        this.mSummaryPref.setUnits(formatBytes.units);
+        this.mSummaryPref.setAmount(bytes.value);
+        this.mSummaryPref.setUnits(bytes.units);
         float f = (float) (d / (d3 + d));
         this.mSummaryPref.setRatios(f, 0.0f, 1.0f - f);
         this.mPerformance.setSummary(charSequence);
-        this.mTotalMemory.setSummary(formatShortFileSize);
+        this.mTotalMemory.setSummary(shortFileSize);
         this.mAverageUsed.setSummary(Utils.formatPercentage(j, j2));
-        this.mFree.setSummary(formatShortFileSize2);
+        this.mFree.setSummary(shortFileSize2);
         String string = getString(sDurationLabels[this.mDurationIndex]);
         int size = this.mStatsManager.getEntries().size();
         this.mAppListPreference.setSummary(getResources().getQuantityString(R.plurals.memory_usage_apps_summary, size, Integer.valueOf(size), string));
@@ -95,7 +99,6 @@ public class ProcessStatsSummary extends ProcessStatsBase implements Preference.
         return false;
     }
 
-    /* loaded from: classes.dex */
     private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;
@@ -106,7 +109,7 @@ public class ProcessStatsSummary extends ProcessStatsBase implements Preference.
         }
 
         @Override // com.android.settings.dashboard.SummaryLoader.SummaryProvider
-        public void setListening(boolean z) {
+        public void setListening(boolean z) throws PackageManager.NameNotFoundException, IOException {
             if (z) {
                 ProcStatsData procStatsData = new ProcStatsData(this.mContext, false);
                 procStatsData.setDuration(ProcessStatsBase.sDurations[0]);

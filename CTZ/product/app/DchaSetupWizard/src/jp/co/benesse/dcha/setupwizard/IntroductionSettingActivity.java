@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import jp.co.benesse.dcha.dchaservice.IDchaService;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class IntroductionSettingActivity extends ParentSettingActivity implements View.OnClickListener {
     public static final int DIGICHALIZE_STATUS_DIGICHALIZED = 3;
@@ -70,9 +71,8 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d(TAG, "onCreate 0001");
         super.onCreate(bundle);
         setContentView(R.layout.act_introduction);
@@ -109,9 +109,8 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
         Logger.d(TAG, "onPause 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.setupwizard.ParentSettingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d(TAG, "onDestroy 0001");
         super.onDestroy();
         this.mOkBtn.setClickable(false);
@@ -123,11 +122,11 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
     protected boolean isRoot() {
         try {
             Logger.d(TAG, "isRoot 0001");
-            if (this.mDchaService != null) {
-                Logger.d(TAG, "isRoot 0002");
-                return this.mDchaService.checkPadRooted();
+            if (this.mDchaService == null) {
+                return false;
             }
-            return false;
+            Logger.d(TAG, "isRoot 0002");
+            return this.mDchaService.checkPadRooted();
         } catch (RemoteException e) {
             Logger.d(TAG, "isRoot 0003");
             Logger.d(TAG, "isRoot", e);
@@ -138,12 +137,12 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
     protected boolean removeTask() {
         try {
             Logger.d(TAG, "removeTask 0001");
-            if (this.mDchaService != null) {
-                Logger.d(TAG, "removeTask 0002");
-                this.mDchaService.removeTask(null);
-                return true;
+            if (this.mDchaService == null) {
+                return false;
             }
-            return false;
+            Logger.d(TAG, "removeTask 0002");
+            this.mDchaService.removeTask(null);
+            return true;
         } catch (RemoteException e) {
             Logger.d(TAG, "removeTask 0003");
             Logger.d(TAG, "removeTask", e);
@@ -154,12 +153,12 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
     protected boolean setDefaultParam() {
         try {
             Logger.d(TAG, "setDefaultParam 0001");
-            if (this.mDchaService != null) {
-                Logger.d(TAG, "setDefaultParam 0002");
-                this.mDchaService.setDefaultParam();
-                return true;
+            if (this.mDchaService == null) {
+                return false;
             }
-            return false;
+            Logger.d(TAG, "setDefaultParam 0002");
+            this.mDchaService.setDefaultParam();
+            return true;
         } catch (RemoteException e) {
             Logger.d(TAG, "setDefaultParam 0003");
             Logger.d(TAG, "setDefaultParam", e);
@@ -170,11 +169,11 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
     protected int getUserCount() {
         try {
             Logger.d(TAG, "getUserCount 0001");
-            if (this.mDchaService != null) {
-                Logger.d(TAG, "getUserCount 0002");
-                return this.mDchaService.getUserCount();
+            if (this.mDchaService == null) {
+                return 0;
             }
-            return 0;
+            Logger.d(TAG, "getUserCount 0002");
+            return this.mDchaService.getUserCount();
         } catch (RemoteException e) {
             Logger.d(TAG, "getUserCount 0003");
             Logger.d(TAG, "getUserCount", e);
@@ -185,11 +184,11 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
     protected boolean isDeviceEncryptionEnabled() {
         try {
             Logger.d(TAG, "isDeviceEncryptionEnabled 0001");
-            if (this.mDchaService != null) {
-                Logger.d(TAG, "isDeviceEncryptionEnabled 0002");
-                return this.mDchaService.isDeviceEncryptionEnabled();
+            if (this.mDchaService == null) {
+                return false;
             }
-            return false;
+            Logger.d(TAG, "isDeviceEncryptionEnabled 0002");
+            return this.mDchaService.isDeviceEncryptionEnabled();
         } catch (RemoteException e) {
             Logger.d(TAG, "isDeviceEncryptionEnabled 0003");
             Logger.d(TAG, "isDeviceEncryptionEnabled", e);
@@ -200,11 +199,11 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
     protected int getSetupStatus() {
         try {
             Logger.d(TAG, "getSetupStatus 0001");
-            if (this.mDchaService != null) {
-                Logger.d(TAG, "getSetupStatus 0002");
-                return this.mDchaService.getSetupStatus();
+            if (this.mDchaService == null) {
+                return 0;
             }
-            return 0;
+            Logger.d(TAG, "getSetupStatus 0002");
+            return this.mDchaService.getSetupStatus();
         } catch (RemoteException e) {
             Logger.d(TAG, "getSetupStatus 0003");
             Logger.d(TAG, "getSetupStatus", e);
@@ -215,12 +214,12 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
     protected boolean setSetupStatus(int i) {
         try {
             Logger.d(TAG, "setSetupStatus 0001");
-            if (this.mDchaService != null) {
-                Logger.d(TAG, "setSetupStatus 0002");
-                this.mDchaService.setSetupStatus(i);
-                return true;
+            if (this.mDchaService == null) {
+                return false;
             }
-            return false;
+            Logger.d(TAG, "setSetupStatus 0002");
+            this.mDchaService.setSetupStatus(i);
+            return true;
         } catch (RemoteException e) {
             Logger.d(TAG, "setSetupStatus 0003");
             Logger.d(TAG, "setSetupStatus", e);
@@ -234,21 +233,31 @@ public class IntroductionSettingActivity extends ParentSettingActivity implement
         this.mOkBtn.setClickable(false);
         if (getUserCount() != 1) {
             callSystemErrorDialog(getString(R.string.error_code_multi_users));
-        } else if (isDeviceEncryptionEnabled()) {
-            callSystemErrorDialog(getString(R.string.error_code_device_encryption));
-        } else if (!setDefaultParam()) {
-            callSystemErrorDialog(getString(R.string.error_code_initialize));
-        } else if (isRoot()) {
-            callSystemErrorDialog(getString(R.string.error_code_root));
-        } else if (!removeTask()) {
-            callSystemErrorDialog(getString(R.string.error_code_remove_task));
-        } else if (!setSetupStatus(1)) {
-            callSystemErrorDialog(getString(R.string.error_code_set_status));
-        } else {
-            Logger.d(TAG, "onClick 0002");
-            startActivity(new Intent(this, TabletIntroductionSettingActivity.class));
-            overridePendingTransition(0, 0);
-            finish();
+            return;
         }
+        if (isDeviceEncryptionEnabled()) {
+            callSystemErrorDialog(getString(R.string.error_code_device_encryption));
+            return;
+        }
+        if (!setDefaultParam()) {
+            callSystemErrorDialog(getString(R.string.error_code_initialize));
+            return;
+        }
+        if (isRoot()) {
+            callSystemErrorDialog(getString(R.string.error_code_root));
+            return;
+        }
+        if (!removeTask()) {
+            callSystemErrorDialog(getString(R.string.error_code_remove_task));
+            return;
+        }
+        if (!setSetupStatus(1)) {
+            callSystemErrorDialog(getString(R.string.error_code_set_status));
+            return;
+        }
+        Logger.d(TAG, "onClick 0002");
+        startActivity(new Intent(this, (Class<?>) TabletIntroductionSettingActivity.class));
+        overridePendingTransition(0, 0);
+        finish();
     }
 }

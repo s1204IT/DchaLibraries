@@ -20,6 +20,8 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
 import com.android.settingslib.core.lifecycle.events.OnStop;
+import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class WifiTetherPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnStart, OnStop {
     private static final IntentFilter AIRPLANE_INTENT_FILTER = new IntentFilter("android.intent.action.AIRPLANE_MODE");
@@ -116,19 +118,19 @@ public class WifiTetherPreferenceController extends AbstractPreferenceController
 
     void handleWifiApStateChanged(int i, int i2) {
         switch (i) {
-            case 10:
+            case AccessPoint.Speed.MODERATE /* 10 */:
                 this.mPreference.setSummary(R.string.wifi_tether_stopping);
-                return;
+                break;
             case 11:
                 this.mPreference.setSummary(R.string.wifi_hotspot_off_subtext);
                 clearSummaryForAirplaneMode();
-                return;
+                break;
             case 12:
                 this.mPreference.setSummary(R.string.wifi_tether_starting);
-                return;
+                break;
             case 13:
                 updateConfigSummary(this.mWifiManager.getWifiApConfiguration());
-                return;
+                break;
             default:
                 if (i2 == 1) {
                     this.mPreference.setSummary(R.string.wifi_sap_no_channel_error);
@@ -136,12 +138,12 @@ public class WifiTetherPreferenceController extends AbstractPreferenceController
                     this.mPreference.setSummary(R.string.wifi_error);
                 }
                 clearSummaryForAirplaneMode();
-                return;
+                break;
         }
     }
 
     private void updateConfigSummary(WifiConfiguration wifiConfiguration) {
-        String string = this.mContext.getString(17041118);
+        String string = this.mContext.getString(android.R.string.permdesc_callCompanionApp);
         Preference preference = this.mPreference;
         Context context = this.mContext;
         Object[] objArr = new Object[1];
@@ -157,8 +159,7 @@ public class WifiTetherPreferenceController extends AbstractPreferenceController
         clearSummaryForAirplaneMode(-1);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void clearSummaryForAirplaneMode(int i) {
+    private void clearSummaryForAirplaneMode(int i) {
         if (Settings.Global.getInt(this.mContext.getContentResolver(), "airplane_mode_on", 0) != 0) {
             this.mPreference.setSummary(R.string.wifi_tether_disabled_by_airplane);
         } else if (i != -1) {

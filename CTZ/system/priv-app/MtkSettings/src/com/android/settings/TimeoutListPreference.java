@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.android.settingslib.RestrictedLockUtils;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class TimeoutListPreference extends RestrictedListPreference {
     private RestrictedLockUtils.EnforcedAdmin mAdmin;
@@ -21,9 +22,8 @@ public class TimeoutListPreference extends RestrictedListPreference {
         this.mInitialValues = getEntryValues();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.RestrictedListPreference, com.android.settings.CustomListPreference
-    public void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder, DialogInterface.OnClickListener onClickListener) {
         super.onPrepareDialogBuilder(builder, onClickListener);
         if (this.mAdmin != null) {
             builder.setView(R.layout.admin_disabled_other_options_footer);
@@ -32,9 +32,8 @@ public class TimeoutListPreference extends RestrictedListPreference {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.CustomListPreference
-    public void onDialogCreated(Dialog dialog) {
+    protected void onDialogCreated(Dialog dialog) {
         super.onDialogCreated(dialog);
         dialog.create();
         if (this.mAdmin != null) {
@@ -47,7 +46,7 @@ public class TimeoutListPreference extends RestrictedListPreference {
         }
     }
 
-    public void removeUnusableTimeouts(long j, RestrictedLockUtils.EnforcedAdmin enforcedAdmin) {
+    public void removeUnusableTimeouts(long j, RestrictedLockUtils.EnforcedAdmin enforcedAdmin) throws NumberFormatException {
         if (((DevicePolicyManager) getContext().getSystemService("device_policy")) == null) {
             return;
         }
@@ -71,12 +70,12 @@ public class TimeoutListPreference extends RestrictedListPreference {
         }
         setDisabledByAdmin(null);
         if (arrayList.size() != getEntries().length) {
-            int parseInt = Integer.parseInt(getValue());
+            int i2 = Integer.parseInt(getValue());
             setEntries((CharSequence[]) arrayList.toArray(new CharSequence[0]));
             setEntryValues((CharSequence[]) arrayList2.toArray(new CharSequence[0]));
             this.mAdmin = enforcedAdmin;
-            if (parseInt <= j) {
-                setValue(String.valueOf(parseInt));
+            if (i2 <= j) {
+                setValue(String.valueOf(i2));
             } else if (arrayList2.size() > 0 && Long.parseLong(((CharSequence) arrayList2.get(arrayList2.size() - 1)).toString()) == j) {
                 setValue(String.valueOf(j));
             }

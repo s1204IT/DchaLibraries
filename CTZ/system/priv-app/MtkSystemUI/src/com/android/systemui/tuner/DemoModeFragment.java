@@ -16,6 +16,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.view.MenuItem;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class DemoModeFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
     private static final String[] STATUS_ICONS = {"volume", "bluetooth", "location", "alarm", "zen", "sync", "tty", "eri", "mute", "speakerphone", "managed_profile"};
@@ -39,10 +40,10 @@ public class DemoModeFragment extends PreferenceFragment implements Preference.O
         this.mOnSwitch.setTitle(R.string.show_demo_mode);
         this.mOnSwitch.setEnabled(false);
         this.mOnSwitch.setOnPreferenceChangeListener(this);
-        PreferenceScreen createPreferenceScreen = getPreferenceManager().createPreferenceScreen(context);
-        createPreferenceScreen.addPreference(this.mEnabledSwitch);
-        createPreferenceScreen.addPreference(this.mOnSwitch);
-        setPreferenceScreen(createPreferenceScreen);
+        PreferenceScreen preferenceScreenCreatePreferenceScreen = getPreferenceManager().createPreferenceScreen(context);
+        preferenceScreenCreatePreferenceScreen.addPreference(this.mEnabledSwitch);
+        preferenceScreenCreatePreferenceScreen.addPreference(this.mOnSwitch);
+        setPreferenceScreen(preferenceScreenCreatePreferenceScreen);
         updateDemoModeEnabled();
         updateDemoModeOn();
         ContentResolver contentResolver = getContext().getContentResolver();
@@ -77,18 +78,17 @@ public class DemoModeFragment extends PreferenceFragment implements Preference.O
         super.onDestroy();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDemoModeEnabled() {
+    private void updateDemoModeEnabled() {
         boolean z = Settings.Global.getInt(getContext().getContentResolver(), "sysui_demo_allowed", 0) != 0;
         this.mEnabledSwitch.setChecked(z);
         this.mOnSwitch.setEnabled(z);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDemoModeOn() {
+    private void updateDemoModeOn() {
         this.mOnSwitch.setChecked(Settings.Global.getInt(getContext().getContentResolver(), "sysui_tuner_demo_on", 0) != 0);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: com.android.systemui.tuner.DemoModeFragment */
     /* JADX WARN: Multi-variable type inference failed */
     /* JADX WARN: Type inference failed for: r5v1 */
     /* JADX WARN: Type inference failed for: r5v2, types: [boolean, int] */
@@ -103,9 +103,10 @@ public class DemoModeFragment extends PreferenceFragment implements Preference.O
             }
             MetricsLogger.action(getContext(), 235, (boolean) r5);
             setGlobal("sysui_demo_allowed", r5);
-        } else if (preference != this.mOnSwitch) {
-            return false;
         } else {
+            if (preference != this.mOnSwitch) {
+                return false;
+            }
             MetricsLogger.action(getContext(), 236, (boolean) r5);
             if (r5 != 0) {
                 startDemoMode();

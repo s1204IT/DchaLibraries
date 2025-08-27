@@ -6,14 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public abstract class AbnormalRingerConditionBase extends Condition {
     protected final AudioManager mAudioManager;
     private final IntentFilter mFilter;
     private final RingerModeChangeReceiver mReceiver;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public AbnormalRingerConditionBase(ConditionManager conditionManager) {
+    AbnormalRingerConditionBase(ConditionManager conditionManager) {
         super(conditionManager);
         this.mAudioManager = (AudioManager) this.mManager.getContext().getSystemService("audio");
         this.mReceiver = new RingerModeChangeReceiver(this);
@@ -38,7 +38,6 @@ public abstract class AbnormalRingerConditionBase extends Condition {
         refreshState();
     }
 
-    /* loaded from: classes.dex */
     static class RingerModeChangeReceiver extends BroadcastReceiver {
         private final AbnormalRingerConditionBase mCondition;
 

@@ -4,6 +4,7 @@ import android.content.res.Configuration;
 import com.android.systemui.DemoMode;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public interface VolumeComponent extends DemoMode {
     void dismissNow();

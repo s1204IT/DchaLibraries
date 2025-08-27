@@ -3,15 +3,18 @@ package com.android.settingslib;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.SparseBooleanArray;
+
 /* loaded from: classes.dex */
 public class AppItem implements Parcelable, Comparable<AppItem> {
     public static final Parcelable.Creator<AppItem> CREATOR = new Parcelable.Creator<AppItem>() { // from class: com.android.settingslib.AppItem.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public AppItem createFromParcel(Parcel parcel) {
             return new AppItem(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public AppItem[] newArray(int i) {
@@ -57,12 +60,13 @@ public class AppItem implements Parcelable, Comparable<AppItem> {
         return 0;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     @Override // java.lang.Comparable
     public int compareTo(AppItem appItem) {
-        int compare = Integer.compare(this.category, appItem.category);
-        if (compare == 0) {
+        int iCompare = Integer.compare(this.category, appItem.category);
+        if (iCompare == 0) {
             return Long.compare(appItem.total, this.total);
         }
-        return compare;
+        return iCompare;
     }
 }

@@ -8,6 +8,7 @@ import com.android.settingslib.dream.DreamBackend;
 import com.android.settingslib.widget.CandidateInfo;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class WhenToDreamPicker extends RadioButtonPickerFragment {
     private DreamBackend mBackend;
@@ -18,9 +19,8 @@ public class WhenToDreamPicker extends RadioButtonPickerFragment {
         this.mBackend = DreamBackend.getInstance(context);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.when_to_dream_settings;
     }
 
@@ -31,17 +31,17 @@ public class WhenToDreamPicker extends RadioButtonPickerFragment {
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected List<? extends CandidateInfo> getCandidates() {
-        String[] entries = entries();
-        String[] keys = keys();
+        String[] strArrEntries = entries();
+        String[] strArrKeys = keys();
         ArrayList arrayList = new ArrayList();
-        if (entries == null || entries.length <= 0) {
+        if (strArrEntries == null || strArrEntries.length <= 0) {
             return null;
         }
-        if (keys == null || keys.length != entries.length) {
+        if (strArrKeys == null || strArrKeys.length != strArrEntries.length) {
             throw new IllegalArgumentException("Entries and values must be of the same length.");
         }
-        for (int i = 0; i < entries.length; i++) {
-            arrayList.add(new WhenToDreamCandidateInfo(entries[i], keys[i]));
+        for (int i = 0; i < strArrEntries.length; i++) {
+            arrayList.add(new WhenToDreamCandidateInfo(strArrEntries[i], strArrKeys[i]));
         }
         return arrayList;
     }
@@ -65,14 +65,12 @@ public class WhenToDreamPicker extends RadioButtonPickerFragment {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment
-    public void onSelectionPerformed(boolean z) {
+    protected void onSelectionPerformed(boolean z) {
         super.onSelectionPerformed(z);
         getActivity().finish();
     }
 
-    /* loaded from: classes.dex */
     private final class WhenToDreamCandidateInfo extends CandidateInfo {
         private final String key;
         private final String name;

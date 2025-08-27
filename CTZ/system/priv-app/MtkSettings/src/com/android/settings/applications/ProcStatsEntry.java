@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
 /* loaded from: classes.dex */
 public final class ProcStatsEntry implements Parcelable {
     final long mAvgBgMem;
@@ -32,12 +33,14 @@ public final class ProcStatsEntry implements Parcelable {
     final int mUid;
     private static boolean DEBUG = false;
     public static final Parcelable.Creator<ProcStatsEntry> CREATOR = new Parcelable.Creator<ProcStatsEntry>() { // from class: com.android.settings.applications.ProcStatsEntry.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ProcStatsEntry createFromParcel(Parcel parcel) {
             return new ProcStatsEntry(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ProcStatsEntry[] newArray(int i) {
@@ -99,14 +102,14 @@ public final class ProcStatsEntry implements Parcelable {
         this.mMaxRunMem = parcel.readLong();
         this.mRunWeight = parcel.readDouble();
         this.mBestTargetPackage = parcel.readString();
-        int readInt = parcel.readInt();
-        if (readInt > 0) {
-            this.mServices.ensureCapacity(readInt);
-            for (int i = 0; i < readInt; i++) {
-                String readString = parcel.readString();
+        int i = parcel.readInt();
+        if (i > 0) {
+            this.mServices.ensureCapacity(i);
+            for (int i2 = 0; i2 < i; i2++) {
+                String string = parcel.readString();
                 ArrayList arrayList = new ArrayList();
                 parcel.readTypedList(arrayList, Service.CREATOR);
-                this.mServices.append(readString, arrayList);
+                this.mServices.append(string, arrayList);
             }
         }
     }
@@ -115,15 +118,16 @@ public final class ProcStatsEntry implements Parcelable {
         this.mPackages.add(str);
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [183=5] */
     /* JADX WARN: Removed duplicated region for block: B:101:0x03a8  */
     /* JADX WARN: Removed duplicated region for block: B:105:0x03dd  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    public void evaluateTargetPackage(PackageManager packageManager, ProcessStats processStats, ProcessStats.ProcessDataCollection processDataCollection, ProcessStats.ProcessDataCollection processDataCollection2, Comparator<ProcStatsEntry> comparator, boolean z) {
+    public void evaluateTargetPackage(PackageManager packageManager, ProcessStats processStats, ProcessStats.ProcessDataCollection processDataCollection, ProcessStats.ProcessDataCollection processDataCollection2, Comparator<ProcStatsEntry> comparator, boolean z) throws PackageManager.NameNotFoundException {
         double d;
         ApplicationInfo applicationInfo;
-        ArrayList<Service> arrayList;
+        ArrayList<Service> arrayListValueAt;
         this.mBestTargetPackage = null;
         int i = 0;
         if (this.mPackages.size() == 1) {
@@ -139,7 +143,7 @@ public final class ProcStatsEntry implements Parcelable {
                 return;
             }
         }
-        ArrayList arrayList2 = new ArrayList();
+        ArrayList arrayList = new ArrayList();
         for (int i3 = 0; i3 < this.mPackages.size(); i3++) {
             LongSparseArray longSparseArray = (LongSparseArray) processStats.mPackages.get(this.mPackages.get(i3), this.mUid);
             for (int i4 = 0; i4 < longSparseArray.size(); i4++) {
@@ -154,43 +158,46 @@ public final class ProcStatsEntry implements Parcelable {
                     if (processState == null) {
                         Log.w("ProcStatsEntry", "No process " + this.mName + " found in package state " + this.mPackages.get(i3) + "/" + this.mUid);
                     } else {
-                        arrayList2.add(new ProcStatsEntry(processState, packageState.mPackageName, processDataCollection, processDataCollection2, z));
+                        arrayList.add(new ProcStatsEntry(processState, packageState.mPackageName, processDataCollection, processDataCollection2, z));
                     }
                 }
             }
         }
-        if (arrayList2.size() <= 1) {
-            if (arrayList2.size() == 1) {
-                this.mBestTargetPackage = ((ProcStatsEntry) arrayList2.get(0)).mPackage;
+        if (arrayList.size() <= 1) {
+            if (arrayList.size() == 1) {
+                this.mBestTargetPackage = ((ProcStatsEntry) arrayList.get(0)).mPackage;
                 return;
             }
             return;
         }
-        Collections.sort(arrayList2, comparator);
-        if (((ProcStatsEntry) arrayList2.get(0)).mRunWeight > ((ProcStatsEntry) arrayList2.get(1)).mRunWeight * 3.0d) {
+        Collections.sort(arrayList, comparator);
+        if (((ProcStatsEntry) arrayList.get(0)).mRunWeight > ((ProcStatsEntry) arrayList.get(1)).mRunWeight * 3.0d) {
             if (DEBUG) {
-                Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": best pkg " + ((ProcStatsEntry) arrayList2.get(0)).mPackage + " weight " + ((ProcStatsEntry) arrayList2.get(0)).mRunWeight + " better than " + ((ProcStatsEntry) arrayList2.get(1)).mPackage + " weight " + ((ProcStatsEntry) arrayList2.get(1)).mRunWeight);
+                Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": best pkg " + ((ProcStatsEntry) arrayList.get(0)).mPackage + " weight " + ((ProcStatsEntry) arrayList.get(0)).mRunWeight + " better than " + ((ProcStatsEntry) arrayList.get(1)).mPackage + " weight " + ((ProcStatsEntry) arrayList.get(1)).mRunWeight);
             }
-            this.mBestTargetPackage = ((ProcStatsEntry) arrayList2.get(0)).mPackage;
+            this.mBestTargetPackage = ((ProcStatsEntry) arrayList.get(0)).mPackage;
             return;
         }
-        double d2 = ((ProcStatsEntry) arrayList2.get(0)).mRunWeight;
+        double d2 = ((ProcStatsEntry) arrayList.get(0)).mRunWeight;
         long j = -1;
         int i5 = 0;
         boolean z2 = false;
-        while (i5 < arrayList2.size()) {
-            ProcStatsEntry procStatsEntry = (ProcStatsEntry) arrayList2.get(i5);
+        while (i5 < arrayList.size()) {
+            ProcStatsEntry procStatsEntry = (ProcStatsEntry) arrayList.get(i5);
             if (procStatsEntry.mRunWeight >= d2 / 2.0d) {
                 try {
-                    applicationInfo = packageManager.getApplicationInfo(procStatsEntry.mPackage, i);
-                } catch (PackageManager.NameNotFoundException e) {
-                    d = d2;
-                    if (DEBUG) {
-                        Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": pkg " + procStatsEntry.mPackage + " failed finding app info");
+                    try {
+                        applicationInfo = packageManager.getApplicationInfo(procStatsEntry.mPackage, i);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        d = d2;
+                        if (DEBUG) {
+                            Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": pkg " + procStatsEntry.mPackage + " failed finding app info");
+                        }
+                        i5++;
+                        d2 = d;
+                        i = 0;
                     }
-                    i5++;
-                    d2 = d;
-                    i = 0;
+                } catch (PackageManager.NameNotFoundException e2) {
                 }
                 if (applicationInfo.icon == 0) {
                     if (DEBUG) {
@@ -198,43 +205,43 @@ public final class ProcStatsEntry implements Parcelable {
                     }
                 } else if ((applicationInfo.flags & 8) != 0) {
                     long j2 = procStatsEntry.mRunDuration;
-                    if (z2 && j2 <= j) {
+                    if (!z2 || j2 > j) {
                         if (DEBUG) {
-                            Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": pkg " + procStatsEntry.mPackage + " pers run time " + j2 + " not as good as last " + j);
+                            Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": pkg " + procStatsEntry.mPackage + " new best pers run time " + j2);
                         }
+                        j = j2;
+                        z2 = true;
+                    } else if (DEBUG) {
+                        Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": pkg " + procStatsEntry.mPackage + " pers run time " + j2 + " not as good as last " + j);
                     }
-                    if (DEBUG) {
-                        Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": pkg " + procStatsEntry.mPackage + " new best pers run time " + j2);
-                    }
-                    j = j2;
-                    z2 = true;
                 } else if (!z2) {
                     int size = this.mServices.size();
                     int i6 = i;
                     while (true) {
                         if (i6 >= size) {
-                            arrayList = null;
+                            arrayListValueAt = null;
                             break;
                         }
-                        arrayList = this.mServices.valueAt(i6);
-                        if (arrayList.get(i).mPackage.equals(procStatsEntry.mPackage)) {
+                        arrayListValueAt = this.mServices.valueAt(i6);
+                        if (arrayListValueAt.get(i).mPackage.equals(procStatsEntry.mPackage)) {
                             break;
+                        } else {
+                            i6++;
                         }
-                        i6++;
                     }
                     long j3 = 0;
-                    if (arrayList != null) {
-                        int size2 = arrayList.size();
+                    if (arrayListValueAt != null) {
+                        int size2 = arrayListValueAt.size();
                         int i7 = i;
                         while (i7 < size2) {
-                            Service service = arrayList.get(i7);
+                            Service service = arrayListValueAt.get(i7);
                             d = d2;
                             if (service.mDuration > 0) {
                                 if (DEBUG) {
                                     Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": pkg " + procStatsEntry.mPackage + " service " + service.mName + " run time is " + service.mDuration);
                                 }
                                 j3 = service.mDuration;
-                                if (j3 <= j) {
+                                if (j3 > j) {
                                     if (DEBUG) {
                                         Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": pkg " + procStatsEntry.mPackage + " new best run time " + j3);
                                     }
@@ -243,17 +250,18 @@ public final class ProcStatsEntry implements Parcelable {
                                 } else if (DEBUG) {
                                     Log.d("ProcStatsEntry", "Eval pkg of " + this.mName + ": pkg " + procStatsEntry.mPackage + " run time " + j3 + " not as good as last " + j);
                                 }
-                                i5++;
-                                d2 = d;
-                                i = 0;
                             } else {
                                 i7++;
                                 d2 = d;
                             }
                         }
-                    }
-                    d = d2;
-                    if (j3 <= j) {
+                        d = d2;
+                        if (j3 > j) {
+                        }
+                    } else {
+                        d = d2;
+                        if (j3 > j) {
+                        }
                     }
                     i5++;
                     d2 = d;
@@ -270,7 +278,7 @@ public final class ProcStatsEntry implements Parcelable {
             i = 0;
         }
         if (TextUtils.isEmpty(this.mBestTargetPackage)) {
-            this.mBestTargetPackage = ((ProcStatsEntry) arrayList2.get(0)).mPackage;
+            this.mBestTargetPackage = ((ProcStatsEntry) arrayList.get(0)).mPackage;
         }
     }
 
@@ -315,15 +323,16 @@ public final class ProcStatsEntry implements Parcelable {
         return this.mUid;
     }
 
-    /* loaded from: classes.dex */
     public static final class Service implements Parcelable {
         public static final Parcelable.Creator<Service> CREATOR = new Parcelable.Creator<Service>() { // from class: com.android.settings.applications.ProcStatsEntry.Service.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public Service createFromParcel(Parcel parcel) {
                 return new Service(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public Service[] newArray(int i) {

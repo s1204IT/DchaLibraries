@@ -1,12 +1,15 @@
 package com.android.systemui.shared.recents.model;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 /* loaded from: classes.dex */
 class TaskResourceLoadQueue {
     private final ConcurrentLinkedQueue<Task> mQueue = new ConcurrentLinkedQueue<>();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void addTask(Task task) {
+    TaskResourceLoadQueue() {
+    }
+
+    void addTask(Task task) {
         if (!this.mQueue.contains(task)) {
             this.mQueue.add(task);
         }
@@ -15,23 +18,19 @@ class TaskResourceLoadQueue {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Task nextTask() {
+    Task nextTask() {
         return this.mQueue.poll();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void removeTask(Task task) {
+    void removeTask(Task task) {
         this.mQueue.remove(task);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void clearTasks() {
+    void clearTasks() {
         this.mQueue.clear();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return this.mQueue.isEmpty();
     }
 }

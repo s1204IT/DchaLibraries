@@ -1,10 +1,10 @@
 package com.google.common.collect;
+
 /* loaded from: classes.dex */
 class DescendingImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     private final ImmutableSortedSet<E> forward;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public DescendingImmutableSortedSet(ImmutableSortedSet<E> immutableSortedSet) {
+    DescendingImmutableSortedSet(ImmutableSortedSet<E> immutableSortedSet) {
         super(Ordering.from(immutableSortedSet.comparator()).reverse());
         this.forward = immutableSortedSet;
     }
@@ -14,6 +14,7 @@ class DescendingImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return this.forward.size();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSortedSet, com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
     public UnmodifiableIterator<E> iterator() {
         return this.forward.descendingIterator();
@@ -34,11 +35,13 @@ class DescendingImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return this.forward.headSet((ImmutableSortedSet<E>) e, z).descendingSet();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: descendingSet()Ljava/util/NavigableSet; */
     @Override // com.google.common.collect.ImmutableSortedSet, java.util.NavigableSet
     public ImmutableSortedSet<E> descendingSet() {
         return this.forward;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: descendingIterator()Ljava/util/Iterator; */
     @Override // com.google.common.collect.ImmutableSortedSet, java.util.NavigableSet
     public UnmodifiableIterator<E> descendingIterator() {
         return this.forward.iterator();
@@ -71,16 +74,15 @@ class DescendingImmutableSortedSet<E> extends ImmutableSortedSet<E> {
 
     @Override // com.google.common.collect.ImmutableSortedSet
     int indexOf(Object obj) {
-        int indexOf = this.forward.indexOf(obj);
-        if (indexOf == -1) {
-            return indexOf;
+        int iIndexOf = this.forward.indexOf(obj);
+        if (iIndexOf == -1) {
+            return iIndexOf;
         }
-        return (size() - 1) - indexOf;
+        return (size() - 1) - iIndexOf;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return this.forward.isPartialView();
     }
 }

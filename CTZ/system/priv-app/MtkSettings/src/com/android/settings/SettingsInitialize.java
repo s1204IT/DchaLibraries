@@ -16,6 +16,7 @@ import android.util.Log;
 import com.android.settings.shortcut.CreateShortcut;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SettingsInitialize extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver
@@ -39,16 +40,16 @@ public class SettingsInitialize extends BroadcastReceiver {
         Intent intent2 = new Intent();
         intent2.addCategory("android.intent.category.DEFAULT");
         intent2.setPackage(context.getPackageName());
-        List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent2, 705);
-        int size = queryIntentActivities.size();
+        List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent2, 705);
+        int size = listQueryIntentActivities.size();
         for (int i = 0; i < size; i++) {
-            ResolveInfo resolveInfo = queryIntentActivities.get(i);
+            ResolveInfo resolveInfo = listQueryIntentActivities.get(i);
             if (resolveInfo.filter != null && resolveInfo.activityInfo != null && resolveInfo.activityInfo.metaData != null && resolveInfo.activityInfo.metaData.getBoolean("com.android.settings.PRIMARY_PROFILE_CONTROLLED")) {
                 packageManager.addCrossProfileIntentFilter(resolveInfo.filter, userInfo.id, userInfo.profileGroupId, 2);
             }
         }
-        packageManager.setComponentEnabledSetting(new ComponentName(context, Settings.class), 2, 1);
-        packageManager.setComponentEnabledSetting(new ComponentName(context, CreateShortcut.class), 2, 1);
+        packageManager.setComponentEnabledSetting(new ComponentName(context, (Class<?>) Settings.class), 2, 1);
+        packageManager.setComponentEnabledSetting(new ComponentName(context, (Class<?>) CreateShortcut.class), 2, 1);
     }
 
     private void webviewSettingSetup(Context context, PackageManager packageManager, UserInfo userInfo) {

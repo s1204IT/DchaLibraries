@@ -3,6 +3,7 @@ package com.android.systemui.statusbar;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.Button;
+
 /* loaded from: classes.dex */
 public class AlphaOptimizedButton extends Button {
     public AlphaOptimizedButton(Context context) {

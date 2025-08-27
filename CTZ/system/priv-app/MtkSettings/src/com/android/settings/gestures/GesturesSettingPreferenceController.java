@@ -10,6 +10,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class GesturesSettingPreferenceController extends BasePreferenceController {
     private static final String FAKE_PREF_KEY = "fake_key_only_for_get_available";

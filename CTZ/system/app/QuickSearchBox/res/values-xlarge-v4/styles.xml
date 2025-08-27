@@ -9,7 +9,7 @@
         <item name="android:windowBackground">@drawable/activity_background</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">adjustResize|stateUnchanged</item>
+        <item name="android:windowSoftInputMode">0x11</item>
         <item name="android:windowShowWallpaper">true</item>
     </style>
     <style name="Theme.QuickSearchBox.SearchWidgetConfig" parent="@android:style/Theme.Dialog">
@@ -23,7 +23,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@style/Animation.SelectSearchSource</item>
         <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:windowSoftInputMode">adjustResize|stateUnchanged</item>
+        <item name="android:windowSoftInputMode">0x11</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
 </resources>

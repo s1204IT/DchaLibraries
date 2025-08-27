@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class UserLockStateChangedTask extends BaseModelUpdateTask {
     private final UserHandle mUser;
@@ -30,17 +31,17 @@ public class UserLockStateChangedTask extends BaseModelUpdateTask {
     @Override // com.android.launcher3.model.BaseModelUpdateTask
     public void execute(LauncherAppState launcherAppState, BgDataModel bgDataModel, AllAppsList allAppsList) {
         Context context = launcherAppState.getContext();
-        boolean isUserUnlocked = UserManagerCompat.getInstance(context).isUserUnlocked(this.mUser);
+        boolean zIsUserUnlocked = UserManagerCompat.getInstance(context).isUserUnlocked(this.mUser);
         DeepShortcutManager deepShortcutManager = DeepShortcutManager.getInstance(context);
-        HashMap hashMap = new HashMap();
-        if (isUserUnlocked) {
-            List<ShortcutInfoCompat> queryForPinnedShortcuts = deepShortcutManager.queryForPinnedShortcuts(null, this.mUser);
+        HashMap map = new HashMap();
+        if (zIsUserUnlocked) {
+            List<ShortcutInfoCompat> listQueryForPinnedShortcuts = deepShortcutManager.queryForPinnedShortcuts(null, this.mUser);
             if (deepShortcutManager.wasLastCallSuccess()) {
-                for (ShortcutInfoCompat shortcutInfoCompat : queryForPinnedShortcuts) {
-                    hashMap.put(ShortcutKey.fromInfo(shortcutInfoCompat), shortcutInfoCompat);
+                for (ShortcutInfoCompat shortcutInfoCompat : listQueryForPinnedShortcuts) {
+                    map.put(ShortcutKey.fromInfo(shortcutInfoCompat), shortcutInfoCompat);
                 }
             } else {
-                isUserUnlocked = false;
+                zIsUserUnlocked = false;
             }
         }
         ArrayList<ShortcutInfo> arrayList = new ArrayList<>();
@@ -50,17 +51,17 @@ public class UserLockStateChangedTask extends BaseModelUpdateTask {
             ItemInfo next = it.next();
             if (next.itemType == 6 && this.mUser.equals(next.user)) {
                 ShortcutInfo shortcutInfo = (ShortcutInfo) next;
-                if (isUserUnlocked) {
-                    ShortcutKey fromItemInfo = ShortcutKey.fromItemInfo(shortcutInfo);
-                    ShortcutInfoCompat shortcutInfoCompat2 = (ShortcutInfoCompat) hashMap.get(fromItemInfo);
+                if (zIsUserUnlocked) {
+                    ShortcutKey shortcutKeyFromItemInfo = ShortcutKey.fromItemInfo(shortcutInfo);
+                    ShortcutInfoCompat shortcutInfoCompat2 = (ShortcutInfoCompat) map.get(shortcutKeyFromItemInfo);
                     if (shortcutInfoCompat2 == null) {
-                        hashSet.add(fromItemInfo);
+                        hashSet.add(shortcutKeyFromItemInfo);
                     } else {
                         shortcutInfo.runtimeStatusFlags &= -33;
                         shortcutInfo.updateFromDeepShortcutInfo(shortcutInfoCompat2, context);
-                        LauncherIcons obtain = LauncherIcons.obtain(context);
-                        obtain.createShortcutIcon(shortcutInfoCompat2, true, Provider.of(shortcutInfo.iconBitmap)).applyTo(shortcutInfo);
-                        obtain.recycle();
+                        LauncherIcons launcherIconsObtain = LauncherIcons.obtain(context);
+                        launcherIconsObtain.createShortcutIcon(shortcutInfoCompat2, true, Provider.of(shortcutInfo.iconBitmap)).applyTo(shortcutInfo);
+                        launcherIconsObtain.recycle();
                     }
                 } else {
                     shortcutInfo.runtimeStatusFlags |= 32;
@@ -78,7 +79,7 @@ public class UserLockStateChangedTask extends BaseModelUpdateTask {
                 it2.remove();
             }
         }
-        if (isUserUnlocked) {
+        if (zIsUserUnlocked) {
             bgDataModel.updateDeepShortcutMap(null, this.mUser, deepShortcutManager.queryForAllShortcuts(this.mUser));
         }
         bindDeepShortcuts(bgDataModel);

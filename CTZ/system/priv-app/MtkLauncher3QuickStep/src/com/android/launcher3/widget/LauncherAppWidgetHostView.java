@@ -32,12 +32,14 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.dragndrop.DragLayer;
 import com.android.launcher3.views.BaseDragLayer;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class LauncherAppWidgetHostView extends AppWidgetHostView implements BaseDragLayer.TouchCompleteListener, View.OnLongClickListener {
     private static final long ADVANCE_INTERVAL = 20000;
     private static final long ADVANCE_STAGGER = 250;
     private static final SparseBooleanArray sAutoAdvanceWidgetIds = new SparseBooleanArray();
     private Runnable mAutoAdvanceRunnable;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private boolean mChildrenFocused;
     protected final LayoutInflater mInflater;
@@ -46,6 +48,7 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
     private boolean mIsScrollable;
     protected final Launcher mLauncher;
     private final CheckLongPressHelper mLongPressHelper;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private boolean mReinflateOnConfigChange;
     private float mScaleToFit;
@@ -114,35 +117,34 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
         if (this.mLongPressHelper.hasPerformedLongPress()) {
             this.mLongPressHelper.cancelLongPress();
             return true;
-        } else if (this.mStylusEventHelper.onMotionEvent(motionEvent)) {
+        }
+        if (this.mStylusEventHelper.onMotionEvent(motionEvent)) {
             this.mLongPressHelper.cancelLongPress();
             return true;
-        } else {
-            switch (motionEvent.getAction()) {
-                case 0:
-                    DragLayer dragLayer = Launcher.getLauncher(getContext()).getDragLayer();
-                    if (this.mIsScrollable) {
-                        dragLayer.requestDisallowInterceptTouchEvent(true);
-                    }
-                    if (!this.mStylusEventHelper.inStylusButtonPressed()) {
-                        this.mLongPressHelper.postCheckForLongPress();
-                    }
-                    dragLayer.setTouchCompleteListener(this);
-                    return false;
-                case 1:
-                case 3:
-                    this.mLongPressHelper.cancelLongPress();
-                    return false;
-                case 2:
-                    if (!Utilities.pointInView(this, motionEvent.getX(), motionEvent.getY(), this.mSlop)) {
-                        this.mLongPressHelper.cancelLongPress();
-                        return false;
-                    }
-                    return false;
-                default:
-                    return false;
-            }
         }
+        switch (motionEvent.getAction()) {
+            case 0:
+                DragLayer dragLayer = Launcher.getLauncher(getContext()).getDragLayer();
+                if (this.mIsScrollable) {
+                    dragLayer.requestDisallowInterceptTouchEvent(true);
+                }
+                if (!this.mStylusEventHelper.inStylusButtonPressed()) {
+                    this.mLongPressHelper.postCheckForLongPress();
+                }
+                dragLayer.setTouchCompleteListener(this);
+                break;
+            case 1:
+            case 3:
+                this.mLongPressHelper.cancelLongPress();
+                break;
+            case 2:
+                if (!Utilities.pointInView(this, motionEvent.getX(), motionEvent.getY(), this.mSlop)) {
+                    this.mLongPressHelper.cancelLongPress();
+                    break;
+                }
+                break;
+        }
+        return true;
     }
 
     @Override // android.view.View
@@ -151,16 +153,15 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
             case 1:
             case 3:
                 this.mLongPressHelper.cancelLongPress();
-                return false;
+                break;
             case 2:
                 if (!Utilities.pointInView(this, motionEvent.getX(), motionEvent.getY(), this.mSlop)) {
                     this.mLongPressHelper.cancelLongPress();
-                    return false;
+                    break;
                 }
-                return false;
-            default:
-                return false;
+                break;
         }
+        return false;
     }
 
     @Override // android.view.ViewGroup, android.view.View
@@ -240,12 +241,14 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
                         if (itemInfo.spanX == 1 && itemInfo.spanY == 1) {
                             ((View) focusables.get(0)).performClick();
                             this.mChildrenFocused = false;
-                            return true;
+                            break;
                         }
                     }
                     break;
+                default:
+                    ((View) focusables.get(0)).requestFocus();
+                    break;
             }
-            ((View) focusables.get(0)).requestFocus();
             return true;
         }
         return super.onKeyUp(i, keyEvent);
@@ -294,6 +297,9 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
             super.onLayout(z, i, i2, i3, i4);
         } catch (RuntimeException e) {
             post(new Runnable() { // from class: com.android.launcher3.widget.LauncherAppWidgetHostView.1
+                AnonymousClass1() {
+                }
+
                 @Override // java.lang.Runnable
                 public void run() {
                     LauncherAppWidgetHostView.this.switchToErrorView();
@@ -301,6 +307,17 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
             });
         }
         this.mIsScrollable = checkScrollableRecursively(this);
+    }
+
+    /* renamed from: com.android.launcher3.widget.LauncherAppWidgetHostView$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            LauncherAppWidgetHostView.this.switchToErrorView();
+        }
     }
 
     @Override // android.view.View
@@ -343,9 +360,9 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
         if (appWidgetInfo == null || appWidgetInfo.autoAdvanceViewId == -1 || !this.mIsAttachedToWindow) {
             return null;
         }
-        View findViewById = findViewById(appWidgetInfo.autoAdvanceViewId);
-        if (findViewById instanceof Advanceable) {
-            return (Advanceable) findViewById;
+        KeyEvent.Callback callbackFindViewById = findViewById(appWidgetInfo.autoAdvanceViewId);
+        if (callbackFindViewById instanceof Advanceable) {
+            return (Advanceable) callbackFindViewById;
         }
         return null;
     }
@@ -357,6 +374,9 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
             this.mIsAutoAdvanceRegistered = z;
             if (this.mAutoAdvanceRunnable == null) {
                 this.mAutoAdvanceRunnable = new Runnable() { // from class: com.android.launcher3.widget.LauncherAppWidgetHostView.2
+                    AnonymousClass2() {
+                    }
+
                     @Override // java.lang.Runnable
                     public void run() {
                         LauncherAppWidgetHostView.this.runAutoAdvance();
@@ -368,20 +388,30 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
         }
     }
 
+    /* renamed from: com.android.launcher3.widget.LauncherAppWidgetHostView$2 */
+    class AnonymousClass2 implements Runnable {
+        AnonymousClass2() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            LauncherAppWidgetHostView.this.runAutoAdvance();
+        }
+    }
+
     private void scheduleNextAdvance() {
         if (!this.mIsAutoAdvanceRegistered) {
             return;
         }
-        long uptimeMillis = SystemClock.uptimeMillis();
-        long indexOfKey = uptimeMillis + (ADVANCE_INTERVAL - (uptimeMillis % ADVANCE_INTERVAL)) + (ADVANCE_STAGGER * sAutoAdvanceWidgetIds.indexOfKey(getAppWidgetId()));
+        long jUptimeMillis = SystemClock.uptimeMillis();
+        long jIndexOfKey = jUptimeMillis + (ADVANCE_INTERVAL - (jUptimeMillis % ADVANCE_INTERVAL)) + (ADVANCE_STAGGER * sAutoAdvanceWidgetIds.indexOfKey(getAppWidgetId()));
         Handler handler = getHandler();
         if (handler != null) {
-            handler.postAtTime(this.mAutoAdvanceRunnable, indexOfKey);
+            handler.postAtTime(this.mAutoAdvanceRunnable, jIndexOfKey);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void runAutoAdvance() {
+    private void runAutoAdvance() {
         Advanceable advanceable = getAdvanceable();
         if (advanceable != null) {
             advanceable.advance();

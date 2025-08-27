@@ -24,6 +24,7 @@ import com.android.settingslib.drawer.SettingsDrawerActivity;
 import com.android.settingslib.suggestions.SuggestionControllerMixin;
 import com.android.settingslib.utils.ThreadUtils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DashboardSummary extends InstrumentedFragment implements ConditionManager.ConditionListener, FocusRecyclerView.DetachListener, FocusRecyclerView.FocusListener, SettingsDrawerActivity.CategoryListener, SuggestionControllerMixin.SuggestionControllerHost {
     private DashboardAdapter mAdapter;
@@ -142,8 +143,8 @@ public class DashboardSummary extends InstrumentedFragment implements ConditionM
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         System.currentTimeMillis();
-        View inflate = layoutInflater.inflate(R.layout.dashboard, viewGroup, false);
-        this.mDashboard = (FocusRecyclerView) inflate.findViewById(R.id.dashboard_container);
+        View viewInflate = layoutInflater.inflate(R.layout.dashboard, viewGroup, false);
+        this.mDashboard = (FocusRecyclerView) viewInflate.findViewById(R.id.dashboard_container);
         this.mLayoutManager = new LinearLayoutManager(getContext());
         this.mLayoutManager.setOrientation(1);
         if (bundle != null) {
@@ -159,14 +160,14 @@ public class DashboardSummary extends InstrumentedFragment implements ConditionM
         this.mSummaryLoader.setSummaryConsumer(this.mAdapter);
         ActionBarShadowController.attachToRecyclerView(getActivity().findViewById(R.id.search_bar_container), getLifecycle(), this.mDashboard);
         rebuildUI();
-        return inflate;
+        return viewInflate;
     }
 
     void rebuildUI() {
         ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardSummary$8s9N5t2Nn47oUx2XbtJ_BLsLzIY
             @Override // java.lang.Runnable
             public final void run() {
-                DashboardSummary.this.updateCategory();
+                this.f$0.updateCategory();
             }
         });
     }
@@ -205,8 +206,7 @@ public class DashboardSummary extends InstrumentedFragment implements ConditionM
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void updateCategory() {
+    void updateCategory() {
         DashboardCategory tilesForCategory = this.mDashboardFeatureProvider.getTilesForCategory("com.android.settings.category.ia.homepage");
         this.mSummaryLoader.updateSummaryToCache(tilesForCategory);
         this.mStagingCategory = tilesForCategory;
@@ -214,7 +214,8 @@ public class DashboardSummary extends InstrumentedFragment implements ConditionM
             ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardSummary$IEZgZ97m6Eczh4OO9ztmxtZNqM8
                 @Override // java.lang.Runnable
                 public final void run() {
-                    r0.mAdapter.setCategory(DashboardSummary.this.mStagingCategory);
+                    DashboardSummary dashboardSummary = this.f$0;
+                    dashboardSummary.mAdapter.setCategory(dashboardSummary.mStagingCategory);
                 }
             });
         } else if (this.mSuggestionControllerMixin.isSuggestionLoaded()) {
@@ -222,7 +223,7 @@ public class DashboardSummary extends InstrumentedFragment implements ConditionM
             ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardSummary$S4ZnJYAtpWnSKH5Ya-6PeP-43T4
                 @Override // java.lang.Runnable
                 public final void run() {
-                    DashboardSummary.lambda$updateCategory$2(DashboardSummary.this);
+                    DashboardSummary.lambda$updateCategory$2(this.f$0);
                 }
             });
         } else {
@@ -230,7 +231,8 @@ public class DashboardSummary extends InstrumentedFragment implements ConditionM
             this.mHandler.postDelayed(new Runnable() { // from class: com.android.settings.dashboard.-$$Lambda$DashboardSummary$kCUZowpTTsEozF-ygTzgGisYUiM
                 @Override // java.lang.Runnable
                 public final void run() {
-                    r0.mAdapter.setCategory(DashboardSummary.this.mStagingCategory);
+                    DashboardSummary dashboardSummary = this.f$0;
+                    dashboardSummary.mAdapter.setCategory(dashboardSummary.mStagingCategory);
                 }
             }, 3000L);
         }

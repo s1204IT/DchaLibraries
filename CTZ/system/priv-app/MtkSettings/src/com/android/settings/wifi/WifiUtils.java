@@ -9,6 +9,7 @@ import android.net.wifi.WifiConfiguration;
 import android.provider.Settings;
 import android.text.TextUtils;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class WifiUtils {
     public static boolean isSSIDTooLong(String str) {
@@ -40,12 +41,10 @@ public class WifiUtils {
                 z = packageManagerWrapper.getPackageUidAsUser(deviceOwnerComponentOnAnyUser.getPackageName(), devicePolicyManager.getDeviceOwnerUserId()) == wifiConfiguration.creatorUid;
             } catch (PackageManager.NameNotFoundException e) {
             }
-            return (z || Settings.Global.getInt(context.getContentResolver(), "wifi_device_owner_configs_lockdown", 0) == 0) ? false : true;
+        } else {
+            z = false;
         }
-        z = false;
-        if (z) {
-            return false;
-        }
+        return z && Settings.Global.getInt(context.getContentResolver(), "wifi_device_owner_configs_lockdown", 0) != 0;
     }
 
     public static boolean canSignIntoNetwork(NetworkCapabilities networkCapabilities) {

@@ -11,6 +11,7 @@ import com.android.settingslib.bluetooth.LocalBluetoothManager;
 import com.android.settingslib.bluetooth.LocalBluetoothProfile;
 import com.android.settingslib.wifi.AccessPoint;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class BluetoothPairingController implements CompoundButton.OnCheckedChangeListener {
     private LocalBluetoothManager mBluetoothManager;
@@ -48,7 +49,7 @@ public class BluetoothPairingController implements CompoundButton.OnCheckedChang
         }
     }
 
-    public void onDialogPositiveClick(BluetoothPairingDialogFragment bluetoothPairingDialogFragment) {
+    public void onDialogPositiveClick(BluetoothPairingDialogFragment bluetoothPairingDialogFragment) throws NumberFormatException {
         if (getDialogType() == 0) {
             if (this.mPbapAllowed) {
                 this.mDevice.setPhonebookAccessPermission(1);
@@ -166,8 +167,7 @@ public class BluetoothPairingController implements CompoundButton.OnCheckedChang
         return this.mType != 1;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void notifyDialogDisplayed() {
+    protected void notifyDialogDisplayed() {
         if (this.mType == 4) {
             this.mDevice.setPairingConfirmation(true);
         } else if (this.mType == 5) {
@@ -207,8 +207,7 @@ public class BluetoothPairingController implements CompoundButton.OnCheckedChang
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateUserInput(String str) {
+    protected void updateUserInput(String str) {
         this.mUserInput = str;
     }
 
@@ -227,33 +226,33 @@ public class BluetoothPairingController implements CompoundButton.OnCheckedChang
         return String.format(Locale.US, "%06d", Integer.valueOf(i));
     }
 
-    private void onPair(String str) {
+    private void onPair(String str) throws NumberFormatException {
         Log.d("BTPairingController", "Pairing dialog accepted");
         switch (this.mType) {
             case 0:
             case 7:
-                byte[] convertPinToBytes = BluetoothDevice.convertPinToBytes(str);
-                if (convertPinToBytes == null) {
-                    return;
+                byte[] bArrConvertPinToBytes = BluetoothDevice.convertPinToBytes(str);
+                if (bArrConvertPinToBytes != null) {
+                    this.mDevice.setPin(bArrConvertPinToBytes);
+                    break;
                 }
-                this.mDevice.setPin(convertPinToBytes);
-                return;
+                break;
             case 1:
                 this.mDevice.setPasskey(Integer.parseInt(str));
-                return;
+                break;
             case 2:
             case 3:
                 this.mDevice.setPairingConfirmation(true);
-                return;
+                break;
             case 4:
             case 5:
-                return;
+                break;
             case 6:
                 this.mDevice.setRemoteOutOfBandData();
-                return;
+                break;
             default:
                 Log.e("BTPairingController", "Incorrect pairing type received");
-                return;
+                break;
         }
     }
 

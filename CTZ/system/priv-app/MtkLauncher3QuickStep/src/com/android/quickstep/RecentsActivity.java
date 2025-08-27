@@ -33,6 +33,7 @@ import com.android.systemui.shared.system.RemoteAnimationAdapterCompat;
 import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class RecentsActivity extends BaseDraggingActivity {
     private FallbackRecentsView mFallbackRecentsView;
@@ -41,9 +42,8 @@ public class RecentsActivity extends BaseDraggingActivity {
     private RecentsRootView mRecentsRootView;
     private Handler mUiHandler = new Handler(Looper.getMainLooper());
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.BaseDraggingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         this.mOldConfig = new Configuration(getResources().getConfiguration());
         initDeviceProfile();
@@ -92,18 +92,18 @@ public class RecentsActivity extends BaseDraggingActivity {
     }
 
     private void initDeviceProfile() {
-        DeviceProfile copy;
+        DeviceProfile deviceProfileCopy;
         LauncherAppState instanceNoCreate = LauncherAppState.getInstanceNoCreate();
         if (isInMultiWindowModeCompat()) {
             DeviceProfile deviceProfile = (instanceNoCreate == null ? new InvariantDeviceProfile(this) : instanceNoCreate.getInvariantDeviceProfile()).getDeviceProfile(this);
             this.mDeviceProfile = this.mRecentsRootView == null ? deviceProfile.copy(this) : deviceProfile.getMultiWindowProfile(this, this.mRecentsRootView.getLastKnownSize());
         } else {
             if (instanceNoCreate == null) {
-                copy = new InvariantDeviceProfile(this).getDeviceProfile(this);
+                deviceProfileCopy = new InvariantDeviceProfile(this).getDeviceProfile(this);
             } else {
-                copy = instanceNoCreate.getInvariantDeviceProfile().getDeviceProfile(this).copy(this);
+                deviceProfileCopy = instanceNoCreate.getInvariantDeviceProfile().getDeviceProfile(this).copy(this);
             }
-            this.mDeviceProfile = copy;
+            this.mDeviceProfile = deviceProfileCopy;
         }
         onDeviceProfileInitiated();
     }
@@ -137,8 +137,15 @@ public class RecentsActivity extends BaseDraggingActivity {
         if (!(view instanceof TaskView)) {
             return null;
         }
-        final TaskView taskView = (TaskView) view;
         return ActivityOptionsCompat.makeRemoteAnimation(new RemoteAnimationAdapterCompat(new LauncherAnimationRunner(this.mUiHandler, true) { // from class: com.android.quickstep.RecentsActivity.1
+            final /* synthetic */ TaskView val$taskView;
+
+            /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+            AnonymousClass1(Handler handler, boolean z, TaskView taskView) {
+                super(handler, z);
+                taskView = taskView;
+            }
+
             @Override // com.android.launcher3.LauncherAnimationRunner
             public void onCreateAnimation(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr, LauncherAnimationRunner.AnimationResult animationResult) {
                 animationResult.setAnimation(RecentsActivity.this.composeRecentsLaunchAnimator(taskView, remoteAnimationTargetCompatArr));
@@ -146,43 +153,70 @@ public class RecentsActivity extends BaseDraggingActivity {
         }, 336L, 216L));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public AnimatorSet composeRecentsLaunchAnimator(TaskView taskView, RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
+    /* renamed from: com.android.quickstep.RecentsActivity$1 */
+    class AnonymousClass1 extends LauncherAnimationRunner {
+        final /* synthetic */ TaskView val$taskView;
+
+        /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+        AnonymousClass1(Handler handler, boolean z, TaskView taskView) {
+            super(handler, z);
+            taskView = taskView;
+        }
+
+        @Override // com.android.launcher3.LauncherAnimationRunner
+        public void onCreateAnimation(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr, LauncherAnimationRunner.AnimationResult animationResult) {
+            animationResult.setAnimation(RecentsActivity.this.composeRecentsLaunchAnimator(taskView, remoteAnimationTargetCompatArr));
+        }
+    }
+
+    private AnimatorSet composeRecentsLaunchAnimator(TaskView taskView, RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
         AnimatorSet animatorSet = new AnimatorSet();
-        boolean taskIsATargetWithMode = TaskUtils.taskIsATargetWithMode(remoteAnimationTargetCompatArr, getTaskId(), 1);
+        boolean zTaskIsATargetWithMode = TaskUtils.taskIsATargetWithMode(remoteAnimationTargetCompatArr, getTaskId(), 1);
         ClipAnimationHelper clipAnimationHelper = new ClipAnimationHelper();
-        animatorSet.play(TaskUtils.getRecentsWindowAnimator(taskView, !taskIsATargetWithMode, remoteAnimationTargetCompatArr, clipAnimationHelper).setDuration(336L));
-        if (taskIsATargetWithMode) {
-            AnimatorSet createAdjacentPageAnimForTaskLaunch = this.mFallbackRecentsView.createAdjacentPageAnimForTaskLaunch(taskView, clipAnimationHelper);
-            createAdjacentPageAnimForTaskLaunch.setInterpolator(Interpolators.TOUCH_RESPONSE_INTERPOLATOR);
-            createAdjacentPageAnimForTaskLaunch.setDuration(336L);
-            createAdjacentPageAnimForTaskLaunch.addListener(new AnimatorListenerAdapter() { // from class: com.android.quickstep.RecentsActivity.2
+        animatorSet.play(TaskUtils.getRecentsWindowAnimator(taskView, !zTaskIsATargetWithMode, remoteAnimationTargetCompatArr, clipAnimationHelper).setDuration(336L));
+        if (zTaskIsATargetWithMode) {
+            AnimatorSet animatorSetCreateAdjacentPageAnimForTaskLaunch = this.mFallbackRecentsView.createAdjacentPageAnimForTaskLaunch(taskView, clipAnimationHelper);
+            animatorSetCreateAdjacentPageAnimForTaskLaunch.setInterpolator(Interpolators.TOUCH_RESPONSE_INTERPOLATOR);
+            animatorSetCreateAdjacentPageAnimForTaskLaunch.setDuration(336L);
+            animatorSetCreateAdjacentPageAnimForTaskLaunch.addListener(new AnimatorListenerAdapter() { // from class: com.android.quickstep.RecentsActivity.2
+                AnonymousClass2() {
+                }
+
                 @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
                 public void onAnimationEnd(Animator animator) {
                     RecentsActivity.this.mFallbackRecentsView.resetTaskVisuals();
                 }
             });
-            animatorSet.play(createAdjacentPageAnimForTaskLaunch);
+            animatorSet.play(animatorSetCreateAdjacentPageAnimForTaskLaunch);
         }
         return animatorSet;
+    }
+
+    /* renamed from: com.android.quickstep.RecentsActivity$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        AnonymousClass2() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            RecentsActivity.this.mFallbackRecentsView.resetTaskVisuals();
+        }
     }
 
     @Override // com.android.launcher3.BaseDraggingActivity
     public void invalidateParent(ItemInfo itemInfo) {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.BaseDraggingActivity, com.android.launcher3.BaseActivity, android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         this.mFallbackRecentsView.setContentAlpha(1.0f);
         super.onStart();
         UiFactory.onStart(this);
         this.mFallbackRecentsView.resetTaskVisuals();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.BaseActivity, android.app.Activity
-    public void onStop() {
+    protected void onStop() {
         super.onStop();
         onTrimMemory(20);
     }
@@ -199,9 +233,8 @@ public class RecentsActivity extends BaseDraggingActivity {
         RecentsActivityTracker.onRecentsActivityNewIntent(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.BaseDraggingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         RecentsActivityTracker.onRecentsActivityDestroy(this);
     }

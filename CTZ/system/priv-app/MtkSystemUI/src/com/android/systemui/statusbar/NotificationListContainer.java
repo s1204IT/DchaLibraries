@@ -6,6 +6,7 @@ import com.android.systemui.plugins.statusbar.NotificationSwipeActionHelper;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationLogger;
 import com.android.systemui.statusbar.notification.ActivityLaunchAnimator;
+
 /* loaded from: classes.dex */
 public interface NotificationListContainer {
     void addContainerView(View view);

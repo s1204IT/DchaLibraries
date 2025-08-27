@@ -19,11 +19,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppPicker extends ListActivity {
     private static final Comparator<MyApplicationInfo> sDisplayNameComparator = new Comparator<MyApplicationInfo>() { // from class: com.android.settings.development.AppPicker.1
         private final Collator collator = Collator.getInstance();
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public final int compare(MyApplicationInfo myApplicationInfo, MyApplicationInfo myApplicationInfo2) {
             return this.collator.compare(myApplicationInfo.label, myApplicationInfo2.label);
@@ -67,9 +69,7 @@ public class AppPicker extends ListActivity {
         finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class MyApplicationInfo {
+    class MyApplicationInfo {
         ApplicationInfo info;
         CharSequence label;
 
@@ -77,14 +77,17 @@ public class AppPicker extends ListActivity {
         }
     }
 
-    /* loaded from: classes.dex */
     public class AppListAdapter extends ArrayAdapter<MyApplicationInfo> {
         private final LayoutInflater mInflater;
         private final List<MyApplicationInfo> mPackageInfoList;
 
-        public AppListAdapter(Context context) {
-            super(context, 0);
+        /* JADX WARN: Removed duplicated region for block: B:32:0x0083  */
+        /*
+            Code decompiled incorrectly, please refer to instructions dump.
+        */
+        public AppListAdapter(Context context) throws PackageManager.NameNotFoundException {
             boolean z;
+            super(context, 0);
             this.mPackageInfoList = new ArrayList();
             this.mInflater = (LayoutInflater) context.getSystemService("layout_inflater");
             List<ApplicationInfo> installedApplications = context.getPackageManager().getInstalledApplications(0);
@@ -111,20 +114,20 @@ public class AppPicker extends ListActivity {
                                         break;
                                     }
                                 }
-                                if (!z) {
+                                if (z) {
+                                    MyApplicationInfo myApplicationInfo = AppPicker.this.new MyApplicationInfo();
+                                    myApplicationInfo.info = applicationInfo;
+                                    myApplicationInfo.label = myApplicationInfo.info.loadLabel(AppPicker.this.getPackageManager()).toString();
+                                    this.mPackageInfoList.add(myApplicationInfo);
                                 }
                             }
                         } catch (PackageManager.NameNotFoundException e) {
                         }
                     }
-                    MyApplicationInfo myApplicationInfo = new MyApplicationInfo();
-                    myApplicationInfo.info = applicationInfo;
-                    myApplicationInfo.label = myApplicationInfo.info.loadLabel(AppPicker.this.getPackageManager()).toString();
-                    this.mPackageInfoList.add(myApplicationInfo);
                 }
             }
             Collections.sort(this.mPackageInfoList, AppPicker.sDisplayNameComparator);
-            MyApplicationInfo myApplicationInfo2 = new MyApplicationInfo();
+            MyApplicationInfo myApplicationInfo2 = AppPicker.this.new MyApplicationInfo();
             myApplicationInfo2.label = context.getText(R.string.no_application);
             this.mPackageInfoList.add(0, myApplicationInfo2);
             addAll(this.mPackageInfoList);
@@ -132,18 +135,18 @@ public class AppPicker extends ListActivity {
 
         @Override // android.widget.ArrayAdapter, android.widget.Adapter
         public View getView(int i, View view, ViewGroup viewGroup) {
-            AppViewHolder createOrRecycle = AppViewHolder.createOrRecycle(this.mInflater, view);
-            View view2 = createOrRecycle.rootView;
+            AppViewHolder appViewHolderCreateOrRecycle = AppViewHolder.createOrRecycle(this.mInflater, view);
+            View view2 = appViewHolderCreateOrRecycle.rootView;
             MyApplicationInfo item = getItem(i);
-            createOrRecycle.appName.setText(item.label);
+            appViewHolderCreateOrRecycle.appName.setText(item.label);
             if (item.info != null) {
-                createOrRecycle.appIcon.setImageDrawable(item.info.loadIcon(AppPicker.this.getPackageManager()));
-                createOrRecycle.summary.setText(item.info.packageName);
+                appViewHolderCreateOrRecycle.appIcon.setImageDrawable(item.info.loadIcon(AppPicker.this.getPackageManager()));
+                appViewHolderCreateOrRecycle.summary.setText(item.info.packageName);
             } else {
-                createOrRecycle.appIcon.setImageDrawable(null);
-                createOrRecycle.summary.setText("");
+                appViewHolderCreateOrRecycle.appIcon.setImageDrawable(null);
+                appViewHolderCreateOrRecycle.summary.setText("");
             }
-            createOrRecycle.disabled.setVisibility(8);
+            appViewHolderCreateOrRecycle.disabled.setVisibility(8);
             return view2;
         }
     }

@@ -9,6 +9,7 @@ import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.FlashlightController;
+
 /* loaded from: classes.dex */
 public class FlashlightTile extends QSTileImpl<QSTile.BooleanState> implements FlashlightController.FlashlightListener {
     private final FlashlightController mFlashlightController;
@@ -20,13 +21,12 @@ public class FlashlightTile extends QSTileImpl<QSTile.BooleanState> implements F
         this.mFlashlightController = (FlashlightController) Dependency.get(FlashlightController.class);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleDestroy() {
+    protected void handleDestroy() {
         super.handleDestroy();
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -41,9 +41,8 @@ public class FlashlightTile extends QSTileImpl<QSTile.BooleanState> implements F
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUserSwitch(int i) {
+    protected void handleUserSwitch(int i) {
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
@@ -76,9 +75,9 @@ public class FlashlightTile extends QSTileImpl<QSTile.BooleanState> implements F
         handleClick();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         if (booleanState.slash == null) {
             booleanState.slash = new QSTile.SlashState();
         }
@@ -91,11 +90,12 @@ public class FlashlightTile extends QSTileImpl<QSTile.BooleanState> implements F
             return;
         }
         if (obj instanceof Boolean) {
-            boolean booleanValue = ((Boolean) obj).booleanValue();
-            if (booleanValue == booleanState.value) {
+            boolean zBooleanValue = ((Boolean) obj).booleanValue();
+            if (zBooleanValue == booleanState.value) {
                 return;
+            } else {
+                booleanState.value = zBooleanValue;
             }
-            booleanState.value = booleanValue;
         } else {
             booleanState.value = this.mFlashlightController.isEnabled();
         }
@@ -108,7 +108,7 @@ public class FlashlightTile extends QSTileImpl<QSTile.BooleanState> implements F
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 119;
+        return com.android.systemui.plugins.R.styleable.AppCompatTheme_windowMinWidthMinor;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl

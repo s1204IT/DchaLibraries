@@ -3,6 +3,7 @@ package com.android.settings.notification;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
 /* loaded from: classes.dex */
 public class ZenSuggestionActivity extends Activity {
     @Override // android.app.Activity

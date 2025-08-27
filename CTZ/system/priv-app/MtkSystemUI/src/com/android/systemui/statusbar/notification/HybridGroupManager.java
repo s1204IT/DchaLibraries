@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.android.systemui.R;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class HybridGroupManager {
     private final Context mContext;
@@ -66,7 +67,7 @@ public class HybridGroupManager {
     }
 
     public HybridNotificationView bindAmbientFromNotification(HybridNotificationView hybridNotificationView, Notification notification) {
-        return bindFromNotificationWithStyle(hybridNotificationView, notification, com.android.systemui.plugins.R.style.HybridNotification_Ambient);
+        return bindFromNotificationWithStyle(hybridNotificationView, notification, 2131886288);
     }
 
     private HybridNotificationView bindFromNotificationWithStyle(HybridNotificationView hybridNotificationView, Notification notification, int i) {
@@ -93,7 +94,7 @@ public class HybridGroupManager {
         return charSequence;
     }
 
-    public TextView bindOverflowNumber(TextView textView, int i) {
+    public TextView bindOverflowNumber(TextView textView, int i) throws Resources.NotFoundException {
         if (textView == null) {
             textView = inflateOverflowNumber();
         }
@@ -105,7 +106,7 @@ public class HybridGroupManager {
         return textView;
     }
 
-    public TextView bindOverflowNumberAmbient(TextView textView, Notification notification, int i) {
+    public TextView bindOverflowNumberAmbient(TextView textView, Notification notification, int i) throws Resources.NotFoundException {
         String string = this.mContext.getResources().getString(R.string.notification_group_overflow_indicator_ambient, resolveTitle(notification), Integer.valueOf(i));
         if (!string.equals(textView.getText())) {
             textView.setText(string);
@@ -117,7 +118,7 @@ public class HybridGroupManager {
         this.mDozer.setIntensityDark(new Consumer() { // from class: com.android.systemui.statusbar.notification.-$$Lambda$HybridGroupManager$F4-Ues96OqS7pldtinZIwLPoyPg
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                HybridGroupManager.lambda$setOverflowNumberDark$0(HybridGroupManager.this, textView, (Float) obj);
+                HybridGroupManager.lambda$setOverflowNumberDark$0(this.f$0, textView, (Float) obj);
             }
         }, z, z2, j, textView);
         textView.setTextSize(0, z ? this.mOverflowNumberSizeDark : this.mOverflowNumberSize);

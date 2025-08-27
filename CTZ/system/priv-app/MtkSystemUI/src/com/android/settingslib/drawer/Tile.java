@@ -9,15 +9,18 @@ import android.os.UserHandle;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class Tile implements Parcelable {
     public static final Parcelable.Creator<Tile> CREATOR = new Parcelable.Creator<Tile>() { // from class: com.android.settingslib.drawer.Tile.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public Tile createFromParcel(Parcel parcel) {
             return new Tile(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public Tile[] newArray(int i) {
@@ -84,8 +87,8 @@ public class Tile implements Parcelable {
         if (parcel.readByte() != 0) {
             this.intent = (Intent) Intent.CREATOR.createFromParcel(parcel);
         }
-        int readInt = parcel.readInt();
-        for (int i = 0; i < readInt; i++) {
+        int i = parcel.readInt();
+        for (int i2 = 0; i2 < i; i2++) {
             this.userHandle.add((UserHandle) UserHandle.CREATOR.createFromParcel(parcel));
         }
         this.extras = parcel.readBundle();

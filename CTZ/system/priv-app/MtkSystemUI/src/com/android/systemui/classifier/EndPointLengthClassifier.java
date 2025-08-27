@@ -1,4 +1,5 @@
 package com.android.systemui.classifier;
+
 /* loaded from: classes.dex */
 public class EndPointLengthClassifier extends StrokeClassifier {
     public EndPointLengthClassifier(ClassifierData classifierData) {

@@ -33,9 +33,9 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Serializable, ConcurrentMap<K, V> {
+class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Serializable, ConcurrentMap<K, V> {
     private static final long serialVersionUID = 5;
     final int concurrencyLevel;
     final transient EntryFactory entryFactory;
@@ -113,9 +113,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface ReferenceEntry<K, V> {
+    interface ReferenceEntry<K, V> {
         long getExpirationTime();
 
         int getHash();
@@ -147,9 +145,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         void setValueReference(ValueReference<K, V> valueReference);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public enum Strength {
+    enum Strength {
         STRONG { // from class: com.google.common.collect.MapMakerInternalMap.Strength.1
             @Override // com.google.common.collect.MapMakerInternalMap.Strength
             <K, V> ValueReference<K, V> referenceValue(Segment<K, V> segment, ReferenceEntry<K, V> referenceEntry, V v) {
@@ -184,15 +180,12 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
         };
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public abstract Equivalence<Object> defaultEquivalence();
+        abstract Equivalence<Object> defaultEquivalence();
 
         abstract <K, V> ValueReference<K, V> referenceValue(Segment<K, V> segment, ReferenceEntry<K, V> referenceEntry, V v);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface ValueReference<K, V> {
+    interface ValueReference<K, V> {
         void clear(ValueReference<K, V> valueReference);
 
         ValueReference<K, V> copyFor(ReferenceQueue<V> referenceQueue, V v, ReferenceEntry<K, V> referenceEntry);
@@ -206,8 +199,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         V waitForValue() throws ExecutionException;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public MapMakerInternalMap(MapMaker mapMaker) {
+    MapMakerInternalMap(MapMaker mapMaker) {
         Queue<MapMaker.RemovalNotification<K, V>> concurrentLinkedQueue;
         this.concurrencyLevel = Math.min(mapMaker.getConcurrencyLevel(), 65536);
         this.keyStrength = mapMaker.getKeyStrength();
@@ -226,8 +218,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
         }
         this.removalNotificationQueue = concurrentLinkedQueue;
-        int min = Math.min(mapMaker.getInitialCapacity(), 1073741824);
-        min = evictsBySize() ? Math.min(min, this.maximumSize) : min;
+        int iMin = Math.min(mapMaker.getInitialCapacity(), 1073741824);
+        iMin = evictsBySize() ? Math.min(iMin, this.maximumSize) : iMin;
         int i = 0;
         int i2 = 0;
         int i3 = 1;
@@ -238,8 +230,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         this.segmentShift = 32 - i2;
         this.segmentMask = i3 - 1;
         this.segments = newSegmentArray(i3);
-        int i4 = min / i3;
-        i4 = i4 * i3 < min ? i4 + 1 : i4;
+        int i4 = iMin / i3;
+        i4 = i4 * i3 < iMin ? i4 + 1 : i4;
         int i5 = 1;
         while (i5 < i4) {
             i5 <<= 1;
@@ -266,8 +258,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         return this.maximumSize != -1;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean expires() {
+    boolean expires() {
         return expiresAfterWrite() || expiresAfterAccess();
     }
 
@@ -287,9 +278,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         return this.valueStrength != Strength.STRONG;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public enum EntryFactory {
+    enum EntryFactory {
         STRONG { // from class: com.google.common.collect.MapMakerInternalMap.EntryFactory.1
             @Override // com.google.common.collect.MapMakerInternalMap.EntryFactory
             <K, V> ReferenceEntry<K, V> newEntry(Segment<K, V> segment, K k, int i, ReferenceEntry<K, V> referenceEntry) {
@@ -304,9 +293,9 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
 
             @Override // com.google.common.collect.MapMakerInternalMap.EntryFactory
             <K, V> ReferenceEntry<K, V> copyEntry(Segment<K, V> segment, ReferenceEntry<K, V> referenceEntry, ReferenceEntry<K, V> referenceEntry2) {
-                ReferenceEntry<K, V> copyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
-                copyExpirableEntry(referenceEntry, copyEntry);
-                return copyEntry;
+                ReferenceEntry<K, V> referenceEntryCopyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
+                copyExpirableEntry(referenceEntry, referenceEntryCopyEntry);
+                return referenceEntryCopyEntry;
             }
         },
         STRONG_EVICTABLE { // from class: com.google.common.collect.MapMakerInternalMap.EntryFactory.3
@@ -317,9 +306,9 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
 
             @Override // com.google.common.collect.MapMakerInternalMap.EntryFactory
             <K, V> ReferenceEntry<K, V> copyEntry(Segment<K, V> segment, ReferenceEntry<K, V> referenceEntry, ReferenceEntry<K, V> referenceEntry2) {
-                ReferenceEntry<K, V> copyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
-                copyEvictableEntry(referenceEntry, copyEntry);
-                return copyEntry;
+                ReferenceEntry<K, V> referenceEntryCopyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
+                copyEvictableEntry(referenceEntry, referenceEntryCopyEntry);
+                return referenceEntryCopyEntry;
             }
         },
         STRONG_EXPIRABLE_EVICTABLE { // from class: com.google.common.collect.MapMakerInternalMap.EntryFactory.4
@@ -330,10 +319,10 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
 
             @Override // com.google.common.collect.MapMakerInternalMap.EntryFactory
             <K, V> ReferenceEntry<K, V> copyEntry(Segment<K, V> segment, ReferenceEntry<K, V> referenceEntry, ReferenceEntry<K, V> referenceEntry2) {
-                ReferenceEntry<K, V> copyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
-                copyExpirableEntry(referenceEntry, copyEntry);
-                copyEvictableEntry(referenceEntry, copyEntry);
-                return copyEntry;
+                ReferenceEntry<K, V> referenceEntryCopyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
+                copyExpirableEntry(referenceEntry, referenceEntryCopyEntry);
+                copyEvictableEntry(referenceEntry, referenceEntryCopyEntry);
+                return referenceEntryCopyEntry;
             }
         },
         WEAK { // from class: com.google.common.collect.MapMakerInternalMap.EntryFactory.5
@@ -350,9 +339,9 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
 
             @Override // com.google.common.collect.MapMakerInternalMap.EntryFactory
             <K, V> ReferenceEntry<K, V> copyEntry(Segment<K, V> segment, ReferenceEntry<K, V> referenceEntry, ReferenceEntry<K, V> referenceEntry2) {
-                ReferenceEntry<K, V> copyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
-                copyExpirableEntry(referenceEntry, copyEntry);
-                return copyEntry;
+                ReferenceEntry<K, V> referenceEntryCopyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
+                copyExpirableEntry(referenceEntry, referenceEntryCopyEntry);
+                return referenceEntryCopyEntry;
             }
         },
         WEAK_EVICTABLE { // from class: com.google.common.collect.MapMakerInternalMap.EntryFactory.7
@@ -363,9 +352,9 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
 
             @Override // com.google.common.collect.MapMakerInternalMap.EntryFactory
             <K, V> ReferenceEntry<K, V> copyEntry(Segment<K, V> segment, ReferenceEntry<K, V> referenceEntry, ReferenceEntry<K, V> referenceEntry2) {
-                ReferenceEntry<K, V> copyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
-                copyEvictableEntry(referenceEntry, copyEntry);
-                return copyEntry;
+                ReferenceEntry<K, V> referenceEntryCopyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
+                copyEvictableEntry(referenceEntry, referenceEntryCopyEntry);
+                return referenceEntryCopyEntry;
             }
         },
         WEAK_EXPIRABLE_EVICTABLE { // from class: com.google.common.collect.MapMakerInternalMap.EntryFactory.8
@@ -376,13 +365,13 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
 
             @Override // com.google.common.collect.MapMakerInternalMap.EntryFactory
             <K, V> ReferenceEntry<K, V> copyEntry(Segment<K, V> segment, ReferenceEntry<K, V> referenceEntry, ReferenceEntry<K, V> referenceEntry2) {
-                ReferenceEntry<K, V> copyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
-                copyExpirableEntry(referenceEntry, copyEntry);
-                copyEvictableEntry(referenceEntry, copyEntry);
-                return copyEntry;
+                ReferenceEntry<K, V> referenceEntryCopyEntry = super.copyEntry(segment, referenceEntry, referenceEntry2);
+                copyExpirableEntry(referenceEntry, referenceEntryCopyEntry);
+                copyEvictableEntry(referenceEntry, referenceEntryCopyEntry);
+                return referenceEntryCopyEntry;
             }
         };
-        
+
         static final EntryFactory[][] factories = {new EntryFactory[]{STRONG, STRONG_EXPIRABLE, STRONG_EVICTABLE, STRONG_EXPIRABLE_EVICTABLE}, new EntryFactory[0], new EntryFactory[]{WEAK, WEAK_EXPIRABLE, WEAK_EVICTABLE, WEAK_EXPIRABLE_EVICTABLE}};
 
         abstract <K, V> ReferenceEntry<K, V> newEntry(Segment<K, V> segment, K k, int i, ReferenceEntry<K, V> referenceEntry);
@@ -409,14 +398,11 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <K, V> ValueReference<K, V> unset() {
+    static <K, V> ValueReference<K, V> unset() {
         return (ValueReference<K, V>) UNSET;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public enum NullEntry implements ReferenceEntry<Object, Object> {
+    private enum NullEntry implements ReferenceEntry<Object, Object> {
         INSTANCE;
 
         @Override // com.google.common.collect.MapMakerInternalMap.ReferenceEntry
@@ -489,7 +475,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static abstract class AbstractReferenceEntry<K, V> implements ReferenceEntry<K, V> {
         AbstractReferenceEntry() {
         }
@@ -578,7 +563,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         return (Queue<E>) DISCARDING_QUEUE;
     }
 
-    /* loaded from: classes.dex */
     static class StrongEntry<K, V> implements ReferenceEntry<K, V> {
         final int hash;
         final K key;
@@ -669,7 +653,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static final class StrongExpirableEntry<K, V> extends StrongEntry<K, V> implements ReferenceEntry<K, V> {
         ReferenceEntry<K, V> nextExpirable;
         ReferenceEntry<K, V> previousExpirable;
@@ -713,7 +696,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static final class StrongEvictableEntry<K, V> extends StrongEntry<K, V> implements ReferenceEntry<K, V> {
         ReferenceEntry<K, V> nextEvictable;
         ReferenceEntry<K, V> previousEvictable;
@@ -745,7 +727,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static final class StrongExpirableEvictableEntry<K, V> extends StrongEntry<K, V> implements ReferenceEntry<K, V> {
         ReferenceEntry<K, V> nextEvictable;
         ReferenceEntry<K, V> nextExpirable;
@@ -813,7 +794,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static class WeakEntry<K, V> extends WeakReference<K> implements ReferenceEntry<K, V> {
         final int hash;
         final ReferenceEntry<K, V> next;
@@ -904,7 +884,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static final class WeakExpirableEntry<K, V> extends WeakEntry<K, V> implements ReferenceEntry<K, V> {
         ReferenceEntry<K, V> nextExpirable;
         ReferenceEntry<K, V> previousExpirable;
@@ -948,7 +927,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static final class WeakEvictableEntry<K, V> extends WeakEntry<K, V> implements ReferenceEntry<K, V> {
         ReferenceEntry<K, V> nextEvictable;
         ReferenceEntry<K, V> previousEvictable;
@@ -980,7 +958,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static final class WeakExpirableEvictableEntry<K, V> extends WeakEntry<K, V> implements ReferenceEntry<K, V> {
         ReferenceEntry<K, V> nextEvictable;
         ReferenceEntry<K, V> nextExpirable;
@@ -1048,7 +1025,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static final class WeakValueReference<K, V> extends WeakReference<V> implements ValueReference<K, V> {
         final ReferenceEntry<K, V> entry;
 
@@ -1083,7 +1059,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static final class SoftValueReference<K, V> extends SoftReference<V> implements ValueReference<K, V> {
         final ReferenceEntry<K, V> entry;
 
@@ -1118,7 +1093,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     static final class StrongValueReference<K, V> implements ValueReference<K, V> {
         final V referent;
 
@@ -1177,8 +1151,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         return this.valueStrength.referenceValue(segmentFor(referenceEntry.getHash()), referenceEntry, v);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int hash(Object obj) {
+    int hash(Object obj) {
         return rehash(this.keyEquivalence.hash(obj));
     }
 
@@ -1197,8 +1170,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         return segmentFor(referenceEntry.getHash()).getLiveValue(referenceEntry) != null;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Segment<K, V> segmentFor(int i) {
+    Segment<K, V> segmentFor(int i) {
         return this.segments[(i >>> this.segmentShift) & this.segmentMask];
     }
 
@@ -1217,8 +1189,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         return v;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isExpired(ReferenceEntry<K, V> referenceEntry) {
+    boolean isExpired(ReferenceEntry<K, V> referenceEntry) {
         return isExpired(referenceEntry, this.ticker.read());
     }
 
@@ -1232,17 +1203,17 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
     }
 
     static <K, V> void nullifyExpirable(ReferenceEntry<K, V> referenceEntry) {
-        ReferenceEntry<K, V> nullEntry = nullEntry();
-        referenceEntry.setNextExpirable(nullEntry);
-        referenceEntry.setPreviousExpirable(nullEntry);
+        ReferenceEntry<K, V> referenceEntryNullEntry = nullEntry();
+        referenceEntry.setNextExpirable(referenceEntryNullEntry);
+        referenceEntry.setPreviousExpirable(referenceEntryNullEntry);
     }
 
     void processPendingNotifications() {
         while (true) {
-            MapMaker.RemovalNotification<K, V> poll = this.removalNotificationQueue.poll();
-            if (poll != null) {
+            MapMaker.RemovalNotification<K, V> removalNotificationPoll = this.removalNotificationQueue.poll();
+            if (removalNotificationPoll != null) {
                 try {
-                    this.removalListener.onRemoval(poll);
+                    this.removalListener.onRemoval(removalNotificationPoll);
                 } catch (Exception e) {
                     logger.log(Level.WARNING, "Exception thrown by removal listener", (Throwable) e);
                 }
@@ -1258,18 +1229,16 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
     }
 
     static <K, V> void nullifyEvictable(ReferenceEntry<K, V> referenceEntry) {
-        ReferenceEntry<K, V> nullEntry = nullEntry();
-        referenceEntry.setNextEvictable(nullEntry);
-        referenceEntry.setPreviousEvictable(nullEntry);
+        ReferenceEntry<K, V> referenceEntryNullEntry = nullEntry();
+        referenceEntry.setNextEvictable(referenceEntryNullEntry);
+        referenceEntry.setPreviousEvictable(referenceEntryNullEntry);
     }
 
     final Segment<K, V>[] newSegmentArray(int i) {
         return new Segment[i];
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class Segment<K, V> extends ReentrantLock {
+    static class Segment<K, V> extends ReentrantLock {
         volatile int count;
         final Queue<ReferenceEntry<K, V>> evictionQueue;
         final Queue<ReferenceEntry<K, V>> expirationQueue;
@@ -1283,11 +1252,10 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         int threshold;
         final ReferenceQueue<V> valueReferenceQueue;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public Segment(MapMakerInternalMap<K, V> mapMakerInternalMap, int i, int i2) {
+        Segment(MapMakerInternalMap<K, V> mapMakerInternalMap, int i, int i2) {
             Queue<ReferenceEntry<K, V>> concurrentLinkedQueue;
-            Queue<ReferenceEntry<K, V>> discardingQueue;
-            Queue<ReferenceEntry<K, V>> discardingQueue2;
+            Queue<ReferenceEntry<K, V>> queueDiscardingQueue;
+            Queue<ReferenceEntry<K, V>> queueDiscardingQueue2;
             this.map = mapMakerInternalMap;
             this.maxSegmentSize = i2;
             initTable(newEntryArray(i));
@@ -1300,17 +1268,17 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
             this.recencyQueue = concurrentLinkedQueue;
             if (mapMakerInternalMap.evictsBySize()) {
-                discardingQueue = new EvictionQueue<>();
+                queueDiscardingQueue = new EvictionQueue<>();
             } else {
-                discardingQueue = MapMakerInternalMap.discardingQueue();
+                queueDiscardingQueue = MapMakerInternalMap.discardingQueue();
             }
-            this.evictionQueue = discardingQueue;
+            this.evictionQueue = queueDiscardingQueue;
             if (mapMakerInternalMap.expires()) {
-                discardingQueue2 = new ExpirationQueue<>();
+                queueDiscardingQueue2 = new ExpirationQueue<>();
             } else {
-                discardingQueue2 = MapMakerInternalMap.discardingQueue();
+                queueDiscardingQueue2 = MapMakerInternalMap.discardingQueue();
             }
-            this.expirationQueue = discardingQueue2;
+            this.expirationQueue = queueDiscardingQueue2;
         }
 
         AtomicReferenceArray<ReferenceEntry<K, V>> newEntryArray(int i) {
@@ -1325,8 +1293,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             this.table = atomicReferenceArray;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public ReferenceEntry<K, V> newEntry(K k, int i, ReferenceEntry<K, V> referenceEntry) {
+        ReferenceEntry<K, V> newEntry(K k, int i, ReferenceEntry<K, V> referenceEntry) {
             return this.map.entryFactory.newEntry(this, k, i, referenceEntry);
         }
 
@@ -1336,12 +1303,12 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
             ValueReference<K, V> valueReference = referenceEntry.getValueReference();
             V v = valueReference.get();
-            if (v != null || valueReference.isComputingReference()) {
-                ReferenceEntry<K, V> copyEntry = this.map.entryFactory.copyEntry(this, referenceEntry, referenceEntry2);
-                copyEntry.setValueReference(valueReference.copyFor(this.valueReferenceQueue, v, copyEntry));
-                return copyEntry;
+            if (v == null && !valueReference.isComputingReference()) {
+                return null;
             }
-            return null;
+            ReferenceEntry<K, V> referenceEntryCopyEntry = this.map.entryFactory.copyEntry(this, referenceEntry, referenceEntry2);
+            referenceEntryCopyEntry.setValueReference(valueReference.copyFor(this.valueReferenceQueue, v, referenceEntryCopyEntry));
+            return referenceEntryCopyEntry;
         }
 
         void setValue(ReferenceEntry<K, V> referenceEntry, V v) {
@@ -1371,9 +1338,9 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         void drainKeyReferenceQueue() {
             int i = 0;
             do {
-                Reference<? extends K> poll = this.keyReferenceQueue.poll();
-                if (poll != null) {
-                    this.map.reclaimKey((ReferenceEntry) poll);
+                Reference<? extends K> referencePoll = this.keyReferenceQueue.poll();
+                if (referencePoll != null) {
+                    this.map.reclaimKey((ReferenceEntry) referencePoll);
                     i++;
                 } else {
                     return;
@@ -1384,9 +1351,9 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         void drainValueReferenceQueue() {
             int i = 0;
             do {
-                Reference<? extends V> poll = this.valueReferenceQueue.poll();
-                if (poll != null) {
-                    this.map.reclaimValue((ValueReference) poll);
+                Reference<? extends V> referencePoll = this.valueReferenceQueue.poll();
+                if (referencePoll != null) {
+                    this.map.reclaimValue((ValueReference) referencePoll);
                     i++;
                 } else {
                     return;
@@ -1404,25 +1371,23 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
 
         void clearKeyReferenceQueue() {
-            do {
-            } while (this.keyReferenceQueue.poll() != null);
+            while (this.keyReferenceQueue.poll() != null) {
+            }
         }
 
         void clearValueReferenceQueue() {
-            do {
-            } while (this.valueReferenceQueue.poll() != null);
+            while (this.valueReferenceQueue.poll() != null) {
+            }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void recordRead(ReferenceEntry<K, V> referenceEntry) {
+        void recordRead(ReferenceEntry<K, V> referenceEntry) {
             if (this.map.expiresAfterAccess()) {
                 recordExpirationTime(referenceEntry, this.map.expireAfterAccessNanos);
             }
             this.recencyQueue.add(referenceEntry);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void recordLockedRead(ReferenceEntry<K, V> referenceEntry) {
+        void recordLockedRead(ReferenceEntry<K, V> referenceEntry) {
             this.evictionQueue.add(referenceEntry);
             if (this.map.expiresAfterAccess()) {
                 recordExpirationTime(referenceEntry, this.map.expireAfterAccessNanos);
@@ -1447,13 +1412,13 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
 
         void drainRecencyQueue() {
             while (true) {
-                ReferenceEntry<K, V> poll = this.recencyQueue.poll();
-                if (poll != null) {
-                    if (this.evictionQueue.contains(poll)) {
-                        this.evictionQueue.add(poll);
+                ReferenceEntry<K, V> referenceEntryPoll = this.recencyQueue.poll();
+                if (referenceEntryPoll != null) {
+                    if (this.evictionQueue.contains(referenceEntryPoll)) {
+                        this.evictionQueue.add(referenceEntryPoll);
                     }
-                    if (this.map.expiresAfterAccess() && this.expirationQueue.contains(poll)) {
-                        this.expirationQueue.add(poll);
+                    if (this.map.expiresAfterAccess() && this.expirationQueue.contains(referenceEntryPoll)) {
+                        this.expirationQueue.add(referenceEntryPoll);
                     }
                 } else {
                     return;
@@ -1476,18 +1441,18 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
 
         void expireEntries() {
-            ReferenceEntry<K, V> peek;
+            ReferenceEntry<K, V> referenceEntryPeek;
             drainRecencyQueue();
             if (this.expirationQueue.isEmpty()) {
                 return;
             }
-            long read = this.map.ticker.read();
+            long j = this.map.ticker.read();
             do {
-                peek = this.expirationQueue.peek();
-                if (peek == null || !this.map.isExpired(peek, read)) {
+                referenceEntryPeek = this.expirationQueue.peek();
+                if (referenceEntryPeek == null || !this.map.isExpired(referenceEntryPeek, j)) {
                     return;
                 }
-            } while (removeEntry(peek, peek.getHash(), MapMaker.RemovalCause.EXPIRED));
+            } while (removeEntry(referenceEntryPeek, referenceEntryPeek.getHash(), MapMaker.RemovalCause.EXPIRED));
             throw new AssertionError();
         }
 
@@ -1495,8 +1460,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             enqueueNotification(referenceEntry.getKey(), referenceEntry.getHash(), referenceEntry.getValueReference().get(), removalCause);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void enqueueNotification(K k, int i, V v, MapMaker.RemovalCause removalCause) {
+        void enqueueNotification(K k, int i, V v, MapMaker.RemovalCause removalCause) {
             if (this.map.removalNotificationQueue != MapMakerInternalMap.DISCARDING_QUEUE) {
                 this.map.removalNotificationQueue.offer(new MapMaker.RemovalNotification<>(k, v, removalCause));
             }
@@ -1505,8 +1469,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         boolean evictEntries() {
             if (this.map.evictsBySize() && this.count >= this.maxSegmentSize) {
                 drainRecencyQueue();
-                ReferenceEntry<K, V> remove = this.evictionQueue.remove();
-                if (!removeEntry(remove, remove.getHash(), MapMaker.RemovalCause.SIZE)) {
+                ReferenceEntry<K, V> referenceEntryRemove = this.evictionQueue.remove();
+                if (!removeEntry(referenceEntryRemove, referenceEntryRemove.getHash(), MapMaker.RemovalCause.SIZE)) {
                     throw new AssertionError();
                 }
                 return true;
@@ -1515,12 +1479,10 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
 
         ReferenceEntry<K, V> getFirst(int i) {
-            AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
-            return atomicReferenceArray.get(i & (atomicReferenceArray.length() - 1));
+            return this.table.get(i & (r0.length() - 1));
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public ReferenceEntry<K, V> getEntry(Object obj, int i) {
+        ReferenceEntry<K, V> getEntry(Object obj, int i) {
             if (this.count != 0) {
                 for (ReferenceEntry<K, V> first = getFirst(i); first != null; first = first.getNext()) {
                     if (first.getHash() == i) {
@@ -1567,16 +1529,17 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [2464=4] */
         boolean containsKey(Object obj, int i) {
             try {
-                if (this.count != 0) {
-                    ReferenceEntry<K, V> liveEntry = getLiveEntry(obj, i);
-                    if (liveEntry == null) {
-                        return false;
-                    }
-                    return liveEntry.getValueReference().get() != null;
+                if (this.count == 0) {
+                    return false;
                 }
-                return false;
+                ReferenceEntry<K, V> liveEntry = getLiveEntry(obj, i);
+                if (liveEntry == null) {
+                    return false;
+                }
+                return liveEntry.getValueReference().get() != null;
             } finally {
                 postReadCleanup();
             }
@@ -1588,8 +1551,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                     AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                     int length = atomicReferenceArray.length();
                     for (int i = 0; i < length; i++) {
-                        for (ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(i); referenceEntry != null; referenceEntry = referenceEntry.getNext()) {
-                            V liveValue = getLiveValue(referenceEntry);
+                        for (ReferenceEntry<K, V> next = atomicReferenceArray.get(i); next != null; next = next.getNext()) {
+                            V liveValue = getLiveValue(next);
                             if (liveValue != null && this.map.valueEquivalence.equivalent(obj, liveValue)) {
                                 postReadCleanup();
                                 return true;
@@ -1603,8 +1566,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public V put(K k, int i, V v, boolean z) {
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [2560=5, 2561=5] */
+        V put(K k, int i, V v, boolean z) {
             lock();
             try {
                 preWriteCleanup();
@@ -1616,23 +1579,23 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                 AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                 int length = (atomicReferenceArray.length() - 1) & i;
                 ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(length);
-                for (ReferenceEntry<K, V> referenceEntry2 = referenceEntry; referenceEntry2 != null; referenceEntry2 = referenceEntry2.getNext()) {
-                    K key = referenceEntry2.getKey();
-                    if (referenceEntry2.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
-                        ValueReference<K, V> valueReference = referenceEntry2.getValueReference();
+                for (ReferenceEntry<K, V> next = referenceEntry; next != null; next = next.getNext()) {
+                    K key = next.getKey();
+                    if (next.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
+                        ValueReference<K, V> valueReference = next.getValueReference();
                         V v2 = valueReference.get();
                         if (v2 != null) {
                             if (z) {
-                                recordLockedRead(referenceEntry2);
+                                recordLockedRead(next);
                                 return v2;
                             }
                             this.modCount++;
                             enqueueNotification(k, i, v2, MapMaker.RemovalCause.REPLACED);
-                            setValue(referenceEntry2, v);
+                            setValue(next, v);
                             return v2;
                         }
                         this.modCount++;
-                        setValue(referenceEntry2, v);
+                        setValue(next, v);
                         if (!valueReference.isComputingReference()) {
                             enqueueNotification(k, i, v2, MapMaker.RemovalCause.COLLECTED);
                             i2 = this.count;
@@ -1644,9 +1607,9 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                     }
                 }
                 this.modCount++;
-                ReferenceEntry<K, V> newEntry = newEntry(k, i, referenceEntry);
-                setValue(newEntry, v);
-                atomicReferenceArray.set(length, newEntry);
+                ReferenceEntry<K, V> referenceEntryNewEntry = newEntry(k, i, referenceEntry);
+                setValue(referenceEntryNewEntry, v);
+                atomicReferenceArray.set(length, referenceEntryNewEntry);
                 if (evictEntries()) {
                     i2 = this.count + 1;
                 }
@@ -1665,45 +1628,46 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                 return;
             }
             int i = this.count;
-            AtomicReferenceArray<ReferenceEntry<K, V>> newEntryArray = newEntryArray(length << 1);
-            this.threshold = (newEntryArray.length() * 3) / 4;
-            int length2 = newEntryArray.length() - 1;
+            AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArrayNewEntryArray = newEntryArray(length << 1);
+            this.threshold = (atomicReferenceArrayNewEntryArray.length() * 3) / 4;
+            int length2 = atomicReferenceArrayNewEntryArray.length() - 1;
             for (int i2 = 0; i2 < length; i2++) {
-                ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(i2);
-                if (referenceEntry != null) {
-                    ReferenceEntry<K, V> next = referenceEntry.getNext();
-                    int hash = referenceEntry.getHash() & length2;
-                    if (next == null) {
-                        newEntryArray.set(hash, referenceEntry);
+                ReferenceEntry<K, V> next = atomicReferenceArray.get(i2);
+                if (next != null) {
+                    ReferenceEntry<K, V> next2 = next.getNext();
+                    int hash = next.getHash() & length2;
+                    if (next2 == null) {
+                        atomicReferenceArrayNewEntryArray.set(hash, next);
                     } else {
-                        ReferenceEntry<K, V> referenceEntry2 = referenceEntry;
-                        while (next != null) {
-                            int hash2 = next.getHash() & length2;
+                        ReferenceEntry<K, V> referenceEntry = next;
+                        while (next2 != null) {
+                            int hash2 = next2.getHash() & length2;
                             if (hash2 != hash) {
-                                referenceEntry2 = next;
+                                referenceEntry = next2;
                                 hash = hash2;
                             }
-                            next = next.getNext();
+                            next2 = next2.getNext();
                         }
-                        newEntryArray.set(hash, referenceEntry2);
-                        while (referenceEntry != referenceEntry2) {
-                            int hash3 = referenceEntry.getHash() & length2;
-                            ReferenceEntry<K, V> copyEntry = copyEntry(referenceEntry, newEntryArray.get(hash3));
-                            if (copyEntry != null) {
-                                newEntryArray.set(hash3, copyEntry);
+                        atomicReferenceArrayNewEntryArray.set(hash, referenceEntry);
+                        while (next != referenceEntry) {
+                            int hash3 = next.getHash() & length2;
+                            ReferenceEntry<K, V> referenceEntryCopyEntry = copyEntry(next, atomicReferenceArrayNewEntryArray.get(hash3));
+                            if (referenceEntryCopyEntry != null) {
+                                atomicReferenceArrayNewEntryArray.set(hash3, referenceEntryCopyEntry);
                             } else {
-                                removeCollectedEntry(referenceEntry);
+                                removeCollectedEntry(next);
                                 i--;
                             }
-                            referenceEntry = referenceEntry.getNext();
+                            next = next.getNext();
                         }
                     }
                 }
             }
-            this.table = newEntryArray;
+            this.table = atomicReferenceArrayNewEntryArray;
             this.count = i;
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [2683=5, 2684=5] */
         boolean replace(K k, int i, V v, V v2) {
             lock();
             try {
@@ -1711,27 +1675,29 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                 AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                 int length = (atomicReferenceArray.length() - 1) & i;
                 ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(length);
-                for (ReferenceEntry<K, V> referenceEntry2 = referenceEntry; referenceEntry2 != null; referenceEntry2 = referenceEntry2.getNext()) {
-                    K key = referenceEntry2.getKey();
-                    if (referenceEntry2.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
-                        ValueReference<K, V> valueReference = referenceEntry2.getValueReference();
+                for (ReferenceEntry<K, V> next = referenceEntry; next != null; next = next.getNext()) {
+                    K key = next.getKey();
+                    if (next.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
+                        ValueReference<K, V> valueReference = next.getValueReference();
                         V v3 = valueReference.get();
                         if (v3 != null) {
                             if (!this.map.valueEquivalence.equivalent(v, v3)) {
-                                recordLockedRead(referenceEntry2);
+                                recordLockedRead(next);
                                 return false;
                             }
                             this.modCount++;
                             enqueueNotification(k, i, v3, MapMaker.RemovalCause.REPLACED);
-                            setValue(referenceEntry2, v2);
+                            setValue(next, v2);
                             return true;
                         }
                         if (isCollected(valueReference)) {
                             int i2 = this.count;
                             this.modCount++;
                             enqueueNotification(key, i, v3, MapMaker.RemovalCause.COLLECTED);
-                            atomicReferenceArray.set(length, removeFromChain(referenceEntry, referenceEntry2));
-                            this.count--;
+                            ReferenceEntry<K, V> referenceEntryRemoveFromChain = removeFromChain(referenceEntry, next);
+                            int i3 = this.count - 1;
+                            atomicReferenceArray.set(length, referenceEntryRemoveFromChain);
+                            this.count = i3;
                         }
                         return false;
                     }
@@ -1743,6 +1709,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [2727=4, 2728=4] */
         V replace(K k, int i, V v) {
             lock();
             try {
@@ -1750,23 +1717,25 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                 AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                 int length = (atomicReferenceArray.length() - 1) & i;
                 ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(length);
-                for (ReferenceEntry<K, V> referenceEntry2 = referenceEntry; referenceEntry2 != null; referenceEntry2 = referenceEntry2.getNext()) {
-                    K key = referenceEntry2.getKey();
-                    if (referenceEntry2.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
-                        ValueReference<K, V> valueReference = referenceEntry2.getValueReference();
+                for (ReferenceEntry<K, V> next = referenceEntry; next != null; next = next.getNext()) {
+                    K key = next.getKey();
+                    if (next.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
+                        ValueReference<K, V> valueReference = next.getValueReference();
                         V v2 = valueReference.get();
                         if (v2 != null) {
                             this.modCount++;
                             enqueueNotification(k, i, v2, MapMaker.RemovalCause.REPLACED);
-                            setValue(referenceEntry2, v);
+                            setValue(next, v);
                             return v2;
                         }
                         if (isCollected(valueReference)) {
                             int i2 = this.count;
                             this.modCount++;
                             enqueueNotification(key, i, v2, MapMaker.RemovalCause.COLLECTED);
-                            atomicReferenceArray.set(length, removeFromChain(referenceEntry, referenceEntry2));
-                            this.count--;
+                            ReferenceEntry<K, V> referenceEntryRemoveFromChain = removeFromChain(referenceEntry, next);
+                            int i3 = this.count - 1;
+                            atomicReferenceArray.set(length, referenceEntryRemoveFromChain);
+                            this.count = i3;
                         }
                         return null;
                     }
@@ -1778,6 +1747,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [2770=4, 2771=4] */
         V remove(Object obj, int i) {
             MapMaker.RemovalCause removalCause;
             lock();
@@ -1787,22 +1757,25 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                 AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                 int length = (atomicReferenceArray.length() - 1) & i;
                 ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(length);
-                for (ReferenceEntry<K, V> referenceEntry2 = referenceEntry; referenceEntry2 != null; referenceEntry2 = referenceEntry2.getNext()) {
-                    K key = referenceEntry2.getKey();
-                    if (referenceEntry2.getHash() == i && key != null && this.map.keyEquivalence.equivalent(obj, key)) {
-                        ValueReference<K, V> valueReference = referenceEntry2.getValueReference();
+                for (ReferenceEntry<K, V> next = referenceEntry; next != null; next = next.getNext()) {
+                    K key = next.getKey();
+                    if (next.getHash() == i && key != null && this.map.keyEquivalence.equivalent(obj, key)) {
+                        ValueReference<K, V> valueReference = next.getValueReference();
                         V v = valueReference.get();
                         if (v != null) {
                             removalCause = MapMaker.RemovalCause.EXPLICIT;
-                        } else if (!isCollected(valueReference)) {
-                            return null;
                         } else {
+                            if (!isCollected(valueReference)) {
+                                return null;
+                            }
                             removalCause = MapMaker.RemovalCause.COLLECTED;
                         }
                         this.modCount++;
                         enqueueNotification(key, i, v, removalCause);
-                        atomicReferenceArray.set(length, removeFromChain(referenceEntry, referenceEntry2));
-                        this.count--;
+                        ReferenceEntry<K, V> referenceEntryRemoveFromChain = removeFromChain(referenceEntry, next);
+                        int i3 = this.count - 1;
+                        atomicReferenceArray.set(length, referenceEntryRemoveFromChain);
+                        this.count = i3;
                         return v;
                     }
                 }
@@ -1813,6 +1786,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
         }
 
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [2813=4, 2814=4] */
         boolean remove(Object obj, int i, Object obj2) {
             MapMaker.RemovalCause removalCause;
             lock();
@@ -1822,22 +1796,25 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                 AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                 int length = (atomicReferenceArray.length() - 1) & i;
                 ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(length);
-                for (ReferenceEntry<K, V> referenceEntry2 = referenceEntry; referenceEntry2 != null; referenceEntry2 = referenceEntry2.getNext()) {
-                    K key = referenceEntry2.getKey();
-                    if (referenceEntry2.getHash() == i && key != null && this.map.keyEquivalence.equivalent(obj, key)) {
-                        ValueReference<K, V> valueReference = referenceEntry2.getValueReference();
+                for (ReferenceEntry<K, V> next = referenceEntry; next != null; next = next.getNext()) {
+                    K key = next.getKey();
+                    if (next.getHash() == i && key != null && this.map.keyEquivalence.equivalent(obj, key)) {
+                        ValueReference<K, V> valueReference = next.getValueReference();
                         V v = valueReference.get();
                         if (this.map.valueEquivalence.equivalent(obj2, v)) {
                             removalCause = MapMaker.RemovalCause.EXPLICIT;
-                        } else if (!isCollected(valueReference)) {
-                            return false;
                         } else {
+                            if (!isCollected(valueReference)) {
+                                return false;
+                            }
                             removalCause = MapMaker.RemovalCause.COLLECTED;
                         }
                         this.modCount++;
                         enqueueNotification(key, i, v, removalCause);
-                        atomicReferenceArray.set(length, removeFromChain(referenceEntry, referenceEntry2));
-                        this.count--;
+                        ReferenceEntry<K, V> referenceEntryRemoveFromChain = removeFromChain(referenceEntry, next);
+                        int i3 = this.count - 1;
+                        atomicReferenceArray.set(length, referenceEntryRemoveFromChain);
+                        this.count = i3;
                         return removalCause == MapMaker.RemovalCause.EXPLICIT;
                     }
                 }
@@ -1855,9 +1832,9 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                     AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                     if (this.map.removalNotificationQueue != MapMakerInternalMap.DISCARDING_QUEUE) {
                         for (int i = 0; i < atomicReferenceArray.length(); i++) {
-                            for (ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(i); referenceEntry != null; referenceEntry = referenceEntry.getNext()) {
-                                if (!referenceEntry.getValueReference().isComputingReference()) {
-                                    enqueueNotification(referenceEntry, MapMaker.RemovalCause.EXPLICIT);
+                            for (ReferenceEntry<K, V> next = atomicReferenceArray.get(i); next != null; next = next.getNext()) {
+                                if (!next.getValueReference().isComputingReference()) {
+                                    enqueueNotification(next, MapMaker.RemovalCause.EXPLICIT);
                                 }
                             }
                         }
@@ -1884,9 +1861,9 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             int i = this.count;
             ReferenceEntry<K, V> next = referenceEntry2.getNext();
             while (referenceEntry != referenceEntry2) {
-                ReferenceEntry<K, V> copyEntry = copyEntry(referenceEntry, next);
-                if (copyEntry != null) {
-                    next = copyEntry;
+                ReferenceEntry<K, V> referenceEntryCopyEntry = copyEntry(referenceEntry, next);
+                if (referenceEntryCopyEntry != null) {
+                    next = referenceEntryCopyEntry;
                 } else {
                     removeCollectedEntry(referenceEntry);
                     i--;
@@ -1910,12 +1887,14 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                 AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                 int length = (atomicReferenceArray.length() - 1) & i;
                 ReferenceEntry<K, V> referenceEntry2 = atomicReferenceArray.get(length);
-                for (ReferenceEntry<K, V> referenceEntry3 = referenceEntry2; referenceEntry3 != null; referenceEntry3 = referenceEntry3.getNext()) {
-                    if (referenceEntry3 == referenceEntry) {
+                for (ReferenceEntry<K, V> next = referenceEntry2; next != null; next = next.getNext()) {
+                    if (next == referenceEntry) {
                         this.modCount++;
-                        enqueueNotification(referenceEntry3.getKey(), i, referenceEntry3.getValueReference().get(), MapMaker.RemovalCause.COLLECTED);
-                        atomicReferenceArray.set(length, removeFromChain(referenceEntry2, referenceEntry3));
-                        this.count--;
+                        enqueueNotification(next.getKey(), i, next.getValueReference().get(), MapMaker.RemovalCause.COLLECTED);
+                        ReferenceEntry<K, V> referenceEntryRemoveFromChain = removeFromChain(referenceEntry2, next);
+                        int i3 = this.count - 1;
+                        atomicReferenceArray.set(length, referenceEntryRemoveFromChain);
+                        this.count = i3;
                         return true;
                     }
                 }
@@ -1926,6 +1905,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
         }
 
+        /* JADX DEBUG: Another duplicated slice has different insns count: {[INVOKE, INVOKE]}, finally: {[INVOKE, INVOKE, INVOKE, IF] complete} */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [2950=4, 2951=4, 2952=4] */
         boolean reclaimValue(K k, int i, ValueReference<K, V> valueReference) {
             lock();
             try {
@@ -1933,10 +1914,10 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                 AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                 int length = (atomicReferenceArray.length() - 1) & i;
                 ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(length);
-                for (ReferenceEntry<K, V> referenceEntry2 = referenceEntry; referenceEntry2 != null; referenceEntry2 = referenceEntry2.getNext()) {
-                    K key = referenceEntry2.getKey();
-                    if (referenceEntry2.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
-                        if (referenceEntry2.getValueReference() != valueReference) {
+                for (ReferenceEntry<K, V> next = referenceEntry; next != null; next = next.getNext()) {
+                    K key = next.getKey();
+                    if (next.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
+                        if (next.getValueReference() != valueReference) {
                             unlock();
                             if (!isHeldByCurrentThread()) {
                                 postWriteCleanup();
@@ -1945,8 +1926,10 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                         }
                         this.modCount++;
                         enqueueNotification(k, i, valueReference.get(), MapMaker.RemovalCause.COLLECTED);
-                        atomicReferenceArray.set(length, removeFromChain(referenceEntry, referenceEntry2));
-                        this.count--;
+                        ReferenceEntry<K, V> referenceEntryRemoveFromChain = removeFromChain(referenceEntry, next);
+                        int i3 = this.count - 1;
+                        atomicReferenceArray.set(length, referenceEntryRemoveFromChain);
+                        this.count = i3;
                         return true;
                     }
                 }
@@ -1963,21 +1946,21 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public boolean clearValue(K k, int i, ValueReference<K, V> valueReference) {
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [2983=4, 2984=4] */
+        boolean clearValue(K k, int i, ValueReference<K, V> valueReference) {
             lock();
             try {
                 AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
                 int length = (atomicReferenceArray.length() - 1) & i;
                 ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(length);
-                for (ReferenceEntry<K, V> referenceEntry2 = referenceEntry; referenceEntry2 != null; referenceEntry2 = referenceEntry2.getNext()) {
-                    K key = referenceEntry2.getKey();
-                    if (referenceEntry2.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
-                        if (referenceEntry2.getValueReference() == valueReference) {
-                            atomicReferenceArray.set(length, removeFromChain(referenceEntry, referenceEntry2));
-                            return true;
+                for (ReferenceEntry<K, V> next = referenceEntry; next != null; next = next.getNext()) {
+                    K key = next.getKey();
+                    if (next.getHash() == i && key != null && this.map.keyEquivalence.equivalent(k, key)) {
+                        if (next.getValueReference() != valueReference) {
+                            return false;
                         }
-                        return false;
+                        atomicReferenceArray.set(length, removeFromChain(referenceEntry, next));
+                        return true;
                     }
                 }
                 return false;
@@ -1992,12 +1975,14 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = this.table;
             int length = (atomicReferenceArray.length() - 1) & i;
             ReferenceEntry<K, V> referenceEntry2 = atomicReferenceArray.get(length);
-            for (ReferenceEntry<K, V> referenceEntry3 = referenceEntry2; referenceEntry3 != null; referenceEntry3 = referenceEntry3.getNext()) {
-                if (referenceEntry3 == referenceEntry) {
+            for (ReferenceEntry<K, V> next = referenceEntry2; next != null; next = next.getNext()) {
+                if (next == referenceEntry) {
                     this.modCount++;
-                    enqueueNotification(referenceEntry3.getKey(), i, referenceEntry3.getValueReference().get(), removalCause);
-                    atomicReferenceArray.set(length, removeFromChain(referenceEntry2, referenceEntry3));
-                    this.count--;
+                    enqueueNotification(next.getKey(), i, next.getValueReference().get(), removalCause);
+                    ReferenceEntry<K, V> referenceEntryRemoveFromChain = removeFromChain(referenceEntry2, next);
+                    int i3 = this.count - 1;
+                    atomicReferenceArray.set(length, referenceEntryRemoveFromChain);
+                    this.count = i3;
                     return true;
                 }
             }
@@ -2008,8 +1993,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             return !valueReference.isComputingReference() && valueReference.get() == null;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public V getLiveValue(ReferenceEntry<K, V> referenceEntry) {
+        V getLiveValue(ReferenceEntry<K, V> referenceEntry) {
             if (referenceEntry.getKey() == null) {
                 tryDrainReferenceQueues();
                 return null;
@@ -2018,28 +2002,25 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             if (v == null) {
                 tryDrainReferenceQueues();
                 return null;
-            } else if (this.map.expires() && this.map.isExpired(referenceEntry)) {
+            }
+            if (this.map.expires() && this.map.isExpired(referenceEntry)) {
                 tryExpireEntries();
                 return null;
-            } else {
-                return v;
             }
+            return v;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void postReadCleanup() {
+        void postReadCleanup() {
             if ((this.readCount.incrementAndGet() & 63) == 0) {
                 runCleanup();
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void preWriteCleanup() {
+        void preWriteCleanup() {
             runLockedCleanup();
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void postWriteCleanup() {
+        void postWriteCleanup() {
             runUnlockedCleanup();
         }
 
@@ -2067,9 +2048,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static final class EvictionQueue<K, V> extends AbstractQueue<ReferenceEntry<K, V>> {
+    static final class EvictionQueue<K, V> extends AbstractQueue<ReferenceEntry<K, V>> {
         final ReferenceEntry<K, V> head = new AbstractReferenceEntry<K, V>() { // from class: com.google.common.collect.MapMakerInternalMap.EvictionQueue.1
             ReferenceEntry<K, V> nextEvictable = this;
             ReferenceEntry<K, V> previousEvictable = this;
@@ -2098,11 +2077,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         EvictionQueue() {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: offer(Ljava/lang/Object;)Z */
         @Override // java.util.Queue
-        public /* bridge */ /* synthetic */ boolean offer(Object obj) {
-            return offer((ReferenceEntry) ((ReferenceEntry) obj));
-        }
-
         public boolean offer(ReferenceEntry<K, V> referenceEntry) {
             MapMakerInternalMap.connectEvictables(referenceEntry.getPreviousEvictable(), referenceEntry.getNextEvictable());
             MapMakerInternalMap.connectEvictables(this.head.getPreviousEvictable(), referenceEntry);
@@ -2110,6 +2086,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             return true;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: peek()Ljava/lang/Object; */
         @Override // java.util.Queue
         public ReferenceEntry<K, V> peek() {
             ReferenceEntry<K, V> nextEvictable = this.head.getNextEvictable();
@@ -2119,6 +2096,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             return nextEvictable;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: poll()Ljava/lang/Object; */
         @Override // java.util.Queue
         public ReferenceEntry<K, V> poll() {
             ReferenceEntry<K, V> nextEvictable = this.head.getNextEvictable();
@@ -2173,11 +2151,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         @Override // java.util.AbstractCollection, java.util.Collection, java.lang.Iterable
         public Iterator<ReferenceEntry<K, V>> iterator() {
             return new AbstractSequentialIterator<ReferenceEntry<K, V>>(peek()) { // from class: com.google.common.collect.MapMakerInternalMap.EvictionQueue.2
+                /* JADX DEBUG: Method merged with bridge method: computeNext(Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // com.google.common.collect.AbstractSequentialIterator
-                protected /* bridge */ /* synthetic */ Object computeNext(Object obj) {
-                    return computeNext((ReferenceEntry) ((ReferenceEntry) obj));
-                }
-
                 protected ReferenceEntry<K, V> computeNext(ReferenceEntry<K, V> referenceEntry) {
                     ReferenceEntry<K, V> nextEvictable = referenceEntry.getNextEvictable();
                     if (nextEvictable == EvictionQueue.this.head) {
@@ -2189,9 +2164,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static final class ExpirationQueue<K, V> extends AbstractQueue<ReferenceEntry<K, V>> {
+    static final class ExpirationQueue<K, V> extends AbstractQueue<ReferenceEntry<K, V>> {
         final ReferenceEntry<K, V> head = new AbstractReferenceEntry<K, V>() { // from class: com.google.common.collect.MapMakerInternalMap.ExpirationQueue.1
             ReferenceEntry<K, V> nextExpirable = this;
             ReferenceEntry<K, V> previousExpirable = this;
@@ -2229,11 +2202,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         ExpirationQueue() {
         }
 
+        /* JADX DEBUG: Method merged with bridge method: offer(Ljava/lang/Object;)Z */
         @Override // java.util.Queue
-        public /* bridge */ /* synthetic */ boolean offer(Object obj) {
-            return offer((ReferenceEntry) ((ReferenceEntry) obj));
-        }
-
         public boolean offer(ReferenceEntry<K, V> referenceEntry) {
             MapMakerInternalMap.connectExpirables(referenceEntry.getPreviousExpirable(), referenceEntry.getNextExpirable());
             MapMakerInternalMap.connectExpirables(this.head.getPreviousExpirable(), referenceEntry);
@@ -2241,6 +2211,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             return true;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: peek()Ljava/lang/Object; */
         @Override // java.util.Queue
         public ReferenceEntry<K, V> peek() {
             ReferenceEntry<K, V> nextExpirable = this.head.getNextExpirable();
@@ -2250,6 +2221,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             return nextExpirable;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: poll()Ljava/lang/Object; */
         @Override // java.util.Queue
         public ReferenceEntry<K, V> poll() {
             ReferenceEntry<K, V> nextExpirable = this.head.getNextExpirable();
@@ -2304,11 +2276,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         @Override // java.util.AbstractCollection, java.util.Collection, java.lang.Iterable
         public Iterator<ReferenceEntry<K, V>> iterator() {
             return new AbstractSequentialIterator<ReferenceEntry<K, V>>(peek()) { // from class: com.google.common.collect.MapMakerInternalMap.ExpirationQueue.2
+                /* JADX DEBUG: Method merged with bridge method: computeNext(Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // com.google.common.collect.AbstractSequentialIterator
-                protected /* bridge */ /* synthetic */ Object computeNext(Object obj) {
-                    return computeNext((ReferenceEntry) ((ReferenceEntry) obj));
-                }
-
                 protected ReferenceEntry<K, V> computeNext(ReferenceEntry<K, V> referenceEntry) {
                     ReferenceEntry<K, V> nextExpirable = referenceEntry.getNextExpirable();
                     if (nextExpirable == ExpirationQueue.this.head) {
@@ -2345,8 +2314,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
     @Override // java.util.AbstractMap, java.util.Map
     public int size() {
         long j = 0;
-        for (Segment<K, V> segment : this.segments) {
-            j += segment.count;
+        for (int i = 0; i < this.segments.length; i++) {
+            j += r0[i].count;
         }
         return Ints.saturatedCast(j);
     }
@@ -2356,8 +2325,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         if (obj == null) {
             return null;
         }
-        int hash = hash(obj);
-        return segmentFor(hash).get(obj, hash);
+        int iHash = hash(obj);
+        return segmentFor(iHash).get(obj, iHash);
     }
 
     @Override // java.util.AbstractMap, java.util.Map
@@ -2365,8 +2334,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         if (obj == null) {
             return false;
         }
-        int hash = hash(obj);
-        return segmentFor(hash).containsKey(obj, hash);
+        int iHash = hash(obj);
+        return segmentFor(iHash).containsKey(obj, iHash);
     }
 
     @Override // java.util.AbstractMap, java.util.Map
@@ -2387,8 +2356,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
                 int i4 = segment.count;
                 AtomicReferenceArray<ReferenceEntry<K, V>> atomicReferenceArray = segment.table;
                 for (int i5 = i; i5 < atomicReferenceArray.length(); i5++) {
-                    for (ReferenceEntry<K, V> referenceEntry = atomicReferenceArray.get(i5); referenceEntry != null; referenceEntry = referenceEntry.getNext()) {
-                        V liveValue = segment.getLiveValue(referenceEntry);
+                    for (ReferenceEntry<K, V> next = atomicReferenceArray.get(i5); next != null; next = next.getNext()) {
+                        V liveValue = segment.getLiveValue(next);
                         if (liveValue != null && this.valueEquivalence.equivalent(obj, liveValue)) {
                             return true;
                         }
@@ -2413,16 +2382,16 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
     public V put(K k, V v) {
         Preconditions.checkNotNull(k);
         Preconditions.checkNotNull(v);
-        int hash = hash(k);
-        return segmentFor(hash).put(k, hash, v, false);
+        int iHash = hash(k);
+        return segmentFor(iHash).put(k, iHash, v, false);
     }
 
     @Override // java.util.Map, java.util.concurrent.ConcurrentMap
     public V putIfAbsent(K k, V v) {
         Preconditions.checkNotNull(k);
         Preconditions.checkNotNull(v);
-        int hash = hash(k);
-        return segmentFor(hash).put(k, hash, v, true);
+        int iHash = hash(k);
+        return segmentFor(iHash).put(k, iHash, v, true);
     }
 
     @Override // java.util.AbstractMap, java.util.Map
@@ -2437,8 +2406,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         if (obj == null) {
             return null;
         }
-        int hash = hash(obj);
-        return segmentFor(hash).remove(obj, hash);
+        int iHash = hash(obj);
+        return segmentFor(iHash).remove(obj, iHash);
     }
 
     @Override // java.util.Map, java.util.concurrent.ConcurrentMap
@@ -2446,8 +2415,8 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         if (obj == null || obj2 == null) {
             return false;
         }
-        int hash = hash(obj);
-        return segmentFor(hash).remove(obj, hash, obj2);
+        int iHash = hash(obj);
+        return segmentFor(iHash).remove(obj, iHash, obj2);
     }
 
     @Override // java.util.Map, java.util.concurrent.ConcurrentMap
@@ -2457,16 +2426,16 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         if (v == null) {
             return false;
         }
-        int hash = hash(k);
-        return segmentFor(hash).replace(k, hash, v, v2);
+        int iHash = hash(k);
+        return segmentFor(iHash).replace(k, iHash, v, v2);
     }
 
     @Override // java.util.Map, java.util.concurrent.ConcurrentMap
     public V replace(K k, V v) {
         Preconditions.checkNotNull(k);
         Preconditions.checkNotNull(v);
-        int hash = hash(k);
-        return segmentFor(hash).replace(k, hash, v);
+        int iHash = hash(k);
+        return segmentFor(iHash).replace(k, iHash, v);
     }
 
     @Override // java.util.AbstractMap, java.util.Map
@@ -2509,13 +2478,14 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         return entrySet;
     }
 
-    /* loaded from: classes.dex */
     abstract class HashIterator<E> implements Iterator<E> {
         Segment<K, V> currentSegment;
         AtomicReferenceArray<ReferenceEntry<K, V>> currentTable;
+
         /* JADX WARN: Incorrect inner types in field signature: Lcom/google/common/collect/MapMakerInternalMap<TK;TV;>.com/google/common/collect/MapMakerInternalMap$com/google/common/collect/MapMakerInternalMap$WriteThroughEntry; */
         WriteThroughEntry lastReturned;
         ReferenceEntry<K, V> nextEntry;
+
         /* JADX WARN: Incorrect inner types in field signature: Lcom/google/common/collect/MapMakerInternalMap<TK;TV;>.com/google/common/collect/MapMakerInternalMap$com/google/common/collect/MapMakerInternalMap$WriteThroughEntry; */
         WriteThroughEntry nextExternal;
         int nextSegmentIndex;
@@ -2610,7 +2580,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     final class KeyIterator extends MapMakerInternalMap<K, V>.HashIterator<K> {
         KeyIterator() {
             super();
@@ -2621,7 +2590,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     final class ValueIterator extends MapMakerInternalMap<K, V>.HashIterator<V> {
         ValueIterator() {
             super();
@@ -2632,9 +2600,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public final class WriteThroughEntry extends AbstractMapEntry<K, V> {
+    final class WriteThroughEntry extends AbstractMapEntry<K, V> {
         final K key;
         V value;
 
@@ -2655,11 +2621,11 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
 
         @Override // com.google.common.collect.AbstractMapEntry, java.util.Map.Entry
         public boolean equals(Object obj) {
-            if (obj instanceof Map.Entry) {
-                Map.Entry entry = (Map.Entry) obj;
-                return this.key.equals(entry.getKey()) && this.value.equals(entry.getValue());
+            if (!(obj instanceof Map.Entry)) {
+                return false;
             }
-            return false;
+            Map.Entry entry = (Map.Entry) obj;
+            return this.key.equals(entry.getKey()) && this.value.equals(entry.getValue());
         }
 
         @Override // com.google.common.collect.AbstractMapEntry, java.util.Map.Entry
@@ -2675,18 +2641,17 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     final class EntryIterator extends MapMakerInternalMap<K, V>.HashIterator<Map.Entry<K, V>> {
         EntryIterator() {
             super();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: next()Ljava/lang/Object; */
         public Map.Entry<K, V> next() {
             return nextEntry();
         }
     }
 
-    /* loaded from: classes.dex */
     final class KeySet extends AbstractSet<K> {
         KeySet() {
         }
@@ -2722,7 +2687,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     final class Values extends AbstractCollection<V> {
         Values() {
         }
@@ -2753,7 +2717,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     final class EntrySet extends AbstractSet<Map.Entry<K, V>> {
         EntrySet() {
         }
@@ -2798,9 +2761,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         return new SerializationProxy(this.keyStrength, this.valueStrength, this.keyEquivalence, this.valueEquivalence, this.expireAfterWriteNanos, this.expireAfterAccessNanos, this.maximumSize, this.concurrencyLevel, this.removalListener, this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static abstract class AbstractSerializationProxy<K, V> extends ForwardingConcurrentMap<K, V> implements Serializable {
+    static abstract class AbstractSerializationProxy<K, V> extends ForwardingConcurrentMap<K, V> implements Serializable {
         private static final long serialVersionUID = 3;
         final int concurrencyLevel;
         transient ConcurrentMap<K, V> delegate;
@@ -2813,8 +2774,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         final Equivalence<Object> valueEquivalence;
         final Strength valueStrength;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public AbstractSerializationProxy(Strength strength, Strength strength2, Equivalence<Object> equivalence, Equivalence<Object> equivalence2, long j, long j2, int i, int i2, MapMaker.RemovalListener<? super K, ? super V> removalListener, ConcurrentMap<K, V> concurrentMap) {
+        AbstractSerializationProxy(Strength strength, Strength strength2, Equivalence<Object> equivalence, Equivalence<Object> equivalence2, long j, long j2, int i, int i2, MapMaker.RemovalListener<? super K, ? super V> removalListener, ConcurrentMap<K, V> concurrentMap) {
             this.keyStrength = strength;
             this.valueStrength = strength2;
             this.keyEquivalence = equivalence;
@@ -2827,14 +2787,14 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             this.delegate = concurrentMap;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/lang/Object; */
+        /* JADX DEBUG: Method merged with bridge method: delegate()Ljava/util/Map; */
         @Override // com.google.common.collect.ForwardingConcurrentMap, com.google.common.collect.ForwardingMap, com.google.common.collect.ForwardingObject
-        public ConcurrentMap<K, V> delegate() {
+        protected ConcurrentMap<K, V> delegate() {
             return this.delegate;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void writeMapTo(ObjectOutputStream objectOutputStream) throws IOException {
+        void writeMapTo(ObjectOutputStream objectOutputStream) throws IOException {
             objectOutputStream.writeInt(this.delegate.size());
             for (Map.Entry<K, V> entry : this.delegate.entrySet()) {
                 objectOutputStream.writeObject(entry.getKey());
@@ -2843,29 +2803,28 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             objectOutputStream.writeObject(null);
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public MapMaker readMapMaker(ObjectInputStream objectInputStream) throws IOException {
-            MapMaker concurrencyLevel = new MapMaker().initialCapacity(objectInputStream.readInt()).setKeyStrength(this.keyStrength).setValueStrength(this.valueStrength).keyEquivalence(this.keyEquivalence).concurrencyLevel(this.concurrencyLevel);
-            concurrencyLevel.removalListener(this.removalListener);
+        MapMaker readMapMaker(ObjectInputStream objectInputStream) throws IOException {
+            MapMaker mapMakerConcurrencyLevel = new MapMaker().initialCapacity(objectInputStream.readInt()).setKeyStrength(this.keyStrength).setValueStrength(this.valueStrength).keyEquivalence(this.keyEquivalence).concurrencyLevel(this.concurrencyLevel);
+            mapMakerConcurrencyLevel.removalListener(this.removalListener);
             if (this.expireAfterWriteNanos > 0) {
-                concurrencyLevel.expireAfterWrite(this.expireAfterWriteNanos, TimeUnit.NANOSECONDS);
+                mapMakerConcurrencyLevel.expireAfterWrite(this.expireAfterWriteNanos, TimeUnit.NANOSECONDS);
             }
             if (this.expireAfterAccessNanos > 0) {
-                concurrencyLevel.expireAfterAccess(this.expireAfterAccessNanos, TimeUnit.NANOSECONDS);
+                mapMakerConcurrencyLevel.expireAfterAccess(this.expireAfterAccessNanos, TimeUnit.NANOSECONDS);
             }
             if (this.maximumSize != -1) {
-                concurrencyLevel.maximumSize(this.maximumSize);
+                mapMakerConcurrencyLevel.maximumSize(this.maximumSize);
             }
-            return concurrencyLevel;
+            return mapMakerConcurrencyLevel;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: com.google.common.collect.ComputingConcurrentHashMap */
         /* JADX WARN: Multi-variable type inference failed */
-        public void readEntries(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        void readEntries(ObjectInputStream objectInputStream) throws ClassNotFoundException, IOException {
             while (true) {
-                Object readObject = objectInputStream.readObject();
-                if (readObject != null) {
-                    this.delegate.put(readObject, objectInputStream.readObject());
+                Object object = objectInputStream.readObject();
+                if (object != null) {
+                    this.delegate.put(object, objectInputStream.readObject());
                 } else {
                     return;
                 }
@@ -2873,7 +2832,6 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    /* loaded from: classes.dex */
     private static final class SerializationProxy<K, V> extends AbstractSerializationProxy<K, V> {
         private static final long serialVersionUID = 3;
 
@@ -2886,7 +2844,7 @@ public class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Seri
             writeMapTo(objectOutputStream);
         }
 
-        private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        private void readObject(ObjectInputStream objectInputStream) throws ClassNotFoundException, IOException {
             objectInputStream.defaultReadObject();
             this.delegate = readMapMaker(objectInputStream).makeMap();
             readEntries(objectInputStream);

@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.util.Log;
 import com.android.quicksearchbox.util.NamedTaskExecutor;
 import com.android.quicksearchbox.util.NowOrLater;
+
 /* loaded from: classes.dex */
 public abstract class AbstractSource implements Source {
     private final Context mContext;
@@ -25,8 +26,7 @@ public abstract class AbstractSource implements Source {
         this.mIconLoaderExecutor = namedTaskExecutor;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Context getContext() {
+    protected Context getContext() {
         return this.mContext;
     }
 
@@ -69,8 +69,7 @@ public abstract class AbstractSource implements Source {
         return intent;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Intent createVoiceWebSearchIntent(Bundle bundle) {
+    protected Intent createVoiceWebSearchIntent(Bundle bundle) {
         return QsbApplication.get(this.mContext).getVoiceSearch().createVoiceWebSearchIntent(bundle);
     }
 

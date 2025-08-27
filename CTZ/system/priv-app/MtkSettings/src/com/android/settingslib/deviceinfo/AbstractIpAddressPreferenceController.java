@@ -9,6 +9,7 @@ import com.android.settingslib.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.net.InetAddress;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public abstract class AbstractIpAddressPreferenceController extends AbstractConnectivityPreferenceController {
     private static final String[] CONNECTIVITY_INTENTS = {"android.net.conn.CONNECTIVITY_CHANGE", "android.net.wifi.LINK_CONFIGURATION_CHANGED", "android.net.wifi.STATE_CHANGE"};

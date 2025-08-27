@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.UserManager;
 import com.android.settings.R;
 import com.android.settings.core.BasePreferenceController;
+
 /* loaded from: classes.dex */
 public class BackupSettingsActivityPreferenceController extends BasePreferenceController {
     private static final String KEY_BACKUP_SETTINGS = "backup_settings";

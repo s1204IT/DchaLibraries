@@ -12,6 +12,7 @@ import com.android.launcher3.ShortcutInfo;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class CacheDataUpdatedTask extends BaseModelUpdateTask {
     public static final int OP_CACHE_UPDATE = 1;

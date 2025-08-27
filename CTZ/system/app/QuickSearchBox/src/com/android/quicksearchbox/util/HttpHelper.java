@@ -2,17 +2,16 @@ package com.android.quicksearchbox.util;
 
 import java.io.IOException;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public interface HttpHelper {
 
-    /* loaded from: classes.dex */
     public interface UrlRewriter {
         String rewrite(String str);
     }
 
-    String get(GetRequest getRequest) throws IOException, HttpException;
+    String get(GetRequest getRequest) throws IOException;
 
-    /* loaded from: classes.dex */
     public static class GetRequest {
         private Map<String, String> mHeaders;
         private String mUrl;
@@ -33,7 +32,6 @@ public interface HttpHelper {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class HttpException extends IOException {
         private final String mReasonPhrase;
         private final int mStatusCode;

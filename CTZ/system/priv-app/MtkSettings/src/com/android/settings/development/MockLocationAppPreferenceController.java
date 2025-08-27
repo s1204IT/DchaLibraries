@@ -10,7 +10,9 @@ import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class MockLocationAppPreferenceController extends DeveloperOptionsPreferenceController implements PreferenceControllerMixin, OnActivityResultListener {
     private static final int[] MOCK_LOCATION_APP_OPS = {58};
@@ -35,7 +37,7 @@ public class MockLocationAppPreferenceController extends DeveloperOptionsPrefere
         if (!TextUtils.equals(preference.getKey(), getPreferenceKey())) {
             return false;
         }
-        Intent intent = new Intent(this.mContext, AppPicker.class);
+        Intent intent = new Intent(this.mContext, (Class<?>) AppPicker.class);
         intent.putExtra("com.android.settings.extra.REQUESTIING_PERMISSION", "android.permission.ACCESS_MOCK_LOCATION");
         this.mFragment.startActivityForResult(intent, 2);
         return true;
@@ -104,10 +106,11 @@ public class MockLocationAppPreferenceController extends DeveloperOptionsPrefere
     }
 
     private String getCurrentMockLocationApp() {
-        List<AppOpsManager.PackageOps> packagesForOps = this.mAppsOpsManager.getPackagesForOps(MOCK_LOCATION_APP_OPS);
+        List packagesForOps = this.mAppsOpsManager.getPackagesForOps(MOCK_LOCATION_APP_OPS);
         if (packagesForOps != null) {
-            for (AppOpsManager.PackageOps packageOps : packagesForOps) {
-                if (((AppOpsManager.OpEntry) packageOps.getOps().get(0)).getMode() == 0) {
+            Iterator it = packagesForOps.iterator();
+            while (it.hasNext()) {
+                if (((AppOpsManager.OpEntry) ((AppOpsManager.PackageOps) it.next()).getOps().get(0)).getMode() == 0) {
                     return ((AppOpsManager.PackageOps) packagesForOps.get(0)).getPackageName();
                 }
             }

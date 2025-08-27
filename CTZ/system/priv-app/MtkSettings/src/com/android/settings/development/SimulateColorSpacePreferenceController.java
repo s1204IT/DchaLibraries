@@ -9,6 +9,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class SimulateColorSpacePreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final int SETTING_VALUE_OFF = 0;
@@ -24,7 +25,7 @@ public class SimulateColorSpacePreferenceController extends DeveloperOptionsPref
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         writeSimulateColorSpace(obj);
         return true;
     }
@@ -35,7 +36,7 @@ public class SimulateColorSpacePreferenceController extends DeveloperOptionsPref
     }
 
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsDisabled() {
+    public void onDeveloperOptionsDisabled() throws NumberFormatException {
         super.onDeveloperOptionsDisabled();
         if (usingDevelopmentColorSpace()) {
             writeSimulateColorSpace(-1);
@@ -47,28 +48,29 @@ public class SimulateColorSpacePreferenceController extends DeveloperOptionsPref
         boolean z = Settings.Secure.getInt(contentResolver, "accessibility_display_daltonizer_enabled", 0) != 0;
         ListPreference listPreference = (ListPreference) this.mPreference;
         if (z) {
-            String num = Integer.toString(Settings.Secure.getInt(contentResolver, "accessibility_display_daltonizer", -1));
-            listPreference.setValue(num);
-            if (listPreference.findIndexOfValue(num) < 0) {
+            String string = Integer.toString(Settings.Secure.getInt(contentResolver, "accessibility_display_daltonizer", -1));
+            listPreference.setValue(string);
+            if (listPreference.findIndexOfValue(string) < 0) {
                 Resources resources = this.mContext.getResources();
                 listPreference.setSummary(resources.getString(R.string.daltonizer_type_overridden, resources.getString(R.string.accessibility_display_daltonizer_preference_title)));
                 return;
+            } else {
+                listPreference.setSummary("%s");
+                return;
             }
-            listPreference.setSummary("%s");
-            return;
         }
         listPreference.setValue(Integer.toString(-1));
     }
 
-    private void writeSimulateColorSpace(Object obj) {
+    private void writeSimulateColorSpace(Object obj) throws NumberFormatException {
         ContentResolver contentResolver = this.mContext.getContentResolver();
-        int parseInt = Integer.parseInt(obj.toString());
-        if (parseInt < 0) {
+        int i = Integer.parseInt(obj.toString());
+        if (i < 0) {
             Settings.Secure.putInt(contentResolver, "accessibility_display_daltonizer_enabled", 0);
-            return;
+        } else {
+            Settings.Secure.putInt(contentResolver, "accessibility_display_daltonizer_enabled", 1);
+            Settings.Secure.putInt(contentResolver, "accessibility_display_daltonizer", i);
         }
-        Settings.Secure.putInt(contentResolver, "accessibility_display_daltonizer_enabled", 1);
-        Settings.Secure.putInt(contentResolver, "accessibility_display_daltonizer", parseInt);
     }
 
     private boolean usingDevelopmentColorSpace() {

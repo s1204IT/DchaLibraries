@@ -1,6 +1,7 @@
 package com.android.systemui.doze;
 
 import com.android.systemui.doze.DozeMachine;
+
 /* loaded from: classes.dex */
 public class DozeBrightnessHostForwarder extends DozeMachine.Service.Delegate {
     private final DozeHost mHost;

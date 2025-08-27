@@ -8,6 +8,7 @@ import com.android.settings.connecteddevice.DevicePreferenceCallback;
 import com.android.settings.dashboard.DashboardFragment;
 import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
+
 /* loaded from: classes.dex */
 public class ConnectedBluetoothDeviceUpdater extends BluetoothDeviceUpdater {
     private final AudioManager mAudioManager;
@@ -32,10 +33,13 @@ public class ConnectedBluetoothDeviceUpdater extends BluetoothDeviceUpdater {
         if (i == 2) {
             if (isFilterMatched(cachedBluetoothDevice)) {
                 addPreference(cachedBluetoothDevice);
+                return;
             } else {
                 removePreference(cachedBluetoothDevice);
+                return;
             }
-        } else if (i == 0) {
+        }
+        if (i == 0) {
             removePreference(cachedBluetoothDevice);
         }
     }
@@ -47,22 +51,21 @@ public class ConnectedBluetoothDeviceUpdater extends BluetoothDeviceUpdater {
         if (mode == 1 || mode == 2 || mode == 3) {
             c = 1;
         }
-        if (isDeviceConnected(cachedBluetoothDevice)) {
-            switch (c) {
-                case 1:
-                    return !cachedBluetoothDevice.isHfpDevice();
-                case 2:
-                    return !cachedBluetoothDevice.isA2dpDevice();
-                default:
-                    return false;
-            }
+        if (!isDeviceConnected(cachedBluetoothDevice)) {
+            return false;
         }
-        return false;
+        switch (c) {
+            case 1:
+                return !cachedBluetoothDevice.isHfpDevice();
+            case 2:
+                return !cachedBluetoothDevice.isA2dpDevice();
+            default:
+                return false;
+        }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.bluetooth.BluetoothDeviceUpdater
-    public void addPreference(CachedBluetoothDevice cachedBluetoothDevice) {
+    protected void addPreference(CachedBluetoothDevice cachedBluetoothDevice) {
         super.addPreference(cachedBluetoothDevice);
         BluetoothDevice device = cachedBluetoothDevice.getDevice();
         if (this.mPreferenceMap.containsKey(device)) {
@@ -72,7 +75,7 @@ public class ConnectedBluetoothDeviceUpdater extends BluetoothDeviceUpdater {
             bluetoothDevicePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.bluetooth.-$$Lambda$ConnectedBluetoothDeviceUpdater$cbcA1LEPXmJVOc_WhespijdA8X8
                 @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
                 public final boolean onPreferenceClick(Preference preference) {
-                    return ConnectedBluetoothDeviceUpdater.lambda$addPreference$0(ConnectedBluetoothDeviceUpdater.this, preference);
+                    return ConnectedBluetoothDeviceUpdater.lambda$addPreference$0(this.f$0, preference);
                 }
             });
         }

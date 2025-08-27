@@ -14,6 +14,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AdvancedConnectedDeviceDashboardFragment extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.connecteddevice.AdvancedConnectedDeviceDashboardFragment.1
@@ -55,9 +56,8 @@ public class AdvancedConnectedDeviceDashboardFragment extends DashboardFragment 
         return R.string.help_url_connected_devices;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.connected_devices_advanced;
     }
 
@@ -66,8 +66,7 @@ public class AdvancedConnectedDeviceDashboardFragment extends DashboardFragment 
         return buildControllers(context, getLifecycle());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new BluetoothFilesPreferenceController(context));
         arrayList.add(new BluetoothOnWhileDrivingPreferenceController(context));

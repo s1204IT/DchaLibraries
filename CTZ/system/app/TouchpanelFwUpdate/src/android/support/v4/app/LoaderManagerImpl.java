@@ -14,14 +14,13 @@ import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class LoaderManagerImpl extends LoaderManager {
+class LoaderManagerImpl extends LoaderManager {
     static boolean DEBUG = false;
     private final LifecycleOwner mLifecycleOwner;
     private final LoaderViewModel mLoaderViewModel;
 
-    /* loaded from: classes.dex */
     public static class LoaderInfo<D> extends MutableLiveData<D> implements Loader.OnLoadCompleteListener<D> {
         private final Bundle mArgs;
         private final int mId;
@@ -59,6 +58,7 @@ public class LoaderManagerImpl extends LoaderManager {
             }
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r2v0, resolved type: android.arch.lifecycle.Observer<? super D> */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // android.arch.lifecycle.LiveData
         public void removeObserver(Observer<? super D> observer) {
@@ -118,14 +118,12 @@ public class LoaderManagerImpl extends LoaderManager {
             writer.print(prefix);
             writer.print("mLoader=");
             writer.println(this.mLoader);
-            Loader<D> loader = this.mLoader;
-            loader.dump(prefix + "  ", fd, writer, args);
+            this.mLoader.dump(prefix + "  ", fd, writer, args);
             if (this.mObserver != null) {
                 writer.print(prefix);
                 writer.print("mCallbacks=");
                 writer.println(this.mObserver);
-                LoaderObserver<D> loaderObserver = this.mObserver;
-                loaderObserver.dump(prefix + "  ", writer);
+                this.mObserver.dump(prefix + "  ", writer);
             }
             writer.print(prefix);
             writer.print("mData=");
@@ -136,9 +134,7 @@ public class LoaderManagerImpl extends LoaderManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class LoaderObserver<D> implements Observer<D> {
+    static class LoaderObserver<D> implements Observer<D> {
         private final LoaderManager.LoaderCallbacks<D> mCallback;
         private boolean mDeliveredData;
         private final Loader<D> mLoader;
@@ -176,7 +172,6 @@ public class LoaderManagerImpl extends LoaderManager {
         }
     }
 
-    /* loaded from: classes.dex */
     static class LoaderViewModel extends ViewModel {
         private static final ViewModelProvider.Factory FACTORY = new ViewModelProvider.Factory() { // from class: android.support.v4.app.LoaderManagerImpl.LoaderViewModel.1
             @Override // android.arch.lifecycle.ViewModelProvider.Factory
@@ -202,9 +197,8 @@ public class LoaderManagerImpl extends LoaderManager {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // android.arch.lifecycle.ViewModel
-        public void onCleared() {
+        protected void onCleared() {
             super.onCleared();
             int size = this.mLoaders.size();
             for (int index = 0; index < size; index++) {
@@ -232,8 +226,7 @@ public class LoaderManagerImpl extends LoaderManager {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public LoaderManagerImpl(LifecycleOwner lifecycleOwner, ViewModelStore viewModelStore) {
+    LoaderManagerImpl(LifecycleOwner lifecycleOwner, ViewModelStore viewModelStore) {
         this.mLifecycleOwner = lifecycleOwner;
         this.mLoaderViewModel = LoaderViewModel.getInstance(viewModelStore);
     }

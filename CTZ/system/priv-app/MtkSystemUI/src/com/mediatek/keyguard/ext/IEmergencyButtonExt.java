@@ -2,6 +2,7 @@ package com.mediatek.keyguard.ext;
 
 import android.content.Intent;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public interface IEmergencyButtonExt {
     void customizeEmergencyIntent(Intent intent, int i);

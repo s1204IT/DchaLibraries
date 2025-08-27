@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.leak.RotationUtils;
+
 /* loaded from: classes.dex */
 public class HardwareUiLayout extends FrameLayout implements TunerService.Tunable {
     private Animator mAnimator;
@@ -40,7 +41,7 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
         this.mSwapOrientation = true;
         this.mInsetsListener = new ViewTreeObserver.OnComputeInternalInsetsListener() { // from class: com.android.systemui.-$$Lambda$HardwareUiLayout$Wopid983i_OFN_0DzaqL8EnwZHc
             public final void onComputeInternalInsets(ViewTreeObserver.InternalInsetsInfo internalInsetsInfo) {
-                HardwareUiLayout.lambda$new$5(HardwareUiLayout.this, internalInsetsInfo);
+                HardwareUiLayout.lambda$new$5(this.f$0, internalInsetsInfo);
             }
         };
         updateSettings();
@@ -107,7 +108,7 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
                 this.mChild.addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // from class: com.android.systemui.-$$Lambda$HardwareUiLayout$iXisPfYv_BRDXTMSPDe1D5AA0Wo
                     @Override // android.view.View.OnLayoutChangeListener
                     public final void onLayoutChange(View view, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10) {
-                        HardwareUiLayout.this.updatePosition();
+                        this.f$0.updatePosition();
                     }
                 });
                 updateRotation();
@@ -122,7 +123,7 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
         post(new Runnable() { // from class: com.android.systemui.-$$Lambda$HardwareUiLayout$zQ_qVVlFo_33izIMpEk2X8p8Su8
             @Override // java.lang.Runnable
             public final void run() {
-                HardwareUiLayout.this.updatePosition();
+                this.f$0.updatePosition();
             }
         });
     }
@@ -161,8 +162,11 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
                     linearLayout.setOrientation(0);
                 }
                 swapDimens(this.mChild);
+                return;
             }
-        } else if (this.mChild instanceof LinearLayout) {
+            return;
+        }
+        if (this.mChild instanceof LinearLayout) {
             this.mRotatedBackground = false;
             this.mBackground.setRotatedBackground(false);
             LinearLayout linearLayout2 = (LinearLayout) this.mChild;
@@ -192,16 +196,16 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
 
     private int rotateGravityRight(int i) {
         int absoluteGravity = Gravity.getAbsoluteGravity(i, getLayoutDirection());
-        int i2 = i & 112;
+        int i2 = i & com.android.systemui.plugins.R.styleable.AppCompatTheme_windowActionBarOverlay;
         int i3 = absoluteGravity & 7;
         int i4 = i3 != 1 ? i3 != 5 ? 48 : 80 : 16;
-        if (i2 != 16) {
-            if (i2 == 80) {
-                return i4 | 3;
-            }
-            return i4 | 5;
+        if (i2 == 16) {
+            return i4 | 1;
         }
-        return i4 | 1;
+        if (i2 == 80) {
+            return i4 | 3;
+        }
+        return i4 | 5;
     }
 
     private void rotateLeft() {
@@ -218,16 +222,16 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
             i = 8388659;
         }
         int absoluteGravity = Gravity.getAbsoluteGravity(i, getLayoutDirection());
-        int i2 = i & 112;
+        int i2 = i & com.android.systemui.plugins.R.styleable.AppCompatTheme_windowActionBarOverlay;
         int i3 = absoluteGravity & 7;
         int i4 = i3 != 1 ? i3 != 5 ? 80 : 48 : 16;
-        if (i2 != 16) {
-            if (i2 == 80) {
-                return i4 | 5;
-            }
-            return i4 | 3;
+        if (i2 == 16) {
+            return i4 | 1;
         }
-        return i4 | 1;
+        if (i2 == 80) {
+            return i4 | 5;
+        }
+        return i4 | 3;
     }
 
     private void rotateLeft(View view) {
@@ -250,7 +254,7 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
         post(new Runnable() { // from class: com.android.systemui.-$$Lambda$HardwareUiLayout$cC2d-RGmOoAkRlNqsTu1n43qy3A
             @Override // java.lang.Runnable
             public final void run() {
-                HardwareUiLayout.this.updatePosition();
+                this.f$0.updatePosition();
             }
         });
     }
@@ -264,15 +268,14 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
             this.mDivision.addOnLayoutChangeListener(new View.OnLayoutChangeListener() { // from class: com.android.systemui.-$$Lambda$HardwareUiLayout$2j9eMBfPQJX3xgwLvM_hUGNd8jc
                 @Override // android.view.View.OnLayoutChangeListener
                 public final void onLayoutChange(View view2, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
-                    HardwareUiLayout.this.updatePosition();
+                    this.f$0.updatePosition();
                 }
             });
         }
         updatePosition();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePosition() {
+    private void updatePosition() {
         if (this.mChild == null) {
             return;
         }
@@ -299,8 +302,9 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
         if (this.mAnimator != null) {
             if (this.mEndPoint == i) {
                 return;
+            } else {
+                this.mAnimator.cancel();
             }
-            this.mAnimator.cancel();
         }
         this.mEndPoint = i;
         this.mAnimator = ObjectAnimator.ofInt(this.mBackground, "cutPoint", cutPoint, i);
@@ -337,9 +341,9 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
     public static /* synthetic */ void lambda$new$5(HardwareUiLayout hardwareUiLayout, ViewTreeObserver.InternalInsetsInfo internalInsetsInfo) {
         if (hardwareUiLayout.mHasOutsideTouch || hardwareUiLayout.mChild == null) {
             internalInsetsInfo.setTouchableInsets(0);
-            return;
+        } else {
+            internalInsetsInfo.setTouchableInsets(1);
+            internalInsetsInfo.contentInsets.set(hardwareUiLayout.mChild.getLeft(), hardwareUiLayout.mChild.getTop(), 0, hardwareUiLayout.getBottom() - hardwareUiLayout.mChild.getBottom());
         }
-        internalInsetsInfo.setTouchableInsets(1);
-        internalInsetsInfo.contentInsets.set(hardwareUiLayout.mChild.getLeft(), hardwareUiLayout.mChild.getTop(), 0, hardwareUiLayout.getBottom() - hardwareUiLayout.mChild.getBottom());
     }
 }

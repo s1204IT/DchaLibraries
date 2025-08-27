@@ -3,6 +3,7 @@ package com.android.settings.bluetooth;
 import android.app.Activity;
 import android.os.Bundle;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public final class DevicePickerActivity extends Activity {
     @Override // android.app.Activity

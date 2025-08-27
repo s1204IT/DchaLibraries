@@ -9,6 +9,7 @@ import android.util.Log;
 import com.android.settings.R;
 import com.android.settings.Utils;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ProcStatsPackageEntry implements Parcelable {
     long mAvgBgMem;
@@ -26,12 +27,14 @@ public class ProcStatsPackageEntry implements Parcelable {
     private long mWindowLength;
     private static boolean DEBUG = false;
     public static final Parcelable.Creator<ProcStatsPackageEntry> CREATOR = new Parcelable.Creator<ProcStatsPackageEntry>() { // from class: com.android.settings.applications.ProcStatsPackageEntry.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ProcStatsPackageEntry createFromParcel(Parcel parcel) {
             return new ProcStatsPackageEntry(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public ProcStatsPackageEntry[] newArray(int i) {

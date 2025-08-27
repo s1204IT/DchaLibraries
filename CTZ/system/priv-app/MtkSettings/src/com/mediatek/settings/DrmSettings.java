@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class DrmSettings extends SettingsPreferenceFragment {
     private static DrmManagerClient sClient;
@@ -28,9 +29,8 @@ public class DrmSettings extends SettingsPreferenceFragment {
         return 81;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsPreferenceFragment
-    public void showDialog(int i) {
+    protected void showDialog(int i) {
         if (this.mDialogFragment != null) {
             Log.e("DrmSettings", "Old dialog fragment not null!");
         }
@@ -55,15 +55,15 @@ public class DrmSettings extends SettingsPreferenceFragment {
         }
         builder.setMessage(getResources().getString(R.string.drm_reset_dialog_msg));
         builder.setTitle(getResources().getString(R.string.drm_settings_title));
-        builder.setIcon(17301543);
-        builder.setPositiveButton(17039370, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.DrmSettings.1
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // from class: com.mediatek.settings.DrmSettings.1
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i2) {
                 if (DrmSettings.sClient != null) {
-                    int removeAllRights = DrmSettings.sClient.removeAllRights();
+                    int iRemoveAllRights = DrmSettings.sClient.removeAllRights();
                     DrmManagerClient unused = DrmSettings.sClient;
-                    if (removeAllRights == 0) {
-                        Toast.makeText(DrmSettings.this.mContext, (int) R.string.drm_reset_toast_msg, 0).show();
+                    if (iRemoveAllRights == 0) {
+                        Toast.makeText(DrmSettings.this.mContext, R.string.drm_reset_toast_msg, 0).show();
                         DrmSettings.sPreferenceReset.setEnabled(false);
                     } else {
                         Log.d("DrmSettings", "removeAllRights fail!");
@@ -72,7 +72,7 @@ public class DrmSettings extends SettingsPreferenceFragment {
                 }
             }
         });
-        builder.setNegativeButton(17039360, (DialogInterface.OnClickListener) null);
+        builder.setNegativeButton(android.R.string.cancel, (DialogInterface.OnClickListener) null);
         return builder.create();
     }
 

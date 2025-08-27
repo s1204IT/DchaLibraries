@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class WifiConfigController implements TextWatcher, View.OnClickListener, View.OnKeyListener, AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
     private final AccessPoint mAccessPoint;
@@ -87,10 +88,10 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
     private ProxyInfo mHttpProxy = null;
     private StaticIpConfiguration mStaticIpConfiguration = null;
 
-    public WifiConfigController(NetworkSettingActivity networkSettingActivity, WifiConfigUiBase wifiConfigUiBase, View view, AccessPoint accessPoint, int i) {
+    public WifiConfigController(NetworkSettingActivity networkSettingActivity, WifiConfigUiBase wifiConfigUiBase, View view, AccessPoint accessPoint, int i) throws Resources.NotFoundException {
         boolean z;
         String str;
-        String str2 = null;
+        String string = null;
         Logger.d("WifiConfigController", "WifiConfigController 0001");
         this.mConfigUi = wifiConfigUiBase;
         this.mView = view;
@@ -101,10 +102,10 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         this.mContext = this.mConfigUi.getContext();
         Resources resources = this.mContext.getResources();
         this.mLevels = resources.getStringArray(R.array.wifi_signal);
-        this.mPhase2PeapAdapter = new ArrayAdapter<>(this.mContext, 17367048, resources.getStringArray(R.array.wifi_peap_phase2_entries));
-        this.mPhase2PeapAdapter.setDropDownViewResource(17367049);
-        this.mPhase2FullAdapter = new ArrayAdapter<>(this.mContext, 17367048, resources.getStringArray(R.array.wifi_phase2_entries));
-        this.mPhase2FullAdapter.setDropDownViewResource(17367049);
+        this.mPhase2PeapAdapter = new ArrayAdapter<>(this.mContext, android.R.layout.simple_spinner_item, resources.getStringArray(R.array.wifi_peap_phase2_entries));
+        this.mPhase2PeapAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        this.mPhase2FullAdapter = new ArrayAdapter<>(this.mContext, android.R.layout.simple_spinner_item, resources.getStringArray(R.array.wifi_phase2_entries));
+        this.mPhase2FullAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.mUnspecifiedCertString = this.mContext.getString(R.string.wifi_unspecified);
         this.mMultipleCertSetString = this.mContext.getString(R.string.wifi_multiple_cert_added);
         this.mUseSystemCertsString = this.mContext.getString(R.string.wifi_use_system_certs);
@@ -204,7 +205,7 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
             }
             if (detailedState != null) {
                 Logger.d("WifiConfigController", "WifiConfigController 0018");
-                boolean isEphemeral = this.mAccessPoint.isEphemeral();
+                boolean zIsEphemeral = this.mAccessPoint.isEphemeral();
                 WifiConfiguration config2 = this.mAccessPoint.getConfig();
                 if (config2 != null && config2.isPasspoint()) {
                     Logger.d("WifiConfigController", "WifiConfigController 0019");
@@ -212,7 +213,7 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 } else {
                     str = null;
                 }
-                addRow(viewGroup, R.string.wifi_status, AccessPoint.getSummary(this.mConfigUi.getContext(), detailedState, isEphemeral, str));
+                addRow(viewGroup, R.string.wifi_status, AccessPoint.getSummary(this.mConfigUi.getContext(), detailedState, zIsEphemeral, str));
             }
             if (signalString != null) {
                 Logger.d("WifiConfigController", "WifiConfigController 0020");
@@ -228,17 +229,17 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 int frequency = info.getFrequency();
                 if (frequency >= 2400 && frequency < 2500) {
                     Logger.d("WifiConfigController", "WifiConfigController 0023");
-                    str2 = resources.getString(R.string.wifi_band_24ghz);
+                    string = resources.getString(R.string.wifi_band_24ghz);
                 } else if (frequency >= 4900 && frequency < 5900) {
                     Logger.d("WifiConfigController", "WifiConfigController 0024");
-                    str2 = resources.getString(R.string.wifi_band_5ghz);
+                    string = resources.getString(R.string.wifi_band_5ghz);
                 } else {
                     Logger.d("WifiConfigController", "WifiConfigController 0025");
                     Logger.d("WifiConfigController", "Unexpected frequency " + frequency);
                 }
-                if (str2 != null) {
+                if (string != null) {
                     Logger.d("WifiConfigController", "WifiConfigController 0026");
-                    addRow(viewGroup, R.string.wifi_frequency, str2);
+                    addRow(viewGroup, R.string.wifi_frequency, string);
                 }
             }
             addRow(viewGroup, R.string.wifi_security, this.mAccessPoint.getSecurityString(false));
@@ -248,7 +249,6 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 this.mConfigUi.setForgetButton(resources.getString(R.string.wifi_forget));
             }
         }
-        UserManager userManager = (UserManager) this.mContext.getSystemService("user");
         if (!UserManager.isSplitSystemUser()) {
             Logger.d("WifiConfigController", "WifiConfigController 0027");
             this.mSharedCheckBox.setVisibility(8);
@@ -263,10 +263,10 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
 
     private void addRow(ViewGroup viewGroup, int i, String str) {
         Logger.d("WifiConfigController", "addRow 0001");
-        View inflate = this.mConfigUi.getLayoutInflater().inflate(R.layout.wifi_dialog_row, viewGroup, false);
-        ((TextView) inflate.findViewById(R.id.name)).setText(i);
-        ((TextView) inflate.findViewById(R.id.value)).setText(str);
-        viewGroup.addView(inflate);
+        View viewInflate = this.mConfigUi.getLayoutInflater().inflate(R.layout.wifi_dialog_row, viewGroup, false);
+        ((TextView) viewInflate.findViewById(R.id.name)).setText(i);
+        ((TextView) viewInflate.findViewById(R.id.value)).setText(str);
+        viewGroup.addView(viewInflate);
         Logger.d("WifiConfigController", "addRow 0002");
     }
 
@@ -279,32 +279,29 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         return this.mLevels[level];
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void hideForgetButton() {
+    void hideForgetButton() {
         Logger.d("WifiConfigController", "hideForgetButton 0001");
         Button forgetButton = this.mConfigUi.getForgetButton();
         if (forgetButton == null) {
             Logger.d("WifiConfigController", "hideForgetButton 0002");
-            return;
+        } else {
+            forgetButton.setVisibility(8);
+            Logger.d("WifiConfigController", "hideForgetButton 0003");
         }
-        forgetButton.setVisibility(8);
-        Logger.d("WifiConfigController", "hideForgetButton 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void hideSubmitButton() {
+    void hideSubmitButton() {
         Logger.d("WifiConfigController", "hideSubmitButton 0001");
         Button submitButton = this.mConfigUi.getSubmitButton();
         if (submitButton == null) {
             Logger.d("WifiConfigController", "hideSubmitButton 0002");
-            return;
+        } else {
+            submitButton.setVisibility(8);
+            Logger.d("WifiConfigController", "hideSubmitButton 0003");
         }
-        submitButton.setVisibility(8);
-        Logger.d("WifiConfigController", "hideSubmitButton 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setSubmitOrEnable() {
+    void setSubmitOrEnable() {
         boolean z;
         boolean z2;
         Logger.d("WifiConfigController", "setSubmitOrEnable 0001");
@@ -336,21 +333,20 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         Logger.d("WifiConfigController", "setSubmitOrEnable 0008");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void enableSubmitIfAppropriate() {
+    void enableSubmitIfAppropriate() {
         Logger.d("WifiConfigController", "enableSubmitIfAppropriate 0001");
         Button submitButton = this.mConfigUi.getSubmitButton();
         if (submitButton == null) {
             Logger.d("WifiConfigController", "enableSubmitIfAppropriate 0002");
-            return;
+        } else {
+            submitButton.setEnabled(isSubmittable());
+            Logger.d("WifiConfigController", "enableSubmitIfAppropriate 0003");
         }
-        submitButton.setEnabled(isSubmittable());
-        Logger.d("WifiConfigController", "enableSubmitIfAppropriate 0003");
     }
 
-    boolean isSubmittable() {
+    boolean isSubmittable() throws NumberFormatException {
         boolean z;
-        boolean ipAndProxyFieldsAreValid;
+        boolean zIpAndProxyFieldsAreValid;
         Logger.d("WifiConfigController", "isSubmittable 0001");
         if (this.mPasswordView == null || (!(this.mAccessPointSecurity == 1 && this.mPasswordView.length() == 0) && (this.mAccessPointSecurity != 2 || this.mPasswordView.length() >= 8))) {
             z = false;
@@ -360,29 +356,29 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         }
         if ((this.mSsidView != null && this.mSsidView.length() == 0) || ((this.mAccessPoint == null || !this.mAccessPoint.isSaved()) && z)) {
             Logger.d("WifiConfigController", "isSubmittable 0003");
-            ipAndProxyFieldsAreValid = false;
+            zIpAndProxyFieldsAreValid = false;
         } else {
             Logger.d("WifiConfigController", "isSubmittable 0004");
-            ipAndProxyFieldsAreValid = ipAndProxyFieldsAreValid();
+            zIpAndProxyFieldsAreValid = ipAndProxyFieldsAreValid();
         }
         if (this.mEapCaCertSpinner != null && this.mView.findViewById(R.id.l_ca_cert).getVisibility() != 8) {
             Logger.d("WifiConfigController", "isSubmittable 0005");
             String str = (String) this.mEapCaCertSpinner.getSelectedItem();
             if (str.equals(this.mUnspecifiedCertString)) {
                 Logger.d("WifiConfigController", "isSubmittable 0006");
-                ipAndProxyFieldsAreValid = false;
+                zIpAndProxyFieldsAreValid = false;
             }
             if (str.equals(this.mUseSystemCertsString) && this.mEapDomainView != null && this.mView.findViewById(R.id.l_domain).getVisibility() != 8 && TextUtils.isEmpty(this.mEapDomainView.getText().toString())) {
                 Logger.d("WifiConfigController", "isSubmittable 0007");
-                ipAndProxyFieldsAreValid = false;
+                zIpAndProxyFieldsAreValid = false;
             }
         }
         if (this.mEapUserCertSpinner != null && this.mView.findViewById(R.id.l_user_cert).getVisibility() != 8 && ((String) this.mEapUserCertSpinner.getSelectedItem()).equals(this.mUnspecifiedCertString)) {
             Logger.d("WifiConfigController", "isSubmittable 0008");
-            ipAndProxyFieldsAreValid = false;
+            zIpAndProxyFieldsAreValid = false;
         }
         Logger.d("WifiConfigController", "isSubmittable 0009");
-        return ipAndProxyFieldsAreValid;
+        return zIpAndProxyFieldsAreValid;
     }
 
     void showWarningMessagesIfAppropriate() {
@@ -404,8 +400,7 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         Logger.d("WifiConfigController", "showWarningMessagesIfAppropriate 0005");
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public WifiConfiguration getConfig() {
+    WifiConfiguration getConfig() {
         Logger.d("WifiConfigController", "getConfig 0001");
         if (this.mMode == 0) {
             Logger.d("WifiConfigController", "getConfig 0002");
@@ -437,15 +432,14 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 if (this.mPasswordView.length() != 0) {
                     Logger.d("WifiConfigController", "getConfig 0008");
                     int length = this.mPasswordView.length();
-                    String charSequence = this.mPasswordView.getText().toString();
-                    if ((length == 10 || length == 26 || length == 58) && charSequence.matches("[0-9A-Fa-f]*")) {
+                    String string = this.mPasswordView.getText().toString();
+                    if ((length == 10 || length == 26 || length == 58) && string.matches("[0-9A-Fa-f]*")) {
                         Logger.d("WifiConfigController", "getConfig 0009");
-                        wifiConfiguration.wepKeys[0] = charSequence;
+                        wifiConfiguration.wepKeys[0] = string;
                         break;
                     } else {
                         Logger.d("WifiConfigController", "getConfig 0010");
-                        String[] strArr = wifiConfiguration.wepKeys;
-                        strArr[0] = '\"' + charSequence + '\"';
+                        wifiConfiguration.wepKeys[0] = '\"' + string + '\"';
                         break;
                     }
                 }
@@ -455,14 +449,14 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 wifiConfiguration.allowedKeyManagement.set(1);
                 if (this.mPasswordView.length() != 0) {
                     Logger.d("WifiConfigController", "getConfig 0012");
-                    String charSequence2 = this.mPasswordView.getText().toString();
-                    if (charSequence2.matches("[0-9A-Fa-f]{64}")) {
+                    String string2 = this.mPasswordView.getText().toString();
+                    if (string2.matches("[0-9A-Fa-f]{64}")) {
                         Logger.d("WifiConfigController", "getConfig 0013");
-                        wifiConfiguration.preSharedKey = charSequence2;
+                        wifiConfiguration.preSharedKey = string2;
                         break;
                     } else {
                         Logger.d("WifiConfigController", "getConfig 0014");
-                        wifiConfiguration.preSharedKey = '\"' + charSequence2 + '\"';
+                        wifiConfiguration.preSharedKey = '\"' + string2 + '\"';
                         break;
                     }
                 }
@@ -567,15 +561,15 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         return wifiConfiguration;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:28:0x00ba  */
-    /* JADX WARN: Removed duplicated region for block: B:29:0x00cd  */
+    /* JADX WARN: Removed duplicated region for block: B:77:0x00ba  */
+    /* JADX WARN: Removed duplicated region for block: B:78:0x00cd  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private boolean ipAndProxyFieldsAreValid() {
+    private boolean ipAndProxyFieldsAreValid() throws NumberFormatException {
         IpConfiguration.IpAssignment ipAssignment;
         int i;
-        int i2;
+        int iValidate;
         Logger.d("WifiConfigController", "ipAndProxyFieldsAreValid 0001");
         if (this.mIpSettingsSpinner != null && this.mIpSettingsSpinner.getSelectedItemPosition() == 1) {
             ipAssignment = IpConfiguration.IpAssignment.STATIC;
@@ -597,28 +591,28 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         if (selectedItemPosition == 1 && this.mProxyHostView != null) {
             Logger.d("WifiConfigController", "ipAndProxyFieldsAreValid 0004");
             this.mProxySettings = IpConfiguration.ProxySettings.STATIC;
-            String charSequence = this.mProxyHostView.getText().toString();
-            String charSequence2 = this.mProxyPortView.getText().toString();
-            String charSequence3 = this.mProxyExclusionListView.getText().toString();
+            String string = this.mProxyHostView.getText().toString();
+            String string2 = this.mProxyPortView.getText().toString();
+            String string3 = this.mProxyExclusionListView.getText().toString();
             try {
-                i = Integer.parseInt(charSequence2);
-                try {
-                    i2 = validate(charSequence, charSequence2, charSequence3);
-                } catch (NumberFormatException e) {
-                    e = e;
-                    Logger.d("WifiConfigController", "ipAndProxyFieldsAreValid 0005");
-                    Logger.e("WifiConfigController", "NumberFormatException", e);
-                    i2 = R.string.proxy_error_invalid_port;
-                    if (i2 != 0) {
-                    }
-                }
-            } catch (NumberFormatException e2) {
-                e = e2;
+                i = Integer.parseInt(string2);
+            } catch (NumberFormatException e) {
+                e = e;
                 i = 0;
             }
-            if (i2 != 0) {
+            try {
+                iValidate = validate(string, string2, string3);
+            } catch (NumberFormatException e2) {
+                e = e2;
+                Logger.d("WifiConfigController", "ipAndProxyFieldsAreValid 0005");
+                Logger.e("WifiConfigController", "NumberFormatException", e);
+                iValidate = R.string.proxy_error_invalid_port;
+                if (iValidate != 0) {
+                }
+            }
+            if (iValidate != 0) {
                 Logger.d("WifiConfigController", "ipAndProxyFieldsAreValid 0006");
-                this.mHttpProxy = new ProxyInfo(charSequence, i, charSequence3);
+                this.mHttpProxy = new ProxyInfo(string, i, string3);
             } else {
                 Logger.d("WifiConfigController", "ipAndProxyFieldsAreValid 0007");
                 return false;
@@ -631,26 +625,26 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 Logger.d("WifiConfigController", "ipAndProxyFieldsAreValid 0009");
                 return false;
             }
-            Uri parse = Uri.parse(text.toString());
-            if (parse == null) {
+            Uri uri = Uri.parse(text.toString());
+            if (uri == null) {
                 Logger.d("WifiConfigController", "ipAndProxyFieldsAreValid 0010");
                 return false;
             }
-            this.mHttpProxy = new ProxyInfo(parse);
+            this.mHttpProxy = new ProxyInfo(uri);
         }
         Logger.d("WifiConfigController", "ipAndProxyFieldsAreValid 0011");
         return true;
     }
 
-    public static int validate(String str, String str2, String str3) {
+    public static int validate(String str, String str2, String str3) throws NumberFormatException {
         Logger.d("WifiConfigController", "validate 0001");
         Matcher matcher = HOSTNAME_PATTERN.matcher(str);
-        String[] split = str3.split(",");
+        String[] strArrSplit = str3.split(",");
         if (!matcher.matches()) {
             Logger.d("WifiConfigController", "validate 0002");
             return R.string.proxy_error_invalid_host;
         }
-        for (String str4 : split) {
+        for (String str4 : strArrSplit) {
             Logger.d("WifiConfigController", "validate 0003");
             if (!EXCLUSION_PATTERN.matcher(str4).matches()) {
                 Logger.d("WifiConfigController", "validate 0004");
@@ -668,8 +662,8 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 return R.string.proxy_error_empty_host_set_port;
             }
             try {
-                int parseInt = Integer.parseInt(str2);
-                if (parseInt <= 0 || parseInt > 65535) {
+                int i = Integer.parseInt(str2);
+                if (i <= 0 || i > 65535) {
                     Logger.d("WifiConfigController", "validate 0009");
                     return R.string.proxy_error_invalid_port;
                 }
@@ -693,69 +687,69 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         }
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:31:0x00c5  */
-    /* JADX WARN: Removed duplicated region for block: B:39:0x011e  */
-    /* JADX WARN: Removed duplicated region for block: B:50:0x0166  */
-    /* JADX WARN: Removed duplicated region for block: B:51:0x0184  */
-    /* JADX WARN: Removed duplicated region for block: B:58:0x01ae  */
+    /* JADX WARN: Removed duplicated region for block: B:103:0x00c5  */
+    /* JADX WARN: Removed duplicated region for block: B:111:0x011e  */
+    /* JADX WARN: Removed duplicated region for block: B:122:0x0166  */
+    /* JADX WARN: Removed duplicated region for block: B:123:0x0184  */
+    /* JADX WARN: Removed duplicated region for block: B:130:0x01ae  */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private int validateIpConfigFields(StaticIpConfiguration staticIpConfiguration) {
-        String charSequence;
-        String charSequence2;
-        int parseInt;
+    private int validateIpConfigFields(StaticIpConfiguration staticIpConfiguration) throws NumberFormatException {
+        String string;
+        String string2;
+        int i;
         Logger.d("WifiConfigController", "validateIpConfigFields 0001");
         if (this.mIpAddressView == null) {
             Logger.d("WifiConfigController", "validateIpConfigFields 0002");
             return 0;
         }
-        String charSequence3 = this.mIpAddressView.getText().toString();
-        if (TextUtils.isEmpty(charSequence3)) {
+        String string3 = this.mIpAddressView.getText().toString();
+        if (TextUtils.isEmpty(string3)) {
             Logger.d("WifiConfigController", "validateIpConfigFields 0003");
             return R.string.wifi_ip_settings_invalid_ip_address;
         }
-        Inet4Address iPv4Address = getIPv4Address(charSequence3);
+        Inet4Address iPv4Address = getIPv4Address(string3);
         if (iPv4Address == null || iPv4Address.isAnyLocalAddress()) {
             Logger.d("WifiConfigController", "validateIpConfigFields 0004");
             return R.string.wifi_ip_settings_invalid_ip_address;
         }
-        int i = -1;
+        int i2 = -1;
         try {
             Logger.d("WifiConfigController", "validateIpConfigFields 0005");
-            parseInt = Integer.parseInt(this.mNetworkPrefixLengthView.getText().toString());
-            try {
-            } catch (NumberFormatException e) {
-                e = e;
-                i = parseInt;
-                Logger.d("WifiConfigController", "validateIpConfigFields 0007");
-                Logger.e("WifiConfigController", "NumberFormatException", e);
-                this.mNetworkPrefixLengthView.setText(this.mConfigUi.getContext().getString(R.string.wifi_network_prefix_length_hint));
-                charSequence = this.mGatewayView.getText().toString();
-                if (!TextUtils.isEmpty(charSequence)) {
-                }
-                charSequence2 = this.mDns1View.getText().toString();
-                if (!TextUtils.isEmpty(charSequence2)) {
-                }
-                if (this.mDns2View.length() > 0) {
-                }
-                Logger.d("WifiConfigController", "validateIpConfigFields 0019");
-                return 0;
-            }
+            i = Integer.parseInt(this.mNetworkPrefixLengthView.getText().toString());
+        } catch (NumberFormatException e) {
+            e = e;
+        }
+        try {
         } catch (NumberFormatException e2) {
             e = e2;
+            i2 = i;
+            Logger.d("WifiConfigController", "validateIpConfigFields 0007");
+            Logger.e("WifiConfigController", "NumberFormatException", e);
+            this.mNetworkPrefixLengthView.setText(this.mConfigUi.getContext().getString(R.string.wifi_network_prefix_length_hint));
+            string = this.mGatewayView.getText().toString();
+            if (!TextUtils.isEmpty(string)) {
+            }
+            string2 = this.mDns1View.getText().toString();
+            if (!TextUtils.isEmpty(string2)) {
+            }
+            if (this.mDns2View.length() > 0) {
+            }
+            Logger.d("WifiConfigController", "validateIpConfigFields 0019");
+            return 0;
         }
-        if (parseInt < 0 || parseInt > 32) {
+        if (i < 0 || i > 32) {
             Logger.d("WifiConfigController", "validateIpConfigFields 0006");
             return R.string.wifi_ip_settings_invalid_network_prefix_length;
         }
-        staticIpConfiguration.ipAddress = new LinkAddress(iPv4Address, parseInt);
-        i = parseInt;
-        charSequence = this.mGatewayView.getText().toString();
-        if (!TextUtils.isEmpty(charSequence)) {
+        staticIpConfiguration.ipAddress = new LinkAddress(iPv4Address, i);
+        i2 = i;
+        string = this.mGatewayView.getText().toString();
+        if (!TextUtils.isEmpty(string)) {
             Logger.d("WifiConfigController", "validateIpConfigFields 0008");
             try {
-                byte[] address = NetworkUtils.getNetworkPart(iPv4Address, i).getAddress();
+                byte[] address = NetworkUtils.getNetworkPart(iPv4Address, i2).getAddress();
                 address[address.length - 1] = 1;
                 this.mGatewayView.setText(InetAddress.getByAddress(address).getHostAddress());
             } catch (RuntimeException e3) {
@@ -767,24 +761,24 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
             }
         } else {
             Logger.d("WifiConfigController", "validateIpConfigFields 0011");
-            Inet4Address iPv4Address2 = getIPv4Address(charSequence);
+            Inet4Address iPv4Address2 = getIPv4Address(string);
             if (iPv4Address2 == null) {
                 Logger.d("WifiConfigController", "validateIpConfigFields 0012");
                 return R.string.wifi_ip_settings_invalid_gateway;
-            } else if (iPv4Address2.isMulticastAddress()) {
+            }
+            if (iPv4Address2.isMulticastAddress()) {
                 Logger.d("WifiConfigController", "validateIpConfigFields 0013");
                 return R.string.wifi_ip_settings_invalid_gateway;
-            } else {
-                staticIpConfiguration.gateway = iPv4Address2;
             }
+            staticIpConfiguration.gateway = iPv4Address2;
         }
-        charSequence2 = this.mDns1View.getText().toString();
-        if (!TextUtils.isEmpty(charSequence2)) {
+        string2 = this.mDns1View.getText().toString();
+        if (!TextUtils.isEmpty(string2)) {
             Logger.d("WifiConfigController", "validateIpConfigFields 0014");
             this.mDns1View.setText(this.mConfigUi.getContext().getString(R.string.wifi_dns1_hint));
         } else {
             Logger.d("WifiConfigController", "validateIpConfigFields 0015");
-            Inet4Address iPv4Address3 = getIPv4Address(charSequence2);
+            Inet4Address iPv4Address3 = getIPv4Address(string2);
             if (iPv4Address3 == null) {
                 Logger.d("WifiConfigController", "validateIpConfigFields 0016");
                 return R.string.wifi_ip_settings_invalid_dns;
@@ -839,10 +833,10 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
             Logger.d("WifiConfigController", "showSecurityFields 0006");
             this.mEapMethodSpinner = (Spinner) this.mView.findViewById(R.id.method);
             this.mEapMethodSpinner.setOnItemSelectedListener(this);
-            if (isWifiOnly(this.mContext) || !this.mContext.getResources().getBoolean(17956946)) {
+            if (isWifiOnly(this.mContext) || !this.mContext.getResources().getBoolean(android.R.^attr-private.dotActivatedColor)) {
                 Logger.d("WifiConfigController", "showSecurityFields 0007");
-                ArrayAdapter arrayAdapter = new ArrayAdapter(this.mContext, 17367048, this.mContext.getResources().getStringArray(R.array.eap_method_without_sim_auth));
-                arrayAdapter.setDropDownViewResource(17367049);
+                ArrayAdapter arrayAdapter = new ArrayAdapter(this.mContext, android.R.layout.simple_spinner_item, this.mContext.getResources().getStringArray(R.array.eap_method_without_sim_auth));
+                arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 this.mEapMethodSpinner.setAdapter((SpinnerAdapter) arrayAdapter);
             }
             this.mPhase2Spinner = (Spinner) this.mView.findViewById(R.id.phase2);
@@ -1050,14 +1044,14 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
     }
 
     private void showIpConfigFields() {
-        WifiConfiguration wifiConfiguration;
+        WifiConfiguration config;
         Logger.d("WifiConfigController", "showIpConfigFields 0001");
         this.mView.findViewById(R.id.ip_fields).setVisibility(0);
         if (this.mAccessPoint != null && this.mAccessPoint.isSaved()) {
             Logger.d("WifiConfigController", "showIpConfigFields 0002");
-            wifiConfiguration = this.mAccessPoint.getConfig();
+            config = this.mAccessPoint.getConfig();
         } else {
-            wifiConfiguration = null;
+            config = null;
         }
         if (this.mIpSettingsSpinner.getSelectedItemPosition() == 1) {
             Logger.d("WifiConfigController", "showIpConfigFields 0003");
@@ -1075,9 +1069,9 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 this.mDns2View = (TextView) this.mView.findViewById(R.id.dns2);
                 this.mDns2View.addTextChangedListener(this);
             }
-            if (wifiConfiguration != null) {
+            if (config != null) {
                 Logger.d("WifiConfigController", "showIpConfigFields 0005");
-                StaticIpConfiguration staticIpConfiguration = wifiConfiguration.getStaticIpConfiguration();
+                StaticIpConfiguration staticIpConfiguration = config.getStaticIpConfiguration();
                 if (staticIpConfiguration != null) {
                     Logger.d("WifiConfigController", "showIpConfigFields 0006");
                     if (staticIpConfiguration.ipAddress != null) {
@@ -1108,14 +1102,14 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
     }
 
     private void showProxyFields() {
-        WifiConfiguration wifiConfiguration;
+        WifiConfiguration config;
         Logger.d("WifiConfigController", "showProxyFields 0001");
         this.mView.findViewById(R.id.proxy_settings_fields).setVisibility(0);
         if (this.mAccessPoint != null && this.mAccessPoint.isSaved()) {
             Logger.d("WifiConfigController", "showProxyFields 0002");
-            wifiConfiguration = this.mAccessPoint.getConfig();
+            config = this.mAccessPoint.getConfig();
         } else {
-            wifiConfiguration = null;
+            config = null;
         }
         if (this.mProxySettingsSpinner.getSelectedItemPosition() == 1) {
             Logger.d("WifiConfigController", "showProxyFields 0003");
@@ -1131,9 +1125,9 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 this.mProxyExclusionListView = (TextView) this.mView.findViewById(R.id.proxy_exclusionlist);
                 this.mProxyExclusionListView.addTextChangedListener(this);
             }
-            if (wifiConfiguration != null) {
+            if (config != null) {
                 Logger.d("WifiConfigController", "showProxyFields 0005");
-                ProxyInfo httpProxy = wifiConfiguration.getHttpProxy();
+                ProxyInfo httpProxy = config.getHttpProxy();
                 if (httpProxy != null) {
                     Logger.d("WifiConfigController", "showProxyFields 0006");
                     this.mProxyHostView.setText(httpProxy.getHost());
@@ -1151,9 +1145,9 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
                 this.mProxyPacView = (TextView) this.mView.findViewById(R.id.proxy_pac);
                 this.mProxyPacView.addTextChangedListener(this);
             }
-            if (wifiConfiguration != null) {
+            if (config != null) {
                 Logger.d("WifiConfigController", "showProxyFields 0009");
-                ProxyInfo httpProxy2 = wifiConfiguration.getHttpProxy();
+                ProxyInfo httpProxy2 = config.getHttpProxy();
                 if (httpProxy2 != null) {
                     Logger.d("WifiConfigController", "showProxyFields 0010");
                     this.mProxyPacView.setText(httpProxy2.getPacFileUrl().toString());
@@ -1168,9 +1162,9 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
     }
 
     private void setVisibility(int i, int i2) {
-        View findViewById = this.mView.findViewById(i);
-        if (findViewById != null) {
-            findViewById.setVisibility(i2);
+        View viewFindViewById = this.mView.findViewById(i);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(i2);
         }
     }
 
@@ -1189,8 +1183,8 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         }
         arrayList.addAll(Arrays.asList(KeyStore.getInstance().list(str, 1010)));
         arrayList.add(str2);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(context, 17367048, (String[]) arrayList.toArray(new String[arrayList.size()]));
-        arrayAdapter.setDropDownViewResource(17367049);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, (String[]) arrayList.toArray(new String[arrayList.size()]));
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter((SpinnerAdapter) arrayAdapter);
         Logger.d("WifiConfigController", "loadCertificates 0004");
     }
@@ -1223,10 +1217,25 @@ public class WifiConfigController implements TextWatcher, View.OnClickListener, 
         return this.mMode;
     }
 
+    /* renamed from: jp.co.benesse.dcha.systemsettings.WifiConfigController$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            Logger.d("WifiConfigController", "run 0001");
+            WifiConfigController.this.setSubmitOrEnable();
+        }
+    }
+
     @Override // android.text.TextWatcher
     public void afterTextChanged(Editable editable) {
         Logger.d("WifiConfigController", "afterTextChanged 0001");
         this.mTextViewChangedHandler.post(new Runnable() { // from class: jp.co.benesse.dcha.systemsettings.WifiConfigController.1
+            AnonymousClass1() {
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 Logger.d("WifiConfigController", "run 0001");

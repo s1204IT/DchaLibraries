@@ -7,6 +7,7 @@ import android.content.Context;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.notification.VolumeSeekBarPreference;
+
 /* loaded from: classes.dex */
 public abstract class VolumeSeekBarPreferenceController extends AdjustVolumeRestrictedPreferenceController implements LifecycleObserver {
     protected AudioHelper mHelper;

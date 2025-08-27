@@ -28,6 +28,7 @@ import com.android.systemui.pip.phone.PipMenuActivityController;
 import com.android.systemui.shared.system.InputConsumerController;
 import com.android.systemui.statusbar.FlingAnimationUtils;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class PipTouchHandler {
     private final AccessibilityManager mAccessibilityManager;
@@ -71,7 +72,7 @@ public class PipTouchHandler {
     };
     private ValueAnimator.AnimatorUpdateListener mUpdateScrimListener = new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.pip.phone.PipTouchHandler.2
         @Override // android.animation.ValueAnimator.AnimatorUpdateListener
-        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+        public void onAnimationUpdate(ValueAnimator valueAnimator) throws RemoteException {
             PipTouchHandler.this.updateDismissFraction();
         }
     };
@@ -84,7 +85,7 @@ public class PipTouchHandler {
         private final PointF mDelta = new PointF();
 
         @Override // com.android.systemui.pip.phone.PipTouchGesture
-        public void onDown(PipTouchState pipTouchState) {
+        public void onDown(PipTouchState pipTouchState) throws Resources.NotFoundException, RemoteException {
             if (pipTouchState.isUserInteracting()) {
                 Rect bounds = PipTouchHandler.this.mMotionHelper.getBounds();
                 this.mDelta.set(0.0f, 0.0f);
@@ -100,108 +101,109 @@ public class PipTouchHandler {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
+        /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [654=4] */
         @Override // com.android.systemui.pip.phone.PipTouchGesture
-        public boolean onMove(PipTouchState pipTouchState) {
-            if (pipTouchState.isUserInteracting()) {
-                if (pipTouchState.startedDragging()) {
-                    PipTouchHandler.this.mSavedSnapFraction = -1.0f;
-                    PipTouchHandler.this.mHandler.removeCallbacks(PipTouchHandler.this.mShowDismissAffordance);
-                    PipTouchHandler.this.mDismissViewController.showDismissTarget();
-                }
-                if (pipTouchState.isDragging()) {
-                    PointF lastTouchDelta = pipTouchState.getLastTouchDelta();
-                    float f = this.mStartPosition.x + this.mDelta.x;
-                    float f2 = this.mStartPosition.y + this.mDelta.y;
-                    pipTouchState.allowDraggingOffscreen();
-                    float max = Math.max(PipTouchHandler.this.mMovementBounds.left, Math.min(PipTouchHandler.this.mMovementBounds.right, lastTouchDelta.x + f));
-                    float max2 = Math.max(PipTouchHandler.this.mMovementBounds.top, lastTouchDelta.y + f2);
-                    this.mDelta.x += max - f;
-                    this.mDelta.y += max2 - f2;
-                    PipTouchHandler.this.mTmpBounds.set(PipTouchHandler.this.mMotionHelper.getBounds());
-                    PipTouchHandler.this.mTmpBounds.offsetTo((int) max, (int) max2);
-                    PipTouchHandler.this.mMotionHelper.movePip(PipTouchHandler.this.mTmpBounds);
-                    PipTouchHandler.this.updateDismissFraction();
-                    PointF lastTouchPosition = pipTouchState.getLastTouchPosition();
-                    if (PipTouchHandler.this.mMovementWithinMinimize) {
-                        PipTouchHandler.this.mMovementWithinMinimize = !this.mStartedOnLeft ? lastTouchPosition.x < ((float) PipTouchHandler.this.mMovementBounds.right) : lastTouchPosition.x > ((float) (PipTouchHandler.this.mMovementBounds.left + PipTouchHandler.this.mTmpBounds.width()));
-                    }
-                    if (PipTouchHandler.this.mMovementWithinDismiss) {
-                        PipTouchHandler.this.mMovementWithinDismiss = lastTouchPosition.y >= ((float) PipTouchHandler.this.mMovementBounds.bottom);
-                    }
-                    return true;
-                }
+        boolean onMove(PipTouchState pipTouchState) throws RemoteException {
+            if (!pipTouchState.isUserInteracting()) {
                 return false;
             }
-            return false;
+            if (pipTouchState.startedDragging()) {
+                PipTouchHandler.this.mSavedSnapFraction = -1.0f;
+                PipTouchHandler.this.mHandler.removeCallbacks(PipTouchHandler.this.mShowDismissAffordance);
+                PipTouchHandler.this.mDismissViewController.showDismissTarget();
+            }
+            if (!pipTouchState.isDragging()) {
+                return false;
+            }
+            PointF lastTouchDelta = pipTouchState.getLastTouchDelta();
+            float f = this.mStartPosition.x + this.mDelta.x;
+            float f2 = this.mStartPosition.y + this.mDelta.y;
+            float f3 = lastTouchDelta.x + f;
+            float f4 = lastTouchDelta.y + f2;
+            pipTouchState.allowDraggingOffscreen();
+            float fMax = Math.max(PipTouchHandler.this.mMovementBounds.left, Math.min(PipTouchHandler.this.mMovementBounds.right, f3));
+            float fMax2 = Math.max(PipTouchHandler.this.mMovementBounds.top, f4);
+            this.mDelta.x += fMax - f;
+            this.mDelta.y += fMax2 - f2;
+            PipTouchHandler.this.mTmpBounds.set(PipTouchHandler.this.mMotionHelper.getBounds());
+            PipTouchHandler.this.mTmpBounds.offsetTo((int) fMax, (int) fMax2);
+            PipTouchHandler.this.mMotionHelper.movePip(PipTouchHandler.this.mTmpBounds);
+            PipTouchHandler.this.updateDismissFraction();
+            PointF lastTouchPosition = pipTouchState.getLastTouchPosition();
+            if (PipTouchHandler.this.mMovementWithinMinimize) {
+                PipTouchHandler.this.mMovementWithinMinimize = !this.mStartedOnLeft ? lastTouchPosition.x < ((float) PipTouchHandler.this.mMovementBounds.right) : lastTouchPosition.x > ((float) (PipTouchHandler.this.mMovementBounds.left + PipTouchHandler.this.mTmpBounds.width()));
+            }
+            if (PipTouchHandler.this.mMovementWithinDismiss) {
+                PipTouchHandler.this.mMovementWithinDismiss = lastTouchPosition.y >= ((float) PipTouchHandler.this.mMovementBounds.bottom);
+            }
+            return true;
         }
 
         @Override // com.android.systemui.pip.phone.PipTouchGesture
-        public boolean onUp(PipTouchState pipTouchState) {
+        public boolean onUp(PipTouchState pipTouchState) throws RemoteException {
             AnimatorListenerAdapter animatorListenerAdapter;
             PipTouchHandler.this.cleanUpDismissTarget();
-            if (pipTouchState.isUserInteracting()) {
-                PointF velocity = pipTouchState.getVelocity();
-                boolean z = Math.abs(velocity.x) > Math.abs(velocity.y);
-                float length = PointF.length(velocity.x, velocity.y);
-                boolean z2 = length > PipTouchHandler.this.mFlingAnimationUtils.getMinVelocityPxPerSecond();
-                boolean z3 = z2 && velocity.y > 0.0f && !z && PipTouchHandler.this.mMovementWithinDismiss;
-                if (PipTouchHandler.this.mMotionHelper.shouldDismissPip() || z3) {
-                    MetricsLoggerWrapper.logPictureInPictureDismissByDrag(PipTouchHandler.this.mContext, PipUtils.getTopPinnedActivity(PipTouchHandler.this.mContext, PipTouchHandler.this.mActivityManager));
-                    PipTouchHandler.this.mMotionHelper.animateDismiss(PipTouchHandler.this.mMotionHelper.getBounds(), velocity.x, velocity.y, PipTouchHandler.this.mUpdateScrimListener);
-                    return true;
-                }
-                if (!pipTouchState.isDragging()) {
-                    if (PipTouchHandler.this.mIsMinimized) {
-                        PipTouchHandler.this.mMotionHelper.animateToClosestSnapTarget(PipTouchHandler.this.mMovementBounds, null, null);
-                        PipTouchHandler.this.setMinimizedStateInternal(false);
-                    } else if (PipTouchHandler.this.mMenuState != 2) {
-                        if (PipTouchHandler.this.mTouchState.isDoubleTap()) {
-                            PipTouchHandler.this.mMotionHelper.expandPip();
-                        } else if (PipTouchHandler.this.mTouchState.isWaitingForDoubleTap()) {
-                            PipTouchHandler.this.mTouchState.scheduleDoubleTapTimeoutCallback();
-                        } else {
-                            PipTouchHandler.this.mMenuController.showMenu(2, PipTouchHandler.this.mMotionHelper.getBounds(), PipTouchHandler.this.mMovementBounds, true, PipTouchHandler.this.willResizeMenu());
-                        }
-                    } else {
-                        PipTouchHandler.this.mMenuController.hideMenu();
-                        PipTouchHandler.this.mMotionHelper.expandPip();
-                    }
-                } else {
-                    if (z2 && z && PipTouchHandler.this.mMovementWithinMinimize) {
-                        if (this.mStartedOnLeft) {
-                            int i = (velocity.x > 0.0f ? 1 : (velocity.x == 0.0f ? 0 : -1));
-                        } else {
-                            int i2 = (velocity.x > 0.0f ? 1 : (velocity.x == 0.0f ? 0 : -1));
-                        }
-                    }
-                    if (PipTouchHandler.this.mIsMinimized) {
-                        PipTouchHandler.this.setMinimizedStateInternal(false);
-                    }
-                    if (PipTouchHandler.this.mMenuState != 0) {
-                        PipTouchHandler.this.mMenuController.showMenu(PipTouchHandler.this.mMenuState, PipTouchHandler.this.mMotionHelper.getBounds(), PipTouchHandler.this.mMovementBounds, true, PipTouchHandler.this.willResizeMenu());
-                        animatorListenerAdapter = null;
-                    } else {
-                        animatorListenerAdapter = new AnimatorListenerAdapter() { // from class: com.android.systemui.pip.phone.PipTouchHandler.3.1
-                            @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
-                            public void onAnimationEnd(Animator animator) {
-                                PipTouchHandler.this.mMenuController.hideMenu();
-                            }
-                        };
-                    }
-                    if (!z2) {
-                        PipTouchHandler.this.mMotionHelper.animateToClosestSnapTarget(PipTouchHandler.this.mMovementBounds, PipTouchHandler.this.mUpdateScrimListener, animatorListenerAdapter);
-                    } else {
-                        PipTouchHandler.this.mMotionHelper.flingToSnapTarget(length, velocity.x, velocity.y, PipTouchHandler.this.mMovementBounds, PipTouchHandler.this.mUpdateScrimListener, animatorListenerAdapter, this.mStartPosition);
-                    }
-                }
+            if (!pipTouchState.isUserInteracting()) {
+                return false;
+            }
+            PointF velocity = pipTouchState.getVelocity();
+            boolean z = Math.abs(velocity.x) > Math.abs(velocity.y);
+            float length = PointF.length(velocity.x, velocity.y);
+            boolean z2 = length > PipTouchHandler.this.mFlingAnimationUtils.getMinVelocityPxPerSecond();
+            boolean z3 = z2 && velocity.y > 0.0f && !z && PipTouchHandler.this.mMovementWithinDismiss;
+            if (PipTouchHandler.this.mMotionHelper.shouldDismissPip() || z3) {
+                MetricsLoggerWrapper.logPictureInPictureDismissByDrag(PipTouchHandler.this.mContext, PipUtils.getTopPinnedActivity(PipTouchHandler.this.mContext, PipTouchHandler.this.mActivityManager));
+                PipTouchHandler.this.mMotionHelper.animateDismiss(PipTouchHandler.this.mMotionHelper.getBounds(), velocity.x, velocity.y, PipTouchHandler.this.mUpdateScrimListener);
                 return true;
             }
-            return false;
+            if (!pipTouchState.isDragging()) {
+                if (PipTouchHandler.this.mIsMinimized) {
+                    PipTouchHandler.this.mMotionHelper.animateToClosestSnapTarget(PipTouchHandler.this.mMovementBounds, null, null);
+                    PipTouchHandler.this.setMinimizedStateInternal(false);
+                } else if (PipTouchHandler.this.mMenuState != 2) {
+                    if (PipTouchHandler.this.mTouchState.isDoubleTap()) {
+                        PipTouchHandler.this.mMotionHelper.expandPip();
+                    } else if (PipTouchHandler.this.mTouchState.isWaitingForDoubleTap()) {
+                        PipTouchHandler.this.mTouchState.scheduleDoubleTapTimeoutCallback();
+                    } else {
+                        PipTouchHandler.this.mMenuController.showMenu(2, PipTouchHandler.this.mMotionHelper.getBounds(), PipTouchHandler.this.mMovementBounds, true, PipTouchHandler.this.willResizeMenu());
+                    }
+                } else {
+                    PipTouchHandler.this.mMenuController.hideMenu();
+                    PipTouchHandler.this.mMotionHelper.expandPip();
+                }
+            } else {
+                if (z2 && z && PipTouchHandler.this.mMovementWithinMinimize) {
+                    if (this.mStartedOnLeft) {
+                        int i = (velocity.x > 0.0f ? 1 : (velocity.x == 0.0f ? 0 : -1));
+                    } else {
+                        int i2 = (velocity.x > 0.0f ? 1 : (velocity.x == 0.0f ? 0 : -1));
+                    }
+                }
+                if (PipTouchHandler.this.mIsMinimized) {
+                    PipTouchHandler.this.setMinimizedStateInternal(false);
+                }
+                if (PipTouchHandler.this.mMenuState != 0) {
+                    PipTouchHandler.this.mMenuController.showMenu(PipTouchHandler.this.mMenuState, PipTouchHandler.this.mMotionHelper.getBounds(), PipTouchHandler.this.mMovementBounds, true, PipTouchHandler.this.willResizeMenu());
+                    animatorListenerAdapter = null;
+                } else {
+                    animatorListenerAdapter = new AnimatorListenerAdapter() { // from class: com.android.systemui.pip.phone.PipTouchHandler.3.1
+                        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+                        public void onAnimationEnd(Animator animator) throws RemoteException {
+                            PipTouchHandler.this.mMenuController.hideMenu();
+                        }
+                    };
+                }
+                if (!z2) {
+                    PipTouchHandler.this.mMotionHelper.animateToClosestSnapTarget(PipTouchHandler.this.mMovementBounds, PipTouchHandler.this.mUpdateScrimListener, animatorListenerAdapter);
+                } else {
+                    PipTouchHandler.this.mMotionHelper.flingToSnapTarget(length, velocity.x, velocity.y, PipTouchHandler.this.mMovementBounds, PipTouchHandler.this.mUpdateScrimListener, animatorListenerAdapter, this.mStartPosition);
+                }
+            }
+            return true;
         }
     };
 
-    /* loaded from: classes.dex */
     private class PipMenuListener implements PipMenuActivityController.Listener {
         private PipMenuListener() {
         }
@@ -231,7 +233,7 @@ public class PipTouchHandler {
         }
 
         @Override // com.android.systemui.pip.phone.PipMenuActivityController.Listener
-        public void onPipShowMenu() {
+        public void onPipShowMenu() throws RemoteException {
             PipTouchHandler.this.mMenuController.showMenu(2, PipTouchHandler.this.mMotionHelper.getBounds(), PipTouchHandler.this.mMovementBounds, true, PipTouchHandler.this.willResizeMenu());
         }
     }
@@ -250,8 +252,9 @@ public class PipTouchHandler {
         this.mMotionHelper = new PipMotionHelper(this.mContext, this.mActivityManager, this.mMenuController, this.mSnapAlgorithm, this.mFlingAnimationUtils);
         this.mTouchState = new PipTouchState(this.mViewConfig, this.mHandler, new Runnable() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipTouchHandler$Uq5M9Md512Sfgd22VAeFpot25E0
             @Override // java.lang.Runnable
-            public final void run() {
-                r0.mMenuController.showMenu(2, r0.mMotionHelper.getBounds(), r0.mMovementBounds, true, PipTouchHandler.this.willResizeMenu());
+            public final void run() throws RemoteException {
+                PipTouchHandler pipTouchHandler = this.f$0;
+                pipTouchHandler.mMenuController.showMenu(2, pipTouchHandler.mMotionHelper.getBounds(), pipTouchHandler.mMovementBounds, true, pipTouchHandler.willResizeMenu());
             }
         });
         Resources resources = context.getResources();
@@ -260,15 +263,13 @@ public class PipTouchHandler {
         inputConsumerController.setTouchListener(new InputConsumerController.TouchListener() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipTouchHandler$6VeR24MB4-xnOTUaDMT0CXNQVjE
             @Override // com.android.systemui.shared.system.InputConsumerController.TouchListener
             public final boolean onTouchEvent(MotionEvent motionEvent) {
-                boolean handleTouchEvent;
-                handleTouchEvent = PipTouchHandler.this.handleTouchEvent(motionEvent);
-                return handleTouchEvent;
+                return this.f$0.handleTouchEvent(motionEvent);
             }
         });
         inputConsumerController.setRegistrationListener(new InputConsumerController.RegistrationListener() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipTouchHandler$NVpciZTELe-GnxXPZeY5rYMmqJQ
             @Override // com.android.systemui.shared.system.InputConsumerController.RegistrationListener
             public final void onRegistrationChanged(boolean z) {
-                PipTouchHandler.this.onRegistrationChanged(z);
+                this.f$0.onRegistrationChanged(z);
             }
         });
         onRegistrationChanged(inputConsumerController.isRegistered());
@@ -278,7 +279,7 @@ public class PipTouchHandler {
         this.mTouchState.setAllowTouches(z);
     }
 
-    public void showPictureInPictureMenu() {
+    public void showPictureInPictureMenu() throws RemoteException {
         if (!this.mTouchState.isUserInteracting()) {
             this.mMenuController.showMenu(2, this.mMotionHelper.getBounds(), this.mMovementBounds, false, willResizeMenu());
         }
@@ -295,7 +296,7 @@ public class PipTouchHandler {
         }
     }
 
-    public void onPinnedStackAnimationEnded() {
+    public void onPinnedStackAnimationEnded() throws RemoteException {
         this.mMotionHelper.synchronizePinnedStackBounds();
         if (this.mShowPipMenuOnAnimationEnd) {
             this.mMenuController.showMenu(1, this.mMotionHelper.getBounds(), this.mMovementBounds, true, false);
@@ -323,19 +324,18 @@ public class PipTouchHandler {
         this.mNormalBounds = rect2;
         Rect rect4 = new Rect();
         this.mSnapAlgorithm.getMovementBounds(this.mNormalBounds, rect, rect4, i2);
-        float width = rect2.width() / rect2.height();
         Point point = new Point();
         this.mContext.getDisplay().getRealSize(point);
-        Size sizeForAspectRatio = this.mSnapAlgorithm.getSizeForAspectRatio(width, this.mExpandedShortestEdgeSize, point.x, point.y);
+        Size sizeForAspectRatio = this.mSnapAlgorithm.getSizeForAspectRatio(rect2.width() / rect2.height(), this.mExpandedShortestEdgeSize, point.x, point.y);
         this.mExpandedBounds.set(0, 0, sizeForAspectRatio.getWidth(), sizeForAspectRatio.getHeight());
         Rect rect5 = new Rect();
         this.mSnapAlgorithm.getMovementBounds(this.mExpandedBounds, rect, rect5, i2);
         if ((z || z2) && !this.mTouchState.isUserInteracting()) {
-            int max = Math.max(this.mIsImeShowing ? this.mImeHeight + this.mImeOffset : 0, this.mIsShelfShowing ? this.mShelfHeight : 0);
+            int iMax = Math.max(this.mIsImeShowing ? this.mImeHeight + this.mImeOffset : 0, this.mIsShelfShowing ? this.mShelfHeight : 0);
             Rect rect6 = new Rect();
-            this.mSnapAlgorithm.getMovementBounds(this.mNormalBounds, rect, rect6, max);
+            this.mSnapAlgorithm.getMovementBounds(this.mNormalBounds, rect, rect6, iMax);
             Rect rect7 = new Rect();
-            this.mSnapAlgorithm.getMovementBounds(this.mExpandedBounds, rect, rect7, max);
+            this.mSnapAlgorithm.getMovementBounds(this.mExpandedBounds, rect, rect7, iMax);
             if (this.mMenuState == 2) {
                 rect6 = rect7;
             }
@@ -347,8 +347,9 @@ public class PipTouchHandler {
             int i4 = z ? this.mImeOffset : this.mShelfHeight;
             if (rect6.bottom >= this.mMovementBounds.bottom && rect3.top < (rect6.bottom - i3) - i4) {
                 return;
+            } else {
+                animateToOffset(rect3, rect6);
             }
-            animateToOffset(rect3, rect6);
         }
         this.mNormalMovementBounds = rect4;
         this.mExpandedMovementBounds = rect5;
@@ -369,15 +370,14 @@ public class PipTouchHandler {
         this.mMotionHelper.animateToOffset(rect3);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onRegistrationChanged(boolean z) {
+    private void onRegistrationChanged(boolean z) {
         PipAccessibilityInteractionConnection pipAccessibilityInteractionConnection;
         AccessibilityManager accessibilityManager = this.mAccessibilityManager;
         if (z) {
             pipAccessibilityInteractionConnection = new PipAccessibilityInteractionConnection(this.mMotionHelper, new PipAccessibilityInteractionConnection.AccessibilityCallbacks() { // from class: com.android.systemui.pip.phone.-$$Lambda$PipTouchHandler$1nY3kLe318Fm3UtIAbDmSK80h7w
                 @Override // com.android.systemui.pip.phone.PipAccessibilityInteractionConnection.AccessibilityCallbacks
-                public final void onAccessibilityShowMenu() {
-                    PipTouchHandler.this.onAccessibilityShowMenu();
+                public final void onAccessibilityShowMenu() throws RemoteException {
+                    this.f$0.onAccessibilityShowMenu();
                 }
             }, this.mHandler);
         } else {
@@ -389,14 +389,12 @@ public class PipTouchHandler {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onAccessibilityShowMenu() {
+    private void onAccessibilityShowMenu() throws RemoteException {
         this.mMenuController.showMenu(2, this.mMotionHelper.getBounds(), this.mMovementBounds, false, willResizeMenu());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
-    public boolean handleTouchEvent(MotionEvent motionEvent) {
+    private boolean handleTouchEvent(MotionEvent motionEvent) {
         if (this.mPinnedStackController == null) {
             return true;
         }
@@ -428,22 +426,22 @@ public class PipTouchHandler {
             case 7:
             case 9:
                 if (this.mAccessibilityManager.isEnabled() && !this.mSendingHoverAccessibilityEvents) {
-                    AccessibilityEvent obtain = AccessibilityEvent.obtain(128);
-                    obtain.setImportantForAccessibility(true);
-                    obtain.setSourceNodeId(AccessibilityNodeInfo.ROOT_NODE_ID);
-                    obtain.setWindowId(-3);
-                    this.mAccessibilityManager.sendAccessibilityEvent(obtain);
+                    AccessibilityEvent accessibilityEventObtain = AccessibilityEvent.obtain(128);
+                    accessibilityEventObtain.setImportantForAccessibility(true);
+                    accessibilityEventObtain.setSourceNodeId(AccessibilityNodeInfo.ROOT_NODE_ID);
+                    accessibilityEventObtain.setWindowId(-3);
+                    this.mAccessibilityManager.sendAccessibilityEvent(accessibilityEventObtain);
                     this.mSendingHoverAccessibilityEvents = true;
                     break;
                 }
                 break;
             case 10:
                 if (this.mAccessibilityManager.isEnabled() && this.mSendingHoverAccessibilityEvents) {
-                    AccessibilityEvent obtain2 = AccessibilityEvent.obtain(256);
-                    obtain2.setImportantForAccessibility(true);
-                    obtain2.setSourceNodeId(AccessibilityNodeInfo.ROOT_NODE_ID);
-                    obtain2.setWindowId(-3);
-                    this.mAccessibilityManager.sendAccessibilityEvent(obtain2);
+                    AccessibilityEvent accessibilityEventObtain2 = AccessibilityEvent.obtain(256);
+                    accessibilityEventObtain2.setImportantForAccessibility(true);
+                    accessibilityEventObtain2.setSourceNodeId(AccessibilityNodeInfo.ROOT_NODE_ID);
+                    accessibilityEventObtain2.setWindowId(-3);
+                    this.mAccessibilityManager.sendAccessibilityEvent(accessibilityEventObtain2);
                     this.mSendingHoverAccessibilityEvents = false;
                     break;
                 }
@@ -452,38 +450,33 @@ public class PipTouchHandler {
         return this.mMenuState == 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateDismissFraction() {
-        float f;
+    private void updateDismissFraction() throws RemoteException {
+        float fMin;
         if (this.mMenuController != null && !this.mIsImeShowing) {
             Rect bounds = this.mMotionHelper.getBounds();
-            float f2 = this.mInsetBounds.bottom;
-            if (bounds.bottom > f2) {
-                f = Math.min((bounds.bottom - f2) / bounds.height(), 1.0f);
+            float f = this.mInsetBounds.bottom;
+            if (bounds.bottom > f) {
+                fMin = Math.min((bounds.bottom - f) / bounds.height(), 1.0f);
             } else {
-                f = 0.0f;
+                fMin = 0.0f;
             }
-            if (Float.compare(f, 0.0f) != 0 || this.mMenuController.isMenuActivityVisible()) {
-                this.mMenuController.setDismissFraction(f);
+            if (Float.compare(fMin, 0.0f) != 0 || this.mMenuController.isMenuActivityVisible()) {
+                this.mMenuController.setDismissFraction(fMin);
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setPinnedStackController(IPinnedStackController iPinnedStackController) {
+    void setPinnedStackController(IPinnedStackController iPinnedStackController) {
         this.mPinnedStackController = iPinnedStackController;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setMinimizedStateInternal(boolean z) {
+    private void setMinimizedStateInternal(boolean z) {
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setMinimizedState(boolean z, boolean z2) {
+    void setMinimizedState(boolean z, boolean z2) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setMenuState(int i, boolean z) {
+    private void setMenuState(int i, boolean z) {
         if (i == 2) {
             Rect rect = new Rect(this.mExpandedBounds);
             if (z) {
@@ -542,8 +535,7 @@ public class PipTouchHandler {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void cleanUpDismissTarget() {
+    private void cleanUpDismissTarget() {
         this.mHandler.removeCallbacks(this.mShowDismissAffordance);
         this.mDismissViewController.destroyDismissTarget();
     }
@@ -555,8 +547,7 @@ public class PipTouchHandler {
         cleanUpDismissTarget();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean willResizeMenu() {
+    private boolean willResizeMenu() {
         return (this.mExpandedBounds.width() == this.mNormalBounds.width() && this.mExpandedBounds.height() == this.mNormalBounds.height()) ? false : true;
     }
 

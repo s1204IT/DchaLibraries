@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+
 /* loaded from: classes.dex */
 public class DefaultSuggestionViewFactory implements SuggestionViewFactory {
     private final SuggestionViewFactory mDefaultFactory;

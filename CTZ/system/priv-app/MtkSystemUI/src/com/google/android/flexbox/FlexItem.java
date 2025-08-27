@@ -1,6 +1,7 @@
 package com.google.android.flexbox;
 
 import android.os.Parcelable;
+
 /* loaded from: classes.dex */
 interface FlexItem extends Parcelable {
     int getAlignSelf();

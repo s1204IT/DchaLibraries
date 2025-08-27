@@ -10,6 +10,7 @@ import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.phone.StatusBar;
+
 /* loaded from: classes.dex */
 public class DeadZone {
     private int mDecay;
@@ -51,7 +52,7 @@ public class DeadZone {
         if (j2 < this.mHold) {
             return this.mSizeMax;
         }
-        return (int) lerp(this.mSizeMax, this.mSizeMin, ((float) (j2 - this.mHold)) / this.mDecay);
+        return (int) lerp(this.mSizeMax, this.mSizeMin, (j2 - this.mHold) / this.mDecay);
     }
 
     public void setFlashOnTouchCapture(boolean z) {

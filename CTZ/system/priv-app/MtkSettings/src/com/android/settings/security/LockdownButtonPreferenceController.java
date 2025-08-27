@@ -5,6 +5,7 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.settings.core.TogglePreferenceController;
+
 /* loaded from: classes.dex */
 public class LockdownButtonPreferenceController extends TogglePreferenceController {
     private static final String KEY_LOCKDOWN_ENALBED = "security_setting_lockdown_enabled";

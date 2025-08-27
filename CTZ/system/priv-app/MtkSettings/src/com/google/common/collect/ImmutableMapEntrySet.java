@@ -2,10 +2,13 @@ package com.google.common.collect;
 
 import java.io.Serializable;
 import java.util.Map;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public abstract class ImmutableMapEntrySet<K, V> extends ImmutableSet<Map.Entry<K, V>> {
+abstract class ImmutableMapEntrySet<K, V> extends ImmutableSet<Map.Entry<K, V>> {
     abstract ImmutableMap<K, V> map();
+
+    ImmutableMapEntrySet() {
+    }
 
     @Override // java.util.AbstractCollection, java.util.Collection, java.util.Set
     public int size() {
@@ -14,17 +17,16 @@ public abstract class ImmutableMapEntrySet<K, V> extends ImmutableSet<Map.Entry<
 
     @Override // com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.util.Set
     public boolean contains(Object obj) {
-        if (obj instanceof Map.Entry) {
-            Map.Entry entry = (Map.Entry) obj;
-            V v = map().get(entry.getKey());
-            return v != null && v.equals(entry.getValue());
+        if (!(obj instanceof Map.Entry)) {
+            return false;
         }
-        return false;
+        Map.Entry entry = (Map.Entry) obj;
+        V v = map().get(entry.getKey());
+        return v != null && v.equals(entry.getValue());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return map().isPartialView();
     }
 
@@ -33,7 +35,6 @@ public abstract class ImmutableMapEntrySet<K, V> extends ImmutableSet<Map.Entry<
         return new EntrySetSerializedForm(map());
     }
 
-    /* loaded from: classes.dex */
     private static class EntrySetSerializedForm<K, V> implements Serializable {
         private static final long serialVersionUID = 0;
         final ImmutableMap<K, V> map;

@@ -12,6 +12,7 @@ import com.android.settings.R;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.datausage.CellDataPreference;
 import com.android.settings.datausage.TemplatePreference;
+
 /* loaded from: classes.dex */
 public class BillingCyclePreference extends Preference implements TemplatePreference {
     private final CellDataPreference.DataStateListener mListener;
@@ -47,18 +48,15 @@ public class BillingCyclePreference extends Preference implements TemplatePrefer
         this.mSubId = i;
         this.mServices = networkServices;
         int policyCycleDay = networkServices.mPolicyEditor.getPolicyCycleDay(this.mTemplate);
-        if (FeatureFlagUtils.isEnabled(getContext(), "settings_data_usage_v2")) {
+        if (FeatureFlagUtils.isEnabled(getContext(), "settings_data_usage_v2") || policyCycleDay == -1) {
             setSummary((CharSequence) null);
-        } else if (policyCycleDay != -1) {
-            setSummary(getContext().getString(R.string.billing_cycle_fragment_summary, Integer.valueOf(policyCycleDay)));
         } else {
-            setSummary((CharSequence) null);
+            setSummary(getContext().getString(R.string.billing_cycle_fragment_summary, Integer.valueOf(policyCycleDay)));
         }
         setIntent(getIntent());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateEnabled() {
+    private void updateEnabled() {
         try {
             setEnabled(this.mServices.mNetworkService.isBandwidthControlEnabled() && this.mServices.mTelephonyManager.getDataEnabled(this.mSubId) && this.mServices.mUserManager.isAdminUser());
         } catch (RemoteException e) {

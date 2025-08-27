@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.IntConsumer;
+
 /* loaded from: classes.dex */
 public class TrustedCredentialsSettings extends InstrumentedFragment implements TrustedCredentialsDialogBuilder.DelegateInterface {
     private AliasOperation mAliasOperation;
@@ -65,6 +66,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
     private UserManager mUserManager;
     private ArrayList<GroupAdapter> mGroupAdapters = new ArrayList<>(2);
     private Set<AdapterData.AliasLoader> mAliasLoaders = new ArraySet(2);
+
     @GuardedBy("mKeyChainConnectionByProfileId")
     private final SparseArray<KeyChain.KeyChainConnection> mKeyChainConnectionByProfileId = new SparseArray<>();
     private BroadcastReceiver mWorkProfileChangedReceiver = new BroadcastReceiver() { // from class: com.android.settings.TrustedCredentialsSettings.1
@@ -85,12 +87,10 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         return 92;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public enum Tab {
+    private enum Tab {
         SYSTEM("system", R.string.trusted_credentials_system_tab, R.id.system_tab, R.id.system_progress, R.id.system_content, true),
         USER("user", R.string.trusted_credentials_user_tab, R.id.user_tab, R.id.user_progress, R.id.user_content, false);
-        
+
         private final int mContentView;
         private final int mLabel;
         private final int mProgress;
@@ -107,8 +107,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             this.mSwitch = z;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public List<String> getAliases(IKeyChainService iKeyChainService) throws RemoteException {
+        private List<String> getAliases(IKeyChainService iKeyChainService) throws RemoteException {
             switch (this) {
                 case SYSTEM:
                     return iKeyChainService.getSystemCaAliases().getList();
@@ -119,8 +118,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public boolean deleted(IKeyChainService iKeyChainService, String str) throws RemoteException {
+        private boolean deleted(IKeyChainService iKeyChainService, String str) throws RemoteException {
             switch (this) {
                 case SYSTEM:
                     return !iKeyChainService.containsCaAlias(str);
@@ -179,8 +177,9 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
     @Override // com.android.settingslib.core.lifecycle.ObservableFragment, android.app.Fragment
     public void onDestroy() {
         getActivity().unregisterReceiver(this.mWorkProfileChangedReceiver);
-        for (AdapterData.AliasLoader aliasLoader : this.mAliasLoaders) {
-            aliasLoader.cancel(true);
+        Iterator<AdapterData.AliasLoader> it = this.mAliasLoaders.iterator();
+        while (it.hasNext()) {
+            it.next().cancel(true);
         }
         this.mAliasLoaders.clear();
         this.mGroupAdapters.clear();
@@ -226,11 +225,11 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         int groupCount = groupAdapter.getGroupCount();
         ViewGroup viewGroup = (ViewGroup) this.mTabHost.findViewById(tab.mContentView);
         viewGroup.getLayoutTransition().enableTransitionType(4);
-        LayoutInflater from = LayoutInflater.from(getActivity());
+        LayoutInflater layoutInflaterFrom = LayoutInflater.from(getActivity());
         for (int i = 0; i < groupAdapter.getGroupCount(); i++) {
-            boolean isManagedProfile = groupAdapter.getUserInfoByGroup(i).isManagedProfile();
+            boolean zIsManagedProfile = groupAdapter.getUserInfoByGroup(i).isManagedProfile();
             ChildAdapter childAdapter = groupAdapter.getChildAdapter(i);
-            LinearLayout linearLayout = (LinearLayout) from.inflate(R.layout.trusted_credential_list_container, viewGroup, false);
+            LinearLayout linearLayout = (LinearLayout) layoutInflaterFrom.inflate(R.layout.trusted_credential_list_container, viewGroup, false);
             childAdapter.setContainerView(linearLayout);
             boolean z2 = true;
             if (groupCount <= 1) {
@@ -239,12 +238,12 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
                 z = true;
             }
             childAdapter.showHeader(z);
-            childAdapter.showDivider(isManagedProfile);
-            if (groupCount > 2 && isManagedProfile) {
+            childAdapter.showDivider(zIsManagedProfile);
+            if (groupCount > 2 && zIsManagedProfile) {
                 z2 = false;
             }
             childAdapter.setExpandIfAvailable(z2);
-            if (isManagedProfile) {
+            if (zIsManagedProfile) {
                 viewGroup.addView(linearLayout);
             } else {
                 viewGroup.addView(linearLayout, 0);
@@ -252,20 +251,17 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean startConfirmCredential(int i) {
-        Intent createConfirmDeviceCredentialIntent = this.mKeyguardManager.createConfirmDeviceCredentialIntent(null, null, i);
-        if (createConfirmDeviceCredentialIntent == null) {
+    private boolean startConfirmCredential(int i) {
+        Intent intentCreateConfirmDeviceCredentialIntent = this.mKeyguardManager.createConfirmDeviceCredentialIntent(null, null, i);
+        if (intentCreateConfirmDeviceCredentialIntent == null) {
             return false;
         }
         this.mConfirmingCredentialUser = i;
-        startActivityForResult(createConfirmDeviceCredentialIntent, 1);
+        startActivityForResult(intentCreateConfirmDeviceCredentialIntent, 1);
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class GroupAdapter extends BaseExpandableListAdapter implements View.OnClickListener, ExpandableListView.OnChildClickListener, ExpandableListView.OnGroupClickListener {
+    private class GroupAdapter extends BaseExpandableListAdapter implements View.OnClickListener, ExpandableListView.OnChildClickListener, ExpandableListView.OnGroupClickListener {
         private final AdapterData mData;
 
         private GroupAdapter(Tab tab) {
@@ -287,11 +283,13 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             return 0;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getGroup(I)Ljava/lang/Object; */
         @Override // android.widget.ExpandableListAdapter
         public UserHandle getGroup(int i) {
             return new UserHandle(this.mData.mCertHoldersByUserId.keyAt(i));
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getChild(II)Ljava/lang/Object; */
         @Override // android.widget.ExpandableListAdapter
         public CertHolder getChild(int i, int i2) {
             return (CertHolder) ((List) this.mData.mCertHoldersByUserId.get(getUserIdByGroup(i))).get(i2);
@@ -325,7 +323,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             if (view == null) {
                 view = Utils.inflateCategoryHeader((LayoutInflater) TrustedCredentialsSettings.this.getActivity().getSystemService("layout_inflater"), viewGroup);
             }
-            TextView textView = (TextView) view.findViewById(16908310);
+            TextView textView = (TextView) view.findViewById(android.R.id.title);
             if (getUserInfoByGroup(i).isManagedProfile()) {
                 textView.setText(R.string.category_work);
             } else {
@@ -364,7 +362,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         public void load() {
             AdapterData adapterData = this.mData;
             Objects.requireNonNull(adapterData);
-            new AdapterData.AliasLoader().execute(new Void[0]);
+            adapterData.new AliasLoader().execute(new Void[0]);
         }
 
         public void remove(CertHolder certHolder) {
@@ -391,26 +389,26 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
                 }
                 return true;
             }
-            Intent createInQuietModeDialogIntent = UnlaunchableAppActivity.createInQuietModeDialogIntent(identifier);
+            Intent intentCreateInQuietModeDialogIntent = UnlaunchableAppActivity.createInQuietModeDialogIntent(identifier);
             if (z) {
-                TrustedCredentialsSettings.this.getActivity().startActivity(createInQuietModeDialogIntent);
+                TrustedCredentialsSettings.this.getActivity().startActivity(intentCreateInQuietModeDialogIntent);
             }
             return false;
         }
 
         private View getViewForCertificate(CertHolder certHolder, Tab tab, View view, ViewGroup viewGroup) {
-            View view2;
+            View viewInflate;
             ViewHolder viewHolder;
             if (view == null) {
                 viewHolder = new ViewHolder();
-                view2 = LayoutInflater.from(TrustedCredentialsSettings.this.getActivity()).inflate(R.layout.trusted_credential, viewGroup, false);
-                view2.setTag(viewHolder);
-                viewHolder.mSubjectPrimaryView = (TextView) view2.findViewById(R.id.trusted_credential_subject_primary);
-                viewHolder.mSubjectSecondaryView = (TextView) view2.findViewById(R.id.trusted_credential_subject_secondary);
-                viewHolder.mSwitch = (Switch) view2.findViewById(R.id.trusted_credential_status);
+                viewInflate = LayoutInflater.from(TrustedCredentialsSettings.this.getActivity()).inflate(R.layout.trusted_credential, viewGroup, false);
+                viewInflate.setTag(viewHolder);
+                viewHolder.mSubjectPrimaryView = (TextView) viewInflate.findViewById(R.id.trusted_credential_subject_primary);
+                viewHolder.mSubjectSecondaryView = (TextView) viewInflate.findViewById(R.id.trusted_credential_subject_secondary);
+                viewHolder.mSwitch = (Switch) viewInflate.findViewById(R.id.trusted_credential_status);
                 viewHolder.mSwitch.setOnClickListener(this);
             } else {
-                view2 = view;
+                viewInflate = view;
                 viewHolder = (ViewHolder) view.getTag();
             }
             viewHolder.mSubjectPrimaryView.setText(certHolder.mSubjectPrimary);
@@ -421,12 +419,10 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
                 viewHolder.mSwitch.setVisibility(0);
                 viewHolder.mSwitch.setTag(certHolder);
             }
-            return view2;
+            return viewInflate;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class ViewHolder {
+        private class ViewHolder {
             private TextView mSubjectPrimaryView;
             private TextView mSubjectSecondaryView;
             private Switch mSwitch;
@@ -436,9 +432,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class ChildAdapter extends BaseAdapter implements View.OnClickListener, AdapterView.OnItemClickListener {
+    private class ChildAdapter extends BaseAdapter implements View.OnClickListener, AdapterView.OnItemClickListener {
         private final int[] EMPTY_STATE_SET;
         private final int[] GROUP_EXPANDED_STATE_SET;
         private final LinearLayout.LayoutParams HIDE_CONTAINER_LAYOUT_PARAMS;
@@ -454,7 +448,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         private final GroupAdapter mParent;
 
         private ChildAdapter(GroupAdapter groupAdapter, int i) {
-            this.GROUP_EXPANDED_STATE_SET = new int[]{16842920};
+            this.GROUP_EXPANDED_STATE_SET = new int[]{android.R.attr.state_expanded};
             this.EMPTY_STATE_SET = new int[0];
             this.HIDE_CONTAINER_LAYOUT_PARAMS = new LinearLayout.LayoutParams(-1, -2, 0.0f);
             this.HIDE_LIST_LAYOUT_PARAMS = new LinearLayout.LayoutParams(-1, 0);
@@ -483,6 +477,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             return this.mParent.getChildrenCount(this.mGroupPosition);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
         @Override // android.widget.Adapter
         public CertHolder getItem(int i) {
             return this.mParent.getChild(this.mGroupPosition, i);
@@ -561,16 +556,14 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }
 
         private Drawable getGroupIndicator() {
-            TypedArray obtainStyledAttributes = TrustedCredentialsSettings.this.getActivity().obtainStyledAttributes(null, com.android.internal.R.styleable.ExpandableListView, 16842863, 0);
-            Drawable drawable = obtainStyledAttributes.getDrawable(0);
-            obtainStyledAttributes.recycle();
+            TypedArray typedArrayObtainStyledAttributes = TrustedCredentialsSettings.this.getActivity().obtainStyledAttributes(null, com.android.internal.R.styleable.ExpandableListView, android.R.attr.expandableListViewStyle, 0);
+            Drawable drawable = typedArrayObtainStyledAttributes.getDrawable(0);
+            typedArrayObtainStyledAttributes.recycle();
             return drawable;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AdapterData {
+    private class AdapterData {
         private final GroupAdapter mAdapter;
         private final SparseArray<List<CertHolder>> mCertHoldersByUserId;
         private final Tab mTab;
@@ -581,9 +574,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             this.mTab = tab;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
-        public class AliasLoader extends AsyncTask<Void, Integer, SparseArray<List<CertHolder>>> {
+        private class AliasLoader extends AsyncTask<Void, Integer, SparseArray<List<CertHolder>>> {
             private View mContentView;
             private Context mContext;
             private ProgressBar mProgressBar;
@@ -591,8 +582,9 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             public AliasLoader() {
                 this.mContext = TrustedCredentialsSettings.this.getActivity();
                 TrustedCredentialsSettings.this.mAliasLoaders.add(this);
-                for (UserHandle userHandle : TrustedCredentialsSettings.this.mUserManager.getUserProfiles()) {
-                    AdapterData.this.mCertHoldersByUserId.put(userHandle.getIdentifier(), new ArrayList());
+                Iterator<UserHandle> it = TrustedCredentialsSettings.this.mUserManager.getUserProfiles().iterator();
+                while (it.hasNext()) {
+                    AdapterData.this.mCertHoldersByUserId.put(it.next().getIdentifier(), new ArrayList());
                 }
             }
 
@@ -609,9 +601,9 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
                 this.mContentView.setVisibility(8);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public SparseArray<List<CertHolder>> doInBackground(Void... voidArr) {
+            protected SparseArray<List<CertHolder>> doInBackground(Void... voidArr) {
                 List<UserHandle> list;
                 int i;
                 SparseArray sparseArray;
@@ -621,52 +613,57 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
                         List<UserHandle> userProfiles = TrustedCredentialsSettings.this.mUserManager.getUserProfiles();
                         int size = userProfiles.size();
                         SparseArray sparseArray3 = new SparseArray(size);
-                        int i2 = 0;
-                        for (int i3 = 0; i3 < size; i3++) {
-                            UserHandle userHandle = userProfiles.get(i3);
+                        int size2 = 0;
+                        for (int i2 = 0; i2 < size; i2++) {
+                            UserHandle userHandle = userProfiles.get(i2);
                             int identifier = userHandle.getIdentifier();
                             if (!shouldSkipProfile(userHandle)) {
-                                KeyChain.KeyChainConnection bindAsUser = KeyChain.bindAsUser(this.mContext, userHandle);
-                                TrustedCredentialsSettings.this.mKeyChainConnectionByProfileId.put(identifier, bindAsUser);
-                                List aliases = AdapterData.this.mTab.getAliases(bindAsUser.getService());
+                                KeyChain.KeyChainConnection keyChainConnectionBindAsUser = KeyChain.bindAsUser(this.mContext, userHandle);
+                                TrustedCredentialsSettings.this.mKeyChainConnectionByProfileId.put(identifier, keyChainConnectionBindAsUser);
+                                List aliases = AdapterData.this.mTab.getAliases(keyChainConnectionBindAsUser.getService());
                                 if (isCancelled()) {
                                     return new SparseArray<>();
                                 }
-                                i2 += aliases.size();
+                                size2 += aliases.size();
                                 sparseArray3.put(identifier, aliases);
                             }
                         }
+                        int i3 = 0;
                         int i4 = 0;
-                        int i5 = 0;
-                        while (i4 < size) {
-                            UserHandle userHandle2 = userProfiles.get(i4);
+                        while (i3 < size) {
+                            UserHandle userHandle2 = userProfiles.get(i3);
                             int identifier2 = userHandle2.getIdentifier();
                             List list2 = (List) sparseArray3.get(identifier2);
                             if (!isCancelled()) {
                                 KeyChain.KeyChainConnection keyChainConnection = (KeyChain.KeyChainConnection) TrustedCredentialsSettings.this.mKeyChainConnectionByProfileId.get(identifier2);
-                                if (!shouldSkipProfile(userHandle2) && list2 != null && keyChainConnection != null) {
+                                if (shouldSkipProfile(userHandle2) || list2 == null || keyChainConnection == null) {
+                                    list = userProfiles;
+                                    i = size;
+                                    sparseArray = sparseArray3;
+                                    sparseArray2.put(identifier2, new ArrayList(0));
+                                } else {
                                     IKeyChainService service = keyChainConnection.getService();
-                                    ArrayList arrayList = new ArrayList(i2);
-                                    int size2 = list2.size();
-                                    int i6 = i5;
-                                    int i7 = 0;
-                                    while (i7 < size2) {
-                                        String str = (String) list2.get(i7);
-                                        int i8 = size;
+                                    ArrayList arrayList = new ArrayList(size2);
+                                    int size3 = list2.size();
+                                    int i5 = i4;
+                                    int i6 = 0;
+                                    while (i6 < size3) {
+                                        String str = (String) list2.get(i6);
+                                        int i7 = size;
                                         SparseArray sparseArray4 = sparseArray3;
                                         ArrayList arrayList2 = arrayList;
-                                        int i9 = identifier2;
-                                        arrayList2.add(new CertHolder(service, AdapterData.this.mAdapter, AdapterData.this.mTab, str, KeyChain.toCertificate(service.getEncodedCaCertificate(str, true)), i9));
-                                        int i10 = i6 + 1;
-                                        publishProgress(Integer.valueOf(i10), Integer.valueOf(i2));
-                                        i7++;
-                                        identifier2 = i9;
+                                        int i8 = identifier2;
+                                        arrayList2.add(new CertHolder(service, AdapterData.this.mAdapter, AdapterData.this.mTab, str, KeyChain.toCertificate(service.getEncodedCaCertificate(str, true)), i8));
+                                        int i9 = i5 + 1;
+                                        publishProgress(Integer.valueOf(i9), Integer.valueOf(size2));
+                                        i6++;
+                                        identifier2 = i8;
                                         arrayList = arrayList2;
                                         list2 = list2;
-                                        i6 = i10;
+                                        i5 = i9;
                                         userProfiles = userProfiles;
-                                        size = i8;
-                                        size2 = size2;
+                                        size = i7;
+                                        size3 = size3;
                                         sparseArray3 = sparseArray4;
                                     }
                                     list = userProfiles;
@@ -675,17 +672,9 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
                                     ArrayList arrayList3 = arrayList;
                                     Collections.sort(arrayList3);
                                     sparseArray2.put(identifier2, arrayList3);
-                                    i5 = i6;
-                                    i4++;
-                                    userProfiles = list;
-                                    size = i;
-                                    sparseArray3 = sparseArray;
+                                    i4 = i5;
                                 }
-                                list = userProfiles;
-                                i = size;
-                                sparseArray = sparseArray3;
-                                sparseArray2.put(identifier2, new ArrayList(0));
-                                i4++;
+                                i3++;
                                 userProfiles = list;
                                 size = i;
                                 sparseArray3 = sparseArray;
@@ -704,20 +693,20 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
                 }
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onProgressUpdate([Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onProgressUpdate(Integer... numArr) {
-                int intValue = numArr[0].intValue();
-                int intValue2 = numArr[1].intValue();
-                if (intValue2 != this.mProgressBar.getMax()) {
-                    this.mProgressBar.setMax(intValue2);
+            protected void onProgressUpdate(Integer... numArr) {
+                int iIntValue = numArr[0].intValue();
+                int iIntValue2 = numArr[1].intValue();
+                if (iIntValue2 != this.mProgressBar.getMax()) {
+                    this.mProgressBar.setMax(iIntValue2);
                 }
-                this.mProgressBar.setProgress(intValue);
+                this.mProgressBar.setProgress(iIntValue);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(SparseArray<List<CertHolder>> sparseArray) {
+            protected void onPostExecute(SparseArray<List<CertHolder>> sparseArray) {
                 AdapterData.this.mCertHoldersByUserId.clear();
                 int size = sparseArray.size();
                 for (int i = 0; i < size; i++) {
@@ -763,9 +752,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class CertHolder implements Comparable<CertHolder> {
+    static class CertHolder implements Comparable<CertHolder> {
         private final GroupAdapter mAdapter;
         private final String mAlias;
         private boolean mDeleted;
@@ -811,11 +798,12 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             }
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
         @Override // java.lang.Comparable
         public int compareTo(CertHolder certHolder) {
-            int compareToIgnoreCase = this.mSubjectPrimary.compareToIgnoreCase(certHolder.mSubjectPrimary);
-            if (compareToIgnoreCase != 0) {
-                return compareToIgnoreCase;
+            int iCompareToIgnoreCase = this.mSubjectPrimary.compareToIgnoreCase(certHolder.mSubjectPrimary);
+            if (iCompareToIgnoreCase != 0) {
+                return iCompareToIgnoreCase;
             }
             return this.mSubjectSecondary.compareToIgnoreCase(certHolder.mSubjectSecondary);
         }
@@ -848,13 +836,11 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isTrustAllCaCertModeInProgress() {
+    private boolean isTrustAllCaCertModeInProgress() {
         return this.mTrustAllCaUserId != -10000;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showTrustAllCaDialog(List<CertHolder> list) {
+    private void showTrustAllCaDialog(List<CertHolder> list) {
         new TrustedCredentialsDialogBuilder(getActivity(), this).setCertHolders((CertHolder[]) list.toArray(new CertHolder[list.size()])).setOnDismissListener(new DialogInterface.OnDismissListener() { // from class: com.android.settings.TrustedCredentialsSettings.2
             @Override // android.content.DialogInterface.OnDismissListener
             public void onDismiss(DialogInterface dialogInterface) {
@@ -864,13 +850,12 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }).show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showCertDialog(CertHolder certHolder) {
+    private void showCertDialog(CertHolder certHolder) {
         new TrustedCredentialsDialogBuilder(getActivity(), this).setCertHolder(certHolder).show();
     }
 
     @Override // com.android.settings.TrustedCredentialsDialogBuilder.DelegateInterface
-    public List<X509Certificate> getX509CertsFromCertHolder(CertHolder certHolder) {
+    public List<X509Certificate> getX509CertsFromCertHolder(CertHolder certHolder) throws Throwable {
         ArrayList arrayList = null;
         try {
             synchronized (this.mKeyChainConnectionByProfileId) {
@@ -910,16 +895,14 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         if (this.mConfirmedCredentialUsers.contains(Integer.valueOf(i))) {
             return false;
         }
-        boolean startConfirmCredential = startConfirmCredential(i);
-        if (startConfirmCredential) {
+        boolean zStartConfirmCredential = startConfirmCredential(i);
+        if (zStartConfirmCredential) {
             this.mConfirmingCredentialListener = intConsumer;
         }
-        return startConfirmCredential;
+        return zStartConfirmCredential;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AliasOperation extends AsyncTask<Void, Void, Boolean> {
+    private class AliasOperation extends AsyncTask<Void, Void, Boolean> {
         private final CertHolder mCertHolder;
 
         private AliasOperation(CertHolder certHolder) {
@@ -927,9 +910,9 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             TrustedCredentialsSettings.this.mAliasOperation = this;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             try {
                 synchronized (TrustedCredentialsSettings.this.mKeyChainConnectionByProfileId) {
                     IKeyChainService service = ((KeyChain.KeyChainConnection) TrustedCredentialsSettings.this.mKeyChainConnectionByProfileId.get(this.mCertHolder.mProfileId)).getService();
@@ -945,9 +928,9 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) {
             if (bool.booleanValue()) {
                 if (!this.mCertHolder.mTab.mSwitch) {
                     this.mCertHolder.mAdapter.remove(this.mCertHolder);

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,6 +26,7 @@ import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public abstract class AppInfoBase extends SettingsPreferenceFragment implements ApplicationsState.Callbacks {
     protected static final String TAG = AppInfoBase.class.getSimpleName();
@@ -93,8 +93,7 @@ public abstract class AppInfoBase extends SettingsPreferenceFragment implements 
         super.onDestroy();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public String retrieveAppEntry() {
+    protected String retrieveAppEntry() {
         Bundle arguments = getArguments();
         this.mPackageName = arguments != null ? arguments.getString("package") : null;
         Intent intent = arguments == null ? getIntent() : (Intent) arguments.getParcelable("intent");
@@ -111,8 +110,7 @@ public abstract class AppInfoBase extends SettingsPreferenceFragment implements 
             try {
                 this.mPackageInfo = this.mPm.getPackageInfoAsUser(this.mAppEntry.info.packageName, 134222336, this.mUserId);
             } catch (PackageManager.NameNotFoundException e) {
-                String str = TAG;
-                Log.e(str, "Exception when retrieving package:" + this.mAppEntry.info.packageName, e);
+                Log.e(TAG, "Exception when retrieving package:" + this.mAppEntry.info.packageName, e);
             }
         } else {
             Log.w(TAG, "Missing AppEntry; maybe reinstalling?");
@@ -121,20 +119,17 @@ public abstract class AppInfoBase extends SettingsPreferenceFragment implements 
         return this.mPackageName;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setIntentAndFinish(boolean z, boolean z2) {
+    protected void setIntentAndFinish(boolean z, boolean z2) {
         Intent intent = new Intent();
         intent.putExtra("chg", z2);
         ((SettingsActivity) getActivity()).finishPreferencePanel(-1, intent);
         this.mFinishing = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void showDialogInner(int i, int i2) {
-        MyAlertDialogFragment newInstance = MyAlertDialogFragment.newInstance(i, i2);
-        newInstance.setTargetFragment(this, 0);
-        FragmentManager fragmentManager = getFragmentManager();
-        newInstance.show(fragmentManager, "dialog " + i);
+    protected void showDialogInner(int i, int i2) {
+        MyAlertDialogFragment myAlertDialogFragmentNewInstance = MyAlertDialogFragment.newInstance(i, i2);
+        myAlertDialogFragmentNewInstance.setTargetFragment(this, 0);
+        myAlertDialogFragmentNewInstance.show(getFragmentManager(), "dialog " + i);
     }
 
     @Override // com.android.settingslib.applications.ApplicationsState.Callbacks
@@ -179,7 +174,6 @@ public abstract class AppInfoBase extends SettingsPreferenceFragment implements 
         new SubSettingLauncher(fragment.getContext()).setDestination(cls.getName()).setSourceMetricsCategory(i4).setTitle(i).setArguments(bundle).setUserHandle(new UserHandle(UserHandle.getUserId(i2))).setResultListener(fragment, i3).launch();
     }
 
-    /* loaded from: classes.dex */
     public static class MyAlertDialogFragment extends InstrumentedDialogFragment {
         @Override // com.android.settingslib.core.instrumentation.Instrumentable
         public int getMetricsCategory() {
@@ -189,11 +183,11 @@ public abstract class AppInfoBase extends SettingsPreferenceFragment implements 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
             int i = getArguments().getInt("id");
-            AlertDialog createDialog = ((AppInfoBase) getTargetFragment()).createDialog(i, getArguments().getInt("moveError"));
-            if (createDialog == null) {
+            AlertDialog alertDialogCreateDialog = ((AppInfoBase) getTargetFragment()).createDialog(i, getArguments().getInt("moveError"));
+            if (alertDialogCreateDialog == null) {
                 throw new IllegalArgumentException("unknown id " + i);
             }
-            return createDialog;
+            return alertDialogCreateDialog;
         }
 
         public static MyAlertDialogFragment newInstance(int i, int i2) {

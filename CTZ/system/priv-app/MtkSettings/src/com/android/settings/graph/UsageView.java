@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class UsageView extends FrameLayout {
     private final TextView[] mBottomLabels;
@@ -22,15 +23,15 @@ public class UsageView extends FrameLayout {
         this.mUsageGraph = (UsageGraph) findViewById(R.id.usage_graph);
         this.mLabels = new TextView[]{(TextView) findViewById(R.id.label_bottom), (TextView) findViewById(R.id.label_middle), (TextView) findViewById(R.id.label_top)};
         this.mBottomLabels = new TextView[]{(TextView) findViewById(R.id.label_start), (TextView) findViewById(R.id.label_end)};
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, com.android.settingslib.R.styleable.UsageView, 0, 0);
-        if (obtainStyledAttributes.hasValue(3)) {
-            setSideLabels(obtainStyledAttributes.getTextArray(3));
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, com.android.settingslib.R.styleable.UsageView, 0, 0);
+        if (typedArrayObtainStyledAttributes.hasValue(3)) {
+            setSideLabels(typedArrayObtainStyledAttributes.getTextArray(3));
         }
-        if (obtainStyledAttributes.hasValue(2)) {
-            setBottomLabels(obtainStyledAttributes.getTextArray(2));
+        if (typedArrayObtainStyledAttributes.hasValue(2)) {
+            setBottomLabels(typedArrayObtainStyledAttributes.getTextArray(2));
         }
-        if (obtainStyledAttributes.hasValue(4)) {
-            int color = obtainStyledAttributes.getColor(4, 0);
+        if (typedArrayObtainStyledAttributes.hasValue(4)) {
+            int color = typedArrayObtainStyledAttributes.getColor(4, 0);
             for (TextView textView : this.mLabels) {
                 textView.setTextColor(color);
             }
@@ -38,8 +39,8 @@ public class UsageView extends FrameLayout {
                 textView2.setTextColor(color);
             }
         }
-        if (obtainStyledAttributes.hasValue(0)) {
-            int i = obtainStyledAttributes.getInt(0, 0);
+        if (typedArrayObtainStyledAttributes.hasValue(0)) {
+            int i = typedArrayObtainStyledAttributes.getInt(0, 0);
             if (i == 8388613) {
                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.graph_label_group);
                 LinearLayout linearLayout2 = (LinearLayout) findViewById(R.id.label_group);
@@ -47,15 +48,15 @@ public class UsageView extends FrameLayout {
                 linearLayout.addView(linearLayout2);
                 linearLayout2.setGravity(8388613);
                 LinearLayout linearLayout3 = (LinearLayout) findViewById(R.id.bottom_label_group);
-                View findViewById = linearLayout3.findViewById(R.id.bottom_label_space);
-                linearLayout3.removeView(findViewById);
-                linearLayout3.addView(findViewById);
+                View viewFindViewById = linearLayout3.findViewById(R.id.bottom_label_space);
+                linearLayout3.removeView(viewFindViewById);
+                linearLayout3.addView(viewFindViewById);
             } else if (i != 8388611) {
                 throw new IllegalArgumentException("Unsupported gravity " + i);
             }
         }
-        this.mUsageGraph.setAccentColor(obtainStyledAttributes.getColor(1, 0));
-        obtainStyledAttributes.recycle();
+        this.mUsageGraph.setAccentColor(typedArrayObtainStyledAttributes.getColor(1, 0));
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public void clearPaths() {
@@ -92,10 +93,10 @@ public class UsageView extends FrameLayout {
     }
 
     private void setWeight(int i, float f) {
-        View findViewById = findViewById(i);
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) findViewById.getLayoutParams();
+        View viewFindViewById = findViewById(i);
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) viewFindViewById.getLayoutParams();
         layoutParams.weight = f;
-        findViewById.setLayoutParams(layoutParams);
+        viewFindViewById.setLayoutParams(layoutParams);
     }
 
     public void setSideLabels(CharSequence[] charSequenceArr) {

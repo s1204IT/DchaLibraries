@@ -7,6 +7,7 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 /* loaded from: classes.dex */
 public class Help {
     private final Config mConfig;
@@ -22,18 +23,18 @@ public class Help {
     }
 
     public void addHelpMenuItem(Menu menu, String str, boolean z) {
-        Intent intent;
+        Intent helpIntent;
         if (Settings.System.getInt(this.mContext.getContentResolver(), "dcha_state", 0) == 0) {
-            intent = getHelpIntent(str);
+            helpIntent = getHelpIntent(str);
         } else {
-            intent = null;
+            helpIntent = null;
         }
-        if (intent != null) {
+        if (helpIntent != null) {
             new MenuInflater(this.mContext).inflate(R.menu.help, menu);
-            MenuItem findItem = menu.findItem(R.id.menu_help);
-            findItem.setIntent(intent);
+            MenuItem menuItemFindItem = menu.findItem(R.id.menu_help);
+            menuItemFindItem.setIntent(helpIntent);
             if (z) {
-                findItem.setShowAsAction(2);
+                menuItemFindItem.setShowAsAction(2);
             }
         }
     }

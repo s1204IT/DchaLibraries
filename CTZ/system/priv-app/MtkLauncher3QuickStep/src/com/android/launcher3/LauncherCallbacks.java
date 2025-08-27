@@ -5,6 +5,7 @@ import android.os.Bundle;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public interface LauncherCallbacks {
     void bindAllApplications(ArrayList<AppInfo> arrayList);

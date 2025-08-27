@@ -9,6 +9,7 @@ import com.android.quickstep.ActivityControlHelper;
 import com.android.quickstep.util.RemoteAnimationProvider;
 import java.lang.ref.WeakReference;
 import java.util.function.BiPredicate;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public class RecentsActivityTracker implements ActivityControlHelper.ActivityInitListener {
@@ -30,8 +31,7 @@ public class RecentsActivityTracker implements ActivityControlHelper.ActivityIni
         sScheduler.clearReference(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean init(RecentsActivity recentsActivity, boolean z) {
+    private boolean init(RecentsActivity recentsActivity, boolean z) {
         return this.mOnInitListener.test(recentsActivity, Boolean.valueOf(z));
     }
 
@@ -60,14 +60,16 @@ public class RecentsActivityTracker implements ActivityControlHelper.ActivityIni
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class Scheduler implements Runnable {
+    private static class Scheduler implements Runnable {
         private MainThreadExecutor mMainThreadExecutor;
         private WeakReference<RecentsActivityTracker> mPendingTracker;
 
         private Scheduler() {
             this.mPendingTracker = new WeakReference<>(null);
+        }
+
+        /* synthetic */ Scheduler(AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         public synchronized void schedule(RecentsActivityTracker recentsActivityTracker) {

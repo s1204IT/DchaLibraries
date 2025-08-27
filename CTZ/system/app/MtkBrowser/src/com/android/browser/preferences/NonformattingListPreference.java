@@ -3,6 +3,7 @@ package com.android.browser.preferences;
 import android.content.Context;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
+
 /* loaded from: classes.dex */
 public class NonformattingListPreference extends ListPreference {
     private CharSequence mSummary;

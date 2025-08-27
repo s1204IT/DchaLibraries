@@ -8,6 +8,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.text.TextUtils;
 import com.android.settingslib.R;
 import com.android.settingslib.core.lifecycle.Lifecycle;
+
 /* loaded from: classes.dex */
 public abstract class AbstractBluetoothAddressPreferenceController extends AbstractConnectivityPreferenceController {
     private static final String[] CONNECTIVITY_INTENTS = {"android.bluetooth.adapter.action.STATE_CHANGED"};

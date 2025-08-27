@@ -12,6 +12,7 @@ import com.android.launcher3.util.TouchController;
 import com.android.launcher3.views.BaseDragLayer;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 /* loaded from: classes.dex */
 public abstract class AbstractFloatingView extends LinearLayout implements TouchController {
     public static final int TYPE_ACCESSIBLE = 447;
@@ -31,7 +32,6 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
     protected boolean mIsOpen;
 
     @Retention(RetentionPolicy.SOURCE)
-    /* loaded from: classes.dex */
     public @interface FloatingViewType {
     }
 
@@ -68,8 +68,7 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
         return this.mIsOpen;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void onWidgetsBound() {
+    protected void onWidgetsBound() {
     }
 
     public boolean onBackPressed() {
@@ -83,8 +82,7 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void announceAccessibilityChanges() {
+    protected void announceAccessibilityChanges() {
         Pair<View, String> accessibilityTarget = getAccessibilityTarget();
         if (accessibilityTarget == null || !AccessibilityManagerCompat.isAccessibilityEnabled(getContext())) {
             return;
@@ -100,8 +98,7 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public static <T extends AbstractFloatingView> T getOpenView(BaseDraggingActivity baseDraggingActivity, int i) {
+    protected static <T extends AbstractFloatingView> T getOpenView(BaseDraggingActivity baseDraggingActivity, int i) {
         BaseDragLayer dragLayer = baseDraggingActivity.getDragLayer();
         for (int childCount = dragLayer.getChildCount() - 1; childCount >= 0; childCount--) {
             View childAt = dragLayer.getChildAt(childCount);

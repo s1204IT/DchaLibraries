@@ -10,6 +10,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Checkable;
 import com.android.browser.R;
+
 /* loaded from: classes.dex */
 public class RadioPreference extends Preference {
     private AccessibilityManager mAccessibilityManager;
@@ -27,15 +28,17 @@ public class RadioPreference extends Preference {
         return false;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r3v1, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     @Override // android.preference.Preference
     protected void onBindView(View view) {
         super.onBindView(view);
-        View findViewById = view.findViewById(R.id.radiobutton);
-        if (findViewById != null && (findViewById instanceof Checkable)) {
-            ((Checkable) findViewById).setChecked(this.mChecked);
-            if (this.mSendAccessibilityEventViewClickedType && this.mAccessibilityManager.isEnabled() && findViewById.isEnabled()) {
+        View viewFindViewById = view.findViewById(R.id.radiobutton);
+        if (viewFindViewById != 0 && (viewFindViewById instanceof Checkable)) {
+            ((Checkable) viewFindViewById).setChecked(this.mChecked);
+            if (this.mSendAccessibilityEventViewClickedType && this.mAccessibilityManager.isEnabled() && viewFindViewById.isEnabled()) {
                 this.mSendAccessibilityEventViewClickedType = false;
-                findViewById.sendAccessibilityEventUnchecked(AccessibilityEvent.obtain(1));
+                viewFindViewById.sendAccessibilityEventUnchecked(AccessibilityEvent.obtain(1));
             }
         }
     }
@@ -87,11 +90,11 @@ public class RadioPreference extends Preference {
 
     @Override // android.preference.Preference
     protected Parcelable onSaveInstanceState() {
-        Parcelable onSaveInstanceState = super.onSaveInstanceState();
+        Parcelable parcelableOnSaveInstanceState = super.onSaveInstanceState();
         if (isPersistent()) {
-            return onSaveInstanceState;
+            return parcelableOnSaveInstanceState;
         }
-        SavedState savedState = new SavedState(onSaveInstanceState);
+        SavedState savedState = new SavedState(parcelableOnSaveInstanceState);
         savedState.mSaveStateChecked = isChecked();
         return savedState;
     }
@@ -107,16 +110,16 @@ public class RadioPreference extends Preference {
         setChecked(savedState.mSaveStateChecked);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SavedState extends Preference.BaseSavedState {
+    private static class SavedState extends Preference.BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() { // from class: com.android.browser.preferences.RadioPreference.SavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState createFromParcel(Parcel parcel) {
                 return new SavedState(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public SavedState[] newArray(int i) {

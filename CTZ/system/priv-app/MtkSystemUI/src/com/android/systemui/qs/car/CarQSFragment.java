@@ -8,6 +8,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.android.systemui.qs.QSFooter;
 import com.android.systemui.statusbar.car.UserGridRecyclerView;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class CarQSFragment extends Fragment implements QS {
     private AnimatorSet mAnimatorSet;
@@ -149,7 +151,6 @@ public class CarQSFragment extends Fragment implements QS {
     public void setExpandClickListener(View.OnClickListener onClickListener) {
     }
 
-    /* loaded from: classes.dex */
     public class UserSwitchCallback {
         private boolean mShowing;
 
@@ -160,25 +161,23 @@ public class CarQSFragment extends Fragment implements QS {
             return this.mShowing;
         }
 
-        public void show() {
+        public void show() throws Resources.NotFoundException {
             this.mShowing = true;
             CarQSFragment.this.animateHeightChange(true);
         }
 
-        public void hide() {
+        public void hide() throws Resources.NotFoundException {
             this.mShowing = false;
             CarQSFragment.this.animateHeightChange(false);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateUserSwitcherHeight(int i) {
+    private void updateUserSwitcherHeight(int i) {
         this.mUserSwitcherContainer.getLayoutParams().height = i;
         this.mUserSwitcherContainer.requestLayout();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void animateHeightChange(boolean z) {
+    private void animateHeightChange(boolean z) throws Resources.NotFoundException {
         if (this.mAnimatorSet != null) {
             this.mAnimatorSet.cancel();
         }
@@ -187,18 +186,21 @@ public class CarQSFragment extends Fragment implements QS {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.qs.car.-$$Lambda$CarQSFragment$F8Wi9wqWb5vO5dq5W60LmH4nDcg
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator2) {
-                CarQSFragment.this.updateUserSwitcherHeight(((Integer) valueAnimator2.getAnimatedValue()).intValue());
+                this.f$0.updateUserSwitcherHeight(((Integer) valueAnimator2.getAnimatedValue()).intValue());
             }
         });
         arrayList.add(valueAnimator);
-        Animator loadAnimator = AnimatorInflater.loadAnimator(getContext(), z ? R.anim.car_user_switcher_open_name_animation : R.anim.car_user_switcher_close_name_animation);
-        loadAnimator.setTarget(this.mFooterUserName);
-        arrayList.add(loadAnimator);
-        Animator loadAnimator2 = AnimatorInflater.loadAnimator(getContext(), z ? R.anim.car_user_switcher_open_icon_animation : R.anim.car_user_switcher_close_icon_animation);
-        loadAnimator2.setTarget(this.mFooterExpandIcon);
-        arrayList.add(loadAnimator2);
+        Animator animatorLoadAnimator = AnimatorInflater.loadAnimator(getContext(), z ? R.anim.car_user_switcher_open_name_animation : R.anim.car_user_switcher_close_name_animation);
+        animatorLoadAnimator.setTarget(this.mFooterUserName);
+        arrayList.add(animatorLoadAnimator);
+        Animator animatorLoadAnimator2 = AnimatorInflater.loadAnimator(getContext(), z ? R.anim.car_user_switcher_open_icon_animation : R.anim.car_user_switcher_close_icon_animation);
+        animatorLoadAnimator2.setTarget(this.mFooterExpandIcon);
+        arrayList.add(animatorLoadAnimator2);
         this.mAnimatorSet = new AnimatorSet();
         this.mAnimatorSet.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.car.CarQSFragment.1
+            AnonymousClass1() {
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 CarQSFragment.this.mAnimatorSet = null;
@@ -207,6 +209,17 @@ public class CarQSFragment extends Fragment implements QS {
         this.mAnimatorSet.playTogether((Animator[]) arrayList.toArray(new Animator[0]));
         setupInitialValues(this.mAnimatorSet);
         this.mAnimatorSet.start();
+    }
+
+    /* renamed from: com.android.systemui.qs.car.CarQSFragment$1 */
+    class AnonymousClass1 extends AnimatorListenerAdapter {
+        AnonymousClass1() {
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            CarQSFragment.this.mAnimatorSet = null;
+        }
     }
 
     private void setupInitialValues(Animator animator) {

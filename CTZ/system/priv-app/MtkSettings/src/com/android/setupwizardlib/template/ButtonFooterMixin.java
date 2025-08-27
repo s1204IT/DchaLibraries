@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.ViewStub;
 import com.android.setupwizardlib.R;
 import com.android.setupwizardlib.TemplateLayout;
+
 /* loaded from: classes.dex */
 public class ButtonFooterMixin implements Mixin {
     private final Context mContext;

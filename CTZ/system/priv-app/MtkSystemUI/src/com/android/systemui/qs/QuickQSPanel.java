@@ -16,6 +16,7 @@ import com.android.systemui.tuner.TunerService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class QuickQSPanel extends QSPanel {
     private boolean mDisabledByPolicy;
@@ -26,6 +27,9 @@ public class QuickQSPanel extends QSPanel {
     public QuickQSPanel(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mNumTiles = new TunerService.Tunable() { // from class: com.android.systemui.qs.QuickQSPanel.1
+            AnonymousClass1() {
+            }
+
             @Override // com.android.systemui.tuner.TunerService.Tunable
             public void onTuningChanged(String str, String str2) {
                 QuickQSPanel.this.setMaxTiles(QuickQSPanel.getNumQuickTiles(QuickQSPanel.this.mContext));
@@ -54,16 +58,14 @@ public class QuickQSPanel extends QSPanel {
     protected void addDivider() {
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.QSPanel, android.view.ViewGroup, android.view.View
-    public void onAttachedToWindow() {
+    protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         ((TunerService) Dependency.get(TunerService.class)).addTunable(this.mNumTiles, "sysui_qqs_count");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.QSPanel, android.view.ViewGroup, android.view.View
-    public void onDetachedFromWindow() {
+    protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         ((TunerService) Dependency.get(TunerService.class)).removeTunable(this.mNumTiles);
     }
@@ -77,9 +79,8 @@ public class QuickQSPanel extends QSPanel {
         return !this.mExpanded;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.qs.QSPanel
-    public void drawTile(QSPanel.TileRecord tileRecord, QSTile.State state) {
+    protected void drawTile(QSPanel.TileRecord tileRecord, QSTile.State state) {
         if (state instanceof QSTile.SignalState) {
             QSTile.SignalState signalState = new QSTile.SignalState();
             state.copyTo(signalState);
@@ -113,8 +114,9 @@ public class QuickQSPanel extends QSPanel {
     @Override // com.android.systemui.qs.QSPanel
     public void setTiles(Collection<QSTile> collection) {
         ArrayList arrayList = new ArrayList();
-        for (QSTile qSTile : collection) {
-            arrayList.add(qSTile);
+        Iterator<QSTile> it = collection.iterator();
+        while (it.hasNext()) {
+            arrayList.add(it.next());
             if (arrayList.size() == this.mMaxTiles) {
                 break;
             }
@@ -122,12 +124,22 @@ public class QuickQSPanel extends QSPanel {
         super.setTiles(arrayList, true);
     }
 
+    /* renamed from: com.android.systemui.qs.QuickQSPanel$1 */
+    class AnonymousClass1 implements TunerService.Tunable {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.systemui.tuner.TunerService.Tunable
+        public void onTuningChanged(String str, String str2) {
+            QuickQSPanel.this.setMaxTiles(QuickQSPanel.getNumQuickTiles(QuickQSPanel.this.mContext));
+        }
+    }
+
     public static int getNumQuickTiles(Context context) {
         return ((TunerService) Dependency.get(TunerService.class)).getValue("sysui_qqs_count", 6);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setDisabledByPolicy(boolean z) {
+    void setDisabledByPolicy(boolean z) {
         if (z != this.mDisabledByPolicy) {
             this.mDisabledByPolicy = z;
             setVisibility(z ? 8 : 0);
@@ -139,13 +151,13 @@ public class QuickQSPanel extends QSPanel {
         if (this.mDisabledByPolicy) {
             if (getVisibility() == 8) {
                 return;
+            } else {
+                i = 8;
             }
-            i = 8;
         }
         super.setVisibility(i);
     }
 
-    /* loaded from: classes.dex */
     private static class HeaderTileLayout extends LinearLayout implements QSPanel.QSTileLayout {
         private boolean mListening;
         protected final ArrayList<QSPanel.TileRecord> mRecords;
@@ -165,12 +177,12 @@ public class QuickQSPanel extends QSPanel {
         protected void onConfigurationChanged(Configuration configuration) {
             super.onConfigurationChanged(configuration);
             setGravity(17);
-            LinearLayout.LayoutParams generateSpaceLayoutParams = generateSpaceLayoutParams(this.mContext.getResources().getDimensionPixelSize(R.dimen.qs_quick_tile_space_width));
+            LinearLayout.LayoutParams layoutParamsGenerateSpaceLayoutParams = generateSpaceLayoutParams(this.mContext.getResources().getDimensionPixelSize(R.dimen.qs_quick_tile_space_width));
             int childCount = getChildCount();
             for (int i = 0; i < childCount; i++) {
                 View childAt = getChildAt(i);
                 if (childAt instanceof Space) {
-                    childAt.setLayoutParams(generateSpaceLayoutParams);
+                    childAt.setLayoutParams(layoutParamsGenerateSpaceLayoutParams);
                 }
             }
         }
@@ -253,11 +265,11 @@ public class QuickQSPanel extends QSPanel {
             super.onMeasure(i, i2);
             if (this.mRecords != null && this.mRecords.size() > 0) {
                 Iterator<QSPanel.TileRecord> it = this.mRecords.iterator();
-                View view = this;
+                View viewUpdateAccessibilityOrder = this;
                 while (it.hasNext()) {
                     QSPanel.TileRecord next = it.next();
                     if (next.tileView.getVisibility() != 8) {
-                        view = next.tileView.updateAccessibilityOrder(view);
+                        viewUpdateAccessibilityOrder = next.tileView.updateAccessibilityOrder(viewUpdateAccessibilityOrder);
                     }
                 }
                 this.mRecords.get(0).tileView.setAccessibilityTraversalAfter(R.id.alarm_status_collapsed);

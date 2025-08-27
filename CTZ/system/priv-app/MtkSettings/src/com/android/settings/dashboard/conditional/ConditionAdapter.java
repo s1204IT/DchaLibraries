@@ -13,8 +13,10 @@ import com.android.settings.dashboard.DashboardAdapter;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.WirelessUtils;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class ConditionAdapter extends RecyclerView.Adapter<DashboardAdapter.DashboardItemHolder> {
     private List<Condition> mConditions;
@@ -44,7 +46,7 @@ public class ConditionAdapter extends RecyclerView.Adapter<DashboardAdapter.Dash
         }
 
         @Override // android.support.v7.widget.helper.ItemTouchHelper.Callback
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int i) {
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int i) throws IllegalStateException, IOException, IllegalArgumentException {
             Object item = ConditionAdapter.this.getItem(viewHolder.getItemId());
             if (item != null) {
                 ((Condition) item).silence();
@@ -69,11 +71,13 @@ public class ConditionAdapter extends RecyclerView.Adapter<DashboardAdapter.Dash
         return null;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onCreateViewHolder(Landroid/view/ViewGroup;I)Landroid/support/v7/widget/RecyclerView$ViewHolder; */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public DashboardAdapter.DashboardItemHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new DashboardAdapter.DashboardItemHolder(LayoutInflater.from(viewGroup.getContext()).inflate(i, viewGroup, false));
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onBindViewHolder(Landroid/support/v7/widget/RecyclerView$ViewHolder;I)V */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(DashboardAdapter.DashboardItemHolder dashboardItemHolder, int i) {
         bindViews(this.mConditions.get(i), dashboardItemHolder, i == this.mConditions.size() - 1, this.mConditionClickListener);
@@ -105,9 +109,9 @@ public class ConditionAdapter extends RecyclerView.Adapter<DashboardAdapter.Dash
         if (condition instanceof AirplaneModeCondition) {
             Log.d("ConditionAdapter", "Airplane mode condition has been bound with isActive=" + condition.isActive() + ". Airplane mode is currently " + WirelessUtils.isAirplaneModeOn(condition.mManager.getContext()));
         }
-        View findViewById = dashboardItemHolder.itemView.findViewById(R.id.content);
-        findViewById.setTag(condition);
-        findViewById.setOnClickListener(onClickListener);
+        View viewFindViewById = dashboardItemHolder.itemView.findViewById(R.id.content);
+        viewFindViewById.setTag(condition);
+        viewFindViewById.setOnClickListener(onClickListener);
         dashboardItemHolder.icon.setImageDrawable(condition.getIcon());
         dashboardItemHolder.title.setText(condition.getTitle());
         CharSequence[] actions = condition.getActions();
@@ -136,9 +140,9 @@ public class ConditionAdapter extends RecyclerView.Adapter<DashboardAdapter.Dash
     }
 
     private void setViewVisibility(View view, int i, boolean z) {
-        View findViewById = view.findViewById(i);
-        if (findViewById != null) {
-            findViewById.setVisibility(z ? 0 : 8);
+        View viewFindViewById = view.findViewById(i);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(z ? 0 : 8);
         }
     }
 }

@@ -32,6 +32,7 @@ import com.android.settings.EditPinPreference;
 import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.sim.SimHotSwapHandler;
 import com.mediatek.settings.sim.TelephonyUtils;
+
 /* loaded from: classes.dex */
 public class IccLockSettings extends SettingsPreferenceFragment implements EditPinPreference.OnPinEnteredListener {
     private String mError;
@@ -51,32 +52,32 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
     private boolean mIsAirplaneModeOn = false;
     private Handler mHandler = new Handler() { // from class: com.android.settings.IccLockSettings.1
         @Override // android.os.Handler
-        public void handleMessage(Message message) {
+        public void handleMessage(Message message) throws Resources.NotFoundException {
             AsyncResult asyncResult = (AsyncResult) message.obj;
             switch (message.what) {
                 case 100:
                     IccLockSettings.this.iccLockChanged(asyncResult.exception, message.arg1, (Phone) asyncResult.userObj);
-                    return;
+                    break;
                 case 101:
                     IccLockSettings.this.iccPinChanged(asyncResult.exception, message.arg1, (Phone) asyncResult.userObj);
-                    return;
+                    break;
                 case 102:
                     IccLockSettings.this.updatePreferences();
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     };
     private final BroadcastReceiver mSimStateReceiver = new BroadcastReceiver() { // from class: com.android.settings.IccLockSettings.2
         @Override // android.content.BroadcastReceiver
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, Intent intent) throws Resources.NotFoundException {
             Dialog dialog;
             String action = intent.getAction();
             Log.d("IccLockSettings", "onReceive, action=" + action);
             if ("android.intent.action.SIM_STATE_CHANGED".equals(action)) {
                 IccLockSettings.this.mHandler.sendMessage(IccLockSettings.this.mHandler.obtainMessage(102));
-            } else if ("android.intent.action.AIRPLANE_MODE".equals(action)) {
+                return;
+            }
+            if ("android.intent.action.AIRPLANE_MODE".equals(action)) {
                 IccLockSettings.this.mIsAirplaneModeOn = intent.getBooleanExtra("state", false);
                 IccLockSettings.this.updatePreferences();
                 if (IccLockSettings.this.mPinDialog != null) {
@@ -90,7 +91,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
     };
     private TabHost.OnTabChangeListener mTabListener = new TabHost.OnTabChangeListener() { // from class: com.android.settings.IccLockSettings.4
         @Override // android.widget.TabHost.OnTabChangeListener
-        public void onTabChanged(String str) {
+        public void onTabChanged(String str) throws Resources.NotFoundException {
             SubscriptionInfo activeSubscriptionInfoForSimSlotIndex = SubscriptionManager.from(IccLockSettings.this.getActivity().getBaseContext()).getActiveSubscriptionInfoForSimSlotIndex(Integer.parseInt(str));
             IccLockSettings.this.mPhone = activeSubscriptionInfoForSimSlotIndex == null ? null : PhoneFactory.getPhone(SubscriptionManager.getPhoneId(activeSubscriptionInfoForSimSlotIndex.getSubscriptionId()));
             StringBuilder sb = new StringBuilder();
@@ -144,33 +145,33 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) throws Resources.NotFoundException {
         CharSequence displayName;
         int simCount = ((TelephonyManager) getContext().getSystemService("phone")).getSimCount();
         if (simCount > 1) {
-            View inflate = layoutInflater.inflate(R.layout.icc_lock_tabs, viewGroup, false);
-            ViewGroup viewGroup2 = (ViewGroup) inflate.findViewById(R.id.prefs_container);
-            Utils.prepareCustomPreferencesList(viewGroup, inflate, viewGroup2, false);
+            View viewInflate = layoutInflater.inflate(R.layout.icc_lock_tabs, viewGroup, false);
+            ViewGroup viewGroup2 = (ViewGroup) viewInflate.findViewById(R.id.prefs_container);
+            Utils.prepareCustomPreferencesList(viewGroup, viewInflate, viewGroup2, false);
             viewGroup2.addView(super.onCreateView(layoutInflater, viewGroup2, bundle));
-            this.mTabHost = (TabHost) inflate.findViewById(16908306);
-            this.mTabWidget = (TabWidget) inflate.findViewById(16908307);
-            this.mListView = (ListView) inflate.findViewById(16908298);
+            this.mTabHost = (TabHost) viewInflate.findViewById(android.R.id.tabhost);
+            this.mTabWidget = (TabWidget) viewInflate.findViewById(android.R.id.tabs);
+            this.mListView = (ListView) viewInflate.findViewById(android.R.id.list);
             this.mTabHost.setup();
             this.mTabHost.setOnTabChangedListener(this.mTabListener);
             this.mTabHost.clearAllTabs();
-            SubscriptionManager from = SubscriptionManager.from(getContext());
+            SubscriptionManager subscriptionManagerFrom = SubscriptionManager.from(getContext());
             for (int i = 0; i < simCount; i++) {
-                SubscriptionInfo activeSubscriptionInfoForSimSlotIndex = from.getActiveSubscriptionInfoForSimSlotIndex(i);
+                SubscriptionInfo activeSubscriptionInfoForSimSlotIndex = subscriptionManagerFrom.getActiveSubscriptionInfoForSimSlotIndex(i);
                 TabHost tabHost = this.mTabHost;
-                String valueOf = String.valueOf(i);
+                String strValueOf = String.valueOf(i);
                 if (activeSubscriptionInfoForSimSlotIndex == null) {
                     displayName = getContext().getString(R.string.sim_editor_title, Integer.valueOf(i + 1));
                 } else {
                     displayName = activeSubscriptionInfoForSimSlotIndex.getDisplayName();
                 }
-                tabHost.addTab(buildTabSpec(valueOf, String.valueOf(displayName)));
+                tabHost.addTab(buildTabSpec(strValueOf, String.valueOf(displayName)));
             }
-            SubscriptionInfo activeSubscriptionInfoForSimSlotIndex2 = from.getActiveSubscriptionInfoForSimSlotIndex(0);
+            SubscriptionInfo activeSubscriptionInfoForSimSlotIndex2 = subscriptionManagerFrom.getActiveSubscriptionInfoForSimSlotIndex(0);
             this.mPhone = activeSubscriptionInfoForSimSlotIndex2 == null ? null : PhoneFactory.getPhone(SubscriptionManager.getPhoneId(activeSubscriptionInfoForSimSlotIndex2.getSubscriptionId()));
             StringBuilder sb = new StringBuilder();
             sb.append("onCreateView, phone=");
@@ -179,7 +180,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
             if (bundle != null && bundle.containsKey("currentTab")) {
                 this.mTabHost.setCurrentTabByTag(bundle.getString("currentTab"));
             }
-            return inflate;
+            return viewInflate;
         }
         this.mPhone = PhoneFactory.getDefaultPhone();
         return super.onCreateView(layoutInflater, viewGroup, bundle);
@@ -191,8 +192,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         updatePreferences();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updatePreferences() {
+    private void updatePreferences() {
         boolean z = false;
         if (this.mPinDialog != null) {
             this.mPinDialog.setEnabled((this.mPhone == null || this.mIsAirplaneModeOn) ? false : true);
@@ -217,7 +217,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         super.onResume();
         IntentFilter intentFilter = new IntentFilter("android.intent.action.SIM_STATE_CHANGED");
         intentFilter.addAction("android.intent.action.AIRPLANE_MODE");
@@ -266,7 +266,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         }
     }
 
-    private void showPinDialog() {
+    private void showPinDialog() throws Resources.NotFoundException {
         if (this.mDialogState == 0) {
             return;
         }
@@ -278,13 +278,13 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         }
     }
 
-    private void setDialogValues() {
+    private void setDialogValues() throws Resources.NotFoundException {
         String string;
         this.mPinDialog.setText(this.mPin);
-        String str = "";
+        String string2 = "";
         switch (this.mDialogState) {
             case 1:
-                str = this.mRes.getString(R.string.sim_enter_pin);
+                string2 = this.mRes.getString(R.string.sim_enter_pin);
                 EditPinPreference editPinPreference = this.mPinDialog;
                 if (this.mToState) {
                     string = this.mRes.getString(R.string.sim_enable_sim_lock);
@@ -294,31 +294,30 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
                 editPinPreference.setDialogTitle(string);
                 break;
             case 2:
-                str = this.mRes.getString(R.string.sim_enter_old);
+                string2 = this.mRes.getString(R.string.sim_enter_old);
                 this.mPinDialog.setDialogTitle(this.mRes.getString(R.string.sim_change_pin));
                 break;
             case 3:
-                str = this.mRes.getString(R.string.sim_enter_new);
+                string2 = this.mRes.getString(R.string.sim_enter_new);
                 this.mPinDialog.setDialogTitle(this.mRes.getString(R.string.sim_change_pin));
                 break;
             case 4:
-                str = this.mRes.getString(R.string.sim_reenter_new);
+                string2 = this.mRes.getString(R.string.sim_reenter_new);
                 this.mPinDialog.setDialogTitle(this.mRes.getString(R.string.sim_change_pin));
                 break;
         }
         if (this.mError != null) {
-            str = this.mError + "\n" + str;
+            string2 = this.mError + "\n" + string2;
             this.mError = null;
         }
         Log.d("IccLockSettings", "setDialogValues, dialogState=" + this.mDialogState);
-        this.mPinDialog.setDialogMessage(str);
+        this.mPinDialog.setDialogMessage(string2);
     }
 
     @Override // com.android.settings.EditPinPreference.OnPinEnteredListener
-    public void onPinEntered(EditPinPreference editPinPreference, boolean z) {
+    public void onPinEntered(EditPinPreference editPinPreference, boolean z) throws Resources.NotFoundException {
         if (!z) {
             resetDialogState();
-            return;
         }
         this.mPin = editPinPreference.getText();
         if (!reasonablePin(this.mPin)) {
@@ -332,38 +331,37 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         switch (this.mDialogState) {
             case 1:
                 tryChangeIccLockState();
-                return;
+                break;
             case 2:
                 this.mOldPin = this.mPin;
                 this.mDialogState = 3;
                 this.mError = null;
                 this.mPin = null;
                 showPinDialog();
-                return;
+                break;
             case 3:
                 this.mNewPin = this.mPin;
                 this.mDialogState = 4;
                 this.mPin = null;
                 showPinDialog();
-                return;
+                break;
             case 4:
                 if (!this.mPin.equals(this.mNewPin)) {
                     this.mError = this.mRes.getString(R.string.sim_pins_dont_match);
                     this.mDialogState = 3;
                     this.mPin = null;
                     showPinDialog();
-                    return;
+                    break;
+                } else {
+                    this.mError = null;
+                    tryChangePin();
+                    break;
                 }
-                this.mError = null;
-                tryChangePin();
-                return;
-            default:
-                return;
         }
     }
 
     @Override // android.support.v14.preference.PreferenceFragment, android.support.v7.preference.PreferenceManager.OnPreferenceTreeClickListener
-    public boolean onPreferenceTreeClick(Preference preference) {
+    public boolean onPreferenceTreeClick(Preference preference) throws Resources.NotFoundException {
         if (preference == this.mPinToggle) {
             this.mToState = this.mPinToggle.isChecked();
             this.mPinToggle.setChecked(!this.mToState);
@@ -377,16 +375,15 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
     }
 
     private void tryChangeIccLockState() {
-        Message obtain = Message.obtain(this.mHandler, 100, this.mPhone);
+        Message messageObtain = Message.obtain(this.mHandler, 100, this.mPhone);
         if (this.mPhone != null) {
             Log.d("IccLockSettings", "tryChangeIccLockState, toState=" + this.mToState);
-            this.mPhone.getIccCard().setIccLockEnabled(this.mToState, this.mPin, obtain);
+            this.mPhone.getIccCard().setIccLockEnabled(this.mToState, this.mPin, messageObtain);
             this.mPinToggle.setEnabled(false);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void iccLockChanged(Throwable th, int i, Phone phone) {
+    private void iccLockChanged(Throwable th, int i, Phone phone) throws Resources.NotFoundException {
         Log.d("IccLockSettings", "iccLockChanged, exception=" + th + ", attemptsRemaining=" + i);
         boolean z = false;
         boolean z2 = th == null;
@@ -416,8 +413,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         resetDialogState();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void iccPinChanged(Throwable th, int i, Phone phone) {
+    private void iccPinChanged(Throwable th, int i, Phone phone) throws Resources.NotFoundException {
         Log.d("IccLockSettings", "iccPinChanged, exception=" + th + ", attemptsRemaining=" + i);
         boolean z = th == null;
         boolean z2 = this.mPhone != null && this.mPhone.equals(phone);
@@ -449,22 +445,23 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         }
     }
 
-    private String getPinPasswordErrorMessage(int i, Throwable th) {
+    /* JADX WARN: Removed duplicated region for block: B:9:0x0020  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    private String getPinPasswordErrorMessage(int i, Throwable th) throws Resources.NotFoundException {
         String string;
         if (th instanceof CommandException) {
             CommandException commandException = (CommandException) th;
             if (commandException.getCommandError() == CommandException.Error.GENERIC_FAILURE || commandException.getCommandError() == CommandException.Error.SIM_ERR) {
                 string = this.mRes.getString(R.string.pin_failed);
-                Log.d("IccLockSettings", "getPinPasswordErrorMessage: attemptsRemaining=" + i + " displayMessage=" + string);
-                return string;
+            } else if (i == 0) {
+                string = this.mRes.getString(R.string.wrong_pin_code_pukked);
+            } else if (i > 0) {
+                string = this.mRes.getQuantityString(R.plurals.wrong_pin_code, i, Integer.valueOf(i));
+            } else {
+                string = this.mRes.getString(R.string.pin_failed);
             }
-        }
-        if (i == 0) {
-            string = this.mRes.getString(R.string.wrong_pin_code_pukked);
-        } else if (i > 0) {
-            string = this.mRes.getQuantityString(R.plurals.wrong_pin_code, i, Integer.valueOf(i));
-        } else {
-            string = this.mRes.getString(R.string.pin_failed);
         }
         Log.d("IccLockSettings", "getPinPasswordErrorMessage: attemptsRemaining=" + i + " displayMessage=" + string);
         return string;
@@ -477,8 +474,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resetDialogState() {
+    private void resetDialogState() throws Resources.NotFoundException {
         this.mError = null;
         this.mDialogState = 2;
         this.mPin = "";

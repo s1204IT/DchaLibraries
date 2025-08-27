@@ -64,6 +64,7 @@ import com.android.systemui.shared.system.PackageManagerWrapper;
 import com.android.systemui.shared.system.TaskStackChangeListener;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public abstract class RecentsView<T extends BaseActivity> extends PagedView implements Insettable {
@@ -71,6 +72,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
     private static final float UPDATE_SYSUI_FLAGS_THRESHOLD = 0.6f;
     protected final T mActivity;
     private View mClearAllButton;
+
     @ViewDebug.ExportedProperty(category = "launcher")
     private float mContentAlpha;
     private final Drawable mEmptyIcon;
@@ -104,7 +106,6 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
     private static final String TAG = RecentsView.class.getSimpleName();
     private static final float[] sTempFloatArray = new float[3];
 
-    /* loaded from: classes.dex */
     public static class ScrollState {
         public float linearInterpolation;
     }
@@ -116,10 +117,8 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
     public abstract boolean shouldUseMultiWindowTaskSizeStrategy();
 
     /* renamed from: com.android.quickstep.views.RecentsView$1 */
-    /* loaded from: classes.dex */
-    public class AnonymousClass1 extends TaskStackChangeListener {
+    class AnonymousClass1 extends TaskStackChangeListener {
         AnonymousClass1() {
-            RecentsView.this = r1;
         }
 
         @Override // com.android.systemui.shared.system.TaskStackChangeListener
@@ -154,12 +153,12 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
             BackgroundExecutor.get().submit(new Runnable() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$1$33q0Vx0rJJiNf-2oiC6R0mvbHw0
                 @Override // java.lang.Runnable
                 public final void run() {
-                    RecentsView.AnonymousClass1.lambda$onTaskRemoved$2(RecentsView.AnonymousClass1.this, i);
+                    RecentsView.AnonymousClass1.lambda$onTaskRemoved$2(this.f$0, i);
                 }
             });
         }
 
-        public static /* synthetic */ void lambda$onTaskRemoved$2(AnonymousClass1 anonymousClass1, int i) {
+        public static /* synthetic */ void lambda$onTaskRemoved$2(final AnonymousClass1 anonymousClass1, int i) {
             Handler handler;
             final TaskView taskView = RecentsView.this.getTaskView(i);
             if (taskView == null || (handler = taskView.getHandler()) == null) {
@@ -216,7 +215,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         this.mMultiWindowModeChangedListener = new BaseActivity.MultiWindowModeChangedListener() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$cuqrsa-tyQadsC84Z2h0Rmwf57k
             @Override // com.android.launcher3.BaseActivity.MultiWindowModeChangedListener
             public final void onMultiWindowModeChanged(boolean z) {
-                RecentsView.lambda$new$0(RecentsView.this, z);
+                RecentsView.lambda$new$0(this.f$0, z);
             }
         };
         setPageSpacing(getResources().getDimensionPixelSize(R.dimen.recents_page_spacing));
@@ -233,7 +232,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         this.mEmptyIcon.setCallback(this);
         this.mEmptyMessage = context.getText(R.string.recents_empty_message);
         this.mEmptyMessagePaint = new TextPaint();
-        this.mEmptyMessagePaint.setColor(Themes.getAttrColor(context, 16842806));
+        this.mEmptyMessagePaint.setColor(Themes.getAttrColor(context, android.R.attr.textColorPrimary));
         this.mEmptyMessagePaint.setTextSize(getResources().getDimension(R.dimen.recents_empty_message_text_size));
         this.mEmptyMessagePadding = getResources().getDimensionPixelSize(R.dimen.recents_empty_message_text_padding);
         setWillNotDraw(false);
@@ -311,9 +310,8 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         this.mNextPageSwitchRunnable = runnable;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.PagedView
-    public void onPageEndTransition() {
+    protected void onPageEndTransition() {
         super.onPageEndTransition();
         if (this.mNextPageSwitchRunnable != null) {
             this.mNextPageSwitchRunnable.run();
@@ -336,13 +334,11 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         if (this.mShowEmptyMessage || childCount == 0 || this.mPageScrolls == null || childCount != this.mPageScrolls.length) {
             return 0.0f;
         }
-        int scrollEnd = getScrollEnd();
-        int scrollForPage = getScrollForPage(childCount - 1);
-        int i = scrollEnd - scrollForPage;
-        if (i == 0) {
+        int scrollEnd = getScrollEnd() - getScrollForPage(childCount - 1);
+        if (scrollEnd == 0) {
             return 0.0f;
         }
-        float scrollX = (getScrollX() - scrollForPage) / i;
+        float scrollX = (getScrollX() - r0) / scrollEnd;
         if (scrollX > 1.0f) {
             return 0.0f;
         }
@@ -352,8 +348,8 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
     private void updateClearAllButtonAlpha() {
         boolean z;
         if (this.mClearAllButton != null) {
-            float calculateClearAllButtonAlpha = calculateClearAllButtonAlpha();
-            if (calculateClearAllButtonAlpha != 1.0f) {
+            float fCalculateClearAllButtonAlpha = calculateClearAllButtonAlpha();
+            if (fCalculateClearAllButtonAlpha != 1.0f) {
                 z = false;
             } else {
                 z = true;
@@ -362,7 +358,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
                 this.mIsClearAllButtonFullyRevealed = z;
                 this.mClearAllButton.setImportantForAccessibility(z ? 1 : 2);
             }
-            this.mClearAllButton.setAlpha(calculateClearAllButtonAlpha * this.mContentAlpha);
+            this.mClearAllButton.setAlpha(fCalculateClearAllButtonAlpha * this.mContentAlpha);
         }
     }
 
@@ -372,9 +368,8 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         updateClearAllButtonAlpha();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.PagedView
-    public void restoreScrollOnLayout() {
+    protected void restoreScrollOnLayout() {
         if (this.mIsClearAllButtonFullyRevealed) {
             scrollAndForceFinish(getScrollEnd());
         } else {
@@ -397,13 +392,12 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         return super.onTouchEvent(motionEvent);
     }
 
-    public void applyLoadPlan(final RecentsTaskLoadPlan recentsTaskLoadPlan) {
+    private void applyLoadPlan(final RecentsTaskLoadPlan recentsTaskLoadPlan) {
         if (this.mPendingAnimation != null) {
             this.mPendingAnimation.addEndListener(new Consumer() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$AenGcjDqD14z7boU9lHV0QeB4c8
                 @Override // java.util.function.Consumer
                 public final void accept(Object obj) {
-                    PendingAnimation.OnEndListener onEndListener = (PendingAnimation.OnEndListener) obj;
-                    RecentsView.this.applyLoadPlan(recentsTaskLoadPlan);
+                    this.f$0.applyLoadPlan(recentsTaskLoadPlan);
                 }
             });
             return;
@@ -415,11 +409,11 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
             return;
         }
         int childCount = getChildCount();
-        LayoutInflater from = LayoutInflater.from(getContext());
+        LayoutInflater layoutInflaterFrom = LayoutInflater.from(getContext());
         ArrayList arrayList = new ArrayList(taskStack.getTasks());
         int size = arrayList.size();
         for (int childCount2 = getChildCount(); childCount2 < size; childCount2++) {
-            addView((TaskView) from.inflate(R.layout.task, (ViewGroup) this, false));
+            addView((TaskView) layoutInflaterFrom.inflate(R.layout.task, (ViewGroup) this, false));
         }
         while (getChildCount() > size) {
             removeView((TaskView) getChildAt(getChildCount() - 1));
@@ -476,15 +470,14 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         getTaskSize(this.mActivity.getDeviceProfile(), rect);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.PagedView
-    public boolean computeScrollHelper() {
-        boolean computeScrollHelper = super.computeScrollHelper();
+    protected boolean computeScrollHelper() {
+        boolean zComputeScrollHelper = super.computeScrollHelper();
         updateCurveProperties();
         boolean z = true;
         boolean z2 = false;
-        if (computeScrollHelper || this.mTouchState == 1) {
-            if (computeScrollHelper) {
+        if (zComputeScrollHelper || this.mTouchState == 1) {
+            if (zComputeScrollHelper) {
                 if (this.mScroller.getCurrVelocity() <= this.mFastFlingVelocity) {
                     z = false;
                 }
@@ -493,7 +486,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
             loadVisibleTaskData();
         }
         this.mModel.getRecentsTaskLoader().getHighResThumbnailLoader().setFlingingFast(z2);
-        return computeScrollHelper;
+        return zComputeScrollHelper;
     }
 
     public void updateCurveProperties() {
@@ -520,13 +513,13 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         }
         RecentsTaskLoader recentsTaskLoader = this.mModel.getRecentsTaskLoader();
         int pageNearestToCenterOfScreen = getPageNearestToCenterOfScreen();
-        int max = Math.max(0, pageNearestToCenterOfScreen - 2);
-        int min = Math.min(pageNearestToCenterOfScreen + 2, getChildCount() - 1);
+        int iMax = Math.max(0, pageNearestToCenterOfScreen - 2);
+        int iMin = Math.min(pageNearestToCenterOfScreen + 2, getChildCount() - 1);
         int childCount = getChildCount();
         int i = 0;
         while (i < childCount) {
             Task task = ((TaskView) getChildAt(i)).getTask();
-            boolean z = max <= i && i <= min;
+            boolean z = iMax <= i && i <= iMin;
             if (z) {
                 if (task != this.mTmpRunningTask) {
                     if (!this.mHasVisibleTaskData.get(task.key.id)) {
@@ -607,13 +600,12 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         if (taskView == null) {
             if (getChildCount() > 0) {
                 ((TaskView) getChildAt(0)).launchTask(true);
-                return;
             }
-            return;
-        }
-        int max = Math.max(0, Math.min(getChildCount() - 1, indexOfChild(taskView) + 1));
-        if (max < getChildCount()) {
-            ((TaskView) getChildAt(max)).launchTask(true);
+        } else {
+            int iMax = Math.max(0, Math.min(getChildCount() - 1, indexOfChild(taskView) + 1));
+            if (iMax < getChildCount()) {
+                ((TaskView) getChildAt(iMax)).launchTask(true);
+            }
         }
     }
 
@@ -649,7 +641,6 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         return this.mSwipeDownShouldLaunchApp;
     }
 
-    /* loaded from: classes.dex */
     public interface PageCallbacks {
         default void onPageScroll(ScrollState scrollState) {
         }
@@ -664,8 +655,8 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
     }
 
     private void addDismissedTaskAnimations(View view, AnimatorSet animatorSet, long j) {
-        addAnim(ObjectAnimator.ofFloat(view, ALPHA, 0.0f), j, Interpolators.ACCEL_2, animatorSet);
-        addAnim(ObjectAnimator.ofFloat(view, TRANSLATION_Y, -view.getHeight()), j, Interpolators.LINEAR, animatorSet);
+        addAnim(ObjectAnimator.ofFloat(view, (Property<View, Float>) ALPHA, 0.0f), j, Interpolators.ACCEL_2, animatorSet);
+        addAnim(ObjectAnimator.ofFloat(view, (Property<View, Float>) TRANSLATION_Y, -view.getHeight()), j, Interpolators.LINEAR, animatorSet);
     }
 
     private void removeTask(Task task, int i, PendingAnimation.OnEndListener onEndListener, boolean z) {
@@ -699,7 +690,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         getPageScrolls(iArr3, false, new PagedView.ComputePageScrollsLogic() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$22olkO-xTCGy8V4w_dNEM5CXDkY
             @Override // com.android.launcher3.PagedView.ComputePageScrollsLogic
             public final boolean shouldIncludeView(View view) {
-                return RecentsView.lambda$createTaskDismissAnimation$2(TaskView.this, view);
+                return RecentsView.lambda$createTaskDismissAnimation$2(taskView, view);
             }
         });
         int i8 = this.mIsRtl ? childCount - 1 : 0;
@@ -718,7 +709,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         } else {
             i2 = 0;
         }
-        final int indexOfChild = indexOfChild(taskView);
+        final int iIndexOfChild = indexOfChild(taskView);
         boolean z4 = false;
         while (i7 < childCount) {
             View childAt = getChildAt(i7);
@@ -734,14 +725,14 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
                 i3 = childCount;
                 int i9 = this.mIsRtl ? i2 : 0;
                 i4 = i8;
-                if (this.mCurrentPage == indexOfChild) {
+                if (this.mCurrentPage == iIndexOfChild) {
                     i5 = i;
                     if (this.mCurrentPage == (this.mIsRtl ? i4 : i)) {
                         i9 += this.mIsRtl ? -i2 : i2;
                     }
                 } else {
                     i5 = i;
-                    if (indexOfChild == this.mCurrentPage - 1) {
+                    if (iIndexOfChild == this.mCurrentPage - 1) {
                         i9 += this.mIsRtl ? -i2 : i2;
                     }
                 }
@@ -749,7 +740,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
                 if (i10 != 0) {
                     iArr = iArr2;
                     z3 = true;
-                    addAnim(ObjectAnimator.ofFloat(childAt, TRANSLATION_X, i10), j, Interpolators.ACCEL, animatorSet);
+                    addAnim(ObjectAnimator.ofFloat(childAt, (Property<View, Float>) TRANSLATION_X, i10), j, Interpolators.ACCEL, animatorSet);
                     z4 = true;
                     i7++;
                     childCount = i3;
@@ -768,14 +759,14 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
             iArr2 = iArr;
         }
         if (z4) {
-            ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$O8Draeq9XtDwd0zxi6MdnjpVeKc
+            ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+            valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$O8Draeq9XtDwd0zxi6MdnjpVeKc
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    RecentsView.this.updateCurveProperties();
+                    this.f$0.updateCurveProperties();
                 }
             });
-            animatorSet.play(ofFloat);
+            animatorSet.play(valueAnimatorOfFloat);
         }
         if (z) {
             taskView.setTranslationZ(0.1f);
@@ -784,13 +775,13 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         this.mPendingAnimation.addEndListener(new Consumer() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$W4rpBvRw7hjG-nky8UfZ86QDTwk
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                RecentsView.lambda$createTaskDismissAnimation$4(RecentsView.this, z2, taskView, indexOfChild, (PendingAnimation.OnEndListener) obj);
+                RecentsView.lambda$createTaskDismissAnimation$4(this.f$0, z2, taskView, iIndexOfChild, (PendingAnimation.OnEndListener) obj);
             }
         });
         return pendingAnimation;
     }
 
-    public static /* synthetic */ boolean lambda$createTaskDismissAnimation$2(TaskView taskView, View view) {
+    static /* synthetic */ boolean lambda$createTaskDismissAnimation$2(TaskView taskView, View view) {
         return (view.getVisibility() == 8 || view == taskView) ? false : true;
     }
 
@@ -825,7 +816,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         this.mPendingAnimation.addEndListener(new Consumer() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$vaMQpg8ISJL-eHsXQ8-CM1-N9b0
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                RecentsView.lambda$createAllTasksDismissAnimation$5(RecentsView.this, (PendingAnimation.OnEndListener) obj);
+                RecentsView.lambda$createAllTasksDismissAnimation$5(this.f$0, (PendingAnimation.OnEndListener) obj);
             }
         });
         return pendingAnimation;
@@ -853,24 +844,24 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
             return false;
         }
         int nextPage = getNextPage() + i;
-        if (z || (nextPage >= 0 && nextPage < getChildCount())) {
-            snapToPage((nextPage + getPageCount()) % getPageCount());
-            return true;
+        if (!z && (nextPage < 0 || nextPage >= getChildCount())) {
+            return false;
         }
-        return false;
+        snapToPage((nextPage + getPageCount()) % getPageCount());
+        return true;
     }
 
     private void runDismissAnimation(final PendingAnimation pendingAnimation) {
-        AnimatorPlaybackController wrap = AnimatorPlaybackController.wrap(pendingAnimation.anim, 300L);
-        wrap.dispatchOnStart();
-        wrap.setEndAction(new Runnable() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$dgGE3h8VV7RqwRWGJ-rZYKXyLCQ
+        AnimatorPlaybackController animatorPlaybackControllerWrap = AnimatorPlaybackController.wrap(pendingAnimation.anim, 300L);
+        animatorPlaybackControllerWrap.dispatchOnStart();
+        animatorPlaybackControllerWrap.setEndAction(new Runnable() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$dgGE3h8VV7RqwRWGJ-rZYKXyLCQ
             @Override // java.lang.Runnable
             public final void run() {
-                PendingAnimation.this.finish(true, 3);
+                pendingAnimation.finish(true, 3);
             }
         });
-        wrap.getAnimationPlayer().setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
-        wrap.start();
+        animatorPlaybackControllerWrap.getAnimationPlayer().setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
+        animatorPlaybackControllerWrap.start();
     }
 
     public void dismissTask(TaskView taskView, boolean z, boolean z2) {
@@ -887,17 +878,20 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
             int keyCode = keyEvent.getKeyCode();
             if (keyCode == 61) {
                 return snapToPageRelative(keyEvent.isShiftPressed() ? -1 : 1, keyEvent.isAltPressed());
-            } else if (keyCode == 67 || keyCode == 112) {
+            }
+            if (keyCode == 67 || keyCode == 112) {
                 dismissTask((TaskView) getChildAt(getNextPage()), true, true);
                 return true;
-            } else if (keyCode != 158) {
+            }
+            if (keyCode != 158) {
                 switch (keyCode) {
                     case 21:
                         return snapToPageRelative(this.mIsRtl ? 1 : -1, false);
                     case 22:
                         return snapToPageRelative(this.mIsRtl ? -1 : 1, false);
                 }
-            } else if (keyEvent.isAltPressed()) {
+            }
+            if (keyEvent.isAltPressed()) {
                 dismissTask((TaskView) getChildAt(getNextPage()), true, true);
                 return true;
             }
@@ -911,13 +905,9 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         if (z && getChildCount() > 0) {
             if (i != 17 && i != 66) {
                 switch (i) {
-                    case 1:
-                        break;
                     case 2:
                         setCurrentPage(0);
-                        return;
-                    default:
-                        return;
+                        break;
                 }
             }
             setCurrentPage(getChildCount() - 1);
@@ -929,17 +919,17 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
     }
 
     public void setContentAlpha(float f) {
-        float boundToRange = Utilities.boundToRange(f, 0.0f, 1.0f);
-        this.mContentAlpha = boundToRange;
+        float fBoundToRange = Utilities.boundToRange(f, 0.0f, 1.0f);
+        this.mContentAlpha = fBoundToRange;
         for (int childCount = getChildCount() - 1; childCount >= 0; childCount--) {
             TaskView pageAt = getPageAt(childCount);
             if (!this.mRunningTaskTileHidden || pageAt.getTask().key.id != this.mRunningTaskId) {
-                getChildAt(childCount).setAlpha(boundToRange);
+                getChildAt(childCount).setAlpha(fBoundToRange);
             }
         }
-        int round = Math.round(boundToRange * 255.0f);
-        this.mEmptyMessagePaint.setAlpha(round);
-        this.mEmptyIcon.setAlpha(round);
+        int iRound = Math.round(fBoundToRange * 255.0f);
+        this.mEmptyMessagePaint.setAlpha(iRound);
+        this.mEmptyIcon.setAlpha(iRound);
         updateClearAllButtonAlpha();
     }
 
@@ -962,28 +952,26 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         onChildViewsChanged();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getPageAt(I)Landroid/view/View; */
     @Override // com.android.launcher3.PagedView
     public TaskView getPageAt(int i) {
         return (TaskView) getChildAt(i);
     }
 
     public void updateEmptyMessage() {
-        boolean z = false;
-        boolean z2 = getChildCount() == 0;
-        if (this.mLastMeasureSize.x != getWidth() || this.mLastMeasureSize.y != getHeight()) {
-            z = true;
-        }
-        if (z2 == this.mShowEmptyMessage && !z) {
+        boolean z = getChildCount() == 0;
+        boolean z2 = (this.mLastMeasureSize.x == getWidth() && this.mLastMeasureSize.y == getHeight()) ? false : true;
+        if (z == this.mShowEmptyMessage && !z2) {
             return;
         }
-        setContentDescription(z2 ? this.mEmptyMessage : "");
-        this.mShowEmptyMessage = z2;
-        updateEmptyStateUi(z);
+        setContentDescription(z ? this.mEmptyMessage : "");
+        this.mShowEmptyMessage = z;
+        updateEmptyStateUi(z2);
         invalidate();
     }
 
     @Override // com.android.launcher3.PagedView, android.view.ViewGroup, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         updateEmptyStateUi(z);
         setPivotY((((this.mInsets.top + getPaddingTop()) + this.mTaskTopMargin) + ((getHeight() - this.mInsets.bottom) - getPaddingBottom())) / 2);
@@ -1010,7 +998,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         return super.verifyDrawable(drawable) || (this.mShowEmptyMessage && drawable == this.mEmptyIcon);
     }
 
-    public void maybeDrawEmptyMessage(Canvas canvas) {
+    protected void maybeDrawEmptyMessage(Canvas canvas) {
         if (this.mShowEmptyMessage && this.mEmptyTextLayout != null) {
             this.mTempRect.set(this.mInsets.left + getPaddingLeft(), this.mInsets.top + getPaddingTop(), this.mInsets.right + getPaddingRight(), this.mInsets.bottom + getPaddingBottom());
             canvas.save();
@@ -1024,39 +1012,39 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
 
     public AnimatorSet createAdjacentPageAnimForTaskLaunch(TaskView taskView, ClipAnimationHelper clipAnimationHelper) {
         AnimatorSet animatorSet = new AnimatorSet();
-        int indexOfChild = indexOfChild(taskView);
+        int iIndexOfChild = indexOfChild(taskView);
         int currentPage = getCurrentPage();
-        boolean z = indexOfChild == currentPage;
-        float width = clipAnimationHelper.getSourceRect().width() / clipAnimationHelper.getTargetRect().width();
-        float centerY = clipAnimationHelper.getSourceRect().centerY() - clipAnimationHelper.getTargetRect().centerY();
+        boolean z = iIndexOfChild == currentPage;
+        float fWidth = clipAnimationHelper.getSourceRect().width() / clipAnimationHelper.getTargetRect().width();
+        float fCenterY = clipAnimationHelper.getSourceRect().centerY() - clipAnimationHelper.getTargetRect().centerY();
         if (z) {
             TaskView pageAt = getPageAt(currentPage);
-            int i = indexOfChild - 1;
+            int i = iIndexOfChild - 1;
             if (i >= 0) {
                 TaskView pageAt2 = getPageAt(i);
-                float[] adjacentScaleAndTranslation = getAdjacentScaleAndTranslation(pageAt, width, centerY);
+                float[] adjacentScaleAndTranslation = getAdjacentScaleAndTranslation(pageAt, fWidth, fCenterY);
                 adjacentScaleAndTranslation[1] = -adjacentScaleAndTranslation[1];
                 animatorSet.play(createAnimForChild(pageAt2, adjacentScaleAndTranslation));
             }
-            int i2 = indexOfChild + 1;
+            int i2 = iIndexOfChild + 1;
             if (i2 < getPageCount()) {
-                animatorSet.play(createAnimForChild(getPageAt(i2), getAdjacentScaleAndTranslation(pageAt, width, centerY)));
+                animatorSet.play(createAnimForChild(getPageAt(i2), getAdjacentScaleAndTranslation(pageAt, fWidth, fCenterY)));
             }
         } else {
-            float width2 = taskView.getWidth() * (width - taskView.getCurveScale());
+            float width = taskView.getWidth() * (fWidth - taskView.getCurveScale());
             TaskView pageAt3 = getPageAt(currentPage);
             Property property = TRANSLATION_X;
             float[] fArr = new float[1];
-            fArr[0] = this.mIsRtl ? -width2 : width2;
-            animatorSet.play(ObjectAnimator.ofFloat(pageAt3, property, fArr));
-            int i3 = currentPage + (currentPage - indexOfChild);
+            fArr[0] = this.mIsRtl ? -width : width;
+            animatorSet.play(ObjectAnimator.ofFloat(pageAt3, (Property<TaskView, Float>) property, fArr));
+            int i3 = currentPage + (currentPage - iIndexOfChild);
             if (i3 >= 0 && i3 < getPageCount()) {
                 TaskView pageAt4 = getPageAt(i3);
                 PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
                 if (this.mIsRtl) {
-                    width2 = -width2;
+                    width = -width;
                 }
-                animatorSet.play(ObjectAnimator.ofPropertyValuesHolder(pageAt4, propertyListBuilder.translationX(width2).scale(1.0f).build()));
+                animatorSet.play(ObjectAnimator.ofPropertyValuesHolder(pageAt4, propertyListBuilder.translationX(width).scale(1.0f).build()));
             }
         }
         return animatorSet;
@@ -1077,28 +1065,28 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         final int sysUiStatusNavFlags = taskView.getThumbnail().getSysUiStatusNavFlags();
         final TaskViewDrawable taskViewDrawable = new TaskViewDrawable(taskView, this);
         getOverlay().add(taskViewDrawable);
-        ObjectAnimator ofFloat = ObjectAnimator.ofFloat(taskViewDrawable, TaskViewDrawable.PROGRESS, 1.0f, 0.0f);
-        ofFloat.setInterpolator(Interpolators.LINEAR);
-        ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$6rY-CbVfaW6Tllsto9JMEtZpvcc
+        ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(taskViewDrawable, TaskViewDrawable.PROGRESS, 1.0f, 0.0f);
+        objectAnimatorOfFloat.setInterpolator(Interpolators.LINEAR);
+        objectAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$6rY-CbVfaW6Tllsto9JMEtZpvcc
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                RecentsView.lambda$createTaskLauncherAnimation$7(RecentsView.this, sysUiStatusNavFlags, valueAnimator);
+                RecentsView.lambda$createTaskLauncherAnimation$7(this.f$0, sysUiStatusNavFlags, valueAnimator);
             }
         });
-        AnimatorSet createAdjacentPageAnimForTaskLaunch = createAdjacentPageAnimForTaskLaunch(taskView, taskViewDrawable.getClipAnimationHelper());
-        createAdjacentPageAnimForTaskLaunch.play(ofFloat);
-        createAdjacentPageAnimForTaskLaunch.setDuration(j);
+        AnimatorSet animatorSetCreateAdjacentPageAnimForTaskLaunch = createAdjacentPageAnimForTaskLaunch(taskView, taskViewDrawable.getClipAnimationHelper());
+        animatorSetCreateAdjacentPageAnimForTaskLaunch.play(objectAnimatorOfFloat);
+        animatorSetCreateAdjacentPageAnimForTaskLaunch.setDuration(j);
         final Consumer consumer = new Consumer() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$Wo_ajyBoMmxYcPL1Ygm-K_4O_JM
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                RecentsView.lambda$createTaskLauncherAnimation$8(RecentsView.this, taskView, taskViewDrawable, (Boolean) obj);
+                RecentsView.lambda$createTaskLauncherAnimation$8(this.f$0, taskView, taskViewDrawable, (Boolean) obj);
             }
         };
-        this.mPendingAnimation = new PendingAnimation(createAdjacentPageAnimForTaskLaunch);
+        this.mPendingAnimation = new PendingAnimation(animatorSetCreateAdjacentPageAnimForTaskLaunch);
         this.mPendingAnimation.addEndListener(new Consumer() { // from class: com.android.quickstep.views.-$$Lambda$RecentsView$K9aSmLDhytYuCKnL74rPfPFTYQ8
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                RecentsView.lambda$createTaskLauncherAnimation$10(RecentsView.this, consumer, taskView, (PendingAnimation.OnEndListener) obj);
+                RecentsView.lambda$createTaskLauncherAnimation$10(this.f$0, consumer, taskView, (PendingAnimation.OnEndListener) obj);
             }
         });
         return this.mPendingAnimation;
@@ -1136,20 +1124,19 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         recentsView.mPendingAnimation = null;
     }
 
-    public static /* synthetic */ void lambda$createTaskLauncherAnimation$9(Consumer consumer, TaskView taskView, Boolean bool) {
+    static /* synthetic */ void lambda$createTaskLauncherAnimation$9(Consumer consumer, TaskView taskView, Boolean bool) {
         consumer.accept(bool);
         if (!bool.booleanValue()) {
             taskView.notifyTaskLaunchFailed(TAG);
         }
     }
 
-    public void onTaskLaunched(boolean z) {
+    protected void onTaskLaunched(boolean z) {
         resetTaskVisuals();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.PagedView
-    public void notifyPageSwitchListener(int i) {
+    protected void notifyPageSwitchListener(int i) {
         super.notifyPageSwitchListener(i);
         loadVisibleTaskData();
     }
@@ -1163,9 +1150,8 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         return ((int) getResources().getDimension(R.dimen.clear_all_container_width)) - getPaddingEnd();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.launcher3.PagedView
-    public int computeMaxScrollX() {
+    protected int computeMaxScrollX() {
         if (getChildCount() == 0) {
             return super.computeMaxScrollX();
         }
@@ -1196,20 +1182,25 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         scrollTo(this.mIsRtl ? 0 : computeMaxScrollX(), 0);
     }
 
+    /* JADX WARN: Removed duplicated region for block: B:38:0x0027  */
     @Override // com.android.launcher3.PagedView, android.view.View
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     public boolean performAccessibilityAction(int i, Bundle bundle) {
         if (getChildCount() > 0) {
-            if (i != 4096) {
-                if (i == 8192) {
-                    if (!this.mIsClearAllButtonFullyRevealed && getCurrentPage() == getPageCount() - 1) {
-                        revealClearAllButton();
-                        return true;
-                    }
+            if (i == 4096) {
+                if (this.mIsClearAllButtonFullyRevealed) {
+                    setCurrentPage(getChildCount() - 1);
+                    return true;
                 }
-            }
-            if (this.mIsClearAllButtonFullyRevealed) {
-                setCurrentPage(getChildCount() - 1);
-                return true;
+            } else if (i == 8192) {
+                if (!this.mIsClearAllButtonFullyRevealed && getCurrentPage() == getPageCount() - 1) {
+                    revealClearAllButton();
+                    return true;
+                }
+                if (this.mIsClearAllButtonFullyRevealed) {
+                }
             }
         }
         return super.performAccessibilityAction(i, bundle);

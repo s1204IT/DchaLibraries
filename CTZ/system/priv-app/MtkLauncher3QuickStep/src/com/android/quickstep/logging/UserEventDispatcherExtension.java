@@ -6,6 +6,7 @@ import com.android.launcher3.logging.LoggerUtils;
 import com.android.launcher3.logging.UserEventDispatcher;
 import com.android.launcher3.userevent.nano.LauncherLogProto;
 import com.android.systemui.shared.system.MetricsLoggerCompat;
+
 /* loaded from: classes.dex */
 public class UserEventDispatcherExtension extends UserEventDispatcher {
     private static final String TAG = "UserEventDispatcher";

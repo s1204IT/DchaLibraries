@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.view.View;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class ZenDeleteRuleDialog extends InstrumentedDialogFragment {
     protected static PositiveClickListener mPositiveClickListener;
 
-    /* loaded from: classes.dex */
     public interface PositiveClickListener {
         void onOk(String str);
     }
@@ -38,7 +38,7 @@ public class ZenDeleteRuleDialog extends InstrumentedDialogFragment {
         final Bundle arguments = getArguments();
         String string = arguments.getString("zen_rule_name");
         final String string2 = arguments.getString("zen_rule_id");
-        AlertDialog create = new AlertDialog.Builder(getContext()).setMessage(getString(R.string.zen_mode_delete_rule_confirmation, new Object[]{string})).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).setPositiveButton(R.string.zen_mode_delete_rule_button, new DialogInterface.OnClickListener() { // from class: com.android.settings.notification.ZenDeleteRuleDialog.1
+        AlertDialog alertDialogCreate = new AlertDialog.Builder(getContext()).setMessage(getString(R.string.zen_mode_delete_rule_confirmation, new Object[]{string})).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).setPositiveButton(R.string.zen_mode_delete_rule_button, new DialogInterface.OnClickListener() { // from class: com.android.settings.notification.ZenDeleteRuleDialog.1
             @Override // android.content.DialogInterface.OnClickListener
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (arguments != null) {
@@ -46,10 +46,10 @@ public class ZenDeleteRuleDialog extends InstrumentedDialogFragment {
                 }
             }
         }).create();
-        View findViewById = create.findViewById(16908299);
-        if (findViewById != null) {
-            findViewById.setTextDirection(5);
+        View viewFindViewById = alertDialogCreate.findViewById(android.R.id.message);
+        if (viewFindViewById != null) {
+            viewFindViewById.setTextDirection(5);
         }
-        return create;
+        return alertDialogCreate;
     }
 }

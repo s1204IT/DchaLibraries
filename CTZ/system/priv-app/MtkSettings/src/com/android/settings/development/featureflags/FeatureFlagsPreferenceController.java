@@ -8,7 +8,9 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
+import java.util.Iterator;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class FeatureFlagsPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnStart {
     private PreferenceScreen mScreen;
@@ -44,8 +46,9 @@ public class FeatureFlagsPreferenceController extends AbstractPreferenceControll
         }
         this.mScreen.removeAll();
         Context context = this.mScreen.getContext();
-        for (String str : allFeatureFlags.keySet()) {
-            this.mScreen.addPreference(new FeatureFlagPreference(context, str));
+        Iterator it = allFeatureFlags.keySet().iterator();
+        while (it.hasNext()) {
+            this.mScreen.addPreference(new FeatureFlagPreference(context, (String) it.next()));
         }
     }
 }

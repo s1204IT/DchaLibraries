@@ -12,6 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import com.android.settings.R;
 import com.android.settings.SettingsActivity;
+
 /* loaded from: classes.dex */
 public class TtsEnginePreference extends Preference {
     private final TextToSpeech.EngineInfo mEngineInfo;
@@ -20,7 +21,6 @@ public class TtsEnginePreference extends Preference {
     private final CompoundButton.OnCheckedChangeListener mRadioChangeListener;
     private final RadioButtonGroupState mSharedState;
 
-    /* loaded from: classes.dex */
     public interface RadioButtonGroupState {
         Checkable getCurrentChecked();
 
@@ -56,12 +56,12 @@ public class TtsEnginePreference extends Preference {
         RadioButton radioButton = (RadioButton) preferenceViewHolder.findViewById(R.id.tts_engine_radiobutton);
         radioButton.setOnCheckedChangeListener(this.mRadioChangeListener);
         radioButton.setText(this.mEngineInfo.label);
-        boolean equals = getKey().equals(this.mSharedState.getCurrentKey());
-        if (equals) {
+        boolean zEquals = getKey().equals(this.mSharedState.getCurrentKey());
+        if (zEquals) {
             this.mSharedState.setCurrentChecked(radioButton);
         }
         this.mPreventRadioButtonCallbacks = true;
-        radioButton.setChecked(equals);
+        radioButton.setChecked(zEquals);
         this.mPreventRadioButtonCallbacks = false;
         this.mRadioButton = radioButton;
     }
@@ -73,12 +73,11 @@ public class TtsEnginePreference extends Preference {
     private void displayDataAlert(DialogInterface.OnClickListener onClickListener, DialogInterface.OnClickListener onClickListener2) {
         Log.i("TtsEnginePreference", "Displaying data alert for :" + this.mEngineInfo.name);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(17039380).setMessage(getContext().getString(R.string.tts_engine_security_warning, this.mEngineInfo.label)).setCancelable(true).setPositiveButton(17039370, onClickListener).setNegativeButton(17039360, onClickListener2);
+        builder.setTitle(android.R.string.dialog_alert_title).setMessage(getContext().getString(R.string.tts_engine_security_warning, this.mEngineInfo.label)).setCancelable(true).setPositiveButton(android.R.string.ok, onClickListener).setNegativeButton(android.R.string.cancel, onClickListener2);
         builder.create().show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onRadioButtonClicked(final CompoundButton compoundButton, boolean z) {
+    private void onRadioButtonClicked(final CompoundButton compoundButton, boolean z) {
         if (!this.mPreventRadioButtonCallbacks && this.mSharedState.getCurrentChecked() != compoundButton && z) {
             if (shouldDisplayDataAlert()) {
                 displayDataAlert(new DialogInterface.OnClickListener() { // from class: com.android.settings.tts.TtsEnginePreference.2
@@ -98,8 +97,7 @@ public class TtsEnginePreference extends Preference {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void makeCurrentEngine(Checkable checkable) {
+    private void makeCurrentEngine(Checkable checkable) {
         if (this.mSharedState.getCurrentChecked() != null) {
             this.mSharedState.getCurrentChecked().setChecked(false);
         }

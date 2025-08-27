@@ -16,7 +16,9 @@ import com.android.settingslib.wrapper.BluetoothA2dpWrapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class A2dpProfile implements LocalBluetoothProfile {
     private Context mContext;
@@ -29,7 +31,6 @@ public class A2dpProfile implements LocalBluetoothProfile {
     private static boolean V = false;
     static final ParcelUuid[] SINK_UUIDS = {BluetoothUuid.AudioSink, BluetoothUuid.AdvAudioDist};
 
-    /* loaded from: classes.dex */
     private final class A2dpServiceListener implements BluetoothProfile.ServiceListener {
         private A2dpServiceListener() {
         }
@@ -43,14 +44,14 @@ public class A2dpProfile implements LocalBluetoothProfile {
             A2dpProfile.this.mServiceWrapper = new BluetoothA2dpWrapper(A2dpProfile.this.mService);
             List<BluetoothDevice> connectedDevices = A2dpProfile.this.mService.getConnectedDevices();
             while (!connectedDevices.isEmpty()) {
-                BluetoothDevice remove = connectedDevices.remove(0);
-                CachedBluetoothDevice findDevice = A2dpProfile.this.mDeviceManager.findDevice(remove);
-                if (findDevice == null) {
-                    Log.w("A2dpProfile", "A2dpProfile found new device: " + remove);
-                    findDevice = A2dpProfile.this.mDeviceManager.addDevice(A2dpProfile.this.mLocalAdapter, A2dpProfile.this.mProfileManager, remove);
+                BluetoothDevice bluetoothDeviceRemove = connectedDevices.remove(0);
+                CachedBluetoothDevice cachedBluetoothDeviceFindDevice = A2dpProfile.this.mDeviceManager.findDevice(bluetoothDeviceRemove);
+                if (cachedBluetoothDeviceFindDevice == null) {
+                    Log.w("A2dpProfile", "A2dpProfile found new device: " + bluetoothDeviceRemove);
+                    cachedBluetoothDeviceFindDevice = A2dpProfile.this.mDeviceManager.addDevice(A2dpProfile.this.mLocalAdapter, A2dpProfile.this.mProfileManager, bluetoothDeviceRemove);
                 }
-                findDevice.onProfileStateChanged(A2dpProfile.this, 2);
-                findDevice.refresh();
+                cachedBluetoothDeviceFindDevice.onProfileStateChanged(A2dpProfile.this, 2);
+                cachedBluetoothDeviceFindDevice.refresh();
             }
             A2dpProfile.this.mIsProfileReady = true;
         }
@@ -74,8 +75,7 @@ public class A2dpProfile implements LocalBluetoothProfile {
         return 2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public A2dpProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
+    A2dpProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mContext = context;
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;
@@ -173,13 +173,13 @@ public class A2dpProfile implements LocalBluetoothProfile {
         this.mService.setPriority(bluetoothDevice, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isA2dpPlaying() {
+    boolean isA2dpPlaying() {
         if (this.mService == null) {
             return false;
         }
-        for (BluetoothDevice bluetoothDevice : this.mService.getConnectedDevices()) {
-            if (this.mService.isA2dpPlaying(bluetoothDevice)) {
+        Iterator<BluetoothDevice> it = this.mService.getConnectedDevices().iterator();
+        while (it.hasNext()) {
+            if (this.mService.isA2dpPlaying(it.next())) {
                 return true;
             }
         }
@@ -194,18 +194,18 @@ public class A2dpProfile implements LocalBluetoothProfile {
         int optionalCodecsEnabled = this.mServiceWrapper.getOptionalCodecsEnabled(bluetoothDevice);
         if (optionalCodecsEnabled != -1) {
             return optionalCodecsEnabled == 1;
-        } else if (getConnectionStatus(bluetoothDevice) == 2 || !supportsHighQualityAudio(bluetoothDevice)) {
-            BluetoothCodecConfig bluetoothCodecConfig = null;
-            if (this.mServiceWrapper.getCodecStatus(bluetoothDevice) != null) {
-                bluetoothCodecConfig = this.mServiceWrapper.getCodecStatus(bluetoothDevice).getCodecConfig();
-            }
-            if (bluetoothCodecConfig == null) {
-                return false;
-            }
-            return !bluetoothCodecConfig.isMandatoryCodec();
-        } else {
+        }
+        if (getConnectionStatus(bluetoothDevice) != 2 && supportsHighQualityAudio(bluetoothDevice)) {
             return true;
         }
+        BluetoothCodecConfig codecConfig = null;
+        if (this.mServiceWrapper.getCodecStatus(bluetoothDevice) != null) {
+            codecConfig = this.mServiceWrapper.getCodecStatus(bluetoothDevice).getCodecConfig();
+        }
+        if (codecConfig == null) {
+            return false;
+        }
+        return !codecConfig.isMandatoryCodec();
     }
 
     public void setHighQualityAudioEnabled(BluetoothDevice bluetoothDevice, boolean z) {
@@ -227,25 +227,25 @@ public class A2dpProfile implements LocalBluetoothProfile {
     }
 
     public String getHighQualityAudioOptionLabel(BluetoothDevice bluetoothDevice) {
-        BluetoothCodecConfig[] bluetoothCodecConfigArr;
+        BluetoothCodecConfig[] codecsSelectableCapabilities;
         int i = R.string.bluetooth_profile_a2dp_high_quality_unknown_codec;
         if (supportsHighQualityAudio(bluetoothDevice)) {
             char c = 2;
             if (getConnectionStatus(bluetoothDevice) == 2) {
                 BluetoothCodecConfig bluetoothCodecConfig = null;
                 if (this.mServiceWrapper.getCodecStatus(bluetoothDevice) != null) {
-                    bluetoothCodecConfigArr = this.mServiceWrapper.getCodecStatus(bluetoothDevice).getCodecsSelectableCapabilities();
-                    Arrays.sort(bluetoothCodecConfigArr, new Comparator() { // from class: com.android.settingslib.bluetooth.-$$Lambda$A2dpProfile$exPXCssgW4cryyr_RqCY5K-rQFI
+                    codecsSelectableCapabilities = this.mServiceWrapper.getCodecStatus(bluetoothDevice).getCodecsSelectableCapabilities();
+                    Arrays.sort(codecsSelectableCapabilities, new Comparator() { // from class: com.android.settingslib.bluetooth.-$$Lambda$A2dpProfile$exPXCssgW4cryyr_RqCY5K-rQFI
                         @Override // java.util.Comparator
                         public final int compare(Object obj, Object obj2) {
                             return A2dpProfile.lambda$getHighQualityAudioOptionLabel$0((BluetoothCodecConfig) obj, (BluetoothCodecConfig) obj2);
                         }
                     });
                 } else {
-                    bluetoothCodecConfigArr = null;
+                    codecsSelectableCapabilities = null;
                 }
-                if (bluetoothCodecConfigArr != null && bluetoothCodecConfigArr.length >= 1) {
-                    bluetoothCodecConfig = bluetoothCodecConfigArr[0];
+                if (codecsSelectableCapabilities != null && codecsSelectableCapabilities.length >= 1) {
+                    bluetoothCodecConfig = codecsSelectableCapabilities[0];
                 }
                 switch ((bluetoothCodecConfig == null || bluetoothCodecConfig.isMandatoryCodec()) ? 1000000 : bluetoothCodecConfig.getCodecType()) {
                     case 0:
@@ -275,8 +275,8 @@ public class A2dpProfile implements LocalBluetoothProfile {
         return this.mContext.getString(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ int lambda$getHighQualityAudioOptionLabel$0(BluetoothCodecConfig bluetoothCodecConfig, BluetoothCodecConfig bluetoothCodecConfig2) {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: 0x0008: ARITH (wrap:int:0x0000: INVOKE (r1v0 android.bluetooth.BluetoothCodecConfig) VIRTUAL call: android.bluetooth.BluetoothCodecConfig.getCodecPriority():int A[MD:():int (c), WRAPPED] (LINE:266)) - (wrap:int:0x0004: INVOKE (r0v0 android.bluetooth.BluetoothCodecConfig) VIRTUAL call: android.bluetooth.BluetoothCodecConfig.getCodecPriority():int A[MD:():int (c), WRAPPED]) (LINE:266) */
+    static /* synthetic */ int lambda$getHighQualityAudioOptionLabel$0(BluetoothCodecConfig bluetoothCodecConfig, BluetoothCodecConfig bluetoothCodecConfig2) {
         return bluetoothCodecConfig2.getCodecPriority() - bluetoothCodecConfig.getCodecPriority();
     }
 

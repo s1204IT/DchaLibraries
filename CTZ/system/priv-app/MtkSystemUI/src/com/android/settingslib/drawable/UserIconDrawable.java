@@ -1,5 +1,6 @@
 package com.android.settingslib.drawable;
 
+import android.R;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -17,6 +18,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+
 /* loaded from: classes.dex */
 public class UserIconDrawable extends Drawable implements Drawable.Callback {
     private Drawable mBadge;
@@ -118,13 +120,13 @@ public class UserIconDrawable extends Drawable implements Drawable.Callback {
     }
 
     public UserIconDrawable setBadgeIfManagedUser(Context context, int i) {
-        Drawable drawable;
+        Drawable drawableForDisplayDensity;
         if (((DevicePolicyManager) context.getSystemService(DevicePolicyManager.class)).getProfileOwnerAsUser(i) != null) {
-            drawable = getDrawableForDisplayDensity(context, 17302326);
+            drawableForDisplayDensity = getDrawableForDisplayDensity(context, R.drawable.fastscroll_thumb_material);
         } else {
-            drawable = null;
+            drawableForDisplayDensity = null;
         }
-        return setBadge(drawable);
+        return setBadge(drawableForDisplayDensity);
     }
 
     public void setBadgeRadius(float f) {
@@ -251,10 +253,10 @@ public class UserIconDrawable extends Drawable implements Drawable.Callback {
             if (this.mUserDrawable != null) {
                 this.mUserDrawable.draw(canvas);
             } else if (this.mUserIcon != null) {
-                int save = canvas.save();
+                int iSave = canvas.save();
                 canvas.concat(this.mIconMatrix);
                 canvas.drawCircle(this.mUserIcon.getWidth() * 0.5f, this.mUserIcon.getHeight() * 0.5f, this.mIntrinsicRadius, this.mIconPaint);
-                canvas.restoreToCount(save);
+                canvas.restoreToCount(iSave);
             }
             if (this.mFrameColor != null) {
                 this.mFramePaint.setColor(this.mFrameColor.getColorForState(getState(), 0));
@@ -281,10 +283,10 @@ public class UserIconDrawable extends Drawable implements Drawable.Callback {
         if (this.mUserIcon == null && this.mUserDrawable == null) {
             return;
         }
-        float min = Math.min(rect.width(), rect.height()) * 0.5f;
-        int i = (int) (min * 2.0f);
+        float fMin = Math.min(rect.width(), rect.height()) * 0.5f;
+        int i = (int) (fMin * 2.0f);
         if (this.mBitmap == null || i != ((int) (this.mDisplayRadius * 2.0f))) {
-            this.mDisplayRadius = min;
+            this.mDisplayRadius = fMin;
             if (this.mBitmap != null) {
                 this.mBitmap.recycle();
             }

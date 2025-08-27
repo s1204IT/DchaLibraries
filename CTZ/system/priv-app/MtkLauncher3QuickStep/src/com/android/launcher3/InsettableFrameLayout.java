@@ -4,12 +4,15 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewDebug;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 /* loaded from: classes.dex */
 public class InsettableFrameLayout extends FrameLayout implements Insettable {
+
     @ViewDebug.ExportedProperty(category = "launcher")
     protected Rect mInsets;
 
@@ -22,6 +25,8 @@ public class InsettableFrameLayout extends FrameLayout implements Insettable {
         this.mInsets = new Rect();
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r5v0, resolved type: android.view.View */
+    /* JADX WARN: Multi-variable type inference failed */
     public void setFrameLayoutChildInsets(View view, Rect rect, Rect rect2) {
         LayoutParams layoutParams = (LayoutParams) view.getLayoutParams();
         if (view instanceof Insettable) {
@@ -44,14 +49,17 @@ public class InsettableFrameLayout extends FrameLayout implements Insettable {
         this.mInsets.set(rect);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/util/AttributeSet;)Landroid/view/ViewGroup$LayoutParams; */
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/util/AttributeSet;)Landroid/widget/FrameLayout$LayoutParams; */
     @Override // android.widget.FrameLayout, android.view.ViewGroup
     public LayoutParams generateLayoutParams(AttributeSet attributeSet) {
         return new LayoutParams(getContext(), attributeSet);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: generateDefaultLayoutParams()Landroid/view/ViewGroup$LayoutParams; */
+    /* JADX DEBUG: Method merged with bridge method: generateDefaultLayoutParams()Landroid/widget/FrameLayout$LayoutParams; */
     @Override // android.widget.FrameLayout, android.view.ViewGroup
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-2, -2);
     }
 
@@ -60,22 +68,21 @@ public class InsettableFrameLayout extends FrameLayout implements Insettable {
         return layoutParams instanceof LayoutParams;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: generateLayoutParams(Landroid/view/ViewGroup$LayoutParams;)Landroid/view/ViewGroup$LayoutParams; */
     @Override // android.widget.FrameLayout, android.view.ViewGroup
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
         return new LayoutParams(layoutParams);
     }
 
-    /* loaded from: classes.dex */
     public static class LayoutParams extends FrameLayout.LayoutParams {
         boolean ignoreInsets;
 
         public LayoutParams(Context context, AttributeSet attributeSet) {
             super(context, attributeSet);
             this.ignoreInsets = false;
-            TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.InsettableFrameLayout_Layout);
-            this.ignoreInsets = obtainStyledAttributes.getBoolean(0, false);
-            obtainStyledAttributes.recycle();
+            TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.InsettableFrameLayout_Layout);
+            this.ignoreInsets = typedArrayObtainStyledAttributes.getBoolean(0, false);
+            typedArrayObtainStyledAttributes.recycle();
         }
 
         public LayoutParams(int i, int i2) {
@@ -98,7 +105,7 @@ public class InsettableFrameLayout extends FrameLayout implements Insettable {
     public static void dispatchInsets(ViewGroup viewGroup, Rect rect) {
         int childCount = viewGroup.getChildCount();
         for (int i = 0; i < childCount; i++) {
-            View childAt = viewGroup.getChildAt(i);
+            KeyEvent.Callback childAt = viewGroup.getChildAt(i);
             if (childAt instanceof Insettable) {
                 ((Insettable) childAt).setInsets(rect);
             }

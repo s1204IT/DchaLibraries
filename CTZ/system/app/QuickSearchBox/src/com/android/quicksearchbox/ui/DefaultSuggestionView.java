@@ -15,6 +15,7 @@ import com.android.quicksearchbox.Source;
 import com.android.quicksearchbox.Suggestion;
 import com.android.quicksearchbox.util.Consumer;
 import com.android.quicksearchbox.util.NowOrLater;
+
 /* loaded from: classes.dex */
 public class DefaultSuggestionView extends BaseSuggestionView {
     private final String TAG;
@@ -36,9 +37,8 @@ public class DefaultSuggestionView extends BaseSuggestionView {
         this.TAG = "QSB.DefaultSuggestionView";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.quicksearchbox.ui.BaseSuggestionView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mText1 = (TextView) findViewById(R.id.text1);
         this.mText2 = (TextView) findViewById(R.id.text2);
@@ -58,16 +58,16 @@ public class DefaultSuggestionView extends BaseSuggestionView {
 
     @Override // com.android.quicksearchbox.ui.BaseSuggestionView, com.android.quicksearchbox.ui.SuggestionView
     public void bindAsSuggestion(Suggestion suggestion, String str) {
-        CharSequence formatText;
+        CharSequence text;
         super.bindAsSuggestion(suggestion, str);
-        CharSequence formatText2 = formatText(suggestion.getSuggestionText1(), suggestion);
+        CharSequence text2 = formatText(suggestion.getSuggestionText1(), suggestion);
         String suggestionText2Url = suggestion.getSuggestionText2Url();
         if (suggestionText2Url != null) {
-            formatText = formatUrl(suggestionText2Url);
+            text = formatUrl(suggestionText2Url);
         } else {
-            formatText = formatText(suggestion.getSuggestionText2(), suggestion);
+            text = formatText(suggestion.getSuggestionText2(), suggestion);
         }
-        if (TextUtils.isEmpty(formatText)) {
+        if (TextUtils.isEmpty(text)) {
             this.mText1.setSingleLine(false);
             this.mText1.setMaxLines(2);
             this.mText1.setEllipsize(TextUtils.TruncateAt.START);
@@ -76,8 +76,8 @@ public class DefaultSuggestionView extends BaseSuggestionView {
             this.mText1.setMaxLines(1);
             this.mText1.setEllipsize(TextUtils.TruncateAt.MIDDLE);
         }
-        setText1(formatText2);
-        setText2(formatText);
+        setText1(text2);
+        setText2(text);
         this.mAsyncIcon1.set(suggestion.getSuggestionSource(), suggestion.getSuggestionIcon1());
         this.mAsyncIcon2.set(suggestion.getSuggestionSource(), suggestion.getSuggestionIcon2());
     }
@@ -100,16 +100,15 @@ public class DefaultSuggestionView extends BaseSuggestionView {
             return false;
         }
         for (int length = str.length() - 1; length >= 0; length--) {
-            char charAt = str.charAt(length);
-            if (charAt == '>' || charAt == '&') {
+            char cCharAt = str.charAt(length);
+            if (cCharAt == '>' || cCharAt == '&') {
                 return true;
             }
         }
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static void setViewDrawable(ImageView imageView, Drawable drawable) {
+    private static void setViewDrawable(ImageView imageView, Drawable drawable) {
         imageView.setImageDrawable(drawable);
         if (drawable == null) {
             imageView.setVisibility(8);
@@ -120,9 +119,7 @@ public class DefaultSuggestionView extends BaseSuggestionView {
         drawable.setVisible(true, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AsyncIcon {
+    private class AsyncIcon {
         private String mCurrentId;
         private final ImageView mView;
         private String mWantedId;
@@ -134,26 +131,28 @@ public class DefaultSuggestionView extends BaseSuggestionView {
         public void set(final Source source, String str) {
             if (str != null) {
                 Uri iconUri = source.getIconUri(str);
-                final String uri = iconUri != null ? iconUri.toString() : null;
-                this.mWantedId = uri;
+                final String string = iconUri != null ? iconUri.toString() : null;
+                this.mWantedId = string;
                 if (!TextUtils.equals(this.mWantedId, this.mCurrentId)) {
                     NowOrLater<Drawable> icon = source.getIcon(str);
                     if (icon.haveNow()) {
-                        handleNewDrawable(icon.getNow(), uri, source);
+                        handleNewDrawable(icon.getNow(), string, source);
+                        return;
+                    } else {
+                        clearDrawable();
+                        icon.getLater(new Consumer<Drawable>() { // from class: com.android.quicksearchbox.ui.DefaultSuggestionView.AsyncIcon.1
+                            /* JADX DEBUG: Method merged with bridge method: consume(Ljava/lang/Object;)Z */
+                            @Override // com.android.quicksearchbox.util.Consumer
+                            public boolean consume(Drawable drawable) {
+                                if (TextUtils.equals(string, AsyncIcon.this.mWantedId)) {
+                                    AsyncIcon.this.handleNewDrawable(drawable, string, source);
+                                    return true;
+                                }
+                                return false;
+                            }
+                        });
                         return;
                     }
-                    clearDrawable();
-                    icon.getLater(new Consumer<Drawable>() { // from class: com.android.quicksearchbox.ui.DefaultSuggestionView.AsyncIcon.1
-                        @Override // com.android.quicksearchbox.util.Consumer
-                        public boolean consume(Drawable drawable) {
-                            if (TextUtils.equals(uri, AsyncIcon.this.mWantedId)) {
-                                AsyncIcon.this.handleNewDrawable(drawable, uri, source);
-                                return true;
-                            }
-                            return false;
-                        }
-                    });
-                    return;
                 }
                 return;
             }
@@ -161,14 +160,14 @@ public class DefaultSuggestionView extends BaseSuggestionView {
             handleNewDrawable(null, null, source);
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void handleNewDrawable(Drawable drawable, String str, Source source) {
+        private void handleNewDrawable(Drawable drawable, String str, Source source) {
             if (drawable == null) {
                 this.mWantedId = getFallbackIconId(source);
                 if (TextUtils.equals(this.mWantedId, this.mCurrentId)) {
                     return;
+                } else {
+                    drawable = getFallbackIcon(source);
                 }
-                drawable = getFallbackIcon(source);
             }
             setDrawable(drawable, str);
         }
@@ -192,7 +191,6 @@ public class DefaultSuggestionView extends BaseSuggestionView {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Factory extends SuggestionViewInflater {
         public Factory(Context context) {
             super("default", DefaultSuggestionView.class, R.layout.suggestion, context);

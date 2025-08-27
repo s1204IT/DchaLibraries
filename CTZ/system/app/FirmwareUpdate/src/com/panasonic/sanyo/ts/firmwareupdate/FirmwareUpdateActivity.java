@@ -3,6 +3,7 @@ package com.panasonic.sanyo.ts.firmwareupdate;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
 /* loaded from: classes.dex */
 public class FirmwareUpdateActivity extends BaseActivity {
     private Button FirmUpButton;

@@ -29,14 +29,15 @@ import com.android.settings.AppWidgetLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ActivityPicker extends AlertActivity implements DialogInterface.OnCancelListener, DialogInterface.OnClickListener {
     private PickAdapter mAdapter;
     private Intent mBaseIntent;
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: com.android.settings.ActivityPicker */
     /* JADX WARN: Multi-variable type inference failed */
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         getWindow().addPrivateFlags(524288);
         Intent intent = getIntent();
@@ -73,13 +74,13 @@ public class ActivityPicker extends AlertActivity implements DialogInterface.OnC
         finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Intent getIntentForPosition(int i) {
+    protected Intent getIntentForPosition(int i) {
         return ((PickAdapter.Item) this.mAdapter.getItem(i)).getIntent(this.mBaseIntent);
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r9v0, resolved type: com.android.settings.ActivityPicker */
     /* JADX WARN: Multi-variable type inference failed */
-    protected List<PickAdapter.Item> getItems() {
+    protected List<PickAdapter.Item> getItems() throws Resources.NotFoundException, PackageManager.NameNotFoundException {
         PackageManager packageManager = getPackageManager();
         ArrayList arrayList = new ArrayList();
         Intent intent = getIntent();
@@ -104,24 +105,22 @@ public class ActivityPicker extends AlertActivity implements DialogInterface.OnC
         return arrayList;
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r5v0, resolved type: com.android.settings.ActivityPicker */
     /* JADX WARN: Multi-variable type inference failed */
     protected void putIntentItems(Intent intent, List<PickAdapter.Item> list) {
         PackageManager packageManager = getPackageManager();
-        List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent, 0);
-        Collections.sort(queryIntentActivities, new ResolveInfo.DisplayNameComparator(packageManager));
-        int size = queryIntentActivities.size();
+        List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent, 0);
+        Collections.sort(listQueryIntentActivities, new ResolveInfo.DisplayNameComparator(packageManager));
+        int size = listQueryIntentActivities.size();
         for (int i = 0; i < size; i++) {
-            list.add(new PickAdapter.Item((Context) this, packageManager, queryIntentActivities.get(i)));
+            list.add(new PickAdapter.Item((Context) this, packageManager, listQueryIntentActivities.get(i)));
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public static class PickAdapter extends BaseAdapter {
+    protected static class PickAdapter extends BaseAdapter {
         private final LayoutInflater mInflater;
         private final List<Item> mItems;
 
-        /* loaded from: classes.dex */
         public static class Item implements AppWidgetLoader.LabelledItem {
             protected static IconResizer sResizer;
             String className;
@@ -133,14 +132,13 @@ public class ActivityPicker extends AlertActivity implements DialogInterface.OnC
             protected IconResizer getResizer(Context context) {
                 if (sResizer == null) {
                     Resources resources = context.getResources();
-                    int dimension = (int) resources.getDimension(17104896);
+                    int dimension = (int) resources.getDimension(android.R.dimen.app_icon_size);
                     sResizer = new IconResizer(dimension, dimension, resources.getDisplayMetrics());
                 }
                 return sResizer;
             }
 
-            /* JADX INFO: Access modifiers changed from: package-private */
-            public Item(Context context, CharSequence charSequence, Drawable drawable) {
+            Item(Context context, CharSequence charSequence, Drawable drawable) {
                 this.label = charSequence;
                 this.icon = getResizer(context).createIconThumbnail(drawable);
             }
@@ -208,9 +206,7 @@ public class ActivityPicker extends AlertActivity implements DialogInterface.OnC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class IconResizer {
+    private static class IconResizer {
         private final int mIconHeight;
         private final int mIconWidth;
         private final DisplayMetrics mMetrics;
@@ -246,16 +242,16 @@ public class ActivityPicker extends AlertActivity implements DialogInterface.OnC
                 if (intrinsicWidth > 0 && intrinsicHeight > 0) {
                     if (i >= intrinsicWidth && i2 >= intrinsicHeight) {
                         if (intrinsicWidth < i && intrinsicHeight < i2) {
-                            Bitmap createBitmap = Bitmap.createBitmap(this.mIconWidth, this.mIconHeight, Bitmap.Config.ARGB_8888);
+                            Bitmap bitmapCreateBitmap = Bitmap.createBitmap(this.mIconWidth, this.mIconHeight, Bitmap.Config.ARGB_8888);
                             Canvas canvas = this.mCanvas;
-                            canvas.setBitmap(createBitmap);
+                            canvas.setBitmap(bitmapCreateBitmap);
                             this.mOldBounds.set(drawable.getBounds());
                             int i3 = (i - intrinsicWidth) / 2;
                             int i4 = (i2 - intrinsicHeight) / 2;
                             drawable.setBounds(i3, i4, intrinsicWidth + i3, intrinsicHeight + i4);
                             drawable.draw(canvas);
                             drawable.setBounds(this.mOldBounds);
-                            BitmapDrawable bitmapDrawable2 = new BitmapDrawable(createBitmap);
+                            BitmapDrawable bitmapDrawable2 = new BitmapDrawable(bitmapCreateBitmap);
                             bitmapDrawable2.setTargetDensity(this.mMetrics);
                             canvas.setBitmap(null);
                             return bitmapDrawable2;
@@ -268,16 +264,16 @@ public class ActivityPicker extends AlertActivity implements DialogInterface.OnC
                     } else if (intrinsicHeight > intrinsicWidth) {
                         i = (int) (i2 * f);
                     }
-                    Bitmap createBitmap2 = Bitmap.createBitmap(this.mIconWidth, this.mIconHeight, drawable.getOpacity() != -1 ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
+                    Bitmap bitmapCreateBitmap2 = Bitmap.createBitmap(this.mIconWidth, this.mIconHeight, drawable.getOpacity() != -1 ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
                     Canvas canvas2 = this.mCanvas;
-                    canvas2.setBitmap(createBitmap2);
+                    canvas2.setBitmap(bitmapCreateBitmap2);
                     this.mOldBounds.set(drawable.getBounds());
                     int i5 = (this.mIconWidth - i) / 2;
                     int i6 = (this.mIconHeight - i2) / 2;
                     drawable.setBounds(i5, i6, i5 + i, i6 + i2);
                     drawable.draw(canvas2);
                     drawable.setBounds(this.mOldBounds);
-                    BitmapDrawable bitmapDrawable3 = new BitmapDrawable(createBitmap2);
+                    BitmapDrawable bitmapDrawable3 = new BitmapDrawable(bitmapCreateBitmap2);
                     bitmapDrawable3.setTargetDensity(this.mMetrics);
                     canvas2.setBitmap(null);
                     return bitmapDrawable3;
@@ -289,9 +285,7 @@ public class ActivityPicker extends AlertActivity implements DialogInterface.OnC
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class EmptyDrawable extends Drawable {
+    private static class EmptyDrawable extends Drawable {
         private final int mHeight;
         private final int mWidth;
 

@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import com.android.internal.R;
 import com.android.settingslib.core.instrumentation.Instrumentable;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class UpdatableListPreferenceDialogFragment extends PreferenceDialogFragment implements Instrumentable {
     private ArrayAdapter mAdapter;
@@ -35,10 +36,10 @@ public class UpdatableListPreferenceDialogFragment extends PreferenceDialogFragm
             this.mClickedDialogEntryIndex = bundle.getInt("UpdatableListPreferenceDialogFragment.index", 0);
             this.mEntries = bundle.getCharSequenceArrayList("UpdatableListPreferenceDialogFragment.entries");
             this.mEntryValues = bundle.getCharSequenceArray("UpdatableListPreferenceDialogFragment.entryValues");
-            return;
+        } else {
+            this.mEntries = new ArrayList<>();
+            setPreferenceData(getListPreference());
         }
-        this.mEntries = new ArrayList<>();
-        setPreferenceData(getListPreference());
     }
 
     @Override // android.support.v14.preference.PreferenceDialogFragment, android.app.DialogFragment, android.app.Fragment
@@ -53,9 +54,9 @@ public class UpdatableListPreferenceDialogFragment extends PreferenceDialogFragm
     public void onDialogClosed(boolean z) {
         ListPreference listPreference = getListPreference();
         if (z && this.mClickedDialogEntryIndex >= 0) {
-            String charSequence = this.mEntryValues[this.mClickedDialogEntryIndex].toString();
-            if (listPreference.callChangeListener(charSequence)) {
-                listPreference.setValue(charSequence);
+            String string = this.mEntryValues[this.mClickedDialogEntryIndex].toString();
+            if (listPreference.callChangeListener(string)) {
+                listPreference.setValue(string);
             }
         }
     }
@@ -76,20 +77,19 @@ public class UpdatableListPreferenceDialogFragment extends PreferenceDialogFragm
         this.mMetricsCategory = bundle.getInt("metrics_category_key", 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v14.preference.PreferenceDialogFragment
-    public void onPrepareDialogBuilder(AlertDialog.Builder builder) {
+    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(null, R.styleable.AlertDialog, 16842845, 0);
-        this.mAdapter = new ArrayAdapter(getContext(), obtainStyledAttributes.getResourceId(21, 17367058), this.mEntries);
+        TypedArray typedArrayObtainStyledAttributes = getContext().obtainStyledAttributes(null, R.styleable.AlertDialog, android.R.attr.alertDialogStyle, 0);
+        this.mAdapter = new ArrayAdapter(getContext(), typedArrayObtainStyledAttributes.getResourceId(21, android.R.layout.select_dialog_singlechoice), this.mEntries);
         builder.setSingleChoiceItems(this.mAdapter, this.mClickedDialogEntryIndex, new DialogInterface.OnClickListener() { // from class: com.android.settings.widget.-$$Lambda$UpdatableListPreferenceDialogFragment$yZRmvmWflT3ytJ4m-nzXQtpejcQ
             @Override // android.content.DialogInterface.OnClickListener
             public final void onClick(DialogInterface dialogInterface, int i) {
-                UpdatableListPreferenceDialogFragment.lambda$onPrepareDialogBuilder$0(UpdatableListPreferenceDialogFragment.this, dialogInterface, i);
+                UpdatableListPreferenceDialogFragment.lambda$onPrepareDialogBuilder$0(this.f$0, dialogInterface, i);
             }
         });
         builder.setPositiveButton((CharSequence) null, (DialogInterface.OnClickListener) null);
-        obtainStyledAttributes.recycle();
+        typedArrayObtainStyledAttributes.recycle();
     }
 
     public static /* synthetic */ void lambda$onPrepareDialogBuilder$0(UpdatableListPreferenceDialogFragment updatableListPreferenceDialogFragment, DialogInterface dialogInterface, int i) {

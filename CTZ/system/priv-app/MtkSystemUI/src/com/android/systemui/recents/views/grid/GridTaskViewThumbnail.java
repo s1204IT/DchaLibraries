@@ -1,11 +1,13 @@
 package com.android.systemui.recents.views.grid;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import com.android.systemui.R;
 import com.android.systemui.recents.views.TaskViewThumbnail;
+
 /* loaded from: classes.dex */
 public class GridTaskViewThumbnail extends TaskViewThumbnail {
     private final Path mRestBackgroundOutline;
@@ -44,23 +46,23 @@ public class GridTaskViewThumbnail extends TaskViewThumbnail {
         super.updateThumbnailMatrix();
     }
 
-    private void updateThumbnailOutline() {
+    private void updateThumbnailOutline() throws Resources.NotFoundException {
         int dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.recents_grid_task_view_header_height);
-        int width = this.mTaskViewRect.width();
-        int height = this.mTaskViewRect.height() - dimensionPixelSize;
-        int min = Math.min(width, (int) (this.mThumbnailRect.width() * this.mThumbnailScale));
-        int min2 = Math.min(height, (int) (this.mThumbnailRect.height() * this.mThumbnailScale));
-        if (this.mBitmapShader == null || min <= 0 || min2 <= 0) {
-            createThumbnailPath(0, 0, width, height, this.mThumbnailOutline);
+        int iWidth = this.mTaskViewRect.width();
+        int iHeight = this.mTaskViewRect.height() - dimensionPixelSize;
+        int iMin = Math.min(iWidth, (int) (this.mThumbnailRect.width() * this.mThumbnailScale));
+        int iMin2 = Math.min(iHeight, (int) (this.mThumbnailRect.height() * this.mThumbnailScale));
+        if (this.mBitmapShader == null || iMin <= 0 || iMin2 <= 0) {
+            createThumbnailPath(0, 0, iWidth, iHeight, this.mThumbnailOutline);
             return;
         }
-        int i = 0 + min;
-        int i2 = 0 + min2;
+        int i = 0 + iMin;
+        int i2 = 0 + iMin2;
         createThumbnailPath(0, 0, i, i2, this.mThumbnailOutline);
-        if (min < width) {
-            int max = Math.max(0, i - this.mCornerRadius);
+        if (iMin < iWidth) {
+            int iMax = Math.max(0, i - this.mCornerRadius);
             this.mRestBackgroundOutline.reset();
-            float f = max;
+            float f = iMax;
             this.mRestBackgroundOutline.moveTo(f, 0.0f);
             float f2 = i;
             this.mRestBackgroundOutline.lineTo(f2, 0.0f);
@@ -71,10 +73,10 @@ public class GridTaskViewThumbnail extends TaskViewThumbnail {
             this.mRestBackgroundOutline.lineTo(f, 0.0f);
             this.mRestBackgroundOutline.close();
         }
-        if (min2 < height) {
-            int max2 = Math.max(0, min2 - this.mCornerRadius);
+        if (iMin2 < iHeight) {
+            int iMax2 = Math.max(0, iMin2 - this.mCornerRadius);
             this.mRestBackgroundOutline.reset();
-            float f4 = max2;
+            float f4 = iMax2;
             this.mRestBackgroundOutline.moveTo(0.0f, f4);
             float f5 = i;
             this.mRestBackgroundOutline.lineTo(f5, f4);
@@ -105,28 +107,30 @@ public class GridTaskViewThumbnail extends TaskViewThumbnail {
     }
 
     @Override // com.android.systemui.recents.views.TaskViewThumbnail, android.view.View
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) throws Resources.NotFoundException {
         int dimensionPixelSize = getResources().getDimensionPixelSize(R.dimen.recents_grid_task_view_header_height);
-        int width = this.mTaskViewRect.width();
-        int height = this.mTaskViewRect.height() - dimensionPixelSize;
-        int min = Math.min(width, (int) (this.mThumbnailRect.width() * this.mThumbnailScale));
-        int min2 = Math.min(height, (int) (this.mThumbnailRect.height() * this.mThumbnailScale));
+        int iWidth = this.mTaskViewRect.width();
+        int iHeight = this.mTaskViewRect.height() - dimensionPixelSize;
+        int iMin = Math.min(iWidth, (int) (this.mThumbnailRect.width() * this.mThumbnailScale));
+        int iMin2 = Math.min(iHeight, (int) (this.mThumbnailRect.height() * this.mThumbnailScale));
         if (this.mUpdateThumbnailOutline) {
             updateThumbnailOutline();
             this.mUpdateThumbnailOutline = false;
         }
         if (this.mUserLocked) {
             canvas.drawPath(this.mThumbnailOutline, this.mLockedPaint);
-        } else if (this.mBitmapShader != null && min > 0 && min2 > 0) {
-            if (min < width) {
+            return;
+        }
+        if (this.mBitmapShader != null && iMin > 0 && iMin2 > 0) {
+            if (iMin < iWidth) {
                 canvas.drawPath(this.mRestBackgroundOutline, this.mBgFillPaint);
             }
-            if (min2 < height) {
+            if (iMin2 < iHeight) {
                 canvas.drawPath(this.mRestBackgroundOutline, this.mBgFillPaint);
             }
             canvas.drawPath(this.mThumbnailOutline, getDrawPaint());
-        } else {
-            canvas.drawPath(this.mThumbnailOutline, this.mBgFillPaint);
+            return;
         }
+        canvas.drawPath(this.mThumbnailOutline, this.mBgFillPaint);
     }
 }

@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar.policy;
 
+import android.R;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import com.android.internal.telephony.IccCardConstants;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class EmergencyCryptkeeperText extends TextView {
     private final KeyguardUpdateMonitorCallback mCallback;
@@ -63,34 +65,34 @@ public class EmergencyCryptkeeperText extends TextView {
     }
 
     public void update() {
-        boolean isNetworkSupported = ConnectivityManager.from(this.mContext).isNetworkSupported(0);
+        boolean zIsNetworkSupported = ConnectivityManager.from(this.mContext).isNetworkSupported(0);
         boolean z = Settings.Global.getInt(this.mContext.getContentResolver(), "airplane_mode_on", 0) == 1;
-        if (isNetworkSupported && !z) {
+        if (zIsNetworkSupported && !z) {
             List<SubscriptionInfo> subscriptionInfo = this.mKeyguardUpdateMonitor.getSubscriptionInfo(false);
             int size = subscriptionInfo.size();
             boolean z2 = true;
-            CharSequence charSequence = null;
+            CharSequence text = null;
             for (int i = 0; i < size; i++) {
                 IccCardConstants.State simState = this.mKeyguardUpdateMonitor.getSimState(subscriptionInfo.get(i).getSubscriptionId());
                 CharSequence carrierName = subscriptionInfo.get(i).getCarrierName();
                 if (simState.iccCardExist() && !TextUtils.isEmpty(carrierName)) {
                     z2 = false;
-                    charSequence = carrierName;
+                    text = carrierName;
                 }
             }
             if (z2) {
                 if (size != 0) {
-                    charSequence = subscriptionInfo.get(0).getCarrierName();
+                    text = subscriptionInfo.get(0).getCarrierName();
                 } else {
-                    charSequence = getContext().getText(17039824);
-                    Intent registerReceiver = getContext().registerReceiver(null, new IntentFilter("android.provider.Telephony.SPN_STRINGS_UPDATED"));
-                    if (registerReceiver != null) {
-                        charSequence = registerReceiver.getStringExtra("plmn");
+                    text = getContext().getText(R.string.chooseActivity);
+                    Intent intentRegisterReceiver = getContext().registerReceiver(null, new IntentFilter("android.provider.Telephony.SPN_STRINGS_UPDATED"));
+                    if (intentRegisterReceiver != null) {
+                        text = intentRegisterReceiver.getStringExtra("plmn");
                     }
                 }
             }
-            setText(charSequence);
-            setVisibility(TextUtils.isEmpty(charSequence) ? 8 : 0);
+            setText(text);
+            setVisibility(TextUtils.isEmpty(text) ? 8 : 0);
             return;
         }
         setText((CharSequence) null);

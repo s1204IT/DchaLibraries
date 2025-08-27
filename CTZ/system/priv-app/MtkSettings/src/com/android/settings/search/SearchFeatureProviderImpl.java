@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.search.indexing.IndexData;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class SearchFeatureProviderImpl implements SearchFeatureProvider {
     private SearchIndexableResources mSearchIndexableResources;
@@ -17,11 +18,11 @@ public class SearchFeatureProviderImpl implements SearchFeatureProvider {
         }
         String packageName = componentName.getPackageName();
         boolean z = TextUtils.equals(packageName, context.getPackageName()) || TextUtils.equals(getSettingsIntelligencePkgName(), packageName);
-        boolean isSignatureWhitelisted = isSignatureWhitelisted(context, componentName.getPackageName());
-        if (z || isSignatureWhitelisted) {
-            return;
+        boolean zIsSignatureWhitelisted = isSignatureWhitelisted(context, componentName.getPackageName());
+        if (z || zIsSignatureWhitelisted) {
+        } else {
+            throw new SecurityException("Search result intents must be called with from a whitelisted package.");
         }
-        throw new SecurityException("Search result intents must be called with from a whitelisted package.");
     }
 
     @Override // com.android.settings.search.SearchFeatureProvider

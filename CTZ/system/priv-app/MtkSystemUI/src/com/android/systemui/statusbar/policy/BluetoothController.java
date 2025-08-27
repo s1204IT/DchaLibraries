@@ -4,10 +4,10 @@ import com.android.settingslib.bluetooth.CachedBluetoothDevice;
 import com.android.systemui.Dumpable;
 import java.util.Collection;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface BluetoothController extends Dumpable, CallbackController<Callback> {
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onBluetoothDevicesChanged();
 

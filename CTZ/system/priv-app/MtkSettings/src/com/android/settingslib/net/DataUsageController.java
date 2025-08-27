@@ -1,5 +1,6 @@
 package com.android.settingslib.net;
 
+import android.R;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.INetworkStatsService;
@@ -19,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class DataUsageController {
     private static final boolean DEBUG = Log.isLoggable("DataUsageController", 3);
@@ -32,7 +34,6 @@ public class DataUsageController {
     private final INetworkStatsService mStatsService = INetworkStatsService.Stub.asInterface(ServiceManager.getService("netstats"));
     private final TelephonyManager mTelephonyManager;
 
-    /* loaded from: classes.dex */
     public static class DataUsageInfo {
         public String carrier;
         public long cycleEnd;
@@ -44,7 +45,6 @@ public class DataUsageController {
         public long warningLevel;
     }
 
-    /* loaded from: classes.dex */
     public interface NetworkNameProvider {
         String getMobileDataNetworkName();
     }
@@ -57,7 +57,7 @@ public class DataUsageController {
     }
 
     public long getDefaultWarningLevel() {
-        return 1048576 * this.mContext.getResources().getInteger(17694939);
+        return 1048576 * this.mContext.getResources().getInteger(R.integer.config_notificationsBatteryLedOn);
     }
 
     private INetworkStatsSession getSession() {
@@ -89,53 +89,54 @@ public class DataUsageController {
     public DataUsageInfo getDataUsageInfo(NetworkTemplate networkTemplate) {
         long j;
         long j2;
-        long j3;
-        long j4;
+        long epochMilli;
+        long epochMilli2;
         INetworkStatsSession session = getSession();
         if (session == null) {
             return warn("no stats session");
         }
-        NetworkPolicy findNetworkPolicy = findNetworkPolicy(networkTemplate);
+        NetworkPolicy networkPolicyFindNetworkPolicy = findNetworkPolicy(networkTemplate);
         try {
             NetworkStatsHistory historyForNetwork = session.getHistoryForNetwork(networkTemplate, 10);
-            long currentTimeMillis = System.currentTimeMillis();
-            if (findNetworkPolicy != null) {
-                boolean hasNext = NetworkPolicyManager.cycleIterator(findNetworkPolicy).hasNext();
-                Log.i("DataUsageController", "getDataUsageInfo , policy != null hasNext = " + hasNext);
-                if (hasNext) {
-                    Pair pair = (Pair) NetworkPolicyManager.cycleIterator(findNetworkPolicy).next();
-                    j3 = ((ZonedDateTime) pair.first).toInstant().toEpochMilli();
-                    j4 = ((ZonedDateTime) pair.second).toInstant().toEpochMilli();
+            long jCurrentTimeMillis = System.currentTimeMillis();
+            if (networkPolicyFindNetworkPolicy != null) {
+                boolean zHasNext = NetworkPolicyManager.cycleIterator(networkPolicyFindNetworkPolicy).hasNext();
+                Log.i("DataUsageController", "getDataUsageInfo , policy != null hasNext = " + zHasNext);
+                if (zHasNext) {
+                    Pair pair = (Pair) NetworkPolicyManager.cycleIterator(networkPolicyFindNetworkPolicy).next();
+                    epochMilli = ((ZonedDateTime) pair.first).toInstant().toEpochMilli();
+                    epochMilli2 = ((ZonedDateTime) pair.second).toInstant().toEpochMilli();
                 } else {
-                    j3 = currentTimeMillis - 2419200000L;
-                    j4 = currentTimeMillis;
+                    epochMilli = jCurrentTimeMillis - 2419200000L;
+                    epochMilli2 = jCurrentTimeMillis;
                 }
-                j = j3;
-                j2 = j4;
+                j = epochMilli;
+                j2 = epochMilli2;
             } else {
                 Log.i("DataUsageController", "getDataUsageInfo , policy = null");
-                j = currentTimeMillis - 2419200000L;
-                j2 = currentTimeMillis;
+                j = jCurrentTimeMillis - 2419200000L;
+                j2 = jCurrentTimeMillis;
             }
-            long currentTimeMillis2 = System.currentTimeMillis();
-            long j5 = j2;
-            NetworkStatsHistory.Entry values = historyForNetwork.getValues(j, j2, currentTimeMillis, (NetworkStatsHistory.Entry) null);
-            long currentTimeMillis3 = System.currentTimeMillis();
+            long jCurrentTimeMillis2 = System.currentTimeMillis();
+            long j3 = j2;
+            NetworkStatsHistory.Entry values = historyForNetwork.getValues(j, j2, jCurrentTimeMillis, (NetworkStatsHistory.Entry) null);
+            long jCurrentTimeMillis3 = System.currentTimeMillis();
             if (DEBUG) {
-                Log.d("DataUsageController", String.format("history call from %s to %s now=%s took %sms: %s", new Date(j), new Date(j5), new Date(currentTimeMillis), Long.valueOf(currentTimeMillis3 - currentTimeMillis2), historyEntryToString(values)));
+                Log.d("DataUsageController", String.format("history call from %s to %s now=%s took %sms: %s", new Date(j), new Date(j3), new Date(jCurrentTimeMillis), Long.valueOf(jCurrentTimeMillis3 - jCurrentTimeMillis2), historyEntryToString(values)));
             }
             if (values == null) {
                 return warn("no entry data");
             }
+            long j4 = values.rxBytes + values.txBytes;
             DataUsageInfo dataUsageInfo = new DataUsageInfo();
             dataUsageInfo.startDate = j;
-            dataUsageInfo.usageLevel = values.rxBytes + values.txBytes;
-            dataUsageInfo.period = formatDateRange(j, j5);
+            dataUsageInfo.usageLevel = j4;
+            dataUsageInfo.period = formatDateRange(j, j3);
             dataUsageInfo.cycleStart = j;
-            dataUsageInfo.cycleEnd = j5;
-            if (findNetworkPolicy != null) {
-                dataUsageInfo.limitLevel = findNetworkPolicy.limitBytes > 0 ? findNetworkPolicy.limitBytes : 0L;
-                dataUsageInfo.warningLevel = findNetworkPolicy.warningBytes > 0 ? findNetworkPolicy.warningBytes : 0L;
+            dataUsageInfo.cycleEnd = j3;
+            if (networkPolicyFindNetworkPolicy != null) {
+                dataUsageInfo.limitLevel = networkPolicyFindNetworkPolicy.limitBytes > 0 ? networkPolicyFindNetworkPolicy.limitBytes : 0L;
+                dataUsageInfo.warningLevel = networkPolicyFindNetworkPolicy.warningBytes > 0 ? networkPolicyFindNetworkPolicy.warningBytes : 0L;
             } else {
                 dataUsageInfo.warningLevel = getDefaultWarningLevel();
             }
@@ -173,11 +174,11 @@ public class DataUsageController {
     }
 
     private String formatDateRange(long j, long j2) {
-        String formatter;
+        String string;
         synchronized (PERIOD_BUILDER) {
             PERIOD_BUILDER.setLength(0);
-            formatter = DateUtils.formatDateRange(this.mContext, PERIOD_FORMATTER, j, j2, 65552, null).toString();
+            string = DateUtils.formatDateRange(this.mContext, PERIOD_FORMATTER, j, j2, 65552, null).toString();
         }
-        return formatter;
+        return string;
     }
 }

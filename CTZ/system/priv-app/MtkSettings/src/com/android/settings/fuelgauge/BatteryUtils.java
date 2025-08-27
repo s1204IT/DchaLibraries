@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.BatteryStats;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.android.settingslib.utils.PowerUtil;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BatteryUtils {
     private static BatteryUtils sInstance;
@@ -52,21 +54,11 @@ public class BatteryUtils {
             return 0L;
         }
         switch (i) {
-            case 0:
-                return getScreenUsageTimeMs(uid, i2);
-            case 1:
-                return getProcessForegroundTimeMs(uid, i2);
-            case 2:
-                return getProcessBackgroundTimeMs(uid, i2);
-            case 3:
-                return getProcessForegroundTimeMs(uid, i2) + getProcessBackgroundTimeMs(uid, i2);
-            default:
-                return 0L;
         }
+        return 0L;
     }
 
     private long getScreenUsageTimeMs(BatteryStats.Uid uid, int i, long j) {
-        int[] iArr;
         Log.v("BatteryUtils", "package: " + this.mPackageManager.getNameForUid(uid.getUid()));
         long j2 = 0;
         for (int i2 : new int[]{0}) {
@@ -90,8 +82,8 @@ public class BatteryUtils {
     }
 
     private long getProcessForegroundTimeMs(BatteryStats.Uid uid, int i) {
-        long convertMsToUs = PowerUtil.convertMsToUs(SystemClock.elapsedRealtime());
-        return getScreenUsageTimeMs(uid, i, convertMsToUs) + PowerUtil.convertUsToMs(getForegroundServiceTotalTimeUs(uid, convertMsToUs));
+        long jConvertMsToUs = PowerUtil.convertMsToUs(SystemClock.elapsedRealtime());
+        return getScreenUsageTimeMs(uid, i, jConvertMsToUs) + PowerUtil.convertUsToMs(getForegroundServiceTotalTimeUs(uid, jConvertMsToUs));
     }
 
     public double removeHiddenBatterySippers(List<BatterySipper> list) {
@@ -114,7 +106,6 @@ public class BatteryUtils {
     }
 
     void smearScreenBatterySipper(List<BatterySipper> list, BatterySipper batterySipper) {
-        BatterySipper batterySipper2;
         SparseLongArray sparseLongArray = new SparseLongArray();
         int size = list.size();
         long j = 0;
@@ -136,7 +127,7 @@ public class BatteryUtils {
             double d = batterySipper.totalPowerMah;
             int size2 = list.size();
             while (i < size2) {
-                list.get(i).totalPowerMah += (sparseLongArray.get(batterySipper2.getUid(), j) * d) / j2;
+                list.get(i).totalPowerMah += (sparseLongArray.get(r3.getUid(), j) * d) / j2;
                 i++;
                 j = 0;
             }
@@ -177,12 +168,13 @@ public class BatteryUtils {
     }
 
     public boolean isBackgroundRestrictionEnabled(int i, int i2, String str) {
-        int checkOpNoThrow;
-        return i >= 26 || (checkOpNoThrow = this.mAppOpsManager.checkOpNoThrow(63, i2, str)) == 1 || checkOpNoThrow == 2;
+        int iCheckOpNoThrow;
+        return i >= 26 || (iCheckOpNoThrow = this.mAppOpsManager.checkOpNoThrow(63, i2, str)) == 1 || iCheckOpNoThrow == 2;
     }
 
     public void sortUsageList(List<BatterySipper> list) {
         Collections.sort(list, new Comparator<BatterySipper>() { // from class: com.android.settings.fuelgauge.BatteryUtils.1
+            /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
             @Override // java.util.Comparator
             public int compare(BatterySipper batterySipper, BatterySipper batterySipper2) {
                 return Double.compare(batterySipper2.totalPowerMah, batterySipper.totalPowerMah);
@@ -195,9 +187,9 @@ public class BatteryUtils {
     }
 
     public long calculateScreenUsageTime(BatteryStatsHelper batteryStatsHelper) {
-        BatterySipper findBatterySipperByType = findBatterySipperByType(batteryStatsHelper.getUsageList(), BatterySipper.DrainType.SCREEN);
-        if (findBatterySipperByType != null) {
-            return findBatterySipperByType.usageTimeMs;
+        BatterySipper batterySipperFindBatterySipperByType = findBatterySipperByType(batteryStatsHelper.getUsageList(), BatterySipper.DrainType.SCREEN);
+        if (batterySipperFindBatterySipperByType != null) {
+            return batterySipperFindBatterySipperByType.usageTimeMs;
         }
         return 0L;
     }
@@ -247,20 +239,20 @@ public class BatteryUtils {
         batteryStatsHelper.refreshStats(0, userManager.getUserProfiles());
     }
 
-    public BatteryInfo getBatteryInfo(BatteryStatsHelper batteryStatsHelper, String str) {
+    public BatteryInfo getBatteryInfo(BatteryStatsHelper batteryStatsHelper, String str) throws Resources.NotFoundException {
         Estimate estimate;
-        long currentTimeMillis = System.currentTimeMillis();
-        Intent registerReceiver = this.mContext.registerReceiver(null, new IntentFilter("android.intent.action.BATTERY_CHANGED"));
-        long convertMsToUs = PowerUtil.convertMsToUs(SystemClock.elapsedRealtime());
+        long jCurrentTimeMillis = System.currentTimeMillis();
+        Intent intentRegisterReceiver = this.mContext.registerReceiver(null, new IntentFilter("android.intent.action.BATTERY_CHANGED"));
+        long jConvertMsToUs = PowerUtil.convertMsToUs(SystemClock.elapsedRealtime());
         BatteryStats stats = batteryStatsHelper.getStats();
         if (this.mPowerUsageFeatureProvider != null && this.mPowerUsageFeatureProvider.isEnhancedBatteryPredictionEnabled(this.mContext)) {
             estimate = this.mPowerUsageFeatureProvider.getEnhancedBatteryPrediction(this.mContext);
         } else {
-            estimate = new Estimate(PowerUtil.convertUsToMs(stats.computeBatteryTimeRemaining(convertMsToUs)), false, -1L);
+            estimate = new Estimate(PowerUtil.convertUsToMs(stats.computeBatteryTimeRemaining(jConvertMsToUs)), false, -1L);
         }
-        logRuntime(str, "BatteryInfoLoader post query", currentTimeMillis);
-        BatteryInfo batteryInfo = BatteryInfo.getBatteryInfo(this.mContext, registerReceiver, stats, estimate, convertMsToUs, false);
-        logRuntime(str, "BatteryInfoLoader.loadInBackground", currentTimeMillis);
+        logRuntime(str, "BatteryInfoLoader post query", jCurrentTimeMillis);
+        BatteryInfo batteryInfo = BatteryInfo.getBatteryInfo(this.mContext, intentRegisterReceiver, stats, estimate, jConvertMsToUs, false);
+        logRuntime(str, "BatteryInfoLoader.loadInBackground", jCurrentTimeMillis);
         return batteryInfo;
     }
 
@@ -352,10 +344,10 @@ public class BatteryUtils {
     private boolean hasLauncherEntry(String[] strArr) {
         Intent intent = new Intent("android.intent.action.MAIN", (Uri) null);
         intent.addCategory("android.intent.category.LAUNCHER");
-        List<ResolveInfo> queryIntentActivities = this.mPackageManager.queryIntentActivities(intent, 1835520);
-        int size = queryIntentActivities.size();
+        List<ResolveInfo> listQueryIntentActivities = this.mPackageManager.queryIntentActivities(intent, 1835520);
+        int size = listQueryIntentActivities.size();
         for (int i = 0; i < size; i++) {
-            if (ArrayUtils.contains(strArr, queryIntentActivities.get(i).activityInfo.packageName)) {
+            if (ArrayUtils.contains(strArr, listQueryIntentActivities.get(i).activityInfo.packageName)) {
                 return true;
             }
         }

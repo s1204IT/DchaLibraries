@@ -1,6 +1,7 @@
 package com.android.settings.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
@@ -8,6 +9,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public final class RtlCompatibleViewPager extends ViewPager {
     public RtlCompatibleViewPager(Context context) {
@@ -24,7 +26,7 @@ public final class RtlCompatibleViewPager extends ViewPager {
     }
 
     @Override // android.support.v4.view.ViewPager
-    public void setCurrentItem(int i) {
+    public void setCurrentItem(int i) throws Resources.NotFoundException {
         super.setCurrentItem(getRtlAwareIndex(i));
     }
 
@@ -36,7 +38,7 @@ public final class RtlCompatibleViewPager extends ViewPager {
     }
 
     @Override // android.support.v4.view.ViewPager, android.view.View
-    public void onRestoreInstanceState(Parcelable parcelable) {
+    public void onRestoreInstanceState(Parcelable parcelable) throws Resources.NotFoundException {
         RtlSavedState rtlSavedState = (RtlSavedState) parcelable;
         super.onRestoreInstanceState(rtlSavedState.getSuperState());
         setCurrentItem(rtlSavedState.position);
@@ -49,21 +51,22 @@ public final class RtlCompatibleViewPager extends ViewPager {
         return i;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class RtlSavedState extends View.BaseSavedState {
+    static class RtlSavedState extends View.BaseSavedState {
         public static final Parcelable.ClassLoaderCreator<RtlSavedState> CREATOR = new Parcelable.ClassLoaderCreator<RtlSavedState>() { // from class: com.android.settings.widget.RtlCompatibleViewPager.RtlSavedState.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;Ljava/lang/ClassLoader;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.ClassLoaderCreator
             public RtlSavedState createFromParcel(Parcel parcel, ClassLoader classLoader) {
                 return new RtlSavedState(parcel, classLoader);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             @Override // android.os.Parcelable.Creator
             public RtlSavedState createFromParcel(Parcel parcel) {
                 return new RtlSavedState(parcel, null);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             @Override // android.os.Parcelable.Creator
             public RtlSavedState[] newArray(int i) {
                 return new RtlSavedState[i];

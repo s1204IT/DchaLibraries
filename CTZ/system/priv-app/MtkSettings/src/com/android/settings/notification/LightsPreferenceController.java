@@ -1,10 +1,12 @@
 package com.android.settings.notification;
 
+import android.R;
 import android.content.Context;
 import android.provider.Settings;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.RestrictedSwitchPreference;
+
 /* loaded from: classes.dex */
 public class LightsPreferenceController extends NotificationPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     public LightsPreferenceController(Context context, NotificationBackend notificationBackend) {
@@ -42,6 +44,6 @@ public class LightsPreferenceController extends NotificationPreferenceController
     }
 
     boolean canPulseLight() {
-        return this.mContext.getResources().getBoolean(17956984) && Settings.System.getInt(this.mContext.getContentResolver(), "notification_light_pulse", 0) == 1;
+        return this.mContext.getResources().getBoolean(R.^attr-private.headerLayout) && Settings.System.getInt(this.mContext.getContentResolver(), "notification_light_pulse", 0) == 1;
     }
 }

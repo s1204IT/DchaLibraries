@@ -3,6 +3,7 @@ package com.android.setupwizardlib.template;
 import android.os.Handler;
 import android.os.Looper;
 import com.android.setupwizardlib.TemplateLayout;
+
 /* loaded from: classes.dex */
 public class RequireScrollMixin implements Mixin {
     private ScrollHandlingDelegate mDelegate;
@@ -12,14 +13,11 @@ public class RequireScrollMixin implements Mixin {
     private boolean mRequiringScrollToBottom = false;
     private boolean mEverScrolledToBottom = false;
 
-    /* loaded from: classes.dex */
     public interface OnRequireScrollStateChangedListener {
         void onRequireScrollStateChanged(boolean z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface ScrollHandlingDelegate {
+    interface ScrollHandlingDelegate {
     }
 
     public RequireScrollMixin(TemplateLayout templateLayout) {
@@ -30,8 +28,7 @@ public class RequireScrollMixin implements Mixin {
         this.mDelegate = scrollHandlingDelegate;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void notifyScrollabilityChange(boolean z) {
+    void notifyScrollabilityChange(boolean z) {
         if (z == this.mRequiringScrollToBottom) {
             return;
         }

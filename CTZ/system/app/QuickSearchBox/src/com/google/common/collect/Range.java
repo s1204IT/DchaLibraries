@@ -5,24 +5,28 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import java.io.Serializable;
 import java.lang.Comparable;
+
 /* loaded from: classes.dex */
 public final class Range<C extends Comparable> implements Predicate<C>, Serializable {
     private static final long serialVersionUID = 0;
     final Cut<C> lowerBound;
     final Cut<C> upperBound;
     private static final Function<Range, Cut> LOWER_BOUND_FN = new Function<Range, Cut>() { // from class: com.google.common.collect.Range.1
+        /* JADX DEBUG: Method merged with bridge method: apply(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // com.google.common.base.Function
         public Cut apply(Range range) {
             return range.lowerBound;
         }
     };
     private static final Function<Range, Cut> UPPER_BOUND_FN = new Function<Range, Cut>() { // from class: com.google.common.collect.Range.2
+        /* JADX DEBUG: Method merged with bridge method: apply(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // com.google.common.base.Function
         public Cut apply(Range range) {
             return range.upperBound;
         }
     };
     static final Ordering<Range<?>> RANGE_LEX_ORDERING = new Ordering<Range<?>>() { // from class: com.google.common.collect.Range.3
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // com.google.common.collect.Ordering, java.util.Comparator
         public int compare(Range<?> range, Range<?> range2) {
             return ComparisonChain.start().compare(range.lowerBound, range2.lowerBound).compare(range.upperBound, range2.upperBound).result();
@@ -30,33 +34,26 @@ public final class Range<C extends Comparable> implements Predicate<C>, Serializ
     };
     private static final Range<Comparable> ALL = new Range<>(Cut.belowAll(), Cut.aboveAll());
 
-    /* JADX WARN: Multi-variable type inference failed */
-    @Override // com.google.common.base.Predicate
-    @Deprecated
-    public /* bridge */ /* synthetic */ boolean apply(Object obj) {
-        return apply((Range<C>) ((Comparable) obj));
-    }
-
     static <C extends Comparable<?>> Range<C> create(Cut<C> cut, Cut<C> cut2) {
         return new Range<>(cut, cut2);
     }
 
     public static <C extends Comparable<?>> Range<C> range(C c, BoundType boundType, C c2, BoundType boundType2) {
-        Cut belowValue;
-        Cut aboveValue;
+        Cut cutBelowValue;
+        Cut cutAboveValue;
         Preconditions.checkNotNull(boundType);
         Preconditions.checkNotNull(boundType2);
         if (boundType == BoundType.OPEN) {
-            belowValue = Cut.aboveValue(c);
+            cutBelowValue = Cut.aboveValue(c);
         } else {
-            belowValue = Cut.belowValue(c);
+            cutBelowValue = Cut.belowValue(c);
         }
         if (boundType2 == BoundType.OPEN) {
-            aboveValue = Cut.belowValue(c2);
+            cutAboveValue = Cut.belowValue(c2);
         } else {
-            aboveValue = Cut.aboveValue(c2);
+            cutAboveValue = Cut.aboveValue(c2);
         }
-        return create(belowValue, aboveValue);
+        return create(cutBelowValue, cutAboveValue);
     }
 
     public static <C extends Comparable<?>> Range<C> lessThan(C c) {
@@ -114,7 +111,7 @@ public final class Range<C extends Comparable> implements Predicate<C>, Serializ
     }
 
     public C lowerEndpoint() {
-        return this.lowerBound.endpoint();
+        return (C) this.lowerBound.endpoint();
     }
 
     public boolean hasUpperBound() {
@@ -122,7 +119,7 @@ public final class Range<C extends Comparable> implements Predicate<C>, Serializ
     }
 
     public C upperEndpoint() {
-        return this.upperBound.endpoint();
+        return (C) this.upperBound.endpoint();
     }
 
     public boolean contains(C c) {
@@ -130,6 +127,8 @@ public final class Range<C extends Comparable> implements Predicate<C>, Serializ
         return this.lowerBound.isLessThan(c) && !this.upperBound.isLessThan(c);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: apply(Ljava/lang/Object;)Z */
+    @Override // com.google.common.base.Predicate
     @Deprecated
     public boolean apply(C c) {
         return contains(c);
@@ -140,23 +139,23 @@ public final class Range<C extends Comparable> implements Predicate<C>, Serializ
     }
 
     public Range<C> intersection(Range<C> range) {
-        int compareTo = this.lowerBound.compareTo((Cut) range.lowerBound);
-        int compareTo2 = this.upperBound.compareTo((Cut) range.upperBound);
-        if (compareTo >= 0 && compareTo2 <= 0) {
+        int iCompareTo = this.lowerBound.compareTo((Cut) range.lowerBound);
+        int iCompareTo2 = this.upperBound.compareTo((Cut) range.upperBound);
+        if (iCompareTo >= 0 && iCompareTo2 <= 0) {
             return this;
         }
-        if (compareTo <= 0 && compareTo2 >= 0) {
+        if (iCompareTo <= 0 && iCompareTo2 >= 0) {
             return range;
         }
-        return create(compareTo >= 0 ? this.lowerBound : range.lowerBound, compareTo2 <= 0 ? this.upperBound : range.upperBound);
+        return create(iCompareTo >= 0 ? this.lowerBound : range.lowerBound, iCompareTo2 <= 0 ? this.upperBound : range.upperBound);
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof Range) {
-            Range range = (Range) obj;
-            return this.lowerBound.equals(range.lowerBound) && this.upperBound.equals(range.upperBound);
+        if (!(obj instanceof Range)) {
+            return false;
         }
-        return false;
+        Range range = (Range) obj;
+        return this.lowerBound.equals(range.lowerBound) && this.upperBound.equals(range.upperBound);
     }
 
     public int hashCode() {
@@ -182,8 +181,7 @@ public final class Range<C extends Comparable> implements Predicate<C>, Serializ
         return this;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static int compareOrThrow(Comparable comparable, Comparable comparable2) {
+    static int compareOrThrow(Comparable comparable, Comparable comparable2) {
         return comparable.compareTo(comparable2);
     }
 }

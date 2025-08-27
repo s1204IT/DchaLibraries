@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import com.android.settings.core.SubSettingLauncher;
 import com.android.settings.search.Indexable;
+
 /* loaded from: classes.dex */
 public class DatabaseIndexingUtils {
     public static Intent buildSearchResultPageIntent(Context context, String str, String str2, String str3) {

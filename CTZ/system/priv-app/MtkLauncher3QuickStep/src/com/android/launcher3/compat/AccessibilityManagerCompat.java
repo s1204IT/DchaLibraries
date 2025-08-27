@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+
 /* loaded from: classes.dex */
 public class AccessibilityManagerCompat {
     public static boolean isAccessibilityEnabled(Context context) {
@@ -16,10 +17,10 @@ public class AccessibilityManagerCompat {
 
     public static void sendCustomAccessibilityEvent(View view, int i, String str) {
         if (isObservedEventType(view.getContext(), i)) {
-            AccessibilityEvent obtain = AccessibilityEvent.obtain(i);
-            view.onInitializeAccessibilityEvent(obtain);
-            obtain.getText().add(str);
-            getManager(view.getContext()).sendAccessibilityEvent(obtain);
+            AccessibilityEvent accessibilityEventObtain = AccessibilityEvent.obtain(i);
+            view.onInitializeAccessibilityEvent(accessibilityEventObtain);
+            accessibilityEventObtain.getText().add(str);
+            getManager(view.getContext()).sendAccessibilityEvent(accessibilityEventObtain);
         }
     }
 

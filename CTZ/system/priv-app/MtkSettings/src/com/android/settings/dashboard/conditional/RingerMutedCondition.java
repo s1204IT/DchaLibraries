@@ -3,26 +3,26 @@ package com.android.settings.dashboard.conditional;
 import android.app.NotificationManager;
 import android.graphics.drawable.Drawable;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class RingerMutedCondition extends AbnormalRingerConditionBase {
     private final NotificationManager mNotificationManager;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public RingerMutedCondition(ConditionManager conditionManager) {
+    RingerMutedCondition(ConditionManager conditionManager) {
         super(conditionManager);
         this.mNotificationManager = (NotificationManager) this.mManager.getContext().getSystemService("notification");
     }
 
     @Override // com.android.settings.dashboard.conditional.Condition
     public void refreshState() {
-        int i;
+        int zenMode;
         boolean z = false;
         if (this.mNotificationManager != null) {
-            i = this.mNotificationManager.getZenMode();
+            zenMode = this.mNotificationManager.getZenMode();
         } else {
-            i = 0;
+            zenMode = 0;
         }
-        boolean z2 = i != 0;
+        boolean z2 = zenMode != 0;
         if ((this.mAudioManager.getRingerModeInternal() == 0) && !z2) {
             z = true;
         }

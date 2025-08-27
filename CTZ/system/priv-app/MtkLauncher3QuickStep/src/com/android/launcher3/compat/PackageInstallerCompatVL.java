@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PackageInstallerCompatVL extends PackageInstallerCompat {
     private static final boolean DEBUG = false;
@@ -40,9 +41,9 @@ public class PackageInstallerCompatVL extends PackageInstallerCompat {
 
         @Override // android.content.pm.PackageInstaller.SessionCallback
         public void onProgressChanged(int i, float f) {
-            PackageInstaller.SessionInfo verify = PackageInstallerCompatVL.this.verify(PackageInstallerCompatVL.this.mInstaller.getSessionInfo(i));
-            if (verify != null && verify.getAppPackageName() != null) {
-                PackageInstallerCompatVL.this.sendUpdate(PackageInstallerCompat.PackageInstallInfo.fromInstallingState(verify));
+            PackageInstaller.SessionInfo sessionInfoVerify = PackageInstallerCompatVL.this.verify(PackageInstallerCompatVL.this.mInstaller.getSessionInfo(i));
+            if (sessionInfoVerify != null && sessionInfoVerify.getAppPackageName() != null) {
+                PackageInstallerCompatVL.this.sendUpdate(PackageInstallerCompat.PackageInstallInfo.fromInstallingState(sessionInfoVerify));
             }
         }
 
@@ -56,23 +57,22 @@ public class PackageInstallerCompatVL extends PackageInstallerCompat {
         }
 
         private PackageInstaller.SessionInfo pushSessionDisplayToLauncher(int i) {
-            PackageInstaller.SessionInfo verify = PackageInstallerCompatVL.this.verify(PackageInstallerCompatVL.this.mInstaller.getSessionInfo(i));
-            if (verify != null && verify.getAppPackageName() != null) {
-                PackageInstallerCompatVL.this.mActiveSessions.put(i, verify.getAppPackageName());
-                PackageInstallerCompatVL.this.addSessionInfoToCache(verify, Process.myUserHandle());
+            PackageInstaller.SessionInfo sessionInfoVerify = PackageInstallerCompatVL.this.verify(PackageInstallerCompatVL.this.mInstaller.getSessionInfo(i));
+            if (sessionInfoVerify != null && sessionInfoVerify.getAppPackageName() != null) {
+                PackageInstallerCompatVL.this.mActiveSessions.put(i, sessionInfoVerify.getAppPackageName());
+                PackageInstallerCompatVL.this.addSessionInfoToCache(sessionInfoVerify, Process.myUserHandle());
                 LauncherAppState instanceNoCreate = LauncherAppState.getInstanceNoCreate();
                 if (instanceNoCreate != null) {
-                    instanceNoCreate.getModel().updateSessionDisplayInfo(verify.getAppPackageName());
+                    instanceNoCreate.getModel().updateSessionDisplayInfo(sessionInfoVerify.getAppPackageName());
                 }
-                return verify;
+                return sessionInfoVerify;
             }
             return null;
         }
     };
     private final Handler mWorker = new Handler(LauncherModel.getWorkerLooper());
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public PackageInstallerCompatVL(Context context) {
+    PackageInstallerCompatVL(Context context) {
         this.mAppContext = context.getApplicationContext();
         this.mInstaller = context.getPackageManager().getPackageInstaller();
         this.mCache = LauncherAppState.getInstance(context).getIconCache();
@@ -81,16 +81,16 @@ public class PackageInstallerCompatVL extends PackageInstallerCompat {
 
     @Override // com.android.launcher3.compat.PackageInstallerCompat
     public HashMap<String, PackageInstaller.SessionInfo> updateAndGetActiveSessionCache() {
-        HashMap<String, PackageInstaller.SessionInfo> hashMap = new HashMap<>();
-        UserHandle myUserHandle = Process.myUserHandle();
+        HashMap<String, PackageInstaller.SessionInfo> map = new HashMap<>();
+        UserHandle userHandleMyUserHandle = Process.myUserHandle();
         for (PackageInstaller.SessionInfo sessionInfo : getAllVerifiedSessions()) {
-            addSessionInfoToCache(sessionInfo, myUserHandle);
+            addSessionInfoToCache(sessionInfo, userHandleMyUserHandle);
             if (sessionInfo.getAppPackageName() != null) {
-                hashMap.put(sessionInfo.getAppPackageName(), sessionInfo);
+                map.put(sessionInfo.getAppPackageName(), sessionInfo);
                 this.mActiveSessions.put(sessionInfo.getSessionId(), sessionInfo.getAppPackageName());
             }
         }
-        return hashMap;
+        return map;
     }
 
     void addSessionInfoToCache(PackageInstaller.SessionInfo sessionInfo, UserHandle userHandle) {
@@ -112,8 +112,7 @@ public class PackageInstallerCompatVL extends PackageInstallerCompat {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public PackageInstaller.SessionInfo verify(PackageInstaller.SessionInfo sessionInfo) {
+    private PackageInstaller.SessionInfo verify(PackageInstaller.SessionInfo sessionInfo) {
         if (sessionInfo == null || sessionInfo.getInstallerPackageName() == null || TextUtils.isEmpty(sessionInfo.getAppPackageName())) {
             return null;
         }

@@ -2,6 +2,7 @@ package com.android.settings.fingerprint;
 
 import android.content.Context;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class FingerprintEnrollSuggestionActivity extends FingerprintEnrollIntroduction {
     public static boolean isSuggestionComplete(Context context) {

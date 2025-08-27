@@ -3,6 +3,7 @@ package com.android.launcher3.util;
 import android.graphics.Rect;
 import com.android.launcher3.ItemInfo;
 import java.lang.reflect.Array;
+
 /* loaded from: classes.dex */
 public class GridOccupancy {
     public final boolean[][] cells;
@@ -12,7 +13,7 @@ public class GridOccupancy {
     public GridOccupancy(int i, int i2) {
         this.mCountX = i;
         this.mCountY = i2;
-        this.cells = (boolean[][]) Array.newInstance(boolean.class, i, i2);
+        this.cells = (boolean[][]) Array.newInstance((Class<?>) boolean.class, i, i2);
     }
 
     public boolean findVacantCell(int[] iArr, int i, int i2) {

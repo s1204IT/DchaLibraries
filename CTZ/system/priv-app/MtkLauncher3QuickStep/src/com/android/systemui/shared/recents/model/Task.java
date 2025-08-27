@@ -9,42 +9,55 @@ import com.android.systemui.shared.recents.utilities.Utilities;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class Task {
     public static final String TAG = "Task";
+
     @ViewDebug.ExportedProperty(category = "recents")
     public int colorBackground;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public int colorPrimary;
     public Drawable icon;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public boolean isDockable;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public boolean isLaunchTarget;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public boolean isLocked;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public boolean isStackTask;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public boolean isSystemApp;
+
     @ViewDebug.ExportedProperty(deepExport = true, prefix = "key_")
     public TaskKey key;
     private ArrayList<TaskCallbacks> mCallbacks = new ArrayList<>();
+
     @ViewDebug.ExportedProperty(category = "recents")
     public int resizeMode;
     public ActivityManager.TaskDescription taskDescription;
     public int temporarySortIndexInStack;
     public ThumbnailData thumbnail;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public String title;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public String titleDescription;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public ComponentName topActivity;
+
     @ViewDebug.ExportedProperty(category = "recents")
     public boolean useLightOnPrimaryColor;
 
-    /* loaded from: classes.dex */
     public interface TaskCallbacks {
         void onTaskDataLoaded(Task task, ThumbnailData thumbnailData);
 
@@ -53,17 +66,21 @@ public class Task {
         void onTaskWindowingModeChanged();
     }
 
-    /* loaded from: classes.dex */
     public static class TaskKey {
+
         @ViewDebug.ExportedProperty(category = "recents")
         public final Intent baseIntent;
+
         @ViewDebug.ExportedProperty(category = "recents")
         public final int id;
+
         @ViewDebug.ExportedProperty(category = "recents")
         public long lastActiveTime;
         private int mHashCode;
+
         @ViewDebug.ExportedProperty(category = "recents")
         public final int userId;
+
         @ViewDebug.ExportedProperty(category = "recents")
         public int windowingMode;
 
@@ -93,11 +110,11 @@ public class Task {
         }
 
         public boolean equals(Object o) {
-            if (o instanceof TaskKey) {
-                TaskKey otherKey = (TaskKey) o;
-                return this.id == otherKey.id && this.windowingMode == otherKey.windowingMode && this.userId == otherKey.userId;
+            if (!(o instanceof TaskKey)) {
+                return false;
             }
-            return false;
+            TaskKey otherKey = (TaskKey) o;
+            return this.id == otherKey.id && this.windowingMode == otherKey.windowingMode && this.userId == otherKey.userId;
         }
 
         public int hashCode() {

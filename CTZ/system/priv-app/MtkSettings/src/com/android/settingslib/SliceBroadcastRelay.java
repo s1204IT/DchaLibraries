@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Process;
 import android.os.UserHandle;
+
 /* loaded from: classes.dex */
 public class SliceBroadcastRelay {
     public static void registerReceiver(Context context, Uri uri, Class<? extends BroadcastReceiver> cls, IntentFilter intentFilter) {

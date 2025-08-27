@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.List;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class ApListAdapter extends ArrayAdapter<AccessPoint> {
     private static Typeface mTypeFace;
@@ -119,13 +120,13 @@ public class ApListAdapter extends ArrayAdapter<AccessPoint> {
         if (accessPoint2.equals(accessPoint)) {
             Logger.d("ApListAdapter", "updateAccessPoint 0005");
             return true;
-        } else if (accessPoint2.update(accessPoint.getConfig(), accessPoint.getInfo(), accessPoint.getNetworkInfo())) {
+        }
+        if (accessPoint2.update(accessPoint.getConfig(), accessPoint.getInfo(), accessPoint.getNetworkInfo())) {
             Logger.d("ApListAdapter", "updateAccessPoint 0006");
             notifyDataSetChanged();
             return true;
-        } else {
-            Logger.d("ApListAdapter", "updateAccessPoint 0007");
-            return false;
         }
+        Logger.d("ApListAdapter", "updateAccessPoint 0007");
+        return false;
     }
 }

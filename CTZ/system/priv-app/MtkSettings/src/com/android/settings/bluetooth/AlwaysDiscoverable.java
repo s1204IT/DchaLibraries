@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import com.android.settingslib.bluetooth.LocalBluetoothAdapter;
+
 /* loaded from: classes.dex */
 public class AlwaysDiscoverable extends BroadcastReceiver {
     private Context mContext;

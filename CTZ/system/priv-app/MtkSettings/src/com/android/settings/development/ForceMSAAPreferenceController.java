@@ -7,6 +7,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.development.SystemPropPoker;
+
 /* loaded from: classes.dex */
 public class ForceMSAAPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final String MSAA_PROPERTY = "debug.egl.force_msaa";
@@ -32,9 +33,8 @@ public class ForceMSAAPreferenceController extends DeveloperOptionsPreferenceCon
         ((SwitchPreference) this.mPreference).setChecked(SystemProperties.getBoolean(MSAA_PROPERTY, false));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         SystemProperties.set(MSAA_PROPERTY, Boolean.toString(false));
         ((SwitchPreference) this.mPreference).setChecked(false);

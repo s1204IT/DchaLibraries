@@ -6,13 +6,12 @@ import java.lang.Enum;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class ImmutableEnumMap<K extends Enum<K>, V> extends ImmutableMap<K, V> {
+final class ImmutableEnumMap<K extends Enum<K>, V> extends ImmutableMap<K, V> {
     private final transient EnumMap<K, V> delegate;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static <K extends Enum<K>, V> ImmutableMap<K, V> asImmutable(EnumMap<K, V> enumMap) {
+    static <K extends Enum<K>, V> ImmutableMap<K, V> asImmutable(EnumMap<K, V> enumMap) {
         switch (enumMap.size()) {
             case 0:
                 return ImmutableMap.of();
@@ -42,14 +41,14 @@ public final class ImmutableEnumMap<K extends Enum<K>, V> extends ImmutableMap<K
                 return ImmutableEnumMap.this.size();
             }
 
+            /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
             @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
             public UnmodifiableIterator<K> iterator() {
                 return Iterators.unmodifiableIterator(ImmutableEnumMap.this.delegate.keySet().iterator());
             }
 
-            /* JADX INFO: Access modifiers changed from: package-private */
             @Override // com.google.common.collect.ImmutableCollection
-            public boolean isPartialView() {
+            boolean isPartialView() {
                 return true;
             }
         };
@@ -78,6 +77,7 @@ public final class ImmutableEnumMap<K extends Enum<K>, V> extends ImmutableMap<K
                 return ImmutableEnumMap.this;
             }
 
+            /* JADX DEBUG: Method merged with bridge method: iterator()Ljava/util/Iterator; */
             @Override // com.google.common.collect.ImmutableSet, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.lang.Iterable, java.util.Set, java.util.NavigableSet
             public UnmodifiableIterator<Map.Entry<K, V>> iterator() {
                 return (UnmodifiableIterator<Map.Entry<K, V>>) new UnmodifiableIterator<Map.Entry<K, V>>() { // from class: com.google.common.collect.ImmutableEnumMap.2.1
@@ -92,6 +92,7 @@ public final class ImmutableEnumMap<K extends Enum<K>, V> extends ImmutableMap<K
                         return this.backingIterator.hasNext();
                     }
 
+                    /* JADX DEBUG: Method merged with bridge method: next()Ljava/lang/Object; */
                     @Override // java.util.Iterator
                     public Map.Entry<K, V> next() {
                         Map.Entry<K, V> next = this.backingIterator.next();
@@ -112,7 +113,6 @@ public final class ImmutableEnumMap<K extends Enum<K>, V> extends ImmutableMap<K
         return new EnumSerializedForm(this.delegate);
     }
 
-    /* loaded from: classes.dex */
     private static class EnumSerializedForm<K extends Enum<K>, V> implements Serializable {
         private static final long serialVersionUID = 0;
         final EnumMap<K, V> delegate;

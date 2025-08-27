@@ -9,6 +9,7 @@ import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
 import com.android.settingslib.wrapper.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public class LocalTerminalPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     static final String TERMINAL_APP_PACKAGE = "com.android.terminal";
@@ -42,9 +43,9 @@ public class LocalTerminalPreferenceController extends DeveloperOptionsPreferenc
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
     public boolean onPreferenceChange(Preference preference, Object obj) {
         int i;
-        boolean booleanValue = ((Boolean) obj).booleanValue();
+        boolean zBooleanValue = ((Boolean) obj).booleanValue();
         PackageManagerWrapper packageManagerWrapper = this.mPackageManager;
-        if (!booleanValue) {
+        if (!zBooleanValue) {
             i = 0;
         } else {
             i = 1;
@@ -58,17 +59,15 @@ public class LocalTerminalPreferenceController extends DeveloperOptionsPreferenc
         ((SwitchPreference) this.mPreference).setChecked(this.mPackageManager.getApplicationEnabledSetting(TERMINAL_APP_PACKAGE) == 1);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchEnabled() {
+    protected void onDeveloperOptionsSwitchEnabled() {
         if (isEnabled()) {
             this.mPreference.setEnabled(true);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         this.mPackageManager.setApplicationEnabledSetting(TERMINAL_APP_PACKAGE, 0, 0);
         ((SwitchPreference) this.mPreference).setChecked(false);

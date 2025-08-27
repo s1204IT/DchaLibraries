@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settingslib.HelpUtils;
+
 /* loaded from: classes.dex */
 public class WifiScanningRequiredFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
     public static WifiScanningRequiredFragment newInstance() {

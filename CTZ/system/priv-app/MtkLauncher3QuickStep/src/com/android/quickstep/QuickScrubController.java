@@ -10,6 +10,7 @@ import com.android.launcher3.anim.Interpolators;
 import com.android.quickstep.views.RecentsView;
 import com.android.quickstep.views.TaskView;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class QuickScrubController implements OnAlarmListener {
     private static final long AUTO_ADVANCE_DELAY = 500;
@@ -57,11 +58,11 @@ public class QuickScrubController implements OnAlarmListener {
         Runnable runnable = new Runnable() { // from class: com.android.quickstep.-$$Lambda$QuickScrubController$iIcrBVScs5EFuJBcCXy6xjHbFJ4
             @Override // java.lang.Runnable
             public final void run() {
-                QuickScrubController.lambda$onQuickScrubEnd$1(QuickScrubController.this, nextPage);
+                QuickScrubController.lambda$onQuickScrubEnd$1(this.f$0, nextPage);
             }
         };
-        int abs = Math.abs(nextPage - this.mRecentsView.getPageNearestToCenterOfScreen()) * QUICKSCRUB_END_SNAP_DURATION_PER_PAGE;
-        if (this.mRecentsView.getChildCount() > 0 && this.mRecentsView.snapToPage(nextPage, abs)) {
+        int iAbs = Math.abs(nextPage - this.mRecentsView.getPageNearestToCenterOfScreen()) * QUICKSCRUB_END_SNAP_DURATION_PER_PAGE;
+        if (this.mRecentsView.getChildCount() > 0 && this.mRecentsView.snapToPage(nextPage, iAbs)) {
             this.mRecentsView.setNextPageSwitchRunnable(runnable);
         } else if (this.mFinishedTransitionToQuickScrub) {
             runnable.run();
@@ -77,7 +78,7 @@ public class QuickScrubController implements OnAlarmListener {
             pageAt.launchTask(true, new Consumer() { // from class: com.android.quickstep.-$$Lambda$QuickScrubController$hSsri-NuYy5GIuelGzr3-0JPFWU
                 @Override // java.util.function.Consumer
                 public final void accept(Object obj) {
-                    QuickScrubController.lambda$onQuickScrubEnd$0(QuickScrubController.this, pageAt, i, (Boolean) obj);
+                    QuickScrubController.lambda$onQuickScrubEnd$0(this.f$0, pageAt, i, (Boolean) obj);
                 }
             }, pageAt.getHandler());
         } else {
@@ -130,13 +131,12 @@ public class QuickScrubController implements OnAlarmListener {
     public void onQuickScrubProgress(float f) {
         float[] fArr = QUICK_SCRUB_THRESHOLDS;
         int length = fArr.length;
-        boolean z = false;
         int i = 0;
         for (int i2 = 0; i2 < length && f >= fArr[i2]; i2++) {
             i++;
         }
         if (i != this.mQuickScrubSection) {
-            z = (this.mQuickScrubSection == QUICK_SCRUB_THRESHOLDS.length || this.mQuickScrubSection == 0) ? true : true;
+            boolean z = this.mQuickScrubSection == QUICK_SCRUB_THRESHOLDS.length || this.mQuickScrubSection == 0;
             int nextPage = (this.mRecentsView.getNextPage() + i) - this.mQuickScrubSection;
             if (this.mFinishedTransitionToQuickScrub && !z) {
                 goToPageWithHaptic(nextPage);
@@ -170,13 +170,13 @@ public class QuickScrubController implements OnAlarmListener {
     }
 
     private void goToPageWithHaptic(int i, int i2, boolean z, Interpolator interpolator) {
-        int boundToRange = Utilities.boundToRange(i, 0, this.mRecentsView.getPageCount() - 1);
-        boolean z2 = boundToRange != this.mRecentsView.getNextPage();
+        int iBoundToRange = Utilities.boundToRange(i, 0, this.mRecentsView.getPageCount() - 1);
+        boolean z2 = iBoundToRange != this.mRecentsView.getNextPage();
         if (z2) {
             if (i2 <= -1) {
-                i2 = Math.abs(boundToRange - this.mRecentsView.getNextPage()) * QUICKSCRUB_SNAP_DURATION_PER_PAGE;
+                i2 = Math.abs(iBoundToRange - this.mRecentsView.getNextPage()) * QUICKSCRUB_SNAP_DURATION_PER_PAGE;
             }
-            this.mRecentsView.snapToPage(boundToRange, i2, interpolator);
+            this.mRecentsView.snapToPage(iBoundToRange, i2, interpolator);
         }
         if (z2 || z) {
             this.mRecentsView.performHapticFeedback(1, 1);

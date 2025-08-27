@@ -10,14 +10,14 @@ import android.content.IntentFilter;
 import android.os.UserHandle;
 import android.view.WindowManager;
 import com.android.systemui.Dependency;
-import com.android.systemui.plugins.R;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
+
 /* loaded from: classes.dex */
 public class SystemUIDialog extends AlertDialog {
     private final Context mContext;
 
     public SystemUIDialog(Context context) {
-        this(context, R.style.Theme_SystemUI_Dialog);
+        this(context, 2131886643);
     }
 
     public SystemUIDialog(Context context, int i) {
@@ -53,9 +53,9 @@ public class SystemUIDialog extends AlertDialog {
     public static void setShowForAllUsers(Dialog dialog, boolean z) {
         if (z) {
             dialog.getWindow().getAttributes().privateFlags |= 16;
-            return;
+        } else {
+            dialog.getWindow().getAttributes().privateFlags &= -17;
         }
-        dialog.getWindow().getAttributes().privateFlags &= -17;
     }
 
     public static void setWindowOnTop(Dialog dialog) {
@@ -76,9 +76,7 @@ public class SystemUIDialog extends AlertDialog {
         new DismissReceiver(dialog).register();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class DismissReceiver extends BroadcastReceiver implements DialogInterface.OnDismissListener {
+    private static class DismissReceiver extends BroadcastReceiver implements DialogInterface.OnDismissListener {
         private static final IntentFilter INTENT_FILTER = new IntentFilter();
         private final Dialog mDialog;
         private boolean mRegistered;

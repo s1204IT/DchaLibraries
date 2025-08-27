@@ -3,6 +3,7 @@ package com.mediatek.settings.wifi.tether;
 import android.content.Context;
 import android.os.Bundle;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public class WifiTetherUserListSettingsConnected extends WifiTetherUserListSettings {
     private int mUserMode = 0;

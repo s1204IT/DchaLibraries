@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+
 /* loaded from: classes.dex */
 public class FixedSizeFrameLayout extends FrameLayout {
     private final Rect mLayoutBounds;
@@ -44,10 +45,10 @@ public class FixedSizeFrameLayout extends FrameLayout {
     public final void requestLayout() {
         if (this.mLayoutBounds == null || this.mLayoutBounds.isEmpty()) {
             super.requestLayout();
-            return;
+        } else {
+            measureContents(getMeasuredWidth(), getMeasuredHeight());
+            layoutContents(this.mLayoutBounds, false);
         }
-        measureContents(getMeasuredWidth(), getMeasuredHeight());
-        layoutContents(this.mLayoutBounds, false);
     }
 
     protected void measureContents(int i, int i2) {

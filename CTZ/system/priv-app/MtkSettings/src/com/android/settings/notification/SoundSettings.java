@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SoundSettings extends DashboardFragment {
     public static final BaseSearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.notification.SoundSettings.2
@@ -124,9 +125,8 @@ public class SoundSettings extends DashboardFragment {
         return "SoundSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.sound_settings;
     }
 
@@ -163,14 +163,14 @@ public class SoundSettings extends DashboardFragment {
         ((MediaOutputPreferenceController) use(MediaOutputPreferenceController.class)).setCallback(new AudioSwitchPreferenceController.AudioSwitchCallback() { // from class: com.android.settings.notification.-$$Lambda$SoundSettings$jhjL65jex6M9bCQGfPcGogvuH7o
             @Override // com.android.settings.sound.AudioSwitchPreferenceController.AudioSwitchCallback
             public final void onPreferenceDataChanged(ListPreference listPreference) {
-                SoundSettings.this.onPreferenceDataChanged(listPreference);
+                this.f$0.onPreferenceDataChanged(listPreference);
             }
         });
         this.mMediaOutputControllerKey = ((MediaOutputPreferenceController) use(MediaOutputPreferenceController.class)).getPreferenceKey();
         ((HandsFreeProfileOutputPreferenceController) use(HandsFreeProfileOutputPreferenceController.class)).setCallback(new AudioSwitchPreferenceController.AudioSwitchCallback() { // from class: com.android.settings.notification.-$$Lambda$SoundSettings$P7n4dsft5tPdi8YUFcItX8K9whw
             @Override // com.android.settings.sound.AudioSwitchPreferenceController.AudioSwitchCallback
             public final void onPreferenceDataChanged(ListPreference listPreference) {
-                SoundSettings.this.onPreferenceDataChanged(listPreference);
+                this.f$0.onPreferenceDataChanged(listPreference);
             }
         });
         this.mHfpOutputControllerKey = ((HandsFreeProfileOutputPreferenceController) use(HandsFreeProfileOutputPreferenceController.class)).getPreferenceKey();
@@ -182,7 +182,6 @@ public class SoundSettings extends DashboardFragment {
         }
     }
 
-    /* loaded from: classes.dex */
     final class VolumePreferenceCallback implements VolumeSeekBarPreference.Callback {
         private SeekBarVolumizer mCurrent;
 
@@ -216,8 +215,7 @@ public class SoundSettings extends DashboardFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, SoundSettings soundSettings, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, SoundSettings soundSettings, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModePreferenceController(context, lifecycle, "zen_mode"));
         arrayList.add(new PhoneRingtonePreferenceController(context));
@@ -246,16 +244,14 @@ public class SoundSettings extends DashboardFragment {
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void enableWorkSync() {
+    void enableWorkSync() {
         WorkSoundPreferenceController workSoundPreferenceController = (WorkSoundPreferenceController) use(WorkSoundPreferenceController.class);
         if (workSoundPreferenceController != null) {
             workSoundPreferenceController.enableWorkSync();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onPreferenceDataChanged(ListPreference listPreference) {
+    private void onPreferenceDataChanged(ListPreference listPreference) {
         if (this.mDialogFragment != null) {
             this.mDialogFragment.onListPreferenceUpdated(listPreference);
         }

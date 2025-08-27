@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class OmacpSettingReceiver extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver
@@ -32,7 +33,7 @@ public class OmacpSettingReceiver extends BroadcastReceiver {
     }
 
     private boolean setBookmarkAndHomePage(Context context, Intent intent, long j) {
-        String fixUrl;
+        String strFixUrl;
         boolean z = false;
         if (-1 == j) {
             return false;
@@ -46,19 +47,19 @@ public class OmacpSettingReceiver extends BroadcastReceiver {
         Log.i("@M_browser/OmacpSettingReceiver", "resourceMapList size:" + arrayList.size());
         Iterator it = arrayList.iterator();
         while (it.hasNext()) {
-            HashMap hashMap = (HashMap) it.next();
-            String str = (String) hashMap.get("URI");
-            String str2 = (String) hashMap.get("NAME");
-            String str3 = (String) hashMap.get("STARTPAGE");
-            if (str != null && (fixUrl = UrlUtils.fixUrl(str)) != null) {
-                String str4 = str2 == null ? fixUrl : str2;
-                String smartUrlFilter = UrlUtils.smartUrlFilter(fixUrl);
-                Bookmarks.addBookmark(context, false, smartUrlFilter, str4, null, j);
+            HashMap map = (HashMap) it.next();
+            String str = (String) map.get("URI");
+            String str2 = (String) map.get("NAME");
+            String str3 = (String) map.get("STARTPAGE");
+            if (str != null && (strFixUrl = UrlUtils.fixUrl(str)) != null) {
+                String str4 = str2 == null ? strFixUrl : str2;
+                String strSmartUrlFilter = UrlUtils.smartUrlFilter(strFixUrl);
+                Bookmarks.addBookmark(context, false, strSmartUrlFilter, str4, null, j);
                 if (!z && str3 != null && str3.equals("1")) {
-                    setHomePage(context, smartUrlFilter);
+                    setHomePage(context, strSmartUrlFilter);
                     z = true;
                 }
-                Log.i("@M_browser/OmacpSettingReceiver", "BOOKMARK_URI: " + smartUrlFilter);
+                Log.i("@M_browser/OmacpSettingReceiver", "BOOKMARK_URI: " + strSmartUrlFilter);
                 Log.i("@M_browser/OmacpSettingReceiver", "BOOKMARK_NAME: " + str4);
                 Log.i("@M_browser/OmacpSettingReceiver", "STARTPAGE: " + str3);
             }
@@ -73,9 +74,9 @@ public class OmacpSettingReceiver extends BroadcastReceiver {
         if (!str.startsWith("http:")) {
             str = "http://" + str;
         }
-        SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        edit.putString("homepage", str);
-        edit.commit();
+        SharedPreferences.Editor editorEdit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editorEdit.putString("homepage", str);
+        editorEdit.commit();
         return true;
     }
 

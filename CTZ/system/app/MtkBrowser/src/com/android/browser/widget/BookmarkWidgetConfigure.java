@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.android.browser.AddBookmarkPage;
 import com.android.browser.R;
 import com.android.browser.provider.BrowserContract;
+
 /* loaded from: classes.dex */
 public class BookmarkWidgetConfigure extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
     private ArrayAdapter<AddBookmarkPage.BookmarkAccount> mAccountAdapter;
@@ -26,7 +27,7 @@ public class BookmarkWidgetConfigure extends ListActivity implements LoaderManag
         setVisible(false);
         setContentView(R.layout.widget_account_selection);
         findViewById(R.id.cancel).setOnClickListener(this);
-        this.mAccountAdapter = new ArrayAdapter<>(this, 17367043);
+        this.mAccountAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         setListAdapter(this.mAccountAdapter);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -62,6 +63,7 @@ public class BookmarkWidgetConfigure extends ListActivity implements LoaderManag
         finish();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
     @Override // android.app.LoaderManager.LoaderCallbacks
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null && cursor.getCount() >= 1) {
@@ -85,7 +87,6 @@ public class BookmarkWidgetConfigure extends ListActivity implements LoaderManag
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-    /* loaded from: classes.dex */
     static class AccountsLoader extends CursorLoader {
         static final String[] PROJECTION = {"account_name", "account_type", "root_id"};
 

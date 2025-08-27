@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import com.android.browser.UI;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface UiController {
     void attachSubWindow(Tab tab);

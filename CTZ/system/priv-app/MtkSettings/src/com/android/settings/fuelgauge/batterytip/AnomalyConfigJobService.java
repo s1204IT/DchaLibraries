@@ -15,13 +15,14 @@ import android.util.Log;
 import com.android.settings.R;
 import com.android.settingslib.utils.ThreadUtils;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public class AnomalyConfigJobService extends JobService {
     static final long CONFIG_UPDATE_FREQUENCY_MS = TimeUnit.DAYS.toMillis(1);
 
     public static void scheduleConfigUpdate(Context context) {
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(JobScheduler.class);
-        JobInfo.Builder persisted = new JobInfo.Builder(R.integer.job_anomaly_config_update, new ComponentName(context, AnomalyConfigJobService.class)).setPeriodic(CONFIG_UPDATE_FREQUENCY_MS).setRequiresDeviceIdle(true).setRequiresCharging(true).setPersisted(true);
+        JobInfo.Builder persisted = new JobInfo.Builder(R.integer.job_anomaly_config_update, new ComponentName(context, (Class<?>) AnomalyConfigJobService.class)).setPeriodic(CONFIG_UPDATE_FREQUENCY_MS).setRequiresDeviceIdle(true).setRequiresCharging(true).setPersisted(true);
         if (jobScheduler.getPendingJob(R.integer.job_anomaly_config_update) == null && jobScheduler.schedule(persisted.build()) != 1) {
             Log.i("AnomalyConfigJobService", "Anomaly config update job service schedule failed.");
         }
@@ -32,7 +33,7 @@ public class AnomalyConfigJobService extends JobService {
         ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.fuelgauge.batterytip.-$$Lambda$AnomalyConfigJobService$ABo24-XwFDn4e3D3k2rc6z-5bdU
             @Override // java.lang.Runnable
             public final void run() {
-                AnomalyConfigJobService.lambda$onStartJob$0(AnomalyConfigJobService.this, jobParameters);
+                AnomalyConfigJobService.lambda$onStartJob$0(this.f$0, jobParameters);
             }
         });
         return true;
@@ -70,9 +71,9 @@ public class AnomalyConfigJobService extends JobService {
                 try {
                     statsManager.addConfig(1L, Base64.decode(string, 0));
                     Log.i("AnomalyConfigJobService", "Upload the anomaly config. configKey: 1");
-                    SharedPreferences.Editor edit = sharedPreferences.edit();
-                    edit.putInt("anomaly_config_version", i2);
-                    edit.commit();
+                    SharedPreferences.Editor editorEdit = sharedPreferences.edit();
+                    editorEdit.putInt("anomaly_config_version", i2);
+                    editorEdit.commit();
                 } catch (StatsManager.StatsUnavailableException e2) {
                     Log.i("AnomalyConfigJobService", "Upload of anomaly config failed for configKey 1", e2);
                 } catch (IllegalArgumentException e3) {

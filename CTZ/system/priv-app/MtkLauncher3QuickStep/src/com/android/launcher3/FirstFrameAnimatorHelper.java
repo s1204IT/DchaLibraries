@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
+
 /* loaded from: classes.dex */
 public class FirstFrameAnimatorHelper extends AnimatorListenerAdapter implements ValueAnimator.AnimatorUpdateListener {
     private static final boolean DEBUG = false;
@@ -56,45 +57,42 @@ public class FirstFrameAnimatorHelper extends AnimatorListenerAdapter implements
         sVisible = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$initializeDrawListener$0() {
+    /* JADX DEBUG: Can't inline method, not implemented redirect type for insn: ?: ARITH (wrap:long:0x0000: SGET  A[WRAPPED] (LINE:76) com.android.launcher3.FirstFrameAnimatorHelper.sGlobalFrameCounter long) += (1 long) A[ARITH_ONEARG] */
+    static /* synthetic */ void lambda$initializeDrawListener$0() {
         sGlobalFrameCounter++;
     }
 
     @Override // android.animation.ValueAnimator.AnimatorUpdateListener
     public void onAnimationUpdate(final ValueAnimator valueAnimator) {
-        long currentTimeMillis = System.currentTimeMillis();
+        long jCurrentTimeMillis = System.currentTimeMillis();
         if (this.mStartTime == -1) {
             this.mStartFrame = sGlobalFrameCounter;
-            this.mStartTime = currentTimeMillis;
+            this.mStartTime = jCurrentTimeMillis;
         }
         long currentPlayTime = valueAnimator.getCurrentPlayTime();
         boolean z = Float.compare(1.0f, valueAnimator.getAnimatedFraction()) == 0;
         if (!this.mHandlingOnAnimationUpdate && sVisible && currentPlayTime < valueAnimator.getDuration() && !z) {
             this.mHandlingOnAnimationUpdate = true;
             long j = sGlobalFrameCounter - this.mStartFrame;
-            if (j == 0 && currentTimeMillis < this.mStartTime + 1000 && currentPlayTime > 0) {
+            if (j == 0 && jCurrentTimeMillis < this.mStartTime + 1000 && currentPlayTime > 0) {
                 this.mTarget.getRootView().invalidate();
                 valueAnimator.setCurrentPlayTime(0L);
-            } else {
-                int i = (j > 1L ? 1 : (j == 1L ? 0 : -1));
-                if (i == 0 && currentTimeMillis < this.mStartTime + 1000 && !this.mAdjustedSecondFrameTime && currentTimeMillis > this.mStartTime + 16 && currentPlayTime > 16) {
-                    valueAnimator.setCurrentPlayTime(16L);
-                    this.mAdjustedSecondFrameTime = true;
-                } else if (i > 0) {
-                    this.mTarget.post(new Runnable() { // from class: com.android.launcher3.FirstFrameAnimatorHelper.1
-                        @Override // java.lang.Runnable
-                        public void run() {
-                            valueAnimator.removeUpdateListener(FirstFrameAnimatorHelper.this);
-                        }
-                    });
-                }
+            } else if (j == 1 && jCurrentTimeMillis < this.mStartTime + 1000 && !this.mAdjustedSecondFrameTime && jCurrentTimeMillis > this.mStartTime + 16 && currentPlayTime > 16) {
+                valueAnimator.setCurrentPlayTime(16L);
+                this.mAdjustedSecondFrameTime = true;
+            } else if (j > 1) {
+                this.mTarget.post(new Runnable() { // from class: com.android.launcher3.FirstFrameAnimatorHelper.1
+                    @Override // java.lang.Runnable
+                    public void run() {
+                        valueAnimator.removeUpdateListener(FirstFrameAnimatorHelper.this);
+                    }
+                });
             }
             this.mHandlingOnAnimationUpdate = false;
         }
     }
 
     public void print(ValueAnimator valueAnimator) {
-        Log.d(TAG, sGlobalFrameCounter + "(" + (sGlobalFrameCounter - this.mStartFrame) + ") " + this.mTarget + " dirty? " + this.mTarget.isDirty() + " " + (((float) valueAnimator.getCurrentPlayTime()) / ((float) valueAnimator.getDuration())) + " " + this + " " + valueAnimator);
+        Log.d(TAG, sGlobalFrameCounter + "(" + (sGlobalFrameCounter - this.mStartFrame) + ") " + this.mTarget + " dirty? " + this.mTarget.isDirty() + " " + (valueAnimator.getCurrentPlayTime() / valueAnimator.getDuration()) + " " + this + " " + valueAnimator);
     }
 }

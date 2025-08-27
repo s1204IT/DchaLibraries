@@ -17,6 +17,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnCreate;
 import com.android.settingslib.core.lifecycle.events.OnDestroy;
+
 /* loaded from: classes.dex */
 public abstract class AbstractLogpersistPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, ConfirmationDialogController, LifecycleObserver, OnCreate, OnDestroy {
     static final String ACTUAL_LOGPERSIST_PROPERTY = "logd.logpersistd";
@@ -30,7 +31,7 @@ public abstract class AbstractLogpersistPreferenceController extends DeveloperOp
         super(context);
         this.mReceiver = new BroadcastReceiver() { // from class: com.android.settingslib.development.AbstractLogpersistPreferenceController.1
             @Override // android.content.BroadcastReceiver
-            public void onReceive(Context context2, Intent intent) {
+            public void onReceive(Context context2, Intent intent) throws InterruptedException {
                 AbstractLogpersistPreferenceController.this.onLogdSizeSettingUpdate(intent.getStringExtra("CURRENT_LOGD_VALUE"));
             }
         };
@@ -58,12 +59,12 @@ public abstract class AbstractLogpersistPreferenceController extends DeveloperOp
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
-        if (preference == this.mLogpersist) {
-            writeLogpersistOption(obj, false);
-            return true;
+    public boolean onPreferenceChange(Preference preference, Object obj) throws InterruptedException {
+        if (preference != this.mLogpersist) {
+            return false;
         }
-        return false;
+        writeLogpersistOption(obj, false);
+        return true;
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnCreate
@@ -76,8 +77,7 @@ public abstract class AbstractLogpersistPreferenceController extends DeveloperOp
         LocalBroadcastManager.getInstance(this.mContext).unregisterReceiver(this.mReceiver);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onLogdSizeSettingUpdate(String str) {
+    private void onLogdSizeSettingUpdate(String str) throws InterruptedException {
         if (this.mLogpersist != null) {
             String str2 = SystemProperties.get("logd.logpersistd.enable");
             if (str2 == null || !str2.equals("true") || str.equals("32768")) {
@@ -99,20 +99,23 @@ public abstract class AbstractLogpersistPreferenceController extends DeveloperOp
             str = "";
         }
         String str2 = SystemProperties.get(ACTUAL_LOGPERSIST_PROPERTY_BUFFER);
-        str2 = (str2 == null || str2.length() == 0) ? "all" : "all";
+        if (str2 == null || str2.length() == 0) {
+            str2 = "all";
+        }
         if (str.equals(SELECT_LOGPERSIST_PROPERTY_SERVICE)) {
             if (str2.equals("kernel")) {
                 c = 3;
-            } else {
-                if (!str2.equals("all") && !str2.contains("radio") && str2.contains("security") && str2.contains("kernel")) {
-                    c = 2;
-                    if (!str2.contains("default")) {
-                        for (String str3 : new String[]{"main", "events", "system", "crash"}) {
-                            if (str2.contains(str3)) {
-                            }
+            } else if (!str2.equals("all") && !str2.contains("radio") && str2.contains("security") && str2.contains("kernel")) {
+                c = 2;
+                if (!str2.contains("default")) {
+                    for (String str3 : new String[]{"main", "events", "system", "crash"}) {
+                        if (!str2.contains(str3)) {
+                            c = 1;
+                            break;
                         }
                     }
                 }
+            } else {
                 c = 1;
                 break;
             }
@@ -130,8 +133,7 @@ public abstract class AbstractLogpersistPreferenceController extends DeveloperOp
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setLogpersistOff(boolean z) {
+    protected void setLogpersistOff(boolean z) throws InterruptedException {
         String str;
         SystemProperties.set("persist.logd.logpersistd.buffer", "");
         SystemProperties.set(ACTUAL_LOGPERSIST_PROPERTY_BUFFER, "");
@@ -150,7 +152,7 @@ public abstract class AbstractLogpersistPreferenceController extends DeveloperOp
         }
     }
 
-    public void writeLogpersistOption(Object obj, boolean z) {
+    public void writeLogpersistOption(Object obj, boolean z) throws InterruptedException {
         String str;
         String str2;
         if (this.mLogpersist == null) {

@@ -37,6 +37,7 @@ import com.android.systemui.shared.system.TransactionCompat;
 import java.util.ArrayList;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+
 @TargetApi(28)
 /* loaded from: classes.dex */
 public class OverviewCommandHelper {
@@ -73,8 +74,7 @@ public class OverviewCommandHelper {
         initOverviewTargets();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void initOverviewTargets() {
+    private void initOverviewTargets() {
         String str;
         ComponentName homeActivities = PackageManagerWrapper.getInstance().getHomeActivities(new ArrayList());
         if (homeActivities == null || this.mMyHomeComponent.equals(homeActivities)) {
@@ -86,7 +86,7 @@ public class OverviewCommandHelper {
                 this.mUpdateRegisteredPackage = null;
             }
         } else {
-            this.overviewComponent = new ComponentName(this.mContext, RecentsActivity.class);
+            this.overviewComponent = new ComponentName(this.mContext, (Class<?>) RecentsActivity.class);
             this.mActivityControlHelper = new ActivityControlHelper.FallbackActivityControllerHelper(homeActivities);
             str = "android.intent.category.DEFAULT";
             if (!homeActivities.getPackageName().equals(this.mUpdateRegisteredPackage)) {
@@ -138,7 +138,6 @@ public class OverviewCommandHelper {
         return this.mActivityControlHelper;
     }
 
-    /* loaded from: classes.dex */
     private class ShowRecentsCommand extends RecentsActivityCommand {
         private ShowRecentsCommand() {
             super();
@@ -150,9 +149,7 @@ public class OverviewCommandHelper {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class RecentsActivityCommand<T extends BaseDraggingActivity> implements Runnable {
+    private class RecentsActivityCommand<T extends BaseDraggingActivity> implements Runnable {
         private T mActivity;
         protected final ActivityControlHelper<T> mHelper;
         private ActivityControlHelper.ActivityInitListener mListener;
@@ -176,17 +173,13 @@ public class OverviewCommandHelper {
                 this.mListener = this.mHelper.createActivityInitListener(new BiPredicate() { // from class: com.android.quickstep.-$$Lambda$OverviewCommandHelper$RecentsActivityCommand$g0d_c7pXhFX3i1y0pMIg_9rJnhs
                     @Override // java.util.function.BiPredicate
                     public final boolean test(Object obj, Object obj2) {
-                        boolean onActivityReady;
-                        onActivityReady = OverviewCommandHelper.RecentsActivityCommand.this.onActivityReady((BaseDraggingActivity) obj, (Boolean) obj2);
-                        return onActivityReady;
+                        return this.f$0.onActivityReady((BaseDraggingActivity) obj, (Boolean) obj2);
                     }
                 });
                 this.mListener.registerAndStartActivity(OverviewCommandHelper.this.overviewIntent, new RemoteAnimationProvider() { // from class: com.android.quickstep.-$$Lambda$OverviewCommandHelper$RecentsActivityCommand$58M8Q8bLHkgPPJiaoVVAlKBEVb8
                     @Override // com.android.quickstep.util.RemoteAnimationProvider
                     public final AnimatorSet createWindowAnimation(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
-                        AnimatorSet createWindowAnimation;
-                        createWindowAnimation = OverviewCommandHelper.RecentsActivityCommand.this.createWindowAnimation(remoteAnimationTargetCompatArr);
-                        return createWindowAnimation;
+                        return this.f$0.createWindowAnimation(remoteAnimationTargetCompatArr);
                     }
                 }, OverviewCommandHelper.this.mContext, OverviewCommandHelper.this.mMainThreadExecutor.getHandler(), OverviewCommandHelper.RECENTS_LAUNCH_DURATION);
             }
@@ -197,26 +190,25 @@ public class OverviewCommandHelper {
             if (visibleRecentsView != null) {
                 visibleRecentsView.showNextTask();
                 return true;
-            } else if (j < ViewConfiguration.getDoubleTapTimeout()) {
-                return true;
-            } else {
-                return false;
             }
+            if (j < ViewConfiguration.getDoubleTapTimeout()) {
+                return true;
+            }
+            return false;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public boolean onActivityReady(T t, Boolean bool) {
+        private boolean onActivityReady(T t, Boolean bool) {
             ((RecentsView) t.getOverviewPanel()).setCurrentTask(this.mRunningTaskId);
             AbstractFloatingView.closeAllOpenViews(t, bool.booleanValue());
-            ActivityControlHelper.AnimationFactory prepareRecentsUI = this.mHelper.prepareRecentsUI(t, bool.booleanValue(), new Consumer() { // from class: com.android.quickstep.-$$Lambda$OverviewCommandHelper$RecentsActivityCommand$gbst_seV7t6-5IdZtdo43ZlXWKY
+            ActivityControlHelper.AnimationFactory animationFactoryPrepareRecentsUI = this.mHelper.prepareRecentsUI(t, bool.booleanValue(), new Consumer() { // from class: com.android.quickstep.-$$Lambda$OverviewCommandHelper$RecentsActivityCommand$gbst_seV7t6-5IdZtdo43ZlXWKY
                 @Override // java.util.function.Consumer
                 public final void accept(Object obj) {
                     OverviewCommandHelper.RecentsActivityCommand.lambda$onActivityReady$0((AnimatorPlaybackController) obj);
                 }
             });
-            prepareRecentsUI.onRemoteAnimationReceived(null);
+            animationFactoryPrepareRecentsUI.onRemoteAnimationReceived(null);
             if (bool.booleanValue()) {
-                prepareRecentsUI.createActivityController(OverviewCommandHelper.RECENTS_LAUNCH_DURATION, 0);
+                animationFactoryPrepareRecentsUI.createActivityController(OverviewCommandHelper.RECENTS_LAUNCH_DURATION, 0);
             }
             this.mActivity = t;
             this.mRecentsView = (RecentsView) this.mActivity.getOverviewPanel();
@@ -228,16 +220,14 @@ public class OverviewCommandHelper {
             return false;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$onActivityReady$0(AnimatorPlaybackController animatorPlaybackController) {
+        static /* synthetic */ void lambda$onActivityReady$0(AnimatorPlaybackController animatorPlaybackController) {
             animatorPlaybackController.dispatchOnStart();
             ValueAnimator duration = animatorPlaybackController.getAnimationPlayer().setDuration(OverviewCommandHelper.RECENTS_LAUNCH_DURATION);
             duration.setInterpolator(Interpolators.FAST_OUT_SLOW_IN);
             duration.start();
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public AnimatorSet createWindowAnimation(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
+        private AnimatorSet createWindowAnimation(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
             if (LatencyTrackerCompat.isEnabled(OverviewCommandHelper.this.mContext)) {
                 LatencyTrackerCompat.logToggleRecents((int) (SystemClock.uptimeMillis() - this.mToggleClickedTime));
             }
@@ -259,8 +249,8 @@ public class OverviewCommandHelper {
                 return animatorSet;
             }
             final RemoteAnimationTargetSet remoteAnimationTargetSet = new RemoteAnimationTargetSet(remoteAnimationTargetCompatArr, 1);
-            RemoteAnimationTargetCompat findTask = remoteAnimationTargetSet.findTask(this.mRunningTaskId);
-            if (findTask == null) {
+            RemoteAnimationTargetCompat remoteAnimationTargetCompatFindTask = remoteAnimationTargetSet.findTask(this.mRunningTaskId);
+            if (remoteAnimationTargetCompatFindTask == null) {
                 Log.e(OverviewCommandHelper.TAG, "No closing app");
                 animatorSet.play(ValueAnimator.ofInt(0, 1).setDuration(100L));
                 return animatorSet;
@@ -269,36 +259,35 @@ public class OverviewCommandHelper {
             int[] iArr = new int[2];
             View rootView = this.mActivity.getRootView();
             rootView.getLocationOnScreen(iArr);
-            clipAnimationHelper.updateSource(new Rect(iArr[0], iArr[1], iArr[0] + rootView.getWidth(), iArr[1] + rootView.getHeight()), findTask);
+            clipAnimationHelper.updateSource(new Rect(iArr[0], iArr[1], iArr[0] + rootView.getWidth(), iArr[1] + rootView.getHeight()), remoteAnimationTargetCompatFindTask);
             TransformedRect transformedRect = new TransformedRect();
             this.mHelper.getSwipeUpDestinationAndLength(this.mActivity.getDeviceProfile(), this.mActivity, 0, transformedRect);
             clipAnimationHelper.updateTargetRect(transformedRect);
             clipAnimationHelper.prepareAnimation(false);
-            ValueAnimator ofFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
-            ofFloat.setDuration(OverviewCommandHelper.RECENTS_LAUNCH_DURATION);
-            ofFloat.setInterpolator(Interpolators.TOUCH_RESPONSE_INTERPOLATOR);
-            ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.quickstep.-$$Lambda$OverviewCommandHelper$RecentsActivityCommand$8iI_LqZWyAv8QabhtIcTI0jJWAA
+            ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
+            valueAnimatorOfFloat.setDuration(OverviewCommandHelper.RECENTS_LAUNCH_DURATION);
+            valueAnimatorOfFloat.setInterpolator(Interpolators.TOUCH_RESPONSE_INTERPOLATOR);
+            valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.quickstep.-$$Lambda$OverviewCommandHelper$RecentsActivityCommand$8iI_LqZWyAv8QabhtIcTI0jJWAA
                 @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                 public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    ClipAnimationHelper.this.applyTransform(remoteAnimationTargetSet, ((Float) valueAnimator.getAnimatedValue()).floatValue());
+                    clipAnimationHelper.applyTransform(remoteAnimationTargetSet, ((Float) valueAnimator.getAnimatedValue()).floatValue());
                 }
             });
             if (remoteAnimationTargetSet.isAnimatingHome()) {
                 final RemoteAnimationTargetSet remoteAnimationTargetSet2 = new RemoteAnimationTargetSet(remoteAnimationTargetCompatArr, 0);
                 final TransactionCompat transactionCompat = new TransactionCompat();
-                ofFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.quickstep.-$$Lambda$OverviewCommandHelper$RecentsActivityCommand$F_EvfAMhcuHE2RxBnheELiDY3mU
+                valueAnimatorOfFloat.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.quickstep.-$$Lambda$OverviewCommandHelper$RecentsActivityCommand$F_EvfAMhcuHE2RxBnheELiDY3mU
                     @Override // android.animation.ValueAnimator.AnimatorUpdateListener
                     public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        OverviewCommandHelper.RecentsActivityCommand.lambda$createWindowAnimation$2(RemoteAnimationTargetSet.this, transactionCompat, valueAnimator);
+                        OverviewCommandHelper.RecentsActivityCommand.lambda$createWindowAnimation$2(remoteAnimationTargetSet2, transactionCompat, valueAnimator);
                     }
                 });
             }
-            animatorSet.play(ofFloat);
+            animatorSet.play(valueAnimatorOfFloat);
             return animatorSet;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static /* synthetic */ void lambda$createWindowAnimation$2(RemoteAnimationTargetSet remoteAnimationTargetSet, TransactionCompat transactionCompat, ValueAnimator valueAnimator) {
+        static /* synthetic */ void lambda$createWindowAnimation$2(RemoteAnimationTargetSet remoteAnimationTargetSet, TransactionCompat transactionCompat, ValueAnimator valueAnimator) {
             for (RemoteAnimationTargetCompat remoteAnimationTargetCompat : remoteAnimationTargetSet.apps) {
                 transactionCompat.setAlpha(remoteAnimationTargetCompat.leash, ((Float) valueAnimator.getAnimatedValue()).floatValue());
             }

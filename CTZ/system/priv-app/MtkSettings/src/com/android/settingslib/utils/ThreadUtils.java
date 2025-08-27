@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 /* loaded from: classes.dex */
 public class ThreadUtils {
     private static volatile Thread sMainThread;

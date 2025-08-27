@@ -14,6 +14,7 @@ import android.util.IconDrawableFactory;
 import android.util.Log;
 import com.android.settingslib.applications.DefaultAppInfo;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserPreferenceController extends DefaultAppPreferenceController {
     static final Intent BROWSE_PROBE = new Intent().setAction("android.intent.action.VIEW").addCategory("android.intent.category.BROWSABLE").setData(Uri.parse("http:"));
@@ -55,15 +56,15 @@ public class DefaultBrowserPreferenceController extends DefaultAppPreferenceCont
 
     @Override // com.android.settings.applications.defaultapps.DefaultAppPreferenceController
     public CharSequence getDefaultAppLabel() {
-        if (isAvailable()) {
-            DefaultAppInfo defaultAppInfo = getDefaultAppInfo();
-            CharSequence loadLabel = defaultAppInfo != null ? defaultAppInfo.loadLabel() : null;
-            if (!TextUtils.isEmpty(loadLabel)) {
-                return loadLabel;
-            }
-            return getOnlyAppLabel();
+        if (!isAvailable()) {
+            return null;
         }
-        return null;
+        DefaultAppInfo defaultAppInfo = getDefaultAppInfo();
+        CharSequence charSequenceLoadLabel = defaultAppInfo != null ? defaultAppInfo.loadLabel() : null;
+        if (!TextUtils.isEmpty(charSequenceLoadLabel)) {
+            return charSequenceLoadLabel;
+        }
+        return getOnlyAppLabel();
     }
 
     @Override // com.android.settings.applications.defaultapps.DefaultAppPreferenceController
@@ -88,14 +89,13 @@ public class DefaultBrowserPreferenceController extends DefaultAppPreferenceCont
             return null;
         }
         ResolveInfo resolveInfo = candidates.get(0);
-        String charSequence = resolveInfo.loadLabel(this.mPackageManager.getPackageManager()).toString();
+        String string = resolveInfo.loadLabel(this.mPackageManager.getPackageManager()).toString();
         ComponentInfo componentInfo = resolveInfo.getComponentInfo();
-        String str = componentInfo != null ? componentInfo.packageName : null;
-        Log.d("BrowserPrefCtrl", "Getting label for the only browser app: " + str + charSequence);
-        return charSequence;
+        Log.d("BrowserPrefCtrl", "Getting label for the only browser app: " + (componentInfo != null ? componentInfo.packageName : null) + string);
+        return string;
     }
 
-    private Drawable getOnlyAppIcon() {
+    private Drawable getOnlyAppIcon() throws PackageManager.NameNotFoundException {
         String str;
         List<ResolveInfo> candidates = getCandidates();
         if (candidates == null || candidates.size() != 1) {
@@ -123,8 +123,8 @@ public class DefaultBrowserPreferenceController extends DefaultAppPreferenceCont
     public static boolean hasBrowserPreference(String str, Context context) {
         Intent intent = new Intent(BROWSE_PROBE);
         intent.setPackage(str);
-        List<ResolveInfo> queryIntentActivities = context.getPackageManager().queryIntentActivities(intent, 0);
-        return (queryIntentActivities == null || queryIntentActivities.size() == 0) ? false : true;
+        List<ResolveInfo> listQueryIntentActivities = context.getPackageManager().queryIntentActivities(intent, 0);
+        return (listQueryIntentActivities == null || listQueryIntentActivities.size() == 0) ? false : true;
     }
 
     public boolean isBrowserDefault(String str, int i) {
@@ -132,7 +132,7 @@ public class DefaultBrowserPreferenceController extends DefaultAppPreferenceCont
         if (defaultBrowserPackageNameAsUser != null) {
             return defaultBrowserPackageNameAsUser.equals(str);
         }
-        List<ResolveInfo> queryIntentActivitiesAsUser = this.mPackageManager.queryIntentActivitiesAsUser(BROWSE_PROBE, 131072, i);
-        return queryIntentActivitiesAsUser != null && queryIntentActivitiesAsUser.size() == 1;
+        List<ResolveInfo> listQueryIntentActivitiesAsUser = this.mPackageManager.queryIntentActivitiesAsUser(BROWSE_PROBE, 131072, i);
+        return listQueryIntentActivitiesAsUser != null && listQueryIntentActivitiesAsUser.size() == 1;
     }
 }

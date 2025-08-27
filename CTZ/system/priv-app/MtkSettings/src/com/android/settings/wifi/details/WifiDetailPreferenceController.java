@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.LinkAddress;
@@ -55,33 +56,47 @@ import java.util.Iterator;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 /* loaded from: classes.dex */
 public class WifiDetailPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, WifiDialog.WifiDialogListener, LifecycleObserver, OnPause, OnResume {
     private static final boolean DEBUG = Log.isLoggable("WifiDetailsPrefCtrl", 3);
+
     @VisibleForTesting
     static final String KEY_BUTTONS_PREF = "buttons";
+
     @VisibleForTesting
     static final String KEY_DNS_PREF = "dns";
+
     @VisibleForTesting
     static final String KEY_FREQUENCY_PREF = "frequency";
+
     @VisibleForTesting
     static final String KEY_GATEWAY_PREF = "gateway";
+
     @VisibleForTesting
     static final String KEY_HEADER = "connection_header";
+
     @VisibleForTesting
     static final String KEY_IPV6_ADDRESSES_PREF = "ipv6_addresses";
+
     @VisibleForTesting
     static final String KEY_IPV6_CATEGORY = "ipv6_category";
+
     @VisibleForTesting
     static final String KEY_IP_ADDRESS_PREF = "ip_address";
+
     @VisibleForTesting
     static final String KEY_LINK_SPEED = "link_speed";
+
     @VisibleForTesting
     static final String KEY_MAC_ADDRESS_PREF = "mac_address";
+
     @VisibleForTesting
     static final String KEY_SECURITY_PREF = "security";
+
     @VisibleForTesting
     static final String KEY_SIGNAL_STRENGTH_PREF = "signal_strength";
+
     @VisibleForTesting
     static final String KEY_SUBNET_MASK_PREF = "subnet_mask";
     private AccessPoint mAccessPoint;
@@ -126,31 +141,27 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         super(context);
         this.mRssiSignalLevel = -1;
         this.mReceiver = new BroadcastReceiver() { // from class: com.android.settings.wifi.details.WifiDetailPreferenceController.1
-            /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+            /* JADX WARN: Removed duplicated region for block: B:18:0x0037  */
             @Override // android.content.BroadcastReceiver
-            public void onReceive(Context context2, Intent intent) {
+            /*
+                Code decompiled incorrectly, please refer to instructions dump.
+            */
+            public void onReceive(Context context2, Intent intent) throws Resources.NotFoundException {
                 char c;
                 String action = intent.getAction();
-                int hashCode = action.hashCode();
-                if (hashCode == -385684331) {
-                    if (action.equals("android.net.wifi.RSSI_CHANGED")) {
-                        c = 2;
-                    }
-                    c = 65535;
-                } else if (hashCode != -343630553) {
-                    if (hashCode == 1625920338 && action.equals("android.net.wifi.CONFIGURED_NETWORKS_CHANGE")) {
-                        c = 0;
-                    }
-                    c = 65535;
-                } else {
-                    if (action.equals("android.net.wifi.STATE_CHANGE")) {
+                int iHashCode = action.hashCode();
+                if (iHashCode != -385684331) {
+                    if (iHashCode != -343630553) {
+                        c = (iHashCode == 1625920338 && action.equals("android.net.wifi.CONFIGURED_NETWORKS_CHANGE")) ? (char) 0 : (char) 65535;
+                    } else if (action.equals("android.net.wifi.STATE_CHANGE")) {
                         c = 1;
                     }
-                    c = 65535;
+                } else if (action.equals("android.net.wifi.RSSI_CHANGED")) {
+                    c = 2;
                 }
                 switch (c) {
                     case 0:
-                        if (!intent.getBooleanExtra("multipleChanges", WifiDetailPreferenceController.DEBUG)) {
+                        if (!intent.getBooleanExtra("multipleChanges", false)) {
                             WifiConfiguration wifiConfiguration = (WifiConfiguration) intent.getParcelableExtra("wifiConfiguration");
                             if (WifiDetailPreferenceController.this.mAccessPoint.matches(wifiConfiguration)) {
                                 WifiDetailPreferenceController.this.mWifiConfig = wifiConfiguration;
@@ -178,10 +189,7 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
             }
 
             private boolean hasCapabilityChanged(NetworkCapabilities networkCapabilities, int i) {
-                if (WifiDetailPreferenceController.this.mNetworkCapabilities != null && WifiDetailPreferenceController.this.mNetworkCapabilities.hasCapability(i) == networkCapabilities.hasCapability(i)) {
-                    return WifiDetailPreferenceController.DEBUG;
-                }
-                return true;
+                return WifiDetailPreferenceController.this.mNetworkCapabilities == null || WifiDetailPreferenceController.this.mNetworkCapabilities.hasCapability(i) != networkCapabilities.hasCapability(i);
             }
 
             @Override // android.net.ConnectivityManager.NetworkCallback
@@ -232,15 +240,15 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
     public void displayPreference(PreferenceScreen preferenceScreen) {
         super.displayPreference(preferenceScreen);
         setupEntityHeader(preferenceScreen);
-        this.mButtonsPref = ((ActionButtonPreference) preferenceScreen.findPreference(KEY_BUTTONS_PREF)).setButton1Text(R.string.forget).setButton1Positive(DEBUG).setButton1OnClickListener(new View.OnClickListener() { // from class: com.android.settings.wifi.details.-$$Lambda$WifiDetailPreferenceController$HDOTYXVF80U7sCZa22KqorlzriY
+        this.mButtonsPref = ((ActionButtonPreference) preferenceScreen.findPreference(KEY_BUTTONS_PREF)).setButton1Text(R.string.forget).setButton1Positive(false).setButton1OnClickListener(new View.OnClickListener() { // from class: com.android.settings.wifi.details.-$$Lambda$WifiDetailPreferenceController$HDOTYXVF80U7sCZa22KqorlzriY
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                WifiDetailPreferenceController.this.forgetNetwork();
+                this.f$0.forgetNetwork();
             }
         }).setButton2Text(R.string.wifi_sign_in_button_text).setButton2Positive(true).setButton2OnClickListener(new View.OnClickListener() { // from class: com.android.settings.wifi.details.-$$Lambda$WifiDetailPreferenceController$PxMNywf_HXiVAESmLubuiIo869s
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                WifiDetailPreferenceController.this.signIntoNetwork();
+                this.f$0.signIntoNetwork();
             }
         });
         this.mSignalStrengthPref = (WifiDetailPreference) preferenceScreen.findPreference(KEY_SIGNAL_STRENGTH_PREF);
@@ -254,7 +262,7 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         this.mDnsPref = (WifiDetailPreference) preferenceScreen.findPreference(KEY_DNS_PREF);
         this.mIpv6Category = (PreferenceCategory) preferenceScreen.findPreference(KEY_IPV6_CATEGORY);
         this.mIpv6AddressPref = preferenceScreen.findPreference(KEY_IPV6_ADDRESSES_PREF);
-        this.mSecurityPref.setDetailText(this.mAccessPoint.getSecurityString(DEBUG));
+        this.mSecurityPref.setDetailText(this.mAccessPoint.getSecurityString(false));
     }
 
     private void setupEntityHeader(PreferenceScreen preferenceScreen) {
@@ -267,7 +275,7 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
     }
 
     @Override // com.android.settingslib.core.lifecycle.events.OnResume
-    public void onResume() {
+    public void onResume() throws Resources.NotFoundException {
         this.mNetwork = this.mWifiManager.getCurrentNetwork();
         this.mLinkProperties = this.mConnectivityManager.getLinkProperties(this.mNetwork);
         this.mNetworkCapabilities = this.mConnectivityManager.getNetworkCapabilities(this.mNetwork);
@@ -287,8 +295,7 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         this.mConnectivityManager.unregisterNetworkCallback(this.mNetworkCallback);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateInfo() {
+    private void updateInfo() throws Resources.NotFoundException {
         this.mNetworkInfo = this.mConnectivityManager.getNetworkInfo(this.mNetwork);
         this.mWifiInfo = this.mWifiManager.getConnectionInfo();
         if (this.mNetwork == null || this.mNetworkInfo == null || this.mWifiInfo == null) {
@@ -302,28 +309,26 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         this.mLinkSpeedPref.setVisible(this.mWifiInfo.getLinkSpeed() >= 0);
         this.mLinkSpeedPref.setDetailText(this.mContext.getString(R.string.link_speed, Integer.valueOf(this.mWifiInfo.getLinkSpeed())));
         int frequency = this.mWifiInfo.getFrequency();
-        String str = null;
+        String string = null;
         if (frequency >= 2400 && frequency < 2500) {
-            str = this.mContext.getResources().getString(R.string.wifi_band_24ghz);
+            string = this.mContext.getResources().getString(R.string.wifi_band_24ghz);
         } else if (frequency >= 4900 && frequency < 5900) {
-            str = this.mContext.getResources().getString(R.string.wifi_band_5ghz);
+            string = this.mContext.getResources().getString(R.string.wifi_band_5ghz);
         } else {
             Log.e("WifiDetailsPrefCtrl", "Unexpected frequency " + frequency);
         }
-        this.mFrequencyPref.setDetailText(str);
+        this.mFrequencyPref.setDetailText(string);
         updateIpLayerInfo();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void exitActivity() {
+    private void exitActivity() {
         if (DEBUG) {
             Log.d("WifiDetailsPrefCtrl", "Exiting the WifiNetworkDetailsPage");
         }
         this.mFragment.getActivity().finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refreshNetworkState() {
+    private void refreshNetworkState() {
         this.mAccessPoint.update(this.mWifiConfig, this.mWifiInfo, this.mNetworkInfo);
         this.mEntityHeaderController.setSummary(this.mAccessPoint.getSettingsSummary()).done(this.mFragment.getActivity(), true);
     }
@@ -337,9 +342,9 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         Drawable icon = this.mIconInjector.getIcon(this.mRssiSignalLevel);
         icon.setTint(Utils.getColorAccent(this.mContext));
         this.mEntityHeaderController.setIcon(icon).done(this.mFragment.getActivity(), true);
-        Drawable mutate = icon.getConstantState().newDrawable().mutate();
-        mutate.setTint(this.mContext.getResources().getColor(R.color.wifi_details_icon_color, this.mContext.getTheme()));
-        this.mSignalStrengthPref.setIcon(mutate);
+        Drawable drawableMutate = icon.getConstantState().newDrawable().mutate();
+        drawableMutate.setTint(this.mContext.getResources().getColor(R.color.wifi_details_icon_color, this.mContext.getTheme()));
+        this.mSignalStrengthPref.setIcon(drawableMutate);
         this.mSignalStrengthPref.setDetailText(this.mSignalStr[this.mRssiSignalLevel]);
     }
 
@@ -347,31 +352,30 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         if (!TextUtils.isEmpty(str)) {
             wifiDetailPreference.setDetailText(str);
             wifiDetailPreference.setVisible(true);
-            return;
+        } else {
+            wifiDetailPreference.setVisible(false);
         }
-        wifiDetailPreference.setVisible(DEBUG);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateIpLayerInfo() {
+    private void updateIpLayerInfo() {
         this.mButtonsPref.setButton2Visible(canSignIntoNetwork());
         this.mButtonsPref.setVisible(canSignIntoNetwork() || canForgetNetwork());
         if (this.mNetwork == null || this.mLinkProperties == null) {
-            this.mIpAddressPref.setVisible(DEBUG);
-            this.mSubnetPref.setVisible(DEBUG);
-            this.mGatewayPref.setVisible(DEBUG);
-            this.mDnsPref.setVisible(DEBUG);
-            this.mIpv6Category.setVisible(DEBUG);
+            this.mIpAddressPref.setVisible(false);
+            this.mSubnetPref.setVisible(false);
+            this.mGatewayPref.setVisible(false);
+            this.mDnsPref.setVisible(false);
+            this.mIpv6Category.setVisible(false);
             return;
         }
         StringJoiner stringJoiner = new StringJoiner("\n");
-        String str = null;
-        String str2 = null;
-        String str3 = null;
+        String hostAddress = null;
+        String hostAddress2 = null;
+        String strIpv4PrefixLengthToSubnetMask = null;
         for (LinkAddress linkAddress : this.mLinkProperties.getLinkAddresses()) {
             if (linkAddress.getAddress() instanceof Inet4Address) {
-                str2 = linkAddress.getAddress().getHostAddress();
-                str3 = ipv4PrefixLengthToSubnetMask(linkAddress.getPrefixLength());
+                hostAddress2 = linkAddress.getAddress().getHostAddress();
+                strIpv4PrefixLengthToSubnetMask = ipv4PrefixLengthToSubnetMask(linkAddress.getPrefixLength());
             } else if (linkAddress.getAddress() instanceof Inet6Address) {
                 stringJoiner.add(linkAddress.getAddress().getHostAddress());
             }
@@ -383,27 +387,26 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
             }
             RouteInfo next = it.next();
             if (next.isIPv4Default() && next.hasGateway()) {
-                str = next.getGateway().getHostAddress();
+                hostAddress = next.getGateway().getHostAddress();
                 break;
             }
         }
-        updatePreference(this.mIpAddressPref, str2);
-        updatePreference(this.mSubnetPref, str3);
-        updatePreference(this.mGatewayPref, str);
-        updatePreference(this.mDnsPref, (String) this.mLinkProperties.getDnsServers().stream().map(new Function() { // from class: com.android.settings.wifi.details.-$$Lambda$WifiDetailPreferenceController$XZAGhHrbkIDyusER4MAM6luKcT0
+        String str = (String) this.mLinkProperties.getDnsServers().stream().map(new Function() { // from class: com.android.settings.wifi.details.-$$Lambda$WifiDetailPreferenceController$XZAGhHrbkIDyusER4MAM6luKcT0
             @Override // java.util.function.Function
             public final Object apply(Object obj) {
-                String hostAddress;
-                hostAddress = ((InetAddress) obj).getHostAddress();
-                return hostAddress;
+                return ((InetAddress) obj).getHostAddress();
             }
-        }).collect(Collectors.joining("\n")));
+        }).collect(Collectors.joining("\n"));
+        updatePreference(this.mIpAddressPref, hostAddress2);
+        updatePreference(this.mSubnetPref, strIpv4PrefixLengthToSubnetMask);
+        updatePreference(this.mGatewayPref, hostAddress);
+        updatePreference(this.mDnsPref, str);
         if (stringJoiner.length() > 0) {
             this.mIpv6AddressPref.setSummary(BidiFormatter.getInstance().unicodeWrap(stringJoiner.toString()));
             this.mIpv6Category.setVisible(true);
-            return;
+        } else {
+            this.mIpv6Category.setVisible(false);
         }
-        this.mIpv6Category.setVisible(DEBUG);
     }
 
     private static String ipv4PrefixLengthToSubnetMask(int i) {
@@ -415,25 +418,18 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
     }
 
     private boolean canForgetNetwork() {
-        if ((this.mWifiInfo == null || !this.mWifiInfo.isEphemeral()) && !canModifyNetwork()) {
-            return DEBUG;
-        }
-        return true;
+        return (this.mWifiInfo != null && this.mWifiInfo.isEphemeral()) || canModifyNetwork();
     }
 
     public boolean canModifyNetwork() {
-        if (this.mWifiConfig == null || WifiUtils.isNetworkLockedDown(this.mContext, this.mWifiConfig)) {
-            return DEBUG;
-        }
-        return true;
+        return (this.mWifiConfig == null || WifiUtils.isNetworkLockedDown(this.mContext, this.mWifiConfig)) ? false : true;
     }
 
     private boolean canSignIntoNetwork() {
         return WifiUtils.canSignIntoNetwork(this.mNetworkCapabilities);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void forgetNetwork() {
+    private void forgetNetwork() {
         if (this.mWifiInfo != null && this.mWifiInfo.isEphemeral()) {
             this.mWifiManager.disableEphemeralNetwork(this.mWifiInfo.getSSID());
         } else if (this.mWifiConfig != null) {
@@ -447,8 +443,7 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         this.mFragment.getActivity().finish();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void signIntoNetwork() {
+    private void signIntoNetwork() {
         this.mMetricsFeatureProvider.action(this.mFragment.getActivity(), 1008, new Pair[0]);
         this.mConnectivityManager.startCaptivePortalApp(this.mNetwork);
     }
@@ -467,17 +462,15 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
                 public void onFailure(int i) {
                     Activity activity = WifiDetailPreferenceController.this.mFragment.getActivity();
                     if (activity != null) {
-                        Toast.makeText(activity, (int) R.string.wifi_failed_save_message, 0).show();
+                        Toast.makeText(activity, R.string.wifi_failed_save_message, 0).show();
                     }
                 }
             });
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @VisibleForTesting
-    /* loaded from: classes.dex */
-    public static class IconInjector {
+    static class IconInjector {
         private final Context mContext;
 
         public IconInjector(Context context) {

@@ -11,7 +11,9 @@ import com.android.settingslib.applications.DefaultAppInfo;
 import com.android.settingslib.widget.CandidateInfo;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultSmsPicker extends DefaultAppPickerFragment {
     private DefaultKeyUpdater mDefaultKeyUpdater = new DefaultKeyUpdater();
@@ -21,20 +23,20 @@ public class DefaultSmsPicker extends DefaultAppPickerFragment {
         return 789;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.default_sms_settings;
     }
 
     @Override // com.android.settings.widget.RadioButtonPickerFragment
     protected List<DefaultAppInfo> getCandidates() {
         Context context = getContext();
-        Collection<SmsApplication.SmsApplicationData> applicationCollection = SmsApplication.getApplicationCollection(context);
+        Collection applicationCollection = SmsApplication.getApplicationCollection(context);
         ArrayList arrayList = new ArrayList(applicationCollection.size());
-        for (SmsApplication.SmsApplicationData smsApplicationData : applicationCollection) {
+        Iterator it = applicationCollection.iterator();
+        while (it.hasNext()) {
             try {
-                arrayList.add(new DefaultAppInfo(context, this.mPm, this.mPm.getApplicationInfoAsUser(smsApplicationData.mPackageName, 0, this.mUserId)));
+                arrayList.add(new DefaultAppInfo(context, this.mPm, this.mPm.getApplicationInfoAsUser(((SmsApplication.SmsApplicationData) it.next()).mPackageName, 0, this.mUserId)));
             } catch (PackageManager.NameNotFoundException e) {
             }
         }
@@ -55,18 +57,16 @@ public class DefaultSmsPicker extends DefaultAppPickerFragment {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: getConfirmationMessage(Lcom/android/settingslib/widget/CandidateInfo;)Ljava/lang/CharSequence; */
     @Override // com.android.settings.applications.defaultapps.DefaultAppPickerFragment
-    public String getConfirmationMessage(CandidateInfo candidateInfo) {
+    protected String getConfirmationMessage(CandidateInfo candidateInfo) {
         if (Utils.isPackageDirectBootAware(getContext(), candidateInfo.getKey())) {
             return null;
         }
         return getContext().getString(R.string.direct_boot_unaware_dialog_message);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class DefaultKeyUpdater {
+    static class DefaultKeyUpdater {
         DefaultKeyUpdater() {
         }
 

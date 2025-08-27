@@ -9,6 +9,7 @@ import com.android.settings.search.Indexable;
 import com.android.settings.search.SearchIndexableRaw;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PreviouslyConnectedDeviceDashboardFragment extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.connecteddevice.PreviouslyConnectedDeviceDashboardFragment.1
@@ -30,9 +31,8 @@ public class PreviouslyConnectedDeviceDashboardFragment extends DashboardFragmen
         return R.string.help_url_previously_connected_devices;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.previously_connected_devices;
     }
 

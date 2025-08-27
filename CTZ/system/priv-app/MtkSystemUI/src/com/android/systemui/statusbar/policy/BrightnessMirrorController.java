@@ -12,6 +12,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.NotificationPanelView;
 import com.android.systemui.statusbar.phone.StatusBarWindowView;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class BrightnessMirrorController implements CallbackController<BrightnessMirrorListener> {
     private View mBrightnessMirror;
@@ -21,7 +22,6 @@ public class BrightnessMirrorController implements CallbackController<Brightness
     private final StatusBarWindowView mStatusBarWindow;
     private final Consumer<Boolean> mVisibilityCallback;
 
-    /* loaded from: classes.dex */
     public interface BrightnessMirrorListener {
         void onBrightnessMirrorReinflated(View view);
     }
@@ -33,7 +33,7 @@ public class BrightnessMirrorController implements CallbackController<Brightness
         this.mNotificationPanel.setPanelAlphaEndAction(new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$BrightnessMirrorController$6Ez050oVQOhwQ3Mf-NjJAvUx4_k
             @Override // java.lang.Runnable
             public final void run() {
-                BrightnessMirrorController.this.mBrightnessMirror.setVisibility(4);
+                this.f$0.mBrightnessMirror.setVisibility(4);
             }
         });
         this.mVisibilityCallback = consumer;
@@ -85,22 +85,24 @@ public class BrightnessMirrorController implements CallbackController<Brightness
     }
 
     private void reinflate() {
-        ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(this.mBrightnessMirror.getContext(), (int) R.style.qs_theme);
-        int indexOfChild = this.mStatusBarWindow.indexOfChild(this.mBrightnessMirror);
+        ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(this.mBrightnessMirror.getContext(), R.style.qs_theme);
+        int iIndexOfChild = this.mStatusBarWindow.indexOfChild(this.mBrightnessMirror);
         this.mStatusBarWindow.removeView(this.mBrightnessMirror);
         this.mBrightnessMirror = LayoutInflater.from(contextThemeWrapper).inflate(R.layout.brightness_mirror, (ViewGroup) this.mStatusBarWindow, false);
-        this.mStatusBarWindow.addView(this.mBrightnessMirror, indexOfChild);
+        this.mStatusBarWindow.addView(this.mBrightnessMirror, iIndexOfChild);
         for (int i = 0; i < this.mBrightnessMirrorListeners.size(); i++) {
             this.mBrightnessMirrorListeners.valueAt(i).onBrightnessMirrorReinflated(this.mBrightnessMirror);
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(BrightnessMirrorListener brightnessMirrorListener) {
         Preconditions.checkNotNull(brightnessMirrorListener);
         this.mBrightnessMirrorListeners.add(brightnessMirrorListener);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(BrightnessMirrorListener brightnessMirrorListener) {
         this.mBrightnessMirrorListeners.remove(brightnessMirrorListener);

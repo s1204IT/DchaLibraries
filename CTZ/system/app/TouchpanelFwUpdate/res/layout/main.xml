@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_gravity="center" android:orientation="vertical" android:background="@drawable/frame" android:layout_width="wrap_content" android:layout_height="wrap_content">
-    <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:textSize="30dp" android:textColor="@color/white" android:layout_gravity="center_horizontal" android:id="@+id/textView1" android:paddingLeft="5dp" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="0dp" android:layout_marginLeft="20dp" android:layout_marginTop="80dp" android:layout_marginRight="15dp" android:layout_marginBottom="100dp" android:text="@string/UpdateMessege" android:layout_weight="0.01" android:lineSpacingExtra="10dp"/>
-    <Button android:textSize="30dp" android:textColor="@color/black" android:layout_gravity="center_horizontal" android:id="@+id/button1" android:background="@color/ghostwhite" android:padding="30dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="50dp" android:text="@string/UpdateStart"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/frame"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="30dp"
+        android:textColor="@color/white"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/textView1"
+        android:paddingLeft="5dp"
+        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="100dp"
+        android:text="@string/UpdateMessege"
+        android:layout_weight="0.01"
+        android:lineSpacingExtra="10dp"/>
+    <Button
+        android:textSize="30dp"
+        android:textColor="@color/black"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/button1"
+        android:background="@color/ghostwhite"
+        android:padding="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:text="@string/UpdateStart"/>
 </LinearLayout>

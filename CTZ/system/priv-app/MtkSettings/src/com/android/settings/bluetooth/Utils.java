@@ -1,5 +1,6 @@
 package com.android.settings.bluetooth;
 
+import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -11,10 +12,10 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
-import com.android.settings.R;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.bluetooth.LocalBluetoothManager;
 import com.android.settingslib.bluetooth.Utils;
+
 /* loaded from: classes.dex */
 public final class Utils {
     private static final Utils.ErrorListener mErrorListener = new Utils.ErrorListener() { // from class: com.android.settings.bluetooth.Utils.1
@@ -30,15 +31,14 @@ public final class Utils {
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static AlertDialog showDisconnectDialog(Context context, AlertDialog alertDialog, DialogInterface.OnClickListener onClickListener, CharSequence charSequence, CharSequence charSequence2) {
+    static AlertDialog showDisconnectDialog(Context context, AlertDialog alertDialog, DialogInterface.OnClickListener onClickListener, CharSequence charSequence, CharSequence charSequence2) {
         if (alertDialog == null) {
-            alertDialog = new AlertDialog.Builder(context).setPositiveButton(17039370, onClickListener).setNegativeButton(17039360, (DialogInterface.OnClickListener) null).create();
+            alertDialog = new AlertDialog.Builder(context).setPositiveButton(R.string.ok, onClickListener).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).create();
         } else {
             if (alertDialog.isShowing()) {
                 alertDialog.dismiss();
             }
-            alertDialog.setButton(-1, context.getText(17039370), onClickListener);
+            alertDialog.setButton(-1, context.getText(R.string.ok), onClickListener);
         }
         alertDialog.setTitle(charSequence);
         alertDialog.setMessage(charSequence2);
@@ -48,11 +48,10 @@ public final class Utils {
 
     static void showConnectingError(Context context, String str, LocalBluetoothManager localBluetoothManager) {
         FeatureFactory.getFactory(context).getMetricsFeatureProvider().visible(context, 0, 869);
-        showError(context, str, R.string.bluetooth_connecting_error_message, localBluetoothManager);
+        showError(context, str, com.android.settings.R.string.bluetooth_connecting_error_message, localBluetoothManager);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void showError(Context context, String str, int i) {
+    static void showError(Context context, String str, int i) {
         showError(context, str, i, getLocalBtManager(context));
     }
 
@@ -71,11 +70,10 @@ public final class Utils {
         Toast.makeText(context, string, 0).show();
     }
 
-    /* loaded from: classes.dex */
     public static class ErrorDialogFragment extends DialogFragment {
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            return new AlertDialog.Builder(getActivity()).setIcon(17301543).setTitle(R.string.bluetooth_error_title).setMessage(getArguments().getString("errorMessage")).setPositiveButton(17039370, (DialogInterface.OnClickListener) null).show();
+            return new AlertDialog.Builder(getActivity()).setIcon(R.drawable.ic_dialog_alert).setTitle(com.android.settings.R.string.bluetooth_error_title).setMessage(getArguments().getString("errorMessage")).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
         }
     }
 
@@ -86,7 +84,7 @@ public final class Utils {
     public static String createRemoteName(Context context, BluetoothDevice bluetoothDevice) {
         String aliasName = bluetoothDevice != null ? bluetoothDevice.getAliasName() : null;
         if (aliasName == null) {
-            return context.getString(R.string.unknown);
+            return context.getString(com.android.settings.R.string.unknown);
         }
         return aliasName;
     }

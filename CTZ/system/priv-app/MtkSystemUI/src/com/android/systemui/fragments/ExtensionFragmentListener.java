@@ -6,6 +6,7 @@ import android.view.View;
 import com.android.systemui.plugins.FragmentBase;
 import com.android.systemui.statusbar.policy.ExtensionController;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class ExtensionFragmentListener<T extends FragmentBase> implements Consumer<T> {
     private final ExtensionController.Extension<T> mExtension;
@@ -13,12 +14,6 @@ public class ExtensionFragmentListener<T extends FragmentBase> implements Consum
     private final int mId;
     private String mOldClass;
     private final String mTag;
-
-    /* JADX WARN: Multi-variable type inference failed */
-    @Override // java.util.function.Consumer
-    public /* bridge */ /* synthetic */ void accept(Object obj) {
-        accept((ExtensionFragmentListener<T>) ((FragmentBase) obj));
-    }
 
     private ExtensionFragmentListener(View view, String str, int i, ExtensionController.Extension<T> extension) {
         this.mTag = str;
@@ -29,6 +24,8 @@ public class ExtensionFragmentListener<T extends FragmentBase> implements Consum
         this.mExtension.clearItem(false);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: accept(Ljava/lang/Object;)V */
+    @Override // java.util.function.Consumer
     public void accept(T t) {
         try {
             Fragment.class.cast(t);

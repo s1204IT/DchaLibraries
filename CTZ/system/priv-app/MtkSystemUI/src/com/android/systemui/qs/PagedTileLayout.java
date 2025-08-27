@@ -6,10 +6,12 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Property;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.android.systemui.qs.QSPanel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
     private static final Interpolator SCROLL_CUBIC = new Interpolator() { // from class: com.android.systemui.qs.-$$Lambda$PagedTileLayout$fHkBmUM3ca-ZV4_eDd9ap-VT7Ho
@@ -45,29 +48,33 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
     private Scroller mScroller;
     private final ArrayList<QSPanel.TileRecord> mTiles;
 
-    /* loaded from: classes.dex */
     public interface PageListener {
         void onPageChanged(boolean z);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ float lambda$static$0(float f) {
+    static /* synthetic */ float lambda$static$0(float f) {
         float f2 = f - 1.0f;
         return (f2 * f2 * f2) + 1.0f;
     }
 
-    public PagedTileLayout(Context context, AttributeSet attributeSet) {
+    public PagedTileLayout(Context context, AttributeSet attributeSet) throws Resources.NotFoundException {
         super(context, attributeSet);
         this.mTiles = new ArrayList<>();
         this.mPages = new ArrayList<>();
         this.mAnimatingToPage = -1;
         this.mDistribute = new Runnable() { // from class: com.android.systemui.qs.PagedTileLayout.1
+            AnonymousClass1() {
+            }
+
             @Override // java.lang.Runnable
-            public void run() {
+            public void run() throws Resources.NotFoundException {
                 PagedTileLayout.this.distributeTiles();
             }
         };
         this.mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() { // from class: com.android.systemui.qs.PagedTileLayout.3
+            AnonymousClass3() {
+            }
+
             @Override // android.support.v4.view.ViewPager.SimpleOnPageChangeListener, android.support.v4.view.ViewPager.OnPageChangeListener
             public void onPageSelected(int i) {
                 PagedTileLayout.this.updateSelected();
@@ -99,6 +106,9 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
             }
         };
         this.mAdapter = new PagerAdapter() { // from class: com.android.systemui.qs.PagedTileLayout.4
+            AnonymousClass4() {
+            }
+
             @Override // android.support.v4.view.PagerAdapter
             public void destroyItem(ViewGroup viewGroup, int i, Object obj) {
                 viewGroup.removeView((View) obj);
@@ -137,14 +147,14 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
     }
 
     @Override // android.view.View
-    public void onRtlPropertiesChanged(int i) {
+    public void onRtlPropertiesChanged(int i) throws Resources.NotFoundException {
         super.onRtlPropertiesChanged(i);
         setAdapter(this.mAdapter);
         setCurrentItem(0, false);
     }
 
     @Override // android.support.v4.view.ViewPager
-    public void setCurrentItem(int i, boolean z) {
+    public void setCurrentItem(int i, boolean z) throws Resources.NotFoundException {
         if (isLayoutRtl()) {
             i = (this.mPages.size() - 1) - i;
         }
@@ -160,8 +170,7 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         updateListening();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateListening() {
+    private void updateListening() {
         Iterator<TilePage> it = this.mPages.iterator();
         while (it.hasNext()) {
             TilePage next = it.next();
@@ -186,7 +195,7 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
     }
 
     @Override // android.support.v4.view.ViewPager, android.view.View
-    public void computeScroll() {
+    public void computeScroll() throws Resources.NotFoundException {
         if (!this.mScroller.isFinished() && this.mScroller.computeScrollOffset()) {
             scrollTo(this.mScroller.getCurrX(), this.mScroller.getCurrY());
             float scrollX = getScrollX() / getWidth();
@@ -249,8 +258,7 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         updateSelected();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSelected() {
+    private void updateSelected() {
         if (this.mLastExpansion > 0.0f && this.mLastExpansion < 1.0f) {
             return;
         }
@@ -273,8 +281,7 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         post(this.mDistribute);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void distributeTiles() {
+    private void distributeTiles() throws Resources.NotFoundException {
         int size = this.mPages.size();
         for (int i = 0; i < size; i++) {
             this.mPages.get(i).removeAllViews();
@@ -302,21 +309,20 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
     }
 
     @Override // com.android.systemui.qs.QSPanel.QSTileLayout
-    public boolean updateResources() {
+    public boolean updateResources() throws Resources.NotFoundException {
         setPadding(0, 0, 0, getContext().getResources().getDimensionPixelSize(R.dimen.qs_paged_tile_layout_padding_bottom));
-        boolean z = false;
+        boolean zUpdateResources = false;
         for (int i = 0; i < this.mPages.size(); i++) {
-            z |= this.mPages.get(i).updateResources();
+            zUpdateResources |= this.mPages.get(i).updateResources();
         }
-        if (z) {
+        if (zUpdateResources) {
             distributeTiles();
         }
-        return z;
+        return zUpdateResources;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.support.v4.view.ViewPager, android.view.View
-    public void onMeasure(int i, int i2) {
+    protected void onMeasure(int i, int i2) throws Resources.NotFoundException {
         super.onMeasure(i, i2);
         int childCount = getChildCount();
         int i3 = 0;
@@ -329,6 +335,17 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         setMeasuredDimension(getMeasuredWidth(), i3 + getPaddingBottom());
     }
 
+    /* renamed from: com.android.systemui.qs.PagedTileLayout$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() throws Resources.NotFoundException {
+            PagedTileLayout.this.distributeTiles();
+        }
+    }
+
     public int getColumnCount() {
         if (this.mPages.size() == 0) {
             return 0;
@@ -336,13 +353,14 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         return this.mPages.get(0).mColumns;
     }
 
-    public void startTileReveal(Set<String> set, final Runnable runnable) {
+    public void startTileReveal(Set<String> set, Runnable runnable) {
         if (set.isEmpty() || this.mPages.size() < 2 || getScrollX() != 0) {
             return;
         }
         int size = this.mPages.size() - 1;
+        TilePage tilePage = this.mPages.get(size);
         ArrayList arrayList = new ArrayList();
-        Iterator<QSPanel.TileRecord> it = this.mPages.get(size).mRecords.iterator();
+        Iterator<QSPanel.TileRecord> it = tilePage.mRecords.iterator();
         while (it.hasNext()) {
             QSPanel.TileRecord next = it.next();
             if (set.contains(next.tile.getTileSpec())) {
@@ -355,6 +373,12 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         this.mBounceAnimatorSet = new AnimatorSet();
         this.mBounceAnimatorSet.playTogether(arrayList);
         this.mBounceAnimatorSet.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.PagedTileLayout.2
+            final /* synthetic */ Runnable val$postAnimation;
+
+            AnonymousClass2(Runnable runnable2) {
+                runnable = runnable2;
+            }
+
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
             public void onAnimationEnd(Animator animator) {
                 PagedTileLayout.this.mBounceAnimatorSet = null;
@@ -367,18 +391,68 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         postInvalidateOnAnimation();
     }
 
+    /* renamed from: com.android.systemui.qs.PagedTileLayout$2 */
+    class AnonymousClass2 extends AnimatorListenerAdapter {
+        final /* synthetic */ Runnable val$postAnimation;
+
+        AnonymousClass2(Runnable runnable2) {
+            runnable = runnable2;
+        }
+
+        @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
+        public void onAnimationEnd(Animator animator) {
+            PagedTileLayout.this.mBounceAnimatorSet = null;
+            runnable.run();
+        }
+    }
+
     private static Animator setupBounceAnimator(View view, int i) {
         view.setAlpha(0.0f);
         view.setScaleX(0.0f);
         view.setScaleY(0.0f);
-        ObjectAnimator ofPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(view, PropertyValuesHolder.ofFloat(View.ALPHA, 1.0f), PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f), PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f));
-        ofPropertyValuesHolder.setDuration(450L);
-        ofPropertyValuesHolder.setStartDelay(i * 85);
-        ofPropertyValuesHolder.setInterpolator(new OvershootInterpolator(1.3f));
-        return ofPropertyValuesHolder;
+        ObjectAnimator objectAnimatorOfPropertyValuesHolder = ObjectAnimator.ofPropertyValuesHolder(view, PropertyValuesHolder.ofFloat((Property<?, Float>) View.ALPHA, 1.0f), PropertyValuesHolder.ofFloat((Property<?, Float>) View.SCALE_X, 1.0f), PropertyValuesHolder.ofFloat((Property<?, Float>) View.SCALE_Y, 1.0f));
+        objectAnimatorOfPropertyValuesHolder.setDuration(450L);
+        objectAnimatorOfPropertyValuesHolder.setStartDelay(i * 85);
+        objectAnimatorOfPropertyValuesHolder.setInterpolator(new OvershootInterpolator(1.3f));
+        return objectAnimatorOfPropertyValuesHolder;
     }
 
-    /* loaded from: classes.dex */
+    /* renamed from: com.android.systemui.qs.PagedTileLayout$3 */
+    class AnonymousClass3 extends ViewPager.SimpleOnPageChangeListener {
+        AnonymousClass3() {
+        }
+
+        @Override // android.support.v4.view.ViewPager.SimpleOnPageChangeListener, android.support.v4.view.ViewPager.OnPageChangeListener
+        public void onPageSelected(int i) {
+            PagedTileLayout.this.updateSelected();
+            if (PagedTileLayout.this.mPageIndicator != null && PagedTileLayout.this.mPageListener != null) {
+                PageListener pageListener = PagedTileLayout.this.mPageListener;
+                boolean z = false;
+                if (!PagedTileLayout.this.isLayoutRtl() ? i == 0 : i == PagedTileLayout.this.mPages.size() - 1) {
+                    z = true;
+                }
+                pageListener.onPageChanged(z);
+            }
+        }
+
+        @Override // android.support.v4.view.ViewPager.SimpleOnPageChangeListener, android.support.v4.view.ViewPager.OnPageChangeListener
+        public void onPageScrolled(int i, float f, int i2) {
+            if (PagedTileLayout.this.mPageIndicator == null) {
+                return;
+            }
+            PagedTileLayout.this.mPageIndicatorPosition = i + f;
+            PagedTileLayout.this.mPageIndicator.setLocation(PagedTileLayout.this.mPageIndicatorPosition);
+            if (PagedTileLayout.this.mPageListener != null) {
+                PageListener pageListener = PagedTileLayout.this.mPageListener;
+                boolean z = true;
+                if (i2 != 0 || (!PagedTileLayout.this.isLayoutRtl() ? i != 0 : i != PagedTileLayout.this.mPages.size() - 1)) {
+                    z = false;
+                }
+                pageListener.onPageChanged(z);
+            }
+        }
+    }
+
     public static class TilePage extends TileLayout {
         private int mMaxRows;
 
@@ -405,6 +479,43 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
 
         public boolean isFull() {
             return this.mRecords.size() >= this.mColumns * this.mMaxRows;
+        }
+    }
+
+    /* renamed from: com.android.systemui.qs.PagedTileLayout$4 */
+    class AnonymousClass4 extends PagerAdapter {
+        AnonymousClass4() {
+        }
+
+        @Override // android.support.v4.view.PagerAdapter
+        public void destroyItem(ViewGroup viewGroup, int i, Object obj) {
+            viewGroup.removeView((View) obj);
+            PagedTileLayout.this.updateListening();
+        }
+
+        @Override // android.support.v4.view.PagerAdapter
+        public Object instantiateItem(ViewGroup viewGroup, int i) {
+            if (PagedTileLayout.this.isLayoutRtl()) {
+                i = (PagedTileLayout.this.mPages.size() - 1) - i;
+            }
+            ViewGroup viewGroup2 = (ViewGroup) PagedTileLayout.this.mPages.get(i);
+            try {
+                viewGroup.addView(viewGroup2);
+            } catch (IllegalStateException e) {
+                Log.e("PagedTileLayout", "Err when add " + viewGroup2 + " to " + i);
+            }
+            PagedTileLayout.this.updateListening();
+            return viewGroup2;
+        }
+
+        @Override // android.support.v4.view.PagerAdapter
+        public int getCount() {
+            return PagedTileLayout.this.mNumPages;
+        }
+
+        @Override // android.support.v4.view.PagerAdapter
+        public boolean isViewFromObject(View view, Object obj) {
+            return view == obj;
         }
     }
 }

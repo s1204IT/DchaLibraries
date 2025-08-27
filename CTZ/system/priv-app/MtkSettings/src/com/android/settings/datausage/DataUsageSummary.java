@@ -47,9 +47,11 @@ import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.datausage.TempDataServiceDialogActivity;
 import com.mediatek.settings.ext.IDataUsageSummaryExt;
 import com.mediatek.settings.sim.TelephonyUtils;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DataUsageSummary extends DataUsageBaseFragment implements DataUsageEditController, Indexable {
     private Context mContext;
@@ -143,28 +145,28 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         Log.d("DataUsageSummary", "onCreate");
         this.mContext = getContext();
         this.mDataUsageSummaryExt = UtilsExt.getDataUsageSummaryExt(this.mContext.getApplicationContext());
-        boolean hasMobileData = DataUsageUtils.hasMobileData(this.mContext);
+        boolean zHasMobileData = DataUsageUtils.hasMobileData(this.mContext);
         this.mDefaultSubId = DataUsageUtils.getDefaultSubscriptionId(this.mContext);
         if (this.mDefaultSubId == -1) {
             Log.d("DataUsageSummary", "onCreate INVALID_SUBSCRIPTION_ID Mobile data false");
-            hasMobileData = false;
+            zHasMobileData = false;
         }
         this.mDefaultTemplate = DataUsageUtils.getDefaultTemplate(this.mContext, this.mDefaultSubId);
         this.mSummaryPreference = (DataUsageSummaryPreference) findPreference("status_header");
-        if (!hasMobileData || !isAdmin()) {
+        if (!zHasMobileData || !isAdmin()) {
             removePreference("restrict_background");
         }
-        boolean hasWifiRadio = DataUsageUtils.hasWifiRadio(this.mContext);
-        if (hasMobileData) {
+        boolean zHasWifiRadio = DataUsageUtils.hasWifiRadio(this.mContext);
+        if (zHasMobileData) {
             addMobileSection(this.mDefaultSubId);
             List<SubscriptionInfo> activeSubscriptionInfoList = this.services.mSubscriptionManager.getActiveSubscriptionInfoList();
             if (activeSubscriptionInfoList != null && activeSubscriptionInfoList.size() == 2) {
                 addDataServiceSection(activeSubscriptionInfoList);
             }
-            if (DataUsageUtils.hasSim(this.mContext) && hasWifiRadio) {
+            if (DataUsageUtils.hasSim(this.mContext) && zHasWifiRadio) {
                 addWifiSection();
             }
-        } else if (hasWifiRadio) {
+        } else if (zHasWifiRadio) {
             addWifiSection();
         }
         if (DataUsageUtils.hasEthernet(this.mContext)) {
@@ -193,19 +195,20 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
                 Log.d("DataUsageSummary", "select CELLULAR_DATA");
                 try {
                     startActivity(new Intent("com.mediatek.security.CELLULAR_DATA"));
+                    break;
                 } catch (ActivityNotFoundException e) {
                     Log.e("DataUsageSummary", "cellular data control activity not found!!!");
+                    break;
                 }
-                return true;
             case R.id.data_usage_menu_cellular_networks /* 2131362035 */:
                 Log.d("DataUsageSummary", "select CELLULAR_NETWORKDATA");
                 Intent intent = new Intent("android.intent.action.MAIN");
                 intent.setComponent(new ComponentName("com.android.phone", "com.android.phone.MobileNetworkSettings"));
                 startActivity(intent);
-                return true;
-            default:
-                return false;
+                break;
         }
+        return true;
+        return true;
     }
 
     @Override // com.android.settings.dashboard.DashboardFragment, android.support.v14.preference.PreferenceFragment, android.support.v7.preference.PreferenceManager.OnPreferenceTreeClickListener
@@ -217,9 +220,8 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         return super.onPreferenceTreeClick(preference);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.data_usage;
     }
 
@@ -257,9 +259,9 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
     }
 
     private Preference inflatePreferences(int i, int i2) {
-        PreferenceScreen inflateFromResource = getPreferenceManager().inflateFromResource(getPrefContext(), i, null);
-        Preference preference = inflateFromResource.getPreference(0);
-        inflateFromResource.removeAll();
+        PreferenceScreen preferenceScreenInflateFromResource = getPreferenceManager().inflateFromResource(getPrefContext(), i, null);
+        Preference preference = preferenceScreenInflateFromResource.getPreference(0);
+        preferenceScreenInflateFromResource.removeAll();
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preference.setOrder(i2);
         preferenceScreen.addPreference(preference);
@@ -285,9 +287,9 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
     }
 
     private Preference inflatePreferences(int i) {
-        PreferenceScreen inflateFromResource = getPreferenceManager().inflateFromResource(getPrefContext(), i, null);
-        Preference preference = inflateFromResource.getPreference(0);
-        inflateFromResource.removeAll();
+        PreferenceScreen preferenceScreenInflateFromResource = getPreferenceManager().inflateFromResource(getPrefContext(), i, null);
+        Preference preference = preferenceScreenInflateFromResource.getPreference(0);
+        preferenceScreenInflateFromResource.removeAll();
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preference.setOrder(preferenceScreen.getPreferenceCount());
         preferenceScreen.addPreference(preference);
@@ -295,9 +297,9 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
     }
 
     private NetworkTemplate getNetworkTemplate(int i) {
-        NetworkTemplate buildTemplateMobileAll = NetworkTemplate.buildTemplateMobileAll(this.services.mTelephonyManager.getSubscriberId(i));
+        NetworkTemplate networkTemplateBuildTemplateMobileAll = NetworkTemplate.buildTemplateMobileAll(this.services.mTelephonyManager.getSubscriberId(i));
         Log.d("DataUsageSummary", "getNetworkTemplate with subID: " + i);
-        return NetworkTemplate.normalize(buildTemplateMobileAll, this.services.mTelephonyManager.getMergedSubscriberIds());
+        return NetworkTemplate.normalize(networkTemplateBuildTemplateMobileAll, this.services.mTelephonyManager.getMergedSubscriberIds());
     }
 
     @Override // com.android.settings.datausage.DataUsageBaseFragment, com.android.settings.dashboard.DashboardFragment, com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
@@ -306,12 +308,12 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         super.onResume();
         int defaultSubscriptionId = DataUsageUtils.getDefaultSubscriptionId(this.mContext);
         Log.d("DataUsageSummary", "onResumed mDefaultSubId = " + this.mDefaultSubId + " newDefaultSubId = " + defaultSubscriptionId);
-        boolean hasMobileData = DataUsageUtils.hasMobileData(this.mContext);
+        boolean zHasMobileData = DataUsageUtils.hasMobileData(this.mContext);
         if (this.mDefaultSubId == -1) {
             Log.d("DataUsageSummary", "onResume INVALID_SUBSCRIPTION_ID Mobile data false");
-            hasMobileData = false;
+            zHasMobileData = false;
         }
-        if (hasMobileData && this.mDefaultSubId != defaultSubscriptionId && (templatePreferenceCategory = (TemplatePreferenceCategory) getPreferenceScreen().findPreference("mobile_category")) != null) {
+        if (zHasMobileData && this.mDefaultSubId != defaultSubscriptionId && (templatePreferenceCategory = (TemplatePreferenceCategory) getPreferenceScreen().findPreference("mobile_category")) != null) {
             int order = templatePreferenceCategory.getOrder();
             getPreferenceScreen().removePreference(templatePreferenceCategory);
             Log.d("DataUsageSummary", "removePreferencedd and add (data_usage_cellular_screen) order = " + order);
@@ -331,13 +333,13 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
     }
 
     static CharSequence formatUsage(Context context, String str, long j, float f, float f2) {
-        Formatter.BytesResult formatBytes = Formatter.formatBytes(context.getResources(), j, 10);
-        SpannableString spannableString = new SpannableString(formatBytes.value);
+        Formatter.BytesResult bytes = Formatter.formatBytes(context.getResources(), j, 10);
+        SpannableString spannableString = new SpannableString(bytes.value);
         spannableString.setSpan(new RelativeSizeSpan(f), 0, spannableString.length(), 18);
-        CharSequence expandTemplate = TextUtils.expandTemplate(new SpannableString(context.getString(17039893).replace("%1$s", "^1").replace("%2$s", "^2")), spannableString, formatBytes.units);
+        CharSequence charSequenceExpandTemplate = TextUtils.expandTemplate(new SpannableString(context.getString(android.R.string.config_defaultAssistantAccessComponent).replace("%1$s", "^1").replace("%2$s", "^2")), spannableString, bytes.units);
         SpannableString spannableString2 = new SpannableString(str);
         spannableString2.setSpan(new RelativeSizeSpan(f2), 0, spannableString2.length(), 18);
-        return TextUtils.expandTemplate(spannableString2, BidiFormatter.getInstance().unicodeWrap(expandTemplate.toString()));
+        return TextUtils.expandTemplate(spannableString2, BidiFormatter.getInstance().unicodeWrap(charSequenceExpandTemplate.toString()));
     }
 
     private void updateState() {
@@ -378,9 +380,7 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         this.mSummaryController.updateState(this.mSummaryPreference);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Activity mActivity;
         private final DataUsageController mDataController;
         private final SummaryLoader mSummaryLoader;
@@ -436,20 +436,20 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(Menu menu) throws IllegalAccessException, NoSuchMethodException, ClassNotFoundException, SecurityException, IllegalArgumentException, InvocationTargetException {
         super.onPrepareOptionsMenu(menu);
-        MenuItem findItem = menu.findItem(R.id.data_usage_menu_cellular_data_control);
+        MenuItem menuItemFindItem = menu.findItem(R.id.data_usage_menu_cellular_data_control);
         try {
             Class<?> cls = Class.forName("com.mediatek.cta.CtaUtils", false, ClassLoader.getSystemClassLoader());
             Method declaredMethod = cls.getDeclaredMethod("isCtaSupported", new Class[0]);
             declaredMethod.setAccessible(true);
-            Object invoke = declaredMethod.invoke(cls, new Object[0]);
-            if (findItem != null) {
-                findItem.setVisible(Boolean.valueOf(invoke.toString()).booleanValue());
+            Object objInvoke = declaredMethod.invoke(cls, new Object[0]);
+            if (menuItemFindItem != null) {
+                menuItemFindItem.setVisible(Boolean.valueOf(objInvoke.toString()).booleanValue());
             }
         } catch (Exception e) {
-            if (findItem != null) {
-                findItem.setVisible(false);
+            if (menuItemFindItem != null) {
+                menuItemFindItem.setVisible(false);
             }
             e.printStackTrace();
         }
@@ -464,7 +464,6 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
             Log.d("DataUsageSummary", "subscriptions size != 2");
             return;
         }
-        PreferenceCategory preferenceCategory = (PreferenceCategory) inflatePreferences(R.xml.data_service_cellular);
         this.mEnableDataService = (SwitchPreference) findPreference("data_service_enable");
         this.mEnableDataService.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.datausage.DataUsageSummary.2
             @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
@@ -511,26 +510,23 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         return this.mPhoneStateListener;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void showDataServiceDialog() {
+    private void showDataServiceDialog() {
         Log.d("DataUsageSummary", "showDataServiceDialog");
-        startActivity(new Intent(getContext(), TempDataServiceDialogActivity.class));
+        startActivity(new Intent(getContext(), (Class<?>) TempDataServiceDialogActivity.class));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateScreenEnabled() {
-        boolean isCapabilitySwitching = TelephonyUtils.isCapabilitySwitching();
-        Log.d("DataUsageSummary", "updateScreenEnabled, mIsAirplaneModeOn = " + this.mIsAirplaneModeOn + ", isSwitching = " + isCapabilitySwitching + ", mTempPhoneid = " + this.mTempPhoneid);
+    private void updateScreenEnabled() {
+        boolean zIsCapabilitySwitching = TelephonyUtils.isCapabilitySwitching();
+        Log.d("DataUsageSummary", "updateScreenEnabled, mIsAirplaneModeOn = " + this.mIsAirplaneModeOn + ", isSwitching = " + zIsCapabilitySwitching + ", mTempPhoneid = " + this.mTempPhoneid);
         if (this.mEnableDataService != null) {
-            this.mEnableDataService.setEnabled((this.mIsAirplaneModeOn || isCapabilitySwitching || this.mDataUsageSummaryExt.customTempdata(this.mTempPhoneid)) ? false : true);
+            this.mEnableDataService.setEnabled((this.mIsAirplaneModeOn || zIsCapabilitySwitching || this.mDataUsageSummaryExt.customTempdata(this.mTempPhoneid)) ? false : true);
             this.mDataUsageSummaryExt.customTempdataHide(this.mEnableDataService);
-            return;
+        } else {
+            Log.d("DataUsageSummary", "mEnableDataService == null");
         }
-        Log.d("DataUsageSummary", "mEnableDataService == null");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean getDataService() {
+    private boolean getDataService() {
         int i;
         Context context = getContext();
         if (context != null) {
@@ -542,8 +538,7 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         return i != 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setDataService(int i) {
+    private void setDataService(int i) {
         Log.d("DataUsageSummary", "setDataService =" + i);
         Settings.Global.putInt(getContext().getContentResolver(), "data_service_enabled", i);
     }

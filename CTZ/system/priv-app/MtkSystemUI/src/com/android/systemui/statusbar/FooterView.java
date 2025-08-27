@@ -7,6 +7,7 @@ import android.view.View;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.stack.ExpandableViewState;
 import com.android.systemui.statusbar.stack.StackScrollState;
+
 /* loaded from: classes.dex */
 public class FooterView extends StackScrollerDecorView {
     private final int mClearAllTopPadding;
@@ -28,9 +29,8 @@ public class FooterView extends StackScrollerDecorView {
         return findViewById(R.id.dismiss_text);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.StackScrollerDecorView, android.view.View
-    public void onFinishInflate() {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         this.mDismissButton = (FooterViewButton) findSecondaryView();
         this.mManageButton = (FooterViewButton) findViewById(R.id.manage_text);
@@ -66,7 +66,6 @@ public class FooterView extends StackScrollerDecorView {
         return new FooterViewState();
     }
 
-    /* loaded from: classes.dex */
     public class FooterViewState extends ExpandableViewState {
         public FooterViewState() {
         }

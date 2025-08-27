@@ -1,6 +1,7 @@
 package com.mediatek.settings.deviceinfo;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.SystemProperties;
 import android.support.v7.preference.Preference;
 import com.android.settings.R;
@@ -9,6 +10,7 @@ import com.android.settingslib.Utils;
 import com.android.settingslib.core.AbstractPreferenceController;
 import com.mediatek.internal.telephony.ratconfiguration.RatConfiguration;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class BasebandVersion2PreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     public BasebandVersion2PreferenceController(Context context) {
@@ -40,7 +42,7 @@ public class BasebandVersion2PreferenceController extends AbstractPreferenceCont
         return SystemProperties.get("ro.vendor.mtk_ril_mode", "").contains("1rild");
     }
 
-    public static String getCustomizedBasebandTitle(Context context, String str) {
+    public static String getCustomizedBasebandTitle(Context context, String str) throws Resources.NotFoundException {
         String string = context.getResources().getString(R.string.baseband_version);
         String country = Locale.getDefault().getCountry();
         boolean z = country.equals(Locale.CHINA.getCountry()) || country.equals(Locale.TAIWAN.getCountry());

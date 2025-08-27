@@ -3,13 +3,13 @@ package com.android.systemui.statusbar.policy;
 import android.content.Context;
 import android.view.accessibility.AccessibilityManager;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AccessibilityController implements AccessibilityManager.AccessibilityStateChangeListener, AccessibilityManager.TouchExplorationStateChangeListener {
     private boolean mAccessibilityEnabled;
     private final ArrayList<AccessibilityStateChangedCallback> mChangeCallbacks = new ArrayList<>();
     private boolean mTouchExplorationEnabled;
 
-    /* loaded from: classes.dex */
     public interface AccessibilityStateChangedCallback {
         void onStateChanged(boolean z, boolean z2);
     }

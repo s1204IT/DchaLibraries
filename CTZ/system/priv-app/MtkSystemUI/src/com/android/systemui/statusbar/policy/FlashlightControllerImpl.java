@@ -13,6 +13,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class FlashlightControllerImpl implements FlashlightController {
     private static final boolean DEBUG = Log.isLoggable("FlashlightController", 3);
@@ -125,6 +126,7 @@ public class FlashlightControllerImpl implements FlashlightController {
         return this.mTorchAvailable;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: addCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void addCallback(FlashlightController.FlashlightListener flashlightListener) {
         synchronized (this.mListeners) {
@@ -138,6 +140,7 @@ public class FlashlightControllerImpl implements FlashlightController {
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: removeCallback(Ljava/lang/Object;)V */
     @Override // com.android.systemui.statusbar.policy.CallbackController
     public void removeCallback(FlashlightController.FlashlightListener flashlightListener) {
         synchronized (this.mListeners) {
@@ -154,7 +157,6 @@ public class FlashlightControllerImpl implements FlashlightController {
     }
 
     private String getCameraId() throws CameraAccessException {
-        String[] cameraIdList;
         for (String str : this.mCameraManager.getCameraIdList()) {
             CameraCharacteristics cameraCharacteristics = this.mCameraManager.getCameraCharacteristics(str);
             Boolean bool = (Boolean) cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
@@ -166,8 +168,7 @@ public class FlashlightControllerImpl implements FlashlightController {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dispatchModeChanged(boolean z) {
+    private void dispatchModeChanged(boolean z) {
         dispatchListeners(1, z);
     }
 
@@ -175,8 +176,7 @@ public class FlashlightControllerImpl implements FlashlightController {
         dispatchListeners(1, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void dispatchAvailabilityChanged(boolean z) {
+    private void dispatchAvailabilityChanged(boolean z) {
         dispatchListeners(2, z);
     }
 

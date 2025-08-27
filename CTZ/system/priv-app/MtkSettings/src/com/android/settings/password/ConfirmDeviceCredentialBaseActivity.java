@@ -2,6 +2,7 @@ package com.android.settings.password;
 
 import android.app.Fragment;
 import android.app.KeyguardManager;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.view.MenuItem;
@@ -12,6 +13,7 @@ import com.android.settings.SetupWizardUtils;
 import com.android.settings.Utils;
 import com.android.settings.password.ConfirmLockPassword;
 import com.android.settings.password.ConfirmLockPattern;
+
 /* loaded from: classes.dex */
 public abstract class ConfirmDeviceCredentialBaseActivity extends SettingsActivity {
     private ConfirmCredentialTheme mConfirmCredentialTheme;
@@ -20,9 +22,7 @@ public abstract class ConfirmDeviceCredentialBaseActivity extends SettingsActivi
     private boolean mIsKeyguardLocked = false;
     private boolean mRestoring;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public enum ConfirmCredentialTheme {
+    enum ConfirmCredentialTheme {
         NORMAL,
         DARK,
         WORK
@@ -32,15 +32,14 @@ public abstract class ConfirmDeviceCredentialBaseActivity extends SettingsActivi
         return (this instanceof ConfirmLockPassword.InternalActivity) || (this instanceof ConfirmLockPattern.InternalActivity);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity, com.android.settingslib.drawer.SettingsDrawerActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
-        boolean z;
+    protected void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
+        boolean zIsKeyguardLocked;
         if (UserManager.get(this).isManagedProfile(Utils.getCredentialOwnerUserId(this, Utils.getUserIdFromBundle(this, getIntent().getExtras(), isInternalActivity())))) {
-            setTheme(2131952089);
+            setTheme(R.style.Theme_ConfirmDeviceCredentialsWork);
             this.mConfirmCredentialTheme = ConfirmCredentialTheme.WORK;
         } else if (getIntent().getBooleanExtra("com.android.settings.ConfirmCredentials.darkTheme", false)) {
-            setTheme(2131952088);
+            setTheme(R.style.Theme_ConfirmDeviceCredentialsDark);
             this.mConfirmCredentialTheme = ConfirmCredentialTheme.DARK;
         } else {
             setTheme(SetupWizardUtils.getTheme(getIntent()));
@@ -52,11 +51,11 @@ public abstract class ConfirmDeviceCredentialBaseActivity extends SettingsActivi
         }
         getWindow().addFlags(8192);
         if (bundle == null) {
-            z = ((KeyguardManager) getSystemService(KeyguardManager.class)).isKeyguardLocked();
+            zIsKeyguardLocked = ((KeyguardManager) getSystemService(KeyguardManager.class)).isKeyguardLocked();
         } else {
-            z = bundle.getBoolean("STATE_IS_KEYGUARD_LOCKED", false);
+            zIsKeyguardLocked = bundle.getBoolean("STATE_IS_KEYGUARD_LOCKED", false);
         }
-        this.mIsKeyguardLocked = z;
+        this.mIsKeyguardLocked = zIsKeyguardLocked;
         if (this.mIsKeyguardLocked && getIntent().getBooleanExtra("com.android.settings.ConfirmCredentials.showWhenLocked", false)) {
             getWindow().addFlags(524288);
         }
@@ -94,9 +93,9 @@ public abstract class ConfirmDeviceCredentialBaseActivity extends SettingsActivi
     }
 
     private ConfirmDeviceCredentialBaseFragment getFragment() {
-        Fragment findFragmentById = getFragmentManager().findFragmentById(R.id.main_content);
-        if (findFragmentById != null && (findFragmentById instanceof ConfirmDeviceCredentialBaseFragment)) {
-            return (ConfirmDeviceCredentialBaseFragment) findFragmentById;
+        Fragment fragmentFindFragmentById = getFragmentManager().findFragmentById(R.id.main_content);
+        if (fragmentFindFragmentById != null && (fragmentFindFragmentById instanceof ConfirmDeviceCredentialBaseFragment)) {
+            return (ConfirmDeviceCredentialBaseFragment) fragmentFindFragmentById;
         }
         return null;
     }

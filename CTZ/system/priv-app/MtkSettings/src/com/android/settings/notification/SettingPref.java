@@ -10,6 +10,7 @@ import android.support.v7.preference.DropDownPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.TwoStatePreference;
 import com.android.settings.SettingsPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class SettingPref {
     protected final int mDefault;
@@ -40,15 +41,15 @@ public class SettingPref {
 
     public Preference init(SettingsPreferenceFragment settingsPreferenceFragment) {
         final Activity activity = settingsPreferenceFragment.getActivity();
-        Preference findPreference = settingsPreferenceFragment.getPreferenceScreen().findPreference(this.mKey);
-        if (findPreference != null && !isApplicable(activity)) {
-            settingsPreferenceFragment.getPreferenceScreen().removePreference(findPreference);
-            findPreference = null;
+        Preference preferenceFindPreference = settingsPreferenceFragment.getPreferenceScreen().findPreference(this.mKey);
+        if (preferenceFindPreference != null && !isApplicable(activity)) {
+            settingsPreferenceFragment.getPreferenceScreen().removePreference(preferenceFindPreference);
+            preferenceFindPreference = null;
         }
-        if (findPreference instanceof TwoStatePreference) {
-            this.mTwoState = (TwoStatePreference) findPreference;
-        } else if (findPreference instanceof DropDownPreference) {
-            this.mDropDown = (DropDownPreference) findPreference;
+        if (preferenceFindPreference instanceof TwoStatePreference) {
+            this.mTwoState = (TwoStatePreference) preferenceFindPreference;
+        } else if (preferenceFindPreference instanceof DropDownPreference) {
+            this.mDropDown = (DropDownPreference) preferenceFindPreference;
             CharSequence[] charSequenceArr = new CharSequence[this.mValues.length];
             CharSequence[] charSequenceArr2 = new CharSequence[this.mValues.length];
             for (int i = 0; i < this.mValues.length; i++) {
@@ -60,7 +61,7 @@ public class SettingPref {
         }
         update(activity);
         if (this.mTwoState != null) {
-            findPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.notification.SettingPref.1
+            preferenceFindPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.notification.SettingPref.1
                 @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
                 public boolean onPreferenceChange(Preference preference, Object obj) {
                     SettingPref.this.setSetting(activity, ((Boolean) obj).booleanValue() ? 1 : 0);
@@ -68,21 +69,20 @@ public class SettingPref {
                 }
             });
             return this.mTwoState;
-        } else if (this.mDropDown == null) {
-            return null;
-        } else {
-            findPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.notification.SettingPref.2
-                @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-                public boolean onPreferenceChange(Preference preference, Object obj) {
-                    return SettingPref.this.setSetting(activity, Integer.parseInt((String) obj));
-                }
-            });
-            return this.mDropDown;
         }
+        if (this.mDropDown == null) {
+            return null;
+        }
+        preferenceFindPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() { // from class: com.android.settings.notification.SettingPref.2
+            @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
+            public boolean onPreferenceChange(Preference preference, Object obj) {
+                return SettingPref.this.setSetting(activity, Integer.parseInt((String) obj));
+            }
+        });
+        return this.mDropDown;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean setSetting(Context context, int i) {
+    protected boolean setSetting(Context context, int i) {
         return putInt(this.mType, context.getContentResolver(), this.mSetting, i);
     }
 

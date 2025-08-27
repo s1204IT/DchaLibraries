@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.webkit.WebView;
 import java.util.HashMap;
+
 /* loaded from: classes.dex */
 public class DeviceAccountLogin implements AccountManagerCallback<Bundle> {
     private final AccountManager mAccountManager;
@@ -21,7 +22,6 @@ public class DeviceAccountLogin implements AccountManagerCallback<Bundle> {
     private final WebView mWebView;
     private final WebViewController mWebViewController;
 
-    /* loaded from: classes.dex */
     public interface AutoLoginCallback {
         void loginFailed();
     }
@@ -35,7 +35,6 @@ public class DeviceAccountLogin implements AccountManagerCallback<Bundle> {
     }
 
     public void handleLogin(String str, String str2, String str3) {
-        Account[] accountArr;
         this.mAccounts = this.mAccountManager.getAccountsByType(str);
         this.mAuthToken = "weblogin:" + str3;
         if (this.mAccounts.length == 0) {
@@ -57,9 +56,9 @@ public class DeviceAccountLogin implements AccountManagerCallback<Bundle> {
             if (string == null) {
                 loginFailed();
             } else {
-                HashMap hashMap = new HashMap();
-                hashMap.put(Browser.HEADER, Browser.UAPROF);
-                this.mWebView.loadUrl(string, hashMap);
+                HashMap map = new HashMap();
+                map.put(Browser.HEADER, Browser.UAPROF);
+                this.mWebView.loadUrl(string, map);
                 this.mTab.setDeviceAccountLogin(null);
                 if (this.mTab.inForeground()) {
                     this.mWebViewController.hideAutoLogin(this.mTab);

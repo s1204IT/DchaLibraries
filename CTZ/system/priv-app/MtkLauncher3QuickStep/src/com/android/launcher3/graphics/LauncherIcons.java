@@ -33,6 +33,7 @@ import com.android.launcher3.shortcuts.DeepShortcutManager;
 import com.android.launcher3.shortcuts.ShortcutInfoCompat;
 import com.android.launcher3.util.Provider;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class LauncherIcons implements AutoCloseable {
     private static final int DEFAULT_WRAPPER_BACKGROUND = -1;
@@ -99,7 +100,7 @@ public class LauncherIcons implements AutoCloseable {
         return this.mNormalizer;
     }
 
-    public BitmapInfo createIconBitmap(Intent.ShortcutIconResource shortcutIconResource) {
+    public BitmapInfo createIconBitmap(Intent.ShortcutIconResource shortcutIconResource) throws PackageManager.NameNotFoundException {
         try {
             Resources resourcesForApplication = this.mPm.getResourcesForApplication(shortcutIconResource.packageName);
             if (resourcesForApplication != null) {
@@ -122,27 +123,27 @@ public class LauncherIcons implements AutoCloseable {
     }
 
     public BitmapInfo createBadgedIconBitmap(Drawable drawable, UserHandle userHandle, int i, boolean z) {
-        Bitmap createIconBitmap;
+        Bitmap bitmapCreateIconBitmap;
         float[] fArr = new float[1];
-        Drawable normalizeAndWrapToAdaptiveIcon = normalizeAndWrapToAdaptiveIcon(drawable, i, null, fArr);
-        Bitmap createIconBitmap2 = createIconBitmap(normalizeAndWrapToAdaptiveIcon, fArr[0]);
-        if (Utilities.ATLEAST_OREO && (normalizeAndWrapToAdaptiveIcon instanceof AdaptiveIconDrawable)) {
-            this.mCanvas.setBitmap(createIconBitmap2);
-            getShadowGenerator().recreateIcon(Bitmap.createBitmap(createIconBitmap2), this.mCanvas);
+        Drawable drawableNormalizeAndWrapToAdaptiveIcon = normalizeAndWrapToAdaptiveIcon(drawable, i, null, fArr);
+        Bitmap bitmapCreateIconBitmap2 = createIconBitmap(drawableNormalizeAndWrapToAdaptiveIcon, fArr[0]);
+        if (Utilities.ATLEAST_OREO && (drawableNormalizeAndWrapToAdaptiveIcon instanceof AdaptiveIconDrawable)) {
+            this.mCanvas.setBitmap(bitmapCreateIconBitmap2);
+            getShadowGenerator().recreateIcon(Bitmap.createBitmap(bitmapCreateIconBitmap2), this.mCanvas);
             this.mCanvas.setBitmap(null);
         }
         if (userHandle != null && !Process.myUserHandle().equals(userHandle)) {
-            Drawable userBadgedIcon = this.mPm.getUserBadgedIcon(new FixedSizeBitmapDrawable(createIconBitmap2), userHandle);
+            Drawable userBadgedIcon = this.mPm.getUserBadgedIcon(new FixedSizeBitmapDrawable(bitmapCreateIconBitmap2), userHandle);
             if (userBadgedIcon instanceof BitmapDrawable) {
-                createIconBitmap = ((BitmapDrawable) userBadgedIcon).getBitmap();
+                bitmapCreateIconBitmap = ((BitmapDrawable) userBadgedIcon).getBitmap();
             } else {
-                createIconBitmap = createIconBitmap(userBadgedIcon, 1.0f);
+                bitmapCreateIconBitmap = createIconBitmap(userBadgedIcon, 1.0f);
             }
-            createIconBitmap2 = createIconBitmap;
+            bitmapCreateIconBitmap2 = bitmapCreateIconBitmap;
         } else if (z) {
-            badgeWithDrawable(createIconBitmap2, this.mContext.getDrawable(R.drawable.ic_instant_app_badge));
+            badgeWithDrawable(bitmapCreateIconBitmap2, this.mContext.getDrawable(R.drawable.ic_instant_app_badge));
         }
-        return BitmapInfo.fromBitmap(createIconBitmap2);
+        return BitmapInfo.fromBitmap(bitmapCreateIconBitmap2);
     }
 
     public Bitmap createScaledBitmapWithoutShadow(Drawable drawable, int i) {
@@ -183,13 +184,13 @@ public class LauncherIcons implements AutoCloseable {
         return drawable;
     }
 
-    public void badgeWithDrawable(Bitmap bitmap, Drawable drawable) {
+    public void badgeWithDrawable(Bitmap bitmap, Drawable drawable) throws Resources.NotFoundException {
         this.mCanvas.setBitmap(bitmap);
         badgeWithDrawable(this.mCanvas, drawable);
         this.mCanvas.setBitmap(null);
     }
 
-    private void badgeWithDrawable(Canvas canvas, Drawable drawable) {
+    private void badgeWithDrawable(Canvas canvas, Drawable drawable) throws Resources.NotFoundException {
         int dimensionPixelSize = this.mContext.getResources().getDimensionPixelSize(R.dimen.profile_badge_size);
         drawable.setBounds(this.mIconBitmapSize - dimensionPixelSize, this.mIconBitmapSize - dimensionPixelSize, this.mIconBitmapSize, this.mIconBitmapSize);
         drawable.draw(canvas);
@@ -219,15 +220,15 @@ public class LauncherIcons implements AutoCloseable {
         }
         int i3 = this.mIconBitmapSize;
         int i4 = this.mIconBitmapSize;
-        Bitmap createBitmap = Bitmap.createBitmap(i3, i4, Bitmap.Config.ARGB_8888);
-        this.mCanvas.setBitmap(createBitmap);
+        Bitmap bitmapCreateBitmap = Bitmap.createBitmap(i3, i4, Bitmap.Config.ARGB_8888);
+        this.mCanvas.setBitmap(bitmapCreateBitmap);
         int i5 = (i3 - i) / 2;
         int i6 = (i4 - i2) / 2;
         this.mOldBounds.set(drawable.getBounds());
         if (Utilities.ATLEAST_OREO && (drawable instanceof AdaptiveIconDrawable)) {
-            int max = Math.max((int) Math.ceil(0.010416667f * i3), Math.max(i5, i6));
-            int max2 = Math.max(i, i2) + max;
-            drawable.setBounds(max, max, max2, max2);
+            int iMax = Math.max((int) Math.ceil(0.010416667f * i3), Math.max(i5, i6));
+            int iMax2 = Math.max(i, i2) + iMax;
+            drawable.setBounds(iMax, iMax, iMax2, iMax2);
         } else {
             drawable.setBounds(i5, i6, i + i5, i2 + i6);
         }
@@ -237,7 +238,7 @@ public class LauncherIcons implements AutoCloseable {
         this.mCanvas.restore();
         drawable.setBounds(this.mOldBounds);
         this.mCanvas.setBitmap(null);
-        return createBitmap;
+        return bitmapCreateBitmap;
     }
 
     public BitmapInfo createShortcutIcon(ShortcutInfoCompat shortcutInfoCompat) {
@@ -249,35 +250,36 @@ public class LauncherIcons implements AutoCloseable {
     }
 
     public BitmapInfo createShortcutIcon(ShortcutInfoCompat shortcutInfoCompat, boolean z, @Nullable Provider<Bitmap> provider) {
-        final Bitmap bitmap;
-        Bitmap bitmap2;
+        final Bitmap bitmapCreateScaledBitmapWithoutShadow;
+        Bitmap bitmap;
         Drawable shortcutIconDrawable = DeepShortcutManager.getInstance(this.mContext).getShortcutIconDrawable(shortcutInfoCompat, this.mFillResIconDpi);
         IconCache iconCache = LauncherAppState.getInstance(this.mContext).getIconCache();
         if (shortcutIconDrawable != null) {
-            bitmap = createScaledBitmapWithoutShadow(shortcutIconDrawable, 0);
-        } else if (provider != null && (bitmap2 = provider.get()) != null) {
-            return createIconBitmap(bitmap2);
+            bitmapCreateScaledBitmapWithoutShadow = createScaledBitmapWithoutShadow(shortcutIconDrawable, 0);
         } else {
-            bitmap = iconCache.getDefaultIcon(Process.myUserHandle()).icon;
+            if (provider != null && (bitmap = provider.get()) != null) {
+                return createIconBitmap(bitmap);
+            }
+            bitmapCreateScaledBitmapWithoutShadow = iconCache.getDefaultIcon(Process.myUserHandle()).icon;
         }
         BitmapInfo bitmapInfo = new BitmapInfo();
         if (!z) {
             bitmapInfo.color = Themes.getColorAccent(this.mContext);
-            bitmapInfo.icon = bitmap;
+            bitmapInfo.icon = bitmapCreateScaledBitmapWithoutShadow;
             return bitmapInfo;
         }
         final ItemInfoWithIcon shortcutInfoBadge = getShortcutInfoBadge(shortcutInfoCompat, iconCache);
         bitmapInfo.color = shortcutInfoBadge.iconColor;
         bitmapInfo.icon = BitmapRenderer.createHardwareBitmap(this.mIconBitmapSize, this.mIconBitmapSize, new BitmapRenderer.Renderer() { // from class: com.android.launcher3.graphics.-$$Lambda$LauncherIcons$kILAslWtyiwsfY-0Zq978JNfOV4
             @Override // com.android.launcher3.graphics.BitmapRenderer.Renderer
-            public final void draw(Canvas canvas) {
-                LauncherIcons.lambda$createShortcutIcon$0(LauncherIcons.this, bitmap, shortcutInfoBadge, canvas);
+            public final void draw(Canvas canvas) throws Resources.NotFoundException {
+                LauncherIcons.lambda$createShortcutIcon$0(this.f$0, bitmapCreateScaledBitmapWithoutShadow, shortcutInfoBadge, canvas);
             }
         });
         return bitmapInfo;
     }
 
-    public static /* synthetic */ void lambda$createShortcutIcon$0(LauncherIcons launcherIcons, Bitmap bitmap, ItemInfoWithIcon itemInfoWithIcon, Canvas canvas) {
+    public static /* synthetic */ void lambda$createShortcutIcon$0(LauncherIcons launcherIcons, Bitmap bitmap, ItemInfoWithIcon itemInfoWithIcon, Canvas canvas) throws Resources.NotFoundException {
         launcherIcons.getShadowGenerator().recreateIcon(bitmap, canvas);
         launcherIcons.badgeWithDrawable(canvas, new FastBitmapDrawable(itemInfoWithIcon));
     }
@@ -299,9 +301,7 @@ public class LauncherIcons implements AutoCloseable {
         return packageItemInfo;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class FixedSizeBitmapDrawable extends BitmapDrawable {
+    private static class FixedSizeBitmapDrawable extends BitmapDrawable {
         public FixedSizeBitmapDrawable(Bitmap bitmap) {
             super((Resources) null, bitmap);
         }

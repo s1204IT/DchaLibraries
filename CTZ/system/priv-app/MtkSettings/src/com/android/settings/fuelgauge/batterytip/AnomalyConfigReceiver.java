@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class AnomalyConfigReceiver extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver

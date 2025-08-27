@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
 /* loaded from: classes.dex */
 public final class MapMaker extends GenericMapMaker<Object, Object> {
     Equivalence<Object> keyEquivalence;
@@ -31,9 +32,7 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
     long expireAfterWriteNanos = -1;
     long expireAfterAccessNanos = -1;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public enum RemovalCause {
+    enum RemovalCause {
         EXPLICIT { // from class: com.google.common.collect.MapMaker.RemovalCause.1
         },
         REPLACED { // from class: com.google.common.collect.MapMaker.RemovalCause.2
@@ -46,22 +45,18 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface RemovalListener<K, V> {
+    interface RemovalListener<K, V> {
         void onRemoval(RemovalNotification<K, V> removalNotification);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public MapMaker keyEquivalence(Equivalence<Object> equivalence) {
+    MapMaker keyEquivalence(Equivalence<Object> equivalence) {
         Preconditions.checkState(this.keyEquivalence == null, "key equivalence was already set to %s", this.keyEquivalence);
         this.keyEquivalence = (Equivalence) Preconditions.checkNotNull(equivalence);
         this.useCustomMap = true;
         return this;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Equivalence<Object> getKeyEquivalence() {
+    Equivalence<Object> getKeyEquivalence() {
         return (Equivalence) MoreObjects.firstNonNull(this.keyEquivalence, getKeyStrength().defaultEquivalence());
     }
 
@@ -72,17 +67,15 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         return this;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getInitialCapacity() {
+    int getInitialCapacity() {
         if (this.initialCapacity == -1) {
             return 16;
         }
         return this.initialCapacity;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Deprecated
-    public MapMaker maximumSize(int i) {
+    MapMaker maximumSize(int i) {
         Preconditions.checkState(this.maximumSize == -1, "maximum size was already set to %s", Integer.valueOf(this.maximumSize));
         Preconditions.checkArgument(i >= 0, "maximum size must not be negative");
         this.maximumSize = i;
@@ -100,8 +93,7 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         return this;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getConcurrencyLevel() {
+    int getConcurrencyLevel() {
         if (this.concurrencyLevel == -1) {
             return 4;
         }
@@ -112,8 +104,7 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         return setKeyStrength(MapMakerInternalMap.Strength.WEAK);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public MapMaker setKeyStrength(MapMakerInternalMap.Strength strength) {
+    MapMaker setKeyStrength(MapMakerInternalMap.Strength strength) {
         Preconditions.checkState(this.keyStrength == null, "Key strength was already set to %s", this.keyStrength);
         this.keyStrength = (MapMakerInternalMap.Strength) Preconditions.checkNotNull(strength);
         Preconditions.checkArgument(this.keyStrength != MapMakerInternalMap.Strength.SOFT, "Soft keys are not supported");
@@ -123,13 +114,11 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         return this;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public MapMakerInternalMap.Strength getKeyStrength() {
+    MapMakerInternalMap.Strength getKeyStrength() {
         return (MapMakerInternalMap.Strength) MoreObjects.firstNonNull(this.keyStrength, MapMakerInternalMap.Strength.STRONG);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public MapMaker setValueStrength(MapMakerInternalMap.Strength strength) {
+    MapMaker setValueStrength(MapMakerInternalMap.Strength strength) {
         Preconditions.checkState(this.valueStrength == null, "Value strength was already set to %s", this.valueStrength);
         this.valueStrength = (MapMakerInternalMap.Strength) Preconditions.checkNotNull(strength);
         if (strength != MapMakerInternalMap.Strength.STRONG) {
@@ -138,14 +127,12 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         return this;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public MapMakerInternalMap.Strength getValueStrength() {
+    MapMakerInternalMap.Strength getValueStrength() {
         return (MapMakerInternalMap.Strength) MoreObjects.firstNonNull(this.valueStrength, MapMakerInternalMap.Strength.STRONG);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Deprecated
-    public MapMaker expireAfterWrite(long j, TimeUnit timeUnit) {
+    MapMaker expireAfterWrite(long j, TimeUnit timeUnit) {
         checkExpiration(j, timeUnit);
         this.expireAfterWriteNanos = timeUnit.toNanos(j);
         if (j == 0 && this.nullRemovalCause == null) {
@@ -161,17 +148,15 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         Preconditions.checkArgument(j >= 0, "duration cannot be negative: %s %s", Long.valueOf(j), timeUnit);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public long getExpireAfterWriteNanos() {
+    long getExpireAfterWriteNanos() {
         if (this.expireAfterWriteNanos == -1) {
             return 0L;
         }
         return this.expireAfterWriteNanos;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Deprecated
-    public MapMaker expireAfterAccess(long j, TimeUnit timeUnit) {
+    MapMaker expireAfterAccess(long j, TimeUnit timeUnit) {
         checkExpiration(j, timeUnit);
         this.expireAfterAccessNanos = timeUnit.toNanos(j);
         if (j == 0 && this.nullRemovalCause == null) {
@@ -181,22 +166,19 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         return this;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public long getExpireAfterAccessNanos() {
+    long getExpireAfterAccessNanos() {
         if (this.expireAfterAccessNanos == -1) {
             return 0L;
         }
         return this.expireAfterAccessNanos;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public Ticker getTicker() {
+    Ticker getTicker() {
         return (Ticker) MoreObjects.firstNonNull(this.ticker, Ticker.systemTicker());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Deprecated
-    public <K, V> GenericMapMaker<K, V> removalListener(RemovalListener<K, V> removalListener) {
+    <K, V> GenericMapMaker<K, V> removalListener(RemovalListener<K, V> removalListener) {
         Preconditions.checkState(this.removalListener == null);
         this.removalListener = (RemovalListener) Preconditions.checkNotNull(removalListener);
         this.useCustomMap = true;
@@ -216,10 +198,9 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         return nullConcurrentMap;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.GenericMapMaker
     @Deprecated
-    public <K, V> ConcurrentMap<K, V> makeComputingMap(Function<? super K, ? extends V> function) {
+    <K, V> ConcurrentMap<K, V> makeComputingMap(Function<? super K, ? extends V> function) {
         ConcurrentMap<K, V> nullComputingConcurrentMap;
         if (this.nullRemovalCause == null) {
             nullComputingConcurrentMap = new ComputingMapAdapter<>(this, function);
@@ -261,20 +242,16 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         return stringHelper.toString();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static final class RemovalNotification<K, V> extends ImmutableEntry<K, V> {
+    static final class RemovalNotification<K, V> extends ImmutableEntry<K, V> {
         private static final long serialVersionUID = 0;
         private final RemovalCause cause;
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public RemovalNotification(K k, V v, RemovalCause removalCause) {
+        RemovalNotification(K k, V v, RemovalCause removalCause) {
             super(k, v);
             this.cause = removalCause;
         }
     }
 
-    /* loaded from: classes.dex */
     static class NullConcurrentMap<K, V> extends AbstractMap<K, V> implements Serializable, ConcurrentMap<K, V> {
         private static final long serialVersionUID = 0;
         private final RemovalCause removalCause;
@@ -347,7 +324,6 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         }
     }
 
-    /* loaded from: classes.dex */
     static final class NullComputingConcurrentMap<K, V> extends NullConcurrentMap<K, V> {
         private static final long serialVersionUID = 0;
         final Function<? super K, ? extends V> computingFunction;
@@ -359,10 +335,10 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
 
         @Override // com.google.common.collect.MapMaker.NullConcurrentMap, java.util.AbstractMap, java.util.Map
         public V get(Object obj) {
-            V compute = compute(obj);
-            Preconditions.checkNotNull(compute, "%s returned null for key %s.", this.computingFunction, obj);
-            notifyRemoval(obj, compute);
-            return compute;
+            V vCompute = compute(obj);
+            Preconditions.checkNotNull(vCompute, "%s returned null for key %s.", this.computingFunction, obj);
+            notifyRemoval(obj, vCompute);
+            return vCompute;
         }
 
         private V compute(K k) {
@@ -377,7 +353,6 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
         }
     }
 
-    /* loaded from: classes.dex */
     static final class ComputingMapAdapter<K, V> extends ComputingConcurrentHashMap<K, V> implements Serializable {
         private static final long serialVersionUID = 0;
 
@@ -385,9 +360,10 @@ public final class MapMaker extends GenericMapMaker<Object, Object> {
             super(mapMaker, function);
         }
 
+        /* JADX DEBUG: Multi-variable search result rejected for r4v0, resolved type: java.lang.Object */
         /* JADX WARN: Multi-variable type inference failed */
         @Override // com.google.common.collect.MapMakerInternalMap, java.util.AbstractMap, java.util.Map
-        public V get(Object obj) {
+        public V get(Object obj) throws Throwable {
             try {
                 V orCompute = getOrCompute(obj);
                 if (orCompute == null) {

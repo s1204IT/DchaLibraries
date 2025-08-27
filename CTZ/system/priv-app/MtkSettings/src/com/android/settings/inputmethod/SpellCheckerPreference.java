@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.textservice.SpellCheckerInfo;
 import com.android.settings.CustomListPreference;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 class SpellCheckerPreference extends CustomListPreference {
     private Intent mIntent;
@@ -52,19 +53,19 @@ class SpellCheckerPreference extends CustomListPreference {
     @Override // android.support.v7.preference.ListPreference
     public void setValue(String str) {
         super.setValue(str);
-        int parseInt = str != null ? Integer.parseInt(str) : -1;
-        if (parseInt == -1) {
+        int i = str != null ? Integer.parseInt(str) : -1;
+        if (i == -1) {
             this.mIntent = null;
             return;
         }
-        SpellCheckerInfo spellCheckerInfo = this.mScis[parseInt];
+        SpellCheckerInfo spellCheckerInfo = this.mScis[i];
         String settingsActivity = spellCheckerInfo.getSettingsActivity();
         if (TextUtils.isEmpty(settingsActivity)) {
             this.mIntent = null;
-            return;
+        } else {
+            this.mIntent = new Intent("android.intent.action.MAIN");
+            this.mIntent.setClassName(spellCheckerInfo.getPackageName(), settingsActivity);
         }
-        this.mIntent = new Intent("android.intent.action.MAIN");
-        this.mIntent.setClassName(spellCheckerInfo.getPackageName(), settingsActivity);
     }
 
     @Override // android.support.v7.preference.Preference
@@ -75,9 +76,9 @@ class SpellCheckerPreference extends CustomListPreference {
     @Override // android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        View findViewById = preferenceViewHolder.findViewById(R.id.settings_button);
-        findViewById.setVisibility(this.mIntent != null ? 0 : 4);
-        findViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.inputmethod.SpellCheckerPreference.1
+        View viewFindViewById = preferenceViewHolder.findViewById(R.id.settings_button);
+        viewFindViewById.setVisibility(this.mIntent != null ? 0 : 4);
+        viewFindViewById.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.inputmethod.SpellCheckerPreference.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 SpellCheckerPreference.this.onSettingsButtonClicked();
@@ -85,8 +86,7 @@ class SpellCheckerPreference extends CustomListPreference {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onSettingsButtonClicked() {
+    private void onSettingsButtonClicked() {
         Context context = getContext();
         try {
             Intent intent = this.mIntent;

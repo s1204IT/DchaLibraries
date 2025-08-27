@@ -2,6 +2,7 @@ package com.android.settings;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import com.android.settings.widget.DotsPageIndicator;
 import com.android.settings.widget.LabeledSeekBar;
+
 /* loaded from: classes.dex */
 public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenceFragment {
     protected int mActivityLayoutResId;
@@ -58,7 +60,6 @@ public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenc
 
     protected abstract Configuration createConfig(Configuration configuration, int i);
 
-    /* loaded from: classes.dex */
     private class onPreviewSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
         private boolean mSeekByTouch;
 
@@ -95,18 +96,18 @@ public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenc
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View onCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
-        ViewGroup viewGroup2 = (ViewGroup) onCreateView.findViewById(16908351);
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) throws Resources.NotFoundException {
+        View viewOnCreateView = super.onCreateView(layoutInflater, viewGroup, bundle);
+        ViewGroup viewGroup2 = (ViewGroup) viewOnCreateView.findViewById(android.R.id.list_container);
         viewGroup2.removeAllViews();
-        View inflate = layoutInflater.inflate(this.mActivityLayoutResId, viewGroup2, false);
-        viewGroup2.addView(inflate);
-        this.mLabel = (TextView) inflate.findViewById(R.id.current_label);
-        int max = Math.max(1, this.mEntries.length - 1);
-        this.mSeekBar = (LabeledSeekBar) inflate.findViewById(R.id.seek_bar);
+        View viewInflate = layoutInflater.inflate(this.mActivityLayoutResId, viewGroup2, false);
+        viewGroup2.addView(viewInflate);
+        this.mLabel = (TextView) viewInflate.findViewById(R.id.current_label);
+        int iMax = Math.max(1, this.mEntries.length - 1);
+        this.mSeekBar = (LabeledSeekBar) viewInflate.findViewById(R.id.seek_bar);
         this.mSeekBar.setLabels(this.mEntries);
-        this.mSeekBar.setMax(max);
-        this.mSmaller = inflate.findViewById(R.id.smaller);
+        this.mSeekBar.setMax(iMax);
+        this.mSmaller = viewInflate.findViewById(R.id.smaller);
         this.mSmaller.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.PreviewSeekBarPreferenceFragment.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
@@ -116,7 +117,7 @@ public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenc
                 }
             }
         });
-        this.mLarger = inflate.findViewById(R.id.larger);
+        this.mLarger = viewInflate.findViewById(R.id.larger);
         this.mLarger.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.PreviewSeekBarPreferenceFragment.2
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
@@ -136,12 +137,12 @@ public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenc
         for (int i = 0; i < this.mEntries.length; i++) {
             configurationArr[i] = createConfig(configuration, i);
         }
-        this.mPreviewPager = (ViewPager) inflate.findViewById(R.id.preview_pager);
+        this.mPreviewPager = (ViewPager) viewInflate.findViewById(R.id.preview_pager);
         this.mPreviewPagerAdapter = new PreviewPagerAdapter(context, z, this.mPreviewSampleResIds, configurationArr);
         this.mPreviewPager.setAdapter(this.mPreviewPagerAdapter);
         this.mPreviewPager.setCurrentItem(z ? this.mPreviewSampleResIds.length - 1 : 0);
         this.mPreviewPager.addOnPageChangeListener(this.mPreviewPageChangeListener);
-        this.mPageIndicator = (DotsPageIndicator) inflate.findViewById(R.id.page_indicator);
+        this.mPageIndicator = (DotsPageIndicator) viewInflate.findViewById(R.id.page_indicator);
         if (this.mPreviewSampleResIds.length > 1) {
             this.mPageIndicator.setViewPager(this.mPreviewPager);
             this.mPageIndicator.setVisibility(0);
@@ -150,7 +151,7 @@ public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenc
             this.mPageIndicator.setVisibility(8);
         }
         setPreviewLayer(this.mInitialIndex, false);
-        return onCreateView;
+        return viewOnCreateView;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.support.v14.preference.PreferenceFragment, android.app.Fragment
@@ -166,8 +167,7 @@ public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenc
         this.mSeekBar.setOnSeekBarChangeListener(null);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setPreviewLayer(int i, boolean z) {
+    private void setPreviewLayer(int i, boolean z) {
         this.mLabel.setText(this.mEntries[i]);
         this.mSmaller.setEnabled(i > 0);
         this.mLarger.setEnabled(i < this.mEntries.length - 1);
@@ -176,8 +176,7 @@ public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenc
         this.mCurrentIndex = i;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setPagerIndicatorContentDescription(int i) {
+    private void setPagerIndicatorContentDescription(int i) {
         this.mPageIndicator.setContentDescription(getPrefContext().getString(R.string.preview_page_indicator_content_description, Integer.valueOf(i + 1), Integer.valueOf(this.mPreviewSampleResIds.length)));
     }
 }

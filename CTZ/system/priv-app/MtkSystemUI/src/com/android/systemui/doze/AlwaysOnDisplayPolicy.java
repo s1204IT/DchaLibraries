@@ -9,6 +9,7 @@ import android.provider.Settings;
 import android.util.KeyValueListParser;
 import android.util.Log;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class AlwaysOnDisplayPolicy {
     public int[] dimmingScrimArray;
@@ -30,7 +31,6 @@ public class AlwaysOnDisplayPolicy {
         this.mSettingsObserver.observe();
     }
 
-    /* loaded from: classes.dex */
     private final class SettingsObserver extends ContentObserver {
         private final Uri ALWAYS_ON_DISPLAY_CONSTANTS_URI;
 

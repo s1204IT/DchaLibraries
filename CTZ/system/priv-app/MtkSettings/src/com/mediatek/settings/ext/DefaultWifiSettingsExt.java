@@ -9,6 +9,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class DefaultWifiSettingsExt implements IWifiSettingsExt {
     private static final String TAG = "DefaultWifiSettingsExt";

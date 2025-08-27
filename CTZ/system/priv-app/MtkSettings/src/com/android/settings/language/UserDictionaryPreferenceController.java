@@ -8,6 +8,7 @@ import com.android.settings.inputmethod.UserDictionaryList;
 import com.android.settings.inputmethod.UserDictionarySettings;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.TreeSet;
+
 /* loaded from: classes.dex */
 public class UserDictionaryPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     public UserDictionaryPreferenceController(Context context) {

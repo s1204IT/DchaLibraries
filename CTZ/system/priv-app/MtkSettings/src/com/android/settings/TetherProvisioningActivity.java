@@ -2,21 +2,23 @@ package com.android.settings;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.os.UserHandle;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class TetherProvisioningActivity extends Activity {
     private static final boolean DEBUG = Log.isLoggable("TetherProvisioningAct", 3);
     private ResultReceiver mResultReceiver;
 
     @Override // android.app.Activity
-    public void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) throws Resources.NotFoundException {
         super.onCreate(bundle);
         this.mResultReceiver = (ResultReceiver) getIntent().getParcelableExtra("extraProvisionCallback");
         int intExtra = getIntent().getIntExtra("extraAddTetherType", -1);
-        String[] stringArray = getResources().getStringArray(17236019);
+        String[] stringArray = getResources().getStringArray(android.R.array.config_companionPermSyncEnabledCerts);
         Intent intent = new Intent("android.intent.action.MAIN");
         intent.setClassName(stringArray[0], stringArray[1]);
         intent.putExtra("TETHER_TYPE", intExtra);

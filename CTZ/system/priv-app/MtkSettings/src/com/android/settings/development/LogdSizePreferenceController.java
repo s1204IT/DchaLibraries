@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.preference.Preference;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.AbstractLogdSizePreferenceController;
+
 /* loaded from: classes.dex */
 public class LogdSizePreferenceController extends AbstractLogdSizePreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     public LogdSizePreferenceController(Context context) {
@@ -15,9 +16,8 @@ public class LogdSizePreferenceController extends AbstractLogdSizePreferenceCont
         updateLogdSizeValues();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         writeLogdSizeOption(null);
     }

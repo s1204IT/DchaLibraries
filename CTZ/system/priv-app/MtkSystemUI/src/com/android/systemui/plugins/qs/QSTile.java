@@ -8,6 +8,7 @@ import com.android.systemui.plugins.annotations.DependsOn;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
 import java.util.Objects;
 import java.util.function.Supplier;
+
 @Dependencies({@DependsOn(target = QSIconView.class), @DependsOn(target = DetailAdapter.class), @DependsOn(target = Callback.class), @DependsOn(target = Icon.class), @DependsOn(target = State.class)})
 @ProvidesInterface(version = 1)
 /* loaded from: classes.dex */
@@ -15,7 +16,6 @@ public interface QSTile {
     public static final int VERSION = 1;
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public interface Callback {
         public static final int VERSION = 1;
 
@@ -75,7 +75,6 @@ public interface QSTile {
     }
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public static abstract class Icon {
         public static final int VERSION = 1;
 
@@ -95,7 +94,6 @@ public interface QSTile {
     }
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public static class State {
         public static final int VERSION = 1;
         public CharSequence contentDescription;
@@ -178,7 +176,6 @@ public interface QSTile {
     }
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public static class BooleanState extends State {
         public static final int VERSION = 1;
         public boolean value;
@@ -207,7 +204,6 @@ public interface QSTile {
     }
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public static final class SignalState extends BooleanState {
         public static final int VERSION = 1;
         public boolean activityIn;
@@ -230,7 +226,7 @@ public interface QSTile {
         protected StringBuilder toStringBuilder() {
             StringBuilder stringBuilder = super.toStringBuilder();
             stringBuilder.insert(stringBuilder.length() - 1, ",activityIn=" + this.activityIn);
-            stringBuilder.insert(stringBuilder.length() - 1, ",activityOut=" + this.activityOut);
+            stringBuilder.insert(stringBuilder.length() + (-1), ",activityOut=" + this.activityOut);
             return stringBuilder;
         }
 
@@ -243,7 +239,6 @@ public interface QSTile {
     }
 
     @ProvidesInterface(version = 1)
-    /* loaded from: classes.dex */
     public static class AirplaneBooleanState extends BooleanState {
         public static final int VERSION = 1;
         public boolean isAirplaneMode;
@@ -265,7 +260,6 @@ public interface QSTile {
     }
 
     @ProvidesInterface(version = 2)
-    /* loaded from: classes.dex */
     public static class SlashState {
         public static final int VERSION = 2;
         public boolean isSlashed;

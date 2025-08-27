@@ -9,6 +9,7 @@ import android.provider.Settings;
 import android.security.KeyStore;
 import android.util.Log;
 import com.android.internal.net.VpnConfig;
+
 /* loaded from: classes.dex */
 public class VpnUtils {
     public static String getLockdownVpn() {

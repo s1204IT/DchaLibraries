@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+
 /* loaded from: classes.dex */
 public class FingerprintDialogView extends LinearLayout {
     private boolean mAnimatingAway;
@@ -61,9 +62,8 @@ public class FingerprintDialogView extends LinearLayout {
         this.mErrorColor = Color.parseColor(getResources().getString(R.color.fingerprint_dialog_error_color));
         this.mTextColor = Color.parseColor(getResources().getString(R.color.fingerprint_dialog_text_light_color));
         this.mFingerprintColor = Color.parseColor(getResources().getString(R.color.fingerprint_dialog_fingerprint_color));
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        this.mWindowManager.getDefaultDisplay().getMetrics(displayMetrics);
-        this.mDisplayWidth = displayMetrics.widthPixels;
+        this.mWindowManager.getDefaultDisplay().getMetrics(new DisplayMetrics());
+        this.mDisplayWidth = r5.widthPixels;
         this.mLayout = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.fingerprint_dialog, (ViewGroup) this, false);
         addView(this.mLayout);
         this.mDialog = (LinearLayout) this.mLayout.findViewById(R.id.dialog);
@@ -87,22 +87,24 @@ public class FingerprintDialogView extends LinearLayout {
                 return true;
             }
         });
-        View findViewById = this.mLayout.findViewById(R.id.space);
-        View findViewById2 = this.mLayout.findViewById(R.id.left_space);
-        View findViewById3 = this.mLayout.findViewById(R.id.right_space);
-        setDismissesDialog(findViewById);
-        setDismissesDialog(findViewById2);
-        setDismissesDialog(findViewById3);
-        ((Button) this.mLayout.findViewById(R.id.button2)).setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.fingerprint.-$$Lambda$FingerprintDialogView$AY1LbNSslwKOa0l3N4uHVqoK1i4
+        View viewFindViewById = this.mLayout.findViewById(R.id.space);
+        View viewFindViewById2 = this.mLayout.findViewById(R.id.left_space);
+        View viewFindViewById3 = this.mLayout.findViewById(R.id.right_space);
+        Button button = (Button) this.mLayout.findViewById(R.id.button2);
+        Button button2 = (Button) this.mLayout.findViewById(R.id.button1);
+        setDismissesDialog(viewFindViewById);
+        setDismissesDialog(viewFindViewById2);
+        setDismissesDialog(viewFindViewById3);
+        button.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.fingerprint.-$$Lambda$FingerprintDialogView$AY1LbNSslwKOa0l3N4uHVqoK1i4
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                FingerprintDialogView.this.mHandler.obtainMessage(6).sendToTarget();
+                this.f$0.mHandler.obtainMessage(6).sendToTarget();
             }
         });
-        ((Button) this.mLayout.findViewById(R.id.button1)).setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.fingerprint.-$$Lambda$FingerprintDialogView$wK2wxIkjVyYpIRuSqdrv9YicRNI
+        button2.setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.fingerprint.-$$Lambda$FingerprintDialogView$wK2wxIkjVyYpIRuSqdrv9YicRNI
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                FingerprintDialogView.this.mHandler.obtainMessage(8).sendToTarget();
+                this.f$0.mHandler.obtainMessage(8).sendToTarget();
             }
         });
         this.mLayout.setFocusableInTouchMode(true);
@@ -163,7 +165,7 @@ public class FingerprintDialogView extends LinearLayout {
         view.setOnTouchListener(new View.OnTouchListener() { // from class: com.android.systemui.fingerprint.-$$Lambda$FingerprintDialogView$B8knj9fNUARFy_4W9AAQmquxejk
             @Override // android.view.View.OnTouchListener
             public final boolean onTouch(View view2, MotionEvent motionEvent) {
-                return FingerprintDialogView.lambda$setDismissesDialog$2(FingerprintDialogView.this, view2, motionEvent);
+                return FingerprintDialogView.lambda$setDismissesDialog$2(this.f$0, view2, motionEvent);
             }
         });
     }
@@ -207,8 +209,7 @@ public class FingerprintDialogView extends LinearLayout {
         this.mBundle = bundle;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void resetMessage() {
+    protected void resetMessage() {
         updateFingerprintIcon(1);
         this.mErrorText.setText(R.string.fingerprint_dialog_touch_sensor);
         this.mErrorText.setTextColor(this.mTextColor);
@@ -277,6 +278,7 @@ public class FingerprintDialogView extends LinearLayout {
         return this.mContext.getDrawable(i3);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getLayoutParams()Landroid/view/ViewGroup$LayoutParams; */
     @Override // android.view.View
     public WindowManager.LayoutParams getLayoutParams() {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(-1, -1, 2014, 16777216, -3);

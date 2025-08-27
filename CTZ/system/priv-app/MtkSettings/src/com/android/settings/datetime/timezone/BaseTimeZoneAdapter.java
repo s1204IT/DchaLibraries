@@ -14,6 +14,7 @@ import com.android.settings.datetime.timezone.BaseTimeZonePicker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class BaseTimeZoneAdapter<T extends AdapterItem> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     static final int TYPE_HEADER = 0;
@@ -27,7 +28,6 @@ public class BaseTimeZoneAdapter<T extends AdapterItem> extends RecyclerView.Ada
     private final boolean mShowHeader;
     private final boolean mShowItemSummary;
 
-    /* loaded from: classes.dex */
     public interface AdapterItem {
         String getCurrentTime();
 
@@ -55,17 +55,19 @@ public class BaseTimeZoneAdapter<T extends AdapterItem> extends RecyclerView.Ada
 
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        LayoutInflater from = LayoutInflater.from(viewGroup.getContext());
+        LayoutInflater layoutInflaterFrom = LayoutInflater.from(viewGroup.getContext());
         switch (i) {
             case 0:
-                return new HeaderViewHolder(from.inflate(R.layout.preference_category_material_settings, viewGroup, false));
+                return new HeaderViewHolder(layoutInflaterFrom.inflate(R.layout.preference_category_material_settings, viewGroup, false));
             case 1:
-                return new ItemViewHolder(from.inflate(R.layout.time_zone_search_item, viewGroup, false), this.mOnListItemClickListener);
+                return new ItemViewHolder(layoutInflaterFrom.inflate(R.layout.time_zone_search_item, viewGroup, false), this.mOnListItemClickListener);
             default:
                 throw new IllegalArgumentException("Unexpected viewType: " + i);
         }
     }
 
+    /* JADX DEBUG: Multi-variable search result rejected for r2v1, resolved type: com.android.settings.datetime.timezone.BaseTimeZoneAdapter$ItemViewHolder */
+    /* JADX WARN: Multi-variable type inference failed */
     @Override // android.support.v7.widget.RecyclerView.Adapter
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
         if (viewHolder instanceof HeaderViewHolder) {
@@ -119,13 +121,12 @@ public class BaseTimeZoneAdapter<T extends AdapterItem> extends RecyclerView.Ada
         return this.mItems.get(i - getHeaderCount());
     }
 
-    /* loaded from: classes.dex */
     private static class HeaderViewHolder extends RecyclerView.ViewHolder {
         private final TextView mTextView;
 
         public HeaderViewHolder(View view) {
             super(view);
-            this.mTextView = (TextView) view.findViewById(16908310);
+            this.mTextView = (TextView) view.findViewById(android.R.id.title);
         }
 
         public void setText(CharSequence charSequence) {
@@ -133,7 +134,6 @@ public class BaseTimeZoneAdapter<T extends AdapterItem> extends RecyclerView.Ada
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ItemViewHolder<T extends AdapterItem> extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView mIconTextView;
         private T mItem;
@@ -147,9 +147,9 @@ public class BaseTimeZoneAdapter<T extends AdapterItem> extends RecyclerView.Ada
             super(view);
             view.setOnClickListener(this);
             this.mSummaryFrame = view.findViewById(R.id.summary_frame);
-            this.mTitleView = (TextView) view.findViewById(16908310);
+            this.mTitleView = (TextView) view.findViewById(android.R.id.title);
             this.mIconTextView = (TextView) view.findViewById(R.id.icon_text);
-            this.mSummaryView = (TextView) view.findViewById(16908304);
+            this.mSummaryView = (TextView) view.findViewById(android.R.id.summary);
             this.mTimeView = (TextView) view.findViewById(R.id.current_time);
             this.mOnListItemClickListener = onListItemClickListener;
         }
@@ -168,7 +168,6 @@ public class BaseTimeZoneAdapter<T extends AdapterItem> extends RecyclerView.Ada
         }
     }
 
-    /* loaded from: classes.dex */
     public class ArrayFilter extends Filter {
         private BreakIterator mBreakIterator;
 

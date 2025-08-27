@@ -11,6 +11,7 @@ import com.android.systemui.statusbar.NotificationData;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class RemoteInputController {
     private static final boolean ENABLE_REMOTE_INPUT = SystemProperties.getBoolean("debug.enable_remote_input", true);
@@ -19,7 +20,6 @@ public class RemoteInputController {
     private final ArrayMap<String, Object> mSpinning = new ArrayMap<>();
     private final ArrayList<Callback> mCallbacks = new ArrayList<>(3);
 
-    /* loaded from: classes.dex */
     public interface Delegate {
         void lockScrollTo(NotificationData.Entry entry);
 
@@ -45,14 +45,13 @@ public class RemoteInputController {
                         int length = remoteInputs.length;
                         int i2 = 0;
                         while (true) {
-                            if (i2 < length) {
-                                if (!remoteInputs[i2].getAllowFreeFormInput()) {
-                                    i2++;
-                                } else {
-                                    action = action2;
-                                    break;
-                                }
+                            if (i2 >= length) {
+                                break;
+                            }
+                            if (!remoteInputs[i2].getAllowFreeFormInput()) {
+                                i2++;
                             } else {
+                                action = action2;
                                 break;
                             }
                         }
@@ -62,9 +61,9 @@ public class RemoteInputController {
                     }
                 }
                 if (action != null) {
-                    Notification.Builder recoverBuilder = Notification.Builder.recoverBuilder(context, notification);
-                    recoverBuilder.setActions(action);
-                    recoverBuilder.build();
+                    Notification.Builder builderRecoverBuilder = Notification.Builder.recoverBuilder(context, notification);
+                    builderRecoverBuilder.setActions(action);
+                    builderRecoverBuilder.build();
                 }
             }
         }
@@ -108,10 +107,10 @@ public class RemoteInputController {
 
     private void apply(NotificationData.Entry entry) {
         this.mDelegate.setRemoteInputActive(entry, isRemoteInputActive(entry));
-        boolean isRemoteInputActive = isRemoteInputActive();
+        boolean zIsRemoteInputActive = isRemoteInputActive();
         int size = this.mCallbacks.size();
         for (int i = 0; i < size; i++) {
-            this.mCallbacks.get(i).onRemoteInputActive(isRemoteInputActive);
+            this.mCallbacks.get(i).onRemoteInputActive(zIsRemoteInputActive);
         }
     }
 
@@ -182,7 +181,6 @@ public class RemoteInputController {
         this.mDelegate.lockScrollTo(entry);
     }
 
-    /* loaded from: classes.dex */
     public interface Callback {
         default void onRemoteInputActive(boolean z) {
         }

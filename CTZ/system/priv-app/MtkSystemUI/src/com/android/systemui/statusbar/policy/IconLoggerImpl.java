@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar.policy;
 
+import android.R;
 import android.content.Context;
 import android.metrics.LogMaker;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import com.android.internal.logging.MetricsLogger;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class IconLoggerImpl implements IconLogger {
     protected static long MIN_LOG_INTERVAL = 1000;
@@ -20,7 +22,7 @@ public class IconLoggerImpl implements IconLogger {
     private final Runnable mLog = new Runnable() { // from class: com.android.systemui.statusbar.policy.-$$Lambda$IconLoggerImpl$R-UnLK2IlCvdUfqG-_mI_-TEpe4
         @Override // java.lang.Runnable
         public final void run() {
-            IconLoggerImpl.this.doLog();
+            this.f$0.doLog();
         }
     };
     private final MetricsLogger mLogger;
@@ -29,7 +31,7 @@ public class IconLoggerImpl implements IconLogger {
         this.mContext = context;
         this.mHandler = new Handler(looper);
         this.mLogger = metricsLogger;
-        this.mIconIndex = Arrays.asList(this.mContext.getResources().getStringArray(17236037));
+        this.mIconIndex = Arrays.asList(this.mContext.getResources().getStringArray(R.array.config_deviceTabletopRotations));
         doLog();
     }
 
@@ -58,12 +60,11 @@ public class IconLoggerImpl implements IconLogger {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void doLog() {
+    private void doLog() {
         ArraySet<String> arraySet;
-        long currentTimeMillis = System.currentTimeMillis();
-        long j = currentTimeMillis - this.mLastLog;
-        this.mLastLog = currentTimeMillis;
+        long jCurrentTimeMillis = System.currentTimeMillis();
+        long j = jCurrentTimeMillis - this.mLastLog;
+        this.mLastLog = jCurrentTimeMillis;
         synchronized (this.mIcons) {
             arraySet = new ArraySet<>(this.mIcons);
         }
@@ -74,9 +75,9 @@ public class IconLoggerImpl implements IconLogger {
         Iterator<String> it = arraySet.iterator();
         int i = 0;
         while (it.hasNext()) {
-            int indexOf = this.mIconIndex.indexOf(it.next());
-            if (indexOf >= 0) {
-                i |= 1 << indexOf;
+            int iIndexOf = this.mIconIndex.indexOf(it.next());
+            if (iIndexOf >= 0) {
+                i |= 1 << iIndexOf;
             }
         }
         return i;

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 /* loaded from: classes.dex */
 public class BookmarkExpandableView extends ExpandableListView implements BreadCrumbView.Controller {
     private BookmarkAccountAdapter mAdapter;
@@ -45,12 +46,12 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
                 if (view.getVisibility() != 0) {
                     return;
                 }
-                int intValue = ((Integer) view.getTag(R.id.group_position)).intValue();
-                int intValue2 = ((Integer) view.getTag(R.id.child_position)).intValue();
-                if (BookmarkExpandableView.this.mAdapter.getGroupCount() > intValue && BookmarkExpandableView.this.mAdapter.mChildren.get(intValue).getCount() > intValue2) {
-                    long itemId = BookmarkExpandableView.this.mAdapter.mChildren.get(intValue).getItemId(intValue2);
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                int iIntValue2 = ((Integer) view.getTag(R.id.child_position)).intValue();
+                if (BookmarkExpandableView.this.mAdapter.getGroupCount() > iIntValue && BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getCount() > iIntValue2) {
+                    long itemId = BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getItemId(iIntValue2);
                     if (BookmarkExpandableView.this.mOnChildClickListener != null) {
-                        BookmarkExpandableView.this.mOnChildClickListener.onChildClick(BookmarkExpandableView.this, view, intValue, intValue2, itemId);
+                        BookmarkExpandableView.this.mOnChildClickListener.onChildClick(BookmarkExpandableView.this, view, iIntValue, iIntValue2, itemId);
                     }
                 }
             }
@@ -58,13 +59,13 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
         this.mGroupOnClickListener = new View.OnClickListener() { // from class: com.android.browser.view.BookmarkExpandableView.2
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
-                int intValue = ((Integer) view.getTag(R.id.group_position)).intValue();
-                if (BookmarkExpandableView.this.isGroupExpanded(intValue)) {
-                    BookmarkExpandableView.this.collapseGroup(intValue);
-                    return;
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                if (BookmarkExpandableView.this.isGroupExpanded(iIntValue)) {
+                    BookmarkExpandableView.this.collapseGroup(iIntValue);
+                } else {
+                    BookmarkExpandableView.this.hideAllGroups();
+                    BookmarkExpandableView.this.expandGroup(iIntValue, true);
                 }
-                BookmarkExpandableView.this.hideAllGroups();
-                BookmarkExpandableView.this.expandGroup(intValue, true);
             }
         };
         init(context);
@@ -79,12 +80,12 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
                 if (view.getVisibility() != 0) {
                     return;
                 }
-                int intValue = ((Integer) view.getTag(R.id.group_position)).intValue();
-                int intValue2 = ((Integer) view.getTag(R.id.child_position)).intValue();
-                if (BookmarkExpandableView.this.mAdapter.getGroupCount() > intValue && BookmarkExpandableView.this.mAdapter.mChildren.get(intValue).getCount() > intValue2) {
-                    long itemId = BookmarkExpandableView.this.mAdapter.mChildren.get(intValue).getItemId(intValue2);
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                int iIntValue2 = ((Integer) view.getTag(R.id.child_position)).intValue();
+                if (BookmarkExpandableView.this.mAdapter.getGroupCount() > iIntValue && BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getCount() > iIntValue2) {
+                    long itemId = BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getItemId(iIntValue2);
                     if (BookmarkExpandableView.this.mOnChildClickListener != null) {
-                        BookmarkExpandableView.this.mOnChildClickListener.onChildClick(BookmarkExpandableView.this, view, intValue, intValue2, itemId);
+                        BookmarkExpandableView.this.mOnChildClickListener.onChildClick(BookmarkExpandableView.this, view, iIntValue, iIntValue2, itemId);
                     }
                 }
             }
@@ -92,13 +93,13 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
         this.mGroupOnClickListener = new View.OnClickListener() { // from class: com.android.browser.view.BookmarkExpandableView.2
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
-                int intValue = ((Integer) view.getTag(R.id.group_position)).intValue();
-                if (BookmarkExpandableView.this.isGroupExpanded(intValue)) {
-                    BookmarkExpandableView.this.collapseGroup(intValue);
-                    return;
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                if (BookmarkExpandableView.this.isGroupExpanded(iIntValue)) {
+                    BookmarkExpandableView.this.collapseGroup(iIntValue);
+                } else {
+                    BookmarkExpandableView.this.hideAllGroups();
+                    BookmarkExpandableView.this.expandGroup(iIntValue, true);
                 }
-                BookmarkExpandableView.this.hideAllGroups();
-                BookmarkExpandableView.this.expandGroup(intValue, true);
             }
         };
         init(context);
@@ -113,12 +114,12 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
                 if (view.getVisibility() != 0) {
                     return;
                 }
-                int intValue = ((Integer) view.getTag(R.id.group_position)).intValue();
-                int intValue2 = ((Integer) view.getTag(R.id.child_position)).intValue();
-                if (BookmarkExpandableView.this.mAdapter.getGroupCount() > intValue && BookmarkExpandableView.this.mAdapter.mChildren.get(intValue).getCount() > intValue2) {
-                    long itemId = BookmarkExpandableView.this.mAdapter.mChildren.get(intValue).getItemId(intValue2);
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                int iIntValue2 = ((Integer) view.getTag(R.id.child_position)).intValue();
+                if (BookmarkExpandableView.this.mAdapter.getGroupCount() > iIntValue && BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getCount() > iIntValue2) {
+                    long itemId = BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getItemId(iIntValue2);
                     if (BookmarkExpandableView.this.mOnChildClickListener != null) {
-                        BookmarkExpandableView.this.mOnChildClickListener.onChildClick(BookmarkExpandableView.this, view, intValue, intValue2, itemId);
+                        BookmarkExpandableView.this.mOnChildClickListener.onChildClick(BookmarkExpandableView.this, view, iIntValue, iIntValue2, itemId);
                     }
                 }
             }
@@ -126,13 +127,13 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
         this.mGroupOnClickListener = new View.OnClickListener() { // from class: com.android.browser.view.BookmarkExpandableView.2
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
-                int intValue = ((Integer) view.getTag(R.id.group_position)).intValue();
-                if (BookmarkExpandableView.this.isGroupExpanded(intValue)) {
-                    BookmarkExpandableView.this.collapseGroup(intValue);
-                    return;
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                if (BookmarkExpandableView.this.isGroupExpanded(iIntValue)) {
+                    BookmarkExpandableView.this.collapseGroup(iIntValue);
+                } else {
+                    BookmarkExpandableView.this.hideAllGroups();
+                    BookmarkExpandableView.this.expandGroup(iIntValue, true);
                 }
-                BookmarkExpandableView.this.hideAllGroups();
-                BookmarkExpandableView.this.expandGroup(intValue, true);
             }
         };
         init(context);
@@ -169,9 +170,9 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
     }
 
     public void setColumnWidthFromLayout(int i) {
-        View inflate = LayoutInflater.from(this.mContext).inflate(i, (ViewGroup) this, false);
-        inflate.measure(0, 0);
-        this.mColumnWidth = inflate.getMeasuredWidth();
+        View viewInflate = LayoutInflater.from(this.mContext).inflate(i, (ViewGroup) this, false);
+        viewInflate.measure(0, 0);
+        this.mColumnWidth = viewInflate.getMeasuredWidth();
     }
 
     public void clearAccounts() {
@@ -179,13 +180,13 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
     }
 
     public void addAccount(String str, BrowserBookmarksAdapter browserBookmarksAdapter, boolean z) {
-        int indexOf = this.mAdapter.mGroups.indexOf(str);
-        if (indexOf >= 0) {
-            BrowserBookmarksAdapter browserBookmarksAdapter2 = this.mAdapter.mChildren.get(indexOf);
+        int iIndexOf = this.mAdapter.mGroups.indexOf(str);
+        if (iIndexOf >= 0) {
+            BrowserBookmarksAdapter browserBookmarksAdapter2 = this.mAdapter.mChildren.get(iIndexOf);
             if (browserBookmarksAdapter2 != browserBookmarksAdapter) {
                 browserBookmarksAdapter2.unregisterDataSetObserver(this.mAdapter.mObserver);
-                this.mAdapter.mChildren.remove(indexOf);
-                this.mAdapter.mChildren.add(indexOf, browserBookmarksAdapter);
+                this.mAdapter.mChildren.remove(iIndexOf);
+                this.mAdapter.mChildren.add(iIndexOf, browserBookmarksAdapter);
                 browserBookmarksAdapter.registerDataSetObserver(this.mAdapter.mObserver);
             }
         } else {
@@ -290,9 +291,7 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
         return jSONObject;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class BookmarkAccountAdapter extends BaseExpandableListAdapter {
+    class BookmarkAccountAdapter extends BaseExpandableListAdapter {
         ArrayList<BrowserBookmarksAdapter> mChildren;
         ArrayList<String> mGroups;
         LayoutInflater mInflater;
@@ -347,30 +346,30 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
                 linearLayout.removeViews(i3, linearLayout.getChildCount() - i3);
             }
             for (int i4 = 0; i4 < i3; i4++) {
-                View view2 = null;
+                View childAt = null;
                 if (linearLayout.getChildCount() > i4) {
-                    view2 = linearLayout.getChildAt(i4);
+                    childAt = linearLayout.getChildAt(i4);
                 }
                 int i5 = (i2 * i3) + i4;
                 if (i5 < browserBookmarksAdapter.getCount()) {
-                    View view3 = browserBookmarksAdapter.getView(i5, view2, linearLayout);
-                    view3.setTag(R.id.group_position, Integer.valueOf(i));
-                    view3.setTag(R.id.child_position, Integer.valueOf(i5));
-                    view3.setOnClickListener(BookmarkExpandableView.this.mChildClickListener);
-                    view3.setLongClickable(BookmarkExpandableView.this.mLongClickable);
+                    View view2 = browserBookmarksAdapter.getView(i5, childAt, linearLayout);
+                    view2.setTag(R.id.group_position, Integer.valueOf(i));
+                    view2.setTag(R.id.child_position, Integer.valueOf(i5));
+                    view2.setOnClickListener(BookmarkExpandableView.this.mChildClickListener);
+                    view2.setLongClickable(BookmarkExpandableView.this.mLongClickable);
                     if (linearLayout.getChildCount() > 1) {
-                        view3.setPadding(linearLayout.getChildAt(0).getPaddingLeft(), linearLayout.getChildAt(0).getPaddingTop(), linearLayout.getChildAt(0).getPaddingRight(), linearLayout.getChildAt(0).getPaddingBottom());
+                        view2.setPadding(linearLayout.getChildAt(0).getPaddingLeft(), linearLayout.getChildAt(0).getPaddingTop(), linearLayout.getChildAt(0).getPaddingRight(), linearLayout.getChildAt(0).getPaddingBottom());
                     }
-                    if (view2 == null) {
-                        linearLayout.addView(view3);
-                    } else if (view2 != view3) {
+                    if (childAt == null) {
+                        linearLayout.addView(view2);
+                    } else if (childAt != view2) {
                         linearLayout.removeViewAt(i4);
-                        linearLayout.addView(view3, i4);
+                        linearLayout.addView(view2, i4);
                     } else {
-                        view2.setVisibility(0);
+                        childAt.setVisibility(0);
                     }
-                } else if (view2 != null) {
-                    view2.setVisibility(8);
+                } else if (childAt != null) {
+                    childAt.setVisibility(8);
                 }
             }
             return linearLayout;
@@ -395,14 +394,14 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
             if (this.mLastViewWidth == i) {
                 return;
             }
-            int i2 = i / BookmarkExpandableView.this.mColumnWidth;
+            int iMin = i / BookmarkExpandableView.this.mColumnWidth;
             if (BookmarkExpandableView.this.mMaxColumnCount > 0) {
-                i2 = Math.min(i2, BookmarkExpandableView.this.mMaxColumnCount);
+                iMin = Math.min(iMin, BookmarkExpandableView.this.mMaxColumnCount);
             }
-            int i3 = (i - (BookmarkExpandableView.this.mColumnWidth * i2)) / 2;
-            boolean z = (i2 == this.mRowCount && i3 == this.mRowPadding) ? false : true;
-            this.mRowCount = i2;
-            this.mRowPadding = i3;
+            int i2 = (i - (BookmarkExpandableView.this.mColumnWidth * iMin)) / 2;
+            boolean z = (iMin == this.mRowCount && i2 == this.mRowPadding) ? false : true;
+            this.mRowCount = iMin;
+            this.mRowPadding = i2;
             this.mLastViewWidth = i;
             if (z) {
                 notifyDataSetChanged();
@@ -429,11 +428,11 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
             }
             frameLayout.addView(breadCrumbView);
             TextView textView = (TextView) view.findViewById(R.id.group_name);
-            String str = this.mGroups.get(i);
-            if (str == null) {
-                str = BookmarkExpandableView.this.mContext.getString(R.string.local_bookmarks);
+            String string = this.mGroups.get(i);
+            if (string == null) {
+                string = BookmarkExpandableView.this.mContext.getString(R.string.local_bookmarks);
             }
-            textView.setText(str);
+            textView.setText(string);
             return view;
         }
 
@@ -464,7 +463,6 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
         }
     }
 
-    /* loaded from: classes.dex */
     public static class BookmarkContextMenuInfo implements ContextMenu.ContextMenuInfo {
         public int childPosition;
         public int groupPosition;

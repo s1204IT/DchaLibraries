@@ -17,6 +17,7 @@ import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.TransformableView;
 import com.android.systemui.statusbar.ViewTransformationHelper;
 import java.util.Stack;
+
 /* loaded from: classes.dex */
 public class NotificationHeaderViewWrapper extends NotificationViewWrapper {
     private static final Interpolator LOW_PRIORITY_HEADER_CLOSE = new PathInterpolator(0.4f, 0.0f, 0.7f, 1.0f);
@@ -33,12 +34,15 @@ public class NotificationHeaderViewWrapper extends NotificationViewWrapper {
     private final int mTranslationForHeader;
     private ImageView mWorkProfileImage;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public NotificationHeaderViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
+    protected NotificationHeaderViewWrapper(Context context, View view, ExpandableNotificationRow expandableNotificationRow) {
         super(context, view, expandableNotificationRow);
         this.mShowExpandButtonAtEnd = context.getResources().getBoolean(R.bool.config_showNotificationExpandButtonAtEnd);
         this.mTransformationHelper = new ViewTransformationHelper();
         this.mTransformationHelper.setCustomTransformation(new CustomInterpolatorTransformation(1) { // from class: com.android.systemui.statusbar.notification.NotificationHeaderViewWrapper.1
+            AnonymousClass1(int i) {
+                super(i);
+            }
+
             @Override // com.android.systemui.statusbar.ViewTransformationHelper.CustomTransformation
             public Interpolator getCustomInterpolator(int i, boolean z) {
                 boolean z2 = NotificationHeaderViewWrapper.this.mView instanceof NotificationHeaderView;
@@ -58,15 +62,39 @@ public class NotificationHeaderViewWrapper extends NotificationViewWrapper {
         }, 1);
         resolveHeaderViews();
         addAppOpsOnClickListener(expandableNotificationRow);
-        this.mTranslationForHeader = context.getResources().getDimensionPixelSize(17105198) - context.getResources().getDimensionPixelSize(17105201);
+        this.mTranslationForHeader = context.getResources().getDimensionPixelSize(android.R.dimen.datepicker_selected_date_month_size) - context.getResources().getDimensionPixelSize(android.R.dimen.datepicker_year_label_height);
+    }
+
+    /* renamed from: com.android.systemui.statusbar.notification.NotificationHeaderViewWrapper$1 */
+    class AnonymousClass1 extends CustomInterpolatorTransformation {
+        AnonymousClass1(int i) {
+            super(i);
+        }
+
+        @Override // com.android.systemui.statusbar.ViewTransformationHelper.CustomTransformation
+        public Interpolator getCustomInterpolator(int i, boolean z) {
+            boolean z2 = NotificationHeaderViewWrapper.this.mView instanceof NotificationHeaderView;
+            if (i == 16) {
+                if ((!z2 || z) && (z2 || !z)) {
+                    return NotificationHeaderViewWrapper.LOW_PRIORITY_HEADER_CLOSE;
+                }
+                return Interpolators.LINEAR_OUT_SLOW_IN;
+            }
+            return null;
+        }
+
+        @Override // com.android.systemui.statusbar.notification.CustomInterpolatorTransformation
+        protected boolean hasCustomTransformation() {
+            return NotificationHeaderViewWrapper.this.mIsLowPriority && NotificationHeaderViewWrapper.this.mTransformLowPriorityTitle;
+        }
     }
 
     protected void resolveHeaderViews() {
-        this.mIcon = (ImageView) this.mView.findViewById(16908294);
-        this.mHeaderText = (TextView) this.mView.findViewById(16908938);
-        this.mExpandButton = this.mView.findViewById(16908862);
-        this.mWorkProfileImage = (ImageView) this.mView.findViewById(16909202);
-        this.mNotificationHeader = this.mView.findViewById(16909117);
+        this.mIcon = (ImageView) this.mView.findViewById(android.R.id.icon);
+        this.mHeaderText = (TextView) this.mView.findViewById(android.R.id.conversation_icon);
+        this.mExpandButton = this.mView.findViewById(android.R.id.by_org_unit);
+        this.mWorkProfileImage = (ImageView) this.mView.findViewById(android.R.id.leftPanel);
+        this.mNotificationHeader = this.mView.findViewById(android.R.id.icon_menu);
         this.mNotificationHeader.setShowExpandButtonAtEnd(this.mShowExpandButtonAtEnd);
         this.mColor = this.mNotificationHeader.getOriginalIconColor();
     }
@@ -90,9 +118,9 @@ public class NotificationHeaderViewWrapper extends NotificationViewWrapper {
         this.mWorkProfileImage.setTag(R.id.image_icon_tag, notification.getSmallIcon());
         ArraySet<View> allTransformingViews2 = this.mTransformationHelper.getAllTransformingViews();
         for (int i = 0; i < allTransformingViews.size(); i++) {
-            View valueAt = allTransformingViews.valueAt(i);
-            if (!allTransformingViews2.contains(valueAt)) {
-                this.mTransformationHelper.resetTransformedView(valueAt);
+            View viewValueAt = allTransformingViews.valueAt(i);
+            if (!allTransformingViews2.contains(viewValueAt)) {
+                this.mTransformationHelper.resetTransformedView(viewValueAt);
             }
         }
     }
@@ -117,8 +145,7 @@ public class NotificationHeaderViewWrapper extends NotificationViewWrapper {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void updateTransformedTypes() {
+    protected void updateTransformedTypes() {
         this.mTransformationHelper.reset();
         this.mTransformationHelper.addTransformedView(0, this.mIcon);
         if (this.mIsLowPriority) {

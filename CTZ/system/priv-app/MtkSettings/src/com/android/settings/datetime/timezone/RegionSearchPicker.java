@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 /* loaded from: classes.dex */
 public class RegionSearchPicker extends BaseTimeZonePicker {
     private BaseTimeZoneAdapter<RegionItem> mAdapter;
@@ -38,32 +39,31 @@ public class RegionSearchPicker extends BaseTimeZonePicker {
         this.mAdapter = new BaseTimeZoneAdapter<>(createAdapterItem(timeZoneData.getRegionIds()), new BaseTimeZonePicker.OnListItemClickListener() { // from class: com.android.settings.datetime.timezone.-$$Lambda$RegionSearchPicker$DOJaHroZb7JziN-vdZ6PwdoM4gg
             @Override // com.android.settings.datetime.timezone.BaseTimeZonePicker.OnListItemClickListener
             public final void onListItemClick(BaseTimeZoneAdapter.AdapterItem adapterItem) {
-                RegionSearchPicker.this.onListItemClick((RegionSearchPicker.RegionItem) adapterItem);
+                this.f$0.onListItemClick((RegionSearchPicker.RegionItem) adapterItem);
             }
         }, getLocale(), false, null);
         return this.mAdapter;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onListItemClick(RegionItem regionItem) {
+    private void onListItemClick(RegionItem regionItem) {
         String id = regionItem.getId();
-        FilteredCountryTimeZones lookupCountryTimeZones = this.mTimeZoneData.lookupCountryTimeZones(id);
+        FilteredCountryTimeZones filteredCountryTimeZonesLookupCountryTimeZones = this.mTimeZoneData.lookupCountryTimeZones(id);
         Activity activity = getActivity();
-        if (lookupCountryTimeZones == null || lookupCountryTimeZones.getTimeZoneIds().isEmpty()) {
+        if (filteredCountryTimeZonesLookupCountryTimeZones == null || filteredCountryTimeZonesLookupCountryTimeZones.getTimeZoneIds().isEmpty()) {
             Log.e("RegionSearchPicker", "Region has no time zones: " + id);
             activity.setResult(0);
             activity.finish();
             return;
         }
-        List<String> timeZoneIds = lookupCountryTimeZones.getTimeZoneIds();
+        List<String> timeZoneIds = filteredCountryTimeZonesLookupCountryTimeZones.getTimeZoneIds();
         if (timeZoneIds.size() == 1) {
             getActivity().setResult(-1, new Intent().putExtra("com.android.settings.datetime.timezone.result_region_id", id).putExtra("com.android.settings.datetime.timezone.result_time_zone_id", timeZoneIds.get(0)));
             getActivity().finish();
-            return;
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putString("com.android.settings.datetime.timezone.region_id", id);
+            new SubSettingLauncher(getContext()).setDestination(RegionZonePicker.class.getCanonicalName()).setArguments(bundle).setSourceMetricsCategory(getMetricsCategory()).setResultListener(this, 1).launch();
         }
-        Bundle bundle = new Bundle();
-        bundle.putString("com.android.settings.datetime.timezone.region_id", id);
-        new SubSettingLauncher(getContext()).setDestination(RegionZonePicker.class.getCanonicalName()).setArguments(bundle).setSourceMetricsCategory(getMetricsCategory()).setResultListener(this, 1).launch();
     }
 
     @Override // android.app.Fragment
@@ -87,9 +87,7 @@ public class RegionSearchPicker extends BaseTimeZonePicker {
         return new ArrayList(treeSet);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class RegionItem implements BaseTimeZoneAdapter.AdapterItem {
+    static class RegionItem implements BaseTimeZoneAdapter.AdapterItem {
         private final String mId;
         private final long mItemId;
         private final String mName;
@@ -137,15 +135,14 @@ public class RegionSearchPicker extends BaseTimeZonePicker {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class RegionInfoComparator implements Comparator<RegionItem> {
+    private static class RegionInfoComparator implements Comparator<RegionItem> {
         private final Collator mCollator;
 
         RegionInfoComparator(Collator collator) {
             this.mCollator = collator;
         }
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(RegionItem regionItem, RegionItem regionItem2) {
             return this.mCollator.compare(regionItem.getTitle(), regionItem2.getTitle());

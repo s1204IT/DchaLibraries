@@ -5,12 +5,12 @@ import android.graphics.Canvas;
 import android.view.View;
 import com.android.browser.R;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class PieStackView extends BasePieView {
     private OnCurrentListener mCurrentListener;
     private int mMinHeight;
 
-    /* loaded from: classes.dex */
     public interface OnCurrentListener {
         void onSetCurrent(int i);
     }
@@ -50,12 +50,14 @@ public class PieStackView extends BasePieView {
         int i2 = size == 1 ? 0 : (this.mHeight - this.mChildHeight) / (size - 1);
         Iterator<View> it = this.mViews.iterator();
         while (it.hasNext()) {
+            View next = it.next();
             int i3 = this.mLeft;
-            it.next().layout(i3, i, this.mChildWidth + i3, this.mChildHeight + i);
+            next.layout(i3, i, this.mChildWidth + i3, this.mChildHeight + i);
             i += i2;
         }
     }
 
+    /* JADX DEBUG: Move duplicate insns, count: 1 to block B:11:0x0024 */
     @Override // com.android.browser.view.PieMenu.PieView
     public void draw(Canvas canvas) {
         if (this.mViews != null && this.mCurrent > -1) {

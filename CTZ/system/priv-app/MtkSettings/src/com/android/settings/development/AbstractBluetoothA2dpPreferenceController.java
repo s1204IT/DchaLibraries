@@ -14,6 +14,7 @@ import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnDestroy;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public abstract class AbstractBluetoothA2dpPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, BluetoothServiceConnectionListener, LifecycleObserver, OnDestroy {
     static final int STREAMING_LABEL_ID = 2131886889;
@@ -57,17 +58,17 @@ public abstract class AbstractBluetoothA2dpPreferenceController extends Develope
             return false;
         }
         writeConfigurationValues(obj);
-        BluetoothCodecConfig createCodecConfig = this.mBluetoothA2dpConfigStore.createCodecConfig();
+        BluetoothCodecConfig bluetoothCodecConfigCreateCodecConfig = this.mBluetoothA2dpConfigStore.createCodecConfig();
         synchronized (this.mBluetoothA2dpConfigStore) {
             if (this.mBluetoothA2dp != null) {
-                setCodecConfigPreference(null, createCodecConfig);
+                setCodecConfigPreference(null, bluetoothCodecConfigCreateCodecConfig);
             }
         }
-        int findIndexOfValue = this.mPreference.findIndexOfValue(obj.toString());
-        if (findIndexOfValue == getDefaultIndex()) {
-            this.mPreference.setSummary(this.mListSummaries[findIndexOfValue]);
+        int iFindIndexOfValue = this.mPreference.findIndexOfValue(obj.toString());
+        if (iFindIndexOfValue == getDefaultIndex()) {
+            this.mPreference.setSummary(this.mListSummaries[iFindIndexOfValue]);
         } else {
-            this.mPreference.setSummary(this.mContext.getResources().getString(R.string.bluetooth_select_a2dp_codec_streaming_label, this.mListSummaries[findIndexOfValue]));
+            this.mPreference.setSummary(this.mContext.getResources().getString(R.string.bluetooth_select_a2dp_codec_streaming_label, this.mListSummaries[iFindIndexOfValue]));
         }
         return true;
     }

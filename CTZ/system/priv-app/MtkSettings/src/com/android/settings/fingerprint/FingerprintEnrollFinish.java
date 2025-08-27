@@ -7,11 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import com.android.settings.R;
 import com.android.settings.Utils;
+
 /* loaded from: classes.dex */
 public class FingerprintEnrollFinish extends FingerprintEnrollBase {
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.fingerprint.FingerprintEnrollBase, com.android.settings.core.InstrumentedActivity, com.android.settingslib.core.lifecycle.ObservableActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.fingerprint_enroll_finish);
         setHeaderText(R.string.security_settings_fingerprint_enroll_finish_title);
@@ -23,7 +23,7 @@ public class FingerprintEnrollFinish extends FingerprintEnrollBase {
         Button button = (Button) findViewById(R.id.add_another_button);
         FingerprintManager fingerprintManagerOrNull = Utils.getFingerprintManagerOrNull(this);
         boolean z = false;
-        if (fingerprintManagerOrNull != null && fingerprintManagerOrNull.getEnrolledFingerprints(this.mUserId).size() >= getResources().getInteger(17694789)) {
+        if (fingerprintManagerOrNull != null && fingerprintManagerOrNull.getEnrolledFingerprints(this.mUserId).size() >= getResources().getInteger(android.R.integer.config_datause_polling_period_sec)) {
             z = true;
         }
         if (z) {
@@ -52,9 +52,9 @@ public class FingerprintEnrollFinish extends FingerprintEnrollBase {
         if (i == 1 && i2 != 0) {
             setResult(i2, intent);
             finish();
-            return;
+        } else {
+            super.onActivityResult(i, i2, intent);
         }
-        super.onActivityResult(i, i2, intent);
     }
 
     @Override // com.android.settingslib.core.instrumentation.Instrumentable

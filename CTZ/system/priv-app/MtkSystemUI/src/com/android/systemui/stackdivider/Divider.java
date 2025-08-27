@@ -1,6 +1,7 @@
 package com.android.systemui.stackdivider;
 
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.RemoteException;
 import android.view.IDockedStackListener;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import com.android.systemui.recents.events.ui.RecentsDrawnEvent;
 import com.android.systemui.stackdivider.Divider;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class Divider extends SystemUI {
     private DockDividerVisibilityListener mDockDividerVisibilityListener;
@@ -26,7 +28,7 @@ public class Divider extends SystemUI {
     private boolean mHomeStackResizable = false;
 
     @Override // com.android.systemui.SystemUI
-    public void start() {
+    public void start() throws Resources.NotFoundException, NoSuchMethodException, SecurityException {
         this.mWindowManager = new DividerWindowManager(this.mContext);
         update(this.mContext.getResources().getConfiguration());
         putComponent(Divider.class, this);
@@ -36,9 +38,8 @@ public class Divider extends SystemUI {
         EventBus.getDefault().register(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.SystemUI
-    public void onConfigurationChanged(Configuration configuration) {
+    protected void onConfigurationChanged(Configuration configuration) throws Resources.NotFoundException {
         super.onConfigurationChanged(configuration);
         update(configuration);
     }
@@ -55,12 +56,12 @@ public class Divider extends SystemUI {
         return this.mHomeStackResizable;
     }
 
-    private void addDivider(Configuration configuration) {
+    private void addDivider(Configuration configuration) throws Resources.NotFoundException {
         this.mView = (DividerView) LayoutInflater.from(this.mContext).inflate(R.layout.docked_stack_divider, (ViewGroup) null);
         this.mView.injectDependencies(this.mWindowManager, this.mDividerState);
         this.mView.setVisibility(this.mVisible ? 0 : 4);
         this.mView.setMinimizedDockStack(this.mMinimized, this.mHomeStackResizable);
-        int dimensionPixelSize = this.mContext.getResources().getDimensionPixelSize(17105034);
+        int dimensionPixelSize = this.mContext.getResources().getDimensionPixelSize(android.R.dimen.car_padding_2);
         boolean z = configuration.orientation == 2;
         int i = -1;
         int i2 = z ? dimensionPixelSize : -1;
@@ -77,7 +78,7 @@ public class Divider extends SystemUI {
         this.mWindowManager.remove();
     }
 
-    private void update(Configuration configuration) {
+    private void update(Configuration configuration) throws Resources.NotFoundException {
         removeDivider();
         addDivider(configuration);
         if (this.mMinimized) {
@@ -86,9 +87,32 @@ public class Divider extends SystemUI {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateVisibility(final boolean z) {
+    /* renamed from: com.android.systemui.stackdivider.Divider$1 */
+    class AnonymousClass1 implements Runnable {
+        final /* synthetic */ boolean val$visible;
+
+        AnonymousClass1(boolean z) {
+            z = z;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (Divider.this.mVisible != z) {
+                Divider.this.mVisible = z;
+                Divider.this.mView.setVisibility(z ? 0 : 4);
+                Divider.this.mView.setMinimizedDockStack(Divider.this.mMinimized, Divider.this.mHomeStackResizable);
+            }
+        }
+    }
+
+    private void updateVisibility(boolean z) {
         this.mView.post(new Runnable() { // from class: com.android.systemui.stackdivider.Divider.1
+            final /* synthetic */ boolean val$visible;
+
+            AnonymousClass1(boolean z2) {
+                z = z2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 if (Divider.this.mVisible != z) {
@@ -100,28 +124,83 @@ public class Divider extends SystemUI {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateMinimizedDockedStack(final boolean z, final long j, final boolean z2) {
+    /* renamed from: com.android.systemui.stackdivider.Divider$2 */
+    class AnonymousClass2 implements Runnable {
+        final /* synthetic */ long val$animDuration;
+        final /* synthetic */ boolean val$isHomeStackResizable;
+        final /* synthetic */ boolean val$minimized;
+
+        AnonymousClass2(boolean z, boolean z2, long j) {
+            z = z;
+            z = z2;
+            j = j;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            Divider.this.mHomeStackResizable = z;
+            if (Divider.this.mMinimized != z) {
+                Divider.this.mMinimized = z;
+                Divider.this.updateTouchable();
+                if (j > 0) {
+                    Divider.this.mView.setMinimizedDockStack(z, j, z);
+                } else {
+                    Divider.this.mView.setMinimizedDockStack(z, z);
+                }
+            }
+        }
+    }
+
+    private void updateMinimizedDockedStack(boolean z, long j, boolean z2) {
         this.mView.post(new Runnable() { // from class: com.android.systemui.stackdivider.Divider.2
+            final /* synthetic */ long val$animDuration;
+            final /* synthetic */ boolean val$isHomeStackResizable;
+            final /* synthetic */ boolean val$minimized;
+
+            AnonymousClass2(boolean z22, boolean z3, long j2) {
+                z = z22;
+                z = z3;
+                j = j2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
-                Divider.this.mHomeStackResizable = z2;
+                Divider.this.mHomeStackResizable = z;
                 if (Divider.this.mMinimized != z) {
                     Divider.this.mMinimized = z;
                     Divider.this.updateTouchable();
                     if (j > 0) {
-                        Divider.this.mView.setMinimizedDockStack(z, j, z2);
+                        Divider.this.mView.setMinimizedDockStack(z, j, z);
                     } else {
-                        Divider.this.mView.setMinimizedDockStack(z, z2);
+                        Divider.this.mView.setMinimizedDockStack(z, z);
                     }
                 }
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void notifyDockedStackExistsChanged(final boolean z) {
+    /* renamed from: com.android.systemui.stackdivider.Divider$3 */
+    class AnonymousClass3 implements Runnable {
+        final /* synthetic */ boolean val$exists;
+
+        AnonymousClass3(boolean z) {
+            z = z;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            Divider.this.mForcedResizableController.notifyDockedStackExistsChanged(z);
+        }
+    }
+
+    private void notifyDockedStackExistsChanged(boolean z) {
         this.mView.post(new Runnable() { // from class: com.android.systemui.stackdivider.Divider.3
+            final /* synthetic */ boolean val$exists;
+
+            AnonymousClass3(boolean z2) {
+                z = z2;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 Divider.this.mForcedResizableController.notifyDockedStackExistsChanged(z);
@@ -129,8 +208,7 @@ public class Divider extends SystemUI {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateTouchable() {
+    private void updateTouchable() {
         this.mWindowManager.setTouchable((this.mHomeStackResizable || !this.mMinimized) && !this.mAdjustedForIme);
     }
 
@@ -150,9 +228,7 @@ public class Divider extends SystemUI {
         printWriter.println(this.mAdjustedForIme);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class DockDividerVisibilityListener extends IDockedStackListener.Stub {
+    class DockDividerVisibilityListener extends IDockedStackListener.Stub {
         DockDividerVisibilityListener() {
         }
 
@@ -173,7 +249,7 @@ public class Divider extends SystemUI {
             Divider.this.mView.post(new Runnable() { // from class: com.android.systemui.stackdivider.-$$Lambda$Divider$DockDividerVisibilityListener$fZDE4rhC5s3QEgR-7YXeKi_feiY
                 @Override // java.lang.Runnable
                 public final void run() {
-                    Divider.DockDividerVisibilityListener.lambda$onAdjustedForImeChanged$0(Divider.DockDividerVisibilityListener.this, z, j);
+                    Divider.DockDividerVisibilityListener.lambda$onAdjustedForImeChanged$0(this.f$0, z, j);
                 }
             });
         }
@@ -182,12 +258,13 @@ public class Divider extends SystemUI {
             if (Divider.this.mAdjustedForIme != z) {
                 Divider.this.mAdjustedForIme = z;
                 Divider.this.updateTouchable();
-                if (!Divider.this.mMinimized) {
-                    if (j > 0) {
-                        Divider.this.mView.setAdjustedForIme(z, j);
-                    } else {
-                        Divider.this.mView.setAdjustedForIme(z);
-                    }
+                if (Divider.this.mMinimized) {
+                    return;
+                }
+                if (j > 0) {
+                    Divider.this.mView.setAdjustedForIme(z, j);
+                } else {
+                    Divider.this.mView.setAdjustedForIme(z);
                 }
             }
         }

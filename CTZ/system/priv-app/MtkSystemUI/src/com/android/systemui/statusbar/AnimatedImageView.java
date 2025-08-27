@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 import com.android.systemui.R;
+
 @RemoteViews.RemoteView
 /* loaded from: classes.dex */
 public class AnimatedImageView extends ImageView {
@@ -26,11 +27,11 @@ public class AnimatedImageView extends ImageView {
     public AnimatedImageView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mAllowAnimation = true;
-        TypedArray obtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.AnimatedImageView, 0, 0);
+        TypedArray typedArrayObtainStyledAttributes = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.AnimatedImageView, 0, 0);
         try {
-            this.mHasOverlappingRendering = obtainStyledAttributes.getBoolean(0, true);
+            this.mHasOverlappingRendering = typedArrayObtainStyledAttributes.getBoolean(0, true);
         } finally {
-            obtainStyledAttributes.recycle();
+            typedArrayObtainStyledAttributes.recycle();
         }
     }
 
@@ -65,8 +66,9 @@ public class AnimatedImageView extends ImageView {
         if (drawable != null) {
             if (this.mDrawableId == drawable.hashCode()) {
                 return;
+            } else {
+                this.mDrawableId = drawable.hashCode();
             }
-            this.mDrawableId = drawable.hashCode();
         } else {
             this.mDrawableId = 0;
         }

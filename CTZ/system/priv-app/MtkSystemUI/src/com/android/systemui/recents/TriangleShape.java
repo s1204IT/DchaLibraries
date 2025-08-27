@@ -3,6 +3,7 @@ package com.android.systemui.recents;
 import android.graphics.Outline;
 import android.graphics.Path;
 import android.graphics.drawable.shapes.PathShape;
+
 /* loaded from: classes.dex */
 public class TriangleShape extends PathShape {
     private Path mTriangularPath;

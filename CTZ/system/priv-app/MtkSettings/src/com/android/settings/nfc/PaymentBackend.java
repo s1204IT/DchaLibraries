@@ -14,6 +14,7 @@ import com.android.internal.content.PackageMonitor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PaymentBackend {
     private final NfcAdapter mAdapter;
@@ -30,12 +31,10 @@ public class PaymentBackend {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface Callback {
         void onPaymentAppsChanged();
     }
 
-    /* loaded from: classes.dex */
     public static class PaymentAppInfo {
         Drawable banner;
         public ComponentName componentName;
@@ -116,8 +115,7 @@ public class PaymentBackend {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean isForegroundMode() {
+    boolean isForegroundMode() {
         try {
             return Settings.Secure.getInt(this.mContext.getContentResolver(), "nfc_payment_foreground") != 0;
         } catch (Settings.SettingNotFoundException e) {
@@ -125,13 +123,11 @@ public class PaymentBackend {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setForegroundMode(boolean z) {
+    void setForegroundMode(boolean z) {
         Settings.Secure.putInt(this.mContext.getContentResolver(), "nfc_payment_foreground", z ? 1 : 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ComponentName getDefaultPaymentApp() {
+    ComponentName getDefaultPaymentApp() {
         String string = Settings.Secure.getString(this.mContext.getContentResolver(), "nfc_payment_default_component");
         if (string != null) {
             return ComponentName.unflattenFromString(string);
@@ -144,7 +140,6 @@ public class PaymentBackend {
         refresh();
     }
 
-    /* loaded from: classes.dex */
     private class SettingsPackageMonitor extends PackageMonitor {
         private SettingsPackageMonitor() {
         }

@@ -2,6 +2,7 @@ package com.android.settings.enterprise;
 
 import android.content.Context;
 import java.util.Date;
+
 /* loaded from: classes.dex */
 public class SecurityLogsPreferenceController extends AdminActionPreferenceControllerBase {
     public SecurityLogsPreferenceController(Context context) {

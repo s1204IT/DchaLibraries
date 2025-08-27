@@ -3,6 +3,7 @@ package com.android.quicksearchbox;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.util.Log;
+
 /* loaded from: classes.dex */
 public class Suggestions {
     protected final String mQuery;
@@ -40,12 +41,13 @@ public class Suggestions {
     public void addResults(SourceResult sourceResult) {
         if (isClosed()) {
             sourceResult.close();
-        } else if (!this.mQuery.equals(sourceResult.getUserQuery())) {
-            throw new IllegalArgumentException("Got result for wrong query: " + this.mQuery + " != " + sourceResult.getUserQuery());
-        } else {
-            this.mResult = sourceResult;
-            notifyDataSetChanged();
+            return;
         }
+        if (!this.mQuery.equals(sourceResult.getUserQuery())) {
+            throw new IllegalArgumentException("Got result for wrong query: " + this.mQuery + " != " + sourceResult.getUserQuery());
+        }
+        this.mResult = sourceResult;
+        notifyDataSetChanged();
     }
 
     public void registerDataSetObserver(DataSetObserver dataSetObserver) {

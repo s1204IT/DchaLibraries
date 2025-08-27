@@ -9,6 +9,7 @@ import android.support.v7.preference.Preference;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class BackgroundProcessLimitPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
     private final String[] mListSummaries;
@@ -26,7 +27,7 @@ public class BackgroundProcessLimitPreferenceController extends DeveloperOptions
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws NumberFormatException {
         writeAppProcessLimitOptions(obj);
         updateAppProcessLimitOptions();
         return true;
@@ -37,9 +38,8 @@ public class BackgroundProcessLimitPreferenceController extends DeveloperOptions
         updateAppProcessLimitOptions();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() throws NumberFormatException {
         super.onDeveloperOptionsSwitchDisabled();
         writeAppProcessLimitOptions(null);
     }
@@ -52,7 +52,8 @@ public class BackgroundProcessLimitPreferenceController extends DeveloperOptions
             while (true) {
                 if (i2 >= this.mListValues.length) {
                     break;
-                } else if (Integer.parseInt(this.mListValues[i2]) < processLimit) {
+                }
+                if (Integer.parseInt(this.mListValues[i2]) < processLimit) {
                     i2++;
                 } else {
                     i = i2;
@@ -66,18 +67,18 @@ public class BackgroundProcessLimitPreferenceController extends DeveloperOptions
         }
     }
 
-    private void writeAppProcessLimitOptions(Object obj) {
-        int parseInt;
+    private void writeAppProcessLimitOptions(Object obj) throws NumberFormatException {
+        int i;
         if (obj == null) {
-            parseInt = -1;
+            i = -1;
         } else {
             try {
-                parseInt = Integer.parseInt(obj.toString());
+                i = Integer.parseInt(obj.toString());
             } catch (RemoteException e) {
                 return;
             }
         }
-        getActivityManagerService().setProcessLimit(parseInt);
+        getActivityManagerService().setProcessLimit(i);
         updateAppProcessLimitOptions();
     }
 

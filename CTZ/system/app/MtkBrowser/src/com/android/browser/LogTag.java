@@ -1,6 +1,7 @@
 package com.android.browser;
 
 import android.util.EventLog;
+
 /* loaded from: classes.dex */
 public class LogTag {
     public static void logBookmarkAdded(String str, String str2) {

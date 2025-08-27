@@ -16,6 +16,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnStart;
+
 /* loaded from: classes.dex */
 public class BatteryHeaderPreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin, LifecycleObserver, OnStart {
     static final String KEY_BATTERY_HEADER = "battery_header";
@@ -78,9 +79,9 @@ public class BatteryHeaderPreferenceController extends AbstractPreferenceControl
 
     public void quickUpdateHeaderPreference() {
         boolean z;
-        Intent registerReceiver = this.mContext.registerReceiver(null, new IntentFilter("android.intent.action.BATTERY_CHANGED"));
-        int batteryLevel = Utils.getBatteryLevel(registerReceiver);
-        if (registerReceiver.getIntExtra("plugged", -1) != 0) {
+        Intent intentRegisterReceiver = this.mContext.registerReceiver(null, new IntentFilter("android.intent.action.BATTERY_CHANGED"));
+        int batteryLevel = Utils.getBatteryLevel(intentRegisterReceiver);
+        if (intentRegisterReceiver.getIntExtra("plugged", -1) != 0) {
             z = false;
         } else {
             z = true;

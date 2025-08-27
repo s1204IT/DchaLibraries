@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
-import android.net.NetworkPolicy;
 import android.net.NetworkTemplate;
 import android.os.Bundle;
 import android.support.v14.preference.SwitchPreference;
@@ -24,8 +23,10 @@ import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
 import com.android.settingslib.NetworkPolicyEditor;
 import com.android.settingslib.net.DataUsageController;
+
 /* loaded from: classes.dex */
 public class BillingCycleSettings extends DataUsageBase implements Preference.OnPreferenceChangeListener, DataUsageEditController {
+
     @VisibleForTesting
     static final String KEY_SET_DATA_LIMIT = "set_data_limit";
     private Preference mBillingCycle;
@@ -71,9 +72,7 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
     @VisibleForTesting
     void updatePrefs() {
         int policyCycleDay = this.services.mPolicyEditor.getPolicyCycleDay(this.mNetworkTemplate);
-        if (FeatureFlagUtils.isEnabled(getContext(), "settings_data_usage_v2")) {
-            this.mBillingCycle.setSummary((CharSequence) null);
-        } else if (policyCycleDay != -1) {
+        if (!FeatureFlagUtils.isEnabled(getContext(), "settings_data_usage_v2") && policyCycleDay != -1) {
             this.mBillingCycle.setSummary(getString(R.string.billing_cycle_fragment_summary, new Object[]{Integer.valueOf(policyCycleDay)}));
         } else {
             this.mBillingCycle.setSummary((CharSequence) null);
@@ -93,11 +92,11 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
             this.mDataLimit.setSummary(DataUsageUtils.formatDataUsage(getContext(), policyLimitBytes));
             this.mDataLimit.setEnabled(true);
             this.mEnableDataLimit.setChecked(true);
-            return;
+        } else {
+            this.mDataLimit.setSummary((CharSequence) null);
+            this.mDataLimit.setEnabled(false);
+            this.mEnableDataLimit.setChecked(false);
         }
-        this.mDataLimit.setSummary((CharSequence) null);
-        this.mDataLimit.setEnabled(false);
-        this.mEnableDataLimit.setChecked(false);
     }
 
     @Override // android.support.v14.preference.PreferenceFragment, android.support.v7.preference.PreferenceManager.OnPreferenceTreeClickListener
@@ -105,15 +104,16 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
         if (preference == this.mBillingCycle) {
             CycleEditorFragment.show(this);
             return true;
-        } else if (preference == this.mDataWarning) {
+        }
+        if (preference == this.mDataWarning) {
             BytesEditorFragment.show((DataUsageEditController) this, false);
             return true;
-        } else if (preference == this.mDataLimit) {
+        }
+        if (preference == this.mDataLimit) {
             BytesEditorFragment.show((DataUsageEditController) this, true);
             return true;
-        } else {
-            return super.onPreferenceTreeClick(preference);
         }
+        return super.onPreferenceTreeClick(preference);
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
@@ -126,16 +126,16 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
             }
             ConfirmLimitFragment.show(this);
             return false;
-        } else if (this.mEnableDataWarning == preference) {
-            if (((Boolean) obj).booleanValue()) {
-                setPolicyWarningBytes(this.mDataUsageController.getDefaultWarningLevel());
-            } else {
-                setPolicyWarningBytes(-1L);
-            }
-            return true;
-        } else {
+        }
+        if (this.mEnableDataWarning != preference) {
             return false;
         }
+        if (((Boolean) obj).booleanValue()) {
+            setPolicyWarningBytes(this.mDataUsageController.getDefaultWarningLevel());
+        } else {
+            setPolicyWarningBytes(-1L);
+        }
+        return true;
     }
 
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -169,10 +169,11 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
         updatePrefs();
     }
 
-    /* loaded from: classes.dex */
     public static class BytesEditorFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
         private View mView;
 
+        /* JADX DEBUG: Multi-variable search result rejected for r3v0, resolved type: com.android.settings.datausage.DataUsageEditController */
+        /* JADX WARN: Multi-variable type inference failed */
         public static void show(DataUsageEditController dataUsageEditController, boolean z) {
             if (!(dataUsageEditController instanceof Fragment)) {
                 return;
@@ -193,9 +194,9 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
             Activity activity = getActivity();
-            LayoutInflater from = LayoutInflater.from(activity);
+            LayoutInflater layoutInflaterFrom = LayoutInflater.from(activity);
             boolean z = getArguments().getBoolean("limit");
-            this.mView = from.inflate(R.layout.data_usage_bytes_editor, (ViewGroup) null, false);
+            this.mView = layoutInflaterFrom.inflate(R.layout.data_usage_bytes_editor, (ViewGroup) null, false);
             setupPicker((EditText) this.mView.findViewById(R.id.bytes), (Spinner) this.mView.findViewById(R.id.size_spinner));
             return new AlertDialog.Builder(activity).setTitle(z ? R.string.data_usage_limit_editor_title : R.string.data_usage_warning_editor_title).setView(this.mView).setPositiveButton(R.string.data_usage_cycle_editor_positive, this).create();
         }
@@ -203,17 +204,17 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
         private void setupPicker(EditText editText, Spinner spinner) {
             NetworkPolicyEditor networkPolicyEditor = ((DataUsageEditController) getTargetFragment()).getNetworkPolicyEditor();
             NetworkTemplate networkTemplate = (NetworkTemplate) getArguments().getParcelable("template");
-            float policyLimitBytes = (float) (getArguments().getBoolean("limit") ? networkPolicyEditor.getPolicyLimitBytes(networkTemplate) : networkPolicyEditor.getPolicyWarningBytes(networkTemplate));
-            if (policyLimitBytes > 1.61061274E9f) {
-                String formatText = formatText(policyLimitBytes / 1.07374182E9f);
-                editText.setText(formatText);
-                editText.setSelection(0, formatText.length());
+            float policyLimitBytes = getArguments().getBoolean("limit") ? networkPolicyEditor.getPolicyLimitBytes(networkTemplate) : networkPolicyEditor.getPolicyWarningBytes(networkTemplate);
+            if (policyLimitBytes > 1.6106127E9f) {
+                String text = formatText(policyLimitBytes / 1.0737418E9f);
+                editText.setText(text);
+                editText.setSelection(0, text.length());
                 spinner.setSelection(1);
                 return;
             }
-            String formatText2 = formatText(policyLimitBytes / 1048576.0f);
-            editText.setText(formatText2);
-            editText.setSelection(0, formatText2.length());
+            String text2 = formatText(policyLimitBytes / 1048576.0f);
+            editText.setText(text2);
+            editText.setSelection(0, text2.length());
             spinner.setSelection(0);
         }
 
@@ -230,14 +231,18 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
             NetworkPolicyEditor networkPolicyEditor = dataUsageEditController.getNetworkPolicyEditor();
             NetworkTemplate networkTemplate = (NetworkTemplate) getArguments().getParcelable("template");
             boolean z = getArguments().getBoolean("limit");
+            EditText editText = (EditText) this.mView.findViewById(R.id.bytes);
             Spinner spinner = (Spinner) this.mView.findViewById(R.id.size_spinner);
-            String obj = ((EditText) this.mView.findViewById(R.id.bytes)).getText().toString();
-            long min = Math.min(53687091200000L, Float.valueOf((obj.isEmpty() || obj.equals(".")) ? "0" : "0").floatValue() * ((float) (spinner.getSelectedItemPosition() == 0 ? 1048576L : 1073741824L)));
-            Log.d("BillingCycleSettings", "onClick, isLimit = " + z + " correctedBytes = " + min);
+            String string = editText.getText().toString();
+            if (string.isEmpty() || string.equals(".")) {
+                string = "0";
+            }
+            long jMin = Math.min(53687091200000L, (long) (Float.valueOf(string).floatValue() * (spinner.getSelectedItemPosition() == 0 ? 1048576L : 1073741824L)));
+            Log.d("BillingCycleSettings", "onClick, isLimit = " + z + " correctedBytes = " + jMin);
             if (z) {
-                networkPolicyEditor.setPolicyLimitBytes(networkTemplate, min);
+                networkPolicyEditor.setPolicyLimitBytes(networkTemplate, jMin);
             } else {
-                networkPolicyEditor.setPolicyWarningBytes(networkTemplate, min);
+                networkPolicyEditor.setPolicyWarningBytes(networkTemplate, jMin);
             }
             dataUsageEditController.updateDataUsage();
         }
@@ -248,7 +253,6 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
         }
     }
 
-    /* loaded from: classes.dex */
     public static class CycleEditorFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
         private NumberPicker mCycleDayPicker;
 
@@ -273,45 +277,45 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
             Activity activity = getActivity();
             NetworkPolicyEditor networkPolicyEditor = ((DataUsageEditController) getTargetFragment()).getNetworkPolicyEditor();
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            View inflate = LayoutInflater.from(builder.getContext()).inflate(R.layout.data_usage_cycle_editor, (ViewGroup) null, false);
-            this.mCycleDayPicker = (NumberPicker) inflate.findViewById(R.id.cycle_day);
+            View viewInflate = LayoutInflater.from(builder.getContext()).inflate(R.layout.data_usage_cycle_editor, (ViewGroup) null, false);
+            this.mCycleDayPicker = (NumberPicker) viewInflate.findViewById(R.id.cycle_day);
             int policyCycleDay = networkPolicyEditor.getPolicyCycleDay((NetworkTemplate) getArguments().getParcelable("template"));
             this.mCycleDayPicker.setMinValue(1);
             this.mCycleDayPicker.setMaxValue(31);
             this.mCycleDayPicker.setValue(policyCycleDay);
             this.mCycleDayPicker.setWrapSelectorWheel(true);
-            return builder.setTitle(R.string.data_usage_cycle_editor_title).setView(inflate).setPositiveButton(R.string.data_usage_cycle_editor_positive, this).create();
+            return builder.setTitle(R.string.data_usage_cycle_editor_title).setView(viewInflate).setPositiveButton(R.string.data_usage_cycle_editor_positive, this).create();
         }
 
         @Override // android.content.DialogInterface.OnClickListener
         public void onClick(DialogInterface dialogInterface, int i) {
+            NetworkTemplate parcelable = getArguments().getParcelable("template");
             DataUsageEditController dataUsageEditController = (DataUsageEditController) getTargetFragment();
             NetworkPolicyEditor networkPolicyEditor = dataUsageEditController.getNetworkPolicyEditor();
             this.mCycleDayPicker.clearFocus();
             int value = this.mCycleDayPicker.getValue();
             String str = new Time().timezone;
             Log.d("BillingCycleSettings", "onClick, cycleDay = " + value + ", cycleTimezone = " + str);
-            networkPolicyEditor.setPolicyCycleDay(getArguments().getParcelable("template"), value, str);
+            networkPolicyEditor.setPolicyCycleDay(parcelable, value, str);
             dataUsageEditController.updateDataUsage();
         }
     }
 
-    /* loaded from: classes.dex */
     public static class ConfirmLimitFragment extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
+
         @VisibleForTesting
         static final String EXTRA_LIMIT_BYTES = "limitBytes";
 
         public static void show(BillingCycleSettings billingCycleSettings) {
             if (billingCycleSettings.isAdded()) {
-                NetworkPolicy policy = billingCycleSettings.services.mPolicyEditor.getPolicy(billingCycleSettings.mNetworkTemplate);
-                if (policy == null) {
+                if (billingCycleSettings.services.mPolicyEditor.getPolicy(billingCycleSettings.mNetworkTemplate) == null) {
                     Log.d("BillingCycleSettings", "NetworkPolicy is null, Cannot ShowDialog");
                     return;
                 }
                 billingCycleSettings.getResources();
-                long max = Math.max(5368709120L, ((float) policy.warningBytes) * 1.2f);
+                long jMax = Math.max(5368709120L, (long) (r0.warningBytes * 1.2f));
                 Bundle bundle = new Bundle();
-                bundle.putLong(EXTRA_LIMIT_BYTES, max);
+                bundle.putLong(EXTRA_LIMIT_BYTES, jMax);
                 ConfirmLimitFragment confirmLimitFragment = new ConfirmLimitFragment();
                 confirmLimitFragment.setArguments(bundle);
                 confirmLimitFragment.setTargetFragment(billingCycleSettings, 0);
@@ -329,7 +333,7 @@ public class BillingCycleSettings extends DataUsageBase implements Preference.On
 
         @Override // android.app.DialogFragment
         public Dialog onCreateDialog(Bundle bundle) {
-            return new AlertDialog.Builder(getActivity()).setTitle(R.string.data_usage_limit_dialog_title).setMessage(R.string.data_usage_limit_dialog_mobile).setPositiveButton(17039370, this).setNegativeButton(17039360, this).create();
+            return new AlertDialog.Builder(getActivity()).setTitle(R.string.data_usage_limit_dialog_title).setMessage(R.string.data_usage_limit_dialog_mobile).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this).create();
         }
 
         @Override // android.content.DialogInterface.OnClickListener

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
 /* loaded from: classes.dex */
 public class DefaultBrowserHistoryExt implements IBrowserHistoryExt {
     @Override // com.mediatek.browser.ext.IBrowserHistoryExt

@@ -14,6 +14,7 @@ import android.view.animation.Interpolator;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.Workspace;
 import com.android.launcher3.anim.Interpolators;
+
 /* loaded from: classes.dex */
 public class WallpaperOffsetInterpolator extends BroadcastReceiver {
     private static final int ANIMATION_DURATION = 250;
@@ -49,7 +50,7 @@ public class WallpaperOffsetInterpolator extends BroadcastReceiver {
     }
 
     private void wallpaperOffsetForScroll(int i, int i2, int[] iArr) {
-        int max;
+        int iMax;
         int i3;
         int i4;
         int i5;
@@ -59,9 +60,9 @@ public class WallpaperOffsetInterpolator extends BroadcastReceiver {
             return;
         }
         if (!this.mWallpaperIsLiveWallpaper) {
-            max = Math.max(4, i2);
+            iMax = Math.max(4, i2);
         } else {
-            max = i2;
+            iMax = i2;
         }
         if (this.mIsRtl) {
             i4 = (0 + i2) - 1;
@@ -76,14 +77,14 @@ public class WallpaperOffsetInterpolator extends BroadcastReceiver {
             iArr[0] = 0;
             return;
         }
-        int boundToRange = Utilities.boundToRange((i - scrollForPage) - this.mWorkspace.getLayoutTransitionOffsetForPage(0), 0, scrollForPage2);
-        iArr[1] = (max - 1) * scrollForPage2;
+        int iBoundToRange = Utilities.boundToRange((i - scrollForPage) - this.mWorkspace.getLayoutTransitionOffsetForPage(0), 0, scrollForPage2);
+        iArr[1] = (iMax - 1) * scrollForPage2;
         if (this.mIsRtl) {
             i5 = iArr[1] - ((i2 - 1) * scrollForPage2);
         } else {
             i5 = 0;
         }
-        iArr[0] = i5 + (boundToRange * (i2 - 1));
+        iArr[0] = i5 + (iBoundToRange * (i2 - 1));
     }
 
     public float wallpaperOffsetForScroll(int i) {
@@ -102,25 +103,25 @@ public class WallpaperOffsetInterpolator extends BroadcastReceiver {
     public void syncWithScroll() {
         int numScreensExcludingEmpty = getNumScreensExcludingEmpty();
         wallpaperOffsetForScroll(this.mWorkspace.getScrollX(), numScreensExcludingEmpty, sTempInt);
-        Message obtain = Message.obtain(this.mHandler, 2, sTempInt[0], sTempInt[1], this.mWindowToken);
+        Message messageObtain = Message.obtain(this.mHandler, 2, sTempInt[0], sTempInt[1], this.mWindowToken);
         if (numScreensExcludingEmpty != this.mNumScreens) {
             if (this.mNumScreens > 0) {
-                obtain.what = 1;
+                messageObtain.what = 1;
             }
             this.mNumScreens = numScreensExcludingEmpty;
             updateOffset();
         }
-        obtain.sendToTarget();
+        messageObtain.sendToTarget();
     }
 
     private void updateOffset() {
-        int max;
+        int iMax;
         if (this.mWallpaperIsLiveWallpaper) {
-            max = this.mNumScreens;
+            iMax = this.mNumScreens;
         } else {
-            max = Math.max(4, this.mNumScreens);
+            iMax = Math.max(4, this.mNumScreens);
         }
-        Message.obtain(this.mHandler, 4, max, 0, this.mWindowToken).sendToTarget();
+        Message.obtain(this.mHandler, 4, iMax, 0, this.mWindowToken).sendToTarget();
     }
 
     public void jumpToFinal() {
@@ -145,7 +146,6 @@ public class WallpaperOffsetInterpolator extends BroadcastReceiver {
         updateOffset();
     }
 
-    /* loaded from: classes.dex */
     private static class OffsetHandler extends Handler {
         private boolean mAnimating;
         private float mAnimationStartOffset;
@@ -167,7 +167,6 @@ public class WallpaperOffsetInterpolator extends BroadcastReceiver {
         public void handleMessage(Message message) {
             IBinder iBinder = (IBinder) message.obj;
             if (iBinder == null) {
-                return;
             }
             switch (message.what) {
                 case 1:
@@ -176,37 +175,35 @@ public class WallpaperOffsetInterpolator extends BroadcastReceiver {
                     this.mAnimationStartTime = message.getWhen();
                 case 2:
                     this.mFinalOffset = message.arg1 / message.arg2;
-                    break;
                 case 3:
+                    float f = this.mCurrentOffset;
+                    if (this.mAnimating) {
+                        long jUptimeMillis = SystemClock.uptimeMillis() - this.mAnimationStartTime;
+                        this.mCurrentOffset = this.mAnimationStartOffset + ((this.mFinalOffset - this.mAnimationStartOffset) * this.mInterpolator.getInterpolation(jUptimeMillis / 250.0f));
+                        this.mAnimating = jUptimeMillis < 250;
+                    } else {
+                        this.mCurrentOffset = this.mFinalOffset;
+                    }
+                    if (Float.compare(this.mCurrentOffset, f) != 0) {
+                        setOffsetSafely(iBinder);
+                        this.mWM.setWallpaperOffsetSteps(this.mOffsetX, 1.0f);
+                    }
+                    if (this.mAnimating) {
+                        Message.obtain(this, 3, iBinder).sendToTarget();
+                        break;
+                    }
                     break;
                 case 4:
                     this.mOffsetX = 1.0f / (message.arg1 - 1);
                     this.mWM.setWallpaperOffsetSteps(this.mOffsetX, 1.0f);
-                    return;
+                    break;
                 case 5:
                     if (Float.compare(this.mCurrentOffset, this.mFinalOffset) != 0) {
                         this.mCurrentOffset = this.mFinalOffset;
                         setOffsetSafely(iBinder);
                     }
                     this.mAnimating = false;
-                    return;
-                default:
-                    return;
-            }
-            float f = this.mCurrentOffset;
-            if (this.mAnimating) {
-                long uptimeMillis = SystemClock.uptimeMillis() - this.mAnimationStartTime;
-                this.mCurrentOffset = this.mAnimationStartOffset + ((this.mFinalOffset - this.mAnimationStartOffset) * this.mInterpolator.getInterpolation(((float) uptimeMillis) / 250.0f));
-                this.mAnimating = uptimeMillis < 250;
-            } else {
-                this.mCurrentOffset = this.mFinalOffset;
-            }
-            if (Float.compare(this.mCurrentOffset, f) != 0) {
-                setOffsetSafely(iBinder);
-                this.mWM.setWallpaperOffsetSteps(this.mOffsetX, 1.0f);
-            }
-            if (this.mAnimating) {
-                Message.obtain(this, 3, iBinder).sendToTarget();
+                    break;
             }
         }
 

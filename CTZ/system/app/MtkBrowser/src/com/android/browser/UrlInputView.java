@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.android.browser.SuggestionsAdapter;
 import com.android.browser.search.SearchEngines;
 import com.mediatek.common.search.SearchEngine;
+
 /* loaded from: classes.dex */
 public class UrlInputView extends AutoCompleteTextView implements TextWatcher, AdapterView.OnItemClickListener, TextView.OnEditorActionListener, SuggestionsAdapter.CompletionListener {
     private static final boolean DEBUG = Browser.DEBUG;
@@ -37,15 +38,11 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
     private StateListener mStateListener;
     private UiController mUiController;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface StateListener {
+    interface StateListener {
         void onStateChanged(int i);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface UrlInputListener {
+    interface UrlInputListener {
         void onAction(String str, String str2, String str3);
 
         void onCopySuggestion(String str);
@@ -53,9 +50,7 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         void onDismiss();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class UrlInsertActionMode implements ActionMode.Callback {
+    private class UrlInsertActionMode implements ActionMode.Callback {
         public UrlInsertActionMode() {
         }
 
@@ -88,7 +83,7 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
     }
 
     public UrlInputView(Context context, AttributeSet attributeSet) {
-        this(context, attributeSet, 16842859);
+        this(context, attributeSet, android.R.attr.autoCompleteTextViewStyle);
     }
 
     public UrlInputView(Context context) {
@@ -139,10 +134,10 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
 
     @Override // android.widget.TextView, android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean hasSelection = hasSelection();
-        boolean hasFocus = hasFocus();
-        boolean onTouchEvent = super.onTouchEvent(motionEvent);
-        if (motionEvent.getActionMasked() == 0 && hasSelection) {
+        boolean zHasSelection = hasSelection();
+        boolean zHasFocus = hasFocus();
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
+        if (motionEvent.getActionMasked() == 0 && zHasSelection) {
             postDelayed(new Runnable() { // from class: com.android.browser.UrlInputView.2
                 @Override // java.lang.Runnable
                 public void run() {
@@ -150,36 +145,31 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
                 }
             }, 100L);
         }
-        if (!hasFocus && hasFocus()) {
+        if (!zHasFocus && hasFocus()) {
             selectAll();
         }
-        return onTouchEvent;
+        return zOnTouchEvent;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean needsUpdate() {
+    boolean needsUpdate() {
         return this.mNeedsUpdate;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void clearNeedsUpdate() {
+    void clearNeedsUpdate() {
         this.mNeedsUpdate = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void ignoreIME(boolean z) {
+    void ignoreIME(boolean z) {
         this.mIgnore = z;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setController(UiController uiController) {
+    void setController(UiController uiController) {
         this.mUiController = uiController;
         setCustomSelectionActionModeCallback(new UrlSelectionActionMode(uiController));
         setCustomInsertionActionModeCallback(new UrlInsertActionMode());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void setContainer(View view) {
+    void setContainer(View view) {
         this.mContainer = view;
     }
 
@@ -192,8 +182,7 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         changeState(this.mState);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void changeState(int i) {
+    private void changeState(int i) {
         if (DEBUG) {
             Log.d("browser", "UrlInputView.changeState()--->newState = " + i);
         }
@@ -203,8 +192,7 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public int getState() {
+    int getState() {
         return this.mState;
     }
 
@@ -240,13 +228,11 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void hideIME() {
+    void hideIME() {
         this.mInputManager.hideSoftInputFromWindow(getWindowToken(), 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void showIME() {
+    void showIME() {
         if ((this.mUiController != null && !this.mUiController.getUi().isWebShowing()) || this.mIgnore) {
             return;
         }
@@ -270,15 +256,16 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
             com.android.browser.search.SearchEngine searchEngine = BrowserSettings.getInstance().getSearchEngine();
             if (searchEngine == null || (searchEngineInfo = SearchEngines.getSearchEngineInfo(this.mContext, searchEngine.getName())) == null) {
                 return;
+            } else {
+                str = searchEngineInfo.getSearchUriForQuery(str);
             }
-            str = searchEngineInfo.getSearchUriForQuery(str);
         }
         this.mListener.onAction(str, str2, str3);
     }
 
     boolean isSearch(String str) {
-        String trim = UrlUtils.fixUrl(str).trim();
-        return (TextUtils.isEmpty(trim) || Patterns.WEB_URL.matcher(trim).matches() || UrlUtils.ACCEPTED_URI_SCHEMA.matcher(trim).matches()) ? false : true;
+        String strTrim = UrlUtils.fixUrl(str).trim();
+        return (TextUtils.isEmpty(strTrim) || Patterns.WEB_URL.matcher(strTrim).matches() || UrlUtils.ACCEPTED_URI_SCHEMA.matcher(strTrim).matches()) ? false : true;
     }
 
     @Override // com.android.browser.SuggestionsAdapter.CompletionListener
@@ -314,6 +301,7 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         return super.onKeyDown(i, keyEvent);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: getAdapter()Landroid/widget/ListAdapter; */
     @Override // android.widget.AutoCompleteTextView
     public SuggestionsAdapter getAdapter() {
         return this.mAdapter;

@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.hardware.display.DisplayManager;
@@ -42,6 +43,7 @@ import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.stackdivider.events.StartedDragingEvent;
 import com.android.systemui.stackdivider.events.StoppedDragingEvent;
 import com.android.systemui.statusbar.FlingAnimationUtils;
+
 /* loaded from: classes.dex */
 public class DividerView extends FrameLayout implements View.OnTouchListener, ViewTreeObserver.OnComputeInternalInsetsListener {
     private boolean mAdjustedForIme;
@@ -167,7 +169,7 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
             }
 
             @Override // android.view.View.AccessibilityDelegate
-            public boolean performAccessibilityAction(View view, int i3, Bundle bundle) {
+            public boolean performAccessibilityAction(View view, int i3, Bundle bundle) throws Resources.NotFoundException {
                 DividerSnapAlgorithm.SnapTarget dismissStartTarget;
                 int currentPosition = DividerView.this.getCurrentPosition();
                 switch (i3) {
@@ -216,8 +218,8 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         this.mBackground = findViewById(R.id.docked_divider_background);
         this.mMinimizedShadow = (MinimizedDockShadow) findViewById(R.id.minimized_dock_shadow);
         this.mHandle.setOnTouchListener(this);
-        this.mDividerWindowWidth = getResources().getDimensionPixelSize(17105034);
-        this.mDividerInsets = getResources().getDimensionPixelSize(17105033);
+        this.mDividerWindowWidth = getResources().getDimensionPixelSize(android.R.dimen.car_padding_2);
+        this.mDividerInsets = getResources().getDimensionPixelSize(android.R.dimen.car_padding_1);
         this.mDividerSize = this.mDividerWindowWidth - (this.mDividerInsets * 2);
         this.mTouchElevation = getResources().getDimensionPixelSize(R.dimen.docked_stack_divider_lift_elevation);
         this.mLongPressEntraceAnimDuration = getResources().getInteger(R.integer.long_press_dock_anim_duration);
@@ -231,7 +233,7 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
     }
 
     @Override // android.view.ViewGroup, android.view.View
-    protected void onAttachedToWindow() {
+    protected void onAttachedToWindow() throws NoSuchMethodException, SecurityException {
         super.onAttachedToWindow();
         EventBus.getDefault().register(this);
         if (this.mHomeStackResizable && this.mDockSide != -1 && !this.mIsInMinimizeInteraction) {
@@ -245,8 +247,7 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         EventBus.getDefault().unregister(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void onDividerRemoved() {
+    void onDividerRemoved() {
         this.mRemoved = true;
         this.mHandler.removeMessages(0);
     }
@@ -268,14 +269,14 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
     protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         int left;
         super.onLayout(z, i, i2, i3, i4);
-        int i5 = 0;
+        int top = 0;
         if (this.mDockSide == 2) {
-            i5 = this.mBackground.getTop();
+            top = this.mBackground.getTop();
             left = 0;
         } else {
             left = this.mDockSide == 1 ? this.mBackground.getLeft() : this.mDockSide == 3 ? this.mBackground.getRight() - this.mMinimizedShadow.getWidth() : 0;
         }
-        this.mMinimizedShadow.layout(left, i5, this.mMinimizedShadow.getMeasuredWidth() + left, this.mMinimizedShadow.getMeasuredHeight() + i5);
+        this.mMinimizedShadow.layout(left, top, this.mMinimizedShadow.getMeasuredWidth() + left, this.mMinimizedShadow.getMeasuredHeight() + top);
         if (z) {
             this.mWindowManagerProxy.setTouchRegion(new Rect(this.mHandle.getLeft(), this.mHandle.getTop(), this.mHandle.getRight(), this.mHandle.getBottom()));
         }
@@ -334,22 +335,22 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         return false;
     }
 
-    public void stopDragging(int i, float f, boolean z, boolean z2) {
+    public void stopDragging(int i, float f, boolean z, boolean z2) throws Resources.NotFoundException {
         this.mHandle.setTouching(false, true);
         fling(i, f, z, z2);
         this.mWindowManager.setSlippery(true);
         releaseBackground();
     }
 
-    public void stopDragging(int i, DividerSnapAlgorithm.SnapTarget snapTarget, long j, Interpolator interpolator) {
+    public void stopDragging(int i, DividerSnapAlgorithm.SnapTarget snapTarget, long j, Interpolator interpolator) throws Resources.NotFoundException {
         stopDragging(i, snapTarget, j, 0L, 0L, interpolator);
     }
 
-    public void stopDragging(int i, DividerSnapAlgorithm.SnapTarget snapTarget, long j, Interpolator interpolator, long j2) {
+    public void stopDragging(int i, DividerSnapAlgorithm.SnapTarget snapTarget, long j, Interpolator interpolator, long j2) throws Resources.NotFoundException {
         stopDragging(i, snapTarget, j, 0L, j2, interpolator);
     }
 
-    public void stopDragging(int i, DividerSnapAlgorithm.SnapTarget snapTarget, long j, long j2, long j3, Interpolator interpolator) {
+    public void stopDragging(int i, DividerSnapAlgorithm.SnapTarget snapTarget, long j, long j2, long j3, Interpolator interpolator) throws Resources.NotFoundException {
         this.mHandle.setTouching(false, true);
         flingTo(i, snapTarget, j, j2, j3, interpolator);
         this.mWindowManager.setSlippery(true);
@@ -362,7 +363,7 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         releaseBackground();
     }
 
-    private void updateDockSide() {
+    private void updateDockSide() throws Resources.NotFoundException {
         this.mDockSide = this.mWindowManagerProxy.getDockSide();
         this.mMinimizedShadow.setDockSide(this.mDockSide);
     }
@@ -389,8 +390,9 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         return this.mTempInt2[0] + this.mDividerInsets;
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // android.view.View.OnTouchListener
-    public boolean onTouch(View view, MotionEvent motionEvent) {
+    public boolean onTouch(View view, MotionEvent motionEvent) throws Resources.NotFoundException {
         convertToScreenCoordinates(motionEvent);
         switch (motionEvent.getAction() & 255) {
             case 0:
@@ -398,20 +400,22 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
                 this.mVelocityTracker.addMovement(motionEvent);
                 this.mStartX = (int) motionEvent.getX();
                 this.mStartY = (int) motionEvent.getY();
-                boolean startDragging = startDragging(true, true);
-                if (!startDragging) {
+                boolean zStartDragging = startDragging(true, true);
+                if (!zStartDragging) {
                     stopDragging();
                 }
                 this.mStartPosition = getCurrentPosition();
                 this.mMoving = false;
-                return startDragging;
+                return zStartDragging;
             case 1:
             case 3:
                 this.mVelocityTracker.addMovement(motionEvent);
+                int rawX = (int) motionEvent.getRawX();
+                int rawY = (int) motionEvent.getRawY();
                 this.mVelocityTracker.computeCurrentVelocity(1000);
-                stopDragging(calculatePosition((int) motionEvent.getRawX(), (int) motionEvent.getRawY()), isHorizontalDivision() ? this.mVelocityTracker.getYVelocity() : this.mVelocityTracker.getXVelocity(), false, true);
+                stopDragging(calculatePosition(rawX, rawY), isHorizontalDivision() ? this.mVelocityTracker.getYVelocity() : this.mVelocityTracker.getXVelocity(), false, true);
                 this.mMoving = false;
-                break;
+                return true;
             case 2:
                 this.mVelocityTracker.addMovement(motionEvent);
                 int x = (int) motionEvent.getX();
@@ -424,26 +428,30 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
                 }
                 if (this.mMoving && this.mDockSide != -1) {
                     resizeStackDelayed(calculatePosition(x, y), this.mStartPosition, getSnapAlgorithm().calculateSnapTarget(this.mStartPosition, 0.0f, false));
-                    break;
                 }
-                break;
+                return true;
+            default:
+                return true;
         }
-        return true;
     }
 
     private void logResizeEvent(DividerSnapAlgorithm.SnapTarget snapTarget) {
         if (snapTarget == this.mSnapAlgorithm.getDismissStartTarget()) {
             MetricsLogger.action(this.mContext, 390, dockSideTopLeft(this.mDockSide) ? 1 : 0);
-        } else if (snapTarget == this.mSnapAlgorithm.getDismissEndTarget()) {
+            return;
+        }
+        if (snapTarget == this.mSnapAlgorithm.getDismissEndTarget()) {
             MetricsLogger.action(this.mContext, 390, dockSideBottomRight(this.mDockSide) ? 1 : 0);
-        } else if (snapTarget == this.mSnapAlgorithm.getMiddleTarget()) {
+            return;
+        }
+        if (snapTarget == this.mSnapAlgorithm.getMiddleTarget()) {
             MetricsLogger.action(this.mContext, 389, 0);
-        } else {
-            if (snapTarget == this.mSnapAlgorithm.getFirstSplitTarget()) {
-                MetricsLogger.action(this.mContext, 389, dockSideTopLeft(this.mDockSide) ? 1 : 2);
-            } else if (snapTarget == this.mSnapAlgorithm.getLastSplitTarget()) {
-                MetricsLogger.action(this.mContext, 389, dockSideTopLeft(this.mDockSide) ? 2 : 1);
-            }
+            return;
+        }
+        if (snapTarget == this.mSnapAlgorithm.getFirstSplitTarget()) {
+            MetricsLogger.action(this.mContext, 389, dockSideTopLeft(this.mDockSide) ? 1 : 2);
+        } else if (snapTarget == this.mSnapAlgorithm.getLastSplitTarget()) {
+            MetricsLogger.action(this.mContext, 389, dockSideTopLeft(this.mDockSide) ? 2 : 1);
         }
     }
 
@@ -451,21 +459,21 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         motionEvent.setLocation(motionEvent.getRawX(), motionEvent.getRawY());
     }
 
-    private void fling(int i, float f, boolean z, boolean z2) {
+    private void fling(int i, float f, boolean z, boolean z2) throws Resources.NotFoundException {
         DividerSnapAlgorithm snapAlgorithm = getSnapAlgorithm();
-        DividerSnapAlgorithm.SnapTarget calculateSnapTarget = snapAlgorithm.calculateSnapTarget(i, f);
-        if (z && calculateSnapTarget == snapAlgorithm.getDismissStartTarget()) {
-            calculateSnapTarget = snapAlgorithm.getFirstSplitTarget();
+        DividerSnapAlgorithm.SnapTarget snapTargetCalculateSnapTarget = snapAlgorithm.calculateSnapTarget(i, f);
+        if (z && snapTargetCalculateSnapTarget == snapAlgorithm.getDismissStartTarget()) {
+            snapTargetCalculateSnapTarget = snapAlgorithm.getFirstSplitTarget();
         }
         if (z2) {
-            logResizeEvent(calculateSnapTarget);
+            logResizeEvent(snapTargetCalculateSnapTarget);
         }
-        ValueAnimator flingAnimator = getFlingAnimator(i, calculateSnapTarget, 0L);
-        this.mFlingAnimationUtils.apply(flingAnimator, i, calculateSnapTarget.position, f);
+        ValueAnimator flingAnimator = getFlingAnimator(i, snapTargetCalculateSnapTarget, 0L);
+        this.mFlingAnimationUtils.apply(flingAnimator, i, snapTargetCalculateSnapTarget.position, f);
         flingAnimator.start();
     }
 
-    private void flingTo(int i, DividerSnapAlgorithm.SnapTarget snapTarget, long j, long j2, long j3, Interpolator interpolator) {
+    private void flingTo(int i, DividerSnapAlgorithm.SnapTarget snapTarget, long j, long j2, long j3, Interpolator interpolator) throws Resources.NotFoundException {
         ValueAnimator flingAnimator = getFlingAnimator(i, snapTarget, j3);
         flingAnimator.setDuration(j);
         flingAnimator.setStartDelay(j2);
@@ -473,32 +481,32 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         flingAnimator.start();
     }
 
-    private ValueAnimator getFlingAnimator(int i, final DividerSnapAlgorithm.SnapTarget snapTarget, final long j) {
+    private ValueAnimator getFlingAnimator(int i, final DividerSnapAlgorithm.SnapTarget snapTarget, final long j) throws Resources.NotFoundException {
         if (this.mCurrentAnimator != null) {
             cancelFlingAnimation();
             updateDockSide();
         }
         final boolean z = snapTarget.flag == 0;
-        ValueAnimator ofInt = ValueAnimator.ofInt(i, snapTarget.position);
-        ofInt.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.stackdivider.-$$Lambda$DividerView$o4c7SI5Mz67OwDjq6n3ndBTEfNk
+        ValueAnimator valueAnimatorOfInt = ValueAnimator.ofInt(i, snapTarget.position);
+        valueAnimatorOfInt.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.stackdivider.-$$Lambda$DividerView$o4c7SI5Mz67OwDjq6n3ndBTEfNk
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                DividerView.lambda$getFlingAnimator$0(DividerView.this, z, snapTarget, valueAnimator);
+                DividerView.lambda$getFlingAnimator$0(this.f$0, z, snapTarget, valueAnimator);
             }
         });
         final Runnable runnable = new Runnable() { // from class: com.android.systemui.stackdivider.-$$Lambda$DividerView$fuKXuLmLQTYwkdmcrCKfS4vkKk8
             @Override // java.lang.Runnable
-            public final void run() {
-                DividerView.lambda$getFlingAnimator$1(DividerView.this, snapTarget);
+            public final void run() throws Resources.NotFoundException {
+                DividerView.lambda$getFlingAnimator$1(this.f$0, snapTarget);
             }
         };
         final Runnable runnable2 = new Runnable() { // from class: com.android.systemui.stackdivider.-$$Lambda$DividerView$PQ9UBhgXlQLedw0JrRm_JR-uZkk
             @Override // java.lang.Runnable
             public final void run() {
-                DividerView.lambda$getFlingAnimator$2(DividerView.this);
+                DividerView.lambda$getFlingAnimator$2(this.f$0);
             }
         };
-        ofInt.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.stackdivider.DividerView.4
+        valueAnimatorOfInt.addListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.stackdivider.DividerView.4
             private boolean mCancelled;
 
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
@@ -522,30 +530,30 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
                         runnable2.run();
                     }
                     runnable.run();
-                    return;
+                } else {
+                    if (!this.mCancelled) {
+                        DividerView.this.mHandler.postDelayed(runnable2, surfaceFlingerOffsetMs);
+                    }
+                    DividerView.this.mHandler.postDelayed(runnable, surfaceFlingerOffsetMs);
                 }
-                if (!this.mCancelled) {
-                    DividerView.this.mHandler.postDelayed(runnable2, surfaceFlingerOffsetMs);
-                }
-                DividerView.this.mHandler.postDelayed(runnable, surfaceFlingerOffsetMs);
             }
         });
-        this.mCurrentAnimator = ofInt;
-        return ofInt;
+        this.mCurrentAnimator = valueAnimatorOfInt;
+        return valueAnimatorOfInt;
     }
 
     public static /* synthetic */ void lambda$getFlingAnimator$0(DividerView dividerView, boolean z, DividerSnapAlgorithm.SnapTarget snapTarget, ValueAnimator valueAnimator) {
         int i;
-        int intValue = ((Integer) valueAnimator.getAnimatedValue()).intValue();
+        int iIntValue = ((Integer) valueAnimator.getAnimatedValue()).intValue();
         if (z && valueAnimator.getAnimatedFraction() == 1.0f) {
             i = Integer.MAX_VALUE;
         } else {
             i = snapTarget.taskPosition;
         }
-        dividerView.resizeStackDelayed(intValue, i, snapTarget);
+        dividerView.resizeStackDelayed(iIntValue, i, snapTarget);
     }
 
-    public static /* synthetic */ void lambda$getFlingAnimator$1(DividerView dividerView, DividerSnapAlgorithm.SnapTarget snapTarget) {
+    public static /* synthetic */ void lambda$getFlingAnimator$1(DividerView dividerView, DividerSnapAlgorithm.SnapTarget snapTarget) throws Resources.NotFoundException {
         dividerView.commitSnapFlags(snapTarget);
         dividerView.mWindowManagerProxy.setResizing(false);
         dividerView.updateDockSide();
@@ -641,7 +649,9 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         if (!z2) {
             this.mHandle.setAlpha(z ? 0.0f : 1.0f);
             this.mDockedStackMinimized = z;
-        } else if (this.mDockedStackMinimized != z) {
+            return;
+        }
+        if (this.mDockedStackMinimized != z) {
             this.mDockedStackMinimized = z;
             if (this.mDisplayRotation != this.mDefaultDisplay.getRotation()) {
                 SystemServicesProxy.getInstance(this.mContext).getStableInsets(this.mStableInsets);
@@ -657,10 +667,10 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
                     requestLayout();
                     this.mIsInMinimizeInteraction = true;
                     resizeStack(this.mMinimizedSnapAlgorithm.getMiddleTarget());
-                    return;
+                } else {
+                    resizeStack(this.mSnapTargetBeforeMinimized);
+                    this.mIsInMinimizeInteraction = false;
                 }
-                resizeStack(this.mSnapTargetBeforeMinimized);
-                this.mIsInMinimizeInteraction = false;
             }
         }
     }
@@ -739,8 +749,7 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         this.mState.mRatioPositionBeforeMinimized = snapTarget.position / (isHorizontalDivision() ? this.mDisplayHeight : this.mDisplayWidth);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resetBackground() {
+    private void resetBackground() {
         this.mBackground.setPivotX(this.mBackground.getWidth() / 2);
         this.mBackground.setPivotY(this.mBackground.getHeight() / 2);
         this.mBackground.setScaleX(1.0f);
@@ -771,11 +780,10 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
     }
 
     private void repositionSnapTargetBeforeMinimized() {
-        float f = this.mState.mRatioPositionBeforeMinimized;
-        int i = isHorizontalDivision() ? this.mDisplayHeight : this.mDisplayWidth;
+        int i = (int) (this.mState.mRatioPositionBeforeMinimized * (isHorizontalDivision() ? this.mDisplayHeight : this.mDisplayWidth));
         this.mSnapAlgorithm = null;
         initializeSnapAlgorithm();
-        this.mSnapTargetBeforeMinimized = this.mSnapAlgorithm.calculateNonDismissingSnapTarget((int) (f * i));
+        this.mSnapTargetBeforeMinimized = this.mSnapAlgorithm.calculateNonDismissingSnapTarget(i);
     }
 
     private void updateDisplayInfo() {
@@ -818,9 +826,9 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
     }
 
     public void resizeStackDelayed(int i, int i2, DividerSnapAlgorithm.SnapTarget snapTarget) {
-        Message obtainMessage = this.mHandler.obtainMessage(0, i, i2, snapTarget);
-        obtainMessage.setAsynchronous(true);
-        this.mSfChoreographer.scheduleAtSfVsync(this.mHandler, obtainMessage);
+        Message messageObtainMessage = this.mHandler.obtainMessage(0, i, i2, snapTarget);
+        messageObtainMessage.setAsynchronous(true);
+        this.mSfChoreographer.scheduleAtSfVsync(this.mHandler, messageObtainMessage);
     }
 
     private void resizeStack(DividerSnapAlgorithm.SnapTarget snapTarget) {
@@ -867,11 +875,11 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
             this.mWindowManagerProxy.resizeDockedStack(this.mDockedRect, this.mDockedTaskRect, this.mDockedInsetRect, this.mOtherTaskRect, this.mOtherInsetRect);
         } else if (i2 != Integer.MAX_VALUE) {
             calculateBoundsForPosition(i, DockedDividerUtils.invertDockSide(this.mDockSide), this.mOtherRect);
-            int invertDockSide = DockedDividerUtils.invertDockSide(this.mDockSide);
-            int restrictDismissingTaskPosition = restrictDismissingTaskPosition(i2, this.mDockSide, snapTarget);
-            int restrictDismissingTaskPosition2 = restrictDismissingTaskPosition(i2, invertDockSide, snapTarget);
-            calculateBoundsForPosition(restrictDismissingTaskPosition, this.mDockSide, this.mDockedTaskRect);
-            calculateBoundsForPosition(restrictDismissingTaskPosition2, invertDockSide, this.mOtherTaskRect);
+            int iInvertDockSide = DockedDividerUtils.invertDockSide(this.mDockSide);
+            int iRestrictDismissingTaskPosition = restrictDismissingTaskPosition(i2, this.mDockSide, snapTarget);
+            int iRestrictDismissingTaskPosition2 = restrictDismissingTaskPosition(i2, iInvertDockSide, snapTarget);
+            calculateBoundsForPosition(iRestrictDismissingTaskPosition, this.mDockSide, this.mDockedTaskRect);
+            calculateBoundsForPosition(iRestrictDismissingTaskPosition2, iInvertDockSide, this.mOtherTaskRect);
             this.mTmpRect.set(0, 0, this.mDisplayWidth, this.mDisplayHeight);
             alignTopLeft(this.mDockedRect, this.mDockedTaskRect);
             alignTopLeft(this.mOtherRect, this.mOtherTaskRect);
@@ -884,8 +892,8 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
                 alignBottomRight(this.mTmpRect, this.mDockedInsetRect);
                 alignTopLeft(this.mTmpRect, this.mOtherInsetRect);
             }
-            applyDismissingParallax(this.mDockedTaskRect, this.mDockSide, snapTarget, i, restrictDismissingTaskPosition);
-            applyDismissingParallax(this.mOtherTaskRect, invertDockSide, snapTarget, i, restrictDismissingTaskPosition2);
+            applyDismissingParallax(this.mDockedTaskRect, this.mDockSide, snapTarget, i, iRestrictDismissingTaskPosition);
+            applyDismissingParallax(this.mOtherTaskRect, iInvertDockSide, snapTarget, i, iRestrictDismissingTaskPosition2);
             this.mWindowManagerProxy.resizeDockedStack(this.mDockedRect, this.mDockedTaskRect, this.mDockedInsetRect, this.mOtherTaskRect, this.mOtherInsetRect);
         } else {
             this.mWindowManagerProxy.resizeDockedStack(this.mDockedRect, null, null, null, null);
@@ -932,44 +940,42 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
 
     private void applyDismissingParallax(Rect rect, int i, DividerSnapAlgorithm.SnapTarget snapTarget, int i2, int i3) {
         int i4;
-        DividerSnapAlgorithm.SnapTarget snapTarget2;
-        float min = Math.min(1.0f, Math.max(0.0f, this.mSnapAlgorithm.calculateDismissingFraction(i2)));
-        DividerSnapAlgorithm.SnapTarget snapTarget3 = null;
+        DividerSnapAlgorithm.SnapTarget lastSplitTarget;
+        float fMin = Math.min(1.0f, Math.max(0.0f, this.mSnapAlgorithm.calculateDismissingFraction(i2)));
+        DividerSnapAlgorithm.SnapTarget dismissEndTarget = null;
         if (i2 <= this.mSnapAlgorithm.getLastSplitTarget().position && dockSideTopLeft(i)) {
-            snapTarget3 = this.mSnapAlgorithm.getDismissStartTarget();
+            dismissEndTarget = this.mSnapAlgorithm.getDismissStartTarget();
             i4 = i3;
-            snapTarget2 = this.mSnapAlgorithm.getFirstSplitTarget();
+            lastSplitTarget = this.mSnapAlgorithm.getFirstSplitTarget();
         } else if (i2 >= this.mSnapAlgorithm.getLastSplitTarget().position && dockSideBottomRight(i)) {
-            snapTarget3 = this.mSnapAlgorithm.getDismissEndTarget();
-            snapTarget2 = this.mSnapAlgorithm.getLastSplitTarget();
-            i4 = snapTarget2.position;
+            dismissEndTarget = this.mSnapAlgorithm.getDismissEndTarget();
+            lastSplitTarget = this.mSnapAlgorithm.getLastSplitTarget();
+            i4 = lastSplitTarget.position;
         } else {
             i4 = 0;
-            snapTarget2 = null;
+            lastSplitTarget = null;
         }
-        if (snapTarget3 != null && min > 0.0f && isDismissing(snapTarget2, i2, i)) {
-            int calculateParallaxDismissingFraction = (int) (i4 + (calculateParallaxDismissingFraction(min, i) * (snapTarget3.position - snapTarget2.position)));
-            int width = rect.width();
-            int height = rect.height();
+        if (dismissEndTarget != null && fMin > 0.0f && isDismissing(lastSplitTarget, i2, i)) {
+            int iCalculateParallaxDismissingFraction = (int) (i4 + (calculateParallaxDismissingFraction(fMin, i) * (dismissEndTarget.position - lastSplitTarget.position)));
+            int iWidth = rect.width();
+            int iHeight = rect.height();
             switch (i) {
                 case 1:
-                    rect.left = calculateParallaxDismissingFraction - width;
-                    rect.right = calculateParallaxDismissingFraction;
-                    return;
+                    rect.left = iCalculateParallaxDismissingFraction - iWidth;
+                    rect.right = iCalculateParallaxDismissingFraction;
+                    break;
                 case 2:
-                    rect.top = calculateParallaxDismissingFraction - height;
-                    rect.bottom = calculateParallaxDismissingFraction;
-                    return;
+                    rect.top = iCalculateParallaxDismissingFraction - iHeight;
+                    rect.bottom = iCalculateParallaxDismissingFraction;
+                    break;
                 case 3:
-                    rect.left = this.mDividerSize + calculateParallaxDismissingFraction;
-                    rect.right = calculateParallaxDismissingFraction + width + this.mDividerSize;
-                    return;
+                    rect.left = this.mDividerSize + iCalculateParallaxDismissingFraction;
+                    rect.right = iCalculateParallaxDismissingFraction + iWidth + this.mDividerSize;
+                    break;
                 case 4:
-                    rect.top = this.mDividerSize + calculateParallaxDismissingFraction;
-                    rect.bottom = calculateParallaxDismissingFraction + height + this.mDividerSize;
-                    return;
-                default:
-                    return;
+                    rect.top = this.mDividerSize + iCalculateParallaxDismissingFraction;
+                    rect.bottom = iCalculateParallaxDismissingFraction + iHeight + this.mDividerSize;
+                    break;
             }
         }
     }
@@ -1028,7 +1034,7 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         saveSnapTargetBeforeMinimized(this.mSnapAlgorithm.getMiddleTarget());
     }
 
-    public final void onBusEvent(DockedTopTaskEvent dockedTopTaskEvent) {
+    public final void onBusEvent(DockedTopTaskEvent dockedTopTaskEvent) throws Resources.NotFoundException {
         if (dockedTopTaskEvent.dragMode == -1) {
             this.mState.growAfterRecentsDrawn = false;
             this.mState.animateAfterRecentsDrawn = true;
@@ -1041,14 +1047,14 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
 
     public void onRecentsDrawn() {
         updateDockSide();
-        final int calculatePositionForInsetBounds = calculatePositionForInsetBounds();
+        final int iCalculatePositionForInsetBounds = calculatePositionForInsetBounds();
         if (this.mState.animateAfterRecentsDrawn) {
             this.mState.animateAfterRecentsDrawn = false;
             this.mHandler.post(new Runnable() { // from class: com.android.systemui.stackdivider.-$$Lambda$DividerView$6QXub7h9g3mZn2yBpbDKCxY_TW4
                 @Override // java.lang.Runnable
-                public final void run() {
-                    DividerView dividerView = DividerView.this;
-                    dividerView.stopDragging(calculatePositionForInsetBounds, dividerView.getSnapAlgorithm().getMiddleTarget(), dividerView.mLongPressEntraceAnimDuration, Interpolators.FAST_OUT_SLOW_IN, 200L);
+                public final void run() throws Resources.NotFoundException {
+                    DividerView dividerView = this.f$0;
+                    dividerView.stopDragging(iCalculatePositionForInsetBounds, dividerView.getSnapAlgorithm().getMiddleTarget(), dividerView.mLongPressEntraceAnimDuration, Interpolators.FAST_OUT_SLOW_IN, 200L);
                 }
             });
         }
@@ -1056,11 +1062,11 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
             this.mState.growAfterRecentsDrawn = false;
             updateDockSide();
             EventBus.getDefault().send(new RecentsGrowingEvent());
-            stopDragging(calculatePositionForInsetBounds, getSnapAlgorithm().getMiddleTarget(), 336L, Interpolators.FAST_OUT_SLOW_IN);
+            stopDragging(iCalculatePositionForInsetBounds, getSnapAlgorithm().getMiddleTarget(), 336L, Interpolators.FAST_OUT_SLOW_IN);
         }
     }
 
-    public final void onBusEvent(UndockingTaskEvent undockingTaskEvent) {
+    public final void onBusEvent(UndockingTaskEvent undockingTaskEvent) throws Resources.NotFoundException {
         DividerSnapAlgorithm.SnapTarget dismissStartTarget;
         int dockSide = this.mWindowManagerProxy.getDockSide();
         if (dockSide != -1) {

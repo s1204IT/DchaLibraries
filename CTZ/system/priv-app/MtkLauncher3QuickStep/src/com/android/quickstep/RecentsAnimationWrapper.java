@@ -8,6 +8,7 @@ import com.android.systemui.shared.system.RecentsAnimationControllerCompat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
+
 /* loaded from: classes.dex */
 public class RecentsAnimationWrapper {
     private RecentsAnimationControllerCompat mController;
@@ -46,7 +47,7 @@ public class RecentsAnimationWrapper {
         this.mExecutorService.submit(new Runnable() { // from class: com.android.quickstep.-$$Lambda$RecentsAnimationWrapper$t0651d-J6Ex6rVOzuxBL-Fg45bs
             @Override // java.lang.Runnable
             public final void run() {
-                RecentsAnimationWrapper.lambda$finish$0(RecentsAnimationWrapper.this, z, runnable);
+                RecentsAnimationWrapper.lambda$finish$0(this.f$0, z, runnable);
             }
         });
     }
@@ -70,7 +71,7 @@ public class RecentsAnimationWrapper {
             this.mExecutorService.submit(new Runnable() { // from class: com.android.quickstep.-$$Lambda$RecentsAnimationWrapper$9c3qO5H-3-3OmkdTM70q4HUnQYM
                 @Override // java.lang.Runnable
                 public final void run() {
-                    RecentsAnimationWrapper.lambda$enableInputConsumer$1(RecentsAnimationWrapper.this);
+                    RecentsAnimationWrapper.lambda$enableInputConsumer$1(this.f$0);
                 }
             });
         }
@@ -92,7 +93,7 @@ public class RecentsAnimationWrapper {
         this.mExecutorService.submit(new Runnable() { // from class: com.android.quickstep.-$$Lambda$RecentsAnimationWrapper$QrJiGACPfNMszQcu6iJp-4ImttA
             @Override // java.lang.Runnable
             public final void run() {
-                RecentsAnimationWrapper.lambda$setAnimationTargetsBehindSystemBars$2(RecentsAnimationWrapper.this, z);
+                RecentsAnimationWrapper.lambda$setAnimationTargetsBehindSystemBars$2(this.f$0, z);
             }
         });
     }
@@ -113,7 +114,7 @@ public class RecentsAnimationWrapper {
         this.mExecutorService.submit(new Runnable() { // from class: com.android.quickstep.-$$Lambda$RecentsAnimationWrapper$ykLqYkc8Y_V0VQVp5BD2XcRvDC4
             @Override // java.lang.Runnable
             public final void run() {
-                RecentsAnimationWrapper.lambda$setSplitScreenMinimizedForTransaction$3(RecentsAnimationWrapper.this, z);
+                RecentsAnimationWrapper.lambda$setSplitScreenMinimizedForTransaction$3(this.f$0, z);
             }
         });
     }
@@ -130,7 +131,7 @@ public class RecentsAnimationWrapper {
         this.mExecutorService.submit(new Runnable() { // from class: com.android.quickstep.-$$Lambda$RecentsAnimationWrapper$MFk8IdJZdT6NsP_HIZZL9XUWA0c
             @Override // java.lang.Runnable
             public final void run() {
-                RecentsAnimationWrapper.lambda$hideCurrentInputMethod$4(RecentsAnimationWrapper.this);
+                RecentsAnimationWrapper.lambda$hideCurrentInputMethod$4(this.f$0);
             }
         });
     }

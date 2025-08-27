@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 /* loaded from: classes.dex */
 public class DbDowngradeHelper {
     private static final String KEY_DOWNGRADE_TO = "downgrade_to_";
@@ -29,7 +30,7 @@ public class DbDowngradeHelper {
         this.version = i;
     }
 
-    public void onDowngrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+    public void onDowngrade(SQLiteDatabase sQLiteDatabase, int i, int i2) throws Exception {
         ArrayList arrayList = new ArrayList();
         for (int i3 = i - 1; i3 >= i2; i3--) {
             String[] strArr = this.mStatements.get(i3);
@@ -45,12 +46,12 @@ public class DbDowngradeHelper {
                 sQLiteDatabase.execSQL((String) it.next());
             }
             sQLiteTransaction.commit();
-            $closeResource(null, sQLiteTransaction);
         } finally {
+            $closeResource(null, sQLiteTransaction);
         }
     }
 
-    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) {
+    private static /* synthetic */ void $closeResource(Throwable th, AutoCloseable autoCloseable) throws Exception {
         if (th == null) {
             autoCloseable.close();
             return;
@@ -78,7 +79,14 @@ public class DbDowngradeHelper {
         return dbDowngradeHelper;
     }
 
-    public static void updateSchemaFile(File file, int i, Context context, int i2) {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [101=4, 104=4] */
+    /* JADX WARN: Removed duplicated region for block: B:22:0x0031 A[Catch: all -> 0x0035, Throwable -> 0x0037, TRY_ENTER, TryCatch #4 {, blocks: (B:9:0x0011, B:12:0x001f, B:22:0x0031, B:23:0x0034), top: B:33:0x0011, outer: #0 }] */
+    /* JADX WARN: Removed duplicated region for block: B:41:? A[Catch: all -> 0x0035, Throwable -> 0x0037, SYNTHETIC, TRY_LEAVE, TryCatch #4 {, blocks: (B:9:0x0011, B:12:0x001f, B:22:0x0031, B:23:0x0034), top: B:33:0x0011, outer: #0 }] */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
+    public static void updateSchemaFile(File file, int i, Context context, int i2) throws Exception {
+        Throwable th;
         try {
             if (parse(file).version >= i) {
                 return;
@@ -87,12 +95,22 @@ public class DbDowngradeHelper {
         }
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            InputStream openRawResource = context.getResources().openRawResource(i2);
-            IOUtils.copy(openRawResource, fileOutputStream);
-            if (openRawResource != null) {
-                $closeResource(null, openRawResource);
+            try {
+                InputStream inputStreamOpenRawResource = context.getResources().openRawResource(i2);
+                try {
+                    IOUtils.copy(inputStreamOpenRawResource, fileOutputStream);
+                    if (inputStreamOpenRawResource != null) {
+                        $closeResource(null, inputStreamOpenRawResource);
+                    }
+                } catch (Throwable th2) {
+                    th = th2;
+                    th = null;
+                    if (inputStreamOpenRawResource != null) {
+                    }
+                }
+            } finally {
+                $closeResource(null, fileOutputStream);
             }
-            $closeResource(null, fileOutputStream);
         } catch (IOException e2) {
             Log.e(TAG, "Error writing schema file", e2);
         }

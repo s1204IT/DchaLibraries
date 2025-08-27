@@ -1,11 +1,13 @@
 package com.android.settings.notification;
 
+import android.R;
 import android.content.Context;
 import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.View;
 import com.android.settings.applications.LayoutPreference;
 import com.android.settings.widget.ToggleSwitch;
+
 /* loaded from: classes.dex */
 public class NotificationSwitchBarPreference extends LayoutPreference {
     private boolean mChecked;
@@ -20,7 +22,7 @@ public class NotificationSwitchBarPreference extends LayoutPreference {
     @Override // com.android.settings.applications.LayoutPreference, android.support.v7.preference.Preference
     public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
         super.onBindViewHolder(preferenceViewHolder);
-        this.mSwitch = (ToggleSwitch) preferenceViewHolder.findViewById(16908352);
+        this.mSwitch = (ToggleSwitch) preferenceViewHolder.findViewById(R.id.switch_widget);
         if (this.mSwitch != null) {
             this.mSwitch.setOnClickListener(new View.OnClickListener() { // from class: com.android.settings.notification.NotificationSwitchBarPreference.1
                 @Override // android.view.View.OnClickListener

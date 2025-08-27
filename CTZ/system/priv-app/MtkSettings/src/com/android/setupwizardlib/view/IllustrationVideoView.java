@@ -12,6 +12,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import com.android.setupwizardlib.R;
+
 @TargetApi(14)
 /* loaded from: classes.dex */
 public class IllustrationVideoView extends TextureView implements Animatable, MediaPlayer.OnInfoListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnSeekCompleteListener, TextureView.SurfaceTextureListener {
@@ -24,9 +25,9 @@ public class IllustrationVideoView extends TextureView implements Animatable, Me
         super(context, attributeSet);
         this.mAspectRatio = 1.0f;
         this.mVideoResId = 0;
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwIllustrationVideoView);
-        this.mVideoResId = obtainStyledAttributes.getResourceId(R.styleable.SuwIllustrationVideoView_suwVideo, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SuwIllustrationVideoView);
+        this.mVideoResId = typedArrayObtainStyledAttributes.getResourceId(R.styleable.SuwIllustrationVideoView_suwVideo, 0);
+        typedArrayObtainStyledAttributes.recycle();
         setScaleX(0.9999999f);
         setScaleX(0.9999999f);
         setSurfaceTextureListener(this);
@@ -46,7 +47,7 @@ public class IllustrationVideoView extends TextureView implements Animatable, Me
         super.onMeasure(View.MeasureSpec.makeMeasureSpec(size, 1073741824), View.MeasureSpec.makeMeasureSpec(size2, 1073741824));
     }
 
-    public void setVideoResource(int i) {
+    public void setVideoResource(int i) throws IllegalStateException {
         if (i != this.mVideoResId) {
             this.mVideoResId = i;
             createMediaPlayer();
@@ -54,7 +55,7 @@ public class IllustrationVideoView extends TextureView implements Animatable, Me
     }
 
     @Override // android.view.View
-    public void onWindowFocusChanged(boolean z) {
+    public void onWindowFocusChanged(boolean z) throws IllegalStateException {
         super.onWindowFocusChanged(z);
         if (z) {
             start();
@@ -63,7 +64,7 @@ public class IllustrationVideoView extends TextureView implements Animatable, Me
         }
     }
 
-    private void createMediaPlayer() {
+    private void createMediaPlayer() throws IllegalStateException {
         if (this.mMediaPlayer != null) {
             this.mMediaPlayer.release();
         }
@@ -93,7 +94,7 @@ public class IllustrationVideoView extends TextureView implements Animatable, Me
         return true;
     }
 
-    public void release() {
+    public void release() throws IllegalStateException {
         if (this.mMediaPlayer != null) {
             this.mMediaPlayer.stop();
             this.mMediaPlayer.release();
@@ -106,7 +107,7 @@ public class IllustrationVideoView extends TextureView implements Animatable, Me
     }
 
     @Override // android.view.TextureView.SurfaceTextureListener
-    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i2) {
+    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i2) throws IllegalStateException {
         setVisibility(4);
         this.mSurface = new Surface(surfaceTexture);
         createMediaPlayer();
@@ -117,7 +118,7 @@ public class IllustrationVideoView extends TextureView implements Animatable, Me
     }
 
     @Override // android.view.TextureView.SurfaceTextureListener
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) throws IllegalStateException {
         release();
         return true;
     }
@@ -127,14 +128,14 @@ public class IllustrationVideoView extends TextureView implements Animatable, Me
     }
 
     @Override // android.graphics.drawable.Animatable
-    public void start() {
+    public void start() throws IllegalStateException {
         if (this.mMediaPlayer != null && !this.mMediaPlayer.isPlaying()) {
             this.mMediaPlayer.start();
         }
     }
 
     @Override // android.graphics.drawable.Animatable
-    public void stop() {
+    public void stop() throws IllegalStateException {
         if (this.mMediaPlayer != null) {
             this.mMediaPlayer.pause();
         }
@@ -159,7 +160,7 @@ public class IllustrationVideoView extends TextureView implements Animatable, Me
     }
 
     @Override // android.media.MediaPlayer.OnSeekCompleteListener
-    public void onSeekComplete(MediaPlayer mediaPlayer) {
+    public void onSeekComplete(MediaPlayer mediaPlayer) throws IllegalStateException {
         mediaPlayer.start();
     }
 

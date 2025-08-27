@@ -11,6 +11,7 @@ import android.support.v7.preference.Preference;
 import android.text.TextUtils;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.development.DeveloperOptionsPreferenceController;
+
 /* loaded from: classes.dex */
 public class WaitForDebuggerPreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin, OnActivityResultListener {
     static final int SETTING_VALUE_OFF = 0;
@@ -53,9 +54,8 @@ public class WaitForDebuggerPreferenceController extends DeveloperOptionsPrefere
         switchPreference.setEnabled(!TextUtils.isEmpty(str));
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settingslib.development.DeveloperOptionsPreferenceController
-    public void onDeveloperOptionsSwitchDisabled() {
+    protected void onDeveloperOptionsSwitchDisabled() {
         super.onDeveloperOptionsSwitchDisabled();
         writeDebuggerAppOptions(null, false, false);
         ((SwitchPreference) this.mPreference).setChecked(false);

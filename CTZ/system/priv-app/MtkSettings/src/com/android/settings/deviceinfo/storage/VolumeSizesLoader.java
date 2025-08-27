@@ -7,6 +7,7 @@ import com.android.settingslib.deviceinfo.PrivateStorageInfo;
 import com.android.settingslib.deviceinfo.StorageVolumeProvider;
 import com.android.settingslib.utils.AsyncLoader;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public class VolumeSizesLoader extends AsyncLoader<PrivateStorageInfo> {
     private StorageStatsManager mStats;
@@ -20,11 +21,12 @@ public class VolumeSizesLoader extends AsyncLoader<PrivateStorageInfo> {
         this.mVolume = volumeInfo;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(PrivateStorageInfo privateStorageInfo) {
+    protected void onDiscardResult(PrivateStorageInfo privateStorageInfo) {
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
     public PrivateStorageInfo loadInBackground() {
         try {

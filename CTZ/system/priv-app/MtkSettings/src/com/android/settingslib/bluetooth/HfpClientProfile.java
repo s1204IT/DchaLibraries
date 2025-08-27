@@ -11,10 +11,11 @@ import android.os.ParcelUuid;
 import android.util.Log;
 import com.android.settingslib.R;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class HfpClientProfile implements LocalBluetoothProfile {
+final class HfpClientProfile implements LocalBluetoothProfile {
     private final CachedBluetoothDeviceManager mDeviceManager;
     private boolean mIsProfileReady;
     private final LocalBluetoothAdapter mLocalAdapter;
@@ -23,7 +24,6 @@ public final class HfpClientProfile implements LocalBluetoothProfile {
     private static boolean V = false;
     static final ParcelUuid[] SRC_UUIDS = {BluetoothUuid.HSP_AG, BluetoothUuid.Handsfree_AG};
 
-    /* loaded from: classes.dex */
     private final class HfpClientServiceListener implements BluetoothProfile.ServiceListener {
         private HfpClientServiceListener() {
         }
@@ -37,13 +37,13 @@ public final class HfpClientProfile implements LocalBluetoothProfile {
             List connectedDevices = HfpClientProfile.this.mService.getConnectedDevices();
             while (!connectedDevices.isEmpty()) {
                 BluetoothDevice bluetoothDevice = (BluetoothDevice) connectedDevices.remove(0);
-                CachedBluetoothDevice findDevice = HfpClientProfile.this.mDeviceManager.findDevice(bluetoothDevice);
-                if (findDevice == null) {
+                CachedBluetoothDevice cachedBluetoothDeviceFindDevice = HfpClientProfile.this.mDeviceManager.findDevice(bluetoothDevice);
+                if (cachedBluetoothDeviceFindDevice == null) {
                     Log.w("HfpClientProfile", "HfpClient profile found new device: " + bluetoothDevice);
-                    findDevice = HfpClientProfile.this.mDeviceManager.addDevice(HfpClientProfile.this.mLocalAdapter, HfpClientProfile.this.mProfileManager, bluetoothDevice);
+                    cachedBluetoothDeviceFindDevice = HfpClientProfile.this.mDeviceManager.addDevice(HfpClientProfile.this.mLocalAdapter, HfpClientProfile.this.mProfileManager, bluetoothDevice);
                 }
-                findDevice.onProfileStateChanged(HfpClientProfile.this, 2);
-                findDevice.refresh();
+                cachedBluetoothDeviceFindDevice.onProfileStateChanged(HfpClientProfile.this, 2);
+                cachedBluetoothDeviceFindDevice.refresh();
             }
             HfpClientProfile.this.mIsProfileReady = true;
         }
@@ -67,8 +67,7 @@ public final class HfpClientProfile implements LocalBluetoothProfile {
         return 16;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public HfpClientProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
+    HfpClientProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;
         this.mProfileManager = localBluetoothProfileManager;
@@ -96,8 +95,9 @@ public final class HfpClientProfile implements LocalBluetoothProfile {
         }
         List<BluetoothDevice> connectedDevices = getConnectedDevices();
         if (connectedDevices != null) {
-            for (BluetoothDevice bluetoothDevice2 : connectedDevices) {
-                if (bluetoothDevice2.equals(bluetoothDevice)) {
+            Iterator<BluetoothDevice> it = connectedDevices.iterator();
+            while (it.hasNext()) {
+                if (it.next().equals(bluetoothDevice)) {
                     Log.d("HfpClientProfile", "Ignoring Connect");
                     return true;
                 }

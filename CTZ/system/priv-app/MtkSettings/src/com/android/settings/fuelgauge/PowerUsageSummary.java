@@ -23,6 +23,7 @@ import com.android.settings.dashboard.SummaryLoader;
 import com.android.settings.display.BatteryPercentagePreferenceController;
 import com.android.settings.fuelgauge.BatteryBroadcastReceiver;
 import com.android.settings.fuelgauge.BatteryInfo;
+import com.android.settings.fuelgauge.PowerUsageSummary;
 import com.android.settings.fuelgauge.anomaly.Anomaly;
 import com.android.settings.fuelgauge.anomaly.AnomalyDetectionPolicy;
 import com.android.settings.fuelgauge.batterytip.BatteryTipLoader;
@@ -39,6 +40,7 @@ import com.mediatek.settings.fuelguage.BackgroundPowerSavingPreferenceController
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClickListener, BatteryTipPreferenceController.BatteryTipListener {
     static final int BATTERY_INFO_LOADER = 1;
@@ -83,6 +85,7 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
             return new BatteryInfoLoader(PowerUsageSummary.this.getContext(), PowerUsageSummary.this.mStatsHelper);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<BatteryInfo> loader, BatteryInfo batteryInfo) {
             PowerUsageSummary.this.mBatteryHeaderPreferenceController.updateHeaderPreference(batteryInfo);
@@ -100,6 +103,7 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
             return new DebugEstimatesLoader(PowerUsageSummary.this.getContext(), PowerUsageSummary.this.mStatsHelper);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<List<BatteryInfo>> loader, List<BatteryInfo> list) {
             PowerUsageSummary.this.updateViews(list);
@@ -115,6 +119,7 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
             return new BatteryTipLoader(PowerUsageSummary.this.getContext(), PowerUsageSummary.this.mStatsHelper);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: onLoadFinished(Landroid/content/Loader;Ljava/lang/Object;)V */
         @Override // android.app.LoaderManager.LoaderCallbacks
         public void onLoadFinished(Loader<List<BatteryTip>> loader, List<BatteryTip> list) {
             PowerUsageSummary.this.mBatteryTipPreferenceController.updateBatteryTips(list);
@@ -127,10 +132,14 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
 
     protected void updateViews(List<BatteryInfo> list) {
         BatteryMeterView batteryMeterView = (BatteryMeterView) this.mBatteryLayoutPref.findViewById(R.id.battery_header_icon);
+        TextView textView = (TextView) this.mBatteryLayoutPref.findViewById(R.id.battery_percent);
+        TextView textView2 = (TextView) this.mBatteryLayoutPref.findViewById(R.id.summary1);
+        TextView textView3 = (TextView) this.mBatteryLayoutPref.findViewById(R.id.summary2);
         BatteryInfo batteryInfo = list.get(0);
-        ((TextView) this.mBatteryLayoutPref.findViewById(R.id.battery_percent)).setText(Utils.formatPercentage(batteryInfo.batteryLevel));
-        ((TextView) this.mBatteryLayoutPref.findViewById(R.id.summary1)).setText(this.mPowerFeatureProvider.getOldEstimateDebugString(Formatter.formatShortElapsedTime(getContext(), PowerUtil.convertUsToMs(batteryInfo.remainingTimeUs))));
-        ((TextView) this.mBatteryLayoutPref.findViewById(R.id.summary2)).setText(this.mPowerFeatureProvider.getEnhancedEstimateDebugString(Formatter.formatShortElapsedTime(getContext(), PowerUtil.convertUsToMs(list.get(1).remainingTimeUs))));
+        BatteryInfo batteryInfo2 = list.get(1);
+        textView.setText(Utils.formatPercentage(batteryInfo.batteryLevel));
+        textView2.setText(this.mPowerFeatureProvider.getOldEstimateDebugString(Formatter.formatShortElapsedTime(getContext(), PowerUtil.convertUsToMs(batteryInfo.remainingTimeUs))));
+        textView3.setText(this.mPowerFeatureProvider.getEnhancedEstimateDebugString(Formatter.formatShortElapsedTime(getContext(), PowerUtil.convertUsToMs(batteryInfo2.remainingTimeUs))));
         batteryMeterView.setBatteryLevel(batteryInfo.batteryLevel);
         batteryMeterView.setCharging(!batteryInfo.discharging);
     }
@@ -161,17 +170,17 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
         return "PowerUsageSummary";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.power_usage_summary;
     }
 
     @Override // com.android.settings.dashboard.DashboardFragment
     protected List<AbstractPreferenceController> createPreferenceControllers(Context context) {
         Lifecycle lifecycle = getLifecycle();
+        SettingsActivity settingsActivity = (SettingsActivity) getActivity();
         ArrayList arrayList = new ArrayList();
-        this.mBatteryHeaderPreferenceController = new BatteryHeaderPreferenceController(context, (SettingsActivity) getActivity(), this, lifecycle);
+        this.mBatteryHeaderPreferenceController = new BatteryHeaderPreferenceController(context, settingsActivity, this, lifecycle);
         arrayList.add(this.mBatteryHeaderPreferenceController);
         this.mBatteryTipPreferenceController = new BatteryTipPreferenceController(context, "battery_tip", (SettingsActivity) getActivity(), this, this);
         arrayList.add(this.mBatteryTipPreferenceController);
@@ -241,11 +250,11 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
         if (this.mBatteryInfo != null && this.mBatteryInfo.averageTimeToDischarge != -1) {
             this.mLastFullChargePref.setTitle(R.string.battery_full_charge_last);
             this.mLastFullChargePref.setSubtitle(StringUtil.formatElapsedTime(getContext(), this.mBatteryInfo.averageTimeToDischarge, false));
-            return;
+        } else {
+            long jCalculateLastFullChargeTime = this.mBatteryUtils.calculateLastFullChargeTime(this.mStatsHelper, System.currentTimeMillis());
+            this.mLastFullChargePref.setTitle(R.string.battery_last_full_charge);
+            this.mLastFullChargePref.setSubtitle(StringUtil.formatRelativeTime(getContext(), jCalculateLastFullChargeTime, false));
         }
-        long calculateLastFullChargeTime = this.mBatteryUtils.calculateLastFullChargeTime(this.mStatsHelper, System.currentTimeMillis());
-        this.mLastFullChargePref.setTitle(R.string.battery_last_full_charge);
-        this.mLastFullChargePref.setSubtitle(StringUtil.formatRelativeTime(getContext(), calculateLastFullChargeTime, false));
     }
 
     void showBothEstimates() {
@@ -289,9 +298,8 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.fuelgauge.PowerUsageBase
-    public void restartBatteryStatsLoader(int i) {
+    protected void restartBatteryStatsLoader(int i) {
         super.restartBatteryStatsLoader(i);
         this.mBatteryHeaderPreferenceController.quickUpdateHeaderPreference();
     }
@@ -307,9 +315,7 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
         restartBatteryTipLoader();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final BatteryBroadcastReceiver mBatteryBroadcastReceiver;
         private final Context mContext;
         private final SummaryLoader mLoader;
@@ -321,7 +327,8 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
             this.mBatteryBroadcastReceiver.setBatteryChangedListener(new BatteryBroadcastReceiver.OnBatteryChangedListener() { // from class: com.android.settings.fuelgauge.-$$Lambda$PowerUsageSummary$SummaryProvider$kRfOu1vb_I8hwLBBDAS0-xe6-pM
                 @Override // com.android.settings.fuelgauge.BatteryBroadcastReceiver.OnBatteryChangedListener
                 public final void onBatteryChanged(int i) {
-                    BatteryInfo.getBatteryInfo(r0.mContext, new BatteryInfo.Callback() { // from class: com.android.settings.fuelgauge.PowerUsageSummary.SummaryProvider.1
+                    PowerUsageSummary.SummaryProvider summaryProvider = this.f$0;
+                    BatteryInfo.getBatteryInfo(summaryProvider.mContext, new BatteryInfo.Callback() { // from class: com.android.settings.fuelgauge.PowerUsageSummary.SummaryProvider.1
                         @Override // com.android.settings.fuelgauge.BatteryInfo.Callback
                         public void onBatteryInfoLoaded(BatteryInfo batteryInfo) {
                             SummaryProvider.this.mLoader.setSummary(SummaryProvider.this, PowerUsageSummary.getDashboardLabel(SummaryProvider.this.mContext, batteryInfo));

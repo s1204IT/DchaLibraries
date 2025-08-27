@@ -20,6 +20,7 @@ import com.android.systemui.qs.tiles.UserDetailItemView;
 import com.android.systemui.statusbar.phone.KeyguardStatusBarView;
 import com.android.systemui.statusbar.phone.NotificationPanelView;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
+
 /* loaded from: classes.dex */
 public class KeyguardUserSwitcher {
     private final Adapter mAdapter;
@@ -167,23 +168,22 @@ public class KeyguardUserSwitcher {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void refresh() {
+    private void refresh() {
         int childCount = this.mUserSwitcher.getChildCount();
         int count = this.mAdapter.getCount();
-        int max = Math.max(childCount, count);
-        for (int i = 0; i < max; i++) {
+        int iMax = Math.max(childCount, count);
+        for (int i = 0; i < iMax; i++) {
             if (i < count) {
-                View view = null;
+                View childAt = null;
                 if (i < childCount) {
-                    view = this.mUserSwitcher.getChildAt(i);
+                    childAt = this.mUserSwitcher.getChildAt(i);
                 }
-                View view2 = this.mAdapter.getView(i, view, this.mUserSwitcher);
-                if (view == null) {
-                    this.mUserSwitcher.addView(view2);
-                } else if (view != view2) {
+                View view = this.mAdapter.getView(i, childAt, this.mUserSwitcher);
+                if (childAt == null) {
+                    this.mUserSwitcher.addView(view);
+                } else if (childAt != view) {
                     this.mUserSwitcher.removeViewAt(i);
-                    this.mUserSwitcher.addView(view2, i);
+                    this.mUserSwitcher.addView(view, i);
                 }
             } else {
                 this.mUserSwitcher.removeViewAt(this.mUserSwitcher.getChildCount() - 1);
@@ -209,7 +209,6 @@ public class KeyguardUserSwitcher {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Adapter extends UserSwitcherController.BaseUserAdapter implements View.OnClickListener {
         private Context mContext;
         private KeyguardUserSwitcher mKeyguardUserSwitcher;
@@ -251,7 +250,6 @@ public class KeyguardUserSwitcher {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class Container extends FrameLayout {
         private KeyguardUserSwitcher mKeyguardUserSwitcher;
 

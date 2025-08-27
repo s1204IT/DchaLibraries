@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import com.android.settingslib.R;
+
 /* loaded from: classes.dex */
 public class CircleFramedDrawable extends Drawable {
     private final Bitmap mBitmap;
@@ -31,8 +32,8 @@ public class CircleFramedDrawable extends Drawable {
         Canvas canvas = new Canvas(this.mBitmap);
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
-        int min = Math.min(width, height);
-        Rect rect = new Rect((width - min) / 2, (height - min) / 2, min, min);
+        int iMin = Math.min(width, height);
+        Rect rect = new Rect((width - iMin) / 2, (height - iMin) / 2, iMin, iMin);
         RectF rectF = new RectF(0.0f, 0.0f, this.mSize, this.mSize);
         Path path = new Path();
         path.addArc(rectF, 0.0f, 360.0f);

@@ -7,10 +7,11 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import com.android.settings.R;
 import com.android.settingslib.display.DisplayDensityUtils;
+
 /* loaded from: classes.dex */
 public class ScreenZoomPreference extends Preference {
     public ScreenZoomPreference(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.preferenceStyle, 16842894));
+        super(context, attributeSet, TypedArrayUtils.getAttr(context, R.attr.preferenceStyle, android.R.attr.preferenceStyle));
         DisplayDensityUtils displayDensityUtils = new DisplayDensityUtils(context);
         if (displayDensityUtils.getCurrentIndex() < 0) {
             setVisible(false);

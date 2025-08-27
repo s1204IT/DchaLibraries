@@ -3,10 +3,13 @@ package com.google.common.collect;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public abstract class ImmutableAsList<E> extends ImmutableList<E> {
+abstract class ImmutableAsList<E> extends ImmutableList<E> {
     abstract ImmutableCollection<E> delegateCollection();
+
+    ImmutableAsList() {
+    }
 
     @Override // com.google.common.collect.ImmutableList, com.google.common.collect.ImmutableCollection, java.util.AbstractCollection, java.util.Collection, java.util.Set
     public boolean contains(Object obj) {
@@ -23,13 +26,11 @@ public abstract class ImmutableAsList<E> extends ImmutableList<E> {
         return delegateCollection().isEmpty();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableCollection
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return delegateCollection().isPartialView();
     }
 
-    /* loaded from: classes.dex */
     static class SerializedForm implements Serializable {
         private static final long serialVersionUID = 0;
         final ImmutableCollection<?> collection;

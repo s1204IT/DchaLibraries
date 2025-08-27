@@ -11,6 +11,7 @@ import com.android.settingslib.core.lifecycle.events.OnPause;
 import com.android.settingslib.core.lifecycle.events.OnResume;
 import com.mediatek.settings.FeatureOption;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AndroidBeamPreferenceController extends BasePreferenceController implements LifecycleObserver, OnPause, OnResume {
     public static final String KEY_ANDROID_BEAM_SETTINGS = "android_beam_settings";

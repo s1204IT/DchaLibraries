@@ -1,6 +1,7 @@
 package com.android.launcher3.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -24,6 +25,7 @@ import com.android.launcher3.graphics.DrawableFactory;
 import com.android.launcher3.model.PackageItemInfo;
 import com.android.launcher3.touch.ItemClickHandler;
 import com.android.launcher3.util.Themes;
+
 /* loaded from: classes.dex */
 public class PendingAppWidgetHostView extends LauncherAppWidgetHostView implements View.OnClickListener, IconCache.ItemInfoUpdateReceiver {
     private static final float MIN_SATUNATION = 0.7f;
@@ -41,13 +43,13 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView implemen
     private final int mStartState;
 
     public PendingAppWidgetHostView(Context context, LauncherAppWidgetInfo launcherAppWidgetInfo, IconCache iconCache, boolean z) {
-        super(new ContextThemeWrapper(context, (int) R.style.WidgetContainerTheme));
+        super(new ContextThemeWrapper(context, R.style.WidgetContainerTheme));
         this.mRect = new Rect();
         this.mInfo = launcherAppWidgetInfo;
         this.mStartState = launcherAppWidgetInfo.restoreStatus;
         this.mDisabledForSafeMode = z;
         this.mPaint = new TextPaint();
-        this.mPaint.setColor(Themes.getAttrColor(getContext(), 16842806));
+        this.mPaint.setColor(Themes.getAttrColor(getContext(), android.R.attr.textColorPrimary));
         this.mPaint.setTextSize(TypedValue.applyDimension(0, this.mLauncher.getDeviceProfile().iconTextSizePx, getResources().getDisplayMetrics()));
         setBackgroundResource(R.drawable.pending_widget_bg);
         setWillNotDraw(false);
@@ -101,9 +103,9 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView implemen
         if (itemInfoWithIcon.iconBitmap != null) {
             DrawableFactory drawableFactory = DrawableFactory.get(getContext());
             if (this.mDisabledForSafeMode) {
-                FastBitmapDrawable newIcon = drawableFactory.newIcon(itemInfoWithIcon);
-                newIcon.setIsDisabled(true);
-                this.mCenterDrawable = newIcon;
+                FastBitmapDrawable fastBitmapDrawableNewIcon = drawableFactory.newIcon(itemInfoWithIcon);
+                fastBitmapDrawableNewIcon.setIsDisabled(true);
+                this.mCenterDrawable = fastBitmapDrawableNewIcon;
                 this.mSettingIconDrawable = null;
             } else if (isReadyForClickSetup()) {
                 this.mCenterDrawable = drawableFactory.newIcon(itemInfoWithIcon);
@@ -121,8 +123,10 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView implemen
     }
 
     private void updateSettingColor(int i) {
-        Color.colorToHSV(i, r0);
-        float[] fArr = {0.0f, Math.min(fArr[1], (float) MIN_SATUNATION), 1.0f};
+        float[] fArr = new float[3];
+        Color.colorToHSV(i, fArr);
+        fArr[1] = Math.min(fArr[1], MIN_SATUNATION);
+        fArr[2] = 1.0f;
         this.mSettingIconDrawable.setColorFilter(Color.HSVToColor(fArr), PorterDuff.Mode.SRC_IN);
     }
 
@@ -148,7 +152,7 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView implemen
         return !this.mInfo.hasRestoreFlag(2) && (this.mInfo.hasRestoreFlag(4) || this.mInfo.hasRestoreFlag(1));
     }
 
-    private void updateDrawableBounds() {
+    private void updateDrawableBounds() throws Resources.NotFoundException {
         DeviceProfile deviceProfile = this.mLauncher.getDeviceProfile();
         int paddingTop = getPaddingTop();
         int paddingBottom = getPaddingBottom();
@@ -159,35 +163,36 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView implemen
         int width = ((getWidth() - paddingLeft) - paddingRight) - i;
         int height = ((getHeight() - paddingTop) - paddingBottom) - i;
         if (this.mSettingIconDrawable == null) {
-            int min = Math.min(deviceProfile.iconSizePx, Math.min(width, height));
-            this.mRect.set(0, 0, min, min);
+            int iMin = Math.min(deviceProfile.iconSizePx, Math.min(width, height));
+            this.mRect.set(0, 0, iMin, iMin);
             this.mRect.offsetTo((getWidth() - this.mRect.width()) / 2, (getHeight() - this.mRect.height()) / 2);
             this.mCenterDrawable.setBounds(this.mRect);
             return;
         }
-        float max = Math.max(0, Math.min(width, height));
-        float max2 = Math.max(width, height);
-        if (max * 1.8f > max2) {
-            max = max2 / 1.8f;
+        float fMax = Math.max(0, Math.min(width, height));
+        float f = fMax * 1.8f;
+        float fMax2 = Math.max(width, height);
+        if (f > fMax2) {
+            fMax = fMax2 / 1.8f;
         }
-        int min2 = (int) Math.min(max, deviceProfile.iconSizePx);
-        int height2 = (getHeight() - min2) / 2;
+        int iMin2 = (int) Math.min(fMax, deviceProfile.iconSizePx);
+        int height2 = (getHeight() - iMin2) / 2;
         this.mSetupTextLayout = null;
         if (width > 0) {
             this.mSetupTextLayout = new StaticLayout(getResources().getText(R.string.gadget_setup_text), this.mPaint, width, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, true);
             int height3 = this.mSetupTextLayout.getHeight();
-            if (height3 + (min2 * 1.8f) + deviceProfile.iconDrawablePaddingPx >= height) {
+            if (height3 + (iMin2 * 1.8f) + deviceProfile.iconDrawablePaddingPx >= height) {
                 this.mSetupTextLayout = null;
             } else {
-                height2 = (((getHeight() - height3) - deviceProfile.iconDrawablePaddingPx) - min2) / 2;
+                height2 = (((getHeight() - height3) - deviceProfile.iconDrawablePaddingPx) - iMin2) / 2;
             }
         }
-        this.mRect.set(0, 0, min2, min2);
-        this.mRect.offset((getWidth() - min2) / 2, height2);
+        this.mRect.set(0, 0, iMin2, iMin2);
+        this.mRect.offset((getWidth() - iMin2) / 2, height2);
         this.mCenterDrawable.setBounds(this.mRect);
         int i2 = paddingLeft + dimensionPixelSize;
         this.mRect.left = i2;
-        int i3 = (int) (0.4f * min2);
+        int i3 = (int) (0.4f * iMin2);
         this.mRect.right = this.mRect.left + i3;
         this.mRect.top = paddingTop + dimensionPixelSize;
         this.mRect.bottom = this.mRect.top + i3;
@@ -199,7 +204,7 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView implemen
     }
 
     @Override // android.view.View
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) throws Resources.NotFoundException {
         if (this.mCenterDrawable == null) {
             return;
         }

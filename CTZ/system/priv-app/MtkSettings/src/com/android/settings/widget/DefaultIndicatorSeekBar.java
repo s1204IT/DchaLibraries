@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.SeekBar;
+
 /* loaded from: classes.dex */
 public class DefaultIndicatorSeekBar extends SeekBar {
     private int mDefaultProgress;
@@ -41,10 +42,10 @@ public class DefaultIndicatorSeekBar extends SeekBar {
             float max = getMax() - getMin();
             int i3 = (int) (((max > 0.0f ? this.mDefaultProgress / max : 0.0f) * width) + 0.5f);
             int i4 = (isLayoutRtl() && getMirrorForRtl()) ? (width - i3) + this.mPaddingRight : this.mPaddingLeft + i3;
-            int save = canvas.save();
+            int iSave = canvas.save();
             canvas.translate(i4, getHeight() / 2);
             tickMark.draw(canvas);
-            canvas.restoreToCount(save);
+            canvas.restoreToCount(iSave);
         }
     }
 

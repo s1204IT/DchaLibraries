@@ -6,12 +6,12 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.SparseIntArray;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class BatteryActiveView extends View {
     private final Paint mPaint;
     private BatteryActiveProvider mProvider;
 
-    /* loaded from: classes.dex */
     public interface BatteryActiveProvider {
         SparseIntArray getColorArray();
 
@@ -46,7 +46,7 @@ public class BatteryActiveView extends View {
             return;
         }
         SparseIntArray colorArray = this.mProvider.getColorArray();
-        float period = (float) this.mProvider.getPeriod();
+        float period = this.mProvider.getPeriod();
         int i = 0;
         while (i < colorArray.size() - 1) {
             int i2 = i + 1;

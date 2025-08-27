@@ -8,6 +8,8 @@ import com.android.settings.location.RecentLocationRequestPreferenceController;
 import com.android.settings.widget.AppPreference;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.location.RecentLocationApps;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class RecentLocationRequestSeeAllPreferenceController extends LocationBasePreferenceController {
     private PreferenceCategory mCategoryAllRecentLocationRequests;
@@ -43,8 +45,9 @@ public class RecentLocationRequestSeeAllPreferenceController extends LocationBas
     @Override // com.android.settingslib.core.AbstractPreferenceController
     public void updateState(Preference preference) {
         this.mCategoryAllRecentLocationRequests.removeAll();
-        for (RecentLocationApps.Request request : this.mRecentLocationApps.getAppListSorted()) {
-            this.mCategoryAllRecentLocationRequests.addPreference(createAppPreference(preference.getContext(), request));
+        Iterator<RecentLocationApps.Request> it = this.mRecentLocationApps.getAppListSorted().iterator();
+        while (it.hasNext()) {
+            this.mCategoryAllRecentLocationRequests.addPreference(createAppPreference(preference.getContext(), it.next()));
         }
     }
 

@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import com.android.systemui.shared.recents.utilities.Utilities;
+
 /* loaded from: classes.dex */
 public class AnimateableViewBounds extends ViewOutlineProvider {
     protected int mCornerRadius;

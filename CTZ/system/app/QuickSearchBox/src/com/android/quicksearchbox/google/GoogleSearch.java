@@ -13,6 +13,7 @@ import com.android.quicksearchbox.QsbApplication;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Locale;
+
 /* loaded from: classes.dex */
 public class GoogleSearch extends Activity {
     private SearchBaseUrlHelper mSearchDomainHelper;
@@ -46,18 +47,18 @@ public class GoogleSearch extends Activity {
         }
         if ("zh".equals(str)) {
             return "CN".equals(str2) || "TW".equals(str2);
-        } else if ("pt".equals(str)) {
-            return "BR".equals(str2) || "PT".equals(str2);
-        } else {
-            return false;
         }
+        if ("pt".equals(str)) {
+            return "BR".equals(str2) || "PT".equals(str2);
+        }
+        return false;
     }
 
     private void handleWebSearchIntent(Intent intent) {
-        Intent createLaunchUriIntentFromSearchIntent = createLaunchUriIntentFromSearchIntent(intent);
+        Intent intentCreateLaunchUriIntentFromSearchIntent = createLaunchUriIntentFromSearchIntent(intent);
         PendingIntent pendingIntent = (PendingIntent) intent.getParcelableExtra("web_search_pendingintent");
-        if (pendingIntent == null || !launchPendingIntent(pendingIntent, createLaunchUriIntentFromSearchIntent)) {
-            launchIntent(createLaunchUriIntentFromSearchIntent);
+        if (pendingIntent == null || !launchPendingIntent(pendingIntent, intentCreateLaunchUriIntentFromSearchIntent)) {
+            launchIntent(intentCreateLaunchUriIntentFromSearchIntent);
         }
     }
 
@@ -68,16 +69,16 @@ public class GoogleSearch extends Activity {
             return null;
         }
         Bundle bundleExtra = intent.getBundleExtra("app_data");
-        String str = "unknown";
+        String string = "unknown";
         if (bundleExtra != null) {
-            str = bundleExtra.getString("source");
+            string = bundleExtra.getString("source");
         }
         String stringExtra2 = intent.getStringExtra("com.android.browser.application_id");
         if (stringExtra2 == null) {
             stringExtra2 = getPackageName();
         }
         try {
-            Intent intent2 = new Intent("android.intent.action.VIEW", Uri.parse(this.mSearchDomainHelper.getSearchBaseUrl() + "&source=android-" + str + "&q=" + URLEncoder.encode(stringExtra, "UTF-8")));
+            Intent intent2 = new Intent("android.intent.action.VIEW", Uri.parse(this.mSearchDomainHelper.getSearchBaseUrl() + "&source=android-" + string + "&q=" + URLEncoder.encode(stringExtra, "UTF-8")));
             intent2.putExtra("com.android.browser.application_id", stringExtra2);
             intent2.addFlags(268435456);
             return intent2;
@@ -98,7 +99,7 @@ public class GoogleSearch extends Activity {
         }
     }
 
-    private boolean launchPendingIntent(PendingIntent pendingIntent, Intent intent) {
+    private boolean launchPendingIntent(PendingIntent pendingIntent, Intent intent) throws PendingIntent.CanceledException {
         try {
             pendingIntent.send(this, -1, intent);
             return true;

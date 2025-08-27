@@ -6,6 +6,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.util.AttributeSet;
 import com.android.settings.datausage.TemplatePreference;
+
 /* loaded from: classes.dex */
 public class TemplatePreferenceCategory extends PreferenceCategory implements TemplatePreference {
     private int mSubId;

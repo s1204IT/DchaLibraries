@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
+
 /* loaded from: classes.dex */
 public abstract class PanelBar extends FrameLayout {
     public static final String TAG = PanelBar.class.getSimpleName();
@@ -70,7 +71,8 @@ public abstract class PanelBar extends FrameLayout {
             if (panelView == null) {
                 Log.v(TAG, String.format("onTouch: no panel for touch at (%d,%d)", Integer.valueOf((int) motionEvent.getX()), Integer.valueOf((int) motionEvent.getY())));
                 return true;
-            } else if (!panelView.isEnabled()) {
+            }
+            if (!panelView.isEnabled()) {
                 Log.v(TAG, String.format("onTouch: panel (%s) is disabled, ignoring touch at (%d,%d)", panelView, Integer.valueOf((int) motionEvent.getX()), Integer.valueOf((int) motionEvent.getY())));
                 return true;
             }

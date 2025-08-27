@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class SetupSkipDialog extends InstrumentedDialogFragment implements DialogInterface.OnClickListener {
     public static SetupSkipDialog newInstance(boolean z) {

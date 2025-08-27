@@ -54,6 +54,7 @@ import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
+
 /* loaded from: classes.dex */
 public class NavigationBarView extends FrameLayout implements PluginListener<NavGesture> {
     private KeyButtonDrawable mAccessibilityIcon;
@@ -114,14 +115,11 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
     boolean mVertical;
     private boolean mWakeAndUnlocking;
 
-    /* loaded from: classes.dex */
     public interface OnVerticalChangedListener {
         void onVerticalChanged(boolean z);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class NavTransitionListener implements LayoutTransition.TransitionListener {
+    private class NavTransitionListener implements LayoutTransition.TransitionListener {
         private boolean mBackTransitioning;
         private long mDuration;
         private boolean mHomeAppearing;
@@ -131,11 +129,17 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         private NavTransitionListener() {
         }
 
+        /* synthetic */ NavTransitionListener(NavigationBarView navigationBarView, AnonymousClass1 anonymousClass1) {
+            this();
+        }
+
         @Override // android.animation.LayoutTransition.TransitionListener
         public void startTransition(LayoutTransition layoutTransition, ViewGroup viewGroup, View view, int i) {
             if (view.getId() == R.id.back) {
                 this.mBackTransitioning = true;
-            } else if (view.getId() == R.id.home && i == 2) {
+                return;
+            }
+            if (view.getId() == R.id.home && i == 2) {
                 this.mHomeAppearing = true;
                 this.mStartDelay = layoutTransition.getStartDelay(i);
                 this.mDuration = layoutTransition.getDuration(i);
@@ -156,19 +160,32 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
             ButtonDispatcher backButton = NavigationBarView.this.getBackButton();
             if (!this.mBackTransitioning && backButton.getVisibility() == 0 && this.mHomeAppearing && NavigationBarView.this.getHomeButton().getAlpha() == 0.0f) {
                 NavigationBarView.this.getBackButton().setAlpha(0.0f);
-                ObjectAnimator ofFloat = ObjectAnimator.ofFloat(backButton, "alpha", 0.0f, 1.0f);
-                ofFloat.setStartDelay(this.mStartDelay);
-                ofFloat.setDuration(this.mDuration);
-                ofFloat.setInterpolator(this.mInterpolator);
-                ofFloat.start();
+                ObjectAnimator objectAnimatorOfFloat = ObjectAnimator.ofFloat(backButton, "alpha", 0.0f, 1.0f);
+                objectAnimatorOfFloat.setStartDelay(this.mStartDelay);
+                objectAnimatorOfFloat.setDuration(this.mDuration);
+                objectAnimatorOfFloat.setInterpolator(this.mInterpolator);
+                objectAnimatorOfFloat.start();
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class H extends Handler {
+    /* renamed from: com.android.systemui.statusbar.phone.NavigationBarView$1 */
+    class AnonymousClass1 implements View.OnClickListener {
+        AnonymousClass1() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            ((InputMethodManager) NavigationBarView.this.mContext.getSystemService(InputMethodManager.class)).showInputMethodPicker(true);
+        }
+    }
+
+    private class H extends Handler {
         private H() {
+        }
+
+        /* synthetic */ H(NavigationBarView navigationBarView, AnonymousClass1 anonymousClass1) {
+            this();
         }
 
         @Override // android.os.Handler
@@ -184,6 +201,32 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
                     NavigationBarView.this.requestLayout();
                 }
             }
+        }
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.NavigationBarView$2 */
+    class AnonymousClass2 extends View.AccessibilityDelegate {
+        private AccessibilityNodeInfo.AccessibilityAction mToggleOverviewAction;
+
+        AnonymousClass2() {
+        }
+
+        @Override // android.view.View.AccessibilityDelegate
+        public void onInitializeAccessibilityNodeInfo(View view, AccessibilityNodeInfo accessibilityNodeInfo) {
+            super.onInitializeAccessibilityNodeInfo(view, accessibilityNodeInfo);
+            if (this.mToggleOverviewAction == null) {
+                this.mToggleOverviewAction = new AccessibilityNodeInfo.AccessibilityAction(R.id.action_toggle_overview, NavigationBarView.this.getContext().getString(R.string.quick_step_accessibility_toggle_overview));
+            }
+            accessibilityNodeInfo.addAction(this.mToggleOverviewAction);
+        }
+
+        @Override // android.view.View.AccessibilityDelegate
+        public boolean performAccessibilityAction(View view, int i, Bundle bundle) {
+            if (i == R.id.action_toggle_overview) {
+                ((Recents) SysUiServiceProvider.getComponent(NavigationBarView.this.getContext(), Recents.class)).toggleRecentApps();
+                return true;
+            }
+            return super.performAccessibilityAction(view, i, bundle);
         }
     }
 
@@ -210,6 +253,9 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         this.mRotateBtnStyle = R.style.RotateButtonCCWStart90;
         this.mSystemUICustomizationFactory = null;
         this.mImeSwitcherClickListener = new View.OnClickListener() { // from class: com.android.systemui.statusbar.phone.NavigationBarView.1
+            AnonymousClass1() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 ((InputMethodManager) NavigationBarView.this.mContext.getSystemService(InputMethodManager.class)).showInputMethodPicker(true);
@@ -217,6 +263,9 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         };
         this.mQuickStepAccessibilityDelegate = new View.AccessibilityDelegate() { // from class: com.android.systemui.statusbar.phone.NavigationBarView.2
             private AccessibilityNodeInfo.AccessibilityAction mToggleOverviewAction;
+
+            AnonymousClass2() {
+            }
 
             @Override // android.view.View.AccessibilityDelegate
             public void onInitializeAccessibilityNodeInfo(View view, AccessibilityNodeInfo accessibilityNodeInfo) {
@@ -240,10 +289,11 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         this.mDockedListener = new Consumer() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarView$rZTKiGVTHMScp1MOeQG9jGW8tDA
             @Override // java.util.function.Consumer
             public final void accept(Object obj) {
-                r0.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarView$4XDnqGNkJ613pDIbZ7uGeE4B1z4
+                NavigationBarView navigationBarView = this.f$0;
+                navigationBarView.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$NavigationBarView$4XDnqGNkJ613pDIbZ7uGeE4B1z4
                     @Override // java.lang.Runnable
                     public final void run() {
-                        NavigationBarView.lambda$new$0(NavigationBarView.this, r2);
+                        NavigationBarView.lambda$new$0(this.f$0, bool);
                     }
                 });
             }
@@ -275,11 +325,27 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         this.mButtonDispatchers.put(R.id.menu_container, new ButtonDispatcher(R.id.menu_container));
         this.mDeadZone = new DeadZone(this);
         context.getContentResolver().registerContentObserver(Settings.System.getUriFor("dcha_state"), false, new ContentObserver(this.mHandler) { // from class: com.android.systemui.statusbar.phone.NavigationBarView.3
+            AnonymousClass3(Handler handler) {
+                super(handler);
+            }
+
             @Override // android.database.ContentObserver
             public void onChange(boolean z) {
                 NavigationBarView.this.updateNavButtonIcons();
             }
         }, -1);
+    }
+
+    /* renamed from: com.android.systemui.statusbar.phone.NavigationBarView$3 */
+    class AnonymousClass3 extends ContentObserver {
+        AnonymousClass3(Handler handler) {
+            super(handler);
+        }
+
+        @Override // android.database.ContentObserver
+        public void onChange(boolean z) {
+            NavigationBarView.this.updateNavButtonIcons();
+        }
     }
 
     public BarTransitions getBarTransitions() {
@@ -334,23 +400,29 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         return super.onTouchEvent(motionEvent);
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
+    /* JADX WARN: Removed duplicated region for block: B:28:0x0021  */
+    /*
+        Code decompiled incorrectly, please refer to instructions dump.
+    */
     private boolean shouldDeadZoneConsumeTouchEvents(MotionEvent motionEvent) {
-        if (this.mDeadZone.onTouchEvent(motionEvent) || this.mDeadZoneConsuming) {
-            int actionMasked = motionEvent.getActionMasked();
-            if (actionMasked != 3) {
-                switch (actionMasked) {
-                    case 0:
-                        setSlippery(true);
-                        this.mDeadZoneConsuming = true;
-                        break;
-                }
-                return true;
-            }
-            updateSlippery();
-            this.mDeadZoneConsuming = false;
-            return true;
+        if (!this.mDeadZone.onTouchEvent(motionEvent) && !this.mDeadZoneConsuming) {
+            return false;
         }
-        return false;
+        int actionMasked = motionEvent.getActionMasked();
+        if (actionMasked != 3) {
+            switch (actionMasked) {
+                case 0:
+                    setSlippery(true);
+                    this.mDeadZoneConsuming = true;
+                    break;
+                case 1:
+                    updateSlippery();
+                    this.mDeadZoneConsuming = false;
+                    break;
+            }
+        }
+        return true;
     }
 
     public int getDownHitTarget() {
@@ -440,9 +512,9 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
     }
 
     public KeyButtonDrawable getBackDrawable(Context context, Context context2) {
-        KeyButtonDrawable chooseNavigationIconDrawable = chooseNavigationIconDrawable(context, context2, R.drawable.ic_sysbar_back, R.drawable.ic_sysbar_back_quick_step);
-        orientBackButton(chooseNavigationIconDrawable);
-        return chooseNavigationIconDrawable;
+        KeyButtonDrawable keyButtonDrawableChooseNavigationIconDrawable = chooseNavigationIconDrawable(context, context2, R.drawable.ic_sysbar_back, R.drawable.ic_sysbar_back_quick_step);
+        orientBackButton(keyButtonDrawableChooseNavigationIconDrawable);
+        return keyButtonDrawableChooseNavigationIconDrawable;
     }
 
     public KeyButtonDrawable getHomeDrawable(Context context, Context context2) {
@@ -530,9 +602,9 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         if (this.mDisabledFlags == i) {
             return;
         }
-        boolean isOverviewEnabled = isOverviewEnabled();
+        boolean zIsOverviewEnabled = isOverviewEnabled();
         this.mDisabledFlags = i;
-        if (!isOverviewEnabled && isOverviewEnabled()) {
+        if (!zIsOverviewEnabled && isOverviewEnabled()) {
             reloadNavIcons();
         }
         updateNavButtonIcons();
@@ -568,14 +640,14 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         boolean z2 = (this.mDisabledFlags & 2097152) != 0;
         boolean z3 = this.mUseCarModeUi || !isOverviewEnabled();
         boolean z4 = ((this.mDisabledFlags & 4194304) == 0 || z) ? false : true;
-        boolean isScreenPinningActive = ActivityManagerWrapper.getInstance().isScreenPinningActive();
+        boolean zIsScreenPinningActive = ActivityManagerWrapper.getInstance().isScreenPinningActive();
         if (this.mOverviewProxyService.isEnabled()) {
             z3 |= (this.mOverviewProxyService.getInteractionFlags() & 4) == 0;
-            if (isScreenPinningActive) {
+            if (zIsScreenPinningActive) {
                 z4 = false;
                 z2 = false;
             }
-        } else if (isScreenPinningActive) {
+        } else if (zIsScreenPinningActive) {
             z4 = false;
             z3 = false;
         }
@@ -627,7 +699,7 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         if (layoutParams != null) {
             boolean z2 = layoutParams.windowAnimations != 0;
             if (!z2 && z) {
-                layoutParams.windowAnimations = com.android.systemui.plugins.R.style.Animation_NavigationBarFadeIn;
+                layoutParams.windowAnimations = 2131886088;
             } else if (z2 && !z) {
                 layoutParams.windowAnimations = 0;
             } else {
@@ -646,7 +718,7 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
     }
 
     public void updateStates() {
-        boolean shouldShowSwipeUpUI = this.mOverviewProxyService.shouldShowSwipeUpUI();
+        boolean zShouldShowSwipeUpUI = this.mOverviewProxyService.shouldShowSwipeUpUI();
         if (this.mNavigationInflaterView != null) {
             this.mNavigationInflaterView.onLikelyDefaultLayoutChange();
         }
@@ -654,8 +726,8 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         reloadNavIcons();
         updateNavButtonIcons();
         setUpSwipeUpOnboarding(isQuickStepSwipeUpEnabled());
-        WindowManagerWrapper.getInstance().setNavBarVirtualKeyHapticFeedbackEnabled(!shouldShowSwipeUpUI);
-        getHomeButton().setAccessibilityDelegate(shouldShowSwipeUpUI ? this.mQuickStepAccessibilityDelegate : null);
+        WindowManagerWrapper.getInstance().setNavBarVirtualKeyHapticFeedbackEnabled(!zShouldShowSwipeUpUI);
+        getHomeButton().setAccessibilityDelegate(zShouldShowSwipeUpUI ? this.mQuickStepAccessibilityDelegate : null);
     }
 
     private void updateSlippery() {
@@ -755,16 +827,15 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         return this.mShowRotateButton;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public ButtonDispatcher getButtonAtPosition(int i, int i2) {
+    ButtonDispatcher getButtonAtPosition(int i, int i2) {
         for (int i3 = 0; i3 < this.mButtonDispatchers.size(); i3++) {
-            ButtonDispatcher valueAt = this.mButtonDispatchers.valueAt(i3);
-            View currentView = valueAt.getCurrentView();
+            ButtonDispatcher buttonDispatcherValueAt = this.mButtonDispatchers.valueAt(i3);
+            View currentView = buttonDispatcherValueAt.getCurrentView();
             if (currentView != null) {
                 currentView.getHitRect(this.mTmpRect);
                 offsetDescendantRectToMyCoords(currentView, this.mTmpRect);
                 if (this.mTmpRect.contains(i, i2)) {
-                    return valueAt;
+                    return buttonDispatcherValueAt;
                 }
             }
         }
@@ -823,14 +894,14 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
     private void updateRotatedViews() {
         View[] viewArr = this.mRotatedViews;
         View[] viewArr2 = this.mRotatedViews;
-        View findViewById = findViewById(R.id.rot0);
-        viewArr2[2] = findViewById;
-        viewArr[0] = findViewById;
+        View viewFindViewById = findViewById(R.id.rot0);
+        viewArr2[2] = viewFindViewById;
+        viewArr[0] = viewFindViewById;
         View[] viewArr3 = this.mRotatedViews;
         View[] viewArr4 = this.mRotatedViews;
-        View findViewById2 = findViewById(R.id.rot90);
-        viewArr4[1] = findViewById2;
-        viewArr3[3] = findViewById2;
+        View viewFindViewById2 = findViewById(R.id.rot90);
+        viewArr4[1] = viewFindViewById2;
+        viewArr3[3] = viewFindViewById2;
         updateCurrentView();
     }
 
@@ -899,12 +970,12 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
     @Override // android.view.View
     protected void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
-        boolean updateCarMode = updateCarMode(configuration);
+        boolean zUpdateCarMode = updateCarMode(configuration);
         updateTaskSwitchHelper();
         updateIcons(getContext(), this.mConfiguration, configuration);
         updateRecentsIcon();
         this.mRecentsOnboarding.onConfigurationChanged(configuration);
-        if (updateCarMode || this.mConfiguration.densityDpi != configuration.densityDpi || this.mConfiguration.getLayoutDirection() != configuration.getLayoutDirection()) {
+        if (zUpdateCarMode || this.mConfiguration.densityDpi != configuration.densityDpi || this.mConfiguration.getLayoutDirection() != configuration.getLayoutDirection()) {
             updateNavButtonIcons();
         }
         this.mConfiguration.updateFrom(configuration);
@@ -937,13 +1008,13 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
     }
 
     private static String visibilityToString(int i) {
-        if (i != 4) {
-            if (i == 8) {
-                return "GONE";
-            }
-            return "VISIBLE";
+        if (i == 4) {
+            return "INVISIBLE";
         }
-        return "INVISIBLE";
+        if (i == 8) {
+            return "GONE";
+        }
+        return "VISIBLE";
     }
 
     @Override // android.view.ViewGroup, android.view.View
@@ -974,12 +1045,14 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginConnected(Lcom/android/systemui/plugins/Plugin;Landroid/content/Context;)V */
     @Override // com.android.systemui.plugins.PluginListener
     public void onPluginConnected(NavGesture navGesture, Context context) {
         this.mGestureHelper = navGesture.getGestureHelper();
         updateTaskSwitchHelper();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginDisconnected(Lcom/android/systemui/plugins/Plugin;)V */
     @Override // com.android.systemui.plugins.PluginListener
     public void onPluginDisconnected(NavGesture navGesture) {
         NavigationBarGestureHelper navigationBarGestureHelper = new NavigationBarGestureHelper(getContext());

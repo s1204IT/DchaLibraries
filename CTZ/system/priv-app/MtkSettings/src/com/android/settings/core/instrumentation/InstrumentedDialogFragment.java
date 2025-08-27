@@ -7,6 +7,7 @@ import com.android.settingslib.core.instrumentation.Instrumentable;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.core.instrumentation.VisibilityLoggerMixin;
 import com.android.settingslib.core.lifecycle.ObservableDialogFragment;
+
 /* loaded from: classes.dex */
 public abstract class InstrumentedDialogFragment extends ObservableDialogFragment implements Instrumentable {
     protected final DialogCreatable mDialogCreatable;

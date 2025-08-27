@@ -36,6 +36,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment implements InputManager.InputDeviceListener, KeyboardLayoutDialogFragment.OnSetupKeyboardLayoutsListener, Indexable {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.inputmethod.PhysicalKeyboardFragment.4
@@ -127,7 +128,7 @@ public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment i
         ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.inputmethod.-$$Lambda$PhysicalKeyboardFragment$j2wn_SRBsrC7ziAxKgN6he5fFRk
             @Override // java.lang.Runnable
             public final void run() {
-                PhysicalKeyboardFragment.lambda$scheduleUpdateHardKeyboards$1(PhysicalKeyboardFragment.this, context);
+                PhysicalKeyboardFragment.lambda$scheduleUpdateHardKeyboards$1(this.f$0, context);
             }
         });
     }
@@ -137,13 +138,12 @@ public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment i
         ThreadUtils.postOnMainThread(new Runnable() { // from class: com.android.settings.inputmethod.-$$Lambda$PhysicalKeyboardFragment$TSW09XXjPDm85D9gNcQRBrAyYps
             @Override // java.lang.Runnable
             public final void run() {
-                PhysicalKeyboardFragment.this.updateHardKeyboards(hardKeyboards);
+                this.f$0.updateHardKeyboards(hardKeyboards);
             }
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateHardKeyboards(List<HardKeyboardDeviceInfo> list) {
+    private void updateHardKeyboards(List<HardKeyboardDeviceInfo> list) {
         if (Objects.equals(this.mLastHardKeyboards, list)) {
             return;
         }
@@ -162,7 +162,7 @@ public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment i
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.inputmethod.-$$Lambda$PhysicalKeyboardFragment$GzAuWQoIrNRWOGdhye1KALY7EFw
                 @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
                 public final boolean onPreferenceClick(Preference preference2) {
-                    return PhysicalKeyboardFragment.lambda$updateHardKeyboards$2(PhysicalKeyboardFragment.this, hardKeyboardDeviceInfo, preference2);
+                    return PhysicalKeyboardFragment.lambda$updateHardKeyboards$2(this.f$0, hardKeyboardDeviceInfo, preference2);
                 }
             });
             preferenceCategory.addPreference(preference);
@@ -193,13 +193,11 @@ public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment i
         getActivity().getContentResolver().unregisterContentObserver(this.mContentObserver);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateShowVirtualKeyboardSwitch() {
+    private void updateShowVirtualKeyboardSwitch() {
         this.mShowVirtualKeyboardSwitch.setChecked(this.mSettings.isShowImeWithHardKeyboardEnabled());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void toggleKeyboardShortcutsMenu() {
+    private void toggleKeyboardShortcutsMenu() {
         getActivity().requestShowKeyboardShortcuts();
     }
 
@@ -216,8 +214,9 @@ public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment i
     public void onActivityResult(int i, int i2, Intent intent) {
         super.onActivityResult(i, i2, intent);
         if (this.mIntentWaitingForResult != null) {
+            InputDeviceIdentifier inputDeviceIdentifier = (InputDeviceIdentifier) this.mIntentWaitingForResult.getParcelableExtra("input_device_identifier");
             this.mIntentWaitingForResult = null;
-            showKeyboardLayoutDialog((InputDeviceIdentifier) this.mIntentWaitingForResult.getParcelableExtra("input_device_identifier"));
+            showKeyboardLayoutDialog(inputDeviceIdentifier);
         }
     }
 
@@ -233,8 +232,7 @@ public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment i
         return TextUtils.emptyIfNull(keyboardLayout.getLabel());
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static List<HardKeyboardDeviceInfo> getHardKeyboards(Context context) {
+    static List<HardKeyboardDeviceInfo> getHardKeyboards(Context context) {
         ArrayList arrayList = new ArrayList();
         InputManager inputManager = (InputManager) context.getSystemService(InputManager.class);
         if (inputManager == null) {
@@ -256,20 +254,18 @@ public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment i
         return arrayList;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ int lambda$getHardKeyboards$3(Collator collator, HardKeyboardDeviceInfo hardKeyboardDeviceInfo, HardKeyboardDeviceInfo hardKeyboardDeviceInfo2) {
-        int compare = collator.compare(hardKeyboardDeviceInfo.mDeviceName, hardKeyboardDeviceInfo2.mDeviceName);
-        if (compare != 0) {
-            return compare;
+    static /* synthetic */ int lambda$getHardKeyboards$3(Collator collator, HardKeyboardDeviceInfo hardKeyboardDeviceInfo, HardKeyboardDeviceInfo hardKeyboardDeviceInfo2) {
+        int iCompare = collator.compare(hardKeyboardDeviceInfo.mDeviceName, hardKeyboardDeviceInfo2.mDeviceName);
+        if (iCompare != 0) {
+            return iCompare;
         }
-        int compareTo = hardKeyboardDeviceInfo.mDeviceIdentifier.getDescriptor().compareTo(hardKeyboardDeviceInfo2.mDeviceIdentifier.getDescriptor());
-        if (compareTo != 0) {
-            return compareTo;
+        int iCompareTo = hardKeyboardDeviceInfo.mDeviceIdentifier.getDescriptor().compareTo(hardKeyboardDeviceInfo2.mDeviceIdentifier.getDescriptor());
+        if (iCompareTo != 0) {
+            return iCompareTo;
         }
         return collator.compare(hardKeyboardDeviceInfo.mLayoutLabel, hardKeyboardDeviceInfo2.mLayoutLabel);
     }
 
-    /* loaded from: classes.dex */
     public static final class HardKeyboardDeviceInfo {
         public final InputDeviceIdentifier mDeviceIdentifier;
         public final String mDeviceName;

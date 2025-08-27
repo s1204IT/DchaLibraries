@@ -5,6 +5,7 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
+
 /* loaded from: classes.dex */
 public interface IDchaService extends IInterface {
     void cancelSetup() throws RemoteException;
@@ -53,15 +54,14 @@ public interface IDchaService extends IInterface {
 
     boolean verifyUpdateImage(String str) throws RemoteException;
 
-    /* loaded from: classes.dex */
     public static abstract class Stub extends Binder implements IDchaService {
         public static IDchaService asInterface(IBinder iBinder) {
             if (iBinder == null) {
                 return null;
             }
-            IInterface queryLocalInterface = iBinder.queryLocalInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-            if (queryLocalInterface != null && (queryLocalInterface instanceof IDchaService)) {
-                return (IDchaService) queryLocalInterface;
+            IInterface iInterfaceQueryLocalInterface = iBinder.queryLocalInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
+            if (iInterfaceQueryLocalInterface != null && (iInterfaceQueryLocalInterface instanceof IDchaService)) {
+                return (IDchaService) iInterfaceQueryLocalInterface;
             }
             return new Proxy(iBinder);
         }
@@ -75,15 +75,15 @@ public interface IDchaService extends IInterface {
             switch (i) {
                 case 1:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean verifyUpdateImage = verifyUpdateImage(parcel.readString());
+                    boolean zVerifyUpdateImage = verifyUpdateImage(parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(verifyUpdateImage ? 1 : 0);
+                    parcel2.writeInt(zVerifyUpdateImage ? 1 : 0);
                     return true;
                 case 2:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean copyUpdateImage = copyUpdateImage(parcel.readString(), parcel.readString());
+                    boolean zCopyUpdateImage = copyUpdateImage(parcel.readString(), parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(copyUpdateImage ? 1 : 0);
+                    parcel2.writeInt(zCopyUpdateImage ? 1 : 0);
                     return true;
                 case 3:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
@@ -106,21 +106,21 @@ public interface IDchaService extends IInterface {
                     return true;
                 case 7:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean checkPadRooted = checkPadRooted();
+                    boolean zCheckPadRooted = checkPadRooted();
                     parcel2.writeNoException();
-                    parcel2.writeInt(checkPadRooted ? 1 : 0);
+                    parcel2.writeInt(zCheckPadRooted ? 1 : 0);
                     return true;
                 case 8:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean installApp = installApp(parcel.readString(), parcel.readInt());
+                    boolean zInstallApp = installApp(parcel.readString(), parcel.readInt());
                     parcel2.writeNoException();
-                    parcel2.writeInt(installApp ? 1 : 0);
+                    parcel2.writeInt(zInstallApp ? 1 : 0);
                     return true;
                 case 9:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean uninstallApp = uninstallApp(parcel.readString(), parcel.readInt());
+                    boolean zUninstallApp = uninstallApp(parcel.readString(), parcel.readInt());
                     parcel2.writeNoException();
-                    parcel2.writeInt(uninstallApp ? 1 : 0);
+                    parcel2.writeInt(zUninstallApp ? 1 : 0);
                     return true;
                 case 10:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
@@ -166,15 +166,15 @@ public interface IDchaService extends IInterface {
                     return true;
                 case 18:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean copyFile = copyFile(parcel.readString(), parcel.readString());
+                    boolean zCopyFile = copyFile(parcel.readString(), parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(copyFile ? 1 : 0);
+                    parcel2.writeInt(zCopyFile ? 1 : 0);
                     return true;
                 case 19:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean deleteFile = deleteFile(parcel.readString());
+                    boolean zDeleteFile = deleteFile(parcel.readString());
                     parcel2.writeNoException();
-                    parcel2.writeInt(deleteFile ? 1 : 0);
+                    parcel2.writeInt(zDeleteFile ? 1 : 0);
                     return true;
                 case 20:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
@@ -184,9 +184,9 @@ public interface IDchaService extends IInterface {
                     return true;
                 case 21:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    boolean isDeviceEncryptionEnabled = isDeviceEncryptionEnabled();
+                    boolean zIsDeviceEncryptionEnabled = isDeviceEncryptionEnabled();
                     parcel2.writeNoException();
-                    parcel2.writeInt(isDeviceEncryptionEnabled ? 1 : 0);
+                    parcel2.writeInt(zIsDeviceEncryptionEnabled ? 1 : 0);
                     return true;
                 case 22:
                     parcel.enforceInterface("jp.co.benesse.dcha.dchaservice.IDchaService");
@@ -203,7 +203,6 @@ public interface IDchaService extends IInterface {
             }
         }
 
-        /* loaded from: classes.dex */
         private static class Proxy implements IDchaService {
             private IBinder mRemote;
 
@@ -218,351 +217,351 @@ public interface IDchaService extends IInterface {
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean verifyUpdateImage(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    this.mRemote.transact(1, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    this.mRemote.transact(1, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean copyUpdateImage(String str, String str2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    obtain.writeString(str2);
-                    this.mRemote.transact(2, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeString(str2);
+                    this.mRemote.transact(2, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void rebootPad(int i, String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeInt(i);
-                    obtain.writeString(str);
-                    this.mRemote.transact(3, obtain, null, 1);
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeInt(i);
+                    parcelObtain.writeString(str);
+                    this.mRemote.transact(3, parcelObtain, null, 1);
                 } finally {
-                    obtain.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setDefaultPreferredHomeApp(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    this.mRemote.transact(4, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    this.mRemote.transact(4, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void clearDefaultPreferredApp(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    this.mRemote.transact(5, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    this.mRemote.transact(5, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void disableADB() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    this.mRemote.transact(6, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    this.mRemote.transact(6, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean checkPadRooted() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    this.mRemote.transact(7, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    this.mRemote.transact(7, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean installApp(String str, int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    obtain.writeInt(i);
-                    this.mRemote.transact(8, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeInt(i);
+                    this.mRemote.transact(8, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean uninstallApp(String str, int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    obtain.writeInt(i);
-                    this.mRemote.transact(9, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeInt(i);
+                    this.mRemote.transact(9, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void cancelSetup() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    this.mRemote.transact(10, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    this.mRemote.transact(10, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setSetupStatus(int i) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeInt(i);
-                    this.mRemote.transact(11, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeInt(i);
+                    this.mRemote.transact(11, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public int getSetupStatus() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    this.mRemote.transact(12, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    this.mRemote.transact(12, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setSystemTime(String str, String str2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    obtain.writeString(str2);
-                    this.mRemote.transact(13, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeString(str2);
+                    this.mRemote.transact(13, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void removeTask(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    this.mRemote.transact(14, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    this.mRemote.transact(14, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void sdUnmount() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    this.mRemote.transact(15, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    this.mRemote.transact(15, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setDefaultParam() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    this.mRemote.transact(16, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    this.mRemote.transact(16, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public String getForegroundPackageName() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    this.mRemote.transact(17, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readString();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    this.mRemote.transact(17, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readString();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean copyFile(String str, String str2) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    obtain.writeString(str2);
-                    this.mRemote.transact(18, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    parcelObtain.writeString(str2);
+                    this.mRemote.transact(18, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean deleteFile(String str) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeString(str);
-                    this.mRemote.transact(19, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeString(str);
+                    this.mRemote.transact(19, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public int getUserCount() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    this.mRemote.transact(20, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    this.mRemote.transact(20, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public boolean isDeviceEncryptionEnabled() throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    this.mRemote.transact(21, obtain, obtain2, 0);
-                    obtain2.readException();
-                    return obtain2.readInt() != 0;
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    this.mRemote.transact(21, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
+                    return parcelObtain2.readInt() != 0;
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void hideNavigationBar(boolean z) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeInt(z ? 1 : 0);
-                    this.mRemote.transact(22, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(22, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
 
             @Override // jp.co.benesse.dcha.dchaservice.IDchaService
             public void setPermissionEnforced(boolean z) throws RemoteException {
-                Parcel obtain = Parcel.obtain();
-                Parcel obtain2 = Parcel.obtain();
+                Parcel parcelObtain = Parcel.obtain();
+                Parcel parcelObtain2 = Parcel.obtain();
                 try {
-                    obtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
-                    obtain.writeInt(z ? 1 : 0);
-                    this.mRemote.transact(23, obtain, obtain2, 0);
-                    obtain2.readException();
+                    parcelObtain.writeInterfaceToken("jp.co.benesse.dcha.dchaservice.IDchaService");
+                    parcelObtain.writeInt(z ? 1 : 0);
+                    this.mRemote.transact(23, parcelObtain, parcelObtain2, 0);
+                    parcelObtain2.readException();
                 } finally {
-                    obtain2.recycle();
-                    obtain.recycle();
+                    parcelObtain2.recycle();
+                    parcelObtain.recycle();
                 }
             }
         }

@@ -5,6 +5,7 @@ import android.service.settings.suggestions.Suggestion;
 import android.util.Log;
 import com.android.settingslib.utils.AsyncLoader;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SuggestionLoader extends AsyncLoader<List<Suggestion>> {
     private final SuggestionController mSuggestionController;
@@ -14,11 +15,12 @@ public class SuggestionLoader extends AsyncLoader<List<Suggestion>> {
         this.mSuggestionController = suggestionController;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: onDiscardResult(Ljava/lang/Object;)V */
     @Override // com.android.settingslib.utils.AsyncLoader
-    public void onDiscardResult(List<Suggestion> list) {
+    protected void onDiscardResult(List<Suggestion> list) {
     }
 
+    /* JADX DEBUG: Method merged with bridge method: loadInBackground()Ljava/lang/Object; */
     @Override // android.content.AsyncTaskLoader
     public List<Suggestion> loadInBackground() {
         List<Suggestion> suggestions = this.mSuggestionController.getSuggestions();

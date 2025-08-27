@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Fragment;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.android.systemui.qs.customize.QSCustomizer;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.phone.NotificationsQuickSettingsContainer;
 import com.android.systemui.statusbar.policy.RemoteInputQuickSettingsDisabler;
+
 /* loaded from: classes.dex */
 public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
     private QSContainerImpl mContainer;
@@ -55,7 +57,7 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
     };
     private final Animator.AnimatorListener mAnimateHeaderSlidingInListener = new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.QSFragment.3
         @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
-        public void onAnimationEnd(Animator animator) {
+        public void onAnimationEnd(Animator animator) throws Resources.NotFoundException {
             QSFragment.this.mHeaderAnimating = false;
             QSFragment.this.updateQsState();
         }
@@ -63,11 +65,11 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
 
     @Override // android.app.Fragment
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        return layoutInflater.cloneInContext(new ContextThemeWrapper(getContext(), (int) R.style.qs_theme)).inflate(R.layout.qs_panel, viewGroup, false);
+        return layoutInflater.cloneInContext(new ContextThemeWrapper(getContext(), R.style.qs_theme)).inflate(R.layout.qs_panel, viewGroup, false);
     }
 
     @Override // android.app.Fragment
-    public void onViewCreated(View view, Bundle bundle) {
+    public void onViewCreated(View view, Bundle bundle) throws Resources.NotFoundException {
         super.onViewCreated(view, bundle);
         this.mQSPanel = (QSPanel) view.findViewById(R.id.quick_settings_panel);
         this.mQSDetail = (QSDetail) view.findViewById(R.id.qs_detail);
@@ -82,10 +84,9 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
             setExpanded(bundle.getBoolean("expanded"));
             setListening(bundle.getBoolean("listening"));
             int[] iArr = new int[2];
-            View findViewById = view.findViewById(16908291);
-            findViewById.getLocationInWindow(iArr);
-            int height = iArr[1] + (findViewById.getHeight() / 2);
-            this.mQSCustomizer.setEditLocation(iArr[0] + (findViewById.getWidth() / 2), height);
+            View viewFindViewById = view.findViewById(android.R.id.edit);
+            viewFindViewById.getLocationInWindow(iArr);
+            this.mQSCustomizer.setEditLocation(iArr[0] + (viewFindViewById.getWidth() / 2), iArr[1] + (viewFindViewById.getHeight() / 2));
             this.mQSCustomizer.restoreInstanceState(bundle);
         }
         ((CommandQueue) SysUiServiceProvider.getComponent(getContext(), CommandQueue.class)).addCallbacks(this);
@@ -169,10 +170,10 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
     }
 
     @Override // com.android.systemui.statusbar.CommandQueue.Callbacks
-    public void disable(int i, int i2, boolean z) {
+    public void disable(int i, int i2, boolean z) throws Resources.NotFoundException {
         boolean z2;
-        int adjustDisableFlags = this.mRemoteInputQuickSettingsDisabler.adjustDisableFlags(i2);
-        if ((adjustDisableFlags & 1) == 0) {
+        int iAdjustDisableFlags = this.mRemoteInputQuickSettingsDisabler.adjustDisableFlags(i2);
+        if ((iAdjustDisableFlags & 1) == 0) {
             z2 = false;
         } else {
             z2 = true;
@@ -181,16 +182,14 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
             return;
         }
         this.mQsDisabled = z2;
-        this.mContainer.disable(i, adjustDisableFlags, z);
-        this.mHeader.disable(i, adjustDisableFlags, z);
-        this.mFooter.disable(i, adjustDisableFlags, z);
+        this.mContainer.disable(i, iAdjustDisableFlags, z);
+        this.mHeader.disable(i, iAdjustDisableFlags, z);
+        this.mFooter.disable(i, iAdjustDisableFlags, z);
         updateQsState();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateQsState() {
+    private void updateQsState() throws Resources.NotFoundException {
         boolean z = true;
-        int i = 0;
         boolean z2 = this.mQsExpanded || this.mStackScrollerOverscrolling || this.mHeaderAnimating;
         this.mQSPanel.setExpanded(this.mQsExpanded);
         this.mQSDetail.setExpanded(this.mQsExpanded);
@@ -202,11 +201,7 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
             z = false;
         }
         qSFooter.setExpanded(z);
-        QSPanel qSPanel = this.mQSPanel;
-        if (this.mQsDisabled || !z2) {
-            i = 4;
-        }
-        qSPanel.setVisibility(i);
+        this.mQSPanel.setVisibility((this.mQsDisabled || !z2) ? 4 : 0);
     }
 
     public QSPanel getQsPanel() {
@@ -228,14 +223,14 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
     }
 
     @Override // com.android.systemui.plugins.qs.QS
-    public void setExpanded(boolean z) {
+    public void setExpanded(boolean z) throws Resources.NotFoundException {
         this.mQsExpanded = z;
         this.mQSPanel.setListening(this.mListening && this.mQsExpanded);
         updateQsState();
     }
 
     @Override // com.android.systemui.plugins.qs.QS
-    public void setKeyguardShowing(boolean z) {
+    public void setKeyguardShowing(boolean z) throws Resources.NotFoundException {
         this.mKeyguardShowing = z;
         this.mLastQSExpansion = -1.0f;
         if (this.mQSAnimator != null) {
@@ -246,7 +241,7 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
     }
 
     @Override // com.android.systemui.plugins.qs.QS
-    public void setOverscrolling(boolean z) {
+    public void setOverscrolling(boolean z) throws Resources.NotFoundException {
         this.mStackScrollerOverscrolling = z;
         updateQsState();
     }
@@ -315,7 +310,7 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
         this.mHeaderAnimating = true;
         getView().animate().y(-this.mHeader.getHeight()).setStartDelay(0L).setDuration(360L).setInterpolator(Interpolators.FAST_OUT_SLOW_IN).setListener(new AnimatorListenerAdapter() { // from class: com.android.systemui.qs.QSFragment.1
             @Override // android.animation.AnimatorListenerAdapter, android.animation.Animator.AnimatorListener
-            public void onAnimationEnd(Animator animator) {
+            public void onAnimationEnd(Animator animator) throws Resources.NotFoundException {
                 if (QSFragment.this.getView() == null) {
                     Log.e(QS.TAG, "current view is null, return");
                     return;

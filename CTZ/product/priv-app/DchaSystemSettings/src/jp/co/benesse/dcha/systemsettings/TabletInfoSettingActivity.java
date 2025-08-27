@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jp.co.benesse.dcha.dchaservice.IDchaService;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class TabletInfoSettingActivity extends PreferenceActivity {
     private static final Uri URI_TEST_ENVIRONMENT_INFO = Uri.parse("content://jp.co.benesse.dcha.databox.db.KvsProvider/kvs/test.environment.info");
@@ -64,7 +65,7 @@ public class TabletInfoSettingActivity extends PreferenceActivity {
     };
 
     @Override // android.preference.PreferenceActivity, android.app.Activity
-    protected void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) throws Throwable {
         Logger.d("TabletInfoSettingActivity", "onCreate 0001");
         super.onCreate(bundle);
         addPreferencesFromResource(R.xml.device_info_settings);
@@ -168,51 +169,52 @@ public class TabletInfoSettingActivity extends PreferenceActivity {
 
     private boolean updatePreferenceToSpecificActivityOrRemove(Context context, PreferenceGroup preferenceGroup, String str, int i) {
         Logger.d("TabletInfoSettingActivity", "updatePreferenceToSpecificActivityOrRemove 0001");
-        Preference findPreference = preferenceGroup.findPreference(str);
-        if (findPreference == null) {
+        Preference preferenceFindPreference = preferenceGroup.findPreference(str);
+        if (preferenceFindPreference == null) {
             Logger.d("TabletInfoSettingActivity", "updatePreferenceToSpecificActivityOrRemove 0002");
             return false;
         }
-        Intent intent = findPreference.getIntent();
+        Intent intent = preferenceFindPreference.getIntent();
         if (intent != null) {
             Logger.d("TabletInfoSettingActivity", "updatePreferenceToSpecificActivityOrRemove 0003");
             PackageManager packageManager = context.getPackageManager();
-            List<ResolveInfo> queryIntentActivities = packageManager.queryIntentActivities(intent, 0);
-            int size = queryIntentActivities.size();
+            List<ResolveInfo> listQueryIntentActivities = packageManager.queryIntentActivities(intent, 0);
+            int size = listQueryIntentActivities.size();
             for (int i2 = 0; i2 < size; i2++) {
                 Logger.d("TabletInfoSettingActivity", "updatePreferenceToSpecificActivityOrRemove 0004");
-                ResolveInfo resolveInfo = queryIntentActivities.get(i2);
+                ResolveInfo resolveInfo = listQueryIntentActivities.get(i2);
                 if ((resolveInfo.activityInfo.applicationInfo.flags & 1) != 0) {
                     Logger.d("TabletInfoSettingActivity", "updatePreferenceToSpecificActivityOrRemove 0005");
-                    findPreference.setIntent(new Intent().setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name));
+                    preferenceFindPreference.setIntent(new Intent().setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name));
                     if ((i & 1) != 0) {
                         Logger.d("TabletInfoSettingActivity", "updatePreferenceToSpecificActivityOrRemove 0006");
-                        findPreference.setTitle(resolveInfo.loadLabel(packageManager));
+                        preferenceFindPreference.setTitle(resolveInfo.loadLabel(packageManager));
                     }
                     Logger.d("TabletInfoSettingActivity", "updatePreferenceToSpecificActivityOrRemove 0007");
                     return true;
                 }
             }
         }
-        preferenceGroup.removePreference(findPreference);
+        preferenceGroup.removePreference(preferenceFindPreference);
         Logger.d("TabletInfoSettingActivity", "updatePreferenceToSpecificActivityOrRemove 0008");
         return false;
     }
 
-    protected String getKvsValue(Context context, Uri uri, String str, String str2) {
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [455=5] */
+    protected String getKvsValue(Context context, Uri uri, String str, String str2) throws Throwable {
         String[] strArr = {str};
         Cursor cursor = null;
         try {
             try {
-                Cursor query = context.getContentResolver().query(uri, new String[]{"value"}, "key=?", strArr, null);
-                if (query != null) {
+                Cursor cursorQuery = context.getContentResolver().query(uri, new String[]{"value"}, "key=?", strArr, null);
+                if (cursorQuery != null) {
                     try {
-                        if (query.moveToFirst()) {
-                            str2 = query.getString(query.getColumnIndex("value"));
+                        if (cursorQuery.moveToFirst()) {
+                            str2 = cursorQuery.getString(cursorQuery.getColumnIndex("value"));
                         }
                     } catch (Exception e) {
                         e = e;
-                        cursor = query;
+                        cursor = cursorQuery;
                         Logger.d("TabletInfoSettingActivity", "getKvsValue", e);
                         if (cursor != null) {
                             cursor.close();
@@ -220,23 +222,23 @@ public class TabletInfoSettingActivity extends PreferenceActivity {
                         return str2;
                     } catch (Throwable th) {
                         th = th;
-                        cursor = query;
+                        cursor = cursorQuery;
                         if (cursor != null) {
                             cursor.close();
                         }
                         throw th;
                     }
                 }
-                if (query != null) {
-                    query.close();
+                if (cursorQuery != null) {
+                    cursorQuery.close();
                 }
-            } catch (Exception e2) {
-                e = e2;
+            } catch (Throwable th2) {
+                th = th2;
             }
-            return str2;
-        } catch (Throwable th2) {
-            th = th2;
+        } catch (Exception e2) {
+            e = e2;
         }
+        return str2;
     }
 
     @Override // android.app.Activity, android.view.Window.Callback
@@ -262,8 +264,7 @@ public class TabletInfoSettingActivity extends PreferenceActivity {
         Logger.d("TabletInfoSettingActivity", "moveSettingActivity 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void hideNavigationBar(boolean z) {
+    private void hideNavigationBar(boolean z) {
         Logger.d("TabletInfoSettingActivity", "hideNavigationBar 0001");
         try {
             Logger.d("TabletInfoSettingActivity", "hideNavigationBar 0002");

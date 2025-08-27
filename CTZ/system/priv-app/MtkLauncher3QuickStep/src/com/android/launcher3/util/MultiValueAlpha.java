@@ -3,14 +3,17 @@ package com.android.launcher3.util;
 import android.util.Property;
 import android.view.View;
 import com.android.launcher3.LauncherSettings;
+
 /* loaded from: classes.dex */
 public class MultiValueAlpha {
     public static final Property<AlphaProperty, Float> VALUE = new Property<AlphaProperty, Float>(Float.TYPE, LauncherSettings.Settings.EXTRA_VALUE) { // from class: com.android.launcher3.util.MultiValueAlpha.1
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(AlphaProperty alphaProperty) {
             return Float.valueOf(alphaProperty.mValue);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: set(Ljava/lang/Object;Ljava/lang/Object;)V */
         @Override // android.util.Property
         public void set(AlphaProperty alphaProperty, Float f) {
             alphaProperty.setValue(f.floatValue());
@@ -34,7 +37,6 @@ public class MultiValueAlpha {
         return this.mMyProperties[i];
     }
 
-    /* loaded from: classes.dex */
     public class AlphaProperty {
         private final int mMyMask;
         private float mValue = 1.0f;
@@ -45,7 +47,6 @@ public class MultiValueAlpha {
         }
 
         public void setValue(float f) {
-            AlphaProperty[] alphaPropertyArr;
             if (this.mValue != f) {
                 if ((MultiValueAlpha.this.mValidMask & this.mMyMask) == 0) {
                     this.mOthers = 1.0f;

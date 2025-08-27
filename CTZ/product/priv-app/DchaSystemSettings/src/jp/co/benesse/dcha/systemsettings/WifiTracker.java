@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class WifiTracker {
     private ArrayList<AccessPoint> mAccessPoints;
@@ -52,7 +53,6 @@ public class WifiTracker {
     private final WifiManager mWifiManager;
     private final WorkHandler mWorkHandler;
 
-    /* loaded from: classes.dex */
     public interface WifiListener {
         void onAccessPointsChanged();
 
@@ -66,7 +66,7 @@ public class WifiTracker {
     }
 
     private WifiTracker(Context context, WifiListener wifiListener, Looper looper, boolean z, boolean z2, boolean z3, WifiManager wifiManager, ConnectivityManager connectivityManager, Looper looper2) {
-        Looper looper3;
+        Looper mainLooper;
         this.mConnected = new AtomicBoolean(false);
         this.mAccessPoints = new ArrayList<>();
         this.mSeenBssids = new HashMap<>();
@@ -80,24 +80,31 @@ public class WifiTracker {
                 if ("android.net.wifi.WIFI_STATE_CHANGED".equals(action)) {
                     Logger.d("WifiTracker", "onReceive 0002");
                     WifiTracker.this.updateWifiState(intent.getIntExtra("wifi_state", 4));
-                } else if ("android.net.wifi.SCAN_RESULTS".equals(action) || "android.net.wifi.CONFIGURED_NETWORKS_CHANGE".equals(action) || "android.net.wifi.LINK_CONFIGURATION_CHANGED".equals(action)) {
+                    return;
+                }
+                if ("android.net.wifi.SCAN_RESULTS".equals(action) || "android.net.wifi.CONFIGURED_NETWORKS_CHANGE".equals(action) || "android.net.wifi.LINK_CONFIGURATION_CHANGED".equals(action)) {
                     Logger.d("WifiTracker", "onReceive 0003");
                     WifiTracker.this.mWorkHandler.sendEmptyMessage(0);
-                } else if ("android.net.wifi.supplicant.STATE_CHANGE".equals(action)) {
+                    return;
+                }
+                if ("android.net.wifi.supplicant.STATE_CHANGE".equals(action)) {
                     Logger.d("WifiTracker", "onReceive 0004");
                     WifiTracker.this.updateWifiState(WifiTracker.this.mWifiManager.getWifiState());
-                } else if (!"android.net.wifi.STATE_CHANGE".equals(action)) {
+                    return;
+                }
+                if (!"android.net.wifi.STATE_CHANGE".equals(action)) {
                     if ("android.net.wifi.RSSI_CHANGED".equals(action)) {
                         Logger.d("WifiTracker", "onReceive 0006");
                         WifiTracker.this.mWorkHandler.obtainMessage(1, WifiTracker.this.mConnectivityManager.getNetworkInfo(WifiTracker.this.mWifiManager.getCurrentNetwork())).sendToTarget();
+                        return;
                     }
-                } else {
-                    Logger.d("WifiTracker", "onReceive 0005");
-                    NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra("networkInfo");
-                    WifiTracker.this.mConnected.set(networkInfo != null ? networkInfo.isConnected() : false);
-                    WifiTracker.this.mWorkHandler.obtainMessage(1, networkInfo).sendToTarget();
-                    WifiTracker.this.mWorkHandler.sendEmptyMessage(0);
+                    return;
                 }
+                Logger.d("WifiTracker", "onReceive 0005");
+                NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra("networkInfo");
+                WifiTracker.this.mConnected.set(networkInfo != null ? networkInfo.isConnected() : false);
+                WifiTracker.this.mWorkHandler.obtainMessage(1, networkInfo).sendToTarget();
+                WifiTracker.this.mWorkHandler.sendEmptyMessage(0);
             }
         };
         Logger.d("WifiTracker", "WifiTracker 0001");
@@ -108,12 +115,12 @@ public class WifiTracker {
         this.mContext = context;
         if (looper2 == null) {
             Logger.d("WifiTracker", "WifiTracker 0003");
-            looper3 = Looper.getMainLooper();
+            mainLooper = Looper.getMainLooper();
         } else {
-            looper3 = looper2;
+            mainLooper = looper2;
         }
-        this.mMainHandler = new MainHandler(looper3);
-        this.mWorkHandler = new WorkHandler(looper != null ? looper : looper3);
+        this.mMainHandler = new MainHandler(mainLooper);
+        this.mWorkHandler = new WorkHandler(looper != null ? looper : mainLooper);
         this.mWifiManager = wifiManager;
         this.mIncludeSaved = z;
         this.mIncludeScans = z2;
@@ -204,8 +211,7 @@ public class WifiTracker {
         return this.mWifiManager;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleResume() {
+    private void handleResume() {
         Logger.d("WifiTracker", "handleResume 0001");
         this.mScanResultCache.clear();
         this.mSeenBssids.clear();
@@ -225,11 +231,11 @@ public class WifiTracker {
         }
         if (this.mScanId.intValue() > 3) {
             Logger.d("WifiTracker", "fetchScanResults 0002");
-            Integer valueOf = Integer.valueOf(this.mScanId.intValue() - 3);
+            Integer numValueOf = Integer.valueOf(this.mScanId.intValue() - 3);
             Iterator<Map.Entry<String, Integer>> it = this.mSeenBssids.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, Integer> next = it.next();
-                if (next.getValue().intValue() < valueOf.intValue()) {
+                if (next.getValue().intValue() < numValueOf.intValue()) {
                     this.mScanResultCache.get(next.getKey());
                     this.mScanResultCache.remove(next.getKey());
                     it.remove();
@@ -255,53 +261,60 @@ public class WifiTracker {
         return null;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateAccessPoints() {
-        boolean z;
-        boolean z2;
+    /* JADX DEBUG: Multi-variable search result rejected for r10v6, resolved type: byte */
+    /* JADX DEBUG: Multi-variable search result rejected for r10v7, resolved type: byte */
+    /* JADX DEBUG: Multi-variable search result rejected for r10v9, resolved type: byte */
+    /* JADX DEBUG: Multi-variable search result rejected for r8v10, resolved type: byte */
+    /* JADX DEBUG: Multi-variable search result rejected for r8v13, resolved type: byte */
+    /* JADX DEBUG: Multi-variable search result rejected for r8v9, resolved type: byte */
+    /* JADX WARN: Multi-variable type inference failed */
+    private void updateAccessPoints() {
+        byte b;
+        byte b2;
         Logger.d("WifiTracker", "updateAccessPoints 0001");
         List<AccessPoint> accessPoints = getAccessPoints();
         ArrayList<AccessPoint> arrayList = new ArrayList<>();
-        for (AccessPoint accessPoint : accessPoints) {
-            accessPoint.clearConfig();
+        Iterator<AccessPoint> it = accessPoints.iterator();
+        while (it.hasNext()) {
+            it.next().clearConfig();
         }
-        WifiConfiguration wifiConfiguration = null;
+        WifiConfiguration wifiConfigurationForNetworkId = null;
         Multimap multimap = new Multimap();
         if (this.mLastInfo != null) {
             Logger.d("WifiTracker", "updateAccessPoints 0002");
-            wifiConfiguration = getWifiConfigurationForNetworkId(this.mLastInfo.getNetworkId());
+            wifiConfigurationForNetworkId = getWifiConfigurationForNetworkId(this.mLastInfo.getNetworkId());
         }
-        Collection<ScanResult> fetchScanResults = fetchScanResults();
+        Collection<ScanResult> collectionFetchScanResults = fetchScanResults();
         List<WifiConfiguration> configuredNetworks = this.mWifiManager.getConfiguredNetworks();
         if (configuredNetworks != null) {
             Logger.d("WifiTracker", "updateAccessPoints 0003");
             this.mSavedNetworksExist = configuredNetworks.size() != 0;
-            for (WifiConfiguration wifiConfiguration2 : configuredNetworks) {
-                if (!wifiConfiguration2.selfAdded || wifiConfiguration2.numAssociation != 0) {
-                    AccessPoint cachedOrCreate = getCachedOrCreate(wifiConfiguration2, accessPoints);
-                    if (this.mLastInfo != null && this.mLastNetworkInfo != null && !wifiConfiguration2.isPasspoint()) {
-                        cachedOrCreate.update(wifiConfiguration, this.mLastInfo, this.mLastNetworkInfo);
+            for (WifiConfiguration wifiConfiguration : configuredNetworks) {
+                if (!wifiConfiguration.selfAdded || wifiConfiguration.numAssociation != 0) {
+                    AccessPoint cachedOrCreate = getCachedOrCreate(wifiConfiguration, accessPoints);
+                    if (this.mLastInfo != null && this.mLastNetworkInfo != null && !wifiConfiguration.isPasspoint()) {
+                        cachedOrCreate.update(wifiConfigurationForNetworkId, this.mLastInfo, this.mLastNetworkInfo);
                     }
                     if (this.mIncludeSaved) {
-                        if (!wifiConfiguration2.isPasspoint() || this.mIncludePasspoints) {
-                            Iterator<ScanResult> it = fetchScanResults.iterator();
+                        if (!wifiConfiguration.isPasspoint() || this.mIncludePasspoints) {
+                            Iterator<ScanResult> it2 = collectionFetchScanResults.iterator();
                             while (true) {
-                                if (it.hasNext()) {
-                                    if (it.next().SSID.equals(cachedOrCreate.getSsidStr())) {
-                                        z2 = true;
+                                if (it2.hasNext()) {
+                                    if (it2.next().SSID.equals(cachedOrCreate.getSsidStr())) {
+                                        b2 = true;
                                         break;
                                     }
                                 } else {
-                                    z2 = false;
+                                    b2 = false;
                                     break;
                                 }
                             }
-                            if (!z2) {
+                            if (b2 == false) {
                                 cachedOrCreate.setRssi(Integer.MAX_VALUE);
                             }
                             arrayList.add(cachedOrCreate);
                         }
-                        if (!wifiConfiguration2.isPasspoint()) {
+                        if (!wifiConfiguration.isPasspoint()) {
                             multimap.put(cachedOrCreate.getSsidStr(), cachedOrCreate);
                         }
                     } else {
@@ -310,29 +323,29 @@ public class WifiTracker {
                 }
             }
         }
-        if (fetchScanResults != null) {
+        if (collectionFetchScanResults != null) {
             Logger.d("WifiTracker", "updateAccessPoints 0004");
-            for (ScanResult scanResult : fetchScanResults) {
+            for (ScanResult scanResult : collectionFetchScanResults) {
                 if (scanResult.SSID != null && scanResult.SSID.length() != 0 && !scanResult.capabilities.contains("[IBSS]")) {
-                    Iterator it2 = multimap.getAll(scanResult.SSID).iterator();
+                    Iterator it3 = multimap.getAll(scanResult.SSID).iterator();
                     while (true) {
-                        if (it2.hasNext()) {
-                            if (((AccessPoint) it2.next()).update(scanResult)) {
-                                z = true;
+                        if (it3.hasNext()) {
+                            if (((AccessPoint) it3.next()).update(scanResult)) {
+                                b = true;
                                 break;
                             }
                         } else {
-                            z = false;
+                            b = false;
                             break;
                         }
                     }
-                    if (!z && this.mIncludeScans) {
+                    if (b == false && this.mIncludeScans) {
                         AccessPoint cachedOrCreate2 = getCachedOrCreate(scanResult, accessPoints);
                         if (this.mLastInfo != null && this.mLastNetworkInfo != null) {
-                            cachedOrCreate2.update(wifiConfiguration, this.mLastInfo, this.mLastNetworkInfo);
+                            cachedOrCreate2.update(wifiConfigurationForNetworkId, this.mLastInfo, this.mLastNetworkInfo);
                         }
-                        if (this.mLastInfo != null && this.mLastInfo.getBSSID() != null && this.mLastInfo.getBSSID().equals(scanResult.BSSID) && wifiConfiguration != null && wifiConfiguration.isPasspoint()) {
-                            cachedOrCreate2.update(wifiConfiguration);
+                        if (this.mLastInfo != null && this.mLastInfo.getBSSID() != null && this.mLastInfo.getBSSID().equals(scanResult.BSSID) && wifiConfigurationForNetworkId != null && wifiConfigurationForNetworkId.isPasspoint()) {
+                            cachedOrCreate2.update(wifiConfigurationForNetworkId);
                         }
                         arrayList.add(cachedOrCreate2);
                         multimap.put(cachedOrCreate2.getSsidStr(), cachedOrCreate2);
@@ -341,14 +354,14 @@ public class WifiTracker {
             }
         }
         Collections.sort(arrayList);
-        Iterator<AccessPoint> it3 = this.mAccessPoints.iterator();
-        while (it3.hasNext()) {
-            AccessPoint next = it3.next();
+        Iterator<AccessPoint> it4 = this.mAccessPoints.iterator();
+        while (it4.hasNext()) {
+            AccessPoint next = it4.next();
             if (next.getSsid() != null) {
                 String ssidStr = next.getSsidStr();
-                Iterator<AccessPoint> it4 = arrayList.iterator();
-                while (it4.hasNext()) {
-                    AccessPoint next2 = it4.next();
+                Iterator<AccessPoint> it5 = arrayList.iterator();
+                while (it5.hasNext()) {
+                    AccessPoint next2 = it5.next();
                     if (next2.getSsid() == null || !next2.getSsid().equals(ssidStr)) {
                     }
                 }
@@ -364,9 +377,9 @@ public class WifiTracker {
         int size = list.size();
         for (int i = 0; i < size; i++) {
             if (list.get(i).matches(scanResult)) {
-                AccessPoint remove = list.remove(i);
-                remove.update(scanResult);
-                return remove;
+                AccessPoint accessPointRemove = list.remove(i);
+                accessPointRemove.update(scanResult);
+                return accessPointRemove;
             }
         }
         Logger.d("WifiTracker", "getCachedOrCreate 0002");
@@ -378,17 +391,16 @@ public class WifiTracker {
         int size = list.size();
         for (int i = 0; i < size; i++) {
             if (list.get(i).matches(wifiConfiguration)) {
-                AccessPoint remove = list.remove(i);
-                remove.loadConfig(wifiConfiguration);
-                return remove;
+                AccessPoint accessPointRemove = list.remove(i);
+                accessPointRemove.loadConfig(wifiConfiguration);
+                return accessPointRemove;
             }
         }
         Logger.d("WifiTracker", "getCachedOrCreate 0004");
         return new AccessPoint(this.mContext, wifiConfiguration);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateNetworkInfo(NetworkInfo networkInfo) {
+    private void updateNetworkInfo(NetworkInfo networkInfo) {
         Logger.d("WifiTracker", "updateNetworkInfo 0001");
         if (!this.mWifiManager.isWifiEnabled()) {
             Logger.d("WifiTracker", "updateNetworkInfo 0002");
@@ -406,15 +418,15 @@ public class WifiTracker {
             Logger.d("WifiTracker", "updateNetworkInfo 0005");
             this.mLastNetworkInfo = networkInfo;
         }
-        WifiConfiguration wifiConfiguration = null;
+        WifiConfiguration wifiConfigurationForNetworkId = null;
         this.mLastInfo = this.mWifiManager.getConnectionInfo();
         if (this.mLastInfo != null) {
             Logger.d("WifiTracker", "updateNetworkInfo 0006");
-            wifiConfiguration = getWifiConfigurationForNetworkId(this.mLastInfo.getNetworkId());
+            wifiConfigurationForNetworkId = getWifiConfigurationForNetworkId(this.mLastInfo.getNetworkId());
         }
         boolean z = false;
         for (int size = this.mAccessPoints.size() - 1; size >= 0; size--) {
-            if (this.mAccessPoints.get(size).update(wifiConfiguration, this.mLastInfo, this.mLastNetworkInfo)) {
+            if (this.mAccessPoints.get(size).update(wifiConfigurationForNetworkId, this.mLastInfo, this.mLastNetworkInfo)) {
                 z = true;
             }
         }
@@ -428,16 +440,13 @@ public class WifiTracker {
         Logger.d("WifiTracker", "updateNetworkInfo 0008");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateWifiState(int i) {
+    private void updateWifiState(int i) {
         Logger.d("WifiTracker", "updateWifiState 0001");
         this.mWorkHandler.obtainMessage(3, i, 0).sendToTarget();
         Logger.d("WifiTracker", "updateWifiState 0002");
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class WifiTrackerNetworkCallback extends ConnectivityManager.NetworkCallback {
+    private final class WifiTrackerNetworkCallback extends ConnectivityManager.NetworkCallback {
         private WifiTrackerNetworkCallback() {
         }
 
@@ -451,9 +460,7 @@ public class WifiTracker {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class MainHandler extends Handler {
+    private final class MainHandler extends Handler {
         public MainHandler(Looper looper) {
             super(looper);
         }
@@ -463,46 +470,41 @@ public class WifiTracker {
             Logger.d("WifiTracker", "MainHandler handleMessage 0001");
             if (WifiTracker.this.mListener == null) {
                 Logger.d("WifiTracker", "MainHandler handleMessage 0002");
-                return;
             }
             switch (message.what) {
                 case 0:
                     Logger.d("WifiTracker", "MainHandler handleMessage 0003");
                     WifiTracker.this.mListener.onConnectedChanged();
-                    return;
+                    break;
                 case 1:
                     Logger.d("WifiTracker", "MainHandler handleMessage 0004");
                     WifiTracker.this.mListener.onWifiStateChanged(message.arg1);
-                    return;
+                    break;
                 case 2:
                     Logger.d("WifiTracker", "MainHandler handleMessage 0005");
                     WifiTracker.this.mListener.onAccessPointsChanged();
-                    return;
+                    break;
                 case 3:
                     Logger.d("WifiTracker", "MainHandler handleMessage 0006");
                     if (WifiTracker.this.mScanner != null) {
                         Logger.d("WifiTracker", "MainHandler handleMessage 0007");
                         WifiTracker.this.mScanner.resume();
-                        return;
+                        break;
                     }
-                    return;
+                    break;
                 case 4:
                     Logger.d("WifiTracker", "MainHandler handleMessage 0008");
                     if (WifiTracker.this.mScanner != null) {
                         Logger.d("WifiTracker", "MainHandler handleMessage 0009");
                         WifiTracker.this.mScanner.pause();
-                        return;
+                        break;
                     }
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class WorkHandler extends Handler {
+    private final class WorkHandler extends Handler {
         public WorkHandler(Looper looper) {
             super(looper);
         }
@@ -514,15 +516,15 @@ public class WifiTracker {
                 case 0:
                     Logger.d("WifiTracker", "WorkHandler handleMessage 0002");
                     WifiTracker.this.updateAccessPoints();
-                    return;
+                    break;
                 case 1:
                     Logger.d("WifiTracker", "WorkHandler handleMessage 0003");
                     WifiTracker.this.updateNetworkInfo((NetworkInfo) message.obj);
-                    return;
+                    break;
                 case 2:
                     Logger.d("WifiTracker", "WorkHandler handleMessage 0004");
                     WifiTracker.this.handleResume();
-                    return;
+                    break;
                 case 3:
                     Logger.d("WifiTracker", "WorkHandler handleMessage 0005");
                     if (message.arg1 == 3) {
@@ -541,16 +543,12 @@ public class WifiTracker {
                         }
                     }
                     WifiTracker.this.mMainHandler.obtainMessage(1, message.arg1, 0).sendToTarget();
-                    return;
-                default:
-                    return;
+                    break;
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class Scanner extends Handler {
+    private class Scanner extends Handler {
         private int mRetry;
 
         private Scanner() {
@@ -581,7 +579,7 @@ public class WifiTracker {
                 if (i >= 3) {
                     this.mRetry = 0;
                     if (WifiTracker.this.mContext != null) {
-                        Toast.makeText(WifiTracker.this.mContext, (int) R.string.wifi_fail_to_scan, 1).show();
+                        Toast.makeText(WifiTracker.this.mContext, R.string.wifi_fail_to_scan, 1).show();
                         return;
                     }
                     return;
@@ -591,9 +589,7 @@ public class WifiTracker {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class Multimap<K, V> {
+    private static class Multimap<K, V> {
         private final HashMap<K, List<V>> store;
 
         private Multimap() {
@@ -606,12 +602,12 @@ public class WifiTracker {
         }
 
         void put(K k, V v) {
-            List<V> list = this.store.get(k);
-            if (list == null) {
-                list = new ArrayList<>(3);
-                this.store.put(k, list);
+            List<V> arrayList = this.store.get(k);
+            if (arrayList == null) {
+                arrayList = new ArrayList<>(3);
+                this.store.put(k, arrayList);
             }
-            list.add(v);
+            arrayList.add(v);
         }
     }
 }

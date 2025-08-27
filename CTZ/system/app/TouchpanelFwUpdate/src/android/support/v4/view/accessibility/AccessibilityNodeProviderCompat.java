@@ -6,11 +6,11 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityNodeProvider;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AccessibilityNodeProviderCompat {
     private final Object mProvider;
 
-    /* loaded from: classes.dex */
     static class AccessibilityNodeProviderApi16 extends AccessibilityNodeProvider {
         final AccessibilityNodeProviderCompat mCompat;
 
@@ -48,7 +48,6 @@ public class AccessibilityNodeProviderCompat {
         }
     }
 
-    /* loaded from: classes.dex */
     static class AccessibilityNodeProviderApi19 extends AccessibilityNodeProviderApi16 {
         AccessibilityNodeProviderApi19(AccessibilityNodeProviderCompat compat) {
             super(compat);

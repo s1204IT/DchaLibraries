@@ -22,6 +22,7 @@ import com.android.settings.Utils;
 import com.android.settings.widget.AppPreference;
 import com.android.settingslib.applications.ApplicationsState;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class ManageDomainUrls extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, ApplicationsState.Callbacks {
     private ApplicationsState mApplicationsState;
@@ -39,9 +40,8 @@ public class ManageDomainUrls extends SettingsPreferenceFragment implements Pref
         setHasOptionsMenu(true);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.manage_domain_url_settings;
     }
 
@@ -78,17 +78,17 @@ public class ManageDomainUrls extends SettingsPreferenceFragment implements Pref
                 this.mWebAction.setOnPreferenceChangeListener(this);
                 preferenceCategory.addPreference(this.mWebAction);
                 ComponentName instantAppResolverSettingsComponent = getActivity().getPackageManager().getInstantAppResolverSettingsComponent();
-                final Intent intent = null;
+                final Intent component = null;
                 if (instantAppResolverSettingsComponent != null) {
-                    intent = new Intent().setComponent(instantAppResolverSettingsComponent);
+                    component = new Intent().setComponent(instantAppResolverSettingsComponent);
                 }
-                if (intent != null) {
+                if (component != null) {
                     this.mInstantAppAccountPreference = new Preference(getPrefContext());
                     this.mInstantAppAccountPreference.setTitle(R.string.instant_apps_settings);
                     this.mInstantAppAccountPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() { // from class: com.android.settings.applications.-$$Lambda$ManageDomainUrls$agHbI5vf9m7UaPnJCYH2ithkZhk
                         @Override // android.support.v7.preference.Preference.OnPreferenceClickListener
                         public final boolean onPreferenceClick(Preference preference) {
-                            return ManageDomainUrls.lambda$onRebuildComplete$0(ManageDomainUrls.this, intent, preference);
+                            return ManageDomainUrls.lambda$onRebuildComplete$0(this.f$0, component, preference);
                         }
                     });
                     preferenceCategory.addPreference(this.mInstantAppAccountPreference);
@@ -116,9 +116,9 @@ public class ManageDomainUrls extends SettingsPreferenceFragment implements Pref
     }
 
     private void rebuild() {
-        ArrayList<ApplicationsState.AppEntry> rebuild = this.mSession.rebuild(ApplicationsState.FILTER_WITH_DOMAIN_URLS, ApplicationsState.ALPHA_COMPARATOR);
-        if (rebuild != null) {
-            onRebuildComplete(rebuild);
+        ArrayList<ApplicationsState.AppEntry> arrayListRebuild = this.mSession.rebuild(ApplicationsState.FILTER_WITH_DOMAIN_URLS, ApplicationsState.ALPHA_COMPARATOR);
+        if (arrayListRebuild != null) {
+            onRebuildComplete(arrayListRebuild);
         }
     }
 
@@ -178,9 +178,7 @@ public class ManageDomainUrls extends SettingsPreferenceFragment implements Pref
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class DomainAppPreference extends AppPreference {
+    static class DomainAppPreference extends AppPreference {
         private final ApplicationsState mApplicationsState;
         private final ApplicationsState.AppEntry mEntry;
         private final PackageManager mPm;

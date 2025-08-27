@@ -8,7 +8,9 @@ import com.android.settings.R;
 import com.android.settingslib.core.AbstractPreferenceController;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ChannelGroupNotificationSettings extends NotificationSettingsBase {
     @Override // com.android.settingslib.core.instrumentation.Instrumentable
@@ -37,9 +39,8 @@ public class ChannelGroupNotificationSettings extends NotificationSettingsBase {
         return "ChannelGroupSettings";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.notification_group_settings;
     }
 
@@ -57,22 +58,24 @@ public class ChannelGroupNotificationSettings extends NotificationSettingsBase {
     private void populateChannelList() {
         if (!this.mDynamicPreferences.isEmpty()) {
             Log.w("ChannelGroupSettings", "Notification channel group posted twice to settings - old size " + this.mDynamicPreferences.size() + ", new size " + this.mDynamicPreferences.size());
-            for (Preference preference : this.mDynamicPreferences) {
-                getPreferenceScreen().removePreference(preference);
+            Iterator<Preference> it = this.mDynamicPreferences.iterator();
+            while (it.hasNext()) {
+                getPreferenceScreen().removePreference(it.next());
             }
         }
         if (this.mChannelGroup.getChannels().isEmpty()) {
-            Preference preference2 = new Preference(getPrefContext());
-            preference2.setTitle(R.string.no_channels);
-            preference2.setEnabled(false);
-            getPreferenceScreen().addPreference(preference2);
-            this.mDynamicPreferences.add(preference2);
+            Preference preference = new Preference(getPrefContext());
+            preference.setTitle(R.string.no_channels);
+            preference.setEnabled(false);
+            getPreferenceScreen().addPreference(preference);
+            this.mDynamicPreferences.add(preference);
             return;
         }
         List<NotificationChannel> channels = this.mChannelGroup.getChannels();
         Collections.sort(channels, this.mChannelComparator);
-        for (NotificationChannel notificationChannel : channels) {
-            this.mDynamicPreferences.add(populateSingleChannelPrefs(getPreferenceScreen(), notificationChannel, this.mChannelGroup.isBlocked()));
+        Iterator<NotificationChannel> it2 = channels.iterator();
+        while (it2.hasNext()) {
+            this.mDynamicPreferences.add(populateSingleChannelPrefs(getPreferenceScreen(), it2.next(), this.mChannelGroup.isBlocked()));
         }
     }
 }

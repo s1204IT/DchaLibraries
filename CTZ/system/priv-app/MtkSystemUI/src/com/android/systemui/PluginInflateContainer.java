@@ -7,6 +7,7 @@ import android.view.View;
 import com.android.systemui.plugins.PluginListener;
 import com.android.systemui.plugins.PluginManager;
 import com.android.systemui.plugins.ViewProvider;
+
 /* loaded from: classes.dex */
 public class PluginInflateContainer extends AutoReinflateContainer implements PluginListener<ViewProvider> {
     private Class<?> mClass;
@@ -23,27 +24,24 @@ public class PluginInflateContainer extends AutoReinflateContainer implements Pl
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.AutoReinflateContainer, android.view.ViewGroup, android.view.View
-    public void onAttachedToWindow() {
+    protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (this.mClass != null) {
             ((PluginManager) Dependency.get(PluginManager.class)).addPluginListener(this, this.mClass);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.AutoReinflateContainer, android.view.ViewGroup, android.view.View
-    public void onDetachedFromWindow() {
+    protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         if (this.mClass != null) {
             ((PluginManager) Dependency.get(PluginManager.class)).removePluginListener(this);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.AutoReinflateContainer
-    public void inflateLayoutImpl() {
+    protected void inflateLayoutImpl() {
         if (this.mPluginView != null) {
             addView(this.mPluginView);
         } else {
@@ -51,12 +49,14 @@ public class PluginInflateContainer extends AutoReinflateContainer implements Pl
         }
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginConnected(Lcom/android/systemui/plugins/Plugin;Landroid/content/Context;)V */
     @Override // com.android.systemui.plugins.PluginListener
     public void onPluginConnected(ViewProvider viewProvider, Context context) {
         this.mPluginView = viewProvider.getView();
         inflateLayout();
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginDisconnected(Lcom/android/systemui/plugins/Plugin;)V */
     @Override // com.android.systemui.plugins.PluginListener
     public void onPluginDisconnected(ViewProvider viewProvider) {
         this.mPluginView = null;

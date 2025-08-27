@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import com.android.settings.R;
+
 /* loaded from: classes.dex */
 public final class AspectRatioFrameLayout extends FrameLayout {
     float mAspectRatio;
@@ -22,9 +23,9 @@ public final class AspectRatioFrameLayout extends FrameLayout {
         super(context, attributeSet, i);
         this.mAspectRatio = 1.0f;
         if (attributeSet != null) {
-            TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.AspectRatioFrameLayout);
-            this.mAspectRatio = obtainStyledAttributes.getFloat(0, 1.0f);
-            obtainStyledAttributes.recycle();
+            TypedArray typedArrayObtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.AspectRatioFrameLayout);
+            this.mAspectRatio = typedArrayObtainStyledAttributes.getFloat(0, 1.0f);
+            typedArrayObtainStyledAttributes.recycle();
         }
     }
 

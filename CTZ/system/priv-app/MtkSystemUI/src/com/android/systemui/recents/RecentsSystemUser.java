@@ -16,6 +16,7 @@ import com.android.systemui.recents.events.activity.RecentsActivityStartingEvent
 import com.android.systemui.recents.events.component.SetWaitingForTransitionStartEvent;
 import com.android.systemui.recents.events.ui.RecentsDrawnEvent;
 import com.android.systemui.recents.misc.ForegroundThread;
+
 /* loaded from: classes.dex */
 public class RecentsSystemUser extends IRecentsSystemUserCallbacks.Stub {
     private Context mContext;
@@ -28,17 +29,17 @@ public class RecentsSystemUser extends IRecentsSystemUserCallbacks.Stub {
     }
 
     @Override // com.android.systemui.recents.IRecentsSystemUserCallbacks
-    public void registerNonSystemUserCallbacks(IBinder iBinder, final int i) {
+    public void registerNonSystemUserCallbacks(IBinder iBinder, final int i) throws RemoteException {
         try {
-            final IRecentsNonSystemUserCallbacks asInterface = IRecentsNonSystemUserCallbacks.Stub.asInterface(iBinder);
+            final IRecentsNonSystemUserCallbacks iRecentsNonSystemUserCallbacksAsInterface = IRecentsNonSystemUserCallbacks.Stub.asInterface(iBinder);
             iBinder.linkToDeath(new IBinder.DeathRecipient() { // from class: com.android.systemui.recents.RecentsSystemUser.1
                 @Override // android.os.IBinder.DeathRecipient
                 public void binderDied() {
-                    RecentsSystemUser.this.mNonSystemUserRecents.removeAt(RecentsSystemUser.this.mNonSystemUserRecents.indexOfValue(asInterface));
+                    RecentsSystemUser.this.mNonSystemUserRecents.removeAt(RecentsSystemUser.this.mNonSystemUserRecents.indexOfValue(iRecentsNonSystemUserCallbacksAsInterface));
                     EventLog.writeEvent(36060, 5, Integer.valueOf(i));
                 }
             }, 0);
-            this.mNonSystemUserRecents.put(i, asInterface);
+            this.mNonSystemUserRecents.put(i, iRecentsNonSystemUserCallbacksAsInterface);
             EventLog.writeEvent(36060, 4, Integer.valueOf(i));
         } catch (RemoteException e) {
             Log.e("RecentsSystemUser", "Failed to register NonSystemUserCallbacks", e);
@@ -54,7 +55,8 @@ public class RecentsSystemUser extends IRecentsSystemUserCallbacks.Stub {
         ForegroundThread.getHandler().post(new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$RecentsSystemUser$mq7gzWWE-rKCOgjCgOrRqm6b0eU
             @Override // java.lang.Runnable
             public final void run() {
-                r0.mImpl.onVisibilityChanged(RecentsSystemUser.this.mContext, z);
+                RecentsSystemUser recentsSystemUser = this.f$0;
+                recentsSystemUser.mImpl.onVisibilityChanged(recentsSystemUser.mContext, z);
             }
         });
     }
@@ -64,7 +66,8 @@ public class RecentsSystemUser extends IRecentsSystemUserCallbacks.Stub {
         ForegroundThread.getHandler().post(new Runnable() { // from class: com.android.systemui.recents.-$$Lambda$RecentsSystemUser$RuMGq01oJynKESbiTF6h02bxcQ4
             @Override // java.lang.Runnable
             public final void run() {
-                r0.mImpl.onStartScreenPinning(RecentsSystemUser.this.mContext, i);
+                RecentsSystemUser recentsSystemUser = this.f$0;
+                recentsSystemUser.mImpl.onStartScreenPinning(recentsSystemUser.mContext, i);
             }
         });
     }

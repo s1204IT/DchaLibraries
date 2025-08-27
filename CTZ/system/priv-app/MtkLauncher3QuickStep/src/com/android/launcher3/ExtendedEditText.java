@@ -10,13 +10,13 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import com.android.launcher3.util.UiThreadHelper;
+
 /* loaded from: classes.dex */
 public class ExtendedEditText extends EditText {
     private OnBackKeyListener mBackKeyListener;
     private boolean mForceDisableSuggestions;
     private boolean mShowImeAfterFirstLayout;
 
-    /* loaded from: classes.dex */
     public interface OnBackKeyListener {
         boolean onBackKey();
     }
@@ -56,9 +56,8 @@ public class ExtendedEditText extends EditText {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // android.widget.TextView, android.view.View
-    public void onLayout(boolean z, int i, int i2, int i3, int i4) {
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
         super.onLayout(z, i, i2, i3, i4);
         if (this.mShowImeAfterFirstLayout) {
             post(new Runnable() { // from class: com.android.launcher3.ExtendedEditText.1
@@ -75,8 +74,7 @@ public class ExtendedEditText extends EditText {
         this.mShowImeAfterFirstLayout = !showSoftInput();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean showSoftInput() {
+    private boolean showSoftInput() {
         return requestFocus() && ((InputMethodManager) getContext().getSystemService("input_method")).showSoftInput(this, 1);
     }
 
@@ -97,12 +95,12 @@ public class ExtendedEditText extends EditText {
     }
 
     public void reset() {
-        View focusSearch;
+        View viewFocusSearch;
         if (!TextUtils.isEmpty(getText())) {
             setText("");
         }
-        if (isFocused() && (focusSearch = focusSearch(Cea708CCParser.Const.CODE_C1_CW2)) != null) {
-            focusSearch.requestFocus();
+        if (isFocused() && (viewFocusSearch = focusSearch(Cea708CCParser.Const.CODE_C1_CW2)) != null) {
+            viewFocusSearch.requestFocus();
         }
         UiThreadHelper.hideKeyboardAsync(getContext(), getWindowToken());
     }

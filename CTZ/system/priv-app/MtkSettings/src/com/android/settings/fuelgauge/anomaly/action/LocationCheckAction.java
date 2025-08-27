@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.permission.RuntimePermissionPresenter;
 import android.support.v4.content.PermissionChecker;
 import com.android.settings.fuelgauge.anomaly.Anomaly;
+
 /* loaded from: classes.dex */
 public class LocationCheckAction extends AnomalyAction {
     private final RuntimePermissionPresenter mRuntimePermissionPresenter;

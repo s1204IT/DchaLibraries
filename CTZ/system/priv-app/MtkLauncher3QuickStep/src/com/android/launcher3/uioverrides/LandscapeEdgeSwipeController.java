@@ -7,6 +7,7 @@ import com.android.launcher3.LauncherState;
 import com.android.launcher3.touch.AbstractStateChangeTouchController;
 import com.android.launcher3.touch.SwipeDetector;
 import com.android.quickstep.RecentsModel;
+
 /* loaded from: classes.dex */
 public class LandscapeEdgeSwipeController extends AbstractStateChangeTouchController {
     private static final String TAG = "LandscapeEdgeSwipeCtrl";
@@ -44,7 +45,7 @@ public class LandscapeEdgeSwipeController extends AbstractStateChangeTouchContro
     @Override // com.android.launcher3.touch.AbstractStateChangeTouchController
     protected float initCurrentAnimation(int i) {
         float shiftRange = getShiftRange();
-        this.mCurrentAnimation = this.mLauncher.getStateManager().createAnimationToNewWorkspace(this.mToState, 2.0f * shiftRange, i);
+        this.mCurrentAnimation = this.mLauncher.getStateManager().createAnimationToNewWorkspace(this.mToState, (long) (2.0f * shiftRange), i);
         return (this.mLauncher.getDeviceProfile().isSeascape() ? 2 : -2) / shiftRange;
     }
 

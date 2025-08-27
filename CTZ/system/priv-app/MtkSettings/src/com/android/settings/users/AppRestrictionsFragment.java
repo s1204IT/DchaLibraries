@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+
 /* loaded from: classes.dex */
 public class AppRestrictionsFragment extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener, View.OnClickListener, AppRestrictionsHelper.OnDisableUiForPackageListener {
     private static final String TAG = AppRestrictionsFragment.class.getSimpleName();
@@ -73,9 +74,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     };
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class AppRestrictionsPreference extends SwitchPreference {
+    static class AppRestrictionsPreference extends SwitchPreference {
         private boolean hasSettings;
         private boolean immutable;
         private View.OnClickListener listener;
@@ -90,8 +89,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
             this.listener = onClickListener;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public void setSettingsEnabled(boolean z) {
+        private void setSettingsEnabled(boolean z) {
             this.hasSettings = z;
         }
 
@@ -122,15 +120,15 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         @Override // android.support.v14.preference.SwitchPreference, android.support.v7.preference.Preference
         public void onBindViewHolder(PreferenceViewHolder preferenceViewHolder) {
             super.onBindViewHolder(preferenceViewHolder);
-            View findViewById = preferenceViewHolder.findViewById(R.id.app_restrictions_settings);
-            findViewById.setVisibility(this.hasSettings ? 0 : 8);
+            View viewFindViewById = preferenceViewHolder.findViewById(R.id.app_restrictions_settings);
+            viewFindViewById.setVisibility(this.hasSettings ? 0 : 8);
             preferenceViewHolder.findViewById(R.id.settings_divider).setVisibility(this.hasSettings ? 0 : 8);
-            findViewById.setOnClickListener(this.listener);
-            findViewById.setTag(this);
-            View findViewById2 = preferenceViewHolder.findViewById(R.id.app_restrictions_pref);
-            findViewById2.setOnClickListener(this.listener);
-            findViewById2.setTag(this);
-            ViewGroup viewGroup = (ViewGroup) preferenceViewHolder.findViewById(16908312);
+            viewFindViewById.setOnClickListener(this.listener);
+            viewFindViewById.setTag(this);
+            View viewFindViewById2 = preferenceViewHolder.findViewById(R.id.app_restrictions_pref);
+            viewFindViewById2.setOnClickListener(this.listener);
+            viewFindViewById2.setTag(this);
+            ViewGroup viewGroup = (ViewGroup) preferenceViewHolder.findViewById(android.R.id.widget_frame);
             viewGroup.setEnabled(!isImmutable());
             if (viewGroup.getChildCount() > 0) {
                 final Switch r6 = (Switch) viewGroup.getChildAt(0);
@@ -148,8 +146,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void init(Bundle bundle) {
+    protected void init(Bundle bundle) {
         if (bundle != null) {
             this.mUser = new UserHandle(bundle.getInt("user_id"));
         } else {
@@ -213,9 +210,9 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         getActivity().unregisterReceiver(this.mPackageObserver);
         if (this.mAppListChanged) {
             new AsyncTask<Void, Void, Void>() { // from class: com.android.settings.users.AppRestrictionsFragment.3
-                /* JADX INFO: Access modifiers changed from: protected */
+                /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
                 @Override // android.os.AsyncTask
-                public Void doInBackground(Void... voidArr) {
+                protected Void doInBackground(Void... voidArr) {
                     AppRestrictionsFragment.this.mHelper.applyUserAppsStates(AppRestrictionsFragment.this);
                     return null;
                 }
@@ -223,8 +220,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onPackageChanged(Intent intent) {
+    private void onPackageChanged(Intent intent) {
         String action = intent.getAction();
         AppRestrictionsPreference appRestrictionsPreference = (AppRestrictionsPreference) findPreference(getKeyForPackage(intent.getData().getSchemeSpecificPart()));
         if (appRestrictionsPreference == null) {
@@ -247,22 +243,20 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public class AppLoadingTask extends AsyncTask<Void, Void, Void> {
+    private class AppLoadingTask extends AsyncTask<Void, Void, Void> {
         private AppLoadingTask() {
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.os.AsyncTask
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) throws PackageManager.NameNotFoundException {
             AppRestrictionsFragment.this.mHelper.fetchAndMergeApps();
             return null;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
+        /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
         @Override // android.os.AsyncTask
-        public void onPostExecute(Void r1) {
+        protected void onPostExecute(Void r1) {
             AppRestrictionsFragment.this.populateApps();
         }
     }
@@ -278,8 +272,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         return (packageInfo.applicationInfo.flags & 8388608) != 0 && (packageInfo.applicationInfo.privateFlags & 1) == 0;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void populateApps() {
+    private void populateApps() {
         PackageInfo packageInfo;
         Activity activity = getActivity();
         if (activity == null) {
@@ -292,14 +285,14 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
             return;
         }
         this.mAppList.removeAll();
-        List<ResolveInfo> queryBroadcastReceivers = packageManager.queryBroadcastReceivers(new Intent("android.intent.action.GET_RESTRICTION_ENTRIES"), 0);
+        List<ResolveInfo> listQueryBroadcastReceivers = packageManager.queryBroadcastReceivers(new Intent("android.intent.action.GET_RESTRICTION_ENTRIES"), 0);
         for (AppRestrictionsHelper.SelectableAppInfo selectableAppInfo : this.mHelper.getVisibleApps()) {
             String str = selectableAppInfo.packageName;
             if (str != null) {
-                boolean equals = str.equals(activity.getPackageName());
+                boolean zEquals = str.equals(activity.getPackageName());
                 AppRestrictionsPreference appRestrictionsPreference = new AppRestrictionsPreference(getPrefContext(), this);
-                boolean resolveInfoListHasPackage = resolveInfoListHasPackage(queryBroadcastReceivers, str);
-                if (equals) {
+                boolean zResolveInfoListHasPackage = resolveInfoListHasPackage(listQueryBroadcastReceivers, str);
+                if (zEquals) {
                     addLocationAppRestrictionsPreference(selectableAppInfo, appRestrictionsPreference);
                     this.mHelper.setPackageSelected(str, true);
                 } else {
@@ -313,7 +306,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
                         appRestrictionsPreference.setChecked(false);
                         appRestrictionsPreference.setTitle(selectableAppInfo.activityName);
                         appRestrictionsPreference.setKey(getKeyForPackage(str));
-                        appRestrictionsPreference.setSettingsEnabled(resolveInfoListHasPackage && selectableAppInfo.masterEntry == null);
+                        appRestrictionsPreference.setSettingsEnabled(zResolveInfoListHasPackage && selectableAppInfo.masterEntry == null);
                         appRestrictionsPreference.setPersistent(false);
                         appRestrictionsPreference.setOnPreferenceChangeListener(this);
                         appRestrictionsPreference.setOnPreferenceClickListener(this);
@@ -321,7 +314,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
                         if (packageInfo.requiredForAllUsers || isPlatformSigned(packageInfo)) {
                             appRestrictionsPreference.setChecked(true);
                             appRestrictionsPreference.setImmutable(true);
-                            if (resolveInfoListHasPackage) {
+                            if (zResolveInfoListHasPackage) {
                                 if (selectableAppInfo.masterEntry == null) {
                                     requestRestrictionsForApp(str, appRestrictionsPreference, false);
                                 }
@@ -353,11 +346,11 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
                 return getString(R.string.app_sees_restricted_accounts_and_controlled_by, new Object[]{selectableAppInfo.masterEntry.activityName});
             }
             return getString(R.string.user_restrictions_controlled_by, new Object[]{selectableAppInfo.masterEntry.activityName});
-        } else if (packageInfo.restrictedAccountType != null) {
-            return getString(R.string.app_sees_restricted_accounts);
-        } else {
-            return null;
         }
+        if (packageInfo.restrictedAccountType != null) {
+            return getString(R.string.app_sees_restricted_accounts);
+        }
+        return null;
     }
 
     private static boolean isAppUnsupportedInRestrictedProfile(PackageInfo packageInfo) {
@@ -385,8 +378,9 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
     }
 
     private boolean resolveInfoListHasPackage(List<ResolveInfo> list, String str) {
-        for (ResolveInfo resolveInfo : list) {
-            if (resolveInfo.activityInfo.packageName.equals(str)) {
+        Iterator<ResolveInfo> it = list.iterator();
+        while (it.hasNext()) {
+            if (it.next().activityInfo.packageName.equals(str)) {
                 return true;
             }
         }
@@ -408,21 +402,23 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
             AppRestrictionsPreference appRestrictionsPreference = (AppRestrictionsPreference) view.getTag();
             if (view.getId() == R.id.app_restrictions_settings) {
                 onAppSettingsIconClicked(appRestrictionsPreference);
-            } else if (!appRestrictionsPreference.isImmutable()) {
+                return;
+            }
+            if (!appRestrictionsPreference.isImmutable()) {
                 appRestrictionsPreference.setChecked(!appRestrictionsPreference.isChecked());
-                String substring = appRestrictionsPreference.getKey().substring("pkg_".length());
-                if (substring.equals(getActivity().getPackageName())) {
+                String strSubstring = appRestrictionsPreference.getKey().substring("pkg_".length());
+                if (strSubstring.equals(getActivity().getPackageName())) {
                     ((RestrictionEntry) appRestrictionsPreference.restrictions.get(0)).setSelectedState(appRestrictionsPreference.isChecked());
                     RestrictionUtils.setRestrictions(getActivity(), appRestrictionsPreference.restrictions, this.mUser);
                     return;
                 }
-                this.mHelper.setPackageSelected(substring, appRestrictionsPreference.isChecked());
+                this.mHelper.setPackageSelected(strSubstring, appRestrictionsPreference.isChecked());
                 if (appRestrictionsPreference.isChecked() && appRestrictionsPreference.hasSettings && appRestrictionsPreference.restrictions == null) {
-                    requestRestrictionsForApp(substring, appRestrictionsPreference, false);
+                    requestRestrictionsForApp(strSubstring, appRestrictionsPreference, false);
                 }
                 this.mAppListChanged = true;
                 if (!this.mRestrictedProfile) {
-                    this.mHelper.applyUserAppState(substring, appRestrictionsPreference.isChecked(), this);
+                    this.mHelper.applyUserAppState(strSubstring, appRestrictionsPreference.isChecked(), this);
                 }
                 updateAllEntries(appRestrictionsPreference.getKey(), appRestrictionsPreference.isChecked());
             }
@@ -434,33 +430,32 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         String key = preference.getKey();
         if (key != null && key.contains(";")) {
             StringTokenizer stringTokenizer = new StringTokenizer(key, ";");
-            String nextToken = stringTokenizer.nextToken();
-            String nextToken2 = stringTokenizer.nextToken();
-            PreferenceGroup preferenceGroup = this.mAppList;
-            ArrayList<RestrictionEntry> restrictions = ((AppRestrictionsPreference) preferenceGroup.findPreference("pkg_" + nextToken)).getRestrictions();
+            String strNextToken = stringTokenizer.nextToken();
+            String strNextToken2 = stringTokenizer.nextToken();
+            ArrayList<RestrictionEntry> restrictions = ((AppRestrictionsPreference) this.mAppList.findPreference("pkg_" + strNextToken)).getRestrictions();
             if (restrictions != null) {
                 Iterator<RestrictionEntry> it = restrictions.iterator();
                 while (it.hasNext()) {
                     RestrictionEntry next = it.next();
-                    if (next.getKey().equals(nextToken2)) {
+                    if (next.getKey().equals(strNextToken2)) {
                         switch (next.getType()) {
                             case 1:
                                 next.setSelectedState(((Boolean) obj).booleanValue());
-                                this.mUserManager.setApplicationRestrictions(nextToken, RestrictionsManager.convertRestrictionsToBundle(restrictions), this.mUser);
+                                this.mUserManager.setApplicationRestrictions(strNextToken, RestrictionsManager.convertRestrictionsToBundle(restrictions), this.mUser);
                                 return true;
                             case 2:
                             case 3:
                                 String str = (String) obj;
                                 next.setSelectedString(str);
                                 ((ListPreference) preference).setSummary(findInArray(next.getChoiceEntries(), next.getChoiceValues(), str));
-                                this.mUserManager.setApplicationRestrictions(nextToken, RestrictionsManager.convertRestrictionsToBundle(restrictions), this.mUser);
+                                this.mUserManager.setApplicationRestrictions(strNextToken, RestrictionsManager.convertRestrictionsToBundle(restrictions), this.mUser);
                                 return true;
                             case 4:
                                 Set set = (Set) obj;
                                 String[] strArr = new String[set.size()];
                                 set.toArray(strArr);
                                 next.setAllSelectedStrings(strArr);
-                                this.mUserManager.setApplicationRestrictions(nextToken, RestrictionsManager.convertRestrictionsToBundle(restrictions), this.mUser);
+                                this.mUserManager.setApplicationRestrictions(strNextToken, RestrictionsManager.convertRestrictionsToBundle(restrictions), this.mUser);
                                 return true;
                         }
                     }
@@ -473,8 +468,9 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
     }
 
     private void removeRestrictionsForApp(AppRestrictionsPreference appRestrictionsPreference) {
-        for (Preference preference : appRestrictionsPreference.mChildren) {
-            this.mAppList.removePreference(preference);
+        Iterator it = appRestrictionsPreference.mChildren.iterator();
+        while (it.hasNext()) {
+            this.mAppList.removePreference((Preference) it.next());
         }
         appRestrictionsPreference.mChildren.clear();
     }
@@ -499,9 +495,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         getActivity().sendOrderedBroadcast(intent, null, new RestrictionsResultReceiver(str, appRestrictionsPreference, z), null, -1, null, null);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public class RestrictionsResultReceiver extends BroadcastReceiver {
+    class RestrictionsResultReceiver extends BroadcastReceiver {
         boolean invokeIfCustom;
         String packageName;
         AppRestrictionsPreference preference;
@@ -521,8 +515,11 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
                 AppRestrictionsFragment.this.onRestrictionsReceived(this.preference, parcelableArrayList);
                 if (AppRestrictionsFragment.this.mRestrictedProfile) {
                     AppRestrictionsFragment.this.mUserManager.setApplicationRestrictions(this.packageName, RestrictionsManager.convertRestrictionsToBundle(parcelableArrayList), AppRestrictionsFragment.this.mUser);
+                    return;
                 }
-            } else if (intent2 != null) {
+                return;
+            }
+            if (intent2 != null) {
                 this.preference.setRestrictions(parcelableArrayList);
                 if (this.invokeIfCustom && AppRestrictionsFragment.this.isResumed()) {
                     assertSafeToStartCustomActivity(intent2);
@@ -535,50 +532,49 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
             if (intent.getPackage() != null && intent.getPackage().equals(this.packageName)) {
                 return;
             }
-            List<ResolveInfo> queryIntentActivities = AppRestrictionsFragment.this.mPackageManager.queryIntentActivities(intent, 0);
-            if (queryIntentActivities.size() != 1) {
+            List<ResolveInfo> listQueryIntentActivities = AppRestrictionsFragment.this.mPackageManager.queryIntentActivities(intent, 0);
+            if (listQueryIntentActivities.size() != 1) {
                 return;
             }
-            if (!this.packageName.equals(queryIntentActivities.get(0).activityInfo.packageName)) {
+            if (!this.packageName.equals(listQueryIntentActivities.get(0).activityInfo.packageName)) {
                 throw new SecurityException("Application " + this.packageName + " is not allowed to start activity " + intent);
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void onRestrictionsReceived(AppRestrictionsPreference appRestrictionsPreference, ArrayList<RestrictionEntry> arrayList) {
+    private void onRestrictionsReceived(AppRestrictionsPreference appRestrictionsPreference, ArrayList<RestrictionEntry> arrayList) {
         removeRestrictionsForApp(appRestrictionsPreference);
         Iterator<RestrictionEntry> it = arrayList.iterator();
         int i = 1;
         while (it.hasNext()) {
             RestrictionEntry next = it.next();
-            Preference preference = null;
+            Preference switchPreference = null;
             switch (next.getType()) {
                 case 1:
-                    preference = new SwitchPreference(getPrefContext());
-                    preference.setTitle(next.getTitle());
-                    preference.setSummary(next.getDescription());
-                    ((SwitchPreference) preference).setChecked(next.getSelectedState());
+                    switchPreference = new SwitchPreference(getPrefContext());
+                    switchPreference.setTitle(next.getTitle());
+                    switchPreference.setSummary(next.getDescription());
+                    ((SwitchPreference) switchPreference).setChecked(next.getSelectedState());
                     break;
                 case 2:
                 case 3:
-                    preference = new ListPreference(getPrefContext());
-                    preference.setTitle(next.getTitle());
+                    switchPreference = new ListPreference(getPrefContext());
+                    switchPreference.setTitle(next.getTitle());
                     String selectedString = next.getSelectedString();
                     if (selectedString == null) {
                         selectedString = next.getDescription();
                     }
-                    preference.setSummary(findInArray(next.getChoiceEntries(), next.getChoiceValues(), selectedString));
-                    ListPreference listPreference = (ListPreference) preference;
+                    switchPreference.setSummary(findInArray(next.getChoiceEntries(), next.getChoiceValues(), selectedString));
+                    ListPreference listPreference = (ListPreference) switchPreference;
                     listPreference.setEntryValues(next.getChoiceValues());
                     listPreference.setEntries(next.getChoiceEntries());
                     listPreference.setValue(selectedString);
                     listPreference.setDialogTitle(next.getTitle());
                     break;
                 case 4:
-                    preference = new MultiSelectListPreference(getPrefContext());
-                    preference.setTitle(next.getTitle());
-                    MultiSelectListPreference multiSelectListPreference = (MultiSelectListPreference) preference;
+                    switchPreference = new MultiSelectListPreference(getPrefContext());
+                    switchPreference.setTitle(next.getTitle());
+                    MultiSelectListPreference multiSelectListPreference = (MultiSelectListPreference) switchPreference;
                     multiSelectListPreference.setEntryValues(next.getChoiceValues());
                     multiSelectListPreference.setEntries(next.getChoiceEntries());
                     HashSet hashSet = new HashSet();
@@ -587,14 +583,14 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
                     multiSelectListPreference.setDialogTitle(next.getTitle());
                     break;
             }
-            if (preference != null) {
-                preference.setPersistent(false);
-                preference.setOrder(appRestrictionsPreference.getOrder() + i);
-                preference.setKey(appRestrictionsPreference.getKey().substring("pkg_".length()) + ";" + next.getKey());
-                this.mAppList.addPreference(preference);
-                preference.setOnPreferenceChangeListener(this);
-                preference.setIcon(R.drawable.empty_icon);
-                appRestrictionsPreference.mChildren.add(preference);
+            if (switchPreference != null) {
+                switchPreference.setPersistent(false);
+                switchPreference.setOrder(appRestrictionsPreference.getOrder() + i);
+                switchPreference.setKey(appRestrictionsPreference.getKey().substring("pkg_".length()) + ";" + next.getKey());
+                this.mAppList.addPreference(switchPreference);
+                switchPreference.setOnPreferenceChangeListener(this);
+                switchPreference.setIcon(R.drawable.empty_icon);
+                appRestrictionsPreference.mChildren.add(switchPreference);
                 i++;
             }
         }
@@ -604,8 +600,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public int generateCustomActivityRequestCode(AppRestrictionsPreference appRestrictionsPreference) {
+    private int generateCustomActivityRequestCode(AppRestrictionsPreference appRestrictionsPreference) {
         this.mCustomRequestCode++;
         this.mCustomRequestMap.put(Integer.valueOf(this.mCustomRequestCode), appRestrictionsPreference);
         return this.mCustomRequestCode;
@@ -616,19 +611,18 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         super.onActivityResult(i, i2, intent);
         AppRestrictionsPreference appRestrictionsPreference = this.mCustomRequestMap.get(Integer.valueOf(i));
         if (appRestrictionsPreference == null) {
-            String str = TAG;
-            Log.w(str, "Unknown requestCode " + i);
+            Log.w(TAG, "Unknown requestCode " + i);
             return;
         }
         if (i2 == -1) {
-            String substring = appRestrictionsPreference.getKey().substring("pkg_".length());
+            String strSubstring = appRestrictionsPreference.getKey().substring("pkg_".length());
             ArrayList<RestrictionEntry> parcelableArrayListExtra = intent.getParcelableArrayListExtra("android.intent.extra.restrictions_list");
             Bundle bundleExtra = intent.getBundleExtra("android.intent.extra.restrictions_bundle");
             if (parcelableArrayListExtra != null) {
                 appRestrictionsPreference.setRestrictions(parcelableArrayListExtra);
-                this.mUserManager.setApplicationRestrictions(substring, RestrictionsManager.convertRestrictionsToBundle(parcelableArrayListExtra), this.mUser);
+                this.mUserManager.setApplicationRestrictions(strSubstring, RestrictionsManager.convertRestrictionsToBundle(parcelableArrayListExtra), this.mUser);
             } else if (bundleExtra != null) {
-                this.mUserManager.setApplicationRestrictions(substring, bundleExtra, this.mUser);
+                this.mUserManager.setApplicationRestrictions(strSubstring, bundleExtra, this.mUser);
             }
         }
         this.mCustomRequestMap.remove(Integer.valueOf(i));
@@ -648,13 +642,13 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         if (preference.getKey().startsWith("pkg_")) {
             AppRestrictionsPreference appRestrictionsPreference = (AppRestrictionsPreference) preference;
             if (!appRestrictionsPreference.isImmutable()) {
-                String substring = appRestrictionsPreference.getKey().substring("pkg_".length());
+                String strSubstring = appRestrictionsPreference.getKey().substring("pkg_".length());
                 boolean z = !appRestrictionsPreference.isChecked();
                 appRestrictionsPreference.setChecked(z);
-                this.mHelper.setPackageSelected(substring, z);
+                this.mHelper.setPackageSelected(strSubstring, z);
                 updateAllEntries(appRestrictionsPreference.getKey(), z);
                 this.mAppListChanged = true;
-                this.mHelper.applyUserAppState(substring, z, this);
+                this.mHelper.applyUserAppState(strSubstring, z, this);
             }
             return true;
         }

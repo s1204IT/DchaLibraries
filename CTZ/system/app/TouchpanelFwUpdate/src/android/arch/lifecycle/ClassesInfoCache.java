@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 class ClassesInfoCache {
     static ClassesInfoCache sInstance = new ClassesInfoCache();
@@ -16,8 +17,7 @@ class ClassesInfoCache {
     ClassesInfoCache() {
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public boolean hasLifecycleMethods(Class klass) {
+    boolean hasLifecycleMethods(Class klass) {
         if (this.mHasLifecycleMethods.containsKey(klass)) {
             return this.mHasLifecycleMethods.get(klass).booleanValue();
         }
@@ -41,8 +41,7 @@ class ClassesInfoCache {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public CallbackInfo getInfo(Class klass) {
+    CallbackInfo getInfo(Class klass) {
         CallbackInfo existing = this.mCallbackMap.get(klass);
         if (existing != null) {
             return existing;
@@ -55,7 +54,8 @@ class ClassesInfoCache {
         if (event != null && newEvent != event) {
             Method method = newHandler.mMethod;
             throw new IllegalArgumentException("Method " + method.getName() + " in " + klass.getName() + " already declared with different @OnLifecycleEvent value: previous value " + event + ", new value " + newEvent);
-        } else if (event == null) {
+        }
+        if (event == null) {
             handlers.put(newHandler, newEvent);
         }
     }
@@ -121,9 +121,7 @@ class ClassesInfoCache {
         return info;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class CallbackInfo {
+    static class CallbackInfo {
         final Map<Lifecycle.Event, List<MethodReference>> mEventToHandlers = new HashMap();
         final Map<MethodReference, Lifecycle.Event> mHandlerToEvent;
 
@@ -140,13 +138,12 @@ class ClassesInfoCache {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public void invokeCallbacks(LifecycleOwner source, Lifecycle.Event event, Object target) {
+        void invokeCallbacks(LifecycleOwner source, Lifecycle.Event event, Object target) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
             invokeMethodsForEvent(this.mEventToHandlers.get(event), source, event, target);
             invokeMethodsForEvent(this.mEventToHandlers.get(Lifecycle.Event.ON_ANY), source, event, target);
         }
 
-        private static void invokeMethodsForEvent(List<MethodReference> handlers, LifecycleOwner source, Lifecycle.Event event, Object mWrapped) {
+        private static void invokeMethodsForEvent(List<MethodReference> handlers, LifecycleOwner source, Lifecycle.Event event, Object mWrapped) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
             if (handlers != null) {
                 for (int i = handlers.size() - 1; i >= 0; i--) {
                     handlers.get(i).invokeCallback(source, event, mWrapped);
@@ -155,9 +152,7 @@ class ClassesInfoCache {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class MethodReference {
+    static class MethodReference {
         final int mCallType;
         final Method mMethod;
 
@@ -167,7 +162,7 @@ class ClassesInfoCache {
             this.mMethod.setAccessible(true);
         }
 
-        void invokeCallback(LifecycleOwner source, Lifecycle.Event event, Object target) {
+        void invokeCallback(LifecycleOwner source, Lifecycle.Event event, Object target) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
             try {
                 switch (this.mCallType) {
                     case 0:

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.NotificationGuts;
+
 /* loaded from: classes.dex */
 public class AppOpsInfo extends LinearLayout implements NotificationGuts.GutsContent {
     private String mAppName;
@@ -28,7 +29,6 @@ public class AppOpsInfo extends LinearLayout implements NotificationGuts.GutsCon
     private PackageManager mPm;
     private StatusBarNotification mSbn;
 
-    /* loaded from: classes.dex */
     public interface OnSettingsClickListener {
         void onClick(View view, String str, int i, ArraySet<Integer> arraySet);
     }
@@ -38,12 +38,12 @@ public class AppOpsInfo extends LinearLayout implements NotificationGuts.GutsCon
         this.mOnOk = new View.OnClickListener() { // from class: com.android.systemui.statusbar.-$$Lambda$AppOpsInfo$68oqrp8uVHC6FuhanxBqfZBzjSI
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                AppOpsInfo.this.closeControls(view);
+                this.f$0.closeControls(view);
             }
         };
     }
 
-    public void bindGuts(PackageManager packageManager, OnSettingsClickListener onSettingsClickListener, StatusBarNotification statusBarNotification, ArraySet<Integer> arraySet) {
+    public void bindGuts(PackageManager packageManager, OnSettingsClickListener onSettingsClickListener, StatusBarNotification statusBarNotification, ArraySet<Integer> arraySet) throws PackageManager.NameNotFoundException {
         this.mPkg = statusBarNotification.getPackageName();
         this.mSbn = statusBarNotification;
         this.mPm = packageManager;
@@ -57,7 +57,7 @@ public class AppOpsInfo extends LinearLayout implements NotificationGuts.GutsCon
         this.mMetricsLogger.visibility(1345, true);
     }
 
-    private void bindHeader() {
+    private void bindHeader() throws PackageManager.NameNotFoundException {
         Drawable defaultActivityIcon;
         try {
             ApplicationInfo applicationInfo = this.mPm.getApplicationInfo(this.mPkg, 795136);
@@ -83,7 +83,8 @@ public class AppOpsInfo extends LinearLayout implements NotificationGuts.GutsCon
         findViewById(R.id.settings).setOnClickListener(new View.OnClickListener() { // from class: com.android.systemui.statusbar.-$$Lambda$AppOpsInfo$t2ZvU1jOw3dfO--nkIVBlcF8VwE
             @Override // android.view.View.OnClickListener
             public final void onClick(View view) {
-                r0.mOnSettingsClickListener.onClick(view, r0.mPkg, r0.mAppUid, AppOpsInfo.this.mAppOps);
+                AppOpsInfo appOpsInfo = this.f$0;
+                appOpsInfo.mOnSettingsClickListener.onClick(view, appOpsInfo.mPkg, appOpsInfo.mAppUid, appOpsInfo.mAppOps);
             }
         });
         ((TextView) findViewById(R.id.ok)).setOnClickListener(this.mOnOk);
@@ -101,7 +102,8 @@ public class AppOpsInfo extends LinearLayout implements NotificationGuts.GutsCon
                 return this.mContext.getString(R.string.appops_microphone);
             }
             return this.mContext.getString(R.string.appops_overlay);
-        } else if (this.mAppOps.size() == 2) {
+        }
+        if (this.mAppOps.size() == 2) {
             if (this.mAppOps.contains(26)) {
                 if (this.mAppOps.contains(27)) {
                     return this.mContext.getString(R.string.appops_camera_mic);
@@ -109,9 +111,8 @@ public class AppOpsInfo extends LinearLayout implements NotificationGuts.GutsCon
                 return this.mContext.getString(R.string.appops_camera_overlay);
             }
             return this.mContext.getString(R.string.appops_mic_overlay);
-        } else {
-            return this.mContext.getString(R.string.appops_camera_mic_overlay);
         }
+        return this.mContext.getString(R.string.appops_camera_mic_overlay);
     }
 
     @Override // android.view.View
@@ -126,16 +127,15 @@ public class AppOpsInfo extends LinearLayout implements NotificationGuts.GutsCon
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void closeControls(View view) {
+    private void closeControls(View view) {
         this.mMetricsLogger.visibility(1345, false);
         int[] iArr = new int[2];
         int[] iArr2 = new int[2];
         this.mGutsContainer.getLocationOnScreen(iArr);
         view.getLocationOnScreen(iArr2);
-        int i = iArr2[0] - iArr[0];
-        int height = (iArr2[1] - iArr[1]) + (view.getHeight() / 2);
-        this.mGutsContainer.closeControls(i + (view.getWidth() / 2), height, false, false);
+        int width = view.getWidth() / 2;
+        int height = view.getHeight() / 2;
+        this.mGutsContainer.closeControls((iArr2[0] - iArr[0]) + width, (iArr2[1] - iArr[1]) + height, false, false);
     }
 
     @Override // com.android.systemui.statusbar.NotificationGuts.GutsContent

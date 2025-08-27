@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import com.android.settings.R;
 import com.android.settings.core.instrumentation.InstrumentedDialogFragment;
+
 /* loaded from: classes.dex */
 public class UnificationConfirmationDialog extends InstrumentedDialogFragment {
     public static UnificationConfirmationDialog newInstance(boolean z) {
@@ -36,8 +37,7 @@ public class UnificationConfirmationDialog extends InstrumentedDialogFragment {
         }).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).create();
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$onCreateDialog$0(boolean z, SecuritySettings securitySettings, DialogInterface dialogInterface, int i) {
+    static /* synthetic */ void lambda$onCreateDialog$0(boolean z, SecuritySettings securitySettings, DialogInterface dialogInterface, int i) {
         if (z) {
             securitySettings.launchConfirmDeviceLockForUnification();
         } else {

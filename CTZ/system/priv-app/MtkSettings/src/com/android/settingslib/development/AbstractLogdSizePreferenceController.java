@@ -2,12 +2,14 @@ package com.android.settingslib.development;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.SystemProperties;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settingslib.R;
+
 /* loaded from: classes.dex */
 public abstract class AbstractLogdSizePreferenceController extends DeveloperOptionsPreferenceController implements Preference.OnPreferenceChangeListener {
     static final String DEFAULT_SNET_TAG = "I";
@@ -36,7 +38,7 @@ public abstract class AbstractLogdSizePreferenceController extends DeveloperOpti
     }
 
     @Override // android.support.v7.preference.Preference.OnPreferenceChangeListener
-    public boolean onPreferenceChange(Preference preference, Object obj) {
+    public boolean onPreferenceChange(Preference preference, Object obj) throws Resources.NotFoundException {
         if (preference == this.mLogdSize) {
             writeLogdSizeOption(obj);
             return true;
@@ -55,16 +57,16 @@ public abstract class AbstractLogdSizePreferenceController extends DeveloperOpti
         return str;
     }
 
-    public void updateLogdSizeValues() {
+    public void updateLogdSizeValues() throws Resources.NotFoundException {
         if (this.mLogdSize != null) {
             String str = SystemProperties.get("persist.log.tag");
-            String str2 = SystemProperties.get(SELECT_LOGD_SIZE_PROPERTY);
+            String strDefaultLogdSizeValue = SystemProperties.get(SELECT_LOGD_SIZE_PROPERTY);
             if (str != null && str.startsWith("Settings")) {
-                str2 = "32768";
+                strDefaultLogdSizeValue = "32768";
             }
-            LocalBroadcastManager.getInstance(this.mContext).sendBroadcastSync(new Intent("com.android.settingslib.development.AbstractLogdSizePreferenceController.LOGD_SIZE_UPDATED").putExtra("CURRENT_LOGD_VALUE", str2));
-            if (str2 == null || str2.length() == 0) {
-                str2 = defaultLogdSizeValue();
+            LocalBroadcastManager.getInstance(this.mContext).sendBroadcastSync(new Intent("com.android.settingslib.development.AbstractLogdSizePreferenceController.LOGD_SIZE_UPDATED").putExtra("CURRENT_LOGD_VALUE", strDefaultLogdSizeValue));
+            if (strDefaultLogdSizeValue == null || strDefaultLogdSizeValue.length() == 0) {
+                strDefaultLogdSizeValue = defaultLogdSizeValue();
             }
             String[] stringArray = this.mContext.getResources().getStringArray(R.array.select_logd_size_values);
             String[] stringArray2 = this.mContext.getResources().getStringArray(R.array.select_logd_size_titles);
@@ -76,7 +78,7 @@ public abstract class AbstractLogdSizePreferenceController extends DeveloperOpti
             }
             String[] stringArray3 = this.mContext.getResources().getStringArray(R.array.select_logd_size_summaries);
             for (int i2 = 0; i2 < stringArray2.length; i2++) {
-                if (str2.equals(stringArray[i2]) || str2.equals(stringArray2[i2])) {
+                if (strDefaultLogdSizeValue.equals(stringArray[i2]) || strDefaultLogdSizeValue.equals(stringArray2[i2])) {
                     i = i2;
                     break;
                 }
@@ -86,39 +88,39 @@ public abstract class AbstractLogdSizePreferenceController extends DeveloperOpti
         }
     }
 
-    public void writeLogdSizeOption(Object obj) {
+    public void writeLogdSizeOption(Object obj) throws Resources.NotFoundException {
+        String string;
         String str;
-        String str2;
         boolean z = obj != null && obj.toString().equals("32768");
-        String str3 = SystemProperties.get("persist.log.tag");
-        if (str3 == null) {
-            str3 = "";
+        String str2 = SystemProperties.get("persist.log.tag");
+        if (str2 == null) {
+            str2 = "";
         }
-        String replaceFirst = str3.replaceAll(",+Settings", "").replaceFirst("^Settings,*", "").replaceAll(",+", ",").replaceFirst(",+$", "");
+        String strReplaceFirst = str2.replaceAll(",+Settings", "").replaceFirst("^Settings,*", "").replaceAll(",+", ",").replaceFirst(",+$", "");
         if (z) {
             obj = SELECT_LOGD_MINIMUM_SIZE_VALUE;
-            String str4 = SystemProperties.get(SELECT_LOGD_SNET_TAG_PROPERTY);
-            if ((str4 == null || str4.length() == 0) && ((str2 = SystemProperties.get("log.tag.snet_event_log")) == null || str2.length() == 0)) {
+            String str3 = SystemProperties.get(SELECT_LOGD_SNET_TAG_PROPERTY);
+            if ((str3 == null || str3.length() == 0) && ((str = SystemProperties.get("log.tag.snet_event_log")) == null || str.length() == 0)) {
                 SystemProperties.set(SELECT_LOGD_SNET_TAG_PROPERTY, DEFAULT_SNET_TAG);
             }
-            if (replaceFirst.length() != 0) {
-                replaceFirst = "," + replaceFirst;
+            if (strReplaceFirst.length() != 0) {
+                strReplaceFirst = "," + strReplaceFirst;
             }
-            replaceFirst = "Settings" + replaceFirst;
+            strReplaceFirst = "Settings" + strReplaceFirst;
         }
-        if (!replaceFirst.equals(str3)) {
-            SystemProperties.set("persist.log.tag", replaceFirst);
+        if (!strReplaceFirst.equals(str2)) {
+            SystemProperties.set("persist.log.tag", strReplaceFirst);
         }
-        String defaultLogdSizeValue = defaultLogdSizeValue();
+        String strDefaultLogdSizeValue = defaultLogdSizeValue();
         if (obj != null && obj.toString().length() != 0) {
-            str = obj.toString();
+            string = obj.toString();
         } else {
-            str = defaultLogdSizeValue;
+            string = strDefaultLogdSizeValue;
         }
-        if (defaultLogdSizeValue.equals(str)) {
-            str = "";
+        if (strDefaultLogdSizeValue.equals(string)) {
+            string = "";
         }
-        SystemProperties.set(SELECT_LOGD_SIZE_PROPERTY, str);
+        SystemProperties.set(SELECT_LOGD_SIZE_PROPERTY, string);
         SystemProperties.set("ctl.start", "logd-reinit");
         SystemPropPoker.getInstance().poke();
         updateLogdSizeValues();

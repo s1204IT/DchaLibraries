@@ -1,5 +1,6 @@
 package com.android.systemui.settings;
 
+import android.R;
 import android.animation.ValueAnimator;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -22,10 +23,10 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.display.BrightnessUtils;
 import com.android.systemui.Dependency;
-import com.android.systemui.R;
 import com.android.systemui.settings.ToggleSlider;
 import java.util.ArrayList;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class BrightnessController implements ToggleSlider.Listener {
     private volatile boolean mAutomatic;
@@ -151,12 +152,10 @@ public class BrightnessController implements ToggleSlider.Listener {
         }
     };
 
-    /* loaded from: classes.dex */
     public interface BrightnessStateChangeCallback {
         void onBrightnessLevelChanged();
     }
 
-    /* loaded from: classes.dex */
     private class BrightnessObserver extends ContentObserver {
         private final Uri BRIGHTNESS_FOR_VR_URI;
         private final Uri BRIGHTNESS_MODE_URI;
@@ -182,12 +181,10 @@ public class BrightnessController implements ToggleSlider.Listener {
             if (this.BRIGHTNESS_MODE_URI.equals(uri)) {
                 BrightnessController.this.mBackgroundHandler.post(BrightnessController.this.mUpdateModeRunnable);
                 BrightnessController.this.mBackgroundHandler.post(BrightnessController.this.mUpdateSliderRunnable);
-            } else if (this.BRIGHTNESS_URI.equals(uri)) {
-                BrightnessController.this.mBackgroundHandler.post(BrightnessController.this.mUpdateSliderRunnable);
-            } else if (this.BRIGHTNESS_FOR_VR_URI.equals(uri)) {
+            } else if (!this.BRIGHTNESS_URI.equals(uri) && !this.BRIGHTNESS_FOR_VR_URI.equals(uri)) {
+                BrightnessController.this.mBackgroundHandler.post(BrightnessController.this.mUpdateModeRunnable);
                 BrightnessController.this.mBackgroundHandler.post(BrightnessController.this.mUpdateSliderRunnable);
             } else {
-                BrightnessController.this.mBackgroundHandler.post(BrightnessController.this.mUpdateModeRunnable);
                 BrightnessController.this.mBackgroundHandler.post(BrightnessController.this.mUpdateSliderRunnable);
             }
             Iterator it = BrightnessController.this.mChangeCallbacks.iterator();
@@ -230,7 +227,7 @@ public class BrightnessController implements ToggleSlider.Listener {
         this.mMinimumBacklightForVr = powerManager.getMinimumScreenBrightnessForVrSetting();
         this.mMaximumBacklightForVr = powerManager.getMaximumScreenBrightnessForVrSetting();
         this.mDefaultBacklightForVr = powerManager.getDefaultScreenBrightnessForVrSetting();
-        this.mAutomaticAvailable = context.getResources().getBoolean(17956895);
+        this.mAutomaticAvailable = context.getResources().getBoolean(R.^attr-private.borderRight);
         this.mDisplayManager = (DisplayManager) context.getSystemService(DisplayManager.class);
         this.mVrManager = IVrManager.Stub.asInterface(ServiceManager.getService("vrmanager"));
     }
@@ -299,16 +296,16 @@ public class BrightnessController implements ToggleSlider.Listener {
             i4 = this.mMaximumBacklight;
             str = "screen_brightness";
         }
-        final int convertGammaToLinear = BrightnessUtils.convertGammaToLinear(i, i3, i4);
+        final int iConvertGammaToLinear = BrightnessUtils.convertGammaToLinear(i, i3, i4);
         if (z3) {
-            MetricsLogger.action(this.mContext, i2, convertGammaToLinear);
+            MetricsLogger.action(this.mContext, i2, iConvertGammaToLinear);
         }
-        setBrightness(convertGammaToLinear);
+        setBrightness(iConvertGammaToLinear);
         if (!z) {
             AsyncTask.execute(new Runnable() { // from class: com.android.systemui.settings.BrightnessController.8
                 @Override // java.lang.Runnable
                 public void run() {
-                    Settings.System.putIntForUser(BrightnessController.this.mContext.getContentResolver(), str, convertGammaToLinear, -2);
+                    Settings.System.putIntForUser(BrightnessController.this.mContext.getContentResolver(), str, iConvertGammaToLinear, -2);
                 }
             });
         }
@@ -331,23 +328,20 @@ public class BrightnessController implements ToggleSlider.Listener {
         this.mDisplayManager.setTemporaryBrightness(i);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateIcon(boolean z) {
+    private void updateIcon(boolean z) {
         if (this.mIcon != null) {
-            this.mIcon.setImageResource(R.drawable.ic_qs_brightness_auto_off);
+            this.mIcon.setImageResource(com.android.systemui.R.drawable.ic_qs_brightness_auto_off);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateVrMode(boolean z) {
+    private void updateVrMode(boolean z) {
         if (this.mIsVrModeEnabled != z) {
             this.mIsVrModeEnabled = z;
             this.mBackgroundHandler.post(this.mUpdateSliderRunnable);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateSlider(int i, boolean z) {
+    private void updateSlider(int i, boolean z) {
         int i2;
         int i3;
         if (z) {
@@ -375,7 +369,7 @@ public class BrightnessController implements ToggleSlider.Listener {
         this.mSliderAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() { // from class: com.android.systemui.settings.-$$Lambda$BrightnessController$T5g_am3jK-it6CD1eLLpr05aFxc
             @Override // android.animation.ValueAnimator.AnimatorUpdateListener
             public final void onAnimationUpdate(ValueAnimator valueAnimator) {
-                BrightnessController.lambda$animateSliderTo$0(BrightnessController.this, valueAnimator);
+                BrightnessController.lambda$animateSliderTo$0(this.f$0, valueAnimator);
             }
         });
         this.mSliderAnimator.setDuration(3000L);

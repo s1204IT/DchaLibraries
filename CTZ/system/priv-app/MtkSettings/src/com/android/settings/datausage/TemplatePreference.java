@@ -8,10 +8,10 @@ import android.os.UserManager;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import com.android.settingslib.NetworkPolicyEditor;
+
 /* loaded from: classes.dex */
 public interface TemplatePreference {
 
-    /* loaded from: classes.dex */
     public static class NetworkServices {
         INetworkManagementService mNetworkService;
         NetworkPolicyEditor mPolicyEditor;

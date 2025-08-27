@@ -25,6 +25,7 @@ import com.android.internal.widget.LockPatternUtils;
 import com.mediatek.keyguard.AntiTheft.AntiTheftManager;
 import com.mediatek.keyguard.ext.IEmergencyButtonExt;
 import com.mediatek.keyguard.ext.OpKeyguardCustomizationFactoryBase;
+
 /* loaded from: classes.dex */
 public class EmergencyButton extends Button {
     private static final boolean DEBUG = KeyguardConstants.DEBUG;
@@ -45,9 +46,32 @@ public class EmergencyButton extends Button {
     private PowerManager mPowerManager;
     private TelephonyManager mTelephonyManager;
 
-    /* loaded from: classes.dex */
     public interface EmergencyButtonCallback {
         void onEmergencyButtonClickedWhenInCall();
+    }
+
+    /* renamed from: com.android.keyguard.EmergencyButton$1 */
+    class AnonymousClass1 extends KeyguardUpdateMonitorCallback {
+        AnonymousClass1() {
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onPhoneStateChanged(int i) {
+            EmergencyButton.this.updateEmergencyCallButton();
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onSimStateChangedUsingPhoneId(int i, IccCardConstants.State state) {
+            if (EmergencyButton.DEBUG) {
+                Slog.d("EmergencyButton", "onSimStateChangedUsingSubId: " + state + ", phoneId=" + i);
+            }
+            EmergencyButton.this.updateEmergencyCallButton();
+        }
+
+        @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
+        public void onRefreshCarrierInfo() {
+            EmergencyButton.this.updateEmergencyCallButton();
+        }
     }
 
     public EmergencyButton(Context context) {
@@ -57,6 +81,9 @@ public class EmergencyButton extends Button {
     public EmergencyButton(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mInfoCallback = new KeyguardUpdateMonitorCallback() { // from class: com.android.keyguard.EmergencyButton.1
+            AnonymousClass1() {
+            }
+
             @Override // com.android.keyguard.KeyguardUpdateMonitorCallback
             public void onPhoneStateChanged(int i) {
                 EmergencyButton.this.updateEmergencyCallButton();
@@ -77,8 +104,8 @@ public class EmergencyButton extends Button {
         };
         this.mEccPhoneIdForNoneSecurityMode = -1;
         this.mLocateAtNonSecureView = false;
-        this.mIsVoiceCapable = context.getResources().getBoolean(17957067);
-        this.mEnableEmergencyCallWhileSimLocked = this.mContext.getResources().getBoolean(17956970);
+        this.mIsVoiceCapable = context.getResources().getBoolean(android.R.^attr-private.materialColorSurfaceContainerLowest);
+        this.mEnableEmergencyCallWhileSimLocked = this.mContext.getResources().getBoolean(android.R.^attr-private.floatingToolbarItemBackgroundDrawable);
         this.mEmergencyAffordanceManager = new EmergencyAffordanceManager(context);
         try {
             this.mEmergencyButtonExt = OpKeyguardCustomizationFactoryBase.getOpFactory(this.mContext).makeEmergencyButton();
@@ -108,6 +135,9 @@ public class EmergencyButton extends Button {
         this.mLockPatternUtils = new LockPatternUtils(this.mContext);
         this.mPowerManager = (PowerManager) this.mContext.getSystemService("power");
         setOnClickListener(new View.OnClickListener() { // from class: com.android.keyguard.EmergencyButton.2
+            AnonymousClass2() {
+            }
+
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 EmergencyButton.this.takeEmergencyCallAction();
@@ -115,6 +145,9 @@ public class EmergencyButton extends Button {
         });
         this.mIsSecure = this.mLockPatternUtils.isSecure(KeyguardUpdateMonitor.getCurrentUser());
         setOnLongClickListener(new View.OnLongClickListener() { // from class: com.android.keyguard.EmergencyButton.3
+            AnonymousClass3() {
+            }
+
             @Override // android.view.View.OnLongClickListener
             public boolean onLongClick(View view) {
                 if (!EmergencyButton.this.mLongPressWasDragged && EmergencyButton.this.mEmergencyAffordanceManager.needsEmergencyAffordance()) {
@@ -127,6 +160,32 @@ public class EmergencyButton extends Button {
         updateEmergencyCallButton();
     }
 
+    /* renamed from: com.android.keyguard.EmergencyButton$2 */
+    class AnonymousClass2 implements View.OnClickListener {
+        AnonymousClass2() {
+        }
+
+        @Override // android.view.View.OnClickListener
+        public void onClick(View view) {
+            EmergencyButton.this.takeEmergencyCallAction();
+        }
+    }
+
+    /* renamed from: com.android.keyguard.EmergencyButton$3 */
+    class AnonymousClass3 implements View.OnLongClickListener {
+        AnonymousClass3() {
+        }
+
+        @Override // android.view.View.OnLongClickListener
+        public boolean onLongClick(View view) {
+            if (!EmergencyButton.this.mLongPressWasDragged && EmergencyButton.this.mEmergencyAffordanceManager.needsEmergencyAffordance()) {
+                EmergencyButton.this.mEmergencyAffordanceManager.performEmergencyCall();
+                return true;
+            }
+            return false;
+        }
+    }
+
     @Override // android.widget.TextView, android.view.View
     public boolean onTouchEvent(MotionEvent motionEvent) {
         int x = (int) motionEvent.getX();
@@ -136,10 +195,10 @@ public class EmergencyButton extends Button {
             this.mDownY = y;
             this.mLongPressWasDragged = false;
         } else {
-            int abs = Math.abs(x - this.mDownX);
-            int abs2 = Math.abs(y - this.mDownY);
+            int iAbs = Math.abs(x - this.mDownX);
+            int iAbs2 = Math.abs(y - this.mDownY);
             int scaledTouchSlop = ViewConfiguration.get(this.mContext).getScaledTouchSlop();
-            if (Math.abs(abs2) > scaledTouchSlop || Math.abs(abs) > scaledTouchSlop) {
+            if (Math.abs(iAbs2) > scaledTouchSlop || Math.abs(iAbs) > scaledTouchSlop) {
                 this.mLongPressWasDragged = true;
             }
         }
@@ -183,12 +242,11 @@ public class EmergencyButton extends Button {
         getContext().startActivityAsUser(INTENT_EMERGENCY_DIAL, ActivityOptions.makeCustomAnimation(getContext(), 0, 0).toBundle(), new UserHandle(KeyguardUpdateMonitor.getCurrentUser()));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateEmergencyCallButton() {
+    private void updateEmergencyCallButton() {
         boolean z;
-        boolean isSecure = isInCall() ? true : this.mIsVoiceCapable ? KeyguardUpdateMonitor.getInstance(this.mContext).isSimPinVoiceSecure() ? this.mEnableEmergencyCallWhileSimLocked : this.mLockPatternUtils.isSecure(KeyguardUpdateMonitor.getCurrentUser()) : false;
-        boolean isAntiTheftLocked = AntiTheftManager.isAntiTheftLocked();
-        boolean eccButtonShouldShow = eccButtonShouldShow();
+        boolean zIsSecure = isInCall() ? true : this.mIsVoiceCapable ? KeyguardUpdateMonitor.getInstance(this.mContext).isSimPinVoiceSecure() ? this.mEnableEmergencyCallWhileSimLocked : this.mLockPatternUtils.isSecure(KeyguardUpdateMonitor.getCurrentUser()) : false;
+        boolean zIsAntiTheftLocked = AntiTheftManager.isAntiTheftLocked();
+        boolean zEccButtonShouldShow = eccButtonShouldShow();
         if (DEBUG) {
             Slog.i("EmergencyButton", "mLocateAtNonSecureView = " + this.mLocateAtNonSecureView);
         }
@@ -198,10 +256,10 @@ public class EmergencyButton extends Button {
             }
             z = false;
         } else {
-            z = (isSecure || isAntiTheftLocked || this.mEmergencyButtonExt.showEccInNonSecureUnlock()) && eccButtonShouldShow;
+            z = (zIsSecure || zIsAntiTheftLocked || this.mEmergencyButtonExt.showEccInNonSecureUnlock()) && zEccButtonShouldShow;
             Slog.i("EmergencyButton", "show = " + z);
             if (DEBUG) {
-                Slog.i("EmergencyButton", "visible= " + isSecure + ", antiTheftLocked=" + isAntiTheftLocked + ", mEmergencyButtonExt.showEccInNonSecureUnlock() =" + this.mEmergencyButtonExt.showEccInNonSecureUnlock() + ", eccShouldShow=" + eccButtonShouldShow);
+                Slog.i("EmergencyButton", "visible= " + zIsSecure + ", antiTheftLocked=" + zIsAntiTheftLocked + ", mEmergencyButtonExt.showEccInNonSecureUnlock() =" + this.mEmergencyButtonExt.showEccInNonSecureUnlock() + ", eccShouldShow=" + zEccButtonShouldShow);
             }
         }
         if (this.mLocateAtNonSecureView && !z) {
@@ -263,11 +321,11 @@ public class EmergencyButton extends Button {
         if (this.mIsVoiceCapable && z) {
             setVisibility(0);
             if (isInCall()) {
-                i = 17040168;
-                setCompoundDrawablesWithIntrinsicBounds(z2 ? 17301636 : 0, 0, 0, 0);
+                i = android.R.string.default_card_name;
+                setCompoundDrawablesWithIntrinsicBounds(z2 ? android.R.drawable.stat_sys_phone_call : 0, 0, 0, 0);
             } else {
-                i = 17040141;
-                setCompoundDrawablesWithIntrinsicBounds(z2 ? 17302366 : 0, 0, 0, 0);
+                i = android.R.string.date_picker_decrement_year_button;
+                setCompoundDrawablesWithIntrinsicBounds(z2 ? android.R.drawable.ic_ab_back_holo_light : 0, 0, 0, 0);
             }
             setText(i);
             return;

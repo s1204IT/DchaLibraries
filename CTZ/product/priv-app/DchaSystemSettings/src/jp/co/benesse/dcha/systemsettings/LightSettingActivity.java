@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class LightSettingActivity extends ParentSettingActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     private ImageView mBackBtn;
@@ -22,9 +23,8 @@ public class LightSettingActivity extends ParentSettingActivity implements View.
     private int mResumeBrightness = -1;
     private int mCurBrightness = -1;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d("LightSettingActivity", "onCreate 0001");
         super.onCreate(bundle);
         setContentView(R.layout.act_light);
@@ -71,9 +71,8 @@ public class LightSettingActivity extends ParentSettingActivity implements View.
         Logger.d("LightSettingActivity", "onPause 0003");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d("LightSettingActivity", "onDestroy 0001");
         super.onDestroy();
         this.mDoneBtn.setOnClickListener(null);

@@ -7,6 +7,7 @@ import com.android.systemui.plugins.annotations.Dependencies;
 import com.android.systemui.plugins.annotations.DependsOn;
 import com.android.systemui.plugins.annotations.ProvidesInterface;
 import com.android.systemui.plugins.qs.QSTile;
+
 @Dependencies({@DependsOn(target = QSIconView.class), @DependsOn(target = QSTile.class)})
 @ProvidesInterface(version = 2)
 /* loaded from: classes.dex */

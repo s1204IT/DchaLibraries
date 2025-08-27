@@ -3,11 +3,11 @@ package com.android.settings.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.Switch;
+
 /* loaded from: classes.dex */
 public class ToggleSwitch extends Switch {
     private OnBeforeCheckedChangeListener mOnBeforeListener;
 
-    /* loaded from: classes.dex */
     public interface OnBeforeCheckedChangeListener {
         boolean onBeforeCheckedChanged(ToggleSwitch toggleSwitch, boolean z);
     }

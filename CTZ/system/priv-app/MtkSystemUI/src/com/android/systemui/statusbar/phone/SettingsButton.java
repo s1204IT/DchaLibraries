@@ -1,15 +1,18 @@
 package com.android.systemui.statusbar.phone;
 
+import android.R;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Property;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
 import com.android.keyguard.AlphaOptimizedImageButton;
 import com.android.systemui.Interpolators;
+
 /* loaded from: classes.dex */
 public class SettingsButton extends AlphaOptimizedImageButton {
     private ObjectAnimator mAnimator;
@@ -58,8 +61,7 @@ public class SettingsButton extends AlphaOptimizedImageButton {
         return super.onTouchEvent(motionEvent);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void cancelLongClick() {
+    private void cancelLongClick() {
         cancelAnimation();
         this.mUpToSpeed = false;
         removeCallbacks(this.mLongPressCallback);
@@ -74,7 +76,7 @@ public class SettingsButton extends AlphaOptimizedImageButton {
     }
 
     private void startExitAnimation() {
-        animate().translationX(((View) getParent().getParent()).getWidth() - getX()).alpha(0.0f).setDuration(350L).setInterpolator(AnimationUtils.loadInterpolator(this.mContext, 17563650)).setListener(new Animator.AnimatorListener() { // from class: com.android.systemui.statusbar.phone.SettingsButton.1
+        animate().translationX(((View) getParent().getParent()).getWidth() - getX()).alpha(0.0f).setDuration(350L).setInterpolator(AnimationUtils.loadInterpolator(this.mContext, R.interpolator.accelerate_cubic)).setListener(new Animator.AnimatorListener() { // from class: com.android.systemui.statusbar.phone.SettingsButton.1
             @Override // android.animation.Animator.AnimatorListener
             public void onAnimationStart(Animator animator) {
             }
@@ -98,8 +100,8 @@ public class SettingsButton extends AlphaOptimizedImageButton {
 
     protected void startAccelSpin() {
         cancelAnimation();
-        this.mAnimator = ObjectAnimator.ofFloat(this, View.ROTATION, 0.0f, 360.0f);
-        this.mAnimator.setInterpolator(AnimationUtils.loadInterpolator(this.mContext, 17563648));
+        this.mAnimator = ObjectAnimator.ofFloat(this, (Property<SettingsButton, Float>) View.ROTATION, 0.0f, 360.0f);
+        this.mAnimator.setInterpolator(AnimationUtils.loadInterpolator(this.mContext, R.interpolator.accelerate_quad));
         this.mAnimator.setDuration(750L);
         this.mAnimator.addListener(new Animator.AnimatorListener() { // from class: com.android.systemui.statusbar.phone.SettingsButton.2
             @Override // android.animation.Animator.AnimatorListener
@@ -126,7 +128,7 @@ public class SettingsButton extends AlphaOptimizedImageButton {
         cancelAnimation();
         performHapticFeedback(0);
         this.mUpToSpeed = true;
-        this.mAnimator = ObjectAnimator.ofFloat(this, View.ROTATION, 0.0f, 360.0f);
+        this.mAnimator = ObjectAnimator.ofFloat(this, (Property<SettingsButton, Float>) View.ROTATION, 0.0f, 360.0f);
         this.mAnimator.setInterpolator(Interpolators.LINEAR);
         this.mAnimator.setDuration(375L);
         this.mAnimator.setRepeatCount(-1);

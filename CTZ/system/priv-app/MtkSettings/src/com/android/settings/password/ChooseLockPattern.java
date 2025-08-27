@@ -3,6 +3,7 @@ package com.android.settings.password;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.google.android.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ChooseLockPattern extends SettingsActivity {
     @Override // com.android.settings.SettingsActivity, android.app.Activity
@@ -43,12 +45,11 @@ public class ChooseLockPattern extends SettingsActivity {
         super.onApplyThemeResource(theme, SetupWizardUtils.getTheme(getIntent()), z);
     }
 
-    /* loaded from: classes.dex */
     public static class IntentBuilder {
         private final Intent mIntent;
 
         public IntentBuilder(Context context) {
-            this.mIntent = new Intent(context, ChooseLockPattern.class);
+            this.mIntent = new Intent(context, (Class<?>) ChooseLockPattern.class);
             this.mIntent.putExtra("extra_require_password", false);
             this.mIntent.putExtra("confirm_credentials", false);
             this.mIntent.putExtra("has_challenge", false);
@@ -80,9 +81,8 @@ public class ChooseLockPattern extends SettingsActivity {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity
-    public boolean isValidFragment(String str) {
+    protected boolean isValidFragment(String str) {
         return ChooseLockPatternFragment.class.getName().equals(str);
     }
 
@@ -90,9 +90,8 @@ public class ChooseLockPattern extends SettingsActivity {
         return ChooseLockPatternFragment.class;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.SettingsActivity, com.android.settingslib.drawer.SettingsDrawerActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) throws PackageManager.NameNotFoundException {
         super.onCreate(bundle);
         setTitle(getIntent().getBooleanExtra("for_fingerprint", false) ? R.string.lockpassword_choose_your_pattern_header_for_fingerprint : R.string.lockpassword_choose_your_screen_lock_header);
         ((LinearLayout) findViewById(R.id.content_parent)).setFitsSystemWindows(false);
@@ -103,7 +102,6 @@ public class ChooseLockPattern extends SettingsActivity {
         return super.onKeyDown(i, keyEvent);
     }
 
-    /* loaded from: classes.dex */
     public static class ChooseLockPatternFragment extends InstrumentedFragment implements View.OnClickListener, SaveChosenLockWorkerBase.Listener {
         private long mChallenge;
         private ChooseLockSettingsHelper mChooseLockSettingsHelper;
@@ -138,20 +136,22 @@ public class ChooseLockPattern extends SettingsActivity {
                 if (ChooseLockPatternFragment.this.mUiStage != Stage.NeedToConfirm && ChooseLockPatternFragment.this.mUiStage != Stage.ConfirmWrong) {
                     if (ChooseLockPatternFragment.this.mUiStage != Stage.Introduction && ChooseLockPatternFragment.this.mUiStage != Stage.ChoiceTooShort) {
                         throw new IllegalStateException("Unexpected stage " + ChooseLockPatternFragment.this.mUiStage + " when entering the pattern.");
-                    } else if (list.size() < 4) {
+                    }
+                    if (list.size() < 4) {
                         ChooseLockPatternFragment.this.updateStage(Stage.ChoiceTooShort);
-                    } else {
-                        ChooseLockPatternFragment.this.mChosenPattern = new ArrayList(list);
-                        ChooseLockPatternFragment.this.updateStage(Stage.FirstChoiceValid);
+                        return;
                     }
-                } else if (ChooseLockPatternFragment.this.mChosenPattern == null) {
+                    ChooseLockPatternFragment.this.mChosenPattern = new ArrayList(list);
+                    ChooseLockPatternFragment.this.updateStage(Stage.FirstChoiceValid);
+                    return;
+                }
+                if (ChooseLockPatternFragment.this.mChosenPattern == null) {
                     throw new IllegalStateException("null chosen pattern in stage 'need to confirm");
+                }
+                if (ChooseLockPatternFragment.this.mChosenPattern.equals(list)) {
+                    ChooseLockPatternFragment.this.updateStage(Stage.ChoiceConfirmed);
                 } else {
-                    if (ChooseLockPatternFragment.this.mChosenPattern.equals(list)) {
-                        ChooseLockPatternFragment.this.updateStage(Stage.ChoiceConfirmed);
-                    } else {
-                        ChooseLockPatternFragment.this.updateStage(Stage.ConfirmWrong);
-                    }
+                    ChooseLockPatternFragment.this.updateStage(Stage.ConfirmWrong);
                 }
             }
 
@@ -211,13 +211,11 @@ public class ChooseLockPattern extends SettingsActivity {
             return 29;
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        /* loaded from: classes.dex */
-        public enum LeftButtonMode {
+        enum LeftButtonMode {
             Retry(R.string.lockpattern_retry_button_text, true),
             RetryDisabled(R.string.lockpattern_retry_button_text, false),
             Gone(-1, false);
-            
+
             final boolean enabled;
             final int text;
 
@@ -227,15 +225,13 @@ public class ChooseLockPattern extends SettingsActivity {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: package-private */
-        /* loaded from: classes.dex */
-        public enum RightButtonMode {
+        enum RightButtonMode {
             Continue(R.string.next_label, true),
             ContinueDisabled(R.string.next_label, false),
             Confirm(R.string.lockpattern_confirm_button_text, true),
             ConfirmDisabled(R.string.lockpattern_confirm_button_text, false),
-            Ok(17039370, true);
-            
+            Ok(android.R.string.ok, true);
+
             final boolean enabled;
             final int text;
 
@@ -245,9 +241,7 @@ public class ChooseLockPattern extends SettingsActivity {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
-        /* loaded from: classes.dex */
-        public enum Stage {
+        protected enum Stage {
             Introduction(R.string.lock_settings_picker_fingerprint_added_security_message, R.string.lockpassword_choose_your_pattern_message, R.string.lockpattern_recording_intro_header, LeftButtonMode.Gone, RightButtonMode.ContinueDisabled, -1, true),
             HelpScreen(-1, -1, R.string.lockpattern_settings_help_how_to_record, LeftButtonMode.Gone, RightButtonMode.Ok, -1, false),
             ChoiceTooShort(R.string.lock_settings_picker_fingerprint_added_security_message, R.string.lockpassword_choose_your_pattern_message, R.string.lockpattern_recording_incorrect_too_short, LeftButtonMode.Retry, RightButtonMode.ContinueDisabled, -1, true),
@@ -255,7 +249,7 @@ public class ChooseLockPattern extends SettingsActivity {
             NeedToConfirm(-1, -1, R.string.lockpattern_need_to_confirm, LeftButtonMode.Gone, RightButtonMode.ConfirmDisabled, -1, true),
             ConfirmWrong(-1, -1, R.string.lockpattern_need_to_unlock_wrong, LeftButtonMode.Gone, RightButtonMode.ConfirmDisabled, -1, true),
             ChoiceConfirmed(-1, -1, R.string.lockpattern_pattern_confirmed_header, LeftButtonMode.Gone, RightButtonMode.Confirm, -1, false);
-            
+
             final int footerMessage;
             final int headerMessage;
             final LeftButtonMode leftMode;
@@ -301,9 +295,9 @@ public class ChooseLockPattern extends SettingsActivity {
             GlifLayout glifLayout = (GlifLayout) layoutInflater.inflate(R.layout.choose_lock_pattern, viewGroup, false);
             glifLayout.setHeaderText(getActivity().getTitle());
             if (getResources().getBoolean(R.bool.config_lock_pattern_minimal_ui)) {
-                View findViewById = glifLayout.findViewById(R.id.suw_layout_icon);
-                if (findViewById != null) {
-                    findViewById.setVisibility(8);
+                View viewFindViewById = glifLayout.findViewById(R.id.suw_layout_icon);
+                if (viewFindViewById != null) {
+                    viewFindViewById.setVisibility(8);
                 }
             } else if (this.mForFingerprint) {
                 glifLayout.setIcon(getActivity().getDrawable(R.drawable.ic_fingerprint_header));
@@ -384,9 +378,9 @@ public class ChooseLockPattern extends SettingsActivity {
                 this.mChosenPattern = null;
                 this.mLockPatternView.clearPattern();
                 updateStage(Stage.Introduction);
-                return;
+            } else {
+                throw new IllegalStateException("left footer button pressed, but stage of " + this.mUiStage + " doesn't make sense");
             }
-            throw new IllegalStateException("left footer button pressed, but stage of " + this.mUiStage + " doesn't make sense");
         }
 
         public void handleRightButton() {
@@ -395,12 +389,16 @@ public class ChooseLockPattern extends SettingsActivity {
                     throw new IllegalStateException("expected ui stage " + Stage.FirstChoiceValid + " when button is " + RightButtonMode.Continue);
                 }
                 updateStage(Stage.NeedToConfirm);
-            } else if (this.mUiStage.rightMode == RightButtonMode.Confirm) {
+                return;
+            }
+            if (this.mUiStage.rightMode == RightButtonMode.Confirm) {
                 if (this.mUiStage != Stage.ChoiceConfirmed) {
                     throw new IllegalStateException("expected ui stage " + Stage.ChoiceConfirmed + " when button is " + RightButtonMode.Confirm);
                 }
                 startSaveAndFinish();
-            } else if (this.mUiStage.rightMode == RightButtonMode.Ok) {
+                return;
+            }
+            if (this.mUiStage.rightMode == RightButtonMode.Ok) {
                 if (this.mUiStage != Stage.HelpScreen) {
                     throw new IllegalStateException("Help screen is only mode with ok button, but stage is " + this.mUiStage);
                 }
@@ -431,9 +429,8 @@ public class ChooseLockPattern extends SettingsActivity {
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
-        public void updateStage(Stage stage) {
+        protected void updateStage(Stage stage) {
             Stage stage2 = this.mUiStage;
             this.mUiStage = stage;
             boolean z = true;
@@ -546,7 +543,6 @@ public class ChooseLockPattern extends SettingsActivity {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class SaveAndFinishWorker extends SaveChosenLockWorkerBase {
         private List<LockPatternView.Cell> mChosenPattern;
         private String mCurrentPattern;
@@ -578,28 +574,27 @@ public class ChooseLockPattern extends SettingsActivity {
 
         @Override // com.android.settings.password.SaveChosenLockWorkerBase
         protected Intent saveAndVerifyInBackground() {
-            byte[] bArr;
+            byte[] bArrVerifyPattern;
             int i = this.mUserId;
             this.mUtils.saveLockPattern(this.mChosenPattern, this.mCurrentPattern, i);
-            if (this.mHasChallenge) {
-                try {
-                    bArr = this.mUtils.verifyPattern(this.mChosenPattern, this.mChallenge, i);
-                } catch (LockPatternUtils.RequestThrottledException e) {
-                    bArr = null;
-                }
-                if (bArr == null) {
-                    Log.e("ChooseLockPattern", "critical: no token returned for known good pattern");
-                }
-                Intent intent = new Intent();
-                intent.putExtra("hw_auth_token", bArr);
-                return intent;
+            if (!this.mHasChallenge) {
+                return null;
             }
-            return null;
+            try {
+                bArrVerifyPattern = this.mUtils.verifyPattern(this.mChosenPattern, this.mChallenge, i);
+            } catch (LockPatternUtils.RequestThrottledException e) {
+                bArrVerifyPattern = null;
+            }
+            if (bArrVerifyPattern == null) {
+                Log.e("ChooseLockPattern", "critical: no token returned for known good pattern");
+            }
+            Intent intent = new Intent();
+            intent.putExtra("hw_auth_token", bArrVerifyPattern);
+            return intent;
         }
 
-        /* JADX INFO: Access modifiers changed from: protected */
         @Override // com.android.settings.password.SaveChosenLockWorkerBase
-        public void finish(Intent intent) {
+        protected void finish(Intent intent) {
             if (this.mLockVirgin) {
                 this.mUtils.setVisiblePatternEnabled(true, this.mUserId);
             }

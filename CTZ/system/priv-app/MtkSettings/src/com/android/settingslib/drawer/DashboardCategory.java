@@ -7,7 +7,9 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DashboardCategory implements Parcelable {
     public String key;
@@ -16,12 +18,14 @@ public class DashboardCategory implements Parcelable {
     public CharSequence title;
     private static final boolean DEBUG = Log.isLoggable("DashboardCategory", 3);
     public static final Parcelable.Creator<DashboardCategory> CREATOR = new Parcelable.Creator<DashboardCategory>() { // from class: com.android.settingslib.drawer.DashboardCategory.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public DashboardCategory createFromParcel(Parcel parcel) {
             return new DashboardCategory(parcel);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public DashboardCategory[] newArray(int i) {
@@ -29,6 +33,7 @@ public class DashboardCategory implements Parcelable {
         }
     };
     public static final Comparator<Tile> TILE_COMPARATOR = new Comparator<Tile>() { // from class: com.android.settingslib.drawer.DashboardCategory.2
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(Tile tile, Tile tile2) {
             return tile2.priority - tile.priority;
@@ -41,8 +46,9 @@ public class DashboardCategory implements Parcelable {
     public synchronized List<Tile> getTiles() {
         ArrayList arrayList;
         arrayList = new ArrayList(this.mTiles.size());
-        for (Tile tile : this.mTiles) {
-            arrayList.add(tile);
+        Iterator<Tile> it = this.mTiles.iterator();
+        while (it.hasNext()) {
+            arrayList.add(it.next());
         }
         return arrayList;
     }
@@ -76,16 +82,15 @@ public class DashboardCategory implements Parcelable {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ int lambda$sortTiles$0(String str, Tile tile, Tile tile2) {
+    static /* synthetic */ int lambda$sortTiles$0(String str, Tile tile, Tile tile2) {
         String packageName = tile.intent.getComponent().getPackageName();
         String packageName2 = tile2.intent.getComponent().getPackageName();
-        int compare = String.CASE_INSENSITIVE_ORDER.compare(packageName, packageName2);
+        int iCompare = String.CASE_INSENSITIVE_ORDER.compare(packageName, packageName2);
         int i = tile2.priority - tile.priority;
         if (i != 0) {
             return i;
         }
-        if (compare != 0) {
+        if (iCompare != 0) {
             if (TextUtils.equals(packageName, str)) {
                 return -1;
             }
@@ -93,7 +98,7 @@ public class DashboardCategory implements Parcelable {
                 return 1;
             }
         }
-        return compare;
+        return iCompare;
     }
 
     @Override // android.os.Parcelable
@@ -117,8 +122,8 @@ public class DashboardCategory implements Parcelable {
         this.title = (CharSequence) TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(parcel);
         this.key = parcel.readString();
         this.priority = parcel.readInt();
-        int readInt = parcel.readInt();
-        for (int i = 0; i < readInt; i++) {
+        int i = parcel.readInt();
+        for (int i2 = 0; i2 < i; i2++) {
             this.mTiles.add(Tile.CREATOR.createFromParcel(parcel));
         }
     }

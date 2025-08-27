@@ -15,6 +15,7 @@ import android.util.Log;
 import android.util.LruCache;
 import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.system.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public abstract class IconLoader {
     protected final LruCache<ComponentName, ActivityInfo> mActivityInfoCache;
@@ -50,22 +51,22 @@ public abstract class IconLoader {
     public Drawable getIcon(Task task) {
         Drawable drawable = this.mIconCache.get(task.key);
         if (drawable == null) {
-            Drawable createNewIconForTask = createNewIconForTask(task.key, task.taskDescription, true);
-            this.mIconCache.put(task.key, createNewIconForTask);
-            return createNewIconForTask;
+            Drawable drawableCreateNewIconForTask = createNewIconForTask(task.key, task.taskDescription, true);
+            this.mIconCache.put(task.key, drawableCreateNewIconForTask);
+            return drawableCreateNewIconForTask;
         }
         return drawable;
     }
 
     public Drawable getAndInvalidateIfModified(Task.TaskKey taskKey, ActivityManager.TaskDescription taskDescription, boolean z) {
-        Drawable createNewIconForTask;
+        Drawable drawableCreateNewIconForTask;
         Drawable andInvalidateIfModified = this.mIconCache.getAndInvalidateIfModified(taskKey);
         if (andInvalidateIfModified != null) {
             return andInvalidateIfModified;
         }
-        if (z && (createNewIconForTask = createNewIconForTask(taskKey, taskDescription, false)) != null) {
-            this.mIconCache.put(taskKey, createNewIconForTask);
-            return createNewIconForTask;
+        if (z && (drawableCreateNewIconForTask = createNewIconForTask(taskKey, taskDescription, false)) != null) {
+            this.mIconCache.put(taskKey, drawableCreateNewIconForTask);
+            return drawableCreateNewIconForTask;
         }
         return null;
     }
@@ -85,9 +86,9 @@ public abstract class IconLoader {
                 Log.e("IconLoader", "Could not find icon drawable from resource", e);
             }
         }
-        Bitmap loadTaskDescriptionIcon = ActivityManager.TaskDescription.loadTaskDescriptionIcon(taskDescription.getIconFilename(), i);
-        if (loadTaskDescriptionIcon != null) {
-            return createDrawableFromBitmap(loadTaskDescriptionIcon, i, taskDescription);
+        Bitmap bitmapLoadTaskDescriptionIcon = ActivityManager.TaskDescription.loadTaskDescriptionIcon(taskDescription.getIconFilename(), i);
+        if (bitmapLoadTaskDescriptionIcon != null) {
+            return createDrawableFromBitmap(bitmapLoadTaskDescriptionIcon, i, taskDescription);
         }
         ActivityInfo andUpdateActivityInfo = getAndUpdateActivityInfo(taskKey);
         if (andUpdateActivityInfo != null && (badgedActivityIcon = getBadgedActivityIcon(andUpdateActivityInfo, i, taskDescription)) != null) {
@@ -103,16 +104,15 @@ public abstract class IconLoader {
         return createBadgedDrawable(new BitmapDrawable(this.mContext.getResources(), bitmap), i, taskDescription);
     }
 
-    /* loaded from: classes.dex */
     public static class DefaultIconLoader extends IconLoader {
         private final BitmapDrawable mDefaultIcon;
         private final IconDrawableFactory mDrawableFactory;
 
         public DefaultIconLoader(Context context, TaskKeyLruCache<Drawable> taskKeyLruCache, LruCache<ComponentName, ActivityInfo> lruCache) {
             super(context, taskKeyLruCache, lruCache);
-            Bitmap createBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
-            createBitmap.eraseColor(0);
-            this.mDefaultIcon = new BitmapDrawable(context.getResources(), createBitmap);
+            Bitmap bitmapCreateBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
+            bitmapCreateBitmap.eraseColor(0);
+            this.mDefaultIcon = new BitmapDrawable(context.getResources(), bitmapCreateBitmap);
             this.mDrawableFactory = IconDrawableFactory.newInstance(context);
         }
 

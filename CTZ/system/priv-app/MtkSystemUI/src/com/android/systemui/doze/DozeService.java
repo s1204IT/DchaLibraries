@@ -12,6 +12,7 @@ import com.android.systemui.plugins.PluginListener;
 import com.android.systemui.plugins.PluginManager;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class DozeService extends DreamService implements DozeMachine.Service, DozeServicePlugin.RequestDoze, PluginListener<DozeServicePlugin> {
     static final boolean DEBUG = Log.isLoggable("DozeService", 3);
@@ -28,10 +29,10 @@ public class DozeService extends DreamService implements DozeMachine.Service, Do
         setWindowless(true);
         if (DozeFactory.getHost(this) == null) {
             finish();
-            return;
+        } else {
+            ((PluginManager) Dependency.get(PluginManager.class)).addPluginListener((PluginListener) this, DozeServicePlugin.class, false);
+            this.mDozeMachine = new DozeFactory().assembleMachine(this);
         }
-        ((PluginManager) Dependency.get(PluginManager.class)).addPluginListener((PluginListener) this, DozeServicePlugin.class, false);
-        this.mDozeMachine = new DozeFactory().assembleMachine(this);
     }
 
     @Override // android.service.dreams.DreamService, android.app.Service
@@ -41,12 +42,14 @@ public class DozeService extends DreamService implements DozeMachine.Service, Do
         this.mDozeMachine = null;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginConnected(Lcom/android/systemui/plugins/Plugin;Landroid/content/Context;)V */
     @Override // com.android.systemui.plugins.PluginListener
     public void onPluginConnected(DozeServicePlugin dozeServicePlugin, Context context) {
         this.mDozePlugin = dozeServicePlugin;
         this.mDozePlugin.setDozeRequester(this);
     }
 
+    /* JADX DEBUG: Method merged with bridge method: onPluginDisconnected(Lcom/android/systemui/plugins/Plugin;)V */
     @Override // com.android.systemui.plugins.PluginListener
     public void onPluginDisconnected(DozeServicePlugin dozeServicePlugin) {
         if (this.mDozePlugin != null) {

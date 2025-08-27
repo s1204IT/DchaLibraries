@@ -5,6 +5,7 @@ import com.android.settings.applications.AppStateBaseBridge;
 import com.android.settingslib.applications.ApplicationsState;
 import com.android.settingslib.fuelgauge.PowerWhitelistBackend;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AppStatePowerBridge extends AppStateBaseBridge {
     public static final ApplicationsState.AppFilter FILTER_POWER_WHITELISTED = new ApplicationsState.CompoundFilter(ApplicationsState.FILTER_WITHOUT_DISABLED_UNTIL_USED, new ApplicationsState.AppFilter() { // from class: com.android.settings.applications.AppStatePowerBridge.1

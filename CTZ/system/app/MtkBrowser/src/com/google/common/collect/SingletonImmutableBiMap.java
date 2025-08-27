@@ -1,15 +1,14 @@
 package com.google.common.collect;
 
 import java.util.Map;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public final class SingletonImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
+final class SingletonImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     transient ImmutableBiMap<V, K> inverse;
     final transient K singleKey;
     final transient V singleValue;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public SingletonImmutableBiMap(K k, V v) {
+    SingletonImmutableBiMap(K k, V v) {
         CollectPreconditions.checkEntryNotNull(k, v);
         this.singleKey = k;
         this.singleValue = v;
@@ -44,9 +43,8 @@ public final class SingletonImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
         return this.singleValue.equals(obj);
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
     @Override // com.google.common.collect.ImmutableMap
-    public boolean isPartialView() {
+    boolean isPartialView() {
         return false;
     }
 

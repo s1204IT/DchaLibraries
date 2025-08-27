@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
 import android.support.v7.preference.Preference;
 import com.android.internal.net.VpnConfig;
+
 /* loaded from: classes.dex */
 public class AppPreference extends ManageablePreference {
     public static final int STATE_DISCONNECTED = STATE_NONE;
@@ -14,11 +15,11 @@ public class AppPreference extends ManageablePreference {
     private final String mPackageName;
 
     /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
-    public AppPreference(Context context, int i, String str) {
+    public AppPreference(Context context, int i, String str) throws PackageManager.NameNotFoundException {
+        Drawable defaultActivityIcon;
+        String string;
         super(context, null);
-        Drawable drawable;
-        String str2;
-        Drawable drawable2 = null;
+        Drawable drawable = null;
         super.setUserId(i);
         this.mPackageName = str;
         try {
@@ -27,30 +28,30 @@ public class AppPreference extends ManageablePreference {
             try {
                 PackageInfo packageInfo = packageManager.getPackageInfo(this.mPackageName, 0);
                 if (packageInfo != null) {
-                    Drawable loadIcon = packageInfo.applicationInfo.loadIcon(packageManager);
+                    Drawable drawableLoadIcon = packageInfo.applicationInfo.loadIcon(packageManager);
                     try {
-                        str2 = VpnConfig.getVpnLabel(userContext, this.mPackageName).toString();
-                        drawable2 = loadIcon;
+                        string = VpnConfig.getVpnLabel(userContext, this.mPackageName).toString();
+                        drawable = drawableLoadIcon;
                     } catch (PackageManager.NameNotFoundException e) {
-                        drawable2 = loadIcon;
+                        drawable = drawableLoadIcon;
                     }
                 } else {
-                    str2 = str;
+                    string = str;
                 }
-                str = str2;
+                str = string;
             } catch (PackageManager.NameNotFoundException e2) {
             }
-            if (drawable2 == null) {
-                drawable = packageManager.getDefaultActivityIcon();
+            if (drawable == null) {
+                defaultActivityIcon = packageManager.getDefaultActivityIcon();
             } else {
-                drawable = drawable2;
+                defaultActivityIcon = drawable;
             }
         } catch (PackageManager.NameNotFoundException e3) {
-            drawable = drawable2;
+            defaultActivityIcon = drawable;
         }
         this.mName = str;
         setTitle(this.mName);
-        setIcon(drawable);
+        setIcon(defaultActivityIcon);
     }
 
     public PackageInfo getPackageInfo() {
@@ -73,6 +74,7 @@ public class AppPreference extends ManageablePreference {
         return getContext().createPackageContextAsUser(getContext().getPackageName(), 0, UserHandle.of(this.mUserId));
     }
 
+    /* JADX DEBUG: Method merged with bridge method: compareTo(Ljava/lang/Object;)I */
     /* JADX WARN: Can't rename method to resolve collision */
     @Override // android.support.v7.preference.Preference, java.lang.Comparable
     public int compareTo(Preference preference) {
@@ -80,21 +82,21 @@ public class AppPreference extends ManageablePreference {
             AppPreference appPreference = (AppPreference) preference;
             int i = appPreference.mState - this.mState;
             if (i == 0) {
-                int compareToIgnoreCase = this.mName.compareToIgnoreCase(appPreference.mName);
-                if (compareToIgnoreCase == 0) {
-                    int compareTo = this.mPackageName.compareTo(appPreference.mPackageName);
-                    if (compareTo == 0) {
+                int iCompareToIgnoreCase = this.mName.compareToIgnoreCase(appPreference.mName);
+                if (iCompareToIgnoreCase == 0) {
+                    int iCompareTo = this.mPackageName.compareTo(appPreference.mPackageName);
+                    if (iCompareTo == 0) {
                         return this.mUserId - appPreference.mUserId;
                     }
-                    return compareTo;
+                    return iCompareTo;
                 }
-                return compareToIgnoreCase;
+                return iCompareToIgnoreCase;
             }
             return i;
-        } else if (preference instanceof LegacyVpnPreference) {
-            return -((LegacyVpnPreference) preference).compareTo((Preference) this);
-        } else {
-            return super.compareTo(preference);
         }
+        if (preference instanceof LegacyVpnPreference) {
+            return -((LegacyVpnPreference) preference).compareTo((Preference) this);
+        }
+        return super.compareTo(preference);
     }
 }

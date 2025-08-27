@@ -3,6 +3,7 @@ package com.android.systemui.statusbar.policy;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import com.android.internal.graphics.ColorUtils;
+
 /* loaded from: classes.dex */
 public class TintedKeyButtonDrawable extends KeyButtonDrawable {
     private final int mDarkColor;
@@ -29,12 +30,10 @@ public class TintedKeyButtonDrawable extends KeyButtonDrawable {
     }
 
     private int blendAlpha(int i, float f) {
-        if (f >= 0.0f) {
-            if (f > 1.0f) {
-                f = 1.0f;
-            }
-        } else {
+        if (f < 0.0f) {
             f = 0.0f;
+        } else if (f > 1.0f) {
+            f = 1.0f;
         }
         return ColorUtils.setAlphaComponent(i, (int) (255.0f * f * (Color.alpha(i) / 255.0f)));
     }

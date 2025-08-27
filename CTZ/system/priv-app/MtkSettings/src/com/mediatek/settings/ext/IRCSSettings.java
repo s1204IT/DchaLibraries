@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v7.preference.PreferenceScreen;
 import android.telephony.SubscriptionInfo;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public interface IRCSSettings {
     void addRCSPreference(Activity activity, PreferenceScreen preferenceScreen);

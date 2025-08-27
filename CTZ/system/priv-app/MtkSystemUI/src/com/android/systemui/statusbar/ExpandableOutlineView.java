@@ -17,6 +17,7 @@ import com.android.systemui.statusbar.notification.PropertyAnimator;
 import com.android.systemui.statusbar.stack.AnimationProperties;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+
 /* loaded from: classes.dex */
 public abstract class ExpandableOutlineView extends ExpandableView {
     private boolean mAlwaysRoundBothCorners;
@@ -63,62 +64,60 @@ public abstract class ExpandableOutlineView extends ExpandableView {
     private static final AnimationProperties ROUNDNESS_PROPERTIES = new AnimationProperties().setDuration(360);
     private static final Path EMPTY_PATH = new Path();
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public Path getClipPath() {
+    private Path getClipPath() {
         return getClipPath(false, false);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public Path getClipPath(boolean z, boolean z2) {
+    protected Path getClipPath(boolean z, boolean z2) {
+        int iMax;
         int i;
-        int i2;
-        int i3;
-        int i4;
-        int i5;
+        int iMin;
+        int iMax2;
+        int translation;
         Path path = null;
         if (!this.mCustomOutline) {
             if (this.mShouldTranslateContents && !z) {
-                i5 = (int) getTranslation();
+                translation = (int) getTranslation();
             } else {
-                i5 = 0;
+                translation = 0;
             }
-            i = Math.max(i5, 0);
-            i2 = this.mClipTopAmount + this.mBackgroundTop;
-            i3 = Math.min(i5, 0) + getWidth();
-            i4 = Math.max(getActualHeight(), i2);
-            int max = Math.max(getActualHeight() - this.mClipBottomAmount, i2);
-            if (i4 != max) {
+            iMax = Math.max(translation, 0);
+            i = this.mClipTopAmount + this.mBackgroundTop;
+            iMin = Math.min(translation, 0) + getWidth();
+            iMax2 = Math.max(getActualHeight(), i);
+            int iMax3 = Math.max(getActualHeight() - this.mClipBottomAmount, i);
+            if (iMax2 != iMax3) {
                 if (!z2) {
-                    getRoundedRectPath(i, i2, i3, max, 0.0f, 0.0f, this.mTmpPath2);
+                    getRoundedRectPath(iMax, i, iMin, iMax3, 0.0f, 0.0f, this.mTmpPath2);
                     path = this.mTmpPath2;
                 } else {
-                    i4 = max;
+                    iMax2 = iMax3;
                 }
             }
         } else {
-            i = this.mOutlineRect.left;
-            i2 = this.mOutlineRect.top;
-            i3 = this.mOutlineRect.right;
-            i4 = this.mOutlineRect.bottom;
+            iMax = this.mOutlineRect.left;
+            i = this.mOutlineRect.top;
+            iMin = this.mOutlineRect.right;
+            iMax2 = this.mOutlineRect.bottom;
         }
-        int i6 = i3;
-        int i7 = i;
-        int i8 = i4;
-        int i9 = i2;
-        int i10 = i8 - i9;
-        if (i10 == 0) {
+        int i2 = iMin;
+        int i3 = iMax;
+        int i4 = iMax2;
+        int i5 = i;
+        int i6 = i4 - i5;
+        if (i6 == 0) {
             return EMPTY_PATH;
         }
         float currentBackgroundRadiusTop = this.mAlwaysRoundBothCorners ? this.mOutlineRadius : getCurrentBackgroundRadiusTop();
         float currentBackgroundRadiusBottom = this.mAlwaysRoundBothCorners ? this.mOutlineRadius : getCurrentBackgroundRadiusBottom();
         float f = currentBackgroundRadiusTop + currentBackgroundRadiusBottom;
-        float f2 = i10;
+        float f2 = i6;
         if (f > f2) {
             float f3 = f - f2;
             currentBackgroundRadiusTop -= (this.mCurrentTopRoundness * f3) / (this.mCurrentTopRoundness + this.mCurrentBottomRoundness);
             currentBackgroundRadiusBottom -= (f3 * this.mCurrentBottomRoundness) / (this.mCurrentTopRoundness + this.mCurrentBottomRoundness);
         }
-        getRoundedRectPath(i7, i9, i6, i8, currentBackgroundRadiusTop, currentBackgroundRadiusBottom, this.mTmpPath);
+        getRoundedRectPath(i3, i5, i2, i4, currentBackgroundRadiusTop, currentBackgroundRadiusBottom, this.mTmpPath);
         Path path2 = this.mTmpPath;
         if (path != null) {
             path2.op(path, Path.Op.INTERSECT);
@@ -129,16 +128,16 @@ public abstract class ExpandableOutlineView extends ExpandableView {
     public static void getRoundedRectPath(int i, int i2, int i3, int i4, float f, float f2, Path path) {
         path.reset();
         float f3 = (i3 - i) / 2;
-        float min = Math.min(f3, f);
-        float min2 = Math.min(f3, f2);
+        float fMin = Math.min(f3, f);
+        float fMin2 = Math.min(f3, f2);
         if (f > 0.0f) {
             float f4 = i;
             float f5 = i2;
             float f6 = f + f5;
             path.moveTo(f4, f6);
-            path.quadTo(f4, f5, f4 + min, f5);
+            path.quadTo(f4, f5, f4 + fMin, f5);
             float f7 = i3;
-            path.lineTo(f7 - min, f5);
+            path.lineTo(f7 - fMin, f5);
             path.quadTo(f7, f5, f7, f6);
         } else {
             float f8 = i2;
@@ -150,9 +149,9 @@ public abstract class ExpandableOutlineView extends ExpandableView {
             float f10 = i4;
             float f11 = f10 - f2;
             path.lineTo(f9, f11);
-            path.quadTo(f9, f10, f9 - min2, f10);
+            path.quadTo(f9, f10, f9 - fMin2, f10);
             float f12 = i;
-            path.lineTo(min2 + f12, f10);
+            path.lineTo(fMin2 + f12, f10);
             path.quadTo(f12, f10, f12, f11);
         } else {
             float f13 = i3;
@@ -182,9 +181,9 @@ public abstract class ExpandableOutlineView extends ExpandableView {
                     }
                 } else {
                     int translation = ExpandableOutlineView.this.mShouldTranslateContents ? (int) ExpandableOutlineView.this.getTranslation() : 0;
-                    int max = Math.max(translation, 0);
+                    int iMax = Math.max(translation, 0);
                     int i = ExpandableOutlineView.this.mClipTopAmount + ExpandableOutlineView.this.mBackgroundTop;
-                    outline.setRect(max, i, ExpandableOutlineView.this.getWidth() + Math.min(translation, 0), Math.max(ExpandableOutlineView.this.getActualHeight() - ExpandableOutlineView.this.mClipBottomAmount, i));
+                    outline.setRect(iMax, i, ExpandableOutlineView.this.getWidth() + Math.min(translation, 0), Math.max(ExpandableOutlineView.this.getActualHeight() - ExpandableOutlineView.this.mClipBottomAmount, i));
                 }
                 outline.setAlpha(ExpandableOutlineView.this.mOutlineAlpha);
             }
@@ -222,9 +221,9 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         if (!z && path != null) {
             canvas.clipPath(path);
         }
-        boolean drawChild = super.drawChild(canvas, view, j);
+        boolean zDrawChild = super.drawChild(canvas, view, j);
         canvas.restore();
-        return drawChild;
+        return zDrawChild;
     }
 
     public void setExtraWidthForClipping(float f) {
@@ -245,8 +244,7 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean childNeedsClipping(View view) {
+    protected boolean childNeedsClipping(View view) {
         return false;
     }
 
@@ -254,8 +252,7 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean isClippingNeeded() {
+    protected boolean isClippingNeeded() {
         return this.mAlwaysRoundBothCorners || this.mCustomOutline || getTranslation() != 0.0f;
     }
 
@@ -265,7 +262,7 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         this.mOutlineRadius = resources.getDimension(R.dimen.notification_shadow_radius);
         this.mAlwaysRoundBothCorners = resources.getBoolean(R.bool.config_clipNotificationsToOutline);
         if (!this.mAlwaysRoundBothCorners) {
-            this.mOutlineRadius = resources.getDimensionPixelSize(Utils.getThemeAttr(this.mContext, 16844145));
+            this.mOutlineRadius = resources.getDimensionPixelSize(Utils.getThemeAttr(this.mContext, android.R.attr.dialogCornerRadius));
         }
         setClipToOutline(this.mAlwaysRoundBothCorners);
     }
@@ -279,8 +276,7 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         return false;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void applyRoundness() {
+    protected void applyRoundness() {
         invalidateOutline();
         invalidate();
     }
@@ -300,8 +296,7 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         return this.mCurrentBottomRoundness;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public float getCurrentBackgroundRadiusBottom() {
+    protected float getCurrentBackgroundRadiusBottom() {
         return this.mCurrentBottomRoundness * this.mOutlineRadius;
     }
 
@@ -321,14 +316,12 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setTopRoundnessInternal(float f) {
+    private void setTopRoundnessInternal(float f) {
         this.mCurrentTopRoundness = f;
         applyRoundness();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setBottomRoundnessInternal(float f) {
+    private void setBottomRoundnessInternal(float f) {
         this.mCurrentBottomRoundness = f;
         applyRoundness();
     }
@@ -365,8 +358,7 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setOutlineAlpha(float f) {
+    protected void setOutlineAlpha(float f) {
         if (f != this.mOutlineAlpha) {
             this.mOutlineAlpha = f;
             applyRoundness();
@@ -378,14 +370,13 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         return this.mOutlineAlpha;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setOutlineRect(RectF rectF) {
+    protected void setOutlineRect(RectF rectF) {
         if (rectF != null) {
             setOutlineRect(rectF.left, rectF.top, rectF.right, rectF.bottom);
-            return;
+        } else {
+            this.mCustomOutline = false;
+            applyRoundness();
         }
-        this.mCustomOutline = false;
-        applyRoundness();
     }
 
     @Override // com.android.systemui.statusbar.ExpandableView
@@ -400,19 +391,17 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         setOutlineProvider(needsOutline() ? this.mProvider : null);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public boolean needsOutline() {
+    protected boolean needsOutline() {
         if (isChildInGroup()) {
             return isGroupExpanded() && !isGroupExpansionChanging();
-        } else if (isSummaryWithChildren()) {
-            return !isGroupExpanded() || isGroupExpansionChanging();
-        } else {
-            return true;
         }
+        if (isSummaryWithChildren()) {
+            return !isGroupExpanded() || isGroupExpansionChanging();
+        }
+        return true;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void setOutlineRect(float f, float f2, float f3, float f4) {
+    protected void setOutlineRect(float f, float f2, float f3, float f4) {
         this.mCustomOutline = true;
         this.mOutlineRect.set((int) f, (int) f2, (int) f3, (int) f4);
         this.mOutlineRect.bottom = (int) Math.max(f2, this.mOutlineRect.bottom);

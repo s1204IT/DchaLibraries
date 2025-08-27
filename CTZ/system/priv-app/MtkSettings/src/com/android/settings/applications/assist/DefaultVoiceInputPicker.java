@@ -14,6 +14,7 @@ import com.android.settingslib.wrapper.PackageManagerWrapper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class DefaultVoiceInputPicker extends DefaultAppPickerFragment {
     private String mAssistRestrict;
@@ -26,7 +27,7 @@ public class DefaultVoiceInputPicker extends DefaultAppPickerFragment {
     }
 
     @Override // com.android.settings.applications.defaultapps.DefaultAppPickerFragment, com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onAttach(Context context) {
+    public void onAttach(Context context) throws Throwable {
         super.onAttach(context);
         this.mAssistUtils = new AssistUtils(context);
         this.mHelper = new VoiceInputHelper(context);
@@ -37,9 +38,8 @@ public class DefaultVoiceInputPicker extends DefaultAppPickerFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.widget.RadioButtonPickerFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.default_voice_settings;
     }
 
@@ -51,9 +51,9 @@ public class DefaultVoiceInputPicker extends DefaultAppPickerFragment {
         boolean z = true;
         while (it.hasNext()) {
             VoiceInputHelper.InteractionInfo next = it.next();
-            boolean equals = TextUtils.equals(next.key, this.mAssistRestrict);
-            arrayList.add(new VoiceInputDefaultAppInfo(context, this.mPm, this.mUserId, next, equals));
-            z |= equals;
+            boolean zEquals = TextUtils.equals(next.key, this.mAssistRestrict);
+            arrayList.add(new VoiceInputDefaultAppInfo(context, this.mPm, this.mUserId, next, zEquals));
+            z |= zEquals;
         }
         boolean z2 = !z;
         Iterator<VoiceInputHelper.RecognizerInfo> it2 = this.mHelper.mAvailableRecognizerInfos.iterator();
@@ -112,7 +112,6 @@ public class DefaultVoiceInputPicker extends DefaultAppPickerFragment {
         return (componentName == null && componentName2 == null) || (componentName != null && componentName.equals(componentName2));
     }
 
-    /* loaded from: classes.dex */
     public static class VoiceInputDefaultAppInfo extends DefaultAppInfo {
         public VoiceInputHelper.BaseInfo mInfo;
 

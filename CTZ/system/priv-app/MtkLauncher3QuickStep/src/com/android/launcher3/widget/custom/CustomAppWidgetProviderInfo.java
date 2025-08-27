@@ -7,15 +7,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import com.android.launcher3.LauncherAppWidgetProviderInfo;
 import com.android.launcher3.Utilities;
+
 /* loaded from: classes.dex */
 public class CustomAppWidgetProviderInfo extends LauncherAppWidgetProviderInfo implements Parcelable {
     public static final Parcelable.Creator<CustomAppWidgetProviderInfo> CREATOR = new Parcelable.Creator<CustomAppWidgetProviderInfo>() { // from class: com.android.launcher3.widget.custom.CustomAppWidgetProviderInfo.1
+        /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public CustomAppWidgetProviderInfo createFromParcel(Parcel parcel) {
             return new CustomAppWidgetProviderInfo(parcel, true, 0);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
         /* JADX WARN: Can't rename method to resolve collision */
         @Override // android.os.Parcelable.Creator
         public CustomAppWidgetProviderInfo[] newArray(int i) {
@@ -24,13 +27,11 @@ public class CustomAppWidgetProviderInfo extends LauncherAppWidgetProviderInfo i
     };
     public final int providerId;
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public CustomAppWidgetProviderInfo(Parcel parcel, boolean z, int i) {
+    protected CustomAppWidgetProviderInfo(Parcel parcel, boolean z, int i) {
         super(parcel);
         if (z) {
             this.providerId = parcel.readInt();
-            String readString = parcel.readString();
-            this.provider = new ComponentName(readString, LauncherAppWidgetProviderInfo.CLS_CUSTOM_WIDGET_PREFIX + i);
+            this.provider = new ComponentName(parcel.readString(), LauncherAppWidgetProviderInfo.CLS_CUSTOM_WIDGET_PREFIX + i);
             this.label = parcel.readString();
             this.initialLayout = parcel.readInt();
             this.icon = parcel.readInt();

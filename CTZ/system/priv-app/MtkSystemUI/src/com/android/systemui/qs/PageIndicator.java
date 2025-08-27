@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.android.systemui.R;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class PageIndicator extends ViewGroup {
     private boolean mAnimating;
@@ -47,9 +48,9 @@ public class PageIndicator extends ViewGroup {
         while (i < getChildCount()) {
             removeViewAt(getChildCount() - 1);
         }
-        TypedArray obtainStyledAttributes = getContext().obtainStyledAttributes(new int[]{16843818});
-        int color = obtainStyledAttributes.getColor(0, 0);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArrayObtainStyledAttributes = getContext().obtainStyledAttributes(new int[]{android.R.attr.colorControlActivated});
+        int color = typedArrayObtainStyledAttributes.getColor(0, 0);
+        typedArrayObtainStyledAttributes.recycle();
         while (i > getChildCount()) {
             ImageView imageView = new ImageView(this.mContext);
             imageView.setImageResource(R.drawable.minor_a_b);
@@ -63,11 +64,11 @@ public class PageIndicator extends ViewGroup {
         int i = (int) f;
         setContentDescription(getContext().getString(R.string.accessibility_quick_settings_page, Integer.valueOf(i + 1), Integer.valueOf(getChildCount())));
         int i2 = (i << 1) | (f != ((float) i) ? 1 : 0);
-        int i3 = this.mPosition;
+        int iIntValue = this.mPosition;
         if (this.mQueuedPositions.size() != 0) {
-            i3 = this.mQueuedPositions.get(this.mQueuedPositions.size() - 1).intValue();
+            iIntValue = this.mQueuedPositions.get(this.mQueuedPositions.size() - 1).intValue();
         }
-        if (i2 == i3) {
+        if (i2 == iIntValue) {
             return;
         }
         if (this.mAnimating) {
@@ -77,8 +78,7 @@ public class PageIndicator extends ViewGroup {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setPosition(int i) {
+    private void setPosition(int i) {
         if (isVisibleToUser() && Math.abs(this.mPosition - i) == 1) {
             animate(this.mPosition, i);
         } else {
@@ -99,19 +99,20 @@ public class PageIndicator extends ViewGroup {
         }
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [123=4] */
     private void animate(int i, int i2) {
         int i3 = i >> 1;
         int i4 = i2 >> 1;
         setIndex(i3);
         boolean z = (i & 1) != 0;
         boolean z2 = !z ? i >= i2 : i <= i2;
-        int min = Math.min(i3, i4);
-        int max = Math.max(i3, i4);
-        if (max == min) {
-            max++;
+        int iMin = Math.min(i3, i4);
+        int iMax = Math.max(i3, i4);
+        if (iMax == iMin) {
+            iMax++;
         }
-        ImageView imageView = (ImageView) getChildAt(min);
-        ImageView imageView2 = (ImageView) getChildAt(max);
+        ImageView imageView = (ImageView) getChildAt(iMin);
+        ImageView imageView2 = (ImageView) getChildAt(iMax);
         if (imageView == null || imageView2 == null) {
             return;
         }
@@ -142,21 +143,22 @@ public class PageIndicator extends ViewGroup {
                     return R.drawable.major_b_a_animation;
                 }
                 return R.drawable.major_b_c_animation;
-            } else if (z2) {
-                return R.drawable.major_a_b_animation;
-            } else {
-                return R.drawable.major_c_b_animation;
             }
-        } else if (z) {
+            if (z2) {
+                return R.drawable.major_a_b_animation;
+            }
+            return R.drawable.major_c_b_animation;
+        }
+        if (z) {
             if (z2) {
                 return R.drawable.minor_b_c_animation;
             }
             return R.drawable.minor_b_a_animation;
-        } else if (z2) {
-            return R.drawable.minor_c_b_animation;
-        } else {
-            return R.drawable.minor_a_b_animation;
         }
+        if (z2) {
+            return R.drawable.minor_c_b_animation;
+        }
+        return R.drawable.minor_a_b_animation;
     }
 
     @Override // android.view.View
@@ -166,10 +168,10 @@ public class PageIndicator extends ViewGroup {
             super.onMeasure(i, i2);
             return;
         }
-        int makeMeasureSpec = View.MeasureSpec.makeMeasureSpec(this.mPageIndicatorWidth, 1073741824);
-        int makeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(this.mPageIndicatorHeight, 1073741824);
+        int iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(this.mPageIndicatorWidth, 1073741824);
+        int iMakeMeasureSpec2 = View.MeasureSpec.makeMeasureSpec(this.mPageIndicatorHeight, 1073741824);
         for (int i3 = 0; i3 < childCount; i3++) {
-            getChildAt(i3).measure(makeMeasureSpec, makeMeasureSpec2);
+            getChildAt(i3).measure(iMakeMeasureSpec, iMakeMeasureSpec2);
         }
         setMeasuredDimension(((this.mPageIndicatorWidth - this.mPageDotWidth) * (childCount - 1)) + this.mPageDotWidth, this.mPageIndicatorHeight);
     }

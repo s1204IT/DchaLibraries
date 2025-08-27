@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar.phone;
 
+import android.R;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.systemui.Dumpable;
-import com.android.systemui.R;
 import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.notification.VisualStabilityManager;
@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
+
 /* loaded from: classes.dex */
 public class HeadsUpManagerPhone extends HeadsUpManager implements ViewTreeObserver.OnComputeInternalInsetsListener, Dumpable, VisualStabilityManager.Callback, ConfigurationController.ConfigurationListener, OnHeadsUpChangedListener {
     private final StatusBar mBar;
@@ -52,14 +53,16 @@ public class HeadsUpManagerPhone extends HeadsUpManager implements ViewTreeObser
         this.mEntryPool = new Pools.Pool<HeadsUpEntryPhone>() { // from class: com.android.systemui.statusbar.phone.HeadsUpManagerPhone.1
             private Stack<HeadsUpEntryPhone> mPoolObjects = new Stack<>();
 
-            /* renamed from: acquire */
+            /* JADX DEBUG: Method merged with bridge method: acquire()Ljava/lang/Object; */
+            /* renamed from: acquire, reason: merged with bridge method [inline-methods] */
             public HeadsUpEntryPhone m16acquire() {
                 if (!this.mPoolObjects.isEmpty()) {
                     return this.mPoolObjects.pop();
                 }
-                return new HeadsUpEntryPhone();
+                return HeadsUpManagerPhone.this.new HeadsUpEntryPhone();
             }
 
+            /* JADX DEBUG: Method merged with bridge method: release(Ljava/lang/Object;)Z */
             public boolean release(HeadsUpEntryPhone headsUpEntryPhone) {
                 this.mPoolObjects.push(headsUpEntryPhone);
                 return true;
@@ -80,8 +83,8 @@ public class HeadsUpManagerPhone extends HeadsUpManager implements ViewTreeObser
 
     private void initResources() {
         Resources resources = this.mContext.getResources();
-        this.mStatusBarHeight = resources.getDimensionPixelSize(17105309);
-        this.mHeadsUpInset = this.mStatusBarHeight + resources.getDimensionPixelSize(R.dimen.heads_up_status_bar_padding);
+        this.mStatusBarHeight = resources.getDimensionPixelSize(R.dimen.indeterminate_progress_alpha_16);
+        this.mHeadsUpInset = this.mStatusBarHeight + resources.getDimensionPixelSize(com.android.systemui.R.dimen.heads_up_status_bar_padding);
     }
 
     @Override // com.android.systemui.statusbar.policy.HeadsUpManager, com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener
@@ -207,14 +210,16 @@ public class HeadsUpManagerPhone extends HeadsUpManager implements ViewTreeObser
             expandableNotificationRow = groupSummary;
         }
         expandableNotificationRow.getLocationOnScreen(this.mTmpTwoArray);
+        int i = this.mTmpTwoArray[0];
+        int width = this.mTmpTwoArray[0] + expandableNotificationRow.getWidth();
         int intrinsicHeight = expandableNotificationRow.getIntrinsicHeight();
         internalInsetsInfo.setTouchableInsets(3);
-        internalInsetsInfo.touchableRegion.set(this.mTmpTwoArray[0], 0, this.mTmpTwoArray[0] + expandableNotificationRow.getWidth(), this.mHeadsUpInset + intrinsicHeight);
+        internalInsetsInfo.touchableRegion.set(i, 0, width, this.mHeadsUpInset + intrinsicHeight);
     }
 
     @Override // com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener
     public void onConfigChanged(Configuration configuration) {
-        this.mStatusBarHeight = this.mContext.getResources().getDimensionPixelSize(17105309);
+        this.mStatusBarHeight = this.mContext.getResources().getDimensionPixelSize(R.dimen.indeterminate_progress_alpha_16);
     }
 
     @Override // com.android.systemui.statusbar.notification.VisualStabilityManager.Callback
@@ -242,15 +247,13 @@ public class HeadsUpManagerPhone extends HeadsUpManager implements ViewTreeObser
         this.mEntryPool.release((HeadsUpEntryPhone) headsUpEntry);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.policy.HeadsUpManager
-    public boolean shouldHeadsUpBecomePinned(NotificationData.Entry entry) {
+    protected boolean shouldHeadsUpBecomePinned(NotificationData.Entry entry) {
         return !(this.mStatusBarState == 1 || this.mIsExpanded) || super.shouldHeadsUpBecomePinned(entry);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.systemui.statusbar.policy.HeadsUpManager
-    public void dumpInternal(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
+    protected void dumpInternal(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
         super.dumpInternal(fileDescriptor, printWriter, strArr);
         printWriter.print("  mStatusBarState=");
         printWriter.println(this.mStatusBarState);
@@ -287,8 +290,7 @@ public class HeadsUpManagerPhone extends HeadsUpManager implements ViewTreeObser
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateTouchableRegionListener() {
+    private void updateTouchableRegionListener() {
         boolean z = hasPinnedHeadsUp() || this.mHeadsUpGoingAway || this.mWaitingOnCollapseWhenGoingAway;
         if (z == this.mIsObserving) {
             return;
@@ -302,9 +304,7 @@ public class HeadsUpManagerPhone extends HeadsUpManager implements ViewTreeObser
         this.mIsObserving = z;
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    /* loaded from: classes.dex */
-    public class HeadsUpEntryPhone extends HeadsUpManager.HeadsUpEntry {
+    protected class HeadsUpEntryPhone extends HeadsUpManager.HeadsUpEntry {
         protected HeadsUpEntryPhone() {
             super();
         }
@@ -314,7 +314,7 @@ public class HeadsUpManagerPhone extends HeadsUpManager implements ViewTreeObser
             super.setEntry(entry, new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$HeadsUpManagerPhone$HeadsUpEntryPhone$5mHSyZcdvhRZee7SQo_tx2_2-Bg
                 @Override // java.lang.Runnable
                 public final void run() {
-                    HeadsUpManagerPhone.HeadsUpEntryPhone.lambda$setEntry$0(HeadsUpManagerPhone.HeadsUpEntryPhone.this, entry);
+                    HeadsUpManagerPhone.HeadsUpEntryPhone.lambda$setEntry$0(this.f$0, entry);
                 }
             });
         }

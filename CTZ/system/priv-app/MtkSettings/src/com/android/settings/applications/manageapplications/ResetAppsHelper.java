@@ -18,6 +18,7 @@ import android.os.UserHandle;
 import android.webkit.IWebViewUpdateService;
 import com.android.settings.R;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ResetAppsHelper implements DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
     private final AppOpsManager mAom;
@@ -55,8 +56,7 @@ public class ResetAppsHelper implements DialogInterface.OnClickListener, DialogI
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public void buildResetDialog() {
+    void buildResetDialog() {
         if (this.mResetDialog == null) {
             this.mResetDialog = new AlertDialog.Builder(this.mContext).setTitle(R.string.reset_app_preferences_title).setMessage(R.string.reset_app_preferences_desc).setPositiveButton(R.string.reset_app_preferences_button, this).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).setOnDismissListener(this).show();
         }
@@ -104,8 +104,7 @@ public class ResetAppsHelper implements DialogInterface.OnClickListener, DialogI
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isNonEnableableFallback(String str) {
+    private boolean isNonEnableableFallback(String str) {
         try {
             return this.mWvus.isFallbackPackage(str);
         } catch (RemoteException e) {

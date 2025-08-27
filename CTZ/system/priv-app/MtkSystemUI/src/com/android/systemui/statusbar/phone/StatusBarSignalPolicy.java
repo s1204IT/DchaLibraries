@@ -1,5 +1,6 @@
 package com.android.systemui.statusbar.phone;
 
+import android.R;
 import android.content.Context;
 import android.os.Handler;
 import android.telephony.SubscriptionInfo;
@@ -7,7 +8,6 @@ import android.telephony.TelephonyManager;
 import android.util.ArraySet;
 import android.util.Log;
 import com.android.systemui.Dependency;
-import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.SecurityController;
 import com.android.systemui.tuner.TunerService;
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 public class StatusBarSignalPolicy implements NetworkController.SignalCallback, SecurityController.SecurityControllerCallback, TunerService.Tunable, ISystemUIStatusBarExt.StatusBarCallback {
     private static final boolean DEBUG;
@@ -50,12 +51,12 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
 
     public StatusBarSignalPolicy(Context context, StatusBarIconController statusBarIconController) {
         this.mContext = context;
-        this.mSlotAirplane = this.mContext.getString(17040908);
-        this.mSlotMobile = this.mContext.getString(17040923);
-        this.mSlotWifi = this.mContext.getString(17040936);
-        this.mSlotEthernet = this.mContext.getString(17040917);
-        this.mSlotVpn = this.mContext.getString(17040935);
-        this.mActivityEnabled = this.mContext.getResources().getBoolean(R.bool.config_showActivity);
+        this.mSlotAirplane = this.mContext.getString(R.string.mime_type_document_ext);
+        this.mSlotMobile = this.mContext.getString(R.string.miniresolver_open_in_personal);
+        this.mSlotWifi = this.mContext.getString(R.string.mismatchPin);
+        this.mSlotEthernet = this.mContext.getString(R.string.mime_type_spreadsheet_ext);
+        this.mSlotVpn = this.mContext.getString(R.string.minutes);
+        this.mActivityEnabled = this.mContext.getResources().getBoolean(com.android.systemui.R.bool.config_showActivity);
         this.mStatusBarExt = OpSystemUICustomizationFactoryBase.getOpFactory(context).makeSystemUIStatusBar(context);
         this.mStatusBarExt.addCallback(this);
         this.mIconController = statusBarIconController;
@@ -65,15 +66,14 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         this.mSecurityController.addCallback(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void updateVpn() {
-        boolean isVpnEnabled = this.mSecurityController.isVpnEnabled();
+    private void updateVpn() {
+        boolean zIsVpnEnabled = this.mSecurityController.isVpnEnabled();
         this.mIconController.setIcon(this.mSlotVpn, currentVpnIconId(this.mSecurityController.isVpnBranded()), null);
-        this.mIconController.setIconVisibility(this.mSlotVpn, isVpnEnabled);
+        this.mIconController.setIconVisibility(this.mSlotVpn, zIsVpnEnabled);
     }
 
     private int currentVpnIconId(boolean z) {
-        return z ? R.drawable.stat_sys_branded_vpn : R.drawable.stat_sys_vpn_ic;
+        return z ? com.android.systemui.R.drawable.stat_sys_branded_vpn : com.android.systemui.R.drawable.stat_sys_vpn_ic;
     }
 
     @Override // com.android.systemui.statusbar.policy.SecurityController.SecurityControllerCallback
@@ -81,7 +81,7 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         this.mHandler.post(new Runnable() { // from class: com.android.systemui.statusbar.phone.-$$Lambda$StatusBarSignalPolicy$UsBELiDs0GJjQ8hYeagcWJmxhFc
             @Override // java.lang.Runnable
             public final void run() {
-                StatusBarSignalPolicy.this.updateVpn();
+                this.f$0.updateVpn();
             }
         });
     }
@@ -92,15 +92,15 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
             return;
         }
         ArraySet<String> iconBlacklist = StatusBarIconController.getIconBlacklist(str2);
-        boolean contains = iconBlacklist.contains(this.mSlotAirplane);
-        boolean contains2 = iconBlacklist.contains(this.mSlotMobile);
-        boolean contains3 = iconBlacklist.contains(this.mSlotWifi);
-        boolean contains4 = iconBlacklist.contains(this.mSlotEthernet);
-        if (contains != this.mBlockAirplane || contains2 != this.mBlockMobile || contains4 != this.mBlockEthernet || contains3 != this.mBlockWifi) {
-            this.mBlockAirplane = contains;
-            this.mBlockMobile = contains2;
-            this.mBlockEthernet = contains4;
-            this.mBlockWifi = contains3 || this.mForceBlockWifi;
+        boolean zContains = iconBlacklist.contains(this.mSlotAirplane);
+        boolean zContains2 = iconBlacklist.contains(this.mSlotMobile);
+        boolean zContains3 = iconBlacklist.contains(this.mSlotWifi);
+        boolean zContains4 = iconBlacklist.contains(this.mSlotEthernet);
+        if (zContains != this.mBlockAirplane || zContains2 != this.mBlockMobile || zContains4 != this.mBlockEthernet || zContains3 != this.mBlockWifi) {
+            this.mBlockAirplane = zContains;
+            this.mBlockMobile = zContains2;
+            this.mBlockEthernet = zContains4;
+            this.mBlockWifi = zContains3 || this.mForceBlockWifi;
             this.mNetworkController.removeCallback((NetworkController.SignalCallback) this);
         }
     }
@@ -111,21 +111,21 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         boolean z6 = iconState.visible && !this.mBlockWifi;
         boolean z7 = z2 && this.mActivityEnabled && z6;
         boolean z8 = z3 && this.mActivityEnabled && z6;
-        WifiIconState copy = this.mWifiIconState.copy();
-        copy.visible = z6;
-        copy.resId = iconState.icon;
-        copy.activityIn = z7;
-        copy.activityOut = z8;
-        copy.slot = this.mSlotWifi;
-        copy.airplaneSpacerVisible = this.mIsAirplaneMode;
-        copy.contentDescription = iconState.contentDescription;
+        WifiIconState wifiIconStateCopy = this.mWifiIconState.copy();
+        wifiIconStateCopy.visible = z6;
+        wifiIconStateCopy.resId = iconState.icon;
+        wifiIconStateCopy.activityIn = z7;
+        wifiIconStateCopy.activityOut = z8;
+        wifiIconStateCopy.slot = this.mSlotWifi;
+        wifiIconStateCopy.airplaneSpacerVisible = this.mIsAirplaneMode;
+        wifiIconStateCopy.contentDescription = iconState.contentDescription;
         MobileIconState firstMobileState = getFirstMobileState();
         if (firstMobileState != null && firstMobileState.typeId != 0) {
             z5 = true;
         }
-        copy.signalSpacerVisible = z5;
-        updateWifiIconWithState(copy);
-        this.mWifiIconState = copy;
+        wifiIconStateCopy.signalSpacerVisible = z5;
+        updateWifiIconWithState(wifiIconStateCopy);
+        this.mWifiIconState = wifiIconStateCopy;
     }
 
     private void updateShowWifiSignalSpacer(WifiIconState wifiIconState) {
@@ -137,9 +137,9 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         if (wifiIconState.visible && wifiIconState.resId > 0) {
             this.mIconController.setSignalIcon(this.mSlotWifi, wifiIconState);
             this.mIconController.setIconVisibility(this.mSlotWifi, true);
-            return;
+        } else {
+            this.mIconController.setIconVisibility(this.mSlotWifi, false);
         }
-        this.mIconController.setIconVisibility(this.mSlotWifi, false);
     }
 
     @Override // com.android.systemui.statusbar.policy.NetworkController.SignalCallback
@@ -168,11 +168,11 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         state.mDefaultData = z5;
         this.mIconController.setMobileIcons(this.mSlotMobile, MobileIconState.copyStates(this.mMobileStates));
         if (z7) {
-            WifiIconState copy = this.mWifiIconState.copy();
-            updateShowWifiSignalSpacer(copy);
-            if (!Objects.equals(copy, this.mWifiIconState)) {
-                updateWifiIconWithState(copy);
-                this.mWifiIconState = copy;
+            WifiIconState wifiIconStateCopy = this.mWifiIconState.copy();
+            updateShowWifiSignalSpacer(wifiIconStateCopy);
+            if (!Objects.equals(wifiIconStateCopy, this.mWifiIconState)) {
+                updateWifiIconWithState(wifiIconStateCopy);
+                this.mWifiIconState = wifiIconStateCopy;
             }
         }
     }
@@ -245,9 +245,9 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         if (i > 0) {
             this.mIconController.setIcon(this.mSlotEthernet, i, str);
             this.mIconController.setIconVisibility(this.mSlotEthernet, true);
-            return;
+        } else {
+            this.mIconController.setIconVisibility(this.mSlotEthernet, false);
         }
-        this.mIconController.setIconVisibility(this.mSlotEthernet, false);
     }
 
     @Override // com.android.systemui.statusbar.policy.NetworkController.SignalCallback
@@ -258,18 +258,16 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         if (this.mIsAirplaneMode && i > 0) {
             this.mIconController.setIcon(this.mSlotAirplane, i, str);
             this.mIconController.setIconVisibility(this.mSlotAirplane, true);
-            return;
+        } else {
+            this.mIconController.setIconVisibility(this.mSlotAirplane, false);
         }
-        this.mIconController.setIconVisibility(this.mSlotAirplane, false);
     }
 
     @Override // com.android.systemui.statusbar.policy.NetworkController.SignalCallback
     public void setMobileDataEnabled(boolean z) {
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static abstract class SignalIconState {
+    private static abstract class SignalIconState {
         public boolean activityIn;
         public boolean activityOut;
         public String contentDescription;
@@ -300,7 +298,6 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         }
     }
 
-    /* loaded from: classes.dex */
     public static class WifiIconState extends SignalIconState {
         public boolean airplaneSpacerVisible;
         public int resId;
@@ -342,7 +339,6 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         }
     }
 
-    /* loaded from: classes.dex */
     public static class MobileIconState extends SignalIconState {
         public boolean mDataActivityIn;
         public boolean mDataActivityOut;
@@ -403,8 +399,7 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
             mobileIconState.phoneId = this.phoneId;
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        public static List<MobileIconState> copyStates(List<MobileIconState> list) {
+        private static List<MobileIconState> copyStates(List<MobileIconState> list) {
             ArrayList arrayList = new ArrayList();
             for (MobileIconState mobileIconState : list) {
                 MobileIconState mobileIconState2 = new MobileIconState(mobileIconState.subId);
@@ -422,13 +417,13 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
     @Override // com.mediatek.systemui.ext.ISystemUIStatusBarExt.StatusBarCallback
     public void setSystemIcon(String str, int i, CharSequence charSequence, boolean z) {
         if (str.equals("hdvoice")) {
-            i = R.drawable.stat_sys_hd_voice_call;
+            i = com.android.systemui.R.drawable.stat_sys_hd_voice_call;
         } else if (str.equals("nosim")) {
             int simCount = TelephonyManager.getDefault().getSimCount();
             if (simCount == 1) {
-                i = R.drawable.stat_sys_signal_null_one_sim;
+                i = com.android.systemui.R.drawable.stat_sys_signal_null_one_sim;
             } else if (simCount == 2) {
-                i = R.drawable.stat_sys_signal_null_two_sims;
+                i = com.android.systemui.R.drawable.stat_sys_signal_null_two_sims;
             }
         }
         if (DEBUG) {

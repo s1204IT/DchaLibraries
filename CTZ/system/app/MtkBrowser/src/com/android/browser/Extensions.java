@@ -11,6 +11,7 @@ import com.mediatek.browser.ext.IBrowserSiteNavigationExt;
 import com.mediatek.browser.ext.IBrowserUrlExt;
 import com.mediatek.browser.ext.INetworkStateHandlerExt;
 import com.mediatek.browser.ext.OpBrowserCustomizationFactoryBase;
+
 /* loaded from: classes.dex */
 public class Extensions {
     private static volatile IBrowserBookmarkExt sBookmarkPlugin = null;
@@ -125,8 +126,7 @@ public class Extensions {
         return sNetworkPlugin;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void resetPlugins() {
+    static void resetPlugins() {
         synchronized (Extensions.class) {
             sBookmarkPlugin = null;
             sDownloadPlugin = null;

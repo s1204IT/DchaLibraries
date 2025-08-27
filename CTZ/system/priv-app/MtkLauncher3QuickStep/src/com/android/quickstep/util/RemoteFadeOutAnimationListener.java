@@ -3,6 +3,7 @@ package com.android.quickstep.util;
 import android.animation.ValueAnimator;
 import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
 import com.android.systemui.shared.system.TransactionCompat;
+
 /* loaded from: classes.dex */
 public class RemoteFadeOutAnimationListener implements ValueAnimator.AnimatorUpdateListener {
     private boolean mFirstFrame = true;

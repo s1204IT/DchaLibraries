@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.UserManager;
 import com.android.settings.SettingsPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class DrawOverlayDetailPreferenceController extends AppInfoPreferenceControllerBase {
     public DrawOverlayDetailPreferenceController(Context context, String str) {

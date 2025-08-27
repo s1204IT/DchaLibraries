@@ -12,6 +12,7 @@ import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.doze.AlwaysOnDisplayPolicy;
 import com.android.systemui.tuner.TunerService;
+
 /* loaded from: classes.dex */
 public class DozeParameters implements TunerService.Tunable {
     public static final boolean FORCE_NO_BLANKING = SystemProperties.getBoolean("debug.force_no_blanking", false);
@@ -50,7 +51,7 @@ public class DozeParameters implements TunerService.Tunable {
     }
 
     public float getScreenBrightnessDoze() {
-        return this.mContext.getResources().getInteger(17694856) / 255.0f;
+        return this.mContext.getResources().getInteger(android.R.integer.config_dynamicPowerSavingsDefaultDisableThreshold) / 255.0f;
     }
 
     public int getPulseVisibleDuration() {
@@ -85,7 +86,7 @@ public class DozeParameters implements TunerService.Tunable {
     }
 
     public boolean getDisplayNeedsBlanking() {
-        return !FORCE_NO_BLANKING && this.mContext.getResources().getBoolean(17956932);
+        return !FORCE_NO_BLANKING && this.mContext.getResources().getBoolean(android.R.^attr-private.customColorShadeDisabled);
     }
 
     public boolean shouldControlScreenOff() {
@@ -145,15 +146,13 @@ public class DozeParameters implements TunerService.Tunable {
         return this.mAlwaysOnPolicy;
     }
 
-    /* loaded from: classes.dex */
     public static class IntInOutMatcher {
         private final boolean mDefaultIsIn;
         private final SparseBooleanArray mIsIn;
         final String mSpec;
 
-        public IntInOutMatcher(String str) {
-            String[] split;
-            String substring;
+        public IntInOutMatcher(String str) throws NumberFormatException {
+            String strSubstring;
             if (TextUtils.isEmpty(str)) {
                 throw new IllegalArgumentException("Spec must not be empty");
             }
@@ -167,14 +166,14 @@ public class DozeParameters implements TunerService.Tunable {
                 }
                 boolean z3 = str2.charAt(0) != '!';
                 if (!z3) {
-                    substring = str2.substring(1);
+                    strSubstring = str2.substring(1);
                 } else {
-                    substring = str2;
+                    strSubstring = str2;
                 }
                 if (str2.length() == 0) {
                     throw new IllegalArgumentException("Illegal spec, must not have zero-length items: `" + str + "`");
                 }
-                if ("*".equals(substring)) {
+                if ("*".equals(strSubstring)) {
                     if (!z) {
                         z2 = z3;
                         z = true;
@@ -182,11 +181,11 @@ public class DozeParameters implements TunerService.Tunable {
                         throw new IllegalArgumentException("Illegal spec, `*` must not appear multiple times in `" + str + "`");
                     }
                 } else {
-                    int parseInt = Integer.parseInt(substring);
-                    if (this.mIsIn.indexOfKey(parseInt) >= 0) {
-                        throw new IllegalArgumentException("Illegal spec, `" + parseInt + "` must not appear multiple times in `" + str + "`");
+                    int i = Integer.parseInt(strSubstring);
+                    if (this.mIsIn.indexOfKey(i) >= 0) {
+                        throw new IllegalArgumentException("Illegal spec, `" + i + "` must not appear multiple times in `" + str + "`");
                     }
-                    this.mIsIn.put(parseInt, z3);
+                    this.mIsIn.put(i, z3);
                 }
             }
             if (!z) {

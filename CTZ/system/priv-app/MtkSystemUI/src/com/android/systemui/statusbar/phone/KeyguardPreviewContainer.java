@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
+
 /* loaded from: classes.dex */
 public class KeyguardPreviewContainer extends FrameLayout {
     private Drawable mBlackBarDrawable;

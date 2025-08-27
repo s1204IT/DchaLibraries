@@ -2,6 +2,7 @@ package com.android.browser;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.android.browser.view.PieMenu;
 import com.android.browser.view.PieStackView;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PieControl implements View.OnClickListener, PieMenu.PieController {
     protected Activity mActivity;
@@ -56,8 +58,7 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
         this.mUi.stopEditingUrl();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void attachToContainer(FrameLayout frameLayout) {
+    protected void attachToContainer(FrameLayout frameLayout) {
         if (this.mPie == null) {
             this.mPie = new PieMenu(this.mActivity);
             this.mPie.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
@@ -67,13 +68,11 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
         frameLayout.addView(this.mPie);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void removeFromContainer(FrameLayout frameLayout) {
+    protected void removeFromContainer(FrameLayout frameLayout) {
         frameLayout.removeView(this.mPie);
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void forceToTop(FrameLayout frameLayout) {
+    protected void forceToTop(FrameLayout frameLayout) {
         if (this.mPie.getParent() != null) {
             frameLayout.removeView(this.mPie);
             frameLayout.addView(this.mPie);
@@ -117,7 +116,7 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
         this.mNewTab = makeItem(R.drawable.ic_new_window_holo_dark, 1);
         this.mIncognito = makeItem(R.drawable.ic_new_incognito_holo_dark, 1);
         this.mClose = makeItem(R.drawable.ic_close_window_holo_dark, 1);
-        this.mInfo = makeItem(17301569, 1);
+        this.mInfo = makeItem(android.R.drawable.ic_menu_info_details, 1);
         this.mFind = makeItem(R.drawable.ic_search_holo_dark, 1);
         this.mShare = makeItem(R.drawable.ic_share_holo_dark, 1);
         this.mShowTabs = new PieItem(makeTabsView(), 1);
@@ -171,7 +170,7 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
     }
 
     @Override // android.view.View.OnClickListener
-    public void onClick(View view) {
+    public void onClick(View view) throws Resources.NotFoundException {
         Tab currentTab = this.mUiController.getTabControl().getCurrentTab();
         if (currentTab == null) {
             return;
@@ -179,37 +178,64 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
         WebView webView = currentTab.getWebView();
         if (this.mBack.getView() == view) {
             currentTab.goBack();
-        } else if (this.mForward.getView() == view) {
+            return;
+        }
+        if (this.mForward.getView() == view) {
             currentTab.goForward();
-        } else if (this.mRefresh.getView() == view) {
+            return;
+        }
+        if (this.mRefresh.getView() == view) {
             if (currentTab.inPageLoad()) {
                 webView.stopLoading();
+                return;
             } else {
                 webView.reload();
+                return;
             }
-        } else if (this.mUrl.getView() == view) {
+        }
+        if (this.mUrl.getView() == view) {
             this.mUi.editUrl(false, true);
-        } else if (this.mBookmarks.getView() == view) {
+            return;
+        }
+        if (this.mBookmarks.getView() == view) {
             this.mUiController.bookmarksOrHistoryPicker(UI.ComboViews.Bookmarks);
-        } else if (this.mHistory.getView() == view) {
+            return;
+        }
+        if (this.mHistory.getView() == view) {
             this.mUiController.bookmarksOrHistoryPicker(UI.ComboViews.History);
-        } else if (this.mAddBookmark.getView() == view) {
+            return;
+        }
+        if (this.mAddBookmark.getView() == view) {
             this.mUiController.bookmarkCurrentPage();
-        } else if (this.mNewTab.getView() == view) {
+            return;
+        }
+        if (this.mNewTab.getView() == view) {
             this.mUiController.openTab("about:blank", false, true, false);
             this.mUi.editUrl(false, true);
-        } else if (this.mIncognito.getView() == view) {
+            return;
+        }
+        if (this.mIncognito.getView() == view) {
             this.mUiController.openIncognitoTab();
             this.mUi.editUrl(false, true);
-        } else if (this.mClose.getView() == view) {
+            return;
+        }
+        if (this.mClose.getView() == view) {
             this.mUiController.closeCurrentTab();
-        } else if (this.mOptions.getView() == view) {
+            return;
+        }
+        if (this.mOptions.getView() == view) {
             this.mUiController.openPreferences();
-        } else if (this.mShare.getView() == view) {
+            return;
+        }
+        if (this.mShare.getView() == view) {
             this.mUiController.shareCurrentPage();
-        } else if (this.mInfo.getView() == view) {
+            return;
+        }
+        if (this.mInfo.getView() == view) {
             this.mUiController.showPageInfo();
-        } else if (this.mFind.getView() == view) {
+            return;
+        }
+        if (this.mFind.getView() == view) {
             this.mUiController.findOnPage();
         } else if (this.mRDS.getView() == view) {
             this.mUiController.toggleUserAgent();
@@ -218,8 +244,7 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void buildTabs() {
+    private void buildTabs() {
         List<Tab> tabs = this.mUiController.getTabs();
         this.mUi.getActiveTab().capture();
         this.mTabAdapter.setTabs(tabs);
@@ -241,19 +266,17 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
     }
 
     protected View makeTabsView() {
-        View inflate = this.mActivity.getLayoutInflater().inflate(R.layout.qc_tabs_view, (ViewGroup) null);
-        this.mTabsCount = (TextView) inflate.findViewById(R.id.label);
+        View viewInflate = this.mActivity.getLayoutInflater().inflate(R.layout.qc_tabs_view, (ViewGroup) null);
+        this.mTabsCount = (TextView) viewInflate.findViewById(R.id.label);
         this.mTabsCount.setText("1");
-        ImageView imageView = (ImageView) inflate.findViewById(R.id.icon);
+        ImageView imageView = (ImageView) viewInflate.findViewById(R.id.icon);
         imageView.setImageResource(R.drawable.ic_windows_holo_dark);
         imageView.setScaleType(ImageView.ScaleType.CENTER);
-        inflate.setLayoutParams(new ViewGroup.LayoutParams(this.mItemSize, this.mItemSize));
-        return inflate;
+        viewInflate.setLayoutParams(new ViewGroup.LayoutParams(this.mItemSize, this.mItemSize));
+        return viewInflate;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class TabAdapter extends BaseAdapter implements PieStackView.OnCurrentListener {
+    static class TabAdapter extends BaseAdapter implements PieStackView.OnCurrentListener {
         LayoutInflater mInflater;
         UiController mUiController;
         private List<Tab> mTabs = new ArrayList();
@@ -274,6 +297,7 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
             return this.mTabs.size();
         }
 
+        /* JADX DEBUG: Method merged with bridge method: getItem(I)Ljava/lang/Object; */
         @Override // android.widget.Adapter
         public Tab getItem(int i) {
             return this.mTabs.get(i);
@@ -287,10 +311,10 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
         @Override // android.widget.Adapter
         public View getView(int i, View view, ViewGroup viewGroup) {
             final Tab tab = this.mTabs.get(i);
-            View inflate = this.mInflater.inflate(R.layout.qc_tab, (ViewGroup) null);
-            ImageView imageView = (ImageView) inflate.findViewById(R.id.thumb);
-            TextView textView = (TextView) inflate.findViewById(R.id.title1);
-            TextView textView2 = (TextView) inflate.findViewById(R.id.title2);
+            View viewInflate = this.mInflater.inflate(R.layout.qc_tab, (ViewGroup) null);
+            ImageView imageView = (ImageView) viewInflate.findViewById(R.id.thumb);
+            TextView textView = (TextView) viewInflate.findViewById(R.id.title1);
+            TextView textView2 = (TextView) viewInflate.findViewById(R.id.title2);
             Bitmap screenshot = tab.getScreenshot();
             if (screenshot != null) {
                 imageView.setImageBitmap(screenshot);
@@ -302,13 +326,13 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
                 textView2.setVisibility(8);
                 textView.setText(tab.getTitle());
             }
-            inflate.setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.PieControl.TabAdapter.1
+            viewInflate.setOnClickListener(new View.OnClickListener() { // from class: com.android.browser.PieControl.TabAdapter.1
                 @Override // android.view.View.OnClickListener
                 public void onClick(View view2) {
                     TabAdapter.this.mUiController.switchToTab(tab);
                 }
             });
-            return inflate;
+            return viewInflate;
         }
 
         @Override // com.android.browser.view.PieStackView.OnCurrentListener

@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class AppOpsState {
     final AppOpsManager mAppOps;
@@ -37,22 +38,25 @@ public class AppOpsState {
     public static final Comparator<AppOpEntry> RECENCY_COMPARATOR = new Comparator<AppOpEntry>() { // from class: com.android.settings.applications.appops.AppOpsState.1
         private final Collator sCollator = Collator.getInstance();
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(AppOpEntry appOpEntry, AppOpEntry appOpEntry2) {
             if (appOpEntry.getSwitchOrder() != appOpEntry2.getSwitchOrder()) {
                 return appOpEntry.getSwitchOrder() < appOpEntry2.getSwitchOrder() ? -1 : 1;
-            } else if (appOpEntry.isRunning() != appOpEntry2.isRunning()) {
-                return appOpEntry.isRunning() ? -1 : 1;
-            } else if (appOpEntry.getTime() != appOpEntry2.getTime()) {
-                return appOpEntry.getTime() > appOpEntry2.getTime() ? -1 : 1;
-            } else {
-                return this.sCollator.compare(appOpEntry.getAppEntry().getLabel(), appOpEntry2.getAppEntry().getLabel());
             }
+            if (appOpEntry.isRunning() != appOpEntry2.isRunning()) {
+                return appOpEntry.isRunning() ? -1 : 1;
+            }
+            if (appOpEntry.getTime() != appOpEntry2.getTime()) {
+                return appOpEntry.getTime() > appOpEntry2.getTime() ? -1 : 1;
+            }
+            return this.sCollator.compare(appOpEntry.getAppEntry().getLabel(), appOpEntry2.getAppEntry().getLabel());
         }
     };
     public static final Comparator<AppOpEntry> LABEL_COMPARATOR = new Comparator<AppOpEntry>() { // from class: com.android.settings.applications.appops.AppOpsState.2
         private final Collator sCollator = Collator.getInstance();
 
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(AppOpEntry appOpEntry, AppOpEntry appOpEntry2) {
             return this.sCollator.compare(appOpEntry.getAppEntry().getLabel(), appOpEntry2.getAppEntry().getLabel());
@@ -67,15 +71,16 @@ public class AppOpsState {
         this.mOpLabels = context.getResources().getTextArray(R.array.app_ops_labels);
     }
 
-    /* loaded from: classes.dex */
     public static class OpsTemplate implements Parcelable {
         public static final Parcelable.Creator<OpsTemplate> CREATOR = new Parcelable.Creator<OpsTemplate>() { // from class: com.android.settings.applications.appops.AppOpsState.OpsTemplate.1
+            /* JADX DEBUG: Method merged with bridge method: createFromParcel(Landroid/os/Parcel;)Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public OpsTemplate createFromParcel(Parcel parcel) {
                 return new OpsTemplate(parcel);
             }
 
+            /* JADX DEBUG: Method merged with bridge method: newArray(I)[Ljava/lang/Object; */
             /* JADX WARN: Can't rename method to resolve collision */
             @Override // android.os.Parcelable.Creator
             public OpsTemplate[] newArray(int i) {
@@ -107,7 +112,6 @@ public class AppOpsState {
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AppEntry {
         private final File mApkFile;
         private Drawable mIcon;
@@ -161,7 +165,7 @@ public class AppOpsState {
             } else {
                 return this.mIcon;
             }
-            return this.mState.mContext.getDrawable(17301651);
+            return this.mState.mContext.getDrawable(android.R.drawable.sym_def_app_icon);
         }
 
         public String toString() {
@@ -173,16 +177,15 @@ public class AppOpsState {
                 if (!this.mApkFile.exists()) {
                     this.mMounted = false;
                     this.mLabel = this.mInfo.packageName;
-                    return;
+                } else {
+                    this.mMounted = true;
+                    CharSequence charSequenceLoadLabel = this.mInfo.loadLabel(context.getPackageManager());
+                    this.mLabel = charSequenceLoadLabel != null ? charSequenceLoadLabel.toString() : this.mInfo.packageName;
                 }
-                this.mMounted = true;
-                CharSequence loadLabel = this.mInfo.loadLabel(context.getPackageManager());
-                this.mLabel = loadLabel != null ? loadLabel.toString() : this.mInfo.packageName;
             }
         }
     }
 
-    /* loaded from: classes.dex */
     public static class AppOpEntry {
         private final AppEntry mApp;
         private final AppOpsManager.PackageOps mPkgOps;
@@ -289,8 +292,8 @@ public class AppOpsState {
         return this.mAppOps;
     }
 
-    private AppEntry getAppEntry(Context context, HashMap<String, AppEntry> hashMap, String str, ApplicationInfo applicationInfo) {
-        AppEntry appEntry = hashMap.get(str);
+    private AppEntry getAppEntry(Context context, HashMap<String, AppEntry> map, String str, ApplicationInfo applicationInfo) throws PackageManager.NameNotFoundException {
+        AppEntry appEntry = map.get(str);
         if (appEntry == null) {
             if (applicationInfo == null) {
                 try {
@@ -302,81 +305,74 @@ public class AppOpsState {
             }
             AppEntry appEntry2 = new AppEntry(this, applicationInfo);
             appEntry2.loadLabel(context);
-            hashMap.put(str, appEntry2);
+            map.put(str, appEntry2);
             return appEntry2;
         }
         return appEntry;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [565=4, 623=4] */
     /* JADX WARN: Multi-variable type inference failed */
-    /* JADX WARN: Type inference failed for: r0v18 */
-    /* JADX WARN: Type inference failed for: r0v19, types: [java.util.List] */
-    public List<AppOpEntry> buildState(OpsTemplate opsTemplate, int i, String str, Comparator<AppOpEntry> comparator) {
-        List packagesForOps;
+    /* JADX WARN: Type inference failed for: r13v0, types: [java.util.ArrayList] */
+    /* JADX WARN: Type inference failed for: r14v0, types: [java.util.ArrayList] */
+    /* JADX WARN: Type inference failed for: r1v30, types: [java.util.List] */
+    /* JADX WARN: Type inference failed for: r3v10 */
+    /* JADX WARN: Type inference failed for: r3v11, types: [int] */
+    /* JADX WARN: Type inference failed for: r3v15 */
+    /* JADX WARN: Type inference failed for: r3v16 */
+    /* JADX WARN: Type inference failed for: r3v3 */
+    /* JADX WARN: Type inference failed for: r3v4, types: [int] */
+    public List<AppOpEntry> buildState(OpsTemplate opsTemplate, int i, String str, Comparator<AppOpEntry> comparator) throws PackageManager.NameNotFoundException {
         List<PackageInfo> packagesHoldingPermissions;
         int i2;
         int i3;
         AppEntry appEntry;
         PackageInfo packageInfo;
         int i4;
-        ArrayList arrayList;
-        ApplicationInfo applicationInfo;
-        int i5;
-        char c;
-        String opToPermission;
+        AppOpsManager.PackageOps packageOps;
+        AppOpsManager.PackageOps packageOps2;
+        String strOpToPermission;
         Context context = this.mContext;
-        HashMap<String, AppEntry> hashMap = new HashMap<>();
-        ArrayList arrayList2 = new ArrayList();
-        ArrayList arrayList3 = new ArrayList();
-        ArrayList arrayList4 = new ArrayList();
+        HashMap<String, AppEntry> map = new HashMap<>();
+        ArrayList arrayList = new ArrayList();
+        ?? arrayList2 = new ArrayList();
+        ?? arrayList3 = new ArrayList();
         int[] iArr = new int[78];
-        char c2 = 0;
-        for (int i6 = 0; i6 < opsTemplate.ops.length; i6++) {
-            if (opsTemplate.showPerms[i6] && (opToPermission = AppOpsManager.opToPermission(opsTemplate.ops[i6])) != null && !arrayList3.contains(opToPermission)) {
-                arrayList3.add(opToPermission);
-                arrayList4.add(Integer.valueOf(opsTemplate.ops[i6]));
-                iArr[opsTemplate.ops[i6]] = i6;
+        boolean z = false;
+        for (int i5 = 0; i5 < opsTemplate.ops.length; i5++) {
+            if (opsTemplate.showPerms[i5] && (strOpToPermission = AppOpsManager.opToPermission(opsTemplate.ops[i5])) != null && !arrayList2.contains(strOpToPermission)) {
+                arrayList2.add(strOpToPermission);
+                arrayList3.add(Integer.valueOf(opsTemplate.ops[i5]));
+                iArr[opsTemplate.ops[i5]] = i5;
             }
         }
-        if (str != null) {
-            packagesForOps = this.mAppOps.getOpsForPackage(i, str, opsTemplate.ops);
-        } else {
-            packagesForOps = this.mAppOps.getPackagesForOps(opsTemplate.ops);
-        }
-        ApplicationInfo applicationInfo2 = null;
-        if (packagesForOps != null) {
-            int i7 = 0;
-            while (i7 < packagesForOps.size()) {
-                AppOpsManager.PackageOps packageOps = (AppOpsManager.PackageOps) packagesForOps.get(i7);
-                AppEntry appEntry2 = getAppEntry(context, hashMap, packageOps.getPackageName(), applicationInfo2);
+        List opsForPackage = str != null ? this.mAppOps.getOpsForPackage(i, str, opsTemplate.ops) : this.mAppOps.getPackagesForOps(opsTemplate.ops);
+        AppOpsManager.PackageOps packageOps3 = null;
+        if (opsForPackage != null) {
+            int i6 = 0;
+            while (i6 < opsForPackage.size()) {
+                AppOpsManager.PackageOps packageOps4 = (AppOpsManager.PackageOps) opsForPackage.get(i6);
+                AppEntry appEntry2 = getAppEntry(context, map, packageOps4.getPackageName(), packageOps3);
                 if (appEntry2 != null) {
-                    int i8 = c2;
-                    while (i8 < packageOps.getOps().size()) {
-                        AppOpsManager.OpEntry opEntry = (AppOpsManager.OpEntry) packageOps.getOps().get(i8);
-                        char c3 = str == null ? true : c2;
-                        if (str == null) {
-                            c = c2;
-                        } else {
-                            c = iArr[opEntry.getOp()];
-                        }
-                        addOp(arrayList2, packageOps, appEntry2, opEntry, c3, c);
-                        i8++;
-                        c2 = c2;
-                        applicationInfo2 = applicationInfo2;
-                        packageOps = packageOps;
-                        i7 = i7;
-                        arrayList2 = arrayList2;
+                    for (int i7 = z; i7 < packageOps4.getOps().size(); i7++) {
+                        AppOpsManager.OpEntry opEntry = (AppOpsManager.OpEntry) packageOps4.getOps().get(i7);
+                        addOp(arrayList, packageOps4, appEntry2, opEntry, str == null ? true : z, str == null ? z : iArr[opEntry.getOp()]);
+                        z = z;
+                        packageOps3 = packageOps3;
+                        packageOps4 = packageOps4;
+                        i6 = i6;
+                        arrayList = arrayList;
                     }
                 }
-                i7++;
-                c2 = c2;
-                applicationInfo2 = applicationInfo2;
-                arrayList2 = arrayList2;
+                i6++;
+                z = z;
+                packageOps3 = packageOps3;
+                arrayList = arrayList;
             }
         }
-        ApplicationInfo applicationInfo3 = applicationInfo2;
-        ArrayList arrayList5 = arrayList2;
-        char c4 = c2;
+        AppOpsManager.PackageOps packageOps5 = packageOps3;
+        ArrayList arrayList4 = arrayList;
+        boolean z2 = z;
         if (str != null) {
             packagesHoldingPermissions = new ArrayList<>();
             try {
@@ -384,78 +380,71 @@ public class AppOpsState {
             } catch (PackageManager.NameNotFoundException e) {
             }
         } else {
-            String[] strArr = new String[arrayList3.size()];
-            arrayList3.toArray(strArr);
-            packagesHoldingPermissions = this.mPm.getPackagesHoldingPermissions(strArr, c4);
+            String[] strArr = new String[arrayList2.size()];
+            arrayList2.toArray(strArr);
+            packagesHoldingPermissions = this.mPm.getPackagesHoldingPermissions(strArr, z2 ? 1 : 0);
         }
         List<PackageInfo> list = packagesHoldingPermissions;
-        int i9 = c4;
-        while (i9 < list.size()) {
-            PackageInfo packageInfo2 = list.get(i9);
-            AppEntry appEntry3 = getAppEntry(context, hashMap, packageInfo2.packageName, packageInfo2.applicationInfo);
+        int i8 = z2 ? 1 : 0;
+        while (i8 < list.size()) {
+            PackageInfo packageInfo2 = list.get(i8);
+            AppEntry appEntry3 = getAppEntry(context, map, packageInfo2.packageName, packageInfo2.applicationInfo);
             if (appEntry3 != null && packageInfo2.requestedPermissions != null) {
-                int i10 = c4;
-                ApplicationInfo applicationInfo4 = applicationInfo3;
-                ApplicationInfo applicationInfo5 = applicationInfo4;
-                while (i10 < packageInfo2.requestedPermissions.length) {
-                    if (packageInfo2.requestedPermissionsFlags == null || (packageInfo2.requestedPermissionsFlags[i10] & 2) != 0) {
-                        int i11 = c4;
-                        while (i11 < arrayList3.size()) {
+                int i9 = z2 ? 1 : 0;
+                AppOpsManager.PackageOps packageOps6 = packageOps5;
+                AppOpsManager.PackageOps packageOps7 = packageOps6;
+                while (i9 < packageInfo2.requestedPermissions.length) {
+                    if (packageInfo2.requestedPermissionsFlags == null || (packageInfo2.requestedPermissionsFlags[i9] & 2) != 0) {
+                        ?? r3 = z2;
+                        while (r3 < arrayList2.size()) {
                             List<PackageInfo> list2 = list;
-                            if (!((String) arrayList3.get(i11)).equals(packageInfo2.requestedPermissions[i10]) || appEntry3.hasOp(((Integer) arrayList4.get(i11)).intValue())) {
-                                i2 = i11;
-                                i3 = i10;
+                            if (((String) arrayList2.get(r3)).equals(packageInfo2.requestedPermissions[i9]) && !appEntry3.hasOp(((Integer) arrayList3.get(r3)).intValue())) {
+                                if (packageOps6 == null) {
+                                    AppOpsManager.PackageOps arrayList5 = new ArrayList();
+                                    packageOps2 = new AppOpsManager.PackageOps(packageInfo2.packageName, packageInfo2.applicationInfo.uid, arrayList5);
+                                    packageOps = arrayList5;
+                                } else {
+                                    packageOps = packageOps6;
+                                    packageOps2 = packageOps7;
+                                }
+                                AppOpsManager.OpEntry opEntry2 = new AppOpsManager.OpEntry(((Integer) arrayList3.get(r3)).intValue(), 0, 0L, 0L, 0, -1, (String) null);
+                                packageOps.add(opEntry2);
+                                i2 = r3;
+                                i3 = i9;
                                 appEntry = appEntry3;
                                 packageInfo = packageInfo2;
-                                i4 = i9;
+                                i4 = i8;
+                                addOp(arrayList4, packageOps2, appEntry3, opEntry2, str == null, str == null ? 0 : iArr[opEntry2.getOp()]);
+                                packageOps6 = packageOps;
+                                packageOps7 = packageOps2;
                             } else {
-                                if (applicationInfo4 == null) {
-                                    ArrayList arrayList6 = new ArrayList();
-                                    applicationInfo = new AppOpsManager.PackageOps(packageInfo2.packageName, packageInfo2.applicationInfo.uid, arrayList6);
-                                    arrayList = arrayList6;
-                                } else {
-                                    arrayList = applicationInfo4;
-                                    applicationInfo = applicationInfo5;
-                                }
-                                AppOpsManager.OpEntry opEntry2 = new AppOpsManager.OpEntry(((Integer) arrayList4.get(i11)).intValue(), 0, 0L, 0L, 0, -1, (String) null);
-                                arrayList.add(opEntry2);
-                                boolean z = str == null;
-                                if (str == null) {
-                                    i5 = 0;
-                                } else {
-                                    i5 = iArr[opEntry2.getOp()];
-                                }
-                                i2 = i11;
-                                i3 = i10;
+                                i2 = r3;
+                                i3 = i9;
                                 appEntry = appEntry3;
                                 packageInfo = packageInfo2;
-                                boolean z2 = z;
-                                i4 = i9;
-                                addOp(arrayList5, applicationInfo, appEntry3, opEntry2, z2, i5);
-                                applicationInfo4 = arrayList;
-                                applicationInfo5 = applicationInfo;
+                                i4 = i8;
                             }
-                            i11 = i2 + 1;
-                            i9 = i4;
+                            i8 = i4;
                             packageInfo2 = packageInfo;
-                            i10 = i3;
+                            i9 = i3;
                             appEntry3 = appEntry;
                             list = list2;
+                            r3 = i2 + 1;
                         }
                     }
-                    i10++;
-                    i9 = i9;
+                    i9++;
+                    i8 = i8;
                     packageInfo2 = packageInfo2;
                     appEntry3 = appEntry3;
                     list = list;
-                    c4 = 0;
+                    z2 = false;
                 }
             }
-            i9++;
+            i8++;
             list = list;
-            c4 = 0;
+            z2 = false;
         }
-        Collections.sort(arrayList5, comparator);
-        return arrayList5;
+        Collections.sort(arrayList4, comparator);
+        return arrayList4;
     }
 }

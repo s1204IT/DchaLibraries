@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import com.android.settings.R;
 import com.android.settingslib.wifi.AccessPoint;
+
 /* loaded from: classes.dex */
 public class BottomLabelLayout extends LinearLayout {
     public BottomLabelLayout(Context context, AttributeSet attributeSet) {
@@ -15,19 +16,19 @@ public class BottomLabelLayout extends LinearLayout {
     @Override // android.widget.LinearLayout, android.view.View
     protected void onMeasure(int i, int i2) {
         boolean z;
-        int i3;
+        int iMakeMeasureSpec;
         int size = View.MeasureSpec.getSize(i);
-        boolean isStacked = isStacked();
+        boolean zIsStacked = isStacked();
         boolean z2 = true;
-        if (!isStacked && View.MeasureSpec.getMode(i) == 1073741824) {
-            i3 = View.MeasureSpec.makeMeasureSpec(size, AccessPoint.UNREACHABLE_RSSI);
+        if (!zIsStacked && View.MeasureSpec.getMode(i) == 1073741824) {
+            iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(size, AccessPoint.UNREACHABLE_RSSI);
             z = true;
         } else {
             z = false;
-            i3 = i;
+            iMakeMeasureSpec = i;
         }
-        super.onMeasure(i3, i2);
-        if (!isStacked && (getMeasuredWidthAndState() & (-16777216)) == 16777216) {
+        super.onMeasure(iMakeMeasureSpec, i2);
+        if (!zIsStacked && (getMeasuredWidthAndState() & (-16777216)) == 16777216) {
             setStacked(true);
         } else {
             z2 = z;
@@ -40,9 +41,9 @@ public class BottomLabelLayout extends LinearLayout {
     void setStacked(boolean z) {
         setOrientation(z ? 1 : 0);
         setGravity(z ? 8388611 : 80);
-        View findViewById = findViewById(R.id.spacer);
-        if (findViewById != null) {
-            findViewById.setVisibility(z ? 8 : 0);
+        View viewFindViewById = findViewById(R.id.spacer);
+        if (viewFindViewById != null) {
+            viewFindViewById.setVisibility(z ? 8 : 0);
         }
     }
 

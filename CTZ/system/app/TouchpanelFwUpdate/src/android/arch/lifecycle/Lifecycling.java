@@ -7,13 +7,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /* loaded from: classes.dex */
 public class Lifecycling {
     private static Map<Class, Integer> sCallbackCache = new HashMap();
     private static Map<Class, List<Constructor<? extends GeneratedAdapter>>> sClassToAdapters = new HashMap();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static GenericLifecycleObserver getCallback(Object object) {
+    static GenericLifecycleObserver getCallback(Object object) throws NoSuchMethodException, SecurityException {
         if (object instanceof FullLifecycleObserver) {
             return new FullLifecycleObserverAdapter((FullLifecycleObserver) object);
         }
@@ -49,7 +49,7 @@ public class Lifecycling {
         }
     }
 
-    private static Constructor<? extends GeneratedAdapter> generatedConstructor(Class<?> klass) {
+    private static Constructor<? extends GeneratedAdapter> generatedConstructor(Class<?> klass) throws NoSuchMethodException, SecurityException {
         String str;
         try {
             Package aPackage = klass.getPackage();
@@ -73,7 +73,7 @@ public class Lifecycling {
         }
     }
 
-    private static int getObserverConstructorType(Class<?> klass) {
+    private static int getObserverConstructorType(Class<?> klass) throws NoSuchMethodException, SecurityException {
         if (sCallbackCache.containsKey(klass)) {
             return sCallbackCache.get(klass).intValue();
         }
@@ -82,8 +82,7 @@ public class Lifecycling {
         return type;
     }
 
-    private static int resolveObserverCallbackType(Class<?> klass) {
-        Class<?>[] interfaces;
+    private static int resolveObserverCallbackType(Class<?> klass) throws NoSuchMethodException, SecurityException {
         if (klass.getCanonicalName() == null) {
             return 1;
         }
@@ -115,11 +114,11 @@ public class Lifecycling {
                 adapterConstructors.addAll(sClassToAdapters.get(intrface));
             }
         }
-        if (adapterConstructors != null) {
-            sClassToAdapters.put(klass, adapterConstructors);
-            return 2;
+        if (adapterConstructors == null) {
+            return 1;
         }
-        return 1;
+        sClassToAdapters.put(klass, adapterConstructors);
+        return 2;
     }
 
     private static boolean isLifecycleParent(Class<?> klass) {

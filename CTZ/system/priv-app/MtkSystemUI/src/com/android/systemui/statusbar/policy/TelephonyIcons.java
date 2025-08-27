@@ -2,9 +2,9 @@ package com.android.systemui.statusbar.policy;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.MobileSignalController;
-/* JADX INFO: Access modifiers changed from: package-private */
+
 /* loaded from: classes.dex */
-public class TelephonyIcons {
+class TelephonyIcons {
     static final MobileSignalController.MobileIconGroup CARRIER_NETWORK_CHANGE = new MobileSignalController.MobileIconGroup("CARRIER_NETWORK_CHANGE", null, null, AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH, 0, 0, 0, 0, AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0], R.string.carrier_network_change_mode, 0, false);
     static final MobileSignalController.MobileIconGroup THREE_G = new MobileSignalController.MobileIconGroup("3G", null, null, AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH, 0, 0, 0, 0, AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0], R.string.data_connection_3g, R.drawable.stat_sys_data_fully_connected_3g, true);
     static final MobileSignalController.MobileIconGroup WFC = new MobileSignalController.MobileIconGroup("WFC", null, null, AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH, 0, 0, 0, 0, AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0], 0, 0, false);

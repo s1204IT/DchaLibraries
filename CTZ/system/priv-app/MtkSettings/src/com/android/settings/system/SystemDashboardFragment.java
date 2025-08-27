@@ -15,6 +15,7 @@ import com.mediatek.settings.UtilsExt;
 import com.mediatek.settings.ext.IDeviceInfoSettingsExt;
 import java.util.Arrays;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class SystemDashboardFragment extends DashboardFragment {
     public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new BaseSearchIndexProvider() { // from class: com.android.settings.system.SystemDashboardFragment.1
@@ -55,9 +56,8 @@ public class SystemDashboardFragment extends DashboardFragment {
         return "SystemDashboardFrag";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.system_dashboard_fragment;
     }
 
@@ -67,15 +67,15 @@ public class SystemDashboardFragment extends DashboardFragment {
     }
 
     private int getVisiblePreferenceCount(PreferenceGroup preferenceGroup) {
-        int i = 0;
-        for (int i2 = 0; i2 < preferenceGroup.getPreferenceCount(); i2++) {
-            Preference preference = preferenceGroup.getPreference(i2);
+        int visiblePreferenceCount = 0;
+        for (int i = 0; i < preferenceGroup.getPreferenceCount(); i++) {
+            Preference preference = preferenceGroup.getPreference(i);
             if (preference instanceof PreferenceGroup) {
-                i += getVisiblePreferenceCount((PreferenceGroup) preference);
+                visiblePreferenceCount += getVisiblePreferenceCount((PreferenceGroup) preference);
             } else if (preference.isVisible()) {
-                i++;
+                visiblePreferenceCount++;
             }
         }
-        return i;
+        return visiblePreferenceCount;
     }
 }

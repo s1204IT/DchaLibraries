@@ -6,17 +6,18 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Process;
+import android.os.RemoteException;
 import android.os.UserHandle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
-import com.android.launcher3.LauncherModel;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.compat.LauncherAppsCompat;
 import com.android.launcher3.compat.PackageInstallerCompat;
@@ -54,6 +55,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.Executor;
+
 /* loaded from: classes.dex */
 public class LauncherModel extends BroadcastReceiver implements LauncherAppsCompat.OnAppsChangedCallbackCompat {
     private static final boolean DEBUG_RECEIVER = false;
@@ -70,6 +72,9 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     private final MainThreadExecutor mUiExecutor = new MainThreadExecutor();
     final Object mLock = new Object();
     private final Runnable mShortcutPermissionCheckRunnable = new Runnable() { // from class: com.android.launcher3.LauncherModel.1
+        AnonymousClass1() {
+        }
+
         @Override // java.lang.Runnable
         public void run() {
             if (LauncherModel.this.mModelLoaded && DeepShortcutManager.getInstance(LauncherModel.this.mApp.getContext()).hasHostPermission() != LauncherModel.sBgDataModel.hasShortcutHostPermission) {
@@ -78,12 +83,10 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         }
     };
 
-    /* loaded from: classes.dex */
     public interface CallbackTask {
         void execute(Callbacks callbacks);
     }
 
-    /* loaded from: classes.dex */
     public interface Callbacks {
         void bindAllApplications(ArrayList<AppInfo> arrayList);
 
@@ -128,7 +131,6 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         void startBinding();
     }
 
-    /* loaded from: classes.dex */
     public interface ModelUpdateTask extends Runnable {
         void init(LauncherAppState launcherAppState, LauncherModel launcherModel, BgDataModel bgDataModel, AllAppsList allAppsList, Executor executor);
     }
@@ -147,8 +149,20 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         return z;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public LauncherModel(LauncherAppState launcherAppState, IconCache iconCache, AppFilter appFilter) {
+    /* renamed from: com.android.launcher3.LauncherModel$1 */
+    class AnonymousClass1 implements Runnable {
+        AnonymousClass1() {
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            if (LauncherModel.this.mModelLoaded && DeepShortcutManager.getInstance(LauncherModel.this.mApp.getContext()).hasHostPermission() != LauncherModel.sBgDataModel.hasShortcutHostPermission) {
+                LauncherModel.this.forceReload();
+            }
+        }
+    }
+
+    LauncherModel(LauncherAppState launcherAppState, IconCache iconCache, AppFilter appFilter) {
         this.mApp = launcherAppState;
         this.mBgAllAppsList = new AllAppsList(iconCache, appFilter);
     }
@@ -198,29 +212,57 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             RuntimeException runtimeException = new RuntimeException(sb.toString());
             if (stackTraceElementArr != null) {
                 runtimeException.setStackTrace(stackTraceElementArr);
+                throw runtimeException;
             }
             throw runtimeException;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static void checkItemInfo(final ItemInfo itemInfo) {
-        final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-        final long j = itemInfo.id;
+    static void checkItemInfo(ItemInfo itemInfo) {
         runOnWorkerThread(new Runnable() { // from class: com.android.launcher3.LauncherModel.2
+            final /* synthetic */ ItemInfo val$item;
+            final /* synthetic */ long val$itemId;
+            final /* synthetic */ StackTraceElement[] val$stackTrace;
+
+            AnonymousClass2(long j, ItemInfo itemInfo2, StackTraceElement[] stackTraceElementArr) {
+                j = j;
+                itemInfo = itemInfo2;
+                stackTraceElementArr = stackTraceElementArr;
+            }
+
             @Override // java.lang.Runnable
             public void run() {
                 synchronized (LauncherModel.sBgDataModel) {
-                    LauncherModel.checkItemInfoLocked(j, itemInfo, stackTrace);
+                    LauncherModel.checkItemInfoLocked(j, itemInfo, stackTraceElementArr);
                 }
             }
         });
     }
 
+    /* renamed from: com.android.launcher3.LauncherModel$2 */
+    class AnonymousClass2 implements Runnable {
+        final /* synthetic */ ItemInfo val$item;
+        final /* synthetic */ long val$itemId;
+        final /* synthetic */ StackTraceElement[] val$stackTrace;
+
+        AnonymousClass2(long j, ItemInfo itemInfo2, StackTraceElement[] stackTraceElementArr) {
+            j = j;
+            itemInfo = itemInfo2;
+            stackTraceElementArr = stackTraceElementArr;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() {
+            synchronized (LauncherModel.sBgDataModel) {
+                LauncherModel.checkItemInfoLocked(j, itemInfo, stackTraceElementArr);
+            }
+        }
+    }
+
     public static void updateWorkspaceScreenOrder(Context context, ArrayList<Long> arrayList) {
-        final ArrayList arrayList2 = new ArrayList(arrayList);
-        final ContentResolver contentResolver = context.getContentResolver();
-        final Uri uri = LauncherSettings.WorkspaceScreens.CONTENT_URI;
+        ArrayList arrayList2 = new ArrayList(arrayList);
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = LauncherSettings.WorkspaceScreens.CONTENT_URI;
         Iterator it = arrayList2.iterator();
         while (it.hasNext()) {
             if (((Long) it.next()).longValue() < 0) {
@@ -228,14 +270,24 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             }
         }
         runOnWorkerThread(new Runnable() { // from class: com.android.launcher3.LauncherModel.3
+            final /* synthetic */ ContentResolver val$cr;
+            final /* synthetic */ ArrayList val$screensCopy;
+            final /* synthetic */ Uri val$uri;
+
+            AnonymousClass3(Uri uri2, ArrayList arrayList22, ContentResolver contentResolver2) {
+                uri = uri2;
+                arrayList = arrayList22;
+                contentResolver = contentResolver2;
+            }
+
             @Override // java.lang.Runnable
-            public void run() {
+            public void run() throws RemoteException, OperationApplicationException {
                 ArrayList<ContentProviderOperation> arrayList3 = new ArrayList<>();
                 arrayList3.add(ContentProviderOperation.newDelete(uri).build());
-                int size = arrayList2.size();
+                int size = arrayList.size();
                 for (int i = 0; i < size; i++) {
                     ContentValues contentValues = new ContentValues();
-                    contentValues.put("_id", Long.valueOf(((Long) arrayList2.get(i)).longValue()));
+                    contentValues.put("_id", Long.valueOf(((Long) arrayList.get(i)).longValue()));
                     contentValues.put(LauncherSettings.WorkspaceScreens.SCREEN_RANK, Integer.valueOf(i));
                     arrayList3.add(ContentProviderOperation.newInsert(uri).withValues(contentValues).build());
                 }
@@ -243,13 +295,48 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     contentResolver.applyBatch(LauncherProvider.AUTHORITY, arrayList3);
                     synchronized (LauncherModel.sBgDataModel) {
                         LauncherModel.sBgDataModel.workspaceScreens.clear();
-                        LauncherModel.sBgDataModel.workspaceScreens.addAll(arrayList2);
+                        LauncherModel.sBgDataModel.workspaceScreens.addAll(arrayList);
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
         });
+    }
+
+    /* renamed from: com.android.launcher3.LauncherModel$3 */
+    class AnonymousClass3 implements Runnable {
+        final /* synthetic */ ContentResolver val$cr;
+        final /* synthetic */ ArrayList val$screensCopy;
+        final /* synthetic */ Uri val$uri;
+
+        AnonymousClass3(Uri uri2, ArrayList arrayList22, ContentResolver contentResolver2) {
+            uri = uri2;
+            arrayList = arrayList22;
+            contentResolver = contentResolver2;
+        }
+
+        @Override // java.lang.Runnable
+        public void run() throws RemoteException, OperationApplicationException {
+            ArrayList<ContentProviderOperation> arrayList3 = new ArrayList<>();
+            arrayList3.add(ContentProviderOperation.newDelete(uri).build());
+            int size = arrayList.size();
+            for (int i = 0; i < size; i++) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("_id", Long.valueOf(((Long) arrayList.get(i)).longValue()));
+                contentValues.put(LauncherSettings.WorkspaceScreens.SCREEN_RANK, Integer.valueOf(i));
+                arrayList3.add(ContentProviderOperation.newInsert(uri).withValues(contentValues).build());
+            }
+            try {
+                contentResolver.applyBatch(LauncherProvider.AUTHORITY, arrayList3);
+                synchronized (LauncherModel.sBgDataModel) {
+                    LauncherModel.sBgDataModel.workspaceScreens.clear();
+                    LauncherModel.sBgDataModel.workspaceScreens.addAll(arrayList);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public void initialize(Callbacks callbacks) {
@@ -315,10 +402,14 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         String action = intent.getAction();
         if ("android.intent.action.LOCALE_CHANGED".equals(action)) {
             forceReload();
-        } else if ("android.intent.action.MANAGED_PROFILE_ADDED".equals(action) || "android.intent.action.MANAGED_PROFILE_REMOVED".equals(action)) {
+            return;
+        }
+        if ("android.intent.action.MANAGED_PROFILE_ADDED".equals(action) || "android.intent.action.MANAGED_PROFILE_REMOVED".equals(action)) {
             UserManagerCompat.getInstance(context).enableAndResetCache();
             forceReload();
-        } else if (("android.intent.action.MANAGED_PROFILE_AVAILABLE".equals(action) || "android.intent.action.MANAGED_PROFILE_UNAVAILABLE".equals(action) || "android.intent.action.MANAGED_PROFILE_UNLOCKED".equals(action)) && (userHandle = (UserHandle) intent.getParcelableExtra("android.intent.extra.USER")) != null) {
+            return;
+        }
+        if (("android.intent.action.MANAGED_PROFILE_AVAILABLE".equals(action) || "android.intent.action.MANAGED_PROFILE_UNAVAILABLE".equals(action) || "android.intent.action.MANAGED_PROFILE_UNLOCKED".equals(action)) && (userHandle = (UserHandle) intent.getParcelableExtra("android.intent.extra.USER")) != null) {
             if ("android.intent.action.MANAGED_PROFILE_AVAILABLE".equals(action) || "android.intent.action.MANAGED_PROFILE_UNAVAILABLE".equals(action)) {
                 enqueueModelUpdateTask(new PackageUpdatedTask(7, userHandle, new String[0]));
             }
@@ -353,7 +444,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 mainThreadExecutor.execute(new Runnable() { // from class: com.android.launcher3.-$$Lambda$rGy4HMHlfF5mKCkPMTuda4Xd94I
                     @Override // java.lang.Runnable
                     public final void run() {
-                        LauncherModel.Callbacks.this.clearPendingBinds();
+                        callbacks.clearPendingBinds();
                     }
                 });
                 stopLoader();
@@ -402,15 +493,71 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         return LauncherDbUtils.getScreenIdsFromCursor(context.getContentResolver().query(LauncherSettings.WorkspaceScreens.CONTENT_URI, null, null, null, LauncherSettings.WorkspaceScreens.SCREEN_RANK));
     }
 
-    public void onInstallSessionCreated(final PackageInstallerCompat.PackageInstallInfo packageInstallInfo) {
+    /* renamed from: com.android.launcher3.LauncherModel$4 */
+    class AnonymousClass4 extends BaseModelUpdateTask {
+        final /* synthetic */ PackageInstallerCompat.PackageInstallInfo val$sessionInfo;
+
+        AnonymousClass4(PackageInstallerCompat.PackageInstallInfo packageInstallInfo) {
+            packageInstallInfo = packageInstallInfo;
+        }
+
+        @Override // com.android.launcher3.model.BaseModelUpdateTask
+        public void execute(LauncherAppState launcherAppState, BgDataModel bgDataModel, AllAppsList allAppsList) {
+            allAppsList.addPromiseApp(launcherAppState.getContext(), packageInstallInfo);
+            if (!allAppsList.added.isEmpty()) {
+                ArrayList arrayList = new ArrayList(allAppsList.added);
+                allAppsList.added.clear();
+                scheduleCallbackTask(new CallbackTask() { // from class: com.android.launcher3.LauncherModel.4.1
+                    final /* synthetic */ ArrayList val$arrayList;
+
+                    AnonymousClass1(ArrayList arrayList2) {
+                        arrayList = arrayList2;
+                    }
+
+                    @Override // com.android.launcher3.LauncherModel.CallbackTask
+                    public void execute(Callbacks callbacks) {
+                        callbacks.bindAppsAddedOrUpdated(arrayList);
+                    }
+                });
+            }
+        }
+
+        /* renamed from: com.android.launcher3.LauncherModel$4$1 */
+        class AnonymousClass1 implements CallbackTask {
+            final /* synthetic */ ArrayList val$arrayList;
+
+            AnonymousClass1(ArrayList arrayList2) {
+                arrayList = arrayList2;
+            }
+
+            @Override // com.android.launcher3.LauncherModel.CallbackTask
+            public void execute(Callbacks callbacks) {
+                callbacks.bindAppsAddedOrUpdated(arrayList);
+            }
+        }
+    }
+
+    public void onInstallSessionCreated(PackageInstallerCompat.PackageInstallInfo packageInstallInfo) {
         enqueueModelUpdateTask(new BaseModelUpdateTask() { // from class: com.android.launcher3.LauncherModel.4
+            final /* synthetic */ PackageInstallerCompat.PackageInstallInfo val$sessionInfo;
+
+            AnonymousClass4(PackageInstallerCompat.PackageInstallInfo packageInstallInfo2) {
+                packageInstallInfo = packageInstallInfo2;
+            }
+
             @Override // com.android.launcher3.model.BaseModelUpdateTask
             public void execute(LauncherAppState launcherAppState, BgDataModel bgDataModel, AllAppsList allAppsList) {
                 allAppsList.addPromiseApp(launcherAppState.getContext(), packageInstallInfo);
                 if (!allAppsList.added.isEmpty()) {
-                    final ArrayList arrayList = new ArrayList(allAppsList.added);
+                    ArrayList arrayList2 = new ArrayList(allAppsList.added);
                     allAppsList.added.clear();
                     scheduleCallbackTask(new CallbackTask() { // from class: com.android.launcher3.LauncherModel.4.1
+                        final /* synthetic */ ArrayList val$arrayList;
+
+                        AnonymousClass1(ArrayList arrayList22) {
+                            arrayList = arrayList22;
+                        }
+
                         @Override // com.android.launcher3.LauncherModel.CallbackTask
                         public void execute(Callbacks callbacks) {
                             callbacks.bindAppsAddedOrUpdated(arrayList);
@@ -418,12 +565,29 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     });
                 }
             }
+
+            /* renamed from: com.android.launcher3.LauncherModel$4$1 */
+            class AnonymousClass1 implements CallbackTask {
+                final /* synthetic */ ArrayList val$arrayList;
+
+                AnonymousClass1(ArrayList arrayList22) {
+                    arrayList = arrayList22;
+                }
+
+                @Override // com.android.launcher3.LauncherModel.CallbackTask
+                public void execute(Callbacks callbacks) {
+                    callbacks.bindAppsAddedOrUpdated(arrayList);
+                }
+            }
         });
     }
 
-    /* loaded from: classes.dex */
     public class LoaderTransaction implements AutoCloseable {
         private final LoaderTask mTask;
+
+        /* synthetic */ LoaderTransaction(LauncherModel launcherModel, LoaderTask loaderTask, AnonymousClass1 anonymousClass1) throws CancellationException {
+            this(loaderTask);
+        }
 
         private LoaderTransaction(LoaderTask loaderTask) throws CancellationException {
             synchronized (LauncherModel.this.mLock) {
@@ -473,22 +637,74 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         runOnWorkerThread(modelUpdateTask);
     }
 
-    public void updateAndBindShortcutInfo(final ShortcutInfo shortcutInfo, final ShortcutInfoCompat shortcutInfoCompat) {
+    /* renamed from: com.android.launcher3.LauncherModel$5 */
+    class AnonymousClass5 extends Provider<ShortcutInfo> {
+        final /* synthetic */ ShortcutInfoCompat val$info;
+        final /* synthetic */ ShortcutInfo val$si;
+
+        AnonymousClass5(ShortcutInfo shortcutInfo, ShortcutInfoCompat shortcutInfoCompat) {
+            shortcutInfo = shortcutInfo;
+            shortcutInfoCompat = shortcutInfoCompat;
+        }
+
+        /* JADX DEBUG: Method merged with bridge method: get()Ljava/lang/Object; */
+        @Override // com.android.launcher3.util.Provider
+        public ShortcutInfo get() {
+            shortcutInfo.updateFromDeepShortcutInfo(shortcutInfoCompat, LauncherModel.this.mApp.getContext());
+            LauncherIcons launcherIconsObtain = LauncherIcons.obtain(LauncherModel.this.mApp.getContext());
+            launcherIconsObtain.createShortcutIcon(shortcutInfoCompat).applyTo(shortcutInfo);
+            launcherIconsObtain.recycle();
+            return shortcutInfo;
+        }
+    }
+
+    public void updateAndBindShortcutInfo(ShortcutInfo shortcutInfo, ShortcutInfoCompat shortcutInfoCompat) {
         updateAndBindShortcutInfo(new Provider<ShortcutInfo>() { // from class: com.android.launcher3.LauncherModel.5
-            /* JADX WARN: Can't rename method to resolve collision */
+            final /* synthetic */ ShortcutInfoCompat val$info;
+            final /* synthetic */ ShortcutInfo val$si;
+
+            AnonymousClass5(ShortcutInfo shortcutInfo2, ShortcutInfoCompat shortcutInfoCompat2) {
+                shortcutInfo = shortcutInfo2;
+                shortcutInfoCompat = shortcutInfoCompat2;
+            }
+
+            /* JADX DEBUG: Method merged with bridge method: get()Ljava/lang/Object; */
             @Override // com.android.launcher3.util.Provider
             public ShortcutInfo get() {
                 shortcutInfo.updateFromDeepShortcutInfo(shortcutInfoCompat, LauncherModel.this.mApp.getContext());
-                LauncherIcons obtain = LauncherIcons.obtain(LauncherModel.this.mApp.getContext());
-                obtain.createShortcutIcon(shortcutInfoCompat).applyTo(shortcutInfo);
-                obtain.recycle();
+                LauncherIcons launcherIconsObtain = LauncherIcons.obtain(LauncherModel.this.mApp.getContext());
+                launcherIconsObtain.createShortcutIcon(shortcutInfoCompat).applyTo(shortcutInfo);
+                launcherIconsObtain.recycle();
                 return shortcutInfo;
             }
         });
     }
 
-    public void updateAndBindShortcutInfo(final Provider<ShortcutInfo> provider) {
+    /* renamed from: com.android.launcher3.LauncherModel$6 */
+    class AnonymousClass6 extends BaseModelUpdateTask {
+        final /* synthetic */ Provider val$shortcutProvider;
+
+        AnonymousClass6(Provider provider) {
+            provider = provider;
+        }
+
+        @Override // com.android.launcher3.model.BaseModelUpdateTask
+        public void execute(LauncherAppState launcherAppState, BgDataModel bgDataModel, AllAppsList allAppsList) {
+            ShortcutInfo shortcutInfo = (ShortcutInfo) provider.get();
+            ArrayList<ShortcutInfo> arrayList = new ArrayList<>();
+            arrayList.add(shortcutInfo);
+            bindUpdatedShortcuts(arrayList, shortcutInfo.user);
+        }
+    }
+
+    public void updateAndBindShortcutInfo(Provider<ShortcutInfo> provider) {
         enqueueModelUpdateTask(new BaseModelUpdateTask() { // from class: com.android.launcher3.LauncherModel.6
+            final /* synthetic */ Provider val$shortcutProvider;
+
+            AnonymousClass6(Provider provider2) {
+                provider = provider2;
+            }
+
             @Override // com.android.launcher3.model.BaseModelUpdateTask
             public void execute(LauncherAppState launcherAppState, BgDataModel bgDataModel, AllAppsList allAppsList) {
                 ShortcutInfo shortcutInfo = (ShortcutInfo) provider.get();
@@ -499,8 +715,29 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         });
     }
 
-    public void refreshAndBindWidgetsAndShortcuts(@Nullable final PackageUserKey packageUserKey) {
+    /* renamed from: com.android.launcher3.LauncherModel$7 */
+    class AnonymousClass7 extends BaseModelUpdateTask {
+        final /* synthetic */ PackageUserKey val$packageUser;
+
+        AnonymousClass7(PackageUserKey packageUserKey) {
+            packageUserKey = packageUserKey;
+        }
+
+        @Override // com.android.launcher3.model.BaseModelUpdateTask
+        public void execute(LauncherAppState launcherAppState, BgDataModel bgDataModel, AllAppsList allAppsList) {
+            bgDataModel.widgetsModel.update(launcherAppState, packageUserKey);
+            bindUpdatedWidgets(bgDataModel);
+        }
+    }
+
+    public void refreshAndBindWidgetsAndShortcuts(@Nullable PackageUserKey packageUserKey) {
         enqueueModelUpdateTask(new BaseModelUpdateTask() { // from class: com.android.launcher3.LauncherModel.7
+            final /* synthetic */ PackageUserKey val$packageUser;
+
+            AnonymousClass7(PackageUserKey packageUserKey2) {
+                packageUserKey = packageUserKey2;
+            }
+
             @Override // com.android.launcher3.model.BaseModelUpdateTask
             public void execute(LauncherAppState launcherAppState, BgDataModel bgDataModel, AllAppsList allAppsList) {
                 bgDataModel.widgetsModel.update(launcherAppState, packageUserKey);

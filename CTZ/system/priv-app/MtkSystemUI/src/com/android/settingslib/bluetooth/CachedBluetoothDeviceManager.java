@@ -8,23 +8,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+
 /* loaded from: classes.dex */
 public class CachedBluetoothDeviceManager {
     private final LocalBluetoothManager mBtManager;
     private Context mContext;
+
     @VisibleForTesting
     final List<CachedBluetoothDevice> mCachedDevices = new ArrayList();
+
     @VisibleForTesting
     final List<CachedBluetoothDevice> mHearingAidDevicesNotAddedInCache = new ArrayList();
+
     @VisibleForTesting
     final Map<Long, CachedBluetoothDevice> mCachedDevicesMapForHearingAids = new HashMap();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public CachedBluetoothDeviceManager(Context context, LocalBluetoothManager localBluetoothManager) {
+    CachedBluetoothDeviceManager(Context context, LocalBluetoothManager localBluetoothManager) {
         this.mContext = context;
         this.mBtManager = localBluetoothManager;
     }
@@ -39,9 +43,9 @@ public class CachedBluetoothDeviceManager {
     }
 
     public void onDeviceNameUpdated(BluetoothDevice bluetoothDevice) {
-        CachedBluetoothDevice findDevice = findDevice(bluetoothDevice);
-        if (findDevice != null) {
-            findDevice.refreshName();
+        CachedBluetoothDevice cachedBluetoothDeviceFindDevice = findDevice(bluetoothDevice);
+        if (cachedBluetoothDeviceFindDevice != null) {
+            cachedBluetoothDeviceFindDevice.refreshName();
         }
     }
 
@@ -93,7 +97,7 @@ public class CachedBluetoothDeviceManager {
             log("updateHearingAidsDevices: getHearingAidProfile() is null");
             return;
         }
-        HashSet<Long> hashSet = new HashSet();
+        HashSet hashSet = new HashSet();
         for (CachedBluetoothDevice cachedBluetoothDevice : this.mCachedDevices) {
             if (cachedBluetoothDevice.getHiSyncId() == 0) {
                 long hiSyncId = hearingAidProfile.getHiSyncId(cachedBluetoothDevice.getDevice());
@@ -103,8 +107,9 @@ public class CachedBluetoothDeviceManager {
                 }
             }
         }
-        for (Long l : hashSet) {
-            onHiSyncIdChanged(l.longValue());
+        Iterator it = hashSet.iterator();
+        while (it.hasNext()) {
+            onHiSyncIdChanged(((Long) it.next()).longValue());
         }
     }
 
@@ -129,18 +134,15 @@ public class CachedBluetoothDeviceManager {
         });
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$clearNonBondedDevices$0(Map.Entry entry) {
+    static /* synthetic */ boolean lambda$clearNonBondedDevices$0(Map.Entry entry) {
         return ((CachedBluetoothDevice) entry.getValue()).getBondState() == 10;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$clearNonBondedDevices$1(CachedBluetoothDevice cachedBluetoothDevice) {
+    static /* synthetic */ boolean lambda$clearNonBondedDevices$1(CachedBluetoothDevice cachedBluetoothDevice) {
         return cachedBluetoothDevice.getBondState() == 10;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ boolean lambda$clearNonBondedDevices$2(CachedBluetoothDevice cachedBluetoothDevice) {
+    static /* synthetic */ boolean lambda$clearNonBondedDevices$2(CachedBluetoothDevice cachedBluetoothDevice) {
         return cachedBluetoothDevice.getBondState() == 10;
     }
 
@@ -156,16 +158,16 @@ public class CachedBluetoothDeviceManager {
     }
 
     public synchronized void onBtClassChanged(BluetoothDevice bluetoothDevice) {
-        CachedBluetoothDevice findDevice = findDevice(bluetoothDevice);
-        if (findDevice != null) {
-            findDevice.refreshBtClass();
+        CachedBluetoothDevice cachedBluetoothDeviceFindDevice = findDevice(bluetoothDevice);
+        if (cachedBluetoothDeviceFindDevice != null) {
+            cachedBluetoothDeviceFindDevice.refreshBtClass();
         }
     }
 
     public synchronized void onUuidChanged(BluetoothDevice bluetoothDevice) {
-        CachedBluetoothDevice findDevice = findDevice(bluetoothDevice);
-        if (findDevice != null) {
-            findDevice.onUuidChanged();
+        CachedBluetoothDevice cachedBluetoothDeviceFindDevice = findDevice(bluetoothDevice);
+        if (cachedBluetoothDeviceFindDevice != null) {
+            cachedBluetoothDeviceFindDevice.onUuidChanged();
         }
     }
 
@@ -202,22 +204,27 @@ public class CachedBluetoothDeviceManager {
         }
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:10:0x0027, code lost:
+    /* JADX WARN: Code restructure failed: missing block: B:36:0x0024, code lost:
+    
+        if (r3.isConnected() == false) goto L38;
+     */
+    /* JADX WARN: Code restructure failed: missing block: B:37:0x0027, code lost:
+    
+        r0 = r6.mCachedDevices.get(r2);
         r6.mCachedDevicesMapForHearingAids.put(java.lang.Long.valueOf(r7), r3);
-        r3 = r6.mCachedDevices.get(r2);
+        r3 = r0;
         r0 = r2;
      */
-    /* JADX WARN: Code restructure failed: missing block: B:11:0x003b, code lost:
+    /* JADX WARN: Code restructure failed: missing block: B:38:0x003b, code lost:
+    
         r6.mCachedDevicesMapForHearingAids.put(java.lang.Long.valueOf(r7), r6.mCachedDevices.get(r2));
      */
-    /* JADX WARN: Code restructure failed: missing block: B:12:0x004e, code lost:
+    /* JADX WARN: Code restructure failed: missing block: B:39:0x004e, code lost:
+    
         r6.mCachedDevices.remove(r0);
         r6.mHearingAidDevicesNotAddedInCache.add(r3);
         log("onHiSyncIdChanged: removed from UI device=" + r3 + ", with hiSyncId=" + r7);
         r6.mBtManager.getEventManager().dispatchDeviceRemoved(r3);
-     */
-    /* JADX WARN: Code restructure failed: missing block: B:9:0x0024, code lost:
-        if (r3.isConnected() == false) goto L21;
      */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
@@ -309,8 +316,9 @@ public class CachedBluetoothDeviceManager {
     }
 
     public synchronized void dispatchAudioModeChanged() {
-        for (CachedBluetoothDevice cachedBluetoothDevice : this.mCachedDevices) {
-            cachedBluetoothDevice.onAudioModeChanged();
+        Iterator<CachedBluetoothDevice> it = this.mCachedDevices.iterator();
+        while (it.hasNext()) {
+            it.next().onAudioModeChanged();
         }
     }
 

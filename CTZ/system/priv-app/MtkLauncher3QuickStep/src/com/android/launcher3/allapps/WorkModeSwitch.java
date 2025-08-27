@@ -7,6 +7,8 @@ import android.os.UserHandle;
 import android.util.AttributeSet;
 import android.widget.Switch;
 import com.android.launcher3.compat.UserManagerCompat;
+import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class WorkModeSwitch extends Switch {
     public WorkModeSwitch(Context context) {
@@ -48,22 +50,22 @@ public class WorkModeSwitch extends Switch {
                 WorkModeSwitch.this.setEnabled(false);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: doInBackground([Ljava/lang/Object;)Ljava/lang/Object; */
             @Override // android.os.AsyncTask
-            public Boolean doInBackground(Void... voidArr) {
-                UserManagerCompat userManagerCompat = UserManagerCompat.getInstance(WorkModeSwitch.this.getContext());
+            protected Boolean doInBackground(Void... voidArr) {
+                Iterator<UserHandle> it = UserManagerCompat.getInstance(WorkModeSwitch.this.getContext()).getUserProfiles().iterator();
                 boolean z2 = false;
-                for (UserHandle userHandle : userManagerCompat.getUserProfiles()) {
-                    if (!Process.myUserHandle().equals(userHandle)) {
-                        z2 |= !userManagerCompat.requestQuietModeEnabled(z, userHandle);
+                while (it.hasNext()) {
+                    if (!Process.myUserHandle().equals(it.next())) {
+                        z2 |= !r5.requestQuietModeEnabled(z, r2);
                     }
                 }
                 return Boolean.valueOf(z2);
             }
 
-            /* JADX INFO: Access modifiers changed from: protected */
+            /* JADX DEBUG: Method merged with bridge method: onPostExecute(Ljava/lang/Object;)V */
             @Override // android.os.AsyncTask
-            public void onPostExecute(Boolean bool) {
+            protected void onPostExecute(Boolean bool) {
                 if (bool.booleanValue()) {
                     WorkModeSwitch.this.setEnabled(true);
                 }

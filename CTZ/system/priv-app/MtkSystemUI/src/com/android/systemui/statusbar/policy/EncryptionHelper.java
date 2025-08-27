@@ -1,6 +1,7 @@
 package com.android.systemui.statusbar.policy;
 
 import android.os.SystemProperties;
+
 /* loaded from: classes.dex */
 public class EncryptionHelper {
     public static final boolean IS_DATA_ENCRYPTED = isDataEncrypted();

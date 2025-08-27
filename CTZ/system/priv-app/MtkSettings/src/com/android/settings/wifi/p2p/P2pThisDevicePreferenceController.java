@@ -7,6 +7,7 @@ import android.support.v7.preference.PreferenceScreen;
 import android.text.TextUtils;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
+
 /* loaded from: classes.dex */
 public class P2pThisDevicePreferenceController extends AbstractPreferenceController implements PreferenceControllerMixin {
     private Preference mPreference;

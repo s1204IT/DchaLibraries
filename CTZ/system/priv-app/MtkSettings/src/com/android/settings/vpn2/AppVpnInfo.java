@@ -2,6 +2,7 @@ package com.android.settings.vpn2;
 
 import com.android.internal.util.Preconditions;
 import java.util.Objects;
+
 /* loaded from: classes.dex */
 class AppVpnInfo implements Comparable {
     public final String packageName;
@@ -15,19 +16,19 @@ class AppVpnInfo implements Comparable {
     @Override // java.lang.Comparable
     public int compareTo(Object obj) {
         AppVpnInfo appVpnInfo = (AppVpnInfo) obj;
-        int compareTo = this.packageName.compareTo(appVpnInfo.packageName);
-        if (compareTo == 0) {
+        int iCompareTo = this.packageName.compareTo(appVpnInfo.packageName);
+        if (iCompareTo == 0) {
             return appVpnInfo.userId - this.userId;
         }
-        return compareTo;
+        return iCompareTo;
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof AppVpnInfo) {
-            AppVpnInfo appVpnInfo = (AppVpnInfo) obj;
-            return this.userId == appVpnInfo.userId && Objects.equals(this.packageName, appVpnInfo.packageName);
+        if (!(obj instanceof AppVpnInfo)) {
+            return false;
         }
-        return false;
+        AppVpnInfo appVpnInfo = (AppVpnInfo) obj;
+        return this.userId == appVpnInfo.userId && Objects.equals(this.packageName, appVpnInfo.packageName);
     }
 
     public int hashCode() {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import jp.co.benesse.dcha.dchaservice.util.Log;
+
 /* loaded from: classes.dex */
 public class BootReceiver extends BroadcastReceiver {
     @Override // android.content.BroadcastReceiver
@@ -17,17 +18,17 @@ public class BootReceiver extends BroadcastReceiver {
             Log.d("DchaService", "onReceive DigichalizedStatus:" + i);
             if (i == 1 || i == 2) {
                 Log.d("DchaService", "onReceive DigichalizedStatus 0003");
-                Intent intent2 = new Intent(context, DchaService.class);
+                Intent intent2 = new Intent(context, (Class<?>) DchaService.class);
                 intent2.putExtra("REQ_COMMAND", 1);
                 context.startService(intent2);
             } else if (i == 0) {
                 Log.d("DchaService", "onReceive DigichalizedStatus 0004");
-                Intent intent3 = new Intent(context, DchaService.class);
+                Intent intent3 = new Intent(context, (Class<?>) DchaService.class);
                 intent3.putExtra("REQ_COMMAND", 2);
                 context.startService(intent3);
             } else if (i == 3) {
                 Log.d("DchaService", "onReceive DigichalizedStatus 0005");
-                Intent intent4 = new Intent(context, DchaService.class);
+                Intent intent4 = new Intent(context, (Class<?>) DchaService.class);
                 intent4.putExtra("REQ_COMMAND", 3);
                 context.startService(intent4);
             }

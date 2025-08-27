@@ -12,6 +12,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class BluetoothDeviceDetailsFragment extends RestrictedDashboardFragment {
     static int EDIT_DEVICE_NAME_ITEM_ID = 1;
@@ -20,9 +21,7 @@ public class BluetoothDeviceDetailsFragment extends RestrictedDashboardFragment 
     private String mDeviceAddress;
     private LocalBluetoothManager mManager;
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public interface TestDataFactory {
+    interface TestDataFactory {
         CachedBluetoothDevice getDevice(String str);
 
         LocalBluetoothManager getManager(Context context);
@@ -64,17 +63,16 @@ public class BluetoothDeviceDetailsFragment extends RestrictedDashboardFragment 
         return "BTDeviceDetailsFrg";
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.android.settings.dashboard.DashboardFragment, com.android.settings.core.InstrumentedPreferenceFragment
-    public int getPreferenceScreenResId() {
+    protected int getPreferenceScreenResId() {
         return R.xml.bluetooth_device_details_fragment;
     }
 
     @Override // com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        MenuItem add = menu.add(0, EDIT_DEVICE_NAME_ITEM_ID, 0, R.string.bluetooth_rename_button);
-        add.setIcon(R.drawable.ic_mode_edit);
-        add.setShowAsAction(2);
+        MenuItem menuItemAdd = menu.add(0, EDIT_DEVICE_NAME_ITEM_ID, 0, R.string.bluetooth_rename_button);
+        menuItemAdd.setIcon(R.drawable.ic_mode_edit);
+        menuItemAdd.setShowAsAction(2);
         super.onCreateOptionsMenu(menu, menuInflater);
     }
 

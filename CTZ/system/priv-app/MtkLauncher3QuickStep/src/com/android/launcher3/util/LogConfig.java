@@ -1,4 +1,5 @@
 package com.android.launcher3.util;
+
 /* loaded from: classes.dex */
 public class LogConfig {
     public static final String KEEP_ALL_ICONS = "KeepAllIcons";

@@ -21,13 +21,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PopupPopulator {
     public static final int MAX_SHORTCUTS = 4;
     public static final int MAX_SHORTCUTS_IF_NOTIFICATIONS = 2;
+
     @VisibleForTesting
     static final int NUM_DYNAMIC = 2;
     private static final Comparator<ShortcutInfoCompat> SHORTCUT_RANK_COMPARATOR = new Comparator<ShortcutInfoCompat>() { // from class: com.android.launcher3.popup.PopupPopulator.1
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ShortcutInfoCompat shortcutInfoCompat, ShortcutInfoCompat shortcutInfoCompat2) {
             if (shortcutInfoCompat.isDeclaredInManifest() && !shortcutInfoCompat2.isDeclaredInManifest()) {
@@ -44,12 +47,11 @@ public class PopupPopulator {
         if (str != null) {
             Iterator<ShortcutInfoCompat> it = list.iterator();
             while (true) {
-                if (it.hasNext()) {
-                    if (it.next().getId().equals(str)) {
-                        it.remove();
-                        break;
-                    }
-                } else {
+                if (!it.hasNext()) {
+                    break;
+                }
+                if (it.next().getId().equals(str)) {
+                    it.remove();
                     break;
                 }
             }
@@ -89,8 +91,7 @@ public class PopupPopulator {
         };
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public static /* synthetic */ void lambda$createUpdateRunnable$3(List list, final Launcher launcher, Handler handler, final PopupContainerWithArrow popupContainerWithArrow, ComponentName componentName, List list2, UserHandle userHandle, List list3, final ItemInfo itemInfo) {
+    static /* synthetic */ void lambda$createUpdateRunnable$3(List list, final Launcher launcher, Handler handler, final PopupContainerWithArrow popupContainerWithArrow, ComponentName componentName, List list2, UserHandle userHandle, List list3, final ItemInfo itemInfo) {
         if (!list.isEmpty()) {
             List<StatusBarNotification> statusBarNotificationsForKeys = launcher.getPopupDataProvider().getStatusBarNotificationsForKeys(list);
             final ArrayList arrayList = new ArrayList(statusBarNotificationsForKeys.size());
@@ -100,30 +101,30 @@ public class PopupPopulator {
             handler.post(new Runnable() { // from class: com.android.launcher3.popup.-$$Lambda$PopupPopulator$mfbIeKUr23EqjgnrfxXRLYPVxyA
                 @Override // java.lang.Runnable
                 public final void run() {
-                    PopupContainerWithArrow.this.applyNotificationInfos(arrayList);
+                    popupContainerWithArrow.applyNotificationInfos(arrayList);
                 }
             });
         }
-        List<ShortcutInfoCompat> sortAndFilterShortcuts = sortAndFilterShortcuts(DeepShortcutManager.getInstance(launcher).queryForShortcutsContainer(componentName, list2, userHandle), list.isEmpty() ? null : ((NotificationKeyData) list.get(0)).shortcutId);
-        for (int i2 = 0; i2 < sortAndFilterShortcuts.size() && i2 < list3.size(); i2++) {
-            final ShortcutInfoCompat shortcutInfoCompat = sortAndFilterShortcuts.get(i2);
+        List<ShortcutInfoCompat> listSortAndFilterShortcuts = sortAndFilterShortcuts(DeepShortcutManager.getInstance(launcher).queryForShortcutsContainer(componentName, list2, userHandle), list.isEmpty() ? null : ((NotificationKeyData) list.get(0)).shortcutId);
+        for (int i2 = 0; i2 < listSortAndFilterShortcuts.size() && i2 < list3.size(); i2++) {
+            final ShortcutInfoCompat shortcutInfoCompat = listSortAndFilterShortcuts.get(i2);
             final ShortcutInfo shortcutInfo = new ShortcutInfo(shortcutInfoCompat, launcher);
-            LauncherIcons obtain = LauncherIcons.obtain(launcher);
-            obtain.createShortcutIcon(shortcutInfoCompat, false).applyTo(shortcutInfo);
-            obtain.recycle();
+            LauncherIcons launcherIconsObtain = LauncherIcons.obtain(launcher);
+            launcherIconsObtain.createShortcutIcon(shortcutInfoCompat, false).applyTo(shortcutInfo);
+            launcherIconsObtain.recycle();
             shortcutInfo.rank = i2;
             final DeepShortcutView deepShortcutView = (DeepShortcutView) list3.get(i2);
             handler.post(new Runnable() { // from class: com.android.launcher3.popup.-$$Lambda$PopupPopulator$nJhY5SlHJI-8CnLEnSOsA7FnDNU
                 @Override // java.lang.Runnable
                 public final void run() {
-                    DeepShortcutView.this.applyShortcutInfo(shortcutInfo, shortcutInfoCompat, popupContainerWithArrow);
+                    deepShortcutView.applyShortcutInfo(shortcutInfo, shortcutInfoCompat, popupContainerWithArrow);
                 }
             });
         }
         handler.post(new Runnable() { // from class: com.android.launcher3.popup.-$$Lambda$PopupPopulator$wkh1GdyT5H0NmBH3MqLolBDFslg
             @Override // java.lang.Runnable
             public final void run() {
-                Launcher.this.refreshAndBindWidgetsForPackageUser(PackageUserKey.fromItemInfo(itemInfo));
+                launcher.refreshAndBindWidgetsForPackageUser(PackageUserKey.fromItemInfo(itemInfo));
             }
         });
     }

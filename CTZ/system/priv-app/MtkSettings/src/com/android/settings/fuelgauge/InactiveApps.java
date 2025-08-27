@@ -12,6 +12,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
+
 /* loaded from: classes.dex */
 public class InactiveApps extends SettingsPreferenceFragment implements Preference.OnPreferenceChangeListener {
     private static final CharSequence[] SETTABLE_BUCKETS_NAMES = {"ACTIVE", "WORKING_SET", "FREQUENT", "RARE"};
@@ -42,7 +43,6 @@ public class InactiveApps extends SettingsPreferenceFragment implements Preferen
         preferenceScreen.setOrderingAsAdded(false);
         Activity activity = getActivity();
         PackageManager packageManager = activity.getPackageManager();
-        UsageStatsManager usageStatsManager = (UsageStatsManager) activity.getSystemService(UsageStatsManager.class);
         Intent intent = new Intent("android.intent.action.MAIN");
         intent.addCategory("android.intent.category.LAUNCHER");
         for (ResolveInfo resolveInfo : packageManager.queryIntentActivities(intent, 0)) {
@@ -60,25 +60,25 @@ public class InactiveApps extends SettingsPreferenceFragment implements Preferen
     }
 
     static String bucketToName(int i) {
-        if (i != 5) {
-            if (i != 10) {
-                if (i != 20) {
-                    if (i != 30) {
-                        if (i != 40) {
-                            if (i == 50) {
-                                return "NEVER";
-                            }
-                            return "";
-                        }
-                        return "RARE";
-                    }
-                    return "FREQUENT";
-                }
-                return "WORKING_SET";
-            }
+        if (i == 5) {
+            return "EXEMPTED";
+        }
+        if (i == 10) {
             return "ACTIVE";
         }
-        return "EXEMPTED";
+        if (i == 20) {
+            return "WORKING_SET";
+        }
+        if (i == 30) {
+            return "FREQUENT";
+        }
+        if (i == 40) {
+            return "RARE";
+        }
+        if (i == 50) {
+            return "NEVER";
+        }
+        return "";
     }
 
     private void updateSummary(ListPreference listPreference) {

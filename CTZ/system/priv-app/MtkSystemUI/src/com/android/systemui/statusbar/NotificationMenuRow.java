@@ -21,6 +21,7 @@ import com.android.systemui.statusbar.ExpandableNotificationRow;
 import com.android.systemui.statusbar.NotificationGuts;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class NotificationMenuRow implements View.OnClickListener, NotificationMenuRowPlugin, ExpandableNotificationRow.LayoutListener {
     private boolean mAnimating;
@@ -178,6 +179,7 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         }
     }
 
+    /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override // com.android.systemui.plugins.statusbar.NotificationMenuRowPlugin
     public boolean onTouchEvent(View view, MotionEvent motionEvent, float f) {
         switch (motionEvent.getActionMasked()) {
@@ -190,14 +192,15 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
                 this.mCheckForDrag = null;
                 this.mPrevX = motionEvent.getRawX();
                 this.mIsUserTouching = true;
-                break;
+                return false;
             case 1:
                 this.mIsUserTouching = false;
                 return handleUpEvent(motionEvent, view, f);
             case 2:
                 this.mSnapping = false;
+                float rawX = motionEvent.getRawX() - this.mPrevX;
                 this.mPrevX = motionEvent.getRawX();
-                if (!isTowardsMenu(motionEvent.getRawX() - this.mPrevX) && isMenuLocationChange()) {
+                if (!isTowardsMenu(rawX) && isMenuLocationChange()) {
                     this.mMenuSnappedTo = false;
                     if (!this.mHandler.hasCallbacks(this.mCheckForDrag)) {
                         this.mCheckForDrag = null;
@@ -209,17 +212,18 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
                 if (this.mShouldShowMenu && !NotificationStackScrollLayout.isPinnedHeadsUp(view) && !this.mParent.areGutsExposed() && !this.mParent.isDark() && (this.mCheckForDrag == null || !this.mHandler.hasCallbacks(this.mCheckForDrag))) {
                     this.mCheckForDrag = new CheckForDrag();
                     this.mHandler.postDelayed(this.mCheckForDrag, 60L);
-                    break;
                 }
-                break;
+                return false;
             case 3:
                 this.mIsUserTouching = false;
                 cancelDrag();
                 return false;
+            default:
+                return false;
         }
-        return false;
     }
 
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [347=4] */
     private boolean handleUpEvent(MotionEvent motionEvent, View view, float f) {
         if (!this.mShouldShowMenu) {
             if (this.mSwipeHelper.isDismissGesture(motionEvent)) {
@@ -229,7 +233,7 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
             }
             return true;
         }
-        boolean isTowardsMenu = isTowardsMenu(f);
+        boolean zIsTowardsMenu = isTowardsMenu(f);
         boolean z = false;
         boolean z2 = this.mSwipeHelper.getMinDismissVelocity() <= Math.abs(f);
         this.mSwipeHelper.swipedFarEnough(this.mTranslation, this.mParent.getWidth());
@@ -249,9 +253,9 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
             } else {
                 dismiss(view, f);
             }
-        } else if ((!this.mSwipeHelper.isFalseGesture(motionEvent) && swipedEnoughToShowMenu() && (!z2 || z3)) || (isTowardsMenu && !this.mSwipeHelper.isDismissGesture(motionEvent))) {
+        } else if ((!this.mSwipeHelper.isFalseGesture(motionEvent) && swipedEnoughToShowMenu() && (!z2 || z3)) || (zIsTowardsMenu && !this.mSwipeHelper.isDismissGesture(motionEvent))) {
             showMenu(view, spaceForMenu, f);
-        } else if (!this.mSwipeHelper.isDismissGesture(motionEvent) || isTowardsMenu) {
+        } else if (!this.mSwipeHelper.isDismissGesture(motionEvent) || zIsTowardsMenu) {
             snapBack(view, f);
         } else {
             dismiss(view, f);
@@ -311,10 +315,10 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         int size = this.mMenuItems.size();
         for (int i = 0; i < size; i++) {
             NotificationMenuRowPlugin.MenuItem menuItem = this.mMenuItems.get(i);
-            String format = String.format(resources.getString(R.string.notification_menu_accessibility), str, menuItem.getContentDescription());
+            String str2 = String.format(resources.getString(R.string.notification_menu_accessibility), str, menuItem.getContentDescription());
             View menuView = menuItem.getMenuView();
             if (menuView != null) {
-                menuView.setContentDescription(format);
+                menuView.setContentDescription(str2);
             }
         }
     }
@@ -325,9 +329,8 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         if (this.mParent == null || this.mMenuItems.size() == 0 || this.mMenuContainer == null) {
             return;
         }
-        int actualHeight = this.mParent.getActualHeight();
-        if (actualHeight < this.mVertSpaceForIcons) {
-            f = (actualHeight / 2) - (this.mHorizSpaceForIcon / 2.0f);
+        if (this.mParent.getActualHeight() < this.mVertSpaceForIcons) {
+            f = (r0 / 2) - (this.mHorizSpaceForIcon / 2.0f);
         } else {
             f = (this.mVertSpaceForIcons - this.mHorizSpaceForIcon) / 2.0f;
         }
@@ -341,16 +344,16 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
             return;
         }
         float width = this.mParent.getWidth() * 0.3f;
-        float abs = Math.abs(f);
-        float f2 = 0.0f;
-        if (abs != 0.0f) {
-            if (abs > width) {
-                f2 = 1.0f - ((abs - width) / (this.mParent.getWidth() - width));
+        float fAbs = Math.abs(f);
+        float width2 = 0.0f;
+        if (fAbs != 0.0f) {
+            if (fAbs > width) {
+                width2 = 1.0f - ((fAbs - width) / (this.mParent.getWidth() - width));
             } else {
-                f2 = 1.0f;
+                width2 = 1.0f;
             }
         }
-        setMenuAlpha(f2);
+        setMenuAlpha(width2);
     }
 
     @Override // android.view.View.OnClickListener
@@ -360,11 +363,12 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         }
         view.getLocationOnScreen(this.mIconLocation);
         this.mParent.getLocationOnScreen(this.mParentLocation);
-        this.mMenuListener.onMenuClicked(this.mParent, (this.mIconLocation[0] - this.mParentLocation[0]) + ((int) (this.mHorizSpaceForIcon / 2.0f)), (this.mIconLocation[1] - this.mParentLocation[1]) + (view.getHeight() / 2), this.mMenuItems.get(this.mMenuContainer.indexOfChild(view)));
+        int i = (int) (this.mHorizSpaceForIcon / 2.0f);
+        int height = view.getHeight() / 2;
+        this.mMenuListener.onMenuClicked(this.mParent, (this.mIconLocation[0] - this.mParentLocation[0]) + i, (this.mIconLocation[1] - this.mParentLocation[1]) + height, this.mMenuItems.get(this.mMenuContainer.indexOfChild(view)));
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public boolean isMenuLocationChange() {
+    private boolean isMenuLocationChange() {
         return (this.mOnLeft && ((this.mTranslation > ((float) (-this.mIconPadding)) ? 1 : (this.mTranslation == ((float) (-this.mIconPadding)) ? 0 : -1)) < 0)) || (!this.mOnLeft && ((this.mTranslation > ((float) this.mIconPadding) ? 1 : (this.mTranslation == ((float) this.mIconPadding) ? 0 : -1)) > 0));
     }
 
@@ -389,8 +393,7 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         this.mIconsPlaced = true;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setMenuAlpha(float f) {
+    private void setMenuAlpha(float f) {
         this.mAlpha = f;
         if (this.mMenuContainer == null) {
             return;
@@ -407,30 +410,26 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public float getSpaceForMenu() {
+    private float getSpaceForMenu() {
         return this.mHorizSpaceForIcon * this.mMenuContainer.getChildCount();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public final class CheckForDrag implements Runnable {
+    private final class CheckForDrag implements Runnable {
         private CheckForDrag() {
         }
 
         @Override // java.lang.Runnable
         public void run() {
-            float abs = Math.abs(NotificationMenuRow.this.mTranslation);
+            float fAbs = Math.abs(NotificationMenuRow.this.mTranslation);
             float spaceForMenu = NotificationMenuRow.this.getSpaceForMenu();
             float width = NotificationMenuRow.this.mParent.getWidth() * 0.4f;
-            if ((!NotificationMenuRow.this.isMenuVisible() || NotificationMenuRow.this.isMenuLocationChange()) && abs >= spaceForMenu * 0.4d && abs < width) {
+            if ((!NotificationMenuRow.this.isMenuVisible() || NotificationMenuRow.this.isMenuLocationChange()) && fAbs >= spaceForMenu * 0.4d && fAbs < width) {
                 NotificationMenuRow.this.fadeInMenu(width);
             }
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void fadeInMenu(final float f) {
+    private void fadeInMenu(final float f) {
         if (this.mDismissing || this.mAnimating) {
             return;
         }
@@ -476,7 +475,8 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
     }
 
     public static NotificationMenuRowPlugin.MenuItem createSnoozeItem(Context context) {
-        return new NotificationMenuItem(context, context.getResources().getString(R.string.notification_menu_snooze_description), (NotificationSnooze) LayoutInflater.from(context).inflate(R.layout.notification_snooze, (ViewGroup) null, false), R.drawable.ic_snooze);
+        Resources resources = context.getResources();
+        return new NotificationMenuItem(context, resources.getString(R.string.notification_menu_snooze_description), (NotificationSnooze) LayoutInflater.from(context).inflate(R.layout.notification_snooze, (ViewGroup) null, false), R.drawable.ic_snooze);
     }
 
     public static NotificationMenuRowPlugin.MenuItem createInfoItem(Context context) {
@@ -499,13 +499,12 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         }
     }
 
-    /* loaded from: classes.dex */
     public static class NotificationMenuItem implements NotificationMenuRowPlugin.MenuItem {
         String mContentDescription;
         NotificationGuts.GutsContent mGutsContent;
         View mMenuView;
 
-        public NotificationMenuItem(Context context, String str, NotificationGuts.GutsContent gutsContent, int i) {
+        public NotificationMenuItem(Context context, String str, NotificationGuts.GutsContent gutsContent, int i) throws Resources.NotFoundException {
             Resources resources = context.getResources();
             int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.notification_menu_icon_padding);
             int color = resources.getColor(R.color.notification_gear_color);

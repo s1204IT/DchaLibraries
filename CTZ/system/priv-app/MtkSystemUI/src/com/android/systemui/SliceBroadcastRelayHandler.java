@@ -12,6 +12,7 @@ import android.util.ArrayMap;
 import android.util.ArraySet;
 import com.android.internal.annotations.VisibleForTesting;
 import java.util.Iterator;
+
 /* loaded from: classes.dex */
 public class SliceBroadcastRelayHandler extends SystemUI {
     private final ArrayMap<Uri, BroadcastRelay> mRelays = new ArrayMap<>();
@@ -31,10 +32,13 @@ public class SliceBroadcastRelayHandler extends SystemUI {
 
     @VisibleForTesting
     void handleIntent(Intent intent) {
-        if ("com.android.settingslib.action.REGISTER_SLICE_RECEIVER".equals(intent.getAction())) {
-            getOrCreateRelay((Uri) intent.getParcelableExtra("uri")).register(this.mContext, (ComponentName) intent.getParcelableExtra("receiver"), (IntentFilter) intent.getParcelableExtra("filter"));
-        } else if ("com.android.settingslib.action.UNREGISTER_SLICE_RECEIVER".equals(intent.getAction())) {
-            getAndRemoveRelay((Uri) intent.getParcelableExtra("uri")).unregister(this.mContext);
+        if (!"com.android.settingslib.action.REGISTER_SLICE_RECEIVER".equals(intent.getAction())) {
+            if ("com.android.settingslib.action.UNREGISTER_SLICE_RECEIVER".equals(intent.getAction())) {
+                getAndRemoveRelay((Uri) intent.getParcelableExtra("uri")).unregister(this.mContext);
+            }
+        } else {
+            Uri uri = (Uri) intent.getParcelableExtra("uri");
+            getOrCreateRelay(uri).register(this.mContext, (ComponentName) intent.getParcelableExtra("receiver"), (IntentFilter) intent.getParcelableExtra("filter"));
         }
     }
 
@@ -52,9 +56,7 @@ public class SliceBroadcastRelayHandler extends SystemUI {
         return this.mRelays.remove(uri);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
-    public static class BroadcastRelay extends BroadcastReceiver {
+    private static class BroadcastRelay extends BroadcastReceiver {
         private final ArraySet<ComponentName> mReceivers = new ArraySet<>();
         private final Uri mUri;
         private final UserHandle mUserId;

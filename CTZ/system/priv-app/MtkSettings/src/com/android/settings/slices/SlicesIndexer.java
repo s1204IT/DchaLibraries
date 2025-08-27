@@ -2,10 +2,12 @@ package com.android.settings.slices;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import com.android.settings.overlay.FeatureFactory;
 import java.util.List;
+
 /* loaded from: classes.dex */
 class SlicesIndexer implements Runnable {
     private Context mContext;
@@ -21,20 +23,19 @@ class SlicesIndexer implements Runnable {
         indexSliceData();
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
-    public void indexSliceData() {
+    protected void indexSliceData() {
         if (this.mHelper.isSliceDataIndexed()) {
             Log.d("SlicesIndexer", "Slices already indexed - returning.");
             return;
         }
         SQLiteDatabase writableDatabase = this.mHelper.getWritableDatabase();
         try {
-            long currentTimeMillis = System.currentTimeMillis();
+            long jCurrentTimeMillis = System.currentTimeMillis();
             writableDatabase.beginTransaction();
             this.mHelper.reconstruct(this.mHelper.getWritableDatabase());
             insertSliceData(writableDatabase, getSliceData());
             this.mHelper.setIndexedState();
-            Log.d("SlicesIndexer", "Indexing slices database took: " + (System.currentTimeMillis() - currentTimeMillis));
+            Log.d("SlicesIndexer", "Indexing slices database took: " + (System.currentTimeMillis() - jCurrentTimeMillis));
             writableDatabase.setTransactionSuccessful();
         } finally {
             writableDatabase.endTransaction();
@@ -45,7 +46,7 @@ class SlicesIndexer implements Runnable {
         return FeatureFactory.getFactory(this.mContext).getSlicesFeatureProvider().getSliceDataConverter(this.mContext).getSliceData();
     }
 
-    void insertSliceData(SQLiteDatabase sQLiteDatabase, List<SliceData> list) {
+    void insertSliceData(SQLiteDatabase sQLiteDatabase, List<SliceData> list) throws SQLException {
         for (SliceData sliceData : list) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("key", sliceData.getKey());

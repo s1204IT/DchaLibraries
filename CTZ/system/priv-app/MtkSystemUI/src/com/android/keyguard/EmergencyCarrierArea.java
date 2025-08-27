@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
 /* loaded from: classes.dex */
 public class EmergencyCarrierArea extends AlphaOptimizedLinearLayout {
     private CarrierText mCarrierText;
@@ -23,6 +24,7 @@ public class EmergencyCarrierArea extends AlphaOptimizedLinearLayout {
         this.mCarrierText = (CarrierText) findViewById(com.android.systemui.R.id.carrier_text);
         this.mEmergencyButton = (EmergencyButton) findViewById(com.android.systemui.R.id.emergency_call_button);
         this.mEmergencyButton.setOnTouchListener(new View.OnTouchListener() { // from class: com.android.keyguard.EmergencyCarrierArea.1
+            /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
             @Override // android.view.View.OnTouchListener
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (EmergencyCarrierArea.this.mCarrierText.getVisibility() != 0) {
@@ -31,12 +33,13 @@ public class EmergencyCarrierArea extends AlphaOptimizedLinearLayout {
                 switch (motionEvent.getAction()) {
                     case 0:
                         EmergencyCarrierArea.this.mCarrierText.animate().alpha(0.0f);
-                        break;
+                        return false;
                     case 1:
                         EmergencyCarrierArea.this.mCarrierText.animate().alpha(1.0f);
-                        break;
+                        return false;
+                    default:
+                        return false;
                 }
-                return false;
             }
         });
     }

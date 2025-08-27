@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 /* loaded from: classes.dex */
 public class SummaryPreference extends Preference {
     private String mAmount;
@@ -74,8 +75,8 @@ public class SummaryPreference extends Preference {
         }
         if (this.mChartEnabled && (!TextUtils.isEmpty(this.mStartLabel) || !TextUtils.isEmpty(this.mEndLabel))) {
             preferenceViewHolder.findViewById(R.id.label_bar).setVisibility(0);
-            ((TextView) preferenceViewHolder.findViewById(16908308)).setText(this.mStartLabel);
-            ((TextView) preferenceViewHolder.findViewById(16908309)).setText(this.mEndLabel);
+            ((TextView) preferenceViewHolder.findViewById(android.R.id.text1)).setText(this.mStartLabel);
+            ((TextView) preferenceViewHolder.findViewById(android.R.id.text2)).setText(this.mEndLabel);
             return;
         }
         preferenceViewHolder.findViewById(R.id.label_bar).setVisibility(8);

@@ -5,6 +5,7 @@ import com.android.settings.AccessiblePreferenceCategory;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.settingslib.RestrictedPreference;
 import java.util.ArrayList;
+
 /* loaded from: classes.dex */
 public class AccountRestrictionHelper {
     private final Context mContext;

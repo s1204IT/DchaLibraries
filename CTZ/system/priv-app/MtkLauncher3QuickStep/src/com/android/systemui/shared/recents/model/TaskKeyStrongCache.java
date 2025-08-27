@@ -3,13 +3,13 @@ package com.android.systemui.shared.recents.model;
 import android.util.ArrayMap;
 import com.android.systemui.shared.recents.model.Task;
 import java.io.PrintWriter;
+
 /* loaded from: classes.dex */
 public class TaskKeyStrongCache<V> extends TaskKeyCache<V> {
     private static final String TAG = "TaskKeyCache";
     private final ArrayMap<Integer, V> mCache = new ArrayMap<>();
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public final void copyEntries(TaskKeyStrongCache<V> other) {
+    final void copyEntries(TaskKeyStrongCache<V> other) {
         for (int i = other.mKeys.size() - 1; i >= 0; i--) {
             Task.TaskKey key = other.mKeys.valueAt(i);
             put(key, other.mCache.get(Integer.valueOf(key.id)));

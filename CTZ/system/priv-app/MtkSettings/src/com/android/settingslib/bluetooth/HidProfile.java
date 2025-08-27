@@ -9,6 +9,7 @@ import android.content.Context;
 import android.util.Log;
 import com.android.settingslib.R;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class HidProfile implements LocalBluetoothProfile {
     private static boolean V = true;
@@ -18,7 +19,6 @@ public class HidProfile implements LocalBluetoothProfile {
     private final LocalBluetoothProfileManager mProfileManager;
     private BluetoothHidHost mService;
 
-    /* loaded from: classes.dex */
     private final class HidHostServiceListener implements BluetoothProfile.ServiceListener {
         private HidHostServiceListener() {
         }
@@ -32,13 +32,13 @@ public class HidProfile implements LocalBluetoothProfile {
             List connectedDevices = HidProfile.this.mService.getConnectedDevices();
             while (!connectedDevices.isEmpty()) {
                 BluetoothDevice bluetoothDevice = (BluetoothDevice) connectedDevices.remove(0);
-                CachedBluetoothDevice findDevice = HidProfile.this.mDeviceManager.findDevice(bluetoothDevice);
-                if (findDevice == null) {
+                CachedBluetoothDevice cachedBluetoothDeviceFindDevice = HidProfile.this.mDeviceManager.findDevice(bluetoothDevice);
+                if (cachedBluetoothDeviceFindDevice == null) {
                     Log.w("HidProfile", "HidProfile found new device: " + bluetoothDevice);
-                    findDevice = HidProfile.this.mDeviceManager.addDevice(HidProfile.this.mLocalAdapter, HidProfile.this.mProfileManager, bluetoothDevice);
+                    cachedBluetoothDeviceFindDevice = HidProfile.this.mDeviceManager.addDevice(HidProfile.this.mLocalAdapter, HidProfile.this.mProfileManager, bluetoothDevice);
                 }
-                findDevice.onProfileStateChanged(HidProfile.this, 2);
-                findDevice.refresh();
+                cachedBluetoothDeviceFindDevice.onProfileStateChanged(HidProfile.this, 2);
+                cachedBluetoothDeviceFindDevice.refresh();
             }
             HidProfile.this.mIsProfileReady = true;
         }
@@ -62,8 +62,7 @@ public class HidProfile implements LocalBluetoothProfile {
         return 4;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    public HidProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
+    HidProfile(Context context, LocalBluetoothAdapter localBluetoothAdapter, CachedBluetoothDeviceManager cachedBluetoothDeviceManager, LocalBluetoothProfileManager localBluetoothProfileManager) {
         this.mLocalAdapter = localBluetoothAdapter;
         this.mDeviceManager = cachedBluetoothDeviceManager;
         this.mProfileManager = localBluetoothProfileManager;

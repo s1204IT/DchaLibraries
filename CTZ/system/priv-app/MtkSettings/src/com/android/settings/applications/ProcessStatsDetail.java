@@ -31,9 +31,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class ProcessStatsDetail extends SettingsPreferenceFragment {
     static final Comparator<ProcStatsEntry> sEntryCompare = new Comparator<ProcStatsEntry>() { // from class: com.android.settings.applications.ProcessStatsDetail.2
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ProcStatsEntry procStatsEntry, ProcStatsEntry procStatsEntry2) {
             if (procStatsEntry.mRunWeight < procStatsEntry2.mRunWeight) {
@@ -46,6 +48,7 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
         }
     };
     static final Comparator<ProcStatsEntry.Service> sServiceCompare = new Comparator<ProcStatsEntry.Service>() { // from class: com.android.settings.applications.ProcessStatsDetail.3
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(ProcStatsEntry.Service service, ProcStatsEntry.Service service2) {
             if (service.mDuration < service2.mDuration) {
@@ -58,6 +61,7 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
         }
     };
     static final Comparator<PkgService> sServicePkgCompare = new Comparator<PkgService>() { // from class: com.android.settings.applications.ProcessStatsDetail.4
+        /* JADX DEBUG: Method merged with bridge method: compare(Ljava/lang/Object;Ljava/lang/Object;)I */
         @Override // java.util.Comparator
         public int compare(PkgService pkgService, PkgService pkgService2) {
             if (pkgService.mDuration < pkgService2.mDuration) {
@@ -130,13 +134,13 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
     }
 
     @Override // com.android.settings.SettingsPreferenceFragment, com.android.settings.core.InstrumentedPreferenceFragment, com.android.settingslib.core.lifecycle.ObservablePreferenceFragment, android.app.Fragment
-    public void onResume() {
+    public void onResume() throws SecurityException {
         super.onResume();
         checkForceStop();
         updateRunningServices();
     }
 
-    private void updateRunningServices() {
+    private void updateRunningServices() throws SecurityException {
         final ComponentName componentName;
         CancellablePreference cancellablePreference;
         List<ActivityManager.RunningServiceInfo> runningServices = ((ActivityManager) getActivity().getSystemService("activity")).getRunningServices(Preference.DEFAULT_ORDER);
@@ -150,7 +154,7 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
             if ((runningServiceInfo.started || runningServiceInfo.clientLabel != 0) && (runningServiceInfo.flags & 8) == 0 && (cancellablePreference = this.mServiceMap.get((componentName = runningServiceInfo.service))) != null) {
                 cancellablePreference.setOnCancelListener(new CancellablePreference.OnCancelListener() { // from class: com.android.settings.applications.ProcessStatsDetail.1
                     @Override // com.android.settings.CancellablePreference.OnCancelListener
-                    public void onCancel(CancellablePreference cancellablePreference2) {
+                    public void onCancel(CancellablePreference cancellablePreference2) throws SecurityException {
                         ProcessStatsDetail.this.stopService(componentName.getPackageName(), componentName.getClassName());
                     }
                 });
@@ -174,10 +178,10 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
         float f = (float) (d / this.mMaxMemoryUsage);
         Activity activity = getActivity();
         summaryPreference.setRatios(f, 0.0f, 1.0f - f);
-        Formatter.BytesResult formatBytes = Formatter.formatBytes(activity.getResources(), (long) d, 1);
-        summaryPreference.setAmount(formatBytes.value);
-        summaryPreference.setUnits(formatBytes.units);
-        findPreference("frequency").setSummary(ProcStatsPackageEntry.getFrequency(((float) Math.max(this.mApp.mRunDuration, this.mApp.mBgDuration)) / ((float) this.mTotalTime), getActivity()));
+        Formatter.BytesResult bytes = Formatter.formatBytes(activity.getResources(), (long) d, 1);
+        summaryPreference.setAmount(bytes.value);
+        summaryPreference.setUnits(bytes.units);
+        findPreference("frequency").setSummary(ProcStatsPackageEntry.getFrequency(Math.max(this.mApp.mRunDuration, this.mApp.mBgDuration) / this.mTotalTime, getActivity()));
         findPreference("max_usage").setSummary(Formatter.formatShortFileSize(getContext(), (long) (Math.max(this.mApp.mMaxBgMem, this.mApp.mMaxRunMem) * this.mTotalScale * 1024.0d)));
     }
 
@@ -214,7 +218,7 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
             Preference preference = new Preference(getPrefContext());
             preference.setTitle(procStatsEntry2.mLabel);
             preference.setSelectable(false);
-            preference.setSummary(getString(R.string.memory_use_running_format, new Object[]{Formatter.formatShortFileSize(getActivity(), Math.max((long) (procStatsEntry2.mRunWeight * this.mWeightToRam), (long) (procStatsEntry2.mBgWeight * this.mWeightToRam))), ProcStatsPackageEntry.getFrequency(((float) Math.max(procStatsEntry2.mRunDuration, procStatsEntry2.mBgDuration)) / ((float) this.mTotalTime), getActivity())}));
+            preference.setSummary(getString(R.string.memory_use_running_format, new Object[]{Formatter.formatShortFileSize(getActivity(), Math.max((long) (procStatsEntry2.mRunWeight * this.mWeightToRam), (long) (procStatsEntry2.mBgWeight * this.mWeightToRam))), ProcStatsPackageEntry.getFrequency(Math.max(procStatsEntry2.mRunDuration, procStatsEntry2.mBgDuration) / this.mTotalTime, getActivity())}));
             this.mProcGroup.addPreference(preference);
         }
         if (this.mProcGroup.getPreferenceCount() < 2) {
@@ -223,11 +227,11 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
     }
 
     private static String capitalize(String str) {
-        char charAt = str.charAt(0);
-        if (!Character.isLowerCase(charAt)) {
+        char cCharAt = str.charAt(0);
+        if (!Character.isLowerCase(cCharAt)) {
             return str;
         }
-        return Character.toUpperCase(charAt) + str.substring(1);
+        return Character.toUpperCase(cCharAt) + str.substring(1);
     }
 
     private static String getProcessName(String str, ProcStatsEntry procStatsEntry) {
@@ -248,9 +252,7 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
         return str2;
     }
 
-    /* JADX INFO: Access modifiers changed from: package-private */
-    /* loaded from: classes.dex */
-    public static class PkgService {
+    static class PkgService {
         long mDuration;
         final ArrayList<ProcStatsEntry.Service> mServices = new ArrayList<>();
 
@@ -258,8 +260,7 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void stopService(String str, String str2) {
+    private void stopService(String str, String str2) throws SecurityException {
         try {
             if ((getActivity().getPackageManager().getApplicationInfo(str, 0).flags & 1) != 0) {
                 showStopServiceDialog(str, str2);
@@ -274,14 +275,13 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
     private void showStopServiceDialog(final String str, final String str2) {
         new AlertDialog.Builder(getActivity()).setTitle(R.string.runningservicedetails_stop_dlg_title).setMessage(R.string.runningservicedetails_stop_dlg_text).setPositiveButton(R.string.dlg_ok, new DialogInterface.OnClickListener() { // from class: com.android.settings.applications.ProcessStatsDetail.5
             @Override // android.content.DialogInterface.OnClickListener
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(DialogInterface dialogInterface, int i) throws SecurityException {
                 ProcessStatsDetail.this.doStopService(str, str2);
             }
         }).setNegativeButton(R.string.dlg_cancel, (DialogInterface.OnClickListener) null).show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void doStopService(String str, String str2) {
+    private void doStopService(String str, String str2) throws SecurityException {
         getActivity().stopService(new Intent().setClassName(str, str2));
         updateRunningServices();
     }
@@ -314,12 +314,13 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
                 if (this.mDpm.packageHasActiveAdmins(str)) {
                     this.mForceStop.setEnabled(false);
                     return;
-                }
-                try {
-                    if ((this.mPm.getApplicationInfo(str, 0).flags & 2097152) == 0) {
-                        z2 = true;
+                } else {
+                    try {
+                        if ((this.mPm.getApplicationInfo(str, 0).flags & 2097152) == 0) {
+                            z2 = true;
+                        }
+                    } catch (PackageManager.NameNotFoundException e) {
                     }
-                } catch (PackageManager.NameNotFoundException e) {
                 }
             }
             i++;

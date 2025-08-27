@@ -23,6 +23,7 @@ import com.android.launcher3.util.Themes;
 import com.android.quickstep.TaskOverlayFactory;
 import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.recents.model.ThumbnailData;
+
 /* loaded from: classes.dex */
 public class TaskThumbnailView extends View {
     private final BaseActivity mActivity;
@@ -41,11 +42,13 @@ public class TaskThumbnailView extends View {
     private static final LightingColorFilter[] sDimFilterCache = new LightingColorFilter[256];
     private static final LightingColorFilter[] sHighlightFilterCache = new LightingColorFilter[256];
     public static final Property<TaskThumbnailView, Float> DIM_ALPHA_MULTIPLIER = new FloatProperty<TaskThumbnailView>("dimAlphaMultiplier") { // from class: com.android.quickstep.views.TaskThumbnailView.1
+        /* JADX DEBUG: Method merged with bridge method: setValue(Ljava/lang/Object;F)V */
         @Override // android.util.FloatProperty
         public void setValue(TaskThumbnailView taskThumbnailView, float f) {
             taskThumbnailView.setDimAlphaMultipler(f);
         }
 
+        /* JADX DEBUG: Method merged with bridge method: get(Ljava/lang/Object;)Ljava/lang/Object; */
         @Override // android.util.Property
         public Float get(TaskThumbnailView taskThumbnailView) {
             return Float.valueOf(taskThumbnailView.mDimAlphaMultiplier);
@@ -124,21 +127,21 @@ public class TaskThumbnailView extends View {
     public int getSysUiStatusNavFlags() {
         int i;
         int i2;
-        if (this.mThumbnailData != null) {
-            if ((this.mThumbnailData.systemUiVisibility & 8192) != 0) {
-                i = 4;
-            } else {
-                i = 8;
-            }
-            int i3 = i | 0;
-            if ((this.mThumbnailData.systemUiVisibility & 16) != 0) {
-                i2 = 1;
-            } else {
-                i2 = 2;
-            }
-            return i3 | i2;
+        if (this.mThumbnailData == null) {
+            return 0;
         }
-        return 0;
+        if ((this.mThumbnailData.systemUiVisibility & 8192) != 0) {
+            i = 4;
+        } else {
+            i = 8;
+        }
+        int i3 = i | 0;
+        if ((this.mThumbnailData.systemUiVisibility & 16) != 0) {
+            i2 = 1;
+        } else {
+            i2 = 2;
+        }
+        return i3 | i2;
     }
 
     @Override // android.view.View
@@ -223,9 +226,9 @@ public class TaskThumbnailView extends View {
             if (!z) {
                 width = height;
             }
-            float max = Math.max(width * measuredWidth, 0.0f);
-            if (Math.round(max) < getMeasuredHeight()) {
-                this.mClipBottom = max;
+            float fMax = Math.max(width * measuredWidth, 0.0f);
+            if (Math.round(fMax) < getMeasuredHeight()) {
+                this.mClipBottom = fMax;
             }
             this.mPaint.setShader(this.mBitmapShader);
         }
@@ -244,20 +247,20 @@ public class TaskThumbnailView extends View {
     }
 
     private static LightingColorFilter getDimmingColorFilter(int i, boolean z) {
-        int boundToRange = Utilities.boundToRange(i, 0, 255);
-        if (boundToRange == 255) {
+        int iBoundToRange = Utilities.boundToRange(i, 0, 255);
+        if (iBoundToRange == 255) {
             return null;
         }
         if (z) {
-            if (sHighlightFilterCache[boundToRange] == null) {
-                int i2 = 255 - boundToRange;
-                sHighlightFilterCache[boundToRange] = new LightingColorFilter(Color.argb(255, boundToRange, boundToRange, boundToRange), Color.argb(255, i2, i2, i2));
+            if (sHighlightFilterCache[iBoundToRange] == null) {
+                int i2 = 255 - iBoundToRange;
+                sHighlightFilterCache[iBoundToRange] = new LightingColorFilter(Color.argb(255, iBoundToRange, iBoundToRange, iBoundToRange), Color.argb(255, i2, i2, i2));
             }
-            return sHighlightFilterCache[boundToRange];
+            return sHighlightFilterCache[iBoundToRange];
         }
-        if (sDimFilterCache[boundToRange] == null) {
-            sDimFilterCache[boundToRange] = new LightingColorFilter(Color.argb(255, boundToRange, boundToRange, boundToRange), 0);
+        if (sDimFilterCache[iBoundToRange] == null) {
+            sDimFilterCache[iBoundToRange] = new LightingColorFilter(Color.argb(255, iBoundToRange, iBoundToRange, iBoundToRange), 0);
         }
-        return sDimFilterCache[boundToRange];
+        return sDimFilterCache[iBoundToRange];
     }
 }

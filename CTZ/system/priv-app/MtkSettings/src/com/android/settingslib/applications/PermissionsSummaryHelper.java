@@ -8,6 +8,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class PermissionsSummaryHelper {
     public static void getPermissionSummary(Context context, String str, final PermissionsResultCallback permissionsResultCallback) {
@@ -33,12 +34,11 @@ public class PermissionsSummaryHelper {
                 Collator collator = Collator.getInstance();
                 collator.setStrength(0);
                 Collections.sort(arrayList, collator);
-                PermissionsResultCallback.this.onPermissionSummaryResult(i2, i, i3, arrayList);
+                permissionsResultCallback.onPermissionSummaryResult(i2, i, i3, arrayList);
             }
         }, (Handler) null);
     }
 
-    /* loaded from: classes.dex */
     public static abstract class PermissionsResultCallback {
         public void onPermissionSummaryResult(int i, int i2, int i3, List<CharSequence> list) {
         }

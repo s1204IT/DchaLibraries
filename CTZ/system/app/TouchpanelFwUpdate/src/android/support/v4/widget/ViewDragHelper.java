@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.OverScroller;
 import java.util.Arrays;
+
 /* loaded from: classes.dex */
 public class ViewDragHelper {
     private static final Interpolator sInterpolator = new Interpolator() { // from class: android.support.v4.widget.ViewDragHelper.1
@@ -41,7 +42,6 @@ public class ViewDragHelper {
     private int mTrackingEdges;
     private VelocityTracker mVelocityTracker;
 
-    /* loaded from: classes.dex */
     public static abstract class Callback {
         public abstract boolean tryCaptureView(View view, int i);
 
@@ -400,12 +400,7 @@ public class ViewDragHelper {
         return false;
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:45:0x00ed, code lost:
-        if (r2 != r15) goto L50;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
+    /* JADX DEBUG: Don't trust debug lines info. Repeating lines: [1087=4] */
     public boolean shouldInterceptTouchEvent(MotionEvent ev) {
         boolean z;
         int action;
@@ -470,29 +465,18 @@ public class ViewDragHelper {
                                     int newTop = this.mCallback.clampViewPositionVertical(toCapture3, targetTop, targetLeft2);
                                     int hDragRange = this.mCallback.getViewHorizontalDragRange(toCapture3);
                                     int vDragRange = this.mCallback.getViewVerticalDragRange(toCapture3);
-                                    if (hDragRange != 0) {
-                                        if (hDragRange > 0) {
-                                        }
-                                    }
-                                    if (vDragRange != 0) {
-                                        if (vDragRange > 0 && newTop == oldTop) {
-                                        }
+                                    if ((hDragRange == 0 || (hDragRange > 0 && newLeft == oldLeft)) && (vDragRange == 0 || (vDragRange > 0 && newTop == oldTop))) {
                                     }
                                     saveLastMotion(ev);
-                                    z = false;
-                                    break;
                                 } else {
                                     action = action2;
                                     actionIndex = actionIndex2;
                                     pointerCount = pointerCount2;
                                 }
                                 reportNewEdgeDrags(dx, dy, pointerId2);
-                                if (this.mDragState != 1) {
-                                    if (pastSlop && tryCaptureViewForDrag(toCapture3, pointerId2)) {
-                                    }
+                                if (this.mDragState == 1 || (pastSlop && tryCaptureViewForDrag(toCapture3, pointerId2))) {
+                                    saveLastMotion(ev);
                                 }
-                                saveLastMotion(ev);
-                                z = false;
                             } else {
                                 action = action2;
                                 actionIndex = actionIndex2;
@@ -504,9 +488,9 @@ public class ViewDragHelper {
                             pointerCount2 = pointerCount;
                         }
                         saveLastMotion(ev);
-                        z = false;
                     }
                     z = false;
+                    break;
                 }
                 break;
             case 4:
@@ -561,15 +545,15 @@ public class ViewDragHelper {
                 int edgesTouched = this.mInitialEdgesTouched[pointerId];
                 if ((this.mTrackingEdges & edgesTouched) != 0) {
                     this.mCallback.onEdgeTouched(this.mTrackingEdges & edgesTouched, pointerId);
-                    return;
+                    break;
                 }
-                return;
+                break;
             case 1:
                 if (this.mDragState == 1) {
                     releaseViewForPointerUp();
                 }
                 cancel();
-                return;
+                break;
             case 2:
                 if (this.mDragState == 1) {
                     if (isValidPointerForActionMove(this.mActivePointerId)) {
@@ -580,40 +564,37 @@ public class ViewDragHelper {
                         int idy = (int) (y2 - this.mLastMotionY[this.mActivePointerId]);
                         dragTo(this.mCapturedView.getLeft() + idx, this.mCapturedView.getTop() + idy, idx, idy);
                         saveLastMotion(ev);
-                        return;
+                        break;
                     }
-                    return;
-                }
-                int pointerCount = ev.getPointerCount();
-                while (i < pointerCount) {
-                    int pointerId2 = ev.getPointerId(i);
-                    if (isValidPointerForActionMove(pointerId2)) {
-                        float x3 = ev.getX(i);
-                        float y3 = ev.getY(i);
-                        float dx = x3 - this.mInitialMotionX[pointerId2];
-                        float dy = y3 - this.mInitialMotionY[pointerId2];
-                        reportNewEdgeDrags(dx, dy, pointerId2);
-                        if (this.mDragState != 1) {
-                            View toCapture2 = findTopChildUnder((int) x3, (int) y3);
-                            if (checkTouchSlop(toCapture2, dx, dy) && tryCaptureViewForDrag(toCapture2, pointerId2)) {
+                } else {
+                    int pointerCount = ev.getPointerCount();
+                    while (i < pointerCount) {
+                        int pointerId2 = ev.getPointerId(i);
+                        if (isValidPointerForActionMove(pointerId2)) {
+                            float x3 = ev.getX(i);
+                            float y3 = ev.getY(i);
+                            float dx = x3 - this.mInitialMotionX[pointerId2];
+                            float dy = y3 - this.mInitialMotionY[pointerId2];
+                            reportNewEdgeDrags(dx, dy, pointerId2);
+                            if (this.mDragState != 1) {
+                                View toCapture2 = findTopChildUnder((int) x3, (int) y3);
+                                if (!checkTouchSlop(toCapture2, dx, dy) || !tryCaptureViewForDrag(toCapture2, pointerId2)) {
+                                }
                             }
+                            saveLastMotion(ev);
+                            break;
                         }
-                        saveLastMotion(ev);
-                        return;
+                        i++;
                     }
-                    i++;
+                    saveLastMotion(ev);
                 }
-                saveLastMotion(ev);
-                return;
+                break;
             case 3:
                 if (this.mDragState == 1) {
                     dispatchViewReleased(0.0f, 0.0f);
                 }
                 cancel();
-                return;
-            case 4:
-            default:
-                return;
+                break;
             case 5:
                 int pointerId3 = ev.getPointerId(actionIndex);
                 float x4 = ev.getX(actionIndex);
@@ -622,18 +603,18 @@ public class ViewDragHelper {
                 if (this.mDragState != 0) {
                     if (isCapturedViewUnder((int) x4, (int) y4)) {
                         tryCaptureViewForDrag(this.mCapturedView, pointerId3);
-                        return;
+                        break;
                     }
-                    return;
+                } else {
+                    View toCapture3 = findTopChildUnder((int) x4, (int) y4);
+                    tryCaptureViewForDrag(toCapture3, pointerId3);
+                    int edgesTouched2 = this.mInitialEdgesTouched[pointerId3];
+                    if ((this.mTrackingEdges & edgesTouched2) != 0) {
+                        this.mCallback.onEdgeTouched(this.mTrackingEdges & edgesTouched2, pointerId3);
+                        break;
+                    }
                 }
-                View toCapture3 = findTopChildUnder((int) x4, (int) y4);
-                tryCaptureViewForDrag(toCapture3, pointerId3);
-                int edgesTouched2 = this.mInitialEdgesTouched[pointerId3];
-                if ((this.mTrackingEdges & edgesTouched2) != 0) {
-                    this.mCallback.onEdgeTouched(this.mTrackingEdges & edgesTouched2, pointerId3);
-                    return;
-                }
-                return;
+                break;
             case 6:
                 int pointerId4 = ev.getPointerId(actionIndex);
                 if (this.mDragState == 1 && pointerId4 == this.mActivePointerId) {
@@ -655,7 +636,7 @@ public class ViewDragHelper {
                     }
                 }
                 clearMotionHistory(pointerId4);
-                return;
+                break;
         }
     }
 
@@ -714,14 +695,14 @@ public class ViewDragHelper {
     }
 
     public boolean checkTouchSlop(int directions, int pointerId) {
-        if (isPointerDown(pointerId)) {
-            boolean checkHorizontal = (directions & 1) == 1;
-            boolean checkVertical = (directions & 2) == 2;
-            float dx = this.mLastMotionX[pointerId] - this.mInitialMotionX[pointerId];
-            float dy = this.mLastMotionY[pointerId] - this.mInitialMotionY[pointerId];
-            return (checkHorizontal && checkVertical) ? (dx * dx) + (dy * dy) > ((float) (this.mTouchSlop * this.mTouchSlop)) : checkHorizontal ? Math.abs(dx) > ((float) this.mTouchSlop) : checkVertical && Math.abs(dy) > ((float) this.mTouchSlop);
+        if (!isPointerDown(pointerId)) {
+            return false;
         }
-        return false;
+        boolean checkHorizontal = (directions & 1) == 1;
+        boolean checkVertical = (directions & 2) == 2;
+        float dx = this.mLastMotionX[pointerId] - this.mInitialMotionX[pointerId];
+        float dy = this.mLastMotionY[pointerId] - this.mInitialMotionY[pointerId];
+        return (checkHorizontal && checkVertical) ? (dx * dx) + (dy * dy) > ((float) (this.mTouchSlop * this.mTouchSlop)) : checkHorizontal ? Math.abs(dx) > ((float) this.mTouchSlop) : checkVertical && Math.abs(dy) > ((float) this.mTouchSlop);
     }
 
     private void releaseViewForPointerUp() {

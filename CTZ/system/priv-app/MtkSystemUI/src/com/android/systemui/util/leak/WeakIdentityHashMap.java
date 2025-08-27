@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class WeakIdentityHashMap<K, V> {
     private final HashMap<WeakReference<K>, V> mMap = new HashMap<>();
@@ -13,9 +14,9 @@ public class WeakIdentityHashMap<K, V> {
 
     private void cleanUp() {
         while (true) {
-            Reference<? extends Object> poll = this.mRefQueue.poll();
-            if (poll != null) {
-                this.mMap.remove(poll);
+            Reference<? extends Object> referencePoll = this.mRefQueue.poll();
+            if (referencePoll != null) {
+                this.mMap.remove(referencePoll);
             } else {
                 return;
             }
@@ -46,7 +47,6 @@ public class WeakIdentityHashMap<K, V> {
         return this.mMap.isEmpty();
     }
 
-    /* loaded from: classes.dex */
     private static class CmpWeakReference<K> extends WeakReference<K> {
         private final int mHashCode;
 

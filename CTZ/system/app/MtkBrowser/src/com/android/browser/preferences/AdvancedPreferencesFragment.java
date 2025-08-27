@@ -20,6 +20,7 @@ import com.mediatek.browser.ext.IBrowserMiscExt;
 import com.mediatek.browser.ext.IBrowserSettingExt;
 import java.util.Map;
 import java.util.Set;
+
 /* loaded from: classes.dex */
 public class AdvancedPreferencesFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
     private IBrowserSettingExt mBrowserSettingExt = null;
@@ -34,10 +35,10 @@ public class AdvancedPreferencesFragment extends PreferenceFragment implements P
         this.mBrowserSettingExt = Extensions.getSettingPlugin(getActivity());
         findPreference("reset_default_preferences").setOnPreferenceChangeListener(this);
         findPreference("search_engine").setOnPreferenceChangeListener(this);
-        Preference findPreference = findPreference("plugin_state");
-        findPreference.setOnPreferenceChangeListener(this);
-        updateListPreferenceSummary((ListPreference) findPreference);
-        getPreferenceScreen().removePreference(findPreference);
+        Preference preferenceFindPreference = findPreference("plugin_state");
+        preferenceFindPreference.setOnPreferenceChangeListener(this);
+        updateListPreferenceSummary((ListPreference) preferenceFindPreference);
+        getPreferenceScreen().removePreference(preferenceFindPreference);
         this.mBrowserSettingExt.customizePreference(140, getPreferenceScreen(), this, BrowserSettings.getInstance().getPreferences(), this);
         ((CheckBoxPreference) findPreference("load_page")).setChecked(PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("load_page", true));
     }
@@ -59,6 +60,7 @@ public class AdvancedPreferencesFragment extends PreferenceFragment implements P
         final PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("website_settings");
         preferenceScreen.setEnabled(false);
         WebStorage.getInstance().getOrigins(new ValueCallback<Map>() { // from class: com.android.browser.preferences.AdvancedPreferencesFragment.1
+            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
             @Override // android.webkit.ValueCallback
             public void onReceiveValue(Map map) {
                 if (map != null && !map.isEmpty()) {
@@ -67,6 +69,7 @@ public class AdvancedPreferencesFragment extends PreferenceFragment implements P
             }
         });
         GeolocationPermissions.getInstance().getOrigins(new ValueCallback<Set<String>>() { // from class: com.android.browser.preferences.AdvancedPreferencesFragment.2
+            /* JADX DEBUG: Method merged with bridge method: onReceiveValue(Ljava/lang/Object;)V */
             @Override // android.webkit.ValueCallback
             public void onReceiveValue(Set<String> set) {
                 if (set != null && !set.isEmpty()) {

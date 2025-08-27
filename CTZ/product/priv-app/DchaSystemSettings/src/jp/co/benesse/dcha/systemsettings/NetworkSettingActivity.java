@@ -26,6 +26,7 @@ import jp.co.benesse.dcha.systemsettings.AccessPoint;
 import jp.co.benesse.dcha.systemsettings.WifiDialog;
 import jp.co.benesse.dcha.systemsettings.WifiTracker;
 import jp.co.benesse.dcha.util.Logger;
+
 /* loaded from: classes.dex */
 public class NetworkSettingActivity extends ParentSettingActivity implements View.OnClickListener, View.OnTouchListener, AdapterView.OnItemClickListener, AccessPoint.AccessPointListener, WifiDialog.WifiDialogListener, WifiTracker.WifiListener {
     private int apSize;
@@ -76,9 +77,8 @@ public class NetworkSettingActivity extends ParentSettingActivity implements Vie
     private final int scrollBarWidth = 60;
     private final int scrollBarHeight = 90;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle) {
         Logger.d("NetworkSettingActivity", "onCreate 0001");
         super.onCreate(bundle);
         setContentView(R.layout.act_network);
@@ -115,9 +115,8 @@ public class NetworkSettingActivity extends ParentSettingActivity implements Vie
         Logger.d("NetworkSettingActivity", "onCreate 0004");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onDestroy() {
+    protected void onDestroy() {
         Logger.d("NetworkSettingActivity", "onDestroy 0001");
         this.mBgThread.quit();
         this.mAddNetworkBtn.setOnClickListener(null);
@@ -198,9 +197,8 @@ public class NetworkSettingActivity extends ParentSettingActivity implements Vie
         Logger.d("NetworkSettingActivity", "onActivityCreated 0007");
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // jp.co.benesse.dcha.systemsettings.ParentSettingActivity, android.app.Activity
-    public void onStart() {
+    protected void onStart() {
         Logger.d("NetworkSettingActivity", "onStart 0001");
         super.onStart();
         Logger.d("NetworkSettingActivity", "onStart 0002");
@@ -614,30 +612,32 @@ public class NetworkSettingActivity extends ParentSettingActivity implements Vie
         Logger.d("NetworkSettingActivity", "scrollImageAndList 0001");
         if (this.upEnableFlg && this.mTouchBeforeY > f2) {
             Logger.d("NetworkSettingActivity", "scrollImageAndList 0002");
-        } else if (this.downEnableFlg && f2 > this.mTouchBeforeY) {
-            Logger.d("NetworkSettingActivity", "scrollImageAndList 0003");
-        } else {
-            this.upEnableFlg = false;
-            this.downEnableFlg = false;
-            this.mTouchDiffBeforeActionY = (int) (this.mTouchBeforeY - f2);
-            this.mScrollHandleNetwork.scrollBy(0, (int) this.mTouchDiffBeforeActionY);
-            int scrollY = ((129 - this.mScrollHandleNetwork.getScrollY()) * this.scrollAbleAmountOfList) / 259;
-            this.mApList.smoothScrollToPositionFromTop((scrollY / 138) + 1, 138 - (scrollY % 138), 0);
-            this.locationY = this.mScrollHandleNetwork.getScrollY();
-            if (this.locationY >= 129) {
-                Logger.d("NetworkSettingActivity", "scrollImageAndList 0004");
-                this.mScrollHandleNetwork.scrollTo(0, 129);
-                this.mApList.smoothScrollToPosition(0);
-                this.upEnableFlg = true;
-            }
-            if (this.locationY <= -130) {
-                Logger.d("NetworkSettingActivity", "scrollImageAndList 0005");
-                this.mScrollHandleNetwork.scrollTo(0, -130);
-                this.mApList.smoothScrollToPosition(this.apSize);
-                this.downEnableFlg = true;
-            }
-            Logger.d("NetworkSettingActivity", "scrollImageAndList 0006");
+            return;
         }
+        if (this.downEnableFlg && f2 > this.mTouchBeforeY) {
+            Logger.d("NetworkSettingActivity", "scrollImageAndList 0003");
+            return;
+        }
+        this.upEnableFlg = false;
+        this.downEnableFlg = false;
+        this.mTouchDiffBeforeActionY = (int) (this.mTouchBeforeY - f2);
+        this.mScrollHandleNetwork.scrollBy(0, (int) this.mTouchDiffBeforeActionY);
+        int scrollY = ((129 - this.mScrollHandleNetwork.getScrollY()) * this.scrollAbleAmountOfList) / 259;
+        this.mApList.smoothScrollToPositionFromTop((scrollY / 138) + 1, 138 - (scrollY % 138), 0);
+        this.locationY = this.mScrollHandleNetwork.getScrollY();
+        if (this.locationY >= 129) {
+            Logger.d("NetworkSettingActivity", "scrollImageAndList 0004");
+            this.mScrollHandleNetwork.scrollTo(0, 129);
+            this.mApList.smoothScrollToPosition(0);
+            this.upEnableFlg = true;
+        }
+        if (this.locationY <= -130) {
+            Logger.d("NetworkSettingActivity", "scrollImageAndList 0005");
+            this.mScrollHandleNetwork.scrollTo(0, -130);
+            this.mApList.smoothScrollToPosition(this.apSize);
+            this.downEnableFlg = true;
+        }
+        Logger.d("NetworkSettingActivity", "scrollImageAndList 0006");
     }
 
     private void backWifiActivity() {
@@ -653,28 +653,28 @@ public class NetworkSettingActivity extends ParentSettingActivity implements Vie
 
     private String getMacAddress(WifiManager wifiManager) {
         Logger.d("NetworkSettingActivity", "getMacAddress 0001");
-        String str = "";
+        String macAddress = "";
         try {
-            str = Settings.System.getString(getContentResolver(), "bc:mac_address");
+            macAddress = Settings.System.getString(getContentResolver(), "bc:mac_address");
         } catch (Exception e) {
             Logger.d("NetworkSettingActivity", "getMacAddress 0002");
             Logger.d("NetworkSettingActivity", "Exception", e);
         }
-        if (TextUtils.isEmpty(str)) {
+        if (TextUtils.isEmpty(macAddress)) {
             try {
                 Logger.d("NetworkSettingActivity", "getMacAddress 0003");
                 WifiInfo connectionInfo = wifiManager.getConnectionInfo();
                 if (connectionInfo != null) {
                     Logger.d("NetworkSettingActivity", "getMacAddress 0004");
-                    str = connectionInfo.getMacAddress();
+                    macAddress = connectionInfo.getMacAddress();
                 }
             } catch (Exception e2) {
                 Logger.d("NetworkSettingActivity", "getMacAddress 0005");
                 Logger.d("NetworkSettingActivity", "Exception", e2);
             }
         }
-        Logger.d("NetworkSettingActivity", "getMacAddress 0006 return:", str);
-        return str;
+        Logger.d("NetworkSettingActivity", "getMacAddress 0006 return:", macAddress);
+        return macAddress;
     }
 
     private String getOnAccessSsid(WifiManager wifiManager) {

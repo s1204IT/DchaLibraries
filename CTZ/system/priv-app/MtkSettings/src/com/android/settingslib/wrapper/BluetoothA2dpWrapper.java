@@ -3,6 +3,7 @@ package com.android.settingslib.wrapper;
 import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothCodecStatus;
 import android.bluetooth.BluetoothDevice;
+
 /* loaded from: classes.dex */
 public class BluetoothA2dpWrapper {
     private BluetoothA2dp mService;

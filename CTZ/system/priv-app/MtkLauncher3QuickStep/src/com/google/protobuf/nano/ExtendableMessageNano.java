@@ -2,25 +2,25 @@ package com.google.protobuf.nano;
 
 import com.google.protobuf.nano.ExtendableMessageNano;
 import java.io.IOException;
+
 /* loaded from: classes.dex */
 public abstract class ExtendableMessageNano<M extends ExtendableMessageNano<M>> extends MessageNano {
     protected FieldArray unknownFieldData;
 
-    /* JADX INFO: Access modifiers changed from: protected */
     @Override // com.google.protobuf.nano.MessageNano
-    public int computeSerializedSize() {
-        if (this.unknownFieldData != null) {
-            int i = 0;
-            for (int i2 = 0; i2 < this.unknownFieldData.size(); i2++) {
-                i += this.unknownFieldData.dataAt(i2).computeSerializedSize();
-            }
-            return i;
+    protected int computeSerializedSize() {
+        if (this.unknownFieldData == null) {
+            return 0;
         }
-        return 0;
+        int iComputeSerializedSize = 0;
+        for (int i = 0; i < this.unknownFieldData.size(); i++) {
+            iComputeSerializedSize += this.unknownFieldData.dataAt(i).computeSerializedSize();
+        }
+        return iComputeSerializedSize;
     }
 
     @Override // com.google.protobuf.nano.MessageNano
-    public void writeTo(CodedOutputByteBufferNano codedOutputByteBufferNano) throws IOException {
+    public void writeTo(CodedOutputByteBufferNano codedOutputByteBufferNano) throws IOException, ArrayIndexOutOfBoundsException, IllegalArgumentException {
         if (this.unknownFieldData == null) {
             return;
         }
@@ -87,6 +87,8 @@ public abstract class ExtendableMessageNano<M extends ExtendableMessageNano<M>> 
         return true;
     }
 
+    /* JADX DEBUG: Method merged with bridge method: clone()Lcom/google/protobuf/nano/MessageNano; */
+    /* JADX DEBUG: Method merged with bridge method: clone()Ljava/lang/Object; */
     @Override // com.google.protobuf.nano.MessageNano
     /* renamed from: clone */
     public M mo22clone() throws CloneNotSupportedException {

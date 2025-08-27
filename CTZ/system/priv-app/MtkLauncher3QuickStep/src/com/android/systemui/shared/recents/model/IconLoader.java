@@ -16,6 +16,7 @@ import android.util.Log;
 import android.util.LruCache;
 import com.android.systemui.shared.recents.model.Task;
 import com.android.systemui.shared.system.PackageManagerWrapper;
+
 /* loaded from: classes.dex */
 public abstract class IconLoader {
     private static final String TAG = "IconLoader";
@@ -49,7 +50,7 @@ public abstract class IconLoader {
         return activityInfo;
     }
 
-    public Drawable getIcon(Task t) {
+    public Drawable getIcon(Task t) throws PackageManager.NameNotFoundException {
         Drawable cachedIcon = this.mIconCache.get(t.key);
         if (cachedIcon == null) {
             Drawable cachedIcon2 = createNewIconForTask(t.key, t.taskDescription, true);
@@ -72,7 +73,7 @@ public abstract class IconLoader {
         return null;
     }
 
-    private Drawable createNewIconForTask(Task.TaskKey taskKey, ActivityManager.TaskDescription desc, boolean returnDefault) {
+    private Drawable createNewIconForTask(Task.TaskKey taskKey, ActivityManager.TaskDescription desc, boolean returnDefault) throws PackageManager.NameNotFoundException {
         Drawable icon;
         int userId = taskKey.userId;
         Bitmap tdIcon = desc.getInMemoryIcon();
@@ -107,7 +108,6 @@ public abstract class IconLoader {
         return createBadgedDrawable(new BitmapDrawable(this.mContext.getResources(), icon), userId, desc);
     }
 
-    /* loaded from: classes.dex */
     public static class DefaultIconLoader extends IconLoader {
         private final BitmapDrawable mDefaultIcon;
         private final IconDrawableFactory mDrawableFactory;

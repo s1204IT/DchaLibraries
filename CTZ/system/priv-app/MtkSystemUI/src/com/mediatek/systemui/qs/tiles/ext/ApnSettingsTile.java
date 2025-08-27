@@ -16,6 +16,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import com.android.systemui.Dependency;
 import com.android.systemui.plugins.ActivityStarter;
+import com.android.systemui.plugins.R;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
@@ -23,6 +24,7 @@ import com.mediatek.systemui.ext.IQuickSettingsPlugin;
 import com.mediatek.systemui.ext.OpSystemUICustomizationFactoryBase;
 import com.mediatek.systemui.statusbar.extcb.IconIdWrapper;
 import com.mediatek.systemui.statusbar.util.SIMHelper;
+
 /* loaded from: classes.dex */
 public class ApnSettingsTile extends QSTileImpl<QSTile.BooleanState> {
     private static final Intent APN_SETTINGS = new Intent().setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$ApnSettingsActivity"));
@@ -53,10 +55,11 @@ public class ApnSettingsTile extends QSTileImpl<QSTile.BooleanState> {
                 String action = intent.getAction();
                 Log.d("ApnSettingsTile", "onReceive(), action: " + action);
                 if (action.equals("android.intent.action.AIRPLANE_MODE")) {
-                    boolean booleanExtra = intent.getBooleanExtra("state", false);
-                    Log.d("ApnSettingsTile", "onReceive(), airline mode changed: state is " + booleanExtra);
+                    Log.d("ApnSettingsTile", "onReceive(), airline mode changed: state is " + intent.getBooleanExtra("state", false));
                     ApnSettingsTile.this.updateState();
-                } else if (action.equals("com.mediatek.phone.ACTION_EF_CSP_CONTENT_NOTIFY") || action.equals("com.mediatek.intent.action.MSIM_MODE") || action.equals("mediatek.intent.action.ACTION_MD_TYPE_CHANGE") || action.equals("mediatek.intent.action.LOCATED_PLMN_CHANGED") || action.equals("android.intent.action.ACTION_SET_RADIO_CAPABILITY_DONE") || action.equals("android.intent.action.ACTION_SUBINFO_CONTENT_CHANGE") || action.equals("android.intent.action.ACTION_SUBINFO_RECORD_UPDATED")) {
+                    return;
+                }
+                if (action.equals("com.mediatek.phone.ACTION_EF_CSP_CONTENT_NOTIFY") || action.equals("com.mediatek.intent.action.MSIM_MODE") || action.equals("mediatek.intent.action.ACTION_MD_TYPE_CHANGE") || action.equals("mediatek.intent.action.LOCATED_PLMN_CHANGED") || action.equals("android.intent.action.ACTION_SET_RADIO_CAPABILITY_DONE") || action.equals("android.intent.action.ACTION_SUBINFO_CONTENT_CHANGE") || action.equals("android.intent.action.ACTION_SUBINFO_RECORD_UPDATED")) {
                     ApnSettingsTile.this.updateState();
                 }
             }
@@ -77,7 +80,7 @@ public class ApnSettingsTile extends QSTileImpl<QSTile.BooleanState> {
         updateState();
     }
 
-    /* JADX WARN: Can't rename method to resolve collision */
+    /* JADX DEBUG: Method merged with bridge method: newTileState()Lcom/android/systemui/plugins/qs/QSTile$State; */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
     public QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
@@ -121,7 +124,7 @@ public class ApnSettingsTile extends QSTileImpl<QSTile.BooleanState> {
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl, com.android.systemui.plugins.qs.QSTile
     public int getMetricsCategory() {
-        return 111;
+        return R.styleable.AppCompatTheme_windowActionBar;
     }
 
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
@@ -140,9 +143,9 @@ public class ApnSettingsTile extends QSTileImpl<QSTile.BooleanState> {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: protected */
+    /* JADX DEBUG: Method merged with bridge method: handleUpdateState(Lcom/android/systemui/plugins/qs/QSTile$State;Ljava/lang/Object;)V */
     @Override // com.android.systemui.qs.tileimpl.QSTileImpl
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         if (this.mApnSettingsEnabled) {
             booleanState.icon = QsIconWrapper.get(this.mEnableApnStateIconWrapper.getIconId(), this.mEnableApnStateIconWrapper);
         } else {
@@ -152,14 +155,13 @@ public class ApnSettingsTile extends QSTileImpl<QSTile.BooleanState> {
         booleanState.contentDescription = this.mApnStateLabel;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void updateState() {
+    private final void updateState() {
         boolean z = false;
         this.mIsAirplaneMode = Settings.Global.getInt(this.mContext.getContentResolver(), "airplane_mode_on", 0) != 0;
         boolean z2 = (UserHandle.myUserId() == 0 && ActivityManager.getCurrentUser() == 0) ? false : true;
-        boolean hasUserRestriction = this.mUm.hasUserRestriction("no_config_mobile_networks");
-        if (this.mIsWifiOnly || z2 || hasUserRestriction) {
-            Log.d("ApnSettingsTile", "updateState(), isSecondaryUser = " + z2 + ", mIsWifiOnly = " + this.mIsWifiOnly + ", isRestricted = " + hasUserRestriction);
+        boolean zHasUserRestriction = this.mUm.hasUserRestriction("no_config_mobile_networks");
+        if (this.mIsWifiOnly || z2 || zHasUserRestriction) {
+            Log.d("ApnSettingsTile", "updateState(), isSecondaryUser = " + z2 + ", mIsWifiOnly = " + this.mIsWifiOnly + ", isRestricted = " + zHasUserRestriction);
         } else {
             int activeSubscriptionInfoCount = this.mSubscriptionManager.getActiveSubscriptionInfoCount();
             int callState = TelephonyManager.getDefault().getCallState();

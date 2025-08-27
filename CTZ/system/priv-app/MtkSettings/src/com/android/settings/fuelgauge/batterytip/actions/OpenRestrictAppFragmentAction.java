@@ -7,6 +7,7 @@ import com.android.settings.fuelgauge.batterytip.BatteryDatabaseManager;
 import com.android.settings.fuelgauge.batterytip.tips.RestrictAppTip;
 import com.android.settingslib.utils.ThreadUtils;
 import java.util.List;
+
 /* loaded from: classes.dex */
 public class OpenRestrictAppFragmentAction extends BatteryTipAction {
     BatteryDatabaseManager mBatteryDatabaseManager;
@@ -28,7 +29,7 @@ public class OpenRestrictAppFragmentAction extends BatteryTipAction {
         ThreadUtils.postOnBackgroundThread(new Runnable() { // from class: com.android.settings.fuelgauge.batterytip.actions.-$$Lambda$OpenRestrictAppFragmentAction$EtKh55lPJMI0rxkM0QFArF_zK8E
             @Override // java.lang.Runnable
             public final void run() {
-                OpenRestrictAppFragmentAction.this.mBatteryDatabaseManager.updateAnomalies(restrictAppList, 1);
+                this.f$0.mBatteryDatabaseManager.updateAnomalies(restrictAppList, 1);
             }
         });
     }
